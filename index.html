@@ -433,6 +433,14 @@ nav button{font-size:15px;letter-spacing:.04em}
 .rav{flex-basis:100%;margin:3px 0 0 36px;font-size:12px}
 /* Ducks: grigio metallizzato */
 /* Giochi: menu e Tiro da 3 / Partita simulata */
+.gmenu{display:grid;gap:12px}
+.gmc{display:flex;align-items:center;gap:14px;width:100%;text-align:left;cursor:pointer;color:#fff;padding:16px 14px;border:1px solid var(--line);border-left:5px solid var(--gc);background:linear-gradient(110deg,color-mix(in srgb,var(--gc) 26%,var(--panel2)),var(--panel) 70%);box-shadow:0 10px 22px rgba(0,0,0,.35);transition:transform .12s}
+.gmc:active{transform:scale(.98)}
+.gmi{flex:none;width:58px;height:58px;display:grid;place-items:center;font-size:30px;background:rgba(0,0,0,.3);border:2px solid var(--gc);transform:skewX(-8deg)}
+.gmt{flex:1;min-width:0;display:grid;gap:3px}
+.gmt b{font-family:var(--display);font-style:italic;font-weight:800;font-size:24px;line-height:1;text-transform:uppercase}
+.gmt small{font-size:13px;color:#cfd6ea;line-height:1.35}
+.gmc .rgo{font-size:30px}
 .gtabs{display:flex;gap:6px;overflow-x:auto;margin:0 0 16px;scrollbar-width:none}
 .gtabs button{flex:none;background:var(--panel);border:1px solid var(--line);color:var(--muted);font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;letter-spacing:.04em;text-transform:uppercase;padding:8px 14px;cursor:pointer;transform:skewX(-10deg)}
 .gtabs button[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#0a0f1f}
@@ -1244,17 +1252,23 @@ function hlBind(m){
   });
 }
 /* ===== Sezione Giochi: selettore ===== */
-let GAME="hl";
-try{GAME=localStorage.getItem("game")||"hl"}catch(e){}
+let GAME="menu";
 const effOf=(t,n)=>{const e=(EFF.gioc[t]||[]).find(x=>x[0]===n);return e&&e[1]!=null?e[1]:null};
+const GAMES=[
+  {k:"hl",t:"Più o Meno",d:"Due giocatori della lega: il secondo ha l'efficienza più alta o più bassa? Allunga la serie.",i:"⇅",c:"#2fd36b"},
+  {k:"tiro",t:"Tiro da 3",d:"45 secondi per segnare più canestri possibile. La mira dipende dall'efficienza del tuo giocatore.",i:"🏀",c:"#f08a1c"},
+  {k:"sim",t:"Partita simulata",d:"Scegli due franchigie e guarda la partita con quintetti ed efficienze reali.",i:"📺",c:"#3b82f6"}];
 function vGiochiHub(){
-  const tabs=[["hl","Più o Meno"],["tiro","Tiro da 3"],["sim","Partita simulata"]];
-  const bar=`<div class="gtabs">${tabs.map(([k,l])=>`<button data-game="${k}" aria-pressed="${GAME===k}">${l}</button>`).join("")}</div>`;
-  return bar+(GAME==="tiro"?vTiro():GAME==="sim"?vSim():vGiochi());
+  if(GAME==="menu"){
+    return `${H("Giochi",`<em>Scegli una sfida</em>`)}
+    <div class="gmenu">${GAMES.map(g=>`<button class="gmc" data-game="${g.k}" style="--gc:${g.c}"><span class="gmi">${g.i}</span><span class="gmt"><b>${g.t}</b><small>${g.d}</small></span><span class="rgo">›</span></button>`).join("")}</div>
+    <p class="note">Record e risultati restano salvati su questo telefono. Usa "Condividi risultato" per sfidare gli altri GM nel gruppo.</p>`;
+  }
+  return `<button class="gback" data-game="menu">‹ Giochi</button>`+(GAME==="tiro"?vTiro():GAME==="sim"?vSim():vGiochi());
 }
 function bindGiochi(m){
-  m.querySelectorAll("[data-game]").forEach(b=>b.onclick=()=>{GAME=b.dataset.game;try{localStorage.setItem("game",GAME)}catch(e){}TR.run=false;SIM.timer&&clearInterval(SIM.timer);SIM.timer=null;render()});
-  if(GAME==="hl")hlBind(m);else if(GAME==="tiro")tiroBind(m);else simBind(m);
+  m.querySelectorAll("[data-game]").forEach(b=>b.onclick=()=>{GAME=b.dataset.game;window.scrollTo(0,0);TR.run=false;SIM.timer&&clearInterval(SIM.timer);SIM.timer=null;render()});
+  if(GAME==="hl")hlBind(m);else if(GAME==="tiro")tiroBind(m);else if(GAME==="sim")simBind(m);
 }
 
 /* ===== Gioco 1: Tiro da 3 (arcade) ===== */
@@ -1474,7 +1488,7 @@ function syncMenu(){
       p.style.minWidth=width+"px";p.style.left=left+"px";p.style.top=(r.bottom-w.top+4)+"px"}
   });
 }
-document.querySelectorAll("nav button").forEach(b=>b.onclick=e=>{e.stopPropagation();if(b.dataset.menu){dkOpen=!dkOpen;syncMenu();return}dkOpen=false;cur=b.dataset.v;render();window.scrollTo(0,0)});
+document.querySelectorAll("nav button").forEach(b=>b.onclick=e=>{e.stopPropagation();if(b.dataset.menu){dkOpen=!dkOpen;syncMenu();return}dkOpen=false;cur=b.dataset.v;if(cur==="giochi"){GAME="menu";TR.run=false;if(SIM.timer){clearInterval(SIM.timer);SIM.timer=null}}render();window.scrollTo(0,0)});
 document.querySelectorAll("#subnav button").forEach(b=>b.onclick=e=>{e.stopPropagation();dkOpen=false;cur=b.dataset.v;render();window.scrollTo(0,0)});
 document.addEventListener("click",e=>{if(dkOpen&&!e.target.closest(".subnav")){dkOpen=false;syncMenu()}});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&dkOpen){dkOpen=false;syncMenu()}});
