@@ -849,7 +849,7 @@ function vCampo(){
     </g>
     </g>
     <g font-family="CourtBlock,Impact,Arial Narrow,sans-serif" font-weight="400" font-size="${afs}" letter-spacing=".5" fill="${atxt}" fill-opacity=".94" stroke="${astk}" stroke-width=".45" stroke-linejoin="round" paint-order="stroke"><text x="${lg?39:50}" y="${ay}" text-anchor="${lg?"end":"middle"}">${lg?c.city.toUpperCase():c.nick.toUpperCase()}</text>${lg?`<text x="61" y="${ay}" text-anchor="start">${c.nick.toUpperCase()}</text>`:""}</g><rect width="100" height="16" fill="url(#gloss)"/>
-    ${lg?(LOGO2[t]?`<image href="${lg}" x="39.6" y=".35" width="20.8" height="15.5" preserveAspectRatio="xMidYMid meet"/>`:`<image href="${lg}" x="40.5" y=".3" width="19" height="15.4" preserveAspectRatio="xMidYMid meet"/>`):""}
+    ${lg?(LOGO2[t]?`<image href="${lg}" x="40.12" y=".74" width="19.76" height="14.73" preserveAspectRatio="xMidYMid meet"/>`:`<image href="${lg}" x="40.5" y=".3" width="19" height="15.4" preserveAspectRatio="xMidYMid meet"/>`):""}
     </svg>`;
   const ROWY={C:30.6,F:56.6,G:83.3},XS={G:[30,70],F:[19,81]};const pos={};["G","F","C"].forEach(r=>{const l=q.filter(p=>p[2]===r);l.forEach((p,i)=>pos[p[0]]=[l.length===2&&XS[r]?XS[r][i]:(i+1)/(l.length+1)*100,ROWY[r]])});
   const onCourt=q.map((p,i)=>`<button class="cpl" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${jersey(t,p[1],p[0])}<span class="cnm"${(L=>L>=12?' style="font-size:9.5px"':L>=9?' style="font-size:10.5px"':"")(sur(p[0]).length)}>${sur(p[0])}</span>${pill(lastEff(t,p[0]))}</button>`).join("");
