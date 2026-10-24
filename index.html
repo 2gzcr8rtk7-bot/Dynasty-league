@@ -24,6 +24,35 @@
 <meta name="twitter:card" content="summary_large_image">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}html{-webkit-text-size-adjust:100%}.upd{padding-block:0 28px;text-align:center;font-family:var(--display);font-style:italic;font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .rookie{font-family:var(--display);font-style:italic;font-weight:800;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#04170b;background:linear-gradient(180deg,#5eea8f,var(--win));padding:1px 9px;transform:skewX(-12deg)}
+/* pagina giocatore */
+.pl[data-pl]{cursor:pointer;transition:transform .12s ease,border-color .12s}
+.pl[data-pl]:hover{border-color:var(--red)}
+.pl[data-pl]:active{transform:scale(.97)}
+.pl[data-pl]:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.gback{background:none;border:0;color:var(--muted);font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;padding:0 0 12px;cursor:pointer}
+.ghead{position:relative;display:flex;align-items:center;gap:14px;padding:16px;margin-bottom:22px;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.4)}
+.ghead::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.07) 0 10px,transparent 10px 22px);pointer-events:none}
+.ghead>*{position:relative}
+.gjer svg{width:96px;height:116px;overflow:visible}
+.gtit{display:grid;gap:4px;justify-items:start;min-width:0}
+.gtit small{font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.gtit h3{margin:0;font-family:var(--display);font-style:italic;font-weight:800;font-size:30px;line-height:.95;text-transform:uppercase;overflow-wrap:anywhere}
+.gtit p{margin:0;font-family:var(--display);font-style:italic;font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;opacity:.9}
+.gbig{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.gbig .ev{font-size:56px;gap:12px}
+.gbig .ev i{width:16px;height:16px}
+.gbig small{color:var(--muted);font-size:13px;letter-spacing:.08em;text-transform:uppercase;font-family:var(--display);font-weight:700}
+.gbars{display:grid;gap:8px;margin-bottom:16px}
+.gbars>div{display:grid;grid-template-columns:110px 1fr 46px;align-items:center;gap:10px}
+.gbars span{font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gbars i{height:10px;background:rgba(255,255,255,.07);display:block}
+.gbars b{display:block;height:100%}
+.gbars em{font-family:var(--display);font-style:italic;font-weight:800;text-align:right}
+.gstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.gst{background:linear-gradient(180deg,var(--panel2),var(--panel));padding:12px;display:grid;gap:2px}
+.gst small{font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.gst b{font-family:var(--display);font-style:italic;font-weight:800;font-size:28px;line-height:1;color:#fff}
+.gst em{font-size:12px;color:var(--muted);font-style:normal}
 </style>
 
 
@@ -259,7 +288,7 @@ nav button{font-size:15px;letter-spacing:.04em}
   </div>
 </header>
 <main class="wrap" id="main"></main>
-<footer class="wrap upd">Ultimo aggiornamento: 24/10/2026 · 14:33</footer>
+<footer class="wrap upd">Ultimo aggiornamento: 24/10/2026 · 14:48</footer>
 
 <script>
 const TEAMS={
@@ -435,7 +464,7 @@ function vRoster(){
   <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">
    ${LOGO[curTeam]?`<img class="hlogo" src="${LOGO[curTeam]}" alt="">`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div><div class="rec">${CREDITI[curTeam]??"–"}<small>CREDITI</small></div></div></div>
   <div class="sumrow"><span>${r.length} giocatori</span></div>
-  ${[["G","Guardie"],["F","Ali"],["C","Centri"]].map(([k,lab])=>{const g=r.filter(p=>p[2]===k);return g.length?`<section class="role"><h4><span>${lab}</span></h4><div class="players">${g.map(p=>`<div class="pl">${jersey(curTeam,p[1],p[0])}<div class="pn">${p[0]}</div><div class="meta"><span>${p[3]}</span></div>${ROOKIE.includes(p[0])?`<div class="rookie">Slot Rookie</div>`:""}${AVVISI[p[0]]?`<div class="avviso">${AVVISI[p[0]]}</div>`:""}</div>`).join("")}</div></section>`:""}).join("")}`;
+  ${[["G","Guardie"],["F","Ali"],["C","Centri"]].map(([k,lab])=>{const g=r.filter(p=>p[2]===k);return g.length?`<section class="role"><h4><span>${lab}</span></h4><div class="players">${g.map(p=>`<div class="pl" data-pl="${p[0]}" role="button" tabindex="0">${jersey(curTeam,p[1],p[0])}<div class="pn">${p[0]}</div><div class="meta"><span>${p[3]}</span></div>${ROOKIE.includes(p[0])?`<div class="rookie">Slot Rookie</div>`:""}${AVVISI[p[0]]?`<div class="avviso">${AVVISI[p[0]]}</div>`:""}</div>`).join("")}</div></section>`:""}).join("")}`;
 }
 
 const f2=n=>n.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -477,12 +506,49 @@ function vHome(){
   const st=standings();
   return `${H("Franchigie",`<em>Tocca un logo per il roster</em>`)}<div class="hgrid">${Object.keys(TEAMS).map(t=>{const c=TEAMS[t],x=st.find(y=>y.t===t);return `<button class="htile" data-team="${t}" style="--tc:${c.bg};--tt:${c.trim}" aria-label="Roster ${c.name}"><span class="hlg">${badge(t)}</span><span class="hnm"><small>${c.city}</small><b>${c.nick}</b></span><span class="hrec">${x.w}-${x.l}</span></button>`}).join("")}</div>`;
 }
-const VIEWS={home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};
+
+let curPlayer=null;
+function vGiocatore(){
+  const t=curTeam,c=TEAMS[t],p=(ROSTER[t]||[]).find(x=>x[0]===curPlayer);
+  if(!p)return `<p class="note">Giocatore non trovato.</p>`;
+  const e=(EFF.gioc[t]||[]).find(x=>x[0]===p[0])||[p[0],null,0,null];
+  const all=[];Object.entries(EFF.gioc).forEach(([tt,a])=>a.forEach(x=>x[1]!=null&&all.push([tt,...x])));
+  all.sort((a,b)=>b[2]-a[2]);
+  const team=(EFF.gioc[t]||[]).filter(x=>x[1]!=null).sort((a,b)=>b[1]-a[1]);
+  const rL=all.findIndex(x=>x[1]===p[0])+1, rT=team.findIndex(x=>x[0]===p[0])+1;
+  const ts=EFF.squadre.find(x=>x[0]===t);
+  const ruolo={G:"Guardia",F:"Ala",C:"Centro"}[p[2]]||p[2];
+  const pct=v=>Math.max(3,Math.min(100,v/1.6*100));
+  const stat=(lab,val,sub="")=>`<div class="gst"><small>${lab}</small><b>${val}</b>${sub?`<em>${sub}</em>`:""}</div>`;
+  return `<button class="gback" id="gback">‹ Roster ${c.nick}</button>
+  <div class="ghead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 60%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">
+    <div class="gjer">${jersey(t,p[1],p[0])}</div>
+    <div class="gtit"><small>${c.name}</small><h3>${p[0]}</h3><p>${ruolo} · ${p[3]} · #${p[1]}</p>${ROOKIE.includes(p[0])?`<div class="rookie">Slot Rookie</div>`:""}${AVVISI[p[0]]?`<div class="avviso">${AVVISI[p[0]]}</div>`:""}</div>
+  </div>
+  ${H("Efficienza",`<em>Agg. ${EFF.agg}</em>`)}
+  ${e[1]==null?`<p class="note">Nessuna partita giocata finora: i dati compariranno dopo la prima gara.</p>`:`
+  <div class="gbig">${eff(e[1])}<small>Dunkest per minuto · media stagionale</small></div>
+  <div class="gbars">
+    <div><span>${p[0].split(" ").slice(-1)[0]}</span><i><b style="width:${pct(e[1])}%;background:${c.bg}"></b></i><em>${f2(e[1])}</em></div>
+    ${ts?`<div><span>Media ${c.nick}</span><i><b style="width:${pct(ts[4])}%;background:#5b6b95"></b></i><em>${f2(ts[4])}</em></div>`:""}
+  </div>
+  <div class="gstats">
+    ${stat("Partite",e[2])}
+    ${stat("Minuti medi",e[3]==null?"—":e[3].toLocaleString("it-IT",{minimumFractionDigits:1}))}
+    ${stat("Proiezione 36'",f2(e[1]*36).replace(/,\d+$/,m=>m.slice(0,2)),"Dunkest")}
+    ${stat("In squadra",rT?rT+"°":"—","su "+team.length)}
+    ${stat("Nella lega",rL?rL+"°":"—","su "+all.length)}
+  </div>`}
+  <p class="note">Dati dal report Dunkest giornaliero, senza capitano, vittoria e quintetto. Pallino: verde sopra 1,10 · giallo 0,80–1,10 · rosso sotto 0,80.</p>`;
+}
+const VIEWS={giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
-  document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===cur));
+  document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===(cur==="giocatore"?"roster":cur)));
   const m=document.getElementById("main");m.innerHTML=`<div class="view">${VIEWS[cur]()}</div>`;
+  m.querySelectorAll(".pl[data-pl]").forEach(b=>{const go=()=>{curPlayer=b.dataset.pl;cur="giocatore";render();window.scrollTo(0,0)};b.onclick=go;b.onkeydown=e=>{if(e.key==="Enter")go()}});
+  const gb=m.querySelector("#gback");if(gb)gb.onclick=()=>{cur="roster";render();window.scrollTo(0,0)};
   m.querySelectorAll(".htile").forEach(b=>b.onclick=()=>{curTeam=b.dataset.team;try{localStorage.setItem("team",curTeam)}catch(e){}cur="roster";render();window.scrollTo(0,0)});
   m.querySelectorAll(".echip").forEach(b=>b.onclick=()=>{effTeam=b.dataset.t;render()});
   m.querySelectorAll(".chip:not(.echip)").forEach(b=>b.onclick=()=>{curTeam=b.dataset.t;try{localStorage.setItem("team",curTeam)}catch(e){}render()});
