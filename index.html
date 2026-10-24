@@ -334,7 +334,7 @@ nav button{font-size:15px;letter-spacing:.04em}
   </div>
 </header>
 <main class="wrap" id="main"></main>
-<footer class="wrap upd">Ultimo aggiornamento: 24/10/2026 · 17:42</footer>
+<footer class="wrap upd">Ultimo aggiornamento: 24/10/2026 · 17:44</footer>
 
 <script>
 const TEAMS={
@@ -481,7 +481,7 @@ const DECO={
    <path d="M4 54 L12 54 L10 112 L2 118 Z M116 54 L108 54 L110 112 L118 118 Z" fill="#fff" opacity=".9"/>`
 };
 function jersey(t,num,name=""){
-  const c=t==="DOL"?{...TEAMS[t],bg:"#ffffff",fg:"#1747c9",trim:"#0b0b0b",jstroke:"#0b0b0b"}:TEAMS[t],n=num==null?"?":String(num),k="j"+(JID++);
+  const c=t==="DOL"?{...TEAMS[t],bg:"#ffffff",fg:"#1747c9",trim:"#0b0b0b",jstroke:"#ffffff"}:TEAMS[t],n=num==null?"?":String(num),k="j"+(JID++);
   const fs=n.length>1?38:44;
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
   const ol=c.jstroke||(lum(c.fg)<0.45?"#ffffff":"#0a0f1f");
