@@ -319,7 +319,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 /* home */
 .hgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 @media (min-width:640px){.hgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
-.htile{position:relative;display:grid;justify-items:center;gap:6px;padding:14px 8px 12px;border:0;cursor:pointer;color:#fff;text-align:center;background:linear-gradient(160deg,var(--tc),color-mix(in srgb,var(--tc) 45%,#000));border-bottom:3px solid color-mix(in srgb,var(--tc) 40%,#000);box-shadow:0 10px 22px rgba(0,0,0,.4);overflow:hidden;transition:transform .15s ease}
+.htile{position:relative;display:grid;justify-items:center;gap:13px;padding:14px 8px 5px;border:0;cursor:pointer;color:#fff;text-align:center;background:linear-gradient(160deg,var(--tc),color-mix(in srgb,var(--tc) 45%,#000));border-bottom:3px solid color-mix(in srgb,var(--tc) 40%,#000);box-shadow:0 10px 22px rgba(0,0,0,.4);overflow:hidden;transition:transform .15s ease}
 .htile::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.06) 0 10px,transparent 10px 22px);pointer-events:none}
 .htile:active{transform:scale(.97)}
 .htile:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
@@ -540,7 +540,7 @@ const CHIUSE=GIORNATE.filter(g=>!g.live);
 /* Efficienza dell'ultima partita giocata (solo per chi ha più di una gara: con una sola gara coincide con la media) */
 const ULTIMA={agg:"22/10/2026",gioc:{"Tyrese Maxey":.74,"Jalen Williams":.61,"Isaiah Hartenstein":.32,"Jaylen Brown":.55,"Shai Gilgeous-Alexander":.43,"Aday Mara":.40,"LeBron James":.86,"Joel Embiid":.62,"VJ Edgecombe":.69,"Chet Holmgren":1.37}};
 /* Quintetti titolari, in ordine: playmaker, guardia, ala piccola, ala grande, centro. Vuoto = scelto in automatico */
-const TITOLARI={DOL:["Tyrese Maxey","Trae Young","Kevin Durant","Paul George","Nikola Jokić"],SPI:["Stephon Castle","Donovan Mitchell","Giannis Antetokounmpo","LeBron James","Joel Embiid"],PEA:["Josh Giddey","LaMelo Ball","Julius Randle","Evan Mobley","Domantas Sabonis"],DUC:["Cade Cunningham","Anthony Edwards","Jalen Johnson","Cooper Flagg","Victor Wembanyama"],MOO:["Kon Knueppel","Tyler Herro","Caleb Wilson","Ausar Thompson","Kel'el Ware"],TUR:["Dylan Harper","Tyrese Haliburton","Paolo Banchero","Chet Holmgren","Zach Edey"],EAG:["Stephen Curry","Jalen Brunson","Anthony Davis","Deni Avdija","Karl-Anthony Towns"],FOX:["Shai Gilgeous-Alexander","Luka Dončić","Jayson Tatum","Kawhi Leonard","Ivica Zubac"]};
+const TITOLARI={DOL:["Tyrese Maxey","Trae Young","Kevin Durant","Paul George","Nikola Jokić"],SPI:["Stephon Castle","Donovan Mitchell","Giannis Antetokounmpo","LeBron James","Joel Embiid"],PEA:["Josh Giddey","LaMelo Ball","Julius Randle","Evan Mobley","Domantas Sabonis"],DUC:["Cade Cunningham","Amen Thompson","Jalen Johnson","Cooper Flagg","Victor Wembanyama"],MOO:["Kon Knueppel","Tyler Herro","Caleb Wilson","Ausar Thompson","Kel'el Ware"],TUR:["Dylan Harper","Tyrese Haliburton","AJ Dybantsa","Chet Holmgren","Zach Edey"],EAG:["Stephen Curry","Jalen Brunson","Anthony Davis","Deni Avdija","Karl-Anthony Towns"],FOX:["Shai Gilgeous-Alexander","Luka Dončić","Jayson Tatum","Kawhi Leonard","Ivica Zubac"]};
 
 /* Infortuni dei giocatori della lega. stato: out | dubbio | quest | dtd | ok. fonti: nomi delle fonti consultate */
 const INFORTUNI={agg:"24/10/2026 · 18:02",
