@@ -48,3 +48,11 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 - Pagina squadra: "Bacheca" con coppe oro/argento/bronzo, solo per chi ha fatto podio (funzione `bacheca(t)`, legge `STORIA`).
 - Efficienza: aggiunta "Flop 10 lega" sotto la Top 10.
 - Regolamento: testo completo del PDF ufficiale in `REGOLAMENTO` (articoli apribili) + file `regolamento.pdf` scaricabile.
+
+## 24/10/2026 (9) — Sezione Giochi (Claude, account di Francesco)
+- Bottone "Giochi" nella barra (la barra su telefono scorre a destra, bottoni più grandi).
+- Tre giochi, selettore in alto (variabile `GAME`):
+  - "Più o Meno" (`vGiochi`/`hlBind`, stato `HL`): chi ha l'efficienza stagionale più alta; record in localStorage `hlBest`.
+  - "Tiro da 3" (`vTiro`/`tiroCanvas`, stato `TR`): arcade su canvas, 45 secondi, si tira trascinando verso l'alto; la precisione dipende dall'efficienza del giocatore (`tiroAcc`); record in `tiroBest`.
+  - "Partita simulata" (`vSim`/`simRun`, stato `SIM`): partita automatica tra due franchigie con titolari + 4 riserve migliori, tiri pesati sulle efficienze.
+- I giochi usano i dati `EFF`, `ROSTER` e `TITOLARI`: si aggiornano da soli quando si aggiornano quelli.
