@@ -23,3 +23,8 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 - Tolto il logo dal parquet. Ora sta al centro della fascia alta del campo, con città a sinistra e nome squadra a destra.
 - Fascia alta più spessa (viewBox 100x120, campo spostato di 8 unità); bordi laterali sottili come prima.
 - Posizioni righe aggiornate: centro 30%, ali 56,2%, guardie 83,2%.
+
+## 24/10/2026 (4) — Scritte sul bordo stile NBA
+- Città e nome squadra sul bordo alto scritti con il font Anton (blocco condensato tipo parquet NBA), incluso nell'index.html come @font-face "CourtBlock" (base64, solo caratteri latini) così funziona anche offline.
+- Colore delle scritte: secondo colore della squadra se si legge bene sul bordo, altrimenti bianco/nero; contorno scuro e leggera lucidatura per l'effetto "dipinto".
+- Dimensione del testo adattata alla lunghezza (es. SACRAMENTO, CALIFORNIA).
