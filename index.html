@@ -409,6 +409,19 @@ nav button{font-size:15px;letter-spacing:.04em}
 .cdet{grid-column:1/-1;list-style:none;margin:0;padding:5px 10px 7px 12px;border-top:1px solid rgba(255,255,255,.06);font-size:11.5px;line-height:1.45;color:#cfd6ea}
 .cdet li span{font-family:var(--display);font-style:italic;font-weight:800}
 .cdet .p{color:#5eea8f}.cdet .n{color:#ff7373}
+/* Roster a elenco */
+.rost .gpl li.rrow{flex-wrap:wrap;cursor:pointer;padding:9px 12px;transition:background .12s}
+.rost .gpl li.rrow:hover{background:rgba(255,255,255,.04)}
+.rost .gpl li.rrow:active{background:rgba(255,255,255,.07)}
+.rost .gpl li.rrow:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.rnm{flex:1;min-width:0;display:grid}
+.rnm b{font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;color:#fff;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rnm small{font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.rtags{display:flex;gap:5px;flex:none}
+.rtags .rookie{font-size:11px;padding:1px 7px}
+.rtags .injtag{font-size:11px;padding:1px 7px}
+.rgo{flex:none;color:var(--muted);font-size:22px;line-height:1;margin-left:2px}
+.rav{flex-basis:100%;margin:3px 0 0 36px;font-size:12px}
 /* Sala Trofei */
 .medal{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;color:#2a1c00;box-shadow:inset 0 -2px 0 rgba(0,0,0,.25),0 2px 6px rgba(0,0,0,.4)}
 .medal.m1{background:radial-gradient(circle at 35% 30%,#fff4b8,#f5b400 58%,#a87400)}
@@ -691,7 +704,9 @@ function vRoster(){
   <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">
    ${LOGO[curTeam]?`<img class="hlogo" src="${LOGO[curTeam]}" alt="">`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div><div class="rec">${CREDITI[curTeam]??"–"}<small>CREDITI</small></div></div></div>
   <div class="sumrow"><span>${r.length} giocatori</span></div>
-  ${[["G","Guardie"],["F","Ali"],["C","Centri"]].map(([k,lab])=>{const g=r.filter(p=>p[2]===k);return g.length?`<section class="role"><h4><span>${lab}</span></h4><div class="players">${g.map(p=>`<div class="pl" data-pl="${p[0]}" role="button" tabindex="0">${jersey(curTeam,p[1],p[0])}<div class="pn">${p[0]}</div><div class="meta"><span>${p[3]}</span></div>${INJ[p[0]]&&INJ[p[0]].stato!=="ok"?`<div class="injtag ${INJ[p[0]].stato}">${STATI[INJ[p[0]].stato][0]}</div>`:""}${ROOKIE.includes(p[0])?`<div class="rookie">Slot Rookie</div>`:""}${AVVISI[p[0]]?`<div class="avviso">${AVVISI[p[0]]}</div>`:""}</div>`).join("")}</div></section>`:""}).join("")}`;
+  ${(()=>{const R={G:"Guardia",F:"Ala",C:"Centro"},L={G:"G",F:"A",C:"C"};
+    const pl=r.slice().sort((a,b)=>"GFC".indexOf(a[2])-"GFC".indexOf(b[2]));
+    return `<div class="gcard rost"><ul class="gpl">${pl.map(p=>`<li class="rrow" data-pl="${p[0]}" role="button" tabindex="0"><span class="grl ${p[2]}" title="${R[p[2]]}">${L[p[2]]}</span><span class="rnm"><b>${p[0]}</b><small>#${p[1]} · ${p[3]}</small></span><span class="rtags">${INJ[p[0]]&&INJ[p[0]].stato!=="ok"?`<span class="injtag ${INJ[p[0]].stato}">${STATI[INJ[p[0]].stato][0]}</span>`:""}${ROOKIE.includes(p[0])?`<span class="rookie">Rookie</span>`:""}</span><span class="rgo">›</span>${AVVISI[p[0]]?`<span class="avviso rav">${AVVISI[p[0]]}</span>`:""}</li>`).join("")}</ul></div>`})()}`;
 }
 
 const f2=n=>n.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -1121,7 +1136,7 @@ function render(){
   m.querySelectorAll(".cpl[data-pl],.bpl[data-pl]").forEach(b=>b.onclick=()=>{curPlayer=b.dataset.pl;cur="giocatore";render();window.scrollTo(0,0)});
   const cb=m.querySelector("#cback");if(cb)cb.onclick=()=>{cur="home";render();window.scrollTo(0,0)};
   const cr=m.querySelector("#croster");if(cr)cr.onclick=()=>{cur="roster";render();window.scrollTo(0,0)};
-  m.querySelectorAll(".pl[data-pl]").forEach(b=>{const go=()=>{curPlayer=b.dataset.pl;cur="giocatore";render();window.scrollTo(0,0)};b.onclick=go;b.onkeydown=e=>{if(e.key==="Enter")go()}});
+  m.querySelectorAll(".pl[data-pl],.rrow[data-pl]").forEach(b=>{const go=()=>{curPlayer=b.dataset.pl;cur="giocatore";render();window.scrollTo(0,0)};b.onclick=go;b.onkeydown=e=>{if(e.key==="Enter")go()}});
   const gb=m.querySelector("#gback");if(gb)gb.onclick=()=>{cur="roster";render();window.scrollTo(0,0)};
   m.querySelectorAll(".htile").forEach(b=>b.onclick=()=>{curTeam=b.dataset.team;try{localStorage.setItem("team",curTeam)}catch(e){}cur="campo";render();window.scrollTo(0,0)});
   m.querySelectorAll(".echip").forEach(b=>b.onclick=()=>{effTeam=b.dataset.t;render()});
