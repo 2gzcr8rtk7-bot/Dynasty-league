@@ -23,6 +23,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}html{-webkit-text-size-adjust:100%}.upd{padding-block:0 28px;text-align:center;font-family:var(--display);font-style:italic;font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.rookie{font-family:var(--display);font-style:italic;font-weight:800;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#04170b;background:linear-gradient(180deg,#5eea8f,var(--win));padding:1px 9px;transform:skewX(-12deg)}
 </style>
 
 
@@ -258,7 +259,7 @@ nav button{font-size:15px;letter-spacing:.04em}
   </div>
 </header>
 <main class="wrap" id="main"></main>
-<footer class="wrap upd">Ultimo aggiornamento: 24/10/2026 · 14:21</footer>
+<footer class="wrap upd">Ultimo aggiornamento: 24/10/2026 · 14:33</footer>
 
 <script>
 const TEAMS={
@@ -277,6 +278,8 @@ const LOGO={"TUR": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAGQCAYAAA
 const CREDITI={"SPI": 50, "PEA": 52, "DUC": 0, "DOL": 0, "TUR": 149, "EAG": 108, "MOO": 443, "FOX": 21};
 /* Avvisi sui giocatori (scritta gialla nel roster) */
 const AVVISI={"Ryan Rollins":"Trade Speciale in corso · 30 cr","Brandon Ingram":"Trade Speciale in corso · 30 cr","Brayden Burries":"Trade Speciale in corso · 40 cr"};
+/* Giocatori in slot rookie (etichetta nel roster) */
+const ROOKIE=["Cameron Boozer","Nate Ament","Darryn Peterson","Yaxel Lendeborg","Darius Acuff Jr."];
 const ini=t=>TEAMS[t].nick.slice(0,3).toUpperCase();
 
 /* Risultati: aggiungere una giornata = aggiungere un blocco qui */
@@ -432,7 +435,7 @@ function vRoster(){
   <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">
    ${LOGO[curTeam]?`<img class="hlogo" src="${LOGO[curTeam]}" alt="">`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div><div class="rec">${CREDITI[curTeam]??"–"}<small>CREDITI</small></div></div></div>
   <div class="sumrow"><span>${r.length} giocatori</span></div>
-  ${[["G","Guardie"],["F","Ali"],["C","Centri"]].map(([k,lab])=>{const g=r.filter(p=>p[2]===k);return g.length?`<section class="role"><h4><span>${lab}</span></h4><div class="players">${g.map(p=>`<div class="pl">${jersey(curTeam,p[1],p[0])}<div class="pn">${p[0]}</div><div class="meta"><span>${p[3]}</span></div>${AVVISI[p[0]]?`<div class="avviso">${AVVISI[p[0]]}</div>`:""}</div>`).join("")}</div></section>`:""}).join("")}`;
+  ${[["G","Guardie"],["F","Ali"],["C","Centri"]].map(([k,lab])=>{const g=r.filter(p=>p[2]===k);return g.length?`<section class="role"><h4><span>${lab}</span></h4><div class="players">${g.map(p=>`<div class="pl">${jersey(curTeam,p[1],p[0])}<div class="pn">${p[0]}</div><div class="meta"><span>${p[3]}</span></div>${ROOKIE.includes(p[0])?`<div class="rookie">Slot Rookie</div>`:""}${AVVISI[p[0]]?`<div class="avviso">${AVVISI[p[0]]}</div>`:""}</div>`).join("")}</div></section>`:""}).join("")}`;
 }
 
 const f2=n=>n.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
