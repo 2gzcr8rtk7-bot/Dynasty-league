@@ -37,3 +37,6 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 
 ## 24/10/2026 (6)
 - Tolti dal disegno il tabellone e il ferro arancione del canestro.
+
+## 24/10/2026 (7) — Home
+- Logo Texas Ducks nella griglia Franchigie un po' più grande e più basso: regola CSS `.htile[data-team="DUC"] .hlg .badge{transform:translateY(4px) scale(1.15)}`.
