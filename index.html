@@ -1103,10 +1103,9 @@ const GLEAGUE=[
 function vGLeague(){
   const R={G:"Guardia",F:"Ala",C:"Centro"};
   const cards=GLEAGUE.map(x=>{const c=TEAMS[x.t];const pl=x.g.slice().sort((a,b)=>"GFC".indexOf(a[1])-"GFC".indexOf(b[1]));
-    return `<article class="gcard"><div class="ghd" style="--tc:${c.bg};--tt:${c.trim}"><span class="glg">${x.logo?`<img src="${x.logo}" alt="">`:`${badge(x.t)}<i>G</i>`}</span><span class="gnm"><b>G-${c.nick}</b><small>Satellite di ${c.name}</small></span></div>
+    return `<article class="gcard"><div class="ghd" style="--tc:${c.bg};--tt:${c.trim}"><span class="glg">${x.logo?`<img src="${x.logo}" alt="">`:`${badge(x.t)}`}</span><span class="gnm"><b>G-${c.nick}</b><small>Satellite di ${c.name}</small></span></div>
     <ul class="gpl">${pl.map(p=>`<li><span class="grl ${p[1]}" title="${R[p[1]]}">${p[1]==="F"?"A":p[1]}</span><b>${p[0]}</b></li>`).join("")}</ul></article>`}).join("");
   return `${H("G League",`<em>Squadre satellite</em>`)}
-  <div class="glegend"><span><span class="grl G">G</span>Guardia</span><span><span class="grl F">A</span>Ala</span><span><span class="grl C">C</span>Centro</span></div>
   <div class="ggrid">${cards}</div>
   <p class="note">Campionato secondario: ogni franchigia ha una squadra satellite da 5 giocatori. Regole complete nella voce Regolamento → G-League.</p>`;
 }
