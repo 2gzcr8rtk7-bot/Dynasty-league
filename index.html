@@ -340,6 +340,14 @@ nav button{font-size:15px;letter-spacing:.04em}
 .ssn td.pt{font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;color:#cfd6ea;white-space:nowrap}
 .ssn tr:nth-child(n+4) .tmcell b{color:#b9c0d6}
 .gmseason{margin-top:26px}
+/* Bacheca trofei nella pagina squadra */
+.trophies{display:flex;align-items:center;gap:12px;margin:-6px 0 18px;padding:7px 12px;background:linear-gradient(90deg,rgba(245,180,0,.10),rgba(255,255,255,.02) 60%);border-left:3px solid var(--gold);box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.trophies>small{font-family:var(--display);font-style:italic;font-weight:800;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);white-space:nowrap}
+.trophies .shelf{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.cup{display:flex;align-items:center;gap:5px}
+.cup svg{width:20px;height:23px;flex:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
+.cup span{display:grid;line-height:1;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;color:#fff;white-space:nowrap}
+.cup span small{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:2px}
 .gmh{min-width:0}
 .gmh th{font-size:11px;letter-spacing:.06em;padding-top:7px;padding-bottom:7px}
 .gmh td{vertical-align:middle}
@@ -724,12 +732,27 @@ function vCampo(){
   return `<button class="gback" id="cback">‹ Home</button>
   <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">
    ${LOGO[t]?`<img class="hlogo" src="${LOGO[t]}" alt="">`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
+  ${bacheca(t)}
   ${H("Quintetto",`<em>${auto?"Provvisorio · scelto per efficienza":"Titolari · per ruolo"}</em>`)}
   <div class="court" style="border-color:${shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}</div>
   <p class="note">Sotto ogni maglia: efficienza dell'ultima partita giocata (Dunkest per minuto). Tocca un giocatore per la sua scheda.</p>
   ${H("Panchina")}
   <div class="bench">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span>${pill(lastEff(t,p[0]))}</button>`).join("")}</div>
   <button class="croster" id="croster">Roster completo ›</button>`;
+}
+function cupSvg(pos,id){
+  const C={1:["#fff3b0","#f5b400","#8a5f00"],2:["#ffffff","#c3cad6","#6d7588"],3:["#ffd9b0","#cd7f32","#6e3c10"]}[pos];
+  return `<svg viewBox="0 0 26 30" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" x2="1"><stop offset="0" stop-color="${C[2]}"/><stop offset=".35" stop-color="${C[0]}"/><stop offset=".6" stop-color="${C[1]}"/><stop offset="1" stop-color="${C[2]}"/></linearGradient></defs>
+  <path d="M6 3h14v6c0 5-3 8.5-7 8.5S6 14 6 9z" fill="url(#${id})"/>
+  <path d="M6 5H2.5c0 4 1.6 6.5 4.6 7M20 5h3.5c0 4-1.6 6.5-4.6 7" fill="none" stroke="url(#${id})" stroke-width="1.8"/>
+  <path d="M11.4 17h3.2l.6 5h-4.4z" fill="url(#${id})"/><rect x="7.5" y="22" width="11" height="3" rx=".6" fill="url(#${id})"/><rect x="6" y="25" width="14" height="3.4" rx=".8" fill="#1b2233" stroke="url(#${id})" stroke-width=".8"/>
+  <path d="M9 5.2c.2 3.6 1.2 6 3 7.4" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1" stroke-linecap="round"/></svg>`;
+}
+function bacheca(t){
+  const won=STORIA.map(s=>({anno:s.anno,pos:s.ordine.indexOf(t)+1})).filter(x=>x.pos>=1&&x.pos<=3).sort((a,b)=>a.pos-b.pos||a.anno-b.anno);
+  if(!won.length)return "";
+  const lab={1:"1°",2:"2°",3:"3°"};
+  return `<div class="trophies" aria-label="Bacheca trofei"><small>Bacheca</small><div class="shelf">${won.map((x,i)=>`<div class="cup" title="${lab[x.pos]} posto · Anno ${x.anno}">${cupSvg(x.pos,"cp"+t+i)}<span>${lab[x.pos]} posto<small>Anno ${x.anno}</small></span></div>`).join("")}</div></div>`;
 }
 function vStoria(){
   const N=Object.keys(TEAMS).length,pts=pos=>N-pos+1;
