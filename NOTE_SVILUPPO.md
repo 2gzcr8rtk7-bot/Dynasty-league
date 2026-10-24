@@ -18,3 +18,8 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 - Logo squadra spostato nell'angolo in alto a destra del campo.
 - Targhette col nome tutte della stessa larghezza; i cognomi lunghi usano un testo più piccolo.
 - Posizioni: centro 25%, ali 19%/81% a 53%, guardie 30%/70% a 82%.
+
+## 24/10/2026 (3) — Logo sul bordo alto
+- Tolto il logo dal parquet. Ora sta al centro della fascia alta del campo, con città a sinistra e nome squadra a destra.
+- Fascia alta più spessa (viewBox 100x120, campo spostato di 8 unità); bordi laterali sottili come prima.
+- Posizioni righe aggiornate: centro 30%, ali 56,2%, guardie 83,2%.
