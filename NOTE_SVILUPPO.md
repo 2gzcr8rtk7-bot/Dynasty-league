@@ -28,3 +28,9 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 - Città e nome squadra sul bordo alto scritti con il font Anton (blocco condensato tipo parquet NBA), incluso nell'index.html come @font-face "CourtBlock" (base64, solo caratteri latini) così funziona anche offline.
 - Colore delle scritte: secondo colore della squadra se si legge bene sul bordo, altrimenti bianco/nero; contorno scuro e leggera lucidatura per l'effetto "dipinto".
 - Dimensione del testo adattata alla lunghezza (es. SACRAMENTO, CALIFORNIA).
+
+## 24/10/2026 (5) — Campo a tutta larghezza
+- Tolti i bordi colorati laterali (sia nel disegno SVG sia il bordo CSS a sx/dx): il parquet arriva ai lati.
+- Il campo è disegnato nelle stesse coordinate di prima e scalato con `translate(-3.19,9.62) scale(1.0638)`; viewBox ora 100x128.8.
+- Fascia alta più alta (16 unità): logo più grande (19x15.4) e scritte leggermente più grandi.
+- Righe: centro 30,6%, ali 56,6%, guardie 83,3%.
