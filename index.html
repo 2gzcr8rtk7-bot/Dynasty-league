@@ -325,7 +325,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .hnm b{font-family:var(--display);font-style:italic;font-weight:800;font-size:22px;text-transform:uppercase;text-shadow:0 2px 6px rgba(0,0,0,.45)}
 .htile[data-team="DUC"] .hlg .badge{transform:translateY(4px) scale(1.15)}
 .hrec{position:absolute;top:6px;right:8px;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;background:rgba(0,0,0,.45);padding:1px 7px}
-/* GM History */
+/* Sala Trofei */
 .medal{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;color:#2a1c00;box-shadow:inset 0 -2px 0 rgba(0,0,0,.25),0 2px 6px rgba(0,0,0,.4)}
 .medal.m1{background:radial-gradient(circle at 35% 30%,#fff4b8,#f5b400 58%,#a87400)}
 .medal.m2{background:radial-gradient(circle at 35% 30%,#ffffff,#c9d0dc 58%,#7f889b);color:#1b2233}
@@ -361,7 +361,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .gmh .tmcell small{display:none}
 .gmh td.pt{font-size:22px;padding-right:9px}
 nav button>span{white-space:nowrap}
-@media (max-width:600px){nav{gap:2px}nav button{flex:1 1 auto;min-width:0;font-size:clamp(10px,2.75vw,14px);letter-spacing:0;padding:8px 2px}}
+@media (max-width:600px){nav{gap:2px}nav button{flex:1 1 auto;min-width:0;font-size:clamp(11px,3.1vw,15px);letter-spacing:0;padding:8px 2px}}
 </style>
 
 </head>
@@ -373,14 +373,14 @@ nav button>span{white-space:nowrap}
       <button role="tab" id="t-ho" data-v="home" aria-selected="true"><span>Home</span></button>
       <button role="tab" id="t-dk" data-v="dunkest" data-menu="subnav" aria-haspopup="true" aria-expanded="false" aria-selected="false"><span>Dunkest<i class="car">▾</i></span></button>
       <button role="tab" id="t-ef" data-v="efficienza" aria-selected="false"><span>Efficienza</span></button>
-      <button role="tab" id="t-tr" data-v="trade" aria-selected="false"><span>Trade</span></button>
       <button role="tab" id="t-in" data-v="infortuni" aria-selected="false"><span>Infortuni</span></button>
-      <button role="tab" id="t-gm" data-v="storia" aria-selected="false"><span>GM History</span></button>
+      <button role="tab" id="t-gm" data-v="storia" aria-selected="false"><span>Sala Trofei</span></button>
     </nav>
     <div class="subnav" id="subnav" role="menu" hidden>
       <button data-v="risultati" aria-selected="false"><span>Risultati</span></button>
       <button data-v="classifica" aria-selected="false"><span>Classifica</span></button>
       <button data-v="roster" aria-selected="false"><span>Roster</span></button>
+      <button data-v="trade" aria-selected="false"><span>Trade</span></button>
     </div>
   </div>
 </header>
@@ -407,7 +407,7 @@ const AVVISI={"Ryan Rollins":"Trade Speciale in corso · 30 cr","Brandon Ingram"
 /* Giocatori in slot rookie (etichetta nel roster) */
 const ROOKIE=["Cameron Boozer","Nate Ament","Darryn Peterson","Yaxel Lendeborg","Darius Acuff Jr."];
 const ini=t=>TEAMS[t].nick.slice(0,3).toUpperCase();
-/* GM History: classifica finale di ogni stagione, dalla prima alla più recente.
+/* Sala Trofei: classifica finale di ogni stagione, dalla prima alla più recente.
    Per aggiungere un anno basta aggiungere una riga con l'ordine d'arrivo (1° → ultimo). */
 const STORIA=[
   {anno:1,ordine:["DUC","FOX","MOO","EAG","PEA","DOL","SPI","TUR"]},
@@ -776,7 +776,7 @@ const VIEWS={storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocato
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
-  const eff=cur==="giocatore"?"roster":cur==="campo"?"home":cur;const DK=["risultati","classifica","roster"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
+  const eff=cur==="giocatore"?"roster":cur==="campo"?"home":cur;const DK=["risultati","classifica","roster","trade"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
