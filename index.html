@@ -334,7 +334,7 @@ nav button{font-size:15px;letter-spacing:.04em}
   </div>
 </header>
 <main class="wrap" id="main"></main>
-<footer class="wrap upd">Ultimo aggiornamento: 24/10/2026 · 17:16</footer>
+<footer class="wrap upd">Ultimo aggiornamento: 24/10/2026 · 17:20</footer>
 
 <script>
 const TEAMS={
@@ -463,16 +463,12 @@ function vRisultati(){
 let JID=0;
 /* Decorazioni diverse per ogni divisa (disegnate dentro il profilo della canotta) */
 const DECO={
- DOL:(c,k)=>`<path d="M22 40 L120 128 L120 146 L104 146 L4 54 Z" fill="#0b0b0b"/>
-   <path d="M4 54 L104 146 L96 146 L0 60 Z" fill="#fff"/>
-   <path d="M22 40 L120 128" stroke="#5fb4ff" stroke-width="2.4"/>
-   <path d="M30 47 l6 -1 -2 6 M44 60 l6 -1 -2 6 M58 72 l6 -1 -2 6 M72 85 l6 -1 -2 6 M86 97 l6 -1 -2 6 M100 110 l6 -1 -2 6" stroke="#fff" stroke-width="1.6" fill="none"/>
-   <path d="M0 52 L14 52 L8 62 L16 70 L8 78 L16 86 L8 94 L16 102 L8 110 L16 118 L8 126 L14 146 L0 146 Z" fill="#0b0b0b"/>
-   <path d="M120 52 L106 52 L112 62 L104 70 L112 78 L104 86 L112 94 L104 102 L112 110 L104 118 L112 126 L106 146 L120 146 Z" fill="#0b0b0b"/>
-   <path d="M14 52 L8 62 L16 70 L8 78 L16 86 L8 94 L16 102 L8 110 L16 118 L8 126 L14 146" stroke="#fff" stroke-width="1.2" fill="none"/>
-   <path d="M106 52 L112 62 L104 70 L112 78 L104 86 L112 94 L104 102 L112 110 L104 118 L112 126 L106 146" stroke="#fff" stroke-width="1.2" fill="none"/>
-   <path d="M0 124 L10 118 L18 126 L28 116 L38 126 L48 116 L58 126 L68 116 L78 126 L88 116 L98 126 L108 116 L120 124 V146 H0 Z" fill="#0b0b0b"/>
-   <path d="M0 124 L10 118 L18 126 L28 116 L38 126 L48 116 L58 126 L68 116 L78 126 L88 116 L98 126 L108 116 L120 124" stroke="#5fb4ff" stroke-width="1.6" fill="none"/>`,
+ DOL:(c,k)=>`<path d="M0 70 C18 58 30 76 44 70 C58 64 62 50 78 52 C92 54 100 66 120 60 V86 C104 92 92 82 78 84 C62 86 56 98 42 96 C28 94 18 82 0 92 Z" fill="#0b0b0b"/>
+   <path d="M0 74 C18 62 30 80 44 74 C58 68 62 54 78 56 C92 58 100 70 120 64 V72 C104 78 92 66 78 66 C62 66 58 80 44 82 C28 84 18 70 0 82 Z" fill="#fff"/>
+   <path d="M0 84 C18 72 30 90 44 84 C58 78 62 64 78 66 C92 68 100 80 120 74" stroke="#5fb4ff" stroke-width="2.4" fill="none"/>
+   <path d="M64 52 C70 40 80 36 90 38 C82 42 78 48 78 52 Z" fill="#fff"/>
+   <path d="M4 54 L10 54 L8 120 L2 122 Z M116 54 L110 54 L112 120 L118 122 Z" fill="#0b0b0b"/>
+   <path d="M0 128 H120" stroke="#0b0b0b" stroke-width="4"/><path d="M0 132.5 H120" stroke="#fff" stroke-width="1.6"/>`,
  DUC:(c,k)=>`<path d="M0 50 L20 50 L14 64 L22 78 L14 92 L22 106 L14 120 L20 140 L0 140 Z M120 50 L100 50 L106 64 L98 78 L106 92 L98 106 L106 120 L100 140 L120 140 Z" fill="#111"/>
    <path d="M60 118 l2.6 5.4 5.9.8-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8-4.3-4.1 5.9-.8z" fill="#111"/>`,
  FOX:(c,k)=>`<pattern id="${k}p" width="7" height="10" patternUnits="userSpaceOnUse"><rect width="1.2" height="10" fill="#111" opacity=".55"/></pattern><rect width="120" height="146" fill="url(#${k}p)"/>
@@ -524,10 +520,12 @@ function jersey(t,num,name=""){
   <path d="M22 12 C23 34 16 46 6 50 M98 12 C97 34 104 46 114 50" fill="none" stroke="${c.trim}" stroke-width="6" stroke-linecap="round"/>
   <path d="M22 12 C23 34 16 46 6 50 M98 12 C97 34 104 46 114 50" fill="none" stroke="url(#${k}n)" stroke-width="6" stroke-linecap="round"/>
   <g font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-style="italic">
+   ${t==="DOL"?`<text x="60" y="114" text-anchor="middle" font-size="${Math.min(22,wfs+5)}" letter-spacing=".6" fill="${c.fg}" stroke="${ol}" stroke-width="3.4" paint-order="stroke" stroke-linejoin="round" textLength="${Math.min(84,Math.round(wlen*1.25))}" lengthAdjust="spacingAndGlyphs">${word}</text>
+   <text x="84" y="46" font-size="${n.length>1?17:20}" text-anchor="middle" fill="${c.fg}" stroke="${ol}" stroke-width="2.8" paint-order="stroke" stroke-linejoin="round">${n}</text>`:`
    <text x="60" y="60" text-anchor="middle" font-style="normal" font-size="${wfs}" letter-spacing=".6" fill="${c.fg}" stroke="${ol}" stroke-width="3.2" paint-order="stroke" stroke-linejoin="round" textLength="${wlen}" lengthAdjust="spacingAndGlyphs">${word}</text>
    <text x="61.5" y="106.5" font-size="${fs}" text-anchor="middle" fill="#000" fill-opacity=".45" filter="url(#${k}b)">${n}</text>
    <text x="60" y="104" font-size="${fs}" text-anchor="middle" fill="${c.fg}" stroke="${ol}" stroke-width="3.6" paint-order="stroke" stroke-linejoin="round">${n}</text>
-   <text x="60" y="104" font-size="${fs}" text-anchor="middle" fill="url(#${k}n)">${n}</text>
+   <text x="60" y="104" font-size="${fs}" text-anchor="middle" fill="url(#${k}n)">${n}</text>`}
   </g>
   <path d="${body}" fill="none" stroke="#000" stroke-opacity=".35" stroke-width="1"/>
   </svg>`;
