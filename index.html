@@ -610,7 +610,9 @@ function vEfficienza(){
   const sq=EFF.squadre.map((x,i)=>{const[t,inc,dn,en,es,ds]=x;return `<div class="erow">${wedge(t)}<div class="einfo"><b>${TEAMS[t].nick}</b><div class="ebar"><span style="width:${Math.max(4,Math.min(100,es/1.1*100))}%;background:${TEAMS[t].bg}"></span></div><small>${inc} in campo nella notte · notte ${en==null?"—":f2(en)}</small></div><div class="eval">${eff(es)}<small>${f2(ds)} Dk</small></div></div>`}).join("");
   const all=[];Object.entries(EFF.gioc).forEach(([t,a])=>a.forEach(p=>p[1]!=null&&p[3]>=10&&all.push([t,...p])));
   all.sort((a,b)=>b[2]-a[2]);
-  const top=all.slice(0,10).map((p,i)=>`<div class="trow"><span class="trk">${i+1}</span>${wedge(p[0])}<span class="tnm"><b>${p[1]}</b><small>${TEAMS[p[0]].nick} · ${p[4].toLocaleString("it-IT")} min</small></span>${eff(p[2])}</div>`).join("");
+  const prow=(p,i)=>`<div class="trow"><span class="trk">${i+1}</span>${wedge(p[0])}<span class="tnm"><b>${p[1]}</b><small>${TEAMS[p[0]].nick} · ${p[4].toLocaleString("it-IT")} min</small></span>${eff(p[2])}</div>`;
+  const top=all.slice(0,10).map(prow).join("");
+  const flop=all.slice().reverse().slice(0,10).map(prow).join("");
   const chips=Object.keys(TEAMS).map(t=>`<button class="chip echip" data-t="${t}" aria-pressed="${t===t0}">${badge(t)}${TEAMS[t].nick}</button>`).join("");
   const rows=EFF.gioc[t0].slice().sort((a,b)=>(b[1]??-9)-(a[1]??-9)).map(p=>`<tr><td class="pnm">${p[0]}</td><td>${eff(p[1])}</td><td>${p[2]}</td><td>${p[3]==null?"—":p[3].toLocaleString("it-IT",{minimumFractionDigits:1})}</td></tr>`).join("");
   return `${H("Efficienza squadre",`<em>Agg. ${EFF.agg}</em>`)}
@@ -623,6 +625,9 @@ function vEfficienza(){
   <div style="height:22px"></div>
   ${H("Top 10 lega",`<em>min. 10 minuti</em>`)}
   <div class="eboard">${top}</div>
+  <div style="height:22px"></div>
+  ${H("Flop 10 lega",`<em>min. 10 minuti</em>`)}
+  <div class="eboard">${flop}</div>
   <p class="note"><span class="ev g"><i></i>sopra 1,10</span> &nbsp; <span class="ev y"><i></i>0,80–1,10</span> &nbsp; <span class="ev r"><i></i>sotto 0,80</span> &nbsp; Efficienza = Dunkest per minuto, senza capitano, vittoria e quintetto.</p>`;
 }
 
