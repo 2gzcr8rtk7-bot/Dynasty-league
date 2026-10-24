@@ -334,7 +334,7 @@ nav button{font-size:15px;letter-spacing:.04em}
   </div>
 </header>
 <main class="wrap" id="main"></main>
-<footer class="wrap upd">Ultimo aggiornamento: 24/10/2026 · 17:44</footer>
+<footer class="wrap upd">Ultimo aggiornamento: 24/10/2026 · 17:46</footer>
 
 <script>
 const TEAMS={
@@ -463,7 +463,7 @@ function vRisultati(){
 let JID=0;
 /* Decorazioni diverse per ogni divisa (disegnate dentro il profilo della canotta) */
 const DECO={
- DOL:(c,k)=>`<pattern id="${k}st" width="10" height="146" patternUnits="userSpaceOnUse"><rect x="3.5" width="3" height="146" fill="#1747c9"/></pattern><rect width="120" height="146" fill="url(#${k}st)"/>`,
+ DOL:(c,k)=>`<pattern id="${k}st" width="10" height="146" patternUnits="userSpaceOnUse"><rect x="3.5" width="3" height="146" fill="#ffffff"/></pattern><rect width="120" height="146" fill="url(#${k}st)"/>`,
  DUC:(c,k)=>`<path d="M0 50 L20 50 L14 64 L22 78 L14 92 L22 106 L14 120 L20 140 L0 140 Z M120 50 L100 50 L106 64 L98 78 L106 92 L98 106 L106 120 L100 140 L120 140 Z" fill="#111"/>
    <path d="M60 118 l2.6 5.4 5.9.8-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8-4.3-4.1 5.9-.8z" fill="#111"/>`,
  FOX:(c,k)=>`<pattern id="${k}p" width="7" height="10" patternUnits="userSpaceOnUse"><rect width="1.2" height="10" fill="#111" opacity=".55"/></pattern><rect width="120" height="146" fill="url(#${k}p)"/>
@@ -481,7 +481,7 @@ const DECO={
    <path d="M4 54 L12 54 L10 112 L2 118 Z M116 54 L108 54 L110 112 L118 118 Z" fill="#fff" opacity=".9"/>`
 };
 function jersey(t,num,name=""){
-  const c=t==="DOL"?{...TEAMS[t],bg:"#ffffff",fg:"#1747c9",trim:"#0b0b0b",jstroke:"#ffffff"}:TEAMS[t],n=num==null?"?":String(num),k="j"+(JID++);
+  const c=t==="DOL"?{...TEAMS[t],bg:"#1747c9",fg:"#ffffff",trim:"#0b0b0b",jstroke:"#0b0b0b"}:TEAMS[t],n=num==null?"?":String(num),k="j"+(JID++);
   const fs=n.length>1?38:44;
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
   const ol=c.jstroke||(lum(c.fg)<0.45?"#ffffff":"#0a0f1f");
