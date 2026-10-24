@@ -311,6 +311,11 @@ nav button{font-size:15px;letter-spacing:.04em}
 .tct small{font-family:var(--display);font-weight:700;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .tct .trc{min-width:0;max-width:none}
 .tct .trc span{font-size:13.5px;line-height:1.15}
+.trc.tdir{display:flex;align-items:center;gap:6px}
+.tar{flex:none;display:grid;place-items:center;width:20px;height:16px}
+.tar svg{width:16px;height:12px}
+.tar.in{color:var(--win)}
+.tar.out{color:var(--loss)}
 /* home */
 .hgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 @media (min-width:640px){.hgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
@@ -677,7 +682,9 @@ const NUM={};Object.values(ROSTER).forEach(a=>a.forEach(p=>NUM[p[0]]=p[1]));
 function vTrade(){
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
   const rec=l=>l.map(n=>NUM[n]!==undefined?`<span>${sur(n)}</span>`:`<span class="tcr2">${/credit/i.test(n)?"+"+n.replace(/\s*crediti.*$/i," cr"):n.replace(/^Diritti su /,"").replace(/Slot ala per 10 giornate/,"Slot ala 10g")}</span>`).join("");
-  const cell=x=>x?`<div class="tc">${wedge(x[0])}<div class="tct"><small>${TEAMS[x[0]].nick}${x[2]?" · "+x[2]:""}</small><div class="trc">${rec(x[1])}</div></div></div>`:`<div class="tc"></div>`;
+  const dir=v=>v==="entra"||v==="acquista"?"in":v==="esce"?"out":"";
+  const arw=d=>d==="in"?`<i class="tar in" title="Entra"><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M15 6H3M7 1.5 2.2 6 7 10.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i>`:d==="out"?`<i class="tar out" title="Esce"><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M1 6h12M9 1.5 13.8 6 9 10.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i>`:"";
+  const cell=x=>x?`<div class="tc">${wedge(x[0])}<div class="tct"><small>${TEAMS[x[0]].nick}${x[2]?" · "+x[2]:""}</small><div class="trc tdir">${arw(dir(x[2]))}<div>${rec(x[1])}</div></div></div></div>`:`<div class="tc"></div>`;
   const rows=TRADES.map(x=>{const tipo=/asta/i.test(x.titolo)?"Asta":/speciale/i.test(x.titolo)?"Speciale":"Scambio";
     return `<div class="tr3"><div class="tty3"><span>${tipo}${x.data?" "+x.data.slice(0,5):""}</span></div>${cell(x.lati[0])}${cell(x.lati[1])}</div>`}).join("");
   return `${H("Trade Alert",`<em>Operazioni chiuse</em>`)}<div class="tbl-wrap ttab">${rows}</div>`;
