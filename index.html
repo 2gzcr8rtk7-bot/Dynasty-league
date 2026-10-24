@@ -504,7 +504,7 @@ const TEAMS={
   FOX:{name:"Detroit Foxes",city:"Detroit",nick:"Foxes",bg:"#f97316",fg:"#111111",trim:"#111111"},
   PEA:{name:"Dakota Peacocks",city:"Dakota",nick:"Peacocks",bg:"#2f6bff",fg:"#ff7a1a",trim:"#ff7a1a"},
   SPI:{name:"Sacramento Spiders",city:"Sacramento",nick:"Spiders",bg:"#ffffff",fg:"#111111",trim:"#111111"},
-  TUR:{name:"California Turtles",city:"California",nick:"Turtles",bg:"#219bdc",fg:"#ffffff",trim:"#0b3a5c"},
+  TUR:{name:"California Turtles",city:"California",nick:"Turtles",bg:"#16a34a",fg:"#7dd3fc",trim:"#7dd3fc"},
   EAG:{name:"San Diego Eagles",city:"San Diego",nick:"Eagles",bg:"#0f1b4d",fg:"#facc15",trim:"#facc15"},
   MOO:{name:"Alaska Mooses",city:"Alaska",nick:"Mooses",bg:"#7cc4f0",fg:"#ffffff",trim:"#ffffff",stroke:"#0b3a5c"}
 };
@@ -661,7 +661,7 @@ const DECO={
    <path d="M4 54 L12 54 L10 112 L2 118 Z M116 54 L108 54 L110 112 L118 118 Z" fill="#fff" opacity=".9"/>`
 };
 function jersey(t,num,name=""){
-  const c=t==="TUR"?{...TEAMS[t],bg:"#16a34a",fg:"#7dd3fc",trim:"#7dd3fc"}:t==="DUC"?{...TEAMS[t],bg:"#d1cdc1"}:t==="SPI"?{...TEAMS[t],bg:"#ffffff",fg:"#111111"}:t==="DOL"?{...TEAMS[t],bg:"#f4f6f8",fg:"#1747c9",trim:"#1747c9",jstroke:"#ffffff",outer:"#1747c9"}:TEAMS[t],n=num==null?"?":String(num),k="j"+(JID++);
+  const c=t==="DUC"?{...TEAMS[t],bg:"#d1cdc1"}:t==="SPI"?{...TEAMS[t],bg:"#ffffff",fg:"#111111"}:t==="DOL"?{...TEAMS[t],bg:"#f4f6f8",fg:"#1747c9",trim:"#1747c9",jstroke:"#ffffff",outer:"#1747c9"}:TEAMS[t],n=num==null?"?":String(num),k="j"+(JID++);
   const fs=n.length>1?38:44;
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
   const ol=c.jstroke||(lum(c.fg)<0.45?"#ffffff":"#0a0f1f");
