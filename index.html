@@ -432,6 +432,37 @@ nav button{font-size:15px;letter-spacing:.04em}
 .rgo{flex:none;color:var(--muted);font-size:22px;line-height:1;margin-left:2px}
 .rav{flex-basis:100%;margin:3px 0 0 36px;font-size:12px}
 /* Ducks: grigio metallizzato */
+/* Giochi: Più o Meno */
+@media (max-width:600px){nav button{flex:0 0 auto!important;padding:8px 9px!important;font-size:13px!important}}
+.gintro{color:var(--muted);font-size:13.5px;margin:-4px 0 14px}
+.gscore{display:flex;gap:10px;margin-bottom:14px}
+.gscore div{flex:1;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);padding:8px 12px;display:grid}
+.gscore small{font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.gscore b{font-family:var(--display);font-style:italic;font-weight:800;font-size:30px;line-height:1;color:#fff}
+.gscore div.rec b{color:var(--gold)}
+.hl{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:stretch}
+.hlc{position:relative;display:grid;justify-items:center;align-content:start;gap:6px;padding:14px 8px 12px;text-align:center;background:linear-gradient(160deg,var(--tc),color-mix(in srgb,var(--tc) 45%,#000));border-bottom:3px solid color-mix(in srgb,var(--tc) 40%,#000);box-shadow:0 10px 22px rgba(0,0,0,.4);overflow:hidden;min-width:0}
+.hlc::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.06) 0 10px,transparent 10px 22px);pointer-events:none}
+.hlc>*{position:relative}
+.hlc svg{width:84px;height:102px;overflow:visible;filter:drop-shadow(0 4px 6px rgba(0,0,0,.45))}
+.hlc .hn{font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;line-height:1.05;text-transform:uppercase;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.6);overflow-wrap:anywhere}
+.hlc .hm{font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#fff;opacity:.85;background:rgba(0,0,0,.35);padding:1px 7px}
+.hlc .hv{font-family:var(--display);font-style:italic;font-weight:800;font-size:34px;line-height:1;color:#fff;background:rgba(6,11,26,.75);padding:4px 12px;min-width:86px}
+.hlc .hv.q{color:var(--gold)}
+.hlc .hv small{display:block;font-size:10px;letter-spacing:.14em;font-style:normal;color:var(--muted)}
+.hlvs{align-self:center;font-family:var(--display);font-style:italic;font-weight:800;font-size:20px;color:var(--gold)}
+.hlbtn{display:grid;gap:8px;margin-top:12px}
+.hlbtn button{border:0;cursor:pointer;font-family:var(--display);font-style:italic;font-weight:800;font-size:19px;letter-spacing:.06em;text-transform:uppercase;padding:12px;color:#fff;transform:skewX(-8deg)}
+.hlbtn button>span{display:inline-block;transform:skewX(8deg)}
+.hlbtn .up{background:linear-gradient(180deg,#2fd36b,#16a34a)}
+.hlbtn .dn{background:linear-gradient(180deg,#ff4d5f,#dc2626)}
+.hlbtn .go{background:linear-gradient(180deg,#ffd24a,var(--gold));color:#0a0f1f}
+.hlbtn .sh{background:#1f2b52}
+.hlbtn button:disabled{opacity:.5}
+.hlmsg{margin-top:12px;padding:10px 12px;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;text-align:center}
+.hlmsg.ok{background:rgba(34,197,94,.15);color:#5eea8f;border-left:4px solid var(--win)}
+.hlmsg.ko{background:rgba(239,68,68,.15);color:#ff8a8a;border-left:4px solid var(--loss)}
+@media (prefers-reduced-motion:no-preference){.hlc .hv.rev{animation:pop .35s ease-out}@keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:none;opacity:1}}}
 /* Sala Trofei */
 .medal{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;color:#2a1c00;box-shadow:inset 0 -2px 0 rgba(0,0,0,.25),0 2px 6px rgba(0,0,0,.4)}
 .medal.m1{background:radial-gradient(circle at 35% 30%,#fff4b8,#f5b400 58%,#a87400)}
@@ -483,6 +514,7 @@ nav button>span{white-space:nowrap}
       <button role="tab" id="t-ef" data-v="efficienza" aria-selected="false"><span>Efficienza</span></button>
       <button role="tab" id="t-in" data-v="infortuni" aria-selected="false"><span>Infortuni</span></button>
       <button role="tab" id="t-gm" data-v="storia" aria-selected="false"><span>Sala Trofei</span></button>
+      <button role="tab" id="t-gi" data-v="giochi" aria-selected="false"><span>Giochi</span></button>
     </nav>
     <div class="subnav" id="subnav" role="menu" hidden>
       <button data-v="risultati" aria-selected="false"><span>Risultati</span></button>
@@ -1137,7 +1169,42 @@ function vGLeague(){
   <div class="ggrid">${cards}</div>
   <p class="note">Campionato secondario: ogni franchigia ha una squadra satellite da 5 giocatori. Regole complete nella voce Regolamento → G-League.</p>`;
 }
-const VIEWS={gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};
+/* Gioco "Più o Meno": indovina se il secondo giocatore ha efficienza stagionale più alta o più bassa */
+const HL={a:null,b:null,streak:0,state:"play",best:0,last:null};
+try{HL.best=+localStorage.getItem("hlBest")||0}catch(e){}
+function hlPool(){const out=[];Object.entries(EFF.gioc).forEach(([t,a])=>a.forEach(p=>{if(p[1]!=null&&p[3]!=null&&p[3]>=10){const r=(ROSTER[t]||[]).find(x=>x[0]===p[0]);out.push({t,n:p[0],e:p[1],num:NUM[p[0]],r:r?r[2]:"",nba:r?r[3]:""})}}));return out}
+function hlPick(ex){const P=hlPool().filter(x=>!ex||x.n!==ex.n);let c=P[Math.floor(Math.random()*P.length)];
+  for(let i=0;i<12&&ex&&Math.abs(c.e-ex.e)<0.005;i++)c=P[Math.floor(Math.random()*P.length)];return c}
+function hlNew(){HL.a=hlPick();HL.b=hlPick(HL.a);HL.streak=0;HL.state="play";HL.last=null}
+function hlCard(x,show,rev){const c=TEAMS[x.t],R={G:"Guardia",F:"Ala",C:"Centro"};
+  return `<div class="hlc" style="--tc:${c.bg}">${jersey(x.t,x.num,x.n)}<div class="hn">${x.n}</div><div class="hm">${c.nick}${x.r?` · ${R[x.r]}`:""}</div>
+  <div class="hv ${show?"":"q"} ${rev?"rev":""}">${show?f2(x.e):"?"}<small>EFF. STAGIONE</small></div></div>`}
+function vGiochi(){
+  if(!HL.a)hlNew();
+  const rev=HL.state!=="play";
+  const msg=HL.state==="ok"?`<div class="hlmsg ok">Giusto! ${HL.b.n.split(" ").slice(-1)[0]} ha ${f2(HL.b.e)}</div>`:HL.state==="ko"?`<div class="hlmsg ko">Sbagliato! Serie finita a ${HL.streak}</div>`:"";
+  const btn=HL.state==="play"?`<button class="up" data-hl="up"><span>▲ Più alta</span></button><button class="dn" data-hl="dn"><span>▼ Più bassa</span></button>`
+    :HL.state==="ok"?`<button class="go" data-hl="next"><span>Avanti ›</span></button>`
+    :`<button class="go" data-hl="restart"><span>Gioca ancora</span></button><button class="sh" data-hl="share"><span>Condividi risultato</span></button>`;
+  return `${H("Più o Meno",`<em>Efficienza stagionale</em>`)}
+  <p class="gintro">L'efficienza di <b>${HL.a.n}</b> è nota: quella di <b>${HL.b.n}</b> è più alta o più bassa? Una risposta giusta allunga la serie, una sbagliata la chiude.</p>
+  <div class="gscore"><div><small>Serie</small><b>${HL.streak}</b></div><div class="rec"><small>Record</small><b>${HL.best}</b></div></div>
+  <div class="hl">${hlCard(HL.a,true,false)}<div class="hlvs">VS</div>${hlCard(HL.b,rev,rev)}</div>
+  ${msg}<div class="hlbtn">${btn}</div>
+  <p class="note">Giocatori con almeno 10 minuti di media. Efficienza = Dunkest per minuto, agg. ${EFF.agg}. Il record è salvato su questo telefono.</p>`;
+}
+function hlBind(m){
+  m.querySelectorAll("[data-hl]").forEach(b=>b.onclick=()=>{const a=b.dataset.hl;
+    if(a==="up"||a==="dn"){const ok=a==="up"?HL.b.e>=HL.a.e:HL.b.e<=HL.a.e;
+      if(ok){HL.streak++;HL.state="ok";if(HL.streak>HL.best){HL.best=HL.streak;try{localStorage.setItem("hlBest",HL.best)}catch(e){}}}else HL.state="ko";render()}
+    else if(a==="next"){HL.a=HL.b;HL.b=hlPick(HL.a);HL.state="play";render()}
+    else if(a==="restart"){hlNew();render()}
+    else if(a==="share"){const t=`🏀 Dynasty League · Più o Meno\nSerie: ${HL.streak} ${"🔥".repeat(Math.min(HL.streak,10))}\nRecord: ${HL.best}`;
+      const done=()=>{b.querySelector("span").textContent="Copiato ✓"};
+      if(navigator.share){navigator.share({text:t}).catch(()=>{})}else if(navigator.clipboard){navigator.clipboard.writeText(t).then(done,()=>{})}}
+  });
+}
+const VIEWS={giochi:vGiochi,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
@@ -1153,6 +1220,7 @@ function render(){
   const gb=m.querySelector("#gback");if(gb)gb.onclick=()=>{cur="roster";render();window.scrollTo(0,0)};
   m.querySelectorAll(".htile").forEach(b=>b.onclick=()=>{curTeam=b.dataset.team;try{localStorage.setItem("team",curTeam)}catch(e){}cur="campo";render();window.scrollTo(0,0)});
   m.querySelectorAll(".echip").forEach(b=>b.onclick=()=>{effTeam=b.dataset.t;render()});
+  if(cur==="giochi")hlBind(m);
   m.querySelectorAll(".chip:not(.echip)").forEach(b=>b.onclick=()=>{curTeam=b.dataset.t;try{localStorage.setItem("team",curTeam)}catch(e){}render()});
 }
 /* Menu a tendina: il bottone con data-menu apre il pannello sotto di sé, senza ricaricare la pagina */
