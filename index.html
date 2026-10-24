@@ -371,6 +371,27 @@ nav button{font-size:15px;letter-spacing:.04em}
 .rflow li::before{content:counter(f,decimal-leading-zero);position:absolute;left:0;top:0;width:34px;height:28px;display:grid;place-items:center;background:var(--red);color:#fff;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px}
 .rflow li:not(:last-child)::after{content:"";position:absolute;left:16px;top:30px;bottom:2px;width:2px;background:var(--line)}
 .rflow li b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;text-transform:uppercase;color:#fff}
+/* G League */
+.ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.gcard{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);box-shadow:0 10px 22px rgba(0,0,0,.35);overflow:hidden}
+.ghd{position:relative;display:flex;align-items:center;gap:12px;padding:10px 12px;background:linear-gradient(115deg,var(--tc),color-mix(in srgb,var(--tc) 45%,#000));border-bottom:3px solid var(--tt);overflow:hidden}
+.ghd::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.06) 0 10px,transparent 10px 22px);pointer-events:none}
+.ghd>*{position:relative}
+.glg{position:relative;flex:none;width:58px;height:58px}
+.glg .badge{width:100%;height:100%;border-radius:0}
+.glg img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
+.glg i{position:absolute;right:-4px;bottom:-2px;font-style:italic;font-family:var(--display);font-weight:800;font-size:13px;line-height:1;color:#0a0f1f;background:linear-gradient(180deg,#ffd24a,var(--gold));padding:2px 5px;transform:skewX(-10deg);box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.gnm{display:grid;line-height:1;color:#fff}
+.gnm b{font-family:var(--display);font-style:italic;font-weight:800;font-size:24px;text-transform:uppercase;text-shadow:0 2px 6px rgba(0,0,0,.45)}
+.gnm small{font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.85;margin-top:4px}
+.gpl{list-style:none;margin:0;padding:4px 0}
+.gpl li{display:flex;align-items:center;gap:10px;padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.05)}
+.gpl li:last-child{border-bottom:0}
+.gpl li b{font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase;color:#fff;line-height:1.1}
+.grl{flex:none;width:26px;text-align:center;font-family:var(--display);font-style:italic;font-weight:800;font-size:12px;padding:2px 0;color:#0a0f1f;transform:skewX(-10deg)}
+.grl.G{background:#7dd3fc}.grl.F{background:#a3e635}.grl.C{background:#fbbf24}
+.glegend{display:flex;gap:12px;flex-wrap:wrap;margin:-4px 0 12px;font-size:12px;color:var(--muted)}
+.glegend span{display:flex;align-items:center;gap:6px}
 /* Sala Trofei */
 .medal{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;color:#2a1c00;box-shadow:inset 0 -2px 0 rgba(0,0,0,.25),0 2px 6px rgba(0,0,0,.4)}
 .medal.m1{background:radial-gradient(circle at 35% 30%,#fff4b8,#f5b400 58%,#a87400)}
@@ -427,6 +448,7 @@ nav button>span{white-space:nowrap}
       <button data-v="classifica" aria-selected="false"><span>Classifica</span></button>
       <button data-v="roster" aria-selected="false"><span>Roster</span></button>
       <button data-v="trade" aria-selected="false"><span>Trade</span></button>
+      <button data-v="gleague" aria-selected="false"><span>G League</span></button>
       <button data-v="regolamento" aria-selected="false"><span>Regolamento</span></button>
     </div>
   </div>
@@ -1027,11 +1049,33 @@ function vRegolamento(){
   <div class="rlegend"><span><b>cr</b> crediti</span><span><b>FA</b> Free Agent</span><span><b>PDK</b> punti Dunkest</span><span><b>G64</b> giornata 64</span><span><span class="rnew">Novità</span> aggiornamenti</span></div>
   ${REGOLAMENTO}`;
 }
-const VIEWS={regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};
+/* G League: squadre satellite. Ruoli: G guardia, F ala, C centro.
+   logo: null = usa il logo della squadra madre con l'etichetta G; per un logo dedicato inserire qui l'immagine. */
+const GLEAGUE=[
+  {t:"FOX",logo:null,g:[["Quintance","F"],["K. Peat","F"],["Beringer","F"],["McCain","G"],["Landale","C"]]},
+  {t:"DUC",logo:null,g:[["Sheppard","G"],["Anderson","G"],["L. Miller","F"],["O. Dieng","F"],["Reed Jr.","C"]]},
+  {t:"PEA",logo:null,g:[["Podziemski","G"],["Brazile","F"],["Ejiofor","F"],["Newell","F"],["J. Smith","C"]]},
+  {t:"EAG",logo:null,g:[["McDaniels","F"],["Mathurin","G"],["D. Mitchell","G"],["Missi","C"],["Gillespie","G"]]},
+  {t:"DOL",logo:null,g:[["Collier","G"],["Lopez","F"],["K. Murray","F"],["Suggs","G"],["Kalkbrenner","C"]]},
+  {t:"SPI",logo:null,g:[["Cenac Jr.","F"],["Carr","G"],["Cardwell","C"],["Yang","C"],["Larson","G"]]},
+  {t:"MOO",logo:null,g:[["M. Thomas","G"],["D. Sharpe","C"],["G. Santos","F"],["Gonzalez","G"],["A. Mitchell","G"]]},
+  {t:"TUR",logo:null,g:[["Watson","G"],["Lively II","C"],["Hachimura","F"],["Filippo","C"],["Henderson","G"]]}
+];
+function vGLeague(){
+  const R={G:"Guardia",F:"Ala",C:"Centro"};
+  const cards=GLEAGUE.map(x=>{const c=TEAMS[x.t];const pl=x.g.slice().sort((a,b)=>"GFC".indexOf(a[1])-"GFC".indexOf(b[1]));
+    return `<article class="gcard"><div class="ghd" style="--tc:${c.bg};--tt:${c.trim}"><span class="glg">${x.logo?`<img src="${x.logo}" alt="">`:`${badge(x.t)}<i>G</i>`}</span><span class="gnm"><b>G-${c.nick}</b><small>Satellite di ${c.name}</small></span></div>
+    <ul class="gpl">${pl.map(p=>`<li><span class="grl ${p[1]}" title="${R[p[1]]}">${p[1]==="F"?"A":p[1]}</span><b>${p[0]}</b></li>`).join("")}</ul></article>`}).join("");
+  return `${H("G League",`<em>Squadre satellite</em>`)}
+  <div class="glegend"><span><span class="grl G">G</span>Guardia</span><span><span class="grl F">A</span>Ala</span><span><span class="grl C">C</span>Centro</span></div>
+  <div class="ggrid">${cards}</div>
+  <p class="note">Campionato secondario: ogni franchigia ha una squadra satellite da 5 giocatori. Regole complete nella voce Regolamento → G-League.</p>`;
+}
+const VIEWS={gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
-  const eff=cur==="giocatore"?"roster":cur==="campo"?"home":cur;const DK=["risultati","classifica","roster","trade","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
+  const eff=cur==="giocatore"?"roster":cur==="campo"?"home":cur;const DK=["risultati","classifica","roster","trade","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
