@@ -334,7 +334,7 @@ nav button{font-size:15px;letter-spacing:.04em}
   </div>
 </header>
 <main class="wrap" id="main"></main>
-<footer class="wrap upd">Ultimo aggiornamento: 24/10/2026 · 16:33</footer>
+<footer class="wrap upd">Ultimo aggiornamento: 24/10/2026 · 17:15</footer>
 
 <script>
 const TEAMS={
@@ -463,8 +463,12 @@ function vRisultati(){
 let JID=0;
 /* Decorazioni diverse per ogni divisa (disegnate dentro il profilo della canotta) */
 const DECO={
- DOL:(c,k)=>`<path d="M0 70 C14 60 20 82 10 100 C4 112 14 124 0 140 Z M120 70 C106 60 100 82 110 100 C116 112 106 124 120 140 Z" fill="#0b0b0b" opacity=".85"/>
-   <path d="M0 64 C18 56 26 84 14 104 C8 116 18 126 6 140" stroke="#fff" stroke-width="2.5" fill="none" opacity=".9"/><path d="M120 64 C102 56 94 84 106 104 C112 116 102 126 114 140" stroke="#fff" stroke-width="2.5" fill="none" opacity=".9"/>`,
+ DOL:(c,k)=>`<pattern id="${k}bb" width="14" height="16" patternUnits="userSpaceOnUse"><circle cx="3" cy="4" r="1.1" fill="#fff" fill-opacity=".18"/><circle cx="10" cy="11" r=".7" fill="#fff" fill-opacity=".14"/><circle cx="8" cy="3" r=".45" fill="#fff" fill-opacity=".2"/></pattern><rect width="120" height="146" fill="url(#${k}bb)"/>
+   <path d="M0 104 C14 96 26 112 40 104 S66 96 80 104 S106 112 120 102 V146 H0 Z" fill="#5fb4ff" opacity=".55"/>
+   <path d="M0 112 C16 104 28 120 44 112 S70 104 86 112 S108 120 120 110 V146 H0 Z" fill="#ffffff" opacity=".92"/>
+   <path d="M0 120 C16 112 28 128 44 120 S70 112 86 120 S108 128 120 118 V146 H0 Z" fill="#0b0b0b"/>
+   <path d="M0 112 C16 104 28 120 44 112 S70 104 86 112 S108 120 120 110" stroke="#0b0b0b" stroke-width="1.6" fill="none"/>
+   <path d="M4 54 L10 54 L8 108 L2 110 Z M116 54 L110 54 L112 108 L118 110 Z" fill="#fff" opacity=".9"/>`,
  DUC:(c,k)=>`<path d="M0 50 L20 50 L14 64 L22 78 L14 92 L22 106 L14 120 L20 140 L0 140 Z M120 50 L100 50 L106 64 L98 78 L106 92 L98 106 L106 120 L100 140 L120 140 Z" fill="#111"/>
    <path d="M60 118 l2.6 5.4 5.9.8-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8-4.3-4.1 5.9-.8z" fill="#111"/>`,
  FOX:(c,k)=>`<pattern id="${k}p" width="7" height="10" patternUnits="userSpaceOnUse"><rect width="1.2" height="10" fill="#111" opacity=".55"/></pattern><rect width="120" height="146" fill="url(#${k}p)"/>
@@ -512,7 +516,7 @@ function jersey(t,num,name=""){
    <rect width="120" height="146" fill="url(#${k}v)"/>
   </g>
   <path d="M38 6 C42 27 78 27 82 6" fill="none" stroke="${c.trim}" stroke-width="6" stroke-linecap="round"/>
-  <path d="M39 6 C43 25 77 25 81 6" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.2"/>
+  <path d="M39 6 C43 25 77 25 81 6" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.2"/>${t==="DOL"?`<path d="M38 6 C42 27 78 27 82 6" fill="none" stroke="#fff" stroke-width="1.6" transform="translate(0,3.2)"/><path d="M22 12 C23 34 16 46 6 50 M98 12 C97 34 104 46 114 50" fill="none" stroke="#fff" stroke-width="1.4" transform="translate(0,1.5)"/>`:""}
   <path d="M22 12 C23 34 16 46 6 50 M98 12 C97 34 104 46 114 50" fill="none" stroke="${c.trim}" stroke-width="6" stroke-linecap="round"/>
   <path d="M22 12 C23 34 16 46 6 50 M98 12 C97 34 104 46 114 50" fill="none" stroke="url(#${k}n)" stroke-width="6" stroke-linecap="round"/>
   <g font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-style="italic">
