@@ -433,6 +433,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .rav{flex-basis:100%;margin:3px 0 0 36px;font-size:12px}
 /* Ducks: grigio metallizzato */
 /* Giochi: menu e Tiro da 3 / Partita simulata */
+[data-game],[data-hl],[data-trt],[data-trp],[data-tr],[data-sim]{cursor:pointer;-webkit-tap-highlight-color:transparent}
 .gmenu{display:grid;gap:12px}
 .gmc{display:flex;align-items:center;gap:14px;width:100%;text-align:left;cursor:pointer;color:#fff;padding:16px 14px;border:1px solid var(--line);border-left:5px solid var(--gc);background:linear-gradient(110deg,color-mix(in srgb,var(--gc) 26%,var(--panel2)),var(--panel) 70%);box-shadow:0 10px 22px rgba(0,0,0,.35);transition:transform .12s}
 .gmc:active{transform:scale(.98)}
@@ -1240,8 +1241,8 @@ function vGiochi(){
   ${msg}<div class="hlbtn">${btn}</div>
   <p class="note">Giocatori con almeno 10 minuti di media. Efficienza = Dunkest per minuto, agg. ${EFF.agg}. Il record è salvato su questo telefono.</p>`;
 }
-function hlBind(m){
-  m.querySelectorAll("[data-hl]").forEach(b=>b.onclick=()=>{const a=b.dataset.hl;
+function hlBind(m){}
+function hlAct(b){{const a=b.dataset.hl;
     if(a==="up"||a==="dn"){const ok=a==="up"?HL.b.e>=HL.a.e:HL.b.e<=HL.a.e;
       if(ok){HL.streak++;HL.state="ok";if(HL.streak>HL.best){HL.best=HL.streak;try{localStorage.setItem("hlBest",HL.best)}catch(e){}}}else HL.state="ko";render()}
     else if(a==="next"){HL.a=HL.b;HL.b=hlPick(HL.a);HL.state="play";render()}
@@ -1249,7 +1250,7 @@ function hlBind(m){
     else if(a==="share"){const t=`🏀 Dynasty League · Più o Meno\nSerie: ${HL.streak} ${"🔥".repeat(Math.min(HL.streak,10))}\nRecord: ${HL.best}`;
       const done=()=>{b.querySelector("span").textContent="Copiato ✓"};
       if(navigator.share){navigator.share({text:t}).catch(()=>{})}else if(navigator.clipboard){navigator.clipboard.writeText(t).then(done,()=>{})}}
-  });
+  }
 }
 /* ===== Sezione Giochi: selettore ===== */
 let GAME="menu";
@@ -1266,9 +1267,21 @@ function vGiochiHub(){
   }
   return `<button class="gback" data-game="menu">‹ Giochi</button>`+(GAME==="tiro"?vTiro():GAME==="sim"?vSim():vGiochi());
 }
+document.getElementById("main").addEventListener("click",e=>{
+  if(cur!=="giochi")return;
+  const el=e.target.closest("[data-game],[data-hl],[data-trt],[data-trp],[data-tr],[data-sim]");if(!el)return;
+  e.preventDefault();gameClick(el);
+});
+document.getElementById("main").addEventListener("change",e=>{if(cur!=="giochi")return;if(e.target.id==="simH"||e.target.id==="simA")simChange(e.target)});
 function bindGiochi(m){
-  m.querySelectorAll("[data-game]").forEach(b=>b.onclick=()=>{GAME=b.dataset.game;window.scrollTo(0,0);TR.run=false;SIM.timer&&clearInterval(SIM.timer);SIM.timer=null;render()});
-  if(GAME==="hl")hlBind(m);else if(GAME==="tiro")tiroBind(m);else if(GAME==="sim")simBind(m);
+  if(GAME==="tiro"){const cv=m.querySelector("#trc");if(cv)tiroCanvas(cv)}
+}
+function gameClick(b){
+  const d=b.dataset;
+  if(d.game!==undefined){GAME=d.game;window.scrollTo(0,0);TR.run=false;if(SIM.timer){clearInterval(SIM.timer);SIM.timer=null}render();return}
+  if(d.hl!==undefined)return hlAct(b);
+  if(d.trt!==undefined||d.trp!==undefined||d.tr!==undefined)return tiroAct(b);
+  if(d.sim!==undefined)return simAct(b);
 }
 
 /* ===== Gioco 1: Tiro da 3 (arcade) ===== */
@@ -1297,15 +1310,15 @@ function vTiro(){
   </div>
   <p class="note">Canestro = 2 punti · 3 di fila = 🔥 in fiamme: punti doppi finché non sbagli. Il canestro inizia a muoversi dopo 5 centri.</p>`;
 }
-function tiroBind(m){
-  m.querySelectorAll("[data-trt]").forEach(b=>b.onclick=()=>{TR.team=b.dataset.trt;render()});
-  m.querySelectorAll("[data-trp]").forEach(b=>b.onclick=()=>{TR.pl=b.dataset.trp;TR.state="ready";TR.score=0;TR.makes=0;TR.shots=0;TR.streak=0;TR.time=45;render()});
-  m.querySelectorAll("[data-tr]").forEach(b=>b.onclick=()=>{const a=b.dataset.tr;
-    if(a==="start"||a==="again"){TR.state="play";TR.score=0;TR.makes=0;TR.shots=0;TR.streak=0;TR.time=45;render()}
-    else if(a==="pick"){TR.state="pick";render()}
-    else if(a==="share"){const tx=`🏀 Dynasty League · Tiro da 3\n${TR.pl}: ${TR.score} punti (${TR.makes}/${TR.shots})\nRecord: ${TR.best}`;
-      if(navigator.share)navigator.share({text:tx}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(tx).then(()=>{b.querySelector("span").textContent="Copiato ✓"},()=>{})}});
-  const cv=m.querySelector("#trc");if(cv)tiroCanvas(cv);
+function tiroAct(b){
+  const d=b.dataset;
+  if(d.trt!==undefined){TR.team=d.trt;render();return}
+  if(d.trp!==undefined){TR.pl=d.trp;TR.state="ready";TR.score=0;TR.makes=0;TR.shots=0;TR.streak=0;TR.time=45;render();window.scrollTo(0,0);return}
+  const a=d.tr;
+  if(a==="start"||a==="again"){TR.state="play";TR.score=0;TR.makes=0;TR.shots=0;TR.streak=0;TR.time=45;render()}
+  else if(a==="pick"){TR.state="pick";render()}
+  else if(a==="share"){const tx=`🏀 Dynasty League · Tiro da 3\n${TR.pl}: ${TR.score} punti (${TR.makes}/${TR.shots})\nRecord: ${TR.best}`;
+    if(navigator.share)navigator.share({text:tx}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(tx).then(()=>{b.querySelector("span").textContent="Copiato ✓"},()=>{})}
 }
 function tiroCanvas(cv){
   const X=cv.getContext("2d"),W=360,Hh=460;X.setTransform(2,0,0,2,0,0);
@@ -1442,18 +1455,20 @@ function simBoardHTML(){const h=SIM.home,a=SIM.away;
 function simLogHTML(){const evs=SIM.res.ev.slice(0,SIM.i).slice(-8).reverse();
   return `<div class="simlog">${evs.map(e=>`<div class="sev ${e.k}">${e.t?`<i style="background:${TEAMS[e.t].bg}"></i>`:""}${e.txt}${e.v?` <b>+${e.v}</b>`:""}</div>`).join("")}</div>`;
 }
-function simBind(m){
-  const sh=m.querySelector("#simH"),sa=m.querySelector("#simA");
-  if(sh)sh.onchange=()=>{SIM.home=sh.value;if(SIM.away===SIM.home)SIM.away=Object.keys(TEAMS).find(k=>k!==SIM.home);SIM.state="pick";SIM.res=null;clearInterval(SIM.timer);render()};
-  if(sa)sa.onchange=()=>{SIM.away=sa.value;if(SIM.away===SIM.home)SIM.home=Object.keys(TEAMS).find(k=>k!==SIM.away);SIM.state="pick";SIM.res=null;clearInterval(SIM.timer);render()};
-  m.querySelectorAll("[data-sim]").forEach(b=>b.onclick=()=>{const a=b.dataset.sim;
-    if(a==="go"){clearInterval(SIM.timer);SIM.res=simRun(SIM.home,SIM.away);SIM.i=0;SIM.state="live";
-      SIM.timer=setInterval(()=>{if(cur!=="giochi"||GAME!=="sim"){clearInterval(SIM.timer);return}
-        SIM.i++;if(SIM.i>=SIM.res.ev.length){SIM.i=SIM.res.ev.length;SIM.state="done";clearInterval(SIM.timer);render();return}
-        const bd=document.getElementById("simBoard"),lg=document.getElementById("simLog");if(bd)bd.innerHTML=simBoardHTML();if(lg)lg.innerHTML=simLogHTML()},140);render()}
-    else if(a==="skip"){clearInterval(SIM.timer);SIM.i=SIM.res.ev.length;SIM.state="done";render()}
-    else if(a==="share"){const {S}=SIM.res,h=SIM.home,aw=SIM.away;const tx=`🏀 Dynasty League · Partita simulata\n${TEAMS[h].nick} ${S[h]} - ${S[aw]} ${TEAMS[aw].nick}`;
-      if(navigator.share)navigator.share({text:tx}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(tx).then(()=>{b.querySelector("span").textContent="Copiato ✓"},()=>{})}});
+function simChange(el){
+  if(el.id==="simH"){SIM.home=el.value;if(SIM.away===SIM.home)SIM.away=Object.keys(TEAMS).find(k=>k!==SIM.home)}
+  else{SIM.away=el.value;if(SIM.away===SIM.home)SIM.home=Object.keys(TEAMS).find(k=>k!==SIM.away)}
+  clearInterval(SIM.timer);SIM.timer=null;SIM.state="pick";SIM.res=null;render();
+}
+function simAct(b){
+  const a=b.dataset.sim;
+  if(a==="go"){clearInterval(SIM.timer);SIM.res=simRun(SIM.home,SIM.away);SIM.i=0;SIM.state="live";render();
+    SIM.timer=setInterval(()=>{if(cur!=="giochi"||GAME!=="sim"){clearInterval(SIM.timer);SIM.timer=null;return}
+      SIM.i++;if(SIM.i>=SIM.res.ev.length){SIM.i=SIM.res.ev.length;SIM.state="done";clearInterval(SIM.timer);SIM.timer=null;render();return}
+      const bd=document.getElementById("simBoard"),lg=document.getElementById("simLog");if(bd)bd.innerHTML=simBoardHTML();if(lg)lg.innerHTML=simLogHTML()},140)}
+  else if(a==="skip"){clearInterval(SIM.timer);SIM.timer=null;SIM.i=SIM.res.ev.length;SIM.state="done";render()}
+  else if(a==="share"){const {S}=SIM.res,h=SIM.home,aw=SIM.away;const tx=`🏀 Dynasty League · Partita simulata\n${TEAMS[h].nick} ${S[h]} - ${S[aw]} ${TEAMS[aw].nick}`;
+    if(navigator.share)navigator.share({text:tx}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(tx).then(()=>{b.querySelector("span").textContent="Copiato ✓"},()=>{})}
 }
 
 const VIEWS={giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};
@@ -1473,7 +1488,7 @@ function render(){
   m.querySelectorAll(".htile").forEach(b=>b.onclick=()=>{curTeam=b.dataset.team;try{localStorage.setItem("team",curTeam)}catch(e){}cur="campo";render();window.scrollTo(0,0)});
   m.querySelectorAll(".echip").forEach(b=>b.onclick=()=>{effTeam=b.dataset.t;render()});
   if(cur==="giochi")bindGiochi(m);
-  m.querySelectorAll(".chip:not(.echip)").forEach(b=>b.onclick=()=>{curTeam=b.dataset.t;try{localStorage.setItem("team",curTeam)}catch(e){}render()});
+  m.querySelectorAll(".chip:not(.echip):not([data-trt])").forEach(b=>b.onclick=()=>{curTeam=b.dataset.t;try{localStorage.setItem("team",curTeam)}catch(e){}render()});
 }
 /* Menu a tendina: il bottone con data-menu apre il pannello sotto di sé, senza ricaricare la pagina */
 let dkOpen=false;
