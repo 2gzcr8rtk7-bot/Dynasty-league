@@ -34,3 +34,6 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 - Il campo è disegnato nelle stesse coordinate di prima e scalato con `translate(-3.19,9.62) scale(1.0638)`; viewBox ora 100x128.8.
 - Fascia alta più alta (16 unità): logo più grande (19x15.4) e scritte leggermente più grandi.
 - Righe: centro 30,6%, ali 56,6%, guardie 83,3%.
+
+## 24/10/2026 (6)
+- Tolti dal disegno il tabellone e il ferro arancione del canestro.
