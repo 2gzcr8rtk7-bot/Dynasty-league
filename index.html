@@ -325,6 +325,35 @@ nav button{font-size:15px;letter-spacing:.04em}
 .hnm b{font-family:var(--display);font-style:italic;font-weight:800;font-size:22px;text-transform:uppercase;text-shadow:0 2px 6px rgba(0,0,0,.45)}
 .htile[data-team="DUC"] .hlg .badge{transform:translateY(4px) scale(1.15)}
 .hrec{position:absolute;top:6px;right:8px;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;background:rgba(0,0,0,.45);padding:1px 7px}
+/* GM History */
+.medal{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;color:#2a1c00;box-shadow:inset 0 -2px 0 rgba(0,0,0,.25),0 2px 6px rgba(0,0,0,.4)}
+.medal.m1{background:radial-gradient(circle at 35% 30%,#fff4b8,#f5b400 58%,#a87400)}
+.medal.m2{background:radial-gradient(circle at 35% 30%,#ffffff,#c9d0dc 58%,#7f889b);color:#1b2233}
+.medal.m3{background:radial-gradient(circle at 35% 30%,#ffd7ae,#cd7f32 58%,#7f4714);color:#fff}
+.gmh td.rk,.ssn td.rk{width:46px}
+.gmh td.yr{text-align:center;font-family:var(--display);font-style:italic;font-weight:800;font-size:19px;color:#fff;line-height:1.05}
+.gmh td.yr small{display:block;font-size:11px;font-style:normal;letter-spacing:.08em;color:var(--muted)}
+.gmh th.c{text-align:center}
+.gmh td.ttl{text-align:center;font-family:var(--display);font-style:italic;font-weight:800;font-size:19px;white-space:nowrap}
+.gmh td.pt{font-family:var(--display);font-style:italic;font-weight:800;font-size:26px;color:#fff;background:linear-gradient(90deg,transparent,rgba(228,22,58,.22));box-shadow:inset -4px 0 0 var(--red)}
+.gmh tr.lead td.pt{color:var(--gold)}
+.ssn td.pt{font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;color:#cfd6ea;white-space:nowrap}
+.ssn tr:nth-child(n+4) .tmcell b{color:#b9c0d6}
+.gmseason{margin-top:26px}
+.gmh{min-width:0}
+.gmh th{font-size:11px;letter-spacing:.06em;padding-top:7px;padding-bottom:7px}
+.gmh td{vertical-align:middle}
+.gmh td.yr,.gmh th.c{width:40px}
+.gmh td.ttl{width:36px;color:var(--muted)}
+.gmh th,.gmh td{padding-left:5px;padding-right:5px}
+.gmh .tmcell{gap:8px}
+.gmh .wedge{width:40px}
+.gmh .wedge .logo{width:36px;height:36px}
+.gmh .tmcell b{font-size:16px}
+.gmh .tmcell small{display:none}
+.gmh td.pt{font-size:22px;padding-right:9px}
+nav button>span{white-space:nowrap}
+@media (max-width:600px){nav{gap:2px}nav button{flex:1 1 auto;min-width:0;font-size:clamp(10px,2.75vw,14px);letter-spacing:0;padding:8px 2px}}
 </style>
 
 </head>
@@ -338,6 +367,7 @@ nav button{font-size:15px;letter-spacing:.04em}
       <button role="tab" id="t-ef" data-v="efficienza" aria-selected="false"><span>Efficienza</span></button>
       <button role="tab" id="t-tr" data-v="trade" aria-selected="false"><span>Trade</span></button>
       <button role="tab" id="t-in" data-v="infortuni" aria-selected="false"><span>Infortuni</span></button>
+      <button role="tab" id="t-gm" data-v="storia" aria-selected="false"><span>GM History</span></button>
     </nav>
     <div class="subnav" id="subnav" role="menu" hidden>
       <button data-v="risultati" aria-selected="false"><span>Risultati</span></button>
@@ -369,6 +399,12 @@ const AVVISI={"Ryan Rollins":"Trade Speciale in corso · 30 cr","Brandon Ingram"
 /* Giocatori in slot rookie (etichetta nel roster) */
 const ROOKIE=["Cameron Boozer","Nate Ament","Darryn Peterson","Yaxel Lendeborg","Darius Acuff Jr."];
 const ini=t=>TEAMS[t].nick.slice(0,3).toUpperCase();
+/* GM History: classifica finale di ogni stagione, dalla prima alla più recente.
+   Per aggiungere un anno basta aggiungere una riga con l'ordine d'arrivo (1° → ultimo). */
+const STORIA=[
+  {anno:1,ordine:["DUC","FOX","MOO","EAG","PEA","DOL","SPI","TUR"]},
+  {anno:2,ordine:["DUC","DOL","MOO","EAG","FOX","SPI","PEA","TUR"]}
+];
 
 /* Risultati: aggiungere una giornata = aggiungere un blocco qui */
 const GIORNATE=[
@@ -695,7 +731,25 @@ function vCampo(){
   <div class="bench">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span>${pill(lastEff(t,p[0]))}</button>`).join("")}</div>
   <button class="croster" id="croster">Roster completo ›</button>`;
 }
-const VIEWS={campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};
+function vStoria(){
+  const N=Object.keys(TEAMS).length,pts=pos=>N-pos+1;
+  const med=pos=>pos<=3?`<span class="medal m${pos}">${pos}</span>`:pos;
+  const tot=Object.keys(TEAMS).map(t=>{const p=STORIA.map(s=>s.ordine.indexOf(t)+1);
+    return{t,p,pt:p.reduce((a,x)=>a+(x?pts(x):0),0),tit:p.filter(x=>x===1).length}});
+  const cmp=(a,b)=>{if(b.pt!==a.pt)return b.pt-a.pt;for(let k=1;k<=N;k++){const d=b.p.filter(x=>x===k).length-a.p.filter(x=>x===k).length;if(d)return d}
+    for(let i=STORIA.length-1;i>=0;i--){if(a.p[i]!==b.p[i])return a.p[i]-b.p[i]}return 0};
+  tot.sort(cmp);
+  const yrs=STORIA.map(s=>`<th class="c" title="Anno ${s.anno}">A${s.anno}</th>`).join("");
+  const rows=tot.map((x,i)=>`<tr class="${i===0?"lead":""}"><td class="rk">${med(i+1)}</td><td class="tm"><div class="tmcell">${wedge(x.t)}<div><b>${TEAMS[x.t].nick}</b><small>${TEAMS[x.t].city}</small></div></div></td>
+   ${x.p.map(q=>`<td class="yr">${q?pts(q):"–"}<small>${q?q+"°":""}</small></td>`).join("")}<td class="ttl">${x.tit?`<b style="color:var(--gold)">${x.tit}</b>`:"–"}</td><td class="pt">${x.pt}</td></tr>`).join("");
+  const seasons=STORIA.slice().reverse().map(s=>`<section class="gmseason">${H("Anno "+s.anno,`<em>Campione: ${TEAMS[s.ordine[0]].nick}</em>`)}
+   <div class="tbl-wrap"><table class="ssn" style="min-width:0"><tbody>${s.ordine.map((t,i)=>`<tr><td class="rk">${med(i+1)}</td><td class="tm"><div class="tmcell">${wedge(t)}<div><b>${TEAMS[t].nick}</b><small>${TEAMS[t].city}</small></div></div></td><td class="pt">+${pts(i+1)} pt</td></tr>`).join("")}</tbody></table></div></section>`).join("");
+  return `${H("Classifica competenza")}
+  <div class="tbl-wrap"><table class="gmh"><thead><tr><th>#</th><th>Squadra</th>${yrs}<th class="c" title="Titoli">🏆</th><th>Pt</th></tr></thead><tbody>${rows}</tbody></table></div>
+  <p class="note">A1, A2… = punti in ogni anno (sotto il piazzamento). 🏆 = titoli vinti. Ogni stagione: ${N} punti al 1°, ${N-1} al 2° e così via fino a 1 punto all'ultimo. A parità di punti conta chi ha più titoli, poi più secondi posti e così via; poi il piazzamento nella stagione più recente.</p>
+  ${seasons}`;
+}
+const VIEWS={storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
