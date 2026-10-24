@@ -325,6 +325,47 @@ nav button{font-size:15px;letter-spacing:.04em}
 .hnm b{font-family:var(--display);font-style:italic;font-weight:800;font-size:22px;text-transform:uppercase;text-shadow:0 2px 6px rgba(0,0,0,.45)}
 .htile[data-team="DUC"] .hlg .badge{transform:translateY(4px) scale(1.15)}
 .hrec{position:absolute;top:6px;right:8px;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;background:rgba(0,0,0,.45);padding:1px 7px}
+/* Regolamento */
+.rhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:-4px 0 12px}
+.rhead p{margin:0;color:var(--muted);font-size:13px}
+.rpdf{display:inline-flex;align-items:center;gap:6px;background:var(--red);color:#fff;text-decoration:none;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;letter-spacing:.06em;text-transform:uppercase;padding:7px 14px;transform:skewX(-10deg)}
+.rpdf>span{display:inline-block;transform:skewX(10deg)}
+.rlegend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted);margin:0 0 14px}
+.rlegend b{color:#dfe5f5;font-weight:600}
+.rart{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);margin-bottom:8px;box-shadow:0 6px 16px rgba(0,0,0,.25)}
+.rart>summary{list-style:none;display:flex;align-items:center;gap:12px;padding:10px 12px;cursor:pointer}
+.rart>summary::-webkit-details-marker{display:none}
+.rart>summary::after{content:"";width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin:0 4px 4px auto;transition:transform .15s;flex:none}
+.rart[open]>summary::after{transform:rotate(-135deg);margin-bottom:-4px}
+.rart[open]{border-color:rgba(228,22,58,.55)}
+.rn{flex:none;width:38px;height:34px;display:grid;place-items:center;background:var(--red);color:#fff;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;transform:skewX(-10deg)}
+.rgold .rn{background:linear-gradient(180deg,#ffd24a,var(--gold));color:#2a1c00}
+.rt{flex:1;min-width:0;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;line-height:1.1;color:#fff}
+.rt small{display:block;font-size:11px;letter-spacing:.12em;color:var(--muted);font-weight:700;margin-top:2px}
+.rnew{flex:none;font-family:var(--display);font-style:italic;font-weight:800;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#04170b;background:var(--win);padding:1px 7px}
+.rbody{padding:2px 14px 14px;font-size:14.5px;line-height:1.55;color:#dfe5f5}
+.rbody p{margin:0 0 10px}
+.rbody h5{margin:16px 0 8px;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+.rbox,.rnov{margin:12px 0;padding:10px 12px;background:rgba(255,255,255,.04);border-left:3px solid #5b6b95}
+.rbox>b,.rnov>b{display:block;margin-bottom:4px;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;letter-spacing:.04em;text-transform:uppercase;color:#fff}
+.rbox p:last-child,.rnov p:last-child{margin-bottom:0}
+.rnov{background:rgba(34,197,94,.08);border-left-color:var(--win)}
+.rnov>b{color:#5eea8f}
+.rgold .rbox{border-left-color:var(--gold);background:rgba(245,180,0,.06)}
+.rtab{overflow-x:auto;margin:8px 0 12px;border:1px solid var(--line)}
+.rtab table{min-width:0;font-size:13.5px}
+.rtab th{text-align:left!important;font-size:11.5px;padding:7px 8px}
+.rtab td{text-align:left;height:auto;padding:8px;vertical-align:top}
+.rtab tr.rtot td{font-weight:700;color:var(--gold)}
+.rok{color:var(--win);font-style:normal}
+.rsteps,.rlist{margin:8px 0 12px;padding-left:22px}
+.rsteps li,.rlist li{margin-bottom:6px}
+.rsteps li::marker{color:var(--gold);font-family:var(--display);font-weight:800}
+.rflow{list-style:none;margin:8px 0 4px;padding:0;counter-reset:f}
+.rflow li{counter-increment:f;position:relative;padding:0 0 12px 46px}
+.rflow li::before{content:counter(f,decimal-leading-zero);position:absolute;left:0;top:0;width:34px;height:28px;display:grid;place-items:center;background:var(--red);color:#fff;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px}
+.rflow li:not(:last-child)::after{content:"";position:absolute;left:16px;top:30px;bottom:2px;width:2px;background:var(--line)}
+.rflow li b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;text-transform:uppercase;color:#fff}
 /* Sala Trofei */
 .medal{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;color:#2a1c00;box-shadow:inset 0 -2px 0 rgba(0,0,0,.25),0 2px 6px rgba(0,0,0,.4)}
 .medal.m1{background:radial-gradient(circle at 35% 30%,#fff4b8,#f5b400 58%,#a87400)}
@@ -381,6 +422,7 @@ nav button>span{white-space:nowrap}
       <button data-v="classifica" aria-selected="false"><span>Classifica</span></button>
       <button data-v="roster" aria-selected="false"><span>Roster</span></button>
       <button data-v="trade" aria-selected="false"><span>Trade</span></button>
+      <button data-v="regolamento" aria-selected="false"><span>Regolamento</span></button>
     </div>
   </div>
 </header>
@@ -777,11 +819,212 @@ function vStoria(){
   <p class="note">A1, A2… = punti in ogni anno (sotto il piazzamento). 🏆 = titoli vinti. Ogni stagione: ${N} punti al 1°, ${N-1} al 2° e così via fino a 1 punto all'ultimo. A parità di punti conta chi ha più titoli, poi più secondi posti e così via; poi il piazzamento nella stagione più recente.</p>
   ${seasons}`;
 }
-const VIEWS={storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};
+/* Regolamento ufficiale (testo dal PDF regolamento.pdf) */
+const REGOLAMENTO=`<details class="rart" id="reg-1"><summary><span class="rn">01</span><span class="rt">Organizzazione e votazioni<small>Articolo 1</small></span><span class="rnew">Novità</span></summary><div class="rbody">
+<div class="rnov"><b>Novità · Organizzatori e poteri decisionali</b><p>Gli organizzatori – Ducks, Parrots e Turtles – si riservano la facoltà di apportare modifiche al regolamento qualora emergano falle di sistema dovute alla giovane età del progetto.</p></div>
+<p>Tutte le decisioni generali e burocratiche vengono votate dalla commissione, composta dalle persone che hanno scelto volontariamente di parteciparvi.</p>
+<p>Chi non fa parte della commissione non può partecipare alle decisioni, fatta eccezione per le votazioni riguardanti possibili illeciti negli scambi: in questi casi resta il voto popolare.</p>
+<p>In caso di parità, la decisione passa ai tre organizzatori, che deliberano a maggioranza.</p>
+</div></details>
+
+<details class="rart" id="reg-2"><summary><span class="rn">02</span><span class="rt">Trade speciali e Free Agent<small>Articolo 2</small></span></summary><div class="rbody">
+<p>Le trade Free Agent e le trade speciali sono disponibili durante tutto l'anno, ma sono operazioni a pagamento.</p>
+<div class="rbox"><b>Principio di esclusività</b><p>Trade speciale e trade FA non possono sovrapporsi. L'operazione comunicata per prima impedisce di attivare contemporaneamente l'altra.</p><p>La trade speciale viene assegnata in ordine temporale a chi la comunica per primo; la trade FA è invece soggetta ad asta.</p></div>
+<p>I giocatori temporaneamente fuori dalla squadra possono comunque essere scambiati direttamente con altre franchigie prima della scadenza della speciale. Il giocatore ricevuto prende il posto del precedente e può essere inserito in squadra entro la scadenza della speciale già attivata.</p>
+<h5>Le tre trade speciali</h5>
+<div class="rtab"><table><thead><tr><th>Tipo</th><th>Costo / spesa minima</th><th>Durata</th><th>Giornate extra</th></tr></thead><tbody>
+<tr><td>Trade speciale 30</td><td>30 cr</td><td>20 giornate</td><td>2 cr ciascuna</td></tr>
+<tr><td>Trade speciale 40</td><td>40 cr</td><td>40 giornate</td><td>1 cr ciascuna</td></tr>
+<tr><td>Trade speciale 50</td><td>50 cr</td><td>Intera stagione</td><td>–</td></tr></tbody></table></div>
+<h5>Trade Free Agent</h5>
+<div class="rbox"><b>Costo dell'operazione</b><p>10 cr di commissione + valore di listone del giocatore.</p></div>
+<ol class="rsteps">
+<li>La chiamata deve essere dichiarata nell'apposito gruppo o nell'applicazione utilizzata, indicando l'offerta salariale per il giocatore.</li>
+<li>L'offerta minima corrisponde alla quotazione Dunkest, arrotondata per difetto. Esempio: quotazione 10,3 = offerta minima 10 cr.</li>
+<li>Prima dell'offerta deve essere dichiarato il giocatore da svincolare. Dopo l'acquisto del FA, il nome indicato non può essere cambiato.</li>
+<li>Se l'asta viene persa, il giocatore indicato per lo svincolo torna in possesso della franchigia. Anche chi rilancia deve comunicare lo svincolo prima del primo rilancio.</li></ol>
+<h5>Orari dell'asta</h5>
+<div class="rtab"><table><thead><tr><th>Orario della chiamata</th><th>Chiusura dell'asta</th></tr></thead><tbody>
+<tr><td>Entro le 17:00</td><td>20:30 dello stesso giorno</td></tr>
+<tr><td>Dopo le 17:00</td><td>20:30 del giorno successivo</td></tr></tbody></table></div>
+<p>Alla scadenza, se non arrivano nuove offerte, il giocatore firma con la franchigia che ha presentato l'offerta più alta.</p>
+</div></details>
+
+<details class="rart" id="reg-3"><summary><span class="rn">03</span><span class="rt">Scambi tra franchigie<small>Articolo 3</small></span></summary><div class="rbody">
+<p>Gli scambi tra squadre sono consentiti durante tutto l'anno, fino alla giornata 64, che coincide con la fine della regular season.</p>
+<p>Ogni scambio può essere valutato dalla giuria se non risulta regolare. La giuria dispone del massimo potere decisionale e delibera a maggioranza.</p>
+<p>Il vincolo principale riguarda il valore del pacchetto scambiato: confrontando i valori di listone Dunkest dei giocatori coinvolti, la differenza tra le due squadre deve essere minore o uguale a 3 cr.</p>
+<div class="rbox"><b>Compensazione oltre la soglia</b><p>Per ogni credito di differenza oltre i 3 cr, arrotondato secondo il regolamento, la squadra che ottiene il risparmio paga una compensazione pari a 10 volte i crediti eccedenti alla squadra penalizzata dal valore dello scambio.</p></div>
+<ol class="rsteps">
+<li>Gli scambi con differenza entro 3 cr sono approvati automaticamente.</li>
+<li>Gli scambi oltre 3 cr, compensati con il pagamento previsto (x10 sulla parte eccedente), sono approvati automaticamente.</li>
+<li>Gli scambi oltre 3 cr senza compensazione possono essere comunicati nel gruppo trade e sottoposti al voto di tutti i GM della Lega.</li>
+<li>Lo scambio sottoposto alla commissione è approvato solo se ottiene la maggioranza dei voti favorevoli. In caso di parità o mancata maggioranza, lo scambio viene annullato e deve essere ripresentato in un'altra forma. Le franchigie coinvolte nello scambio non partecipano al voto.</li></ol>
+<div class="rnov"><b>Novità · Credito postdatato e cambi di ruolo</b><p>4) È possibile prevedere crediti postdatati alla prima occasione utile dopo la Lottery, fino a un massimo di 10 cr. In presenza di più creditori, vengono soddisfatti per primi quelli relativi alle trade concluse prima in ordine temporale.</p><p>5) Tra l'uscita del listone e l'inizio dell'asta, le franchigie che subiscono un cambio di ruolo possono effettuare scambi secchi tra ruoli differenti con una o più franchigie. È consentito uno scambio per ogni cambio di ruolo o ritiro di un giocatore.</p></div>
+</div></details>
+
+<details class="rart" id="reg-4"><summary><span class="rn">04</span><span class="rt">Lottery Draft<small>Articolo 4</small></span></summary><div class="rbody">
+<p>Ogni anno, con l'uscita del nuovo listone, si apre un periodo di mercato tra squadre a partire da una settimana prima della Lottery.</p>
+<p>In questa fase è possibile scambiare giocatori e crediti. Possono essere utilizzati soltanto i crediti già posseduti in quel momento, non i premi di fine anno, che vengono caricati all'inizio della Lottery.</p>
+<p>La Lottery funziona come un'asta Free Agent: i giocatori vengono chiamati e la franchigia che offre di più può metterli sotto contratto.</p>
+<h5>Ordine e regole di chiamata</h5>
+<div class="rtab"><table><thead><tr><th>Fase</th><th>Regola</th></tr></thead><tbody>
+<tr><td>Ordine</td><td>Dall'8ª posizione verso la 1ª, poi si ricomincia dall'ultima, procedendo a cerchio.</td></tr>
+<tr><td>Prezzo</td><td>Prezzo di listone; nessuna commissione.</td></tr>
+<tr><td>Chiamate</td><td>Tre chiamate per franchigia.</td></tr>
+<tr><td>Passaggio turno</td><td>Una franchigia può saltare il turno e chiamare in quello successivo.</td></tr>
+<tr><td>Svincolo</td><td>Quando vengono offerti crediti, anche in caso di rilancio, deve essere dichiarato il giocatore da svincolare.</td></tr></tbody></table></div>
+<div class="rnov"><b>Novità · Completamento dei roster</b><p>Terminati tutti i giri di chiamate del Draft, le squadre ancora incomplete possono effettuare aste tradizionali con commissione per riempire gli slot, utilizzando i crediti post-Draft.</p><p>Soltanto dopo il completamento di tutti gli slot di ogni squadra si passa all'asta G-League.</p></div>
+</div></details>
+
+<details class="rart" id="reg-5"><summary><span class="rn">05</span><span class="rt">Competizione, premi e slot Rookie<small>Articolo 5</small></span></summary><div class="rbody">
+<p>La competizione si svolge a scontri diretti. Al termine di ogni stagione vengono assegnati i seguenti premi in crediti:</p>
+<div class="rtab"><table><thead><tr><th>Posizione</th><th>Premio</th><th>Posizione</th><th>Premio</th></tr></thead><tbody>
+<tr><td>1°</td><td>30 cr</td><td>5°</td><td>200 cr</td></tr>
+<tr><td>2°</td><td>40 cr</td><td>6°</td><td>300 cr</td></tr>
+<tr><td>3°</td><td>50 cr</td><td>7°</td><td>400 cr</td></tr>
+<tr><td>4°</td><td>150 cr</td><td>8°</td><td>500 cr</td></tr></tbody></table></div>
+<p>Gli eventuali premi in denaro sono stabiliti dalla commissione.</p>
+<div class="rbox"><b>Slot Rookie</b><p>Le franchigie classificate dal 4° all'8° posto ottengono uno slot Rookie aggiuntivo, valido soltanto per l'anno corrente e collocato al di fuori dei 13 giocatori della rosa.</p><p>Esempio: la Squadra Y chiude al 4° posto, partecipa alla Lottery e acquista un Rookie. Può occupare lo slot extra con quel giocatore, mantenendone la proprietà.</p><p>Lo slot è valido solo se il giocatore che lo occupa è un Rookie e solo se viene acquistato durante la prima asta della Lottery.</p></div>
+<div class="rnov"><b>Novità · Scadenza dello slot Rookie</b><p>Lo slot Rookie dura fino a poco prima dell'asta Lottery successiva.</p><p>Prima dell'inizio della nuova Lottery, le franchigie devono comunicare i rispettivi svincoli.</p></div>
+</div></details>
+
+<details class="rart" id="reg-6"><summary><span class="rn">06</span><span class="rt">Sistema anti-tank<small>Articolo 6</small></span><span class="rnew">Novità</span></summary><div class="rbody">
+<h5>Parte 1 – Formazione errata</h5>
+<div class="rtab"><table><thead><tr><th>Caso</th><th>Multa</th></tr></thead><tbody>
+<tr><td>La formazione errata non incide sul risultato</td><td>10 cr</td></tr>
+<tr><td>La formazione errata incide sul risultato</td><td>20 cr</td></tr></tbody></table></div>
+<div class="rnov"><b>Novità · Parte 2 – Segnalazione su capitano o formazione</b><p>A seguito di una segnalazione soggettiva e di un voto favorevole della commissione a maggioranza, con esclusione della franchigia interessata, viene applicato un sistema matematico come parametro oggettivo e uguale per tutti.</p><p>Il sistema serve a valutare e multare eventuali illeciti nella scelta del capitano o, più in generale, dei titolari e dei panchinari.</p></div>
+<h5>I tre parametri</h5>
+<div class="rtab"><table><thead><tr><th>Parametro</th><th>Valore considerato</th></tr></thead><tbody>
+<tr><td>A</td><td>Media dell'intera stagione in corso</td></tr>
+<tr><td>B</td><td>Media dell'ultimo 50% delle partite giocate</td></tr>
+<tr><td>C</td><td>Media dell'ultimo 15% delle partite giocate</td></tr></tbody></table></div>
+<div class="rbox"><b>Criterio di conformità</b><p>Su ogni parametro si applica una tolleranza di 3 PDK. Per non essere multati è necessario rientrare nei valori di almeno 2 parametri su 3.</p></div>
+<h5>Esempio pratico</h5>
+<div class="rtab"><table><thead><tr><th>Giocatore</th><th>Media stagione</th><th>Ultimo 50%</th><th>Ultimo 15%</th><th>Esito</th></tr></thead><tbody>
+<tr><td>Giocatore A</td><td>40 PDK <i class="rok">●</i></td><td>31 PDK <i class="rok">●</i></td><td>27 PDK <i class="rok">●</i></td><td>3/3</td></tr>
+<tr><td>Giocatore B</td><td>30 PDK <i class="rok">●</i></td><td>33 PDK <i class="rok">●</i></td><td>30 PDK <i class="rok">●</i></td><td>2/3</td></tr></tbody></table></div>
+<div class="rnov"><b>Novità · Risultato</b><p>Entrambi i giocatori raggiungono almeno due indicatori verdi; possono quindi essere schierati come capitano senza penalizzazioni.</p></div>
+<h5>Note di applicazione</h5>
+<ul class="rlist">
+<li>Si considerano sempre le partite giocate, non i giorni. Per un giocatore rientrato da un infortunio, il calcolo si basa sulle sue ultime partite.</li>
+<li>Le percentuali vengono arrotondate per eccesso quando necessario.</li>
+<li>La tolleranza di 3 PDK è effettiva: a 3,01 PDK scatta l'indicatore rosso.</li>
+<li>Se il calcolo non è possibile, si torna al precedente sistema di multa soggettiva deciso tramite voto della commissione.</li></ul>
+<div class="rbox"><b>Esempi di impossibilità di calcolo</b><p>1. Segnalazione troppo vicina all'inizio del campionato, con meno di 15 partite giocate e valori PDK ancora in definizione rispetto allo status già conosciuto dei giocatori.</p><p>2. Uno o entrambi i giocatori non hanno un numero di partite sufficiente o paragonabile a causa di un infortunio.</p></div>
+<h5>Parte 3 – Anti-tank e trade speciali</h5>
+<div class="rnov"><b>Novità · Controllo delle trade speciali</b><p>Le trade speciali possono essere sottoposte al giudizio della commissione su segnalazione individuale.</p><p>Se una trade speciale viene considerata antisportiva ai fini del tanking, può essere annullata con voto a maggioranza. La franchigia interessata è esclusa dal voto.</p><p>La squadra penalizzata ha 5 ore per indicare un altro giocatore su cui attivare la speciale oppure per confermare l'annullamento.</p><p>Durante queste 5 ore, il giocatore FA coinvolto resta bloccato e non può essere selezionato da nessun'altra squadra per altre operazioni.</p></div>
+<h5>Sequenza operativa</h5>
+<ol class="rflow">
+<li><b>Segnalazione</b>Una franchigia segnala la speciale</li>
+<li><b>Voto</b>La commissione decide a maggioranza</li>
+<li><b>Blocco 5h</b>Il FA non è disponibile per altre operazioni</li>
+<li><b>Scelta</b>Nuovo nome oppure annullamento confermato</li></ol>
+</div></details>
+
+<details class="rart" id="reg-7"><summary><span class="rn">07</span><span class="rt">Espansione della Lega<small>Articolo 7</small></span></summary><div class="rbody">
+<p>Nuovi membri possono entrare nella Lega soltanto sostituendo una franchigia esistente oppure attraverso l'ingresso di un numero pari di nuove franchigie. Quest'ultima ipotesi richiede un voto unanime.</p>
+<div class="rbox"><b>Sostituzione</b><p>Il presidente entrante acquisisce esattamente tutto ciò che viene lasciato dal presidente uscente.</p></div>
+<h5>Ingresso di due franchigie</h5>
+<p>Come nella NBA, i giocatori vengono selezionati dalle società già esistenti. Ogni presidente mette a disposizione 3 giocatori: 1 guardia, 1 ala e 1 centro.</p>
+<div class="rtab"><table><thead><tr><th>Fase</th><th>Budget</th></tr></thead><tbody>
+<tr><td>Spartizione dei 18 giocatori disponibili</td><td>200 cr</td></tr>
+<tr><td>Fase successiva – mercato Free Agent</td><td>300 cr</td></tr>
+<tr><td>Operazioni annuali</td><td>400 cr</td></tr>
+<tr class="rtot"><td>Totale</td><td>900 cr</td></tr></tbody></table></div>
+<div class="rbox"><b>Composizione delle nuove rose</b><p>I crediti avanzati nelle diverse fasi sono cumulabili.</p><p>Alle franchigie entranti spettano soltanto 9 giocatori, assegnati tramite asta tra le due nuove franchigie. Gli slot rimanenti devono essere completati con Free Agent sempre soggetti ad asta.</p><p>Una volta formate le rose da 9 giocatori, le franchigie dispongono dei 200 cr indicati per completare gli acquisti e arrivare a 13 giocatori.</p></div>
+</div></details>
+
+<details class="rart" id="reg-8"><summary><span class="rn">08</span><span class="rt">Cambio ruolo su Dunkest<small>Articolo 8</small></span></summary><div class="rbody">
+<p>In caso di cambio ruolo, la franchigia che lo subisce riceve 50 cr extra e deve recuperare il ruolo mancante nell'asta di inizio anno.</p>
+<p>La franchigia può mantenere uno slot extra nel ruolo in eccedenza per 10 giornate, così da poter vendere il giocatore. Nella trade può inserire il giocatore che preferisce, purché appartenga al ruolo in cui dispone dell'extra.</p>
+<p>Trascorse 10 giornate senza vendita, deve scegliere quale giocatore lasciare ai FA, recuperando crediti dallo svincolo.</p>
+<p>Se lo slot viene ceduto, la scadenza resta fissata a 10 giornate anche per la squadra ricevente. Lo slot può passare successivamente a una terza squadra, ma al termine originario la squadra che lo detiene deve liberare uno dei propri giocatori ai FA.</p>
+<p>Per slot si intende la possibilità di utilizzare integralmente le prestazioni del giocatore fuori roster ma sotto contratto con la franchigia.</p>
+<div class="rnov"><b>Novità · Scambi secchi tra ruoli</b><p>In caso di cambio ruolo o ritiro, la franchigia può effettuare scambi secchi tra ruoli differenti con le altre franchigie: uno scambio per ogni cambio ruolo o ritiro.</p><p>Questa possibilità vale soltanto tra l'uscita del listone e l'inizio del Draft Lottery.</p></div>
+</div></details>
+
+<details class="rart" id="reg-9"><summary><span class="rn">09</span><span class="rt">Mercato Free Agent e scambi<small>Articolo 9</small></span></summary><div class="rbody">
+<p>Il mercato Free Agent e gli scambi restano aperti per tutto l'anno fino alla fine della regular season. Il mercato degli scambi riapre, su decisione degli organizzatori, una settimana prima della Lottery, utilizzando i crediti di fine anno ma senza i premi stagionali.</p>
+</div></details>
+
+<details class="rart" id="reg-10"><summary><span class="rn">10</span><span class="rt">Ritiro di un giocatore<small>Articolo 10</small></span></summary><div class="rbody">
+<p>Un giocatore è considerato ritirato quando non compare più nel listone Dunkest oppure nell'app Dunkest a campionato in corso.</p>
+<p>La franchigia dispone delle seguenti opzioni:</p>
+<ol class="rsteps">
+<li><b>Mantenimento.</b> Tenere il giocatore e sostituirlo con un giocatore fantoccio da 4 cr, utilizzato come prestanome.</li>
+<li><b>Rimborso da scambio.</b> Ricevere 50 cr se il giocatore era stato acquisito tramite scambio tra squadre. Questa scelta svincola il giocatore: se torna nel listone, sarà un FA.</li>
+<li><b>Rimborso da FA.</b> Se il giocatore era stato acquisito come FA, è garantito un rimborso minimo di 20 cr al possessore al momento del ritiro.</li></ol>
+<div class="rbox"><b>Maggiorazione del rimborso FA</b><p>Se il giocatore è stato mantenuto per più di 20 giornate, il rimborso aumenta di 1 cr per ogni giornata oltre la ventesima, fino a un massimo complessivo di 50 cr.</p><p>Ai fini di questa regola, per ritiro si intende il ritiro da Dunkest.</p></div>
+</div></details>
+
+<details class="rart" id="reg-11"><summary><span class="rn">11</span><span class="rt">Regolamento sul budget<small>Articolo 11</small></span><span class="rnew">Novità</span></summary><div class="rbody">
+<div class="rnov"><b>Novità · Limiti e sanzioni</b><p>Il budget non può essere superato volontariamente attraverso una trade relativa all'anno in corso. Ogni trade che porta la franchigia sotto zero crediti nell'anno in corso viene annullata automaticamente.</p><p>Se multe o trade successive alla G64 portano una squadra sotto zero, si applica una multa aggiuntiva pari al doppio dei crediti sotto zero generati da quella specifica operazione.</p><p>Le squadre già sotto zero non possono partecipare a scambi che coinvolgano i loro crediti, nemmeno in forma futura dopo la G64.</p></div>
+</div></details>
+
+<details class="rart" id="reg-12"><summary><span class="rn">12</span><span class="rt">Aste giocatori<small>Articolo 12</small></span></summary><div class="rbody">
+<p>È possibile utilizzare il gruppo trade o l'applicazione per pubblicare annunci di vendita relativi ai propri giocatori.</p>
+<h5>Contenuto dell'annuncio</h5>
+<ul class="rlist">
+<li>Giocatore che si intende vendere.</li>
+<li>Prezzo base d'asta espresso in crediti.</li>
+<li>Data effettiva dello scambio, sia per il trasferimento dei crediti sia per quello del giocatore. È possibile, ad esempio, richiedere subito i crediti e rilasciare il giocatore in una data successiva.</li></ul>
+<div class="rbox"><b>Contropartita e finalità</b><p>Questo tipo di annuncio è finalizzato a ottenere crediti. Gli acquirenti possono offrire come contropartita il giocatore che preferiscono e il venditore non può opporsi.</p><p>Si consiglia di utilizzare questo metodo prima di ricorrere ai Free Agent, così da ricavare qualcosa dallo svincolo.</p></div>
+</div></details>
+
+<details class="rart" id="reg-anno"><summary><span class="rn">—</span><span class="rt">Procedura di fine e inizio anno<small>Sequenza ufficiale</small></span></summary><div class="rbody">
+<p>Le operazioni seguono questo ordine cronologico:</p>
+<ol class="rflow">
+<li><b>G64</b>Le trade e le trade speciali con scadenza G64 diventano effettive automaticamente dopo l'inizio delle partite. I giocatori scambiati non scendono quindi in campo per le franchigie proprietarie in quella stagione.</li>
+<li><b>Chiusura</b>Alla fine della G64, gli scambi ufficiali tra franchigie vengono chiusi fino all'uscita del nuovo listone.</li>
+<li><b>Pre-Lottery</b>Gli scambi riaprono durante la settimana pre-Lottery stabilita dai tre organizzatori.</li>
+<li><b>Svincoli</b>Gli slot Rookie cessano poco prima della Lottery e le franchigie comunicano i rispettivi svincoli.</li>
+<li><b>Lottery</b>Dopo gli svincoli si svolge la Lottery.</li>
+<li><b>Completamento</b>Le franchigie con slot liberi possono partecipare a una fase opzionale d'asta per i prospetti, pagando 10 cr di commissione con crediti post-Draft.</li>
+<li><b>G-League</b>Si procede quindi all'asta G-League e, successivamente, all'apertura del mercato classico.</li></ol>
+</div></details>
+
+<details class="rart rgold" id="reg-g"><summary><span class="rn">G</span><span class="rt">G-League<small>Competizione parallela</small></span></summary><div class="rbody">
+<div class="rbox"><b>Un'esperienza parallela al Dynasty</b><p>La G-League ha le caratteristiche di un fanta annuale e inizia con un'asta a base 1 cr, disputata dopo il Draft Dynasty utilizzando i giocatori rimasti liberi.</p></div>
+<h5>Rosa e budget</h5>
+<div class="rtab"><table><thead><tr><th>Dotazione</th><th>Valore</th></tr></thead><tbody>
+<tr><td>Budget per franchigia</td><td>100 cr</td></tr>
+<tr><td>Slot giocatori</td><td>5</td></tr>
+<tr><td>Composizione minima</td><td>Almeno 1 giocatore per ruolo</td></tr>
+<tr><td>Limite storico</td><td>Nessun giocatore deve avere mai superato 21,9 PDK medi nella propria storia Dunkest</td></tr></tbody></table></div>
+<p>La Lega viene ospitata nella sezione Dunkest Classic. Gli slot rimanenti vengono occupati da giocatori fantoccio identici per tutti.</p>
+<h5>Formato e premi</h5>
+<p>La competizione è a punti totali e non a scontri diretti.</p>
+<div class="rtab"><table><thead><tr><th>Posizione</th><th>Premio</th></tr></thead><tbody>
+<tr><td>1° posto</td><td>30 cr</td></tr><tr><td>2° posto</td><td>20 cr</td></tr><tr><td>3° posto</td><td>10 cr</td></tr></tbody></table></div>
+<h5>Diritto di pareggio · G-League e squadra madre</h5>
+<div class="rbox"><b>Collegamento con il Dynasty</b><p>I giocatori posseduti in G-League non sono di proprietà diretta della franchigia nel Dynasty principale. Il loro possesso assegna però il diritto di pareggiare le offerte ricevute nel Dynasty.</p></div>
+<p>I giocatori restano quindi FA nel Dynasty. Se un'altra franchigia tenta di acquisire un giocatore appartenente a una rosa G-League tramite asta classica o trade speciale, la squadra madre può pareggiare l'offerta e acquisirlo.</p>
+<div class="rtab"><table><thead><tr><th>Operazione</th><th>Come si esercita il diritto</th></tr></thead><tbody>
+<tr><td>Asta classica</td><td>Al termine dell'asta, la squadra madre comunica se pareggia l'offerta vincente e indica il giocatore da escludere dal roster attuale.</td></tr>
+<tr><td>Trade speciale</td><td>La squadra madre può pareggiare la speciale e attivarne una propria. Ha 2 ore dal momento in cui visualizza la comunicazione e deve indicare il giocatore da inserire nella speciale.</td></tr></tbody></table></div>
+<div class="rbox"><b>Esempio pratico: Queen</b><p>I G-Turtles possiedono Queen in G-League. I California Turtles hanno quindi la facoltà di pareggiare qualsiasi offerta per Queen nel Dynasty, dove il giocatore è considerato FA.</p><p>Se i Ducks tentano di acquisire Queen all'asta, i Turtles possono pareggiare l'offerta vincente e indicare chi escludere dal roster.</p><p>Se i Ducks attivano una speciale, i Turtles possono pareggiarla, attivarne una propria entro 2 ore dalla visualizzazione e indicare il giocatore coinvolto nella loro speciale.</p></div>
+<h5>Gestione annuale · Durante l'anno</h5>
+<p>I giocatori G-League possono essere scambiati tra le varie squadre G-League.</p>
+<p>Quando una squadra Dynasty acquisisce il giocatore G-League di un'altra franchigia, la franchigia G-League deve sostituirlo gratuitamente con un altro FA che rispetti il limite di 21,9 PDK, escludendo l'anno in corso dal calcolo.</p>
+<p>La squadra madre riceve 10 cr reali come premio competenza, salvo che eserciti il diritto di pareggio: in quel caso diventa essa stessa proprietaria del giocatore.</p>
+<h5>Alla G64</h5>
+<div class="rbox"><b>Passaggio alla prima squadra</b><p>Alla fine dell'anno, in corrispondenza della G64, i giocatori delle rose G-League possono passare gratuitamente alle rispettive prime squadre madri.</p><p>Esempio: Queen termina la stagione da Free Agent; la franchigia che ne possiede i diritti in G-League può trasferirlo in prima squadra.</p></div>
+<div class="rbox"><b>Reset di fine anno</b><p>Al termine della stagione l'intera G-League viene azzerata e ricreata da zero per l'anno successivo.</p></div>
+</div></details>
+`;
+function vRegolamento(){
+  return `${H("Regolamento",`<em>GM NBA League</em>`)}
+  <div class="rhead"><p>Fanta Dynasty basato su Dunkest · tocca un articolo per aprirlo.</p><a class="rpdf" href="regolamento.pdf" target="_blank" rel="noopener"><span>Scarica PDF</span></a></div>
+  <div class="rlegend"><span><b>cr</b> crediti</span><span><b>FA</b> Free Agent</span><span><b>PDK</b> punti Dunkest</span><span><b>G64</b> giornata 64</span><span><span class="rnew">Novità</span> aggiornamenti</span></div>
+  ${REGOLAMENTO}`;
+}
+const VIEWS={regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
-  const eff=cur==="giocatore"?"roster":cur==="campo"?"home":cur;const DK=["risultati","classifica","roster","trade"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
+  const eff=cur==="giocatore"?"roster":cur==="campo"?"home":cur;const DK=["risultati","classifica","roster","trade","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
