@@ -329,7 +329,10 @@ nav button{font-size:15px;letter-spacing:.04em}
 .hnm small{font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
 .hnm b{font-family:var(--display);font-style:italic;font-weight:800;font-size:22px;text-transform:uppercase;text-shadow:0 2px 6px rgba(0,0,0,.45)}
 
-.htile[data-team="DUC"] .hlg .badge{transform:translateY(-1px) scale(1.04)}
+.htile[data-team="DUC"] .hlg .badge{transform:translateY(-3px) scale(1.12)}
+.teamhead .hlogo[data-t="DUC"]{width:74px;height:74px;margin:-10px -4px -10px -6px}
+@media (max-width:420px){.teamhead .hlogo[data-t="DUC"]{width:72px;height:72px;margin:-10px -4px -10px -6px}}
+@media (max-width:420px){.teamhead:has(.rec+.rec) .hlogo[data-t="DUC"]{width:66px;height:66px;margin:-8px -10px -8px -8px}}
 .hrec{position:absolute;top:6px;right:8px;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;background:rgba(0,0,0,.45);padding:1px 7px}
 /* Regolamento */
 .rhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:-4px 0 12px}
@@ -703,7 +706,7 @@ function vRoster(){
   const chips=Object.keys(TEAMS).map(t=>`<button class="chip" data-t="${t}" aria-pressed="${t===curTeam}">${badge(t)}${TEAMS[t].nick}</button>`).join("");
   return `<div class="chips">${chips}</div>
   <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">
-   ${LOGO[curTeam]?`<img class="hlogo" src="${LOGO[curTeam]}" alt="">`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div><div class="rec">${CREDITI[curTeam]??"–"}<small>CREDITI</small></div></div></div>
+   ${LOGO[curTeam]?`<img class="hlogo" data-t="${curTeam}" src="${LOGO[curTeam]}" alt="">`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div><div class="rec">${CREDITI[curTeam]??"–"}<small>CREDITI</small></div></div></div>
   <div class="sumrow"><span>${r.length} giocatori</span></div>
   ${(()=>{const R={G:"Guardia",F:"Ala",C:"Centro"},L={G:"G",F:"A",C:"C"};
     const pl=r.slice().sort((a,b)=>"GFC".indexOf(a[2])-"GFC".indexOf(b[2]));
@@ -847,7 +850,7 @@ function vCampo(){
   const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>"GFC".indexOf(a[2])-"GFC".indexOf(b[2]));
   return `<button class="gback" id="cback">‹ Home</button>
   <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">
-   ${LOGO[t]?`<img class="hlogo" src="${LOGO[t]}" alt="">`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
+   ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${LOGO[t]}" alt="">`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
   ${bacheca(t)}
   ${cassa(t)}
   ${H("Quintetto",`<em>${auto?"Provvisorio · scelto per efficienza":"Titolari · per ruolo"}</em>`)}
