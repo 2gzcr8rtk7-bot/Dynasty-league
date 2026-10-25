@@ -29,9 +29,9 @@ function parse(src) {
   const EFF = getConst(src, "EFF"); if (!EFF || !EFF.agg || !EFF.gioc) return null;
   const notte = {};
   for (const a of Object.values(EFF.gioc)) for (const p of a) {
-    const dk = p[4], e = p[5];
-    if (dk == null || e == null) continue;          // non ha giocato quella notte
-    notte[p[0]] = e;                                // efficienza pura della partita (Dunkest/minuto)
+    const dk = p[4];
+    if (dk == null) continue;                       // non ha giocato quella notte
+    notte[p[0]] = dk;                               // PDK (punti Dunkest) della partita
   }
   return { agg: EFF.agg, night: nightOf(EFF.agg), notte, ROSTER: getConst(src, "ROSTER"), VALORI: getConst(src, "VALORI") };
 }
@@ -61,7 +61,7 @@ for (const n of Object.keys(byNight).sort()) {
     }
   }
 }
-const out = `/* DREAMERS – file generato da tools/dreamers.mjs, non modificare a mano. Notti = data NBA (USA). {giocatore: efficienza della partita} */
+const out = `/* DREAMERS – file generato da tools/dreamers.mjs, non modificare a mano. Notti = data NBA (USA). {giocatore: PDK della partita} */
 const DREAM_DATA=${JSON.stringify({ notti, form })};
 `;
 writeFileSync("dreamers-data.js", out);

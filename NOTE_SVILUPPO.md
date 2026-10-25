@@ -8,7 +8,7 @@ Prima di iniziare: leggere questo file. Alla fine di ogni sessione: aggiungere c
 > 2. **Non modificare e non committare `dreamers-data.js`**: lo genera GitHub (workflow `.github/workflows/dreamers.yml`) leggendo la storia di index.html. Nessun comando da lanciare.
 > 3. In `EFF.gioc` le colonne 5 e 6 (Dunkest ed efficienza della notte) devono esserci per chi ha giocato quella notte e `null` per chi non ha giocato: DREAMERS le usa per archiviare ogni partita.
 > 4. **Efficienza "pura"** (richiesta di Francesco): in tutta l'app conta solo il rapporto Dunkest/minuto, non il minutaggio. Quindi l'efficienza media stagionale di un giocatore (colonna 2 di `EFF.gioc`) va calcolata come **media semplice delle efficienze partita per partita** (es. 1,00 e 0,50 → 0,75), non come Dunkest totali ÷ minuti totali. Stessa regola per le efficienze di squadra in `EFF.squadre` (media semplice delle efficienze dei giocatori).
-> 5. **Una sola fonte per ogni numero**: efficienza MEDIA stagionale = `EFF.gioc[...][1]` (funzione `effMed`); efficienza dell'ULTIMA partita = `ULTIMA.gioc` (funzione `lastEff`). Ogni schermata dice quale mostra. Campo, panchina, scheda, Efficienza e Cup mostrano la media; "ultima" compare solo come dato secondario. Sfida della notte usa l'ultima partita.
+> 5. **Una sola fonte per ogni numero**: efficienza MEDIA stagionale = `EFF.gioc[...][1]` (`effMed`); efficienza dell'ULTIMA partita = `ULTIMA.gioc` (`lastEff`); PDK medi e ultima partita = da `PARTITE` (`pdkMed`, `pdkLast`). Campo e panchina mostrano i PDK; scheda, Efficienza e Cup l'efficienza. Sfida della notte usa l'efficienza dell'ultima partita.
 > 6. GitHub controlla da solo la coerenza del report a ogni push (`tools/verifica.mjs`, avvisi nella scheda Actions) e l'app fa lo stesso controllo all'apertura (console). Controlla: notte ≠ ULTIMA, 1 partita con media ≠ ultima, giocatori con partite senza ULTIMA, roster ed EFF non allineati, date diverse tra EFF e ULTIMA.
 
 L'app è tutta in `index.html` (loghi squadre in base64 nell'oggetto `LOGO`).
@@ -216,3 +216,7 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Ricalibrato: punti trade = (valore/1000)^2 × 1000; 300 crediti ≈ giocatore da 1150 (centro di 1000-1300), quindi `VAL_CR` = 1,15²×1000/300 ≈ 4,41 punti per credito. `VAL_FALLBACK` = 400.
 - Anche DREAMERS usa `VALORI` per i 10 titolari: le formazioni cambiano di conseguenza (dal turno 1, che parte il 26/10).
 - I valori sono statici: a fine stagione o quando servono vanno ricalcolati con la stessa formula.
+
+## 25/10/2026 (25) — PDK su campo, panchina e DREAMERS
+- Pagina squadra (campo e panchina): al posto dell'efficienza i PDK medi a partita della stagione (`pdkMed`, `pillP`; colori verde ≥35, giallo 20–35, rosso <20); panchina ordinata per PDK medio, sotto "ultima" = PDK dell'ultima partita (`pdkLast`).
+- DREAMERS: il punteggio usa i PDK. PDK settimanale di un giocatore = media dei PDK delle sue partite della settimana; punteggio di turno = media dei 10. `tools/dreamers.mjs` ora archivia i PDK della notte (colonna 5 di `EFF.gioc`), la notte live si legge dallo stesso campo.
