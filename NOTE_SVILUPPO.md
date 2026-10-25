@@ -184,3 +184,8 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Aggiunti i controlli automatici di coerenza (`tools/verifica.mjs` nel workflow GitHub + `checkDati` all'apertura).
 - Tabellone playoff stile bracket: semifinali a metà altezza tra i due quarti, finalissima al centro con coppa dorata (e nome dei campioni a fine stagione), linee di collegamento; finale 3° posto separata in basso. Box vuoti con "Vincente"/"Perdente semifinale"; niente etichette QF/SF dentro i box.
 - Coppa del tabellone viola (tema DREAMERS), senza scritta sotto; a fine stagione compare "Campioni" con la squadra vincitrice.
+
+## 25/10/2026 (20) — Asta Peacocks: Trevon Brazile
+- PEA prende all'asta Trevon Brazile (DEN, ala, #7) per 14 crediti (registrati come 10 commissione + 4 di lista); Nate Ament va in G League al suo posto.
+- Aggiornati: `ROSTER.PEA` (Brazile al posto di Ament, quotazione 4), `EFF.gioc.PEA` (riga Brazile vuota, la riempie il prossimo report), `GLEAGUE` PEA (Ament al posto di Brazile), `ROOKIE` (tolto Ament), `NBA_ANNO` (Brazile 2026), `CREDITI.PEA` 52 → 38, `TRADES` (asta: la cassa Peacocks registra −14 da sola).
+- Pagina Trade: nelle aste i crediti ora si vedono come spesa (−14 cr) invece di +14.
