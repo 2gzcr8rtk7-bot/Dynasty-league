@@ -142,4 +142,4 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 - `shareGame` disegna su canvas un'immagine 1080x1350 (formato storie/post): logo lega, giornata, le due squadre con logo grande, città e punteggio, vincitore con trofeo, scarto. Su telefono apre la condivisione (WhatsApp ecc.), altrimenti scarica il PNG.
 
 ## 25/10/2026 (15) — Ducks di nuovo gialli
-- DUC: bg tornato `#facc15` (il giallo originale), al posto del silver `#a9afb7`. Le maglie restano silver (override in `jersey()`).
+- DUC: bg tornato `#facc15` (il giallo originale), al posto del silver `#a9afb7`. Anche le maglie sono gialle con le punte nere (override in `jersey()`).

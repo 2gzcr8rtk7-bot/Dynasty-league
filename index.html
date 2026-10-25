@@ -1080,7 +1080,7 @@ const DECO={
    <path d="M4 54 L12 54 L10 112 L2 118 Z M116 54 L108 54 L110 112 L118 118 Z" fill="#fff" opacity=".9"/>`
 };
 function jersey(t,num,name=""){
-  const c=t==="DUC"?{...TEAMS[t],bg:"#a9afb7"}:t==="SPI"?{...TEAMS[t],bg:"#ffffff",fg:"#111111"}:t==="DOL"?{...TEAMS[t],bg:"#f4f6f8",fg:"#1747c9",trim:"#1747c9",jstroke:"#ffffff",outer:"#1747c9"}:TEAMS[t],n=num==null?"?":String(num),k="j"+(JID++);
+  const c=t==="DUC"?{...TEAMS[t],bg:"#facc15"}:t==="SPI"?{...TEAMS[t],bg:"#ffffff",fg:"#111111"}:t==="DOL"?{...TEAMS[t],bg:"#f4f6f8",fg:"#1747c9",trim:"#1747c9",jstroke:"#ffffff",outer:"#1747c9"}:TEAMS[t],n=num==null?"?":String(num),k="j"+(JID++);
   const fs=n.length>1?38:44;
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
   const ol=c.jstroke||(lum(c.fg)<0.45?"#ffffff":"#0a0f1f");
