@@ -72,6 +72,12 @@
 .esqk small{font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .esqk b{font-family:var(--display);font-style:italic;font-weight:800;font-size:22px;line-height:1;color:#fff}
 .esqtbl{min-width:560px}
+.esqg{min-width:0;width:auto}
+.esqg th.gcol{text-align:center;padding:6px 4px;min-width:52px}.esqg th.gcol b{display:block;font-size:14px;color:#fff}.esqg th.gcol small{display:block;font-size:9.5px;color:var(--muted);font-family:var(--body);font-style:normal;letter-spacing:0;font-weight:500}
+.esqg td.gcell{text-align:center;padding:0 3px}
+.gv{display:inline-block;min-width:44px;padding:3px 4px;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;color:#0a0f1f;text-align:center}
+.gv.g{background:var(--win)}.gv.y{background:var(--gold)}.gv.r{background:var(--loss);color:#fff}
+.esqg td.pnm small{display:block;font-size:10.5px;color:var(--muted);font-weight:500}
 .esqtbl th,.esqtbl td{text-align:right;white-space:nowrap;padding:0 6px}
 .esqtbl th{white-space:normal;font-size:11px;line-height:1.15;padding:8px 6px;vertical-align:bottom}
 .esqtbl th:first-child,.esqtbl td:first-child{text-align:left;position:sticky;left:0;z-index:1;background:#0f1938}
@@ -1292,13 +1298,19 @@ function vEffSquadra(){
   const ar=(cur,base,thr)=>{if(cur==null||base==null)return"";const df=cur-base;return df>=thr&&df>0?'<span class="tr u">▲</span>':df<=-thr&&df<0?'<span class="tr d">▼</span>':'<span class="tr s">▶</span>'};
   const ps=EFF.gioc[t].slice().sort((a,b)=>(b[1]??-9)-(a[1]??-9));
   let best=null;ps.forEach(p=>{if(p[5]!=null&&(best==null||p[5]>best[5]))best=p});
-  const rows=ps.map(p=>`<tr data-plt="${t}" data-pln="${p[0]}" class="plink${best&&p===best?" best":""}"><td class="pnm">${p[0]} <span class="plgo">›</span></td><td>${nba(p[0])}</td><td>${p[4]==null?'<span class="dash">—</span>':p[4]}</td><td>${p[5]==null?'<span class="dash">—</span>':eff(p[5])}</td><td>${p[2]}</td><td>${eff(p[1])}</td><td>${p[6]==null?'<span class="dash">—</span>':eff(p[6])+ar(p[6],p[1],Math.abs(p[1]||0)*.05)}</td><td>${d1(p[7])}${ar(p[7],p[3],2)}</td></tr>`).join("");
+  /* Colonne = giornate di gioco NBA della stagione (G1 = prima notte con partite), dal database PARTITE.
+     Cella = efficienza del giocatore in quella partita; "—" se non ha giocato. Si allunga da sola a ogni report. */
+  const dk=d=>{const[g,m]=d.split("/").map(Number);return (m>=8?0:12)*100+m*100+g};
+  const notti=[...new Set(Object.values(PARTITE).flat().map(g=>g[0]))].sort((x,y)=>dk(x)-dk(y));
+  const cols=notti.map((d,i)=>`<th class="gcol"><b>G${i+1}</b><small>${d}</small></th>`).join("");
+  const rows=ps.map(p=>{const pg={};(PARTITE[p[0]]||[]).forEach(g=>pg[g[0]]=g);
+    return `<tr data-plt="${t}" data-pln="${p[0]}" class="plink"><td class="pnm">${p[0]} <span class="plgo">›</span><small>${nba(p[0])}</small></td>${notti.map(d=>{const g=pg[d];return `<td class="gcell">${g?`<span class="gv ${lvl(g[4])}" title="${g[1]} · ${g[2]} min">${f2(g[4])}</span>`:'<span class="dash">—</span>'}</td>`}).join("")}</tr>`}).join("");
   return `<button class="gback esqback" id="effback">‹ Efficienza squadre</button>
   <div class="esqhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 60%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">${badge(t)}<div class="esqt"><small>${c.name}</small><h3>${c.nick}</h3></div></div>
   <div class="esqk"><div><small>Eff. stagionale</small>${eff(s[4])}</div><div><small>Notte · ${s[1]} in campo</small>${eff(s[3])}</div><div><small>Posizione lega</small><b>${pos}ª</b></div></div>
   ${H(c.nick,`<em>Agg. ${EFF.agg}</em>`)}
-  <div class="tbl-wrap"><table class="ptbl esqtbl"><thead><tr><th>Giocatore</th><th>Sq.</th><th>Min notte</th><th>Eff. notte</th><th>PG</th><th>Eff. media</th><th>Forma ult. 5</th><th>Min ult. 5</th></tr></thead><tbody>${rows}</tbody></table></div>
-  <p class="note">Come nel report giornaliero. Notte = ultima notte NBA del report; in arancione la miglior efficienza della notte. Forma ult. 5 = efficienza delle ultime 5 partite (▲▼ se si scosta almeno del 5% dalla media). Min ult. 5 = minuti medi delle ultime 5 (▲▼ se cambiano di almeno 2 minuti). Con meno di 5 partite si usano quelle disponibili.</p>
+  <div class="tbl-wrap esqwrap"><table class="ptbl esqtbl esqg"><thead><tr><th>Giocatore</th>${cols}</tr></thead><tbody>${rows}</tbody></table></div>
+  <p class="note">Ogni colonna è una giornata di gioco NBA (G1 = prima notte della stagione, con la data sotto): nella cella l’efficienza del giocatore in quella partita, "—" se non ha giocato. Scorri a destra per le giornate successive; i giocatori sono in ordine di efficienza media.</p>
   <p class="note"><span class="ev g"><i></i>sopra 1,10</span> &nbsp; <span class="ev y"><i></i>0,80–1,10</span> &nbsp; <span class="ev r"><i></i>sotto 0,80</span></p>`;
 }
 function vEfficienza(){
