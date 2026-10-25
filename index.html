@@ -643,10 +643,10 @@ nav button{font-size:15px;letter-spacing:.04em}
 .drs::before,.drf::before{content:"";position:absolute;left:-12px;width:10px;top:25%;bottom:25%;border:2px solid rgba(196,181,253,.45);border-left:0}
 .drs::after,.drf::after{content:"";position:absolute;left:-2px;top:50%;width:2px;height:2px}
 .drfin{width:100%;position:relative}.drtop{position:absolute;left:-4px;right:-4px;bottom:calc(100% + 6px);display:grid;justify-items:center;gap:2px}
-.drtop>b{font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:#fde68a;text-shadow:0 0 10px rgba(245,197,66,.6)}
-.drfin .drbm{width:100%;border-color:rgba(245,197,66,.6);box-shadow:0 0 14px rgba(245,197,66,.25)}
-.drcup{width:60px;height:60px;filter:drop-shadow(0 0 12px rgba(245,197,66,.65)) drop-shadow(0 4px 6px rgba(0,0,0,.5))}
-.drchamp{display:flex;align-items:center;justify-content:center;gap:5px;max-width:100%;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;color:#fde68a!important;white-space:nowrap;overflow:hiddentext-transform:uppercase;color:#fff}
+.drtop>b{font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:#e9d5ff;text-shadow:0 0 10px rgba(168,85,247,.8)}
+.drfin .drbm{width:100%;border-color:rgba(192,132,252,.8);box-shadow:0 0 16px rgba(168,85,247,.45)}
+.drcup{width:60px;height:60px;filter:drop-shadow(0 0 14px rgba(168,85,247,.85)) drop-shadow(0 4px 6px rgba(0,0,0,.5))}
+.drchamp{display:flex;align-items:center;justify-content:center;gap:5px;max-width:100%;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;color:#f5ecff!important;white-space:nowrap;overflow:hiddentext-transform:uppercase;color:#fff}
 .drthird{margin-top:16px;padding-top:12px;border-top:1px dashed rgba(196,181,253,.3);display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center}
 .drthird h5{margin:0;font-family:var(--display);font-style:italic;font-size:13px;text-transform:uppercase;color:#e9d5ff}.drthird h5 small{display:block;font-size:9px;color:#a5b4fc;font-style:normal}
 .drlg{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--tc) 75%,#fff),var(--tc) 55%,color-mix(in srgb,var(--tc) 60%,#000));box-shadow:0 0 0 2px rgba(255,255,255,.18),0 3px 10px rgba(0,0,0,.45);overflow:hidden}
@@ -2115,14 +2115,14 @@ function vDream(){
     const m=(k,p,lab,ph)=>{if(!p)return`<div class="drbm tbd">${ph?ph.map(x=>`<span>${x}</span>`).join(""):"<span>da definire</span>"}</div>`;const w=drWeek(k),[a,b]=p,A=drTeam(k,a,w).score,Bs=drTeam(k,b,w).score,win=w.closed?(A>Bs||(A===Bs&&sd[a]<sd[b])?a:b):null;
       return `<div class="drbm">${[a,b].map((t,i)=>`<div class="drbr ${win===t?"w":win?"l":""}"><i>${sd[t]}</i>${drLg(t,"s")}<span>${TEAMS[t].nick}</span><em>${w.started?f2(i?Bs:A):""}</em></div>`).join("")}</div>`};
     const fin=(B[24]||[])[0],fw=drWeek(24);let champ=null;if(fin&&fw.closed){const[a,b]=fin,A=drTeam(24,a,fw).score,Bs=drTeam(24,b,fw).score;champ=A>Bs||(A===Bs&&sd[a]<sd[b])?a:b}
-    const cup=`<svg class="drcup" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="drg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff4c2"/><stop offset=".45" stop-color="#f5c542"/><stop offset="1" stop-color="#a86f00"/></linearGradient></defs><path d="M18 8h28v14a14 14 0 0 1-28 0z" fill="url(#drg)"/><path d="M18 12h-8v4a10 10 0 0 0 10 10M46 12h8v4a10 10 0 0 1-10 10" fill="none" stroke="url(#drg)" stroke-width="3.5"/><path d="M29 35h6v9h-6z" fill="url(#drg)"/><path d="M21 46h22l2 6H19z" fill="url(#drg)"/><rect x="17" y="52" width="30" height="5" rx="1" fill="#7a5200"/><path d="M24 12c0 8 2 13 6 16" stroke="#fff" stroke-opacity=".55" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>`;
+    const cup=`<svg class="drcup" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="drg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f5ecff"/><stop offset=".45" stop-color="#b48cff"/><stop offset="1" stop-color="#5b21b6"/></linearGradient></defs><path d="M18 8h28v14a14 14 0 0 1-28 0z" fill="url(#drg)"/><path d="M18 12h-8v4a10 10 0 0 0 10 10M46 12h8v4a10 10 0 0 1-10 10" fill="none" stroke="url(#drg)" stroke-width="3.5"/><path d="M29 35h6v9h-6z" fill="url(#drg)"/><path d="M21 46h22l2 6H19z" fill="url(#drg)"/><rect x="17" y="52" width="30" height="5" rx="1" fill="#3b1585"/><path d="M24 12c0 8 2 13 6 16" stroke="#fff" stroke-opacity=".55" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>`;
     body=`<p class="note" style="margin-top:0">${drWeek(DR_REG).closed?"Tabellone definitivo.":"Tabellone provvisorio in base alla classifica attuale."}</p>
     <div class="drbh"><span>Quarti<small>${drFmt(drWeekStart(22))}</small></span><span>Semifinali<small>${drFmt(drWeekStart(23))}</small></span><span>Finale<small>${drFmt(drWeekStart(24))}</small></span></div>
     <div class="drbk2">
       ${[0,1,2,3].map(i=>`<div class="drq" style="grid-row:${i+1}">${m(22,B[22][i],"QF"+(i+1))}</div>`).join("")}
       <div class="drs" style="grid-row:1/3">${m(23,(B[23]||[])[0],"SF1",["Vincente","Vincente"])}</div>
       <div class="drs" style="grid-row:3/5">${m(23,(B[23]||[])[1],"SF2",["Vincente","Vincente"])}</div>
-      <div class="drf" style="grid-row:1/5"><div class="drfin"><div class="drtop">${cup}<b>${champ?"Campioni":"Finale"}</b>${champ?`<span class="drchamp">${drLg(champ,"m")}${TEAMS[champ].nick}</span>`:""}</div>${m(24,fin,"Finalissima",["Vincente","Vincente"])}</div></div>
+      <div class="drf" style="grid-row:1/5"><div class="drfin"><div class="drtop">${cup}${champ?"<b>Campioni</b>":""}${champ?`<span class="drchamp">${drLg(champ,"m")}${TEAMS[champ].nick}</span>`:""}</div>${m(24,fin,"Finalissima",["Vincente","Vincente"])}</div></div>
     </div>
     <div class="drthird"><h5>Finale 3° posto<small>${drFmt(drWeekStart(24))}</small></h5>${m(24,(B[24]||[])[1],"3° posto",["Perdente semifinale","Perdente semifinale"])}</div>`}
   return `<div class="drroom"><div class="drhd"><span class="drlogo">DREAMERS</span><small>Fanta efficienza · stagione ${STAGIONE_CORRENTE}</small></div>

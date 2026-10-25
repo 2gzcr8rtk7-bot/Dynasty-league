@@ -183,3 +183,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Ora campo e panchina mostrano la media stagionale (`effMed`), e la panchina è ordinata per media; sotto, in piccolo, "ultima X". Scheda giocatore: nuovo riquadro "Ultima partita".
 - Aggiunti i controlli automatici di coerenza (`tools/verifica.mjs` nel workflow GitHub + `checkDati` all'apertura).
 - Tabellone playoff stile bracket: semifinali a metà altezza tra i due quarti, finalissima al centro con coppa dorata (e nome dei campioni a fine stagione), linee di collegamento; finale 3° posto separata in basso. Box vuoti con "Vincente"/"Perdente semifinale"; niente etichette QF/SF dentro i box.
+- Coppa del tabellone viola (tema DREAMERS), senza scritta sotto; a fine stagione compare "Campioni" con la squadra vincitrice.
