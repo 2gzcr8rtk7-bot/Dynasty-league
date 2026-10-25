@@ -1344,17 +1344,19 @@ function vGLeague(){
 /* Gioco "Più o Meno": indovina se il secondo giocatore ha efficienza stagionale più alta o più bassa */
 const HL={a:null,b:null,streak:0,state:"play",best:0,last:null};
 try{HL.best=+localStorage.getItem("hlBest")||0}catch(e){}
-function hlPool(){const out=[];Object.entries(EFF.gioc).forEach(([t,a])=>a.forEach(p=>{if(p[1]!=null&&p[3]!=null&&p[3]>=10){const r=(ROSTER[t]||[]).find(x=>x[0]===p[0]);out.push({t,n:p[0],e:p[1],num:NUM[p[0]],r:r?r[2]:"",nba:r?r[3]:""})}}));return out}
-function hlPick(ex){const P=hlPool().filter(x=>!ex||x.n!==ex.n);let c=P[Math.floor(Math.random()*P.length)];
-  for(let i=0;i<12&&ex&&Math.abs(c.e-ex.e)<0.005;i++)c=P[Math.floor(Math.random()*P.length)];return c}
+/* Valore usato nel confronto: efficienza arrotondata come la vede il giocatore (2 decimali).
+   Efficienza mancante o non numerica = la più bassa possibile. */
+const hlVal=e=>(e==null||isNaN(e))?-99:Math.round(e*100)/100;
+function hlPool(){const out=[];Object.entries(EFF.gioc).forEach(([t,a])=>a.forEach(p=>{if(p[3]!=null&&p[3]>=10){const r=(ROSTER[t]||[]).find(x=>x[0]===p[0]);out.push({t,n:p[0],e:p[1],v:hlVal(p[1]),num:NUM[p[0]],r:r?r[2]:"",nba:r?r[3]:""})}}));return out}
+function hlPick(ex){const P=hlPool().filter(x=>!ex||(x.n!==ex.n&&x.v!==ex.v));return P[Math.floor(Math.random()*P.length)]}
 function hlNew(){HL.a=hlPick();HL.b=hlPick(HL.a);HL.streak=0;HL.state="play";HL.last=null}
 function hlCard(x,show,rev){const c=TEAMS[x.t],R={G:"Guardia",F:"Ala",C:"Centro"};
   return `<div class="hlc" style="--tc:${c.bg}">${jersey(x.t,x.num,x.n)}<div class="hn">${x.n}</div><div class="hm">${c.nick}${x.r?` · ${R[x.r]}`:""}</div>
-  <div class="hv ${show?"":"q"} ${rev?"rev":""}">${show?f2(x.e):"?"}<small>EFF. STAGIONE</small></div></div>`}
+  <div class="hv ${show?"":"q"} ${rev?"rev":""}">${show?(x.e==null?"—":f2(x.e)):"?"}<small>EFF. STAGIONE</small></div></div>`}
 function vGiochi(){
   if(!HL.a)hlNew();
   const rev=HL.state!=="play";
-  const msg=HL.state==="ok"?`<div class="hlmsg ok">Giusto! ${HL.b.n.split(" ").slice(-1)[0]} ha ${f2(HL.b.e)}</div>`:HL.state==="ko"?`<div class="hlmsg ko">Sbagliato! Serie finita a ${HL.streak}</div>`:"";
+  const msg=HL.state==="ok"?`<div class="hlmsg ok">Giusto! ${HL.b.n.split(" ").slice(-1)[0]} ha ${HL.b.e==null?"—":f2(HL.b.e)}</div>`:HL.state==="ko"?`<div class="hlmsg ko">Sbagliato! Serie finita a ${HL.streak}</div>`:"";
   const btn=HL.state==="play"?`<button class="up" data-hl="up"><span>▲ Più alta</span></button><button class="dn" data-hl="dn"><span>▼ Più bassa</span></button>`
     :HL.state==="ok"?`<button class="go" data-hl="next"><span>Avanti ›</span></button>`
     :`<button class="go" data-hl="restart"><span>Gioca ancora</span></button><button class="sh" data-hl="share"><span>Condividi risultato</span></button>`;
@@ -1367,7 +1369,7 @@ function vGiochi(){
 }
 function hlBind(m){}
 function hlAct(b){{const a=b.dataset.hl;
-    if(a==="up"||a==="dn"){const ok=a==="up"?HL.b.e>=HL.a.e:HL.b.e<=HL.a.e;
+    if(a==="up"||a==="dn"){const ok=a==="up"?HL.b.v>HL.a.v:HL.b.v<HL.a.v;
       if(ok){HL.streak++;HL.state="ok";if(HL.streak>HL.best){HL.best=HL.streak;try{localStorage.setItem("hlBest",HL.best)}catch(e){}}}else HL.state="ko";render()}
     else if(a==="next"){HL.a=HL.b;HL.b=hlPick(HL.a);HL.state="play";render()}
     else if(a==="restart"){hlNew();render()}
