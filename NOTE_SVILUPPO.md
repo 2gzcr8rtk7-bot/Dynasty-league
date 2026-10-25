@@ -128,3 +128,4 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 - Esito: differenza < 10% equilibrata, 10–25% leggermente a favore, > 25% sbilanciata; suggerisce i crediti per pareggiare.
 - Per aggiornare i valori: sostituire `VALORI` e `VALORI_AGG`.
 - Risultato: in alto il valore che ogni squadra RICEVE; il giudizio nomina la squadra che ci guadagna ("Sbilanciata a favore dei X", "Ci guadagnano i X del N%").
+- Barra: parte sinistra = quota ricevuta dalla prima squadra, destra = dalla seconda, con le percentuali scritte e uno stacco tra i due colori (utile quando le squadre hanno colori simili).
