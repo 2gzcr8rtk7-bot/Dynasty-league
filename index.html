@@ -815,6 +815,13 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .drn{flex:1;min-width:0;display:grid}.drn b{font-family:var(--display);font-style:italic;font-weight:800;font-size:20px;text-transform:uppercase;color:#cbd5e1}.drn small{font-size:11px;color:#a5b4fc}
 .drr em{font-style:normal;font-family:var(--display);font-weight:800;font-size:26px;color:#94a3b8;min-width:60px;text-align:right}
 .drr.w .drn b,.drr.w em{color:#fff}.drr.w em{text-shadow:0 0 12px rgba(167,139,250,.9)}
+.drplh{margin:26px 0 4px;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.06em;color:#e9d5ff;border-left:4px solid #a855f7;padding-left:10px}
+.drfinal{display:grid;gap:6px;margin-top:10px}
+.drfr{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:rgba(12,8,32,.75);border:1px solid rgba(196,181,253,.22)}
+.drfr .drpos{width:22px;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;color:#c4b5fd;text-align:center}
+.drfr b{font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;text-transform:uppercase;color:#fff}
+.drfr em{font-style:normal;font-size:13px;color:#a5b4fc}
+.drfr.gold{border-color:rgba(250,204,21,.7);box-shadow:0 0 14px rgba(250,204,21,.25)}.drfr.gold .drpos{color:var(--gold)}
 .drsub{display:block;padding:7px 30px 0 12px;font-family:var(--display);font-style:italic;font-weight:800;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#c4b5fd!important}
 .drst{position:absolute;right:0;top:0;bottom:0;width:22px;display:grid;place-items:center;writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-style:italic;font-weight:800;font-size:11px;letter-spacing:.2em;text-transform:uppercase;background:#3b2a7a;color:#ddd6fe}
 .drst.live{background:#7c3aed;color:#fff}
@@ -2619,9 +2626,10 @@ function drPO(st){const s=st.map(x=>x.t),seed={};s.forEach((t,i)=>seed[t]=i+1);
   while(k<=DR_TOT){const act=R[r].filter(x=>!x.win);if(RS[r]==null)RS[r]=k;W[k]={r,g:k-RS[r]+1,pr:act};
     const w=drWeek(k);if(!regDone||!w.closed)break;
     act.forEach(x=>{const A=drTeam(k,x.a,w).score,B=drTeam(k,x.b,w).score,wa=A>=B;x.g.push({k,A,B});wa?x.wa++:x.wb++;if(x.wa===2||x.wb===2){x.win=x.wa===2?x.a:x.b;x.lose=x.win===x.a?x.b:x.a}});
-    k++;if(R[r].every(x=>x.win)){if(r===0)R[1]=[mk(R[0][0].win,R[0][1].win),mk(R[0][2].win,R[0][3].win)];
-      else if(r===1)R[2]=[mk(R[1][0].win,R[1][1].win),mk(R[1][0].lose,R[1][1].lose)];else{done=true;break}r++}}
-  return{seed,R,W,RS,done,end:done?k-1:DR_TOT,champ:done?R[2][0].win:null}}
+    k++;if(R[r].every(x=>x.win)){if(r===0)R[1]=[mk(R[0][0].win,R[0][1].win),mk(R[0][2].win,R[0][3].win),mk(R[0][0].lose,R[0][1].lose),mk(R[0][2].lose,R[0][3].lose)];
+      else if(r===1)R[2]=[mk(R[1][0].win,R[1][1].win),mk(R[1][0].lose,R[1][1].lose),mk(R[1][2].win,R[1][3].win),mk(R[1][2].lose,R[1][3].lose)];else{done=true;break}r++}}
+  const fin=[];(R[2]||[]).forEach(x=>{fin.push(x.win||null,x.lose||null)}); // posizioni finali 1..8
+  return{seed,R,W,RS,done,end:done?k-1:DR_TOT,champ:done?R[2][0].win:null,fin}}
 const DR_RN=["Quarti di finale","Semifinali","Finale"];
 const drLg=(t,z)=>`<span class="drlg ${z||""}" style="--tc:${TEAMS[t].bg}">${badge(t)}</span>`;
 const DR_PH=(k,P)=>{if(k<=DR_REG)return `Turno ${k}`;const w=P&&P.W[k];return w?`${DR_RN[w.r]} · gara ${w.g}`:"Playoff · da definire"};
@@ -2645,7 +2653,7 @@ function vDream(){
     <p class="note">${W.closed?"Turno chiuso: titolari = i 10 della rosa con il PDK medio settimanale più alto (capitano ×1,5, ultimi 4 ½), gli altri in tribuna. Se meno di 10 hanno giocato, i posti mancanti valgono 0.":"Turno in corso: tutta la rosa concorre; i 10 con il PDK medio più alto finora sono titolari (capitano ×1,5, ultimi 4 ½) e cambiano a ogni report. Punteggio in corso = media dei titolari attuali."}</p>`}
   else if(DR.tab==="turno"){const pr=drPairs(k,st,P);
     const sub=(a,b)=>{if(!PW)return"";const x=PW.pr.find(x=>x.a===a&&x.b===b),ix=P.R[PW.r].indexOf(x);let wa=0,wb=0;x.g.filter(g=>g.k<=k).forEach(g=>g.A>=g.B?wa++:wb++);
-      return `<span class="drsub">${PW.r===2?(ix?"Finale 3° posto":"Finalissima"):PW.r===1?"Semifinale "+(ix+1):"Quarto "+(ix+1)} · gara ${PW.g} · serie ${wa}–${wb}</span>`};
+      return `<span class="drsub">${PW.r===2?["Finalissima","Finale 3° posto","Finale 5° posto","Finale 7° posto"][ix]:PW.r===1?(ix<2?"Semifinale "+(ix+1):"Piazzamenti 5°–8° · "+(ix-1)):"Quarto "+(ix+1)} · gara ${PW.g} · serie ${wa}–${wb}</span>`};
     const card=([a,b])=>{const A=drTeam(k,a,W),B=drTeam(k,b,W),wa=W.closed&&A.score>=B.score,wb=W.closed&&B.score>A.score;
       const row=(T,w)=>`<div class="drr ${w?"w":""}">${drLg(T.t)}<span class="drn"><b>${TEAMS[T.t].nick}</b><small>${W.closed?(T.zeros?`${10-T.zeros}/10 · ${T.zeros} a zero`:"10/10"):T.played+"/10 titolari finora"}</small></span><em>${drScore(T.score)}</em></div>`;
       return `<button class="drm" data-dr="open" data-a="${a}" data-b="${b}">${sub(a,b)}${row(A,wa)}${row(B,wb)}<span class="drst ${W.closed?"":"live"}">${W.closed?"Finale":W.started?"In corso":"Da giocare"}</span></button>`};
@@ -2658,7 +2666,7 @@ function vDream(){
     const form=t=>{const o=[];for(let k=1;k<=DR_REG;k++){const w=drWeek(k);if(!w.closed)continue;const pr=DR_SCHED[k-1].find(p=>p.includes(t));if(!pr)continue;const o2=pr[0]===t?pr[1]:pr[0];o.push(drTeam(k,t,w).score>=drTeam(k,o2,w).score?"V":"P")}return o.slice(-5)};
     const ld=st[0]?st[0].w:0;
     body=`<div class="drcla">${st.map((x,i)=>{const f=form(x.t);return `<div class="drcr ${i<1?"lead":""}" style="--tc:${TEAMS[x.t].bg}"><span class="drpos">${i+1}</span>${drLg(x.t,"l")}<div class="drci"><b>${TEAMS[x.t].nick}</b><small>${x.n?`${x.n} turni giocati`:"nessun turno giocato"}</small><span class="drfm">${f.length?f.map(r=>`<i class="${r}">${r}</i>`).join(""):'<em>forma —</em>'}</span></div><div class="drcwl"><b>${x.w}<small>V</small></b><b class="l">${x.l}<small>P</small></b><b class="avg">${x.avg==null?"—":pdkF(x.avg)}<small>MEDIA</small></b>${i>0&&ld>x.w?`<em>−${ld-x.w} V</em>`:""}</div></div>`}).join("")}</div>
-    <p class="note">Vittoria = punteggio di turno più alto. A parità di vittorie è davanti chi ha la media punteggio più alta. Tutte e 8 le squadre vanno ai playoff: la posizione decide gli accoppiamenti (1ª–8ª, 4ª–5ª, 2ª–7ª, 3ª–6ª). Serie al meglio delle 3, una gara a settimana.</p>`}
+    <p class="note">Vittoria = punteggio di turno più alto. A parità di vittorie è davanti chi ha la media punteggio più alta. Tutte e 8 le squadre vanno ai playoff: la posizione decide gli accoppiamenti (1ª–8ª, 4ª–5ª, 2ª–7ª, 3ª–6ª). Serie al meglio delle 3, una gara a settimana; ci sono anche le serie per il 3°, 5° e 7° posto, così la classifica finale va da 1 a 8.</p>`}
   else{const sd=P.seed,R=P.R;
     const m=(x,ph)=>{if(!x)return`<div class="drbm tbd">${ph?ph.map(y=>`<span>${y}</span>`).join(""):"<span>da definire</span>"}</div>`;const win=x.win||null;
       return `<div class="drbm">${[x.a,x.b].map((t,i)=>`<div class="drbr ${win===t?"w":win?"l":""}"><i>${sd[t]}</i>${drLg(t,"s")}<span>${TEAMS[t].nick}</span><em>${x.g.length?(i?x.wb:x.wa):""}</em></div>`).join("")}</div>`};
@@ -2672,7 +2680,14 @@ function vDream(){
       <div class="drs" style="grid-row:3/5">${m((R[1]||[])[1],["Vincente","Vincente"])}</div>
       <div class="drf" style="grid-row:1/5"><div class="drfin"><div class="drtop">${cup}${champ?"<b>Campioni</b>":""}${champ?`<span class="drchamp">${drLg(champ,"m")}${TEAMS[champ].nick}</span>`:""}</div>${m((R[2]||[])[0],["Vincente","Vincente"])}</div></div>
     </div>
-    <div class="drthird"><h5>Finale 3° posto<small>${rd(2)}</small></h5>${m((R[2]||[])[1],["Perdente semifinale","Perdente semifinale"])}</div>`}
+    <div class="drthird"><h5>Finale 3° posto<small>${rd(2)}</small></h5>${m((R[2]||[])[1],["Perdente semifinale","Perdente semifinale"])}</div>
+    <h4 class="drplh">Piazzamenti 5°–8°</h4>
+    <div class="drthird"><h5>Semifinale 1<small>${rd(1)}</small></h5>${m((R[1]||[])[2],["Perdente quarto 1","Perdente quarto 2"])}</div>
+    <div class="drthird"><h5>Semifinale 2<small>${rd(1)}</small></h5>${m((R[1]||[])[3],["Perdente quarto 3","Perdente quarto 4"])}</div>
+    <div class="drthird"><h5>Finale 5° posto<small>${rd(2)}</small></h5>${m((R[2]||[])[2],["Vincente","Vincente"])}</div>
+    <div class="drthird"><h5>Finale 7° posto<small>${rd(2)}</small></h5>${m((R[2]||[])[3],["Perdente","Perdente"])}</div>
+    <h4 class="drplh">Classifica finale</h4>
+    <div class="drfinal">${Array.from({length:8},(_,i)=>{const t=P.fin[i];return `<div class="drfr ${i===0&&t?"gold":""}"><span class="drpos">${i+1}</span>${t?`${drLg(t,"s")}<b>${TEAMS[t].nick}</b>`:`<em>da decidere</em>`}</div>`}).join("")}</div>`}
   return `<div class="drroom"><button class="drexit" data-game="menu">‹ Torna all'app</button><div class="drhd"><span class="drlogo">DREAMERS</span><small>Fanta PDK · stagione ${STAGIONE_CORRENTE}</small></div>
   <div class="drtabs">${tabs}</div>${body}</div>
   <p class="note">Meritocrazia: ogni settimana i 10 giocatori della rosa con il PDK medio più alto diventano titolari, gli altri vanno in tribuna. Punteggio = media dei 10 PDK settimanali (media dei punti Dunkest delle partite della settimana); il migliore è capitano ×1,5 e i 4 peggiori valgono la metà (provvisori durante la settimana, definitivi a turno chiuso). Dati aggiornati al ${EFF.agg}.</p>`}
