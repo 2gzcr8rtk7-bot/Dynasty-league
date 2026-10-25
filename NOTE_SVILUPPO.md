@@ -78,6 +78,6 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 - Importante: perché funzioni, quando si aggiorna `EFF` va aggiornato anche il numero di partite e `ULTIMA` con l'efficienza dell'ultima partita di ogni giocatore che ha giocato.
 
 ## 25/10/2026 (4) — Partita simulata: merito + caso
-- Esito = 55% migliori 5 per efficienza + 15% i 5 successivi + 30% caso (`SIMW`). "Migliori" = più efficienti della rosa con almeno 10 minuti, non i titolari del campo.
-- Vantaggio = 0,55·tanh(Δtop/0,15) + 0,15·tanh(Δaltri/0,20); caso = 0,30·N(0,1). Scarto = 2 + |valore|·28 (max 40).
+- Esito = 60% migliori 5 per efficienza + 20% i 5 successivi + 20% caso (`SIMW`). "Migliori" = più efficienti della rosa con almeno 10 minuti, non i titolari del campo.
+- Vantaggio = 0,60·tanh(Δtop/0,15) + 0,20·tanh(Δaltri/0,20); caso = 0,20·N(0,1). Scarto = 2 + |valore|·28 (max 40).
 - Prima di giocare mostra le medie e il pronostico in percentuale (`simProb`). La cronaca è generata in modo coerente con il punteggio finale.

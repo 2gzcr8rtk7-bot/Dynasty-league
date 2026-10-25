@@ -1642,9 +1642,9 @@ function tiroCanvas(cv){
 
 /* ===== Gioco 2: Partita simulata ===== */
 const SIM={home:null,away:null,timer:null,ev:[],i:0,state:"pick",res:null};
-/* Partita simulata: esito = 55% forza dei 5 più efficienti + 15% forza dei 5 successivi + 30% caso.
+/* Partita simulata: esito = 60% forza dei 5 più efficienti + 20% forza dei 5 successivi + 20% caso.
    I "migliori" sono i più efficienti della rosa (min. 10 minuti di media), non i titolari impostati nel campo. */
-const SIMW={top:.55,bench:.15,luck:.30,sdTop:.15,sdBench:.20};
+const SIMW={top:.60,bench:.20,luck:.20,sdTop:.15,sdBench:.20};
 function simTeam(t){
   const all=(EFF.gioc[t]||[]).filter(p=>p[1]!=null).map(p=>({n:p[0],e:p[1],m:p[3]||0}));
   const ok=all.filter(p=>p.m>=10).sort((a,b)=>b.e-a.e),low=all.filter(p=>p.m<10).sort((a,b)=>b.e-a.e);
@@ -1688,7 +1688,7 @@ function vSim(){
   const h=SIM.home,a=SIM.away;
   const sh=simStr(h),sa=simStr(a),ph=simProb(h,a);
   const head=`${H("Partita simulata",`<em>Merito + fortuna</em>`)}
-  <p class="gintro">L'esito dipende per il <b>55%</b> dai 5 giocatori più efficienti di ogni squadra, per il <b>15%</b> dai 5 successivi e per il <b>30%</b> dal caso. Più è grande la differenza di efficienza, più è probabile vincere e più largo è lo scarto.</p>
+  <p class="gintro">L'esito dipende per il <b>60%</b> dai 5 giocatori più efficienti di ogni squadra, per il <b>20%</b> dai 5 successivi e per il <b>20%</b> dal caso. Più è grande la differenza di efficienza, più è probabile vincere e più largo è lo scarto.</p>
   <div class="simsel"><select id="simH">${opt(h)}</select><span>vs</span><select id="simA">${opt(a)}</select></div>
   <div class="simpre"><div><small>Migliori 5</small><b>${f2(sh.top)}</b><small>Altri 5</small><b>${f2(sh.bench)}</b></div>
    <div class="simbar"><i style="width:${Math.round(ph*100)}%;background:${TEAMS[h].bg}"></i><i style="width:${100-Math.round(ph*100)}%;background:${TEAMS[a].bg}"></i><span>${Math.round(ph*100)}%</span><span>${100-Math.round(ph*100)}%</span><em>Pronostico</em></div>
