@@ -2436,11 +2436,12 @@ const drEff=a=>a?a.s/a.g:null; // media dei PDK partita
 function drTeam(k,t,W){W=W||drWeek(k);const F=drForm(k)[t]||{t:[],r:[]};
   const slots=F.t.map(n=>({n,e:drEff(W.acc[n]),a:W.acc[n]}));
   if(W.closed){const used=new Set();slots.forEach(s=>{if(s.e==null){const sub=F.r.find(r=>!used.has(r)&&W.acc[r]);if(sub){used.add(sub);s.sub=sub;s.e=drEff(W.acc[sub]);s.a=W.acc[sub]}else{s.zero=true;s.e=0}}})}
-  /* A turno chiuso: capitano (PDK medio più alto dei 10) ×1,5; i 4 più bassi ×0,5. Punteggio = media dei 10 valori finali. */
-  if(W.closed&&slots.length){slots.forEach(s=>s.m=1);const o=slots.slice().sort((a,b)=>b.e-a.e);o[0].m=1.5;o[0].cap=true;o.slice(-4).forEach(s=>{if(!s.cap){s.m=.5;s.half=true}})}
-  slots.forEach(s=>s.f=s.e==null?null:s.e*(s.m||1));
-  const played=slots.filter(s=>s.e!=null);
-  const score=W.closed?slots.reduce((x,s)=>x+s.f,0)/10:(played.length?played.reduce((x,s)=>x+s.e,0)/played.length:null);
+  /* Capitano (PDK medio più alto) ×1,5 e 4 più bassi ×0,5. Si applica sempre, anche a turno in corso, tra chi ha già un valore:
+     a ogni report capitano e dimezzati possono cambiare; a turno chiuso (dopo le sostituzioni) diventano definitivi. */
+  const vs=slots.filter(s=>s.e!=null);slots.forEach(s=>{s.m=1;s.cap=s.half=false});
+  if(vs.length){const o=vs.slice().sort((a,b)=>b.e-a.e);o[0].m=1.5;o[0].cap=true;o.slice(1).slice(-4).forEach(s=>{s.m=.5;s.half=true})}
+  slots.forEach(s=>s.f=s.e==null?null:s.e*s.m);
+  const score=W.closed?slots.reduce((x,s)=>x+s.f,0)/10:(vs.length?vs.reduce((x,s)=>x+s.f,0)/vs.length:null);
   return{t,slots,res:F.r,score,played:slots.filter(s=>s.a).length}}
 function drPairs(k,stand){if(k<=DR_REG)return DR_SCHED[k-1];return drBracket(stand)[k]||[]}
 function drStand(){const S={};Object.keys(TEAMS).forEach(t=>S[t]={t,w:0,l:0,pf:0,pa:0,n:0});
@@ -2466,7 +2467,7 @@ function vDream(){
       ${T.slots.map(s=>`<div class="drpl ${s.zero?"z":""}"><span>${s.sub?`<i class="drsub">↺</i>${s.sub}<small>per ${s.n}</small>`:s.n}${s.a?`<small>${s.a.g} ${s.a.g===1?"partita":"partite"}</small>`:""}</span><b>${s.cap?`<i class="drcap">C ×1,5</i>`:s.half?`<i class="drhalf">½</i>`:""}${s.zero?"0,0":s.e==null?(W.closed?"—":"attesa"):s.m&&s.m!==1?`<s>${pdkF(s.e)}</s> ${pdkF(s.f)}`:pdkF(s.e)}</b></div>`).join("")}
       <div class="drres"><small>Riserve</small>${T.res.map(n=>`<span>${n}${W.acc[n]?` <b>${pdkF(drEff(W.acc[n]))}</b>`:""}</span>`).join("")||"<span>—</span>"}</div></div>`;
     body=`<button class="gback" data-dr="close">‹ ${DR_PH(k)}</button><div class="drdet">${col(A)}${col(B)}</div>
-    <p class="note">${W.closed?"Turno chiuso: chi non ha giocato è stato sostituito dalla miglior riserva (per valore) che ha giocato; senza cambi disponibili vale 0. Poi il capitano (C, PDK medio più alto) vale ×1,5 e i 4 più bassi (½) valgono la metà.":"Turno in corso: punteggio = media dei titolari che hanno già giocato. Le sostituzioni si applicano alla chiusura del turno."}</p>`}
+    <p class="note">${W.closed?"Turno chiuso: chi non ha giocato è stato sostituito dalla miglior riserva (per valore) che ha giocato; senza cambi disponibili vale 0. Poi il capitano (C, PDK medio più alto) vale ×1,5 e i 4 più bassi (½) valgono la metà.":"Turno in corso: capitano (C ×1,5) e i 4 più bassi (½) si aggiornano a ogni report tra chi ha già giocato; punteggio in corso = media dei loro valori. Le sostituzioni di chi non gioca si applicano alla chiusura del turno."}</p>`}
   else if(DR.tab==="turno"){const pr=drPairs(k,st);
     const card=([a,b])=>{const A=drTeam(k,a,W),B=drTeam(k,b,W),wa=W.closed&&A.score>=B.score,wb=W.closed&&B.score>A.score;
       const row=(T,w)=>`<div class="drr ${w?"w":""}">${drLg(T.t)}<span class="drn"><b>${TEAMS[T.t].nick}</b><small>${W.closed?"10/10":T.played+"/10 hanno giocato"}</small></span><em>${drScore(T.score)}</em></div>`;
@@ -2494,7 +2495,7 @@ function vDream(){
     <div class="drthird"><h5>Finale 3° posto<small>${drFmt(drWeekStart(24))}</small></h5>${m(24,(B[24]||[])[1],"3° posto",["Perdente semifinale","Perdente semifinale"])}</div>`}
   return `<div class="drroom"><div class="drhd"><span class="drlogo">DREAMERS</span><small>Fanta PDK · stagione ${STAGIONE_CORRENTE}</small></div>
   <div class="drtabs">${tabs}</div>${body}</div>
-  <p class="note">Ogni squadra schiera i suoi 10 giocatori con il valore più alto; le riserve entrano da sole a fine turno al posto di chi non ha giocato. Punteggio = media dei 10 PDK settimanali (media dei punti Dunkest delle partite della settimana); a turno chiuso il migliore è capitano ×1,5 e i 4 peggiori valgono la metà. Dati aggiornati al ${EFF.agg}.</p>`}
+  <p class="note">Ogni squadra schiera i suoi 10 giocatori con il valore più alto; le riserve entrano da sole a fine turno al posto di chi non ha giocato. Punteggio = media dei 10 PDK settimanali (media dei punti Dunkest delle partite della settimana); il migliore è capitano ×1,5 e i 4 peggiori valgono la metà (provvisori durante la settimana, definitivi a turno chiuso). Dati aggiornati al ${EFF.agg}.</p>`}
 function drAct(b){const d=b.dataset;
   if(d.dr==="tab"){DR.tab=d.k;DR.open=null}
   else if(d.dr==="wk"){DR.k=Math.max(1,Math.min(DR_TOT,DR.k+(+d.d)));DR.open=null}
