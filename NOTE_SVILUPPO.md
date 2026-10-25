@@ -113,3 +113,4 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 - Regola unica presa dalla classifica competenza: il logo occupa il riquadro colorato meno 2 px per lato (`.wedge` padding 2px).
 - Efficienza (squadre e Top/Flop) 54 px, Classifica e Sala Trofei 50–54, Risultati 51, Infortuni e Cassa 42, Sfida della notte 38, Trade speciali e Partita simulata 46. Trade resta 30 (colonna stretta).
 - Tolte le regole speciali `.wedge:has(.lg-DUC)` e `.wedge .logo.lg-DUC` (100%): ora la scritta Ducks ha lo stesso margine e la stessa misura degli altri loghi in ogni riquadro.
+- Partita simulata: logo Ducks +15% (53 px invece di 46, regola `.simtm .wedge .logo.lg-DUC`).
