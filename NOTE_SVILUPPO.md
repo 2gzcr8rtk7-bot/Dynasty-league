@@ -3,6 +3,11 @@
 File di passaggio tra chi lavora sull'app (due account Claude diversi).
 Prima di iniziare: leggere questo file. Alla fine di ogni sessione: aggiungere cosa è cambiato.
 
+> **IMPORTANTE – dopo OGNI aggiornamento di efficienza (EFF/ULTIMA)**, prima di fare commit lanciare:
+> `node tools/dreamers.mjs`
+> e includere nel commit il file `dreamers-data.js`. Serve al gioco DREAMERS per salvare la notte appena caricata.
+> Se ci si dimentica non si perde niente: lo script rilegge tutta la storia git e recupera le notti mancanti la volta dopo.
+
 L'app è tutta in `index.html` (loghi squadre in base64 nell'oggetto `LOGO`).
 Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 
@@ -155,3 +160,12 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLARI`, `TRADES`, `SPECIALI`) al momento del disegno, senza copiare numeri a mano. Così basta aggiornare quegli oggetti con il report e si aggiornano: classifiche, efficienza, Top/Flop, panchina, Efficienza Cup, Sfida della notte, giochi, calcolatore (roster), cassa.
 - Bottone "Condividi classifica" nella sala: `shareCup` crea un PNG 1080 di larghezza (sfondo rosso, titolo, anno·ruolo, classifica con medaglie, loghi ed efficienza) e apre la condivisione del telefono (o lo scarica). Usa i dati del momento.
 - Immagine condivisa della Cup: per i Ducks usa la sola scritta (`LOGO2`), come nei loghi piccoli dell'app.
+
+## 25/10/2026 (17) — Gioco 5: DREAMERS (fanta efficienza)
+- Quinta card nel menu Giochi (`GAME="dream"`, `vDream`, `drAct`, stato `DR`). Tema viola/notte. Schede: Turno, Calendario, Classifica, Playoff; tocca una partita per vedere le due formazioni.
+- Squadre: le 8 franchigie. Titolari = i 10 con valore più alto in `VALORI` (Court Consensus, come il calcolatore); gli altri sono riserve in ordine di valore.
+- Turni da lunedì a domenica (date NBA USA) dal 26/10/2026: 1–21 regular season (3 gironi all'italiana, calendario `DR_SCHED` col metodo del cerchio), 22 quarti (1–8, 4–5, 2–7, 3–6), 23 semifinali, 24 finale + 3° posto (5–11/04/2027, ultima settimana NBA).
+- Punteggio di turno = media delle 10 efficienze settimanali (Dunkest della settimana ÷ minuti della settimana di ogni giocatore). Durante il turno: "in corso", media dei titolari che hanno già giocato. A turno chiuso (c'è la notte della domenica): chi non ha giocato è sostituito dalla miglior riserva per valore che ha giocato; senza cambi vale 0.
+- Classifica: vittorie, poi media punteggi. Playoff a 8, in caso di parità passa la testa di serie migliore.
+- Dati: `dreamers-data.js` (`DREAM_DATA.notti` = per ogni notte NBA {giocatore: [Dunkest, minuti]}; `DREAM_DATA.form` = formazione di ogni turno, bloccata alla prima notte del turno così le trade successive valgono dal turno dopo). Generato da `tools/dreamers.mjs` leggendo la storia git di index.html: notte = data del report − 1 giorno; Dunkest della notte = colonna 5 di `EFF.gioc`, minuti = Dunkest ÷ efficienza della notte (colonna 6). L'ultima notte del report attuale viene comunque letta dal vivo da `EFF`.
+- Tolte dal repository due immagini di prova finite lì per errore (ntd1.png, ntd2.png).
