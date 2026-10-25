@@ -603,10 +603,10 @@ nav button{font-size:15px;letter-spacing:.04em}
 .vtlg{width:30px!important;height:30px!important}
 .vtbar{position:relative;display:flex;height:10px;margin:10px 0 8px;background:#223}.vtbar i{display:block;height:100%}
 .vtbar em{position:absolute;top:-3px;bottom:-3px;width:2px;background:#fff;transform:translateX(-1px)}
-.vtver{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.vtver{display:grid;gap:2px}
 .vtver b{font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase}
 .vtres.ok .vtver b{color:#4ade80}.vtres.mid .vtver b{color:#fbbf24}.vtres.bad .vtver b{color:#f87171}
-.vtver span{font-size:12px;color:var(--muted);white-space:nowrap}
+.vtver span{font-size:12.5px;color:var(--muted)}
 .vtsug{margin:8px 0 0;font-size:13.5px;color:#dfe6f5}
 .vtgrid{display:grid;gap:12px}
 .vtcard{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-top:4px solid var(--tc)}
@@ -1126,9 +1126,9 @@ function vtResHTML(){
   const fav=A>B?tb:ta,give=A>B?ta:tb;const cr=Math.round(Math.abs(A-B)/VAL_CR/5)*5;
   const [lab,cls]=d<.10?["Equilibrata","ok"]:d<.25?[`Leggermente a favore dei ${TEAMS[fav].nick}`,"mid"]:[`Sbilanciata a favore dei ${TEAMS[fav].nick}`,"bad"];
   return `<div class="vtres ${cls}">
-    <div class="vtsc"><span>${badge(ta,"vtlg")}<b>${Math.round(A)}</b><small>${ca.nick} danno</small></span><span class="r"><small>${cb.nick} danno</small><b>${Math.round(B)}</b>${badge(tb,"vtlg")}</span></div>
-    <div class="vtbar"><i style="width:${pa}%;background:${ca.bg}"></i><i style="width:${100-pa}%;background:${cb.bg}"></i><em style="left:50%"></em></div>
-    <div class="vtver"><b>${lab}</b><span>Differenza ${Math.round(d*100)}%</span></div>
+    <div class="vtsc"><span>${badge(ta,"vtlg")}<b>${Math.round(B)}</b><small>${ca.nick} ricevono</small></span><span class="r"><small>${cb.nick} ricevono</small><b>${Math.round(A)}</b>${badge(tb,"vtlg")}</span></div>
+    <div class="vtbar"><i style="width:${100-pa}%;background:${ca.bg}"></i><i style="width:${pa}%;background:${cb.bg}"></i><em style="left:50%"></em></div>
+    <div class="vtver"><b>${lab}</b><span>${d<.10?"Differenza":"Ci guadagnano i "+TEAMS[fav].nick+" del"} ${Math.round(d*100)}%</span></div>
     ${d>=.10&&cr>0?`<p class="vtsug">Per pareggiare: i <b>${TEAMS[fav].nick}</b> dovrebbero aggiungere circa <b>${cr} crediti</b> (o i ${TEAMS[give].nick} togliere qualcosa).</p>`:""}
   </div>`}
 function vtCard(k){

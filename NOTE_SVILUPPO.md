@@ -127,3 +127,4 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 - Punti trade = (valore/1000)^`VAL_EXP` (3,3), così le stelle pesano di più. Crediti: 1 cr = `VAL_CR` (1,13) punti, tarato sulle pick indicate da Francesco: pick 1 = 300 cr, 2 = 250, 3 = 200, 4 = 150, 5 = 100 (`PICK_CR`).
 - Esito: differenza < 10% equilibrata, 10–25% leggermente a favore, > 25% sbilanciata; suggerisce i crediti per pareggiare.
 - Per aggiornare i valori: sostituire `VALORI` e `VALORI_AGG`.
+- Risultato: in alto il valore che ogni squadra RICEVE; il giudizio nomina la squadra che ci guadagna ("Sbilanciata a favore dei X", "Ci guadagnano i X del N%").
