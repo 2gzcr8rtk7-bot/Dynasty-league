@@ -223,3 +223,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 
 ## 25/10/2026 (26) — Nuovo logo Foxes
 - `LOGO.FOX` sostituito con il nuovo logo "Detroit Foxes" (volpe in gessato, PNG trasparente). Vale ovunque: Home, testate, campo, classifiche, loghi piccoli e immagini condivise.
+- Efficienza squadre: interruttore "Eff. / PDK" accanto al menu Stagione (`effMet`). In PDK: valore di squadra = media dei PDK medi a partita dei giocatori della rosa (stagione scelta, `teamPdk`), notte = media PDK di chi ha giocato (`teamPdkNight`), classifica riordinata per PDK. Scegliendo PDK anche la tabella squadra si apre in PDK.

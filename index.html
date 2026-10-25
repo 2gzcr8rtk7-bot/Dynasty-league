@@ -45,6 +45,8 @@
 .gszn{display:flex;align-items:center;gap:10px;margin:0 0 14px}
 .gszn label{font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .gszn select{flex:1;max-width:260px;appearance:none;-webkit-appearance:none;background:linear-gradient(180deg,var(--panel2),var(--panel)) padding-box;color:#fff;border:1px solid var(--line);border-left:4px solid var(--gold);font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;letter-spacing:.06em;text-transform:uppercase;padding:8px 34px 8px 12px;cursor:pointer;background-image:linear-gradient(45deg,transparent 50%,var(--gold) 50%),linear-gradient(135deg,var(--gold) 50%,transparent 50%);background-position:calc(100% - 18px) 55%,calc(100% - 12px) 55%;background-size:6px 6px,6px 6px;background-repeat:no-repeat}
+.effbar{display:flex;align-items:center;gap:8px;margin:0 0 14px}.effbar .gszn{flex:1;min-width:0;margin:0}.effbar .gszn select{min-width:0;width:100%}
+.effsw{flex:none;width:96px}.effsw button{height:38px}
 .gszn select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .gszn option{background:#0d1530;color:#fff;font-style:normal}
 .gbig.g2{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);align-items:stretch}
@@ -1405,10 +1407,17 @@ function effPast(sz){const S=STAGIONI[sz]||{},gioc={},squadre=[];
   squadre.sort((a,b)=>(b[4]??-9)-(a[4]??-9));return{agg:sz,squadre,gioc,past:true}}
 const SZ_ALL=["2026/27","2025/26","2024/25"],SZ_LBL={"2026/27":"Stagione 3","2025/26":"Stagione 2","2024/25":"Stagione 1"};let PTcur=null;
 function szSelect(sz){return `<div class="gszn"><label for="gseason">Stagione</label><select id="gseason">${SZ_ALL.map((s,i)=>`<option value="${s}"${s===sz?" selected":""}>${SZ_LBL[s]} · ${s}</option>`).join("")}</select></div>`}
+let effMet="eff";
+/* PDK medio di squadra = media dei PDK medi a partita dei giocatori della rosa che hanno giocato (dati della stagione scelta);
+   PDK della notte = media dei PDK della notte di chi è sceso in campo (EFF.gioc colonna 5, solo stagione in corso) */
+function teamPdk(t,PT){const v=(ROSTER[t]||[]).map(p=>PT[p[0]]||[]).filter(g=>g.length).map(g=>g.reduce((a,x)=>a+x[3],0)/g.length);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null}
+function teamPdkNight(t){const v=(EFF.gioc[t]||[]).filter(p=>p[4]!=null).map(p=>p[4]);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null}
 function vEfficienza(){
   const sz=SZ_ALL.includes(gSeason)?gSeason:SZ_ALL[0],E=sz===SZ_ALL[0]?EFF:effPast(sz);
   const t0=TEAMS[effTeam]?effTeam:TEAMS[curTeam]?curTeam:"DOL";
-  const sq=E.squadre.map((x,i)=>{const[t,inc,dn,en,es,ds]=x;return `<div class="erow" data-effsq="${t}" role="button" tabindex="0" aria-label="Tabella efficienza ${TEAMS[t].nick}">${wedge(t)}<div class="einfo"><b>${TEAMS[t].nick}</b><div class="ebar"><span style="width:${Math.max(4,Math.min(100,es/1.1*100))}%;background:${TEAMS[t].bg}"></span></div><small>${E.past?SZ_LBL[sz]+" · regular season "+sz:`${inc} in campo nella notte · notte ${en==null?"—":f2(en)}`}</small></div><div class="eval">${eff(es)}<small>${f2(ds)} Dk</small></div><span class="ego">›</span></div>`}).join("");
+  const PTs=E.past?(STAGIONI[sz]||{}):PARTITE,isP=effMet==="pdk";
+  const SQ=isP?E.squadre.map(x=>({x,v:teamPdk(x[0],PTs),n:E.past?null:teamPdkNight(x[0])})).sort((a,b)=>(b.v??-99)-(a.v??-99)):E.squadre.map(x=>({x,v:x[4],n:x[3]}));
+  const sq=SQ.map(({x,v,n})=>{const[t,inc,dn,en,es,ds]=x;return `<div class="erow" data-effsq="${t}" role="button" tabindex="0" aria-label="Tabella efficienza ${TEAMS[t].nick}">${wedge(t)}<div class="einfo"><b>${TEAMS[t].nick}</b><div class="ebar"><span style="width:${Math.max(4,Math.min(100,isP?(v||0)/40*100:es/1.1*100))}%;background:${TEAMS[t].bg}"></span></div><small>${E.past?SZ_LBL[sz]+" · regular season "+sz:`${inc} in campo nella notte · notte ${n==null?"—":isP?pdkF(n):f2(n)}`}</small></div><div class="eval">${isP?(v==null?'<span class="ev na">—</span>':`<span class="ev ${pdkLvl(v)}"><i></i>${pdkF(v)}</span>`):eff(es)}<small>${isP?"PDK medio":f2(ds)+" Dk"}</small></div><span class="ego">›</span></div>`}).join("");
   const all=[];Object.entries(E.gioc).forEach(([t,a])=>a.forEach(p=>p[1]!=null&&p[3]>=10&&all.push([t,...p])));
   all.sort((a,b)=>b[2]-a[2]);
   const prow=(p,i)=>`<div class="trow plink" data-plt="${p[0]}" data-pln="${p[1]}"><span class="trk">${i+1}</span>${wedge(p[0])}<span class="tnm"><b>${p[1]}</b><small>${TEAMS[p[0]].nick} · ${p[4].toLocaleString("it-IT")} min</small></span>${eff(p[2])}</div>`;
@@ -1418,9 +1427,9 @@ function vEfficienza(){
   const rows=E.gioc[t0].slice().sort((a,b)=>(b[1]??-9)-(a[1]??-9)).map(p=>`<tr><td class="pnm">${p[0]}</td><td>${eff(p[1])}</td><td>${p[2]}</td><td>${p[3]==null?"—":p[3].toLocaleString("it-IT",{minimumFractionDigits:1})}</td></tr>`).join("");
   return `<button class="cupbtn" data-cupgo="1"><svg class="cupt" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v4a5 5 0 0 1-10 0V4zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M12 13v4M8.5 20h7M10 17h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Efficienza Cup</span><i>›</i></button>
   ${H("Efficienza squadre",`<em>${E.past?SZ_LBL[sz]+" · "+sz:"Agg. "+E.agg}</em>`)}
-  ${szSelect(sz)}
+  <div class="effbar">${szSelect(sz)}<div class="metsw effsw"><button data-effmet="eff" aria-pressed="${!isP}">Eff.</button><button data-effmet="pdk" aria-pressed="${isP}">PDK</button></div></div>
   <div class="eboard">${sq}</div>
-  <p class="note">Efficienza stagionale = Dunkest totali ÷ minuti giocati da tutta la rosa. Dk = Dunkest stagionali di squadra. Tocca una squadra per la tabella dei suoi giocatori.</p>
+  <p class="note">${isP?"PDK medio = media dei PDK a partita dei giocatori della rosa (stagione scelta). Notte = media dei PDK di chi è sceso in campo. Colori: verde da 35, giallo 20–35, rosso sotto 20.":"Efficienza stagionale = Dunkest totali ÷ minuti giocati da tutta la rosa. Dk = Dunkest stagionali di squadra."} Tocca una squadra per la tabella dei suoi giocatori.</p>
   <div style="height:22px"></div>
   <div class="hgreen">${H("Top 10 lega",`<em>min. 10 minuti</em>`)}</div>
   <div class="eboard">${top}</div>
@@ -1855,6 +1864,7 @@ async function shareRoster(t,btn){
       const e=effMed(t,p[0]);X.textAlign="right";X.fillStyle=e==null?"#8e98b8":e>1.1?"#4ade80":e>=.8?"#facc15":"#f87171";X.font=F(800,40);X.fillText(e==null?"—":f2(e),x+cw-14,y+50)})});
   X.textAlign="center";X.fillStyle="#5d678a";X.font=F(700,28);X.fillText("Efficienza media stagionale · DYNASTY LEAGUE · "+EFF.agg,W/2,Hh-45);
   shSend(cv,`roster-${c.nick.toLowerCase()}.png`,`🏀 Roster ${c.name}`,btn)}
+document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-effmet]");if(b&&cur==="efficienza"){e.preventDefault();effMet=b.dataset.effmet;esqMet=effMet;const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-esqmet]");if(b&&cur==="effsquadra"){e.preventDefault();esqMet=b.dataset.esqmet;const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("click",e=>{const a=e.target.closest("[data-esqadv]");if(a&&cur==="effsquadra"){e.preventDefault();esqAdv=!esqAdv;const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("click",e=>{const m=e.target.closest("[data-esqm]");if(m&&cur==="effsquadra"){e.preventDefault();esqMese=m.dataset.esqm==="tutta"?"tutta":+m.dataset.esqm;const y=window.scrollY;render();window.scrollTo(0,y)}});
