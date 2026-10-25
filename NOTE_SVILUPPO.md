@@ -209,3 +209,10 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 
 ## 25/10/2026 (23) — Calcolatore Scambi a 3 squadre
 - Nuova scheda "3 squadre" (`VT.tab="calc3"`, stato `V3`, `v3Res`, `v3Card`, `v3Act`). Ogni pezzo (giocatore, pick, crediti) ha chi lo dà e chi lo riceve (selettore "→", default squadra successiva). Saldo squadra = punti ricevuti − punti dati; barra con zero al centro (verde a destra = guadagna, rosso a sinistra = perde). Squilibrio = saldo massimo ÷ volume massimo scambiato da una squadra (soglie 10%/25%); suggerisce i crediti che il più avvantaggiato dovrebbe dare al più penalizzato. La scheda a 2 squadre è invariata.
+
+## 25/10/2026 (24) — Valori Dynasty League nel Calcolatore Scambi
+- `VALORI` ora contiene i valori della lega (formula di Francesco), non più Court Consensus: Efficienza × PDK medio ÷ (età + correzione) × 1000. Correzione età: 19-21 −4, 22-23 −3, 24-25 −2, 26 −1, 27-30 0, 31-32 +2, 33-34 +4, 35-37 +6, 38+ +11. Età calcolate al 25/10/2026 (alcune stimate, vedi CSV in chat).
+- Dati: 2025/26 se ≥30 partite, altrimenti 2024/25 (≥30), altrimenti le due insieme (`STAGIONI`). Rookie 2026 con valori fissati da Francesco (Boozer 1500, Dybantsa 1200, Wilson 1150, Peterson 1000, Mara 970, Acuff 900, Brown 880, Wagler 850, Burries 830, De Larrea 770, Lendeborg 750, Flemings 700, Graves 550, Morez Johnson 550, Brazile 400; Steinbach da formula 377).
+- Ricalibrato: punti trade = (valore/1000)^2 × 1000; 300 crediti ≈ giocatore da 1150 (centro di 1000-1300), quindi `VAL_CR` = 1,15²×1000/300 ≈ 4,41 punti per credito. `VAL_FALLBACK` = 400.
+- Anche DREAMERS usa `VALORI` per i 10 titolari: le formazioni cambiano di conseguenza (dal turno 1, che parte il 26/10).
+- I valori sono statici: a fine stagione o quando servono vanno ricalcolati con la stessa formula.
