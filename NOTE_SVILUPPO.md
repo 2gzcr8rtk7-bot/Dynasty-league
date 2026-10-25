@@ -223,7 +223,7 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 
 ## 25/10/2026 (26) — Nuovo logo Foxes
 - `LOGO.FOX` sostituito con il nuovo logo "Detroit Foxes" (volpe in gessato, PNG trasparente). Vale ovunque: Home, testate, campo, classifiche, loghi piccoli e immagini condivise.
-- Efficienza squadre: interruttore "Eff. / PDK" accanto al menu Stagione (`effMet`). In PDK: valore di squadra = media dei PDK medi a partita dei giocatori della rosa (stagione scelta, `teamPdk`), notte = media PDK di chi ha giocato (`teamPdkNight`), classifica riordinata per PDK. Scegliendo PDK anche la tabella squadra si apre in PDK.
+- Efficienza squadre: interruttore "Eff. / PDK" accanto al menu Stagione (`effMet`). In PDK: valore di squadra = media dei PDK medi a partita dei giocatori della rosa (stagione scelta, `teamPdk`), notte = media PDK di chi ha giocato (`teamPdkNight`), classifica riordinata per PDK. Il tastino cambia tutta la pagina: classifica squadre, Top 10, Flop 10 e tabella Giocatori passano ai PDK medi a partita (stessa stagione, stesso filtro min. 10 minuti); scegliendo PDK anche la tabella squadra si apre in PDK.
 
 ## 25/10/2026 (27) — Colori dei ruoli unici in tutta l'app
 - Variabili CSS `--rG` (guardie, verde #a3e635), `--rF` (ali, blu #60a5fa), `--rC` (centri, giallo #fbbf24) usate da roster (`.grl`), Rookie History (`.rhrole`, ora con lettera A per le ali come nel resto dell'app), calcolatore (`.vtp .rc`) e immagine roster condivisa. Per nuove schermate usare sempre queste variabili.

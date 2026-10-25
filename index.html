@@ -1432,13 +1432,18 @@ function vEfficienza(){
   const PTs=E.past?(STAGIONI[sz]||{}):PARTITE,isP=effMet==="pdk";
   const SQ=isP?E.squadre.map(x=>({x,v:teamPdk(x[0],PTs),n:E.past?null:teamPdkNight(x[0])})).sort((a,b)=>(b.v??-99)-(a.v??-99)):E.squadre.map(x=>({x,v:x[4],n:x[3]}));
   const sq=SQ.map(({x,v,n})=>{const[t,inc,dn,en,es,ds]=x;return `<div class="erow" data-effsq="${t}" role="button" tabindex="0" aria-label="Tabella efficienza ${TEAMS[t].nick}">${wedge(t)}<div class="einfo"><b>${TEAMS[t].nick}</b><div class="ebar"><span style="width:${Math.max(4,Math.min(100,isP?(v||0)/40*100:es/1.1*100))}%;background:${TEAMS[t].bg}"></span></div><small>${E.past?SZ_LBL[sz]+" · regular season "+sz:`${inc} in campo nella notte · notte ${n==null?"—":isP?pdkF(n):f2(n)}`}</small></div><div class="eval">${isP?(v==null?'<span class="ev na">—</span>':`<span class="ev ${pdkLvl(v)}"><i></i>${pdkF(v)}</span>`):eff(es)}<small>${isP?"PDK medio":f2(ds)+" Dk"}</small></div><span class="ego">›</span></div>`}).join("");
+  /* In modalità PDK tutte le classifiche e la tabella usano i PDK medi a partita (stessa stagione, stesso filtro min. 10 minuti) */
+  const pdkOf=n=>{const g=PTs[n]||[];return g.length?g.reduce((a,x)=>a+x[3],0)/g.length:null};
+  const mv=(p)=>isP?pdkOf(p[1]):p[2];   // p = [team, nome, eff, PG, min]
+  const shw=v=>isP?(v==null?'<span class="ev na">—</span>':`<span class="ev ${pdkLvl(v)}"><i></i>${pdkF(v)}</span>`):eff(v);
   const all=[];Object.entries(E.gioc).forEach(([t,a])=>a.forEach(p=>p[1]!=null&&p[3]>=10&&all.push([t,...p])));
-  all.sort((a,b)=>b[2]-a[2]);
-  const prow=(p,i)=>`<div class="trow plink" data-plt="${p[0]}" data-pln="${p[1]}"><span class="trk">${i+1}</span>${wedge(p[0])}<span class="tnm"><b>${p[1]}</b><small>${TEAMS[p[0]].nick} · ${p[4].toLocaleString("it-IT")} min</small></span>${eff(p[2])}</div>`;
-  const top=all.slice(0,10).map(prow).join("");
-  const flop=all.slice().reverse().slice(0,10).map(prow).join("");
+  all.forEach(p=>p.mv=mv(p));const allv=all.filter(p=>p.mv!=null);allv.sort((a,b)=>b.mv-a.mv);
+  const prow=(p,i)=>`<div class="trow plink" data-plt="${p[0]}" data-pln="${p[1]}"><span class="trk">${i+1}</span>${wedge(p[0])}<span class="tnm"><b>${p[1]}</b><small>${TEAMS[p[0]].nick} · ${p[4].toLocaleString("it-IT")} min</small></span>${shw(p.mv)}</div>`;
+  const top=allv.slice(0,10).map(prow).join("");
+  const flop=allv.slice().reverse().slice(0,10).map(prow).join("");
   const chips=Object.keys(TEAMS).map(t=>`<button class="chip echip" data-t="${t}" aria-pressed="${t===t0}">${badge(t)}${TEAMS[t].nick}</button>`).join("");
-  const rows=E.gioc[t0].slice().sort((a,b)=>(b[1]??-9)-(a[1]??-9)).map(p=>`<tr><td class="pnm">${p[0]}</td><td>${eff(p[1])}</td><td>${p[2]}</td><td>${p[3]==null?"—":p[3].toLocaleString("it-IT",{minimumFractionDigits:1})}</td></tr>`).join("");
+  const rv=p=>isP?pdkOf(p[0]):p[1];
+  const rows=E.gioc[t0].slice().sort((a,b)=>(rv(b)??-99)-(rv(a)??-99)).map(p=>`<tr><td class="pnm">${p[0]}</td><td>${shw(rv(p))}</td><td>${p[2]}</td><td>${p[3]==null?"—":p[3].toLocaleString("it-IT",{minimumFractionDigits:1})}</td></tr>`).join("");
   return `<button class="cupbtn" data-cupgo="1"><svg class="cupt" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v4a5 5 0 0 1-10 0V4zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M12 13v4M8.5 20h7M10 17h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Efficienza Cup</span><i>›</i></button>
   ${H("Efficienza squadre",`<em>${E.past?SZ_LBL[sz]+" · "+sz:"Agg. "+E.agg}</em>`)}
   <div class="effbar">${szSelect(sz)}<div class="metsw effsw"><button data-effmet="eff" aria-pressed="${!isP}">Eff.</button><button data-effmet="pdk" aria-pressed="${isP}">PDK</button></div></div>
@@ -1453,8 +1458,8 @@ function vEfficienza(){
   <div style="height:22px"></div>
   <div class="hyellow">${H("Giocatori")}</div>
   <div class="chips">${chips}</div>
-  <div class="tbl-wrap"><table class="ptbl"><thead><tr><th>Giocatore</th><th>Eff.</th><th>PG</th><th>Min</th></tr></thead><tbody>${rows}</tbody></table></div>
-  <p class="note"><span class="ev g"><i></i>sopra 1,10</span> &nbsp; <span class="ev y"><i></i>0,80–1,10</span> &nbsp; <span class="ev r"><i></i>sotto 0,80</span> &nbsp; Efficienza = Dunkest per minuto (punteggi ufficiali Dunkest, senza capitano). Stagioni passate: regular season dei giocatori delle rose attuali.</p>`;
+  <div class="tbl-wrap"><table class="ptbl"><thead><tr><th>Giocatore</th><th>${isP?"PDK":"Eff."}</th><th>PG</th><th>Min</th></tr></thead><tbody>${rows}</tbody></table></div>
+  <p class="note">${isP?`<span class="ev g"><i></i>da 35</span> &nbsp; <span class="ev y"><i></i>20–35</span> &nbsp; <span class="ev r"><i></i>sotto 20</span> &nbsp; PDK = punti Dunkest medi a partita (senza capitano).`:`<span class="ev g"><i></i>sopra 1,10</span> &nbsp; <span class="ev y"><i></i>0,80–1,10</span> &nbsp; <span class="ev r"><i></i>sotto 0,80</span> &nbsp; Efficienza = Dunkest per minuto (punteggi ufficiali Dunkest, senza capitano).`} Stagioni passate: regular season dei giocatori delle rose attuali.</p>`;
 }
 
 const NUM={};Object.values(ROSTER).forEach(a=>a.forEach(p=>NUM[p[0]]=p[1]));
