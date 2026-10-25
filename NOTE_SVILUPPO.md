@@ -195,4 +195,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 ## 25/10/2026 (21) — Condividi cassa
 - Pagina Cassa: piccolo bottone condividi in alto a destra nella testata (`.bshare.hsh`, `data-cshare`, `shareCassa`). Crea un PNG con testata nel colore della squadra (logo, città, nome), crediti disponibili con crediti/debiti portafoglio e post draft, bilancio per stagione, registro completo entrate/uscite e liste "Deve pagare"/"Deve ricevere". Legge `movimenti(t)`, `DEBITI`, `CREDITI` al momento.
 - Pagina Roster (Dunkest → Roster): stesso piccolo bottone nella testata (`data-rshare`, `shareRoster`). Immagine con testata squadra e 3 colonne (Guardie, Ali, Centri) ordinate per efficienza media: cognome grande, nome · numero · squadra NBA (· R se rookie), efficienza colorata. Testata e invio in comune: `shHead`, `shSend`.
-- G League: G-Turtles con il logo "Los Angeles Turtles" (angoli arrotondati), sfondo viola chiaro `#9b7ad8` (diverso dai G-Ducks) e bordo oro `#f5b82e`.
+- G League: G-Turtles con il logo "Los Angeles Turtles" scontornato (PNG trasparente), sfondo viola chiaro `#9b7ad8` (diverso dai G-Ducks) e bordo oro `#f5b82e`.
