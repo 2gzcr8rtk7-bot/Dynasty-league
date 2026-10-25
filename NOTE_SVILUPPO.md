@@ -205,3 +205,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Comandi della tabella squadra in un blocco ordinato (`.esqctl`): interruttore Efficienza/PDK e "Statistiche avanzate" a tutta larghezza, stessa altezza (34px); bottoni dei mesi compatti.
 - Fix: i sottotitoli delle intestazioni di sezione (h2 em) ora si accorciano con "…" invece di allargare la pagina su telefono (Home, Efficienza, Infortuni, Sfida della notte).
 - Filtro mesi: sempre tutti i mesi della regular season (Ottobre → Aprile), selezionabili anche se vuoti (messaggio "nessuna partita ancora"); il primo bottone si chiama "Stagione 3". All'apertura si sceglie il mese più recente con dati.
+- Infortuni: per le malattie che colpiscono tutto il corpo (malattia, POTS, influenza, virus, febbre…) il manichino è colorato per intero nel colore dello stato (es. Porziņģis tutto rosso).
