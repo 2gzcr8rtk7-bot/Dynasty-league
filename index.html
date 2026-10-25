@@ -858,7 +858,33 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .drr.tm .drn small{color:var(--tf);opacity:.85;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.25)}
 .drr.tm em{color:var(--tf)!important;text-shadow:-1px -1px 0 var(--ts),1px -1px 0 var(--ts),-1px 1px 0 var(--ts),1px 1px 0 var(--ts),0 4px 10px rgba(0,0,0,.35)!important}
 .drr.tm.l{filter:saturate(.35) brightness(.62)}
-.drr.tm.w{box-shadow:inset 0 0 0 2px rgba(250,204,21,.95),inset 0 0 22px rgba(250,204,21,.35)}
+.drr.tm{box-shadow:inset 0 0 0 2px var(--tb)}
+.drr.tm.w{box-shadow:inset 0 0 0 2px var(--tb),inset 0 0 22px rgba(250,204,21,.45)}
+/* DREAMERS: colore squadra ovunque (.tmc) + cornice morbida (.hud) */
+.tmc{position:relative;isolation:isolate;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.30) 0%,rgba(255,255,255,.08) 46%,rgba(255,255,255,0) 50%,rgba(0,0,0,.18) 100%),linear-gradient(120deg,color-mix(in srgb,var(--tc) 88%,#fff) 0%,var(--tc) 45%,color-mix(in srgb,var(--tc) 62%,#000) 100%)!important}
+.tmc::before{content:"";position:absolute;z-index:-1;top:-70%;left:-35%;width:40%;height:240%;transform:rotate(22deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.26),transparent);pointer-events:none}
+.tmc>b,.tmc .drci>b{color:var(--tf)!important;text-shadow:-1px -1px 0 var(--ts),1px -1px 0 var(--ts),-1px 1px 0 var(--ts),1px 1px 0 var(--ts),0 3px 8px rgba(0,0,0,.35)!important}
+.tmc em,.tmc .drcwl b{color:var(--tf)!important;text-shadow:-1px -1px 0 var(--ts),1px -1px 0 var(--ts),-1px 1px 0 var(--ts),1px 1px 0 var(--ts)!important}
+.tmc small,.tmc>i,.tmc .drpos{color:var(--tf)!important;opacity:.9;text-shadow:0 1px 2px rgba(0,0,0,.3)}
+.tmc .drtl{flex:none;display:grid;place-items:center;filter:drop-shadow(0 3px 5px rgba(0,0,0,.45))}
+.tmc .drtl .badge{width:100%!important;height:100%!important;background-color:transparent!important;box-shadow:none!important;border-radius:0!important}
+.tmc .drtl .lg-DUC{transform:scale(1.14)}
+.tmc.l{filter:saturate(.35) brightness(.62)}
+.tmc{box-shadow:inset 0 0 0 2px var(--tb)}
+.tmc.w{box-shadow:inset 0 0 0 2px var(--tb),inset 0 0 20px rgba(250,204,21,.45)}
+.tmc.hud{border:2px solid var(--tb)!important}
+.drch.tmc{border-bottom:0!important;padding:4px 8px 4px 2px;gap:4px}.drch.tmc .drtl{width:38px;height:38px}.drch.tmc>b{font-size:13.5px!important}.drch.tmc em{font-size:17px!important}
+.drcm span.tmc{padding:4px 8px;border-radius:8px;min-height:36px}.drcm span.tmc .drtl{width:28px;height:28px}.drcm span.tmc b{font-size:12px}
+.drcm span.tmc.h{padding-left:4px}.drcm span.tmc.a{padding-right:4px}
+.drcr.tmc{border-color:rgba(255,255,255,.18)!important}.drcr.tmc .drtl{width:52px;height:52px}.drcr.tmc .drci>b{font-size:19px}
+.drcr.tmc .drcwl small{color:var(--tf)!important;opacity:.8}
+.bkt.tmc{border-top:0!important;margin:2px 4px;border-radius:7px}.bkt.tmc .drtl{width:28px;height:28px}.bkt.tmc>i{font-style:normal}
+.bkm{padding:3px 0!important}
+.drfr.tmc .drtl{width:30px;height:30px}
+/* cornice morbida: bordo sottile chiaro, angoli arrotondati, ombra soffice */
+.hud{position:relative;border:1px solid rgba(255,255,255,.14)!important;border-radius:16px!important;box-shadow:0 10px 26px rgba(8,4,24,.45),inset 0 1px 0 rgba(255,255,255,.08)!important}
+.hud.cur,.drcr.hud.lead{border-color:rgba(233,213,255,.55)!important;box-shadow:0 0 0 3px rgba(168,85,247,.18),0 10px 26px rgba(8,4,24,.45)!important}
+.bkt.tmc{border-radius:10px!important}.drcm span.tmc{border-radius:12px!important}
 .drplh{margin:26px 0 4px;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.06em;color:#e9d5ff;border-left:4px solid #a855f7;padding-left:10px}
 .drfinal{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,auto);grid-auto-flow:column;gap:6px;margin-top:10px}.drfinal .drfr{padding:6px 8px;gap:7px;min-width:0}.drfinal .drfr b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.drfinal .drfr .drpos{font-size:15px;width:16px}.drfinal .drfr em{font-size:11px}.drfinal .bklg{width:22px;height:22px}
 .drfr{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:rgba(12,8,32,.75);border:1px solid rgba(196,181,253,.22)}
@@ -2683,7 +2709,7 @@ function drPO(st){const s=st.map(x=>x.t),seed={};s.forEach((t,i)=>seed[t]=i+1);
   const fin=[];(R[2]||[]).forEach(x=>{fin.push(x.win||null,x.lose||null)}); // posizioni finali 1..8
   return{seed,R,W,RS,done,end:done?k-1:DR_TOT,champ:done?R[2][0].win:null,fin}}
 const DR_RN=["Quarti di finale","Semifinali","Finale"];
-const drTm=t=>{const c=TEAMS[t],lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};return `--tc:${c.bg};--tf:${c.fg};--ts:${c.stroke||(lum(c.fg)<.4?"rgba(255,255,255,.4)":"rgba(0,0,0,.5)")}`};
+const drTm=t=>{const c=TEAMS[t],lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};return `--tc:${c.bg};--tf:${c.fg};--tb:${c.trim};--ts:${c.stroke||(lum(c.fg)<.4?"rgba(255,255,255,.4)":"rgba(0,0,0,.5)")}`};
 const drLg=(t,z)=>`<span class="drlg ${z||""}" style="--tc:${TEAMS[t].bg}">${badge(t)}</span>`;
 const DR_PH=(k,P)=>{if(k<=DR_REG)return `Turno ${k}`;const w=P&&P.W[k];return w?`${DR_RN[w.r]} · gara ${w.g}`:"Playoff · da definire"};
 let DR={tab:"turno",k:null,open:null};
@@ -2699,7 +2725,7 @@ function vDream(){
       const row=(s,k)=>`<div class="drpl ${k}"><span>${s.n}${s.a?`<small>${s.a.g} ${s.a.g===1?"partita":"partite"}</small>`:""}</span><b>${s.e==null?(W.closed?"—":"attesa"):s.m&&s.m!==1?`<s>${pdkF(s.e)}</s>${pdkF(s.f)}`:pdkF(s.e)}</b></div>`;
       const sec=(cls,lab,a)=>a.length?`<div class="drsec ${cls}">${lab}</div>${a.map(s=>row(s,cls)).join("")}`:"";
       const zr=T.zeros?`<div class="drsec half">Posti vuoti</div>${Array.from({length:T.zeros},()=>`<div class="drpl half z"><span>Nessun giocatore</span><b>0,0</b></div>`).join("")}`:"";
-      return `<div class="drcol"><div class="drch" style="--tc:${TEAMS[T.t].bg}">${drLg(T.t)}<b>${TEAMS[T.t].nick}</b><em>${drScore(T.score)}</em></div>
+      return `<div class="drcol hud"><div class="drch tmc" style="${drTm(T.t)}"><span class="drtl">${badge(T.t)}</span><b>${TEAMS[T.t].nick}</b><em>${drScore(T.score)}</em></div>
       ${sec("cap","Capitano ×1,5",T.top.filter(s=>s.cap))}${sec("full","Punteggio pieno",T.top.filter(s=>!s.cap&&!s.half))}${sec("half","Panchina · ½",T.top.filter(s=>s.half))}${zr}
       ${sec("trib","Tribuna",T.trib)}${sec(W.closed?"trib":"wait",W.closed?"Non hanno giocato":"In attesa",T.wait)}</div>`};
     body=`<button class="gback" data-dr="close">‹ ${DR_PH(k,P)}</button><div class="drdet">${col(A)}${col(B)}</div>
@@ -2709,22 +2735,22 @@ function vDream(){
       return `<span class="drsub">${PW.r===2?["Finalissima","Finale 3° posto","Finale 5° posto","Finale 7° posto"][ix]:PW.r===1?(ix<2?"Semifinale "+(ix+1):"Piazzamenti 5°–8° · "+(ix-1)):"Quarto "+(ix+1)} · gara ${PW.g} · serie ${wa}–${wb}</span>`};
     const card=([a,b])=>{const A=drTeam(k,a,W),B=drTeam(k,b,W),wa=W.closed&&A.score>=B.score,wb=W.closed&&B.score>A.score;
       const row=(T,w)=>`<div class="drr tm ${w?"w":W.closed?"l":""}" style="${drTm(T.t)}"><span class="drtl">${badge(T.t)}</span><span class="drn"><b>${TEAMS[T.t].nick}</b><small>${W.closed?(T.zeros?`${10-T.zeros}/10 · ${T.zeros} a zero`:"10/10"):T.played+"/10 titolari finora"}</small></span><em>${drScore(T.score)}</em></div>`;
-      return `<button class="drm" data-dr="open" data-a="${a}" data-b="${b}">${sub(a,b)}${row(A,wa)}${row(B,wb)}<span class="drst ${W.closed?"":"live"}">${W.closed?"Finale":W.started?"In corso":"Da giocare"}</span></button>`};
+      return `<button class="drm hud" data-dr="open" data-a="${a}" data-b="${b}">${sub(a,b)}${row(A,wa)}${row(B,wb)}<span class="drst ${W.closed?"":"live"}">${W.closed?"Finale":W.started?"In corso":"Da giocare"}</span></button>`};
     body=`<div class="drnav"><button data-dr="wk" data-d="-1" ${k<=1?"disabled":""}>‹</button><div><b>${DR_PH(k,P)}</b><small>${drFmt(W.start)} – ${drFmt(W.end)} · ${W.nights}/7 notti</small></div><button data-dr="wk" data-d="1" ${k>=MAXK?"disabled":""}>›</button></div>
     ${pr.length?`<div class="drms">${pr.map(card).join("")}</div>`:`<div class="cempty">${k>DR_REG?"Settimana di playoff: si gioca solo se servono altre gare. Gli accoppiamenti si conoscono quando finisce la settimana precedente.":"Gli accoppiamenti si conoscono quando finisce il turno precedente."}</div>`}`}
   else if(DR.tab==="cal"){const rows=[];for(let i=1;i<=MAXK;i++){const w=drWeek(i),pr=drPairs(i,st,P),pw=P.W[i];
-      rows.push(`<button class="drcal ${i===drCurWeek(P)?"cur":""}" data-dr="go" data-k="${i}"><span class="drck"><b>${i<=DR_REG?i:pw?["QF","SF","F"][pw.r]:"PO"}</b><small>${pw?`gara ${pw.g}<br>`:""}${drFmt(w.start)}–${drFmt(w.end)}</small></span><span class="drcp">${pr.length?pr.map(([a,b])=>{const A=w.closed?drTeam(i,a,w).score:null,B=w.closed?drTeam(i,b,w).score:null;return `<i class="drcm"><span class="h ${w.closed&&A>=B?"w":""}">${drLg(a,"s")}<b>${TEAMS[a].nick}</b></span><em>${w.closed?`${pdkF(A)}–${pdkF(B)}`:"vs"}</em><span class="a ${w.closed&&B>A?"w":""}"><b>${TEAMS[b].nick}</b>${drLg(b,"s")}</span></i>`}).join(""):`<em class="tbd">${pw?DR_PH(i,P)+" · da definire":"Playoff · solo se necessaria"}</em>`}</span></button>`)}
+      rows.push(`<button class="drcal hud ${i===drCurWeek(P)?"cur":""}" data-dr="go" data-k="${i}"><span class="drck"><b>${i<=DR_REG?i:pw?["QF","SF","F"][pw.r]:"PO"}</b><small>${pw?`gara ${pw.g}<br>`:""}${drFmt(w.start)}–${drFmt(w.end)}</small></span><span class="drcp">${pr.length?pr.map(([a,b])=>{const A=w.closed?drTeam(i,a,w).score:null,B=w.closed?drTeam(i,b,w).score:null;return `<i class="drcm"><span class="h tmc ${w.closed?(A>=B?"w":"l"):""}" style="${drTm(a)}"><span class="drtl">${badge(a)}</span><b>${TEAMS[a].nick}</b></span><em>${w.closed?`${pdkF(A)}–${pdkF(B)}`:"vs"}</em><span class="a tmc ${w.closed?(B>A?"w":"l"):""}" style="${drTm(b)}"><b>${TEAMS[b].nick}</b><span class="drtl">${badge(b)}</span></span></i>`}).join(""):`<em class="tbd">${pw?DR_PH(i,P)+" · da definire":"Playoff · solo se necessaria"}</em>`}</span></button>`)}
     body=`<div class="drcals">${rows.join("")}</div>`}
   else if(DR.tab==="cla"){
     const form=t=>{const o=[];for(let k=1;k<=DR_REG;k++){const w=drWeek(k);if(!w.closed)continue;const pr=DR_SCHED[k-1].find(p=>p.includes(t));if(!pr)continue;const o2=pr[0]===t?pr[1]:pr[0];o.push(drTeam(k,t,w).score>=drTeam(k,o2,w).score?"V":"P")}return o.slice(-5)};
     const ld=st[0]?st[0].w:0;
-    body=`<div class="drcla">${st.map((x,i)=>{const f=form(x.t);return `<div class="drcr ${i<1?"lead":""}" style="--tc:${TEAMS[x.t].bg}"><span class="drpos">${i+1}</span>${drLg(x.t,"l")}<div class="drci"><b>${TEAMS[x.t].nick}</b><small>${x.n?`${x.n} turni giocati`:"nessun turno giocato"}</small><span class="drfm">${f.length?f.map(r=>`<i class="${r}">${r}</i>`).join(""):'<em>forma —</em>'}</span></div><div class="drcwl"><b>${x.w}<small>V</small></b><b class="l">${x.l}<small>P</small></b><b class="avg">${x.avg==null?"—":pdkF(x.avg)}<small>MEDIA</small></b>${i>0&&ld>x.w?`<em>−${ld-x.w} V</em>`:""}</div></div>`}).join("")}</div>
+    body=`<div class="drcla">${st.map((x,i)=>{const f=form(x.t);return `<div class="drcr tmc hud ${i<1?"lead":""}" style="${drTm(x.t)}"><span class="drpos">${i+1}</span><span class="drtl">${badge(x.t)}</span><div class="drci"><b>${TEAMS[x.t].nick}</b><small>${x.n?`${x.n} turni giocati`:"nessun turno giocato"}</small><span class="drfm">${f.length?f.map(r=>`<i class="${r}">${r}</i>`).join(""):'<em>forma —</em>'}</span></div><div class="drcwl"><b>${x.w}<small>V</small></b><b class="l">${x.l}<small>P</small></b><b class="avg">${x.avg==null?"—":pdkF(x.avg)}<small>MEDIA</small></b>${i>0&&ld>x.w?`<em>−${ld-x.w} V</em>`:""}</div></div>`}).join("")}</div>
     <p class="note">Vittoria = punteggio di turno più alto. A parità di vittorie è davanti chi ha la media punteggio più alta. Tutte e 8 le squadre vanno ai playoff: la posizione decide gli accoppiamenti (1ª–8ª, 4ª–5ª, 2ª–7ª, 3ª–6ª). Serie al meglio delle 3, una gara a settimana; ci sono anche le serie per il 3°, 5° e 7° posto, così la classifica finale va da 1 a 8.</p>`}
   else{const sd=P.seed,R=P.R,R1=R[1]||[],R2=R[2]||[];
     const lg=t=>`<span class="bklg" style="--tc:${TEAMS[t].bg}">${badge(t)}</span>`;
     const m=(x,ph,lab,cls="")=>{const head=lab?`<span class="bklab">${lab}</span>`:"";
-      if(!x)return`<div class="bkm tbd ${cls}">${head}${ph.map(y=>`<div class="bkt"><b>${y}</b></div>`).join("")}</div>`;const win=x.win||null;
-      return `<div class="bkm ${cls}">${head}${[x.a,x.b].map((t,i)=>`<div class="bkt ${win===t?"w":win?"l":""}"><i>${sd[t]}</i>${lg(t)}<b>${TEAMS[t].nick}</b><em>${x.g.length?(i?x.wb:x.wa):""}</em></div>`).join("")}</div>`};
+      if(!x)return`<div class="bkm hud tbd ${cls}">${head}${ph.map(y=>`<div class="bkt"><b>${y}</b></div>`).join("")}</div>`;const win=x.win||null;
+      return `<div class="bkm hud ${cls}">${head}${[x.a,x.b].map((t,i)=>`<div class="bkt tmc ${win===t?"w":win?"l":""}" style="${drTm(t)}"><i>${sd[t]}</i><span class="drtl">${badge(t)}</span><b>${TEAMS[t].nick}</b><em>${x.g.length?(i?x.wb:x.wa):""}</em></div>`).join("")}</div>`};
     const champ=P.champ,rd=r=>P.RS[r]?drFmt(drWeekStart(P.RS[r])):"";
     const cup=`<svg class="drcup" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="drg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f5ecff"/><stop offset=".45" stop-color="#b48cff"/><stop offset="1" stop-color="#5b21b6"/></linearGradient></defs><path d="M18 8h28v14a14 14 0 0 1-28 0z" fill="url(#drg)"/><path d="M18 12h-8v4a10 10 0 0 0 10 10M46 12h8v4a10 10 0 0 1-10 10" fill="none" stroke="url(#drg)" stroke-width="3.5"/><path d="M29 35h6v9h-6z" fill="url(#drg)"/><path d="M21 46h22l2 6H19z" fill="url(#drg)"/><rect x="17" y="52" width="30" height="5" rx="1" fill="#3b1585"/><path d="M24 12c0 8 2 13 6 16" stroke="#fff" stroke-opacity=".55" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>`;
     const col=(t,r,inner,cls="")=>`<div class="bkc ${cls}"><h6>${t}<small>${rd(r)||"&nbsp;"}</small></h6><div class="bkb">${inner}</div></div>`;
@@ -2742,7 +2768,7 @@ function vDream(){
       ${col("Finali",2,`${m(R2[2],[W,W],"Finale 5° posto","in")}${m(R2[3],["Perdente","Perdente"],"Finale 7° posto","bot")}`,"last")}
     </div></div>
     <h4 class="drplh">Classifica finale</h4>
-    <div class="drfinal">${Array.from({length:8},(_,i)=>{const t=P.fin[i];return `<div class="drfr ${i===0&&t?"gold":""}"><span class="drpos">${i+1}</span>${t?`<span class="bklg" style="--tc:${TEAMS[t].bg}">${badge(t)}</span><b>${TEAMS[t].nick}</b>`:`<em>da decidere</em>`}</div>`}).join("")}</div>`}
+    <div class="drfinal">${Array.from({length:8},(_,i)=>{const t=P.fin[i];return `<div class="drfr hud ${t?"tmc":""} ${i===0&&t?"gold":""}" style="${t?drTm(t):""}"><span class="drpos">${i+1}</span>${t?`<span class="drtl">${badge(t)}</span><b>${TEAMS[t].nick}</b>`:`<em>da decidere</em>`}</div>`}).join("")}</div>`}
   return `<div class="drroom"><button class="drexit" data-game="menu">‹ Torna all'app</button><div class="drhd"><span class="drlogo">DREAMERS</span><small>Fanta PDK · stagione ${STAGIONE_CORRENTE}</small></div>
   <div class="drtabs">${tabs}</div>${body}</div>
   <p class="note">Meritocrazia: ogni settimana i 10 giocatori della rosa con il PDK medio più alto diventano titolari, gli altri vanno in tribuna. Punteggio = media dei 10 PDK settimanali (media dei punti Dunkest delle partite della settimana); il migliore è capitano ×1,5 e i 4 peggiori valgono la metà (provvisori durante la settimana, definitivi a turno chiuso). Dati aggiornati al ${EFF.agg}.</p>`}

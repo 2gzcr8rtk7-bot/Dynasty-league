@@ -275,3 +275,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 
 ## 26/10/2026 (35) — DREAMERS: caselle squadra a tutto colore
 - Nel Turno ogni squadra è una casella col colore della squadra (gradiente + riflesso lucido diagonale + luce in alto), logo libero senza cerchio, nome e punteggio nel colore del logo (`TEAMS.fg`) con contorno di contrasto (`stroke` o chiaro/scuro automatico). Vincitore con bordo oro, perdente desaturato a turno chiuso. Helper `drTm(t)`, CSS `.drr.tm`, logo `.drtl`.
+- Esteso a tutte le sezioni DREAMERS (classe `.tmc` + `drTm(t)`): dettaglio partita, calendario (pillole squadra), classifica, tabelloni playoff, classifica finale. Logo libero (`.drtl`), bordino nel secondo colore della squadra (`--tb` = `TEAMS.trim`), vincitore con alone dorato interno, perdente spento. Caselle con cornice morbida (`.hud`: bordo chiaro sottile, angoli 16px, ombra soffice; settimana in corso e 1ª in classifica con alone viola).
