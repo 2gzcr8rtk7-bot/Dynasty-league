@@ -199,3 +199,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 
 ## 25/10/2026 (22) — Tabella squadra partita per partita
 - Efficienza → squadra (`vEffSquadra`): tolte le colonne Min notte / Eff. notte / PG / Eff. media / Forma / Min ult. 5. Ora ogni colonna è una PARTITA DEL GIOCATORE in ordine (G1 = sua prima, G2 = seconda…), da `PARTITE`; cella = efficienza di quella partita (colorata) con data e avversario sotto. Nessun buco: chi ha giocato meno ha le ultime caselle vuote. Prima colonna (nome + squadra NBA) fissa, si scorre a destra. Si allunga da sola quando il report aggiunge partite a `PARTITE`.
+- Filtro per mese sopra la tabella (`esqMese`, bottoni `data-esqm`): "Stagione" o un mese (si apre sul mese più recente). Nei mesi le colonne sono 1ª, 2ª… partita del mese e nella casella resta il numero stagionale (G7 · data · avversario).
