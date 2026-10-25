@@ -265,5 +265,5 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Tab Playoff rifatto: due tabelloni a scorrimento orizzontale (`.bkw/.bk/.bkc/.bkg/.bkm/.bkt`, connettori in CSS): "Tabellone" (quarti → semifinali → finalissima con coppa e campione, finale 3° posto sotto) e "Piazzamenti 5°–8°" (semifinali → finale 5° e 7° posto). Nomi interi, vittorie nella serie, etichetta su ogni serie. Classifica finale 1→8 su due colonne.
 
 ## 26/10/2026 (33) — Calcolatore: nuovo esito scambio
-- `tradeVerdict(d,t)`: sotto 10% "Trade equilibrata", fino al 40% "Vincitore trade “Squadra”", oltre il 40% "Grande truffa dei “Squadra”" (calcolatore a 2 e a 3 squadre e immagine da condividere).
+- `tradeVerdict(d,t)`: sotto 10% "Trade equilibrata", fino al 40% "Vincitore trade Squadra", oltre il 40% "Grande truffa dei Squadra" (calcolatore a 2 e a 3 squadre e immagine da condividere).
 - Logo Ducks completo (papero con palla, `LOGO.DUC`) in Risultati, Classifica e Sala Trofei, cioè le sezioni con i loghi senza sfondo (selettori aggiunti alla regola `.hlg`).

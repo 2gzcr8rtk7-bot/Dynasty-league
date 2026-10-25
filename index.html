@@ -1620,7 +1620,7 @@ const vtPts=v=>Math.pow(Math.max(0,v)/1000,VAL_EXP)*1000;
 const VT={tab:"calc",t:["DUC","PEA"],pl:[[],[]],cr:[0,0],pk:[[],[]]};
 function vtSide(k){const pts=VT.pl[k].reduce((s,n)=>s+vtPts(valOf(n)??VAL_FALLBACK),0);const cr=(+VT.cr[k]||0)+VT.pk[k].reduce((s,p)=>s+PICK_CR[p],0);return pts+cr*VAL_CR}
 /* esito scambio: <10% equilibrata, 10-40% vincitore, oltre 40% grande truffa */
-const tradeVerdict=(d,t)=>d<.10?["Trade equilibrata","ok"]:d<.40?[`Vincitore trade “${TEAMS[t].nick}”`,"mid"]:[`Grande truffa dei “${TEAMS[t].nick}”`,"bad"];
+const tradeVerdict=(d,t)=>d<.10?["Trade equilibrata","ok"]:d<.40?[`Vincitore trade ${TEAMS[t].nick}`,"mid"]:[`Grande truffa dei ${TEAMS[t].nick}`,"bad"];
 function vtResHTML(){
   const A=vtSide(0),B=vtSide(1),[ta,tb]=VT.t,ca=TEAMS[ta],cb=TEAMS[tb];
   if(!A&&!B)return `<div class="vtres empty">Aggiungi giocatori, crediti o pick da una parte e dall'altra.</div>`;
