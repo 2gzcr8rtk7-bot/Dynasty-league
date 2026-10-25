@@ -107,4 +107,4 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 - Il logo intero resta nella casella Home (`.hlg`) e nei banner squadra (`.hlogo`, che usano `LOGO` direttamente). Regola generata nello `<style>` creato da script vicino a `LOGO2`.
 
 ## 25/10/2026 (9) — Spiders azzurro chiaro
-- SPI: bg `#dcebf7` (azzurro chiarissimo), fg `#0f1f3d`, trim `#1e3a8a` (blu scuro, si vede anche nei bordi della maglia, che resta bianca).
+- SPI: bg `#8cc9f5` (azzurro chiaro), fg `#0f1f3d`, trim `#1e3a8a` (blu scuro, si vede anche nei bordi della maglia, che resta bianca).
