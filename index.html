@@ -590,6 +590,54 @@ nav button{font-size:15px;letter-spacing:.04em}
 .hgreen h2 .t{background:#16a34a}.hgreen h2::after{background:linear-gradient(90deg,#16a34a,transparent)}
 .hyellow h2 .t{background:var(--gold);color:#0a0f1f}.hyellow h2::after{background:linear-gradient(90deg,var(--gold),transparent)}
 .hred h2 .t{background:#dc2626}.hred h2::after{background:linear-gradient(90deg,#dc2626,transparent)}
+
+/* Calcolatore trade */
+.vtres{padding:12px;margin-bottom:12px;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-left:5px solid var(--gold)}
+.vtres.ok{border-left-color:#22c55e}.vtres.mid{border-left-color:#f59e0b}.vtres.bad{border-left-color:#ef4444}
+.vtres.empty{color:var(--muted);font-size:14px;border-left-color:var(--line)}
+.vtsc{display:flex;justify-content:space-between;gap:8px}
+.vtsc span{display:grid;grid-template-columns:auto auto;align-items:center;column-gap:8px}
+.vtsc span.r{text-align:right;grid-template-columns:auto auto}
+.vtsc b{font-family:var(--display);font-style:italic;font-weight:800;font-size:26px;line-height:1}
+.vtsc small{grid-column:1/-1;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.vtlg{width:30px!important;height:30px!important}
+.vtbar{position:relative;display:flex;height:10px;margin:10px 0 8px;background:#223}.vtbar i{display:block;height:100%}
+.vtbar em{position:absolute;top:-3px;bottom:-3px;width:2px;background:#fff;transform:translateX(-1px)}
+.vtver{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.vtver b{font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase}
+.vtres.ok .vtver b{color:#4ade80}.vtres.mid .vtver b{color:#fbbf24}.vtres.bad .vtver b{color:#f87171}
+.vtver span{font-size:12px;color:var(--muted);white-space:nowrap}
+.vtsug{margin:8px 0 0;font-size:13.5px;color:#dfe6f5}
+.vtgrid{display:grid;gap:12px}
+.vtcard{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-top:4px solid var(--tc)}
+.vthd{display:flex;align-items:stretch;gap:8px;border-bottom:1px solid var(--line)}
+.vthd .wedge{width:50px;height:50px}.vthd .wedge .logo{width:46px;height:46px}
+.vthd select{flex:1;min-width:0;background:transparent;color:#fff;border:0;font-family:var(--display);font-weight:800;font-style:italic;font-size:18px;text-transform:uppercase;padding:0 4px}
+.vthd select option{color:#000}
+.vtgv{align-self:center;padding-right:12px;font-family:var(--display);font-style:italic;font-weight:800;color:var(--gold);text-transform:uppercase}
+.vtitems{display:flex;flex-wrap:wrap;gap:6px;padding:10px;min-height:44px}
+.vtitems em{color:var(--muted);font-size:13px;font-style:normal}
+.vtit{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid var(--line);color:#fff;padding:5px 8px;font-size:13px;cursor:pointer}
+.vtit b{font-family:var(--display);color:var(--gold)}.vtit i{font-style:normal;color:var(--muted)}
+.vtit.pk b{color:#93c5fd}
+.vtcr,.vtpk{display:flex;align-items:center;gap:6px;padding:0 10px 10px;flex-wrap:wrap}
+.vtcr span,.vtpk span{width:56px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.vtcr button,.vtpk button{background:var(--panel);border:1px solid var(--line);color:#fff;font-family:var(--display);font-weight:800;padding:6px 9px;cursor:pointer}
+.vtpk button{display:grid;line-height:1;padding:5px 8px;text-align:center}.vtpk button small{font-size:9px;color:var(--muted);font-weight:600}
+.vtcr input{width:72px;background:#0b1224;border:1px solid var(--line);color:#fff;padding:6px;font-size:15px;font-family:var(--display);font-weight:800;text-align:center}
+.vtros{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border-top:1px solid var(--line)}
+.vtp{display:flex;align-items:center;gap:6px;background:var(--panel);border:0;color:#cfd6e6;padding:8px;text-align:left;font-size:13px;cursor:pointer;min-width:0}
+.vtp span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vtp b{font-family:var(--display);font-size:13px;color:var(--muted)}
+.vtp .rc{flex:none;width:8px;height:8px;border-radius:50%;background:#64748b}.vtp .rc.G{background:#22c55e}.vtp .rc.F{background:#38bdf8}.vtp .rc.C{background:#facc15}
+.vtp.on{background:color-mix(in srgb,var(--tc) 35%,var(--panel));color:#fff}.vtp.on b{color:var(--gold)}
+.vtreset{margin:12px 0 0}
+.vtrow{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding-right:12px;background:var(--panel)}
+.vtrow .wedge{width:46px;min-height:46px;height:auto;align-self:stretch}.vtrow .wedge .logo{width:42px;height:42px}
+.vtrk{width:26px;text-align:right;font-family:var(--display);font-weight:800;color:var(--muted)}
+.vtnm{flex:1;min-width:0;display:grid;font-weight:700}.vtnm small{font-size:11px;color:var(--muted);font-weight:500}
+.vtrow b{font-family:var(--display);font-weight:800;font-size:17px;color:#93c5fd}
+.vtrook{font-style:normal;font-size:10px;background:var(--gold);color:#0a0f1f;padding:0 4px;margin-left:4px;vertical-align:middle}
 /* Trade speciali */
 .splg{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:-4px 0 14px;font-family:var(--display);font-weight:700;font-size:12px;color:#cfd6ea}
 .splg span{display:flex;align-items:center;gap:5px}.splg i{width:14px;height:14px;display:inline-block}
@@ -712,6 +760,7 @@ nav button>span{white-space:nowrap}
       <button data-v="roster" aria-selected="false"><span>Roster</span></button>
       <button data-v="trade" aria-selected="false"><span>Trade</span></button>
       <button data-v="speciali" aria-selected="false"><span>Trade speciali</span></button>
+      <button data-v="valtrade" aria-selected="false"><span>Calcolatore trade</span></button>
       <button data-v="gleague" aria-selected="false"><span>G League</span></button>
       <button data-v="regolamento" aria-selected="false"><span>Regolamento</span></button>
     </div>
@@ -1053,6 +1102,72 @@ function vTrade(){
     return `<div class="tr3"><div class="tty3"><span>${tipo}${x.data?" "+x.data.slice(0,5):""}</span></div>${cell(x.lati[0])}${cell(x.lati[1])}</div>`}).join("");
   return `${H("Trade Alert",`<em>Operazioni chiuse</em>`)}<div class="tbl-wrap ttab">${rows}</div>`;
 }
+
+/* ===== Calcolatore trade =====
+   Valori giocatori da Court Consensus (classifica dynasty, aggiornata a VALORI_AGG): VALORI = nome -> [ruolo, valore, 1 se rookie].
+   Per aggiornare: sostituire VALORI con la nuova lista. I nomi si abbinano ai roster ignorando accenti, punti e Jr./II.
+   Calcolo: valore trade = (valore/1000)^VAL_EXP, così una stella vale più di tanti giocatori medi.
+   Crediti: 1 cr = VAL_CR punti trade (tarato sulle pick: pick 1 = 300 cr, 2 = 250, 3 = 200, 4 = 150, 5 = 100).
+   Giocatori non in lista: VAL_FALLBACK (sotto l'ultimo della lista). */
+const VALORI_AGG="25/10/2026";
+const VALORI={"Victor Wembanyama":["C",9712],"Nikola Jokic":["C",9438],"Luka Doncic":["PG",9125],"Shai Gilgeous-Alexander":["PG",9116],"Cade Cunningham":["PG",8469],"Cooper Flagg":["SG",8459],"Jalen Johnson":["PF",8133],"Jayson Tatum":["SF",8133],"Anthony Edwards":["SG",8103],"Tyrese Haliburton":["PG",7955],"Scottie Barnes":["PF",7932],"Tyrese Maxey":["PG",7886],"Giannis Antetokounmpo":["PF",7731],"Cameron Boozer":["C",7584,1],"Alperen Sengun":["C",7515],"Donovan Mitchell":["SG",7489],"Amen Thompson":["SG",7488],"AJ Dybantsa":["PF",7354,1],"Caleb Wilson":["PF",7314,1],"LaMelo Ball":["PG",7283],"Darryn Peterson":["PG",7258,1],"Chet Holmgren":["C",7208],"Josh Giddey":["PG",7135],"Evan Mobley":["C",7069],"Jalen Brunson":["PG",7030],"Deni Avdija":["PF",6930],"Paolo Banchero":["PF",6908],"Jalen Williams":["PF",6905],"Karl-Anthony Towns":["C",6841],"Austin Reaves":["SG",6809],"Jalen Duren":["C",6805],"Kon Knueppel":["SG",6805],"Devin Booker":["SG",6763],"Jaylen Brown":["SF",6712],"Bam Adebayo":["C",6660],"Trey Murphy":["SG",6633],"Dylan Harper":["SG",6609],"Stephon Castle":["SG",6599],"Jamal Murray":["PG",6559],"Brandon Miller":["SF",6506],"VJ Edgecombe":["SG",6487],"Franz Wagner":["SF",6484],"Trae Young":["PG",6387],"Lauri Markkanen":["PF",6372],"Alex Sarr":["C",6287],"Domantas Sabonis":["C",6278],"Matas Buzelis":["PF",6212],"Keyonte George":["PG",6161],"Kevin Durant":["SF",6141],"Darius Acuff":["PG",6115,1],"Walker Kessler":["C",6037],"Jaren Jackson":["C",5969],"Donovan Clingan":["C",5931],"Stephen Curry":["PG",5890],"Derik Queen":["C",5881],"Keaton Wagler":["PG",5854,1],"Pascal Siakam":["PF",5837],"Dyson Daniels":["SG",5759],"Zion Williamson":["PF",5754],"Kawhi Leonard":["SF",5688],"Darius Garland":["PG",5684],"Desmond Bane":["SG",5681],"Ausar Thompson":["SG",5664],"Onyeka Okongwu":["C",5631],"Anthony Davis":["C",5594],"Tyler Herro":["SG",5584],"Zach Edey":["C",5575],"James Harden":["PG",5567],"Mikel Brown":["PG",5531,1],"Brandon Ingram":["SF",5482],"Michael Porter":["SF",5438],"Derrick White":["SG",5417],"Joel Embiid":["C",5344],"De'Aaron Fox":["PG",5339],"OG Anunoby":["PF",5324],"Cedric Coward":["SG",5232],"Ace Bailey":["SF",5193],"Nickeil Alexander-Walker":["SG",5185],"Jarrett Allen":["C",5162],"Ivica Zubac":["C",5109],"Ja Morant":["PG",5083],"Brayden Burries":["PG",5056,1],"Julius Randle":["PF",5008],"Jaden McDaniels":["SF",4944],"Reed Sheppard":["PG",4895],"Morez Johnson":["C",4894,1],"Kel'el Ware":["C",4890],"Collin Murray-Boyles":["C",4890],"Coby White":["PG",4867],"LeBron James":["PF",4817],"Ryan Rollins":["PG",4811],"Mikal Bridges":["SF",4781],"Jeremiah Fears":["PG",4715],"Kingston Flemings":["PG",4695,1],"Kyshawn George":["SF",4674],"Jabari Smith":["PF",4610],"Anthony Black":["SG",4603],"Immanuel Quickley":["PG",4560],"Naz Reid":["C",4498],"Miles Bridges":["PF",4491],"Kyrie Irving":["PG",4481],"RJ Barrett":["SF",4475],"Peyton Watson":["SF",4469],"Dejounte Murray":["PG",4442],"Yaxel Lendeborg":["PF",4414,1],"Ayo Dosunmu":["SG",4301],"Jalen Green":["SG",4292],"Payton Pritchard":["PG",4279],"Rudy Gobert":["C",4268],"Norman Powell":["SF",4251],"Jalen Suggs":["PG",4234],"Ajay Mitchell":["PG",4176],"Nic Claxton":["C",4174],"Aday Mara":["C",4162,1],"Hannes Steinbach":["C",4149,1],"Josh Hart":["SG",4133],"Keegan Murray":["PF",4118],"Tre Johnson":["SG",4105],"Toumani Camara":["SF",4035],"CJ McCollum":["PG",3995],"Cason Wallace":["SG",3943],"Egor Demin":["SG",3931],"Andrew Nembhard":["PG",3917],"Jared McCain":["SG",3876],"Scoot Henderson":["PG",3872],"Shaedon Sharpe":["SG",3859],"Bilal Coulibaly":["SF",3853],"Jaime Jaquez":["PF",3781],"Isaiah Hartenstein":["C",3770],"Devin Vassell":["SF",3745],"Kevin Porter":["PG",3729],"Paul George":["SF",3701],"Fred VanVleet":["PG",3696],"Aaron Gordon":["PF",3692],"Mark Williams":["C",3680],"Jimmy Butler":["SF",3649],"Myles Turner":["C",3649],"Nate Ament":["PF",3620,1],"Maxime Raynaud":["C",3618],"Saddiq Bey":["SF",3610],"Davion Mitchell":["PG",3566],"Brandin Podziemski":["PG",3560],"Jaylon Tyson":["SF",3544],"P.J. Washington":["PF",3543],"Ty Jerome":["PG",3520],"Isaiah Collier":["PG",3518],"Bennedict Mathurin":["SF",3507],"Andrew Wiggins":["SF",3479],"Zach LaVine":["SG",3458],"Nikola Vucevic":["C",3431],"Tari Eason":["SG",3431],"Damian Lillard":["PG",3405],"Dailyn Swain":["PF",3402,1],"Dereck Lively":["C",3391],"Moussa Diabate":["C",3331],"Collin Gillespie":["PG",3331],"Aaron Nesmith":["SF",3311],"Ebuka Okorie":["PG",3301,1],"Christian Anderson":["PG",3285,1],"Christian Braun":["SG",3282],"Quentin Grimes":["PG",3250],"Ryan Kalkbrenner":["C",3233],"Collin Sexton":["SG",3233],"Dillon Brooks":["SF",3221],"Jrue Holiday":["PG",3212],"Tobias Harris":["PF",3180],"Santi Aldama":["PF",3176],"Cameron Carr":["PG",3150,1],"Day'Ron Sharpe":["C",3148],"DeMar DeRozan":["SF",3117],"Jonathan Kuminga":["PF",3099],"Mitchell Robinson":["C",3078],"Pelle Larsson":["SF",3072],"Donte DiVincenzo":["SG",3053],"Khaman Maluach":["C",3035],"Anfernee Simons":["PG",3034],"Kristaps Porzingis":["C",3034],"Wendell Carter":["C",3015],"Isaiah Stewart":["C",2999],"Kyle Filipowski":["C",2998],"John Collins":["PF",2991],"Nikola Jovic":["PF",2986],"Zaccharie Risacher":["SF",2985],"Bub Carrington":["PG",2972],"Carter Bryant":["PF",2945],"Keldon Johnson":["PF",2925],"Cameron Johnson":["SF",2896],"Jayden Quaintance":["C",2881,1],"Labaron Philon":["PG",2879,1],"Herbert Jones":["PF",2874],"Daniel Gafford":["C",2847],"Gui Santos":["SF",2842],"Cam Spencer":["SG",2833],"Jakob Poeltl":["C",2803],"Allen Graves":["PF",2789,1],"Julian Champagnie":["SF",2772],"Joan Beringer":["C",2771],"Jaylen Wells":["SF",2765],"Max Christie":["SG",2744],"Neemias Queta":["C",2730],"Naji Marshall":["SF",2698],"Hugo Gonzalez":["SF",2697],"Noah Clowney":["PF",2659],"Will Riley":["SF",2653],"Bobby Portis":["C",2624],"Kasparas Jakucionis":["PG",2600],"Karim Lopez":["PF",2584,1],"Yves Missi":["C",2566],"Brice Sensabaugh":["SF",2562],"Walter Clayton":["PG",2549]};
+const VAL_EXP=3.3,VAL_CR=1.13,VAL_FALLBACK=2400,PICK_CR={1:300,2:250,3:200,4:150,5:100};
+const vnz=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/ş/g,"s").replace(/[.'’]/g,"").replace(/\s+(jr|sr|ii|iii|iv)$/,"").replace(/\s+/g," ").trim();
+const VALMAP=(()=>{const m={};Object.entries(VALORI).forEach(([n,a])=>m[vnz(n)]=a);return m})();
+const valOf=n=>{const a=VALMAP[vnz(n)];return a?a[1]:null};
+const vtPts=v=>Math.pow(v/1000,VAL_EXP);
+const VT={tab:"calc",t:["DUC","PEA"],pl:[[],[]],cr:[0,0],pk:[[],[]]};
+function vtSide(k){const pts=VT.pl[k].reduce((s,n)=>s+vtPts(valOf(n)??VAL_FALLBACK),0);const cr=(+VT.cr[k]||0)+VT.pk[k].reduce((s,p)=>s+PICK_CR[p],0);return pts+cr*VAL_CR}
+function vtResHTML(){
+  const A=vtSide(0),B=vtSide(1),[ta,tb]=VT.t,ca=TEAMS[ta],cb=TEAMS[tb];
+  if(!A&&!B)return `<div class="vtres empty">Aggiungi giocatori, crediti o pick da una parte e dall'altra.</div>`;
+  const mx=Math.max(A,B),d=Math.abs(A-B)/mx,pa=A/(A+B)*100;
+  // chi dà di più è svantaggiato: favorito = squadra che dà meno
+  const fav=A>B?tb:ta,give=A>B?ta:tb;const cr=Math.round(Math.abs(A-B)/VAL_CR/5)*5;
+  const [lab,cls]=d<.10?["Equilibrata","ok"]:d<.25?[`Leggermente a favore dei ${TEAMS[fav].nick}`,"mid"]:[`Sbilanciata a favore dei ${TEAMS[fav].nick}`,"bad"];
+  return `<div class="vtres ${cls}">
+    <div class="vtsc"><span>${badge(ta,"vtlg")}<b>${Math.round(A)}</b><small>${ca.nick} danno</small></span><span class="r"><small>${cb.nick} danno</small><b>${Math.round(B)}</b>${badge(tb,"vtlg")}</span></div>
+    <div class="vtbar"><i style="width:${pa}%;background:${ca.bg}"></i><i style="width:${100-pa}%;background:${cb.bg}"></i><em style="left:50%"></em></div>
+    <div class="vtver"><b>${lab}</b><span>Differenza ${Math.round(d*100)}%</span></div>
+    ${d>=.10&&cr>0?`<p class="vtsug">Per pareggiare: i <b>${TEAMS[fav].nick}</b> dovrebbero aggiungere circa <b>${cr} crediti</b> (o i ${TEAMS[give].nick} togliere qualcosa).</p>`:""}
+  </div>`}
+function vtCard(k){
+  const t=VT.t[k],c=TEAMS[t],sel=new Set(VT.pl[k]);
+  const opts=Object.keys(TEAMS).map(x=>`<option value="${x}" ${x===t?"selected":""}>${TEAMS[x].name}</option>`).join("");
+  const items=[...VT.pl[k].map((n,i)=>{const v=valOf(n);return `<button class="vtit" data-vt="rm" data-k="${k}" data-i="${i}"><span>${n}</span><b>${v??"~"+VAL_FALLBACK}</b><i>✕</i></button>`}),
+    ...VT.pk[k].map((p,i)=>`<button class="vtit pk" data-vt="rmpk" data-k="${k}" data-i="${i}"><span>Pick ${p}</span><b>${PICK_CR[p]} cr</b><i>✕</i></button>`)].join("");
+  const ros=(ROSTER[t]||[]).map(p=>({n:p[0],r:p[2],v:valOf(p[0])})).sort((a,b)=>(b.v??0)-(a.v??0));
+  return `<div class="vtcard" style="--tc:${c.bg}">
+    <div class="vthd">${wedge(t)}<select data-vtsel="${k}" aria-label="Squadra">${opts}</select><span class="vtgv">dà</span></div>
+    <div class="vtitems">${items||`<em>Niente ancora: tocca i giocatori qui sotto</em>`}</div>
+    <div class="vtcr"><span>Crediti</span><button data-vt="cr" data-k="${k}" data-d="-10">−10</button><input type="number" inputmode="numeric" min="0" step="5" data-vtcr="${k}" value="${VT.cr[k]||0}"><button data-vt="cr" data-k="${k}" data-d="10">+10</button></div>
+    <div class="vtpk"><span>Pick</span>${[1,2,3,4,5].map(p=>`<button data-vt="pk" data-k="${k}" data-p="${p}">${p}<small>${PICK_CR[p]}cr</small></button>`).join("")}</div>
+    <div class="vtros">${ros.map(p=>`<button class="vtp ${sel.has(p.n)?"on":""}" data-vt="pl" data-k="${k}" data-n="${p.n.replace(/"/g,"&quot;")}"><i class="rc ${p.r}"></i><span>${p.n}</span><b>${p.v??"—"}</b></button>`).join("")}</div>
+  </div>`}
+function vValTrade(){
+  const tabs=`<div class="ctabs vttabs"><button data-vt="tab" data-k="calc" aria-pressed="${VT.tab==="calc"}">Calcolatore</button><button data-vt="tab" data-k="list" aria-pressed="${VT.tab==="list"}">Valori lega</button></div>`;
+  if(VT.tab==="list"){
+    const all=Object.entries(ROSTER).flatMap(([t,a])=>a.map(p=>({t,n:p[0],v:valOf(p[0]),rk:!!(VALMAP[vnz(p[0])]||[])[2]}))).sort((a,b)=>(b.v??0)-(a.v??0));
+    return `${H("Calcolatore trade",`<em>${VALORI_AGG.slice(0,5)}</em>`)}${tabs}
+    <div class="tbl-wrap vtlist">${all.map((x,i)=>`<div class="vtrow">${wedge(x.t)}<span class="vtrk">${x.v?i+1:"–"}</span><span class="vtnm">${x.n}${x.rk?` <i class="vtrook">R</i>`:""}<small>${TEAMS[x.t].nick}</small></span><b>${x.v??"n.d."}</b></div>`).join("")}</div>
+    <p class="note">Valori dynasty della classifica Court Consensus (voti della community), aggiornati al ${VALORI_AGG}. "n.d." = giocatore non ancora nella lista: nel calcolatore vale ${VAL_FALLBACK}. R = rookie.</p>`}
+  return `${H("Calcolatore trade",`<em>${VALORI_AGG.slice(0,5)}</em>`)}${tabs}
+  <div id="vtRes">${vtResHTML()}</div>
+  <div class="vtgrid">${vtCard(0)}${vtCard(1)}</div>
+  <button class="sh vtreset" data-vt="reset"><span>Azzera</span></button>
+  <p class="note">Ogni giocatore vale (valore/1000)<sup>${VAL_EXP}</sup> punti trade: le stelle pesano molto più dei giocatori medi, come nei calcolatori dynasty. 1 credito ≈ ${VAL_CR} punti (pick 1 = 300 cr, 2 = 250, 3 = 200, 4 = 150, 5 = 100). Sotto il 10% di differenza la trade è equilibrata, oltre il 25% sbilanciata. Valori Court Consensus al ${VALORI_AGG}.</p>`}
+function vtAct(b){const d=b.dataset,k=+d.k;
+  if(d.vt==="tab"){VT.tab=d.k;render();return}
+  if(d.vt==="pl"){const i=VT.pl[k].indexOf(d.n);if(i>=0)VT.pl[k].splice(i,1);else VT.pl[k].push(d.n)}
+  else if(d.vt==="rm")VT.pl[k].splice(+d.i,1);
+  else if(d.vt==="rmpk")VT.pk[k].splice(+d.i,1);
+  else if(d.vt==="pk")VT.pk[k].push(+d.p);
+  else if(d.vt==="cr")VT.cr[k]=Math.max(0,(+VT.cr[k]||0)+(+d.d));
+  else if(d.vt==="reset"){VT.pl=[[],[]];VT.cr=[0,0];VT.pk=[[],[]]}
+  const y=window.scrollY;render();window.scrollTo(0,y)}
+document.getElementById("main").addEventListener("click",e=>{if(cur!=="valtrade")return;const el=e.target.closest("[data-vt]");if(!el)return;e.preventDefault();vtAct(el)});
+document.getElementById("main").addEventListener("change",e=>{if(cur!=="valtrade")return;const s=e.target.dataset.vtsel;if(s!==undefined){const k=+s,o=1-k,v=e.target.value;if(v===VT.t[o]){VT.t[o]=VT.t[k];VT.pl[o]=[]}VT.t[k]=v;VT.pl[k]=[];const y=window.scrollY;render();window.scrollTo(0,y)}});
+document.getElementById("main").addEventListener("input",e=>{if(cur!=="valtrade")return;const c=e.target.dataset.vtcr;if(c!==undefined){VT.cr[+c]=Math.max(0,+e.target.value||0);const r=document.getElementById("vtRes");if(r)r.innerHTML=vtResHTML()}});
 
 function vHome(){
   const st=standings();
@@ -1869,11 +1984,11 @@ function simAct(b){
     if(navigator.share)navigator.share({text:tx}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(tx).then(()=>{b.querySelector("span").textContent="Copiato ✓"},()=>{})}
 }
 
-const VIEWS={speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};
+const VIEWS={valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
-  const eff=cur==="giocatore"?"roster":cur==="campo"||cur==="cassa"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
+  const eff=cur==="giocatore"?"roster":cur==="campo"||cur==="cassa"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","valtrade","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
