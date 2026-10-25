@@ -108,3 +108,7 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 
 ## 25/10/2026 (9) — Spiders azzurro chiaro
 - SPI: bg `#8cc9f5` (azzurro chiaro), fg `#0f1f3d`, trim `#1e3a8a` (blu scuro, si vede anche nei bordi della maglia, che resta bianca).
+
+## 25/10/2026 (10) — Loghi più grandi nei riquadri
+- Regola unica presa dalla classifica competenza: il logo occupa il riquadro colorato meno 2 px per lato (`.wedge` padding 2px).
+- Efficienza (squadre e Top/Flop) 54 px, Classifica e Sala Trofei 50–54, Risultati 51, Infortuni e Cassa 42, Sfida della notte 38, Trade speciali e Partita simulata 46. Trade resta 30 (colonna stretta).
