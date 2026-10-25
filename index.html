@@ -628,6 +628,10 @@ nav button{font-size:15px;letter-spacing:.04em}
 .hred h2 .t{background:#dc2626}.hred h2::after{background:linear-gradient(90deg,#dc2626,transparent)}
 
 
+.arcbtn{display:flex;align-items:center;gap:12px;width:100%;margin:14px 0 4px;padding:10px 14px;border:1px dashed rgba(148,163,184,.45);background:rgba(15,23,42,.6);color:#cbd5e1;text-align:left;cursor:pointer}
+.arcbtn>span:nth-child(2){flex:1;display:grid;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;letter-spacing:.12em;text-transform:uppercase;color:#fff;line-height:1.1}
+.arcbtn small{font-family:var(--body,inherit);font-style:normal;font-weight:500;font-size:11.5px;letter-spacing:.02em;text-transform:none;color:#94a3b8}
+.arci{font-size:22px}.arcbtn .rgo{color:#94a3b8}
 /* DREAMERS */
 .drlg{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--tc) 75%,#fff),var(--tc) 55%,color-mix(in srgb,var(--tc) 60%,#000));box-shadow:0 0 0 2px rgba(255,255,255,.18),0 3px 10px rgba(0,0,0,.45);overflow:hidden}
 .drlg .badge{width:84%!important;height:84%!important;border-radius:0!important;box-shadow:none!important}
@@ -2104,18 +2108,27 @@ function drAct(b){const d=b.dataset;
   render();window.scrollTo(0,0)}
 
 const GAMES=[
-  {k:"hl",t:"Più o Meno",d:"Due giocatori della lega: il secondo ha l'efficienza più alta o più bassa? Allunga la serie.",i:"⇅",c:"#2fd36b"},
-  {k:"tiro",t:"Tiro da 3",d:"45 secondi per segnare più canestri possibile. La mira dipende dall'efficienza del tuo giocatore.",i:"🏀",c:"#f08a1c"},
+  {k:"hl",a:1,t:"Più o Meno",d:"Due giocatori della lega: il secondo ha l'efficienza più alta o più bassa? Allunga la serie.",i:"⇅",c:"#2fd36b"},
+  {k:"tiro",a:1,t:"Tiro da 3",d:"45 secondi per segnare più canestri possibile. La mira dipende dall'efficienza del tuo giocatore.",i:"🏀",c:"#f08a1c"},
   {k:"notte",t:"Sfida della notte",d:"Crea 2-3 gruppi di giocatori di tutta la lega: vince la media di efficienza più alta nella prossima partita.",i:"🌙",c:"#a855f7"},
-  {k:"sim",t:"Partita simulata",d:"Scegli due franchigie e guarda la partita con quintetti ed efficienze reali.",i:"📺",c:"#3b82f6"},
+  {k:"sim",a:1,t:"Partita simulata",d:"Scegli due franchigie e guarda la partita con quintetti ed efficienze reali.",i:"📺",c:"#3b82f6"},
   {k:"dream",t:"DREAMERS",d:"Il fanta privato della lega: scontri diretti settimanali a colpi di efficienza, classifica e playoff a 8.",i:"✦",c:"#8b5cf6"}];
 function vGiochiHub(){
+  const card=g=>`<button class="gmc" data-game="${g.k}" style="--gc:${g.c}"><span class="gmi">${g.i}</span><span class="gmt"><b>${g.t}</b><small>${g.d}</small></span><span class="rgo">›</span></button>`;
+  const ord=["notte","dream"];
   if(GAME==="menu"){
-    return `${H("Giochi",`<em>Scegli una sfida</em>`)}
-    <div class="gmenu">${GAMES.map(g=>`<button class="gmc" data-game="${g.k}" style="--gc:${g.c}"><span class="gmi">${g.i}</span><span class="gmt"><b>${g.t}</b><small>${g.d}</small></span><span class="rgo">›</span></button>`).join("")}</div>
-    <p class="note">Record e risultati restano salvati su questo telefono. Usa "Condividi risultato" per sfidare gli altri GM nel gruppo.</p>`;
+    return `${H("Giochi",`<em>Fanta della lega</em>`)}
+    <div class="gmenu">${ord.map(k=>card(GAMES.find(g=>g.k===k))).join("")}</div>
+    <button class="arcbtn" data-game="arcade"><span class="arci">🕹️</span><span>Arcade<small>${GAMES.filter(g=>g.a).map(g=>g.t).join(" · ")}</small></span><span class="rgo">›</span></button>
+    <p class="note">Sfida della notte e DREAMERS sono i giochi fanta della lega; nell'Arcade trovi i passatempi. Record e risultati restano salvati su questo telefono.</p>`;
   }
-  return (GAME==="notte"&&NT.view!=="list"?"":`<button class="gback" data-game="menu">‹ Giochi</button>`)+(GAME==="tiro"?vTiro():GAME==="sim"?vSim():GAME==="notte"?vNotte():GAME==="dream"?vDream():vGiochi());
+  if(GAME==="arcade"){
+    return `<button class="gback" data-game="menu">‹ Giochi</button>${H("Arcade",`<em>Passatempi</em>`)}
+    <div class="gmenu">${GAMES.filter(g=>g.a).map(card).join("")}</div>
+    <p class="note">Record salvati su questo telefono. Usa "Condividi risultato" per sfidare gli altri GM nel gruppo.</p>`;
+  }
+  const arc=(GAMES.find(g=>g.k===GAME)||{}).a;
+  return (GAME==="notte"&&NT.view!=="list"?"":arc?`<button class="gback" data-game="arcade">‹ Arcade</button>`:`<button class="gback" data-game="menu">‹ Giochi</button>`)+(GAME==="tiro"?vTiro():GAME==="sim"?vSim():GAME==="notte"?vNotte():GAME==="dream"?vDream():vGiochi());
 }
 document.getElementById("main").addEventListener("click",e=>{
   if(cur!=="giochi")return;

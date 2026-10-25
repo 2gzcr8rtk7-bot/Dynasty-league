@@ -172,3 +172,6 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Archivio: `dreamers-data.js` (`DREAM_DATA.notti` = {notte NBA: {giocatore: efficienza della partita}}, `DREAM_DATA.form` = formazione di ogni turno, bloccata alla prima notte del turno). Lo genera `tools/dreamers.mjs` leggendo tutta la storia git di index.html (notte = data del report − 1 giorno, efficienza = colonna 6 di `EFF.gioc`). Lo lancia in automatico il workflow GitHub `dreamers.yml` a ogni push di index.html e salva solo se ci sono novità. L'ultima notte del report attuale l'app la legge comunque dal vivo da `EFF`, quindi i punteggi sono aggiornati subito anche prima che il workflow finisca.
 - Tolte dal repository due immagini di prova finite lì per errore (ntd1.png, ntd2.png).
 - Loghi in DREAMERS: tondi con lo sfondo del colore squadra (`drLg(t, taglia)`; taglie: normale 46px, "m" 32px, "s" 26px).
+
+## 25/10/2026 (18) — Giochi divisi: fanta + Arcade
+- Menu Giochi: solo Sfida della notte e DREAMERS (giochi fanta) + pulsante "Arcade" (`GAME="arcade"`) con Più o Meno, Tiro da 3 e Partita simulata (in `GAMES` hanno `a:1`). Dai giochi arcade il tasto indietro torna all'Arcade.
