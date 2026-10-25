@@ -432,6 +432,15 @@ nav button{font-size:15px;letter-spacing:.04em}
 .rgo{flex:none;color:var(--muted);font-size:22px;line-height:1;margin-left:2px}
 .rav{flex-basis:100%;margin:3px 0 0 36px;font-size:12px}
 /* Ducks: grigio metallizzato */
+.simpre{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;margin-bottom:12px}
+.simpre>div:not(.simbar){display:grid;text-align:center;background:var(--panel);border:1px solid var(--line);padding:4px 8px}
+.simpre small{font-family:var(--display);font-weight:700;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.simpre b{font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;line-height:1.05;color:#fff}
+.simbar{position:relative;display:flex;height:34px;border:1px solid var(--line);overflow:hidden}
+.simbar i{display:block;height:100%}
+.simbar span{position:absolute;top:50%;transform:translateY(-50%);font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.8)}
+.simbar span:nth-of-type(1){left:8px}.simbar span:nth-of-type(2){right:8px}
+.simbar em{position:absolute;left:50%;bottom:-1px;transform:translateX(-50%);font-family:var(--display);font-weight:700;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#fff;background:rgba(0,0,0,.55);padding:0 5px}
 /* Giochi: Sfida della notte */
 .ntnum{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .ntnum span{font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
@@ -1633,41 +1642,57 @@ function tiroCanvas(cv){
 
 /* ===== Gioco 2: Partita simulata ===== */
 const SIM={home:null,away:null,timer:null,ev:[],i:0,state:"pick",res:null};
+/* Partita simulata: esito = 55% forza dei 5 più efficienti + 15% forza dei 5 successivi + 30% caso.
+   I "migliori" sono i più efficienti della rosa (min. 10 minuti di media), non i titolari impostati nel campo. */
+const SIMW={top:.55,bench:.15,luck:.30,sdTop:.15,sdBench:.20};
 function simTeam(t){
-  const {q}=quintetto(t);const qs=new Set(q.map(p=>p[0]));
-  const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).map(p=>[p,effOf(t,p[0])]).filter(x=>x[1]!=null).sort((a,b)=>b[1]-a[1]).slice(0,4).map(x=>x[0]);
-  return [...q.map(p=>({n:p[0],e:effOf(t,p[0])??.8,w:1})),...bench.map(p=>({n:p[0],e:effOf(t,p[0])??.8,w:.35}))];
+  const all=(EFF.gioc[t]||[]).filter(p=>p[1]!=null).map(p=>({n:p[0],e:p[1],m:p[3]||0}));
+  const ok=all.filter(p=>p.m>=10).sort((a,b)=>b.e-a.e),low=all.filter(p=>p.m<10).sort((a,b)=>b.e-a.e);
+  const l=[...ok,...low].slice(0,10);
+  return l.map((p,i)=>({...p,w:i<5?1:.45,tier:i<5?"top":"bench"}));
 }
+function simStr(t){const l=simTeam(t),av=a=>a.length?a.reduce((s,p)=>s+p.e,0)/a.length:.6;
+  return{top:av(l.filter(p=>p.tier==="top")),bench:av(l.filter(p=>p.tier==="bench"))}}
+function simEdge(h,a){const A=simStr(h),B=simStr(a);
+  return SIMW.top*Math.tanh((A.top-B.top)/SIMW.sdTop)+SIMW.bench*Math.tanh((A.bench-B.bench)/SIMW.sdBench)}
+const simNorm=()=>{let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)};
+function simProb(h,a){const x=simEdge(h,a)/SIMW.luck,t=1/(1+.2316419*Math.abs(x)),d=.3989423*Math.exp(-x*x/2),p=d*t*(.3193815+t*(-.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return x>0?1-p:p}
 function simRun(h,a){
-  const T={[h]:simTeam(h),[a]:simTeam(a)},S={[h]:0,[a]:0},pts={},ev=[];
-  const pick=arr=>{const tot=arr.reduce((s,p)=>s+p.w*(.6+p.e),0);let r=Math.random()*tot;for(const p of arr){r-=p.w*(.6+p.e);if(r<=0)return p}return arr[0]};
-  const sur=n=>n.split(" ").slice(-1)[0];
-  for(let qn=1;qn<=4;qn++){
-    ev.push({q:qn,txt:`Inizio ${qn}° quarto`,k:"q"});
-    for(let i=0;i<52;i++){
-      const t=i%2?a:h,o=t===h?a:h,p=pick(T[t]);
-      const dAvg=T[o].slice(0,5).reduce((s,x)=>s+x.e,0)/5;
-      const three=Math.random()<.36;
-      let pr=(three?.33:.5)+(p.e-.9)*.22-(dAvg-.9)*.08;pr=Math.max(.15,Math.min(.75,pr));
-      const r=Math.random();
-      if(r<.07){ev.push({q:qn,t,txt:`Palla persa di ${sur(p.n)}`,k:"to"});continue}
-      if(Math.random()<pr){const v=three?3:2;S[t]+=v;pts[p.n]=(pts[p.n]||0)+v;
-        ev.push({q:qn,t,txt:three?`${sur(p.n)} segna da tre!`:Math.random()<.25?`Schiacciata di ${sur(p.n)}!`:`${sur(p.n)} segna`,k:"ok",v,s:{...S}})}
-      else if(Math.random()<.12){S[t]+=2;pts[p.n]=(pts[p.n]||0)+2;ev.push({q:qn,t,txt:`${sur(p.n)} subisce fallo: 2 liberi a segno`,k:"ok",v:2,s:{...S}})}
-      else ev.push({q:qn,t,txt:`${sur(p.n)} sbaglia${three?" da tre":""}`,k:"ko"});
-    }
-  }
-  while(S[h]===S[a]){const t=Math.random()<.5?h:a,p=pick(T[t]);S[t]+=2;pts[p.n]=(pts[p.n]||0)+2;ev.push({q:5,t,txt:`Supplementare: ${sur(p.n)} segna`,k:"ok",v:2,s:{...S}})}
-  return{ev,S,pts};
+  const X=simEdge(h,a)+SIMW.luck*simNorm();
+  const margin=Math.min(40,Math.max(1,Math.round(2+Math.abs(X)*28+Math.random()*4)));
+  const sh=simStr(h),sa=simStr(a);
+  const lose=Math.round(98+((sh.top+sa.top)/2-.9)*40+(Math.random()*16-8));
+  const w=X>=0?h:a,o=w===h?a:h,TOT={[w]:lose+margin,[o]:lose};
+  const sur=n=>n.replace(/\s+(Jr\.?|Sr\.?|II|III|IV)$/i,"").split(" ").slice(-1)[0],pts={},ev=[];
+  const pick=arr=>{const tot=arr.reduce((s,p)=>s+p.w*(.4+p.e),0);let r=Math.random()*tot;for(const p of arr){r-=p.w*(.4+p.e);if(r<=0)return p}return arr[0]};
+  [h,a].forEach(t=>{const T=simTeam(t);let rem=TOT[t];
+    while(rem>0){const p=pick(T),r=Math.random();let v,txt,k="ok";
+      if(rem>=3&&r<.34){v=3;txt=`${sur(p.n)} segna da tre!`}
+      else if(rem>=2){v=2;txt=r<.46?`${sur(p.n)} subisce fallo: 2 liberi a segno`:r<.58?`Schiacciata di ${sur(p.n)}!`:`${sur(p.n)} segna`}
+      else{v=1;txt=`${sur(p.n)} segna un tiro libero`}
+      rem-=v;pts[p.n]=(pts[p.n]||0)+v;ev.push({tm:Math.random()*48,t,txt,k,v,pn:p.n})}
+    const nmiss=Math.round(ev.filter(e=>e.t===t).length*.85),nto=10+Math.round(Math.random()*6);
+    for(let i=0;i<nmiss;i++){const p=pick(T);ev.push({tm:Math.random()*48,t,txt:`${sur(p.n)} sbaglia${Math.random()<.4?" da tre":""}`,k:"ko"})}
+    for(let i=0;i<nto;i++){const p=pick(T);ev.push({tm:Math.random()*48,t,txt:`Palla persa di ${sur(p.n)}`,k:"to"})}
+  });
+  ev.sort((x,y)=>x.tm-y.tm);
+  const S={[h]:0,[a]:0},out=[];let q=0;
+  ev.forEach(e=>{const qq=Math.min(4,Math.floor(e.tm/12)+1);while(q<qq){q++;out.push({q,txt:`Inizio ${q}° quarto`,k:"q"})}
+    e.q=qq;if(e.v){S[e.t]+=e.v;e.s={...S}}out.push(e)});
+  return{ev:out,S,pts,X};
 }
 function vSim(){
   if(!SIM.home)SIM.home=curTeam;
   if(!SIM.away)SIM.away=Object.keys(TEAMS).find(k=>k!==SIM.home);
   const opt=sel=>Object.keys(TEAMS).map(k=>`<option value="${k}" ${k===sel?"selected":""}>${TEAMS[k].name}</option>`).join("");
   const h=SIM.home,a=SIM.away;
-  const head=`${H("Partita simulata",`<em>Quintetti e efficienze reali</em>`)}
-  <p class="gintro">Scegli due franchigie: la partita si gioca da sola con i titolari e le riserve migliori. Ogni tiro dipende dall'efficienza vera dei giocatori.</p>
-  <div class="simsel"><select id="simH">${opt(h)}</select><span>vs</span><select id="simA">${opt(a)}</select></div>`;
+  const sh=simStr(h),sa=simStr(a),ph=simProb(h,a);
+  const head=`${H("Partita simulata",`<em>Merito + fortuna</em>`)}
+  <p class="gintro">L'esito dipende per il <b>55%</b> dai 5 giocatori più efficienti di ogni squadra, per il <b>15%</b> dai 5 successivi e per il <b>30%</b> dal caso. Più è grande la differenza di efficienza, più è probabile vincere e più largo è lo scarto.</p>
+  <div class="simsel"><select id="simH">${opt(h)}</select><span>vs</span><select id="simA">${opt(a)}</select></div>
+  <div class="simpre"><div><small>Migliori 5</small><b>${f2(sh.top)}</b><small>Altri 5</small><b>${f2(sh.bench)}</b></div>
+   <div class="simbar"><i style="width:${Math.round(ph*100)}%;background:${TEAMS[h].bg}"></i><i style="width:${100-Math.round(ph*100)}%;background:${TEAMS[a].bg}"></i><span>${Math.round(ph*100)}%</span><span>${100-Math.round(ph*100)}%</span><em>Pronostico</em></div>
+   <div><small>Migliori 5</small><b>${f2(sa.top)}</b><small>Altri 5</small><b>${f2(sa.bench)}</b></div></div>`;
   const board=`<div id="simBoard">${simBoardHTML()}</div>`;
   let body="";
   if(SIM.state==="pick")body=`<div class="hlbtn"><button class="go" data-sim="go"><span>Gioca la partita ▶</span></button></div>`;
@@ -1681,7 +1706,7 @@ function vSim(){
       <div class="simbox">${[h,a].map(t=>`<div><small>${TEAMS[t].nick}</small>${top(t).map(([n,v])=>`<p>${n.split(" ").slice(-1)[0]} <b>${v}</b></p>`).join("")}</div>`).join("")}</div></div>
       <div class="hlbtn"><button class="go" data-sim="go"><span>Rigioca</span></button><button class="sh" data-sim="share"><span>Condividi risultato</span></button></div>`}
   }
-  return head+board+body+`<p class="note">Simulazione per divertimento: non conta in classifica. Ogni partita è diversa.</p>`;
+  return head+board+body+`<p class="note">Simulazione per divertimento: non conta in classifica. Migliori 5 e altri 5 = media di efficienza dei giocatori più efficienti della rosa (min. 10 minuti), indipendentemente dal quintetto impostato.</p>`;
 }
 function simBoardHTML(){const h=SIM.home,a=SIM.away;
   const sc=SIM.res&&SIM.i>0?(SIM.res.ev.slice(0,SIM.i).reverse().find(e=>e.s)||{s:{[h]:0,[a]:0}}).s:{[h]:0,[a]:0};
