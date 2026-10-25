@@ -256,3 +256,8 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Risultati: loghi senza sfondo colorato (solo PNG trasparente con leggera ombra), `.rgl`.
 - Classifica: loghi senza sfondo colorato (`.clf .wedge`).
 - Sala Trofei: loghi senza sfondo colorato (`body[data-v=storia] .wedge`; `render()` ora scrive `body.dataset.v=cur`).
+
+## 25/10/2026 (32) — DREAMERS: playoff al meglio delle 3
+- Regular season ridotta da 21 a 15 turni (`DR_REG=15`, 2 gironi completi + 1 turno). Playoff: quarti, semifinali e finale (con finale 3° posto in parallelo) al meglio delle 3, una gara a settimana, max 9 settimane (`DR_TOT=24`, fine stagione invariata).
+- Ottimizzati: un turno finisce appena tutte le sue serie sono decise (se finiscono tutte 2-0 si passa subito al turno dopo). A parità di punteggio in una gara vince la testa di serie migliore.
+- Nuova `drPO(st)` sostituisce `drBracket/drWin`: restituisce serie (`R`), settimane di playoff (`W[k]={r,g,pr}`), inizio turni (`RS`), `done`, `end`, `champ`. Calendario: settimane non ancora determinate = "Playoff · solo se necessaria"; tabellone mostra le vittorie nella serie; nel turno ogni partita ha la riga "Quarto N · gara G · serie X–Y".
