@@ -158,6 +158,11 @@ nav button[aria-expanded="true"] .car{transform:rotate(180deg)}
 .gmese summary .ev{font-size:17px}
 .gmese .tbl-wrap{border:0;border-top:1px solid var(--line);box-shadow:none}
 .plink{cursor:pointer}.esqtbl tr.plink:hover td{background:rgba(255,255,255,.05)}.plgo{color:var(--muted);font-style:normal}.trow.plink:hover{background:rgba(255,255,255,.04)}
+.ichip{gap:6px}.ichip[data-it="ALL"]{padding-left:12px}
+.icnt{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--loss);color:#fff;font-style:normal;font-size:11px;font-weight:800;margin-left:2px}
+.ihead{display:flex;align-items:center;gap:10px;padding:8px 12px;margin-bottom:12px;background:linear-gradient(115deg,var(--tc),color-mix(in srgb,var(--tc) 50%,#000));color:#fff}
+.ihead .badge{width:34px;height:34px}.ihead b{font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.iok{padding:18px;text-align:center;font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase;color:var(--win);background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line)}
 </style>
 
 
@@ -913,7 +918,7 @@ nav button>span{white-space:nowrap}
       <button role="tab" id="t-ho" data-v="home" aria-selected="true"><span>Home</span></button>
       <button role="tab" id="t-dk" data-v="dunkest" data-menu="subnav" aria-haspopup="true" aria-expanded="false" aria-selected="false"><span>Dunkest<i class="car">▾</i></span></button>
       <button role="tab" id="t-ef" data-v="efficienza" aria-selected="false"><span>Efficienza</span></button>
-      <button role="tab" id="t-in" data-v="infortuni" aria-selected="false"><span>Infortuni</span></button>
+      <button role="tab" id="t-in" data-v="infortuni" aria-selected="false"><span>Centro Medico</span></button>
       <button role="tab" id="t-gm" data-v="storia" aria-selected="false"><span>Sala Trofei</span></button>
       <button role="tab" id="t-cs" data-v="valtrade" aria-selected="false"><span>Calcolatore Scambi</span></button>
       <button role="tab" id="t-gi" data-v="giochi" aria-selected="false"><span>Giochi</span></button>
@@ -930,7 +935,7 @@ nav button>span{white-space:nowrap}
   </div>
 </header>
 <main class="wrap" id="main"></main>
-<footer class="wrap upd">Ultimo aggiornamento: 25/10/2026 · 18:28</footer>
+<footer class="wrap upd">Ultimo aggiornamento: 25/10/2026 · 18:34</footer>
 
 <script src="dreamers-data.js"></script>
 <script>
@@ -1525,11 +1530,17 @@ function vGiocatore(){
 
 const STATI={out:["Out","Fuori"],dubbio:["Doubtful","In dubbio"],quest:["Questionable","In forse"],dtd:["Day-to-day","Giorno per giorno"],ok:["Disponibile","Monitorati"]};
 const INJ={};INFORTUNI.lista.forEach(x=>INJ[x.p]=x);
+let injTeam="ALL";try{injTeam=localStorage.getItem("injTeam")||"ALL"}catch(e){}
 function vInfortuni(){
-  const groups=Object.keys(STATI).map(k=>[k,INFORTUNI.lista.filter(x=>x.stato===k)]).filter(([k,l])=>l.length);
-  return `${H("Infortuni",`<em>Agg. ${INFORTUNI.agg}</em>`)}
-  <div class="isum">${Object.keys(STATI).filter(k=>k!=="ok").map(k=>`<span class="ipill ${k}">${STATI[k][0]} <b>${INFORTUNI.lista.filter(x=>x.stato===k).length}</b></span>`).join("")}</div>
-  ${groups.map(([k,l])=>`<section class="igrp"><h4 class="ih ${k}"><span>${STATI[k][1]}</span></h4><div class="tbl-wrap ilist">${l.map(x=>`<div class="irow ${k}">${wedge(x.t)}<div class="ib"><div class="it"><b>${x.p}</b><span class="ipill ${k}">${STATI[k][0]}</span></div><small>${TEAMS[x.t].nick} · ${x.nba}</small><p>${x.tipo}${x.rientro?` · <em>${x.rientro}</em>`:""}</p>${x.nota?`<p class="inote">${x.nota}</p>`:""}<div class="isrc">${x.fonti.map(f=>`<span>${f}</span>`).join("")}</div></div></div>`).join("")}</div></section>`).join("")}
+  const all=INFORTUNI.lista,L=injTeam==="ALL"?all:all.filter(x=>x.t===injTeam);
+  const bad=t=>all.filter(x=>x.t===t&&x.stato!=="ok").length;
+  const chips=`<div class="chips ichips"><button class="chip ichip" data-it="ALL" aria-pressed="${injTeam==="ALL"}">Tutte<b class="icnt">${all.filter(x=>x.stato!=="ok").length}</b></button>${Object.keys(TEAMS).map(t=>`<button class="chip ichip" data-it="${t}" aria-pressed="${injTeam===t}">${badge(t)}${TEAMS[t].nick}${bad(t)?`<b class="icnt">${bad(t)}</b>`:""}</button>`).join("")}</div>`;
+  const groups=Object.keys(STATI).map(k=>[k,L.filter(x=>x.stato===k)]).filter(([k,l])=>l.length);
+  return `${H("Centro Medico",`<em>Agg. ${INFORTUNI.agg}</em>`)}
+  ${chips}
+  ${injTeam!=="ALL"?`<div class="ihead" style="--tc:${TEAMS[injTeam].bg}">${badge(injTeam)}<b>${TEAMS[injTeam].name}</b></div>`:""}
+  <div class="isum">${Object.keys(STATI).filter(k=>k!=="ok").map(k=>`<span class="ipill ${k}">${STATI[k][0]} <b>${L.filter(x=>x.stato===k).length}</b></span>`).join("")}</div>
+  ${groups.length?groups.map(([k,l])=>`<section class="igrp"><h4 class="ih ${k}"><span>${STATI[k][1]}</span></h4><div class="tbl-wrap ilist">${l.map(x=>`<div class="irow ${k}">${wedge(x.t)}<div class="ib"><div class="it"><b>${x.p}</b><span class="ipill ${k}">${STATI[k][0]}</span></div><small>${TEAMS[x.t].nick} · ${x.nba}</small><p>${x.tipo}${x.rientro?` · <em>${x.rientro}</em>`:""}</p>${x.nota?`<p class="inote">${x.nota}</p>`:""}<div class="isrc">${x.fonti.map(f=>`<span>${f}</span>`).join("")}</div></div></div>`).join("")}</div></section>`).join(""):`<div class="iok">✓ Nessun giocatore segnalato: rosa al completo.</div>`}
   <p class="note">Fonti consultate: ${INFORTUNI.fonti.join(" · ")}. Più fonti per la stessa notizia sono indicate sotto ogni giocatore; se non concordano è segnalato.</p>`;
 }
 
@@ -2532,6 +2543,7 @@ function render(){
   const cr=m.querySelector("#croster");if(cr)cr.onclick=()=>{cur="roster";render();window.scrollTo(0,0)};
   m.querySelectorAll(".pl[data-pl],.rrow[data-pl]").forEach(b=>{const go=()=>{curPlayer=b.dataset.pl;cur="giocatore";render();window.scrollTo(0,0)};b.onclick=go;b.onkeydown=e=>{if(e.key==="Enter")go()}});
   const gb=m.querySelector("#gback");if(gb)gb.onclick=()=>{cur=gFrom||"roster";gFrom="roster";render();window.scrollTo(0,0)};
+  m.querySelectorAll(".ichip").forEach(b=>b.onclick=()=>{injTeam=b.dataset.it;try{localStorage.setItem("injTeam",injTeam)}catch(e){}render()});
   m.querySelectorAll("[data-pln]").forEach(b=>{const from=cur;b.onclick=()=>{curTeam=b.dataset.plt;curPlayer=b.dataset.pln;gFrom=from;cur="giocatore";render();window.scrollTo(0,0)}});
   m.querySelectorAll(".htile").forEach(b=>b.onclick=()=>{curTeam=b.dataset.team;try{localStorage.setItem("team",curTeam)}catch(e){}cur="campo";render();window.scrollTo(0,0)});
   m.querySelectorAll(".echip").forEach(b=>b.onclick=()=>{effTeam=b.dataset.t;render()});
