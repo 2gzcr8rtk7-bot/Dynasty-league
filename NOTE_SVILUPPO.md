@@ -240,3 +240,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Entrando in DREAMERS la pagina diventa un'app a sé: classe `body.dreamfs` (impostata in `render()`) nasconde testata, barra e footer; bottone rosso fisso "‹ Torna all'app" (`.drexit`, `data-game="menu"`) per tornare ai Giochi.
 - Look più moderno: card con angoli arrotondati e ombre, cerchi dei loghi più grandi (60px nelle partite) con logo centrato al 76% del cerchio.
 - DREAMERS: il bottone "Torna all'app" ora scorre via con la pagina (in cima alla schermata). Calendario con logo + nome squadra (solo animale) per ogni partita, una per riga, vincitrice in bianco.
+- DREAMERS a tutto schermo, spazio sfruttato meglio: classifica a schede grandi (posizione, logo 58px, nome, media e turni, forma ultime 5 V/P, vittorie/sconfitte grandi, distacco dalla prima); tabellone playoff più grande (quarti più larghi con nomi, semifinali e finale con logo grande e punteggio, coppa più grande).
