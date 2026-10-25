@@ -129,3 +129,9 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 - Per aggiornare i valori: sostituire `VALORI` e `VALORI_AGG`.
 - Risultato: in alto il valore che ogni squadra RICEVE; il giudizio nomina la squadra che ci guadagna ("Sbilanciata a favore dei X", "Ci guadagnano i X del N%").
 - Barra: parte sinistra = quota ricevuta dalla prima squadra, destra = dalla seconda, con le percentuali scritte e uno stacco tra i due colori (utile quando le squadre hanno colori simili).
+
+## 25/10/2026 (13) — Sfida della notte: correzioni
+- Quando un gruppo arriva a 5 giocatori la scelta passa da sola al gruppo successivo con un messaggio (`NT.msg`); se tutti i gruppi sono pieni lo dice invece di non fare niente.
+- "Chiudi ora" va toccato due volte (conferma), così non si chiude una sfida per sbaglio.
+- Dopo "Lancia la sfida" i tocchi vengono ignorati per 0,6 s (`ntLock`): su iPhone un doppio tocco poteva finire su "Chiudi ora" e chiudere subito la sfida.
+- `ntGames` cerca il giocatore anche nelle altre squadre di `EFF.gioc` (giocatori appena scambiati).

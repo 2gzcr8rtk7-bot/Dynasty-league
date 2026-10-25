@@ -452,6 +452,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .ntg small{font-size:11px;color:#cfd6ea}
 .ntsel{display:flex;flex-wrap:wrap;gap:6px;min-height:52px;padding:8px;border:2px solid var(--gc);border-top:0;background:color-mix(in srgb,var(--gc) 10%,transparent);margin-bottom:4px}
 .ntsel em{color:var(--muted);font-size:13px;align-self:center}
+.ntmsg{margin:0 0 8px;padding:8px 10px;background:rgba(245,179,1,.12);border-left:4px solid var(--gold);color:#fde68a;font-size:13.5px}
 .ntsel.shake{animation:sh .35s}@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 .ntp{display:flex;align-items:center;gap:6px;background:var(--panel2);border:1px solid var(--line);color:#fff;padding:0 8px 0 0;cursor:pointer;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;text-transform:uppercase}
 .ntp .wedge{width:30px;height:32px;padding:2px}.ntp .wedge .logo{width:26px;height:26px}
@@ -1619,7 +1620,7 @@ const effOf=(t,n)=>{const e=(EFF.gioc[t]||[]).find(x=>x[0]===n);return e&&e[1]!=
    Si creano 2-3 gruppi da 1-5 giocatori (di qualsiasi franchigia). Alla creazione si salva quante partite ha
    giocato ognuno (EFF.gioc[...][2]). Quando il numero di partite sale, la sua efficienza nella nuova partita
    è quella dell'ultima gara (lastEff). Punteggio del gruppo = media delle efficienze. Le sfide restano sul telefono. */
-const NT={view:"list",groups:[[],[]],act:0,q:"",team:"ALL",open:null,list:[]};
+const NT={view:"list",msg:"",groups:[[],[]],act:0,q:"",team:"ALL",open:null,list:[]};
 try{NT.list=JSON.parse(localStorage.getItem("notteSfide")||"[]")}catch(e){NT.list=[]}
 const ntSave=()=>{try{localStorage.setItem("notteSfide",JSON.stringify(NT.list))}catch(e){}};
 const NT_COL=["#3b82f6","#ef4444","#22c55e"],NT_LET=["A","B","C"];
@@ -1635,7 +1636,7 @@ function ntCard(x){const{c,i,S}=x,sc=NT_SC[(c.n||1)-1];
   const pc=S.tot?Math.round(S.played/S.tot*100):0;
   return `<button class="ntc" data-nt="open" data-i="${i}" style="--sc:${sc}"><span class="ntch"><b>Sfida ${c.n||""}</b><small class="ntcd">${c.d}</small><span class="ntst">LIVE</span></span><div class="ntcgs g${S.g.length}" style="grid-template-columns:repeat(${S.g.length},minmax(0,1fr))">${cols}</div><span class="ntcp"><span style="width:${pc}%"></span></span><small class="ntcf">${S.played}/${S.tot} hanno giocato</small></button>`}
 function ntAll(){const out=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>out.push({n:p[0],t,r:p[2],num:p[1]})));return out}
-function ntGames(t,n){const e=(EFF.gioc[t]||[]).find(x=>x[0]===n);return e?e[2]||0:0}
+function ntGames(t,n){let e=(EFF.gioc[t]||[]).find(x=>x[0]===n);if(!e)for(const a of Object.values(EFF.gioc)){e=a.find(x=>x[0]===n);if(e)break}return e?+e[2]||0:0}
 function ntStatus(c){
   const g=c.groups.map(gr=>{const pl=gr.map(p=>{const now=ntGames(p.t,p.n),done=now>p.g0;return{...p,done,v:done?lastEff(p.t,p.n):null}});
     const dn=pl.filter(x=>x.done&&x.v!=null);const avg=dn.length?dn.reduce((s,x)=>s+x.v,0)/dn.length:null;
@@ -1656,7 +1657,7 @@ function vNotte(){
     <p class="gintro">Crea da 2 a 3 gruppi con 1-5 giocatori ciascuno, anche di franchigie diverse. Vince il gruppo con la <b>media di efficienza più alta</b> nella prossima partita giocata da ognuno.</p>
     <div class="ntnum"><span>Gruppi</span><button data-nt="ng" data-k="2" aria-pressed="${NT.groups.length===2}">2</button><button data-nt="ng" data-k="3" aria-pressed="${NT.groups.length===3}">3</button></div>
     <div class="ntgs">${tabs}</div>
-    <div class="ntsel" style="--gc:${NT_COL[NT.act]}">${cur.length?cur.map(p=>`<button class="ntp" data-nt="rm" data-n="${p.n}">${wedge(p.t)}<span>${p.n}</span><i>✕</i></button>`).join(""):`<em>Tocca i giocatori qui sotto per aggiungerli al Gruppo ${NT_LET[NT.act]}</em>`}</div>
+    ${NT.msg?`<div class="ntmsg">${NT.msg}</div>`:""}<div class="ntsel" style="--gc:${NT_COL[NT.act]}">${cur.length?cur.map(p=>`<button class="ntp" data-nt="rm" data-n="${p.n}">${wedge(p.t)}<span>${p.n}</span><i>✕</i></button>`).join(""):`<em>Tocca i giocatori qui sotto per aggiungerli al Gruppo ${NT_LET[NT.act]}</em>`}</div>
     <div class="hlbtn"><button class="go" data-nt="launch" ${ready?"":"disabled"}><span>Lancia la sfida ▶</span></button></div>
     <input id="ntq" class="ntq" type="search" placeholder="Cerca giocatore…" value="${NT.q.replace(/"/g,"&quot;")}">
     <div class="chips">${chips}</div>
@@ -1694,24 +1695,28 @@ function ntListHTML(used){
   return `<div class="gcard rost"><ul class="gpl">${l.map(p=>{const gi=NT.groups.findIndex(g=>g.some(x=>x.n===p.n));
     return `<li class="rrow ${gi>=0?"ntin":""}" data-nt="add" data-n="${p.n}" data-t="${p.t}" style="${gi>=0?`--gc:${NT_COL[gi]}`:""}"><span class="grl ${p.r}">${R[p.r]||"?"}</span><span class="rnm"><b>${p.n}</b><small>${TEAMS[p.t].nick}</small></span>${gi>=0?`<span class="ntin-b">${NT_LET[gi]}</span>`:`<span class="rgo">+</span>`}</li>`}).join("")}</ul></div>`;
 }
-function ntAct(b){
+let ntLock=0;
+function ntAct(b){if(Date.now()<ntLock)return;
   const a=b.dataset.nt,d=b.dataset;
-  if(a==="new"){if(ntLive().length>=NT_MAX)return;NT.view="new";NT.groups=[[],[]];NT.act=0;NT.q="";NT.team="ALL";render();window.scrollTo(0,0)}
+  if(a==="new"){if(ntLive().length>=NT_MAX)return;NT.msg="";NT.view="new";NT.groups=[[],[]];NT.act=0;NT.q="";NT.team="ALL";render();window.scrollTo(0,0)}
   else if(a==="back"||a==="list"){NT.view="list";render();window.scrollTo(0,0)}
   else if(a==="ng"){const k=+d.k;if(k===3&&NT.groups.length===2)NT.groups.push([]);if(k===2&&NT.groups.length===3){NT.groups.pop();if(NT.act>1)NT.act=1}render()}
-  else if(a==="grp"){NT.act=+d.i;render()}
+  else if(a==="grp"){NT.act=+d.i;NT.msg="";render()}
   else if(a==="team"){NT.team=d.k;render()}
   else if(a==="add"){const gi=NT.groups.findIndex(g=>g.some(x=>x.n===d.n));
-    if(gi>=0){NT.groups[gi]=NT.groups[gi].filter(x=>x.n!==d.n)}else if(NT.groups[NT.act].length<5){NT.groups[NT.act].push({n:d.n,t:d.t})}
-    else{alertNT("Il Gruppo "+NT_LET[NT.act]+" ha già 5 giocatori");return}
+    NT.msg="";
+    if(gi>=0){NT.groups[gi]=NT.groups[gi].filter(x=>x.n!==d.n)}
+    else{if(NT.groups[NT.act].length>=5){const nx=NT.groups.findIndex(g=>g.length<5);if(nx<0){NT.msg="Tutti i gruppi sono completi (5 giocatori ciascuno): togli qualcuno o lancia la sfida.";alertNT();const y=window.scrollY;render();window.scrollTo(0,y);return}NT.act=nx}
+      NT.groups[NT.act].push({n:d.n,t:d.t});
+      if(NT.groups[NT.act].length>=5){const nx=NT.groups.findIndex(g=>g.length<5);NT.msg=nx>=0?`Gruppo ${NT_LET[NT.act]} completo: ora stai scegliendo il Gruppo ${NT_LET[nx]}.`:"Tutti i gruppi sono completi: puoi lanciare la sfida.";if(nx>=0)NT.act=nx}}
     const y=window.scrollY;render();window.scrollTo(0,y)}
   else if(a==="rm"){NT.groups[NT.act]=NT.groups[NT.act].filter(x=>x.n!==d.n);const y=window.scrollY;render();window.scrollTo(0,y)}
   else if(a==="launch"){if(!NT.groups.every(g=>g.length>=1&&g.length<=5))return;const lv=ntLive();if(lv.length>=NT_MAX)return;const us=new Set(lv.map(x=>x.c.n));let sn=1;while(us.has(sn))sn++;
     const now=new Date(),dd=now.toLocaleDateString("it-IT",{day:"2-digit",month:"2-digit",year:"numeric"})+" "+now.toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"});
     NT.list.push({n:sn,d:dd,names:NT.groups.map((g,i)=>"Gruppo "+NT_LET[i]),groups:NT.groups.map(g=>g.map(p=>({n:p.n,t:p.t,g0:ntGames(p.t,p.n)})))});
-    ntSave();NT.open=NT.list.length-1;NT.view="show";render();window.scrollTo(0,0)}
+    ntSave();NT.open=NT.list.length-1;NT.view="show";ntLock=Date.now()+600;render();window.scrollTo(0,0)}
   else if(a==="open"){NT.open=+d.i;NT.view="show";render();window.scrollTo(0,0)}
-  else if(a==="close"){NT.list[NT.open].closed=true;ntSave();render()}
+  else if(a==="close"){if(!b.classList.contains("arm")){b.classList.add("arm");b.querySelector("span").textContent="Tocca di nuovo per chiudere";setTimeout(()=>{if(b.isConnected){b.classList.remove("arm");b.querySelector("span").textContent="Chiudi ora"}},3000);return}NT.list[NT.open].closed=true;ntSave();render()}
   else if(a==="del"){NT.list.splice(NT.open,1);ntSave();NT.view="list";render()}
   else if(a==="share"){ntShare(b)}
 }
