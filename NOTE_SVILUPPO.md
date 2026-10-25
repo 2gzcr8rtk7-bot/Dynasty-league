@@ -249,4 +249,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 
 ## 25/10/2026 (31) — Risultati in stile calendario
 - Sezione Risultati rifatta: una scheda per giornata (pillola Finale/Live), ogni partita su una riga: logo tondo + nome, punteggio al centro (vincente in oro, scarto sotto), avversaria a destra, icona condividi a fine riga (stesso `data-share` → `shareGame`). CSS `.rgc/.rgh/.rgm/.rgt/.rgl/.rgs`, funzione `vRisultati`.
-- Risultati: loghi quadrati e più grandi (56px, angoli arrotondati), `.rgl`.
+- Risultati: loghi quadrati a spigolo vivo e più grandi (56px), `.rgl`.
