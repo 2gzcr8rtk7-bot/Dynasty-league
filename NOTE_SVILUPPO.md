@@ -56,3 +56,11 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
   - "Tiro da 3" (`vTiro`/`tiroCanvas`, stato `TR`): arcade su canvas, 45 secondi, si tira trascinando verso l'alto; la precisione dipende dall'efficienza del giocatore (`tiroAcc`); record in `tiroBest`.
   - "Partita simulata" (`vSim`/`simRun`, stato `SIM`): partita automatica tra due franchigie con titolari + 4 riserve migliori, tiri pesati sulle efficienze.
 - I giochi usano i dati `EFF`, `ROSTER` e `TITOLARI`: si aggiornano da soli quando si aggiornano quelli.
+
+## 25/10/2026 — Cassa con registro (Claude, account di Francesco)
+- Il riquadro Cassa nella pagina squadra è cliccabile e apre la vista `cassa` con 3 schede:
+  - Bilancio: entrate, uscite e saldo per stagione (stagione = Draft→G64, non anno solare).
+  - Entrate e uscite: registro con data, causa e importo, filtrabile per stagione. Dati in `MOVIMENTI` (per squadra).
+  - Debiti e crediti: chi deve pagare a chi, senza causa. Dati in `DEBITI` (lista unica della lega: da, a, v, tipo portafoglio/post, s, saldato).
+- I numeri del riquadro Cassa (crediti/debiti portafoglio e post draft) ora si calcolano da `DEBITI` (solo quelli non saldati). `CASSA` non esiste più.
+- `STAGIONE_CORRENTE` = etichetta della stagione in corso.
