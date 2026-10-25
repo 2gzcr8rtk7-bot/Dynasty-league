@@ -187,5 +187,5 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 
 ## 25/10/2026 (20) — Asta Peacocks: Trevon Brazile
 - PEA prende all'asta Trevon Brazile (DEN, ala, #7) per 14 crediti (registrati come 10 commissione + 4 di lista); Nate Ament va in G League al suo posto.
-- Aggiornati: `ROSTER.PEA` (Brazile al posto di Ament, quotazione 4), `EFF.gioc.PEA` (riga Brazile vuota, la riempie il prossimo report), `GLEAGUE` PEA (Ament al posto di Brazile), `ROOKIE` (tolto Ament), `NBA_ANNO` (Brazile 2026), `CREDITI.PEA` 52 → 38, `TRADES` (asta: la cassa Peacocks registra −14 da sola).
+- Aggiornati: `ROSTER.PEA` (Brazile al posto di Ament, quotazione 4), `EFF.gioc.PEA` (riga Brazile vuota, la riempie il prossimo report), `GLEAGUE` PEA (Ament al posto di Brazile), `ROOKIE` (tolto Ament, aggiunto Brazile: prende il suo slot rookie), `NBA_ANNO` (Brazile 2026), `CREDITI.PEA` 52 → 38, `TRADES` (asta: la cassa Peacocks registra −14 da sola).
 - Pagina Trade: nelle aste i crediti ora si vedono come spesa (−14 cr) invece di +14.
