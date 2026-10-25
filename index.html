@@ -1360,7 +1360,13 @@ function gameClick(b){
 /* ===== Gioco 1: Tiro da 3 (arcade) ===== */
 const TR={team:null,pl:null,run:false,score:0,makes:0,shots:0,streak:0,time:45,best:0,bestBy:"",state:"pick"};
 try{TR.best=+localStorage.getItem("tiroBest")||0;TR.bestBy=localStorage.getItem("tiroBestBy")||""}catch(e){}
-function tiroAcc(n,t){const e=effOf(t,n);return Math.max(.72,Math.min(1.3,.68+(e==null?.8:e)*.42))}
+/* Difficoltà Tiro da 3: tutto scala in modo esponenziale con l'efficienza (e) */
+function tiroE(n,t){const e=effOf(t,n);return Math.max(.1,Math.min(1.6,e==null?.6:e))}
+const tiroPeriod=e=>Math.max(480,Math.min(3600,2700/Math.exp(2.2*(1-e))));   /* ms per oscillazione: e 1.0 = 2,7 s · e 0.3 = 0,58 s */
+const tiroAmp=e=>Math.min(112,72+Math.max(0,1-e)*50);                         /* ampiezza del movimento */
+const tiroTol=e=>Math.max(9,Math.min(22,18*Math.exp(-.7*(1-e))));           /* margine per fare canestro (px) */
+const tiroNoise=e=>5*Math.exp(1.3*(1-e));                                     /* imprecisione del tiro (px) */
+function tiroLabel(e){const p=tiroPeriod(e);return p<800?"velocissimo":p<1400?"veloce":p<2300?"medio":"lento"}
 function vTiro(){
   if(!TR.team)TR.team=curTeam;
   const t=TR.team,c=TEAMS[t];
@@ -1368,10 +1374,10 @@ function vTiro(){
     const chips=Object.keys(TEAMS).map(k=>`<button class="chip" data-trt="${k}" aria-pressed="${k===t}">${badge(k)}${TEAMS[k].nick}</button>`).join("");
     const pl=(ROSTER[t]||[]).map(p=>{const e=effOf(t,p[0]);return [p,e]}).sort((a,b)=>(b[1]??-9)-(a[1]??-9));
     return `${H("Tiro da 3",`<em>45 secondi</em>`)}
-    <p class="gintro">Scegli un giocatore e segna più canestri possibile: <b>trascina il dito verso l'alto</b> dalla palla al canestro. Più è alta la sua efficienza, più è preciso.</p>
+    <p class="gintro">Scegli un giocatore e segna più canestri possibile: <b>trascina il dito verso l'alto</b> dalla palla al canestro. Il canestro si muove sempre: <b>più bassa è l'efficienza, più va veloce</b> e più il tiro è impreciso. Anticipa il movimento!</p>
     <div class="gscore"><div class="rec"><small>Record</small><b>${TR.best}</b>${TR.bestBy?`<em class="gby">${TR.bestBy}</em>`:""}</div></div>
     <div class="chips">${chips}</div>
-    <div class="gcard rost"><ul class="gpl">${pl.map(([p,e])=>`<li class="rrow" data-trp="${p[0]}" role="button" tabindex="0"><span class="grl ${p[2]}">${{G:"G",F:"A",C:"C"}[p[2]]}</span><span class="rnm"><b>${p[0]}</b><small>Mira ${Math.round(tiroAcc(p[0],t)*100)}</small></span>${eff(e)}<span class="rgo">›</span></li>`).join("")}</ul></div>`;
+    <div class="gcard rost"><ul class="gpl">${pl.map(([p,e])=>`<li class="rrow" data-trp="${p[0]}" role="button" tabindex="0"><span class="grl ${p[2]}">${{G:"G",F:"A",C:"C"}[p[2]]}</span><span class="rnm"><b>${p[0]}</b><small>Mira ${Math.round(tiroTol(tiroE(p[0],t))/18*100)} · canestro ${tiroLabel(tiroE(p[0],t))}</small></span>${eff(e)}<span class="rgo">›</span></li>`).join("")}</ul></div>`;
   }
   const p=TR.pl;
   return `${H("Tiro da 3",`<em>${p} · ${c.nick}</em>`)}
@@ -1381,7 +1387,7 @@ function vTiro(){
    <div class="hlbtn"><button class="go" data-tr="again"><span>Gioca ancora</span></button><button class="sh" data-tr="share"><span>Condividi risultato</span></button><button class="sh" data-tr="pick"><span>Cambia giocatore</span></button></div></div>`:""}
    ${TR.state==="ready"?`<div class="trover trready"><b>Pronto?</b><span>Trascina la palla verso il canestro</span><div class="hlbtn"><button class="go" data-tr="start"><span>Via! ▶</span></button></div></div>`:""}
   </div>
-  <p class="note">Canestro = 2 punti · 3 di fila = 🔥 in fiamme: punti doppi finché non sbagli. Il canestro inizia a muoversi dopo 5 centri.</p>`;
+  <p class="note">Canestro = 2 punti · 3 di fila = 🔥 in fiamme: punti doppi finché non sbagli. Il canestro accelera a ogni centro. La palla arriva dopo quasi un secondo: tira dove sarà il canestro, non dove è.</p>`;
 }
 function tiroAct(b){
   const d=b.dataset;
@@ -1395,8 +1401,8 @@ function tiroAct(b){
 }
 function tiroCanvas(cv){
   const X=cv.getContext("2d"),W=360,Hh=460;X.setTransform(2,0,0,2,0,0);
-  const col=TEAMS[TR.team],acc=tiroAcc(TR.pl,TR.team);
-  const G={hx:180,rimY:132,rimW:52,ball:null,start:{x:180,y:388},drag:null,fx:[],t0:performance.now(),last:performance.now(),msg:null,net:0};
+  const col=TEAMS[TR.team],E=tiroE(TR.pl,TR.team);
+  const G={ph:0,hx:180,rimY:132,rimW:52,ball:null,start:{x:180,y:388},drag:null,fx:[],t0:performance.now(),last:performance.now(),msg:null,net:0};
   const live=TR.state==="play";TR.run=live;
   const pos=e=>{const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*Hh/r.height}};
   cv.onpointerdown=e=>{if(!TR.run||G.ball)return;const p=pos(e);if(Math.hypot(p.x-G.start.x,p.y-G.start.y)<70){G.drag={x0:p.x,y0:p.y,x:p.x,y:p.y};cv.setPointerCapture(e.pointerId)}};
@@ -1404,12 +1410,11 @@ function tiroCanvas(cv){
   cv.onpointerup=e=>{if(!G.drag)return;const d=G.drag;G.drag=null;const dy=d.y0-d.y,dx=d.x-d.x0;if(dy<25)return;shoot(dx,dy)};
   function shoot(dx,dy){
     TR.shots++;
-    const noise=(Math.random()+Math.random()-1)*9*(1.35-acc);
+    const noise=(Math.random()+Math.random()+Math.random()-1.5)*1.4*tiroNoise(E);
     const land=G.start.x+dx*1.25+noise;
-    const short=dy<70,long=dy>300;
-    const err=Math.abs(land-G.hx),tol=G.rimW*.5*acc;
-    let res=short?"short":long?(Math.random()<.35?"bank":"long"):err<tol*.55?"swish":err<tol?"rim":"miss";
-    G.ball={t:0,dur:720,x0:G.start.x,y0:G.start.y,x1:land,y1:G.rimY-4,peak:G.rimY-(short?10:long?120:85),res,side:Math.sign(land-G.hx)||1};
+    const short=dy<80,long=dy>290;
+    let res=short?"short":long?(Math.random()<.15?"bank":"long"):"pending";
+    G.ball={t:0,dur:650+Math.random()*140,x0:G.start.x,y0:G.start.y,x1:land,y1:G.rimY-4,peak:G.rimY-(short?10:long?120:85),res,side:Math.sign(land-G.hx)||1};
   }
   function resolve(b){
     const made=b.res==="swish"||b.res==="rim"||b.res==="bank";
@@ -1430,7 +1435,7 @@ function tiroCanvas(cv){
     const dt=Math.min(50,now-G.last);G.last=now;
     if(TR.state==="play"){TR.time-=dt/1000;const el=document.getElementById("trT");if(el)el.textContent=Math.max(0,Math.ceil(TR.time));
       if(TR.time<=0&&!G.ball){TR.run=false;TR.state="over";if(TR.score>TR.best){TR.best=TR.score;TR.bestBy=TR.pl;try{localStorage.setItem("tiroBest",TR.best);localStorage.setItem("tiroBestBy",TR.pl)}catch(e){}}render();return}}
-    if(TR.makes>=5)G.hx=180+Math.sin(now/900)*(TR.makes>=12?95:70);
+    G.ph+=dt*2*Math.PI/(tiroPeriod(E)/(1+.04*TR.makes));G.hx=180+Math.sin(G.ph)*tiroAmp(E);
     // sfondo
     const g=X.createLinearGradient(0,0,0,Hh);g.addColorStop(0,"#0d1530");g.addColorStop(.62,"#16224a");g.addColorStop(.62,"#c98a4b");g.addColorStop(1,"#a96a32");X.fillStyle=g;X.fillRect(0,0,W,Hh);
     X.strokeStyle="rgba(0,0,0,.08)";X.lineWidth=1;for(let i=0;i<W;i+=18){X.beginPath();X.moveTo(i,286);X.lineTo(i,Hh);X.stroke()}
@@ -1443,9 +1448,10 @@ function tiroCanvas(cv){
     // palla
     let bp=null;
     if(G.ball){const b=G.ball;b.t+=dt;let u=Math.min(1,b.t/b.dur);
-      if(b.t<=b.dur){bp=ballPos(b,u);b.x1=b.res==="swish"||b.res==="rim"||b.res==="bank"?G.hx+(b.x1-G.hx)*(b.res==="swish"?0:.35):b.x1}
-      else{const k=(b.t-b.dur)/1;const made=b.res==="swish"||b.res==="rim"||b.res==="bank";
-        if(!b.done){b.done=true;resolve(b)}
+      if(b.t<=b.dur){if(b.res==="bank")b.x1=G.hx;bp=ballPos(b,u)}
+      else{const k=(b.t-b.dur)/1;
+        if(!b.done){b.done=true;if(b.res==="pending"){const err=Math.abs(b.x1-G.hx),tol=tiroTol(E);b.res=err<tol*.45?"swish":err<tol?"rim":"miss";b.side=Math.sign(b.x1-G.hx)||1}resolve(b)}
+        const made=b.res==="swish"||b.res==="rim"||b.res==="bank";
         if(made){bp={x:G.hx+(b.res==="rim"?Math.sin(k/60)*6*b.side*Math.max(0,1-k/300):0),y:G.rimY-4+k*.42,s:.55}}
         else{bp={x:b.x1+b.side*k*.12*(b.res==="short"?-.3:1),y:G.rimY-4+(k*k)/2400-(b.res==="short"?0:Math.sin(Math.min(k,300)/300*Math.PI)*30),s:.55}}
         if(k>520)G.ball=null}}

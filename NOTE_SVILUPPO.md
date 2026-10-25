@@ -64,3 +64,8 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
   - Debiti e crediti: chi deve pagare a chi, senza causa. Dati in `DEBITI` (lista unica della lega: da, a, v, tipo portafoglio/post, s, saldato).
 - I numeri del riquadro Cassa (crediti/debiti portafoglio e post draft) ora si calcolano da `DEBITI` (solo quelli non saldati). `CASSA` non esiste più.
 - `STAGIONE_CORRENTE` = etichetta della stagione in corso.
+
+## 25/10/2026 (2) — Tiro da 3 più difficile
+- Il canestro si muove sempre fin dall'inizio. Velocità, ampiezza, margine di canestro e imprecisione dipendono in modo esponenziale dall'efficienza (`tiroPeriod`, `tiroAmp`, `tiroTol`, `tiroNoise`, `tiroE`).
+- Esempi: eff 1,0 → oscillazione 2,7 s, margine 18 px; eff 0,3 → 0,58 s, margine 11 px. Accelera del 4% a ogni centro.
+- Il canestro viene valutato quando la palla arriva (non al tiro): bisogna anticipare il movimento. Durata del volo leggermente casuale (650–790 ms).
