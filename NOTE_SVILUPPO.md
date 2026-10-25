@@ -145,6 +145,11 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 - DUC: bg tornato `#facc15` (il giallo originale), al posto del silver `#a9afb7`. Anche le maglie sono gialle con le punte nere (override in `jersey()`).
 
 ## 25/10/2026 (16) — Efficienza Cup
-- Nuovo bottone "Efficienza Cup" nella barra, tra Calcolatore Scambi e Giochi (vista `effcup`, `vEffCup`). Schede Anno 1 / Anno 2 / Anno 3.
-- Classifica per efficienza stagionale (`EFF.gioc`) dei giocatori dei nostri roster al 1°, 2° o 3° anno NBA, con logo squadra, partite e minuti; podio con medaglie. Chi non ha partite va in "Senza partite".
-- Anno NBA da `NBA_ANNO` (anno del Draft, verificato sulle liste Draft 2024/2025/2026): anno = `NBA_STAG` (2027) − anno draft. Quando entra un giovane nuovo in un roster va aggiunto lì; a inizio stagione nuova aumentare `NBA_STAG`.
+- Si apre dal bottone dorato "Efficienza Cup" in fondo alla pagina Efficienza, sotto la rubrica Giocatori (`data-cupgo`); non è più nella barra. Vista `effcup` ("‹ Efficienza" per tornare; nella barra resta evidenziato Efficienza).
+- "Sala" rossa con due selettori: Anno NBA (1/2/3) e Ruolo (Guardie/Ali/Centri) → 9 classifiche (`cupYear`, `cupRole`). Ruolo = quello del roster (`ROSTER[t][i][2]`).
+- Classifica per efficienza stagionale con logo squadra, partite, minuti e podio; chi non ha partite va in "Senza partite".
+- Tutto è calcolato al momento da `ROSTER` ed `EFF.gioc`: con un nuovo report le classifiche si aggiornano da sole.
+- Anno NBA da `NBA_ANNO` (anno del Draft, verificato sulle liste Draft 2024/2025/2026): anno = `NBA_STAG` (2027) − anno draft. Se entra un giovane nuovo in un roster va aggiunto lì; a inizio stagione nuova aumentare `NBA_STAG`.
+
+## Regola generale: tutto collegato ai dati
+Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLARI`, `TRADES`, `SPECIALI`) al momento del disegno, senza copiare numeri a mano. Così basta aggiornare quegli oggetti con il report e si aggiornano: classifiche, efficienza, Top/Flop, panchina, Efficienza Cup, Sfida della notte, giochi, calcolatore (roster), cassa.

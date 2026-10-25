@@ -680,6 +680,24 @@ nav button{font-size:15px;letter-spacing:.04em}
 .vtnm{flex:1;min-width:0;display:grid;font-weight:700}.vtnm small{font-size:11px;color:var(--muted);font-weight:500}
 .vtrow b{font-family:var(--display);font-weight:800;font-size:17px;color:#93c5fd}
 .trow.cup .ev{white-space:nowrap;flex:none}.trow.cup .tnm{min-width:0}.trow.cup .tnm b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cupbtn{display:flex;align-items:center;gap:12px;width:100%;margin:18px 0 6px;padding:14px 16px;border:0;cursor:pointer;text-align:left;color:#1a1203;background:linear-gradient(135deg,#ffe27a 0%,#f5b400 45%,#c88a00 100%);box-shadow:0 8px 22px rgba(245,180,0,.35),inset 0 1px 0 rgba(255,255,255,.6)}
+.cupbtn span:nth-child(2){flex:1;display:grid;font-family:var(--display);font-style:italic;font-weight:800;font-size:24px;letter-spacing:.04em;text-transform:uppercase;line-height:1}
+.cupbtn small{font-family:inherit;font-style:normal;font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:none;opacity:.75;margin-top:3px}
+.cupbtn .rgo{color:#1a1203;font-size:28px}.cupic{font-size:28px;line-height:1}
+.cupbtn:active{transform:scale(.98)}
+.cuproom{margin:4px -16px 0;padding:16px;background:radial-gradient(ellipse at 50% 0%,#b5122e 0%,#6e0a1b 45%,#2a0610 100%);border-top:3px solid #ff2a4d;border-bottom:3px solid #ff2a4d}
+.cuphd{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.cuphd b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:30px;text-transform:uppercase;color:#ffd84d;line-height:1;text-shadow:0 2px 0 #4a0710}
+.cuphd small{font-size:13px;color:#ffd0d6;letter-spacing:.04em}
+.cupsel{margin-bottom:10px}.cupsel>span{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#ffb3bf;margin-bottom:5px}
+.cupsel>div{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.cupsel button{display:grid;gap:1px;padding:9px 4px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.28);color:#fff;font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;text-transform:uppercase;cursor:pointer}
+.cupsel button small{font-style:normal;font-weight:600;font-size:10px;opacity:.7}
+.cupsel button[aria-pressed="true"]{background:linear-gradient(180deg,#ffe27a,#f5b400);color:#1a1203;border-color:#ffe27a}
+.cuproom .eboard{background:rgba(0,0,0,.25);border-color:rgba(255,255,255,.12)}
+.cuproom .trow{background:rgba(20,4,8,.55);border-color:rgba(255,255,255,.08)}
+.cuproom .ch4{color:#ffd0d6;border-left-color:#ffd84d}
+.cuproom .cempty{background:rgba(0,0,0,.25);color:#ffd0d6}
 .cupm{width:26px;height:26px;display:grid;place-items:center;border-radius:50%;font-family:var(--display);font-weight:800;font-size:14px;color:#0a0f1f;flex:none}.cupm.m0{background:#f5b400}.cupm.m1{background:#c0c7d4}.cupm.m2{background:#cd7f32}
 .vtrook{font-style:normal;font-size:10px;background:var(--gold);color:#0a0f1f;padding:0 4px;margin-left:4px;vertical-align:middle}
 /* Trade speciali */
@@ -797,7 +815,6 @@ nav button>span{white-space:nowrap}
       <button role="tab" id="t-in" data-v="infortuni" aria-selected="false"><span>Infortuni</span></button>
       <button role="tab" id="t-gm" data-v="storia" aria-selected="false"><span>Sala Trofei</span></button>
       <button role="tab" id="t-cs" data-v="valtrade" aria-selected="false"><span>Calcolatore Scambi</span></button>
-      <button role="tab" id="t-ec" data-v="effcup" aria-selected="false"><span>Efficienza Cup</span></button>
       <button role="tab" id="t-gi" data-v="giochi" aria-selected="false"><span>Giochi</span></button>
     </nav>
     <div class="subnav" id="subnav" role="menu" hidden>
@@ -1190,6 +1207,7 @@ function vEfficienza(){
   <div class="hyellow">${H("Giocatori")}</div>
   <div class="chips">${chips}</div>
   <div class="tbl-wrap"><table class="ptbl"><thead><tr><th>Giocatore</th><th>Eff.</th><th>PG</th><th>Min</th></tr></thead><tbody>${rows}</tbody></table></div>
+  <button class="cupbtn" data-cupgo="1"><span class="cupic">🏆</span><span>Efficienza Cup<small>Giovani per anno NBA e ruolo</small></span><span class="rgo">›</span></button>
   <p class="note"><span class="ev g"><i></i>sopra 1,10</span> &nbsp; <span class="ev y"><i></i>0,80–1,10</span> &nbsp; <span class="ev r"><i></i>sotto 0,80</span> &nbsp; Efficienza = Dunkest per minuto, senza capitano, vittoria e quintetto.</p>`;
 }
 
@@ -1283,20 +1301,32 @@ const NBA_ANNO={
  /* Draft 2025 */ "Cooper Flagg":2025,"Dylan Harper":2025,"VJ Edgecombe":2025,"Kon Knueppel":2025,"Ace Bailey":2025,"Jeremiah Fears":2025,"Egor Dëmin":2025,"Collin Murray-Boyles":2025,"Khaman Maluach":2025,"Cedric Coward":2025,"Derik Queen":2025,"Danny Wolf":2025,"Maxime Raynaud":2025,
  /* Draft 2024 */ "Alex Sarr":2024,"Stephon Castle":2024,"Donovan Clingan":2024,"Zach Edey":2024,"Matas Buzelis":2024,"Kel'el Ware":2024,"Kyshawn George":2024,"Oso Ighodaro":2024};
 const NBA_STASH={}; /* giocatori draftati ma ancora fuori NBA: nome -> nota */
-let cupYear=1;
+let cupYear=1,cupRole="G";
+const CUP_R={G:"Guardie",F:"Ali",C:"Centri"};
 function vEffCup(){
-  const tabs=`<div class="ctabs">${[1,2,3].map(y=>`<button data-cupy="${y}" aria-pressed="${cupYear===y}">Anno ${y}</button>`).join("")}</div>`;
-  const L=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>{const d=NBA_ANNO[p[0]];if(d&&NBA_STAG-d===cupYear){const e=(EFF.gioc[t]||[]).find(x=>x[0]===p[0]);L.push({t,n:p[0],e:e?e[1]:null,g:e?e[2]||0:0,m:e?e[3]:null})}}));
+  /* Tutto calcolato al momento da ROSTER (ruolo, squadra) ed EFF.gioc (efficienza, partite, minuti):
+     quando si carica un nuovo report le classifiche cambiano da sole. */
+  const lab={1:"Rookie · Draft 2026",2:"2° anno · Draft 2025",3:"3° anno · Draft 2024"};
+  const L=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>{const d=NBA_ANNO[p[0]];if(d&&NBA_STAG-d===cupYear&&p[2]===cupRole){const e=(EFF.gioc[t]||[]).find(x=>x[0]===p[0]);L.push({t,n:p[0],e:e?e[1]:null,g:e?e[2]||0:0,m:e?e[3]:null})}}));
+  const cnt=(y,r)=>Object.values(ROSTER).flat().filter(p=>NBA_ANNO[p[0]]&&NBA_STAG-NBA_ANNO[p[0]]===y&&p[2]===r).length;
   const on=L.filter(x=>x.e!=null).sort((a,b)=>b.e-a.e),off=L.filter(x=>x.e==null);
   const medal=i=>i<3?`<span class="cupm m${i}">${i+1}</span>`:`<span class="trk">${i+1}</span>`;
   const row=(x,i)=>`<div class="trow cup">${medal(i)}${wedge(x.t)}<span class="tnm"><b>${x.n}</b><small>${TEAMS[x.t].nick} · ${x.g} ${x.g===1?"partita":"partite"}${x.m!=null?` · ${x.m.toLocaleString("it-IT")} min`:""}</small></span>${eff(x.e)}</div>`;
-  const lab={1:"Draft 2026",2:"Draft 2025",3:"Draft 2024"}[cupYear];
-  return `${H("Efficienza Cup",`<em>${lab}</em>`)}${tabs}
-  ${on.length?`<div class="eboard">${on.map(row).join("")}</div>`:`<div class="cempty">Nessun giocatore con partite giocate.</div>`}
-  ${off.length?`<h4 class="ch4">Senza partite</h4><div class="eboard">${off.map(x=>`<div class="trow cup"><span class="trk">–</span>${wedge(x.t)}<span class="tnm"><b>${x.n}</b><small>${TEAMS[x.t].nick}${NBA_STASH[x.n]?" · "+NBA_STASH[x.n]:""}</small></span>${eff(null)}</div>`).join("")}</div>`:""}
-  <p class="note">Solo giocatori dei roster della lega. Anno NBA calcolato dall'anno del Draft (stagione 2026-27). Efficienza stagionale = Dunkest ÷ minuti (dati al ${EFF.agg}).</p>`;
+  return `<button class="gback" data-cupback="1">‹ Efficienza</button>
+  <div class="cuproom">
+   <div class="cuphd"><span class="cupic">🏆</span><div><b>Efficienza Cup</b><small>${lab[cupYear]} · ${CUP_R[cupRole]}</small></div></div>
+   <div class="cupsel"><span>Anno NBA</span><div>${[1,2,3].map(y=>`<button data-cupy="${y}" aria-pressed="${cupYear===y}">Anno ${y}</button>`).join("")}</div></div>
+   <div class="cupsel"><span>Ruolo</span><div>${["G","F","C"].map(r=>`<button data-cupr="${r}" aria-pressed="${cupRole===r}">${CUP_R[r]}<small>${cnt(cupYear,r)}</small></button>`).join("")}</div></div>
+   ${on.length?`<div class="eboard">${on.map(row).join("")}</div>`:`<div class="cempty">${L.length?"Nessuno ha ancora giocato.":"Nessun giocatore in questa categoria."}</div>`}
+   ${off.length?`<h4 class="ch4">Senza partite</h4><div class="eboard">${off.map(x=>`<div class="trow cup"><span class="trk">–</span>${wedge(x.t)}<span class="tnm"><b>${x.n}</b><small>${TEAMS[x.t].nick}${NBA_STASH[x.n]?" · "+NBA_STASH[x.n]:""}</small></span>${eff(null)}</div>`).join("")}</div>`:""}
+  </div>
+  <p class="note">9 classifiche: anno NBA (1°, 2°, 3°) × ruolo (guardie, ali, centri), solo giocatori dei roster della lega. Ruolo come nel roster. Efficienza stagionale = Dunkest ÷ minuti, si aggiorna da sola a ogni report (dati al ${EFF.agg}).</p>`;
 }
-document.getElementById("main").addEventListener("click",e=>{if(cur!=="effcup")return;const b=e.target.closest("[data-cupy]");if(!b)return;cupYear=+b.dataset.cupy;render()});
+document.getElementById("main").addEventListener("click",e=>{
+  const go=e.target.closest("[data-cupgo]");if(go&&cur==="efficienza"){e.preventDefault();cur="effcup";render();window.scrollTo(0,0);return}
+  if(cur!=="effcup")return;const b=e.target.closest("[data-cupy],[data-cupr],[data-cupback]");if(!b)return;e.preventDefault();
+  if(b.dataset.cupback){cur="efficienza";render();window.scrollTo(0,0);return}
+  if(b.dataset.cupy)cupYear=+b.dataset.cupy;if(b.dataset.cupr)cupRole=b.dataset.cupr;render()});
 
 function vHome(){
   const st=standings();
@@ -2121,7 +2151,7 @@ const VIEWS={effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,g
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
-  const eff=cur==="giocatore"?"roster":cur==="effsquadra"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
+  const eff=cur==="giocatore"?"roster":cur==="effsquadra"||cur==="effcup"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -2148,7 +2178,7 @@ function syncMenu(){
   document.querySelectorAll("nav button[data-menu]").forEach(b=>{
     const p=document.getElementById(b.dataset.menu);if(!p)return;
     b.setAttribute("aria-expanded",dkOpen);p.hidden=!dkOpen;
-    const eff=cur==="giocatore"?"roster":cur==="effsquadra"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
+    const eff=cur==="giocatore"?"roster":cur==="effsquadra"||cur==="effcup"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
     b.setAttribute("aria-selected",dkOpen||inside);
     if(dkOpen){const w=b.closest(".wrap").getBoundingClientRect(),r=b.getBoundingClientRect();
       const width=Math.max(r.width,180);let left=r.left-w.left+r.width/2-width/2;left=Math.max(0,Math.min(left,w.width-width));
