@@ -253,3 +253,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Prezzi fissati a mano (25/10 notte) in `PREZZO_FISSO`: Jokić 1400, Flagg 1200, J. Johnson 850, Cunningham 850, Dončić 800, SGA 750, Boozer 750, Giddey 690, Duren 600, Giannis 600, Castle 420, Clingan 390, Haliburton 290, Ware 200, Buzelis 140, T. Murphy III 130, D. Daniels 125, Kyshawn George 110, Burries 99, Zion 80, Reaves 70, LeBron 50.
 - Valore Jokić portato a 3150 (era 2813), ora sopra Wembanyama (3127).
 - Prezzi fissi aggiunti: Sabonis 470, Trae Young 179, Anthony Davis 155; Buzelis 120.
+- Risultati: loghi senza sfondo colorato (solo PNG trasparente con leggera ombra), `.rgl`.
