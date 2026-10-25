@@ -432,6 +432,48 @@ nav button{font-size:15px;letter-spacing:.04em}
 .rgo{flex:none;color:var(--muted);font-size:22px;line-height:1;margin-left:2px}
 .rav{flex-basis:100%;margin:3px 0 0 36px;font-size:12px}
 /* Ducks: grigio metallizzato */
+/* Giochi: Sfida della notte */
+.ntnum{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.ntnum span{font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.ntnum button{width:44px;background:var(--panel);border:1px solid var(--line);color:var(--muted);font-family:var(--display);font-style:italic;font-weight:800;font-size:20px;padding:4px;cursor:pointer}
+.ntnum button[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#0a0f1f}
+.ntgs{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px}
+.ntg{display:grid;justify-items:start;padding:8px 10px;background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--gc);color:#fff;cursor:pointer;opacity:.6}
+.ntg.on{opacity:1;background:color-mix(in srgb,var(--gc) 22%,var(--panel))}
+.ntg b{font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase}
+.ntg small{font-size:11px;color:#cfd6ea}
+.ntsel{display:flex;flex-wrap:wrap;gap:6px;min-height:52px;padding:8px;border:2px solid var(--gc);border-top:0;background:color-mix(in srgb,var(--gc) 10%,transparent);margin-bottom:4px}
+.ntsel em{color:var(--muted);font-size:13px;align-self:center}
+.ntsel.shake{animation:sh .35s}@keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.ntp{display:flex;align-items:center;gap:6px;background:var(--panel2);border:1px solid var(--line);color:#fff;padding:0 8px 0 0;cursor:pointer;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;text-transform:uppercase}
+.ntp .wedge{width:30px;height:32px;padding:2px}.ntp .wedge .logo{width:26px;height:26px}
+.ntp i{font-style:normal;color:var(--muted)}
+.ntq{width:100%;margin:14px 0 10px;background:var(--panel);border:1px solid var(--line);color:#fff;padding:11px 12px;font-size:16px;font-family:var(--body)}
+.rrow.ntin{background:color-mix(in srgb,var(--gc) 18%,transparent)}
+.ntin-b{flex:none;width:28px;height:28px;display:grid;place-items:center;background:var(--gc);color:#fff;font-family:var(--display);font-style:italic;font-weight:800}
+.ntlist{display:grid;gap:8px}
+.ntli{display:flex;align-items:center;gap:10px;width:100%;text-align:left;color:#fff;cursor:pointer;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);padding:10px 12px}
+.ntlt{flex:1;min-width:0;display:grid}
+.ntlt b{font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase}
+.ntlt small{font-size:12px;color:var(--muted)}
+.ntst{font-family:var(--display);font-style:italic;font-weight:800;font-size:12px;letter-spacing:.08em;padding:2px 8px;background:var(--red);color:#fff}
+.ntst.f{background:#334}
+.ntwin{display:grid;justify-items:center;gap:2px;padding:14px;margin-bottom:12px;background:linear-gradient(135deg,var(--gc),color-mix(in srgb,var(--gc) 40%,#000));box-shadow:0 10px 24px rgba(0,0,0,.4);text-align:center}
+.ntwin small{font-family:var(--display);font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#fff;opacity:.85}
+.ntwin b{font-family:var(--display);font-style:italic;font-weight:800;font-size:36px;line-height:1;text-transform:uppercase;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+.ntwin span{color:#fff;font-weight:600}
+.ntwait{padding:12px;margin-bottom:12px;background:rgba(168,85,247,.12);border-left:4px solid #a855f7;color:#e9ddff;font-size:14px}
+.ntgrid{display:grid;gap:10px}
+.ntbox{border:1px solid var(--line);border-left:5px solid var(--gc);background:linear-gradient(180deg,var(--panel2),var(--panel))}
+.ntbox.win{box-shadow:0 0 0 2px var(--gold) inset}
+.ntbh{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:color-mix(in srgb,var(--gc) 22%,transparent)}
+.ntbh b{font-family:var(--display);font-style:italic;font-weight:800;font-size:19px;text-transform:uppercase}
+.ntbh em{font-family:var(--display);font-style:italic;font-weight:800;font-size:26px;color:#fff}
+.ntrow{display:flex;align-items:center;gap:10px;min-height:48px;padding-right:12px;border-top:1px solid rgba(255,255,255,.05)}
+.ntrow .wedge{width:42px;height:auto;min-height:48px;align-self:stretch;padding:3px}.ntrow .wedge .logo{width:34px;height:34px}
+.ntn{flex:1;min-width:0;font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;text-transform:uppercase;line-height:1.1}
+.ntn small{display:block;font-style:normal;font-size:10.5px;letter-spacing:.1em;color:var(--muted)}
+.ntpend{font-family:var(--display);font-style:italic;font-weight:700;font-size:13px;color:var(--muted);text-transform:uppercase}
 /* Giochi: menu e Tiro da 3 / Partita simulata */
 [data-game],[data-hl],[data-trt],[data-trp],[data-tr],[data-sim]{cursor:pointer;-webkit-tap-highlight-color:transparent}
 .gmenu{display:grid;gap:12px}
@@ -1328,9 +1370,123 @@ function hlAct(b){{const a=b.dataset.hl;
 /* ===== Sezione Giochi: selettore ===== */
 let GAME="menu";
 const effOf=(t,n)=>{const e=(EFF.gioc[t]||[]).find(x=>x[0]===n);return e&&e[1]!=null?e[1]:null};
+/* ===== Gioco: Sfida della notte =====
+   Si creano 2-3 gruppi da 1-5 giocatori (di qualsiasi franchigia). Alla creazione si salva quante partite ha
+   giocato ognuno (EFF.gioc[...][2]). Quando il numero di partite sale, la sua efficienza nella nuova partita
+   è quella dell'ultima gara (lastEff). Punteggio del gruppo = media delle efficienze. Le sfide restano sul telefono. */
+const NT={view:"list",groups:[[],[]],act:0,q:"",team:"ALL",open:null,list:[]};
+try{NT.list=JSON.parse(localStorage.getItem("notteSfide")||"[]")}catch(e){NT.list=[]}
+const ntSave=()=>{try{localStorage.setItem("notteSfide",JSON.stringify(NT.list))}catch(e){}};
+const NT_COL=["#3b82f6","#ef4444","#22c55e"],NT_LET=["A","B","C"];
+function ntAll(){const out=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>out.push({n:p[0],t,r:p[2],num:p[1]})));return out}
+function ntGames(t,n){const e=(EFF.gioc[t]||[]).find(x=>x[0]===n);return e?e[2]||0:0}
+function ntStatus(c){
+  const g=c.groups.map(gr=>{const pl=gr.map(p=>{const now=ntGames(p.t,p.n),done=now>p.g0;return{...p,done,v:done?lastEff(p.t,p.n):null}});
+    const dn=pl.filter(x=>x.done&&x.v!=null);const avg=dn.length?dn.reduce((s,x)=>s+x.v,0)/dn.length:null;
+    return{pl,avg,ok:pl.every(x=>x.done)}});
+  const fin=c.closed||g.every(x=>x.ok);
+  let win=null;if(fin){const sc=g.map(x=>x.avg??-99),m=Math.max(...sc);win=sc.filter(x=>x===m).length>1?-1:sc.indexOf(m)}
+  return{g,fin,win,played:g.reduce((s,x)=>s+x.pl.filter(p=>p.done).length,0),tot:g.reduce((s,x)=>s+x.pl.length,0)};
+}
+function vNotte(){
+  const R={G:"G",F:"A",C:"C"};
+  if(NT.view==="new"){
+    const used=new Set(NT.groups.flat().map(p=>p.n));
+    const tabs=NT.groups.map((g,i)=>`<button class="ntg ${i===NT.act?"on":""}" data-nt="grp" data-i="${i}" style="--gc:${NT_COL[i]}"><b>Gruppo ${NT_LET[i]}</b><small>${g.length}/5</small></button>`).join("");
+    const cur=NT.groups[NT.act];
+    const chips=["ALL",...Object.keys(TEAMS)].map(k=>`<button class="chip" data-nt="team" data-k="${k}" aria-pressed="${NT.team===k}">${k==="ALL"?"Tutti":badge(k)+TEAMS[k].nick}</button>`).join("");
+    const ready=NT.groups.every(g=>g.length>=1&&g.length<=5);
+    return `${H("Sfida della notte",`<em>Nuova sfida</em>`)}
+    <p class="gintro">Crea da 2 a 3 gruppi con 1-5 giocatori ciascuno, anche di franchigie diverse. Vince il gruppo con la <b>media di efficienza più alta</b> nella prossima partita giocata da ognuno.</p>
+    <div class="ntnum"><span>Gruppi</span><button data-nt="ng" data-k="2" aria-pressed="${NT.groups.length===2}">2</button><button data-nt="ng" data-k="3" aria-pressed="${NT.groups.length===3}">3</button></div>
+    <div class="ntgs">${tabs}</div>
+    <div class="ntsel" style="--gc:${NT_COL[NT.act]}">${cur.length?cur.map(p=>`<button class="ntp" data-nt="rm" data-n="${p.n}">${wedge(p.t)}<span>${p.n}</span><i>✕</i></button>`).join(""):`<em>Tocca i giocatori qui sotto per aggiungerli al Gruppo ${NT_LET[NT.act]}</em>`}</div>
+    <div class="hlbtn"><button class="go" data-nt="launch" ${ready?"":"disabled"}><span>Lancia la sfida ▶</span></button></div>
+    <input id="ntq" class="ntq" type="search" placeholder="Cerca giocatore…" value="${NT.q.replace(/"/g,"&quot;")}">
+    <div class="chips">${chips}</div>
+    <div id="ntList">${ntListHTML(used)}</div>
+    <button class="gback" data-nt="back">‹ Annulla</button>`;
+  }
+  if(NT.view==="show"&&NT.list[NT.open]){
+    const c=NT.list[NT.open],S=ntStatus(c);
+    const res=S.fin?(S.win===-1?`<div class="ntwin" style="--gc:var(--gold)"><b>Pareggio!</b></div>`:`<div class="ntwin" style="--gc:${NT_COL[S.win]}"><small>Vince</small><b>${c.names[S.win]}</b><span>media ${f2(S.g[S.win].avg)}</span></div>`)
+      :`<div class="ntwait">In attesa: ${S.played}/${S.tot} giocatori hanno giocato. La sfida si chiude da sola quando tutti avranno giocato una partita.</div>`;
+    const grp=S.g.map((g,i)=>`<div class="ntbox ${S.fin&&S.win===i?"win":""}" style="--gc:${NT_COL[i]}"><div class="ntbh"><b>${c.names[i]}</b><em>${g.avg==null?"—":f2(g.avg)}</em></div>
+      ${g.pl.map(p=>`<div class="ntrow">${wedge(p.t)}<span class="ntn">${p.n}<small>${TEAMS[p.t].nick}</small></span>${p.done?eff(p.v):`<span class="ntpend">${c.closed?"non ha giocato":"in attesa"}</span>`}</div>`).join("")}</div>`).join("");
+    return `<button class="gback" data-nt="list">‹ Le mie sfide</button>
+    ${H("Sfida della notte",`<em>${c.d}</em>`)}${res}<div class="ntgrid">${grp}</div>
+    <div class="hlbtn">${S.fin?`<button class="go" data-nt="share"><span>Condividi immagine</span></button>`:`<button class="sh" data-nt="close"><span>Chiudi ora</span></button>`}<button class="sh" data-nt="del"><span>Elimina sfida</span></button></div>
+    <p class="note">Efficienza della partita = Dunkest per minuto dell'ultima gara giocata dopo l'inizio della sfida (dati aggiornati al ${EFF.agg}). Punteggio del gruppo = media dei suoi giocatori. "Chiudi ora" termina la sfida contando solo chi ha già giocato (utile se qualcuno è infortunato).</p>`;
+  }
+  const items=NT.list.map((c,i)=>{const S=ntStatus(c);return `<button class="ntli" data-nt="open" data-i="${i}"><span class="ntlt"><b>${c.names.join(" vs ")}</b><small>${c.d} · ${S.fin?(S.win===-1?"pareggio":"vince "+c.names[S.win]):`in corso ${S.played}/${S.tot}`}</small></span><span class="ntst ${S.fin?"f":""}">${S.fin?"FINITA":"LIVE"}</span><span class="rgo">›</span></button>`}).reverse().join("");
+  return `${H("Sfida della notte",`<em>Efficienza della prossima partita</em>`)}
+  <p class="gintro">Metti a confronto 2 o 3 gruppi di giocatori scelti da tutta la lega: vince chi fa la media di efficienza più alta nella loro prossima partita.</p>
+  <div class="hlbtn"><button class="go" data-nt="new"><span>+ Nuova sfida</span></button></div>
+  ${items?`<h4 class="ch4">Le mie sfide</h4><div class="ntlist">${items}</div>`:`<div class="cempty" style="margin-top:14px">Nessuna sfida ancora.</div>`}
+  <p class="note">Le sfide sono salvate su questo telefono. Il risultato si aggiorna da solo quando arrivano i dati delle nuove partite.</p>`;
+}
+function ntListHTML(used){
+  used=used||new Set(NT.groups.flat().map(p=>p.n));
+  const nz=x=>x.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/ş/gi,"s").toLowerCase();
+  const q=nz(NT.q.trim());
+  const l=ntAll().filter(p=>(NT.team==="ALL"||p.t===NT.team)&&(!q||nz(p.n).includes(q))).sort((a,b)=>a.n.localeCompare(b.n)).slice(0,80);
+  const R={G:"G",F:"A",C:"C"};
+  return `<div class="gcard rost"><ul class="gpl">${l.map(p=>{const gi=NT.groups.findIndex(g=>g.some(x=>x.n===p.n));
+    return `<li class="rrow ${gi>=0?"ntin":""}" data-nt="add" data-n="${p.n}" data-t="${p.t}" style="${gi>=0?`--gc:${NT_COL[gi]}`:""}"><span class="grl ${p.r}">${R[p.r]||"?"}</span><span class="rnm"><b>${p.n}</b><small>${TEAMS[p.t].nick}</small></span>${gi>=0?`<span class="ntin-b">${NT_LET[gi]}</span>`:`<span class="rgo">+</span>`}</li>`}).join("")}</ul></div>`;
+}
+function ntAct(b){
+  const a=b.dataset.nt,d=b.dataset;
+  if(a==="new"){NT.view="new";NT.groups=[[],[]];NT.act=0;NT.q="";NT.team="ALL";render();window.scrollTo(0,0)}
+  else if(a==="back"||a==="list"){NT.view="list";render();window.scrollTo(0,0)}
+  else if(a==="ng"){const k=+d.k;if(k===3&&NT.groups.length===2)NT.groups.push([]);if(k===2&&NT.groups.length===3){NT.groups.pop();if(NT.act>1)NT.act=1}render()}
+  else if(a==="grp"){NT.act=+d.i;render()}
+  else if(a==="team"){NT.team=d.k;render()}
+  else if(a==="add"){const gi=NT.groups.findIndex(g=>g.some(x=>x.n===d.n));
+    if(gi>=0){NT.groups[gi]=NT.groups[gi].filter(x=>x.n!==d.n)}else if(NT.groups[NT.act].length<5){NT.groups[NT.act].push({n:d.n,t:d.t})}
+    else{alertNT("Il Gruppo "+NT_LET[NT.act]+" ha già 5 giocatori");return}
+    const y=window.scrollY;render();window.scrollTo(0,y)}
+  else if(a==="rm"){NT.groups[NT.act]=NT.groups[NT.act].filter(x=>x.n!==d.n);const y=window.scrollY;render();window.scrollTo(0,y)}
+  else if(a==="launch"){if(!NT.groups.every(g=>g.length>=1&&g.length<=5))return;
+    const now=new Date(),dd=now.toLocaleDateString("it-IT",{day:"2-digit",month:"2-digit",year:"numeric"});
+    NT.list.push({d:dd,names:NT.groups.map((g,i)=>"Gruppo "+NT_LET[i]),groups:NT.groups.map(g=>g.map(p=>({n:p.n,t:p.t,g0:ntGames(p.t,p.n)})))});
+    ntSave();NT.open=NT.list.length-1;NT.view="show";render();window.scrollTo(0,0)}
+  else if(a==="open"){NT.open=+d.i;NT.view="show";render();window.scrollTo(0,0)}
+  else if(a==="close"){NT.list[NT.open].closed=true;ntSave();render()}
+  else if(a==="del"){NT.list.splice(NT.open,1);ntSave();NT.view="list";render()}
+  else if(a==="share"){ntShare(b)}
+}
+function alertNT(t){const el=document.querySelector(".ntsel");if(el){el.classList.add("shake");setTimeout(()=>el.classList.remove("shake"),400)}}
+function ntShare(btn){
+  const c=NT.list[NT.open],S=ntStatus(c),W=1080,Hh=400+S.g.reduce((a,g)=>a+150+g.pl.length*92,0)+80;
+  const cv=document.createElement("canvas");cv.width=W;cv.height=Hh;const X=cv.getContext("2d");
+  const g=X.createLinearGradient(0,0,0,Hh);g.addColorStop(0,"#16275a");g.addColorStop(1,"#060b1a");X.fillStyle=g;X.fillRect(0,0,W,Hh);
+  X.save();X.globalAlpha=.06;X.fillStyle="#fff";for(let i=-Hh;i<W;i+=60){X.beginPath();X.moveTo(i,0);X.lineTo(i+30,0);X.lineTo(i+30+Hh*.47,Hh);X.lineTo(i+Hh*.47,Hh);X.fill()}X.restore();
+  const F=(w,s)=>`italic ${w} ${s}px "Barlow Condensed","Arial Narrow",Arial,sans-serif`;
+  X.fillStyle="#e4163a";X.fillRect(0,0,W,14);
+  X.textAlign="center";X.fillStyle="#f5b400";X.font=F(800,40);X.fillText("DYNASTY LEAGUE · "+c.d,W/2,90);
+  X.fillStyle="#fff";X.font=F(800,96);X.fillText("SFIDA DELLA NOTTE",W/2,190);
+  const wn=S.win===-1?"PAREGGIO":"VINCE "+c.names[S.win].toUpperCase();
+  X.fillStyle=S.win>=0?NT_COL[S.win]:"#f5b400";X.fillRect(140,230,W-280,110);
+  X.fillStyle="#fff";X.font=F(800,70);X.fillText(wn,W/2,310);
+  let y=400;
+  S.g.forEach((gr,i)=>{const h=110+gr.pl.length*92;
+    X.fillStyle="rgba(255,255,255,.05)";X.fillRect(60,y,W-120,h);X.fillStyle=NT_COL[i];X.fillRect(60,y,14,h);
+    X.textAlign="left";X.fillStyle="#fff";X.font=F(800,54);X.fillText(c.names[i].toUpperCase()+(S.win===i?"  🏆":""),100,y+70);
+    X.textAlign="right";X.fillStyle=S.win===i?"#f5b400":"#fff";X.font=F(800,64);X.fillText(gr.avg==null?"—":f2(gr.avg),W-100,y+72);
+    gr.pl.forEach((p,j)=>{const yy=y+110+j*92+56;X.textAlign="left";X.fillStyle="#dfe5f5";X.font=F(800,46);X.fillText(p.n.toUpperCase(),100,yy);
+      X.fillStyle="#8e98b8";X.font=F(700,30);X.fillText(TEAMS[p.t].nick.toUpperCase(),100,yy+34);
+      X.textAlign="right";const v=p.v;X.fillStyle=v==null?"#8e98b8":v>1.1?"#22c55e":v>=.8?"#f5b400":"#ef4444";X.font=F(800,50);X.fillText(v==null?"N.G.":f2(v),W-100,yy+10)});
+    y+=h+40});
+  X.textAlign="center";X.fillStyle="#8e98b8";X.font=F(700,28);X.fillText("Media efficienza (Dunkest/minuto) nella prossima partita",W/2,Hh-50);
+  cv.toBlob(bl=>{const file=new File([bl],"sfida-della-notte.png",{type:"image/png"});
+    if(navigator.canShare&&navigator.canShare({files:[file]}))navigator.share({files:[file],text:"🏀 Sfida della notte · "+wn}).catch(()=>{});
+    else{const a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download="sfida-della-notte.png";document.body.appendChild(a);a.click();a.remove();btn.querySelector("span").textContent="Immagine scaricata ✓"}},"image/png");
+}
+
 const GAMES=[
   {k:"hl",t:"Più o Meno",d:"Due giocatori della lega: il secondo ha l'efficienza più alta o più bassa? Allunga la serie.",i:"⇅",c:"#2fd36b"},
   {k:"tiro",t:"Tiro da 3",d:"45 secondi per segnare più canestri possibile. La mira dipende dall'efficienza del tuo giocatore.",i:"🏀",c:"#f08a1c"},
+  {k:"notte",t:"Sfida della notte",d:"Crea 2-3 gruppi di giocatori di tutta la lega: vince la media di efficienza più alta nella prossima partita.",i:"🌙",c:"#a855f7"},
   {k:"sim",t:"Partita simulata",d:"Scegli due franchigie e guarda la partita con quintetti ed efficienze reali.",i:"📺",c:"#3b82f6"}];
 function vGiochiHub(){
   if(GAME==="menu"){
@@ -1338,13 +1494,14 @@ function vGiochiHub(){
     <div class="gmenu">${GAMES.map(g=>`<button class="gmc" data-game="${g.k}" style="--gc:${g.c}"><span class="gmi">${g.i}</span><span class="gmt"><b>${g.t}</b><small>${g.d}</small></span><span class="rgo">›</span></button>`).join("")}</div>
     <p class="note">Record e risultati restano salvati su questo telefono. Usa "Condividi risultato" per sfidare gli altri GM nel gruppo.</p>`;
   }
-  return `<button class="gback" data-game="menu">‹ Giochi</button>`+(GAME==="tiro"?vTiro():GAME==="sim"?vSim():vGiochi());
+  return (GAME==="notte"&&NT.view!=="list"?"":`<button class="gback" data-game="menu">‹ Giochi</button>`)+(GAME==="tiro"?vTiro():GAME==="sim"?vSim():GAME==="notte"?vNotte():vGiochi());
 }
 document.getElementById("main").addEventListener("click",e=>{
   if(cur!=="giochi")return;
-  const el=e.target.closest("[data-game],[data-hl],[data-trt],[data-trp],[data-tr],[data-sim]");if(!el)return;
+  const el=e.target.closest("[data-game],[data-hl],[data-trt],[data-trp],[data-tr],[data-sim],[data-nt]");if(!el)return;
   e.preventDefault();gameClick(el);
 });
+document.getElementById("main").addEventListener("input",e=>{if(cur==="giochi"&&e.target.id==="ntq"){NT.q=e.target.value;const l=document.getElementById("ntList");if(l)l.innerHTML=ntListHTML()}});
 document.getElementById("main").addEventListener("change",e=>{if(cur!=="giochi")return;if(e.target.id==="simH"||e.target.id==="simA")simChange(e.target)});
 function bindGiochi(m){
   if(GAME==="tiro"){const cv=m.querySelector("#trc");if(cv)tiroCanvas(cv)}
@@ -1355,6 +1512,7 @@ function gameClick(b){
   if(d.hl!==undefined)return hlAct(b);
   if(d.trt!==undefined||d.trp!==undefined||d.tr!==undefined)return tiroAct(b);
   if(d.sim!==undefined)return simAct(b);
+  if(d.nt!==undefined)return ntAct(b);
 }
 
 /* ===== Gioco 1: Tiro da 3 (arcade) ===== */
