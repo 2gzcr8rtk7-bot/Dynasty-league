@@ -638,7 +638,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .drlg.m{width:32px;height:32px}
 .drlg.s{width:26px;height:26px;box-shadow:0 0 0 1.5px rgba(255,255,255,.2)}
 .drr .drlg{margin:6px 0 6px 8px}
-.drbm .drlg.s{width:22px;height:22px}.drbr{gap:2px!important}.drbr em{font-size:10.5px!important;flex:none}
+.drlg{flex:0 0 auto!important;aspect-ratio:1/1;min-width:0}.drbr span.drlg{flex:0 0 26px!important;width:26px!important;height:26px!important;overflow:hidden}.drbr span:not(.drlg){flex:1}.drbr{gap:2px!important}.drbr em{font-size:10.5px!important;flex:none}
 .drch .drlg{width:32px;height:32px;margin:4px}
 .drroom{margin:0 -16px;padding:16px 16px 18px;background:radial-gradient(ellipse at 20% 0%,rgba(168,85,247,.45),transparent 55%),radial-gradient(ellipse at 90% 10%,rgba(59,130,246,.35),transparent 50%),linear-gradient(180deg,#1b0f3d,#0c0820 70%);border-top:3px solid #8b5cf6;border-bottom:3px solid #8b5cf6;position:relative;overflow:hidden}
 .drroom::before{content:"";position:absolute;inset:0;background-image:radial-gradient(1.4px 1.4px at 12% 18%,#fff,transparent),radial-gradient(1px 1px at 72% 8%,#fff,transparent),radial-gradient(1.2px 1.2px at 45% 30%,#e9d5ff,transparent),radial-gradient(1px 1px at 88% 40%,#fff,transparent),radial-gradient(1.3px 1.3px at 30% 62%,#c4b5fd,transparent),radial-gradient(1px 1px at 60% 80%,#fff,transparent);opacity:.55;pointer-events:none}
@@ -690,7 +690,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .drbm{background:rgba(12,8,32,.8);border:1px solid rgba(196,181,253,.22);padding:3px}.drbm>small{display:block;font-size:9px;color:#a5b4fc;letter-spacing:.08em;padding:0 2px}
 .drbm.tbd span{display:block;font-size:11px;color:#a5b4fc;padding:6px 2px}
 .drbr{display:flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 1px}.drbr i{font-style:normal;font-size:9px;color:#a5b4fc;width:9px}
-.drbr span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.drbr em{font-style:normal;font-family:var(--display);font-size:11px}
+.drbr span:not(.drlg){min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.drbr em{font-style:normal;font-family:var(--display);font-size:11px}
 .drbr.w{color:#fff}.drbr.w em{color:#c4b5fd}.drbr.l{opacity:.45}
 /* Calcolatore trade */
 .vtres{padding:12px;margin-bottom:12px;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-left:5px solid var(--gold)}
