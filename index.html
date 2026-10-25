@@ -83,6 +83,12 @@
 .esqtbl{min-width:560px}
 .esqg{min-width:0;width:auto}
 .esqg th.gcol{text-align:center;padding:6px 4px;min-width:52px}.esqg th.gcol b{display:block;font-size:14px;color:#fff}.esqg th.gcol small{display:block;font-size:9.5px;color:var(--muted);font-family:var(--body);font-style:normal;letter-spacing:0;font-weight:500}
+.szchip{flex:none;position:relative;display:flex;align-items:center;height:30px;background:var(--panel);border:1px solid var(--line);border-radius:3px;cursor:pointer}
+.szchip[aria-pressed="true"]{border-color:var(--red);background:linear-gradient(180deg,#2a1530,#1a0f26);box-shadow:inset 0 -3px 0 var(--red)}
+.szchip select{appearance:none;-webkit-appearance:none;background:transparent;border:0;color:var(--fg);height:100%;padding:0 28px 0 12px;font-family:var(--display);font-style:italic;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.szchip select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.szchip option{background:#0d1530;color:#fff;font-style:normal;text-transform:none}
+.szchip::after{content:"";position:absolute;right:11px;top:50%;margin-top:-3px;border:5px solid transparent;border-top-color:var(--gold);border-bottom:0;pointer-events:none}
 .esqm{margin:0 0 10px;gap:6px}.esqm .chip{height:30px;padding:0 12px;font-size:13px;letter-spacing:.08em}
 .esqctl{display:grid;gap:6px;margin:0 0 10px}
 .metsw{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line)}
@@ -1348,14 +1354,13 @@ function vEffSquadra(){
   const sel=L=>L.map((g,i)=>({g,n:i+1})).filter(x=>esqMese==="tutta"||+x.g[0].slice(3)===esqMese);
   const nmax=Math.max(1,...ps.map(p=>sel(gl(p[0])).length));
   const cols=Array.from({length:nmax},(_,i)=>`<th class="gcol"><b>${esqMese==="tutta"?"G"+(i+1):(i+1)+"ª"}</b></th>`).join("");
-  const mchips=`<div class="chips esqm">${["tutta",...mesi].map(m=>`<button class="chip" data-esqm="${m}" aria-pressed="${esqMese===m}">${m==="tutta"?SZ_LBL[sz]:MESI_N[m]}</button>`).join("")}</div>`;
+  const mchips=`<div class="chips esqm"><label class="szchip" aria-pressed="${esqMese==="tutta"}"><select id="gseason" data-szchip="1" aria-label="Stagione">${esqMese!=="tutta"?`<option value="" selected hidden>${SZ_LBL[sz]}</option>`:""}${SZ_ALL.map(s=>`<option value="${s}"${esqMese==="tutta"&&s===sz?" selected":""}>${SZ_LBL[s]}</option>`).join("")}</select></label>${mesi.map(m=>`<button class="chip" data-esqm="${m}" aria-pressed="${esqMese===m}">${MESI_N[m]}</button>`).join("")}</div>`;
   const rows=ps.map(p=>{const L=sel(gl(p[0]));
     return `<tr data-plt="${t}" data-pln="${p[0]}" class="plink"><td class="pnm">${p[0]} <span class="plgo">›</span><small>${nba(p[0])}</small></td>${Array.from({length:nmax},(_,i)=>{const x=L[i];return `<td class="gcell">${x?`<span class="gv ${MET().l(x.g[MET().i])}">${MET().f(x.g[MET().i])}</span><small class="gd">${x.g[0]} · ${x.g[1]}</small>`:""}</td>`}).join("")}</tr>`}).join("");
   return `<button class="gback esqback" id="effback">‹ Efficienza squadre</button>
   <div class="esqhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 60%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">${badge(t)}<div class="esqt"><small>${c.name}</small><h3>${c.nick}</h3></div></div>
   <div class="esqk"><div><small>Eff. stagionale</small>${eff(s[4])}</div>${E.past?`<div><small>Stagione</small><b>${sz}</b></div>`:`<div><small>Notte · ${s[1]} in campo</small>${eff(s[3])}</div>`}<div><small>Posizione lega</small><b>${pos}ª</b></div></div>
   ${H(c.nick,`<em>${E.past?SZ_LBL[sz]+" · "+sz:"Agg. "+E.agg}</em>`)}
-  ${szSelect(sz)}
   <div class="esqctl"><div class="metsw"><button data-esqmet="eff" aria-pressed="${esqMet==="eff"}">Efficienza</button><button data-esqmet="pdk" aria-pressed="${esqMet==="pdk"}">PDK</button></div><button class="advbtn" data-esqadv="1" aria-pressed="${esqAdv}">${esqAdv?"‹ Partita per partita":"Statistiche avanzate"}</button></div>
   ${esqAdv?advTable(t,ps,nba):`${mchips}${esqMese!=="tutta"&&!conDati.includes(esqMese)?`<div class="cempty">Nessuna partita ancora a ${MESI_N[esqMese].toLowerCase()}: la tabella si riempie da sola con i report.</div>`:`<div class="tbl-wrap esqwrap"><table class="ptbl esqtbl esqg"><thead><tr><th>Giocatore</th>${cols}</tr></thead><tbody>${rows}</tbody></table></div>`}`}
   <p class="note">Filtra per mese con i bottoni sopra la tabella (si apre sul mese in corso). In "Stagione" ogni colonna è una partita del giocatore in ordine: G1 la sua prima, G2 la seconda e così via; nei mesi le colonne sono le partite di quel mese (1ª, 2ª…) Sotto ogni valore: data e avversario. Chi ha giocato meno partite ha le ultime caselle vuote finché il report non aggiunge la gara. Scorri a destra per le partite successive; giocatori in ordine di efficienza media.</p>
@@ -2663,7 +2668,7 @@ function render(){
   const cb=m.querySelector("#cback");if(cb)cb.onclick=()=>{cur="home";render();window.scrollTo(0,0)};
   const cr=m.querySelector("#croster");if(cr)cr.onclick=()=>{cur="roster";render();window.scrollTo(0,0)};
   m.querySelectorAll(".pl[data-pl],.rrow[data-pl]").forEach(b=>{const go=()=>{curPlayer=b.dataset.pl;cur="giocatore";render();window.scrollTo(0,0)};b.onclick=go;b.onkeydown=e=>{if(e.key==="Enter")go()}});
-  const gse=m.querySelector("#gseason");if(gse)gse.onchange=()=>{gSeason=gse.value;render()};
+  const gse=m.querySelector("#gseason");if(gse)gse.onchange=()=>{if(!gse.value)return;gSeason=gse.value;if(gse.dataset.szchip)esqMese="tutta";const y=window.scrollY;render();if(gse.dataset.szchip)window.scrollTo(0,y)};
   const gb=m.querySelector("#gback");if(gb)gb.onclick=()=>{cur=gFrom||"roster";gFrom="roster";render();window.scrollTo(0,0)};
   m.querySelectorAll(".ichip").forEach(b=>b.onclick=()=>{injTeam=b.dataset.it;render()});
   m.querySelectorAll("[data-pln]").forEach(b=>{const from=cur;b.onclick=()=>{curTeam=b.dataset.plt;curPlayer=b.dataset.pln;gFrom=from;cur="giocatore";render();window.scrollTo(0,0)}});
