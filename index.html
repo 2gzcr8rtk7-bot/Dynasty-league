@@ -562,6 +562,8 @@ nav button{font-size:15px;letter-spacing:.04em}
 .hlmsg.ok{background:rgba(34,197,94,.15);color:#5eea8f;border-left:4px solid var(--win)}
 .hlmsg.ko{background:rgba(239,68,68,.15);color:#ff8a8a;border-left:4px solid var(--loss)}
 @media (prefers-reduced-motion:no-preference){.hlc .hv.rev{animation:pop .35s ease-out}@keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:none;opacity:1}}}
+.hgreen h2 .t{background:#16a34a}.hgreen h2::after{background:linear-gradient(90deg,#16a34a,transparent)}
+.hred h2 .t{background:#dc2626}.hred h2::after{background:linear-gradient(90deg,#dc2626,transparent)}
 /* Trade speciali */
 .splg{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:-4px 0 14px;font-family:var(--display);font-weight:700;font-size:12px;color:#cfd6ea}
 .splg span{display:flex;align-items:center;gap:5px}.splg i{width:14px;height:14px;display:inline-block}
@@ -975,15 +977,15 @@ function vEfficienza(){
   <div class="eboard">${sq}</div>
   <p class="note">Efficienza stagionale = Dunkest totali ÷ minuti giocati da tutta la rosa. Dk = Dunkest stagionali di squadra.</p>
   <div style="height:22px"></div>
+  <div class="hgreen">${H("Top 10 lega",`<em>min. 10 minuti</em>`)}</div>
+  <div class="eboard">${top}</div>
+  <div style="height:22px"></div>
+  <div class="hred">${H("Flop 10 lega",`<em>min. 10 minuti</em>`)}</div>
+  <div class="eboard">${flop}</div>
+  <div style="height:22px"></div>
   ${H("Giocatori")}
   <div class="chips">${chips}</div>
   <div class="tbl-wrap"><table class="ptbl"><thead><tr><th>Giocatore</th><th>Eff.</th><th>PG</th><th>Min</th></tr></thead><tbody>${rows}</tbody></table></div>
-  <div style="height:22px"></div>
-  ${H("Top 10 lega",`<em>min. 10 minuti</em>`)}
-  <div class="eboard">${top}</div>
-  <div style="height:22px"></div>
-  ${H("Flop 10 lega",`<em>min. 10 minuti</em>`)}
-  <div class="eboard">${flop}</div>
   <p class="note"><span class="ev g"><i></i>sopra 1,10</span> &nbsp; <span class="ev y"><i></i>0,80–1,10</span> &nbsp; <span class="ev r"><i></i>sotto 0,80</span> &nbsp; Efficienza = Dunkest per minuto, senza capitano, vittoria e quintetto.</p>`;
 }
 
