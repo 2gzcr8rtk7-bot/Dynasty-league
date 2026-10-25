@@ -693,6 +693,29 @@ nav button{font-size:15px;letter-spacing:.04em}
 .arcbtn small{font-family:var(--body,inherit);font-style:normal;font-weight:500;font-size:11.5px;letter-spacing:.02em;text-transform:none;color:#94a3b8}
 .arci{font-size:22px}.arcbtn .rgo{color:#94a3b8}
 /* DREAMERS */
+/* DREAMERS a tutto schermo come app separata */
+body.dreamfs header,body.dreamfs footer,body.dreamfs nav,body.dreamfs .subnav{display:none!important}
+body.dreamfs{background:#0c0820}
+body.dreamfs main,body.dreamfs #main{padding-top:0!important;margin-top:0!important}
+body.dreamfs .drroom{margin:0 -16px;min-height:100vh;padding-top:calc(env(safe-area-inset-top,0px) + 64px);border-top:0}
+body.dreamfs #main>.note:last-child{display:none}
+body.dreamfs .drhd{margin-top:6px}
+.drroom>.drexit,.drexit{position:fixed;z-index:50;top:calc(env(safe-area-inset-top,0px) + 10px);left:12px;padding:8px 14px;border:0;border-radius:999px;background:linear-gradient(180deg,#ff3b5c,#d1123a);color:#fff;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 6px 18px rgba(228,22,58,.45);cursor:pointer}
+body:not(.dreamfs) .drexit{display:none}
+/* look moderno */
+.drm{border-radius:16px!important;overflow:hidden;background:linear-gradient(180deg,rgba(30,20,70,.75),rgba(12,8,32,.85))!important;border:1px solid rgba(196,181,253,.25)!important;box-shadow:0 10px 26px rgba(0,0,0,.35)}
+.drr{min-height:76px;gap:14px!important}
+.drr .drlg{width:60px!important;height:60px!important;flex:0 0 60px!important;margin:8px 0 8px 10px!important}
+.drlg{display:grid!important;place-items:center!important;padding:0}
+.drlg .badge{width:76%!important;height:76%!important;background-size:contain!important;background-position:center!important;background-repeat:no-repeat!important;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}
+.drch .drlg{width:42px!important;height:42px!important;flex:0 0 42px!important}
+.drlg.m{width:38px!important;height:38px!important;flex:0 0 38px!important}
+.drtt .drlg{width:34px!important;height:34px!important;flex:0 0 34px!important}
+.drcol{border-radius:14px;overflow:hidden}
+.drcal,.drbm,.drtab{border-radius:12px;overflow:hidden}
+.drtabs button{border-radius:10px}
+.drnav button{border-radius:10px}
+.drst{border-radius:0 16px 16px 0}
 .drbh{display:grid;grid-template-columns:1.08fr 1fr 1fr;gap:12px;margin-bottom:6px}.drbh span{text-align:center;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;text-transform:uppercase;color:#e9d5ff}.drbh small{display:block;font-size:9px;color:#a5b4fc;font-style:normal}
 .drbk2{display:grid;grid-template-columns:1.08fr 1fr 1fr;grid-auto-rows:1fr;column-gap:12px;row-gap:8px}
 .drq,.drs,.drf{min-width:0}.drs .drbr i,.drf .drbr i{display:none}.drs .drbr span.drlg,.drf .drbr span.drlg{flex:0 0 22px!important;width:22px!important;height:22px!important}.drbk2 .drbm{min-width:0;overflow:hidden}
@@ -2566,7 +2589,7 @@ function vDream(){
       <div class="drf" style="grid-row:1/5"><div class="drfin"><div class="drtop">${cup}${champ?"<b>Campioni</b>":""}${champ?`<span class="drchamp">${drLg(champ,"m")}${TEAMS[champ].nick}</span>`:""}</div>${m(24,fin,"Finalissima",["Vincente","Vincente"])}</div></div>
     </div>
     <div class="drthird"><h5>Finale 3° posto<small>${drFmt(drWeekStart(24))}</small></h5>${m(24,(B[24]||[])[1],"3° posto",["Perdente semifinale","Perdente semifinale"])}</div>`}
-  return `<div class="drroom"><div class="drhd"><span class="drlogo">DREAMERS</span><small>Fanta PDK · stagione ${STAGIONE_CORRENTE}</small></div>
+  return `<div class="drroom"><button class="drexit" data-game="menu">‹ Torna all'app</button><div class="drhd"><span class="drlogo">DREAMERS</span><small>Fanta PDK · stagione ${STAGIONE_CORRENTE}</small></div>
   <div class="drtabs">${tabs}</div>${body}</div>
   <p class="note">Meritocrazia: ogni settimana i 10 giocatori della rosa con il PDK medio più alto diventano titolari, gli altri vanno in tribuna. Punteggio = media dei 10 PDK settimanali (media dei punti Dunkest delle partite della settimana); il migliore è capitano ×1,5 e i 4 peggiori valgono la metà (provvisori durante la settimana, definitivi a turno chiuso). Dati aggiornati al ${EFF.agg}.</p>`}
 function drAct(b){const d=b.dataset;
@@ -2598,7 +2621,7 @@ function vGiochiHub(){
     <p class="note">Record salvati su questo telefono. Usa "Condividi risultato" per sfidare gli altri GM nel gruppo.</p>`;
   }
   const arc=(GAMES.find(g=>g.k===GAME)||{}).a;
-  return (GAME==="notte"&&NT.view!=="list"?"":arc?`<button class="gback" data-game="arcade">‹ Arcade</button>`:`<button class="gback" data-game="menu">‹ Giochi</button>`)+(GAME==="tiro"?vTiro():GAME==="sim"?vSim():GAME==="notte"?vNotte():GAME==="dream"?vDream():vGiochi());
+  return (GAME==="dream"||GAME==="notte"&&NT.view!=="list"?"":arc?`<button class="gback" data-game="arcade">‹ Arcade</button>`:`<button class="gback" data-game="menu">‹ Giochi</button>`)+(GAME==="tiro"?vTiro():GAME==="sim"?vSim():GAME==="notte"?vNotte():GAME==="dream"?vDream():vGiochi());
 }
 document.getElementById("main").addEventListener("click",e=>{
   if(cur!=="giochi")return;
@@ -2833,6 +2856,7 @@ const VIEWS={effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,g
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
+  document.body.classList.toggle("dreamfs",cur==="giochi"&&GAME==="dream");
   const eff=cur==="giocatore"?(gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));

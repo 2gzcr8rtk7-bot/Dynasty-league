@@ -235,3 +235,7 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 
 ## 25/10/2026 (29) — DREAMERS meritocrazia
 - Non ci sono più 10 titolari fissi con riserve che entrano solo per lo 0. Ogni settimana tutta la rosa concorre: i 10 con il PDK medio settimanale più alto sono titolari (1° capitano ×1,5, ultimi 4 dei 10 ×0,5, gli altri pieno), il resto va in tribuna (`drTeam`: `top`, `trib`, `wait`, `zeros`). Si aggiorna a ogni report. A turno chiuso, se hanno giocato meno di 10 giocatori, i posti mancanti valgono 0. `form` (valori) serve solo a definire la rosa del turno.
+
+## 25/10/2026 (30) — DREAMERS a tutto schermo
+- Entrando in DREAMERS la pagina diventa un'app a sé: classe `body.dreamfs` (impostata in `render()`) nasconde testata, barra e footer; bottone rosso fisso "‹ Torna all'app" (`.drexit`, `data-game="menu"`) per tornare ai Giochi.
+- Look più moderno: card con angoli arrotondati e ombre, cerchi dei loghi più grandi (60px nelle partite) con logo centrato al 76% del cerchio.
