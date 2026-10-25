@@ -780,7 +780,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .drbr span:not(.drlg){min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.drbr em{font-style:normal;font-family:var(--display);font-size:11px}
 .drbr.w{color:#fff}.drbr.w em{color:#c4b5fd}.drbr.l{opacity:.45}
 /* Calcolatore trade */
-.vtres{padding:12px;margin-bottom:12px;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-left:5px solid var(--gold)}
+.vtres{position:relative;padding:12px;margin-bottom:12px;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-left:5px solid var(--gold)}
 .vtres.ok{border-left-color:#22c55e}.vtres.mid{border-left-color:#f59e0b}.vtres.bad{border-left-color:#ef4444}
 .vtres.empty{color:var(--muted);font-size:14px;border-left-color:var(--line)}
 .vtsc{display:flex;justify-content:space-between;gap:8px}
@@ -867,6 +867,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .cupshare{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:12px 0 4px;padding:11px;border:1px solid #ffe27a;background:linear-gradient(180deg,#ffe27a,#f5b400);color:#1a1203;font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase;letter-spacing:.04em;cursor:pointer}.cupshare svg{width:18px;height:18px}
 .cupm{width:26px;height:26px;display:grid;place-items:center;border-radius:50%;font-family:var(--display);font-weight:800;font-size:14px;color:#0a0f1f;flex:none}.cupm.m0{background:#f5b400}.cupm.m1{background:#c0c7d4}.cupm.m2{background:#cd7f32}
 .vttabs{grid-template-columns:repeat(3,1fr)}
+.vtsh{position:absolute;right:8px;top:8px;margin:0!important;z-index:2}.vtres .vtsc{padding-right:34px}
 .v3h{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-family:var(--display);font-style:italic;font-weight:800}
 .v3r{display:grid;grid-template-columns:32px 1fr 62px;align-items:center;gap:8px;margin:9px 0}
 .v3n{min-width:0}.v3n b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;text-transform:uppercase}.v3n small{display:block;font-size:11px;color:var(--muted)}
@@ -1491,7 +1492,7 @@ function vtResHTML(){
   // chi dà di più è svantaggiato: favorito = squadra che dà meno
   const fav=A>B?tb:ta,give=A>B?ta:tb;const cr=Math.round(Math.abs(A-B)/VAL_CR/5)*5;
   const [lab,cls]=d<.10?["Equilibrata","ok"]:d<.25?[`Leggermente a favore dei ${TEAMS[fav].nick}`,"mid"]:[`Sbilanciata a favore dei ${TEAMS[fav].nick}`,"bad"];
-  return `<div class="vtres ${cls}">
+  return `<div class="vtres ${cls}"><button class="bshare vtsh" data-tshare="1" aria-label="Condividi scambio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <div class="vtsc"><span>${badge(ta,"vtlg")}<b>${Math.round(B)}</b><small>${ca.nick} ricevono</small></span><span class="r"><small>${cb.nick} ricevono</small><b>${Math.round(A)}</b>${badge(tb,"vtlg")}</span></div>
     <div class="vtbar"><i style="width:${100-pa}%;background:${ca.bg};">${Math.round(100-pa)}%</i><i style="width:${pa}%;background:${cb.bg};">${Math.round(pa)}%</i><em style="left:50%"></em></div>
     <div class="vtver"><b>${lab}</b><span>${d<.10?"Differenza":"Ci guadagnano i "+TEAMS[fav].nick+" del"} ${Math.round(d*100)}%</span></div>
@@ -1525,7 +1526,7 @@ function v3Res(){
   const [lab,cls]=d<.10?["Equilibrata","ok"]:d<.25?[`Leggermente a favore dei ${TEAMS[w.t].nick}`,"mid"]:[`Sbilanciata a favore dei ${TEAMS[w.t].nick}`,"bad"];
   const cr=Math.round(Math.min(w.s,-l.s)/VAL_CR/5)*5;
   const col=x=>Math.abs(x.s)/base<.10?"y":x.s>0?"g":"r";
-  return `<div class="vtres ${cls}"><div class="v3h">Saldo di ogni squadra (riceve − dà)</div>
+  return `<div class="vtres ${cls}"><button class="bshare vtsh" data-tshare="1" aria-label="Condividi scambio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="v3h">Saldo di ogni squadra (riceve − dà)</div>
    ${S.map(x=>`<div class="v3r">${drLg(x.t,"m")}<div class="v3n"><b>${TEAMS[x.t].nick}</b><small>riceve ${Math.round(x.R)} · dà ${Math.round(x.G)}</small><div class="v3b"><i class="${x.s>=0?"p":"n"}" style="width:${Math.abs(x.s)/mx*50}%"></i><em></em></div></div><span class="v3v ${col(x)}">${x.s>=0?"+":"−"}${Math.abs(Math.round(x.s))}</span></div>`).join("")}
    <div class="vtver"><b>${lab}</b><span>Squilibrio massimo ${Math.round(d*100)}%</span></div>
    ${d>=.10&&cr>0?`<p class="vtsug">Per pareggiare: i <b>${TEAMS[w.t].nick}</b> dovrebbero dare circa <b>${cr} crediti</b> ai <b>${TEAMS[l.t].nick}</b>.</p>`:""}</div>`}
@@ -1555,6 +1556,56 @@ document.getElementById("main").addEventListener("change",e=>{if(cur!=="valtrade
   if(d.v3to!==undefined){V3.it[+d.v3to].to=+e.target.value}
   else if(d.v3sel!==undefined){const k=+d.v3sel,v=e.target.value,o=V3.t.indexOf(v);if(o>=0&&o!==k){V3.t[o]=V3.t[k];V3.it=V3.it.filter(x=>x.k!==o)}V3.t[k]=v;V3.it=V3.it.filter(x=>x.k!==k)}
   else return;const y=window.scrollY;render();window.scrollTo(0,y)});
+/* Condividi lo scambio (2 o 3 squadre) come immagine: squadre, cosa riceve ognuna con i valori, saldo, barra e giudizio */
+function tradeModel(){
+  if(VT.tab==="calc3"){const T=V3.t;const S=T.map((t,k)=>{const rec=V3.it.filter(x=>x.to===k);const R=rec.reduce((a,x)=>a+v3Pts(x),0),G=V3.it.filter(x=>x.k===k).reduce((a,x)=>a+v3Pts(x),0);
+      return{t,R,G,s:R-G,items:rec.map(x=>({l:v3Lab(x),v:x.ty==="pl"?(valOf(x.n)??VAL_FALLBACK):null,from:T[x.k]}))}});
+    const base=Math.max(1,...S.map(x=>Math.max(x.R,x.G))),d=Math.max(...S.map(x=>Math.abs(x.s)))/base,w=S.slice().sort((a,b)=>b.s-a.s)[0],l=S.slice().sort((a,b)=>a.s-b.s)[0];
+    const cr=Math.round(Math.min(w.s,-l.s)/VAL_CR/5)*5;
+    return{S,d,fav:w.t,sug:d>=.10&&cr>0?`I ${TEAMS[w.t].nick} dovrebbero dare circa ${cr} crediti ai ${TEAMS[l.t].nick}`:""}}
+  const A=vtSide(0),B=vtSide(1),T=VT.t;
+  const items=o=>[...VT.pl[o].map(n=>({l:n,v:valOf(n)??VAL_FALLBACK,from:T[o]})),...VT.pk[o].map(p=>({l:`Pick ${p} · ${PICK_CR[p]} cr`,v:null,from:T[o]})),...(+VT.cr[o]?[{l:`${+VT.cr[o]} crediti`,v:null,from:T[o]}]:[])];
+  const S=[{t:T[0],R:B,G:A,s:B-A,items:items(1)},{t:T[1],R:A,G:B,s:A-B,items:items(0)}];
+  const d=Math.abs(A-B)/Math.max(A,B,1),fav=A>B?T[1]:T[0],give=A>B?T[0]:T[1],cr=Math.round(Math.abs(A-B)/VAL_CR/5)*5;
+  return{S,d,fav,sug:d>=.10&&cr>0?`I ${TEAMS[fav].nick} dovrebbero aggiungere circa ${cr} crediti`:""}}
+async function shareTrade(btn){
+  const M=tradeModel();if(!M.S.some(x=>x.items.length))return;
+  try{await document.fonts.load('800 italic 40px "Barlow Condensed"')}catch(e){}
+  const F=(w,z)=>`italic ${w} ${z}px "Barlow Condensed","Arial Narrow",Arial,sans-serif`,FB=(w,z)=>`${w} ${z}px "Barlow",Arial,sans-serif`;
+  const W=1080,n=M.S.length,cardH=M.S.map(x=>170+Math.max(1,x.items.length)*58),Hh=420+cardH.reduce((a,b)=>a+b+24,0)+(n*60)+330;
+  const cv=document.createElement("canvas");cv.width=W;cv.height=Hh;const X=cv.getContext("2d");
+  const bg=X.createLinearGradient(0,0,0,Hh);bg.addColorStop(0,"#16275a");bg.addColorStop(1,"#050915");X.fillStyle=bg;X.fillRect(0,0,W,Hh);
+  X.save();X.globalAlpha=.05;X.fillStyle="#fff";for(let i=-Hh;i<W;i+=64){X.beginPath();X.moveTo(i,0);X.lineTo(i+32,0);X.lineTo(i+32+Hh*.47,Hh);X.lineTo(i+Hh*.47,Hh);X.fill()}X.restore();
+  X.fillStyle="#e4163a";X.fillRect(0,0,W,14);
+  const lg=await ldImg(document.querySelector(".lglogo")?.src||"");if(lg)X.drawImage(lg,60,44,96,96);
+  X.textAlign="left";X.fillStyle="#fff";X.font=F(800,56);X.fillText("DYNASTY",lg?176:60,96);X.fillStyle="#f5b400";X.fillText("LEAGUE",(lg?176:60)+X.measureText("DYNASTY ").width,96);
+  X.fillStyle="#8e98b8";X.font=F(700,30);X.fillText("CALCOLATORE SCAMBI · "+new Date().toLocaleDateString("it-IT"),lg?176:60,136);
+  X.textAlign="center";X.fillStyle="#fff";X.font=F(800,84);X.fillText(n===3?"SCAMBIO A 3":"SCAMBIO A 2",W/2,256);
+  let y=320;
+  for(let k=0;k<n;k++){const x=M.S[k],c=TEAMS[x.t],h=cardH[k];
+    X.fillStyle="rgba(255,255,255,.05)";X.fillRect(60,y,W-120,h);X.fillStyle=c.bg;X.fillRect(60,y,W-120,110);
+    const im=await ldImg(LOGO2[x.t]||LOGO[x.t]);if(im){const z=90,r=Math.min(z/im.width,z/im.height);X.drawImage(im,80+45-im.width*r/2,y+55-im.height*r/2,im.width*r,im.height*r)}
+    X.textAlign="left";X.fillStyle=c.fg||"#fff";X.font=F(800,58);X.fillText(c.nick.toUpperCase()+" RICEVONO",190,y+76);
+    let yy=y+110+48;
+    if(!x.items.length){X.fillStyle="#8e98b8";X.font=FB(500,30);X.fillText("Niente",90,yy)}
+    x.items.forEach(it=>{X.textAlign="left";X.fillStyle="#fff";X.font=F(800,40);X.fillText(it.l.toUpperCase(),90,yy);
+      if(n===3){X.textAlign="right";X.fillStyle="#8e98b8";X.font=F(700,28);X.fillText("da "+TEAMS[it.from].nick.toUpperCase(),W-200,yy)}
+      X.textAlign="right";X.fillStyle=it.v!=null?"#93c5fd":"#f5b400";X.font=F(800,36);X.fillText(it.v!=null?String(it.v):"",W-90,yy);yy+=58});
+    y+=h+24}
+  // saldi
+  X.textAlign="left";X.fillStyle="#fff";X.font=F(800,44);X.fillText("EQUILIBRIO",60,y+40);y+=70;
+  const mx=Math.max(1,...M.S.map(x=>Math.abs(x.s)));
+  for(const x of M.S){const c=TEAMS[x.t];X.fillStyle="#fff";X.font=F(800,36);X.textAlign="left";X.fillText(c.nick.toUpperCase(),60,y+30);
+    const bx=330,bw=520,cx=bx+bw/2;X.fillStyle="#1d2850";X.fillRect(bx,y+6,bw,30);const L=Math.abs(x.s)/mx*bw/2;
+    X.fillStyle=x.s>=0?"#4ade80":"#f87171";X.fillRect(x.s>=0?cx:cx-L,y+6,L,30);X.fillStyle="#fff";X.fillRect(cx-2,y,4,42);
+    X.textAlign="right";X.fillStyle=x.s>=0?"#4ade80":"#f87171";X.font=F(800,40);X.fillText((x.s>=0?"+":"−")+Math.abs(Math.round(x.s)),W-60,y+34);y+=96*0+60}
+  y+=30;const ok=M.d<.10,lab=ok?"EQUILIBRATA":(M.d<.25?"LEGGERMENTE A FAVORE DEI ":"SBILANCIATA A FAVORE DEI ")+TEAMS[M.fav].nick.toUpperCase();
+  X.fillStyle=ok?"#22c55e":M.d<.25?"#f59e0b":"#ef4444";X.fillRect(60,y,W-120,96);X.fillStyle="#fff";X.textAlign="center";X.font=F(800,48);X.fillText(lab,W/2,y+64);y+=130;
+  X.fillStyle="#dfe5f5";X.font=FB(500,30);X.fillText(`Squilibrio ${Math.round(M.d*100)}%${M.sug?" · "+M.sug:""}`,W/2,y);
+  y+=60;X.fillStyle="#5d678a";X.font=F(700,26);X.fillText("Valori Dynasty League · 300 crediti ≈ un giocatore da 1150",W/2,y);
+  const out=document.createElement("canvas");out.width=W;out.height=Math.min(Hh,y+40);out.getContext("2d").drawImage(cv,0,0);
+  shSend(out,"scambio.png",`🔁 Calcolatore scambi: ${ok?"equilibrata":lab.toLowerCase()} (${Math.round(M.d*100)}%)`,btn)}
+document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-tshare]");if(!b||cur!=="valtrade")return;e.preventDefault();e.stopPropagation();shareTrade(b)});
 function vValTrade(){
   const tabs=`<div class="ctabs vttabs"><button data-vt="tab" data-k="calc" aria-pressed="${VT.tab==="calc"}">2 squadre</button><button data-vt="tab" data-k="calc3" aria-pressed="${VT.tab==="calc3"}">3 squadre</button><button data-vt="tab" data-k="list" aria-pressed="${VT.tab==="list"}">Valori lega</button></div>`;
   if(VT.tab==="list"){
