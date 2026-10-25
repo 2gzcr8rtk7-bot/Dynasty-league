@@ -145,7 +145,7 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 - DUC: bg tornato `#facc15` (il giallo originale), al posto del silver `#a9afb7`. Anche le maglie sono gialle con le punte nere (override in `jersey()`).
 
 ## 25/10/2026 (16) — Efficienza Cup
-- Si apre dal bottone dorato "Efficienza Cup" in fondo alla pagina Efficienza, sotto la rubrica Giocatori (`data-cupgo`); non è più nella barra. Vista `effcup` ("‹ Efficienza" per tornare; nella barra resta evidenziato Efficienza).
+- Si apre dal bottone dorato "Efficienza Cup" in cima alla pagina Efficienza, sopra la classifica squadre (`data-cupgo`); non è più nella barra. Vista `effcup` ("‹ Efficienza" per tornare; nella barra resta evidenziato Efficienza).
 - "Sala" rossa con due selettori: Anno NBA (1/2/3) e Ruolo (Guardie/Ali/Centri) → 9 classifiche (`cupYear`, `cupRole`). Ruolo = quello del roster (`ROSTER[t][i][2]`).
 - Classifica per efficienza stagionale con logo squadra, partite, minuti e podio; chi non ha partite va in "Senza partite".
 - Tutto è calcolato al momento da `ROSTER` ed `EFF.gioc`: con un nuovo report le classifiche si aggiornano da sole.
