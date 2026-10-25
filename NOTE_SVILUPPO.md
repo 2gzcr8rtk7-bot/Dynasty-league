@@ -246,3 +246,6 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Calcolatore → Valori lega: colonna "Prezzo cr" (prezzo consigliato in crediti) accanto al valore. Proporzionale al valore, tarato su Scottie Barnes (valore 1275 = 400 crediti pagati): prezzo = valore × 400 ÷ 1275, arrotondato a 5 (`PREZZO_RIF`, `prezzo`).
 - Valori aggiornati a mano da Francesco (25/10 sera) per 37 giocatori (es. Flagg 1700, Banchero 1275, Hartenstein 300, Booker 790, Brazile 90, Ighodaro 90, Kuminga 170, Wolf 150, Paul George 250, Porziņģis 30, Ingram 390…). Prezzo consigliato rifatto: curva esponenziale sul valore, correzione età e ruolo (`prezzo(v,nome)`, `PR`, date di nascita in `NASCITA`, `eta`, `ruoloDi`).
 - Prezzi fissati a mano (precedenza sulla curva): `PREZZO_FISSO` — Buzelis 150, Ware 200.
+
+## 25/10/2026 (31) — Risultati in stile calendario
+- Sezione Risultati rifatta: una scheda per giornata (pillola Finale/Live), ogni partita su una riga: logo tondo + nome, punteggio al centro (vincente in oro, scarto sotto), avversaria a destra, icona condividi a fine riga (stesso `data-share` → `shareGame`). CSS `.rgc/.rgh/.rgm/.rgt/.rgl/.rgs`, funzione `vRisultati`.
