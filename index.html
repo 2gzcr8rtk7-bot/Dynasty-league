@@ -815,8 +815,36 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .drn{flex:1;min-width:0;display:grid}.drn b{font-family:var(--display);font-style:italic;font-weight:800;font-size:20px;text-transform:uppercase;color:#cbd5e1}.drn small{font-size:11px;color:#a5b4fc}
 .drr em{font-style:normal;font-family:var(--display);font-weight:800;font-size:26px;color:#94a3b8;min-width:60px;text-align:right}
 .drr.w .drn b,.drr.w em{color:#fff}.drr.w em{text-shadow:0 0 12px rgba(167,139,250,.9)}
+.bkw{overflow-x:auto;margin:0 -16px;padding:4px 16px 14px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none}.bkw::-webkit-scrollbar{display:none}
+.bk{display:flex;gap:30px;width:max-content}
+.bkc{width:186px;flex:none;scroll-snap-align:start;scroll-margin-left:16px}
+.bkc h6{margin:0 0 8px;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:#e9d5ff}
+.bkc h6 small{display:block;font-size:10px;font-style:normal;font-weight:600;color:#a5b4fc;letter-spacing:.04em}
+.bkb{position:relative;height:var(--h);display:flex;flex-direction:column}
+.bkg{position:relative;flex:1;display:flex;flex-direction:column;justify-content:space-around}
+.bkc:not(.last) .bkg::after{content:"";position:absolute;right:-15px;top:25%;bottom:25%;width:15px;border:2px solid rgba(196,181,253,.4);border-left:0;border-radius:0 10px 10px 0}
+.bkm{position:relative;background:rgba(12,8,32,.82);border:1px solid rgba(196,181,253,.25);border-radius:12px;padding:4px 0;box-shadow:0 8px 20px rgba(0,0,0,.3)}
+.bkm.in::before{content:"";position:absolute;left:-17px;top:50%;width:15px;border-top:2px solid rgba(196,181,253,.4)}
+.bklab{position:absolute;left:10px;top:-8px;padding:0 6px;border-radius:6px;background:#3b2a7a;font-family:var(--display);font-style:italic;font-weight:800;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#ddd6fe;line-height:15px}
+.bkt{display:flex;align-items:center;gap:7px;padding:5px 10px;min-height:30px}
+.bkt+.bkt{border-top:1px solid rgba(196,181,253,.12)}
+.bkt i{width:12px;font-style:normal;font-size:10px;color:#a5b4fc;text-align:center}
+.bklg{flex:none;width:24px;height:24px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:var(--tc);box-shadow:0 0 0 1px rgba(255,255,255,.2)}
+.bklg .badge{width:90%!important;height:90%!important;border-radius:0!important;box-shadow:none!important}
+.bkt b{flex:1;min-width:0;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;text-transform:uppercase;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bkt em{font-style:normal;font-family:var(--display);font-weight:800;font-size:16px;color:#fff;min-width:12px;text-align:right}
+.bkt.l b,.bkt.l em{color:#7c74a8}.bkt.l .bklg{opacity:.5}
+.bkt.w em{color:var(--gold)}
+.bkm.tbd .bkt b{font-family:inherit;font-style:normal;font-weight:500;font-size:12px;text-transform:none;color:#a5b4fc}
+.bkc.last .bkb{justify-content:center}
+.bkm.fin{border-color:rgba(192,132,252,.85);box-shadow:0 0 18px rgba(168,85,247,.45)}
+.bkm.bot{position:absolute;left:0;right:0;bottom:0}
+.bkcup{position:absolute;left:0;right:0;top:calc(50% - 150px);display:flex;flex-direction:column;align-items:center;gap:2px}
+.bkcup .drcup{width:58px!important;height:58px!important;margin:0!important}
+.bkchamp{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#e9d5ff;text-align:center}.bkchamp b{display:block;font-family:var(--display);font-style:italic;font-size:15px;color:var(--gold);letter-spacing:.04em}
+.drplh span{float:right;margin-top:4px;font-size:10px;letter-spacing:.12em;color:#a5b4fc;font-style:normal;font-weight:600}
 .drplh{margin:26px 0 4px;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.06em;color:#e9d5ff;border-left:4px solid #a855f7;padding-left:10px}
-.drfinal{display:grid;gap:6px;margin-top:10px}
+.drfinal{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,auto);grid-auto-flow:column;gap:6px;margin-top:10px}.drfinal .drfr{padding:6px 8px;gap:7px;min-width:0}.drfinal .drfr b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.drfinal .drfr .drpos{font-size:15px;width:16px}.drfinal .drfr em{font-size:11px}.drfinal .bklg{width:22px;height:22px}
 .drfr{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:rgba(12,8,32,.75);border:1px solid rgba(196,181,253,.22)}
 .drfr .drpos{width:22px;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;color:#c4b5fd;text-align:center}
 .drfr b{font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;text-transform:uppercase;color:#fff}
@@ -2667,27 +2695,29 @@ function vDream(){
     const ld=st[0]?st[0].w:0;
     body=`<div class="drcla">${st.map((x,i)=>{const f=form(x.t);return `<div class="drcr ${i<1?"lead":""}" style="--tc:${TEAMS[x.t].bg}"><span class="drpos">${i+1}</span>${drLg(x.t,"l")}<div class="drci"><b>${TEAMS[x.t].nick}</b><small>${x.n?`${x.n} turni giocati`:"nessun turno giocato"}</small><span class="drfm">${f.length?f.map(r=>`<i class="${r}">${r}</i>`).join(""):'<em>forma —</em>'}</span></div><div class="drcwl"><b>${x.w}<small>V</small></b><b class="l">${x.l}<small>P</small></b><b class="avg">${x.avg==null?"—":pdkF(x.avg)}<small>MEDIA</small></b>${i>0&&ld>x.w?`<em>−${ld-x.w} V</em>`:""}</div></div>`}).join("")}</div>
     <p class="note">Vittoria = punteggio di turno più alto. A parità di vittorie è davanti chi ha la media punteggio più alta. Tutte e 8 le squadre vanno ai playoff: la posizione decide gli accoppiamenti (1ª–8ª, 4ª–5ª, 2ª–7ª, 3ª–6ª). Serie al meglio delle 3, una gara a settimana; ci sono anche le serie per il 3°, 5° e 7° posto, così la classifica finale va da 1 a 8.</p>`}
-  else{const sd=P.seed,R=P.R;
-    const m=(x,ph)=>{if(!x)return`<div class="drbm tbd">${ph?ph.map(y=>`<span>${y}</span>`).join(""):"<span>da definire</span>"}</div>`;const win=x.win||null;
-      return `<div class="drbm">${[x.a,x.b].map((t,i)=>`<div class="drbr ${win===t?"w":win?"l":""}"><i>${sd[t]}</i>${drLg(t,"s")}<span>${TEAMS[t].nick}</span><em>${x.g.length?(i?x.wb:x.wa):""}</em></div>`).join("")}</div>`};
-    const champ=P.champ,rd=r=>P.RS[r]?drFmt(drWeekStart(P.RS[r])):"—";
+  else{const sd=P.seed,R=P.R,R1=R[1]||[],R2=R[2]||[];
+    const lg=t=>`<span class="bklg" style="--tc:${TEAMS[t].bg}">${badge(t)}</span>`;
+    const m=(x,ph,lab,cls="")=>{const head=lab?`<span class="bklab">${lab}</span>`:"";
+      if(!x)return`<div class="bkm tbd ${cls}">${head}${ph.map(y=>`<div class="bkt"><b>${y}</b></div>`).join("")}</div>`;const win=x.win||null;
+      return `<div class="bkm ${cls}">${head}${[x.a,x.b].map((t,i)=>`<div class="bkt ${win===t?"w":win?"l":""}"><i>${sd[t]}</i>${lg(t)}<b>${TEAMS[t].nick}</b><em>${x.g.length?(i?x.wb:x.wa):""}</em></div>`).join("")}</div>`};
+    const champ=P.champ,rd=r=>P.RS[r]?drFmt(drWeekStart(P.RS[r])):"";
     const cup=`<svg class="drcup" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="drg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f5ecff"/><stop offset=".45" stop-color="#b48cff"/><stop offset="1" stop-color="#5b21b6"/></linearGradient></defs><path d="M18 8h28v14a14 14 0 0 1-28 0z" fill="url(#drg)"/><path d="M18 12h-8v4a10 10 0 0 0 10 10M46 12h8v4a10 10 0 0 1-10 10" fill="none" stroke="url(#drg)" stroke-width="3.5"/><path d="M29 35h6v9h-6z" fill="url(#drg)"/><path d="M21 46h22l2 6H19z" fill="url(#drg)"/><rect x="17" y="52" width="30" height="5" rx="1" fill="#3b1585"/><path d="M24 12c0 8 2 13 6 16" stroke="#fff" stroke-opacity=".55" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>`;
-    body=`<p class="note" style="margin-top:0">${drWeek(DR_REG).closed?"Tabellone definitivo.":"Tabellone provvisorio in base alla classifica attuale."} Serie al meglio delle 3 (il numero è le vittorie nella serie); appena tutte le serie di un turno sono decise si passa al turno dopo.</p>
-    <div class="drbh"><span>Quarti<small>${rd(0)}</small></span><span>Semifinali<small>${rd(1)}</small></span><span>Finale<small>${rd(2)}</small></span></div>
-    <div class="drbk2">
-      ${[0,1,2,3].map(i=>`<div class="drq" style="grid-row:${i+1}">${m(R[0][i])}</div>`).join("")}
-      <div class="drs" style="grid-row:1/3">${m((R[1]||[])[0],["Vincente","Vincente"])}</div>
-      <div class="drs" style="grid-row:3/5">${m((R[1]||[])[1],["Vincente","Vincente"])}</div>
-      <div class="drf" style="grid-row:1/5"><div class="drfin"><div class="drtop">${cup}${champ?"<b>Campioni</b>":""}${champ?`<span class="drchamp">${drLg(champ,"m")}${TEAMS[champ].nick}</span>`:""}</div>${m((R[2]||[])[0],["Vincente","Vincente"])}</div></div>
-    </div>
-    <div class="drthird"><h5>Finale 3° posto<small>${rd(2)}</small></h5>${m((R[2]||[])[1],["Perdente semifinale","Perdente semifinale"])}</div>
-    <h4 class="drplh">Piazzamenti 5°–8°</h4>
-    <div class="drthird"><h5>Semifinale 1<small>${rd(1)}</small></h5>${m((R[1]||[])[2],["Perdente quarto 1","Perdente quarto 2"])}</div>
-    <div class="drthird"><h5>Semifinale 2<small>${rd(1)}</small></h5>${m((R[1]||[])[3],["Perdente quarto 3","Perdente quarto 4"])}</div>
-    <div class="drthird"><h5>Finale 5° posto<small>${rd(2)}</small></h5>${m((R[2]||[])[2],["Vincente","Vincente"])}</div>
-    <div class="drthird"><h5>Finale 7° posto<small>${rd(2)}</small></h5>${m((R[2]||[])[3],["Perdente","Perdente"])}</div>
+    const col=(t,r,inner,cls="")=>`<div class="bkc ${cls}"><h6>${t}<small>${rd(r)||"&nbsp;"}</small></h6><div class="bkb">${inner}</div></div>`;
+    const W="Vincente",QL=n=>"Perdente quarto "+n;
+    body=`<p class="note" style="margin-top:0">${drWeek(DR_REG).closed?"Tabellone definitivo.":"Tabellone provvisorio in base alla classifica attuale."} Serie al meglio delle 3: il numero accanto alla squadra sono le vittorie nella serie.</p>
+    <h4 class="drplh">Tabellone<span>scorri ›</span></h4>
+    <div class="bkw"><div class="bk" style="--h:400px">
+      ${col("Quarti",0,`<div class="bkg">${m(R[0][0],[],"Quarto 1")}${m(R[0][1],[],"Quarto 2")}</div><div class="bkg">${m(R[0][2],[],"Quarto 3")}${m(R[0][3],[],"Quarto 4")}</div>`)}
+      ${col("Semifinali",1,`<div class="bkg">${m(R1[0],[W,W],"Semifinale 1","in")}${m(R1[1],[W,W],"Semifinale 2","in")}</div>`)}
+      ${col("Finale",2,`<div class="bkcup">${cup}${champ?`<span class="bkchamp">Campioni<b>${TEAMS[champ].nick}</b></span>`:""}</div>${m(R2[0],[W,W],"Finalissima","in fin")}${m(R2[1],["Perdente semifinale","Perdente semifinale"],"Finale 3° posto","bot")}`,"last")}
+    </div></div>
+    <h4 class="drplh">Piazzamenti 5°–8°<span>scorri ›</span></h4>
+    <div class="bkw"><div class="bk" style="--h:300px">
+      ${col("Semifinali",1,`<div class="bkg">${m(R1[2],[QL(1),QL(2)],"Semifinale 5°–8° · 1")}${m(R1[3],[QL(3),QL(4)],"Semifinale 5°–8° · 2")}</div>`)}
+      ${col("Finali",2,`${m(R2[2],[W,W],"Finale 5° posto","in")}${m(R2[3],["Perdente","Perdente"],"Finale 7° posto","bot")}`,"last")}
+    </div></div>
     <h4 class="drplh">Classifica finale</h4>
-    <div class="drfinal">${Array.from({length:8},(_,i)=>{const t=P.fin[i];return `<div class="drfr ${i===0&&t?"gold":""}"><span class="drpos">${i+1}</span>${t?`${drLg(t,"s")}<b>${TEAMS[t].nick}</b>`:`<em>da decidere</em>`}</div>`}).join("")}</div>`}
+    <div class="drfinal">${Array.from({length:8},(_,i)=>{const t=P.fin[i];return `<div class="drfr ${i===0&&t?"gold":""}"><span class="drpos">${i+1}</span>${t?`<span class="bklg" style="--tc:${TEAMS[t].bg}">${badge(t)}</span><b>${TEAMS[t].nick}</b>`:`<em>da decidere</em>`}</div>`}).join("")}</div>`}
   return `<div class="drroom"><button class="drexit" data-game="menu">‹ Torna all'app</button><div class="drhd"><span class="drlogo">DREAMERS</span><small>Fanta PDK · stagione ${STAGIONE_CORRENTE}</small></div>
   <div class="drtabs">${tabs}</div>${body}</div>
   <p class="note">Meritocrazia: ogni settimana i 10 giocatori della rosa con il PDK medio più alto diventano titolari, gli altri vanno in tribuna. Punteggio = media dei 10 PDK settimanali (media dei punti Dunkest delle partite della settimana); il migliore è capitano ×1,5 e i 4 peggiori valgono la metà (provvisori durante la settimana, definitivi a turno chiuso). Dati aggiornati al ${EFF.agg}.</p>`}
