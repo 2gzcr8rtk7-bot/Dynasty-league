@@ -101,3 +101,7 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
   - Stagione: `s` facoltativo nella voce di `TRADES`, altrimenti `STAGIONE_CORRENTE`.
 - REGOLA: quando arriva una nuova trade, basta inserirla in `TRADES` (e, se speciale, anche in `SPECIALI`). Non va scritta a mano in `MOVIMENTI`, che ora serve solo per altri movimenti (premi, quote…).
 - Saldi 26/27 attuali: Moose +335, Pelicans −9, Dolphins −17, Foxes −60, Ducks −370. Alcune date mancano in `TRADES`.
+
+## 25/10/2026 (8) — Ducks: solo scritta nei loghi piccoli
+- Dove il logo è piccolo (Classifica, Risultati, scelta squadra, Trade, Trade speciali, Efficienza, Sala Trofei, Giochi, Infortuni) i Ducks usano la sola scritta (`LOGO2.DUC`, la stessa del campo).
+- Il logo intero resta nella casella Home (`.hlg`) e nei banner squadra (`.hlogo`, che usano `LOGO` direttamente). Regola generata nello `<style>` creato da script vicino a `LOGO2`.
