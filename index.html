@@ -120,6 +120,7 @@ nav::-webkit-scrollbar{display:none}
 .cpl{position:absolute;transform:translate(-50%,-50%);display:grid;justify-items:center;gap:2px;background:none;border:0;padding:0;cursor:pointer;width:104px}
 .cpl svg{width:58px;height:70px;overflow:visible;filter:drop-shadow(0 4px 6px rgba(0,0,0,.45))}
 .cnm{font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;text-transform:uppercase;color:#fff;background:rgba(6,11,26,.85);padding:1px 4px;white-space:nowrap;width:96px;text-align:center;max-width:96px;overflow:hidden;text-overflow:ellipsis}
+.bev{display:grid;justify-items:end;gap:2px}.bev small{font-size:10px;color:var(--muted);letter-spacing:.04em;white-space:nowrap}
 .cev{font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;padding:0 7px;color:#0a0f1f;line-height:1.35}
 .cev.g{background:var(--win)}.cev.y{background:var(--gold)}.cev.r{background:var(--loss);color:#fff}.cev.na{background:#3a4568;color:#cfd6ea}
 .bench{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:16px}
@@ -1468,6 +1469,7 @@ function vGiocatore(){
     ${stat("Partite",e[2])}
     ${stat("Minuti medi",e[3]==null?"—":e[3].toLocaleString("it-IT",{minimumFractionDigits:1}))}
     ${stat("Proiezione 36'",f2(e[1]*36).replace(/,\d+$/,m=>m.slice(0,2)),"Dunkest")}
+    ${stat("Ultima partita",lastEff(t,p[0])==null?"—":f2(lastEff(t,p[0])),"Dunkest/min")}
     ${stat("In squadra",rT?rT+"°":"—","su "+team.length)}
     ${stat("Nella lega",rL?rL+"°":"—","su "+all.length)}
   </div>`}
@@ -1484,6 +1486,11 @@ function vInfortuni(){
   <p class="note">Fonti consultate: ${INFORTUNI.fonti.join(" · ")}. Più fonti per la stessa notizia sono indicate sotto ogni giocatore; se non concordano è segnalato.</p>`;
 }
 
+/* UNA sola fonte per ogni numero:
+   - effMed  = efficienza MEDIA stagionale  -> EFF.gioc[...][1]
+   - lastEff = efficienza dell'ULTIMA partita -> ULTIMA.gioc
+   Ogni schermata dichiara quale dei due mostra; non si mescolano. */
+function effMed(t,n){let e=(EFF.gioc[t]||[]).find(x=>x[0]===n);if(!e)for(const a of Object.values(EFF.gioc)){e=a.find(x=>x[0]===n);if(e)break}return e&&e[1]!=null?e[1]:null}
 function lastEff(t,n){const e=(EFF.gioc[t]||[]).find(x=>x[0]===n);if(ULTIMA.gioc[n]!==undefined)return ULTIMA.gioc[n];return e&&e[1]!=null&&e[2]===1?e[1]:(e?e[1]:null)}
 function quintetto(t){
   const r=ROSTER[t]||[];const by=n=>r.find(p=>p[0]===n);
@@ -1525,8 +1532,8 @@ function vCampo(){
     ${lg?(LOGO2[t]?`<image href="${lg}" x="40.91" y="1.33" width="18.18" height="13.55" preserveAspectRatio="xMidYMid meet"/>`:`<image href="${lg}" x="40.5" y=".3" width="19" height="15.4" preserveAspectRatio="xMidYMid meet"/>`):""}
     </svg>`;
   const ROWY={C:30.6,F:56.6,G:83.3},XS={G:[30,70],F:[19,81]};const pos={};["G","F","C"].forEach(r=>{const l=q.filter(p=>p[2]===r);l.forEach((p,i)=>pos[p[0]]=[l.length===2&&XS[r]?XS[r][i]:(i+1)/(l.length+1)*100,ROWY[r]])});
-  const onCourt=q.map((p,i)=>`<button class="cpl" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${jersey(t,p[1],p[0])}<span class="cnm"${(L=>L>=12?' style="font-size:9.5px"':L>=9?' style="font-size:10.5px"':"")(sur(p[0]).length)}>${sur(p[0])}</span>${pill(lastEff(t,p[0]))}</button>`).join("");
-  const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>(lastEff(t,b[0])??-99)-(lastEff(t,a[0])??-99));  /* panchina in ordine di efficienza (stesso valore mostrato), si riordina a ogni aggiornamento */
+  const onCourt=q.map((p,i)=>`<button class="cpl" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${jersey(t,p[1],p[0])}<span class="cnm"${(L=>L>=12?' style="font-size:9.5px"':L>=9?' style="font-size:10.5px"':"")(sur(p[0]).length)}>${sur(p[0])}</span>${pill(effMed(t,p[0]))}</button>`).join("");
+  const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>(effMed(t,b[0])??-99)-(effMed(t,a[0])??-99));  /* panchina in ordine di efficienza media stagionale (stesso valore mostrato), si riordina a ogni aggiornamento */
   return `<button class="gback" id="cback">‹ Home</button>
   <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">
    ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${LOGO[t]}" alt="">`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
@@ -1534,9 +1541,9 @@ function vCampo(){
   ${cassa(t)}
   ${H("Quintetto",`<em>${auto?"Provvisorio · scelto per efficienza":"Titolari · per ruolo"}</em>`)}
   <div class="court" style="border-color:${shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}</div>
-  <p class="note">Sotto ogni maglia: efficienza dell'ultima partita giocata (Dunkest per minuto). Tocca un giocatore per la sua scheda.</p>
+  <p class="note">Sotto ogni maglia: efficienza media stagionale (Dunkest per minuto), la stessa della scheda giocatore e della pagina Efficienza. In panchina, sotto, anche quella dell'ultima partita. Tocca un giocatore per la sua scheda.</p>
   ${H("Panchina")}
-  <div class="bench">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span>${pill(lastEff(t,p[0]))}</button>`).join("")}</div>
+  <div class="bench">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><span class="bev">${pill(effMed(t,p[0]))}${lastEff(t,p[0])!=null?`<small>ultima ${f2(lastEff(t,p[0]))}</small>`:""}</span></button>`).join("")}</div>
   <button class="croster" id="croster">Roster completo ›</button>`;
 }
 function cupSvg(pos,id){
@@ -2408,6 +2415,16 @@ render();
 
 
 
+<script>
+/* Controllo coerenza dati a ogni apertura (console): segnala report incompleti o incoerenti. */
+(function checkDati(){try{const w=[];Object.entries(EFF.gioc).forEach(([t,a])=>a.forEach(p=>{const u=ULTIMA.gioc[p[0]];
+ if(p[5]!=null&&u!==undefined&&Math.abs(u-p[5])>0.005)w.push(`${p[0]}: efficienza della notte ${p[5]} diversa da ULTIMA ${u}`);
+ if(p[2]===1&&u!=null&&Math.abs(u-p[1])>0.015)w.push(`${p[0]}: 1 partita ma media ${p[1]} ≠ ultima ${u}`);
+ if(p[2]>0&&u===undefined)w.push(`${p[0]}: ha partite ma manca in ULTIMA`);
+ if(!(ROSTER[t]||[]).some(r=>r[0]===p[0]))w.push(`${p[0]}: in EFF.gioc.${t} ma non nel roster ${t}`)}));
+ Object.entries(ROSTER).forEach(([t,a])=>a.forEach(r=>{if(!(EFF.gioc[t]||[]).some(p=>p[0]===r[0]))w.push(`${r[0]}: nel roster ${t} ma manca in EFF.gioc.${t}`)}));
+ if(w.length)console.warn("[Dynasty] Controllo dati:\n"+w.join("\n"))}catch(e){}})();
+</script>
 <script>if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
 </body>
 </html>

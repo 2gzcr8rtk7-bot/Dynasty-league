@@ -8,6 +8,8 @@ Prima di iniziare: leggere questo file. Alla fine di ogni sessione: aggiungere c
 > 2. **Non modificare e non committare `dreamers-data.js`**: lo genera GitHub (workflow `.github/workflows/dreamers.yml`) leggendo la storia di index.html. Nessun comando da lanciare.
 > 3. In `EFF.gioc` le colonne 5 e 6 (Dunkest ed efficienza della notte) devono esserci per chi ha giocato quella notte e `null` per chi non ha giocato: DREAMERS le usa per archiviare ogni partita.
 > 4. **Efficienza "pura"** (richiesta di Francesco): in tutta l'app conta solo il rapporto Dunkest/minuto, non il minutaggio. Quindi l'efficienza media stagionale di un giocatore (colonna 2 di `EFF.gioc`) va calcolata come **media semplice delle efficienze partita per partita** (es. 1,00 e 0,50 → 0,75), non come Dunkest totali ÷ minuti totali. Stessa regola per le efficienze di squadra in `EFF.squadre` (media semplice delle efficienze dei giocatori).
+> 5. **Una sola fonte per ogni numero**: efficienza MEDIA stagionale = `EFF.gioc[...][1]` (funzione `effMed`); efficienza dell'ULTIMA partita = `ULTIMA.gioc` (funzione `lastEff`). Ogni schermata dice quale mostra. Campo, panchina, scheda, Efficienza e Cup mostrano la media; "ultima" compare solo come dato secondario. Sfida della notte usa l'ultima partita.
+> 6. GitHub controlla da solo la coerenza del report a ogni push (`tools/verifica.mjs`, avvisi nella scheda Actions) e l'app fa lo stesso controllo all'apertura (console). Controlla: notte ≠ ULTIMA, 1 partita con media ≠ ultima, giocatori con partite senza ULTIMA, roster ed EFF non allineati, date diverse tra EFF e ULTIMA.
 
 L'app è tutta in `index.html` (loghi squadre in base64 nell'oggetto `LOGO`).
 Ogni modifica pubblicata su GitHub viene messa online da GitHub Pages in automatico (prima era Netlify).
@@ -175,3 +177,8 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 
 ## 25/10/2026 (18) — Giochi divisi: fanta + Arcade
 - Menu Giochi: solo Sfida della notte e DREAMERS (giochi fanta) + pulsante "Arcade" (`GAME="arcade"`) con Più o Meno, Tiro da 3 e Partita simulata (in `GAMES` hanno `a:1`). Dai giochi arcade il tasto indietro torna all'Arcade.
+
+## 25/10/2026 (19) — Medie coerenti in tutta l'app
+- Problema: campo e panchina mostravano l'efficienza dell'ULTIMA partita (`ULTIMA`), la scheda giocatore e la pagina Efficienza la MEDIA stagionale (`EFF`), quindi i numeri sembravano non tornare (es. Edwards 0,28 in panchina, 0,96 nella scheda). I dati erano corretti, era la visualizzazione a mescolare due misure.
+- Ora campo e panchina mostrano la media stagionale (`effMed`), e la panchina è ordinata per media; sotto, in piccolo, "ultima X". Scheda giocatore: nuovo riquadro "Ultima partita".
+- Aggiunti i controlli automatici di coerenza (`tools/verifica.mjs` nel workflow GitHub + `checkDati` all'apertura).

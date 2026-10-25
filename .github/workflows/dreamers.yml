@@ -21,6 +21,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Controllo coerenza dati del report
+        run: node tools/verifica.mjs
       - name: Rigenera dreamers-data.js
         run: node tools/dreamers.mjs
       - name: Salva se ci sono notti nuove
