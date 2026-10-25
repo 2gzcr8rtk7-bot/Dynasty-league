@@ -22,7 +22,7 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}html{-webkit-text-size-adjust:100%}.upd{padding-block:0 28px;text-align:center;font-family:var(--display);font-style:italic;font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+<style>:root{--rG:#a3e635;--rF:#60a5fa;--rC:#fbbf24;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}html{-webkit-text-size-adjust:100%}.upd{padding-block:0 28px;text-align:center;font-family:var(--display);font-style:italic;font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .rookie{font-family:var(--display);font-style:italic;font-weight:800;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#04170b;background:linear-gradient(180deg,#5eea8f,var(--win));padding:1px 9px;transform:skewX(-12deg)}
 /* pagina giocatore */
 .pl[data-pl]{cursor:pointer;transition:transform .12s ease,border-color .12s}
@@ -491,7 +491,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .gpl li:last-child{border-bottom:0}
 .gpl li b{font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase;color:#fff;line-height:1.1}
 .grl{flex:none;width:26px;text-align:center;font-family:var(--display);font-style:italic;font-weight:800;font-size:12px;padding:2px 0;color:#0a0f1f;transform:skewX(-10deg)}
-.grl.G{background:#a3e635}.grl.F{background:#7dd3fc}.grl.C{background:#fbbf24}
+.grl.G{background:var(--rG)}.grl.F{background:var(--rF)}.grl.C{background:var(--rC)}
 .glegend{display:flex;gap:12px;flex-wrap:wrap;margin:-4px 0 12px;font-size:12px;color:var(--muted)}
 .glegend span{display:flex;align-items:center;gap:6px}
 /* Cassa */
@@ -810,7 +810,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .vtp{display:flex;align-items:center;gap:6px;background:var(--panel);border:0;color:#cfd6e6;padding:8px;text-align:left;font-size:13px;cursor:pointer;min-width:0}
 .vtp span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .vtp b{font-family:var(--display);font-size:13px;color:var(--muted)}
-.vtp .rc{flex:none;width:8px;height:8px;border-radius:50%;background:#64748b}.vtp .rc.G{background:#22c55e}.vtp .rc.F{background:#38bdf8}.vtp .rc.C{background:#facc15}
+.vtp .rc{flex:none;width:8px;height:8px;border-radius:50%;background:#64748b}.vtp .rc.G{background:var(--rG)}.vtp .rc.F{background:var(--rF)}.vtp .rc.C{background:var(--rC)}
 .vtp.on{background:color-mix(in srgb,var(--tc) 35%,var(--panel));color:#fff}.vtp.on b{color:var(--gold)}
 .vtreset{margin:12px 0 0}
 .vtrow{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding-right:12px;background:var(--panel)}
@@ -837,7 +837,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .rhsel option{background:#3a0712;color:#fff;font-style:normal}
 .rhrole{flex:none;align-self:center;display:grid;place-items:center;width:34px;height:34px;margin-right:8px;font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;color:#fff;border:1px solid rgba(255,255,255,.25)}
 .rhrow .tnm{flex:1;min-width:0}.rhrow .tnm small{display:block;white-space:normal;letter-spacing:.04em}.rhrow .ev{flex:none;margin-left:8px}
-.rhrole.G{background:#1d4ed8}.rhrole.F{background:#0f766e}.rhrole.C{background:#7c3aed}
+.rhrole.G{background:var(--rG)}.rhrole.F{background:var(--rF)}.rhrole.C{background:var(--rC)}.rhrole{color:#0a0f1f!important}
 
 .cuphd b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:30px;text-transform:uppercase;color:#ffd84d;line-height:1;text-shadow:0 2px 0 #4a0710}
 .cuphd small{font-size:13px;color:#ffd0d6;letter-spacing:.04em}
@@ -1624,7 +1624,7 @@ function vRookieHist(){const Y=Object.keys(ROOKIE_HIST).slice().reverse(),y=ROOK
   const RN={G:"Guardia",F:"Ala",C:"Centro"};
   const medal=i=>i<3?`<span class="cupm m${i}">${i+1}</span>`:`<span class="trk">${i+1}</span>`;
   return `<div class="rhsel"><span>Stagione da rookie</span><select id="cuphy" aria-label="Stagione da rookie">${Y.map(s=>`<option value="${s}"${s===y?" selected":""}>Draft ${s.slice(0,4)} · ${s}</option>`).join("")}</select></div>
-  <div class="eboard">${L.map((x,i)=>`<div class="trow cup rhrow">${medal(i)}<span class="rhrole ${x.r}" title="${RN[x.r]||x.r}">${x.r}</span><span class="tnm"><b>${x.n}</b><small>${x.t} · ${x.g} PG · ${x.m.toLocaleString("it-IT")} min · ${x.p.toLocaleString("it-IT")} PDK</small></span>${eff(x.e)}</div>`).join("")}</div>`}
+  <div class="eboard">${L.map((x,i)=>`<div class="trow cup rhrow">${medal(i)}<span class="rhrole ${x.r}" title="${RN[x.r]||x.r}">${{G:"G",F:"A",C:"C"}[x.r]||x.r}</span><span class="tnm"><b>${x.n}</b><small>${x.t} · ${x.g} PG · ${x.m.toLocaleString("it-IT")} min · ${x.p.toLocaleString("it-IT")} PDK</small></span>${eff(x.e)}</div>`).join("")}</div>`}
 function vEffCup(){
   /* Tutto calcolato al momento da ROSTER (ruolo, squadra) ed EFF.gioc (efficienza, partite, minuti):
      quando si carica un nuovo report le classifiche cambiano da sole. */
@@ -1846,7 +1846,7 @@ function shSend(cv,fn,txt,btn){cv.toBlob(bl=>{const file=new File([bl],fn,{type:
   else{const a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=fn;document.body.appendChild(a);a.click();a.remove();if(btn)btn.classList.add("done")}},"image/png")}
 /* Condividi il roster: 3 colonne (Guardie, Ali, Centri) */
 async function shareRoster(t,btn){
-  const c=TEAMS[t],r=ROSTER[t]||[],RO=[["G","GUARDIE","#a3e635"],["F","ALI","#7dd3fc"],["C","CENTRI","#fbbf24"]];
+  const c=TEAMS[t],r=ROSTER[t]||[],RO=[["G","GUARDIE","#a3e635"],["F","ALI","#60a5fa"],["C","CENTRI","#fbbf24"]];
   const col=RO.map(([k])=>r.filter(p=>p[2]===k).sort((a,b)=>(effMed(t,b[0])??-9)-(effMed(t,a[0])??-9)));
   try{await document.fonts.load('800 italic 40px "Barlow Condensed"')}catch(e){}
   const W=1080,CH=118,top=520,n=Math.max(...col.map(x=>x.length),1),Hh=top+n*CH+130;
