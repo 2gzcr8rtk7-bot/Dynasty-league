@@ -461,23 +461,29 @@ nav button{font-size:15px;letter-spacing:.04em}
 .ntin-b{flex:none;width:28px;height:28px;display:grid;place-items:center;background:var(--gc);color:#fff;font-family:var(--display);font-style:italic;font-weight:800}
 .ntlist{display:grid;gap:8px}
 .ntcnt{float:right;color:var(--muted);font-size:13px;font-style:normal;letter-spacing:.04em}
-.ntdash{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ntc{position:relative;display:flex;flex-direction:column;gap:6px;text-align:left;color:#fff;cursor:pointer;padding:10px 10px 9px;min-height:150px;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-top:4px solid var(--sc)}
-.ntch{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.ntdash{display:grid;grid-template-columns:1fr;gap:10px}
+.ntc{position:relative;display:flex;flex-direction:column;gap:6px;text-align:left;color:#fff;cursor:pointer;padding:10px 10px 9px;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-top:4px solid var(--sc)}
+.ntch{display:flex;align-items:baseline;gap:8px}.ntch .ntst{margin-left:auto;align-self:center}
 .ntch b{font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;color:var(--sc)}
 .ntch .ntst{font-size:10px;padding:1px 6px;animation:ntpulse 1.6s ease-in-out infinite}
 @keyframes ntpulse{50%{opacity:.55}}
-.ntcd{font-size:11px;color:var(--muted);margin-top:-4px}
-.ntcg{display:grid;grid-template-columns:18px 1fr auto;align-items:center;gap:6px;padding:3px 4px 3px 0;border-left:3px solid var(--gc);background:rgba(255,255,255,.03)}
-.ntcl{font-family:var(--display);font-weight:800;font-style:italic;font-size:13px;text-align:center;color:var(--gc)}
-.ntcm{display:flex;gap:4px;min-width:0;align-items:center}
-.ntcm i{display:block;width:9px;height:9px;border-radius:50%;border:2px solid var(--gc);opacity:.7}.ntcm i.ok{background:var(--gc);opacity:1}
-.ntcg em{font-style:normal;font-family:var(--display);font-weight:800;font-size:15px;min-width:34px;text-align:right}
-.ntcg.lead em{color:var(--gold)}.ntcg.lead{background:rgba(245,179,1,.10)}
+.ntcd{font-size:12px;color:var(--muted)}
+.ntcgs{display:grid;gap:6px}
+.ntcg{min-width:0;background:rgba(255,255,255,.03);border-top:3px solid var(--gc);padding:0 0 4px}
+.ntcgh{display:flex;align-items:center;justify-content:space-between;padding:4px 6px;background:color-mix(in srgb,var(--gc) 16%,transparent)}
+.ntcgh span{font-family:var(--display);font-weight:800;font-style:italic;font-size:14px;color:var(--gc)}
+.ntcgh em{font-style:normal;font-family:var(--display);font-weight:800;font-size:16px}
+.ntcg.lead .ntcgh em{color:var(--gold)}.ntcg.lead{box-shadow:inset 0 0 0 1px rgba(245,179,1,.55)}
+.ntcp1{display:flex;align-items:center;gap:5px;padding:3px 6px;font-size:12.5px;line-height:1.2;color:var(--muted)}
+.ntcp1 i{flex:none;width:8px;height:8px;border-radius:50%;border:2px solid var(--gc)}
+.ntcp1.ok{color:#fff}.ntcp1.ok i{background:var(--gc)}
+.ntcp1 span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.ntcp1 b{flex:none;font-size:12px;font-family:var(--display)}
+.ntcgs.g3{gap:4px}.ntcgs.g3 .ntcp1{font-size:11.5px;padding:3px 4px;gap:4px}.ntcgs.g3 .ntcp1 b{font-size:11px}
 .ntcp{display:block;height:5px;background:rgba(255,255,255,.08);margin-top:auto}.ntcp span{display:block;height:100%;background:var(--sc)}
 .ntcf{font-size:11px;color:var(--muted);margin-top:-2px}
-.ntc.empty{align-items:center;justify-content:center;gap:2px;background:transparent;border:2px dashed color-mix(in srgb,var(--sc) 45%,transparent);border-top:2px dashed color-mix(in srgb,var(--sc) 45%,transparent);color:var(--muted)}
-.ntc.empty b{font-size:34px;line-height:1;color:var(--sc);font-family:var(--display)}
+.ntc.empty{flex-direction:row;align-items:center;justify-content:center;gap:10px;padding:12px;background:transparent;border:2px dashed color-mix(in srgb,var(--sc) 45%,transparent);border-top:2px dashed color-mix(in srgb,var(--sc) 45%,transparent);color:var(--muted)}
+.ntc.empty b{font-size:26px;line-height:1;color:var(--sc);font-family:var(--display)}
 .ntc.empty span{font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;text-transform:uppercase;color:#fff}
 .ntc.empty small{font-size:11px}
 .ntli{display:flex;align-items:center;gap:10px;width:100%;text-align:left;color:#fff;cursor:pointer;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);padding:10px 12px}
@@ -1506,12 +1512,13 @@ const NT_MAX=4,NT_SC=["#f5b301","#22d3ee","#e879f9","#a3e635"];
 /* Sfide in corso (max NT_MAX): ognuna ha uno slot c.n = 1..4, assegnato alla creazione */
 function ntLive(){const l=NT.list.map((c,i)=>({c,i,S:ntStatus(c)})).filter(x=>!x.S.fin);
   const used=new Set(l.map(x=>x.c.n).filter(Boolean));l.forEach(x=>{if(!x.c.n){for(let k=1;k<=NT_MAX;k++)if(!used.has(k)){x.c.n=k;used.add(k);break}}});return l}
+const ntSur=n=>{const p=n.replace(/\s+(Jr\.?|Sr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
 function ntCard(x){const{c,i,S}=x,sc=NT_SC[(c.n||1)-1];
   const av=S.g.map(g=>g.avg),best=Math.max(...av.map(v=>v??-99));
-  const rows=S.g.map((g,k)=>{const lead=g.avg!=null&&g.avg===best&&av.filter(v=>v===best).length===1;
-    return `<div class="ntcg ${lead?"lead":""}" style="--gc:${NT_COL[k]}"><span class="ntcl">${NT_LET[k]}</span><span class="ntcm">${g.pl.map(p=>`<i class="${p.done?"ok":""}" title="${p.n}"></i>`).join("")}</span><em>${g.avg==null?"—":f2(g.avg)}</em></div>`}).join("");
+  const cols=S.g.map((g,k)=>{const lead=g.avg!=null&&g.avg===best&&av.filter(v=>v===best).length===1;
+    return `<div class="ntcg ${lead?"lead":""}" style="--gc:${NT_COL[k]}"><div class="ntcgh"><span>${NT_LET[k]}</span><em>${g.avg==null?"—":f2(g.avg)}</em></div>${g.pl.map(p=>`<div class="ntcp1 ${p.done?"ok":""}"><i></i><span>${ntSur(p.n)}</span><b>${p.done&&p.v!=null?f2(p.v):""}</b></div>`).join("")}</div>`}).join("");
   const pc=S.tot?Math.round(S.played/S.tot*100):0;
-  return `<button class="ntc" data-nt="open" data-i="${i}" style="--sc:${sc}"><span class="ntch"><b>Sfida ${c.n||""}</b><span class="ntst">LIVE</span></span><small class="ntcd">${c.d}</small>${rows}<span class="ntcp"><span style="width:${pc}%"></span></span><small class="ntcf">${S.played}/${S.tot} hanno giocato</small></button>`}
+  return `<button class="ntc" data-nt="open" data-i="${i}" style="--sc:${sc}"><span class="ntch"><b>Sfida ${c.n||""}</b><small class="ntcd">${c.d}</small><span class="ntst">LIVE</span></span><div class="ntcgs g${S.g.length}" style="grid-template-columns:repeat(${S.g.length},minmax(0,1fr))">${cols}</div><span class="ntcp"><span style="width:${pc}%"></span></span><small class="ntcf">${S.played}/${S.tot} hanno giocato</small></button>`}
 function ntAll(){const out=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>out.push({n:p[0],t,r:p[2],num:p[1]})));return out}
 function ntGames(t,n){const e=(EFF.gioc[t]||[]).find(x=>x[0]===n);return e?e[2]||0:0}
 function ntStatus(c){

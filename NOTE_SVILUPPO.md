@@ -117,6 +117,6 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 
 ## 25/10/2026 (11) — Sfida della notte: fino a 4 sfide in corso
 - Massimo `NT_MAX` = 4 sfide non finite. Ognuna ha uno slot `c.n` (1–4) assegnato alla creazione; le sfide vecchie senza `n` lo ricevono in automatico (`ntLive`).
-- Pagina iniziale: cruscotto 2×2 "Sfide in corso" (`ntCard`): colore per slot (`NT_SC`), un pallino per giocatore (pieno = ha giocato), media di ogni gruppo con il gruppo in testa in giallo, barra di avanzamento. Gli slot liberi sono riquadri tratteggiati che aprono "Nuova sfida". Le sfide finite vanno in "Archivio".
+- Pagina iniziale: cruscotto "Sfide in corso" (`ntCard`), una sfida per riga: colore per slot (`NT_SC`), gruppi affiancati con cognome di ogni giocatore, pallino (pieno = ha giocato) ed efficienza della partita, media di ogni gruppo con il gruppo in testa in giallo, barra di avanzamento. Gli slot liberi sono riquadri tratteggiati che aprono "Nuova sfida". Le sfide finite vanno in "Archivio".
 - Con 4 sfide in corso non se ne possono creare altre (bisogna aspettare o usare "Chiudi ora").
 - La data della sfida ora include l'ora. Sottotitolo accorciato in "Prossima partita" (prima allargava la pagina su telefono).
