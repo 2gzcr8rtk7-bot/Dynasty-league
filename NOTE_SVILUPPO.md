@@ -186,6 +186,6 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Coppa del tabellone viola (tema DREAMERS), senza scritta sotto; a fine stagione compare "Campioni" con la squadra vincitrice.
 
 ## 25/10/2026 (20) — Asta Peacocks: Trevon Brazile
-- PEA prende all'asta Trevon Brazile (DEN, ala, #7) per 14 crediti (registrati come 10 commissione + 4 di lista); Nate Ament va in G League al suo posto.
-- Aggiornati: `ROSTER.PEA` (Brazile al posto di Ament, quotazione 4), `EFF.gioc.PEA` (riga Brazile vuota, la riempie il prossimo report), `GLEAGUE` PEA (Ament al posto di Brazile), `ROOKIE` (tolto Ament, aggiunto Brazile: prende il suo slot rookie), `NBA_ANNO` (Brazile 2026), `CREDITI.PEA` 52 → 38, `TRADES` (asta: la cassa Peacocks registra −14 da sola).
+- Spostamento G League (registrato dall'altro Claude): Brazile sale dalla G League nello slot rookie dei Peacocks, Nate Ament scende in G League (ROSTER, EFF, GLEAGUE, ROOKIE, voce "G League" in TRADES).
+- Aggiunto il costo dell'asta: voce "Asta" in `TRADES` con 14 crediti (registrati come 10 commissione + 4 di lista) → la cassa Peacocks registra −14 da sola; `CREDITI.PEA` 52 → 38. `NBA_ANNO`: Brazile 2026.
 - Pagina Trade: nelle aste i crediti ora si vedono come spesa (−14 cr) invece di +14.
