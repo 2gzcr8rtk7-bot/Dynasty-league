@@ -123,7 +123,7 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 
 ## 25/10/2026 (12) — Calcolatore Scambi
 - Nuovo bottone "Calcolatore Scambi" nella barra, dopo Giochi (vista `valtrade`, `vValTrade`, stato `VT`). Due schede: Calcolatore e Valori lega.
-- Valori: classifica dynasty di Court Consensus (screenshot del 25/10, posizioni 1–293 con alcuni buchi, pick escluse) nell'oggetto `VALORI` (nome → [ruolo, valore, 1 se rookie]). Abbinamento ai roster con `vnz` (ignora accenti, punti, Jr./II). Mancano Ighodaro e Wolf (valgono `VAL_FALLBACK` = 1600, sotto l'ultimo in lista).
+- Valori: classifica dynasty di Court Consensus (screenshot del 25/10, posizioni 1–293 con alcuni buchi, pick escluse) nell'oggetto `VALORI` (nome → [ruolo, valore, 1 se rookie]). Abbinamento ai roster con `vnz` (ignora accenti, punti, Jr./II). Wolf (2017) e Ighodaro (1700) inseriti a mano su indicazione di Francesco. Chi non è in lista vale `VAL_FALLBACK` = 1600.
 - Punti trade = (valore/1000)^`VAL_EXP` (3,3), così le stelle pesano di più. Crediti: 1 cr = `VAL_CR` (1,13) punti, tarato sulle pick indicate da Francesco: pick 1 = 300 cr, 2 = 250, 3 = 200, 4 = 150, 5 = 100 (`PICK_CR`).
 - Esito: differenza < 10% equilibrata, 10–25% leggermente a favore, > 25% sbilanciata; suggerisce i crediti per pareggiare.
 - Per aggiornare i valori: sostituire `VALORI` e `VALORI_AGG`.
