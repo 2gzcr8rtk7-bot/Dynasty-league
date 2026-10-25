@@ -157,6 +157,7 @@ nav button[aria-expanded="true"] .car{transform:rotate(180deg)}
 .gmesi{margin-left:auto;font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .gmese summary .ev{font-size:17px}
 .gmese .tbl-wrap{border:0;border-top:1px solid var(--line);box-shadow:none}
+.plink{cursor:pointer}.esqtbl tr.plink:hover td{background:rgba(255,255,255,.05)}.plgo{color:var(--muted);font-style:normal}.trow.plink:hover{background:rgba(255,255,255,.04)}
 </style>
 
 
@@ -929,7 +930,7 @@ nav button>span{white-space:nowrap}
   </div>
 </header>
 <main class="wrap" id="main"></main>
-<footer class="wrap upd">Ultimo aggiornamento: 25/10/2026 · 18:23</footer>
+<footer class="wrap upd">Ultimo aggiornamento: 25/10/2026 · 18:28</footer>
 
 <script src="dreamers-data.js"></script>
 <script>
@@ -1284,7 +1285,7 @@ function vEffSquadra(){
   const ar=(cur,base,thr)=>{if(cur==null||base==null)return"";const df=cur-base;return df>=thr&&df>0?'<span class="tr u">▲</span>':df<=-thr&&df<0?'<span class="tr d">▼</span>':'<span class="tr s">▶</span>'};
   const ps=EFF.gioc[t].slice().sort((a,b)=>(b[1]??-9)-(a[1]??-9));
   let best=null;ps.forEach(p=>{if(p[5]!=null&&(best==null||p[5]>best[5]))best=p});
-  const rows=ps.map(p=>`<tr${best&&p===best?' class="best"':""}><td class="pnm">${p[0]}</td><td>${nba(p[0])}</td><td>${p[4]==null?'<span class="dash">—</span>':p[4]}</td><td>${p[5]==null?'<span class="dash">—</span>':eff(p[5])}</td><td>${p[2]}</td><td>${eff(p[1])}</td><td>${p[6]==null?'<span class="dash">—</span>':eff(p[6])+ar(p[6],p[1],Math.abs(p[1]||0)*.05)}</td><td>${d1(p[7])}${ar(p[7],p[3],2)}</td></tr>`).join("");
+  const rows=ps.map(p=>`<tr data-plt="${t}" data-pln="${p[0]}" class="plink${best&&p===best?" best":""}"><td class="pnm">${p[0]} <span class="plgo">›</span></td><td>${nba(p[0])}</td><td>${p[4]==null?'<span class="dash">—</span>':p[4]}</td><td>${p[5]==null?'<span class="dash">—</span>':eff(p[5])}</td><td>${p[2]}</td><td>${eff(p[1])}</td><td>${p[6]==null?'<span class="dash">—</span>':eff(p[6])+ar(p[6],p[1],Math.abs(p[1]||0)*.05)}</td><td>${d1(p[7])}${ar(p[7],p[3],2)}</td></tr>`).join("");
   return `<button class="gback esqback" id="effback">‹ Efficienza squadre</button>
   <div class="esqhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 60%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">${badge(t)}<div class="esqt"><small>${c.name}</small><h3>${c.nick}</h3></div></div>
   <div class="esqk"><div><small>Eff. stagionale</small>${eff(s[4])}</div><div><small>Notte · ${s[1]} in campo</small>${eff(s[3])}</div><div><small>Posizione lega</small><b>${pos}ª</b></div></div>
@@ -1298,7 +1299,7 @@ function vEfficienza(){
   const sq=EFF.squadre.map((x,i)=>{const[t,inc,dn,en,es,ds]=x;return `<div class="erow" data-effsq="${t}" role="button" tabindex="0" aria-label="Tabella efficienza ${TEAMS[t].nick}">${wedge(t)}<div class="einfo"><b>${TEAMS[t].nick}</b><div class="ebar"><span style="width:${Math.max(4,Math.min(100,es/1.1*100))}%;background:${TEAMS[t].bg}"></span></div><small>${inc} in campo nella notte · notte ${en==null?"—":f2(en)}</small></div><div class="eval">${eff(es)}<small>${f2(ds)} Dk</small></div><span class="ego">›</span></div>`}).join("");
   const all=[];Object.entries(EFF.gioc).forEach(([t,a])=>a.forEach(p=>p[1]!=null&&p[3]>=10&&all.push([t,...p])));
   all.sort((a,b)=>b[2]-a[2]);
-  const prow=(p,i)=>`<div class="trow"><span class="trk">${i+1}</span>${wedge(p[0])}<span class="tnm"><b>${p[1]}</b><small>${TEAMS[p[0]].nick} · ${p[4].toLocaleString("it-IT")} min</small></span>${eff(p[2])}</div>`;
+  const prow=(p,i)=>`<div class="trow plink" data-plt="${p[0]}" data-pln="${p[1]}"><span class="trk">${i+1}</span>${wedge(p[0])}<span class="tnm"><b>${p[1]}</b><small>${TEAMS[p[0]].nick} · ${p[4].toLocaleString("it-IT")} min</small></span>${eff(p[2])}</div>`;
   const top=all.slice(0,10).map(prow).join("");
   const flop=all.slice().reverse().slice(0,10).map(prow).join("");
   const chips=Object.keys(TEAMS).map(t=>`<button class="chip echip" data-t="${t}" aria-pressed="${t===t0}">${badge(t)}${TEAMS[t].nick}</button>`).join("");
@@ -1479,6 +1480,7 @@ function vHome(){
 }
 
 let curPlayer=null;
+let gFrom="roster";
 function vGiocatore(){
   const t=curTeam,c=TEAMS[t],p=(ROSTER[t]||[]).find(x=>x[0]===curPlayer);
   if(!p)return `<p class="note">Giocatore non trovato.</p>`;
@@ -1491,7 +1493,7 @@ function vGiocatore(){
   const ruolo={G:"Guardia",F:"Ala",C:"Centro"}[p[2]]||p[2];
   const pct=v=>Math.max(3,Math.min(100,v/1.6*100));
   const stat=(lab,val,sub="")=>`<div class="gst"><small>${lab}</small><b>${val}</b>${sub?`<em>${sub}</em>`:""}</div>`;
-  return `<button class="gback" id="gback">‹ Roster ${c.nick}</button>
+  return `<button class="gback" id="gback">‹ ${gFrom==="effsquadra"?"Efficienza "+c.nick:gFrom==="efficienza"?"Efficienza":"Roster "+c.nick}</button>
   <div class="ghead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 60%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">
     <div class="gjer">${jersey(t,p[1],p[0])}</div>
     <div class="gtit"><small>${c.name}</small><h3>${p[0]}</h3><p>${ruolo} · ${p[3]} · #${p[1]}</p>${INJ[p[0]]&&INJ[p[0]].stato!=="ok"?`<div class="injtag ${INJ[p[0]].stato}">${STATI[INJ[p[0]].stato][0]} · ${INJ[p[0]].tipo}</div>`:""}${ROOKIE.includes(p[0])?`<div class="rookie">Slot Rookie</div>`:""}${AVVISI[p[0]]?`<div class="avviso">${AVVISI[p[0]]}</div>`:""}</div>
@@ -2516,7 +2518,7 @@ const VIEWS={effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,g
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
-  const eff=cur==="giocatore"?"roster":cur==="effsquadra"||cur==="effcup"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
+  const eff=cur==="giocatore"?(gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -2529,7 +2531,8 @@ function render(){
   const cb=m.querySelector("#cback");if(cb)cb.onclick=()=>{cur="home";render();window.scrollTo(0,0)};
   const cr=m.querySelector("#croster");if(cr)cr.onclick=()=>{cur="roster";render();window.scrollTo(0,0)};
   m.querySelectorAll(".pl[data-pl],.rrow[data-pl]").forEach(b=>{const go=()=>{curPlayer=b.dataset.pl;cur="giocatore";render();window.scrollTo(0,0)};b.onclick=go;b.onkeydown=e=>{if(e.key==="Enter")go()}});
-  const gb=m.querySelector("#gback");if(gb)gb.onclick=()=>{cur="roster";render();window.scrollTo(0,0)};
+  const gb=m.querySelector("#gback");if(gb)gb.onclick=()=>{cur=gFrom||"roster";gFrom="roster";render();window.scrollTo(0,0)};
+  m.querySelectorAll("[data-pln]").forEach(b=>{const from=cur;b.onclick=()=>{curTeam=b.dataset.plt;curPlayer=b.dataset.pln;gFrom=from;cur="giocatore";render();window.scrollTo(0,0)}});
   m.querySelectorAll(".htile").forEach(b=>b.onclick=()=>{curTeam=b.dataset.team;try{localStorage.setItem("team",curTeam)}catch(e){}cur="campo";render();window.scrollTo(0,0)});
   m.querySelectorAll(".echip").forEach(b=>b.onclick=()=>{effTeam=b.dataset.t;render()});
   m.querySelectorAll("[data-effsq]").forEach(b=>{const go=()=>{effSq=b.dataset.effsq;cur="effsquadra";render();window.scrollTo(0,0)};b.onclick=go;b.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}}});
@@ -2543,7 +2546,7 @@ function syncMenu(){
   document.querySelectorAll("nav button[data-menu]").forEach(b=>{
     const p=document.getElementById(b.dataset.menu);if(!p)return;
     b.setAttribute("aria-expanded",dkOpen);p.hidden=!dkOpen;
-    const eff=cur==="giocatore"?"roster":cur==="effsquadra"||cur==="effcup"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
+    const eff=cur==="giocatore"?(gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
     b.setAttribute("aria-selected",dkOpen||inside);
     if(dkOpen){const w=b.closest(".wrap").getBoundingClientRect(),r=b.getBoundingClientRect();
       const width=Math.max(r.width,180);let left=r.left-w.left+r.width/2-width/2;left=Math.max(0,Math.min(left,w.width-width));
