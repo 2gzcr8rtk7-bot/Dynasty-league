@@ -42,6 +42,10 @@
 .gbig .ev{font-size:56px;gap:12px}
 .gbig .ev i{width:16px;height:16px}
 .gbig small{color:var(--muted);font-size:13px;letter-spacing:.08em;text-transform:uppercase;font-family:var(--display);font-weight:700}
+.gbig.g2{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);align-items:stretch}
+.gbig.g2>div{background:linear-gradient(180deg,var(--panel2),var(--panel));padding:12px 14px 10px;display:grid;gap:4px;align-content:start;min-width:0}
+.gbig .gpdk{font-family:var(--display);font-style:italic;font-weight:800;font-size:56px;line-height:1;color:#fff}
+@media (max-width:420px){.gbig .ev,.gbig .gpdk{font-size:44px}}
 .gbars{display:grid;gap:8px;margin-bottom:16px}
 .gbars>div{display:grid;grid-template-columns:110px 1fr 46px;align-items:center;gap:10px}
 .gbars span{font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1563,7 +1567,7 @@ function vGiocatore(){
   </div>
   ${H("Efficienza",`<em>Agg. ${EFF.agg}</em>`)}
   ${e[1]==null?`<p class="note">Nessuna partita giocata finora: i dati compariranno dopo la prima gara.</p>`:`
-  <div class="gbig">${eff(e[1])}<small>Dunkest per minuto · media stagionale</small></div>
+  <div class="gbig g2"><div>${eff(e[1])}<small>Efficienza media</small></div><div><b class="gpdk">${(()=>{const g=PARTITE[p[0]]||[];const v=g.length?g.reduce((a,x)=>a+x[3],0)/g.length:(e[1]!=null&&e[3]!=null?e[1]*e[3]:null);return v==null?"—":f2(v)})()}</b><small>PDK medi a partita</small></div></div>
   <div class="gbars">
     <div><span>${p[0].split(" ").slice(-1)[0]}</span><i><b style="width:${pct(e[1])}%;background:${c.bg}"></b></i><em>${f2(e[1])}</em></div>
     ${ts?`<div><span>Media ${c.nick}</span><i><b style="width:${pct(ts[4])}%;background:#5b6b95"></b></i><em>${f2(ts[4])}</em></div>`:""}
