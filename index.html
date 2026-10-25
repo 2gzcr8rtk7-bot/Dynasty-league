@@ -460,6 +460,26 @@ nav button{font-size:15px;letter-spacing:.04em}
 .rrow.ntin{background:color-mix(in srgb,var(--gc) 18%,transparent)}
 .ntin-b{flex:none;width:28px;height:28px;display:grid;place-items:center;background:var(--gc);color:#fff;font-family:var(--display);font-style:italic;font-weight:800}
 .ntlist{display:grid;gap:8px}
+.ntcnt{float:right;color:var(--muted);font-size:13px;font-style:normal;letter-spacing:.04em}
+.ntdash{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ntc{position:relative;display:flex;flex-direction:column;gap:6px;text-align:left;color:#fff;cursor:pointer;padding:10px 10px 9px;min-height:150px;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-top:4px solid var(--sc)}
+.ntch{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.ntch b{font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;color:var(--sc)}
+.ntch .ntst{font-size:10px;padding:1px 6px;animation:ntpulse 1.6s ease-in-out infinite}
+@keyframes ntpulse{50%{opacity:.55}}
+.ntcd{font-size:11px;color:var(--muted);margin-top:-4px}
+.ntcg{display:grid;grid-template-columns:18px 1fr auto;align-items:center;gap:6px;padding:3px 4px 3px 0;border-left:3px solid var(--gc);background:rgba(255,255,255,.03)}
+.ntcl{font-family:var(--display);font-weight:800;font-style:italic;font-size:13px;text-align:center;color:var(--gc)}
+.ntcm{display:flex;gap:4px;min-width:0;align-items:center}
+.ntcm i{display:block;width:9px;height:9px;border-radius:50%;border:2px solid var(--gc);opacity:.7}.ntcm i.ok{background:var(--gc);opacity:1}
+.ntcg em{font-style:normal;font-family:var(--display);font-weight:800;font-size:15px;min-width:34px;text-align:right}
+.ntcg.lead em{color:var(--gold)}.ntcg.lead{background:rgba(245,179,1,.10)}
+.ntcp{display:block;height:5px;background:rgba(255,255,255,.08);margin-top:auto}.ntcp span{display:block;height:100%;background:var(--sc)}
+.ntcf{font-size:11px;color:var(--muted);margin-top:-2px}
+.ntc.empty{align-items:center;justify-content:center;gap:2px;background:transparent;border:2px dashed color-mix(in srgb,var(--sc) 45%,transparent);border-top:2px dashed color-mix(in srgb,var(--sc) 45%,transparent);color:var(--muted)}
+.ntc.empty b{font-size:34px;line-height:1;color:var(--sc);font-family:var(--display)}
+.ntc.empty span{font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;text-transform:uppercase;color:#fff}
+.ntc.empty small{font-size:11px}
 .ntli{display:flex;align-items:center;gap:10px;width:100%;text-align:left;color:#fff;cursor:pointer;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);padding:10px 12px}
 .ntlt{flex:1;min-width:0;display:grid}
 .ntlt b{font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase}
@@ -1482,6 +1502,16 @@ const NT={view:"list",groups:[[],[]],act:0,q:"",team:"ALL",open:null,list:[]};
 try{NT.list=JSON.parse(localStorage.getItem("notteSfide")||"[]")}catch(e){NT.list=[]}
 const ntSave=()=>{try{localStorage.setItem("notteSfide",JSON.stringify(NT.list))}catch(e){}};
 const NT_COL=["#3b82f6","#ef4444","#22c55e"],NT_LET=["A","B","C"];
+const NT_MAX=4,NT_SC=["#f5b301","#22d3ee","#e879f9","#a3e635"];
+/* Sfide in corso (max NT_MAX): ognuna ha uno slot c.n = 1..4, assegnato alla creazione */
+function ntLive(){const l=NT.list.map((c,i)=>({c,i,S:ntStatus(c)})).filter(x=>!x.S.fin);
+  const used=new Set(l.map(x=>x.c.n).filter(Boolean));l.forEach(x=>{if(!x.c.n){for(let k=1;k<=NT_MAX;k++)if(!used.has(k)){x.c.n=k;used.add(k);break}}});return l}
+function ntCard(x){const{c,i,S}=x,sc=NT_SC[(c.n||1)-1];
+  const av=S.g.map(g=>g.avg),best=Math.max(...av.map(v=>v??-99));
+  const rows=S.g.map((g,k)=>{const lead=g.avg!=null&&g.avg===best&&av.filter(v=>v===best).length===1;
+    return `<div class="ntcg ${lead?"lead":""}" style="--gc:${NT_COL[k]}"><span class="ntcl">${NT_LET[k]}</span><span class="ntcm">${g.pl.map(p=>`<i class="${p.done?"ok":""}" title="${p.n}"></i>`).join("")}</span><em>${g.avg==null?"—":f2(g.avg)}</em></div>`}).join("");
+  const pc=S.tot?Math.round(S.played/S.tot*100):0;
+  return `<button class="ntc" data-nt="open" data-i="${i}" style="--sc:${sc}"><span class="ntch"><b>Sfida ${c.n||""}</b><span class="ntst">LIVE</span></span><small class="ntcd">${c.d}</small>${rows}<span class="ntcp"><span style="width:${pc}%"></span></span><small class="ntcf">${S.played}/${S.tot} hanno giocato</small></button>`}
 function ntAll(){const out=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>out.push({n:p[0],t,r:p[2],num:p[1]})));return out}
 function ntGames(t,n){const e=(EFF.gioc[t]||[]).find(x=>x[0]===n);return e?e[2]||0:0}
 function ntStatus(c){
@@ -1518,16 +1548,20 @@ function vNotte(){
     const grp=S.g.map((g,i)=>`<div class="ntbox ${S.fin&&S.win===i?"win":""}" style="--gc:${NT_COL[i]}"><div class="ntbh"><b>${c.names[i]}</b><em>${g.avg==null?"—":f2(g.avg)}</em></div>
       ${g.pl.map(p=>`<div class="ntrow">${wedge(p.t)}<span class="ntn">${p.n}<small>${TEAMS[p.t].nick}</small></span>${p.done?eff(p.v):`<span class="ntpend">${c.closed?"non ha giocato":"in attesa"}</span>`}</div>`).join("")}</div>`).join("");
     return `<button class="gback" data-nt="list">‹ Le mie sfide</button>
-    ${H("Sfida della notte",`<em>${c.d}</em>`)}${res}<div class="ntgrid">${grp}</div>
+    ${H(c.n&&!S.fin?"Sfida "+c.n:"Sfida della notte",`<em>${c.d}</em>`)}${res}<div class="ntgrid">${grp}</div>
     <div class="hlbtn">${S.fin?`<button class="go" data-nt="share"><span>Condividi immagine</span></button>`:`<button class="sh" data-nt="close"><span>Chiudi ora</span></button>`}<button class="sh" data-nt="del"><span>Elimina sfida</span></button></div>
     <p class="note">Efficienza della partita = Dunkest per minuto dell'ultima gara giocata dopo l'inizio della sfida (dati aggiornati al ${EFF.agg}). Punteggio del gruppo = media dei suoi giocatori. "Chiudi ora" termina la sfida contando solo chi ha già giocato (utile se qualcuno è infortunato).</p>`;
   }
-  const items=NT.list.map((c,i)=>{const S=ntStatus(c);return `<button class="ntli" data-nt="open" data-i="${i}"><span class="ntlt"><b>${c.names.join(" vs ")}</b><small>${c.d} · ${S.fin?(S.win===-1?"pareggio":"vince "+c.names[S.win]):`in corso ${S.played}/${S.tot}`}</small></span><span class="ntst ${S.fin?"f":""}">${S.fin?"FINITA":"LIVE"}</span><span class="rgo">›</span></button>`}).reverse().join("");
-  return `${H("Sfida della notte",`<em>Efficienza della prossima partita</em>`)}
-  <p class="gintro">Metti a confronto 2 o 3 gruppi di giocatori scelti da tutta la lega: vince chi fa la media di efficienza più alta nella loro prossima partita.</p>
-  <div class="hlbtn"><button class="go" data-nt="new"><span>+ Nuova sfida</span></button></div>
-  ${items?`<h4 class="ch4">Le mie sfide</h4><div class="ntlist">${items}</div>`:`<div class="cempty" style="margin-top:14px">Nessuna sfida ancora.</div>`}
-  <p class="note">Le sfide sono salvate su questo telefono. Il risultato si aggiorna da solo quando arrivano i dati delle nuove partite.</p>`;
+  const live=ntLive().sort((a,b)=>a.c.n-b.c.n),full=live.length>=NT_MAX;ntSave();
+  const slots=[];for(let k=1;k<=NT_MAX;k++){const x=live.find(y=>y.c.n===k);slots.push(x?ntCard(x):`<button class="ntc empty" data-nt="new" style="--sc:${NT_SC[k-1]}"><b>+</b><span>Sfida ${k}</span><small>slot libero</small></button>`)}
+  const arch=NT.list.map((c,i)=>({c,i,S:ntStatus(c)})).filter(x=>x.S.fin).map(({c,i,S})=>`<button class="ntli" data-nt="open" data-i="${i}"><span class="ntlt"><b>${c.names.join(" vs ")}</b><small>${c.d} · ${S.win===-1?"pareggio":"vince "+c.names[S.win]}</small></span><span class="ntst f">FINITA</span><span class="rgo">›</span></button>`).reverse().join("");
+  return `${H("Sfida della notte",`<em>Prossima partita</em>`)}
+  <p class="gintro">Metti a confronto 2 o 3 gruppi di giocatori scelti da tutta la lega: vince chi fa la media di efficienza più alta nella loro prossima partita. Puoi avere fino a <b>${NT_MAX} sfide in corso</b> insieme.</p>
+  <h4 class="ch4">Sfide in corso <span class="ntcnt">${live.length}/${NT_MAX}</span></h4>
+  <div class="ntdash">${slots.join("")}</div>
+  ${full?`<p class="note">Hai già ${NT_MAX} sfide in corso: per crearne un'altra aspetta che una finisca oppure aprila e premi "Chiudi ora".</p>`:""}
+  ${arch?`<h4 class="ch4">Archivio</h4><div class="ntlist">${arch}</div>`:""}
+  <p class="note">Le sfide sono salvate su questo telefono. Il risultato si aggiorna da solo quando arrivano i dati delle nuove partite. Ogni pallino è un giocatore: diventa pieno quando ha giocato. In giallo il gruppo in testa.</p>`;
 }
 function ntListHTML(used){
   used=used||new Set(NT.groups.flat().map(p=>p.n));
@@ -1540,7 +1574,7 @@ function ntListHTML(used){
 }
 function ntAct(b){
   const a=b.dataset.nt,d=b.dataset;
-  if(a==="new"){NT.view="new";NT.groups=[[],[]];NT.act=0;NT.q="";NT.team="ALL";render();window.scrollTo(0,0)}
+  if(a==="new"){if(ntLive().length>=NT_MAX)return;NT.view="new";NT.groups=[[],[]];NT.act=0;NT.q="";NT.team="ALL";render();window.scrollTo(0,0)}
   else if(a==="back"||a==="list"){NT.view="list";render();window.scrollTo(0,0)}
   else if(a==="ng"){const k=+d.k;if(k===3&&NT.groups.length===2)NT.groups.push([]);if(k===2&&NT.groups.length===3){NT.groups.pop();if(NT.act>1)NT.act=1}render()}
   else if(a==="grp"){NT.act=+d.i;render()}
@@ -1550,9 +1584,9 @@ function ntAct(b){
     else{alertNT("Il Gruppo "+NT_LET[NT.act]+" ha già 5 giocatori");return}
     const y=window.scrollY;render();window.scrollTo(0,y)}
   else if(a==="rm"){NT.groups[NT.act]=NT.groups[NT.act].filter(x=>x.n!==d.n);const y=window.scrollY;render();window.scrollTo(0,y)}
-  else if(a==="launch"){if(!NT.groups.every(g=>g.length>=1&&g.length<=5))return;
-    const now=new Date(),dd=now.toLocaleDateString("it-IT",{day:"2-digit",month:"2-digit",year:"numeric"});
-    NT.list.push({d:dd,names:NT.groups.map((g,i)=>"Gruppo "+NT_LET[i]),groups:NT.groups.map(g=>g.map(p=>({n:p.n,t:p.t,g0:ntGames(p.t,p.n)})))});
+  else if(a==="launch"){if(!NT.groups.every(g=>g.length>=1&&g.length<=5))return;const lv=ntLive();if(lv.length>=NT_MAX)return;const us=new Set(lv.map(x=>x.c.n));let sn=1;while(us.has(sn))sn++;
+    const now=new Date(),dd=now.toLocaleDateString("it-IT",{day:"2-digit",month:"2-digit",year:"numeric"})+" "+now.toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"});
+    NT.list.push({n:sn,d:dd,names:NT.groups.map((g,i)=>"Gruppo "+NT_LET[i]),groups:NT.groups.map(g=>g.map(p=>({n:p.n,t:p.t,g0:ntGames(p.t,p.n)})))});
     ntSave();NT.open=NT.list.length-1;NT.view="show";render();window.scrollTo(0,0)}
   else if(a==="open"){NT.open=+d.i;NT.view="show";render();window.scrollTo(0,0)}
   else if(a==="close"){NT.list[NT.open].closed=true;ntSave();render()}

@@ -114,3 +114,9 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 - Efficienza (squadre e Top/Flop) 54 px, Classifica e Sala Trofei 50–54, Risultati 51, Infortuni e Cassa 42, Sfida della notte 38, Trade speciali e Partita simulata 46. Trade resta 30 (colonna stretta).
 - Tolte le regole speciali `.wedge:has(.lg-DUC)` e `.wedge .logo.lg-DUC` (100%): ora la scritta Ducks ha lo stesso margine e la stessa misura degli altri loghi in ogni riquadro.
 - Partita simulata: logo Ducks +15% (53 px invece di 46, regola `.simtm .wedge .logo.lg-DUC`).
+
+## 25/10/2026 (11) — Sfida della notte: fino a 4 sfide in corso
+- Massimo `NT_MAX` = 4 sfide non finite. Ognuna ha uno slot `c.n` (1–4) assegnato alla creazione; le sfide vecchie senza `n` lo ricevono in automatico (`ntLive`).
+- Pagina iniziale: cruscotto 2×2 "Sfide in corso" (`ntCard`): colore per slot (`NT_SC`), un pallino per giocatore (pieno = ha giocato), media di ogni gruppo con il gruppo in testa in giallo, barra di avanzamento. Gli slot liberi sono riquadri tratteggiati che aprono "Nuova sfida". Le sfide finite vanno in "Archivio".
+- Con 4 sfide in corso non se ne possono creare altre (bisogna aspettare o usare "Chiudi ora").
+- La data della sfida ora include l'ora. Sottotitolo accorciato in "Prossima partita" (prima allargava la pagina su telefono).
