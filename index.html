@@ -700,9 +700,19 @@ body.dreamfs main,body.dreamfs #main{padding-top:0!important;margin-top:0!import
 body.dreamfs .drroom{margin:0 -16px;min-height:100vh;padding-top:calc(env(safe-area-inset-top,0px) + 64px);border-top:0}
 body.dreamfs #main>.note:last-child{display:none}
 body.dreamfs .drhd{margin-top:6px}
-.drroom>.drexit,.drexit{position:fixed;z-index:50;top:calc(env(safe-area-inset-top,0px) + 10px);left:12px;padding:8px 14px;border:0;border-radius:999px;background:linear-gradient(180deg,#ff3b5c,#d1123a);color:#fff;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 6px 18px rgba(228,22,58,.45);cursor:pointer}
+.drroom>.drexit,.drexit{position:absolute;z-index:50;top:calc(env(safe-area-inset-top,0px) + 10px);left:12px;padding:8px 14px;border:0;border-radius:999px;background:linear-gradient(180deg,#ff3b5c,#d1123a);color:#fff;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 6px 18px rgba(228,22,58,.45);cursor:pointer}
 body:not(.dreamfs) .drexit{display:none}
 /* look moderno */
+.drcp{grid-template-columns:1fr!important;gap:4px!important}
+.drcm{display:grid!important;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid rgba(196,181,253,.08)}
+.drcm:last-child{border-bottom:0}
+.drcm span{display:flex;align-items:center;gap:6px;min-width:0}.drcm span.a{justify-content:flex-end}
+.drcm b{font-family:var(--display);font-style:italic;font-weight:800;font-size:12.5px;letter-spacing:-.01em;text-transform:uppercase;color:#cbd5e1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.drcm span.w b{color:#fff}
+.drcm em{font-size:11.5px!important;color:#c4b5fd!important;min-width:56px;text-align:center}
+.drcm .drlg.s{width:28px!important;height:28px!important;flex:0 0 28px!important}
+.drck{align-self:stretch;justify-content:center;width:40px!important}.drcal{padding:6px 6px!important;gap:6px!important}.drcm .drlg.s{width:26px!important;height:26px!important;flex:0 0 26px!important}
+
 .drm{border-radius:16px!important;overflow:hidden;background:linear-gradient(180deg,rgba(30,20,70,.75),rgba(12,8,32,.85))!important;border:1px solid rgba(196,181,253,.25)!important;box-shadow:0 10px 26px rgba(0,0,0,.35)}
 .drr{min-height:76px;gap:14px!important}
 .drr .drlg{width:60px!important;height:60px!important;flex:0 0 60px!important;margin:8px 0 8px 10px!important}
@@ -2571,7 +2581,7 @@ function vDream(){
     body=`<div class="drnav"><button data-dr="wk" data-d="-1" ${k<=1?"disabled":""}>‹</button><div><b>${DR_PH(k)}</b><small>${drFmt(W.start)} – ${drFmt(W.end)} · ${W.nights}/7 notti</small></div><button data-dr="wk" data-d="1" ${k>=DR_TOT?"disabled":""}>›</button></div>
     ${pr.length?`<div class="drms">${pr.map(card).join("")}</div>`:`<div class="cempty">Gli accoppiamenti si conoscono quando finisce il turno precedente.</div>`}`}
   else if(DR.tab==="cal"){const rows=[];for(let i=1;i<=DR_TOT;i++){const w=drWeek(i),pr=drPairs(i,st);
-      rows.push(`<button class="drcal ${i===drCurWeek()?"cur":""}" data-dr="go" data-k="${i}"><span class="drck"><b>${i<=DR_REG?i:["QF","SF","F"][i-22]}</b><small>${drFmt(w.start)}–${drFmt(w.end)}</small></span><span class="drcp">${pr.length?pr.map(([a,b])=>`<i>${drLg(a,"s")}${w.closed?`<em>${pdkF(drTeam(i,a,w).score)}–${pdkF(drTeam(i,b,w).score)}</em>`:"<em>vs</em>"}${drLg(b,"s")}</i>`).join(""):`<em class="tbd">${DR_PH(i)} · da definire</em>`}</span></button>`)}
+      rows.push(`<button class="drcal ${i===drCurWeek()?"cur":""}" data-dr="go" data-k="${i}"><span class="drck"><b>${i<=DR_REG?i:["QF","SF","F"][i-22]}</b><small>${drFmt(w.start)}–${drFmt(w.end)}</small></span><span class="drcp">${pr.length?pr.map(([a,b])=>{const A=w.closed?drTeam(i,a,w).score:null,B=w.closed?drTeam(i,b,w).score:null;return `<i class="drcm"><span class="h ${w.closed&&A>=B?"w":""}">${drLg(a,"s")}<b>${TEAMS[a].nick}</b></span><em>${w.closed?`${pdkF(A)}–${pdkF(B)}`:"vs"}</em><span class="a ${w.closed&&B>A?"w":""}"><b>${TEAMS[b].nick}</b>${drLg(b,"s")}</span></i>`}).join(""):`<em class="tbd">${DR_PH(i)} · da definire</em>`}</span></button>`)}
     body=`<div class="drcals">${rows.join("")}</div>`}
   else if(DR.tab==="cla"){body=`<div><table class="drtab"><thead><tr><th>#</th><th>Squadra</th><th>V</th><th>P</th><th>Media</th></tr></thead><tbody>${st.map((x,i)=>`<tr><td>${i+1}</td><td class="drtt">${drLg(x.t,"m")}${TEAMS[x.t].nick}</td><td>${x.w}</td><td>${x.l}</td><td>${x.n?pdkF(x.pf/x.n):"—"}</td></tr>`).join("")}</tbody></table></div>
     <p class="note">Vittoria = punteggio di turno più alto. A parità di vittorie conta la media dei punteggi. Tutte e 8 le squadre vanno ai playoff: la posizione decide gli accoppiamenti (1ª–8ª, 4ª–5ª, 2ª–7ª, 3ª–6ª).</p>`}
