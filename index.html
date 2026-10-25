@@ -893,7 +893,7 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .vtrow .wedge{width:46px;min-height:46px;height:auto;align-self:stretch}.vtrow .wedge .logo{width:42px;height:42px}
 .vtrk{width:26px;text-align:right;font-family:var(--display);font-weight:800;color:var(--muted)}
 .vtnm{flex:1;min-width:0;display:grid;font-weight:700}.vtnm small{font-size:11px;color:var(--muted);font-weight:500}
-.vtrow b{font-family:var(--display);font-weight:800;font-size:17px;color:#93c5fd}
+.vtrow b{font-family:var(--display);font-weight:800;font-size:17px;color:#93c5fd}.vtvp{display:grid;justify-items:end;min-width:52px}.vtvp small{font-size:9.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}.vtvp.pr b{color:var(--gold)}
 .trow.cup .ev{white-space:nowrap;flex:none}.trow.cup .trk,.trow.cup .cupm{width:30px;min-width:30px;margin:0;justify-self:center;flex:none;box-sizing:border-box}.trow.cup .cupm{height:30px}.trow.cup .trk{text-align:center}.trow.cup .tnm{min-width:0}.trow.cup .tnm b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cupbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:0 0 14px;padding:9px 14px;border:0;cursor:pointer;color:#2a1c00;background:linear-gradient(100deg,#b8860b 0%,#f5d26a 28%,#fff1b8 50%,#f0c040 72%,#a87800 100%);box-shadow:0 4px 14px rgba(245,180,0,.22),inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(0,0,0,.25)}
 .cupbtn span{font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;letter-spacing:.22em;text-transform:uppercase;line-height:1}
@@ -1550,6 +1550,9 @@ const VAL_EXP=2,VAL_CR=Math.pow(1.15,2)*1000/300,VAL_FALLBACK=400,PICK_CR={1:300
 const vnz=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/ş/g,"s").replace(/[.'’]/g,"").replace(/\s+(jr|sr|ii|iii|iv)$/,"").replace(/\s+/g," ").trim();
 const VALMAP=(()=>{const m={};Object.entries(VALORI).forEach(([n,a])=>m[vnz(n)]=a);return m})();
 const valOf=n=>{const a=VALMAP[vnz(n)];return a?a[1]:null};
+/* Prezzo consigliato in crediti: proporzionale al valore, tarato su Scottie Barnes (valore 1275 pagato 400 crediti). Arrotondato a 5. */
+const PREZZO_RIF={n:"Scottie Barnes",cr:400};
+const prezzo=v=>{const b=valOf(PREZZO_RIF.n)||1275;return v==null?null:Math.max(5,Math.round(v*PREZZO_RIF.cr/b/5)*5)};
 const vtPts=v=>Math.pow(Math.max(0,v)/1000,VAL_EXP)*1000;
 const VT={tab:"calc",t:["DUC","PEA"],pl:[[],[]],cr:[0,0],pk:[[],[]]};
 function vtSide(k){const pts=VT.pl[k].reduce((s,n)=>s+vtPts(valOf(n)??VAL_FALLBACK),0);const cr=(+VT.cr[k]||0)+VT.pk[k].reduce((s,p)=>s+PICK_CR[p],0);return pts+cr*VAL_CR}
@@ -1679,8 +1682,8 @@ function vValTrade(){
   if(VT.tab==="list"){
     const all=Object.entries(ROSTER).flatMap(([t,a])=>a.map(p=>({t,n:p[0],v:valOf(p[0]),rk:!!(VALMAP[vnz(p[0])]||[])[2]}))).sort((a,b)=>(b.v??0)-(a.v??0));
     return `${H("Calcolatore scambi",`<em>${VALORI_AGG.slice(0,5)}</em>`)}${tabs}
-    <div class="tbl-wrap vtlist">${all.map((x,i)=>`<div class="vtrow">${wedge(x.t)}<span class="vtrk">${x.v?i+1:"–"}</span><span class="vtnm">${x.n}${x.rk?` <i class="vtrook">R</i>`:""}<small>${TEAMS[x.t].nick}</small></span><b>${x.v??"n.d."}</b></div>`).join("")}</div>
-    <p class="note">Valori Dynasty League al ${VALORI_AGG}: Efficienza × PDK medio ÷ età corretta (×1000), con i dati dell'ultima stagione con almeno 30 partite; rookie 2026 con valori fissati dalla lega. "n.d." = giocatore non in lista: vale ${VAL_FALLBACK}. R = rookie.</p>`}
+    <div class="tbl-wrap vtlist">${all.map((x,i)=>`<div class="vtrow">${wedge(x.t)}<span class="vtrk">${x.v?i+1:"–"}</span><span class="vtnm">${x.n}${x.rk?` <i class="vtrook">R</i>`:""}<small>${TEAMS[x.t].nick}</small></span><span class="vtvp"><b>${x.v??"n.d."}</b><small>valore</small></span><span class="vtvp pr"><b>${x.v!=null?prezzo(x.v):"—"}</b><small>prezzo cr</small></span></div>`).join("")}</div>
+    <p class="note">Valori Dynasty League al ${VALORI_AGG}: Efficienza × PDK medio ÷ età corretta (×1000), con i dati dell'ultima stagione con almeno 30 partite; rookie 2026 con valori fissati dalla lega. "n.d." = giocatore non in lista: vale ${VAL_FALLBACK}. R = rookie. Prezzo consigliato = valore in proporzione a Scottie Barnes (valore ${valOf("Scottie Barnes")}, pagato 400 crediti), arrotondato a 5 crediti.</p>`}
   if(VT.tab==="calc3")return `${H("Calcolatore scambi",`<em>${VALORI_AGG.slice(0,5)}</em>`)}${tabs}
   <div id="vtRes">${v3Res()}</div>
   <div class="vtgrid">${v3Card(0)}${v3Card(1)}${v3Card(2)}</div>
