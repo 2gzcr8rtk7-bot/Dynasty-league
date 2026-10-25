@@ -2503,15 +2503,15 @@ function drWeek(k){ // efficienze settimanali dei giocatori
   return{acc,nights,closed,started:!!l&&l>=s,start:s,end:drAdd(s,6)}}
 const drEff=a=>a?a.s/a.g:null; // media dei PDK partita
 function drTeam(k,t,W){W=W||drWeek(k);const F=drForm(k)[t]||{t:[],r:[]};
-  const slots=F.t.map(n=>({n,e:drEff(W.acc[n]),a:W.acc[n]}));
-  if(W.closed){const used=new Set();slots.forEach(s=>{if(s.e==null){const sub=F.r.find(r=>!used.has(r)&&W.acc[r]);if(sub){used.add(sub);s.sub=sub;s.e=drEff(W.acc[sub]);s.a=W.acc[sub]}else{s.zero=true;s.e=0}}})}
-  /* Capitano (PDK medio più alto) ×1,5 e 4 più bassi ×0,5. Si applica sempre, anche a turno in corso, tra chi ha già un valore:
-     a ogni report capitano e dimezzati possono cambiare; a turno chiuso (dopo le sostituzioni) diventano definitivi. */
-  const vs=slots.filter(s=>s.e!=null);slots.forEach(s=>{s.m=1;s.cap=s.half=false});
-  if(vs.length){const o=vs.slice().sort((a,b)=>b.e-a.e);o[0].m=1.5;o[0].cap=true;o.slice(1).slice(-4).forEach(s=>{s.m=.5;s.half=true})}
-  slots.forEach(s=>s.f=s.e==null?null:s.e*s.m);
-  const score=W.closed?slots.reduce((x,s)=>x+s.f,0)/10:(vs.length?vs.reduce((x,s)=>x+s.f,0)/vs.length:null);
-  return{t,slots,res:F.r,score,played:slots.filter(s=>s.a).length}}
+  /* MERITOCRAZIA: tutta la rosa concorre. I 10 con il PDK medio settimanale più alto sono i titolari:
+     il migliore è capitano ×1,5, gli ultimi 4 dei 10 valgono ×0,5, gli altri punteggio pieno. Il resto va in tribuna.
+     Si aggiorna a ogni report; a turno chiuso, se meno di 10 hanno giocato, i posti mancanti valgono 0. */
+  const pool=[...F.t,...F.r].map(n=>({n,e:drEff(W.acc[n]),a:W.acc[n]}));
+  const vs=pool.filter(x=>x.e!=null).sort((a,b)=>b.e-a.e),top=vs.slice(0,10),trib=vs.slice(10),wait=pool.filter(x=>x.e==null);
+  top.forEach((x,i)=>{x.m=i===0?1.5:(top.length>1&&i>=Math.max(1,top.length-4))?.5:1;x.cap=i===0;x.half=x.m===.5;x.f=x.e*x.m});
+  const zeros=W.closed?Math.max(0,10-top.length):0;
+  const score=top.length?(W.closed?top.reduce((a,x)=>a+x.f,0)/10:top.reduce((a,x)=>a+x.f,0)/top.length):(W.closed?0:null);
+  return{t,slots:top,top,trib,wait,zeros,res:F.r,score,played:top.length}}
 function drPairs(k,stand){if(k<=DR_REG)return DR_SCHED[k-1];return drBracket(stand)[k]||[]}
 function drStand(){const S={};Object.keys(TEAMS).forEach(t=>S[t]={t,w:0,l:0,pf:0,pa:0,n:0});
   for(let k=1;k<=DR_REG;k++){const W=drWeek(k);if(!W.closed)continue;DR_SCHED[k-1].forEach(([a,b])=>{const A=drTeam(k,a,W).score,B=drTeam(k,b,W).score;S[a].pf+=A;S[a].pa+=B;S[b].pf+=B;S[b].pa+=A;S[a].n++;S[b].n++;if(A>=B){S[a].w++;S[b].l++}else{S[b].w++;S[a].l++}})}
@@ -2532,20 +2532,18 @@ function vDream(){
   const tabs=[["turno","Turno"],["cal","Calendario"],["cla","Classifica"],["po","Playoff"]].map(([x,l])=>`<button data-dr="tab" data-k="${x}" aria-pressed="${DR.tab===x}">${l}</button>`).join("");
   let body="";
   if(DR.open&&DR.tab==="turno"){const[a,b]=DR.open,A=drTeam(k,a,W),B=drTeam(k,b,W);
-    const col=T=>{const used=new Set(T.slots.filter(x=>x.sub).map(x=>x.sub));
-      const row=(s,k)=>`<div class="drpl ${k}${s.zero?" z":""}"><span>${s.sub?`<i class="drsub">↺</i>${s.sub}<small>per ${s.n}</small>`:s.n}${s.a?`<small>${s.a.g} ${s.a.g===1?"partita":"partite"}</small>`:""}</span><b>${s.zero?"0,0":s.e==null?(W.closed?"—":"attesa"):s.m!==1?`<s>${pdkF(s.e)}</s>${pdkF(s.f)}`:pdkF(s.e)}</b></div>`;
-      const by=(a)=>a.slice().sort((x,y)=>(y.f??-1)-(x.f??-1));
-      const cap=T.slots.filter(s=>s.cap),full=by(T.slots.filter(s=>!s.cap&&!s.half&&s.e!=null)),half=by(T.slots.filter(s=>s.half)),wait=T.slots.filter(s=>s.e==null);
+    const col=T=>{
+      const row=(s,k)=>`<div class="drpl ${k}"><span>${s.n}${s.a?`<small>${s.a.g} ${s.a.g===1?"partita":"partite"}</small>`:""}</span><b>${s.e==null?(W.closed?"—":"attesa"):s.m&&s.m!==1?`<s>${pdkF(s.e)}</s>${pdkF(s.f)}`:pdkF(s.e)}</b></div>`;
       const sec=(cls,lab,a)=>a.length?`<div class="drsec ${cls}">${lab}</div>${a.map(s=>row(s,cls)).join("")}`:"";
-      const trib=T.res.filter(n=>!used.has(n));
+      const zr=T.zeros?`<div class="drsec half">Posti vuoti</div>${Array.from({length:T.zeros},()=>`<div class="drpl half z"><span>Nessun giocatore</span><b>0,0</b></div>`).join("")}`:"";
       return `<div class="drcol"><div class="drch" style="--tc:${TEAMS[T.t].bg}">${drLg(T.t)}<b>${TEAMS[T.t].nick}</b><em>${drScore(T.score)}</em></div>
-      ${sec("cap","Capitano ×1,5",cap)}${sec("full","Punteggio pieno",full)}${sec("half","Panchina · ½",half)}${sec("wait","In attesa",wait)}
-      <div class="drsec trib">Tribuna</div>${trib.length?trib.map(n=>`<div class="drpl trib"><span>${n}${W.acc[n]?`<small>${W.acc[n].g} ${W.acc[n].g===1?"partita":"partite"}</small>`:""}</span><b>${W.acc[n]?pdkF(drEff(W.acc[n])):"—"}</b></div>`).join(""):`<div class="drpl trib"><span>—</span></div>`}</div>`};
+      ${sec("cap","Capitano ×1,5",T.top.filter(s=>s.cap))}${sec("full","Punteggio pieno",T.top.filter(s=>!s.cap&&!s.half))}${sec("half","Panchina · ½",T.top.filter(s=>s.half))}${zr}
+      ${sec("trib","Tribuna",T.trib)}${sec(W.closed?"trib":"wait",W.closed?"Non hanno giocato":"In attesa",T.wait)}</div>`};
     body=`<button class="gback" data-dr="close">‹ ${DR_PH(k)}</button><div class="drdet">${col(A)}${col(B)}</div>
-    <p class="note">${W.closed?"Turno chiuso: chi non ha giocato è stato sostituito dalla miglior riserva (per valore) che ha giocato; senza cambi disponibili vale 0. Poi il capitano (C, PDK medio più alto) vale ×1,5 e i 4 più bassi (½) valgono la metà.":"Turno in corso: capitano (C ×1,5) e i 4 più bassi (½) si aggiornano a ogni report tra chi ha già giocato; punteggio in corso = media dei loro valori. Le sostituzioni di chi non gioca si applicano alla chiusura del turno."}</p>`}
+    <p class="note">${W.closed?"Turno chiuso: titolari = i 10 della rosa con il PDK medio settimanale più alto (capitano ×1,5, ultimi 4 ½), gli altri in tribuna. Se meno di 10 hanno giocato, i posti mancanti valgono 0.":"Turno in corso: tutta la rosa concorre; i 10 con il PDK medio più alto finora sono titolari (capitano ×1,5, ultimi 4 ½) e cambiano a ogni report. Punteggio in corso = media dei titolari attuali."}</p>`}
   else if(DR.tab==="turno"){const pr=drPairs(k,st);
     const card=([a,b])=>{const A=drTeam(k,a,W),B=drTeam(k,b,W),wa=W.closed&&A.score>=B.score,wb=W.closed&&B.score>A.score;
-      const row=(T,w)=>`<div class="drr ${w?"w":""}">${drLg(T.t)}<span class="drn"><b>${TEAMS[T.t].nick}</b><small>${W.closed?"10/10":T.played+"/10 hanno giocato"}</small></span><em>${drScore(T.score)}</em></div>`;
+      const row=(T,w)=>`<div class="drr ${w?"w":""}">${drLg(T.t)}<span class="drn"><b>${TEAMS[T.t].nick}</b><small>${W.closed?(T.zeros?`${10-T.zeros}/10 · ${T.zeros} a zero`:"10/10"):T.played+"/10 titolari finora"}</small></span><em>${drScore(T.score)}</em></div>`;
       return `<button class="drm" data-dr="open" data-a="${a}" data-b="${b}">${row(A,wa)}${row(B,wb)}<span class="drst ${W.closed?"":"live"}">${W.closed?"Finale":W.started?"In corso":"Da giocare"}</span></button>`};
     body=`<div class="drnav"><button data-dr="wk" data-d="-1" ${k<=1?"disabled":""}>‹</button><div><b>${DR_PH(k)}</b><small>${drFmt(W.start)} – ${drFmt(W.end)} · ${W.nights}/7 notti</small></div><button data-dr="wk" data-d="1" ${k>=DR_TOT?"disabled":""}>›</button></div>
     ${pr.length?`<div class="drms">${pr.map(card).join("")}</div>`:`<div class="cempty">Gli accoppiamenti si conoscono quando finisce il turno precedente.</div>`}`}
@@ -2570,7 +2568,7 @@ function vDream(){
     <div class="drthird"><h5>Finale 3° posto<small>${drFmt(drWeekStart(24))}</small></h5>${m(24,(B[24]||[])[1],"3° posto",["Perdente semifinale","Perdente semifinale"])}</div>`}
   return `<div class="drroom"><div class="drhd"><span class="drlogo">DREAMERS</span><small>Fanta PDK · stagione ${STAGIONE_CORRENTE}</small></div>
   <div class="drtabs">${tabs}</div>${body}</div>
-  <p class="note">Ogni squadra schiera i suoi 10 giocatori con il valore più alto; le riserve entrano da sole a fine turno al posto di chi non ha giocato. Punteggio = media dei 10 PDK settimanali (media dei punti Dunkest delle partite della settimana); il migliore è capitano ×1,5 e i 4 peggiori valgono la metà (provvisori durante la settimana, definitivi a turno chiuso). Dati aggiornati al ${EFF.agg}.</p>`}
+  <p class="note">Meritocrazia: ogni settimana i 10 giocatori della rosa con il PDK medio più alto diventano titolari, gli altri vanno in tribuna. Punteggio = media dei 10 PDK settimanali (media dei punti Dunkest delle partite della settimana); il migliore è capitano ×1,5 e i 4 peggiori valgono la metà (provvisori durante la settimana, definitivi a turno chiuso). Dati aggiornati al ${EFF.agg}.</p>`}
 function drAct(b){const d=b.dataset;
   if(d.dr==="tab"){DR.tab=d.k;DR.open=null}
   else if(d.dr==="wk"){DR.k=Math.max(1,Math.min(DR_TOT,DR.k+(+d.d)));DR.open=null}
