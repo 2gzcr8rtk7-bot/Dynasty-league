@@ -74,7 +74,7 @@
 .esqtbl{min-width:560px}
 .esqg{min-width:0;width:auto}
 .esqg th.gcol{text-align:center;padding:6px 4px;min-width:52px}.esqg th.gcol b{display:block;font-size:14px;color:#fff}.esqg th.gcol small{display:block;font-size:9.5px;color:var(--muted);font-family:var(--body);font-style:normal;letter-spacing:0;font-weight:500}
-.esqg td.gcell{text-align:center;padding:0 3px}
+.esqg td.gcell{text-align:center;padding:3px 3px}.gd{display:block;font-size:9px;color:var(--muted);font-family:var(--body);font-weight:500;margin-top:2px;white-space:nowrap}
 .gv{display:inline-block;min-width:44px;padding:3px 4px;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;color:#0a0f1f;text-align:center}
 .gv.g{background:var(--win)}.gv.y{background:var(--gold)}.gv.r{background:var(--loss);color:#fff}
 .esqg td.pnm small{display:block;font-size:10.5px;color:var(--muted);font-weight:500}
@@ -1299,19 +1299,20 @@ function vEffSquadra(){
   const ar=(cur,base,thr)=>{if(cur==null||base==null)return"";const df=cur-base;return df>=thr&&df>0?'<span class="tr u">▲</span>':df<=-thr&&df<0?'<span class="tr d">▼</span>':'<span class="tr s">▶</span>'};
   const ps=EFF.gioc[t].slice().sort((a,b)=>(b[1]??-9)-(a[1]??-9));
   let best=null;ps.forEach(p=>{if(p[5]!=null&&(best==null||p[5]>best[5]))best=p});
-  /* Colonne = giornate di gioco NBA della stagione (G1 = prima notte con partite), dal database PARTITE.
-     Cella = efficienza del giocatore in quella partita; "—" se non ha giocato. Si allunga da sola a ogni report. */
+  /* Colonne = partite del giocatore in ordine (G1 = sua 1ª partita, G2 = 2ª…), dal database PARTITE.
+     Nessun buco: chi ha giocato meno partite ha le ultime celle vuote finché il report non aggiunge la gara. */
   const dk=d=>{const[g,m]=d.split("/").map(Number);return (m>=8?0:12)*100+m*100+g};
-  const notti=[...new Set(Object.values(PARTITE).flat().map(g=>g[0]))].sort((x,y)=>dk(x)-dk(y));
-  const cols=notti.map((d,i)=>`<th class="gcol"><b>G${i+1}</b><small>${d}</small></th>`).join("");
-  const rows=ps.map(p=>{const pg={};(PARTITE[p[0]]||[]).forEach(g=>pg[g[0]]=g);
-    return `<tr data-plt="${t}" data-pln="${p[0]}" class="plink"><td class="pnm">${p[0]} <span class="plgo">›</span><small>${nba(p[0])}</small></td>${notti.map(d=>{const g=pg[d];return `<td class="gcell">${g?`<span class="gv ${lvl(g[4])}" title="${g[1]} · ${g[2]} min">${f2(g[4])}</span>`:'<span class="dash">—</span>'}</td>`}).join("")}</tr>`}).join("");
+  const gl=n=>(PARTITE[n]||[]).slice().sort((x,y)=>dk(x[0])-dk(y[0]));
+  const nmax=Math.max(1,...ps.map(p=>gl(p[0]).length));
+  const cols=Array.from({length:nmax},(_,i)=>`<th class="gcol"><b>G${i+1}</b></th>`).join("");
+  const rows=ps.map(p=>{const L=gl(p[0]);
+    return `<tr data-plt="${t}" data-pln="${p[0]}" class="plink"><td class="pnm">${p[0]} <span class="plgo">›</span><small>${nba(p[0])}</small></td>${Array.from({length:nmax},(_,i)=>{const g=L[i];return `<td class="gcell">${g?`<span class="gv ${lvl(g[4])}">${f2(g[4])}</span><small class="gd">${g[0]} · ${g[1]}</small>`:""}</td>`}).join("")}</tr>`}).join("");
   return `<button class="gback esqback" id="effback">‹ Efficienza squadre</button>
   <div class="esqhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 60%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">${badge(t)}<div class="esqt"><small>${c.name}</small><h3>${c.nick}</h3></div></div>
   <div class="esqk"><div><small>Eff. stagionale</small>${eff(s[4])}</div><div><small>Notte · ${s[1]} in campo</small>${eff(s[3])}</div><div><small>Posizione lega</small><b>${pos}ª</b></div></div>
   ${H(c.nick,`<em>Agg. ${EFF.agg}</em>`)}
   <div class="tbl-wrap esqwrap"><table class="ptbl esqtbl esqg"><thead><tr><th>Giocatore</th>${cols}</tr></thead><tbody>${rows}</tbody></table></div>
-  <p class="note">Ogni colonna è una giornata di gioco NBA (G1 = prima notte della stagione, con la data sotto): nella cella l’efficienza del giocatore in quella partita, "—" se non ha giocato. Scorri a destra per le giornate successive; i giocatori sono in ordine di efficienza media.</p>
+  <p class="note">Ogni colonna è una partita del giocatore in ordine: G1 la sua prima, G2 la seconda e così via (sotto: data e avversario). Chi ha giocato meno partite ha le ultime caselle vuote finché il report non aggiunge la gara. Scorri a destra per le partite successive; giocatori in ordine di efficienza media.</p>
   <p class="note"><span class="ev g"><i></i>sopra 1,10</span> &nbsp; <span class="ev y"><i></i>0,80–1,10</span> &nbsp; <span class="ev r"><i></i>sotto 0,80</span></p>`;
 }
 function vEfficienza(){
