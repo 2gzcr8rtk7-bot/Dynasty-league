@@ -696,6 +696,8 @@ nav button{font-size:15px;letter-spacing:.04em}
 /* DREAMERS a tutto schermo come app separata */
 body.dreamfs header,body.dreamfs footer,body.dreamfs nav,body.dreamfs .subnav{display:none!important}
 body.dreamfs{background:#0c0820}
+html.dreamfs{padding-top:0!important;background:#2a1260}body.dreamfs::before{display:none}
+body.dreamfs .drroom{background:radial-gradient(ellipse at 20% 0%,rgba(168,85,247,.55),transparent 55%),radial-gradient(ellipse at 90% 10%,rgba(59,130,246,.35),transparent 50%),linear-gradient(180deg,#2a1260,#0c0820 75%)!important}
 body.dreamfs main,body.dreamfs #main{padding-top:0!important;margin-top:0!important}
 body.dreamfs .drroom{margin:0 -16px;min-height:100vh;padding-top:calc(env(safe-area-inset-top,0px) + 64px);border-top:0}
 body.dreamfs #main>.note:last-child{display:none}
@@ -2895,7 +2897,7 @@ const VIEWS={effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,g
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
-  document.body.classList.toggle("dreamfs",cur==="giochi"&&GAME==="dream");
+  {const fs=cur==="giochi"&&GAME==="dream";document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=fs?"#2a1260":"#0a1330"}
   const eff=cur==="giocatore"?(gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
