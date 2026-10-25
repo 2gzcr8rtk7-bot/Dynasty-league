@@ -1,5 +1,6 @@
 // DREAMERS – genera dreamers-data.js dai report già caricati.
-// Uso (dalla cartella del progetto):  node tools/dreamers.mjs
+// Lo lancia da solo GitHub (.github/workflows/dreamers.yml) a ogni pubblicazione: non serve farlo a mano.
+// Uso manuale (solo per prova, senza fare commit del file):  node tools/dreamers.mjs
 // Legge TUTTA la storia git di index.html + la versione attuale, quindi se qualche giorno non è stato lanciato
 // recupera da solo le notti mancanti. Si può lanciare quante volte si vuole (rigenera tutto da capo).
 import { execSync } from "node:child_process";
@@ -29,9 +30,8 @@ function parse(src) {
   const notte = {};
   for (const a of Object.values(EFF.gioc)) for (const p of a) {
     const dk = p[4], e = p[5];
-    if (dk == null) continue;                       // non ha giocato quella notte
-    const min = e ? Math.round(dk / e * 10) / 10 : null;
-    notte[p[0]] = [dk, min];
+    if (dk == null || e == null) continue;          // non ha giocato quella notte
+    notte[p[0]] = e;                                // efficienza pura della partita (Dunkest/minuto)
   }
   return { agg: EFF.agg, night: nightOf(EFF.agg), notte, ROSTER: getConst(src, "ROSTER"), VALORI: getConst(src, "VALORI") };
 }
@@ -61,8 +61,8 @@ for (const n of Object.keys(byNight).sort()) {
     }
   }
 }
-const out = `/* DREAMERS – file generato da tools/dreamers.mjs, non modificare a mano. Notti = data NBA (USA). [Dunkest, minuti] */
-const DREAM_DATA=${JSON.stringify({ gen: new Date().toISOString(), notti, form })};
+const out = `/* DREAMERS – file generato da tools/dreamers.mjs, non modificare a mano. Notti = data NBA (USA). {giocatore: efficienza della partita} */
+const DREAM_DATA=${JSON.stringify({ notti, form })};
 `;
 writeFileSync("dreamers-data.js", out);
 console.log(`dreamers-data.js: ${Object.keys(notti).length} notti, ${Object.keys(form).length} turni con formazione`);

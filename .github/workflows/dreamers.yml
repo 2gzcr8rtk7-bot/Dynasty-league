@@ -1,0 +1,34 @@
+# DREAMERS: a ogni pubblicazione di index.html rigenera l'archivio delle notti (dreamers-data.js)
+# leggendo la storia git. Nessuno deve lanciare niente a mano.
+name: dreamers-archivio
+on:
+  push:
+    branches: [main]
+    paths: [index.html, tools/dreamers.mjs]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: dreamers
+  cancel-in-progress: false
+jobs:
+  archivio:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Rigenera dreamers-data.js
+        run: node tools/dreamers.mjs
+      - name: Salva se ci sono notti nuove
+        run: |
+          git config user.name "dreamers-bot"
+          git config user.email "dreamers-bot@users.noreply.github.com"
+          if git diff --quiet -- dreamers-data.js; then echo "Nessuna novità"; exit 0; fi
+          git add dreamers-data.js
+          git commit -m "DREAMERS: archivio notti aggiornato [automatico]"
+          for i in 1 2 3; do git pull --rebase -X theirs origin main && git push origin HEAD:main && exit 0; sleep 5; done
+          exit 1

@@ -3,13 +3,14 @@
 File di passaggio tra chi lavora sull'app (due account Claude diversi).
 Prima di iniziare: leggere questo file. Alla fine di ogni sessione: aggiungere cosa è cambiato.
 
-> **IMPORTANTE – dopo OGNI aggiornamento di efficienza (EFF/ULTIMA)**, prima di fare commit lanciare:
-> `node tools/dreamers.mjs`
-> e includere nel commit il file `dreamers-data.js`. Serve al gioco DREAMERS per salvare la notte appena caricata.
-> Se ci si dimentica non si perde niente: lo script rilegge tutta la storia git e recupera le notti mancanti la volta dopo.
+> **IMPORTANTE – regole per chi carica i report**
+> 1. **Prima di ogni push fare sempre `git pull --rebase origin main`**: dopo ogni pubblicazione GitHub aggiunge da solo un commit ("DREAMERS: archivio notti aggiornato [automatico]").
+> 2. **Non modificare e non committare `dreamers-data.js`**: lo genera GitHub (workflow `.github/workflows/dreamers.yml`) leggendo la storia di index.html. Nessun comando da lanciare.
+> 3. In `EFF.gioc` le colonne 5 e 6 (Dunkest ed efficienza della notte) devono esserci per chi ha giocato quella notte e `null` per chi non ha giocato: DREAMERS le usa per archiviare ogni partita.
+> 4. **Efficienza "pura"** (richiesta di Francesco): in tutta l'app conta solo il rapporto Dunkest/minuto, non il minutaggio. Quindi l'efficienza media stagionale di un giocatore (colonna 2 di `EFF.gioc`) va calcolata come **media semplice delle efficienze partita per partita** (es. 1,00 e 0,50 → 0,75), non come Dunkest totali ÷ minuti totali. Stessa regola per le efficienze di squadra in `EFF.squadre` (media semplice delle efficienze dei giocatori).
 
 L'app è tutta in `index.html` (loghi squadre in base64 nell'oggetto `LOGO`).
-Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
+Ogni modifica pubblicata su GitHub viene messa online da GitHub Pages in automatico (prima era Netlify).
 
 ## 24/10/2026 — Campo del quintetto (pagina squadra, funzione `vCampo`)
 - Campo ribaltato stile Dunkest: canestro in alto, centro sotto canestro, ali in mezzo, guardie in basso.
@@ -164,8 +165,9 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 ## 25/10/2026 (17) — Gioco 5: DREAMERS (fanta efficienza)
 - Quinta card nel menu Giochi (`GAME="dream"`, `vDream`, `drAct`, stato `DR`). Tema viola/notte. Schede: Turno, Calendario, Classifica, Playoff; tocca una partita per vedere le due formazioni.
 - Squadre: le 8 franchigie. Titolari = i 10 con valore più alto in `VALORI` (Court Consensus, come il calcolatore); gli altri sono riserve in ordine di valore.
-- Turni da lunedì a domenica (date NBA USA) dal 26/10/2026: 1–21 regular season (3 gironi all'italiana, calendario `DR_SCHED` col metodo del cerchio), 22 quarti (1–8, 4–5, 2–7, 3–6), 23 semifinali, 24 finale + 3° posto (5–11/04/2027, ultima settimana NBA).
-- Punteggio di turno = media delle 10 efficienze settimanali (Dunkest della settimana ÷ minuti della settimana di ogni giocatore). Durante il turno: "in corso", media dei titolari che hanno già giocato. A turno chiuso (c'è la notte della domenica): chi non ha giocato è sostituito dalla miglior riserva per valore che ha giocato; senza cambi vale 0.
-- Classifica: vittorie, poi media punteggi. Playoff a 8, in caso di parità passa la testa di serie migliore.
-- Dati: `dreamers-data.js` (`DREAM_DATA.notti` = per ogni notte NBA {giocatore: [Dunkest, minuti]}; `DREAM_DATA.form` = formazione di ogni turno, bloccata alla prima notte del turno così le trade successive valgono dal turno dopo). Generato da `tools/dreamers.mjs` leggendo la storia git di index.html: notte = data del report − 1 giorno; Dunkest della notte = colonna 5 di `EFF.gioc`, minuti = Dunkest ÷ efficienza della notte (colonna 6). L'ultima notte del report attuale viene comunque letta dal vivo da `EFF`.
+- Turni da lunedì a domenica (date NBA USA) dal 26/10/2026: 1–21 regular season (3 gironi all'italiana, `DR_SCHED`), 22 quarti (1–8, 4–5, 2–7, 3–6), 23 semifinali, 24 finale + 3° posto (5–11/04/2027).
+- Efficienza pura: efficienza settimanale di un giocatore = media semplice delle efficienze delle sue partite della settimana; punteggio di turno = media semplice delle 10. Il minutaggio non pesa.
+- Durante il turno: "in corso", media dei titolari che hanno già giocato. A turno chiuso (c'è la notte della domenica): chi non ha giocato è sostituito dalla miglior riserva per valore che ha giocato; senza cambi vale 0.
+- Classifica: vittorie, poi media punteggi. Playoff a 8; a parità passa la testa di serie migliore.
+- Archivio: `dreamers-data.js` (`DREAM_DATA.notti` = {notte NBA: {giocatore: efficienza della partita}}, `DREAM_DATA.form` = formazione di ogni turno, bloccata alla prima notte del turno). Lo genera `tools/dreamers.mjs` leggendo tutta la storia git di index.html (notte = data del report − 1 giorno, efficienza = colonna 6 di `EFF.gioc`). Lo lancia in automatico il workflow GitHub `dreamers.yml` a ogni push di index.html e salva solo se ci sono novità. L'ultima notte del report attuale l'app la legge comunque dal vivo da `EFF`, quindi i punteggi sono aggiornati subito anche prima che il workflow finisca.
 - Tolte dal repository due immagini di prova finite lì per errore (ntd1.png, ntd2.png).

@@ -2005,7 +2005,8 @@ function ntShare(btn){
    Fanta privato a scontri diretti basato sull'efficienza (Dunkest/minuto).
    - Squadre: le 8 franchigie; titolari = i 10 con valore più alto (VALORI, Court Consensus), riserve = gli altri.
    - Turni da lunedì a domenica (date NBA USA). 1–21 regular season (3 gironi all'italiana), 22 quarti, 23 semifinali, 24 finale (+ 3° posto).
-   - Punteggio di turno = media delle 10 efficienze settimanali (Dunkest della settimana ÷ minuti della settimana).
+   - Efficienza "pura": conta solo il rapporto Dunkest/minuto, non il minutaggio. Efficienza settimanale di un giocatore =
+     media semplice delle efficienze delle sue partite della settimana. Punteggio di turno = media semplice delle 10 efficienze.
      A turno chiuso, ogni titolare senza minuti è sostituito dalla miglior riserva (per valore) che ha giocato; se non ce ne sono, 0.
      Durante il turno il punteggio è "in corso": media dei titolari che hanno già giocato.
    - Dati: DREAM_DATA in dreamers-data.js (generato da tools/dreamers.mjs) + la notte dell'ultimo report, presa dal vivo da EFF. */
@@ -2018,7 +2019,7 @@ const drWeekStart=k=>drAdd(DR_START,(k-1)*7);
 const drFmt=s=>{const[y,m,d]=s.split("-");return d+"/"+m};
 function drNotti(){ // notti salvate + ultima notte dal report attuale
   const N={...DRD.notti};const n=drNightOfAgg(EFF.agg);
-  if(n>=DR_START&&!N[n]){const o={};Object.values(EFF.gioc).forEach(a=>a.forEach(p=>{if(p[4]!=null)o[p[0]]=[p[4],p[5]?Math.round(p[4]/p[5]*10)/10:null]}));N[n]=o}
+  if(n>=DR_START&&!N[n]){const o={};Object.values(EFF.gioc).forEach(a=>a.forEach(p=>{if(p[4]!=null&&p[5]!=null)o[p[0]]=p[5]}));N[n]=o}
   return N}
 const drLast=()=>{const k=Object.keys(drNotti()).sort();return k[k.length-1]||null};
 function drCurWeek(){const l=drLast(),today=drIso(new Date()),ref=l&&l>today?l:today;const k=Math.floor((Date.parse(ref)-Date.parse(DR_START))/864e5/7)+1;return Math.max(1,Math.min(DR_TOT,k))}
@@ -2031,10 +2032,10 @@ function drSchedule(){const T=Object.keys(TEAMS),n=T.length,out=[];let a=T.slice
 const DR_SCHED=drSchedule();
 function drWeek(k){ // efficienze settimanali dei giocatori
   const N=drNotti(),s=drWeekStart(k),acc={};let nights=0;
-  for(let i=0;i<7;i++){const n=N[drAdd(s,i)];if(!n)continue;nights++;Object.entries(n).forEach(([p,[dk,min]])=>{const a=acc[p]||(acc[p]={dk:0,min:0,g:0});a.dk+=dk;a.min+=min||0;a.g++})}
+  for(let i=0;i<7;i++){const n=N[drAdd(s,i)];if(!n)continue;nights++;Object.entries(n).forEach(([p,e])=>{const a=acc[p]||(acc[p]={s:0,g:0});a.s+=(typeof e==="number"?e:0);a.g++})}
   const l=drLast(),closed=!!l&&l>=drAdd(s,6);
   return{acc,nights,closed,started:!!l&&l>=s,start:s,end:drAdd(s,6)}}
-const drEff=a=>a?(a.min>0?a.dk/a.min:0):null;
+const drEff=a=>a?a.s/a.g:null; // media semplice delle efficienze partita
 function drTeam(k,t,W){W=W||drWeek(k);const F=drForm(k)[t]||{t:[],r:[]};
   const slots=F.t.map(n=>({n,e:drEff(W.acc[n]),a:W.acc[n]}));
   if(W.closed){const used=new Set();slots.forEach(s=>{if(s.e==null){const sub=F.r.find(r=>!used.has(r)&&W.acc[r]);if(sub){used.add(sub);s.sub=sub;s.e=drEff(W.acc[sub]);s.a=W.acc[sub]}else{s.zero=true;s.e=0}}})}
@@ -2061,7 +2062,7 @@ function vDream(){
   let body="";
   if(DR.open&&DR.tab==="turno"){const[a,b]=DR.open,A=drTeam(k,a,W),B=drTeam(k,b,W);
     const col=T=>`<div class="drcol"><div class="drch" style="--tc:${TEAMS[T.t].bg}">${wedge(T.t)}<b>${TEAMS[T.t].nick}</b><em>${drScore(T.score)}</em></div>
-      ${T.slots.map(s=>`<div class="drpl ${s.zero?"z":""}"><span>${s.sub?`<i class="drsub">↺</i>${s.sub}<small>per ${s.n}</small>`:s.n}${s.a?`<small>${s.a.g} ${s.a.g===1?"partita":"partite"} · ${Math.round(s.a.min)} min</small>`:""}</span><b>${s.zero?"0,00":s.e==null?(W.closed?"—":"attesa"):f2(s.e)}</b></div>`).join("")}
+      ${T.slots.map(s=>`<div class="drpl ${s.zero?"z":""}"><span>${s.sub?`<i class="drsub">↺</i>${s.sub}<small>per ${s.n}</small>`:s.n}${s.a?`<small>${s.a.g} ${s.a.g===1?"partita":"partite"}</small>`:""}</span><b>${s.zero?"0,00":s.e==null?(W.closed?"—":"attesa"):f2(s.e)}</b></div>`).join("")}
       <div class="drres"><small>Riserve</small>${T.res.map(n=>`<span>${n}${W.acc[n]?` <b>${f2(drEff(W.acc[n]))}</b>`:""}</span>`).join("")||"<span>—</span>"}</div></div>`;
     body=`<button class="gback" data-dr="close">‹ ${DR_PH(k)}</button><div class="drdet">${col(A)}${col(B)}</div>
     <p class="note">${W.closed?"Turno chiuso: chi non ha giocato è stato sostituito dalla miglior riserva (per valore) che ha giocato; senza cambi disponibili vale 0.":"Turno in corso: punteggio = media dei titolari che hanno già giocato. Le sostituzioni si applicano alla chiusura del turno."}</p>`}
@@ -2085,7 +2086,7 @@ function vDream(){
     <div><h5>Finale<small>${drFmt(drWeekStart(24))}</small></h5>${m(24,(B[24]||[])[0],"🏆 Finale")}${m(24,(B[24]||[])[1],"3° posto")}</div></div>`}
   return `<div class="drroom"><div class="drhd"><span class="drlogo">DREAMERS</span><small>Fanta efficienza · stagione ${STAGIONE_CORRENTE}</small></div>
   <div class="drtabs">${tabs}</div>${body}</div>
-  <p class="note">Ogni squadra schiera i suoi 10 giocatori con il valore più alto; le riserve entrano da sole a fine turno al posto di chi non ha giocato. Punteggio = media delle 10 efficienze della settimana (Dunkest ÷ minuti). Dati aggiornati al ${EFF.agg}.</p>`}
+  <p class="note">Ogni squadra schiera i suoi 10 giocatori con il valore più alto; le riserve entrano da sole a fine turno al posto di chi non ha giocato. Punteggio = media delle 10 efficienze della settimana; l'efficienza di ogni giocatore è la media delle sue partite (Dunkest/minuto), il minutaggio non conta. Dati aggiornati al ${EFF.agg}.</p>`}
 function drAct(b){const d=b.dataset;
   if(d.dr==="tab"){DR.tab=d.k;DR.open=null}
   else if(d.dr==="wk"){DR.k=Math.max(1,Math.min(DR_TOT,DR.k+(+d.d)));DR.open=null}
