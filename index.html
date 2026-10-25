@@ -163,6 +163,7 @@ nav button[aria-expanded="true"] .car{transform:rotate(180deg)}
 .ihead{display:flex;align-items:center;gap:10px;padding:8px 12px;margin-bottom:12px;background:linear-gradient(115deg,var(--tc),color-mix(in srgb,var(--tc) 50%,#000));color:#fff}
 .ihead .badge{width:34px;height:34px}.ihead b{font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.5)}
 .iok{padding:18px;text-align:center;font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase;color:var(--win);background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line)}
+.ipick{padding:22px 16px;text-align:center;font-family:var(--display);font-style:italic;font-weight:700;font-size:16px;color:var(--muted);background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px dashed var(--line)}
 </style>
 
 
@@ -935,7 +936,7 @@ nav button>span{white-space:nowrap}
   </div>
 </header>
 <main class="wrap" id="main"></main>
-<footer class="wrap upd">Ultimo aggiornamento: 25/10/2026 · 18:34</footer>
+<footer class="wrap upd">Ultimo aggiornamento: 25/10/2026 · 18:38</footer>
 
 <script src="dreamers-data.js"></script>
 <script>
@@ -1530,17 +1531,17 @@ function vGiocatore(){
 
 const STATI={out:["Out","Fuori"],dubbio:["Doubtful","In dubbio"],quest:["Questionable","In forse"],dtd:["Day-to-day","Giorno per giorno"],ok:["Disponibile","Monitorati"]};
 const INJ={};INFORTUNI.lista.forEach(x=>INJ[x.p]=x);
-let injTeam="ALL";try{injTeam=localStorage.getItem("injTeam")||"ALL"}catch(e){}
+let injTeam=null;
 function vInfortuni(){
-  const all=INFORTUNI.lista,L=injTeam==="ALL"?all:all.filter(x=>x.t===injTeam);
+  const all=INFORTUNI.lista,L=injTeam?all.filter(x=>x.t===injTeam):[];
   const bad=t=>all.filter(x=>x.t===t&&x.stato!=="ok").length;
-  const chips=`<div class="chips ichips"><button class="chip ichip" data-it="ALL" aria-pressed="${injTeam==="ALL"}">Tutte<b class="icnt">${all.filter(x=>x.stato!=="ok").length}</b></button>${Object.keys(TEAMS).map(t=>`<button class="chip ichip" data-it="${t}" aria-pressed="${injTeam===t}">${badge(t)}${TEAMS[t].nick}${bad(t)?`<b class="icnt">${bad(t)}</b>`:""}</button>`).join("")}</div>`;
+  const chips=`<div class="chips ichips">${Object.keys(TEAMS).map(t=>`<button class="chip ichip" data-it="${t}" aria-pressed="${injTeam===t}">${badge(t)}${TEAMS[t].nick}${bad(t)?`<b class="icnt">${bad(t)}</b>`:""}</button>`).join("")}</div>`;
   const groups=Object.keys(STATI).map(k=>[k,L.filter(x=>x.stato===k)]).filter(([k,l])=>l.length);
   return `${H("Centro Medico",`<em>Agg. ${INFORTUNI.agg}</em>`)}
   ${chips}
-  ${injTeam!=="ALL"?`<div class="ihead" style="--tc:${TEAMS[injTeam].bg}">${badge(injTeam)}<b>${TEAMS[injTeam].name}</b></div>`:""}
+  ${!injTeam?`<div class="ipick">Scegli una squadra per vedere i suoi giocatori in infermeria.</div>`:`<div class="ihead" style="--tc:${TEAMS[injTeam].bg}">${badge(injTeam)}<b>${TEAMS[injTeam].name}</b></div>
   <div class="isum">${Object.keys(STATI).filter(k=>k!=="ok").map(k=>`<span class="ipill ${k}">${STATI[k][0]} <b>${L.filter(x=>x.stato===k).length}</b></span>`).join("")}</div>
-  ${groups.length?groups.map(([k,l])=>`<section class="igrp"><h4 class="ih ${k}"><span>${STATI[k][1]}</span></h4><div class="tbl-wrap ilist">${l.map(x=>`<div class="irow ${k}">${wedge(x.t)}<div class="ib"><div class="it"><b>${x.p}</b><span class="ipill ${k}">${STATI[k][0]}</span></div><small>${TEAMS[x.t].nick} · ${x.nba}</small><p>${x.tipo}${x.rientro?` · <em>${x.rientro}</em>`:""}</p>${x.nota?`<p class="inote">${x.nota}</p>`:""}<div class="isrc">${x.fonti.map(f=>`<span>${f}</span>`).join("")}</div></div></div>`).join("")}</div></section>`).join(""):`<div class="iok">✓ Nessun giocatore segnalato: rosa al completo.</div>`}
+  ${groups.length?groups.map(([k,l])=>`<section class="igrp"><h4 class="ih ${k}"><span>${STATI[k][1]}</span></h4><div class="tbl-wrap ilist">${l.map(x=>`<div class="irow ${k}">${wedge(x.t)}<div class="ib"><div class="it"><b>${x.p}</b><span class="ipill ${k}">${STATI[k][0]}</span></div><small>${TEAMS[x.t].nick} · ${x.nba}</small><p>${x.tipo}${x.rientro?` · <em>${x.rientro}</em>`:""}</p>${x.nota?`<p class="inote">${x.nota}</p>`:""}<div class="isrc">${x.fonti.map(f=>`<span>${f}</span>`).join("")}</div></div></div>`).join("")}</div></section>`).join(""):`<div class="iok">✓ Nessun giocatore segnalato: rosa al completo.</div>`}`}
   <p class="note">Fonti consultate: ${INFORTUNI.fonti.join(" · ")}. Più fonti per la stessa notizia sono indicate sotto ogni giocatore; se non concordano è segnalato.</p>`;
 }
 
@@ -2543,14 +2544,14 @@ function render(){
   const cr=m.querySelector("#croster");if(cr)cr.onclick=()=>{cur="roster";render();window.scrollTo(0,0)};
   m.querySelectorAll(".pl[data-pl],.rrow[data-pl]").forEach(b=>{const go=()=>{curPlayer=b.dataset.pl;cur="giocatore";render();window.scrollTo(0,0)};b.onclick=go;b.onkeydown=e=>{if(e.key==="Enter")go()}});
   const gb=m.querySelector("#gback");if(gb)gb.onclick=()=>{cur=gFrom||"roster";gFrom="roster";render();window.scrollTo(0,0)};
-  m.querySelectorAll(".ichip").forEach(b=>b.onclick=()=>{injTeam=b.dataset.it;try{localStorage.setItem("injTeam",injTeam)}catch(e){}render()});
+  m.querySelectorAll(".ichip").forEach(b=>b.onclick=()=>{injTeam=b.dataset.it;render()});
   m.querySelectorAll("[data-pln]").forEach(b=>{const from=cur;b.onclick=()=>{curTeam=b.dataset.plt;curPlayer=b.dataset.pln;gFrom=from;cur="giocatore";render();window.scrollTo(0,0)}});
   m.querySelectorAll(".htile").forEach(b=>b.onclick=()=>{curTeam=b.dataset.team;try{localStorage.setItem("team",curTeam)}catch(e){}cur="campo";render();window.scrollTo(0,0)});
   m.querySelectorAll(".echip").forEach(b=>b.onclick=()=>{effTeam=b.dataset.t;render()});
   m.querySelectorAll("[data-effsq]").forEach(b=>{const go=()=>{effSq=b.dataset.effsq;cur="effsquadra";render();window.scrollTo(0,0)};b.onclick=go;b.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}}});
   const eb=m.querySelector("#effback");if(eb)eb.onclick=()=>{cur="efficienza";render();window.scrollTo(0,0)};
   if(cur==="giochi")bindGiochi(m);
-  m.querySelectorAll(".chip:not(.echip):not([data-trt]):not([data-cstag])").forEach(b=>b.onclick=()=>{curTeam=b.dataset.t;try{localStorage.setItem("team",curTeam)}catch(e){}render()});
+  m.querySelectorAll(".chip:not(.echip):not(.ichip):not([data-trt]):not([data-cstag])").forEach(b=>b.onclick=()=>{curTeam=b.dataset.t;try{localStorage.setItem("team",curTeam)}catch(e){}render()});
 }
 /* Menu a tendina: il bottone con data-menu apre il pannello sotto di sé, senza ricaricare la pagina */
 let dkOpen=false;
@@ -2565,7 +2566,7 @@ function syncMenu(){
       p.style.minWidth=width+"px";p.style.left=left+"px";p.style.top=(r.bottom-w.top+4)+"px"}
   });
 }
-document.querySelectorAll("nav button").forEach(b=>b.onclick=e=>{e.stopPropagation();if(b.dataset.menu){dkOpen=!dkOpen;syncMenu();return}dkOpen=false;cur=b.dataset.v;if(cur==="giochi"){GAME="menu";TR.run=false;if(SIM.timer){clearInterval(SIM.timer);SIM.timer=null}}render();window.scrollTo(0,0)});
+document.querySelectorAll("nav button").forEach(b=>b.onclick=e=>{e.stopPropagation();if(b.dataset.menu){dkOpen=!dkOpen;syncMenu();return}dkOpen=false;cur=b.dataset.v;if(cur==="infortuni")injTeam=null;if(cur==="giochi"){GAME="menu";TR.run=false;if(SIM.timer){clearInterval(SIM.timer);SIM.timer=null}}render();window.scrollTo(0,0)});
 document.querySelectorAll("#subnav button").forEach(b=>b.onclick=e=>{e.stopPropagation();dkOpen=false;cur=b.dataset.v;render();window.scrollTo(0,0)});
 document.addEventListener("click",e=>{if(dkOpen&&!e.target.closest(".subnav")){dkOpen=false;syncMenu()}});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&dkOpen){dkOpen=false;syncMenu()}});
