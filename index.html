@@ -220,7 +220,7 @@ main{padding-block:20px 48px}
 h2{display:flex;align-items:center;gap:10px;margin:0 0 12px;font-family:var(--display);font-style:italic;font-weight:800;text-transform:uppercase}
 h2 .t{background:var(--red);color:#fff;font-size:18px;letter-spacing:.06em;padding:2px 14px;transform:skewX(-14deg);white-space:nowrap}
 h2 .t>span{display:inline-block;transform:skewX(14deg)}
-h2 em{font-size:13px;letter-spacing:.12em;color:var(--muted);white-space:nowrap}
+h2 em{font-size:13px;letter-spacing:.12em;color:var(--muted);white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}h2{min-width:0;max-width:100%}h2 .t{flex:none}
 h2::after{content:"";flex:1;height:2px;background:linear-gradient(90deg,var(--red),transparent)}
 /* standings */
 .tbl-wrap{overflow-x:auto;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);box-shadow:0 10px 24px rgba(0,0,0,.35)}
