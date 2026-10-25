@@ -679,6 +679,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .vtrk{width:26px;text-align:right;font-family:var(--display);font-weight:800;color:var(--muted)}
 .vtnm{flex:1;min-width:0;display:grid;font-weight:700}.vtnm small{font-size:11px;color:var(--muted);font-weight:500}
 .vtrow b{font-family:var(--display);font-weight:800;font-size:17px;color:#93c5fd}
+.cupm{width:26px;height:26px;display:grid;place-items:center;border-radius:50%;font-family:var(--display);font-weight:800;font-size:14px;color:#0a0f1f;flex:none}.cupm.m0{background:#f5b400}.cupm.m1{background:#c0c7d4}.cupm.m2{background:#cd7f32}
 .vtrook{font-style:normal;font-size:10px;background:var(--gold);color:#0a0f1f;padding:0 4px;margin-left:4px;vertical-align:middle}
 /* Trade speciali */
 .splg{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:-4px 0 14px;font-family:var(--display);font-weight:700;font-size:12px;color:#cfd6ea}
@@ -795,6 +796,7 @@ nav button>span{white-space:nowrap}
       <button role="tab" id="t-in" data-v="infortuni" aria-selected="false"><span>Infortuni</span></button>
       <button role="tab" id="t-gm" data-v="storia" aria-selected="false"><span>Sala Trofei</span></button>
       <button role="tab" id="t-cs" data-v="valtrade" aria-selected="false"><span>Calcolatore Scambi</span></button>
+      <button role="tab" id="t-ec" data-v="effcup" aria-selected="false"><span>Efficienza Cup</span></button>
       <button role="tab" id="t-gi" data-v="giochi" aria-selected="false"><span>Giochi</span></button>
     </nav>
     <div class="subnav" id="subnav" role="menu" hidden>
@@ -1269,6 +1271,31 @@ function vtAct(b){const d=b.dataset,k=+d.k;
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="valtrade")return;const el=e.target.closest("[data-vt]");if(!el)return;e.preventDefault();vtAct(el)});
 document.getElementById("main").addEventListener("change",e=>{if(cur!=="valtrade")return;const s=e.target.dataset.vtsel;if(s!==undefined){const k=+s,o=1-k,v=e.target.value;if(v===VT.t[o]){VT.t[o]=VT.t[k];VT.pl[o]=[]}VT.t[k]=v;VT.pl[k]=[];const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("input",e=>{if(cur!=="valtrade")return;const c=e.target.dataset.vtcr;if(c!==undefined){VT.cr[+c]=Math.max(0,+e.target.value||0);const r=document.getElementById("vtRes");if(r)r.innerHTML=vtResHTML()}});
+
+/* ===== Efficienza Cup =====
+   Classifica efficienza dei giocatori dei nostri roster al 1°, 2° o 3° anno NBA (stagione 2026-27).
+   NBA_ANNO: anno draft (verificato sui risultati dei Draft 2024, 2025, 2026). Anno NBA = 2027 - anno draft.
+   Da aggiornare quando entra in un roster un giovane nuovo; a ogni nuova stagione cambiare NBA_STAG. */
+const NBA_STAG=2027;
+const NBA_ANNO={
+ /* Draft 2026 */ "AJ Dybantsa":2026,"Darryn Peterson":2026,"Cameron Boozer":2026,"Caleb Wilson":2026,"Keaton Wagler":2026,"Mikel Brown Jr.":2026,"Darius Acuff Jr.":2026,"Kingston Flemings":2026,"Morez Johnson Jr.":2026,"Brayden Burries":2026,"Yaxel Lendeborg":2026,"Aday Mara":2026,"Nate Ament":2026,"Hannes Steinbach":2026,"Allen Graves":2026,"Sergio De Larrea":2026,
+ /* Draft 2025 */ "Cooper Flagg":2025,"Dylan Harper":2025,"VJ Edgecombe":2025,"Kon Knueppel":2025,"Ace Bailey":2025,"Jeremiah Fears":2025,"Egor Dëmin":2025,"Collin Murray-Boyles":2025,"Khaman Maluach":2025,"Cedric Coward":2025,"Derik Queen":2025,"Danny Wolf":2025,"Maxime Raynaud":2025,
+ /* Draft 2024 */ "Alex Sarr":2024,"Stephon Castle":2024,"Donovan Clingan":2024,"Zach Edey":2024,"Matas Buzelis":2024,"Kel'el Ware":2024,"Kyshawn George":2024,"Oso Ighodaro":2024};
+const NBA_STASH={}; /* giocatori draftati ma ancora fuori NBA: nome -> nota */
+let cupYear=1;
+function vEffCup(){
+  const tabs=`<div class="ctabs">${[1,2,3].map(y=>`<button data-cupy="${y}" aria-pressed="${cupYear===y}">Anno ${y}</button>`).join("")}</div>`;
+  const L=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>{const d=NBA_ANNO[p[0]];if(d&&NBA_STAG-d===cupYear){const e=(EFF.gioc[t]||[]).find(x=>x[0]===p[0]);L.push({t,n:p[0],e:e?e[1]:null,g:e?e[2]||0:0,m:e?e[3]:null})}}));
+  const on=L.filter(x=>x.e!=null).sort((a,b)=>b.e-a.e),off=L.filter(x=>x.e==null);
+  const medal=i=>i<3?`<span class="cupm m${i}">${i+1}</span>`:`<span class="trk">${i+1}</span>`;
+  const row=(x,i)=>`<div class="trow cup">${medal(i)}${wedge(x.t)}<span class="tnm"><b>${x.n}</b><small>${TEAMS[x.t].nick} · ${x.g} ${x.g===1?"partita":"partite"}${x.m!=null?` · ${x.m.toLocaleString("it-IT")} min`:""}</small></span>${eff(x.e)}</div>`;
+  const lab={1:"Rookie · Draft 2026",2:"Secondo anno · Draft 2025",3:"Terzo anno · Draft 2024"}[cupYear];
+  return `${H("Efficienza Cup",`<em>${lab}</em>`)}${tabs}
+  ${on.length?`<div class="eboard">${on.map(row).join("")}</div>`:`<div class="cempty">Nessun giocatore con partite giocate.</div>`}
+  ${off.length?`<h4 class="ch4">Senza partite</h4><div class="eboard">${off.map(x=>`<div class="trow cup"><span class="trk">–</span>${wedge(x.t)}<span class="tnm"><b>${x.n}</b><small>${TEAMS[x.t].nick}${NBA_STASH[x.n]?" · "+NBA_STASH[x.n]:""}</small></span>${eff(null)}</div>`).join("")}</div>`:""}
+  <p class="note">Solo giocatori dei roster della lega. Anno NBA calcolato dall'anno del Draft (stagione 2026-27). Efficienza stagionale = Dunkest ÷ minuti (dati al ${EFF.agg}).</p>`;
+}
+document.getElementById("main").addEventListener("click",e=>{if(cur!=="effcup")return;const b=e.target.closest("[data-cupy]");if(!b)return;cupYear=+b.dataset.cupy;render()});
 
 function vHome(){
   const st=standings();
@@ -2089,7 +2116,7 @@ function simAct(b){
     if(navigator.share)navigator.share({text:tx}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(tx).then(()=>{b.querySelector("span").textContent="Copiato ✓"},()=>{})}
 }
 
-const VIEWS={valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;
+const VIEWS={effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){

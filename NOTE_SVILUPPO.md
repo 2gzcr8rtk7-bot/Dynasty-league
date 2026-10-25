@@ -143,3 +143,8 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 
 ## 25/10/2026 (15) — Ducks di nuovo gialli
 - DUC: bg tornato `#facc15` (il giallo originale), al posto del silver `#a9afb7`. Anche le maglie sono gialle con le punte nere (override in `jersey()`).
+
+## 25/10/2026 (16) — Efficienza Cup
+- Nuovo bottone "Efficienza Cup" nella barra, tra Calcolatore Scambi e Giochi (vista `effcup`, `vEffCup`). Schede Anno 1 / Anno 2 / Anno 3.
+- Classifica per efficienza stagionale (`EFF.gioc`) dei giocatori dei nostri roster al 1°, 2° o 3° anno NBA, con logo squadra, partite e minuti; podio con medaglie. Chi non ha partite va in "Senza partite".
+- Anno NBA da `NBA_ANNO` (anno del Draft, verificato sulle liste Draft 2024/2025/2026): anno = `NBA_STAG` (2027) − anno draft. Quando entra un giovane nuovo in un roster va aggiunto lì; a inizio stagione nuova aumentare `NBA_STAG`.
