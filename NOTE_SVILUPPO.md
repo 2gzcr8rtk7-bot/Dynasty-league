@@ -271,4 +271,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Logo Ducks +14% (`transform:scale(1.14)`) solo in Risultati e Classifica.
 
 ## 26/10/2026 (34) — Stelle giocatori in Trade Alert
-- `pdkStar(n)` = PDK medio 2025/26 se ≥30 partite, altrimenti 2024/25 (≥30), altrimenti tutte le partite note. `stelle(n)`: 50+ = 5, 45 = 4½, 40 = 4, 35 = 3½, 30 = 3, 27,5 = 2½, 25 = 2, sotto 25 = 1; rookie = 1. In Trade Alert ogni giocatore è su una riga con le stelle sotto (`.tstar`, mezza stella con riempimento parziale).
+- `pdkStar(n)` = PDK medio 2025/26 se ≥30 partite, altrimenti 2024/25 (≥30), altrimenti tutte le partite note. `stelle(n)`: 50+ = 5, 45 = 4½, 40 = 4, 35 = 3½, 30 = 3, 28,5 = 2½, 27 = 2, sotto 27 = 0 (stelle vuote); solo i rookie = 1. In Trade Alert ogni giocatore è su una riga con le stelle sotto (`.tstar`, mezza stella con riempimento parziale).
