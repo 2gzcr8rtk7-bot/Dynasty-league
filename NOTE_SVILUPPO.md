@@ -220,3 +220,6 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 ## 25/10/2026 (25) — PDK su campo, panchina e DREAMERS
 - Pagina squadra (campo e panchina): al posto dell'efficienza i PDK medi a partita della stagione (`pdkMed`, `pillP`; colori verde ≥35, giallo 20–35, rosso <20); panchina ordinata per PDK medio, sotto "ultima" = PDK dell'ultima partita (`pdkLast`).
 - DREAMERS: il punteggio usa i PDK. PDK settimanale di un giocatore = media dei PDK delle sue partite della settimana; punteggio di turno = media dei 10. `tools/dreamers.mjs` ora archivia i PDK della notte (colonna 5 di `EFF.gioc`), la notte live si legge dallo stesso campo.
+
+## 25/10/2026 (26) — Nuovo logo Foxes
+- `LOGO.FOX` sostituito con il nuovo logo "Detroit Foxes" (volpe in gessato, PNG trasparente). Vale ovunque: Home, testate, campo, classifiche, loghi piccoli e immagini condivise.
