@@ -1327,7 +1327,7 @@ async function shareCup(btn){
     if(i<3){X.fillStyle=MC[i];X.beginPath();X.arc(115,y+53,32,0,7);X.fill();X.fillStyle="#1a1203"}else X.fillStyle="#ffb3bf";
     X.textAlign="center";X.font=F(800,40);X.fillText(i+1,115,y+67);
     X.fillStyle=c.bg;X.fillRect(165,y,106,RH-12);
-    const im=await ldImg(LOGO[x.t]);if(im){const s=96,r=Math.min(s/im.width,s/im.height);X.drawImage(im,218-im.width*r/2,y+53-im.height*r/2,im.width*r,im.height*r)}
+    const im=await ldImg(LOGO2[x.t]||LOGO[x.t]);if(im){const s=96,r=Math.min(s/im.width,s/im.height);X.drawImage(im,218-im.width*r/2,y+53-im.height*r/2,im.width*r,im.height*r)}
     X.textAlign="left";X.fillStyle="#fff";const nm=x.n.toUpperCase();fit(nm,800,50,W-295-260);X.fillText(nm,295,y+56);
     X.fillStyle="#ffb3bf";X.font=F(700,30);X.fillText(c.nick.toUpperCase()+" · "+x.g+(x.g===1?" PARTITA":" PARTITE"),295,y+94);
     X.textAlign="right";X.fillStyle=x.e>1.1?"#4ade80":x.e>=.8?"#ffd84d":"#ff8a8a";X.font=F(800,66);X.fillText(f2(x.e),W-90,y+76)}
