@@ -1576,7 +1576,7 @@ const PR={A:11.24,B:2.8,C:.105,R:{F:1.36,C:1,G:.8},VC:1300};
 function eta(n){const d=NASCITA[n];if(!d)return 25;const b=new Date(d+"T00:00:00Z"),t=new Date();let a=t.getUTCFullYear()-b.getUTCFullYear();if(t.getUTCMonth()<b.getUTCMonth()||(t.getUTCMonth()===b.getUTCMonth()&&t.getUTCDate()<b.getUTCDate()))a--;return a}
 function ruoloDi(n){for(const a of Object.values(ROSTER)){const p=a.find(x=>x[0]===n);if(p)return p[2]}const v=VALMAP[vnz(n)];return v?({PG:"G",SG:"G",SF:"F",PF:"F",C:"C",G:"G",F:"F"}[v[0]]||"F"):"F"}
 /* Prezzi fissati a mano da Francesco: hanno la precedenza sulla curva */
-const PREZZO_FISSO={"Matas Buzelis":150,"Kel'el Ware":200};
+const PREZZO_FISSO={"Nikola Jokić":1400,"Jalen Johnson":850,"Shai Gilgeous-Alexander":750,"Jalen Duren":600,"Luka Dončić":800,"Cade Cunningham":850,"Cooper Flagg":1200,"Josh Giddey":690,"Donovan Clingan":390,"Giannis Antetokounmpo":600,"Cameron Boozer":750,"Tyrese Haliburton":290,"Stephon Castle":420,"Dyson Daniels":125,"Matas Buzelis":140,"Trey Murphy III":130,"Austin Reaves":70,"Zion Williamson":80,"Brayden Burries":99,"Kyshawn George":110,"LeBron James":50,"Kel'el Ware":200};
 function prezzo(v,n){if(n&&PREZZO_FISSO[n]!=null)return PREZZO_FISSO[n];if(v==null)return null;const a=eta(n),r=ruoloDi(n),base=x=>PR.A*Math.exp(PR.B*x/1000)*Math.exp(-PR.C*(a-22))*PR.R[r];
   const p=base(Math.min(v,PR.VC))*(v>PR.VC?Math.pow(v/PR.VC,2):1);return Math.max(5,p<50?Math.round(p):Math.round(p/5)*5)}
 const vtPts=v=>Math.pow(Math.max(0,v)/1000,VAL_EXP)*1000;

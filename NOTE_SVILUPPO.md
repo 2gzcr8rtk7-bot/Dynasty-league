@@ -250,3 +250,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 ## 25/10/2026 (31) — Risultati in stile calendario
 - Sezione Risultati rifatta: una scheda per giornata (pillola Finale/Live), ogni partita su una riga: logo tondo + nome, punteggio al centro (vincente in oro, scarto sotto), avversaria a destra, icona condividi a fine riga (stesso `data-share` → `shareGame`). CSS `.rgc/.rgh/.rgm/.rgt/.rgl/.rgs`, funzione `vRisultati`.
 - Risultati: loghi quadrati a spigolo vivo e più grandi (56px), `.rgl`.
+- Prezzi fissati a mano (25/10 notte) in `PREZZO_FISSO`: Jokić 1400, Flagg 1200, J. Johnson 850, Cunningham 850, Dončić 800, SGA 750, Boozer 750, Giddey 690, Duren 600, Giannis 600, Castle 420, Clingan 390, Haliburton 290, Ware 200, Buzelis 140, T. Murphy III 130, D. Daniels 125, Kyshawn George 110, Burries 99, Zion 80, Reaves 70, LeBron 50.
