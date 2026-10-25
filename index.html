@@ -846,6 +846,19 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .rgl .lg-DUC,.clf .lg-DUC{transform:scale(1.14)}
 .tstar{position:relative;display:inline-block;font-style:normal;font-size:10px;letter-spacing:1px;line-height:1;width:max-content;flex:none}
 .ttab .trc span{display:block;padding:3px 0}.ttab .trc .tstar{display:block;margin-top:3px;font-size:9.5px}.ttab .trc span::after{content:none!important}.ttab .trc span+span{border-top:1px solid rgba(255,255,255,.06)}.tstar b{color:rgba(255,255,255,.18);font-weight:400}.tstar b+b{position:absolute;left:0;top:0;overflow:hidden;white-space:nowrap;color:var(--gold)}
+/* DREAMERS: casella squadra a tutto colore, logo libero, riflesso lucido */
+.drr.tm{position:relative;overflow:hidden;isolation:isolate;border-bottom:1px solid rgba(0,0,0,.28);background:linear-gradient(180deg,rgba(255,255,255,.30) 0%,rgba(255,255,255,.08) 46%,rgba(255,255,255,0) 50%,rgba(0,0,0,.18) 100%),linear-gradient(120deg,color-mix(in srgb,var(--tc) 88%,#fff) 0%,var(--tc) 45%,color-mix(in srgb,var(--tc) 62%,#000) 100%)!important}
+.drr.tm::before{content:"";position:absolute;z-index:-1;top:-70%;left:-35%;width:40%;height:240%;transform:rotate(22deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);pointer-events:none}
+.drr.tm::after{content:"";position:absolute;inset:0;z-index:-1;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -2px 6px rgba(0,0,0,.25);pointer-events:none}
+.drr.tm .drtl{flex:none;width:66px;height:66px;margin:6px 0 6px 10px;display:grid;place-items:center;filter:drop-shadow(0 5px 7px rgba(0,0,0,.45))}
+.drr.tm .drtl .badge{width:100%!important;height:100%!important;background-color:transparent!important;box-shadow:none!important;border-radius:0!important;filter:none}
+.drr.tm .drtl .lg-DUC{transform:scale(1.14)}
+.drr.tm{padding-right:34px!important;gap:10px!important}.drr.tm em{min-width:0!important;font-size:25px!important}
+.drr.tm .drn b{font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 2px;color:var(--tf)!important;text-shadow:-1px -1px 0 var(--ts),1px -1px 0 var(--ts),-1px 1px 0 var(--ts),1px 1px 0 var(--ts),0 4px 10px rgba(0,0,0,.35)}
+.drr.tm .drn small{color:var(--tf);opacity:.85;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+.drr.tm em{color:var(--tf)!important;text-shadow:-1px -1px 0 var(--ts),1px -1px 0 var(--ts),-1px 1px 0 var(--ts),1px 1px 0 var(--ts),0 4px 10px rgba(0,0,0,.35)!important}
+.drr.tm.l{filter:saturate(.35) brightness(.62)}
+.drr.tm.w{box-shadow:inset 0 0 0 2px rgba(250,204,21,.95),inset 0 0 22px rgba(250,204,21,.35)}
 .drplh{margin:26px 0 4px;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.06em;color:#e9d5ff;border-left:4px solid #a855f7;padding-left:10px}
 .drfinal{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,auto);grid-auto-flow:column;gap:6px;margin-top:10px}.drfinal .drfr{padding:6px 8px;gap:7px;min-width:0}.drfinal .drfr b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.drfinal .drfr .drpos{font-size:15px;width:16px}.drfinal .drfr em{font-size:11px}.drfinal .bklg{width:22px;height:22px}
 .drfr{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:rgba(12,8,32,.75);border:1px solid rgba(196,181,253,.22)}
@@ -2670,6 +2683,7 @@ function drPO(st){const s=st.map(x=>x.t),seed={};s.forEach((t,i)=>seed[t]=i+1);
   const fin=[];(R[2]||[]).forEach(x=>{fin.push(x.win||null,x.lose||null)}); // posizioni finali 1..8
   return{seed,R,W,RS,done,end:done?k-1:DR_TOT,champ:done?R[2][0].win:null,fin}}
 const DR_RN=["Quarti di finale","Semifinali","Finale"];
+const drTm=t=>{const c=TEAMS[t],lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};return `--tc:${c.bg};--tf:${c.fg};--ts:${c.stroke||(lum(c.fg)<.4?"rgba(255,255,255,.4)":"rgba(0,0,0,.5)")}`};
 const drLg=(t,z)=>`<span class="drlg ${z||""}" style="--tc:${TEAMS[t].bg}">${badge(t)}</span>`;
 const DR_PH=(k,P)=>{if(k<=DR_REG)return `Turno ${k}`;const w=P&&P.W[k];return w?`${DR_RN[w.r]} · gara ${w.g}`:"Playoff · da definire"};
 let DR={tab:"turno",k:null,open:null};
@@ -2694,7 +2708,7 @@ function vDream(){
     const sub=(a,b)=>{if(!PW)return"";const x=PW.pr.find(x=>x.a===a&&x.b===b),ix=P.R[PW.r].indexOf(x);let wa=0,wb=0;x.g.filter(g=>g.k<=k).forEach(g=>g.A>=g.B?wa++:wb++);
       return `<span class="drsub">${PW.r===2?["Finalissima","Finale 3° posto","Finale 5° posto","Finale 7° posto"][ix]:PW.r===1?(ix<2?"Semifinale "+(ix+1):"Piazzamenti 5°–8° · "+(ix-1)):"Quarto "+(ix+1)} · gara ${PW.g} · serie ${wa}–${wb}</span>`};
     const card=([a,b])=>{const A=drTeam(k,a,W),B=drTeam(k,b,W),wa=W.closed&&A.score>=B.score,wb=W.closed&&B.score>A.score;
-      const row=(T,w)=>`<div class="drr ${w?"w":""}">${drLg(T.t)}<span class="drn"><b>${TEAMS[T.t].nick}</b><small>${W.closed?(T.zeros?`${10-T.zeros}/10 · ${T.zeros} a zero`:"10/10"):T.played+"/10 titolari finora"}</small></span><em>${drScore(T.score)}</em></div>`;
+      const row=(T,w)=>`<div class="drr tm ${w?"w":W.closed?"l":""}" style="${drTm(T.t)}"><span class="drtl">${badge(T.t)}</span><span class="drn"><b>${TEAMS[T.t].nick}</b><small>${W.closed?(T.zeros?`${10-T.zeros}/10 · ${T.zeros} a zero`:"10/10"):T.played+"/10 titolari finora"}</small></span><em>${drScore(T.score)}</em></div>`;
       return `<button class="drm" data-dr="open" data-a="${a}" data-b="${b}">${sub(a,b)}${row(A,wa)}${row(B,wb)}<span class="drst ${W.closed?"":"live"}">${W.closed?"Finale":W.started?"In corso":"Da giocare"}</span></button>`};
     body=`<div class="drnav"><button data-dr="wk" data-d="-1" ${k<=1?"disabled":""}>‹</button><div><b>${DR_PH(k,P)}</b><small>${drFmt(W.start)} – ${drFmt(W.end)} · ${W.nights}/7 notti</small></div><button data-dr="wk" data-d="1" ${k>=MAXK?"disabled":""}>›</button></div>
     ${pr.length?`<div class="drms">${pr.map(card).join("")}</div>`:`<div class="cempty">${k>DR_REG?"Settimana di playoff: si gioca solo se servono altre gare. Gli accoppiamenti si conoscono quando finisce la settimana precedente.":"Gli accoppiamenti si conoscono quando finisce il turno precedente."}</div>`}`}
