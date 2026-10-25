@@ -255,3 +255,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Prezzi fissi aggiunti: Sabonis 470, Trae Young 179, Anthony Davis 155; Buzelis 120.
 - Risultati: loghi senza sfondo colorato (solo PNG trasparente con leggera ombra), `.rgl`.
 - Classifica: loghi senza sfondo colorato (`.clf .wedge`).
+- Sala Trofei: loghi senza sfondo colorato (`body[data-v=storia] .wedge`; `render()` ora scrive `body.dataset.v=cur`).

@@ -269,7 +269,7 @@ td.rk{text-align:left;width:34px;font-family:var(--display);font-style:italic;fo
 td.tm{text-align:left;padding-left:0}
 .tmcell{display:flex;align-items:center;gap:12px;min-width:0;height:54px}
 .wedge{height:100%;width:56px;flex:none;display:flex;align-items:center;justify-content:center;overflow:visible;background:linear-gradient(135deg,var(--tc),color-mix(in srgb,var(--tc) 55%,#000));position:relative;padding:2px}
-.clf .wedge{background:none}.clf .wedge .badge{background-color:transparent!important;box-shadow:none!important;filter:drop-shadow(0 3px 6px rgba(0,0,0,.45))}
+.clf .wedge,body[data-v=storia] .wedge{background:none}.clf .wedge .badge,body[data-v=storia] .wedge .badge{background-color:transparent!important;box-shadow:none!important;filter:drop-shadow(0 3px 6px rgba(0,0,0,.45))}
 .tmcell b{font-family:var(--display);font-style:italic;font-weight:800;font-size:19px;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;line-height:1}
 .tmcell small{display:block;color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase;line-height:1.3}
 td.w{font-family:var(--display);font-style:italic;font-weight:800;font-size:22px;color:#fff}
@@ -2928,6 +2928,7 @@ const VIEWS={effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,g
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
+  document.body.dataset.v=cur;
   {const fs=cur==="giochi"&&GAME==="dream";document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=fs?"#2a1260":"#0a1330"}
   const eff=cur==="giocatore"?(gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));
