@@ -746,8 +746,20 @@ nav button{font-size:15px;letter-spacing:.04em}
 .drpl span{flex:1;min-width:0;display:grid;font-weight:700;overflow:hidden}.drpl small{font-size:10px;color:#a5b4fc;font-weight:500}
 .drpl b{font-family:var(--display);font-size:14px;color:#e9d5ff;white-space:nowrap}.drpl.z b{color:#f87171}
 .drcap,.drhalf{font-style:normal;font-family:var(--display);font-weight:800;font-size:9.5px;padding:1px 4px;margin-right:4px;vertical-align:1px}.drcap{background:#f5c542;color:#1a1203}.drhalf{background:#ef4444;color:#fff}.drpl b s{opacity:.45;font-weight:600;font-size:11px}
+.drsec{padding:6px 8px 4px;font-family:var(--display);font-style:italic;font-weight:800;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase}
+.drsec.cap{color:#fde68a;background:linear-gradient(90deg,rgba(245,197,66,.35),transparent)}
+.drsec.full{color:#6ee7b7;background:linear-gradient(90deg,rgba(16,185,129,.25),transparent)}
+.drsec.half{color:#fda4af;background:linear-gradient(90deg,rgba(244,63,94,.25),transparent)}
+.drsec.wait{color:#c4b5fd;background:linear-gradient(90deg,rgba(139,92,246,.22),transparent)}
+.drsec.trib{color:#94a3b8;background:linear-gradient(90deg,rgba(100,116,139,.25),transparent)}
+.drpl.cap{background:linear-gradient(90deg,rgba(245,197,66,.28),rgba(245,197,66,.06));border-left:3px solid #f5c542}.drpl.cap b{color:#fde68a;font-size:16px}
+.drpl.full{background:linear-gradient(90deg,rgba(16,185,129,.16),rgba(16,185,129,.03));border-left:3px solid #10b981}.drpl.full b{color:#a7f3d0}
+.drpl.half{background:linear-gradient(90deg,rgba(244,63,94,.14),rgba(244,63,94,.02));border-left:3px solid #f43f5e}.drpl.half b{color:#fecdd3}
+.drpl.wait{border-left:3px solid #8b5cf6;opacity:.8}
+.drpl.trib{background:rgba(100,116,139,.08);border-left:3px solid #475569;opacity:.75}.drpl.trib b{color:#cbd5e1}
+.drpl b s{margin-right:4px}
 .drsub{font-style:normal;color:#4ade80;margin-right:2px}
-.drres{padding:6px;font-size:11px;color:#a5b4fc;display:flex;flex-wrap:wrap;gap:3px 8px}.drres small{width:100%;text-transform:uppercase;letter-spacing:.1em}.drres b{color:#e9d5ff}
+.drres{display:none;padding:6px;font-size:11px;color:#a5b4fc;display:flex;flex-wrap:wrap;gap:3px 8px}.drres small{width:100%;text-transform:uppercase;letter-spacing:.1em}.drres b{color:#e9d5ff}
 .drcals{display:grid;gap:5px}
 .drcal{display:flex;align-items:center;gap:8px;width:100%;padding:6px 8px;border:1px solid rgba(196,181,253,.18);background:rgba(12,8,32,.7);color:#fff;text-align:left;cursor:pointer}
 .drcal.cur{border-color:#a78bfa;box-shadow:0 0 0 1px #a78bfa inset}
@@ -2463,9 +2475,15 @@ function vDream(){
   const tabs=[["turno","Turno"],["cal","Calendario"],["cla","Classifica"],["po","Playoff"]].map(([x,l])=>`<button data-dr="tab" data-k="${x}" aria-pressed="${DR.tab===x}">${l}</button>`).join("");
   let body="";
   if(DR.open&&DR.tab==="turno"){const[a,b]=DR.open,A=drTeam(k,a,W),B=drTeam(k,b,W);
-    const col=T=>`<div class="drcol"><div class="drch" style="--tc:${TEAMS[T.t].bg}">${drLg(T.t)}<b>${TEAMS[T.t].nick}</b><em>${drScore(T.score)}</em></div>
-      ${T.slots.map(s=>`<div class="drpl ${s.zero?"z":""}"><span>${s.sub?`<i class="drsub">↺</i>${s.sub}<small>per ${s.n}</small>`:s.n}${s.a?`<small>${s.a.g} ${s.a.g===1?"partita":"partite"}</small>`:""}</span><b>${s.cap?`<i class="drcap">C ×1,5</i>`:s.half?`<i class="drhalf">½</i>`:""}${s.zero?"0,0":s.e==null?(W.closed?"—":"attesa"):s.m&&s.m!==1?`<s>${pdkF(s.e)}</s> ${pdkF(s.f)}`:pdkF(s.e)}</b></div>`).join("")}
-      <div class="drres"><small>Riserve</small>${T.res.map(n=>`<span>${n}${W.acc[n]?` <b>${pdkF(drEff(W.acc[n]))}</b>`:""}</span>`).join("")||"<span>—</span>"}</div></div>`;
+    const col=T=>{const used=new Set(T.slots.filter(x=>x.sub).map(x=>x.sub));
+      const row=(s,k)=>`<div class="drpl ${k}${s.zero?" z":""}"><span>${s.sub?`<i class="drsub">↺</i>${s.sub}<small>per ${s.n}</small>`:s.n}${s.a?`<small>${s.a.g} ${s.a.g===1?"partita":"partite"}</small>`:""}</span><b>${s.zero?"0,0":s.e==null?(W.closed?"—":"attesa"):s.m!==1?`<s>${pdkF(s.e)}</s>${pdkF(s.f)}`:pdkF(s.e)}</b></div>`;
+      const by=(a)=>a.slice().sort((x,y)=>(y.f??-1)-(x.f??-1));
+      const cap=T.slots.filter(s=>s.cap),full=by(T.slots.filter(s=>!s.cap&&!s.half&&s.e!=null)),half=by(T.slots.filter(s=>s.half)),wait=T.slots.filter(s=>s.e==null);
+      const sec=(cls,lab,a)=>a.length?`<div class="drsec ${cls}">${lab}</div>${a.map(s=>row(s,cls)).join("")}`:"";
+      const trib=T.res.filter(n=>!used.has(n));
+      return `<div class="drcol"><div class="drch" style="--tc:${TEAMS[T.t].bg}">${drLg(T.t)}<b>${TEAMS[T.t].nick}</b><em>${drScore(T.score)}</em></div>
+      ${sec("cap","Capitano ×1,5",cap)}${sec("full","Punteggio pieno",full)}${sec("half","Panchina · ½",half)}${sec("wait","In attesa",wait)}
+      <div class="drsec trib">Tribuna</div>${trib.length?trib.map(n=>`<div class="drpl trib"><span>${n}${W.acc[n]?`<small>${W.acc[n].g} ${W.acc[n].g===1?"partita":"partite"}</small>`:""}</span><b>${W.acc[n]?pdkF(drEff(W.acc[n])):"—"}</b></div>`).join(""):`<div class="drpl trib"><span>—</span></div>`}</div>`};
     body=`<button class="gback" data-dr="close">‹ ${DR_PH(k)}</button><div class="drdet">${col(A)}${col(B)}</div>
     <p class="note">${W.closed?"Turno chiuso: chi non ha giocato è stato sostituito dalla miglior riserva (per valore) che ha giocato; senza cambi disponibili vale 0. Poi il capitano (C, PDK medio più alto) vale ×1,5 e i 4 più bassi (½) valgono la metà.":"Turno in corso: capitano (C ×1,5) e i 4 più bassi (½) si aggiornano a ogni report tra chi ha già giocato; punteggio in corso = media dei loro valori. Le sostituzioni di chi non gioca si applicano alla chiusura del turno."}</p>`}
   else if(DR.tab==="turno"){const pr=drPairs(k,st);
