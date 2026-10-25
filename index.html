@@ -707,14 +707,15 @@ body:not(.dreamfs) .drexit{display:none}
 /* look moderno */
 /* spazio a tutto schermo: classifica e tabellone più grandi */
 .drcla{display:grid;gap:8px}
-.drcr{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 22%,rgba(12,8,32,.85)),rgba(12,8,32,.85) 60%);border:1px solid rgba(196,181,253,.2);box-shadow:0 8px 20px rgba(0,0,0,.3)}
+.drcr{display:flex;align-items:center;gap:9px;padding:10px 10px;border-radius:16px;background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 22%,rgba(12,8,32,.85)),rgba(12,8,32,.85) 60%);border:1px solid rgba(196,181,253,.2);box-shadow:0 8px 20px rgba(0,0,0,.3)}
 .drcr.lead{border-color:#c4b5fd;box-shadow:0 0 0 1px #a78bfa inset,0 8px 24px rgba(139,92,246,.35)}
-.drpos{width:26px;text-align:center;font-family:var(--display);font-style:italic;font-weight:800;font-size:26px;color:#c4b5fd}
-.drlg.l{width:58px!important;height:58px!important;flex:0 0 58px!important}
-.drci{flex:1;min-width:0;display:grid;gap:2px}.drci b{font-family:var(--display);font-style:italic;font-weight:800;font-size:22px;text-transform:uppercase;line-height:1}
+.drpos{width:20px;font-size:22px!important;text-align:center;font-family:var(--display);font-style:italic;font-weight:800;font-size:26px;color:#c4b5fd}
+.drlg.l{width:50px!important;height:50px!important;flex:0 0 50px!important}
+.drci{flex:1;min-width:0;display:grid;gap:2px}.drci b{font-family:var(--display);font-style:italic;font-weight:800;font-size:19px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-transform:uppercase;line-height:1}
 .drci small{font-size:12px;color:#c4b5fd}
 .drfm{display:flex;gap:3px;margin-top:3px}.drfm i{width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font-style:normal;font-family:var(--display);font-weight:800;font-size:11px}.drfm i.V{background:#10b981;color:#062}.drfm i.P{background:#f43f5e;color:#fff}.drfm em{font-size:11px;color:#8b8fb8;font-style:normal}
-.drcwl{display:grid;grid-template-columns:auto auto;gap:2px 10px;text-align:center;align-items:end}.drcwl b{font-family:var(--display);font-style:italic;font-weight:800;font-size:28px;line-height:1;color:#fff}.drcwl b.l{color:#94a3b8}.drcwl small{display:block;font-size:10px;color:#a5b4fc;font-style:normal;letter-spacing:.1em}
+.drcwl{flex:none;display:grid;grid-template-columns:auto auto auto;gap:2px 7px;text-align:center;align-items:end}.drcwl b{font-family:var(--display);font-style:italic;font-weight:800;font-size:23px;line-height:1;color:#fff}.drcwl b.l{color:#94a3b8}.drcwl small{display:block;font-size:10px;color:#a5b4fc;font-style:normal;letter-spacing:.1em}
+.drcwl b.avg{color:#c4b5fd;font-size:20px;padding-left:6px;border-left:1px solid rgba(196,181,253,.25)}
 .drcwl em{grid-column:1/-1;font-style:normal;font-size:11px;color:#a5b4fc}
 .drbh span{font-size:16px!important}.drbh small{font-size:11px!important}
 .drbk2{row-gap:12px!important;column-gap:14px!important;min-height:62vh;grid-template-columns:1.55fr 1fr 1fr!important}.drbh{grid-template-columns:1.55fr 1fr 1fr!important;column-gap:14px!important}
@@ -2576,7 +2577,7 @@ function drTeam(k,t,W){W=W||drWeek(k);const F=drForm(k)[t]||{t:[],r:[]};
 function drPairs(k,stand){if(k<=DR_REG)return DR_SCHED[k-1];return drBracket(stand)[k]||[]}
 function drStand(){const S={};Object.keys(TEAMS).forEach(t=>S[t]={t,w:0,l:0,pf:0,pa:0,n:0});
   for(let k=1;k<=DR_REG;k++){const W=drWeek(k);if(!W.closed)continue;DR_SCHED[k-1].forEach(([a,b])=>{const A=drTeam(k,a,W).score,B=drTeam(k,b,W).score;S[a].pf+=A;S[a].pa+=B;S[b].pf+=B;S[b].pa+=A;S[a].n++;S[b].n++;if(A>=B){S[a].w++;S[b].l++}else{S[b].w++;S[a].l++}})}
-  return Object.values(S).sort((x,y)=>y.w-x.w||y.pf-x.pf)}
+  Object.values(S).forEach(x=>x.avg=x.n?x.pf/x.n:null);return Object.values(S).sort((x,y)=>y.w-x.w||(y.avg??-1)-(x.avg??-1))}
 function drWin(k,a,b,seed){const W=drWeek(k);if(!W.closed)return null;const A=drTeam(k,a,W).score,B=drTeam(k,b,W).score;return A>B||(A===B&&seed[a]<seed[b])?[a,b]:[b,a]}
 function drBracket(st){const s=st.map(x=>x.t),seed={};s.forEach((t,i)=>seed[t]=i+1);
   const qf=[[s[0],s[7]],[s[3],s[4]],[s[1],s[6]],[s[2],s[5]]];const B={22:qf};
@@ -2614,8 +2615,8 @@ function vDream(){
   else if(DR.tab==="cla"){
     const form=t=>{const o=[];for(let k=1;k<=DR_REG;k++){const w=drWeek(k);if(!w.closed)continue;const pr=DR_SCHED[k-1].find(p=>p.includes(t));if(!pr)continue;const o2=pr[0]===t?pr[1]:pr[0];o.push(drTeam(k,t,w).score>=drTeam(k,o2,w).score?"V":"P")}return o.slice(-5)};
     const ld=st[0]?st[0].w:0;
-    body=`<div class="drcla">${st.map((x,i)=>{const f=form(x.t);return `<div class="drcr ${i<1?"lead":""}" style="--tc:${TEAMS[x.t].bg}"><span class="drpos">${i+1}</span>${drLg(x.t,"l")}<div class="drci"><b>${TEAMS[x.t].nick}</b><small>${x.n?`media ${pdkF(x.pf/x.n)} · ${x.n} turni`:"nessun turno giocato"}</small><span class="drfm">${f.length?f.map(r=>`<i class="${r}">${r}</i>`).join(""):'<em>forma —</em>'}</span></div><div class="drcwl"><b>${x.w}<small>V</small></b><b class="l">${x.l}<small>P</small></b>${i>0&&ld>x.w?`<em>−${ld-x.w}</em>`:""}</div></div>`}).join("")}</div>
-    <p class="note">Vittoria = punteggio di turno più alto. A parità di vittorie conta la media dei punteggi. Tutte e 8 le squadre vanno ai playoff: la posizione decide gli accoppiamenti (1ª–8ª, 4ª–5ª, 2ª–7ª, 3ª–6ª).</p>`}
+    body=`<div class="drcla">${st.map((x,i)=>{const f=form(x.t);return `<div class="drcr ${i<1?"lead":""}" style="--tc:${TEAMS[x.t].bg}"><span class="drpos">${i+1}</span>${drLg(x.t,"l")}<div class="drci"><b>${TEAMS[x.t].nick}</b><small>${x.n?`${x.n} turni giocati`:"nessun turno giocato"}</small><span class="drfm">${f.length?f.map(r=>`<i class="${r}">${r}</i>`).join(""):'<em>forma —</em>'}</span></div><div class="drcwl"><b>${x.w}<small>V</small></b><b class="l">${x.l}<small>P</small></b><b class="avg">${x.avg==null?"—":pdkF(x.avg)}<small>MEDIA</small></b>${i>0&&ld>x.w?`<em>−${ld-x.w} V</em>`:""}</div></div>`}).join("")}</div>
+    <p class="note">Vittoria = punteggio di turno più alto. A parità di vittorie è davanti chi ha la media punteggio più alta. Tutte e 8 le squadre vanno ai playoff: la posizione decide gli accoppiamenti (1ª–8ª, 4ª–5ª, 2ª–7ª, 3ª–6ª).</p>`}
   else{const B=drBracket(st),sd=B.seed;
     const m=(k,p,lab,ph)=>{if(!p)return`<div class="drbm tbd">${ph?ph.map(x=>`<span>${x}</span>`).join(""):"<span>da definire</span>"}</div>`;const w=drWeek(k),[a,b]=p,A=drTeam(k,a,w).score,Bs=drTeam(k,b,w).score,win=w.closed?(A>Bs||(A===Bs&&sd[a]<sd[b])?a:b):null;
       return `<div class="drbm">${[a,b].map((t,i)=>`<div class="drbr ${win===t?"w":win?"l":""}"><i>${sd[t]}</i>${drLg(t,"s")}<span>${TEAMS[t].nick}</span><em>${w.started?pdkF(i?Bs:A):""}</em></div>`).join("")}</div>`};
