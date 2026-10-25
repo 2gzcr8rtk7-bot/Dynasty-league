@@ -562,6 +562,32 @@ nav button{font-size:15px;letter-spacing:.04em}
 .hlmsg.ok{background:rgba(34,197,94,.15);color:#5eea8f;border-left:4px solid var(--win)}
 .hlmsg.ko{background:rgba(239,68,68,.15);color:#ff8a8a;border-left:4px solid var(--loss)}
 @media (prefers-reduced-motion:no-preference){.hlc .hv.rev{animation:pop .35s ease-out}@keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:none;opacity:1}}}
+/* Trade speciali */
+.splg{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:-4px 0 14px;font-family:var(--display);font-weight:700;font-size:12px;color:#cfd6ea}
+.splg span{display:flex;align-items:center;gap:5px}.splg i{width:14px;height:14px;display:inline-block}
+.splg em{font-style:normal;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.spteam{margin-bottom:18px}
+.spth{display:flex;align-items:center;gap:10px;padding-right:12px;min-height:46px;background:linear-gradient(115deg,var(--tc),color-mix(in srgb,var(--tc) 40%,#000))}
+.spth .wedge{width:50px;height:46px;background:none}
+.spth b{font-family:var(--display);font-style:italic;font-weight:800;font-size:20px;text-transform:uppercase;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.6)}
+.spth small{margin-left:auto;font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#fff;opacity:.85}
+.spgrid{display:grid;gap:8px;margin-top:8px}
+.spc{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-left:6px solid var(--sc);padding:10px 12px 10px}
+.spc.exp{opacity:.55}
+.sptop{display:flex;align-items:center;justify-content:space-between}
+.sptype{font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#0a0f1f;background:var(--gold);padding:1px 8px;transform:skewX(-10deg)}
+.spleft{display:flex;align-items:baseline;gap:5px}
+.spleft b{font-family:var(--display);font-style:italic;font-weight:800;font-size:34px;line-height:1;color:var(--sc)}
+.spleft small{font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sppl{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 8px}
+.spj{display:flex;align-items:center;gap:6px;min-width:0}
+.spj svg:not(.tar svg){width:40px;height:49px;flex:none;overflow:visible}
+.spj>span{display:flex;align-items:center;gap:4px;min-width:0;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;line-height:1.1;text-transform:uppercase;color:#fff}
+.spj .tar{flex:none}
+.spbar{height:8px;background:rgba(255,255,255,.08);overflow:hidden}
+.spbar i{display:block;height:100%;background:var(--sc)}
+.spfoot{display:flex;justify-content:space-between;margin-top:5px;font-size:12px;color:var(--muted)}
+.spfoot b{color:var(--sc);font-family:var(--display);font-style:italic;font-size:14px}
 /* Cassa: registro */
 .clink{cursor:pointer;flex-wrap:wrap;transition:transform .12s}
 .clink:active{transform:scale(.99)}
@@ -657,6 +683,7 @@ nav button>span{white-space:nowrap}
       <button data-v="classifica" aria-selected="false"><span>Classifica</span></button>
       <button data-v="roster" aria-selected="false"><span>Roster</span></button>
       <button data-v="trade" aria-selected="false"><span>Trade</span></button>
+      <button data-v="speciali" aria-selected="false"><span>Trade speciali</span></button>
       <button data-v="gleague" aria-selected="false"><span>G League</span></button>
       <button data-v="regolamento" aria-selected="false"><span>Regolamento</span></button>
     </div>
@@ -736,6 +763,43 @@ const INFORTUNI={agg:"24/10/2026 · 18:02",
  ]};
 
 /* Trade Alert: dalla più recente. stato: "corso" | "chiusa" | "mercato". lati: [squadra, [cosa riceve]] */
+/* ===== Trade speciali =====
+   t = franchigia, entra/esce = giocatori, tipo = 30/40/50 (crediti), inizio = giornata in cui parte,
+   extra = giornate extra acquistate (opzionale). Durata da regolamento: 30 → 20 giornate, 40 → 40, 50 → fino alla G64. */
+const SPECIALI=[
+  {t:"PEA",entra:"Damian Lillard",esce:"Ryan Rollins",tipo:30,inizio:1},
+  {t:"DUC",entra:"Sergio De Larrea",esce:"Brayden Burries",tipo:40,inizio:1},
+  {t:"DUC",entra:"Kyshawn George",esce:"Brandon Ingram",tipo:30,inizio:1}
+];
+const SP_DUR={30:20,40:40},SP_FINE=64;
+function spInfo(x){
+  const cur=GIORNATE.length?GIORNATE[GIORNATE.length-1].n:1;
+  const scad=x.tipo===50?SP_FINE:x.inizio-1+(SP_DUR[x.tipo]||20)+(x.extra||0);
+  const dur=scad-x.inizio+1,left=Math.max(0,scad-cur+1),fr=dur>0?left/dur:0;
+  return{cur,scad,dur,left,fr};
+}
+/* colore: ≥80% verde chiaro · 50% giallo · 30% arancione · ≤15% rosso (sfumature in mezzo) */
+function spColor(fr){
+  const A=[[.15,[239,68,68]],[.30,[249,115,22]],[.50,[250,204,21]],[.80,[134,239,172]]];
+  if(fr<=A[0][0])return"rgb(239,68,68)";if(fr>=A[3][0])return"rgb(134,239,172)";
+  for(let i=0;i<3;i++){const[a,ca]=A[i],[b,cb]=A[i+1];if(fr<=b){const k=(fr-a)/(b-a);return`rgb(${ca.map((v,j)=>Math.round(v+(cb[j]-v)*k)).join(",")})`}}
+}
+function vSpeciali(){
+  const by={};SPECIALI.forEach(x=>(by[x.t]=by[x.t]||[]).push(x));
+  const cur=GIORNATE.length?GIORNATE[GIORNATE.length-1].n:1;
+  const card=x=>{const I=spInfo(x),col=spColor(I.fr),pct=Math.round(I.fr*100),exp=I.left===0;
+    return `<div class="spc ${exp?"exp":""}" style="--sc:${col}">
+      <div class="sptop"><span class="sptype">Speciale ${x.tipo}</span><span class="spleft"><b>${exp?"Scaduta":I.left}</b>${exp?"":`<small>giornat${I.left===1?"a":"e"}</small>`}</span></div>
+      <div class="sppl"><div class="spj in">${jersey(x.t,NUM[x.entra],x.entra)}<span><i class="tar in"><svg viewBox="0 0 16 12"><path d="M15 6H3M7 1.5 2.2 6 7 10.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i>${x.entra}</span></div>
+        <div class="spj out">${jersey(x.t,NUM[x.esce],x.esce)}<span><i class="tar out"><svg viewBox="0 0 16 12"><path d="M1 6h12M9 1.5 13.8 6 9 10.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i>${x.esce}</span></div></div>
+      <div class="spbar"><i style="width:${pct}%"></i></div>
+      <div class="spfoot"><span>Dalla G${x.inizio} alla G${I.scad}${x.extra?` (+${x.extra} extra)`:""}</span><b>${exp?"0%":pct+"% rimasto"}</b></div></div>`};
+  const teams=Object.keys(TEAMS).filter(t=>by[t]);
+  return `${H("Trade speciali",`<em>Giornata ${cur}</em>`)}
+  <div class="splg"><span><i style="background:rgb(134,239,172)"></i>80%+</span><span><i style="background:rgb(250,204,21)"></i>50%</span><span><i style="background:rgb(249,115,22)"></i>30%</span><span><i style="background:rgb(239,68,68)"></i>15%</span><em>tempo rimasto</em></div>
+  ${teams.length?teams.map(t=>`<section class="spteam"><div class="spth" style="--tc:${TEAMS[t].bg}">${wedge(t)}<b>${TEAMS[t].nick}</b><small>${by[t].length} trade special${by[t].length===1?"e":"i"}</small></div><div class="spgrid">${by[t].map(card).join("")}</div></section>`).join(""):`<div class="cempty">Nessuna trade speciale attiva.</div>`}
+  <p class="note">Durata da regolamento: Speciale 30 = 20 giornate · Speciale 40 = 40 giornate · Speciale 50 = fino alla G64. Il numero indica le giornate che mancano alla scadenza, giornata in corso compresa.</p>`;
+}
 const TRADES=[
  {titolo:"Trade speciale",lati:[["PEA",["Damian Lillard"],"entra"],["PEA",["Ryan Rollins"],"esce"]]},
  {data:"23/10/2026",titolo:"Scambio",lati:[["DOL",["De'Aaron Fox"]],["PEA",["Ryan Rollins","9 crediti"]]]},
@@ -1735,11 +1799,11 @@ function simAct(b){
     if(navigator.share)navigator.share({text:tx}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(tx).then(()=>{b.querySelector("span").textContent="Copiato ✓"},()=>{})}
 }
 
-const VIEWS={cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};
+const VIEWS={speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
-  const eff=cur==="giocatore"?"roster":cur==="campo"||cur==="cassa"?"home":cur;const DK=["risultati","classifica","roster","trade","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
+  const eff=cur==="giocatore"?"roster":cur==="campo"||cur==="cassa"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
