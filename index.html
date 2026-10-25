@@ -719,36 +719,34 @@ const LOGO2={"DUC":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeAAAAF+CAYAAA
      tipo = "portafoglio" (sul saldo attuale) o "post" (dopo il Draft), s = stagione, saldato = true quando pagato.
      Esempio: {da:"DUC",a:"FOX",v:10,tipo:"post",s:"26/27",saldato:false} */
 const STAGIONE_CORRENTE="26/27";
-const MOVIMENTI={
- SPI:[],
- PEA:[
-  {s:"26/27",d:"30/09/2026",c:"Scambio con Moose: arriva Zion Williamson, parte Danny Wolf",v:-35},
-  {s:"26/27",d:"",c:"Scambio con Dolphins: parte Isaiah Hartenstein, arriva Rudy Gobert",v:10},
-  {s:"26/27",d:"19/10/2026",c:"Scambio con Dolphins: Giddey, Mobley, Sabonis, Gobert per Booker, Durant, Jokić, Hartenstein",v:37},
-  {s:"26/27",d:"23/10/2026",c:"Scambio con Dolphins: arriva Ryan Rollins, parte De'Aaron Fox",v:9},
-  {s:"26/27",d:"",c:"Trade speciale 30: entra Damian Lillard, esce Ryan Rollins",v:-30}
- ],
- DUC:[
-  {s:"26/27",d:"",c:"Scambio con Moose: arriva Scottie Barnes (a Moose Graves, Johnson Jr., diritti Steinbach, slot ala 10g)",v:-300},
-  {s:"26/27",d:"",c:"Trade speciale 40: entra Sergio De Larrea, esce Brayden Burries",v:-40},
-  {s:"26/27",d:"",c:"Trade speciale 30: entra Kyshawn George, esce Brandon Ingram",v:-30}
- ],
- DOL:[
-  {s:"26/27",d:"",c:"Scambio con Pelicans: arriva Rudy Gobert, parte Isaiah Hartenstein",v:-10},
-  {s:"26/27",d:"",c:"Scambio con Foxes: arrivano Giddey e Sabonis, partono Dončić e Kessler",v:60},
-  {s:"26/27",d:"19/10/2026",c:"Scambio con Pelicans: Booker, Durant, Jokić, Hartenstein per Giddey, Mobley, Sabonis, Gobert",v:-37},
-  {s:"26/27",d:"",c:"Asta FA: Paul George (10 commissione + 11 listone)",v:-21},
-  {s:"26/27",d:"23/10/2026",c:"Scambio con Pelicans: arriva De'Aaron Fox, parte Ryan Rollins",v:-9}
- ],
- TUR:[],EAG:[],
- MOO:[
-  {s:"26/27",d:"30/09/2026",c:"Scambio con Pelicans: arriva Danny Wolf, parte Zion Williamson",v:35},
-  {s:"26/27",d:"",c:"Scambio con Ducks: arrivano Graves, Johnson Jr., diritti Steinbach, slot ala 10g; parte Scottie Barnes",v:300}
- ],
- FOX:[
-  {s:"26/27",d:"",c:"Scambio con Dolphins: arrivano Luka Dončić e Walker Kessler, partono Giddey e Sabonis",v:-60}
- ]
-};
+/* Movimenti extra inseriti a mano (premi, quote, ecc.). Scambi, aste e trade speciali NON vanno qui:
+   si calcolano da soli da TRADES e SPECIALI (funzione movimenti). */
+const MOVIMENTI={SPI:[],PEA:[],DUC:[],DOL:[],TUR:[],EAG:[],MOO:[],FOX:[]};
+const SP_EXTRA_CR={30:2,40:1,50:0};
+function movimenti(t){
+  const cr=x=>{const m=/^(\d+)\s*crediti/i.exec(x);return m?+m[1]:0};
+  const ass=l=>l.filter(x=>!cr(x)).join(", ");
+  const out=[];
+  TRADES.slice().reverse().forEach(x=>{
+    const st=x.s||STAGIONE_CORRENTE,d=x.data||"";
+    if(/speciale/i.test(x.titolo)){
+      if(x.lati[0][0]!==t)return;
+      const en=(x.lati.find(l=>l[2]==="entra")||[,[]])[1][0],es=(x.lati.find(l=>l[2]==="esce")||[,[]])[1][0];
+      const sp=SPECIALI.find(y=>y.t===t&&y.entra===en);if(!sp)return;
+      const v=sp.tipo+(sp.extra||0)*(SP_EXTRA_CR[sp.tipo]||0);
+      out.push({s:st,d,c:`Trade speciale ${sp.tipo}: entra ${en}, esce ${es}${sp.extra?` (+${sp.extra} giornate extra)`:""}`,v:-v,auto:1});
+    }else if(/asta/i.test(x.titolo)){
+      const l=x.lati[0];if(l[0]!==t)return;
+      const c=l[1].find(cr)||"",m=/\((.*)\)/.exec(c);
+      out.push({s:st,d,c:`Asta FA: ${ass(l[1])}${m?` (${m[1].replace(/ di lista/,' listone')})`:""}`,v:-cr(c),auto:1});
+    }else{
+      const me=x.lati.find(l=>l[0]===t),ot=x.lati.find(l=>l[0]!==t);if(!me||!ot)return;
+      const v=me[1].reduce((a,y)=>a+cr(y),0)-ot[1].reduce((a,y)=>a+cr(y),0);if(!v)return;
+      out.push({s:st,d,c:`Scambio con ${TEAMS[ot[0]].nick}: arriva ${ass(me[1])||"—"}; parte ${ass(ot[1])||"—"}`,v,auto:1});
+    }
+  });
+  return out.concat(MOVIMENTI[t]||[]);
+}
 const DEBITI=[];
 const CREDITI={"SPI": 50, "PEA": 52, "DUC": 0, "DOL": 0, "TUR": 149, "EAG": 108, "MOO": 443, "FOX": 21};
 /* Avvisi sui giocatori (scritta gialla nel roster) */
@@ -1161,7 +1159,7 @@ function cassa(t){
 }
 let cassaTab="bil",cassaStag="tutte";
 function vCassa(){
-  const t=curTeam,c=TEAMS[t],cr=CREDITI[t]??0,mv=(MOVIMENTI[t]||[]).slice();
+  const t=curTeam,c=TEAMS[t],cr=CREDITI[t]??0,mv=movimenti(t);
   const stag=[...new Set([STAGIONE_CORRENTE,...mv.map(x=>x.s)])].sort().reverse();
   const fmt=v=>`${v>0?"+":v<0?"−":""}${Math.abs(v)}`;
   const tabs=[["bil","Bilancio"],["mov","Entrate<br>e uscite"],["deb","Debiti<br>e crediti"]];

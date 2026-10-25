@@ -93,6 +93,11 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 - Pagina squadra: la panchina è ordinata per efficienza dell'ultima gara (`lastEff`), quindi si riordina da sola a ogni aggiornamento dei report.
 - Efficienza: Top 10 (etichetta verde) e Flop 10 (rossa) spostate sopra la sezione Giocatori, che ora ha l'etichetta gialla (classi `.hgreen`, `.hred`, `.hyellow`).
 
-## 25/10/2026 (7) — Cassa: movimenti 26/27
-- Inseriti in `MOVIMENTI` tutti i passaggi di crediti noti dalla pagina Trade (6 scambi, asta FA di Paul George, 3 trade speciali con il costo da regolamento 30/40 cr). Tutti come entrate/uscite già pagate; `DEBITI` resta vuoto.
-- Alcune date mancano (campo `d` vuoto): da completare quando si conoscono.
+## 25/10/2026 (7) — Cassa automatica da Trade e Speciali
+- I bilanci si aggiornano da soli: la funzione `movimenti(t)` legge `TRADES` e `SPECIALI` e crea le righe di entrate/uscite.
+  - Scambio: chi riceve "N crediti" ha +N, l'altra squadra −N.
+  - Asta: −N crediti per la squadra che acquista.
+  - Trade speciale: −costo da regolamento (30/40/50 cr) + giornate extra (2 cr ciascuna per la 30, 1 cr per la 40). Si abbina a `SPECIALI` tramite squadra + giocatore che entra.
+  - Stagione: `s` facoltativo nella voce di `TRADES`, altrimenti `STAGIONE_CORRENTE`.
+- REGOLA: quando arriva una nuova trade, basta inserirla in `TRADES` (e, se speciale, anche in `SPECIALI`). Non va scritta a mano in `MOVIMENTI`, che ora serve solo per altri movimenti (premi, quote…).
+- Saldi 26/27 attuali: Moose +335, Pelicans −9, Dolphins −17, Foxes −60, Ducks −370. Alcune date mancano in `TRADES`.
