@@ -170,7 +170,7 @@ nav button[aria-expanded="true"] .car{transform:rotate(180deg)}
 .ihead .badge{width:34px;height:34px}.ihead b{font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.5)}
 .iok{padding:18px;text-align:center;font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase;color:var(--win);background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line)}
 .ipick{padding:22px 16px;text-align:center;font-family:var(--display);font-style:italic;font-weight:700;font-size:16px;color:var(--muted);background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px dashed var(--line)}
-.irow .bmap{flex:none;width:34px;height:68px;align-self:center;margin:6px 10px 6px 0}
+.irow .bmap{flex:none;width:42px;height:84px;align-self:center;margin:6px 10px 6px 0}
 </style>
 
 
@@ -943,7 +943,7 @@ nav button>span{white-space:nowrap}
   </div>
 </header>
 <main class="wrap" id="main"></main>
-<footer class="wrap upd">Ultimo aggiornamento: 25/10/2026 · 18:52</footer>
+<footer class="wrap upd">Ultimo aggiornamento: 25/10/2026 · 18:56</footer>
 
 <script src="dreamers-data.js"></script>
 <script>
@@ -1548,11 +1548,11 @@ const INJ={};INFORTUNI.lista.forEach(x=>INJ[x.p]=x);
 /* Manichino infortuni: evidenzia la zona del corpo letta dalla descrizione (destra = lato sinistro del disegno, vista frontale) */
 function bodyMap(tipo,stato){
   const t=(tipo||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-  const Z=[["head",/testa|commozione|concussion|naso|nasal|viso|occhi|mascell|faccia/],["neck",/collo|neck/],["shoulder",/spall|shoulder|rotator|cuffia|clavicol/],
-   ["elbow",/gomit|elbow/],["wrist",/polso|wrist/],["hand",/mano|dito|dita|finger|thumb|pollic|hand/],["chest",/petto|costol|rib|pettoral|chest|sterno/],
-   ["abs",/obliq|addom|abdom|core/],["back",/schiena|back|lomb|sciatic|spina|vertebr/],["hip",/anca|hip|bacino|ingui|groin|addutt|glute/],
-   ["thigh",/coscia|quadric|quad|hamstring|bicipite femorale|flessor|femor/],["knee",/ginocch|knee|menisc|rotul|patell|acl|crociat|mcl|lca/],
-   ["shin",/polpacc|calf|tibia|shin|perone|stinco/],["ankle",/caviglia|ankle|achill/],["foot",/piede|foot|tallon|heel|plantar|alluce|toe|lisfranc|metatars/]];
+  const Z=[["head",/\b(?:testa|commozione|concussion|naso|nasal|viso|occhi|mascell|faccia)/],["neck",/\b(?:collo|neck)/],["shoulder",/\b(?:spall|shoulder|rotator|cuffia|clavicol)/],
+   ["elbow",/\b(?:gomit|elbow)/],["wrist",/\b(?:polso|wrist)/],["hand",/\b(?:mano|dito|dita|finger|thumb|pollic|hand)/],["chest",/\b(?:petto|costol|rib|pettoral|chest|sterno)/],
+   ["abs",/\b(?:obliq|addom|abdom|core)/],["back",/\b(?:schiena|back|lomb|sciatic|spina|vertebr)/],["hip",/\b(?:anca|hip|bacino|ingui|groin|addutt|glute)/],
+   ["thigh",/\b(?:coscia|quadric|quad|hamstring|bicipite femorale|flessor|femor)/],["knee",/\b(?:ginocch|knee|menisc|rotul|patell|acl|crociat|mcl|lca)/],
+   ["shin",/\b(?:polpacc|calf|tibia|shin|perone|stinco)/],["ankle",/\b(?:caviglia|ankle|achill)/],["foot",/\b(?:piede|foot|tallon|heel|plantar|alluce|toe|lisfranc|metatars)/]];
   const hit=Z.filter(([k,r])=>r.test(t)).map(z=>z[0]);
   const R=/destr|right/.test(t),L=/sinistr|left/.test(t),sides=R&&!L?["R"]:L&&!R?["L"]:["R","L"];
   const col={out:"#ef4444",dubbio:"#f97316",quest:"#f5b400",dtd:"#93a3c8",ok:"#22c55e"}[stato]||"#ef4444";
