@@ -135,3 +135,4 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 - "Chiudi ora" va toccato due volte (conferma), così non si chiude una sfida per sbaglio.
 - Dopo "Lancia la sfida" i tocchi vengono ignorati per 0,6 s (`ntLock`): su iPhone un doppio tocco poteva finire su "Chiudi ora" e chiudere subito la sfida.
 - `ntGames` cerca il giocatore anche nelle altre squadre di `EFF.gioc` (giocatori appena scambiati).
+- Riquadro risultato: resoconto di cosa riceve ogni squadra (giocatori, pick, crediti), sopra il suggerimento per pareggiare.

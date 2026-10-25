@@ -608,6 +608,12 @@ nav button{font-size:15px;letter-spacing:.04em}
 .vtver b{font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase}
 .vtres.ok .vtver b{color:#4ade80}.vtres.mid .vtver b{color:#fbbf24}.vtres.bad .vtver b{color:#f87171}
 .vtver span{font-size:12.5px;color:var(--muted)}
+.vtrec{display:grid;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.vtrr{display:flex;gap:8px;align-items:flex-start}
+.vtrr small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.vtrr p{margin:2px 0 0;display:flex;flex-wrap:wrap;gap:4px}
+.vtrr p span{font-size:13px;font-weight:700;background:rgba(255,255,255,.07);padding:2px 6px}
+.vtrr p span.pk{color:#93c5fd}.vtrr p span.cr{color:var(--gold)}.vtrr p em{font-size:13px;color:var(--muted)}
 .vtsug{margin:8px 0 0;font-size:13.5px;color:#dfe6f5}
 .vtgrid{display:grid;gap:12px}
 .vtcard{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-top:4px solid var(--tc)}
@@ -1130,6 +1136,8 @@ function vtResHTML(){
     <div class="vtsc"><span>${badge(ta,"vtlg")}<b>${Math.round(B)}</b><small>${ca.nick} ricevono</small></span><span class="r"><small>${cb.nick} ricevono</small><b>${Math.round(A)}</b>${badge(tb,"vtlg")}</span></div>
     <div class="vtbar"><i style="width:${100-pa}%;background:${ca.bg};">${Math.round(100-pa)}%</i><i style="width:${pa}%;background:${cb.bg};">${Math.round(pa)}%</i><em style="left:50%"></em></div>
     <div class="vtver"><b>${lab}</b><span>${d<.10?"Differenza":"Ci guadagnano i "+TEAMS[fav].nick+" del"} ${Math.round(d*100)}%</span></div>
+    <div class="vtrec">${[0,1].map(k=>{const o=1-k,its=[...VT.pl[o].map(n=>`<span>${n}</span>`),...VT.pk[o].map(p=>`<span class="pk">Pick ${p}</span>`),...(+VT.cr[o]?[`<span class="cr">${+VT.cr[o]} crediti</span>`]:[])];
+      return `<div class="vtrr">${badge(VT.t[k],"vtlg")}<div><small>${TEAMS[VT.t[k]].nick} ricevono</small><p>${its.length?its.join(""):"<em>niente</em>"}</p></div></div>`}).join("")}</div>
     ${d>=.10&&cr>0?`<p class="vtsug">Per pareggiare: i <b>${TEAMS[fav].nick}</b> dovrebbero aggiungere circa <b>${cr} crediti</b> (o i ${TEAMS[give].nick} togliere qualcosa).</p>`:""}
   </div>`}
 function vtCard(k){
