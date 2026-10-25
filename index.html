@@ -830,7 +830,7 @@ nav button>span{white-space:nowrap}
   </div>
 </header>
 <main class="wrap" id="main"></main>
-<footer class="wrap upd">Ultimo aggiornamento: 25/10/2026 · 11:26</footer>
+<footer class="wrap upd">Ultimo aggiornamento: 25/10/2026 · 12:05</footer>
 
 <script>
 const TEAMS={
@@ -910,23 +910,24 @@ const ULTIMA={agg:"25/10/2026",gioc:{"Nikola Jokić":.34,"Tyrese Maxey":.63,"Kev
 const TITOLARI={DOL:["Tyrese Maxey","Trae Young","Kevin Durant","Paul George","Nikola Jokić"],SPI:["Stephon Castle","Donovan Mitchell","Giannis Antetokounmpo","LeBron James","Joel Embiid"],PEA:["Josh Giddey","LaMelo Ball","Julius Randle","Evan Mobley","Domantas Sabonis"],DUC:["Cade Cunningham","Amen Thompson","Jalen Johnson","Cooper Flagg","Victor Wembanyama"],MOO:["Kon Knueppel","Tyler Herro","Caleb Wilson","Ausar Thompson","Kel'el Ware"],TUR:["Dylan Harper","Tyrese Haliburton","AJ Dybantsa","Chet Holmgren","Zach Edey"],EAG:["Stephen Curry","Jalen Brunson","Anthony Davis","Deni Avdija","Karl-Anthony Towns"],FOX:["Shai Gilgeous-Alexander","Luka Dončić","Jayson Tatum","Kawhi Leonard","Ivica Zubac"]};
 
 /* Infortuni dei giocatori della lega. stato: out | dubbio | quest | dtd | ok. fonti: nomi delle fonti consultate */
-const INFORTUNI={agg:"24/10/2026 · 18:02",
- fonti:["Bollettino NBA del 24/10 (via TalkBasket, 15:33 UTC)","Covers – NBA Injuries 24/10","Hoops Nightly (24/10 9:56 ET)","Heavy – Cooper Flagg 24/10","Rotowire – De'Aaron Fox 23/10","Box score del 23/10 (Land of Basketball)"],
+const INFORTUNI={agg:"25/10/2026 · 12:03",
+ fonti:["ESPN – NBA Injuries (commenti fino al 24/10)","Hoops Nightly (24/10 19:05 ET)","Covers – NBA Injuries (24/10)","ESPN – Banchero, caviglia (24/10)","ESPN – Flagg, spalla (24/10)","Referti NBA e Land of Basketball del 24/10"],
  lista:[
-  {p:"Brandon Ingram",t:"DUC",nba:"LAC",stato:"out",tipo:"Tallone destro",rientro:"Stima 08/11",fonti:["Covers","HoopsNightly"]},
-  {p:"Cooper Flagg",t:"DUC",nba:"DAL",stato:"out",tipo:"Spalla sinistra (colpo subito il 23/10)",rientro:"Stima 26/10 con MIA",nota:"Hoops Nightly lo dà out, Covers giorno per giorno; per Heavy la gravità è ancora da valutare",fonti:["HoopsNightly","Covers","Heavy"]},
-  {p:"Kristaps Porziņģis",t:"SPI",nba:"GSW",stato:"out",tipo:"Malattia (POTS)",rientro:"Stima 01/12",fonti:["Covers","HoopsNightly"]},
-  {p:"Maxime Raynaud",t:"MOO",nba:"SAC",stato:"out",tipo:"Ginocchio destro",rientro:"Stima 02/11",fonti:["HoopsNightly"]},
-  {p:"Oso Ighodaro",t:"TUR",nba:"PHX",stato:"dubbio",tipo:"Stiramento obliquo destro",rientro:"Doubtful con GSW il 24/10",fonti:["NBA","TalkBasket","HoopsNightly"]},
-  {p:"LeBron James",t:"SPI",nba:"PHI",stato:"quest",tipo:"Schiena / sciatica",rientro:"In forse con MIL il 24/10",fonti:["NBA","TalkBasket","Covers","HoopsNightly"]},
-  {p:"Kon Knueppel",t:"MOO",nba:"CHA",stato:"dtd",tipo:"Bicipite femorale sinistro",rientro:"Da valutare con MIA il 24/10",fonti:["Covers","HoopsNightly"]},
-  {p:"Cedric Coward",t:"MOO",nba:"MEM",stato:"dtd",tipo:"Polso sinistro",rientro:"Stima 25/10 con SAC",fonti:["Covers","HoopsNightly"]},
-  {p:"AJ Dybantsa",t:"TUR",nba:"WAS",stato:"dtd",tipo:"Caviglia sinistra",rientro:"Da valutare con CHI il 24/10",fonti:["HoopsNightly"]},
-  {p:"Paolo Banchero",t:"TUR",nba:"ORL",stato:"dtd",tipo:"Caviglia destra",rientro:"Prossima: NYK il 25/10",fonti:["HoopsNightly"]},
-  {p:"Ausar Thompson",t:"MOO",nba:"DET",stato:"dtd",tipo:"Non comunicato",rientro:"Prossima: PHI il 25/10",fonti:["HoopsNightly"]},
-  {p:"Jalen Duren",t:"EAG",nba:"DET",stato:"dtd",tipo:"Coscia destra",rientro:"Prossima: PHI il 25/10",fonti:["HoopsNightly"]},
-  {p:"Stephen Curry",t:"EAG",nba:"GSW",stato:"dtd",tipo:"Riposo",rientro:"In forse con PHX il 24/10",fonti:["HoopsNightly"]},
-  {p:"De'Aaron Fox",t:"DOL",nba:"SAS",stato:"ok",tipo:"Polso destro, monitorato",rientro:"Ha giocato il 23/10 (34')",fonti:["Rotowire","HoopsNightly"]}
+  {p:"Paolo Banchero",t:"TUR",nba:"ORL",stato:"out",tipo:"Distorsione alta caviglia destra",rientro:"Stima 22/11 (4-6 settimane)",fonti:["ESPN","HoopsNightly"]},
+  {p:"Cooper Flagg",t:"DUC",nba:"DAL",stato:"out",tipo:"Distorsione lieve spalla sinistra",rientro:"Rivalutazione la prossima settimana, stima 02/11",fonti:["ESPN","HoopsNightly"]},
+  {p:"Brandon Ingram",t:"DUC",nba:"LAC",stato:"out",tipo:"Tallone / Achille destro",rientro:"Stima 08/11",nota:"ESPN parla di Achille parzialmente lesionato, Hoops Nightly di tallone destro",fonti:["ESPN","HoopsNightly","Covers"]},
+  {p:"Kristaps Porziņģis",t:"SPI",nba:"GSW",stato:"out",tipo:"Malattia (POTS)",rientro:"Stima 01/12",fonti:["ESPN","HoopsNightly","Covers"]},
+  {p:"LeBron James",t:"SPI",nba:"PHI",stato:"out",tipo:"Schiena / sciatica",rientro:"Stima 25/10, stasera con DET da ufficializzare",fonti:["ESPN","HoopsNightly"]},
+  {p:"Stephen Curry",t:"EAG",nba:"GSW",stato:"out",tipo:"Riposo",rientro:"Stima 26/10",nota:"Hoops Nightly lo dà out, ESPN giorno per giorno",fonti:["HoopsNightly","ESPN"]},
+  {p:"Jalen Duren",t:"EAG",nba:"DET",stato:"out",tipo:"Stiramento bicipite femorale destro",rientro:"Out stasera con PHI, stima 27/10",fonti:["ESPN","HoopsNightly"]},
+  {p:"Kyrie Irving",t:"FOX",nba:"DAL",stato:"out",tipo:"Ginocchio sinistro",rientro:"Stima 26/10",nota:"Hoops Nightly lo dà out, ESPN giorno per giorno; non ha giocato il 24/10",fonti:["HoopsNightly","ESPN"]},
+  {p:"AJ Dybantsa",t:"TUR",nba:"WAS",stato:"out",tipo:"Caviglia sinistra",rientro:"Stima 26/10",fonti:["ESPN","HoopsNightly"]},
+  {p:"Oso Ighodaro",t:"TUR",nba:"PHX",stato:"out",tipo:"Stiramento obliquo",rientro:"Stima 26/10",fonti:["ESPN","HoopsNightly"]},
+  {p:"Kon Knueppel",t:"MOO",nba:"CHA",stato:"out",tipo:"Bicipite femorale sinistro",rientro:"Stima 26/10",fonti:["ESPN","HoopsNightly","Covers"]},
+  {p:"Maxime Raynaud",t:"MOO",nba:"SAC",stato:"out",tipo:"Ginocchio destro",rientro:"Stima 02/11",fonti:["ESPN","HoopsNightly"]},
+  {p:"Ausar Thompson",t:"MOO",nba:"DET",stato:"quest",tipo:"Caviglia destra",rientro:"In forse stasera con PHI",fonti:["ESPN","HoopsNightly"]},
+  {p:"Cedric Coward",t:"MOO",nba:"MEM",stato:"dtd",tipo:"Polso sinistro",rientro:"Stima 25/10, stasera @ SAC",fonti:["ESPN","HoopsNightly","Covers"]},
+  {p:"Morez Johnson Jr.",t:"MOO",nba:"DAL",stato:"ok",tipo:"Stinco, monitorato",rientro:"Ha giocato il 24/10 (12')",fonti:["ESPN","NBA"]}
  ]};
 
 /* Trade Alert: dalla più recente. stato: "corso" | "chiusa" | "mercato". lati: [squadra, [cosa riceve]] */
