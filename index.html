@@ -1091,7 +1091,7 @@ function vCampo(){
     </svg>`;
   const ROWY={C:30.6,F:56.6,G:83.3},XS={G:[30,70],F:[19,81]};const pos={};["G","F","C"].forEach(r=>{const l=q.filter(p=>p[2]===r);l.forEach((p,i)=>pos[p[0]]=[l.length===2&&XS[r]?XS[r][i]:(i+1)/(l.length+1)*100,ROWY[r]])});
   const onCourt=q.map((p,i)=>`<button class="cpl" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${jersey(t,p[1],p[0])}<span class="cnm"${(L=>L>=12?' style="font-size:9.5px"':L>=9?' style="font-size:10.5px"':"")(sur(p[0]).length)}>${sur(p[0])}</span>${pill(lastEff(t,p[0]))}</button>`).join("");
-  const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>"GFC".indexOf(a[2])-"GFC".indexOf(b[2]));
+  const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>(lastEff(t,b[0])??-99)-(lastEff(t,a[0])??-99));  /* panchina in ordine di efficienza (stesso valore mostrato), si riordina a ogni aggiornamento */
   return `<button class="gback" id="cback">‹ Home</button>
   <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">
    ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${LOGO[t]}" alt="">`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
