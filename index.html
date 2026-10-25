@@ -936,7 +936,7 @@ nav button>span{white-space:nowrap}
   </div>
 </header>
 <main class="wrap" id="main"></main>
-<footer class="wrap upd">Ultimo aggiornamento: 25/10/2026 · 18:38</footer>
+<footer class="wrap upd">Ultimo aggiornamento: 25/10/2026 · 18:45</footer>
 
 <script src="dreamers-data.js"></script>
 <script>
@@ -1265,6 +1265,7 @@ function jersey(t,num,name=""){
 }
 let curTeam="DOL";
 try{curTeam=localStorage.getItem("team")||"DOL"}catch(e){}
+if(!TEAMS[curTeam]){curTeam="DOL";try{localStorage.setItem("team","DOL")}catch(e){}}
 function vRoster(){
   const st=standings().find(x=>x.t===curTeam),c=TEAMS[curTeam],r=ROSTER[curTeam];
   const chips=Object.keys(TEAMS).map(t=>`<button class="chip" data-t="${t}" aria-pressed="${t===curTeam}">${badge(t)}${TEAMS[t].nick}</button>`).join("");
@@ -1301,7 +1302,7 @@ function vEffSquadra(){
   <p class="note"><span class="ev g"><i></i>sopra 1,10</span> &nbsp; <span class="ev y"><i></i>0,80–1,10</span> &nbsp; <span class="ev r"><i></i>sotto 0,80</span></p>`;
 }
 function vEfficienza(){
-  const t0=effTeam||curTeam;
+  const t0=TEAMS[effTeam]?effTeam:TEAMS[curTeam]?curTeam:"DOL";
   const sq=EFF.squadre.map((x,i)=>{const[t,inc,dn,en,es,ds]=x;return `<div class="erow" data-effsq="${t}" role="button" tabindex="0" aria-label="Tabella efficienza ${TEAMS[t].nick}">${wedge(t)}<div class="einfo"><b>${TEAMS[t].nick}</b><div class="ebar"><span style="width:${Math.max(4,Math.min(100,es/1.1*100))}%;background:${TEAMS[t].bg}"></span></div><small>${inc} in campo nella notte · notte ${en==null?"—":f2(en)}</small></div><div class="eval">${eff(es)}<small>${f2(ds)} Dk</small></div><span class="ego">›</span></div>`}).join("");
   const all=[];Object.entries(EFF.gioc).forEach(([t,a])=>a.forEach(p=>p[1]!=null&&p[3]>=10&&all.push([t,...p])));
   all.sort((a,b)=>b[2]-a[2]);
