@@ -189,3 +189,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Spostamento G League (registrato dall'altro Claude): Brazile sale dalla G League nello slot rookie dei Peacocks, Nate Ament scende in G League (ROSTER, EFF, GLEAGUE, ROOKIE, voce "G League" in TRADES).
 - Aggiunto il costo dell'asta: voce "Asta" in `TRADES` con 14 crediti (registrati come 10 commissione + 4 di lista) → la cassa Peacocks registra −14 da sola; `CREDITI.PEA` 52 → 38. `NBA_ANNO`: Brazile 2026.
 - Pagina Trade: nelle aste i crediti ora si vedono come spesa (−14 cr) invece di +14.
+- Calcolatore Scambi: Trevon Brazile valore 1100 (indicato da Francesco), segnato rookie.
