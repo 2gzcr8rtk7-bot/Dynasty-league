@@ -74,9 +74,12 @@
 .esqtbl{min-width:560px}
 .esqg{min-width:0;width:auto}
 .esqg th.gcol{text-align:center;padding:6px 4px;min-width:52px}.esqg th.gcol b{display:block;font-size:14px;color:#fff}.esqg th.gcol small{display:block;font-size:9.5px;color:var(--muted);font-family:var(--body);font-style:normal;letter-spacing:0;font-weight:500}
-.esqm{margin:0 0 10px}
-.metsw{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:0 0 10px;border:1px solid var(--line)}.metsw button{padding:9px;border:0;background:var(--panel);color:var(--muted);font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}.metsw button[aria-pressed="true"]{background:var(--gold);color:#0a0f1f}
-.advbtn{display:block;margin:0 0 10px auto;padding:6px 12px;border:1px solid rgba(245,180,0,.6);background:rgba(245,180,0,.12);color:var(--gold);font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.esqm{margin:0 0 10px;gap:6px}.esqm .chip{height:30px;padding:0 12px;font-size:13px;letter-spacing:.08em}
+.esqctl{display:grid;gap:6px;margin:0 0 10px}
+.metsw{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line)}
+.metsw button,.advbtn{height:34px;padding:0 8px;border:0;background:var(--panel);color:var(--muted);font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.metsw button[aria-pressed="true"]{background:var(--gold);color:#0a0f1f}
+.advbtn{display:block;width:100%;border:1px solid var(--line)}.advbtn[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
 .esqadv{min-width:760px}.esqadv td{text-align:center!important}.esqadv td.pnm{text-align:left!important}.esqadv th{text-align:center}
 .esqadv .part{opacity:.5}.esqadv .ev{font-size:14px}
 .trd,.dl{font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;white-space:nowrap}
@@ -1340,8 +1343,7 @@ function vEffSquadra(){
   <div class="esqhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 60%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">${badge(t)}<div class="esqt"><small>${c.name}</small><h3>${c.nick}</h3></div></div>
   <div class="esqk"><div><small>Eff. stagionale</small>${eff(s[4])}</div><div><small>Notte · ${s[1]} in campo</small>${eff(s[3])}</div><div><small>Posizione lega</small><b>${pos}ª</b></div></div>
   ${H(c.nick,`<em>Agg. ${EFF.agg}</em>`)}
-  <div class="metsw"><button data-esqmet="eff" aria-pressed="${esqMet==="eff"}">Efficienza</button><button data-esqmet="pdk" aria-pressed="${esqMet==="pdk"}">PDK</button></div>
-  <button class="advbtn" data-esqadv="1">${esqAdv?"‹ Partita per partita":"Statistiche avanzate ›"}</button>
+  <div class="esqctl"><div class="metsw"><button data-esqmet="eff" aria-pressed="${esqMet==="eff"}">Efficienza</button><button data-esqmet="pdk" aria-pressed="${esqMet==="pdk"}">PDK</button></div><button class="advbtn" data-esqadv="1" aria-pressed="${esqAdv}">${esqAdv?"‹ Partita per partita":"Statistiche avanzate"}</button></div>
   ${esqAdv?advTable(t,ps,nba):`${mchips}<div class="tbl-wrap esqwrap"><table class="ptbl esqtbl esqg"><thead><tr><th>Giocatore</th>${cols}</tr></thead><tbody>${rows}</tbody></table></div>`}
   <p class="note">Filtra per mese con i bottoni sopra la tabella (si apre sul mese in corso). In "Stagione" ogni colonna è una partita del giocatore in ordine: G1 la sua prima, G2 la seconda e così via; nei mesi le colonne sono le partite di quel mese (1ª, 2ª…) e nella casella resta il numero stagionale (G7 ecc.). Sotto: data e avversario. Chi ha giocato meno partite ha le ultime caselle vuote finché il report non aggiunge la gara. Scorri a destra per le partite successive; giocatori in ordine di efficienza media.</p>
   <p class="note"><span class="ev g"><i></i>sopra 1,10</span> &nbsp; <span class="ev y"><i></i>0,80–1,10</span> &nbsp; <span class="ev r"><i></i>sotto 0,80</span></p>`;
