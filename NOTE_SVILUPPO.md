@@ -206,3 +206,6 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Fix: i sottotitoli delle intestazioni di sezione (h2 em) ora si accorciano con "…" invece di allargare la pagina su telefono (Home, Efficienza, Infortuni, Sfida della notte).
 - Filtro mesi: sempre tutti i mesi della regular season (Ottobre → Aprile), selezionabili anche se vuoti (messaggio "nessuna partita ancora"); il primo bottone si chiama "Stagione 3". All'apertura si sceglie il mese più recente con dati.
 - Infortuni: per le malattie che colpiscono tutto il corpo (malattia, POTS, influenza, virus, febbre…) il manichino è colorato per intero nel colore dello stato (es. Porziņģis tutto rosso).
+
+## 25/10/2026 (23) — Calcolatore Scambi a 3 squadre
+- Nuova scheda "3 squadre" (`VT.tab="calc3"`, stato `V3`, `v3Res`, `v3Card`, `v3Act`). Ogni pezzo (giocatore, pick, crediti) ha chi lo dà e chi lo riceve (selettore "→", default squadra successiva). Saldo squadra = punti ricevuti − punti dati; barra con zero al centro (verde a destra = guadagna, rosso a sinistra = perde). Squilibrio = saldo massimo ÷ volume massimo scambiato da una squadra (soglie 10%/25%); suggerisce i crediti che il più avvantaggiato dovrebbe dare al più penalizzato. La scheda a 2 squadre è invariata.

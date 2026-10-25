@@ -851,6 +851,17 @@ nav button{font-size:15px;letter-spacing:.04em}
 .hsh{position:absolute;right:6px;top:6px;margin:0!important;z-index:2;background:rgba(0,0,0,.28)!important;border-color:rgba(255,255,255,.35)!important}
 .cupshare{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:12px 0 4px;padding:11px;border:1px solid #ffe27a;background:linear-gradient(180deg,#ffe27a,#f5b400);color:#1a1203;font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase;letter-spacing:.04em;cursor:pointer}.cupshare svg{width:18px;height:18px}
 .cupm{width:26px;height:26px;display:grid;place-items:center;border-radius:50%;font-family:var(--display);font-weight:800;font-size:14px;color:#0a0f1f;flex:none}.cupm.m0{background:#f5b400}.cupm.m1{background:#c0c7d4}.cupm.m2{background:#cd7f32}
+.vttabs{grid-template-columns:repeat(3,1fr)}
+.v3h{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-family:var(--display);font-style:italic;font-weight:800}
+.v3r{display:grid;grid-template-columns:32px 1fr 62px;align-items:center;gap:8px;margin:9px 0}
+.v3n{min-width:0}.v3n b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;text-transform:uppercase}.v3n small{display:block;font-size:11px;color:var(--muted)}
+.v3b{position:relative;height:10px;background:#1d2850;margin-top:4px}.v3b i{position:absolute;top:0;bottom:0}.v3b i.p{left:50%;background:#4ade80}.v3b i.n{right:50%;background:#f87171}.v3b em{position:absolute;left:50%;top:-3px;bottom:-3px;width:2px;background:#fff;transform:translateX(-1px)}
+.v3v{text-align:right;font-family:var(--display);font-style:italic;font-weight:800;font-size:20px}.v3v.g{color:#4ade80}.v3v.r{color:#f87171}.v3v.y{color:#fbbf24}
+.v3items{display:grid;gap:5px;padding:10px;min-height:44px}.v3items em{color:var(--muted);font-size:13px;font-style:normal}
+.v3it{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid var(--line);padding:4px 6px;font-size:13px}
+.v3it>span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
+.v3d{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--muted)}.v3d select{background:#0b1224;color:#fff;border:1px solid var(--line);font-size:12px;padding:3px 2px}
+.v3it button{border:0;background:none;color:var(--muted);cursor:pointer;font-size:13px}
 .vtrook{font-style:normal;font-size:10px;background:var(--gold);color:#0a0f1f;padding:0 4px;margin-left:4px;vertical-align:middle}
 /* Trade speciali */
 .splg{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:-4px 0 14px;font-family:var(--display);font-weight:700;font-size:12px;color:#cfd6ea}
@@ -1478,13 +1489,61 @@ function vtCard(k){
     <div class="vtpk"><span>Pick</span>${[1,2,3,4,5].map(p=>`<button data-vt="pk" data-k="${k}" data-p="${p}">${p}<small>${PICK_CR[p]}cr</small></button>`).join("")}</div>
     <div class="vtros">${ros.map(p=>`<button class="vtp ${sel.has(p.n)?"on":""}" data-vt="pl" data-k="${k}" data-n="${p.n.replace(/"/g,"&quot;")}"><i class="rc ${p.r}"></i><span>${p.n}</span><b>${p.v??"—"}</b></button>`).join("")}</div>
   </div>`}
+/* ===== Scambio a 3 squadre =====
+   Ogni pezzo (giocatore, pick, crediti) ha chi lo dà (k) e chi lo riceve (to). Saldo squadra = riceve − dà (punti trade). */
+const V3={t:["DUC","PEA","DOL"],it:[]};
+const v3Pts=x=>x.ty==="pl"?vtPts(valOf(x.n)??VAL_FALLBACK):x.ty==="pk"?PICK_CR[x.p]*VAL_CR:(+x.v||0)*VAL_CR;
+const v3Lab=x=>x.ty==="pl"?x.n:x.ty==="pk"?`Pick ${x.p} · ${PICK_CR[x.p]} cr`:`${x.v} crediti`;
+function v3Res(){
+  const T=V3.t,S=T.map((t,k)=>{const R=V3.it.filter(x=>x.to===k).reduce((a,x)=>a+v3Pts(x),0),G=V3.it.filter(x=>x.k===k).reduce((a,x)=>a+v3Pts(x),0);return{t,k,R,G,s:R-G}});
+  if(!V3.it.length)return `<div class="vtres empty">Aggiungi giocatori, crediti o pick e scegli a chi va ogni pezzo.</div>`;
+  const mx=Math.max(1,...S.map(x=>Math.abs(x.s))),base=Math.max(1,...S.map(x=>Math.max(x.R,x.G))),d=Math.max(...S.map(x=>Math.abs(x.s)))/base;
+  const w=S.slice().sort((a,b)=>b.s-a.s)[0],l=S.slice().sort((a,b)=>a.s-b.s)[0];
+  const [lab,cls]=d<.10?["Equilibrata","ok"]:d<.25?[`Leggermente a favore dei ${TEAMS[w.t].nick}`,"mid"]:[`Sbilanciata a favore dei ${TEAMS[w.t].nick}`,"bad"];
+  const cr=Math.round(Math.min(w.s,-l.s)/VAL_CR/5)*5;
+  const col=x=>Math.abs(x.s)/base<.10?"y":x.s>0?"g":"r";
+  return `<div class="vtres ${cls}"><div class="v3h">Saldo di ogni squadra (riceve − dà)</div>
+   ${S.map(x=>`<div class="v3r">${drLg(x.t,"m")}<div class="v3n"><b>${TEAMS[x.t].nick}</b><small>riceve ${Math.round(x.R)} · dà ${Math.round(x.G)}</small><div class="v3b"><i class="${x.s>=0?"p":"n"}" style="width:${Math.abs(x.s)/mx*50}%"></i><em></em></div></div><span class="v3v ${col(x)}">${x.s>=0?"+":"−"}${Math.abs(Math.round(x.s))}</span></div>`).join("")}
+   <div class="vtver"><b>${lab}</b><span>Squilibrio massimo ${Math.round(d*100)}%</span></div>
+   ${d>=.10&&cr>0?`<p class="vtsug">Per pareggiare: i <b>${TEAMS[w.t].nick}</b> dovrebbero dare circa <b>${cr} crediti</b> ai <b>${TEAMS[l.t].nick}</b>.</p>`:""}</div>`}
+function v3Card(k){
+  const t=V3.t[k],c=TEAMS[t],mine=V3.it.map((x,i)=>({...x,i})).filter(x=>x.k===k);
+  const opts=Object.keys(TEAMS).map(x=>`<option value="${x}" ${x===t?"selected":""}>${TEAMS[x].name}</option>`).join("");
+  const dest=x=>`<label class="v3d">→ ${drLg(V3.t[x.to],"s")}<select data-v3to="${x.i}">${V3.t.map((tt,j)=>j===k?"":`<option value="${j}" ${j===x.to?"selected":""}>${TEAMS[tt].nick}</option>`).join("")}</select></label>`;
+  const items=mine.map(x=>`<div class="v3it"><span>${v3Lab(x)}</span>${dest(x)}<button data-v3="rm" data-i="${x.i}" aria-label="Togli">✕</button></div>`).join("");
+  const sel=new Set(mine.filter(x=>x.ty==="pl").map(x=>x.n));
+  const ros=(ROSTER[t]||[]).map(p=>({n:p[0],r:p[2],v:valOf(p[0])})).sort((a,b)=>(b.v??0)-(a.v??0));
+  return `<div class="vtcard" style="--tc:${c.bg}">
+    <div class="vthd">${wedge(t)}<select data-v3sel="${k}" aria-label="Squadra">${opts}</select><span class="vtgv">dà</span></div>
+    <div class="v3items">${items||`<em>Niente ancora: tocca i giocatori qui sotto</em>`}</div>
+    <div class="vtcr"><span>Crediti</span>${[10,50,100].map(v=>`<button data-v3="cr" data-k="${k}" data-v="${v}">+${v}</button>`).join("")}</div>
+    <div class="vtpk"><span>Pick</span>${[1,2,3,4,5].map(p=>`<button data-v3="pk" data-k="${k}" data-p="${p}">${p}<small>${PICK_CR[p]}cr</small></button>`).join("")}</div>
+    <div class="vtros">${ros.map(p=>`<button class="vtp ${sel.has(p.n)?"on":""}" data-v3="pl" data-k="${k}" data-n="${p.n.replace(/"/g,"&quot;")}"><i class="rc ${p.r}"></i><span>${p.n}</span><b>${p.v??"—"}</b></button>`).join("")}</div>
+  </div>`}
+function v3Act(b){const d=b.dataset,k=+d.k,nx=(k+1)%3;
+  if(d.v3==="pl"){const i=V3.it.findIndex(x=>x.ty==="pl"&&x.n===d.n&&x.k===k);if(i>=0)V3.it.splice(i,1);else V3.it.push({k,to:nx,ty:"pl",n:d.n})}
+  else if(d.v3==="pk")V3.it.push({k,to:nx,ty:"pk",p:+d.p});
+  else if(d.v3==="cr"){const e=V3.it.find(x=>x.ty==="cr"&&x.k===k&&x.to===nx);if(e)e.v+=+d.v;else V3.it.push({k,to:nx,ty:"cr",v:+d.v})}
+  else if(d.v3==="rm")V3.it.splice(+d.i,1);
+  else if(d.v3==="reset")V3.it=[];
+  const y=window.scrollY;render();window.scrollTo(0,y)}
+document.getElementById("main").addEventListener("click",e=>{if(cur!=="valtrade")return;const el=e.target.closest("[data-v3]");if(!el)return;e.preventDefault();v3Act(el)});
+document.getElementById("main").addEventListener("change",e=>{if(cur!=="valtrade")return;const d=e.target.dataset;
+  if(d.v3to!==undefined){V3.it[+d.v3to].to=+e.target.value}
+  else if(d.v3sel!==undefined){const k=+d.v3sel,v=e.target.value,o=V3.t.indexOf(v);if(o>=0&&o!==k){V3.t[o]=V3.t[k];V3.it=V3.it.filter(x=>x.k!==o)}V3.t[k]=v;V3.it=V3.it.filter(x=>x.k!==k)}
+  else return;const y=window.scrollY;render();window.scrollTo(0,y)});
 function vValTrade(){
-  const tabs=`<div class="ctabs vttabs"><button data-vt="tab" data-k="calc" aria-pressed="${VT.tab==="calc"}">Calcolatore</button><button data-vt="tab" data-k="list" aria-pressed="${VT.tab==="list"}">Valori lega</button></div>`;
+  const tabs=`<div class="ctabs vttabs"><button data-vt="tab" data-k="calc" aria-pressed="${VT.tab==="calc"}">2 squadre</button><button data-vt="tab" data-k="calc3" aria-pressed="${VT.tab==="calc3"}">3 squadre</button><button data-vt="tab" data-k="list" aria-pressed="${VT.tab==="list"}">Valori lega</button></div>`;
   if(VT.tab==="list"){
     const all=Object.entries(ROSTER).flatMap(([t,a])=>a.map(p=>({t,n:p[0],v:valOf(p[0]),rk:!!(VALMAP[vnz(p[0])]||[])[2]}))).sort((a,b)=>(b.v??0)-(a.v??0));
     return `${H("Calcolatore scambi",`<em>${VALORI_AGG.slice(0,5)}</em>`)}${tabs}
     <div class="tbl-wrap vtlist">${all.map((x,i)=>`<div class="vtrow">${wedge(x.t)}<span class="vtrk">${x.v?i+1:"–"}</span><span class="vtnm">${x.n}${x.rk?` <i class="vtrook">R</i>`:""}<small>${TEAMS[x.t].nick}</small></span><b>${x.v??"n.d."}</b></div>`).join("")}</div>
     <p class="note">Valori dynasty della classifica Court Consensus (voti della community), aggiornati al ${VALORI_AGG}. "n.d." = giocatore non ancora nella lista: nel calcolatore vale ${VAL_FALLBACK}. R = rookie.</p>`}
+  if(VT.tab==="calc3")return `${H("Calcolatore scambi",`<em>${VALORI_AGG.slice(0,5)}</em>`)}${tabs}
+  <div id="vtRes">${v3Res()}</div>
+  <div class="vtgrid">${v3Card(0)}${v3Card(1)}${v3Card(2)}</div>
+  <button class="sh vtreset" data-v3="reset"><span>Azzera</span></button>
+  <p class="note">Scambio a 3: per ogni giocatore, pick o credito scegli con "→" quale squadra lo riceve (di default la successiva). Saldo = punti trade ricevuti − punti trade dati; la barra parte dal centro: verso destra in verde chi ci guadagna, verso sinistra in rosso chi ci perde. Squilibrio = saldo più grande ÷ volume più grande scambiato da una squadra: sotto 10% equilibrata, oltre 25% sbilanciata. Stessi valori del calcolatore a 2.</p>`;
   return `${H("Calcolatore scambi",`<em>${VALORI_AGG.slice(0,5)}</em>`)}${tabs}
   <div id="vtRes">${vtResHTML()}</div>
   <div class="vtgrid">${vtCard(0)}${vtCard(1)}</div>
