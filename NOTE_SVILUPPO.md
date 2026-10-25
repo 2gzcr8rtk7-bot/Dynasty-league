@@ -105,3 +105,6 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 ## 25/10/2026 (8) — Ducks: solo scritta nei loghi piccoli
 - Dove il logo è piccolo (Classifica, Risultati, scelta squadra, Trade, Trade speciali, Efficienza, Sala Trofei, Giochi, Infortuni) i Ducks usano la sola scritta (`LOGO2.DUC`, la stessa del campo).
 - Il logo intero resta nella casella Home (`.hlg`) e nei banner squadra (`.hlogo`, che usano `LOGO` direttamente). Regola generata nello `<style>` creato da script vicino a `LOGO2`.
+
+## 25/10/2026 (9) — Spiders azzurro chiaro
+- SPI: bg `#dcebf7` (azzurro chiarissimo), fg `#0f1f3d`, trim `#1e3a8a` (blu scuro, si vede anche nei bordi della maglia, che resta bianca).
