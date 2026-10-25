@@ -148,6 +148,15 @@ nav button[aria-expanded="true"] .car{transform:rotate(180deg)}
 .gtab td.gd small{display:block;font-style:normal;font-family:var(--body);font-weight:500;font-size:11.5px;color:var(--muted);white-space:nowrap}
 .gtab td.gdk{color:#fff;font-weight:800}.gtab td.gpj{color:var(--gold)}
 .gtab .ev{font-size:16px;gap:4px}.gtab .ev i{width:7px;height:7px}
+.gmese{margin-bottom:8px;border:1px solid var(--line);background:linear-gradient(180deg,var(--panel2),var(--panel))}
+.gmese>summary{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;list-style:none}
+.gmese>summary::-webkit-details-marker{display:none}
+.gmese>summary::after{content:"▾";margin-left:6px;color:var(--muted);transition:transform .15s}
+.gmese:not([open])>summary::after{transform:rotate(-90deg)}
+.gmn{font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;color:#fff;border-left:4px solid var(--gold);padding-left:8px}
+.gmi{margin-left:auto;font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.gmese summary .ev{font-size:17px}
+.gmese .tbl-wrap{border:0;border-top:1px solid var(--line);box-shadow:none}
 </style>
 
 
@@ -919,7 +928,7 @@ nav button>span{white-space:nowrap}
   </div>
 </header>
 <main class="wrap" id="main"></main>
-<footer class="wrap upd">Ultimo aggiornamento: 25/10/2026 · 17:58</footer>
+<footer class="wrap upd">Ultimo aggiornamento: 25/10/2026 · 18:00</footer>
 
 <script src="dreamers-data.js"></script>
 <script>
@@ -1499,7 +1508,12 @@ function vGiocatore(){
     ${stat("Nella lega",rL?rL+"°":"—","su "+all.length)}
   </div>`}
   ${(PARTITE[p[0]]||[]).length?`${H("Partita per partita",`<em>${PARTITE[p[0]].length} ${PARTITE[p[0]].length===1?"gara":"gare"}</em>`)}
-  <div class="tbl-wrap"><table class="gtab"><thead><tr><th>Data</th><th>Min</th><th>Dunkest</th><th>Eff.</th><th>Proj 36'</th></tr></thead><tbody>${PARTITE[p[0]].slice().reverse().map(g=>`<tr><td class="gd"><b>${g[0]} <i>vs ${g[1]}</i></b>${g[5]!=null?`<small>${g[5]} pt · ${g[6]} rb · ${g[7]} as</small>`:""}</td><td>${n1(g[2])}</td><td class="gdk">${f2(g[3])}</td><td>${eff(g[4])}</td><td class="gpj">${n1(g[4]*36)}</td></tr>`).join("")}</tbody></table></div>`:""}
+  ${(()=>{const MESI=["","Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"],ord=m=>m>=8?m:m+12;
+    const by={};PARTITE[p[0]].forEach(g=>{const m=+g[0].slice(3);(by[m]=by[m]||[]).push(g)});
+    const ms=Object.keys(by).map(Number).sort((x,y)=>ord(y)-ord(x));
+    return ms.map((m,i)=>{const l=by[m],dk=l.reduce((a,g)=>a+g[3],0),mn=l.reduce((a,g)=>a+g[2],0),av=mn?dk/mn:null;
+      return `<details class="gmese"${i===0?" open":""}><summary><span class="gmn">${MESI[m]}</span><span class="gmi">${l.length} ${l.length===1?"gara":"gare"} · media</span>${eff(av)}</summary>
+      <div class="tbl-wrap"><table class="gtab"><thead><tr><th>Data</th><th>Min</th><th>Dunkest</th><th>Eff.</th><th>Proj 36'</th></tr></thead><tbody>${l.slice().reverse().map(g=>`<tr><td class="gd"><b>${g[0]} <i>vs ${g[1]}</i></b>${g[5]!=null?`<small>${g[5]} pt · ${g[6]} rb · ${g[7]} as</small>`:""}</td><td>${n1(g[2])}</td><td class="gdk">${f2(g[3])}</td><td>${eff(g[4])}</td><td class="gpj">${n1(g[4]*36)}</td></tr>`).join("")}</tbody></table></div></details>`}).join("")})()}`:""}
   <p class="note">Dati dal report Dunkest giornaliero, senza capitano, vittoria e quintetto. Pallino: verde sopra 1,10 · giallo 0,80–1,10 · rosso sotto 0,80.</p>`;
 }
 
