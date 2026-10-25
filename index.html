@@ -698,6 +698,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .cuproom .trow{background:rgba(20,4,8,.55);border-color:rgba(255,255,255,.08)}
 .cuproom .ch4{color:#ffd0d6;border-left-color:#ffd84d}
 .cuproom .cempty{background:rgba(0,0,0,.25);color:#ffd0d6}
+.cupshare{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:12px 0 4px;padding:11px;border:1px solid #ffe27a;background:linear-gradient(180deg,#ffe27a,#f5b400);color:#1a1203;font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase;letter-spacing:.04em;cursor:pointer}.cupshare svg{width:18px;height:18px}
 .cupm{width:26px;height:26px;display:grid;place-items:center;border-radius:50%;font-family:var(--display);font-weight:800;font-size:14px;color:#0a0f1f;flex:none}.cupm.m0{background:#f5b400}.cupm.m1{background:#c0c7d4}.cupm.m2{background:#cd7f32}
 .vtrook{font-style:normal;font-size:10px;background:var(--gold);color:#0a0f1f;padding:0 4px;margin-left:4px;vertical-align:middle}
 /* Trade speciali */
@@ -1301,6 +1302,40 @@ const NBA_ANNO={
  /* Draft 2025 */ "Cooper Flagg":2025,"Dylan Harper":2025,"VJ Edgecombe":2025,"Kon Knueppel":2025,"Ace Bailey":2025,"Jeremiah Fears":2025,"Egor Dëmin":2025,"Collin Murray-Boyles":2025,"Khaman Maluach":2025,"Cedric Coward":2025,"Derik Queen":2025,"Danny Wolf":2025,"Maxime Raynaud":2025,
  /* Draft 2024 */ "Alex Sarr":2024,"Stephon Castle":2024,"Donovan Clingan":2024,"Zach Edey":2024,"Matas Buzelis":2024,"Kel'el Ware":2024,"Kyshawn George":2024,"Oso Ighodaro":2024};
 const NBA_STASH={}; /* giocatori draftati ma ancora fuori NBA: nome -> nota */
+/* Condividi la classifica Efficienza Cup corrente (anno + ruolo) come immagine */
+async function shareCup(btn){
+  const L=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>{const d=NBA_ANNO[p[0]];if(d&&NBA_STAG-d===cupYear&&p[2]===cupRole){const e=(EFF.gioc[t]||[]).find(x=>x[0]===p[0]);if(e&&e[1]!=null)L.push({t,n:p[0],e:e[1],g:e[2]||0})}}));
+  L.sort((a,b)=>b.e-a.e);
+  try{await document.fonts.load('800 italic 40px "Barlow Condensed"')}catch(e){}
+  const W=1080,RH=118,top=420,Hh=Math.max(1350,top+Math.max(1,L.length)*RH+170),cv=document.createElement("canvas");cv.width=W;cv.height=Hh;const X=cv.getContext("2d");
+  const F=(w,s)=>`italic ${w} ${s}px "Barlow Condensed","Arial Narrow",Arial,sans-serif`;
+  const fit=(t,w,s,max)=>{let z=s;X.font=F(w,z);while(X.measureText(t).width>max&&z>14){z-=2;X.font=F(w,z)}};
+  const bg=X.createRadialGradient(W/2,0,50,W/2,0,Hh);bg.addColorStop(0,"#c0132f");bg.addColorStop(.45,"#6e0a1b");bg.addColorStop(1,"#1e040b");X.fillStyle=bg;X.fillRect(0,0,W,Hh);
+  X.save();X.globalAlpha=.05;X.fillStyle="#fff";for(let i=-Hh;i<W;i+=64){X.beginPath();X.moveTo(i,0);X.lineTo(i+32,0);X.lineTo(i+32+Hh*.47,Hh);X.lineTo(i+Hh*.47,Hh);X.fill()}X.restore();
+  X.fillStyle="#ffd84d";X.fillRect(0,0,W,14);
+  const lg=await ldImg(document.querySelector(".lglogo")?.src||"");if(lg)X.drawImage(lg,60,44,100,100);
+  X.textAlign="left";X.fillStyle="#fff";X.font=F(800,58);X.fillText("DYNASTY",lg?180:60,96);X.fillStyle="#f5b400";X.fillText("LEAGUE",(lg?180:60)+X.measureText("DYNASTY ").width,96);
+  X.fillStyle="#ffb3bf";X.font=F(700,32);X.fillText("STAGIONE "+STAGIONE_CORRENTE+" · DATI AL "+EFF.agg,lg?180:60,138);
+  X.textAlign="center";X.fillStyle="#ffd84d";fit("🏆 EFFICIENZA CUP",800,104,W-120);X.fillText("🏆 EFFICIENZA CUP",W/2,268);
+  const sub={1:"ROOKIE",2:"2° ANNO NBA",3:"3° ANNO NBA"}[cupYear]+" · "+CUP_R[cupRole].toUpperCase();
+  X.fillStyle="#fff";fit(sub,800,54,W-120);X.fillText(sub,W/2,345);
+  const MC=["#f5b400","#c0c7d4","#cd7f32"];
+  for(let i=0;i<L.length;i++){const x=L[i],y=top+i*RH,c=TEAMS[x.t];
+    X.fillStyle=i<3?"rgba(255,216,77,.10)":"rgba(0,0,0,.32)";X.fillRect(60,y,W-120,RH-12);
+    if(i<3){X.fillStyle=MC[i];X.beginPath();X.arc(115,y+53,32,0,7);X.fill();X.fillStyle="#1a1203"}else X.fillStyle="#ffb3bf";
+    X.textAlign="center";X.font=F(800,40);X.fillText(i+1,115,y+67);
+    X.fillStyle=c.bg;X.fillRect(165,y,106,RH-12);
+    const im=await ldImg(LOGO[x.t]);if(im){const s=96,r=Math.min(s/im.width,s/im.height);X.drawImage(im,218-im.width*r/2,y+53-im.height*r/2,im.width*r,im.height*r)}
+    X.textAlign="left";X.fillStyle="#fff";const nm=x.n.toUpperCase();fit(nm,800,50,W-295-260);X.fillText(nm,295,y+56);
+    X.fillStyle="#ffb3bf";X.font=F(700,30);X.fillText(c.nick.toUpperCase()+" · "+x.g+(x.g===1?" PARTITA":" PARTITE"),295,y+94);
+    X.textAlign="right";X.fillStyle=x.e>1.1?"#4ade80":x.e>=.8?"#ffd84d":"#ff8a8a";X.font=F(800,66);X.fillText(f2(x.e),W-90,y+76)}
+  if(!L.length){X.textAlign="center";X.fillStyle="#ffb3bf";X.font=F(700,44);X.fillText("Nessuno ha ancora giocato",W/2,top+80)}
+  X.textAlign="center";X.fillStyle="#ffb3bf";const ft="Efficienza stagionale = Dunkest per minuto · giocatori dei roster della lega";fit(ft,700,30,W-120);X.fillText(ft,W/2,Hh-60);
+  const fn=`efficienza-cup-anno${cupYear}-${CUP_R[cupRole].toLowerCase()}.png`,txt=`🏆 Efficienza Cup · ${sub.toLowerCase()}${L[0]?`: comanda ${L[0].n} (${TEAMS[L[0].t].nick}) con ${f2(L[0].e)}`:""}`;
+  cv.toBlob(bl=>{const file=new File([bl],fn,{type:"image/png"});
+    if(navigator.canShare&&navigator.canShare({files:[file]}))navigator.share({files:[file],text:txt}).catch(()=>{});
+    else{const a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=fn;document.body.appendChild(a);a.click();a.remove();if(btn){const s=btn.querySelector("span");if(s)s.textContent="Immagine scaricata ✓"}}},"image/png");
+}
 let cupYear=1,cupRole="G";
 const CUP_R={G:"Guardie",F:"Ali",C:"Centri"};
 function vEffCup(){
@@ -1318,13 +1353,15 @@ function vEffCup(){
    <div class="cupsel"><span>Anno NBA</span><div>${[1,2,3].map(y=>`<button data-cupy="${y}" aria-pressed="${cupYear===y}">Anno ${y}</button>`).join("")}</div></div>
    <div class="cupsel"><span>Ruolo</span><div>${["G","F","C"].map(r=>`<button data-cupr="${r}" aria-pressed="${cupRole===r}">${CUP_R[r]}<small>${cnt(cupYear,r)}</small></button>`).join("")}</div></div>
    ${on.length?`<div class="eboard">${on.map(row).join("")}</div>`:`<div class="cempty">${L.length?"Nessuno ha ancora giocato.":"Nessun giocatore in questa categoria."}</div>`}
+   <button class="cupshare" data-cupshare="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Condividi classifica</span></button>
    ${off.length?`<h4 class="ch4">Senza partite</h4><div class="eboard">${off.map(x=>`<div class="trow cup"><span class="trk">–</span>${wedge(x.t)}<span class="tnm"><b>${x.n}</b><small>${TEAMS[x.t].nick}${NBA_STASH[x.n]?" · "+NBA_STASH[x.n]:""}</small></span>${eff(null)}</div>`).join("")}</div>`:""}
   </div>
   <p class="note">9 classifiche: anno NBA (1°, 2°, 3°) × ruolo (guardie, ali, centri), solo giocatori dei roster della lega. Ruolo come nel roster. Efficienza stagionale = Dunkest ÷ minuti, si aggiorna da sola a ogni report (dati al ${EFF.agg}).</p>`;
 }
 document.getElementById("main").addEventListener("click",e=>{
   const go=e.target.closest("[data-cupgo]");if(go&&cur==="efficienza"){e.preventDefault();cur="effcup";render();window.scrollTo(0,0);return}
-  if(cur!=="effcup")return;const b=e.target.closest("[data-cupy],[data-cupr],[data-cupback]");if(!b)return;e.preventDefault();
+  if(cur!=="effcup")return;const b=e.target.closest("[data-cupy],[data-cupr],[data-cupback],[data-cupshare]");if(!b)return;e.preventDefault();
+  if(b.dataset.cupshare){shareCup(b);return}
   if(b.dataset.cupback){cur="efficienza";render();window.scrollTo(0,0);return}
   if(b.dataset.cupy)cupYear=+b.dataset.cupy;if(b.dataset.cupr)cupRole=b.dataset.cupr;render()});
 

@@ -153,3 +153,4 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 
 ## Regola generale: tutto collegato ai dati
 Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLARI`, `TRADES`, `SPECIALI`) al momento del disegno, senza copiare numeri a mano. Così basta aggiornare quegli oggetti con il report e si aggiornano: classifiche, efficienza, Top/Flop, panchina, Efficienza Cup, Sfida della notte, giochi, calcolatore (roster), cassa.
+- Bottone "Condividi classifica" nella sala: `shareCup` crea un PNG 1080 di larghezza (sfondo rosso, titolo, anno·ruolo, classifica con medaglie, loghi ed efficienza) e apre la condivisione del telefono (o lo scarica). Usa i dati del momento.
