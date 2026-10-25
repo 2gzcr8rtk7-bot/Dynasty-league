@@ -191,3 +191,6 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Pagina Trade: nelle aste i crediti ora si vedono come spesa (−14 cr) invece di +14.
 - Calcolatore Scambi: Trevon Brazile valore 1100 (indicato da Francesco), segnato rookie.
 - G League: G-Peacocks con il logo "Seattle Peacocks" (PNG con sfondo trasparente) e sfondo giallo `#fedd04`.
+
+## 25/10/2026 (21) — Condividi cassa
+- Pagina Cassa: bottone "Condividi cassa" (`data-cshare`, `shareCassa`). Crea un PNG con testata nel colore della squadra (logo, città, nome), crediti disponibili con crediti/debiti portafoglio e post draft, bilancio per stagione, registro completo entrate/uscite e liste "Deve pagare"/"Deve ricevere". Legge `movimenti(t)`, `DEBITI`, `CREDITI` al momento.

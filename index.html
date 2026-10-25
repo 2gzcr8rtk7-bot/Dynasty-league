@@ -796,6 +796,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .cuproom .trow{background:rgba(20,4,8,.55);border-color:rgba(255,255,255,.08)}
 .cuproom .ch4{color:#ffd0d6;border-left-color:#ffd84d}
 .cuproom .cempty{background:rgba(0,0,0,.25);color:#ffd0d6}
+.cshr{margin:0 0 12px!important;padding:8px!important;font-size:15px!important}
 .cupshare{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:12px 0 4px;padding:11px;border:1px solid #ffe27a;background:linear-gradient(180deg,#ffe27a,#f5b400);color:#1a1203;font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase;letter-spacing:.04em;cursor:pointer}.cupshare svg{width:18px;height:18px}
 .cupm{width:26px;height:26px;display:grid;place-items:center;border-radius:50%;font-family:var(--display);font-weight:800;font-size:14px;color:#0a0f1f;flex:none}.cupm.m0{background:#f5b400}.cupm.m1{background:#c0c7d4}.cupm.m2{background:#cd7f32}
 .vtrook{font-style:normal;font-size:10px;background:var(--gold);color:#0a0f1f;padding:0 4px;margin-left:4px;vertical-align:middle}
@@ -1597,6 +1598,69 @@ function cupSvg(pos,id){
   <path d="M11.4 17h3.2l.6 5h-4.4z" fill="url(#${id})"/><rect x="7.5" y="22" width="11" height="3" rx=".6" fill="url(#${id})"/><rect x="6" y="25" width="14" height="3.4" rx=".8" fill="#1b2233" stroke="url(#${id})" stroke-width=".8"/>
   <path d="M9 5.2c.2 3.6 1.2 6 3 7.4" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1" stroke-linecap="round"/></svg>`;
 }
+/* Condividi la cassa di una squadra come immagine: logo, nome, crediti, bilancio, registro e debiti/crediti */
+async function shareCassa(t,btn){
+  const c=TEAMS[t],cr=CREDITI[t]??0,mv=movimenti(t),D=DEBITI.filter(x=>!x.saldato),pay=D.filter(x=>x.da===t),get=D.filter(x=>x.a===t);
+  const TP={portafoglio:"Portafoglio",post:"Post Draft"};
+  const stag=[...new Set([STAGIONE_CORRENTE,...mv.map(x=>x.s)])].sort().reverse();
+  const bil=stag.map(s=>{const l=mv.filter(x=>x.s===s);const e=l.filter(x=>x.v>0).reduce((a,x)=>a+x.v,0),u=l.filter(x=>x.v<0).reduce((a,x)=>a-x.v,0);return{s,e,u,n:e-u}});
+  const reg=mv.slice().reverse();
+  try{await document.fonts.load('800 italic 40px "Barlow Condensed"')}catch(e){}
+  const W=1080,F=(w,s)=>`italic ${w} ${s}px "Barlow Condensed","Arial Narrow",Arial,sans-serif`,FB=(w,s)=>`${w} ${s}px "Barlow","Arial",sans-serif`;
+  const meas=document.createElement("canvas").getContext("2d");
+  const wrap=(txt,font,max)=>{meas.font=font;const w=txt.split(" ");const out=[];let l="";for(const x of w){const tt=l?l+" "+x:x;if(meas.measureText(tt).width>max&&l){out.push(l);l=x}else l=tt}if(l)out.push(l);return out};
+  const regL=reg.map(x=>({x,lines:wrap(x.c,FB(500,30),640)}));
+  const Hh=560+170+60+bil.length*64+90+(regL.length?regL.reduce((a,r)=>a+30+r.lines.length*38,0):70)+90+Math.max(1,pay.length)*62+80+Math.max(1,get.length)*62+110;
+  const cv=document.createElement("canvas");cv.width=W;cv.height=Hh;const X=cv.getContext("2d");
+  const bg=X.createLinearGradient(0,0,0,Hh);bg.addColorStop(0,"#16275a");bg.addColorStop(1,"#050915");X.fillStyle=bg;X.fillRect(0,0,W,Hh);
+  // testata squadra
+  X.fillStyle=c.bg;X.fillRect(0,0,W,380);const hg=X.createLinearGradient(0,0,W,0);hg.addColorStop(0,"rgba(255,255,255,.10)");hg.addColorStop(1,"rgba(0,0,0,.22)");X.fillStyle=hg;X.fillRect(0,0,W,380);
+  X.fillStyle=c.trim||"#000";X.fillRect(0,380,W,10);
+  const im=await ldImg(LOGO[t]);if(im){const s=300,r=Math.min(s/im.width,s/im.height);X.drawImage(im,60+150-im.width*r/2,40+150-im.height*r/2,im.width*r,im.height*r)}
+  X.textAlign="left";X.fillStyle=c.fg||"#fff";X.font=F(700,40);X.fillText(c.city.toUpperCase(),400,130);
+  X.font=F(800,104);X.fillText(c.nick.toUpperCase(),400,230);
+  X.font=F(800,44);X.fillText("CASSA · STAGIONE "+STAGIONE_CORRENTE,400,300);
+  // riquadro crediti
+  let y=430;X.fillStyle="rgba(255,255,255,.06)";X.fillRect(60,y,W-120,140);
+  X.fillStyle="#4ade80";X.font=F(800,34);X.fillText("CREDITI DISPONIBILI",90,y+50);
+  X.fillStyle="#fff";X.font=F(800,84);X.fillText(cr+" cr",90,y+122);
+  const sum=(a,tp)=>a.filter(x=>x.tipo===tp).reduce((s,x)=>s+x.v,0);
+  const C1=820,C2=W-90,sg=(v,n)=>v?(n?"−":"+")+v:"—";
+  X.textAlign="right";X.font=F(700,26);X.fillStyle="#8e98b8";X.fillText("PORTAFOGLIO",C1,y+42);X.fillText("POST DRAFT",C2,y+42);
+  X.textAlign="left";X.font=F(800,32);X.fillStyle="#4ade80";X.fillText("CREDITI",470,y+88);X.fillStyle="#f87171";X.fillText("DEBITI",470,y+126);
+  X.textAlign="right";X.font=F(800,36);X.fillStyle="#4ade80";X.fillText(sg(sum(get,"portafoglio")),C1,y+88);X.fillText(sg(sum(get,"post")),C2,y+88);
+  X.fillStyle="#f87171";X.fillText(sg(sum(pay,"portafoglio"),1),C1,y+126);X.fillText(sg(sum(pay,"post"),1),C2,y+126);
+  y+=240;
+  const sec=(tit,col)=>{X.textAlign="left";X.fillStyle=col;X.fillRect(60,y-36,10,44);X.fillStyle="#fff";X.font=F(800,44);X.fillText(tit,86,y);y+=34};
+  // bilancio
+  sec("BILANCIO","#f5b400");
+  X.font=F(700,28);X.fillStyle="#8e98b8";X.textAlign="left";X.fillText("STAGIONE",80,y+10);X.textAlign="right";X.fillText("ENTRATE",620,y+10);X.fillText("USCITE",820,y+10);X.fillText("SALDO",W-80,y+10);y+=24;
+  bil.forEach(b=>{y+=46;X.textAlign="left";X.fillStyle="#fff";X.font=F(800,38);X.fillText(b.s,80,y);X.textAlign="right";X.fillStyle="#4ade80";X.fillText(b.e?"+"+b.e:"—",620,y);X.fillStyle="#f87171";X.fillText(b.u?"−"+b.u:"—",820,y);X.fillStyle=b.n>0?"#4ade80":b.n<0?"#f87171":"#fff";X.fillText((b.n>0?"+":b.n<0?"−":"")+Math.abs(b.n),W-80,y);y+=18});
+  y+=80;
+  // registro
+  sec("ENTRATE E USCITE","#22d3ee");
+  if(!regL.length){X.textAlign="left";X.fillStyle="#8e98b8";X.font=FB(500,30);X.fillText("Nessun movimento registrato.",80,y+30);y+=70}
+  regL.forEach(({x,lines})=>{y+=10;X.fillStyle="rgba(255,255,255,.04)";X.fillRect(60,y,W-120,lines.length*38+20);
+    X.textAlign="left";X.fillStyle="#8e98b8";X.font=F(700,26);X.fillText((x.d||"—").slice(0,5),80,y+40);
+    X.fillStyle="#dfe5f5";X.font=FB(500,30);lines.forEach((l,i)=>X.fillText(l,190,y+40+i*38));
+    X.textAlign="right";X.fillStyle=x.v>0?"#4ade80":"#f87171";X.font=F(800,40);X.fillText((x.v>0?"+":"−")+Math.abs(x.v)+" cr",W-80,y+42);
+    y+=lines.length*38+20});
+  y+=80;
+  // debiti e crediti
+  const lst=(tit,col,arr,k)=>{sec(tit,col);if(!arr.length){X.textAlign="left";X.fillStyle="#8e98b8";X.font=FB(500,30);X.fillText(k==="n"?"Nessun debito.":"Nessun credito da ricevere.",80,y+30);y+=62;return}
+    arr.forEach(x=>{const o=k==="n"?x.a:x.da;X.fillStyle="rgba(255,255,255,.04)";X.fillRect(60,y,W-120,52);X.fillStyle=TEAMS[o].bg;X.fillRect(60,y,12,52);
+      X.textAlign="left";X.fillStyle="#fff";X.font=F(800,36);X.fillText((k==="n"?"a ":"da ")+TEAMS[o].nick.toUpperCase(),92,y+38);
+      X.fillStyle="#8e98b8";X.font=F(700,26);X.fillText((TP[x.tipo]||x.tipo)+(x.s?" · "+x.s:""),440,y+36);
+      X.textAlign="right";X.fillStyle=k==="n"?"#f87171":"#4ade80";X.font=F(800,40);X.fillText((k==="n"?"−":"+")+x.v+" cr",W-80,y+40);y+=62})};
+  lst("DEVE PAGARE","#ef4444",pay,"n");y+=80;
+  lst("DEVE RICEVERE","#22c55e",get,"p");
+  X.textAlign="center";X.fillStyle="#5d678a";X.font=F(700,28);X.fillText("DYNASTY LEAGUE · "+new Date().toLocaleDateString("it-IT"),W/2,Hh-40);
+  const fn=`cassa-${c.nick.toLowerCase()}.png`;
+  cv.toBlob(bl=>{const file=new File([bl],fn,{type:"image/png"});
+    if(navigator.canShare&&navigator.canShare({files:[file]}))navigator.share({files:[file],text:`💰 Cassa ${c.name}: ${cr} crediti disponibili`}).catch(()=>{});
+    else{const a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=fn;document.body.appendChild(a);a.click();a.remove();if(btn){const s=btn.querySelector("span");if(s)s.textContent="Immagine scaricata ✓"}}},"image/png");
+}
+document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-cshare]");if(!b||cur!=="cassa")return;e.preventDefault();shareCassa(b.dataset.cshare,b)});
 function cassaDeb(t){
   const open=DEBITI.filter(x=>!x.saldato);
   return {futuri:open.filter(x=>x.a===t).map(x=>({tipo:x.tipo,cr:x.v,con:x.da})),debiti:open.filter(x=>x.da===t).map(x=>({tipo:x.tipo,cr:x.v,con:x.a}))};
@@ -1641,6 +1705,7 @@ function vCassa(){
   <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">
    ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${LOGO[t]}" alt="">`:""}<div><h3>Cassa</h3><p>${c.name}</p></div><div class="hstats"><div class="rec">${cr}<small>CREDITI</small></div></div></div>
   ${cassa(t).replace('class="cassa clink"','class="cassa"').replace(/<div class="cgo">.*?<\/div>/,"")}
+  <button class="cupshare cshr" data-cshare="${t}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Condividi cassa</span></button>
   <div class="ctabs">${tabs.map(([k,l])=>`<button data-ctab="${k}" aria-pressed="${cassaTab===k}">${l}</button>`).join("")}</div>
   ${body}`;
 }
