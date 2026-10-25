@@ -679,6 +679,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .vtrk{width:26px;text-align:right;font-family:var(--display);font-weight:800;color:var(--muted)}
 .vtnm{flex:1;min-width:0;display:grid;font-weight:700}.vtnm small{font-size:11px;color:var(--muted);font-weight:500}
 .vtrow b{font-family:var(--display);font-weight:800;font-size:17px;color:#93c5fd}
+.trow.cup .ev{white-space:nowrap;flex:none}.trow.cup .tnm{min-width:0}.trow.cup .tnm b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cupm{width:26px;height:26px;display:grid;place-items:center;border-radius:50%;font-family:var(--display);font-weight:800;font-size:14px;color:#0a0f1f;flex:none}.cupm.m0{background:#f5b400}.cupm.m1{background:#c0c7d4}.cupm.m2{background:#cd7f32}
 .vtrook{font-style:normal;font-size:10px;background:var(--gold);color:#0a0f1f;padding:0 4px;margin-left:4px;vertical-align:middle}
 /* Trade speciali */
@@ -1289,7 +1290,7 @@ function vEffCup(){
   const on=L.filter(x=>x.e!=null).sort((a,b)=>b.e-a.e),off=L.filter(x=>x.e==null);
   const medal=i=>i<3?`<span class="cupm m${i}">${i+1}</span>`:`<span class="trk">${i+1}</span>`;
   const row=(x,i)=>`<div class="trow cup">${medal(i)}${wedge(x.t)}<span class="tnm"><b>${x.n}</b><small>${TEAMS[x.t].nick} · ${x.g} ${x.g===1?"partita":"partite"}${x.m!=null?` · ${x.m.toLocaleString("it-IT")} min`:""}</small></span>${eff(x.e)}</div>`;
-  const lab={1:"Rookie · Draft 2026",2:"Secondo anno · Draft 2025",3:"Terzo anno · Draft 2024"}[cupYear];
+  const lab={1:"Draft 2026",2:"Draft 2025",3:"Draft 2024"}[cupYear];
   return `${H("Efficienza Cup",`<em>${lab}</em>`)}${tabs}
   ${on.length?`<div class="eboard">${on.map(row).join("")}</div>`:`<div class="cempty">Nessun giocatore con partite giocate.</div>`}
   ${off.length?`<h4 class="ch4">Senza partite</h4><div class="eboard">${off.map(x=>`<div class="trow cup"><span class="trk">–</span>${wedge(x.t)}<span class="tnm"><b>${x.n}</b><small>${TEAMS[x.t].nick}${NBA_STASH[x.n]?" · "+NBA_STASH[x.n]:""}</small></span>${eff(null)}</div>`).join("")}</div>`:""}
