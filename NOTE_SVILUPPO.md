@@ -190,3 +190,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Aggiunto il costo dell'asta: voce "Asta" in `TRADES` con 14 crediti (registrati come 10 commissione + 4 di lista) → la cassa Peacocks registra −14 da sola; `CREDITI.PEA` 52 → 38. `NBA_ANNO`: Brazile 2026.
 - Pagina Trade: nelle aste i crediti ora si vedono come spesa (−14 cr) invece di +14.
 - Calcolatore Scambi: Trevon Brazile valore 1100 (indicato da Francesco), segnato rookie.
+- G League: G-Peacocks con il logo "Seattle Peacocks" (PNG con sfondo trasparente) e sfondo giallo `#fedd04`.
