@@ -227,3 +227,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 
 ## 25/10/2026 (27) — Colori dei ruoli unici in tutta l'app
 - Variabili CSS `--rG` (guardie, verde #a3e635), `--rF` (ali, blu #60a5fa), `--rC` (centri, giallo #fbbf24) usate da roster (`.grl`), Rookie History (`.rhrole`, ora con lettera A per le ali come nel resto dell'app), calcolatore (`.vtp .rc`) e immagine roster condivisa. Per nuove schermate usare sempre queste variabili.
+- DREAMERS: a turno chiuso (dopo le sostituzioni) il giocatore con il PDK medio più alto dei 10 è capitano ×1,5 e i 4 più bassi valgono ×0,5; punteggio = media dei 10 valori finali (`drTeam`, campi `m`, `cap`, `half`, `f`). Durante il turno il punteggio in corso resta la media semplice.
