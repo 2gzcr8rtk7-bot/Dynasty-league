@@ -1619,13 +1619,15 @@ function prezzo(v,n){if(n&&PREZZO_FISSO[n]!=null)return PREZZO_FISSO[n];if(v==nu
 const vtPts=v=>Math.pow(Math.max(0,v)/1000,VAL_EXP)*1000;
 const VT={tab:"calc",t:["DUC","PEA"],pl:[[],[]],cr:[0,0],pk:[[],[]]};
 function vtSide(k){const pts=VT.pl[k].reduce((s,n)=>s+vtPts(valOf(n)??VAL_FALLBACK),0);const cr=(+VT.cr[k]||0)+VT.pk[k].reduce((s,p)=>s+PICK_CR[p],0);return pts+cr*VAL_CR}
+/* esito scambio: <10% equilibrata, 10-40% vincitore, oltre 40% grande truffa */
+const tradeVerdict=(d,t)=>d<.10?["Trade equilibrata","ok"]:d<.40?[`Vincitore trade “${TEAMS[t].nick}”`,"mid"]:[`Grande truffa dei “${TEAMS[t].nick}”`,"bad"];
 function vtResHTML(){
   const A=vtSide(0),B=vtSide(1),[ta,tb]=VT.t,ca=TEAMS[ta],cb=TEAMS[tb];
   if(!A&&!B)return `<div class="vtres empty">Aggiungi giocatori, crediti o pick da una parte e dall'altra.</div>`;
   const mx=Math.max(A,B),d=Math.abs(A-B)/mx,pa=A/(A+B)*100;
   // chi dà di più è svantaggiato: favorito = squadra che dà meno
   const fav=A>B?tb:ta,give=A>B?ta:tb;const cr=Math.round(Math.abs(A-B)/VAL_CR/5)*5;
-  const [lab,cls]=d<.10?["Equilibrata","ok"]:d<.25?[`Leggermente a favore dei ${TEAMS[fav].nick}`,"mid"]:[`Sbilanciata a favore dei ${TEAMS[fav].nick}`,"bad"];
+  const [lab,cls]=tradeVerdict(d,fav);
   return `<div class="vtres ${cls}"><button class="bshare vtsh" data-tshare="1" aria-label="Condividi scambio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <div class="vtsc"><span>${badge(ta,"vtlg")}<b>${Math.round(B)}</b><small>${ca.nick} ricevono</small></span><span class="r"><small>${cb.nick} ricevono</small><b>${Math.round(A)}</b>${badge(tb,"vtlg")}</span></div>
     <div class="vtbar"><i style="width:${100-pa}%;background:${ca.bg};">${Math.round(100-pa)}%</i><i style="width:${pa}%;background:${cb.bg};">${Math.round(pa)}%</i><em style="left:50%"></em></div>
@@ -1657,7 +1659,7 @@ function v3Res(){
   if(!V3.it.length)return `<div class="vtres empty">Aggiungi giocatori, crediti o pick e scegli a chi va ogni pezzo.</div>`;
   const mx=Math.max(1,...S.map(x=>Math.abs(x.s))),base=Math.max(1,...S.map(x=>Math.max(x.R,x.G))),d=Math.max(...S.map(x=>Math.abs(x.s)))/base;
   const w=S.slice().sort((a,b)=>b.s-a.s)[0],l=S.slice().sort((a,b)=>a.s-b.s)[0];
-  const [lab,cls]=d<.10?["Equilibrata","ok"]:d<.25?[`Leggermente a favore dei ${TEAMS[w.t].nick}`,"mid"]:[`Sbilanciata a favore dei ${TEAMS[w.t].nick}`,"bad"];
+  const [lab,cls]=tradeVerdict(d,w.t);
   const cr=Math.round(Math.min(w.s,-l.s)/VAL_CR/5)*5;
   const col=x=>Math.abs(x.s)/base<.10?"y":x.s>0?"g":"r";
   return `<div class="vtres ${cls}"><button class="bshare vtsh" data-tshare="1" aria-label="Condividi scambio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="v3h">Saldo di ogni squadra (riceve − dà)</div>
@@ -1733,12 +1735,12 @@ async function shareTrade(btn){
     const bx=330,bw=520,cx=bx+bw/2;X.fillStyle="#1d2850";X.fillRect(bx,y+6,bw,30);const L=Math.abs(x.s)/mx*bw/2;
     X.fillStyle=x.s>=0?"#4ade80":"#f87171";X.fillRect(x.s>=0?cx:cx-L,y+6,L,30);X.fillStyle="#fff";X.fillRect(cx-2,y,4,42);
     X.textAlign="right";X.fillStyle=x.s>=0?"#4ade80":"#f87171";X.font=F(800,40);X.fillText((x.s>=0?"+":"−")+Math.abs(Math.round(x.s)),W-60,y+34);y+=96*0+60}
-  y+=30;const ok=M.d<.10,lab=ok?"EQUILIBRATA":(M.d<.25?"LEGGERMENTE A FAVORE DEI ":"SBILANCIATA A FAVORE DEI ")+TEAMS[M.fav].nick.toUpperCase();
-  X.fillStyle=ok?"#22c55e":M.d<.25?"#f59e0b":"#ef4444";X.fillRect(60,y,W-120,96);X.fillStyle="#fff";X.textAlign="center";X.font=F(800,48);X.fillText(lab,W/2,y+64);y+=130;
+  y+=30;const ok=M.d<.10,lab=tradeVerdict(M.d,M.fav)[0].toUpperCase();
+  X.fillStyle=ok?"#22c55e":M.d<.40?"#f59e0b":"#ef4444";X.fillRect(60,y,W-120,96);X.fillStyle="#fff";X.textAlign="center";X.font=F(800,48);X.fillText(lab,W/2,y+64);y+=130;
   X.fillStyle="#dfe5f5";X.font=FB(500,30);X.fillText(`Squilibrio ${Math.round(M.d*100)}%${M.sug?" · "+M.sug:""}`,W/2,y);
   y+=60;X.fillStyle="#5d678a";X.font=F(700,26);X.fillText("Valori Dynasty League · 300 crediti ≈ un giocatore da 1150",W/2,y);
   const out=document.createElement("canvas");out.width=W;out.height=Math.min(Hh,y+40);out.getContext("2d").drawImage(cv,0,0);
-  shSend(out,"scambio.png",`🔁 Calcolatore scambi: ${ok?"equilibrata":lab.toLowerCase()} (${Math.round(M.d*100)}%)`,btn)}
+  shSend(out,"scambio.png",`🔁 Calcolatore scambi: ${tradeVerdict(M.d,M.fav)[0]} (${Math.round(M.d*100)}%)`,btn)}
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-tshare]");if(!b||cur!=="valtrade")return;e.preventDefault();e.stopPropagation();shareTrade(b)});
 function vValTrade(){
   const tabs=`<div class="ctabs vttabs"><button data-vt="tab" data-k="calc" aria-pressed="${VT.tab==="calc"}">2 squadre</button><button data-vt="tab" data-k="calc3" aria-pressed="${VT.tab==="calc3"}">3 squadre</button><button data-vt="tab" data-k="list" aria-pressed="${VT.tab==="list"}">Valori lega</button></div>`;
@@ -1751,12 +1753,12 @@ function vValTrade(){
   <div id="vtRes">${v3Res()}</div>
   <div class="vtgrid">${v3Card(0)}${v3Card(1)}${v3Card(2)}</div>
   <button class="sh vtreset" data-v3="reset"><span>Azzera</span></button>
-  <p class="note">Scambio a 3: per ogni giocatore, pick o credito scegli con "→" quale squadra lo riceve (di default la successiva). Saldo = punti trade ricevuti − punti trade dati; la barra parte dal centro: verso destra in verde chi ci guadagna, verso sinistra in rosso chi ci perde. Squilibrio = saldo più grande ÷ volume più grande scambiato da una squadra: sotto 10% equilibrata, oltre 25% sbilanciata. Stessi valori del calcolatore a 2.</p>`;
+  <p class="note">Scambio a 3: per ogni giocatore, pick o credito scegli con "→" quale squadra lo riceve (di default la successiva). Saldo = punti trade ricevuti − punti trade dati; la barra parte dal centro: verso destra in verde chi ci guadagna, verso sinistra in rosso chi ci perde. Squilibrio = saldo più grande ÷ volume più grande scambiato da una squadra: sotto 10% trade equilibrata, fino al 40% c'è un vincitore, oltre il 40% è una grande truffa. Stessi valori del calcolatore a 2.</p>`;
   return `${H("Calcolatore scambi",`<em>${VALORI_AGG.slice(0,5)}</em>`)}${tabs}
   <div id="vtRes">${vtResHTML()}</div>
   <div class="vtgrid">${vtCard(0)}${vtCard(1)}</div>
   <button class="sh vtreset" data-vt="reset"><span>Azzera</span></button>
-  <p class="note">Ogni giocatore vale (valore/1000)<sup>${VAL_EXP}</sup> × 1000 punti trade: le stelle pesano più della somma di giocatori medi. Crediti tarati su 300 crediti ≈ un giocatore da 1000-1300 (pick 1 = 300 cr, 2 = 250, 3 = 200, 4 = 150, 5 = 100). Sotto il 10% di differenza la trade è equilibrata, oltre il 25% sbilanciata. Valori Dynasty League al ${VALORI_AGG}.</p>`}
+  <p class="note">Ogni giocatore vale (valore/1000)<sup>${VAL_EXP}</sup> × 1000 punti trade: le stelle pesano più della somma di giocatori medi. Crediti tarati su 300 crediti ≈ un giocatore da 1000-1300 (pick 1 = 300 cr, 2 = 250, 3 = 200, 4 = 150, 5 = 100). Sotto il 10% di differenza la trade è equilibrata, fino al 40% c'è un vincitore, oltre il 40% è una grande truffa. Valori Dynasty League al ${VALORI_AGG}.</p>`}
 function vtAct(b){const d=b.dataset,k=+d.k;
   if(d.vt==="tab"){VT.tab=d.k;render();return}
   if(d.vt==="pl"){const i=VT.pl[k].indexOf(d.n);if(i>=0)VT.pl[k].splice(i,1);else VT.pl[k].push(d.n)}
