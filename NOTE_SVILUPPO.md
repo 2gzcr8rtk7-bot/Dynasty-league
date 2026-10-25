@@ -92,3 +92,7 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 - G League: i Ducks (G-Ducks) hanno il logo Gotham e sfondo viola (`bg`/`trim`/`logo` facoltativi nella voce di `GLEAGUE`).
 - Pagina squadra: la panchina è ordinata per efficienza dell'ultima gara (`lastEff`), quindi si riordina da sola a ogni aggiornamento dei report.
 - Efficienza: Top 10 (etichetta verde) e Flop 10 (rossa) spostate sopra la sezione Giocatori, che ora ha l'etichetta gialla (classi `.hgreen`, `.hred`, `.hyellow`).
+
+## 25/10/2026 (7) — Cassa: movimenti 26/27
+- Inseriti in `MOVIMENTI` tutti i passaggi di crediti noti dalla pagina Trade (6 scambi, asta FA di Paul George, 3 trade speciali con il costo da regolamento 30/40 cr). Tutti come entrate/uscite già pagate; `DEBITI` resta vuoto.
+- Alcune date mancano (campo `d` vuoto): da completare quando si conoscono.

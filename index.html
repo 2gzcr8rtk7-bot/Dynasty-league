@@ -719,7 +719,36 @@ const LOGO2={"DUC":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeAAAAF+CAYAAA
      tipo = "portafoglio" (sul saldo attuale) o "post" (dopo il Draft), s = stagione, saldato = true quando pagato.
      Esempio: {da:"DUC",a:"FOX",v:10,tipo:"post",s:"26/27",saldato:false} */
 const STAGIONE_CORRENTE="26/27";
-const MOVIMENTI={SPI:[],PEA:[],DUC:[],DOL:[],TUR:[],EAG:[],MOO:[],FOX:[]};
+const MOVIMENTI={
+ SPI:[],
+ PEA:[
+  {s:"26/27",d:"30/09/2026",c:"Scambio con Moose: arriva Zion Williamson, parte Danny Wolf",v:-35},
+  {s:"26/27",d:"",c:"Scambio con Dolphins: parte Isaiah Hartenstein, arriva Rudy Gobert",v:10},
+  {s:"26/27",d:"19/10/2026",c:"Scambio con Dolphins: Giddey, Mobley, Sabonis, Gobert per Booker, Durant, Jokić, Hartenstein",v:37},
+  {s:"26/27",d:"23/10/2026",c:"Scambio con Dolphins: arriva Ryan Rollins, parte De'Aaron Fox",v:9},
+  {s:"26/27",d:"",c:"Trade speciale 30: entra Damian Lillard, esce Ryan Rollins",v:-30}
+ ],
+ DUC:[
+  {s:"26/27",d:"",c:"Scambio con Moose: arriva Scottie Barnes (a Moose Graves, Johnson Jr., diritti Steinbach, slot ala 10g)",v:-300},
+  {s:"26/27",d:"",c:"Trade speciale 40: entra Sergio De Larrea, esce Brayden Burries",v:-40},
+  {s:"26/27",d:"",c:"Trade speciale 30: entra Kyshawn George, esce Brandon Ingram",v:-30}
+ ],
+ DOL:[
+  {s:"26/27",d:"",c:"Scambio con Pelicans: arriva Rudy Gobert, parte Isaiah Hartenstein",v:-10},
+  {s:"26/27",d:"",c:"Scambio con Foxes: arrivano Giddey e Sabonis, partono Dončić e Kessler",v:60},
+  {s:"26/27",d:"19/10/2026",c:"Scambio con Pelicans: Booker, Durant, Jokić, Hartenstein per Giddey, Mobley, Sabonis, Gobert",v:-37},
+  {s:"26/27",d:"",c:"Asta FA: Paul George (10 commissione + 11 listone)",v:-21},
+  {s:"26/27",d:"23/10/2026",c:"Scambio con Pelicans: arriva De'Aaron Fox, parte Ryan Rollins",v:-9}
+ ],
+ TUR:[],EAG:[],
+ MOO:[
+  {s:"26/27",d:"30/09/2026",c:"Scambio con Pelicans: arriva Danny Wolf, parte Zion Williamson",v:35},
+  {s:"26/27",d:"",c:"Scambio con Ducks: arrivano Graves, Johnson Jr., diritti Steinbach, slot ala 10g; parte Scottie Barnes",v:300}
+ ],
+ FOX:[
+  {s:"26/27",d:"",c:"Scambio con Dolphins: arrivano Luka Dončić e Walker Kessler, partono Giddey e Sabonis",v:-60}
+ ]
+};
 const DEBITI=[];
 const CREDITI={"SPI": 50, "PEA": 52, "DUC": 0, "DOL": 0, "TUR": 149, "EAG": 108, "MOO": 443, "FOX": 21};
 /* Avvisi sui giocatori (scritta gialla nel roster) */
