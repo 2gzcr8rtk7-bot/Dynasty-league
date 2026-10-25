@@ -831,7 +831,7 @@ nav button>span{white-space:nowrap}
   </div>
 </header>
 <main class="wrap" id="main"></main>
-<footer class="wrap upd">Ultimo aggiornamento: 25/10/2026 · 14:38</footer>
+<footer class="wrap upd">Ultimo aggiornamento: 25/10/2026 · 14:40</footer>
 
 <script>
 const TEAMS={
@@ -885,8 +885,8 @@ function movimenti(t){
   });
   return out.concat(MOVIMENTI[t]||[]);
 }
-const DEBITI=[];
-const CREDITI={"SPI": 50, "PEA": 52, "DUC": 0, "DOL": -5, "TUR": 149, "EAG": 108, "MOO": 448, "FOX": 21};
+const DEBITI=[{da:"DOL",a:"MOO",v:5,tipo:"portafoglio",s:"26/27",saldato:false}];
+const CREDITI={"SPI": 50, "PEA": 52, "DUC": 0, "DOL": 0, "TUR": 149, "EAG": 108, "MOO": 443, "FOX": 21};
 /* Avvisi sui giocatori (scritta gialla nel roster) */
 const AVVISI={"Moussa Diabaté":"Slot extra · 10 giornate (da Mooses)","Ryan Rollins":"Trade Speciale in corso · 30 cr","Brandon Ingram":"Trade Speciale in corso · 30 cr","Brayden Burries":"Trade Speciale in corso · 40 cr"};
 /* Giocatori in slot rookie (etichetta nel roster) */
@@ -970,7 +970,7 @@ function vSpeciali(){
   <p class="note">Durata da regolamento: Speciale 30 = 20 giornate · Speciale 40 = 40 giornate · Speciale 50 = fino alla G64. Il numero indica le giornate che mancano alla scadenza, giornata in corso compresa.</p>`;
 }
 const TRADES=[
- {data:"25/10/2026",titolo:"Scambio",lati:[["DOL",["Moussa Diabaté","Slot ala per 10 giornate"]],["MOO",["5 crediti"]]]},
+ {data:"25/10/2026",titolo:"Scambio",lati:[["DOL",["Moussa Diabaté","Slot ala per 10 giornate"]],["MOO",["Debito di 5 crediti"]]]},
  {titolo:"Trade speciale",lati:[["PEA",["Damian Lillard"],"entra"],["PEA",["Ryan Rollins"],"esce"]]},
  {data:"23/10/2026",titolo:"Scambio",lati:[["DOL",["De'Aaron Fox"]],["PEA",["Ryan Rollins","9 crediti"]]]},
  {titolo:"Asta",lati:[["DOL",["Paul George","21 crediti (10 commissione + 11 di lista)"],"acquista"]]},
@@ -1218,7 +1218,7 @@ function vEfficienza(){
 const NUM={};Object.values(ROSTER).forEach(a=>a.forEach(p=>NUM[p[0]]=p[1]));
 function vTrade(){
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
-  const rec=l=>l.map(n=>NUM[n]!==undefined?`<span>${sur(n)}</span>`:`<span class="tcr2">${/credit/i.test(n)?"+"+n.replace(/\s*crediti.*$/i," cr"):n.replace(/^Diritti su /,"").replace(/Slot ala per 10 giornate/,"Slot ala 10g")}</span>`).join("");
+  const rec=l=>l.map(n=>NUM[n]!==undefined?`<span>${sur(n)}</span>`:`<span class="tcr2">${/credit/i.test(n)?(/^debito/i.test(n)?"":"+")+n.replace(/\s*crediti.*$/i," cr"):n.replace(/^Diritti su /,"").replace(/Slot ala per 10 giornate/,"Slot ala 10g")}</span>`).join("");
   const dir=v=>v==="entra"||v==="acquista"?"in":v==="esce"?"out":"";
   const arw=d=>d==="in"?`<i class="tar in" title="Entra"><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M15 6H3M7 1.5 2.2 6 7 10.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i>`:d==="out"?`<i class="tar out" title="Esce"><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M1 6h12M9 1.5 13.8 6 9 10.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i>`:"";
   const cell=x=>x?`<div class="tc">${wedge(x[0])}<div class="tct"><small>${TEAMS[x[0]].nick}${x[2]?" · "+x[2]:""}</small><div class="trc tdir">${arw(dir(x[2]))}<div>${rec(x[1])}</div></div></div></div>`:`<div class="tc"></div>`;
