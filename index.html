@@ -269,6 +269,7 @@ td.rk{text-align:left;width:34px;font-family:var(--display);font-style:italic;fo
 td.tm{text-align:left;padding-left:0}
 .tmcell{display:flex;align-items:center;gap:12px;min-width:0;height:54px}
 .wedge{height:100%;width:56px;flex:none;display:flex;align-items:center;justify-content:center;overflow:visible;background:linear-gradient(135deg,var(--tc),color-mix(in srgb,var(--tc) 55%,#000));position:relative;padding:2px}
+.clf .wedge{background:none}.clf .wedge .badge{background-color:transparent!important;box-shadow:none!important;filter:drop-shadow(0 3px 6px rgba(0,0,0,.45))}
 .tmcell b{font-family:var(--display);font-style:italic;font-weight:800;font-size:19px;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;line-height:1}
 .tmcell small{display:block;color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase;line-height:1.3}
 td.w{font-family:var(--display);font-style:italic;font-weight:800;font-size:22px;color:#fff}
@@ -1300,7 +1301,7 @@ function vClassifica(){
   const rows=standings().map((x,i)=>`<tr><td class="rk">${i+1}</td><td class="tm"><div class="tmcell">${wedge(x.t)}<div><b>${TEAMS[x.t].nick}</b><small>${TEAMS[x.t].city}</small></div></div></td>
   <td class="w">${x.w}</td><td class="l">${x.l}</td><td>${pctf(x.pct)}</td><td>${x.gb===0?"–":x.gb.toFixed(1)}</td><td>${f1(x.pf)}</td><td>${f1(x.pa)}</td><td>${streak(x.last)}</td></tr>`).join("");
   return `${H("Classifica",`<em>Dopo la giornata ${CHIUSE.length}</em>`)}
-  <div class="tbl-wrap"><table><thead><tr><th>#</th><th>Squadra</th><th>V</th><th>P</th><th>%</th><th>GB</th><th>PF</th><th>PS</th><th>Serie</th></tr></thead><tbody>${rows}</tbody></table></div>
+  <div class="tbl-wrap clf"><table><thead><tr><th>#</th><th>Squadra</th><th>V</th><th>P</th><th>%</th><th>GB</th><th>PF</th><th>PS</th><th>Serie</th></tr></thead><tbody>${rows}</tbody></table></div>
   <p class="note">${GIORNATE.some(g=>g.live)?"La giornata in corso entra in classifica quando è conclusa. ":""}Ordinata per percentuale di vittorie. A parità: scontro diretto, poi punti fatti (PF). GB = partite di distacco dalla prima.</p>`;
 }
 function vRisultati(){

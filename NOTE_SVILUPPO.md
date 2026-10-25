@@ -254,3 +254,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Valore Jokić portato a 3150 (era 2813), ora sopra Wembanyama (3127).
 - Prezzi fissi aggiunti: Sabonis 470, Trae Young 179, Anthony Davis 155; Buzelis 120.
 - Risultati: loghi senza sfondo colorato (solo PNG trasparente con leggera ombra), `.rgl`.
+- Classifica: loghi senza sfondo colorato (`.clf .wedge`).
