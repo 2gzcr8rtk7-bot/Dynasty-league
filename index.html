@@ -2112,19 +2112,19 @@ function vDream(){
   else if(DR.tab==="cla"){body=`<div><table class="drtab"><thead><tr><th>#</th><th>Squadra</th><th>V</th><th>P</th><th>Media</th></tr></thead><tbody>${st.map((x,i)=>`<tr><td>${i+1}</td><td class="drtt">${drLg(x.t,"m")}${TEAMS[x.t].nick}</td><td>${x.w}</td><td>${x.l}</td><td>${x.n?f2(x.pf/x.n):"—"}</td></tr>`).join("")}</tbody></table></div>
     <p class="note">Vittoria = punteggio di turno più alto. A parità di vittorie conta la media dei punteggi. Tutte e 8 le squadre vanno ai playoff: la posizione decide gli accoppiamenti (1ª–8ª, 4ª–5ª, 2ª–7ª, 3ª–6ª).</p>`}
   else{const B=drBracket(st),sd=B.seed;
-    const m=(k,p,lab,ph)=>{if(!p)return`<div class="drbm tbd"><small>${lab}</small>${ph?ph.map(x=>`<span>${x}</span>`).join(""):"<span>da definire</span>"}</div>`;const w=drWeek(k),[a,b]=p,A=drTeam(k,a,w).score,Bs=drTeam(k,b,w).score,win=w.closed?(A>Bs||(A===Bs&&sd[a]<sd[b])?a:b):null;
-      return `<div class="drbm"><small>${lab}</small>${[a,b].map((t,i)=>`<div class="drbr ${win===t?"w":win?"l":""}"><i>${sd[t]}</i>${drLg(t,"s")}<span>${TEAMS[t].nick}</span><em>${w.started?f2(i?Bs:A):""}</em></div>`).join("")}</div>`};
+    const m=(k,p,lab,ph)=>{if(!p)return`<div class="drbm tbd">${ph?ph.map(x=>`<span>${x}</span>`).join(""):"<span>da definire</span>"}</div>`;const w=drWeek(k),[a,b]=p,A=drTeam(k,a,w).score,Bs=drTeam(k,b,w).score,win=w.closed?(A>Bs||(A===Bs&&sd[a]<sd[b])?a:b):null;
+      return `<div class="drbm">${[a,b].map((t,i)=>`<div class="drbr ${win===t?"w":win?"l":""}"><i>${sd[t]}</i>${drLg(t,"s")}<span>${TEAMS[t].nick}</span><em>${w.started?f2(i?Bs:A):""}</em></div>`).join("")}</div>`};
     const fin=(B[24]||[])[0],fw=drWeek(24);let champ=null;if(fin&&fw.closed){const[a,b]=fin,A=drTeam(24,a,fw).score,Bs=drTeam(24,b,fw).score;champ=A>Bs||(A===Bs&&sd[a]<sd[b])?a:b}
     const cup=`<svg class="drcup" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="drg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff4c2"/><stop offset=".45" stop-color="#f5c542"/><stop offset="1" stop-color="#a86f00"/></linearGradient></defs><path d="M18 8h28v14a14 14 0 0 1-28 0z" fill="url(#drg)"/><path d="M18 12h-8v4a10 10 0 0 0 10 10M46 12h8v4a10 10 0 0 1-10 10" fill="none" stroke="url(#drg)" stroke-width="3.5"/><path d="M29 35h6v9h-6z" fill="url(#drg)"/><path d="M21 46h22l2 6H19z" fill="url(#drg)"/><rect x="17" y="52" width="30" height="5" rx="1" fill="#7a5200"/><path d="M24 12c0 8 2 13 6 16" stroke="#fff" stroke-opacity=".55" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>`;
     body=`<p class="note" style="margin-top:0">${drWeek(DR_REG).closed?"Tabellone definitivo.":"Tabellone provvisorio in base alla classifica attuale."}</p>
     <div class="drbh"><span>Quarti<small>${drFmt(drWeekStart(22))}</small></span><span>Semifinali<small>${drFmt(drWeekStart(23))}</small></span><span>Finale<small>${drFmt(drWeekStart(24))}</small></span></div>
     <div class="drbk2">
       ${[0,1,2,3].map(i=>`<div class="drq" style="grid-row:${i+1}">${m(22,B[22][i],"QF"+(i+1))}</div>`).join("")}
-      <div class="drs" style="grid-row:1/3">${m(23,(B[23]||[])[0],"SF1",["Vincente QF1","Vincente QF2"])}</div>
-      <div class="drs" style="grid-row:3/5">${m(23,(B[23]||[])[1],"SF2",["Vincente QF3","Vincente QF4"])}</div>
-      <div class="drf" style="grid-row:1/5"><div class="drfin"><div class="drtop">${cup}<b>${champ?"Campioni":"Finale"}</b>${champ?`<span class="drchamp">${drLg(champ,"m")}${TEAMS[champ].nick}</span>`:""}</div>${m(24,fin,"Finalissima",["Vincente SF1","Vincente SF2"])}</div></div>
+      <div class="drs" style="grid-row:1/3">${m(23,(B[23]||[])[0],"SF1",["Vincente","Vincente"])}</div>
+      <div class="drs" style="grid-row:3/5">${m(23,(B[23]||[])[1],"SF2",["Vincente","Vincente"])}</div>
+      <div class="drf" style="grid-row:1/5"><div class="drfin"><div class="drtop">${cup}<b>${champ?"Campioni":"Finale"}</b>${champ?`<span class="drchamp">${drLg(champ,"m")}${TEAMS[champ].nick}</span>`:""}</div>${m(24,fin,"Finalissima",["Vincente","Vincente"])}</div></div>
     </div>
-    <div class="drthird"><h5>Finale 3° posto<small>${drFmt(drWeekStart(24))}</small></h5>${m(24,(B[24]||[])[1],"3° posto",["Perdente SF1","Perdente SF2"])}</div>`}
+    <div class="drthird"><h5>Finale 3° posto<small>${drFmt(drWeekStart(24))}</small></h5>${m(24,(B[24]||[])[1],"3° posto",["Perdente semifinale","Perdente semifinale"])}</div>`}
   return `<div class="drroom"><div class="drhd"><span class="drlogo">DREAMERS</span><small>Fanta efficienza · stagione ${STAGIONE_CORRENTE}</small></div>
   <div class="drtabs">${tabs}</div>${body}</div>
   <p class="note">Ogni squadra schiera i suoi 10 giocatori con il valore più alto; le riserve entrano da sole a fine turno al posto di chi non ha giocato. Punteggio = media delle 10 efficienze della settimana; l'efficienza di ogni giocatore è la media delle sue partite (Dunkest/minuto), il minutaggio non conta. Dati aggiornati al ${EFF.agg}.</p>`}
