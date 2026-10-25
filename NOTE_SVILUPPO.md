@@ -136,3 +136,7 @@ Ogni modifica pubblicata su GitHub viene messa online da Netlify in automatico.
 - Dopo "Lancia la sfida" i tocchi vengono ignorati per 0,6 s (`ntLock`): su iPhone un doppio tocco poteva finire su "Chiudi ora" e chiudere subito la sfida.
 - `ntGames` cerca il giocatore anche nelle altre squadre di `EFF.gioc` (giocatori appena scambiati).
 - Riquadro risultato: resoconto di cosa riceve ogni squadra (giocatori, pick, crediti), sopra il suggerimento per pareggiare.
+
+## 25/10/2026 (14) — Condividi risultato partita
+- Risultati: piccolo bottone condividi nella fascia "Scarto" di ogni partita (`data-share="giornata|indice"`).
+- `shareGame` disegna su canvas un'immagine 1080x1350 (formato storie/post): logo lega, giornata, le due squadre con logo grande, città e punteggio, vincitore con trofeo, scarto. Su telefono apre la condivisione (WhatsApp ecc.), altrimenti scarica il PNG.

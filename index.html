@@ -226,6 +226,8 @@ td.l{font-family:var(--display);font-style:italic;font-weight:700;font-size:20px
 .tag.live{background:var(--red);color:#fff}
 .bugfoot{grid-column:1/-1;display:flex;justify-content:space-between;font-family:var(--display);font-style:italic;font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:5px 12px;background:#070d22}
 .bugfoot b{color:var(--gold);font-weight:800}
+.bugfoot span:last-child{display:flex;align-items:center;gap:4px}
+.bshare{display:inline-grid;place-items:center;width:26px;height:22px;margin:-4px -6px -4px 6px;padding:0;background:rgba(255,255,255,.08);border:1px solid var(--line);color:#fff;cursor:pointer}.bshare svg{width:14px;height:14px}.bshare.done{color:#22c55e}
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#fff;margin-left:6px}
 @media (prefers-reduced-motion:no-preference){.tag.live .dot,h2 .live .dot{animation:pulse 1.2s ease-in-out infinite}@keyframes pulse{50%{opacity:.25}}}
 h2 .live{background:var(--red);color:#fff;font-size:12px;letter-spacing:.14em;padding:2px 10px;font-style:italic}
@@ -1013,10 +1015,48 @@ function vClassifica(){
   <p class="note">${GIORNATE.some(g=>g.live)?"La giornata in corso entra in classifica quando è conclusa. ":""}Ordinata per percentuale di vittorie. A parità: scontro diretto, poi punti fatti (PF). GB = partite di distacco dalla prima.</p>`;
 }
 function vRisultati(){
-  return GIORNATE.slice().reverse().map(g=>`<section class="day">${H("Giornata "+g.n,g.live?'<span class="live">Live<span class="dot"></span></span>':'<em>Finale</em>')}<div class="games">${g.gare.map(([a,pa,b,pb])=>{
+  return GIORNATE.slice().reverse().map(g=>`<section class="day">${H("Giornata "+g.n,g.live?'<span class="live">Live<span class="dot"></span></span>':'<em>Finale</em>')}<div class="games">${g.gare.map(([a,pa,b,pb],ix)=>{
     const bar=(t,p,w)=>`<div class="bar ${w?"w":"l"}">${wedge(t)}<span class="tn"><b>${TEAMS[t].nick}</b><small>${TEAMS[t].city}</small></span><span class="sc">${f1(p)}</span></div>`;
-    return `<div class="bug"><div class="bars">${bar(a,pa,pa>pb)}${bar(b,pb,pb>pa)}</div><div class="tag ${g.live?"live":""}">${g.live?"Live":"Finale"}</div><div class="bugfoot"><span>Giornata ${g.n}</span><span>${g.live?"Parziale · ":""}Scarto <b>${f1(Math.abs(pa-pb))}</b></span></div></div>`}).join("")}</div></section>`).join("");
+    return `<div class="bug"><div class="bars">${bar(a,pa,pa>pb)}${bar(b,pb,pb>pa)}</div><div class="tag ${g.live?"live":""}">${g.live?"Live":"Finale"}</div><div class="bugfoot"><span>Giornata ${g.n}</span><span>${g.live?"Parziale · ":""}Scarto <b>${f1(Math.abs(pa-pb))}</b><button class="bshare" data-share="${g.n}|${ix}" aria-label="Condividi risultato"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></span></div></div>`}).join("")}</div></section>`).join("");
 }
+/* Condividi risultato di una partita: immagine 1080x1350 generata su canvas (shareGame) */
+function ldImg(src){return new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src})}
+async function shareGame(gi,ix,btn){
+  const g=GIORNATE.find(x=>x.n===gi);if(!g)return;const[a,pa,b,pb]=g.gare[ix];
+  try{await document.fonts.load('800 italic 40px "Barlow Condensed"');await document.fonts.load('40px "CourtBlock"')}catch(e){}
+  const W=1080,Hh=1350,cv=document.createElement("canvas");cv.width=W;cv.height=Hh;const X=cv.getContext("2d");
+  const F=(w,s,f)=>f==="cb"?`${s}px "CourtBlock","Anton",Impact,sans-serif`:`italic ${w} ${s}px "Barlow Condensed","Arial Narrow",Arial,sans-serif`;
+  const bg=X.createLinearGradient(0,0,0,Hh);bg.addColorStop(0,"#16275a");bg.addColorStop(1,"#050915");X.fillStyle=bg;X.fillRect(0,0,W,Hh);
+  X.save();X.globalAlpha=.05;X.fillStyle="#fff";for(let i=-Hh;i<W;i+=64){X.beginPath();X.moveTo(i,0);X.lineTo(i+32,0);X.lineTo(i+32+Hh*.47,Hh);X.lineTo(i+Hh*.47,Hh);X.fill()}X.restore();
+  X.fillStyle="#e4163a";X.fillRect(0,0,W,16);
+  const lg=await ldImg(LOGO.LEAGUE||document.querySelector("header img")?.src||"");
+  if(lg)X.drawImage(lg,60,46,110,110);
+  X.textAlign="left";X.fillStyle="#fff";X.font=F(800,64);X.fillText("DYNASTY",lg?190:60,100);X.fillStyle="#f5b400";X.fillText("LEAGUE",(lg?190:60)+X.measureText("DYNASTY ").width,100);
+  X.fillStyle="#8e98b8";X.font=F(700,34);X.fillText("STAGIONE "+STAGIONE_CORRENTE,lg?190:60,145);
+  // etichetta giornata
+  X.fillStyle="#e4163a";X.beginPath();X.moveTo(60,200);X.lineTo(640,200);X.lineTo(610,290);X.lineTo(60,290);X.fill();
+  X.fillStyle="#fff";X.font=F(800,66);X.fillText("GIORNATA "+g.n,90,268);
+  X.fillStyle=g.live?"#ef4444":"#8e98b8";X.font=F(800,40);X.fillText(g.live?"● LIVE":"FINALE",670,262);
+  const rows=[[a,pa,pa>pb],[b,pb,pb>pa]];
+  for(let k=0;k<2;k++){const[t,p,w]=rows[k],c=TEAMS[t],y=340+k*400,h=370;
+    X.fillStyle=w?"#16224d":"#0e1634";X.fillRect(60,y,W-120,h);
+    const lgr=X.createLinearGradient(60,y,400,y+h);lgr.addColorStop(0,c.bg);lgr.addColorStop(1,"#000");X.fillStyle=lgr;X.globalAlpha=1;X.fillRect(60,y,340,h);
+    X.save();X.globalAlpha=.6;X.fillStyle=c.bg;X.fillRect(60,y,340,h);X.restore();
+    const im=await ldImg(LOGO[t]);if(im){const s=300,r=Math.min(s/im.width,s/im.height),iw=im.width*r,ih=im.height*r;X.drawImage(im,60+170-iw/2,y+h/2-ih/2,iw,ih)}
+    if(w){X.fillStyle="#e4163a";X.fillRect(W-74,y,14,h);X.fillStyle="#f5b400";X.font=F(800,40);X.textAlign="left";X.fillText("🏆 VINCE",440,y+70)}
+    X.textAlign="left";X.fillStyle=w?"#fff":"#9aa3c0";X.font=F(800,92);X.fillText(c.nick.toUpperCase(),440,y+165);
+    X.fillStyle="#8e98b8";X.font=F(700,38);X.fillText(c.city.toUpperCase(),440,y+215);
+    X.textAlign="right";X.fillStyle=w?"#fff":"#9aa3c0";X.font=F(800,130);X.fillText(f1(p),W-110,y+330)}
+  X.textAlign="center";X.fillStyle="#8e98b8";X.font=F(800,44);const sc="SCARTO ";const sv=f1(Math.abs(pa-pb));
+  const tw=X.measureText(sc+sv).width;X.textAlign="left";X.fillText(sc,W/2-tw/2,1220);X.fillStyle="#f5b400";X.fillText(sv,W/2-tw/2+X.measureText(sc).width,1220);
+  X.textAlign="center";X.fillStyle="#5d678a";X.font=F(700,28);X.fillText(g.live?"Punteggio parziale":"Risultato finale",W/2,1290);
+  const win=pa>pb?a:b,lose=pa>pb?b:a,txt=`🏀 Giornata ${g.n}: ${TEAMS[win].nick} ${f1(Math.max(pa,pb))} - ${f1(Math.min(pa,pb))} ${TEAMS[lose].nick}`;
+  cv.toBlob(bl=>{const file=new File([bl],`giornata-${g.n}-${a}-${b}.png`,{type:"image/png"});
+    if(navigator.canShare&&navigator.canShare({files:[file]}))navigator.share({files:[file],text:txt}).catch(()=>{});
+    else{const l=document.createElement("a");l.href=URL.createObjectURL(bl);l.download=file.name;document.body.appendChild(l);l.click();l.remove();if(btn)btn.classList.add("done")}},"image/png");
+}
+document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-share]");if(!b)return;e.preventDefault();const[gi,ix]=b.dataset.share.split("|").map(Number);shareGame(gi,ix,b)});
+
 let JID=0;
 /* Decorazioni diverse per ogni divisa (disegnate dentro il profilo della canotta) */
 const DECO={
