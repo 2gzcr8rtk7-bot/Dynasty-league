@@ -51,3 +51,9 @@ James Harden|1001|70
 Dejounte Murray|650|30
 
 Alperen Şengün|1580|550
+Moussa Diabaté|400|10
+Isaiah Hartenstein|300|5
+Paul George|250|10
+Jonathan Kuminga|170|10
+Trevon Brazile|90|5
+Kristaps Porziņģis|30|5

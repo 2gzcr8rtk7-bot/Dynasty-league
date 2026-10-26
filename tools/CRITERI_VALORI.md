@@ -145,3 +145,6 @@ Voto del GM: Ingram Infortuni ½.
   giovani nei primi 3 anni, che restano valutati su promessa e margine di crescita.
   → Nel modello (solo anno NBA ≥ 4): valore e prezzo si calcolano sul **PDK sopra il livello di rimpiazzo** (G/F ≈ 23
   PDK; C un po' più basso perché i centri utili scarseggiano); sotto/vicino alla soglia il valore crolla verso il minimo.
+- **Fascia bassa (rimpiazzabili)**: Porziņģis, Brazile, Kuminga, Paul George, Hartenstein, Diabaté e simili sono
+  facilmente sostituibili con svincolati → prezzo quasi nullo (5–10 crediti) e valore basso nelle trade. I valori
+  attuali di questa fascia restano quelli scritti.
