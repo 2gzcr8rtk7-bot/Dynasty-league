@@ -72,3 +72,12 @@ Gerarchia nella propria squadra NBA:
 - ½ = fondo delle rotazioni (es. Allen Graves, rookie, ~9° uomo)
 Calcolo automatico (proposta): ordine dei giocatori della squadra NBA per PDK/uso nelle ultime partite
 (serve la rosa completa della squadra NBA, non solo i giocatori della lega); Francesco corregge i casi dubbi.
+Interazione con età ed efficienza (26/10/2026):
+- Lo spazio va letto **in rapporto all'età**: a 18–19 anni è normale avere poco spazio; averne tanto è clamoroso.
+  Es. Boozer, numero 1 di Memphis a 19 anni = 5 stelle di spazio + età → fa esplodere valore e prezzo.
+- Per i giovani poco spazio **non deve penalizzare troppo** (è normale partire dalla panchina), soprattutto se
+  l'efficienza giovani e l'età sono ottime: sono segnali che lo spazio arriverà.
+- Proposta di calcolo: spazio "atteso" per età (18–19 ≈1 · 20–21 ≈1½ · 22–23 ≈2½ · 24+ nessuna attesa).
+  Sorpresa = spazio − atteso. Sorpresa positiva → premio forte su valore e prezzo, tanto più grande quanto più è giovane.
+  Sorpresa negativa da giovane → penalità dimezzata, e annullata se l'efficienza giovani è ≥3½.
+  Dai 24 anni lo spazio conta così com'è.
