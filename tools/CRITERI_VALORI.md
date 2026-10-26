@@ -81,3 +81,6 @@ Interazione con età ed efficienza (26/10/2026):
   Sorpresa = spazio − atteso. Sorpresa positiva → premio forte su valore e prezzo, tanto più grande quanto più è giovane.
   Sorpresa negativa da giovane → penalità dimezzata, e annullata se l'efficienza giovani è ≥3½.
   Dai 24 anni lo spazio conta così com'è.
+
+## Anni NBA
+Si contano dalla stagione in cui il giocatore è entrato in NBA (1° anno = stagione d'ingresso).
