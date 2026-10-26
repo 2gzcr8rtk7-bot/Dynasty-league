@@ -389,3 +389,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - (57) Calcola il trend: toccando un giocatore si apre il suo dettaglio (`trDetail`): per PDK, minuti ed efficienza
   "partiva da" (primo punto del periodo) → "ora" (ultimo punto), differenza assoluta e %, media del periodo, trend e
   grafico personale. Il trattino a sinistra della riga mostra/nasconde la linea nel grafico comune.
+  Pulsante Condividi (`trShare`): immagine 1080×1350 del dettaglio.

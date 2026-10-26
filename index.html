@@ -206,7 +206,7 @@
 .tdh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px}.tdh b{color:var(--c);font-size:14px;text-transform:uppercase;letter-spacing:.05em}.tdh span{font-size:10.5px;color:var(--muted)}
 .tdv{display:grid;grid-template-columns:1fr auto 1fr 1fr;gap:6px;align-items:center;margin-bottom:6px}.tdv i{font-style:normal;color:var(--muted);font-size:18px}.tdv small{display:block;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.tdv b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:22px}.tdv em{font-style:normal;font-size:10px;color:var(--muted)}
 .tdd{text-align:right}.tdd.up b{color:#4ade80}.tdd.dn b{color:#f87171}
-.trrow .trsw{cursor:pointer}
+.trrow .trsw{cursor:pointer}.cshare.alt{background:rgba(255,255,255,.08);color:#fff;box-shadow:none}
 .gback{text-shadow:0 1px 0 rgba(255,255,255,.5)}
 .colroom .nban{background:linear-gradient(100deg,color-mix(in srgb,var(--tc) 38%,#141a2b) 0%,#161c2e 55%,#0e1220 100%)!important;box-shadow:0 10px 22px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -1px 0 rgba(0,0,0,.6)}
 .colroom .nban .njs svg{filter:drop-shadow(0 4px 5px rgba(0,0,0,.5))}
@@ -2427,7 +2427,35 @@ function trDetail(n){const C=TRN._ctx;if(!C)return"";const p=Object.entries(ROST
   return`<div class="colsheet trsheet"><div class="ccard" style="--rc:${c.bg}"><button class="ccx" data-trdx="1" aria-label="Chiudi">×</button>
    <div class="tdhd">${jersey(p.t,p.num,n)}<div><b>${n}</b><small>${c.name} · ${{G:"Guardia",F:"Ala",C:"Centro"}[p.r]} · ${g.length} partite · ${C.by==="s"?"media per stagione":C.by==="m"?"media per mese":"media per settimana"}</small></div></div>
    ${mets.map(box).join("")}
-   <button class="cshare" data-grafico="${p.t}" data-grp="${n.replace(/"/g,"&quot;")}"><span>📈 Apri il grafico completo</span></button></div></div>`}
+   <button class="cshare" data-trshare="${n.replace(/"/g,"&quot;")}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Condividi</span></button>
+   <button class="cshare alt" data-grafico="${p.t}" data-grp="${n.replace(/"/g,"&quot;")}"><span>📈 Apri il grafico completo</span></button></div></div>`}
+/* Condivisione del dettaglio trend: immagine 1080×1350 con i 3 riquadri (partiva da → ora) e i grafici. */
+async function trShare(n,btn){const C=TRN._ctx;if(!C)return;const p=Object.entries(ROSTER).flatMap(([t,a])=>a.map(x=>({n:x[0],t,num:x[1],r:x[2]}))).find(x=>x.n===n);if(!p)return;
+  const g=grGames(n,C.SZR.length>1?"all":C.sz).filter(x=>C.SZR.includes(x.sz)&&C.rng.includes(grMk(x.dt)));const c=TEAMS[p.t];
+  const M=new Map();g.forEach(x=>{const k=trKey(x,C.by);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});const K=[...M.keys()].sort();
+  try{await document.fonts.load('800 italic 40px "Barlow Condensed"')}catch(e){}
+  const W=1080,H=1350,cv=document.createElement("canvas");cv.width=W;cv.height=H;const X=cv.getContext("2d");
+  const F=(w,s2)=>`italic ${w} ${s2}px "Barlow Condensed","Arial Narrow",Arial,sans-serif`,B=(w,s2)=>`${w} ${s2}px system-ui,-apple-system,Segoe UI,Arial,sans-serif`;
+  const bg=X.createLinearGradient(0,0,0,H);bg.addColorStop(0,"#1c2338");bg.addColorStop(1,"#070a12");X.fillStyle=bg;X.fillRect(0,0,W,H);
+  const hd=X.createLinearGradient(0,0,W,0);const dk=(h,k)=>{const v=parseInt(h.slice(1),16),q=x=>Math.round(x*(1-k)).toString(16).padStart(2,"0");return"#"+q(v>>16)+q((v>>8)&255)+q(v&255)};hd.addColorStop(0,c.bg);hd.addColorStop(1,dk(c.bg,.28));X.fillStyle=hd;X.fillRect(0,0,W,250);X.fillStyle="#facc15";X.fillRect(0,250,W,6);
+  const js=await ldImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jersey(p.t,p.num,n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')));if(js){const s2=190,r=Math.min(s2/js.width,s2/js.height);X.drawImage(js,50,30,js.width*r,js.height*r)}
+  const lum=(h=>{const v=parseInt(h.slice(1),16);return(0.299*(v>>16)+0.587*((v>>8)&255)+0.114*(v&255))/255})(c.bg),tc=lum>.6?"#111":"#fff";
+  X.fillStyle=tc;X.font=F(800,26);X.textAlign="left";X.fillText("CALCOLA IL TREND · DYNASTY LEAGUE",270,72);
+  let z=86;X.font=F(800,z);const nm=n.toUpperCase();while(X.measureText(nm).width>W-310&&z>40){z-=4;X.font=F(800,z)}X.fillText(nm,270,158);
+  X.font=F(700,32);X.fillText(`${c.name.toUpperCase()} · ${trLab(K[0],C.by).replace("|"," ").toUpperCase()} → ${trLab(K[K.length-1],C.by).replace("|"," ").toUpperCase()}`,270,206);
+  const f=(k,v)=>v==null?"—":k==="eff"?cf2(v):cf1(v),mets=[["pdk","PDK","#22c55e"],["min","MINUTI","#facc15"],["eff","EFFICIENZA","#a855f7"]];
+  mets.forEach(([k,l,col],i)=>{const y0=290+i*340,pts=K.map(q=>grAvg(M.get(q),x=>x[k])).filter(v=>v!=null);if(!pts.length)return;const a=pts[0],zz=pts[pts.length-1],d=zz-a,dp=a?d/Math.abs(a)*100:null;
+    X.fillStyle="rgba(255,255,255,.05)";X.beginPath();X.roundRect(50,y0,W-100,310,26);X.fill();X.fillStyle=col;X.fillRect(50,y0+20,8,270);
+    X.textAlign="left";X.fillStyle=col;X.font=F(800,40);X.fillText(l,90,y0+56);
+    X.fillStyle="#94a3b8";X.font=B(700,22);X.fillText("PARTIVA DA",90,y0+100);X.fillText("ORA",330,y0+100);X.textAlign="right";X.fillText("DIFFERENZA",W-90,y0+100);
+    X.textAlign="left";X.fillStyle="#fff";X.font=F(800,72);X.fillText(f(k,a),90,y0+168);X.fillStyle="#94a3b8";X.font=F(800,50);X.fillText("→",250,y0+164);X.fillStyle="#fff";X.font=F(800,72);X.fillText(f(k,zz),330,y0+168);
+    X.textAlign="right";X.fillStyle=d>=0?"#4ade80":"#f87171";X.fillText((d>=0?"+":"−")+f(k,Math.abs(d)),W-90,y0+168);X.font=B(700,24);X.fillText(dp==null?"":(d>=0?"+":"−")+Math.abs(Math.round(dp))+"%",W-90,y0+200);
+    /* mini grafico */const gx=90,gy=y0+215,gw=W-180,gh=75,lo=Math.min(...pts),hi=Math.max(...pts),sp=hi-lo||1,px=j=>gx+(pts.length===1?gw/2:j*gw/(pts.length-1)),py=v=>gy+gh-(v-lo)/sp*gh;
+    X.strokeStyle=col;X.lineWidth=5;X.lineJoin="round";X.beginPath();pts.forEach((v,j)=>j?X.lineTo(px(j),py(v)):X.moveTo(px(j),py(v)));X.stroke();X.fillStyle=col;pts.forEach((v,j)=>{X.beginPath();X.arc(px(j),py(v),j===0||j===pts.length-1?9:6,0,7);X.fill()})});
+  X.textAlign="center";X.fillStyle="#94a3b8";X.font=F(700,28);X.fillText(`${g.length} PARTITE · ${C.by==="s"?"MEDIA PER STAGIONE":C.by==="m"?"MEDIA PER MESE":"MEDIA PER SETTIMANA"} · DATI DUNKEST AL ${EFF.agg}`,W/2,H-34);
+  const fn=`trend-${n.toLowerCase().replace(/[^a-z0-9]+/g,"-")}.png`,txt=`📈 ${n}: ${mets.map(([k,l])=>{const pts=K.map(q=>grAvg(M.get(q),x=>x[k])).filter(v=>v!=null);return pts.length?`${l} ${f(k,pts[0])}→${f(k,pts[pts.length-1])}`:""}).filter(Boolean).join(" · ")}`;
+  cv.toBlob(bl=>{const file=new File([bl],fn,{type:"image/png"});if(navigator.canShare&&navigator.canShare({files:[file]}))navigator.share({files:[file],text:txt}).catch(()=>{});
+    else{const a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=fn;document.body.appendChild(a);a.click();a.remove();if(btn){const sp=btn.querySelector("span");if(sp)sp.textContent="Immagine scaricata ✓"}}},"image/png")}
 function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>PL.push({n:p[0],t,r:p[2]})));
   const ORD=["2024/25","2025/26","2026/27"];if(!ORD.includes(TRN.sz))TRN.sz="2026/27";if(!ORD.includes(TRN.sz2)||ORD.indexOf(TRN.sz2)<ORD.indexOf(TRN.sz))TRN.sz2=TRN.sz;
   const SZR=ORD.slice(ORD.indexOf(TRN.sz),ORD.indexOf(TRN.sz2)+1),multi=SZR.length>1,sz=multi?"all":TRN.sz,met=TRN.met;
@@ -3247,6 +3275,7 @@ document.getElementById("main").addEventListener("click",e=>{
   if(e.target.closest("[data-trclose]")){e.preventDefault();cur=TRN.from||"efficienza";render();window.scrollTo(0,0);return}
   const b=e.target.closest("[data-trset]");if(b){e.preventDefault();TRN[b.dataset.trset]=b.dataset.v;if(b.dataset.trset!=="on")TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y);return}
   const rl=e.target.closest("[data-trrole]");if(rl){e.preventDefault();const r0=rl.dataset.trrole;let v=TRN.ruoli.includes(r0)?TRN.ruoli.replace(r0,""):TRN.ruoli+r0;if(!v)v=r0;TRN.ruoli="GFC".split("").filter(c=>v.includes(c)).join("");TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y);return}
+  const tsh=e.target.closest("[data-trshare]");if(tsh){e.preventDefault();trShare(tsh.dataset.trshare,tsh);return}
   if(e.target.closest("[data-trdx]")){e.preventDefault();TRN.det=null;document.querySelector(".trsheet")?.remove();return}
   if(e.target.classList&&e.target.classList.contains("trsheet")){TRN.det=null;e.target.remove();return}
   const r=e.target.closest("[data-trln]");if(r&&!e.target.closest("[data-grafico]")&&!e.target.closest("[data-trtog]")){e.preventDefault();TRN.det=r.dataset.trln;const y=window.scrollY;render();window.scrollTo(0,y);return}
