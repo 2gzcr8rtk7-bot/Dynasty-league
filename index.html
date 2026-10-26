@@ -191,6 +191,9 @@
 .colroom .cdot{filter:drop-shadow(0 2px 2px rgba(0,0,0,.6))}
 .colroom .ccom{margin-top:12px;display:grid;gap:6px}.ccom>small{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800}.ccom p{margin:0;font-size:12.5px;line-height:1.45;color:#e2e8f0}.ccom p b{color:#facc15}
 .ccmp span small{color:var(--muted)}.cshare{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:12px;padding:11px;border:0;border-radius:12px;cursor:pointer;font-weight:800;font-size:14px;color:#111;background:linear-gradient(180deg,#fff6c2 0%,#facc15 45%,#d9a200 100%);box-shadow:0 6px 14px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.9),inset 0 -3px 0 rgba(0,0,0,.18)}.cshare svg{width:18px;height:18px}
+.colroom>.colsheet,.colsheet{position:fixed;inset:0;z-index:950;background:rgba(3,6,16,.72);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);overflow-y:auto;padding:max(16px,env(safe-area-inset-top)) 12px 28px;animation:colin .18s ease-out}
+.colsheet .ccard{max-width:520px;margin:0 auto!important}.colroom .ccard>.ccx{position:absolute!important}.colsheet .ccx{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1)!important;top:10px!important;right:10px!important;z-index:2}
+@keyframes colin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .gback{text-shadow:0 1px 0 rgba(255,255,255,.5)}
 .colroom .nban{background:linear-gradient(100deg,color-mix(in srgb,var(--tc) 38%,#141a2b) 0%,#161c2e 55%,#0e1220 100%)!important;box-shadow:0 10px 22px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -1px 0 rgba(0,0,0,.6)}
 .colroom .nban .njs svg{filter:drop-shadow(0 4px 5px rgba(0,0,0,.5))}
@@ -3035,7 +3038,7 @@ function vCollege(){if(!COL.d){cur="campo";return vCampo()}COL.sec=COL.sec||"col
   <div class="colsec"><button data-colsec="college" aria-pressed="${isC}">🎓 College</button><button data-colsec="nba" aria-pressed="${!isC}">🏀 NBA</button></div>
   ${isC?`<div class="ctabs coltabs">${tabs.map(([k,l])=>`<button data-coltab="${k}" aria-pressed="${COL.tab===k}">${l}</button>`).join("")}</div>
   ${["usage","radar","orig","ris"].includes(COL.tab)?"":`<div class="trseg colrl">${COL_RL.map(([k,l])=>`<button class="${k}" data-colr="${k}" aria-pressed="${COL.r===k}">${l} <small>${(COL.d[k]||[]).length}</small></button>`).join("")}</div>`}
-  ${colCard()}${body}`:`<div class="grcard">${vNbaSec()}</div>`}<p class="colft">🦆 Texas Ducks Scouting · uso interno</p></div>`}
+  ${body}`:`<div class="grcard">${vNbaSec()}</div>`}<p class="colft">🦆 Texas Ducks Scouting · uso interno</p>${isC&&COL.sel?`<div class="colsheet">${colCard()}</div>`:""}</div>`}
 function vCampo(){
   const t=curTeam,c=TEAMS[t],st=standings().find(x=>x.t===t);
   const {auto,q}=quintetto(t);const qs=new Set(q.map(p=>p[0]));
@@ -3121,6 +3124,10 @@ async function shareRoster(t,btn){
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-effmet]");if(b&&cur==="efficienza"){e.preventDefault();effMet=b.dataset.effmet;esqMet=effMet;const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-esqmet]");if(b&&cur==="effsquadra"){e.preventDefault();esqMet=b.dataset.esqmet;const y=window.scrollY;render();window.scrollTo(0,y)}});
 
+/* Scouting: tocco su un giocatore (data-colsel) = apre la scheda in un pannello sopra la lista; × o fuori = chiude */
+document.getElementById("main").addEventListener("click",e=>{if(cur!=="college")return;if(e.target.closest("[data-colshare]"))return;
+  if(e.target.classList&&e.target.classList.contains("colsheet")){COL.sel=null;document.querySelector(".colsheet")?.remove();document.body.classList.remove("colsheet-open");return}
+  const c=e.target.closest("[data-colsel]");if(!c)return;e.preventDefault();if(c.dataset.colrr)COL.r=c.dataset.colrr;COL.sel=c.dataset.colsel||null;const y=window.scrollY;render();window.scrollTo(0,y)});
 /* Calcola il trend: apertura, chiusura, filtri, linee */
 document.getElementById("main").addEventListener("click",e=>{
   if(e.target.closest("[data-trgo]")){e.preventDefault();TRN.from=cur;cur="trend";render();window.scrollTo(0,0);return}
@@ -4095,7 +4102,7 @@ function render(){
     const nq=m.querySelector("#nbq");if(nq)nq.oninput=()=>{NB.q=nq.value;const L=m.querySelector("#npls");if(L){const q=NB.q.toLowerCase();L.innerHTML=nbPlList(nbAll().filter(p=>!q||p.n.toLowerCase().includes(q)).sort((a,b)=>a.n.localeCompare(b.n)));L.querySelectorAll("[data-nbpl]").forEach(b=>b.onclick=()=>{const n=b.dataset.nbpl,P=NB.g.pl,i=P.indexOf(n);if(i>=0)P.splice(i,1);else{P.push(n);if(P.length>6)P.shift()}const y=window.scrollY;render();window.scrollTo(0,y)})}};
     m.querySelectorAll("[data-colset2]").forEach(b=>b.onclick=()=>{COL[b.dataset.colset2]=b.dataset.v;const y=window.scrollY;render();window.scrollTo(0,y)});
     m.querySelectorAll("select[data-colset]").forEach(x=>x.onchange=()=>{COL[x.dataset.colset]=x.value;const y=window.scrollY;render();window.scrollTo(0,y)});
-    m.addEventListener("click",e=>{if(cur!=="college")return;const c=e.target.closest("[data-colsel]");if(!c)return;if(c.dataset.colrr)COL.r=c.dataset.colrr;COL.sel=c.dataset.colsel||null;render();if(COL.sel){const k=document.querySelector(".ccard");if(k)k.scrollIntoView({block:"nearest",behavior:"smooth"})}},{once:true});}
+}
   const cr=m.querySelector("#croster");if(cr)cr.onclick=()=>{cur="roster";render();window.scrollTo(0,0)};
   m.querySelectorAll(".pl[data-pl],.rrow[data-pl]").forEach(b=>{const go=()=>{curPlayer=b.dataset.pl;cur="giocatore";render();window.scrollTo(0,0)};b.onclick=go;b.onkeydown=e=>{if(e.key==="Enter")go()}});
   const gse=m.querySelector("#gseason");if(gse)gse.onchange=()=>{if(!gse.value)return;gSeason=gse.value;if(gse.dataset.szchip)esqMese="tutta";const y=window.scrollY;render();if(gse.dataset.szchip)window.scrollTo(0,y)};

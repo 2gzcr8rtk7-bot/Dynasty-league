@@ -370,3 +370,6 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - (51) Scheda giocatore dello Scouting: **commento tecnico** automatico (`colComment`: POT, PDK/min, P36/USG, usage,
   profilo, paragoni Dunkest `colComps`, inizio/carriera NBA) e pulsante **Condividi la scheda** (`colShare`, immagine
   1080×1350 del singolo giocatore).
+- (52) Scouting: la scheda del giocatore si apre in un pannello sopra la lista (`.colsheet`) toccando qualsiasi nome
+  (Archivio, Risultati, Radar, grafici…); si chiude con × o toccando fuori. Corretto il bug per cui dopo un tocco
+  qualsiasi i nomi non aprivano più la scheda (listener "once" sostituito da uno permanente).
