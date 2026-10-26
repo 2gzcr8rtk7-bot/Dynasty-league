@@ -426,3 +426,5 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 (73) Scambio 26/10/2026 DOL↔MOO: ai Dolphins Jaime Jaquez Jr.; ai Mooses Jalen Williams + 30 cr post-Draft (debito Dolphins, in DEBITI tipo "post"). Aggiornati ROSTER, EFF.gioc, INFORTUNI (J. Williams ora t:"MOO"), TRADES. Titolari invariati (nessuno dei due era titolare).
 
 (74) Indietro con swipe: script prima del service worker. Swipe dal bordo sinistro o destro (26px) → navBack(): chiude il .colsheet aperto, altrimenti clicca l'ultimo .gback/.grback della pagina (anche nascosto), altrimenti torna alla sezione precedente (pila NAVH, alimentata da un wrapper di render()). Android: voce finta in history + popstate → navBack. Sui telefoni (hover:none, pointer:coarse) i tasti .gback/.grback sono nascosti, tranne "‹ Annulla" dei giochi (data-nt="back"); su PC restano visibili. NON togliere i .gback dal markup: lo swipe li usa.
+
+(75) Box score Dynasty TV: PDK dei giocatori in riquadri colorati con angoli arrotondati (.pdkb): rosso <20, giallo 20-29,99, verde 30-39,99, viola ≥40 (classi pr/py/pg/pv). Intestazione PDK e totale squadra bianchi, senza riquadro.
