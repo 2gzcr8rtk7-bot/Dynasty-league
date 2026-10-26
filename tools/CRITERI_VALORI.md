@@ -84,3 +84,10 @@ Interazione con età ed efficienza (26/10/2026):
 
 ## Anni NBA
 Si contano dalla stagione in cui il giocatore è entrato in NBA (1° anno = stagione d'ingresso).
+Aggiornamenti infortuni (26/10/2026):
+- Rookie senza storia → 3 stelle (neutro: non sposta né valore né prezzo).
+- Voto del GM: **Dončić 3** (ha sempre qualche problema ogni anno).
+- Il recente conta più della storia: un problema nella prima stagione non deve pesare se poi è stato sano.
+  Regola: ultime 2 stagioni sane (≤15 partite saltate ciascuna) → almeno 3½; ultima stagione sana e 2 delle ultime 3 sane
+  → almeno 3 (es. Holmgren: 0 partite al 1° anno, poi 82 · 32 · 69 → 3).
+- Fonte partite 2021/22–2023/24: memoria di Claude (possibile scarto di qualche partita); 2024/25–2025/26: dati dell'app.
