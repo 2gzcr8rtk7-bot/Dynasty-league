@@ -140,5 +140,8 @@ Voto del GM: Ingram Infortuni ½.
   scendere), nessuna crescita futura; a Philadelphia è 3°–4° violino (Embiid, LeBron, Maxey) → stellina spazio bassa.
 - **Livello di rimpiazzo (Naz Reid, Ingram)**: guardie e ali nella fascia ~18–23 PDK sono abbondanti anche tra i
   giocatori svincolati (non in nessuna squadra della lega): se ne trovano tanti "pescando" fuori. Quindi valgono poco.
-  → Nel modello: valore e prezzo si calcolano sul **PDK sopra il livello di rimpiazzo** (G/F ≈ 23 PDK; C un po' più
-  basso perché i centri utili scarseggiano); sotto/vicino alla soglia il valore crolla verso il minimo.
+  Vale per i **"normodotati"**: giocatori dal 4° anno NBA in poi che hanno già dimostrato di non avere potenziale da
+  superstar, fanno quello che fanno e ce ne sono tanti simili (es. John Collins, Naz Reid, Ingram). NON vale per i
+  giovani nei primi 3 anni, che restano valutati su promessa e margine di crescita.
+  → Nel modello (solo anno NBA ≥ 4): valore e prezzo si calcolano sul **PDK sopra il livello di rimpiazzo** (G/F ≈ 23
+  PDK; C un po' più basso perché i centri utili scarseggiano); sotto/vicino alla soglia il valore crolla verso il minimo.
