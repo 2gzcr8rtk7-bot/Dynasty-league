@@ -22,7 +22,7 @@ Kon Knueppel|1229|290
 Alex Sarr|980|220
 Caleb Wilson|1240|520
 Darryn Peterson|1075|420
-Joel Embiid|1540|130
+Joel Embiid|1265|130
 Karl-Anthony Towns|1250|110
 Donovan Mitchell|1160|99
 Dylan Harper|1205|405
