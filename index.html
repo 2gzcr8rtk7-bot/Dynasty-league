@@ -826,9 +826,13 @@ nav button{font-size:15px;letter-spacing:.04em}
 .tvbox tr.tot td{background:rgba(255,255,255,.06);color:#fff;font-weight:800}
 .tvbox tr.pct td{height:28px;font-size:12.5px;color:var(--muted)}
 .tvbox .tvpn{display:flex;align-items:center;gap:7px}
-.tvbox .tvown{display:flex;flex-direction:column;gap:2px;flex:none;width:22px;margin-left:auto}
-.tvbox .tvob{width:22px;height:22px;display:block;border-radius:50%;font-size:8px;line-height:22px;text-align:center;font-weight:800}
-.tvbox .tvob.logo{border-radius:0}
+.tvbox td:first-child{overflow:hidden}
+.tvbox .tvpn{position:relative}
+.tvbox .tvpn>div:first-child{position:relative;z-index:1}
+.tvbox .tvown{position:absolute;right:-14px;top:50%;transform:translateY(-50%);display:flex;gap:2px;opacity:.38;pointer-events:none}
+.tvbox .tvob{width:52px;height:52px;display:block;border-radius:50%;font-size:14px;line-height:52px;text-align:center;font-weight:800}
+.tvbox .tvob.logo{border-radius:0;filter:none}
+.tvbox td.pdkl.py{color:#ffd23f!important}.tvbox td.pdkl.pg{color:#34d399!important}
 .tvbox .pos{color:var(--win)}.tvbox .neg{color:var(--loss)}
 /* G League */
 /* G League · statistiche */
@@ -4534,7 +4538,7 @@ function tvGame(key){const T=TVD(),[d,g]=key.split("_"),G=(T.days[d]||[]).find(x
   const lead=(lab,x,i)=>`<div><small>${lab}</small><p>${tvLogo(x[0]==="a"?a:h)}<span>${sur(x[1][0])}</span><b>${x[1][i]}</b></p></div>`;
   const side=TVS.side==="h"?"h":"a",P=b[side],tc=side==="a"?a:h,TS=side==="a"?A:Hh;
   const f1=v=>v==null?"—":String(v).replace(".",",");
-  const LV=b&&b.live&&G[5]==="L",pr=p=>`<tr><td><div class="tvpn"><div>${p[0]}<small>${p[1]?"Quintetto":"Panchina"}</small></div>${tvOwn(p[0])}</div></td><td class="pdkl">${LV?'<i class="lvd"></i>':""}${f1(p[19])}</td><td>${p[2]}</td><td class="pts">${p[3]}</td><td>${p[6]}</td><td>${p[7]}</td><td>${p[8]}</td><td>${p[9]}</td><td>${p[10]}</td><td>${p[12]}-${p[13]}</td><td>${p[14]}-${p[15]}</td><td>${p[16]}-${p[17]}</td><td>${p[4]}</td><td>${p[5]}</td><td>${p[11]}</td><td class="${p[18]>0?"pos":p[18]<0?"neg":""}">${p[18]==null?"—":(p[18]>0?"+":"")+p[18]}</td></tr>`;
+  const LV=b&&b.live&&G[5]==="L",pr=p=>`<tr><td><div class="tvpn"><div>${p[0]}<small>${p[1]?"Quintetto":"Panchina"}</small></div>${tvOwn(p[0])}</div></td><td class="pdkl ${p[19]==null?"":+p[19]<20?"pr":+p[19]<30?"py":"pg"}">${LV?'<i class="lvd"></i>':""}${f1(p[19])}</td><td>${p[2]}</td><td class="pts">${p[3]}</td><td>${p[6]}</td><td>${p[7]}</td><td>${p[8]}</td><td>${p[9]}</td><td>${p[10]}</td><td>${p[12]}-${p[13]}</td><td>${p[14]}-${p[15]}</td><td>${p[16]}-${p[17]}</td><td>${p[4]}</td><td>${p[5]}</td><td>${p[11]}</td><td class="${p[18]>0?"pos":p[18]<0?"neg":""}">${p[18]==null?"—":(p[18]>0?"+":"")+p[18]}</td></tr>`;
   const st=P.filter(p=>p[1]),bn=P.filter(p=>!p[1]);
   const tot=`<tr class="tot"><td>Totale squadra</td><td class="pdkl">${f1(Math.round(TS.pdk*100)/100)}</td><td></td><td>${side==="a"?sa:sh}</td><td>${TS.reb}</td><td>${TS.ast}</td><td>${TS.stl}</td><td>${TS.blk}</td><td>${TS.tov}</td><td>${TS.fgm}-${TS.fga}</td><td>${TS.tpm}-${TS.tpa}</td><td>${TS.ftm}-${TS.fta}</td><td>${TS.oreb}</td><td>${TS.reb-TS.oreb}</td><td>${TS.pf}</td><td></td></tr>
    <tr class="pct"><td>Percentuali</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>${pc(TS.fgm,TS.fga)}</td><td>${pc(TS.tpm,TS.tpa)}</td><td>${pc(TS.ftm,TS.fta)}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
