@@ -390,3 +390,5 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
   "partiva da" (primo punto del periodo) → "ora" (ultimo punto), differenza assoluta e %, media del periodo, trend e
   grafico personale. Il trattino a sinistra della riga mostra/nasconde la linea nel grafico comune.
   Pulsante Condividi (`trShare`): immagine 1080×1350 del dettaglio.
+- (58) Grafico: con poche partite nel periodo (2-8) i punti sono le singole partite; se il periodo dà un solo punto
+  (es. un solo mese) si scende a settimane e poi a partite. Stesso ripiego in Calcola il trend (punti per partita).

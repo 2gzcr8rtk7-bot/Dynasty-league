@@ -2403,8 +2403,8 @@ function grChart(P,show){if(!P.length)return`<div class="grempty">Nessuna partit
    ≥ soglia (in crescita) o ≤ −soglia (in calo), con almeno TRN.minp partite nel periodo e almeno 2 punti. */
 let TRN={ruoli:"GFC",sz:"2026/27",sz2:"2026/27",mese:"",mese2:"",met:"pdk",dir:"up",soglia:"10",minp:"3",team:"",on:null,from:null};
 const TR_MAXL=8,TR_DASH=["","6 4","2 3","8 3 2 3"];
-function trKey(x,by){const d=x.dt;if(by==="w")return grMk(d)+"#"+Math.min(3,Math.floor((d.getUTCDate()-1)/7));if(by==="m")return grMk(d);return x.sz}
-function trLab(k,by){if(by==="w"){const[mk,q]=k.split("#"),[yy,mm]=mk.split("-").map(Number),last=new Date(Date.UTC(yy,mm,0)).getUTCDate(),a0=+q*7+1,a1=+q===3?last:a0+6,f=v=>String(v).padStart(2,"0");return"Sett. "+(+q+1)+"|"+f(a0)+"–"+f(a1)+"/"+f(mm)}
+function trKey(x,by){const d=x.dt;if(by==="g")return d.toISOString().slice(0,10);if(by==="w")return grMk(d)+"#"+Math.min(3,Math.floor((d.getUTCDate()-1)/7));if(by==="m")return grMk(d);return x.sz}
+function trLab(k,by){if(by==="g"){const[y,m,d]=k.split("-");return d+"/"+m+"|"+y}if(by==="w"){const[mk,q]=k.split("#"),[yy,mm]=mk.split("-").map(Number),last=new Date(Date.UTC(yy,mm,0)).getUTCDate(),a0=+q*7+1,a1=+q===3?last:a0+6,f=v=>String(v).padStart(2,"0");return"Sett. "+(+q+1)+"|"+f(a0)+"–"+f(a1)+"/"+f(mm)}
   if(by==="m"){const[y,m]=k.split("-");return GR_MESI[+m-1]+"|"+y}return SZ_LBL[k]+"|"+k.slice(2)}
 function trCol(t){const c=TEAMS[t];const l=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
   for(const h of[c.bg,c.trim,c.fg,c.stroke])if(h&&/^#[0-9a-f]{6}$/i.test(h)&&l(h)>.28)return h;return"#93c5fd"}
@@ -2425,7 +2425,7 @@ function trDetail(n){const C=TRN._ctx;if(!C)return"";const p=Object.entries(ROST
     return`<div class="tdbox" style="--c:${col}"><div class="tdh"><b>${l}</b><span>media periodo ${f(k,grAvg(g,x=>x[k]))}${tr&&pts.length>=3?` · trend ${tr.pct>=0?"+":"−"}${Math.abs(Math.round(tr.pct))}%`:""}</span></div>
       <div class="tdv"><div><small>Partiva da</small><b>${f(k,a)}</b><em>${trLab(K[0],C.by).replace("|"," ")}</em></div><i>→</i><div><small>Ora</small><b>${f(k,z)}</b><em>${trLab(K[K.length-1],C.by).replace("|"," ")}</em></div><div class="tdd ${up?"up":"dn"}"><small>Differenza</small><b>${up?"+":"−"}${f(k,Math.abs(d))}</b><em>${dp==null?"":(up?"+":"−")+Math.abs(Math.round(dp))+"%"}</em></div></div>${chart(k,col)}</div>`};
   return`<div class="colsheet trsheet"><div class="ccard" style="--rc:${c.bg}"><button class="ccx" data-trdx="1" aria-label="Chiudi">×</button>
-   <div class="tdhd">${jersey(p.t,p.num,n)}<div><b>${n}</b><small>${c.name} · ${{G:"Guardia",F:"Ala",C:"Centro"}[p.r]} · ${g.length} partite · ${C.by==="s"?"media per stagione":C.by==="m"?"media per mese":"media per settimana"}</small></div></div>
+   <div class="tdhd">${jersey(p.t,p.num,n)}<div><b>${n}</b><small>${c.name} · ${{G:"Guardia",F:"Ala",C:"Centro"}[p.r]} · ${g.length} partite · ${C.by==="s"?"media per stagione":C.by==="m"?"media per mese":C.by==="w"?"media per settimana":"partita per partita"}</small></div></div>
    ${mets.map(box).join("")}
    <button class="cshare" data-trshare="${n.replace(/"/g,"&quot;")}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Condividi</span></button>
    <button class="cshare alt" data-grafico="${p.t}" data-grp="${n.replace(/"/g,"&quot;")}"><span>📈 Apri il grafico completo</span></button></div></div>`}
@@ -2452,7 +2452,7 @@ async function trShare(n,btn){const C=TRN._ctx;if(!C)return;const p=Object.entri
     X.textAlign="right";X.fillStyle=d>=0?"#4ade80":"#f87171";X.fillText((d>=0?"+":"−")+f(k,Math.abs(d)),W-90,y0+168);X.font=B(700,24);X.fillText(dp==null?"":(d>=0?"+":"−")+Math.abs(Math.round(dp))+"%",W-90,y0+200);
     /* mini grafico */const gx=90,gy=y0+215,gw=W-180,gh=75,lo=Math.min(...pts),hi=Math.max(...pts),sp=hi-lo||1,px=j=>gx+(pts.length===1?gw/2:j*gw/(pts.length-1)),py=v=>gy+gh-(v-lo)/sp*gh;
     X.strokeStyle=col;X.lineWidth=5;X.lineJoin="round";X.beginPath();pts.forEach((v,j)=>j?X.lineTo(px(j),py(v)):X.moveTo(px(j),py(v)));X.stroke();X.fillStyle=col;pts.forEach((v,j)=>{X.beginPath();X.arc(px(j),py(v),j===0||j===pts.length-1?9:6,0,7);X.fill()})});
-  X.textAlign="center";X.fillStyle="#94a3b8";X.font=F(700,28);X.fillText(`${g.length} PARTITE · ${C.by==="s"?"MEDIA PER STAGIONE":C.by==="m"?"MEDIA PER MESE":"MEDIA PER SETTIMANA"} · DATI DUNKEST AL ${EFF.agg}`,W/2,H-34);
+  X.textAlign="center";X.fillStyle="#94a3b8";X.font=F(700,28);X.fillText(`${g.length} PARTITE · ${C.by==="s"?"MEDIA PER STAGIONE":C.by==="m"?"MEDIA PER MESE":C.by==="w"?"MEDIA PER SETTIMANA":"PARTITA PER PARTITA"} · DATI DUNKEST AL ${EFF.agg}`,W/2,H-34);
   const fn=`trend-${n.toLowerCase().replace(/[^a-z0-9]+/g,"-")}.png`,txt=`📈 ${n}: ${mets.map(([k,l])=>{const pts=K.map(q=>grAvg(M.get(q),x=>x[k])).filter(v=>v!=null);return pts.length?`${l} ${f(k,pts[0])}→${f(k,pts[pts.length-1])}`:""}).filter(Boolean).join(" · ")}`;
   cv.toBlob(bl=>{const file=new File([bl],fn,{type:"image/png"});if(navigator.canShare&&navigator.canShare({files:[file]}))navigator.share({files:[file],text:txt}).catch(()=>{});
     else{const a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=fn;document.body.appendChild(a);a.click();a.remove();if(btn){const sp=btn.querySelector("span");if(sp)sp.textContent="Immagine scaricata ✓"}}},"image/png")}
@@ -2464,7 +2464,10 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   const mesi=[...new Set([...G.values()].flatMap(g=>g.map(x=>grMk(x.dt))))].sort();
   if(sz==="all"||!mesi.includes(TRN.mese))TRN.mese="";
   const iA=mesi.indexOf(TRN.mese);let iB=mesi.indexOf(TRN.mese2);if(iA<0)TRN.mese2="";else if(iB<iA){iB=iA;TRN.mese2=TRN.mese}
-  const rng=iA<0?mesi:mesi.slice(iA,iB+1),by=multi?"s":rng.length===1?"w":"m";TRN._ctx={SZR,rng,by,sz};
+  const rng=iA<0?mesi:mesi.slice(iA,iB+1);let by=multi?"s":rng.length===1?"w":"m";
+  /* se il periodo ha un solo punto possibile (es. stagione appena iniziata) si passa alle singole partite */
+  {const ks=new Set();G.forEach(g=>g.forEach(x=>{if(rng.includes(grMk(x.dt)))ks.add(trKey(x,by))}));if(ks.size<2&&by!=="s")by="g"}
+  TRN._ctx={SZR,rng,by,sz};
   const keysAll=new Set(),R=[];
   PL.forEach(p=>{if(TRN.team&&p.t!==TRN.team)return;if(!TRN.ruoli.includes(p.r))return;const g=G.get(p.n).filter(x=>rng.includes(grMk(x.dt)));if(g.length<+TRN.minp)return;
     const M=new Map();g.forEach(x=>{const k=trKey(x,by);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});
@@ -2508,7 +2511,7 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   <div class="trlab">Cosa misurare</div>${seg("met",[["pdk","PDK"],["min","Minuti"],["eff","Efficienza"]])}
   <div class="trlab">Trend cercato</div>${seg("dir",[["up","▲ In crescita"],["down","▼ In calo"]])}
   <div class="trctl two">${sel("soglia","Almeno",[5,10,15,20,25,30,40,50].map(v=>[v,(TRN.dir==="up"?"+":"−")+v+"%"]),TRN.soglia)}${sel("minp","Partite minime",[1,3,5,10,15,20].map(v=>[v,v+" partite"]),TRN.minp)}</div>
-  <div class="grcard">${chart}<div class="grfoot">${by==="s"?"media di ogni stagione":by==="m"?"media di ogni mese":"media di ogni settimana"} · max ${TR_MAXL} linee</div></div>
+  <div class="grcard">${chart}<div class="grfoot">${by==="s"?"media di ogni stagione":by==="m"?"media di ogni mese":by==="w"?"media di ogni settimana":"ogni partita"} · max ${TR_MAXL} linee</div></div>
   <div class="trcount">${R.length} ${R.length===1?"giocatore":"giocatori"} con trend ${TRN.dir==="up"?"≥ +":"≤ −"}${TRN.soglia}% · tocca per mostrare/nascondere la linea, 📈 per il suo grafico</div>
   <div class="trlist">${rows||`<p class="note">Prova a scegliere un periodo più lungo o una soglia più bassa.</p>`}</div>
   <p class="note">Trend = come per il Grafico: retta che passa meglio tra i punti del periodo (stagioni, mesi o settimane), variazione dal primo all'ultimo punto in % sulla media. Servono almeno 2 punti: con la stagione appena iniziata scegli un solo mese per avere le settimane.</p></div>${TRN.det?trDetail(TRN.det):""}`}
@@ -2522,7 +2525,10 @@ function vGrafico(){if(!TEAMS[GR.t])GR.t=TEAMS[curTeam]?curTeam:Object.keys(TEAM
   const iA=mesi.indexOf(GR.mese);let iB=mesi.indexOf(GR.mese2);if(iA<0)GR.mese2="";else if(iB<iA){iB=iA;GR.mese2=GR.mese}
   const rng=iA<0?mesi:mesi.slice(iA,iB+1),g=gAll.filter(x=>rng.includes(grMk(x.dt)));
   GR.by=multi?"s":(iA>=0&&iA===iB)?"w":"m";
-  const P=grGroup(g,GR.by),avg=f=>grAvg(g,x=>x[f]);
+  /* se il periodo dà un solo punto (es. stagione appena iniziata, un solo mese) scendo di livello: settimane, poi partite */
+  if(GR.by!=="s"&&g.length>=2&&g.length<=8)GR.by="g";/* poche partite: mostrale una per una */
+  if(GR.by!=="s"&&g.length>=2&&g.length<=8)GR.by="g";/* poche partite: mostrale una per una */
+  let P=grGroup(g,GR.by);if(P.length<2&&g.length>=2&&GR.by!=="g"){if(GR.by!=="w"){GR.by="w";P=grGroup(g,"w")}if(P.length<2){GR.by="g";P=grGroup(g,"g")}}const _P=P,avg=f=>grAvg(g,x=>x[f]);
   const mLab=k=>{const[y,m]=k.split("-");return["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"][+m-1]+" "+y.slice(2)};
   const wLab=(k,i)=>{const d0=new Date(k+"T00:00:00Z"),d1=new Date(d0);d1.setUTCDate(d1.getUTCDate()+6);const f=d=>String(d.getUTCDate()).padStart(2,"0")+"/"+String(d.getUTCMonth()+1).padStart(2,"0");return`Sett. ${i+1} · ${f(d0)}–${f(d1)}`};
   const f1=v=>v==null?"—":v.toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1}),f2=v=>v==null?"—":v.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -2539,7 +2545,7 @@ function vGrafico(){if(!TEAMS[GR.t])GR.t=TEAMS[curTeam]?curTeam:Object.keys(TEAM
   ${sel("Al mese",iA<0?[["","—"]]:mesi.slice(iA).map(k=>[k,mLab(k)]),GR.mese2,iA<0)}</div>
   <div class="grjs">${(()=>{const r=(ROSTER[t]||[]).find(x=>x[0]===GR.p);return jersey(t,r?r[1]:null,GR.p)})()}</div></div>
   <div class="grtgs">${tg("pdk")}${tg("min")}${tg("eff")}</div>
-  <div class="grcard">${grChart(P,GR.show)}<div class="grfoot">${g.length} ${g.length===1?"partita":"partite"} · ${GR.by==="s"?"media di ogni stagione":GR.by==="m"?"media di ogni mese":"media di ogni settimana"}</div></div></div>`}
+  <div class="grcard">${grChart(P,GR.show)}<div class="grfoot">${g.length} ${g.length===1?"partita":"partite"} · ${GR.by==="s"?"media di ogni stagione":GR.by==="m"?"media di ogni mese":GR.by==="w"?"media di ogni settimana":"ogni partita"}</div></div></div>`}
 
 function vGiocatore(){
   const t=curTeam,c=TEAMS[t],p=(ROSTER[t]||[]).find(x=>x[0]===curPlayer);
