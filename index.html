@@ -1689,7 +1689,12 @@ nav button>span{white-space:nowrap}
 </style><style>
 .vdl{display:block;font-style:normal;font-weight:800;font-size:10px;letter-spacing:.02em;margin-top:1px;color:var(--muted)}.vdl.su{color:#22c55e}.vdl.giu{color:#ef4444}
 .vfrom{display:block;font-style:normal;font-size:10.5px;color:var(--muted);margin-top:2px}.vfrom .vdl{display:inline;margin-left:4px}
-</style><style>.fasz{white-space:nowrap}.fasz small{display:block;font-size:10px;color:var(--muted);font-style:normal;font-weight:600}</style><style>.grk{display:flex;gap:12px;align-items:baseline}.grk span{display:flex;flex-direction:column}.grk i{font-style:normal;font-size:10.5px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin-top:1px}</style></head>
+</style><style>.fasz{white-space:nowrap}.fasz small{display:block;font-size:10px;color:var(--muted);font-style:normal;font-weight:600}</style><style>.grk{display:flex;gap:12px;align-items:baseline}.grk span{display:flex;flex-direction:column}.grk i{font-style:normal;font-size:10.5px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin-top:1px}</style><style>
+.glwrap{position:relative;display:inline-flex;line-height:0}.glwrap .glmk{position:absolute;right:-3px;bottom:-2px;font-style:normal;font-family:var(--display);font-weight:900;font-size:9px;line-height:1;padding:1px 3px;border-radius:3px;background:#f5b400;color:#111}
+.glb{background-size:contain;background-position:center;background-repeat:no-repeat}
+.tvbox .tvob.glb{border-radius:0}
+.fagl .glb,.fagl .glwrap{vertical-align:middle}.faglb.glb{border-radius:0!important;background-color:transparent!important}
+</style></head>
 <body>
 <header>
   <div class="wrap">
@@ -1911,6 +1916,9 @@ const ROSTER={
 };
 
 function badge(t,cls="badge"){const c=TEAMS[t];if(LOGO[t])return `<span class="${cls} logo lg-${t}" role="img" aria-label="${c.nick}"></span>`;return `<span class="${cls}" style="background:${c.bg};color:${c.fg};box-shadow:inset 0 0 0 2px ${c.trim}">${ini(t)}</span>`}
+/* Logo della squadra G League (satellite) della franchigia t: logo proprio se c'è in GLEAGUE, altrimenti logo della franchigia con la "G" */
+function glBadge(t,cls="badge"){const g=typeof GLEAGUE!=="undefined"?GLEAGUE.find(x=>x.t===t):null;if(g&&g.logo)return `<span class="${cls} logo glb" role="img" aria-label="G-${TEAMS[t].nick}" style="background-image:url('${g.logo}')"></span>`;
+  return `<span class="glwrap">${badge(t,cls)}<i class="glmk">G</i></span>`}
 
 function standings(){
   const s={};Object.keys(TEAMS).forEach(t=>s[t]={t,w:0,l:0,pf:0,pa:0,h2h:{},last:[]});
@@ -2622,7 +2630,7 @@ const FA_OWN={"Koa Peat":"FOX","Joan Beringer":"FOX","Jared McCain":"FOX","Jock 
 let faSz="26/27",faRole="",faGL=false,faP=null,faFrom="fa";
 const FA_R={G:"Guardia",F:"Ala",C:"Centro"};
 const faNz=v=>String(v||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-const faGL1=n=>FA_OWN[n]?`<span class="fagl" title="Diritti G League: ${TEAMS[FA_OWN[n]].nick}">${badge(FA_OWN[n],"faglb")}<i>G</i></span>`:"";
+const faGL1=n=>FA_OWN[n]?`<span class="fagl" title="Diritti G League: ${TEAMS[FA_OWN[n]].nick}">${glBadge(FA_OWN[n],"faglb")}</span>`:"";
 const faNum=v=>v==null?"—":v.toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1});
 const FA_SZL={"24/25":"Stagione 1","25/26":"Stagione 2","26/27":"Stagione 3"};
 function vFA(){
@@ -2663,7 +2671,7 @@ function vFAP(){
   const o=FA_OWN[x[0]],c=o?TEAMS[o]:null;
   const rows=["26/27","25/26","24/25"].map(z=>{const s=x[4][z];return `<tr><td class="fasz">${FA_SZL[z].replace("Stagione ","Stag. ")}<small>${z}</small></td>${s?`<td>${s[0]}</td><td>${faNum(s[1])}</td><td class="fapdk">${pdkB(s[2],faNum(s[2]))}</td><td>${eff(s[3])}</td><td class="gpj">${s[3]==null?"—":faNum(s[3]*36)}</td><td>${faNum(s[4])}</td><td>${faNum(s[5])}</td><td>${faNum(s[6])}</td>`:`<td colspan="8" class="dash">Nessuna partita</td>`}</tr>`}).join("");
   return `<button class="gback" id="faback">‹ ${faFrom==="home"?"Home":"Free Agent"}</button>
-  <div class="fahead"${c?` style="--tc:${c.bg}"`:""}><span class="fanum">${x[3]?"#"+x[3]:FA_R[x[2]][0]}</span><div><small>Free Agent${o?` · G League ${c.nick}`:""}</small><h3>${x[0]}</h3><p>${FA_R[x[2]]} · ${x[1]}</p></div>${o?`<span class="faown">${badge(o)}</span>`:""}</div>
+  <div class="fahead"${c?` style="--tc:${c.bg}"`:""}><span class="fanum">${x[3]?"#"+x[3]:FA_R[x[2]][0]}</span><div><small>Free Agent${o?` · G League ${c.nick}`:""}</small><h3>${x[0]}</h3><p>${FA_R[x[2]]} · ${x[1]}</p></div>${o?`<span class="faown">${glBadge(o)}</span>`:""}</div>
   ${H("Stagioni",`<em>media per partita</em>`)}
   <div class="tbl-wrap"><table class="fatbl faptbl"><thead><tr><th>Stag.</th><th>PG</th><th>Min</th><th>PDK</th><th>Eff.</th><th>Proj 36'</th><th>Pt</th><th>Rb</th><th>As</th></tr></thead><tbody>${rows}</tbody></table></div>
   ${faGames(x)}
@@ -2881,7 +2889,7 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   const seg=(k,opts)=>`<div class="trseg">${opts.map(([v,l])=>`<button data-trset="${k}" data-v="${v}" aria-pressed="${TRN[k]===v}">${l}</button>`).join("")}</div>`;
   const rows=R.map((x,i)=>{const on=TRN.on.includes(x.n),st=sty[x.n];return`<div class="trrow${on?" on":""}" data-trln="${x.n.replace(/"/g,"&quot;")}" role="button" tabindex="0">
     <span class="trsw" data-trtog="1" title="Mostra/nascondi la linea"${on?` style="--c:${st.c}"`:""}>${on?`<svg viewBox="0 0 26 8" width="26" height="8"><line x1="1" y1="4" x2="25" y2="4" stroke="${st.c}" stroke-width="3" ${st.d?`stroke-dasharray="${st.d}"`:""} stroke-linecap="round"/></svg>`:""}</span>
-    ${badge(x.t,"trlg")}<span class="trnm"><b>${x.n}</b><small>${x.gl?"G-":""}${TEAMS[x.t].nick} · ${{G:"Guardia",F:"Ala",C:"Centro"}[x.r]} · ${x.N} partite · media ${fmt(x.m)}</small></span>
+    ${x.gl?glBadge(x.t,"trlg"):badge(x.t,"trlg")}<span class="trnm"><b>${x.n}</b><small>${x.gl?"G-":""}${TEAMS[x.t].nick} · ${{G:"Guardia",F:"Ala",C:"Centro"}[x.r]} · ${x.N} partite · media ${fmt(x.m)}</small></span>
     <span class="trpc ${x.pct>=0?"up":"dn"}">${x.pct>=0?"▲ +":"▼ −"}${Math.abs(x.pct).toFixed(0)}%</span>
     <button class="trgr" data-grafico="${x.t}" data-grp="${x.n.replace(/"/g,"&quot;")}" aria-label="Grafico di ${x.n}">📈</button></div>`}).join("");
   return`<div class="grroom trroom" style="--tc:#16213f;--tf:#fff">
@@ -2901,7 +2909,7 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   <div class="trlist">${rows||`<p class="note">Prova a scegliere un periodo più lungo o una soglia più bassa.</p>`}</div>
   <p class="note">Trend = come per il Grafico: retta che passa meglio tra i punti del periodo (stagioni, mesi o settimane), variazione dal primo all'ultimo punto in % sulla media. Servono almeno 2 punti: con la stagione appena iniziata scegli un solo mese per avere le settimane.</p></div>${TRN.det?trDetail(TRN.det):""}`}
 function vGrafico(){const FAm=!!GR.fa;if(FAm&&typeof FAG==="undefined"){faLoadG();return`<button class="grback" data-grclose="1">‹ Indietro</button><p class="note">Caricamento delle partite…</p>`}
-  const fo=FAm?FA_OWN[GR.fa]:null;if(FAm)GR.t=fo||"FA";else if(!TEAMS[GR.t])GR.t=TEAMS[curTeam]?curTeam:Object.keys(TEAMS)[0];const t=GR.t,c=TEAMS[t]||{name:"Free Agent",nick:"FA",bg:"#2b3a67",fg:"#fff"};const ros=FAm?[GR.fa]:(ROSTER[t]||[]).map(x=>x[0]);if(!GR.p||!ros.includes(GR.p))GR.p=ros[0];
+  const fo=FAm?FA_OWN[GR.fa]:null;if(FAm)GR.t=fo||"FA";else if(!TEAMS[GR.t])GR.t=TEAMS[curTeam]?curTeam:Object.keys(TEAMS)[0];const t=GR.t,c=TEAMS[t]||{name:"Free Agent",nick:"FA",bg:"#2b3a67",fg:"#fff"};const glN=FAm?[]:glPlayers().filter(p=>p.t===t).map(p=>p.n),ros=FAm?[GR.fa]:[...(ROSTER[t]||[]).map(x=>x[0]),...glN];if(!GR.p||!ros.includes(GR.p))GR.p=ros[0];const isGL=glN.includes(GR.p);
   /* livello automatico: Tutte → stagioni; stagione → mesi; mese → settimane; settimana → partite */
   /* intervallo di stagioni consecutive: Dalla stagione → Alla stagione (più stagioni = un punto per stagione) */
   const ORD=["2024/25","2025/26","2026/27"];if(GR.sz==="all"){GR.sz=ORD[0];GR.sz2=ORD[2]}if(!ORD.includes(GR.sz))GR.sz=ORD[2];if(!ORD.includes(GR.sz2)||ORD.indexOf(GR.sz2)<ORD.indexOf(GR.sz))GR.sz2=GR.sz;
@@ -2921,15 +2929,16 @@ function vGrafico(){const FAm=!!GR.fa;if(FAm&&typeof FAG==="undefined"){faLoadG(
   const sel=(k,opts,v,dis)=>`<label class="grsel${dis?" off":""}"><span>${k}</span><select data-gr="${k}" ${dis?"disabled":""}>${opts.map(([a,b])=>`<option value="${a}" ${a===v?"selected":""}>${b}</option>`).join("")}</select></label>`;
   const tg=k=>`<button class="grtg ${k}" data-grtg="${k}" aria-pressed="${!!GR.show[k]}"><i></i>${GR_LAB[k]}<b>${k==="eff"?f2(avg(k)):f1(avg(k))}</b></button>`;
   const win=GR_WIN[GR.by];
-  return`<div class="grroom" style="--tc:${c.bg};--tf:${c.txt||c.fg}">
+  const gle=(FAm||isGL)&&typeof GLEAGUE!=="undefined"?GLEAGUE.find(x=>x.t===t):null,gbg=gle&&gle.bg?gle.bg:c.bg,gtf=gle&&gle.bg?"#fff":(c.txt||c.fg);
+  return`<div class="grroom" style="--tc:${gbg};--tf:${gtf}">
   <button class="grback" data-grclose="1">‹ Indietro</button>
-  <div class="grhd"><span class="grlg">${TEAMS[t]?badge(t):`<span class="grfa">FA</span>`}</span><div><small>${FAm?"Free Agent"+(fo?" · G League "+c.nick:""):c.name} · grafici</small><b>${GR.p}</b></div></div>
-  <div class="grtop"><div class="grctl">${FAm?"":sel("Giocatore",ros.map(n=>[n,n]),GR.p)}
+  <div class="grhd"><span class="grlg">${TEAMS[t]?(FAm||isGL?glBadge(t):badge(t)):`<span class="grfa">FA</span>`}</span><div><small>${FAm?"Free Agent"+(fo?" · G League "+c.nick:""):isGL?"G League "+c.nick:c.name} · grafici</small><b>${GR.p}</b></div></div>
+  <div class="grtop"><div class="grctl">${FAm?"":sel("Giocatore",ros.map(n=>[n,glN.includes(n)?n+" (G League)":n]),GR.p)}
   ${sel("Dalla stagione",[["2024/25","Stagione 1"],["2025/26","Stagione 2"],["2026/27","Stagione 3"]],GR.sz)}
   ${sel("Alla stagione",[["2024/25","Stagione 1"],["2025/26","Stagione 2"],["2026/27","Stagione 3"]].filter(([k])=>ORD.indexOf(k)>=ORD.indexOf(GR.sz)),GR.sz2)}
   ${sel("Dal mese",[["","Tutta la stagione"],...mesi.map(k=>[k,mLab(k)])],GR.mese,multi)}
   ${sel("Al mese",iA<0?[["","—"]]:mesi.slice(iA).map(k=>[k,mLab(k)]),GR.mese2,iA<0)}</div>
-  ${FAm?"":`<div class="grjs">${(()=>{const r=(ROSTER[t]||[]).find(x=>x[0]===GR.p);return jersey(t,r?r[1]:null,GR.p)})()}</div>`}</div>
+  ${FAm||isGL?"":`<div class="grjs">${(()=>{const r=(ROSTER[t]||[]).find(x=>x[0]===GR.p);return jersey(t,r?r[1]:null,GR.p)})()}</div>`}</div>
   <div class="grtgs">${tg("pdk")}${tg("min")}${tg("eff")}</div>
   <div class="grcard">${grChart(P,GR.show)}<div class="grfoot">${g.length} ${g.length===1?"partita":"partite"} · ${GR.by==="s"?"media di ogni stagione":GR.by==="m"?"media di ogni mese":GR.by==="w"?"media di ogni settimana":"ogni partita"}</div></div></div>`}
 
@@ -4725,8 +4734,10 @@ function vTV0(){setTimeout(tvWeekPos,0);const T=TVD(),ks=Object.keys(T.days).sor
   <p class="note">${TVL.err?"Dati live NBA non raggiungibili in questo momento: restano i dati del report. ":TVL.last?`Live: dati NBA.com aggiornati ogni 30 secondi (ultimo ${TVL.last}); il PDK delle partite in corso è calcolato con la formula Dunkest ed è provvisorio. `:""}${T.src||""} Orari d'inizio in ora italiana. Tocca una partita in corso o finita per il tabellino completo. Aggiornato ${T.upd||""}.</p>`}
 /* loghi Dynasty dei proprietari nel box score */
 const tvNm=n=>String(n||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[.'’]/g,"").replace(/\s+(jr|sr|ii|iii|iv)$/,"").replace(/[^a-z0-9]+/g," ").trim();
-let TVOWN=null;
-function tvOwn(n){if(!TVOWN){TVOWN={};for(const t in ROSTER)for(const r of ROSTER[t]){const k=tvNm(r[0]);(TVOWN[k]=TVOWN[k]||[]).includes(t)||TVOWN[k].push(t)}}
+let TVOWN=null,TVGL={};
+function tvOwn(n){if(!TVOWN){TVOWN={};TVGL={};for(const t in ROSTER)for(const r of ROSTER[t]){const k=tvNm(r[0]);(TVOWN[k]=TVOWN[k]||[]).includes(t)||TVOWN[k].push(t)}
+    try{glPlayers().forEach(p=>{const k=tvNm(p.n);if(!TVOWN[k])TVGL[k]=p.t});if(typeof FA_OWN!=="undefined")for(const m in FA_OWN){const k=tvNm(m);if(!TVOWN[k])TVGL[k]=FA_OWN[m]}}catch(e){}}
+  {const g=TVGL[tvNm(n)];if(g&&!TVOWN[tvNm(n)])return`<span class="tvown">${glBadge(g,"tvob")}</span>`}
   const T=TVOWN[tvNm(n)];return`<span class="tvown">${T?T.map(t=>badge(t,"tvob")).join(""):""}</span>`}
 function tvGame(key){const T=TVD(),[d,g]=key.split("_"),G=(T.days[d]||[]).find(x=>x[7]===key);if(!G)return"";const[a,h,sa,sh,ot]=G,b=T.box[key],ca=(T.teams[a]||[])[2]||"#333",ch=(T.teams[h]||[])[2]||"#333",dd=tvDt(d);
   const sum=(L,i)=>L.reduce((s,p)=>s+(+p[i]||0),0),pc=(m,x)=>x?(m/x*100).toFixed(1).replace(".",",")+"%":"—";

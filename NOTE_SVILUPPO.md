@@ -460,3 +460,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (88) Free Agent: stagioni scritte come "Stagione 1/2/3" (FA_SZL: 24/25=1, 25/26=2, 26/27=3) nei bottoni della lista e nella tabella della scheda ("Stag. 3" con sotto 26/27).
 
 (89) Scheda giocatore: griglia di 6 caselle come prima, ma "In squadra" (efficienza) sostituita da "Lega · PDK" (posizione per PDK medi a partita tra tutti i giocatori della lega con partite nella stagione scelta) e "Nella lega" rinominata "Lega · efficienza". Nota in fondo spiega le due classifiche.
+
+(90) Loghi G League: glBadge(t,cls) = logo della squadra G League se GLEAGUE ne ha uno (oggi DUC, PEA, TUR), altrimenti logo della franchigia con la "G" gialla. Usato per i giocatori G League in: Calcola il trend (lista), Free Agent (lista e scheda), box score Dynasty TV (filigrana, anche per i free agent con diritti G League: TVGL), grafico. Grafico: ora apre davvero il giocatore G League scelto (prima tornava al primo del roster), con colori e logo G League e "(G League)" nel menu giocatore.
