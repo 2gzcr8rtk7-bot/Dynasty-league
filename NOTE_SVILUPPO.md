@@ -354,3 +354,6 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - (46) Scouting: l'archivio cifrato ora contiene anche la carriera Dunkest (regular season dal 2018/19) di ogni
   giocatore. Studio usage rifatto: curva di crescita per anno NBA, esplosione (+8 PDK sull'anno da rookie), confronto
   equo solo sui debutti 2018-2023.
+- (47) Scouting: nuova scheda iniziale **Radar** (`colRadar`): "PDK nascosti" = resa al minuto × minuti mancanti fino a
+  32' (resa NBA recente o, se manca, PDK/min college × tenuta del ruolo), validata sullo storico (debutti 2018-2023)
+  e applicata ai rookie 2024-2026. Grafica dello scouting rinnovata (schede a pillola, card arrotondate).
