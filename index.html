@@ -2095,7 +2095,7 @@ function vtSide(k){const pts=VT.pl[k].reduce((s,n)=>s+vtPts(valOf(n)??VAL_FALLBA
 const tradeVerdict=(d,t)=>d<.10?["Trade equilibrata","ok"]:d<.40?[`Vincitore trade ${TEAMS[t].nick}`,"mid"]:[`Grande truffa dei ${TEAMS[t].nick}`,"bad"];
 function vtResHTML(){
   const A=vtSide(0),B=vtSide(1),[ta,tb]=VT.t,ca=TEAMS[ta],cb=TEAMS[tb];
-  if(!A&&!B)return `<div class="vtres empty">Aggiungi giocatori, crediti o pick da una parte e dall'altra.</div>`;
+  if(!A&&!B)return "";
   const mx=Math.max(A,B),d=Math.abs(A-B)/mx,pa=A/(A+B)*100;
   // chi dà di più è svantaggiato: favorito = squadra che dà meno
   const fav=A>B?tb:ta,give=A>B?ta:tb;const cr=Math.round(Math.abs(A-B)/VAL_CR/5)*5;
@@ -2128,7 +2128,7 @@ const v3Pts=x=>x.ty==="pl"?vtPts(valOf(x.n)??VAL_FALLBACK):x.ty==="pk"?PICK_CR[x
 const v3Lab=x=>x.ty==="pl"?x.n:x.ty==="pk"?`Pick ${x.p} · ${PICK_CR[x.p]} cr`:`${x.v} crediti`;
 function v3Res(){
   const T=V3.t,S=T.map((t,k)=>{const R=V3.it.filter(x=>x.to===k).reduce((a,x)=>a+v3Pts(x),0),G=V3.it.filter(x=>x.k===k).reduce((a,x)=>a+v3Pts(x),0);return{t,k,R,G,s:R-G}});
-  if(!V3.it.length)return `<div class="vtres empty">Aggiungi giocatori, crediti o pick e scegli a chi va ogni pezzo.</div>`;
+  if(!V3.it.length)return "";
   const mx=Math.max(1,...S.map(x=>Math.abs(x.s))),base=Math.max(1,...S.map(x=>Math.max(x.R,x.G))),d=Math.max(...S.map(x=>Math.abs(x.s)))/base;
   const w=S.slice().sort((a,b)=>b.s-a.s)[0],l=S.slice().sort((a,b)=>a.s-b.s)[0];
   const [lab,cls]=tradeVerdict(d,w.t);
