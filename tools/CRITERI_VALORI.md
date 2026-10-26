@@ -60,4 +60,5 @@ Peso sul valore/prezzo:
   2. **Efficienza esperti** (dal 4° anno): scala da giocatore affermato (Jokić ~1,60 = 5 stelle). Serve solo **insieme al
      minutaggio**: tanti PDK, efficienza alta ma minuti non al massimo (es. 28) = quando i minuti saliranno i PDK cresceranno
      → segnale di crescita. Con minutaggio già pieno conta poco.
-     Scala proposta: 0,90 =2½ · 1,00 =3 · 1,10 =3½ · 1,20 =4 · 1,35 =4½ · 1,50+ =5.
+     Scala (corretta da Francesco: 0,75 = 2½; efficienza 1 = "ottimo", almeno 4 — 33 min per 33 PDK):
+     0,50 =1 · 0,58 =1½ · 0,67 =2 · 0,75 =2½ · 0,83 =3 · 0,92 =3½ · 1,00 =4 · 1,15 =4½ · 1,30+ =5.
