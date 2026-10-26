@@ -277,4 +277,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - DREAMERS: tolti i cerchi colorati dietro i loghi in tutte le sezioni, solo logo con ombra leggera e margine: Turno 52px, Classifica 52px, Calendario 34px, dettaglio 40px, tabelloni 30px, classifica finale 32px (Ducks ×1,14).
 - DREAMERS: alone leggero del colore squadra dietro ogni logo (classe `.tint` + `--tc` nella riga: radiale sfocato + sfumatura lineare tenue), in Turno, dettaglio, Calendario (lato del logo), Classifica, tabelloni e classifica finale. Il colore è solo sfondo: loghi sopra (`z-index:2`) e sempre a piena opacità, anche per chi perde/è eliminato.
 - Tabelloni: l'alone colorato ora segue esattamente gli angoli arrotondati delle caselle (`.bkm` senza padding, prima/ultima riga con raggio 13px); etichetta "Quarto N" sopra l'alone (`.bklab` z-index 5).
-- Menu: il tab "Efficienza" ora si chiama "Statistiche" (stessa sezione, `data-v="efficienza"`).
+- Menu: il tab "Efficienza" ora si chiama "Statistiche" (stessa sezione, `data-v="efficienza"`); titolo "Statistiche squadre" (e tasto indietro dalla tabella squadra).

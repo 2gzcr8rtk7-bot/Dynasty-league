@@ -1559,7 +1559,7 @@ function vEffSquadra(){
   const mchips=`<div class="chips esqm"><label class="szchip" aria-pressed="${esqMese==="tutta"}"><select id="gseason" data-szchip="1" aria-label="Stagione">${esqMese!=="tutta"?`<option value="" selected hidden>${SZ_LBL[sz]}</option>`:""}${SZ_ALL.map(s=>`<option value="${s}"${esqMese==="tutta"&&s===sz?" selected":""}>${SZ_LBL[s]}</option>`).join("")}</select></label>${mesi.map(m=>`<button class="chip" data-esqm="${m}" aria-pressed="${esqMese===m}">${MESI_N[m]}</button>`).join("")}</div>`;
   const rows=ps.map(p=>{const L=sel(gl(p[0]));
     return `<tr data-plt="${t}" data-pln="${p[0]}" class="plink"><td class="pnm">${p[0]} <span class="plgo">›</span><small>${nba(p[0])}</small></td>${Array.from({length:nmax},(_,i)=>{const x=L[i];return `<td class="gcell">${x?`<span class="gv ${MET().l(x.g[MET().i])}">${MET().f(x.g[MET().i])}</span><small class="gd">${x.g[1]}</small>`:""}</td>`}).join("")}</tr>`}).join("");
-  return `<button class="gback esqback" id="effback">‹ Efficienza squadre</button>
+  return `<button class="gback esqback" id="effback">‹ Statistiche squadre</button>
   <div class="esqhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 60%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">${badge(t)}<div class="esqt"><small>${c.name}</small><h3>${c.nick}</h3></div></div>
   <div class="esqk"><div><small>Eff. stagionale</small>${eff(s[4])}</div>${E.past?`<div><small>Stagione</small><b>${sz}</b></div>`:`<div><small>Notte · ${s[1]} in campo</small>${eff(s[3])}</div>`}<div><small>Posizione lega</small><b>${pos}ª</b></div></div>
   ${H(c.nick,`<em>${E.past?SZ_LBL[sz]+" · "+sz:"Agg. "+E.agg}</em>`)}
@@ -1608,7 +1608,7 @@ function vEfficienza(){
   const rv=p=>isP?pdkOf(p[0]):p[1];
   const rows=E.gioc[t0].slice().sort((a,b)=>(rv(b)??-99)-(rv(a)??-99)).map(p=>`<tr><td class="pnm">${p[0]}</td><td>${shw(rv(p))}</td><td>${p[2]}</td><td>${p[3]==null?"—":p[3].toLocaleString("it-IT",{minimumFractionDigits:1})}</td></tr>`).join("");
   return `<button class="cupbtn" data-cupgo="1"><svg class="cupt" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v4a5 5 0 0 1-10 0V4zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M12 13v4M8.5 20h7M10 17h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Efficienza Cup</span><i>›</i></button>
-  ${H("Efficienza squadre",`<em>${E.past?SZ_LBL[sz]+" · "+sz:"Agg. "+E.agg}</em>`)}
+  ${H("Statistiche squadre",`<em>${E.past?SZ_LBL[sz]+" · "+sz:"Agg. "+E.agg}</em>`)}
   <div class="effbar">${szSelect(sz)}<div class="metsw effsw"><button data-effmet="eff" aria-pressed="${!isP}">Eff.</button><button data-effmet="pdk" aria-pressed="${isP}">PDK</button></div></div>
   <div class="eboard">${sq}</div>
   <p class="note">${isP?"PDK medio = media dei PDK a partita dei giocatori della rosa (stagione scelta). Notte = media dei PDK di chi è sceso in campo. Colori: verde da 35, giallo 20–35, rosso sotto 20.":"Efficienza stagionale = Dunkest totali ÷ minuti giocati da tutta la rosa. Dk = Dunkest stagionali di squadra."} Tocca una squadra per la tabella dei suoi giocatori.</p>
