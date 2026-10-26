@@ -49,3 +49,5 @@ Zach Edey|690|50
 Ausar Thompson|650|30
 James Harden|1001|70
 Dejounte Murray|650|30
+
+Alperen Şengün|1580|550
