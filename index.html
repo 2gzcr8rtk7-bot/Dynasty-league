@@ -1246,6 +1246,7 @@ nav button>span{white-space:nowrap}
 <footer class="wrap upd">Ultimo aggiornamento: 26/10/2026 · 10:38</footer>
 
 <script src="dreamers-data.js"></script>
+<script src="spazio-data.js"></script>
 <script>
 const TEAMS={
   DOL:{name:"Salt Lake Dolphins",city:"Salt Lake",nick:"Dolphins",bg:"#1747c9",fg:"#ffffff",trim:"#0b0b0b"},
@@ -1709,6 +1710,21 @@ const STAR_P="M6 .6l1.6 3.5 3.8.4-2.9 2.6.8 3.8L6 9 2.7 10.9l.8-3.8L.6 4.5l3.8-.
 const starH=n=>{const v=stelle(n),rk=isRookie(n);if(v==null&&!rk)return"";const w=v||0,id="sc"+(JID++);
   const row=Array.from({length:5},(_,k)=>`<path d="${STAR_P}" transform="translate(${k*13} 0)"/>`).join("");
   return `<i class="tstar" title="${String(w).replace(".",",")} stelle${rk?" + stella rookie":""}"><svg viewBox="0 0 ${rk?79:64} 12" width="${rk?79:64}" height="12" aria-hidden="true"><defs><clipPath id="${id}"><rect x="0" y="0" width="${w*13}" height="12"/></clipPath></defs><g fill="rgba(255,255,255,.2)">${row}</g><g fill="#facc15" clip-path="url(#${id})">${row}</g>${rk?`<path d="${STAR_P}" transform="translate(67 0)" fill="#38bdf8" class="trk"/>`:""}</svg></i>`};
+
+/* SPAZIO IN SQUADRA (stelline 0-5, a gradini) — criteri di Francesco in tools/CRITERI_VALORI.md.
+   Gerarchia nella squadra NBA: 1° = 5 · 2° = 4 · 3° = 3 · 4°-6° (titolari/sesto uomo, ≥24 min) = 2 · in rotazione (≥12 min) = 1 · fondo = ½.
+   Ordine = PDK medi + 0,3 × minuti medi. Fonte: SPAZIO_DATA (Dunkest, tutta la squadra NBA); se manca la squadra,
+   si ordinano solo i giocatori della lega della stessa squadra NBA (stagione in corso pesata di più man mano che si gioca). */
+function spazioStelle(n){const p=Object.values(ROSTER).flat().find(x=>x[0]===n);if(!p)return null;const nba=p[3];
+  const D=typeof SPAZIO_DATA!=="undefined"&&SPAZIO_DATA.squadre&&SPAZIO_DATA.squadre[nba];
+  let L;if(D&&D.length)L=D.map(([m,mn,pd])=>({n:m,mn:+mn||0,s:(+pd||0)+0.3*(+mn||0)}));
+  else{const avg=(g,i)=>g.length?g.reduce((s,x)=>s+(+x[i]||0),0)/g.length:null;
+    L=Object.values(ROSTER).flat().filter(x=>x[3]===nba).map(x=>{const m=x[0],cur=PARTITE[m]||[],ref=pgRef?pgRef(m):[],rk=isRookie(m);
+      let w=Math.min(.6,cur.length/10);if(!ref.length||rk)w=cur.length?1:0;
+      const pd=w*(avg(cur,3)||0)+(1-w)*(avg(ref,3)||0),mn=w*(avg(cur,2)||0)+(1-w)*(avg(ref,2)||0);return{n:m,mn,s:pd+0.3*mn}})}
+  L.sort((a,b)=>b.s-a.s);const i=L.findIndex(x=>x.n===n);if(i<0)return null;const mn=L[i].mn;
+  return i===0?5:i===1?4:i===2?3:mn>=24?2:mn>=12?1:.5}
+function pgRef(n){const g=sz=>(STAGIONI[sz]||{})[n]||[];let a=g("2025/26");if(a.length<30)a=g("2024/25").length>=30?g("2024/25"):[...g("2025/26"),...g("2024/25"),...(PARTITE[n]||[])];return a}
 function vTrade(){
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
   const rec=(l,neg)=>l.map(n=>NUM[n]!==undefined?`<span>${sur(n)}${starH(n)}</span>`:`<span class="tcr2">${/credit/i.test(n)?(/^debito/i.test(n)?"":neg?"−":"+")+n.replace(/\s*crediti.*$/i," cr"):n.replace(/^Diritti su /,"").replace(/Slot ala per 10 giornate/,"Slot ala 10g")}</span>`).join("");

@@ -70,8 +70,9 @@ Gerarchia nella propria squadra NBA:
 - 2 = titolare ma non tra i principali (4°–6° giocatore, anche sesto uomo)
 - 1 = panchina, nelle rotazioni ma non principale (tipico dei rookie)
 - ½ = fondo delle rotazioni (es. Allen Graves, rookie, ~9° uomo)
-Calcolo automatico (proposta): ordine dei giocatori della squadra NBA per PDK/uso nelle ultime partite
-(serve la rosa completa della squadra NBA, non solo i giocatori della lega); Francesco corregge i casi dubbi.
+Calcolo automatico: ordine dei giocatori della squadra NBA per PDK medi + 0,3 × minuti medi (ultime 10 partite).
+Fonte principale: Dunkest, tutta la squadra NBA, scritta dal Claude dei report in `spazio-data.js` (regola 7 di NOTE_SVILUPPO).
+Se la squadra manca: solo i giocatori della lega della stessa squadra NBA. Francesco corregge i casi dubbi.
 Interazione con età ed efficienza (26/10/2026):
 - Lo spazio va letto **in rapporto all'età**: a 18–19 anni è normale avere poco spazio; averne tanto è clamoroso.
   Es. Boozer, numero 1 di Memphis a 19 anni = 5 stelle di spazio + età → fa esplodere valore e prezzo.
