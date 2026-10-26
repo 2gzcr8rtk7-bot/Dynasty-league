@@ -881,6 +881,13 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .tint>*{position:relative;z-index:1}
 .tint .drlg,.tint .bklg{position:relative;z-index:2;opacity:1!important;filter:none!important}
 .tint .drlg .badge,.tint .bklg .badge{opacity:1!important}
+/* tabelloni: l'alone segue esattamente gli angoli arrotondati della casella */
+.bkm{padding:0!important;border-radius:14px!important}
+.bkm>.bkt{margin:0!important;border-radius:0}
+.bkm>.bkt:first-of-type{border-radius:13px 13px 0 0}
+.bkm>.bkt:last-of-type{border-radius:0 0 13px 13px}
+.bkm>.bkt:only-of-type{border-radius:13px}
+.drcol{overflow:hidden}
 .drplh{margin:26px 0 4px;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.06em;color:#e9d5ff;border-left:4px solid #a855f7;padding-left:10px}
 .drfinal{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,auto);grid-auto-flow:column;gap:6px;margin-top:10px}.drfinal .drfr{padding:6px 8px;gap:7px;min-width:0}.drfinal .drfr b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.drfinal .drfr .drpos{font-size:15px;width:16px}.drfinal .drfr em{font-size:11px}.drfinal .bklg{width:22px;height:22px}
 .drfr{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:rgba(12,8,32,.75);border:1px solid rgba(196,181,253,.22)}
