@@ -8,7 +8,7 @@ Josh Giddey|1850|750
 Giannis Antetokounmpo|1950|670
 Shai Gilgeous-Alexander|1750|690
 Cameron Boozer|1499|820
-Tyrese Haliburton|1420|320
+Tyrese Haliburton|1420|340
 Tyrese Maxey|1505|399
 Stephon Castle|1230|399
 Jayson Tatum|1510|410
@@ -24,11 +24,11 @@ Caleb Wilson|1240|520
 Darryn Peterson|1158|420
 Joel Embiid|1265|130
 Karl-Anthony Towns|1250|110
-Donovan Mitchell|1160|99
+Donovan Mitchell|1160|140
 Dylan Harper|1220|405
 VJ Edgecombe|1155|299
 Ja Morant|1060|110
-Bam Adebayo|999|80
+Bam Adebayo|999|130
 Dyson Daniels|989|85
 Derik Queen|1190|399
 Collin Murray-Boyles|1010|280
