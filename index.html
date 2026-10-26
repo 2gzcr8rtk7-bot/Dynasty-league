@@ -1661,6 +1661,7 @@ nav button>span{white-space:nowrap}
 .sndate button{height:44px;border:1px solid var(--line);background:linear-gradient(180deg,var(--panel2),var(--panel));color:#fff;font-size:24px;font-weight:800;cursor:pointer}
 .sndate button:disabled{opacity:.3;cursor:default}
 .sndate>div{text-align:center;display:grid;gap:2px}.sndate b{font-family:var(--display);font-style:italic;font-weight:800;font-size:21px;text-transform:uppercase;color:#fff;line-height:1}.sndate small{font-size:11.5px;color:var(--muted)}
+.snsw{display:flex;justify-content:flex-end;gap:0;margin:-4px 0 6px}.snsw button{padding:3px 8px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font-family:var(--display);font-style:italic;font-weight:800;font-size:10px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;line-height:1.2}.snsw button[aria-pressed="true"]{background:#6d4bd8;border-color:#6d4bd8;color:#fff}
 .snlist{display:grid;gap:4px}
 .snrow{display:flex;align-items:stretch;gap:10px;min-height:58px;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);padding-right:10px}
 .snrow .wedge{width:58px;min-height:58px;height:auto}.snrow .wedge .logo{width:46px;height:46px}
@@ -2738,23 +2739,24 @@ async function trShare(n,btn){const C=TRN._ctx;if(!C)return;const p=Object.entri
 function glPlayers(){const S=typeof GL_STATS!=="undefined"?GL_STATS:{},inR=new Set(Object.values(ROSTER).flat().map(p=>p[0]));
   return Object.entries(S).filter(([k,v])=>v&&v.n&&!inR.has(v.n)).map(([k,v])=>({t:k.split("|")[0],n:v.n,r:v.r,nba:v.nba||""}))}
 /* ===== STATISTICHE NOTTE: PDK di tutti i giocatori delle franchigie in una notte (dati PARTITE, data USA) ===== */
-const SN={d:null};
+const SN={d:null,m:"pdk"};
 const snKey=d=>{const[g,m]=d.split("/").map(Number);return(m>=7?2026:2027)*10000+m*100+g};
 function snNights(){const o={};for(const n in PARTITE)for(const g of PARTITE[n])o[g[0]]=1;return Object.keys(o).sort((a,b)=>snKey(a)-snKey(b))}
 function vStatNotte(){const N=snNights();if(!N.length)return`<button class="gback" data-snback="1">‹ Statistiche</button>${H("Statistiche notte")}<p class="note">Nessuna partita registrata.</p>`;
   if(!SN.d||!N.includes(SN.d))SN.d=N[N.length-1];const d=SN.d,i=N.indexOf(d);
   const L=[];for(const t in ROSTER)for(const r of ROSTER[t]){const g=(PARTITE[r[0]]||[]).find(x=>x[0]===d);if(g)L.push({n:r[0],t,g})}
-  L.sort((a,b)=>b.g[3]-a.g[3]);
+  const E=SN.m==="eff",val=x=>E?x.g[4]:x.g[3];L.sort((a,b)=>val(b)-val(a));
   const f2=v=>(Math.round(v*100)/100).toLocaleString("it-IT",{maximumFractionDigits:2});
-  const cl=v=>v<20?"pr":v<30?"py":v<40?"pg":"pv";
+  const cl=v=>E?(v<.8?"pr":v<=1.1?"py":v<1.5?"pg":"pv"):(v<20?"pr":v<30?"py":v<40?"pg":"pv");
   const MM=["","gen","feb","mar","apr","mag","giu","lug","ago","set","ott","nov","dic"],dl=x=>{const[g,m]=x.split("/").map(Number);return`${g} ${MM[m]}`};
-  const tot=L.reduce((a,x)=>a+x.g[3],0);
-  const rows=L.map((x,k)=>`<div class="snrow">${wedge(x.t)}<div class="sninfo"><b><i>${k+1}</i>${x.n}</b><small>vs ${x.g[1]} · ${String(x.g[2]).replace(".",",")} min · ${x.g[5]} pt ${x.g[6]} rb ${x.g[7]} as</small></div><span class="snp ${cl(x.g[3])}">${f2(x.g[3])}</span></div>`).join("");
+  const tot=L.reduce((a,x)=>a+val(x),0),fv=v=>E?v.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2}):f2(v);
+  const rows=L.map((x,k)=>`<div class="snrow">${wedge(x.t)}<div class="sninfo"><b><i>${k+1}</i>${x.n}</b><small>vs ${x.g[1]} · ${String(x.g[2]).replace(".",",")} min · ${x.g[5]} pt ${x.g[6]} rb ${x.g[7]} as</small></div><span class="snp ${cl(val(x))}">${fv(val(x))}</span></div>`).join("");
   return`<button class="gback" data-snback="1">‹ Statistiche</button>
   ${H("Statistiche notte",`<em>${L.length} giocatori</em>`)}
-  <div class="sndate"><button data-snd="${N[i-1]||""}" aria-label="Notte precedente"${i<=0?" disabled":""}>‹</button><div><b>Notte del ${dl(d)}</b><small>data USA · media ${L.length?f2(tot/L.length):"—"} PDK</small></div><button data-snd="${N[i+1]||""}" aria-label="Notte successiva"${i>=N.length-1?" disabled":""}>›</button></div>
+  <div class="sndate"><button data-snd="${N[i-1]||""}" aria-label="Notte precedente"${i<=0?" disabled":""}>‹</button><div><b>Notte del ${dl(d)}</b><small>data USA · media ${L.length?fv(tot/L.length):"—"} ${E?"eff.":"PDK"}</small></div><button data-snd="${N[i+1]||""}" aria-label="Notte successiva"${i>=N.length-1?" disabled":""}>›</button></div>
+  <div class="snsw"><button data-snm="pdk" aria-pressed="${!E}">PDK</button><button data-snm="eff" aria-pressed="${E}">Eff.</button></div>
   <div class="snlist">${rows||'<p class="note">Nessun giocatore delle franchigie in campo.</p>'}</div>
-  <p class="note">PDK Dunkest della notte di tutti i giocatori delle 8 franchigie scesi in campo, dal più alto. Colori: rosso sotto 20, giallo 20-29,99, verde 30-39,99, viola da 40.</p>`}
+  <p class="note">${E?"Efficienza della notte (PDK ÷ minuti)":"PDK Dunkest della notte"} di tutti i giocatori delle 8 franchigie scesi in campo, dal più alto. Colori: ${E?"rosso sotto 0,80, giallo 0,80-1,10, verde oltre 1,10, viola da 1,50":"rosso sotto 20, giallo 20-29,99, verde 30-39,99, viola da 40"}.</p>`}
 function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>PL.push({n:p[0],t,r:p[2]})));glPlayers().forEach(p=>PL.push({n:p.n,t:p.t,r:p.r,gl:1}));
   const ORD=["2024/25","2025/26","2026/27"];if(!ORD.includes(TRN.sz))TRN.sz="2026/27";if(!ORD.includes(TRN.sz2)||ORD.indexOf(TRN.sz2)<ORD.indexOf(TRN.sz))TRN.sz2=TRN.sz;
   const SZR=ORD.slice(ORD.indexOf(TRN.sz),ORD.indexOf(TRN.sz2)+1),multi=SZR.length>1,sz=multi?"all":TRN.sz,met=TRN.met;
@@ -3604,6 +3606,7 @@ document.getElementById("main").addEventListener("click",e=>{
   if(e.target.closest("[data-trgo]")){e.preventDefault();TRN.from=cur;cur="trend";render();window.scrollTo(0,0);return}
   if(e.target.closest("[data-sngo]")){e.preventDefault();SN.d=null;cur="statnotte";render();window.scrollTo(0,0);return}
   if(e.target.closest("[data-snback]")){e.preventDefault();cur="efficienza";render();window.scrollTo(0,0);return}
+  {const b=e.target.closest("[data-snm]");if(b){e.preventDefault();SN.m=b.dataset.snm;render();return}}
   {const b=e.target.closest("[data-snd]");if(b&&!b.disabled){e.preventDefault();SN.d=b.dataset.snd;render();return}}
   if(cur!=="trend")return;
   if(e.target.closest("[data-trclose]")){e.preventDefault();cur=TRN.from||"efficienza";render();window.scrollTo(0,0);return}
