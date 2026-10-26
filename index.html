@@ -859,6 +859,17 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .drms .drn b{font-size:18px!important}
 .drms .drn small{font-size:10.5px}
 .drms .drr em{font-size:23px!important}
+/* DREAMERS: solo loghi, senza cerchio né sfondo; grandi ma con margine dai bordi */
+.drroom .drlg,.drroom .bklg{background:none!important;box-shadow:none!important;border:0!important;border-radius:0!important;overflow:visible!important}
+.drroom .drlg::before,.drroom .drlg::after{display:none!important}
+.drroom .drlg .badge,.drroom .bklg .badge{width:100%!important;height:100%!important;background-color:transparent!important;box-shadow:none!important;border-radius:0!important;filter:drop-shadow(0 3px 5px rgba(0,0,0,.5))}
+.drroom .lg-DUC{transform:scale(1.14)}
+.drms .drr .drlg{width:52px!important;height:52px!important;flex:0 0 52px!important;margin:7px 4px 7px 14px!important}
+.drroom .drcm .drlg.s{width:34px!important;height:34px!important;flex:0 0 34px!important;margin:3px 0}
+.drroom .drcr .drlg{width:52px!important;height:52px!important;flex:0 0 52px!important;margin:4px 2px}
+.drroom .drch .drlg{width:40px!important;height:40px!important;flex:0 0 40px!important;margin:4px 2px 4px 6px!important}
+.drroom .bkt .bklg{width:30px;height:30px;margin:2px 0}
+.drroom .drfr .bklg{width:32px;height:32px}
 .drplh{margin:26px 0 4px;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.06em;color:#e9d5ff;border-left:4px solid #a855f7;padding-left:10px}
 .drfinal{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,auto);grid-auto-flow:column;gap:6px;margin-top:10px}.drfinal .drfr{padding:6px 8px;gap:7px;min-width:0}.drfinal .drfr b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.drfinal .drfr .drpos{font-size:15px;width:16px}.drfinal .drfr em{font-size:11px}.drfinal .bklg{width:22px;height:22px}
 .drfr{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:rgba(12,8,32,.75);border:1px solid rgba(196,181,253,.22)}
