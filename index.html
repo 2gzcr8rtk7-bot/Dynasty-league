@@ -207,6 +207,13 @@
 .tdv{display:grid;grid-template-columns:1fr auto 1fr 1fr;gap:6px;align-items:center;margin-bottom:6px}.tdv i{font-style:normal;color:var(--muted);font-size:18px}.tdv small{display:block;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.tdv b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:22px}.tdv em{font-style:normal;font-size:10px;color:var(--muted)}
 .tdd{text-align:right}.tdd.up b{color:#4ade80}.tdd.dn b{color:#f87171}
 .trrow .trsw{cursor:pointer}.cshare.alt{background:rgba(255,255,255,.08);color:#fff;box-shadow:none}
+.caprep{background:linear-gradient(135deg,rgba(250,204,21,.16),rgba(250,204,21,.04));border:1px solid rgba(250,204,21,.45);border-radius:14px;padding:12px;margin-bottom:12px}.caprep>small{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#facc15;font-weight:800}.caprep p{margin:4px 0 8px;font-size:13px;line-height:1.45}.caprep p b{color:#facc15}
+.caprk{display:flex;flex-wrap:wrap;gap:6px}.caprk span{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.06);border-radius:9px;padding:5px 8px;font-size:12px}.caprk span.top{background:#facc15;color:#111}.caprk i{font-style:normal;font-weight:800;opacity:.7}.caprk em{font-style:normal;font-size:10px;opacity:.8}.caprk span.top em{opacity:.75}
+.caprk em.g{color:#4ade80}.caprk em.r{color:#f87171}.caprk span.top em.g,.caprk span.top em.r,.caprk span.top em.y{color:#111}
+.capdef{margin-top:10px;border-radius:10px;padding:8px 10px;background:rgba(255,255,255,.05);border-left:4px solid #94a3b8}.capdef.g{border-left-color:#4ade80}.capdef.r{border-left-color:#f87171}.capdef.y{border-left-color:#facc15}
+.cdh{display:flex;justify-content:space-between;gap:8px;font-size:12px}.cdh b{text-transform:uppercase;letter-spacing:.04em}.capdef.g .cdh span{color:#4ade80;font-weight:800}.capdef.r .cdh span{color:#f87171;font-weight:800}.capdef.y .cdh span{color:#facc15;font-weight:800}.cdh span{color:var(--muted)}
+.capdef p{margin:4px 0;font-size:12px;color:#cbd5e1}.capdef p b{color:#fff}.cdl{display:flex;flex-wrap:wrap;gap:4px}.cdl span{font-size:11px;background:rgba(255,255,255,.06);border-radius:6px;padding:2px 6px}.cdl span i{font-style:normal;font-weight:700}.cdl span.up{color:#4ade80}.cdl span.dn{color:#f87171}.cdl small{color:var(--muted)}
+.capatt{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding:8px 10px;border-radius:10px;background:rgba(56,189,248,.1);font-size:12px;color:#cbd5e1}.capatt b{font-family:var(--display);font-style:italic;font-weight:800;font-size:22px;color:#38bdf8}
 .gback{text-shadow:0 1px 0 rgba(255,255,255,.5)}
 .colroom .nban{background:linear-gradient(100deg,color-mix(in srgb,var(--tc) 38%,#141a2b) 0%,#161c2e 55%,#0e1220 100%)!important;box-shadow:0 10px 22px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -1px 0 rgba(0,0,0,.6)}
 .colroom .nban .njs svg{filter:drop-shadow(0 4px 5px rgba(0,0,0,.5))}
@@ -2690,10 +2697,22 @@ function capDati(n,opp){const cur=PARTITE[n]||[],mean=a=>a.length?a.reduce((s,x)
   const idx=stag==null?null:.4*vsAdj+.35*(u15??stag)+.25*stag;
   const best=vs.length?vs.reduce((a,b)=>b.p>a.p?b:a):null;
   return{n,opp,N,stag,u50,u15,vs,vsm,vsmin,best,ultima:vs.length?vs[0]:null,idx}}
+/* DIFESA AVVERSARIA PER RUOLO (Cap): nelle ultime 5 partite dell'avversario (dalle partite dei giocatori della lega che lo
+   hanno affrontato; se i campioni sono meno di 3 si allarga a 10) guardo i giocatori della lega dello stesso ruolo con
+   almeno 10 minuti: PDK fatti contro di lui rispetto alla loro media di stagione. Delta medio = quanto concede a quel ruolo. */
+function capDef(opp,role){if(!opp)return null;const RL={};Object.values(ROSTER).flat().forEach(p=>RL[p[0]]=p[2]);
+  const all=[];Object.keys(RL).forEach(n=>{const g=grGames(n,"all");g.forEach(x=>{if(x.opp===opp)all.push({n,x,g})})});
+  const dates=[...new Set(all.map(o=>+o.x.dt))].sort((a,b)=>b-a);
+  const take=k=>{const D=new Set(dates.slice(0,k));return all.filter(o=>D.has(+o.x.dt)&&RL[o.n]===role&&o.x.min>=10).map(o=>{const ss=o.g.filter(y=>y.sz===o.x.sz&&y!==o.x);let avg=ss.length>=5?ss.reduce((s2,y)=>s2+y.pdk,0)/ss.length:null;if(avg==null){const rf=o.x.sz==="2026/27"?pgRef(o.n).map(r=>+r[3]):o.g.filter(y=>y.sz!==o.x.sz).map(y=>y.pdk);const all2=[...ss.map(y=>y.pdk),...rf];avg=all2.length?all2.reduce((a,b)=>a+b,0)/all2.length:null}return avg==null?null:{n:o.n,d:o.x.dt,p:o.x.pdk,avg,dl:o.x.pdk-avg}}).filter(Boolean)};
+  let k=5,L=take(5);if(L.length<3){k=10;L=take(10)}if(!L.length)return{k,n:0,games:Math.min(k,dates.length)};
+  const dl=L.reduce((s2,o)=>s2+o.dl,0)/L.length,avg=L.reduce((s2,o)=>s2+o.avg,0)/L.length;L.sort((a,b)=>b.d-a.d);
+  return{k,games:Math.min(k,dates.length),n:L.length,dl,pct:avg?dl/avg*100:0,rows:L}}
+const CAP_RUOLO={G:"le guardie",F:"le ali",C:"i centri"};
+const capDefLab=d=>!d||!d.n?["dati insufficienti","n"]:d.pct>=10?["difesa morbida","g"]:d.pct<=-10?["difesa dura","r"]:["difesa nella media","y"];
 function vCap(){const t=CAP.t||curTeam,c=TEAMS[t],R=ROSTER[t]||[];if(CAP.t!==t)capLoad(t);
   const sel=Object.keys(CAP.sel).filter(n=>R.some(p=>p[0]===n));
-  const D=sel.map(n=>capDati(n,CAP.sel[n]||null));
-  const ord=[...D].sort((a,b)=>(b.idx??-1)-(a.idx??-1)),top=ord.find(x=>x.idx!=null&&x.opp);
+  const D=sel.map(n=>{const d=capDati(n,CAP.sel[n]||null),p=R.find(x=>x[0]===n);d.role=p[2];d.def=capDef(d.opp,d.role);const w=d.def&&d.def.n?Math.min(1,d.def.n/6):0;d.att=d.idx==null?null:d.idx*(1+(d.def&&d.def.n?d.def.pct:0)/100*w*.6);return d});
+  const ord=[...D].sort((a,b)=>(b.att??-1)-(a.att??-1)),top=ord.find(x=>x.att!=null&&x.opp);
   /* anti-tank: confronto con il miglior altro candidato per media stagione */
   const at=d=>{const alt=D.filter(x=>x.n!==d.n&&x.stag!=null).sort((a,b)=>b.stag-a.stag)[0];if(!alt||d.stag==null)return null;
     const ks=["stag","u50","u15"],g=ks.map(k=>d[k]>=alt[k]||alt[k]-d[k]<=3);return{alt:alt.n,ok:g.filter(Boolean).length,g,ind:d.N<15||alt.N<15}};
@@ -2709,15 +2728,19 @@ function vCap(){const t=CAP.t||curTeam,c=TEAMS[t],R=ROSTER[t]||[];if(CAP.t!==t)c
      ${d.opp?`<div class="capvs"><div><small>Media vs ${d.opp}</small><b>${f(d.vsm)}</b><em>${d.vs.length?d.vs.length+(d.vs.length===1?" partita":" partite")+" · ultime 3 stagioni":"mai affrontati"}</em></div>
        <div><small>Minuti vs ${d.opp}</small><b class="sm">${f(d.vsmin)}</b><em>${d.best?"migliore "+f(d.best.p)+" ("+d.best.d+" "+d.best.sz.slice(2,5)+d.best.sz.slice(-2)+")":""}</em></div></div>
        ${d.vs.length?`<div class="capgl">${d.vs.map(x=>`<span class="${x.p>=35?"g":x.p>=20?"y":"r"}" title="${x.d} · ${x.sz}">${f(x.p)}</span>`).join("")}</div>`:""}`:`<p class="capnote">Scegli l'avversario per vedere i precedenti.</p>`}
-     <div class="capfm"><div><small>Stagione</small><b>${f(d.stag)}</b><em>${d.N} part.</em></div><div><small>Ultimo 50%</small><b>${f(d.u50)}</b><em>${d.N?Math.ceil(d.N/2)+" part.":""}</em></div><div><small>Ultimo 15%</small><b>${f(d.u15)}</b><em>${d.N?Math.ceil(d.N*.15)+" part.":""}</em></div><div class="ix"><small>Indice Cap</small><b>${f(d.idx)}</b></div></div>
+     ${d.opp?(()=>{const df=d.def,[lb,cl]=capDefLab(df);return`<div class="capdef ${cl}"><div class="cdh"><b>${d.opp} contro ${CAP_RUOLO[d.role]}</b><span>${lb}</span></div>${df&&df.n?`<p>Nelle ultime ${df.games} partite di ${d.opp} ${CAP_RUOLO[d.role]} della lega hanno fatto <b>${df.dl>=0?"+":"−"}${f(Math.abs(df.dl))} PDK</b> rispetto alla loro media (${df.pct>=0?"+":"−"}${Math.abs(Math.round(df.pct))}%, ${df.n} prestazioni).</p><div class="cdl">${df.rows.slice(0,6).map(o=>`<span class="${o.dl>=0?"up":"dn"}"><i>${sur(o.n)}</i> ${f(o.p)} <small>(media ${f(o.avg)})</small></span>`).join("")}</div>`:`<p>Nessun giocatore della lega di questo ruolo lo ha affrontato di recente.</p>`}</div>`})():""}
+     <div class="capfm"><div><small>Stagione</small><b>${f(d.stag)}</b><em>${d.N} part.</em></div><div><small>Ultimo 50%</small><b>${f(d.u50)}</b><em>${d.N?Math.ceil(d.N/2)+" part.":""}</em></div><div><small>Ultimo 15%</small><b>${f(d.u15)}</b><em>${d.N?Math.ceil(d.N*.15)+" part.":""}</em></div><div class="ix"><small>Indice Cap</small><b>${f(d.idx)}</b></div></div>${d.opp&&d.att!=null?`<div class="capatt"><span>Atteso contro la difesa di ${d.opp}</span><b>${f(d.att)}</b></div>`:""}
      ${a?`<div class="capat ${a.ok>=2?"ok":"ko"}">${a.ok>=2?"Anti-tank OK":"Rischio multa"} · ${a.ok}/3 contro ${sur(a.alt)}${a.ind?" <i>(meno di 15 partite: indicativo)</i>":""}</div>`:""}
     </div>`};
   return`<button class="gback" id="capback">‹ Campo ${c.nick}</button>
   ${H("Cap",`<em>Chi mettere capitano</em>`)}
   <p class="capintro">Tocca i giocatori che giocano la prossima notte e scegli l'avversario di ognuno.</p>
   <div class="capchips">${chips}</div>
-  ${D.length?`<div class="capbar"><span>${D.length} ${D.length===1?"candidato":"candidati"} · ordinati per Indice Cap</span><button id="capclr">Azzera</button></div>${ord.map(card).join("")}
-  <p class="note">Indice Cap = 40% media contro l'avversario (con poche partite si avvicina alla media stagione) + 35% Ultimo 15% + 25% media stagione. Anti-tank: confronto con il miglior altro candidato per media stagione, su Stagione, Ultimo 50% e Ultimo 15% (verde se meglio o entro 3 PDK; servono 2 verdi su 3). Le scelte restano salvate su questo telefono.</p>`:""}`}
+  ${D.length?(()=>{const ok=ord.filter(x=>x.att!=null&&x.opp);if(!ok.length)return"";const b=ok[0],sec=ok[1],[lb]=capDefLab(b.def);
+   return`<div class="caprep"><small>Consiglio capitano</small><p><b>${b.n}</b>${b.opp?` contro ${b.opp}`:""}: atteso <b>${f(b.att)}</b> (forma ${f(b.u15??b.stag)}, ${b.vs.length?`media vs ${b.opp} ${f(b.vsm)}`:`mai affrontato ${b.opp}`}, ${lb} contro ${CAP_RUOLO[b.role]}${b.def&&b.def.n?` ${b.def.pct>=0?"+":"−"}${Math.abs(Math.round(b.def.pct))}%`:""}).${sec?` Alternativa: <b>${sur(sec.n)}</b> (${f(sec.att)}${sec.att&&b.att&&b.att-sec.att<2?", praticamente alla pari":""}).`:""}</p>
+   <div class="caprk">${ok.map((x,i)=>{const[l2,c2]=capDefLab(x.def);return`<span class="${i?"":"top"}"><i>${i+1}</i>${sur(x.n)} <b>${f(x.att)}</b><em class="${c2}">${x.opp} · ${l2.replace("difesa ","")}</em></span>`}).join("")}</div></div>`})():""}
+  ${D.length?`<div class="capbar"><span>${D.length} ${D.length===1?"candidato":"candidati"} · ordinati per atteso</span><button id="capclr">Azzera</button></div>${ord.map(card).join("")}
+  <p class="note">Indice Cap = 40% media contro l'avversario (con poche partite si avvicina alla media stagione) + 35% Ultimo 15% + 25% media stagione. Atteso = Indice Cap corretto per quanto l'avversario concede al ruolo del giocatore nelle sue ultime 5 partite (pari ruolo della lega, rispetto alla loro media; peso pieno da 6 prestazioni). Anti-tank: confronto con il miglior altro candidato per media stagione, su Stagione, Ultimo 50% e Ultimo 15% (verde se meglio o entro 3 PDK; servono 2 verdi su 3). Le scelte restano salvate su questo telefono.</p>`:""}`}
 
 /* ===== MULTE: simulatore del sistema anti-tank (Regolamento, Articolo 6, Parte 2) =====
    Parametri sulle partite giocate nella stagione in corso: A = media stagione, B = media ultimo 50%, C = media ultimo 15%

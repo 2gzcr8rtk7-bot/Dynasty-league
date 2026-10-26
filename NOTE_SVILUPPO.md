@@ -395,3 +395,7 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
   i punti sono le singole partite (prima 7 giocatori con 2-3 partite nella stessa settimana restavano esclusi).
 - (59) Peacocks: `TEAMS.PEA.txt="#ffffff"` = colore delle scritte sulle intestazioni di squadra/giocatore e nel Grafico
   (caselle, numeri, etichette) al posto dell'arancione, per leggibilità. Usato come `c.txt||c.fg`.
+- (60) Cap: difesa dell'avversario per ruolo (`capDef`): nelle ultime 5 partite dell'avversario (10 se pochi dati), PDK
+  dei giocatori della lega dello stesso ruolo (≥10') rispetto alla loro media → "difesa morbida/nella media/dura".
+  "Atteso" = Indice Cap corretto per questo delta (peso pieno da 6 prestazioni). In alto il riquadro "Consiglio
+  capitano" con classifica dei candidati per atteso e alternativa.
