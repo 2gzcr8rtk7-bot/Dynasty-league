@@ -40,7 +40,7 @@ pesa il recente ma conta la carriera) · Curry 2–3 · Dončić 2½–3.
 
 ## Minutaggio (26/10/2026)
 Esempi di Francesco: Amen Thompson ~36 min (spesso 38) e Maxey = 5 stelle · ~5 min = 1 · 7–10 min = 1½ · 20–22 min = 3 · 25 min = 3½.
-Fasce (minuti medi): ≥36 =5 · 33 =4½ · 29 =4 · 25 =3½ · 20 =3 · 16 =2½ · 12 =2 · 7 =1½ · 4 =1 · meno =½.
+Fasce (minuti medi, corrette da Francesco): ≥36 =5 · 34 =4½ · 31 =4 · 29 =3½ · 25 =3 · 20 =2½ · 15 =2 · 7 =1½ · 4 =1 · meno =½.
 Peso sul valore/prezzo:
 - Conta soprattutto per i giocatori con PDK medio-bassi.
 - Per chi ha tanti PDK il minutaggio conta poco (conta il PDK). Anzi: tanti PDK con pochi minuti = tanta efficienza
