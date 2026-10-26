@@ -386,3 +386,6 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
   intestazione su una riga non fissa, campo e grafici entro l'altezza dello schermo, liste a 2 colonne (banner,
   Risultati, Radar…), filtri a 3-4 colonne. I grafici SVG usano `chW()` (340 in verticale, più larghi in orizzontale) e
   si ridisegnano da soli quando si gira il telefono.
+- (57) Calcola il trend: toccando un giocatore si apre il suo dettaglio (`trDetail`): per PDK, minuti ed efficienza
+  "partiva da" (primo punto del periodo) → "ora" (ultimo punto), differenza assoluta e %, media del periodo, trend e
+  grafico personale. Il trattino a sinistra della riga mostra/nasconde la linea nel grafico comune.

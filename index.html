@@ -200,6 +200,13 @@
 .colgbtn{position:absolute;right:16px;top:14px;border:0;border-radius:999px;padding:7px 12px;font-weight:800;font-size:12.5px;color:#facc15;cursor:pointer;background:linear-gradient(180deg,#2a2a2a,#0a0a0a);box-shadow:0 4px 10px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.18);z-index:3}
 .lgsec{margin-top:14px}.lgsec h5{margin:0 0 6px;font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;text-transform:uppercase;color:#facc15;letter-spacing:.03em}
 .lgit{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07)}.lgit b{display:block;font-size:13.5px;color:#fff}.lgit p{margin:2px 0 0;font-size:12.5px;line-height:1.45;color:#cbd5e1}
+.trsheet .ccard{background:linear-gradient(160deg,#1c2338,#0b0e17)!important;color:#fff;border:1px solid rgba(255,255,255,.12)}
+.tdhd{display:grid;grid-template-columns:46px 1fr;gap:10px;align-items:center;margin-bottom:10px;padding-right:36px}.tdhd svg{width:46px;height:auto}.tdhd b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:20px;text-transform:uppercase;line-height:1.05}.tdhd small{font-size:11px;color:var(--muted)}
+.tdbox{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-left:4px solid var(--c);border-radius:12px;padding:10px;margin-bottom:10px}
+.tdh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px}.tdh b{color:var(--c);font-size:14px;text-transform:uppercase;letter-spacing:.05em}.tdh span{font-size:10.5px;color:var(--muted)}
+.tdv{display:grid;grid-template-columns:1fr auto 1fr 1fr;gap:6px;align-items:center;margin-bottom:6px}.tdv i{font-style:normal;color:var(--muted);font-size:18px}.tdv small{display:block;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.tdv b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:22px}.tdv em{font-style:normal;font-size:10px;color:var(--muted)}
+.tdd{text-align:right}.tdd.up b{color:#4ade80}.tdd.dn b{color:#f87171}
+.trrow .trsw{cursor:pointer}
 .gback{text-shadow:0 1px 0 rgba(255,255,255,.5)}
 .colroom .nban{background:linear-gradient(100deg,color-mix(in srgb,var(--tc) 38%,#141a2b) 0%,#161c2e 55%,#0e1220 100%)!important;box-shadow:0 10px 22px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -1px 0 rgba(0,0,0,.6)}
 .colroom .nban .njs svg{filter:drop-shadow(0 4px 5px rgba(0,0,0,.5))}
@@ -2401,6 +2408,26 @@ function trLab(k,by){if(by==="w"){const[mk,q]=k.split("#"),[yy,mm]=mk.split("-")
   if(by==="m"){const[y,m]=k.split("-");return GR_MESI[+m-1]+"|"+y}return SZ_LBL[k]+"|"+k.slice(2)}
 function trCol(t){const c=TEAMS[t];const l=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
   for(const h of[c.bg,c.trim,c.fg,c.stroke])if(h&&/^#[0-9a-f]{6}$/i.test(h)&&l(h)>.28)return h;return"#93c5fd"}
+/* Dettaglio di un giocatore nel Calcola il trend: grafico personale per PDK, minuti ed efficienza sullo stesso periodo,
+   da dove partiva (primo punto) a dove è arrivato (ultimo punto), media del periodo e trend %. */
+function trDetail(n){const C=TRN._ctx;if(!C)return"";const p=Object.entries(ROSTER).flatMap(([t,a])=>a.map(x=>({n:x[0],t,num:x[1],r:x[2]}))).find(x=>x.n===n);if(!p)return"";
+  const g=grGames(n,C.SZR.length>1?"all":C.sz).filter(x=>C.SZR.includes(x.sz)&&C.rng.includes(grMk(x.dt)));const c=TEAMS[p.t];
+  const M=new Map();g.forEach(x=>{const k=trKey(x,C.by);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});const K=[...M.keys()].sort();
+  const mets=[["pdk","PDK","#22c55e"],["min","Minuti","#facc15"],["eff","Efficienza","#a855f7"]];
+  const f=(k,v)=>v==null?"—":k==="eff"?cf2(v):cf1(v);
+  const chart=(k,col)=>{const pts=K.map(q=>({q,v:grAvg(M.get(q),x=>x[k])})).filter(o=>o.v!=null);if(!pts.length)return"";const W=chW(),H=150,l=30,r=14,t=16,b=26,iw=W-l-r,ih=H-t-b,vs=pts.map(o=>o.v),S=grNice(Math.min(...vs),Math.max(...vs),k==="eff",3);
+    const X=i=>l+(pts.length===1?iw/2:i*iw/(pts.length-1)),Y=v=>t+ih-(v-S[0])/(S[1]-S[0])*ih,mean=grAvg(g,x=>x[k]);let gr="";
+    for(let v=S[0];v<=S[1]+1e-9;v+=S[2])gr+=`<line x1="${l}" x2="${W-r}" y1="${Y(v)}" y2="${Y(v)}" class="grg"/><text x="${l-4}" y="${Y(v)+3}" class="gry l">${k==="eff"?v.toFixed(2).replace(".",","):Math.round(v)}</text>`;
+    const step=Math.max(1,Math.ceil(pts.length/7));pts.forEach((o,i)=>{if(i%step&&i!==pts.length-1)return;const[a,bb]=trLab(o.q,C.by).split("|");gr+=`<text x="${X(i)}" y="${H-b+13}" class="grx big">${a}</text>`});
+    return`<svg class="grsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${k}">${gr}${mean!=null?`<line x1="${l}" x2="${W-r}" y1="${Y(mean)}" y2="${Y(mean)}" stroke="${col}" stroke-opacity=".45" stroke-dasharray="3 3"/>`:""}<polyline points="${pts.map((o,i)=>X(i).toFixed(1)+","+Y(o.v).toFixed(1)).join(" ")}" fill="none" stroke="${col}" stroke-width="2.6"/>${pts.map((o,i)=>`<circle cx="${X(i).toFixed(1)}" cy="${Y(o.v).toFixed(1)}" r="${i===0||i===pts.length-1?4.5:3}" fill="${col}" stroke="#0b1022" stroke-width="1.5"/>`).join("")}
+      <text x="${X(0)}" y="${Y(pts[0].v)-8}" class="cdl" fill="${col}" text-anchor="${pts.length>1?"start":"middle"}">${f(k,pts[0].v)}</text>${pts.length>1?`<text x="${X(pts.length-1)}" y="${Y(pts[pts.length-1].v)-8}" class="cdl" fill="${col}" text-anchor="end">${f(k,pts[pts.length-1].v)}</text>`:""}</svg>`};
+  const box=([k,l,col])=>{const pts=K.map(q=>grAvg(M.get(q),x=>x[k])).filter(v=>v!=null);if(!pts.length)return"";const a=pts[0],z=pts[pts.length-1],tr=grTrend(pts),d=z-a,dp=a?d/Math.abs(a)*100:null,up=d>=0;
+    return`<div class="tdbox" style="--c:${col}"><div class="tdh"><b>${l}</b><span>media periodo ${f(k,grAvg(g,x=>x[k]))}${tr&&pts.length>=3?` · trend ${tr.pct>=0?"+":"−"}${Math.abs(Math.round(tr.pct))}%`:""}</span></div>
+      <div class="tdv"><div><small>Partiva da</small><b>${f(k,a)}</b><em>${trLab(K[0],C.by).replace("|"," ")}</em></div><i>→</i><div><small>Ora</small><b>${f(k,z)}</b><em>${trLab(K[K.length-1],C.by).replace("|"," ")}</em></div><div class="tdd ${up?"up":"dn"}"><small>Differenza</small><b>${up?"+":"−"}${f(k,Math.abs(d))}</b><em>${dp==null?"":(up?"+":"−")+Math.abs(Math.round(dp))+"%"}</em></div></div>${chart(k,col)}</div>`};
+  return`<div class="colsheet trsheet"><div class="ccard" style="--rc:${c.bg}"><button class="ccx" data-trdx="1" aria-label="Chiudi">×</button>
+   <div class="tdhd">${jersey(p.t,p.num,n)}<div><b>${n}</b><small>${c.name} · ${{G:"Guardia",F:"Ala",C:"Centro"}[p.r]} · ${g.length} partite · ${C.by==="s"?"media per stagione":C.by==="m"?"media per mese":"media per settimana"}</small></div></div>
+   ${mets.map(box).join("")}
+   <button class="cshare" data-grafico="${p.t}" data-grp="${n.replace(/"/g,"&quot;")}"><span>📈 Apri il grafico completo</span></button></div></div>`}
 function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>PL.push({n:p[0],t,r:p[2]})));
   const ORD=["2024/25","2025/26","2026/27"];if(!ORD.includes(TRN.sz))TRN.sz="2026/27";if(!ORD.includes(TRN.sz2)||ORD.indexOf(TRN.sz2)<ORD.indexOf(TRN.sz))TRN.sz2=TRN.sz;
   const SZR=ORD.slice(ORD.indexOf(TRN.sz),ORD.indexOf(TRN.sz2)+1),multi=SZR.length>1,sz=multi?"all":TRN.sz,met=TRN.met;
@@ -2409,7 +2436,7 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   const mesi=[...new Set([...G.values()].flatMap(g=>g.map(x=>grMk(x.dt))))].sort();
   if(sz==="all"||!mesi.includes(TRN.mese))TRN.mese="";
   const iA=mesi.indexOf(TRN.mese);let iB=mesi.indexOf(TRN.mese2);if(iA<0)TRN.mese2="";else if(iB<iA){iB=iA;TRN.mese2=TRN.mese}
-  const rng=iA<0?mesi:mesi.slice(iA,iB+1),by=multi?"s":rng.length===1?"w":"m";
+  const rng=iA<0?mesi:mesi.slice(iA,iB+1),by=multi?"s":rng.length===1?"w":"m";TRN._ctx={SZR,rng,by,sz};
   const keysAll=new Set(),R=[];
   PL.forEach(p=>{if(TRN.team&&p.t!==TRN.team)return;if(!TRN.ruoli.includes(p.r))return;const g=G.get(p.n).filter(x=>rng.includes(grMk(x.dt)));if(g.length<+TRN.minp)return;
     const M=new Map();g.forEach(x=>{const k=trKey(x,by);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});
@@ -2437,7 +2464,7 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   const sel=(k,lab,opts,v,dis)=>`<label class="grsel${dis?" off":""}"><span>${lab}</span><select data-tr="${k}" ${dis?"disabled":""}>${opts.map(([a,b])=>`<option value="${a}" ${String(a)===String(v)?"selected":""}>${b}</option>`).join("")}</select></label>`;
   const seg=(k,opts)=>`<div class="trseg">${opts.map(([v,l])=>`<button data-trset="${k}" data-v="${v}" aria-pressed="${TRN[k]===v}">${l}</button>`).join("")}</div>`;
   const rows=R.map((x,i)=>{const on=TRN.on.includes(x.n),st=sty[x.n];return`<div class="trrow${on?" on":""}" data-trln="${x.n.replace(/"/g,"&quot;")}" role="button" tabindex="0">
-    <span class="trsw"${on?` style="--c:${st.c}"`:""}>${on?`<svg viewBox="0 0 26 8" width="26" height="8"><line x1="1" y1="4" x2="25" y2="4" stroke="${st.c}" stroke-width="3" ${st.d?`stroke-dasharray="${st.d}"`:""} stroke-linecap="round"/></svg>`:""}</span>
+    <span class="trsw" data-trtog="1" title="Mostra/nascondi la linea"${on?` style="--c:${st.c}"`:""}>${on?`<svg viewBox="0 0 26 8" width="26" height="8"><line x1="1" y1="4" x2="25" y2="4" stroke="${st.c}" stroke-width="3" ${st.d?`stroke-dasharray="${st.d}"`:""} stroke-linecap="round"/></svg>`:""}</span>
     ${badge(x.t,"trlg")}<span class="trnm"><b>${x.n}</b><small>${TEAMS[x.t].nick} · ${{G:"Guardia",F:"Ala",C:"Centro"}[x.r]} · ${x.N} partite · media ${fmt(x.m)}</small></span>
     <span class="trpc ${x.pct>=0?"up":"dn"}">${x.pct>=0?"▲ +":"▼ −"}${Math.abs(x.pct).toFixed(0)}%</span>
     <button class="trgr" data-grafico="${x.t}" data-grp="${x.n.replace(/"/g,"&quot;")}" aria-label="Grafico di ${x.n}">📈</button></div>`}).join("");
@@ -2456,7 +2483,7 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   <div class="grcard">${chart}<div class="grfoot">${by==="s"?"media di ogni stagione":by==="m"?"media di ogni mese":"media di ogni settimana"} · max ${TR_MAXL} linee</div></div>
   <div class="trcount">${R.length} ${R.length===1?"giocatore":"giocatori"} con trend ${TRN.dir==="up"?"≥ +":"≤ −"}${TRN.soglia}% · tocca per mostrare/nascondere la linea, 📈 per il suo grafico</div>
   <div class="trlist">${rows||`<p class="note">Prova a scegliere un periodo più lungo o una soglia più bassa.</p>`}</div>
-  <p class="note">Trend = come per il Grafico: retta che passa meglio tra i punti del periodo (stagioni, mesi o settimane), variazione dal primo all'ultimo punto in % sulla media. Servono almeno 2 punti: con la stagione appena iniziata scegli un solo mese per avere le settimane.</p></div>`}
+  <p class="note">Trend = come per il Grafico: retta che passa meglio tra i punti del periodo (stagioni, mesi o settimane), variazione dal primo all'ultimo punto in % sulla media. Servono almeno 2 punti: con la stagione appena iniziata scegli un solo mese per avere le settimane.</p></div>${TRN.det?trDetail(TRN.det):""}`}
 function vGrafico(){if(!TEAMS[GR.t])GR.t=TEAMS[curTeam]?curTeam:Object.keys(TEAMS)[0];const t=GR.t,c=TEAMS[t];const ros=(ROSTER[t]||[]).map(x=>x[0]);if(!GR.p||!ros.includes(GR.p))GR.p=ros[0];
   /* livello automatico: Tutte → stagioni; stagione → mesi; mese → settimane; settimana → partite */
   /* intervallo di stagioni consecutive: Dalla stagione → Alla stagione (più stagioni = un punto per stagione) */
@@ -3220,7 +3247,10 @@ document.getElementById("main").addEventListener("click",e=>{
   if(e.target.closest("[data-trclose]")){e.preventDefault();cur=TRN.from||"efficienza";render();window.scrollTo(0,0);return}
   const b=e.target.closest("[data-trset]");if(b){e.preventDefault();TRN[b.dataset.trset]=b.dataset.v;if(b.dataset.trset!=="on")TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y);return}
   const rl=e.target.closest("[data-trrole]");if(rl){e.preventDefault();const r0=rl.dataset.trrole;let v=TRN.ruoli.includes(r0)?TRN.ruoli.replace(r0,""):TRN.ruoli+r0;if(!v)v=r0;TRN.ruoli="GFC".split("").filter(c=>v.includes(c)).join("");TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y);return}
-  const r=e.target.closest("[data-trln]");if(r&&!e.target.closest("[data-grafico]")){e.preventDefault();const n=r.dataset.trln;TRN.on=TRN.on||[];const i=TRN.on.indexOf(n);if(i>=0)TRN.on.splice(i,1);else{TRN.on.push(n);if(TRN.on.length>TR_MAXL)TRN.on.shift()}const y=window.scrollY;render();window.scrollTo(0,y)}});
+  if(e.target.closest("[data-trdx]")){e.preventDefault();TRN.det=null;document.querySelector(".trsheet")?.remove();return}
+  if(e.target.classList&&e.target.classList.contains("trsheet")){TRN.det=null;e.target.remove();return}
+  const r=e.target.closest("[data-trln]");if(r&&!e.target.closest("[data-grafico]")&&!e.target.closest("[data-trtog]")){e.preventDefault();TRN.det=r.dataset.trln;const y=window.scrollY;render();window.scrollTo(0,y);return}
+  if(r&&e.target.closest("[data-trtog]")){e.preventDefault();const n=r.dataset.trln;TRN.on=TRN.on||[];const i=TRN.on.indexOf(n);if(i>=0)TRN.on.splice(i,1);else{TRN.on.push(n);if(TRN.on.length>TR_MAXL)TRN.on.shift()}const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("change",e=>{const s=e.target.closest("select[data-tr]");if(!s||cur!=="trend")return;const k=s.dataset.tr;
   if(k==="sz"||k==="sz2"){TRN[k]=s.value;TRN.mese="";TRN.mese2=""}else if(k==="mese"){TRN.mese=s.value;TRN.mese2=s.value}else TRN[k]=s.value;TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y)});
 /* Grafico: apertura, chiusura, menu e linee */
