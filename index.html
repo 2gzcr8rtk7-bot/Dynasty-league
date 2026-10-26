@@ -39,6 +39,29 @@
 .pgsw{display:flex;align-items:center;gap:6px;margin-top:3px}.pgsw svg{flex:none}.pgsw b{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}.pgnd{font-size:11px;color:var(--muted)}
 .pgnote{font-size:11px;color:var(--muted);margin:10px 0 0}
 .vtrow[data-pln]{cursor:pointer}
+.ctools{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 16px}
+.ctool{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:10px;align-items:center;text-align:left;background:var(--card,#141c33);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:10px 12px;color:#fff;font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;letter-spacing:.05em;text-transform:uppercase;cursor:pointer}
+.ctool small{grid-column:2;font-family:inherit;font-style:normal;font-weight:500;font-size:10.5px;letter-spacing:0;text-transform:none;color:var(--muted)}
+.ctool .ci{grid-row:1/3;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#facc15;color:#111;font-style:normal;font-size:18px}
+.ctool.off{opacity:.45;cursor:default}.ctool.off .ci{background:#5b6b95;color:#fff}
+.capintro{font-size:13px;color:var(--muted);margin:0 0 10px}
+.capchips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.capch{display:grid;text-align:left;background:var(--card,#141c33);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:6px 10px;color:#fff;font-weight:700;font-size:13px;cursor:pointer}
+.capch small{font-weight:500;font-size:10px;color:var(--muted)}.capch.on{background:#facc15;border-color:#facc15;color:#111}.capch.on small{color:#3b3b3b}
+.capbar{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-bottom:8px}.capbar button{background:none;border:1px solid rgba(255,255,255,.2);color:var(--muted);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer}
+.capcard{background:var(--card,#141c33);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px;margin-bottom:10px}.capcard.capbest{border-color:#facc15;box-shadow:0 0 0 1px #facc15 inset}
+.capah{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center}.capah svg{width:44px;height:auto}
+.capnm b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase;line-height:1.05}.capnm small{font-size:11px;color:var(--muted)}.capinj{color:#f87171;font-weight:700}
+.capcrown{background:#facc15;color:#111;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:6px}
+.capopp{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:10px 0;font-size:12px;color:var(--muted)}
+.capopp select{flex:0 0 46%;background:#0b1224;color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:7px 8px;font-size:14px;font-weight:700}
+.capvs,.capfm{display:grid;gap:8px}.capvs{grid-template-columns:1fr 1fr}.capfm{grid-template-columns:repeat(4,1fr);margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08)}
+.capvs small,.capfm small{display:block;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.capvs b{font-family:var(--display);font-style:italic;font-weight:800;font-size:26px;color:#facc15}.capvs b.sm{font-size:20px;color:#fff}.capvs em,.capfm em{display:block;font-style:normal;font-size:10.5px;color:var(--muted)}
+.capfm b{font-weight:800;font-size:16px;font-variant-numeric:tabular-nums}.capfm .ix b{color:#38bdf8}
+.capgl{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}.capgl span{font-size:11px;font-weight:700;padding:2px 6px;border-radius:5px;color:#111}.capgl .g{background:#4ade80}.capgl .y{background:#facc15}.capgl .r{background:#f87171}
+.capnote{font-size:12px;color:var(--muted);margin:0}
+.capat{margin-top:10px;font-size:12px;font-weight:700;padding:6px 10px;border-radius:8px}.capat.ok{background:rgba(74,222,128,.14);color:#4ade80}.capat.ko{background:rgba(248,113,113,.14);color:#f87171}.capat i{font-weight:500;color:var(--muted)}
 .gback{background:none;border:0;color:var(--muted);font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;padding:0 0 12px;cursor:pointer}
 .ghead{position:relative;display:flex;align-items:center;gap:14px;padding:16px;margin-bottom:22px;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.4)}
 .ghead::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.07) 0 10px,transparent 10px 22px);pointer-events:none}
@@ -2325,6 +2348,55 @@ function quintetto(t){
   if(q.length<5){r.filter(p=>!used.has(p[0])).sort((a,b)=>avg(b[0])-avg(a[0])).slice(0,5-q.length).forEach(p=>q.push(p))}
   return{auto:true,q};
 }
+/* ===== CAP: aiuto scelta capitano (dal Campo di ogni squadra) =====
+   Il GM sceglie i giocatori candidati e, per ognuno, l'avversario NBA della prossima notte.
+   Per ogni candidato: media PDK contro quella squadra (stagione in corso + 2025/26 + 2024/25), partite, minuti, ultima e migliore;
+   forma: Media stagione (100%), Ultimo 50%, Ultimo 15% della stagione in corso (le stesse metriche del regolamento anti-tank).
+   Indice Cap = 40% media vs avversario (corretta verso la media stagione se le partite sono poche) + 35% Ultimo 15% + 25% stagione.
+   Anti-tank: confronto con il miglior altro candidato (tolleranza 3 PDK, servono 2/3 verdi); prima delle 15 partite = indicativo.
+   Le scelte sono salvate su questo telefono (per squadra). */
+let CAP={t:null,sel:{}};
+function capLoad(t){CAP={t,sel:{}};try{const x=JSON.parse(localStorage.getItem("dl_cap_"+t)||"null");if(x&&typeof x==="object")CAP.sel=x}catch(e){}}
+function capSave(){try{localStorage.setItem("dl_cap_"+CAP.t,JSON.stringify(CAP.sel))}catch(e){}}
+const NBA_SIGLE=["ATL","BKN","BOS","CHA","CHI","CLE","DAL","DEN","DET","GSW","HOU","IND","LAC","LAL","MEM","MIA","MIL","MIN","NOP","NYK","OKC","ORL","PHI","PHX","POR","SAC","SAS","TOR","UTA","WAS"];
+function capDati(n,opp){const cur=PARTITE[n]||[],mean=a=>a.length?a.reduce((s,x)=>s+(+x[3]||0),0)/a.length:null,N=cur.length;
+  const last=k=>mean(cur.slice(-k));
+  const stag=mean(cur),u50=N?last(Math.ceil(N/2)):null,u15=N?last(Math.ceil(N*.15)):null;
+  const vs=[];[["2026/27",cur],["2025/26",(STAGIONI["2025/26"]||{})[n]||[]],["2024/25",(STAGIONI["2024/25"]||{})[n]||[]]].forEach(([sz,g])=>g.forEach(x=>{if(opp&&x[1]===opp)vs.push({sz,d:x[0],mn:+x[2]||0,p:+x[3]||0})}));
+  const vsm=vs.length?vs.reduce((s,x)=>s+x.p,0)/vs.length:null,vsmin=vs.length?vs.reduce((s,x)=>s+x.mn,0)/vs.length:null;
+  const base=stag??mean(pgRef(n))??0,vsAdj=vs.length?(vs.length*vsm+3*base)/(vs.length+3):base;
+  const idx=stag==null?null:.4*vsAdj+.35*(u15??stag)+.25*stag;
+  const best=vs.length?vs.reduce((a,b)=>b.p>a.p?b:a):null;
+  return{n,opp,N,stag,u50,u15,vs,vsm,vsmin,best,ultima:vs.length?vs[0]:null,idx}}
+function vCap(){const t=CAP.t||curTeam,c=TEAMS[t],R=ROSTER[t]||[];if(CAP.t!==t)capLoad(t);
+  const sel=Object.keys(CAP.sel).filter(n=>R.some(p=>p[0]===n));
+  const D=sel.map(n=>capDati(n,CAP.sel[n]||null));
+  const ord=[...D].sort((a,b)=>(b.idx??-1)-(a.idx??-1)),top=ord.find(x=>x.idx!=null&&x.opp);
+  /* anti-tank: confronto con il miglior altro candidato per media stagione */
+  const at=d=>{const alt=D.filter(x=>x.n!==d.n&&x.stag!=null).sort((a,b)=>b.stag-a.stag)[0];if(!alt||d.stag==null)return null;
+    const ks=["stag","u50","u15"],g=ks.map(k=>d[k]>=alt[k]||alt[k]-d[k]<=3);return{alt:alt.n,ok:g.filter(Boolean).length,g,ind:d.N<15||alt.N<15}};
+  const f=v=>v==null?"—":v.toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1});
+  const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
+  const chips=R.map(p=>{const on=p[0] in CAP.sel,inj=INJ[p[0]]&&INJ[p[0]].stato!=="ok";return`<button class="capch${on?" on":""}" data-capp="${p[0].replace(/"/g,"&quot;")}" aria-pressed="${on}"><span>${sur(p[0])}</span><small>${p[3]}${inj?" · "+STATI[INJ[p[0]].stato][0]:""}</small></button>`}).join("");
+  const card=d=>{const p=R.find(x=>x[0]===d.n),a=at(d),inj=INJ[d.n]&&INJ[d.n].stato!=="ok",isTop=top&&top.n===d.n;
+    const opts=`<option value="">Avversario…</option>`+NBA_SIGLE.filter(x=>x!==p[3]).map(x=>`<option value="${x}"${x===d.opp?" selected":""}>${x}</option>`).join("");
+    return`<div class="capcard${isTop?" capbest":""}">
+     <div class="capah">${jersey(t,p[1],p[0])}<div class="capnm"><b>${d.n}</b><small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}${inj?` · <span class="capinj">${STATI[INJ[d.n].stato][0]}</span>`:""}</small></div>
+     ${isTop?`<span class="capcrown">Consigliato</span>`:""}</div>
+     <label class="capopp"><span>Prossima partita contro</span><select data-capo="${d.n.replace(/"/g,"&quot;")}">${opts}</select></label>
+     ${d.opp?`<div class="capvs"><div><small>Media vs ${d.opp}</small><b>${f(d.vsm)}</b><em>${d.vs.length?d.vs.length+(d.vs.length===1?" partita":" partite")+" · ultime 3 stagioni":"mai affrontati"}</em></div>
+       <div><small>Minuti vs ${d.opp}</small><b class="sm">${f(d.vsmin)}</b><em>${d.best?"migliore "+f(d.best.p)+" ("+d.best.d+" "+d.best.sz.slice(2,5)+d.best.sz.slice(-2)+")":""}</em></div></div>
+       ${d.vs.length?`<div class="capgl">${d.vs.map(x=>`<span class="${x.p>=35?"g":x.p>=20?"y":"r"}" title="${x.d} · ${x.sz}">${f(x.p)}</span>`).join("")}</div>`:""}`:`<p class="capnote">Scegli l'avversario per vedere i precedenti.</p>`}
+     <div class="capfm"><div><small>Stagione</small><b>${f(d.stag)}</b><em>${d.N} part.</em></div><div><small>Ultimo 50%</small><b>${f(d.u50)}</b><em>${d.N?Math.ceil(d.N/2)+" part.":""}</em></div><div><small>Ultimo 15%</small><b>${f(d.u15)}</b><em>${d.N?Math.ceil(d.N*.15)+" part.":""}</em></div><div class="ix"><small>Indice Cap</small><b>${f(d.idx)}</b></div></div>
+     ${a?`<div class="capat ${a.ok>=2?"ok":"ko"}">${a.ok>=2?"Anti-tank OK":"Rischio multa"} · ${a.ok}/3 contro ${sur(a.alt)}${a.ind?" <i>(meno di 15 partite: indicativo)</i>":""}</div>`:""}
+    </div>`};
+  return`<button class="gback" id="capback">‹ Campo ${c.nick}</button>
+  ${H("Cap",`<em>Chi mettere capitano</em>`)}
+  <p class="capintro">Tocca i giocatori che giocano la prossima notte e scegli l'avversario di ognuno.</p>
+  <div class="capchips">${chips}</div>
+  ${D.length?`<div class="capbar"><span>${D.length} ${D.length===1?"candidato":"candidati"} · ordinati per Indice Cap</span><button id="capclr">Azzera</button></div>${ord.map(card).join("")}
+  <p class="note">Indice Cap = 40% media contro l'avversario (con poche partite si avvicina alla media stagione) + 35% Ultimo 15% + 25% media stagione. Anti-tank: confronto con il miglior altro candidato per media stagione, su Stagione, Ultimo 50% e Ultimo 15% (verde se meglio o entro 3 PDK; servono 2 verdi su 3). Le scelte restano salvate su questo telefono.</p>`:""}`}
+
 function vCampo(){
   const t=curTeam,c=TEAMS[t],st=standings().find(x=>x.t===t);
   const {auto,q}=quintetto(t);const qs=new Set(q.map(p=>p[0]));
@@ -2364,7 +2436,7 @@ function vCampo(){
   ${cassa(t)}
   ${H("Quintetto",`<em>${auto?"Provvisorio · scelto per efficienza":"Titolari · per ruolo"}</em>`)}
   <div class="court" style="border-color:${shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}</div>
-  <p class="note">Sotto ogni maglia: PDK medi a partita nella stagione in corso (verde da 35, giallo 20–35, rosso sotto 20). In panchina, sotto, anche i PDK dell'ultima partita. Tocca un giocatore per la sua scheda.</p>
+  <div class="ctools"><button class="ctool" id="ccap"><span class="ci">C</span>Cap<small>Chi mettere capitano</small></button><button class="ctool off" disabled><span class="ci">…</span>In arrivo<small>Presto disponibile</small></button></div>
   ${H("Panchina")}
   <div class="bench">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><span class="bev">${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}</span></button>`).join("")}</div>
   <button class="croster" id="croster">Roster completo ›</button>`;
@@ -3334,13 +3406,13 @@ function simAct(b){
     if(navigator.share)navigator.share({text:tx}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(tx).then(()=>{b.querySelector("span").textContent="Copiato ✓"},()=>{})}
 }
 
-const VIEWS={effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.grafico=vGrafico;
+const VIEWS={cap:vCap,effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.grafico=vGrafico;
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
   document.body.dataset.v=cur;
   {const fs=cur==="giochi"&&GAME==="dream";document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=fs?"#2a1260":"#0a1330"}
-  const eff=cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
+  const eff=cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -3351,6 +3423,11 @@ function render(){
   m.querySelectorAll("[data-ctab]").forEach(b=>b.onclick=()=>{cassaTab=b.dataset.ctab;render()});
   m.querySelectorAll("[data-cstag]").forEach(b=>b.onclick=()=>{cassaStag=b.dataset.cstag;render()});
   const cb=m.querySelector("#cback");if(cb)cb.onclick=()=>{cur="home";render();window.scrollTo(0,0)};
+  const cc=m.querySelector("#ccap");if(cc)cc.onclick=()=>{capLoad(curTeam);cur="cap";render();window.scrollTo(0,0)};
+  if(cur==="cap"){const kb=m.querySelector("#capback");if(kb)kb.onclick=()=>{cur="campo";render();window.scrollTo(0,0)};
+    m.querySelectorAll("[data-capp]").forEach(b=>b.onclick=()=>{const n=b.dataset.capp;if(n in CAP.sel)delete CAP.sel[n];else CAP.sel[n]="";capSave();render()});
+    m.querySelectorAll("[data-capo]").forEach(x=>x.onchange=()=>{CAP.sel[x.dataset.capo]=x.value;capSave();render()});
+    const cl=m.querySelector("#capclr");if(cl)cl.onclick=()=>{CAP.sel={};capSave();render()};}
   const cr=m.querySelector("#croster");if(cr)cr.onclick=()=>{cur="roster";render();window.scrollTo(0,0)};
   m.querySelectorAll(".pl[data-pl],.rrow[data-pl]").forEach(b=>{const go=()=>{curPlayer=b.dataset.pl;cur="giocatore";render();window.scrollTo(0,0)};b.onclick=go;b.onkeydown=e=>{if(e.key==="Enter")go()}});
   const gse=m.querySelector("#gseason");if(gse)gse.onchange=()=>{if(!gse.value)return;gSeason=gse.value;if(gse.dataset.szchip)esqMese="tutta";const y=window.scrollY;render();if(gse.dataset.szchip)window.scrollTo(0,y)};
@@ -3370,7 +3447,7 @@ function syncMenu(){
   document.querySelectorAll("nav button[data-menu]").forEach(b=>{
     const p=document.getElementById(b.dataset.menu);if(!p)return;
     b.setAttribute("aria-expanded",dkOpen);p.hidden=!dkOpen;
-    const eff=cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
+    const eff=cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"?"home":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
     b.setAttribute("aria-selected",dkOpen||inside);
     if(dkOpen){const w=b.closest(".wrap").getBoundingClientRect(),r=b.getBoundingClientRect();
       const width=Math.max(r.width,180);let left=r.left-w.left+r.width/2-width/2;left=Math.max(0,Math.min(left,w.width-width));

@@ -311,3 +311,11 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
   Si aggiornano da sole con i report, tranne **INF_STELLE** (stelline infortuni): aggiornarle a mano se un giocatore ha un
   infortunio lungo, rientra, o entra un giocatore nuovo (regole nel commento sopra INF_STELLE).
 - Valori lega: tocca una riga per aprire la scheda del giocatore (il tasto indietro torna a Valori lega).
+
+## 26/10/2026 (40) — Campo: pulsanti "Cap" e "In arrivo"
+- Sotto il campo la nota sui colori è sostituita da due pulsanti. **Cap** (view `cap`, `vCap`, stato `CAP`, salvato in
+  localStorage `dl_cap_<squadra>`): il GM sceglie i candidati capitano e l'avversario NBA di ognuno; mostra media PDK
+  contro quell'avversario (ultime 3 stagioni, partite, minuti, migliore, pallini partita per partita), forma (Media
+  stagione, Ultimo 50%, Ultimo 15%), Indice Cap (40% vs avversario corretto verso la media + 35% ultimo 15% + 25%
+  stagione) e controllo anti-tank contro il miglior altro candidato (tolleranza 3 PDK, 2/3 verdi; <15 partite = indicativo).
+- Il secondo pulsante è un segnaposto disattivato: funzione da definire con Francesco.
