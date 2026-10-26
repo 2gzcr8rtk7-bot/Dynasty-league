@@ -82,6 +82,7 @@
 .trlab{font-size:10px;letter-spacing:.1em;text-transform:uppercase;opacity:.75;margin:10px 0 5px}
 .trseg{display:flex;gap:6px}.trseg button{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:#fff;border-radius:9px;padding:8px 6px;font-weight:700;font-size:13px;cursor:pointer}
 .trseg button[aria-pressed="true"]{background:#34d399;border-color:#34d399;color:#03291b}
+.trrl button.G[aria-pressed="true"]{background:#22c55e;border-color:#22c55e;color:#052e16}.trrl button.F[aria-pressed="true"]{background:#3b82f6;border-color:#3b82f6;color:#fff}.trrl button.C[aria-pressed="true"]{background:#facc15;border-color:#facc15;color:#2a1c00}
 .trend-lab{font-size:10px;font-weight:800}
 .trcount{font-size:11.5px;opacity:.8;margin:10px 0 6px}
 .trrow{display:grid;grid-template-columns:26px 30px minmax(0,1fr) auto 32px;gap:8px;align-items:center;padding:8px 6px;border-bottom:1px solid rgba(255,255,255,.08);cursor:pointer}
@@ -2235,7 +2236,7 @@ function grChart(P,show){if(!P.length)return`<div class="grempty">Nessuna partit
    ogni settimana fissa (1-7, 8-14, 15-21, 22-fine) se il periodo è un solo mese. Trend = retta dei minimi quadrati
    (grTrend): variazione dal primo all'ultimo punto in % sulla media. Si cercano tutti i giocatori della lega con trend
    ≥ soglia (in crescita) o ≤ −soglia (in calo), con almeno TRN.minp partite nel periodo e almeno 2 punti. */
-let TRN={sz:"2026/27",mese:"",mese2:"",met:"pdk",dir:"up",soglia:"10",minp:"3",team:"",on:null,from:null};
+let TRN={ruoli:"GFC",sz:"2026/27",mese:"",mese2:"",met:"pdk",dir:"up",soglia:"10",minp:"3",team:"",on:null,from:null};
 const TR_MAXL=8,TR_DASH=["","6 4","2 3","8 3 2 3"];
 function trKey(x,by){const d=x.dt;if(by==="w")return grMk(d)+"#"+Math.min(3,Math.floor((d.getUTCDate()-1)/7));if(by==="m")return grMk(d);return x.sz}
 function trLab(k,by){if(by==="w"){const[mk,q]=k.split("#"),[yy,mm]=mk.split("-").map(Number),last=new Date(Date.UTC(yy,mm,0)).getUTCDate(),a0=+q*7+1,a1=+q===3?last:a0+6,f=v=>String(v).padStart(2,"0");return"Sett. "+(+q+1)+"|"+f(a0)+"–"+f(a1)+"/"+f(mm)}
@@ -2251,7 +2252,7 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   const iA=mesi.indexOf(TRN.mese);let iB=mesi.indexOf(TRN.mese2);if(iA<0)TRN.mese2="";else if(iB<iA){iB=iA;TRN.mese2=TRN.mese}
   const rng=iA<0?mesi:mesi.slice(iA,iB+1),by=sz==="all"?"s":rng.length===1?"w":"m";
   const keysAll=new Set(),R=[];
-  PL.forEach(p=>{if(TRN.team&&p.t!==TRN.team)return;const g=G.get(p.n).filter(x=>rng.includes(grMk(x.dt)));if(g.length<+TRN.minp)return;
+  PL.forEach(p=>{if(TRN.team&&p.t!==TRN.team)return;if(!TRN.ruoli.includes(p.r))return;const g=G.get(p.n).filter(x=>rng.includes(grMk(x.dt)));if(g.length<+TRN.minp)return;
     const M=new Map();g.forEach(x=>{const k=trKey(x,by);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});
     const pts=[...M.entries()].map(([k,a])=>({k,v:grAvg(a,x=>x[met])})).filter(q=>q.v!=null).sort((a,b)=>a.k<b.k?-1:1);
     if(pts.length<2)return;const tr=grTrend(pts.map(q=>q.v));if(!tr)return;
@@ -2288,6 +2289,7 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   ${sel("mese","Dal mese",[["","Tutta la stagione"],...mesi.map(k=>[k,mLab(k)])],TRN.mese,sz==="all")}
   ${sel("mese2","Al mese",iA<0?[["","—"]]:mesi.slice(iA).map(k=>[k,mLab(k)]),TRN.mese2,iA<0)}
   ${sel("team","Squadra",[["","Tutte le squadre"],...Object.keys(TEAMS).map(t=>[t,TEAMS[t].nick])],TRN.team)}</div>
+  <div class="trlab">Ruoli</div><div class="trseg trrl">${[["G","Guardie"],["F","Ali"],["C","Centri"]].map(([r,l])=>`<button class="${r}" data-trrole="${r}" aria-pressed="${TRN.ruoli.includes(r)}">${l}</button>`).join("")}</div>
   <div class="trlab">Cosa misurare</div>${seg("met",[["pdk","PDK"],["min","Minuti"],["eff","Efficienza"]])}
   <div class="trlab">Trend cercato</div>${seg("dir",[["up","▲ In crescita"],["down","▼ In calo"]])}
   <div class="trctl two">${sel("soglia","Almeno",[5,10,15,20,25,30,40,50].map(v=>[v,(TRN.dir==="up"?"+":"−")+v+"%"]),TRN.soglia)}${sel("minp","Partite minime",[1,3,5,10,15,20].map(v=>[v,v+" partite"]),TRN.minp)}</div>
@@ -2621,6 +2623,7 @@ document.getElementById("main").addEventListener("click",e=>{
   if(cur!=="trend")return;
   if(e.target.closest("[data-trclose]")){e.preventDefault();cur=TRN.from||"efficienza";render();window.scrollTo(0,0);return}
   const b=e.target.closest("[data-trset]");if(b){e.preventDefault();TRN[b.dataset.trset]=b.dataset.v;if(b.dataset.trset!=="on")TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y);return}
+  const rl=e.target.closest("[data-trrole]");if(rl){e.preventDefault();const r0=rl.dataset.trrole;let v=TRN.ruoli.includes(r0)?TRN.ruoli.replace(r0,""):TRN.ruoli+r0;if(!v)v=r0;TRN.ruoli="GFC".split("").filter(c=>v.includes(c)).join("");TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y);return}
   const r=e.target.closest("[data-trln]");if(r&&!e.target.closest("[data-grafico]")){e.preventDefault();const n=r.dataset.trln;TRN.on=TRN.on||[];const i=TRN.on.indexOf(n);if(i>=0)TRN.on.splice(i,1);else{TRN.on.push(n);if(TRN.on.length>TR_MAXL)TRN.on.shift()}const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("change",e=>{const s=e.target.closest("select[data-tr]");if(!s||cur!=="trend")return;const k=s.dataset.tr;
   if(k==="sz"){TRN.sz=s.value;TRN.mese="";TRN.mese2=""}else if(k==="mese"){TRN.mese=s.value;TRN.mese2=s.value}else TRN[k]=s.value;TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y)});

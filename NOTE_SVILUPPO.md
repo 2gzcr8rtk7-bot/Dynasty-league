@@ -329,6 +329,6 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Pulsante verde sotto Efficienza Cup → view `trend` (`vTrend`, stato `TRN`, `trKey`, `trLab`, `trCol`). Ricerca al
   contrario rispetto al Grafico: si scelgono periodo (stagione / Tutte / dal mese–al mese), squadra, misura (PDK, Minuti,
   Efficienza), direzione (crescita/calo), soglia % e partite minime; escono tutti i giocatori della lega con quel trend
-  (stesso calcolo `grTrend` del Grafico; punti per stagione, mese o settimana se il periodo è un solo mese), con grafico
+  (filtro ruoli G/F/C multiplo, `TRN.ruoli`; stesso calcolo `grTrend` del Grafico; punti per stagione, mese o settimana se il periodo è un solo mese), con grafico
   a linee nei colori squadra (max 8, tratteggi diversi per giocatori della stessa squadra) e pulsante 📈 che apre il
   Grafico del giocatore sullo stesso periodo.
