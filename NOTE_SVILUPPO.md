@@ -429,4 +429,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 
 (75) Box score Dynasty TV: PDK dei giocatori in riquadri colorati con angoli arrotondati (.pdkb): rosso <20, giallo 20-29,99, verde 30-39,99, viola ≥40 (classi pr/py/pg/pv). Intestazione PDK e totale squadra bianchi, senza riquadro.
 
-(76) Swipe indietro rivisto come SUPPORTO: i tasti ‹ sono di nuovo visibili ovunque (tolto il CSS che li nascondeva). Swipe ottimizzato: zona bordo 34px, la pagina segue il dito 1:1 (requestAnimationFrame, translate3d) con ombra, freccia #swar che diventa gialla oltre la soglia (25% schermo o colpo veloce >0,45 px/ms), vibrazione breve su Android, animazione d'ingresso della pagina precedente.
+(76) Swipe indietro rivisto come SUPPORTO: i tasti ‹ sono di nuovo visibili ovunque (tolto il CSS che li nascondeva). Swipe ottimizzato: zona bordo 34px, la pagina segue il dito 1:1 (requestAnimationFrame, translate3d) con ombra, freccia #swar (fissa in alto a sinistra, sotto l'intestazione) che diventa gialla oltre la soglia (25% schermo o colpo veloce >0,45 px/ms), vibrazione breve su Android, animazione d'ingresso della pagina precedente.

@@ -1630,8 +1630,8 @@ nav button>span{white-space:nowrap}
 }
 </style>
 <style>
-#swar{position:fixed;top:50%;z-index:2000;width:44px;height:44px;margin-top:-22px;border-radius:50%;display:grid;place-items:center;background:rgba(20,32,70,.92);border:1px solid rgba(255,255,255,.25);color:#fff;font:800 28px/1 sans-serif;opacity:0;pointer-events:none;transition:opacity .12s,background .12s;box-shadow:0 4px 14px rgba(0,0,0,.5)}
-#swar.l{left:6px}#swar.r{right:6px}#swar.go{background:#f5b400;color:#111;border-color:transparent}
+#swar{position:fixed;top:120px;left:12px;z-index:2000;width:44px;height:44px;transform-origin:center;border-radius:50%;display:grid;place-items:center;background:rgba(20,32,70,.92);border:1px solid rgba(255,255,255,.25);color:#fff;font:800 28px/1 sans-serif;opacity:0;pointer-events:none;transition:opacity .12s,background .12s;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+#swar.go{background:#f5b400;color:#111;border-color:transparent}
 </style></head>
 <body>
 <header>
@@ -4700,11 +4700,11 @@ addEventListener("popstate",()=>{if(navBack()){try{history.pushState({dl:1},"")}
   const ar=document.createElement("div");ar.id="swar";ar.textContent="‹";document.body.appendChild(ar);
   const tgt=()=>{const sh=[...document.querySelectorAll(".colsheet")];return sh.length?sh[sh.length-1]:document.getElementById("main")};
   const paint=()=>{raf=0;const v=Math.max(0,dx),p=Math.min(1,v/(innerWidth*.25));el.style.transform=`translate3d(${side*v}px,0,0)`;
-    ar.style.opacity=String(Math.min(1,v/40));ar.style.transform=`translateX(${side*Math.min(v*.5,46)}px) scale(${side*(.7+.3*p)},${.7+.3*p})`;ar.classList.toggle("go",p>=1);
+    ar.style.opacity=String(Math.min(1,v/40));ar.style.transform=`scale(${.7+.3*p})`;ar.classList.toggle("go",p>=1);
     if(p>=1&&!arm){arm=true;try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}}else if(p<1)arm=false};
   addEventListener("touchstart",e=>{if(e.touches.length!==1){on=false;return}const t=e.touches[0],x=t.clientX;side=x<=E?1:x>=innerWidth-E?-1:0;
     if(!side||!navTarget())return;sx=x;sy=t.clientY;on=true;ok=false;dx=0;arm=false;t0=Date.now();el=tgt();
-    ar.className=side>0?"l":"r";ar.style.top=Math.max(80,Math.min(innerHeight-80,sy))+"px"},{passive:true});
+    {const h=document.querySelector("header,.top,.hdr");const hb=h?h.getBoundingClientRect().bottom:0;ar.style.top=Math.max(12,hb+12)+"px"}},{passive:true});
   addEventListener("touchmove",e=>{if(!on)return;const t=e.touches[0];dx=(t.clientX-sx)*side;const dy=Math.abs(t.clientY-sy);
     if(!ok){if(dy>10&&dy>dx*1.1){on=false;return}if(dx>8){ok=true;el.style.transition="none";el.style.willChange="transform";el.style.boxShadow=side>0?"-14px 0 28px rgba(0,0,0,.45)":"14px 0 28px rgba(0,0,0,.45)"}else return}
     if(e.cancelable)e.preventDefault();if(!raf)raf=requestAnimationFrame(paint)},{passive:false});
