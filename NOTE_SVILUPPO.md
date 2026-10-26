@@ -357,3 +357,6 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - (47) Scouting: nuova scheda iniziale **Radar** (`colRadar`): "PDK nascosti" = resa al minuto × minuti mancanti fino a
   32' (resa NBA recente o, se manca, PDK/min college × tenuta del ruolo), validata sullo storico (debutti 2018-2023)
   e applicata ai rookie 2024-2026. Grafica dello scouting rinnovata (schede a pillola, card arrotondate).
+- (48) Ufficio Scouting diviso in **College** (prima scheda "Archivio" come l'artefatto originale: tre sezioni per ruolo
+  ordinate per POT, `colOrig`) e **NBA** (`vNbaSec`, `nbaTrend`): report a banner dei giocatori della lega con trend
+  nelle ultime 1/2/3 settimane rispetto alla loro media solita, su PDK, minuti ed efficienza, partita per partita.
