@@ -1627,7 +1627,10 @@ nav button>span{white-space:nowrap}
  .colsheet{padding-top:10px!important}
 }
 </style>
-</head>
+<style>
+/* telefoni: tasti indietro nascosti, si torna indietro con lo swipe dal bordo (resta "Annulla" nei giochi) */
+@media (hover:none) and (pointer:coarse){#main .gback:not([data-nt="back"]),#main .grback{display:none!important}}
+</style></head>
 <body>
 <header>
   <div class="wrap">
@@ -4673,6 +4676,35 @@ render();
  if(!(ROSTER[t]||[]).some(r=>r[0]===p[0]))w.push(`${p[0]}: in EFF.gioc.${t} ma non nel roster ${t}`)}));
  Object.entries(ROSTER).forEach(([t,a])=>a.forEach(r=>{if(!(EFF.gioc[t]||[]).some(p=>p[0]===r[0]))w.push(`${r[0]}: nel roster ${t} ma manca in EFF.gioc.${t}`)}));
  if(w.length)console.warn("[Dynasty] Controllo dati:\n"+w.join("\n"))}catch(e){}})();
+</script>
+<script>
+/* ===== INDIETRO CON SWIPE (bordo sinistro o destro) + tasto/gesto indietro di Android =====
+   Ordine: 1) chiude il foglio aperto (.colsheet), 2) usa il tasto ‹ indietro della pagina (anche se nascosto),
+   3) torna alla sezione precedente (pila NAVH). Sui telefoni i tasti ‹ sono nascosti via CSS (tranne "Annulla" dei giochi). */
+const NAVH=[];let navLast=cur,navT=0;
+(function(){const r0=render;render=function(){if(navLast!==null&&cur!==navLast){if(NAVH[NAVH.length-1]===cur)NAVH.pop();else{NAVH.push(navLast);if(NAVH.length>40)NAVH.shift()}}navLast=cur;return r0.apply(this,arguments)}})();
+function navTarget(){const sh=[...document.querySelectorAll(".colsheet")].filter(x=>x.offsetParent!==null||getComputedStyle(x).position==="fixed");
+  if(sh.length){const x=sh[sh.length-1].querySelector(".ccx,[data-trdx],[data-colleg]");if(x)return{el:x}}
+  const b=[...document.querySelectorAll("#main .gback,#main .grback")];if(b.length)return{el:b[b.length-1]};
+  if(NAVH.length)return{view:NAVH[NAVH.length-1]};return null}
+function navBack(){const n=Date.now();if(n-navT<450)return true;const t=navTarget();if(!t)return false;navT=n;
+  if(t.el)t.el.click();else{cur=t.view;render();window.scrollTo(0,0)}return true}
+/* Android: una voce finta nella cronologia, il gesto/tasto indietro torna indietro nell'app */
+try{history.pushState({dl:1},"")}catch(e){}
+addEventListener("popstate",()=>{if(navBack()){try{history.pushState({dl:1},"")}catch(e){}}});
+/* Swipe dal bordo */
+(function(){const E=26;let sx=0,sy=0,on=false,ok=false,dx=0,el=null,side=0,t0=0;
+  const tgt=()=>{const sh=[...document.querySelectorAll(".colsheet")];return sh.length?sh[sh.length-1]:document.getElementById("main")};
+  addEventListener("touchstart",e=>{if(e.touches.length!==1)return;const x=e.touches[0].clientX;side=x<E?1:x>innerWidth-E?-1:0;if(!side||!navTarget())return;
+    sx=x;sy=e.touches[0].clientY;on=true;ok=false;dx=0;t0=Date.now();el=tgt()},{passive:true});
+  addEventListener("touchmove",e=>{if(!on)return;const x=e.touches[0].clientX,y=e.touches[0].clientY;dx=(x-sx)*side;const dy=Math.abs(y-sy);
+    if(!ok){if(dy>12&&dy>dx){on=false;return}if(dx>10)ok=true;else return}
+    e.preventDefault();const v=Math.max(0,dx);el.style.transition="none";el.style.transform=`translateX(${side*v*.55}px)`;el.style.opacity=String(1-Math.min(.35,v/innerWidth*.5))},{passive:false});
+  const end=()=>{if(!on)return;on=false;if(!ok)return;const fast=dx>60&&Date.now()-t0<260,go=dx>innerWidth*.28||fast;
+    el.style.transition="transform .18s ease-out,opacity .18s ease-out";
+    if(go){el.style.transform=`translateX(${side*innerWidth*.45}px)`;el.style.opacity="0";const e2=el;setTimeout(()=>{e2.style.transition="none";e2.style.transform="";e2.style.opacity="";navBack()},170)}
+    else{el.style.transform="";el.style.opacity="";setTimeout(()=>{el.style.transition=""},200)}};
+  addEventListener("touchend",end);addEventListener("touchcancel",end)})();
 </script>
 <script>if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
 </body>
