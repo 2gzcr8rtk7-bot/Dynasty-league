@@ -922,6 +922,13 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .grx.big{font-weight:700;font-size:9.5px;fill:rgba(255,255,255,.85)}
 .grsel.off{opacity:.4}
 .grtag text{font-family:Barlow,sans-serif;font-weight:800;font-size:8.5px;fill:#0b1022;text-anchor:middle}
+.grtrs{display:grid;justify-items:end;gap:3px;padding:2px 8px 6px;margin-bottom:2px;border-bottom:1px solid rgba(255,255,255,.07)}
+.grtrs small{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);font-weight:700}
+.grtr{display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.75)}
+.grtr i{width:12px;height:4px;border-radius:2px}.grtr.pdk i{background:#22c55e}.grtr.min i{background:#facc15}.grtr.eff i{background:#a855f7}
+.grtr b{color:#fff;font-family:var(--display);font-style:italic;font-size:15px}
+.grtr em{min-width:74px;text-align:right;font-style:normal;font-weight:800;font-family:var(--display);font-size:14px;letter-spacing:.02em}
+.grtr em.up{color:#4ade80}.grtr em.dn{color:#f87171}.grtr em.eq{color:rgba(255,255,255,.6)}
 .grbtn{margin-top:8px}
 .ggrbtn{display:block;width:100%;margin:12px 0 4px}
 /* Calcolatore: stelle giocatore e badge rookie compatto */
@@ -1996,6 +2003,11 @@ function grPath(pts){if(pts.length<2)return pts.length?`M${pts[0][0]},${pts[0][1
     const lo=Math.min(p1[1],p2[1]),hi=Math.max(p1[1],p2[1]),cl=v=>Math.min(hi,Math.max(lo,v));const c1=[p1[0]+(p2[0]-p0[0])/6,cl(p1[1]+(p2[1]-p0[1])/6)],c2=[p2[0]-(p3[0]-p1[0])/6,cl(p2[1]-(p3[1]-p1[1])/6)];d+=` C${c1[0].toFixed(1)},${c1[1].toFixed(1)} ${c2[0].toFixed(1)},${c2[1].toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`}return d}
 function grNice(lo,hi,isEff,n){const mid=(lo+hi)/2,span=Math.max(hi-lo,isEff?.5:24)*1.2;lo=Math.max(0,mid-span/2);hi=lo+span;
   const ST=isEff?[.05,.1,.2,.25,.5]:[2,5,10,20];n=n||4;for(const st of ST){const a=Math.floor(lo/st)*st,b=a+n*st;if(b>=hi-1e-9)return[a,b,st]}const st=ST[ST.length-1],a=Math.floor(lo/st)*st;return[a,a+Math.ceil((hi-a)/st)*st,st]}
+/* TENDENZA: retta dei minimi quadrati sui punti del grafico (stagioni, mesi o settimane).
+   Variazione = pendenza × (n−1), cioè quanto la retta cambia dal primo all'ultimo punto, in % sulla media dei punti.
+   Usa tutti i punti (non solo l'ultimo), così un singolo picco non inganna. Entro ±3% = stabile. */
+function grTrend(v){v=v.filter(x=>x!=null);const n=v.length;if(n<2)return null;const m=v.reduce((a,b)=>a+b,0)/n,xm=(n-1)/2;
+  let num=0,den=0;v.forEach((y,i)=>{num+=(i-xm)*(y-m);den+=(i-xm)**2});const pct=m?(num/den)*(n-1)/m*100:0;return{m,pct}}
 function grChart(P,show){if(!P.length)return`<div class="grempty">Nessuna partita in questo periodo.</div>`;
   const on=Object.keys(show).filter(k=>show[k]);if(!on.length)return`<div class="grempty">Scegli almeno una linea: PDK, Minuti o Efficienza.</div>`;
   const left=on.filter(k=>k!=="eff"),right=on.includes("eff");const few=P.length<=16,W=340,H=246+(few?(on.length-1)*26:0),L=left.length?32:14,R=right?34:14,T=34,B=32,iw=W-L-R-(few?24:0),ih=H-T-B,X0=L+(few?12:0);
@@ -2025,7 +2037,10 @@ function grChart(P,show){if(!P.length)return`<div class="grempty">Nessuna partit
     all.forEach(o=>{const base=o.ty,dir=o.ty>o.py?1:-1,offs=[0];for(let n=1;n<=8;n++)offs.push(dir*13*n,-dir*13*n);
       for(const d of offs){o.ty=clamp(base+d);if(!bad(o))break}placed.push(o)});
     return placed.map(o=>`<g class="grtag"><rect x="${(o.cx-o.w/2).toFixed(1)}" y="${(o.ty-8).toFixed(1)}" width="${o.w.toFixed(1)}" height="12" rx="6" fill="${GR_COL[o.k]}"/><text x="${o.cx.toFixed(1)}" y="${(o.ty+1.6).toFixed(1)}">${o.t}</text></g>`).join("")};
-  return`<svg class="grsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Andamento">${grid}${xl}
+  const unit=(P[0]&&P[0].lab||"").startsWith("Sett")?"settimane":(P[0]&&P[0].lab||"").startsWith("Stagione")?"stagioni":"mesi";
+  const tr=on.map(k=>{const r=grTrend(P.map(p=>p[k])),av=grAvg(P,p=>p[k]);if(av==null)return"";const pc=r?r.pct:0,cls=!r||Math.abs(pc)<3?"eq":pc>0?"up":"dn";
+    return`<div class="grtr ${k}"><i></i><span>Media <b>${fmt(k,av)}</b></span><em class="${cls}">${!r?"—":cls==="eq"?"▶ stabile":(cls==="up"?"▲ +":"▼ ")+pc.toFixed(0).replace("-","−")+"%"}</em></div>`}).join("");
+  return`<div class="grtrs"><small>Media e tendenza · ${P.length} ${unit}</small>${tr}</div><svg class="grsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Andamento">${grid}${xl}
     ${SL?`<text x="4" y="10" class="gry ax" text-anchor="start">${left.map(k=>GR_LAB[k]).join(" · ").toUpperCase()}</text>`:""}${SR?`<text x="${W-2}" y="10" class="gry ax" text-anchor="end">EFFICIENZA</text>`:""}
     ${on.map(line).join("")}${tags()}</svg>`}
 function vGrafico(){if(!TEAMS[GR.t])GR.t=TEAMS[curTeam]?curTeam:Object.keys(TEAMS)[0];const t=GR.t,c=TEAMS[t];const ros=(ROSTER[t]||[]).map(x=>x[0]);if(!GR.p||!ros.includes(GR.p))GR.p=ros[0];
