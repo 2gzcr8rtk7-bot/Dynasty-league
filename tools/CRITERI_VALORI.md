@@ -46,3 +46,11 @@ Peso sul valore/prezzo:
 - Per chi ha tanti PDK il minutaggio conta poco (conta il PDK). Anzi: tanti PDK con pochi minuti = tanta efficienza
   e margine di crescita se i minuti aumentano → semmai un segnale positivo.
 - Per i giovani (prime 2 stagioni NBA) i minuti contano molto meno: conta di più l'efficienza.
+
+## Efficienza (26/10/2026)
+- Serve a capire il **talento** dei giovani: con pochi minuti dice come renderebbe con tanti minuti.
+- Peso: **grosso al 1° anno**; 2° e 3° anno scende un po' ma conta ancora; **dal 4° anno in poi quasi zero**
+  (giocatore già esploso: contano PDK e il resto).
+- Soglia "sufficiente, preannuncia un buon giocatore" al 1° anno (PDK al minuto): **guardie 0,60 · ali 0,66 · centri 0,75**.
+- Proposta di scala (da confermare): soglia = 3 stelle; ogni 10% sopra/sotto la soglia = ±½ stella
+  (guardie: 0,60 =3 · 0,66 =3½ · 0,72 =4 · 0,78 =4½ · 0,84+ =5 · 0,54 =2½ · 0,48 =2 …; ali e centri in proporzione).
