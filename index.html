@@ -1671,6 +1671,15 @@ nav button>span{white-space:nowrap}
 .sninfo small{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .snp{align-self:center;display:inline-block;min-width:58px;padding:4px 7px;border-radius:6px;text-align:center;font-family:var(--display);font-style:italic;font-weight:900;font-size:15px;line-height:1.1;color:#0b0b0b;box-shadow:inset 0 -2px 0 rgba(0,0,0,.18)}
 .snp.pr{background:#ef4444;color:#fff}.snp.py{background:#f5b400}.snp.pg{background:#22c55e}.snp.pv{background:#8b5cf6;color:#fff}
+</style><style>
+/* PDK a fasce colorate in tutta l'app (box score, statistiche, campo, schede) */
+.pdkx{display:inline-block;min-width:44px;padding:2px 6px;border-radius:6px;text-align:center;font-family:var(--display);font-style:italic;font-weight:900;line-height:1.2;color:#0b0b0b;box-shadow:inset 0 -2px 0 rgba(0,0,0,.18);font-variant-numeric:tabular-nums}
+.pdkx.r{background:#ef4444;color:#fff}.pdkx.y{background:#f5b400}.pdkx.g{background:#22c55e}.pdkx.v{background:#8b5cf6;color:#fff}
+.pdkx.big{padding:2px 10px;border-radius:8px}
+.gv,.cev{border-radius:6px}
+.gv.v,.cev.v{background:#8b5cf6;color:#fff}.ev.v i{background:#8b5cf6}
+.tvtop .pdkx{min-width:0;padding:1px 5px;font-size:.95em}
+.capgl span{border-radius:6px}.capgl span.g{background:#22c55e}.capgl span.y{background:#f5b400}.capgl span.r{background:#ef4444;color:#fff}.capgl span.v{background:#8b5cf6;color:#fff}.capfm .pdkx,.capvs .pdkx,.capatt .pdkx{min-width:0;padding:1px 7px}
 </style></head>
 <body>
 <header>
@@ -2056,7 +2065,7 @@ let effSq=null;
 let esqMese=null,esqAdv=false,esqMet="eff";
 /* Metrica della tabella squadra: "eff" = efficienza (Dunkest/minuto, PARTITE[..][4]) o "pdk" = punti Dunkest della partita (PARTITE[..][3]).
    Soglie colori PDK: verde ≥ 35, giallo 20–35, rosso < 20. */
-const MET=()=>esqMet==="pdk"?{i:3,f:v=>v.toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1}),l:v=>v==null?"na":v>=35?"g":v>=20?"y":"r",trS:1,dS:2,nome:"PDK"}:{i:4,f:f2,l:lvl,trS:.03,dS:.05,nome:"Eff."};
+const MET=()=>esqMet==="pdk"?{i:3,f:v=>v.toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1}),l:v=>pdkLvl(v),trS:1,dS:2,nome:"PDK"}:{i:4,f:f2,l:lvl,trS:.03,dS:.05,nome:"Eff."};
 const mEv=v=>{const M=MET();return v==null?'<span class="ev na">—</span>':`<span class="ev ${M.l(v)}"><i></i>${M.f(v)}</span>`};
 /* Statistiche avanzate di un giocatore da PARTITE (efficienza "pura": medie semplici delle partite) */
 function advStats(n){const dk=d=>{const[g,m]=d.split("/").map(Number);return (m>=8?0:12)*100+m*100+g};
@@ -2128,11 +2137,11 @@ function vEfficienza(){
   const t0=TEAMS[effTeam]?effTeam:TEAMS[curTeam]?curTeam:"DOL";
   const PTs=E.past?(STAGIONI[sz]||{}):PARTITE,isP=effMet==="pdk";
   const SQ=isP?E.squadre.map(x=>({x,v:teamPdk(x[0],PTs),n:E.past?null:teamPdkNight(x[0])})).sort((a,b)=>(b.v??-99)-(a.v??-99)):E.squadre.map(x=>({x,v:x[4],n:x[3]}));
-  const sq=SQ.map(({x,v,n})=>{const[t,inc,dn,en,es,ds]=x;return `<div class="erow" data-effsq="${t}" role="button" tabindex="0" aria-label="Tabella efficienza ${TEAMS[t].nick}">${wedge(t)}<div class="einfo"><b>${TEAMS[t].nick}</b><div class="ebar"><span style="width:${Math.max(4,Math.min(100,isP?(v||0)/40*100:es/1.1*100))}%;background:${TEAMS[t].bg}"></span></div><small>${E.past?SZ_LBL[sz]+" · regular season "+sz:`${inc} in campo nella notte · notte ${n==null?"—":isP?pdkF(n):f2(n)}`}</small></div><div class="eval">${isP?(v==null?'<span class="ev na">—</span>':`<span class="ev ${pdkLvl(v)}"><i></i>${pdkF(v)}</span>`):eff(es)}<small>${isP?"PDK medio":f2(ds)+" Dk"}</small></div><span class="ego">›</span></div>`}).join("");
+  const sq=SQ.map(({x,v,n})=>{const[t,inc,dn,en,es,ds]=x;return `<div class="erow" data-effsq="${t}" role="button" tabindex="0" aria-label="Tabella efficienza ${TEAMS[t].nick}">${wedge(t)}<div class="einfo"><b>${TEAMS[t].nick}</b><div class="ebar"><span style="width:${Math.max(4,Math.min(100,isP?(v||0)/40*100:es/1.1*100))}%;background:${TEAMS[t].bg}"></span></div><small>${E.past?SZ_LBL[sz]+" · regular season "+sz:`${inc} in campo nella notte · notte ${n==null?"—":isP?pdkF(n):f2(n)}`}</small></div><div class="eval">${isP?(v==null?'<span class="ev na">—</span>':pdkB(v)):eff(es)}<small>${isP?"PDK medio":f2(ds)+" Dk"}</small></div><span class="ego">›</span></div>`}).join("");
   /* In modalità PDK tutte le classifiche e la tabella usano i PDK medi a partita (stessa stagione, stesso filtro min. 10 minuti) */
   const pdkOf=n=>{const g=PTs[n]||[];return g.length?g.reduce((a,x)=>a+x[3],0)/g.length:null};
   const mv=(p)=>isP?pdkOf(p[1]):p[2];   // p = [team, nome, eff, PG, min]
-  const shw=v=>isP?(v==null?'<span class="ev na">—</span>':`<span class="ev ${pdkLvl(v)}"><i></i>${pdkF(v)}</span>`):eff(v);
+  const shw=v=>isP?(v==null?'<span class="ev na">—</span>':pdkB(v)):eff(v);
   const all=[];Object.entries(E.gioc).forEach(([t,a])=>a.forEach(p=>p[1]!=null&&p[3]>=10&&all.push([t,...p])));
   all.forEach(p=>p.mv=mv(p));const allv=all.filter(p=>p.mv!=null);allv.sort((a,b)=>b.mv-a.mv);
   const prow=(p,i)=>`<div class="trow plink" data-plt="${p[0]}" data-pln="${p[1]}"><span class="trk">${i+1}</span>${wedge(p[0])}<span class="tnm"><b>${p[1]}</b><small>${TEAMS[p[0]].nick} · ${p[4].toLocaleString("it-IT")} min</small></span>${shw(p.mv)}</div>`;
@@ -2147,7 +2156,7 @@ function vEfficienza(){
   ${H("Statistiche squadre",`<em>${E.past?SZ_LBL[sz]+" · "+sz:"Agg. "+E.agg}</em>`)}
   <div class="effbar">${szSelect(sz)}<div class="metsw effsw"><button data-effmet="eff" aria-pressed="${!isP}">Eff.</button><button data-effmet="pdk" aria-pressed="${isP}">PDK</button></div></div>
   <div class="eboard">${sq}</div>
-  <p class="note">${isP?"PDK medio = media dei PDK a partita dei giocatori della rosa (stagione scelta). Notte = media dei PDK di chi è sceso in campo. Colori: verde da 35, giallo 20–35, rosso sotto 20.":"Efficienza stagionale = Dunkest totali ÷ minuti giocati da tutta la rosa. Dk = Dunkest stagionali di squadra."} Tocca una squadra per la tabella dei suoi giocatori.</p>
+  <p class="note">${isP?"PDK medio = media dei PDK a partita dei giocatori della rosa (stagione scelta). Notte = media dei PDK di chi è sceso in campo. Colori: viola da 40, verde 30–40, giallo 20–30, rosso sotto 20.":"Efficienza stagionale = Dunkest totali ÷ minuti giocati da tutta la rosa. Dk = Dunkest stagionali di squadra."} Tocca una squadra per la tabella dei suoi giocatori.</p>
   <div style="height:22px"></div>
   <div class="hgreen">${H("Top 10 lega",`<em>min. 10 minuti</em>`)}</div>
   <div class="eboard">${top}</div>
@@ -2158,7 +2167,7 @@ function vEfficienza(){
   <div class="hyellow">${H("Giocatori")}</div>
   <div class="chips">${chips}</div>
   <div class="tbl-wrap"><table class="ptbl"><thead><tr><th>Giocatore</th><th>${isP?"PDK":"Eff."}</th><th>PG</th><th>Min</th></tr></thead><tbody>${rows}</tbody></table></div>
-  <p class="note">${isP?`<span class="ev g"><i></i>da 35</span> &nbsp; <span class="ev y"><i></i>20–35</span> &nbsp; <span class="ev r"><i></i>sotto 20</span> &nbsp; PDK = punti Dunkest medi a partita (senza capitano).`:`<span class="ev g"><i></i>sopra 1,10</span> &nbsp; <span class="ev y"><i></i>0,80–1,10</span> &nbsp; <span class="ev r"><i></i>sotto 0,80</span> &nbsp; Efficienza = Dunkest per minuto (punteggi ufficiali Dunkest, senza capitano).`} Stagioni passate: regular season dei giocatori delle rose attuali.</p>`;
+  <p class="note">${isP?`<span class="pdkx v">da 40</span> <span class="pdkx g">30–40</span> <span class="pdkx y">20–30</span> <span class="pdkx r">sotto 20</span> &nbsp; PDK = punti Dunkest medi a partita (senza capitano).`:`<span class="ev g"><i></i>sopra 1,10</span> &nbsp; <span class="ev y"><i></i>0,80–1,10</span> &nbsp; <span class="ev r"><i></i>sotto 0,80</span> &nbsp; Efficienza = Dunkest per minuto (punteggi ufficiali Dunkest, senza capitano).`} Stagioni passate: regular season dei giocatori delle rose attuali.</p>`;
 }
 
 const NUM={};Object.values(ROSTER).forEach(a=>a.forEach(p=>NUM[p[0]]=p[1]));
@@ -2577,7 +2586,7 @@ function vFA(){
   const L=FA.filter(x=>(!faRole||x[2]===faRole)&&(!faGL||FA_OWN[x[0]])).map(x=>({x,s:x[4][faSz]}));
   L.sort((a,b)=>(b.s?b.s[2]:-999)-(a.s?a.s[2]:-999)||a.x[0].localeCompare(b.x[0]));
   let k=0;
-  const rows=L.map(({x,s})=>{const has=!!s;if(has)k++;return `<tr class="farow${has?"":" fanone"}" data-fan="${x[0].replace(/"/g,"&quot;")}" data-fs="${faNz(x[0]+" "+x[1])}"${has?"":" hidden"}><td class="fark">${has?k:"–"}</td><td class="fanm"><b>${x[0]}</b>${faGL1(x[0])}<small>${x[1]} · ${FA_R[x[2]]}</small></td><td>${has?s[0]:"—"}</td><td>${has?faNum(s[1]):"—"}</td><td class="fapdk">${has?faNum(s[2]):"—"}</td><td>${has?eff(s[3]):"—"}</td></tr>`}).join("");
+  const rows=L.map(({x,s})=>{const has=!!s;if(has)k++;return `<tr class="farow${has?"":" fanone"}" data-fan="${x[0].replace(/"/g,"&quot;")}" data-fs="${faNz(x[0]+" "+x[1])}"${has?"":" hidden"}><td class="fark">${has?k:"–"}</td><td class="fanm"><b>${x[0]}</b>${faGL1(x[0])}<small>${x[1]} · ${FA_R[x[2]]}</small></td><td>${has?s[0]:"—"}</td><td>${has?faNum(s[1]):"—"}</td><td class="fapdk">${has?pdkB(s[2],faNum(s[2])):"—"}</td><td>${has?eff(s[3]):"—"}</td></tr>`}).join("");
   const ch=(attr,val,lab,on)=>`<button class="fach" ${attr}="${val}" aria-pressed="${on}">${lab}</button>`;
   return `${H("Free Agent",`<em>${FA.length} giocatori</em>`)}
   <input id="faq" class="vtq" type="search" placeholder="🔍 Cerca free agent o squadra NBA" autocomplete="off" aria-label="Cerca free agent">
@@ -2602,12 +2611,12 @@ function faGames(x){
   <div class="fasel"><div>${chips}</div></div>
   ${ms.map((m,i)=>{const l=by[m],dk=l.reduce((a,g)=>a+g[3],0),mn=l.reduce((a,g)=>a+g[2],0),av=mn?dk/mn:null;
     return `<details class="gmese"${i===0?" open":""}><summary><span class="gmn">${MESI[m]}</span><span class="gmesi">${l.length} ${l.length===1?"gara":"gare"} · media</span>${eff(av)}</summary>
-    <div class="tbl-wrap"><table class="gtab"><thead><tr><th>Data</th><th>Min</th><th>Dunkest</th><th>Eff.</th><th>Proj 36'</th></tr></thead><tbody>${l.slice().reverse().map(g=>`<tr><td class="gd"><b>${g[0]} <i>vs ${g[1]}</i></b><small>${g[5]} pt · ${g[6]} rb · ${g[7]} as</small></td><td>${n1(g[2])}</td><td class="gdk">${fx(g[3])}</td><td>${eff(g[4])}</td><td class="gpj">${n1(g[4]*36)}</td></tr>`).join("")}</tbody></table></div></details>`}).join("")}`;
+    <div class="tbl-wrap"><table class="gtab"><thead><tr><th>Data</th><th>Min</th><th>Dunkest</th><th>Eff.</th><th>Proj 36'</th></tr></thead><tbody>${l.slice().reverse().map(g=>`<tr><td class="gd"><b>${g[0]} <i>vs ${g[1]}</i></b><small>${g[5]} pt · ${g[6]} rb · ${g[7]} as</small></td><td>${n1(g[2])}</td><td class="gdk">${pdkB(g[3],fx(g[3]))}</td><td>${eff(g[4])}</td><td class="gpj">${n1(g[4]*36)}</td></tr>`).join("")}</tbody></table></div></details>`}).join("")}`;
 }
 function vFAP(){
   const x=FA.find(y=>y[0]===faP);if(!x)return `<p class="note">Giocatore non trovato.</p>`;
   const o=FA_OWN[x[0]],c=o?TEAMS[o]:null;
-  const rows=["26/27","25/26","24/25"].map(z=>{const s=x[4][z];return `<tr><td class="fasz">${z}</td>${s?`<td>${s[0]}</td><td>${faNum(s[1])}</td><td class="fapdk">${faNum(s[2])}</td><td>${eff(s[3])}</td><td class="gpj">${s[3]==null?"—":faNum(s[3]*36)}</td><td>${faNum(s[4])}</td><td>${faNum(s[5])}</td><td>${faNum(s[6])}</td>`:`<td colspan="8" class="dash">Nessuna partita</td>`}</tr>`}).join("");
+  const rows=["26/27","25/26","24/25"].map(z=>{const s=x[4][z];return `<tr><td class="fasz">${z}</td>${s?`<td>${s[0]}</td><td>${faNum(s[1])}</td><td class="fapdk">${pdkB(s[2],faNum(s[2]))}</td><td>${eff(s[3])}</td><td class="gpj">${s[3]==null?"—":faNum(s[3]*36)}</td><td>${faNum(s[4])}</td><td>${faNum(s[5])}</td><td>${faNum(s[6])}</td>`:`<td colspan="8" class="dash">Nessuna partita</td>`}</tr>`}).join("");
   return `<button class="gback" id="faback">‹ ${faFrom==="home"?"Home":"Free Agent"}</button>
   <div class="fahead"${c?` style="--tc:${c.bg}"`:""}><span class="fanum">${x[3]?"#"+x[3]:FA_R[x[2]][0]}</span><div><small>Free Agent${o?` · G League ${c.nick}`:""}</small><h3>${x[0]}</h3><p>${FA_R[x[2]]} · ${x[1]}</p></div>${o?`<span class="faown">${badge(o)}</span>`:""}</div>
   ${H("Stagioni",`<em>media per partita</em>`)}
@@ -2911,7 +2920,7 @@ function vGiocatore(){
   ${H("Efficienza",`<em>${past?SZ_LBL[sz]+" · "+sz:"Agg. "+EFF.agg}</em>`)}
   ${szSel}
   ${e[1]==null?`<p class="note">${past?"Nessuna partita NBA in questa stagione: non era in NBA o non ha giocato.":"Nessuna partita giocata finora: i dati compariranno dopo la prima gara."}</p>`:`
-  <div class="gbig g2"><div>${eff(e[1])}<small>Efficienza media</small></div><div><b class="gpdk">${(()=>{const g=GL;const v=g.length?g.reduce((a,x)=>a+x[3],0)/g.length:(e[1]!=null&&e[3]!=null?e[1]*e[3]:null);return v==null?"—":f2(v)})()}</b><small>PDK medi a partita</small></div></div>
+  <div class="gbig g2"><div>${eff(e[1])}<small>Efficienza media</small></div><div><b class="gpdk">${(()=>{const g=GL;const v=g.length?g.reduce((a,x)=>a+x[3],0)/g.length:(e[1]!=null&&e[3]!=null?e[1]*e[3]:null);return v==null?"—":`<span class="pdkx big ${pdkLvl(v)}">${f2(v)}</span>`})()}</b><small>PDK medi a partita</small></div></div>
   <div class="gbars">
     <div><span>${p[0].split(" ").slice(-1)[0]}</span><i><b style="width:${pct(e[1])}%;background:${c.bg}"></b></i><em>${f2(e[1])}</em></div>
     ${ts?`<div><span>Media ${c.nick}</span><i><b style="width:${pct(ts[4])}%;background:#5b6b95"></b></i><em>${f2(ts[4])}</em></div>`:""}
@@ -2930,7 +2939,7 @@ function vGiocatore(){
     const ms=Object.keys(by).map(Number).sort((x,y)=>ord(y)-ord(x));
     return ms.map((m,i)=>{const l=by[m],dk=l.reduce((a,g)=>a+g[3],0),mn=l.reduce((a,g)=>a+g[2],0),av=mn?dk/mn:null;
       return `<details class="gmese"${i===0?" open":""}><summary><span class="gmn">${MESI[m]}</span><span class="gmesi">${l.length} ${l.length===1?"gara":"gare"} · media</span>${eff(av)}</summary>
-      <div class="tbl-wrap"><table class="gtab"><thead><tr><th>Data</th><th>Min</th><th>Dunkest</th><th>Eff.</th><th>Proj 36'</th></tr></thead><tbody>${l.slice().reverse().map(g=>`<tr><td class="gd"><b>${g[0]} <i>vs ${g[1]}</i></b>${g[5]!=null?`<small>${g[5]} pt · ${g[6]} rb · ${g[7]} as</small>`:""}</td><td>${n1(g[2])}</td><td class="gdk">${f2(g[3])}</td><td>${eff(g[4])}</td><td class="gpj">${n1(g[4]*36)}</td></tr>`).join("")}</tbody></table></div></details>`}).join("")})()}`:""}
+      <div class="tbl-wrap"><table class="gtab"><thead><tr><th>Data</th><th>Min</th><th>Dunkest</th><th>Eff.</th><th>Proj 36'</th></tr></thead><tbody>${l.slice().reverse().map(g=>`<tr><td class="gd"><b>${g[0]} <i>vs ${g[1]}</i></b>${g[5]!=null?`<small>${g[5]} pt · ${g[6]} rb · ${g[7]} as</small>`:""}</td><td>${n1(g[2])}</td><td class="gdk">${pdkB(g[3],f2(g[3]))}</td><td>${eff(g[4])}</td><td class="gpj">${n1(g[4]*36)}</td></tr>`).join("")}</tbody></table></div></details>`}).join("")})()}`:""}
   <p class="note">Punteggi e minuti ufficiali Dunkest (senza capitano). Stagioni passate: solo regular season. Pallino: verde sopra 1,10 · giallo 0,80–1,10 · rosso sotto 0,80.</p>`;
 }
 
@@ -2985,7 +2994,9 @@ function effMed(t,n){let e=(EFF.gioc[t]||[]).find(x=>x[0]===n);if(!e)for(const a
 /* PDK (punti Dunkest) per campo e panchina: media stagionale e ultima partita, da PARTITE (stagione in corso) */
 function pdkMed(n){const g=PARTITE[n]||[];return g.length?g.reduce((a,x)=>a+x[3],0)/g.length:null}
 function pdkLast(n){const dk=d=>{const[g,m]=d.split("/").map(Number);return (m>=8?0:12)*100+m*100+g};const g=(PARTITE[n]||[]).slice().sort((x,y)=>dk(x[0])-dk(y[0]));return g.length?g[g.length-1][3]:null}
-const pdkLvl=v=>v==null?"na":v>=35?"g":v>=20?"y":"r";
+const pdkLvl=v=>v==null?"na":v>=40?"v":v>=30?"g":v>=20?"y":"r";
+/* PDK colorati come nel box score (rosso <20, giallo 20-29,99, verde 30-39,99, viola ≥40), riquadro arrotondato */
+const pdkB=(v,txt)=>v==null||isNaN(v)?'<span class="dash">—</span>':`<span class="pdkx ${pdkLvl(+v)}">${txt??pdkF(+v)}</span>`;
 const pdkF=v=>v.toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1});
 const pillP=v=>v==null?`<span class="cev na">—</span>`:`<span class="cev ${pdkLvl(v)}">${pdkF(v)}</span>`;
 function lastEff(t,n){const e=(EFF.gioc[t]||[]).find(x=>x[0]===n);if(ULTIMA.gioc[n]!==undefined)return ULTIMA.gioc[n];return e&&e[1]!=null&&e[2]===1?e[1]:(e?e[1]:null)}
@@ -3047,11 +3058,11 @@ function vCap(){const t=CAP.t||curTeam,c=TEAMS[t],R=[...(ROSTER[t]||[]),...glPla
      <div class="capah">${jersey(t,p[1],p[0])}<div class="capnm"><b>${d.n}</b><small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}${inj?` · <span class="capinj">${STATI[INJ[d.n].stato][0]}</span>`:""}</small></div>
      ${isTop?`<span class="capcrown">Consigliato</span>`:""}</div>
      <label class="capopp"><span>Prossima partita contro</span><select data-capo="${d.n.replace(/"/g,"&quot;")}">${opts}</select></label>
-     ${d.opp?`<div class="capvs"><div><small>Media vs ${d.opp}</small><b>${f(d.vsm)}</b><em>${d.vs.length?d.vs.length+(d.vs.length===1?" partita":" partite")+" · ultime 3 stagioni":"mai affrontati"}</em></div>
+     ${d.opp?`<div class="capvs"><div><small>Media vs ${d.opp}</small><b>${d.vsm==null?f(d.vsm):pdkB(d.vsm,f(d.vsm))}</b><em>${d.vs.length?d.vs.length+(d.vs.length===1?" partita":" partite")+" · ultime 3 stagioni":"mai affrontati"}</em></div>
        <div><small>Minuti vs ${d.opp}</small><b class="sm">${f(d.vsmin)}</b><em>${d.best?"migliore "+f(d.best.p)+" ("+d.best.d+" "+d.best.sz.slice(2,5)+d.best.sz.slice(-2)+")":""}</em></div></div>
-       ${d.vs.length?`<div class="capgl">${d.vs.map(x=>`<span class="${x.p>=35?"g":x.p>=20?"y":"r"}" title="${x.d} · ${x.sz}">${f(x.p)}</span>`).join("")}</div>`:""}`:`<p class="capnote">Scegli l'avversario per vedere i precedenti.</p>`}
+       ${d.vs.length?`<div class="capgl">${d.vs.map(x=>`<span class="${pdkLvl(x.p)}" title="${x.d} · ${x.sz}">${f(x.p)}</span>`).join("")}</div>`:""}`:`<p class="capnote">Scegli l'avversario per vedere i precedenti.</p>`}
      ${d.opp?(()=>{const df=d.def,[lb,cl]=capDefLab(df);return`<div class="capdef ${cl}"><div class="cdh"><b>${d.opp} contro ${CAP_RUOLO[d.role]}</b><span>${lb}</span></div>${df&&df.n?`<p>Nelle ultime ${df.games} partite di ${d.opp} ${CAP_RUOLO[d.role]} della lega hanno fatto <b>${df.dl>=0?"+":"−"}${f(Math.abs(df.dl))} PDK</b> rispetto alla loro media (${df.pct>=0?"+":"−"}${Math.abs(Math.round(df.pct))}%, ${df.n} prestazioni).</p><div class="cdl">${df.rows.slice(0,6).map(o=>`<span class="${o.dl>=0?"up":"dn"}"><i>${sur(o.n)}</i> ${f(o.p)} <small>(media ${f(o.avg)})</small></span>`).join("")}</div>`:`<p>Nessun giocatore della lega di questo ruolo lo ha affrontato di recente.</p>`}</div>`})():""}
-     <div class="capfm"><div><small>Stagione</small><b>${f(d.stag)}</b><em>${d.N} part.</em></div><div><small>Ultimo 50%</small><b>${f(d.u50)}</b><em>${d.N?Math.ceil(d.N/2)+" part.":""}</em></div><div><small>Ultimo 15%</small><b>${f(d.u15)}</b><em>${d.N?Math.ceil(d.N*.15)+" part.":""}</em></div><div class="ix"><small>Indice Cap</small><b>${f(d.idx)}</b></div></div>${d.opp&&d.att!=null?`<div class="capatt"><span>Atteso contro la difesa di ${d.opp}</span><b>${f(d.att)}</b></div>`:""}
+     <div class="capfm"><div><small>Stagione</small><b>${d.stag==null?f(d.stag):pdkB(d.stag,f(d.stag))}</b><em>${d.N} part.</em></div><div><small>Ultimo 50%</small><b>${d.u50==null?f(d.u50):pdkB(d.u50,f(d.u50))}</b><em>${d.N?Math.ceil(d.N/2)+" part.":""}</em></div><div><small>Ultimo 15%</small><b>${d.u15==null?f(d.u15):pdkB(d.u15,f(d.u15))}</b><em>${d.N?Math.ceil(d.N*.15)+" part.":""}</em></div><div class="ix"><small>Indice Cap</small><b>${f(d.idx)}</b></div></div>${d.opp&&d.att!=null?`<div class="capatt"><span>Atteso contro la difesa di ${d.opp}</span><b>${pdkB(d.att,f(d.att))}</b></div>`:""}
      ${a?`<div class="capat ${a.ok>=2?"ok":"ko"}">${a.ok>=2?"Anti-tank OK":"Rischio multa"} · ${a.ok}/3 contro ${sur(a.alt)}${a.ind?" <i>(meno di 15 partite: indicativo)</i>":""}</div>`:""}
     </div>`};
   return`<button class="gback" id="capback">‹ Campo ${c.nick}</button>
@@ -4021,9 +4032,9 @@ function vGLeague(){
     const rows=pl.map(({p,s})=>{const L=(s.log||[]).slice().reverse(),u=L[0];
       const head=`<span class="grl ${p[1]}" title="${R[p[1]]}">${p[1]==="F"?"A":p[1]}</span><span class="gn"><b>${s.n||p[0]}</b><small>${s.nba||"—"} · ${R[p[1]]}</small></span>`;
       if(!s.g)return `<details class="glp"><summary>${head}<span class="gna">Nessuna partita</span></summary><div class="gldet"><p class="note" style="margin:6px 0 0">${past?"Nessuna partita NBA in questa stagione: non era in NBA o non ha giocato.":"Non è ancora sceso in campo in questa stagione."}</p></div></details>`;
-      return `<details class="glp"><summary>${head}<span class="gv2">${s.g}</span><span class="gv2">${d1(s.m)}</span><span class="gv2 pdk">${d1(s.p)}</span>${eff(s.e)}</summary>
-      <div class="gldet"><div class="glk"><div><small>Forma ult. 5</small><span>${eff(s.l5)}${ar(s.l5,s.e)}</span></div><div><small>Ultima ${u?u[0]:""}</small>${u?eff(u[4]):"—"}</div><div><small>PDK ultima</small><b>${u?d1(u[3]):"—"}</b></div></div>
-      <table class="gllog"><thead><tr><th>Data</th><th>Min</th><th>PDK</th><th>Eff.</th></tr></thead><tbody>${L.map(l=>`<tr><td>${l[0]} vs ${l[1]}<small>${l[5]} pt · ${l[6]} rb · ${l[7]} as</small></td><td>${d1(l[2])}</td><td>${d1(l[3])}</td><td>${eff(l[4])}</td></tr>`).join("")}</tbody></table></div></details>`}).join("");
+      return `<details class="glp"><summary>${head}<span class="gv2">${s.g}</span><span class="gv2">${d1(s.m)}</span><span class="gv2 pdk">${s.p==null?d1(s.p):pdkB(s.p,d1(s.p))}</span>${eff(s.e)}</summary>
+      <div class="gldet"><div class="glk"><div><small>Forma ult. 5</small><span>${eff(s.l5)}${ar(s.l5,s.e)}</span></div><div><small>Ultima ${u?u[0]:""}</small>${u?eff(u[4]):"—"}</div><div><small>PDK ultima</small><b>${u?pdkB(u[3],d1(u[3])):"—"}</b></div></div>
+      <table class="gllog"><thead><tr><th>Data</th><th>Min</th><th>PDK</th><th>Eff.</th></tr></thead><tbody>${L.map(l=>`<tr><td>${l[0]} vs ${l[1]}<small>${l[5]} pt · ${l[6]} rb · ${l[7]} as</small></td><td>${d1(l[2])}</td><td>${pdkB(l[3],d1(l[3]))}</td><td>${eff(l[4])}</td></tr>`).join("")}</tbody></table></div></details>`}).join("");
     return `<article class="gcard glstat"><div class="ghd" style="--tc:${c.bg};--tt:${c.trim}"><span class="glg">${x.logo?`<img src="${x.logo}" alt="">`:`${badge(x.t)}`}</span><span class="gnm"><b>G-${c.nick}</b><small>Satellite di ${c.name}</small></span></div>
     <div class="glsum"><div><small>Eff. squadra</small>${eff(e)}</div><div><small>PDK totali</small><b>${d1(d)}</b></div><div><small>Partite</small><b>${g}</b></div></div>
     <div class="glhd"><span></span><span>Giocatore</span><span>PG</span><span>Min</span><span>PDK</span><span>Eff.</span></div>${rows}</article>`}).join("");
@@ -4654,7 +4665,7 @@ function vTV0(){setTimeout(tvWeekPos,0);const T=TVD(),ks=Object.keys(T.days).sor
   /* striscia giorni: tutta la stagione, scorre col dito, centrata sul giorno scelto */
   const wk=[],d0=tvDt(ks[0]),d1=tvDt(ks[ks.length-1]);for(let x=new Date(d0);x<=d1;x.setUTCDate(x.getUTCDate()+1)){const s=x.toISOString().slice(0,10),n=(T.days[s]||[]).length;wk.push(`<button class="tvday${n?"":" off"}" data-tvd="${s}" aria-pressed="${s===d}"${n?"":" disabled"}><span>${TV_G3[x.getUTCDay()]}</span><b>${x.getUTCDate()}</b><small>${n?n+" part.":"—"}</small></button>`)}
   const cards=G.map(g=>{const[a,h,sa,sh,ot,st,tm,key]=g,lv=st==="L",fin=st==="F",sc=fin||lv,wa=fin&&sa>sh,wh=fin&&sh>sa;let top="";
-    if(sc&&T.box[key]){const L=tvLead(T.box[key]),pp=L.pdk;top=`<div class="tvtop"><span>Top: <b>${sur(pp[1][0])}</b> (${pp[0]==="a"?a:h}) ${pp[1][3]} pt · ${pp[1][6]} rb · ${pp[1][7]} as · ${String(pp[1][19]).replace(".",",")} PDK</span></div>`}
+    if(sc&&T.box[key]){const L=tvLead(T.box[key]),pp=L.pdk;top=`<div class="tvtop"><span>Top: <b>${sur(pp[1][0])}</b> (${pp[0]==="a"?a:h}) ${pp[1][3]} pt · ${pp[1][6]} rb · ${pp[1][7]} as · ${pdkB(pp[1][19],String(pp[1][19]).replace(".",","))} PDK</span></div>`}
     const row=(c,s,w)=>`<div class="tvt${w?" win":""}">${tvLogo(c)}<span class="tvnm"><b>${tvNick(c)}</b><small>${c} · ${tvRec(c)}</small></span><span class="tvsc">${sc?s:""}</span></div>`;
     return`<button class="tvg${lv?" live":""}" ${sc&&key&&T.box[key]?`data-tvg="${key}"`:"disabled"} aria-label="${a} contro ${h}"><div class="tvteams">${row(a,sa,wa)}${row(h,sh,wh)}</div>
       <div class="tvst">${lv?`<b class="lv"><i></i>Live</b><small>${TVL.st[key]||""}${T.box[key]?" · tabellino ›":""}</small>`:fin?`<b>Finale${ot?" · OT":""}</b><small>${TVL.st[key]&&T.box[key]&&T.box[key].live?"dati NBA live · ":""}tabellino ›</small>`:`<b class="pre">${tm.replace("+1","")}</b><small>ora italiana${tm.includes("+1")?" · notte tra "+dd.getUTCDate()+" e "+(dd.getUTCDate()+1>new Date(Date.UTC(dd.getUTCFullYear(),dd.getUTCMonth()+1,0)).getUTCDate()?1:dd.getUTCDate()+1):""}</small>`}</div>${top}</button>`}).join("");
