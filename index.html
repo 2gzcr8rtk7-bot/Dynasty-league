@@ -156,6 +156,16 @@
 .nchips u{text-decoration:none;opacity:.9;margin-left:2px}.ntbl td small,.ntbl .nm small{display:block;font-size:9.5px;color:var(--muted)}.ntbl td.up{color:#4ade80;font-weight:800}.ntbl td.dn{color:#f87171;font-weight:800}.ntbl td.on{background:rgba(250,204,21,.08)!important}.ntbl th small{font-size:8.5px;font-weight:500;text-transform:none}.ntbl tr{cursor:pointer}.ntbl table{font-size:11.5px!important}.ntbl td,.ntbl th{padding:6px 3px!important}
 .nchart{padding:10px!important;background:#0b0e17!important}.nsums{display:grid;gap:4px;margin-top:8px}.nsum{display:flex;gap:8px;align-items:baseline;font-size:12px;border-left:3px solid var(--c);padding-left:8px}.nsum b{color:var(--c)}.nsum span{color:#cbd5e1}
 .npls{display:flex;flex-wrap:wrap;gap:5px;max-height:260px;overflow:auto;padding:2px}.npls button{display:grid;text-align:left;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:5px 8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer}.npls button small{font-size:9.5px;color:var(--muted);font-weight:500}.npls button[aria-pressed="true"]{border-color:var(--tc);box-shadow:inset 3px 0 0 var(--tc);background:rgba(255,255,255,.12)}
+.scrl{display:grid;gap:10px}.scr{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-left:4px solid var(--rc);border-radius:14px;padding:10px}
+.scr.scrtop{background:linear-gradient(135deg,rgba(250,204,21,.14),rgba(255,255,255,.03));border-color:rgba(250,204,21,.45);border-left-color:var(--rc)}.scr.scrt1{box-shadow:0 0 0 1px rgba(250,204,21,.6) inset}
+.scrh{display:grid;grid-template-columns:30px minmax(0,1fr) 54px;gap:8px;align-items:center;cursor:pointer}.scrp{font-size:20px;font-weight:800;text-align:center;color:var(--muted)}
+.scrn b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase;line-height:1.05}.scrn small{display:block;font-size:10.5px;color:var(--muted)}
+.scrb{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.scrb i{font-style:normal;font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:5px;background:rgba(255,255,255,.08);color:#cbd5e1}.scrb i.h{background:#facc15;color:#111}.scrb i.n{background:rgba(74,222,128,.16);color:#4ade80}
+.scri{text-align:center;background:#facc15;color:#111;border-radius:12px;padding:6px 0}.scri b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:24px;line-height:1}.scri small{font-size:9px;font-weight:800;text-transform:uppercase}
+.scrk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:10px 0}.scrk div{background:rgba(255,255,255,.05);border-radius:10px;padding:7px}.scrk small{display:block;font-size:8.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--muted)}.scrk b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:21px;color:#facc15}.scrk em{font-style:normal;font-size:9.5px;color:var(--muted)}
+.scrcs{display:grid;gap:4px}.scrcs>small{font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}.scr{min-width:0}.scrcs,.scrk,.scrh{min-width:0}.scrn{min-width:0}.scrn small{overflow-wrap:anywhere}
+.scrc{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;background:rgba(255,255,255,.04);border-radius:9px;padding:6px 8px;cursor:pointer;font-size:12px}
+.scrc b{color:#fff}.scrc em{font-style:normal;font-weight:800;color:#4ade80;text-align:right}.scrc em small{font-weight:500;color:var(--muted)}.scrc i{grid-column:1/-1;font-style:normal;font-size:10px;color:var(--muted)}
 .gback{color:#111}.colroom h2 .t{background:#111}.colhd{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:center;margin:4px 0 12px}.colhd img{width:64px;height:64px;object-fit:contain}
 .colhd small{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;opacity:.75}.colhd b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:26px;text-transform:uppercase;line-height:1}.colhd em{font-style:normal;font-size:11.5px;font-weight:600}
 .colroom .coltabs button{background:#111;color:#facc15;border-color:#111}.colroom .coltabs button[aria-pressed="true"]{background:#fff;color:#111;border-color:#111}
@@ -2899,9 +2909,44 @@ function nbGraphView(){const G=NB.g,last=nbLast(),mx=last?nbIso(last):"";const q
   <div class="npls" id="npls">${nbPlList(L)}</div>`}
 function nbPlList(L){return L.map(p=>`<button data-nbpl="${p.n.replace(/"/g,"&quot;")}" aria-pressed="${NB.g.pl.includes(p.n)}" style="--tc:${NB.g.pl.includes(p.n)?NB_PAL[NB.g.pl.indexOf(p.n)%NB_PAL.length]:"#64748b"}">${p.n}<small>${TEAMS[p.t].nick}</small></button>`).join("")}
 function vNbaSec(){return`<div class="nsubt"><button data-nbt="rep" aria-pressed="${NB.tab==="rep"}">Report delta</button><button data-nbt="gr" aria-pressed="${NB.tab==="gr"}">Grafici liberi</button></div>${NB.tab==="rep"?nbRepView():nbGraphView()}`}
-function vCollege(){if(!COL.d){cur="campo";return vCampo()}COL.sec=COL.sec||"college";COL.tab=COL.tab||"orig";COL.u=COL.u||24;COL.k=COL.k||.9;
-  const tabs=[["orig","Archivio"],["radar","Radar"],["usage","Profilo"],["pros","Prospetti"],["studio","Studio rookie"],["mappa","Mappa"],["nba","College→NBA"],["lista","Tabella"]];
-  const body=COL.tab==="orig"?`<input id="colq" class="colq" type="search" placeholder="Cerca giocatore" value="${COL.q.replace(/"/g,"&quot;")}" aria-label="Cerca giocatore"><div class="grcard" id="colorig">${colOrig()}<p class="note">POT = PDK/min normalizzato a usage 27%. * = ruolo da confermare. Tocca un giocatore per la scheda.</p></div>`
+/* ===== RISULTATI: classifica dei migliori prospetti =====
+   Per ogni prospetto (classe 2026; opzione: anche rookie 2024-2025) cerco nello storico i 3 giocatori del suo ruolo con il
+   profilo college più simile (usage, P36/USG, PDK/min standardizzati) e ne uso la carriera Dunkest:
+   - Picco atteso = media pesata (1/distanza) del miglior PDK Dunkest dei comparabili;
+   - Esplosione = quota pesata di comparabili con debutto 2018+ esplosi (+8 PDK sull'anno da rookie), corretta col profilo
+     Haliburton (nello storico 87% contro 65%);
+   - PDK nascosti = dal Radar.
+   Indice 0-100 = 60% picco atteso + 25% esplosione + 15% PDK nascosti (normalizzati sul gruppo). */
+function colRisultati(){const A=colAll(),inc=COL.inc||"26",best=x=>x.nba?x.nba.v:null;
+  const pool=A.filter(x=>!x.r26&&x.Y[1]&&x.deb>=2018&&x.deb<=2024);
+  const P=A.filter(x=>inc==="26"?x.r26:(x.r26||(x.deb>=2024)));
+  const rad=new Map(colRadarRows().map(o=>[o.x.n,o]));
+  const sd=(L,f)=>{const v=L.map(f),m=v.reduce((a,b)=>a+b,0)/v.length;return Math.sqrt(v.reduce((s,y)=>s+(y-m)**2,0)/v.length)||1};
+  const R=P.map(x=>{const L=pool.filter(y=>y.r===x.r);if(!L.length)return null;const su=sd(L,y=>y.usg),sp=sd(L,y=>y.p36),sm=sd(L,y=>y.pm);
+    const C=L.map(y=>({y,d:Math.hypot((y.usg-x.usg)/su,(y.p36-x.p36)/sp,.7*(y.pm-x.pm)/sm)})).sort((a,b)=>a.d-b.d).slice(0,3);
+    const w=C.map(c=>1/(c.d+.25)),W=w.reduce((a,b)=>a+b,0),peak=C.reduce((s,c,i)=>s+w[i]*best(c.y),0)/W;
+    const E=C.map((c,i)=>({c,w:w[i]})).filter(o=>o.c.y.Y[1]&&o.c.y.deb>=2018),prof=x.usg<=+COL.u&&x.p36>=+COL.k;
+    let ex=E.length?E.reduce((s,o)=>s+o.w*((Math.max(...Object.values(o.c.y.Y).map(v=>v.p))-o.c.y.Y[1].p)>=8?1:0),0)/E.reduce((s,o)=>s+o.w,0):null;
+    const base=prof?.87:.65;ex=ex==null?base:(ex*E.length+base*2)/(E.length+2);
+    const r=rad.get(x.n);return{x,C,peak,ex,prof,hid:r?r.hid:0,sim:Math.round(100/(1+C.reduce((s,c)=>s+c.d,0)/C.length))}}).filter(Boolean);
+  const nz=(v,L)=>{const lo=Math.min(...L),hi=Math.max(...L);return hi>lo?(v-lo)/(hi-lo):.5},PK=R.map(o=>o.peak),HD=R.map(o=>o.hid);
+  R.forEach(o=>o.idx=Math.round(100*(.6*nz(o.peak,PK)+.25*o.ex+.15*nz(o.hid,HD))));R.sort((a,b)=>b.idx-a.idx);
+  const role={guardia:"Guardia",ala:"Ala",centro:"Centro"},col=k=>COL_RL.find(r=>r[0]===k)[3];
+  const traj=y=>{const ks=Object.keys(y.Y).map(Number).sort((a,b)=>a-b);if(!ks.length)return"";const b=ks.reduce((a,k)=>y.Y[k].p>y.Y[a].p?k:a);return y.Y[1]?`${cf1(y.Y[1].p)} → ${cf1(y.Y[b].p)} <small>(${b}° anno)</small>`:`picco ${cf1(y.Y[b].p)} <small>(${y.Y[b].s})</small>`};
+  const comp=o=>o.C.map(c=>`<span class="scrc" data-colsel="${c.y.n.replace(/"/g,"&quot;")}" data-colrr="${c.y.r}"><b>${colLbl(c.y)}</b><em>${traj(c.y)}</em><i>usg ${cf1(c.y.usg)}% · P36/USG ${cf2(c.y.p36)}</i></span>`).join("");
+  const card=(o,i)=>`<div class="scr${i<3?" scrtop rt"+(i+1):""}" style="--rc:${col(o.x.r)}"><div class="scrh" data-colsel="${o.x.n.replace(/"/g,"&quot;")}" data-colrr="${o.x.r}">
+    <span class="scrp">${i<3?["🥇","🥈","🥉"][i]:i+1}</span><span class="scrn"><b>${o.x.app||o.x.n}</b><small>${role[o.x.r]} · usage ${cf1(o.x.usg)}% · P36/USG ${cf2(o.x.p36)} · POT ${cf2(o.x.pot)}</small>
+    <span class="scrb">${o.prof?`<i class="h">Profilo Haliburton</i>`:""}${o.hid>=8?`<i class="n">+${cf1(o.hid)} PDK nascosti</i>`:""}${o.x.r26?`<i>Classe 2026</i>`:`<i>Rookie ${o.x.deb}</i>`}</span></span>
+    <span class="scri"><b>${o.idx}</b><small>indice</small></span></div>
+    <div class="scrk"><div><small>Picco Dunkest atteso</small><b>${cf1(o.peak)}</b><em>PDK a partita</em></div><div><small>Prob. esplosione</small><b>${Math.round(o.ex*100)}%</b><em>+8 PDK dal 1° anno</em></div><div><small>Somiglianza</small><b>${o.sim}%</b><em>con i 3 paragoni</em></div></div>
+    <div class="scrcs"><small>Al college era come…  (carriera Dunkest: 1° anno → migliore)</small>${comp(o)}</div></div>`;
+  const opts=`<div class="nseg" style="margin-bottom:10px"><button data-colset2="inc" data-v="26" aria-pressed="${inc==="26"}">Classe 2026</button><button data-colset2="inc" data-v="all" aria-pressed="${inc!=="26"}">+ rookie 2024-25</button></div>`;
+  return`${opts}<div class="cins">Classifica costruita sui dati: per ogni prospetto trovo i <b>3 giocatori già in NBA</b> con il profilo college più simile (usage, P36/USG, PDK/min) e guardo cosa hanno fatto su <b>Dunkest</b>. Più i paragoni sono esplosi e più sono arrivati in alto, più il prospetto sale.</div>
+  <div class="scrl">${R.map(card).join("")}</div>
+  <p class="note">Indice 0-100 = 60% picco Dunkest atteso (media dei migliori PDK dei 3 paragoni, pesata per somiglianza) + 25% probabilità di esplosione (quota di paragoni esplosi, corretta col profilo Haliburton: 87% contro 65% nello storico) + 15% PDK nascosti del Radar. Paragoni solo tra giocatori dello stesso ruolo debuttati in NBA dal 2018 al 2024, di cui Dunkest ha tutta la carriera dal 1° anno. È uno strumento di confronto, non una certezza: i paragoni sono pochi per ruolo.</p>`}
+function vCollege(){if(!COL.d){cur="campo";return vCampo()}COL.sec=COL.sec||"college";COL.tab=COL.tab||"ris";COL.u=COL.u||24;COL.k=COL.k||.9;
+  const tabs=[["ris","🏆 Risultati"],["orig","Archivio"],["radar","Radar"],["usage","Profilo"],["pros","Prospetti"],["studio","Studio rookie"],["mappa","Mappa"],["nba","College→NBA"],["lista","Tabella"]];
+  const body=COL.tab==="ris"?`<div class="grcard">${colRisultati()}</div>`:COL.tab==="orig"?`<input id="colq" class="colq" type="search" placeholder="Cerca giocatore" value="${COL.q.replace(/"/g,"&quot;")}" aria-label="Cerca giocatore"><div class="grcard" id="colorig">${colOrig()}<p class="note">POT = PDK/min normalizzato a usage 27%. * = ruolo da confermare. Tocca un giocatore per la scheda.</p></div>`
    :COL.tab==="radar"?`<div class="grcard">${colRadar()}</div>`:COL.tab==="usage"?`<div class="grcard">${colUsage()}</div>`:COL.tab==="pros"?`<div class="grcard">${colProspetti()}</div>`:COL.tab==="studio"?`<div class="grcard">${colStudio()}</div>`:COL.tab==="mappa"?`<div class="grcard">${colMap()}</div>`:COL.tab==="nba"?`<div class="grcard">${colNbaChart()}</div>`
    :`<input id="colq" class="colq" type="search" placeholder="Cerca giocatore" value="${COL.q.replace(/"/g,"&quot;")}" aria-label="Cerca giocatore">
   <div class="coltbl"><table><thead><tr><th>#</th><th class="nm">Giocatore</th><th>POT</th><th>PDK/min</th><th>USG</th><th>NBA</th></tr></thead><tbody id="collist">${colList()}</tbody></table></div>
@@ -2911,7 +2956,7 @@ function vCollege(){if(!COL.d){cur="campo";return vCampo()}COL.sec=COL.sec||"col
   <div class="colhd">${lg?`<img src="${lg}" alt="Texas Ducks">`:""}<div><small>Texas Ducks · area riservata del GM</small><b>Ufficio Scouting</b><em>${isC?"College · archivio al "+COL_ENC.agg:"NBA · trend delle ultime settimane"}</em></div></div>
   <div class="colsec"><button data-colsec="college" aria-pressed="${isC}">🎓 College</button><button data-colsec="nba" aria-pressed="${!isC}">🏀 NBA</button></div>
   ${isC?`<div class="ctabs coltabs">${tabs.map(([k,l])=>`<button data-coltab="${k}" aria-pressed="${COL.tab===k}">${l}</button>`).join("")}</div>
-  ${["usage","radar","orig"].includes(COL.tab)?"":`<div class="trseg colrl">${COL_RL.map(([k,l])=>`<button class="${k}" data-colr="${k}" aria-pressed="${COL.r===k}">${l} <small>${(COL.d[k]||[]).length}</small></button>`).join("")}</div>`}
+  ${["usage","radar","orig","ris"].includes(COL.tab)?"":`<div class="trseg colrl">${COL_RL.map(([k,l])=>`<button class="${k}" data-colr="${k}" aria-pressed="${COL.r===k}">${l} <small>${(COL.d[k]||[]).length}</small></button>`).join("")}</div>`}
   ${colCard()}${body}`:`<div class="grcard">${vNbaSec()}</div>`}<p class="colft">🦆 Texas Ducks Scouting · uso interno</p></div>`}
 function vCampo(){
   const t=curTeam,c=TEAMS[t],st=standings().find(x=>x.t===t);

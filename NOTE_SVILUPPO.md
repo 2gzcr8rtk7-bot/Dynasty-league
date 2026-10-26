@@ -364,3 +364,6 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
   date a scelta; confronto = media solita / resto della stagione / 2025/26 / 2024/25; delta assoluto o %, soglia,
   partite minime, squadra, ruoli, vista banner o tabella) e **Grafici liberi** (fino a 6 giocatori, periodo con date o
   scorciatoie 7/14/30 giorni, punti per partita / media mobile 3-5 / settimana / mese, linea della media, trend).
+- (50) Scouting College: nuova prima scheda **🏆 Risultati** (`colRisultati`): classifica dei prospetti (classe 2026, o
+  anche rookie 2024-25) con indice 0-100 da 3 paragoni statistici (stesso ruolo, debutto NBA 2018-2024, profilo college
+  più simile) e la loro carriera Dunkest: picco atteso, probabilità di esplosione, PDK nascosti.
