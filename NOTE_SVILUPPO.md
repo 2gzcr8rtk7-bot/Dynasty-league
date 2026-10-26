@@ -414,3 +414,5 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - (66) Home: pulsantino rosso (telecamera con pallino "live" pulsante) accanto alla ricerca che apre la Dynasty TV (view `tv`).
 - (67) Menu: "Giochi" rinominato **Entertainment**; Dynasty TV tolta dalla barra in alto e messa dentro Entertainment con un pulsante come Arcade (`data-tvopen`); dalla TV "‹ Entertainment" torna al menu. Il pulsante rosso in Home apre sempre la TV.
 - (68) Dynasty TV, tabellino: colonna PDK spostata subito dopo il nome, in rosso; durante una partita in corso diventa "PDK live" con pallino lampeggiante.
+
+(69) Dynasty TV, dettaglio partita: tolti i blocchi "Migliori" e "Statistiche di squadra". Restano punteggio, tab squadre e box score giocatori (con PDK live in rosso).

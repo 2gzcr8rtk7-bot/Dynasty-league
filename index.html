@@ -4533,10 +4533,6 @@ function tvGame(key){const T=TVD(),[d,g]=key.split("_"),G=(T.days[d]||[]).find(x
   <div class="tvsb" style="--ca:${ca};--ch:${ch}"><div class="tside">${tvLogo(a)}<b>${tvNick(a)}</b><small>${tvRec(a)} · trasferta</small></div>
    <div class="tmid"><div><span class="${sa<sh?"lo":""}">${sa}</span><i>–</i><span class="${sh<sa?"lo":""}">${sh}</span></div><small>${G[5]==="L"?"Live · "+(TVL.st[key]||""):"Finale"+(ot?" · OT":"")}</small></div>
    <div class="tside">${tvLogo(h)}<b>${tvNick(h)}</b><small>${tvRec(h)} · casa</small></div></div>
-  <div class="tvsec">Migliori</div>
-  <div class="tvlead">${lead("Punti",L.pts,3)}${lead("Rimbalzi",L.reb,6)}${lead("Assist",L.ast,7)}</div>
-  <div class="tvsec">Statistiche di squadra</div><div class="tvleg"><span class="a">${tvNick(a)}</span><span class="h">${tvNick(h)}</span></div>
-  <div class="tvcmp" style="--ca:${ca};--ch:${ch}">${cmp("Tiri dal campo",A.fga?A.fgm/A.fga:0,Hh.fga?Hh.fgm/Hh.fga:0,pf)}${cmp("Tiri da 3",A.tpa?A.tpm/A.tpa:0,Hh.tpa?Hh.tpm/Hh.tpa:0,pf)}${cmp("Tiri liberi",A.fta?A.ftm/A.fta:0,Hh.fta?Hh.ftm/Hh.fta:0,pf)}${cmp("Rimbalzi",A.reb,Hh.reb)}${cmp("Rimbalzi offensivi",A.oreb,Hh.oreb)}${cmp("Assist",A.ast,Hh.ast)}${cmp("Recuperi",A.stl,Hh.stl)}${cmp("Stoppate",A.blk,Hh.blk)}${cmp("Palle perse",A.tov,Hh.tov)}${cmp("Falli",A.pf,Hh.pf)}${cmp("PDK Dunkest",A.pdk,Hh.pdk,v=>Math.round(v))}</div>
   <div class="tvtabs"><button class="tvtab" data-tvside="a" aria-pressed="${side==="a"}">${tvLogo(a)}${tvNick(a)}</button><button class="tvtab" data-tvside="h" aria-pressed="${side==="h"}">${tvLogo(h)}${tvNick(h)}</button></div>
   <div class="tbl-wrap"><table class="ptbl tvbox"><thead><tr><th>Giocatore</th><th class="pdkl">${LV?"PDK live":"PDK"}</th><th>Min</th><th>Pt</th><th>Rim</th><th>Ass</th><th>Rec</th><th>Stp</th><th>Pp</th><th>Tiri</th><th>Da 3</th><th>Liberi</th><th>Off</th><th>Dif</th><th>Falli</th><th>+/−</th></tr></thead>
   <tbody><tr class="grp"><td>Quintetto</td><td colspan="15"></td></tr>${st.map(pr).join("")}<tr class="grp"><td>Panchina</td><td colspan="15"></td></tr>${bn.map(pr).join("")}${tot}</tbody></table></div>
