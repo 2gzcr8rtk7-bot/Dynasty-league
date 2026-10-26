@@ -1971,7 +1971,7 @@ let gSeason="2026/27";
 /* ===== GRAFICO andamento giocatore (PDK verde, minuti giallo, efficienza viola) =====
    Leggibilità: ogni punto è la MEDIA MOBILE (partita: ultime 5; settimana: ultime 3; mese/stagione: valore del periodo),
    linea curva morbida; i valori reali restano come puntini tenui. Scala adattata ai dati (non da zero) se c'è una sola grandezza per asse. */
-let GR={t:null,p:null,sz:"2026/27",mese:"",sett:"",by:"m",show:{pdk:true,min:false,eff:false},from:null};
+let GR={t:null,p:null,sz:"2026/27",mese:"",mese2:"",by:"m",show:{pdk:true,min:false,eff:false},from:null};
 const GR_SZ=["2026/27","2025/26","2024/25"];
 const GR_MESI=["Gen","Feb","Mar","Apr","Mag","Giu","Lug","Ago","Set","Ott","Nov","Dic"];
 const GR_WIN={g:1,w:1,m:1,s:1};
@@ -2031,8 +2031,10 @@ function grChart(P,show){if(!P.length)return`<div class="grempty">Nessuna partit
 function vGrafico(){if(!TEAMS[GR.t])GR.t=TEAMS[curTeam]?curTeam:Object.keys(TEAMS)[0];const t=GR.t,c=TEAMS[t];const ros=(ROSTER[t]||[]).map(x=>x[0]);if(!GR.p||!ros.includes(GR.p))GR.p=ros[0];
   /* livello automatico: Tutte → stagioni; stagione → mesi; mese → settimane; settimana → partite */
   const gAll=grGames(GR.p,GR.sz),mesi=[...new Set(gAll.map(x=>grMk(x.dt)))];if(GR.sz==="all"||!mesi.includes(GR.mese))GR.mese="";
-  const gM=GR.mese?gAll.filter(x=>grMk(x.dt)===GR.mese):gAll,setts=GR.mese?[...new Set(gM.map(x=>grWk(x.dt)))]:[];if(!setts.includes(GR.sett))GR.sett="";
-  const g=GR.sett?gM.filter(x=>grWk(x.dt)===GR.sett):gM;GR.by=GR.sz==="all"?"s":!GR.mese?"m":!GR.sett?"w":"g";
+  /* intervallo di mesi continuo: Dal mese → Al mese (stesso mese = un mese singolo, punti per settimana) */
+  const iA=mesi.indexOf(GR.mese);let iB=mesi.indexOf(GR.mese2);if(iA<0)GR.mese2="";else if(iB<iA){iB=iA;GR.mese2=GR.mese}
+  const rng=iA<0?mesi:mesi.slice(iA,iB+1),g=gAll.filter(x=>rng.includes(grMk(x.dt)));
+  GR.by=GR.sz==="all"?"s":(iA>=0&&iA===iB)?"w":"m";
   const P=grGroup(g,GR.by),avg=f=>grAvg(g,x=>x[f]);
   const mLab=k=>{const[y,m]=k.split("-");return["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"][+m-1]+" "+y.slice(2)};
   const wLab=(k,i)=>{const d0=new Date(k+"T00:00:00Z"),d1=new Date(d0);d1.setUTCDate(d1.getUTCDate()+6);const f=d=>String(d.getUTCDate()).padStart(2,"0")+"/"+String(d.getUTCMonth()+1).padStart(2,"0");return`Sett. ${i+1} · ${f(d0)}–${f(d1)}`};
@@ -2045,11 +2047,11 @@ function vGrafico(){if(!TEAMS[GR.t])GR.t=TEAMS[curTeam]?curTeam:Object.keys(TEAM
   <div class="grhd"><span class="grlg">${badge(t)}</span><div><small>${c.name} · grafici</small><b>${GR.p}</b></div></div>
   <div class="grtop"><div class="grctl">${sel("Giocatore",ros.map(n=>[n,n]),GR.p)}
   ${sel("Stagione",[["2026/27","Stagione 3"],["2025/26","Stagione 2"],["2024/25","Stagione 1"],["all","Tutte"]],GR.sz)}
-  ${sel("Mese",[["","Tutta la stagione"],...mesi.map(k=>[k,mLab(k)])],GR.mese,GR.sz==="all")}
-  ${sel("Settimana",[["","Tutto il mese"],...setts.map((k,i)=>[k,wLab(k,i)])],GR.sett,!GR.mese)}</div>
+  ${sel("Dal mese",[["","Tutta la stagione"],...mesi.map(k=>[k,mLab(k)])],GR.mese,GR.sz==="all")}
+  ${sel("Al mese",iA<0?[["","—"]]:mesi.slice(iA).map(k=>[k,mLab(k)]),GR.mese2,iA<0)}</div>
   <div class="grjs">${(()=>{const r=(ROSTER[t]||[]).find(x=>x[0]===GR.p);return jersey(t,r?r[1]:null,GR.p)})()}</div></div>
   <div class="grtgs">${tg("pdk")}${tg("min")}${tg("eff")}</div>
-  <div class="grcard">${grChart(P,GR.show)}<div class="grfoot">${g.length} ${g.length===1?"partita":"partite"} · ${GR.by==="s"?"media di ogni stagione":GR.by==="m"?"media di ogni mese":GR.by==="w"?"media di ogni settimana":"valori di ogni partita"}</div></div></div>`}
+  <div class="grcard">${grChart(P,GR.show)}<div class="grfoot">${g.length} ${g.length===1?"partita":"partite"} · ${GR.by==="s"?"media di ogni stagione":GR.by==="m"?"media di ogni mese":"media di ogni settimana"}</div></div></div>`}
 
 function vGiocatore(){
   const t=curTeam,c=TEAMS[t],p=(ROSTER[t]||[]).find(x=>x[0]===curPlayer);
@@ -2258,11 +2260,11 @@ document.getElementById("main").addEventListener("click",e=>{const b=e.target.cl
 
 /* Grafico: apertura, chiusura, menu e linee */
 document.getElementById("main").addEventListener("click",e=>{
-  const o=e.target.closest("[data-grafico]");if(o){e.preventDefault();GR.t=o.dataset.grafico;GR.p=o.dataset.grp||null;GR.from=cur;GR.sz=SZ_ALL.includes(gSeason)?gSeason:SZ_ALL[0];GR.mese="";GR.sett="";cur="grafico";render();window.scrollTo(0,0);return}
+  const o=e.target.closest("[data-grafico]");if(o){e.preventDefault();GR.t=o.dataset.grafico;GR.p=o.dataset.grp||null;GR.from=cur;GR.sz=SZ_ALL.includes(gSeason)?gSeason:SZ_ALL[0];GR.mese="";GR.mese2="";cur="grafico";render();window.scrollTo(0,0);return}
   if(e.target.closest("[data-grclose]")){e.preventDefault();cur=GR.from||"efficienza";render();window.scrollTo(0,0);return}
   const tg=e.target.closest("[data-grtg]");if(tg){e.preventDefault();GR.show[tg.dataset.grtg]=!GR.show[tg.dataset.grtg];const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("change",e=>{const s=e.target.closest("select[data-gr]");if(!s)return;const k=s.dataset.gr;
-  if(k==="Giocatore")GR.p=s.value;else if(k==="Stagione"){GR.sz=s.value;GR.mese="";GR.sett=""}else if(k==="Mese"){GR.mese=s.value;GR.sett=""}else if(k==="Settimana")GR.sett=s.value;const y=window.scrollY;render();window.scrollTo(0,y)});
+  if(k==="Giocatore")GR.p=s.value;else if(k==="Stagione"){GR.sz=s.value;GR.mese="";GR.mese2=""}else if(k==="Dal mese"){GR.mese=s.value;GR.mese2=s.value}else if(k==="Al mese")GR.mese2=s.value;const y=window.scrollY;render();window.scrollTo(0,y)});
 document.getElementById("main").addEventListener("click",e=>{const a=e.target.closest("[data-esqadv]");if(a&&cur==="effsquadra"){e.preventDefault();esqAdv=!esqAdv;const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("click",e=>{const m=e.target.closest("[data-esqm]");if(m&&cur==="effsquadra"){e.preventDefault();esqMese=m.dataset.esqm==="tutta"?"tutta":+m.dataset.esqm;const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-rshare]");if(!b)return;e.preventDefault();e.stopPropagation();shareRoster(b.dataset.rshare,b)});
