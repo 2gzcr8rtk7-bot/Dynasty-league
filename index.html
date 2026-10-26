@@ -715,6 +715,105 @@ nav button{font-size:15px;letter-spacing:.04em}
 .rflow li::before{content:counter(f,decimal-leading-zero);position:absolute;left:0;top:0;width:34px;height:28px;display:grid;place-items:center;background:var(--red);color:#fff;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px}
 .rflow li:not(:last-child)::after{content:"";position:absolute;left:16px;top:30px;bottom:2px;width:2px;background:var(--line)}
 .rflow li b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;text-transform:uppercase;color:#fff}
+/* ===== DYNASTY TV ===== */
+.tvlw{position:relative;display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;flex:none;overflow:hidden}
+.tvlw em{font-style:italic;font-family:var(--display);font-weight:800;font-size:12px;color:#fff;letter-spacing:.02em}
+.tvlw img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0}
+.tvlw.ok{background:none!important;border-radius:0;overflow:visible}.tvlw.ok em{visibility:hidden}.tvlw.ok img{opacity:1}
+.tvsb .tside .tvlw{width:64px;height:64px}.tvsb .tside .tvlw em{font-size:18px}
+.tvlead .tvlw{width:22px;height:22px}.tvlead .tvlw em{font-size:8px}
+.tvtab .tvlw{width:26px;height:26px}.tvtab .tvlw em{font-size:9px}
+.tvhero{position:relative;overflow:hidden;margin:-4px 0 14px;padding:14px 16px;background:linear-gradient(120deg,#0b1d4a 0%,#1d428a 55%,#c8102e 140%);border-bottom:3px solid #c8102e;box-shadow:0 10px 24px rgba(0,0,0,.45)}
+.tvhero::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.05) 0 12px,transparent 12px 26px)}
+.tvhero>*{position:relative}
+.tvhero b{display:flex;align-items:center;gap:8px;font-family:var(--display);font-style:italic;font-weight:800;font-size:30px;letter-spacing:.02em;text-transform:uppercase;color:#fff;line-height:1}
+.tvhero b i{font-style:normal;font-size:12px;letter-spacing:.14em;background:#c8102e;padding:3px 7px;transform:skewX(-10deg)}
+.tvhero small{display:block;margin-top:5px;font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#cfd8f5}
+.tvdate{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:6px;margin-bottom:10px}
+.tvdate button{height:44px;border:1px solid var(--line);background:linear-gradient(180deg,var(--panel2),var(--panel));color:#fff;font-size:24px;font-weight:800;cursor:pointer}
+.tvdate button:disabled{opacity:.3;cursor:default}
+.tvdate button:focus-visible,.tvday:focus-visible,.tvg:focus-visible,.tvtab:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.tvdl{text-align:center;display:grid;gap:2px}
+.tvdl b{font-family:var(--display);font-style:italic;font-weight:800;font-size:21px;text-transform:uppercase;color:#fff;line-height:1}
+.tvdl small{font-size:11.5px;color:var(--muted);letter-spacing:.04em}
+.tvweek{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px}
+.tvday{display:grid;justify-items:center;gap:1px;padding:6px 0 5px;border:1px solid var(--line);background:var(--panel);color:var(--muted);cursor:pointer;font-family:var(--display);font-weight:700}
+.tvday span{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase}
+.tvday b{font-style:italic;font-weight:800;font-size:19px;color:#fff;line-height:1.1}
+.tvday small{font-size:10px;color:var(--muted)}
+.tvday[aria-pressed="true"]{background:linear-gradient(180deg,#1d428a,#0e2a66);border-color:#3d6ad6}
+.tvday[aria-pressed="true"] small,.tvday[aria-pressed="true"] span{color:#dbe4ff}
+.tvday.off{opacity:.35}
+.tvlist{display:grid;gap:8px}
+.tvg{display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center;padding:10px 12px;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);cursor:pointer;text-align:left;color:var(--fg);width:100%}
+.tvg:hover{border-color:#3d6ad6}
+.tvteams{display:grid;gap:6px;min-width:0}
+.tvt{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:10px}
+.tvt .tvnm{min-width:0;display:grid;line-height:1.05}
+.tvt .tvnm b{font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tvt .tvnm small{font-size:11px;color:var(--muted)}
+.tvt .tvsc{font-family:var(--display);font-style:italic;font-weight:800;font-size:26px;color:#8e98b8;min-width:44px;text-align:right}
+.tvt.win .tvsc{color:#fff}
+.tvt.win .tvnm b::after{content:"◂";font-style:normal;font-size:12px;margin-left:6px;color:var(--gold)}
+.tvst{grid-column:2;grid-row:1;display:grid;justify-items:end;gap:2px;font-family:var(--display);font-weight:800;font-style:italic;text-transform:uppercase;text-align:right}
+.tvst b{font-size:13px;letter-spacing:.08em;color:#fff;background:#c8102e;padding:2px 7px;transform:skewX(-10deg)}
+.tvst b.pre{background:#1d428a}
+.tvst small{font-style:normal;font-weight:700;font-size:10.5px;letter-spacing:.06em;color:var(--muted);max-width:110px}
+.tvtop{grid-column:1/-1;border-top:1px solid rgba(255,255,255,.07);padding-top:6px;font-size:12px;color:#cfd6ea;display:flex;gap:10px;flex-wrap:wrap}
+.tvtop span b{color:#fff;font-weight:700}
+.tvlg{width:34px;height:34px;object-fit:contain;flex:none}
+.tvbd{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;font-family:var(--display);font-style:italic;font-weight:800;font-size:12px;color:#fff;flex:none}
+.tvempty{padding:26px 16px;text-align:center;color:var(--muted);border:1px dashed var(--line);font-family:var(--display);font-style:italic;font-weight:700;font-size:17px}
+.tvback{margin-bottom:8px}
+.tvsb{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:16px 12px;margin-bottom:12px;background:linear-gradient(120deg,var(--ca) 0%,#0a1330 50%,var(--ch) 100%);border-bottom:3px solid #c8102e;box-shadow:0 10px 24px rgba(0,0,0,.45)}
+.tvsb .tside{display:grid;justify-items:center;gap:4px;text-align:center}
+.tvsb .tside .tvlg,.tvsb .tside .tvbd{width:64px;height:64px;font-size:18px}
+.tvsb .tside b{font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase;color:#fff;line-height:1}
+.tvsb .tside small{font-size:11px;color:#dbe1f0}
+.tvsb .tmid{display:grid;justify-items:center;gap:4px}
+.tvsb .tmid div{font-family:var(--display);font-style:italic;font-weight:800;font-size:40px;color:#fff;line-height:1;white-space:nowrap}
+.tvsb .tmid div i{font-style:normal;color:rgba(255,255,255,.4);margin:0 6px;font-size:28px}
+.tvsb .tmid div .lo{color:rgba(255,255,255,.55)}
+.tvsb .tmid small{font-family:var(--display);font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#fff;background:#c8102e;padding:2px 8px}
+.tvsec{margin:16px 0 8px;font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;letter-spacing:.08em;text-transform:uppercase;color:#fff;border-left:4px solid #c8102e;padding-left:8px}
+.tvlead{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tvlead>div{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);padding:8px;display:grid;gap:6px}
+.tvlead small{font-family:var(--display);font-weight:700;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.tvlead p{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 6px;align-items:center;font-size:12px;color:#dbe1f0}
+.tvlead p b{grid-column:1/-1}
+.tvlead p b{font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;color:#fff}
+.tvlead p span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tvlead .tvlg,.tvlead .tvbd{width:20px;height:20px;font-size:8px}
+.tvcmp{display:grid;gap:4px;padding:10px 12px;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line)}
+.tvleg{display:flex;justify-content:space-between;margin:-2px 0 6px;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;text-transform:uppercase}.tvleg .a{color:#f5b400}.tvleg .h{color:#4c8dff}
+.tvcr{display:grid;grid-template-columns:52px 1fr 52px;gap:8px;align-items:center}
+.tvcr b{font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;color:#f5b400}
+.tvcr b:last-child{color:#4c8dff}
+.tvcr b:last-child{text-align:right}
+.tvcr .bar{display:grid;gap:3px}
+.tvcr .bar span{font-family:var(--display);font-weight:700;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:center}
+.tvcr .bar i{display:grid;grid-template-columns:var(--l) var(--r);height:7px;background:#1f2b52}
+.tvcr .bar i::before,.tvcr .bar i::after{content:""}
+.tvcr .bar i::before{background:#f5b400}.tvcr .bar i::after{background:#4c8dff}
+.tvcr .bar i{gap:2px}
+.tvtabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:16px 0 8px}
+.tvtab{display:flex;align-items:center;justify-content:center;gap:8px;height:42px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;text-transform:uppercase;cursor:pointer}
+.tvtab .tvlg,.tvtab .tvbd{width:24px;height:24px;font-size:9px}
+.tvtab[aria-pressed="true"]{color:#fff;background:linear-gradient(180deg,#1d428a,#0e2a66);border-color:#3d6ad6}
+.tvbox{min-width:860px}
+.tvbox th,.tvbox td{text-align:right;padding:0 7px;white-space:nowrap}
+.tvbox th{font-size:11px;padding:8px 7px}
+.tvbox td{height:38px;font-family:var(--display);font-style:italic;font-weight:700;font-size:15px;color:#dbe1f0}
+.tvbox th:first-child,.tvbox td:first-child{text-align:left;position:sticky;left:0;z-index:1;background:#0f1938;min-width:150px;max-width:170px}
+.tvbox thead th:first-child{background:#091129;z-index:2}
+.tvbox td:first-child{font-family:var(--body);font-style:normal;font-weight:600;font-size:13.5px;color:#fff;white-space:normal;line-height:1.15}
+.tvbox td:first-child small{display:block;font-size:10.5px;color:var(--muted);font-weight:500}
+.tvbox td.pts{color:#fff;font-weight:800}
+.tvbox td.pdk{color:var(--gold);font-weight:800}
+.tvbox tr.grp td{height:26px;background:#091129;font-family:var(--display);font-style:italic;font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.tvbox tr.tot td{background:rgba(255,255,255,.06);color:#fff;font-weight:800}
+.tvbox tr.pct td{height:28px;font-size:12.5px;color:var(--muted)}
+.tvbox .pos{color:var(--win)}.tvbox .neg{color:var(--loss)}
 /* G League */
 /* G League · statistiche */
 .glrank{margin-bottom:18px}
@@ -1516,9 +1615,9 @@ nav button>span{white-space:nowrap}
       <button role="tab" id="t-ho" data-v="home" aria-selected="true"><span>Home</span></button>
       <button role="tab" id="t-dk" data-v="dunkest" data-menu="subnav" aria-haspopup="true" aria-expanded="false" aria-selected="false"><span>Dunkest<i class="car">▾</i></span></button>
       <button role="tab" id="t-ef" data-v="efficienza" aria-selected="false"><span>Statistiche</span></button>
-      <button role="tab" id="t-in" data-v="infortuni" aria-selected="false"><span>Centro Medico</span></button>
+      <button role="tab" id="t-cs" data-v="valtrade" aria-selected="false"><span>Calcolatore Trade</span></button>
+      <button role="tab" id="t-tv" data-v="tv" aria-selected="false"><span>Dynasty TV</span></button>
       <button role="tab" id="t-gm" data-v="storia" aria-selected="false"><span>Sala Trofei</span></button>
-      <button role="tab" id="t-cs" data-v="valtrade" aria-selected="false"><span>Calcolatore Scambi</span></button>
       <button role="tab" id="t-gi" data-v="giochi" aria-selected="false"><span>Giochi</span></button>
     </nav>
     <div class="subnav" id="subnav" role="menu" hidden>
@@ -1528,6 +1627,7 @@ nav button>span{white-space:nowrap}
       <button data-v="trade" aria-selected="false"><span>Trade</span></button>
       <button data-v="speciali" aria-selected="false"><span>Trade speciali</span></button>
       <button data-v="gleague" aria-selected="false"><span>G League</span></button>
+      <button data-v="infortuni" aria-selected="false"><span>Centro Medico</span></button>
       <button data-v="regolamento" aria-selected="false"><span>Regolamento</span></button>
     </div>
   </div>
@@ -1536,6 +1636,7 @@ nav button>span{white-space:nowrap}
 <footer class="wrap upd">Ultimo aggiornamento: 26/10/2026 · 17:27</footer>
 
 <script src="dreamers-data.js"></script>
+<script src="tv-data.js"></script>
 <script src="spazio-data.js"></script>
 <script>
 const TEAMS={
@@ -4367,7 +4468,68 @@ function simAct(b){
     if(navigator.share)navigator.share({text:tx}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(tx).then(()=>{b.querySelector("span").textContent="Copiato ✓"},()=>{})}
 }
 
-const VIEWS={college:vCollege,trend:vTrend,cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.grafico=vGrafico;
+/* ===== DYNASTY TV: calendario NBA, risultati e tabellini (dati in tv-data.js) ===== */
+const TVS={d:null,g:null,side:"a"};
+const TVD=()=>typeof TV!=="undefined"?TV:{teams:{},rec:{},days:{},box:{}};
+const TV_GG=["Domenica","Lunedì","Martedì","Mercoledì","Giovedì","Venerdì","Sabato"],TV_G3=["Dom","Lun","Mar","Mer","Gio","Ven","Sab"],TV_MM=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
+const tvDt=s=>new Date(s+"T12:00:00Z");
+function tvLogo(c,cls=""){const t=TVD().teams[c]||[c,0,"#333"];return`<span class="tvlw ${cls}" style="background:${t[2]}"><em>${c}</em>${t[1]?`<img src="https://cdn.nba.com/logos/nba/${t[1]}/primary/L/logo.svg" alt="" loading="lazy" onload="this.parentNode.classList.add('ok')" onerror="this.remove()">`:""}</span>`}
+const tvNick=c=>{const n=(TVD().teams[c]||[c])[0];return n.split(" ").slice(-1)[0]==="Blazers"?"Trail Blazers":n.split(" ").slice(-1)[0]};
+const tvRec=c=>{const r=TVD().rec[c];return r?r[0]+"-"+r[1]:""};
+function tvDefDay(){const T=TVD(),ks=Object.keys(T.days).sort();const f=ks.filter(k=>T.days[k].some(g=>g[5]==="F"));return f.length?f[f.length-1]:ks[0]}
+function tvLead(b){const all=[...b.a.map(p=>["a",p]),...b.h.map(p=>["h",p])];const top=i=>all.slice().sort((x,y)=>y[1][i]-x[1][i])[0];return{pts:top(3),reb:top(6),ast:top(7),pdk:all.slice().sort((x,y)=>y[1][19]-x[1][19])[0]}}
+function vTV(){const T=TVD(),ks=Object.keys(T.days).sort();if(!ks.length)return`${H("Dynasty TV")}<div class="tvempty">Calendario non ancora disponibile.</div>`;
+  if(!TVS.d||!T.days[TVS.d])TVS.d=tvDefDay();
+  if(TVS.g&&T.box[TVS.g])return tvGame(TVS.g);
+  const d=TVS.d,i=ks.indexOf(d),dd=tvDt(d),G=T.days[d]||[];
+  const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
+  /* settimana: 7 giorni attorno alla data scelta */
+  const wk=[];for(let k=-3;k<=3;k++){const x=new Date(dd);x.setUTCDate(x.getUTCDate()+k);const s=x.toISOString().slice(0,10),n=(T.days[s]||[]).length;wk.push(`<button class="tvday${n?"":" off"}" data-tvd="${s}" aria-pressed="${s===d}"${n?"":" disabled"}><span>${TV_G3[x.getUTCDay()]}</span><b>${x.getUTCDate()}</b><small>${n?n+" part.":"—"}</small></button>`)}
+  const cards=G.map(g=>{const[a,h,sa,sh,ot,st,tm,key]=g,fin=st==="F",wa=fin&&sa>sh,wh=fin&&sh>sa;let top="";
+    if(fin&&T.box[key]){const L=tvLead(T.box[key]),pp=L.pdk;top=`<div class="tvtop"><span>Top: <b>${sur(pp[1][0])}</b> (${pp[0]==="a"?a:h}) ${pp[1][3]} pt · ${pp[1][6]} rb · ${pp[1][7]} as · ${String(pp[1][19]).replace(".",",")} PDK</span></div>`}
+    const row=(c,s,w)=>`<div class="tvt${w?" win":""}">${tvLogo(c)}<span class="tvnm"><b>${tvNick(c)}</b><small>${c} · ${tvRec(c)}</small></span><span class="tvsc">${fin?s:""}</span></div>`;
+    return`<button class="tvg" ${fin&&key?`data-tvg="${key}"`:"disabled"} aria-label="${a} contro ${h}"><div class="tvteams">${row(a,sa,wa)}${row(h,sh,wh)}</div>
+      <div class="tvst">${fin?`<b>Finale${ot?" · OT":""}</b><small>tabellino ›</small>`:`<b class="pre">${tm.replace("+1","")}</b><small>ora italiana${tm.includes("+1")?" · notte tra "+dd.getUTCDate()+" e "+(dd.getUTCDate()+1>new Date(Date.UTC(dd.getUTCFullYear(),dd.getUTCMonth()+1,0)).getUTCDate()?1:dd.getUTCDate()+1):""}</small>`}</div>${top}</button>`}).join("");
+  const nf=G.filter(g=>g[5]==="F").length;
+  return`<div class="tvhero"><b>Dynasty TV <i>NBA</i></b><small>Calendario, risultati e tabellini · stagione 2026/27</small></div>
+  <div class="tvdate"><button data-tvnav="-1" aria-label="Giorno precedente"${i<=0?" disabled":""}>‹</button><div class="tvdl"><b>${TV_GG[dd.getUTCDay()]} ${dd.getUTCDate()} ${TV_MM[dd.getUTCMonth()]}</b><small>${G.length} ${G.length===1?"partita":"partite"}${nf?` · ${nf===G.length?"tutte finite":nf+" finite"}`:" · in programma"} · data USA</small></div><button data-tvnav="1" aria-label="Giorno successivo"${i>=ks.length-1?" disabled":""}>›</button></div>
+  <div class="tvweek">${wk.join("")}</div>
+  <div class="tvlist">${cards||`<div class="tvempty">Nessuna partita in questa data.</div>`}</div>
+  <p class="note">${T.src||""} Orari d'inizio in ora italiana. Tocca una partita finita per il tabellino completo. Aggiornato ${T.upd||""}.</p>`}
+function tvGame(key){const T=TVD(),[d,g]=key.split("_"),G=(T.days[d]||[]).find(x=>x[7]===key);if(!G)return"";const[a,h,sa,sh,ot]=G,b=T.box[key],ca=(T.teams[a]||[])[2]||"#333",ch=(T.teams[h]||[])[2]||"#333",dd=tvDt(d);
+  const sum=(L,i)=>L.reduce((s,p)=>s+(+p[i]||0),0),pc=(m,x)=>x?(m/x*100).toFixed(1).replace(".",",")+"%":"—";
+  const S=L=>({fgm:sum(L,12),fga:sum(L,13),tpm:sum(L,14),tpa:sum(L,15),ftm:sum(L,16),fta:sum(L,17),reb:sum(L,6),oreb:sum(L,4),ast:sum(L,7),stl:sum(L,8),blk:sum(L,9),tov:sum(L,10),pf:sum(L,11),pdk:sum(L,19)});
+  const A=S(b.a),Hh=S(b.h);
+  const cmp=(lab,va,vh,fa=v=>v,lowGood=false)=>{const t=(va+vh)||1,l=Math.max(4,va/t*100),r=Math.max(4,vh/t*100);return`<div class="tvcr"><b>${fa(va)}</b><div class="bar"><span>${lab}</span><i style="--l:${l}fr;--r:${r}fr"></i></div><b>${fa(vh)}</b></div>`};
+  const pf=v=>(v*100).toFixed(1).replace(".",",")+"%";
+  const L=tvLead(b),sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
+  const lead=(lab,x,i)=>`<div><small>${lab}</small><p>${tvLogo(x[0]==="a"?a:h)}<span>${sur(x[1][0])}</span><b>${x[1][i]}</b></p></div>`;
+  const side=TVS.side==="h"?"h":"a",P=b[side],tc=side==="a"?a:h,TS=side==="a"?A:Hh;
+  const f1=v=>v==null?"—":String(v).replace(".",",");
+  const pr=p=>`<tr><td>${p[0]}<small>${p[1]?"Quintetto":"Panchina"}</small></td><td>${p[2]}</td><td class="pts">${p[3]}</td><td>${p[6]}</td><td>${p[7]}</td><td>${p[8]}</td><td>${p[9]}</td><td>${p[10]}</td><td>${p[12]}-${p[13]}</td><td>${p[14]}-${p[15]}</td><td>${p[16]}-${p[17]}</td><td>${p[4]}</td><td>${p[5]}</td><td>${p[11]}</td><td class="${p[18]>0?"pos":p[18]<0?"neg":""}">${p[18]==null?"—":(p[18]>0?"+":"")+p[18]}</td><td class="pdk">${f1(p[19])}</td></tr>`;
+  const st=P.filter(p=>p[1]),bn=P.filter(p=>!p[1]);
+  const tot=`<tr class="tot"><td>Totale squadra</td><td></td><td>${side==="a"?sa:sh}</td><td>${TS.reb}</td><td>${TS.ast}</td><td>${TS.stl}</td><td>${TS.blk}</td><td>${TS.tov}</td><td>${TS.fgm}-${TS.fga}</td><td>${TS.tpm}-${TS.tpa}</td><td>${TS.ftm}-${TS.fta}</td><td>${TS.oreb}</td><td>${TS.reb-TS.oreb}</td><td>${TS.pf}</td><td></td><td>${f1(Math.round(TS.pdk*100)/100)}</td></tr>
+   <tr class="pct"><td>Percentuali</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>${pc(TS.fgm,TS.fga)}</td><td>${pc(TS.tpm,TS.tpa)}</td><td>${pc(TS.ftm,TS.fta)}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
+  return`<button class="gback tvback" data-tvback="1">‹ Partite del ${dd.getUTCDate()} ${TV_MM[dd.getUTCMonth()]}</button>
+  <div class="tvsb" style="--ca:${ca};--ch:${ch}"><div class="tside">${tvLogo(a)}<b>${tvNick(a)}</b><small>${tvRec(a)} · trasferta</small></div>
+   <div class="tmid"><div><span class="${sa<sh?"lo":""}">${sa}</span><i>–</i><span class="${sh<sa?"lo":""}">${sh}</span></div><small>Finale${ot?" · OT":""}</small></div>
+   <div class="tside">${tvLogo(h)}<b>${tvNick(h)}</b><small>${tvRec(h)} · casa</small></div></div>
+  <div class="tvsec">Migliori</div>
+  <div class="tvlead">${lead("Punti",L.pts,3)}${lead("Rimbalzi",L.reb,6)}${lead("Assist",L.ast,7)}</div>
+  <div class="tvsec">Statistiche di squadra</div><div class="tvleg"><span class="a">${tvNick(a)}</span><span class="h">${tvNick(h)}</span></div>
+  <div class="tvcmp" style="--ca:${ca};--ch:${ch}">${cmp("Tiri dal campo",A.fga?A.fgm/A.fga:0,Hh.fga?Hh.fgm/Hh.fga:0,pf)}${cmp("Tiri da 3",A.tpa?A.tpm/A.tpa:0,Hh.tpa?Hh.tpm/Hh.tpa:0,pf)}${cmp("Tiri liberi",A.fta?A.ftm/A.fta:0,Hh.fta?Hh.ftm/Hh.fta:0,pf)}${cmp("Rimbalzi",A.reb,Hh.reb)}${cmp("Rimbalzi offensivi",A.oreb,Hh.oreb)}${cmp("Assist",A.ast,Hh.ast)}${cmp("Recuperi",A.stl,Hh.stl)}${cmp("Stoppate",A.blk,Hh.blk)}${cmp("Palle perse",A.tov,Hh.tov)}${cmp("Falli",A.pf,Hh.pf)}${cmp("PDK Dunkest",A.pdk,Hh.pdk,v=>Math.round(v))}</div>
+  <div class="tvtabs"><button class="tvtab" data-tvside="a" aria-pressed="${side==="a"}">${tvLogo(a)}${tvNick(a)}</button><button class="tvtab" data-tvside="h" aria-pressed="${side==="h"}">${tvLogo(h)}${tvNick(h)}</button></div>
+  <div class="tbl-wrap"><table class="ptbl tvbox"><thead><tr><th>Giocatore</th><th>Min</th><th>Pt</th><th>Rim</th><th>Ass</th><th>Rec</th><th>Stp</th><th>Pp</th><th>Tiri</th><th>Da 3</th><th>Liberi</th><th>Off</th><th>Dif</th><th>Falli</th><th>+/−</th><th>PDK</th></tr></thead>
+  <tbody><tr class="grp"><td>Quintetto</td><td colspan="15"></td></tr>${st.map(pr).join("")}<tr class="grp"><td>Panchina</td><td colspan="15"></td></tr>${bn.map(pr).join("")}${tot}</tbody></table></div>
+  <p class="note">Tabellino ufficiale (dati Dunkest). Pt punti, Rim rimbalzi, Ass assist, Rec recuperi, Stp stoppate, Pp palle perse, Off/Dif rimbalzi offensivi/difensivi, +/− punti di scarto con il giocatore in campo, PDK punteggio Dunkest. Scorri a destra per tutte le colonne.</p>`}
+document.getElementById("main").addEventListener("click",e=>{if(cur!=="tv")return;const T=TVD(),ks=Object.keys(T.days).sort();
+  const nav=e.target.closest("[data-tvnav]"),day=e.target.closest("[data-tvd]"),gm=e.target.closest("[data-tvg]"),bk=e.target.closest("[data-tvback]"),sd=e.target.closest("[data-tvside]");
+  if(nav){const i=ks.indexOf(TVS.d)+ +nav.dataset.tvnav;if(i>=0&&i<ks.length){TVS.d=ks[i];render()}return}
+  if(day){TVS.d=day.dataset.tvd;render();return}
+  if(gm){TVS.g=gm.dataset.tvg;TVS.side="a";render();window.scrollTo(0,0);return}
+  if(bk){TVS.g=null;render();window.scrollTo(0,0);return}
+  if(sd){TVS.side=sd.dataset.tvside;const y=window.scrollY;render();window.scrollTo(0,y)}});
+const VIEWS={tv:vTV,college:vCollege,trend:vTrend,cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.grafico=vGrafico;
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
