@@ -380,3 +380,9 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
   termini (`COL_LEG`, `colLegend`).
 - (55) Risultati: tolto il "picco Dunkest atteso" (non richiesto da Francesco). Indice = 55% PDK nascosti + 45%
   probabilità di esplosione.
+
+## 26/10/2026 (56) — Telefono in orizzontale
+- Media query `(orientation:landscape) and (max-height:540px)` in fondo al `<head>`: contenuto a tutta larghezza,
+  intestazione su una riga non fissa, campo e grafici entro l'altezza dello schermo, liste a 2 colonne (banner,
+  Risultati, Radar…), filtri a 3-4 colonne. I grafici SVG usano `chW()` (340 in verticale, più larghi in orizzontale) e
+  si ridisegnano da soli quando si gira il telefono.

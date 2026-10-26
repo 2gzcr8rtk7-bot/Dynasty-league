@@ -1406,6 +1406,33 @@ nav button>span{white-space:nowrap}
 @media (max-width:600px){nav{gap:2px}nav button{flex:1 1 auto;min-width:0;font-size:clamp(11px,3.1vw,15px);letter-spacing:0;padding:8px 2px}}
 </style>
 
+<style>
+/* ===== TELEFONO IN ORIZZONTALE: sfrutta la larghezza, intestazione su una riga, grafici entro l'altezza dello schermo ===== */
+@media (orientation:landscape) and (max-height:540px){
+ .wrap{max-width:none!important}
+ header{position:relative!important}
+ header>.wrap{display:flex;align-items:center;gap:14px}
+ header .top{flex:none;padding-block:6px!important;gap:10px}
+ header .lglogo{width:34px!important;height:34px!important}
+ header .brand{font-size:19px!important}
+ header .season{font-size:11px!important}
+ header nav{flex:1 1 auto;min-width:0;padding-bottom:0!important;padding-block:6px!important}
+ main{padding-block:10px 28px!important}
+ .grsvg,svg.grsvg{max-height:calc(100vh - 40px)!important;width:100%}
+ .court{max-width:calc((100vh - 24px)/1.288)!important}
+ .nbans,.scrl,.rdrs,.mres,.ccands,.cdb{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+ .bench{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))!important}
+ .colsheet .ccard{max-width:780px!important}
+ .ctools{grid-template-columns:repeat(2,minmax(0,340px))!important;justify-content:center}
+ .colhd{grid-template-columns:52px 1fr!important}.colhd img{width:52px!important;height:52px!important}
+ .grtop{grid-template-columns:1fr 110px!important}.grctl{grid-template-columns:repeat(3,minmax(0,1fr))!important}.grjs svg{max-width:100px!important}
+ .grhd{margin-bottom:8px!important}
+ .ncf{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+ .trctl{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+ .cust{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+ .colsheet{padding-top:10px!important}
+}
+</style>
 </head>
 <body>
 <header>
@@ -2231,7 +2258,7 @@ function vRookieCmp(){const L=rkList();if(!CMP.a||!L.some(x=>x.n===CMP.a))CMP.a=
   <div class="cmpchips">${chip(A,cA)}${chip(B,cB)}</div>
   <div class="grcard cmpcard">${cmpChart(used.map(m=>ML[MS.indexOf(m)]),series,k)}</div>`}
 function cmpChart(xs,series,k){if(!xs.length)return`<div class="grempty">Nessun dato.</div>`;
-  const W=340,H=250,L=34,R=14,T=26,B=28,X0=L+12,iw=W-L-R-24,ih=H-T-B,isE=k==="eff";
+  const W=chW(),H=250,L=34,R=14,T=26,B=28,X0=L+12,iw=W-L-R-24,ih=H-T-B,isE=k==="eff";
   const v=series.flatMap(s=>s.v).filter(x=>x!=null),S=grNice(Math.min(...v),Math.max(...v),isE,4);
   const x=i=>X0+(xs.length===1?iw/2:i*iw/(xs.length-1)),y=val=>T+ih-((val-S[0])/(S[1]-S[0]))*ih,fmt=val=>isE?val.toFixed(2).replace(".",","):val.toFixed(1).replace(".",",");
   let g="";for(let t=S[0];t<=S[1]+1e-9;t+=S[2]){const yy=y(t);g+=`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" class="grg"/><text x="${L-5}" y="${yy+3}" class="gry l">${isE?t.toFixed(2).replace(".",","):Math.round(t)}</text>`}
@@ -2294,6 +2321,10 @@ let gSeason="2026/27";
    Leggibilità: ogni punto è la MEDIA MOBILE (partita: ultime 5; settimana: ultime 3; mese/stagione: valore del periodo),
    linea curva morbida; i valori reali restano come puntini tenui. Scala adattata ai dati (non da zero) se c'è una sola grandezza per asse. */
 let GR={t:null,p:null,sz:"2026/27",sz2:"2026/27",mese:"",mese2:"",by:"m",show:{pdk:true,min:false,eff:false},from:null};
+/* Larghezza dei grafici: 340 in verticale; in orizzontale (telefono girato) si allarga per usare tutto lo schermo. */
+const isLand=()=>innerWidth>innerHeight&&innerHeight<=540;
+function chW(){if(!isLand())return 340;return Math.round(340*Math.min(2.4,Math.max(1,(innerWidth/innerHeight)/.75)))}
+(()=>{let was=isLand(),tm;addEventListener("resize",()=>{clearTimeout(tm);tm=setTimeout(()=>{const now=isLand();if(now!==was){was=now;const y=scrollY;try{render()}catch(e){}scrollTo(0,y)}},180)})})();
 const GR_SZ=["2026/27","2025/26","2024/25"];
 const GR_MESI=["Gen","Feb","Mar","Apr","Mag","Giu","Lug","Ago","Set","Ott","Nov","Dic"];
 const GR_WIN={g:1,w:1,m:1,s:1};
@@ -2325,7 +2356,7 @@ function grTrend(v){v=v.filter(x=>x!=null);const n=v.length;if(n<2)return null;c
   let num=0,den=0;v.forEach((y,i)=>{num+=(i-xm)*(y-m);den+=(i-xm)**2});const pct=m?(num/den)*(n-1)/m*100:0;return{m,pct}}
 function grChart(P,show){if(!P.length)return`<div class="grempty">Nessuna partita in questo periodo.</div>`;
   const on=Object.keys(show).filter(k=>show[k]);if(!on.length)return`<div class="grempty">Scegli almeno una linea: PDK, Minuti o Efficienza.</div>`;
-  const left=on.filter(k=>k!=="eff"),right=on.includes("eff");const few=P.length<=16,W=340,H=246+(few?(on.length-1)*26:0),L=left.length?32:14,R=right?34:14,T=34,B=32,iw=W-L-R-(few?24:0),ih=H-T-B,X0=L+(few?12:0);
+  const left=on.filter(k=>k!=="eff"),right=on.includes("eff");const few=P.length<=16,W=chW(),H=246+(few?(on.length-1)*26:0),L=left.length?32:14,R=right?34:14,T=34,B=32,iw=W-L-R-(few?24:0),ih=H-T-B,X0=L+(few?12:0);
   const rng=ks=>{const v=P.flatMap(p=>ks.map(k=>p[k])).filter(v=>v!=null);return[Math.min(...v),Math.max(...v)]};
   const SL=left.length?grNice(...rng(left),false,4):null,SR=right?grNice(...rng(["eff"]),true,4):null;
   const x=i=>X0+(P.length===1?iw/2:i*iw/(P.length-1)),y=(v,S)=>T+ih-((v-S[0])/(S[1]-S[0]))*ih,S=k=>k==="eff"?SR:SL;
@@ -2393,7 +2424,7 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   /* colori: colore squadra; più giocatori della stessa squadra = tratteggi diversi */
   const used={},sty={};TRN.on.forEach(n=>{const x=R.find(y=>y.n===n);const i=used[x.t]=(used[x.t]??-1)+1;sty[n]={c:trCol(x.t),d:TR_DASH[i%TR_DASH.length]}});
   const chart=(()=>{const S=R.filter(x=>TRN.on.includes(x.n));if(!S.length||K.length<2)return`<div class="grempty">${R.length?"Tocca un giocatore della lista per vederne la linea.":"Nessun giocatore con questo trend nel periodo scelto."}</div>`;
-    const W=340,H=250,L=32,Rr=62,T=18,B=32,iw=W-L-Rr,ih=H-T-B,vals=S.flatMap(x=>x.pts.map(q=>q.v)),SC=grNice(Math.min(...vals),Math.max(...vals),isE,4);
+    const W=chW(),H=250,L=32,Rr=62,T=18,B=32,iw=W-L-Rr,ih=H-T-B,vals=S.flatMap(x=>x.pts.map(q=>q.v)),SC=grNice(Math.min(...vals),Math.max(...vals),isE,4);
     const X=k=>L+K.indexOf(k)*iw/(K.length-1),Y=v=>T+ih-(v-SC[0])/(SC[1]-SC[0])*ih;
     let grid="";for(let v=SC[0];v<=SC[1]+1e-9;v+=SC[2]){const y=Y(v);grid+=`<line x1="${L}" x2="${W-Rr}" y1="${y}" y2="${y}" class="grg"/><text x="${L-5}" y="${y+3}" class="gry l">${isE?v.toFixed(2).replace(".",","):Math.round(v)}</text>`}
     const step=Math.max(1,Math.ceil(K.length/6));const xl=K.map((k,i)=>{if(i%step&&i!==K.length-1)return"";const[a,b]=trLab(k,by).split("|");return`<text x="${X(k)}" y="${H-B+15}" class="grx big">${a}</text><text x="${X(k)}" y="${H-B+26}" class="grx">${b}</text>`}).join("");
@@ -2744,7 +2775,7 @@ function colCard(){const L=colRows(COL.r),x=L.find(y=>y.n===COL.sel);if(!x)retur
    <div class="ccom"><small>Commento tecnico</small>${colComment(x).map(t=>`<p>${t}</p>`).join("")}</div>
    <button class="cshare" data-colshare="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Condividi la scheda</span></button></div>`}
 function colLabels(pts,W){pts.sort((a,b)=>a.y-b.y);const out=[];pts.forEach(p=>{let y=p.y-7,ok=false;for(let k=0;k<6&&!ok;k++){const yy=y+(k%2?1:-1)*Math.ceil(k/2)*10;if(!out.some(o=>Math.abs(o.y-yy)<9&&Math.abs(o.x-p.x)<p.w/2+o.w/2)){y=yy;ok=true}}if(ok)out.push({...p,y})});return out}
-function colMap(){const L=colRows(COL.r),col=COL_RL.find(r=>r[0]===COL.r)[3];const W=340,H=300,l=34,r=10,t=14,b=34,iw=W-l-r,ih=H-t-b;
+function colMap(){const L=colRows(COL.r),col=COL_RL.find(r=>r[0]===COL.r)[3];const W=chW(),H=300,l=34,r=10,t=14,b=34,iw=W-l-r,ih=H-t-b;
   const ux=[14,40],py=[.35,Math.max(1.25,Math.ceil(Math.max(...L.map(x=>x.pm))*10)/10+.05)];const X=v=>l+(v-ux[0])/(ux[1]-ux[0])*iw,Y=v=>t+ih-(v-py[0])/(py[1]-py[0])*ih;
   let g="";for(let v=.4;v<=py[1]+1e-9;v+=.2)g+=`<line x1="${l}" x2="${W-r}" y1="${Y(v)}" y2="${Y(v)}" class="grg"/><text x="${l-4}" y="${Y(v)+3}" class="gry l">${v.toFixed(1).replace(".",",")}</text>`;
   for(let u=15;u<=40;u+=5)g+=`<text x="${X(u)}" y="${H-b+14}" class="grx">${u}%</text>`;
@@ -2759,7 +2790,7 @@ function colMap(){const L=colRows(COL.r),col=COL_RL.find(r=>r[0]===COL.r)[3];con
   <p class="note">Più in alto = più PDK al minuto. Più a sinistra = meno palloni gestiti. In alto a sinistra c'è la "potenza nascosta": chi produce tanto senza avere la palla in mano, ed è proprio lì che il POT li premia (riporta la resa al 27% di usage). Tocca un pallino per la scheda.</p>`}
 function colNbaChart(){const L=colRows(COL.r),col=COL_RL.find(r=>r[0]===COL.r)[3],R=colReg(L);const P=L.filter(x=>!x.r26&&x.nba);
   if(!R)return`<div class="grempty">Pochi giocatori di questo ruolo con dati NBA.</div>`;
-  const W=340,H=300,l=30,r=12,t=14,b=34,iw=W-l-r,ih=H-t-b;const xs=L.map(x=>x.pot),x0=Math.floor(Math.min(...xs)*10)/10-.05,x1=Math.ceil(Math.max(...xs)*10)/10+.05;
+  const W=chW(),H=300,l=30,r=12,t=14,b=34,iw=W-l-r,ih=H-t-b;const xs=L.map(x=>x.pot),x0=Math.floor(Math.min(...xs)*10)/10-.05,x1=Math.ceil(Math.max(...xs)*10)/10+.05;
   const ys=P.map(x=>x.nba.v).concat(L.filter(x=>x.r26).map(x=>R.a+R.b*x.pot)),y0=0,y1=Math.max(50,Math.ceil(Math.max(...ys)/10)*10);
   const X=v=>l+(v-x0)/(x1-x0)*iw,Y=v=>t+ih-(v-y0)/(y1-y0)*ih;let g="";
   for(let v=0;v<=y1;v+=10)g+=`<line x1="${l}" x2="${W-r}" y1="${Y(v)}" y2="${Y(v)}" class="grg${v===30||v===40?" hi":""}"/><text x="${l-4}" y="${Y(v)+3}" class="gry l">${v}</text>`;
@@ -2796,7 +2827,7 @@ function colAffid(L){const A=L.filter(x=>x.app).map(x=>({x,nb:colNbaPm(x.app,x)}
   <p>${best&&best.r>=.2?`Per questo ruolo il dato più utile è <b>${best.l}</b>.`:`Per questo ruolo i numeri del college dicono poco su come renderà in NBA: contano di più ruolo in squadra, minuti e crescita fisica. Qui conta l'occhio.`}</p></div>`}
 function colStudio(){const L=colRows(COL.r),col=COL_RL.find(r=>r[0]===COL.r)[3],{R,med}=colConv(L);
   if(!R.length)return`<div class="grempty">Nessun rookie recente di questo ruolo con dati college e NBA.</div>`;
-  const W=340,H=290,l=32,r=12,t=14,b=34,iw=W-l-r,ih=H-t-b;const mx=Math.max(...R.map(o=>Math.max(o.x.pm,o.nb.pm)))*1.1,mn=Math.min(...R.map(o=>Math.min(o.x.pm,o.nb.pm)))*.85;
+  const W=chW(),H=290,l=32,r=12,t=14,b=34,iw=W-l-r,ih=H-t-b;const mx=Math.max(...R.map(o=>Math.max(o.x.pm,o.nb.pm)))*1.1,mn=Math.min(...R.map(o=>Math.min(o.x.pm,o.nb.pm)))*.85;
   const X=v=>l+(v-mn)/(mx-mn)*iw,Y=v=>t+ih-(v-mn)/(mx-mn)*ih;let g="";for(let v=Math.ceil(mn*10)/10;v<=mx;v+=.1){g+=`<line x1="${l}" x2="${W-r}" y1="${Y(v)}" y2="${Y(v)}" class="grg"/><text x="${l-4}" y="${Y(v)+3}" class="gry l">${v.toFixed(1).replace(".",",")}</text><text x="${X(v)}" y="${H-b+14}" class="grx">${v.toFixed(1).replace(".",",")}</text>`}
   const eq=`<line x1="${X(mn)}" y1="${Y(mn)}" x2="${X(mx)}" y2="${Y(mx)}" stroke="rgba(255,255,255,.3)" stroke-width="1"/><text x="${X(mx)-4}" y="${Y(mx)+12}" class="cisol">stessa resa</text>`;
   const cl=med?`<line x1="${X(mn)}" y1="${Y(mn*med)}" x2="${X(mx)}" y2="${Y(mx*med)}" stroke="${col}" stroke-width="2" stroke-dasharray="5 4"/>`:"";
@@ -2825,14 +2856,14 @@ function colUsage(){const A=colAll(),u=+COL.u,k=+COL.k,isP=x=>x.usg<=u&&x.p36>=k
   const st=L=>{const n=L.length,av=f=>n?L.reduce((s,x)=>s+f(x),0)/n:null;return{n,ex:n?Math.round(100*L.filter(x=>jump(x)>=EX).length/n):0,salto:av(jump),y1:av(x=>x.Y[1].p),best:av(bestOf),m1:av(x=>x.Y[1].m),pm1:av(x=>x.Y[1].p/x.Y[1].m),pmb:av(x=>{const b=Object.values(x.Y).reduce((a,c)=>c.p>a.p?c:a);return b.p/b.m}),p30:n?Math.round(100*L.filter(x=>bestOf(x)>=30).length/n):0}};
   const sg=st(G),so=st(O);
   /* 1) curva di crescita per anno NBA */
-  const curve=(()=>{const W=340,H=250,l=30,r=12,t=16,b=30,iw=W-l-r,ih=H-t-b,NY=6;const avg=(L,y)=>{const v=L.map(x=>x.Y[y]).filter(Boolean);return v.length>=2?{p:v.reduce((s,z)=>s+z.p,0)/v.length,n:v.length}:null};
+  const curve=(()=>{const W=chW(),H=250,l=30,r=12,t=16,b=30,iw=W-l-r,ih=H-t-b,NY=6;const avg=(L,y)=>{const v=L.map(x=>x.Y[y]).filter(Boolean);return v.length>=2?{p:v.reduce((s,z)=>s+z.p,0)/v.length,n:v.length}:null};
     const X=y=>l+(y-1)/(NY-1)*iw,Y=v=>t+ih-v/40*ih;let g="";for(let v=0;v<=40;v+=10)g+=`<line x1="${l}" x2="${W-r}" y1="${Y(v)}" y2="${Y(v)}" class="grg"/><text x="${l-4}" y="${Y(v)+3}" class="gry l">${v}</text>`;
     for(let y=1;y<=NY;y++)g+=`<text x="${X(y)}" y="${H-b+14}" class="grx big">${y}° anno</text>`;
     const thin=G.map(x=>{const pts=Object.keys(x.Y).map(Number).filter(y=>y<=NY).sort((a,b)=>a-b).map(y=>X(y).toFixed(1)+","+Y(x.Y[y].p).toFixed(1));return pts.length>1?`<polyline points="${pts.join(" ")}" fill="none" stroke="#facc15" stroke-opacity=".18" stroke-width="1.2"/>`:""}).join("");
     const line=(L,c,w)=>{const P=[];for(let y=1;y<=NY;y++){const a=avg(L,y);if(a)P.push([X(y),Y(a.p),a])}return`<polyline points="${P.map(q=>q[0].toFixed(1)+","+q[1].toFixed(1)).join(" ")}" fill="none" stroke="${c}" stroke-width="${w}"/>`+P.map(q=>`<circle cx="${q[0].toFixed(1)}" cy="${q[1].toFixed(1)}" r="4" fill="${c}" stroke="#0b1022" stroke-width="1.5"/><text x="${q[0].toFixed(1)}" y="${(q[1]+(c==="#facc15"?-8:14)).toFixed(1)}" class="cdl" fill="${c}" text-anchor="middle">${cf1(q[2].p)}</text>`).join("")};
     return`<svg class="grsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Curva di crescita">${g}${thin}${line(O,"#94a3b8",2.4)}${line(G,"#facc15",3)}<text x="4" y="10" class="gry ax" text-anchor="start">PDK MEDI PER ANNO NBA</text></svg>`})();
   /* 2) mappa usage vs P36/USG */
-  const W=340,H=300,l=34,r=10,t=14,b=34,iw=W-l-r,ih=H-t-b,ux=[15,40],ky=[.4,2.05],X=v=>l+(Math.min(ux[1],Math.max(ux[0],v))-ux[0])/(ux[1]-ux[0])*iw,Y=v=>t+ih-(Math.min(ky[1],Math.max(ky[0],v))-ky[0])/(ky[1]-ky[0])*ih;
+  const W=chW(),H=300,l=34,r=10,t=14,b=34,iw=W-l-r,ih=H-t-b,ux=[15,40],ky=[.4,2.05],X=v=>l+(Math.min(ux[1],Math.max(ux[0],v))-ux[0])/(ux[1]-ux[0])*iw,Y=v=>t+ih-(Math.min(ky[1],Math.max(ky[0],v))-ky[0])/(ky[1]-ky[0])*ih;
   let g="";for(let v=.5;v<=2;v+=.25)g+=`<line x1="${l}" x2="${W-r}" y1="${Y(v)}" y2="${Y(v)}" class="grg"/><text x="${l-4}" y="${Y(v)+3}" class="gry l">${v.toFixed(2).replace(".",",")}</text>`;for(let v=15;v<=40;v+=5)g+=`<text x="${X(v)}" y="${H-b+14}" class="grx">${v}%</text>`;
   const zone=`<rect x="${l}" y="${t}" width="${X(u)-l}" height="${Y(k)-t}" fill="#facc15" opacity=".13"/><line x1="${X(u)}" x2="${X(u)}" y1="${t}" y2="${t+ih}" class="cq"/><line x1="${l}" x2="${W-r}" y1="${Y(k)}" y2="${Y(k)}" class="cq"/><text x="${l+4}" y="${t+10}" class="czl" style="fill:#facc15">PROFILO HALIBURTON</text>`;
   const cl=x=>x.r26||!x.nba?"none":x.Y[1]&&jump(x)>=EX?"#facc15":"rgba(255,255,255,.45)";
@@ -2880,7 +2911,7 @@ function colRadar(){const R=colRadarRows(),A=colAll();
   const T=[...H].sort((p,q)=>p.hid-q.hid),t1=T[Math.floor(n/2)].hid,rate=f=>{const L=H.filter(f);return L.length?Math.round(100*L.filter(o=>o.j>=8).length/L.length):0},jav=f=>{const L=H.filter(f);return L.length?L.reduce((s,o)=>s+o.j,0)/L.length:0};
   const rH=rate(o=>o.hid>=t1),rL=rate(o=>o.hid<t1),jH=jav(o=>o.hid>=t1),jL=jav(o=>o.hid<t1);
   const lvl=h=>h>=t1?["alto",rH,"a"]:["basso",rL,"c"];
-  const W=340,Hh=230,l=30,r=10,t=14,bb=30,iw=W-l-r,ih=Hh-t-bb,xm=Math.max(...H.map(o=>o.hid))*1.08,ym=Math.max(...H.map(o=>o.j))*1.1;
+  const W=chW(),Hh=230,l=30,r=10,t=14,bb=30,iw=W-l-r,ih=Hh-t-bb,xm=Math.max(...H.map(o=>o.hid))*1.08,ym=Math.max(...H.map(o=>o.j))*1.1;
   const X=v=>l+v/xm*iw,Y=v=>t+ih-Math.max(0,v)/ym*ih;let g="";for(let v=0;v<=ym;v+=10)g+=`<line x1="${l}" x2="${W-r}" y1="${Y(v)}" y2="${Y(v)}" class="grg"/><text x="${l-4}" y="${Y(v)+3}" class="gry l">+${v}</text>`;for(let v=0;v<=xm;v+=5)g+=`<text x="${X(v)}" y="${Hh-bb+14}" class="grx">${v}</text>`;
   const pts=H.map(o=>`<circle cx="${X(o.hid).toFixed(1)}" cy="${Y(o.j).toFixed(1)}" r="4.2" fill="${o.j>=8?"#facc15":"rgba(255,255,255,.4)"}" stroke="#0b1022" stroke-width="1.2" data-colsel="${o.x.n.replace(/"/g,"&quot;")}" data-colrr="${o.x.r}" class="cdot"/>`).join("");
   const lab=colLabels(H.filter(o=>o.j>=18||o.hid>=14).map(o=>({x:X(o.hid),y:Y(o.j),t:colLbl(o.x),w:colLbl(o.x).length*5.2,c:o.j>=8?"#facc15":"#cbd5e1"})),W).map(o=>`<text x="${o.x.toFixed(1)}" y="${o.y.toFixed(1)}" class="cdl" fill="${o.c}" text-anchor="${o.x>W-50?"end":o.x<l+30?"start":"middle"}">${o.t}</text>`).join("");
@@ -2957,7 +2988,7 @@ function nbChart(){const G=NB.g,pl=G.pl.filter(n=>nbAll().some(p=>p.n===n)),met=
     else{const w=+G.gran.slice(2);pts=g.map((x,j)=>({t:+x.dt,v:nbAv(g.slice(Math.max(0,j-w+1),j+1),met)}))}
     const c=NB_PAL[i%NB_PAL.length];return{p,pts,avg:nbAv(g,met),c,dash:"",n:g.length}});
   const all=S.flatMap(s=>s.pts);if(!all.length)return`<div class="grempty">Nessuna partita nel periodo scelto.</div>`;
-  const W=340,H=260,l=32,r=64,t=14,b=30,iw=W-l-r,ih=H-t-b,t0=Math.min(...all.map(q=>q.t)),t1=Math.max(...all.map(q=>q.t)),vs=all.map(q=>q.v).concat(G.avg?S.map(s=>s.avg).filter(v=>v!=null):[]),SC=grNice(Math.min(...vs),Math.max(...vs),met==="eff",4);
+  const W=chW(),H=260,l=32,r=64,t=14,b=30,iw=W-l-r,ih=H-t-b,t0=Math.min(...all.map(q=>q.t)),t1=Math.max(...all.map(q=>q.t)),vs=all.map(q=>q.v).concat(G.avg?S.map(s=>s.avg).filter(v=>v!=null):[]),SC=grNice(Math.min(...vs),Math.max(...vs),met==="eff",4);
   const X=v=>l+(t1===t0?iw/2:(v-t0)/(t1-t0)*iw),Y=v=>t+ih-(v-SC[0])/(SC[1]-SC[0])*ih;let g="";
   for(let v=SC[0];v<=SC[1]+1e-9;v+=SC[2])g+=`<line x1="${l}" x2="${W-r}" y1="${Y(v)}" y2="${Y(v)}" class="grg"/><text x="${l-4}" y="${Y(v)+3}" class="gry l">${met==="eff"?v.toFixed(2).replace(".",","):Math.round(v)}</text>`;
   for(let k=0;k<=4;k++){const tt=t0+(t1-t0)*k/4;g+=`<text x="${X(tt)}" y="${H-b+14}" class="grx">${nbFd(new Date(tt))}</text>`}
