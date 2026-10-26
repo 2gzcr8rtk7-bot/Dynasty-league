@@ -37,3 +37,12 @@ pesa il recente ma conta la carriera) · Curry 2–3 · Dončić 2½–3.
   | stelle | 5 | 4½ | 4 | 3½ | 3 | 2½ | 2 | 1½ | 1 | ½ |
   |---|---|---|---|---|---|---|---|---|---|---|
   | prezzo | +20% | +10% | +4% | +2% | 0 | −6% | −15% | −30% | −50% | −80% |
+
+## Minutaggio (26/10/2026)
+Esempi di Francesco: Amen Thompson ~36 min (spesso 38) e Maxey = 5 stelle · ~5 min = 1 · 7–10 min = 1½ · 20–22 min = 3 · 25 min = 3½.
+Fasce (minuti medi): ≥36 =5 · 33 =4½ · 29 =4 · 25 =3½ · 20 =3 · 16 =2½ · 12 =2 · 7 =1½ · 4 =1 · meno =½.
+Peso sul valore/prezzo:
+- Conta soprattutto per i giocatori con PDK medio-bassi.
+- Per chi ha tanti PDK il minutaggio conta poco (conta il PDK). Anzi: tanti PDK con pochi minuti = tanta efficienza
+  e margine di crescita se i minuti aumentano → semmai un segnale positivo.
+- Per i giovani (prime 2 stagioni NBA) i minuti contano molto meno: conta di più l'efficienza.
