@@ -127,3 +127,9 @@ Voto del GM: Ingram Infortuni ½.
   diventa scambiabile 1:1 con lui. → Nel modello: il premio promessa si applica con un tetto (rendimenti decrescenti);
   valore e prezzo di un giocatore senza PDK da affermato (<40 di media in carriera) restano sotto quelli dei
   giocatori affermati da 40+ PDK.
+- **Tetto di crescita / potenziale proiettato (Clingan)**: la giovinezza vale solo se c'è margine di crescita. Clingan a
+  Portland è il 4° per spazio (Lillard, Morant, Avdija) e, molto grosso e poco atletico, non crescerà nei minuti: giocherà
+  più o meno sempre quelli, con efficienza simile → tetto realistico ~33 PDK, nessun potenziale esplosivo.
+  → Nel modello: si stima un **PDK potenziale** (tetto) per i giovani, limitato da gerarchia in squadra, minuti
+  sostenibili (fisico/atletismo) ed efficienza attuale; il premio giovinezza si applica in proporzione al margine
+  (tetto − PDK attuale), non all'età da sola. Il tetto è un dato del GM quando serve un giudizio visivo.
