@@ -4916,14 +4916,14 @@ render();
 <script>
 /* ===== INDIETRO CON SWIPE (bordo sinistro o destro) + tasto/gesto indietro di Android =====
    Ordine: 1) chiude il foglio aperto (.colsheet), 2) usa il tasto ‹ indietro della pagina (anche se nascosto),
-   3) torna alla sezione precedente (pila NAVH). I tasti ‹ restano visibili: lo swipe è un supporto. */
+   3) solo per il tasto/gesto indietro di Android: torna alla sezione precedente (pila NAVH). Lo SWIPE invece funziona solo dove c'è un tasto ‹ visibile o un foglio aperto (navTarget(1)); dove non si può tornare indietro non parte. */
 const NAVH=[];let navLast=cur,navT=0;
 (function(){const r0=render;render=function(){if(navLast!==null&&cur!==navLast){if(NAVH[NAVH.length-1]===cur)NAVH.pop();else{NAVH.push(navLast);if(NAVH.length>40)NAVH.shift()}}navLast=cur;return r0.apply(this,arguments)}})();
-function navTarget(){const sh=[...document.querySelectorAll(".colsheet")].filter(x=>x.offsetParent!==null||getComputedStyle(x).position==="fixed");
+function navTarget(btnOnly){const sh=[...document.querySelectorAll(".colsheet")].filter(x=>x.offsetParent!==null||getComputedStyle(x).position==="fixed");
   if(sh.length){const x=sh[sh.length-1].querySelector(".ccx,[data-trdx],[data-colleg]");if(x)return{el:x}}
-  const b=[...document.querySelectorAll("#main .gback,#main .grback")];if(b.length)return{el:b[b.length-1]};
-  if(NAVH.length)return{view:NAVH[NAVH.length-1]};return null}
-function navBack(){const n=Date.now();if(n-navT<450)return true;const t=navTarget();if(!t)return false;navT=n;
+  const b=[...document.querySelectorAll("#main .gback,#main .grback")].filter(x=>!(btnOnly&&x.matches('[data-nt="back"]'))&&x.offsetParent!==null);if(b.length)return{el:b[b.length-1]};
+  if(!btnOnly&&NAVH.length)return{view:NAVH[NAVH.length-1]};return null}
+function navBack(btnOnly){const n=Date.now();if(n-navT<450)return true;const t=navTarget(btnOnly);if(!t)return false;navT=n;
   if(t.el)t.el.click();else{cur=t.view;render();window.scrollTo(0,0)}return true}
 /* Android: una voce finta nella cronologia, il gesto/tasto indietro torna indietro nell'app */
 try{history.pushState({dl:1},"")}catch(e){}
@@ -4937,7 +4937,7 @@ addEventListener("popstate",()=>{if(navBack()){try{history.pushState({dl:1},"")}
     ar.style.opacity=String(Math.min(1,v/40));ar.style.transform=`scale(${.7+.3*p})`;ar.classList.toggle("go",p>=1);
     if(p>=1&&!arm){arm=true;try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}}else if(p<1)arm=false};
   addEventListener("touchstart",e=>{if(e.touches.length!==1){on=false;return}const t=e.touches[0],x=t.clientX;side=x<=E?1:x>=innerWidth-E?-1:0;
-    if(!side||!navTarget())return;sx=x;sy=t.clientY;on=true;ok=false;dx=0;arm=false;t0=Date.now();el=tgt();
+    if(!side||!navTarget(1))return;sx=x;sy=t.clientY;on=true;ok=false;dx=0;arm=false;t0=Date.now();el=tgt();
     {const h=document.querySelector("header,.top,.hdr");const hb=h?h.getBoundingClientRect().bottom:0;ar.style.top=Math.max(12,hb+12)+"px"}},{passive:true});
   addEventListener("touchmove",e=>{if(!on)return;const t=e.touches[0];dx=(t.clientX-sx)*side;const dy=Math.abs(t.clientY-sy);
     if(!ok){if(dy>10&&dy>dx*1.1){on=false;return}if(dx>8){ok=true;el.style.transition="none";el.style.willChange="transform";el.style.boxShadow=side>0?"-14px 0 28px rgba(0,0,0,.45)":"14px 0 28px rgba(0,0,0,.45)"}else return}
@@ -4947,7 +4947,7 @@ addEventListener("popstate",()=>{if(navBack()){try{history.pushState({dl:1},"")}
     const ms=Math.max(1,Date.now()-t0),go=dx>innerWidth*.25||(dx>45&&dx/ms>.45),e2=el;
     ar.style.opacity="0";ar.classList.remove("go");
     if(go){e2.style.transition="transform .16s ease-out";e2.style.transform=`translate3d(${side*innerWidth}px,0,0)`;
-      setTimeout(()=>{reset(e2);navBack();const m=document.getElementById("main");if(!m)return;m.style.transition="none";m.style.transform=`translate3d(${-side*28}px,0,0)`;m.style.opacity=".4";
+      setTimeout(()=>{reset(e2);navBack(1);const m=document.getElementById("main");if(!m)return;m.style.transition="none";m.style.transform=`translate3d(${-side*28}px,0,0)`;m.style.opacity=".4";
         requestAnimationFrame(()=>requestAnimationFrame(()=>{m.style.transition="transform .2s ease-out,opacity .2s ease-out";m.style.transform="";m.style.opacity="";setTimeout(()=>reset(m),230)}))},150)}
     else{e2.style.transition="transform .18s ease-out";e2.style.transform="";setTimeout(()=>reset(e2),200)}};
   addEventListener("touchend",end);addEventListener("touchcancel",end)})();
