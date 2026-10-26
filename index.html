@@ -2466,7 +2466,8 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   const iA=mesi.indexOf(TRN.mese);let iB=mesi.indexOf(TRN.mese2);if(iA<0)TRN.mese2="";else if(iB<iA){iB=iA;TRN.mese2=TRN.mese}
   const rng=iA<0?mesi:mesi.slice(iA,iB+1);let by=multi?"s":rng.length===1?"w":"m";
   /* se il periodo ha un solo punto possibile (es. stagione appena iniziata) si passa alle singole partite */
-  {const ks=new Set();G.forEach(g=>g.forEach(x=>{if(rng.includes(grMk(x.dt)))ks.add(trKey(x,by))}));if(ks.size<2&&by!=="s")by="g"}
+  {const ks=new Set();let mx=0;G.forEach(g=>{let c=0;g.forEach(x=>{if(rng.includes(grMk(x.dt))){ks.add(trKey(x,by));c++}});if(c>mx)mx=c});if(by!=="s"&&(ks.size<2||mx<=8))by="g"}
+  /* stagione appena iniziata (al massimo 8 partite a testa nel periodo): punti = singole partite, così nessuno resta escluso */
   TRN._ctx={SZR,rng,by,sz};
   const keysAll=new Set(),R=[];
   PL.forEach(p=>{if(TRN.team&&p.t!==TRN.team)return;if(!TRN.ruoli.includes(p.r))return;const g=G.get(p.n).filter(x=>rng.includes(grMk(x.dt)));if(g.length<+TRN.minp)return;
