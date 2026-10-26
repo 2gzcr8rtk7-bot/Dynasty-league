@@ -2207,7 +2207,8 @@ function pagella(n){const cur=PARTITE[n]||[],ref=pgRef(n),rk=isRookie(n);
   const yr=NBA_ANNO[n]?NBA_STAG-NBA_ANNO[n]:null,young=yr!=null&&yr<=3;
   const thr={G:.6,F:.66,C:.75}[role]||.66;
   return{pdk,mn,ef,age,yr,young,rk,
-    s:{pdk:pdk==null?null:pgInterp(pdk,[[20,0],[24,1],[27,2],[30,3],[40,4],[50,5]]),
+    /* PDK: stesse stelline mostrate ovunque (funzione stelle), come da tools/CRITERI_VALORI.md */
+    s:{pdk:stelle(n),
        gio:age==null?null:pgInterp(age,[[20,5],[22,4.5],[24,4],[26,3.5],[28,3],[30,2.5],[32,2],[34,1.5],[36,1],[38,.5],[40,0]]),
        inj:INF_STELLE[n]??(rk?3:null),
        min:mn==null?null:pgInterp(mn,[[0,0],[4,1],[7,1.5],[15,2],[20,2.5],[25,3],[29,3.5],[31,4],[34,4.5],[36,5]]),
@@ -2219,7 +2220,7 @@ function pgStars(v,col,rk){if(v==null)return`<span class="pgnd">n.d.</span>`;con
 function pagellaHTML(n){const P=pagella(n),S=P.s,v=(VALORI[n]||[])[1],pr=v!=null?prezzo(v,n):null,f1=x=>x==null?"":x.toLocaleString("it-IT",{maximumFractionDigits:1});
   const c=(lab,sub,val,col,rk)=>`<div class="pgc"><small>${lab}${sub?` <em>${sub}</em>`:""}</small>${pgStars(val,col,rk)}</div>`;
   return`<div class="pgbox"><div class="pgvp"><div><small>Valore</small><b>${v??"n.d."}</b></div><div><small>Prezzo</small><b class="pr">${pr??"—"}<i> cr</i></b></div><div class="pgag"><small>Agg.</small><span>${VALORI_AGG}</span></div></div>
-  <div class="pgg">${c("PDK",f1(P.pdk),S.pdk,PG_COL.pdk,P.rk)}${c("Giovinezza",P.age?Math.floor(P.age)+" anni":"",S.gio,PG_COL.gio)}
+  <div class="pgg">${c("PDK",f1(pdkStar(n)),S.pdk,PG_COL.pdk,P.rk)}${c("Giovinezza",P.age?Math.floor(P.age)+" anni":"",S.gio,PG_COL.gio)}
   ${c("Infortuni",INF_STELLE[n]==null&&P.rk?"neutro":"",S.inj,PG_COL.inj)}${c("Minutaggio",P.mn!=null?f1(P.mn)+"'":"",S.min,PG_COL.min)}
   ${c(P.young?"Efficienza giovani":"Efficienza esperti",P.ef!=null?P.ef.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2}):"",S.eff,P.young?PG_COL.effg:PG_COL.effe)}${c("Spazio in squadra","",S.spa,PG_COL.spa)}</div>
   <p class="pgnote">Più stelle = meglio (Infortuni: più stelle = più sano). ${P.rk?"Stella azzurra = rookie. ":""}${P.young?`${P.yr}° anno NBA: efficienza confrontata con la soglia del ruolo.`:""}</p></div>`}

@@ -437,3 +437,5 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 (77) Statistiche notte (vista "statnotte", vStatNotte; attenzione: vNotte e VIEWS.notte sono del gioco "Sfida della notte"). Bottone viola .snbtn sotto "Calcola il trend". Elenca tutti i giocatori dei ROSTER con una partita in PARTITE nella notte scelta (data USA, frecce per le notti precedenti), ordinati per PDK, con wedge colorato della franchigia e PDK nei riquadri a fasce (rosso <20, giallo, verde, viola ≥40).
 
 (78) Statistiche notte: interruttore piccolo PDK/Eff. (.snsw, SN.m). In Eff. ordina per efficienza della notte (PARTITE col. 4) con fasce rosso <0,80, giallo 0,80-1,10, verde >1,10, viola ≥1,50 (stesse soglie del lvl dell'app + viola).
+
+(79) Stelline PDK unificate: nella pagella del giocatore la categoria PDK ora usa stelle(n) (stessa funzione delle stelline accanto ai nomi in Trade/Valori/roster, scala di tools/CRITERI_VALORI.md: 50=5, 45=4½, 40=4, 35=3½, 30=3, 28,5=2½, 27=2, 24=1) e mostra il PDK di pdkStar(n). Prima la pagella usava un PDK misto (stagione in corso + riferimento) con interpolazione continua: 52 giocatori su 115 avevano stelline diverse.
