@@ -1984,11 +1984,11 @@ function grGames(n,sz){const one=s=>{const a=s===GR_SZ[0]?(PARTITE[n]||[]):((STA
   const g=sz==="all"?GR_SZ.slice().reverse().flatMap(one):one(sz);return g.sort((a,b)=>a.dt-b.dt)}
 const grAvg=(a,f)=>{const v=a.map(f).filter(v=>v!=null);return v.length?v.reduce((s,y)=>s+y,0)/v.length:null};
 function grGroup(g,by){const key=x=>{const d=x.dt;if(by==="g")return d.toISOString().slice(0,10)+"#"+x.opp;
-    if(by==="w"){const w=new Date(d);w.setUTCDate(w.getUTCDate()-((w.getUTCDay()+6)%7));return w.toISOString().slice(0,10)}
+    if(by==="w")return grMk(d)+"#"+Math.min(3,Math.floor((d.getUTCDate()-1)/7)); /* mese diviso sempre in 4 settimane: 1-7, 8-14, 15-21, 22-fine */
     if(by==="m")return d.getUTCFullYear()+"-"+String(d.getUTCMonth()+1).padStart(2,"0");return x.sz};
   const M=new Map();g.forEach(x=>{const k=key(x);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});
   const P=[...M.entries()].map(([k,a],ix)=>{let lab;if(by==="g"){const d=a[0].dt;lab=GR_GG[d.getUTCDay()]+" "+String(d.getUTCDate()).padStart(2,"0")+"/"+String(d.getUTCMonth()+1).padStart(2,"0")+"|"+a[0].opp}
-      else if(by==="w"){const d0=new Date(k+"T00:00:00Z"),d1=new Date(d0);d1.setUTCDate(d1.getUTCDate()+6);const f=d=>String(d.getUTCDate()).padStart(2,"0");lab="Sett. "+(ix+1)+"|"+f(d0)+"–"+f(d1)+"/"+String(d1.getUTCMonth()+1).padStart(2,"0")}else if(by==="m"){const[y,m]=k.split("-");lab=GR_MESI[+m-1]+"|"+y}else lab=SZ_LBL[k]+"|"+k.slice(2);
+      else if(by==="w"){const[mk,q]=k.split("#"),[yy,mm]=mk.split("-").map(Number),last=new Date(Date.UTC(yy,mm,0)).getUTCDate(),a0=+q*7+1,a1=+q===3?last:a0+6,f=v=>String(v).padStart(2,"0");lab="Sett. "+(+q+1)+"|"+f(a0)+"–"+f(a1)+"/"+f(mm)}else if(by==="m"){const[y,m]=k.split("-");lab=GR_MESI[+m-1]+"|"+y}else lab=SZ_LBL[k]+"|"+k.slice(2);
     return{lab,raw:{pdk:grAvg(a,x=>x.pdk),min:grAvg(a,x=>x.min),eff:grAvg(a,x=>x.eff)}}});
   const w=GR_WIN[by];P.forEach((p,i)=>{const s=P.slice(Math.max(0,i-w+1),i+1);p.pdk=grAvg(s,q=>q.raw.pdk);p.min=grAvg(s,q=>q.raw.min);p.eff=grAvg(s,q=>q.raw.eff)});return P}
 function grPath(pts){if(pts.length<2)return pts.length?`M${pts[0][0]},${pts[0][1]}`:"";let d=`M${pts[0][0]},${pts[0][1]}`;
