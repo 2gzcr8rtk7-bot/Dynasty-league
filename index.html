@@ -1689,7 +1689,7 @@ nav button>span{white-space:nowrap}
 </style><style>
 .vdl{display:block;font-style:normal;font-weight:800;font-size:10px;letter-spacing:.02em;margin-top:1px;color:var(--muted)}.vdl.su{color:#22c55e}.vdl.giu{color:#ef4444}
 .vfrom{display:block;font-style:normal;font-size:10.5px;color:var(--muted);margin-top:2px}.vfrom .vdl{display:inline;margin-left:4px}
-</style><style>.fasz{white-space:nowrap}.fasz small{display:block;font-size:10px;color:var(--muted);font-style:normal;font-weight:600}</style></head>
+</style><style>.fasz{white-space:nowrap}.fasz small{display:block;font-size:10px;color:var(--muted);font-style:normal;font-weight:600}</style><style>.grk{display:flex;gap:12px;align-items:baseline}.grk span{display:flex;flex-direction:column}.grk i{font-style:normal;font-size:10.5px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin-top:1px}</style></head>
 <body>
 <header>
   <div class="wrap">
@@ -2976,13 +2976,10 @@ function vGiocatore(){
     ${stat("Partite",e[2])}
     ${stat("Minuti medi",e[3]==null?"—":e[3].toLocaleString("it-IT",{minimumFractionDigits:1}))}
     ${stat("Proiezione 36'",f2(e[1]*36).replace(/,\d+$/,m=>m.slice(0,2)),"Dunkest")}
-    ${stat("Ultima partita",LAST==null?"—":f2(LAST),"efficienza (Dunkest/min)")}
-    ${stat("Efficienza · squadra",rT?rT+"°":"—","su "+team.length+" "+c.nick)}
-    ${stat("Efficienza · lega",rL?rL+"°":"—","su "+all.length+" della lega")}
+    ${stat("Ultima partita",LAST==null?"—":f2(LAST),"Dunkest/min")}
     ${(()=>{const src=nm=>past?((STAGIONI[sz]||{})[nm]||[]):(PARTITE[nm]||[]),av=nm=>{const g=src(nm);return g.length?g.reduce((s,x)=>s+(+x[3]||0),0)/g.length:null};
-      const AL=all.map(x=>[x[1],av(x[1])]).filter(x=>x[1]!=null).sort((a,b)=>b[1]-a[1]),TL=team.map(x=>[x[0],av(x[0])]).filter(x=>x[1]!=null).sort((a,b)=>b[1]-a[1]);
-      const pL=AL.findIndex(x=>x[0]===p[0])+1,pT=TL.findIndex(x=>x[0]===p[0])+1,lg=GL.length?GL[GL.length-1][3]:null;
-      return `${stat("Ultima partita",lg==null?"—":pdkB(lg,f2(lg)),"PDK")}${stat("PDK · squadra",pT?pT+"°":"—","su "+TL.length+" "+c.nick)}${stat("PDK · lega",pL?pL+"°":"—","su "+AL.length+" della lega")}`})()}
+      const AL=all.map(x=>[x[1],av(x[1])]).filter(x=>x[1]!=null).sort((a,b)=>b[1]-a[1]),pL=AL.findIndex(x=>x[0]===p[0])+1;
+      return `${stat("Lega · PDK",pL?pL+"°":"—","su "+AL.length)}${stat("Lega · efficienza",rL?rL+"°":"—","su "+all.length)}`})()}
   </div>`}
   ${GL.length?`${H("Partita per partita",`<em>${GL.length} ${GL.length===1?"gara":"gare"}</em>`)}
   ${(()=>{const MESI=["","Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"],ord=m=>m>=8?m:m+12;
@@ -2991,7 +2988,7 @@ function vGiocatore(){
     return ms.map((m,i)=>{const l=by[m],dk=l.reduce((a,g)=>a+g[3],0),mn=l.reduce((a,g)=>a+g[2],0),av=mn?dk/mn:null;
       return `<details class="gmese"${i===0?" open":""}><summary><span class="gmn">${MESI[m]}</span><span class="gmesi">${l.length} ${l.length===1?"gara":"gare"} · media</span>${eff(av)}</summary>
       <div class="tbl-wrap"><table class="gtab"><thead><tr><th>Data</th><th>Min</th><th>Dunkest</th><th>Eff.</th><th>Proj 36'</th></tr></thead><tbody>${l.slice().reverse().map(g=>`<tr><td class="gd"><b>${g[0]} <i>vs ${g[1]}</i></b>${g[5]!=null?`<small>${g[5]} pt · ${g[6]} rb · ${g[7]} as</small>`:""}</td><td>${n1(g[2])}</td><td class="gdk">${pdkB(g[3],f2(g[3]))}</td><td>${eff(g[4])}</td><td class="gpj">${n1(g[4]*36)}</td></tr>`).join("")}</tbody></table></div></details>`}).join("")})()}`:""}
-  <p class="note">Classifiche: posizione del giocatore tra quelli della sua squadra Dynasty e tra tutti i giocatori della lega con almeno una partita nella stagione scelta. <b>Efficienza</b> = PDK fatti per ogni minuto giocato (media della stagione); <b>PDK</b> = punti Dunkest medi a partita. Punteggi e minuti ufficiali Dunkest (senza capitano). Stagioni passate: solo regular season. Pallino: verde sopra 1,10 · giallo 0,80–1,10 · rosso sotto 0,80.</p>`;
+  <p class="note">Lega · PDK e Lega · efficienza: posizione tra tutti i giocatori della lega con almeno una partita nella stagione scelta, per <b>PDK</b> (punti Dunkest medi a partita) e per <b>efficienza</b> (PDK fatti per ogni minuto giocato). Punteggi e minuti ufficiali Dunkest (senza capitano). Stagioni passate: solo regular season. Pallino: verde sopra 1,10 · giallo 0,80–1,10 · rosso sotto 0,80.</p>`;
 }
 
 const STATI={out:["Out","Fuori"],dubbio:["Doubtful","In dubbio"],quest:["Questionable","In forse"],dtd:["Day-to-day","Giorno per giorno"],ok:["Disponibile","Monitorati"]};

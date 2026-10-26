@@ -459,4 +459,4 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 
 (88) Free Agent: stagioni scritte come "Stagione 1/2/3" (FA_SZL: 24/25=1, 25/26=2, 26/27=3) nei bottoni della lista e nella tabella della scheda ("Stag. 3" con sotto 26/27).
 
-(89) Scheda giocatore: oltre alle classifiche per efficienza (rinominate "Efficienza · squadra / lega") ci sono "PDK · squadra / lega" (posizione per PDK medi a partita, stessa stagione e stessi giocatori) e "Ultima partita" in PDK (riquadro colorato). Nota in fondo spiega le due classifiche.
+(89) Scheda giocatore: griglia di 6 caselle come prima, ma "In squadra" (efficienza) sostituita da "Lega · PDK" (posizione per PDK medi a partita tra tutti i giocatori della lega con partite nella stagione scelta) e "Nella lega" rinominata "Lega · efficienza". Nota in fondo spiega le due classifiche.
