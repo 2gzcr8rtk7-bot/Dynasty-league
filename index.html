@@ -1653,6 +1653,22 @@ nav button>span{white-space:nowrap}
 <style>
 #swar{position:fixed;top:120px;left:12px;z-index:2000;width:44px;height:44px;transform-origin:center;border-radius:50%;display:grid;place-items:center;background:rgba(20,32,70,.92);border:1px solid rgba(255,255,255,.25);color:#fff;font:800 28px/1 sans-serif;opacity:0;pointer-events:none;transition:opacity .12s,background .12s;box-shadow:0 4px 14px rgba(0,0,0,.5)}
 #swar.go{background:#f5b400;color:#111;border-color:transparent}
+</style><style>
+.snbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:-4px 0 14px;padding:9px 14px;border:0;cursor:pointer;color:#fff;background:#6d4bd8;box-shadow:none}
+.snbtn svg{width:19px;height:19px;flex:none}.snbtn span{font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;letter-spacing:.22em;text-transform:uppercase;line-height:1}.snbtn i{font-style:normal;font-family:var(--display);font-weight:800;font-size:20px;line-height:1}
+.snbtn:active{transform:scale(.98)}
+.sndate{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:6px;margin-bottom:12px}
+.sndate button{height:44px;border:1px solid var(--line);background:linear-gradient(180deg,var(--panel2),var(--panel));color:#fff;font-size:24px;font-weight:800;cursor:pointer}
+.sndate button:disabled{opacity:.3;cursor:default}
+.sndate>div{text-align:center;display:grid;gap:2px}.sndate b{font-family:var(--display);font-style:italic;font-weight:800;font-size:21px;text-transform:uppercase;color:#fff;line-height:1}.sndate small{font-size:11.5px;color:var(--muted)}
+.snlist{display:grid;gap:4px}
+.snrow{display:flex;align-items:stretch;gap:10px;min-height:58px;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);padding-right:10px}
+.snrow .wedge{width:58px;min-height:58px;height:auto}.snrow .wedge .logo{width:46px;height:46px}
+.sninfo{flex:1;min-width:0;display:grid;align-content:center;gap:3px;padding:6px 0}
+.sninfo b{font-weight:700;font-size:15px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sninfo b i{font-style:italic;font-family:var(--display);font-weight:800;color:var(--muted);margin-right:7px;font-size:14px}
+.sninfo small{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.snp{align-self:center;display:inline-block;min-width:58px;padding:4px 7px;border-radius:6px;text-align:center;font-family:var(--display);font-style:italic;font-weight:900;font-size:15px;line-height:1.1;color:#0b0b0b;box-shadow:inset 0 -2px 0 rgba(0,0,0,.18)}
+.snp.pr{background:#ef4444;color:#fff}.snp.py{background:#f5b400}.snp.pg{background:#22c55e}.snp.pv{background:#8b5cf6;color:#fff}
 </style></head>
 <body>
 <header>
@@ -2125,6 +2141,7 @@ function vEfficienza(){
   const rows=E.gioc[t0].slice().sort((a,b)=>(rv(b)??-99)-(rv(a)??-99)).map(p=>`<tr><td class="pnm">${p[0]}</td><td>${shw(rv(p))}</td><td>${p[2]}</td><td>${p[3]==null?"—":p[3].toLocaleString("it-IT",{minimumFractionDigits:1})}</td></tr>`).join("");
   return `<button class="cupbtn" data-cupgo="1"><svg class="cupt" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v4a5 5 0 0 1-10 0V4zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M12 13v4M8.5 20h7M10 17h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Efficienza Cup</span><i>›</i></button>
   <button class="trbtn" data-trgo="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8M15 7h6v6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Calcola il trend</span><i>›</i></button>
+  <button class="snbtn" data-sngo="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Statistiche notte</span><i>›</i></button>
   ${H("Statistiche squadre",`<em>${E.past?SZ_LBL[sz]+" · "+sz:"Agg. "+E.agg}</em>`)}
   <div class="effbar">${szSelect(sz)}<div class="metsw effsw"><button data-effmet="eff" aria-pressed="${!isP}">Eff.</button><button data-effmet="pdk" aria-pressed="${isP}">PDK</button></div></div>
   <div class="eboard">${sq}</div>
@@ -2720,6 +2737,24 @@ async function trShare(n,btn){const C=TRN._ctx;if(!C)return;const p=Object.entri
 /* Giocatori G League (squadre satellite): stessi dati della prima squadra (PARTITE/STAGIONI, nome completo da GL_STATS) */
 function glPlayers(){const S=typeof GL_STATS!=="undefined"?GL_STATS:{},inR=new Set(Object.values(ROSTER).flat().map(p=>p[0]));
   return Object.entries(S).filter(([k,v])=>v&&v.n&&!inR.has(v.n)).map(([k,v])=>({t:k.split("|")[0],n:v.n,r:v.r,nba:v.nba||""}))}
+/* ===== STATISTICHE NOTTE: PDK di tutti i giocatori delle franchigie in una notte (dati PARTITE, data USA) ===== */
+const SN={d:null};
+const snKey=d=>{const[g,m]=d.split("/").map(Number);return(m>=7?2026:2027)*10000+m*100+g};
+function snNights(){const o={};for(const n in PARTITE)for(const g of PARTITE[n])o[g[0]]=1;return Object.keys(o).sort((a,b)=>snKey(a)-snKey(b))}
+function vStatNotte(){const N=snNights();if(!N.length)return`<button class="gback" data-snback="1">‹ Statistiche</button>${H("Statistiche notte")}<p class="note">Nessuna partita registrata.</p>`;
+  if(!SN.d||!N.includes(SN.d))SN.d=N[N.length-1];const d=SN.d,i=N.indexOf(d);
+  const L=[];for(const t in ROSTER)for(const r of ROSTER[t]){const g=(PARTITE[r[0]]||[]).find(x=>x[0]===d);if(g)L.push({n:r[0],t,g})}
+  L.sort((a,b)=>b.g[3]-a.g[3]);
+  const f2=v=>(Math.round(v*100)/100).toLocaleString("it-IT",{maximumFractionDigits:2});
+  const cl=v=>v<20?"pr":v<30?"py":v<40?"pg":"pv";
+  const MM=["","gen","feb","mar","apr","mag","giu","lug","ago","set","ott","nov","dic"],dl=x=>{const[g,m]=x.split("/").map(Number);return`${g} ${MM[m]}`};
+  const tot=L.reduce((a,x)=>a+x.g[3],0);
+  const rows=L.map((x,k)=>`<div class="snrow">${wedge(x.t)}<div class="sninfo"><b><i>${k+1}</i>${x.n}</b><small>vs ${x.g[1]} · ${String(x.g[2]).replace(".",",")} min · ${x.g[5]} pt ${x.g[6]} rb ${x.g[7]} as</small></div><span class="snp ${cl(x.g[3])}">${f2(x.g[3])}</span></div>`).join("");
+  return`<button class="gback" data-snback="1">‹ Statistiche</button>
+  ${H("Statistiche notte",`<em>${L.length} giocatori</em>`)}
+  <div class="sndate"><button data-snd="${N[i-1]||""}" aria-label="Notte precedente"${i<=0?" disabled":""}>‹</button><div><b>Notte del ${dl(d)}</b><small>data USA · media ${L.length?f2(tot/L.length):"—"} PDK</small></div><button data-snd="${N[i+1]||""}" aria-label="Notte successiva"${i>=N.length-1?" disabled":""}>›</button></div>
+  <div class="snlist">${rows||'<p class="note">Nessun giocatore delle franchigie in campo.</p>'}</div>
+  <p class="note">PDK Dunkest della notte di tutti i giocatori delle 8 franchigie scesi in campo, dal più alto. Colori: rosso sotto 20, giallo 20-29,99, verde 30-39,99, viola da 40.</p>`}
 function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>PL.push({n:p[0],t,r:p[2]})));glPlayers().forEach(p=>PL.push({n:p.n,t:p.t,r:p.r,gl:1}));
   const ORD=["2024/25","2025/26","2026/27"];if(!ORD.includes(TRN.sz))TRN.sz="2026/27";if(!ORD.includes(TRN.sz2)||ORD.indexOf(TRN.sz2)<ORD.indexOf(TRN.sz))TRN.sz2=TRN.sz;
   const SZR=ORD.slice(ORD.indexOf(TRN.sz),ORD.indexOf(TRN.sz2)+1),multi=SZR.length>1,sz=multi?"all":TRN.sz,met=TRN.met;
@@ -3567,6 +3602,9 @@ document.getElementById("main").addEventListener("click",e=>{if(e.target.closest
 /* Calcola il trend: apertura, chiusura, filtri, linee */
 document.getElementById("main").addEventListener("click",e=>{
   if(e.target.closest("[data-trgo]")){e.preventDefault();TRN.from=cur;cur="trend";render();window.scrollTo(0,0);return}
+  if(e.target.closest("[data-sngo]")){e.preventDefault();SN.d=null;cur="statnotte";render();window.scrollTo(0,0);return}
+  if(e.target.closest("[data-snback]")){e.preventDefault();cur="efficienza";render();window.scrollTo(0,0);return}
+  {const b=e.target.closest("[data-snd]");if(b&&!b.disabled){e.preventDefault();SN.d=b.dataset.snd;render();return}}
   if(cur!=="trend")return;
   if(e.target.closest("[data-trclose]")){e.preventDefault();cur=TRN.from||"efficienza";render();window.scrollTo(0,0);return}
   const b=e.target.closest("[data-trset]");if(b){e.preventDefault();TRN[b.dataset.trset]=b.dataset.v;if(b.dataset.trset!=="on")TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y);return}
@@ -4650,13 +4688,13 @@ document.getElementById("main").addEventListener("click",e=>{if(cur!=="tv")retur
   if(bk){TVS.g=null;render();window.scrollTo(0,0);return}
   if(sd){TVS.side=sd.dataset.tvside;const y=window.scrollY;render();window.scrollTo(0,y)}});
 const vTVlive=()=>{tvLiveStart();return vTV()};
-const VIEWS={fa:vFA,faplayer:vFAP,tv:vTVlive,college:vCollege,trend:vTrend,cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.grafico=vGrafico;
+const VIEWS={fa:vFA,faplayer:vFAP,tv:vTVlive,college:vCollege,trend:vTrend,statnotte:vStatNotte,cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.grafico=vGrafico;
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
   document.body.dataset.v=cur;
   {const fs=cur==="giochi"&&(GAME==="dream"||GAME==="gdream");document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=fs?"#2a1260":"#0a1330"}
-  const eff=cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"?"home":cur==="tv"?"giochi":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
+  const eff=cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"?"home":cur==="tv"?"giochi":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -4714,7 +4752,7 @@ function syncMenu(){
   document.querySelectorAll("nav button[data-menu]").forEach(b=>{
     const p=document.getElementById(b.dataset.menu);if(!p)return;
     b.setAttribute("aria-expanded",dkOpen);p.hidden=!dkOpen;
-    const eff=cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
+    const eff=cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
     b.setAttribute("aria-selected",dkOpen||inside);
     if(dkOpen){const w=b.closest(".wrap").getBoundingClientRect(),r=b.getBoundingClientRect();
       const width=Math.max(r.width,180);let left=r.left-w.left+r.width/2-width/2;left=Math.max(0,Math.min(left,w.width-width));
