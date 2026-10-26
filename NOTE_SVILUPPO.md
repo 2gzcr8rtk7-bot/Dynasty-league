@@ -360,3 +360,7 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - (48) Ufficio Scouting diviso in **College** (prima scheda "Archivio" come l'artefatto originale: tre sezioni per ruolo
   ordinate per POT, `colOrig`) e **NBA** (`vNbaSec`, `nbaTrend`): report a banner dei giocatori della lega con trend
   nelle ultime 1/2/3 settimane rispetto alla loro media solita, su PDK, minuti ed efficienza, partita per partita.
+- (49) Scouting NBA con massima libertà (stato `NB`): **Report delta** (periodo = ultime N partite / ultimi N giorni /
+  date a scelta; confronto = media solita / resto della stagione / 2025/26 / 2024/25; delta assoluto o %, soglia,
+  partite minime, squadra, ruoli, vista banner o tabella) e **Grafici liberi** (fino a 6 giocatori, periodo con date o
+  scorciatoie 7/14/30 giorni, punti per partita / media mobile 3-5 / settimana / mese, linea della media, trend).

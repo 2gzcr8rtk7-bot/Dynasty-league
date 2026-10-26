@@ -148,6 +148,14 @@
 .nmain small{display:block;font-size:10.5px;color:#cbd5e1}.nmain b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;text-transform:uppercase;line-height:1.1;margin:1px 0 4px}
 .nchips{display:flex;flex-wrap:wrap;gap:4px}.nchips i{font-style:normal;font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:6px;background:rgba(255,255,255,.08);color:#cbd5e1;white-space:nowrap}.nchips i.up{background:rgba(74,222,128,.16);color:#4ade80}.nchips i.dn{background:rgba(248,113,113,.16);color:#f87171}.nchips i.on{outline:1px solid currentColor}
 .nside{display:grid;justify-items:end;gap:1px}.nside b{font-family:var(--display);font-style:italic;font-weight:800;font-size:22px}.nside b.up{color:#4ade80}.nside b.dn{color:#f87171}.nside small{font-size:9.5px;color:var(--muted)}
+.nsubt{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:rgba(255,255,255,.06);padding:3px;border-radius:10px;margin-bottom:12px}.nsubt button{border:0;border-radius:8px;padding:9px;background:transparent;color:#cbd5e1;font-weight:800;font-size:13px;cursor:pointer}.nsubt button[aria-pressed="true"]{background:#facc15;color:#111}
+.ncf{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}.nsel{display:grid;gap:3px;min-width:0}.nsel span{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.nsel select,.nsel input{width:100%;min-width:0;background:#0b1224;color:#fff;border:1px solid rgba(255,255,255,.18);border-radius:9px;padding:8px;font-size:13px;font-weight:700;color-scheme:dark}
+.nquick{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:5px}.nquick button{border:1px solid rgba(255,255,255,.18);background:transparent;color:#e5e7eb;border-radius:999px;padding:5px 10px;font-size:11.5px;font-weight:700;cursor:pointer}
+.ntbl{overflow-x:auto;max-width:100%}.ntbl table{min-width:430px!important}
+.nchips u{text-decoration:none;opacity:.9;margin-left:2px}.ntbl td small,.ntbl .nm small{display:block;font-size:9.5px;color:var(--muted)}.ntbl td.up{color:#4ade80;font-weight:800}.ntbl td.dn{color:#f87171;font-weight:800}.ntbl td.on{background:rgba(250,204,21,.08)!important}.ntbl th small{font-size:8.5px;font-weight:500;text-transform:none}.ntbl tr{cursor:pointer}.ntbl table{font-size:11.5px!important}.ntbl td,.ntbl th{padding:6px 3px!important}
+.nchart{padding:10px!important;background:#0b0e17!important}.nsums{display:grid;gap:4px;margin-top:8px}.nsum{display:flex;gap:8px;align-items:baseline;font-size:12px;border-left:3px solid var(--c);padding-left:8px}.nsum b{color:var(--c)}.nsum span{color:#cbd5e1}
+.npls{display:flex;flex-wrap:wrap;gap:5px;max-height:260px;overflow:auto;padding:2px}.npls button{display:grid;text-align:left;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:5px 8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer}.npls button small{font-size:9.5px;color:var(--muted);font-weight:500}.npls button[aria-pressed="true"]{border-color:var(--tc);box-shadow:inset 3px 0 0 var(--tc);background:rgba(255,255,255,.12)}
 .gback{color:#111}.colroom h2 .t{background:#111}.colhd{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:center;margin:4px 0 12px}.colhd img{width:64px;height:64px;object-fit:contain}
 .colhd small{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;opacity:.75}.colhd b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:26px;text-transform:uppercase;line-height:1}.colhd em{font-style:normal;font-size:11.5px;font-weight:600}
 .colroom .coltabs button{background:#111;color:#facc15;border-color:#111}.colroom .coltabs button[aria-pressed="true"]{background:#fff;color:#111;border-color:#111}
@@ -2808,36 +2816,89 @@ function colRadar(){const R=colRadarRows(),A=colAll();
 /* ARCHIVIO come l'artefatto originale: tre sezioni per ruolo, ordinate per POT (POT | PDK/min | Giocatore | P36/USG | USG%). */
 function colOrig(){const q=COL.q.trim().toLowerCase();return COL_RL.map(([k,l,,c])=>{const L=colRows(k).sort((a,b)=>b.pot-a.pot).filter(x=>!q||x.n.toLowerCase().includes(q)||(x.app||"").toLowerCase().includes(q));
   return`<section class="corig" style="--rc:${c}"><h4>${l}<small>${L.length} giocatori</small></h4><div class="coltbl"><table><thead><tr><th>POT</th><th>PDK/min</th><th class="nm">Giocatore</th><th>P36/USG</th><th>USG%</th></tr></thead><tbody>${L.map(x=>`<tr data-colsel="${x.n.replace(/"/g,"&quot;")}" data-colrr="${k}"${x.uns?' class="uns"':""}><td class="pot">${cf2(x.pot)}</td><td>${cf2(x.pm)}</td><td class="nm">${x.n}${x.uns?" *":""}${x.r26?` <i class="c26">2026</i>`:""}</td><td>${cf2(x.p36)}</td><td>${cf1(x.usg)}%</td></tr>`).join("")||`<tr><td colspan="5" class="emp">Nessun giocatore.</td></tr>`}</tbody></table></div></section>`}).join("")}
-/* ===== SEZIONE NBA: report trend settimanale, partita per partita (giocatori della lega) =====
-   Finestra = ultime 1/2/3 settimane fino all'ultima data dei report. "Media solita" = partite della stagione prima della
-   finestra pesate min(60%, partite/10) + stagione di riferimento (pgRef); se la stagione è appena iniziata pesa la passata.
-   Variazione % per PDK, minuti ed efficienza; "andamento" = retta partita per partita nella finestra (grTrend). */
-function nbaTrend(){const W=+(COL.w||2),met=COL.met||"pdk",dir=COL.dir||"up",soglia=+(COL.so||10);
-  const all=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>all.push({n:p[0],t,r:p[2],num:p[1]})));
-  const G=new Map(all.map(p=>[p.n,grGames(p.n,"2026/27")]));let last=0;G.forEach(g=>g.forEach(x=>{if(+x.dt>last)last=+x.dt}));if(!last)return{rows:[],from:null,to:null};
-  const to=new Date(last),from=new Date(last-(7*W-1)*864e5);from.setUTCHours(0,0,0,0);
-  const av=(a,k)=>{const v=a.map(x=>x[k]).filter(v=>v!=null);return v.length?v.reduce((s,y)=>s+y,0)/v.length:null};
-  const ref=n=>{const r=pgRef(n);return{pdk:av(r.map(x=>({v:+x[3]})),"v"),min:av(r.map(x=>({v:+x[2]})),"v"),eff:av(r.map(x=>({v:x[4]==null?null:+x[4]})),"v")}};
-  const rows=all.map(p=>{const g=G.get(p.n),win=g.filter(x=>+x.dt>=+from),pre=g.filter(x=>+x.dt<+from);if(win.length<2)return null;
-    const R=ref(p.n),w=Math.min(.6,pre.length/10),bl=k=>{const c=av(pre,k),r=R[k];if(c==null&&r==null)return null;if(c==null)return r;if(r==null)return c;return w*c+(1-w)*r};
-    const o={p,win,base:{},now:{},d:{}};["pdk","min","eff"].forEach(k=>{o.base[k]=bl(k);o.now[k]=av(win,k);o.d[k]=o.base[k]&&o.now[k]!=null?(o.now[k]-o.base[k])/Math.abs(o.base[k])*100:null});
-    const tr=grTrend(win.map(x=>x[met]));o.slope=tr?tr.pct:null;return o}).filter(o=>o&&o.d[met]!=null&&(dir==="up"?o.d[met]>=soglia:o.d[met]<=-soglia));
-  rows.sort((a,b)=>dir==="up"?b.d[met]-a.d[met]:a.d[met]-b.d[met]);return{rows,from,to,W}}
-function nbaSpark(o,met){const v=o.win.map(x=>x[met]),b=o.base[met];if(!v.length)return"";const W=84,H=30,lo=Math.min(...v,b??Infinity),hi=Math.max(...v,b??-Infinity),sp=hi-lo||1;
+/* ===== SEZIONE NBA (scouting riservato): massima libertà di impostazione =====
+   NB = stato. Report: finestra = ultime N partite | ultimi N giorni | dal–al (date libere, anche stagioni passate);
+   confronto = media solita (partite precedenti della stagione + stagione di riferimento) | resto della stagione |
+   stagione 2025/26 | stagione 2024/25. Delta assoluto e % per PDK, minuti, efficienza. Vista banner o tabella.
+   Grafici: giocatori a scelta (fino a 6), periodo libero, granularità partita/settimana/mese/media mobile, linea della media. */
+let NB={tab:"rep",mode:"n",n:5,d:7,from:"",to:"",base:"solita",met:"pdk",dir:"up",so:"10",unit:"pct",team:"",role:"GFC",view:"ban",minG:2,
+  g:{pl:[],met:"pdk",gran:"g",from:"",to:"",avg:true}};
+const NB_SZ=["2024/25","2025/26","2026/27"];
+function nbAll(){const L=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>L.push({n:p[0],t,r:p[2],num:p[1]})));return L}
+function nbGames(n){return grGames(n,"all")}
+const nbIso=d=>d.toISOString().slice(0,10),nbFd=d=>String(d.getUTCDate()).padStart(2,"0")+"/"+String(d.getUTCMonth()+1).padStart(2,"0")+(d.getUTCFullYear()!==new Date().getUTCFullYear()?"/"+String(d.getUTCFullYear()).slice(2):"");
+function nbLast(){let m=0;nbAll().forEach(p=>(PARTITE[p.n]||[]).length&&nbGames(p.n).forEach(x=>{if(x.sz==="2026/27"&&+x.dt>m)m=+x.dt}));return m?new Date(m):null}
+const nbAv=(a,k)=>{const v=a.map(x=>x[k]).filter(v=>v!=null);return v.length?v.reduce((s,y)=>s+y,0)/v.length:null};
+function nbReport(){const last=nbLast();if(!last)return{rows:[],lab:"Nessuna partita"};
+  let lab,pick;if(NB.mode==="n"){lab=`Ultime ${NB.n} partite`;pick=g=>g.filter(x=>x.sz==="2026/27").slice(-NB.n)}
+  else if(NB.mode==="d"){const fr=new Date(+last-(NB.d-1)*864e5);fr.setUTCHours(0,0,0,0);lab=`Ultimi ${NB.d} giorni · ${nbFd(fr)} – ${nbFd(last)}`;pick=g=>g.filter(x=>+x.dt>=+fr&&+x.dt<=+last)}
+  else{const fr=NB.from?new Date(NB.from+"T00:00:00Z"):new Date(+last-13*864e5),to=NB.to?new Date(NB.to+"T23:59:59Z"):last;lab=`Dal ${nbFd(fr)} al ${nbFd(to)}`;pick=g=>g.filter(x=>+x.dt>=+fr&&+x.dt<=+to)}
+  const rows=nbAll().filter(p=>(!NB.team||p.t===NB.team)&&NB.role.includes(p.r)).map(p=>{const g=nbGames(p.n),win=pick(g);if(win.length<+NB.minG)return null;
+    const sz=win[win.length-1].sz,first=+win[0].dt,inW=new Set(win);let base,bl;
+    if(NB.base==="solita"){const pre=g.filter(x=>x.sz===sz&&+x.dt<first),R=sz==="2026/27"?pgRef(p.n).map(x=>({min:+x[2],pdk:+x[3],eff:x[4]==null?null:+x[4]})):g.filter(x=>x.sz===NB_SZ[Math.max(0,NB_SZ.indexOf(sz)-1)]),w=Math.min(.6,pre.length/10);
+      base=k=>{const c=nbAv(pre,k),r=nbAv(R,k);if(c==null)return r;if(r==null)return c;return w*c+(1-w)*r};bl="media solita"}
+    else if(NB.base==="stag"){const o=g.filter(x=>x.sz===sz&&!inW.has(x));base=k=>nbAv(o,k);bl="resto della stagione"}
+    else{const o=g.filter(x=>x.sz===NB.base);base=k=>nbAv(o,k);bl="stagione "+NB.base}
+    const o={p,win,b:{},v:{},da:{},dp:{},bl};["pdk","min","eff"].forEach(k=>{o.b[k]=base(k);o.v[k]=nbAv(win,k);o.da[k]=o.b[k]!=null&&o.v[k]!=null?o.v[k]-o.b[k]:null;o.dp[k]=o.da[k]!=null&&o.b[k]?o.da[k]/Math.abs(o.b[k])*100:null});
+    const tr=grTrend(win.map(x=>x[NB.met]));o.slope=tr?tr.pct:null;return o}).filter(o=>{if(!o)return false;const v=NB.unit==="pct"?o.dp[NB.met]:o.da[NB.met];if(v==null)return false;const th=+NB.so;return NB.dir==="up"?v>=th:NB.dir==="down"?v<=-th:true});
+  const key=o=>NB.unit==="pct"?o.dp[NB.met]:o.da[NB.met];rows.sort((a,b)=>NB.dir==="down"?key(a)-key(b):key(b)-key(a));return{rows,lab}}
+function nbSpark(o){const v=o.win.map(x=>x[NB.met]),b=o.b[NB.met];if(!v.length)return"";const W=84,H=30,lo=Math.min(...v,b??Infinity),hi=Math.max(...v,b??-Infinity),sp=hi-lo||1;
   const X=i=>4+(v.length===1?(W-8)/2:i*(W-8)/(v.length-1)),Y=y=>H-4-(y-lo)/sp*(H-8);
-  return`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true">${b!=null?`<line x1="2" x2="${W-2}" y1="${Y(b)}" y2="${Y(b)}" stroke="rgba(255,255,255,.35)" stroke-dasharray="3 3"/>`:""}<polyline points="${v.map((y,i)=>X(i).toFixed(1)+","+Y(y).toFixed(1)).join(" ")}" fill="none" stroke="#facc15" stroke-width="2"/>${v.map((y,i)=>`<circle cx="${X(i).toFixed(1)}" cy="${Y(y).toFixed(1)}" r="2.6" fill="#facc15"/>`).join("")}</svg>`}
-function vNbaSec(){const{rows,from,to,W}=nbaTrend(),met=COL.met||"pdk",dir=COL.dir||"up";const fd=d=>String(d.getUTCDate()).padStart(2,"0")+"/"+String(d.getUTCMonth()+1).padStart(2,"0");
-  const seg=(k,opts,cur)=>`<div class="nseg">${opts.map(([v,l])=>`<button data-colset2="${k}" data-v="${v}" aria-pressed="${String(cur)===String(v)}">${l}</button>`).join("")}</div>`;
-  const ff=(k,v)=>v==null?"—":k==="eff"?cf2(v):cf1(v),pc=v=>v==null?"—":(v>=0?"+":"−")+Math.abs(Math.round(v))+"%";
-  const card=o=>{const c=TEAMS[o.p.t],lead=o.d[met];return`<button class="nban" style="--tc:${c.bg};--tf:${c.fg}" data-pln="${o.p.n.replace(/"/g,"&quot;")}" data-plt="${o.p.t}">
+  return`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true">${b!=null?`<line x1="2" x2="${W-2}" y1="${Y(b)}" y2="${Y(b)}" stroke="rgba(255,255,255,.35)" stroke-dasharray="3 3"/>`:""}<polyline points="${v.map((y,i)=>X(i).toFixed(1)+","+Y(y).toFixed(1)).join(" ")}" fill="none" stroke="#facc15" stroke-width="2"/>${v.map((y,i)=>`<circle cx="${X(i).toFixed(1)}" cy="${Y(y).toFixed(1)}" r="2.4" fill="#facc15"/>`).join("")}</svg>`}
+const nbF=(k,v)=>v==null?"—":k==="eff"?cf2(v):cf1(v),nbS=(k,v)=>v==null?"—":(v>=0?"+":"−")+nbF(k,Math.abs(v)),nbP=v=>v==null?"—":(v>=0?"+":"−")+Math.abs(Math.round(v))+"%";
+const NB_LAB={pdk:"PDK",min:"Minuti",eff:"Efficienza"},NB_PAL=["#facc15","#38bdf8","#f472b6","#4ade80","#fb923c","#a78bfa"];
+function nbSel(k,lab,opts,cur,obj="NB"){return`<label class="nsel"><span>${lab}</span><select data-nb="${obj}.${k}">${opts.map(([v,l])=>`<option value="${v}"${String(v)===String(cur)?" selected":""}>${l}</option>`).join("")}</select></label>`}
+function nbRepView(){const{rows,lab}=nbReport(),m=NB.met;const last=nbLast(),mx=last?nbIso(last):"";
+  const cfg=`<div class="ncf">${nbSel("mode","Periodo",[["n","Ultime N partite"],["d","Ultimi N giorni"],["r","Date a scelta"]],NB.mode)}
+   ${NB.mode==="n"?nbSel("n","Partite",[1,2,3,4,5,6,7,8,10,12,15,20].map(v=>[v,v+(v===1?" partita":" partite")]),NB.n):NB.mode==="d"?nbSel("d","Giorni",[1,2,3,4,5,7,10,14,21,30,45,60].map(v=>[v,v+(v===1?" giorno":" giorni")]),NB.d):`<label class="nsel"><span>Dal</span><input type="date" data-nb="NB.from" value="${NB.from}" max="${mx}"></label><label class="nsel"><span>Al</span><input type="date" data-nb="NB.to" value="${NB.to||mx}" max="${mx}"></label>`}
+   ${nbSel("base","Confronta con",[["solita","Media solita"],["stag","Resto della stagione"],["2025/26","Stagione 2025/26"],["2024/25","Stagione 2024/25"]],NB.base)}
+   ${nbSel("met","Misura",[["pdk","PDK"],["min","Minuti"],["eff","Efficienza"]],NB.met)}
+   ${nbSel("dir","Direzione",[["up","▲ In crescita"],["down","▼ In calo"],["all","Tutti"]],NB.dir)}
+   ${nbSel("unit","Delta in",[["pct","Percentuale"],["abs","Valore assoluto"]],NB.unit)}
+   ${nbSel("so","Soglia",(NB.unit==="pct"?[0,5,10,15,20,30,50].map(v=>[v,"±"+v+"%"]):(m==="eff"?[0,.05,.1,.15,.2,.3]:m==="min"?[0,2,4,6,8,10]:[0,2,4,6,8,10,15]).map(v=>[v,"±"+String(v).replace(".",",")])),NB.so)}
+   ${nbSel("minG","Partite minime",[1,2,3,4,5,8,10].map(v=>[v,v]),NB.minG)}
+   ${nbSel("team","Squadra",[["","Tutte"],...Object.keys(TEAMS).map(t=>[t,TEAMS[t].nick])],NB.team)}
+   ${nbSel("role","Ruoli",[["GFC","Tutti"],["G","Guardie"],["F","Ali"],["C","Centri"],["GF","Guardie e ali"],["FC","Ali e centri"]],NB.role)}
+   ${nbSel("view","Vista",[["ban","Banner"],["tab","Tabella"]],NB.view)}</div>`;
+  const ban=o=>{const c=TEAMS[o.p.t],a=o.da[m],pc=o.dp[m],up=(a??0)>=0;return`<button class="nban" style="--tc:${c.bg}" data-pln="${o.p.n.replace(/"/g,"&quot;")}" data-plt="${o.p.t}">
     <span class="nstripe"></span><span class="njs">${jersey(o.p.t,o.p.num,o.p.n)}</span>
-    <span class="nmain"><small>${c.nick} · ${o.win.length} partite${o.slope!=null&&Math.abs(o.slope)>=3?` · ${o.slope>0?"in salita":"in discesa"} partita dopo partita`:""}</small><b>${o.p.n}</b>
-     <span class="nchips">${["pdk","min","eff"].map(k=>`<i class="${o.d[k]==null?"":o.d[k]>=3?"up":o.d[k]<=-3?"dn":"eq"}${k===met?" on":""}">${{pdk:"PDK",min:"Min",eff:"Eff"}[k]} ${ff(k,o.base[k])}→${ff(k,o.now[k])}</i>`).join("")}</span></span>
-    <span class="nside"><b class="${lead>=0?"up":"dn"}">${lead>=0?"▲":"▼"} ${pc(lead).replace(/^[+−]/,"")}</b><small>${{pdk:"PDK",min:"minuti",eff:"efficienza"}[met]} vs media</small>${nbaSpark(o,met)}</span></button>`};
-  return`<div class="nhead"><div><small>Report settimanale</small><b>${from?`${fd(from)} – ${fd(to)}`:"Nessuna partita"}</b><em>Agg. ${EFF.agg} · ${rows.length} ${rows.length===1?"giocatore":"giocatori"}</em></div></div>
-  <div class="ncfg">${seg("w",[[1,"1 settimana"],[2,"2 settimane"],[3,"3 settimane"]],COL.w||2)}${seg("met",[["pdk","PDK"],["min","Minuti"],["eff","Efficienza"]],met)}${seg("dir",[["up","▲ In crescita"],["down","▼ In calo"]],dir)}${seg("so",[[5,"±5%"],[10,"±10%"],[20,"±20%"],[30,"±30%"]],COL.so||10)}</div>
-  <div class="nbans">${rows.map(card).join("")||`<p class="note">Nessun giocatore ${dir==="up"?"in crescita":"in calo"} oltre la soglia in questo periodo.</p>`}</div>
-  <p class="note">Ogni banner confronta le partite della finestra con la <b>media solita</b> del giocatore (partite precedenti della stagione + stagione di riferimento, che pesa di più a inizio stagione). Le tre pillole: PDK, minuti ed efficienza da media solita → finestra (verde su, rosso giù). La linea gialla sono le partite una per una, la tratteggiata la media solita. Tocca un banner per la scheda del giocatore.</p>`}
+    <span class="nmain"><small>${c.nick} · ${o.win.length} ${o.win.length===1?"partita":"partite"} · vs ${o.bl}${o.slope!=null&&Math.abs(o.slope)>=3&&o.win.length>=3?` · ${o.slope>0?"in salita":"in discesa"}`:""}</small><b>${o.p.n}</b>
+     <span class="nchips">${["pdk","min","eff"].map(k=>`<i class="${o.da[k]==null?"":o.dp[k]>=3?"up":o.dp[k]<=-3?"dn":"eq"}${k===m?" on":""}">${{pdk:"PDK",min:"Min",eff:"Eff"}[k]} ${nbF(k,o.b[k])}→${nbF(k,o.v[k])} <u>${nbS(k,o.da[k])}</u></i>`).join("")}</span></span>
+    <span class="nside"><b class="${up?"up":"dn"}">${nbS(m,a)}</b><small>${NB_LAB[m]} · ${nbP(pc)}</small>${nbSpark(o)}</span></button>`};
+  const tab=`<div class="coltbl ntbl"><table><thead><tr><th class="nm">Giocatore</th><th>P.</th>${["pdk","min","eff"].map(k=>`<th>${{pdk:"PDK",min:"Min",eff:"Eff"}[k]}<br><small>media→ora</small></th><th>Δ</th>`).join("")}</tr></thead><tbody>${rows.map(o=>`<tr data-pln="${o.p.n.replace(/"/g,"&quot;")}" data-plt="${o.p.t}"><td class="nm">${o.p.n}<small>${TEAMS[o.p.t].nick}</small></td><td>${o.win.length}</td>${["pdk","min","eff"].map(k=>`<td>${nbF(k,o.b[k])}→${nbF(k,o.v[k])}</td><td class="${(o.da[k]??0)>=0?"up":"dn"}${k===m?" on":""}">${nbS(k,o.da[k])}<small>${nbP(o.dp[k])}</small></td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+  return`<div class="nhead"><div><small>Report</small><b>${lab}</b><em>Agg. ${EFF.agg} · ${rows.length} ${rows.length===1?"giocatore":"giocatori"}</em></div></div>${cfg}
+  ${rows.length?(NB.view==="tab"?tab:`<div class="nbans">${rows.map(ban).join("")}</div>`):`<p class="note">Nessun giocatore con queste impostazioni.</p>`}
+  <p class="note">Delta = media nel periodo scelto − media di confronto (in grande il valore assoluto, sotto la percentuale). "Media solita" = partite precedenti della stessa stagione + stagione di riferimento (che pesa di più a inizio stagione). Le pillole mostrano PDK, minuti ed efficienza: media di confronto → periodo (delta). Tocca un giocatore per la scheda.</p>`}
+/* Grafici liberi */
+function nbChart(){const G=NB.g,pl=G.pl.filter(n=>nbAll().some(p=>p.n===n)),met=G.met;if(!pl.length)return`<div class="grempty">Scegli uno o più giocatori qui sotto.</div>`;
+  const fr=G.from?+new Date(G.from+"T00:00:00Z"):-Infinity,to=G.to?+new Date(G.to+"T23:59:59Z"):Infinity;
+  const S=pl.map((n,i)=>{const p=nbAll().find(x=>x.n===n),g=nbGames(n).filter(x=>+x.dt>=fr&&+x.dt<=to&&x[met]!=null);let pts;
+    if(G.gran==="g")pts=g.map(x=>({t:+x.dt,v:x[met],lab:nbFd(x.dt)+" "+x.opp}));
+    else if(G.gran==="w"||G.gran==="m"){const M=new Map();g.forEach(x=>{const k=G.gran==="w"?grWk(x.dt):grMk(x.dt);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});pts=[...M.entries()].map(([k,a])=>({t:+a[0].dt,v:nbAv(a,met),lab:k}))}
+    else{const w=+G.gran.slice(2);pts=g.map((x,j)=>({t:+x.dt,v:nbAv(g.slice(Math.max(0,j-w+1),j+1),met)}))}
+    const c=NB_PAL[i%NB_PAL.length];return{p,pts,avg:nbAv(g,met),c,dash:"",n:g.length}});
+  const all=S.flatMap(s=>s.pts);if(!all.length)return`<div class="grempty">Nessuna partita nel periodo scelto.</div>`;
+  const W=340,H=260,l=32,r=64,t=14,b=30,iw=W-l-r,ih=H-t-b,t0=Math.min(...all.map(q=>q.t)),t1=Math.max(...all.map(q=>q.t)),vs=all.map(q=>q.v).concat(G.avg?S.map(s=>s.avg).filter(v=>v!=null):[]),SC=grNice(Math.min(...vs),Math.max(...vs),met==="eff",4);
+  const X=v=>l+(t1===t0?iw/2:(v-t0)/(t1-t0)*iw),Y=v=>t+ih-(v-SC[0])/(SC[1]-SC[0])*ih;let g="";
+  for(let v=SC[0];v<=SC[1]+1e-9;v+=SC[2])g+=`<line x1="${l}" x2="${W-r}" y1="${Y(v)}" y2="${Y(v)}" class="grg"/><text x="${l-4}" y="${Y(v)+3}" class="gry l">${met==="eff"?v.toFixed(2).replace(".",","):Math.round(v)}</text>`;
+  for(let k=0;k<=4;k++){const tt=t0+(t1-t0)*k/4;g+=`<text x="${X(tt)}" y="${H-b+14}" class="grx">${nbFd(new Date(tt))}</text>`}
+  const lines=S.map(s=>`${G.avg&&s.avg!=null?`<line x1="${l}" x2="${W-r}" y1="${Y(s.avg)}" y2="${Y(s.avg)}" stroke="${s.c}" stroke-opacity=".45" stroke-dasharray="2 3"/>`:""}${(()=>{const seg=[[]];s.pts.forEach((q,j)=>{if(j&&q.t-s.pts[j-1].t>60*864e5)seg.push([]);seg[seg.length-1].push(q)});return seg.map(sg=>`<polyline points="${sg.map(q=>X(q.t).toFixed(1)+","+Y(q.v).toFixed(1)).join(" ")}" fill="none" stroke="${s.c}" stroke-width="2.2"/>`).join("")})()}${s.pts.length<=40?s.pts.map(q=>`<circle cx="${X(q.t).toFixed(1)}" cy="${Y(q.v).toFixed(1)}" r="2.6" fill="${s.c}"/>`).join(""):""}`).join("");
+  const ends=S.filter(s=>s.pts.length).map(s=>({y:Y(s.pts[s.pts.length-1].v),c:s.c,t:colSur(s.p.n)})).sort((a,b)=>a.y-b.y);for(let i=1;i<ends.length;i++)if(ends[i].y-ends[i-1].y<11)ends[i].y=ends[i-1].y+11;
+  const lab=ends.map(o=>`<text x="${W-r+6}" y="${(o.y+3).toFixed(1)}" class="trend-lab" fill="${o.c}">${o.t}</text>`).join("");
+  const sum=S.map(s=>{const v=s.pts.map(q=>q.v),tr=grTrend(v);return`<div class="nsum" style="--c:${s.c}"><b>${colSur(s.p.n)}</b><span>${s.n} partite · media ${nbF(met,s.avg)}${tr&&v.length>=3?` · trend ${tr.pct>=0?"+":"−"}${Math.abs(Math.round(tr.pct))}%`:""}</span></div>`}).join("");
+  return`<svg class="grsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Grafico libero">${g}${lines}${lab}<text x="4" y="10" class="gry ax" text-anchor="start">${NB_LAB[met].toUpperCase()}</text></svg><div class="nsums">${sum}</div>`}
+function nbGraphView(){const G=NB.g,last=nbLast(),mx=last?nbIso(last):"";const q=(NB.q||"").toLowerCase();
+  const L=nbAll().filter(p=>!q||p.n.toLowerCase().includes(q)).sort((a,b)=>a.n.localeCompare(b.n));
+  return`<div class="ncf">${nbSel("met","Misura",[["pdk","PDK"],["min","Minuti"],["eff","Efficienza"]],G.met,"NB.g")}
+   ${nbSel("gran","Punti",[["g","Ogni partita"],["mm3","Media mobile 3 partite"],["mm5","Media mobile 5 partite"],["w","Media per settimana"],["m","Media per mese"]],G.gran,"NB.g")}
+   <label class="nsel"><span>Dal</span><input type="date" data-nb="NB.g.from" value="${G.from}" max="${mx}"></label><label class="nsel"><span>Al</span><input type="date" data-nb="NB.g.to" value="${G.to}" max="${mx}"></label>
+   ${nbSel("avg","Linea della media",[["1","Mostra"],["","Nascondi"]],G.avg?"1":"","NB.g")}
+   <div class="nquick">${[["7","7 giorni"],["14","14 giorni"],["30","30 giorni"],["s","Stagione"],["all","Tutto"]].map(([v,l])=>`<button data-nbq="${v}">${l}</button>`).join("")}</div></div>
+  <div class="grcard nchart">${nbChart()}</div>
+  <div class="csub">Giocatori (${G.pl.length}/6)</div><input class="colq" id="nbq" type="search" placeholder="Cerca giocatore" value="${(NB.q||"").replace(/"/g,"&quot;")}">
+  <div class="npls" id="npls">${nbPlList(L)}</div>`}
+function nbPlList(L){return L.map(p=>`<button data-nbpl="${p.n.replace(/"/g,"&quot;")}" aria-pressed="${NB.g.pl.includes(p.n)}" style="--tc:${NB.g.pl.includes(p.n)?NB_PAL[NB.g.pl.indexOf(p.n)%NB_PAL.length]:"#64748b"}">${p.n}<small>${TEAMS[p.t].nick}</small></button>`).join("")}
+function vNbaSec(){return`<div class="nsubt"><button data-nbt="rep" aria-pressed="${NB.tab==="rep"}">Report delta</button><button data-nbt="gr" aria-pressed="${NB.tab==="gr"}">Grafici liberi</button></div>${NB.tab==="rep"?nbRepView():nbGraphView()}`}
 function vCollege(){if(!COL.d){cur="campo";return vCampo()}COL.sec=COL.sec||"college";COL.tab=COL.tab||"orig";COL.u=COL.u||24;COL.k=COL.k||.9;
   const tabs=[["orig","Archivio"],["radar","Radar"],["usage","Profilo"],["pros","Prospetti"],["studio","Studio rookie"],["mappa","Mappa"],["nba","College→NBA"],["lista","Tabella"]];
   const body=COL.tab==="orig"?`<input id="colq" class="colq" type="search" placeholder="Cerca giocatore" value="${COL.q.replace(/"/g,"&quot;")}" aria-label="Cerca giocatore"><div class="grcard" id="colorig">${colOrig()}<p class="note">POT = PDK/min normalizzato a usage 27%. * = ruolo da confermare. Tocca un giocatore per la scheda.</p></div>`
@@ -3903,6 +3964,11 @@ function render(){
     m.querySelectorAll("[data-colr]").forEach(b=>b.onclick=()=>{COL.r=b.dataset.colr;COL.sel=null;render()});
     m.querySelectorAll("[data-coltab]").forEach(b=>b.onclick=()=>{COL.tab=b.dataset.coltab;COL.sel=null;render()});
     m.querySelectorAll("[data-colsec]").forEach(b=>b.onclick=()=>{COL.sec=b.dataset.colsec;COL.sel=null;render();window.scrollTo(0,0)});
+    m.querySelectorAll("[data-nbt]").forEach(b=>b.onclick=()=>{NB.tab=b.dataset.nbt;render()});
+    m.querySelectorAll("[data-nb]").forEach(x=>x.onchange=()=>{const k=x.dataset.nb.split(".").slice(1);let tg=NB;for(let i=0;i<k.length-1;i++)tg=tg[k[i]];const key=k[k.length-1];tg[key]=key==="avg"?!!x.value:x.value;if(key==="unit")NB.so=NB.unit==="pct"?"10":"0";const y=window.scrollY;render();window.scrollTo(0,y)});
+    m.querySelectorAll("[data-nbpl]").forEach(b=>b.onclick=()=>{const n=b.dataset.nbpl,P=NB.g.pl,i=P.indexOf(n);if(i>=0)P.splice(i,1);else{P.push(n);if(P.length>6)P.shift()}const y=window.scrollY;render();window.scrollTo(0,y)});
+    m.querySelectorAll("[data-nbq]").forEach(b=>b.onclick=()=>{const v=b.dataset.nbq,last=nbLast();if(!last)return;if(v==="all"){NB.g.from="";NB.g.to=""}else if(v==="s"){NB.g.from="2026-10-01";NB.g.to=""}else{NB.g.from=nbIso(new Date(+last-(+v-1)*864e5));NB.g.to=""}const y=window.scrollY;render();window.scrollTo(0,y)});
+    const nq=m.querySelector("#nbq");if(nq)nq.oninput=()=>{NB.q=nq.value;const L=m.querySelector("#npls");if(L){const q=NB.q.toLowerCase();L.innerHTML=nbPlList(nbAll().filter(p=>!q||p.n.toLowerCase().includes(q)).sort((a,b)=>a.n.localeCompare(b.n)));L.querySelectorAll("[data-nbpl]").forEach(b=>b.onclick=()=>{const n=b.dataset.nbpl,P=NB.g.pl,i=P.indexOf(n);if(i>=0)P.splice(i,1);else{P.push(n);if(P.length>6)P.shift()}const y=window.scrollY;render();window.scrollTo(0,y)})}};
     m.querySelectorAll("[data-colset2]").forEach(b=>b.onclick=()=>{COL[b.dataset.colset2]=b.dataset.v;const y=window.scrollY;render();window.scrollTo(0,y)});
     m.querySelectorAll("select[data-colset]").forEach(x=>x.onchange=()=>{COL[x.dataset.colset]=x.value;const y=window.scrollY;render();window.scrollTo(0,y)});
     m.addEventListener("click",e=>{if(cur!=="college")return;const c=e.target.closest("[data-colsel]");if(!c)return;if(c.dataset.colrr)COL.r=c.dataset.colrr;COL.sel=c.dataset.colsel||null;render();if(COL.sel){const k=document.querySelector(".ccard");if(k)k.scrollIntoView({block:"nearest",behavior:"smooth"})}},{once:true});}
