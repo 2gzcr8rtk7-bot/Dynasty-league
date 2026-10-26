@@ -2039,8 +2039,8 @@ function grChart(P,show){if(!P.length)return`<div class="grempty">Nessuna partit
     return placed.map(o=>`<g class="grtag"><rect x="${(o.cx-o.w/2).toFixed(1)}" y="${(o.ty-8).toFixed(1)}" width="${o.w.toFixed(1)}" height="12" rx="6" fill="${GR_COL[o.k]}"/><text x="${o.cx.toFixed(1)}" y="${(o.ty+1.6).toFixed(1)}">${o.t}</text></g>`).join("")};
   const unit=(P[0]&&P[0].lab||"").startsWith("Sett")?"settimane":(P[0]&&P[0].lab||"").startsWith("Stagione")?"stagioni":"mesi";
   const tr=on.map(k=>{const r=grTrend(P.map(p=>p[k])),av=grAvg(P,p=>p[k]);if(av==null)return"";const pc=r?r.pct:0,cls=!r||Math.abs(pc)<3?"eq":pc>0?"up":"dn";
-    return`<div class="grtr ${k}"><i></i><span>Media <b>${fmt(k,av)}</b></span><em class="${cls}">${!r?"—":cls==="eq"?"▶ stabile":(cls==="up"?"▲ +":"▼ ")+pc.toFixed(0).replace("-","−")+"%"}</em></div>`}).join("");
-  return`<div class="grtrs"><small>Media e tendenza · ${P.length} ${unit}</small>${tr}</div><svg class="grsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Andamento">${grid}${xl}
+    return`<div class="grtr ${k}"><i></i><b>${fmt(k,av)}</b><em class="${cls}">${!r?"—":cls==="eq"?"▶ stabile":(cls==="up"?"▲ +":"▼ ")+pc.toFixed(0).replace("-","−")+"%"}</em></div>`}).join("");
+  return`<div class="grtrs">${tr}</div><svg class="grsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Andamento">${grid}${xl}
     ${SL?`<text x="4" y="10" class="gry ax" text-anchor="start">${left.map(k=>GR_LAB[k]).join(" · ").toUpperCase()}</text>`:""}${SR?`<text x="${W-2}" y="10" class="gry ax" text-anchor="end">EFFICIENZA</text>`:""}
     ${on.map(line).join("")}${tags()}</svg>`}
 function vGrafico(){if(!TEAMS[GR.t])GR.t=TEAMS[curTeam]?curTeam:Object.keys(TEAMS)[0];const t=GR.t,c=TEAMS[t];const ros=(ROSTER[t]||[]).map(x=>x[0]);if(!GR.p||!ros.includes(GR.p))GR.p=ros[0];
