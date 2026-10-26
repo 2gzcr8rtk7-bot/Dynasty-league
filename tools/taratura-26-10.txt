@@ -43,7 +43,7 @@ LeBron James|980|70
 Kevin Durant|960|60
 Khaman Maluach|450|140
 Cedric Coward|380|40
-Naz Reid|300|20
+Naz Reid|300|40
 Jeremiah Fears|800|180
 Zach Edey|690|50
 Ausar Thompson|650|30
