@@ -31,3 +31,9 @@ pesa il recente ma conta la carriera) · Curry 2–3 · Dončić 2½–3.
   Conta davvero agli estremi: 4–5 stelle = premio (Jokić vs Dončić: entrambi ~50 PDK, ma Jokić le gioca tutte e
   lo si sente tantissimo nel prezzo); 1–2 stelle = sconto forte (Ingram in vendita a ~10–20 crediti).
   Si sente più sul prezzo che sul valore.
+- Precisazione (26/10): da 2½ in giù il prezzo inizia a scendere leggermente rispetto a un 4–5 stelle; tra 3, 3½ e 4
+  è quasi la stessa cosa (piccolo premio a chi ne ha di più). Curva proposta (moltiplicatore sul **prezzo**;
+  sul **valore** metà effetto):
+  | stelle | 5 | 4½ | 4 | 3½ | 3 | 2½ | 2 | 1½ | 1 | ½ |
+  |---|---|---|---|---|---|---|---|---|---|---|
+  | prezzo | +20% | +10% | +4% | +2% | 0 | −6% | −15% | −30% | −50% | −80% |
