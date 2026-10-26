@@ -2287,7 +2287,7 @@ function prezzo(v,n){if(n&&PREZZO_FISSO[n]!=null)return PREZZO_FISSO[n];if(v==nu
 /* ===== VALORI AUTOMATICI SETTIMANALI (deciso da Francesco il 26/10/2026) =====
    I valori e i prezzi scritti a mano in VALORI / PREZZO_FISSO sono la PARTENZA. Ogni lunedì l'app li aggiorna da sola:
    valore = valore di partenza × F(oggi) / F(partenza), con F = PDKrif^1,78 × 0,93^(età−25) × 0,925^max(0; 2,5 − stelle infortuni)
-   (formula imparata dai valori di Francesco: vedi tools/CRITERI_VALORI.md). Massimo ±10% a settimana: se serve di più, il resto
+   (formula imparata dai valori di Francesco: vedi tools/CRITERI_VALORI.md). Massimo ±15% a settimana (deciso il 26/10, prima 10%): se serve di più, il resto
    arriva le settimane dopo. PDKrif = stagione in corso (partite fino alla domenica prima del lunedì) pesata g/(g+15)
    + base storica (2025/26 peso 1, 2024/25 peso ½). Rookie e chi non ha storia NBA: fermi finché non hanno 20 partite, poi partono da lì.
    I prezzi fissati si muovono della stessa percentuale del valore; gli altri prezzi vengono dalla formula prezzo() sul valore nuovo.
@@ -2308,7 +2308,7 @@ function valAuto(n,now){const V0=VAL_MAN[n];if(V0==null)return null;const B=VAL_
   const out={v0:V0,v:V0,k:Math.max(0,k),attesa:false};if(k<1)return out;const rk=isRookie(n),injNow=INF_STELLE[n]??B[1];let F0=null,v=V0;
   for(let i=0;i<=k;i++){const cut=d0+i*VAL_SETT-864e5,r=valPdkRif(n,cut);if(!r)continue;
     if(F0==null){if((rk||r.nuovo)&&r.g<20){out.attesa=true;continue}out.attesa=false;F0=valF(r.p,valEta(n,cut),i===0?B[1]:injNow);continue}
-    const t=V0*valF(r.p,valEta(n,cut),injNow)/F0;v=Math.min(v*1.1,Math.max(v*.9,t))}
+    const t=V0*valF(r.p,valEta(n,cut),injNow)/F0;v=Math.min(v*1.15,Math.max(v*.85,t))}
   out.v=v;return out}
 const VAL_INFO={};
 function valApply(now){now=now||Date.now();let kmax=0;for(const n in VAL_MAN){const r=valAuto(n,now);if(!r||!VALORI[n])continue;VAL_INFO[n]=r;kmax=Math.max(kmax,r.k);

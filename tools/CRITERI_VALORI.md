@@ -168,7 +168,7 @@ Prezzi (75 prezzi fissati): la formula prezzo attuale (PR) sbaglia in mediana de
 
 ## Aggiornamento automatico settimanale (deciso il 26/10/2026, attivo da lunedì 2/11/2026)
 - I valori e i prezzi di Francesco sono la partenza; ogni lunedì l'app li sposta con la formula sopra in rapporto alla partenza
-  (valore × F(oggi) ÷ F(partenza)), massimo ±10% a settimana.
+  (valore × F(oggi) ÷ F(partenza)), massimo ±15% a settimana.
 - PDK di riferimento = stagione in corso pesata partite/(partite+15) + storico (2025/26 peso 1, 2024/25 peso ½).
 - Età −7%/anno; infortuni −7,5% per stella sotto 2,5; minutaggio, efficienza e spazio non incidono.
 - Rookie e chi non ha storia NBA: fermi fino a 20 partite. Prezzi fissati: stessa percentuale del valore.
