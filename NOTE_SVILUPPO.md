@@ -422,3 +422,5 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 (71) Dynasty TV, box score: logo proprietario in filigrana (grande, trasparente, a destra nella casella del nome). PDK colorati per fascia: rosso <20, giallo 20-29,99, verde ≥30 (classi pr/py/pg); il totale squadra resta rosso.
 
 (72) Dynasty TV, striscia giorni (#tvweek): non più 7 giorni fissi ma tutti i giorni del calendario caricato, scorrevoli col dito (scroll-snap, 7 visibili). All'apertura si centra sul giorno scelto; la posizione di scorrimento resta durante i refresh live (tvWeekPos, TVS.wl/TVS.wd).
+
+(73) Scambio 26/10/2026 DOL↔MOO: ai Dolphins Jaime Jaquez Jr.; ai Mooses Jalen Williams + 30 cr post-Draft (debito Dolphins, in DEBITI tipo "post"). Aggiornati ROSTER, EFF.gioc, INFORTUNI (J. Williams ora t:"MOO"), TRADES. Titolari invariati (nessuno dei due era titolare).
