@@ -162,7 +162,7 @@
 .scrn b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase;line-height:1.05}.scrn small{display:block;font-size:10.5px;color:var(--muted)}
 .scrb{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.scrb i{font-style:normal;font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:5px;background:rgba(255,255,255,.08);color:#cbd5e1}.scrb i.h{background:#facc15;color:#111}.scrb i.n{background:rgba(74,222,128,.16);color:#4ade80}
 .scri{text-align:center;background:#facc15;color:#111;border-radius:12px;padding:6px 0}.scri b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:24px;line-height:1}.scri small{font-size:9px;font-weight:800;text-transform:uppercase}
-.scrk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:10px 0}.scrk div{background:rgba(255,255,255,.05);border-radius:10px;padding:7px}.scrk small{display:block;font-size:8.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--muted)}.scrk b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:21px;color:#facc15}.scrk em{font-style:normal;font-size:9.5px;color:var(--muted)}
+.scrk{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:10px 0}.scrk div{background:rgba(255,255,255,.05);border-radius:10px;padding:7px}.scrk small{display:block;font-size:8.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--muted)}.scrk b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:21px;color:#facc15}.scrk em{font-style:normal;font-size:9.5px;color:var(--muted)}
 .scrcs{display:grid;gap:4px}.scrcs>small{font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}.scr{min-width:0}.scrcs,.scrk,.scrh{min-width:0}.scrn{min-width:0}.scrn small{overflow-wrap:anywhere}
 .scrc{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;background:rgba(255,255,255,.04);border-radius:9px;padding:6px 8px;cursor:pointer;font-size:12px}
 .scrc b{color:#fff}.scrc em{font-style:normal;font-weight:800;color:#4ade80;text-align:right}.scrc em small{font-weight:500;color:var(--muted)}.scrc i{grid-column:1/-1;font-style:normal;font-size:10px;color:var(--muted)}
@@ -2726,7 +2726,7 @@ function colComment(x){const L=colRows(x.r),pc=(v,f)=>colPct(v,L.map(f)),role={g
   T.push(`<b>Usage ${cf1(x.usg)}%</b>: ${x.usg>=28?"prima opzione al college: in NBA difficilmente avrà subito lo stesso spazio, attenzione al calo":x.usg>=22?"secondo violino al college: ruolo che in NBA può replicare abbastanza in fretta":"gregario al college: produceva tanto senza la palla in mano, margine di crescita quando avrà più responsabilità"}.`);
   const prof=x.usg<=+(COL.u||24)&&x.p36>=+(COL.k||.9),C=colComps(x);
   if(prof)T.push(`<b>Profilo Haliburton</b>: poco usage e alta conversione. Nello storico chi aveva questo profilo è esploso nell'87% dei casi (contro il 65% degli altri).`);
-  if(C.length){const ex=C.filter(c=>{const b=colBestY(c.y);return b!=null&&c.y.Y[b].p-c.y.Y[1].p>=8});T.push(`<b>Paragoni</b>: al college assomigliava a ${C.map(c=>colLbl(c.y)).join(", ")}; ${ex.length?`${(n=>n.length>1?n.slice(0,-1).join(", ")+" e "+n[n.length-1]:n[0])(ex.map(c=>colLbl(c.y)))} ${ex.length>1?(ex.length===C.length?"sono esplosi tutti":"sono esplosi"):"è esploso"} su Dunkest`:"nessuno di loro è esploso"} (picco medio ${cf1(C.reduce((s,c)=>s+c.y.Y[colBestY(c.y)].p,0)/C.length)} PDK).`)}
+  if(C.length){const ex=C.filter(c=>{const b=colBestY(c.y);return b!=null&&c.y.Y[b].p-c.y.Y[1].p>=8});T.push(`<b>Paragoni</b>: al college assomigliava a ${C.map(c=>colLbl(c.y)).join(", ")}; ${ex.length?`${(n=>n.length>1?n.slice(0,-1).join(", ")+" e "+n[n.length-1]:n[0])(ex.map(c=>colLbl(c.y)))} ${ex.length>1?(ex.length===C.length?"sono esplosi tutti":"sono esplosi"):"è esploso"} su Dunkest`:"nessuno di loro è esploso"}.`)}
   const ks=Object.keys(x.Y||{}).map(Number).sort((a,b)=>a-b);if(ks.length&&!x.r26){const f=x.Y[ks[0]],b=x.Y[colBestY(x)],nb=colNbaPm(x.app,x);T.push(`<b>In NBA</b>: ${ks[0]===1?`da rookie ${cf1(f.p)} PDK`:`prima stagione nei dati ${cf1(f.p)}`}, migliore ${cf1(b.p)} (${b.s}).${nb?` Ha tenuto il ${Math.round(nb.pm/x.pm*100)}% della resa al minuto del college ${nb.pm/x.pm>=(med||1)?"(meglio della media del ruolo)":"(sotto la media del ruolo)"}.`:""}`)}
   else if(x.r26){const c=x.car&&x.car["2026/27"];T.push(c&&c[0]?`<b>Inizio NBA</b>: ${c[0]} partite, ${cf1(c[1])} minuti e ${cf1(c[2])} PDK di media. Campione ancora troppo piccolo per giudicare.`:`<b>Inizio NBA</b>: ancora nessuna partita registrata.`)}
   return T}
@@ -2981,11 +2981,10 @@ function vNbaSec(){return`<div class="nsubt"><button data-nbt="rep" aria-pressed
 /* ===== RISULTATI: classifica dei migliori prospetti =====
    Per ogni prospetto (classe 2026; opzione: anche rookie 2024-2025) cerco nello storico i 3 giocatori del suo ruolo con il
    profilo college più simile (usage, P36/USG, PDK/min standardizzati) e ne uso la carriera Dunkest:
-   - Picco atteso = media pesata (1/distanza) del miglior PDK Dunkest dei comparabili;
    - Esplosione = quota pesata di comparabili con debutto 2018+ esplosi (+8 PDK sull'anno da rookie), corretta col profilo
      Haliburton (nello storico 87% contro 65%);
    - PDK nascosti = dal Radar.
-   Indice 0-100 = 60% picco atteso + 25% esplosione + 15% PDK nascosti (normalizzati sul gruppo). */
+   Indice 0-100 = 55% PDK nascosti + 45% esplosione (normalizzati sul gruppo). */
 function colRisultati(){const A=colAll(),inc=COL.inc||"26",best=x=>x.nba?x.nba.v:null;
   const pool=A.filter(x=>!x.r26&&x.Y[1]&&x.deb>=2018&&x.deb<=2024);
   const P=A.filter(x=>x.pro||(inc==="26"?x.r26:(x.r26||(x.deb>=2024))));
@@ -2999,7 +2998,7 @@ function colRisultati(){const A=colAll(),inc=COL.inc||"26",best=x=>x.nba?x.nba.v
     const base=prof?.87:.65;ex=ex==null?base:(ex*E.length+base*2)/(E.length+2);
     const Hh=colHidden(x);return{x,C,peak,ex,prof,hid:Hh.v,hreal:Hh.real,sim:Math.round(100/(1+C.reduce((s,c)=>s+c.d,0)/C.length))}}).filter(Boolean);
   const nz=(v,L)=>{const lo=Math.min(...L),hi=Math.max(...L);return hi>lo?(v-lo)/(hi-lo):.5},PK=R.map(o=>o.peak),HD=R.map(o=>o.hid);
-  R.forEach(o=>o.idx=Math.round(100*(.6*nz(o.peak,PK)+.25*o.ex+.15*nz(o.hid,HD))));R.sort((a,b)=>COL.ord==="hid"?b.hid-a.hid:b.idx-a.idx);
+  R.forEach(o=>o.idx=Math.round(100*(.55*nz(o.hid,HD)+.45*o.ex)));R.sort((a,b)=>COL.ord==="hid"?b.hid-a.hid:b.idx-a.idx);
   const role={guardia:"Guardia",ala:"Ala",centro:"Centro"},col=k=>COL_RL.find(r=>r[0]===k)[3];
   const traj=y=>{const ks=Object.keys(y.Y).map(Number).sort((a,b)=>a-b);if(!ks.length)return"";const b=ks.reduce((a,k)=>y.Y[k].p>y.Y[a].p?k:a);return y.Y[1]?`${cf1(y.Y[1].p)} → ${cf1(y.Y[b].p)} <small>(${b}° anno)</small>`:`picco ${cf1(y.Y[b].p)} <small>(${y.Y[b].s})</small>`};
   const comp=o=>o.C.map(c=>`<span class="scrc" data-colsel="${c.y.n.replace(/"/g,"&quot;")}" data-colrr="${c.y.r}"><b>${colLbl(c.y)}</b><em>${traj(c.y)}</em><i>usg ${cf1(c.y.usg)}% · P36/USG ${cf2(c.y.p36)}</i></span>`).join("");
@@ -3007,12 +3006,12 @@ function colRisultati(){const A=colAll(),inc=COL.inc||"26",best=x=>x.nba?x.nba.v
     <span class="scrp">${i<3?["🥇","🥈","🥉"][i]:i+1}</span><span class="scrn"><b>${o.x.app||o.x.n}</b><small>${role[o.x.r]} · usage ${cf1(o.x.usg)}% · P36/USG ${cf2(o.x.p36)} · POT ${cf2(o.x.pot)}</small>
     <span class="scrb">${o.prof?`<i class="h">Profilo Haliburton</i>`:""}${o.x.pro?`<i class="h">Prospetto</i>`:o.x.r26?`<i>Classe 2026</i>`:`<i>Rookie ${o.x.deb}</i>`}</span></span>
     <span class="scri"><b>${o.idx}</b><small>indice</small></span></div>
-    <div class="scrk"><div class="scrhid"><small>PDK nascosti</small><b>${o.hreal?"":"≈"}+${cf1(o.hid)}</b><em>${o.hreal?"reali (NBA)":"stima college"}</em></div><div><small>Picco Dunkest atteso</small><b>${cf1(o.peak)}</b><em>PDK a partita</em></div><div><small>Prob. esplosione</small><b>${Math.round(o.ex*100)}%</b><em>+8 PDK dal 1° anno</em></div></div><p class="scrsim">Somiglianza con i paragoni: ${o.sim}%</p>
+    <div class="scrk"><div class="scrhid"><small>PDK nascosti</small><b>${o.hreal?"":"≈"}+${cf1(o.hid)}</b><em>${o.hreal?"reali (NBA)":"stima college"}</em></div><div><small>Prob. esplosione</small><b>${Math.round(o.ex*100)}%</b><em>+8 PDK dal 1° anno</em></div></div><p class="scrsim">Somiglianza con i paragoni: ${o.sim}%</p>
     <div class="scrcs"><small>Al college era come…  (carriera Dunkest: 1° anno → migliore)</small>${comp(o)}</div></div>`;
   const opts=`<div class="nseg" style="margin-bottom:6px"><button data-colset2="inc" data-v="26" aria-pressed="${inc==="26"}">Classe 2026</button><button data-colset2="inc" data-v="all" aria-pressed="${inc!=="26"}">+ rookie 2024-25</button></div><div class="nseg" style="margin-bottom:10px"><button data-colset2="ord" data-v="hid" aria-pressed="${COL.ord==="hid"}">Ordina per PDK nascosti</button><button data-colset2="ord" data-v="idx" aria-pressed="${COL.ord!=="hid"}">Ordina per indice</button></div>`;
-  return`${opts}<div class="cins">Classifica costruita sui dati: per ogni prospetto trovo i <b>3 giocatori già in NBA</b> con il profilo college più simile (usage, P36/USG, PDK/min) e guardo cosa hanno fatto su <b>Dunkest</b>. Più i paragoni sono esplosi e più sono arrivati in alto, più il prospetto sale.</div>
+  return`${opts}<div class="cins">Classifica costruita sui dati: per ogni prospetto trovo i <b>3 giocatori già in NBA</b> con il profilo college più simile (usage, P36/USG, PDK/min) e guardo cosa hanno fatto su <b>Dunkest</b>. Più spazio di crescita ha (PDK nascosti) e più i suoi paragoni sono esplosi, più il prospetto sale.</div>
   <div class="scrl">${R.map(card).join("")}</div>
-  <p class="note">Indice 0-100 = 60% picco Dunkest atteso (media dei migliori PDK dei 3 paragoni, pesata per somiglianza) + 25% probabilità di esplosione (quota di paragoni esplosi, corretta col profilo Haliburton: 87% contro 65% nello storico) + 15% PDK nascosti del Radar. Paragoni solo tra giocatori dello stesso ruolo debuttati in NBA dal 2018 al 2024, di cui Dunkest ha tutta la carriera dal 1° anno. È uno strumento di confronto, non una certezza: i paragoni sono pochi per ruolo.</p>`}
+  <p class="note">Indice 0-100 = 55% PDK nascosti + 45% probabilità di esplosione (quota di paragoni esplosi, corretta col profilo Haliburton: 87% contro 65% nello storico), normalizzati sul gruppo mostrato. Paragoni solo tra giocatori dello stesso ruolo debuttati in NBA dal 2018 al 2024, di cui Dunkest ha tutta la carriera dal 1° anno. È uno strumento di confronto, non una certezza.</p>`}
 /* Condivisione: immagine 1080×1350 della scheda del giocatore (stile Ufficio Scouting). */
 async function colShare(btn){const x=colRows(COL.r).find(y=>y.n===COL.sel);if(!x)return;const L=colRows(COL.r),col=COL_RL.find(r=>r[0]===COL.r)[3];
   try{await document.fonts.load('800 italic 40px "Barlow Condensed"')}catch(e){}
@@ -3059,10 +3058,9 @@ const COL_LEG=[["Dati del college",[
  ["Affidabilità","Quanto un dato del college è legato alla resa NBA nel ruolo (correlazione): alta, media o quasi nulla. Per le ali il college dice poco, per i centri conta il PDK/min, per le guardie il POT."]]],
  ["Classifica Risultati",[
  ["Paragoni statistici","I 3 giocatori dello stesso ruolo, debuttati in NBA dal 2018 al 2024, con il profilo college più simile (usage, P36/USG, PDK/min). Di ognuno si vede la carriera Dunkest: 1° anno → stagione migliore."],
- ["Picco Dunkest atteso","Media dei migliori PDK stagionali dei 3 paragoni, pesata: il più simile conta di più. Indica fin dove può arrivare."],
  ["Probabilità di esplosione","Quota dei paragoni che sono esplosi, corretta con il profilo Haliburton."],
  ["Somiglianza","Quanto il prospetto è vicino ai suoi 3 paragoni: più è alta, più il confronto è affidabile."],
- ["Indice (0-100)","Voto relativo alla lista mostrata: 60% picco atteso + 25% probabilità di esplosione + 15% PDK nascosti. 100 = il migliore della lista, non un valore assoluto."],
+ ["Indice (0-100)","Voto relativo alla lista mostrata: 55% PDK nascosti + 45% probabilità di esplosione. 100 = il migliore della lista, non un valore assoluto."],
  ["Classe 2026 / Prospetto","Classe 2026 = draftati nel 2026, già in NBA. Prospetto = giocatore del college in vista del prossimo draft, senza ancora dati NBA."]]],
  ["Mappa e profili",[
  ["Potenza nascosta","Poco usage e tanta resa al minuto: con più spazio in NBA può esplodere."],

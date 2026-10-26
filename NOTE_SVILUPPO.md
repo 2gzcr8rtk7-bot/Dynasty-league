@@ -378,3 +378,5 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
   (colonna "Nasc."), Risultati (ordinamento predefinito), Radar e scheda giocatore. Riga archivio con x[7]=2 = prospetto.
 - (54) Scouting: pulsante **📖 Legenda** in alto a destra (College e NBA) che apre la spiegazione di tutti i dati e i
   termini (`COL_LEG`, `colLegend`).
+- (55) Risultati: tolto il "picco Dunkest atteso" (non richiesto da Francesco). Indice = 55% PDK nascosti + 45%
+  probabilità di esplosione.
