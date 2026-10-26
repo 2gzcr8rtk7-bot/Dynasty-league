@@ -411,3 +411,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - Dati letti da `GL_STATS` (log partita per partita): per aggiornarlo basta il report G League già esistente.
 - (64) Home: barra "Cerca giocatore" elegante al posto di "Tocca un logo per il roster" (`#hq`, `homeSearch`): risultati con maglia, squadra e ruolo; tocco = scheda giocatore (indietro torna alla Home).
 - (65) G-DREAMERS usa i colori delle G League (`GLEAGUE.bg`: Ducks viola, Peacocks giallo, Turtles lilla), per le altre quelli della prima squadra (`gdBg`).
+- (66) Home: pulsantino rosso (telecamera con pallino "live" pulsante) accanto alla ricerca che apre la Dynasty TV (view `tv`).
