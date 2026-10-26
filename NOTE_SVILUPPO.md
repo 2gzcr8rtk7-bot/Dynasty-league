@@ -456,3 +456,5 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo in VALORI/PREZZO_FISSO come sempre E mettere in VAL_BASE[nome] ["AAAA-MM-GG" del lunedì di quella settimana, INF_STELLE attuale]. Nuovi giocatori senza VAL_BASE partono da VAL_ORIGINE: per loro aggiungere sempre la riga in VAL_BASE con la data del lunedì in cui entrano. A fine stagione (stagione nuova) valDt/valBaseStorica vanno aggiornati (anni e stagioni di riferimento).
 
 (87) Freno dei valori automatici portato al 15% a settimana (richiesta di Francesco 26/10).
+
+(88) Free Agent: stagioni scritte come "Stagione 1/2/3" (FA_SZL: 24/25=1, 25/26=2, 26/27=3) nei bottoni della lista e nella tabella della scheda ("Stag. 3" con sotto 26/27).
