@@ -102,3 +102,11 @@ interpolazione lineare tra i punti delle fasce: PDK (20→0 · 24→1 · 27→2 
 esatta: 20→5 · 22→4½ · 24→4 · … · 38→½ · 40→0), Minutaggio, Efficienza giovani (3 + ½ ogni +15% sulla soglia di ruolo),
 Efficienza esperti, Infortuni (partite saltate medie). Spazio in squadra resta a gradini (è una gerarchia).
 Voto del GM: Ingram Infortuni ½.
+
+## Risposte di Francesco sulle discrepanze (26/10/2026)
+- **Il valore serve a equilibrare le trade** senza falsare i campionati: chi non ha ancora dati utili (pochi PDK) non deve
+  avere un valore troppo alto, anche se è una promessa. Il **prezzo** invece paga la promessa.
+- **Promesse giovani (Queen, Harper, Dybantsa)**: prezzo alto per **posizione al draft** (Dybantsa pick 1) e per come hanno
+  performato al 1° anno, cioè **efficienza giovani** e statistiche complete (Harper playmaker che altrove esploderebbe;
+  Queen centro "alla Şengün" con tante statistiche e tanta efficienza). Nei giovani **efficienza e draft fanno il prezzo**.
+  → serve un fattore **draft** (posizione della scelta) per i primi 3 anni, e più peso all'efficienza giovani sul prezzo.
