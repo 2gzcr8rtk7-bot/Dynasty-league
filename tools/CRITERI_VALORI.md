@@ -62,3 +62,13 @@ Peso sul valore/prezzo:
      → segnale di crescita. Con minutaggio già pieno conta poco.
      Scala (corretta da Francesco: 0,75 = 2½; efficienza 1 = "ottimo", almeno 4 — 33 min per 33 PDK):
      0,50 =1 · 0,58 =1½ · 0,67 =2 · 0,75 =2½ · 0,83 =3 · 0,92 =3½ · 1,00 =4 · 1,15 =4½ · 1,30+ =5.
+
+## Spazio in squadra (26/10/2026)
+Gerarchia nella propria squadra NBA:
+- 5 stelle = numero 1 della squadra (Jokić, Dončić)
+- 4 = numero 2 · 3 = numero 3
+- 2 = titolare ma non tra i principali (4°–6° giocatore, anche sesto uomo)
+- 1 = panchina, nelle rotazioni ma non principale (tipico dei rookie)
+- ½ = fondo delle rotazioni (es. Allen Graves, rookie, ~9° uomo)
+Calcolo automatico (proposta): ordine dei giocatori della squadra NBA per PDK/uso nelle ultime partite
+(serve la rosa completa della squadra NBA, non solo i giocatori della lega); Francesco corregge i casi dubbi.
