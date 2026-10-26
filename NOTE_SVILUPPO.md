@@ -347,3 +347,7 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
   College→NBA (POT vs miglior PDK NBA, `colReg`), Archivio. Scheda giocatore al tocco (`colCard`: percentili nel ruolo,
   profilo, tenuta/proiezione, 3 profili college più simili). I dati NBA si leggono dall'app e si aggiornano da soli;
   l'archivio college resta cifrato (non toccare `COL_ENC`).
+- (45) Scouting in giallo Ducks (logo Texas Ducks, "Ufficio Scouting"). Nuova scheda iniziale **Studio usage**
+  (`colUsage`): profilo "Haliburton" = usage college basso + P36/USG alto (soglie regolabili), grafico usage vs
+  P36/USG colorato per esito NBA, confronto profilo vs altri (30+ PDK, PDK medio, tenuta, salto da rookie),
+  primo anno → migliore, candidati classe 2026, elenco dati NBA mancanti.
