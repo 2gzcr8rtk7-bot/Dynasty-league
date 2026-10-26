@@ -763,6 +763,9 @@ nav button{font-size:15px;letter-spacing:.04em}
 .tvst{grid-column:2;grid-row:1;display:grid;justify-items:end;gap:2px;font-family:var(--display);font-weight:800;font-style:italic;text-transform:uppercase;text-align:right}
 .tvst b{font-size:13px;letter-spacing:.08em;color:#fff;background:#c8102e;padding:2px 7px;transform:skewX(-10deg)}
 .tvst b.pre{background:#1d428a}
+.tvst b.lv{display:inline-flex;align-items:center;gap:5px;background:#c8102e}.tvst b.lv i{width:7px;height:7px;border-radius:50%;background:#fff;transform:skewX(10deg)}
+@media (prefers-reduced-motion:no-preference){.tvst b.lv i{animation:tvpulse 1.2s ease-in-out infinite}@keyframes tvpulse{50%{opacity:.25}}}
+.tvg.live{border-color:#c8102e;box-shadow:inset 3px 0 0 #c8102e}.tvg.live .tvsc{color:#fff}
 .tvst small{font-style:normal;font-weight:700;font-size:10.5px;letter-spacing:.06em;color:var(--muted);max-width:110px}
 .tvtop{grid-column:1/-1;border-top:1px solid rgba(255,255,255,.07);padding-top:6px;font-size:12px;color:#cfd6ea;display:flex;gap:10px;flex-wrap:wrap}
 .tvtop span b{color:#fff;font-weight:700}
@@ -4485,7 +4488,7 @@ const tvDt=s=>new Date(s+"T12:00:00Z");
 function tvLogo(c,cls=""){const t=TVD().teams[c]||[c,0,"#333"];return`<span class="tvlw ${cls}" style="background:${t[2]}"><em>${c}</em>${t[1]?`<img src="https://cdn.nba.com/logos/nba/${t[1]}/primary/L/logo.svg" alt="" loading="lazy" onload="this.parentNode.classList.add('ok')" onerror="this.remove()">`:""}</span>`}
 const tvNick=c=>{const n=(TVD().teams[c]||[c])[0];return n.split(" ").slice(-1)[0]==="Blazers"?"Trail Blazers":n.split(" ").slice(-1)[0]};
 const tvRec=c=>{const r=TVD().rec[c];return r?r[0]+"-"+r[1]:""};
-function tvDefDay(){const T=TVD(),ks=Object.keys(T.days).sort();const f=ks.filter(k=>T.days[k].some(g=>g[5]==="F"));return f.length?f[f.length-1]:ks[0]}
+function tvDefDay(){const T=TVD(),ks=Object.keys(T.days).sort();const lv=ks.filter(k=>T.days[k].some(g=>g[5]==="L"));if(lv.length)return lv[0];const f=ks.filter(k=>T.days[k].some(g=>g[5]==="F"));return f.length?f[f.length-1]:ks[0]}
 function tvLead(b){const all=[...b.a.map(p=>["a",p]),...b.h.map(p=>["h",p])];const top=i=>all.slice().sort((x,y)=>y[1][i]-x[1][i])[0];return{pts:top(3),reb:top(6),ast:top(7),pdk:all.slice().sort((x,y)=>y[1][19]-x[1][19])[0]}}
 function vTV(){const T=TVD(),ks=Object.keys(T.days).sort();if(!ks.length)return`${H("Dynasty TV")}<div class="tvempty">Calendario non ancora disponibile.</div>`;
   if(!TVS.d||!T.days[TVS.d])TVS.d=tvDefDay();
@@ -4494,17 +4497,17 @@ function vTV(){const T=TVD(),ks=Object.keys(T.days).sort();if(!ks.length)return`
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
   /* settimana: 7 giorni attorno alla data scelta */
   const wk=[];for(let k=-3;k<=3;k++){const x=new Date(dd);x.setUTCDate(x.getUTCDate()+k);const s=x.toISOString().slice(0,10),n=(T.days[s]||[]).length;wk.push(`<button class="tvday${n?"":" off"}" data-tvd="${s}" aria-pressed="${s===d}"${n?"":" disabled"}><span>${TV_G3[x.getUTCDay()]}</span><b>${x.getUTCDate()}</b><small>${n?n+" part.":"—"}</small></button>`)}
-  const cards=G.map(g=>{const[a,h,sa,sh,ot,st,tm,key]=g,fin=st==="F",wa=fin&&sa>sh,wh=fin&&sh>sa;let top="";
-    if(fin&&T.box[key]){const L=tvLead(T.box[key]),pp=L.pdk;top=`<div class="tvtop"><span>Top: <b>${sur(pp[1][0])}</b> (${pp[0]==="a"?a:h}) ${pp[1][3]} pt · ${pp[1][6]} rb · ${pp[1][7]} as · ${String(pp[1][19]).replace(".",",")} PDK</span></div>`}
-    const row=(c,s,w)=>`<div class="tvt${w?" win":""}">${tvLogo(c)}<span class="tvnm"><b>${tvNick(c)}</b><small>${c} · ${tvRec(c)}</small></span><span class="tvsc">${fin?s:""}</span></div>`;
-    return`<button class="tvg" ${fin&&key?`data-tvg="${key}"`:"disabled"} aria-label="${a} contro ${h}"><div class="tvteams">${row(a,sa,wa)}${row(h,sh,wh)}</div>
-      <div class="tvst">${fin?`<b>Finale${ot?" · OT":""}</b><small>tabellino ›</small>`:`<b class="pre">${tm.replace("+1","")}</b><small>ora italiana${tm.includes("+1")?" · notte tra "+dd.getUTCDate()+" e "+(dd.getUTCDate()+1>new Date(Date.UTC(dd.getUTCFullYear(),dd.getUTCMonth()+1,0)).getUTCDate()?1:dd.getUTCDate()+1):""}</small>`}</div>${top}</button>`}).join("");
+  const cards=G.map(g=>{const[a,h,sa,sh,ot,st,tm,key]=g,lv=st==="L",fin=st==="F",sc=fin||lv,wa=fin&&sa>sh,wh=fin&&sh>sa;let top="";
+    if(sc&&T.box[key]){const L=tvLead(T.box[key]),pp=L.pdk;top=`<div class="tvtop"><span>Top: <b>${sur(pp[1][0])}</b> (${pp[0]==="a"?a:h}) ${pp[1][3]} pt · ${pp[1][6]} rb · ${pp[1][7]} as · ${String(pp[1][19]).replace(".",",")} PDK</span></div>`}
+    const row=(c,s,w)=>`<div class="tvt${w?" win":""}">${tvLogo(c)}<span class="tvnm"><b>${tvNick(c)}</b><small>${c} · ${tvRec(c)}</small></span><span class="tvsc">${sc?s:""}</span></div>`;
+    return`<button class="tvg${lv?" live":""}" ${sc&&key&&T.box[key]?`data-tvg="${key}"`:"disabled"} aria-label="${a} contro ${h}"><div class="tvteams">${row(a,sa,wa)}${row(h,sh,wh)}</div>
+      <div class="tvst">${lv?`<b class="lv"><i></i>Live</b><small>${TVL.st[key]||""}${T.box[key]?" · tabellino ›":""}</small>`:fin?`<b>Finale${ot?" · OT":""}</b><small>${TVL.st[key]&&T.box[key]&&T.box[key].live?"dati NBA live · ":""}tabellino ›</small>`:`<b class="pre">${tm.replace("+1","")}</b><small>ora italiana${tm.includes("+1")?" · notte tra "+dd.getUTCDate()+" e "+(dd.getUTCDate()+1>new Date(Date.UTC(dd.getUTCFullYear(),dd.getUTCMonth()+1,0)).getUTCDate()?1:dd.getUTCDate()+1):""}</small>`}</div>${top}</button>`}).join("");
   const nf=G.filter(g=>g[5]==="F").length;
   return`<div class="tvhero"><b>Dynasty TV <i>NBA</i></b><small>Calendario, risultati e tabellini · stagione 2026/27</small></div>
-  <div class="tvdate"><button data-tvnav="-1" aria-label="Giorno precedente"${i<=0?" disabled":""}>‹</button><div class="tvdl"><b>${TV_GG[dd.getUTCDay()]} ${dd.getUTCDate()} ${TV_MM[dd.getUTCMonth()]}</b><small>${G.length} ${G.length===1?"partita":"partite"}${nf?` · ${nf===G.length?"tutte finite":nf+" finite"}`:" · in programma"} · data USA</small></div><button data-tvnav="1" aria-label="Giorno successivo"${i>=ks.length-1?" disabled":""}>›</button></div>
+  <div class="tvdate"><button data-tvnav="-1" aria-label="Giorno precedente"${i<=0?" disabled":""}>‹</button><div class="tvdl"><b>${TV_GG[dd.getUTCDay()]} ${dd.getUTCDate()} ${TV_MM[dd.getUTCMonth()]}</b><small>${G.length} ${G.length===1?"partita":"partite"}${G.some(g=>g[5]==="L")?` · ${G.filter(g=>g[5]==="L").length} in corso`:""}${nf?` · ${nf===G.length?"tutte finite":nf+" finite"}`:G.some(g=>g[5]==="L")?"":" · in programma"} · data USA</small></div><button data-tvnav="1" aria-label="Giorno successivo"${i>=ks.length-1?" disabled":""}>›</button></div>
   <div class="tvweek">${wk.join("")}</div>
   <div class="tvlist">${cards||`<div class="tvempty">Nessuna partita in questa data.</div>`}</div>
-  <p class="note">${T.src||""} Orari d'inizio in ora italiana. Tocca una partita finita per il tabellino completo. Aggiornato ${T.upd||""}.</p>`}
+  <p class="note">${TVL.err?"Dati live NBA non raggiungibili in questo momento: restano i dati del report. ":TVL.last?`Live: dati NBA.com aggiornati ogni 30 secondi (ultimo ${TVL.last}); il PDK delle partite in corso è calcolato con la formula Dunkest ed è provvisorio. `:""}${T.src||""} Orari d'inizio in ora italiana. Tocca una partita in corso o finita per il tabellino completo. Aggiornato ${T.upd||""}.</p>`}
 function tvGame(key){const T=TVD(),[d,g]=key.split("_"),G=(T.days[d]||[]).find(x=>x[7]===key);if(!G)return"";const[a,h,sa,sh,ot]=G,b=T.box[key],ca=(T.teams[a]||[])[2]||"#333",ch=(T.teams[h]||[])[2]||"#333",dd=tvDt(d);
   const sum=(L,i)=>L.reduce((s,p)=>s+(+p[i]||0),0),pc=(m,x)=>x?(m/x*100).toFixed(1).replace(".",",")+"%":"—";
   const S=L=>({fgm:sum(L,12),fga:sum(L,13),tpm:sum(L,14),tpa:sum(L,15),ftm:sum(L,16),fta:sum(L,17),reb:sum(L,6),oreb:sum(L,4),ast:sum(L,7),stl:sum(L,8),blk:sum(L,9),tov:sum(L,10),pf:sum(L,11),pdk:sum(L,19)});
@@ -4521,7 +4524,7 @@ function tvGame(key){const T=TVD(),[d,g]=key.split("_"),G=(T.days[d]||[]).find(x
    <tr class="pct"><td>Percentuali</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>${pc(TS.fgm,TS.fga)}</td><td>${pc(TS.tpm,TS.tpa)}</td><td>${pc(TS.ftm,TS.fta)}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
   return`<button class="gback tvback" data-tvback="1">‹ Partite del ${dd.getUTCDate()} ${TV_MM[dd.getUTCMonth()]}</button>
   <div class="tvsb" style="--ca:${ca};--ch:${ch}"><div class="tside">${tvLogo(a)}<b>${tvNick(a)}</b><small>${tvRec(a)} · trasferta</small></div>
-   <div class="tmid"><div><span class="${sa<sh?"lo":""}">${sa}</span><i>–</i><span class="${sh<sa?"lo":""}">${sh}</span></div><small>Finale${ot?" · OT":""}</small></div>
+   <div class="tmid"><div><span class="${sa<sh?"lo":""}">${sa}</span><i>–</i><span class="${sh<sa?"lo":""}">${sh}</span></div><small>${G[5]==="L"?"Live · "+(TVL.st[key]||""):"Finale"+(ot?" · OT":"")}</small></div>
    <div class="tside">${tvLogo(h)}<b>${tvNick(h)}</b><small>${tvRec(h)} · casa</small></div></div>
   <div class="tvsec">Migliori</div>
   <div class="tvlead">${lead("Punti",L.pts,3)}${lead("Rimbalzi",L.reb,6)}${lead("Assist",L.ast,7)}</div>
@@ -4530,7 +4533,27 @@ function tvGame(key){const T=TVD(),[d,g]=key.split("_"),G=(T.days[d]||[]).find(x
   <div class="tvtabs"><button class="tvtab" data-tvside="a" aria-pressed="${side==="a"}">${tvLogo(a)}${tvNick(a)}</button><button class="tvtab" data-tvside="h" aria-pressed="${side==="h"}">${tvLogo(h)}${tvNick(h)}</button></div>
   <div class="tbl-wrap"><table class="ptbl tvbox"><thead><tr><th>Giocatore</th><th>Min</th><th>Pt</th><th>Rim</th><th>Ass</th><th>Rec</th><th>Stp</th><th>Pp</th><th>Tiri</th><th>Da 3</th><th>Liberi</th><th>Off</th><th>Dif</th><th>Falli</th><th>+/−</th><th>PDK</th></tr></thead>
   <tbody><tr class="grp"><td>Quintetto</td><td colspan="15"></td></tr>${st.map(pr).join("")}<tr class="grp"><td>Panchina</td><td colspan="15"></td></tr>${bn.map(pr).join("")}${tot}</tbody></table></div>
-  <p class="note">Tabellino ufficiale (dati Dunkest). Pt punti, Rim rimbalzi, Ass assist, Rec recuperi, Stp stoppate, Pp palle perse, Off/Dif rimbalzi offensivi/difensivi, +/− punti di scarto con il giocatore in campo, PDK punteggio Dunkest. Scorri a destra per tutte le colonne.</p>`}
+  <p class="note">${b.live?`Tabellino dati NBA.com live${G[5]==="L"?", si aggiorna ogni 30 secondi; PDK provvisorio (formula Dunkest, il +5% vittoria si aggiunge a fine partita)":"; PDK calcolato con la formula Dunkest, quello ufficiale arriva con il report del mattino"}.`:"Tabellino ufficiale (dati Dunkest)."} Pt punti, Rim rimbalzi, Ass assist, Rec recuperi, Stp stoppate, Pp palle perse, Off/Dif rimbalzi offensivi/difensivi, +/− punti di scarto con il giocatore in campo, PDK punteggio Dunkest. Scorri a destra per tutte le colonne.</p>`}
+/* ===== DYNASTY TV LIVE: dati in diretta NBA letti dal telefono (cdn.nba.com), solo mentre la sezione è aperta ===== */
+const TVL={st:{},on:false,err:false,t:null,last:""};
+const tvMin=s=>{const m=/PT(\d+)M([\d.]+)S/.exec(s||"");if(!m)return"0:00";const ss=Math.floor(+m[2]);return`${+m[1]}:${String(ss).padStart(2,"0")}`};
+function tvPdk(s,starter,win){let v=s.points+s.reboundsDefensive+1.25*s.reboundsOffensive+1.5*(s.assists+s.steals+s.blocks)-1.5*s.turnovers-.5*(s.blocksReceived||0)-(s.fieldGoalsAttempted-s.fieldGoalsMade)-(s.freeThrowsAttempted-s.freeThrowsMade)+(starter?1:0);
+  const t=s.threePointersMade;v+=t>=5?5:t>=3?t:0;const c=[s.points,s.reboundsTotal,s.assists,s.steals,s.blocks].filter(x=>x>=10).length;v+=c>=4?50:c===3?10:c===2?5:0;if(win)v+=.05*Math.abs(v);return Math.round(v*100)/100}
+function tvLiveSide(tm,win){return(tm.players||[]).filter(p=>p.played==="1").map(p=>{const s=p.statistics,st=p.starter==="1";
+  return[p.name,st?1:0,tvMin(s.minutes),s.points,s.reboundsOffensive,s.reboundsDefensive,s.reboundsTotal,s.assists,s.steals,s.blocks,s.turnovers,s.foulsPersonal,s.fieldGoalsMade,s.fieldGoalsAttempted,s.threePointersMade,s.threePointersAttempted,s.freeThrowsMade,s.freeThrowsAttempted,Math.round(s.plusMinusPoints),tvPdk(s,st,win)]}).sort((x,y)=>y[1]-x[1])}
+async function tvLiveTick(){if(cur!=="tv"||document.hidden||typeof TV==="undefined")return;
+  try{const r=await fetch("https://cdn.nba.com/static/json/liveData/scoreboard/todaysScoreboard_00.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)throw 0;const J=await r.json();TVL.err=false;
+    for(const g of(J.scoreboard&&J.scoreboard.games)||[]){const gc=g.gameCode||"",d=gc.slice(0,4)+"-"+gc.slice(4,6)+"-"+gc.slice(6,8),a=g.awayTeam.teamTricode,hm=g.homeTeam.teamTricode,day=TV.days[d];if(!day)continue;
+      const G=day.find(x=>x[0]===a&&x[1]===hm);if(!G||G[5]==="F"&&!TVL.st[G[7]])continue;if(g.gameStatus<2)continue;
+      const fin=g.gameStatus===3,key=d+"_"+a+hm;G[2]=g.awayTeam.score;G[3]=g.homeTeam.score;G[4]=g.period>4?1:0;G[5]=fin?"F":"L";G[7]=key;
+      TVL.st[key]=fin?"Finale"+(g.period>4?" · OT":""):(g.gameStatusText||"Live").trim();
+      try{const b=await fetch(`https://cdn.nba.com/static/json/liveData/boxscore/boxscore_${g.gameId}.json?t=`+Date.now(),{cache:"no-store"});if(b.ok){const B=(await b.json()).game,aw=fin&&B.awayTeam.score>B.homeTeam.score,hw=fin&&B.homeTeam.score>B.awayTeam.score;TV.box[key]={a:tvLiveSide(B.awayTeam,aw),h:tvLiveSide(B.homeTeam,hw),live:1}}}catch(e){}}
+    if(!TVL.moved&&!TVS.g){const lv=tvDefDay();if(TV.days[lv]&&TV.days[lv].some(x=>x[5]==="L")){TVS.d=lv;TVL.moved=true}}
+    TVL.last=new Date().toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  }catch(e){TVL.err=true}
+  if(cur==="tv"){const y=window.scrollY;render();window.scrollTo(0,y)}}
+function tvLiveStart(){if(TVL.t)return;tvLiveTick();TVL.t=setInterval(tvLiveTick,30000)}
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&cur==="tv")tvLiveTick()});
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="tv")return;const T=TVD(),ks=Object.keys(T.days).sort();
   const nav=e.target.closest("[data-tvnav]"),day=e.target.closest("[data-tvd]"),gm=e.target.closest("[data-tvg]"),bk=e.target.closest("[data-tvback]"),sd=e.target.closest("[data-tvside]");
   if(nav){const i=ks.indexOf(TVS.d)+ +nav.dataset.tvnav;if(i>=0&&i<ks.length){TVS.d=ks[i];render()}return}
@@ -4538,7 +4561,8 @@ document.getElementById("main").addEventListener("click",e=>{if(cur!=="tv")retur
   if(gm){TVS.g=gm.dataset.tvg;TVS.side="a";render();window.scrollTo(0,0);return}
   if(bk){TVS.g=null;render();window.scrollTo(0,0);return}
   if(sd){TVS.side=sd.dataset.tvside;const y=window.scrollY;render();window.scrollTo(0,y)}});
-const VIEWS={tv:vTV,college:vCollege,trend:vTrend,cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.grafico=vGrafico;
+const vTVlive=()=>{tvLiveStart();return vTV()};
+const VIEWS={tv:vTVlive,college:vCollege,trend:vTrend,cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.grafico=vGrafico;
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
