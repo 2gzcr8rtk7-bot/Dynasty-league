@@ -62,6 +62,19 @@
 .capgl{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}.capgl span{font-size:11px;font-weight:700;padding:2px 6px;border-radius:5px;color:#111}.capgl .g{background:#4ade80}.capgl .y{background:#facc15}.capgl .r{background:#f87171}
 .capnote{font-size:12px;color:var(--muted);margin:0}
 .capat{margin-top:10px;font-size:12px;font-weight:700;padding:6px 10px;border-radius:8px}.capat.ok{background:rgba(74,222,128,.14);color:#4ade80}.capat.ko{background:rgba(248,113,113,.14);color:#f87171}.capat i{font-weight:500;color:var(--muted)}
+.ctool .ci.mul{background:#ef4444;color:#fff}
+.mtbl{overflow-x:auto;margin-bottom:6px}.mtbl table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.mtbl th,.mtbl td{padding:8px 6px;border-bottom:1px solid rgba(255,255,255,.08);text-align:right;white-space:nowrap}.mtbl thead th{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.mtbl tbody th{text-align:left;font-weight:800}.mtbl tbody th small{display:block;font-weight:500;font-size:10px;color:var(--muted)}.mtbl thead th:first-child{text-align:left}
+.mtbl table{min-width:0!important;table-layout:fixed}.mtbl th,.mtbl td{padding:8px 3px!important;background:none!important;position:static!important;font-size:12.5px}
+.mtbl thead th{font-size:9.5px!important;letter-spacing:.04em!important}.mtbl tbody th{font-family:inherit!important;font-style:normal!important;letter-spacing:0!important;text-transform:none!important;font-size:13px!important;width:31%;overflow:hidden;text-overflow:ellipsis}
+.mtbl thead th:first-child{width:31%}
+.mdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}.mdot.g{background:#4ade80}.mdot.r{background:#f87171}
+.mleg{font-size:11px;color:var(--muted);margin:4px 0 14px}
+.mrow{background:var(--card,#141c33);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.mnm b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;text-transform:uppercase}.mnm small{font-size:10.5px;color:var(--muted)}
+.mvd{margin-top:8px}.mvd small{display:block;font-size:11.5px;color:var(--muted);margin-top:4px}.mvd small.mi{color:#facc15}
+.mv{display:inline-block;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:4px 10px;border-radius:7px}.mv.ok{background:rgba(74,222,128,.16);color:#4ade80}.mv.ko{background:rgba(248,113,113,.16);color:#f87171}.mv.nd{background:rgba(255,255,255,.06);color:var(--muted);text-transform:none;letter-spacing:0;font-weight:600}
 .gback{background:none;border:0;color:var(--muted);font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;padding:0 0 12px;cursor:pointer}
 .ghead{position:relative;display:flex;align-items:center;gap:14px;padding:16px;margin-bottom:22px;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.4)}
 .ghead::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.07) 0 10px,transparent 10px 22px);pointer-events:none}
@@ -2397,6 +2410,45 @@ function vCap(){const t=CAP.t||curTeam,c=TEAMS[t],R=ROSTER[t]||[];if(CAP.t!==t)c
   ${D.length?`<div class="capbar"><span>${D.length} ${D.length===1?"candidato":"candidati"} · ordinati per Indice Cap</span><button id="capclr">Azzera</button></div>${ord.map(card).join("")}
   <p class="note">Indice Cap = 40% media contro l'avversario (con poche partite si avvicina alla media stagione) + 35% Ultimo 15% + 25% media stagione. Anti-tank: confronto con il miglior altro candidato per media stagione, su Stagione, Ultimo 50% e Ultimo 15% (verde se meglio o entro 3 PDK; servono 2 verdi su 3). Le scelte restano salvate su questo telefono.</p>`:""}`}
 
+/* ===== MULTE: simulatore del sistema anti-tank (Regolamento, Articolo 6, Parte 2) =====
+   Parametri sulle partite giocate nella stagione in corso: A = media stagione, B = media ultimo 50%, C = media ultimo 15%
+   (numero di partite arrotondato per eccesso). Capitano confrontato con ogni altro giocatore selezionato (l'alternativa):
+   su ogni parametro è verde se è più alto o se è sotto di non più di 3,00 PDK (da 3,01 rosso). Servono 2 verdi su 3.
+   Calcolo NON possibile (si torna al voto della commissione): meno di 15 partite giocate (MUL_MIN), oppure partite non
+   paragonabili per infortunio (uno dei due ha meno del 60% delle partite dell'altro). In quei casi il risultato è solo indicativo.
+   Selezione salvata su questo telefono (localStorage dl_mul_<squadra>). */
+const MUL_MIN=15,MUL_TOL=3;let MUL={t:null,sel:[]};
+function mulLoad(t){MUL={t,sel:[]};try{const x=JSON.parse(localStorage.getItem("dl_mul_"+t)||"null");if(Array.isArray(x))MUL.sel=x}catch(e){}}
+function mulSave(){try{localStorage.setItem("dl_mul_"+MUL.t,JSON.stringify(MUL.sel))}catch(e){}}
+function mulPar(n){const g=PARTITE[n]||[],N=g.length,m=a=>a.length?a.reduce((s,x)=>s+(+x[3]||0),0)/a.length:null;
+  return{n,N,A:m(g),B:N?m(g.slice(-Math.ceil(N/2))):null,C:N?m(g.slice(-Math.ceil(N*.15))):null,kB:Math.ceil(N/2),kC:Math.ceil(N*.15)}}
+const mulVerde=(v,alt)=>v!=null&&alt!=null&&(v>=alt||Math.round((alt-v)*100)/100<=MUL_TOL);
+function mulCheck(c,a){const g=["A","B","C"].map(k=>mulVerde(c[k],a[k])),ok=g.filter(Boolean).length;
+  const poche=c.N<MUL_MIN||a.N<MUL_MIN,inf=!poche&&Math.min(c.N,a.N)<.6*Math.max(c.N,a.N);
+  return{alt:a.n,g,ok,multa:ok<2,valido:!poche&&!inf,motivo:poche?"meno di "+MUL_MIN+" partite giocate":inf?"partite non paragonabili (infortunio)":""}}
+function vMulte(){const t=MUL.t||curTeam,c=TEAMS[t],R=ROSTER[t]||[];if(MUL.t!==t)mulLoad(t);
+  const sel=MUL.sel.filter(n=>R.some(p=>p[0]===n)),P=sel.map(mulPar);
+  const f=v=>v==null?"—":v.toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1});
+  const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
+  const chips=R.map(p=>{const on=sel.includes(p[0]),inj=INJ[p[0]]&&INJ[p[0]].stato!=="ok";return`<button class="capch${on?" on":""}" data-mulp="${p[0].replace(/"/g,"&quot;")}" aria-pressed="${on}"><span>${sur(p[0])}</span><small>${(PARTITE[p[0]]||[]).length} part.${inj?" · "+STATI[INJ[p[0]].stato][0]:""}</small></button>`}).join("");
+  const best={};["A","B","C"].forEach(k=>best[k]=Math.max(...P.map(x=>x[k]??-1e9)));
+  const dot=(v,k)=>v==null?`<td>—</td>`:`<td><i class="mdot ${mulVerde(v,best[k])?"g":"r"}"></i>${f(v)}</td>`;
+  const res=P.map(x=>{const L=P.filter(y=>y.n!==x.n).map(y=>mulCheck(x,y)),worst=L.sort((a,b)=>a.ok-b.ok)[0];return{x,L,worst}});
+  const verd=r=>{if(!r.worst)return`<span class="mv nd">Aggiungi almeno un altro giocatore per il confronto</span>`;
+    const bad=r.L.filter(l=>l.multa),inv=r.L.filter(l=>!l.valido);
+    const base=bad.length?`<span class="mv ko">Multa possibile</span><small>${bad.map(l=>`contro ${sur(l.alt)} (${l.ok}/3)`).join(" · ")}</small>`:`<span class="mv ok">Nessuna multa</span><small>almeno 2/3 contro tutti gli altri</small>`;
+    return base+(inv.length?`<small class="mi">Calcolo non possibile ufficialmente: ${[...new Set(inv.map(l=>l.motivo))].join(", ")} → decide la commissione. Risultato indicativo.</small>`:"")};
+  return`<button class="gback" id="mulback">‹ Campo ${c.nick}</button>
+  ${H("Multe",`<em>Sistema anti-tank · Art. 6</em>`)}
+  <p class="capintro">Seleziona i giocatori che potresti mettere capitano quel giorno (e le alternative disponibili). Per ognuno ti dico se, scegliendolo come capitano, rischi la multa.</p>
+  <div class="capchips">${chips}</div>
+  ${P.length?`<div class="capbar"><span>${P.length} ${P.length===1?"giocatore":"giocatori"} selezionati</span><button id="mulclr">Azzera</button></div>
+  <div class="mtbl"><table><thead><tr><th>Giocatore</th><th>Stagione</th><th>Ultimo 50%</th><th>Ultimo 15%</th></tr></thead><tbody>${P.map(x=>`<tr><th>${sur(x.n)}<small>${x.N} part.</small></th>${dot(x.A,"A")}${dot(x.B,"B")}${dot(x.C,"C")}</tr>`).join("")}</tbody></table></div>
+  <p class="mleg"><i class="mdot g"></i>il migliore o entro 3 PDK dal migliore · <i class="mdot r"></i>sotto di più di 3 PDK</p>
+  ${H("Capitano: multa sì o no?")}
+  <div class="mres">${res.map(r=>`<div class="mrow"><div class="mnm"><b>${r.x.n}</b><small>Capitano · ${r.x.N} partite (50% = ultime ${r.x.kB}, 15% = ultime ${r.x.kC})</small></div><div class="mvd">${verd(r)}</div></div>`).join("")}</div>
+  <p class="note">Regolamento, Articolo 6: si confronta il capitano con ogni alternativa su media stagione, ultimo 50% e ultimo 15% delle partite giocate (arrotondate per eccesso). Tolleranza 3 PDK (a 3,01 scatta il rosso); servono almeno 2 indicatori verdi su 3. Con meno di 15 partite o partite non paragonabili per infortunio il calcolo non vale ufficialmente e decide la commissione: qui il risultato è solo indicativo. Il sistema si applica dopo una segnalazione e il voto della commissione.</p>`:""}`}
+
 function vCampo(){
   const t=curTeam,c=TEAMS[t],st=standings().find(x=>x.t===t);
   const {auto,q}=quintetto(t);const qs=new Set(q.map(p=>p[0]));
@@ -2436,7 +2488,7 @@ function vCampo(){
   ${cassa(t)}
   ${H("Quintetto",`<em>${auto?"Provvisorio · scelto per efficienza":"Titolari · per ruolo"}</em>`)}
   <div class="court" style="border-color:${shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}</div>
-  <div class="ctools"><button class="ctool" id="ccap"><span class="ci">C</span>Cap<small>Chi mettere capitano</small></button><button class="ctool off" disabled><span class="ci">…</span>In arrivo<small>Presto disponibile</small></button></div>
+  <div class="ctools"><button class="ctool" id="ccap"><span class="ci">C</span>Cap<small>Chi mettere capitano</small></button><button class="ctool" id="cmul"><span class="ci mul">€</span>Multe<small>Capitano senza multa</small></button></div>
   ${H("Panchina")}
   <div class="bench">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><span class="bev">${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}</span></button>`).join("")}</div>
   <button class="croster" id="croster">Roster completo ›</button>`;
@@ -3406,13 +3458,13 @@ function simAct(b){
     if(navigator.share)navigator.share({text:tx}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(tx).then(()=>{b.querySelector("span").textContent="Copiato ✓"},()=>{})}
 }
 
-const VIEWS={cap:vCap,effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.grafico=vGrafico;
+const VIEWS={cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.grafico=vGrafico;
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
   document.body.dataset.v=cur;
   {const fs=cur==="giochi"&&GAME==="dream";document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=fs?"#2a1260":"#0a1330"}
-  const eff=cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
+  const eff=cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -3424,6 +3476,10 @@ function render(){
   m.querySelectorAll("[data-cstag]").forEach(b=>b.onclick=()=>{cassaStag=b.dataset.cstag;render()});
   const cb=m.querySelector("#cback");if(cb)cb.onclick=()=>{cur="home";render();window.scrollTo(0,0)};
   const cc=m.querySelector("#ccap");if(cc)cc.onclick=()=>{capLoad(curTeam);cur="cap";render();window.scrollTo(0,0)};
+  const cmu=m.querySelector("#cmul");if(cmu)cmu.onclick=()=>{mulLoad(curTeam);cur="multe";render();window.scrollTo(0,0)};
+  if(cur==="multe"){const kb=m.querySelector("#mulback");if(kb)kb.onclick=()=>{cur="campo";render();window.scrollTo(0,0)};
+    m.querySelectorAll("[data-mulp]").forEach(b=>b.onclick=()=>{const n=b.dataset.mulp,i=MUL.sel.indexOf(n);if(i>=0)MUL.sel.splice(i,1);else MUL.sel.push(n);mulSave();render()});
+    const cl=m.querySelector("#mulclr");if(cl)cl.onclick=()=>{MUL.sel=[];mulSave();render()};}
   if(cur==="cap"){const kb=m.querySelector("#capback");if(kb)kb.onclick=()=>{cur="campo";render();window.scrollTo(0,0)};
     m.querySelectorAll("[data-capp]").forEach(b=>b.onclick=()=>{const n=b.dataset.capp;if(n in CAP.sel)delete CAP.sel[n];else CAP.sel[n]="";capSave();render()});
     m.querySelectorAll("[data-capo]").forEach(x=>x.onchange=()=>{CAP.sel[x.dataset.capo]=x.value;capSave();render()});
@@ -3447,7 +3503,7 @@ function syncMenu(){
   document.querySelectorAll("nav button[data-menu]").forEach(b=>{
     const p=document.getElementById(b.dataset.menu);if(!p)return;
     b.setAttribute("aria-expanded",dkOpen);p.hidden=!dkOpen;
-    const eff=cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"?"home":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
+    const eff=cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"?"home":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
     b.setAttribute("aria-selected",dkOpen||inside);
     if(dkOpen){const w=b.closest(".wrap").getBoundingClientRect(),r=b.getBoundingClientRect();
       const width=Math.max(r.width,180);let left=r.left-w.left+r.width/2-width/2;left=Math.max(0,Math.min(left,w.width-width));

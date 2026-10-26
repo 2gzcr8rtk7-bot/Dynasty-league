@@ -318,4 +318,9 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
   contro quell'avversario (ultime 3 stagioni, partite, minuti, migliore, pallini partita per partita), forma (Media
   stagione, Ultimo 50%, Ultimo 15%), Indice Cap (40% vs avversario corretto verso la media + 35% ultimo 15% + 25%
   stagione) e controllo anti-tank contro il miglior altro candidato (tolleranza 3 PDK, 2/3 verdi; <15 partite = indicativo).
-- Il secondo pulsante è un segnaposto disattivato: funzione da definire con Francesco.
+- Secondo pulsante **Multe** (view `multe`, `vMulte`, `mulPar`, `mulCheck`, `MUL_MIN=15`, `MUL_TOL=3`): simulatore del
+  sistema anti-tank dell'Articolo 6. Il GM seleziona i possibili capitani e le alternative; per ognuno: media stagione,
+  ultimo 50%, ultimo 15% (partite arrotondate per eccesso) e verdetto "Nessuna multa"/"Multa possibile" confrontandolo
+  con ogni altro selezionato (2/3 verdi, tolleranza 3,00 PDK). Con meno di 15 partite o partite non paragonabili per
+  infortunio (<60% dell'altro) avvisa che il calcolo non vale ufficialmente (decide la commissione). Verificato
+  sull'esempio del regolamento (A 3/3, B 2/3).
