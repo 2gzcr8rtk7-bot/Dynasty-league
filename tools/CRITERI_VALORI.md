@@ -94,3 +94,10 @@ Aggiornamenti infortuni (26/10/2026):
 - Infortunio attuale (correzione Francesco): conta **quanto resta fuori**, non il solo fatto di essere fuori.
   Assenze di giorni o settimane (Flagg, Knueppel, Banchero…) **non toccano** la stella. Si toglie 1 stella solo per
   assenze lunghe (rientro stimato a 2 mesi o più, stagione finita) o infortuni gravi tipo Achille / crociato (es. Ingram).
+
+## Stelline graduali (26/10/2026)
+Per le categorie misurabili le stelle si riempiono in proporzione (es. Wembanyama, 22,8 anni → Giovinezza 4,3), con
+interpolazione lineare tra i punti delle fasce: PDK (20→0 · 24→1 · 27→2 · 30→3 · 40→4 · 50→5), Giovinezza (età
+esatta: 20→5 · 22→4½ · 24→4 · … · 38→½ · 40→0), Minutaggio, Efficienza giovani (3 + ½ ogni +15% sulla soglia di ruolo),
+Efficienza esperti, Infortuni (partite saltate medie). Spazio in squadra resta a gradini (è una gerarchia).
+Voto del GM: Ingram Infortuni ½.
