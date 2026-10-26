@@ -929,6 +929,8 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .tstar b{color:rgba(255,255,255,.2)!important;font-size:inherit!important;font-weight:400!important;font-style:normal!important;letter-spacing:1px!important;margin:0!important;padding:0!important;display:inline!important}
 .tstar b+b{position:absolute!important;left:0;top:0;overflow:hidden;white-space:nowrap;color:var(--gold)!important}
 .vtnm small .tstar{display:inline-block!important}
+.tstar .tsb{position:relative;display:inline-block}
+.tstar .trk{position:static;display:inline;margin-left:4px;font-style:normal;font-size:inherit;color:#38bdf8;text-shadow:0 0 6px rgba(56,189,248,.7)}
 .drplh{margin:26px 0 4px;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.06em;color:#e9d5ff;border-left:4px solid #a855f7;padding-left:10px}
 .drfinal{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,auto);grid-auto-flow:column;gap:6px;margin-top:10px}.drfinal .drfr{padding:6px 8px;gap:7px;min-width:0}.drfinal .drfr b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.drfinal .drfr .drpos{font-size:15px;width:16px}.drfinal .drfr em{font-size:11px}.drfinal .bklg{width:22px;height:22px}
 .drfr{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:rgba(12,8,32,.75);border:1px solid rgba(196,181,253,.22)}
@@ -1666,12 +1668,15 @@ function vEfficienza(){
 }
 
 const NUM={};Object.values(ROSTER).forEach(a=>a.forEach(p=>NUM[p[0]]=p[1]));
-/* STELLE giocatore (Trade Alert): PDK medio stagione 2025/26 se ≥30 partite, altrimenti 2024/25, altrimenti tutte le partite note.
-   50+ = 5, 40-49 = 4, 30-39 = 3, 27-29 = 2, sotto 27 = 0; mezza stella in più dalla metà della fascia (45, 35, 28,5). Solo i rookie = 1. */
+/* STELLE giocatore: PDK medio stagione 2025/26 se ≥30 partite, altrimenti 2024/25, altrimenti tutte le partite note.
+   50+ = 5, 40-49 = 4, 30-39 = 3, 27-29 = 2, 24-26,9 = 1, sotto 24 = 0; mezza stella in più dalla metà della fascia (45, 35, 28,5).
+   Rookie della stagione: + una stella AZZURRA che si somma alle stelle normali (es. rookie a 28 PDK = 2 stelle + azzurra). */
 function pdkStar(n){const g=sz=>(STAGIONI[sz]||{})[n]||[];let a=g("2025/26");if(a.length<30)a=g("2024/25").length>=30?g("2024/25"):[...g("2025/26"),...g("2024/25"),...(PARTITE[n]||[])];return a.length?a.reduce((s,x)=>s+(+x[3]||0),0)/a.length:null}
-function stelle(n){if(ROOKIE.includes(n)||(VALORI[n]&&VALORI[n][2]===1))return 1;const p=pdkStar(n);if(p==null)return null;
-  return p>=50?5:p>=45?4.5:p>=40?4:p>=35?3.5:p>=30?3:p>=28.5?2.5:p>=27?2:0}
-const starH=n=>{const v=stelle(n);return v==null?"":`<i class="tstar" title="${String(v).replace(".",",")} stelle${ROOKIE.includes(n)||(VALORI[n]&&VALORI[n][2]===1)?" · rookie":""}"><b>★★★★★</b><b style="width:${v*20}%">★★★★★</b></i>`};
+const isRookie=n=>ROOKIE.includes(n)||(VALORI[n]&&VALORI[n][2]===1);
+function stelle(n){const p=pdkStar(n);if(p==null)return isRookie(n)?0:null;
+  return p>=50?5:p>=45?4.5:p>=40?4:p>=35?3.5:p>=30?3:p>=28.5?2.5:p>=27?2:p>=24?1:0}
+const starH=n=>{const v=stelle(n),rk=isRookie(n);if(v==null&&!rk)return"";const w=v||0;
+  return `<i class="tstar${rk?" rk":""}" title="${String(w).replace(".",",")} stelle${rk?" + stella rookie":""}"><span class="tsb"><b>★★★★★</b><b style="width:${w*20}%">★★★★★</b></span>${rk?`<em class="trk">★</em>`:""}</i>`};
 function vTrade(){
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
   const rec=(l,neg)=>l.map(n=>NUM[n]!==undefined?`<span>${sur(n)}${starH(n)}</span>`:`<span class="tcr2">${/credit/i.test(n)?(/^debito/i.test(n)?"":neg?"−":"+")+n.replace(/\s*crediti.*$/i," cr"):n.replace(/^Diritti su /,"").replace(/Slot ala per 10 giornate/,"Slot ala 10g")}</span>`).join("");
