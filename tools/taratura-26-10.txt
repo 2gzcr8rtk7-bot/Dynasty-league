@@ -1,7 +1,7 @@
 Victor Wembanyama|3250|2500
 Luka Dončić|2500|900
 Cade Cunningham|1900|800
-Jalen Duren|1580|590
+Jalen Duren|1500|500
 Domantas Sabonis|1850|450
 Donovan Clingan|1250|370
 Josh Giddey|1850|750
@@ -9,8 +9,8 @@ Giannis Antetokounmpo|1950|670
 Shai Gilgeous-Alexander|1750|690
 Cameron Boozer|1499|820
 Tyrese Haliburton|1420|320
-Tyrese Maxey|1500|399
-Stephon Castle|1210|399
+Tyrese Maxey|1505|399
+Stephon Castle|1230|399
 Jayson Tatum|1510|410
 Chet Holmgren|1260|400
 Trae Young|1210|260
@@ -21,24 +21,24 @@ AJ Dybantsa|1250|550
 Kon Knueppel|1229|290
 Alex Sarr|980|220
 Caleb Wilson|1240|520
-Darryn Peterson|1075|420
+Darryn Peterson|1158|420
 Joel Embiid|1265|130
 Karl-Anthony Towns|1250|110
 Donovan Mitchell|1160|99
-Dylan Harper|1205|405
-VJ Edgecombe|1100|299
+Dylan Harper|1220|405
+VJ Edgecombe|1155|299
 Ja Morant|1060|110
 Bam Adebayo|999|80
 Dyson Daniels|989|85
 Derik Queen|1190|399
-Collin Murray-Boyles|1040|280
+Collin Murray-Boyles|1010|280
 Jarrett Allen|985|80
 Trey Murphy III|919|110
 Jaylen Brown|1050|130
 Ivica Zubac|1100|150
 Mikel Brown Jr.|840|140
 Austin Reaves|967|80
-Franz Wagner|1020|199
+Franz Wagner|1045|199
 LeBron James|980|70
 Kevin Durant|960|60
 Khaman Maluach|450|140
@@ -47,5 +47,5 @@ Naz Reid|300|20
 Jeremiah Fears|800|180
 Zach Edey|690|50
 Ausar Thompson|650|30
-James Harden|979|70
+James Harden|1001|70
 Dejounte Murray|650|30
