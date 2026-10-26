@@ -29,7 +29,7 @@ function parse(src) {
   const EFF = getConst(src, "EFF"); if (!EFF || !EFF.agg || !EFF.gioc) return null;
   const notte = {};
   for (const a of Object.values(EFF.gioc)) for (const p of a) {
-    const dk = p[4];
+    const dk = p[8];                                // colonna 9 di EFF.gioc = PDK della notte (dal 26/10; la 5 sono i minuti)
     if (dk == null) continue;                       // non ha giocato quella notte
     notte[p[0]] = dk;                               // PDK (punti Dunkest) della partita
   }
