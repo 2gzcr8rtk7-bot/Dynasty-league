@@ -401,3 +401,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
   capitano" con classifica dei candidati per atteso e alternativa.
 - (61) Calcolatore scambi (2 e 3 squadre): giocatori di ogni squadra in ordine di ruolo (Guardie, Ali, Centri, con
   intestazione colorata) e dentro il ruolo per valore.
+- (62) Valori lega: casella "Cerca giocatore o squadra" in testa (`#vtq`, filtra le righe mentre scrivi, ignora gli accenti).

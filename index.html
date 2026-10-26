@@ -1295,6 +1295,7 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .vtpk button{display:grid;line-height:1;padding:5px 8px;text-align:center}.vtpk button small{font-size:9px;color:var(--muted);font-weight:600}
 .vtcr input{width:72px;background:#0b1224;border:1px solid var(--line);color:#fff;padding:6px;font-size:15px;font-family:var(--display);font-weight:800;text-align:center}
 .vtros{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border-top:1px solid var(--line)}
+.vtq{width:100%;margin:0 0 10px;padding:11px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:#0b1224;color:#fff;font-size:15px}
 .vtrh{grid-column:1/-1;padding:6px 12px;font-family:var(--display);font-style:italic;font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;background:#0b1430;color:var(--muted);border-left:4px solid}.vtrh.G{border-color:#22c55e;color:#4ade80}.vtrh.F{border-color:#3b82f6;color:#60a5fa}.vtrh.C{border-color:#facc15;color:#facc15}
 .vtp{display:flex;align-items:center;gap:6px;background:var(--panel);border:0;color:#cfd6e6;padding:8px;text-align:left;font-size:13px;cursor:pointer;min-width:0}
 .vtp span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -2197,6 +2198,7 @@ function vValTrade(){
   if(VT.tab==="list"){
     const all=Object.entries(ROSTER).flatMap(([t,a])=>a.map(p=>({t,n:p[0],v:valOf(p[0]),rk:!!(VALMAP[vnz(p[0])]||[])[2]}))).sort((a,b)=>(b.v??0)-(a.v??0));
     return `${H("Calcolatore scambi",`<em>${VALORI_AGG.slice(0,5)}</em>`)}${tabs}
+    <input id="vtq" class="vtq" type="search" placeholder="🔍 Cerca giocatore o squadra" autocomplete="off" aria-label="Cerca giocatore">
     <div class="tbl-wrap vtlist">${all.map((x,i)=>`<div class="vtrow" role="button" tabindex="0" data-pln="${x.n.replace(/"/g,"&quot;")}" data-plt="${x.t}">${wedge(x.t)}<span class="vtrk">${x.v?i+1:"–"}</span><span class="vtnm"><span class="vtnn">${x.n}${x.rk?`<i class="vtrook">R</i>`:""}</span><small>${TEAMS[x.t].nick}${starH(x.n)}</small></span><span class="vtvp"><b>${x.v??"n.d."}</b><small>valore</small></span><span class="vtvp pr"><b>${x.v!=null?prezzo(x.v,x.n):"—"}</b><small>prezzo cr</small></span></div>`).join("")}</div>
     <p class="note">Valori Dynasty League al ${VALORI_AGG}, fissati dalla lega con le pagelle a stelline (PDK, giovinezza, infortuni, minutaggio, efficienza, spazio in squadra, rookie e draft). Tocca un giocatore per vedere la sua pagella. "n.d." = giocatore non in lista: vale ${VAL_FALLBACK}. R = rookie. Prezzo in crediti: quello fissato dalla lega oppure calcolato dal valore (più caro per giovani e ali, poi centri, guardie più economiche).</p>`}
   if(VT.tab==="calc3")return `${H("Calcolatore scambi",`<em>${VALORI_AGG.slice(0,5)}</em>`)}${tabs}
@@ -4312,6 +4314,7 @@ function render(){
   const cbk=m.querySelector("#cassaback");if(cbk)cbk.onclick=()=>{cur="campo";render();window.scrollTo(0,0)};
   m.querySelectorAll("[data-ctab]").forEach(b=>b.onclick=()=>{cassaTab=b.dataset.ctab;render()});
   m.querySelectorAll("[data-cstag]").forEach(b=>b.onclick=()=>{cassaStag=b.dataset.cstag;render()});
+    const vq=m.querySelector("#vtq");if(vq)vq.oninput=()=>{const q=vq.value.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");m.querySelectorAll(".vtlist .vtrow").forEach(r=>{const t=(r.dataset.pln+" "+(TEAMS[r.dataset.plt]||{}).nick).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");r.style.display=!q||t.includes(q)?"":"none"})};
   const cb=m.querySelector("#cback");if(cb)cb.onclick=()=>{cur="home";render();window.scrollTo(0,0)};
   const cc=m.querySelector("#ccap");if(cc)cc.onclick=()=>{capLoad(curTeam);cur="cap";render();window.scrollTo(0,0)};
   const cmu=m.querySelector("#cmul");if(cmu)cmu.onclick=()=>{mulLoad(curTeam);cur="multe";render();window.scrollTo(0,0)};
