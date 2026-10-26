@@ -825,6 +825,10 @@ nav button{font-size:15px;letter-spacing:.04em}
 .tvbox tr.grp td{height:26px;background:#091129;font-family:var(--display);font-style:italic;font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .tvbox tr.tot td{background:rgba(255,255,255,.06);color:#fff;font-weight:800}
 .tvbox tr.pct td{height:28px;font-size:12.5px;color:var(--muted)}
+.tvbox .tvpn{display:flex;align-items:center;gap:7px}
+.tvbox .tvown{display:flex;flex-direction:column;gap:2px;flex:none}
+.tvbox .tvob{width:22px;height:22px;display:block;border-radius:50%;font-size:8px;line-height:22px;text-align:center;font-weight:800}
+.tvbox .tvob.logo{border-radius:0}
 .tvbox .pos{color:var(--win)}.tvbox .neg{color:var(--loss)}
 /* G League */
 /* G League · statistiche */
@@ -4515,6 +4519,11 @@ function vTV0(){const T=TVD(),ks=Object.keys(T.days).sort();if(!ks.length)return
   <div class="tvweek">${wk.join("")}</div>
   <div class="tvlist">${cards||`<div class="tvempty">Nessuna partita in questa data.</div>`}</div>
   <p class="note">${TVL.err?"Dati live NBA non raggiungibili in questo momento: restano i dati del report. ":TVL.last?`Live: dati NBA.com aggiornati ogni 30 secondi (ultimo ${TVL.last}); il PDK delle partite in corso è calcolato con la formula Dunkest ed è provvisorio. `:""}${T.src||""} Orari d'inizio in ora italiana. Tocca una partita in corso o finita per il tabellino completo. Aggiornato ${T.upd||""}.</p>`}
+/* loghi Dynasty dei proprietari nel box score */
+const tvNm=n=>String(n||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[.'’]/g,"").replace(/\s+(jr|sr|ii|iii|iv)$/,"").replace(/[^a-z0-9]+/g," ").trim();
+let TVOWN=null;
+function tvOwn(n){if(!TVOWN){TVOWN={};for(const t in ROSTER)for(const r of ROSTER[t]){const k=tvNm(r[0]);(TVOWN[k]=TVOWN[k]||[]).includes(t)||TVOWN[k].push(t)}}
+  const T=TVOWN[tvNm(n)];return T?`<span class="tvown">${T.map(t=>badge(t,"tvob")).join("")}</span>`:""}
 function tvGame(key){const T=TVD(),[d,g]=key.split("_"),G=(T.days[d]||[]).find(x=>x[7]===key);if(!G)return"";const[a,h,sa,sh,ot]=G,b=T.box[key],ca=(T.teams[a]||[])[2]||"#333",ch=(T.teams[h]||[])[2]||"#333",dd=tvDt(d);
   const sum=(L,i)=>L.reduce((s,p)=>s+(+p[i]||0),0),pc=(m,x)=>x?(m/x*100).toFixed(1).replace(".",",")+"%":"—";
   const S=L=>({fgm:sum(L,12),fga:sum(L,13),tpm:sum(L,14),tpa:sum(L,15),ftm:sum(L,16),fta:sum(L,17),reb:sum(L,6),oreb:sum(L,4),ast:sum(L,7),stl:sum(L,8),blk:sum(L,9),tov:sum(L,10),pf:sum(L,11),pdk:sum(L,19)});
@@ -4525,7 +4534,7 @@ function tvGame(key){const T=TVD(),[d,g]=key.split("_"),G=(T.days[d]||[]).find(x
   const lead=(lab,x,i)=>`<div><small>${lab}</small><p>${tvLogo(x[0]==="a"?a:h)}<span>${sur(x[1][0])}</span><b>${x[1][i]}</b></p></div>`;
   const side=TVS.side==="h"?"h":"a",P=b[side],tc=side==="a"?a:h,TS=side==="a"?A:Hh;
   const f1=v=>v==null?"—":String(v).replace(".",",");
-  const LV=b&&b.live&&G[5]==="L",pr=p=>`<tr><td>${p[0]}<small>${p[1]?"Quintetto":"Panchina"}</small></td><td class="pdkl">${LV?'<i class="lvd"></i>':""}${f1(p[19])}</td><td>${p[2]}</td><td class="pts">${p[3]}</td><td>${p[6]}</td><td>${p[7]}</td><td>${p[8]}</td><td>${p[9]}</td><td>${p[10]}</td><td>${p[12]}-${p[13]}</td><td>${p[14]}-${p[15]}</td><td>${p[16]}-${p[17]}</td><td>${p[4]}</td><td>${p[5]}</td><td>${p[11]}</td><td class="${p[18]>0?"pos":p[18]<0?"neg":""}">${p[18]==null?"—":(p[18]>0?"+":"")+p[18]}</td></tr>`;
+  const LV=b&&b.live&&G[5]==="L",pr=p=>`<tr><td><div class="tvpn">${tvOwn(p[0])}<div>${p[0]}<small>${p[1]?"Quintetto":"Panchina"}</small></div></div></td><td class="pdkl">${LV?'<i class="lvd"></i>':""}${f1(p[19])}</td><td>${p[2]}</td><td class="pts">${p[3]}</td><td>${p[6]}</td><td>${p[7]}</td><td>${p[8]}</td><td>${p[9]}</td><td>${p[10]}</td><td>${p[12]}-${p[13]}</td><td>${p[14]}-${p[15]}</td><td>${p[16]}-${p[17]}</td><td>${p[4]}</td><td>${p[5]}</td><td>${p[11]}</td><td class="${p[18]>0?"pos":p[18]<0?"neg":""}">${p[18]==null?"—":(p[18]>0?"+":"")+p[18]}</td></tr>`;
   const st=P.filter(p=>p[1]),bn=P.filter(p=>!p[1]);
   const tot=`<tr class="tot"><td>Totale squadra</td><td class="pdkl">${f1(Math.round(TS.pdk*100)/100)}</td><td></td><td>${side==="a"?sa:sh}</td><td>${TS.reb}</td><td>${TS.ast}</td><td>${TS.stl}</td><td>${TS.blk}</td><td>${TS.tov}</td><td>${TS.fgm}-${TS.fga}</td><td>${TS.tpm}-${TS.tpa}</td><td>${TS.ftm}-${TS.fta}</td><td>${TS.oreb}</td><td>${TS.reb-TS.oreb}</td><td>${TS.pf}</td><td></td></tr>
    <tr class="pct"><td>Percentuali</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>${pc(TS.fgm,TS.fga)}</td><td>${pc(TS.tpm,TS.tpa)}</td><td>${pc(TS.ftm,TS.fta)}</td><td></td><td></td><td></td><td></td><td></td></tr>`;

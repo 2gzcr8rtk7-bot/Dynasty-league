@@ -416,3 +416,5 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - (68) Dynasty TV, tabellino: colonna PDK spostata subito dopo il nome, in rosso; durante una partita in corso diventa "PDK live" con pallino lampeggiante.
 
 (69) Dynasty TV, dettaglio partita: tolti i blocchi "Migliori" e "Statistiche di squadra". Restano punteggio, tab squadre e box score giocatori (con PDK live in rosso).
+
+(70) Dynasty TV, box score: a sinistra del nome il logo della squadra Dynasty proprietaria (tvOwn, confronto nomi senza accenti/suffissi su ROSTER). Svincolati: nessun logo.
