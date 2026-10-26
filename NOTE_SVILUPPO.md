@@ -402,3 +402,10 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - (61) Calcolatore scambi (2 e 3 squadre): giocatori di ogni squadra in ordine di ruolo (Guardie, Ali, Centri, con
   intestazione colorata) e dentro il ruolo per valore.
 - (62) Valori lega: casella "Cerca giocatore o squadra" in testa (`#vtq`, filtra le righe mentre scrivi, ignora gli accenti).
+
+## 26/10/2026 (63) — Nuovo gioco G-DREAMERS
+- Giochi → G-DREAMERS (`vGDream`, `gdData`, stato `GD`, `GD_START`="2026-10-20"): fanta delle 8 G League. I 5
+  giocatori di ogni G League sono sempre titolari, niente capitano, PDK pieni; nessuno scontro diretto né playoff:
+  ogni notte i PDK si sommano e la classifica è il totale. Schede Classifica (con ultima notte e ▲▼ posizioni),
+  Giornate (punti notte per notte) e Squadre (giocatori, totali e partita per partita).
+- Dati letti da `GL_STATS` (log partita per partita): per aggiornarlo basta il report G League già esistente.
