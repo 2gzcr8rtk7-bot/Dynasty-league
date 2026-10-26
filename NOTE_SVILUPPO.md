@@ -399,3 +399,5 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
   dei giocatori della lega dello stesso ruolo (≥10') rispetto alla loro media → "difesa morbida/nella media/dura".
   "Atteso" = Indice Cap corretto per questo delta (peso pieno da 6 prestazioni). In alto il riquadro "Consiglio
   capitano" con classifica dei candidati per atteso e alternativa.
+- (61) Calcolatore scambi (2 e 3 squadre): giocatori di ogni squadra in ordine di ruolo (Guardie, Ali, Centri, con
+  intestazione colorata) e dentro il ruolo per valore.

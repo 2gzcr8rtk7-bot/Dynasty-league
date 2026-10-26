@@ -1295,6 +1295,7 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .vtpk button{display:grid;line-height:1;padding:5px 8px;text-align:center}.vtpk button small{font-size:9px;color:var(--muted);font-weight:600}
 .vtcr input{width:72px;background:#0b1224;border:1px solid var(--line);color:#fff;padding:6px;font-size:15px;font-family:var(--display);font-weight:800;text-align:center}
 .vtros{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border-top:1px solid var(--line)}
+.vtrh{grid-column:1/-1;padding:6px 12px;font-family:var(--display);font-style:italic;font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;background:#0b1430;color:var(--muted);border-left:4px solid}.vtrh.G{border-color:#22c55e;color:#4ade80}.vtrh.F{border-color:#3b82f6;color:#60a5fa}.vtrh.C{border-color:#facc15;color:#facc15}
 .vtp{display:flex;align-items:center;gap:6px;background:var(--panel);border:0;color:#cfd6e6;padding:8px;text-align:left;font-size:13px;cursor:pointer;min-width:0}
 .vtp span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .vtp b{font-family:var(--display);font-size:13px;color:var(--muted)}
@@ -2090,13 +2091,13 @@ function vtCard(k){
   const opts=Object.keys(TEAMS).map(x=>`<option value="${x}" ${x===t?"selected":""}>${TEAMS[x].name}</option>`).join("");
   const items=[...VT.pl[k].map((n,i)=>{const v=valOf(n);return `<button class="vtit" data-vt="rm" data-k="${k}" data-i="${i}"><span>${n}${starH(n)}</span><b>${v??"~"+VAL_FALLBACK}</b><i>✕</i></button>`}),
     ...VT.pk[k].map((p,i)=>`<button class="vtit pk" data-vt="rmpk" data-k="${k}" data-i="${i}"><span>Pick ${p}</span><b>${PICK_CR[p]} cr</b><i>✕</i></button>`)].join("");
-  const ros=(ROSTER[t]||[]).map(p=>({n:p[0],r:p[2],v:valOf(p[0])})).sort((a,b)=>(b.v??0)-(a.v??0));
+  const RO={G:0,F:1,C:2},ros=(ROSTER[t]||[]).map(p=>({n:p[0],r:p[2],v:valOf(p[0])})).sort((a,b)=>(RO[a.r]-RO[b.r])||((b.v??0)-(a.v??0)));
   return `<div class="vtcard" style="--tc:${c.bg}">
     <div class="vthd">${wedge(t)}<select data-vtsel="${k}" aria-label="Squadra">${opts}</select><span class="vtgv">dà</span></div>
     <div class="vtitems">${items||`<em>Niente ancora: tocca i giocatori qui sotto</em>`}</div>
     <div class="vtcr"><span>Crediti</span><button data-vt="cr" data-k="${k}" data-d="-10">−10</button><input type="number" inputmode="numeric" min="0" step="5" data-vtcr="${k}" value="${VT.cr[k]||0}"><button data-vt="cr" data-k="${k}" data-d="10">+10</button></div>
     <div class="vtpk"><span>Pick</span>${[1,2,3,4,5].map(p=>`<button data-vt="pk" data-k="${k}" data-p="${p}">${p}<small>${PICK_CR[p]}cr</small></button>`).join("")}</div>
-    <div class="vtros">${ros.map(p=>`<button class="vtp ${sel.has(p.n)?"on":""}" data-vt="pl" data-k="${k}" data-n="${p.n.replace(/"/g,"&quot;")}"><i class="rc ${p.r}"></i><span>${p.n}</span><b>${p.v??"—"}</b></button>`).join("")}</div>
+    <div class="vtros">${ros.map((p,i)=>`${i===0||ros[i-1].r!==p.r?`<div class="vtrh ${p.r}">${{G:"Guardie",F:"Ali",C:"Centri"}[p.r]}</div>`:""}<button class="vtp ${sel.has(p.n)?"on":""}" data-vt="pl" data-k="${k}" data-n="${p.n.replace(/"/g,"&quot;")}"><i class="rc ${p.r}"></i><span>${p.n}</span><b>${p.v??"—"}</b></button>`).join("")}</div>
   </div>`}
 /* ===== Scambio a 3 squadre =====
    Ogni pezzo (giocatore, pick, crediti) ha chi lo dà (k) e chi lo riceve (to). Saldo squadra = riceve − dà (punti trade). */
@@ -2121,13 +2122,13 @@ function v3Card(k){
   const dest=x=>`<label class="v3d">→ ${drLg(V3.t[x.to],"s")}<select data-v3to="${x.i}">${V3.t.map((tt,j)=>j===k?"":`<option value="${j}" ${j===x.to?"selected":""}>${TEAMS[tt].nick}</option>`).join("")}</select></label>`;
   const items=mine.map(x=>`<div class="v3it"><span>${v3Lab(x)}</span>${dest(x)}<button data-v3="rm" data-i="${x.i}" aria-label="Togli">✕</button></div>`).join("");
   const sel=new Set(mine.filter(x=>x.ty==="pl").map(x=>x.n));
-  const ros=(ROSTER[t]||[]).map(p=>({n:p[0],r:p[2],v:valOf(p[0])})).sort((a,b)=>(b.v??0)-(a.v??0));
+  const RO={G:0,F:1,C:2},ros=(ROSTER[t]||[]).map(p=>({n:p[0],r:p[2],v:valOf(p[0])})).sort((a,b)=>(RO[a.r]-RO[b.r])||((b.v??0)-(a.v??0)));
   return `<div class="vtcard" style="--tc:${c.bg}">
     <div class="vthd">${wedge(t)}<select data-v3sel="${k}" aria-label="Squadra">${opts}</select><span class="vtgv">dà</span></div>
     <div class="v3items">${items||`<em>Niente ancora: tocca i giocatori qui sotto</em>`}</div>
     <div class="vtcr"><span>Crediti</span>${[10,50,100].map(v=>`<button data-v3="cr" data-k="${k}" data-v="${v}">+${v}</button>`).join("")}</div>
     <div class="vtpk"><span>Pick</span>${[1,2,3,4,5].map(p=>`<button data-v3="pk" data-k="${k}" data-p="${p}">${p}<small>${PICK_CR[p]}cr</small></button>`).join("")}</div>
-    <div class="vtros">${ros.map(p=>`<button class="vtp ${sel.has(p.n)?"on":""}" data-v3="pl" data-k="${k}" data-n="${p.n.replace(/"/g,"&quot;")}"><i class="rc ${p.r}"></i><span>${p.n}</span><b>${p.v??"—"}</b></button>`).join("")}</div>
+    <div class="vtros">${ros.map((p,i)=>`${i===0||ros[i-1].r!==p.r?`<div class="vtrh ${p.r}">${{G:"Guardie",F:"Ali",C:"Centri"}[p.r]}</div>`:""}<button class="vtp ${sel.has(p.n)?"on":""}" data-v3="pl" data-k="${k}" data-n="${p.n.replace(/"/g,"&quot;")}"><i class="rc ${p.r}"></i><span>${p.n}</span><b>${p.v??"—"}</b></button>`).join("")}</div>
   </div>`}
 function v3Act(b){const d=b.dataset,k=+d.k,nx=(k+1)%3;
   if(d.v3==="pl"){const i=V3.it.findIndex(x=>x.ty==="pl"&&x.n===d.n&&x.k===k);if(i>=0)V3.it.splice(i,1);else V3.it.push({k,to:nx,ty:"pl",n:d.n})}
