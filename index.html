@@ -889,6 +889,37 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .bkm>.bkt:only-of-type{border-radius:13px}
 .drcol{overflow:hidden}
 .bkm>.bklab{z-index:5}
+/* ===== Grafico ===== */
+.grroom{margin:0 -16px;padding:14px 16px 26px;min-height:100vh;background:var(--tc);color:var(--tf)}
+.grback{padding:7px 14px;border-radius:999px;border:2px solid var(--tf);background:transparent;color:var(--tf);font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;margin-bottom:12px}
+.grhd{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.grlg{width:64px;height:64px;flex:none;display:grid;place-items:center;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35))}
+.grlg .badge{width:100%!important;height:100%!important;background-color:transparent!important;box-shadow:none!important;border-radius:0!important}
+.grhd small{display:block;font-family:var(--display);font-weight:800;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--tf);opacity:.75}
+.grhd b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:28px;text-transform:uppercase;line-height:1;color:var(--tf)}
+.grtop{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center;margin-bottom:12px}
+.grctl{display:grid;gap:7px;min-width:0}
+.grjs{display:grid;place-items:center;min-width:0}.grjs svg{width:100%;max-width:170px;height:auto;filter:drop-shadow(0 8px 14px rgba(0,0,0,.35))}
+.grsel{display:grid;gap:2px;min-width:0}
+.grsel span{font-family:var(--display);font-weight:800;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--tf)}
+.grsel select{appearance:none;-webkit-appearance:none;width:100%;height:36px;padding:0 26px 0 10px;text-overflow:ellipsis;border-radius:10px;border:2px solid var(--tf);background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23888' stroke-width='2.4'/%3E%3C/svg%3E") right 9px center/11px no-repeat;color:var(--tf);font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;text-transform:uppercase}
+.grsel select option{color:#000}
+.grtgs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.grtg{display:grid;justify-items:center;gap:2px;padding:7px 4px;border-radius:12px;border:2px solid var(--tf);background:transparent;color:var(--tf);font-family:var(--display);font-weight:800;font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;opacity:.55}
+.grtg i{width:22px;height:4px;border-radius:2px;background:currentColor}
+.grtg b{font-size:17px;font-style:italic;letter-spacing:0}
+.grtg[aria-pressed=true]{opacity:1;background:#0b1022;border-color:#0b1022;color:#fff}
+.grtg.pdk[aria-pressed=true] i{background:#22c55e}.grtg.min[aria-pressed=true] i{background:#facc15}.grtg.eff[aria-pressed=true] i{background:#a855f7}
+.grcard{border-radius:16px;padding:10px 6px 8px;background:#0b1022;box-shadow:0 8px 20px rgba(0,0,0,.3)}
+.grsvg{display:block;width:100%;height:auto}
+.grg{stroke:rgba(255,255,255,.08);stroke-width:1}
+.gry,.grx{font-family:Barlow,sans-serif;font-size:9px;fill:rgba(255,255,255,.55)}
+.gry.l{text-anchor:end}.gry.r{text-anchor:start}.gry.ax{font-size:7.5px;letter-spacing:.08em;font-weight:700}
+.grx{text-anchor:middle}
+.grempty{padding:40px 10px;text-align:center;color:rgba(255,255,255,.75)}
+.grfoot{padding:4px 8px 0;font-size:11px;color:rgba(255,255,255,.55)}
+.grbtn{margin-top:8px}
+.ggrbtn{display:block;width:100%;margin:12px 0 4px}
 .drplh{margin:26px 0 4px;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.06em;color:#e9d5ff;border-left:4px solid #a855f7;padding-left:10px}
 .drfinal{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,auto);grid-auto-flow:column;gap:6px;margin-top:10px}.drfinal .drfr{padding:6px 8px;gap:7px;min-width:0}.drfinal .drfr b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.drfinal .drfr .drpos{font-size:15px;width:16px}.drfinal .drfr em{font-size:11px}.drfinal .bklg{width:22px;height:22px}
 .drfr{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:rgba(12,8,32,.75);border:1px solid rgba(196,181,253,.22)}
@@ -1563,7 +1594,7 @@ function vEffSquadra(){
   <div class="esqhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 60%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">${badge(t)}<div class="esqt"><small>${c.name}</small><h3>${c.nick}</h3></div></div>
   <div class="esqk"><div><small>Eff. stagionale</small>${eff(s[4])}</div>${E.past?`<div><small>Stagione</small><b>${sz}</b></div>`:`<div><small>Notte · ${s[1]} in campo</small>${eff(s[3])}</div>`}<div><small>Posizione lega</small><b>${pos}ª</b></div></div>
   ${H(c.nick,`<em>${E.past?SZ_LBL[sz]+" · "+sz:"Agg. "+E.agg}</em>`)}
-  <div class="esqctl"><div class="metsw"><button data-esqmet="eff" aria-pressed="${esqMet==="eff"}">Efficienza</button><button data-esqmet="pdk" aria-pressed="${esqMet==="pdk"}">PDK</button></div><button class="advbtn" data-esqadv="1" aria-pressed="${esqAdv}">${esqAdv?"‹ Partita per partita":"Statistiche avanzate"}</button></div>
+  <div class="esqctl"><div class="metsw"><button data-esqmet="eff" aria-pressed="${esqMet==="eff"}">Efficienza</button><button data-esqmet="pdk" aria-pressed="${esqMet==="pdk"}">PDK</button></div><button class="advbtn" data-esqadv="1" aria-pressed="${esqAdv}">${esqAdv?"‹ Partita per partita":"Statistiche avanzate"}</button><button class="advbtn grbtn" data-grafico="${t}">📈 Grafico</button></div>
   ${esqAdv?advTable(t,ps,nba):`${mchips}${esqMese!=="tutta"&&!conDati.includes(esqMese)?`<div class="cempty">Nessuna partita ancora a ${MESI_N[esqMese].toLowerCase()}: la tabella si riempie da sola con i report.</div>`:`<div class="tbl-wrap esqwrap"><table class="ptbl esqtbl esqg"><thead><tr><th>Giocatore</th>${cols}</tr></thead><tbody>${rows}</tbody></table></div>`}`}
   <p class="note">Filtra per mese con i bottoni sopra la tabella (si apre sul mese in corso). In "Stagione" ogni colonna è una partita del giocatore in ordine: G1 la sua prima, G2 la seconda e così via; nei mesi le colonne sono le partite di quel mese (1ª, 2ª…) Sotto ogni valore: la squadra avversaria. Chi ha giocato meno partite ha le ultime caselle vuote finché il report non aggiunge la gara. Scorri a destra per le partite successive; giocatori in ordine di efficienza media.</p>
   <p class="note"><span class="ev g"><i></i>sopra 1,10</span> &nbsp; <span class="ev y"><i></i>0,80–1,10</span> &nbsp; <span class="ev r"><i></i>sotto 0,80</span></p>`;
@@ -1915,6 +1946,63 @@ function vHome(){
 let curPlayer=null;
 let gFrom="roster";
 let gSeason="2026/27";
+/* ===== GRAFICO andamento giocatore (PDK verde, minuti giallo, efficienza viola) =====
+   Leggibilità: ogni punto è la MEDIA MOBILE (partita: ultime 5; settimana: ultime 3; mese/stagione: valore del periodo),
+   linea curva morbida; i valori reali restano come puntini tenui. Scala adattata ai dati (non da zero) se c'è una sola grandezza per asse. */
+let GR={t:null,p:null,sz:"2026/27",by:"g",show:{pdk:true,min:false,eff:false},from:null};
+const GR_SZ=["2026/27","2025/26","2024/25"];
+const GR_MESI=["Gen","Feb","Mar","Apr","Mag","Giu","Lug","Ago","Set","Ott","Nov","Dic"];
+const GR_WIN={g:8,w:4,m:2,s:1};
+const GR_COL={pdk:"#22c55e",min:"#facc15",eff:"#a855f7"},GR_LAB={pdk:"PDK",min:"Minuti",eff:"Efficienza"};
+function grGames(n,sz){const one=s=>{const a=s===GR_SZ[0]?(PARTITE[n]||[]):((STAGIONI[s]||{})[n]||[]);const y0=+s.slice(0,4);
+    return a.map(x=>{const[d,m]=x[0].split("/").map(Number);const y=m>=8?y0:y0+1;return{dt:new Date(Date.UTC(y,m-1,d)),sz:s,opp:x[1],min:+x[2]||0,pdk:+x[3]||0,eff:x[4]==null?null:+x[4]}})};
+  const g=sz==="all"?GR_SZ.slice().reverse().flatMap(one):one(sz);return g.sort((a,b)=>a.dt-b.dt)}
+const grAvg=(a,f)=>{const v=a.map(f).filter(v=>v!=null);return v.length?v.reduce((s,y)=>s+y,0)/v.length:null};
+function grGroup(g,by){const key=x=>{const d=x.dt;if(by==="g")return d.toISOString().slice(0,10)+"#"+x.opp;
+    if(by==="w"){const w=new Date(d);w.setUTCDate(w.getUTCDate()-((w.getUTCDay()+6)%7));return w.toISOString().slice(0,10)}
+    if(by==="m")return d.getUTCFullYear()+"-"+String(d.getUTCMonth()+1).padStart(2,"0");return x.sz};
+  const M=new Map();g.forEach(x=>{const k=key(x);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});
+  const P=[...M.entries()].map(([k,a])=>{let lab;if(by==="g"||by==="w"){const[y,m,d]=k.slice(0,10).split("-");lab=d+"/"+m}else if(by==="m"){const[y,m]=k.split("-");lab=GR_MESI[+m-1]+" "+y.slice(2)}else lab=SZ_LBL[k].replace("Stagione ","S")+" "+k.slice(2);
+    return{lab,raw:{pdk:grAvg(a,x=>x.pdk),min:grAvg(a,x=>x.min),eff:grAvg(a,x=>x.eff)}}});
+  const w=GR_WIN[by];P.forEach((p,i)=>{const s=P.slice(Math.max(0,i-w+1),i+1);p.pdk=grAvg(s,q=>q.raw.pdk);p.min=grAvg(s,q=>q.raw.min);p.eff=grAvg(s,q=>q.raw.eff)});return P}
+function grPath(pts){if(pts.length<2)return pts.length?`M${pts[0][0]},${pts[0][1]}`:"";let d=`M${pts[0][0]},${pts[0][1]}`;
+  for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;
+    const lo=Math.min(p1[1],p2[1]),hi=Math.max(p1[1],p2[1]),cl=v=>Math.min(hi,Math.max(lo,v));const c1=[p1[0]+(p2[0]-p0[0])/6,cl(p1[1]+(p2[1]-p0[1])/6)],c2=[p2[0]-(p3[0]-p1[0])/6,cl(p2[1]-(p3[1]-p1[1])/6)];d+=` C${c1[0].toFixed(1)},${c1[1].toFixed(1)} ${c2[0].toFixed(1)},${c2[1].toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`}return d}
+function grNice(lo,hi,isEff,n){const mid=(lo+hi)/2,span=Math.max(hi-lo,isEff?.5:24)*1.2;lo=Math.max(0,mid-span/2);hi=lo+span;
+  const ST=isEff?[.05,.1,.2,.25,.5]:[2,5,10,20];n=n||4;for(const st of ST){const a=Math.floor(lo/st)*st,b=a+n*st;if(b>=hi-1e-9)return[a,b,st]}const st=ST[ST.length-1],a=Math.floor(lo/st)*st;return[a,a+Math.ceil((hi-a)/st)*st,st]}
+function grChart(P,show){if(!P.length)return`<div class="grempty">Nessuna partita in questo periodo.</div>`;
+  const on=Object.keys(show).filter(k=>show[k]);if(!on.length)return`<div class="grempty">Scegli almeno una linea: PDK, Minuti o Efficienza.</div>`;
+  const left=on.filter(k=>k!=="eff"),right=on.includes("eff");const W=340,H=236,L=left.length?32:12,R=right?34:12,T=22,B=30,iw=W-L-R,ih=H-T-B;
+  const rng=ks=>{const v=P.flatMap(p=>ks.map(k=>p[k])).filter(v=>v!=null);return[Math.min(...v),Math.max(...v)]};
+  const SL=left.length?grNice(...rng(left),false,4):null,SR=right?grNice(...rng(["eff"]),true,4):null;
+  const x=i=>L+(P.length===1?iw/2:i*iw/(P.length-1)),y=(v,S)=>T+ih-((v-S[0])/(S[1]-S[0]))*ih,S=k=>k==="eff"?SR:SL;
+  const base=SL||SR,ticks=[];for(let v=base[0];v<=base[1]+1e-9;v+=base[2])ticks.push(v);
+  const grid=ticks.map(v=>{const yy=y(v,base);return`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" class="grg"/>${SL?`<text x="${L-5}" y="${yy+3}" class="gry l">${Math.round(v)}</text>`:""}`}).join("")
+    +(SR?(()=>{const n=Math.round((SR[1]-SR[0])/SR[2]);return Array.from({length:n+1},(_,i)=>{const v=SR[0]+SR[2]*i,yy=T+ih-ih*i/n;return`${SL?"":`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" class="grg"/>`}<text x="${W-R+5}" y="${yy+3}" class="gry r">${v.toFixed(2).replace(".",",")}</text>`}).join("")})():"");
+  const step=Math.max(1,Math.ceil(P.length/6));
+  const xl=P.map((p,i)=>(i%step&&i!==P.length-1)||(i===P.length-1&&i%step&&i%step<step*.6)?"":`<text x="${x(i)}" y="${H-B+16}" class="grx">${p.lab}</text>`).join("");
+  const dots=k=>""||true?"":P.map((p,i)=>p.raw[k]==null?"":`<circle cx="${x(i).toFixed(1)}" cy="${y(p.raw[k],S(k)).toFixed(1)}" r="1.8" fill="${GR_COL[k]}" opacity=".28"/>`).join("");
+  const line=k=>{const pts=P.map((p,i)=>p[k]==null?null:[x(i),y(p[k],S(k))]).filter(Boolean);const last=pts[pts.length-1];
+    return`${dots(k)}<path d="${grPath(pts)}" fill="none" stroke="${GR_COL[k]}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${last?`<circle cx="${last[0]}" cy="${last[1]}" r="4" fill="${GR_COL[k]}" stroke="#0b1022" stroke-width="2"/>`:""}`};
+  return`<svg class="grsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Andamento">${grid}${xl}
+    ${SL?`<text x="4" y="10" class="gry ax" text-anchor="start">${left.map(k=>GR_LAB[k]).join(" · ").toUpperCase()}</text>`:""}${SR?`<text x="${W-2}" y="10" class="gry ax" text-anchor="end">EFFICIENZA</text>`:""}
+    ${on.map(line).join("")}</svg>`}
+function vGrafico(){if(!TEAMS[GR.t])GR.t=TEAMS[curTeam]?curTeam:Object.keys(TEAMS)[0];const t=GR.t,c=TEAMS[t];const ros=(ROSTER[t]||[]).map(x=>x[0]);if(!GR.p||!ros.includes(GR.p))GR.p=ros[0];
+  const g=grGames(GR.p,GR.sz),P=grGroup(g,GR.by),avg=f=>grAvg(g,x=>x[f]);
+  const f1=v=>v==null?"—":v.toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1}),f2=v=>v==null?"—":v.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
+  const sel=(k,opts,v)=>`<label class="grsel"><span>${k}</span><select data-gr="${k}">${opts.map(([a,b])=>`<option value="${a}" ${a===v?"selected":""}>${b}</option>`).join("")}</select></label>`;
+  const tg=k=>`<button class="grtg ${k}" data-grtg="${k}" aria-pressed="${!!GR.show[k]}"><i></i>${GR_LAB[k]}<b>${k==="eff"?f2(avg(k)):f1(avg(k))}</b></button>`;
+  const win=GR_WIN[GR.by];
+  return`<div class="grroom" style="--tc:${c.bg};--tf:${c.fg}">
+  <button class="grback" data-grclose="1">‹ Indietro</button>
+  <div class="grhd"><span class="grlg">${badge(t)}</span><div><small>${c.name} · grafici</small><b>${GR.p}</b></div></div>
+  <div class="grtop"><div class="grctl">${sel("Giocatore",ros.map(n=>[n,n]),GR.p)}
+  ${sel("Stagione",[["2026/27","Stagione 3"],["2025/26","Stagione 2"],["2024/25","Stagione 1"],["all","Tutte"]],GR.sz)}
+  ${sel("Periodo",[["g","Partite"],["w","Settimane"],["m","Mesi"],["s","Stagioni"]],GR.by)}</div>
+  <div class="grjs">${(()=>{const r=(ROSTER[t]||[]).find(x=>x[0]===GR.p);return jersey(t,r?r[1]:null,GR.p)})()}</div></div>
+  <div class="grtgs">${tg("pdk")}${tg("min")}${tg("eff")}</div>
+  <div class="grcard">${grChart(P,GR.show)}<div class="grfoot">${g.length} partite · ${win>1?`linea = media delle ultime ${win} ${GR.by==="g"?"partite":GR.by==="w"?"settimane":"mesi"}`:"media del periodo"}</div></div></div>`}
+
 function vGiocatore(){
   const t=curTeam,c=TEAMS[t],p=(ROSTER[t]||[]).find(x=>x[0]===curPlayer);
   if(!p)return `<p class="note">Giocatore non trovato.</p>`;
@@ -1943,6 +2031,7 @@ function vGiocatore(){
     <div class="gjer">${jersey(t,p[1],p[0])}</div>
     <div class="gtit"><small>${c.name}</small><h3>${p[0]}</h3><p>${ruolo} · ${p[3]} · #${p[1]}</p>${INJ[p[0]]&&INJ[p[0]].stato!=="ok"?`<div class="injtag ${INJ[p[0]].stato}">${STATI[INJ[p[0]].stato][0]} · ${INJ[p[0]].tipo}</div>`:""}${ROOKIE.includes(p[0])?`<div class="rookie">Slot Rookie</div>`:""}${AVVISI[p[0]]?`<div class="avviso">${AVVISI[p[0]]}</div>`:""}</div>
   </div>
+  <button class="advbtn ggrbtn" data-grafico="${t}" data-grp="${p[0]}">📈 Grafico</button>
   ${H("Efficienza",`<em>${past?SZ_LBL[sz]+" · "+sz:"Agg. "+EFF.agg}</em>`)}
   ${szSel}
   ${e[1]==null?`<p class="note">${past?"Nessuna partita NBA in questa stagione: non era in NBA o non ha giocato.":"Nessuna partita giocata finora: i dati compariranno dopo la prima gara."}</p>`:`
@@ -2118,6 +2207,14 @@ async function shareRoster(t,btn){
   shSend(cv,`roster-${c.nick.toLowerCase()}.png`,`🏀 Roster ${c.name}`,btn)}
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-effmet]");if(b&&cur==="efficienza"){e.preventDefault();effMet=b.dataset.effmet;esqMet=effMet;const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-esqmet]");if(b&&cur==="effsquadra"){e.preventDefault();esqMet=b.dataset.esqmet;const y=window.scrollY;render();window.scrollTo(0,y)}});
+
+/* Grafico: apertura, chiusura, menu e linee */
+document.getElementById("main").addEventListener("click",e=>{
+  const o=e.target.closest("[data-grafico]");if(o){e.preventDefault();GR.t=o.dataset.grafico;GR.p=o.dataset.grp||null;GR.from=cur;GR.sz=SZ_ALL.includes(gSeason)?gSeason:SZ_ALL[0];cur="grafico";render();window.scrollTo(0,0);return}
+  if(e.target.closest("[data-grclose]")){e.preventDefault();cur=GR.from||"efficienza";render();window.scrollTo(0,0);return}
+  const tg=e.target.closest("[data-grtg]");if(tg){e.preventDefault();GR.show[tg.dataset.grtg]=!GR.show[tg.dataset.grtg];const y=window.scrollY;render();window.scrollTo(0,y)}});
+document.getElementById("main").addEventListener("change",e=>{const s=e.target.closest("select[data-gr]");if(!s)return;const k=s.dataset.gr;
+  if(k==="Giocatore")GR.p=s.value;else if(k==="Stagione")GR.sz=s.value;else if(k==="Periodo")GR.by=s.value;const y=window.scrollY;render();window.scrollTo(0,y)});
 document.getElementById("main").addEventListener("click",e=>{const a=e.target.closest("[data-esqadv]");if(a&&cur==="effsquadra"){e.preventDefault();esqAdv=!esqAdv;const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("click",e=>{const m=e.target.closest("[data-esqm]");if(m&&cur==="effsquadra"){e.preventDefault();esqMese=m.dataset.esqm==="tutta"?"tutta":+m.dataset.esqm;const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-rshare]");if(!b)return;e.preventDefault();e.stopPropagation();shareRoster(b.dataset.rshare,b)});
@@ -3035,13 +3132,13 @@ function simAct(b){
     if(navigator.share)navigator.share({text:tx}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(tx).then(()=>{b.querySelector("span").textContent="Copiato ✓"},()=>{})}
 }
 
-const VIEWS={effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;
+const VIEWS={effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.grafico=vGrafico;
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
   document.body.dataset.v=cur;
   {const fs=cur==="giochi"&&GAME==="dream";document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=fs?"#2a1260":"#0a1330"}
-  const eff=cur==="giocatore"?(gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
+  const eff=cur==="giocatore"?(gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -3071,7 +3168,7 @@ function syncMenu(){
   document.querySelectorAll("nav button[data-menu]").forEach(b=>{
     const p=document.getElementById(b.dataset.menu);if(!p)return;
     b.setAttribute("aria-expanded",dkOpen);p.hidden=!dkOpen;
-    const eff=cur==="giocatore"?(gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
+    const eff=cur==="giocatore"?(gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
     b.setAttribute("aria-selected",dkOpen||inside);
     if(dkOpen){const w=b.closest(".wrap").getBoundingClientRect(),r=b.getBoundingClientRect();
       const width=Math.max(r.width,180);let left=r.left-w.left+r.width/2-width/2;left=Math.max(0,Math.min(left,w.width-width));
