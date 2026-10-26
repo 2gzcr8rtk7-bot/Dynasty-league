@@ -373,3 +373,6 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - (52) Scouting: la scheda del giocatore si apre in un pannello sopra la lista (`.colsheet`) toccando qualsiasi nome
   (Archivio, Risultati, Radar, grafici…); si chiude con × o toccando fuori. Corretto il bug per cui dopo un tocco
   qualsiasi i nomi non aprivano più la scheda (listener "once" sostituito da uno permanente).
+- (53) **PDK nascosti** diventa l'unità di misura dello Scouting (`colHidden`): reale con dati NBA, stima per i prospetti
+  solo college (PDK/min college × tenuta del ruolo × (32' − minuti attesi = 10,6 + 0,52 × usage)). Mostrati in Archivio
+  (colonna "Nasc."), Risultati (ordinamento predefinito), Radar e scheda giocatore. Riga archivio con x[7]=2 = prospetto.

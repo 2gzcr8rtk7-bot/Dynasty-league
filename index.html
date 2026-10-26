@@ -194,6 +194,9 @@
 .colroom>.colsheet,.colsheet{position:fixed;inset:0;z-index:950;background:rgba(3,6,16,.72);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);overflow-y:auto;padding:max(16px,env(safe-area-inset-top)) 12px 28px;animation:colin .18s ease-out}
 .colsheet .ccard{max-width:520px;margin:0 auto!important}.colroom .ccard>.ccx{position:absolute!important}.colsheet .ccx{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1)!important;top:10px!important;right:10px!important;z-index:2}
 @keyframes colin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.scrhid b{color:#4ade80!important}.scrsim{font-size:10.5px;color:var(--muted);margin:-4px 0 8px;text-align:right}
+.corig td.hd,.corig th.hd{color:#4ade80;font-weight:800;text-align:right}.corig td.hd.est{color:#86efac;opacity:.75;font-weight:600}
+.chid{grid-column:1/-1;background:linear-gradient(135deg,rgba(74,222,128,.16),rgba(74,222,128,.03))!important;border:1px solid rgba(74,222,128,.35)}.chid b{color:#4ade80!important;font-size:30px!important}
 .gback{text-shadow:0 1px 0 rgba(255,255,255,.5)}
 .colroom .nban{background:linear-gradient(100deg,color-mix(in srgb,var(--tc) 38%,#141a2b) 0%,#161c2e 55%,#0e1220 100%)!important;box-shadow:0 10px 22px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -1px 0 rgba(0,0,0,.6)}
 .colroom .nban .njs svg{filter:drop-shadow(0 4px 5px rgba(0,0,0,.5))}
@@ -2691,7 +2694,7 @@ function colNBA(n){if(!n)return null;const m=a=>a.length?a.reduce((s,x)=>s+(+x[3
 function colYears(c,deb){const Y={};if(!c||!deb)return Y;for(const s in c){const[g,m,p]=c[s],cur=s==="2026/27";if(g<(cur?10:20))continue;Y[+s.slice(0,4)-deb+1]={s,g,m,p}}return Y}
 function colRows(r){return((COL.d||{})[r]||[]).map(x=>{const Y=colYears(x[8],x[9]),ks=Object.keys(Y).map(Number),best=ks.length?ks.reduce((a,b)=>Y[b].p>Y[a].p?b:a):null;
   const nba=best!=null?{v:Y[best].p,src:"miglior stagione "+Y[best].s+" ("+best+"° anno)"}:colNBA(x[6]);
-  return{n:x[0],pot:x[1],pm:x[2],p36:x[3],usg:x[4],uns:x[5],app:x[6],r26:!!x[7],r,car:x[8]||{},deb:x[9],Y,best,nba}})}
+  return{n:x[0],pot:x[1],pm:x[2],p36:x[3],usg:x[4],uns:x[5],app:x[6],r26:x[7]===1,pro:x[7]===2,r,car:x[8]||{},deb:x[9],Y,best,nba}})}
 function colAll(){return COL_RL.flatMap(([k])=>colRows(k))}
 function colReg(L){const P=L.filter(x=>!x.r26&&x.nba);const n=P.length;if(n<4)return null;const mx=P.reduce((s,x)=>s+x.pot,0)/n,my=P.reduce((s,x)=>s+x.nba.v,0)/n;
   let sxy=0,sxx=0;P.forEach(x=>{sxy+=(x.pot-mx)*(x.nba.v-my);sxx+=(x.pot-mx)**2});const b=sxx?sxy/sxx:0,a=my-b*mx;const sd=Math.sqrt(P.reduce((s,x)=>s+(x.nba.v-(a+b*x.pot))**2,0)/Math.max(1,n-2)),syy=P.reduce((s,x)=>s+(x.nba.v-my)**2,0),r2=syy?Math.max(0,1-P.reduce((s,x)=>s+(x.nba.v-(a+b*x.pot))**2,0)/syy):0;return{a,b,sd,n,r2}}
@@ -2733,7 +2736,7 @@ function colCard(){const L=colRows(COL.r),x=L.find(y=>y.n===COL.sel);if(!x)retur
    <div class="cch"><b>${x.app||x.n}</b><small>${({guardia:"Guardia",ala:"Ala",centro:"Centro"})[COL.r]} · ${x.r26?"Classe draft 2026":x.nba?"In NBA":"Archivio"}</small></div>
    <div class="cprof"><b>${pl}</b><span>${pd}</span></div>
    <div class="cbars">${bars}<p class="cbn">Barre = percentile nel ruolo (100° = il migliore dell'archivio).</p></div>
-   <div class="cnba">${x.nba&&!x.r26?`<div><small>PDK NBA</small><b>${cf1(x.nba.v)}</b><em>${x.nba.src}</em></div>`:""}${(()=>{const nb=colNbaPm(x.app,x),{med}=colConv(L);return nb?`<div><small>Tenuta college→NBA</small><b>${Math.round(nb.pm/x.pm*100)}%</b><em>${cf2(x.pm)} → ${cf2(nb.pm)} PDK/min</em></div>`:med?`<div><small>Proiezione a 25'</small><b class="pj">${cf1(x.pm*med*25)}</b><em>con la tenuta tipica del ruolo (${Math.round(med*100)}%)</em></div>`:""})()}${proj!=null&&R.r2>=.15?`<div><small>${x.r26||!x.nba?"Proiezione da POT":"Atteso dal college"}</small><b class="pj">${cf1(proj)}</b><em>${R.n} giocatori del ruolo · ±${cf1(R.sd)}</em></div>`:""}${x.r26&&x.nba?`<div><small>Ora in NBA</small><b>${cf1(x.nba.v)}</b><em>${x.nba.src}</em></div>`:""}</div>
+   <div class="cnba">${(()=>{const H=colHidden(x);return`<div class="chid"><small>PDK nascosti</small><b>${colHidLab(H)}</b><em>${H.real?`reali: ${cf2(H.pm)} PDK/min × ${cf1(Math.max(0,COL_TGT-H.mn))}' mancanti (${H.s})`:`stima college: ${cf2(H.pm)} PDK/min attesi × ${cf1(Math.max(0,COL_TGT-H.mn))}' (≈${Math.round(H.mn)}' da rookie)`}</em></div>`})()}${x.nba&&!x.r26?`<div><small>PDK NBA</small><b>${cf1(x.nba.v)}</b><em>${x.nba.src}</em></div>`:""}${(()=>{const nb=colNbaPm(x.app,x),{med}=colConv(L);return nb?`<div><small>Tenuta college→NBA</small><b>${Math.round(nb.pm/x.pm*100)}%</b><em>${cf2(x.pm)} → ${cf2(nb.pm)} PDK/min</em></div>`:med?`<div><small>Proiezione a 25'</small><b class="pj">${cf1(x.pm*med*25)}</b><em>con la tenuta tipica del ruolo (${Math.round(med*100)}%)</em></div>`:""})()}${proj!=null&&R.r2>=.15?`<div><small>${x.r26||!x.nba?"Proiezione da POT":"Atteso dal college"}</small><b class="pj">${cf1(proj)}</b><em>${R.n} giocatori del ruolo · ±${cf1(R.sd)}</em></div>`:""}${x.r26&&x.nba?`<div><small>Ora in NBA</small><b>${cf1(x.nba.v)}</b><em>${x.nba.src}</em></div>`:""}</div>
    ${(()=>{const C=colComps(x);return C.length?`<div class="ccmp"><small>Paragoni statistici (carriera Dunkest: 1° anno → migliore)</small>${C.map(c=>{const b=colBestY(c.y);return`<span><b>${colLbl(c.y)}</b> usage ${cf1(c.y.usg)}% · P36/USG ${cf2(c.y.p36)} → <em>${cf1(c.y.Y[1].p)} → ${cf1(c.y.Y[b].p)}</em> <small>(${b}° anno)</small></span>`}).join("")}</div>`:""})()}
    <div class="ccom"><small>Commento tecnico</small>${colComment(x).map(t=>`<p>${t}</p>`).join("")}</div>
    <button class="cshare" data-colshare="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Condividi la scheda</span></button></div>`}
@@ -2855,9 +2858,19 @@ function colUsage(){const A=colAll(),u=+COL.u,k=+COL.k,isP=x=>x.usg<=u&&x.p36>=k
    Nello storico (debutti 2018-2023) i PDK nascosti del 1° anno spiegano il salto meglio di ogni dato college da solo.
    Resa al minuto: NBA se ha almeno 3 partite nella stagione più recente, altrimenti PDK/min college × tenuta tipica del ruolo. */
 const COL_TGT=32;
+/* PDK NASCOSTI = unità di misura dello Scouting. Resa al minuto × minuti che mancano fino a 32'.
+   - REALE: se ha partite NBA (stagione più recente con almeno 3 partite) → PDK/min NBA × (32 − minuti NBA).
+   - STIMA (solo college, es. nuovi prospetti): PDK/min college × tenuta tipica del ruolo × (32 − minuti attesi da rookie),
+     minuti attesi = 10,6 + 0,52 × usage college (retta dello storico 2018-2023). La stima college da sola predice poco
+     l'esplosione (nello storico r ≈ 0,1): diventa affidabile quando arrivano le prime 10 partite NBA (r ≈ 0,44). */
+let COL_TEN=null;
+function colHidden(x){if(!COL_TEN){COL_TEN={};COL_RL.forEach(([k])=>COL_TEN[k]=colConv(colRows(k)).med||.95)}
+  const L=colLast(x);if(L&&L.m>0){const pm=L.p/L.m;return{v:pm*Math.max(0,COL_TGT-L.m),real:true,pm,mn:L.m,g:L.g,s:L.s}}
+  const mn=10.6+.52*x.usg,pm=x.pm*(COL_TEN[x.r]||.95);return{v:pm*Math.max(0,COL_TGT-mn),real:false,pm,mn}}
+const colHidLab=h=>`${h.real?"":"≈"}+${cf1(h.v)}`;
 function colLast(x){const ss=Object.keys(x.car||{}).sort();for(let i=ss.length-1;i>=0;i--){const[g,m,p]=x.car[ss[i]];if(g>=3&&m>0)return{s:ss[i],g,m,p}}return null}
 function colRadarRows(){const A=colAll(),conv={};COL_RL.forEach(([k])=>conv[k]=colConv(colRows(k)).med||.9);
-  return A.filter(x=>x.r26||(x.deb&&x.deb>=2024)).map(x=>{const L=colLast(x),pm=L?L.p/L.m:x.pm*conv[x.r],mn=L?L.m:null,hid=pm*Math.max(0,COL_TGT-(mn??14)),prof=x.usg<=+COL.u&&x.p36>=+COL.k;return{x,L,pm,mn,hid,prof,full:pm*COL_TGT}}).sort((a,b)=>b.hid-a.hid)}
+  return A.filter(x=>x.r26||x.pro||(x.deb&&x.deb>=2024)||!x.deb).filter(x=>x.r26||x.pro||x.deb).map(x=>{const H=colHidden(x),L=H.real?colLast(x):null,prof=x.usg<=+COL.u&&x.p36>=+COL.k;return{x,L,pm:H.pm,mn:H.mn,hid:H.v,real:H.real,prof,full:H.pm*COL_TGT}}).sort((a,b)=>b.hid-a.hid)}
 function colRadar(){const R=colRadarRows(),A=colAll();
   const H=A.filter(x=>!x.r26&&x.deb>=2018&&x.deb<=2023&&x.Y[1]).map(x=>{const y1=x.Y[1],best=Math.max(...Object.values(x.Y).map(v=>v.p));return{x,hid:y1.p/y1.m*Math.max(0,COL_TGT-y1.m),j:best-y1.p}});
   const cr=colCor(H.map(o=>o.hid),H.map(o=>o.j));const n=H.length,mx=H.reduce((s,o)=>s+o.hid,0)/n,my=H.reduce((s,o)=>s+o.j,0)/n;let sxy=0,sxx=0;H.forEach(o=>{sxy+=(o.hid-mx)*(o.j-my);sxx+=(o.hid-mx)**2});const b=sxx?sxy/sxx:0,a=my-b*mx;
@@ -2869,7 +2882,7 @@ function colRadar(){const R=colRadarRows(),A=colAll();
   const pts=H.map(o=>`<circle cx="${X(o.hid).toFixed(1)}" cy="${Y(o.j).toFixed(1)}" r="4.2" fill="${o.j>=8?"#facc15":"rgba(255,255,255,.4)"}" stroke="#0b1022" stroke-width="1.2" data-colsel="${o.x.n.replace(/"/g,"&quot;")}" data-colrr="${o.x.r}" class="cdot"/>`).join("");
   const lab=colLabels(H.filter(o=>o.j>=18||o.hid>=14).map(o=>({x:X(o.hid),y:Y(o.j),t:colLbl(o.x),w:colLbl(o.x).length*5.2,c:o.j>=8?"#facc15":"#cbd5e1"})),W).map(o=>`<text x="${o.x.toFixed(1)}" y="${o.y.toFixed(1)}" class="cdl" fill="${o.c}" text-anchor="${o.x>W-50?"end":o.x<l+30?"start":"middle"}">${o.t}</text>`).join("");
   const fit=`<line x1="${X(0)}" y1="${Y(a)}" x2="${X(xm)}" y2="${Y(a+b*xm)}" stroke="#facc15" stroke-width="2" stroke-dasharray="5 4"/>`;
-  const rows=R.map((o,i)=>{const[lv,pc,cl]=lvl(o.hid);return`<button class="rdr" data-colsel="${o.x.n.replace(/"/g,"&quot;")}" data-colrr="${o.x.r}"><span class="rk">${i+1}</span><span class="nm"><b>${o.x.app||o.x.n}</b><small>${({guardia:"Guardia",ala:"Ala",centro:"Centro"})[o.x.r]} · ${o.L?`${cf1(o.L.m)}' e ${cf1(o.L.p)} PDK (${o.L.g} part. ${o.L.s.slice(2)})`:"senza minuti NBA: stima dal college"}${o.prof?" · <i class=\"pf\">profilo Haliburton</i>":""}</small></span><span class="hd"><b>+${cf1(o.hid)}</b><small>PDK nascosti</small></span><span class="lv ${cl}">${lv}<small>${pc}% storico</small></span></button>`}).join("");
+  const rows=R.map((o,i)=>{const[lv,pc,cl]=lvl(o.hid);return`<button class="rdr" data-colsel="${o.x.n.replace(/"/g,"&quot;")}" data-colrr="${o.x.r}"><span class="rk">${i+1}</span><span class="nm"><b>${o.x.app||o.x.n}</b><small>${({guardia:"Guardia",ala:"Ala",centro:"Centro"})[o.x.r]} · ${o.L?`${cf1(o.L.m)}' e ${cf1(o.L.p)} PDK (${o.L.g} part. ${o.L.s.slice(2)})`:`senza minuti NBA: stima dal college (~${Math.round(o.mn)}' attesi)`}${o.prof?" · <i class=\"pf\">profilo Haliburton</i>":""}</small></span><span class="hd"><b>${o.real?"":"≈"}+${cf1(o.hid)}</b><small>${o.real?"PDK nascosti":"stima college"}</small></span><span class="lv ${cl}">${lv}<small>${pc}% storico</small></span></button>`}).join("");
   return`<div class="cins">Idea: chi converte bene ogni minuto ma ne gioca pochi ha <b>PDK nascosti</b> = resa al minuto × minuti mancanti fino a ${COL_TGT}'. Nello storico (${n} giocatori debuttati 2018-2023) questo numero al 1° anno è il segnale più legato all'esplosione (correlazione ${cf2(cr)}), più di qualsiasi dato college preso da solo.</div>
   <div class="cgrid3"><div class="c"><small>Sopra ${cf1(t1)} nascosti</small><b>${rH}%</b><em>esplosi · salto +${cf1(jH)}</em></div><div class="d"><small>Sotto</small><b>${rL}%</b><em>esplosi · salto +${cf1(jL)}</em></div><div class="b"><small>Correlazione</small><b>${cf2(cr)}</b><em>col salto reale</em></div></div>
   <div class="csub">Prova sullo storico · PDK nascosti al 1° anno → salto reale</div>
@@ -2878,7 +2891,7 @@ function colRadar(){const R=colRadarRows(),A=colAll();
   <p class="note">Resa al minuto: dati NBA della stagione più recente (almeno 3 partite), altrimenti PDK/min al college × tenuta tipica del ruolo. Livello alto/basso = sopra o sotto la metà dello storico (${cf1(t1)} PDK nascosti), con la percentuale di chi in quella metà è poi esploso (+8 PDK). Con 3 partite di stagione i numeri della classe 2026 sono ancora ballerini.</p>`}
 /* ARCHIVIO come l'artefatto originale: tre sezioni per ruolo, ordinate per POT (POT | PDK/min | Giocatore | P36/USG | USG%). */
 function colOrig(){const q=COL.q.trim().toLowerCase();return COL_RL.map(([k,l,,c])=>{const L=colRows(k).sort((a,b)=>b.pot-a.pot).filter(x=>!q||x.n.toLowerCase().includes(q)||(x.app||"").toLowerCase().includes(q));
-  return`<section class="corig" style="--rc:${c}"><h4>${l}<small>${L.length} giocatori</small></h4><div class="coltbl"><table><thead><tr><th>POT</th><th>PDK/min</th><th class="nm">Giocatore</th><th>P36/USG</th><th>USG%</th></tr></thead><tbody>${L.map(x=>`<tr data-colsel="${x.n.replace(/"/g,"&quot;")}" data-colrr="${k}"${x.uns?' class="uns"':""}><td class="pot">${cf2(x.pot)}</td><td>${cf2(x.pm)}</td><td class="nm">${x.n}${x.uns?" *":""}${x.r26?` <i class="c26">2026</i>`:""}</td><td>${cf2(x.p36)}</td><td>${cf1(x.usg)}%</td></tr>`).join("")||`<tr><td colspan="5" class="emp">Nessun giocatore.</td></tr>`}</tbody></table></div></section>`}).join("")}
+  return`<section class="corig" style="--rc:${c}"><h4>${l}<small>${L.length} giocatori</small></h4><div class="coltbl"><table><thead><tr><th>POT</th><th>PDK/min</th><th class="nm">Giocatore</th><th>P36/USG</th><th>USG%</th><th class="hd">Nasc.</th></tr></thead><tbody>${L.map(x=>{const H=colHidden(x);return`<tr data-colsel="${x.n.replace(/"/g,"&quot;")}" data-colrr="${k}"${x.uns?' class="uns"':""}><td class="pot">${cf2(x.pot)}</td><td>${cf2(x.pm)}</td><td class="nm">${x.n}${x.uns?" *":""}${x.pro?` <i class="c26">PROSP.</i>`:x.r26?` <i class="c26">2026</i>`:""}</td><td>${cf2(x.p36)}</td><td>${cf1(x.usg)}%</td><td class="hd${H.real?"":" est"}">${colHidLab(H)}</td></tr>`}).join("")||`<tr><td colspan="6" class="emp">Nessun giocatore.</td></tr>`}</tbody></table></div></section>`}).join("")}
 /* ===== SEZIONE NBA (scouting riservato): massima libertà di impostazione =====
    NB = stato. Report: finestra = ultime N partite | ultimi N giorni | dal–al (date libere, anche stagioni passate);
    confronto = media solita (partite precedenti della stagione + stagione di riferimento) | resto della stagione |
@@ -2972,7 +2985,7 @@ function vNbaSec(){return`<div class="nsubt"><button data-nbt="rep" aria-pressed
    Indice 0-100 = 60% picco atteso + 25% esplosione + 15% PDK nascosti (normalizzati sul gruppo). */
 function colRisultati(){const A=colAll(),inc=COL.inc||"26",best=x=>x.nba?x.nba.v:null;
   const pool=A.filter(x=>!x.r26&&x.Y[1]&&x.deb>=2018&&x.deb<=2024);
-  const P=A.filter(x=>inc==="26"?x.r26:(x.r26||(x.deb>=2024)));
+  const P=A.filter(x=>x.pro||(inc==="26"?x.r26:(x.r26||(x.deb>=2024))));
   const rad=new Map(colRadarRows().map(o=>[o.x.n,o]));
   const sd=(L,f)=>{const v=L.map(f),m=v.reduce((a,b)=>a+b,0)/v.length;return Math.sqrt(v.reduce((s,y)=>s+(y-m)**2,0)/v.length)||1};
   const R=P.map(x=>{const L=pool.filter(y=>y.r===x.r);if(!L.length)return null;const su=sd(L,y=>y.usg),sp=sd(L,y=>y.p36),sm=sd(L,y=>y.pm);
@@ -2981,19 +2994,19 @@ function colRisultati(){const A=colAll(),inc=COL.inc||"26",best=x=>x.nba?x.nba.v
     const E=C.map((c,i)=>({c,w:w[i]})).filter(o=>o.c.y.Y[1]&&o.c.y.deb>=2018),prof=x.usg<=+COL.u&&x.p36>=+COL.k;
     let ex=E.length?E.reduce((s,o)=>s+o.w*((Math.max(...Object.values(o.c.y.Y).map(v=>v.p))-o.c.y.Y[1].p)>=8?1:0),0)/E.reduce((s,o)=>s+o.w,0):null;
     const base=prof?.87:.65;ex=ex==null?base:(ex*E.length+base*2)/(E.length+2);
-    const r=rad.get(x.n);return{x,C,peak,ex,prof,hid:r?r.hid:0,sim:Math.round(100/(1+C.reduce((s,c)=>s+c.d,0)/C.length))}}).filter(Boolean);
+    const Hh=colHidden(x);return{x,C,peak,ex,prof,hid:Hh.v,hreal:Hh.real,sim:Math.round(100/(1+C.reduce((s,c)=>s+c.d,0)/C.length))}}).filter(Boolean);
   const nz=(v,L)=>{const lo=Math.min(...L),hi=Math.max(...L);return hi>lo?(v-lo)/(hi-lo):.5},PK=R.map(o=>o.peak),HD=R.map(o=>o.hid);
-  R.forEach(o=>o.idx=Math.round(100*(.6*nz(o.peak,PK)+.25*o.ex+.15*nz(o.hid,HD))));R.sort((a,b)=>b.idx-a.idx);
+  R.forEach(o=>o.idx=Math.round(100*(.6*nz(o.peak,PK)+.25*o.ex+.15*nz(o.hid,HD))));R.sort((a,b)=>COL.ord==="hid"?b.hid-a.hid:b.idx-a.idx);
   const role={guardia:"Guardia",ala:"Ala",centro:"Centro"},col=k=>COL_RL.find(r=>r[0]===k)[3];
   const traj=y=>{const ks=Object.keys(y.Y).map(Number).sort((a,b)=>a-b);if(!ks.length)return"";const b=ks.reduce((a,k)=>y.Y[k].p>y.Y[a].p?k:a);return y.Y[1]?`${cf1(y.Y[1].p)} → ${cf1(y.Y[b].p)} <small>(${b}° anno)</small>`:`picco ${cf1(y.Y[b].p)} <small>(${y.Y[b].s})</small>`};
   const comp=o=>o.C.map(c=>`<span class="scrc" data-colsel="${c.y.n.replace(/"/g,"&quot;")}" data-colrr="${c.y.r}"><b>${colLbl(c.y)}</b><em>${traj(c.y)}</em><i>usg ${cf1(c.y.usg)}% · P36/USG ${cf2(c.y.p36)}</i></span>`).join("");
   const card=(o,i)=>`<div class="scr${i<3?" scrtop rt"+(i+1):""}" style="--rc:${col(o.x.r)}"><div class="scrh" data-colsel="${o.x.n.replace(/"/g,"&quot;")}" data-colrr="${o.x.r}">
     <span class="scrp">${i<3?["🥇","🥈","🥉"][i]:i+1}</span><span class="scrn"><b>${o.x.app||o.x.n}</b><small>${role[o.x.r]} · usage ${cf1(o.x.usg)}% · P36/USG ${cf2(o.x.p36)} · POT ${cf2(o.x.pot)}</small>
-    <span class="scrb">${o.prof?`<i class="h">Profilo Haliburton</i>`:""}${o.hid>=8?`<i class="n">+${cf1(o.hid)} PDK nascosti</i>`:""}${o.x.r26?`<i>Classe 2026</i>`:`<i>Rookie ${o.x.deb}</i>`}</span></span>
+    <span class="scrb">${o.prof?`<i class="h">Profilo Haliburton</i>`:""}${o.x.pro?`<i class="h">Prospetto</i>`:o.x.r26?`<i>Classe 2026</i>`:`<i>Rookie ${o.x.deb}</i>`}</span></span>
     <span class="scri"><b>${o.idx}</b><small>indice</small></span></div>
-    <div class="scrk"><div><small>Picco Dunkest atteso</small><b>${cf1(o.peak)}</b><em>PDK a partita</em></div><div><small>Prob. esplosione</small><b>${Math.round(o.ex*100)}%</b><em>+8 PDK dal 1° anno</em></div><div><small>Somiglianza</small><b>${o.sim}%</b><em>con i 3 paragoni</em></div></div>
+    <div class="scrk"><div class="scrhid"><small>PDK nascosti</small><b>${o.hreal?"":"≈"}+${cf1(o.hid)}</b><em>${o.hreal?"reali (NBA)":"stima college"}</em></div><div><small>Picco Dunkest atteso</small><b>${cf1(o.peak)}</b><em>PDK a partita</em></div><div><small>Prob. esplosione</small><b>${Math.round(o.ex*100)}%</b><em>+8 PDK dal 1° anno</em></div></div><p class="scrsim">Somiglianza con i paragoni: ${o.sim}%</p>
     <div class="scrcs"><small>Al college era come…  (carriera Dunkest: 1° anno → migliore)</small>${comp(o)}</div></div>`;
-  const opts=`<div class="nseg" style="margin-bottom:10px"><button data-colset2="inc" data-v="26" aria-pressed="${inc==="26"}">Classe 2026</button><button data-colset2="inc" data-v="all" aria-pressed="${inc!=="26"}">+ rookie 2024-25</button></div>`;
+  const opts=`<div class="nseg" style="margin-bottom:6px"><button data-colset2="inc" data-v="26" aria-pressed="${inc==="26"}">Classe 2026</button><button data-colset2="inc" data-v="all" aria-pressed="${inc!=="26"}">+ rookie 2024-25</button></div><div class="nseg" style="margin-bottom:10px"><button data-colset2="ord" data-v="hid" aria-pressed="${COL.ord==="hid"}">Ordina per PDK nascosti</button><button data-colset2="ord" data-v="idx" aria-pressed="${COL.ord!=="hid"}">Ordina per indice</button></div>`;
   return`${opts}<div class="cins">Classifica costruita sui dati: per ogni prospetto trovo i <b>3 giocatori già in NBA</b> con il profilo college più simile (usage, P36/USG, PDK/min) e guardo cosa hanno fatto su <b>Dunkest</b>. Più i paragoni sono esplosi e più sono arrivati in alto, più il prospetto sale.</div>
   <div class="scrl">${R.map(card).join("")}</div>
   <p class="note">Indice 0-100 = 60% picco Dunkest atteso (media dei migliori PDK dei 3 paragoni, pesata per somiglianza) + 25% probabilità di esplosione (quota di paragoni esplosi, corretta col profilo Haliburton: 87% contro 65% nello storico) + 15% PDK nascosti del Radar. Paragoni solo tra giocatori dello stesso ruolo debuttati in NBA dal 2018 al 2024, di cui Dunkest ha tutta la carriera dal 1° anno. È uno strumento di confronto, non una certezza: i paragoni sono pochi per ruolo.</p>`}
@@ -3025,7 +3038,7 @@ async function colShare(btn){const x=colRows(COL.r).find(y=>y.n===COL.sel);if(!x
   const fn=`scouting-${(x.app||x.n).toLowerCase().replace(/[^a-z0-9]+/g,"-")}.png`,txt=`🦆 Ufficio Scouting · ${x.app||x.n}`;
   cv.toBlob(bl=>{const file=new File([bl],fn,{type:"image/png"});if(navigator.canShare&&navigator.canShare({files:[file]}))navigator.share({files:[file],text:txt}).catch(()=>{});
     else{const a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=fn;document.body.appendChild(a);a.click();a.remove();if(btn){const s=btn.querySelector("span");if(s)s.textContent="Immagine scaricata ✓"}}},"image/png")}
-function vCollege(){if(!COL.d){cur="campo";return vCampo()}COL.sec=COL.sec||"college";COL.tab=COL.tab||"ris";COL.u=COL.u||24;COL.k=COL.k||.9;
+function vCollege(){if(!COL.d){cur="campo";return vCampo()}COL.sec=COL.sec||"college";COL.tab=COL.tab||"ris";COL.ord=COL.ord||"hid";COL.u=COL.u||24;COL.k=COL.k||.9;
   const tabs=[["ris","🏆 Risultati"],["orig","Archivio"],["radar","Radar"],["usage","Profilo"],["pros","Prospetti"],["studio","Studio rookie"],["mappa","Mappa"],["nba","College→NBA"],["lista","Tabella"]];
   const body=COL.tab==="ris"?`<div class="grcard">${colRisultati()}</div>`:COL.tab==="orig"?`<input id="colq" class="colq" type="search" placeholder="Cerca giocatore" value="${COL.q.replace(/"/g,"&quot;")}" aria-label="Cerca giocatore"><div class="grcard" id="colorig">${colOrig()}<p class="note">POT = PDK/min normalizzato a usage 27%. * = ruolo da confermare. Tocca un giocatore per la scheda.</p></div>`
    :COL.tab==="radar"?`<div class="grcard">${colRadar()}</div>`:COL.tab==="usage"?`<div class="grcard">${colUsage()}</div>`:COL.tab==="pros"?`<div class="grcard">${colProspetti()}</div>`:COL.tab==="studio"?`<div class="grcard">${colStudio()}</div>`:COL.tab==="mappa"?`<div class="grcard">${colMap()}</div>`:COL.tab==="nba"?`<div class="grcard">${colNbaChart()}</div>`
