@@ -332,3 +332,6 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
   (filtro ruoli G/F/C multiplo, `TRN.ruoli`; stesso calcolo `grTrend` del Grafico; punti per stagione, mese o settimana se il periodo è un solo mese), con grafico
   a linee nei colori squadra (max 8, tratteggi diversi per giocatori della stessa squadra) e pulsante 📈 che apre il
   Grafico del giocatore sullo stesso periodo.
+- (42) Grafico e Calcola il trend: al posto di "Stagione" (con "Tutte") ci sono **Dalla stagione / Alla stagione**
+  (stagioni consecutive, `GR.sz`–`GR.sz2`, `TRN.sz`–`TRN.sz2`). Più stagioni = un punto per stagione e mesi disattivati;
+  una stagione = come prima (mesi, o settimane se un solo mese).
