@@ -920,6 +920,7 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .grfoot{padding:4px 8px 0;font-size:11px;color:rgba(255,255,255,.55)}
 .grv{stroke:rgba(255,255,255,.07);stroke-width:1;stroke-dasharray:2 3}
 .grx.big{font-weight:700;font-size:9.5px;fill:rgba(255,255,255,.85)}
+.grsel.off{opacity:.4}
 .grtag text{font-family:Barlow,sans-serif;font-weight:800;font-size:8.5px;fill:#0b1022;text-anchor:middle}
 .grbtn{margin-top:8px}
 .ggrbtn{display:block;width:100%;margin:12px 0 4px}
@@ -1970,10 +1971,13 @@ let gSeason="2026/27";
 /* ===== GRAFICO andamento giocatore (PDK verde, minuti giallo, efficienza viola) =====
    Leggibilità: ogni punto è la MEDIA MOBILE (partita: ultime 5; settimana: ultime 3; mese/stagione: valore del periodo),
    linea curva morbida; i valori reali restano come puntini tenui. Scala adattata ai dati (non da zero) se c'è una sola grandezza per asse. */
-let GR={t:null,p:null,sz:"2026/27",by:"g",show:{pdk:true,min:false,eff:false},from:null};
+let GR={t:null,p:null,sz:"2026/27",mese:"",sett:"",by:"m",show:{pdk:true,min:false,eff:false},from:null};
 const GR_SZ=["2026/27","2025/26","2024/25"];
 const GR_MESI=["Gen","Feb","Mar","Apr","Mag","Giu","Lug","Ago","Set","Ott","Nov","Dic"];
-const GR_WIN={g:8,w:4,m:1,s:1};
+const GR_WIN={g:1,w:1,m:1,s:1};
+const grWk=d=>{const w=new Date(d);w.setUTCDate(w.getUTCDate()-((w.getUTCDay()+6)%7));return w.toISOString().slice(0,10)};
+const grMk=d=>d.getUTCFullYear()+"-"+String(d.getUTCMonth()+1).padStart(2,"0");
+const GR_GG=["Dom","Lun","Mar","Mer","Gio","Ven","Sab"];
 const GR_COL={pdk:"#22c55e",min:"#facc15",eff:"#a855f7"},GR_LAB={pdk:"PDK",min:"Minuti",eff:"Efficienza"};
 function grGames(n,sz){const one=s=>{const a=s===GR_SZ[0]?(PARTITE[n]||[]):((STAGIONI[s]||{})[n]||[]);const y0=+s.slice(0,4);
     return a.map(x=>{const[d,m]=x[0].split("/").map(Number);const y=m>=8?y0:y0+1;return{dt:new Date(Date.UTC(y,m-1,d)),sz:s,opp:x[1],min:+x[2]||0,pdk:+x[3]||0,eff:x[4]==null?null:+x[4]}})};
@@ -1983,7 +1987,8 @@ function grGroup(g,by){const key=x=>{const d=x.dt;if(by==="g")return d.toISOStri
     if(by==="w"){const w=new Date(d);w.setUTCDate(w.getUTCDate()-((w.getUTCDay()+6)%7));return w.toISOString().slice(0,10)}
     if(by==="m")return d.getUTCFullYear()+"-"+String(d.getUTCMonth()+1).padStart(2,"0");return x.sz};
   const M=new Map();g.forEach(x=>{const k=key(x);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});
-  const P=[...M.entries()].map(([k,a])=>{let lab;if(by==="g"||by==="w"){const[y,m,d]=k.slice(0,10).split("-");lab=d+"/"+m}else if(by==="m"){const[y,m]=k.split("-");lab=GR_MESI[+m-1]+" "+y.slice(2)}else lab=SZ_LBL[k]+"|"+k.slice(2);
+  const P=[...M.entries()].map(([k,a],ix)=>{let lab;if(by==="g"){const d=a[0].dt;lab=GR_GG[d.getUTCDay()]+" "+String(d.getUTCDate()).padStart(2,"0")+"/"+String(d.getUTCMonth()+1).padStart(2,"0")+"|"+a[0].opp}
+      else if(by==="w"){const d0=new Date(k+"T00:00:00Z"),d1=new Date(d0);d1.setUTCDate(d1.getUTCDate()+6);const f=d=>String(d.getUTCDate()).padStart(2,"0");lab="Sett. "+(ix+1)+"|"+f(d0)+"–"+f(d1)+"/"+String(d1.getUTCMonth()+1).padStart(2,"0")}else if(by==="m"){const[y,m]=k.split("-");lab=GR_MESI[+m-1]+"|"+y}else lab=SZ_LBL[k]+"|"+k.slice(2);
     return{lab,raw:{pdk:grAvg(a,x=>x.pdk),min:grAvg(a,x=>x.min),eff:grAvg(a,x=>x.eff)}}});
   const w=GR_WIN[by];P.forEach((p,i)=>{const s=P.slice(Math.max(0,i-w+1),i+1);p.pdk=grAvg(s,q=>q.raw.pdk);p.min=grAvg(s,q=>q.raw.min);p.eff=grAvg(s,q=>q.raw.eff)});return P}
 function grPath(pts){if(pts.length<2)return pts.length?`M${pts[0][0]},${pts[0][1]}`:"";let d=`M${pts[0][0]},${pts[0][1]}`;
@@ -1993,7 +1998,7 @@ function grNice(lo,hi,isEff,n){const mid=(lo+hi)/2,span=Math.max(hi-lo,isEff?.5:
   const ST=isEff?[.05,.1,.2,.25,.5]:[2,5,10,20];n=n||4;for(const st of ST){const a=Math.floor(lo/st)*st,b=a+n*st;if(b>=hi-1e-9)return[a,b,st]}const st=ST[ST.length-1],a=Math.floor(lo/st)*st;return[a,a+Math.ceil((hi-a)/st)*st,st]}
 function grChart(P,show){if(!P.length)return`<div class="grempty">Nessuna partita in questo periodo.</div>`;
   const on=Object.keys(show).filter(k=>show[k]);if(!on.length)return`<div class="grempty">Scegli almeno una linea: PDK, Minuti o Efficienza.</div>`;
-  const left=on.filter(k=>k!=="eff"),right=on.includes("eff");const few=P.length<=12,W=340,H=246,L=left.length?32:14,R=right?34:14,T=34,B=32,iw=W-L-R-(few?24:0),ih=H-T-B,X0=L+(few?12:0);
+  const left=on.filter(k=>k!=="eff"),right=on.includes("eff");const few=P.length<=16,W=340,H=246+(few?(on.length-1)*26:0),L=left.length?32:14,R=right?34:14,T=34,B=32,iw=W-L-R-(few?24:0),ih=H-T-B,X0=L+(few?12:0);
   const rng=ks=>{const v=P.flatMap(p=>ks.map(k=>p[k])).filter(v=>v!=null);return[Math.min(...v),Math.max(...v)]};
   const SL=left.length?grNice(...rng(left),false,4):null,SR=right?grNice(...rng(["eff"]),true,4):null;
   const x=i=>X0+(P.length===1?iw/2:i*iw/(P.length-1)),y=(v,S)=>T+ih-((v-S[0])/(S[1]-S[0]))*ih,S=k=>k==="eff"?SR:SL;
@@ -2008,21 +2013,31 @@ function grChart(P,show){if(!P.length)return`<div class="grempty">Nessuna partit
     return`<polyline points="${pts.map(q=>q[0].toFixed(1)+","+q[1].toFixed(1)).join(" ")}" fill="none" stroke="${GR_COL[k]}" stroke-width="2.6" stroke-linejoin="miter" stroke-linecap="round"/>`
       +pts.map((q,n)=>few||n===pts.length-1?`<circle cx="${q[0].toFixed(1)}" cy="${q[1].toFixed(1)}" r="${few?4:3.5}" fill="${GR_COL[k]}" stroke="#0b1022" stroke-width="2"/>`:"").join("")};
   /* etichette valore sui punti: impilate per non sovrapporsi */
-  const tags=()=>{let out="";P.forEach((p,i)=>{if(!few&&i!==P.length-1)return;
-      const it=on.filter(k=>p[k]!=null).map(k=>({k,py:y(p[k],S(k)),t:fmt(k,p[k])})).sort((a,b)=>a.py-b.py);
-      /* il valore più alto ha l'etichetta sopra il punto, il più basso sotto, quello in mezzo sopra: nessuna etichetta copre un punto */
-      it.forEach((o,n)=>{o.ty=(it.length>1&&n===it.length-1)?o.py+15:o.py-12});
-      for(let n=1;n<it.length;n++)if(it[n].ty<it[n-1].ty+13)it[n].ty=it[n-1].ty+13;
-      for(let n=it.length-1;n>=0;n--){const o=it[n];if(o.ty>T+ih+8)o.ty=T+ih+8;if(n<it.length-1&&o.ty>it[n+1].ty-13)o.ty=it[n+1].ty-13;if(o.ty<10)o.ty=10}
-      it.forEach((o,n)=>{const mid=it.length>2&&n>0&&n<it.length-1;if(mid)o.ty=o.py+3;const w=o.t.length*5.4+8,dx=mid?(i===P.length-1?-(w/2+7):w/2+7):0,cx=Math.min(W-R-w/2+ (few?12:0),Math.max(X0-(few?12:0)+w/2,x(i)+dx));
-        out+=`<g class="grtag"><rect x="${(cx-w/2).toFixed(1)}" y="${(o.ty-8).toFixed(1)}" width="${w.toFixed(1)}" height="12" rx="6" fill="${GR_COL[o.k]}"/><text x="${cx.toFixed(1)}" y="${(o.ty+1.6).toFixed(1)}">${o.t}</text></g>`})});return out};
+  const tags=()=>{const all=[];P.forEach((p,i)=>{if(!few&&i!==P.length-1)return;
+      const it=on.filter(k=>p[k]!=null).map(k=>({k,i,py:y(p[k],S(k)),t:fmt(k,p[k])})).sort((a,b)=>a.py-b.py);
+      /* il valore più alto ha l'etichetta sopra il punto, il più basso sotto, quello in mezzo sopra/sotto dove c'è spazio */
+      it.forEach((o,n)=>{o.ty=(it.length>1&&n===it.length-1)?o.py+15:o.py-12;o.w=o.t.length*5.4+8;o.cx=Math.min(W-R-o.w/2+(few?12:0),Math.max(X0-(few?12:0)+o.w/2,x(i)))});
+      all.push(...it)});
+    /* niente etichette sovrapposte tra loro né sopra ai pallini: si spostano in verticale al primo posto libero */
+    const placed=[],hit=(a,b)=>Math.abs(a.cx-b.cx)<(a.w+b.w)/2+2&&Math.abs(a.ty-b.ty)<13;
+    const dots=all.map(o=>({cx:x(o.i),ty:o.py+4,w:9}));
+    const clamp=v=>Math.max(10,Math.min(T+ih-2,v)),bad=o=>placed.some(q=>hit(o,q))||dots.some(d=>Math.abs(d.cx-o.cx)<o.w/2+4&&Math.abs(d.ty-4-(o.ty-2))<10);
+    all.forEach(o=>{const base=o.ty,dir=o.ty>o.py?1:-1,offs=[0];for(let n=1;n<=8;n++)offs.push(dir*13*n,-dir*13*n);
+      for(const d of offs){o.ty=clamp(base+d);if(!bad(o))break}placed.push(o)});
+    return placed.map(o=>`<g class="grtag"><rect x="${(o.cx-o.w/2).toFixed(1)}" y="${(o.ty-8).toFixed(1)}" width="${o.w.toFixed(1)}" height="12" rx="6" fill="${GR_COL[o.k]}"/><text x="${o.cx.toFixed(1)}" y="${(o.ty+1.6).toFixed(1)}">${o.t}</text></g>`).join("")};
   return`<svg class="grsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Andamento">${grid}${xl}
     ${SL?`<text x="4" y="10" class="gry ax" text-anchor="start">${left.map(k=>GR_LAB[k]).join(" · ").toUpperCase()}</text>`:""}${SR?`<text x="${W-2}" y="10" class="gry ax" text-anchor="end">EFFICIENZA</text>`:""}
     ${on.map(line).join("")}${tags()}</svg>`}
 function vGrafico(){if(!TEAMS[GR.t])GR.t=TEAMS[curTeam]?curTeam:Object.keys(TEAMS)[0];const t=GR.t,c=TEAMS[t];const ros=(ROSTER[t]||[]).map(x=>x[0]);if(!GR.p||!ros.includes(GR.p))GR.p=ros[0];
-  const g=grGames(GR.p,GR.sz),P=grGroup(g,GR.by),avg=f=>grAvg(g,x=>x[f]);
+  /* livello automatico: Tutte → stagioni; stagione → mesi; mese → settimane; settimana → partite */
+  const gAll=grGames(GR.p,GR.sz),mesi=[...new Set(gAll.map(x=>grMk(x.dt)))];if(GR.sz==="all"||!mesi.includes(GR.mese))GR.mese="";
+  const gM=GR.mese?gAll.filter(x=>grMk(x.dt)===GR.mese):gAll,setts=GR.mese?[...new Set(gM.map(x=>grWk(x.dt)))]:[];if(!setts.includes(GR.sett))GR.sett="";
+  const g=GR.sett?gM.filter(x=>grWk(x.dt)===GR.sett):gM;GR.by=GR.sz==="all"?"s":!GR.mese?"m":!GR.sett?"w":"g";
+  const P=grGroup(g,GR.by),avg=f=>grAvg(g,x=>x[f]);
+  const mLab=k=>{const[y,m]=k.split("-");return["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"][+m-1]+" "+y.slice(2)};
+  const wLab=(k,i)=>{const d0=new Date(k+"T00:00:00Z"),d1=new Date(d0);d1.setUTCDate(d1.getUTCDate()+6);const f=d=>String(d.getUTCDate()).padStart(2,"0")+"/"+String(d.getUTCMonth()+1).padStart(2,"0");return`Sett. ${i+1} · ${f(d0)}–${f(d1)}`};
   const f1=v=>v==null?"—":v.toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1}),f2=v=>v==null?"—":v.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
-  const sel=(k,opts,v)=>`<label class="grsel"><span>${k}</span><select data-gr="${k}">${opts.map(([a,b])=>`<option value="${a}" ${a===v?"selected":""}>${b}</option>`).join("")}</select></label>`;
+  const sel=(k,opts,v,dis)=>`<label class="grsel${dis?" off":""}"><span>${k}</span><select data-gr="${k}" ${dis?"disabled":""}>${opts.map(([a,b])=>`<option value="${a}" ${a===v?"selected":""}>${b}</option>`).join("")}</select></label>`;
   const tg=k=>`<button class="grtg ${k}" data-grtg="${k}" aria-pressed="${!!GR.show[k]}"><i></i>${GR_LAB[k]}<b>${k==="eff"?f2(avg(k)):f1(avg(k))}</b></button>`;
   const win=GR_WIN[GR.by];
   return`<div class="grroom" style="--tc:${c.bg};--tf:${c.fg}">
@@ -2030,10 +2045,11 @@ function vGrafico(){if(!TEAMS[GR.t])GR.t=TEAMS[curTeam]?curTeam:Object.keys(TEAM
   <div class="grhd"><span class="grlg">${badge(t)}</span><div><small>${c.name} · grafici</small><b>${GR.p}</b></div></div>
   <div class="grtop"><div class="grctl">${sel("Giocatore",ros.map(n=>[n,n]),GR.p)}
   ${sel("Stagione",[["2026/27","Stagione 3"],["2025/26","Stagione 2"],["2024/25","Stagione 1"],["all","Tutte"]],GR.sz)}
-  ${sel("Periodo",[["g","Partite"],["w","Settimane"],["m","Mesi"],["s","Stagioni"]],GR.by)}</div>
+  ${sel("Mese",[["","Tutta la stagione"],...mesi.map(k=>[k,mLab(k)])],GR.mese,GR.sz==="all")}
+  ${sel("Settimana",[["","Tutto il mese"],...setts.map((k,i)=>[k,wLab(k,i)])],GR.sett,!GR.mese)}</div>
   <div class="grjs">${(()=>{const r=(ROSTER[t]||[]).find(x=>x[0]===GR.p);return jersey(t,r?r[1]:null,GR.p)})()}</div></div>
   <div class="grtgs">${tg("pdk")}${tg("min")}${tg("eff")}</div>
-  <div class="grcard">${grChart(P,GR.show)}<div class="grfoot">${g.length} partite · ${win>1?`linea = media delle ultime ${win} ${GR.by==="g"?"partite":GR.by==="w"?"settimane":"mesi"}`:"media del periodo"}</div></div></div>`}
+  <div class="grcard">${grChart(P,GR.show)}<div class="grfoot">${g.length} ${g.length===1?"partita":"partite"} · ${GR.by==="s"?"media di ogni stagione":GR.by==="m"?"media di ogni mese":GR.by==="w"?"media di ogni settimana":"valori di ogni partita"}</div></div></div>`}
 
 function vGiocatore(){
   const t=curTeam,c=TEAMS[t],p=(ROSTER[t]||[]).find(x=>x[0]===curPlayer);
@@ -2242,11 +2258,11 @@ document.getElementById("main").addEventListener("click",e=>{const b=e.target.cl
 
 /* Grafico: apertura, chiusura, menu e linee */
 document.getElementById("main").addEventListener("click",e=>{
-  const o=e.target.closest("[data-grafico]");if(o){e.preventDefault();GR.t=o.dataset.grafico;GR.p=o.dataset.grp||null;GR.from=cur;GR.sz=SZ_ALL.includes(gSeason)?gSeason:SZ_ALL[0];cur="grafico";render();window.scrollTo(0,0);return}
+  const o=e.target.closest("[data-grafico]");if(o){e.preventDefault();GR.t=o.dataset.grafico;GR.p=o.dataset.grp||null;GR.from=cur;GR.sz=SZ_ALL.includes(gSeason)?gSeason:SZ_ALL[0];GR.mese="";GR.sett="";cur="grafico";render();window.scrollTo(0,0);return}
   if(e.target.closest("[data-grclose]")){e.preventDefault();cur=GR.from||"efficienza";render();window.scrollTo(0,0);return}
   const tg=e.target.closest("[data-grtg]");if(tg){e.preventDefault();GR.show[tg.dataset.grtg]=!GR.show[tg.dataset.grtg];const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("change",e=>{const s=e.target.closest("select[data-gr]");if(!s)return;const k=s.dataset.gr;
-  if(k==="Giocatore")GR.p=s.value;else if(k==="Stagione"){GR.sz=s.value;if(s.value==="all")GR.by="s";else if(GR.by==="s")GR.by="g"}else if(k==="Periodo")GR.by=s.value;const y=window.scrollY;render();window.scrollTo(0,y)});
+  if(k==="Giocatore")GR.p=s.value;else if(k==="Stagione"){GR.sz=s.value;GR.mese="";GR.sett=""}else if(k==="Mese"){GR.mese=s.value;GR.sett=""}else if(k==="Settimana")GR.sett=s.value;const y=window.scrollY;render();window.scrollTo(0,y)});
 document.getElementById("main").addEventListener("click",e=>{const a=e.target.closest("[data-esqadv]");if(a&&cur==="effsquadra"){e.preventDefault();esqAdv=!esqAdv;const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("click",e=>{const m=e.target.closest("[data-esqm]");if(m&&cur==="effsquadra"){e.preventDefault();esqMese=m.dataset.esqm==="tutta"?"tutta":+m.dataset.esqm;const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-rshare]");if(!b)return;e.preventDefault();e.stopPropagation();shareRoster(b.dataset.rshare,b)});
