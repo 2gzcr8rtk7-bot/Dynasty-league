@@ -1475,7 +1475,7 @@ const TEAMS={
   DOL:{name:"Salt Lake Dolphins",city:"Salt Lake",nick:"Dolphins",bg:"#1747c9",fg:"#ffffff",trim:"#0b0b0b"},
   DUC:{name:"Texas Ducks",city:"Texas",nick:"Ducks",bg:"#facc15",fg:"#111111",trim:"#111111",stroke:"#ffffff"},
   FOX:{name:"Detroit Foxes",city:"Detroit",nick:"Foxes",bg:"#f97316",fg:"#111111",trim:"#111111"},
-  PEA:{name:"Dakota Peacocks",city:"Dakota",nick:"Peacocks",bg:"#2f6bff",fg:"#ff7a1a",trim:"#ff7a1a"},
+  PEA:{name:"Dakota Peacocks",city:"Dakota",nick:"Peacocks",bg:"#2f6bff",fg:"#ff7a1a",trim:"#ff7a1a",txt:"#ffffff"},
   SPI:{name:"Sacramento Spiders",city:"Sacramento",nick:"Spiders",bg:"#8cc9f5",fg:"#0f1f3d",trim:"#1e3a8a"},
   TUR:{name:"California Turtles",city:"California",nick:"Turtles",bg:"#16a34a",fg:"#7dd3fc",trim:"#7dd3fc"},
   EAG:{name:"San Diego Eagles",city:"San Diego",nick:"Eagles",bg:"#0f1b4d",fg:"#facc15",trim:"#facc15"},
@@ -1802,7 +1802,7 @@ function vRoster(){
   const st=standings().find(x=>x.t===curTeam),c=TEAMS[curTeam],r=ROSTER[curTeam];
   const chips=Object.keys(TEAMS).map(t=>`<button class="chip" data-t="${t}" aria-pressed="${t===curTeam}">${badge(t)}${TEAMS[t].nick}</button>`).join("");
   return `<div class="chips">${chips}</div>
-  <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">
+  <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.txt||c.fg};border-bottom:4px solid ${c.trim}">
    ${LOGO[curTeam]?`<img class="hlogo" data-t="${curTeam}" src="${LOGO[curTeam]}" alt="">`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div><div class="rec">${CREDITI[curTeam]??"–"}<small>CREDITI</small></div></div><button class="bshare hsh" data-rshare="${curTeam}" aria-label="Condividi roster"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
   <div class="sumrow"><span>${r.length} giocatori</span></div>
   ${(()=>{const R={G:"Guardia",F:"Ala",C:"Centro"},L={G:"G",F:"A",C:"C"};
@@ -1856,7 +1856,7 @@ function vEffSquadra(){
   const rows=ps.map(p=>{const L=sel(gl(p[0]));
     return `<tr data-plt="${t}" data-pln="${p[0]}" class="plink"><td class="pnm">${p[0]} <span class="plgo">›</span><small>${nba(p[0])}</small></td>${Array.from({length:nmax},(_,i)=>{const x=L[i];return `<td class="gcell">${x?`<span class="gv ${MET().l(x.g[MET().i])}">${MET().f(x.g[MET().i])}</span><small class="gd">${x.g[1]}</small>`:""}</td>`}).join("")}</tr>`}).join("");
   return `<button class="gback esqback" id="effback">‹ Statistiche squadre</button>
-  <div class="esqhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 60%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">${badge(t)}<div class="esqt"><small>${c.name}</small><h3>${c.nick}</h3></div></div>
+  <div class="esqhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 60%,#000) 100%);color:${c.txt||c.fg};border-bottom:4px solid ${c.trim}">${badge(t)}<div class="esqt"><small>${c.name}</small><h3>${c.nick}</h3></div></div>
   <div class="esqk"><div><small>Eff. stagionale</small>${eff(s[4])}</div>${E.past?`<div><small>Stagione</small><b>${sz}</b></div>`:`<div><small>Notte · ${s[1]} in campo</small>${eff(s[3])}</div>`}<div><small>Posizione lega</small><b>${pos}ª</b></div></div>
   ${H(c.nick,`<em>${E.past?SZ_LBL[sz]+" · "+sz:"Agg. "+E.agg}</em>`)}
   <div class="esqctl"><div class="metsw"><button data-esqmet="eff" aria-pressed="${esqMet==="eff"}">Efficienza</button><button data-esqmet="pdk" aria-pressed="${esqMet==="pdk"}">PDK</button></div><button class="advbtn" data-esqadv="1" aria-pressed="${esqAdv}">${esqAdv?"‹ Partita per partita":"Statistiche avanzate"}</button><button class="advbtn grbtn" data-grafico="${t}">📈 Grafico</button></div>
@@ -2535,7 +2535,7 @@ function vGrafico(){if(!TEAMS[GR.t])GR.t=TEAMS[curTeam]?curTeam:Object.keys(TEAM
   const sel=(k,opts,v,dis)=>`<label class="grsel${dis?" off":""}"><span>${k}</span><select data-gr="${k}" ${dis?"disabled":""}>${opts.map(([a,b])=>`<option value="${a}" ${a===v?"selected":""}>${b}</option>`).join("")}</select></label>`;
   const tg=k=>`<button class="grtg ${k}" data-grtg="${k}" aria-pressed="${!!GR.show[k]}"><i></i>${GR_LAB[k]}<b>${k==="eff"?f2(avg(k)):f1(avg(k))}</b></button>`;
   const win=GR_WIN[GR.by];
-  return`<div class="grroom" style="--tc:${c.bg};--tf:${c.fg}">
+  return`<div class="grroom" style="--tc:${c.bg};--tf:${c.txt||c.fg}">
   <button class="grback" data-grclose="1">‹ Indietro</button>
   <div class="grhd"><span class="grlg">${badge(t)}</span><div><small>${c.name} · grafici</small><b>${GR.p}</b></div></div>
   <div class="grtop"><div class="grctl">${sel("Giocatore",ros.map(n=>[n,n]),GR.p)}
@@ -2571,7 +2571,7 @@ function vGiocatore(){
   const pct=v=>Math.max(3,Math.min(100,v/1.6*100));
   const stat=(lab,val,sub="")=>`<div class="gst"><small>${lab}</small><b>${val}</b>${sub?`<em>${sub}</em>`:""}</div>`;
   return `<button class="gback" id="gback">‹ ${gFrom==="college"?"Ufficio Scouting":gFrom==="valtrade"?"Valori lega":gFrom==="effsquadra"?"Efficienza "+c.nick:gFrom==="efficienza"?"Efficienza":"Roster "+c.nick}</button>
-  <div class="ghead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 60%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">
+  <div class="ghead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 60%,#000) 100%);color:${c.txt||c.fg};border-bottom:4px solid ${c.trim}">
     <div class="gjer">${jersey(t,p[1],p[0])}</div>
     <div class="gtit"><small>${c.name}</small><h3>${p[0]}</h3><p>${ruolo} · ${p[3]} · #${p[1]}</p>${INJ[p[0]]&&INJ[p[0]].stato!=="ok"?`<div class="injtag ${INJ[p[0]].stato}">${STATI[INJ[p[0]].stato][0]} · ${INJ[p[0]].tipo}</div>`:""}${ROOKIE.includes(p[0])?`<div class="rookie">Slot Rookie</div>`:""}${AVVISI[p[0]]?`<div class="avviso">${AVVISI[p[0]]}</div>`:""}</div>
   </div>
@@ -3218,7 +3218,7 @@ function vCampo(){
   const onCourt=q.map((p,i)=>`<button class="cpl" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${jersey(t,p[1],p[0])}<span class="cnm"${(L=>L>=12?' style="font-size:9.5px"':L>=9?' style="font-size:10.5px"':"")(sur(p[0]).length)}>${sur(p[0])}</span>${pillP(pdkMed(p[0]))}</button>`).join("");
   const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>(pdkMed(b[0])??-99)-(pdkMed(a[0])??-99));  /* panchina in ordine di efficienza media stagionale (stesso valore mostrato), si riordina a ogni aggiornamento */
   return `<button class="gback" id="cback">‹ Home</button>
-  <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">
+  <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.txt||c.fg};border-bottom:4px solid ${c.trim}">
    ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${LOGO[t]}" alt="">`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
   ${bacheca(t)}
   ${cassa(t)}
@@ -3402,7 +3402,7 @@ function vCassa(){
     <h4 class="ch4">Registro della lega · aperti</h4>${all.length?`<div class="tbl-wrap">${all.map(x=>`<div class="clr">${wedge(x.da)}<span class="cla">${TEAMS[x.da].nick} <i>→</i> ${TEAMS[x.a].nick}</span>${wedge(x.a)}<b>${x.v} cr<small>${TP[x.tipo]||x.tipo}</small></b></div>`).join("")}</div>`:`<div class="cempty">Nessun debito aperto nella lega.</div>`}`;
   }
   return `<button class="gback" id="cassaback">‹ ${c.nick}</button>
-  <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">
+  <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.txt||c.fg};border-bottom:4px solid ${c.trim}">
    ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${LOGO[t]}" alt="">`:""}<div><h3>Cassa</h3><p>${c.name}</p></div><div class="hstats"><div class="rec">${cr}<small>CREDITI</small></div></div><button class="bshare hsh" data-cshare="${t}" aria-label="Condividi cassa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
   ${cassa(t).replace('class="cassa clink"','class="cassa"').replace(/<div class="cgo">.*?<\/div>/,"")}
   <div class="ctabs">${tabs.map(([k,l])=>`<button data-ctab="${k}" aria-pressed="${cassaTab===k}">${l}</button>`).join("")}</div>

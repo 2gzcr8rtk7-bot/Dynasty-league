@@ -392,3 +392,5 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
   Pulsante Condividi (`trShare`): immagine 1080×1350 del dettaglio.
 - (58) Grafico: con poche partite nel periodo (2-8) i punti sono le singole partite; se il periodo dà un solo punto
   (es. un solo mese) si scende a settimane e poi a partite. Stesso ripiego in Calcola il trend (punti per partita).
+- (59) Peacocks: `TEAMS.PEA.txt="#ffffff"` = colore delle scritte sulle intestazioni di squadra/giocatore e nel Grafico
+  (caselle, numeri, etichette) al posto dell'arancione, per leggibilità. Usato come `c.txt||c.fg`.
