@@ -367,3 +367,6 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - (50) Scouting College: nuova prima scheda **🏆 Risultati** (`colRisultati`): classifica dei prospetti (classe 2026, o
   anche rookie 2024-25) con indice 0-100 da 3 paragoni statistici (stesso ruolo, debutto NBA 2018-2024, profilo college
   più simile) e la loro carriera Dunkest: picco atteso, probabilità di esplosione, PDK nascosti.
+- (51) Scheda giocatore dello Scouting: **commento tecnico** automatico (`colComment`: POT, PDK/min, P36/USG, usage,
+  profilo, paragoni Dunkest `colComps`, inizio/carriera NBA) e pulsante **Condividi la scheda** (`colShare`, immagine
+  1080×1350 del singolo giocatore).
