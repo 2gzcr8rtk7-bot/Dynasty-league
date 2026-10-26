@@ -453,6 +453,7 @@ nav button[aria-expanded="true"] .car{transform:rotate(180deg)}
 /* free agent */
 .fasel{display:grid;gap:6px;margin:0 0 10px}.fasel>div{display:flex;flex-wrap:wrap;gap:6px}
 .fach{flex:1;min-width:0;padding:7px 6px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;text-transform:uppercase;cursor:pointer}
+.fach:disabled{opacity:.35;cursor:default}
 .fach[aria-pressed="true"]{background:var(--gold);color:#0a0f1f;border-color:var(--gold)}
 .fatbl{min-width:0}.fatbl th{text-align:right;padding:8px 5px;font-size:12px}.fatbl th:nth-child(2){text-align:left}.faptbl th:first-child{text-align:left}
 .fatbl td{height:auto;padding:7px 5px;font-family:var(--display);font-style:italic;font-weight:700;font-size:15px}
@@ -2584,6 +2585,25 @@ function vFA(){
   <div class="tbl-wrap"><table class="fatbl"><thead><tr><th>#</th><th>Giocatore</th><th>PG</th><th>Min</th><th>PDK</th><th>Eff.</th></tr></thead><tbody>${rows}</tbody></table></div>
   <p class="note">Tutti i giocatori NBA che non sono nei roster della lega, con media per partita della stagione scelta (solo regular season). <span class="fagl">${badge("DOL","faglb")}<i>G</i></span> = giocatore nella G League di quella franchigia. PDK ufficiali Dunkest (dunkest.com), medie per partita di regular season. Dati al ${FA_AGG}. Tocca un giocatore per la scheda.</p>`;
 }
+let faPS=null,faGLoad=false;
+function faLoadG(){if(typeof FAG!=="undefined"||faGLoad===true)return;faGLoad=true;const s=document.createElement("script");s.src="fa-games.js";
+  s.onload=()=>{if(cur==="faplayer"){const y=scrollY;render();scrollTo(0,y)}};s.onerror=()=>{faGLoad="err";if(cur==="faplayer")render()};document.head.appendChild(s)}
+function faGames(x){
+  if(typeof FAG==="undefined"){faLoadG();return `${H("Partita per partita")}<p class="note">${faGLoad==="err"?"Partite non disponibili in questo momento (serve la connessione).":"Caricamento delle partite…"}</p>`}
+  const G=FAG[x[0]]||{},SZ=["2026/27","2025/26","2024/25"],have=SZ.filter(z=>G[z]&&G[z].length);
+  if(!have.length)return `${H("Partita per partita")}<p class="note">Nessuna partita NBA su Dunkest in queste tre stagioni.</p>`;
+  const z=have.includes(faPS)?faPS:have[0],GL=G[z];
+  const chips=SZ.map(s=>`<button class="fach" data-faps="${s}" aria-pressed="${s===z}"${G[s]&&G[s].length?"":" disabled"}>${s.slice(2,4)}/${s.slice(5)}</button>`).join("");
+  const MESI=["","Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"],ord=m=>m>=8?m:m+12;
+  const by={};GL.forEach(g=>{const m=+g[0].slice(3);(by[m]=by[m]||[]).push(g)});
+  const ms=Object.keys(by).map(Number).sort((a,b)=>ord(b)-ord(a));
+  const fx=v=>v.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
+  return `${H("Partita per partita",`<em>${GL.length} ${GL.length===1?"gara":"gare"} · ${z}</em>`)}
+  <div class="fasel"><div>${chips}</div></div>
+  ${ms.map((m,i)=>{const l=by[m],dk=l.reduce((a,g)=>a+g[3],0),mn=l.reduce((a,g)=>a+g[2],0),av=mn?dk/mn:null;
+    return `<details class="gmese"${i===0?" open":""}><summary><span class="gmn">${MESI[m]}</span><span class="gmesi">${l.length} ${l.length===1?"gara":"gare"} · media</span>${eff(av)}</summary>
+    <div class="tbl-wrap"><table class="gtab"><thead><tr><th>Data</th><th>Min</th><th>Dunkest</th><th>Eff.</th><th>Proj 36'</th></tr></thead><tbody>${l.slice().reverse().map(g=>`<tr><td class="gd"><b>${g[0]} <i>vs ${g[1]}</i></b><small>${g[5]} pt · ${g[6]} rb · ${g[7]} as</small></td><td>${n1(g[2])}</td><td class="gdk">${fx(g[3])}</td><td>${eff(g[4])}</td><td class="gpj">${n1(g[4]*36)}</td></tr>`).join("")}</tbody></table></div></details>`}).join("")}`;
+}
 function vFAP(){
   const x=FA.find(y=>y[0]===faP);if(!x)return `<p class="note">Giocatore non trovato.</p>`;
   const o=FA_OWN[x[0]],c=o?TEAMS[o]:null;
@@ -2592,12 +2612,14 @@ function vFAP(){
   <div class="fahead"${c?` style="--tc:${c.bg}"`:""}><span class="fanum">${x[3]?"#"+x[3]:FA_R[x[2]][0]}</span><div><small>Free Agent${o?` · G League ${c.nick}`:""}</small><h3>${x[0]}</h3><p>${FA_R[x[2]]} · ${x[1]}</p></div>${o?`<span class="faown">${badge(o)}</span>`:""}</div>
   ${H("Stagioni",`<em>media per partita</em>`)}
   <div class="tbl-wrap"><table class="fatbl faptbl"><thead><tr><th>Stag.</th><th>PG</th><th>Min</th><th>PDK</th><th>Eff.</th><th>Proj 36'</th><th>Pt</th><th>Rb</th><th>As</th></tr></thead><tbody>${rows}</tbody></table></div>
+  ${faGames(x)}
   <p class="note">${o?`Diritti G League: ${c.name}. `:""}PDK = punti Dunkest medi a partita, Eff. = PDK per minuto, Proj 36' = PDK su 36 minuti. Fonte: dati ufficiali Dunkest (dunkest.com), regular season.</p>`;
 }
 document.getElementById("main").addEventListener("click",e=>{
-  const b=e.target.closest("[data-fan],[data-fasz],[data-farole],[data-fagl],#faback");if(!b)return;
+  const b=e.target.closest("[data-fan],[data-fasz],[data-farole],[data-fagl],[data-faps],#faback");if(!b)return;
+  if(b.dataset.faps){faPS=b.dataset.faps;const y=scrollY;render();scrollTo(0,y);return}
   if(b.id==="faback"){cur=faFrom==="home"?"home":"fa";render();scrollTo(0,0);return}
-  if(b.dataset.fan!==undefined){faFrom=cur==="home"?"home":"fa";faP=b.dataset.fan;cur="faplayer";render();scrollTo(0,0);return}
+  if(b.dataset.fan!==undefined){faFrom=cur==="home"?"home":"fa";faP=b.dataset.fan;faPS=null;cur="faplayer";render();scrollTo(0,0);return}
   if(b.dataset.fasz)faSz=b.dataset.fasz;if(b.dataset.farole!==undefined)faRole=b.dataset.farole;if(b.dataset.fagl)faGL=!faGL;render()});
 document.getElementById("main").addEventListener("input",e=>{if(e.target.id!=="faq")return;const q=faNz(e.target.value.trim());
   document.querySelectorAll(".farow").forEach(r=>{r.hidden=q?!r.dataset.fs.includes(q):r.classList.contains("fanone")})});
