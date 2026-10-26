@@ -14,7 +14,7 @@ Stephon Castle|1210|399
 Jayson Tatum|1510|410
 Chet Holmgren|1260|400
 Trae Young|1210|260
-Anthony Davis|1999|230
+Anthony Davis|1199|230
 Anthony Edwards|1260|300
 Amen Thompson|1310|350
 AJ Dybantsa|1250|550
