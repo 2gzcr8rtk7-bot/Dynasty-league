@@ -117,3 +117,8 @@ Voto del GM: Ingram Infortuni ½.
   In più Coward è una **guardia** (ruolo che vale meno).
 - **Maluach**: promessa per analisi visiva, numeri non ancora a supporto, molto grezzo → valore e prezzo restano un voto
   del GM finché i numeri non arrivano.
+- **Effetto superstar / potenziale (Giannis)**: per i giocatori che spostano gli equilibri del campionato (Giannis, Sabonis,
+  Shai) il prezzo si basa sul **potenziale di PDK** (es. Giannis ~43 medi), non solo sulla media dell'ultima stagione:
+  un calo dovuto a motivi di campo/contesto non abbassa il prezzo. Per loro l'età pesa poco sul prezzo (Giannis 31 anni).
+  → Nel modello: PDK di riferimento = max(media attuale, miglior media delle ultime 3 stagioni) per chi ha superato 40 PDK;
+  penalità età attenuata sopra quella soglia.
