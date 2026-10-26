@@ -301,3 +301,13 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - In corso con Francesco la taratura di valori e prezzi del Calcolatore a partire da "stelline" per categoria: PDK (+ rookie), Giovinezza, Infortuni, Minutaggio, Efficienza giovani (1°-3° anno), Efficienza esperti, Spazio in squadra. Regole e voti del GM in `tools/CRITERI_VALORI.md` (da leggere prima di toccare i valori).
 - Nuovo file `spazio-data.js` (`SPAZIO_DATA`, caricato da index.html e nella cache del service worker, cache `dynasty-v3`): **lo compila il Claude dei report da Dunkest**, vedi regola 7 in alto. Finché è vuoto, `spazioStelle(n)` ordina solo i giocatori della lega della stessa squadra NBA (meno preciso perché mancano i compagni non in lega).
 - 26/10 mattina: valori e prezzi aggiornati a mano da Francesco per 51 giocatori (Wembanyama 3250/2500, Dončić 2500/900, Davis 1999/230, Embiid 1540/130…): valori in `VALORI`, prezzi in `PREZZO_FISSO`, `VALORI_AGG` = 26/10/2026. Servono anche come riferimenti per tarare le formule stelline → valore/prezzo.
+
+## 26/10/2026 (39) — Nuovi valori/prezzi e Pagella nella scheda giocatore
+- Valori e prezzi ritarati da Francesco (VALORI_AGG = 26/10/2026; elenco in tools/taratura-26-10.txt, criteri in
+  tools/CRITERI_VALORI.md). I valori restano scelti da Francesco: la formula automatica è ancora in discussione, NON
+  ricalcolarli da soli.
+- Scheda giocatore: nuova sezione **Pagella** (valore, prezzo e stelline graduali: PDK + stella azzurra rookie, Giovinezza,
+  Infortuni, Minutaggio, Efficienza giovani/esperti, Spazio in squadra). Funzioni `pagella(n)`, `pagellaHTML(n)`.
+  Si aggiornano da sole con i report, tranne **INF_STELLE** (stelline infortuni): aggiornarle a mano se un giocatore ha un
+  infortunio lungo, rientra, o entra un giocatore nuovo (regole nel commento sopra INF_STELLE).
+- Valori lega: tocca una riga per aprire la scheda del giocatore (il tasto indietro torna a Valori lega).

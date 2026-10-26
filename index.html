@@ -29,6 +29,16 @@
 .pl[data-pl]:hover{border-color:var(--red)}
 .pl[data-pl]:active{transform:scale(.97)}
 .pl[data-pl]:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.pgbox{background:var(--card,#141c33);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;margin:0 0 14px}
+.pgvp{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;padding-bottom:10px;margin-bottom:10px;border-bottom:1px solid rgba(255,255,255,.08)}
+.pgvp small{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.pgvp b{font-family:var(--display);font-style:italic;font-weight:800;font-size:24px;color:#93c5fd;font-variant-numeric:tabular-nums}.pgvp b.pr{color:#facc15}.pgvp b i{font-size:12px;font-style:normal;color:var(--muted)}
+.pgag{text-align:right}.pgag span{font-size:12px;color:var(--muted)}
+.pgg{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}.pgc{min-width:0}
+.pgc small{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pgc small em{font-style:normal;text-transform:none;letter-spacing:0;opacity:.85}
+.pgsw{display:flex;align-items:center;gap:6px;margin-top:3px}.pgsw svg{flex:none}.pgsw b{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}.pgnd{font-size:11px;color:var(--muted)}
+.pgnote{font-size:11px;color:var(--muted);margin:10px 0 0}
+.vtrow[data-pln]{cursor:pointer}
 .gback{background:none;border:0;color:var(--muted);font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;padding:0 0 12px;cursor:pointer}
 .ghead{position:relative;display:flex;align-items:center;gap:14px;padding:16px;margin-bottom:22px;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.4)}
 .ghead::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.07) 0 10px,transparent 10px 22px);pointer-events:none}
@@ -1725,6 +1735,42 @@ function spazioStelle(n){const p=Object.values(ROSTER).flat().find(x=>x[0]===n);
   L.sort((a,b)=>b.s-a.s);const i=L.findIndex(x=>x.n===n);if(i<0)return null;const mn=L[i].mn;
   return i===0?5:i===1?4:i===2?3:mn>=24?2:mn>=12?1:.5}
 function pgRef(n){const g=sz=>(STAGIONI[sz]||{})[n]||[];let a=g("2025/26");if(a.length<30)a=g("2024/25").length>=30?g("2024/25"):[...g("2025/26"),...g("2024/25"),...(PARTITE[n]||[])];return a}
+
+/* ===== PAGELLA GIOCATORE (stelline per categoria) — criteri di Francesco in tools/CRITERI_VALORI.md =====
+   Stelline graduali 0-5 (riempimento parziale). Si aggiornano da sole con i report, tranne INF_STELLE.
+   PDK/Minuti/Efficienza: media della stagione in corso pesata min(60%, partite/10) + ultima stagione di riferimento (pgRef);
+   per i rookie solo la stagione in corso.
+   INF_STELLE: stelline infortuni (più stelle = più sano). Media partite saltate ultime 5 stagioni (11→5 … 70→0), piani per chi
+   è stato sano di recente, −1 per Achille/crociato o rientro ≥60 giorni; rookie senza storia = 3 (neutro), ma conta il college
+   se problematico. DA AGGIORNARE A MANO quando un giocatore ha un infortunio lungo o rientra (e per i nuovi giocatori). */
+const INF_STELLE={"Nikola Jokić":5,"Victor Wembanyama":3.1,"Luka Dončić":3.0,"Jalen Johnson":1.9,"Jalen Duren":4.5,"Cade Cunningham":2.3,"Cooper Flagg":4.5,"Shai Gilgeous-Alexander":4.4,"Domantas Sabonis":3.9,"Donovan Clingan":5,"Josh Giddey":4.1,"Giannis Antetokounmpo":3.2,"Alperen Şengün":5,"Cameron Boozer":3.0,"Tyrese Haliburton":2.4,"Tyrese Maxey":3.9,"Stephon Castle":5,"Jayson Tatum":3.4,"Chet Holmgren":3,"Scottie Barnes":5,"Paolo Banchero":4.2,"Deni Avdija":5,"Evan Mobley":4.1,"Trae Young":2.9,"Anthony Davis":1.7,"Anthony Edwards":5,"Amen Thompson":4.8,"AJ Dybantsa":3.0,"Kon Knueppel":5,"Alex Sarr":2.7,"Keyonte George":3.9,"Walker Kessler":1.8,"LaMelo Ball":1.8,"Caleb Wilson":3.0,"Jamal Murray":3.5,"Joel Embiid":1.4,"Darryn Peterson":3.0,"Karl-Anthony Towns":3.5,"Donovan Mitchell":4.0,"Dylan Harper":4.3,"Kel'el Ware":4.8,"VJ Edgecombe":5,"Dyson Daniels":4.3,"Derik Queen":5,"Collin Murray-Boyles":2.5,"Bam Adebayo":4.8,"Ja Morant":1.1,"Aday Mara":3.0,"Matas Buzelis":5,"Jarrett Allen":4.3,"Jaylen Brown":4.2,"Lauri Markkanen":2.3,"Trey Murphy III":4.2,"Onyeka Okongwu":4.0,"Michael Porter Jr.":2.5,"Ivica Zubac":4.7,"Darius Acuff Jr.":3.0,"Brandon Miller":2.4,"Mikel Brown Jr.":2.0,"Jalen Brunson":5,"Austin Reaves":4.0,"Franz Wagner":3.8,"Zion Williamson":1.1,"Brayden Burries":3.0,"Darius Garland":3.4,"Jalen Williams":3.3,"Devin Booker":3.9,"Zach Edey":1.1,"Tyler Herro":2.6,"Kyshawn George":2.8,"Keaton Wagler":3.0,"Damian Lillard":1.3,"Kawhi Leonard":1.4,"Yaxel Lendeborg":3.0,"De'Aaron Fox":4.3,"Ausar Thompson":3.8,"Jabari Smith Jr.":5,"James Harden":4.5,"Julius Randle":4.4,"Kingston Flemings":3.0,"Dejounte Murray":2.1,"Maxime Raynaud":5,"Immanuel Quickley":4.1,"Pascal Siakam":5,"Desmond Bane":3.9,"Rudy Gobert":5,"Kyrie Irving":1.1,"Miles Bridges":3,"Jaime Jaquez Jr.":5,"Sergio De Larrea":3.0,"Josh Hart":5,"Stephen Curry":3.2,"RJ Barrett":3.5,"Ace Bailey":5,"LeBron James":3.4,"Jeremiah Fears":5,"Ryan Rollins":3.8,"Kevin Durant":3.6,"Naz Reid":5,"Egor Dëmin":2.0,"Jalen Green":4.3,"Cedric Coward":3.3,"Moussa Diabaté":3.5,"Brandon Ingram":0.5,"Hannes Steinbach":3.0,"Isaiah Hartenstein":4.0,"Morez Johnson Jr.":3.0,"Paul George":1.6,"Allen Graves":3.0,"Jonathan Kuminga":2.9,"Khaman Maluach":1.4,"Danny Wolf":2.6,"Trevon Brazile":3.0,"Oso Ighodaro":5,"Kristaps Porziņģis":1.7};
+const PG_COL={pdk:"#facc15",gio:"#22c55e",inj:"#ef4444",min:"#f97316",effg:"#a855f7",effe:"#818cf8",spa:"#ec4899",rk:"#38bdf8"};
+function pgInterp(x,P){if(x<=P[0][0])return P[0][1];for(let i=1;i<P.length;i++)if(x<=P[i][0]){const[a,b]=P[i-1],[c,d]=P[i];return b+(d-b)*(x-a)/(c-a)}return P[P.length-1][1]}
+function etaEsatta(n){const d=NASCITA[n];if(!d)return null;return(Date.now()-new Date(d+"T00:00:00Z"))/(365.25*864e5)}
+function pagella(n){const cur=PARTITE[n]||[],ref=pgRef(n),rk=isRookie(n);
+  let w=Math.min(.6,cur.length/10);if(!ref.length||rk)w=cur.length?1:0;
+  const avg=(g,i)=>{const a=g.filter(x=>x[i]!=null);return a.length?a.reduce((s,x)=>s+(+x[i]||0),0)/a.length:null};
+  const mix=i=>{const c=avg(cur,i),r=avg(ref,i);if(c==null&&r==null)return null;if(c==null)return r;if(r==null||w>=1)return c;return w*c+(1-w)*r};
+  const pdk=mix(3),mn=mix(2),ef=mix(4),age=etaEsatta(n),role=(VALORI[n]||[])[0]||(Object.values(ROSTER).flat().find(x=>x[0]===n)||[])[2];
+  const yr=NBA_ANNO[n]?NBA_STAG-NBA_ANNO[n]:null,young=yr!=null&&yr<=3;
+  const thr={G:.6,F:.66,C:.75}[role]||.66;
+  return{pdk,mn,ef,age,yr,young,rk,
+    s:{pdk:pdk==null?null:pgInterp(pdk,[[20,0],[24,1],[27,2],[30,3],[40,4],[50,5]]),
+       gio:age==null?null:pgInterp(age,[[20,5],[22,4.5],[24,4],[26,3.5],[28,3],[30,2.5],[32,2],[34,1.5],[36,1],[38,.5],[40,0]]),
+       inj:INF_STELLE[n]??(rk?3:null),
+       min:mn==null?null:pgInterp(mn,[[0,0],[4,1],[7,1.5],[15,2],[20,2.5],[25,3],[29,3.5],[31,4],[34,4.5],[36,5]]),
+       eff:ef==null?null:young?Math.max(0,Math.min(5,3+.5*((ef/thr-1)/.15))):pgInterp(ef,[[.42,.5],[.5,1],[.58,1.5],[.67,2],[.75,2.5],[.83,3],[.92,3.5],[1,4],[1.15,4.5],[1.3,5]]),
+       spa:spazioStelle(n)}}}
+function pgStars(v,col,rk){if(v==null)return`<span class="pgnd">n.d.</span>`;const id="pg"+(JID++),w=rk?79:64;
+  const row=Array.from({length:5},(_,k)=>`<path d="${STAR_P}" transform="translate(${k*13} 0)"/>`).join("");
+  return`<span class="pgsw"><svg viewBox="0 0 ${w} 12" width="${Math.round(w*1.2)}" height="14" aria-label="${String(Math.round(v*10)/10).replace(".",",")} stelle"><defs><clipPath id="${id}"><rect width="${v*13}" height="12"/></clipPath></defs><g fill="rgba(255,255,255,.14)">${row}</g><g fill="${col}" clip-path="url(#${id})">${row}</g>${rk?`<path d="${STAR_P}" transform="translate(67 0)" fill="${PG_COL.rk}"/>`:""}</svg><b>${(Math.round(v*10)/10).toLocaleString("it-IT",{minimumFractionDigits:1})}</b></span>`}
+function pagellaHTML(n){const P=pagella(n),S=P.s,v=(VALORI[n]||[])[1],pr=v!=null?prezzo(v,n):null,f1=x=>x==null?"":x.toLocaleString("it-IT",{maximumFractionDigits:1});
+  const c=(lab,sub,val,col,rk)=>`<div class="pgc"><small>${lab}${sub?` <em>${sub}</em>`:""}</small>${pgStars(val,col,rk)}</div>`;
+  return`<div class="pgbox"><div class="pgvp"><div><small>Valore</small><b>${v??"n.d."}</b></div><div><small>Prezzo</small><b class="pr">${pr??"—"}<i> cr</i></b></div><div class="pgag"><small>Agg.</small><span>${VALORI_AGG}</span></div></div>
+  <div class="pgg">${c("PDK",f1(P.pdk),S.pdk,PG_COL.pdk,P.rk)}${c("Giovinezza",P.age?Math.floor(P.age)+" anni":"",S.gio,PG_COL.gio)}
+  ${c("Infortuni",INF_STELLE[n]==null&&P.rk?"neutro":"",S.inj,PG_COL.inj)}${c("Minutaggio",P.mn!=null?f1(P.mn)+"'":"",S.min,PG_COL.min)}
+  ${c(P.young?"Efficienza giovani":"Efficienza esperti",P.ef!=null?P.ef.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2}):"",S.eff,P.young?PG_COL.effg:PG_COL.effe)}${c("Spazio in squadra","",S.spa,PG_COL.spa)}</div>
+  <p class="pgnote">Più stelle = meglio (Infortuni: più stelle = più sano). ${P.rk?"Stella azzurra = rookie. ":""}${P.young?`${P.yr}° anno NBA: efficienza confrontata con la soglia del ruolo.`:""}</p></div>`}
 function vTrade(){
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
   const rec=(l,neg)=>l.map(n=>NUM[n]!==undefined?`<span>${sur(n)}${starH(n)}</span>`:`<span class="tcr2">${/credit/i.test(n)?(/^debito/i.test(n)?"":neg?"−":"+")+n.replace(/\s*crediti.*$/i," cr"):n.replace(/^Diritti su /,"").replace(/Slot ala per 10 giornate/,"Slot ala 10g")}</span>`).join("");
@@ -1892,8 +1938,8 @@ function vValTrade(){
   if(VT.tab==="list"){
     const all=Object.entries(ROSTER).flatMap(([t,a])=>a.map(p=>({t,n:p[0],v:valOf(p[0]),rk:!!(VALMAP[vnz(p[0])]||[])[2]}))).sort((a,b)=>(b.v??0)-(a.v??0));
     return `${H("Calcolatore scambi",`<em>${VALORI_AGG.slice(0,5)}</em>`)}${tabs}
-    <div class="tbl-wrap vtlist">${all.map((x,i)=>`<div class="vtrow">${wedge(x.t)}<span class="vtrk">${x.v?i+1:"–"}</span><span class="vtnm"><span class="vtnn">${x.n}${x.rk?`<i class="vtrook">R</i>`:""}</span><small>${TEAMS[x.t].nick}${starH(x.n)}</small></span><span class="vtvp"><b>${x.v??"n.d."}</b><small>valore</small></span><span class="vtvp pr"><b>${x.v!=null?prezzo(x.v,x.n):"—"}</b><small>prezzo cr</small></span></div>`).join("")}</div>
-    <p class="note">Valori Dynasty League al ${VALORI_AGG}: Efficienza × PDK medio ÷ età corretta (×1000), con i dati dell'ultima stagione con almeno 30 partite; rookie 2026 con valori fissati dalla lega. "n.d." = giocatore non in lista: vale ${VAL_FALLBACK}. R = rookie. Prezzo consigliato in crediti: cresce in modo esponenziale con il valore, vale di più per i giovani e per ruolo (ali più care, poi centri, guardie più economiche); tarato su prezzi reali (es. Barnes 400, Knueppel ~275, Ware ~210, Mara ~160, Booker ~40, Brazile ~14).</p>`}
+    <div class="tbl-wrap vtlist">${all.map((x,i)=>`<div class="vtrow" role="button" tabindex="0" data-pln="${x.n.replace(/"/g,"&quot;")}" data-plt="${x.t}">${wedge(x.t)}<span class="vtrk">${x.v?i+1:"–"}</span><span class="vtnm"><span class="vtnn">${x.n}${x.rk?`<i class="vtrook">R</i>`:""}</span><small>${TEAMS[x.t].nick}${starH(x.n)}</small></span><span class="vtvp"><b>${x.v??"n.d."}</b><small>valore</small></span><span class="vtvp pr"><b>${x.v!=null?prezzo(x.v,x.n):"—"}</b><small>prezzo cr</small></span></div>`).join("")}</div>
+    <p class="note">Valori Dynasty League al ${VALORI_AGG}, fissati dalla lega con le pagelle a stelline (PDK, giovinezza, infortuni, minutaggio, efficienza, spazio in squadra, rookie e draft). Tocca un giocatore per vedere la sua pagella. "n.d." = giocatore non in lista: vale ${VAL_FALLBACK}. R = rookie. Prezzo in crediti: quello fissato dalla lega oppure calcolato dal valore (più caro per giovani e ali, poi centri, guardie più economiche).</p>`}
   if(VT.tab==="calc3")return `${H("Calcolatore scambi",`<em>${VALORI_AGG.slice(0,5)}</em>`)}${tabs}
   <div id="vtRes">${v3Res()}</div>
   <div class="vtgrid">${v3Card(0)}${v3Card(1)}${v3Card(2)}</div>
@@ -2180,12 +2226,14 @@ function vGiocatore(){
   const ruolo={G:"Guardia",F:"Ala",C:"Centro"}[p[2]]||p[2];
   const pct=v=>Math.max(3,Math.min(100,v/1.6*100));
   const stat=(lab,val,sub="")=>`<div class="gst"><small>${lab}</small><b>${val}</b>${sub?`<em>${sub}</em>`:""}</div>`;
-  return `<button class="gback" id="gback">‹ ${gFrom==="effsquadra"?"Efficienza "+c.nick:gFrom==="efficienza"?"Efficienza":"Roster "+c.nick}</button>
+  return `<button class="gback" id="gback">‹ ${gFrom==="valtrade"?"Valori lega":gFrom==="effsquadra"?"Efficienza "+c.nick:gFrom==="efficienza"?"Efficienza":"Roster "+c.nick}</button>
   <div class="ghead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 60%,#000) 100%);color:${c.fg};border-bottom:4px solid ${c.trim}">
     <div class="gjer">${jersey(t,p[1],p[0])}</div>
     <div class="gtit"><small>${c.name}</small><h3>${p[0]}</h3><p>${ruolo} · ${p[3]} · #${p[1]}</p>${INJ[p[0]]&&INJ[p[0]].stato!=="ok"?`<div class="injtag ${INJ[p[0]].stato}">${STATI[INJ[p[0]].stato][0]} · ${INJ[p[0]].tipo}</div>`:""}${ROOKIE.includes(p[0])?`<div class="rookie">Slot Rookie</div>`:""}${AVVISI[p[0]]?`<div class="avviso">${AVVISI[p[0]]}</div>`:""}</div>
   </div>
   <button class="advbtn ggrbtn" data-grafico="${t}" data-grp="${p[0]}">📈 Grafico</button>
+  ${H("Pagella")}
+  ${pagellaHTML(p[0])}
   ${H("Efficienza",`<em>${past?SZ_LBL[sz]+" · "+sz:"Agg. "+EFF.agg}</em>`)}
   ${szSel}
   ${e[1]==null?`<p class="note">${past?"Nessuna partita NBA in questa stagione: non era in NBA o non ha giocato.":"Nessuna partita giocata finora: i dati compariranno dopo la prima gara."}</p>`:`
@@ -3292,7 +3340,7 @@ const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
   document.body.dataset.v=cur;
   {const fs=cur==="giochi"&&GAME==="dream";document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=fs?"#2a1260":"#0a1330"}
-  const eff=cur==="giocatore"?(gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
+  const eff=cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -3322,7 +3370,7 @@ function syncMenu(){
   document.querySelectorAll("nav button[data-menu]").forEach(b=>{
     const p=document.getElementById(b.dataset.menu);if(!p)return;
     b.setAttribute("aria-expanded",dkOpen);p.hidden=!dkOpen;
-    const eff=cur==="giocatore"?(gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
+    const eff=cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"?"efficienza":cur==="campo"||cur==="cassa"?"home":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
     b.setAttribute("aria-selected",dkOpen||inside);
     if(dkOpen){const w=b.closest(".wrap").getBoundingClientRect(),r=b.getBoundingClientRect();
       const width=Math.max(r.width,180);let left=r.left-w.left+r.width/2-width/2;left=Math.max(0,Math.min(left,w.width-width));
