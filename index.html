@@ -1683,6 +1683,9 @@ nav button>span{white-space:nowrap}
 </style><style>
 /* iPhone: i campi con testo sotto i 16px fanno zoomare la pagina quando li tocchi (e lo zoom resta). A 16px non zooma. */
 @media (hover:none) and (pointer:coarse){input,select,textarea{font-size:16px!important}}
+</style><style>
+.grfa{display:grid;place-items:center;width:100%;height:100%;font-family:var(--display);font-style:italic;font-weight:900;font-size:20px;color:#fff}
+.fapsz{margin:0 0 10px}
 </style></head>
 <body>
 <header>
@@ -2605,13 +2608,15 @@ function faGames(x){
   const G=FAG[x[0]]||{},SZ=["2026/27","2025/26","2024/25"],have=SZ.filter(z=>G[z]&&G[z].length);
   if(!have.length)return `${H("Partita per partita")}<p class="note">Nessuna partita NBA su Dunkest in queste tre stagioni.</p>`;
   const z=have.includes(faPS)?faPS:have[0],GL=G[z];
-  const chips=SZ.map(s=>`<button class="fach" data-faps="${s}" aria-pressed="${s===z}"${G[s]&&G[s].length?"":" disabled"}>${s.slice(2,4)}/${s.slice(5)}</button>`).join("");
+  const SZL={"2024/25":"Stagione 1","2025/26":"Stagione 2","2026/27":"Stagione 3"};
+  const chips=`<div class="gszn fapsz"><label for="fapsz">Stagione</label><select id="fapsz">${SZ.map(s=>`<option value="${s}"${s===z?" selected":""}${G[s]&&G[s].length?"":" disabled"}>${SZL[s]} · ${s}${G[s]&&G[s].length?"":" (nessuna partita)"}</option>`).join("")}</select></div>`;
   const MESI=["","Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"],ord=m=>m>=8?m:m+12;
   const by={};GL.forEach(g=>{const m=+g[0].slice(3);(by[m]=by[m]||[]).push(g)});
   const ms=Object.keys(by).map(Number).sort((a,b)=>ord(b)-ord(a));
   const fx=v=>v.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
   return `${H("Partita per partita",`<em>${GL.length} ${GL.length===1?"gara":"gare"} · ${z}</em>`)}
-  <div class="fasel"><div>${chips}</div></div>
+  ${chips}
+  <button class="advbtn ggrbtn" data-grafico="FA" data-grp="${x[0].replace(/"/g,"&quot;")}" data-grsz="${z}">📈 Grafico</button>
   ${ms.map((m,i)=>{const l=by[m],dk=l.reduce((a,g)=>a+g[3],0),mn=l.reduce((a,g)=>a+g[2],0),av=mn?dk/mn:null;
     return `<details class="gmese"${i===0?" open":""}><summary><span class="gmn">${MESI[m]}</span><span class="gmesi">${l.length} ${l.length===1?"gara":"gare"} · media</span>${eff(av)}</summary>
     <div class="tbl-wrap"><table class="gtab"><thead><tr><th>Data</th><th>Min</th><th>Dunkest</th><th>Eff.</th><th>Proj 36'</th></tr></thead><tbody>${l.slice().reverse().map(g=>`<tr><td class="gd"><b>${g[0]} <i>vs ${g[1]}</i></b><small>${g[5]} pt · ${g[6]} rb · ${g[7]} as</small></td><td>${n1(g[2])}</td><td class="gdk">${pdkB(g[3],fx(g[3]))}</td><td>${eff(g[4])}</td><td class="gpj">${n1(g[4]*36)}</td></tr>`).join("")}</tbody></table></div></details>`}).join("")}`;
@@ -2633,6 +2638,7 @@ document.getElementById("main").addEventListener("click",e=>{
   if(b.id==="faback"){cur=faFrom==="home"?"home":"fa";render();scrollTo(0,0);return}
   if(b.dataset.fan!==undefined){faFrom=cur==="home"?"home":"fa";faP=b.dataset.fan;faPS=null;cur="faplayer";render();scrollTo(0,0);return}
   if(b.dataset.fasz)faSz=b.dataset.fasz;if(b.dataset.farole!==undefined)faRole=b.dataset.farole;if(b.dataset.fagl)faGL=!faGL;render()});
+document.getElementById("main").addEventListener("change",e=>{if(e.target.id!=="fapsz")return;faPS=e.target.value;const y=scrollY;render();scrollTo(0,y)});
 document.getElementById("main").addEventListener("input",e=>{if(e.target.id!=="faq")return;const q=faNz(e.target.value.trim());
   document.querySelectorAll(".farow").forEach(r=>{r.hidden=q?!r.dataset.fs.includes(q):r.classList.contains("fanone")})});
 function vHome(){
@@ -2646,7 +2652,7 @@ let gSeason="2026/27";
 /* ===== GRAFICO andamento giocatore (PDK verde, minuti giallo, efficienza viola) =====
    Leggibilità: ogni punto è la MEDIA MOBILE (partita: ultime 5; settimana: ultime 3; mese/stagione: valore del periodo),
    linea curva morbida; i valori reali restano come puntini tenui. Scala adattata ai dati (non da zero) se c'è una sola grandezza per asse. */
-let GR={t:null,p:null,sz:"2026/27",sz2:"2026/27",mese:"",mese2:"",by:"m",show:{pdk:true,min:false,eff:false},from:null};
+let GR={fa:null,t:null,p:null,sz:"2026/27",sz2:"2026/27",mese:"",mese2:"",by:"m",show:{pdk:true,min:false,eff:false},from:null};
 /* Larghezza dei grafici: 340 in verticale; in orizzontale (telefono girato) si allarga per usare tutto lo schermo. */
 const isLand=()=>innerWidth>innerHeight&&innerHeight<=540;
 function chW(){if(!isLand())return 340;return Math.round(340*Math.min(2.4,Math.max(1,(innerWidth/innerHeight)/.75)))}
@@ -2658,7 +2664,7 @@ const grWk=d=>{const w=new Date(d);w.setUTCDate(w.getUTCDate()-((w.getUTCDay()+6
 const grMk=d=>d.getUTCFullYear()+"-"+String(d.getUTCMonth()+1).padStart(2,"0");
 const GR_GG=["Dom","Lun","Mar","Mer","Gio","Ven","Sab"];
 const GR_COL={pdk:"#22c55e",min:"#facc15",eff:"#a855f7"},GR_LAB={pdk:"PDK",min:"Minuti",eff:"Efficienza"};
-function grGames(n,sz){const one=s=>{const a=s===GR_SZ[0]?(PARTITE[n]||[]):((STAGIONI[s]||{})[n]||[]);const y0=+s.slice(0,4);
+function grGames(n,sz){const one=s=>{let a=s===GR_SZ[0]?(PARTITE[n]||[]):((STAGIONI[s]||{})[n]||[]);if(!a.length&&GR.fa===n&&typeof FAG!=="undefined"&&FAG[n])a=FAG[n][s]||[];const y0=+s.slice(0,4);
     return a.map(x=>{const[d,m]=x[0].split("/").map(Number);const y=m>=8?y0:y0+1;return{dt:new Date(Date.UTC(y,m-1,d)),sz:s,opp:x[1],min:+x[2]||0,pdk:+x[3]||0,eff:x[4]==null?null:+x[4]}})};
   const g=sz==="all"?GR_SZ.slice().reverse().flatMap(one):one(sz);return g.sort((a,b)=>a.dt-b.dt)}
 const grAvg=(a,f)=>{const v=a.map(f).filter(v=>v!=null);return v.length?v.reduce((s,y)=>s+y,0)/v.length:null};
@@ -2857,7 +2863,8 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   <div class="trcount">${R.length} ${R.length===1?"giocatore":"giocatori"} con trend ${TRN.dir==="up"?"≥ +":"≤ −"}${TRN.soglia}% · tocca per mostrare/nascondere la linea, 📈 per il suo grafico</div>
   <div class="trlist">${rows||`<p class="note">Prova a scegliere un periodo più lungo o una soglia più bassa.</p>`}</div>
   <p class="note">Trend = come per il Grafico: retta che passa meglio tra i punti del periodo (stagioni, mesi o settimane), variazione dal primo all'ultimo punto in % sulla media. Servono almeno 2 punti: con la stagione appena iniziata scegli un solo mese per avere le settimane.</p></div>${TRN.det?trDetail(TRN.det):""}`}
-function vGrafico(){if(!TEAMS[GR.t])GR.t=TEAMS[curTeam]?curTeam:Object.keys(TEAMS)[0];const t=GR.t,c=TEAMS[t];const ros=(ROSTER[t]||[]).map(x=>x[0]);if(!GR.p||!ros.includes(GR.p))GR.p=ros[0];
+function vGrafico(){const FAm=!!GR.fa;if(FAm&&typeof FAG==="undefined"){faLoadG();return`<button class="grback" data-grclose="1">‹ Indietro</button><p class="note">Caricamento delle partite…</p>`}
+  const fo=FAm?FA_OWN[GR.fa]:null;if(FAm)GR.t=fo||"FA";else if(!TEAMS[GR.t])GR.t=TEAMS[curTeam]?curTeam:Object.keys(TEAMS)[0];const t=GR.t,c=TEAMS[t]||{name:"Free Agent",nick:"FA",bg:"#2b3a67",fg:"#fff"};const ros=FAm?[GR.fa]:(ROSTER[t]||[]).map(x=>x[0]);if(!GR.p||!ros.includes(GR.p))GR.p=ros[0];
   /* livello automatico: Tutte → stagioni; stagione → mesi; mese → settimane; settimana → partite */
   /* intervallo di stagioni consecutive: Dalla stagione → Alla stagione (più stagioni = un punto per stagione) */
   const ORD=["2024/25","2025/26","2026/27"];if(GR.sz==="all"){GR.sz=ORD[0];GR.sz2=ORD[2]}if(!ORD.includes(GR.sz))GR.sz=ORD[2];if(!ORD.includes(GR.sz2)||ORD.indexOf(GR.sz2)<ORD.indexOf(GR.sz))GR.sz2=GR.sz;
@@ -2879,13 +2886,13 @@ function vGrafico(){if(!TEAMS[GR.t])GR.t=TEAMS[curTeam]?curTeam:Object.keys(TEAM
   const win=GR_WIN[GR.by];
   return`<div class="grroom" style="--tc:${c.bg};--tf:${c.txt||c.fg}">
   <button class="grback" data-grclose="1">‹ Indietro</button>
-  <div class="grhd"><span class="grlg">${badge(t)}</span><div><small>${c.name} · grafici</small><b>${GR.p}</b></div></div>
-  <div class="grtop"><div class="grctl">${sel("Giocatore",ros.map(n=>[n,n]),GR.p)}
+  <div class="grhd"><span class="grlg">${TEAMS[t]?badge(t):`<span class="grfa">FA</span>`}</span><div><small>${FAm?"Free Agent"+(fo?" · G League "+c.nick:""):c.name} · grafici</small><b>${GR.p}</b></div></div>
+  <div class="grtop"><div class="grctl">${FAm?"":sel("Giocatore",ros.map(n=>[n,n]),GR.p)}
   ${sel("Dalla stagione",[["2024/25","Stagione 1"],["2025/26","Stagione 2"],["2026/27","Stagione 3"]],GR.sz)}
   ${sel("Alla stagione",[["2024/25","Stagione 1"],["2025/26","Stagione 2"],["2026/27","Stagione 3"]].filter(([k])=>ORD.indexOf(k)>=ORD.indexOf(GR.sz)),GR.sz2)}
   ${sel("Dal mese",[["","Tutta la stagione"],...mesi.map(k=>[k,mLab(k)])],GR.mese,multi)}
   ${sel("Al mese",iA<0?[["","—"]]:mesi.slice(iA).map(k=>[k,mLab(k)]),GR.mese2,iA<0)}</div>
-  <div class="grjs">${(()=>{const r=(ROSTER[t]||[]).find(x=>x[0]===GR.p);return jersey(t,r?r[1]:null,GR.p)})()}</div></div>
+  ${FAm?"":`<div class="grjs">${(()=>{const r=(ROSTER[t]||[]).find(x=>x[0]===GR.p);return jersey(t,r?r[1]:null,GR.p)})()}</div>`}</div>
   <div class="grtgs">${tg("pdk")}${tg("min")}${tg("eff")}</div>
   <div class="grcard">${grChart(P,GR.show)}<div class="grfoot">${g.length} ${g.length===1?"partita":"partite"} · ${GR.by==="s"?"media di ogni stagione":GR.by==="m"?"media di ogni mese":GR.by==="w"?"media di ogni settimana":"ogni partita"}</div></div></div>`}
 
@@ -3663,7 +3670,7 @@ document.getElementById("main").addEventListener("change",e=>{const s=e.target.c
   if(k==="sz"||k==="sz2"){TRN[k]=s.value;TRN.mese="";TRN.mese2=""}else if(k==="mese"){TRN.mese=s.value;TRN.mese2=s.value}else TRN[k]=s.value;TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y)});
 /* Grafico: apertura, chiusura, menu e linee */
 document.getElementById("main").addEventListener("click",e=>{
-  const o=e.target.closest("[data-grafico]");if(o){e.preventDefault();GR.t=o.dataset.grafico;GR.p=o.dataset.grp||null;GR.from=cur;GR.sz=SZ_ALL.includes(gSeason)?gSeason:SZ_ALL[0];GR.sz2=GR.sz;GR.mese="";GR.mese2="";if(cur==="trend"){GR.sz=TRN.sz;GR.sz2=TRN.sz2;GR.mese=TRN.mese;GR.mese2=TRN.mese2;GR.show={pdk:TRN.met==="pdk",min:TRN.met==="min",eff:TRN.met==="eff"}}cur="grafico";render();window.scrollTo(0,0);return}
+  const o=e.target.closest("[data-grafico]");if(o){e.preventDefault();GR.t=o.dataset.grafico;GR.p=o.dataset.grp||null;GR.fa=GR.t==="FA"?GR.p:null;GR.from=cur;GR.sz=GR.fa?(o.dataset.grsz||"2026/27"):SZ_ALL.includes(gSeason)?gSeason:SZ_ALL[0];GR.sz2=GR.sz;GR.mese="";GR.mese2="";if(cur==="trend"){GR.sz=TRN.sz;GR.sz2=TRN.sz2;GR.mese=TRN.mese;GR.mese2=TRN.mese2;GR.show={pdk:TRN.met==="pdk",min:TRN.met==="min",eff:TRN.met==="eff"}}cur="grafico";render();window.scrollTo(0,0);return}
   if(e.target.closest("[data-grclose]")){e.preventDefault();cur=GR.from||"efficienza";render();window.scrollTo(0,0);return}
   const tg=e.target.closest("[data-grtg]");if(tg){e.preventDefault();GR.show[tg.dataset.grtg]=!GR.show[tg.dataset.grtg];const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("change",e=>{const s=e.target.closest("select[data-gr]");if(!s)return;const k=s.dataset.gr;
@@ -4739,7 +4746,7 @@ const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
   document.body.dataset.v=cur;
   {const fs=cur==="giochi"&&(GAME==="dream"||GAME==="gdream");document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=fs?"#2a1260":"#0a1330"}
-  const eff=cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"?"home":cur==="tv"?"giochi":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
+  const eff=cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"?"home":cur==="tv"?"giochi":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -4797,7 +4804,7 @@ function syncMenu(){
   document.querySelectorAll("nav button[data-menu]").forEach(b=>{
     const p=document.getElementById(b.dataset.menu);if(!p)return;
     b.setAttribute("aria-expanded",dkOpen);p.hidden=!dkOpen;
-    const eff=cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
+    const eff=cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
     b.setAttribute("aria-selected",dkOpen||inside);
     if(dkOpen){const w=b.closest(".wrap").getBoundingClientRect(),r=b.getBoundingClientRect();
       const width=Math.max(r.width,180);let left=r.left-w.left+r.width/2-width/2;left=Math.max(0,Math.min(left,w.width-width));
