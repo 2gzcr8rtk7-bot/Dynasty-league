@@ -2166,8 +2166,13 @@ const NUM={};Object.values(ROSTER).forEach(a=>a.forEach(p=>NUM[p[0]]=p[1]));
    Rookie della stagione: + una stella AZZURRA che si somma alle stelle normali (es. rookie a 28 PDK = 2 stelle + azzurra). */
 function pdkStar(n){const g=sz=>(STAGIONI[sz]||{})[n]||[];let a=g("2025/26");if(a.length<30)a=g("2024/25").length>=30?g("2024/25"):[...g("2025/26"),...g("2024/25"),...(PARTITE[n]||[])];return a.length?a.reduce((s,x)=>s+(+x[3]||0),0)/a.length:null}
 const isRookie=n=>ROOKIE.includes(n)||(VALORI[n]&&VALORI[n][2]===1);
-function stelle(n){const p=pdkStar(n);if(p==null)return isRookie(n)?0:null;
-  return p>=50?5:p>=45?4.5:p>=40?4:p>=35?3.5:p>=30?3:p>=28.5?2.5:p>=27?2:p>=24?1:0}
+/* Stelline PDK (uguali ovunque: liste Trade/Valori/roster e pagella). PDK aggiornato = media della stagione in corso
+   pesata min(60%, partite/10) + stagione di riferimento (pgRef); rookie solo stagione in corso. Scala graduale:
+   20=0 · 24=1 · 27=2 · 30=3 · 40=4 · 50=5. */
+function pdkMix(n){const cur=PARTITE[n]||[],ref=pgRef(n),rk=isRookie(n);let w=Math.min(.6,cur.length/10);if(!ref.length||rk)w=cur.length?1:0;
+  const avg=g=>{const a=g.filter(x=>x[3]!=null);return a.length?a.reduce((s,x)=>s+(+x[3]||0),0)/a.length:null};const c=avg(cur),r=avg(ref);
+  if(c==null&&r==null)return null;if(c==null)return r;if(r==null||w>=1)return c;return w*c+(1-w)*r}
+function stelle(n){const p=pdkMix(n);if(p==null)return isRookie(n)?0:null;return Math.round(pgInterp(p,[[20,0],[24,1],[27,2],[30,3],[40,4],[50,5]])*10)/10}
 const STAR_P="M6 .6l1.6 3.5 3.8.4-2.9 2.6.8 3.8L6 9 2.7 10.9l.8-3.8L.6 4.5l3.8-.4z";
 const starH=n=>{const v=stelle(n),rk=isRookie(n);if(v==null&&!rk)return"";const w=v||0,id="sc"+(JID++);
   const row=Array.from({length:5},(_,k)=>`<path d="${STAR_P}" transform="translate(${k*13} 0)"/>`).join("");
@@ -2207,7 +2212,7 @@ function pagella(n){const cur=PARTITE[n]||[],ref=pgRef(n),rk=isRookie(n);
   const yr=NBA_ANNO[n]?NBA_STAG-NBA_ANNO[n]:null,young=yr!=null&&yr<=3;
   const thr={G:.6,F:.66,C:.75}[role]||.66;
   return{pdk,mn,ef,age,yr,young,rk,
-    /* PDK: stesse stelline mostrate ovunque (funzione stelle), come da tools/CRITERI_VALORI.md */
+    /* PDK: stesse stelline mostrate ovunque (funzione stelle) */
     s:{pdk:stelle(n),
        gio:age==null?null:pgInterp(age,[[20,5],[22,4.5],[24,4],[26,3.5],[28,3],[30,2.5],[32,2],[34,1.5],[36,1],[38,.5],[40,0]]),
        inj:INF_STELLE[n]??(rk?3:null),
@@ -2220,7 +2225,7 @@ function pgStars(v,col,rk){if(v==null)return`<span class="pgnd">n.d.</span>`;con
 function pagellaHTML(n){const P=pagella(n),S=P.s,v=(VALORI[n]||[])[1],pr=v!=null?prezzo(v,n):null,f1=x=>x==null?"":x.toLocaleString("it-IT",{maximumFractionDigits:1});
   const c=(lab,sub,val,col,rk)=>`<div class="pgc"><small>${lab}${sub?` <em>${sub}</em>`:""}</small>${pgStars(val,col,rk)}</div>`;
   return`<div class="pgbox"><div class="pgvp"><div><small>Valore</small><b>${v??"n.d."}</b></div><div><small>Prezzo</small><b class="pr">${pr??"—"}<i> cr</i></b></div><div class="pgag"><small>Agg.</small><span>${VALORI_AGG}</span></div></div>
-  <div class="pgg">${c("PDK",f1(pdkStar(n)),S.pdk,PG_COL.pdk,P.rk)}${c("Giovinezza",P.age?Math.floor(P.age)+" anni":"",S.gio,PG_COL.gio)}
+  <div class="pgg">${c("PDK",f1(P.pdk),S.pdk,PG_COL.pdk,P.rk)}${c("Giovinezza",P.age?Math.floor(P.age)+" anni":"",S.gio,PG_COL.gio)}
   ${c("Infortuni",INF_STELLE[n]==null&&P.rk?"neutro":"",S.inj,PG_COL.inj)}${c("Minutaggio",P.mn!=null?f1(P.mn)+"'":"",S.min,PG_COL.min)}
   ${c(P.young?"Efficienza giovani":"Efficienza esperti",P.ef!=null?P.ef.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2}):"",S.eff,P.young?PG_COL.effg:PG_COL.effe)}${c("Spazio in squadra","",S.spa,PG_COL.spa)}</div>
   <p class="pgnote">Più stelle = meglio (Infortuni: più stelle = più sano). ${P.rk?"Stella azzurra = rookie. ":""}${P.young?`${P.yr}° anno NBA: efficienza confrontata con la soglia del ruolo.`:""}</p></div>`}

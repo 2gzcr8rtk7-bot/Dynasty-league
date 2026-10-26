@@ -12,7 +12,7 @@ che sono due cose diverse:
 ## Categorie (stelline 0–5, mezze stelle)
 | Categoria | Colore | Regola |
 |---|---|---|
-| PDK | oro | stelle esistenti (`stelle`): 50+ =5, 45 =4½, 40 =4, 35 =3½, 30 =3, 28,5 =2½, 27 =2, 24 =1, sotto 0 |
+| PDK | oro | `stelle` (uguali in liste e pagella, dal 26/10/2026): PDK aggiornato (stagione in corso pesata min(60%, partite/10) + stagione di riferimento), scala graduale 20 =0 · 24 =1 · 27 =2 · 30 =3 · 40 =4 · 50 =5 |
 | Rookie | azzurro | +1 stella aggiuntiva per il rookie della stagione |
 | Giovinezza | verde | 18-19 =5 · 20-21 =4½ · 22-23 =4 · 24-25 =3½ · 26-27 =3 · 28-29 =2½ · 30-31 =2 · 32-33 =1½ · 34-35 =1 · 36+ =½ |
 | Infortuni | rosso | vedi sotto (più stelle = più sano) |
