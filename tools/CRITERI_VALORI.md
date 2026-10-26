@@ -122,3 +122,8 @@ Voto del GM: Ingram Infortuni ½.
   un calo dovuto a motivi di campo/contesto non abbassa il prezzo. Per loro l'età pesa poco sul prezzo (Giannis 31 anni).
   → Nel modello: PDK di riferimento = max(media attuale, miglior media delle ultime 3 stagioni) per chi ha superato 40 PDK;
   penalità età attenuata sopra quella soglia.
+- **Tetto al premio promessa (Boozer, valore 1499 / prezzo 820)**: l'entusiasmo per un giovane va contenuto. Il premio
+  giovane/rookie/draft non deve mai portarlo alla pari con un giocatore già affermato che sposta gli equilibri, altrimenti
+  diventa scambiabile 1:1 con lui. → Nel modello: il premio promessa si applica con un tetto (rendimenti decrescenti);
+  valore e prezzo di un giocatore senza PDK da affermato (<40 di media in carriera) restano sotto quelli dei
+  giocatori affermati da 40+ PDK.
