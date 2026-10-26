@@ -52,5 +52,12 @@ Peso sul valore/prezzo:
 - Peso: **grosso al 1° anno**; 2° e 3° anno scende un po' ma conta ancora; **dal 4° anno in poi quasi zero**
   (giocatore già esploso: contano PDK e il resto).
 - Soglia "sufficiente, preannuncia un buon giocatore" al 1° anno (PDK al minuto): **guardie 0,60 · ali 0,66 · centri 0,75**.
-- Proposta di scala (da confermare): soglia = 3 stelle; ogni 10% sopra/sotto la soglia = ±½ stella
-  (guardie: 0,60 =3 · 0,66 =3½ · 0,72 =4 · 0,78 =4½ · 0,84+ =5 · 0,54 =2½ · 0,48 =2 …; ali e centri in proporzione).
+- **Due categorie distinte** (precisazione 26/10):
+  1. **Efficienza giovani** (solo 1°–3° anno NBA): peso pesantissimo finché il giocatore è nei primi 3 anni, poi non vale più.
+     Esempio Francesco: Knueppel al 1° anno 24 PDK in 31 min, ~0,78 PDK/min (guardia) = **4 stelle**.
+     Scala proposta: soglia di ruolo = 3 stelle, ogni +15% = +½ stella
+     (guardie 0,60 =3 · 0,69 =3½ · 0,78 =4 · 0,87 =4½ · 0,96+ =5; sotto: 0,51 =2½ · 0,42 =2 …; ali da 0,66, centri da 0,75 in proporzione).
+  2. **Efficienza esperti** (dal 4° anno): scala da giocatore affermato (Jokić ~1,60 = 5 stelle). Serve solo **insieme al
+     minutaggio**: tanti PDK, efficienza alta ma minuti non al massimo (es. 28) = quando i minuti saliranno i PDK cresceranno
+     → segnale di crescita. Con minutaggio già pieno conta poco.
+     Scala proposta: 0,90 =2½ · 1,00 =3 · 1,10 =3½ · 1,20 =4 · 1,35 =4½ · 1,50+ =5.
