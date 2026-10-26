@@ -4092,8 +4092,8 @@ const gdF=v=>v==null?"—":v.toLocaleString("it-IT",{minimumFractionDigits:1,max
 const gdNm=t=>"G-"+TEAMS[t].nick;
 const gdDay=d=>{const[y,m,g]=d.split("-");return g+"/"+m};
 function gdLg(t,cls=""){const x=GLEAGUE.find(z=>z.t===t);return`<span class="drlg ${cls}">${x&&x.logo?`<img src="${x.logo}" alt="">`:badge(t)}</span>`}
-/* Colore di sfondo delle squadre in G-DREAMERS: quello della G League quando è diverso dalla prima squadra (Ducks: viola). */
-const GD_BG={DUC:"#7a1fb5"};const gdBg=t=>GD_BG[t]||TEAMS[t].bg;
+/* Colori delle squadre in G-DREAMERS: quelli della G League (GLEAGUE.bg) quando ci sono, altrimenti della prima squadra. */
+const gdBg=t=>{const x=GLEAGUE.find(z=>z.t===t);return x&&x.bg||TEAMS[t].bg};
 function vGDream(){const D=gdData(),last=D.nights[D.nights.length-1],prev=D.nights[D.nights.length-2];
   const rankAt=d=>{const tot={};Object.keys(D.T).forEach(t=>tot[t]=0);D.nights.filter(n=>n<=d).forEach(n=>Object.entries(D.N[n]).forEach(([t,v])=>tot[t]+=v));return Object.keys(tot).sort((a,b)=>tot[b]-tot[a])};
   const pr=prev?rankAt(prev):null;
@@ -4108,7 +4108,7 @@ function vGDream(){const D=gdData(),last=D.nights[D.nights.length-1],prev=D.nigh
     <div class="drcla">${D.cla.map((x,i)=>{const ln=last&&D.N[last][x.t]||0,mv=pr?pr.indexOf(x.t)-i:0;return`<button class="drcr gdr tint ${i<1?"lead":""}" style="--tc:${gdBg(x.t)}" data-gd="open" data-t="${x.t}"><span class="drpos">${i+1}</span>${gdLg(x.t,"l")}<div class="drci"><b>${gdNm(x.t)}</b><small>${x.g} partite · ultima notte ${last?(ln?(ln>0?"+":"−")+gdF(Math.abs(ln)):"0"):"—"}${mv?` · <span class="${mv>0?"up":"dn"}">${mv>0?"▲":"▼"}${Math.abs(mv)}</span>`:""}</small></div><div class="gdtot"><b>${gdF(x.tot)}</b><small>PDK</small>${i>0?`<em>−${gdF(ld-x.tot)}</em>`:""}</div></button>`}).join("")}</div>
     <p class="note">Classifica generale: somma di tutti i PDK fatti dai 5 giocatori di ogni G League dal ${gdDay(GD_START)}. Tutti sempre titolari, niente capitano, nessuno scontro diretto e niente playoff. Tocca una squadra per i suoi giocatori.</p>`}
   else if(GD.tab==="gio"){
-    body=D.nights.length?`<div class="gdnights">${D.nights.slice().reverse().map(n=>{const E=Object.entries(D.N[n]).sort((a,b)=>b[1]-a[1]),mx=E[0]?E[0][1]:1;return`<div class="gdn"><h5>Notte del ${gdDay(n)}<small>${E.length} squadre in campo</small></h5>${E.map(([t,v],i)=>`<div class="gdnr"><span class="gdnt">${gdLg(t,"s")}<b>${gdNm(t)}</b></span><i><u style="width:${Math.max(3,v/mx*100)}%;background:${GD_BG[t]?"#a855f7":trCol(t)}"></u></i><em>${i===0?"👑 ":""}${v>=0?"+":"−"}${gdF(Math.abs(v))}</em></div>`).join("")}</div>`}).join("")}</div>`:`<div class="cempty">Nessuna partita ancora.</div>`}
+    body=D.nights.length?`<div class="gdnights">${D.nights.slice().reverse().map(n=>{const E=Object.entries(D.N[n]).sort((a,b)=>b[1]-a[1]),mx=E[0]?E[0][1]:1;return`<div class="gdn"><h5>Notte del ${gdDay(n)}<small>${E.length} squadre in campo</small></h5>${E.map(([t,v],i)=>`<div class="gdnr"><span class="gdnt">${gdLg(t,"s")}<b>${gdNm(t)}</b></span><i><u style="width:${Math.max(3,v/mx*100)}%;background:${(GLEAGUE.find(z=>z.t===t)||{}).bg||trCol(t)}"></u></i><em>${i===0?"👑 ":""}${v>=0?"+":"−"}${gdF(Math.abs(v))}</em></div>`).join("")}</div>`}).join("")}</div>`:`<div class="cempty">Nessuna partita ancora.</div>`}
   else{body=`<div class="gdrose">${D.cla.map(x=>`<button class="gdrc tint" style="--tc:${gdBg(x.t)}" data-gd="open" data-t="${x.t}">${gdLg(x.t)}<b>${gdNm(x.t)}</b><span>${x.pl.map(p=>`<i>${p.n.split(" ").slice(-1)[0]} <small>${gdF(p.tot)}</small></i>`).join("")}</span></button>`).join("")}</div>`}
   return`<div class="drroom gdroom"><button class="drexit" data-game="menu">‹ Torna all'app</button><div class="drhd"><span class="drlogo">G-DREAMERS</span><small>Fanta G League · stagione ${STAGIONE_CORRENTE}</small></div>
   <div class="drtabs">${tabs}</div>${body}</div>`}
