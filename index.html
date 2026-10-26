@@ -2236,7 +2236,7 @@ function grChart(P,show){if(!P.length)return`<div class="grempty">Nessuna partit
    ogni settimana fissa (1-7, 8-14, 15-21, 22-fine) se il periodo è un solo mese. Trend = retta dei minimi quadrati
    (grTrend): variazione dal primo all'ultimo punto in % sulla media. Si cercano tutti i giocatori della lega con trend
    ≥ soglia (in crescita) o ≤ −soglia (in calo), con almeno TRN.minp partite nel periodo e almeno 2 punti. */
-let TRN={ruoli:"GFC",sz:"2026/27",mese:"",mese2:"",met:"pdk",dir:"up",soglia:"10",minp:"3",team:"",on:null,from:null};
+let TRN={ruoli:"GFC",sz:"2026/27",sz2:"2026/27",mese:"",mese2:"",met:"pdk",dir:"up",soglia:"10",minp:"3",team:"",on:null,from:null};
 const TR_MAXL=8,TR_DASH=["","6 4","2 3","8 3 2 3"];
 function trKey(x,by){const d=x.dt;if(by==="w")return grMk(d)+"#"+Math.min(3,Math.floor((d.getUTCDate()-1)/7));if(by==="m")return grMk(d);return x.sz}
 function trLab(k,by){if(by==="w"){const[mk,q]=k.split("#"),[yy,mm]=mk.split("-").map(Number),last=new Date(Date.UTC(yy,mm,0)).getUTCDate(),a0=+q*7+1,a1=+q===3?last:a0+6,f=v=>String(v).padStart(2,"0");return"Sett. "+(+q+1)+"|"+f(a0)+"–"+f(a1)+"/"+f(mm)}
@@ -2244,13 +2244,14 @@ function trLab(k,by){if(by==="w"){const[mk,q]=k.split("#"),[yy,mm]=mk.split("-")
 function trCol(t){const c=TEAMS[t];const l=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
   for(const h of[c.bg,c.trim,c.fg,c.stroke])if(h&&/^#[0-9a-f]{6}$/i.test(h)&&l(h)>.28)return h;return"#93c5fd"}
 function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>PL.push({n:p[0],t,r:p[2]})));
-  const sz=TRN.sz,met=TRN.met;
+  const ORD=["2024/25","2025/26","2026/27"];if(!ORD.includes(TRN.sz))TRN.sz="2026/27";if(!ORD.includes(TRN.sz2)||ORD.indexOf(TRN.sz2)<ORD.indexOf(TRN.sz))TRN.sz2=TRN.sz;
+  const SZR=ORD.slice(ORD.indexOf(TRN.sz),ORD.indexOf(TRN.sz2)+1),multi=SZR.length>1,sz=multi?"all":TRN.sz,met=TRN.met;
   /* mesi disponibili nel periodo (unione di tutti i giocatori) */
-  const G=new Map(PL.map(p=>[p.n,grGames(p.n,sz)]));
+  const G=new Map(PL.map(p=>[p.n,grGames(p.n,sz).filter(x=>SZR.includes(x.sz))]));
   const mesi=[...new Set([...G.values()].flatMap(g=>g.map(x=>grMk(x.dt))))].sort();
   if(sz==="all"||!mesi.includes(TRN.mese))TRN.mese="";
   const iA=mesi.indexOf(TRN.mese);let iB=mesi.indexOf(TRN.mese2);if(iA<0)TRN.mese2="";else if(iB<iA){iB=iA;TRN.mese2=TRN.mese}
-  const rng=iA<0?mesi:mesi.slice(iA,iB+1),by=sz==="all"?"s":rng.length===1?"w":"m";
+  const rng=iA<0?mesi:mesi.slice(iA,iB+1),by=multi?"s":rng.length===1?"w":"m";
   const keysAll=new Set(),R=[];
   PL.forEach(p=>{if(TRN.team&&p.t!==TRN.team)return;if(!TRN.ruoli.includes(p.r))return;const g=G.get(p.n).filter(x=>rng.includes(grMk(x.dt)));if(g.length<+TRN.minp)return;
     const M=new Map();g.forEach(x=>{const k=trKey(x,by);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});
@@ -2285,7 +2286,8 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   return`<div class="grroom trroom" style="--tc:#16213f;--tf:#fff">
   <button class="grback" data-trclose="1">‹ Indietro</button>
   <div class="grhd"><div><small>Ricerca per numeri · tutti i giocatori della lega</small><b>Calcola il trend</b></div></div>
-  <div class="trctl">${sel("sz","Stagione",[["2026/27","Stagione 3"],["2025/26","Stagione 2"],["2024/25","Stagione 1"],["all","Tutte"]],TRN.sz)}
+  <div class="trctl">${sel("sz","Dalla stagione",[["2024/25","Stagione 1"],["2025/26","Stagione 2"],["2026/27","Stagione 3"]],TRN.sz)}
+  ${sel("sz2","Alla stagione",[["2024/25","Stagione 1"],["2025/26","Stagione 2"],["2026/27","Stagione 3"]].filter(([k])=>ORD.indexOf(k)>=ORD.indexOf(TRN.sz)),TRN.sz2)}
   ${sel("mese","Dal mese",[["","Tutta la stagione"],...mesi.map(k=>[k,mLab(k)])],TRN.mese,sz==="all")}
   ${sel("mese2","Al mese",iA<0?[["","—"]]:mesi.slice(iA).map(k=>[k,mLab(k)]),TRN.mese2,iA<0)}
   ${sel("team","Squadra",[["","Tutte le squadre"],...Object.keys(TEAMS).map(t=>[t,TEAMS[t].nick])],TRN.team)}</div>
@@ -2626,10 +2628,10 @@ document.getElementById("main").addEventListener("click",e=>{
   const rl=e.target.closest("[data-trrole]");if(rl){e.preventDefault();const r0=rl.dataset.trrole;let v=TRN.ruoli.includes(r0)?TRN.ruoli.replace(r0,""):TRN.ruoli+r0;if(!v)v=r0;TRN.ruoli="GFC".split("").filter(c=>v.includes(c)).join("");TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y);return}
   const r=e.target.closest("[data-trln]");if(r&&!e.target.closest("[data-grafico]")){e.preventDefault();const n=r.dataset.trln;TRN.on=TRN.on||[];const i=TRN.on.indexOf(n);if(i>=0)TRN.on.splice(i,1);else{TRN.on.push(n);if(TRN.on.length>TR_MAXL)TRN.on.shift()}const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("change",e=>{const s=e.target.closest("select[data-tr]");if(!s||cur!=="trend")return;const k=s.dataset.tr;
-  if(k==="sz"){TRN.sz=s.value;TRN.mese="";TRN.mese2=""}else if(k==="mese"){TRN.mese=s.value;TRN.mese2=s.value}else TRN[k]=s.value;TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y)});
+  if(k==="sz"||k==="sz2"){TRN[k]=s.value;TRN.mese="";TRN.mese2=""}else if(k==="mese"){TRN.mese=s.value;TRN.mese2=s.value}else TRN[k]=s.value;TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y)});
 /* Grafico: apertura, chiusura, menu e linee */
 document.getElementById("main").addEventListener("click",e=>{
-  const o=e.target.closest("[data-grafico]");if(o){e.preventDefault();GR.t=o.dataset.grafico;GR.p=o.dataset.grp||null;GR.from=cur;GR.sz=SZ_ALL.includes(gSeason)?gSeason:SZ_ALL[0];GR.mese="";GR.mese2="";if(cur==="trend"){GR.sz=TRN.sz;GR.mese=TRN.mese;GR.mese2=TRN.mese2;GR.show={pdk:TRN.met==="pdk",min:TRN.met==="min",eff:TRN.met==="eff"}}cur="grafico";render();window.scrollTo(0,0);return}
+  const o=e.target.closest("[data-grafico]");if(o){e.preventDefault();GR.t=o.dataset.grafico;GR.p=o.dataset.grp||null;GR.from=cur;GR.sz=SZ_ALL.includes(gSeason)?gSeason:SZ_ALL[0];GR.mese="";GR.mese2="";if(cur==="trend"){GR.sz=TRN.sz===TRN.sz2?TRN.sz:"all";GR.mese=TRN.mese;GR.mese2=TRN.mese2;GR.show={pdk:TRN.met==="pdk",min:TRN.met==="min",eff:TRN.met==="eff"}}cur="grafico";render();window.scrollTo(0,0);return}
   if(e.target.closest("[data-grclose]")){e.preventDefault();cur=GR.from||"efficienza";render();window.scrollTo(0,0);return}
   const tg=e.target.closest("[data-grtg]");if(tg){e.preventDefault();GR.show[tg.dataset.grtg]=!GR.show[tg.dataset.grtg];const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("change",e=>{const s=e.target.closest("select[data-gr]");if(!s)return;const k=s.dataset.gr;
