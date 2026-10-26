@@ -197,6 +197,9 @@
 .scrhid b{color:#4ade80!important}.scrsim{font-size:10.5px;color:var(--muted);margin:-4px 0 8px;text-align:right}
 .corig td.hd,.corig th.hd{color:#4ade80;font-weight:800;text-align:right}.corig td.hd.est{color:#86efac;opacity:.75;font-weight:600}
 .chid{grid-column:1/-1;background:linear-gradient(135deg,rgba(74,222,128,.16),rgba(74,222,128,.03))!important;border:1px solid rgba(74,222,128,.35)}.chid b{color:#4ade80!important;font-size:30px!important}
+.colgbtn{position:absolute;right:16px;top:14px;border:0;border-radius:999px;padding:7px 12px;font-weight:800;font-size:12.5px;color:#facc15;cursor:pointer;background:linear-gradient(180deg,#2a2a2a,#0a0a0a);box-shadow:0 4px 10px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.18);z-index:3}
+.lgsec{margin-top:14px}.lgsec h5{margin:0 0 6px;font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;text-transform:uppercase;color:#facc15;letter-spacing:.03em}
+.lgit{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07)}.lgit b{display:block;font-size:13.5px;color:#fff}.lgit p{margin:2px 0 0;font-size:12.5px;line-height:1.45;color:#cbd5e1}
 .gback{text-shadow:0 1px 0 rgba(255,255,255,.5)}
 .colroom .nban{background:linear-gradient(100deg,color-mix(in srgb,var(--tc) 38%,#141a2b) 0%,#161c2e 55%,#0e1220 100%)!important;box-shadow:0 10px 22px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -1px 0 rgba(0,0,0,.6)}
 .colroom .nban .njs svg{filter:drop-shadow(0 4px 5px rgba(0,0,0,.5))}
@@ -3038,6 +3041,45 @@ async function colShare(btn){const x=colRows(COL.r).find(y=>y.n===COL.sel);if(!x
   const fn=`scouting-${(x.app||x.n).toLowerCase().replace(/[^a-z0-9]+/g,"-")}.png`,txt=`🦆 Ufficio Scouting · ${x.app||x.n}`;
   cv.toBlob(bl=>{const file=new File([bl],fn,{type:"image/png"});if(navigator.canShare&&navigator.canShare({files:[file]}))navigator.share({files:[file],text:txt}).catch(()=>{});
     else{const a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=fn;document.body.appendChild(a);a.click();a.remove();if(btn){const s=btn.querySelector("span");if(s)s.textContent="Immagine scaricata ✓"}}},"image/png")}
+/* LEGENDA dello Scouting: spiega ogni dato e termine (pannello sopra la pagina). */
+const COL_LEG=[["Dati del college",[
+ ["PDK/min","PDK Dunkest prodotti in media per ogni minuto giocato al college. Misura la produzione pura, senza contare quanti minuti gioca."],
+ ["Usage (USG%)","Percentuale dei possessi della squadra che finiscono nelle mani del giocatore (tiro, palla persa, tiri liberi) quando è in campo. Alto = prima opzione (28%+), medio = secondo violino (22-28%), basso = gregario (sotto il 22%)."],
+ ["POT","PDK/min riportato al 27% di usage. Se il giocatore aveva meno del 27% dei possessi, la sua resa viene \"proiettata\" come se ne avesse il 27%: premia chi produce tanto con pochi palloni. Sopra il 27% coincide con il PDK/min."],
+ ["P36/USG","PDK a 36 minuti diviso usage: quanti PDK produce ogni punto di possessi gestiti. Alto = converte bene ogni pallone e fa tanto anche senza palla (rimbalzi, difesa, assist)."],
+ ["Percentile nel ruolo","Posizione rispetto agli altri giocatori dello stesso ruolo nell'archivio: 100° = il migliore, 50° = a metà, \"top 10%\" = tra i primi dieci su cento."],
+ ["Ruolo da confermare (*)","Ruolo incerto nella tabella originale."]]],
+ ["Dal college alla NBA",[
+ ["PDK nascosti","L'unità di misura dello scouting. PDK in più che il giocatore farebbe giocando 32 minuti con la resa al minuto che ha: resa al minuto × minuti mancanti fino a 32'. Reali se ha partite NBA; con \"≈\" è una stima dal college (PDK/min college × tenuta del ruolo × minuti attesi da rookie, ricavati dall'usage). È il segnale più legato alle esplosioni (correlazione 0,44 con il salto reale), ma la stima solo college è poco affidabile finché non gioca una decina di partite NBA."],
+ ["Tenuta college→NBA","Quanta resa al minuto del college il giocatore mantiene in NBA: PDK/min NBA ÷ PDK/min college. 100% = stessa resa; la \"tenuta tipica\" è la mediana dei rookie recenti del ruolo."],
+ ["Esplosione","Una stagione NBA con almeno 8 PDK in più rispetto all'anno da rookie. Di solito arriva tra il 3° e il 5° anno."],
+ ["Salto","PDK della stagione migliore meno PDK dell'anno da rookie."],
+ ["Profilo Haliburton","Usage basso al college (≤24%) e P36/USG alto (≥0,90): produce tanto con pochi palloni. Nello storico (debutti 2018-2023) è esploso l'87% di questi giocatori contro il 65% degli altri. Soglie regolabili nella scheda Profilo."],
+ ["Anno NBA","Stagione numero X dal debutto in NBA (1° anno = da rookie). Le carriere Dunkest partono dal 2018/19."],
+ ["Affidabilità","Quanto un dato del college è legato alla resa NBA nel ruolo (correlazione): alta, media o quasi nulla. Per le ali il college dice poco, per i centri conta il PDK/min, per le guardie il POT."]]],
+ ["Classifica Risultati",[
+ ["Paragoni statistici","I 3 giocatori dello stesso ruolo, debuttati in NBA dal 2018 al 2024, con il profilo college più simile (usage, P36/USG, PDK/min). Di ognuno si vede la carriera Dunkest: 1° anno → stagione migliore."],
+ ["Picco Dunkest atteso","Media dei migliori PDK stagionali dei 3 paragoni, pesata: il più simile conta di più. Indica fin dove può arrivare."],
+ ["Probabilità di esplosione","Quota dei paragoni che sono esplosi, corretta con il profilo Haliburton."],
+ ["Somiglianza","Quanto il prospetto è vicino ai suoi 3 paragoni: più è alta, più il confronto è affidabile."],
+ ["Indice (0-100)","Voto relativo alla lista mostrata: 60% picco atteso + 25% probabilità di esplosione + 15% PDK nascosti. 100 = il migliore della lista, non un valore assoluto."],
+ ["Classe 2026 / Prospetto","Classe 2026 = draftati nel 2026, già in NBA. Prospetto = giocatore del college in vista del prossimo draft, senza ancora dati NBA."]]],
+ ["Mappa e profili",[
+ ["Potenza nascosta","Poco usage e tanta resa al minuto: con più spazio in NBA può esplodere."],
+ ["Dominante","Tanto usage e tanta resa: già leader al college."],
+ ["Volume","Tanto usage ma resa media: rischio di calo in NBA con meno palloni."],
+ ["Da sviluppare","Poco usage e resa bassa: serve crescita."],
+ ["Linee POT","Nella Mappa, le curve tratteggiate collegano i punti con lo stesso POT."],
+ ["Radar · alto/basso","Sopra o sotto la metà dello storico per PDK nascosti, con la percentuale di chi in quella metà è poi esploso."]]],
+ ["Sezione NBA",[
+ ["Media solita","Media del giocatore usata come confronto: partite precedenti della stessa stagione più la stagione di riferimento, che pesa di più a inizio stagione."],
+ ["Delta","Media nel periodo scelto meno media di confronto. In grande il valore assoluto (es. +8,0 PDK), sotto la percentuale."],
+ ["Efficienza","PDK per minuto giocato."],
+ ["In salita / in discesa","Andamento partita per partita dentro il periodo scelto (retta di tendenza)."],
+ ["Trend %","Quanto sale o scende la retta di tendenza dal primo all'ultimo punto, in percentuale sulla media del periodo."],
+ ["Media mobile","Ogni punto del grafico è la media delle ultime 3 o 5 partite: toglie il rumore delle singole serate."]]]];
+function colLegend(){return`<div class="colsheet colleg"><div class="ccard"><button class="ccx" data-colleg="0" aria-label="Chiudi">×</button><div class="cch"><b>Legenda</b><small>Tutti i dati e i termini dell'Ufficio Scouting</small></div>
+  ${COL_LEG.map(([t,L])=>`<div class="lgsec"><h5>${t}</h5>${L.map(([k,v])=>`<div class="lgit"><b>${k}</b><p>${v}</p></div>`).join("")}</div>`).join("")}</div></div>`}
 function vCollege(){if(!COL.d){cur="campo";return vCampo()}COL.sec=COL.sec||"college";COL.tab=COL.tab||"ris";COL.ord=COL.ord||"hid";COL.u=COL.u||24;COL.k=COL.k||.9;
   const tabs=[["ris","🏆 Risultati"],["orig","Archivio"],["radar","Radar"],["usage","Profilo"],["pros","Prospetti"],["studio","Studio rookie"],["mappa","Mappa"],["nba","College→NBA"],["lista","Tabella"]];
   const body=COL.tab==="ris"?`<div class="grcard">${colRisultati()}</div>`:COL.tab==="orig"?`<input id="colq" class="colq" type="search" placeholder="Cerca giocatore" value="${COL.q.replace(/"/g,"&quot;")}" aria-label="Cerca giocatore"><div class="grcard" id="colorig">${colOrig()}<p class="note">POT = PDK/min normalizzato a usage 27%. * = ruolo da confermare. Tocca un giocatore per la scheda.</p></div>`
@@ -3048,10 +3090,11 @@ function vCollege(){if(!COL.d){cur="campo";return vCampo()}COL.sec=COL.sec||"col
   const lg=LOGO2.DUC||LOGO.DUC,isC=COL.sec==="college";
   return`<div class="colroom"><button class="gback" id="colback">‹ Campo Ducks</button>
   <div class="colhd">${lg?`<img src="${lg}" alt="Texas Ducks">`:""}<div><small>Texas Ducks · area riservata del GM</small><b>Ufficio Scouting</b><em>${isC?"College · archivio al "+COL_ENC.agg:"NBA · trend delle ultime settimane"}</em></div></div>
+  <button class="colgbtn" data-colleg="1">📖 Legenda</button>
   <div class="colsec"><button data-colsec="college" aria-pressed="${isC}">🎓 College</button><button data-colsec="nba" aria-pressed="${!isC}">🏀 NBA</button></div>
   ${isC?`<div class="ctabs coltabs">${tabs.map(([k,l])=>`<button data-coltab="${k}" aria-pressed="${COL.tab===k}">${l}</button>`).join("")}</div>
   ${["usage","radar","orig","ris"].includes(COL.tab)?"":`<div class="trseg colrl">${COL_RL.map(([k,l])=>`<button class="${k}" data-colr="${k}" aria-pressed="${COL.r===k}">${l} <small>${(COL.d[k]||[]).length}</small></button>`).join("")}</div>`}
-  ${body}`:`<div class="grcard">${vNbaSec()}</div>`}<p class="colft">🦆 Texas Ducks Scouting · uso interno</p>${isC&&COL.sel?`<div class="colsheet">${colCard()}</div>`:""}</div>`}
+  ${body}`:`<div class="grcard">${vNbaSec()}</div>`}<p class="colft">🦆 Texas Ducks Scouting · uso interno</p>${isC&&COL.sel?`<div class="colsheet">${colCard()}</div>`:""}${COL.leg?colLegend():""}</div>`}
 function vCampo(){
   const t=curTeam,c=TEAMS[t],st=standings().find(x=>x.t===t);
   const {auto,q}=quintetto(t);const qs=new Set(q.map(p=>p[0]));
@@ -3139,7 +3182,7 @@ document.getElementById("main").addEventListener("click",e=>{const b=e.target.cl
 
 /* Scouting: tocco su un giocatore (data-colsel) = apre la scheda in un pannello sopra la lista; × o fuori = chiude */
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="college")return;if(e.target.closest("[data-colshare]"))return;
-  if(e.target.classList&&e.target.classList.contains("colsheet")){COL.sel=null;document.querySelector(".colsheet")?.remove();document.body.classList.remove("colsheet-open");return}
+  if(e.target.classList&&e.target.classList.contains("colsheet")){if(e.target.classList.contains("colleg")){COL.leg=false;e.target.remove();return}COL.sel=null;document.querySelector(".colsheet")?.remove();document.body.classList.remove("colsheet-open");return}
   const c=e.target.closest("[data-colsel]");if(!c)return;e.preventDefault();if(c.dataset.colrr)COL.r=c.dataset.colrr;COL.sel=c.dataset.colsel||null;const y=window.scrollY;render();window.scrollTo(0,y)});
 /* Calcola il trend: apertura, chiusura, filtri, linee */
 document.getElementById("main").addEventListener("click",e=>{
@@ -4107,6 +4150,7 @@ function render(){
     m.querySelectorAll("[data-colr]").forEach(b=>b.onclick=()=>{COL.r=b.dataset.colr;COL.sel=null;render()});
     m.querySelectorAll("[data-coltab]").forEach(b=>b.onclick=()=>{COL.tab=b.dataset.coltab;COL.sel=null;render()});
     m.querySelectorAll("[data-colsec]").forEach(b=>b.onclick=()=>{COL.sec=b.dataset.colsec;COL.sel=null;render();window.scrollTo(0,0)});
+    m.querySelectorAll("[data-colleg]").forEach(b=>b.onclick=e=>{e.stopPropagation();COL.leg=b.dataset.colleg==="1";const y=window.scrollY;render();window.scrollTo(0,y)});
     m.querySelectorAll("[data-colshare]").forEach(b=>b.onclick=e=>{e.stopPropagation();colShare(b)});
     m.querySelectorAll("[data-nbt]").forEach(b=>b.onclick=()=>{NB.tab=b.dataset.nbt;render()});
     m.querySelectorAll("[data-nb]").forEach(x=>x.onchange=()=>{const k=x.dataset.nb.split(".").slice(1);let tg=NB;for(let i=0;i<k.length-1;i++)tg=tg[k[i]];const key=k[k.length-1];tg[key]=key==="avg"?!!x.value:x.value;if(key==="unit")NB.so=NB.unit==="pct"?"10":"0";const y=window.scrollY;render();window.scrollTo(0,y)});

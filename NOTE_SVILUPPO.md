@@ -376,3 +376,5 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - (53) **PDK nascosti** diventa l'unità di misura dello Scouting (`colHidden`): reale con dati NBA, stima per i prospetti
   solo college (PDK/min college × tenuta del ruolo × (32' − minuti attesi = 10,6 + 0,52 × usage)). Mostrati in Archivio
   (colonna "Nasc."), Risultati (ordinamento predefinito), Radar e scheda giocatore. Riga archivio con x[7]=2 = prospetto.
+- (54) Scouting: pulsante **📖 Legenda** in alto a destra (College e NBA) che apre la spiegazione di tutti i dati e i
+  termini (`COL_LEG`, `colLegend`).
