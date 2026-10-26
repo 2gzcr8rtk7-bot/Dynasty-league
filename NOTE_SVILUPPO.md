@@ -341,3 +341,9 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
   una password e apre la view `college` (archivio POT college per ruolo, con ricerca).
 - I dati sono in `COL_ENC` **cifrati** (AES-GCM, chiave PBKDF2 dalla password): NON modificare, NON decifrare, NON
   rimuovere. La password non è nel codice. Lo aggiorna solo il Claude di Francesco ricifrando l'archivio.
+- (44) L'archivio riservato è diventato **Scouting** (view `college`): schede Prospetti (classe draft senza dati NBA,
+  proiezione = PDK/min college × tenuta tipica del ruolo, a 25'), Studio rookie (tenuta college→NBA dei giocatori al
+  1°-3° anno, `colConv`, `colNbaPm`, affidabilità dei dati college `colAffid`), Mappa (usage vs PDK/min con linee POT),
+  College→NBA (POT vs miglior PDK NBA, `colReg`), Archivio. Scheda giocatore al tocco (`colCard`: percentili nel ruolo,
+  profilo, tenuta/proiezione, 3 profili college più simili). I dati NBA si leggono dall'app e si aggiornano da soli;
+  l'archivio college resta cifrato (non toccare `COL_ENC`).
