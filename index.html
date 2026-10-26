@@ -745,7 +745,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .tvdl{text-align:center;display:grid;gap:2px}
 .tvdl b{font-family:var(--display);font-style:italic;font-weight:800;font-size:21px;text-transform:uppercase;color:#fff;line-height:1}
 .tvdl small{font-size:11.5px;color:var(--muted);letter-spacing:.04em}
-.tvweek{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px}
+.tvweek{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 24px)/7);gap:4px;margin-bottom:14px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;position:relative;overscroll-behavior-x:contain}.tvweek::-webkit-scrollbar{display:none}.tvweek .tvday{scroll-snap-align:start}
 .tvday{display:grid;justify-items:center;gap:1px;padding:6px 0 5px;border:1px solid var(--line);background:var(--panel);color:var(--muted);cursor:pointer;font-family:var(--display);font-weight:700}
 .tvday span{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase}
 .tvday b{font-style:italic;font-weight:800;font-size:19px;color:#fff;line-height:1.1}
@@ -4505,13 +4505,16 @@ const tvRec=c=>{const r=TVD().rec[c];return r?r[0]+"-"+r[1]:""};
 function tvDefDay(){const T=TVD(),ks=Object.keys(T.days).sort();const lv=ks.filter(k=>T.days[k].some(g=>g[5]==="L"));if(lv.length)return lv[0];const f=ks.filter(k=>T.days[k].some(g=>g[5]==="F"));return f.length?f[f.length-1]:ks[0]}
 function tvLead(b){const all=[...b.a.map(p=>["a",p]),...b.h.map(p=>["h",p])];const top=i=>all.slice().sort((x,y)=>y[1][i]-x[1][i])[0];return{pts:top(3),reb:top(6),ast:top(7),pdk:all.slice().sort((x,y)=>y[1][19]-x[1][19])[0]}}
 function vTV(){return`<button class="gback" id="tvback">‹ Entertainment</button>`+vTV0()}
-function vTV0(){const T=TVD(),ks=Object.keys(T.days).sort();if(!ks.length)return`${H("Dynasty TV")}<div class="tvempty">Calendario non ancora disponibile.</div>`;
+function tvWeekPos(){const w=document.getElementById("tvweek");if(!w)return;
+  if(TVS.wd===TVS.d&&TVS.wl!=null)w.scrollLeft=TVS.wl;else{const b=w.querySelector('[aria-pressed="true"]');if(b)w.scrollLeft=b.offsetLeft-(w.clientWidth-b.offsetWidth)/2;TVS.wd=TVS.d}
+  TVS.wl=w.scrollLeft;w.addEventListener("scroll",()=>{TVS.wl=w.scrollLeft;TVS.wd=TVS.d},{passive:true})}
+function vTV0(){setTimeout(tvWeekPos,0);const T=TVD(),ks=Object.keys(T.days).sort();if(!ks.length)return`${H("Dynasty TV")}<div class="tvempty">Calendario non ancora disponibile.</div>`;
   if(!TVS.d||!T.days[TVS.d])TVS.d=tvDefDay();
   if(TVS.g&&T.box[TVS.g])return tvGame(TVS.g);
   const d=TVS.d,i=ks.indexOf(d),dd=tvDt(d),G=T.days[d]||[];
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
-  /* settimana: 7 giorni attorno alla data scelta */
-  const wk=[];for(let k=-3;k<=3;k++){const x=new Date(dd);x.setUTCDate(x.getUTCDate()+k);const s=x.toISOString().slice(0,10),n=(T.days[s]||[]).length;wk.push(`<button class="tvday${n?"":" off"}" data-tvd="${s}" aria-pressed="${s===d}"${n?"":" disabled"}><span>${TV_G3[x.getUTCDay()]}</span><b>${x.getUTCDate()}</b><small>${n?n+" part.":"—"}</small></button>`)}
+  /* striscia giorni: tutta la stagione, scorre col dito, centrata sul giorno scelto */
+  const wk=[],d0=tvDt(ks[0]),d1=tvDt(ks[ks.length-1]);for(let x=new Date(d0);x<=d1;x.setUTCDate(x.getUTCDate()+1)){const s=x.toISOString().slice(0,10),n=(T.days[s]||[]).length;wk.push(`<button class="tvday${n?"":" off"}" data-tvd="${s}" aria-pressed="${s===d}"${n?"":" disabled"}><span>${TV_G3[x.getUTCDay()]}</span><b>${x.getUTCDate()}</b><small>${n?n+" part.":"—"}</small></button>`)}
   const cards=G.map(g=>{const[a,h,sa,sh,ot,st,tm,key]=g,lv=st==="L",fin=st==="F",sc=fin||lv,wa=fin&&sa>sh,wh=fin&&sh>sa;let top="";
     if(sc&&T.box[key]){const L=tvLead(T.box[key]),pp=L.pdk;top=`<div class="tvtop"><span>Top: <b>${sur(pp[1][0])}</b> (${pp[0]==="a"?a:h}) ${pp[1][3]} pt · ${pp[1][6]} rb · ${pp[1][7]} as · ${String(pp[1][19]).replace(".",",")} PDK</span></div>`}
     const row=(c,s,w)=>`<div class="tvt${w?" win":""}">${tvLogo(c)}<span class="tvnm"><b>${tvNick(c)}</b><small>${c} · ${tvRec(c)}</small></span><span class="tvsc">${sc?s:""}</span></div>`;
@@ -4520,7 +4523,7 @@ function vTV0(){const T=TVD(),ks=Object.keys(T.days).sort();if(!ks.length)return
   const nf=G.filter(g=>g[5]==="F").length;
   return`<div class="tvhero"><b>Dynasty TV <i>NBA</i></b><small>Calendario, risultati e tabellini · stagione 2026/27</small></div>
   <div class="tvdate"><button data-tvnav="-1" aria-label="Giorno precedente"${i<=0?" disabled":""}>‹</button><div class="tvdl"><b>${TV_GG[dd.getUTCDay()]} ${dd.getUTCDate()} ${TV_MM[dd.getUTCMonth()]}</b><small>${G.length} ${G.length===1?"partita":"partite"}${G.some(g=>g[5]==="L")?` · ${G.filter(g=>g[5]==="L").length} in corso`:""}${nf?` · ${nf===G.length?"tutte finite":nf+" finite"}`:G.some(g=>g[5]==="L")?"":" · in programma"} · data USA</small></div><button data-tvnav="1" aria-label="Giorno successivo"${i>=ks.length-1?" disabled":""}>›</button></div>
-  <div class="tvweek">${wk.join("")}</div>
+  <div class="tvweek" id="tvweek">${wk.join("")}</div>
   <div class="tvlist">${cards||`<div class="tvempty">Nessuna partita in questa data.</div>`}</div>
   <p class="note">${TVL.err?"Dati live NBA non raggiungibili in questo momento: restano i dati del report. ":TVL.last?`Live: dati NBA.com aggiornati ogni 30 secondi (ultimo ${TVL.last}); il PDK delle partite in corso è calcolato con la formula Dunkest ed è provvisorio. `:""}${T.src||""} Orari d'inizio in ora italiana. Tocca una partita in corso o finita per il tabellino completo. Aggiornato ${T.upd||""}.</p>`}
 /* loghi Dynasty dei proprietari nel box score */

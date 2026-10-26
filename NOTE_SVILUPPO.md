@@ -420,3 +420,5 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 (70) Dynasty TV, box score: a destra del nome (vicino ai PDK) il logo della squadra Dynasty proprietaria (tvOwn, confronto nomi senza accenti/suffissi su ROSTER). Svincolati: nessun logo.
 
 (71) Dynasty TV, box score: logo proprietario in filigrana (grande, trasparente, a destra nella casella del nome). PDK colorati per fascia: rosso <20, giallo 20-29,99, verde ≥30 (classi pr/py/pg); il totale squadra resta rosso.
+
+(72) Dynasty TV, striscia giorni (#tvweek): non più 7 giorni fissi ma tutti i giorni del calendario caricato, scorrevoli col dito (scroll-snap, 7 visibili). All'apertura si centra sul giorno scelto; la posizione di scorrimento resta durante i refresh live (tvWeekPos, TVS.wl/TVS.wd).
