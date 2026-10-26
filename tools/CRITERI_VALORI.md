@@ -91,3 +91,6 @@ Aggiornamenti infortuni (26/10/2026):
   Regola: ultime 2 stagioni sane (≤15 partite saltate ciascuna) → almeno 3½; ultima stagione sana e 2 delle ultime 3 sane
   → almeno 3 (es. Holmgren: 0 partite al 1° anno, poi 82 · 32 · 69 → 3).
 - Fonte partite 2021/22–2023/24: memoria di Claude (possibile scarto di qualche partita); 2024/25–2025/26: dati dell'app.
+- Infortunio attuale (correzione Francesco): conta **quanto resta fuori**, non il solo fatto di essere fuori.
+  Assenze di giorni o settimane (Flagg, Knueppel, Banchero…) **non toccano** la stella. Si toglie 1 stella solo per
+  assenze lunghe (rientro stimato a 2 mesi o più, stagione finita) o infortuni gravi tipo Achille / crociato (es. Ingram).
