@@ -410,3 +410,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
   Giornate (punti notte per notte) e Squadre (giocatori, totali e partita per partita).
 - Dati letti da `GL_STATS` (log partita per partita): per aggiornarlo basta il report G League già esistente.
 - (64) Home: barra "Cerca giocatore" elegante al posto di "Tocca un logo per il roster" (`#hq`, `homeSearch`): risultati con maglia, squadra e ruolo; tocco = scheda giocatore (indietro torna alla Home).
+- (65) G-DREAMERS: G-Ducks con sfumatura viola (colore della G League, `GD_BG`) al posto del giallo.
