@@ -351,3 +351,6 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
   (`colUsage`): profilo "Haliburton" = usage college basso + P36/USG alto (soglie regolabili), grafico usage vs
   P36/USG colorato per esito NBA, confronto profilo vs altri (30+ PDK, PDK medio, tenuta, salto da rookie),
   primo anno → migliore, candidati classe 2026, elenco dati NBA mancanti.
+- (46) Scouting: l'archivio cifrato ora contiene anche la carriera Dunkest (regular season dal 2018/19) di ogni
+  giocatore. Studio usage rifatto: curva di crescita per anno NBA, esplosione (+8 PDK sull'anno da rookie), confronto
+  equo solo sui debutti 2018-2023.
