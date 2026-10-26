@@ -148,3 +148,20 @@ Voto del GM: Ingram Infortuni ½.
 - **Fascia bassa (rimpiazzabili)**: Porziņģis, Brazile, Kuminga, Paul George, Hartenstein, Diabaté e simili sono
   facilmente sostituibili con svincolati → prezzo quasi nullo (5–10 crediti) e valore basso nelle trade. I valori
   attuali di questa fascia restano quelli scritti.
+
+## Formula appresa dai valori di Francesco (26/10/2026, 99 giocatori non rookie)
+Stima ricavata dai valori fissati a mano (VALORI al 26/10/2026), controllata lasciando fuori un giocatore alla volta:
+errore mediano 12%, 3 giocatori su 4 entro il 25%.
+
+    Valore ≈ 3,11 × PDK^1,78 × 0,93^(età − 25) × 0,925^(max(0; 2,5 − stelle infortuni))
+
+- PDK = media PDK a partita della stagione 2025/26, con la 2024/25 a peso dimezzato. La stagione in corso (poche partite) per ora non sposta i valori.
+- Ogni anno di età in più = −7% circa (a parità di PDK); ogni stella infortuni sotto 2,5 = −7,5%.
+- Minutaggio, efficienza e spazio in squadra NON migliorano la stima: i valori seguono quasi solo PDK, età e salute.
+- Rookie (1° anno) a parte: il loro valore è sul potenziale (draft/college), la formula NBA non li coglie.
+- Valori molto lontani dalla formula (scelte di mercato da confermare): Porziņģis 30 (formula ~500), Hartenstein 300 (~800),
+  Ighodaro 90 (~285), Kuminga 170 (~425), Naz Reid 300 (~550), Sabonis 1850 (~1080), Dylan Harper 1220 (~600),
+  Murray-Boyles 1010 (~560), LeBron 980 (~490), Maluach 450 (~75).
+
+Prezzi (75 prezzi fissati): la formula prezzo attuale (PR) sbaglia in mediana del 25%; la migliore trovata
+(log prezzo = 1,79 + 3,87·V − 0,66·V² − 0,059·(età − 25), V = valore/1000) arriva al 24%: i prezzi sono più "di mercato".
