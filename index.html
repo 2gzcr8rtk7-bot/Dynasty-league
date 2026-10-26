@@ -925,10 +925,12 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .vtnn .vtrook{flex:none;margin-left:0;border-radius:3px;line-height:15px}
 .vtnm small .tstar,.vtit .tstar{margin-left:8px;vertical-align:1px;font-size:10px}
 .vtit .tstar{display:block;margin:2px 0 0}
-.tstar{font-size:10px!important;line-height:1!important}
+.tstar{display:block;line-height:0!important;font-size:0!important;width:max-content}
+.tstar svg{display:block}
+
 .tstar b{color:rgba(255,255,255,.2)!important;font-size:inherit!important;font-weight:400!important;font-style:normal!important;letter-spacing:1px!important;margin:0!important;padding:0!important;display:inline!important}
 .tstar b+b{position:absolute!important;left:0;top:0;overflow:hidden;white-space:nowrap;color:var(--gold)!important}
-.vtnm small .tstar{display:inline-block!important}
+.vtnm small{display:flex;align-items:center;gap:8px}.vtnm small .tstar{display:block!important;margin:0!important}
 .tstar .tsb{position:relative;display:inline-block}
 .tstar .trk{position:static;display:inline;margin-left:4px;font-style:normal;font-size:inherit;color:#38bdf8;text-shadow:0 0 6px rgba(56,189,248,.7)}
 .drplh{margin:26px 0 4px;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.06em;color:#e9d5ff;border-left:4px solid #a855f7;padding-left:10px}
@@ -1675,8 +1677,10 @@ function pdkStar(n){const g=sz=>(STAGIONI[sz]||{})[n]||[];let a=g("2025/26");if(
 const isRookie=n=>ROOKIE.includes(n)||(VALORI[n]&&VALORI[n][2]===1);
 function stelle(n){const p=pdkStar(n);if(p==null)return isRookie(n)?0:null;
   return p>=50?5:p>=45?4.5:p>=40?4:p>=35?3.5:p>=30?3:p>=28.5?2.5:p>=27?2:p>=24?1:0}
-const starH=n=>{const v=stelle(n),rk=isRookie(n);if(v==null&&!rk)return"";const w=v||0;
-  return `<i class="tstar${rk?" rk":""}" title="${String(w).replace(".",",")} stelle${rk?" + stella rookie":""}"><span class="tsb"><b>★★★★★</b><b style="width:${w*20}%">★★★★★</b></span>${rk?`<em class="trk">★</em>`:""}</i>`};
+const STAR_P="M6 .6l1.6 3.5 3.8.4-2.9 2.6.8 3.8L6 9 2.7 10.9l.8-3.8L.6 4.5l3.8-.4z";
+const starH=n=>{const v=stelle(n),rk=isRookie(n);if(v==null&&!rk)return"";const w=v||0,id="sc"+(JID++);
+  const row=Array.from({length:5},(_,k)=>`<path d="${STAR_P}" transform="translate(${k*13} 0)"/>`).join("");
+  return `<i class="tstar" title="${String(w).replace(".",",")} stelle${rk?" + stella rookie":""}"><svg viewBox="0 0 ${rk?79:64} 12" width="${rk?79:64}" height="12" aria-hidden="true"><defs><clipPath id="${id}"><rect x="0" y="0" width="${w*13}" height="12"/></clipPath></defs><g fill="rgba(255,255,255,.2)">${row}</g><g fill="#facc15" clip-path="url(#${id})">${row}</g>${rk?`<path d="${STAR_P}" transform="translate(67 0)" fill="#38bdf8" class="trk"/>`:""}</svg></i>`};
 function vTrade(){
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
   const rec=(l,neg)=>l.map(n=>NUM[n]!==undefined?`<span>${sur(n)}${starH(n)}</span>`:`<span class="tcr2">${/credit/i.test(n)?(/^debito/i.test(n)?"":neg?"−":"+")+n.replace(/\s*crediti.*$/i," cr"):n.replace(/^Diritti su /,"").replace(/Slot ala per 10 giornate/,"Slot ala 10g")}</span>`).join("");
