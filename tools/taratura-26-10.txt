@@ -34,7 +34,7 @@ Derik Queen|1190|399
 Collin Murray-Boyles|1040|280
 Jarrett Allen|985|80
 Trey Murphy III|919|110
-Jaylen Brown|1000|130
+Jaylen Brown|1050|130
 Ivica Zubac|1100|150
 Mikel Brown Jr.|840|140
 Austin Reaves|967|80

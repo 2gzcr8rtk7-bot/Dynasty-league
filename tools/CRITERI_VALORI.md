@@ -133,3 +133,8 @@ Voto del GM: Ingram Infortuni ½.
   → Nel modello: si stima un **PDK potenziale** (tetto) per i giovani, limitato da gerarchia in squadra, minuti
   sostenibili (fisico/atletismo) ed efficienza attuale; il premio giovinezza si applica in proporzione al margine
   (tetto − PDK attuale), non all'età da sola. Il tetto è un dato del GM quando serve un giudizio visivo.
+- **Infortuni dei rookie (Mikel Brown Jr.)**: la stellina infortuni neutra 3 vale solo per i rookie senza storia. Se
+  l'anno al college è stato problematico e salta partite anche in NBA, la stellina scende (si conta anche il college).
+  La promessa resta (buon rookie da vendere), ma i dubbi fisici frenano valore e prezzo.
+- **Jaylen Brown**: valore +50 (1000 → 1050), non di più: tetto già dimostrato (~31 PDK nel migliore dei casi, può
+  scendere), nessuna crescita futura; a Philadelphia è 3°–4° violino (Embiid, LeBron, Maxey) → stellina spazio bassa.
