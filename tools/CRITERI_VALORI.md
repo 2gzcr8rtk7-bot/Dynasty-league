@@ -110,3 +110,10 @@ Voto del GM: Ingram Infortuni ½.
   performato al 1° anno, cioè **efficienza giovani** e statistiche complete (Harper playmaker che altrove esploderebbe;
   Queen centro "alla Şengün" con tante statistiche e tanta efficienza). Nei giovani **efficienza e draft fanno il prezzo**.
   → serve un fattore **draft** (posizione della scelta) per i primi 3 anni, e più peso all'efficienza giovani sul prezzo.
+- **Età all'ingresso in NBA** (nuovo criterio): un rookie arrivato al draft a 22–23 anni (Coward, Lendeborg) non va
+  confrontato con i rookie di 19 anni ma con i giocatori della sua età (Daniels, Wembanyama, Jalen Johnson): ha molto meno
+  "appeal" da promessa anche con buoni numeri. → Il premio rookie/promessa (stella rookie, efficienza giovani, draft) si
+  riduce con l'età all'ingresso: proposta 19 anni = pieno · 20 = 85% · 21 = 65% · 22 = 40% · 23+ = 20%.
+  In più Coward è una **guardia** (ruolo che vale meno).
+- **Maluach**: promessa per analisi visiva, numeri non ancora a supporto, molto grezzo → valore e prezzo restano un voto
+  del GM finché i numeri non arrivano.
