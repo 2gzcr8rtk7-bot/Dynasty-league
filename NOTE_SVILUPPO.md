@@ -409,3 +409,4 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
   ogni notte i PDK si sommano e la classifica è il totale. Schede Classifica (con ultima notte e ▲▼ posizioni),
   Giornate (punti notte per notte) e Squadre (giocatori, totali e partita per partita).
 - Dati letti da `GL_STATS` (log partita per partita): per aggiornarlo basta il report G League già esistente.
+- (64) Home: barra "Cerca giocatore" elegante al posto di "Tocca un logo per il roster" (`#hq`, `homeSearch`): risultati con maglia, squadra e ruolo; tocco = scheda giocatore (indietro torna alla Home).

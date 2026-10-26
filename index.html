@@ -229,6 +229,12 @@ body.dreamfs .drroom.gdroom,.drroom.gdroom{background:radial-gradient(ellipse at
 .gdnights{display:grid;gap:10px}.gdn{background:rgba(255,255,255,.05);border-radius:14px;padding:10px}.gdn h5{margin:0 0 8px;display:flex;justify-content:space-between;font-family:var(--display);font-style:italic;font-size:16px;text-transform:uppercase;color:#6ee7b7}.gdn h5 small{font-family:inherit;font-style:normal;font-size:10.5px;color:var(--muted);text-transform:none}
 .gdnr{display:grid;grid-template-columns:130px 1fr 66px;gap:8px;align-items:center;margin:5px 0;font-size:12.5px}.gdnt{display:flex;align-items:center;gap:6px;min-width:0}.gdnt b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.gdnr i{height:10px;border-radius:5px;background:rgba(255,255,255,.07);overflow:hidden}.gdnr u{display:block;height:100%;border-radius:5px}.gdnr em{font-style:normal;text-align:right;font-weight:800;color:#6ee7b7}
 .gdrose{display:grid;gap:8px}.gdrc{display:grid;grid-template-columns:44px 1fr;grid-template-rows:auto auto;column-gap:10px;align-items:center;text-align:left;width:100%;padding:10px;border-radius:14px;border:0;color:#fff;cursor:pointer}.gdrc .drlg{grid-row:1/3}.gdrc b{font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase}.gdrc span{display:flex;flex-wrap:wrap;gap:4px}.gdrc i{font-style:normal;font-size:11px;background:rgba(0,0,0,.25);border-radius:6px;padding:2px 6px}.gdrc i small{color:#6ee7b7;font-weight:800}
+.hsrch{display:flex;align-items:center;gap:6px;flex:1 1 auto;max-width:220px;margin-left:10px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:var(--muted);transform:none}
+.hsrch svg{width:15px;height:15px;flex:none}.hsrch input{width:100%;min-width:0;border:0;background:transparent;color:#fff;font-family:var(--body);font-style:normal;font-weight:500;font-size:14px;letter-spacing:0;text-transform:none;outline:none;padding:2px 0}.hsrch input::placeholder{color:var(--muted)}
+.hsrch:focus-within{border-color:var(--gold);background:rgba(255,255,255,.1)}
+.hres{display:grid;gap:4px;margin:-4px 0 14px;padding:6px;border-radius:14px;background:linear-gradient(180deg,#15234f,#0b1430);border:1px solid rgba(255,255,255,.12);box-shadow:0 14px 30px rgba(0,0,0,.45)}
+.hrr{display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:center;text-align:left;width:100%;padding:6px 8px;border:0;border-left:3px solid var(--tc);border-radius:10px;background:rgba(255,255,255,.04);color:#fff;cursor:pointer}.hrr:active{background:rgba(255,255,255,.1)}
+.hrj svg{width:36px;height:auto}.hrn b{display:block;font-size:14.5px}.hrn small{font-size:11px;color:var(--muted)}.hrr i{font-style:normal;color:var(--gold);font-size:20px}.hnone{margin:6px;color:var(--muted);font-size:13px}
 .gback{text-shadow:0 1px 0 rgba(255,255,255,.5)}
 .colroom .nban{background:linear-gradient(100deg,color-mix(in srgb,var(--tc) 38%,#141a2b) 0%,#161c2e 55%,#0e1220 100%)!important;box-shadow:0 10px 22px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.16),inset 0 -1px 0 rgba(0,0,0,.6)}
 .colroom .nban .njs svg{filter:drop-shadow(0 4px 5px rgba(0,0,0,.5))}
@@ -2380,7 +2386,7 @@ document.getElementById("main").addEventListener("click",e=>{
 
 function vHome(){
   const st=standings();
-  return `${H("Franchigie",`<em>Tocca un logo per il roster</em>`)}<div class="hgrid">${Object.keys(TEAMS).map(t=>{const c=TEAMS[t],x=st.find(y=>y.t===t);return `<button class="htile" data-team="${t}" style="--tc:${c.bg};--tt:${c.trim}" aria-label="Roster ${c.name}"><span class="hlg">${badge(t)}</span><span class="hnm"><small>${c.city}</small><b>${c.nick}</b></span><span class="hrec">${x.w}-${x.l}</span></button>`}).join("")}</div>`;
+  return `${H("Franchigie",`<label class="hsrch"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><input id="hq" type="search" placeholder="Cerca giocatore" autocomplete="off" aria-label="Cerca giocatore"></label>`)}<div class="hres" id="hres" hidden></div><div class="hgrid">${Object.keys(TEAMS).map(t=>{const c=TEAMS[t],x=st.find(y=>y.t===t);return `<button class="htile" data-team="${t}" style="--tc:${c.bg};--tt:${c.trim}" aria-label="Roster ${c.name}"><span class="hlg">${badge(t)}</span><span class="hnm"><small>${c.city}</small><b>${c.nick}</b></span><span class="hrec">${x.w}-${x.l}</span></button>`}).join("")}</div>`;
 }
 
 let curPlayer=null;
@@ -2636,7 +2642,7 @@ function vGiocatore(){
   const ruolo={G:"Guardia",F:"Ala",C:"Centro"}[p[2]]||p[2];
   const pct=v=>Math.max(3,Math.min(100,v/1.6*100));
   const stat=(lab,val,sub="")=>`<div class="gst"><small>${lab}</small><b>${val}</b>${sub?`<em>${sub}</em>`:""}</div>`;
-  return `<button class="gback" id="gback">‹ ${gFrom==="college"?"Ufficio Scouting":gFrom==="valtrade"?"Valori lega":gFrom==="effsquadra"?"Efficienza "+c.nick:gFrom==="efficienza"?"Efficienza":"Roster "+c.nick}</button>
+  return `<button class="gback" id="gback">‹ ${gFrom==="home"?"Home":gFrom==="college"?"Ufficio Scouting":gFrom==="valtrade"?"Valori lega":gFrom==="effsquadra"?"Efficienza "+c.nick:gFrom==="efficienza"?"Efficienza":"Roster "+c.nick}</button>
   <div class="ghead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 60%,#000) 100%);color:${c.txt||c.fg};border-bottom:4px solid ${c.trim}">
     <div class="gjer">${jersey(t,p[1],p[0])}</div>
     <div class="gtit"><small>${c.name}</small><h3>${p[0]}</h3><p>${ruolo} · ${p[3]} · #${p[1]}</p>${INJ[p[0]]&&INJ[p[0]].stato!=="ok"?`<div class="injtag ${INJ[p[0]].stato}">${STATI[INJ[p[0]].stato][0]} · ${INJ[p[0]].tipo}</div>`:""}${ROOKIE.includes(p[0])?`<div class="rookie">Slot Rookie</div>`:""}${AVVISI[p[0]]?`<div class="avviso">${AVVISI[p[0]]}</div>`:""}</div>
@@ -3356,6 +3362,13 @@ document.getElementById("main").addEventListener("click",e=>{const b=e.target.cl
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="college")return;if(e.target.closest("[data-colshare]"))return;
   if(e.target.classList&&e.target.classList.contains("colsheet")){if(e.target.classList.contains("colleg")){COL.leg=false;e.target.remove();return}COL.sel=null;document.querySelector(".colsheet")?.remove();document.body.classList.remove("colsheet-open");return}
   const c=e.target.closest("[data-colsel]");if(!c)return;e.preventDefault();if(c.dataset.colrr)COL.r=c.dataset.colrr;COL.sel=c.dataset.colsel||null;const y=window.scrollY;render();window.scrollTo(0,y)});
+/* Ricerca giocatori dalla Home: risultati sotto la barra, tocco = scheda giocatore */
+function homeSearch(q){const box=document.getElementById("hres");if(!box)return;const nz=v=>v.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");q=nz(q.trim());
+  if(q.length<2){box.hidden=true;box.innerHTML="";return}
+  const L=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>{if(nz(p[0]).includes(q))L.push({t,p})}));
+  box.hidden=false;box.innerHTML=L.length?L.slice(0,8).map(({t,p})=>`<button class="hrr" data-pln="${p[0].replace(/"/g,"&quot;")}" data-plt="${t}" style="--tc:${TEAMS[t].bg}"><span class="hrj">${jersey(t,p[1],p[0])}</span><span class="hrn"><b>${p[0]}</b><small>${TEAMS[t].nick} · ${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><i>›</i></button>`).join(""):`<p class="hnone">Nessun giocatore trovato</p>`}
+document.getElementById("main").addEventListener("input",e=>{if(e.target.id==="hq")homeSearch(e.target.value)});
+document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest(".hrr");if(!b)return;e.preventDefault();curTeam=b.dataset.plt;curPlayer=b.dataset.pln;gFrom="home";cur="giocatore";render();window.scrollTo(0,0)});
 /* Calcola il trend: apertura, chiusura, filtri, linee */
 document.getElementById("main").addEventListener("click",e=>{
   if(e.target.closest("[data-trgo]")){e.preventDefault();TRN.from=cur;cur="trend";render();window.scrollTo(0,0);return}
