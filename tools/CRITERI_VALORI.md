@@ -138,3 +138,7 @@ Voto del GM: Ingram Infortuni ½.
   La promessa resta (buon rookie da vendere), ma i dubbi fisici frenano valore e prezzo.
 - **Jaylen Brown**: valore +50 (1000 → 1050), non di più: tetto già dimostrato (~31 PDK nel migliore dei casi, può
   scendere), nessuna crescita futura; a Philadelphia è 3°–4° violino (Embiid, LeBron, Maxey) → stellina spazio bassa.
+- **Livello di rimpiazzo (Naz Reid, Ingram)**: guardie e ali nella fascia ~18–23 PDK sono abbondanti anche tra i
+  giocatori svincolati (non in nessuna squadra della lega): se ne trovano tanti "pescando" fuori. Quindi valgono poco.
+  → Nel modello: valore e prezzo si calcolano sul **PDK sopra il livello di rimpiazzo** (G/F ≈ 23 PDK; C un po' più
+  basso perché i centri utili scarseggiano); sotto/vicino alla soglia il valore crolla verso il minimo.
