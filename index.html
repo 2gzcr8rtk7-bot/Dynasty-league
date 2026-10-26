@@ -455,7 +455,7 @@ nav button[aria-expanded="true"] .car{transform:rotate(180deg)}
 .fach{flex:1;min-width:0;padding:7px 6px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;text-transform:uppercase;cursor:pointer}
 .fach:disabled{opacity:.35;cursor:default}
 .rgnav small{color:var(--muted)!important}.rgnav button{background:linear-gradient(180deg,var(--panel2),var(--panel))!important;border-color:var(--line)!important;border-radius:10px}.rgnav button:not(:disabled):active{transform:scale(.94)}
-.calm .rgs em{font-size:15px;color:var(--muted)}.calm .rgs small{visibility:hidden}.calm.me{background:rgba(245,180,0,.08);box-shadow:inset 3px 0 0 var(--gold)}
+.calm .rgs em{font-size:15px;color:var(--muted)}.calm .rgs small{visibility:hidden}
 .calall{margin:4px 0 12px;border:1px solid var(--line);background:linear-gradient(180deg,var(--panel2),var(--panel))}.calall>summary{cursor:pointer;padding:12px 14px;font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;letter-spacing:.06em;text-transform:uppercase;color:#fff;list-style:none}.calall>summary::-webkit-details-marker{display:none}.calall>summary::after{content:" ▾";color:var(--gold)}.calall[open]>summary::after{content:" ▴"}.calall>.rgc{margin:0 8px 8px}
 .fach[aria-pressed="true"]{background:var(--gold);color:#0a0f1f;border-color:var(--gold)}
 .fatbl{min-width:0}.fatbl th{text-align:right;padding:8px 5px;font-size:12px}.fatbl th:nth-child(2){text-align:left}.faptbl th:first-child{text-align:left}
@@ -1956,7 +1956,7 @@ function vRisultati(){
   const lg=t=>`<span class="rgl" style="--tc:${TEAMS[t].bg}">${badge(t)}</span>`;
   const sv=(n,ix)=>`<button class="bshare" data-share="${n}|${ix}" aria-label="Condividi risultato"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`;
   const lastN=GIORNATE.length?GIORNATE[GIORNATE.length-1].n:0;
-  const calG=([n,gs])=>`<div class="rgc calg${gs.some(p=>p.includes("DOL"))?"":""}"><div class="rgh"><b>Giornata ${n}</b><span>Da giocare</span></div>${gs.map(([a,b])=>`<div class="rgm calm${a==="DOL"||b==="DOL"?" me":""}"><span class="rgt">${lg(a)}<b>${TEAMS[a].nick}</b></span><span class="rgs"><em>vs</em><small>casa · trasferta</small></span><span class="rgt a"><b>${TEAMS[b].nick}</b>${lg(b)}</span></div>`).join("")}</div>`;
+  const calG=([n,gs])=>`<div class="rgc calg${gs.some(p=>p.includes("DOL"))?"":""}"><div class="rgh"><b>Giornata ${n}</b><span>Da giocare</span></div>${gs.map(([a,b])=>`<div class="rgm calm"><span class="rgt">${lg(a)}<b>${TEAMS[a].nick}</b></span><span class="rgs"><em>vs</em><small>casa · trasferta</small></span><span class="rgt a"><b>${TEAMS[b].nick}</b>${lg(b)}</span></div>`).join("")}</div>`;
   if(!rgN)rgN=lastN||1;const curN=Math.min(64,Math.max(1,rgN)),gSel=GIORNATE.find(x=>x.n===curN);
   const nav=`<div class="drnav rgnav"><button data-rgnav="-1" aria-label="Giornata precedente" ${curN<=1?"disabled":""}>‹</button><div><b>Giornata ${curN}</b><small>${gSel?(gSel.live?"In corso":"Finale"):"Da giocare"} · ${curN} di 64</small></div><button data-rgnav="1" aria-label="Giornata successiva" ${curN>=64?"disabled":""}>›</button></div>`;
   const calNote=`<p class="note">Usa le frecce per scorrere le giornate. Calendario Dunkest: le giornate 1-7 si ripetono nello stesso ordine fino alla 64.</p>`;
