@@ -335,3 +335,9 @@ Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLA
 - (42) Grafico e Calcola il trend: al posto di "Stagione" (con "Tutte") ci sono **Dalla stagione / Alla stagione**
   (stagioni consecutive, `GR.sz`–`GR.sz2`, `TRN.sz`–`TRN.sz2`). Più stagioni = un punto per stagione e mesi disattivati;
   una stagione = come prima (mesi, o settimane se un solo mese).
+
+## 26/10/2026 (43) — Archivio College riservato (solo Francesco)
+- Nel Campo dei Ducks, a destra di "Roster completo", c'è un pulsantino "accensione" quasi invisibile (`#cpow`): chiede
+  una password e apre la view `college` (archivio POT college per ruolo, con ricerca).
+- I dati sono in `COL_ENC` **cifrati** (AES-GCM, chiave PBKDF2 dalla password): NON modificare, NON decifrare, NON
+  rimuovere. La password non è nel codice. Lo aggiorna solo il Claude di Francesco ricifrando l'archivio.

@@ -91,6 +91,21 @@
 .trnm{min-width:0}.trnm b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.trnm small{font-size:10.5px;opacity:.7}
 .trpc{font-weight:800;font-size:14px;font-variant-numeric:tabular-nums}.trpc.up{color:#4ade80}.trpc.dn{color:#f87171}
 .trgr{background:rgba(255,255,255,.08);border:0;border-radius:8px;width:32px;height:30px;cursor:pointer;font-size:15px}
+.crwrap{position:relative}.cpow{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:30px;height:30px;padding:5px;border:0;border-radius:50%;background:transparent;color:rgba(255,255,255,.09);cursor:pointer}.cpow svg{width:100%;height:100%}.cpow:active{color:rgba(255,255,255,.35)}
+.colmod{position:fixed;inset:0;z-index:999;background:rgba(3,6,16,.78);display:grid;place-items:center;padding:16px}
+.colbox{width:min(300px,100%);background:#141c33;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:20px;display:grid;gap:12px;justify-items:center;color:#fff}
+.colbox>svg{width:34px;height:34px;color:#facc15}.colbox b{font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.05em}
+.colbox input{width:100%;text-align:center;font-size:22px;letter-spacing:.3em;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:#0b1224;color:#fff}
+.colerr{margin:0;min-height:16px;font-size:12px;color:#f87171}.colbox div{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+.colbox button{padding:10px;border-radius:10px;border:0;font-weight:800;cursor:pointer;background:#facc15;color:#111}.colbox button.no{background:rgba(255,255,255,.08);color:#fff}
+.colbox.shk{animation:shk .35s}@keyframes shk{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.colrl button.guardia[aria-pressed="true"]{background:#22c55e;border-color:#22c55e;color:#052e16}.colrl button.ala[aria-pressed="true"]{background:#3b82f6;border-color:#3b82f6;color:#fff}.colrl button.centro[aria-pressed="true"]{background:#facc15;border-color:#facc15;color:#2a1c00}.colrl small{opacity:.7;font-weight:600}
+.colq{width:100%;margin:10px 0;padding:9px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:#0b1224;color:#fff;font-size:15px}
+.coltbl table{width:100%;min-width:0!important;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.coltbl th,.coltbl td{padding:8px 4px!important;text-align:right;border-bottom:1px solid rgba(255,255,255,.08);background:none!important;position:static!important;white-space:nowrap}
+.coltbl thead th{font-size:9.5px!important;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.coltbl td{font-size:13px!important;font-family:inherit!important;font-style:normal!important;font-weight:500;letter-spacing:0!important;padding:7px 4px!important}
+.coltbl .nm{text-align:left;font-weight:700;white-space:normal}.coltbl .rk{color:var(--muted);width:22px}.coltbl .pot{color:#facc15;font-weight:800}.coltbl tr.uns td{opacity:.7}.coltbl .emp{text-align:center;color:var(--muted)}
 .gback{background:none;border:0;color:var(--muted);font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;padding:0 0 12px;cursor:pointer}
 .ghead{position:relative;display:flex;align-items:center;gap:14px;padding:16px;margin-bottom:22px;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.4)}
 .ghead::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.07) 0 10px,transparent 10px 22px);pointer-events:none}
@@ -2538,6 +2553,34 @@ function vMulte(){const t=MUL.t||curTeam,c=TEAMS[t],R=ROSTER[t]||[];if(MUL.t!==t
   <div class="mres">${res.map(r=>`<div class="mrow"><div class="mnm"><b>${r.x.n}</b><small>Capitano · ${r.x.N} partite (50% = ultime ${r.x.kB}, 15% = ultime ${r.x.kC})</small></div><div class="mvd">${verd(r)}</div></div>`).join("")}</div>
   <p class="note">Regolamento, Articolo 6: si confronta il capitano con ogni alternativa su media stagione, ultimo 50% e ultimo 15% delle partite giocate (arrotondate per eccesso). Tolleranza 3 PDK (a 3,01 scatta il rosso); servono almeno 2 indicatori verdi su 3. Con meno di 15 partite o partite non paragonabili per infortunio il calcolo non vale ufficialmente e decide la commissione: qui il risultato è solo indicativo. Il sistema si applica dopo una segnalazione e il voto della commissione.</p>`:""}`}
 
+/* ===== ARCHIVIO COLLEGE (accesso riservato, solo Campo Ducks: pulsantino "accensione" accanto a Roster completo) =====
+   I dati sono CIFRATI (AES-GCM 256, chiave da PBKDF2-SHA256 con la password): nel codice non c'è né la password né
+   l'archivio in chiaro. Per aggiornarlo serve rifare la cifratura con la password (lo fa il Claude di Francesco).
+   Righe: [giocatore, POT, PDK/min, P36/USG, USG%, ruolo da confermare]. */
+const COL_ENC={"s":"w57kszSuFeFnlza6QI7hrw==","iv":"YJWMfYE6aw1Jgxjp","it":600000,"c":"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","agg":"26/10/2026"};
+let COL={d:null,r:"guardia",q:""};
+const b64u8=b=>Uint8Array.from(atob(b),c=>c.charCodeAt(0));
+async function colOpen(pw){const k0=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveKey"]);
+  const k=await crypto.subtle.deriveKey({name:"PBKDF2",salt:b64u8(COL_ENC.s),iterations:COL_ENC.it,hash:"SHA-256"},k0,{name:"AES-GCM",length:256},false,["decrypt"]);
+  const p=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64u8(COL_ENC.iv)},k,b64u8(COL_ENC.c));return JSON.parse(new TextDecoder().decode(p))}
+function colAsk(){if(COL.d){cur="college";render();window.scrollTo(0,0);return}
+  const o=document.createElement("div");o.className="colmod";o.innerHTML=`<form class="colbox"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M7.1 6.3a8 8 0 1 0 9.8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><b>Accesso riservato</b><input type="password" inputmode="numeric" autocomplete="off" placeholder="Password" aria-label="Password"><p class="colerr" aria-live="polite"></p><div><button type="button" class="no">Annulla</button><button type="submit">Entra</button></div></form>`;
+  document.body.appendChild(o);const inp=o.querySelector("input"),err=o.querySelector(".colerr"),bx=o.querySelector(".colbox");setTimeout(()=>inp.focus(),50);
+  o.querySelector(".no").onclick=()=>o.remove();o.onclick=e=>{if(e.target===o)o.remove()};
+  o.querySelector("form").onsubmit=async e=>{e.preventDefault();err.textContent="Verifica…";
+    try{COL.d=await colOpen(inp.value);o.remove();cur="college";render();window.scrollTo(0,0)}
+    catch(x){err.textContent=window.crypto&&crypto.subtle?"Password errata":"Questo browser non supporta l'apertura";inp.value="";bx.classList.remove("shk");void bx.offsetWidth;bx.classList.add("shk")}}}
+function colList(){const R=(COL.d||{})[COL.r]||[],q=COL.q.trim().toLowerCase(),f=v=>v.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
+  const L=R.slice().sort((a,b)=>b[1]-a[1]).map((x,i)=>[i+1,x]).filter(([,x])=>!q||x[0].toLowerCase().includes(q));
+  return L.length?L.map(([i,x])=>`<tr${x[5]?' class="uns"':""}><td class="rk">${i}</td><td class="nm">${x[0]}${x[5]?" *":""}</td><td class="pot">${f(x[1])}</td><td>${f(x[2])}</td><td>${f(x[3])}</td><td>${x[4].toLocaleString("it-IT",{minimumFractionDigits:1})}%</td></tr>`).join(""):`<tr><td colspan="6" class="emp">Nessun giocatore trovato.</td></tr>`}
+function vCollege(){if(!COL.d){cur="campo";return vCampo()}
+  const RL=[["guardia","Guardie"],["ala","Ali"],["centro","Centri"]];
+  return`<button class="gback" id="colback">‹ Campo Ducks</button>
+  ${H("Archivio College",`<em>${COL_ENC.agg}</em>`)}
+  <div class="trseg colrl">${RL.map(([k,l])=>`<button class="${k}" data-colr="${k}" aria-pressed="${COL.r===k}">${l} <small>${(COL.d[k]||[]).length}</small></button>`).join("")}</div>
+  <input id="colq" class="colq" type="search" placeholder="Cerca giocatore" value="${COL.q.replace(/"/g,"&quot;")}" aria-label="Cerca giocatore">
+  <div class="coltbl"><table><thead><tr><th>#</th><th class="nm">Giocatore</th><th>POT</th><th>PDK/min</th><th>P36/USG</th><th>USG%</th></tr></thead><tbody id="collist">${colList()}</tbody></table></div>
+  <p class="note">POT = PDK/min normalizzato a usage 27% (se l'usage è sotto il 27% il PDK/min viene riportato al 27%). Ordine per POT. * = ruolo da confermare. Copia dell'archivio college di Francesco: si aggiorna solo quando viene ricifrata.</p>`}
 function vCampo(){
   const t=curTeam,c=TEAMS[t],st=standings().find(x=>x.t===t);
   const {auto,q}=quintetto(t);const qs=new Set(q.map(p=>p[0]));
@@ -2580,7 +2623,7 @@ function vCampo(){
   <div class="ctools"><button class="ctool" id="ccap"><span class="ci">C</span>Cap<small>Chi mettere capitano</small></button><button class="ctool" id="cmul"><span class="ci mul">€</span>Multe<small>Capitano senza multa</small></button></div>
   ${H("Panchina")}
   <div class="bench">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><span class="bev">${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}</span></button>`).join("")}</div>
-  <button class="croster" id="croster">Roster completo ›</button>`;
+  <div class="crwrap"><button class="croster" id="croster">Roster completo ›</button>${t==="DUC"?`<button class="cpow" id="cpow" aria-label="Accesso riservato"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M7.1 6.3a8 8 0 1 0 9.8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>`:""}</div>`;
 }
 function cupSvg(pos,id){
   const C={1:["#fff3b0","#f5b400","#8a5f00"],2:["#ffffff","#c3cad6","#6d7588"],3:["#ffd9b0","#cd7f32","#6e3c10"]}[pos];
@@ -3557,13 +3600,13 @@ function simAct(b){
     if(navigator.share)navigator.share({text:tx}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(tx).then(()=>{b.querySelector("span").textContent="Copiato ✓"},()=>{})}
 }
 
-const VIEWS={trend:vTrend,cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.grafico=vGrafico;
+const VIEWS={college:vCollege,trend:vTrend,cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.grafico=vGrafico;
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
   document.body.dataset.v=cur;
   {const fs=cur==="giochi"&&GAME==="dream";document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=fs?"#2a1260":"#0a1330"}
-  const eff=cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
+  const eff=cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -3583,6 +3626,10 @@ function render(){
     m.querySelectorAll("[data-capp]").forEach(b=>b.onclick=()=>{const n=b.dataset.capp;if(n in CAP.sel)delete CAP.sel[n];else CAP.sel[n]="";capSave();render()});
     m.querySelectorAll("[data-capo]").forEach(x=>x.onchange=()=>{CAP.sel[x.dataset.capo]=x.value;capSave();render()});
     const cl=m.querySelector("#capclr");if(cl)cl.onclick=()=>{CAP.sel={};capSave();render()};}
+  const pw=m.querySelector("#cpow");if(pw)pw.onclick=()=>colAsk();
+  if(cur==="college"){const kb=m.querySelector("#colback");if(kb)kb.onclick=()=>{cur="campo";render();window.scrollTo(0,0)};
+    const q=m.querySelector("#colq");if(q)q.oninput=()=>{COL.q=q.value;const L=m.querySelector("#collist");if(L)L.innerHTML=colList()};
+    m.querySelectorAll("[data-colr]").forEach(b=>b.onclick=()=>{COL.r=b.dataset.colr;render()});}
   const cr=m.querySelector("#croster");if(cr)cr.onclick=()=>{cur="roster";render();window.scrollTo(0,0)};
   m.querySelectorAll(".pl[data-pl],.rrow[data-pl]").forEach(b=>{const go=()=>{curPlayer=b.dataset.pl;cur="giocatore";render();window.scrollTo(0,0)};b.onclick=go;b.onkeydown=e=>{if(e.key==="Enter")go()}});
   const gse=m.querySelector("#gseason");if(gse)gse.onchange=()=>{if(!gse.value)return;gSeason=gse.value;if(gse.dataset.szchip)esqMese="tutta";const y=window.scrollY;render();if(gse.dataset.szchip)window.scrollTo(0,y)};
@@ -3602,7 +3649,7 @@ function syncMenu(){
   document.querySelectorAll("nav button[data-menu]").forEach(b=>{
     const p=document.getElementById(b.dataset.menu);if(!p)return;
     b.setAttribute("aria-expanded",dkOpen);p.hidden=!dkOpen;
-    const eff=cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"?"home":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
+    const eff=cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"?"home":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
     b.setAttribute("aria-selected",dkOpen||inside);
     if(dkOpen){const w=b.closest(".wrap").getBoundingClientRect(),r=b.getBoundingClientRect();
       const width=Math.max(r.width,180);let left=r.left-w.left+r.width/2-width/2;left=Math.max(0,Math.min(left,w.width-width));
