@@ -1074,6 +1074,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .hred h2 .t{background:#dc2626}.hred h2::after{background:linear-gradient(90deg,#dc2626,transparent)}
 
 
+.arcbtn.tvarc{border:1px solid rgba(220,38,38,.55);background:linear-gradient(90deg,rgba(220,38,38,.22),rgba(15,23,42,.6))}.arcbtn.tvarc small{color:#fca5a5}
 .arcbtn{display:flex;align-items:center;gap:12px;width:100%;margin:14px 0 4px;padding:10px 14px;border:1px dashed rgba(148,163,184,.45);background:rgba(15,23,42,.6);color:#cbd5e1;text-align:left;cursor:pointer}
 .arcbtn>span:nth-child(2){flex:1;display:grid;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;letter-spacing:.12em;text-transform:uppercase;color:#fff;line-height:1.1}
 .arcbtn small{font-family:var(--body,inherit);font-style:normal;font-weight:500;font-size:11.5px;letter-spacing:.02em;text-transform:none;color:#94a3b8}
@@ -1624,9 +1625,8 @@ nav button>span{white-space:nowrap}
       <button role="tab" id="t-dk" data-v="dunkest" data-menu="subnav" aria-haspopup="true" aria-expanded="false" aria-selected="false"><span>Dunkest<i class="car">▾</i></span></button>
       <button role="tab" id="t-ef" data-v="efficienza" aria-selected="false"><span>Statistiche</span></button>
       <button role="tab" id="t-cs" data-v="valtrade" aria-selected="false"><span>Calcolatore Trade</span></button>
-      <button role="tab" id="t-tv" data-v="tv" aria-selected="false"><span>Dynasty TV</span></button>
       <button role="tab" id="t-gm" data-v="storia" aria-selected="false"><span>Sala Trofei</span></button>
-      <button role="tab" id="t-gi" data-v="giochi" aria-selected="false"><span>Giochi</span></button>
+      <button role="tab" id="t-gi" data-v="giochi" aria-selected="false"><span>Entertainment</span></button>
     </nav>
     <div class="subnav" id="subnav" role="menu" hidden>
       <button data-v="risultati" aria-selected="false"><span>Risultati</span></button>
@@ -3482,6 +3482,7 @@ function homeSearch(q){const box=document.getElementById("hres");if(!box)return;
   box.hidden=false;box.innerHTML=L.length?L.slice(0,8).map(({t,p})=>`<button class="hrr" data-pln="${p[0].replace(/"/g,"&quot;")}" data-plt="${t}" style="--tc:${TEAMS[t].bg}"><span class="hrj">${jersey(t,p[1],p[0])}</span><span class="hrn"><b>${p[0]}</b><small>${TEAMS[t].nick} · ${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><i>›</i></button>`).join(""):`<p class="hnone">Nessun giocatore trovato</p>`}
 document.getElementById("main").addEventListener("input",e=>{if(e.target.id==="hq")homeSearch(e.target.value)});
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest(".hrr");if(!b)return;e.preventDefault();curTeam=b.dataset.plt;curPlayer=b.dataset.pln;gFrom="home";cur="giocatore";render();window.scrollTo(0,0)});
+document.getElementById("main").addEventListener("click",e=>{if(e.target.closest("[data-tvopen]")){e.preventDefault();cur="tv";render();window.scrollTo(0,0)}});
 /* Calcola il trend: apertura, chiusura, filtri, linee */
 document.getElementById("main").addEventListener("click",e=>{
   if(e.target.closest("[data-trgo]")){e.preventDefault();TRN.from=cur;cur="trend";render();window.scrollTo(0,0);return}
@@ -4237,18 +4238,19 @@ function vGiochiHub(){
   const card=g=>`<button class="gmc" data-game="${g.k}" style="--gc:${g.c}"><span class="gmi">${g.i}</span><span class="gmt"><b>${g.t}</b><small>${g.d}</small></span><span class="rgo">›</span></button>`;
   const ord=["notte","dream","gdream"];
   if(GAME==="menu"){
-    return `${H("Giochi",`<em>Fanta della lega</em>`)}
+    return `${H("Entertainment")}
     <div class="gmenu">${ord.map(k=>card(GAMES.find(g=>g.k===k))).join("")}</div>
+    <button class="arcbtn tvarc" data-tvopen="1"><span class="arci">📺</span><span>Dynasty TV<small>Calendario NBA · risultati · tabellini</small></span><span class="rgo">›</span></button>
     <button class="arcbtn" data-game="arcade"><span class="arci">🕹️</span><span>Arcade<small>${GAMES.filter(g=>g.a).map(g=>g.t).join(" · ")}</small></span><span class="rgo">›</span></button>
-    <p class="note">Sfida della notte, DREAMERS e G-DREAMERS sono i giochi fanta della lega; nell'Arcade trovi i passatempi. Record e risultati restano salvati su questo telefono.</p>`;
+    <p class="note">Sfida della notte, DREAMERS e G-DREAMERS sono i giochi fanta della lega; nella Dynasty TV calendario, risultati e tabellini NBA; nell'Arcade i passatempi. Record e risultati restano salvati su questo telefono.</p>`;
   }
   if(GAME==="arcade"){
-    return `<button class="gback" data-game="menu">‹ Giochi</button>${H("Arcade",`<em>Passatempi</em>`)}
+    return `<button class="gback" data-game="menu">‹ Entertainment</button>${H("Arcade",`<em>Passatempi</em>`)}
     <div class="gmenu">${GAMES.filter(g=>g.a).map(card).join("")}</div>
     <p class="note">Record salvati su questo telefono. Usa "Condividi risultato" per sfidare gli altri GM nel gruppo.</p>`;
   }
   const arc=(GAMES.find(g=>g.k===GAME)||{}).a;
-  return (GAME==="dream"||GAME==="gdream"||GAME==="notte"&&NT.view!=="list"?"":arc?`<button class="gback" data-game="arcade">‹ Arcade</button>`:`<button class="gback" data-game="menu">‹ Giochi</button>`)+(GAME==="tiro"?vTiro():GAME==="sim"?vSim():GAME==="notte"?vNotte():GAME==="dream"?vDream():GAME==="gdream"?vGDream():vGiochi());
+  return (GAME==="dream"||GAME==="gdream"||GAME==="notte"&&NT.view!=="list"?"":arc?`<button class="gback" data-game="arcade">‹ Arcade</button>`:`<button class="gback" data-game="menu">‹ Entertainment</button>`)+(GAME==="tiro"?vTiro():GAME==="sim"?vSim():GAME==="notte"?vNotte():GAME==="dream"?vDream():GAME==="gdream"?vGDream():vGiochi());
 }
 document.getElementById("main").addEventListener("click",e=>{
   if(cur!=="giochi")return;
@@ -4490,7 +4492,8 @@ const tvNick=c=>{const n=(TVD().teams[c]||[c])[0];return n.split(" ").slice(-1)[
 const tvRec=c=>{const r=TVD().rec[c];return r?r[0]+"-"+r[1]:""};
 function tvDefDay(){const T=TVD(),ks=Object.keys(T.days).sort();const lv=ks.filter(k=>T.days[k].some(g=>g[5]==="L"));if(lv.length)return lv[0];const f=ks.filter(k=>T.days[k].some(g=>g[5]==="F"));return f.length?f[f.length-1]:ks[0]}
 function tvLead(b){const all=[...b.a.map(p=>["a",p]),...b.h.map(p=>["h",p])];const top=i=>all.slice().sort((x,y)=>y[1][i]-x[1][i])[0];return{pts:top(3),reb:top(6),ast:top(7),pdk:all.slice().sort((x,y)=>y[1][19]-x[1][19])[0]}}
-function vTV(){const T=TVD(),ks=Object.keys(T.days).sort();if(!ks.length)return`${H("Dynasty TV")}<div class="tvempty">Calendario non ancora disponibile.</div>`;
+function vTV(){return`<button class="gback" id="tvback">‹ Entertainment</button>`+vTV0()}
+function vTV0(){const T=TVD(),ks=Object.keys(T.days).sort();if(!ks.length)return`${H("Dynasty TV")}<div class="tvempty">Calendario non ancora disponibile.</div>`;
   if(!TVS.d||!T.days[TVS.d])TVS.d=tvDefDay();
   if(TVS.g&&T.box[TVS.g])return tvGame(TVS.g);
   const d=TVS.d,i=ks.indexOf(d),dd=tvDt(d),G=T.days[d]||[];
@@ -4568,7 +4571,7 @@ const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
   document.body.dataset.v=cur;
   {const fs=cur==="giochi"&&(GAME==="dream"||GAME==="gdream");document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=fs?"#2a1260":"#0a1330"}
-  const eff=cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"?"home":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
+  const eff=cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"?"home":cur==="tv"?"giochi":cur;const DK=["risultati","classifica","roster","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -4579,6 +4582,7 @@ function render(){
   m.querySelectorAll("[data-ctab]").forEach(b=>b.onclick=()=>{cassaTab=b.dataset.ctab;render()});
   m.querySelectorAll("[data-cstag]").forEach(b=>b.onclick=()=>{cassaStag=b.dataset.cstag;render()});
     const vq=m.querySelector("#vtq");if(vq)vq.oninput=()=>{const q=vq.value.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");m.querySelectorAll(".vtlist .vtrow").forEach(r=>{const t=(r.dataset.pln+" "+(TEAMS[r.dataset.plt]||{}).nick).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");r.style.display=!q||t.includes(q)?"":"none"})};
+  const tvk=m.querySelector("#tvback");if(tvk)tvk.onclick=()=>{TVS.g=null;cur="giochi";GAME="menu";render();window.scrollTo(0,0)};
   const tvg=m.querySelector("#tvgo");if(tvg)tvg.onclick=()=>{cur="tv";render();window.scrollTo(0,0)};
   const cb=m.querySelector("#cback");if(cb)cb.onclick=()=>{cur="home";render();window.scrollTo(0,0)};
   const cc=m.querySelector("#ccap");if(cc)cc.onclick=()=>{capLoad(curTeam);cur="cap";render();window.scrollTo(0,0)};
@@ -4625,7 +4629,7 @@ function syncMenu(){
   document.querySelectorAll("nav button[data-menu]").forEach(b=>{
     const p=document.getElementById(b.dataset.menu);if(!p)return;
     b.setAttribute("aria-expanded",dkOpen);p.hidden=!dkOpen;
-    const eff=cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"?"home":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
+    const eff=cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
     b.setAttribute("aria-selected",dkOpen||inside);
     if(dkOpen){const w=b.closest(".wrap").getBoundingClientRect(),r=b.getBoundingClientRect();
       const width=Math.max(r.width,180);let left=r.left-w.left+r.width/2-width/2;left=Math.max(0,Math.min(left,w.width-width));
