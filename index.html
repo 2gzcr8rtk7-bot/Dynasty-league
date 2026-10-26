@@ -1630,8 +1630,8 @@ nav button>span{white-space:nowrap}
 }
 </style>
 <style>
-/* telefoni: tasti indietro nascosti, si torna indietro con lo swipe dal bordo (resta "Annulla" nei giochi) */
-@media (hover:none) and (pointer:coarse){#main .gback:not([data-nt="back"]),#main .grback{display:none!important}}
+#swar{position:fixed;top:50%;z-index:2000;width:44px;height:44px;margin-top:-22px;border-radius:50%;display:grid;place-items:center;background:rgba(20,32,70,.92);border:1px solid rgba(255,255,255,.25);color:#fff;font:800 28px/1 sans-serif;opacity:0;pointer-events:none;transition:opacity .12s,background .12s;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+#swar.l{left:6px}#swar.r{right:6px}#swar.go{background:#f5b400;color:#111;border-color:transparent}
 </style></head>
 <body>
 <header>
@@ -4682,7 +4682,7 @@ render();
 <script>
 /* ===== INDIETRO CON SWIPE (bordo sinistro o destro) + tasto/gesto indietro di Android =====
    Ordine: 1) chiude il foglio aperto (.colsheet), 2) usa il tasto ‹ indietro della pagina (anche se nascosto),
-   3) torna alla sezione precedente (pila NAVH). Sui telefoni i tasti ‹ sono nascosti via CSS (tranne "Annulla" dei giochi). */
+   3) torna alla sezione precedente (pila NAVH). I tasti ‹ restano visibili: lo swipe è un supporto. */
 const NAVH=[];let navLast=cur,navT=0;
 (function(){const r0=render;render=function(){if(navLast!==null&&cur!==navLast){if(NAVH[NAVH.length-1]===cur)NAVH.pop();else{NAVH.push(navLast);if(NAVH.length>40)NAVH.shift()}}navLast=cur;return r0.apply(this,arguments)}})();
 function navTarget(){const sh=[...document.querySelectorAll(".colsheet")].filter(x=>x.offsetParent!==null||getComputedStyle(x).position==="fixed");
@@ -4694,18 +4694,28 @@ function navBack(){const n=Date.now();if(n-navT<450)return true;const t=navTarge
 /* Android: una voce finta nella cronologia, il gesto/tasto indietro torna indietro nell'app */
 try{history.pushState({dl:1},"")}catch(e){}
 addEventListener("popstate",()=>{if(navBack()){try{history.pushState({dl:1},"")}catch(e){}}});
-/* Swipe dal bordo */
-(function(){const E=26;let sx=0,sy=0,on=false,ok=false,dx=0,el=null,side=0,t0=0;
+/* Swipe dal bordo (supporto ai tasti ‹): parte dai 34px del bordo sinistro o destro, segue il dito 1:1,
+   mostra una freccia che diventa gialla oltre la soglia (25% schermo); vale anche un colpo veloce. */
+(function(){const E=34;let sx=0,sy=0,on=false,ok=false,dx=0,el=null,side=0,t0=0,raf=0,arm=false;
+  const ar=document.createElement("div");ar.id="swar";ar.textContent="‹";document.body.appendChild(ar);
   const tgt=()=>{const sh=[...document.querySelectorAll(".colsheet")];return sh.length?sh[sh.length-1]:document.getElementById("main")};
-  addEventListener("touchstart",e=>{if(e.touches.length!==1)return;const x=e.touches[0].clientX;side=x<E?1:x>innerWidth-E?-1:0;if(!side||!navTarget())return;
-    sx=x;sy=e.touches[0].clientY;on=true;ok=false;dx=0;t0=Date.now();el=tgt()},{passive:true});
-  addEventListener("touchmove",e=>{if(!on)return;const x=e.touches[0].clientX,y=e.touches[0].clientY;dx=(x-sx)*side;const dy=Math.abs(y-sy);
-    if(!ok){if(dy>12&&dy>dx){on=false;return}if(dx>10)ok=true;else return}
-    e.preventDefault();const v=Math.max(0,dx);el.style.transition="none";el.style.transform=`translateX(${side*v*.55}px)`;el.style.opacity=String(1-Math.min(.35,v/innerWidth*.5))},{passive:false});
-  const end=()=>{if(!on)return;on=false;if(!ok)return;const fast=dx>60&&Date.now()-t0<260,go=dx>innerWidth*.28||fast;
-    el.style.transition="transform .18s ease-out,opacity .18s ease-out";
-    if(go){el.style.transform=`translateX(${side*innerWidth*.45}px)`;el.style.opacity="0";const e2=el;setTimeout(()=>{e2.style.transition="none";e2.style.transform="";e2.style.opacity="";navBack()},170)}
-    else{el.style.transform="";el.style.opacity="";setTimeout(()=>{el.style.transition=""},200)}};
+  const paint=()=>{raf=0;const v=Math.max(0,dx),p=Math.min(1,v/(innerWidth*.25));el.style.transform=`translate3d(${side*v}px,0,0)`;
+    ar.style.opacity=String(Math.min(1,v/40));ar.style.transform=`translateX(${side*Math.min(v*.5,46)}px) scale(${side*(.7+.3*p)},${.7+.3*p})`;ar.classList.toggle("go",p>=1);
+    if(p>=1&&!arm){arm=true;try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}}else if(p<1)arm=false};
+  addEventListener("touchstart",e=>{if(e.touches.length!==1){on=false;return}const t=e.touches[0],x=t.clientX;side=x<=E?1:x>=innerWidth-E?-1:0;
+    if(!side||!navTarget())return;sx=x;sy=t.clientY;on=true;ok=false;dx=0;arm=false;t0=Date.now();el=tgt();
+    ar.className=side>0?"l":"r";ar.style.top=Math.max(80,Math.min(innerHeight-80,sy))+"px"},{passive:true});
+  addEventListener("touchmove",e=>{if(!on)return;const t=e.touches[0];dx=(t.clientX-sx)*side;const dy=Math.abs(t.clientY-sy);
+    if(!ok){if(dy>10&&dy>dx*1.1){on=false;return}if(dx>8){ok=true;el.style.transition="none";el.style.willChange="transform";el.style.boxShadow=side>0?"-14px 0 28px rgba(0,0,0,.45)":"14px 0 28px rgba(0,0,0,.45)"}else return}
+    if(e.cancelable)e.preventDefault();if(!raf)raf=requestAnimationFrame(paint)},{passive:false});
+  const reset=x=>{x.style.transition="";x.style.transform="";x.style.willChange="";x.style.boxShadow="";x.style.opacity=""};
+  const end=()=>{if(!on)return;on=false;if(raf){cancelAnimationFrame(raf);raf=0}if(!ok)return;
+    const ms=Math.max(1,Date.now()-t0),go=dx>innerWidth*.25||(dx>45&&dx/ms>.45),e2=el;
+    ar.style.opacity="0";ar.classList.remove("go");
+    if(go){e2.style.transition="transform .16s ease-out";e2.style.transform=`translate3d(${side*innerWidth}px,0,0)`;
+      setTimeout(()=>{reset(e2);navBack();const m=document.getElementById("main");if(!m)return;m.style.transition="none";m.style.transform=`translate3d(${-side*28}px,0,0)`;m.style.opacity=".4";
+        requestAnimationFrame(()=>requestAnimationFrame(()=>{m.style.transition="transform .2s ease-out,opacity .2s ease-out";m.style.transform="";m.style.opacity="";setTimeout(()=>reset(m),230)}))},150)}
+    else{e2.style.transition="transform .18s ease-out";e2.style.transform="";setTimeout(()=>reset(e2),200)}};
   addEventListener("touchend",end);addEventListener("touchcancel",end)})();
 </script>
 <script>if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
