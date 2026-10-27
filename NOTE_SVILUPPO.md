@@ -638,3 +638,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
     Poi: tasto Condividi su OGNI grafico dell app (shChartBtns, aggiunto dopo ogni render a ogni riquadro con svg.grsvg: Trend, dettaglio Trend, confronto rookie, scouting, Grafici liberi...). shCardImg ridisegna il grafico più largo (CHW_X forza chW) in base al numero di punti, lo copia con gli stili (shSvgInline) su sfondo Dreamers con il titolo della sezione. Il Grafico del giocatore tiene la sua immagine dedicata (shGrafico).
 
 (165) 27/10/2026 (Claude, account del secondo utente) — Scheda giocatore (vGiocatore): subito sotto la testata c'è "PDK ed efficienza" (prima si chiamava "Efficienza"), con PDK medi a partita a sinistra ed efficienza media a destra (invertiti). La "Pagella" con le stelline è stata spostata in fondo, dopo "Partita per partita". IN CODA.
+
+(166) 27/10/2026 (Claude, account del secondo utente) — Sfida Dreamers (drDuel): in cima a ogni card c'è una fascia piena del colore del ruolo con scritto GUARDIA / ALA / CENTRO (classe .du.ru-G/F/C, data-rn), scelta dell'utente tra 5 prove (opzione 4). Tolto il trattino ruolo accanto al nome nelle card (ridondante).

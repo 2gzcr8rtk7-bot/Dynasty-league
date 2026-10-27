@@ -501,6 +501,11 @@ details.glp.glhit{animation:glhit 2.2s ease}@keyframes glhit{0%,40%{box-shadow:i
 .perq{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
 .perq button{flex:1;min-width:0;padding:8px 6px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);color:#e8ecf7;font-weight:700;font-size:12.5px;cursor:pointer;white-space:nowrap}
 .perattuale{margin:10px 0 0;font-size:12px;color:#8590b0;text-align:center}
+/* sfida Dreamers: etichetta del ruolo in cima a ogni card (scelta dell'utente, opzione 4) */
+.du.ru-G{--rc:var(--rG)}.du.ru-F{--rc:var(--rF)}.du.ru-C{--rc:var(--rC)}
+.du[class*="ru-"]:not(.ru-x){position:relative;padding-top:26px}
+.du[class*="ru-"]:not(.ru-x)::before{content:attr(data-rn);position:absolute;left:0;right:0;top:0;height:19px;display:flex;align-items:center;padding-left:10px;border-radius:11px 11px 0 0;background:var(--rc);color:#0b0f1a;font-family:var(--display);font-style:italic;font-weight:900;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.du[class*="ru-"] .dun .rtr{display:none}
 /* foglio partite del turno */
 .dwsh{position:fixed;inset:0;z-index:9999;background:rgba(3,6,16,.6);display:flex;align-items:flex-end;justify-content:center;animation:dwin .18s ease}
 @keyframes dwin{from{opacity:0}to{opacity:1}}
@@ -5113,7 +5118,7 @@ function drDuel(k,a,b,W,P){const A=drTeam(k,a,W),B=drTeam(k,b,W),f1=v=>v==null?"
       if(y.v!=null)return`<span class="duw dug ${pdkLvl(y.v)}" title="${y.opp}"><i>${gg}</i><b>${f1(y.v)}</b></span>`;
       if(y.fin)return`<span class="duw dun0" title="${y.opp} · non ha giocato"><i>${gg}</i><b>NG</b></span>`;
       return`<span class="duw duu${y.lv?" lv":""}"><i>${gg}</i><b>${y.opp}</b></span>`}).join("");
-    return`<div class="du ${slot}"><div class="duh"><span class="duj">${jersey(t,r[1],x.n)}</span><div class="dun"><b>${RTR(x.n)}${x.n}</b><small>${({G:"G",F:"A",C:"C"})[r[2]]||""} · ${r[3]}</small></div></div>
+    return`<div class="du ${slot} ru-${r[2]||"x"}" data-rn="${({G:"Guardia",F:"Ala",C:"Centro"})[r[2]]||""}"><div class="duh"><span class="duj">${jersey(t,r[1],x.n)}</span><div class="dun"><b>${RTR(x.n)}${x.n}</b><small>${({G:"G",F:"A",C:"C"})[r[2]]||""} · ${r[3]}</small></div></div>
       <div class="dus">${slot==="cap"&&x.f!=null?`<span class="pdkx dugold">${f1(x.f)}</span><em class="dunb">${f1(x.e)} ×1,5</em>`:`${x.e==null?'<span class="pdkx na">—</span>':pdkB(x.e,f1(x.e))}<em>${ml}${pt}</em>`}</div>
       <div class="duwk">${wk||'<span class="duw none"><i>nessuna partita</i></span>'}</div><div class="duf">${fatte}/${gi.length} partite giocate</div></div>`};
   const sezioni=[["cap","Capitano ×1,5",0,1],["full","Punteggio pieno",1,6],["half","Panchina · ½",6,10]];
