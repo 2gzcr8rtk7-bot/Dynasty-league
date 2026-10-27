@@ -517,3 +517,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (112) Modalità notte, campo: il bordo (fascia con il nome della squadra e cornice) resta del colore della squadra; solo i Ducks diventano argento (gradiente metallico "mtl", cornice grigia) al posto del giallo. Il parquet interno diventa grigio scuro per tutte (gradiente "wood" scuro, niente più filtro grigio su tutto il campo).
 
 (113) Modalità notte Ducks: maglie argento con dettagli e numeri neri (come la loro maglia alternativa), bordo del campo argento.
+
+(114) Pallino LIVE sul tasto Entertainment del menu (#t-gi.navlive): controllo leggero del tabellone ESPN ogni 2 minuti (solo con app visibile) + stato di Dynasty TV; acceso se c'è almeno una partita NBA in corso.
