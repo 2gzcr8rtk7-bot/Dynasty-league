@@ -2307,7 +2307,7 @@ const NOTTE_ACC=t=>TEAMS[t].bg;
 /* DIVISE (27/10/2026): 3 maglie per squadra, stesso disegno, colori diversi. 0 = casa (quella di sempre), 1 = notte (base scura),
    2 = alternativa (base bianca con dettagli nel colore della squadra; se la casa è già bianca, base nel colore della squadra).
    Si sceglie dal tastino con la maglietta nella pagina squadra (solo per quella pagina, ricordata sul telefono). Senza scelta: casa di giorno, notte in modalità notte. */
-const KIT_N=["Casa","Notte","Alternativa"];
+const KIT_N=["Casa","Notte","Alternativa","Originale NBA"];
 let KIT={};try{KIT=JSON.parse(localStorage.getItem("dl_kit")||"{}")||{}}catch(e){KIT={}}
 function kitSalva(){try{localStorage.setItem("dl_kit",JSON.stringify(KIT))}catch(e){}}
 function kitDi(t){const nt=typeof CNT!=="undefined"&&CNT&&cur==="campo";if(cur==="campo"&&KIT[t]!=null)return KIT[t];return nt?1:0}
@@ -2321,10 +2321,47 @@ function kitC(t,k){const T=TEAMS[t];
     const acc=t==="EAG"?"#0f1b4d":T.bg,sec=t==="EAG"?"#facc15":(T.trim&&lum(T.trim)<.85?T.trim:T.bg);
     return{...T,bg:"#f7f7f5",fg:acc,trim:t==="DUC"?"#facc15":sec,jstroke:lum(acc)>.6?"#111111":"#ffffff",outer:lum(acc)>.6?"#111111":undefined}}
   return casa}
+/* 4ª maglia "Originale NBA" (27/10/2026): ogni giocatore veste i colori della sua squadra NBA (colonna 4 di ROSTER).
+   bg = maglia, fg = nome e numero, jstroke = contorno, trim = collo/giromanica e fasce laterali, p2 = filetto sottile, outer = secondo contorno. Solo colori, niente loghi. */
+const NBA_KIT={
+ ATL:{bg:"#c8102e",fg:"#ffffff",jstroke:"#26282a",trim:"#26282a",p2:"#fdb927"},
+ BKN:{bg:"#111111",fg:"#ffffff",jstroke:"#111111",trim:"#ffffff",p2:"#777d84"},
+ BOS:{bg:"#007a33",fg:"#ffffff",jstroke:"#0b2e1a",trim:"#ffffff",p2:"#ba9653"},
+ CHA:{bg:"#00788c",fg:"#ffffff",jstroke:"#1d1160",trim:"#1d1160",p2:"#a1a1a4"},
+ CHI:{bg:"#ce1141",fg:"#ffffff",jstroke:"#111111",trim:"#111111",p2:"#ffffff",outer:"#111111"},
+ CLE:{bg:"#860038",fg:"#fdbb30",jstroke:"#041e42",trim:"#fdbb30",p2:"#041e42"},
+ DAL:{bg:"#00538c",fg:"#ffffff",jstroke:"#002b5e",trim:"#b8c4ca",p2:"#002b5e"},
+ DEN:{bg:"#0e2240",fg:"#fec524",jstroke:"#0e2240",trim:"#fec524",p2:"#8b2131"},
+ DET:{bg:"#1d42ba",fg:"#ffffff",jstroke:"#c8102e",trim:"#c8102e",p2:"#ffffff"},
+ GSW:{bg:"#1d428a",fg:"#ffc72c",jstroke:"#1d428a",trim:"#ffc72c",p2:"#ffffff"},
+ HOU:{bg:"#ce1141",fg:"#ffffff",jstroke:"#111111",trim:"#c4ced4",p2:"#111111"},
+ IND:{bg:"#002d62",fg:"#fdbb30",jstroke:"#002d62",trim:"#fdbb30",p2:"#bec0c2"},
+ LAC:{bg:"#1d428a",fg:"#ffffff",jstroke:"#c8102e",trim:"#c8102e",p2:"#bec0c2"},
+ LAL:{bg:"#fdb927",fg:"#552583",jstroke:"#ffffff",trim:"#552583",p2:"#ffffff"},
+ MEM:{bg:"#12173f",fg:"#ffffff",jstroke:"#5d76a9",trim:"#5d76a9",p2:"#f5b112"},
+ MIA:{bg:"#98002e",fg:"#ffffff",jstroke:"#111111",trim:"#f9a01b",p2:"#111111"},
+ MIL:{bg:"#00471b",fg:"#eee1c6",jstroke:"#00471b",trim:"#eee1c6",p2:"#0077c0"},
+ MIN:{bg:"#0c2340",fg:"#ffffff",jstroke:"#236192",trim:"#78be20",p2:"#236192"},
+ NOP:{bg:"#0c2340",fg:"#ffffff",jstroke:"#c8102e",trim:"#85714d",p2:"#c8102e"},
+ NYK:{bg:"#006bb6",fg:"#ffffff",jstroke:"#f58426",trim:"#f58426",p2:"#ffffff",outer:"#1b2a49"},
+ OKC:{bg:"#007ac1",fg:"#ffffff",jstroke:"#ef3b24",trim:"#ef3b24",p2:"#fdbb30",outer:"#002d62"},
+ ORL:{bg:"#0077c0",fg:"#ffffff",jstroke:"#111111",trim:"#111111",p2:"#c4ced4"},
+ PHI:{bg:"#006bb6",fg:"#ffffff",jstroke:"#ed174c",trim:"#ed174c",p2:"#ffffff",outer:"#002b5c"},
+ PHX:{bg:"#1d1160",fg:"#ffffff",jstroke:"#e56020",trim:"#e56020",p2:"#f9ad1b"},
+ POR:{bg:"#111111",fg:"#ffffff",jstroke:"#e03a3e",trim:"#e03a3e",p2:"#ffffff"},
+ SAC:{bg:"#5a2d81",fg:"#ffffff",jstroke:"#2b1a3d",trim:"#c4ced4",p2:"#2b1a3d"},
+ SAS:{bg:"#111111",fg:"#ffffff",jstroke:"#8a8d8f",trim:"#c4ced4",p2:"#111111"},
+ TOR:{bg:"#ce1141",fg:"#ffffff",jstroke:"#111111",trim:"#111111",p2:"#a1a1a4"},
+ UTA:{bg:"#3e2680",fg:"#ffffff",jstroke:"#111111",trim:"#111111",p2:"#9a8fce"},
+ WAS:{bg:"#002b5c",fg:"#ffffff",jstroke:"#e31837",trim:"#e31837",p2:"#c4ced4"}
+};
+/* fasce laterali stile NBA, disegnate dentro la canotta */
+function nbaDeco(c){return`<path d="M0 44 L14 48 L17 146 L0 146Z M120 44 L106 48 L103 146 L120 146Z" fill="${c.trim}"/><path d="M14 48 L17 146 M106 48 L103 146" stroke="${c.p2||c.fg}" stroke-width="2.2" fill="none"/>`}
 /* icona del tastino: piccola maglietta con i colori della divisa scelta */
-function kitIco(t){const c=kitC(t,kitDi(t));return`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 2.2h3.2c.2 2.6 4.2 2.6 4.4 0h3.2c-.1 3.4 1 5.4 3 6.4v12.6c-5.6 1.1-11.2 1.1-16.8 0V8.6c2-1 3.1-3 3-6.4z" fill="${c.bg}" stroke="${c.trim||c.fg}" stroke-width="1.6" stroke-linejoin="round"/><text x="12" y="16.6" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-style="italic" font-size="8.5" fill="${c.fg}">23</text></svg>`}
+function kitIco(t){const c=kitC(t,kitDi(t)),n3=kitDi(t)===3;return`<svg viewBox="0 0 24 24" aria-hidden="true">${n3?`<defs><linearGradient id="kitnba" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c8102e"/><stop offset=".33" stop-color="#c8102e"/><stop offset=".33" stop-color="#fdb927"/><stop offset=".66" stop-color="#fdb927"/><stop offset=".66" stop-color="#1d428a"/><stop offset="1" stop-color="#1d428a"/></linearGradient></defs>`:""}<path d="M6.6 2.2h3.2c.2 2.6 4.2 2.6 4.4 0h3.2c-.1 3.4 1 5.4 3 6.4v12.6c-5.6 1.1-11.2 1.1-16.8 0V8.6c2-1 3.1-3 3-6.4z" fill="${n3?"url(#kitnba)":c.bg}" stroke="${c.trim||c.fg}" stroke-width="1.6" stroke-linejoin="round"/><text x="12" y="16.6" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-style="italic" font-size="8.5" fill="${n3?"#ffffff":c.fg}"${n3?' stroke="#111" stroke-width="1.4" paint-order="stroke"':""}>23</text></svg>`}
 function jersey(t,num,name=""){
-  const c=kitC(t,kitDi(t)),n=num==null?"?":String(num),k="j"+(JID++);
+  const kd=kitDi(t),rw=kd===3?(ROSTER[t]||[]).find(x=>x[0]===name):null,nk=rw?NBA_KIT[rw[3]]:null;
+  const c=nk?{...TEAMS[t],stroke:undefined,outer:undefined,jsw:undefined,...nk}:kitC(t,kd===3?0:kd),n=num==null?"?":String(num),k="j"+(JID++);
   const fs=n.length>1?38:44;
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
   const ol=c.jstroke||(lum(c.fg)<0.45?"#ffffff":"#0a0f1f");
@@ -2346,7 +2383,7 @@ function jersey(t,num,name=""){
   <ellipse cx="60" cy="136" rx="46" ry="5" fill="#000" opacity=".55" filter="url(#${k}d)"/>
   <path d="${body}" fill="${c.bg}"/>
   <g clip-path="url(#${k}c)">
-   ${(DECO[t]||(()=>""))(c,k)}
+   ${nk?nbaDeco(c):(DECO[t]||(()=>""))(c,k)}
    <rect width="120" height="146" fill="url(#${k}m)"/>
    <path d="M30 40 C36 70 34 100 40 132" stroke="#000" stroke-opacity=".25" stroke-width="5" fill="none" filter="url(#${k}b)"/>
    <path d="M90 40 C84 72 88 100 82 132" stroke="#000" stroke-opacity=".2" stroke-width="5" fill="none" filter="url(#${k}b)"/>
@@ -5682,7 +5719,7 @@ async function tvBoxes(d){if(typeof TV==="undefined"||!d||!TV.days[d])return fal
       TV.box[key]={a:tvLiveSide(B.awayTeam,aw),h:tvLiveSide(B.homeTeam,!aw),live:1,fin:1};G[7]=key;ch=true}catch(e){}}
   return ch}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&cur==="tv")tvLiveTick()});
-document.getElementById("main").addEventListener("click",e=>{if(cur!=="campo")return;const kb=e.target.closest("#kitbtn");if(kb){e.preventDefault();const t=kb.dataset.kitt;KIT[t]=(kitDi(t)+1)%3;kitSalva();const y=scrollY;render();scrollTo(0,y);return}});
+document.getElementById("main").addEventListener("click",e=>{if(cur!=="campo")return;const kb=e.target.closest("#kitbtn");if(kb){e.preventDefault();const t=kb.dataset.kitt;KIT[t]=(kitDi(t)+1)%4;kitSalva();const y=scrollY;render();scrollTo(0,y);return}});
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="campo")return;const go=e.target.closest(".lbm[data-drgo]");if(!go)return;const[k,x,y]=go.dataset.drgo.split("|");DR.k=+k;DR.tab="turno";DR.open=[x,y];DR.rules=false;GAME="dream";cur="giochi";render();window.scrollTo(0,0)});
 document.getElementById("main").addEventListener("click",e=>{if(cur==="campo"&&e.target.closest("#cntbtn")){e.preventDefault();CNT=!CNT;const y=scrollY;render();scrollTo(0,y)}});
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="tv")return;const T=TVD(),ks=Object.keys(T.days).sort();
