@@ -531,3 +531,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (119) Modalità notte Ducks: argento chiaro OPACO (come la loro grafica alternativa) al posto dell'argento metallico: banner #9ca1a8 con sfumatura leggera, bordo campo #90959b piatto (niente gradiente mtl), cornice #7d8288, maglie #a2a6ac con dettagli neri.
 
 (120) Modalità notte Ducks (scelta definitiva 27/10): restano gialli (banner, bordo campo); maglie con base nera e lo stesso disegno originale a zig-zag ma in giallo (DECO DUC ora usa c.trim al posto del nero fisso; in modalità normale trim resta nero, quindi invariato). Tolto l'argento.
+
+(121) Entertainment: la Sfida della notte è passata nell'Arcade (a:1; dalla sfida "‹ Arcade"); il tasto Dynasty TV è grande (.tvbig), rosso pieno, icona telecamera e pastiglia "● LIVE" (pallino lampeggiante quando ci sono partite in corso, come il pallino del menu).

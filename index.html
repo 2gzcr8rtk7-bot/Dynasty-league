@@ -1769,6 +1769,13 @@ nav button>span{white-space:nowrap}
 .court .cnm{font-size:3.3cqw;width:24cqw;max-width:24cqw}
 .court .cev,.court .pdkx{font-size:3.8cqw;min-width:0;padding:.15em .5em}
 .court .cnrow{gap:1.3cqw}.court .cnlv{width:2.2cqw;height:2.2cqw}
+</style><style>
+.tvbig{display:flex;align-items:center;gap:12px;width:100%;margin:14px 0 10px;padding:18px 16px;border:0;border-radius:14px;cursor:pointer;color:#fff;text-align:left;background:linear-gradient(135deg,#e11d2e,#b0101f);box-shadow:0 8px 22px rgba(225,29,46,.35)}
+.tvbi{flex:none;display:grid;place-items:center;width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,.16)}.tvbi svg{width:30px;height:30px}
+.tvbt{flex:1;min-width:0}.tvbt b{display:block;white-space:nowrap;font-family:var(--display);font-style:italic;font-weight:800;font-size:24px;letter-spacing:.02em;text-transform:uppercase;line-height:1}.tvbt small{display:block;margin-top:4px;font-size:12.5px;color:#ffe1e4}
+.tvlv{flex:none;display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:6px;background:#fff;color:#c8102e;font-family:var(--display);font-style:italic;font-weight:900;font-size:12px;letter-spacing:.08em}
+.tvlv i{width:7px;height:7px;border-radius:50%;background:#c8102e}.tvbig.lv .tvlv i{animation:lvp 1.2s infinite}.tvbig:not(.lv) .tvlv{opacity:.85}
+.tvbig .rgo{color:#fff;font-size:24px}
 </style></head>
 
 <body>
@@ -4636,19 +4643,19 @@ function gdAct(b){const d=b.dataset;if(d.gd==="tab"){GD.tab=d.k;GD.open=null}els
 const GAMES=[
   {k:"hl",a:1,t:"Più o Meno",d:"Due giocatori della lega: il secondo ha l'efficienza più alta o più bassa? Allunga la serie.",i:"⇅",c:"#2fd36b"},
   {k:"tiro",a:1,t:"Tiro da 3",d:"45 secondi per segnare più canestri possibile. La mira dipende dall'efficienza del tuo giocatore.",i:"🏀",c:"#f08a1c"},
-  {k:"notte",t:"Sfida della notte",d:"Crea 2-3 gruppi di giocatori di tutta la lega: vince la media di efficienza più alta nella prossima partita.",i:"🌙",c:"#a855f7"},
+  {k:"notte",a:1,t:"Sfida della notte",d:"Crea 2-3 gruppi di giocatori di tutta la lega: vince la media di efficienza più alta nella prossima partita.",i:"🌙",c:"#a855f7"},
   {k:"sim",a:1,t:"Partita simulata",d:"Scegli due franchigie e guarda la partita con quintetti ed efficienze reali.",i:"📺",c:"#3b82f6"},
   {k:"dream",t:"DREAMERS",d:"Il fanta privato della lega: scontri diretti settimanali a colpi di PDK, classifica e playoff a 8.",i:"✦",c:"#8b5cf6"},
   {k:"gdream",t:"G-DREAMERS",d:"Il fanta delle G League: tutti titolari, ogni notte i PDK si sommano. Vince chi ne accumula di più.",i:"✧",c:"#10b981"}];
 function vGiochiHub(){
   const card=g=>`<button class="gmc" data-game="${g.k}" style="--gc:${g.c}"><span class="gmi">${g.i}</span><span class="gmt"><b>${g.t}</b><small>${g.d}</small></span><span class="rgo">›</span></button>`;
-  const ord=["notte","dream","gdream"];
+  const ord=["dream","gdream"];
   if(GAME==="menu"){
     return `${H("Entertainment")}
     <div class="gmenu">${ord.map(k=>card(GAMES.find(g=>g.k===k))).join("")}</div>
-    <button class="arcbtn tvarc" data-tvopen="1"><span class="arci">📺</span><span>Dynasty TV<small>Calendario NBA · risultati · tabellini</small></span><span class="rgo">›</span></button>
+    ${(()=>{const lv=(document.getElementById("t-gi")||{classList:{contains:()=>false}}).classList.contains("navlive");return`<button class="tvbig${lv?" lv":""}" data-tvopen="1"><span class="tvbi"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="2.5" fill="currentColor"/><path d="M16.5 10.2l5-3v9.6l-5-3z" fill="currentColor"/></svg></span><span class="tvbt"><b>Dynasty TV</b><small>Partite, risultati e tabellini</small></span><span class="tvlv"><i></i>${lv?"LIVE":"LIVE"}</span><span class="rgo">›</span></button>`})()}
     <button class="arcbtn" data-game="arcade"><span class="arci">🕹️</span><span>Arcade<small>${GAMES.filter(g=>g.a).map(g=>g.t).join(" · ")}</small></span><span class="rgo">›</span></button>
-    <p class="note">Sfida della notte, DREAMERS e G-DREAMERS sono i giochi fanta della lega; nella Dynasty TV calendario, risultati e tabellini NBA; nell'Arcade i passatempi. Record e risultati restano salvati su questo telefono.</p>`;
+    <p class="note">DREAMERS e G-DREAMERS sono i giochi fanta della lega; nella Dynasty TV calendario, risultati e tabellini NBA in diretta; nell'Arcade i passatempi, compresa la Sfida della notte. Record e risultati restano salvati su questo telefono.</p>`;
   }
   if(GAME==="arcade"){
     return `<button class="gback" data-game="menu">‹ Entertainment</button>${H("Arcade",`<em>Passatempi</em>`)}
