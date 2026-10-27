@@ -537,3 +537,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (122) Tasto Dynasty TV in Entertainment rifatto nello stile delle card Dreamers (.gmc .tvgmc, rosso smorzato #c2414b, riquadro inclinato con telecamera, pastiglia LIVE).
 
 (123) Hub Entertainment: in alto sezione "Entertainment" con Dynasty TV, sotto sezione "Fanta Dreamers" con DREAMERS e G-DREAMERS, poi Arcade.
+
+(124) Pallino rosso sul tasto Entertainment del menu sempre presente; lampeggia solo quando ci sono partite in corso (.navlive).
