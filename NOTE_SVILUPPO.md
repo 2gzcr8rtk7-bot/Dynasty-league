@@ -553,3 +553,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (130) Modalità notte: stile cambiato da "Notte viola" a "Spettro" (verde fantasma: sfondo verde-nero, loghi in verde luminoso con alone, testi verde chiaro) su richiesta di Francesco.
 
 (131) Modalità notte: tornati a "Notte viola" ma SOLO sullo sfondo delle caselle; i loghi restano originali (nessun filtro su colori/luminosità), solo un leggero alone viola dietro (drop-shadow).
+
+(132) Modalità notte: stile "Dreamers neon" con cielo stellato leggero (scelta Francesco 27/10): sfondo della Home come Dreamers con qualche stella in alto; carte arrotondate viola-blu con bordo e alone neon e una decina di stelline di grandezze diverse; loghi originali con alone rosa-viola.
