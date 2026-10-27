@@ -551,3 +551,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (129) Modalità notte "Notte viola" (opzione 4 scelta da Francesco): con CNT acceso render() mette body.notte; tile della Home con cielo viola stellato e loghi scuriti con alone viola; stesso filtro sul logo del banner squadra. Alternative mostrate: Ombra, Sangue, Spettro (in /tmp, non nel repo).
 
 (130) Modalità notte: stile cambiato da "Notte viola" a "Spettro" (verde fantasma: sfondo verde-nero, loghi in verde luminoso con alone, testi verde chiaro) su richiesta di Francesco.
+
+(131) Modalità notte: tornati a "Notte viola" ma SOLO sullo sfondo delle caselle; i loghi restano originali (nessun filtro su colori/luminosità), solo un leggero alone viola dietro (drop-shadow).
