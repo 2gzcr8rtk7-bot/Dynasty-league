@@ -4312,27 +4312,24 @@ function drNotti(){ // notti salvate + ultima notte dal report attuale + notti L
   if(n>=DR_START&&!N[n]){const o={};Object.values(EFF.gioc).forEach(a=>a.forEach(p=>{if(p[8]!=null)o[p[0]]=p[8]}));N[n]=o}
   DR_PROV.clear();for(const d in DRL)if(d>=DR_START&&!N[d]&&Object.keys(DRL[d]).length){N[d]=DRL[d];DR_PROV.add(d)}
   return N}
-/* ===== DREAMERS LIVE: mentre Dreamers è aperto il telefono legge da ESPN i PDK delle notti che il report Dunkest non ha ancora
-   (dal giorno dopo l'ultima notte ufficiale fino a oggi, data USA), con la stessa formula Dunkest del live di Dynasty TV (esSide/tvPdk).
+/* ===== DREAMERS LIVE: Dreamers usa i tabellini di DYNASTY TV (TV.box) per le notti che il report Dunkest non ha ancora
+   (dal giorno dopo l'ultima notte ufficiale fino a oggi, data USA). Se mancano o la notte è in corso li fa scaricare a Dynasty TV
+   (tvEspn(data), stessa fonte e stessa formula Dunkest del box score): un solo scaricamento, numeri identici al box score.
    Sono PROVVISORI: appena arriva il report con quella notte, i dati Dunkest la sostituiscono da soli (drNotti usa prima quelli).
    Nessun dato live viene salvato: l'archivio dreamers-data.js resta fatto solo dai report ufficiali. */
 const DRL={},DR_PROV=new Set(),DRL_FIN={};let DRL_T=null,DRL_RUN=false;
 function drOff(){const N={...DRD.notti},n=drNightOfAgg(EFF.agg);if(n>=DR_START)N[n]=1;return N}
 const drUsaOggi=()=>new Date().toLocaleDateString("en-CA",{timeZone:"America/New_York"});
-async function drLiveFetch(){if(DRL_RUN||typeof esSide!=="function")return false;DRL_RUN=true;let ch=false;
+async function drLiveFetch(){if(DRL_RUN||typeof tvEspn!=="function"||typeof TV==="undefined")return false;DRL_RUN=true;let ch=false;
   try{const off=drOff(),ks=Object.keys(off).sort(),last=ks[ks.length-1],oggi=drUsaOggi();
     const nm={};Object.values(ROSTER).flat().forEach(p=>nm[tvNm(p[0])]=p[0]);
     let d=last&&last>=DR_START?drAdd(last,1):DR_START;
-    for(let i=0;d<=oggi&&i<8;d=drAdd(d,1),i++){if(off[d]||DRL_FIN[d])continue;
-      const r=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates="+d.replace(/-/g,"")+"&t="+Date.now(),{cache:"no-store"});if(!r.ok)continue;const J=await r.json();
-      const o={...(DRL[d]||{})};let tutteFinite=(J.events||[]).length>0;
-      for(const ev of J.events||[]){const c=(ev.competitions||[])[0];if(!c||!c.competitors)continue;const ty=((ev.status||c.status||{}).type)||{};if(ty.state==="pre"||!ty.state){tutteFinite=false;continue}
-        const fin=ty.state==="post"||!!ty.completed;if(!fin)tutteFinite=false;
-        try{const b=await fetch(`https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${ev.id}&t=`+Date.now(),{cache:"no-store"});if(!b.ok)continue;const B=await b.json(),P=(B.boxscore&&B.boxscore.players)||[];
-          const Hc=c.competitors.find(x=>x.homeAway==="home"),Ac=c.competitors.find(x=>x.homeAway==="away");if(!Hc||!Ac)continue;const hs=+Hc.score||0,as=+Ac.score||0,hab=esAb(Hc.team.abbreviation);
-          for(const T of P){const win=fin&&(esAb(T.team.abbreviation)===hab?hs>as:as>hs);
-            for(const row of esSide(T,win)){const k=nm[tvNm(row[0])];if(k)o[k]=row[19]}}}catch(e){}}
-      if(JSON.stringify(o)!==JSON.stringify(DRL[d]||{})){DRL[d]=o;ch=true}if(tutteFinite)DRL_FIN[d]=1}}catch(e){}
+    for(let i=0;d<=oggi&&i<8;d=drAdd(d,1),i++){if(off[d])continue;
+      /* stessi dati di Dynasty TV: se mancano o la notte è in corso, li faccio scaricare a Dynasty TV (tvEspn), poi leggo TV.box */
+      if(!DRL_FIN[d])try{await tvEspn(d)}catch(e){}
+      const G=TV.days[d]||[],o={};let tutte=G.length>0;
+      for(const g of G){const B=g[7]&&TV.box[g[7]];if(g[5]!=="F"||!B)tutte=false;if(!B||g[5]==="S")continue;for(const r of[...B.a,...B.h]){const k=nm[tvNm(r[0])];if(k&&r[19]!=null)o[k]=+r[19]}}
+      if(JSON.stringify(o)!==JSON.stringify(DRL[d]||{})){DRL[d]=o;ch=true}if(tutte)DRL_FIN[d]=1}}catch(e){}
   DRL_RUN=false;return ch}
 function drLiveStart(){const go=()=>{if(cur!=="giochi"||GAME!=="dream"||document.hidden)return;drLiveFetch().then(c=>{if(c&&cur==="giochi"&&GAME==="dream"){const y=scrollY;render();scrollTo(0,y)}})};
   if(!DRL_T){DRL_T=setInterval(go,60000);setTimeout(go,0)}}
@@ -4818,7 +4815,7 @@ function esSide(t,win){const S=(t.statistics||[])[0]||{},lab=(S.labels||S.names|
     const st={points:num(g("PTS")),reboundsOffensive:num(g("OREB")),reboundsDefensive:num(g("DREB")),reboundsTotal:num(g("REB")),assists:num(g("AST")),steals:num(g("STL")),blocks:num(g("BLK")),blocksReceived:0,turnovers:num(g("TO")),foulsPersonal:num(g("PF")),fieldGoalsMade:fgm,fieldGoalsAttempted:fga,threePointersMade:tpm,threePointersAttempted:tpa,freeThrowsMade:ftm,freeThrowsAttempted:fta,plusMinusPoints:num(g("+/-"))};
     const mn=String(g("MIN")||"0"),mm=mn.includes(":")?mn:`${parseInt(mn)||0}:00`;if(mm==="0:00"&&!st.points&&!st.reboundsTotal&&!st.assists)return null;
     return[(p.athlete||{}).displayName||"",p.starter?1:0,mm,st.points,st.reboundsOffensive,st.reboundsDefensive,st.reboundsTotal,st.assists,st.steals,st.blocks,st.turnovers,st.foulsPersonal,fgm,fga,tpm,tpa,ftm,fta,Math.round(st.plusMinusPoints),tvPdk(st,!!p.starter,win)]}).filter(Boolean).sort((x,y)=>y[1]-x[1])}
-async function tvEspn(){const r=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?t="+Date.now(),{cache:"no-store"});if(!r.ok)return false;const J=await r.json();
+async function tvEspn(dd){const r=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?"+(dd?"dates="+dd.replace(/-/g,"")+"&":"")+"t="+Date.now(),{cache:"no-store"});if(!r.ok)return false;const J=await r.json();
   for(const ev of J.events||[]){const c=(ev.competitions||[])[0];if(!c||!c.competitors)continue;const Hc=c.competitors.find(x=>x.homeAway==="home"),Ac=c.competitors.find(x=>x.homeAway==="away");if(!Hc||!Ac)continue;
     const a=esAb(Ac.team.abbreviation),hm=esAb(Hc.team.abbreviation);if(!TV.teams[a]||!TV.teams[hm])continue;
     const d=new Date(ev.date).toLocaleDateString("en-CA",{timeZone:"America/New_York"}),key=d+"_"+a+hm,st=ev.status||c.status||{},ty=st.type||{};
