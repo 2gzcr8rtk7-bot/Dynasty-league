@@ -489,3 +489,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (98) Dreamers/G-Dreamers: punteggi squadra (.drr em, .drch em) con lo stesso stile dei punteggi di Dynasty TV (.tvsc): var(--display) corsivo 800, 26px.
 
 (99) Box score sfida Dreamers in Dynasty TV: nel riquadro rosso solo lo stato (Live / In corso / Da giocare / Finale) come le partite NBA; sotto, in piccolo, "Dreamers" (+ "PDK provvisori" se live). Punteggio con lo stesso stile delle partite NBA (.tvsb .tmid).
+
+(100) DREAMERS: punteggio squadra = SOMMA dei punti dei titolari (capitano ×1,5, 2°-6° pieni, 7°-10° ×½), non più la media (richiesta Francesco 27/10/2026). In corso = somma di chi ha già giocato; a turno chiuso i posti vuoti valgono 0. Testi delle note aggiornati.

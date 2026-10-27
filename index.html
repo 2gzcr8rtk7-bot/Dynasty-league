@@ -4310,9 +4310,9 @@ function ntShare(btn){
    - Squadre: le 8 franchigie; titolari = i 10 con valore più alto (VALORI, valori Dynasty League), riserve = gli altri.
    - Turni da lunedì a domenica (date NBA USA). 1–21 regular season (3 gironi all'italiana), 22 quarti, 23 semifinali, 24 finale (+ 3° posto).
    - PDK: punteggio settimanale di un giocatore = media dei PDK (punti Dunkest) delle sue partite della settimana.
-     Punteggio di turno = media semplice dei 10 PDK settimanali.
+     Punteggio di turno = SOMMA dei punti dei 10 titolari (capitano ×1,5, 2°-6° pieni, 7°-10° ×½) — dal 27/10/2026, prima era la media.
      A turno chiuso, ogni titolare senza minuti è sostituito dalla miglior riserva (per valore) che ha giocato; se non ce ne sono, 0.
-     Durante il turno il punteggio è "in corso": media dei titolari che hanno già giocato.
+     Durante il turno il punteggio è "in corso": somma dei titolari che hanno già giocato.
    - Dati: DREAM_DATA in dreamers-data.js (generato da tools/dreamers.mjs) + la notte dell'ultimo report, presa dal vivo da EFF. */
 const DR_START="2026-10-26",DR_REG=15,DR_TOT=24,DR_FALLBACK=1600; // 15 turni di regular season + playoff (max 9 settimane: 3 turni al meglio delle 3)
 const DRD=typeof DREAM_DATA!=="undefined"?DREAM_DATA:{notti:{},form:{}};
@@ -4382,7 +4382,7 @@ function drTeam(k,t,W){W=W||drWeek(k);const F=drForm(k)[t]||{t:[],r:[]};
   /* posti fissi: 1° capitano ×1,5, dal 2° al 6° punteggio pieno, dal 7° al 10° metà (anche a settimana in corso con meno di 10 giocatori) */
   top.forEach((x,i)=>{x.m=i===0?1.5:i>=6?.5:1;x.cap=i===0;x.half=x.m===.5;x.f=x.e*x.m});
   const zeros=W.closed?Math.max(0,10-top.length):0;
-  const score=top.length?(W.closed?top.reduce((a,x)=>a+x.f,0)/10:top.reduce((a,x)=>a+x.f,0)/top.length):(W.closed?0:null);
+  const score=top.length?top.reduce((a,x)=>a+x.f,0):(W.closed?0:null); /* punteggio squadra = SOMMA dei punti dei titolari (deciso 27/10/2026) */
   return{t,slots:top,top,trib,wait,zeros,res:F.r,score,played:top.length}}
 function drPairs(k,stand,P){if(k<=DR_REG)return DR_SCHED[k-1];P=P||drPO(stand);return P.W[k]?P.W[k].pr.map(x=>[x.a,x.b]):[]}
 function drStand(){const S={};Object.keys(TEAMS).forEach(t=>S[t]={t,w:0,l:0,pf:0,pa:0,n:0});
@@ -4422,7 +4422,7 @@ function vDream(){fantaLiveAvvia();
       ${sec("cap","Capitano ×1,5",T.top.filter(s=>s.cap))}${sec("full","Punteggio pieno",T.top.filter(s=>!s.cap&&!s.half))}${sec("half","Panchina · ½",T.top.filter(s=>s.half))}${zr}
       ${sec("trib","Tribuna",T.trib)}${sec(W.closed?"trib":"wait",W.closed?"Non hanno giocato":"In attesa",T.wait)}</div>`};
     body=`<button class="gback" data-dr="close">‹ ${DR_PH(k,P)}</button><div class="drdet">${col(A)}${col(B)}</div>
-    <p class="note">${W.closed?"Turno chiuso: titolari = i 10 della rosa con il PDK medio settimanale più alto (capitano ×1,5, ultimi 4 ½), gli altri in tribuna. Se meno di 10 hanno giocato, i posti mancanti valgono 0.":"Turno in corso: tutta la rosa concorre; i 10 con il PDK medio più alto finora sono titolari (capitano ×1,5, ultimi 4 ½) e cambiano a ogni report. Punteggio in corso = media dei titolari attuali."}</p>`}
+    <p class="note">${W.closed?"Turno chiuso: titolari = i 10 della rosa con il PDK medio settimanale più alto (capitano ×1,5, dal 2° al 6° pieni, dal 7° al 10° ½), gli altri in tribuna. Punteggio = somma dei loro punti; se meno di 10 hanno giocato, i posti mancanti valgono 0.":"Turno in corso: tutta la rosa concorre; i 10 con il PDK medio più alto finora sono titolari (capitano ×1,5, dal 2° al 6° pieni, dal 7° al 10° ½) e cambiano a ogni aggiornamento. Punteggio in corso = somma dei punti dei titolari attuali."}</p>`}
   else if(DR.tab==="turno"){const pr=drPairs(k,st,P);
     const sub=(a,b)=>{if(!PW)return"";const x=PW.pr.find(x=>x.a===a&&x.b===b),ix=P.R[PW.r].indexOf(x);let wa=0,wb=0;x.g.filter(g=>g.k<=k).forEach(g=>g.A>=g.B?wa++:wb++);
       return `<span class="drsub">${PW.r===2?["Finalissima","Finale 3° posto","Finale 5° posto","Finale 7° posto"][ix]:PW.r===1?(ix<2?"Semifinale "+(ix+1):"Piazzamenti 5°–8° · "+(ix-1)):"Quarto "+(ix+1)} · gara ${PW.g} · serie ${wa}–${wb}</span>`};
@@ -4438,7 +4438,7 @@ function vDream(){fantaLiveAvvia();
     const form=t=>{const o=[];for(let k=1;k<=DR_REG;k++){const w=drWeek(k);if(!w.closed)continue;const pr=DR_SCHED[k-1].find(p=>p.includes(t));if(!pr)continue;const o2=pr[0]===t?pr[1]:pr[0];o.push(drTeam(k,t,w).score>=drTeam(k,o2,w).score?"V":"P")}return o.slice(-5)};
     const ld=st[0]?st[0].w:0;
     body=`<div class="drcla">${st.map((x,i)=>{const f=form(x.t);return `<div class="drcr tint ${i<1?"lead":""}" style="--tc:${TEAMS[x.t].bg}"><span class="drpos">${i+1}</span>${drLg(x.t,"l")}<div class="drci"><b>${TEAMS[x.t].name}</b><small>${x.n?`${x.n} turni giocati`:"nessun turno giocato"}</small><span class="drfm">${f.length?f.map(r=>`<i class="${r}">${r}</i>`).join(""):'<em>forma —</em>'}</span></div><div class="drcwl"><b>${x.w}<small>V</small></b><b class="l">${x.l}<small>P</small></b><b class="avg">${x.avg==null?"—":pdkF(x.avg)}<small>MEDIA</small></b>${i>0&&ld>x.w?`<em>−${ld-x.w} V</em>`:""}</div></div>`}).join("")}</div>
-    <p class="note">Vittoria = punteggio di turno più alto. A parità di vittorie è davanti chi ha la media punteggio più alta. Tutte e 8 le squadre vanno ai playoff: la posizione decide gli accoppiamenti (1ª–8ª, 4ª–5ª, 2ª–7ª, 3ª–6ª). Serie al meglio delle 3, una gara a settimana; ci sono anche le serie per il 3°, 5° e 7° posto, così la classifica finale va da 1 a 8.</p>`}
+    <p class="note">Vittoria = punteggio di turno più alto. A parità di vittorie è davanti chi ha la media punteggio più alta (punti fatti per turno). Tutte e 8 le squadre vanno ai playoff: la posizione decide gli accoppiamenti (1ª–8ª, 4ª–5ª, 2ª–7ª, 3ª–6ª). Serie al meglio delle 3, una gara a settimana; ci sono anche le serie per il 3°, 5° e 7° posto, così la classifica finale va da 1 a 8.</p>`}
   else{const sd=P.seed,R=P.R,R1=R[1]||[],R2=R[2]||[];
     const lg=t=>`<span class="bklg" style="--tc:${TEAMS[t].bg}">${badge(t)}</span>`;
     const m=(x,ph,lab,cls="")=>{const head=lab?`<span class="bklab">${lab}</span>`:"";
@@ -4464,7 +4464,7 @@ function vDream(){fantaLiveAvvia();
     <div class="drfinal">${Array.from({length:8},(_,i)=>{const t=P.fin[i];return `<div class="drfr ${t?"tint":""} ${i===0&&t?"gold":""}" style="${t?"--tc:"+TEAMS[t].bg:""}"><span class="drpos">${i+1}</span>${t?`<span class="bklg" style="--tc:${TEAMS[t].bg}">${badge(t)}</span><b>${TEAMS[t].name}</b>`:`<em>da decidere</em>`}</div>`}).join("")}</div>`}
   return `<div class="drroom"><button class="drexit" data-game="menu">‹ Torna all'app</button><div class="drhd"><span class="drlogo">DREAMERS</span><small>Fanta PDK · stagione ${STAGIONE_CORRENTE}</small></div>
   <div class="drtabs">${tabs}</div>${(()=>{const pv=[...DR_PROV].filter(d=>d>=W.start&&d<=W.end).sort();return pv.length?`<div class="drlive"><i></i><span><b>Live</b> · ${pv.length===1?"notte":"notti"} ${pv.map(drFmt).join(", ")}: PDK provvisori (ESPN, formula Dunkest). Si sostituiscono da soli con i dati ufficiali Dunkest quando arriva il report.</span></div>`:""})()}${body}</div>
-  <p class="note">Meritocrazia: ogni settimana i 10 giocatori della rosa con il PDK medio più alto diventano titolari, gli altri vanno in tribuna. Punteggio = media dei 10 PDK settimanali (media dei punti Dunkest delle partite della settimana); il migliore è capitano ×1,5 e i 4 peggiori valgono la metà (provvisori durante la settimana, definitivi a turno chiuso). Dati aggiornati al ${EFF.agg}.</p>`}
+  <p class="note">Meritocrazia: ogni settimana i 10 giocatori della rosa con il PDK medio più alto diventano titolari, gli altri vanno in tribuna. Punteggio squadra = somma dei punti dei 10 titolari (ognuno porta il suo PDK medio della settimana, cioè la media dei punti Dunkest delle sue partite); il migliore è capitano ×1,5, dal 2° al 6° punteggio pieno e dal 7° al 10° valgono la metà (provvisori durante la settimana, definitivi a turno chiuso). Dati aggiornati al ${EFF.agg}.</p>`}
 function drAct(b){const d=b.dataset;
   if(d.dr==="tab"){DR.tab=d.k;DR.open=null}
   else if(d.dr==="wk"){DR.k=Math.max(1,Math.min(drPO(drStand()).end,DR.k+(+d.d)));DR.open=null}
@@ -4819,7 +4819,7 @@ function tvDrGame(key){try{const[ks,a,b]=key.split("|"),k=+ks,st=drStand(),P=drP
   <tbody>${grp("In campo",inCampo,"full")}${grp("Panchina · vale ½",panca,"half")}${zeri}${grp("Tribuna",T.trib,"trib")}${grp(W.closed?"Non ha giocato":"In attesa",T.wait,"wait")}
   <tr class="tot"><td>Punteggio squadra</td><td></td><td></td><td class="dfp">${T.score==null?"—":drScore(T.score)}</td></tr></tbody></table></div>
   <button class="advbtn" data-drgo="${key}">Apri in Dreamers ›</button>
-  <p class="note">${DR_PH(k,P)} · ${drFmt(W.start)}–${drFmt(W.end)}. PDK = media dei punti Dunkest delle partite della settimana. I 10 con il PDK più alto sono titolari: il migliore è capitano (C, ×1,5), poi 5 a punteggio pieno (in campo) e gli ultimi 4 in panchina a metà; gli altri vanno in tribuna. Punteggio squadra = somma dei punti ÷ ${W.closed?"10":"titolari che hanno giocato"} (${pdkF(somma)} ÷ ${W.closed?10:Math.max(1,T.top.length)}).${prov?" Ci sono notti con PDK provvisori (live): si sostituiscono con i dati Dunkest al report.":""}</p>`}catch(e){return""}}
+  <p class="note">${DR_PH(k,P)} · ${drFmt(W.start)}–${drFmt(W.end)}. PDK = media dei punti Dunkest delle partite della settimana. I 10 con il PDK più alto sono titolari: il migliore è capitano (C, ×1,5), poi 5 a punteggio pieno (in campo) e gli ultimi 4 in panchina a metà; gli altri vanno in tribuna. Punteggio squadra = somma dei punti dei titolari (${pdkF(somma)}).${prov?" Ci sono notti con PDK provvisori (live): si sostituiscono con i dati Dunkest al report.":""}</p>`}catch(e){return""}}
 function vTV0(){setTimeout(tvWeekPos,0);const T=TVD(),ks=Object.keys(T.days).sort();if(!ks.length)return`${H("Dynasty TV")}<div class="tvempty">Calendario non ancora disponibile.</div>`;
   if(!TVS.d||!T.days[TVS.d])TVS.d=tvDefDay();
   if(TVS.dr){const h=tvDrGame(TVS.dr);if(h)return h;TVS.dr=null}
