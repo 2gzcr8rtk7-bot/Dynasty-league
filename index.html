@@ -1818,11 +1818,8 @@ html body.notte:not([data-v=home]) nav button:not([aria-selected="true"]){backgr
 html body.notte[data-v=home] #main .hsrch.hsrch{background-image:linear-gradient(rgba(6,2,18,0.3),rgba(6,2,18,0.3))!important}
 html.notte:not(.dreamfs){background-color:#0d0620}
 </style><style>
-/* (141) Dreamers/G-Dreamers – Turno: colore dei punteggi. Turno in corso: chi è avanti verde, chi è dietro rosso (parità: neutro). A fine turno: vincitore giallo/oro, sconfitto bianco */
-.drms .drr.slead em{color:#4ade80!important;text-shadow:0 0 12px rgba(74,222,128,.55)!important}
-.drms .drr.strail em{color:#f87171!important;text-shadow:0 0 12px rgba(248,113,113,.45)!important}
-.drms .drr.sgold em{color:#fcd34d!important;text-shadow:0 0 14px rgba(251,191,36,.7)!important}
-.drms .drr.slost em{color:#fff!important;text-shadow:none!important}
+/* (141) Dreamers/G-Dreamers – Turno: chi è avanti (turno in corso) o ha vinto (fine turno) ha il punteggio viola acceso; l'altro resta normale */
+.drms .drr.slead em,.drms .drr.sgold em{color:#d8b4fe!important;text-shadow:0 0 10px rgba(192,132,252,.95),0 0 22px rgba(168,85,247,.75)!important}
 </style></head>
 
 <body>

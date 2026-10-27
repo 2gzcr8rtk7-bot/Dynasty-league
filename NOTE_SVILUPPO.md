@@ -574,3 +574,4 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
     Aggiornato: la parte alta (header + menu, fino alla linea viola) resta al livello 1 in tutte le schermate; il livello 3 vale solo sotto la linea viola, fuori dalla Home.
 
 (141) 27/10/2026 — Dreamers/G-Dreamers, scheda Turno: colore dei punteggi delle sfide. Turno in corso: chi è avanti verde, chi è dietro rosso (parità o punteggio assente: colore normale). A fine turno (W.closed): vincitore giallo/oro, sconfitto bianco. Classi .slead/.strail/.sgold/.slost sulle righe .drr (solo lista .drms; le card Dreamers dentro Dynasty TV non cambiano).
+    Aggiornato: niente verde/rosso/oro. Solo chi è avanti (turno in corso) o ha vinto (fine turno) ha il punteggio viola acceso con alone; l'altro resta normale.
