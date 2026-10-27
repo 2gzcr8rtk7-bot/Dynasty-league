@@ -499,3 +499,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (103) REGOLA: la G League è una squadra DIVERSA dalla franchigia principale (richiesta di Francesco 27/10). Nelle sezioni della squadra principale NON vanno i giocatori G League: tolti dal Cap (candidati capitano; erano stati aggiunti nel commit 4560bbe), dal box "Live stanotte" del Campo e dal menu giocatori del grafico della squadra (lì compare solo il giocatore G League aperto dal Trend). La G League resta nelle sue sezioni (G League, G-Dreamers, Trend con logo G League, Free Agent con diritti). La difesa per ruolo del Cap continua a usare i dati di tutta la lega.
 
 (104) Fix "Live stanotte" del Campo: dopo mezzanotte (ora di New York, cioè dalle 6 italiane… e già dalle 5 con l'ora solare) la notte in corso è "ieri" in data USA, ma il Campo scaricava solo "oggi" → box vuoto. Ora FANTA_LIVE per il Campo scarica ieri + oggi. fantaLiveAvvia scarica subito a ogni apertura (se l'ultimo giro è di più di 15 s fa) e poi ogni 45 s.
+
+(105) Campo: il tasto "Roster completo ›" (con il tasto nascosto dei Ducks) sta sopra il box "Live stanotte", subito dopo la panchina.

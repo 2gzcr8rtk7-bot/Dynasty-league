@@ -3693,8 +3693,8 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   <div class="ctools"><button class="ctool" id="ccap"><span class="ci">C</span>Cap<small>Chi mettere capitano</small></button><button class="ctool" id="cmul"><span class="ci mul">€</span>Multe<small>Capitano senza multa</small></button></div>
   ${H("Panchina")}
   <div class="bench">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><span class="bev">${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}</span></button>`).join("")}</div>
-  ${campoLive(t)}
-  <div class="crwrap"><button class="croster" id="croster">Roster completo ›</button>${t==="DUC"?`<button class="cpow" id="cpow" aria-label="Accesso riservato"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M7.1 6.3a8 8 0 1 0 9.8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>`:""}</div>`;
+  <div class="crwrap"><button class="croster" id="croster">Roster completo ›</button>${t==="DUC"?`<button class="cpow" id="cpow" aria-label="Accesso riservato"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M7.1 6.3a8 8 0 1 0 9.8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>`:""}</div>
+  ${campoLive(t)}`;
 }
 function cupSvg(pos,id){
   const C={1:["#fff3b0","#f5b400","#8a5f00"],2:["#ffffff","#c3cad6","#6d7588"],3:["#ffd9b0","#cd7f32","#6e3c10"]}[pos];
