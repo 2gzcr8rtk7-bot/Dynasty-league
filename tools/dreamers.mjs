@@ -23,7 +23,9 @@ function getConst(src, name) {
 }
 const iso = d => d.toISOString().slice(0, 10);
 const nightOf = agg => { const [g, m, a] = agg.split("/").map(Number); const d = new Date(Date.UTC(a, m - 1, g)); d.setUTCDate(d.getUTCDate() - 1); return iso(d) };
-const weekOf = night => Math.floor((Date.parse(night) - Date.parse(START)) / 864e5 / 7) + 1;
+/* turni = DR_TURNI di index.html (prospetto A, turni corti); le notti fuori da un turno (pause) cadono nel turno successivo */
+const TURNI = JSON.parse(readFileSync(new URL("../index.html", import.meta.url), "utf8").match(/const DR_TURNI=(\[\[.*?\]\]);/)[1]);
+const weekOf = night => { const i = TURNI.findIndex(x => night <= x[1]); return i < 0 ? TURNI.length : i + 1 };
 
 function parse(src) {
   const EFF = getConst(src, "EFF"); if (!EFF || !EFF.agg || !EFF.gioc) return null;

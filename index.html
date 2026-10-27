@@ -4382,15 +4382,15 @@ function drPanca(t,T){const rp=n=>(ROSTER[t]||[]).find(p=>p[0]===n)||[n,"",ruolo
 /* foglio con le partite del turno del giocatore (come le caselle della sfida Dreamers) */
 function drWkOpen(n){const C=CAMPO_DR;if(!C||!n)return;const T=C.T,x=[...T.top,...T.trib,...T.wait].find(y=>y.n===n);if(!x)return;
   const i=T.top.indexOf(x),pos=i===0?"Capitano · ×1,5":i>0&&i<5?"In campo · punteggio pieno":i===5?"6° uomo · punteggio pieno":i>=6?"Panchina · ×½":"Tribuna · non conta nel turno";
-  const S=drSettimana(n,C.W),GG=["Lun","Mar","Mer","Gio","Ven","Sab","Dom"],p=(ROSTER[C.t]||[]).find(y=>y[0]===n)||[n,"",ruoloDi(n),""];
+  const S=drSettimana(n,C.W),GG=["Dom","Lun","Mar","Mer","Gio","Ven","Sab"],p=(ROSTER[C.t]||[]).find(y=>y[0]===n)||[n,"",ruoloDi(n),""];
   const rows=S.map((y,k)=>{if(!y)return"";const o=y.opp.startsWith("@")?`@ ${y.opp.slice(1)}`:`vs ${y.opp}`,best=y.v!=null&&x.e!=null&&y.v===x.e;
-    return`<div class="dwr${best?" best":""}"><span class="dwd"><b>${GG[k]}</b><small>${y.d.slice(8)}/${y.d.slice(5,7)}</small></span><span class="dwo">${o}${best?'<small>miglior PDK · conta questo</small>':""}</span><span class="dwv">${y.v!=null?pdkB(y.v,pdkF(y.v)):y.lv?'<em class="lv">Live</em>':y.fin?"<em>Non ha giocato</em>":"<em>Da giocare</em>"}</span></div>`}).join("");
+    return`<div class="dwr${best?" best":""}"><span class="dwd"><b>${GG[new Date(y.d+"T00:00:00Z").getUTCDay()]}</b><small>${y.d.slice(8)}/${y.d.slice(5,7)}</small></span><span class="dwo">${o}${best?'<small>miglior PDK · conta questo</small>':""}</span><span class="dwv">${y.v!=null?pdkB(y.v,pdkF(y.v)):y.lv?'<em class="lv">Live</em>':y.fin?"<em>Non ha giocato</em>":"<em>Da giocare</em>"}</span></div>`}).join("");
   const el=document.createElement("div");el.className="dwsh";
   el.innerHTML=`<div class="dwbox" role="dialog" aria-label="Partite del turno"><button class="dwx" aria-label="Chiudi">✕</button>
    <div class="dwhd">${jersey(C.t,p[1],n)}<div><b>${RTR(n)}${n}</b><small>${({G:"Guardia",F:"Ala",C:"Centro"})[p[2]]||""} · ${p[3]} · ${pos}</small></div></div>
    <div class="dwsum"><span>${DR_PH(C.k,C.P)} · ${drFmt(C.W.start)}–${drFmt(C.W.end)}</span><span>Punteggio: ${x.e==null?"<b>in attesa</b>":`<b>${pdkF(x.e)}</b>${x.m&&x.m!==1&&i>=0?` ${x.m===1.5?"×1,5":"×½"} = <b>${pdkF(x.f)}</b>`:""}`}</span></div>
    <div class="dwl">${rows||'<p class="note">Nessuna partita NBA in questo turno.</p>'}</div>
-   <p class="note">Dreamers: conta il miglior PDK della settimana. PDK live da Dynasty TV, poi ufficiali dal report Dunkest.</p></div>`;
+   <p class="note">Dreamers: conta il miglior PDK del turno. PDK live da Dynasty TV, poi ufficiali dal report Dunkest.</p></div>`;
   const chiudi=()=>el.remove();el.onclick=e=>{if(e.target===el||e.target.closest(".dwx"))chiudi()};document.body.appendChild(el)}
 function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   const t=curTeam,c=TEAMS[t],st=standings().find(x=>x.t===t);
@@ -5117,7 +5117,7 @@ const DRD=typeof DREAM_DATA!=="undefined"?DREAM_DATA:{notti:{},form:{}};
 const drIso=d=>d.toISOString().slice(0,10);
 const drAdd=(s,n)=>{const d=new Date(s+"T00:00:00Z");d.setUTCDate(d.getUTCDate()+n);return drIso(d)};
 const drNightOfAgg=a=>{const[g,m,y]=a.split("/").map(Number);return drIso(new Date(Date.UTC(y,m-1,g-1)))};
-const drWeekStart=k=>drAdd(DR_START,(k-1)*7);
+const drWeekStart=k=>DR_TURNI[Math.min(k,DR_TURNI.length)-1][0],drWeekEnd=k=>DR_TURNI[Math.min(k,DR_TURNI.length)-1][1];
 const drFmt=s=>{const[y,m,d]=s.split("-");return d+"/"+m};
 function drNotti(){ // notti salvate + ultima notte dal report attuale + notti LIVE provvisorie (tabellini di Dynasty TV) non ancora nel report
   const N={...DRD.notti};const n=drNightOfAgg(EFF.agg);
@@ -5160,7 +5160,7 @@ function fantaLiveAvvia(){const go=()=>{if(document.hidden)return;const A=FANTA_
 
 
 const drLast=()=>{const k=Object.keys(drNotti()).sort();return k[k.length-1]||null};
-function drCurWeek(P){const l=drLast(),today=drIso(new Date()),ref=l&&l>today?l:today;const k=Math.floor((Date.parse(ref)-Date.parse(DR_START))/864e5/7)+1;return Math.max(1,Math.min(P?P.end:DR_TOT,k))}
+function drCurWeek(P){const l=drLast(),today=drIso(new Date()),ref=l&&l>today?l:today;let k=DR_TURNI.findIndex(x=>ref<=x[1])+1;if(!k)k=DR_TOT;return Math.max(1,Math.min(P?P.end:DR_TOT,k))}
 function drForm(k){if(DRD.form[k])return DRD.form[k];
   const f={};Object.entries(ROSTER).forEach(([t,a])=>{const s=a.map(p=>p[0]).sort((x,y)=>(valOf(y)??DR_FALLBACK)-(valOf(x)??DR_FALLBACK));f[t]={t:s.slice(0,10),r:s.slice(10)}});return f}
 /* calendario: metodo del cerchio, 7 giornate × 3 gironi (nel 2° girone casa/trasferta invertite) */
@@ -5169,10 +5169,10 @@ function drSchedule(){const T=Object.keys(TEAMS),n=T.length,out=[];let a=T.slice
   const all=[];for(let c=0;c<3;c++)out.forEach(pr=>all.push(pr.map(([x,y])=>c===1?[y,x]:[x,y])));return all}
 const DR_SCHED=drSchedule();
 function drWeek(k){ // efficienze settimanali dei giocatori
-  const N=drNotti(),s=drWeekStart(k),acc={};let nights=0;
-  for(let i=0;i<7;i++){const n=N[drAdd(s,i)];if(!n)continue;nights++;Object.entries(n).forEach(([p,e])=>{const a=acc[p]||(acc[p]={s:0,g:0,b:null});const v=(typeof e==="number"?e:0);a.s+=v;a.g++;a.b=a.b==null?v:Math.max(a.b,v)})}
-  const l=drLast(),closed=!!l&&l>=drAdd(s,6);
-  return{acc,nights,closed,started:!!l&&l>=s,start:s,end:drAdd(s,6)}}
+  const N=drNotti(),s=drWeekStart(k),e=drWeekEnd(k),len=Math.round((Date.parse(e)-Date.parse(s))/864e5)+1,acc={};let nights=0;
+  for(let i=0;i<len;i++){const n=N[drAdd(s,i)];if(!n)continue;nights++;Object.entries(n).forEach(([p,e])=>{const a=acc[p]||(acc[p]={s:0,g:0,b:null});const v=(typeof e==="number"?e:0);a.s+=v;a.g++;a.b=a.b==null?v:Math.max(a.b,v)})}
+  const l=drLast(),closed=!!l&&l>=e;
+  return{acc,nights,len,closed,started:!!l&&l>=s,start:s,end:e}}
 const drEff=a=>a?(a.b!=null?a.b:a.s/a.g):null; // MIGLIOR PDK della settimana (dal 27/10/2026; prima era la media)
 /* RUOLI DREAMERS (regola invalicabile, 27/10/2026): i 10 titolari sono SEMPRE 4 guardie, 4 ali e 2 centri,
    e tra capitano + punteggio pieno (i primi 6) c'è almeno 1 centro, 1 ala e 1 guardia. Vale prima della meritocrazia:
@@ -5180,7 +5180,11 @@ const drEff=a=>a?(a.b!=null?a.b:a.s/a.g):null; // MIGLIOR PDK della settimana (d
 const DR_QUOTE={G:4,F:4,C:2};
 /* TURNO SENZA PARTITE PER CALENDARIO (regola 27/10/2026): se la squadra NBA del giocatore non ha nessuna partita nel turno (pausa/calendario),
    il giocatore vale la sua MEDIA STAGIONALE PDK. NON vale per infortuni/scelte dell'allenatore (squadra con partite ma lui non gioca = 0). */
-const DR_ZERO={7:["DAL","LAL"]}; /* turno -> squadre NBA a 0 partite (calcolato dal calendario ufficiale NBA fino al 17/3/2027) */
+/* CALENDARIO TURNI (prospetto A, 27/10/2026): turni corti da 2-4 giorni, ogni squadra NBA gioca 1 o 2 partite per turno (turno 1 = settimana già in corso, 7 giorni).
+   DR_TURNI[k-1]=[primo giorno, ultimo giorno] (date USA); i turni saltano la pausa NBA Cup (4-11/12). DR_ZERO = turno -> squadre NBA a 0 partite (da calendario NBA ufficiale).
+   Se si cambiano le date rigenerare entrambi. */
+const DR_TURNI=[["2026-10-26","2026-11-01"],["2026-11-02","2026-11-03"],["2026-11-04","2026-11-06"],["2026-11-07","2026-11-09"],["2026-11-10","2026-11-12"],["2026-11-13","2026-11-15"],["2026-11-16","2026-11-18"],["2026-11-19","2026-11-21"],["2026-11-22","2026-11-23"],["2026-11-24","2026-11-27"],["2026-11-28","2026-11-30"],["2026-12-01","2026-12-03"],["2026-12-12","2026-12-15"],["2026-12-16","2026-12-18"],["2026-12-19","2026-12-22"],["2026-12-23","2026-12-25"],["2026-12-26","2026-12-28"],["2026-12-29","2026-12-31"],["2027-01-01","2027-01-03"],["2027-01-04","2027-01-06"],["2027-01-07","2027-01-08"],["2027-01-09","2027-01-11"],["2027-01-12","2027-01-14"]];
+const DR_ZERO={"5":["ATL"],"8":["MIA"]};
 function drCalZero(n,k){const p=Object.values(ROSTER).flat().find(x=>x[0]===n);return !!(p&&DR_ZERO[k]&&DR_ZERO[k].includes(p[3]))}
 function drTeam(k,t,W){W=W||drWeek(k);const F=drForm(k)[t]||{t:[],r:[]};
   /* MERITOCRAZIA dentro i ruoli: per ogni ruolo entrano i migliori PDK della settimana (4 G, 4 A, 2 C).
@@ -5226,7 +5230,7 @@ function drScore(v){return v==null?"—":pdkF(v)}
 /* ===== DREAMERS · DUELLO (sfida aperta): giocatori uno contro uno per posto, con maglia, PDK colorato, moltiplicatore
    e le partite della settimana (7 caselle lun→dom: giocata = PDK colorato, da giocare = avversario tratteggiato). ===== */
 function drSettimana(n,W){const p=Object.values(ROSTER).flat().find(x=>x[0]===n),nba=p?p[3]:"",N=drNotti(),out=[];
-  for(let i=0;i<7;i++){const d=drAdd(W.start,i),g=(typeof TV!=="undefined"&&TV.days[d]||[]).find(x=>x[0]===nba||x[1]===nba);
+  for(let i=0;i<(W.len||7);i++){const d=drAdd(W.start,i),g=(typeof TV!=="undefined"&&TV.days[d]||[]).find(x=>x[0]===nba||x[1]===nba);
     if(!g){out.push(null);continue}const casa=g[1]===nba,opp=casa?g[0]:g[1],v=N[d]&&N[d][n];
     out.push({d,opp:(casa?"":"@")+opp,v:typeof v==="number"?v:null,fin:g[5]==="F"||v!=null,lv:g[5]==="L"})}
   return out}
@@ -5235,12 +5239,12 @@ function drProiez(k,t,W){/* chi non ha ancora giocato ma ha partite in settimana
   return drTeam(k,t,{...W,acc:A,closed:true}).score}
 function drDuel(k,a,b,W,P){const A=drTeam(k,a,W),B=drTeam(k,b,W),f1=v=>v==null?"—":pdkF(v);
   const pa=W.closed?null:drProiez(k,a,W),pb=W.closed?null:drProiez(k,b,W);
-  let pw=50;if(W.closed){pw=A.score>B.score?100:A.score<B.score?0:50}else if(pa!=null&&pb!=null){const left=Math.max(.15,1-W.nights/7);pw=Math.round(100/(1+Math.exp(-(pa-pb)/(40*left+8))))}
+  let pw=50;if(W.closed){pw=A.score>B.score?100:A.score<B.score?0:50}else if(pa!=null&&pb!=null){const left=Math.max(.15,1-W.nights/(W.len||7));pw=Math.round(100/(1+Math.exp(-(pa-pb)/(40*left+8))))}
   const card=(x,t,slot)=>{if(!x)return`<div class="du du-vuoto"><span>Posto vuoto</span><b>${W.closed&&slot!=="trib"&&slot!=="wait"?"0,0":""}</b></div>`;
     const r=(ROSTER[t]||[]).find(y=>y[0]===x.n)||[x.n,"","",""],S=drSettimana(x.n,W),gi=S.filter(Boolean),fatte=gi.filter(y=>y.fin).length;
     const ml=x.cal&&slot!=="cap"?"media stagione":slot==="cap"?"×1,5":slot==="half"?"×½":slot==="full"?"×1":slot==="trib"?"tribuna":W.closed?"non ha giocato":"attesa";
     const pt=x.f!=null&&(slot==="cap"||slot==="half")?` = ${f1(x.f)}`:"";
-    const GG=["LUN","MAR","MER","GIO","VEN","SAB","DOM"],wk=S.map((y,i)=>{const gg=GG[i];if(!y)return"";
+    const GG=["DOM","LUN","MAR","MER","GIO","VEN","SAB"],wk=S.map((y,i)=>{if(!y)return"";const gg=GG[new Date(y.d+"T00:00:00Z").getUTCDay()];
       if(y.v!=null)return`<span class="duw dug ${pdkLvl(y.v)}" title="${y.opp}"><i>${gg}</i><b>${f1(y.v)}</b></span>`;
       if(y.fin)return`<span class="duw dun0" title="${y.opp} · non ha giocato"><i>${gg}</i><b>NG</b></span>`;
       return`<span class="duw duu${y.lv?" lv":""}"><i>${gg}</i><b>${y.opp}</b></span>`}).join("");
@@ -5261,12 +5265,12 @@ function drDuel(k,a,b,W,P){const A=drTeam(k,a,W),B=drTeam(k,b,W),f1=v=>v==null?"
    <div class="dunm"><span>${TEAMS[a].nick}</span><span>${TEAMS[b].nick}</span></div>
    <div class="dubar"><i style="width:${pw}%"></i></div><div class="dupct"><span>${pw}% ${W.closed?"":"vittoria"}</span><span>${100-pw}%</span></div></div>
   ${rows}
-  <p class="note">${W.closed?"Turno chiuso.":"Turno in corso: la formazione si aggiorna a ogni partita (sempre la migliore rispettando i ruoli: 4 guardie, 4 ali e 2 centri, con almeno un centro, un'ala e una guardia tra capitano e pieni)."} Trattino accanto al nome = ruolo: <i class="rtr G"></i>guardia, <i class="rtr F"></i>ala, <i class="rtr C"></i>centro. Le caselle sono le partite della settimana del giocatore: colorata = partita giocata con il suo PDK, tratteggiata = partita da giocare (avversario, @ = in trasferta), NG = non ha giocato. Proiezione = punteggio se chi deve ancora giocare facesse la sua media; la percentuale di vittoria viene da lì.</p>`}
+  <p class="note">${W.closed?"Turno chiuso.":"Turno in corso: la formazione si aggiorna a ogni partita (sempre la migliore rispettando i ruoli: 4 guardie, 4 ali e 2 centri, con almeno un centro, un'ala e una guardia tra capitano e pieni)."} Trattino accanto al nome = ruolo: <i class="rtr G"></i>guardia, <i class="rtr F"></i>ala, <i class="rtr C"></i>centro. Le caselle sono le partite del turno del giocatore: colorata = partita giocata con il suo PDK, tratteggiata = partita da giocare (avversario, @ = in trasferta), NG = non ha giocato. Proiezione = punteggio se chi deve ancora giocare facesse la sua media; la percentuale di vittoria viene da lì.</p>`}
 function drRules(){const S=(t,l)=>`<div class="drrs"><h4>${t}</h4><ol>${l.map(x=>`<li>${x}</li>`).join("")}</ol></div>`;
   return `<div class="drrules">
-  ${S("Cos'è DREAMERS",["È il fanta della lega basato sui <b>PDK ufficiali Dunkest</b>: ogni settimana le 8 franchigie si sfidano a due a due.","Partecipano le 8 squadre con la <b>rosa completa</b> della lega (tutti i giocatori della prima squadra).","Non si schiera niente: la formazione si fa da sola in base ai punteggi (meritocrazia)."])}
-  ${S("Il turno",["Un turno dura una <b>settimana NBA, da lunedì a domenica</b> (date USA delle partite).","Il turno 1 è iniziato lunedì 26 ottobre 2026.","I punteggi si aggiornano ogni mattina con il report Dunkest; durante la notte possono comparire PDK provvisori live (ESPN, formula Dunkest), sostituiti dai dati ufficiali Dunkest al report.","Finché la settimana è in corso i punteggi sono <b>provvisori</b>; diventano definitivi quando il turno è chiuso."])}
-  ${S("Il punteggio del giocatore",["Ogni giocatore porta la sua <b>miglior prestazione della settimana</b>: il PDK più alto tra tutte le partite che ha giocato nel turno.","Esempio: 3 partite con 22, 41 e 18 PDK → il giocatore vale <b>41</b>.","Chi nel turno non gioca nessuna partita (infortunio, scelta dell'allenatore NBA…) pur avendo la squadra in campo non porta punti: vale <b>0</b>.","<b>Eccezione calendario</b>: se la sua squadra NBA non ha <b>nessuna partita</b> nel turno per via del calendario, il giocatore prende la sua <b>media stagionale PDK</b> (indicata come «media»)."])}
+  ${S("Cos'è DREAMERS",["È il fanta della lega basato sui <b>PDK ufficiali Dunkest</b>: ogni turno le 8 franchigie si sfidano a due a due.","Partecipano le 8 squadre con la <b>rosa completa</b> della lega (tutti i giocatori della prima squadra).","Non si schiera niente: la formazione si fa da sola in base ai punteggi (meritocrazia)."])}
+  ${S("Il turno",["Dal turno 2 i turni sono <b>corti: 2-4 giorni</b>, scelti sul calendario NBA in modo che ogni squadra giochi <b>1 o 2 partite</b> (date USA delle partite). Si salta la pausa NBA Cup (4-11 dicembre).","Il turno 1 è la settimana già iniziata lunedì 26 ottobre 2026 (fino a domenica 1 novembre); il turno 2 parte il 2 novembre.","Le date esatte di ogni turno sono nella scheda <b>Calendario</b>.","I punteggi si aggiornano ogni mattina con il report Dunkest; durante la notte possono comparire PDK provvisori live (ESPN, formula Dunkest), sostituiti dai dati ufficiali Dunkest al report.","Finché il turno è in corso i punteggi sono <b>provvisori</b>; diventano definitivi quando il turno è chiuso."])}
+  ${S("Il punteggio del giocatore",["Ogni giocatore porta la sua <b>miglior prestazione del turno</b>: il PDK più alto tra tutte le partite che ha giocato nel turno.","Esempio: 3 partite con 22, 41 e 18 PDK → il giocatore vale <b>41</b>.","Chi nel turno non gioca nessuna partita (infortunio, scelta dell'allenatore NBA…) pur avendo la squadra in campo non porta punti: vale <b>0</b>.","<b>Eccezione calendario</b>: se la sua squadra NBA non ha <b>nessuna partita</b> nel turno per via del calendario, il giocatore prende la sua <b>media stagionale PDK</b> (indicata come «media»)."])}
   ${S("Titolari, capitano e panchina",["I <b>10 titolari</b> sono i giocatori con il punteggio più alto, <b>rispettando i ruoli</b> (vedi sotto); gli altri vanno in tribuna e non contano.","Il 1° (il migliore) è il <b>capitano</b> e vale <b>×1,5</b>.","Dal 2° al 6° valgono <b>punteggio pieno</b> (×1).","Dal 7° al 10° sono in panchina e valgono <b>metà</b> (×0,5).","Un titolare che a turno chiuso non ha giocato vale 0."])}
   ${S("Ruoli: regola invalicabile",["I 10 titolari sono <b>sempre 4 guardie, 4 ali e 2 centri</b>.","Tra capitano e punteggio pieno (i primi 6) ci sono <b>almeno 1 centro, 1 ala e 1 guardia</b>.","Questa regola viene <b>prima della meritocrazia</b>: dentro ogni ruolo entrano i migliori punteggi, ma i posti del ruolo vanno riempiti comunque.","Se tra i primi 6 manca un ruolo, sale il migliore di quel ruolo e scende in panchina il peggiore dei primi 6.","Esempio: una squadra ha 3 centri e tutti fanno 0. Due di loro entrano comunque tra i 10 e uno dei due va a punteggio pieno, anche se in rosa ci sono altri giocatori con punteggi più alti.","Il ruolo di ogni giocatore è quello del roster della lega (G = guardia, A = ala, C = centro)."])}
   ${S("Punteggio di squadra e vittoria",["Il punteggio della squadra è la <b>somma</b> dei punti dei 10 titolari (con capitano ×1,5 e panchina ×0,5).","Vince la sfida chi fa il punteggio più alto.","In caso di parità vince la squadra indicata per prima nell'incontro (in casa)."])}
@@ -5289,8 +5293,8 @@ function vDream(){fantaLiveAvvia();
       const sc=(T,O)=>T.score==null||O.score==null?"":W.closed?(T.score>=O.score?"sgold":"slost"):W.started&&T.score!==O.score?(T.score>O.score?"slead":"strail"):"";
       const row=(T,w,O)=>`<div class="drr tint ${w?"w":""} ${sc(T,O)}" style="--tc:${TEAMS[T.t].bg}">${drLg(T.t)}<span class="drn"><b>${TEAMS[T.t].name}</b><small>${W.closed?(T.played<10?`${T.played}/10 · ${10-T.played} a zero`:"10/10"):T.played+"/10 titolari finora"}</small></span><em>${drScore(T.score)}</em></div>`;
       return `<button class="drm" data-dr="open" data-a="${a}" data-b="${b}">${sub(a,b)}${row(A,wa,B)}${row(B,wb,A)}<span class="drst ${W.closed?"":"live"}">${W.closed?"Finale":W.started?"In corso":"Da giocare"}</span></button>`};
-    body=`<div class="drnav"><button data-dr="wk" data-d="-1" ${k<=1?"disabled":""}>‹</button><div><b>${DR_PH(k,P)}</b><small>${drFmt(W.start)} – ${drFmt(W.end)} · ${W.nights}/7 notti</small></div><button data-dr="wk" data-d="1" ${k>=MAXK?"disabled":""}>›</button></div>
-    ${pr.length?`<div class="drms">${pr.map(card).join("")}</div>`:`<div class="cempty">${k>DR_REG?"Settimana di playoff: si gioca solo se servono altre gare. Gli accoppiamenti si conoscono quando finisce la settimana precedente.":"Gli accoppiamenti si conoscono quando finisce il turno precedente."}</div>`}`}
+    body=`<div class="drnav"><button data-dr="wk" data-d="-1" ${k<=1?"disabled":""}>‹</button><div><b>${DR_PH(k,P)}</b><small>${drFmt(W.start)} – ${drFmt(W.end)} · ${W.nights}/${W.len} notti</small></div><button data-dr="wk" data-d="1" ${k>=MAXK?"disabled":""}>›</button></div>
+    ${pr.length?`<div class="drms">${pr.map(card).join("")}</div>`:`<div class="cempty">${k>DR_REG?"Turno di playoff: si gioca solo se servono altre gare. Gli accoppiamenti si conoscono quando finisce la settimana precedente.":"Gli accoppiamenti si conoscono quando finisce il turno precedente."}</div>`}`}
   else if(DR.tab==="cal"){const rows=[];for(let i=1;i<=MAXK;i++){const w=drWeek(i),pr=drPairs(i,st,P),pw=P.W[i];
       rows.push(`<button class="drcal ${i===drCurWeek(P)?"cur":""}" data-dr="go" data-k="${i}"><span class="drck"><b>${i<=DR_REG?i:pw?["QF","SF","F"][pw.r]:"PO"}</b><small>${pw?`gara ${pw.g}<br>`:""}${drFmt(w.start)}–${drFmt(w.end)}</small></span><span class="drcp">${pr.length?pr.map(([a,b])=>{const A=w.closed?drTeam(i,a,w).score:null,B=w.closed?drTeam(i,b,w).score:null;return `<i class="drcm"><span class="h tint ${w.closed&&A>=B?"w":""}" style="--tc:${TEAMS[a].bg}">${drLg(a,"s")}<b>${TEAMS[a].name}</b></span><em>${w.closed?`${pdkF(A)}–${pdkF(B)}`:"vs"}</em><span class="a tint ${w.closed&&B>A?"w":""}" style="--tc:${TEAMS[b].bg}"><b>${TEAMS[b].name}</b>${drLg(b,"s")}</span></i>`}).join(""):`<em class="tbd">${pw?DR_PH(i,P)+" · da definire":"Playoff · solo se necessaria"}</em>`}</span></button>`)}
     body=`<div class="drcals">${rows.join("")}</div>`}
@@ -5298,7 +5302,7 @@ function vDream(){fantaLiveAvvia();
     const form=t=>{const o=[];for(let k=1;k<=DR_REG;k++){const w=drWeek(k);if(!w.closed)continue;const pr=DR_SCHED[k-1].find(p=>p.includes(t));if(!pr)continue;const o2=pr[0]===t?pr[1]:pr[0];o.push(drTeam(k,t,w).score>=drTeam(k,o2,w).score?"V":"P")}return o.slice(-5)};
     const ld=st[0]?st[0].w:0;
     body=`<div class="drcla">${st.map((x,i)=>{const f=form(x.t);return `<div class="drcr tint ${i<1?"lead":""}" style="--tc:${TEAMS[x.t].bg}"><span class="drpos">${i+1}</span>${drLg(x.t,"l")}<div class="drci"><b>${TEAMS[x.t].name}</b><small>${x.n?`${x.n} turni giocati`:"nessun turno giocato"}</small><span class="drfm">${f.length?f.map(r=>`<i class="${r}">${r}</i>`).join(""):'<em>forma —</em>'}</span></div><div class="drcwl"><b>${x.w}<small>V</small></b><b class="l">${x.l}<small>P</small></b><b class="avg">${x.avg==null?"—":pdkF(x.avg)}<small>MEDIA</small></b>${i>0&&ld>x.w?`<em>−${ld-x.w} V</em>`:""}</div></div>`}).join("")}</div>
-    <p class="note">Vittoria = punteggio di turno più alto. A parità di vittorie è davanti chi ha la media punteggio più alta (punti fatti per turno). Tutte e 8 le squadre vanno ai playoff: la posizione decide gli accoppiamenti (1ª–8ª, 4ª–5ª, 2ª–7ª, 3ª–6ª). Serie al meglio delle 3, una gara a settimana; ci sono anche le serie per il 3°, 5° e 7° posto, così la classifica finale va da 1 a 8.</p>`}
+    <p class="note">Vittoria = punteggio di turno più alto. A parità di vittorie è davanti chi ha la media punteggio più alta (punti fatti per turno). Tutte e 8 le squadre vanno ai playoff: la posizione decide gli accoppiamenti (1ª–8ª, 4ª–5ª, 2ª–7ª, 3ª–6ª). Serie al meglio delle 3, una gara per turno; ci sono anche le serie per il 3°, 5° e 7° posto, così la classifica finale va da 1 a 8.</p>`}
   else{const sd=P.seed,R=P.R,R1=R[1]||[],R2=R[2]||[];
     const lg=t=>`<span class="bklg" style="--tc:${TEAMS[t].bg}">${badge(t)}</span>`;
     const m=(x,ph,lab,cls="")=>{const head=lab?`<span class="bklab">${lab}</span>`:"";
@@ -5325,7 +5329,7 @@ function vDream(){fantaLiveAvvia();
     <div class="drfinal">${Array.from({length:8},(_,i)=>{const t=P.fin[i];return `<div class="drfr ${t?"tint":""} ${i===0&&t?"gold":""}" style="${t?"--tc:"+TEAMS[t].bg:""}"><span class="drpos">${i+1}</span>${t?`<span class="bklg" style="--tc:${TEAMS[t].bg}">${badge(t)}</span><b>${TEAMS[t].name}</b>`:`<em>da decidere</em>`}</div>`}).join("")}</div>`}
   return `<div class="drroom"><button class="drexit" data-game="menu">‹ Torna all'app</button><div class="drhd"><span class="drlogo">DREAMERS</span><small>Fanta PDK · stagione ${STAGIONE_CORRENTE}</small>${DR.rules?`<br><button class="drrul" data-dr="rules" aria-pressed="true">‹ Torna al gioco</button>`:""}</div>
   <div class="drtabs">${tabs}</div>${(()=>{const pv=[...DR_PROV].filter(d=>d>=W.start&&d<=W.end).sort();return pv.length?`<div class="drlive"><i></i><span><b>Live</b> · ${pv.length===1?"notte":"notti"} ${pv.map(drFmt).join(", ")}: PDK provvisori (ESPN, formula Dunkest). Si sostituiscono da soli con i dati ufficiali Dunkest quando arriva il report.</span></div>`:""})()}${body}<button class="drrul drrulb" data-dr="rules" aria-pressed="${!!DR.rules}">${DR.rules?"‹ Torna al gioco":"📜 Regolamento"}</button></div>
-  <p class="note">Meritocrazia: ogni settimana i 10 giocatori della rosa con la miglior prestazione (PDK più alto in una singola partita) diventano titolari rispettando i ruoli (4 guardie, 4 ali, 2 centri; almeno uno per ruolo tra capitano e pieni), gli altri vanno in tribuna. Punteggio squadra = somma dei punti dei 10 titolari (ognuno porta la sua MIGLIOR partita della settimana: il PDK più alto tra le sue gare); il migliore è capitano ×1,5, dal 2° al 6° punteggio pieno e dal 7° al 10° valgono la metà (provvisori durante la settimana, definitivi a turno chiuso). Dati aggiornati al ${EFF.agg}.</p>`}
+  <p class="note">Meritocrazia: ogni settimana i 10 giocatori della rosa con la miglior prestazione (PDK più alto in una singola partita) diventano titolari rispettando i ruoli (4 guardie, 4 ali, 2 centri; almeno uno per ruolo tra capitano e pieni), gli altri vanno in tribuna. Punteggio squadra = somma dei punti dei 10 titolari (ognuno porta la sua MIGLIOR partita del turno: il PDK più alto tra le sue gare); il migliore è capitano ×1,5, dal 2° al 6° punteggio pieno e dal 7° al 10° valgono la metà (provvisori durante la settimana, definitivi a turno chiuso). Dati aggiornati al ${EFF.agg}.</p>`}
 function drAct(b){const d=b.dataset;
   if(d.dr==="tab"){DR.tab=d.k;DR.open=null;DR.rules=false}
   else if(d.dr==="wk"){DR.k=Math.max(1,Math.min(drPO(drStand()).end,DR.k+(+d.d)));DR.open=null}
@@ -5650,7 +5654,7 @@ function tvWeekPos(){const w=document.getElementById("tvweek");if(!w)return;
   TVS.wl=w.scrollLeft;w.addEventListener("scroll",()=>{TVS.wl=w.scrollLeft;TVS.wd=TVS.d},{passive:true})}
 /* DREAMERS dentro Dynasty TV: in fondo al giorno, le sfide del turno Dreamers che contiene quella data, con la grafica delle partite.
    Punteggi = quelli di Dreamers (ufficiali Dunkest + live provvisorio). Tocca una sfida per aprirla in Dreamers. */
-function tvDreamers(d){try{if(typeof drWeek!=="function"||d<DR_START)return"";const k=Math.floor((Date.parse(d)-Date.parse(DR_START))/864e5/7)+1;if(k<1||k>DR_TOT)return"";
+function tvDreamers(d){try{if(typeof drWeek!=="function"||d<DR_START)return"";const k=DR_TURNI.findIndex(x=>d>=x[0]&&d<=x[1])+1;if(k<1||k>DR_TOT)return"";
   const st=drStand(),P=drPO(st);if(k>P.end)return"";const W=drWeek(k),pairs=drPairs(k,st,P)||[];if(!pairs.length)return"";
   const prov=[...DR_PROV].some(x=>x>=W.start&&x<=W.end),liveOggi=(TVD().days[flUsaOggi()]||[]).some(g=>g[5]==="L")&&flUsaOggi()>=W.start&&flUsaOggi()<=W.end;
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
@@ -5658,7 +5662,7 @@ function tvDreamers(d){try{if(typeof drWeek!=="function"||d<DR_START)return"";co
   const cards=pairs.map(([a,b])=>{const A=drTeam(k,a,W),B=drTeam(k,b,W),fin=W.closed&&!prov,lv=!W.closed&&(liveOggi||prov)&&W.started,wa=W.closed&&A.score!=null&&B.score!=null&&A.score>B.score,wb=W.closed&&A.score!=null&&B.score!=null&&B.score>A.score;
     const cap=[A,B].map(T=>{const c=T.top.find(x=>x.cap&&x.e!=null);return c?`<b>${sur(c.n)}</b> (${T.t}) ${pdkB(c.e,pdkF(c.e))}`:""}).filter(Boolean).join(" · ");
     return`<button class="tvg drtvg${lv?" live":""}" data-drtv="${k}|${a}|${b}" aria-label="Dreamers ${TEAMS[a].nick} contro ${TEAMS[b].nick}"><div class="tvteams">${row(A,wa)}${row(B,wb)}</div>
-      <div class="tvst">${fin?`<b>Finale</b><small>turno ${k} · sfida ›</small>`:lv?`<b class="lv"><i></i>Live</b><small>${prov?"PDK provvisori · ":""}sfida ›</small>`:W.started?`<b class="pre">In corso</b><small>${W.nights}/7 notti · sfida ›</small>`:`<b class="pre">Da giocare</b><small>dal ${drFmt(W.start)} · sfida ›</small>`}</div>
+      <div class="tvst">${fin?`<b>Finale</b><small>turno ${k} · sfida ›</small>`:lv?`<b class="lv"><i></i>Live</b><small>${prov?"PDK provvisori · ":""}sfida ›</small>`:W.started?`<b class="pre">In corso</b><small>${W.nights}/${W.len} notti · sfida ›</small>`:`<b class="pre">Da giocare</b><small>dal ${drFmt(W.start)} · sfida ›</small>`}</div>
       ${cap?`<div class="tvtop"><span>Capitani: ${cap}</span></div>`:""}</button>`}).join("");
   SHR_DR={ph:DR_PH(k,P),range:`${drFmt(W.start)}–${drFmt(W.end)}`,prov,cards:pairs.map(([a,b])=>{const A=drTeam(k,a,W),B=drTeam(k,b,W);return{a,b,A,B,fin:W.closed&&!prov,lv:!W.closed&&(liveOggi||prov)&&W.started,started:W.started,cap:[A,B].map(T=>{const c=T.top.find(x=>x.cap&&x.e!=null);return c?[sur(c.n),T.t,c.e]:null}).filter(Boolean)}})};
   return`<div class="drtvh">${H("Dreamers",`<em>${DR_PH(k,P)} · ${drFmt(W.start)}–${drFmt(W.end)}</em>${shBtn("dr")}`)}</div><div class="tvlist">${cards}</div>`}catch(e){return""}}
@@ -5684,7 +5688,7 @@ function tvDrGame(key){try{const[ks,a,b]=key.split("|"),k=+ks,st=drStand(),P=drP
   <tbody>${grp("In campo",inCampo,"full")}${grp("Panchina · vale ½",panca,"half")}${zeri}${grp("Tribuna",T.trib,"trib")}${grp(W.closed?"Non ha giocato":"In attesa",T.wait,"wait")}
   <tr class="tot"><td>Punteggio squadra</td><td></td><td></td><td class="dfp">${T.score==null?"—":drScore(T.score)}</td></tr></tbody></table></div>
   <button class="advbtn" data-drgo="${key}">Apri in Dreamers ›</button>
-  <p class="note">${DR_PH(k,P)} · ${drFmt(W.start)}–${drFmt(W.end)}. PDK = miglior punteggio Dunkest tra le partite della settimana. I 10 con il PDK più alto sono titolari: il migliore è capitano (C, ×1,5), poi 5 a punteggio pieno (in campo) e gli ultimi 4 in panchina a metà; gli altri vanno in tribuna. Punteggio squadra = somma dei punti dei titolari (${pdkF(somma)}).${prov?" Ci sono notti con PDK provvisori (live): si sostituiscono con i dati Dunkest al report.":""}</p>`}catch(e){return""}}
+  <p class="note">${DR_PH(k,P)} · ${drFmt(W.start)}–${drFmt(W.end)}. PDK = miglior punteggio Dunkest tra le partite del turno. I 10 con il PDK più alto sono titolari: il migliore è capitano (C, ×1,5), poi 5 a punteggio pieno (in campo) e gli ultimi 4 in panchina a metà; gli altri vanno in tribuna. Punteggio squadra = somma dei punti dei titolari (${pdkF(somma)}).${prov?" Ci sono notti con PDK provvisori (live): si sostituiscono con i dati Dunkest al report.":""}</p>`}catch(e){return""}}
 function vTV0(){setTimeout(tvWeekPos,0);const T=TVD(),ks=Object.keys(T.days).sort();if(!ks.length)return`${H("Dynasty TV")}<div class="tvempty">Calendario non ancora disponibile.</div>`;
   if(!TVS.d||!T.days[TVS.d])TVS.d=tvDefDay();
   if(TVS.dr){const h=tvDrGame(TVS.dr);if(h)return h;TVS.dr=null}
