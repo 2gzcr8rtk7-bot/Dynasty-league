@@ -1806,15 +1806,15 @@ html.notte:not(.dreamfs){padding-top:0!important}
 body.notte:not(.dreamfs)::before{display:none!important}
 body.notte:not(.dreamfs) header{top:0!important;padding-top:env(safe-area-inset-top,0px)!important}
 </style><style>
-/* (140) MODALITÀ NOTTE più scura: velo rgba(6,2,18,k) davanti agli sfondi viola. Home = livello 1 (k .30); tutte le altre sezioni = livello 3 (k .68). Tab selezionato e Dreamers a schermo intero invariati. Per tornare indietro basta togliere questo blocco. */
+/* (140) MODALITÀ NOTTE più scura: velo rgba(6,2,18,k) davanti agli sfondi viola. Parte alta (header + menu) = livello 1 (k .30) ovunque; Home = livello 1; nelle altre sezioni, sotto la linea viola, livello 3 (k .68). Tab selezionato e Dreamers a schermo intero invariati. Per tornare indietro basta togliere questo blocco. */
 html body.notte[data-v=home]{background-image:linear-gradient(rgba(6,2,18,0.3),rgba(6,2,18,0.3)),radial-gradient(at 20% 0%, rgba(168, 85, 247, 0.45), rgba(0, 0, 0, 0) 55%), radial-gradient(at 90% 10%, rgba(59, 130, 246, 0.28), rgba(0, 0, 0, 0) 50%), linear-gradient(rgb(31, 13, 74), rgb(12, 8, 32) 70%)!important}
 html body.notte:not([data-v=home]){background-image:linear-gradient(rgba(6,2,18,0.68),rgba(6,2,18,0.68)),radial-gradient(at 20% 0%, rgba(168, 85, 247, 0.45), rgba(0, 0, 0, 0) 55%), radial-gradient(at 90% 10%, rgba(59, 130, 246, 0.28), rgba(0, 0, 0, 0) 50%), linear-gradient(rgb(31, 13, 74), rgb(12, 8, 32) 70%)!important}
 html body.notte[data-v=home] header{background-image:linear-gradient(rgba(6,2,18,0.3),rgba(6,2,18,0.3)),radial-gradient(at 15% 0%, rgba(168, 85, 247, 0.7), rgba(0, 0, 0, 0) 60%), radial-gradient(at 95% 20%, rgba(59, 130, 246, 0.45), rgba(0, 0, 0, 0) 55%), linear-gradient(rgb(42, 18, 96), rgb(23, 10, 58))!important}
-html body.notte:not([data-v=home]) header{background-image:linear-gradient(rgba(6,2,18,0.68),rgba(6,2,18,0.68)),radial-gradient(at 15% 0%, rgba(168, 85, 247, 0.7), rgba(0, 0, 0, 0) 60%), radial-gradient(at 95% 20%, rgba(59, 130, 246, 0.45), rgba(0, 0, 0, 0) 55%), linear-gradient(rgb(42, 18, 96), rgb(23, 10, 58))!important}
+html body.notte:not([data-v=home]) header{background-image:linear-gradient(rgba(6,2,18,0.3),rgba(6,2,18,0.3)),radial-gradient(at 15% 0%, rgba(168, 85, 247, 0.7), rgba(0, 0, 0, 0) 60%), radial-gradient(at 95% 20%, rgba(59, 130, 246, 0.45), rgba(0, 0, 0, 0) 55%), linear-gradient(rgb(42, 18, 96), rgb(23, 10, 58))!important}
 html body.notte[data-v=home] #main.wrap{background-image:linear-gradient(rgba(6,2,18,0.3),rgba(6,2,18,0.3)),radial-gradient(at 20% 0%, rgba(168, 85, 247, 0.55), rgba(0, 0, 0, 0) 55%), radial-gradient(at 90% 10%, rgba(59, 130, 246, 0.35), rgba(0, 0, 0, 0) 50%), linear-gradient(rgb(42, 18, 96), rgb(12, 8, 32) 75%)!important}
 html body.notte[data-v=home] #main .htile.htile{background-image:linear-gradient(rgba(6,2,18,0.3),rgba(6,2,18,0.3)),linear-gradient(160deg, rgba(76, 29, 149, 0.85), rgba(17, 10, 48, 0.95) 60%, rgba(30, 58, 138, 0.8))!important}
 html body.notte[data-v=home] nav button:not([aria-selected="true"]){background-image:linear-gradient(rgba(6,2,18,0.3),rgba(6,2,18,0.3))!important}
-html body.notte:not([data-v=home]) nav button:not([aria-selected="true"]){background-image:linear-gradient(rgba(6,2,18,0.68),rgba(6,2,18,0.68))!important}
+html body.notte:not([data-v=home]) nav button:not([aria-selected="true"]){background-image:linear-gradient(rgba(6,2,18,0.3),rgba(6,2,18,0.3))!important}
 html body.notte[data-v=home] #main .hsrch.hsrch{background-image:linear-gradient(rgba(6,2,18,0.3),rgba(6,2,18,0.3))!important}
 html.notte:not(.dreamfs){background-color:#0d0620}
 </style></head>
