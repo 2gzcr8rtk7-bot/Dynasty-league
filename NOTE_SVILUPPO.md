@@ -529,3 +529,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (118) Campo più largo: niente più limite di 380px (ora fino a 560px, cioè tutta la larghezza del telefono come gli altri riquadri); maglie, nomi e PDK in proporzione alla larghezza del campo (container query, unità cqw). Vale per modalità normale e notte.
 
 (119) Modalità notte Ducks: argento chiaro OPACO (come la loro grafica alternativa) al posto dell'argento metallico: banner #9ca1a8 con sfumatura leggera, bordo campo #90959b piatto (niente gradiente mtl), cornice #7d8288, maglie #a2a6ac con dettagli neri.
+
+(120) Modalità notte Ducks (scelta definitiva 27/10): restano gialli (banner, bordo campo); maglie con base nera e lo stesso disegno originale a zig-zag ma in giallo (DECO DUC ora usa c.trim al posto del nero fisso; in modalità normale trim resta nero, quindi invariato). Tolto l'argento.
