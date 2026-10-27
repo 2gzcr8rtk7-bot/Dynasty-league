@@ -1754,8 +1754,8 @@ nav button>span{white-space:nowrap}
 .cntbtn svg{width:15px;height:15px}.cntbtn i{position:absolute;top:4px;right:5px;width:6px;height:6px;border-radius:50%;background:#ef4444;opacity:.5}
 .cntbtn.on{background:linear-gradient(180deg,#3b2a8a,#1b1240);border-color:#8b5cf6;color:#fff;box-shadow:0 0 12px rgba(139,92,246,.6)}.cntbtn.on i{opacity:1;animation:lvp 1.4s infinite}
 .court.cdark{position:relative}
-.court.cdark .cbg{filter:grayscale(1) brightness(.42) contrast(1.15)}
-.court.cdark{border-color:var(--tc)!important}.court.cdark::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 50% 30%,color-mix(in srgb,var(--tc) 42%,transparent),transparent 72%),linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.35))}
+
+
 .court.cdark .cnone{position:absolute;inset:40% 10% auto;z-index:1;text-align:center;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:#cfd6ea}
 .court.cdark .cpl{z-index:1}.court.cdark .cnm{background:#000!important;box-shadow:0 0 0 1px color-mix(in srgb,var(--tc) 70%,transparent)}
 .bench.cdark{background:#060915;border-color:color-mix(in srgb,var(--tc) 35%,#1b2340)}
@@ -3711,13 +3711,13 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   const pill=v=>v==null?`<span class="cev na">—</span>`:`<span class="cev ${lvl(v)}">${f2(v)}</span>`;
   const shade=(h,k)=>{const n=parseInt(h.slice(1),16);const f=v=>Math.round(v*(1-k)).toString(16).padStart(2,"0");return "#"+f(n>>16)+f(n>>8&255)+f(n&255)};
   const lum=h=>{const n=parseInt(h.slice(1),16);return (0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255};
-  const apron=shade(c.bg,.18),lg=LOGO2[t]||LOGO[t],atxt=Math.abs(lum(c.fg)-lum(apron))>.35?c.fg:(lum(apron)>.55?"#111":"#fff"),astk=lum(atxt)>.5?shade(c.bg,.55):apron;
+  const apron=CNT&&t==="DUC"?"#c9c7c0":shade(c.bg,.18),lg=LOGO2[t]||LOGO[t],atxt=Math.abs(lum(c.fg)-lum(apron))>.35?c.fg:(lum(apron)>.55?"#111":"#fff"),astk=lum(atxt)>.5?shade(c.bg,.55):apron;
   const aL=Math.max(c.city.length,c.nick.length),afs=Math.min(7.2,(35-(aL-1)*.5)/(aL*.49)),ay=(8+afs*.43).toFixed(2);
   const court=`<svg class="cbg" viewBox="0 0 100 128.8" preserveAspectRatio="none" aria-hidden="true">
-    <defs><linearGradient id="wood" x1="0" x2="1"><stop offset="0" stop-color="#b9793f"/><stop offset=".5" stop-color="#dba567"/><stop offset="1" stop-color="#b9793f"/></linearGradient>
+    <defs><linearGradient id="wood" x1="0" x2="1">${CNT?`<stop offset="0" stop-color="#1c1d22"/><stop offset=".5" stop-color="#34353c"/><stop offset="1" stop-color="#1c1d22"/>`:`<stop offset="0" stop-color="#b9793f"/><stop offset=".5" stop-color="#dba567"/><stop offset="1" stop-color="#b9793f"/>`}</linearGradient>
     <pattern id="planks" width="5" height="112" patternUnits="userSpaceOnUse"><rect width="5" height="112" fill="none" stroke="#000" stroke-opacity=".07" stroke-width=".25"/><path d="M0 37H5M2.5 83H5" stroke="#000" stroke-opacity=".05" stroke-width=".25"/></pattern>
     <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".55" stop-color="#fff" stop-opacity=".03"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></linearGradient><radialGradient id="shine" cx=".5" cy=".3" r=".75"><stop offset="0" stop-color="#fff" stop-opacity=".2"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></radialGradient></defs>
-    <rect width="100" height="128.8" fill="${apron}"/>${false?`<defs><linearGradient id="mtl" x1="0" y1="0" x2="1" y2=".25"><stop offset="0" stop-color="#9c998f"/><stop offset=".18" stop-color="#ecebe6"/><stop offset=".34" stop-color="#a7a49c"/><stop offset=".55" stop-color="#e2e0da"/><stop offset=".72" stop-color="#8f8c84"/><stop offset=".88" stop-color="#d4d1ca"/><stop offset="1" stop-color="#8a877f"/></linearGradient></defs><rect width="100" height="128.8" fill="url(#mtl)"/>`:""}<g transform="translate(0,9.785) scale(1,1.0358)">
+    <rect width="100" height="128.8" fill="${apron}"/>${CNT&&t==="DUC"?`<defs><linearGradient id="mtl" x1="0" y1="0" x2="1" y2=".25"><stop offset="0" stop-color="#9c998f"/><stop offset=".18" stop-color="#ecebe6"/><stop offset=".34" stop-color="#a7a49c"/><stop offset=".55" stop-color="#e2e0da"/><stop offset=".72" stop-color="#8f8c84"/><stop offset=".88" stop-color="#d4d1ca"/><stop offset="1" stop-color="#8a877f"/></linearGradient></defs><rect width="100" height="128.8" fill="url(#mtl)"/>`:""}<g transform="translate(0,9.785) scale(1,1.0358)">
     <rect x="3" y="6" width="94" height="106" fill="url(#wood)"/><rect x="3" y="6" width="94" height="106" fill="url(#planks)"/>
     
     <rect x="3" y="6" width="94" height="106" fill="url(#shine)"/>
@@ -3742,7 +3742,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   ${bacheca(t)}
   ${cassa(t)}
   ${H(CNT?"Modalità notte":"Quintetto",`<em>${CNT?(()=>{const d=campoNotte();if(!d)return"nessuna partita";const dd=tvDt(d);return`${dd.getUTCDate()}/${dd.getUTCMonth()+1}`})():auto?"Provvisorio · scelto per efficienza":"Titolari · per ruolo"}</em><button class="cntbtn${CNT?" on":""}" id="cntbtn" aria-pressed="${CNT}" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`)}
-  <div class="court${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg};border-color:${shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}${CNT&&!q.length?`<div class="cnone">Nessuno in campo stanotte</div>`:""}</div>
+  <div class="court${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg};border-color:${CNT&&t==="DUC"?"#8f8c84":shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}${CNT&&!q.length?`<div class="cnone">Nessuno in campo stanotte</div>`:""}</div>
   ${CNT?"":`<div class="ctools"><button class="ctool" id="ccap"><span class="ci">C</span>Cap<small>Chi mettere capitano</small></button><button class="ctool" id="cmul"><span class="ci mul">€</span>Multe<small>Capitano senza multa</small></button></div>`}
   ${H("Panchina",CNT?`<em>notte · per punteggio</em>`:"")}
   <div class="bench${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg}">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><span class="bev">${CNT?`<span class="cnrow">${NM[p[0]]&&NM[p[0]].lv?'<i class="cnlv" title="In campo ora"></i>':""}${pillN(p[0])}</span><small>${NM[p[0]]?`vs ${NM[p[0]].opp} · ${NM[p[0]].st}`:"non ha giocato"}</small>`:`${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}`}</span></button>`).join("")}</div>
