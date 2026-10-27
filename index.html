@@ -3733,7 +3733,12 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
     <g font-family="CourtBlock,Impact,Arial Narrow,sans-serif" font-weight="400" font-size="${afs}" letter-spacing=".5" fill="${atxt}" fill-opacity=".94" stroke="${astk}" stroke-width=".45" stroke-linejoin="round" paint-order="stroke"><text x="${lg?39:50}" y="${ay}" text-anchor="${lg?"end":"middle"}">${lg?c.city.toUpperCase():c.nick.toUpperCase()}</text>${lg?`<text x="61" y="${ay}" text-anchor="start">${c.nick.toUpperCase()}</text>`:""}</g><rect width="100" height="16" fill="url(#gloss)"/>
     ${lg?(LOGO2[t]?`<image href="${lg}" x="40.91" y="1.33" width="18.18" height="13.55" preserveAspectRatio="xMidYMid meet"/>`:`<image href="${lg}" x="40.5" y=".3" width="19" height="15.4" preserveAspectRatio="xMidYMid meet"/>`):""}
     </svg>`;
-  const ROWY={C:30.6,F:56.6,G:83.3},XS={G:[30,70],F:[19,81]};const pos={};["G","F","C"].forEach(r=>{const l=q.filter(p=>p[2]===r);l.forEach((p,i)=>pos[p[0]]=[l.length===2&&XS[r]?XS[r][i]:(i+1)/(l.length+1)*100,ROWY[r]])});
+  const ROWY={C:30.6,F:56.6,G:83.3},XS={C:[30,70],G:[30,70],F:[19,81]};const pos={};
+  /* massimo 2 giocatori per fila: chi è in più va nella fila vicina meno piena (C↔F↔G), anche se non è il suo ruolo */
+  const FILA={C:[],F:[],G:[]};q.forEach(p=>(FILA[p[2]]||FILA.F).push(p));const VIC={C:["F","G"],F:["C","G"],G:["F","C"]};
+  for(let k=0;k<6;k++)for(const r of["C","F","G"])while(FILA[r].length>2){const dst=VIC[r].filter(x=>FILA[x].length<2).sort((x,y)=>FILA[x].length-FILA[y].length||VIC[r].indexOf(x)-VIC[r].indexOf(y))[0];if(!dst)break;
+    const sc=p=>CNT&&NM&&NM[p[0]]?NM[p[0]].p:(pdkMed(p[0])??0);const L=FILA[r].slice().sort((x,y)=>sc(x)-sc(y));const m=L[0];FILA[r].splice(FILA[r].indexOf(m),1);FILA[dst].push(m)}
+  ["G","F","C"].forEach(r=>{const l=FILA[r];l.forEach((p,i)=>pos[p[0]]=[l.length===2&&XS[r]?XS[r][i]:(i+1)/(l.length+1)*100,ROWY[r]])});
   const onCourt=q.map((p,i)=>`<button class="cpl" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${jersey(t,p[1],p[0])}<span class="cnm"${(L=>L>=12?' style="font-size:9.5px"':L>=9?' style="font-size:10.5px"':"")(sur(p[0]).length)}>${sur(p[0])}</span>${CNT?`<span class="cnrow">${NM[p[0]]&&NM[p[0]].lv?'<i class="cnlv" title="In campo ora"></i>':""}${pillN(p[0])}</span>`:pillP(pdkMed(p[0]))}</button>`).join("");
   const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>CNT?(nv(b[0])??-1e9)-(nv(a[0])??-1e9):(pdkMed(b[0])??-99)-(pdkMed(a[0])??-99));  /* panchina in ordine di efficienza media stagionale (stesso valore mostrato), si riordina a ogni aggiornamento */
   return `<button class="gback" id="cback">‹ Home</button>

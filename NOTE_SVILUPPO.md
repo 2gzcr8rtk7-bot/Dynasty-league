@@ -523,3 +523,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (115) Menu: Entertainment spostato tra Statistiche e Calcolatore Trade.
 
 (116) Modalità notte Ducks: anche il banner della squadra in alto (.teamhead) diventa argento con scritte nere (solo Ducks, solo nella pagina Campo).
+
+(117) Campo (anche modalità normale): massimo 2 giocatori per fila; chi è in più va nella fila vicina meno piena (C↔F↔G), spostando il giocatore con il punteggio più basso della fila. Caselle dei nomi tutte della stessa larghezza, nomi lunghi con i puntini.
