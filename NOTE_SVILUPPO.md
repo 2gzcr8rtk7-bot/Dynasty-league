@@ -527,3 +527,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (117) Campo (anche modalità normale): massimo 2 giocatori per fila; chi è in più va nella fila vicina meno piena (C↔F↔G), spostando il giocatore con il punteggio più basso della fila. Caselle dei nomi tutte della stessa larghezza, nomi lunghi con i puntini.
 
 (118) Campo più largo: niente più limite di 380px (ora fino a 560px, cioè tutta la larghezza del telefono come gli altri riquadri); maglie, nomi e PDK in proporzione alla larghezza del campo (container query, unità cqw). Vale per modalità normale e notte.
+
+(119) Modalità notte Ducks: argento chiaro OPACO (come la loro grafica alternativa) al posto dell'argento metallico: banner #9ca1a8 con sfumatura leggera, bordo campo #90959b piatto (niente gradiente mtl), cornice #7d8288, maglie #a2a6ac con dettagli neri.
