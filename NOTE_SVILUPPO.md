@@ -541,3 +541,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (124) Pallino rosso sul tasto Entertainment del menu sempre presente; lampeggia solo quando ci sono partite in corso (.navlive).
 
 (125) Tolto il pallino rosso dal tasto Entertainment del menu (resta solo il controllo .navlive che fa lampeggiare la pastiglia LIVE della card Dynasty TV).
+
+(126) Dreamers duello, carta del capitano: nel riquadro grande i punti del capitano già moltiplicati, sempre in oro (.pdkx.dugold); a destra il PDK di partenza "×1,5" senza grassetto.
