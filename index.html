@@ -463,6 +463,12 @@ details.glp.glhit{animation:glhit 2.2s ease}@keyframes glhit{0%,40%{box-shadow:i
 .dpan.notte{grid-template-columns:1fr}.dpan.notte .dpg{grid-template-columns:repeat(3,1fr)}
 .dpan.notte .dphalf{background:#070a18;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tc,#334) 35%,#1b2340)}
 .pcd{position:relative}.pcdlv{position:absolute;left:6px;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:#ff3b30;box-shadow:0 0 6px #ff3b30;animation:lbdp 1.1s ease-in-out infinite}
+/* scelta Stagioni / Mesi / Giorni sotto il Periodo */
+.pergr{display:grid;gap:3px;min-width:0}.grroom>.pergr{margin:2px 0 12px}.pergr>span{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.pergr>div{display:flex;padding:3px;gap:3px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16)}
+.pergr button{flex:1;padding:6px 8px;border:0;border-radius:8px;background:none;color:inherit;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;white-space:nowrap}
+.pergr button[aria-pressed="true"]{background:#0b0f1a;color:#facc15}
+.pergr button:disabled{opacity:.3;cursor:not-allowed;text-decoration:line-through}
 /* calendario del periodo (Grafico, Trend, Grafici liberi) */
 .perbtn{display:grid;gap:3px;text-align:left;background:none;border:0;padding:0;color:inherit;cursor:pointer;min-width:0}
 .perbtn>span{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
@@ -3017,6 +3023,11 @@ function perNorm(o){const mx=perOggi();if(!o.da||!o.a){const r=perSzRange(PER_OR
   if(o.da<PER_MIN)o.da=PER_MIN;if(o.a>mx)o.a=mx;if(o.a<o.da){const t=o.a;o.a=o.da;o.da=t}return o}
 /* livello dei punti in base alle partite davvero nel periodo: più stagioni con partite → stagioni; oltre 45 giorni → mesi; altrimenti settimane */
 function perBy(g){if(!g.length)return"w";if(new Set(g.map(x=>x.sz)).size>1)return"s";const t=g.map(x=>+x.dt);return(Math.max(...t)-Math.min(...t))/864e5>45?"m":"w"}
+/* quali livelli hanno senso nel periodo: Stagioni se le partite toccano più stagioni, Mesi se toccano più mesi, Giorni se ci sono almeno 2 partite */
+function perOk(g){return{s:new Set(g.map(x=>x.sz)).size>1,m:new Set(g.map(x=>grMk(x.dt))).size>1,g:g.length>=2}}
+function perGranBtns(key,ok,by){const L=[["s","Stagioni"],["m","Mesi"],["g","Giorni"]];
+  return`<div class="pergr"><span>Media per</span><div>${L.map(([k,l])=>`<button data-pgran="${key}|${k}" aria-pressed="${by===k}" ${ok[k]?"":"disabled"} title="${ok[k]?"":"Non disponibile per questo periodo"}">${l}</button>`).join("")}</div></div>`}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-pgran]");if(!b||b.disabled)return;e.preventDefault();const[k,v]=b.dataset.pgran.split("|"),o=k==="gr"?GR:TRN;o.gran=v;if(k==="tr")TRN.on=null;const y=scrollY;render();scrollTo(0,y)});
 const perGg=(da,a)=>Math.round((Date.parse(a)-Date.parse(da))/864e5)+1;
 const perFmt=iso=>{if(!iso)return"—";const[y,m,d]=iso.split("-");return`${d}/${m}/${y.slice(2)}`};
 const perIn=(da,a)=>d=>{const x=d.toISOString().slice(0,10);return x>=da&&x<=a};
@@ -3086,7 +3097,7 @@ function grChart(P,show){if(!P.length)return`<div class="grempty">Nessuna partit
   const base=SL||SR,ticks=[];for(let v=base[0];v<=base[1]+1e-9;v+=base[2])ticks.push(v);
   const grid=ticks.map(v=>{const yy=y(v,base);return`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" class="grg"/>${SL?`<text x="${L-5}" y="${yy+3}" class="gry l">${Math.round(v)}</text>`:""}`}).join("")
     +(SR?(()=>{const n=Math.round((SR[1]-SR[0])/SR[2]);return Array.from({length:n+1},(_,i)=>{const v=SR[0]+SR[2]*i,yy=T+ih-ih*i/n;return`${SL?"":`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" class="grg"/>`}<text x="${W-R+5}" y="${yy+3}" class="gry r">${v.toFixed(2).replace(".",",")}</text>`}).join("")})():"");
-  const step=few?1:Math.max(1,Math.ceil(P.length/6));
+  const step=Math.max(1,Math.ceil(P.length/Math.max(3,Math.floor(iw/46))));/* etichette dell'asse x diradate in base alla larghezza */
   const xl=P.map((p,i)=>{if((i%step&&i!==P.length-1)||(i===P.length-1&&i%step&&i%step<step*.6))return"";const[a,b]=p.lab.split("|");return`${few?`<line x1="${x(i)}" x2="${x(i)}" y1="${T-6}" y2="${T+ih}" class="grv"/>`:""}<text x="${x(i)}" y="${H-B+15}" class="grx${b?" big":""}">${a}</text>${b?`<text x="${x(i)}" y="${H-B+26}" class="grx">${b}</text>`:""}`}).join("");
   const dots=k=>""||true?"":P.map((p,i)=>p.raw[k]==null?"":`<circle cx="${x(i).toFixed(1)}" cy="${y(p.raw[k],S(k)).toFixed(1)}" r="1.8" fill="${GR_COL[k]}" opacity=".28"/>`).join("");
   const fmt=(k,v)=>k==="eff"?v.toFixed(2).replace(".",","):v.toFixed(1).replace(".",",");
@@ -3220,7 +3231,8 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   const G=new Map(PL.map(p=>[p.n,SZR.length?grGames(p.n,sz).filter(x=>SZR.includes(x.sz)):[]]));
   let by=perBy([...G.values()].flatMap(x=>x.filter(y=>inP(y.dt))));
   /* se il periodo ha un solo punto possibile (es. stagione appena iniziata) si passa alle singole partite */
-  {const ks=new Set();let mx=0;G.forEach(g=>{let c=0;g.forEach(x=>{if(inP(x.dt)){ks.add(trKey(x,by));c++}});if(c>mx)mx=c});if(by!=="s"&&(ks.size<2||mx<=8))by="g"}
+  const GOK=perOk([...G.values()].flatMap(x=>x.filter(y=>inP(y.dt)))),forz=!!(TRN.gran&&GOK[TRN.gran]);if(forz)by=TRN.gran;
+  if(!forz){const ks=new Set();let mx=0;G.forEach(g=>{let c=0;g.forEach(x=>{if(inP(x.dt)){ks.add(trKey(x,by));c++}});if(c>mx)mx=c});if(by!=="s"&&(ks.size<2||mx<=8))by="g"}
   TRN._ctx={SZR,inP,by,sz};
   const keysAll=new Set(),R=[];
   PL.forEach(p=>{if(TRN.team&&p.t!==TRN.team)return;if(!TRN.ruoli.includes(p.r))return;const g=G.get(p.n).filter(x=>inP(x.dt));if(g.length<+TRN.minp)return;
@@ -3256,7 +3268,7 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   return`<div class="grroom trroom" style="--tc:#16213f;--tf:#fff">
   <button class="grback" data-trclose="1">‹ Indietro</button>
   <div class="grhd"><div><small>Ricerca per numeri · tutti i giocatori della lega</small><b>Calcola il trend</b></div></div>
-  <div class="trctl">${perBtn("tr",TRN.da,TRN.a)}
+  <div class="trctl">${perBtn("tr",TRN.da,TRN.a)}${perGranBtns("tr",GOK,by)}
   ${sel("team","Squadra",[["","Tutte le squadre"],...Object.keys(TEAMS).map(t=>[t,TEAMS[t].nick])],TRN.team)}</div>
   <div class="trlab">Ruoli</div><div class="trseg trrl">${[["G","Guardie"],["F","Ali"],["C","Centri"]].map(([r,l])=>`<button class="${r}" data-trrole="${r}" aria-pressed="${TRN.ruoli.includes(r)}">${l}</button>`).join("")}</div>
   <div class="trlab">Cosa misurare</div>${seg("met",[["pdk","PDK"],["min","Minuti"],["eff","Efficienza"]])}
@@ -3273,11 +3285,10 @@ function vGrafico(){const FAm=!!GR.fa;if(FAm&&typeof FAG==="undefined"){faLoadG(
   /* periodo a calendario: GR.da → GR.a; stagioni toccate = SZR; livello: più stagioni → stagioni, oltre 45 giorni → mesi, altrimenti settimane */
   const ORD=PER_ORD;perNorm(GR);const SZR=perSzr(GR.da,GR.a),multi=SZR.length>1,inP=perIn(GR.da,GR.a);
   const gAll=SZR.length?grGames(GR.p,multi?"all":SZR[0]).filter(x=>SZR.includes(x.sz)):[],g=gAll.filter(x=>inP(x.dt));
-  GR.by=perBy(g);
+  GR.by=perBy(g);const GOK=perOk(g),forz=!!(GR.gran&&GOK[GR.gran]);if(forz)GR.by=GR.gran;/* scelta Stagioni/Mesi/Giorni dell'utente, se possibile nel periodo */
   /* se il periodo dà un solo punto (es. stagione appena iniziata, un solo mese) scendo di livello: settimane, poi partite */
-  if(GR.by!=="s"&&g.length>=2&&g.length<=8)GR.by="g";/* poche partite: mostrale una per una */
-  if(GR.by!=="s"&&g.length>=2&&g.length<=8)GR.by="g";/* poche partite: mostrale una per una */
-  let P=grGroup(g,GR.by);if(P.length<2&&g.length>=2&&GR.by!=="g"){if(GR.by!=="w"){GR.by="w";P=grGroup(g,"w")}if(P.length<2){GR.by="g";P=grGroup(g,"g")}}const _P=P,avg=f=>grAvg(g,x=>x[f]);
+  if(!forz&&GR.by!=="s"&&g.length>=2&&g.length<=8)GR.by="g";/* poche partite: mostrale una per una */
+  let P=grGroup(g,GR.by);if(!forz&&P.length<2&&g.length>=2&&GR.by!=="g"){if(GR.by!=="w"){GR.by="w";P=grGroup(g,"w")}if(P.length<2){GR.by="g";P=grGroup(g,"g")}}const _P=P,avg=f=>grAvg(g,x=>x[f]);
   const mLab=k=>{const[y,m]=k.split("-");return["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"][+m-1]+" "+y.slice(2)};
   const wLab=(k,i)=>{const d0=new Date(k+"T00:00:00Z"),d1=new Date(d0);d1.setUTCDate(d1.getUTCDate()+6);const f=d=>String(d.getUTCDate()).padStart(2,"0")+"/"+String(d.getUTCMonth()+1).padStart(2,"0");return`Sett. ${i+1} · ${f(d0)}–${f(d1)}`};
   const f1=v=>v==null?"—":v.toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1}),f2=v=>v==null?"—":v.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -3291,6 +3302,7 @@ function vGrafico(){const FAm=!!GR.fa;if(FAm&&typeof FAG==="undefined"){faLoadG(
   <div class="grtop"><div class="grctl">${FAm?"":sel("Giocatore",ros.map(n=>[n,glN.includes(n)?n+" (G League)":n]),GR.p)}
   ${perBtn("gr",GR.da,GR.a)}</div>
   ${FAm||isGL?"":`<div class="grjs">${(()=>{const r=(ROSTER[t]||[]).find(x=>x[0]===GR.p);return jersey(t,r?r[1]:null,GR.p)})()}</div>`}</div>
+  ${perGranBtns("gr",GOK,GR.by)}
   <div class="grtgs">${tg("pdk")}${tg("min")}${tg("eff")}</div>
   <div class="grcard">${grChart(P,GR.show)}<div class="grfoot">${g.length} ${g.length===1?"partita":"partite"} · ${GR.by==="s"?"media di ogni stagione":GR.by==="m"?"media di ogni mese":GR.by==="w"?"media di ogni settimana":"ogni partita"}</div></div></div>`}
 
