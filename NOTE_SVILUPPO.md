@@ -558,4 +558,4 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 
 (133) Modalità notte: anche header e menu in alto (sfondo viola Dreamers con stelline, bordo viola, tasto selezionato viola) e lo sfondo di tutte le pagine; html.notte e theme-color #2a1260 per la barra di stato.
 
-(134) Modalità notte: stelle ridotte alla densità di Dreamers (stesso stile .drroom::before, opacità .55): 7 sullo sfondo della Home, 2 piccole per carta, 4 nella fascia in alto.
+(134) Modalità notte: stelle nello stile di Dreamers (.drroom::before): 8 sullo sfondo della Home (opacità .6), 2 per carta (.8), 5 nella fascia in alto.
