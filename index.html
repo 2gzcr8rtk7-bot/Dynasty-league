@@ -2397,6 +2397,7 @@ function nbaDeco(c){const sd=`<path d="M0 44 L14 48 L17 146 L0 146Z M120 44 L106
    default:return sd}}
 /* icona del tastino: piccola maglietta con i colori della divisa scelta */
 function kitIco(t){const c=kitC(t,kitDi(t)),n3=kitDi(t)>=3,n9=kitDi(t)===4;return`<svg viewBox="0 0 24 24" aria-hidden="true">${n9?`<defs><pattern id="kit90" width="2.4" height="24" patternUnits="userSpaceOnUse"><rect width="2.4" height="24" fill="#141414"/><rect width=".6" height="24" fill="#ce1126"/></pattern></defs>`:n3?`<defs><linearGradient id="kitnba" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c8102e"/><stop offset=".33" stop-color="#c8102e"/><stop offset=".33" stop-color="#fdb927"/><stop offset=".66" stop-color="#fdb927"/><stop offset=".66" stop-color="#1d428a"/><stop offset="1" stop-color="#1d428a"/></linearGradient></defs>`:""}<path d="M6.6 2.2h3.2c.2 2.6 4.2 2.6 4.4 0h3.2c-.1 3.4 1 5.4 3 6.4v12.6c-5.6 1.1-11.2 1.1-16.8 0V8.6c2-1 3.1-3 3-6.4z" fill="${n9?"url(#kit90)":n3?"url(#kitnba)":c.bg}" stroke="${c.trim||c.fg}" stroke-width="1.6" stroke-linejoin="round"/><text x="12" y="16.6" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-style="italic" font-size="8.5" fill="${n3?"#ffffff":c.fg}"${n3?' stroke="#111" stroke-width="1.4" paint-order="stroke"':""}>${n9?"90":"23"}</text></svg>`}
+const NBA_NOME={ATL:"HAWKS",BOS:"CELTICS",BKN:"NETS",CHA:"HORNETS",CHI:"BULLS",CLE:"CAVALIERS",DAL:"MAVERICKS",DEN:"NUGGETS",DET:"PISTONS",GSW:"WARRIORS",HOU:"ROCKETS",IND:"PACERS",LAC:"CLIPPERS",LAL:"LAKERS",MEM:"GRIZZLIES",MIA:"HEAT",MIL:"BUCKS",MIN:"WOLVES",NOP:"PELICANS",NYK:"KNICKS",OKC:"THUNDER",ORL:"MAGIC",PHI:"76ERS",PHX:"SUNS",POR:"BLAZERS",SAC:"KINGS",SAS:"SPURS",TOR:"RAPTORS",UTA:"JAZZ",WAS:"WIZARDS"};
 function jersey(t,num,name=""){
   const kd=kitDi(t),rw=kd>=3?(ROSTER[t]||[]).find(x=>x[0]===name):null,nk=rw?(kd===4?(NBA_KIT_90[rw[3]]||NBA_BIANCA):NBA_KIT[rw[3]]):null;
   const c=nk?{...TEAMS[t],stroke:undefined,outer:undefined,jsw:undefined,...nk}:kitC(t,kd>=3?0:kd),n=num==null?"?":String(num),k="j"+(JID++);
@@ -2404,7 +2405,8 @@ function jersey(t,num,name=""){
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
   const ol=c.jstroke||(lum(c.fg)<0.45?"#ffffff":"#0a0f1f");
   const parts=name.replace(/\s+(Jr\.?|Sr\.?|II|III|IV)$/i,"").split(" ");
-  const word=(parts.length>1?parts.slice(1).join(" "):parts[0]||c.nick).toUpperCase();
+  let word=(parts.length>1?parts.slice(1).join(" "):parts[0]||c.nick).toUpperCase();
+  if(nk&&kd===4&&NBA_NOME[rw[3]])word=NBA_NOME[rw[3]];/* maglie Anni 90: al posto del cognome il nome della squadra NBA */
   const L=word.length, wfs=L<=6?17:L<=9?15:L<=12?13:11, wlen=Math.min(74,Math.round(L*wfs*.62));
   const body="M38 6 C42 27 78 27 82 6 L98 12 C97 34 104 46 114 50 L112 126 Q60 137 8 126 L6 50 C16 46 23 34 22 12 Z";
   return `<svg viewBox="0 0 120 146" aria-hidden="true">

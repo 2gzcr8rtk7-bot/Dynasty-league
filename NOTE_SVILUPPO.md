@@ -665,3 +665,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (177) 27/10/2026 (Claude, account del secondo utente) — La maglia scelta col tastino (le 5 categorie: Casa, Notte, Alternativa, NBA 2026, Anni 90) ora vale in TUTTE le sezioni (pagina giocatore, scontri Dreamers, trade, ecc.), non solo nella pagina squadra: `kitDi(t)` legge sempre `KIT[t]`. Senza scelta resta casa (notte solo in modalità notte sul campo). PUBBLICATO con la (178).
 
 (178) 27/10/2026 (Claude, account del secondo utente) — Maglia ANNI 90 dei Cavaliers aggiunta a NBA_KIT_90 (CLE bg #b02a2c vinaccia, collo/giromanica blu notte #1f2a5c con oro #d4b066 al centro via tstr, motivo "cle" = fianchi oro con due righe bianche, nome/numero bianchi bordati d oro). PUBBLICATO insieme alla (177).
+
+(178) 27/10/2026 (Claude, account del secondo utente) — Maglie Anni 90: sul petto ora c'è il NOME DELLA SQUADRA NBA (BULLS, CAVALIERS, ROCKETS... mappa `NBA_NOME`, tutte e 30) al posto del cognome del giocatore; solo categoria Anni 90 (kd===4), le altre categorie invariate. Codice in `jersey()`. IN CODA (rendering inviato).
