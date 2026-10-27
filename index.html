@@ -2317,7 +2317,7 @@ function kitC(t,k){const T=TEAMS[t];
   if(k===2){const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
     if(lum(casa.bg)>.85){/* casa già chiara: alternativa nel colore della squadra */
       return t==="DOL"?{...T,bg:"#1747c9",fg:"#ffffff",trim:"#ffffff",jstroke:"#0b0b0b"}:{...T,bg:T.bg,fg:T.fg,trim:T.trim}}
-    if(t==="DUC")return{...T,bg:"#f7f7f5",fg:"#f5c000",trim:"#facc15",jstroke:"#c99a00"};/* Ducks alternativa: solo bianco e giallo, niente bordi neri su nome e numero */
+    if(t==="DUC")return{...T,bg:"#f7f7f5",fg:"#f5c000",trim:"#facc15",jstroke:"#111111",jsw:1.1};/* Ducks alternativa: solo bianco e giallo, niente bordi neri su nome e numero */
     const acc=t==="EAG"?"#0f1b4d":T.bg,sec=t==="EAG"?"#facc15":(T.trim&&lum(T.trim)<.85?T.trim:T.bg);
     return{...T,bg:"#f7f7f5",fg:acc,trim:t==="DUC"?"#facc15":sec,jstroke:lum(acc)>.6?"#111111":"#ffffff",outer:lum(acc)>.6?"#111111":undefined}}
   return casa}
@@ -2362,10 +2362,10 @@ function jersey(t,num,name=""){
    <text x="60" y="84" text-anchor="middle" font-family="CourtBlock,Impact,Arial Narrow,sans-serif" font-style="normal" font-weight="400" font-size="21" letter-spacing=".4" fill="url(#${k}w)" stroke="#0b0b0b" stroke-width="3.2" paint-order="stroke" stroke-linejoin="round" textLength="76" lengthAdjust="spacingAndGlyphs">DOLPHINS</text>
    <text x="83" y="45" font-size="${n.length>1?15:17}" text-anchor="middle" fill="#ffffff" stroke="#0b0b0b" stroke-width="2.4" paint-order="stroke" stroke-linejoin="round">${n}</text>`:`
    ${c.outer?`<text x="60" y="60" text-anchor="middle" font-style="normal" font-size="${wfs}" letter-spacing=".6" fill="${c.outer}" stroke="${c.outer}" stroke-width="5.6" stroke-linejoin="round" textLength="${wlen}" lengthAdjust="spacingAndGlyphs">${word}</text>`:""}
-   <text x="60" y="60" text-anchor="middle" font-style="normal" font-size="${wfs}" letter-spacing=".6" fill="${c.fg}" stroke="${ol}" stroke-width="3.2" paint-order="stroke" stroke-linejoin="round" textLength="${wlen}" lengthAdjust="spacingAndGlyphs">${word}</text>
+   <text x="60" y="60" text-anchor="middle" font-style="normal" font-size="${wfs}" letter-spacing=".6" fill="${c.fg}" stroke="${ol}" stroke-width="${c.jsw||3.2}" paint-order="stroke" stroke-linejoin="round" textLength="${wlen}" lengthAdjust="spacingAndGlyphs">${word}</text>
    <text x="61.5" y="106.5" font-size="${fs}" text-anchor="middle" fill="#000" fill-opacity=".45" filter="url(#${k}b)">${n}</text>
    ${c.outer?`<text x="60" y="104" font-size="${fs}" text-anchor="middle" fill="${c.outer}" stroke="${c.outer}" stroke-width="6.4" stroke-linejoin="round">${n}</text>`:""}
-   <text x="60" y="104" font-size="${fs}" text-anchor="middle" fill="${c.fg}" stroke="${ol}" stroke-width="3.6" paint-order="stroke" stroke-linejoin="round">${n}</text>
+   <text x="60" y="104" font-size="${fs}" text-anchor="middle" fill="${c.fg}" stroke="${ol}" stroke-width="${c.jsw?c.jsw*1.1:3.6}" paint-order="stroke" stroke-linejoin="round">${n}</text>
    <text x="60" y="104" font-size="${fs}" text-anchor="middle" fill="url(#${k}n)">${n}</text>`}
   </g>
   <path d="${body}" fill="none" stroke="#000" stroke-opacity=".35" stroke-width="1"/>

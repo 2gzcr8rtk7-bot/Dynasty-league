@@ -642,3 +642,4 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (166) 27/10/2026 (Claude, account del secondo utente) — Sfida Dreamers (drDuel): in cima a ogni card c'è una fascia piena del colore del ruolo con scritto GUARDIA / ALA / CENTRO (classe .du.ru-G/F/C, data-rn), scelta dell'utente tra 5 prove (opzione 4). Tolto il trattino ruolo accanto al nome nelle card (ridondante).
 
 (167) 27/10/2026 (Claude, account del secondo utente) — Divise: Peacocks "Notte" verde pavone (#0f6b3f, nome/numero bianchi con bordo blu) invece che nera, anche in modalità notte; Ducks "Alternativa" solo bianco e giallo (nome e numero gialli con contorno oro, niente bordi neri). Codice in kitC. IN CODA.
+    Poi: Ducks Alternativa con un bordino nero sottilissimo su nome e numero (parametro jsw della divisa = spessore del contorno, qui 1,1 invece di 3,2).
