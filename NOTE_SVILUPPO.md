@@ -507,3 +507,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (107) Campo: più spazio tra "Roster completo" e "Live stanotte" (.clwrap margin-top 34px).
 
 (108) Campo · MODALITÀ NOTTE: tastino con la luna accanto a "Quintetto" (#cntbtn, CNT). Acceso: campo e panchina diventano scuri con i colori della squadra (.cdark) e usano SOLO i PDK della notte di Dynasty TV (campoNotteMap, stessa notte del box "Live stanotte": si azzera alla prima partita della notte successiva). Meritocrazia senza capitano: i 5 con il PDK più alto in campo, gli altri in panchina in ordine di punteggio (chi non ha giocato in fondo, "non ha giocato"); sotto ogni panchinaro avversario e stato (● = in corso). Spento: tutto come prima (Dunkest).
+
+(109) Modalità notte: il titolo diventa "Modalità notte" (al posto di "Quintetto"); maglie "black edition" (jersey: nero + bianco + accento notte NOTTE_ACC: Ducks grigio, le altre il colore della squadra); campo in scala di grigi scuro con bordo e alone del colore notte; se nessuno ha giocato "Nessuno in campo stanotte".

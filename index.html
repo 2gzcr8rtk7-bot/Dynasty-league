@@ -1754,8 +1754,9 @@ nav button>span{white-space:nowrap}
 .cntbtn svg{width:15px;height:15px}.cntbtn i{position:absolute;top:4px;right:5px;width:6px;height:6px;border-radius:50%;background:#ef4444;opacity:.5}
 .cntbtn.on{background:linear-gradient(180deg,#3b2a8a,#1b1240);border-color:#8b5cf6;color:#fff;box-shadow:0 0 12px rgba(139,92,246,.6)}.cntbtn.on i{opacity:1;animation:lvp 1.4s infinite}
 .court.cdark{position:relative}
-.court.cdark .cbg{filter:brightness(.38) saturate(1.25) contrast(1.1)}
-.court.cdark::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 50% 35%,color-mix(in srgb,var(--tc) 38%,transparent),transparent 70%),linear-gradient(180deg,rgba(6,8,24,.15),rgba(6,8,24,.45))}
+.court.cdark .cbg{filter:grayscale(1) brightness(.42) contrast(1.15)}
+.court.cdark{border-color:var(--tc)!important}.court.cdark::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 50% 30%,color-mix(in srgb,var(--tc) 42%,transparent),transparent 72%),linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.35))}
+.court.cdark .cnone{position:absolute;inset:40% 10% auto;z-index:1;text-align:center;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:#cfd6ea}
 .court.cdark .cpl{z-index:1}.court.cdark .cnm{background:#000!important;box-shadow:0 0 0 1px color-mix(in srgb,var(--tc) 70%,transparent)}
 .bench.cdark{background:#060915;border-color:color-mix(in srgb,var(--tc) 35%,#1b2340)}
 .bench.cdark .bpl{background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 14%,#070a18),#070a18 60%);border-color:#141a33;box-shadow:inset 3px 0 0 color-mix(in srgb,var(--tc) 80%,transparent)}
@@ -2088,8 +2089,10 @@ const DECO={
    <path d="M44 92 L50 99 L46 98 L42 101 L38 99 Z M100 100 L106 106 L101 105 L97 107 L94 105 Z M18 102 L23 107 L19 106 L15 108 Z" fill="#fff"/>
    <path d="M4 54 L12 54 L10 112 L2 118 Z M116 54 L108 54 L110 112 L118 118 Z" fill="#fff" opacity=".9"/>`
 };
+/* Modalità notte del Campo: maglie "black edition" (nero + bianco + accento notte della squadra; Ducks nero/grigio/bianco) */
+const NOTTE_ACC=t=>t==="DUC"?"#9ca3af":TEAMS[t].bg;
 function jersey(t,num,name=""){
-  const c=t==="DUC"?{...TEAMS[t],bg:"#facc15"}:t==="SPI"?{...TEAMS[t],bg:"#ffffff",fg:"#111111"}:t==="DOL"?{...TEAMS[t],bg:"#f4f6f8",fg:"#1747c9",trim:"#1747c9",jstroke:"#ffffff",outer:"#1747c9"}:TEAMS[t],n=num==null?"?":String(num),k="j"+(JID++);
+  const c=(typeof CNT!=="undefined"&&CNT&&cur==="campo")?{...TEAMS[t],bg:"#151515",fg:"#ffffff",trim:NOTTE_ACC(t),jstroke:"#000000",outer:NOTTE_ACC(t)}:t==="DUC"?{...TEAMS[t],bg:"#facc15"}:t==="SPI"?{...TEAMS[t],bg:"#ffffff",fg:"#111111"}:t==="DOL"?{...TEAMS[t],bg:"#f4f6f8",fg:"#1747c9",trim:"#1747c9",jstroke:"#ffffff",outer:"#1747c9"}:TEAMS[t],n=num==null?"?":String(num),k="j"+(JID++);
   const fs=n.length>1?38:44;
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
   const ol=c.jstroke||(lum(c.fg)<0.45?"#ffffff":"#0a0f1f");
@@ -3738,11 +3741,11 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
    ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${LOGO[t]}" alt="">`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
   ${bacheca(t)}
   ${cassa(t)}
-  ${H("Quintetto",`<em>${CNT?(()=>{const d=campoNotte();if(!d)return"Notte · nessuna partita";const dd=tvDt(d);return`Notte ${dd.getUTCDate()}/${dd.getUTCMonth()+1}`})():auto?"Provvisorio · scelto per efficienza":"Titolari · per ruolo"}</em><button class="cntbtn${CNT?" on":""}" id="cntbtn" aria-pressed="${CNT}" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`)}
-  <div class="court${CNT?" cdark":""}" style="--tc:${c.bg};border-color:${shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}</div>
+  ${H(CNT?"Modalità notte":"Quintetto",`<em>${CNT?(()=>{const d=campoNotte();if(!d)return"nessuna partita";const dd=tvDt(d);return`${dd.getUTCDate()}/${dd.getUTCMonth()+1}`})():auto?"Provvisorio · scelto per efficienza":"Titolari · per ruolo"}</em><button class="cntbtn${CNT?" on":""}" id="cntbtn" aria-pressed="${CNT}" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`)}
+  <div class="court${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg};border-color:${shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}${CNT&&!q.length?`<div class="cnone">Nessuno in campo stanotte</div>`:""}</div>
   <div class="ctools"><button class="ctool" id="ccap"><span class="ci">C</span>Cap<small>Chi mettere capitano</small></button><button class="ctool" id="cmul"><span class="ci mul">€</span>Multe<small>Capitano senza multa</small></button></div>
   ${H("Panchina",CNT?`<em>notte · per punteggio</em>`:"")}
-  <div class="bench${CNT?" cdark":""}" style="--tc:${c.bg}">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><span class="bev">${CNT?`${pillN(p[0])}<small>${NM[p[0]]?`${NM[p[0]].lv?"● ":""}vs ${NM[p[0]].opp} · ${NM[p[0]].st}`:"non ha giocato"}</small>`:`${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}`}</span></button>`).join("")}</div>
+  <div class="bench${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg}">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><span class="bev">${CNT?`${pillN(p[0])}<small>${NM[p[0]]?`${NM[p[0]].lv?"● ":""}vs ${NM[p[0]].opp} · ${NM[p[0]].st}`:"non ha giocato"}</small>`:`${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}`}</span></button>`).join("")}</div>
   <div class="crwrap"><button class="croster" id="croster">Roster completo ›</button>${t==="DUC"?`<button class="cpow" id="cpow" aria-label="Accesso riservato"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M7.1 6.3a8 8 0 1 0 9.8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>`:""}</div>
   <div class="clwrap">${campoLive(t)}</div>`;
 }
