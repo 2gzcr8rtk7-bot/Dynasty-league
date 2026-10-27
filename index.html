@@ -2368,7 +2368,7 @@ const NBA_KIT_90={
  TOR:{bg:"#52297a",fg:"#ffffff",jstroke:"#141414",nf:"#b0aeb2",ns:"#141414",trim:"#141414",tline:"#c8323a",p2:"#a9a6a8",d:"torc"},
  DEN:{bg:"#1c3f98",fg:"#ffffff",jstroke:"#f2c230",ns:"#f2c230",outer:"#0b2a6c",trim:"#f2c230",p2:"#f2c230",d:"den"},
  MIN:{bg:"#14191d",fg:"#ffffff",jstroke:"#8fb0d8",outer:"#1d2f56",trim:"#14191d",tline:"#2f9a5c",tlw:4.2,tld:"2.2 1.3",p2:"#2f9a5c",d:"none"},
- ATL:{bg:"#f5bd22",fg:"#161616",jstroke:"#cd1d24",jsw:2.2,trim:"#161616",tline:"#cd1d24",tlw:2.4,p2:"#cd1d24",d:"none"},
+ ATL:{ws:1.07,bg:"#f5bd22",fg:"#161616",jstroke:"#cd1d24",jsw:2.2,trim:"#161616",tline:"#cd1d24",tlw:2.4,p2:"#cd1d24",d:"none"},
  SAS:{bg:"#4bb7a6",fg:"#ffffff",jstroke:"#141414",trim:"#141414",arm:["#f39a3a","#ee6f8f"],p2:"#ffffff",d:"sas"},
  IND:{bg:"#ffd914",fg:"#1b2440",jstroke:"#ffffff",jsw:2.6,trim:"#1b2440",pc:"#1b2440",ps:5.6,p2:"#1b2440",d:"pins"},
  DET:{bg:"#1279a3",fg:"#ffffff",jstroke:"#141414",trim:"#141414",tline:"#e6a422",tlw:1.6,tline2:"#b52a1c",p2:"#e6a422",d:"det"},
@@ -2439,7 +2439,7 @@ function jersey(t,num,name=""){
   const parts=name.replace(/\s+(Jr\.?|Sr\.?|II|III|IV)$/i,"").split(" ");
   let word=(parts.length>1?parts.slice(1).join(" "):parts[0]||c.nick).toUpperCase();
   if(nk&&NBA_NOME[rw[3]])word=NBA_NOME[rw[3]];else if(TEAMS[t]&&TEAMS[t].nick)word=TEAMS[t].nick.toUpperCase();/* su ogni maglia il nome della squadra (NBA se divisa NBA/Anni 90, altrimenti la nostra franchigia), mai il cognome */
-  const L=word.length, wfs=L<=6?17:L<=9?15:L<=12?13:11, wlen=Math.min(74,Math.round(L*wfs*.62));
+  const L=word.length, wfs=(L<=6?17:L<=9?15:L<=12?13:11)*(c.ws||1), wlen=Math.min(74,Math.round(L*wfs*.62));
   const body="M38 6 C42 27 78 27 82 6 L98 12 C97 34 104 46 114 50 L112 126 Q60 137 8 126 L6 50 C16 46 23 34 22 12 Z";
   return `<svg viewBox="0 0 120 146" aria-hidden="true">
   <defs>
