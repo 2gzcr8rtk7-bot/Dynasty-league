@@ -1820,6 +1820,17 @@ html.notte:not(.dreamfs){background-color:#0d0620}
 </style><style>
 /* (141) Dreamers/G-Dreamers – Turno: chi è avanti (turno in corso) o ha vinto (fine turno) ha il punteggio viola acceso; l'altro resta normale */
 .drms .drr.slead em,.drms .drr.sgold em{color:#d8b4fe!important;text-shadow:0 0 10px rgba(192,132,252,.95),0 0 22px rgba(168,85,247,.75)!important}
+</style><style>
+/* (142) Tasto Condividi (Live stanotte, Dreamers in Dynasty TV) e foglio di anteprima */
+h2 .shbtn{margin-left:auto;flex:0 0 32px;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid rgba(196,181,253,.45);border-radius:999px;background:rgba(124,58,237,.22);color:#e9d5ff;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;position:relative;z-index:2}
+h2 .shbtn:active{transform:scale(.96)}
+.shsheet{position:fixed;inset:0;z-index:2000;background:rgba(5,2,15,.82);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:max(14px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom))}
+.shbox{max-width:520px;width:100%;max-height:100%;display:flex;flex-direction:column;gap:12px;align-items:center}
+.shbox img{max-width:100%;max-height:calc(100vh - 140px);object-fit:contain;border-radius:16px;box-shadow:0 10px 40px rgba(124,58,237,.45)}
+.shwait{color:#e9d5ff;font-family:var(--display);font-style:italic;font-weight:700;font-size:18px}
+.shbar{display:flex;gap:10px;width:100%}
+.shbar>*{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px;border-radius:14px;border:1px solid rgba(196,181,253,.35);background:rgba(30,20,70,.8);color:#fff;font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;letter-spacing:.05em;text-transform:uppercase;text-decoration:none;cursor:pointer}
+.shbar .shgo{background:linear-gradient(180deg,#a855f7,#6d28d9);border-color:transparent;box-shadow:0 6px 18px rgba(168,85,247,.45)}
 </style></head>
 
 <body>
@@ -3750,10 +3761,89 @@ function campoLive(t){const d=campoNotte();if(!d)return`${H("Live stanotte",`<em
   R.sort((a,b)=>(+b.r[19]||0)-(+a.r[19]||0));
   const dd=tvDt(d),lab=`${TV_GG[dd.getUTCDay()]} ${dd.getUTCDate()} ${TV_MM[dd.getUTCMonth()]}`,nlv=R.filter(x=>x.lv).length,tot=R.reduce((s,x)=>s+(+x.r[19]||0),0);
   const row=x=>`<tr class="${x.lv?"lvr":""}"><td>${x.n}${x.gl?' <i class="clgl">G</i>':""}<small>${x.tm} vs ${x.opp} · ${x.lv?`<b class="clv"><i></i>${x.st}</b>`:x.st}</small></td><td class="pdkl">${pdkB(+x.r[19],String(x.r[19]).replace(".",","))}</td><td>${x.r[2]}</td><td class="pts">${x.r[3]}</td><td>${x.r[6]}</td><td>${x.r[7]}</td></tr>`;
-  return`${H("Live stanotte",`<em>${dd.getUTCDate()}/${dd.getUTCMonth()+1}${nlv?` · ${nlv} live`:""}</em>`)}
+  SHR_CAMPO=R.length?{t,lab,R,tot,nlv}:null;
+  return`${H("Live stanotte",`<em>${dd.getUTCDate()}/${dd.getUTCMonth()+1}${nlv?` · ${nlv} live`:""}</em>${R.length?shBtn("campo"):""}`)}
   ${R.length?`<div class="tbl-wrap"><table class="ptbl tvbox drbox clbox"><thead><tr><th>Giocatore</th><th class="pdkl">PDK</th><th>Min</th><th>Pt</th><th>Rim</th><th>Ass</th></tr></thead>
   <tbody>${R.map(row).join("")}<tr class="tot"><td>Totale notte</td><td class="pdkl">${pdkF(tot)}</td><td></td><td></td><td></td><td></td></tr></tbody></table></div>`:`<p class="note">Stanotte nessun giocatore di questa squadra è ancora sceso in campo.</p>`}
   <p class="note">Solo dati di Dynasty TV della notte (data USA), aggiornati in automatico mentre i giocatori sono in campo; PDK con la formula Dunkest, provvisori fino al report ufficiale. Alla prima partita della notte successiva il box si azzera.</p>`}
+/* ===== CONDIVIDI (142): tasto piccolo su "Live stanotte" (Campo) e "Dreamers" (Dynasty TV).
+   Disegna un'immagine 1080px elegante (stile Dreamers) con tutte le info e la apre in un foglio con "Condividi" (share sheet
+   di iPhone con il file PNG) e "Salva". Il foglio serve anche perché iOS vuole il tocco dell'utente subito prima di navigator.share. */
+let SHR_CAMPO=null,SHR_DR=null;
+const SH_ICO='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
+const shBtn=k=>`<button class="shbtn" data-share="${k}" aria-label="Condividi" title="Condividi">${SH_ICO}</button>`;
+function shImg(src){return new Promise(r=>{if(!src)return r(null);const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src})}
+function shLogo(t){const s=document.createElement("span");s.className="badge logo lg-"+t;s.style.cssText="position:absolute;left:-9999px;top:0";document.body.appendChild(s);const u=getComputedStyle(s).backgroundImage;s.remove();const m=u&&u.match(/url\("?([^")]+)"?\)/);return shImg(m&&m[1])}
+function shRR(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+function shFit(c,t,w){if(c.measureText(t).width<=w)return t;while(t.length>1&&c.measureText(t+"…").width>w)t=t.slice(0,-1);return t+"…"}
+const SH_F=(w,s,it)=>`${it?"italic ":""}${w} ${s}px "Barlow Condensed","Arial Narrow",Arial,sans-serif`,SH_B=(w,s)=>`${w} ${s}px Barlow,Arial,sans-serif`;
+const SH_PK={r:["#ef4444","#fff"],y:["#f5b400","#111"],g:["#22c55e","#06240f"],v:["#8b5cf6","#fff"],na:["#334155","#cbd5e1"]};
+function shPill(c,v,x,y,w,h,fs){const[bg,fg]=SH_PK[pdkLvl(v)];shRR(c,x,y,w,h,h*.28);c.fillStyle=bg;c.fill();c.fillStyle=fg;c.font=SH_F(800,fs||h*.62,1);c.textAlign="center";c.textBaseline="middle";c.fillText(v==null?"—":String(Math.round(v*100)/100).replace(".",","),x+w/2,y+h/2+1)}
+async function shBase(H){try{await Promise.all([document.fonts.load(SH_F(800,40,1)),document.fonts.load(SH_F(700,40)),document.fonts.load(SH_B(500,30)),document.fonts.load(SH_B(600,30))])}catch(e){}
+  const W=1080,cv=document.createElement("canvas");cv.width=W;cv.height=H;const c=cv.getContext("2d");
+  let g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,"#2a1260");g.addColorStop(.45,"#160a38");g.addColorStop(1,"#0a0618");c.fillStyle=g;c.fillRect(0,0,W,H);
+  g=c.createRadialGradient(200,0,0,200,0,760);g.addColorStop(0,"rgba(168,85,247,.55)");g.addColorStop(1,"rgba(168,85,247,0)");c.fillStyle=g;c.fillRect(0,0,W,H);
+  g=c.createRadialGradient(980,140,0,980,140,620);g.addColorStop(0,"rgba(59,130,246,.35)");g.addColorStop(1,"rgba(59,130,246,0)");c.fillStyle=g;c.fillRect(0,0,W,H);
+  let s=7;const rnd=()=>(s=(s*16807)%2147483647)/2147483647;for(let i=0;i<Math.round(H/14);i++){c.globalAlpha=.25+rnd()*.6;c.fillStyle=rnd()<.3?"#e9d5ff":"#fff";c.beginPath();c.arc(rnd()*W,rnd()*H,.8+rnd()*1.8,0,7);c.fill()}c.globalAlpha=1;
+  const lg=await shImg((document.querySelector("img.lglogo")||{}).src);if(lg){shRR(c,56,48,112,112,24);c.save();c.clip();c.drawImage(lg,56,48,112,112);c.restore()}
+  c.textBaseline="alphabetic";c.textAlign="left";c.font=SH_F(800,62,1);c.fillStyle="#fff";c.fillText("DYNASTY",192,100);c.fillStyle="#fbbf24";c.fillText("LEAGUE",192,156);
+  c.font=SH_F(700,28,1);c.textAlign="right";c.fillStyle="rgba(233,213,255,.75)";c.fillText("STAGIONE 26/27",W-56,100);
+  return{cv,c,W}}
+function shFoot(c,W,H,txt){c.strokeStyle="rgba(196,181,253,.25)";c.lineWidth=2;c.beginPath();c.moveTo(56,H-96);c.lineTo(W-56,H-96);c.stroke();
+  const n=new Date(),p=v=>String(v).padStart(2,"0");c.font=SH_B(500,24);c.fillStyle="rgba(226,232,240,.6)";c.textAlign="left";c.textBaseline="middle";c.fillText(txt,56,H-56);
+  c.textAlign="right";c.fillText(`${p(n.getDate())}/${p(n.getMonth()+1)} · ${p(n.getHours())}:${p(n.getMinutes())}`,W-56,H-56)}
+function shChip(c,txt,x,y,live,col){c.font=SH_F(800,30,1);const w=c.measureText(txt).width+(live?66:40),h=50;shRR(c,x-w,y,w,h,12);c.fillStyle=col||(live?"#e11d48":"rgba(124,58,237,.9)");c.fill();
+  c.fillStyle="#fff";c.textAlign="left";c.textBaseline="middle";if(live){c.beginPath();c.arc(x-w+28,y+h/2,8,0,7);c.fill()}c.fillText(txt,x-w+(live?46:20),y+h/2+1);return w}
+async function shCampo(){const S=SHR_CAMPO;if(!S)return null;const R=S.R,rh=104,H=430+108+R.length*rh+104+150;const{cv,c,W}=await shBase(H);
+  const lg=await shLogo(S.t);let y=210;if(lg)c.drawImage(lg,56,y,150,150);
+  c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_F(800,30,1);c.fillStyle="#f87171";c.fillText("LIVE STANOTTE",232,y+46);
+  c.font=SH_F(800,66,1);c.fillStyle="#fff";c.fillText(shFit(c,TEAMS[S.t].name.toUpperCase(),W-290),232,y+112);
+  c.font=SH_B(500,28);c.fillStyle="rgba(226,232,240,.75)";c.fillText(S.lab+(S.nlv?` · ${S.nlv} in campo ora`:""),232,y+150);
+  y=430;const X={pdk:545,min:695,pt:795,rim:885,ass:970};c.font=SH_F(700,27,1);c.fillStyle="rgba(196,181,253,.85)";c.textBaseline="middle";
+  c.textAlign="left";c.fillText("GIOCATORE",80,y+40);c.textAlign="center";c.fillText("PDK",X.pdk,y+40);[["MIN","min"],["PT","pt"],["RIM","rim"],["ASS","ass"]].forEach(([l,k])=>c.fillText(l,X[k],y+40));
+  c.fillStyle="#a855f7";c.fillRect(56,y+78,W-112,4);y+=108;
+  shRR(c,56,y-8,W-112,R.length*rh+rh+16,22);c.fillStyle="rgba(15,8,40,.55)";c.fill();
+  R.forEach((x,i)=>{const yy=y+i*rh;if(i%2){c.fillStyle="rgba(255,255,255,.035)";c.fillRect(60,yy,W-120,rh)}
+    c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_B(600,36);c.fillStyle="#fff";c.fillText(shFit(c,x.n,380),80,yy+50);
+    c.font=SH_B(500,24);c.fillStyle=x.lv?"#fda4af":"rgba(203,213,225,.7)";c.fillText(`${x.tm} vs ${x.opp} · ${x.st}`,80,yy+84);
+    shPill(c,+x.r[19],X.pdk-70,yy+24,140,56,36);
+    c.textAlign="center";c.textBaseline="middle";c.font=SH_F(700,38,1);c.fillStyle="#e2e8f0";c.fillText(String(x.r[2]),X.min,yy+52);c.font=SH_F(800,40,1);c.fillStyle="#fff";c.fillText(String(x.r[3]),X.pt,yy+52);c.font=SH_F(700,38,1);c.fillStyle="#e2e8f0";c.fillText(String(x.r[6]),X.rim,yy+52);c.fillText(String(x.r[7]),X.ass,yy+52);
+    c.fillStyle="rgba(196,181,253,.12)";c.fillRect(60,yy+rh-1,W-120,1)});
+  const yt=y+R.length*rh;c.textAlign="left";c.textBaseline="middle";c.font=SH_F(800,40,1);c.fillStyle="#e9d5ff";c.fillText("TOTALE NOTTE",80,yt+rh/2);
+  c.textAlign="center";c.font=SH_F(800,52,1);c.fillStyle="#fff";c.shadowColor="rgba(192,132,252,.9)";c.shadowBlur=20;c.fillText(pdkF(S.tot),X.pdk,yt+rh/2+2);c.shadowBlur=0;
+  shFoot(c,W,H,"PDK formula Dunkest · provvisori fino al report ufficiale");return cv}
+async function shDreamers(){const S=SHR_DR;if(!S)return null;const ch=356,H=420+S.cards.length*(ch+32)+150;const{cv,c,W}=await shBase(H);
+  let y=215;c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,108,1);c.letterSpacing="14px";
+  const tg=c.createLinearGradient(240,0,840,0);tg.addColorStop(0,"#e9d5ff");tg.addColorStop(.5,"#c084fc");tg.addColorStop(1,"#a5b4fc");c.fillStyle=tg;c.shadowColor="rgba(168,85,247,.8)";c.shadowBlur=30;c.fillText("DREAMERS",W/2+7,y+100);c.shadowBlur=0;c.letterSpacing="0px";
+  c.font=SH_F(700,32,1);c.fillStyle="rgba(233,213,255,.8)";c.fillText(`FANTA PDK · ${S.ph.toUpperCase()} · ${S.range}`,W/2,y+150);
+  y=420;const L={};for(const x of S.cards)for(const t of[x.a,x.b])if(!(t in L))L[t]=await shLogo(t);
+  for(const x of S.cards){shRR(c,56,y,W-112,ch,28);const cg=c.createLinearGradient(56,0,W-56,0);cg.addColorStop(0,"rgba(76,29,149,.55)");cg.addColorStop(1,"rgba(17,10,48,.75)");c.fillStyle=cg;c.fill();
+    c.strokeStyle=x.lv?"rgba(244,63,94,.75)":"rgba(196,181,253,.35)";c.lineWidth=3;c.stroke();
+    const lead=x.A.score!=null&&x.B.score!=null&&x.A.score!==x.B.score?(x.A.score>x.B.score?"a":"b"):x.fin&&x.A.score!=null?"a":"";
+    [[x.a,x.A,"a"],[x.b,x.B,"b"]].forEach(([t,T,sd],i)=>{const yy=y+26+i*118;
+      c.save();shRR(c,72,yy,W-144,104,18);c.clip();const tc=c.createLinearGradient(72,0,560,0);tc.addColorStop(0,TEAMS[t].bg+"55");tc.addColorStop(1,TEAMS[t].bg+"00");c.fillStyle=tc;c.fillRect(72,yy,W-144,104);c.restore();
+      if(L[t])c.drawImage(L[t],86,yy+4,96,96);
+      c.textAlign="left";c.textBaseline="alphabetic";{const nm=TEAMS[t].name.toUpperCase();let fs=48;c.font=SH_F(800,fs,1);while(fs>34&&c.measureText(nm).width>520){fs-=2;c.font=SH_F(800,fs,1)}c.fillStyle="#fff";c.fillText(shFit(c,nm,520),204,yy+54)};
+      c.font=SH_B(500,25);c.fillStyle="rgba(203,213,225,.75)";c.fillText(`${T.played}/10 titolari${x.fin?"":" finora"}`,204,yy+88);
+      c.textAlign="right";c.textBaseline="middle";c.font=SH_F(800,72,1);const w=lead===sd;c.fillStyle=w?"#e9d5ff":"#94a3b8";if(w){c.shadowColor="rgba(192,132,252,1)";c.shadowBlur=26}c.fillText(T.score==null?"—":pdkF(T.score),W-92,yy+56);c.shadowBlur=0});
+    shChip(c,x.fin?"FINALE":x.lv?"LIVE":x.started?"IN CORSO":"DA GIOCARE",W-90,y-25+0,x.lv);
+    const cy=y+ch-62;c.fillStyle="rgba(196,181,253,.2)";c.fillRect(90,cy-18,W-180,2);
+    let cx=92;c.textAlign="left";c.textBaseline="middle";c.font=SH_B(500,27);c.fillStyle="rgba(226,232,240,.8)";c.fillText("Capitani:",cx,cy+22);cx+=c.measureText("Capitani:").width+14;
+    x.cap.forEach(([n,t,e],i)=>{c.textAlign="left";if(i){c.font=SH_B(500,27);c.fillStyle="rgba(226,232,240,.6)";c.fillText("·",cx,cy+22);cx+=22}
+      c.font=SH_B(700,27);c.fillStyle="#fff";c.fillText(n,cx,cy+22);cx+=c.measureText(n).width+8;c.font=SH_B(500,25);c.fillStyle="rgba(203,213,225,.75)";c.fillText(`(${t})`,cx,cy+22);cx+=c.measureText(`(${t})`).width+10;
+      shPill(c,e,cx,cy+3,86,38,26);cx+=100});
+    y+=ch+32}
+  shFoot(c,W,H,S.prov?"Live: PDK provvisori (ESPN, formula Dunkest)":"Punteggi Dreamers · dati ufficiali Dunkest");return cv}
+async function shOpen(k){const old=document.querySelector(".shsheet");if(old)old.remove();
+  const sh=document.createElement("div");sh.className="shsheet";sh.innerHTML='<div class="shbox"><p class="shwait">Preparo l\'immagine…</p></div>';document.body.appendChild(sh);
+  sh.addEventListener("click",e=>{if(e.target===sh||e.target.closest(".shx"))sh.remove()});
+  let cv=null;try{cv=k==="campo"?await shCampo():await shDreamers()}catch(e){console.error(e)}
+  if(!cv){sh.querySelector(".shbox").innerHTML='<p class="shwait">Niente da condividere adesso.</p><button class="shx">Chiudi</button>';return}
+  const blob=await new Promise(r=>cv.toBlob(r,"image/png")),name=(k==="campo"?"live-stanotte":"dreamers")+".png",file=new File([blob],name,{type:"image/png"}),url=URL.createObjectURL(blob);
+  sh.querySelector(".shbox").innerHTML=`<img src="${url}" alt="Anteprima da condividere"><div class="shbar"><button class="shx">Chiudi</button><a class="shsv" href="${url}" download="${name}">Salva</a><button class="shgo">${SH_ICO} Condividi</button></div>`;
+  const go=sh.querySelector(".shgo");if(!(navigator.canShare&&navigator.canShare({files:[file]})))go.remove();
+  else go.addEventListener("click",async()=>{try{await navigator.share({files:[file],title:k==="campo"?"Live stanotte":"Dreamers"})}catch(e){}})}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-share]");if(!b)return;e.preventDefault();e.stopPropagation();shOpen(b.dataset.share)},true);
 let CNT=false;
 function campoNotteMap(t){const d=campoNotte(),o={};if(!d)return o;const mine={};(ROSTER[t]||[]).forEach(p=>mine[tvNm(p[0])]=p[0]);
   for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
@@ -4969,7 +5059,8 @@ function tvDreamers(d){try{if(typeof drWeek!=="function"||d<DR_START)return"";co
     return`<button class="tvg drtvg${lv?" live":""}" data-drtv="${k}|${a}|${b}" aria-label="Dreamers ${TEAMS[a].nick} contro ${TEAMS[b].nick}"><div class="tvteams">${row(A,wa)}${row(B,wb)}</div>
       <div class="tvst">${fin?`<b>Finale</b><small>turno ${k} · sfida ›</small>`:lv?`<b class="lv"><i></i>Live</b><small>${prov?"PDK provvisori · ":""}sfida ›</small>`:W.started?`<b class="pre">In corso</b><small>${W.nights}/7 notti · sfida ›</small>`:`<b class="pre">Da giocare</b><small>dal ${drFmt(W.start)} · sfida ›</small>`}</div>
       ${cap?`<div class="tvtop"><span>Capitani: ${cap}</span></div>`:""}</button>`}).join("");
-  return`<div class="drtvh">${H("Dreamers",`<em>${DR_PH(k,P)} · ${drFmt(W.start)}–${drFmt(W.end)}</em>`)}</div><div class="tvlist">${cards}</div>`}catch(e){return""}}
+  SHR_DR={ph:DR_PH(k,P),range:`${drFmt(W.start)}–${drFmt(W.end)}`,prov,cards:pairs.map(([a,b])=>{const A=drTeam(k,a,W),B=drTeam(k,b,W);return{a,b,A,B,fin:W.closed&&!prov,lv:!W.closed&&(liveOggi||prov)&&W.started,started:W.started,cap:[A,B].map(T=>{const c=T.top.find(x=>x.cap);return c?[sur(c.n),T.t,c.e]:null}).filter(Boolean)}})};
+  return`<div class="drtvh">${H("Dreamers",`<em>${DR_PH(k,P)} · ${drFmt(W.start)}–${drFmt(W.end)}</em>${shBtn("dr")}`)}</div><div class="tvlist">${cards}</div>`}catch(e){return""}}
 /* Sfida DREAMERS in stile box score di Dynasty TV: punteggio, tab delle due squadre, tabella con
    In campo (capitano ×1,5 + 5 a punteggio pieno), Panchina ½ (gli ultimi 4 dei 10), Tribuna, In attesa (non hanno ancora giocato). */
 function tvDrGame(key){try{const[ks,a,b]=key.split("|"),k=+ks,st=drStand(),P=drPO(st),W=drWeek(k),A=drTeam(k,a,W),B=drTeam(k,b,W);
