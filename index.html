@@ -449,6 +449,10 @@ h2.lbmh>.cntbtn{justify-self:end;margin-left:0}
 .pcd b{font-size:21px}.pcd small{font-size:8.5px}
 .pcd.na b{font-size:12px}
 .dpg{gap:12px 4px}
+/* ricerca Home: titoli di sezione e G League */
+.hrsec{display:flex;justify-content:space-between;margin:8px 4px 4px;font-family:var(--display);font-style:italic;font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.hrsec span{font-style:normal;opacity:.7}
+.hrglb{display:grid;place-items:center}.hrglb .hrglbg,.hrglb .badge{width:30px!important;height:30px!important}
+details.glp.glhit{animation:glhit 2.2s ease}@keyframes glhit{0%,40%{box-shadow:inset 0 0 0 2px #facc15;background:rgba(250,204,21,.12)}100%{box-shadow:none}}
 /* foglio partite del turno */
 .dwsh{position:fixed;inset:0;z-index:9999;background:rgba(3,6,16,.6);display:flex;align-items:flex-end;justify-content:center;animation:dwin .18s ease}
 @keyframes dwin{from{opacity:0}to{opacity:1}}
@@ -4180,13 +4184,28 @@ document.getElementById("main").addEventListener("click",e=>{if(cur!=="college")
   if(e.target.classList&&e.target.classList.contains("colsheet")){if(e.target.classList.contains("colleg")){COL.leg=false;e.target.remove();return}COL.sel=null;document.querySelector(".colsheet")?.remove();document.body.classList.remove("colsheet-open");return}
   const c=e.target.closest("[data-colsel]");if(!c)return;e.preventDefault();if(c.dataset.colrr)COL.r=c.dataset.colrr;COL.sel=c.dataset.colsel||null;const y=window.scrollY;render();window.scrollTo(0,y)});
 /* Ricerca giocatori dalla Home: risultati sotto la barra, tocco = scheda giocatore */
-function homeSearch(q){const box=document.getElementById("hres");if(!box)return;const nz=v=>v.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");q=nz(q.trim());
+/* Ricerca dalla Home (27/10/2026): cerca in tutte le sezioni e porta alla sezione giusta.
+   Squadre (ROSTER) → scheda giocatore · G League (GLEAGUE/GL_STATS) → sezione G League con il giocatore aperto · Free agent (FA, senza quelli già in G League) → scheda free agent */
+function homeSearch(q){const box=document.getElementById("hres");if(!box)return;const nz=v=>String(v).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");q=nz(q.trim());
   if(q.length<2){box.hidden=true;box.innerHTML="";return}
-  const L=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>{if(nz(p[0]).includes(q))L.push({t,p})}));
-  box.hidden=false;const F=FA.filter(x=>nz(x[0]).includes(q)).slice(0,Math.max(3,8-L.length));
-  box.innerHTML=L.length||F.length?L.slice(0,8).map(({t,p})=>`<button class="hrr" data-pln="${p[0].replace(/"/g,"&quot;")}" data-plt="${t}" style="--tc:${TEAMS[t].bg}"><span class="hrj">${jersey(t,p[1],p[0])}</span><span class="hrn"><b>${RTR(p[0])}${p[0]}</b><small>${TEAMS[t].nick} · ${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><i>›</i></button>`).join("")+F.map(x=>`<button class="hrr hrfa" data-fan="${x[0].replace(/"/g,"&quot;")}"><span class="hrj hrfan">${x[3]?"#"+x[3]:x[2]}</span><span class="hrn"><b>${x[0]}${faGL1(x[0])}</b><small>Free Agent · ${FA_R[x[2]]} · ${x[1]}</small></span><i>›</i></button>`).join(""):`<p class="hnone">Nessun giocatore trovato</p>`}
+  const qa=nz(q).replace(/\./g,""),hit=n=>nz(n).replace(/\./g,"").includes(qa);
+  const L=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>{if(hit(p[0]))L.push({t,p})}));
+  const S=typeof GL_STATS!=="undefined"?GL_STATS:{},G=[],glN=new Set();
+  GLEAGUE.forEach(x=>x.g.forEach(p=>{const st=S[x.t+"|"+p[0]]||{},full=st.n||p[0];glN.add(nz(full));if(hit(full)||hit(p[0]))G.push({t:x.t,k:x.t+"|"+p[0],n:full,r:p[1],nba:st.nba||""})}));
+  const F=FA.filter(x=>hit(x[0])&&!glN.has(nz(x[0])));
+  box.hidden=false;const sec=(lab,n)=>`<p class="hrsec">${lab}<span>${n}</span></p>`,R={G:"Guardia",F:"Ala",C:"Centro"};
+  const hT=L.slice(0,8).map(({t,p})=>`<button class="hrr" data-pln="${p[0].replace(/"/g,"&quot;")}" data-plt="${t}" style="--tc:${TEAMS[t].bg}"><span class="hrj">${jersey(t,p[1],p[0])}</span><span class="hrn"><b>${RTR(p[0])}${p[0]}</b><small>${TEAMS[t].nick} · ${R[p[2]]} · ${p[3]}</small></span><i>›</i></button>`).join("");
+  const hG=G.slice(0,6).map(g=>`<button class="hrr hrgl" data-glk="${g.k.replace(/"/g,"&quot;")}" style="--tc:${TEAMS[g.t].bg}"><span class="hrj hrglb">${glBadge(g.t,"hrglbg")}</span><span class="hrn"><b>${RTR(g.n)}${g.n}</b><small>G-${TEAMS[g.t].nick} · ${R[g.r]}${g.nba?" · "+g.nba:""}</small></span><i>›</i></button>`).join("");
+  const hF=F.slice(0,6).map(x=>`<button class="hrr hrfa" data-fan="${x[0].replace(/"/g,"&quot;")}"><span class="hrj hrfan">${x[3]?"#"+x[3]:x[2]}</span><span class="hrn"><b>${RTR(x[0])}${x[0]}</b><small>Free Agent · ${FA_R[x[2]]} · ${x[1]}</small></span><i>›</i></button>`).join("");
+  box.innerHTML=hT||hG||hF?(hT?sec("Squadre",L.length)+hT:"")+(hG?sec("G League",G.length)+hG:"")+(hF?sec("Free agent",F.length)+hF:""):`<p class="hnone">Nessun giocatore trovato</p>`}
+/* apre la sezione G League con il giocatore già aperto e in vista */
+function glVai(k){gSeason=typeof SZ_ALL!=="undefined"?SZ_ALL[0]:gSeason;cur="gleague";render();
+  requestAnimationFrame(()=>{const d=document.querySelector(`details.glp[data-glk="${CSS.escape(k)}"]`);if(!d){scrollTo(0,0);return}d.open=true;d.classList.add("glhit");const y=d.getBoundingClientRect().top+scrollY-120;scrollTo(0,Math.max(0,y));setTimeout(()=>d.classList.remove("glhit"),2200)})}
 document.getElementById("main").addEventListener("input",e=>{if(e.target.id==="hq")homeSearch(e.target.value)});
-document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest(".hrr");if(!b)return;e.preventDefault();curTeam=b.dataset.plt;curPlayer=b.dataset.pln;gFrom="home";cur="giocatore";render();window.scrollTo(0,0)});
+document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest(".hrr");if(!b)return;e.preventDefault();
+  if(b.dataset.fan!==undefined)return;/* free agent: lo gestisce il click dei free agent (scheda FA) */
+  if(b.dataset.glk){glVai(b.dataset.glk);return}
+  if(!b.dataset.plt||!b.dataset.pln)return;curTeam=b.dataset.plt;curPlayer=b.dataset.pln;gFrom="home";cur="giocatore";render();window.scrollTo(0,0)});
 document.getElementById("main").addEventListener("click",e=>{if(e.target.closest("[data-tvopen]")){e.preventDefault();cur="tv";render();window.scrollTo(0,0)}});
 /* Calcola il trend: apertura, chiusura, filtri, linee */
 document.getElementById("main").addEventListener("click",e=>{
@@ -4579,8 +4598,8 @@ function vGLeague(){
     const pl=x.g.map(p=>({p,s:st(x.t,p[0])})).sort((a,b)=>(b.s.e??-99)-(a.s.e??-99)||"GFC".indexOf(a.p[1])-"GFC".indexOf(b.p[1]));
     const rows=pl.map(({p,s})=>{const L=(s.log||[]).slice().reverse(),u=L[0];
       const head=`<span class="grl ${p[1]}" title="${R[p[1]]}">${p[1]==="F"?"A":p[1]}</span><span class="gn"><b>${s.n||p[0]}</b><small>${s.nba||"—"} · ${R[p[1]]}</small></span>`;
-      if(!s.g)return `<details class="glp"><summary>${head}<span class="gna">Nessuna partita</span></summary><div class="gldet"><p class="note" style="margin:6px 0 0">${past?"Nessuna partita NBA in questa stagione: non era in NBA o non ha giocato.":"Non è ancora sceso in campo in questa stagione."}</p></div></details>`;
-      return `<details class="glp"><summary>${head}<span class="gv2">${s.g}</span><span class="gv2">${d1(s.m)}</span><span class="gv2 pdk">${s.p==null?d1(s.p):pdkB(s.p,d1(s.p))}</span>${eff(s.e)}</summary>
+      if(!s.g)return `<details class="glp" data-glk="${x.t}|${p[0]}"><summary>${head}<span class="gna">Nessuna partita</span></summary><div class="gldet"><p class="note" style="margin:6px 0 0">${past?"Nessuna partita NBA in questa stagione: non era in NBA o non ha giocato.":"Non è ancora sceso in campo in questa stagione."}</p></div></details>`;
+      return `<details class="glp" data-glk="${x.t}|${p[0]}"><summary>${head}<span class="gv2">${s.g}</span><span class="gv2">${d1(s.m)}</span><span class="gv2 pdk">${s.p==null?d1(s.p):pdkB(s.p,d1(s.p))}</span>${eff(s.e)}</summary>
       <div class="gldet"><div class="glk"><div><small>Forma ult. 5</small><span>${eff(s.l5)}${ar(s.l5,s.e)}</span></div><div><small>Ultima ${u?u[0]:""}</small>${u?eff(u[4]):"—"}</div><div><small>PDK ultima</small><b>${u?pdkB(u[3],d1(u[3])):"—"}</b></div></div>
       <table class="gllog"><thead><tr><th>Data</th><th>Min</th><th>PDK</th><th>Eff.</th></tr></thead><tbody>${L.map(l=>`<tr><td>${l[0]} vs ${l[1]}<small>${l[5]} pt · ${l[6]} rb · ${l[7]} as</small></td><td>${d1(l[2])}</td><td>${pdkB(l[3],d1(l[3]))}</td><td>${eff(l[4])}</td></tr>`).join("")}</tbody></table></div></details>`}).join("");
     return `<article class="gcard glstat"><div class="ghd" style="--tc:${c.bg};--tt:${c.trim}"><span class="glg">${x.logo?`<img src="${x.logo}" alt="">`:`${badge(x.t)}`}</span><span class="gnm"><b>G-${c.nick}</b><small>Satellite di ${c.name}</small></span></div>
