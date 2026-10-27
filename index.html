@@ -2522,10 +2522,26 @@ ${top}${band?`<rect x="33" y="46" width="54" height="6" rx="3" fill="${band}"/>`
 <path d="M52 77 Q60 83 68 77" stroke="#6b2d1a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
 <path d="M60 66 Q57 72 60 73" stroke="${sh}" stroke-width="2" fill="none"/>
 </svg>`}
+/* ===== ICONE SCHERZO al posto della maglia (27/10/2026): DLS.pj = "bin" (bidone) | "wc" (cesso) | "poop" (cacca). Stessa icona per tutti, cambia solo il numero. ===== */
+function iconeSvg(kind,n,k){
+  const sh='<ellipse cx="60" cy="138" rx="38" ry="5" fill="#000" opacity=".5"/>',fs=n.length>1?26:30;
+  if(kind==="bin")return `<svg viewBox="0 0 120 146" aria-hidden="true">${sh}<defs><linearGradient id="${k}g" x1="0" x2="1"><stop offset="0" stop-color="#5b6472"/><stop offset=".45" stop-color="#aab3c0"/><stop offset="1" stop-color="#4b5360"/></linearGradient></defs>
+<g stroke="#2a2f38" stroke-width="2"><path d="M30 44 L36 132 Q60 138 84 132 L90 44 Z" fill="url(#${k}g)"/><path d="M44 52 L47 126 M60 52 L60 129 M76 52 L73 126" stroke-opacity=".55" stroke-width="3.5" fill="none"/><rect x="24" y="34" width="72" height="12" rx="5" fill="#8a94a3"/><rect x="50" y="24" width="20" height="12" rx="5" fill="#6d7684"/></g>
+<path d="M92 30 C100 20 108 22 106 34 L98 36Z" fill="#c9b27c" stroke="#2a2f38" stroke-width="1.5"/><rect x="68" y="14" width="22" height="14" rx="2" transform="rotate(18 79 21)" fill="#e9e2cf" stroke="#2a2f38" stroke-width="1.5"/>
+<text x="60" y="108" text-anchor="middle" font-family="CourtBlock,Impact,Arial Narrow,sans-serif" font-size="${fs}" fill="#fff" stroke="#000" stroke-width="2.4" paint-order="stroke">${n}</text></svg>`;
+  if(kind==="wc")return `<svg viewBox="0 0 120 146" aria-hidden="true">${sh}<defs><linearGradient id="${k}g" x1="0" x2="1"><stop offset="0" stop-color="#cfd6df"/><stop offset=".4" stop-color="#ffffff"/><stop offset="1" stop-color="#b7c0cc"/></linearGradient></defs>
+<g stroke="#8a94a3" stroke-width="2"><rect x="34" y="10" width="52" height="40" rx="8" fill="url(#${k}g)"/><circle cx="76" cy="20" r="4" fill="#d5dbe4"/><path d="M30 64 H90 C90 90 84 104 72 110 L74 132 H46 L48 110 C36 104 30 90 30 64Z" fill="url(#${k}g)"/><ellipse cx="60" cy="62" rx="32" ry="11" fill="#fff"/><ellipse cx="60" cy="62" rx="24" ry="7" fill="#7fc4e8" stroke="#5aa5cc"/><rect x="36" y="130" width="48" height="6" rx="3" fill="#aab3c0"/></g>
+<text x="60" y="94" text-anchor="middle" font-family="CourtBlock,Impact,Arial Narrow,sans-serif" font-size="${fs-4}" fill="#1e3a8a" stroke="#fff" stroke-width="2.2" paint-order="stroke">${n}</text></svg>`;
+  return `<svg viewBox="0 0 120 146" aria-hidden="true">${sh}<defs><linearGradient id="${k}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a0652f"/><stop offset="1" stop-color="#5e3513"/></linearGradient></defs>
+<g stroke="#3b200b" stroke-width="2.4" stroke-linejoin="round"><path d="M18 130 C6 124 8 100 30 96 L90 96 C112 100 114 124 102 130 Q60 140 18 130Z" fill="url(#${k}g)"/><path d="M28 98 C16 90 22 70 42 68 L78 68 C98 70 104 90 92 98Z" fill="url(#${k}g)"/><path d="M40 70 C30 60 38 44 54 42 L68 42 C84 44 90 60 80 70Z" fill="url(#${k}g)"/><path d="M52 44 C46 34 56 24 62 10 C70 22 78 34 68 44Z" fill="url(#${k}g)"/></g>
+<path d="M30 110 Q60 118 90 110 M38 84 Q60 90 82 84" stroke="#fff" stroke-opacity=".18" stroke-width="3" fill="none" stroke-linecap="round"/>
+<g fill="#fff" stroke="#3b200b" stroke-width="1.6"><ellipse cx="48" cy="66" rx="7" ry="8"/><ellipse cx="72" cy="66" rx="7" ry="8"/></g><g fill="#1b1b1b"><circle cx="49" cy="67" r="3.4"/><circle cx="71" cy="67" r="3.4"/></g><path d="M50 80 Q60 88 70 80" stroke="#3b200b" stroke-width="3" fill="none" stroke-linecap="round"/>
+<text x="60" y="124" text-anchor="middle" font-family="CourtBlock,Impact,Arial Narrow,sans-serif" font-size="${fs-4}" fill="#fff" stroke="#3b200b" stroke-width="2.4" paint-order="stroke">${n}</text></svg>`}
 function jersey(t,num,name=""){
   const kd=kitDi(t),rw=kd>=3?(ROSTER[t]||[]).find(x=>x[0]===name):null,nk=rw?(kd===4?(NBA_KIT_90[rw[3]]||NBA_BIANCA):NBA_KIT[rw[3]]):null;
   const c=nk?{...TEAMS[t],stroke:undefined,outer:undefined,jsw:undefined,...nk}:kitC(t,kd>=3?0:kd),n=num==null?"?":String(num),k="j"+(JID++);
   if(DLS.pj==="avatar"&&name)return avatarSvg(c,n,name,k);
+  if(name&&(DLS.pj==="bin"||DLS.pj==="wc"||DLS.pj==="poop"))return iconeSvg(DLS.pj,n,k);
   const fs=n.length>1?38:44;
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
   const ol=c.jstroke||(lum(c.fg)<0.45?"#ffffff":"#0a0f1f");
@@ -6149,7 +6165,7 @@ window.vImpostazioni=function(){
   <label class="setcol">Colore di sfondo<input type="color" value="${DLS.cb}" data-dlsc="cb"></label><label class="setcol">Colore principale (tasti, barra)<input type="color" value="${DLS.ca}" data-dlsc="ca"></label><label class="setcol">Colore secondario (dettagli, titoli)<input type="color" value="${DLS.cg}" data-dlsc="cg"></label>
   <div class="setchips"><button data-dlst="hs" aria-pressed="${!!DLS.hs}">Righe sull'intestazione</button><button data-dlst="ht" aria-pressed="${!!DLS.ht}">Bordo intestazione sottile</button><button data-dlst="np" aria-pressed="${!!DLS.np}">Tasti a pillola</button></div>
   <div class="setsec">Look rapidi del campo</div><div class="setchips">${Object.entries(LOOK).map(([k,v])=>`<button data-dlslook="${k}">${v[0]}</button>`).join("")}</div>
-  <div class="setsec">Giocatori</div><p class="setnote">Come appaiono in campo, in panchina e nelle liste</p><div class="setchips"><button data-dlsv="pj|jersey" aria-pressed="${DLS.pj!=="avatar"}">👕 Maglia</button><button data-dlsv="pj|avatar" aria-pressed="${DLS.pj==="avatar"}">🧑 Personaggio (cartone)</button></div>${sl.slice(0,5).join("")}
+  <div class="setsec">Giocatori</div><p class="setnote">Come appaiono in campo, in panchina e nelle liste</p><div class="setchips"><button data-dlsv="pj|jersey" aria-pressed="${DLS.pj!=="avatar"}">👕 Maglia</button><button data-dlsv="pj|avatar" aria-pressed="${DLS.pj==="avatar"}">🧑 Personaggio (cartone)</button><button data-dlsv="pj|bin" aria-pressed="${DLS.pj==="bin"}">🗑️ Bidone</button><button data-dlsv="pj|wc" aria-pressed="${DLS.pj==="wc"}">🚽 Cesso</button><button data-dlsv="pj|poop" aria-pressed="${DLS.pj==="poop"}">💩 Cacca</button></div>${sl.slice(0,5).join("")}
   <div class="setsec">Campo da gioco</div><p class="setnote">Parquet</p>${ch("floor")}<p class="setnote">Colore delle linee</p>${ch("line")}<p class="setnote">Bordo del campo</p>${ch("apron")}${sl.slice(5).join("")}
   <div class="setsec">Dettagli</div>${tg}
   ${tsec}
