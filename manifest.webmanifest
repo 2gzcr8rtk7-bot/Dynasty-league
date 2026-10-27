@@ -1,7 +1,7 @@
 {
-  "name": "Dynasty League",
-  "short_name": "Dynasty",
-  "description": "Risultati, classifica, roster, efficienza e trade della Dynasty League",
+  "name": "Dreamers",
+  "short_name": "Dreamers",
+  "description": "Risultati, classifica, roster, efficienza e trade della Dreamers",
   "lang": "it",
   "start_url": "./",
   "scope": "./",
