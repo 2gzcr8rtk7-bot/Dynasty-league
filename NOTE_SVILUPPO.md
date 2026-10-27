@@ -595,3 +595,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (150) 27/10/2026 — Immagine condivisa della sfida Dreamers allineata all'app: capitano con pillola ORO e punti calcolati (×1,5) e sotto "PDK ×1,5"; panchina con bordo rosa e "×½ = punti"; punteggio di chi è avanti viola acceso (#d8b4fe), l'altro bianco.
 
 (151) 27/10/2026 — Immagini condivise (cielo stile Dreamers): niente più logo e scritta Dynasty League. Al loro posto il logo Dreamers (quadrato viola con stella bianca, come il tasto della Home, disegnato da shDrLogo) con la scritta DREAMERS / FANTA PDK (Live stanotte). Dove c'è già il grande titolo DREAMERS (sfide in Dynasty TV, sfida singola, tabellone playoff) il logo sta accanto al titolo e la fascia in alto è tolta (immagine più compatta).
+
+(152) 27/10/2026 — Immagine condivisa "Live stanotte": logo squadra grande al centro (220px, alone viola), sotto "LIVE STANOTTE" e il nome completo della squadra in viola fluo (#d8b4fe con alone fucsia); tolte data e "in campo ora". Logo e scritta DREAMERS in alto più piccoli (76px / 48px).
