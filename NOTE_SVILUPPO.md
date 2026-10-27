@@ -493,3 +493,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (100) DREAMERS: punteggio squadra = SOMMA dei punti dei titolari (capitano ×1,5, 2°-6° pieni, 7°-10° ×½), non più la media (richiesta Francesco 27/10/2026). In corso = somma di chi ha già giocato; a turno chiuso i posti vuoti valgono 0. Testi delle note aggiornati.
 
 (101) Sfide Dreamers in Dynasty TV: punteggi a 22px (le partite NBA 26px) perché i numeri sono più lunghi (es. 243,7) e a 26px sembravano più grandi.
+
+(102) Campo di ogni squadra, sotto la panchina: "Live stanotte" (campoLive) = box score della notte con SOLO dati di Dynasty TV (TV.box: live ESPN / tabellini), non Dunkest. Notte = oggi USA se almeno una partita è iniziata, altrimenti la notte prima (campoNotte): alla prima partita di una nuova notte si azzera. Righe = giocatori della franchigia (anche G League, "G") scesi in campo, ordinati per PDK, con stato Live (rosso, tempo) o Finale; colonne PDK (riquadro), Min, Pt, Rim, Ass; Totale notte. Con il Campo aperto FANTA_LIVE fa aggiornare Dynasty TV ogni 60 s.

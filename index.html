@@ -1714,7 +1714,13 @@ nav button>span{white-space:nowrap}
 </style><style>
 /* DREAMERS e G-DREAMERS: punteggi squadra con lo stesso font e grandezza dei punteggi di Dynasty TV */
 .drr em,.drms .drr em,.drch em{font-family:var(--display)!important;font-style:italic!important;font-weight:800!important;font-size:26px!important;letter-spacing:0!important;line-height:1}
-</style><style>.tvsb .tmid .drsbn{font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#dbe1f0}</style><style>/* sfide Dreamers in Dynasty TV: numeri più lunghi (es. 243,7) → un po' più piccoli per sembrare uguali ai punteggi NBA */.drtvg .tvt .tvsc{font-size:22px}</style></head>
+</style><style>.tvsb .tmid .drsbn{font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#dbe1f0}</style><style>/* sfide Dreamers in Dynasty TV: numeri più lunghi (es. 243,7) → un po' più piccoli per sembrare uguali ai punteggi NBA */.drtvg .tvt .tvsc{font-size:22px}</style><style>
+.clbox tr.lvr td:first-child{box-shadow:inset 3px 0 0 #c8102e}
+.clbox .clv{display:inline-flex;align-items:center;gap:4px;color:#ff6b7a;font-weight:800}.clbox .clv i{width:6px;height:6px;border-radius:50%;background:#ff4d5e;animation:lvp 1.4s infinite}
+.clbox .clgl{display:inline-block;font-style:normal;font-size:9px;font-weight:900;padding:0 3px;border-radius:3px;background:#f5b400;color:#111;vertical-align:middle}
+.clbox td.pts{color:#fff;font-weight:800}
+.clbox th,.clbox td{padding-left:5px!important;padding-right:5px!important}.clbox td:first-child,.clbox th:first-child{min-width:132px!important;max-width:150px!important}
+</style></head>
 <body>
 <header>
   <div class="wrap">
@@ -3629,7 +3635,23 @@ function vCollege(){if(!COL.d){cur="campo";return vCampo()}COL.sec=COL.sec||"col
   ${isC?`<div class="ctabs coltabs">${tabs.map(([k,l])=>`<button data-coltab="${k}" aria-pressed="${COL.tab===k}">${l}</button>`).join("")}</div>
   ${["usage","radar","orig","ris"].includes(COL.tab)?"":`<div class="trseg colrl">${COL_RL.map(([k,l])=>`<button class="${k}" data-colr="${k}" aria-pressed="${COL.r===k}">${l} <small>${(COL.d[k]||[]).length}</small></button>`).join("")}</div>`}
   ${body}`:`<div class="grcard">${vNbaSec()}</div>`}<p class="colft">🦆 Texas Ducks Scouting · uso interno</p>${isC&&COL.sel?`<div class="colsheet">${colCard()}</div>`:""}${COL.leg?colLegend():""}</div>`}
-function vCampo(){
+/* ===== CAMPO: BOX SCORE LIVE DELLA NOTTE (solo dati di DYNASTY TV, non Dunkest) =====
+   Notte = oggi (data USA) se almeno una partita è iniziata, altrimenti la notte prima: quando parte la prima partita
+   di una nuova notte il box si azzera e mostra solo i giocatori di quella notte. Con il Campo aperto Dynasty TV si aggiorna
+   (FANTA_LIVE, ogni 60 s). Righe = giocatori della franchigia (anche G League) scesi in campo quella notte. */
+function campoNotte(){if(typeof TV==="undefined")return null;const oggi=flUsaOggi(),ieri=drAdd(oggi,-1),on=d=>(TV.days[d]||[]).some(g=>g[5]==="L"||g[5]==="F");return on(oggi)?oggi:on(ieri)?ieri:null}
+function campoLive(t){const d=campoNotte();if(!d)return`${H("Live stanotte",`<em>dati Dynasty TV</em>`)}<p class="note">Nessuna partita NBA iniziata stanotte: il box score si riempie da solo appena i giocatori della squadra scendono in campo.</p>`;
+  const mine={};(ROSTER[t]||[]).forEach(p=>mine[tvNm(p[0])]={n:p[0]});try{glPlayers().filter(p=>p.t===t).forEach(p=>{if(!mine[tvNm(p.n)])mine[tvNm(p.n)]={n:p.n,gl:1}})}catch(e){}
+  const R=[];for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
+    [["a",g[0],g[1]],["h",g[1],g[0]]].forEach(([sd,tm,opp])=>(B[sd]||[]).forEach(r=>{const m=mine[tvNm(r[0])];if(!m)return;R.push({n:m.n,gl:m.gl,tm,opp,r,lv:g[5]==="L",st:g[5]==="L"?(TVL.st[g[7]]||"Live"):"Finale",key:g[7]})}))}
+  R.sort((a,b)=>(+b.r[19]||0)-(+a.r[19]||0));
+  const dd=tvDt(d),lab=`${TV_GG[dd.getUTCDay()]} ${dd.getUTCDate()} ${TV_MM[dd.getUTCMonth()]}`,nlv=R.filter(x=>x.lv).length,tot=R.reduce((s,x)=>s+(+x.r[19]||0),0);
+  const row=x=>`<tr class="${x.lv?"lvr":""}"><td>${x.n}${x.gl?' <i class="clgl">G</i>':""}<small>${x.tm} vs ${x.opp} · ${x.lv?`<b class="clv"><i></i>${x.st}</b>`:x.st}</small></td><td class="pdkl">${pdkB(+x.r[19],String(x.r[19]).replace(".",","))}</td><td>${x.r[2]}</td><td class="pts">${x.r[3]}</td><td>${x.r[6]}</td><td>${x.r[7]}</td></tr>`;
+  return`${H("Live stanotte",`<em>${dd.getUTCDate()}/${dd.getUTCMonth()+1}${nlv?` · ${nlv} live`:""}</em>`)}
+  ${R.length?`<div class="tbl-wrap"><table class="ptbl tvbox drbox clbox"><thead><tr><th>Giocatore</th><th class="pdkl">PDK</th><th>Min</th><th>Pt</th><th>Rim</th><th>Ass</th></tr></thead>
+  <tbody>${R.map(row).join("")}<tr class="tot"><td>Totale notte</td><td class="pdkl">${pdkF(tot)}</td><td></td><td></td><td></td><td></td></tr></tbody></table></div>`:`<p class="note">Stanotte nessun giocatore di questa squadra è ancora sceso in campo.</p>`}
+  <p class="note">Solo dati di Dynasty TV della notte (data USA), aggiornati in automatico mentre i giocatori sono in campo; PDK con la formula Dunkest, provvisori fino al report ufficiale. Alla prima partita della notte successiva il box si azzera.</p>`}
+function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   const t=curTeam,c=TEAMS[t],st=standings().find(x=>x.t===t);
   const {auto,q}=quintetto(t);const qs=new Set(q.map(p=>p[0]));
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
@@ -3671,6 +3693,7 @@ function vCampo(){
   <div class="ctools"><button class="ctool" id="ccap"><span class="ci">C</span>Cap<small>Chi mettere capitano</small></button><button class="ctool" id="cmul"><span class="ci mul">€</span>Multe<small>Capitano senza multa</small></button></div>
   ${H("Panchina")}
   <div class="bench">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><span class="bev">${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}</span></button>`).join("")}</div>
+  ${campoLive(t)}
   <div class="crwrap"><button class="croster" id="croster">Roster completo ›</button>${t==="DUC"?`<button class="cpow" id="cpow" aria-label="Accesso riservato"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M7.1 6.3a8 8 0 1 0 9.8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>`:""}</div>`;
 }
 function cupSvg(pos,id){
@@ -4346,6 +4369,7 @@ function fantaLiveNotte(d){const o={};if(typeof TV==="undefined")return o;
     [["a",g[1]],["h",g[0]]].forEach(([sd,opp])=>(B[sd]||[]).forEach(r=>{if(r[19]==null)return;const mm=String(r[2]||"0").split(":");o[tvNm(r[0])]={p:+r[19],min:(+mm[0]||0)+(+mm[1]||0)/60,opp,nm:r[0],prov:!!B.live}}))}
   return o}
 const FANTA_LIVE=[
+  {attivo:()=>cur==="campo",da:()=>campoNotte()||flUsaOggi()},
   {attivo:()=>cur==="giochi"&&GAME==="dream",da:()=>{const N={...DRD.notti},n=drNightOfAgg(EFF.agg);if(n>=DR_START)N[n]=1;const k=Object.keys(N).sort(),l=k[k.length-1];return l&&l>=DR_START?drAdd(l,1):DR_START}},
   {attivo:()=>cur==="tv",da:()=>FANTA_LIVE[0].da()},
   {attivo:()=>cur==="giochi"&&GAME==="gdream",da:()=>{if(GD_LASTOFF==null)try{gdData()}catch(e){}return GD_LASTOFF?drAdd(GD_LASTOFF,1):GD_START}}];
