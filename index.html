@@ -2326,21 +2326,21 @@ function kitC(t,k){const T=TEAMS[t];
 const NBA_KIT={
  ATL:{bg:"#d0202e",fg:"#ffffff",jstroke:"#8a0f19",trim:"#fdb927",p2:"#fdb927"},
  BKN:{bg:"#111111",fg:"#ffffff",jstroke:"#111111",trim:"#ffffff",p2:"#777d84"},
- BOS:{bg:"#007a33",fg:"#ffffff",jstroke:"#0b2e1a",trim:"#ffffff",p2:"#ffffff",d:"plain"},
+ BOS:{bg:"#0a6c33",fg:"#ffffff",jstroke:"#05401c",trim:"#ffffff",p2:"#ffffff",d:"plain"},
  CHA:{bg:"#11a5b2",fg:"#ffffff",jstroke:"#0b5f6b",trim:"#ffffff",p2:"#1d1160",d:"plain"},
  CHI:{bg:"#d4101d",fg:"#ffffff",jstroke:"#111111",trim:"#ffffff",p2:"#111111",d:"plain"},
  CLE:{bg:"#6f1d36",fg:"#fdbb30",jstroke:"#2a0a14",trim:"#fdbb30",p2:"#2a0a14",d:"plain"},
- DAL:{bg:"#0064b1",fg:"#ffffff",jstroke:"#002b5e",trim:"#2b7fd0",p2:"#ffffff"},
+ DAL:{bg:"#0a6bd0",fg:"#c9cccb",jstroke:"#ffffff",nf:"#ffffff",ns:"#052e5c",trim:"#052e5c",p2:"#ffffff",d:"dal"},
  DEN:{bg:"#0e2240",fg:"#ffffff",jstroke:"#c8102e",ns:"#06142a",trim:"#ffffff",p2:"#fec524",d:"plain"},
  DET:{bg:"#1d42ba",fg:"#d4212e",jstroke:"#ffffff",nf:"#ffffff",ns:"#0c2a7a",trim:"#d4212e",p2:"#ffffff"},
  GSW:{bg:"#1d55b8",fg:"#ffc72c",jstroke:"#12357a",trim:"#ffc72c",p2:"#ffffff",d:"plain"},
- HOU:{bg:"#ce1141",fg:"#ffffff",jstroke:"#7d0a27",trim:"#fdb927",p2:"#fdb927",d:"plain"},
+ HOU:{bg:"#d02a1c",fg:"#ffffff",jstroke:"#7d1108",trim:"#edc630",p2:"#edc630",d:"pind"},
  IND:{bg:"#002d62",fg:"#fdbb30",jstroke:"#001a3a",trim:"#fdbb30",p2:"#fdbb30",d:"plain"},
  LAC:{bg:"#0f1f4b",fg:"#ffffff",jstroke:"#c8102e",ns:"#06102a",trim:"#c8102e",p2:"#ffffff",d:"plain"},
  LAL:{bg:"#fdb927",fg:"#552583",jstroke:"#ffffff",trim:"#552583",p2:"#ffffff",d:"plain"},
  MEM:{bg:"#12173f",fg:"#8db1e6",jstroke:"#ffffff",nf:"#ffffff",ns:"#12173f",trim:"#8db1e6",p2:"#ffffff",d:"plain"},
  MIA:{bg:"#141414",fg:"#ffffff",jstroke:"#98002e",ns:"#000000",trim:"#98002e",p2:"#98002e"},
- MIL:{bg:"#0e4b2a",fg:"#ffffff",jstroke:"#062814",trim:"#0e4b2a",p2:"#eee1c6",d:"mil"},
+ MIL:{bg:"#21472c",fg:"#ffffff",jstroke:"#12291a",trim:"#e0dccb",p2:"#e0dccb",d:"mil"},
  MIN:{bg:"#1450d8",fg:"#ffffff",jstroke:"#0c2340",nf:"#78be20",trim:"#78be20",p2:"#9ea2a2",d:"plain"},
  NOP:{bg:"#0c2340",fg:"#ffffff",jstroke:"#0c2340",trim:"#b4975a",p2:"#c8102e"},
  NYK:{bg:"#1d63c4",fg:"#f58426",jstroke:"#ffffff",nf:"#ffffff",ns:"#0e3a7a",trim:"#f58426",p2:"#ffffff",d:"plain"},
@@ -2359,7 +2359,9 @@ const NBA_KIT={
 function nbaDeco(c){const sd=`<path d="M0 44 L14 48 L17 146 L0 146Z M120 44 L106 48 L103 146 L120 146Z" fill="${c.trim}"/><path d="M14 48 L17 146 M106 48 L103 146" stroke="${c.p2||c.fg}" stroke-width="2.2" fill="none"/>`;
   switch(c.d){
    case"plain":return`<path d="M7 50 L9 146 M113 50 L111 146" stroke="${c.trim}" stroke-width="3" fill="none"/>`;
-   case"mil":return`<path d="M10 48 L12 146 M16 48 L18 146 M110 48 L108 146 M104 48 L102 146" stroke="${c.p2}" stroke-width="2.4" fill="none"/>`;
+   case"mil":return`<path d="M9 50 L11 146 M111 50 L109 146" stroke="${c.p2}" stroke-width="2.2" fill="none"/><path d="M0 108H24V114H0Z M0 120H24V126H0Z M120 108H96V114H120Z M120 120H96V126H120Z" fill="${c.p2}"/>`;
+   case"dal":return`<path d="M0 30 L22 12 C23 40 26 52 30 60 L30 146 L0 146Z M120 30 L98 12 C97 40 94 52 90 60 L90 146 L120 146Z" fill="${c.trim}"/><path d="M30 60 L30 146 M90 60 L90 146" stroke="${c.p2}" stroke-opacity=".5" stroke-width="1"/>`;
+   case"pind":{let d="";for(let x=5;x<120;x+=8)d+=`M${x} 0V146`;return`<path d="${d}" stroke="#000" stroke-opacity=".13" stroke-width="1.4"/><path d="M7 50 L9 146 M113 50 L111 146" stroke="${c.trim}" stroke-width="2" fill="none"/>`}
    case"pin":{let d="";for(let x=4;x<120;x+=7)d+=`M${x} 0V146`;return`<path d="${d}" stroke="#ffffff" stroke-opacity=".38" stroke-width="1.1"/>`}
    case"was":return`<rect y="64" width="120" height="40" fill="#ffffff"/><rect y="104" width="120" height="42" fill="#e31837"/><path d="M0 69H120M0 99H120" stroke="#e31837" stroke-width="2.4"/>`;
    case"tor":return`<path d="M0 96 L120 64 L120 146 L0 146Z" fill="#141414"/><path d="M0 96 L120 64" stroke="#ffffff" stroke-opacity=".8" stroke-width="1.6"/>`;
