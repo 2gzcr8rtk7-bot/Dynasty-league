@@ -3806,14 +3806,14 @@ function shFit(c,t,w){if(c.measureText(t).width<=w)return t;while(t.length>1&&c.
 const SH_F=(w,s,it)=>`${it?"italic ":""}${w} ${s}px "Barlow Condensed","Arial Narrow",Arial,sans-serif`,SH_B=(w,s)=>`${w} ${s}px Barlow,Arial,sans-serif`;
 const SH_PK={r:["#ef4444","#fff"],y:["#f5b400","#111"],g:["#22c55e","#06240f"],v:["#8b5cf6","#fff"],na:["#334155","#cbd5e1"]};
 function shPill(c,v,x,y,w,h,fs,txt){const[bg,fg]=SH_PK[pdkLvl(v)];shRR(c,x,y,w,h,h*.28);c.fillStyle=bg;c.fill();c.fillStyle=fg;c.font=SH_F(800,fs||h*.62,1);c.textAlign="center";c.textBaseline="middle";c.fillText(txt??(v==null?"—":String(Math.round(v*100)/100).replace(".",",")),x+w/2,y+h/2+1)}
-async function shBase(H,WW){try{await Promise.all([document.fonts.load(SH_F(800,40,1)),document.fonts.load(SH_F(700,40)),document.fonts.load(SH_B(500,30)),document.fonts.load(SH_B(600,30))])}catch(e){}
+async function shBase(H,WW,noBrand){try{await Promise.all([document.fonts.load(SH_F(800,40,1)),document.fonts.load(SH_F(700,40)),document.fonts.load(SH_B(500,30)),document.fonts.load(SH_B(600,30))])}catch(e){}
   const W=WW||1080,cv=document.createElement("canvas");cv.width=W;cv.height=H;const c=cv.getContext("2d");
   let g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,"#2a1260");g.addColorStop(.45,"#160a38");g.addColorStop(1,"#0a0618");c.fillStyle=g;c.fillRect(0,0,W,H);
   g=c.createRadialGradient(200,0,0,200,0,760);g.addColorStop(0,"rgba(168,85,247,.55)");g.addColorStop(1,"rgba(168,85,247,0)");c.fillStyle=g;c.fillRect(0,0,W,H);
   g=c.createRadialGradient(980,140,0,980,140,620);g.addColorStop(0,"rgba(59,130,246,.35)");g.addColorStop(1,"rgba(59,130,246,0)");c.fillStyle=g;c.fillRect(0,0,W,H);
   let s=7;const rnd=()=>(s=(s*16807)%2147483647)/2147483647;for(let i=0;i<Math.round(H/14);i++){c.globalAlpha=.25+rnd()*.6;c.fillStyle=rnd()<.3?"#e9d5ff":"#fff";c.beginPath();c.arc(rnd()*W,rnd()*H,.8+rnd()*1.8,0,7);c.fill()}c.globalAlpha=1;
-  const lg=await shImg((document.querySelector("img.lglogo")||{}).src);if(lg){shRR(c,56,48,112,112,24);c.save();c.clip();c.drawImage(lg,56,48,112,112);c.restore()}
-  c.textBaseline="alphabetic";c.textAlign="left";c.font=SH_F(800,62,1);c.fillStyle="#fff";c.fillText("DYNASTY",192,100);c.fillStyle="#fbbf24";c.fillText("LEAGUE",192,156);
+  const lg=noBrand?null:await shImg((document.querySelector("img.lglogo")||{}).src);if(lg){shRR(c,56,48,112,112,24);c.save();c.clip();c.drawImage(lg,56,48,112,112);c.restore()}
+  c.textBaseline="alphabetic";c.textAlign="left";if(!noBrand){c.font=SH_F(800,62,1);c.fillStyle="#fff";c.fillText("DYNASTY",192,100);c.fillStyle="#fbbf24";c.fillText("LEAGUE",192,156)}
   c.font=SH_F(700,28,1);c.textAlign="right";c.fillStyle="rgba(233,213,255,.75)";c.fillText("STAGIONE 26/27",W-56,100);
   return{cv,c,W}}
 function shFoot(c,W,H,txt){c.strokeStyle="rgba(196,181,253,.25)";c.lineWidth=2;c.beginPath();c.moveTo(56,H-96);c.lineTo(W-56,H-96);c.stroke();
@@ -3889,7 +3889,7 @@ async function shDuel(){const S=SHR_DUEL;if(!S)return null;const rh=112,secH=64,
       const cx=W/2,cy=y+(rh-12)/2;c.beginPath();c.arc(cx,cy,22,0,7);c.fillStyle=cl==="cap"?"#f5b400":"rgba(76,29,149,.9)";c.fill();c.fillStyle=cl==="cap"?"#111":"#fff";c.font=SH_F(800,26,1);c.textAlign="center";c.textBaseline="middle";c.fillText(cl==="cap"?"C":cl==="half"?"½":String(i+1),cx,cy+1);
       y+=rh}}
   shFoot(c,W,H,S.closed?"Turno chiuso · dati ufficiali Dunkest":S.prov?"In corso · PDK live provvisori (formula Dunkest)":"Turno in corso · punteggi provvisori");return cv}
-async function shPlayoff(){const S=SHR_PO;if(!S)return null;const P=S.P,R=P.R,R1=R[1]||[],R2=R[2]||[],sd=P.seed,WW=1920,H=1270;const{cv,c,W}=await shBase(H,WW);
+async function shPlayoff(){const S=SHR_PO;if(!S)return null;const P=S.P,R=P.R,R1=R[1]||[],R2=R[2]||[],sd=P.seed,WW=1920,H=1220;const{cv,c,W}=await shBase(H,WW,1);
   c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,78,1);c.letterSpacing="12px";const tg=c.createLinearGradient(700,0,1220,0);tg.addColorStop(0,"#e9d5ff");tg.addColorStop(.5,"#c084fc");tg.addColorStop(1,"#a5b4fc");c.fillStyle=tg;c.shadowColor="rgba(168,85,247,.8)";c.shadowBlur=26;c.fillText("DREAMERS",W/2+6,110);c.shadowBlur=0;c.letterSpacing="0px";
   c.font=SH_F(700,30,1);c.fillStyle="rgba(233,213,255,.85)";c.fillText(`PLAYOFF · ${S.def?"TABELLONE":"TABELLONE PROVVISORIO"}`,W/2,152);
   const L={};for(const t of Object.keys(TEAMS))L[t]=await shLogo(t);
@@ -3914,9 +3914,9 @@ async function shPlayoff(){const S=SHR_PO;if(!S)return null;const P=S.P,R=P.R,R1
   /* coppa */const cx=W/2,cy=yF-80;c.save();c.translate(cx-34,cy-44);c.scale(68/64,68/64);const g=c.createLinearGradient(0,0,64,64);g.addColorStop(0,"#f5ecff");g.addColorStop(.45,"#b48cff");g.addColorStop(1,"#5b21b6");c.fillStyle=g;c.shadowColor="rgba(192,132,252,.9)";c.shadowBlur=24;
     c.fill(new Path2D("M18 8h28v14a14 14 0 0 1-28 0z"));c.fill(new Path2D("M29 35h6v9h-6z"));c.fill(new Path2D("M21 46h22l2 6H19z"));c.fillRect(17,52,30,5);c.strokeStyle=g;c.lineWidth=3.5;c.stroke(new Path2D("M18 12h-8v4a10 10 0 0 0 10 10M46 12h8v4a10 10 0 0 1-10 10"));c.restore();c.shadowBlur=0;
   if(P.champ){c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,26,1);c.fillStyle="#fcd34d";c.fillText("CAMPIONI",cx,yF+BH+46);c.font=SH_F(800,44,1);c.fillStyle="#fff";c.fillText(TEAMS[P.champ].name.toUpperCase(),cx,yF+BH+92)}
-  box(R2[1],xF,yQ2+200,"Finale 3° posto",["Perdente semifinale","Perdente semifinale"]);
-  const yP=1010;c.textAlign="left";c.font=SH_F(800,30,1);c.letterSpacing="4px";c.fillStyle="#c4b5fd";c.fillText("PIAZZAMENTI 5°–8°",60,yP-58);c.letterSpacing="0px";
-  const gap=(W-120-4*BW)/3;[[R1[2],"Semifinale 5°–8° · 1",["Perdente Q1","Perdente Q2"]],[R1[3],"Semifinale 5°–8° · 2",["Perdente Q3","Perdente Q4"]],[R2[2],"Finale 5° posto",["Vincente","Vincente"]],[R2[3],"Finale 7° posto",["Perdente","Perdente"]]].forEach(([x,l,ph],i)=>box(x,60+i*(BW+gap),yP,l,ph));
+  box(R2[1],xF,yQ2+180,"Finale 3° posto",["Perdente semifinale","Perdente semifinale"]);
+  const yP=1010,K=.62,SW=BW*K;c.textAlign="center";c.font=SH_F(800,24,1);c.letterSpacing="4px";c.fillStyle="rgba(196,181,253,.8)";c.fillText("PIAZZAMENTI 5°–8°",W/2,yP-44);c.letterSpacing="0px";
+  const gap=60,x0=(W-4*SW-3*gap)/2;[[R1[2],"Semifinale 5°–8° · 1",["Perdente Q1","Perdente Q2"]],[R1[3],"Semifinale 5°–8° · 2",["Perdente Q3","Perdente Q4"]],[R2[2],"Finale 5° posto",["Vincente","Vincente"]],[R2[3],"Finale 7° posto",["Perdente","Perdente"]]].forEach(([x,l,ph],i)=>{c.save();c.translate(x0+i*(SW+gap),yP);c.scale(K,K);box(x,0,0,l,ph);c.restore()});
   shFoot(c,W,H,"Serie al meglio delle 3 · il numero è le vittorie nella serie");return cv}
 async function shOpen(k){const old=document.querySelector(".shsheet");if(old)old.remove();
   const sh=document.createElement("div");sh.className="shsheet";sh.innerHTML='<div class="shbox"><p class="shwait">Preparo l\'immagine…</p></div>';document.body.appendChild(sh);
