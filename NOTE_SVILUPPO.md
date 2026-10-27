@@ -588,3 +588,4 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 
 (148) 27/10/2026 — Condividi il tabellone playoff Dreamers: tasto tondo nel titolo "Tabellone" della scheda Playoff. Immagine ORIZZONTALE 1920×1270 stile Dreamers con il tabellone a "conference": EAST a sinistra (Quarto 1 = 1ª–8ª, Quarto 2 = 4ª–5ª → Semifinale East), WEST a destra (Quarto 3 = 2ª–7ª, Quarto 4 = 3ª–6ª → Semifinale West), al centro coppa, Finalissima (bordo oro), Campioni e Finale 3° posto; sotto i Piazzamenti 5°–8°. Teste di serie, loghi, vittorie nella serie (vincente in viola acceso, perdente sbiadito), segnaposto "Vincente Q1" ecc. se non ancora decisi. shBase ora accetta la larghezza.
     Aggiornato: niente logo né scritta Dynasty League nell'immagine (shBase noBrand); i Piazzamenti 5°–8° sono riquadri piccoli (scala 0,62) centrati in basso.
+    Aggiornato: anche la Finale 3° posto è nei riquadri piccoli ("Piazzamenti 3°–8°", 5 riquadri); immagine 1920×1040.
