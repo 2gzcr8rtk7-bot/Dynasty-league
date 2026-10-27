@@ -2469,9 +2469,63 @@ function nbaDeco(c){const sd=`<path d="M0 44 L14 48 L17 146 L0 146Z M120 44 L106
 /* icona del tastino: piccola maglietta con i colori della divisa scelta */
 function kitIco(t){const c=kitC(t,kitDi(t)),n3=kitDi(t)>=3,n9=kitDi(t)===4;return`<svg viewBox="0 0 24 24" aria-hidden="true">${n9?`<defs><pattern id="kit90" width="2.4" height="24" patternUnits="userSpaceOnUse"><rect width="2.4" height="24" fill="#141414"/><rect width=".6" height="24" fill="#ce1126"/></pattern></defs>`:n3?`<defs><linearGradient id="kitnba" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c8102e"/><stop offset=".33" stop-color="#c8102e"/><stop offset=".33" stop-color="#fdb927"/><stop offset=".66" stop-color="#fdb927"/><stop offset=".66" stop-color="#1d428a"/><stop offset="1" stop-color="#1d428a"/></linearGradient></defs>`:""}<path d="M6.6 2.2h3.2c.2 2.6 4.2 2.6 4.4 0h3.2c-.1 3.4 1 5.4 3 6.4v12.6c-5.6 1.1-11.2 1.1-16.8 0V8.6c2-1 3.1-3 3-6.4z" fill="${n9?"url(#kit90)":n3?"url(#kitnba)":c.bg}" stroke="${c.trim||c.fg}" stroke-width="1.6" stroke-linejoin="round"/><text x="12" y="16.6" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-style="italic" font-size="8.5" fill="${n3?"#ffffff":c.fg}"${n3?' stroke="#111" stroke-width="1.4" paint-order="stroke"':""}>${n9?"90":"23"}</text></svg>`}
 const NBA_NOME={ATL:"HAWKS",BOS:"CELTICS",BKN:"NETS",CHA:"HORNETS",CHI:"BULLS",CLE:"CAVALIERS",DAL:"MAVERICKS",DEN:"NUGGETS",DET:"PISTONS",GSW:"WARRIORS",HOU:"ROCKETS",IND:"PACERS",LAC:"CLIPPERS",LAL:"LAKERS",MEM:"GRIZZLIES",MIA:"HEAT",MIL:"BUCKS",MIN:"WOLVES",NOP:"PELICANS",NYK:"KNICKS",OKC:"THUNDER",ORL:"MAGIC",PHI:"76ERS",PHX:"SUNS",POR:"BLAZERS",SAC:"KINGS",SAS:"SPURS",TOR:"RAPTORS",UTA:"JAZZ",WAS:"WIZARDS"};
+/* ===== AVATAR GIOCATORI (27/10/2026): personaggi in stile cartone al posto delle maglie (impostazione DLS.pj = "avatar").
+   NON sono ritratti: tratti scelti a mano per ogni giocatore (pelle 1-6, capelli, barba, fascia) e facilmente correggibili in AVD.
+   Formato: "pelle|capelli|colore|barba|fascia" — capelli: bald buzz short fade curly afro long bun braids cornrows; colore: black brown lbrown blond gray;
+   barba: none stub short full goatee; fascia: colore esadecimale oppure vuoto. Chi non è in AVD ottiene un avatar generico (da hash del nome). */
+const AVD={
+"Jaime Jaquez Jr.":"3|short|black|stub|","Moussa Diabaté":"6|short|black|none|","Nikola Jokić":"2|long|brown|stub|","Tyrese Maxey":"4|short|black|none|","Kevin Durant":"5|short|black|stub|","Trae Young":"4|curly|black|stub|","Devin Booker":"4|short|black|stub|","Darius Garland":"4|fade|black|stub|","Donovan Clingan":"4|fade|black|none|","Paul George":"4|short|black|short|","De'Aaron Fox":"4|short|black|stub|","Miles Bridges":"5|fade|black|short|","Isaiah Hartenstein":"2|short|brown|short|","Collin Murray-Boyles":"5|short|black|none|",
+"Victor Wembanyama":"5|short|black|none|","Cade Cunningham":"4|fade|black|stub|","Jalen Johnson":"4|fade|black|short|","Alperen Şengün":"2|short|black|full|","Scottie Barnes":"5|fade|black|short|","Anthony Edwards":"5|fade|black|stub|","Cooper Flagg":"2|short|lbrown|none|","Amen Thompson":"5|braids|black|none|","Dyson Daniels":"5|short|black|none|","Matas Buzelis":"2|short|brown|none|","Brandon Ingram":"5|short|black|short|","Kyshawn George":"4|short|black|none|","Brayden Burries":"4|short|black|none|","Hannes Steinbach":"2|short|brown|none|","Sergio De Larrea":"3|short|black|none|",
+"Luka Dončić":"2|short|brown|full|","Shai Gilgeous-Alexander":"5|fade|black|stub|","Jayson Tatum":"5|fade|black|stub|","Kawhi Leonard":"5|cornrows|black|short|","Austin Reaves":"2|short|brown|stub|","Ivica Zubac":"2|short|black|full|","Kyrie Irving":"4|short|black|short|","Josh Hart":"4|short|black|stub|","Desmond Bane":"4|short|black|stub|","Walker Kessler":"4|fade|black|none|","Jabari Smith Jr.":"5|short|black|none|","Naz Reid":"5|afro|black|stub|","Darius Acuff Jr.":"4|short|black|none|","Aday Mara":"2|short|black|none|",
+"Domantas Sabonis":"2|short|brown|stub|","Josh Giddey":"2|short|brown|none|","Julius Randle":"5|fade|black|short|","LaMelo Ball":"4|braids|blond|stub|","Evan Mobley":"4|fade|black|stub|","James Harden":"4|buzz|black|full|","Michael Porter Jr.":"2|short|brown|stub|","Zion Williamson":"4|fade|black|short|","Jarrett Allen":"5|afro|black|stub|","Rudy Gobert":"5|braids|black|short|","Trey Murphy III":"4|afro|black|stub|","Damian Lillard":"5|fade|black|goatee|","Ryan Rollins":"4|short|black|none|","Immanuel Quickley":"4|fade|black|stub|","Trevon Brazile":"5|short|black|none|",
+"Giannis Antetokounmpo":"5|fade|black|stub|","Joel Embiid":"6|fade|black|short|","LeBron James":"5|buzz|black|full|#ffffff","Bam Adebayo":"5|fade|black|short|","Donovan Mitchell":"4|short|black|short|","Ja Morant":"4|fade|black|stub|","Stephon Castle":"5|short|black|none|","Lauri Markkanen":"1|short|blond|short|","Cameron Boozer":"5|fade|black|none|","Franz Wagner":"1|short|brown|stub|","VJ Edgecombe":"5|fade|black|none|","Jalen Green":"4|braids|black|stub|","Kristaps Porziņģis":"1|short|brown|short|","Jonathan Kuminga":"5|short|black|none|",
+"Tyrese Haliburton":"4|short|black|none|","Paolo Banchero":"4|short|black|full|","AJ Dybantsa":"4|fade|black|none|","Chet Holmgren":"4|short|black|none|","Darryn Peterson":"4|short|black|none|","Brandon Miller":"4|short|black|stub|","Dylan Harper":"4|short|black|none|","Derik Queen":"4|short|black|short|","Zach Edey":"3|short|black|short|","Ace Bailey":"5|braids|black|none|","Alex Sarr":"5|short|black|none|","Mikel Brown Jr.":"4|short|black|none|","Jeremiah Fears":"4|short|black|none|","Keaton Wagler":"1|short|brown|none|","Oso Ighodaro":"5|short|black|stub|",
+"Karl-Anthony Towns":"4|short|black|short|","Anthony Davis":"5|short|black|stub|","Jalen Brunson":"4|short|black|stub|","Stephen Curry":"3|short|black|stub|","Deni Avdija":"2|short|black|stub|","Jalen Duren":"5|fade|black|none|","Jamal Murray":"4|short|black|full|","Jaylen Brown":"5|fade|black|short|","Pascal Siakam":"6|short|black|short|","Dejounte Murray":"4|short|black|stub|","Onyeka Okongwu":"5|short|black|none|","Keyonte George":"4|short|black|none|","RJ Barrett":"4|short|black|stub|","Yaxel Lendeborg":"5|short|black|stub|",
+"Caleb Wilson":"4|short|black|none|","Tyler Herro":"3|short|black|short|","Kon Knueppel":"2|short|brown|none|","Ausar Thompson":"5|braids|black|none|","Kel'el Ware":"5|short|black|none|","Maxime Raynaud":"2|short|brown|stub|","Cedric Coward":"4|short|black|none|","Morez Johnson Jr.":"5|fade|black|none|","Kingston Flemings":"4|short|black|none|","Egor Dëmin":"2|short|brown|none|","Danny Wolf":"1|short|brown|stub|","Allen Graves":"2|short|brown|none|","Khaman Maluach":"6|short|black|none|","Jalen Williams":"4|short|black|stub|"};
+const AV_SK={1:["#f8dcc4","#e3bb9c"],2:["#f1c9a5","#d9a982"],3:["#d9a577","#bd8a5f"],4:["#b97f55","#9c6740"],5:["#8a5a3b","#6f4529"],6:["#5e3a24","#4a2c1a"]};
+const AV_HC={black:"#16110e",brown:"#3d2a1c",lbrown:"#8a5a2b",blond:"#d6b45f",gray:"#9aa0a6"};
+function avatarSvg(c,n,name,k){
+  let d=AVD[name];if(!d){let h=0;for(const ch of name)h=(h*31+ch.charCodeAt(0))>>>0;d=[2+h%4,["short","fade","buzz","curly"][h%4],"black",["none","stub","none","short"][(h>>3)%4],""].join("|")}
+  const[sk,hs,hcn,bd,band]=d.split("|"),S=AV_SK[sk]||AV_SK[3],hc=AV_HC[hcn]||AV_HC.black,sh=S[1],skin=S[0];
+  const back=hs==="long"?`<path d="M28 60 C20 100 40 112 60 112 C80 112 100 100 92 60 C90 30 30 30 28 60Z" fill="${hc}"/>`:hs==="braids"?`<g fill="${hc}"><rect x="26" y="52" width="7" height="46" rx="3.5"/><rect x="34" y="56" width="6" height="42" rx="3"/><rect x="87" y="52" width="7" height="46" rx="3.5"/><rect x="80" y="56" width="6" height="42" rx="3"/></g>`:"";
+  const top={
+   bald:"",buzz:`<path d="M34 54 C32 28 88 28 86 54 C80 42 40 42 34 54Z" fill="${hc}" opacity=".9"/>`,
+   short:`<path d="M33 54 C28 22 92 22 87 54 C84 42 74 36 60 36 C46 36 36 42 33 54Z" fill="${hc}"/>`,
+   fade:`<path d="M35 52 C33 30 87 30 85 52 C82 44 70 40 60 40 C50 40 38 44 35 52Z" fill="${hc}"/>`,
+   long:`<path d="M31 62 C22 24 98 20 89 62 C88 46 78 36 62 38 C46 36 34 46 31 62Z" fill="${hc}"/>`,
+   curly:`<g fill="${hc}"><circle cx="38" cy="42" r="9"/><circle cx="50" cy="33" r="10"/><circle cx="64" cy="31" r="10"/><circle cx="77" cy="35" r="10"/><circle cx="84" cy="46" r="8"/><circle cx="34" cy="52" r="6"/></g>`,
+   afro:`<g fill="${hc}"><circle cx="60" cy="34" r="25"/><circle cx="38" cy="44" r="12"/><circle cx="82" cy="44" r="12"/></g>`,
+   bun:`<path d="M33 54 C28 22 92 22 87 54 C84 42 74 36 60 36 C46 36 36 42 33 54Z" fill="${hc}"/><circle cx="60" cy="22" r="9" fill="${hc}"/>`,
+   braids:`<path d="M32 56 C28 22 92 22 88 56 C84 42 74 36 60 36 C46 36 36 42 32 56Z" fill="${hc}"/>`,
+   cornrows:`<path d="M33 54 C28 22 92 22 87 54 C84 42 74 36 60 36 C46 36 36 42 33 54Z" fill="${hc}"/><path d="M44 28 C42 36 42 42 44 48 M54 25 C53 34 53 41 54 46 M66 25 C67 34 67 41 66 46 M76 28 C78 36 78 42 76 48" stroke="#000" stroke-opacity=".35" stroke-width="1.4" fill="none"/>`}[hs]||"";
+  const bc=hcn==="blond"?"#6f5326":hc,
+   beard={full:`<path d="M36 66 C36 96 84 96 84 66 C80 78 70 82 60 82 C50 82 40 78 36 66Z" fill="${bc}"/>`,
+    short:`<path d="M37 68 C38 92 82 92 83 68 C78 80 70 84 60 84 C50 84 42 80 37 68Z" fill="${bc}" opacity=".85"/>`,
+    stub:`<path d="M37 68 C38 92 82 92 83 68 C78 82 70 86 60 86 C50 86 42 82 37 68Z" fill="${bc}" opacity=".32"/>`,
+    goatee:`<path d="M50 80 C52 92 68 92 70 80 C66 84 54 84 50 80Z" fill="${bc}"/>`,none:""}[bd]||"";
+  const brw=hcn==="blond"?"#7a5d2a":hc,ink=lum(c.bg)<.4?"#fff":"#111",bust=c.bg,tr=c.trim||c.fg;
+  function lum(h){const x=parseInt((h||"#888888").slice(1),16);return(0.299*(x>>16)+0.587*((x>>8)&255)+0.114*(x&255))/255}
+  const fs=n.length>1?22:24;
+  return `<svg viewBox="0 0 120 146" aria-hidden="true">
+<ellipse cx="60" cy="138" rx="40" ry="5" fill="#000" opacity=".5"/>
+${back}
+<path d="M10 146 C10 112 34 104 60 104 C86 104 110 112 110 146Z" fill="${bust}"/>
+<path d="M10 146 C10 112 34 104 60 104 C86 104 110 112 110 146Z" fill="none" stroke="#000" stroke-opacity=".3"/>
+<rect x="50" y="86" width="20" height="22" rx="8" fill="${sh}"/>
+<path d="M43 104 C48 118 72 118 77 104" fill="none" stroke="${tr}" stroke-width="5" stroke-linecap="round"/>
+<text x="60" y="140" text-anchor="middle" font-family="CourtBlock,Impact,Arial Narrow,sans-serif" font-size="${fs}" fill="${c.fg}" stroke="${ink==="#fff"?"#000":"#fff"}" stroke-opacity=".85" stroke-width="1.4" paint-order="stroke">${n}</text>
+<ellipse cx="33" cy="68" rx="5" ry="8" fill="${skin}"/><ellipse cx="87" cy="68" rx="5" ry="8" fill="${skin}"/>
+<ellipse cx="60" cy="64" rx="27" ry="31" fill="${skin}"/>
+${top}${band?`<rect x="33" y="46" width="54" height="6" rx="3" fill="${band}"/>`:""}${beard}
+<g fill="#1b1b1b"><ellipse cx="49" cy="64" rx="3.2" ry="4"/><ellipse cx="71" cy="64" rx="3.2" ry="4"/></g><g fill="#fff"><circle cx="50" cy="62.6" r="1.1"/><circle cx="72" cy="62.6" r="1.1"/></g>
+<path d="M44 55 Q49 52 54 55 M66 55 Q71 52 76 55" stroke="${brw}" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+<path d="M52 77 Q60 83 68 77" stroke="#6b2d1a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+<path d="M60 66 Q57 72 60 73" stroke="${sh}" stroke-width="2" fill="none"/>
+</svg>`}
 function jersey(t,num,name=""){
   const kd=kitDi(t),rw=kd>=3?(ROSTER[t]||[]).find(x=>x[0]===name):null,nk=rw?(kd===4?(NBA_KIT_90[rw[3]]||NBA_BIANCA):NBA_KIT[rw[3]]):null;
   const c=nk?{...TEAMS[t],stroke:undefined,outer:undefined,jsw:undefined,...nk}:kitC(t,kd>=3?0:kd),n=num==null?"?":String(num),k="j"+(JID++);
+  if(DLS.pj==="avatar"&&name)return avatarSvg(c,n,name,k);
   const fs=n.length>1?38:44;
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
   const ol=c.jstroke||(lum(c.fg)<0.45?"#ffffff":"#0a0f1f");
@@ -2524,7 +2578,7 @@ function jersey(t,num,name=""){
   </svg>`;
 }
 /* ===== IMPOSTAZIONI GRAFICHE (27/10/2026): salvate su questo dispositivo (localStorage "dl_set"). Campo, maglie, tabellino nome, PDK ===== */
-const DLS_DEF={sj:1,sn:1,st:1,sp:1,sov:-10,floor:"auto",line:"white",lw:1,planks:true,gloss:1,apron:"team",logo:true,tname:true,paint:false,role:true,cap:true,shadow:true,sq:false,noanim:false,decor:true,th:"classico",cb:"#1e3a8a",ca:"#e4163a",cg:"#f5b400",hs:true,ht:false,np:false,pvNight:false,pvTeam:"",pvHide:false,tm:{}};
+const DLS_DEF={sj:1,sn:1,st:1,sp:1,sov:-10,floor:"auto",line:"white",lw:1,planks:true,gloss:1,apron:"team",logo:true,tname:true,paint:false,role:true,cap:true,shadow:true,sq:false,noanim:false,decor:true,th:"classico",cb:"#1e3a8a",ca:"#e4163a",cg:"#f5b400",hs:true,ht:false,np:false,pvNight:false,pvTeam:"",pvHide:false,pj:"jersey",tm:{}};
 let DLS={...DLS_DEF};try{Object.assign(DLS,JSON.parse(localStorage.getItem("dl_set")||"{}"))}catch(e){}
 const DLS_FL={classic:["#b9793f","#dba567","Parquet classico"],maple:["#d9b98a","#f0d8aa","Acero chiaro"],walnut:["#6b3f22","#8a5a36","Noce scuro"],ebony:["#1c1d22","#34353c","Ebano nero"],blue:["#1e3a8a","#2f5fd0","Blu arena"],street:["#6b7280","#9ca3af","Cemento street"],purple:["#2b0a5e","#6d28d9","Viola neon"],green:["#14532d","#22863a","Verde"],natale:["#14532d","#1f8a45","🎄 Natale"],halloween:["#1a1033","#3b1d6b","🎃 Halloween"],team:["","","Colori squadra"]};
 const DLS_LN={white:["#ffffff","Bianco"],gold:["#facc15","Oro"],black:["#111111","Nero"],cyan:["#22d3ee","Ciano"],red:["#f87171","Rosso"],orange:["#fb923c","Arancione"]};
@@ -6095,7 +6149,7 @@ window.vImpostazioni=function(){
   <label class="setcol">Colore di sfondo<input type="color" value="${DLS.cb}" data-dlsc="cb"></label><label class="setcol">Colore principale (tasti, barra)<input type="color" value="${DLS.ca}" data-dlsc="ca"></label><label class="setcol">Colore secondario (dettagli, titoli)<input type="color" value="${DLS.cg}" data-dlsc="cg"></label>
   <div class="setchips"><button data-dlst="hs" aria-pressed="${!!DLS.hs}">Righe sull'intestazione</button><button data-dlst="ht" aria-pressed="${!!DLS.ht}">Bordo intestazione sottile</button><button data-dlst="np" aria-pressed="${!!DLS.np}">Tasti a pillola</button></div>
   <div class="setsec">Look rapidi del campo</div><div class="setchips">${Object.entries(LOOK).map(([k,v])=>`<button data-dlslook="${k}">${v[0]}</button>`).join("")}</div>
-  <div class="setsec">Giocatori</div>${sl.slice(0,5).join("")}
+  <div class="setsec">Giocatori</div><p class="setnote">Come appaiono in campo, in panchina e nelle liste</p><div class="setchips"><button data-dlsv="pj|jersey" aria-pressed="${DLS.pj!=="avatar"}">👕 Maglia</button><button data-dlsv="pj|avatar" aria-pressed="${DLS.pj==="avatar"}">🧑 Personaggio (cartone)</button></div>${sl.slice(0,5).join("")}
   <div class="setsec">Campo da gioco</div><p class="setnote">Parquet</p>${ch("floor")}<p class="setnote">Colore delle linee</p>${ch("line")}<p class="setnote">Bordo del campo</p>${ch("apron")}${sl.slice(5).join("")}
   <div class="setsec">Dettagli</div>${tg}
   ${tsec}
