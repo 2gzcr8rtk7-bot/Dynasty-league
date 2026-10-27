@@ -2146,7 +2146,7 @@ function vRoster(){
   const st=standings().find(x=>x.t===curTeam),c=TEAMS[curTeam],r=ROSTER[curTeam];
   const chips=Object.keys(TEAMS).map(t=>`<button class="chip" data-t="${t}" aria-pressed="${t===curTeam}">${badge(t)}${TEAMS[t].nick}</button>`).join("");
   return `<div class="chips">${chips}</div>
-  <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.txt||c.fg};border-bottom:4px solid ${c.trim}">
+  <div class="teamhead" style="${CNT&&cur==="campo"&&t==="DUC"?"background:linear-gradient(115deg,#e7e6e1 0%,#bdbbb4 45%,#8f8c84 100%);color:#111;border-bottom:4px solid #111":`background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.txt||c.fg};border-bottom:4px solid ${c.trim}`}">
    ${LOGO[curTeam]?`<img class="hlogo" data-t="${curTeam}" src="${LOGO[curTeam]}" alt="">`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div><div class="rec">${CREDITI[curTeam]??"–"}<small>CREDITI</small></div></div><button class="bshare hsh" data-rshare="${curTeam}" aria-label="Condividi roster"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
   <div class="sumrow"><span>${r.length} giocatori</span></div>
   ${(()=>{const R={G:"Guardia",F:"Ala",C:"Centro"},L={G:"G",F:"A",C:"C"};
@@ -3737,7 +3737,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   const onCourt=q.map((p,i)=>`<button class="cpl" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${jersey(t,p[1],p[0])}<span class="cnm"${(L=>L>=12?' style="font-size:9.5px"':L>=9?' style="font-size:10.5px"':"")(sur(p[0]).length)}>${sur(p[0])}</span>${CNT?`<span class="cnrow">${NM[p[0]]&&NM[p[0]].lv?'<i class="cnlv" title="In campo ora"></i>':""}${pillN(p[0])}</span>`:pillP(pdkMed(p[0]))}</button>`).join("");
   const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>CNT?(nv(b[0])??-1e9)-(nv(a[0])??-1e9):(pdkMed(b[0])??-99)-(pdkMed(a[0])??-99));  /* panchina in ordine di efficienza media stagionale (stesso valore mostrato), si riordina a ogni aggiornamento */
   return `<button class="gback" id="cback">‹ Home</button>
-  <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.txt||c.fg};border-bottom:4px solid ${c.trim}">
+  <div class="teamhead" style="${CNT&&cur==="campo"&&t==="DUC"?"background:linear-gradient(115deg,#e7e6e1 0%,#bdbbb4 45%,#8f8c84 100%);color:#111;border-bottom:4px solid #111":`background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.txt||c.fg};border-bottom:4px solid ${c.trim}`}">
    ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${LOGO[t]}" alt="">`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
   ${bacheca(t)}
   ${cassa(t)}
@@ -3935,7 +3935,7 @@ function vCassa(){
     <h4 class="ch4">Registro della lega · aperti</h4>${all.length?`<div class="tbl-wrap">${all.map(x=>`<div class="clr">${wedge(x.da)}<span class="cla">${TEAMS[x.da].nick} <i>→</i> ${TEAMS[x.a].nick}</span>${wedge(x.a)}<b>${x.v} cr<small>${TP[x.tipo]||x.tipo}</small></b></div>`).join("")}</div>`:`<div class="cempty">Nessun debito aperto nella lega.</div>`}`;
   }
   return `<button class="gback" id="cassaback">‹ ${c.nick}</button>
-  <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.txt||c.fg};border-bottom:4px solid ${c.trim}">
+  <div class="teamhead" style="${CNT&&cur==="campo"&&t==="DUC"?"background:linear-gradient(115deg,#e7e6e1 0%,#bdbbb4 45%,#8f8c84 100%);color:#111;border-bottom:4px solid #111":`background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.txt||c.fg};border-bottom:4px solid ${c.trim}`}">
    ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${LOGO[t]}" alt="">`:""}<div><h3>Cassa</h3><p>${c.name}</p></div><div class="hstats"><div class="rec">${cr}<small>CREDITI</small></div></div><button class="bshare hsh" data-cshare="${t}" aria-label="Condividi cassa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
   ${cassa(t).replace('class="cassa clink"','class="cassa"').replace(/<div class="cgo">.*?<\/div>/,"")}
   <div class="ctabs">${tabs.map(([k,l])=>`<button data-ctab="${k}" aria-pressed="${cassaTab===k}">${l}</button>`).join("")}</div>
