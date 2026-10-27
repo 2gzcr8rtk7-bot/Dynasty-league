@@ -3343,12 +3343,10 @@ function vGiocatore(){
     <div class="gtit"><small>${c.name}</small><h3>${p[0]}</h3><p>${ruolo} · ${p[3]} · #${p[1]}</p>${INJ[p[0]]&&INJ[p[0]].stato!=="ok"?`<div class="injtag ${INJ[p[0]].stato}">${STATI[INJ[p[0]].stato][0]} · ${INJ[p[0]].tipo}</div>`:""}${ROOKIE.includes(p[0])?`<div class="rookie">Slot Rookie</div>`:""}${AVVISI[p[0]]?`<div class="avviso">${AVVISI[p[0]]}</div>`:""}</div>
   </div>
   <button class="advbtn ggrbtn" data-grafico="${t}" data-grp="${p[0]}">📈 Grafico</button>
-  ${H("Pagella")}
-  ${pagellaHTML(p[0])}
-  ${H("Efficienza",`<em>${past?SZ_LBL[sz]+" · "+sz:"Agg. "+EFF.agg}</em>`)}
+  ${H("PDK ed efficienza",`<em>${past?SZ_LBL[sz]+" · "+sz:"Agg. "+EFF.agg}</em>`)}
   ${szSel}
   ${e[1]==null?`<p class="note">${past?"Nessuna partita NBA in questa stagione: non era in NBA o non ha giocato.":"Nessuna partita giocata finora: i dati compariranno dopo la prima gara."}</p>`:`
-  <div class="gbig g2"><div>${eff(e[1])}<small>Efficienza media</small></div><div><b class="gpdk">${(()=>{const g=GL;const v=g.length?g.reduce((a,x)=>a+x[3],0)/g.length:(e[1]!=null&&e[3]!=null?e[1]*e[3]:null);return v==null?"—":`<span class="pdkx big ${pdkLvl(v)}">${f2(v)}</span>`})()}</b><small>PDK medi a partita</small></div></div>
+  <div class="gbig g2"><div><b class="gpdk">${(()=>{const g=GL;const v=g.length?g.reduce((a,x)=>a+x[3],0)/g.length:(e[1]!=null&&e[3]!=null?e[1]*e[3]:null);return v==null?"—":`<span class="pdkx big ${pdkLvl(v)}">${f2(v)}</span>`})()}</b><small>PDK medi a partita</small></div><div>${eff(e[1])}<small>Efficienza media</small></div></div>
   <div class="gbars">
     <div><span>${p[0].split(" ").slice(-1)[0]}</span><i><b style="width:${pct(e[1])}%;background:${c.bg}"></b></i><em>${f2(e[1])}</em></div>
     ${ts?`<div><span>Media ${c.nick}</span><i><b style="width:${pct(ts[4])}%;background:#5b6b95"></b></i><em>${f2(ts[4])}</em></div>`:""}
@@ -3369,6 +3367,8 @@ function vGiocatore(){
     return ms.map((m,i)=>{const l=by[m],dk=l.reduce((a,g)=>a+g[3],0),mn=l.reduce((a,g)=>a+g[2],0),av=mn?dk/mn:null;
       return `<details class="gmese"${i===0?" open":""}><summary><span class="gmn">${MESI[m]}</span><span class="gmesi">${l.length} ${l.length===1?"gara":"gare"} · media</span>${eff(av)}</summary>
       <div class="tbl-wrap"><table class="gtab"><thead><tr><th>Data</th><th>Min</th><th>Dunkest</th><th>Eff.</th><th>Proj 36'</th></tr></thead><tbody>${l.slice().reverse().map(g=>`<tr><td class="gd"><b>${g[0]} <i>vs ${g[1]}</i></b>${g[5]!=null?`<small>${g[5]} pt · ${g[6]} rb · ${g[7]} as</small>`:""}</td><td>${n1(g[2])}</td><td class="gdk">${pdkB(g[3],f2(g[3]))}</td><td>${eff(g[4])}</td><td class="gpj">${n1(g[4]*36)}</td></tr>`).join("")}</tbody></table></div></details>`}).join("")})()}`:""}
+  ${H("Pagella")}
+  ${pagellaHTML(p[0])}
   <p class="note">Lega · PDK e Lega · efficienza: posizione tra tutti i giocatori della lega con almeno una partita nella stagione scelta, per <b>PDK</b> (punti Dunkest medi a partita) e per <b>efficienza</b> (PDK fatti per ogni minuto giocato). Punteggi e minuti ufficiali Dunkest (senza capitano). Stagioni passate: solo regular season. Pallino: verde sopra 1,10 · giallo 0,80–1,10 · rosso sotto 0,80.</p>`;
 }
 
