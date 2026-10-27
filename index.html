@@ -463,6 +463,7 @@ details.glp.glhit{animation:glhit 2.2s ease}@keyframes glhit{0%,40%{box-shadow:i
 .dpan.notte{grid-template-columns:1fr}.dpan.notte .dpg{grid-template-columns:repeat(3,1fr)}
 .dpan.notte .dphalf{background:#070a18;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tc,#334) 35%,#1b2340)}
 .pcd{position:relative}.pcdlv{position:absolute;left:6px;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:#ff3b30;box-shadow:0 0 6px #ff3b30;animation:lbdp 1.1s ease-in-out infinite}
+.shcbox{position:relative}.shcbox>.shcard{position:absolute;left:10px;top:8px;margin:0;width:28px;height:28px;flex:none;z-index:3}
 .grshc{position:relative}.grshc>.shbtn{position:absolute;left:12px;top:10px;margin:0}
 /* scelta Stagioni / Mesi / Giorni sotto il Periodo */
 .pergr{display:grid;gap:3px;min-width:0}
@@ -3006,7 +3007,8 @@ let gSeason="2026/27";
 let GR={fa:null,t:null,p:null,sz:"2026/27",sz2:"2026/27",mese:"",mese2:"",by:"m",show:{pdk:true,min:false,eff:false},from:null};
 /* Larghezza dei grafici: 340 in verticale; in orizzontale (telefono girato) si allarga per usare tutto lo schermo. */
 const isLand=()=>innerWidth>innerHeight&&innerHeight<=540;
-function chW(){if(!isLand())return 340;return Math.round(340*Math.min(2.4,Math.max(1,(innerWidth/innerHeight)/.75)))}
+let CHW_X=null;/* larghezza forzata dei grafici, usata solo per creare l'immagine condivisa */
+function chW(){if(CHW_X)return CHW_X;if(!isLand())return 340;return Math.round(340*Math.min(2.4,Math.max(1,(innerWidth/innerHeight)/.75)))}
 (()=>{let was=isLand(),tm;addEventListener("resize",()=>{clearTimeout(tm);tm=setTimeout(()=>{const now=isLand();if(now!==was){was=now;const y=scrollY;try{render()}catch(e){}scrollTo(0,y)}},180)})})();
 const GR_SZ=["2026/27","2025/26","2024/25"];
 const GR_MESI=["Gen","Feb","Mar","Apr","Mag","Giu","Lug","Ago","Set","Ott","Nov","Dic"];
@@ -4129,6 +4131,38 @@ async function shGrafico(){const S=SHR_GR;if(!S||!S.P||S.P.length<1)return null;
       const txt=fv(k,q[2]);c.font=SH_F(800,PX>=70?26:22,1);const tw=c.measureText(txt).width+18,th=PX>=70?34:30;shRR(c,q[0]-tw/2,q[1]-th-16,tw,th,9);c.fillStyle=COL[k];c.fill();
       c.fillStyle=k==="min"?"#1a1400":k==="eff"?"#fff":"#062b14";c.textAlign="center";c.textBaseline="middle";c.fillText(txt,q[0],q[1]-th/2-15)})});
   shFoot(c,W,H,`Dynasty League · grafico ${by} · linea tratteggiata = media del periodo`);return cv}
+/* CONDIVIDI SU OGNI GRAFICO (27/10/2026): tasto tondo in alto a sinistra di ogni riquadro con un grafico (svg.grsvg) dell'app,
+   tranne il Grafico del giocatore che ha già la sua immagine dedicata (shGrafico). L'immagine ridisegna il grafico più largo (CHW_X)
+   se ha tanti punti, così valori e date si leggono, e lo mette sullo sfondo delle immagini condivise con il titolo della sezione. */
+function shChartBtns(){const m=document.getElementById("main");if(!m)return;const seen=new Set();
+  m.querySelectorAll("svg.grsvg").forEach(sv=>{const box=sv.closest(".grcard")||sv.parentElement;if(!box||seen.has(box)||box.classList.contains("grshc"))return;seen.add(box);
+    if(box.querySelector(":scope>.shcard"))return;box.classList.add("shcbox");const b=document.createElement("button");b.className="shbtn shcard";b.setAttribute("aria-label","Condividi grafico");b.innerHTML=SH_ICO;box.prepend(b)})}
+function shTitolo(box){let el=box,t="";for(let i=0;i<8&&el&&!t;i++){let p=el.previousElementSibling;while(p&&!t){const h=p.matches("h2,h3,h4,.csub,.grhd,.nsubt")?p:p.querySelector&&p.querySelector("h2,h3,.grhd b");if(h)t=h.textContent.trim();p=p.previousElementSibling}el=el.parentElement}
+  return(t||document.title||"Grafico").replace(/\s+/g," ").slice(0,80)}
+function shSvgInline(src){const cl=src.cloneNode(true),A=[src,...src.querySelectorAll("*")],B=[cl,...cl.querySelectorAll("*")];
+  const P=["fill","stroke","stroke-width","stroke-dasharray","stroke-opacity","fill-opacity","opacity","font-size","font-family","font-weight","font-style","text-anchor","dominant-baseline","letter-spacing","paint-order","stroke-linecap","stroke-linejoin"];
+  A.forEach((e,i)=>{const cs=getComputedStyle(e);let st="";P.forEach(p=>{const v=cs.getPropertyValue(p);if(v)st+=p+":"+v+";"});B[i].setAttribute("style",st+(B[i].getAttribute("style")||""))});
+  cl.setAttribute("xmlns","http://www.w3.org/2000/svg");return cl}
+async function shCardImg(box){/* quante x ha il grafico: punti/etichette */
+  const sv0=box.querySelector("svg.grsvg");if(!sv0)return null;const nPts=Math.max(box.querySelectorAll("svg.grsvg circle").length,...[...box.querySelectorAll("svg.grsvg polyline")].map(p=>(p.getAttribute("points")||"").trim().split(/\s+/).length),...[...box.querySelectorAll("svg.grsvg text.grx")].map(()=>0),8);
+  const tit=shTitolo(box),boxes=[...document.querySelectorAll("#main .shcbox")],ix=boxes.indexOf(box),y0=scrollY;
+  const vw=Math.max(420,Math.min(4000,nPts*16));CHW_X=vw;let svgs=[];
+  try{render();const nb=[...document.querySelectorAll("#main .shcbox")][ix]||box;svgs=[...nb.querySelectorAll("svg.grsvg")].map(shSvgInline);
+    const leg=[...(nb.querySelectorAll(".grtrs,.nsums")||[])].map(x=>x.innerText.replace(/\s+/g," ").trim()).filter(Boolean).join("  ·  ");svgs.leg=leg}
+  finally{CHW_X=null;render();scrollTo(0,y0)}
+  if(!svgs.length)return null;const K=2.6,W=Math.round(vw*K)+120;
+  const imgs=await Promise.all(svgs.map(sv=>new Promise(res=>{const vb=(sv.getAttribute("viewBox")||"0 0 340 250").split(/[\s,]+/).map(Number);const u="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(new XMLSerializer().serializeToString(sv));const im=new Image();im.onload=()=>res({im,w:vb[2],h:vb[3]});im.onerror=()=>res(null);im.src=u})));
+  const ok=imgs.filter(Boolean);const H=230+ok.reduce((a,o)=>a+o.h*K+40,0)+(svgs.leg?60:0)+120;
+  const{cv,c}=await shBase(H,Math.max(1200,W),1,1);const CW=Math.max(1200,W);
+  c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_F(800,60,1);c.fillStyle="#fff";c.fillText(shFit(c,tit.toUpperCase(),CW-120),60,110);
+  c.font=SH_F(700,28,1);c.fillStyle="rgba(233,213,255,.8)";c.fillText("DYNASTY LEAGUE · GRAFICO",62,152);
+  let y=200;ok.forEach(o=>{shRR(c,40,y-10,CW-80,o.h*K+20,24);c.fillStyle="rgba(10,6,24,.78)";c.fill();c.drawImage(o.im,60,y,o.w*K,o.h*K);y+=o.h*K+40});
+  if(svgs.leg){c.font=SH_B(600,26);c.fillStyle="rgba(226,232,240,.85)";c.fillText(shFit(c,svgs.leg,CW-120),60,y+20)}
+  shFoot(c,CW,H,"Dynasty League · grafico");return cv}
+let SH_CARD=null;
+/* dopo ogni render aggiunge i tasti Condividi ai grafici */
+setTimeout(()=>{if(typeof render!=="function"||render._sh)return;const R0=render;render=function(){const r=R0.apply(this,arguments);try{shChartBtns()}catch(e){}return r};render._sh=1;try{shChartBtns()}catch(e){}},0);
+document.addEventListener("click",e=>{const b=e.target.closest(".shcard");if(!b)return;e.preventDefault();e.stopPropagation();SH_CARD=b.parentElement;shOpen("card")},true);
 async function shPlayoff(){const S=SHR_PO;if(!S)return null;const P=S.P,R=P.R,R1=R[1]||[],R2=R[2]||[],sd=P.seed,WW=1920,H=1040;const{cv,c,W}=await shBase(H,WW,1);
   c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,78,1);c.letterSpacing="12px";const tg=c.createLinearGradient(700,0,1220,0);tg.addColorStop(0,"#e9d5ff");tg.addColorStop(.5,"#c084fc");tg.addColorStop(1,"#a5b4fc");c.fillStyle=tg;c.shadowColor="rgba(168,85,247,.8)";c.shadowBlur=26;shDrTxt(c,"DREAMERS",W/2+6,110,72);c.shadowBlur=0;c.letterSpacing="0px";
   c.font=SH_F(700,30,1);c.fillStyle="rgba(233,213,255,.85)";c.fillText(`PLAYOFF · ${S.def?"TABELLONE":"TABELLONE PROVVISORIO"}`,W/2,152);
@@ -4161,9 +4195,9 @@ async function shPlayoff(){const S=SHR_PO;if(!S)return null;const P=S.P,R=P.R,R1
 async function shOpen(k){const old=document.querySelector(".shsheet");if(old)old.remove();
   const sh=document.createElement("div");sh.className="shsheet";sh.innerHTML='<div class="shbox"><p class="shwait">Preparo l\'immagine…</p></div>';document.body.appendChild(sh);
   sh.addEventListener("click",e=>{if(e.target===sh||e.target.closest(".shx"))sh.remove()});
-  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="gr"?await shGrafico():await shDreamers()}catch(e){console.error(e)}
+  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="gr"?await shGrafico():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
   if(!cv){sh.querySelector(".shbox").innerHTML='<p class="shwait">Niente da condividere adesso.</p><button class="shx">Chiudi</button>';return}
-  const blob=await new Promise(r=>cv.toBlob(r,"image/png")),name=(k==="campo"?"live-stanotte":k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):"dreamers")+".png",file=new File([blob],name,{type:"image/png"}),url=URL.createObjectURL(blob);
+  const blob=await new Promise(r=>cv.toBlob(r,"image/png")),name=(k==="campo"?"live-stanotte":k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="card"?"grafico":"dreamers")+".png",file=new File([blob],name,{type:"image/png"}),url=URL.createObjectURL(blob);
   sh.querySelector(".shbox").innerHTML=`<img src="${url}" alt="Anteprima da condividere"><div class="shbar"><button class="shx">Chiudi</button><a class="shsv" href="${url}" download="${name}">Salva</a><button class="shgo">${SH_ICO} Condividi</button></div>`;
   const go=sh.querySelector(".shgo");if(!(navigator.canShare&&navigator.canShare({files:[file]})))go.remove();
   else go.addEventListener("click",async()=>{try{await navigator.share({files:[file],title:k==="campo"?"Live stanotte":k==="duel"?"Dreamers · sfida":k==="po"?"Dreamers · playoff":"Dreamers"})}catch(e){}})}
