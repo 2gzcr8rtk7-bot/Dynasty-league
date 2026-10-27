@@ -1936,6 +1936,7 @@ nav button>span{white-space:nowrap}
 .setnote{font-size:12px;color:var(--muted);margin:6px 0}
 .dlt-nostripe header::after{display:none}.dlt-thin header{border-bottom-width:1px}
 .dlt-pill nav button{transform:none!important;border-radius:999px}.dlt-pill nav button>span{transform:none!important}
+.pjl{display:flex;flex-direction:column;gap:4px;margin:6px 0}.pjr{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;font-weight:700;padding:4px 8px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:rgba(255,255,255,.04)}.pjr select{background:#0f1938;color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:6px 8px;font-size:13px;max-width:52%}
 .setcol{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0;font-size:13px;font-weight:700}
 .setcol input[type=color]{width:56px;height:34px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:none;padding:2px;cursor:pointer}
 .thsw{display:inline-flex;gap:2px;margin-right:7px;vertical-align:-3px}.thsw i{display:block;width:10px;height:14px}.thsw i:first-child{border-radius:4px 0 0 4px}.thsw i:last-child{border-radius:0 4px 4px 0}
@@ -2540,8 +2541,9 @@ function iconeSvg(kind,n,k){
 function jersey(t,num,name=""){
   const kd=kitDi(t),rw=kd>=3?(ROSTER[t]||[]).find(x=>x[0]===name):null,nk=rw?(kd===4?(NBA_KIT_90[rw[3]]||NBA_BIANCA):NBA_KIT[rw[3]]):null;
   const c=nk?{...TEAMS[t],stroke:undefined,outer:undefined,jsw:undefined,...nk}:kitC(t,kd>=3?0:kd),n=num==null?"?":String(num),k="j"+(JID++);
-  if(DLS.pj==="avatar"&&name)return avatarSvg(c,n,name,k);
-  if(name&&(DLS.pj==="bin"||DLS.pj==="wc"||DLS.pj==="poop"))return iconeSvg(DLS.pj,n,k);
+  const PM=(DLS.pjp&&DLS.pjp[name])||DLS.pj;/* eccezione per singolo giocatore (DLS.pjp) oppure scelta generale */
+  if(PM==="avatar"&&name)return avatarSvg(c,n,name,k);
+  if(name&&(PM==="bin"||PM==="wc"||PM==="poop"))return iconeSvg(PM,n,k);
   const fs=n.length>1?38:44;
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
   const ol=c.jstroke||(lum(c.fg)<0.45?"#ffffff":"#0a0f1f");
@@ -2594,7 +2596,7 @@ function jersey(t,num,name=""){
   </svg>`;
 }
 /* ===== IMPOSTAZIONI GRAFICHE (27/10/2026): salvate su questo dispositivo (localStorage "dl_set"). Campo, maglie, tabellino nome, PDK ===== */
-const DLS_DEF={sj:1,sn:1,st:1,sp:1,sov:-10,floor:"auto",line:"white",lw:1,planks:true,gloss:1,apron:"team",logo:true,tname:true,paint:false,role:true,cap:true,shadow:true,sq:false,noanim:false,decor:true,th:"classico",cb:"#1e3a8a",ca:"#e4163a",cg:"#f5b400",hs:true,ht:false,np:false,pvNight:false,pvTeam:"",pvHide:false,pj:"jersey",tm:{}};
+const DLS_DEF={sj:1,sn:1,st:1,sp:1,sov:-10,floor:"auto",line:"white",lw:1,planks:true,gloss:1,apron:"team",logo:true,tname:true,paint:false,role:true,cap:true,shadow:true,sq:false,noanim:false,decor:true,th:"classico",cb:"#1e3a8a",ca:"#e4163a",cg:"#f5b400",hs:true,ht:false,np:false,pvNight:false,pvTeam:"",pvHide:false,pj:"jersey",pjp:{},tm:{}};
 let DLS={...DLS_DEF};try{Object.assign(DLS,JSON.parse(localStorage.getItem("dl_set")||"{}"))}catch(e){}
 const DLS_FL={classic:["#b9793f","#dba567","Parquet classico"],maple:["#d9b98a","#f0d8aa","Acero chiaro"],walnut:["#6b3f22","#8a5a36","Noce scuro"],ebony:["#1c1d22","#34353c","Ebano nero"],blue:["#1e3a8a","#2f5fd0","Blu arena"],street:["#6b7280","#9ca3af","Cemento street"],purple:["#2b0a5e","#6d28d9","Viola neon"],green:["#14532d","#22863a","Verde"],natale:["#14532d","#1f8a45","🎄 Natale"],halloween:["#1a1033","#3b1d6b","🎃 Halloween"],team:["","","Colori squadra"]};
 const DLS_LN={white:["#ffffff","Bianco"],gold:["#facc15","Oro"],black:["#111111","Nero"],cyan:["#22d3ee","Ciano"],red:["#f87171","Rosso"],orange:["#fb923c","Arancione"]};
@@ -6165,7 +6167,10 @@ window.vImpostazioni=function(){
   <label class="setcol">Colore di sfondo<input type="color" value="${DLS.cb}" data-dlsc="cb"></label><label class="setcol">Colore principale (tasti, barra)<input type="color" value="${DLS.ca}" data-dlsc="ca"></label><label class="setcol">Colore secondario (dettagli, titoli)<input type="color" value="${DLS.cg}" data-dlsc="cg"></label>
   <div class="setchips"><button data-dlst="hs" aria-pressed="${!!DLS.hs}">Righe sull'intestazione</button><button data-dlst="ht" aria-pressed="${!!DLS.ht}">Bordo intestazione sottile</button><button data-dlst="np" aria-pressed="${!!DLS.np}">Tasti a pillola</button></div>
   <div class="setsec">Look rapidi del campo</div><div class="setchips">${Object.entries(LOOK).map(([k,v])=>`<button data-dlslook="${k}">${v[0]}</button>`).join("")}</div>
-  <div class="setsec">Giocatori</div><p class="setnote">Come appaiono in campo, in panchina e nelle liste</p><div class="setchips"><button data-dlsv="pj|jersey" aria-pressed="${DLS.pj!=="avatar"}">👕 Maglia</button><button data-dlsv="pj|avatar" aria-pressed="${DLS.pj==="avatar"}">🧑 Personaggio (cartone)</button><button data-dlsv="pj|bin" aria-pressed="${DLS.pj==="bin"}">🗑️ Bidone</button><button data-dlsv="pj|wc" aria-pressed="${DLS.pj==="wc"}">🚽 Cesso</button><button data-dlsv="pj|poop" aria-pressed="${DLS.pj==="poop"}">💩 Cacca</button></div>${sl.slice(0,5).join("")}
+  <div class="setsec">Giocatori</div><p class="setnote">Come appaiono in campo, in panchina e nelle liste</p><div class="setchips"><button data-dlsv="pj|jersey" aria-pressed="${DLS.pj!=="avatar"}">👕 Maglia</button><button data-dlsv="pj|avatar" aria-pressed="${DLS.pj==="avatar"}">🧑 Personaggio (cartone)</button><button data-dlsv="pj|bin" aria-pressed="${DLS.pj==="bin"}">🗑️ Bidone</button><button data-dlsv="pj|wc" aria-pressed="${DLS.pj==="wc"}">🚽 Cesso</button><button data-dlsv="pj|poop" aria-pressed="${DLS.pj==="poop"}">💩 Cacca</button></div>${(()=>{const PT2=DLS.pvTeam||curTeam,O={"":"Come la scelta generale",jersey:"👕 Maglia",avatar:"🧑 Personaggio",bin:"🗑️ Bidone",wc:"🚽 Cesso",poop:"💩 Cacca"},nex=Object.keys(DLS.pjp||{}).length;
+    return`<div class="setsec">Icona di singoli giocatori</div><p class="setnote">Scegli la squadra nei tasti sotto l'anteprima, poi cambia l'icona solo ai giocatori che vuoi.${nex?` Eccezioni attive: ${nex}.`:""}</p>
+    <div class="pjl">${(ROSTER[PT2]||[]).map(p=>`<label class="pjr"><span>${p[0]}</span><select data-pjp="${p[0].replace(/"/g,"&quot;")}">${Object.entries(O).map(([v,l])=>`<option value="${v}"${((DLS.pjp||{})[p[0]]||"")===v?" selected":""}>${l}</option>`).join("")}</select></label>`).join("")}</div>
+    <div class="setrow"><button data-pjpall="1">Azzera tutte le eccezioni</button></div>`})()}
   <div class="setsec">Campo da gioco</div><p class="setnote">Parquet</p>${ch("floor")}<p class="setnote">Colore delle linee</p>${ch("line")}<p class="setnote">Bordo del campo</p>${ch("apron")}${sl.slice(5).join("")}
   <div class="setsec">Dettagli</div>${tg}
   ${tsec}
@@ -6183,10 +6188,12 @@ document.addEventListener("click",e=>{
   const v=e.target.closest("[data-dlsv]");if(v){const[k,x]=v.dataset.dlsv.split("|");DLS[k]=k==="pvNight"?x==="1":x;dlsSave();dlsApply();full();return}
   const t=e.target.closest("[data-dlst]");if(t){DLS[t.dataset.dlst]=!DLS[t.dataset.dlst];dlsSave();dlsApply();full();return}
   const l=e.target.closest("[data-dlslook]");if(l){Object.assign(DLS,LOOK[l.dataset.dlslook][1]);dlsSave();dlsApply();full();return}
+  if(e.target.closest("[data-pjpall]")){DLS.pjp={};dlsSave();full();return}
   if(e.target.closest("[data-tmreset]")){const T=DLS.pvTeam||curTeam;DLS.tm=DLS.tm||{};delete DLS.tm[T];dlsSave();full();return}
   if(e.target.closest("[data-tmall]")){const T=DLS.pvTeam||curTeam,o=dlTm(T);DLS.tm=DLS.tm||{};Object.keys(TEAMS).forEach(x=>DLS.tm[x]={...o});dlsSave();full();return}
   if(e.target.closest("[data-dlsreset]")){const k=DLS.pvTeam,n=DLS.pvNight;DLS={...DLS_DEF,pvTeam:k,pvNight:n};dlsSave();dlsApply();full()}
 });
+document.addEventListener("change",e=>{const q=e.target.closest("[data-pjp]");if(!q||cur!=="impostazioni")return;DLS.pjp=DLS.pjp||{};if(q.value)DLS.pjp[q.dataset.pjp]=q.value;else delete DLS.pjp[q.dataset.pjp];dlsSave();refPrev()});
 document.addEventListener("input",e=>{const tc=e.target.closest("[data-tmc],[data-tms]");if(tc&&cur==="impostazioni"){const T=DLS.pvTeam||curTeam,k=tc.dataset.tmc||tc.dataset.tms;DLS.tm=DLS.tm||{};const o=DLS.tm[T]=DLS.tm[T]||{};o[k]=tc.dataset.tms?+tc.value:tc.value;if(tc.dataset.tms){const v=document.getElementById("tv-"+k);if(v)v.textContent=Math.round(o[k]*100)+"%"}dlsSave();refPrev();return}
 const cc=e.target.closest("[data-dlsc]");if(cc&&cur==="impostazioni"){DLS[cc.dataset.dlsc]=cc.value;DLS.th="custom";dlsSave();dlsApply();return}
 const r=e.target.closest("[data-dls]");if(!r||cur!=="impostazioni")return;const k=r.dataset.dls,f=SL.find(x=>x[0]===k)[5];DLS[k]=+r.value;const o=document.getElementById("sv-"+k);if(o)o.textContent=f(DLS[k]);dlsSave();dlsApply();refPrev()});
