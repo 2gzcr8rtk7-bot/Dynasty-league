@@ -4307,32 +4307,41 @@ const drAdd=(s,n)=>{const d=new Date(s+"T00:00:00Z");d.setUTCDate(d.getUTCDate()
 const drNightOfAgg=a=>{const[g,m,y]=a.split("/").map(Number);return drIso(new Date(Date.UTC(y,m-1,g-1)))};
 const drWeekStart=k=>drAdd(DR_START,(k-1)*7);
 const drFmt=s=>{const[y,m,d]=s.split("-");return d+"/"+m};
-function drNotti(){ // notti salvate + ultima notte dal report attuale + notti LIVE provvisorie (ESPN) non ancora nel report
+function drNotti(){ // notti salvate + ultima notte dal report attuale + notti LIVE provvisorie (tabellini di Dynasty TV) non ancora nel report
   const N={...DRD.notti};const n=drNightOfAgg(EFF.agg);
   if(n>=DR_START&&!N[n]){const o={};Object.values(EFF.gioc).forEach(a=>a.forEach(p=>{if(p[8]!=null)o[p[0]]=p[8]}));N[n]=o}
-  DR_PROV.clear();for(const d in DRL)if(d>=DR_START&&!N[d]&&Object.keys(DRL[d]).length){N[d]=DRL[d];DR_PROV.add(d)}
+  DR_PROV.clear();const ks=Object.keys(N).sort(),last=ks[ks.length-1];
+  const nm={};Object.values(ROSTER).flat().forEach(p=>nm[tvNm(p[0])]=p[0]);
+  for(const d of fantaLiveNotti(last&&last>=DR_START?drAdd(last,1):DR_START)){if(d<DR_START||N[d])continue;const L=fantaLiveNotte(d),o={};
+    for(const k in L)if(nm[k])o[nm[k]]=L[k].p;if(Object.keys(o).length){N[d]=o;DR_PROV.add(d)}}
   return N}
-/* ===== DREAMERS LIVE: Dreamers usa i tabellini di DYNASTY TV (TV.box) per le notti che il report Dunkest non ha ancora
-   (dal giorno dopo l'ultima notte ufficiale fino a oggi, data USA). Se mancano o la notte è in corso li fa scaricare a Dynasty TV
-   (tvEspn(data), stessa fonte e stessa formula Dunkest del box score): un solo scaricamento, numeri identici al box score.
-   Sono PROVVISORI: appena arriva il report con quella notte, i dati Dunkest la sostituiscono da soli (drNotti usa prima quelli).
-   Nessun dato live viene salvato: l'archivio dreamers-data.js resta fatto solo dai report ufficiali. */
-const DRL={},DR_PROV=new Set(),DRL_FIN={};let DRL_T=null,DRL_RUN=false;
-function drOff(){const N={...DRD.notti},n=drNightOfAgg(EFF.agg);if(n>=DR_START)N[n]=1;return N}
-const drUsaOggi=()=>new Date().toLocaleDateString("en-CA",{timeZone:"America/New_York"});
-async function drLiveFetch(){if(DRL_RUN||typeof tvEspn!=="function"||typeof TV==="undefined")return false;DRL_RUN=true;let ch=false;
-  try{const off=drOff(),ks=Object.keys(off).sort(),last=ks[ks.length-1],oggi=drUsaOggi();
-    const nm={};Object.values(ROSTER).flat().forEach(p=>nm[tvNm(p[0])]=p[0]);
-    let d=last&&last>=DR_START?drAdd(last,1):DR_START;
-    for(let i=0;d<=oggi&&i<8;d=drAdd(d,1),i++){if(off[d])continue;
-      /* stessi dati di Dynasty TV: se mancano o la notte è in corso, li faccio scaricare a Dynasty TV (tvEspn), poi leggo TV.box */
-      if(!DRL_FIN[d])try{await tvEspn(d)}catch(e){}
-      const G=TV.days[d]||[],o={};let tutte=G.length>0;
-      for(const g of G){const B=g[7]&&TV.box[g[7]];if(g[5]!=="F"||!B)tutte=false;if(!B||g[5]==="S")continue;for(const r of[...B.a,...B.h]){const k=nm[tvNm(r[0])];if(k&&r[19]!=null)o[k]=+r[19]}}
-      if(JSON.stringify(o)!==JSON.stringify(DRL[d]||{})){DRL[d]=o;ch=true}if(tutte)DRL_FIN[d]=1}}catch(e){}
-  DRL_RUN=false;return ch}
-function drLiveStart(){const go=()=>{if(cur!=="giochi"||GAME!=="dream"||document.hidden)return;drLiveFetch().then(c=>{if(c&&cur==="giochi"&&GAME==="dream"){const y=scrollY;render();scrollTo(0,y)}})};
-  if(!DRL_T){DRL_T=setInterval(go,60000);setTimeout(go,0)}}
+const DR_PROV=new Set();
+/* ===== PDK LIVE PER TUTTI I FANTA (Dreamers, G-Dreamers e qualsiasi fanta NBA futuro) =====
+   REGOLA: ogni fanta usa PRIMA i dati ufficiali Dunkest (report). Solo per le notti DOPO la sua ultima notte ufficiale
+   prende i PDK dai tabellini di DYNASTY TV (TV.box: ufficiali del report se ci sono, altrimenti live ESPN con formula Dunkest)
+   con fantaLiveNotte(data) e li segna come PROVVISORI. Quando il report porta quella notte, i dati Dunkest la sostituiscono da soli.
+   Mentre un fanta è aperto, ogni 60 s fa aggiornare a Dynasty TV le notti mancanti (tvEspn(data)): un solo scaricamento,
+   numeri identici al box score. Il live non viene mai salvato negli archivi.
+   NUOVO FANTA: chiamare fantaLiveAvvia() nella sua vista e registrarlo in FANTA_LIVE {attivo:()=>bool, da:()=>"AAAA-MM-GG"
+   (giorno dopo la sua ultima notte ufficiale)}; poi per le notti fantaLiveNotti(da) leggere fantaLiveNotte(d)[tvNm(nome)] → {p,min,opp}. */
+const FL={fin:{},run:false,t:null};
+const flUsaOggi=()=>new Date().toLocaleDateString("en-CA",{timeZone:"America/New_York"});
+function fantaLiveNotti(da){const out=[],oggi=flUsaOggi();if(!da)return out;for(let d=da,i=0;d<=oggi&&i<10;d=drAdd(d,1),i++)out.push(d);return out}
+function fantaLiveNotte(d){const o={};if(typeof TV==="undefined")return o;
+  for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
+    [["a",g[1]],["h",g[0]]].forEach(([sd,opp])=>(B[sd]||[]).forEach(r=>{if(r[19]==null)return;const mm=String(r[2]||"0").split(":");o[tvNm(r[0])]={p:+r[19],min:(+mm[0]||0)+(+mm[1]||0)/60,opp,nm:r[0],prov:!!B.live}}))}
+  return o}
+const FANTA_LIVE=[
+  {attivo:()=>cur==="giochi"&&GAME==="dream",da:()=>{const N={...DRD.notti},n=drNightOfAgg(EFF.agg);if(n>=DR_START)N[n]=1;const k=Object.keys(N).sort(),l=k[k.length-1];return l&&l>=DR_START?drAdd(l,1):DR_START}},
+  {attivo:()=>cur==="giochi"&&GAME==="gdream",da:()=>{if(GD_LASTOFF==null)try{gdData()}catch(e){}return GD_LASTOFF?drAdd(GD_LASTOFF,1):GD_START}}];
+async function fantaLiveScarica(da){if(FL.run||typeof tvEspn!=="function"||typeof TV==="undefined")return false;FL.run=true;let ch=false;
+  try{for(const d of fantaLiveNotti(da)){if(FL.fin[d])continue;const prima=JSON.stringify(fantaLiveNotte(d));try{await tvEspn(d)}catch(e){}
+    const G=TV.days[d]||[];if(G.length&&G.every(g=>g[5]==="F"&&g[7]&&TV.box[g[7]]))FL.fin[d]=1;if(JSON.stringify(fantaLiveNotte(d))!==prima)ch=true}}catch(e){}
+  FL.run=false;return ch}
+function fantaLiveAvvia(){const go=()=>{if(document.hidden)return;const A=FANTA_LIVE.filter(f=>{try{return f.attivo()}catch(e){return false}});if(!A.length)return;
+    const da=A.map(f=>f.da()).sort()[0];fantaLiveScarica(da).then(c=>{if(c&&A.some(f=>f.attivo())){const y=scrollY;render();scrollTo(0,y)}})};
+  if(!FL.t){FL.t=setInterval(go,60000);setTimeout(go,0)}}
+
 
 const drLast=()=>{const k=Object.keys(drNotti()).sort();return k[k.length-1]||null};
 function drCurWeek(P){const l=drLast(),today=drIso(new Date()),ref=l&&l>today?l:today;const k=Math.floor((Date.parse(ref)-Date.parse(DR_START))/864e5/7)+1;return Math.max(1,Math.min(P?P.end:DR_TOT,k))}
@@ -4382,7 +4391,7 @@ const drLg=(t,z)=>`<span class="drlg ${z||""}" style="--tc:${TEAMS[t].bg}">${bad
 const DR_PH=(k,P)=>{if(k<=DR_REG)return `Turno ${k}`;const w=P&&P.W[k];return w?`${DR_RN[w.r]} · gara ${w.g}`:"Playoff · da definire"};
 let DR={tab:"turno",k:null,open:null};
 function drScore(v){return v==null?"—":pdkF(v)}
-function vDream(){drLiveStart();
+function vDream(){fantaLiveAvvia();
   const st=drStand(),P=drPO(st),MAXK=P.end;
   if(DR.k==null)DR.k=drCurWeek(P);DR.k=Math.min(DR.k,MAXK);
   const k=DR.k,W=drWeek(k),PW=P.W[k];
@@ -4458,14 +4467,19 @@ function gdIso(d,yr0){const[g,m]=d.split("/").map(Number);const y=m>=8?yr0:yr0+1
 function gdData(){const S=typeof GL_STATS!=="undefined"?GL_STATS:{},y0=+STAGIONE_CORRENTE.slice(0,2)+2000,T={},N={};
   GLEAGUE.forEach(x=>{const c=TEAMS[x.t];T[x.t]={t:x.t,x,tot:0,g:0,pl:x.g.map(p=>{const st=S[x.t+"|"+p[0]]||{n:p[0],log:[]};return{k:p[0],n:st.n||p[0],r:p[1],nba:st.nba||"",tot:0,g:0,log:[]}})}});
   Object.values(T).forEach(tm=>tm.pl.forEach(p=>{const st=S[tm.t+"|"+p.k];((st&&st.log)||[]).forEach(l=>{const d=gdIso(l[0],y0);if(d<GD_START)return;const v=+l[3]||0;p.tot+=v;p.g++;p.log.push({d,opp:l[1],min:+l[2]||0,v});tm.tot+=v;tm.g++;(N[d]||(N[d]={}))[tm.t]=(N[d][tm.t]||0)+v})}));
-  const nights=Object.keys(N).sort();const cla=Object.values(T).sort((a,b)=>b.tot-a.tot);return{T,N,nights,cla}}
+  /* LIVE: notti dopo l'ultima notte ufficiale (GL_STATS) con i tabellini di Dynasty TV, provvisorie finché non arriva il report */
+  const offN=Object.keys(N).sort(),lastOff=offN[offN.length-1]||drAdd(GD_START,-1),prov=[];GD_LASTOFF=lastOff;
+  for(const d of fantaLiveNotti(drAdd(lastOff,1))){const L=fantaLiveNotte(d);let any=false;
+    Object.values(T).forEach(tm=>tm.pl.forEach(p=>{const x=L[tvNm(p.n)];if(!x)return;const v=x.p;p.tot+=v;p.g++;p.log.push({d,opp:x.opp,min:x.min,v,prov:1});tm.tot+=v;tm.g++;(N[d]||(N[d]={}))[tm.t]=(N[d][tm.t]||0)+v;any=true}));if(any)prov.push(d)}
+  const nights=Object.keys(N).sort();const cla=Object.values(T).sort((a,b)=>b.tot-a.tot);return{T,N,nights,cla,prov}}
+let GD_LASTOFF=null;
 const gdF=v=>v==null?"—":v.toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1});
 const gdNm=t=>"G-"+TEAMS[t].nick;
 const gdDay=d=>{const[y,m,g]=d.split("-");return g+"/"+m};
 function gdLg(t,cls=""){const x=GLEAGUE.find(z=>z.t===t);return`<span class="drlg ${cls}">${x&&x.logo?`<img src="${x.logo}" alt="">`:badge(t)}</span>`}
 /* Colori delle squadre in G-DREAMERS: quelli della G League (GLEAGUE.bg) quando ci sono, altrimenti della prima squadra. */
 const gdBg=t=>{const x=GLEAGUE.find(z=>z.t===t);return x&&x.bg||TEAMS[t].bg};
-function vGDream(){const D=gdData(),last=D.nights[D.nights.length-1],prev=D.nights[D.nights.length-2];
+function vGDream(){fantaLiveAvvia();const D=gdData(),last=D.nights[D.nights.length-1],prev=D.nights[D.nights.length-2];
   const rankAt=d=>{const tot={};Object.keys(D.T).forEach(t=>tot[t]=0);D.nights.filter(n=>n<=d).forEach(n=>Object.entries(D.N[n]).forEach(([t,v])=>tot[t]+=v));return Object.keys(tot).sort((a,b)=>tot[b]-tot[a])};
   const pr=prev?rankAt(prev):null;
   const tabs=[["cla","Classifica"],["gio","Giornate"],["rose","Squadre"]].map(([x,l])=>`<button data-gd="tab" data-k="${x}" aria-pressed="${GD.tab===x}">${l}</button>`).join("");
@@ -4482,7 +4496,7 @@ function vGDream(){const D=gdData(),last=D.nights[D.nights.length-1],prev=D.nigh
     body=D.nights.length?`<div class="gdnights">${D.nights.slice().reverse().map(n=>{const E=Object.entries(D.N[n]).sort((a,b)=>b[1]-a[1]),mx=E[0]?E[0][1]:1;return`<div class="gdn"><h5>Notte del ${gdDay(n)}<small>${E.length} squadre in campo</small></h5>${E.map(([t,v],i)=>`<div class="gdnr"><span class="gdnt">${gdLg(t,"s")}<b>${gdNm(t)}</b></span><i><u style="width:${Math.max(3,v/mx*100)}%;background:${(GLEAGUE.find(z=>z.t===t)||{}).bg||trCol(t)}"></u></i><em>${i===0?"👑 ":""}${v>=0?"+":"−"}${gdF(Math.abs(v))}</em></div>`).join("")}</div>`}).join("")}</div>`:`<div class="cempty">Nessuna partita ancora.</div>`}
   else{body=`<div class="gdrose">${D.cla.map(x=>`<button class="gdrc tint" style="--tc:${gdBg(x.t)}" data-gd="open" data-t="${x.t}">${gdLg(x.t)}<b>${gdNm(x.t)}</b><span>${x.pl.map(p=>`<i>${p.n.split(" ").slice(-1)[0]} <small>${gdF(p.tot)}</small></i>`).join("")}</span></button>`).join("")}</div>`}
   return`<div class="drroom gdroom"><button class="drexit" data-game="menu">‹ Torna all'app</button><div class="drhd"><span class="drlogo">G-DREAMERS</span><small>Fanta G League · stagione ${STAGIONE_CORRENTE}</small></div>
-  <div class="drtabs">${tabs}</div>${body}</div>`}
+  <div class="drtabs">${tabs}</div>${D.prov.length?`<div class="drlive"><i></i><span><b>Live</b> · ${D.prov.length===1?"notte":"notti"} ${D.prov.map(gdDay).join(", ")}: PDK provvisori (tabellini di Dynasty TV, formula Dunkest). Si sostituiscono da soli con i dati ufficiali Dunkest quando arriva il report.</span></div>`:""}${body}</div>`}
 function gdAct(b){const d=b.dataset;if(d.gd==="tab"){GD.tab=d.k;GD.open=null}else if(d.gd==="open"){GD.open=d.t}else if(d.gd==="close"){GD.open=null}render();window.scrollTo(0,0)}
 const GAMES=[
   {k:"hl",a:1,t:"Più o Meno",d:"Due giocatori della lega: il secondo ha l'efficienza più alta o più bassa? Allunga la serie.",i:"⇅",c:"#2fd36b"},
