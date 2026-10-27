@@ -519,3 +519,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (113) Modalità notte Ducks: maglie argento con dettagli e numeri neri (come la loro maglia alternativa), bordo del campo argento.
 
 (114) Pallino LIVE sul tasto Entertainment del menu (#t-gi.navlive): controllo leggero del tabellone ESPN ogni 2 minuti (solo con app visibile) + stato di Dynasty TV; acceso se c'è almeno una partita NBA in corso.
+
+(115) Menu: Entertainment spostato tra Statistiche e Calcolatore Trade.
