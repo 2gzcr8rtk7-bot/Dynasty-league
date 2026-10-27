@@ -597,3 +597,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (151) 27/10/2026 — Immagini condivise (cielo stile Dreamers): niente più logo e scritta Dynasty League. Al loro posto il logo Dreamers (quadrato viola con stella bianca, come il tasto della Home, disegnato da shDrLogo) con la scritta DREAMERS / FANTA PDK (Live stanotte). Dove c'è già il grande titolo DREAMERS (sfide in Dynasty TV, sfida singola, tabellone playoff) il logo sta accanto al titolo e la fascia in alto è tolta (immagine più compatta).
 
 (152) 27/10/2026 — Immagine condivisa "Live stanotte": logo squadra grande al centro (220px, alone viola), sotto "LIVE STANOTTE" e il nome completo della squadra in viola fluo (#d8b4fe con alone fucsia); tolte data e "in campo ora". Logo e scritta DREAMERS in alto più piccoli (76px / 48px).
+
+(82) DREAMERS: punteggio del giocatore nel turno = MIGLIOR PDK tra le sue partite della settimana (acc[p].b, drEff), non più la media (richiesta utente 27/10). Tasto "Regolamento" sotto il logo (data-dr="rules", DR.rules, drRules()) con tutte le regole per punti. Se cambiano le regole, aggiorna anche drRules().
