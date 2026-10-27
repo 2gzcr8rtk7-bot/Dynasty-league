@@ -2332,7 +2332,7 @@ const NBA_KIT={
  CLE:{bg:"#6f1d36",fg:"#fdbb30",jstroke:"#2a0a14",trim:"#fdbb30",p2:"#2a0a14",d:"plain"},
  DAL:{bg:"#0a6bd0",fg:"#c9cccb",jstroke:"#ffffff",nf:"#ffffff",ns:"#052e5c",trim:"#052e5c",p2:"#ffffff",d:"dal"},
  DEN:{bg:"#1c3f98",fg:"#ffffff",jstroke:"#f2c230",ns:"#f2c230",outer:"#0b2a6c",trim:"#f2c230",p2:"#f2c230",d:"den"},
- DET:{bg:"#1d42ba",fg:"#d4212e",jstroke:"#ffffff",nf:"#ffffff",ns:"#0c2a7a",trim:"#d4212e",p2:"#ffffff"},
+ DET:{bg:"#1279a3",fg:"#ffffff",jstroke:"#141414",trim:"#141414",tline:"#e6a422",tlw:1.6,tline2:"#b52a1c",p2:"#e6a422",d:"det"},
  GSW:{bg:"#1d55b8",fg:"#ffc72c",jstroke:"#12357a",trim:"#ffc72c",p2:"#ffffff",d:"plain"},
  HOU:{bg:"#1f2540",fg:"#ffffff",jstroke:"#c0282c",jsw:2.4,ns:"#c0282c",trim:"#c0282c",tline:"#ffffff",tlw:2.2,p2:"#ffffff",d:"houc"},
  IND:{bg:"#ffd914",fg:"#1b2440",jstroke:"#ffffff",jsw:2.6,trim:"#1b2440",pc:"#1b2440",ps:5.6,p2:"#1b2440",d:"pins"},
@@ -2367,6 +2367,7 @@ function nbaDeco(c){const sd=`<path d="M0 44 L14 48 L17 146 L0 146Z M120 44 L106
    case"sas":{const sp=(x0,x1,o)=>{let z="",t="";for(let y=46,i=0;y<146;y+=11,i++){const a=i%2?x1:x0,b=i%2?x0:x1;z+=(i?"L":"M")+a+" "+y;t+=`<path d="M${(x0+x1)/2-2.6} ${y+7.5}h5.2l-2.6 -4.6z" fill="#f39a3a"/>`}return`<path d="M${Math.min(x0,x1)-1} 40H${Math.max(x0,x1)+1}V146H${Math.min(x0,x1)-1}Z" fill="#141414"/><path d="${z}" stroke="#ffffff" stroke-width="1.6" fill="none"/>${t}<path d="M${o} 40V146" stroke="#ffffff" stroke-width="1.6"/>`};return sp(5,19,20.6)+sp(115,101,99.4)}
    case"houc":{let w="",b="";[8,21,34,47,73,86,99,112].forEach((x,i)=>{w+=`M${x} ${62+(i%3)*6}V146`;b+=`M${x} ${20+(i%2)*8}V${52+(i%3)*6}`});return`<path d="${b}" stroke="#6ec6e8" stroke-width="1.6" stroke-opacity=".75" stroke-dasharray="7 4"/><path d="${w}" stroke="#ffffff" stroke-width="1.3" stroke-opacity=".9"/>`}
    case"pins":{let d="";for(let x=c.ps/2;x<120;x+=c.ps)d+=`M${x.toFixed(1)} 0V146`;return`<path d="${d}" stroke="${c.pc}" stroke-width=".85"/>`}
+   case"det":return`<path d="M0 40H15V146H0Z M120 40H105V146H120Z" fill="#141414"/><path d="M15.8 44V146 M104.2 44V146" stroke="#e6a422" stroke-width="1.3"/><path d="M17.3 44V146 M102.7 44V146" stroke="#b52a1c" stroke-width="1.1"/>`;
    case"pind":{let d="";for(let x=5;x<120;x+=8)d+=`M${x} 0V146`;return`<path d="${d}" stroke="#000" stroke-opacity=".13" stroke-width="1.4"/><path d="M7 50 L9 146 M113 50 L111 146" stroke="${c.trim}" stroke-width="2" fill="none"/>`}
    case"pin":{let d="";for(let x=4;x<120;x+=7)d+=`M${x} 0V146`;return`<path d="${d}" stroke="#ffffff" stroke-opacity=".38" stroke-width="1.1"/>`}
    case"was":return`<rect y="64" width="120" height="40" fill="#ffffff"/><rect y="104" width="120" height="42" fill="#e31837"/><path d="M0 69H120M0 99H120" stroke="#e31837" stroke-width="2.4"/>`;
@@ -2413,6 +2414,7 @@ function jersey(t,num,name=""){
   <path d="M22 12 C23 34 16 46 6 50 M98 12 C97 34 104 46 114 50" fill="none" stroke="${c.trim}" stroke-width="6" stroke-linecap="round"/>
   <path d="M22 12 C23 34 16 46 6 50 M98 12 C97 34 104 46 114 50" fill="none" stroke="url(#${k}n)" stroke-width="6" stroke-linecap="round"/>
   ${c.arm?`<path d="M22 12 C23 34 16 46 6 50" fill="none" stroke="${c.arm[0]}" stroke-width="6" stroke-linecap="round"/><path d="M98 12 C97 34 104 46 114 50" fill="none" stroke="${c.arm[1]}" stroke-width="6" stroke-linecap="round"/>`:""}
+  ${c.tline2?`<path d="M38 6 C42 27 78 27 82 6" transform="translate(0 2.3)" fill="none" stroke="${c.tline2}" stroke-width="1.2"/><path d="M22 12 C23 34 16 46 6 50" transform="translate(2.2 -.6)" fill="none" stroke="${c.tline2}" stroke-width="1.2"/><path d="M98 12 C97 34 104 46 114 50" transform="translate(-2.2 -.6)" fill="none" stroke="${c.tline2}" stroke-width="1.2"/>`:""}
   ${c.tline?`<path d="M38 6 C42 27 78 27 82 6 M22 12 C23 34 16 46 6 50 M98 12 C97 34 104 46 114 50" fill="none" stroke="${c.tline}" stroke-width="${c.tlw||1.8}"${c.tld?` stroke-dasharray="${c.tld}"`:' stroke-linecap="round"'}/>`:""}
   <g font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-style="italic">
    ${false?`<linearGradient id="${k}w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".52" stop-color="#f1f3f7"/><stop offset=".53" stop-color="#b9bec9"/><stop offset="1" stop-color="#9aa0ad"/></linearGradient>
