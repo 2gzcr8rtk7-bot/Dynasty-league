@@ -3002,7 +3002,7 @@ function vStatLive(){fantaLiveAvvia();const d=campoNotte(),E=SN.m==="eff";
   const f2=v=>(Math.round(v*100)/100).toLocaleString("it-IT",{maximumFractionDigits:2}),fv=v=>E?v.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2}):f2(v);
   const cl=v=>E?(v<.8?"pr":v<=1.1?"py":v<1.5?"pg":"pv"):(v<20?"pr":v<30?"py":v<40?"pg":"pv");
   const dd=tvDt(d),nlv=L.filter(x=>x.lv).length,tot=L.reduce((a,x)=>a+val(x),0);
-  const rows=L.map((x,k)=>`<div class="snrow${x.lv?" lvr":""}">${wedge(x.t)}<div class="sninfo"><b><i>${k+1}</i>${x.n}</b><small>vs ${x.opp} · ${x.r[2]} min · ${x.r[3]} pt ${x.r[6]} rb ${x.r[7]} as · ${x.lv?`<b class="clv"><i></i>${x.st}</b>`:x.st}</small></div><span class="snp ${cl(val(x))}">${fv(val(x))}</span></div>`).join("");
+  const rows=L.map((x,k)=>`<div class="snrow${x.lv?" lvr":""}">${wedge(x.t)}<div class="sninfo"><b><i>${k+1}</i>${x.n}</b><small>vs ${x.opp} · ${x.r[2]} min · ${x.r[3]} pt ${x.r[6]} rb ${x.r[7]} as${x.lv?` · <b class="clv"><i></i>${x.st}</b>`:""}</small></div><span class="snp ${cl(val(x))}">${fv(val(x))}</span></div>`).join("");
   return`${head}
   ${H("Statistiche live",`<em>${L.length} giocatori${nlv?` · ${nlv} in campo`:""}</em>`)}
   <div class="sndate snlive"><div><b><span class="snlvd"></span>Notte del ${dd.getUTCDate()} ${TV_MM[dd.getUTCMonth()].slice(0,3)}</b><small>data USA · media ${L.length?fv(tot/L.length):"—"} ${E?"eff.":"PDK"} · si aggiorna da sola</small></div></div>
