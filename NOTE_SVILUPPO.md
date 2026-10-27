@@ -503,3 +503,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (105) Campo: il tasto "Roster completo ›" (con il tasto nascosto dei Ducks) sta sopra il box "Live stanotte", subito dopo la panchina.
 
 (106) DREAMERS · DUELLO (sfida aperta, scelta da Francesco tra 3 proposte): drDuel(). Testata con punteggi, proiezione (chi deve ancora giocare vale il suo pdkMix) e barra % vittoria; poi i giocatori uno contro uno per posto (capitano, 2°-6° pieni, 7°-10° metà, Tribuna, In attesa), carte di altezza uguale per riga: maglia (jersey), nome, ruolo · squadra NBA, PDK colorato, moltiplicatore (= punti), caselle delle partite della settimana (drSettimana: dal calendario di Dynasty TV; colorata = giocata con PDK, contorno = da giocare con avversario, rosso = in corso, NG = non ha giocato), "x/y partite giocate". Classi du*/duw* (attenzione: .pl, .up esistono già nel CSS globale).
+
+(107) Campo: più spazio tra "Roster completo" e "Live stanotte" (.clwrap margin-top 34px).
