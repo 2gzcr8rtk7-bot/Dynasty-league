@@ -440,6 +440,15 @@ h2.lbmh>.cntbtn{justify-self:end;margin-left:0}
 .dpc.six .pcd{box-shadow:inset 0 -3px 0 rgba(0,0,0,.18),0 0 0 2px color-mix(in srgb,var(--win) 80%,transparent),0 4px 10px rgba(0,0,0,.35)}
 .dpc.half .pj{opacity:.94}
 .dptrib .bpl{opacity:.62;filter:saturate(.6)}.dptrib .bpl svg{width:28px;height:34px}.dptrib .bnm{font-size:13px}
+/* PROPORZIONI STILE DUNKEST (27/10/2026): maglia ≈ 56% della targhetta, cartellino largo quanto la targhetta,
+   alto ≈ 70% della maglia; vale per campo, 6° uomo e panchina. Maglie 64×77 ovunque. */
+.pj,.court .cpl.dr .pj{width:64px;height:77px}.pj svg,.court .cpl.dr .pj svg{width:64px!important;height:77px!important}
+.court .cpl.dr{width:118px}
+.pnm{width:112px;margin-top:-10px;padding:4px 4px 3px;font-size:13px;border-radius:6px 6px 0 0}
+.pcd{width:112px;min-height:42px;margin-top:0;border-radius:0 0 9px 9px;border-top:0}
+.pcd b{font-size:21px}.pcd small{font-size:8.5px}
+.pcd.na b{font-size:12px}
+.dpg{gap:12px 4px}
 /* foglio partite del turno */
 .dwsh{position:fixed;inset:0;z-index:9999;background:rgba(3,6,16,.6);display:flex;align-items:flex-end;justify-content:center;animation:dwin .18s ease}
 @keyframes dwin{from{opacity:0}to{opacity:1}}
@@ -4103,7 +4112,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
     <g font-family="CourtBlock,Impact,Arial Narrow,sans-serif" font-weight="400" font-size="${afs}" letter-spacing=".5" fill="${atxt}" fill-opacity=".94" stroke="${astk}" stroke-width=".45" stroke-linejoin="round" paint-order="stroke"><text x="${lg?39:50}" y="${ay}" text-anchor="${lg?"end":"middle"}">${lg?c.city.toUpperCase():c.nick.toUpperCase()}</text>${lg?`<text x="61" y="${ay}" text-anchor="start">${c.nick.toUpperCase()}</text>`:""}</g><rect width="100" height="16" fill="url(#gloss)"/>
     ${lg?(LOGO2[t]?`<image href="${lg}" x="40.91" y="1.33" width="18.18" height="13.55" preserveAspectRatio="xMidYMid meet"/>`:`<image href="${lg}" x="40.5" y=".3" width="19" height="15.4" preserveAspectRatio="xMidYMid meet"/>`):""}
     </svg>`;
-  const ROWY=CNT?{C:30.6,F:56.6,G:83.3}:{C:27.6,F:55.6,G:84.2},/* formazione Dreamers: righe un po' più distanti per il cartellino PDK */XS={C:[30,70],G:[30,70],F:[19,81]};const pos={};
+  const ROWY=CNT?{C:30.6,F:56.6,G:83.3}:{C:26.2,F:54.6,G:83.2},/* formazione Dreamers: proporzioni stile Dunkest */XS=CNT?{C:[30,70],G:[30,70],F:[19,81]}:{C:[33,67],G:[33,67],F:[21,79]};const pos={};
   /* massimo 2 giocatori per fila: chi è in più va nella fila vicina meno piena (C↔F↔G), anche se non è il suo ruolo */
   const FILA={C:[],F:[],G:[]};q.forEach(p=>(FILA[p[2]]||FILA.F).push(p));const VIC={C:["F","G"],F:["C","G"],G:["F","C"]};
   for(let k=0;k<6;k++)for(const r of["C","F","G"])while(FILA[r].length>2){const dst=VIC[r].filter(x=>FILA[x].length<2).sort((x,y)=>FILA[x].length-FILA[y].length||VIC[r].indexOf(x)-VIC[r].indexOf(y))[0];if(!dst)break;
