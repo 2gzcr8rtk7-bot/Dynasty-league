@@ -391,6 +391,31 @@ nav::-webkit-scrollbar{display:none}
 .bev{display:grid;justify-items:end;gap:2px}.bev small{font-size:10px;color:var(--muted);letter-spacing:.04em;white-space:nowrap}
 .cev{font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;padding:0 7px;color:#0a0f1f;line-height:1.35}
 .cev.g{background:var(--win)}.cev.y{background:var(--gold)}.cev.r{background:var(--loss);color:#fff}.cev.na{background:#3a4568;color:#cfd6ea}
+.court .cpl .cev.wait,.cnrow .cev.wait{font-size:11px!important;white-space:nowrap;padding:2px 7px!important;line-height:1.2!important}
+.cev.wait{background:#e5e7eb;color:#475569;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:1px 6px}
+.ccap{display:grid;place-items:center;width:17px;height:17px;border-radius:50%;background:#f5b400;color:#111;font-style:normal;font-family:var(--display);font-weight:800;font-size:11px;box-shadow:0 0 0 2px rgba(0,0,0,.35)}
+/* 6° uomo + panchina Dreamers (stile Dunkest) */
+.dpan{display:grid;grid-template-columns:1fr 2fr;gap:10px;align-items:start;margin-bottom:16px}
+.dpan h5{margin:0 0 8px;text-align:center;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg)}
+.dpan h5 small{display:block;font-style:normal;font-size:10px;letter-spacing:.12em;color:var(--muted)}
+.dpsix{padding:10px 6px;border-radius:14px;background:linear-gradient(180deg,color-mix(in srgb,var(--win) 16%,transparent),transparent 75%);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--win) 55%,transparent)}
+.dphalf{padding:10px 6px;border-radius:14px;background:rgba(127,127,127,.16)}
+.dpg{display:grid;grid-template-columns:1fr 1fr;gap:12px 8px}
+.dpc{display:grid;justify-items:center;background:none;border:0;padding:0;cursor:pointer;color:inherit;min-width:0}
+.dpj svg{width:50px;height:60px;display:block;filter:drop-shadow(0 3px 5px rgba(0,0,0,.35))}
+.dpc.six .dpj svg{width:60px;height:72px}
+.dpnm{position:relative;z-index:1;margin-top:-6px;width:100%;max-width:120px;background:#0b0d12;color:#fff;border-radius:7px 7px 0 0;padding:4px 4px 3px;font-family:var(--display);font-style:italic;font-weight:800;font-size:12px;text-transform:uppercase;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dpnm i{font-style:normal;color:#8b93a7;margin-right:4px}
+.dpbox{width:100%;max-width:120px;display:grid;justify-items:center;align-content:center;min-height:42px;background:#fff;color:#111;border-radius:0 0 7px 7px;border-top:4px solid #94a3b8;padding:3px 2px 4px;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.dpbox.G{border-top-color:var(--rG)}.dpbox.F{border-top-color:var(--rF)}.dpbox.C{border-top-color:var(--rC)}
+.dpbox b{font-family:var(--display);font-weight:800;font-size:19px;line-height:1}.dpbox b+small{font-size:9px;letter-spacing:.12em;color:#64748b;font-weight:700}
+.dpbox em{font-style:normal;font-weight:800;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#64748b}
+.dpbox .dpx{font-style:normal;font-size:9.5px;color:#94a3b8;font-weight:700}
+.dpc.six .dpnm{max-width:130px;font-size:13px}.dpc.six .dpbox{max-width:130px;min-height:50px;box-shadow:0 0 0 2px color-mix(in srgb,var(--win) 70%,transparent),0 3px 10px rgba(0,0,0,.3)}.dpc.six .dpbox b{font-size:23px}
+.dpc.half .dpj{opacity:.92}
+.dpc.vuoto .dpbox{background:rgba(127,127,127,.2)}
+.dptrib .bpl{opacity:.62;filter:saturate(.6)}.dptrib .bpl svg{width:28px;height:34px}.dptrib .bnm{font-size:13px}
+@media(max-width:380px){.dpan{gap:6px}.dpnm{font-size:11px}.dpj svg{width:44px;height:53px}}
 .bench{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:16px}
 .bpl{display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,var(--panel2),var(--panel));border:0;padding:6px 12px 6px 8px;cursor:pointer;text-align:left;color:var(--fg)}
 .bpl svg{width:34px;height:41px;flex:none}
@@ -3942,12 +3967,32 @@ function campoNotteMap(t){const d=campoNotte(),o={};if(!d)return o;const mine={}
   for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
     [["a",g[1]],["h",g[0]]].forEach(([sd,opp])=>(B[sd]||[]).forEach(r=>{const n=mine[tvNm(r[0])];if(n&&r[19]!=null)o[n]={p:+r[19],opp,lv:g[5]==="L",st:g[5]==="L"?(TVL.st[g[7]]||"Live"):"Finale"}}))}
   return o}
+/* Campo fuori dalla modalità notte: 6° uomo (punteggio pieno) + panchina Dreamers (×½) in stile Dunkest con le maglie, poi tribuna */
+function drPanca(t,T){const L={G:"G",F:"A",C:"C"},sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
+  const rp=n=>(ROSTER[t]||[]).find(p=>p[0]===n)||[n,"",ruoloDi(n),""];
+  const card=(x,cl)=>{if(!x)return`<div class="dpc ${cl} vuoto"><span class="dpbox"><em>Posto vuoto</em></span></div>`;const p=rp(x.n),r=p[2];
+    const sc=x.e==null?`<em>In attesa</em>`:`<b>${pdkF(cl==="half"?x.f:x.e)}</b><small>PDK</small>`;
+    const sub=x.e!=null&&cl==="half"?`<i class="dpx">${pdkF(x.e)} ×½</i>`:"";
+    return`<button class="dpc ${cl}" data-pl="${x.n}"><span class="dpj">${jersey(t,p[1],x.n)}</span><span class="dpnm"><i>${L[r]||""}</i>${sur(x.n)}</span><span class="dpbox ${r}">${sc}${sub}</span></button>`};
+  const tr=[...T.trib,...T.wait];
+  return`<div class="dpan">
+   <div class="dpsix"><h5>6° uomo <small>100% PDK</small></h5>${card(T.top[5],"six")}</div>
+   <div class="dphalf"><h5>Panchina <small>50% PDK</small></h5><div class="dpg">${[6,7,8,9].map(i=>card(T.top[i],"half")).join("")}</div></div></div>
+  ${tr.length?`${H("Tribuna",`<em>non contano nel turno</em>`)}<div class="bench dptrib">${tr.map(x=>{const p=rp(x.n);return`<button class="bpl" data-pl="${x.n}">${jersey(t,p[1],x.n)}<span class="bnm">${RTR(x.n)}${x.n}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]||""} · ${p[3]}</small></span><span class="bev">${x.e==null?`<span class="cev wait">In attesa</span>`:pillP(x.e)}<small>${x.e==null?"nessun PDK nel turno":"PDK del turno"}</small></span></button>`}).join("")}</div>`:""}`}
 function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   const t=curTeam,c=TEAMS[t],st=standings().find(x=>x.t===t);
   let {auto,q}=quintetto(t);let qs=new Set(q.map(p=>p[0]));
   /* MODALITÀ NOTTE (CNT): punteggi della notte da Dynasty TV, meritocrazia: i 5 migliori in campo, gli altri in panchina in ordine (senza capitano) */
   const NM=CNT?campoNotteMap(t):null,nv=n=>NM&&NM[n]?NM[n].p:null;
   if(CNT){const R=(ROSTER[t]||[]).slice().sort((a,b)=>(nv(b[0])??-1e9)-(nv(a[0])??-1e9));q=R.filter(p=>nv(p[0])!=null).slice(0,5);qs=new Set(q.map(p=>p[0]))}
+  /* FORMAZIONE DREAMERS (fuori dalla modalità notte, 27/10/2026): stessa formazione della sfida Dreamers del turno in corso
+     (drTeam: ruoli 4G/4A/2C, miglior PDK della settimana, live da Dynasty TV poi report Dunkest). In campo i primi 5 (il 1° è capitano ×1,5),
+     6° uomo = 6° titolare (punteggio pieno), panchina = 7°–10° (×½), il resto in tribuna. Senza PDK nel turno: ordine per PDK medio, "In attesa". */
+  let DT=null,DK=null;
+  let DP=null;if(!CNT){DP=drPO(drStand());DK=drCurWeek(DP);const DW=drWeek(DK);DT=drTeam(DK,t,DW);DT.W=DW;
+    const rp=n=>(ROSTER[t]||[]).find(p=>p[0]===n)||[n,"",ruoloDi(n),""];q=DT.top.slice(0,5).map(x=>rp(x.n));qs=new Set(q.map(p=>p[0]))}
+  const DX=n=>DT&&DT.top.find(x=>x.n===n);
+  const pillD=x=>!x||x.e==null?`<span class="cev wait">In attesa</span>`:pdkB(x.e,pdkF(x.e));
   const pillN=n=>{const v=nv(n);return v==null?`<span class="cev na">—</span>`:pdkB(v,pdkF(v))};
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
   const pill=v=>v==null?`<span class="cev na">—</span>`:`<span class="cev ${lvl(v)}">${f2(v)}</span>`;
@@ -3981,18 +4026,18 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   for(let k=0;k<6;k++)for(const r of["C","F","G"])while(FILA[r].length>2){const dst=VIC[r].filter(x=>FILA[x].length<2).sort((x,y)=>FILA[x].length-FILA[y].length||VIC[r].indexOf(x)-VIC[r].indexOf(y))[0];if(!dst)break;
     const sc=p=>CNT&&NM&&NM[p[0]]?NM[p[0]].p:(pdkMed(p[0])??0);const L=FILA[r].slice().sort((x,y)=>sc(x)-sc(y));const m=L[0];FILA[r].splice(FILA[r].indexOf(m),1);FILA[dst].push(m)}
   ["G","F","C"].forEach(r=>{const l=FILA[r];l.forEach((p,i)=>pos[p[0]]=[l.length===2&&XS[r]?XS[r][i]:(i+1)/(l.length+1)*100,ROWY[r]])});
-  const onCourt=q.map((p,i)=>`<button class="cpl" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${jersey(t,p[1],p[0])}<span class="cnm"${(L=>L>=12?' style="font-size:9.5px"':L>=9?' style="font-size:10.5px"':"")(sur(p[0]).length)}>${sur(p[0])}</span>${CNT?`<span class="cnrow">${NM[p[0]]&&NM[p[0]].lv?'<i class="cnlv" title="In campo ora"></i>':""}${pillN(p[0])}</span>`:pillP(pdkMed(p[0]))}</button>`).join("");
+  const onCourt=q.map((p,i)=>`<button class="cpl" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${jersey(t,p[1],p[0])}<span class="cnm"${(L=>L>=12?' style="font-size:9.5px"':L>=9?' style="font-size:10.5px"':"")(sur(p[0]).length)}>${sur(p[0])}</span>${CNT?`<span class="cnrow">${NM[p[0]]&&NM[p[0]].lv?'<i class="cnlv" title="In campo ora"></i>':""}${pillN(p[0])}</span>`:`<span class="cnrow">${DX(p[0])&&DX(p[0]).cap?'<i class="ccap" title="Capitano ×1,5">C</i>':""}${pillD(DX(p[0]))}</span>`}</button>`).join("");
   const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>CNT?(nv(b[0])??-1e9)-(nv(a[0])??-1e9):(pdkMed(b[0])??-99)-(pdkMed(a[0])??-99));  /* panchina in ordine di efficienza media stagionale (stesso valore mostrato), si riordina a ogni aggiornamento */
   return `<button class="gback" id="cback">‹ Home</button>
   <div class="teamhead" style="${`background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.txt||c.fg};border-bottom:4px solid ${c.trim}`}">
    ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${LOGO[t]}" alt="">`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
   ${bacheca(t)}
   ${cassa(t)}
-  ${H(CNT?"Modalità notte":"Quintetto",`<em>${CNT?(()=>{const d=campoNotte();if(!d)return"nessuna partita";const dd=tvDt(d);return`${dd.getUTCDate()}/${dd.getUTCMonth()+1}`})():auto?"Provvisorio · scelto per efficienza":"Titolari · per ruolo"}</em><button class="cntbtn${CNT?" on":""}" id="cntbtn" aria-pressed="${CNT}" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`)}
+  ${H(CNT?"Modalità notte":"Quintetto",`<em>${CNT?(()=>{const d=campoNotte();if(!d)return"nessuna partita";const dd=tvDt(d);return`${dd.getUTCDate()}/${dd.getUTCMonth()+1}`})():`Dreamers · ${DR_PH(DK,DP)}`}</em><button class="cntbtn${CNT?" on":""}" id="cntbtn" aria-pressed="${CNT}" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`)}
   <div class="court${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg};border-color:${shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}${CNT&&!q.length?`<div class="cnone">Nessuno in campo stanotte</div>`:""}</div>
+  ${CNT?`${H("Panchina",`<em>notte · per punteggio</em>`)}
+  <div class="bench${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg}">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${RTR(p[0])}${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><span class="bev">${CNT?`<span class="cnrow">${NM[p[0]]&&NM[p[0]].lv?'<i class="cnlv" title="In campo ora"></i>':""}${pillN(p[0])}</span><small>${NM[p[0]]?`vs ${NM[p[0]].opp} · ${NM[p[0]].st}`:"non ha giocato"}</small>`:`${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}`}</span></button>`).join("")}</div>`:drPanca(t,DT)}
   ${CNT?"":`<div class="ctools"><button class="ctool" id="ccap"><span class="ci">C</span>Cap<small>Chi mettere capitano</small></button><button class="ctool" id="cmul"><span class="ci mul">€</span>Multe<small>Capitano senza multa</small></button></div>`}
-  ${H("Panchina",CNT?`<em>notte · per punteggio</em>`:"")}
-  <div class="bench${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg}">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${RTR(p[0])}${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><span class="bev">${CNT?`<span class="cnrow">${NM[p[0]]&&NM[p[0]].lv?'<i class="cnlv" title="In campo ora"></i>':""}${pillN(p[0])}</span><small>${NM[p[0]]?`vs ${NM[p[0]].opp} · ${NM[p[0]].st}`:"non ha giocato"}</small>`:`${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}`}</span></button>`).join("")}</div>
   <div class="crwrap"><button class="croster" id="croster">Roster completo ›</button>${t==="DUC"?`<button class="cpow" id="cpow" aria-label="Accesso riservato"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M7.1 6.3a8 8 0 1 0 9.8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>`:""}</div>
   <div class="clwrap">${campoLive(t)}</div>`;
 }
@@ -4669,7 +4714,7 @@ function fantaLiveNotte(d){const o={};if(typeof TV==="undefined")return o;
     [["a",g[1]],["h",g[0]]].forEach(([sd,opp])=>(B[sd]||[]).forEach(r=>{if(r[19]==null)return;const mm=String(r[2]||"0").split(":");o[tvNm(r[0])]={p:+r[19],min:(+mm[0]||0)+(+mm[1]||0)/60,opp,nm:r[0],prov:!!B.live}}))}
   return o}
 const FANTA_LIVE=[
-  {attivo:()=>cur==="campo",da:()=>drAdd(flUsaOggi(),-1)},/* ieri + oggi (data USA): dopo mezzanotte ET la notte in corso è "ieri" */
+  {attivo:()=>cur==="campo",da:()=>{const a=drAdd(flUsaOggi(),-1),b=FANTA_LIVE[1].da();return b<a?b:a}},/* ieri + oggi (data USA) e, fuori dalla modalità notte, tutta la settimana Dreamers *//* ieri + oggi (data USA): dopo mezzanotte ET la notte in corso è "ieri" */
   {attivo:()=>cur==="giochi"&&GAME==="dream",da:()=>{const N={...DRD.notti},n=drNightOfAgg(EFF.agg);if(n>=DR_START)N[n]=1;const k=Object.keys(N).sort(),l=k[k.length-1];return l&&l>=DR_START?drAdd(l,1):DR_START}},
   {attivo:()=>cur==="tv",da:()=>FANTA_LIVE[0].da()},
   {attivo:()=>cur==="statnotte"&&CNT,da:()=>FANTA_LIVE[0].da()},
@@ -4709,7 +4754,7 @@ function drTeam(k,t,W){W=W||drWeek(k);const F=drForm(k)[t]||{t:[],r:[]};
      sale il migliore di quel ruolo e scende in panchina il peggiore dei primi 6 (di un ruolo che ne ha almeno 2). Il resto va in tribuna.
      Chi è nei 10 ma non ha (ancora) giocato occupa il posto: a turno chiuso vale 0. */
   const pool=[...F.t,...F.r].map((n,i)=>({n,i,r:ruoloDi(n),e:drEff(W.acc[n]),a:W.acc[n]}));
-  const key=x=>x.e==null?-1e9:x.e,ord=(p,q)=>key(q)-key(p)||p.i-q.i;
+  const key=x=>x.e==null?-1e9:x.e,med=x=>x.e==null?(pdkMed(x.n)??-99):0,ord=(p,q)=>key(q)-key(p)||med(q)-med(p)||p.i-q.i; /* senza punteggio nel turno: in ordine di PDK medio */
   let sel=[],zeros=0;for(const r of["G","F","C"]){const l=pool.filter(x=>x.r===r).sort(ord),q=DR_QUOTE[r];sel.push(...l.slice(0,q));zeros+=Math.max(0,q-l.length)}
   sel.sort(ord);let A=sel.slice(0,6),B=sel.slice(6);
   for(const r of["C","F","G"]){if(A.some(x=>x.r===r))continue;const up=B.find(x=>x.r===r);if(!up)continue;
