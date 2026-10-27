@@ -515,3 +515,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (111) Modalità notte: pallino rosso lampeggiante (.cnlv) accanto al PDK (non sulla maglia) di chi ha la partita ancora in corso, in campo e in panchina.
 
 (112) Modalità notte, campo: il bordo (fascia con il nome della squadra e cornice) resta del colore della squadra; solo i Ducks diventano argento (gradiente metallico "mtl", cornice grigia) al posto del giallo. Il parquet interno diventa grigio scuro per tutte (gradiente "wood" scuro, niente più filtro grigio su tutto il campo).
+
+(113) Modalità notte Ducks: maglie argento con dettagli e numeri neri (come la loro maglia alternativa), bordo del campo argento.

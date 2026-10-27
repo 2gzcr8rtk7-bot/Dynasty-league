@@ -2089,10 +2089,10 @@ const DECO={
    <path d="M44 92 L50 99 L46 98 L42 101 L38 99 Z M100 100 L106 106 L101 105 L97 107 L94 105 Z M18 102 L23 107 L19 106 L15 108 Z" fill="#fff"/>
    <path d="M4 54 L12 54 L10 112 L2 118 Z M116 54 L108 54 L110 112 L118 118 Z" fill="#fff" opacity=".9"/>`
 };
-/* Modalità notte del Campo: maglie "black edition" (nero + bianco + accento notte della squadra; Ducks nero/grigio/bianco) */
+/* Modalità notte del Campo: maglie "black edition" (nero + bianco + accento della squadra); Ducks: maglia argento con dettagli neri (come la loro maglia alternativa) */
 const NOTTE_ACC=t=>t==="DUC"?"#9ca3af":TEAMS[t].bg;
 function jersey(t,num,name=""){
-  const c=(typeof CNT!=="undefined"&&CNT&&cur==="campo")?{...TEAMS[t],bg:"#151515",fg:"#ffffff",trim:NOTTE_ACC(t),jstroke:"#000000",outer:NOTTE_ACC(t)}:t==="DUC"?{...TEAMS[t],bg:"#facc15"}:t==="SPI"?{...TEAMS[t],bg:"#ffffff",fg:"#111111"}:t==="DOL"?{...TEAMS[t],bg:"#f4f6f8",fg:"#1747c9",trim:"#1747c9",jstroke:"#ffffff",outer:"#1747c9"}:TEAMS[t],n=num==null?"?":String(num),k="j"+(JID++);
+  const c=(typeof CNT!=="undefined"&&CNT&&cur==="campo")?(t==="DUC"?{...TEAMS[t],bg:"#d9d9d6",fg:"#111111",trim:"#111111"}:{...TEAMS[t],bg:"#151515",fg:"#ffffff",trim:NOTTE_ACC(t),jstroke:"#000000",outer:NOTTE_ACC(t)}):t==="DUC"?{...TEAMS[t],bg:"#facc15"}:t==="SPI"?{...TEAMS[t],bg:"#ffffff",fg:"#111111"}:t==="DOL"?{...TEAMS[t],bg:"#f4f6f8",fg:"#1747c9",trim:"#1747c9",jstroke:"#ffffff",outer:"#1747c9"}:TEAMS[t],n=num==null?"?":String(num),k="j"+(JID++);
   const fs=n.length>1?38:44;
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
   const ol=c.jstroke||(lum(c.fg)<0.45?"#ffffff":"#0a0f1f");
