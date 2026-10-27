@@ -5979,6 +5979,17 @@ addEventListener("popstate",()=>{if(navBack()){try{history.pushState({dl:1},"")}
   chk();setInterval(chk,120000);setInterval(()=>{if(daTV())set(true)},15000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()})})();
 </script>
 <script>if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
-<script>/* logo in alto: tocco = aggiorna la pagina (27/10/2026) */(function(){const l=document.getElementById("lgreload");if(!l)return;const go=()=>{l.classList.add("spin");setTimeout(()=>location.reload(),350)};l.addEventListener("click",go);l.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}})})()</script>
+<script>/* logo in alto: tocco = aggiorna la pagina RESTANDO dove sei (27/10/2026): prima di ricaricare salvo la schermata (sessionStorage),
+   al riavvio la ripristino. Si salva solo lo stato di navigazione, non i dati (che devono arrivare freschi). */(function(){
+const l=document.getElementById("lgreload");if(!l)return;
+const V=["cur","curTeam","effTeam","effSq","esqMese","esqAdv","esqMet","effMet","cupYear","cupRole","cupHist","faSz","faRole","faP","faFrom","curPlayer","gFrom","gSeason","injTeam","COL","NB","CNT","cassaTab","cassaStag","GAME","DR","GD","GR","TRN","CAP","TVS","KITG"];
+const get=n=>{try{return(0,eval)(n)}catch(e){return undefined}};
+const save=()=>{try{const o={};V.forEach(n=>{const v=get(n);if(v===undefined)return;try{const j=JSON.stringify(v);if(j&&j.length<20000)o[n]=j}catch(e){}});
+  sessionStorage.setItem("dl_reload",JSON.stringify({t:Date.now(),y:window.scrollY,o}))}catch(e){}};
+const go=()=>{save();l.classList.add("spin");setTimeout(()=>location.reload(),350)};
+l.addEventListener("click",go);l.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}});
+try{const r=JSON.parse(sessionStorage.getItem("dl_reload")||"null");sessionStorage.removeItem("dl_reload");
+  if(r&&Date.now()-r.t<30000){Object.entries(r.o).forEach(([n,j])=>{try{const c=get(n);if(c&&typeof c==="object")Object.assign(c,JSON.parse(j));else(0,eval)(n+"="+j)}catch(e){}});render();setTimeout(()=>window.scrollTo(0,r.y||0),60)}}catch(e){}
+})()</script>
 </body>
 </html>
