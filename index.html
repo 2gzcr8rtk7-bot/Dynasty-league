@@ -397,7 +397,7 @@ nav::-webkit-scrollbar{display:none}
 /* 6° uomo + panchina Dreamers (stile Dunkest) e blocco giocatore uniforme (campo/6°/panchina) */
 .dpan{display:grid;grid-template-columns:1fr 2fr;gap:10px;align-items:start;margin-bottom:16px}
 .dpan h5{margin:0 0 2px;line-height:1.1;text-align:center;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg)}
-.dpan h5 small{display:block;margin-top:1px;font-style:normal;font-size:10px;letter-spacing:.12em;color:var(--muted)}
+.dpan h5 small{display:block;margin-top:0;font-style:normal;font-size:10px;letter-spacing:.12em;color:var(--muted)}
 .dpsix{padding:6px 4px 12px;border-radius:14px;background:linear-gradient(180deg,color-mix(in srgb,var(--win) 16%,transparent),transparent 75%);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--win) 55%,transparent)}
 .dphalf{padding:6px 4px 12px;border-radius:14px;background:rgba(127,127,127,.16)}
 .dpg{display:grid;grid-template-columns:1fr 1fr;gap:14px 4px}
@@ -4005,8 +4005,8 @@ function drPanca(t,T){const rp=n=>(ROSTER[t]||[]).find(p=>p[0]===n)||[n,"",ruolo
   const card=(x,cl)=>x?`<button class="dpc ${cl}" data-pl="${x.n}">${drGioc(t,x,cl)}</button>`:`<div class="dpc ${cl}">${drGioc(t,null,cl)}</div>`;
   const tr=[...T.trib,...T.wait];
   return`<div class="dpan">
-   <div class="dpsix"><h5>6° uomo <small>100% PDK</small></h5>${card(T.top[5],"six")}</div>
-   <div class="dphalf"><h5>Panchina <small>50% PDK</small></h5><div class="dpg">${[6,7,8,9].map(i=>card(T.top[i],"half")).join("")}</div></div></div>
+   <div class="dpsix"><h5 aria-label="6° uomo"><small>100% PDK</small></h5>${card(T.top[5],"six")}</div>
+   <div class="dphalf"><h5 aria-label="Panchina"><small>50% PDK</small></h5><div class="dpg">${[6,7,8,9].map(i=>card(T.top[i],"half")).join("")}</div></div></div>
   ${tr.length?`${H("Tribuna",`<em>non contano nel turno</em>`)}<div class="bench dptrib">${tr.map(x=>{const p=rp(x.n);return`<button class="bpl" data-pl="${x.n}">${jersey(t,p[1],x.n)}<span class="bnm">${RTR(x.n)}${x.n}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]||""} · ${p[3]}</small></span><span class="bev" data-drwk="${x.n}">${x.e==null?`<span class="cev wait">In attesa</span>`:pillP(x.e)}<small>${x.e==null?"partite del turno ›":"PDK del turno ›"}</small></span></button>`}).join("")}</div>`:""}`}
 /* foglio con le partite del turno del giocatore (come le caselle della sfida Dreamers) */
 function drWkOpen(n){const C=CAMPO_DR;if(!C||!n)return;const T=C.T,x=[...T.top,...T.trib,...T.wait].find(y=>y.n===n);if(!x)return;
