@@ -464,7 +464,11 @@ details.glp.glhit{animation:glhit 2.2s ease}@keyframes glhit{0%,40%{box-shadow:i
 .dpan.notte .dphalf{background:#070a18;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tc,#334) 35%,#1b2340)}
 .pcd{position:relative}.pcdlv{position:absolute;left:6px;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:#ff3b30;box-shadow:0 0 6px #ff3b30;animation:lbdp 1.1s ease-in-out infinite}
 /* scelta Stagioni / Mesi / Giorni sotto il Periodo */
-.pergr{display:grid;gap:3px;min-width:0}.grroom>.pergr{margin:2px 0 12px}.pergr>span{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.pergr{display:grid;gap:3px;min-width:0}
+/* nel Grafico il Periodo è largo quanto il menu Giocatore sopra e uguale nello stile */
+.grctl .perbtn{width:100%;gap:2px}.grctl .perbtn>span{font-family:var(--display);font-size:10px;letter-spacing:.14em;color:var(--tf)}
+.grctl .perbtn>b{box-sizing:border-box;width:100%;height:36px;gap:6px;padding:0 8px;border-radius:10px;border:2px solid var(--tf);background:transparent;color:var(--tf);font-size:12.5px;overflow:hidden}
+.grctl .perbtn svg{width:14px;height:14px;color:currentColor}.grroom>.pergr{margin:2px 0 12px}.pergr>span{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .pergr>div{display:flex;padding:3px;gap:3px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16)}
 .pergr button{flex:1;padding:6px 8px;border:0;border-radius:8px;background:none;color:inherit;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;white-space:nowrap}
 .pergr button[aria-pressed="true"]{background:#0b0f1a;color:#facc15}
