@@ -485,3 +485,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (96) Dynasty TV: dentro una partita o una sfida Dreamers non c'è più "‹ Entertainment"; resta solo "‹ Partite del …" a sinistra (vTV).
 
 (97) Dreamers, correzione: i moltiplicatori sono a posti fissi (1° capitano ×1,5, 2°-6° pieno, 7°-10° metà). Prima "metà" toccava agli ultimi 4 di chi aveva già giocato, quindi a settimana in corso con meno di 10 giocatori finivano a metà giocatori che dovevano essere a punteggio pieno.
+
+(98) Dreamers/G-Dreamers: punteggi squadra (.drr em, .drch em) con lo stesso stile dei punteggi di Dynasty TV (.tvsc): var(--display) corsivo 800, 26px.
