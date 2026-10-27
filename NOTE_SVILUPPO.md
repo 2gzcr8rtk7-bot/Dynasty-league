@@ -617,3 +617,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 
 (158) 27/10/2026 (Claude, account del secondo utente) — Tabellone della pagina squadra rifatto in stile NEUTRO "vetro" (scelto dall'utente tra 6 prove): una sola riga sottile (34px) e lunga, pillola semitrasparente: pallino stato, logo, "X/10 giocato", punteggio | punteggio, "X/10 giocato", logo avversaria. Chi è avanti in bianco, chi è dietro in grigio. Niente cifre LED (SEG/segD restano definiti ma non usati qui). Sempre esattamente al centro, tasto notte a destra. IN CODA sul branch `coda`.
     Aggiornato: tolto il pallino di stato; angoli arrotondati come il tasto notte (9px); punteggi nel colore della squadra padrona della pagina (TEAMS[t].bg, oppure il secondo colore / versione schiarita se troppo scuro sul fondo: es. Eagles in oro, Dolphins in blu chiaro), chi è dietro allo stesso colore ma spento (opacità 50%).
+
+(159) 27/10/2026 (Claude, account del secondo utente) — Pagina squadra: maglie IN CAMPO +10% (64×77, regola .court .cpl.dr .pj); cartellini PDK, targhette e maglie di 6° uomo/panchina invariati. IN CODA sul branch `coda`.
