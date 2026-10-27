@@ -392,26 +392,17 @@ nav::-webkit-scrollbar{display:none}
 .cev{font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;padding:0 7px;color:#0a0f1f;line-height:1.35}
 .cev.g{background:var(--win)}.cev.y{background:var(--gold)}.cev.r{background:var(--loss);color:#fff}.cev.na{background:#3a4568;color:#cfd6ea}
 .court .cpl .cev.wait,.cnrow .cev.wait{font-size:11px!important;white-space:nowrap;padding:2px 7px!important;line-height:1.2!important}
-/* tabellone elettronico (pagina squadra, formazione Dreamers) */
-.lbd{position:relative;margin:18px 0 12px;padding:10px 12px 10px;border-radius:14px;background:radial-gradient(120% 140% at 50% 0%,#1a1206 0%,#0a0805 60%,#050403 100%);border:2px solid #2b2316;box-shadow:inset 0 0 0 2px #000,inset 0 0 24px rgba(0,0,0,.9),0 6px 18px rgba(0,0,0,.45);overflow:hidden}
-.lbd::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(rgba(255,255,255,.05) .7px,transparent .8px);background-size:4px 4px;opacity:.6}
-.lbd::after{content:"";position:absolute;left:0;right:0;top:0;height:45%;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.06),transparent)}
-.lbdh{position:relative;z-index:1;display:flex;align-items:center;gap:8px}
-.lbdt{white-space:nowrap;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#ff4d3d;text-shadow:0 0 8px rgba(255,60,40,.7)}
-.lbdk{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#a8936a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.lbd .cntbtn{margin-left:auto}
-.lbdn{position:relative;z-index:1;display:flex;justify-content:center;align-items:flex-end;gap:5px;padding:10px 0 6px}
-.sg{width:38px;height:64px;transform:skewX(-7deg);overflow:visible}
-.sg path{fill:#ffae1a;opacity:.07}
-.sg path.on{opacity:1;filter:drop-shadow(0 0 3px rgba(255,170,30,.95)) drop-shadow(0 0 9px rgba(255,120,0,.55))}
-.sgdot{width:8px;height:8px;margin:0 1px 4px;border-radius:2px;background:#ffae1a;box-shadow:0 0 6px rgba(255,170,30,.95),0 0 12px rgba(255,120,0,.5);transform:skewX(-7deg)}
-.lbdf{position:relative;z-index:1;display:flex;justify-content:center;flex-wrap:wrap;gap:4px 14px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#a8936a}
-.lbdf b{color:#ffd28a}
-.lbdst{display:inline-flex;align-items:center;gap:5px;color:#d6c49c}.lbdst i{width:7px;height:7px;border-radius:50%;background:#8a7a5a}
-.lbdst.live{color:#ff6b5b}.lbdst.live i{background:#ff3b30;box-shadow:0 0 8px #ff3b30;animation:lbdp 1.1s ease-in-out infinite}
-.lbdst.run i{background:#ffae1a;box-shadow:0 0 6px #ffae1a}.lbdst.fin{color:#7ee2a0}.lbdst.fin i{background:#22c55e}
+/* piccolo tabellone elettronico nel titolo della pagina squadra (formazione Dreamers) */
+.lbm{flex:none;display:inline-flex;align-items:center;gap:2px;padding:4px 8px 4px 7px;border-radius:7px;background:radial-gradient(120% 160% at 50% 0%,#1c1407,#070503 70%);border:1px solid #3a2f1c;box-shadow:inset 0 0 0 1px #000,inset 0 0 10px rgba(0,0,0,.9),0 2px 8px rgba(0,0,0,.4);transform:none}
+.lbm .sg{width:13px;height:22px;transform:skewX(-7deg);overflow:visible}
+.sg path{fill:#ffae1a;opacity:.08}
+.sg path.on{opacity:1;filter:drop-shadow(0 0 2px rgba(255,170,30,.95)) drop-shadow(0 0 5px rgba(255,120,0,.5))}
+.sgdot{width:3px;height:3px;margin:0 1px 1px;align-self:flex-end;border-radius:1px;background:#ffae1a;box-shadow:0 0 4px rgba(255,170,30,.95)}
+.lbm small{margin-left:4px;font-style:normal;font-size:9px;font-weight:800;letter-spacing:.1em;color:#a8936a;align-self:flex-end}
+.lbmd{width:6px;height:6px;margin-right:4px;border-radius:50%;background:#6b5d43}
+.lbm.run .lbmd{background:#ffae1a;box-shadow:0 0 5px #ffae1a}.lbm.fin .lbmd{background:#22c55e;box-shadow:0 0 5px #22c55e}
+.lbm.live .lbmd{background:#ff3b30;box-shadow:0 0 6px #ff3b30;animation:lbdp 1.1s ease-in-out infinite}
 @keyframes lbdp{50%{opacity:.25}}
-@media(max-width:380px){.sg{width:32px;height:54px}}
 .cev.wait{background:#e5e7eb;color:#475569;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:1px 6px}
 .ccap{display:grid;place-items:center;width:17px;height:17px;border-radius:50%;background:#f5b400;color:#111;font-style:normal;font-family:var(--display);font-weight:800;font-size:11px;box-shadow:0 0 0 2px rgba(0,0,0,.35)}
 /* 6° uomo + panchina Dreamers (stile Dunkest) e blocco giocatore uniforme (campo/6°/panchina) */
@@ -4029,15 +4020,12 @@ const SEG={0:"abcdef",1:"bc",2:"abged",3:"abgcd",4:"fgbc",5:"afgcd",6:"afgedc",7
 const SEGP={a:"M2.4 1H9.6L8.4 2.6H3.6Z",b:"M10.6 1.8L9 3.4V8.8L10.6 9.6Z",c:"M10.6 10.4L9 11.2V16.6L10.6 18.2Z",d:"M2.4 19H9.6L8.4 17.4H3.6Z",e:"M1.4 10.4L3 11.2V16.6L1.4 18.2Z",f:"M1.4 1.8L3 3.4V8.8L1.4 9.6Z",g:"M2.4 10L3.5 9.2H8.5L9.6 10L8.5 10.8H3.5Z"};
 const segD=ch=>`<svg class="sg" viewBox="0 0 12 20" aria-hidden="true">${Object.entries(SEGP).map(([k,d])=>`<path d="${d}"${(SEG[ch]||"").includes(k)?' class="on"':""}/>`).join("")}</svg>`;
 function drTabellone(t,T,k,P){const W=T.W,btn=`<button class="cntbtn" id="cntbtn" aria-pressed="false" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`;
+  /* piccolo tabellone elettronico al posto della scritta "Quintetto": stesso titolo, stessa riga, stesso tasto notte */
   const v=T.score,txt=v==null?"---,-":pdkF(v),[ip,dp]=txt.split(","),int=ip.padStart(3," ");
   const cifre=[...int].map(segD).join("")+`<span class="sgdot"></span>`+segD(dp||"-");
   const prov=[...DR_PROV].some(x=>x>=W.start&&x<=W.end),live=!W.closed&&W.started&&(prov||(typeof TV!=="undefined"&&Object.values(TV.days||{}).flat().some(g=>g[5]==="L")));
-  const st=W.closed?["fin","Finale"]:live?["live","Live"]:W.started?["run","In corso"]:["wait","In attesa"];
-  let pj=null;if(!W.closed&&W.started)try{pj=drProiez(k,t,W)}catch(e){}
-  return`<div class="lbd" role="group" aria-label="Punteggio Dreamers della squadra: ${v==null?"in attesa":txt}">
-   <div class="lbdh"><span class="lbdt">PDK squadra</span><span class="lbdk">Dreamers · ${DR_PH(k,P)}</span>${btn}</div>
-   <div class="lbdn">${cifre}</div>
-   <div class="lbdf"><span class="lbdst ${st[0]}"><i></i>${st[1]}</span><span>${T.played}/10 a punteggio</span>${pj!=null?`<span>proiez. <b>${pdkF(pj)}</b></span>`:""}</div></div>`}
+  const st=W.closed?"fin":live?"live":W.started?"run":"wait";
+  return`<h2><span class="lbm ${st}" role="img" aria-label="PDK squadra ${v==null?"in attesa":txt}"><i class="lbmd"></i>${cifre}<small>PDK</small></span><em>Dreamers · ${DR_PH(k,P)}</em>${btn}</h2>`}
 function drPanca(t,T){const rp=n=>(ROSTER[t]||[]).find(p=>p[0]===n)||[n,"",ruoloDi(n),""];
   const card=(x,cl)=>x?`<button class="dpc ${cl}" data-pl="${x.n}">${drGioc(t,x,cl)}</button>`:`<div class="dpc ${cl}">${drGioc(t,null,cl)}</div>`;
   const tr=[...T.trib,...T.wait];
