@@ -1887,7 +1887,7 @@ nav button>span{white-space:nowrap}
 .duw.dun0 b{color:#7f79a8}
 .duw.dug i{color:rgba(0,0,0,.55)}.duw.dug b{color:#111}.duw.dug.r{background:#ef4444}.duw.dug.y{background:#f5b400}.duw.dug.g{background:#22c55e}.duw.dug.v{background:#8b5cf6}.duw.dug.r b,.duw.dug.v b{color:#fff}.duw.dug.r i,.duw.dug.v i{color:rgba(255,255,255,.7)}
 .duf{font-size:9.5px;color:#8f89b5}
-</style><style>.clwrap{margin-top:34px}.cltgw{margin:2px 0 10px}.cltg{display:inline-flex;gap:0;border:1px solid rgba(196,181,253,.45);border-radius:999px;overflow:hidden;flex:none}.cltg button{background:rgba(124,58,237,.18);border:0;color:#e9d5ff;font-family:var(--display);font-style:italic;font-weight:800;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:7px 12px;cursor:pointer}.cltg button[aria-pressed="true"]{background:linear-gradient(180deg,#a78bfa,#7c3aed);color:#fff}</style><style>
+</style><style>@keyframes clblink{0%,100%{stroke-opacity:1}50%{stroke-opacity:.18}}.court.clive .cln{stroke:#ff1f3d!important;stroke-opacity:1;animation:clblink 1s ease-in-out infinite}.noanim .court.clive .cln{animation:none}@media (prefers-reduced-motion:reduce){.court.clive .cln{animation:none}}.clwrap{margin-top:34px}.cltgw{margin:2px 0 10px}.cltg{display:inline-flex;gap:0;border:1px solid rgba(196,181,253,.45);border-radius:999px;overflow:hidden;flex:none}.cltg button{background:rgba(124,58,237,.18);border:0;color:#e9d5ff;font-family:var(--display);font-style:italic;font-weight:800;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:7px 12px;cursor:pointer}.cltg button[aria-pressed="true"]{background:linear-gradient(180deg,#a78bfa,#7c3aed);color:#fff}</style><style>
 /* Campo · modalità notte */
 .cntbtn{margin-left:auto;flex:none;position:relative;display:inline-grid;place-items:center;width:38px;height:28px;border-radius:9px;border:1px solid rgba(255,255,255,.18);background:#141b36;color:#c9d2f5;cursor:pointer;padding:0}
 .cntbtn svg{width:15px;height:15px}.cntbtn i{position:absolute;top:4px;right:5px;width:6px;height:6px;border-radius:50%;background:#ef4444;opacity:.5}
@@ -4590,7 +4590,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
     <rect x="3" y="6" width="94" height="106" fill="url(#wood)"/>${DLS.planks?`<rect x="3" y="6" width="94" height="106" fill="url(#planks)"/>`:""}
     
     <rect x="3" y="6" width="94" height="106" fill="url(#shine)" opacity="${DLS.gloss}"/>${DLS.paint?`<rect x="34" y="6" width="32" height="38" fill="${c.bg}" fill-opacity=".38"/>`:""}
-    <g fill="none" stroke="${OT.lc||(DLS_LN[DLS.line]||DLS_LN.white)[0]}" stroke-opacity=".92" stroke-width="${(.6*DLS.lw).toFixed(2)}">
+    <g class="cln" fill="none" stroke="${OT.lc||(DLS_LN[DLS.line]||DLS_LN.white)[0]}" stroke-opacity=".92" stroke-width="${(.6*DLS.lw).toFixed(2)}">
      <path d="M3 6H97M3.3 6V112M96.7 6V112M3 111.7H97"/>
      <rect x="34" y="6" width="32" height="38"/>
      <path d="M39 44A11 11 0 0 0 61 44"/><path d="M39 44A11 11 0 0 1 61 44" stroke-dasharray="1.6 1.3"/>
@@ -4617,7 +4617,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   ${bacheca(t)}
   ${cassa(t)}
   ${CNT&&DT2?drTabellone(t,DT2,DK2,DP2,true):CNT?H(CNT?"Modalità notte":"Quintetto",`<em>${CNT?(()=>{const d=campoNotte();if(!d)return"nessuna partita";const dd=tvDt(d);return`${dd.getUTCDate()}/${dd.getUTCMonth()+1}`})():`Dreamers · ${DR_PH(DK,DP)}`}</em>${kitBtn(t)}<button class="cntbtn${CNT?" on":""}" id="cntbtn" aria-pressed="${CNT}" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`):drTabellone(t,DT,DK,DP)}
-  <div class="court${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg};border-color:${shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}${CNT&&!q.length?`<div class="cnone">Nessuno in campo stanotte</div>`:""}</div>
+  <div class="court${CNT?" cdark":""}${CNT&&(()=>{try{const d=campoNotte();return d&&(TV.days[d]||[]).some(g=>g[5]==="L")}catch(e){return false}})()?" clive":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg};border-color:${shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}${CNT&&!q.length?`<div class="cnone">Nessuno in campo stanotte</div>`:""}</div>
   ${CNT?`${H("Panchina",`<em>notte · per punteggio</em>`)}
   <div class="bench${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg}">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${RTR(p[0])}${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><span class="bev">${CNT?`<span class="cnrow">${NM[p[0]]&&NM[p[0]].lv?'<i class="cnlv" title="In campo ora"></i>':""}${pillN(p[0])}</span><small>${NM[p[0]]?`vs ${NM[p[0]].opp} · ${NM[p[0]].st}`:"non ha giocato"}</small>`:`${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}`}</span></button>`).join("")}</div>`:drPanca(t,DT)}
   ${CNT?"":`<div class="ctools"><button class="ctool" id="ccap"><span class="ci">C</span>Cap<small>Chi mettere capitano</small></button><button class="ctool" id="cmul"><span class="ci mul">€</span>Multe<small>Capitano senza multa</small></button></div>`}
