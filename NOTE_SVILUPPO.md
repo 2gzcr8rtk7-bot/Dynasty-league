@@ -535,3 +535,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (121) Entertainment: la Sfida della notte è passata nell'Arcade (a:1; dalla sfida "‹ Arcade"); il tasto Dynasty TV è grande (.tvbig), rosso pieno, icona telecamera e pastiglia "● LIVE" (pallino lampeggiante quando ci sono partite in corso, come il pallino del menu).
 
 (122) Tasto Dynasty TV in Entertainment rifatto nello stile delle card Dreamers (.gmc .tvgmc, rosso smorzato #c2414b, riquadro inclinato con telecamera, pastiglia LIVE).
+
+(123) Hub Entertainment: in alto sezione "Entertainment" con Dynasty TV, sotto sezione "Fanta Dreamers" con DREAMERS e G-DREAMERS, poi Arcade.

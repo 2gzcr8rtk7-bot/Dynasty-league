@@ -1770,7 +1770,7 @@ nav button>span{white-space:nowrap}
 .court .cev,.court .pdkx{font-size:3.8cqw;min-width:0;padding:.15em .5em}
 .court .cnrow{gap:1.3cqw}.court .cnlv{width:2.2cqw;height:2.2cqw}
 </style><style>
-.tvgmc{margin-top:10px}.tvgmc .gmi svg{width:30px;height:30px;color:#f3c4c8}
+.tvgmc{margin-bottom:22px}.tvgmc .gmi svg{width:30px;height:30px;color:#f3c4c8}
 .tvgmc .gmt b{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .tvlv{display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border-radius:6px;background:rgba(194,65,75,.22);border:1px solid rgba(232,110,120,.55);color:#ffd5d9;font-family:var(--display);font-style:italic;font-weight:900;font-size:11px;letter-spacing:.1em;line-height:1}
 .tvlv i{width:7px;height:7px;border-radius:50%;background:#e5484d}.tvgmc.lv .tvlv i{animation:lvp 1.2s infinite;box-shadow:0 0 6px #e5484d}
@@ -4650,8 +4650,10 @@ function vGiochiHub(){
   const ord=["dream","gdream"];
   if(GAME==="menu"){
     return `${H("Entertainment")}
-    <div class="gmenu">${ord.map(k=>card(GAMES.find(g=>g.k===k))).join("")}</div>
     ${(()=>{const lv=(document.getElementById("t-gi")||{classList:{contains:()=>false}}).classList.contains("navlive");return`<button class="gmc tvgmc${lv?" lv":""}" data-tvopen="1" style="--gc:#c2414b"><span class="gmi"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="2.5" fill="currentColor"/><path d="M16.5 10.2l5-3v9.6l-5-3z" fill="currentColor"/></svg></span><span class="gmt"><b>Dynasty TV <span class="tvlv"><i></i>LIVE</span></b><small>Calendario NBA, risultati e tabellini in diretta, con i PDK di ogni giocatore.</small></span><span class="rgo">›</span></button>`})()}
+    ${H("Fanta Dreamers")}
+    <div class="gmenu">${ord.map(k=>card(GAMES.find(g=>g.k===k))).join("")}</div>
+
     <button class="arcbtn" data-game="arcade"><span class="arci">🕹️</span><span>Arcade<small>${GAMES.filter(g=>g.a).map(g=>g.t).join(" · ")}</small></span><span class="rgo">›</span></button>
     <p class="note">DREAMERS e G-DREAMERS sono i giochi fanta della lega; nella Dynasty TV calendario, risultati e tabellini NBA in diretta; nell'Arcade i passatempi, compresa la Sfida della notte. Record e risultati restano salvati su questo telefono.</p>`;
   }
