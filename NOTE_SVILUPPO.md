@@ -706,3 +706,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 
 (194) 27/10/2026 (Claude, account del secondo utente) — Barra di navigazione riordinata (IN CODA su `coda`, NON pubblicato): Home · Dreamers · Dynasty TV · Statistiche · Dunkest(▾) · Calcolo Trade · G Dreamers · Sala Trofei · Giochi. Sparisce il tasto "Entertainment" (hub GAME="menu" non più raggiungibile: "Torna all'app"/"‹ Home" riportano alla home). Tasti virtuali: `data-v="dreamers"`→cur giochi+GAME dream, `gdreamers`→gdream, `giochi`→arcade (Arcade), `tv`→cur tv. Pallino LIVE ora sul tasto Dynasty TV (id t-gi). Il tasto attivo scorre in vista nella barra (che scorre in orizzontale).
 - (194) ora PUBBLICATO su main.
+
+(195) 27/10/2026 (Claude, account del secondo utente) — Le GUARDIE sono ROSSE ovunque (prima verdi/lime): `--rG:#ef4444` (chip G, strisce, duelli Dreamers, roster, trade), tasti ruolo del Calcolo Trade e del College (`.trrl`, `.colrl`, `COL_RL`, `.vtrh.G`), canvas di condivisione (4203 e 4482). Ali blu e centri gialli invariati. IN CODA su `coda`, NON pubblicato.
