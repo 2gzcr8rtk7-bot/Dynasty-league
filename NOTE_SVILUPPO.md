@@ -708,3 +708,4 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 - (194) ora PUBBLICATO su main.
 
 (195) 27/10/2026 (Claude, account del secondo utente) — Le GUARDIE sono ROSSE ovunque (prima verdi/lime): `--rG:#ef4444` (chip G, strisce, duelli Dreamers, roster, trade), tasti ruolo del Calcolo Trade e del College (`.trrl`, `.colrl`, `COL_RL`, `.vtrh.G`), canvas di condivisione (4203 e 4482). Ali blu e centri gialli invariati. IN CODA su `coda`, NON pubblicato.
+- (195) ora PUBBLICATO su main. Per tornare indietro: --rG:#a3e635 (lime) e i verdi #22c55e nei punti elencati sopra.
