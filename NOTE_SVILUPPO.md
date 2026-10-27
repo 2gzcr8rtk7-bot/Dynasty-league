@@ -680,6 +680,6 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 
 (184) 27/10/2026 (Claude, account del secondo utente) — Maglie Anni 90 di Heat (MIA rossa, collo e fianchi nero/bianchi, scritte nere bordate di bianco; senza il camouflage/scimmia della foto, che è un marchio di terzi) e Kings (SAC nera, collo viola/bianco). Con queste TUTTE le 30 squadre NBA hanno la loro maglia Anni 90. PUBBLICATE.
 
-(185) 27/10/2026 (Claude, account del secondo utente) — Maglia Anni 90 Hawks: scritta HAWKS +7% (nuovo campo opzionale `ws` = fattore scala del nome sulla maglia, vale per ogni kit NBA_KIT_90/NBA_KIT; ATL ws:1.07). IN CODA (rendering inviato).
+(185) 27/10/2026 (Claude, account del secondo utente) — Maglia Anni 90 Hawks: scritta HAWKS +7% (nuovo campo opzionale `ws` = fattore scala del nome sulla maglia, vale per ogni kit NBA_KIT_90/NBA_KIT; ATL ws:1.07). PUBBLICATO.
 
-(186) 27/10/2026 (Claude, account del secondo utente) — Il nome "Dynasty League" è diventato "Dreamers" ovunque sia scritto (intestazione, titolo scheda, meta, manifest/icona telefono "Dreamers", immagini condivise e piè di pagina, testo di condivisione "Più o Meno", note sui Valori). Restano "Dynasty TV" e le parole "Dynasty" del regolamento (modalità di gioco). L'URL del sito e il nome del repo non cambiano. IN CODA (rendering inviato).
+(186) 27/10/2026 (Claude, account del secondo utente) — Il nome "Dynasty League" è diventato "Dreamers" ovunque sia scritto (intestazione, titolo scheda, meta, manifest/icona telefono "Dreamers", immagini condivise e piè di pagina, testo di condivisione "Più o Meno", note sui Valori). Restano "Dynasty TV" e le parole "Dynasty" del regolamento (modalità di gioco). L'URL del sito e il nome del repo non cambiano. PUBBLICATO.
