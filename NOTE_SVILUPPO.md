@@ -545,3 +545,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (126) Dreamers duello, carta del capitano: nel riquadro grande i punti del capitano già moltiplicati, sempre in oro (.pdkx.dugold); a destra il PDK di partenza "×1,5" senza grassetto.
 
 (127) Dynasty TV, sfide Dreamers: logo Ducks alzato di 4px per allinearlo al nome (.drtvg .drtvl .lg-DUC).
+
+(128) Home: tolto il titolo "Franchigie"; al suo posto una barra (.hbar) con ricerca "Cerca giocatore", tasto Dynasty TV, tasto Dreamers viola con stellina (#hdrm → GAME=dream) e interruttore on/off della modalità notte (#hnt, role=switch, accende/spegne CNT: entrando in una squadra si vede già in modalità notte).

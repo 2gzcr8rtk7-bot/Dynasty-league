@@ -1774,7 +1774,18 @@ nav button>span{white-space:nowrap}
 .tvgmc .gmt b{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .tvlv{display:inline-flex;align-items:center;gap:5px;padding:3px 7px;border-radius:6px;background:rgba(194,65,75,.22);border:1px solid rgba(232,110,120,.55);color:#ffd5d9;font-family:var(--display);font-style:italic;font-weight:900;font-size:11px;letter-spacing:.1em;line-height:1}
 .tvlv i{width:7px;height:7px;border-radius:50%;background:#e5484d}.tvgmc.lv .tvlv i{animation:lvp 1.2s infinite;box-shadow:0 0 6px #e5484d}
-</style><style>.dus em.dunb{font-weight:500;color:#d8d3f0}.pdkx.dugold{background:linear-gradient(180deg,#f7d774,#d4a017);color:#2a1c00;box-shadow:inset 0 -2px 0 rgba(0,0,0,.2),0 0 10px rgba(245,180,0,.35)}</style><style>.drtvg .drtvl .lg-DUC{transform:translateY(-4px)}</style></head>
+</style><style>.dus em.dunb{font-weight:500;color:#d8d3f0}.pdkx.dugold{background:linear-gradient(180deg,#f7d774,#d4a017);color:#2a1c00;box-shadow:inset 0 -2px 0 rgba(0,0,0,.2),0 0 10px rgba(245,180,0,.35)}</style><style>.drtvg .drtvl .lg-DUC{transform:translateY(-4px)}</style><style>
+.hbar{display:flex;align-items:center;gap:8px;margin:4px 0 14px}
+.hbar .hsrch{max-width:none;margin-left:0;padding:9px 12px;flex:1 1 auto}
+.hbar .tvgo{order:0;margin-left:0;padding:9px 10px;border-radius:11px}
+.hdrm{flex:none;display:grid;place-items:center;width:40px;height:38px;border:0;border-radius:11px;cursor:pointer;color:#fff;background:radial-gradient(circle at 30% 20%,#a78bfa,#6d28d9 60%,#3b0f80);box-shadow:0 0 12px rgba(139,92,246,.55),inset 0 0 0 1px rgba(255,255,255,.18)}
+.hdrm svg{width:19px;height:19px;filter:drop-shadow(0 0 4px #e9d5ff)}
+.hnt{flex:none;position:relative;width:54px;height:30px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:#1a2240;cursor:pointer;padding:0;transition:background .2s}
+.hntk{position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#e2e8f0;color:#1a2240;transition:left .2s,background .2s}
+.hntk svg{width:14px;height:14px}
+.hnt.on{background:linear-gradient(90deg,#3b2a8a,#6d4bd8);border-color:#8b5cf6;box-shadow:0 0 10px rgba(139,92,246,.5)}
+.hnt.on .hntk{left:26px;background:#fff;color:#6d4bd8}
+</style></head>
 
 <body>
 <header>
@@ -2781,7 +2792,7 @@ document.getElementById("main").addEventListener("input",e=>{if(e.target.id!=="f
   document.querySelectorAll(".farow").forEach(r=>{r.hidden=q?!r.dataset.fs.includes(q):r.classList.contains("fanone")})});
 function vHome(){
   const st=standings();
-  return `${H("Franchigie",`<label class="hsrch"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><input id="hq" type="search" placeholder="Cerca" autocomplete="off" aria-label="Cerca giocatore"></label><button class="tvgo" id="tvgo" aria-label="Apri Dynasty TV"><i class="tvdot"></i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="2.5" fill="currentColor"/><path d="M16.5 10.2l5-3v9.6l-5-3z" fill="currentColor"/></svg></button>`)}<div class="hres" id="hres" hidden></div><div class="hgrid">${Object.keys(TEAMS).map(t=>{const c=TEAMS[t],x=st.find(y=>y.t===t);return `<button class="htile" data-team="${t}" style="--tc:${c.bg};--tt:${c.trim}" aria-label="Roster ${c.name}"><span class="hlg">${badge(t)}</span><span class="hnm"><small>${c.city}</small><b>${c.nick}</b></span><span class="hrec">${x.w}-${x.l}</span></button>`}).join("")}</div>`;
+  return `<div class="hbar"><label class="hsrch"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><input id="hq" type="search" placeholder="Cerca giocatore" autocomplete="off" aria-label="Cerca giocatore"></label><button class="tvgo" id="tvgo" aria-label="Apri Dynasty TV"><i class="tvdot"></i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="2.5" fill="currentColor"/><path d="M16.5 10.2l5-3v9.6l-5-3z" fill="currentColor"/></svg></button><button class="hdrm" id="hdrm" aria-label="Apri Dreamers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.2 6.6 6.8.1-5.5 4.1 2 6.6L12 16l-5.5 3.9 2-6.6L3 9.2l6.8-.1z" fill="currentColor"/></svg></button><button class="hnt${CNT?" on":""}" id="hnt" role="switch" aria-checked="${CNT}" aria-label="Modalità notte"><span class="hntk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></span></button></div><div class="hres" id="hres" hidden></div><div class="hgrid">${Object.keys(TEAMS).map(t=>{const c=TEAMS[t],x=st.find(y=>y.t===t);return `<button class="htile" data-team="${t}" style="--tc:${c.bg};--tt:${c.trim}" aria-label="Roster ${c.name}"><span class="hlg">${badge(t)}</span><span class="hnm"><small>${c.city}</small><b>${c.nick}</b></span><span class="hrec">${x.w}-${x.l}</span></button>`}).join("")}</div>`;
 }
 
 let curPlayer=null;
@@ -5099,6 +5110,8 @@ function render(){
     const vq=m.querySelector("#vtq");if(vq)vq.oninput=()=>{const q=vq.value.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");m.querySelectorAll(".vtlist .vtrow").forEach(r=>{const t=(r.dataset.pln+" "+(TEAMS[r.dataset.plt]||{}).nick).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");r.style.display=!q||t.includes(q)?"":"none"})};
   const tvk=m.querySelector("#tvback");if(tvk)tvk.onclick=()=>{TVS.g=null;cur="giochi";GAME="menu";render();window.scrollTo(0,0)};
   const tvg=m.querySelector("#tvgo");if(tvg)tvg.onclick=()=>{cur="tv";render();window.scrollTo(0,0)};
+  const hd=m.querySelector("#hdrm");if(hd)hd.onclick=()=>{GAME="dream";cur="giochi";render();window.scrollTo(0,0)};
+  const hn=m.querySelector("#hnt");if(hn)hn.onclick=()=>{CNT=!CNT;const y=scrollY;render();scrollTo(0,y)};
   const cb=m.querySelector("#cback");if(cb)cb.onclick=()=>{cur="home";render();window.scrollTo(0,0)};
   const cc=m.querySelector("#ccap");if(cc)cc.onclick=()=>{capLoad(curTeam);cur="cap";render();window.scrollTo(0,0)};
   const cmu=m.querySelector("#cmul");if(cmu)cmu.onclick=()=>{mulLoad(curTeam);cur="multe";render();window.scrollTo(0,0)};
