@@ -683,3 +683,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (185) 27/10/2026 (Claude, account del secondo utente) — Maglia Anni 90 Hawks: scritta HAWKS +7% (nuovo campo opzionale `ws` = fattore scala del nome sulla maglia, vale per ogni kit NBA_KIT_90/NBA_KIT; ATL ws:1.07). PUBBLICATO.
 
 (186) 27/10/2026 (Claude, account del secondo utente) — Il nome "Dynasty League" è diventato "Dreamers" ovunque sia scritto (intestazione, titolo scheda, meta, manifest/icona telefono "Dreamers", immagini condivise e piè di pagina, testo di condivisione "Più o Meno", note sui Valori). Restano "Dynasty TV" e le parole "Dynasty" del regolamento (modalità di gioco). L'URL del sito e il nome del repo non cambiano. PUBBLICATO.
+
+(187) 27/10/2026 (Claude, account del secondo utente) — Il tastino della maglia ora è GLOBALE: una sola scelta (Casa/Notte/Alternativa/NBA 2026/Anni 90) per TUTTE le squadre e TUTTE le sezioni, salvata sul telefono (`dl_kitg`, variabile `KITG`); prima c'era una scelta per squadra (`KIT[t]`/`dl_kit`, ora non più usati). Senza scelta resta automatica (casa; notte in modalità notte). IN CODA (rendering inviato).
