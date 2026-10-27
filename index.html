@@ -5112,7 +5112,7 @@ function ntShare(btn){
      A turno chiuso, ogni titolare senza minuti è sostituito dalla miglior riserva (per valore) che ha giocato; se non ce ne sono, 0.
      Durante il turno il punteggio è "in corso": somma dei titolari che hanno già giocato.
    - Dati: DREAM_DATA in dreamers-data.js (generato da tools/dreamers.mjs) + la notte dell'ultimo report, presa dal vivo da EFF. */
-const DR_START="2026-10-26",DR_REG=14,DR_TOT=23,DR_FALLBACK=1600; // 14 turni di regular season (andata e ritorno: tutti si affrontano 2 volte) + playoff (max 9 settimane: 3 turni al meglio delle 3)
+const DR_START="2026-10-26",DR_REG=40,DR_TOT=49,DR_FALLBACK=1600; // 40 turni di regular season Dreamers (= giornate 3-42; le giornate 1-2 sono nella classifica di partenza DR_BASE) + playoff (max 9 settimane: 3 turni al meglio delle 3)
 const DRD=typeof DREAM_DATA!=="undefined"?DREAM_DATA:{notti:{},form:{}};
 const drIso=d=>d.toISOString().slice(0,10);
 const drAdd=(s,n)=>{const d=new Date(s+"T00:00:00Z");d.setUTCDate(d.getUTCDate()+n);return drIso(d)};
@@ -5163,11 +5163,18 @@ const drLast=()=>{const k=Object.keys(drNotti()).sort();return k[k.length-1]||nu
 function drCurWeek(P){const l=drLast(),today=drIso(new Date()),ref=l&&l>today?l:today;let k=DR_TURNI.findIndex(x=>ref<=x[1])+1;if(!k)k=DR_TOT;return Math.max(1,Math.min(P?P.end:DR_TOT,k))}
 function drForm(k){if(DRD.form[k])return DRD.form[k];
   const f={};Object.entries(ROSTER).forEach(([t,a])=>{const s=a.map(p=>p[0]).sort((x,y)=>(valOf(y)??DR_FALLBACK)-(valOf(x)??DR_FALLBACK));f[t]={t:s.slice(0,10),r:s.slice(10)}});return f}
-/* calendario: metodo del cerchio, 7 giornate × 3 gironi (nel 2° girone casa/trasferta invertite) */
-function drSchedule(){const T=Object.keys(TEAMS),n=T.length,out=[];let a=T.slice();
-  for(let r=0;r<n-1;r++){const pr=[];for(let i=0;i<n/2;i++){const x=a[i],y=a[n-1-i];pr.push(r%2?[y,x]:[x,y])}out.push(pr);a=[a[0],a[n-1],...a.slice(1,n-1)]}
-  const all=[];for(let c=0;c<3;c++)out.forEach(pr=>all.push(pr.map(([x,y])=>c===1?[y,x]:[x,y])));return all}
-const DR_SCHED=drSchedule();
+/* CALENDARIO SCONTRI = quello di Dunkest (GM League, foto del 27/10/2026): 14 giornate, poi si ripete uguale (la 15ª = la 1ª).
+   Le giornate 1 e 2 sono già state giocate su Dunkest (DR_BASE = classifica di partenza); il turno 1 di Dreamers = giornata 3 di Dunkest (in corso),
+   quindi Dreamers gioca le giornate 3-42 (40 turni = 6 gironi in tutto, DR_REG). Le etichette dei turni seguono la numerazione Dunkest (DR_OFF). */
+const DR_OFF=2;
+const DR_DK=(()=>{const N={CAL:"TUR",SD:"EAG",SL:"DOL",TX:"DUC",DET:"FOX",DAK:"PEA",ALA:"MOO",SAC:"SPI"};
+  const G=["CAL-SD,SL-TX,DET-DAK,ALA-SAC","TX-CAL,DAK-SD,SAC-SL,ALA-DET","CAL-DAK,TX-SAC,SD-ALA,SL-DET","SAC-CAL,ALA-DAK,DET-TX,SL-SD","CAL-ALA,SAC-DET,DAK-SL,TX-SD","DET-CAL,SL-ALA,SD-SAC,TX-DAK","CAL-SL,DET-SD,ALA-TX,SAC-DAK",
+   "SD-CAL,TX-SL,DAK-DET,SAC-ALA","CAL-TX,SD-DAK,SL-SAC,DET-ALA","DAK-CAL,SAC-TX,ALA-SD,DET-SL","CAL-SAC,DAK-ALA,TX-DET,SD-SL","ALA-CAL,DET-SAC,SL-DAK,SD-TX","CAL-DET,ALA-SL,SAC-SD,DAK-TX","SL-CAL,SD-DET,TX-ALA,DAK-SAC"];
+  return G.map(r=>r.split(",").map(m=>m.split("-").map(x=>N[x])))})();
+const DR_SCHED=Array.from({length:DR_REG},(_,i)=>DR_DK[(i+DR_OFF)%14]);
+/* classifica di partenza: risultati delle giornate 1-2 giocate su Dunkest (vittorie e punti vanno mantenuti) */
+const DR_BASE={DUC:{w:2,l:0,pf:527.99,pa:351.58,f:"VV"},FOX:{w:2,l:0,pf:542.68,pa:444.87,f:"VV"},EAG:{w:1,l:1,pf:511.98,pa:512.87,f:"VP"},PEA:{w:1,l:1,pf:536.75,pa:552.33,f:"PV"},
+  SPI:{w:1,l:1,pf:502.16,pa:453.31,f:"VP"},DOL:{w:1,l:1,pf:511.49,pa:562.02,f:"PV"},TUR:{w:0,l:2,pf:376.80,pa:493.85,f:"PP"},MOO:{w:0,l:2,pf:337.59,pa:476.61,f:"PP"}};
 function drWeek(k){ // efficienze settimanali dei giocatori
   const N=drNotti(),s=drWeekStart(k),e=drWeekEnd(k),len=Math.round((Date.parse(e)-Date.parse(s))/864e5)+1,acc={};let nights=0;
   for(let i=0;i<len;i++){const n=N[drAdd(s,i)];if(!n)continue;nights++;Object.entries(n).forEach(([p,e])=>{const a=acc[p]||(acc[p]={s:0,g:0,b:null});const v=(typeof e==="number"?e:0);a.s+=v;a.g++;a.b=a.b==null?v:Math.max(a.b,v)})}
@@ -5183,8 +5190,8 @@ const DR_QUOTE={G:4,F:4,C:2};
 /* CALENDARIO TURNI (prospetto A, 27/10/2026): turni corti da 2-4 giorni, ogni squadra NBA gioca 1 o 2 partite per turno (turno 1 = settimana già in corso, 7 giorni).
    DR_TURNI[k-1]=[primo giorno, ultimo giorno] (date USA); i turni saltano la pausa NBA Cup (4-11/12). DR_ZERO = turno -> squadre NBA a 0 partite (da calendario NBA ufficiale).
    Se si cambiano le date rigenerare entrambi. */
-const DR_TURNI=[["2026-10-26","2026-11-01"],["2026-11-02","2026-11-03"],["2026-11-04","2026-11-06"],["2026-11-07","2026-11-09"],["2026-11-10","2026-11-12"],["2026-11-13","2026-11-15"],["2026-11-16","2026-11-18"],["2026-11-19","2026-11-21"],["2026-11-22","2026-11-23"],["2026-11-24","2026-11-27"],["2026-11-28","2026-11-30"],["2026-12-01","2026-12-03"],["2026-12-12","2026-12-15"],["2026-12-16","2026-12-18"],["2026-12-19","2026-12-22"],["2026-12-23","2026-12-25"],["2026-12-26","2026-12-28"],["2026-12-29","2026-12-31"],["2027-01-01","2027-01-03"],["2027-01-04","2027-01-06"],["2027-01-07","2027-01-08"],["2027-01-09","2027-01-11"],["2027-01-12","2027-01-14"]];
-const DR_ZERO={"5":["ATL"],"8":["MIA"]};
+const DR_TURNI=[["2026-10-26","2026-11-01"],["2026-11-02","2026-11-03"],["2026-11-04","2026-11-06"],["2026-11-07","2026-11-09"],["2026-11-10","2026-11-12"],["2026-11-13","2026-11-15"],["2026-11-16","2026-11-18"],["2026-11-19","2026-11-21"],["2026-11-22","2026-11-23"],["2026-11-24","2026-11-27"],["2026-11-28","2026-11-30"],["2026-12-01","2026-12-03"],["2026-12-12","2026-12-15"],["2026-12-16","2026-12-18"],["2026-12-19","2026-12-22"],["2026-12-23","2026-12-25"],["2026-12-26","2026-12-28"],["2026-12-29","2026-12-31"],["2027-01-01","2027-01-03"],["2027-01-04","2027-01-06"],["2027-01-07","2027-01-08"],["2027-01-09","2027-01-11"],["2027-01-12","2027-01-14"],["2027-01-15","2027-01-17"],["2027-01-18","2027-01-20"],["2027-01-21","2027-01-23"],["2027-01-24","2027-01-26"],["2027-01-27","2027-01-29"],["2027-01-30","2027-02-01"],["2027-02-02","2027-02-04"],["2027-02-05","2027-02-07"],["2027-02-08","2027-02-09"],["2027-02-10","2027-02-12"],["2027-02-13","2027-02-15"],["2027-02-16","2027-02-18"],["2027-02-25","2027-02-26"],["2027-02-27","2027-03-01"],["2027-03-02","2027-03-03"],["2027-03-04","2027-03-06"],["2027-03-07","2027-03-09"],["2027-03-10","2027-03-11"],["2027-03-12","2027-03-14"],["2027-03-15","2027-03-17"],["2027-03-18","2027-03-20"],["2027-03-21","2027-03-23"],["2027-03-24","2027-03-26"],["2027-03-27","2027-03-29"],["2027-03-30","2027-04-01"],["2027-04-02","2027-04-04"]];
+const DR_ZERO={"5":["ATL"],"8":["MIA"],"29":["LAC"],"34":["LAL"],"38":["CLE"],"39":["DEN"],"40":["TOR"]};
 function drCalZero(n,k){const p=Object.values(ROSTER).flat().find(x=>x[0]===n);return !!(p&&DR_ZERO[k]&&DR_ZERO[k].includes(p[3]))}
 function drTeam(k,t,W){W=W||drWeek(k);const F=drForm(k)[t]||{t:[],r:[]};
   /* MERITOCRAZIA dentro i ruoli: per ogni ruolo entrano i migliori PDK della settimana (4 G, 4 A, 2 C).
@@ -5205,7 +5212,7 @@ function drTeam(k,t,W){W=W||drWeek(k);const F=drForm(k)[t]||{t:[],r:[]};
   const score=played||W.closed?top.reduce((a,x)=>a+(x.f||0),0):null; /* punteggio squadra = SOMMA dei punti dei titolari (deciso 27/10/2026) */
   return{t,slots:top,top,trib,wait,zeros:W.closed?zeros:0,res:F.r,score,played}}
 function drPairs(k,stand,P){if(k<=DR_REG)return DR_SCHED[k-1];P=P||drPO(stand);return P.W[k]?P.W[k].pr.map(x=>[x.a,x.b]):[]}
-function drStand(){const S={};Object.keys(TEAMS).forEach(t=>S[t]={t,w:0,l:0,pf:0,pa:0,n:0});
+function drStand(){const S={};Object.keys(TEAMS).forEach(t=>S[t]={t,w:0,l:0,pf:0,pa:0,n:0,...(DR_BASE[t]?{w:DR_BASE[t].w,l:DR_BASE[t].l,pf:DR_BASE[t].pf,pa:DR_BASE[t].pa,n:DR_BASE[t].w+DR_BASE[t].l}:{})});
   for(let k=1;k<=DR_REG;k++){const W=drWeek(k);if(!W.closed)continue;DR_SCHED[k-1].forEach(([a,b])=>{const A=drTeam(k,a,W).score,B=drTeam(k,b,W).score;S[a].pf+=A;S[a].pa+=B;S[b].pf+=B;S[b].pa+=A;S[a].n++;S[b].n++;if(A>=B){S[a].w++;S[b].l++}else{S[b].w++;S[a].l++}})}
   Object.values(S).forEach(x=>x.avg=x.n?x.pf/x.n:null);return Object.values(S).sort((x,y)=>y.w-x.w||(y.avg??-1)-(x.avg??-1))}
 /* PLAYOFF: serie al meglio delle 3 (1 gara = 1 settimana). Un turno finisce appena tutte le sue serie sono decise:
@@ -5224,7 +5231,7 @@ function drPO(st){const s=st.map(x=>x.t),seed={};s.forEach((t,i)=>seed[t]=i+1);
   return{seed,R,W,RS,done,end:done?k-1:DR_TOT,champ:done?R[2][0].win:null,fin}}
 const DR_RN=["Quarti di finale","Semifinali","Finale"];
 const drLg=(t,z)=>`<span class="drlg ${z||""}" style="--tc:${TEAMS[t].bg}">${badge(t)}</span>`;
-const DR_PH=(k,P)=>{if(k<=DR_REG)return `Turno ${k}`;const w=P&&P.W[k];return w?`${DR_RN[w.r]} · gara ${w.g}`:"Playoff · da definire"};
+const DR_PH=(k,P)=>{if(k<=DR_REG)return `Turno ${k+DR_OFF}`;const w=P&&P.W[k];return w?`${DR_RN[w.r]} · gara ${w.g}`:"Playoff · da definire"};
 let DR={tab:"turno",k:null,open:null};
 function drScore(v){return v==null?"—":pdkF(v)}
 /* ===== DREAMERS · DUELLO (sfida aperta): giocatori uno contro uno per posto, con maglia, PDK colorato, moltiplicatore
@@ -5274,7 +5281,7 @@ function drRules(){const S=(t,l)=>`<div class="drrs"><h4>${t}</h4><ol>${l.map(x=
   ${S("Titolari, capitano e panchina",["I <b>10 titolari</b> sono i giocatori con il punteggio più alto, <b>rispettando i ruoli</b> (vedi sotto); gli altri vanno in tribuna e non contano.","Il 1° (il migliore) è il <b>capitano</b> e vale <b>×1,5</b>.","Dal 2° al 6° valgono <b>punteggio pieno</b> (×1).","Dal 7° al 10° sono in panchina e valgono <b>metà</b> (×0,5).","Un titolare che a turno chiuso non ha giocato vale 0."])}
   ${S("Ruoli: regola invalicabile",["I 10 titolari sono <b>sempre 4 guardie, 4 ali e 2 centri</b>.","Tra capitano e punteggio pieno (i primi 6) ci sono <b>almeno 1 centro, 1 ala e 1 guardia</b>.","Questa regola viene <b>prima della meritocrazia</b>: dentro ogni ruolo entrano i migliori punteggi, ma i posti del ruolo vanno riempiti comunque.","Se tra i primi 6 manca un ruolo, sale il migliore di quel ruolo e scende in panchina il peggiore dei primi 6.","Esempio: una squadra ha 3 centri e tutti fanno 0. Due di loro entrano comunque tra i 10 e uno dei due va a punteggio pieno, anche se in rosa ci sono altri giocatori con punteggi più alti.","Il ruolo di ogni giocatore è quello del roster della lega (G = guardia, A = ala, C = centro)."])}
   ${S("Punteggio di squadra e vittoria",["Il punteggio della squadra è la <b>somma</b> dei punti dei 10 titolari (con capitano ×1,5 e panchina ×0,5).","Vince la sfida chi fa il punteggio più alto.","In caso di parità vince la squadra indicata per prima nell'incontro (in casa)."])}
-  ${S("Regular season e classifica",["La regular season dura <b>14 turni</b>: ogni squadra affronta tutte le altre due volte (andata e ritorno, casa e trasferta invertite).","In classifica conta il numero di <b>vittorie</b>.","A parità di vittorie è davanti chi ha la <b>media punti per turno</b> più alta."])}
+  ${S("Regular season e classifica",["La regular season dura <b>42 giornate</b>: gli scontri seguono il calendario di Dunkest (14 giornate che si ripetono), quindi ogni squadra affronta ognuna delle altre 6 volte.","Le giornate 1 e 2 sono state giocate su Dunkest e le loro vittorie e i loro punti sono già nella classifica di partenza; su Dreamers si comincia dalla <b>giornata 3</b> (turno in corso).","In classifica conta il numero di <b>vittorie</b>.","A parità di vittorie è davanti chi ha la <b>media punti per turno</b> più alta."])}
   ${S("Playoff",["Vanno ai playoff <b>tutte e 8</b> le squadre; la posizione in classifica decide gli accoppiamenti.","Quarti di finale: 1ª–8ª, 4ª–5ª, 2ª–7ª, 3ª–6ª.","Ogni serie è <b>al meglio delle 3 gare</b>; ogni gara è una settimana. Chi vince 2 gare passa il turno (se una serie finisce 2-0 non si gioca la terza).","Semifinali tra le vincenti dei quarti; le perdenti dei quarti giocano per i posti dal 5° all'8°.","Si giocano insieme la <b>Finalissima</b>, la finale 3° posto, la finale 5° posto e la finale 7° posto.","In una gara di playoff, a parità di punteggio vince la <b>testa di serie migliore</b>.","La stagione DREAMERS dura al massimo 23 settimane (14 di regular season + fino a 9 di playoff)."])}
   ${S("Dove si vede",["<b>Turno</b>: le sfide della settimana; tocca una sfida per il duello giocatore contro giocatore.","<b>Calendario</b>: tutti i turni e gli accoppiamenti.","<b>Classifica</b>: vittorie, sconfitte, media punti e forma (ultimi 5).","<b>Playoff</b>: tabellone e piazzamenti finali."])}
   </div>`}
@@ -5296,10 +5303,10 @@ function vDream(){fantaLiveAvvia();
     body=`<div class="drnav"><button data-dr="wk" data-d="-1" ${k<=1?"disabled":""}>‹</button><div><b>${DR_PH(k,P)}</b><small>${drFmt(W.start)} – ${drFmt(W.end)} · ${W.nights}/${W.len} notti</small></div><button data-dr="wk" data-d="1" ${k>=MAXK?"disabled":""}>›</button></div>
     ${pr.length?`<div class="drms">${pr.map(card).join("")}</div>`:`<div class="cempty">${k>DR_REG?"Turno di playoff: si gioca solo se servono altre gare. Gli accoppiamenti si conoscono quando finisce la settimana precedente.":"Gli accoppiamenti si conoscono quando finisce il turno precedente."}</div>`}`}
   else if(DR.tab==="cal"){const rows=[];for(let i=1;i<=MAXK;i++){const w=drWeek(i),pr=drPairs(i,st,P),pw=P.W[i];
-      rows.push(`<button class="drcal ${i===drCurWeek(P)?"cur":""}" data-dr="go" data-k="${i}"><span class="drck"><b>${i<=DR_REG?i:pw?["QF","SF","F"][pw.r]:"PO"}</b><small>${pw?`gara ${pw.g}<br>`:""}${drFmt(w.start)}–${drFmt(w.end)}</small></span><span class="drcp">${pr.length?pr.map(([a,b])=>{const A=w.closed?drTeam(i,a,w).score:null,B=w.closed?drTeam(i,b,w).score:null;return `<i class="drcm"><span class="h tint ${w.closed&&A>=B?"w":""}" style="--tc:${TEAMS[a].bg}">${drLg(a,"s")}<b>${TEAMS[a].name}</b></span><em>${w.closed?`${pdkF(A)}–${pdkF(B)}`:"vs"}</em><span class="a tint ${w.closed&&B>A?"w":""}" style="--tc:${TEAMS[b].bg}"><b>${TEAMS[b].name}</b>${drLg(b,"s")}</span></i>`}).join(""):`<em class="tbd">${pw?DR_PH(i,P)+" · da definire":"Playoff · solo se necessaria"}</em>`}</span></button>`)}
+      rows.push(`<button class="drcal ${i===drCurWeek(P)?"cur":""}" data-dr="go" data-k="${i}"><span class="drck"><b>${i<=DR_REG?i+DR_OFF:pw?["QF","SF","F"][pw.r]:"PO"}</b><small>${pw?`gara ${pw.g}<br>`:""}${drFmt(w.start)}–${drFmt(w.end)}</small></span><span class="drcp">${pr.length?pr.map(([a,b])=>{const A=w.closed?drTeam(i,a,w).score:null,B=w.closed?drTeam(i,b,w).score:null;return `<i class="drcm"><span class="h tint ${w.closed&&A>=B?"w":""}" style="--tc:${TEAMS[a].bg}">${drLg(a,"s")}<b>${TEAMS[a].name}</b></span><em>${w.closed?`${pdkF(A)}–${pdkF(B)}`:"vs"}</em><span class="a tint ${w.closed&&B>A?"w":""}" style="--tc:${TEAMS[b].bg}"><b>${TEAMS[b].name}</b>${drLg(b,"s")}</span></i>`}).join(""):`<em class="tbd">${pw?DR_PH(i,P)+" · da definire":"Playoff · solo se necessaria"}</em>`}</span></button>`)}
     body=`<div class="drcals">${rows.join("")}</div>`}
   else if(DR.tab==="cla"){
-    const form=t=>{const o=[];for(let k=1;k<=DR_REG;k++){const w=drWeek(k);if(!w.closed)continue;const pr=DR_SCHED[k-1].find(p=>p.includes(t));if(!pr)continue;const o2=pr[0]===t?pr[1]:pr[0];o.push(drTeam(k,t,w).score>=drTeam(k,o2,w).score?"V":"P")}return o.slice(-5)};
+    const form=t=>{const o=[];for(let k=1;k<=DR_REG;k++){const w=drWeek(k);if(!w.closed)continue;const pr=DR_SCHED[k-1].find(p=>p.includes(t));if(!pr)continue;const o2=pr[0]===t?pr[1]:pr[0];o.push(drTeam(k,t,w).score>=drTeam(k,o2,w).score?"V":"P")}return[...(DR_BASE[t]?DR_BASE[t].f.split(""):[]),...o].slice(-5)};
     const ld=st[0]?st[0].w:0;
     body=`<div class="drcla">${st.map((x,i)=>{const f=form(x.t);return `<div class="drcr tint ${i<1?"lead":""}" style="--tc:${TEAMS[x.t].bg}"><span class="drpos">${i+1}</span>${drLg(x.t,"l")}<div class="drci"><b>${TEAMS[x.t].name}</b><small>${x.n?`${x.n} turni giocati`:"nessun turno giocato"}</small><span class="drfm">${f.length?f.map(r=>`<i class="${r}">${r}</i>`).join(""):'<em>forma —</em>'}</span></div><div class="drcwl"><b>${x.w}<small>V</small></b><b class="l">${x.l}<small>P</small></b><b class="avg">${x.avg==null?"—":pdkF(x.avg)}<small>MEDIA</small></b>${i>0&&ld>x.w?`<em>−${ld-x.w} V</em>`:""}</div></div>`}).join("")}</div>
     <p class="note">Vittoria = punteggio di turno più alto. A parità di vittorie è davanti chi ha la media punteggio più alta (punti fatti per turno). Tutte e 8 le squadre vanno ai playoff: la posizione decide gli accoppiamenti (1ª–8ª, 4ª–5ª, 2ª–7ª, 3ª–6ª). Serie al meglio delle 3, una gara per turno; ci sono anche le serie per il 3°, 5° e 7° posto, così la classifica finale va da 1 a 8.</p>`}
