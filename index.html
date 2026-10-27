@@ -2381,7 +2381,15 @@ const NBA_KIT_90={
  OKC:{bg:"#4a90d9",fg:"#ffffff",jstroke:"#12234f",jsw:2.4,trim:"#12234f",tstr:[["#f4801f",2.6],["#f7c500",1.1]],p2:"#4a90d9",d:"default"},
  WAS:{bg:"#cdb069",fg:"#ffffff",jstroke:"#141414",jsw:2.6,nf:"#ffffff",ns:"#cdb069",trim:"#ffffff",tstr:[["#141414",1.2]],d:"wasg"},
  DAL:{bg:"#2c9a52",fg:"#ffffff",jstroke:"#2d3fd6",jsw:2.6,trim:"#2d3fd6",tstr:[["#ffffff",2.2]],d:"none"},
- ORL:{bg:"#0d0d12",fg:"#2b53c8",jstroke:"#ffffff",jsw:2.8,nf:"#2b53c8",ns:"#ffffff",trim:"#2b53c8",tstr:[["#ffffff",2.2]],pc:"#ffffff",ps:5.6,d:"pins"}
+ ORL:{bg:"#0d0d12",fg:"#2b53c8",jstroke:"#ffffff",jsw:2.8,nf:"#2b53c8",ns:"#ffffff",trim:"#2b53c8",tstr:[["#ffffff",2.2]],pc:"#ffffff",ps:5.6,d:"pins"},
+ GSW:{bg:"#13254f",fg:"#fbc531",jstroke:"#e98a52",jsw:2,trim:"#e8571f",tstr:[["#fbc531",1.1]],p2:"#fbc531",d:"default"},
+ NOP:{bg:"#2a2250",fg:"#ffffff",jstroke:"#2a2250",jsw:2.6,trim:"#6a3fa0",tstr:[["#2d8a3e",3.4],["#f2b61c",1.6]],d:"nop"},
+ BKN:{bg:"#14224d",fg:"#ffffff",jstroke:"#c8203a",jsw:2.8,trim:"#c8203a",tstr:[["#c8ccd4",2.2]],d:"bkn"},
+ UTA:{bg:"#4b2a85",fg:"#ffffff",jstroke:"#2aa7b8",jsw:2.8,nf:"#5b2d91",ns:"#2aa7b8",trim:"#4b2a85",tstr:[["#2aa7b8",2.8],["#ffffff",1.2]],d:"utm"},
+ MEM:{bg:"#62c5bb",fg:"#ffffff",jstroke:"#141414",jsw:2.8,nf:"#ffffff",ns:"#141414",trim:"#141414",tline:"#f0e6d2",tlw:1.6,tld:"2 2",d:"none"},
+ POR:{bg:"#111114",fg:"#ffffff",jstroke:"#c8102e",jsw:2.4,nf:"#ffffff",ns:"#c8102e",trim:"#d6202e",d:"por90"},
+ PHI:{bg:"#0d0d0d",fg:"#ffffff",jstroke:"#c8102e",jsw:2.6,nf:"#ffffff",ns:"#c8102e",trim:"#c8102e",tstr:[["#141414",1.4],["#c9a24b",.8]],d:"none"},
+ PHX:{bg:"#43278a",fg:"#ffffff",jstroke:"#2b1760",jsw:2,trim:"#f26b1f",tstr:[["#141414",1.1]],d:"phx"}
 };
 const NBA_KIT_90_ALT={CHA:{bg:"#6b3fa0",fg:"#f3efdc",jstroke:"#2f9d97",jsw:2.6,trim:"#2b3fc7",tstr:[["#ffffff",2.4],["#141414",.9]],d:"none"}};
 const NBA_BIANCA={bg:"#f4f4f2",fg:"#141414",jstroke:"#ffffff",trim:"#d6d6d2",p2:"#d6d6d2",d:"none"};
@@ -2395,6 +2403,11 @@ function nbaDeco(c){const sd=`<path d="M0 44 L14 48 L17 146 L0 146Z M120 44 L106
    case"den":{const C=["#c43333","#e06a3a","#e9ba38","#02603c","#1d2b5a","#201634"];return C.map((x,i)=>`<rect y="${100+i*4.4}" width="120" height="4.5" fill="${x}"/>`).join("")}
    case"torc":return[[23,"#141414"],[41,c.p2],[59,"#141414"],[77,c.p2],[96,"#141414"]].map(([x,col])=>{let d=`M${x} 18`;for(let y=18;y<146;y+=16)d+=`L${x} ${y+11}L${x+1.4} ${y+12.5}L${x-0.8} ${y+14}L${x} ${y+16}`;return`<path d="${d}" stroke="${col}" stroke-width="2" fill="none" stroke-linejoin="bevel"/>`}).join("");
    case"none":return"";
+   case"nop":return`<rect y="36" width="120" height="22" fill="#6a3fa0"/><rect y="58" width="120" height="22" fill="#2d8a3e"/><rect y="80" width="120" height="17" fill="#e8a820"/>`;
+   case"bkn":{let d="";for(let y=56;y<140;y+=12)d+=`M3 ${y}L9 ${y+6}L3 ${y+12}M117 ${y}L111 ${y+6}L117 ${y+12}`;return`<path d="M12 50V146M108 50V146" stroke="#c8ccd4" stroke-width="3.2"/><path d="M9.4 50V146M110.6 50V146" stroke="#c8203a" stroke-width="1.4"/><path d="${d}" stroke="#c8ccd4" stroke-width="1" fill="none"/>`}
+   case"utm":return`<defs><linearGradient id="utg" x1="0" y1="0" x2="0" y2="1"><stop offset=".3" stop-color="#ffffff"/><stop offset=".62" stop-color="#7a4fb0"/><stop offset="1" stop-color="#4b2a85"/></linearGradient></defs><path d="M0 62 L14 56 L26 40 L40 52 L54 30 L68 46 L82 36 L96 48 L120 40 L120 146 L0 146Z" fill="url(#utg)"/><path d="M26 40 L30 47 L36 46 L40 52 L34 50Z M54 30 L60 40 L66 38 L68 46 L58 40Z M82 36 L88 44 L92 42 L96 48 L86 43Z" fill="#7cc4ef"/>`;
+   case"por90":return`<path d="M0 84 L120 120 L120 134 L0 98Z" fill="#d6202e"/><path d="M0 98 L120 134 L120 150 L0 112Z" fill="#ffffff"/>`;
+   case"phx":{let d="";for(let i=0;i<6;i++){const y=66+i*5.5;d+=`M0 ${y+14} L96 ${y-10} L96 ${y-6} L0 ${y+17}Z `}return`<path d="${d}" fill="#e8481c" fill-opacity=".9"/><path d="M96 20 L120 36 L112 62 L120 92 L98 80 L84 100 L80 70 L70 48 L88 50Z" fill="#f5a623"/><circle cx="100" cy="50" r="15" fill="#d9381e"/><path d="M88 46 Q100 40 110 52 M92 58 Q102 50 112 56" stroke="#141414" stroke-width="2" fill="none"/>`}
    case"cha":return[[28,"#69b7e8",2.6],[44,"#4a2a85",2.6],[60,"#38a34a",2.6],[76,"#4a2a85",2.6],[92,"#69b7e8",2.6]].map(([x,col,w])=>`<path d="M${x} 20V146" stroke="${col}" stroke-width="${w}"/>`).join("");
    case"wasg":return`<rect width="120" height="40" fill="#ffffff"/><path d="M22 0H44V34H22Z M76 0H98V34H76Z" fill="#141414"/><rect y="70" width="120" height="40" fill="#141414"/>`;
    case"default":return sd;
