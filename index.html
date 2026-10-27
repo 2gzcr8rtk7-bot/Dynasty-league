@@ -1819,6 +1819,7 @@ html.notte:not(.dreamfs){background-color:#0d0620}
 </style><style>
 .dutop{display:flex;align-items:center;gap:10px}.dutop .gback{margin-bottom:0}
 .duhd .dut.lead b{color:#d8b4fe!important;text-shadow:0 0 10px rgba(192,132,252,.95),0 0 22px rgba(168,85,247,.75)!important}
+.drplh.drplsh{display:flex;align-items:center;gap:10px}.drplh.drplsh>span{margin-left:auto}.drplh.drplsh .shbtn{margin-left:0}
 /* (142) Tasto Condividi (Live stanotte, Dreamers in Dynasty TV) e foglio di anteprima */
 .shbtn{margin-left:auto;flex:0 0 32px;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid rgba(196,181,253,.45);border-radius:999px;background:rgba(124,58,237,.22);color:#e9d5ff;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;position:relative;z-index:2}
 .shbtn:active{transform:scale(.96)}
@@ -3795,7 +3796,7 @@ function campoLive(t){const d=campoNotte();if(!d)return`${H("Live stanotte",`<em
 /* ===== CONDIVIDI (142): tasto piccolo su "Live stanotte" (Campo) e "Dreamers" (Dynasty TV).
    Disegna un'immagine 1080px elegante (stile Dreamers) con tutte le info e la apre in un foglio con "Condividi" (share sheet
    di iPhone con il file PNG) e "Salva". Il foglio serve anche perché iOS vuole il tocco dell'utente subito prima di navigator.share. */
-let SHR_CAMPO=null,SHR_DR=null,SHR_DUEL=null;
+let SHR_CAMPO=null,SHR_DR=null,SHR_DUEL=null,SHR_PO=null;
 const SH_ICO='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
 const shBtn=k=>`<button class="shbtn" data-share="${k}" aria-label="Condividi" title="Condividi">${SH_ICO}</button>`;
 function shImg(src){return new Promise(r=>{if(!src)return r(null);const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src})}
@@ -3805,8 +3806,8 @@ function shFit(c,t,w){if(c.measureText(t).width<=w)return t;while(t.length>1&&c.
 const SH_F=(w,s,it)=>`${it?"italic ":""}${w} ${s}px "Barlow Condensed","Arial Narrow",Arial,sans-serif`,SH_B=(w,s)=>`${w} ${s}px Barlow,Arial,sans-serif`;
 const SH_PK={r:["#ef4444","#fff"],y:["#f5b400","#111"],g:["#22c55e","#06240f"],v:["#8b5cf6","#fff"],na:["#334155","#cbd5e1"]};
 function shPill(c,v,x,y,w,h,fs,txt){const[bg,fg]=SH_PK[pdkLvl(v)];shRR(c,x,y,w,h,h*.28);c.fillStyle=bg;c.fill();c.fillStyle=fg;c.font=SH_F(800,fs||h*.62,1);c.textAlign="center";c.textBaseline="middle";c.fillText(txt??(v==null?"—":String(Math.round(v*100)/100).replace(".",",")),x+w/2,y+h/2+1)}
-async function shBase(H){try{await Promise.all([document.fonts.load(SH_F(800,40,1)),document.fonts.load(SH_F(700,40)),document.fonts.load(SH_B(500,30)),document.fonts.load(SH_B(600,30))])}catch(e){}
-  const W=1080,cv=document.createElement("canvas");cv.width=W;cv.height=H;const c=cv.getContext("2d");
+async function shBase(H,WW){try{await Promise.all([document.fonts.load(SH_F(800,40,1)),document.fonts.load(SH_F(700,40)),document.fonts.load(SH_B(500,30)),document.fonts.load(SH_B(600,30))])}catch(e){}
+  const W=WW||1080,cv=document.createElement("canvas");cv.width=W;cv.height=H;const c=cv.getContext("2d");
   let g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,"#2a1260");g.addColorStop(.45,"#160a38");g.addColorStop(1,"#0a0618");c.fillStyle=g;c.fillRect(0,0,W,H);
   g=c.createRadialGradient(200,0,0,200,0,760);g.addColorStop(0,"rgba(168,85,247,.55)");g.addColorStop(1,"rgba(168,85,247,0)");c.fillStyle=g;c.fillRect(0,0,W,H);
   g=c.createRadialGradient(980,140,0,980,140,620);g.addColorStop(0,"rgba(59,130,246,.35)");g.addColorStop(1,"rgba(59,130,246,0)");c.fillStyle=g;c.fillRect(0,0,W,H);
@@ -3888,15 +3889,44 @@ async function shDuel(){const S=SHR_DUEL;if(!S)return null;const rh=112,secH=64,
       const cx=W/2,cy=y+(rh-12)/2;c.beginPath();c.arc(cx,cy,22,0,7);c.fillStyle=cl==="cap"?"#f5b400":"rgba(76,29,149,.9)";c.fill();c.fillStyle=cl==="cap"?"#111":"#fff";c.font=SH_F(800,26,1);c.textAlign="center";c.textBaseline="middle";c.fillText(cl==="cap"?"C":cl==="half"?"½":String(i+1),cx,cy+1);
       y+=rh}}
   shFoot(c,W,H,S.closed?"Turno chiuso · dati ufficiali Dunkest":S.prov?"In corso · PDK live provvisori (formula Dunkest)":"Turno in corso · punteggi provvisori");return cv}
+async function shPlayoff(){const S=SHR_PO;if(!S)return null;const P=S.P,R=P.R,R1=R[1]||[],R2=R[2]||[],sd=P.seed,WW=1920,H=1270;const{cv,c,W}=await shBase(H,WW);
+  c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,78,1);c.letterSpacing="12px";const tg=c.createLinearGradient(700,0,1220,0);tg.addColorStop(0,"#e9d5ff");tg.addColorStop(.5,"#c084fc");tg.addColorStop(1,"#a5b4fc");c.fillStyle=tg;c.shadowColor="rgba(168,85,247,.8)";c.shadowBlur=26;c.fillText("DREAMERS",W/2+6,110);c.shadowBlur=0;c.letterSpacing="0px";
+  c.font=SH_F(700,30,1);c.fillStyle="rgba(233,213,255,.85)";c.fillText(`PLAYOFF · ${S.def?"TABELLONE":"TABELLONE PROVVISORIO"}`,W/2,152);
+  const L={};for(const t of Object.keys(TEAMS))L[t]=await shLogo(t);
+  const BW=330,BH=150,RH=70;
+  const box=(x,X,Y,lab,ph,hi)=>{c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_F(800,22,1);c.letterSpacing="2px";c.fillStyle=hi?"#fcd34d":"rgba(196,181,253,.9)";c.fillText(lab.toUpperCase(),X+4,Y-10);c.letterSpacing="0px";
+    shRR(c,X,Y,BW,BH,18);c.fillStyle="rgba(17,10,48,.82)";c.fill();c.strokeStyle=hi?"rgba(251,191,36,.85)":"rgba(196,181,253,.35)";c.lineWidth=hi?3:2;c.stroke();
+    c.fillStyle="rgba(196,181,253,.18)";c.fillRect(X+12,Y+BH/2,BW-24,1);
+    [0,1].forEach(i=>{const yy=Y+5+i*(RH+5),t=x?(i?x.b:x.a):null;
+      if(!t){c.font=SH_B(500,24);c.fillStyle="rgba(203,213,225,.55)";c.textAlign="left";c.textBaseline="middle";c.fillText(ph[i]||"da definire",X+20,yy+RH/2);return}
+      const win=x.win,lost=win&&win!==t;c.save();shRR(c,X+4,yy,BW-8,RH,14);c.clip();const tc=c.createLinearGradient(X,0,X+BW,0);tc.addColorStop(0,TEAMS[t].bg+(lost?"22":"55"));tc.addColorStop(1,TEAMS[t].bg+"00");c.fillStyle=tc;c.fillRect(X,yy,BW,RH);c.restore();
+      c.globalAlpha=lost?.45:1;c.textBaseline="middle";c.textAlign="center";c.font=SH_F(800,24,1);c.fillStyle="rgba(226,232,240,.8)";c.fillText(String(sd[t]),X+24,yy+RH/2+1);
+      if(L[t])c.drawImage(L[t],X+42,yy+5,60,60);c.textAlign="left";{const nm=TEAMS[t].nick.toUpperCase();let fs=34;c.font=SH_F(800,fs,1);while(fs>24&&c.measureText(nm).width>BW-170){fs-=1;c.font=SH_F(800,fs,1)}c.fillStyle="#fff";c.fillText(shFit(c,nm,BW-170),X+112,yy+RH/2+2)}
+      if(x.g.length){c.textAlign="right";c.font=SH_F(800,40,1);const w=win===t;c.fillStyle=w?"#f3e8ff":"#cbd5e1";if(w){c.shadowColor="rgba(192,132,252,1)";c.shadowBlur=18}c.fillText(String(i?x.wb:x.wa),X+BW-20,yy+RH/2+2);c.shadowBlur=0}c.globalAlpha=1})};
+  const line=(x1,y1,x2,y2)=>{c.strokeStyle="rgba(196,181,253,.45)";c.lineWidth=3;const mx=(x1+x2)/2;c.beginPath();c.moveTo(x1,y1);c.lineTo(mx,y1);c.lineTo(mx,y2);c.lineTo(x2,y2);c.stroke()};
+  const xQE=60,xSE=440,xF=W/2-BW/2,xSW=W-440-BW,xQW=W-60-BW,yQ1=300,yQ2=560,yS=(yQ1+yQ2)/2,yF=yS;
+  c.font=SH_F(800,44,1);c.letterSpacing="10px";c.textAlign="left";c.fillStyle="#93c5fd";c.fillText("EAST",xQE,238);c.textAlign="right";c.fillStyle="#fca5a5";c.fillText("WEST",xQW+BW,238);c.letterSpacing="0px";
+  line(xQE+BW,yQ1+BH/2,xSE,yS+BH/2);line(xQE+BW,yQ2+BH/2,xSE,yS+BH/2);line(xSE+BW,yS+BH/2,xF,yF+BH/2);
+  line(xQW,yQ1+BH/2,xSW+BW,yS+BH/2);line(xQW,yQ2+BH/2,xSW+BW,yS+BH/2);line(xSW,yS+BH/2,xF+BW,yF+BH/2);
+  box(R[0][0],xQE,yQ1,"Quarto 1 · 1ª–8ª",[]);box(R[0][1],xQE,yQ2,"Quarto 2 · 4ª–5ª",[]);box(R1[0],xSE,yS,"Semifinale East",["Vincente Q1","Vincente Q2"]);
+  box(R[0][2],xQW,yQ1,"Quarto 3 · 2ª–7ª",[]);box(R[0][3],xQW,yQ2,"Quarto 4 · 3ª–6ª",[]);box(R1[1],xSW,yS,"Semifinale West",["Vincente Q3","Vincente Q4"]);
+  box(R2[0],xF,yF,"Finalissima",["Campione East","Campione West"],1);
+  /* coppa */const cx=W/2,cy=yF-80;c.save();c.translate(cx-34,cy-44);c.scale(68/64,68/64);const g=c.createLinearGradient(0,0,64,64);g.addColorStop(0,"#f5ecff");g.addColorStop(.45,"#b48cff");g.addColorStop(1,"#5b21b6");c.fillStyle=g;c.shadowColor="rgba(192,132,252,.9)";c.shadowBlur=24;
+    c.fill(new Path2D("M18 8h28v14a14 14 0 0 1-28 0z"));c.fill(new Path2D("M29 35h6v9h-6z"));c.fill(new Path2D("M21 46h22l2 6H19z"));c.fillRect(17,52,30,5);c.strokeStyle=g;c.lineWidth=3.5;c.stroke(new Path2D("M18 12h-8v4a10 10 0 0 0 10 10M46 12h8v4a10 10 0 0 1-10 10"));c.restore();c.shadowBlur=0;
+  if(P.champ){c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,26,1);c.fillStyle="#fcd34d";c.fillText("CAMPIONI",cx,yF+BH+46);c.font=SH_F(800,44,1);c.fillStyle="#fff";c.fillText(TEAMS[P.champ].name.toUpperCase(),cx,yF+BH+92)}
+  box(R2[1],xF,yQ2+200,"Finale 3° posto",["Perdente semifinale","Perdente semifinale"]);
+  const yP=1010;c.textAlign="left";c.font=SH_F(800,30,1);c.letterSpacing="4px";c.fillStyle="#c4b5fd";c.fillText("PIAZZAMENTI 5°–8°",60,yP-58);c.letterSpacing="0px";
+  const gap=(W-120-4*BW)/3;[[R1[2],"Semifinale 5°–8° · 1",["Perdente Q1","Perdente Q2"]],[R1[3],"Semifinale 5°–8° · 2",["Perdente Q3","Perdente Q4"]],[R2[2],"Finale 5° posto",["Vincente","Vincente"]],[R2[3],"Finale 7° posto",["Perdente","Perdente"]]].forEach(([x,l,ph],i)=>box(x,60+i*(BW+gap),yP,l,ph));
+  shFoot(c,W,H,"Serie al meglio delle 3 · il numero è le vittorie nella serie");return cv}
 async function shOpen(k){const old=document.querySelector(".shsheet");if(old)old.remove();
   const sh=document.createElement("div");sh.className="shsheet";sh.innerHTML='<div class="shbox"><p class="shwait">Preparo l\'immagine…</p></div>';document.body.appendChild(sh);
   sh.addEventListener("click",e=>{if(e.target===sh||e.target.closest(".shx"))sh.remove()});
-  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():await shDreamers()}catch(e){console.error(e)}
+  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():await shDreamers()}catch(e){console.error(e)}
   if(!cv){sh.querySelector(".shbox").innerHTML='<p class="shwait">Niente da condividere adesso.</p><button class="shx">Chiudi</button>';return}
-  const blob=await new Promise(r=>cv.toBlob(r,"image/png")),name=(k==="campo"?"live-stanotte":k==="duel"?"dreamers-sfida":"dreamers")+".png",file=new File([blob],name,{type:"image/png"}),url=URL.createObjectURL(blob);
+  const blob=await new Promise(r=>cv.toBlob(r,"image/png")),name=(k==="campo"?"live-stanotte":k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":"dreamers")+".png",file=new File([blob],name,{type:"image/png"}),url=URL.createObjectURL(blob);
   sh.querySelector(".shbox").innerHTML=`<img src="${url}" alt="Anteprima da condividere"><div class="shbar"><button class="shx">Chiudi</button><a class="shsv" href="${url}" download="${name}">Salva</a><button class="shgo">${SH_ICO} Condividi</button></div>`;
   const go=sh.querySelector(".shgo");if(!(navigator.canShare&&navigator.canShare({files:[file]})))go.remove();
-  else go.addEventListener("click",async()=>{try{await navigator.share({files:[file],title:k==="campo"?"Live stanotte":k==="duel"?"Dreamers · sfida":"Dreamers"})}catch(e){}})}
+  else go.addEventListener("click",async()=>{try{await navigator.share({files:[file],title:k==="campo"?"Live stanotte":k==="duel"?"Dreamers · sfida":k==="po"?"Dreamers · playoff":"Dreamers"})}catch(e){}})}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-share]");if(!b)return;e.preventDefault();e.stopPropagation();shOpen(b.dataset.share)},true);
 let CNT=false;
 function campoNotteMap(t){const d=campoNotte(),o={};if(!d)return o;const mine={};(ROSTER[t]||[]).forEach(p=>mine[tvNm(p[0])]=p[0]);
@@ -4766,8 +4796,9 @@ function vDream(){fantaLiveAvvia();
     const cup=`<svg class="drcup" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="drg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f5ecff"/><stop offset=".45" stop-color="#b48cff"/><stop offset="1" stop-color="#5b21b6"/></linearGradient></defs><path d="M18 8h28v14a14 14 0 0 1-28 0z" fill="url(#drg)"/><path d="M18 12h-8v4a10 10 0 0 0 10 10M46 12h8v4a10 10 0 0 1-10 10" fill="none" stroke="url(#drg)" stroke-width="3.5"/><path d="M29 35h6v9h-6z" fill="url(#drg)"/><path d="M21 46h22l2 6H19z" fill="url(#drg)"/><rect x="17" y="52" width="30" height="5" rx="1" fill="#3b1585"/><path d="M24 12c0 8 2 13 6 16" stroke="#fff" stroke-opacity=".55" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>`;
     const col=(t,r,inner,cls="")=>`<div class="bkc ${cls}"><h6>${t}<small>${rd(r)||"&nbsp;"}</small></h6><div class="bkb">${inner}</div></div>`;
     const W="Vincente",QL=n=>"Perdente quarto "+n;
+    SHR_PO={P,def:drWeek(DR_REG).closed};
     body=`<p class="note" style="margin-top:0">${drWeek(DR_REG).closed?"Tabellone definitivo.":"Tabellone provvisorio in base alla classifica attuale."} Serie al meglio delle 3: il numero accanto alla squadra sono le vittorie nella serie.</p>
-    <h4 class="drplh">Tabellone<span>scorri ›</span></h4>
+    <h4 class="drplh drplsh">Tabellone<span>scorri ›</span>${shBtn("po")}</h4>
     <div class="bkw"><div class="bk" style="--h:400px">
       ${col("Quarti",0,`<div class="bkg">${m(R[0][0],[],"Quarto 1")}${m(R[0][1],[],"Quarto 2")}</div><div class="bkg">${m(R[0][2],[],"Quarto 3")}${m(R[0][3],[],"Quarto 4")}</div>`)}
       ${col("Semifinali",1,`<div class="bkg">${m(R1[0],[W,W],"Semifinale 1","in")}${m(R1[1],[W,W],"Semifinale 2","in")}</div>`)}
