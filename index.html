@@ -3806,15 +3806,19 @@ function shFit(c,t,w){if(c.measureText(t).width<=w)return t;while(t.length>1&&c.
 const SH_F=(w,s,it)=>`${it?"italic ":""}${w} ${s}px "Barlow Condensed","Arial Narrow",Arial,sans-serif`,SH_B=(w,s)=>`${w} ${s}px Barlow,Arial,sans-serif`;
 const SH_PK={r:["#ef4444","#fff"],y:["#f5b400","#111"],g:["#22c55e","#06240f"],v:["#8b5cf6","#fff"],na:["#334155","#cbd5e1"]};
 function shPill(c,v,x,y,w,h,fs,txt){const[bg,fg]=SH_PK[pdkLvl(v)];shRR(c,x,y,w,h,h*.28);c.fillStyle=bg;c.fill();c.fillStyle=fg;c.font=SH_F(800,fs||h*.62,1);c.textAlign="center";c.textBaseline="middle";c.fillText(txt??(v==null?"—":String(Math.round(v*100)/100).replace(".",",")),x+w/2,y+h/2+1)}
+/* (151) logo Dreamers (come il tasto viola con la stella della Home) per le immagini condivise */
+function shDrLogo(c,x,y,L){c.save();shRR(c,x,y,L,L,L*.27);const g=c.createRadialGradient(x+L*.3,y+L*.2,0,x+L*.3,y+L*.2,L*1.05);g.addColorStop(0,"#a78bfa");g.addColorStop(.6,"#6d28d9");g.addColorStop(1,"#3b0f80");c.fillStyle=g;c.shadowColor="rgba(139,92,246,.75)";c.shadowBlur=L*.35;c.fill();c.shadowBlur=0;
+  c.strokeStyle="rgba(255,255,255,.22)";c.lineWidth=Math.max(1.5,L*.02);c.stroke();c.translate(x+L*.18,y+L*.18);c.scale(L*.64/24,L*.64/24);c.fillStyle="#fff";c.shadowColor="rgba(255,255,255,.6)";c.shadowBlur=6;c.fill(new Path2D("M12 2.5l2.2 6.6 6.8.1-5.5 4.1 2 6.6L12 16l-5.5 3.9 2-6.6L3 9.2l6.8-.1z"));c.restore()}
+function shDrTxt(c,t,X,Y,L){const w=c.measureText(t).width,off=(L+24)/2;const sb=c.shadowBlur;c.fillText(t,X+off,Y);c.shadowBlur=0;shDrLogo(c,X+off-w/2-24-L,Y-L*.86,L);c.shadowBlur=sb}
 async function shBase(H,WW,noBrand){try{await Promise.all([document.fonts.load(SH_F(800,40,1)),document.fonts.load(SH_F(700,40)),document.fonts.load(SH_B(500,30)),document.fonts.load(SH_B(600,30))])}catch(e){}
   const W=WW||1080,cv=document.createElement("canvas");cv.width=W;cv.height=H;const c=cv.getContext("2d");
   let g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,"#2a1260");g.addColorStop(.45,"#160a38");g.addColorStop(1,"#0a0618");c.fillStyle=g;c.fillRect(0,0,W,H);
   g=c.createRadialGradient(200,0,0,200,0,760);g.addColorStop(0,"rgba(168,85,247,.55)");g.addColorStop(1,"rgba(168,85,247,0)");c.fillStyle=g;c.fillRect(0,0,W,H);
   g=c.createRadialGradient(980,140,0,980,140,620);g.addColorStop(0,"rgba(59,130,246,.35)");g.addColorStop(1,"rgba(59,130,246,0)");c.fillStyle=g;c.fillRect(0,0,W,H);
   let s=7;const rnd=()=>(s=(s*16807)%2147483647)/2147483647;for(let i=0;i<Math.round(H/14);i++){c.globalAlpha=.25+rnd()*.6;c.fillStyle=rnd()<.3?"#e9d5ff":"#fff";c.beginPath();c.arc(rnd()*W,rnd()*H,.8+rnd()*1.8,0,7);c.fill()}c.globalAlpha=1;
-  const lg=noBrand?null:await shImg((document.querySelector("img.lglogo")||{}).src);if(lg){shRR(c,56,48,112,112,24);c.save();c.clip();c.drawImage(lg,56,48,112,112);c.restore()}
-  c.textBaseline="alphabetic";c.textAlign="left";if(!noBrand){c.font=SH_F(800,62,1);c.fillStyle="#fff";c.fillText("DYNASTY",192,100);c.fillStyle="#fbbf24";c.fillText("LEAGUE",192,156)}
-  c.font=SH_F(700,28,1);c.textAlign="right";c.fillStyle="rgba(233,213,255,.75)";c.fillText("STAGIONE 26/27",W-56,100);
+  if(!noBrand)shDrLogo(c,56,48,112);
+  c.textBaseline="alphabetic";c.textAlign="left";if(!noBrand){c.font=SH_F(800,72,1);c.letterSpacing="8px";const bg=c.createLinearGradient(192,0,560,0);bg.addColorStop(0,"#e9d5ff");bg.addColorStop(.5,"#c084fc");bg.addColorStop(1,"#a5b4fc");c.fillStyle=bg;c.shadowColor="rgba(168,85,247,.8)";c.shadowBlur=22;c.fillText("DREAMERS",192,118);c.shadowBlur=0;c.letterSpacing="3px";c.font=SH_F(700,24,1);c.fillStyle="rgba(233,213,255,.8)";c.fillText("FANTA PDK",196,152);c.letterSpacing="0px"}
+  if(!noBrand||W>1500){c.font=SH_F(700,28,1);c.textAlign="right";c.fillStyle="rgba(233,213,255,.75)";c.fillText("STAGIONE 26/27",W-56,100)}
   return{cv,c,W}}
 function shFoot(c,W,H,txt){c.strokeStyle="rgba(196,181,253,.25)";c.lineWidth=2;c.beginPath();c.moveTo(56,H-96);c.lineTo(W-56,H-96);c.stroke();
   const n=new Date(),p=v=>String(v).padStart(2,"0");c.font=SH_B(500,24);c.fillStyle="rgba(226,232,240,.6)";c.textAlign="left";c.textBaseline="middle";c.fillText(txt,56,H-56);
@@ -3839,9 +3843,9 @@ async function shCampo(){const S=SHR_CAMPO;if(!S)return null;const R=S.R,rh=104,
   const yt=y+R.length*rh;c.textAlign="left";c.textBaseline="middle";c.font=SH_F(800,40,1);c.fillStyle="#e9d5ff";c.fillText("TOTALE NOTTE",80,yt+rh/2);
   c.textAlign="center";c.font=SH_F(800,52,1);c.fillStyle="#fff";c.shadowColor="rgba(192,132,252,.9)";c.shadowBlur=20;c.fillText(pdkF(S.tot),X.pdk,yt+rh/2+2);c.shadowBlur=0;
   shFoot(c,W,H,"PDK formula Dunkest · provvisori fino al report ufficiale");return cv}
-async function shDreamers(){const S=SHR_DR;if(!S)return null;const ch=356,H=420+S.cards.length*(ch+32)+150;const{cv,c,W}=await shBase(H);
+async function shDreamers(){const S=SHR_DR;if(!S)return null;const ch=356,H=420+S.cards.length*(ch+32)+150-150;const{cv,c,W}=await shBase(H,0,1);c.translate(0,-150);
   let y=215;c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,108,1);c.letterSpacing="14px";
-  const tg=c.createLinearGradient(240,0,840,0);tg.addColorStop(0,"#e9d5ff");tg.addColorStop(.5,"#c084fc");tg.addColorStop(1,"#a5b4fc");c.fillStyle=tg;c.shadowColor="rgba(168,85,247,.8)";c.shadowBlur=30;c.fillText("DREAMERS",W/2+7,y+100);c.shadowBlur=0;c.letterSpacing="0px";
+  const tg=c.createLinearGradient(240,0,840,0);tg.addColorStop(0,"#e9d5ff");tg.addColorStop(.5,"#c084fc");tg.addColorStop(1,"#a5b4fc");c.fillStyle=tg;c.shadowColor="rgba(168,85,247,.8)";c.shadowBlur=30;shDrTxt(c,"DREAMERS",W/2+7,y+100,96);c.shadowBlur=0;c.letterSpacing="0px";
   c.font=SH_F(700,32,1);c.fillStyle="rgba(233,213,255,.8)";c.fillText(`FANTA PDK · ${S.ph.toUpperCase()} · ${S.range}`,W/2,y+150);
   y=420;const L={};for(const x of S.cards)for(const t of[x.a,x.b])if(!(t in L))L[t]=await shLogo(t);
   for(const x of S.cards){shRR(c,56,y,W-112,ch,28);const cg=c.createLinearGradient(56,0,W-56,0);cg.addColorStop(0,"rgba(76,29,149,.55)");cg.addColorStop(1,"rgba(17,10,48,.75)");c.fillStyle=cg;c.fill();
@@ -3860,10 +3864,10 @@ async function shDreamers(){const S=SHR_DR;if(!S)return null;const ch=356,H=420+
       c.font=SH_B(700,27);c.fillStyle="#fff";c.fillText(n,cx,cy+22);cx+=c.measureText(n).width+8;c.font=SH_B(500,25);c.fillStyle="rgba(203,213,225,.75)";c.fillText(`(${t})`,cx,cy+22);cx+=c.measureText(`(${t})`).width+10;
       shPill(c,e,cx,cy+3,86,38,26);cx+=100});
     y+=ch+32}
-  shFoot(c,W,H,S.prov?"Live: PDK provvisori (ESPN, formula Dunkest)":"Punteggi Dreamers · dati ufficiali Dunkest");return cv}
-async function shDuel(){const S=SHR_DUEL;if(!S)return null;const rh=112,secH=64,H=200+130+330+3*secH+10*rh+40+150;const{cv,c,W}=await shBase(H);
+  c.setTransform(1,0,0,1,0,0);shFoot(c,W,H,S.prov?"Live: PDK provvisori (ESPN, formula Dunkest)":"Punteggi Dreamers · dati ufficiali Dunkest");return cv}
+async function shDuel(){const S=SHR_DUEL;if(!S)return null;const rh=112,secH=64,H=200+130+330+3*secH+10*rh+40+150-120;const{cv,c,W}=await shBase(H,0,1);c.translate(0,-120);
   const{a,b,A,B}=S;let y=205;c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,64,1);c.letterSpacing="10px";
-  const tg=c.createLinearGradient(300,0,780,0);tg.addColorStop(0,"#e9d5ff");tg.addColorStop(.5,"#c084fc");tg.addColorStop(1,"#a5b4fc");c.fillStyle=tg;c.shadowColor="rgba(168,85,247,.8)";c.shadowBlur=24;c.fillText("DREAMERS",W/2+5,y+56);c.shadowBlur=0;c.letterSpacing="0px";
+  const tg=c.createLinearGradient(300,0,780,0);tg.addColorStop(0,"#e9d5ff");tg.addColorStop(.5,"#c084fc");tg.addColorStop(1,"#a5b4fc");c.fillStyle=tg;c.shadowColor="rgba(168,85,247,.8)";c.shadowBlur=24;shDrTxt(c,"DREAMERS",W/2+5,y+56,62);c.shadowBlur=0;c.letterSpacing="0px";
   c.font=SH_F(700,30,1);c.fillStyle="rgba(233,213,255,.8)";c.fillText(`${S.ph.toUpperCase()} · ${S.range}`,W/2,y+100);
   y=335;shRR(c,56,y,W-112,300,28);const hg=c.createLinearGradient(56,0,W-56,0);hg.addColorStop(0,TEAMS[a].bg+"55");hg.addColorStop(.5,"rgba(17,10,48,.85)");hg.addColorStop(1,TEAMS[b].bg+"55");c.fillStyle=hg;c.fill();c.strokeStyle="rgba(196,181,253,.35)";c.lineWidth=3;c.stroke();
   const la=await shLogo(a),lb=await shLogo(b);if(la)c.drawImage(la,80,y+22,140,140);if(lb)c.drawImage(lb,W-220,y+22,140,140);
@@ -3888,9 +3892,9 @@ async function shDuel(){const S=SHR_DUEL;if(!S)return null;const rh=112,secH=64,
     for(let i=i0;i<i1;i++){card(A.top[i],a,XL,y,cl);card(B.top[i],b,XR,y,cl);
       const cx=W/2,cy=y+(rh-12)/2;c.beginPath();c.arc(cx,cy,22,0,7);c.fillStyle=cl==="cap"?"#f5b400":"rgba(76,29,149,.9)";c.fill();c.fillStyle=cl==="cap"?"#111":"#fff";c.font=SH_F(800,26,1);c.textAlign="center";c.textBaseline="middle";c.fillText(cl==="cap"?"C":cl==="half"?"½":String(i+1),cx,cy+1);
       y+=rh}}
-  shFoot(c,W,H,S.closed?"Turno chiuso · dati ufficiali Dunkest":S.prov?"In corso · PDK live provvisori (formula Dunkest)":"Turno in corso · punteggi provvisori");return cv}
+  c.setTransform(1,0,0,1,0,0);shFoot(c,W,H,S.closed?"Turno chiuso · dati ufficiali Dunkest":S.prov?"In corso · PDK live provvisori (formula Dunkest)":"Turno in corso · punteggi provvisori");return cv}
 async function shPlayoff(){const S=SHR_PO;if(!S)return null;const P=S.P,R=P.R,R1=R[1]||[],R2=R[2]||[],sd=P.seed,WW=1920,H=1040;const{cv,c,W}=await shBase(H,WW,1);
-  c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,78,1);c.letterSpacing="12px";const tg=c.createLinearGradient(700,0,1220,0);tg.addColorStop(0,"#e9d5ff");tg.addColorStop(.5,"#c084fc");tg.addColorStop(1,"#a5b4fc");c.fillStyle=tg;c.shadowColor="rgba(168,85,247,.8)";c.shadowBlur=26;c.fillText("DREAMERS",W/2+6,110);c.shadowBlur=0;c.letterSpacing="0px";
+  c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,78,1);c.letterSpacing="12px";const tg=c.createLinearGradient(700,0,1220,0);tg.addColorStop(0,"#e9d5ff");tg.addColorStop(.5,"#c084fc");tg.addColorStop(1,"#a5b4fc");c.fillStyle=tg;c.shadowColor="rgba(168,85,247,.8)";c.shadowBlur=26;shDrTxt(c,"DREAMERS",W/2+6,110,72);c.shadowBlur=0;c.letterSpacing="0px";
   c.font=SH_F(700,30,1);c.fillStyle="rgba(233,213,255,.85)";c.fillText(`PLAYOFF · ${S.def?"TABELLONE":"TABELLONE PROVVISORIO"}`,W/2,152);
   const L={};for(const t of Object.keys(TEAMS))L[t]=await shLogo(t);
   const BW=330,BH=150,RH=70;
