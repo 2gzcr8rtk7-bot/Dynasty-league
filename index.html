@@ -1818,6 +1818,7 @@ html.notte:not(.dreamfs){background-color:#0d0620}
 .drms .drr.slead em,.drms .drr.sgold em{color:#d8b4fe!important;text-shadow:0 0 10px rgba(192,132,252,.95),0 0 22px rgba(168,85,247,.75)!important}
 </style><style>
 .dutop{display:flex;align-items:center;gap:10px}.dutop .gback{margin-bottom:0}
+.duhd .dut.lead b{color:#d8b4fe!important;text-shadow:0 0 10px rgba(192,132,252,.95),0 0 22px rgba(168,85,247,.75)!important}
 /* (142) Tasto Condividi (Live stanotte, Dreamers in Dynasty TV) e foglio di anteprima */
 .shbtn{margin-left:auto;flex:0 0 32px;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid rgba(196,181,253,.45);border-radius:999px;background:rgba(124,58,237,.22);color:#e9d5ff;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;position:relative;z-index:2}
 .shbtn:active{transform:scale(.96)}
@@ -4694,7 +4695,8 @@ function drDuel(k,a,b,W,P){const A=drTeam(k,a,W),B=drTeam(k,b,W),f1=v=>v==null?"
     if(any)rows+=`<div class="dusec ${cl}">${lab}</div>${h}`}
   const resto=(arr,cl,lab)=>{const n=Math.max(arr[0].length,arr[1].length);if(!n)return"";let h=`<div class="dusec ${cl}">${lab}</div>`;for(let i=0;i<n;i++)h+=`<div class="durow">${arr[0][i]?card(arr[0][i],a,cl):'<div class="du du-nulla"></div>'}<span class="duslot ${cl}">·</span>${arr[1][i]?card(arr[1][i],b,cl):'<div class="du du-nulla"></div>'}</div>`;return h};
   rows+=resto([A.trib,B.trib],"trib","Tribuna")+resto([A.wait,B.wait],"wait",W.closed?"Non hanno giocato":"In attesa");
-  const tm=(t,T,pj,r)=>`<div class="dut${r?" r":""}"><span class="dulg">${drLg(t)}</span><div><b>${drScore(T.score)}</b><small>${pj!=null?`proiez. ${pdkF(pj)}`:`${T.played}/10 titolari`}</small></div></div>`;
+  const ld=A.score!=null&&B.score!=null&&A.score!==B.score?(A.score>B.score?a:b):null;
+  const tm=(t,T,pj,r)=>`<div class="dut${r?" r":""}${ld===t?" lead":""}"><span class="dulg">${drLg(t)}</span><div><b>${drScore(T.score)}</b><small>${pj!=null?`proiez. ${pdkF(pj)}`:`${T.played}/10 titolari`}</small></div></div>`;
   SHR_DUEL={ph:DR_PH(k,P),range:`${drFmt(W.start)}–${drFmt(W.end)}`,a,b,A,B,pa,pb,pw,W,closed:W.closed,prov:[...DR_PROV].some(x=>x>=W.start&&x<=W.end)};
   return`<div class="dutop"><button class="gback" data-dr="close">‹ ${DR_PH(k,P)}</button>${shBtn("duel")}</div>
   <div class="duhd">${tm(a,A,pa,0)}<span class="duvs">VS</span>${tm(b,B,pb,1)}

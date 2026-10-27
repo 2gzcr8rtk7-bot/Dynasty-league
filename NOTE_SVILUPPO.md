@@ -581,3 +581,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (144) 27/10/2026 — Modalità notte: la Home sotto la linea viola torna alla colorazione chiara di prima (tolti i veli su body/#main/riquadri/ricerca della Home). Header e menu restano al livello 1 ovunque; le altre sezioni restano al livello 3 sotto la linea viola.
 
 (145) 27/10/2026 — Condividi anche la SFIDA Dreamers (vista duello): tasto tondo accanto a "‹ Turno N". Immagine 1080px con punteggi delle due squadre (chi è avanti in viola acceso), proiezioni, barra % vittoria, e i 10 titolari di entrambe affiancati per posto (Capitano ×1,5, Punteggio pieno 2–6, Panchina ½ 7–10): nome, ruolo · squadra NBA · partite giocate, PDK medio colorato e punti (×1,5 / ×½). Dati da SHR_DUEL (riempito da drDuel), disegno in shDuel().
+
+(146) 27/10/2026 — Sfida Dreamers (vista duello): nel riquadro in alto il punteggio di chi è avanti (o ha vinto) è viola acceso con alone, come nella lista del Turno.
