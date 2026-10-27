@@ -2368,8 +2368,19 @@ const NBA_KIT_90={
  ATL:{bg:"#f5bd22",fg:"#161616",jstroke:"#cd1d24",jsw:2.2,trim:"#161616",tline:"#cd1d24",tlw:2.4,p2:"#cd1d24",d:"none"},
  SAS:{bg:"#4bb7a6",fg:"#ffffff",jstroke:"#141414",trim:"#141414",arm:["#f39a3a","#ee6f8f"],p2:"#ffffff",d:"sas"},
  IND:{bg:"#ffd914",fg:"#1b2440",jstroke:"#ffffff",jsw:2.6,trim:"#1b2440",pc:"#1b2440",ps:5.6,p2:"#1b2440",d:"pins"},
- DET:{bg:"#1279a3",fg:"#ffffff",jstroke:"#141414",trim:"#141414",tline:"#e6a422",tlw:1.6,tline2:"#b52a1c",p2:"#e6a422",d:"det"}
+ DET:{bg:"#1279a3",fg:"#ffffff",jstroke:"#141414",trim:"#141414",tline:"#e6a422",tlw:1.6,tline2:"#b52a1c",p2:"#e6a422",d:"det"},
+/* aggiunte 27/10/2026 (ricalcate sulle foto dell utente) */
+ NYK:{bg:"#2748c9",fg:"#f2661c",jstroke:"#ffffff",jsw:2.4,nf:"#f2661c",ns:"#ffffff",trim:"#141414",tstr:[["#f2661c",2.6]],p2:"#f2661c",d:"default"},
+ LAL:{bg:"#4b2a8c",fg:"#ffffff",jstroke:"#fdb927",jsw:2.8,nf:"#fdb927",ns:"#ffffff",trim:"#fdb927",tstr:[["#ffffff",2.2],["#fdb927",1]],d:"none"},
+ BOS:{bg:"#1c9640",fg:"#ffffff",jstroke:"#1c9640",jsw:1,trim:"#ffffff",tstr:[["#1c9640",1.8]],d:"none"},
+ CHA:{bg:"#2a9d98",fg:"#ffffff",jstroke:"#2b1a6b",jsw:2.6,trim:"#2b1a6b",tstr:[["#ffffff",3],["#2b1a6b",1.2]],d:"cha"},
+ LAC:{bg:"#cc2229",fg:"#ffffff",jstroke:"#1d4fc0",jsw:2.8,trim:"#1d4fc0",p2:"#1d4fc0",d:"default"},
+ OKC:{bg:"#4a90d9",fg:"#ffffff",jstroke:"#12234f",jsw:2.4,trim:"#12234f",tstr:[["#f4801f",2.6],["#f7c500",1.1]],p2:"#4a90d9",d:"default"},
+ WAS:{bg:"#cdb069",fg:"#ffffff",jstroke:"#141414",jsw:2.6,nf:"#ffffff",ns:"#cdb069",trim:"#ffffff",tstr:[["#141414",1.2]],d:"wasg"},
+ DAL:{bg:"#2c9a52",fg:"#ffffff",jstroke:"#2d3fd6",jsw:2.6,trim:"#2d3fd6",tstr:[["#ffffff",2.2]],d:"none"},
+ ORL:{bg:"#0d0d12",fg:"#2b53c8",jstroke:"#ffffff",jsw:2.8,nf:"#2b53c8",ns:"#ffffff",trim:"#2b53c8",tstr:[["#ffffff",2.2]],pc:"#ffffff",ps:5.6,d:"pins"}
 };
+const NBA_KIT_90_ALT={CHA:{bg:"#6b3fa0",fg:"#f3efdc",jstroke:"#2f9d97",jsw:2.6,trim:"#2b3fc7",tstr:[["#ffffff",2.4],["#141414",.9]],d:"none"}};
 const NBA_BIANCA={bg:"#f4f4f2",fg:"#141414",jstroke:"#ffffff",trim:"#d6d6d2",p2:"#d6d6d2",d:"none"};
 
 /* motivi delle maglie NBA (solo colori e disegni generici, niente loghi), disegnati dentro la canotta */
@@ -2381,6 +2392,9 @@ function nbaDeco(c){const sd=`<path d="M0 44 L14 48 L17 146 L0 146Z M120 44 L106
    case"den":{const C=["#c43333","#e06a3a","#e9ba38","#02603c","#1d2b5a","#201634"];return C.map((x,i)=>`<rect y="${100+i*4.4}" width="120" height="4.5" fill="${x}"/>`).join("")}
    case"torc":return[[23,"#141414"],[41,c.p2],[59,"#141414"],[77,c.p2],[96,"#141414"]].map(([x,col])=>{let d=`M${x} 18`;for(let y=18;y<146;y+=16)d+=`L${x} ${y+11}L${x+1.4} ${y+12.5}L${x-0.8} ${y+14}L${x} ${y+16}`;return`<path d="${d}" stroke="${col}" stroke-width="2" fill="none" stroke-linejoin="bevel"/>`}).join("");
    case"none":return"";
+   case"cha":return[[28,"#69b7e8",2.6],[44,"#4a2a85",2.6],[60,"#38a34a",2.6],[76,"#4a2a85",2.6],[92,"#69b7e8",2.6]].map(([x,col,w])=>`<path d="M${x} 20V146" stroke="${col}" stroke-width="${w}"/>`).join("");
+   case"wasg":return`<rect width="120" height="40" fill="#ffffff"/><path d="M22 0H44V34H22Z M76 0H98V34H76Z" fill="#141414"/><rect y="70" width="120" height="40" fill="#141414"/>`;
+   case"default":return sd;
    case"sas":{const sp=(x0,x1,o)=>{let z="",t="";for(let y=46,i=0;y<146;y+=11,i++){const a=i%2?x1:x0,b=i%2?x0:x1;z+=(i?"L":"M")+a+" "+y;t+=`<path d="M${(x0+x1)/2-2.6} ${y+7.5}h5.2l-2.6 -4.6z" fill="#f39a3a"/>`}return`<path d="M${Math.min(x0,x1)-1} 40H${Math.max(x0,x1)+1}V146H${Math.min(x0,x1)-1}Z" fill="#141414"/><path d="${z}" stroke="#ffffff" stroke-width="1.6" fill="none"/>${t}<path d="M${o} 40V146" stroke="#ffffff" stroke-width="1.6"/>`};return sp(5,19,20.6)+sp(115,101,99.4)}
    case"houc":{let w="",b="";[8,21,34,47,73,86,99,112].forEach((x,i)=>{w+=`M${x} ${62+(i%3)*6}V146`;b+=`M${x} ${20+(i%2)*8}V${52+(i%3)*6}`});return`<path d="${b}" stroke="#6ec6e8" stroke-width="1.6" stroke-opacity=".75" stroke-dasharray="7 4"/><path d="${w}" stroke="#ffffff" stroke-width="1.3" stroke-opacity=".9"/>`}
    case"pins":{let d="";for(let x=c.ps/2;x<120;x+=c.ps)d+=`M${x.toFixed(1)} 0V146`;return`<path d="${d}" stroke="${c.pc}" stroke-width=".85"/>`}
