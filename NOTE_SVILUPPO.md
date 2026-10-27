@@ -539,3 +539,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (123) Hub Entertainment: in alto sezione "Entertainment" con Dynasty TV, sotto sezione "Fanta Dreamers" con DREAMERS e G-DREAMERS, poi Arcade.
 
 (124) Pallino rosso sul tasto Entertainment del menu sempre presente; lampeggia solo quando ci sono partite in corso (.navlive).
+
+(125) Tolto il pallino rosso dal tasto Entertainment del menu (resta solo il controllo .navlive che fa lampeggiare la pastiglia LIVE della card Dynasty TV).
