@@ -450,7 +450,7 @@ h2 .kitbtn+.cntbtn{margin-left:6px}
 .pj,.court .cpl.dr .pj{width:64px;height:77px}.pj svg,.court .cpl.dr .pj svg{width:64px!important;height:77px!important}
 /* targhetta + cartellino ridotti del 20% (scelta dell'utente 27/10/2026), maglie invariate */
 .court .cpl.dr{width:94px}
-.pnm{width:90px;margin-top:-10px;padding:3.2px 3px 2.4px;font-size:10.4px;border-radius:6px 6px 0 0}
+.pnm{width:90px;margin-top:-10px;padding:3.2px 3px 2.4px;font-size:13px;border-radius:6px 6px 0 0}
 .pcd{width:90px;min-height:27px;margin-top:0;border-radius:0 0 9px 9px;border-top:0}
 .pcd b{font-size:16.8px}.pcd small{font-size:6.8px}
 .pcd.na b{font-size:9.6px}
@@ -4303,9 +4303,11 @@ function drPcd(x,cl){if(!x)return`<span class="pcd na"><b>Posto vuoto</b></span>
   if(x.e==null)return`<span class="pcd na" data-drwk="${x.n}" role="button" tabindex="0"><b>In attesa</b></span>`;
   const big=cl==="cap"||cl==="half"?x.f:x.e,sub=cl==="cap"?`${pdkF(x.e)} ×1,5`:cl==="half"?`${pdkF(x.e)} ×½`:"PDK";
   return`<span class="pcd ${pdkLvl(x.e)}${cl==="cap"?" cap":""}" data-drwk="${x.n}" role="button" tabindex="0"><b>${pdkF(big)}</b></span>`}/* solo il numero: niente "PDK" né calcolo sotto (27/10/2026) */
+/* nome sulla targhetta: 13px, si rimpicciolisce solo per i cognomi lunghi */
+const pnmFs=sn=>Math.max(6.4,Math.min(13,+(64/(sn.length*.7)).toFixed(1)));
 function drGioc(t,x,cl){if(!x)return`<span class="pj"></span><span class="pnm">—</span>${drPcd(null)}`;
   const p=(ROSTER[t]||[]).find(y=>y[0]===x.n)||[x.n,"",ruoloDi(x.n),""],r=p[2],sn=drSur(x.n);
-  return`<span class="pj">${jersey(t,p[1],x.n)}${cl==="cap"?'<i class="pjc" title="Capitano ×1,5">C</i>':""}</span><span class="pnm ${r}"${sn.length>=10?' style="font-size:10px"':""}><i>${({G:"G",F:"A",C:"C"})[r]||""}</i>${sn}</span>${drPcd(x,cl)}`}
+  return`<span class="pj">${jersey(t,p[1],x.n)}${cl==="cap"?'<i class="pjc" title="Capitano ×1,5">C</i>':""}</span><span class="pnm ${r}"${sn.length>=8?` style="font-size:${pnmFs(sn)}px"`:""}><i>${({G:"G",F:"A",C:"C"})[r]||""}</i>${sn}</span>${drPcd(x,cl)}`}
 /* Tabellone elettronico della pagina squadra (fuori dalla modalità notte): punteggio Dreamers della squadra nel turno in corso,
    somma dei 10 titolari con capitano ×1,5, pieni ×1, panchina ×½ (DT.score), cifre a 7 segmenti; si aggiorna col live di Dynasty TV. */
 const SEG={0:"abcdef",1:"bc",2:"abged",3:"abgcd",4:"fgbc",5:"afgcd",6:"afgedc",7:"abc",8:"abcdefg",9:"abcdfg","-":"g"," ":""};
@@ -4331,7 +4333,7 @@ function drTabellone(t,T,k,P){const W=T.W,btn=`<button class="cntbtn" id="cntbtn
 /* modalità notte: stesso blocco giocatore (maglia + targhetta + cartellino) con il PDK della notte; pallino rosso = in campo ora */
 function drGiocN(t,p,m){const r=p[2],sn=drSur(p[0]),v=m?m.p:null;
   const card=v==null?`<span class="pcd na"><b>${m?"—":"Non gioca"}</b></span>`:`<span class="pcd ${pdkLvl(v)}">${m.lv?'<i class="pcdlv" title="In campo ora"></i>':""}<b>${pdkF(v)}</b></span>`;
-  return`<span class="pj">${jersey(t,p[1],p[0])}</span><span class="pnm ${r}"${sn.length>=10?' style="font-size:10px"':""}><i>${({G:"G",F:"A",C:"C"})[r]||""}</i>${sn}</span>${card}`}
+  return`<span class="pj">${jersey(t,p[1],p[0])}</span><span class="pnm ${r}"${sn.length>=8?` style="font-size:${pnmFs(sn)}px"`:""}><i>${({G:"G",F:"A",C:"C"})[r]||""}</i>${sn}</span>${card}`}
 function drPanca(t,T){const rp=n=>(ROSTER[t]||[]).find(p=>p[0]===n)||[n,"",ruoloDi(n),""];
   const card=(x,cl)=>x?`<button class="dpc ${cl}" data-pl="${x.n}">${drGioc(t,x,cl)}</button>`:`<div class="dpc ${cl}">${drGioc(t,null,cl)}</div>`;
   const tr=[...T.trib,...T.wait];

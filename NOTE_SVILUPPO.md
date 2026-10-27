@@ -669,3 +669,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (178) 27/10/2026 (Claude, account del secondo utente) — Maglie Anni 90: sul petto ora c'è il NOME DELLA SQUADRA NBA (BULLS, CAVALIERS, ROCKETS... mappa `NBA_NOME`, tutte e 30) al posto del cognome del giocatore; solo categoria Anni 90 (kd===4), le altre categorie invariate. Codice in `jersey()`. IN CODA (rendering inviato).
 
 (179) 27/10/2026 (Claude, account del secondo utente) — Su TUTTE le maglie di ogni categoria il nome sul petto è quello della squadra, mai il cognome: divise NBA 2026 / Anni 90 → squadra NBA (`NBA_NOME`); Casa/Notte/Alternativa → la nostra franchigia (nick: DUCKS, EAGLES...). Se la squadra non ha nick (FA, G League) resta il cognome. Codice in `jersey()`. PUBBLICATO.
+
+(180) 27/10/2026 (Claude, account del secondo utente) — Nome del giocatore sulla targhetta (.pnm) più leggibile: 13px (era 10,4), targhetta sempre larga 90px; i cognomi lunghi si rimpiccioliscono da soli (`pnmFs`: 64/(lettere×0,7), tra 6,4 e 13px) così nessun cognome del roster viene tagliato (verificato su tutti). Vale in formazione Dreamers e modalità notte (stessa classe). PUBBLICATO.
