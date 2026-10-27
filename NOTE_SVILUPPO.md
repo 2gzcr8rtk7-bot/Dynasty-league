@@ -549,3 +549,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (128) Home: tolto il titolo "Franchigie"; al suo posto una barra (.hbar) con ricerca "Cerca giocatore", tasto Dynasty TV, tasto Dreamers viola con stellina (#hdrm → GAME=dream) e interruttore on/off della modalità notte (#hnt, role=switch, accende/spegne CNT: entrando in una squadra si vede già in modalità notte).
 
 (129) Modalità notte "Notte viola" (opzione 4 scelta da Francesco): con CNT acceso render() mette body.notte; tile della Home con cielo viola stellato e loghi scuriti con alone viola; stesso filtro sul logo del banner squadra. Alternative mostrate: Ombra, Sangue, Spettro (in /tmp, non nel repo).
+
+(130) Modalità notte: stile cambiato da "Notte viola" a "Spettro" (verde fantasma: sfondo verde-nero, loghi in verde luminoso con alone, testi verde chiaro) su richiesta di Francesco.
