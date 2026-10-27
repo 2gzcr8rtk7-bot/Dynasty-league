@@ -1829,6 +1829,14 @@ html.notte:not(.dreamfs){background-color:#0d0620}
 .shbar{display:flex;gap:10px;width:100%}
 .shbar>*{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px;border-radius:14px;border:1px solid rgba(196,181,253,.35);background:rgba(30,20,70,.8);color:#fff;font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;letter-spacing:.05em;text-transform:uppercase;text-decoration:none;cursor:pointer}
 .shbar .shgo{background:linear-gradient(180deg,#a855f7,#6d28d9);border-color:transparent;box-shadow:0 6px 18px rgba(168,85,247,.45)}
+</style><style>
+/* (147) Statistiche live in modalità notte: bottone rosso che pulsa */
+.snbtn.live{background:linear-gradient(180deg,#ef4444,#be123c)!important;box-shadow:0 0 0 0 rgba(239,68,68,.6);animation:snlp 1.6s ease-out infinite}
+@keyframes snlp{0%{box-shadow:0 0 0 0 rgba(239,68,68,.65)}70%{box-shadow:0 0 0 12px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
+.snlvd{display:inline-block;width:10px;height:10px;border-radius:50%;background:#fff;margin-right:8px;vertical-align:middle;animation:lvp 1.2s ease-in-out infinite}
+.sndate.snlive{grid-template-columns:1fr!important;display:grid;text-align:center}.sndate.snlive .snlvd{background:#ef4444}
+.snrow.lvr{box-shadow:inset 3px 0 0 #ef4444}
+@media (prefers-reduced-motion:reduce){.snbtn.live,.snlvd{animation:none}}
 </style></head>
 
 <body>
@@ -2317,7 +2325,7 @@ function vEfficienza(){
   const rows=E.gioc[t0].slice().sort((a,b)=>(rv(b)??-99)-(rv(a)??-99)).map(p=>`<tr><td class="pnm">${p[0]}</td><td>${shw(rv(p))}</td><td>${p[2]}</td><td>${p[3]==null?"—":p[3].toLocaleString("it-IT",{minimumFractionDigits:1})}</td></tr>`).join("");
   return `<button class="cupbtn" data-cupgo="1"><svg class="cupt" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v4a5 5 0 0 1-10 0V4zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M12 13v4M8.5 20h7M10 17h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Efficienza Cup</span><i>›</i></button>
   <button class="trbtn" data-trgo="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8M15 7h6v6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Calcola il trend</span><i>›</i></button>
-  <button class="snbtn" data-sngo="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Statistiche notte</span><i>›</i></button>
+  ${CNT?`<button class="snbtn live" data-sngo="1"><b class="snlvd" aria-hidden="true"></b><span>Statistiche live</span><i>›</i></button>`:`<button class="snbtn" data-sngo="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Statistiche notte</span><i>›</i></button>`}
   ${H("Statistiche squadre",`<em>${E.past?SZ_LBL[sz]+" · "+sz:"Agg. "+E.agg}</em>`)}
   <div class="effbar">${szSelect(sz)}<div class="metsw effsw"><button data-effmet="eff" aria-pressed="${!isP}">Eff.</button><button data-effmet="pdk" aria-pressed="${isP}">PDK</button></div></div>
   <div class="eboard">${sq}</div>
@@ -2981,7 +2989,27 @@ function glPlayers(){const S=typeof GL_STATS!=="undefined"?GL_STATS:{},inR=new S
 const SN={d:null,m:"pdk"};
 const snKey=d=>{const[g,m]=d.split("/").map(Number);return(m>=7?2026:2027)*10000+m*100+g};
 function snNights(){const o={};for(const n in PARTITE)for(const g of PARTITE[n])o[g[0]]=1;return Object.keys(o).sort((a,b)=>snKey(a)-snKey(b))}
-function vStatNotte(){const N=snNights();if(!N.length)return`<button class="gback" data-snback="1">‹ Statistiche</button>${H("Statistiche notte")}<p class="note">Nessuna partita registrata.</p>`;
+/* (147) STATISTICHE LIVE: con la modalità notte attiva la sezione mostra la notte in corso (data USA) dai tabellini live di Dynasty TV
+   (ESPN, PDK formula Dunkest, provvisori). Solo giocatori delle 8 franchigie principali (niente G League). Si aggiorna da sola (FANTA_LIVE). */
+function vStatLive(){fantaLiveAvvia();const d=campoNotte(),E=SN.m==="eff";
+  const head=`<button class="gback" data-snback="1">‹ Statistiche</button>`;
+  if(!d)return`${head}${H("Statistiche live",`<em>dati Dynasty TV</em>`)}<p class="note">Nessuna partita NBA iniziata stanotte: la lista si riempie da sola appena i giocatori scendono in campo.</p>`;
+  const who={};for(const t in ROSTER)for(const r of ROSTER[t])who[tvNm(r[0])]={n:r[0],t};
+  const L=[];for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
+    [["a",g[0],g[1]],["h",g[1],g[0]]].forEach(([sd,tm,opp])=>(B[sd]||[]).forEach(r=>{const m=who[tvNm(r[0])];if(!m||r[19]==null)return;const mm=String(r[2]||"0").split(":"),min=(+mm[0]||0)+(+mm[1]||0)/60;
+      L.push({...m,opp,min,r,p:+r[19],e:min>0?+r[19]/min:0,lv:g[5]==="L",st:g[5]==="L"?(TVL.st[g[7]]||"Live"):"Finale"})}))}
+  const val=x=>E?x.e:x.p;L.sort((a,b)=>val(b)-val(a));
+  const f2=v=>(Math.round(v*100)/100).toLocaleString("it-IT",{maximumFractionDigits:2}),fv=v=>E?v.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2}):f2(v);
+  const cl=v=>E?(v<.8?"pr":v<=1.1?"py":v<1.5?"pg":"pv"):(v<20?"pr":v<30?"py":v<40?"pg":"pv");
+  const dd=tvDt(d),nlv=L.filter(x=>x.lv).length,tot=L.reduce((a,x)=>a+val(x),0);
+  const rows=L.map((x,k)=>`<div class="snrow${x.lv?" lvr":""}">${wedge(x.t)}<div class="sninfo"><b><i>${k+1}</i>${x.n}</b><small>vs ${x.opp} · ${x.r[2]} min · ${x.r[3]} pt ${x.r[6]} rb ${x.r[7]} as · ${x.lv?`<b class="clv"><i></i>${x.st}</b>`:x.st}</small></div><span class="snp ${cl(val(x))}">${fv(val(x))}</span></div>`).join("");
+  return`${head}
+  ${H("Statistiche live",`<em>${L.length} giocatori${nlv?` · ${nlv} in campo`:""}</em>`)}
+  <div class="sndate snlive"><div><b><span class="snlvd"></span>Notte del ${dd.getUTCDate()} ${TV_MM[dd.getUTCMonth()].slice(0,3)}</b><small>data USA · media ${L.length?fv(tot/L.length):"—"} ${E?"eff.":"PDK"} · si aggiorna da sola</small></div></div>
+  <div class="snsw"><button data-snm="pdk" aria-pressed="${!E}">PDK</button><button data-snm="eff" aria-pressed="${E}">Eff.</button></div>
+  <div class="snlist">${rows||'<p class="note">Stanotte nessun giocatore delle franchigie è ancora sceso in campo.</p>'}</div>
+  <p class="note">Modalità notte: PDK live della notte in corso (Dynasty TV, formula Dunkest), provvisori fino al report ufficiale. Spegni la modalità notte per tornare alle statistiche ufficiali delle notti passate.</p>`}
+function vStatNotte(){if(CNT)return vStatLive();const N=snNights();if(!N.length)return`<button class="gback" data-snback="1">‹ Statistiche</button>${H("Statistiche notte")}<p class="note">Nessuna partita registrata.</p>`;
   if(!SN.d||!N.includes(SN.d))SN.d=N[N.length-1];const d=SN.d,i=N.indexOf(d);
   const L=[];for(const t in ROSTER)for(const r of ROSTER[t]){const g=(PARTITE[r[0]]||[]).find(x=>x[0]===d);if(g)L.push({n:r[0],t,g})}
   const E=SN.m==="eff",val=x=>E?x.g[4]:x.g[3];L.sort((a,b)=>val(b)-val(a));
@@ -4605,6 +4633,7 @@ const FANTA_LIVE=[
   {attivo:()=>cur==="campo",da:()=>drAdd(flUsaOggi(),-1)},/* ieri + oggi (data USA): dopo mezzanotte ET la notte in corso è "ieri" */
   {attivo:()=>cur==="giochi"&&GAME==="dream",da:()=>{const N={...DRD.notti},n=drNightOfAgg(EFF.agg);if(n>=DR_START)N[n]=1;const k=Object.keys(N).sort(),l=k[k.length-1];return l&&l>=DR_START?drAdd(l,1):DR_START}},
   {attivo:()=>cur==="tv",da:()=>FANTA_LIVE[0].da()},
+  {attivo:()=>cur==="statnotte"&&CNT,da:()=>FANTA_LIVE[0].da()},
   {attivo:()=>cur==="giochi"&&GAME==="gdream",da:()=>{if(GD_LASTOFF==null)try{gdData()}catch(e){}return GD_LASTOFF?drAdd(GD_LASTOFF,1):GD_START}}];
 async function fantaLiveScarica(da){if(FL.run||typeof tvEspn!=="function"||typeof TV==="undefined")return false;FL.run=true;let ch=false;
   try{for(const d of fantaLiveNotti(da)){if(FL.fin[d])continue;const prima=JSON.stringify(fantaLiveNotte(d));try{await tvEspn(d)}catch(e){}
