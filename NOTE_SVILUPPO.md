@@ -591,3 +591,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
     Aggiornato: anche la Finale 3° posto è nei riquadri piccoli ("Piazzamenti 3°–8°", 5 riquadri); immagine 1920×1040.
 
 (149) 27/10/2026 — Dreamers: regular season di 14 turni (DR_REG=14, andata e ritorno: ognuno affronta tutti esattamente 2 volte, verificato sul calendario) e playoff al meglio delle 3 (chi vince 2 gare passa, max 9 settimane). DR_TOT=23: regular season 26/10/2026–31/01/2027, playoff dal 01/02/2027, al massimo fino al 04/04/2027. Simulate 200 stagioni: finiscono tutte tra la settimana 21 e la 23.
+
+(150) 27/10/2026 — Immagine condivisa della sfida Dreamers allineata all'app: capitano con pillola ORO e punti calcolati (×1,5) e sotto "PDK ×1,5"; panchina con bordo rosa e "×½ = punti"; punteggio di chi è avanti viola acceso (#d8b4fe), l'altro bianco.

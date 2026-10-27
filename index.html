@@ -3868,7 +3868,7 @@ async function shDuel(){const S=SHR_DUEL;if(!S)return null;const rh=112,secH=64,
   y=335;shRR(c,56,y,W-112,300,28);const hg=c.createLinearGradient(56,0,W-56,0);hg.addColorStop(0,TEAMS[a].bg+"55");hg.addColorStop(.5,"rgba(17,10,48,.85)");hg.addColorStop(1,TEAMS[b].bg+"55");c.fillStyle=hg;c.fill();c.strokeStyle="rgba(196,181,253,.35)";c.lineWidth=3;c.stroke();
   const la=await shLogo(a),lb=await shLogo(b);if(la)c.drawImage(la,80,y+22,140,140);if(lb)c.drawImage(lb,W-220,y+22,140,140);
   const lead=A.score!=null&&B.score!=null&&A.score!==B.score?(A.score>B.score?"a":"b"):"";
-  const sc=(T,x,al,sd)=>{c.textAlign=al;c.textBaseline="alphabetic";c.font=SH_F(800,84,1);const w=lead===sd;c.fillStyle=w?"#f3e8ff":"#cbd5e1";if(w){c.shadowColor="rgba(192,132,252,1)";c.shadowBlur=26}c.fillText(T.score==null?"—":pdkF(T.score),x,y+108);c.shadowBlur=0};
+  const sc=(T,x,al,sd)=>{c.textAlign=al;c.textBaseline="alphabetic";c.font=SH_F(800,84,1);const w=lead===sd;c.fillStyle=w?"#d8b4fe":"#fff";if(w){c.shadowColor="rgba(192,132,252,1)";c.shadowBlur=26}c.fillText(T.score==null?"—":pdkF(T.score),x,y+108);c.shadowBlur=0};
   sc(A,238,"left","a");sc(B,W-238,"right","b");
   c.font=SH_B(500,26);c.fillStyle="rgba(226,232,240,.75)";c.textAlign="left";c.fillText(S.pa!=null?`proiez. ${pdkF(S.pa)}`:`${A.played}/10 titolari`,240,y+150);c.textAlign="right";c.fillText(S.pb!=null?`proiez. ${pdkF(S.pb)}`:`${B.played}/10 titolari`,W-240,y+150);
   shRR(c,W/2-38,y+50,76,64,14);c.fillStyle="rgba(10,6,24,.85)";c.fill();c.font=SH_F(800,34,1);c.fillStyle="#fff";c.textAlign="center";c.textBaseline="middle";c.fillText("VS",W/2,y+83);
@@ -3876,13 +3876,13 @@ async function shDuel(){const S=SHR_DUEL;if(!S)return null;const rh=112,secH=64,
   const bx=84,bw=W-168,by=y+236,pw=S.pw;shRR(c,bx,by,bw,14,7);c.fillStyle="#ef4444";c.fill();if(pw>0){shRR(c,bx,by,Math.max(14,bw*pw/100),14,7);c.fillStyle="#22c55e";c.fill()}
   c.font=SH_B(600,28);c.fillStyle="#e2e8f0";c.textAlign="left";c.fillText(`${pw}%${S.closed?"":" vittoria"}`,bx,by+50);c.textAlign="right";c.fillText(`${100-pw}%`,bx+bw,by+50);
   y=665;const CW=(W-112-64)/2,XL=56,XR=56+CW+64;
-  const card=(x,t,X,yy,cl)=>{shRR(c,X,yy,CW,rh-12,18);c.fillStyle=cl==="cap"?"rgba(60,40,10,.55)":"rgba(17,10,48,.72)";c.fill();c.strokeStyle=cl==="cap"?"rgba(251,191,36,.85)":"rgba(196,181,253,.22)";c.lineWidth=cl==="cap"?3:2;c.stroke();
+  const card=(x,t,X,yy,cl)=>{shRR(c,X,yy,CW,rh-12,18);c.fillStyle=cl==="cap"?"rgba(60,40,10,.55)":"rgba(17,10,48,.72)";c.fill();c.strokeStyle=cl==="cap"?"rgba(251,191,36,.85)":cl==="half"?"rgba(219,39,119,.55)":"rgba(196,181,253,.22)";c.lineWidth=cl==="cap"?3:2;c.stroke();
     if(!x){c.font=SH_B(500,26);c.fillStyle="rgba(203,213,225,.55)";c.textAlign="center";c.textBaseline="middle";c.fillText("Posto vuoto",X+CW/2,yy+(rh-12)/2);return}
     const r=(ROSTER[t]||[]).find(z=>z[0]===x.n)||[x.n,"","",""],G=drSettimana(x.n,S.W).filter(Boolean),fat=G.filter(z=>z.fin).length;
     c.textAlign="left";c.textBaseline="alphabetic";{let fs=34;c.font=SH_F(800,fs,1);while(fs>26&&c.measureText(x.n).width>CW-170){fs-=1;c.font=SH_F(800,fs,1)}}c.fillStyle="#fff";c.fillText(shFit(c,x.n,CW-170),X+18,yy+44);
     c.font=SH_B(500,22);c.fillStyle="rgba(203,213,225,.75)";c.fillText(`${({G:"G",F:"A",C:"C"})[r[2]]||""} · ${r[3]} · ${fat}/${G.length} part.`,X+18,yy+80);
-    shPill(c,x.e,X+CW-136,yy+14,118,46,30,x.e==null?"—":pdkF(x.e));
-    c.font=SH_B(600,21);c.fillStyle=cl==="cap"?"#fcd34d":"rgba(226,232,240,.8)";c.textAlign="right";c.textBaseline="alphabetic";c.fillText(cl==="cap"?`×1,5 = ${pdkF(x.f)}`:cl==="half"?`×½ = ${pdkF(x.f)}`:"×1",X+CW-18,yy+88)};
+    if(cl==="cap"&&x.f!=null){const gx=X+CW-136,gy=yy+14;shRR(c,gx,gy,118,46,13);const gg=c.createLinearGradient(0,gy,0,gy+46);gg.addColorStop(0,"#f7d774");gg.addColorStop(1,"#d4a017");c.fillStyle=gg;c.shadowColor="rgba(245,180,0,.55)";c.shadowBlur=14;c.fill();c.shadowBlur=0;c.fillStyle="#2a1c00";c.font=SH_F(800,30,1);c.textAlign="center";c.textBaseline="middle";c.fillText(pdkF(x.f),gx+59,gy+24)}else shPill(c,x.e,X+CW-136,yy+14,118,46,30,x.e==null?"—":pdkF(x.e));
+    c.font=SH_B(600,21);c.fillStyle=cl==="cap"?"#d8d3f0":cl==="half"?"#f9a8d4":"rgba(226,232,240,.8)";c.textAlign="right";c.textBaseline="alphabetic";c.fillText(cl==="cap"?`${pdkF(x.e)} ×1,5`:cl==="half"?`×½ = ${pdkF(x.f)}`:"×1",X+CW-18,yy+88)};
   const secs=[["cap","CAPITANO ×1,5","#fbbf24",0,1],["full","PUNTEGGIO PIENO","#4ade80",1,6],["half","PANCHINA · ½","#c4b5fd",6,10]];
   for(const[cl,lab,col,i0,i1]of secs){c.textAlign="left";c.textBaseline="middle";c.font=SH_F(800,30,1);c.letterSpacing="4px";c.fillStyle=col;c.fillText(lab,60,y+32);c.letterSpacing="0px";y+=secH;
     for(let i=i0;i<i1;i++){card(A.top[i],a,XL,y,cl);card(B.top[i],b,XR,y,cl);
