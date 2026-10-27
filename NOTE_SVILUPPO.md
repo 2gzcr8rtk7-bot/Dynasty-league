@@ -667,3 +667,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (178) 27/10/2026 (Claude, account del secondo utente) — Maglia ANNI 90 dei Cavaliers aggiunta a NBA_KIT_90 (CLE bg #b02a2c vinaccia, collo/giromanica blu notte #1f2a5c con oro #d4b066 al centro via tstr, motivo "cle" = fianchi oro con due righe bianche, nome/numero bianchi bordati d oro). PUBBLICATO insieme alla (177).
 
 (178) 27/10/2026 (Claude, account del secondo utente) — Maglie Anni 90: sul petto ora c'è il NOME DELLA SQUADRA NBA (BULLS, CAVALIERS, ROCKETS... mappa `NBA_NOME`, tutte e 30) al posto del cognome del giocatore; solo categoria Anni 90 (kd===4), le altre categorie invariate. Codice in `jersey()`. IN CODA (rendering inviato).
+
+(179) 27/10/2026 (Claude, account del secondo utente) — Su TUTTE le maglie di ogni categoria il nome sul petto è quello della squadra, mai il cognome: divise NBA 2026 / Anni 90 → squadra NBA (`NBA_NOME`); Casa/Notte/Alternativa → la nostra franchigia (nick: DUCKS, EAGLES...). Se la squadra non ha nick (FA, G League) resta il cognome. Codice in `jersey()`. PUBBLICATO.

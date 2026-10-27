@@ -2406,7 +2406,7 @@ function jersey(t,num,name=""){
   const ol=c.jstroke||(lum(c.fg)<0.45?"#ffffff":"#0a0f1f");
   const parts=name.replace(/\s+(Jr\.?|Sr\.?|II|III|IV)$/i,"").split(" ");
   let word=(parts.length>1?parts.slice(1).join(" "):parts[0]||c.nick).toUpperCase();
-  if(nk&&kd===4&&NBA_NOME[rw[3]])word=NBA_NOME[rw[3]];/* maglie Anni 90: al posto del cognome il nome della squadra NBA */
+  if(nk&&NBA_NOME[rw[3]])word=NBA_NOME[rw[3]];else if(TEAMS[t]&&TEAMS[t].nick)word=TEAMS[t].nick.toUpperCase();/* su ogni maglia il nome della squadra (NBA se divisa NBA/Anni 90, altrimenti la nostra franchigia), mai il cognome */
   const L=word.length, wfs=L<=6?17:L<=9?15:L<=12?13:11, wlen=Math.min(74,Math.round(L*wfs*.62));
   const body="M38 6 C42 27 78 27 82 6 L98 12 C97 34 104 46 114 50 L112 126 Q60 137 8 126 L6 50 C16 46 23 34 22 12 Z";
   return `<svg viewBox="0 0 120 146" aria-hidden="true">
