@@ -6,7 +6,7 @@
 import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 
-const START = process.env.DREAM_START || "2026-10-26";          // lunedì del turno 1
+const START = process.env.DREAM_START || "2026-10-26";          // prima notte coperta dai report (il turno 1 inizia il 25/10, quella notte arriva dai tabellini di Dynasty TV)
 const FALLBACK = 1600;               // valore per chi non è in VALORI (come il calcolatore)
 
 function getConst(src, name) {
