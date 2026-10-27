@@ -2340,7 +2340,7 @@ const NBA_KIT={
  LAL:{bg:"#fdb927",fg:"#552583",jstroke:"#ffffff",trim:"#552583",p2:"#ffffff",d:"plain"},
  MEM:{bg:"#12173f",fg:"#8db1e6",jstroke:"#ffffff",nf:"#ffffff",ns:"#12173f",trim:"#8db1e6",p2:"#ffffff",d:"plain"},
  MIA:{bg:"#141414",fg:"#ffffff",jstroke:"#98002e",ns:"#000000",trim:"#98002e",p2:"#98002e"},
- MIL:{bg:"#21472c",fg:"#ffffff",jstroke:"#12291a",trim:"#e0dccb",p2:"#e0dccb",d:"mil"},
+ MIL:{bg:"#1c1d1c",fg:"#eee1c6",jstroke:"#2e6b3f",nf:"#eee1c6",ns:"#141414",trim:"#1c1d1c",tline:"#e8d9a8",tlw:1.4,p2:"#e8d9a8",d:"milb"},
  MIN:{bg:"#14191d",fg:"#ffffff",jstroke:"#8fb0d8",outer:"#1d2f56",trim:"#14191d",tline:"#2f9a5c",tlw:4.2,tld:"2.2 1.3",p2:"#2f9a5c",d:"none"},
  NOP:{bg:"#0c2340",fg:"#ffffff",jstroke:"#0c2340",trim:"#b4975a",p2:"#c8102e"},
  NYK:{bg:"#1d63c4",fg:"#f58426",jstroke:"#ffffff",nf:"#ffffff",ns:"#0e3a7a",trim:"#f58426",p2:"#ffffff",d:"plain"},
@@ -2368,6 +2368,7 @@ function nbaDeco(c){const sd=`<path d="M0 44 L14 48 L17 146 L0 146Z M120 44 L106
    case"houc":{let w="",b="";[8,21,34,47,73,86,99,112].forEach((x,i)=>{w+=`M${x} ${62+(i%3)*6}V146`;b+=`M${x} ${20+(i%2)*8}V${52+(i%3)*6}`});return`<path d="${b}" stroke="#6ec6e8" stroke-width="1.6" stroke-opacity=".75" stroke-dasharray="7 4"/><path d="${w}" stroke="#ffffff" stroke-width="1.3" stroke-opacity=".9"/>`}
    case"pins":{let d="";for(let x=c.ps/2;x<120;x+=c.ps)d+=`M${x.toFixed(1)} 0V146`;return`<path d="${d}" stroke="${c.pc}" stroke-width=".85"/>`}
    case"det":return`<path d="M0 40H15V146H0Z M120 40H105V146H120Z" fill="#141414"/><path d="M15.8 44V146 M104.2 44V146" stroke="#e6a422" stroke-width="1.3"/><path d="M17.3 44V146 M102.7 44V146" stroke="#b52a1c" stroke-width="1.1"/>`;
+   case"milb":return[[42,3.6,"#3a66d6"],[48,4.5,"#2e6b3f"],[52.5,5,"#f0f0ea"],[57.5,5,"#e8d9a8"],[62.5,6.6,"#2e6b3f"]].map(([y,h,col])=>`<rect y="${y}" width="120" height="${h}" fill="${col}"/>`).join("");
    case"pind":{let d="";for(let x=5;x<120;x+=8)d+=`M${x} 0V146`;return`<path d="${d}" stroke="#000" stroke-opacity=".13" stroke-width="1.4"/><path d="M7 50 L9 146 M113 50 L111 146" stroke="${c.trim}" stroke-width="2" fill="none"/>`}
    case"pin":{let d="";for(let x=4;x<120;x+=7)d+=`M${x} 0V146`;return`<path d="${d}" stroke="#ffffff" stroke-opacity=".38" stroke-width="1.1"/>`}
    case"was":return`<rect y="64" width="120" height="40" fill="#ffffff"/><rect y="104" width="120" height="42" fill="#e31837"/><path d="M0 69H120M0 99H120" stroke="#e31837" stroke-width="2.4"/>`;
