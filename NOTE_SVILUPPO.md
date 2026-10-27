@@ -697,3 +697,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 - Regolamento aggiornato. Alternativa valutata: 5 gironi/35 giornate (playoff finiscono ~14/3).
 - Regola: il giocatore con media stagionale (squadra NBA a 0 partite) può diventare capitano ×1,5 se è il migliore (già così nel codice, aggiunto al regolamento).
 - (190) ora PUBBLICATO su main.
+
+(191) 27/10/2026 (Claude, account del secondo utente) — PLAYOFF AL MEGLIO DELLE 5 + REGULAR SEASON ACCORCIATA (IN CODA su `coda`, NON pubblicato): serie a 3 vittorie (`drPO`), `DR_REG=33` turni Dreamers (= giornate Dunkest 3-35, 5 gironi in tutto), `DR_TOT=48` (33+15 playoff). Regular season finisce il 12/2/2027, playoff dal 13/2 (pausa All-Star 19-24/2 già nelle finestre); caso peggiore (tutte le serie alla gara 5) chiude l'1/4, tipicamente circa 20-25/3. DR_TURNI ha 49 finestre (l'ultima inutilizzata); turni dal 44 provvisori. Regolamento e note aggiornati.
