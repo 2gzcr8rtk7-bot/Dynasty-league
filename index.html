@@ -1714,7 +1714,7 @@ nav button>span{white-space:nowrap}
 </style><style>
 /* DREAMERS e G-DREAMERS: punteggi squadra con lo stesso font e grandezza dei punteggi di Dynasty TV */
 .drr em,.drms .drr em,.drch em{font-family:var(--display)!important;font-style:italic!important;font-weight:800!important;font-size:26px!important;letter-spacing:0!important;line-height:1}
-</style></head>
+</style><style>.tvsb .tmid .drsbn{font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#dbe1f0}</style></head>
 <body>
 <header>
   <div class="wrap">
@@ -4812,7 +4812,7 @@ function tvDrGame(key){try{const[ks,a,b]=key.split("|"),k=+ks,st=drStand(),P=drP
   const somma=T.top.reduce((s,x)=>s+(x.f||0),0);
   return`<button class="gback tvback" data-tvback="1">‹ Partite del ${(()=>{const dd=tvDt(TVS.d);return dd.getUTCDate()+" "+TV_MM[dd.getUTCMonth()]})()}</button>
   <div class="tvsb" style="--ca:${ca};--ch:${cb}"><div class="tside"><span class="drsbl">${badge(a)}</span><b>${TEAMS[a].nick}</b><small>${A.played}/10 titolari</small></div>
-   <div class="tmid"><div><span class="${fin&&A.score<B.score?"lo":""}">${A.score==null?"—":drScore(A.score)}</span><i>–</i><span class="${fin&&B.score<A.score?"lo":""}">${B.score==null?"—":drScore(B.score)}</span></div><small>${fin?"Finale":prov?"Live · provvisorio":W.started?"In corso":"Da giocare"} · Dreamers</small></div>
+   <div class="tmid"><div><span class="${fin&&A.score<B.score?"lo":""}">${A.score==null?"—":drScore(A.score)}</span><i>–</i><span class="${fin&&B.score<A.score?"lo":""}">${B.score==null?"—":drScore(B.score)}</span></div><small>${fin?"Finale":prov?"Live":W.started?"In corso":"Da giocare"}</small><em class="drsbn">Dreamers${prov?" · PDK provvisori":""}</em></div>
    <div class="tside"><span class="drsbl">${badge(b)}</span><b>${TEAMS[b].nick}</b><small>${B.played}/10 titolari</small></div></div>
   <div class="tvtabs"><button class="tvtab" data-drside="a" aria-pressed="${side==="a"}"><span class="drtvl">${badge(a)}</span>${TEAMS[a].nick}</button><button class="tvtab" data-drside="b" aria-pressed="${side==="b"}"><span class="drtvl">${badge(b)}</span>${TEAMS[b].nick}</button></div>
   <div class="tbl-wrap"><table class="ptbl tvbox drbox"><thead><tr><th>Giocatore</th><th class="pdkl">PDK</th><th>Molt.</th><th>Punti</th></tr></thead>

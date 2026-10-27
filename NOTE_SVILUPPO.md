@@ -487,3 +487,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (97) Dreamers, correzione: i moltiplicatori sono a posti fissi (1° capitano ×1,5, 2°-6° pieno, 7°-10° metà). Prima "metà" toccava agli ultimi 4 di chi aveva già giocato, quindi a settimana in corso con meno di 10 giocatori finivano a metà giocatori che dovevano essere a punteggio pieno.
 
 (98) Dreamers/G-Dreamers: punteggi squadra (.drr em, .drch em) con lo stesso stile dei punteggi di Dynasty TV (.tvsc): var(--display) corsivo 800, 26px.
+
+(99) Box score sfida Dreamers in Dynasty TV: nel riquadro rosso solo lo stato (Live / In corso / Da giocare / Finale) come le partite NBA; sotto, in piccolo, "Dreamers" (+ "PDK provvisori" se live). Punteggio con lo stesso stile delle partite NBA (.tvsb .tmid).
