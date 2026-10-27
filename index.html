@@ -2161,6 +2161,8 @@ const SPECIALI=[
   {t:"DUC",entra:"Kyshawn George",esce:"Brandon Ingram",tipo:30,inizio:1}
 ];
 const SP_DUR={30:20,40:40},SP_FINE=64;
+/* chi è "sotto speciale" (esce da una trade speciale ancora attiva) è FUORI ROSA: non gioca e non compare neanche in tribuna nei Dreamers */
+const spFuori=n=>SPECIALI.some(x=>x.esce===n&&spInfo(x).left>0);
 function spInfo(x){
   const cur=GIORNATE.length?GIORNATE[GIORNATE.length-1].n:1;
   const scad=x.tipo===50?SP_FINE:x.inizio-1+(SP_DUR[x.tipo]||20)+(x.extra||0);
@@ -3404,7 +3406,7 @@ function snNights(){const o={};for(const n in PARTITE)for(const g of PARTITE[n])
 function vStatLive(){fantaLiveAvvia();const d=campoNotte(),E=SN.m==="eff";
   const head=`<button class="gback" data-snback="1">‹ Statistiche</button>`;
   if(!d)return`${head}${H("Statistiche live",`<em>dati Dynasty TV</em>`)}<p class="note">Nessuna partita NBA iniziata stanotte: la lista si riempie da sola appena i giocatori scendono in campo.</p>`;
-  const who={};for(const t in ROSTER)for(const r of ROSTER[t])who[tvNm(r[0])]={n:r[0],t};
+  const who={};for(const t in ROSTER)for(const r of ROSTER[t])if(!spFuori(r[0]))who[tvNm(r[0])]={n:r[0],t};
   const L=[];for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
     [["a",g[0],g[1]],["h",g[1],g[0]]].forEach(([sd,tm,opp])=>(B[sd]||[]).forEach(r=>{const m=who[tvNm(r[0])];if(!m||r[19]==null)return;const mm=String(r[2]||"0").split(":"),min=(+mm[0]||0)+(+mm[1]||0)/60;
       L.push({...m,opp,min,r,p:+r[19],e:min>0?+r[19]/min:0,lv:g[5]==="L",st:g[5]==="L"?(TVL.st[g[7]]||"Live"):"Finale"})}))}
@@ -4179,7 +4181,7 @@ function vCollege(){if(!COL.d){cur="campo";return vCampo()}COL.sec=COL.sec||"col
    (FANTA_LIVE, ogni 60 s). Righe = giocatori della squadra principale (NON la G League, che è un'altra squadra) scesi in campo quella notte. */
 function campoNotte(){if(typeof TV==="undefined")return null;const oggi=flUsaOggi(),ieri=drAdd(oggi,-1),on=d=>(TV.days[d]||[]).some(g=>g[5]==="L"||g[5]==="F");return on(oggi)?oggi:on(ieri)?ieri:null}
 function campoLive(t){const d=campoNotte();if(!d)return`${H("Live stanotte",`<em>dati Dynasty TV</em>`)}<p class="note">Nessuna partita NBA iniziata stanotte: il box score si riempie da solo appena i giocatori della squadra scendono in campo.</p>`;
-  const mine={};(ROSTER[t]||[]).forEach(p=>mine[tvNm(p[0])]={n:p[0]});
+  const mine={};(ROSTER[t]||[]).filter(p=>!spFuori(p[0])).forEach(p=>mine[tvNm(p[0])]={n:p[0]});
   const R=[];for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
     [["a",g[0],g[1]],["h",g[1],g[0]]].forEach(([sd,tm,opp])=>(B[sd]||[]).forEach(r=>{const m=mine[tvNm(r[0])];if(!m)return;R.push({n:m.n,gl:m.gl,tm,opp,r,lv:g[5]==="L",st:g[5]==="L"?(TVL.st[g[7]]||"Live"):"Finale",key:g[7]})}))}
   R.sort((a,b)=>(+b.r[19]||0)-(+a.r[19]||0));
@@ -4405,7 +4407,7 @@ async function shOpen(k){const old=document.querySelector(".shsheet");if(old)old
   else go.addEventListener("click",async()=>{try{await navigator.share({files:[file],title:k==="campo"?"Live stanotte":k==="duel"?"Dreamers · sfida":k==="po"?"Dreamers · playoff":"Dreamers"})}catch(e){}})}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-share]");if(!b)return;e.preventDefault();e.stopPropagation();shOpen(b.dataset.share)},true);
 let CNT=false;
-function campoNotteMap(t){const d=campoNotte(),o={};if(!d)return o;const mine={};(ROSTER[t]||[]).forEach(p=>mine[tvNm(p[0])]=p[0]);
+function campoNotteMap(t){const d=campoNotte(),o={};if(!d)return o;const mine={};(ROSTER[t]||[]).filter(p=>!spFuori(p[0])).forEach(p=>mine[tvNm(p[0])]=p[0]);
   for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
     [["a",g[1]],["h",g[0]]].forEach(([sd,opp])=>(B[sd]||[]).forEach(r=>{const n=mine[tvNm(r[0])];if(n&&r[19]!=null)o[n]={p:+r[19],opp,lv:g[5]==="L",st:g[5]==="L"?(TVL.st[g[7]]||"Live"):"Finale"}}))}
   return o}
@@ -4478,7 +4480,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   let {auto,q}=quintetto(t);let qs=new Set(q.map(p=>p[0]));
   /* MODALITÀ NOTTE (CNT): punteggi della notte da Dynasty TV, meritocrazia: i 5 migliori in campo, gli altri in panchina in ordine (senza capitano) */
   const NM=CNT?campoNotteMap(t):null,nv=n=>NM&&NM[n]?NM[n].p:null;
-  if(CNT){const R=(ROSTER[t]||[]).slice().sort((a,b)=>(nv(b[0])??-1e9)-(nv(a[0])??-1e9));q=R.filter(p=>nv(p[0])!=null).slice(0,5);qs=new Set(q.map(p=>p[0]))}
+  if(CNT){const R=(ROSTER[t]||[]).filter(p=>!spFuori(p[0])).slice().sort((a,b)=>(nv(b[0])??-1e9)-(nv(a[0])??-1e9));q=R.filter(p=>nv(p[0])!=null).slice(0,5);qs=new Set(q.map(p=>p[0]))}
   /* FORMAZIONE DREAMERS (fuori dalla modalità notte, 27/10/2026): stessa formazione della sfida Dreamers del turno in corso
      (drTeam: ruoli 4G/4A/2C, miglior PDK della settimana, live da Dynasty TV poi report Dunkest). In campo i primi 5 (il 1° è capitano ×1,5),
      6° uomo = 6° titolare (punteggio pieno), panchina = 7°–10° (×½), il resto in tribuna. Senza PDK nel turno: ordine per PDK medio, "In attesa". */
@@ -4523,7 +4525,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   ["G","F","C"].forEach(r=>{const l=FILA[r];l.forEach((p,i)=>pos[p[0]]=[l.length===2&&XS[r]?XS[r][i]:(i+1)/(l.length+1)*100,ROWY[r]])});
   const onCourt=CNT?q.map((p,i)=>`<button class="cpl dr" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${drGiocN(t,p,NM[p[0]])}</button>`).join("")
     :q.map((p,i)=>`<button class="cpl dr" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${drGioc(t,DX(p[0]),i===0?"cap":"full")}</button>`).join("");
-  const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>CNT?(nv(b[0])??-1e9)-(nv(a[0])??-1e9):(pdkMed(b[0])??-99)-(pdkMed(a[0])??-99));  /* panchina in ordine di efficienza media stagionale (stesso valore mostrato), si riordina a ogni aggiornamento */
+  const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])&&!spFuori(p[0])).sort((a,b)=>CNT?(nv(b[0])??-1e9)-(nv(a[0])??-1e9):(pdkMed(b[0])??-99)-(pdkMed(a[0])??-99));  /* panchina in ordine di efficienza media stagionale (stesso valore mostrato), si riordina a ogni aggiornamento */
   return `<button class="gback" id="cback">‹ Home</button>
   <div class="teamhead" style="${dlHeadSty(curTeam)}">
    ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${LOGO[t]}" alt=""${dlHeadLogo(t)}>`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
@@ -5277,7 +5279,7 @@ const DR_QUOTE={G:4,F:4,C:2};
 const DR_TURNI=[["2026-10-25","2026-11-01"],["2026-11-02","2026-11-03"],["2026-11-04","2026-11-06"],["2026-11-07","2026-11-09"],["2026-11-10","2026-11-12"],["2026-11-13","2026-11-15"],["2026-11-16","2026-11-18"],["2026-11-19","2026-11-21"],["2026-11-22","2026-11-23"],["2026-11-24","2026-11-27"],["2026-11-28","2026-11-30"],["2026-12-01","2026-12-03"],["2026-12-12","2026-12-15"],["2026-12-16","2026-12-18"],["2026-12-19","2026-12-22"],["2026-12-23","2026-12-25"],["2026-12-26","2026-12-28"],["2026-12-29","2026-12-31"],["2027-01-01","2027-01-03"],["2027-01-04","2027-01-06"],["2027-01-07","2027-01-08"],["2027-01-09","2027-01-11"],["2027-01-12","2027-01-14"],["2027-01-15","2027-01-17"],["2027-01-18","2027-01-20"],["2027-01-21","2027-01-23"],["2027-01-24","2027-01-26"],["2027-01-27","2027-01-29"],["2027-01-30","2027-02-01"],["2027-02-02","2027-02-04"],["2027-02-05","2027-02-07"],["2027-02-08","2027-02-09"],["2027-02-10","2027-02-12"],["2027-02-13","2027-02-15"],["2027-02-16","2027-02-18"],["2027-02-25","2027-02-26"],["2027-02-27","2027-03-01"],["2027-03-02","2027-03-03"],["2027-03-04","2027-03-06"],["2027-03-07","2027-03-09"],["2027-03-10","2027-03-11"],["2027-03-12","2027-03-14"],["2027-03-15","2027-03-17"],["2027-03-18","2027-03-20"],["2027-03-21","2027-03-23"],["2027-03-24","2027-03-26"],["2027-03-27","2027-03-29"],["2027-03-30","2027-04-01"],["2027-04-02","2027-04-04"]];
 const DR_ZERO={"5":["ATL"],"8":["MIA"],"29":["LAC"],"34":["LAL"],"38":["CLE"],"39":["DEN"],"40":["TOR"]};
 function drCalZero(n,k){const p=Object.values(ROSTER).flat().find(x=>x[0]===n);return !!(p&&DR_ZERO[k]&&DR_ZERO[k].includes(p[3]))}
-function drTeam(k,t,W){W=W||drWeek(k);const F=drForm(k)[t]||{t:[],r:[]};
+function drTeam(k,t,W){W=W||drWeek(k);const F0=drForm(k)[t]||{t:[],r:[]},F={t:F0.t.filter(n=>!spFuori(n)),r:F0.r.filter(n=>!spFuori(n))};
   /* MERITOCRAZIA dentro i ruoli: per ogni ruolo entrano i migliori PDK della settimana (4 G, 4 A, 2 C).
      Ordinati per punteggio: il migliore è capitano ×1,5, dal 2° al 6° pieno, dal 7° al 10° metà; se tra i primi 6 manca un ruolo,
      sale il migliore di quel ruolo e scende in panchina il peggiore dei primi 6 (di un ruolo che ne ha almeno 2). Il resto va in tribuna.
