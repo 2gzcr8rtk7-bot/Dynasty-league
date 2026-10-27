@@ -696,3 +696,4 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 - Lunghezza: `DR_REG=40` turni Dreamers (= giornate 3-42, 6 gironi) + playoff max 9 turni, `DR_TOT=49`. `DR_TURNI` esteso a 49 finestre (prospetto A fino al 17/3; dal turno 44 PROVVISORIE da 3 giorni, 18/3-4/4, da rigenerare quando esce il calendario NBA di fine stagione). Regular season finisce il 9/3, playoff dal 10/3: tipicamente chiudono a fine marzo, caso peggiore 4/4. `DR_ZERO`: turno 5 ATL, 8 MIA, 29 LAC, 34 LAL, 38 CLE, 39 DEN, 40 TOR (media stagionale PDK).
 - Regolamento aggiornato. Alternativa valutata: 5 gironi/35 giornate (playoff finiscono ~14/3).
 - Regola: il giocatore con media stagionale (squadra NBA a 0 partite) può diventare capitano ×1,5 se è il migliore (già così nel codice, aggiunto al regolamento).
+- (190) ora PUBBLICATO su main.
