@@ -569,3 +569,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (138) 27/10/2026 — Su richiesta dell'utente la Home in modalità notte torna all'estetica della v69 (riquadri dei loghi in stile Dreamers neon, sfondo viola più chiaro, fascia di stato blu scura). Tolto il blocco "MODALITÀ NOTTE v4" (note 135–137) e ripristinato il theme-color di prima: index.html è identico alla v69.
 
 (139) 27/10/2026 — Modalità notte (estetica v69): tolta la fascia blu sotto l'orario dell'iPhone. In notte l'header viola Dreamers sale fino in cima allo schermo (padding-top safe-area, :root senza padding, body::before nascosto) e theme-color #2a1260. Giorno e Dreamers a schermo intero invariati.
+
+(140) 27/10/2026 — Modalità notte più scura: velo rgba(6,2,18,k) davanti agli sfondi viola (body, header, #main, riquadri loghi, ricerca, tasti menu non selezionati). Home = livello 1 (k .30); tutte le altre sezioni = livello 3 (k .68). Tab selezionato e Dreamers a schermo intero invariati. È un blocco CSS a parte ("(140) MODALITÀ NOTTE più scura"): l'utente lo prova e, se non va bene, per la Home si torna a quella di prima togliendo le regole [data-v=home].
