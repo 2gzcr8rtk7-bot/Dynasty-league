@@ -428,7 +428,7 @@ h2 .kitbtn+.cntbtn{margin-left:6px}
 .pj svg{width:58px!important;height:70px!important;display:block;filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))}
 .pjc{position:absolute;right:-7px;top:2px;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:linear-gradient(180deg,#f7d774,#d4a017);color:#2a1c00;font-style:normal;font-family:var(--display);font-weight:900;font-size:12px;box-shadow:0 0 0 2px rgba(0,0,0,.45),0 0 10px rgba(245,180,0,.5)}
 .pnm{position:relative;z-index:1;margin-top:-7px;width:86px;box-sizing:border-box;background:#0b0d12;color:#fff;border-radius:6px;padding:3px 3px 2px;font-family:var(--display);font-style:italic;font-weight:800;font-size:11.5px;line-height:1.25;text-transform:uppercase;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pnm i{font-style:normal;color:#8b93a7;margin-right:3px}
+.pnm i{font-style:normal;color:#8b93a7;margin-right:3px}.pnm{text-overflow:clip!important}.pnm .pn{display:inline-block;font:inherit}
 /* cartellino PDK staccato dalla maglia, come un bottone */
 .pcd{display:grid;justify-items:center;align-content:center;width:70px;min-height:31px;margin-top:5px;box-sizing:border-box;padding:2px 4px 3px;border-radius:9px;border:1px solid rgba(255,255,255,.28);color:#0b0b0b;cursor:pointer;box-shadow:inset 0 -2px 0 rgba(0,0,0,.2),0 3px 8px rgba(0,0,0,.35);transition:transform .12s}
 .pcd:active{transform:scale(.95)}
@@ -4265,7 +4265,7 @@ async function shCardImg(box){/* quante x ha il grafico: punti/etichette */
   shFoot(c,CW,H,"Dynasty League · grafico");return cv}
 let SH_CARD=null;
 /* dopo ogni render aggiunge i tasti Condividi ai grafici */
-setTimeout(()=>{if(typeof render!=="function"||render._sh)return;const R0=render;render=function(){const r=R0.apply(this,arguments);try{shChartBtns()}catch(e){}return r};render._sh=1;try{shChartBtns()}catch(e){}},0);
+setTimeout(()=>{if(typeof render!=="function"||render._sh)return;const R0=render;render=function(){const r=R0.apply(this,arguments);try{shChartBtns()}catch(e){}try{pnmFit()}catch(e){}return r};render._sh=1;try{shChartBtns()}catch(e){}},0);
 document.addEventListener("click",e=>{const b=e.target.closest(".shcard");if(!b)return;e.preventDefault();e.stopPropagation();SH_CARD=b.parentElement;shOpen("card")},true);
 async function shPlayoff(){const S=SHR_PO;if(!S)return null;const P=S.P,R=P.R,R1=R[1]||[],R2=R[2]||[],sd=P.seed,WW=1920,H=1040;const{cv,c,W}=await shBase(H,WW,1);
   c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,78,1);c.letterSpacing="12px";const tg=c.createLinearGradient(700,0,1220,0);tg.addColorStop(0,"#e9d5ff");tg.addColorStop(.5,"#c084fc");tg.addColorStop(1,"#a5b4fc");c.fillStyle=tg;c.shadowColor="rgba(168,85,247,.8)";c.shadowBlur=26;shDrTxt(c,"DREAMERS",W/2+6,110,72);c.shadowBlur=0;c.letterSpacing="0px";
@@ -4321,10 +4321,14 @@ function drPcd(x,cl){if(!x)return`<span class="pcd na"><b>Posto vuoto</b></span>
   const big=cl==="cap"||cl==="half"?x.f:x.e,sub=cl==="cap"?`${pdkF(x.e)} ×1,5`:cl==="half"?`${pdkF(x.e)} ×½`:"PDK";
   return`<span class="pcd ${pdkLvl(x.e)}${cl==="cap"?" cap":""}" data-drwk="${x.n}" role="button" tabindex="0"><b>${pdkF(big)}</b></span>`}/* solo il numero: niente "PDK" né calcolo sotto (27/10/2026) */
 /* nome sulla targhetta: 13px, si rimpicciolisce solo per i cognomi lunghi */
-const pnmFs=sn=>Math.max(6.4,Math.min(13,+(64/(sn.length*.7)).toFixed(1)));
+/* nomi tutti alla stessa altezza (13px): se un cognome è lungo si stringe in larghezza (scaleX), mai più piccolo */
+try{document.fonts&&document.fonts.ready.then(()=>pnmFit())}catch(e){}
+const pnmTxt=sn=>`<b class="pn">${sn}</b>`;
+function pnmFit(){try{document.querySelectorAll(".pnm .pn").forEach(b=>{b.style.transform="";b.style.marginRight="";const pn=b.parentElement,i=pn.querySelector("i"),av=pn.clientWidth-(parseFloat(getComputedStyle(pn).paddingLeft)||0)-(parseFloat(getComputedStyle(pn).paddingRight)||0)-(i?i.offsetWidth+(parseFloat(getComputedStyle(i).marginRight)||0):0),w=b.offsetWidth;
+  if(w>av&&av>0){const k=av/w;b.style.transformOrigin="left center";b.style.transform=`scaleX(${k.toFixed(3)})`;b.style.marginRight=`-${(w-av).toFixed(1)}px`}})}catch(e){}}
 function drGioc(t,x,cl){if(!x)return`<span class="pj"></span><span class="pnm">—</span>${drPcd(null)}`;
   const p=(ROSTER[t]||[]).find(y=>y[0]===x.n)||[x.n,"",ruoloDi(x.n),""],r=p[2],sn=drSur(x.n);
-  return`<span class="pj">${jersey(t,p[1],x.n)}${cl==="cap"?'<i class="pjc" title="Capitano ×1,5">C</i>':""}</span><span class="pnm ${r}"${sn.length>=8?` style="font-size:${pnmFs(sn)}px"`:""}><i>${({G:"G",F:"A",C:"C"})[r]||""}</i>${sn}</span>${drPcd(x,cl)}`}
+  return`<span class="pj">${jersey(t,p[1],x.n)}${cl==="cap"?'<i class="pjc" title="Capitano ×1,5">C</i>':""}</span><span class="pnm ${r}"><i>${({G:"G",F:"A",C:"C"})[r]||""}</i>${pnmTxt(sn)}</span>${drPcd(x,cl)}`}
 /* Tabellone elettronico della pagina squadra (fuori dalla modalità notte): punteggio Dreamers della squadra nel turno in corso,
    somma dei 10 titolari con capitano ×1,5, pieni ×1, panchina ×½ (DT.score), cifre a 7 segmenti; si aggiorna col live di Dynasty TV. */
 const SEG={0:"abcdef",1:"bc",2:"abged",3:"abgcd",4:"fgbc",5:"afgcd",6:"afgedc",7:"abc",8:"abcdefg",9:"abcdfg","-":"g"," ":""};
@@ -4350,7 +4354,7 @@ function drTabellone(t,T,k,P){const W=T.W,btn=`<button class="cntbtn" id="cntbtn
 /* modalità notte: stesso blocco giocatore (maglia + targhetta + cartellino) con il PDK della notte; pallino rosso = in campo ora */
 function drGiocN(t,p,m){const r=p[2],sn=drSur(p[0]),v=m?m.p:null;
   const card=v==null?`<span class="pcd na"><b>${m?"—":"Non gioca"}</b></span>`:`<span class="pcd ${pdkLvl(v)}">${m.lv?'<i class="pcdlv" title="In campo ora"></i>':""}<b>${pdkF(v)}</b></span>`;
-  return`<span class="pj">${jersey(t,p[1],p[0])}</span><span class="pnm ${r}"${sn.length>=8?` style="font-size:${pnmFs(sn)}px"`:""}><i>${({G:"G",F:"A",C:"C"})[r]||""}</i>${sn}</span>${card}`}
+  return`<span class="pj">${jersey(t,p[1],p[0])}</span><span class="pnm ${r}"><i>${({G:"G",F:"A",C:"C"})[r]||""}</i>${pnmTxt(sn)}</span>${card}`}
 function drPanca(t,T){const rp=n=>(ROSTER[t]||[]).find(p=>p[0]===n)||[n,"",ruoloDi(n),""];
   const card=(x,cl)=>x?`<button class="dpc ${cl}" data-pl="${x.n}">${drGioc(t,x,cl)}</button>`:`<div class="dpc ${cl}">${drGioc(t,null,cl)}</div>`;
   const tr=[...T.trib,...T.wait];
