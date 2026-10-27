@@ -4775,7 +4775,8 @@ const tvNick=c=>{const n=(TVD().teams[c]||[c])[0];return n.split(" ").slice(-1)[
 const tvRec=c=>{const r=TVD().rec[c];return r?r[0]+"-"+r[1]:""};
 function tvDefDay(){const T=TVD(),ks=Object.keys(T.days).sort();const lv=ks.filter(k=>T.days[k].some(g=>g[5]==="L"));if(lv.length)return lv[0];const f=ks.filter(k=>T.days[k].some(g=>g[5]==="F"));return f.length?f[f.length-1]:ks[0]}
 function tvLead(b){const all=[...b.a.map(p=>["a",p]),...b.h.map(p=>["h",p])];const top=i=>all.slice().sort((x,y)=>y[1][i]-x[1][i])[0];return{pts:top(3),reb:top(6),ast:top(7),pdk:all.slice().sort((x,y)=>y[1][19]-x[1][19])[0]}}
-function vTV(){return`<button class="gback" id="tvback">‹ Entertainment</button>`+vTV0()}
+function vTV(){const h=vTV0(),dentro=(TVS.g&&TVD().box[TVS.g])||TVS.dr;/* dentro una partita/sfida resta solo "‹ Partite del…" */
+  return(dentro?"":`<button class="gback" id="tvback">‹ Entertainment</button>`)+h}
 function tvWeekPos(){const w=document.getElementById("tvweek");if(!w)return;
   if(TVS.wd===TVS.d&&TVS.wl!=null)w.scrollLeft=TVS.wl;else{const b=w.querySelector('[aria-pressed="true"]');if(b)w.scrollLeft=b.offsetLeft-(w.clientWidth-b.offsetWidth)/2;TVS.wd=TVS.d}
   TVS.wl=w.scrollLeft;w.addEventListener("scroll",()=>{TVS.wl=w.scrollLeft;TVS.wd=TVS.d},{passive:true})}
