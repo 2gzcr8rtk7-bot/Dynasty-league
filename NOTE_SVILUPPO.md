@@ -483,3 +483,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (95) Dreamers in Dynasty TV: loghi senza sfondo (come quelli NBA). Toccando una sfida si apre il suo "box score" dentro Dynasty TV (TVS.dr = "turno|squadraA|squadraB", tvDrGame): punteggio in alto, tab delle due squadre, tabella In campo (capitano C ×1,5 + 5 a punteggio pieno), Panchina · vale ½ (ultimi 4 dei 10), eventuali posti vuoti, Tribuna, In attesa; colonne PDK (riquadro colorato), Molt., Punti; riga Punteggio squadra; tasto "Apri in Dreamers ›". Classe .drmo (NON .drm, già usata dalle card di Dreamers).
 
 (96) Dynasty TV: dentro una partita o una sfida Dreamers non c'è più "‹ Entertainment"; resta solo "‹ Partite del …" a sinistra (vTV).
+
+(97) Dreamers, correzione: i moltiplicatori sono a posti fissi (1° capitano ×1,5, 2°-6° pieno, 7°-10° metà). Prima "metà" toccava agli ultimi 4 di chi aveva già giocato, quindi a settimana in corso con meno di 10 giocatori finivano a metà giocatori che dovevano essere a punteggio pieno.

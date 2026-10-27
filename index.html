@@ -4376,7 +4376,8 @@ function drTeam(k,t,W){W=W||drWeek(k);const F=drForm(k)[t]||{t:[],r:[]};
      Si aggiorna a ogni report; a turno chiuso, se meno di 10 hanno giocato, i posti mancanti valgono 0. */
   const pool=[...F.t,...F.r].map(n=>({n,e:drEff(W.acc[n]),a:W.acc[n]}));
   const vs=pool.filter(x=>x.e!=null).sort((a,b)=>b.e-a.e),top=vs.slice(0,10),trib=vs.slice(10),wait=pool.filter(x=>x.e==null);
-  top.forEach((x,i)=>{x.m=i===0?1.5:(top.length>1&&i>=Math.max(1,top.length-4))?.5:1;x.cap=i===0;x.half=x.m===.5;x.f=x.e*x.m});
+  /* posti fissi: 1° capitano ×1,5, dal 2° al 6° punteggio pieno, dal 7° al 10° metà (anche a settimana in corso con meno di 10 giocatori) */
+  top.forEach((x,i)=>{x.m=i===0?1.5:i>=6?.5:1;x.cap=i===0;x.half=x.m===.5;x.f=x.e*x.m});
   const zeros=W.closed?Math.max(0,10-top.length):0;
   const score=top.length?(W.closed?top.reduce((a,x)=>a+x.f,0)/10:top.reduce((a,x)=>a+x.f,0)/top.length):(W.closed?0:null);
   return{t,slots:top,top,trib,wait,zeros,res:F.r,score,played:top.length}}
