@@ -2358,6 +2358,7 @@ const NBA_KIT={
 };
 /* 5ª maglia "Anni 90": maglie storiche; le squadre non ancora fatte vestono la maglia bianca NBA_BIANCA */
 const NBA_KIT_90={
+ CLE:{bg:"#b02a2c",fg:"#ffffff",jstroke:"#d4b066",jsw:2.4,trim:"#1f2a5c",tstr:[["#d4b066",3]],p2:"#d4b066",d:"cle"},
  CHI:{bg:"#141414",fg:"#ce1126",jstroke:"#ffffff",jsw:2.6,outer:"#141414",trim:"#ce1126",tstr:[["#ffffff",3],["#141414",1.2]],pc:"#ce1126",ps:7.5,p2:"#ce1126",d:"pins"},
  HOU:{bg:"#1f2540",fg:"#ffffff",jstroke:"#c0282c",jsw:2.4,ns:"#c0282c",trim:"#c0282c",tline:"#ffffff",tlw:2.2,p2:"#ffffff",d:"houc"},
  MIL:{bg:"#1c1d1c",fg:"#eee1c6",jstroke:"#2e6b3f",nf:"#eee1c6",ns:"#141414",trim:"#1c1d1c",tline:"#e8d9a8",tlw:1.4,p2:"#e8d9a8",d:"milb"},
@@ -2385,6 +2386,7 @@ function nbaDeco(c){const sd=`<path d="M0 44 L14 48 L17 146 L0 146Z M120 44 L106
    case"pins":{let d="";for(let x=c.ps/2;x<120;x+=c.ps)d+=`M${x.toFixed(1)} 0V146`;return`<path d="${d}" stroke="${c.pc}" stroke-width=".85"/>`}
    case"det":return`<path d="M0 40H15V146H0Z M120 40H105V146H120Z" fill="#141414"/><path d="M15.8 44V146 M104.2 44V146" stroke="#e6a422" stroke-width="1.3"/><path d="M17.3 44V146 M102.7 44V146" stroke="#b52a1c" stroke-width="1.1"/>`;
    case"milb":return[[63,3,"#3a66d6"],[67.8,3.8,"#2e6b3f"],[71.6,4.1,"#f0f0ea"],[75.7,4.1,"#e8d9a8"],[79.8,5.4,"#2e6b3f"]].map(([y,h,col])=>`<rect y="${y}" width="120" height="${h}" fill="${col}"/>`).join("");
+   case"cle":return`<path d="M0 40H13V146H0Z M120 40H107V146H120Z" fill="#d4b066"/><path d="M15.8 44V146 M19.6 44V146 M104.2 44V146 M100.4 44V146" stroke="#ffffff" stroke-width="1.5"/>`;
    case"pind":{let d="";for(let x=5;x<120;x+=8)d+=`M${x} 0V146`;return`<path d="${d}" stroke="#000" stroke-opacity=".13" stroke-width="1.4"/><path d="M7 50 L9 146 M113 50 L111 146" stroke="${c.trim}" stroke-width="2" fill="none"/>`}
    case"pin":{let d="";for(let x=4;x<120;x+=7)d+=`M${x} 0V146`;return`<path d="${d}" stroke="#ffffff" stroke-opacity=".38" stroke-width="1.1"/>`}
    case"was":return`<rect y="64" width="120" height="40" fill="#ffffff"/><rect y="104" width="120" height="42" fill="#e31837"/><path d="M0 69H120M0 99H120" stroke="#e31837" stroke-width="2.4"/>`;
