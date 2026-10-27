@@ -620,3 +620,4 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 
 (159) 27/10/2026 (Claude, account del secondo utente) — Pagina squadra: maglie IN CAMPO +10% (64×77, regola .court .cpl.dr .pj); cartellini PDK, targhette e maglie di 6° uomo/panchina invariati. IN CODA sul branch `coda`.
     Poi (stesso giorno): PROPORZIONI STILE DUNKEST su campo, 6° uomo e panchina: maglie 64×77 ovunque, targhetta e cartellino larghi uguali (112px) e attaccati come un unico blocco (targhetta sopra, cartellino colorato sotto), maglia che entra un po' dietro la targhetta; posizioni in campo C 33/67, A 21/79, G 33/67 e righe 26,2 / 54,6 / 83,2% (solo formazione Dreamers). Blocco CSS "PROPORZIONI STILE DUNKEST". IN CODA.
+    Poi: tolte le scritte piccole sotto i numeri dei cartellini (né "PDK", né il calcolo ×1,5 / ×½, né "partite ›"): resta solo il numero (o "In attesa"). IN CODA.

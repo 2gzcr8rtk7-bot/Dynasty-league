@@ -4023,9 +4023,9 @@ function campoNotteMap(t){const d=campoNotte(),o={};if(!d)return o;const mine={}
 let CAMPO_DR=null;
 const drSur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
 function drPcd(x,cl){if(!x)return`<span class="pcd na"><b>Posto vuoto</b></span>`;
-  if(x.e==null)return`<span class="pcd na" data-drwk="${x.n}" role="button" tabindex="0"><b>In attesa</b><small>partite ›</small></span>`;
+  if(x.e==null)return`<span class="pcd na" data-drwk="${x.n}" role="button" tabindex="0"><b>In attesa</b></span>`;
   const big=cl==="cap"||cl==="half"?x.f:x.e,sub=cl==="cap"?`${pdkF(x.e)} ×1,5`:cl==="half"?`${pdkF(x.e)} ×½`:"PDK";
-  return`<span class="pcd ${pdkLvl(x.e)}${cl==="cap"?" cap":""}" data-drwk="${x.n}" role="button" tabindex="0"><b>${pdkF(big)}</b><small>${sub} ›</small></span>`}
+  return`<span class="pcd ${pdkLvl(x.e)}${cl==="cap"?" cap":""}" data-drwk="${x.n}" role="button" tabindex="0"><b>${pdkF(big)}</b></span>`}/* solo il numero: niente "PDK" né calcolo sotto (27/10/2026) */
 function drGioc(t,x,cl){if(!x)return`<span class="pj"></span><span class="pnm">—</span>${drPcd(null)}`;
   const p=(ROSTER[t]||[]).find(y=>y[0]===x.n)||[x.n,"",ruoloDi(x.n),""],r=p[2],sn=drSur(x.n);
   return`<span class="pj">${jersey(t,p[1],x.n)}${cl==="cap"?'<i class="pjc" title="Capitano ×1,5">C</i>':""}</span><span class="pnm ${r}"${sn.length>=10?' style="font-size:10px"':""}><i>${({G:"G",F:"A",C:"C"})[r]||""}</i>${sn}</span>${drPcd(x,cl)}`}
