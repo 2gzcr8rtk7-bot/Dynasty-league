@@ -572,3 +572,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 
 (140) 27/10/2026 — Modalità notte più scura: velo rgba(6,2,18,k) davanti agli sfondi viola (body, header, #main, riquadri loghi, ricerca, tasti menu non selezionati). Home = livello 1 (k .30); tutte le altre sezioni = livello 3 (k .68). Tab selezionato e Dreamers a schermo intero invariati. È un blocco CSS a parte ("(140) MODALITÀ NOTTE più scura"): l'utente lo prova e, se non va bene, per la Home si torna a quella di prima togliendo le regole [data-v=home].
     Aggiornato: la parte alta (header + menu, fino alla linea viola) resta al livello 1 in tutte le schermate; il livello 3 vale solo sotto la linea viola, fuori dalla Home.
+
+(141) 27/10/2026 — Dreamers/G-Dreamers, scheda Turno: colore dei punteggi delle sfide. Turno in corso: chi è avanti verde, chi è dietro rosso (parità o punteggio assente: colore normale). A fine turno (W.closed): vincitore giallo/oro, sconfitto bianco. Classi .slead/.strail/.sgold/.slost sulle righe .drr (solo lista .drms; le card Dreamers dentro Dynasty TV non cambiano).

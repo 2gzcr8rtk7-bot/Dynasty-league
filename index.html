@@ -1817,6 +1817,12 @@ html body.notte[data-v=home] nav button:not([aria-selected="true"]){background-i
 html body.notte:not([data-v=home]) nav button:not([aria-selected="true"]){background-image:linear-gradient(rgba(6,2,18,0.3),rgba(6,2,18,0.3))!important}
 html body.notte[data-v=home] #main .hsrch.hsrch{background-image:linear-gradient(rgba(6,2,18,0.3),rgba(6,2,18,0.3))!important}
 html.notte:not(.dreamfs){background-color:#0d0620}
+</style><style>
+/* (141) Dreamers/G-Dreamers – Turno: colore dei punteggi. Turno in corso: chi è avanti verde, chi è dietro rosso (parità: neutro). A fine turno: vincitore giallo/oro, sconfitto bianco */
+.drms .drr.slead em{color:#4ade80!important;text-shadow:0 0 12px rgba(74,222,128,.55)!important}
+.drms .drr.strail em{color:#f87171!important;text-shadow:0 0 12px rgba(248,113,113,.45)!important}
+.drms .drr.sgold em{color:#fcd34d!important;text-shadow:0 0 14px rgba(251,191,36,.7)!important}
+.drms .drr.slost em{color:#fff!important;text-shadow:none!important}
 </style></head>
 
 <body>
@@ -4594,8 +4600,9 @@ function vDream(){fantaLiveAvvia();
     const sub=(a,b)=>{if(!PW)return"";const x=PW.pr.find(x=>x.a===a&&x.b===b),ix=P.R[PW.r].indexOf(x);let wa=0,wb=0;x.g.filter(g=>g.k<=k).forEach(g=>g.A>=g.B?wa++:wb++);
       return `<span class="drsub">${PW.r===2?["Finalissima","Finale 3° posto","Finale 5° posto","Finale 7° posto"][ix]:PW.r===1?(ix<2?"Semifinale "+(ix+1):"Piazzamenti 5°–8° · "+(ix-1)):"Quarto "+(ix+1)} · gara ${PW.g} · serie ${wa}–${wb}</span>`};
     const card=([a,b])=>{const A=drTeam(k,a,W),B=drTeam(k,b,W),wa=W.closed&&A.score>=B.score,wb=W.closed&&B.score>A.score;
-      const row=(T,w)=>`<div class="drr tint ${w?"w":""}" style="--tc:${TEAMS[T.t].bg}">${drLg(T.t)}<span class="drn"><b>${TEAMS[T.t].name}</b><small>${W.closed?(T.zeros?`${10-T.zeros}/10 · ${T.zeros} a zero`:"10/10"):T.played+"/10 titolari finora"}</small></span><em>${drScore(T.score)}</em></div>`;
-      return `<button class="drm" data-dr="open" data-a="${a}" data-b="${b}">${sub(a,b)}${row(A,wa)}${row(B,wb)}<span class="drst ${W.closed?"":"live"}">${W.closed?"Finale":W.started?"In corso":"Da giocare"}</span></button>`};
+      const sc=(T,O)=>T.score==null||O.score==null?"":W.closed?(T.score>=O.score?"sgold":"slost"):W.started&&T.score!==O.score?(T.score>O.score?"slead":"strail"):"";
+      const row=(T,w,O)=>`<div class="drr tint ${w?"w":""} ${sc(T,O)}" style="--tc:${TEAMS[T.t].bg}">${drLg(T.t)}<span class="drn"><b>${TEAMS[T.t].name}</b><small>${W.closed?(T.zeros?`${10-T.zeros}/10 · ${T.zeros} a zero`:"10/10"):T.played+"/10 titolari finora"}</small></span><em>${drScore(T.score)}</em></div>`;
+      return `<button class="drm" data-dr="open" data-a="${a}" data-b="${b}">${sub(a,b)}${row(A,wa,B)}${row(B,wb,A)}<span class="drst ${W.closed?"":"live"}">${W.closed?"Finale":W.started?"In corso":"Da giocare"}</span></button>`};
     body=`<div class="drnav"><button data-dr="wk" data-d="-1" ${k<=1?"disabled":""}>‹</button><div><b>${DR_PH(k,P)}</b><small>${drFmt(W.start)} – ${drFmt(W.end)} · ${W.nights}/7 notti</small></div><button data-dr="wk" data-d="1" ${k>=MAXK?"disabled":""}>›</button></div>
     ${pr.length?`<div class="drms">${pr.map(card).join("")}</div>`:`<div class="cempty">${k>DR_REG?"Settimana di playoff: si gioca solo se servono altre gare. Gli accoppiamenti si conoscono quando finisce la settimana precedente.":"Gli accoppiamenti si conoscono quando finisce il turno precedente."}</div>`}`}
   else if(DR.tab==="cal"){const rows=[];for(let i=1;i<=MAXK;i++){const w=drWeek(i),pr=drPairs(i,st,P),pw=P.W[i];
