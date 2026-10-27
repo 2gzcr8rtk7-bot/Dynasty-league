@@ -477,3 +477,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 - Dreamers: drNotti() (ufficiali = DREAM_DATA + EFF.agg).
 - G-Dreamers: gdData() (ufficiali = GL_STATS; GD_LASTOFF = ultima notte ufficiale; D.prov = notti provvisorie).
 - NUOVO FANTA NBA: chiamare fantaLiveAvvia() nella vista, aggiungere {attivo,da} a FANTA_LIVE, e per le notti fantaLiveNotti(giorno dopo l'ultima ufficiale) leggere fantaLiveNotte(d)[tvNm(nome)].
+
+(94) Dynasty TV, in fondo al giorno: sezione "Dreamers" (tvDreamers) con le 4 sfide del turno che contiene quella data, con la grafica delle partite NBA (.tvg + .drtvg viola): punteggi di Dreamers (ufficiali + live provvisorio), stato Finale/Live/In corso/Da giocare, capitani con PDK. Tocca una sfida → apre Dreamers su quel turno e quella sfida. Con Dynasty TV aperta anche FANTA_LIVE scarica le notti mancanti per i fanta.
