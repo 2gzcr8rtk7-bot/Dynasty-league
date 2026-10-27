@@ -1802,12 +1802,13 @@ body.notte nav button{background:rgba(30,20,70,.65)!important;border-color:rgba(
 body.notte nav button[aria-selected="true"]{background:linear-gradient(180deg,#a855f7,#6d28d9)!important;color:#fff;box-shadow:0 4px 14px rgba(168,85,247,.5)}
 </style><style>body.notte[data-v=home] #main{position:relative}body.notte[data-v=home] #main::before{content:"";position:absolute;inset:0;background-image:radial-gradient(1.4px 1.4px at 12% 18%,#fff,transparent),radial-gradient(1px 1px at 72% 8%,#fff,transparent),radial-gradient(1.2px 1.2px at 45% 30%,#e9d5ff,transparent),radial-gradient(1px 1px at 88% 40%,#fff,transparent),radial-gradient(1.3px 1.3px at 30% 62%,#c4b5fd,transparent),radial-gradient(1px 1px at 60% 80%,#fff,transparent),radial-gradient(1.1px 1.1px at 8% 90%,#e9d5ff,transparent),radial-gradient(1.2px 1.2px at 94% 70%,#fff,transparent);opacity:.6;pointer-events:none;z-index:0}body.notte[data-v=home] #main>*{position:relative;z-index:1}</style><style>
 /* MODALITÀ NOTTE v4 (27/10): viola scuro e UN UNICO cielo stile Dreamers dalla barra di stato dell'iPhone fino in fondo (strato fisso html::before; fascia di stato e header usano lo stesso cielo allineato al viewport → niente stacchi né linee); loghi liberi senza riquadri */
+/* (137) header/menu come la versione precedente (sfumatura più chiara + linea viola di stacco); l'header sale fino sotto l'orario dell'iPhone, così la barra di stato ha lo stesso colore dell'header */
+html.notte:not(.dreamfs){padding-top:0!important}
+body.notte:not(.dreamfs)::before{display:none!important}
+body.notte:not(.dreamfs) header{top:0!important;padding-top:env(safe-area-inset-top,0px)!important}
 html.notte{background:#160b30}
 html.notte::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(6,2,18,.54),rgba(6,2,18,.54)),radial-gradient(ellipse at 20% 0%,rgba(168,85,247,.55),transparent 55%),radial-gradient(ellipse at 90% 10%,rgba(59,130,246,.35),transparent 50%),linear-gradient(180deg,#2a1260,#0c0820 75%);background-size:100vw 100vh;pointer-events:none}
 body.notte{background:transparent!important}
-body.notte::before{background:linear-gradient(rgba(6,2,18,.54),rgba(6,2,18,.54)),radial-gradient(ellipse at 20% 0%,rgba(168,85,247,.55),transparent 55%),radial-gradient(ellipse at 90% 10%,rgba(59,130,246,.35),transparent 50%),linear-gradient(180deg,#2a1260,#0c0820 75%)!important;background-size:100vw 100vh!important;background-position:0 0!important}
-body.notte header{background:linear-gradient(rgba(6,2,18,.54),rgba(6,2,18,.54)),radial-gradient(ellipse at 20% 0%,rgba(168,85,247,.55),transparent 55%),radial-gradient(ellipse at 90% 10%,rgba(59,130,246,.35),transparent 50%),linear-gradient(180deg,#2a1260,#0c0820 75%)!important;background-size:100vw 100vh!important;background-position:0 calc(-1 * env(safe-area-inset-top,0px))!important;border-bottom:0!important;box-shadow:none!important}
-body.notte header::after{border:0!important}
 body.notte #main,body.notte[data-v=home] #main{background:none!important}
 body.notte nav button{background:rgba(20,12,48,.55)!important;border-color:rgba(196,181,253,.18)!important}
 body.notte nav button[aria-selected="true"]{background:linear-gradient(180deg,#a855f7,#6d28d9)!important;color:#fff;box-shadow:0 4px 14px rgba(168,85,247,.45)}
