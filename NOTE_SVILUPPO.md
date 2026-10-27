@@ -533,3 +533,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (120) Modalità notte Ducks (scelta definitiva 27/10): restano gialli (banner, bordo campo); maglie con base nera e lo stesso disegno originale a zig-zag ma in giallo (DECO DUC ora usa c.trim al posto del nero fisso; in modalità normale trim resta nero, quindi invariato). Tolto l'argento.
 
 (121) Entertainment: la Sfida della notte è passata nell'Arcade (a:1; dalla sfida "‹ Arcade"); il tasto Dynasty TV è grande (.tvbig), rosso pieno, icona telecamera e pastiglia "● LIVE" (pallino lampeggiante quando ci sono partite in corso, come il pallino del menu).
+
+(122) Tasto Dynasty TV in Entertainment rifatto nello stile delle card Dreamers (.gmc .tvgmc, rosso smorzato #c2414b, riquadro inclinato con telecamera, pastiglia LIVE).
