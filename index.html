@@ -4627,7 +4627,7 @@ function ntShare(btn){
      A turno chiuso, ogni titolare senza minuti è sostituito dalla miglior riserva (per valore) che ha giocato; se non ce ne sono, 0.
      Durante il turno il punteggio è "in corso": somma dei titolari che hanno già giocato.
    - Dati: DREAM_DATA in dreamers-data.js (generato da tools/dreamers.mjs) + la notte dell'ultimo report, presa dal vivo da EFF. */
-const DR_START="2026-10-26",DR_REG=15,DR_TOT=24,DR_FALLBACK=1600; // 15 turni di regular season + playoff (max 9 settimane: 3 turni al meglio delle 3)
+const DR_START="2026-10-26",DR_REG=14,DR_TOT=23,DR_FALLBACK=1600; // 14 turni di regular season (andata e ritorno: tutti si affrontano 2 volte) + playoff (max 9 settimane: 3 turni al meglio delle 3)
 const DRD=typeof DREAM_DATA!=="undefined"?DREAM_DATA:{notti:{},form:{}};
 const drIso=d=>d.toISOString().slice(0,10);
 const drAdd=(s,n)=>{const d=new Date(s+"T00:00:00Z");d.setUTCDate(d.getUTCDate()+n);return drIso(d)};
