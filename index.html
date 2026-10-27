@@ -1697,6 +1697,9 @@ nav button>span{white-space:nowrap}
 .glb{background-size:contain;background-position:center;background-repeat:no-repeat}
 .tvbox .tvob.glb{border-radius:0}
 .fagl .glb,.fagl .glwrap{vertical-align:middle}.faglb.glb{border-radius:0!important;background-color:transparent!important}
+</style><style>
+.drlive{display:flex;gap:8px;align-items:flex-start;margin:8px 0 10px;padding:8px 10px;border-radius:10px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);font-size:12px;color:#fde2e2;line-height:1.35}
+.drlive i{flex:none;width:8px;height:8px;margin-top:4px;border-radius:50%;background:#ef4444;animation:lvp 1.4s infinite}
 </style></head>
 <body>
 <header>
@@ -4304,10 +4307,36 @@ const drAdd=(s,n)=>{const d=new Date(s+"T00:00:00Z");d.setUTCDate(d.getUTCDate()
 const drNightOfAgg=a=>{const[g,m,y]=a.split("/").map(Number);return drIso(new Date(Date.UTC(y,m-1,g-1)))};
 const drWeekStart=k=>drAdd(DR_START,(k-1)*7);
 const drFmt=s=>{const[y,m,d]=s.split("-");return d+"/"+m};
-function drNotti(){ // notti salvate + ultima notte dal report attuale
+function drNotti(){ // notti salvate + ultima notte dal report attuale + notti LIVE provvisorie (ESPN) non ancora nel report
   const N={...DRD.notti};const n=drNightOfAgg(EFF.agg);
   if(n>=DR_START&&!N[n]){const o={};Object.values(EFF.gioc).forEach(a=>a.forEach(p=>{if(p[8]!=null)o[p[0]]=p[8]}));N[n]=o}
+  DR_PROV.clear();for(const d in DRL)if(d>=DR_START&&!N[d]&&Object.keys(DRL[d]).length){N[d]=DRL[d];DR_PROV.add(d)}
   return N}
+/* ===== DREAMERS LIVE: mentre Dreamers è aperto il telefono legge da ESPN i PDK delle notti che il report Dunkest non ha ancora
+   (dal giorno dopo l'ultima notte ufficiale fino a oggi, data USA), con la stessa formula Dunkest del live di Dynasty TV (esSide/tvPdk).
+   Sono PROVVISORI: appena arriva il report con quella notte, i dati Dunkest la sostituiscono da soli (drNotti usa prima quelli).
+   Nessun dato live viene salvato: l'archivio dreamers-data.js resta fatto solo dai report ufficiali. */
+const DRL={},DR_PROV=new Set(),DRL_FIN={};let DRL_T=null,DRL_RUN=false;
+function drOff(){const N={...DRD.notti},n=drNightOfAgg(EFF.agg);if(n>=DR_START)N[n]=1;return N}
+const drUsaOggi=()=>new Date().toLocaleDateString("en-CA",{timeZone:"America/New_York"});
+async function drLiveFetch(){if(DRL_RUN||typeof esSide!=="function")return false;DRL_RUN=true;let ch=false;
+  try{const off=drOff(),ks=Object.keys(off).sort(),last=ks[ks.length-1],oggi=drUsaOggi();
+    const nm={};Object.values(ROSTER).flat().forEach(p=>nm[tvNm(p[0])]=p[0]);
+    let d=last&&last>=DR_START?drAdd(last,1):DR_START;
+    for(let i=0;d<=oggi&&i<8;d=drAdd(d,1),i++){if(off[d]||DRL_FIN[d])continue;
+      const r=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates="+d.replace(/-/g,"")+"&t="+Date.now(),{cache:"no-store"});if(!r.ok)continue;const J=await r.json();
+      const o={...(DRL[d]||{})};let tutteFinite=(J.events||[]).length>0;
+      for(const ev of J.events||[]){const c=(ev.competitions||[])[0];if(!c||!c.competitors)continue;const ty=((ev.status||c.status||{}).type)||{};if(ty.state==="pre"||!ty.state){tutteFinite=false;continue}
+        const fin=ty.state==="post"||!!ty.completed;if(!fin)tutteFinite=false;
+        try{const b=await fetch(`https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${ev.id}&t=`+Date.now(),{cache:"no-store"});if(!b.ok)continue;const B=await b.json(),P=(B.boxscore&&B.boxscore.players)||[];
+          const Hc=c.competitors.find(x=>x.homeAway==="home"),Ac=c.competitors.find(x=>x.homeAway==="away");if(!Hc||!Ac)continue;const hs=+Hc.score||0,as=+Ac.score||0,hab=esAb(Hc.team.abbreviation);
+          for(const T of P){const win=fin&&(esAb(T.team.abbreviation)===hab?hs>as:as>hs);
+            for(const row of esSide(T,win)){const k=nm[tvNm(row[0])];if(k)o[k]=row[19]}}}catch(e){}}
+      if(JSON.stringify(o)!==JSON.stringify(DRL[d]||{})){DRL[d]=o;ch=true}if(tutteFinite)DRL_FIN[d]=1}}catch(e){}
+  DRL_RUN=false;return ch}
+function drLiveStart(){const go=()=>{if(cur!=="giochi"||GAME!=="dream"||document.hidden)return;drLiveFetch().then(c=>{if(c&&cur==="giochi"&&GAME==="dream"){const y=scrollY;render();scrollTo(0,y)}})};
+  if(!DRL_T){DRL_T=setInterval(go,60000);setTimeout(go,0)}}
+
 const drLast=()=>{const k=Object.keys(drNotti()).sort();return k[k.length-1]||null};
 function drCurWeek(P){const l=drLast(),today=drIso(new Date()),ref=l&&l>today?l:today;const k=Math.floor((Date.parse(ref)-Date.parse(DR_START))/864e5/7)+1;return Math.max(1,Math.min(P?P.end:DR_TOT,k))}
 function drForm(k){if(DRD.form[k])return DRD.form[k];
@@ -4356,7 +4385,7 @@ const drLg=(t,z)=>`<span class="drlg ${z||""}" style="--tc:${TEAMS[t].bg}">${bad
 const DR_PH=(k,P)=>{if(k<=DR_REG)return `Turno ${k}`;const w=P&&P.W[k];return w?`${DR_RN[w.r]} · gara ${w.g}`:"Playoff · da definire"};
 let DR={tab:"turno",k:null,open:null};
 function drScore(v){return v==null?"—":pdkF(v)}
-function vDream(){
+function vDream(){drLiveStart();
   const st=drStand(),P=drPO(st),MAXK=P.end;
   if(DR.k==null)DR.k=drCurWeek(P);DR.k=Math.min(DR.k,MAXK);
   const k=DR.k,W=drWeek(k),PW=P.W[k];
@@ -4412,7 +4441,7 @@ function vDream(){
     <h4 class="drplh">Classifica finale</h4>
     <div class="drfinal">${Array.from({length:8},(_,i)=>{const t=P.fin[i];return `<div class="drfr ${t?"tint":""} ${i===0&&t?"gold":""}" style="${t?"--tc:"+TEAMS[t].bg:""}"><span class="drpos">${i+1}</span>${t?`<span class="bklg" style="--tc:${TEAMS[t].bg}">${badge(t)}</span><b>${TEAMS[t].name}</b>`:`<em>da decidere</em>`}</div>`}).join("")}</div>`}
   return `<div class="drroom"><button class="drexit" data-game="menu">‹ Torna all'app</button><div class="drhd"><span class="drlogo">DREAMERS</span><small>Fanta PDK · stagione ${STAGIONE_CORRENTE}</small></div>
-  <div class="drtabs">${tabs}</div>${body}</div>
+  <div class="drtabs">${tabs}</div>${(()=>{const pv=[...DR_PROV].filter(d=>d>=W.start&&d<=W.end).sort();return pv.length?`<div class="drlive"><i></i><span><b>Live</b> · ${pv.length===1?"notte":"notti"} ${pv.map(drFmt).join(", ")}: PDK provvisori (ESPN, formula Dunkest). Si sostituiscono da soli con i dati ufficiali Dunkest quando arriva il report.</span></div>`:""})()}${body}</div>
   <p class="note">Meritocrazia: ogni settimana i 10 giocatori della rosa con il PDK medio più alto diventano titolari, gli altri vanno in tribuna. Punteggio = media dei 10 PDK settimanali (media dei punti Dunkest delle partite della settimana); il migliore è capitano ×1,5 e i 4 peggiori valgono la metà (provvisori durante la settimana, definitivi a turno chiuso). Dati aggiornati al ${EFF.agg}.</p>`}
 function drAct(b){const d=b.dataset;
   if(d.dr==="tab"){DR.tab=d.k;DR.open=null}
