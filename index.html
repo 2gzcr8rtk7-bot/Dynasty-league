@@ -4369,7 +4369,7 @@ function fantaLiveNotte(d){const o={};if(typeof TV==="undefined")return o;
     [["a",g[1]],["h",g[0]]].forEach(([sd,opp])=>(B[sd]||[]).forEach(r=>{if(r[19]==null)return;const mm=String(r[2]||"0").split(":");o[tvNm(r[0])]={p:+r[19],min:(+mm[0]||0)+(+mm[1]||0)/60,opp,nm:r[0],prov:!!B.live}}))}
   return o}
 const FANTA_LIVE=[
-  {attivo:()=>cur==="campo",da:()=>campoNotte()||flUsaOggi()},
+  {attivo:()=>cur==="campo",da:()=>drAdd(flUsaOggi(),-1)},/* ieri + oggi (data USA): dopo mezzanotte ET la notte in corso è "ieri" */
   {attivo:()=>cur==="giochi"&&GAME==="dream",da:()=>{const N={...DRD.notti},n=drNightOfAgg(EFF.agg);if(n>=DR_START)N[n]=1;const k=Object.keys(N).sort(),l=k[k.length-1];return l&&l>=DR_START?drAdd(l,1):DR_START}},
   {attivo:()=>cur==="tv",da:()=>FANTA_LIVE[0].da()},
   {attivo:()=>cur==="giochi"&&GAME==="gdream",da:()=>{if(GD_LASTOFF==null)try{gdData()}catch(e){}return GD_LASTOFF?drAdd(GD_LASTOFF,1):GD_START}}];
@@ -4379,7 +4379,8 @@ async function fantaLiveScarica(da){if(FL.run||typeof tvEspn!=="function"||typeo
   FL.run=false;return ch}
 function fantaLiveAvvia(){const go=()=>{if(document.hidden)return;const A=FANTA_LIVE.filter(f=>{try{return f.attivo()}catch(e){return false}});if(!A.length)return;
     const da=A.map(f=>f.da()).sort()[0];fantaLiveScarica(da).then(c=>{if(c&&A.some(f=>f.attivo())){const y=scrollY;render();scrollTo(0,y)}})};
-  if(!FL.t){FL.t=setInterval(go,60000);setTimeout(go,0)}}
+  /* subito alla prima apertura di ogni fanta/sezione (non aspettare il giro da 60 s), poi ogni 45 s */
+  if(!FL.t){FL.t=setInterval(go,45000)}if(Date.now()-(FL.ult||0)>15000){FL.ult=Date.now();setTimeout(go,0)}}
 
 
 const drLast=()=>{const k=Object.keys(drNotti()).sort();return k[k.length-1]||null};
