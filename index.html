@@ -1748,7 +1748,19 @@ nav button>span{white-space:nowrap}
 .duw.dun0 b{color:#7f79a8}
 .duw.dug i{color:rgba(0,0,0,.55)}.duw.dug b{color:#111}.duw.dug.r{background:#ef4444}.duw.dug.y{background:#f5b400}.duw.dug.g{background:#22c55e}.duw.dug.v{background:#8b5cf6}.duw.dug.r b,.duw.dug.v b{color:#fff}.duw.dug.r i,.duw.dug.v i{color:rgba(255,255,255,.7)}
 .duf{font-size:9.5px;color:#8f89b5}
-</style><style>.clwrap{margin-top:34px}</style></head>
+</style><style>.clwrap{margin-top:34px}</style><style>
+/* Campo · modalità notte */
+.cntbtn{margin-left:auto;flex:none;position:relative;display:inline-grid;place-items:center;width:38px;height:28px;border-radius:9px;border:1px solid rgba(255,255,255,.18);background:#141b36;color:#c9d2f5;cursor:pointer;padding:0}
+.cntbtn svg{width:15px;height:15px}.cntbtn i{position:absolute;top:4px;right:5px;width:6px;height:6px;border-radius:50%;background:#ef4444;opacity:.5}
+.cntbtn.on{background:linear-gradient(180deg,#3b2a8a,#1b1240);border-color:#8b5cf6;color:#fff;box-shadow:0 0 12px rgba(139,92,246,.6)}.cntbtn.on i{opacity:1;animation:lvp 1.4s infinite}
+.court.cdark{position:relative}
+.court.cdark .cbg{filter:brightness(.38) saturate(1.25) contrast(1.1)}
+.court.cdark::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 50% 35%,color-mix(in srgb,var(--tc) 38%,transparent),transparent 70%),linear-gradient(180deg,rgba(6,8,24,.15),rgba(6,8,24,.45))}
+.court.cdark .cpl{z-index:1}.court.cdark .cnm{background:#000!important;box-shadow:0 0 0 1px color-mix(in srgb,var(--tc) 70%,transparent)}
+.bench.cdark{background:#060915;border-color:color-mix(in srgb,var(--tc) 35%,#1b2340)}
+.bench.cdark .bpl{background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 14%,#070a18),#070a18 60%);border-color:#141a33;box-shadow:inset 3px 0 0 color-mix(in srgb,var(--tc) 80%,transparent)}
+.bench.cdark .bev small{color:#9aa3c7}
+</style></head>
 
 <body>
 <header>
@@ -3680,9 +3692,18 @@ function campoLive(t){const d=campoNotte();if(!d)return`${H("Live stanotte",`<em
   ${R.length?`<div class="tbl-wrap"><table class="ptbl tvbox drbox clbox"><thead><tr><th>Giocatore</th><th class="pdkl">PDK</th><th>Min</th><th>Pt</th><th>Rim</th><th>Ass</th></tr></thead>
   <tbody>${R.map(row).join("")}<tr class="tot"><td>Totale notte</td><td class="pdkl">${pdkF(tot)}</td><td></td><td></td><td></td><td></td></tr></tbody></table></div>`:`<p class="note">Stanotte nessun giocatore di questa squadra è ancora sceso in campo.</p>`}
   <p class="note">Solo dati di Dynasty TV della notte (data USA), aggiornati in automatico mentre i giocatori sono in campo; PDK con la formula Dunkest, provvisori fino al report ufficiale. Alla prima partita della notte successiva il box si azzera.</p>`}
+let CNT=false;
+function campoNotteMap(t){const d=campoNotte(),o={};if(!d)return o;const mine={};(ROSTER[t]||[]).forEach(p=>mine[tvNm(p[0])]=p[0]);
+  for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
+    [["a",g[1]],["h",g[0]]].forEach(([sd,opp])=>(B[sd]||[]).forEach(r=>{const n=mine[tvNm(r[0])];if(n&&r[19]!=null)o[n]={p:+r[19],opp,lv:g[5]==="L",st:g[5]==="L"?(TVL.st[g[7]]||"Live"):"Finale"}}))}
+  return o}
 function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   const t=curTeam,c=TEAMS[t],st=standings().find(x=>x.t===t);
-  const {auto,q}=quintetto(t);const qs=new Set(q.map(p=>p[0]));
+  let {auto,q}=quintetto(t);let qs=new Set(q.map(p=>p[0]));
+  /* MODALITÀ NOTTE (CNT): punteggi della notte da Dynasty TV, meritocrazia: i 5 migliori in campo, gli altri in panchina in ordine (senza capitano) */
+  const NM=CNT?campoNotteMap(t):null,nv=n=>NM&&NM[n]?NM[n].p:null;
+  if(CNT){const R=(ROSTER[t]||[]).slice().sort((a,b)=>(nv(b[0])??-1e9)-(nv(a[0])??-1e9));q=R.filter(p=>nv(p[0])!=null).slice(0,5);qs=new Set(q.map(p=>p[0]))}
+  const pillN=n=>{const v=nv(n);return v==null?`<span class="cev na">—</span>`:pdkB(v,pdkF(v))};
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
   const pill=v=>v==null?`<span class="cev na">—</span>`:`<span class="cev ${lvl(v)}">${f2(v)}</span>`;
   const shade=(h,k)=>{const n=parseInt(h.slice(1),16);const f=v=>Math.round(v*(1-k)).toString(16).padStart(2,"0");return "#"+f(n>>16)+f(n>>8&255)+f(n&255)};
@@ -3710,18 +3731,18 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
     ${lg?(LOGO2[t]?`<image href="${lg}" x="40.91" y="1.33" width="18.18" height="13.55" preserveAspectRatio="xMidYMid meet"/>`:`<image href="${lg}" x="40.5" y=".3" width="19" height="15.4" preserveAspectRatio="xMidYMid meet"/>`):""}
     </svg>`;
   const ROWY={C:30.6,F:56.6,G:83.3},XS={G:[30,70],F:[19,81]};const pos={};["G","F","C"].forEach(r=>{const l=q.filter(p=>p[2]===r);l.forEach((p,i)=>pos[p[0]]=[l.length===2&&XS[r]?XS[r][i]:(i+1)/(l.length+1)*100,ROWY[r]])});
-  const onCourt=q.map((p,i)=>`<button class="cpl" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${jersey(t,p[1],p[0])}<span class="cnm"${(L=>L>=12?' style="font-size:9.5px"':L>=9?' style="font-size:10.5px"':"")(sur(p[0]).length)}>${sur(p[0])}</span>${pillP(pdkMed(p[0]))}</button>`).join("");
-  const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>(pdkMed(b[0])??-99)-(pdkMed(a[0])??-99));  /* panchina in ordine di efficienza media stagionale (stesso valore mostrato), si riordina a ogni aggiornamento */
+  const onCourt=q.map((p,i)=>`<button class="cpl" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${jersey(t,p[1],p[0])}<span class="cnm"${(L=>L>=12?' style="font-size:9.5px"':L>=9?' style="font-size:10.5px"':"")(sur(p[0]).length)}>${sur(p[0])}</span>${CNT?pillN(p[0]):pillP(pdkMed(p[0]))}</button>`).join("");
+  const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>CNT?(nv(b[0])??-1e9)-(nv(a[0])??-1e9):(pdkMed(b[0])??-99)-(pdkMed(a[0])??-99));  /* panchina in ordine di efficienza media stagionale (stesso valore mostrato), si riordina a ogni aggiornamento */
   return `<button class="gback" id="cback">‹ Home</button>
   <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.txt||c.fg};border-bottom:4px solid ${c.trim}">
    ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${LOGO[t]}" alt="">`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
   ${bacheca(t)}
   ${cassa(t)}
-  ${H("Quintetto",`<em>${auto?"Provvisorio · scelto per efficienza":"Titolari · per ruolo"}</em>`)}
-  <div class="court" style="border-color:${shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}</div>
+  ${H("Quintetto",`<em>${CNT?(()=>{const d=campoNotte();if(!d)return"Notte · nessuna partita";const dd=tvDt(d);return`Notte ${dd.getUTCDate()}/${dd.getUTCMonth()+1}`})():auto?"Provvisorio · scelto per efficienza":"Titolari · per ruolo"}</em><button class="cntbtn${CNT?" on":""}" id="cntbtn" aria-pressed="${CNT}" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`)}
+  <div class="court${CNT?" cdark":""}" style="--tc:${c.bg};border-color:${shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}</div>
   <div class="ctools"><button class="ctool" id="ccap"><span class="ci">C</span>Cap<small>Chi mettere capitano</small></button><button class="ctool" id="cmul"><span class="ci mul">€</span>Multe<small>Capitano senza multa</small></button></div>
-  ${H("Panchina")}
-  <div class="bench">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><span class="bev">${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}</span></button>`).join("")}</div>
+  ${H("Panchina",CNT?`<em>notte · per punteggio</em>`:"")}
+  <div class="bench${CNT?" cdark":""}" style="--tc:${c.bg}">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><span class="bev">${CNT?`${pillN(p[0])}<small>${NM[p[0]]?`${NM[p[0]].lv?"● ":""}vs ${NM[p[0]].opp} · ${NM[p[0]].st}`:"non ha giocato"}</small>`:`${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}`}</span></button>`).join("")}</div>
   <div class="crwrap"><button class="croster" id="croster">Roster completo ›</button>${t==="DUC"?`<button class="cpow" id="cpow" aria-label="Accesso riservato"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M7.1 6.3a8 8 0 1 0 9.8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>`:""}</div>
   <div class="clwrap">${campoLive(t)}</div>`;
 }
@@ -5024,6 +5045,7 @@ async function tvBoxes(d){if(typeof TV==="undefined"||!d||!TV.days[d])return fal
       TV.box[key]={a:tvLiveSide(B.awayTeam,aw),h:tvLiveSide(B.homeTeam,!aw),live:1,fin:1};G[7]=key;ch=true}catch(e){}}
   return ch}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&cur==="tv")tvLiveTick()});
+document.getElementById("main").addEventListener("click",e=>{if(cur==="campo"&&e.target.closest("#cntbtn")){e.preventDefault();CNT=!CNT;const y=scrollY;render();scrollTo(0,y)}});
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="tv")return;const T=TVD(),ks=Object.keys(T.days).sort();
   {const dv=e.target.closest("[data-drtv]");if(dv){TVS.dr=dv.dataset.drtv;TVS.drs="a";render();window.scrollTo(0,0);return}}
   {const go=e.target.closest("[data-drgo]");if(go){const[k,x,y]=go.dataset.drgo.split("|");TVS.dr=null;DR.k=+k;DR.tab="turno";DR.open=[x,y];GAME="dream";cur="giochi";render();window.scrollTo(0,0);return}}
