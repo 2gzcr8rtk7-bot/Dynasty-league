@@ -453,6 +453,10 @@ h2.lbmh>.cntbtn{justify-self:end;margin-left:0}
 .hrsec{display:flex;justify-content:space-between;margin:8px 4px 4px;font-family:var(--display);font-style:italic;font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.hrsec span{font-style:normal;opacity:.7}
 .hrglb{display:grid;place-items:center}.hrglb .hrglbg,.hrglb .badge{width:30px!important;height:30px!important}
 details.glp.glhit{animation:glhit 2.2s ease}@keyframes glhit{0%,40%{box-shadow:inset 0 0 0 2px #facc15;background:rgba(250,204,21,.12)}100%{box-shadow:none}}
+/* modalità notte con i blocchi giocatore */
+.dpan.notte{grid-template-columns:1fr}.dpan.notte .dpg{grid-template-columns:repeat(3,1fr)}
+.dpan.notte .dphalf{background:#070a18;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tc,#334) 35%,#1b2340)}
+.pcd{position:relative}.pcdlv{position:absolute;left:6px;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:#ff3b30;box-shadow:0 0 6px #ff3b30;animation:lbdp 1.1s ease-in-out infinite}
 /* foglio partite del turno */
 .dwsh{position:fixed;inset:0;z-index:9999;background:rgba(3,6,16,.6);display:flex;align-items:flex-end;justify-content:center;animation:dwin .18s ease}
 @keyframes dwin{from{opacity:0}to{opacity:1}}
@@ -4054,6 +4058,10 @@ function drTabellone(t,T,k,P){const W=T.W,btn=`<button class="cntbtn" id="cntbtn
   const sc=lum(C.bg)>=.33?C.bg:(lum(C.fg)>=.33&&lum(C.fg)<.95?C.fg:`color-mix(in srgb,${C.bg} 62%,#fff)`);
   const gioc=X=>`<span class="lbmg"><b>${X.played}/10</b><small>giocato</small></span>`;
   return`<h2 class="lbmh"><span class="lbmsp"></span><span class="lbm ${st}" style="--sc:${sc}"${o?` data-drgo="${k}|${pr[0]}|${pr[1]}" role="button" tabindex="0"`:""} aria-label="${TEAMS[t].nick} ${T.score==null?"in attesa":pdkF(T.score)}, ${T.played} su 10 hanno giocato${o?`, contro ${TEAMS[o].nick} ${O.score==null?"in attesa":pdkF(O.score)}, ${O.played} su 10 hanno giocato`:""}">${lg(t)}${gioc(T)}<span class="lbmn${lead==="b"?" dim":""}">${T.score==null?"—":pdkF(T.score)}</span>${o?`<span class="lbmx"></span><span class="lbmn${lead==="a"?" dim":""}">${O.score==null?"—":pdkF(O.score)}</span>${gioc(O)}${lg(o)}`:""}</span>${btn}</h2>`}
+/* modalità notte: stesso blocco giocatore (maglia + targhetta + cartellino) con il PDK della notte; pallino rosso = in campo ora */
+function drGiocN(t,p,m){const r=p[2],sn=drSur(p[0]),v=m?m.p:null;
+  const card=v==null?`<span class="pcd na"><b>${m?"—":"Non gioca"}</b></span>`:`<span class="pcd ${pdkLvl(v)}">${m.lv?'<i class="pcdlv" title="In campo ora"></i>':""}<b>${pdkF(v)}</b></span>`;
+  return`<span class="pj">${jersey(t,p[1],p[0])}</span><span class="pnm ${r}"${sn.length>=10?' style="font-size:10px"':""}><i>${({G:"G",F:"A",C:"C"})[r]||""}</i>${sn}</span>${card}`}
 function drPanca(t,T){const rp=n=>(ROSTER[t]||[]).find(p=>p[0]===n)||[n,"",ruoloDi(n),""];
   const card=(x,cl)=>x?`<button class="dpc ${cl}" data-pl="${x.n}">${drGioc(t,x,cl)}</button>`:`<div class="dpc ${cl}">${drGioc(t,null,cl)}</div>`;
   const tr=[...T.trib,...T.wait];
@@ -4116,13 +4124,13 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
     <g font-family="CourtBlock,Impact,Arial Narrow,sans-serif" font-weight="400" font-size="${afs}" letter-spacing=".5" fill="${atxt}" fill-opacity=".94" stroke="${astk}" stroke-width=".45" stroke-linejoin="round" paint-order="stroke"><text x="${lg?39:50}" y="${ay}" text-anchor="${lg?"end":"middle"}">${lg?c.city.toUpperCase():c.nick.toUpperCase()}</text>${lg?`<text x="61" y="${ay}" text-anchor="start">${c.nick.toUpperCase()}</text>`:""}</g><rect width="100" height="16" fill="url(#gloss)"/>
     ${lg?(LOGO2[t]?`<image href="${lg}" x="40.91" y="1.33" width="18.18" height="13.55" preserveAspectRatio="xMidYMid meet"/>`:`<image href="${lg}" x="40.5" y=".3" width="19" height="15.4" preserveAspectRatio="xMidYMid meet"/>`):""}
     </svg>`;
-  const ROWY=CNT?{C:30.6,F:56.6,G:83.3}:{C:26.2,F:54.6,G:83.2},/* formazione Dreamers: proporzioni stile Dunkest */XS=CNT?{C:[30,70],G:[30,70],F:[19,81]}:{C:[33,67],G:[33,67],F:[21,79]};const pos={};
+  const ROWY={C:26.2,F:54.6,G:83.2},/* proporzioni stile Dunkest, uguali in formazione Dreamers e in modalità notte */XS={C:[33,67],G:[33,67],F:[21,79]};const pos={};
   /* massimo 2 giocatori per fila: chi è in più va nella fila vicina meno piena (C↔F↔G), anche se non è il suo ruolo */
   const FILA={C:[],F:[],G:[]};q.forEach(p=>(FILA[p[2]]||FILA.F).push(p));const VIC={C:["F","G"],F:["C","G"],G:["F","C"]};
   for(let k=0;k<6;k++)for(const r of["C","F","G"])while(FILA[r].length>2){const dst=VIC[r].filter(x=>FILA[x].length<2).sort((x,y)=>FILA[x].length-FILA[y].length||VIC[r].indexOf(x)-VIC[r].indexOf(y))[0];if(!dst)break;
     const sc=p=>CNT&&NM&&NM[p[0]]?NM[p[0]].p:(pdkMed(p[0])??0);const L=FILA[r].slice().sort((x,y)=>sc(x)-sc(y));const m=L[0];FILA[r].splice(FILA[r].indexOf(m),1);FILA[dst].push(m)}
   ["G","F","C"].forEach(r=>{const l=FILA[r];l.forEach((p,i)=>pos[p[0]]=[l.length===2&&XS[r]?XS[r][i]:(i+1)/(l.length+1)*100,ROWY[r]])});
-  const onCourt=CNT?q.map((p,i)=>`<button class="cpl" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${jersey(t,p[1],p[0])}<span class="cnm"${(L=>L>=12?' style="font-size:9.5px"':L>=9?' style="font-size:10.5px"':"")(sur(p[0]).length)}>${sur(p[0])}</span><span class="cnrow">${NM[p[0]]&&NM[p[0]].lv?'<i class="cnlv" title="In campo ora"></i>':""}${pillN(p[0])}</span></button>`).join("")
+  const onCourt=CNT?q.map((p,i)=>`<button class="cpl dr" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${drGiocN(t,p,NM[p[0]])}</button>`).join("")
     :q.map((p,i)=>`<button class="cpl dr" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${drGioc(t,DX(p[0]),i===0?"cap":"full")}</button>`).join("");
   const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>CNT?(nv(b[0])??-1e9)-(nv(a[0])??-1e9):(pdkMed(b[0])??-99)-(pdkMed(a[0])??-99));  /* panchina in ordine di efficienza media stagionale (stesso valore mostrato), si riordina a ogni aggiornamento */
   return `<button class="gback" id="cback">‹ Home</button>
@@ -4132,8 +4140,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   ${cassa(t)}
   ${CNT?H(CNT?"Modalità notte":"Quintetto",`<em>${CNT?(()=>{const d=campoNotte();if(!d)return"nessuna partita";const dd=tvDt(d);return`${dd.getUTCDate()}/${dd.getUTCMonth()+1}`})():`Dreamers · ${DR_PH(DK,DP)}`}</em><button class="cntbtn${CNT?" on":""}" id="cntbtn" aria-pressed="${CNT}" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`):drTabellone(t,DT,DK,DP)}
   <div class="court${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg};border-color:${shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}${CNT&&!q.length?`<div class="cnone">Nessuno in campo stanotte</div>`:""}</div>
-  ${CNT?`${H("Panchina",`<em>notte · per punteggio</em>`)}
-  <div class="bench${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg}">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${RTR(p[0])}${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><span class="bev">${CNT?`<span class="cnrow">${NM[p[0]]&&NM[p[0]].lv?'<i class="cnlv" title="In campo ora"></i>':""}${pillN(p[0])}</span><small>${NM[p[0]]?`vs ${NM[p[0]].opp} · ${NM[p[0]].st}`:"non ha giocato"}</small>`:`${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}`}</span></button>`).join("")}</div>`:drPanca(t,DT)}
+  ${CNT?`<div class="dpan notte" style="--tc:${NOTTE_ACC(t)}"><div class="dphalf"><h5><small>Panchina · notte</small></h5><div class="dpg">${bench.map(p=>`<button class="dpc half" data-pl="${p[0]}">${drGiocN(t,p,NM[p[0]])}</button>`).join("")}</div></div></div>`:drPanca(t,DT)}
   ${CNT?"":`<div class="ctools"><button class="ctool" id="ccap"><span class="ci">C</span>Cap<small>Chi mettere capitano</small></button><button class="ctool" id="cmul"><span class="ci mul">€</span>Multe<small>Capitano senza multa</small></button></div>`}
   <div class="crwrap"><button class="croster" id="croster">Roster completo ›</button>${t==="DUC"?`<button class="cpow" id="cpow" aria-label="Accesso riservato"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M7.1 6.3a8 8 0 1 0 9.8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>`:""}</div>
   <div class="clwrap">${campoLive(t)}</div>`;
