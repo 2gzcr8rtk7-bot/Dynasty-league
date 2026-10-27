@@ -2945,7 +2945,7 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   <div class="trlist">${rows||`<p class="note">Prova a scegliere un periodo più lungo o una soglia più bassa.</p>`}</div>
   <p class="note">Trend = come per il Grafico: retta che passa meglio tra i punti del periodo (stagioni, mesi o settimane), variazione dal primo all'ultimo punto in % sulla media. Servono almeno 2 punti: con la stagione appena iniziata scegli un solo mese per avere le settimane.</p></div>${TRN.det?trDetail(TRN.det):""}`}
 function vGrafico(){const FAm=!!GR.fa;if(FAm&&typeof FAG==="undefined"){faLoadG();return`<button class="grback" data-grclose="1">‹ Indietro</button><p class="note">Caricamento delle partite…</p>`}
-  const fo=FAm?FA_OWN[GR.fa]:null;if(FAm)GR.t=fo||"FA";else if(!TEAMS[GR.t])GR.t=TEAMS[curTeam]?curTeam:Object.keys(TEAMS)[0];const t=GR.t,c=TEAMS[t]||{name:"Free Agent",nick:"FA",bg:"#2b3a67",fg:"#fff"};const glN=FAm?[]:glPlayers().filter(p=>p.t===t).map(p=>p.n),ros=FAm?[GR.fa]:[...(ROSTER[t]||[]).map(x=>x[0]),...glN];if(!GR.p||!ros.includes(GR.p))GR.p=ros[0];const isGL=glN.includes(GR.p);
+  const fo=FAm?FA_OWN[GR.fa]:null;if(FAm)GR.t=fo||"FA";else if(!TEAMS[GR.t])GR.t=TEAMS[curTeam]?curTeam:Object.keys(TEAMS)[0];const t=GR.t,c=TEAMS[t]||{name:"Free Agent",nick:"FA",bg:"#2b3a67",fg:"#fff"};const glN=FAm?[]:glPlayers().filter(p=>p.t===t&&p.n===GR.p).map(p=>p.n),/* G League: solo il giocatore aperto dal Trend, mai nel menu della squadra principale */ros=FAm?[GR.fa]:[...(ROSTER[t]||[]).map(x=>x[0]),...glN];if(!GR.p||!ros.includes(GR.p))GR.p=ros[0];const isGL=glN.includes(GR.p);
   /* livello automatico: Tutte → stagioni; stagione → mesi; mese → settimane; settimana → partite */
   /* intervallo di stagioni consecutive: Dalla stagione → Alla stagione (più stagioni = un punto per stagione) */
   const ORD=["2024/25","2025/26","2026/27"];if(GR.sz==="all"){GR.sz=ORD[0];GR.sz2=ORD[2]}if(!ORD.includes(GR.sz))GR.sz=ORD[2];if(!ORD.includes(GR.sz2)||ORD.indexOf(GR.sz2)<ORD.indexOf(GR.sz))GR.sz2=GR.sz;
@@ -3135,7 +3135,7 @@ function capDef(opp,role){if(!opp)return null;const RL={};Object.values(ROSTER).
   return{k,games:Math.min(k,dates.length),n:L.length,dl,pct:avg?dl/avg*100:0,rows:L}}
 const CAP_RUOLO={G:"le guardie",F:"le ali",C:"i centri"};
 const capDefLab=d=>!d||!d.n?["dati insufficienti","n"]:d.pct>=10?["difesa morbida","g"]:d.pct<=-10?["difesa dura","r"]:["difesa nella media","y"];
-function vCap(){const t=CAP.t||curTeam,c=TEAMS[t],R=[...(ROSTER[t]||[]),...glPlayers().filter(p=>p.t===t).map(p=>[p.n,"",p.r,p.nba,0,"G"])];if(CAP.t!==t)capLoad(t);
+function vCap(){const t=CAP.t||curTeam,c=TEAMS[t],R=[...(ROSTER[t]||[])];/* solo la squadra principale: la G League è un'altra squadra */if(CAP.t!==t)capLoad(t);
   const sel=Object.keys(CAP.sel).filter(n=>R.some(p=>p[0]===n));
   const D=sel.map(n=>{const d=capDati(n,CAP.sel[n]||null),p=R.find(x=>x[0]===n);d.role=p[2];d.def=capDef(d.opp,d.role);const w=d.def&&d.def.n?Math.min(1,d.def.n/6):0;d.att=d.idx==null?null:d.idx*(1+(d.def&&d.def.n?d.def.pct:0)/100*w*.6);return d});
   const ord=[...D].sort((a,b)=>(b.att??-1)-(a.att??-1)),top=ord.find(x=>x.att!=null&&x.opp);
@@ -3638,10 +3638,10 @@ function vCollege(){if(!COL.d){cur="campo";return vCampo()}COL.sec=COL.sec||"col
 /* ===== CAMPO: BOX SCORE LIVE DELLA NOTTE (solo dati di DYNASTY TV, non Dunkest) =====
    Notte = oggi (data USA) se almeno una partita è iniziata, altrimenti la notte prima: quando parte la prima partita
    di una nuova notte il box si azzera e mostra solo i giocatori di quella notte. Con il Campo aperto Dynasty TV si aggiorna
-   (FANTA_LIVE, ogni 60 s). Righe = giocatori della franchigia (anche G League) scesi in campo quella notte. */
+   (FANTA_LIVE, ogni 60 s). Righe = giocatori della squadra principale (NON la G League, che è un'altra squadra) scesi in campo quella notte. */
 function campoNotte(){if(typeof TV==="undefined")return null;const oggi=flUsaOggi(),ieri=drAdd(oggi,-1),on=d=>(TV.days[d]||[]).some(g=>g[5]==="L"||g[5]==="F");return on(oggi)?oggi:on(ieri)?ieri:null}
 function campoLive(t){const d=campoNotte();if(!d)return`${H("Live stanotte",`<em>dati Dynasty TV</em>`)}<p class="note">Nessuna partita NBA iniziata stanotte: il box score si riempie da solo appena i giocatori della squadra scendono in campo.</p>`;
-  const mine={};(ROSTER[t]||[]).forEach(p=>mine[tvNm(p[0])]={n:p[0]});try{glPlayers().filter(p=>p.t===t).forEach(p=>{if(!mine[tvNm(p.n)])mine[tvNm(p.n)]={n:p.n,gl:1}})}catch(e){}
+  const mine={};(ROSTER[t]||[]).forEach(p=>mine[tvNm(p[0])]={n:p[0]});
   const R=[];for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
     [["a",g[0],g[1]],["h",g[1],g[0]]].forEach(([sd,tm,opp])=>(B[sd]||[]).forEach(r=>{const m=mine[tvNm(r[0])];if(!m)return;R.push({n:m.n,gl:m.gl,tm,opp,r,lv:g[5]==="L",st:g[5]==="L"?(TVL.st[g[7]]||"Live"):"Finale",key:g[7]})}))}
   R.sort((a,b)=>(+b.r[19]||0)-(+a.r[19]||0));
