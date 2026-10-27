@@ -512,4 +512,4 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 
 (110) Modalità notte: nascosti i bottoni Cap e Multe (.ctools); tornano spegnendo la modalità.
 
-(111) Modalità notte: pallino rosso lampeggiante (.cnlv) vicino alla maglia di chi ha la partita ancora in corso, in campo e in panchina.
+(111) Modalità notte: pallino rosso lampeggiante (.cnlv) accanto al PDK (non sulla maglia) di chi ha la partita ancora in corso, in campo e in panchina.
