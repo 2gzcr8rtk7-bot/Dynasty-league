@@ -511,3 +511,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (109) Modalità notte: il titolo diventa "Modalità notte" (al posto di "Quintetto"); maglie "black edition" (jersey: nero + bianco + accento notte NOTTE_ACC: Ducks grigio, le altre il colore della squadra); campo in scala di grigi scuro con bordo e alone del colore notte; se nessuno ha giocato "Nessuno in campo stanotte".
 
 (110) Modalità notte: nascosti i bottoni Cap e Multe (.ctools); tornano spegnendo la modalità.
+
+(111) Modalità notte: pallino rosso lampeggiante (.cnlv) vicino alla maglia di chi ha la partita ancora in corso, in campo e in panchina.

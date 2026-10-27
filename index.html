@@ -1761,7 +1761,7 @@ nav button>span{white-space:nowrap}
 .bench.cdark{background:#060915;border-color:color-mix(in srgb,var(--tc) 35%,#1b2340)}
 .bench.cdark .bpl{background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 14%,#070a18),#070a18 60%);border-color:#141a33;box-shadow:inset 3px 0 0 color-mix(in srgb,var(--tc) 80%,transparent)}
 .bench.cdark .bev small{color:#9aa3c7}
-</style></head>
+</style><style>.bjw{position:relative;display:inline-flex;flex:none}.cnlv{position:absolute;z-index:3;top:2px;right:calc(50% - 30px);width:11px;height:11px;border-radius:50%;background:#ff2d3d;box-shadow:0 0 0 2px #0a0f1f,0 0 8px #ff2d3d;animation:lvp 1.4s infinite}.bjw .cnlv{top:-2px;right:-3px}</style></head>
 
 <body>
 <header>
@@ -3734,7 +3734,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
     ${lg?(LOGO2[t]?`<image href="${lg}" x="40.91" y="1.33" width="18.18" height="13.55" preserveAspectRatio="xMidYMid meet"/>`:`<image href="${lg}" x="40.5" y=".3" width="19" height="15.4" preserveAspectRatio="xMidYMid meet"/>`):""}
     </svg>`;
   const ROWY={C:30.6,F:56.6,G:83.3},XS={G:[30,70],F:[19,81]};const pos={};["G","F","C"].forEach(r=>{const l=q.filter(p=>p[2]===r);l.forEach((p,i)=>pos[p[0]]=[l.length===2&&XS[r]?XS[r][i]:(i+1)/(l.length+1)*100,ROWY[r]])});
-  const onCourt=q.map((p,i)=>`<button class="cpl" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${jersey(t,p[1],p[0])}<span class="cnm"${(L=>L>=12?' style="font-size:9.5px"':L>=9?' style="font-size:10.5px"':"")(sur(p[0]).length)}>${sur(p[0])}</span>${CNT?pillN(p[0]):pillP(pdkMed(p[0]))}</button>`).join("");
+  const onCourt=q.map((p,i)=>`<button class="cpl" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${CNT&&NM[p[0]]&&NM[p[0]].lv?'<i class="cnlv" title="In campo ora"></i>':""}${jersey(t,p[1],p[0])}<span class="cnm"${(L=>L>=12?' style="font-size:9.5px"':L>=9?' style="font-size:10.5px"':"")(sur(p[0]).length)}>${sur(p[0])}</span>${CNT?pillN(p[0]):pillP(pdkMed(p[0]))}</button>`).join("");
   const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>CNT?(nv(b[0])??-1e9)-(nv(a[0])??-1e9):(pdkMed(b[0])??-99)-(pdkMed(a[0])??-99));  /* panchina in ordine di efficienza media stagionale (stesso valore mostrato), si riordina a ogni aggiornamento */
   return `<button class="gback" id="cback">‹ Home</button>
   <div class="teamhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 70%,#000) 100%);color:${c.txt||c.fg};border-bottom:4px solid ${c.trim}">
@@ -3745,7 +3745,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   <div class="court${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg};border-color:${shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}${CNT&&!q.length?`<div class="cnone">Nessuno in campo stanotte</div>`:""}</div>
   ${CNT?"":`<div class="ctools"><button class="ctool" id="ccap"><span class="ci">C</span>Cap<small>Chi mettere capitano</small></button><button class="ctool" id="cmul"><span class="ci mul">€</span>Multe<small>Capitano senza multa</small></button></div>`}
   ${H("Panchina",CNT?`<em>notte · per punteggio</em>`:"")}
-  <div class="bench${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg}">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><span class="bev">${CNT?`${pillN(p[0])}<small>${NM[p[0]]?`${NM[p[0]].lv?"● ":""}vs ${NM[p[0]].opp} · ${NM[p[0]].st}`:"non ha giocato"}</small>`:`${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}`}</span></button>`).join("")}</div>
+  <div class="bench${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg}">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}"><span class="bjw">${CNT&&NM[p[0]]&&NM[p[0]].lv?'<i class="cnlv" title="In campo ora"></i>':""}${jersey(t,p[1],p[0])}</span><span class="bnm">${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><span class="bev">${CNT?`${pillN(p[0])}<small>${NM[p[0]]?`vs ${NM[p[0]].opp} · ${NM[p[0]].st}`:"non ha giocato"}</small>`:`${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}`}</span></button>`).join("")}</div>
   <div class="crwrap"><button class="croster" id="croster">Roster completo ›</button>${t==="DUC"?`<button class="cpow" id="cpow" aria-label="Accesso riservato"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M7.1 6.3a8 8 0 1 0 9.8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>`:""}</div>
   <div class="clwrap">${campoLive(t)}</div>`;
 }
