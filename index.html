@@ -4507,7 +4507,7 @@ const SEG={0:"abcdef",1:"bc",2:"abged",3:"abgcd",4:"fgbc",5:"afgcd",6:"afgedc",7
 const SEGP={a:"M2.4 1H9.6L8.4 2.6H3.6Z",b:"M10.6 1.8L9 3.4V8.8L10.6 9.6Z",c:"M10.6 10.4L9 11.2V16.6L10.6 18.2Z",d:"M2.4 19H9.6L8.4 17.4H3.6Z",e:"M1.4 10.4L3 11.2V16.6L1.4 18.2Z",f:"M1.4 1.8L3 3.4V8.8L1.4 9.6Z",g:"M2.4 10L3.5 9.2H8.5L9.6 10L8.5 10.8H3.5Z"};
 const segD=ch=>`<svg class="sg" viewBox="0 0 12 20" aria-hidden="true">${Object.entries(SEGP).map(([k,d])=>`<path d="${d}"${(SEG[ch]||"").includes(k)?' class="on"':""}/>`).join("")}</svg>`;
 const kitBtn=t=>`<button class="kitbtn" id="kitbtn" data-kitt="${t}" aria-label="Cambia maglia: ${KIT_N[kitDi(t)]}" title="Maglia: ${KIT_N[kitDi(t)]}">${kitIco(t)}</button>`;
-function drTabellone(t,T,k,P){const W=T.W,btn=`<button class="cntbtn" id="cntbtn" aria-pressed="false" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`;
+function drTabellone(t,T,k,P,on){const W=T.W,btn=`<button class="cntbtn${on?" on":""}" id="cntbtn" aria-pressed="${!!on}" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`;
   /* piccolo tabellone elettronico al posto della scritta "Quintetto": la mia squadra contro l'avversaria del turno Dreamers,
      punteggi live di entrambe (drTeam). Stessa riga del titolo, stesso tasto notte. Tocco = apre la sfida in Dreamers. */
   const num=v=>{const txt=v==null?"---,-":pdkF(v),[ip,dp]=txt.split(",");return[...ip.padStart(3," ")].map(segD).join("")+`<span class="sgdot"></span>`+segD(dp||"-")};
@@ -4559,6 +4559,8 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   let DT=null,DK=null;
   let DP=null;if(!CNT){DP=drPO(drStand());DK=drCurWeek(DP);const DW=drWeek(DK);DT=drTeam(DK,t,DW);DT.W=DW;
     const rp=n=>(ROSTER[t]||[]).find(p=>p[0]===n)||[n,"",ruoloDi(n),""];q=DT.top.slice(0,5).map(x=>rp(x.n));qs=new Set(q.map(p=>p[0]))}
+  /* modalità notte: al posto della scritta "Modalità notte" c'è lo stesso tabellone live della sfida Dreamers (la formazione in campo resta quella della notte) */
+  let DT2=null,DK2=null,DP2=null;if(CNT){try{DP2=drPO(drStand());DK2=drCurWeek(DP2);const W2=drWeek(DK2);DT2=drTeam(DK2,t,W2);DT2.W=W2}catch(e){DT2=null}}
   const DX=n=>DT&&DT.top.find(x=>x.n===n);
   CAMPO_DR=DT?{t,W:DT.W,T:DT,k:DK,P:DP}:null;
   const pillD=x=>!x||x.e==null?`<span class="cev wait">In attesa</span>`:pdkB(x.e,pdkF(x.e));
@@ -4603,7 +4605,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
    ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${LOGO[t]}" alt=""${dlHeadLogo(t)}>`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
   ${bacheca(t)}
   ${cassa(t)}
-  ${CNT?H(CNT?"Modalità notte":"Quintetto",`<em>${CNT?(()=>{const d=campoNotte();if(!d)return"nessuna partita";const dd=tvDt(d);return`${dd.getUTCDate()}/${dd.getUTCMonth()+1}`})():`Dreamers · ${DR_PH(DK,DP)}`}</em>${kitBtn(t)}<button class="cntbtn${CNT?" on":""}" id="cntbtn" aria-pressed="${CNT}" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`):drTabellone(t,DT,DK,DP)}
+  ${CNT&&DT2?drTabellone(t,DT2,DK2,DP2,true):CNT?H(CNT?"Modalità notte":"Quintetto",`<em>${CNT?(()=>{const d=campoNotte();if(!d)return"nessuna partita";const dd=tvDt(d);return`${dd.getUTCDate()}/${dd.getUTCMonth()+1}`})():`Dreamers · ${DR_PH(DK,DP)}`}</em>${kitBtn(t)}<button class="cntbtn${CNT?" on":""}" id="cntbtn" aria-pressed="${CNT}" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`):drTabellone(t,DT,DK,DP)}
   <div class="court${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg};border-color:${shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}${CNT&&!q.length?`<div class="cnone">Nessuno in campo stanotte</div>`:""}</div>
   ${CNT?`${H("Panchina",`<em>notte · per punteggio</em>`)}
   <div class="bench${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg}">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${RTR(p[0])}${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}</small></span><span class="bev">${CNT?`<span class="cnrow">${NM[p[0]]&&NM[p[0]].lv?'<i class="cnlv" title="In campo ora"></i>':""}${pillN(p[0])}</span><small>${NM[p[0]]?`vs ${NM[p[0]].opp} · ${NM[p[0]].st}`:"non ha giocato"}</small>`:`${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}`}</span></button>`).join("")}</div>`:drPanca(t,DT)}
