@@ -463,6 +463,32 @@ details.glp.glhit{animation:glhit 2.2s ease}@keyframes glhit{0%,40%{box-shadow:i
 .dpan.notte{grid-template-columns:1fr}.dpan.notte .dpg{grid-template-columns:repeat(3,1fr)}
 .dpan.notte .dphalf{background:#070a18;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tc,#334) 35%,#1b2340)}
 .pcd{position:relative}.pcdlv{position:absolute;left:6px;top:50%;width:7px;height:7px;margin-top:-3.5px;border-radius:50%;background:#ff3b30;box-shadow:0 0 6px #ff3b30;animation:lbdp 1.1s ease-in-out infinite}
+/* calendario del periodo (Grafico, Trend, Grafici liberi) */
+.perbtn{display:grid;gap:3px;text-align:left;background:none;border:0;padding:0;color:inherit;cursor:pointer;min-width:0}
+.perbtn>span{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.perbtn>b{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;letter-spacing:.02em;white-space:nowrap}
+.perbtn svg{width:17px;height:17px;flex:none;color:var(--gold,#facc15)}
+.persh{position:fixed;inset:0;z-index:9999;background:rgba(3,6,16,.62);display:flex;align-items:flex-end;justify-content:center;animation:dwin .18s ease}
+.perbox{position:relative;width:100%;max-width:440px;background:linear-gradient(180deg,#141b33,#0b1022);color:#e8ecf7;border-radius:20px 20px 0 0;padding:16px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(0,0,0,.5)}
+.perbox h4{margin:0;font-family:var(--display);font-style:italic;font-weight:800;font-size:20px;letter-spacing:.06em;text-transform:uppercase}
+.perx{position:absolute;right:12px;top:12px;width:32px;height:32px;border-radius:50%;border:0;background:rgba(255,255,255,.1);color:#fff;font-size:15px;cursor:pointer}
+.perhint{margin:4px 0 12px;font-size:13px;color:#aab3cf}.perhint b{color:#fff}
+.pernav{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;margin-bottom:10px}
+.perny{display:flex;align-items:center;justify-content:space-between;border-radius:12px;background:rgba(255,255,255,.06);padding:3px}
+.perny b{font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase}
+.perny button{width:38px;height:36px;border:0;border-radius:9px;background:rgba(255,255,255,.08);color:#fff;font-size:20px;cursor:pointer}.perny button:disabled{opacity:.25}
+.perwk,.pergrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.perwk span{text-align:center;font-size:10.5px;font-weight:800;color:#7d87a6;padding-bottom:4px}
+.pd{height:40px;border:0;border-radius:10px;background:transparent;color:#e8ecf7;font-weight:700;font-size:15px;cursor:pointer}
+.pd:disabled{color:#3d4560;cursor:default}
+.pd.oggi{box-shadow:inset 0 0 0 1.5px rgba(250,204,21,.6)}
+.pd.in{background:rgba(250,204,21,.16);border-radius:0}
+.pd.st,.pd.en{background:#facc15;color:#111}
+.pd.st{border-radius:10px 0 0 10px}.pd.en{border-radius:0 10px 10px 0}.pd.st.one,.pd.st:not(.in)+.pd:not(.in):not(.en){}
+.pd.st.one{border-radius:10px}
+.perq{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.perq button{flex:1;min-width:0;padding:8px 6px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);color:#e8ecf7;font-weight:700;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.perattuale{margin:10px 0 0;font-size:12px;color:#8590b0;text-align:center}
 /* foglio partite del turno */
 .dwsh{position:fixed;inset:0;z-index:9999;background:rgba(3,6,16,.6);display:flex;align-items:flex-end;justify-content:center;animation:dwin .18s ease}
 @keyframes dwin{from{opacity:0}to{opacity:1}}
@@ -2978,6 +3004,57 @@ const grWk=d=>{const w=new Date(d);w.setUTCDate(w.getUTCDate()-((w.getUTCDay()+6
 const grMk=d=>d.getUTCFullYear()+"-"+String(d.getUTCMonth()+1).padStart(2,"0");
 const GR_GG=["Dom","Lun","Mar","Mer","Gio","Ven","Sab"];
 const GR_COL={pdk:"#22c55e",min:"#facc15",eff:"#a855f7"},GR_LAB={pdk:"PDK",min:"Minuti",eff:"Efficienza"};
+/* PERIODO A CALENDARIO (27/10/2026): un solo calendario per scegliere inizio e fine (2 tocchi sui giorni; frecce per mese e anno).
+   Usato da Grafico (GR), Trend (TRN) e Grafici liberi dello scouting (NB.g / NB report "Date a scelta"). Date ISO "aaaa-mm-gg". */
+const PER_ORD=["2024/25","2025/26","2026/27"],PER_LBL={"2024/25":"Stagione 1","2025/26":"Stagione 2","2026/27":"Stagione 3"};
+const perOggi=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const PER_MIN="2024-10-22";
+function perSzRange(sz){const R={"2024/25":["2024-10-22","2025-04-13"],"2025/26":["2025-10-21","2026-04-12"],"2026/27":["2026-10-20",perOggi()]}[sz]||["2026-10-20",perOggi()];return[R[0],R[1]>perOggi()?perOggi():R[1]]}
+/* stagioni toccate dal periodo (una stagione va da agosto a luglio) */
+function perSzr(da,a){return PER_ORD.filter(sz=>{const y=+sz.slice(0,4);return a>=`${y}-08-01`&&da<=`${y+1}-07-31`})}
+/* normalizza il periodo di un oggetto (GR/TRN): se manca, stagione corrente (o quella indicata in o.sz) */
+function perNorm(o){const mx=perOggi();if(!o.da||!o.a){const r=perSzRange(PER_ORD.includes(o.sz)?o.sz:PER_ORD[2]);o.da=r[0];o.a=r[1]}
+  if(o.da<PER_MIN)o.da=PER_MIN;if(o.a>mx)o.a=mx;if(o.a<o.da){const t=o.a;o.a=o.da;o.da=t}return o}
+/* livello dei punti in base alle partite davvero nel periodo: più stagioni con partite → stagioni; oltre 45 giorni → mesi; altrimenti settimane */
+function perBy(g){if(!g.length)return"w";if(new Set(g.map(x=>x.sz)).size>1)return"s";const t=g.map(x=>+x.dt);return(Math.max(...t)-Math.min(...t))/864e5>45?"m":"w"}
+const perGg=(da,a)=>Math.round((Date.parse(a)-Date.parse(da))/864e5)+1;
+const perFmt=iso=>{if(!iso)return"—";const[y,m,d]=iso.split("-");return`${d}/${m}/${y.slice(2)}`};
+const perIn=(da,a)=>d=>{const x=d.toISOString().slice(0,10);return x>=da&&x<=a};
+/* bottone che mostra il periodo e apre il calendario */
+function perBtn(key,da,a,lab="Periodo"){return`<button class="perbtn" data-per="${key}" data-perda="${da||""}" data-pera="${a||""}"><span>${lab}</span><b><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 9.5h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>${perFmt(da)} → ${perFmt(a)}</b></button>`}
+const PER_CB={};/* key → funzione(da,a) che salva il periodo nella sezione giusta */
+let PK=null;
+function perApri(key,da,a){const mx=perOggi();da=da||perSzRange(PER_ORD[2])[0];a=a||mx;const v=new Date((a||mx)+"T00:00:00Z");PK={key,da,a,s0:null,y:v.getUTCFullYear(),m:v.getUTCMonth()};perDisegna()}
+function perDisegna(){let el=document.querySelector(".persh");if(!PK){if(el)el.remove();document.body.classList.remove("persh-open");return}
+  if(!el){el=document.createElement("div");el.className="persh";document.body.appendChild(el);document.body.classList.add("persh-open")}
+  const MM=["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"],mx=perOggi();
+  const y=PK.y,m=PK.m,first=new Date(Date.UTC(y,m,1)),off=(first.getUTCDay()+6)%7,nd=new Date(Date.UTC(y,m+1,0)).getUTCDate(),f=v=>String(v).padStart(2,"0");
+  const A=PK.s0||PK.da,B=PK.s0?null:PK.a;let cells="";for(let i=0;i<off;i++)cells+="<span></span>";
+  for(let d=1;d<=nd;d++){const iso=`${y}-${f(m+1)}-${f(d)}`,dis=iso<PER_MIN||iso>mx,st=iso===A,en=B&&iso===B,inr=B&&iso>A&&iso<B,ogg=iso===mx;
+    cells+=`<button class="pd${st?" st":""}${en?" en":""}${inr?" in":""}${st&&en?" one":""}${ogg?" oggi":""}" ${dis?"disabled":""} data-pd="${iso}">${d}</button>`}
+  const yMin=+PER_MIN.slice(0,4),yMax=+mx.slice(0,4),prevOk=y*12+m>yMin*12+9,nextOk=y*12+m<+mx.slice(0,4)*12+(+mx.slice(5,7)-1);
+  const chips=PER_ORD.map(sz=>`<button data-pq="${sz}">${PER_LBL[sz]}</button>`).join("")+`<button data-pq="all">Tutto</button>`;
+  el.innerHTML=`<div class="perbox" role="dialog" aria-label="Scegli il periodo"><button class="perx" data-pclose="1" aria-label="Chiudi">✕</button>
+   <h4>Periodo</h4><p class="perhint">${PK.s0?`Inizio: <b>${perFmt(PK.s0)}</b> · ora tocca il giorno di <b>fine</b>`:"Tocca il giorno di <b>inizio</b>, poi quello di <b>fine</b>"}</p>
+   <div class="pernav"><div class="perny"><button data-py="-1" ${y<=yMin?"disabled":""} aria-label="Anno precedente">‹</button><b>${y}</b><button data-py="1" ${y>=yMax?"disabled":""} aria-label="Anno successivo">›</button></div>
+    <div class="perny"><button data-pm="-1" ${prevOk?"":"disabled"} aria-label="Mese precedente">‹</button><b>${MM[m]}</b><button data-pm="1" ${nextOk?"":"disabled"} aria-label="Mese successivo">›</button></div></div>
+   <div class="perwk"><span>L</span><span>M</span><span>M</span><span>G</span><span>V</span><span>S</span><span>D</span></div>
+   <div class="pergrid">${cells}</div>
+   <div class="perq">${chips}</div>
+   <p class="perattuale">Ora: ${perFmt(PK.da)} → ${perFmt(PK.a)} · ${perGg(PK.da,PK.a)} giorni</p></div>`}
+function perFine(da,a){const k=PK.key;PK=null;perDisegna();const cb=PER_CB[k];if(cb){cb(da,a);const yy=scrollY;render();scrollTo(0,yy)}}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-per]");if(b){e.preventDefault();perApri(b.dataset.per,b.dataset.perda,b.dataset.pera);return}
+  if(!PK)return;const el=e.target.closest(".persh");if(!el)return;
+  if(e.target===el||e.target.closest("[data-pclose]")){PK=null;perDisegna();return}
+  const py=e.target.closest("[data-py]");if(py){const mx=perOggi();PK.y+=+py.dataset.py;const lim=PK.y*12+PK.m,hi=+mx.slice(0,4)*12+(+mx.slice(5,7)-1),lo=+PER_MIN.slice(0,4)*12+9;if(lim>hi){PK.m=+mx.slice(5,7)-1}if(lim<lo)PK.m=9;perDisegna();return}
+  const pm=e.target.closest("[data-pm]");if(pm){let t=PK.y*12+PK.m+ +pm.dataset.pm;PK.y=Math.floor(t/12);PK.m=t%12;perDisegna();return}
+  const pq=e.target.closest("[data-pq]");if(pq){const q=pq.dataset.pq;if(q==="all")perFine(PER_MIN,perOggi());else{const r=perSzRange(q);perFine(r[0],r[1])}return}
+  const pd=e.target.closest("[data-pd]");if(pd&&!pd.disabled){const iso=pd.dataset.pd;if(!PK.s0){PK.s0=iso;perDisegna();return}
+    let a0=PK.s0,b0=iso;if(b0<a0){const t=a0;a0=b0;b0=t}PK.s0=null;PK.da=a0;PK.a=b0;perDisegna();setTimeout(()=>perFine(a0,b0),260)}});
+PER_CB.gr=(da,a)=>{GR.da=da;GR.a=a};
+PER_CB.tr=(da,a)=>{TRN.da=da;TRN.a=a;TRN.on=null};
+PER_CB.nbg=(da,a)=>{NB.g.from=da;NB.g.to=a};
+PER_CB.nbr=(da,a)=>{NB.mode="r";NB.from=da;NB.to=a};
 function grGames(n,sz){const one=s=>{let a=s===GR_SZ[0]?(PARTITE[n]||[]):((STAGIONI[s]||{})[n]||[]);if(!a.length&&GR.fa===n&&typeof FAG!=="undefined"&&FAG[n])a=FAG[n][s]||[];const y0=+s.slice(0,4);
     return a.map(x=>{const[d,m]=x[0].split("/").map(Number);const y=m>=8?y0:y0+1;return{dt:new Date(Date.UTC(y,m-1,d)),sz:s,opp:x[1],min:+x[2]||0,pdk:+x[3]||0,eff:x[4]==null?null:+x[4]}})};
   const g=sz==="all"?GR_SZ.slice().reverse().flatMap(one):one(sz);return g.sort((a,b)=>a.dt-b.dt)}
@@ -3050,7 +3127,7 @@ function trCol(t){const c=TEAMS[t];const l=h=>{const n=parseInt(h.slice(1),16);r
 /* Dettaglio di un giocatore nel Calcola il trend: grafico personale per PDK, minuti ed efficienza sullo stesso periodo,
    da dove partiva (primo punto) a dove è arrivato (ultimo punto), media del periodo e trend %. */
 function trDetail(n){const C=TRN._ctx;if(!C)return"";const p=Object.entries(ROSTER).flatMap(([t,a])=>a.map(x=>({n:x[0],t,num:x[1],r:x[2]}))).find(x=>x.n===n);if(!p)return"";
-  const g=grGames(n,C.SZR.length>1?"all":C.sz).filter(x=>C.SZR.includes(x.sz)&&C.rng.includes(grMk(x.dt)));const c=TEAMS[p.t];
+  const g=grGames(n,C.SZR.length>1?"all":C.sz).filter(x=>C.SZR.includes(x.sz)&&C.inP(x.dt));const c=TEAMS[p.t];
   const M=new Map();g.forEach(x=>{const k=trKey(x,C.by);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});const K=[...M.keys()].sort();
   const mets=[["pdk","PDK","#22c55e"],["min","Minuti","#facc15"],["eff","Efficienza","#a855f7"]];
   const f=(k,v)=>v==null?"—":k==="eff"?cf2(v):cf1(v);
@@ -3070,7 +3147,7 @@ function trDetail(n){const C=TRN._ctx;if(!C)return"";const p=Object.entries(ROST
    <button class="cshare alt" data-grafico="${p.t}" data-grp="${n.replace(/"/g,"&quot;")}"><span>📈 Apri il grafico completo</span></button></div></div>`}
 /* Condivisione del dettaglio trend: immagine 1080×1350 con i 3 riquadri (partiva da → ora) e i grafici. */
 async function trShare(n,btn){const C=TRN._ctx;if(!C)return;const p=Object.entries(ROSTER).flatMap(([t,a])=>a.map(x=>({n:x[0],t,num:x[1],r:x[2]}))).find(x=>x.n===n);if(!p)return;
-  const g=grGames(n,C.SZR.length>1?"all":C.sz).filter(x=>C.SZR.includes(x.sz)&&C.rng.includes(grMk(x.dt)));const c=TEAMS[p.t];
+  const g=grGames(n,C.SZR.length>1?"all":C.sz).filter(x=>C.SZR.includes(x.sz)&&C.inP(x.dt));const c=TEAMS[p.t];
   const M=new Map();g.forEach(x=>{const k=trKey(x,C.by);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});const K=[...M.keys()].sort();
   try{await document.fonts.load('800 italic 40px "Barlow Condensed"')}catch(e){}
   const W=1080,H=1350,cv=document.createElement("canvas");cv.width=W;cv.height=H;const X=cv.getContext("2d");
@@ -3138,20 +3215,15 @@ function vStatNotte(){if(CNT)return vStatLive();const N=snNights();if(!N.length)
   <div class="snlist">${rows||'<p class="note">Nessun giocatore delle franchigie in campo.</p>'}</div>
   <p class="note">${E?"Efficienza della notte (PDK ÷ minuti)":"PDK Dunkest della notte"} di tutti i giocatori delle 8 franchigie scesi in campo, dal più alto. Colori: ${E?"rosso sotto 0,80, giallo 0,80-1,10, verde oltre 1,10, viola da 1,50":"rosso sotto 20, giallo 20-29,99, verde 30-39,99, viola da 40"}.</p>`}
 function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>PL.push({n:p[0],t,r:p[2]})));glPlayers().forEach(p=>PL.push({n:p.n,t:p.t,r:p.r,gl:1}));
-  const ORD=["2024/25","2025/26","2026/27"];if(!ORD.includes(TRN.sz))TRN.sz="2026/27";if(!ORD.includes(TRN.sz2)||ORD.indexOf(TRN.sz2)<ORD.indexOf(TRN.sz))TRN.sz2=TRN.sz;
-  const SZR=ORD.slice(ORD.indexOf(TRN.sz),ORD.indexOf(TRN.sz2)+1),multi=SZR.length>1,sz=multi?"all":TRN.sz,met=TRN.met;
-  /* mesi disponibili nel periodo (unione di tutti i giocatori) */
-  const G=new Map(PL.map(p=>[p.n,grGames(p.n,sz).filter(x=>SZR.includes(x.sz))]));
-  const mesi=[...new Set([...G.values()].flatMap(g=>g.map(x=>grMk(x.dt))))].sort();
-  if(sz==="all"||!mesi.includes(TRN.mese))TRN.mese="";
-  const iA=mesi.indexOf(TRN.mese);let iB=mesi.indexOf(TRN.mese2);if(iA<0)TRN.mese2="";else if(iB<iA){iB=iA;TRN.mese2=TRN.mese}
-  const rng=iA<0?mesi:mesi.slice(iA,iB+1);let by=multi?"s":rng.length===1?"w":"m";
+  /* periodo a calendario: TRN.da → TRN.a (stesse regole del Grafico) */
+  const ORD=PER_ORD;perNorm(TRN);const SZR=perSzr(TRN.da,TRN.a),multi=SZR.length>1,sz=multi?"all":(SZR[0]||ORD[2]),met=TRN.met,inP=perIn(TRN.da,TRN.a);
+  const G=new Map(PL.map(p=>[p.n,SZR.length?grGames(p.n,sz).filter(x=>SZR.includes(x.sz)):[]]));
+  let by=perBy([...G.values()].flatMap(x=>x.filter(y=>inP(y.dt))));
   /* se il periodo ha un solo punto possibile (es. stagione appena iniziata) si passa alle singole partite */
-  {const ks=new Set();let mx=0;G.forEach(g=>{let c=0;g.forEach(x=>{if(rng.includes(grMk(x.dt))){ks.add(trKey(x,by));c++}});if(c>mx)mx=c});if(by!=="s"&&(ks.size<2||mx<=8))by="g"}
-  /* stagione appena iniziata (al massimo 8 partite a testa nel periodo): punti = singole partite, così nessuno resta escluso */
-  TRN._ctx={SZR,rng,by,sz};
+  {const ks=new Set();let mx=0;G.forEach(g=>{let c=0;g.forEach(x=>{if(inP(x.dt)){ks.add(trKey(x,by));c++}});if(c>mx)mx=c});if(by!=="s"&&(ks.size<2||mx<=8))by="g"}
+  TRN._ctx={SZR,inP,by,sz};
   const keysAll=new Set(),R=[];
-  PL.forEach(p=>{if(TRN.team&&p.t!==TRN.team)return;if(!TRN.ruoli.includes(p.r))return;const g=G.get(p.n).filter(x=>rng.includes(grMk(x.dt)));if(g.length<+TRN.minp)return;
+  PL.forEach(p=>{if(TRN.team&&p.t!==TRN.team)return;if(!TRN.ruoli.includes(p.r))return;const g=G.get(p.n).filter(x=>inP(x.dt));if(g.length<+TRN.minp)return;
     const M=new Map();g.forEach(x=>{const k=trKey(x,by);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});
     const pts=[...M.entries()].map(([k,a])=>({k,v:grAvg(a,x=>x[met])})).filter(q=>q.v!=null).sort((a,b)=>a.k<b.k?-1:1);
     if(pts.length<2)return;const tr=grTrend(pts.map(q=>q.v));if(!tr)return;
@@ -3184,10 +3256,7 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   return`<div class="grroom trroom" style="--tc:#16213f;--tf:#fff">
   <button class="grback" data-trclose="1">‹ Indietro</button>
   <div class="grhd"><div><small>Ricerca per numeri · tutti i giocatori della lega</small><b>Calcola il trend</b></div></div>
-  <div class="trctl">${sel("sz","Dalla stagione",[["2024/25","Stagione 1"],["2025/26","Stagione 2"],["2026/27","Stagione 3"]],TRN.sz)}
-  ${sel("sz2","Alla stagione",[["2024/25","Stagione 1"],["2025/26","Stagione 2"],["2026/27","Stagione 3"]].filter(([k])=>ORD.indexOf(k)>=ORD.indexOf(TRN.sz)),TRN.sz2)}
-  ${sel("mese","Dal mese",[["","Tutta la stagione"],...mesi.map(k=>[k,mLab(k)])],TRN.mese,sz==="all")}
-  ${sel("mese2","Al mese",iA<0?[["","—"]]:mesi.slice(iA).map(k=>[k,mLab(k)]),TRN.mese2,iA<0)}
+  <div class="trctl">${perBtn("tr",TRN.da,TRN.a)}
   ${sel("team","Squadra",[["","Tutte le squadre"],...Object.keys(TEAMS).map(t=>[t,TEAMS[t].nick])],TRN.team)}</div>
   <div class="trlab">Ruoli</div><div class="trseg trrl">${[["G","Guardie"],["F","Ali"],["C","Centri"]].map(([r,l])=>`<button class="${r}" data-trrole="${r}" aria-pressed="${TRN.ruoli.includes(r)}">${l}</button>`).join("")}</div>
   <div class="trlab">Cosa misurare</div>${seg("met",[["pdk","PDK"],["min","Minuti"],["eff","Efficienza"]])}
@@ -3201,13 +3270,10 @@ function vGrafico(){const FAm=!!GR.fa;if(FAm&&typeof FAG==="undefined"){faLoadG(
   const fo=FAm?FA_OWN[GR.fa]:null;if(FAm)GR.t=fo||"FA";else if(!TEAMS[GR.t])GR.t=TEAMS[curTeam]?curTeam:Object.keys(TEAMS)[0];const t=GR.t,c=TEAMS[t]||{name:"Free Agent",nick:"FA",bg:"#2b3a67",fg:"#fff"};const glN=FAm?[]:glPlayers().filter(p=>p.t===t&&p.n===GR.p).map(p=>p.n),/* G League: solo il giocatore aperto dal Trend, mai nel menu della squadra principale */ros=FAm?[GR.fa]:[...(ROSTER[t]||[]).map(x=>x[0]),...glN];if(!GR.p||!ros.includes(GR.p))GR.p=ros[0];const isGL=glN.includes(GR.p);
   /* livello automatico: Tutte → stagioni; stagione → mesi; mese → settimane; settimana → partite */
   /* intervallo di stagioni consecutive: Dalla stagione → Alla stagione (più stagioni = un punto per stagione) */
-  const ORD=["2024/25","2025/26","2026/27"];if(GR.sz==="all"){GR.sz=ORD[0];GR.sz2=ORD[2]}if(!ORD.includes(GR.sz))GR.sz=ORD[2];if(!ORD.includes(GR.sz2)||ORD.indexOf(GR.sz2)<ORD.indexOf(GR.sz))GR.sz2=GR.sz;
-  const SZR=ORD.slice(ORD.indexOf(GR.sz),ORD.indexOf(GR.sz2)+1),multi=SZR.length>1;
-  const gAll=grGames(GR.p,multi?"all":GR.sz).filter(x=>SZR.includes(x.sz)),mesi=[...new Set(gAll.map(x=>grMk(x.dt)))];if(multi||!mesi.includes(GR.mese))GR.mese="";
-  /* intervallo di mesi continuo: Dal mese → Al mese (stesso mese = un mese singolo, punti per settimana) */
-  const iA=mesi.indexOf(GR.mese);let iB=mesi.indexOf(GR.mese2);if(iA<0)GR.mese2="";else if(iB<iA){iB=iA;GR.mese2=GR.mese}
-  const rng=iA<0?mesi:mesi.slice(iA,iB+1),g=gAll.filter(x=>rng.includes(grMk(x.dt)));
-  GR.by=multi?"s":(iA>=0&&iA===iB)?"w":"m";
+  /* periodo a calendario: GR.da → GR.a; stagioni toccate = SZR; livello: più stagioni → stagioni, oltre 45 giorni → mesi, altrimenti settimane */
+  const ORD=PER_ORD;perNorm(GR);const SZR=perSzr(GR.da,GR.a),multi=SZR.length>1,inP=perIn(GR.da,GR.a);
+  const gAll=SZR.length?grGames(GR.p,multi?"all":SZR[0]).filter(x=>SZR.includes(x.sz)):[],g=gAll.filter(x=>inP(x.dt));
+  GR.by=perBy(g);
   /* se il periodo dà un solo punto (es. stagione appena iniziata, un solo mese) scendo di livello: settimane, poi partite */
   if(GR.by!=="s"&&g.length>=2&&g.length<=8)GR.by="g";/* poche partite: mostrale una per una */
   if(GR.by!=="s"&&g.length>=2&&g.length<=8)GR.by="g";/* poche partite: mostrale una per una */
@@ -3223,10 +3289,7 @@ function vGrafico(){const FAm=!!GR.fa;if(FAm&&typeof FAG==="undefined"){faLoadG(
   <button class="grback" data-grclose="1">‹ Indietro</button>
   <div class="grhd"><span class="grlg">${TEAMS[t]?(FAm||isGL?glBadge(t):badge(t)):`<span class="grfa">FA</span>`}</span><div><small>${FAm?"Free Agent"+(fo?" · G League "+c.nick:""):isGL?"G League "+c.nick:c.name} · grafici</small><b>${GR.p}</b></div></div>
   <div class="grtop"><div class="grctl">${FAm?"":sel("Giocatore",ros.map(n=>[n,glN.includes(n)?n+" (G League)":n]),GR.p)}
-  ${sel("Dalla stagione",[["2024/25","Stagione 1"],["2025/26","Stagione 2"],["2026/27","Stagione 3"]],GR.sz)}
-  ${sel("Alla stagione",[["2024/25","Stagione 1"],["2025/26","Stagione 2"],["2026/27","Stagione 3"]].filter(([k])=>ORD.indexOf(k)>=ORD.indexOf(GR.sz)),GR.sz2)}
-  ${sel("Dal mese",[["","Tutta la stagione"],...mesi.map(k=>[k,mLab(k)])],GR.mese,multi)}
-  ${sel("Al mese",iA<0?[["","—"]]:mesi.slice(iA).map(k=>[k,mLab(k)]),GR.mese2,iA<0)}</div>
+  ${perBtn("gr",GR.da,GR.a)}</div>
   ${FAm||isGL?"":`<div class="grjs">${(()=>{const r=(ROSTER[t]||[]).find(x=>x[0]===GR.p);return jersey(t,r?r[1]:null,GR.p)})()}</div>`}</div>
   <div class="grtgs">${tg("pdk")}${tg("min")}${tg("eff")}</div>
   <div class="grcard">${grChart(P,GR.show)}<div class="grfoot">${g.length} ${g.length===1?"partita":"partite"} · ${GR.by==="s"?"media di ogni stagione":GR.by==="m"?"media di ogni mese":GR.by==="w"?"media di ogni settimana":"ogni partita"}</div></div></div>`}
@@ -3724,7 +3787,7 @@ const NB_LAB={pdk:"PDK",min:"Minuti",eff:"Efficienza"},NB_PAL=["#facc15","#38bdf
 function nbSel(k,lab,opts,cur,obj="NB"){return`<label class="nsel"><span>${lab}</span><select data-nb="${obj}.${k}">${opts.map(([v,l])=>`<option value="${v}"${String(v)===String(cur)?" selected":""}>${l}</option>`).join("")}</select></label>`}
 function nbRepView(){const{rows,lab}=nbReport(),m=NB.met;const last=nbLast(),mx=last?nbIso(last):"";
   const cfg=`<div class="ncf">${nbSel("mode","Periodo",[["n","Ultime N partite"],["d","Ultimi N giorni"],["r","Date a scelta"]],NB.mode)}
-   ${NB.mode==="n"?nbSel("n","Partite",[1,2,3,4,5,6,7,8,10,12,15,20].map(v=>[v,v+(v===1?" partita":" partite")]),NB.n):NB.mode==="d"?nbSel("d","Giorni",[1,2,3,4,5,7,10,14,21,30,45,60].map(v=>[v,v+(v===1?" giorno":" giorni")]),NB.d):`<label class="nsel"><span>Dal</span><input type="date" data-nb="NB.from" value="${NB.from}" max="${mx}"></label><label class="nsel"><span>Al</span><input type="date" data-nb="NB.to" value="${NB.to||mx}" max="${mx}"></label>`}
+   ${NB.mode==="n"?nbSel("n","Partite",[1,2,3,4,5,6,7,8,10,12,15,20].map(v=>[v,v+(v===1?" partita":" partite")]),NB.n):NB.mode==="d"?nbSel("d","Giorni",[1,2,3,4,5,7,10,14,21,30,45,60].map(v=>[v,v+(v===1?" giorno":" giorni")]),NB.d):perBtn("nbr",NB.from||PER_MIN,NB.to||mx||perOggi())}
    ${nbSel("base","Confronta con",[["solita","Media solita"],["stag","Resto della stagione"],["2025/26","Stagione 2025/26"],["2024/25","Stagione 2024/25"]],NB.base)}
    ${nbSel("met","Misura",[["pdk","PDK"],["min","Minuti"],["eff","Efficienza"]],NB.met)}
    ${nbSel("dir","Direzione",[["up","▲ In crescita"],["down","▼ In calo"],["all","Tutti"]],NB.dir)}
@@ -3765,7 +3828,7 @@ function nbGraphView(){const G=NB.g,last=nbLast(),mx=last?nbIso(last):"";const q
   const L=nbAll().filter(p=>!q||p.n.toLowerCase().includes(q)).sort((a,b)=>a.n.localeCompare(b.n));
   return`<div class="ncf">${nbSel("met","Misura",[["pdk","PDK"],["min","Minuti"],["eff","Efficienza"]],G.met,"NB.g")}
    ${nbSel("gran","Punti",[["g","Ogni partita"],["mm3","Media mobile 3 partite"],["mm5","Media mobile 5 partite"],["w","Media per settimana"],["m","Media per mese"]],G.gran,"NB.g")}
-   <label class="nsel"><span>Dal</span><input type="date" data-nb="NB.g.from" value="${G.from}" max="${mx}"></label><label class="nsel"><span>Al</span><input type="date" data-nb="NB.g.to" value="${G.to}" max="${mx}"></label>
+   ${perBtn("nbg",G.from||PER_MIN,G.to||mx||perOggi())}
    ${nbSel("avg","Linea della media",[["1","Mostra"],["","Nascondi"]],G.avg?"1":"","NB.g")}
    <div class="nquick">${[["7","7 giorni"],["14","14 giorni"],["30","30 giorni"],["s","Stagione"],["all","Tutto"]].map(([v,l])=>`<button data-nbq="${v}">${l}</button>`).join("")}</div></div>
   <div class="grcard nchart">${nbChart()}</div>
@@ -4260,7 +4323,7 @@ document.getElementById("main").addEventListener("change",e=>{const s=e.target.c
   if(k==="sz"||k==="sz2"){TRN[k]=s.value;TRN.mese="";TRN.mese2=""}else if(k==="mese"){TRN.mese=s.value;TRN.mese2=s.value}else TRN[k]=s.value;TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y)});
 /* Grafico: apertura, chiusura, menu e linee */
 document.getElementById("main").addEventListener("click",e=>{
-  const o=e.target.closest("[data-grafico]");if(o){e.preventDefault();GR.t=o.dataset.grafico;GR.p=o.dataset.grp||null;GR.fa=GR.t==="FA"?GR.p:null;GR.from=cur;GR.sz=GR.fa?(o.dataset.grsz||"2026/27"):SZ_ALL.includes(gSeason)?gSeason:SZ_ALL[0];GR.sz2=GR.sz;GR.mese="";GR.mese2="";if(cur==="trend"){GR.sz=TRN.sz;GR.sz2=TRN.sz2;GR.mese=TRN.mese;GR.mese2=TRN.mese2;GR.show={pdk:TRN.met==="pdk",min:TRN.met==="min",eff:TRN.met==="eff"}}cur="grafico";render();window.scrollTo(0,0);return}
+  const o=e.target.closest("[data-grafico]");if(o){e.preventDefault();GR.t=o.dataset.grafico;GR.p=o.dataset.grp||null;GR.fa=GR.t==="FA"?GR.p:null;GR.from=cur;GR.sz=GR.fa?(o.dataset.grsz||"2026/27"):SZ_ALL.includes(gSeason)?gSeason:SZ_ALL[0];GR.sz2=GR.sz;GR.mese="";GR.mese2="";{const r=perSzRange(GR.sz);GR.da=r[0];GR.a=r[1]}if(cur==="trend"){perNorm(TRN);GR.da=TRN.da;GR.a=TRN.a;GR.show={pdk:TRN.met==="pdk",min:TRN.met==="min",eff:TRN.met==="eff"}}cur="grafico";render();window.scrollTo(0,0);return}
   if(e.target.closest("[data-grclose]")){e.preventDefault();cur=GR.from||"efficienza";render();window.scrollTo(0,0);return}
   const tg=e.target.closest("[data-grtg]");if(tg){e.preventDefault();GR.show[tg.dataset.grtg]=!GR.show[tg.dataset.grtg];const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("change",e=>{const s=e.target.closest("select[data-gr]");if(!s)return;const k=s.dataset.gr;
