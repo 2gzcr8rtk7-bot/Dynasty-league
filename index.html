@@ -1702,8 +1702,13 @@ nav button>span{white-space:nowrap}
 .drlive i{flex:none;width:8px;height:8px;margin-top:4px;border-radius:50%;background:#ef4444;animation:lvp 1.4s infinite}
 </style><style>
 .drtvh{margin-top:18px}
-.drtvl{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--tc) 55%,transparent),transparent 72%)}
-.drtvl .badge{width:32px!important;height:32px!important;font-size:11px}
+.drtvl{width:34px;height:34px;display:grid;place-items:center}
+.drtvl .badge,.drsbl .badge{width:100%!important;height:100%!important;background-color:transparent!important;box-shadow:none!important;border-radius:0!important;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}
+.drsbl{width:64px;height:64px;display:grid;place-items:center}
+.tvbox.drbox td i.drmo{display:inline-block;width:auto;height:auto;min-width:34px;padding:2px 6px;border-radius:5px;font-size:11.5px;font-style:normal;font-weight:800;text-align:center;line-height:1.2;animation:none;background:rgba(255,255,255,.06);color:var(--muted);border:0}.tvbox.drbox td i.drmo.c{background:#f5b400;color:#111}.tvbox.drbox td i.drmo.f{background:rgba(255,255,255,.14);color:#fff}.tvbox.drbox td i.drmo.h{background:rgba(139,92,246,.4);color:#f1e9ff}
+.drbox td.dfp{color:#fff;font-weight:800}
+.drbox .drcap{display:inline-grid;place-items:center;width:16px;height:16px;margin-left:6px;border-radius:50%;background:#f5b400;color:#111;font-size:10px;font-weight:900;font-style:normal;vertical-align:middle}
+.drbox{min-width:0!important}
 .drtvg{border-color:rgba(139,92,246,.45);background:linear-gradient(180deg,rgba(76,29,149,.35),var(--panel))}
 .drtvg .tvst b.pre{background:#6d4bd8}
 </style></head>
@@ -4787,8 +4792,32 @@ function tvDreamers(d){try{if(typeof drWeek!=="function"||d<DR_START)return"";co
       <div class="tvst">${fin?`<b>Finale</b><small>turno ${k} · sfida ›</small>`:lv?`<b class="lv"><i></i>Live</b><small>${prov?"PDK provvisori · ":""}sfida ›</small>`:W.started?`<b class="pre">In corso</b><small>${W.nights}/7 notti · sfida ›</small>`:`<b class="pre">Da giocare</b><small>dal ${drFmt(W.start)} · sfida ›</small>`}</div>
       ${cap?`<div class="tvtop"><span>Capitani: ${cap}</span></div>`:""}</button>`}).join("");
   return`<div class="drtvh">${H("Dreamers",`<em>${DR_PH(k,P)} · ${drFmt(W.start)}–${drFmt(W.end)}</em>`)}</div><div class="tvlist">${cards}</div>`}catch(e){return""}}
+/* Sfida DREAMERS in stile box score di Dynasty TV: punteggio, tab delle due squadre, tabella con
+   In campo (capitano ×1,5 + 5 a punteggio pieno), Panchina ½ (gli ultimi 4 dei 10), Tribuna, In attesa (non hanno ancora giocato). */
+function tvDrGame(key){try{const[ks,a,b]=key.split("|"),k=+ks,st=drStand(),P=drPO(st),W=drWeek(k),A=drTeam(k,a,W),B=drTeam(k,b,W);
+  const prov=[...DR_PROV].some(x=>x>=W.start&&x<=W.end),fin=W.closed&&!prov,ca=TEAMS[a].bg,cb=TEAMS[b].bg;
+  const side=TVS.drs==="b"?"b":"a",T=side==="a"?A:B,sur=n=>n;
+  const nba=n=>{const p=Object.values(ROSTER).flat().find(x=>x[0]===n);return p?p[3]:""};
+  const f1=v=>v==null?"—":pdkF(v);
+  const pr=(x,grp)=>{const m=grp==="trib"||grp==="wait"?0:x.m,lab=x.cap?'<i class="drmo c">×1,5</i>':grp==="half"?'<i class="drmo h">×½</i>':grp==="full"?'<i class="drmo f">×1</i>':'<i class="drmo">—</i>';
+    return`<tr><td>${x.n}${x.cap?'<i class="drcap">C</i>':""}<small>${nba(x.n)}${x.a?` · ${x.a.g} ${x.a.g===1?"partita":"partite"}`:""}</small></td><td class="pdkl">${x.e==null?'<span class="dash">—</span>':pdkB(x.e,f1(x.e))}</td><td>${lab}</td><td class="dfp">${grp==="trib"||grp==="wait"||x.f==null?"—":f1(x.f)}</td></tr>`};
+  const grp=(lab,arr,g)=>arr.length?`<tr class="grp"><td>${lab}</td><td colspan="3"></td></tr>${arr.map(x=>pr(x,g)).join("")}`:"";
+  const inCampo=T.top.filter(x=>!x.half),panca=T.top.filter(x=>x.half);
+  const zeri=T.zeros?`<tr class="grp"><td>Posti vuoti</td><td colspan="3"></td></tr>${Array.from({length:T.zeros},()=>`<tr><td>Nessun giocatore<small>vale 0</small></td><td class="pdkl">—</td><td><i class="drmo">—</i></td><td class="dfp">0,0</td></tr>`).join("")}`:"";
+  const somma=T.top.reduce((s,x)=>s+(x.f||0),0);
+  return`<button class="gback tvback" data-tvback="1">‹ Partite del ${(()=>{const dd=tvDt(TVS.d);return dd.getUTCDate()+" "+TV_MM[dd.getUTCMonth()]})()}</button>
+  <div class="tvsb" style="--ca:${ca};--ch:${cb}"><div class="tside"><span class="drsbl">${badge(a)}</span><b>${TEAMS[a].nick}</b><small>${A.played}/10 titolari</small></div>
+   <div class="tmid"><div><span class="${fin&&A.score<B.score?"lo":""}">${A.score==null?"—":drScore(A.score)}</span><i>–</i><span class="${fin&&B.score<A.score?"lo":""}">${B.score==null?"—":drScore(B.score)}</span></div><small>${fin?"Finale":prov?"Live · provvisorio":W.started?"In corso":"Da giocare"} · Dreamers</small></div>
+   <div class="tside"><span class="drsbl">${badge(b)}</span><b>${TEAMS[b].nick}</b><small>${B.played}/10 titolari</small></div></div>
+  <div class="tvtabs"><button class="tvtab" data-drside="a" aria-pressed="${side==="a"}"><span class="drtvl">${badge(a)}</span>${TEAMS[a].nick}</button><button class="tvtab" data-drside="b" aria-pressed="${side==="b"}"><span class="drtvl">${badge(b)}</span>${TEAMS[b].nick}</button></div>
+  <div class="tbl-wrap"><table class="ptbl tvbox drbox"><thead><tr><th>Giocatore</th><th class="pdkl">PDK</th><th>Molt.</th><th>Punti</th></tr></thead>
+  <tbody>${grp("In campo",inCampo,"full")}${grp("Panchina · vale ½",panca,"half")}${zeri}${grp("Tribuna",T.trib,"trib")}${grp(W.closed?"Non ha giocato":"In attesa",T.wait,"wait")}
+  <tr class="tot"><td>Punteggio squadra</td><td></td><td></td><td class="dfp">${T.score==null?"—":drScore(T.score)}</td></tr></tbody></table></div>
+  <button class="advbtn" data-drgo="${key}">Apri in Dreamers ›</button>
+  <p class="note">${DR_PH(k,P)} · ${drFmt(W.start)}–${drFmt(W.end)}. PDK = media dei punti Dunkest delle partite della settimana. I 10 con il PDK più alto sono titolari: il migliore è capitano (C, ×1,5), poi 5 a punteggio pieno (in campo) e gli ultimi 4 in panchina a metà; gli altri vanno in tribuna. Punteggio squadra = somma dei punti ÷ ${W.closed?"10":"titolari che hanno giocato"} (${pdkF(somma)} ÷ ${W.closed?10:Math.max(1,T.top.length)}).${prov?" Ci sono notti con PDK provvisori (live): si sostituiscono con i dati Dunkest al report.":""}</p>`}catch(e){return""}}
 function vTV0(){setTimeout(tvWeekPos,0);const T=TVD(),ks=Object.keys(T.days).sort();if(!ks.length)return`${H("Dynasty TV")}<div class="tvempty">Calendario non ancora disponibile.</div>`;
   if(!TVS.d||!T.days[TVS.d])TVS.d=tvDefDay();
+  if(TVS.dr){const h=tvDrGame(TVS.dr);if(h)return h;TVS.dr=null}
   if(TVS.g&&T.box[TVS.g])return tvGame(TVS.g);
   const d=TVS.d,i=ks.indexOf(d),dd=tvDt(d),G=T.days[d]||[];
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
@@ -4909,12 +4938,14 @@ async function tvBoxes(d){if(typeof TV==="undefined"||!d||!TV.days[d])return fal
   return ch}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&cur==="tv")tvLiveTick()});
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="tv")return;const T=TVD(),ks=Object.keys(T.days).sort();
-  {const dv=e.target.closest("[data-drtv]");if(dv){const[k,x,y]=dv.dataset.drtv.split("|");DR.k=+k;DR.tab="turno";DR.open=[x,y];GAME="dream";cur="giochi";render();window.scrollTo(0,0);return}}
+  {const dv=e.target.closest("[data-drtv]");if(dv){TVS.dr=dv.dataset.drtv;TVS.drs="a";render();window.scrollTo(0,0);return}}
+  {const go=e.target.closest("[data-drgo]");if(go){const[k,x,y]=go.dataset.drgo.split("|");TVS.dr=null;DR.k=+k;DR.tab="turno";DR.open=[x,y];GAME="dream";cur="giochi";render();window.scrollTo(0,0);return}}
+  {const ds=e.target.closest("[data-drside]");if(ds){TVS.drs=ds.dataset.drside;const y=window.scrollY;render();window.scrollTo(0,y);return}}
   const nav=e.target.closest("[data-tvnav]"),day=e.target.closest("[data-tvd]"),gm=e.target.closest("[data-tvg]"),bk=e.target.closest("[data-tvback]"),sd=e.target.closest("[data-tvside]");
   if(nav){const i=ks.indexOf(TVS.d)+ +nav.dataset.tvnav;if(i>=0&&i<ks.length){TVS.d=ks[i];render();tvBoxes(TVS.d).then(c=>{if(c&&cur==="tv"){const y=scrollY;render();scrollTo(0,y)}}).catch(()=>{})}return}
   if(day){TVS.d=day.dataset.tvd;render();tvBoxes(TVS.d).then(c=>{if(c&&cur==="tv"){const y=scrollY;render();scrollTo(0,y)}}).catch(()=>{});return}
   if(gm){TVS.g=gm.dataset.tvg;TVS.side="a";render();window.scrollTo(0,0);return}
-  if(bk){TVS.g=null;render();window.scrollTo(0,0);return}
+  if(bk){TVS.g=null;TVS.dr=null;render();window.scrollTo(0,0);return}
   if(sd){TVS.side=sd.dataset.tvside;const y=window.scrollY;render();window.scrollTo(0,y)}});
 const vTVlive=()=>{tvLiveStart();if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();return vTV()};
 const VIEWS={fa:vFA,faplayer:vFAP,tv:vTVlive,college:vCollege,trend:vTrend,statnotte:vStatNotte,cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.grafico=vGrafico;
