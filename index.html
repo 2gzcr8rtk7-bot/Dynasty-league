@@ -2310,7 +2310,7 @@ const NOTTE_ACC=t=>TEAMS[t].bg;
 const KIT_N=["Casa","Notte","Alternativa","NBA 2026","Anni 90"];
 let KIT={};try{KIT=JSON.parse(localStorage.getItem("dl_kit")||"{}")||{}}catch(e){KIT={}}
 function kitSalva(){try{localStorage.setItem("dl_kit",JSON.stringify(KIT))}catch(e){}}
-function kitDi(t){const nt=typeof CNT!=="undefined"&&CNT&&cur==="campo";if(cur==="campo"&&KIT[t]!=null)return KIT[t];return nt?1:0}
+function kitDi(t){const nt=typeof CNT!=="undefined"&&CNT&&cur==="campo";if(KIT[t]!=null)return KIT[t];return nt?1:0}/* la scelta della maglia vale in TUTTE le sezioni (giocatore, scontri, trade...) */
 function kitC(t,k){const T=TEAMS[t];
   const casa=t==="DUC"?{...T,bg:"#facc15"}:t==="SPI"?{...T,bg:"#ffffff",fg:"#111111"}:t==="DOL"?{...T,bg:"#f4f6f8",fg:"#1747c9",trim:"#1747c9",jstroke:"#ffffff",outer:"#1747c9"}:T;
   if(k===1)return t==="DUC"?{...T,bg:"#141414",fg:"#facc15",trim:"#facc15"}:t==="PEA"?{...T,bg:"#0f6b3f",fg:"#ffffff",trim:"#2f6bff",jstroke:"#062e1b",outer:"#2f6bff"}/* Peacocks: maglia "notte" verde pavone invece che nera */:{...T,bg:"#151515",fg:"#ffffff",trim:NOTTE_ACC(t),jstroke:"#000000",outer:NOTTE_ACC(t)};
