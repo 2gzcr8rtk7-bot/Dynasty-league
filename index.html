@@ -4039,7 +4039,7 @@ function vCap(){const t=CAP.t||curTeam,c=TEAMS[t],R=[...(ROSTER[t]||[])];/* solo
      <div class="capfm"><div><small>Stagione</small><b>${d.stag==null?f(d.stag):pdkB(d.stag,f(d.stag))}</b><em>${d.N} part.</em></div><div><small>Ultimo 50%</small><b>${d.u50==null?f(d.u50):pdkB(d.u50,f(d.u50))}</b><em>${d.N?Math.ceil(d.N/2)+" part.":""}</em></div><div><small>Ultimo 15%</small><b>${d.u15==null?f(d.u15):pdkB(d.u15,f(d.u15))}</b><em>${d.N?Math.ceil(d.N*.15)+" part.":""}</em></div><div class="ix"><small>Indice Cap</small><b>${f(d.idx)}</b></div></div>${d.opp&&d.att!=null?`<div class="capatt"><span>Atteso contro la difesa di ${d.opp}</span><b>${pdkB(d.att,f(d.att))}</b></div>`:""}
      ${a?`<div class="capat ${a.ok>=2?"ok":"ko"}">${a.ok>=2?"Anti-tank OK":"Rischio multa"} · ${a.ok}/3 contro ${sur(a.alt)}${a.ind?" <i>(meno di 15 partite: indicativo)</i>":""}</div>`:""}
     </div>`};
-  return`<button class="gback" id="capback">‹ Campo ${c.nick}</button>
+  return`<button class="gback" id="capback">‹ Ufficio Scouting</button>
   ${H("Cap",`<em>Chi mettere capitano</em>`)}
   <p class="capintro">Tocca i giocatori che giocano la prossima notte e scegli l'avversario di ognuno.</p>
   <div class="capchips">${chips}</div>
@@ -4077,7 +4077,7 @@ function vMulte(){const t=MUL.t||curTeam,c=TEAMS[t],R=ROSTER[t]||[];if(MUL.t!==t
     const bad=r.L.filter(l=>l.multa),inv=r.L.filter(l=>!l.valido);
     const base=bad.length?`<span class="mv ko">Multa possibile</span><small>${bad.map(l=>`contro ${sur(l.alt)} (${l.ok}/3)`).join(" · ")}</small>`:`<span class="mv ok">Nessuna multa</span><small>almeno 2/3 contro tutti gli altri</small>`;
     return base+(inv.length?`<small class="mi">Calcolo non possibile ufficialmente: ${[...new Set(inv.map(l=>l.motivo))].join(", ")} → decide la commissione. Risultato indicativo.</small>`:"")};
-  return`<button class="gback" id="mulback">‹ Campo ${c.nick}</button>
+  return`<button class="gback" id="mulback">‹ Ufficio Scouting</button>
   ${H("Multe",`<em>Sistema anti-tank · Art. 6</em>`)}
   <p class="capintro">Seleziona i giocatori che potresti mettere capitano quel giorno (e le alternative disponibili). Per ognuno ti dico se, scegliendolo come capitano, rischi la multa.</p>
   <div class="capchips">${chips}</div>
@@ -4512,6 +4512,7 @@ function vCollege(){if(!COL.d){cur="campo";return vCampo()}COL.sec=COL.sec||"col
   return`<div class="colroom"><button class="gback" id="colback">‹ Campo Ducks</button>
   <div class="colhd">${lg?`<img src="${lg}" alt="Texas Ducks">`:""}<div><small>Texas Ducks · area riservata del GM</small><b>Ufficio Scouting</b><em>${isC?"College · archivio al "+COL_ENC.agg:"NBA · trend delle ultime settimane"}</em></div></div>
   <button class="colgbtn" data-colleg="1">📖 Legenda</button>
+  <div class="ctools"><button class="ctool" id="ccap"><span class="ci">C</span>Cap<small>Chi mettere capitano</small></button><button class="ctool" id="cmul"><span class="ci mul">€</span>Multe<small>Capitano senza multa</small></button></div>
   <div class="colsec"><button data-colsec="college" aria-pressed="${isC}">🎓 College</button><button data-colsec="nba" aria-pressed="${!isC}">🏀 NBA</button></div>
   ${isC?`<div class="ctabs coltabs">${tabs.map(([k,l])=>`<button data-coltab="${k}" aria-pressed="${COL.tab===k}">${l}</button>`).join("")}</div>
   ${["usage","radar","orig","ris"].includes(COL.tab)?"":`<div class="trseg colrl">${COL_RL.map(([k,l])=>`<button class="${k}" data-colr="${k}" aria-pressed="${COL.r===k}">${l} <small>${(COL.d[k]||[]).length}</small></button>`).join("")}</div>`}
@@ -4931,7 +4932,6 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   <div class="court${CNT?" cdark":""}${CNT&&(()=>{try{const d=campoNotte();return d&&(TV.days[d]||[]).some(g=>g[5]==="L")}catch(e){return false}})()?" clive":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg};border-color:${shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}${CNT&&!q.length?`<div class="cnone">Nessuno in campo stanotte</div>`:""}</div>
   ${CNT?`${H("Panchina",`<em>notte · per punteggio</em>`)}
   <div class="bench${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg}">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${RTR(p[0])}${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}${injTag(p[0])}</small></span><span class="bev">${CNT?`<span class="cnrow">${NM[p[0]]&&NM[p[0]].lv?'<i class="cnlv" title="In campo ora"></i>':""}${pillN(p[0])}</span><small>${NM[p[0]]?`vs ${NM[p[0]].opp} · ${NM[p[0]].st}`:"non ha giocato"}</small>`:`${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}`}</span></button>`).join("")}</div>`:drPanca(t,DT)}
-  ${CNT?"":`<div class="ctools"><button class="ctool" id="ccap"><span class="ci">C</span>Cap<small>Chi mettere capitano</small></button><button class="ctool" id="cmul"><span class="ci mul">€</span>Multe<small>Capitano senza multa</small></button></div>`}
   <div class="crwrap"><button class="croster" id="croster">Roster completo ›</button>${t==="DUC"?`<button class="cpow" id="cpow" aria-label="Accesso riservato"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M7.1 6.3a8 8 0 1 0 9.8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>`:""}</div>
   <div class="clwrap">${campoLive(t)}</div>`;
 }
@@ -6430,10 +6430,10 @@ function render(){
   const cb=m.querySelector("#cback");if(cb)cb.onclick=()=>{cur="home";render();window.scrollTo(0,0)};
   const cc=m.querySelector("#ccap");if(cc)cc.onclick=()=>{capLoad(curTeam);cur="cap";render();window.scrollTo(0,0)};
   const cmu=m.querySelector("#cmul");if(cmu)cmu.onclick=()=>{mulLoad(curTeam);cur="multe";render();window.scrollTo(0,0)};
-  if(cur==="multe"){const kb=m.querySelector("#mulback");if(kb)kb.onclick=()=>{cur="campo";render();window.scrollTo(0,0)};
+  if(cur==="multe"){const kb=m.querySelector("#mulback");if(kb)kb.onclick=()=>{cur="college";render();window.scrollTo(0,0)};
     m.querySelectorAll("[data-mulp]").forEach(b=>b.onclick=()=>{const n=b.dataset.mulp,i=MUL.sel.indexOf(n);if(i>=0)MUL.sel.splice(i,1);else MUL.sel.push(n);mulSave();render()});
     const cl=m.querySelector("#mulclr");if(cl)cl.onclick=()=>{MUL.sel=[];mulSave();render()};}
-  if(cur==="cap"){const kb=m.querySelector("#capback");if(kb)kb.onclick=()=>{cur="campo";render();window.scrollTo(0,0)};
+  if(cur==="cap"){const kb=m.querySelector("#capback");if(kb)kb.onclick=()=>{cur="college";render();window.scrollTo(0,0)};
     m.querySelectorAll("[data-capp]").forEach(b=>b.onclick=()=>{const n=b.dataset.capp;if(n in CAP.sel)delete CAP.sel[n];else CAP.sel[n]="";capSave();render()});
     m.querySelectorAll("[data-capo]").forEach(x=>x.onchange=()=>{CAP.sel[x.dataset.capo]=x.value;capSave();render()});
     const cl=m.querySelector("#capclr");if(cl)cl.onclick=()=>{CAP.sel={};capSave();render()};}

@@ -891,3 +891,6 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 
 ## (271) OUT nelle carte del duello
 - Nel duello Dreamers l'etichetta OUT è una pillola rossa in alto a destra della carta (riga del nome), identica in entrambe le squadre (`.duo`); la maglia ha l'alone rosso. Il nome si accorcia con "…" se serve spazio.
+
+## (272) Cap e Multe solo nell'Ufficio Scouting
+- Tolti i tasti Cap e Multe dal campo; ora sono (stessi id `#ccap`/`#cmul`) in cima all'Ufficio Scouting (`vCollege`, sotto "Legenda"). Le pagine Cap/Multe tornano con "‹ Ufficio Scouting" (`cur="college"`). Come da regola, nessuna voce nel registro pubblico (`NV_LOG`).
