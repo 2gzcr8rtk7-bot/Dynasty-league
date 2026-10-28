@@ -1108,3 +1108,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (346) Hall of Fame Ducks › Personalizzazioni: il logo grande TEXAS DUCKS ("Originale") ora è una scelta normale della griglia, selezionabile come gli altri. Il tasto "↺ Ripristina situazione ufficiale" torna alla vera situazione ufficiale (due loghi diversi: profili e campo), attivo quando c'è una scelta personalizzata. Area riservata, non nel registro pubblico. pubblicato.
 
 (347) Pallini live (Dynasty TV): prima, se il boxscore NBA non rispondeva, i pallini restavano su tutti i giocatori. Ora "in campo" si ricava da ESPN: 5 titolari + tutte le sostituzioni del play-by-play ("X enters the game for Y") in ordine (funzione esOnCourt); il boxscore NBA, se risponde, corregge. Max 5 per squadra. pubblicato.
+
+(348) Dynasty TV: etichette colonne tabellino rinominate solo a video: Rim→RIM, Ass→AST, Rec→STL, Pp→TOV (anche nella tabella del Centro/classifica e nella legenda). Nessun dato, indice o chiave cambiato (PDK, archivio, Dunkest intatti). IN CODA, NON pubblicato.
