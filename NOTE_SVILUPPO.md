@@ -970,3 +970,7 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 ### (299) Profili Free Agent e G League con la stessa struttura dei giocatori di squadra
 - Nuova `extProfilo(o)`: tasto 📈 Grafico in alto, poi "PDK ed efficienza" con filtro Stagione, riquadri PDK medio ed efficienza media, griglia (Partite, Minuti medi, Proiezione 36', Ultima partita, Punti medi, Rimb. · Assist), poi Partita per partita a mesi. `vFAP` la usa (header con Segui ed età, tabella "Stagioni" spostata in fondo; il filtro stagione usa `faPS`/`#fapsz` come prima).
 - G League: nuova scheda `cur="glplayer"` (`vGLP`, `GLP="TEAM|chiave"`), aperta da `glVai(k)` (Home search, Osservatorio) e toccando un giocatore in G-Dreamers (intercetta `details.glp>summary`). Back `#glpback`; stagione = `gSeason`. Header con colori G League, Segui ed età (`NASCITA`, se presente).
+
+### (300) Fix quadrato viola dietro il logo Ducks in modalità notte (Home)
+- Causa: in notte le tile Home davano ai loghi un `drop-shadow(0 0 16px viola)`; su iPhone l'alone veniva tagliato al bordo del riquadro del badge e, con i loghi 7/8 che riempiono tutto il riquadro, appariva come un quadrato viola. Ora il badge non ha più il filtro e l'alone è un `::before` radiale sul contenitore `.hlg` (non clippato). Il filtro resta per il banner `.teamhead .hlogo`.
+- In più: ripulita la trasparenza dei loghi `loghi/duc-1…8.webp` (alpha < 40 azzerata, pixel quasi trasparenti da compressione) e cache-bust `?v=3`.
