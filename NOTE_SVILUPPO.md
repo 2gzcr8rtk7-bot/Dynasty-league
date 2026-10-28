@@ -1035,3 +1035,7 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 ### (313) Turno 3 accorciato, turno 4 allungato
 - SCELTA FINALE (opzione B): `DR_TURNI[0]`: 25/10–29/10 (era fino al 1/11); `DR_TURNI[1]`: 30/10–3/11 (era 2–3/11): turno 4 = 18 squadre NBA con 2 partite e 12 con 3; turno 3 = 1 squadra con 1, 18 con 2, 11 con 3. (La prima versione era 25–30/10 e 31/10–3/11.) Dal calendario in `tv-data.js` (ESPN): turno 4 prima = 30 squadre NBA con 1 sola partita; ora 22 squadre con 2 partite e 8 con 1, nessuna con 3 (il 3/11 non ha gare). Turno 3: 5 squadre con 2 partite, 20 con 3, 5 con 4. Il turno 5 (4–6/11) resta uguale.
 - Nota: `DR_ZERO["5"]=["ATL"]` risulta superato dal calendario ESPN aggiornato (tutte le squadre hanno almeno 1 gara il 4–6/11): da rigenerare per tutti i turni quando serve.
+
+### (314) Duelli Dreamers: bottone PDK più corto, niente calcoli, lucchetto accanto all'OUT/DUB (IN CODA, NON pubblicato)
+- `.dubig`: larghezza min 57pt (sul disegno dell'utente su Miller), numero 28px, a destra; tolte le didascalie di calcolo (×1,5 e ×½ = …): restano solo "tribuna", "attesa", "NG" (non ha giocato) e "media" (turno senza partite NBA per calendario).
+- Il lucchetto (`.fin-b`) ora sta nella riga `.dus` tra la pillola OUT/DUB e il bottone PDK (flex, centrati in verticale), non più sopra il bottone.
