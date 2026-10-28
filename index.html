@@ -2180,7 +2180,6 @@ html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.0
       <button role="tab" id="t-dk" data-v="dunkest" data-menu="subnav" aria-haspopup="true" aria-expanded="false" aria-selected="false"><span>Centro gestione<i class="car">▾</i></span></button>
       <button role="tab" id="t-cs" data-v="valtrade" data-menu="subnav2" aria-haspopup="true" aria-expanded="false" aria-selected="false"><span>Scambi<i class="car">▾</i></span></button>
       <button role="tab" id="t-gm" data-v="storia" aria-selected="false"><span>Sala Trofei</span></button>
-      <button role="tab" id="t-ar" data-v="giochi" aria-selected="false"><span>Giochi</span></button>
     </nav>
     <div class="subnav" id="subnav" role="menu" hidden>
       <button data-v="risultati" aria-selected="false"><span>Risultati</span></button>
@@ -5907,14 +5906,14 @@ const GAMES=[
 function vGiochiHub(){
   const card=g=>`<button class="gmc" data-game="${g.k}" style="--gc:${g.c}"><span class="gmi">${g.i}</span><span class="gmt"><b>${g.t}</b><small>${g.d}</small></span><span class="rgo">›</span></button>`;
   const ord=["dream","gdream"];
+  if(GAME==="arcade")GAME="menu";/* (244) sezione Giochi/Arcade rimossa */
   if(GAME==="menu"){
     return `${H("Entertainment")}
     ${(()=>{const lv=(document.getElementById("t-gi")||{classList:{contains:()=>false}}).classList.contains("navlive");return`<button class="gmc tvgmc${lv?" lv":""}" data-tvopen="1" style="--gc:#c2414b"><span class="gmi"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="2.5" fill="currentColor"/><path d="M16.5 10.2l5-3v9.6l-5-3z" fill="currentColor"/></svg></span><span class="gmt"><b>Dynasty TV <span class="tvlv"><i></i>LIVE</span></b><small>Calendario NBA, risultati e tabellini in diretta, con i PDK di ogni giocatore.</small></span><span class="rgo">›</span></button>`})()}
     ${H("Fanta Dreamers")}
     <div class="gmenu">${ord.map(k=>card(GAMES.find(g=>g.k===k))).join("")}</div>
 
-    <button class="arcbtn" data-game="arcade"><span class="arci">🕹️</span><span>Arcade<small>${GAMES.filter(g=>g.a).map(g=>g.t).join(" · ")}</small></span><span class="rgo">›</span></button>
-    <p class="note">DREAMERS e G-DREAMERS sono i giochi fanta della lega; nella Dynasty TV calendario, risultati e tabellini NBA in diretta; nell'Arcade i passatempi, compresa la Sfida della notte. Record e risultati restano salvati su questo telefono.</p>`;
+    <p class="note">DREAMERS e G-DREAMERS sono i giochi fanta della lega; nella Dynasty TV calendario, risultati e tabellini NBA in diretta; Record e risultati restano salvati su questo telefono.</p>`;
   }
   if(GAME==="arcade"){
     return `<button class="gback" data-game="menu">‹ Home</button>${H("Arcade",`<em>Passatempi</em>`)}
