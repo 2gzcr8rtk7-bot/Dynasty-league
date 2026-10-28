@@ -2189,7 +2189,6 @@ html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.0
       <button data-v="roster" aria-selected="false"><span>Roster</span></button>
       <button data-v="fa" aria-selected="false"><span>Free Agent</span></button>
       <button data-v="trade" aria-selected="false"><span>Trade</span></button>
-      <button data-v="speciali" aria-selected="false"><span>Trade speciali</span></button>
       <button data-v="gleague" aria-selected="false"><span>G-Dreamers</span></button>
       <button data-v="infortuni" aria-selected="false"><span>Centro Medico</span></button>
       <button data-v="regolamento" aria-selected="false"><span>Regolamento</span></button>
@@ -3017,7 +3016,14 @@ function pagellaHTML(n){const P=pagella(n),S=P.s,v=(VALORI[n]||[])[1],pr=v!=null
   ${c("Infortuni",INF_STELLE[n]==null&&P.rk?"neutro":"",S.inj,PG_COL.inj)}${c("Minutaggio",P.mn!=null?f1(P.mn)+"'":"",S.min,PG_COL.min)}
   ${c(P.young?"Efficienza giovani":"Efficienza esperti",P.ef!=null?P.ef.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2}):"",S.eff,P.young?PG_COL.effg:PG_COL.effe)}${c("Spazio in squadra","",S.spa,PG_COL.spa)}</div>
   <p class="pgnote">Più stelle = meglio (Infortuni: più stelle = più sano). ${P.rk?"Stella azzurra = rookie. ":""}${P.young?`${P.yr}° anno NBA: efficienza confrontata con la soglia del ruolo.`:""}</p></div>`}
+let TRS="tutte";
+/* (247) Trade e Trade speciali unite: due categorie dentro la stessa pagina */
 function vTrade(){
+  const sw=`<div class="gdmsw" role="tablist">${[["tutte","Tutte le trade"],["sp","Trade speciale"]].map(([k,l])=>`<button data-trs="${k}" role="tab" aria-selected="${TRS===k}">${l}</button>`).join("")}</div>`;
+  return sw+(TRS==="sp"?vSpeciali():vTradeAll());
+}
+document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-trs]");if(!b||cur!=="trade")return;TRS=b.dataset.trs;render();window.scrollTo(0,0)});
+function vTradeAll(){
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
   const rec=(l,neg)=>l.map(n=>NUM[n]!==undefined?`<span>${sur(n)}${starH(n)}</span>`:`<span class="tcr2">${/credit/i.test(n)?(/^debito/i.test(n)?"":neg?"−":"+")+n.replace(/\s*crediti.*$/i," cr"):n.replace(/^Diritti su /,"").replace(/Slot ala per 10 giornate/,"Slot ala 10g")}</span>`).join("");
   const dir=v=>v==="entra"||v==="acquista"?"in":v==="esce"?"out":"";
