@@ -2006,6 +2006,7 @@ html.notte:not(.dreamfs){background-color:#0d0620}
 .shbox{max-width:520px;width:100%;max-height:100%;display:flex;flex-direction:column;gap:12px;align-items:center}
 .shbox img{max-width:100%;max-height:calc(100vh - 140px);object-fit:contain;border-radius:16px;box-shadow:0 10px 40px rgba(124,58,237,.45)}
 .shwait{color:#e9d5ff;font-family:var(--display);font-style:italic;font-weight:700;font-size:18px}
+.shfoot{position:sticky;bottom:0;width:100%;display:grid;gap:8px;padding-top:6px;background:linear-gradient(180deg,transparent,rgba(10,6,30,.92) 14px)}.shcut{width:100%;display:grid;gap:8px;padding:10px 12px;border-radius:14px;background:rgba(30,20,70,.8);border:1px solid rgba(196,181,253,.35);color:#fff;box-sizing:border-box}.shcut b{font:800 15px var(--display);font-style:italic;letter-spacing:.04em;text-transform:uppercase}.shcut small{display:block;color:#c4b5fd;font-size:12px}.shcut input{width:100%;accent-color:#a855f7;height:28px}
 .shbar{display:flex;gap:10px;width:100%}
 .shbar>*{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px;border-radius:14px;border:1px solid rgba(196,181,253,.35);background:rgba(30,20,70,.8);color:#fff;font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;letter-spacing:.05em;text-transform:uppercase;text-decoration:none;cursor:pointer}
 .shbar .shgo{background:linear-gradient(180deg,#a855f7,#6d28d9);border-color:transparent;box-shadow:0 6px 18px rgba(168,85,247,.45)}
@@ -4373,7 +4374,7 @@ function shFoot(c,W,H,txt){c.strokeStyle="rgba(196,181,253,.25)";c.lineWidth=2;c
   c.textAlign="right";c.fillText(`${p(n.getDate())}/${p(n.getMonth()+1)} · ${p(n.getHours())}:${p(n.getMinutes())}`,W-56,H-56)}
 function shChip(c,txt,x,y,live,col){c.font=SH_F(800,30,1);const w=c.measureText(txt).width+(live?66:40),h=50;shRR(c,x-w,y,w,h,12);c.fillStyle=col||(live?"#e11d48":"rgba(124,58,237,.9)");c.fill();
   c.fillStyle="#fff";c.textAlign="left";c.textBaseline="middle";if(live){c.beginPath();c.arc(x-w+28,y+h/2,8,0,7);c.fill()}c.fillText(txt,x-w+(live?46:20),y+h/2+1);return w}
-async function shCampo(){const S=SHR_CAMPO;if(!S)return null;const R=S.R,rh=104,H=590+108+R.length*rh+104+150;const{cv,c,W}=await shBase(H);
+async function shCampo(nn){const S=SHR_CAMPO;if(!S)return null;const nn0=nn&&nn<S.R.length?nn:S.R.length,part=nn0<S.R.length,R=S.R.slice(0,nn0),rh=104,H=590+108+R.length*rh+104+150;const{cv,c,W}=await shBase(H);
   const lg=await shLogo(S.t);let y=190;if(lg){c.shadowColor="rgba(192,132,252,.55)";c.shadowBlur=34;c.drawImage(lg,W/2-110,y,220,220);c.shadowBlur=0}
   c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,30,1);c.letterSpacing="6px";c.fillStyle="#f87171";c.fillText(S.turno?"MIGLIORI DEL TURNO":"LIVE STANOTTE",W/2+3,y+272);c.letterSpacing="0px";
   {const nm=TEAMS[S.t].name.toUpperCase();let fs=78;c.font=SH_F(800,fs,1);while(fs>48&&c.measureText(nm).width>W-140){fs-=2;c.font=SH_F(800,fs,1)}c.fillStyle="#d8b4fe";c.shadowColor="rgba(192,38,211,.95)";c.shadowBlur=28;c.fillText(nm,W/2,y+348);c.shadowBlur=12;c.fillText(nm,W/2,y+348);c.shadowBlur=0}
@@ -4387,8 +4388,8 @@ async function shCampo(){const S=SHR_CAMPO;if(!S)return null;const R=S.R,rh=104,
     shPill(c,+x.r[19],X.pdk-70,yy+24,140,56,36);
     c.textAlign="center";c.textBaseline="middle";c.font=SH_F(700,38,1);c.fillStyle="#e2e8f0";c.fillText(String(x.r[2]),X.min,yy+52);c.font=SH_F(800,40,1);c.fillStyle="#fff";c.fillText(String(x.r[3]),X.pt,yy+52);c.font=SH_F(700,38,1);c.fillStyle="#e2e8f0";c.fillText(String(x.r[6]),X.rim,yy+52);c.fillText(String(x.r[7]),X.ass,yy+52);
     c.fillStyle="rgba(196,181,253,.12)";c.fillRect(60,yy+rh-1,W-120,1)});
-  const yt=y+R.length*rh;c.textAlign="left";c.textBaseline="middle";c.font=SH_F(800,40,1);c.fillStyle="#e9d5ff";if(S.turno)c.font=SH_F(800,34,1);c.fillText(S.turno?"SOMMA MIGLIORI":"TOTALE NOTTE",80,yt+rh/2);
-  c.textAlign="center";c.font=SH_F(800,52,1);c.fillStyle="#fff";c.shadowColor="rgba(192,132,252,.9)";c.shadowBlur=20;c.fillText(pdkF(S.tot),X.pdk,yt+rh/2+2);c.shadowBlur=0;
+  const yt=y+R.length*rh;c.textAlign="left";c.textBaseline="middle";c.font=SH_F(800,40,1);c.fillStyle="#e9d5ff";if(S.turno)c.font=SH_F(800,34,1);c.fillText(part?"SOMMA PRIME "+nn0:S.turno?"SOMMA MIGLIORI":"TOTALE NOTTE",80,yt+rh/2);
+  c.textAlign="center";c.font=SH_F(800,52,1);c.fillStyle="#fff";c.shadowColor="rgba(192,132,252,.9)";c.shadowBlur=20;c.fillText(pdkF(part?R.reduce((a,x)=>a+(+x.r[19]||0),0):S.tot),X.pdk,yt+rh/2+2);c.shadowBlur=0;
   shFoot(c,W,H,"PDK formula Dunkest · provvisori fino al report ufficiale");return cv}
 async function shDreamers(){const S=SHR_DR;if(!S)return null;const ch=356,H=420+S.cards.length*(ch+32)+150-150;const{cv,c,W}=await shBase(H,0,1);c.translate(0,-150);
   let y=215;c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,108,1);c.letterSpacing="14px";
@@ -4550,10 +4551,14 @@ async function shOpen(k){const old=document.querySelector(".shsheet");if(old)old
   sh.addEventListener("click",e=>{if(e.target===sh||e.target.closest(".shx"))sh.remove()});
   let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="gr"?await shGrafico():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
   if(!cv){sh.querySelector(".shbox").innerHTML='<p class="shwait">Niente da condividere adesso.</p><button class="shx">Chiudi</button>';return}
-  const blob=await new Promise(r=>cv.toBlob(r,"image/png")),name=(k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="card"?"grafico":"dreamers")+".png",file=new File([blob],name,{type:"image/png"}),url=URL.createObjectURL(blob);
-  sh.querySelector(".shbox").innerHTML=`<img src="${url}" alt="Anteprima da condividere"><div class="shbar"><button class="shx">Chiudi</button><a class="shsv" href="${url}" download="${name}">Salva</a><button class="shgo">${SH_ICO} Condividi</button></div>`;
+  const name=(k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="card"?"grafico":"dreamers")+".png";
+  let file=null,url="";const mk=async c=>{const blob=await new Promise(r=>c.toBlob(r,"image/png"));file=new File([blob],name,{type:"image/png"});if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(blob)};await mk(cv);
+  /* Campo: cursore "fino a dove condividere" (si parte sempre dall'alto: prime N righe) */
+  const NR=k==="campo"&&SHR_CAMPO?SHR_CAMPO.R.length:0,sl=NR>1?`<div class="shcut"><div><b>Condividi dalla 1ª alla <output>${NR}</output>ª riga</b><small>su ${NR} · trascina per fermarti prima</small></div><input type="range" min="1" max="${NR}" value="${NR}" step="1" aria-label="Fino a quale riga condividere"></div>`:"";
+  sh.querySelector(".shbox").innerHTML=`<img src="${url}" alt="Anteprima da condividere"><div class="shfoot">${sl}<div class="shbar"><button class="shx">Chiudi</button><a class="shsv" href="${url}" download="${name}">Salva</a><button class="shgo">${SH_ICO} Condividi</button></div></div>`;
   const go=sh.querySelector(".shgo");if(!(navigator.canShare&&navigator.canShare({files:[file]})))go.remove();
-  else go.addEventListener("click",async()=>{try{await navigator.share({files:[file],title:k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"Migliori del turno":"Live stanotte"):k==="duel"?"Dreamers · sfida":k==="po"?"Dreamers · playoff":"Dreamers"})}catch(e){}})}
+  else go.addEventListener("click",async()=>{try{await navigator.share({files:[file],title:k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"Migliori del turno":"Live stanotte"):k==="duel"?"Dreamers · sfida":k==="po"?"Dreamers · playoff":"Dreamers"})}catch(e){}});
+  const rg=sh.querySelector(".shcut input");if(rg){let busy=false,again=false;const upd=async()=>{if(busy){again=true;return}busy=true;do{again=false;const n=+rg.value;sh.querySelector(".shcut output").textContent=n;try{const c2=await shCampo(n);await mk(c2);sh.querySelector(".shbox img").src=url;const sv=sh.querySelector(".shsv");if(sv)sv.href=url}catch(e){console.error(e)}}while(again);busy=false};rg.addEventListener("input",upd)}}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-share]");if(!b)return;e.preventDefault();e.stopPropagation();shOpen(b.dataset.share)},true);
 let CNT=false;
 function campoNotteMap(t){const d=campoNotte(),o={};if(!d)return o;const mine={};(ROSTER[t]||[]).forEach(p=>mine[tvNm(p[0])]=p[0]);

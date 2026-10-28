@@ -766,3 +766,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (220) **Tasto Dynasty TV in Home** — stessa altezza (38 px) degli altri due ma larghezza propria (56 px): pallino tondo e icona videocamera non più schiacciati (`.hbar .tvgo`). La ricerca cede lo spazio.
 
 (221) **Fix Roster (errore `t is not defined`)** — `vRoster` usava `dlHeadSty(t)` con `t` non definita (nella funzione la squadra è `curTeam`): la pagina Roster andava in errore e il tasto "‹ Roster …" dalla scheda giocatore non faceva nulla. Ora `dlHeadSty(curTeam)`. Verificato che tutte le viste di `VIEWS` si disegnano senza errori.
+
+(222) **Condividi: cursore "fino a dove"** — nel foglio di condivisione di "Migliori del turno" / "Live stanotte" (`shOpen("campo")`) c'è un cursore (`.shcut`, 1…N righe, default tutte) che ridisegna l'immagine con le sole prime N righe (`shCampo(n)`; si condivide sempre dall'alto). Con meno righe il totale diventa "SOMMA PRIME N" (somma delle righe mostrate). Cursore e pulsanti sono in un blocco fisso in basso (`.shfoot`, sticky). Il file da condividere/salvare viene rigenerato a ogni spostamento (`mk`).
