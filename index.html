@@ -6385,7 +6385,12 @@ const tvDt=s=>new Date(s+"T12:00:00Z");
 function tvLogo(c,cls=""){const t=TVD().teams[c]||[c,0,"#333"];return`<span class="tvlw ${cls}" style="background:${t[2]}"><em>${c}</em>${t[1]?`<img src="https://cdn.nba.com/logos/nba/${t[1]}/primary/L/logo.svg" alt="" loading="lazy" onload="this.parentNode.classList.add('ok')" onerror="this.remove()">`:""}</span>`}
 const tvNick=c=>{const n=(TVD().teams[c]||[c])[0];return n.split(" ").slice(-1)[0]==="Blazers"?"Trail Blazers":n.split(" ").slice(-1)[0]};
 const tvRec=c=>{const r=TVD().rec[c];return r?r[0]+"-"+r[1]:""};
-function tvDefDay(){const T=TVD(),ks=Object.keys(T.days).sort();const lv=ks.filter(k=>T.days[k].some(g=>g[5]==="L"));if(lv.length)return lv[0];const f=ks.filter(k=>T.days[k].some(g=>g[5]==="F"));return f.length?f[f.length-1]:ks[0]}
+/* (304) giorno di default di Dynasty TV: partita live → quel giorno; dalle 15:00 (ora italiana) le partite della notte che arriva
+   (data USA = data italiana di oggi, o il primo giorno successivo con partite); prima delle 15:00 l'ultima notte giocata */
+function tvDefDay(){const T=TVD(),ks=Object.keys(T.days).sort();const lv=ks.filter(k=>T.days[k].some(g=>g[5]==="L"));if(lv.length)return lv[0];
+  {const n=new Date(),it=n.toLocaleDateString("en-CA",{timeZone:"Europe/Rome"}),h=+n.toLocaleString("en-GB",{timeZone:"Europe/Rome",hour:"2-digit",hourCycle:"h23"});
+   if(h>=15){const nx=ks.find(k=>k>=it&&(T.days[k]||[]).length);if(nx)return nx}}
+  const f=ks.filter(k=>T.days[k].some(g=>g[5]==="F"));return f.length?f[f.length-1]:ks[0]}
 function tvLead(b){const all=[...b.a.map(p=>["a",p]),...b.h.map(p=>["h",p])];const top=i=>all.slice().sort((x,y)=>y[1][i]-x[1][i])[0];return{pts:top(3),reb:top(6),ast:top(7),pdk:all.slice().sort((x,y)=>y[1][19]-x[1][19])[0]}}
 function vTV(){const h=vTV0(),dentro=(TVS.g&&TVD().box[TVS.g])||TVS.dr;/* dentro una partita/sfida resta solo "‹ Partite del…" */
   return(dentro?"":`<button class="gback" id="tvback">‹ Home</button>`)+h}
@@ -6430,6 +6435,7 @@ function tvDrGame(key){try{const[ks,a,b]=key.split("|"),k=+ks,st=drStand(),P=drP
   <button class="advbtn" data-drgo="${key}">Apri in Dreamers ›</button>
   <p class="note">${DR_PH(k,P)} · ${drFmt(W.start)}–${drFmt(W.end)}. PDK = miglior punteggio Dunkest tra le partite del turno. I 10 con il PDK più alto sono titolari: il migliore è capitano (C, ×1,5), poi 5 a punteggio pieno (in campo) e gli ultimi 4 in panchina a metà; gli altri vanno in tribuna. Punteggio squadra = somma dei punti dei titolari (${pdkF(somma)}).${prov?" Ci sono notti con PDK provvisori (live): si sostituiscono con i dati Dunkest al report.":""}</p>`}catch(e){return""}}
 function vTV0(){setTimeout(tvWeekPos,0);const T=TVD(),ks=Object.keys(T.days).sort();if(!ks.length)return`${H("Dynasty TV")}<div class="tvempty">Calendario non ancora disponibile.</div>`;
+  if(TVS.out){TVS.out=0;if(!TVS.g&&!TVS.dr)TVS.d=null}/* (304) a ogni nuova apertura di Dynasty TV si riparte dal giorno giusto */
   if(!TVS.d||!T.days[TVS.d])TVS.d=tvDefDay();
   if(TVS.dr){const h=tvDrGame(TVS.dr);if(h)return h;TVS.dr=null}
   if(TVS.g&&T.box[TVS.g])return tvGame(TVS.g);
@@ -6577,7 +6583,7 @@ const VIEWS={glplayer:vGLP,fa:vFA,faplayer:vFAP,tv:vTVlive,college:vCollege,tren
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
-  liveSync();if(["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur))fantaLiveAvvia();
+  if(cur!=="tv")TVS.out=1;liveSync();if(["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur))fantaLiveAvvia();
   document.body.dataset.v=cur;{const nt=typeof CNT!=="undefined"&&CNT;document.body.classList.toggle("notte",nt);document.documentElement.classList.toggle("notte",nt);const tc=document.querySelector('meta[name="theme-color"]');if(tc&&!document.body.classList.contains("dreamfs"))tc.content=nt?"#2a1260":TH_BAR}
   {document.documentElement.classList.toggle("setpg",cur==="impostazioni");/* (245) */const fs=cur==="giochi"&&(GAME==="dream"||GAME==="gdream");document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=(fs||(typeof CNT!=="undefined"&&CNT))?"#2a1260":TH_BAR}
   const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="fa"?"fa":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"?"home":cur==="osserv"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
@@ -6958,6 +6964,7 @@ ulCheck();
 /* (260) CRONOLOGIA MODIFICHE: il footer "Ultimo aggiornamento" è cliccabile e apre questa pagina (vista "novita").
    OGNI nuova modifica pubblicata va aggiunta in CIMA a NV_LOG (data, titolo, mini spiegazione). */
 const NV_LOG=[
+ ["28/10/2026","Dynasty TV: dalle 15 la notte che arriva","Aprendo Dynasty TV, fino alle 15:00 vedi le partite della notte appena giocata; dalle 15:00 in poi le partite della notte successiva. Il calendario dei prossimi giorni (con gli orari italiani) si aggiorna da solo ogni giorno da ESPN."],
  ["28/10/2026","Free Agent diventa Giocatori","La sezione Free Agent ora si chiama Giocatori. Cercando un nome compaiono anche i giocatori delle squadre ufficiali e delle G-League, col logo della squadra proprietaria, con PDK, efficienza e scheda come i free agent."],
  ["28/10/2026","Nuovo logo Dreamers","Nuovo logo (stella bianca su quadrato viola, col viola della modalità notte) come icona dell'app sul telefono, in alto (toccalo per aggiornare l'app), sul tasto Dreamers della Home e nelle immagini condivise. Per vedere la nuova icona sul telefono togli il collegamento e aggiungilo di nuovo alla schermata Home."],
  ["28/10/2026","Nuovi verdi","Il verde della disponibilità (trattino della salute) e quello del PDK buono hanno una nuova tonalità, più brillante, su tutta l'app. Restano modificabili in Impostazioni › Giocatori."],
