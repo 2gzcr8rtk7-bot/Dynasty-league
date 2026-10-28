@@ -974,3 +974,7 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 ### (300) Fix quadrato viola dietro il logo Ducks in modalità notte (Home)
 - Causa: in notte le tile Home davano ai loghi un `drop-shadow(0 0 16px viola)`; su iPhone l'alone veniva tagliato al bordo del riquadro del badge e, con i loghi 7/8 che riempiono tutto il riquadro, appariva come un quadrato viola. Ora il badge non ha più il filtro e l'alone è un `::before` radiale sul contenitore `.hlg` (non clippato). Il filtro resta per il banner `.teamhead .hlogo`.
 - In più: ripulita la trasparenza dei loghi `loghi/duc-1…8.webp` (alpha < 40 azzerata, pixel quasi trasparenti da compressione) e cache-bust `?v=3`.
+
+### (301) Tasto indietro: torna sempre da dove arrivi
+- Il ‹ della scheda G League tornava a G-Dreamers anche arrivando dall'Osservatorio (il mio handler `#glpback` scattava prima della pila `NAVH`): ora usa la pila e ripiega su G-Dreamers solo se la pila è vuota.
+- Aggiunti alla pila `BK_IDS` anche `#effback` (Efficienza squadra), `#cback` (Campo/Cassa), `[data-cupback]` e `[data-snback]` (Efficienza/Statistiche): prima tornavano sempre alla loro sezione fissa (Statistiche / Home), ora al punto da cui si era arrivati; l'etichetta del tasto dice dove porta.
