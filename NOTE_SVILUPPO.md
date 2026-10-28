@@ -997,3 +997,9 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 ### (306) Duelli Dreamers: pillola DUB/OUT e maglia
 - La pillola DUB/OUT è stata abbassata nella zona tra la riga del nome e il testo della riga punteggio (`.du .duo{top:calc(50% + 18px)}`).
 - Maglia ridotta (svg 40×44,5px, margin-top -1,5px) così l'ombra non tocca più la pillola del punteggio.
+
+### (307) Sezione "Giocatori" (ex Free Agent)
+- Rinominata in menu, titolo, placeholder, etichette "indietro" (`fa`, `faplayer`, gFrom==="fa" → "Giocatori"). Nelle schede dei veri free agent resta la dicitura "Free Agent".
+- `vFA()` ora include anche `faOthers()`: giocatori delle 8 rose (ROSTER, stagione corrente da PARTITE, passate da STAGIONI) e della G League (GL_STATS.log / GL_PAST), righe `.faoth` nascoste finché la ricerca non le trova. Stesse colonne PG/Min/PDK/Eff, filtri stagione e ruolo; filtro "G League" esclude i giocatori di squadra. Logo squadra (`badge`) o G-League (`glBadge`) accanto al nome. Giocatori G League già presenti tra i FA non sono duplicati.
+- Click: squadra → scheda giocatore (gFrom="fa"), G League → `glVai`. La query di ricerca (`faQ`) resta al ritorno e al cambio stagione/ruolo.
+- Voce pubblica in NV_LOG.

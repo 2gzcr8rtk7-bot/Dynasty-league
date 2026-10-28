@@ -2213,7 +2213,7 @@ html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.0
       <button data-v="risultati" aria-selected="false"><span>Risultati</span></button>
       <button data-v="classifica" aria-selected="false"><span>Classifica</span></button>
       <button data-v="roster" aria-selected="false"><span>Roster</span></button>
-      <button data-v="fa" aria-selected="false"><span>Free Agent</span></button>
+      <button data-v="fa" aria-selected="false"><span>Giocatori</span></button>
       <button data-v="trade" aria-selected="false"><span>Trade</span></button>
       <button data-v="gleague" aria-selected="false"><span>G-Dreamers</span></button>
       <button data-v="infortuni" aria-selected="false"><span>Centro Medico</span></button>
@@ -3457,17 +3457,33 @@ const faNz=v=>String(v||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u03
 const faGL1=n=>FA_OWN[n]?`<span class="fagl" title="Diritti G League: ${TEAMS[FA_OWN[n]].nick}">${glBadge(FA_OWN[n],"faglb")}</span>`:"";
 const faNum=v=>v==null?"—":v.toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1});
 const FA_SZL={"24/25":"Stagione 1","25/26":"Stagione 2","26/27":"Stagione 3"};
+/* Altri giocatori (squadre e G League) cercabili dalla sezione Giocatori: stesse colonne dei free agent, con il logo della squadra proprietaria */
+let faQ="";
+const faSzFull=z=>"20"+z;
+function faAvg(g){if(!g||!g.length)return null;const mn=g.reduce((a,x)=>a+x[2],0),dk=g.reduce((a,x)=>a+x[3],0);return[g.length,mn/g.length,dk/g.length,mn?dk/mn:null]}
+function faOthers(){
+  const z=faSzFull(faSz),cur0=z==="2026/27",S=cur0?null:(STAGIONI[z]||{}),PS=cur0?null:((typeof GL_PAST!=="undefined"&&GL_PAST[z])||{}),GS=typeof GL_STATS!=="undefined"?GL_STATS:{};
+  const fa=new Set(FA.map(x=>faNz(x[0]))),out=[],seen=new Set();
+  Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>{if(faRole&&p[2]!==faRole)return;out.push({kind:"T",t,n:p[0],r:p[2],nba:p[3],s:faAvg(cur0?PARTITE[p[0]]:S[p[0]])})}));
+  if(typeof GLEAGUE!=="undefined")GLEAGUE.forEach(x=>x.g.forEach(p=>{const k=x.t+"|"+p[0],st=GS[k]||{},n=st.n||p[0];if(fa.has(faNz(n))||seen.has(faNz(n)))return;seen.add(faNz(n));const r=(p[1]||st.r);if(faRole&&r!==faRole)return;
+    out.push({kind:"G",t:x.t,k,n,r,nba:st.nba||"",s:faAvg(cur0?st.log:PS[k])})}));
+  return out.filter(o=>FA_R[o.r]).map(o=>(o.kind==="T"&&faGL?null:o)).filter(Boolean).sort((a,b)=>(b.s?b.s[2]:-999)-(a.s?a.s[2]:-999)||a.n.localeCompare(b.n));
+}
 function vFA(){
+  const q=faNz(faQ.trim());
   const L=FA.filter(x=>(!faRole||x[2]===faRole)&&(!faGL||FA_OWN[x[0]])).map(x=>({x,s:x[4][faSz]}));
   L.sort((a,b)=>(b.s?b.s[2]:-999)-(a.s?a.s[2]:-999)||a.x[0].localeCompare(b.x[0]));
   let k=0;
-  const rows=L.map(({x,s})=>{const has=!!s;if(has)k++;return `<tr class="farow${has?"":" fanone"}" data-fan="${x[0].replace(/"/g,"&quot;")}" data-fs="${faNz(x[0]+" "+x[1])}"${has?"":" hidden"}><td class="fark">${has?k:"–"}</td><td class="fanm"><b>${RTR(x[0])}${x[0]}</b>${faGL1(x[0])}<small>${x[1]} · ${FA_R[x[2]]}</small></td><td>${has?s[0]:"—"}</td><td>${has?faNum(s[1]):"—"}</td><td class="fapdk">${has?pdkB(s[2],faNum(s[2])):"—"}</td><td>${has?eff(s[3]):"—"}</td></tr>`}).join("");
+  const rows=L.map(({x,s})=>{const has=!!s;if(has)k++;const fs=faNz(x[0]+" "+x[1]);return `<tr class="farow${has?"":" fanone"}" data-fan="${x[0].replace(/"/g,"&quot;")}" data-fs="${fs}"${(q?!fs.includes(q):!has)?" hidden":""}><td class="fark">${has?k:"–"}</td><td class="fanm"><b>${RTR(x[0])}${x[0]}</b>${faGL1(x[0])}<small>${x[1]} · ${FA_R[x[2]]}</small></td><td>${has?s[0]:"—"}</td><td>${has?faNum(s[1]):"—"}</td><td class="fapdk">${has?pdkB(s[2],faNum(s[2])):"—"}</td><td>${has?eff(s[3]):"—"}</td></tr>`}).join("");
+  const oth=faOthers().map(o=>{const s=o.s,has=!!s,fs=faNz(o.n+" "+(o.nba||"")+" "+TEAMS[o.t].name+" "+TEAMS[o.t].nick),nn=o.n.replace(/"/g,"&quot;");
+    const logo=o.kind==="T"?`<span class="fagl" title="${TEAMS[o.t].nick}">${badge(o.t,"faglb")}</span>`:`<span class="fagl" title="G League ${TEAMS[o.t].nick}">${glBadge(o.t,"faglb")}</span>`;
+    return `<tr class="farow faoth" ${o.kind==="T"?`data-fat="${o.t}" data-fap="${nn}"`:`data-fag="${o.k.replace(/"/g,"&quot;")}"`} data-fs="${fs}"${q&&fs.includes(q)?"":" hidden"}><td class="fark">–</td><td class="fanm"><b>${RTR(o.n)}${o.n}</b>${logo}<small>${o.kind==="T"?TEAMS[o.t].nick:"G-"+TEAMS[o.t].nick} · ${FA_R[o.r]}${o.nba?" · "+o.nba:""}</small></td><td>${has?s[0]:"—"}</td><td>${has?faNum(s[1]):"—"}</td><td class="fapdk">${has?pdkB(s[2],faNum(s[2])):"—"}</td><td>${has?eff(s[3]):"—"}</td></tr>`}).join("");
   const ch=(attr,val,lab,on)=>`<button class="fach" ${attr}="${val}" aria-pressed="${on}">${lab}</button>`;
-  return `${H("Free Agent",`<em>${FA.length} giocatori</em>`)}
-  <input id="faq" class="vtq" type="search" placeholder="🔍 Cerca free agent o squadra NBA" autocomplete="off" aria-label="Cerca free agent">
+  return `${H("Giocatori",`<em>${FA.length} giocatori</em>`)}
+  <input id="faq" class="vtq" type="search" placeholder="🔍 Cerca giocatore o squadra NBA" autocomplete="off" aria-label="Cerca giocatore" value="${faQ.replace(/"/g,"&quot;")}">
   <div class="fasel"><div>${["26/27","25/26","24/25"].map(z=>ch("data-fasz",z,FA_SZL[z],faSz===z)).join("")}</div><div>${[["","Tutti"],["G","G"],["F","A"],["C","C"]].map(([v,l])=>ch("data-farole",v,l,faRole===v)).join("")}${ch("data-fagl","1","G League",faGL)}</div></div>
-  <div class="tbl-wrap"><table class="fatbl"><thead><tr><th>#</th><th>Giocatore</th><th>PG</th><th>Min</th><th>PDK</th><th>Eff.</th></tr></thead><tbody>${rows}</tbody></table></div>
-  <p class="note">Tutti i giocatori NBA che non sono nei roster della lega, con media per partita della stagione scelta (solo regular season). <span class="fagl">${badge("DOL","faglb")}<i>G</i></span> = giocatore nella G League di quella franchigia. PDK ufficiali Dunkest (dunkest.com), medie per partita di regular season. Dati al ${FA_AGG}. Tocca un giocatore per la scheda.</p>`;
+  <div class="tbl-wrap"><table class="fatbl"><thead><tr><th>#</th><th>Giocatore</th><th>PG</th><th>Min</th><th>PDK</th><th>Eff.</th></tr></thead><tbody>${rows}${oth}</tbody></table></div>
+  <p class="note">I giocatori NBA non presenti nei roster della lega (free agent) sono sempre in lista; cercando per nome compaiono anche quelli delle squadre ufficiali e delle G League, con il logo della squadra proprietaria. Media per partita della stagione scelta (solo regular season). <span class="fagl">${badge("DOL","faglb")}<i>G</i></span> = giocatore nella G League di quella franchigia. PDK ufficiali Dunkest (dunkest.com). Dati al ${FA_AGG}. Tocca un giocatore per la scheda.</p>`;
 }
 let faPS=null,faGLoad=false;
 function faLoadG(){if(typeof FAG!=="undefined"||faGLoad===true)return;faGLoad=true;const s=document.createElement("script");s.src="fa-games.js";
@@ -3516,7 +3532,7 @@ function vFAP(){
   const GL=typeof FAG==="undefined"?null:((FAG[x[0]]||{})[sz]||[]);
   const sel=`<div class="gszn fapsz"><label for="fapsz">Stagione</label><select id="fapsz">${SZ.map(z=>`<option value="${z}"${z===sz?" selected":""}>${SZ_LBL[z]} · ${z}${x[4][z.slice(2)]?"":" (nessuna partita)"}</option>`).join("")}</select></div>`;
   const rows=SZ.map(z=>{const s=x[4][z.slice(2)];return `<tr><td class="fasz">${SZ_LBL[z].replace("Stagione ","Stag. ")}<small>${z}</small></td>${s?`<td>${s[0]}</td><td>${faNum(s[1])}</td><td class="fapdk">${pdkB(s[2],faNum(s[2]))}</td><td>${eff(s[3])}</td><td class="gpj">${s[3]==null?"—":faNum(s[3]*36)}</td><td>${faNum(s[4])}</td><td>${faNum(s[5])}</td><td>${faNum(s[6])}</td>`:`<td colspan="8" class="faempty">Nessuna partita</td>`}</tr>`}).join("");
-  return `<button class="gback" id="faback">‹ ${faFrom==="home"?"Home":"Free Agent"}</button>
+  return `<button class="gback" id="faback">‹ ${faFrom==="home"?"Home":"Giocatori"}</button>
   <div class="fahead"${c?` style="--tc:${c.bg}"`:""}><span class="fanum">${x[3]?"#"+x[3]:FA_R[x[2]][0]}</span><div><small>Free Agent${o?` · G League ${c.nick}`:""}</small><h3>${x[0]}</h3><div class="segrow">${segBtn(x[0],1)}</div><p>${FA_R[x[2]]} · ${x[1]}${etaTxt(x[0])?`<span style="display:block">${etaTxt(x[0])}</span>`:""}</p></div>${o?`<span class="faown">${glBadge(o)}</span>`:""}</div>
   ${extProfilo({sz,sel,a:s?{g:s[0],min:s[1],pdk:s[2],eff:s[3],pt:s[4],rb:s[5],as:s[6]}:null,GL,gr:`data-grafico="FA" data-grp="${x[0].replace(/"/g,"&quot;")}" data-grsz="${sz}"`,vuoto:"Nessuna partita NBA in questa stagione: non era in NBA o non ha giocato."})}
   ${H("Stagioni",`<em>media per partita</em>`)}
@@ -3545,14 +3561,16 @@ function vGLP(){
 document.addEventListener("click",e=>{const sm=e.target.closest("details.glp>summary");if(sm){const d=sm.parentElement;if(d.dataset.glk){e.preventDefault();e.stopPropagation();glVai(d.dataset.glk)}return}
   if(e.target.closest("#glpback")&&cur==="glplayer"&&!NAVH.length){cur="gleague";render();scrollTo(0,0)}},true);
 document.getElementById("main").addEventListener("click",e=>{
-  const b=e.target.closest("[data-fan],[data-fasz],[data-farole],[data-fagl],[data-faps],#faback");if(!b)return;
+  const b=e.target.closest("[data-fan],[data-fat],[data-fag],[data-fasz],[data-farole],[data-fagl],[data-faps],#faback");if(!b)return;
+  if(b.dataset.fat){curTeam=b.dataset.fat;curPlayer=b.dataset.fap;gFrom="fa";cur="giocatore";render();scrollTo(0,0);return}
+  if(b.dataset.fag){glVai(b.dataset.fag);return}
   if(b.dataset.faps){faPS=b.dataset.faps;const y=scrollY;render();scrollTo(0,y);return}
   if(b.id==="faback"){cur=faFrom==="home"?"home":"fa";render();scrollTo(0,0);return}
   if(b.dataset.fan!==undefined){faFrom=cur==="home"?"home":"fa";faP=b.dataset.fan;faPS=null;cur="faplayer";render();scrollTo(0,0);return}
   if(b.dataset.fasz)faSz=b.dataset.fasz;if(b.dataset.farole!==undefined)faRole=b.dataset.farole;if(b.dataset.fagl)faGL=!faGL;render()});
 document.getElementById("main").addEventListener("change",e=>{if(e.target.id!=="fapsz")return;faPS=e.target.value;const y=scrollY;render();scrollTo(0,y)});
-document.getElementById("main").addEventListener("input",e=>{if(e.target.id!=="faq")return;const q=faNz(e.target.value.trim());
-  document.querySelectorAll(".farow").forEach(r=>{r.hidden=q?!r.dataset.fs.includes(q):r.classList.contains("fanone")})});
+document.getElementById("main").addEventListener("input",e=>{if(e.target.id!=="faq")return;faQ=e.target.value;const q=faNz(faQ.trim());
+  document.querySelectorAll(".farow").forEach(r=>{r.hidden=q?!r.dataset.fs.includes(q):(r.classList.contains("fanone")||r.classList.contains("faoth"))})});
 
 /* ===== OSSERVATORIO (28/10/2026): giocatori che "segui" (tasto segnalibro), salvati SOLO su questo dispositivo (localStorage "dl_seg").
    Vista dal pulsante giallo in Home: classifica Live (chi gioca ora) · Notte (tutta la notte) · Generale (stagione), ordinabile per PDK o efficienza. ===== */
@@ -3956,7 +3974,7 @@ function vGiocatore(){
   const ruolo={G:"Guardia",F:"Ala",C:"Centro"}[p[2]]||p[2];
   const pct=v=>Math.max(3,Math.min(100,v/1.6*100));
   const stat=(lab,val,sub="")=>`<div class="gst"><small>${lab}</small><b>${val}</b>${sub?`<em>${sub}</em>`:""}</div>`;
-  return `<button class="gback" id="gback">‹ ${gFrom==="home"?"Home":gFrom==="college"?"Ufficio Scouting":gFrom==="valtrade"?"Valori lega":gFrom==="effsquadra"?"Efficienza "+c.nick:gFrom==="efficienza"?"Efficienza":"Roster "+c.nick}</button>
+  return `<button class="gback" id="gback">‹ ${gFrom==="home"?"Home":gFrom==="fa"?"Giocatori":gFrom==="college"?"Ufficio Scouting":gFrom==="valtrade"?"Valori lega":gFrom==="effsquadra"?"Efficienza "+c.nick:gFrom==="efficienza"?"Efficienza":"Roster "+c.nick}</button>
   <div class="ghead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 60%,#000) 100%);color:${c.txt||c.fg};border-bottom:4px solid ${c.trim}">
     <div class="gjer">${jersey(t,p[1],p[0])}</div>
     <div class="gtit"><small>${c.name}</small><h3>${p[0]}</h3><div class="segrow">${segBtn(p[0],1)}</div><p>${ruolo} · ${p[3]} · #${p[1]}${etaTxt(p[0])?`<span style="display:block">${etaTxt(p[0])}</span>`:""}</p>${INJ[p[0]]&&INJ[p[0]].stato!=="ok"?`<div class="injtag ${INJ[p[0]].stato}">${STATI[INJ[p[0]].stato][0]} · ${INJ[p[0]].tipo}</div>`:""}${ROOKIE.includes(p[0])?`<div class="rookie">Slot Rookie</div>`:""}${AVVISI[p[0]]?`<div class="avviso">${AVVISI[p[0]]}</div>`:""}</div>
@@ -6504,7 +6522,7 @@ function render(){
   liveSync();if(["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur))fantaLiveAvvia();
   document.body.dataset.v=cur;{const nt=typeof CNT!=="undefined"&&CNT;document.body.classList.toggle("notte",nt);document.documentElement.classList.toggle("notte",nt);const tc=document.querySelector('meta[name="theme-color"]');if(tc&&!document.body.classList.contains("dreamfs"))tc.content=nt?"#2a1260":TH_BAR}
   {document.documentElement.classList.toggle("setpg",cur==="impostazioni");/* (245) */const fs=cur==="giochi"&&(GAME==="dream"||GAME==="gdream");document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=(fs||(typeof CNT!=="undefined"&&CNT))?"#2a1260":TH_BAR}
-  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"?"home":cur==="osserv"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
+  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="fa"?"fa":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"?"home":cur==="osserv"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));try{const nv=document.querySelector("nav"),sb=nv&&nv.querySelector('[aria-selected="true"]');if(sb)nv.scrollTo({left:Math.max(0,sb.offsetLeft-24)})}catch(e){}
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -6566,7 +6584,7 @@ function syncMenu(){
   document.querySelectorAll("nav button[data-menu]").forEach(b=>{
     const p=document.getElementById(b.dataset.menu);if(!p)return;
     const op=dkOpen===b.dataset.menu;b.setAttribute("aria-expanded",op);p.hidden=!op;
-    const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
+    const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="fa"?"fa":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
     b.setAttribute("aria-selected",op||inside);
     if(op){const w=b.closest(".wrap").getBoundingClientRect(),r=b.getBoundingClientRect();
       const width=Math.max(r.width,180);let left=r.left-w.left+r.width/2-width/2;left=Math.max(0,Math.min(left,w.width-width));
@@ -6602,7 +6620,7 @@ const NAVH=[];let navLast=cur,navT=0;
 (function(){const r0=render;render=function(){if(navLast!==null&&cur!==navLast){if(NAVH[NAVH.length-1]===cur)NAVH.pop();else{NAVH.push(navLast);if(NAVH.length>40)NAVH.shift()}}navLast=cur;const rr=r0.apply(this,arguments);try{fixBackLabels()}catch(e){}try{if(document.querySelector(".du .dun b"))document.fonts.load("16px CourtBlock").catch(()=>{}).then(()=>requestAnimationFrame(duFit))}catch(e){}return rr}})();
 /* TASTO INDIETRO SEMPLICE: ogni "‹" della scheda giocatore, Campo, Cassa, Osservatorio ecc. riporta alla schermata da cui si è arrivati (pila NAVH) e la sua scritta dice dove porta */
 const BK_IDS="#gback,#faback,#glpback,#effback,#cback,[data-cupback],[data-snback],#capback,#mulback,#colback,#cassaback,#osback";
-function backLabel(v){const n=(TEAMS[curTeam]||{}).nick||"";const M={home:"Home",campo:"Campo "+n,roster:"Roster "+n,fa:"Free Agent",valtrade:"Calcolatore trade",osserv:"Osservatorio",efficienza:"Statistiche",effsquadra:"Efficienza "+n,effcup:"Efficienza",tv:"Dynasty TV",risultati:"Risultati",classifica:"Classifica",trade:"Trade",speciali:"Trade speciali",gleague:"G-Dreamers",college:"Ufficio Scouting",cassa:"Cassa "+n,cap:"Cap",multe:"Multe",trend:"Trend",statnotte:"Statistiche notte",grafico:"Grafico",dunkest:"Centro gestione",storia:"Sala Trofei",regolamento:"Regolamento",infortuni:"Centro Medico",gdreamers:"G-Dreamers",faplayer:"Free Agent",glplayer:"G-Dreamers"};
+function backLabel(v){const n=(TEAMS[curTeam]||{}).nick||"";const M={home:"Home",campo:"Campo "+n,roster:"Roster "+n,fa:"Giocatori",valtrade:"Calcolatore trade",osserv:"Osservatorio",efficienza:"Statistiche",effsquadra:"Efficienza "+n,effcup:"Efficienza",tv:"Dynasty TV",risultati:"Risultati",classifica:"Classifica",trade:"Trade",speciali:"Trade speciali",gleague:"G-Dreamers",college:"Ufficio Scouting",cassa:"Cassa "+n,cap:"Cap",multe:"Multe",trend:"Trend",statnotte:"Statistiche notte",grafico:"Grafico",dunkest:"Centro gestione",storia:"Sala Trofei",regolamento:"Regolamento",infortuni:"Centro Medico",gdreamers:"G-Dreamers",faplayer:"Giocatori",glplayer:"G-Dreamers"};
   return v==="giochi"?(GAME==="dream"?"Dreamers":GAME==="gdream"?"G-Dreamers":"Giochi"):(M[v]||"Indietro")}
 /* nomi troppo lunghi per la card: nome di battesimo ridotto all'iniziale ("S. GILGEOUS-ALEXANDER") */
 function duFit(){document.querySelectorAll(".du .dun b").forEach(b=>{if(b.scrollWidth<=b.clientWidth+1)return;const t=[...b.childNodes].reverse().find(n=>n.nodeType===3);if(!t)return;const m=t.nodeValue.match(/^(\S)\S*\s+(.+)$/);if(!m)return;b.title=t.nodeValue;t.nodeValue=m[1]+". "+m[2];for(let f=16;f>=13&&b.scrollWidth>b.clientWidth+1;f-=.5)b.style.fontSize=f+"px"})}
@@ -6882,6 +6900,7 @@ ulCheck();
 /* (260) CRONOLOGIA MODIFICHE: il footer "Ultimo aggiornamento" è cliccabile e apre questa pagina (vista "novita").
    OGNI nuova modifica pubblicata va aggiunta in CIMA a NV_LOG (data, titolo, mini spiegazione). */
 const NV_LOG=[
+ ["28/10/2026","Free Agent diventa Giocatori","La sezione Free Agent ora si chiama Giocatori. Cercando un nome compaiono anche i giocatori delle squadre ufficiali e delle G-League, col logo della squadra proprietaria, con PDK, efficienza e scheda come i free agent."],
  ["28/10/2026","Nuovo logo Dreamers","Nuovo logo (stella bianca su quadrato viola, col viola della modalità notte) come icona dell'app sul telefono, in alto (toccalo per aggiornare l'app), sul tasto Dreamers della Home e nelle immagini condivise. Per vedere la nuova icona sul telefono togli il collegamento e aggiungilo di nuovo alla schermata Home."],
  ["28/10/2026","Nuovi verdi","Il verde della disponibilità (trattino della salute) e quello del PDK buono hanno una nuova tonalità, più brillante, su tutta l'app. Restano modificabili in Impostazioni › Giocatori."],
  ["28/10/2026","Giocatori probabili","Quando ESPN segna un giocatore come probabile, il trattino della salute in campo è verde al 75% (non pieno) e nel Centro medico compare il gruppo Probabile. In Impostazioni › Giocatori puoi anche scegliere lo stacco del trattino e i colori di disponibilità e PDK."],
