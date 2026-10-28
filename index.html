@@ -1399,6 +1399,9 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .pobk{position:relative;height:280px;margin:0}.pobk>svg.lnk{position:absolute;inset:0;width:100%;height:100%;overflow:visible}.pobk svg.lnk path{fill:none;stroke-width:2;vector-effect:non-scaling-stroke}.pobk svg.lnk .w{stroke:rgba(252,211,77,.8)}.pobk svg.lnk .l{stroke:rgba(165,180,252,.5);stroke-dasharray:4 3}
 .pobk .pk{position:absolute;width:30%;transform:translateY(-50%)}.pobk .pk.s.e{left:0;top:49%}.pobk .pk.s.w{right:0;top:49%}.pobk .pk.f1,.pobk .pk.f2{left:35%;width:30%}.pobk .pk.f1{top:27%}.pobk .pk.f2{top:71%}.pobk .pkcup{position:absolute;left:35%;width:30%;top:-3%;display:grid;place-items:center}.pobk .pkcup .drcup{width:40px;height:40px}
 .pobx .bkm{padding:2px 0}.pobx .bkt{padding:3px 4px;gap:3px;min-height:28px}.pobx .bklg{width:19px;height:19px}.pobx .bkt i{width:8px;font-size:9px}.pobx .bkt b{font-size:10px;letter-spacing:-.02em;padding-right:2px}.pobx .bklab{white-space:nowrap}.pobx .bkt em{font-size:14px;min-width:10px}.pobx .bklab{font-size:8px;left:6px;padding:0 5px;line-height:14px}.pobx .bkm.tbd .bkt b{font-size:10px;white-space:normal;line-height:1.1}
+.pobt2{display:grid;grid-template-columns:44fr 12fr 44fr;padding:0 0 2px}.pobt2 span{font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#e9d5ff;text-align:center}.pobt2 span:nth-child(2){grid-column:3}.pobt2 small{display:block;font-size:10px;font-style:normal;font-weight:600;color:#a5b4fc}
+.pobk2{height:215px;margin:0}.pobk2 .pk{width:44%}.pobk2 .pk.s1{left:0;top:24%}.pobk2 .pk.s2{left:0;top:76%}.pobk2 .pk.f1{left:56%;top:50%;width:44%}.pobk2 .pkcup{left:56%;width:44%;top:2%}
+.pobp{margin:14px 0 0;padding:12px 0 0;border-top:1px dashed rgba(196,181,253,.3)}.pobp h6{margin:0 0 8px;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#c4b5fd}.pobp h6 small{margin-left:8px;font-size:10px;font-style:normal;font-weight:600;color:#a5b4fc}.pobpm{width:56%;padding-top:8px}
 .pobch{margin-top:12px;text-align:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#fcd34d}.pobch b{display:block;font-family:var(--display);font-style:italic;font-weight:900;font-size:24px;letter-spacing:.04em;color:#fff}
 .bkcup{position:absolute;left:0;right:0;top:calc(50% - 150px);display:flex;flex-direction:column;align-items:center;gap:2px}
 .bkcup .drcup{width:58px!important;height:58px!important;margin:0!important}
@@ -4886,20 +4889,20 @@ async function shPlayoff(){const S=SHR_PO;if(!S)return null;const P=S.P,R=P.R,R0
       if(L[t])c.drawImage(L[t],mir?X+BW-102:X+42,yy+5,60,60);c.textAlign=mir?"right":"left";{const nm=TEAMS[t].nick.toUpperCase();let fs=34;c.font=SH_F(800,fs,1);while(fs>24&&c.measureText(nm).width>BW-170){fs-=1;c.font=SH_F(800,fs,1)}c.fillStyle="#fff";c.fillText(shFit(c,nm,BW-170),mir?X+BW-112:X+112,yy+RH/2+2)}
       if(x.g.length){c.textAlign=mir?"left":"right";c.font=SH_F(800,40,1);const w=win===t;c.fillStyle=w?"#f3e8ff":"#cbd5e1";if(w){c.shadowColor="rgba(192,132,252,1)";c.shadowBlur=18}c.fillText(String(i?x.wb:x.wa),mir?X+20:X+BW-20,yy+RH/2+2);c.shadowBlur=0}c.globalAlpha=1})};
   const line=(x1,y1,x2,y2)=>{c.strokeStyle="rgba(196,181,253,.45)";c.lineWidth=3;const mx=(x1+x2)/2;c.beginPath();c.moveTo(x1,y1);c.lineTo(mx,y1);c.lineTo(mx,y2);c.lineTo(x2,y2);c.stroke()};
-  /* due tabelloni affiancati, ciascuno a bracket EST (sinistra) / WEST (destra, speculare) con DUE finali al centro: vincenti sopra, perdenti sotto */
-  const GAP=60,TW=BW*3+GAP*2,K=.8,SWd=TW*K,xA=(W-2*SWd-40)/2,xB=xA+SWd+40,yTop=360,yFa=40,yFb=300,yS=(yFa+yFb)/2+0,xFin=BW+GAP,xWest=2*(BW+GAP);
-  const brk=(x0,col,tit,sf,fn,ph,hi)=>{c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,42,1);c.letterSpacing="8px";c.fillStyle=col;c.fillText(tit,x0+SWd/2,236);c.letterSpacing="0px";
-    c.font=SH_F(700,22,1);c.letterSpacing="3px";c.fillStyle="#93c5fd";c.fillText("EST",x0+BW*K/2,290);c.fillStyle="rgba(196,181,253,.9)";c.fillText("FINALI",x0+SWd/2,290);c.fillStyle="#fca5a5";c.fillText("WEST",x0+SWd-BW*K/2,290);c.letterSpacing="0px";
-    c.save();c.translate(x0,yTop);c.scale(K,K);
-    const yc=yS+BH/2,y1=yFa+BH/2,y2=yFb+BH/2;
-    const ln=(xa,xb,ya,yb,dash)=>{c.strokeStyle=dash?"rgba(165,180,252,.5)":"rgba(252,211,77,.85)";c.lineWidth=4;c.setLineDash(dash?[10,8]:[]);const mx=(xa+xb)/2;c.beginPath();c.moveTo(xa,ya);c.lineTo(mx,ya);c.lineTo(mx,yb);c.lineTo(xb,yb);c.stroke();c.setLineDash([])};
-    ln(BW,xFin,yc,y1,0);ln(BW,xFin,yc,y2,1);ln(xWest,xFin+BW,yc,y1,0);ln(xWest,xFin+BW,yc,y2,1);
-    box(sf[0],0,yS,ph[0],[]);box(sf[1],xWest,yS,ph[1],[],0,1);box(fn[0],xFin,yFa,ph[2],["Vincente EST","Vincente WEST"],hi);box(fn[1],xFin,yFb,ph[3],["Perdente EST","Perdente WEST"]);c.restore()};
-  brk(xA,"#fcd34d","TITOLO · 1ª–4ª",[R0[0],R0[1]],[R1[0],R1[1]],["1ª vs 4ª","2ª vs 3ª","Finale titolo","Finale 3°–4°"],1);
-  brk(xB,"#93c5fd","5ª–8ª",[R0[2],R0[3]],[R1[2],R1[3]],["5ª vs 8ª","6ª vs 7ª","Finale 5°–6°","Finale 7°–8°"]);
-  /* coppa sopra la finale del titolo */{const cx=xA+SWd/2,cy=yTop-6;c.save();c.translate(cx-30,cy-46);c.scale(60/64,60/64);const g=c.createLinearGradient(0,0,64,64);g.addColorStop(0,"#f5ecff");g.addColorStop(.45,"#b48cff");g.addColorStop(1,"#5b21b6");c.fillStyle=g;c.shadowColor="rgba(192,132,252,.9)";c.shadowBlur=24;
+  /* (331) schizzo di Francesco: a SINISTRA i primi 4 (semifinali → finale titolo), a DESTRA gli ultimi 4 (speculare, semifinali → finale 5°–6°); nessun collegamento al centro;
+     sotto, staccate, le partite di piazzamento (finale 3°–4° e finale 7°–8°) */
+  const xL=70,xLF=xL+BW+130,xR=W-70-BW,xRF=W-70-BW-130-BW,y1=268,y2=458,yFn=(y1+y2)/2,yPl=690;
+  const ln=(xa,xb,ya,yb)=>{c.strokeStyle="rgba(252,211,77,.85)";c.lineWidth=4;c.beginPath();c.moveTo(xa,ya);c.lineTo((xa+xb)/2,ya);c.lineTo((xa+xb)/2,yb);c.lineTo(xb,yb);c.stroke()};
+  const yc1=y1+BH/2,yc2=y2+BH/2,ycF=yFn+BH/2;
+  c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_F(800,40,1);c.letterSpacing="8px";c.fillStyle="#fcd34d";c.fillText("TITOLO · 1ª–4ª",xL,226);c.textAlign="right";c.fillStyle="#93c5fd";c.fillText("5ª–8ª",xR+BW,226);c.letterSpacing="0px";
+  ln(xL+BW,xLF,yc1,ycF);ln(xL+BW,xLF,yc2,ycF);ln(xR,xRF+BW,yc1,ycF);ln(xR,xRF+BW,yc2,ycF);
+  box(R0[0],xL,y1,"1ª vs 4ª",[]);box(R0[1],xL,y2,"2ª vs 3ª",[]);box(R1[0],xLF,yFn,"Finale titolo",["Vincente 1ª vs 4ª","Vincente 2ª vs 3ª"],1);
+  box(R0[2],xR,y1,"5ª vs 8ª",[],0,1);box(R0[3],xR,y2,"6ª vs 7ª",[],0,1);box(R1[2],xRF,yFn,"Finale 5°–6°",["Vincente 5ª vs 8ª","Vincente 6ª vs 7ª"],0,1);
+  /* coppa sopra la finale del titolo */{const cx=xLF+BW/2,cy=yFn-64;c.save();c.translate(cx-30,cy-50);c.scale(60/64,60/64);const g=c.createLinearGradient(0,0,64,64);g.addColorStop(0,"#f5ecff");g.addColorStop(.45,"#b48cff");g.addColorStop(1,"#5b21b6");c.fillStyle=g;c.shadowColor="rgba(192,132,252,.9)";c.shadowBlur=24;
     c.fill(new Path2D("M18 8h28v14a14 14 0 0 1-28 0z"));c.fill(new Path2D("M29 35h6v9h-6z"));c.fill(new Path2D("M21 46h22l2 6H19z"));c.fillRect(17,52,30,5);c.strokeStyle=g;c.lineWidth=3.5;c.stroke(new Path2D("M18 12h-8v4a10 10 0 0 0 10 10M46 12h8v4a10 10 0 0 1-10 10"));c.restore();c.shadowBlur=0}
-  if(P.champ){c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,26,1);c.fillStyle="#fcd34d";c.fillText("CAMPIONI",xA+SWd/2,yTop+(yFb+BH)*K+44);c.font=SH_F(800,44,1);c.fillStyle="#fff";c.fillText(TEAMS[P.champ].name.toUpperCase(),xA+SWd/2,yTop+(yFb+BH)*K+90)}
+  c.textAlign="center";c.font=SH_F(800,22,1);c.letterSpacing="4px";c.fillStyle="rgba(196,181,253,.8)";c.fillText("PIAZZAMENTI",W/2,yPl-34);c.letterSpacing="0px";
+  box(R1[1],xL+(BW+130+BW)/2-BW/2,yPl,"Finale 3°–4° posto",["Perdente 1ª vs 4ª","Perdente 2ª vs 3ª"]);box(R1[3],xR+BW/2-(BW+130+BW)/2,yPl,"Finale 7°–8° posto",["Perdente 5ª vs 8ª","Perdente 6ª vs 7ª"],0,1);
+  if(P.champ){c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,22,1);c.fillStyle="#fcd34d";c.fillText("CAMPIONI",W/2,yPl+BH/2-8);c.font=SH_F(800,40,1);c.fillStyle="#fff";c.fillText(TEAMS[P.champ].name.toUpperCase(),W/2,yPl+BH/2+38)}
   shFoot(c,W,H,"Serie al meglio delle 3 · il numero è le vittorie nella serie");return cv}
 /* ===== CONDIVIDI SCHEDA GIOCATORE (28/10/2026): immagine 1080x1350 con età, PDK e efficienza medi, minuti, partite, trend dei PDK (grafico partita per partita) =====
    I dati arrivano da SHR_PL, impostato da vGiocatore / vFAP / vGLP quando la scheda viene disegnata. */
@@ -6034,21 +6037,23 @@ function vDream(){fantaLiveAvvia();
     const mb=(x,ph,lab,cls="")=>{const head=lab?`<span class="bklab">${lab}</span>`:"";
       if(!x)return`<div class="bkm tbd ${cls}">${head}${ph.map(y=>`<div class="bkt"><b>${y}</b></div>`).join("")}</div>`;const win=x.win||null;
       return `<div class="bkm ${cls}">${head}${[x.a,x.b].map((t,i)=>`<div class="bkt tint ${win===t?"w":win?"l":""}" style="--tc:${TEAMS[t].bg}"><i>${sd[t]}</i>${lg(t)}<b>${TEAMS[t].nick}</b><em>${x.g.length?(i?x.wb:x.wa):""}</em></div>`).join("")}</div>`};
+    /* (331) sulla linea dello schizzo di Francesco: ogni tabellone è un bracket a sé (semifinali → SUA finale, niente collegamento tra i due tabelloni);
+       le partite di piazzamento (3°–4°, 7°–8°) stanno staccate sotto */
     const blk=(cls,tit,sub,sf,fn,ph)=>`<section class="pob ${cls}"><div class="pobh"><span><b>${tit}</b><small>${sub}</small></span></div>
-      <div class="pobt"><span>EST<small>${rd(0)}</small></span><span>FINALI<small>${rd(1)}</small></span><span>WEST<small>${rd(0)}</small></span></div>
-      <div class="pobk pobx">
-        <svg class="lnk" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path class="w" d="M30 49H32.5V27H35M70 49H67.5V27H65"/><path class="l" d="M30 49H32.5V71H35M70 49H67.5V71H65"/></svg>
-        <div class="pk s e">${mb(sf[0],[],ph[0])}</div><div class="pk s w">${mb(sf[1],[],ph[1])}</div>
+      <div class="pobt2"><span>Semifinali<small>${rd(0)}</small></span><span>${cls==="a"?"Finale titolo":"Finale 5°–6°"}<small>${rd(1)}</small></span></div>
+      <div class="pobk pobk2 pobx">
+        <svg class="lnk" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path class="w" d="M44 24H50V50H56M44 76H50V50H56"/></svg>
+        <div class="pk s1">${mb(sf[0],[],ph[0])}</div><div class="pk s2">${mb(sf[1],[],ph[1])}</div>
         ${cls==="a"?`<div class="pkcup">${cup}</div>`:""}
-        <div class="pk f1">${mb(fn[0],["Vincente EST","Vincente WEST"],ph[2],"fin")}</div><div class="pk f2">${mb(fn[1],["Perdente EST","Perdente WEST"],ph[3])}</div>
+        <div class="pk f1">${mb(fn[0],["Vincente "+ph[0],"Vincente "+ph[1]],ph[2],"fin")}</div>
       </div>
-      <div class="pobar">Le vincenti vanno alla finale in alto, le perdenti a quella in basso</div>
+      <div class="pobp"><h6>Piazzamento<small>${rd(1)}</small></h6><div class="pobpm">${mb(fn[1],["Perdente "+ph[0],"Perdente "+ph[1]],ph[3])}</div></div>
       ${cls==="a"&&champ?`<div class="pobch">Campioni<b>${TEAMS[champ].name}</b></div>`:""}</section>`;
     SHR_PO={P,def:drWeek(DR_REG).closed};
     body=`<p class="note" style="margin-top:0">${drWeek(DR_REG).closed?"Tabelloni definitivi.":"Tabelloni provvisori in base alla classifica attuale."} Due playoff in contemporanea, serie al meglio delle 3: il numero accanto alla squadra sono le vittorie nella serie.</p>
     <h4 class="drplh drplsh">Playoff<span></span>${shBtn("po")}</h4>
-    ${blk("a","Tabellone titolo","1ª–4ª · si gioca il titolo",[R0[0],R0[1]],[R1[0],R1[1]],["1ª vs 4ª","2ª vs 3ª","Finale titolo","Finale 3°–4°"])}
-    ${blk("b","Tabellone 5ª–8ª","5ª–8ª · posizioni dal 5° all'8°",[R0[2],R0[3]],[R1[2],R1[3]],["5ª vs 8ª","6ª vs 7ª","Finale 5°–6°","Finale 7°–8°"])}
+    ${blk("a","Tabellone titolo","1ª–4ª · si gioca il titolo",[R0[0],R0[1]],[R1[0],R1[1]],["1ª vs 4ª","2ª vs 3ª","Finale titolo","Finale 3°–4° posto"])}
+    ${blk("b","Tabellone 5ª–8ª","5ª–8ª · posizioni dal 5° all'8°",[R0[2],R0[3]],[R1[2],R1[3]],["5ª vs 8ª","6ª vs 7ª","Finale 5°–6°","Finale 7°–8° posto"])}
     <h4 class="drplh">Classifica finale</h4>
     <div class="drfinal">${Array.from({length:8},(_,i)=>{const t=P.fin[i];return `<div class="drfr ${t?"tint":""} ${i===0&&t?"gold":""}" style="${t?"--tc:"+TEAMS[t].bg:""}"><span class="drpos">${i+1}</span>${t?`<span class="bklg" style="--tc:${TEAMS[t].bg}">${badge(t)}</span><b>${TEAMS[t].name}</b>`:`<em>da decidere</em>`}</div>`}).join("")}</div>`}
   return `<div class="drroom"${DR.th?` data-th="${DR_BASE_TH[DR.th]}"`:""}${DR.th>5?` data-col="1"`:""}><button class="drexit" data-game="menu">‹ Torna all'app</button><div class="drhd"><span class="drlogo">DREAMERS</span><small>Fanta PDK · stagione ${STAGIONE_CORRENTE}</small>${DR.rules?`<br><button class="drrul" data-dr="rules" aria-pressed="true">‹ Torna al gioco</button>`:""}</div>
