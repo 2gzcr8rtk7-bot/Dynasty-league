@@ -981,3 +981,10 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 ### (302) Banda dell'intestazione fino in cima allo schermo in tutti i temi
 - Prima solo in notte/Dreamers: sotto l'orario dell'iPhone c'era una fascia piatta (`body::before`). Ora `html:not(.dreamfs){padding-top:0}`, `body:not(.dreamfs) header{top:0;padding-top:env(safe-area-inset-top)}` e la fascia è nascosta (resta solo in Impostazioni, dove l'intestazione non è fissa e l'anteprima sticky ne ha bisogno). Verificato in Home (anche scorrendo), Campo, Scheda giocatore, Impostazioni con safe-area simulata a 59px.
+
+### (303) Nuovo logo Dreamers (richiesta utente 28/10/2026)
+- Logo dato dall'utente (stella bianca a 4 punte su quadrato arrotondato), colorato col viola della modalità notte: sfumatura verticale `#a855f7 → #6d28d9` (come il tasto della barra selezionato in notte).
+- Icone app rifatte: `icon-180.png` (apple-touch, a tutto quadrato: iOS arrotonda da sé), `icon-192.png` e `icon-512.png` (angoli trasparenti, raggio 21,5%), `icon-512-maskable.png` (stella all'82% per la zona sicura). Cache del service worker → `dynasty-v83`. Sul telefono il collegamento già salvato tiene la vecchia icona finché non si riaggiunge alla Home.
+- Logo in alto `#lgreload` (immagine base64 160px): sostituita solo l'immagine, il tocco aggiorna ancora l'app (verificato). Nello stile Parquet resta il filtro arancione `html.dlt-parquet .lglogo`.
+- Tasto Dreamers della Home `.hdrm`: sfondo con la stessa sfumatura, icona SVG = stella a 4 punte (path `M12 1.4C12.53 7.93 15.14 11.71 22 12…`, ricavato dal logo).
+- Immagini condivise `shDrLogo()`: stessa sfumatura e stessa stella al 72% del quadrato.
