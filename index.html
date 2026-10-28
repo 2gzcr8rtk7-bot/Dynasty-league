@@ -2399,18 +2399,29 @@ function vClassifica(){
   <div class="tbl-wrap clf"><table><thead><tr><th>#</th><th>Squadra</th><th>V</th><th>P</th><th>%</th><th>GB</th><th>PF</th><th>PS</th><th>Serie</th></tr></thead><tbody>${rows}</tbody></table></div>
   <p class="note">Classifica Dreamers: il turno in corso entra quando è chiuso. Ordinata per vittorie; a parità, media PDK fatti. PF e PS = PDK fatti e subiti, GB = partite di distacco dalla prima, Serie = ultimi risultati.</p>`;
 }
+/* (239) RISULTATI = turni DREAMERS: turni 1–2 dalle giornate Dunkest 1–2 (dati base della lega), poi i turni Dreamers 3–28 (regular season) e i playoff. Tocco su una partita = apre la sfida in Dreamers. */
 function vRisultati(){
   const lg=t=>`<span class="rgl" style="--tc:${TEAMS[t].bg}">${badge(t)}</span>`;
-  const sv=(n,ix)=>`<button class="bshare" data-share="${n}|${ix}" aria-label="Condividi risultato"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`;
-  const lastN=GIORNATE.length?GIORNATE[GIORNATE.length-1].n:0;
-  const calG=([n,gs])=>`<div class="rgc calg${gs.some(p=>p.includes("DOL"))?"":""}"><div class="rgh"><b>Giornata ${n}</b><span>Da giocare</span></div>${gs.map(([a,b])=>`<div class="rgm calm"><span class="rgt">${lg(a)}<b>${TEAMS[a].nick}</b></span><span class="rgs"><em>vs</em><small>casa · trasferta</small></span><span class="rgt a"><b>${TEAMS[b].nick}</b>${lg(b)}</span></div>`).join("")}</div>`;
-  if(!rgN)rgN=lastN||1;const curN=Math.min(64,Math.max(1,rgN)),gSel=GIORNATE.find(x=>x.n===curN);
-  const nav=`<div class="drnav rgnav"><button data-rgnav="-1" aria-label="Giornata precedente" ${curN<=1?"disabled":""}>‹</button><div><b>Giornata ${curN}</b><small>${gSel?(gSel.live?"In corso":"Finale"):"Da giocare"} · ${curN} di 64</small></div><button data-rgnav="1" aria-label="Giornata successiva" ${curN>=64?"disabled":""}>›</button></div>`;
-  const calNote=`<p class="note">Usa le frecce per scorrere le giornate. Calendario Dunkest: le giornate 1-7 si ripetono nello stesso ordine fino alla 64.</p>`;
-  return H("Risultati")+nav+(gSel?[gSel]:[]).map(g=>`<div class="rgc"><div class="rgh"><b>Giornata ${g.n}</b><span class="${g.live?"live":""}">${g.live?"Live":"Finale"}</span></div>${g.gare.map(([a,pa,b,pb],ix)=>`<div class="rgm"><span class="rgt ${pa>pb?"w":""}">${lg(a)}<b>${TEAMS[a].nick}</b></span><span class="rgs"><em><i class="${pa>pb?"w":""}">${f1(pa)}</i> – <i class="${pb>pa?"w":""}">${f1(pb)}</i></em><small>${g.live?"parziale · ":""}scarto ${f1(Math.abs(pa-pb))}</small></span><span class="rgt a ${pb>pa?"w":""}"><b>${TEAMS[b].nick}</b>${lg(b)}</span>${sv(g.n,ix)}</div>`).join("")}</div>`).join("")+(gSel?"":calG(CALENDARIO[curN-1]))+calNote;
+  const st=drStand(),P=drPO(st),MAXU=P.end+DR_OFF;
+  if(!rgN)rgN=drCurWeek(P)+DR_OFF;const u=Math.min(MAXU,Math.max(1,rgN));
+  let lab,sub,stt,rows=[];
+  if(u<=DR_OFF){const g=GIORNATE.find(x=>x.n===u);lab=`Turno ${u}`;stt=g?"fin":"wait";sub=`${g?"Finale":"Da giocare"} · ${u} di ${DR_REG+DR_OFF}`;
+    rows=(g?g.gare:[]).map(([a,pa,b,pb])=>({a,b,A:pa,B:pb,go:null}))}
+  else{const k=u-DR_OFF,W=drWeek(k),pr=drPairs(k,st,P);lab=DR_PH(k,P).replace(/^(\S+ \d+)$/,"$1");
+    const live=!W.closed&&W.started&&([...DR_PROV].some(x=>x>=W.start&&x<=W.end)||(typeof TV!=="undefined"&&Object.values(TV.days||{}).flat().some(g=>g[5]==="L")));
+    stt=W.closed?"fin":live?"live":W.started?"run":"wait";
+    sub=`${W.closed?"Finale":live?"Live":W.started?"In corso":"Da giocare"} · ${k<=DR_REG?`${u} di ${DR_REG+DR_OFF}`:"playoff"} · ${drFmt(W.start)}–${drFmt(W.end)}`;
+    rows=pr.map(([a,b])=>({a,b,A:W.started?drTeam(k,a,W).score:null,B:W.started?drTeam(k,b,W).score:null,go:`${k}|${a}|${b}`}))}
+  const nav=`<div class="drnav rgnav"><button data-rgnav="-1" aria-label="Turno precedente" ${u<=1?"disabled":""}>‹</button><div><b>${lab}</b><small>${sub}</small></div><button data-rgnav="1" aria-label="Turno successivo" ${u>=MAXU?"disabled":""}>›</button></div>`;
+  const badgeT=stt==="live"?"Live":stt==="fin"?"Finale":stt==="run"?"In corso":"Da giocare";
+  const card=rows.length?`<div class="rgc${stt==="wait"?" calg":""}"><div class="rgh"><b>${lab.includes(" · ")?lab.split(" · ")[1].replace(/^g/,"G"):lab}</b><span class="${stt==="live"?"live":""}">${badgeT}</span></div>${rows.map(x=>{const has=x.A!=null&&x.B!=null,wa=has&&x.A>x.B,wb=has&&x.B>x.A;
+    return`<div class="rgm${has?"":" calm"}"${x.go?` data-rgo="${x.go}" role="button" tabindex="0"`:""}><span class="rgt ${wa?"w":""}">${lg(x.a)}<b>${TEAMS[x.a].nick}</b></span><span class="rgs">${has?`<em><i class="${wa?"w":""}">${pdkF(x.A)}</i> – <i class="${wb?"w":""}">${pdkF(x.B)}</i></em><small>${stt==="run"||stt==="live"?"parziale · ":""}scarto ${pdkF(Math.abs(x.A-x.B))}</small>`:`<em>vs</em><small>${stt==="wait"?"da giocare":"—"}</small>`}</span><span class="rgt a ${wb?"w":""}"><b>${TEAMS[x.b].nick}</b>${lg(x.b)}</span></div>`}).join("")}</div>`
+    :`<div class="rgc calg"><div class="rgh"><b>${lab}</b><span>Da definire</span></div><p class="note" style="margin:10px 14px">Gli accoppiamenti dei playoff si definiscono quando finisce il turno precedente.</p></div>`;
+  return H("Risultati",`<em>Dreamers</em>`)+nav+card+`<p class="note">Risultati del Dreamers: turno per turno, passato, presente e futuro (i turni 1–2 vengono dalle giornate Dunkest di partenza). Tocca una partita per aprire la sfida con tutti i giocatori. Usa le frecce per scorrere i turni.</p>`;
 }
 let rgN=0;
-document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-rgnav]");if(!b||cur!=="risultati")return;rgN=Math.min(64,Math.max(1,(rgN||1)+ +b.dataset.rgnav));const y=scrollY;render();scrollTo(0,y)});
+document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-rgnav]");if(!b||cur!=="risultati")return;rgN=Math.min(drPO(drStand()).end+DR_OFF,Math.max(1,(rgN||1)+ +b.dataset.rgnav));const y=scrollY;render();scrollTo(0,y)});
+document.getElementById("main").addEventListener("click",e=>{const r=e.target.closest("[data-rgo]");if(!r||cur!=="risultati")return;const[k,x,y]=r.dataset.rgo.split("|");DR.k=+k;DR.tab="turno";DR.open=[x,y];DR.rules=false;GAME="dream";cur="giochi";render();window.scrollTo(0,0)});
 /* Condividi risultato di una partita: immagine 1080x1350 generata su canvas (shareGame) */
 function ldImg(src){return new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src})}
 async function shareGame(gi,ix,btn){
