@@ -4797,8 +4797,8 @@ const SEG={0:"abcdef",1:"bc",2:"abged",3:"abgcd",4:"fgbc",5:"afgcd",6:"afgedc",7
 const SEGP={a:"M2.4 1H9.6L8.4 2.6H3.6Z",b:"M10.6 1.8L9 3.4V8.8L10.6 9.6Z",c:"M10.6 10.4L9 11.2V16.6L10.6 18.2Z",d:"M2.4 19H9.6L8.4 17.4H3.6Z",e:"M1.4 10.4L3 11.2V16.6L1.4 18.2Z",f:"M1.4 1.8L3 3.4V8.8L1.4 9.6Z",g:"M2.4 10L3.5 9.2H8.5L9.6 10L8.5 10.8H3.5Z"};
 const segD=ch=>`<svg class="sg" viewBox="0 0 12 20" aria-hidden="true">${Object.entries(SEGP).map(([k,d])=>`<path d="${d}"${(SEG[ch]||"").includes(k)?' class="on"':""}/>`).join("")}</svg>`;
 const kitBtn=t=>`<button class="kitbtn" id="kitbtn" data-kitt="${t}" aria-label="Cambia maglia: ${KIT_N[kitDi(t)]}" title="Maglia: ${KIT_N[kitDi(t)]}">${kitIco(t)}</button>`;
-/* (233) il bordino rosso lampeggiante del tabellone vale solo di notte: si spegne alle 08:30 (ora italiana) e torna alle 18:00 (la sera iniziano le partite NBA) */
-function lvNotte(){try{const p=new Intl.DateTimeFormat("it-IT",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date()),h=+p.find(x=>x.type==="hour").value%24,m=+p.find(x=>x.type==="minute").value,mm=h*60+m;return mm<8*60+30||mm>=18*60}catch(e){return true}}
+/* (233) il bordino rosso lampeggiante del tabellone vale solo di notte: si spegne alle 07:30 (ora italiana, modificato in (259): da quel momento i dati ESPN sono "fissi") e torna alle 18:00 (la sera iniziano le partite NBA) */
+function lvNotte(){try{const p=new Intl.DateTimeFormat("it-IT",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date()),h=+p.find(x=>x.type==="hour").value%24,m=+p.find(x=>x.type==="minute").value,mm=h*60+m;return mm<7*60+30||mm>=18*60}catch(e){return true}}
 setInterval(()=>{try{const on=lvNotte();document.querySelectorAll(".lbm[data-lv]").forEach(e=>{e.classList.toggle("live",on);e.classList.toggle("run",!on)})}catch(e){}},20000);
 function drTabellone(t,T,k,P,on){const W=T.W,btn=`<button class="cntbtn${on?" on":""}" id="cntbtn" aria-pressed="${!!on}" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`;
   /* piccolo tabellone elettronico al posto della scritta "Quintetto": la mia squadra contro l'avversaria del turno Dreamers,
@@ -6712,10 +6712,14 @@ window.vUpdLog=function(){ulCheck();
   ${L.length?`<ul class="ullog">${L.map(x=>`<li><time>${fmt(x.t)}</time><span>${esc(x.x)}</span></li>`).join("")}</ul>`:`<p class="note">Ancora nessun evento registrato.</p>`}
   <p class="note">Il registro si scrive quando l'app, aperta su questo telefono, rileva il cambiamento: l'orario è quello del rilevamento (ora italiana). Ogni file Dunkest porta anche il proprio orario di aggiornamento.</p>`};
 document.getElementById("main").addEventListener("click",e=>{const c=e.target.closest("[data-ulclear]");if(!c)return;try{localStorage.removeItem(ULK)}catch(_){}render()});
-{const R1=render;render=function(){const x=R1.apply(this,arguments);ulCheck();return x}}
+{const R1=render;render=function(){const x=R1.apply(this,arguments);ulCheck();lvSync();return x}}
+/* (259) dalle 07:30 alle 18:00 (ora italiana) la notte è finita: html.lvoff spegne tutte le animazioni "live" (puntini, bordi lampeggianti, linee del campo, pulsante LIVE…) */
+function lvSync(){try{document.documentElement.classList.toggle("lvoff",!lvNotte())}catch(e){}}
+window.lvSync=lvSync;setInterval(lvSync,20000);lvSync();
 ulCheck();
 })();
 </script>
-<style>.ulst{display:grid;gap:8px;margin:4px 0 12px}.ulst>div{background:rgba(255,255,255,.06);border:1px solid rgba(250,204,21,.35);border-radius:12px;padding:10px 12px;display:grid;gap:2px}.ulst small{font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.75}.ulst b{font-size:16px}.ulst em{font-style:normal;font-size:12.5px;opacity:.8}.ulh{display:flex;justify-content:space-between;align-items:center;margin:6px 0}.ulh .sh{padding:6px 12px}.ullog{list-style:none;margin:0;padding:0;display:grid;gap:6px}.ullog li{display:grid;gap:2px;padding:9px 11px;border-radius:10px;background:rgba(255,255,255,.05);border-left:3px solid #facc15}.ullog time{font-size:12px;font-weight:800;letter-spacing:.04em;color:#facc15}.ullog span{font-size:13.5px;line-height:1.35}</style>
+<style>html.lvoff :is(.tvdot,.tvbox .lvd,.lbm.live,.lbm.live .lbmd,.pcdlv,.tag.live .dot,h2 .live .dot,.tvst b.lv i,.ntch .ntst,.drlive i,.clbox .clv i,.duw.lv,.dwr.lv,.hseg b.lvb,.court.clive .cln,.cntbtn.on i,.cnlv,.tvgmc.lv .tvlv i,.gv.gvlive,.snbtn.live,.snlvd,.navlive,.navlive *){animation:none!important}html.lvoff .gv.gvlive{outline:none!important}
+.ulst{display:grid;gap:8px;margin:4px 0 12px}.ulst>div{background:rgba(255,255,255,.06);border:1px solid rgba(250,204,21,.35);border-radius:12px;padding:10px 12px;display:grid;gap:2px}.ulst small{font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.75}.ulst b{font-size:16px}.ulst em{font-style:normal;font-size:12.5px;opacity:.8}.ulh{display:flex;justify-content:space-between;align-items:center;margin:6px 0}.ulh .sh{padding:6px 12px}.ullog{list-style:none;margin:0;padding:0;display:grid;gap:6px}.ullog li{display:grid;gap:2px;padding:9px 11px;border-radius:10px;background:rgba(255,255,255,.05);border-left:3px solid #facc15}.ullog time{font-size:12px;font-weight:800;letter-spacing:.04em;color:#facc15}.ullog span{font-size:13.5px;line-height:1.35}</style>
 </body>
 </html>
