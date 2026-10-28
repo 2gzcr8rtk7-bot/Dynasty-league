@@ -938,3 +938,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (287) Sfida Dreamers: oltre a OUT ora compare **DUB** (pillola arancione (#ff7a00), stessa forma, posizione e larghezza esatta di OUT: 43px) per i giocatori in dubbio/questionable/day-to-day (`injSt(n)==="dub"`, dati ESPN già letti da `injFetch`). Classe `.duo.dub`. Le caselle future NON diventano NG (può giocare); nome con meno spazio a destra. Solo schermata sfida (`drDuel`). Non pubblicato: in coda.
 
 (288) Centro aggiornamenti: righe con ✓ scritte tutte **in verde**; le righe con problemi sono **gialle con ⚠️** (prima rosso/"!"/"✗"). Vale per il Controllo di coerenza e per il blocco Dunkest ↔ ESPN (`.nvck li.y/.n/.w`). Pubblicato subito su richiesta.
+
+(289) Loghi Ducks (area riservata › Personalizzazioni): sostituiti `loghi/duc-7.webp` ("Pazzo lingua") e `loghi/duc-8.webp` ("Pazzo furioso") con le versioni già ritagliate dall'utente (PNG trasparenti; tolti solo i puntini isolati, ridimensionati a 380px). In `DUC_LOGHI` i due percorsi hanno `?v=2` per forzare l'aggiornamento della copia nei telefoni. Segreto, non in `NV_LOG`. Non pubblicato: in coda.
