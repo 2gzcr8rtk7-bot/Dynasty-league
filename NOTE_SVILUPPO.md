@@ -906,3 +906,6 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 
 ## (276) Linea di stato tra cartellino nome e PDK sul campo
 - Sul campo e in panchina (`.cpl`, `.dpc`) l'attributo `data-ist` (`injSt`: out / dub / ok) disegna tra tagliandino nome e tagliandino PDK una barretta di 3px su fondo grigio, riempita in proporzione (come Dunkest): rosso 9% = out (con la croce), arancione 50% = dubbio/in forse/giorno per giorno, verde 100% = disponibile.
+
+## (277) Dubbi dal commento ESPN
+- Il Centro Medico mostra già Out / In dubbio (Doubtful) / In forse (Questionable) / Giorno per giorno. Da ESPN lo stato "Day-To-Day" viene affinato leggendo fantasyStatus e il commento ("doubtful" → dubbio, "questionable" → in forse, altrimenti giorno per giorno). "Out" resta out.
