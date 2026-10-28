@@ -936,3 +936,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (286) Sfida Dreamers (`drDuel`): in "Fuori dai 10" i giocatori **in attesa / che non hanno giocato** non sono più in una sezione separata "In attesa" con stacco: stanno nello stesso elenco della tribuna, subito dopo quelli con punteggio (stessa riga a coppie, nessun titolo a parte). Le carte restano con l'etichetta "attesa" / "non ha giocato". Non pubblicato: in coda.
 
 (287) Sfida Dreamers: oltre a OUT ora compare **DUB** (pillola arancione (#ff7a00), stessa forma, posizione e larghezza esatta di OUT: 43px) per i giocatori in dubbio/questionable/day-to-day (`injSt(n)==="dub"`, dati ESPN già letti da `injFetch`). Classe `.duo.dub`. Le caselle future NON diventano NG (può giocare); nome con meno spazio a destra. Solo schermata sfida (`drDuel`). Non pubblicato: in coda.
+
+(288) Centro aggiornamenti: righe con ✓ scritte tutte **in verde**; le righe con problemi sono **gialle con ⚠️** (prima rosso/"!"/"✗"). Vale per il Controllo di coerenza e per il blocco Dunkest ↔ ESPN (`.nvck li.y/.n/.w`). Pubblicato subito su richiesta.
