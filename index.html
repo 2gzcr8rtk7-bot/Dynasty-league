@@ -4714,7 +4714,7 @@ async function shDuel(){const S=SHR_DUEL;if(!S)return null;const rh=112,secH=64,
    data e avversario leggibili. Misure accese nel grafico (PDK / Minuti / Efficienza) come nell'app. Dati da SHR_GR, riempito da vGrafico. */
 let SHR_GR=null;
 async function shGrafico(){const S=SHR_GR;if(!S||!S.P||S.P.length<1)return null;const P=S.P,n=P.length,PX=n>16?74:110;
-  const H=1040,W=Math.max(1600,Math.min(20000,300+n*PX));const{cv,c}=await shBase(H,W,1,1);
+  const W=Math.max(1600,Math.min(20000,300+n*PX)),H=Math.round(Math.min(1800,Math.max(1040,W*.3)));/* più punti = immagine più alta, per leggere meglio */const{cv,c}=await shBase(H,W,1,1);
   const on=["pdk","min","eff"].filter(k=>S.show[k]);if(!on.length)on.push("pdk");
   const COL={pdk:"#22c55e",min:"#facc15",eff:"#c084fc"},LAB={pdk:"PDK",min:"MINUTI",eff:"EFFICIENZA"};
   const f1=v=>v==null?"—":v.toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1}),f2=v=>v==null?"—":v.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2}),fv=(k,v)=>k==="eff"?f2(v):f1(v);

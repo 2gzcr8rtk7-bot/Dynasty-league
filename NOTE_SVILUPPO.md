@@ -958,3 +958,6 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 ### (296) Fix: il colore "Disponibile" sovrascriveva anche OUT e Dubbio
 - L'override `[data-ist]{--ist:cOk}` in `stApply()` aveva la stessa specificità di `[data-ist="out"]`/`"dub"` ma veniva dopo nel CSS, quindi colorava anche i trattini di OUT e dubbio. Ora esclude `out` e `dub` con `:not()`; `prob` segue il colore di Disponibile (è verde al 75%).
+
+### (297) Grafico condiviso più alto quando è lungo
+- `shGrafico()`: altezza immagine `H=clamp(W*0.3, 1040, 1800)` invece di 1040 fisso (W≈300+punti×74/110). Fino a ~16 punti resta 1040; con molte giornate l'area del grafico cresce in verticale e i valori si leggono meglio.
