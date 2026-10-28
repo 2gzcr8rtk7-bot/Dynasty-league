@@ -1041,3 +1041,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 - Il lucchetto (`.fin-b`) ora sta nella riga `.dus` tra la pillola OUT/DUB e il bottone PDK (flex, centrati in verticale), non più sopra il bottone.
 
 (315) Dreamers › sfida, carte più basse (pubblicato): maglia 48×51 (prima più piccola), nome 19px sempre intero ("I. Cognome", a capo solo se serve, mai tagliato), layout a due colonne: a sinistra maglia + pillola OUT/DUB, a destra nome e bottone PDK sotto; altezza carta tipica 173pt (prima ~202pt); `duFit()` pareggia l'altezza delle due carte di ogni riga.
+
+(316) Lucchetto «giocatore finito» anche sul campo (pubblicato): nel tagliandino PDK di campo e panchina (`drPcd`, helper `drFinito`) compare davanti al numero quando tutte le partite del turno del giocatore sono concluse (stessa regola delle carte della sfida; non in modalità notte). Look di default = versione 4 (tondino scuro con lucchetto giallo); in Impostazioni › Giocatori › «Lucchetto giocatore finito» si può scegliere la versione 2 (lucchetto semplice nel colore del numero): `DLS.lk` = "tondo"|"testo", applicata come `html[data-lk]` in `dlsApply()`.
