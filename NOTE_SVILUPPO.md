@@ -1018,3 +1018,7 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 - `drPO`: serie a 2 vittorie (prima 3); 3 round (quarti, semifinali con vincenti/perdenti, finali per tutte le posizioni 1–8) = max 9 turni. Un round chiude appena tutte le serie sono decise (2-0 → round dopo subito). Simulazione su 300 casi: 7–9 turni, sempre 8 posizioni definite.
 - `DR_REG=40` (giornate 3–42, 6 gironi, regular season finisce 9/3/2027, turno medio 2,92 giorni), `DR_TOT=49` (playoff dal 10/3, max 9 turni, medio 2,89 gg). Le finestre `DR_TURNI` (49) sono invariate; cambia solo il confine regular/playoff. `DR_ZERO` invariato (turni 5, 8, 29, 34, 38, 39, 40). Turni dopo il 17/3 provvisori (calendario NBA non noto).
 - Testi aggiornati: regolamento Dreamers (durata, serie al meglio delle 3), note del tabellone, footer immagine playoff.
+
+### (311) Regolamento Art. 5: premi divisi regular season / playoff (IN CODA, NON pubblicato)
+- Tabella premi a 4 colonne (Posizione, Regular season, Playoff, Totale): 1° 20-10, 2° 25-15, 3° 35-15, 4° 100-50, 5° 130-70, 6° 200-100, 7° 270-130, 8° 330-170 (totali invariati: 30…500; regular 1110 cr, playoff 560 cr). Box "Novità". Più si è in basso più si prende, in entrambe.
+- Da aggiornare a parte (non richiesto): Art. 4 e Art. 9 citano "giornata 64 = fine regular season"; Art. 5 slot Rookie "dal 4° all'8° posto" (classifica di riferimento da chiarire: regular season o finale playoff).
