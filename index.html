@@ -4810,7 +4810,7 @@ async function shPcCourt(S){const x=S.x,t=S.t,c=TEAMS[t],OT=dlTm(t),W=560,k=W/10
   return cv}
 /* pagina "prestazione": sfondo viola Dreamers (come le altre immagini), logo e nome squadra, campetto compatto con il giocatore, dettagli partita */
 async function shPcard(){const S=SHR_PC;if(!S)return null;const x=S.x,t=S.t,tm=TEAMS[t],court=await shPcCourt(S),W=1080,H=1310;const{cv,c}=await shBase(H);
-  const lg=await shLogo(t);if(lg){c.shadowColor="rgba(192,132,252,.55)";c.shadowBlur=40;c.drawImage(lg,W/2-155,170,310,310);c.shadowBlur=0}
+  {const im=await ldImg(LOGO2[t]||LOGO[t]);if(im){const bw=420,bh=320,r=Math.min(bw/im.width,bh/im.height),w=im.width*r,h=im.height*r;c.shadowColor="rgba(192,132,252,.55)";c.shadowBlur=40;c.drawImage(im,W/2-w/2,150+(bh-h)/2,w,h);c.shadowBlur=0}}/* logo originale, proporzioni intatte */
   const cy=520;c.shadowColor="rgba(0,0,0,.55)";c.shadowBlur=40;c.shadowOffsetY=16;c.drawImage(court,(W-court.width)/2,cy);c.shadowBlur=0;c.shadowOffsetY=0;
   const by=cy+court.height;c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_B(600,34);c.fillStyle="#e9d5ff";c.fillText(`${x.tm} vs ${x.opp} · ${x.st}${x.dl?" · "+x.dl:""}`,W/2,by+70);
   c.font=SH_F(700,34,1);c.fillStyle="rgba(196,181,253,.9)";c.letterSpacing="3px";c.fillText(`${x.r[3]} PT · ${x.r[6]} RIM · ${x.r[7]} ASS · ${x.r[2]} MIN`,W/2,by+120);c.letterSpacing="0px";
