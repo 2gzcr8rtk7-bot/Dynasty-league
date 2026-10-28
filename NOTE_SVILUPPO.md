@@ -897,3 +897,6 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 
 ## (273) Segno infortunato leggero sul campo
 - Sul campo e in panchina gli "out" hanno un quadratino rosso con croce bianca (`.injx`, 24px) in basso a sinistra della maglia, appoggiato al tagliandino nome/PDK (dietro di esso, z-index 1). Tolto l'alone rosso sulla maglia. Resta: pillola OUT nel duello (`.duo`) e in tribuna (`.injo`).
+
+## (274) Partite future degli infortunati = NG rosso
+- Nel duello (`drDuel`, caselle della settimana) le partite non ancora giocate di un giocatore "out" (`injOut`) mostrano "NG" in rosso (`.duw.dung`) invece dell'avversario. Se il giocatore gioca, `injSync` lo toglie dagli infortunati e le caselle tornano normali con i PDK registrati.
