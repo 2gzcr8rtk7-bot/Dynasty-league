@@ -1882,6 +1882,8 @@ nav button>span{white-space:nowrap}
 .du-vuoto{place-content:center;justify-items:center;color:#8f89b5;font-size:11px;border-style:dashed}.du-vuoto b{font-family:var(--display);font-style:italic;font-size:16px;color:#c9c3e8}.du-nulla{visibility:hidden}
 .duh{display:grid;grid-template-columns:34px minmax(0,1fr);gap:6px;align-items:center;height:38px}.duh{position:relative}.duo{position:absolute;right:0;top:50%;transform:translateY(-50%);padding:2px 8px;border-radius:6px;background:#dc2626;color:#fff!important;font-style:normal;font-weight:900;font-size:11px;letter-spacing:.08em;line-height:1.3;box-shadow:0 0 0 1.5px #fff,0 2px 6px rgba(0,0,0,.4)}.duh:has(.duo) .dun b{padding-right:46px}.du:has(.duo) .duj svg{filter:drop-shadow(0 0 3px #ff2a2a)}
 .duj{width:34px;height:38px;display:grid;place-items:center;position:relative}.injx{position:absolute;left:50%;bottom:-3px;transform:translateX(-50%);display:block;padding:1px 7px;border-radius:5px;background:#dc2626;color:#fff!important;font-style:normal;font-weight:900;font-size:11px;line-height:1.3;letter-spacing:.06em;box-shadow:0 0 0 1.5px #fff,0 2px 6px rgba(0,0,0,.5);pointer-events:none;z-index:3;white-space:nowrap}.injx::after{content:" OUT"}
+[data-ist]{--ist:#22c55e}[data-ist="out"]{--ist:#dc2626}[data-ist="dub"]{--ist:#f59e0b}
+[data-ist] .pcd::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--ist);z-index:2}
 .pj .injx{display:block;font-size:0;width:24px;height:24px;padding:0;border-radius:6px;background:#dc2626;box-shadow:0 1px 4px rgba(0,0,0,.45);transform:none;left:-12px;bottom:8px;z-index:1;white-space:normal}
 .pj .injx::before{content:"";position:absolute;left:50%;top:50%;width:4px;height:13px;margin:-6.5px 0 0 -2px;background:#fff;border-radius:1px}
 .pj .injx::after{content:"";position:absolute;left:50%;top:50%;width:13px;height:4px;margin:-2px 0 0 -6.5px;background:#fff;border-radius:1px}
@@ -3922,6 +3924,7 @@ function injSync(){Object.keys(INJ).forEach(k=>delete INJ[k]);INJ_RIENTRI.length
 injSync();
 const injOut=n=>!!(INJ[n]&&INJ[n].stato==="out");
 const injTag=n=>{const i=INJ[n];if(!i||i.stato!=="out")return"";const m=(i.rientro||"").match(/(\d{2}\/\d{2})/);return`<em class="injo" title="Infortunato · vale 0${i.tipo?" · "+String(i.tipo).replace(/"/g,"&quot;"):""}">OUT</em>`};
+const injSt=n=>{const i=INJ[n];return!i||i.stato==="ok"?"ok":i.stato==="out"?"out":"dub"};
 const injX=n=>{const i=INJ[n];return i&&i.stato==="out"?`<i class="injx" title="Infortunato · vale 0 (${(i.tipo||"").replace(/"/g,"&quot;")})">✕</i>`:""};
 /* Manichino infortuni: evidenzia la zona del corpo letta dalla descrizione (destra = lato sinistro del disegno, vista frontale) */
 function bodyMap(tipo,stato){
@@ -4854,7 +4857,7 @@ function drGiocN(t,p,m){const r=p[2],sn=drSur(p[0]),v=m?m.p:null;
   const card=v==null?`<span class="pcd na"><b>${m?"—":"Non gioca"}</b></span>`:`<span class="pcd ${pdkLvl(v)}">${m.lv?'<i class="pcdlv" title="In campo ora"></i>':""}<b>${pdkF(v)}</b></span>`;
   return`<span class="pj">${jersey(t,p[1],p[0])}${injX(p[0])}</span><span class="pnm ${r}"><i>${({G:"G",F:"A",C:"C"})[r]||""}</i>${pnmTxt(sn)}</span>${card}`}
 function drPanca(t,T){const rp=n=>(ROSTER[t]||[]).find(p=>p[0]===n)||[n,"",ruoloDi(n),""];
-  const card=(x,cl)=>x?`<button class="dpc ${cl}" data-pl="${x.n}">${drGioc(t,x,cl)}</button>`:`<div class="dpc ${cl}">${drGioc(t,null,cl)}</div>`;
+  const card=(x,cl)=>x?`<button class="dpc ${cl}" data-ist="${injSt(x.n)}" data-pl="${x.n}">${drGioc(t,x,cl)}</button>`:`<div class="dpc ${cl}">${drGioc(t,null,cl)}</div>`;
   const tr=[...T.trib,...T.wait];
   return`<div class="dpan">
    <div class="dpsix"><h5 aria-label="6° uomo"><small>100% PDK</small></h5>${card(T.top[5],"six")}</div>
@@ -4925,8 +4928,8 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   /* formazione Dreamers: ogni giocatore resta nella fila del suo ruolo (anche 3 o più affiancati: maglie ridotte, --k) */
   const KS=n=>n<=3?1:n===4?.7:.55,XN={3:[18,50,82],4:[11,37,63,89],5:[9,29,50,71,91]};
   ["G","F","C"].forEach(r=>{const l=FILA[r],n=l.length;l.forEach((p,i)=>pos[p[0]]=[n===2&&XS[r]?XS[r][i]:XN[n]?XN[n][i]:(i+1)/(n+1)*100,ROWY[r],KS(n)])});
-  const onCourt=CNT?q.map((p,i)=>`<button class="cpl dr" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%;--k:${pos[p[0]][2]}">${drGiocN(t,p,NM[p[0]])}</button>`).join("")
-    :q.map((p,i)=>`<button class="cpl dr" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%;--k:${pos[p[0]][2]}">${drGioc(t,DX(p[0]),i===0?"cap":"full")}</button>`).join("");
+  const onCourt=CNT?q.map((p,i)=>`<button class="cpl dr" data-ist="${injSt(p[0])}" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%;--k:${pos[p[0]][2]}">${drGiocN(t,p,NM[p[0]])}</button>`).join("")
+    :q.map((p,i)=>`<button class="cpl dr" data-ist="${injSt(p[0])}" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%;--k:${pos[p[0]][2]}">${drGioc(t,DX(p[0]),i===0?"cap":"full")}</button>`).join("");
   const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>CNT?(nv(b[0])??-1e9)-(nv(a[0])??-1e9):(pdkMed(b[0])??-99)-(pdkMed(a[0])??-99));  /* panchina in ordine di efficienza media stagionale (stesso valore mostrato), si riordina a ogni aggiornamento */
   return `<button class="gback" id="cback">‹ Home</button>
   <div class="teamhead" style="${dlHeadSty(curTeam)}">
