@@ -4766,16 +4766,21 @@ async function shCampo(nn){const S=SHR_CAMPO;if(!S)return null;const nn0=nn&&nn<
    parquet chiaro, linee bianche) in versione piccola, con DENTRO solo il giocatore: maglia + tagliandino col PDK della partita.
    Niente capitano, niente punteggio pieno/normale. */
 let SHR_PC=null;
-async function shPcard(){const S=SHR_PC;if(!S)return null;const x=S.x,t=S.t,c=TEAMS[t],OT=dlTm(t),W=720,k=W/100,H=Math.round(128.8*k);
+async function shPcard(){const S=SHR_PC;if(!S)return null;const x=S.x,t=S.t,c=TEAMS[t],OT=dlTm(t),W=640,k=W/100;
   try{await Promise.all([document.fonts.load('40px "CourtBlock"'),document.fonts.load('800 italic 40px "Barlow Condensed"')])}catch(e){}
   const shade=(h,q)=>{const n=parseInt(h.slice(1),16);const f=v=>Math.round(v*(1-q)).toString(16).padStart(2,"0");return"#"+f(n>>16)+f(n>>8&255)+f(n&255)};
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255};
   const apron=OT.ac||shade(c.bg,.18),LK=OT.cl||1,lg=LOGO2[t]||LOGO[t],atxt=Math.abs(lum(c.fg)-lum(apron))>.35?c.fg:(lum(apron)>.55?"#111":"#fff"),astk=lum(atxt)>.5?shade(c.bg,.55):apron;
   const aL=Math.max(c.city.length,c.nick.length),afs=Math.min(7.2,(35-(aL-1)*.5)/(aL*.49))/Math.max(1,LK*.95),TX=9.5*LK+1.5,ay=8+afs*.43;
   const lc=OT.lc||(DLS_LN[DLS.line]||DLS_LN.white)[0];
-  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 128.8" width="${W}" height="${H}" preserveAspectRatio="none"><defs><linearGradient id="wood" x1="0" x2="1"><stop offset="0" stop-color="#b9793f"/><stop offset=".5" stop-color="#dba567"/><stop offset="1" stop-color="#b9793f"/></linearGradient>${woodPat("doghe","planks")}<linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".55" stop-color="#fff" stop-opacity=".03"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></linearGradient><radialGradient id="shine" cx=".5" cy=".3" r=".75"><stop offset="0" stop-color="#fff" stop-opacity=".2"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></radialGradient></defs>
-   <rect width="100" height="128.8" fill="${apron}"/><g transform="translate(0,9.785) scale(1,1.0358)"><rect x="3" y="6" width="94" height="106" fill="url(#wood)"/><rect x="3" y="6" width="94" height="106" fill="url(#planks)"/><rect x="3" y="6" width="94" height="106" fill="url(#shine)" opacity=".8"/>
-   <g fill="none" stroke="${lc}" stroke-opacity=".92" stroke-width=".6"><path d="M3 6H97M3.3 6V112M96.7 6V112M3 111.7H97"/><rect x="34" y="6" width="32" height="38"/><path d="M39 44A11 11 0 0 0 61 44"/><path d="M39 44A11 11 0 0 1 61 44" stroke-dasharray="1.6 1.3"/><path d="M7 6V20A43 43 0 0 0 93 20V6"/><path d="M46 12.5A4 4 0 0 0 54 12.5"/><circle cx="50" cy="112" r="11"/></g></g><rect width="100" height="16" fill="url(#gloss)"/></svg>`;
+  /* campo PICCOLO: cornice (apron) sottile attorno al giocatore (~mezzo cm), intestazione con logo e nome, parquet chiaro con area, tiro libero e linea da tre */
+  const jw=W*.24,jh=jw*77/64,tw2=W*.38,hb=W*.095,hl=6,hp=W*.09,thh=hb+hl+hp,tot=jh+thh-W*.02,M=34,HH=16*k,AP=16,H=Math.round(HH+M+tot+M+AP);
+  const wx=AP,wy=HH,ww=W-2*AP,wh=H-HH-AP,cx=W/2,wl=3.6,ly=(f)=>wy+wh*f;
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><defs><linearGradient id="wood" x1="0" x2="1"><stop offset="0" stop-color="#b9793f"/><stop offset=".5" stop-color="#dba567"/><stop offset="1" stop-color="#b9793f"/></linearGradient>${woodPat("doghe","planks")}<linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".55" stop-color="#fff" stop-opacity=".03"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></linearGradient><radialGradient id="shine" cx=".5" cy=".3" r=".75"><stop offset="0" stop-color="#fff" stop-opacity=".2"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></radialGradient></defs>
+   <rect width="${W}" height="${H}" fill="${apron}"/><rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="url(#wood)"/><g transform="translate(${wx},${wy}) scale(${k*.94/1},${k*.94})"><rect width="${ww/(k*.94)}" height="${wh/(k*.94)}" fill="url(#planks)"/></g><rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="url(#shine)" opacity=".8"/>
+   <g fill="none" stroke="${lc}" stroke-opacity=".92" stroke-width="${wl}" stroke-linejoin="round"><rect x="${wx+wl/2}" y="${wy+wl/2}" width="${ww-wl}" height="${wh-wl}"/>
+    <rect x="${cx-ww*.17}" y="${wy}" width="${ww*.34}" height="${wh*.6}"/><path d="M${cx-ww*.117} ${ly(.6)}A${ww*.117} ${ww*.117} 0 0 0 ${cx+ww*.117} ${ly(.6)}"/><path d="M${cx-ww*.117} ${ly(.6)}A${ww*.117} ${ww*.117} 0 0 1 ${cx+ww*.117} ${ly(.6)}" stroke-dasharray="${wl*3.2} ${wl*2.6}"/>
+    <path d="M${cx-ww*.043} ${wy+wh*.12}A${ww*.043} ${ww*.043} 0 0 0 ${cx+ww*.043} ${wy+wh*.12}"/><path d="M${wx+ww*.0426} ${wy}V${wy+wh*.13}A${ww*.457} ${ww*.457} 0 0 0 ${wx+ww*.9574} ${wy+wh*.13}V${wy}"/></g><rect width="${W}" height="${HH}" fill="url(#gloss)"/></svg>`;
   const bg=await ldImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg));
   const cv=document.createElement("canvas");cv.width=W;cv.height=H;const X=cv.getContext("2d");X.fillStyle=apron;X.fillRect(0,0,W,H);if(bg)X.drawImage(bg,0,0,W,H);
   /* nome squadra ai lati del logo (come sul campo) */
@@ -4783,11 +4788,11 @@ async function shPcard(){const S=SHR_PC;if(!S)return null;const x=S.x,t=S.t,c=TE
   const tw=(txt,al,px)=>{X.textAlign=al;X.lineWidth=.45*k;X.strokeStyle=astk;X.fillStyle=atxt;X.globalAlpha=.94;X.strokeText(txt,px,ay*k);X.fillText(txt,px,ay*k);X.globalAlpha=1};
   X.letterSpacing="0px";tw(lg?c.city.toUpperCase():c.nick.toUpperCase(),lg?"right":"center",lg?(50-TX)*k:50*k);if(lg)tw(c.nick.toUpperCase(),"left",(50+TX)*k);
   if(lg){const im=await ldImg(lg);if(im){const g=LOGO2[t]?[40.91,1.33,18.18,13.55]:[40.5,.3,19,15.4],w=g[2]*LK,h=g[3]*LK,bx=g[0]+g[2]/2-w/2,by=g[1]+g[3]/2-h/2,r=Math.min(w*k/im.width,h*k/im.height),iw=im.width*r,ih=im.height*r;X.drawImage(im,bx*k+w*k/2-iw/2,by*k+h*k/2-ih/2,iw,ih)}}
-  X.fillStyle=shade(c.bg,.45);X.fillRect(0,0,W,6);X.fillRect(0,H-6,W,6);
+  X.fillStyle=shade(c.bg,.45);X.fillRect(0,0,W,5);X.fillRect(0,H-5,W,5);
   /* giocatore al centro del campo */
   const num=((ROSTER[t]||[]).find(p=>p[0]===x.n)||[0,""])[1];
   const js=await ldImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jersey(t,num,x.n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')));
-  const jw=W*.24,jh=jw*77/64,tw2=W*.36,hb=W*.09,hl=6,hp=W*.084,thh=hb+hl+hp,tot=jh+thh-W*.02,cy=H*.545,top=cy-tot/2;
+  const top=wy+M;
   if(js){const r=Math.min(jw/js.width,jh/js.height),w=js.width*r,h=js.height*r;X.shadowColor="rgba(0,0,0,.45)";X.shadowBlur=18;X.shadowOffsetY=8;X.drawImage(js,W/2-w/2,top+(jh-h),w,h);X.shadowBlur=0;X.shadowOffsetY=0}
   const v=+x.r[19],lv=pdkLvl(v),[pbg]=SH_PK[lv],tx=W/2-tw2/2,ty=top+jh-W*.02,rad=W*.022;
   const RR=(x0,y0,w,h,r0)=>{X.beginPath();X.moveTo(x0+r0,y0);X.arcTo(x0+w,y0,x0+w,y0+h,r0);X.arcTo(x0+w,y0+h,x0,y0+h,r0);X.arcTo(x0,y0+h,x0,y0,r0);X.arcTo(x0,y0,x0+w,y0,r0);X.closePath()};
