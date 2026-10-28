@@ -952,3 +952,6 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 ### (294) Ducks: logo dei profili e logo del campo distinti (area riservata › Personalizzazioni) — SEGRETO, non in NV_LOG
 - Due scelte indipendenti: `DUC_L` (localStorage `dl_ducl`) = logo dei profili (`.lg-DUC`, `LOGO.DUC`: Home, liste, chip, pagina squadra); `DUC_C` (`dl_ducc`) = logo del campo (`LOGO2.DUC` + `DUC_CURL` per il banner del campo, condivisioni, bacheca). G-League esclusa.
 - `ducLogoSet(k,w)` con `w==="c"` per il campo; i bottoni `[data-hlo]` hanno `data-hw` (p/c). `pers()` mostra due card con griglia e "Ripristina" ciascuna.
+
+### (295) Nuovi verdi ufficiali (disponibilità e PDK buono)
+- Campionati da screenshot del GM: `cOk` #22c55e → **#5dcb3c** (trattino disponibilità), `pG` #16a34a → **#3ba764** (PDK buono verde). `DLS_DEF` aggiornato; `ST_BASE` conserva i vecchi valori del CSS statico così `stApply()` applica sempre l'override; chi aveva salvato i vecchi default viene migrato ai nuovi (`DLS[k]===ST_BASE[k]`). Restano personalizzabili in Impostazioni › Giocatori. Voce in NV_LOG "Nuovi verdi".

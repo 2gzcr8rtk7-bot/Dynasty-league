@@ -2802,8 +2802,10 @@ function jersey(t,num,name=""){
   </svg>`;
 }
 /* ===== IMPOSTAZIONI GRAFICHE (27/10/2026): salvate su questo dispositivo (localStorage "dl_set"). Campo, maglie, tabellino nome, PDK ===== */
-const DLS_DEF={sepOn:true,sepW:1,sepC:"#0b0b12",cOut:"#dc2626",cDub:"#f59e0b",cOk:"#22c55e",pV:"#7c3aed",pG:"#16a34a",pY:"#f5b400",pR:"#dc2626",sj:1,sn:1,st:1,sp:1,sov:-10,floor:"auto",line:"white",lw:1,planks:true,gloss:1,apron:"team",logo:true,tname:true,paint:false,role:true,cap:true,shadow:true,sq:false,noanim:false,decor:true,th:"classico",cb:"#1e3a8a",ca:"#e4163a",cg:"#f5b400",hs:true,ht:false,np:false,pvNight:false,pvTeam:"",pvHide:false,pj:"jersey",pjp:{},tm:{}};
+const DLS_DEF={sepOn:true,sepW:1,sepC:"#0b0b12",cOut:"#dc2626",cDub:"#f59e0b",cOk:"#5dcb3c",pV:"#7c3aed",pG:"#3ba764",pY:"#f5b400",pR:"#dc2626",sj:1,sn:1,st:1,sp:1,sov:-10,floor:"auto",line:"white",lw:1,planks:true,gloss:1,apron:"team",logo:true,tname:true,paint:false,role:true,cap:true,shadow:true,sq:false,noanim:false,decor:true,th:"classico",cb:"#1e3a8a",ca:"#e4163a",cg:"#f5b400",hs:true,ht:false,np:false,pvNight:false,pvTeam:"",pvHide:false,pj:"jersey",pjp:{},tm:{}};
+const ST_BASE={cOk:"#22c55e",pG:"#16a34a"};
 let DLS={...DLS_DEF};try{Object.assign(DLS,JSON.parse(localStorage.getItem("dl_set")||"{}"))}catch(e){}
+for(const k in ST_BASE)if(DLS[k]===ST_BASE[k])DLS[k]=DLS_DEF[k];
 const DLS_FL={classic:["#b9793f","#dba567","Parquet classico"],maple:["#d9b98a","#f0d8aa","Acero chiaro"],walnut:["#6b3f22","#8a5a36","Noce scuro"],ebony:["#1c1d22","#34353c","Ebano nero"],blue:["#1e3a8a","#2f5fd0","Blu arena"],street:["#6b7280","#9ca3af","Cemento street"],purple:["#2b0a5e","#6d28d9","Viola neon"],green:["#14532d","#22863a","Verde"],cherry:["#7a2e1d","#b0502f","Ciliegio"],ash:["#a8a092","#d3ccbd","Frassino grigio"],mahogany:["#4a1a12","#7a301f","Mogano"],bamboo:["#b79a45","#dcc673","Bambù"],natale:["#14532d","#1f8a45","🎄 Natale"],halloween:["#1a1033","#3b1d6b","🎃 Halloween"],team:["","","Colori squadra"]};
 /* DISEGNO DEL LEGNO (28/10/2026): come è disegnato il parquet, oltre al colore. DLS.wd = chiave; "doghe" = disegno storico. Il pattern ha id "planks" nel campo e id unico nelle miniature. */
 const WD=[["doghe","Doghe classiche","auto"],["spina","Spina di pesce","walnut"],["orizz","Doghe orizzontali","maple"],["diag","Diagonale","cherry"],["quadri","Quadrotti","ash"],["vena","Venatura naturale","mahogany"],["nodi","Listoni con nodi","bamboo"]];
@@ -2861,10 +2863,10 @@ function dlSyncDr(th){try{if(th==="tabellone")DR._th=5;else if(th==="parquet")DR
 /* colori di disponibilità/PDK e stacco del trattino (Impostazioni › Giocatori): override CSS generati solo per ciò che è diverso dal predefinito */
 function stApply(){const D=DLS_DEF,c=DLS,rs=document.documentElement.style,tx=h=>{const n=parseInt(String(h).slice(1),16);return(0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255>.6?"#111":"#fff"};
   rs.setProperty("--sepw",(c.sepOn===false?0:Math.max(0,+c.sepW||0))+"px");rs.setProperty("--sepc",c.sepC||D.sepC);
-  let o="";if(c.cOk&&c.cOk!==D.cOk)o+=`[data-ist]{--ist:${c.cOk}}`;
+  let o="";if(c.cOk&&c.cOk!==ST_BASE.cOk)o+=`[data-ist]{--ist:${c.cOk}}`;
   if(c.cOut&&c.cOut!==D.cOut)o+=`[data-ist="out"]{--ist:${c.cOut}}.pj .injx,.injx,.duo,.bnm small .injo{background:${c.cOut}}`;
   if(c.cDub&&c.cDub!==D.cDub)o+=`[data-ist="dub"]{--ist:${c.cDub}}.duo.dub{background:${c.cDub}}`;
-  [["v","pV"],["g","pG"],["y","pY"],["r","pR"]].forEach(([k,key])=>{const C=c[key];if(!C||C===D[key])return;const t=tx(C);o+=`.pcd.${k}{background:linear-gradient(180deg,color-mix(in srgb,${C} 70%,#fff),${C});color:${t}}.cev.${k},.pdkx.${k},.gv.${k}{background:${C};color:${t}}.ev.${k} i{background:${C}}`});
+  [["v","pV"],["g","pG"],["y","pY"],["r","pR"]].forEach(([k,key])=>{const C=c[key];if(!C||C===(ST_BASE[key]||D[key]))return;const t=tx(C);o+=`.pcd.${k}{background:linear-gradient(180deg,color-mix(in srgb,${C} 70%,#fff),${C});color:${t}}.cev.${k},.pdkx.${k},.gv.${k}{background:${C};color:${t}}.ev.${k} i{background:${C}}`});
   let st=document.getElementById("stc");if(!st){st=document.createElement("style");st.id="stc";document.head.appendChild(st)}st.textContent=o}
 function dlsApply(){stApply();const TV_=dlThemeVars(),rs=document.documentElement.style;document.documentElement.dataset.si=DLS.si==="x"||DLS.si==="line"?DLS.si:"both";["fg","bg","panel","panel2","line","muted","glow","hd1","hd2","red","red2","gold","onred","pn1","pn2"].forEach(k=>TV_?rs.setProperty("--"+k,TV_[k]):rs.removeProperty("--"+k));TH_BAR=TV_?TV_.hd2:"#0a1330";
   try{const tc=document.querySelector('meta[name="theme-color"]'),bc=document.body&&document.body.classList;if(tc&&bc&&!bc.contains("dreamfs")&&!bc.contains("notte"))tc.content=TH_BAR}catch(e){}
@@ -6832,6 +6834,7 @@ ulCheck();
 /* (260) CRONOLOGIA MODIFICHE: il footer "Ultimo aggiornamento" è cliccabile e apre questa pagina (vista "novita").
    OGNI nuova modifica pubblicata va aggiunta in CIMA a NV_LOG (data, titolo, mini spiegazione). */
 const NV_LOG=[
+ ["28/10/2026","Nuovi verdi","Il verde della disponibilità (trattino della salute) e quello del PDK buono hanno una nuova tonalità, più brillante, su tutta l'app. Restano modificabili in Impostazioni › Giocatori."],
  ["28/10/2026","Giocatori probabili","Quando ESPN segna un giocatore come probabile, il trattino della salute in campo è verde al 75% (non pieno) e nel Centro medico compare il gruppo Probabile. In Impostazioni › Giocatori puoi anche scegliere lo stacco del trattino e i colori di disponibilità e PDK."],
  ["28/10/2026","Nuovi disegni del legno","In Impostazioni › Campo c'è la sezione Disegno del legno: oltre alle doghe classiche puoi scegliere spina di pesce, doghe orizzontali, diagonale, quadrotti, venatura naturale e listoni con nodi. Ognuno ha un legno di colore diverso (noce, acero, ciliegio, frassino, mogano, bambù) e puoi cambiare il colore del parquet quando vuoi."],
  ["28/10/2026","Confronto Dunkest ↔ ESPN","Nel centro aggiornamenti ora si vedono solo i giocatori mancanti tra Dunkest ed ESPN (squadre, free agent, G-League) e cosa ha fatto l\'app: ESPN usato dove manca Dunkest, dato Dunkest tenuto dove manca ESPN. Una sezione a parte, Errori Dunkest ↔ ESPN per data, mostra giorno per giorno punti PDK, minuti, statistiche e avversari che non coincidevano: Dunkest sostituisce sempre il dato ESPN. Dalle 07:30 ESPN rende ufficiali anche free agent e G-League finché non arriva Dunkest."],
