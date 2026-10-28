@@ -2122,6 +2122,37 @@ body.dreamfs .drroom[data-th="5"],.drroom.gdemb[data-th="5"]{background:linear-g
 /* (240) pulsante Stile accanto alle impostazioni: cambia lo stile di tutta l'app (Classico <-> Tabellone) */
 .topbtns{display:flex;align-items:center;gap:8px;flex:none}.setbtn.stylebtn{width:34px;height:34px;border-radius:10px}.setbtn.stylebtn svg{width:19px;height:19px}
 html.dlt-tabellone body{background:repeating-linear-gradient(45deg,#0b0d10 0 22px,#12151a 22px 44px) fixed!important}
+/* (241) tema Parquet dell'app: arancione/crema, loghi senza sfondo colorato, logo Dreamers arancione */
+html.dlt-parquet body{background:repeating-linear-gradient(90deg,#c88a4c 0 26px,#be8043 26px 52px)!important;color:#2b1608}
+html.dlt-parquet header,html.dlt-parquet header *{color:#fff}
+html.dlt-parquet header nav button[aria-selected="false"] span{color:rgba(255,255,255,.88)}
+html.dlt-parquet header .brand span{color:#ffe9c4}
+html.dlt-parquet main :is(b,span,td,th,p,li,button,em,small,h2,h3,h4,i,label,summary,sup):not(.htile *,.teamhead *,.rgh *,.htile,.teamhead,.rgh,.pdkx,.pdkb,.pdkx *,.pdkb *,.grl,.rl,.vtrh *,.vtrh,.medal,.avviso,.avviso *,.tvgo,.tvgo *,.hseg.on,.hdrm,.hnt *,.drnav button,.t,.t *,.tbl-wrap thead *,.badge,.ev,.ev *,.rok,.chip[aria-pressed="true"],.chip[aria-pressed="true"] *,.cntbtn *,.shbtn *,.bshare *){color:#2b1608}
+html.dlt-parquet main :is(small,.note,.setnote):not(.htile *,.teamhead *,.rgh *){color:#4a2f14}
+html.dlt-parquet main .htile small,html.dlt-parquet main .htile .hnm small{color:rgba(255,255,255,.85)}
+html.dlt-parquet main .teamhead small,html.dlt-parquet main .teamhead span,html.dlt-parquet main .teamhead b,html.dlt-parquet main .teamhead em{color:#fff}
+html.dlt-parquet .rgnav button{background:#fff6e4;color:#2b1608;border-color:#d9b27a}
+html.dlt-parquet main .upd,html.dlt-parquet main [class*="agg"],html.dlt-parquet footer,html.dlt-parquet main .foot{color:#2b1608}
+html.dlt-parquet .rgh b{color:#2b1608}
+html.dlt-parquet main h2 .t,html.dlt-parquet main h2 .t *{color:#fff}
+html.dlt-parquet .tbl-wrap table thead th{color:#fff}
+/* loghi senza sfondo colorato: card crema, colore squadra solo come filo e dettagli */
+html.dlt-parquet .htile{background:#fff6e4!important;border:1px solid #e3c28d!important;border-bottom:6px solid var(--tc)!important;box-shadow:0 6px 14px rgba(90,50,10,.22)!important;color:#2b1608!important}
+html.dlt-parquet .htile *{color:#2b1608!important;text-shadow:none!important}
+html.dlt-parquet .htile small{color:#7a5632!important}
+html.dlt-parquet .htile::before,html.dlt-parquet .htile::after{display:none!important}
+html.dlt-parquet .htile .hrec{background:rgba(43,22,8,.88)!important;color:#fff!important;border-radius:6px}
+html.dlt-parquet .htile .hrec *{color:#fff!important}
+html.dlt-parquet .htile .badge,html.dlt-parquet .htile .logo{filter:none!important;box-shadow:none!important}
+html.dlt-parquet .teamhead{background:#fff6e4!important;border:1px solid #e3c28d!important;border-bottom:6px solid var(--tc)!important;color:#2b1608!important;box-shadow:0 6px 14px rgba(90,50,10,.22)!important}
+html.dlt-parquet .teamhead *{color:#2b1608!important;text-shadow:none!important}
+html.dlt-parquet .teamhead small{color:#7a5632!important}
+html.dlt-parquet .teamhead::before,html.dlt-parquet .teamhead::after{display:none!important}
+html.dlt-parquet .teamhead .hlogo,html.dlt-parquet .teamhead .badge{filter:none!important;box-shadow:none!important}
+html.dlt-parquet .chip[aria-pressed="true"],html.dlt-parquet .chip[aria-pressed="true"] *{background-color:#f2701a!important;color:#fff!important;border-color:#c2410c!important}
+html.dlt-parquet .chip[aria-pressed="true"] .badge{background-color:transparent!important}
+/* logo Dreamers arancione (il PNG è viola) */
+html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.05)}
 .shfoot{position:sticky;bottom:0;width:100%;display:grid;gap:8px;padding-top:6px;background:linear-gradient(180deg,transparent,rgba(10,6,30,.92) 14px)}.shcut{width:100%;display:grid;gap:8px;padding:10px 12px;border-radius:14px;background:rgba(30,20,70,.8);border:1px solid rgba(196,181,253,.35);color:#fff;box-sizing:border-box}.shcut b{font:800 15px var(--display);font-style:italic;letter-spacing:.04em;text-transform:uppercase}.shcut small{display:block;color:#c4b5fd;font-size:12px}.shcut input{width:100%;accent-color:#a855f7;height:28px}
 .shbar{display:flex;gap:10px;width:100%}
 .shbar>*{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px;border-radius:14px;border:1px solid rgba(196,181,253,.35);background:rgba(30,20,70,.8);color:#fff;font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;letter-spacing:.05em;text-transform:uppercase;text-decoration:none;cursor:pointer}
@@ -2773,15 +2804,18 @@ const DLT={
  oceano:{n:"Oceano",v:{bg:"#031219",panel:"#081f2c",panel2:"#0d2f42",line:"#164862",muted:"#8fb2c4",glow:"#0b4a6b",hd1:"#0a3a55",hd2:"#04202f",red:"#0891b2",red2:"#22d3ee",gold:"#67e8f9",onred:"#ffffff",pn1:"#0e3347",pn2:"#081f2c"}},
  neon:{n:"Neon",v:{bg:"#0a0618",panel:"#160d30",panel2:"#22124a",line:"#3b2478",muted:"#a99bd6",glow:"#4c1d95",hd1:"#2e1065",hd2:"#150a35",red:"#9333ea",red2:"#c084fc",gold:"#f0abfc",onred:"#ffffff",pn1:"#261452",pn2:"#150a35"}},
  tabellone:{n:"Tabellone",v:{bg:"#0b0d10",panel:"#1b2027",panel2:"#262d37",line:"#3a424e",muted:"#9aa3af",glow:"#3a2a00",hd1:"#1b2027",hd2:"#0b0d10",red:"#ffb000",red2:"#ffd166",gold:"#ffe14d",onred:"#14100a",pn1:"#232a33",pn2:"#171b21"}},
+ parquet:{n:"Parquet",v:{fg:"#2b1608",bg:"#c88a4c",panel:"#fff6e4",panel2:"#f6e2bd",line:"#d9b27a",muted:"#7a5632",glow:"#e9b878",hd1:"#f2701a",hd2:"#c2410c",red:"#f2701a",red2:"#c2410c",gold:"#b45309",onred:"#ffffff",pn1:"#fff6e4",pn2:"#f6e2bd"}},
  oro:{n:"Carbone e oro",v:{bg:"#070707",panel:"#141414",panel2:"#1e1e1e",line:"#3a3320",muted:"#a8a08a",glow:"#2a2208",hd1:"#1c1c1c",hd2:"#0b0b0b",red:"#c9a227",red2:"#f2cf5b",gold:"#f5d76e",onred:"#14100a",pn1:"#1d1d1d",pn2:"#101010"}}
 };
 const dlMix=(a,b,t)=>{const A=parseInt(a.slice(1),16),B=parseInt(b.slice(1),16);const g=(x,y)=>Math.round(x*(1-t)+y*t).toString(16).padStart(2,"0");return"#"+g(A>>16,B>>16)+g(A>>8&255,B>>8&255)+g(A&255,B&255)};
 function dlThemeVars(){if(DLS.th==="custom"){const B=DLS.cb,A=DLS.ca,G=DLS.cg,K="#000000",n=parseInt(A.slice(1),16),lum=(.299*(n>>16)+.587*(n>>8&255)+.114*(n&255))/255;
   return{bg:dlMix(B,K,.9),panel:dlMix(B,K,.82),panel2:dlMix(B,K,.74),line:dlMix(B,K,.62),muted:dlMix(B,"#ffffff",.62),glow:dlMix(B,K,.66),hd1:dlMix(B,K,.7),hd2:dlMix(B,K,.86),red:A,red2:dlMix(A,"#ffffff",.25),gold:G,onred:lum>.6?"#14100a":"#ffffff",pn1:dlMix(B,K,.76),pn2:dlMix(B,K,.86)}}
   return DLT[DLS.th]?DLT[DLS.th].v:null}
-function dlsApply(){const TV_=dlThemeVars(),rs=document.documentElement.style;["bg","panel","panel2","line","muted","glow","hd1","hd2","red","red2","gold","onred","pn1","pn2"].forEach(k=>TV_?rs.setProperty("--"+k,TV_[k]):rs.removeProperty("--"+k));TH_BAR=TV_?TV_.hd2:"#0a1330";
+/* (241) scegliere lo stile dell'app (Tabellone / Parquet / Classico) imposta in automatico anche lo stile di Dreamers e G-Dreamers (Tabellone=5, Parquet=3, Classico=predefinito) */
+function dlSyncDr(th){try{if(th==="tabellone")DR._th=5;else if(th==="parquet")DR._th=3;else if(th==="classico")DR._th=null;else return;if(DR._th==null)localStorage.removeItem("dl_drth");else localStorage.setItem("dl_drth",DR._th)}catch(e){}}
+function dlsApply(){const TV_=dlThemeVars(),rs=document.documentElement.style;["fg","bg","panel","panel2","line","muted","glow","hd1","hd2","red","red2","gold","onred","pn1","pn2"].forEach(k=>TV_?rs.setProperty("--"+k,TV_[k]):rs.removeProperty("--"+k));TH_BAR=TV_?TV_.hd2:"#0a1330";
   try{const tc=document.querySelector('meta[name="theme-color"]'),bc=document.body&&document.body.classList;if(tc&&bc&&!bc.contains("dreamfs")&&!bc.contains("notte"))tc.content=TH_BAR}catch(e){}
-  document.documentElement.classList.toggle("dlt-tabellone",DLS.th==="tabellone");document.documentElement.classList.toggle("dlt-nostripe",!DLS.hs);document.documentElement.classList.toggle("dlt-thin",!!DLS.ht);document.documentElement.classList.toggle("dlt-pill",!!DLS.np);const r=document.documentElement,st=r.style;st.setProperty("--sj",DLS.sj);st.setProperty("--sn",DLS.sn);st.setProperty("--st",DLS.st);st.setProperty("--sp",DLS.sp);st.setProperty("--sov",DLS.sov);
+  document.documentElement.classList.toggle("dlt-tabellone",DLS.th==="tabellone");document.documentElement.classList.toggle("dlt-parquet",DLS.th==="parquet");document.documentElement.classList.toggle("dlt-nostripe",!DLS.hs);document.documentElement.classList.toggle("dlt-thin",!!DLS.ht);document.documentElement.classList.toggle("dlt-pill",!!DLS.np);const r=document.documentElement,st=r.style;st.setProperty("--sj",DLS.sj);st.setProperty("--sn",DLS.sn);st.setProperty("--st",DLS.st);st.setProperty("--sp",DLS.sp);st.setProperty("--sov",DLS.sov);
   const c=r.classList;c.toggle("dls-norole",!DLS.role);c.toggle("dls-nocap",!DLS.cap);c.toggle("dls-nosh",!DLS.shadow);c.toggle("dls-sq",!!DLS.sq);c.toggle("noanim",!!DLS.noanim)}
 dlsApply();
 let curTeam="DOL";
@@ -6517,11 +6551,11 @@ const refPrev=()=>{const e=document.getElementById("setpv");if(e){e.innerHTML=dl
 const full=()=>{const y=window.scrollY;render();window.scrollTo(0,y)};
 VIEWS.impostazioni=vImpostazioni;
 document.addEventListener("click",e=>{
-  const stb=e.target.closest("#stylebtn");if(stb){DLS.th=DLS.th==="tabellone"?"classico":"tabellone";dlsSave();dlsApply();render();return}
+  const stb=e.target.closest("#stylebtn");if(stb){DLS.th=DLS.th==="tabellone"?"parquet":DLS.th==="parquet"?"classico":"tabellone";dlSyncDr(DLS.th);dlsSave();dlsApply();render();return}
   const sb=e.target.closest("#setbtn");if(sb){if(cur!=="impostazioni")FROM=cur;cur="impostazioni";render();window.scrollTo(0,0);return}
   if(cur!=="impostazioni")return;
   if(e.target.closest("#setback")){cur=FROM||"home";render();window.scrollTo(0,0);return}
-  const v=e.target.closest("[data-dlsv]");if(v){const[k,x]=v.dataset.dlsv.split("|");DLS[k]=k==="pvNight"?x==="1":x;dlsSave();dlsApply();full();return}
+  const v=e.target.closest("[data-dlsv]");if(v){const[k,x]=v.dataset.dlsv.split("|");DLS[k]=k==="pvNight"?x==="1":x;if(k==="th")dlSyncDr(x);dlsSave();dlsApply();full();return}
   const t=e.target.closest("[data-dlst]");if(t){DLS[t.dataset.dlst]=!DLS[t.dataset.dlst];dlsSave();dlsApply();full();return}
   const l=e.target.closest("[data-dlslook]");if(l){Object.assign(DLS,LOOK[l.dataset.dlslook][1]);dlsSave();dlsApply();full();return}
   const sT=e.target.closest("[data-stab]");if(sT){STAB=sT.dataset.stab;full();return}
