@@ -5582,17 +5582,26 @@ function fantaLiveNotte(d){const o={};if(typeof TV==="undefined")return o;
     [["a",g[1]],["h",g[0]]].forEach(([sd,opp])=>(B[sd]||[]).forEach(r=>{if(r[19]==null)return;const mm=String(r[2]||"0").split(":");o[tvNm(r[0])]={p:+r[19],min:(+mm[0]||0)+(+mm[1]||0)/60,opp,nm:r[0],prov:!!B.live,pts:+r[3]||0,reb:+r[6]||0,ast:+r[7]||0}}))}
   return o}
 /* (242) STATISTICHE LIVE nelle stats dei giocatori: dalle 07:30 italiane la notte appena finita (tabellini ESPN via Dynasty TV, formula Dunkest) viene aggiunta in coda a PARTITE[nome] con un 9° valore "L" (partita in corso) o "P" (finita, ancora provvisoria). Si rimuove e si ricalcola a ogni render. Appena il report ufficiale Dunkest (~10:30) porta la notte in PARTITE (data <= ultima notte ufficiale) la riga live non viene più aggiunta: nessun doppione. */
-let PLV=[];
-function liveSync(){try{PLV.forEach(([n,e])=>{const a=PARTITE[n];if(!a)return;const i=a.indexOf(e);if(i>=0)a.splice(i,1)});PLV=[];
+let PLV=[],EFF0=null;
+/* ripristina EFF.gioc/ULTIMA ai valori ufficiali e poi riapplica la notte live: efficienza media (media semplice delle efficienze partita), partite, minuti medi, notte e ultima partita */
+function liveEff(nights){if(!EFF0)EFF0={g:JSON.stringify(EFF.gioc),u:JSON.stringify(ULTIMA.gioc)};
+  const g0=JSON.parse(EFF0.g);for(const t in g0)EFF.gioc[t]=g0[t];ULTIMA.gioc=JSON.parse(EFF0.u);
+  const r2=v=>Math.round(v*100)/100;
+  nights.forEach(([L,nm])=>{for(const k in L){const n=nm[k];if(!n)continue;const x=L[k];if(!(x.min>0))continue;
+    for(const t in EFF.gioc){const e=EFF.gioc[t].find(q=>q[0]===n);if(!e)continue;
+      const g=e[2]||0,ef=x.p/x.min,m1=e[1]==null?0:e[1];
+      e[1]=r2((m1*g+ef)/(g+1));e[6]=e[1];e[3]=Math.round(((e[3]||0)*g+x.min)/(g+1)*10)/10;e[7]=e[3];e[2]=g+1;
+      e[4]=Math.round(x.min);e[5]=r2(ef);e[8]=r2(x.p);ULTIMA.gioc[n]=e[5];break}}})}
+function liveSync(){try{PLV.forEach(([n,e])=>{const a=PARTITE[n];if(!a)return;const i=a.indexOf(e);if(i>=0)a.splice(i,1)});PLV=[];const LN=[];
   if(typeof TV==="undefined"||typeof EFF==="undefined"||!EFF.agg)return;
   const lastOff=drNightOfAgg(EFF.agg),nm={};Object.values(ROSTER).flat().forEach(p=>nm[tvNm(p[0])]=p[0]);
   const p2=v=>String(v).padStart(2,"0");
   /* le notti ESPN entrano nelle statistiche dalle 07:30 (ora italiana) del giorno dopo la notte; prima restano solo nelle viste live */
   let rk="";try{const q=new Intl.DateTimeFormat("sv-SE",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date());rk=q.replace("T"," ").slice(0,16)}catch(e){rk="9999"}
-  for(const d of fantaLiveNotti(drAdd(lastOff,1))){if(rk<drAdd(d,1)+" 07:30")continue;const L=fantaLiveNotte(d),lab=`${d.slice(8)}/${d.slice(5,7)}`;
+  for(const d of fantaLiveNotti(drAdd(lastOff,1))){if(rk<drAdd(d,1)+" 07:30")continue;const L=fantaLiveNotte(d),lab=`${d.slice(8)}/${d.slice(5,7)}`;LN.push([L,nm]);
     for(const k in L){const n=nm[k];if(!n)continue;const x=L[k];if(!(x.min>0))continue;
       const A=PARTITE[n]||(PARTITE[n]=[]);if(A.some(g=>g[0]===lab&&g[8]==null))continue;
-      const e=[lab,x.opp,Math.round(x.min*10)/10,Math.round(x.p*100)/100,x.min?Math.round(x.p/x.min*100)/100:0,x.pts,x.reb,x.ast,x.prov?"L":"P"];A.push(e);PLV.push([n,e])}}}catch(e){}}
+      const e=[lab,x.opp,Math.round(x.min*10)/10,Math.round(x.p*100)/100,x.min?Math.round(x.p/x.min*100)/100:0,x.pts,x.reb,x.ast,x.prov?"L":"P"];A.push(e);PLV.push([n,e])}}liveEff(LN)}catch(e){}}
 const FANTA_LIVE=[
   {attivo:()=>cur==="campo",da:()=>{const a=drAdd(flUsaOggi(),-1),b=FANTA_LIVE[1].da();return b<a?b:a}},/* ieri + oggi (data USA) e, fuori dalla modalità notte, tutta la settimana Dreamers *//* ieri + oggi (data USA): dopo mezzanotte ET la notte in corso è "ieri" */
   {attivo:()=>cur==="giochi"&&GAME==="dream",da:()=>{const N={...DRD.notti},n=drNightOfAgg(EFF.agg);if(n>=DR_START)N[n]=1;const k=Object.keys(N).sort(),l=k[k.length-1];return l&&l>=DR_START?drAdd(l,1):DR_START}},
