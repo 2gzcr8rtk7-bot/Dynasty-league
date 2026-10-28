@@ -5645,7 +5645,9 @@ function liveSync(){try{PLV.forEach(([n,e])=>{const a=PARTITE[n];if(!a)return;co
   for(const d of fantaLiveNotti(drAdd(lastOff,1))){if(rk<drAdd(d,1)+" 07:30")continue;const L=fantaLiveNotte(d),lab=`${d.slice(8)}/${d.slice(5,7)}`;LN.push([L,nm]);
     for(const k in L){const n=nm[k];if(!n)continue;const x=L[k];if(!(x.min>0))continue;
       const A=PARTITE[n]||(PARTITE[n]=[]);if(A.some(g=>g[0]===lab&&g[8]==null))continue;
-      const e=[lab,x.opp,Math.round(x.min*10)/10,Math.round(x.p*100)/100,x.min?Math.round(x.p/x.min*100)/100:0,x.pts,x.reb,x.ast,x.prov?"L":"P"];A.push(e);PLV.push([n,e])}}liveEff(LN)}catch(e){}}
+      const e=[lab,x.opp,Math.round(x.min*10)/10,Math.round(x.p*100)/100,x.min?Math.round(x.p/x.min*100)/100:0,x.pts,x.reb,x.ast,x.prov?"L":"P"];A.push(e);PLV.push([n,e])}}try{if(window.CF&&CF.fill&&CF.n===lastOff&&CF.fill.length){const lab=`${CF.n.slice(8)}/${CF.n.slice(5,7)}`,Lf={};
+      CF.fill.forEach(x=>{const A=PARTITE[x.n]||(PARTITE[x.n]=[]);if(A.some(g=>g[0]===lab))return;const e=[lab,x.opp,Math.round(x.min*10)/10,Math.round(x.p*100)/100,x.min?Math.round(x.p/x.min*100)/100:0,x.pts,x.reb,x.ast,"E"];A.push(e);PLV.push([x.n,e]);Lf[tvNm(x.n)]={p:x.p,min:x.min}});LN.push([Lf,nm])}}catch(e){}
+  liveEff(LN)}catch(e){}}
 const FANTA_LIVE=[
   {attivo:()=>cur==="campo",da:()=>{const a=drAdd(flUsaOggi(),-1),b=FANTA_LIVE[1].da();return b<a?b:a}},/* ieri + oggi (data USA) e, fuori dalla modalità notte, tutta la settimana Dreamers *//* ieri + oggi (data USA): dopo mezzanotte ET la notte in corso è "ieri" */
   {attivo:()=>cur==="giochi"&&GAME==="dream",da:()=>{const N={...DRD.notti},n=drNightOfAgg(EFF.agg);if(n>=DR_START)N[n]=1;const k=Object.keys(N).sort(),l=k[k.length-1];return l&&l>=DR_START?drAdd(l,1):DR_START}},
@@ -6741,7 +6743,7 @@ window.dataCheck=function(){const it=[],add=(ok,t,w)=>it.push({ok,t,w:!!w});
       if((PARTITE[r[0]]||[]).length!==e[2])mism.push(r[0]+" ("+(PARTITE[r[0]]||[]).length+" vs "+e[2]+")")}}
   for(const t in EFF.gioc)for(const e of EFF.gioc[t])if(!(ROSTER[t]||[]).some(r=>r[0]===e[0]))extra.push(e[0]);
   const lastOff=drNightOfAgg(EFF.agg);
-  for(const n in PARTITE)for(const g of PARTITE[n])if(g[8]!=null){const d=(()=>{const[dd,mm]=g[0].split("/");const y=lastOff.slice(0,4);let x=`${y}-${mm}-${dd}`;if(x<y+"-08-01"&&lastOff>=y+"-08-01"&&mm<"08")x=`${+y+1}-${mm}-${dd}`;return x})();if(d<=lastOff)dup.push(n+" "+g[0])}
+  for(const n in PARTITE)for(const g of PARTITE[n])if(g[8]!=null&&g[8]!=="E"){const d=(()=>{const[dd,mm]=g[0].split("/");const y=lastOff.slice(0,4);let x=`${y}-${mm}-${dd}`;if(x<y+"-08-01"&&lastOff>=y+"-08-01"&&mm<"08")x=`${+y+1}-${mm}-${dd}`;return x})();if(d<=lastOff)dup.push(n+" "+g[0])}
   add(!miss.length,miss.length?`Giocatori delle rose senza dati: ${miss.slice(0,4).join(", ")}${miss.length>4?"…":""}`:`Tutti i ${nPl} giocatori delle rose hanno i dati`);
   add(!extra.length,extra.length?`Giocatori nei dati ma non in rosa: ${extra.slice(0,4).join(", ")}`:"Nessun giocatore estraneo alle rose");
   add(!noUlt.length&&!diff.length,noUlt.length||diff.length?`Ultima partita incoerente: ${[...noUlt,...diff].slice(0,4).join(", ")}`:`Ultima partita coerente con le medie (${nG} giocatori con partite)`);
@@ -6771,6 +6773,7 @@ ulCheck();
 /* (260) CRONOLOGIA MODIFICHE: il footer "Ultimo aggiornamento" è cliccabile e apre questa pagina (vista "novita").
    OGNI nuova modifica pubblicata va aggiunta in CIMA a NV_LOG (data, titolo, mini spiegazione). */
 const NV_LOG=[
+ ["28/10/2026","Confronto Dunkest ↔ ESPN","Nuovo controllo numerico: chi ha giocato, punti PDK e infortunati letti da ESPN e confrontati con i nostri dati. Se Dunkest non ha un giocatore che ESPN dice aver giocato, l'app usa ESPN come dato ufficiale e lo segnala. Il controllo precedente si chiama ora Controllo di coerenza."],
  ["28/10/2026","Controllo dati automatico","In cima alla cronologia: ✅ se i dati caricati sono completi e coerenti, ⚠️ con l'elenco dei problemi se qualcosa non torna (giocatori mancanti, partite che non coincidono, doppioni ESPN/Dunkest, file in ritardo)."],
  ["28/10/2026","Eventi dati in cima alla cronologia","In rosso il caricamento dei dati Dunkest con il suo orario, in verde le statistiche ESPN che entrano nell'app alle 07:30, in viola l'inizio della modalità live quando parte una partita."],
  ["28/10/2026","Animazioni live legate alle partite","Puntini, bordi lampeggianti e linee del campo partono solo quando una partita è davvero iniziata (anche a mezzogiorno) e si fermano alle 07:30."],
@@ -6802,7 +6805,7 @@ window.vNovita=function(){const by={};NV_LOG.forEach(x=>(by[x[0]]=by[x[0]]||[]).
   <p class="note">Tutto ciò che è cambiato nell'app, dal più recente. Ultimo aggiornamento dati: ${e((document.getElementById("updbtn")||{textContent:""}).textContent.replace(/Ultimo aggiornamento:\s*/,"").replace("›","").trim())}.</p>
   ${(()=>{const ev=(window.sharedEvents?sharedEvents():[]),st=((document.getElementById("updbtn")||{textContent:""}).textContent.match(/\d{2}\/\d{2}\/\d{4}\s*·\s*\d{2}:\d{2}/)||[""])[0].replace(/\s+/g," ");
    const ck=window.dataCheck?dataCheck():null;
-   return`<section class="nvd">${ck?`<div class="nvdt">Controllo dati</div><div class="nvck ${ck.ok?"ok":"ko"}"><b>${ck.ok?"✅ Aggiornamenti ok":"⚠️ Problema tecnico"} · controllo di questo telefono alle ${new Date().toLocaleTimeString("it-IT",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit"})}</b><small>${ck.ok?ck.n+" controlli automatici sui dati caricati: tutto regolare":ck.bad+(ck.bad===1?" anomalia trovata":" anomalie trovate")+" su "+ck.n+" controlli, vedi sotto cosa non torna"}</small><ul>${ck.it.map(x=>`<li class="${x.ok?"y":x.w?"w":"n"}">${x.ok?"✓":x.w?"!":"✗"} ${e(x.t)}</li>`).join("")}</ul></div>`:""}<div class="nvdt">Eventi dati</div><div class="nvleg"><span class="r">Dunkest</span><span class="g">ESPN</span><span class="v">Live</span></div>
+   return`<section class="nvd">${ck?`<div class="nvdt">Controllo di coerenza</div><div class="nvck ${ck.ok?"ok":"ko"}"><b>${ck.ok?"✅ Aggiornamenti ok":"⚠️ Problema tecnico"} · controllo di questo telefono alle ${new Date().toLocaleTimeString("it-IT",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit"})}</b><small>${ck.ok?ck.n+" controlli automatici sui dati caricati: tutto regolare":ck.bad+(ck.bad===1?" anomalia trovata":" anomalie trovate")+" su "+ck.n+" controlli, vedi sotto cosa non torna"}</small><ul>${ck.it.map(x=>`<li class="${x.ok?"y":x.w?"w":"n"}">${x.ok?"✓":x.w?"!":"✗"} ${e(x.t)}</li>`).join("")}</ul></div>`:""}${window.cfBlock?cfBlock():""}<div class="nvdt">Eventi dati</div><div class="nvleg"><span class="r">Dunkest</span><span class="g">ESPN</span><span class="v">Live</span></div>
    <article class="nvi nv-r"><b>Ultimo caricamento dati Dunkest</b><span>${e(st||"—")}</span></article>
    ${ev.length?ev.map(x=>`<article class="nvi nv-${x.c}"><b>${e(x.t)}</b><span>${e(x.x)}</span></article>`).join(""):`<p class="note">Nessun evento recente.</p>`}</section>`})()}
   ${Object.keys(by).map(d=>`<section class="nvd"><div class="nvdt">${d}</div>${by[d].map(x=>`<article class="nvi"><b>${e(x[1])}</b><span>${e(x[2])}</span></article>`).join("")}</section>`).join("")}`};
@@ -6848,6 +6851,50 @@ window.sharedEvents=function(){dkFetch();try{const t=flUsaOggi();for(let i=0;i<=
     if(fin){const[y,m,da]=d.split("-").map(Number),ts=romeAt(y,m,da+1,7,30);if(ts<=now)out.push({ts,t:rome(ts),x:`Statistiche ESPN ufficiali nell'app dalle 07:30 · notte ${lab}`,c:"g"})}}
   }catch(e){}
   return out.sort((a,b)=>b.ts-a.ts).slice(0,40)};
+})();
+</script>
+<script>
+/* (267) CONFRONTO NUMERICO Dunkest ↔ ESPN. Ogni telefono rilegge ESPN (tabellini della notte dell'ultimo report Dunkest + lista infortuni) e confronta:
+   chi ha giocato, punti PDK, infortunati. Se Dunkest NON ha un giocatore che ESPN dice aver giocato, l'app usa ESPN come dato ufficiale (riga con 9° valore "E")
+   finché il report Dunkest non viene corretto, e lo segnala. Non è il controllo di coerenza (dataCheck), che resta separato. */
+(function(){
+const CF=window.CF={n:null,esp:null,inj:null,fill:[],err:null,t:0,busy:false,at:null};
+const mmss=v=>{const m=String(v||"0").split(":");return(+m[0]||0)+(+m[1]||0)/60};
+const nmMap=()=>{const m={};Object.values(ROSTER).flat().forEach(p=>m[tvNm(p[0])]=p[0]);return m};
+const hhmm=()=>new Date().toLocaleTimeString("it-IT",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit"});
+const official=()=>{const g=EFF0?JSON.parse(EFF0.g):EFF.gioc,o={};for(const t in g)for(const e of g[t])if(e[8]!=null)o[e[0]]={p:e[8],min:e[4]};return o};
+async function cfFetch(force){if(CF.busy||(!force&&Date.now()-CF.t<600000))return;CF.busy=true;CF.t=Date.now();
+  try{const N=drNightOfAgg(EFF.agg),nm=nmMap(),esp={};
+    const r=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates="+N.replace(/-/g,"")+"&t="+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("tabellone ESPN non raggiungibile");
+    const J=await r.json();let games=0;
+    for(const ev of J.events||[]){const c=(ev.competitions||[])[0];if(!c)continue;const ty=(ev.status||c.status||{}).type||{};if(!(ty.state==="post"||ty.completed))continue;
+      const b=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event="+ev.id+"&t="+Date.now(),{cache:"no-store"});if(!b.ok)throw new Error("tabellino ESPN non raggiungibile");
+      const B=await b.json(),P=(B.boxscore&&B.boxscore.players)||[];games++;
+      P.forEach(x=>{const ab=x.team.abbreviation,co=c.competitors.find(k=>k.team.abbreviation===ab),op=c.competitors.find(k=>k!==co),win=!!(co&&co.winner);
+        esSide(x,win).forEach(row=>{const k=nm[tvNm(row[0])];if(!k)return;esp[k]={p:row[19],min:mmss(row[2]),pts:row[3],reb:row[6],ast:row[7],opp:op?esAb(op.team.abbreviation):""}})})}
+    if(!games)throw new Error("nessuna partita finita trovata su ESPN per la notte "+N);
+    let inj=null;try{const q=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/injuries?t="+Date.now(),{cache:"no-store"});if(q.ok){const Q=await q.json();inj={};(Q.injuries||[]).forEach(tm=>(tm.injuries||[]).forEach(i=>{const k=nm[tvNm((i.athlete||{}).displayName)];if(k)inj[k]=(i.status||"").toString()}))}}catch(e){}
+    CF.n=N;CF.esp=esp;CF.inj=inj;CF.err=null;CF.at=hhmm();
+    const off=official();CF.fill=Object.keys(esp).filter(k=>esp[k].min>0&&!off[k]).map(k=>({n:k,...esp[k]}));
+  }catch(e){CF.err=e.message||"errore"}
+  CF.busy=false;try{if(typeof liveSync==="function")liveSync()}catch(e){}if(cur==="novita")render()}
+window.cfStart=()=>{try{if(EFF&&EFF.agg)cfFetch()}catch(e){}};
+window.cfBlock=function(){cfStart();const e=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));const it=[];
+  const lab=CF.n?`${CF.n.slice(8)}/${CF.n.slice(5,7)}`:"";
+  if(CF.err)it.push({k:"w",t:"Confronto non riuscito: "+CF.err+" (riprovo tra poco)"});
+  else if(!CF.esp)it.push({k:"w",t:"Confronto in corso…"});
+  else{const off=official(),esp=CF.esp,pl=Object.keys(esp).filter(k=>esp[k].min>0),dk=Object.keys(off);
+    const miss=pl.filter(k=>!off[k]),extra=dk.filter(k=>!(esp[k]&&esp[k].min>0));
+    it.push({k:miss.length?"n":"y",t:`Chi ha giocato (notte ${lab}): ESPN ${pl.length} · Dunkest ${dk.length}`+(miss.length?` — manca su Dunkest: ${miss.join(", ")}; usato il dato ESPN come ufficiale finché non viene corretto`:"")});
+    if(extra.length)it.push({k:"w",t:`Su Dunkest ma non su ESPN: ${extra.slice(0,5).join(", ")}`});
+    const bad=pl.filter(k=>off[k]&&Math.abs(off[k].p-esp[k].p)>2);
+    it.push({k:bad.length?"w":"y",t:bad.length?`Punti PDK diversi (oltre 2): ${bad.slice(0,4).map(k=>`${k} D ${off[k].p} / E ${esp[k].p}`).join("; ")}${bad.length>4?"…":""}`:`Punti PDK: ${pl.length-miss.length} giocatori coincidono (±2) con ESPN`});
+    if(CF.inj){const mine=INFORTUNI.lista.filter(x=>x.stato!=="ok").map(x=>x.p),theirs=Object.keys(CF.inj),m1=theirs.filter(k=>!mine.includes(k)),m2=mine.filter(k=>!theirs.includes(k));
+      it.push({k:m1.length||m2.length?"w":"y",t:`Infortunati delle nostre squadre: ESPN ${theirs.length} · nostra lista ${mine.length}`+(m1.length?` — su ESPN, non da noi: ${m1.slice(0,5).join(", ")}`:"")+(m2.length?` — da noi, non su ESPN: ${m2.slice(0,5).join(", ")}`:"")})}
+    else it.push({k:"w",t:"Infortunati: lista ESPN non raggiungibile, confronto saltato"})}
+  const bad=it.filter(x=>x.k==="n").length,warn=it.filter(x=>x.k==="w").length,ok=!bad&&!warn;
+  return`<div class="nvdt">Confronto numerico Dunkest ↔ ESPN</div><div class="nvck ${bad?"ko":"ok"}"><b>${ok?"✅ Dunkest ed ESPN coincidono":bad?"⚠️ Differenze trovate":"ℹ️ Da controllare"}${CF.at?" · controllo di questo telefono alle "+CF.at:""}</b><small>Chi ha giocato, punti PDK e infortunati, letti da ESPN e confrontati con i nostri dati</small><ul>${it.map(x=>`<li class="${x.k}">${x.k==="y"?"✓":x.k==="w"?"!":"✗"} ${e(x.t)}</li>`).join("")}</ul></div>`};
+cfStart();
 })();
 </script>
 </body>
