@@ -410,6 +410,9 @@ h2 .kitbtn+.cntbtn{margin-left:6px}
 .lbml .badge{width:22px!important;height:22px!important;font-size:9px}
 .lbmd{width:5px;height:5px;margin-right:-2px;border-radius:50%;background:#64748b}
 .lbm.run .lbmd{background:#e2e8f0}.lbm.fin .lbmd{background:#22c55e}
+.lbm.live{background:rgba(255,255,255,.06)!important;border:2px solid #ff3b30!important;animation:lbbr 1.1s ease-in-out infinite}
+@keyframes lbbr{0%,100%{border-color:#ff3b30;box-shadow:0 0 10px rgba(255,59,48,.75),0 6px 18px rgba(0,0,0,.3)}50%{border-color:rgba(255,59,48,.18);box-shadow:0 0 0 rgba(255,59,48,0),0 6px 18px rgba(0,0,0,.3)}}
+@media (prefers-reduced-motion:reduce){.lbm.live{animation:none}}
 .lbm.live .lbmd{background:#ff3b30;box-shadow:0 0 6px #ff3b30;animation:lbdp 1.1s ease-in-out infinite}
 @media(max-width:380px){.lbm{gap:4px;padding:0 7px}.lbmn{font-size:18px}.lbml,.lbml .badge{width:19px!important;height:19px!important}}
 @keyframes lbdp{50%{opacity:.25}}
@@ -4714,6 +4717,9 @@ const SEG={0:"abcdef",1:"bc",2:"abged",3:"abgcd",4:"fgbc",5:"afgcd",6:"afgedc",7
 const SEGP={a:"M2.4 1H9.6L8.4 2.6H3.6Z",b:"M10.6 1.8L9 3.4V8.8L10.6 9.6Z",c:"M10.6 10.4L9 11.2V16.6L10.6 18.2Z",d:"M2.4 19H9.6L8.4 17.4H3.6Z",e:"M1.4 10.4L3 11.2V16.6L1.4 18.2Z",f:"M1.4 1.8L3 3.4V8.8L1.4 9.6Z",g:"M2.4 10L3.5 9.2H8.5L9.6 10L8.5 10.8H3.5Z"};
 const segD=ch=>`<svg class="sg" viewBox="0 0 12 20" aria-hidden="true">${Object.entries(SEGP).map(([k,d])=>`<path d="${d}"${(SEG[ch]||"").includes(k)?' class="on"':""}/>`).join("")}</svg>`;
 const kitBtn=t=>`<button class="kitbtn" id="kitbtn" data-kitt="${t}" aria-label="Cambia maglia: ${KIT_N[kitDi(t)]}" title="Maglia: ${KIT_N[kitDi(t)]}">${kitIco(t)}</button>`;
+/* (233) il bordino rosso lampeggiante del tabellone vale solo di notte: si spegne alle 08:30 (ora italiana) e torna alle 18:00 (la sera iniziano le partite NBA) */
+function lvNotte(){try{const p=new Intl.DateTimeFormat("it-IT",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date()),h=+p.find(x=>x.type==="hour").value%24,m=+p.find(x=>x.type==="minute").value,mm=h*60+m;return mm<8*60+30||mm>=18*60}catch(e){return true}}
+setInterval(()=>{try{const on=lvNotte();document.querySelectorAll(".lbm[data-lv]").forEach(e=>{e.classList.toggle("live",on);e.classList.toggle("run",!on)})}catch(e){}},20000);
 function drTabellone(t,T,k,P,on){const W=T.W,btn=`<button class="cntbtn${on?" on":""}" id="cntbtn" aria-pressed="${!!on}" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`;
   /* piccolo tabellone elettronico al posto della scritta "Quintetto": la mia squadra contro l'avversaria del turno Dreamers,
      punteggi live di entrambe (drTeam). Stessa riga del titolo, stesso tasto notte. Tocco = apre la sfida in Dreamers. */
@@ -4721,7 +4727,7 @@ function drTabellone(t,T,k,P,on){const W=T.W,btn=`<button class="cntbtn${on?" on
   let pr=null;try{pr=(drPairs(k,null,P)||[]).find(x=>x.includes(t))}catch(e){}
   const o=pr?(pr[0]===t?pr[1]:pr[0]):null,O=o?drTeam(k,o,W):null;
   const prov=[...DR_PROV].some(x=>x>=W.start&&x<=W.end),live=!W.closed&&W.started&&(prov||(typeof TV!=="undefined"&&Object.values(TV.days||{}).flat().some(g=>g[5]==="L")));
-  const st=W.closed?"fin":live?"live":W.started?"run":"wait";
+  const st=W.closed?"fin":live?(lvNotte()?"live":"run"):W.started?"run":"wait",lvAttr=live&&!W.closed?" data-lv=\"1\"":"";
   const lead=O&&T.score!=null&&O.score!=null&&T.score!==O.score?(T.score>O.score?"a":"b"):"";
   const lg=x=>`<span class="lbml">${badge(x)}</span>`;
   /* stile neutro "vetro" (27/10/2026): una riga sottile, loghi, quanti hanno giocato e punteggi; chi è avanti in bianco, chi è dietro in grigio */
@@ -4729,7 +4735,7 @@ function drTabellone(t,T,k,P,on){const W=T.W,btn=`<button class="cntbtn${on?" on
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255},C=TEAMS[t];
   const sc=lum(C.bg)>=.33?C.bg:(lum(C.fg)>=.33&&lum(C.fg)<.95?C.fg:`color-mix(in srgb,${C.bg} 62%,#fff)`);
   const gioc=X=>`<span class="lbmg"><b>${X.played}/10</b><small>giocato</small></span>`;
-  return`<h2 class="lbmh">${kitBtn(t)}<span class="lbm ${st}" style="--sc:${sc}"${o?` data-drgo="${k}|${pr[0]}|${pr[1]}" role="button" tabindex="0"`:""} aria-label="${TEAMS[t].nick} ${T.score==null?"in attesa":pdkF(T.score)}, ${T.played} su 10 hanno giocato${o?`, contro ${TEAMS[o].nick} ${O.score==null?"in attesa":pdkF(O.score)}, ${O.played} su 10 hanno giocato`:""}">${lg(t)}${gioc(T)}<span class="lbmn${lead==="b"?" dim":""}">${T.score==null?"—":pdkF(T.score)}</span>${o?`<span class="lbmx"></span><span class="lbmn${lead==="a"?" dim":""}">${O.score==null?"—":pdkF(O.score)}</span>${gioc(O)}${lg(o)}`:""}</span>${btn}</h2>`}
+  return`<h2 class="lbmh">${kitBtn(t)}<span class="lbm ${st}"${lvAttr} style="--sc:${sc}"${o?` data-drgo="${k}|${pr[0]}|${pr[1]}" role="button" tabindex="0"`:""} aria-label="${TEAMS[t].nick} ${T.score==null?"in attesa":pdkF(T.score)}, ${T.played} su 10 hanno giocato${o?`, contro ${TEAMS[o].nick} ${O.score==null?"in attesa":pdkF(O.score)}, ${O.played} su 10 hanno giocato`:""}">${lg(t)}${gioc(T)}<span class="lbmn${lead==="b"?" dim":""}">${T.score==null?"—":pdkF(T.score)}</span>${o?`<span class="lbmx"></span><span class="lbmn${lead==="a"?" dim":""}">${O.score==null?"—":pdkF(O.score)}</span>${gioc(O)}${lg(o)}`:""}</span>${btn}</h2>`}
 /* modalità notte: stesso blocco giocatore (maglia + targhetta + cartellino) con il PDK della notte; pallino rosso = in campo ora */
 function drGiocN(t,p,m){const r=p[2],sn=drSur(p[0]),v=m?m.p:null;
   const card=v==null?`<span class="pcd na"><b>${m?"—":"Non gioca"}</b></span>`:`<span class="pcd ${pdkLvl(v)}">${m.lv?'<i class="pcdlv" title="In campo ora"></i>':""}<b>${pdkF(v)}</b></span>`;
