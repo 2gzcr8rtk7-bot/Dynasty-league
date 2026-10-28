@@ -6787,11 +6787,11 @@ window.vNovita=function(){const by={};NV_LOG.forEach(x=>(by[x[0]]=by[x[0]]||[]).
   const e=x=>String(x).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
   return`<button class="gback" id="nvback">‹ Indietro</button><h2><span class="t">Cronologia modifiche</span></h2>
   <p class="note">Tutto ciò che è cambiato nell'app, dal più recente. Ultimo aggiornamento dati: ${e((document.getElementById("updbtn")||{textContent:""}).textContent.replace(/Ultimo aggiornamento:\s*/,"").replace("›","").trim())}.</p>
-  ${(()=>{const ev=(window.ulEvents?ulEvents():[]),st=((document.getElementById("updbtn")||{textContent:""}).textContent.match(/\d{2}\/\d{2}\/\d{4}\s*·\s*\d{2}:\d{2}/)||[""])[0].replace(/\s+/g," ");
+  ${(()=>{const ev=(window.sharedEvents?sharedEvents():[]),st=((document.getElementById("updbtn")||{textContent:""}).textContent.match(/\d{2}\/\d{2}\/\d{4}\s*·\s*\d{2}:\d{2}/)||[""])[0].replace(/\s+/g," ");
    const ck=window.dataCheck?dataCheck():null;
    return`<section class="nvd">${ck?`<div class="nvdt">Controllo dati</div><div class="nvck ${ck.ok?"ok":"ko"}"><b>${ck.ok?"✅ Tutto a posto":"⚠️ "+ck.bad+(ck.bad===1?" anomalia":" anomalie")}</b><small>${ck.n} controlli automatici sui dati caricati</small><ul>${ck.it.map(x=>`<li class="${x.ok?"y":x.w?"w":"n"}">${x.ok?"✓":x.w?"!":"✗"} ${e(x.t)}</li>`).join("")}</ul></div>`:""}<div class="nvdt">Eventi dati</div><div class="nvleg"><span class="r">Dunkest</span><span class="g">ESPN</span><span class="v">Live</span></div>
    <article class="nvi nv-r"><b>Ultimo caricamento dati Dunkest</b><span>${e(st||"—")}</span></article>
-   ${ev.length?ev.map(x=>`<article class="nvi nv-${x.c}"><b>${e(x.t)}</b><span>${e(x.x)}</span></article>`).join(""):`<p class="note">Gli eventi (dati Dunkest, statistiche ESPN dalle 07:30, inizio modalità live) compaiono qui quando l'app, aperta su questo telefono, li rileva.</p>`}</section>`})()}
+   ${ev.length?ev.map(x=>`<article class="nvi nv-${x.c}"><b>${e(x.t)}</b><span>${e(x.x)}</span></article>`).join(""):`<p class="note">Nessun evento recente.</p>`}</section>`})()}
   ${Object.keys(by).map(d=>`<section class="nvd"><div class="nvdt">${d}</div>${by[d].map(x=>`<article class="nvi"><b>${e(x[1])}</b><span>${e(x[2])}</span></article>`).join("")}</section>`).join("")}`};
 VIEWS.novita=vNovita;
 let NV_FROM="home";
@@ -6803,5 +6803,39 @@ let NV_FROM="home";
 .nvd{margin:14px 0}.nvdt{font-family:var(--display);font-style:italic;font-weight:800;letter-spacing:.1em;font-size:14px;color:var(--gold,#facc15);margin:0 0 6px}.nvi{display:grid;gap:2px;padding:10px 12px;margin:0 0 6px;border-radius:12px;background:var(--panel,rgba(255,255,255,.06));border:1px solid var(--line,rgba(255,255,255,.14));border-left:4px solid var(--red,#e4163a)}.nvi.nv-r{border-left-color:#ef4444}.nvi.nv-r b{color:#f87171}.nvi.nv-g{border-left-color:#22c55e}.nvi.nv-g b{color:#4ade80}.nvi.nv-v{border-left-color:#a855f7}.nvi.nv-v b{color:#c084fc}.nvck{border-radius:12px;padding:10px 12px;margin:0 0 10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05)}.nvck.ok{border-color:#22c55e}.nvck.ko{border-color:#f59e0b}.nvck b{font-size:15px}.nvck small{display:block;opacity:.75;font-size:12px;margin:2px 0 6px}.nvck ul{list-style:none;margin:0;padding:0;display:grid;gap:3px}.nvck li{font-size:12.5px;line-height:1.35}.nvck li.y{opacity:.85}.nvck li.n{color:#f87171;font-weight:700}.nvck li.w{color:#fbbf24;font-weight:700}
 .nvleg{display:flex;gap:6px;margin:0 0 8px}.nvleg span{font-size:11px;font-weight:800;padding:3px 9px;border-radius:99px;color:#fff}.nvleg .r{background:#dc2626}.nvleg .g{background:#16a34a}.nvleg .v{background:#9333ea}
 .nvi b{font-size:15px}.nvi span{font-size:13px;line-height:1.35;opacity:.85}</style>
+
+<script>
+/* (264) EVENTI DATI CONDIVISI: uguali per tutti i telefoni, calcolati dai dati condivisi (non dal momento in cui l'app viene aperta).
+   🔴 Dunkest = commit del bot "[automatico]" su GitHub (orario reale del caricamento; se la rete non risponde resta la riga fissa col file).
+   🟢 ESPN = ogni notte NBA finita, dalle 07:30 italiane del giorno dopo. 🟣 Live = prima partita della notte, all'orario d'inizio (Dynasty TV). */
+(function(){
+const rome=ts=>{try{return new Intl.DateTimeFormat("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date(ts)).replace(",","")}catch(e){return""}};
+const DKK="dl_dkev";let DK=[];try{DK=(JSON.parse(localStorage.getItem(DKK)||"null")||{}).e||[]}catch(e){}
+async function dkFetch(){try{const c=JSON.parse(localStorage.getItem(DKK)||"null");if(c&&Date.now()-c.t<600000){DK=c.e;return}
+  const r=await fetch("https://api.github.com/repos/2gzcr8rtk7-bot/Dynasty-league/commits?path=dreamers-data.js&per_page=30");if(!r.ok)return;
+  const J=await r.json();DK=J.filter(x=>/\[automatico\]/i.test(x.commit.message)||(x.commit.author||{}).name==="dreamers-bot").map(x=>Date.parse(x.commit.committer.date));
+  try{localStorage.setItem(DKK,JSON.stringify({t:Date.now(),e:DK}))}catch(e){}
+  if(cur==="novita")render()}catch(e){}}
+const rOff=ts=>{const p=Object.fromEntries(new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).formatToParts(new Date(ts)).map(x=>[x.type,+x.value]));return Date.UTC(p.year,p.month-1,p.day,p.hour%24,p.minute,p.second)-ts};
+const romeAt=(y,m,d,h,mi)=>{const g=Date.UTC(y,m-1,d,h,mi);let t=g-rOff(g);t=g-rOff(t);return t};
+/* inizio della prima partita di ogni notte (giorno USA): tabellone ESPN, salvato in memoria (le notti finite non cambiano più) */
+const TPK="dl_tipev";let TIP={};try{TIP=(JSON.parse(localStorage.getItem(TPK)||"null")||{}).m||{}}catch(e){}
+const TIPT={};
+async function tipFetch(d){try{if(TIPT[d]&&Date.now()-TIPT[d]<600000)return;TIPT[d]=Date.now();
+  const r=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates="+d.replace(/-/g,""));if(!r.ok)return;
+  const J=await r.json(),ts=(J.events||[]).map(e=>Date.parse(e.date)).filter(x=>x>0);if(!ts.length)return;const m=Math.min(...ts);
+  if(TIP[d]!==m){TIP[d]=m;try{localStorage.setItem(TPK,JSON.stringify({m:TIP}))}catch(e){}if(cur==="novita")render()}}catch(e){}}
+window.sharedEvents=function(){dkFetch();try{const t=flUsaOggi();for(let i=0;i<=5;i++){const d=drAdd(t,-i);if(!TIP[d]||i===0)tipFetch(d)}}catch(e){}const out=[],now=Date.now();
+  DK.forEach(ts=>out.push({ts,t:rome(ts),x:"Dati ufficiali Dunkest caricati",c:"r"}));
+  try{const days=TVD().days,ks=Object.keys(days).filter(d=>d<=flUsaOggi()&&d>=drAdd(flUsaOggi(),-6)).sort();
+   for(const d of ks){const G=days[d]||[];if(!G.length)continue;
+    const fin=G.some(g=>g[5]==="F")&&!G.some(g=>g[5]==="L"),lab=`${d.slice(8)}/${d.slice(5,7)}`;
+    let tip=TIP[d]||null;if(!tip)for(const g of G){if(g[5]!=="L"&&g[5]!=="F")continue;const t=lvTip(d,g[6]);if(t!=null&&(!tip||t<tip))tip=t}
+    if(tip&&tip<=now)out.push({ts:tip,t:rome(tip),x:`Modalità live iniziata · notte ${lab} · prima partita`,c:"v"});
+    if(fin){const[y,m,da]=d.split("-").map(Number),ts=romeAt(y,m,da+1,7,30);if(ts<=now)out.push({ts,t:rome(ts),x:`Statistiche ESPN ufficiali nell'app dalle 07:30 · notte ${lab}`,c:"g"})}}
+  }catch(e){}
+  return out.sort((a,b)=>b.ts-a.ts).slice(0,40)};
+})();
+</script>
 </body>
 </html>
