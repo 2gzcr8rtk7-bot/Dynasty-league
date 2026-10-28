@@ -358,10 +358,10 @@ h2:has(.hsrch)::after{display:none}h2:has(.hsrch) .tvgo{margin-left:auto}
 .isum{display:flex;flex-wrap:wrap;gap:6px;margin:-2px 0 16px}
 .ipill{display:inline-flex;align-items:center;gap:5px;font-family:var(--display);font-style:italic;font-weight:800;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:2px 9px;color:#fff;white-space:nowrap}
 .ipill b{font-size:14px}
-.ipill.out{background:var(--loss)}.ipill.dubbio{background:#f97316}.ipill.quest{background:var(--gold);color:#0a0f1f}.ipill.dtd{background:#5b6b95}.ipill.ok{background:var(--win);color:#04170b}
+.ipill.out{background:var(--loss)}.ipill.dubbio{background:#f97316}.ipill.quest{background:var(--gold);color:#0a0f1f}.ipill.prob{background:#84cc16;color:#0a1f04}.ipill.dtd{background:#5b6b95}.ipill.ok{background:var(--win);color:#04170b}
 .igrp{margin-bottom:18px}
 .ih{margin:0 0 8px;font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;letter-spacing:.08em;text-transform:uppercase;color:#fff;border-left:4px solid;padding-left:8px}
-.ih.out{border-color:var(--loss)}.ih.dubbio{border-color:#f97316}.ih.quest{border-color:var(--gold)}.ih.dtd{border-color:#5b6b95}.ih.ok{border-color:var(--win)}
+.ih.out{border-color:var(--loss)}.ih.dubbio{border-color:#f97316}.ih.quest{border-color:var(--gold)}.ih.prob{border-color:#84cc16}.ih.dtd{border-color:#5b6b95}.ih.ok{border-color:var(--win)}
 .ilist{overflow:hidden}
 .irow{display:flex;gap:10px;border-bottom:1px solid rgba(255,255,255,.06)}
 .irow:last-child{border-bottom:0}
@@ -1883,7 +1883,7 @@ nav button>span{white-space:nowrap}
 .duh{display:grid;grid-template-columns:34px minmax(0,1fr);gap:6px;align-items:center;height:38px}.duh{position:relative}.duo{position:absolute;right:0;top:50%;transform:translateY(-50%);padding:2px 8px;border-radius:6px;background:#dc2626;color:#fff!important;font-style:normal;font-weight:900;font-size:11px;letter-spacing:.08em;line-height:1.3;box-shadow:0 0 0 1.5px #fff,0 2px 6px rgba(0,0,0,.4)}.duh:has(.duo) .dun b{padding-right:46px}.duo{box-sizing:border-box;width:43px;padding-left:0!important;padding-right:0!important;text-align:center}.duo.dub{background:#ff7a00}.du:has(.duo.dub) .duj svg{filter:drop-shadow(0 0 3px #ff7a00)}.du:has(.duo) .duj svg{filter:drop-shadow(0 0 3px #ff2a2a)}
 .duj{width:34px;height:38px;display:grid;place-items:center;position:relative}.injx{position:absolute;left:50%;bottom:-3px;transform:translateX(-50%);display:block;padding:1px 7px;border-radius:5px;background:#dc2626;color:#fff!important;font-style:normal;font-weight:900;font-size:11px;line-height:1.3;letter-spacing:.06em;box-shadow:0 0 0 1.5px #fff,0 2px 6px rgba(0,0,0,.5);pointer-events:none;z-index:3;white-space:nowrap}.injx::after{content:" OUT"}
 html[data-si="x"] [data-ist] .pcd::before{display:none}html[data-si="line"] .injx{display:none!important}
-[data-ist]{--ist:#22c55e;--w:100%}[data-ist="out"]{--ist:#dc2626;--w:9%}[data-ist="dub"]{--ist:#f59e0b;--w:50%}
+[data-ist]{--ist:#22c55e;--w:100%}[data-ist="out"]{--ist:#dc2626;--w:9%}[data-ist="dub"]{--ist:#f59e0b;--w:50%}[data-ist="prob"]{--w:75%}
 [data-ist] .pcd::before{content:"";position:absolute;left:0;right:0;top:0;height:calc(3px + var(--sepw,0px));background:linear-gradient(90deg,var(--ist) var(--w),#e6e6e6 var(--w)) 0 0/100% 3px no-repeat,var(--sepc,#0b0b12);z-index:2}
 .pj .injx{display:block;font-size:0;width:24px;height:24px;padding:0;border-radius:6px;background:#dc2626;box-shadow:0 1px 4px rgba(0,0,0,.45);transform:none;left:-12px;bottom:8px;z-index:1;white-space:normal}
 .pj .injx::before{content:"";position:absolute;left:50%;top:50%;width:4px;height:13px;margin:-6.5px 0 0 -2px;background:#fff;border-radius:1px}
@@ -3943,7 +3943,7 @@ function vGiocatore(){
   <p class="note">Lega · PDK e Lega · efficienza: posizione tra tutti i giocatori della lega con almeno una partita nella stagione scelta, per <b>PDK</b> (punti Dunkest medi a partita) e per <b>efficienza</b> (PDK fatti per ogni minuto giocato). Punteggi e minuti ufficiali Dunkest (senza capitano). Stagioni passate: solo regular season. Pallino: verde sopra 1,10 · giallo 0,80–1,10 · rosso sotto 0,80.</p>`;
 }
 
-const STATI={out:["Out","Fuori"],dubbio:["Doubtful","In dubbio"],quest:["Questionable","In forse"],dtd:["Day-to-day","Giorno per giorno"],ok:["Disponibile","Monitorati"]};
+const STATI={out:["Out","Fuori"],dubbio:["Doubtful","In dubbio"],quest:["Questionable","In forse"],prob:["Probable","Probabile"],dtd:["Day-to-day","Giorno per giorno"],ok:["Disponibile","Monitorati"]};
 const INJ={},INJ_RIENTRI=[];
 /* Collegamento Centro Medico ↔ campo/duelli: un infortunato "out" porta una X rossa (vale 0). Se compare una sua partita giocata (minuti>0)
    dal giorno del bollettino in poi (dati ufficiali o live ESPN) viene tolto in automatico dal Centro Medico e vale il suo punteggio. */
@@ -3956,7 +3956,7 @@ function injSync(){Object.keys(INJ).forEach(k=>delete INJ[k]);INJ_RIENTRI.length
 injSync();
 const injOut=n=>!!(INJ[n]&&INJ[n].stato==="out");
 const injTag=n=>{const i=INJ[n];if(!i||i.stato!=="out")return"";const m=(i.rientro||"").match(/(\d{2}\/\d{2})/);return`<em class="injo" title="Infortunato · vale 0${i.tipo?" · "+String(i.tipo).replace(/"/g,"&quot;"):""}">OUT</em>`};
-const injSt=n=>{const i=INJ[n];return!i||i.stato==="ok"?"ok":i.stato==="out"?"out":"dub"};
+const injSt=n=>{const i=INJ[n];return!i||i.stato==="ok"?"ok":i.stato==="out"?"out":i.stato==="prob"?"prob":"dub"};
 const injX=n=>{const i=INJ[n];return i&&i.stato==="out"?`<i class="injx" title="Infortunato · vale 0 (${(i.tipo||"").replace(/"/g,"&quot;")})">✕</i>`:""};
 /* Manichino infortuni: evidenzia la zona del corpo letta dalla descrizione (destra = lato sinistro del disegno, vista frontale) */
 function bodyMap(tipo,stato){
@@ -3970,7 +3970,7 @@ function bodyMap(tipo,stato){
   /* Malattie che colpiscono tutto il corpo (es. POTS, influenza, virus): manichino interamente colorato */
   const all=!hit.length&&/\b(?:malatti|illness|pots|influenz|flu\b|virus|virale|febbre|fever|malore|gastro|covid|sindrom|disidrat)/.test(t);
   const R=/destr|right/.test(t),L=/sinistr|left/.test(t),sides=R&&!L?["R"]:L&&!R?["L"]:["R","L"];
-  const col={out:"#ef4444",dubbio:"#f97316",quest:"#f5b400",dtd:"#93a3c8",ok:"#22c55e"}[stato]||"#ef4444";
+  const col={out:"#ef4444",dubbio:"#f97316",quest:"#f5b400",prob:"#84cc16",dtd:"#93a3c8",ok:"#22c55e"}[stato]||"#ef4444";
   const X=(x,s)=>s==="R"?x:40-x;
   const shp={head:s=>`<circle cx="20" cy="7" r="5"/>`,neck:s=>`<rect x="18" y="11.5" width="4" height="4"/>`,
    shoulder:s=>`<circle cx="${X(11.5,s)}" cy="17.5" r="3"/>`,elbow:s=>`<circle cx="${X(9,s)}" cy="29" r="3"/>`,wrist:s=>`<circle cx="${X(9,s)}" cy="39.5" r="2.8"/>`,
@@ -7040,7 +7040,7 @@ const st=document.createElement("style");st.textContent=`.cfsec{margin:8px 0;pad
    Sostituisce INFORTUNI.lista (la lista manuale resta solo come ripiego se ESPN non risponde). Stato, tipo, rientro e nota vengono da ESPN; il Centro Medico, la X rossa e il rientro automatico seguono da soli. */
 const TRI={ankle:"caviglia",knee:"ginocchio",foot:"piede",toe:"alluce",hand:"mano",wrist:"polso",finger:"dito",thumb:"pollice",shoulder:"spalla",elbow:"gomito",back:"schiena",hip:"anca",hamstring:"posteriore coscia",groin:"inguine",calf:"polpaccio",quadriceps:"quadricipite",thigh:"coscia",achilles:"tendine d'Achille",leg:"gamba",head:"testa",neck:"collo",rib:"costola",ribs:"costole",eye:"occhio",nose:"naso",illness:"malattia",knee_:"",sprain:"distorsione",strain:"stiramento",soreness:"fastidio",surgery:"intervento",fracture:"frattura",contusion:"contusione",bruise:"contusione",tendinitis:"tendinite",injury:"infortunio",concussion:"commozione cerebrale",rest:"riposo",management:"gestione",left:"sinistro/a",right:"destro/a"};
 const trI=t=>String(t||"").replace(/[A-Za-z']+/g,w=>TRI[w.toLowerCase()]||w);
-const mapSt=(st,fs)=>{const a=String(st).toLowerCase(),c=String(fs).toLowerCase();return/\bout\b|suspen/.test(a)?"out":/doubt/.test(a+" "+c)?"dubbio":/question/.test(a+" "+c)?"quest":"dtd"};
+const mapSt=(st,fs)=>{const a=String(st).toLowerCase(),c=String(fs).toLowerCase();return/\bout\b|suspen/.test(a)?"out":/doubt/.test(a+" "+c)?"dubbio":/question/.test(a+" "+c)?"quest":/probab/.test(a+" "+c)?"prob":"dtd"};
 let injT=0,injB=false;
 async function injFetch(force){if(injB||(!force&&Date.now()-injT<300000))return;injB=true;injT=Date.now();
   try{const r=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/injuries?t="+Date.now(),{cache:"no-store"});if(!r.ok)throw 0;const Q=await r.json();if(!Array.isArray(Q.injuries))throw 0;
