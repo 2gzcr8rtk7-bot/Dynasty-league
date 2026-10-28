@@ -888,3 +888,6 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 
 ## (270) OUT anche in tribuna/panchina
 - `injTag(nome)` aggiunge dopo "Ruolo · SQUADRA" una pillola rossa "OUT" (solo "OUT", senza data) nelle righe tribuna (`drPanca`) e nella panchina modalità notte; la maglia ha lo stesso alone rosso del campo. Solo stato "out".
+
+## (271) OUT nelle carte del duello
+- Nel duello Dreamers l'etichetta OUT è una pillola rossa in alto a destra della carta (riga del nome), identica in entrambe le squadre (`.duo`); la maglia ha l'alone rosso. Il nome si accorcia con "…" se serve spazio.
