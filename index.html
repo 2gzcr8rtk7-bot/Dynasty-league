@@ -6655,7 +6655,7 @@ function pqFix(){try{
     const f=fg.a<1?mix(bg,fg,fg.a):fg;const dark=lum(f)<.07;/* niente scritte nere: nero/marrone scurissimo diventa arancione (fondo chiaro) o bianco (fondo scuro) */
     if(cr(f,bg)>=3.4&&!dark)return;
     let n;const L=lum(bg);
-    if(el.closest("header")){el.style.setProperty("color","#fff","important");el.setAttribute("data-pq","1");PQL.push(el);return}
+    if(el.closest("header")&&!el.closest(".subnav")){el.style.setProperty("color","#fff","important");el.setAttribute("data-pq","1");PQL.push(el);return}
     let shadow=false;
     if(L<.3)n=W;
     else{const sat=Math.max(fg.r,fg.g,fg.b)-Math.min(fg.r,fg.g,fg.b)>90;

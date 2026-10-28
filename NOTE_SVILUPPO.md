@@ -828,3 +828,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (251) **Parquet: nomi squadra bianchi nelle caselle Home** — `.htile b/small` bianchi con contorno marrone sottile (text-shadow) per leggersi sul legno; il record `.hrec` resta senza ombra. `pqFix()` salta gli elementi dentro `.htile` per non riscurirli.
 
 (252) **Parquet: niente scritte nere** — `pqFix()` ora gira anche dentro Dreamers/G-Dreamers con stile Parquet (`.drroom[data-th="3"]`), non solo col tema app Parquet, e oltre al contrasto bassa ogni testo nero/marrone scurissimo (luminanza < .07): arancione `#b8410a` su fondi chiari, bianco su fondi scuri, bianco con contorno marrone sul legno. I marroni medi (`#7a5632`, colore parquet) restano. Si salta il testo trasparente (loghi a gradiente) e le caselle `.htile`.
+
+(253) **Fix menu a tendina Parquet** — la regola "tutto bianco nell'intestazione" di (249) colpiva anche le voci dei menu `.subnav` (che stanno dentro `header`), rendendole bianco su crema. Ora `pqFix()` esclude `.subnav`: le voci restano arancioni su crema (selezionata bianca su arancione).
