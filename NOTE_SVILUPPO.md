@@ -990,3 +990,6 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 - Immagini condivise `shDrLogo()`: stessa sfumatura e stessa stella al 72% del quadrato.
 ### (304) Campo › Live › Turno: frecce per cambiare turno
 - Accanto a Notte/Turno compare `‹ N ›` (`.cltn`, `CLK` = turno scelto, null = in corso; `data-clmk` ∓1). Si può andare indietro fino al primo turno Dreamers (Turno 3) e avanti fino a quello in corso; la nota sotto la tabella cambia per i turni passati. Le frecce si attivano man mano che passano i turni (ora esiste solo il Turno 3).
+
+### (305) Dreamers › sfida: nomi stile NBA e maglie più grandi
+- `.du .dun b`: font `CourtBlock` (quello a blocchi del campo, già incluso), maiuscolo, 16,9px; maglia `.duj` 44×49 (sporge di 1,5px sopra/sotto, riga sempre 46px). `duFit()` (chiamata dopo ogni `render`) riduce il nome di battesimo all'iniziale solo se il nome non entra ("S. GILGEOUS-ALEXANDER"), con `title` = nome completo.
