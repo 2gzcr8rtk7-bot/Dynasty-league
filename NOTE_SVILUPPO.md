@@ -1009,3 +1009,4 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 - `shPlayer()` disegna un'immagine 1080×1350: maglia (squadra) o logo G League, nome, ruolo · squadra NBA · numero, età in anni, PDK medi (pillola colorata), efficienza media (pallino per livello), minuti medi, partite, ultima gara, proiezione 36', grafico del trend PDK partita per partita con linea della media, "ultime N gare vs media" e rank lega PDK (solo giocatori di squadra). Stagione = quella scelta nel menu della scheda.
 - I dati vengono da `SHR_PL`, impostato in `vGiocatore` / `vFAP` / `vGLP` a ogni render. Con 0 partite mostra "Nessuna partita NBA in questa stagione". Grafico dalla 2ª partita.
 - `.segrow` ora è flex (gap 8px) per affiancare i due tasti.
+- (308) Intestazione dell'immagine con lo sfondo della squadra (come la scheda in app: gradiente, strisce, bordo trim, testo `txt||fg`); G League col suo colore; free agent resta neutro viola.

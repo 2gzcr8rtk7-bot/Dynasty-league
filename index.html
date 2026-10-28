@@ -4893,19 +4893,24 @@ async function shPlayer(){const S=SHR_PL;if(!S)return null;
   const SZN={"2026/27":"STAGIONE 3","2025/26":"STAGIONE 2","2024/25":"STAGIONE 1"};
   c.font=SH_F(700,28,1);c.textAlign="right";c.textBaseline="alphabetic";c.fillStyle="rgba(233,213,255,.75)";c.fillText((SZN[S.sz]||"")+" · "+S.sz.slice(2),W-56,100);
   /* intestazione: maglia (squadra) o logo + nome, ruolo, età */
-  const y0=170,hh=260;shRR(c,56,y0,W-112,hh,28);c.fillStyle="rgba(15,8,40,.55)";c.fill();c.strokeStyle="rgba(196,181,253,.3)";c.lineWidth=2;c.stroke();
+  const y0=170,hh=260,TC=S.k==="F"||!S.t||!TEAMS[S.t]?null:(()=>{const tm=TEAMS[S.t],gx=S.k==="G"&&typeof GLEAGUE!=="undefined"?GLEAGUE.find(x=>x.t===S.t):null;return{bg:gx&&gx.bg?gx.bg:tm.bg,trim:gx&&gx.trim?gx.trim:tm.trim,tx:S.k==="G"?"#fff":(tm.txt||tm.fg)}})();
+  if(TC){c.save();shRR(c,56,y0,W-112,hh,28);c.clip();const dk=(h,k)=>{const v=parseInt(h.slice(1),16),q=x=>Math.round(x*(1-k)).toString(16).padStart(2,"0");return"#"+q(v>>16)+q((v>>8)&255)+q(v&255)};
+    const gg=c.createLinearGradient(56,y0,W-56,y0+hh);gg.addColorStop(0,TC.bg);gg.addColorStop(1,dk(TC.bg,.4));c.fillStyle=gg;c.fillRect(56,y0,W-112,hh);
+    c.strokeStyle="rgba(255,255,255,.07)";c.lineWidth=18;c.beginPath();for(let x=-hh;x<W;x+=44){c.moveTo(x+56,y0+hh);c.lineTo(x+56+hh,y0)}c.stroke();
+    c.fillStyle=TC.trim;c.fillRect(56,y0+hh-10,W-112,10);c.restore()}
+  else{shRR(c,56,y0,W-112,hh,28);c.fillStyle="rgba(15,8,40,.55)";c.fill();c.strokeStyle="rgba(196,181,253,.3)";c.lineWidth=2;c.stroke()}
   let ic=null;
   try{if(S.k==="T"){ic=await shImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jersey(S.t,S.num,S.n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')))}
     else if(S.t&&TEAMS[S.t]){const g=typeof GLEAGUE!=="undefined"?GLEAGUE.find(x=>x.t===S.t):null;ic=await(g&&g.logo?shImg(g.logo):shLogo(S.t))}}catch(e){}
   if(ic){const bx=230,r=Math.min(bx/ic.width,bx/ic.height),w=ic.width*r,h=ic.height*r;c.drawImage(ic,56+20+(bx-w)/2,y0+(hh-h)/2,w,h)}
   else{c.font=SH_F(800,120,1);c.fillStyle="#c4b5fd";c.textAlign="center";c.fillText(S.num?"#"+S.num:S.r[0],56+20+115,y0+hh/2+40)}
-  const tx=56+20+250+16,tw=W-56-24-tx;c.textAlign="left";c.fillStyle="#fff";
+  const tx=56+20+250+16,tw=W-56-24-tx;c.textAlign="left";c.fillStyle=TC?TC.tx:"#fff";
   const nm=S.n.toUpperCase();let fs=92;c.font=SH_F(800,fs,1);while(fs>44&&c.measureText(nm).width>tw){fs-=2;c.font=SH_F(800,fs,1)}c.fillText(nm,tx,y0+112);
-  c.font=SH_F(700,38,1);c.fillStyle="#d8b4fe";const sub=[S.r.toUpperCase(),S.nba||null,S.num?"#"+S.num:null].filter(Boolean).join(" · ");c.fillText(shFit(c,sub,tw),tx,y0+170);
+  c.font=SH_F(700,38,1);c.fillStyle=TC?TC.tx:"#d8b4fe";c.globalAlpha=TC?.85:1;const sub=[S.r.toUpperCase(),S.nba||null,S.num?"#"+S.num:null].filter(Boolean).join(" · ");c.fillText(shFit(c,sub,tw),tx,y0+170);c.globalAlpha=1;
   const eta=(typeof etaTxt==="function"?etaTxt(S.n):"").match(/^(\d+) anni/);
-  c.font=SH_F(800,38,1);c.fillStyle="#fcd34d";if(eta)c.fillText(eta[1]+" ANNI",tx,y0+222);
-  c.font=SH_F(700,30,1);c.fillStyle="rgba(226,232,240,.8)";const tl=S.k==="T"?TEAMS[S.t].name.toUpperCase():S.k==="G"?"G LEAGUE · "+TEAMS[S.t].name.toUpperCase():S.t?"FREE AGENT · G LEAGUE "+TEAMS[S.t].nick.toUpperCase():"FREE AGENT";
-  c.fillText(shFit(c,tl,tw-(eta?190:0)),tx+(eta?190:0),y0+(eta?222:222));
+  c.font=SH_F(800,38,1);c.fillStyle=TC?TC.tx:"#fcd34d";if(eta)c.fillText(eta[1]+" ANNI",tx,y0+222);
+  c.font=SH_F(700,30,1);c.fillStyle=TC?TC.tx:"rgba(226,232,240,.8)";c.globalAlpha=TC?.8:1;const tl=S.k==="T"?TEAMS[S.t].name.toUpperCase():S.k==="G"?"G LEAGUE · "+TEAMS[S.t].name.toUpperCase():S.t?"FREE AGENT · G LEAGUE "+TEAMS[S.t].nick.toUpperCase():"FREE AGENT";
+  c.fillText(shFit(c,tl,tw-(eta?190:0)),tx+(eta?190:0),y0+222);c.globalAlpha=1;
   if(!a){c.textAlign="center";c.font=SH_F(800,46,1);c.fillStyle="#e9d5ff";c.fillText("NESSUNA PARTITA NBA",W/2,y0+hh+190);c.fillText("IN QUESTA STAGIONE",W/2,y0+hh+250);shFoot(c,W,H,"Dati Dunkest");return cv}
   /* PDK ed efficienza medi */
   const yb=y0+hh+28,bh=216,bw=(W-112-30)/2;
