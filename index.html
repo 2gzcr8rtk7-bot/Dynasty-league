@@ -4126,7 +4126,10 @@ function colAsk(){if(COL.d){cur="sala";render();window.scrollTo(0,0);return}
   o.querySelector(".no").onclick=()=>o.remove();o.onclick=e=>{if(e.target===o)o.remove()};
   o.querySelector("form").onsubmit=async e=>{e.preventDefault();err.textContent="Verifica…";
     try{COL.d=await colOpen(inp.value);o.remove();cur="sala";render();window.scrollTo(0,0)}
-    catch(x){err.textContent=window.crypto&&crypto.subtle?"Password errata":"Questo browser non supporta l'apertura";inp.value="";bx.classList.remove("shk");void bx.offsetWidth;bx.classList.add("shk")}}}
+    catch(x){if(!(window.crypto&&crypto.subtle)){err.textContent="Questo browser non supporta l'apertura";return}
+      const lg=LOGO2.DUC||LOGO.DUC,n=(typeof STORIA!=="undefined"?STORIA.filter(t=>t.ordine[0]==="DUC").length:2)||2;
+      o.className="colmod colno";o.innerHTML=`<div class="cnbox">${lg?`<img src="${lg}" alt="Texas Ducks">`:""}<div class="cntr">${"🏆".repeat(n)}</div><small>${n} ${n===1?"titolo":"titoli"} · Texas Ducks</small><b>Questa è l’area riservata Ducks, vai via</b><button type="button">Vai via</button></div>`;
+      o.onclick=null;o.querySelector("button").onclick=()=>o.remove()}}}
 /* Laboratorio rookie: righe decifrate = [nome college, POT, PDK/min, P36/USG, USG%, ruolo da confermare, nome nell'app|null, classe 2026 (1/0)].
    PDK NBA = migliore media stagionale nell'app (≥25 partite nelle stagioni passate, ≥10 nella stagione in corso);
    per chi non è in lega: media da rookie (ROOKIE_HIST). Classe 2026 = media della stagione in corso (provvisoria). */
@@ -7030,6 +7033,10 @@ cfStart();
 })();
 </script>
 <style>/* Hall of Fame Ducks (area riservata) */
+.colno{background:radial-gradient(120% 70% at 50% 20%,#2a1458,#05030b 80%)!important;z-index:9999}
+.cnbox{display:grid;justify-items:center;gap:10px;padding:28px 22px;text-align:center;color:#fff;max-width:340px}.cnbox img{width:190px;max-width:70vw;filter:drop-shadow(0 8px 18px rgba(0,0,0,.7))}
+.cntr{font-size:44px;letter-spacing:6px;filter:drop-shadow(0 0 14px rgba(255,205,60,.9));animation:hofp 2.6s ease-in-out infinite}.cnbox small{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:#ffd75e}
+.cnbox b{font-family:var(--display);font-style:italic;font-weight:800;font-size:26px;line-height:1.1;text-transform:uppercase;color:#fff}.cnbox button{margin-top:10px;padding:12px 34px;border-radius:12px;border:1.5px solid #f5c400;background:rgba(245,196,0,.16);color:#ffd75e;font-weight:800;font-size:15px;cursor:pointer}
 .hof{margin:-14px -16px 0;padding:14px 16px 30px;min-height:100vh;background:radial-gradient(120% 60% at 50% 0,#2a1458 0,#0b0716 55%,#05030b 100%);color:#fff}
 .hof .gback{color:#ffd75e;text-shadow:none}
 .hofhd{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:center;margin:4px 0 12px}.hofhd img{width:64px;height:64px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.6))}
