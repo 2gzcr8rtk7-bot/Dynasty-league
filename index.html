@@ -5647,7 +5647,7 @@ function liveSync(){try{PLV.forEach(([n,e])=>{const a=PARTITE[n];if(!a)return;co
       const A=PARTITE[n]||(PARTITE[n]=[]);if(A.some(g=>g[0]===lab&&g[8]==null))continue;
       const e=[lab,x.opp,Math.round(x.min*10)/10,Math.round(x.p*100)/100,x.min?Math.round(x.p/x.min*100)/100:0,x.pts,x.reb,x.ast,x.prov?"L":"P"];A.push(e);PLV.push([n,e])}}try{if(window.CF&&CF.fill&&CF.n===lastOff&&CF.fill.length){const lab=`${CF.n.slice(8)}/${CF.n.slice(5,7)}`,Lf={};
       CF.fill.forEach(x=>{const A=PARTITE[x.n]||(PARTITE[x.n]=[]);if(A.some(g=>g[0]===lab))return;const e=[lab,x.opp,Math.round(x.min*10)/10,Math.round(x.p*100)/100,x.min?Math.round(x.p/x.min*100)/100:0,x.pts,x.reb,x.ast,"E"];A.push(e);PLV.push([x.n,e]);Lf[tvNm(x.n)]={p:x.p,min:x.min}});LN.push([Lf,nm])}}catch(e){}
-  liveEff(LN)}catch(e){}}
+  liveEff(LN);try{window.cfApplyOther&&cfApplyOther()}catch(e){}}catch(e){}}
 const FANTA_LIVE=[
   {attivo:()=>cur==="campo",da:()=>{const a=drAdd(flUsaOggi(),-1),b=FANTA_LIVE[1].da();return b<a?b:a}},/* ieri + oggi (data USA) e, fuori dalla modalità notte, tutta la settimana Dreamers *//* ieri + oggi (data USA): dopo mezzanotte ET la notte in corso è "ieri" */
   {attivo:()=>cur==="giochi"&&GAME==="dream",da:()=>{const N={...DRD.notti},n=drNightOfAgg(EFF.agg);if(n>=DR_START)N[n]=1;const k=Object.keys(N).sort(),l=k[k.length-1];return l&&l>=DR_START?drAdd(l,1):DR_START}},
@@ -6773,7 +6773,7 @@ ulCheck();
 /* (260) CRONOLOGIA MODIFICHE: il footer "Ultimo aggiornamento" è cliccabile e apre questa pagina (vista "novita").
    OGNI nuova modifica pubblicata va aggiunta in CIMA a NV_LOG (data, titolo, mini spiegazione). */
 const NV_LOG=[
- ["28/10/2026","Confronto Dunkest ↔ ESPN","Nuovo controllo numerico: chi ha giocato, punti PDK e infortunati letti da ESPN e confrontati con i nostri dati. Se Dunkest non ha un giocatore che ESPN dice aver giocato, l'app usa ESPN come dato ufficiale e lo segnala. Il controllo precedente si chiama ora Controllo di coerenza."],
+ ["28/10/2026","Confronto Dunkest ↔ ESPN","Nuovo controllo numerico, notte per notte e diviso in Squadre, Free agent e G-League: chi ha giocato, punti PDK, minuti, statistiche e infortunati letti da ESPN e confrontati con i dati Dunkest. Se Dunkest non ha un giocatore che ESPN dice aver giocato, l'app usa ESPN come dato ufficiale e lo segnala. Il controllo precedente si chiama ora Controllo di coerenza."],
  ["28/10/2026","Controllo dati automatico","In cima alla cronologia: ✅ se i dati caricati sono completi e coerenti, ⚠️ con l'elenco dei problemi se qualcosa non torna (giocatori mancanti, partite che non coincidono, doppioni ESPN/Dunkest, file in ritardo)."],
  ["28/10/2026","Eventi dati in cima alla cronologia","In rosso il caricamento dei dati Dunkest con il suo orario, in verde le statistiche ESPN che entrano nell'app alle 07:30, in viola l'inizio della modalità live quando parte una partita."],
  ["28/10/2026","Animazioni live legate alle partite","Puntini, bordi lampeggianti e linee del campo partono solo quando una partita è davvero iniziata (anche a mezzogiorno) e si fermano alle 07:30."],
@@ -6854,38 +6854,72 @@ window.sharedEvents=function(){dkFetch();try{const t=flUsaOggi();for(let i=0;i<=
 })();
 </script>
 <script>
-/* (267) CONFRONTO NUMERICO Dunkest ↔ ESPN, notte per notte. Ogni telefono rilegge ESPN (tabellini delle ultime notti ufficiali + lista infortuni) e li confronta con i dati
-   Dunkest di PARTITE (solo righe ufficiali, senza 9° valore): giocatori, PDK (±2), minuti (±1,5'), statistiche (punti/rimbalzi/assist), infortunati.
-   Se Dunkest NON ha un giocatore che ESPN dice aver giocato nell'ULTIMA notte, l'app usa ESPN come dato ufficiale (riga con 9° valore "E") finché Dunkest non viene corretto.
+/* (267) CONFRONTO NUMERICO Dunkest ↔ ESPN, notte per notte e per gruppo: SQUADRE (le 8 rose), FREE AGENT, G-LEAGUE. Ogni telefono rilegge ESPN (tabellini delle ultime notti + infortuni)
+   e confronta con i dati Dunkest: squadre = PARTITE; G-League = GL_STATS[..].log (poi PARTITE); free agent = FAG[nome]["2026/27"] (poi PARTITE).
+   Controlli: giocatori, PDK (±2), minuti (±1,5'), punti/rimbalzi/assist, infortunati (solo squadre).
+   ESPN DIVENTA UFFICIALE dove Dunkest manca (righe col 9° valore "E", medie ricalcolate, tutto annullato e rifatto a ogni render):
+   • squadre: solo la notte dell'ultimo report (le notti dopo le gestisce liveSync dalle 07:30);
+   • free agent e G-League: la notte dell'ultimo report e le successive, dalle 07:30 italiane del giorno dopo; quando Dunkest porta la riga questa non viene più aggiunta.
    Separato dal controllo di coerenza (dataCheck). */
 (function(){
-const CF=window.CF={d:{},inj:null,err:null,t:0,busy:false,at:null,n:null,fill:[],sel:null};
+const CF=window.CF={d:{},inj:null,err:null,t:0,busy:false,at:null,n:null,fill:[],sel:null,grp:"sq",oth:[]};
+const SC=STAGIONE_CORRENTE,FAK="20"+SC,r1=v=>Math.round(v*10)/10,r2=v=>Math.round(v*100)/100;
 const mmss=v=>{const m=String(v||"0").split(":");return(+m[0]||0)+(+m[1]||0)/60};
-const nmMap=()=>{const m={};Object.values(ROSTER).flat().forEach(p=>m[tvNm(p[0])]=p[0]);return m};
 const hhmm=()=>new Date().toLocaleTimeString("it-IT",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit"});
 const lab=d=>`${d.slice(8)}/${d.slice(5,7)}`;
-const dunk=N=>{const l=lab(N),o={};for(const n in PARTITE)for(const g of PARTITE[n])if(g[0]===l&&g[8]==null)o[n]={min:+g[2]||0,p:+g[3]||0,pts:+g[5]||0,reb:+g[6]||0,ast:+g[7]||0};return o};
-const nights=()=>{const L=drNightOfAgg(EFF.agg),out=[];for(let d=L,i=0;d>=DR_START&&i<6;d=drAdd(d,-1),i++)out.push(d);return out};
-async function night(N,nm){const esp={},r=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates="+N.replace(/-/g,"")+"&t="+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("tabellone ESPN non raggiungibile");
+let GR=null;
+function grp(){if(GR)return GR;const m={};
+  (typeof FA!=="undefined"?FA:[]).forEach(x=>m[tvNm(x[0])]={n:x[0],g:"fa"});
+  if(typeof GLEAGUE!=="undefined")GLEAGUE.forEach(x=>x.g.forEach(p=>{const st=(typeof GL_STATS!=="undefined"&&GL_STATS[x.t+"|"+p[0]])||{},n=st.n||p[0];m[tvNm(n)]={n,g:"gl",key:x.t+"|"+p[0]}}));
+  Object.values(ROSTER).flat().forEach(p=>m[tvNm(p[0])]={n:p[0],g:"sq"});return GR=m}
+const GN={sq:"Squadre",fa:"Free agent",gl:"G-League"};
+/* dati Dunkest ufficiali di una notte per gruppo (le righe "E" sono quelle messe da ESPN, non contano) */
+function dunk(N,g){const l=lab(N),o={},ok=r=>r&&r[0]===l&&r[8]==null&&r[8]!=="E",row=r=>({min:+r[2]||0,p:+r[3]||0,pts:+r[5]||0,reb:+r[6]||0,ast:+r[7]||0}),G=grp();
+  for(const k in G){const x=G[k];if(x.g!==g)continue;let r=null;
+    if(g==="gl"){const st=GL_STATS[x.key];r=((st&&st.log)||[]).find(ok)}
+    if(g==="fa"&&typeof FAG!=="undefined"){r=(((FAG[x.n]||{})[FAK])||[]).find(ok)}
+    if(!r)r=(PARTITE[x.n]||[]).find(ok);
+    if(r)o[x.n]=row(r)}return o}
+/* notti da confrontare: dall'ultima notte ESPN disponibile (dopo le 07:30) all'indietro, fino a 6 */
+const espnNight=()=>{let rk="";try{rk=new Intl.DateTimeFormat("sv-SE",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date()).replace("T"," ").slice(0,16)}catch(e){return drNightOfAgg(EFF.agg)}
+  for(let d=flUsaOggi(),i=0;i<4;d=drAdd(d,-1),i++)if(rk>=drAdd(d,1)+" 07:30")return d;return drNightOfAgg(EFF.agg)};
+const nights=()=>{const L=drNightOfAgg(EFF.agg),E=espnNight(),top=E>L?E:L,out=[];for(let d=top,i=0;d>=DR_START&&i<6;d=drAdd(d,-1),i++)out.push(d);return out};
+async function night(N,G){const esp={},r=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates="+N.replace(/-/g,"")+"&t="+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("tabellone ESPN non raggiungibile");
   const J=await r.json();let games=0;
   for(const ev of J.events||[]){const c=(ev.competitions||[])[0];if(!c)continue;const ty=(ev.status||c.status||{}).type||{};if(!(ty.state==="post"||ty.completed))continue;
     const b=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event="+ev.id+"&t="+Date.now(),{cache:"no-store"});if(!b.ok)throw new Error("tabellino ESPN non raggiungibile");
     const B=await b.json(),P=(B.boxscore&&B.boxscore.players)||[];games++;
     P.forEach(x=>{const ab=x.team.abbreviation,co=c.competitors.find(k=>k.team.abbreviation===ab),op=c.competitors.find(k=>k!==co),win=!!(co&&co.winner);
-      esSide(x,win).forEach(row=>{const k=nm[tvNm(row[0])];if(!k)return;esp[k]={p:row[19],min:mmss(row[2]),pts:row[3],reb:row[6],ast:row[7],opp:op?esAb(op.team.abbreviation):""}})})}
+      esSide(x,win).forEach(row=>{const q=G[tvNm(row[0])];if(!q)return;esp[q.n]={g:q.g,p:row[19],min:mmss(row[2]),pts:row[3],reb:row[6],ast:row[7],opp:op?esAb(op.team.abbreviation):""}})})}
   if(!games)throw new Error("nessuna partita finita su ESPN per la notte "+lab(N));return esp}
 async function cfFetch(force){if(CF.busy||(!force&&Date.now()-CF.t<600000))return;CF.busy=true;CF.t=Date.now();
-  try{const nm=nmMap(),L=drNightOfAgg(EFF.agg);CF.n=L;if(!CF.sel)CF.sel=L;
-    for(const N of nights()){if(CF.d[N]&&N!==L)continue;try{CF.d[N]=await night(N,nm)}catch(e){if(N===L)throw e}}
-    let inj=null;try{const q=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/injuries?t="+Date.now(),{cache:"no-store"});if(q.ok){const Q=await q.json();inj={};(Q.injuries||[]).forEach(tm=>(tm.injuries||[]).forEach(i=>{const k=nm[tvNm((i.athlete||{}).displayName)];if(k)inj[k]=(i.status||"").toString()}))}}catch(e){}
+  try{GR=null;const G=grp(),L=drNightOfAgg(EFF.agg),ns=nights();CF.n=L;if(!CF.sel)CF.sel=ns[0];
+    try{faLoadG()}catch(e){}{let n=0;const iv=setInterval(()=>{if(typeof FAG!=="undefined"||++n>12){clearInterval(iv);try{liveSync()}catch(e){}}},800)}
+    for(const N of ns){if(CF.d[N]&&N<L)continue;try{CF.d[N]=await night(N,G)}catch(e){if(N===ns[0]&&!Object.keys(CF.d).length)throw e}}
+    let inj=null;try{const q=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/injuries?t="+Date.now(),{cache:"no-store"});if(q.ok){const Q=await q.json();inj={};(Q.injuries||[]).forEach(tm=>(tm.injuries||[]).forEach(i=>{const k=G[tvNm((i.athlete||{}).displayName)];if(k&&k.g==="sq")inj[k.n]=(i.status||"").toString()}))}}catch(e){}
     CF.inj=inj;CF.err=null;CF.at=hhmm();
-    const off=dunk(L),esp=CF.d[L]||{};CF.fill=Object.keys(esp).filter(k=>esp[k].min>0&&!off[k]).map(k=>({n:k,...esp[k]}));
+    const off=dunk(L,"sq"),esp=CF.d[L]||{};CF.fill=Object.keys(esp).filter(k=>esp[k].g==="sq"&&esp[k].min>0&&!off[k]).map(k=>({n:k,...esp[k]}));
   }catch(e){CF.err=e.message||"errore"}
   CF.busy=false;try{if(typeof liveSync==="function")liveSync()}catch(e){}if(cur==="novita")render()}
 window.cfStart=()=>{try{if(EFF&&EFF.agg)cfFetch()}catch(e){}};
+/* ESPN ufficiale per free agent e G-League: annulla le righe "E" messe prima e le rifà (così quando arriva Dunkest spariscono da sole) */
+function cfUndo(){CF.oth.forEach(u=>{try{if(u.k==="fa"){const a=((FAG[u.n]||{})[FAK])||[],i=a.indexOf(u.row);if(i>=0)a.splice(i,1);const f=FA.find(x=>x[0]===u.n);if(f){if(u.orig)f[4][SC]=u.orig;else delete f[4][SC]}}
+    else{const st=GL_STATS[u.key],i=st.log.indexOf(u.row);if(i>=0)st.log.splice(i,1);Object.assign(st,u.orig)}}catch(e){}});CF.oth=[]}
+window.cfApplyOther=function(){try{cfUndo();if(!CF.n)return;const L=CF.n,lastLog={};
+  const rk=new Intl.DateTimeFormat("sv-SE",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date()).replace("T"," ").slice(0,16);
+  Object.keys(CF.d).sort().forEach(N=>{if(N<L||rk<drAdd(N,1)+" 07:30")return;const l=lab(N),esp=CF.d[N],G=grp();
+    for(const n in esp){const x=esp[n];if(!(x.min>0)||x.g==="sq")continue;const q=G[tvNm(n)];if(!q)continue;
+      const row=[l,x.opp,r1(x.min),r2(x.p),x.min?r2(x.p/x.min):0,x.pts,x.reb,x.ast,"E"],eff=row[4];
+      if(x.g==="gl"){const st=GL_STATS[q.key];if(!st)continue;st.log=st.log||[];if(st.log.some(r=>r[0]===l)||(PARTITE[n]||[]).some(r=>r[0]===l&&r[8]==null))continue;
+        const orig={g:st.g,m:st.m,p:st.p,e:st.e,l5:st.l5},g=st.g||0;st.log.push(row);
+        st.m=r1(((st.m||0)*g+x.min)/(g+1));st.p=r1(((st.p||0)*g+x.p)/(g+1));st.e=r2(((st.e||0)*g+eff)/(g+1));st.g=g+1;
+        const l5=st.log.slice(-5).map(r=>+r[4]||0);st.l5=r2(l5.reduce((a,b)=>a+b,0)/l5.length);CF.oth.push({k:"gl",key:q.key,row,orig})}
+      else if(typeof FAG!=="undefined"){const f=FA.find(y=>y[0]===n);if(!f)continue;const a=(FAG[n]||(FAG[n]={}))[FAK]||(FAG[n][FAK]=[]);if(a.some(r=>r[0]===l)||(PARTITE[n]||[]).some(r=>r[0]===l&&r[8]==null))continue;
+        const cur=f[4][SC],orig=cur?cur.slice():null,g=cur?cur[0]:0,v=i=>cur?cur[i]:0;a.push(row);
+        f[4][SC]=[g+1,r1((v(1)*g+x.min)/(g+1)),r1((v(2)*g+x.p)/(g+1)),r2((v(3)*g+eff)/(g+1)),r1((v(4)*g+x.pts)/(g+1)),r1((v(5)*g+x.reb)/(g+1)),r1((v(6)*g+x.ast)/(g+1))];CF.oth.push({k:"fa",n,row,orig})}}})}catch(e){}};
 const E=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
-/* confronto di una notte: restituisce le sezioni con le differenze */
-function cmp(N){const esp=CF.d[N];if(!esp)return null;const off=dunk(N),ek=Object.keys(esp).filter(k=>esp[k].min>0),dk=Object.keys(off),both=ek.filter(k=>off[k]);
+/* confronto di una notte per un gruppo */
+function cmp(N,g){const all=CF.d[N];if(!all)return null;const esp={};for(const k in all)if(all[k].g===g)esp[k]=all[k];const off=dunk(N,g),ek=Object.keys(esp).filter(k=>esp[k].min>0),dk=Object.keys(off),both=ek.filter(k=>off[k]);
   const f1=v=>(Math.round(v*10)/10).toString().replace(".",",");
   return{n:{e:ek.length,d:dk.length},miss:ek.filter(k=>!off[k]),extra:dk.filter(k=>!(esp[k]&&esp[k].min>0)),
     pdk:both.filter(k=>Math.abs(off[k].p-esp[k].p)>2).map(k=>[k,f1(off[k].p),f1(esp[k].p)]),
@@ -6898,21 +6932,28 @@ const tbl=(h,rows,more)=>rows.length?`<table class="cft"><tr>${h.map(x=>`<th>${x
 window.cfBlock=function(){cfStart();let h=`<div class="nvdt">Confronto Dunkest ↔ ESPN</div>`;
   if(CF.err&&!Object.keys(CF.d).length)return h+`<div class="cfsec ko"><div class="cfh"><b>Confronto non riuscito</b></div><small>${E(CF.err)} · riprovo tra poco</small></div>`;
   if(!Object.keys(CF.d).length)return h+`<div class="cfsec"><small>Confronto in corso…</small></div>`;
-  const ns=Object.keys(CF.d).sort().reverse(),sel=CF.d[CF.sel]?CF.sel:ns[0],c=cmp(sel),L=lab(sel);
-  h+=`<p class="note">Confronta i dati Dunkest dell'app con i tabellini ESPN, notte per notte${CF.at?` · controllo di questo telefono alle ${CF.at}`:""}. Dove Dunkest manca di un giocatore, per l'ultima notte l'app usa ESPN come dato ufficiale finché non viene corretto.</p>
-  <div class="cfch">${ns.map(N=>{const k=nIss(cmp(N));return`<button class="cfc${N===sel?" on":""}" data-cfn="${N}">${lab(N)} ${k?`<b class="ko">${k}</b>`:"✅"}</button>`}).join("")}</div>`;
-  h+=sec("Giocatori che hanno giocato",!c.miss.length&&!c.extra.length,`ESPN ${c.n.e} · Dunkest ${c.n.d}`,
-    (c.miss.length?`<p class="cfp"><b>Mancano su Dunkest</b> (${c.miss.length}): ${E(c.miss.join(", "))}.${sel===CF.n?" Usato il dato ESPN come ufficiale finché non viene corretto.":""}</p>`:"")+(c.extra.length?`<p class="cfp"><b>Su Dunkest ma non su ESPN</b> (${c.extra.length}): ${E(c.extra.join(", "))}</p>`:""));
+  const ns=Object.keys(CF.d).sort().reverse(),sel=CF.d[CF.sel]?CF.sel:ns[0],g=CF.grp,L=drNightOfAgg(EFF.agg),c=cmp(sel,g);
+  const tot=N=>["sq","fa","gl"].reduce((a,k)=>a+(nIss(cmp(N,k))||0),0);
+  h+=`<p class="note">Confronta i dati Dunkest dell'app con i tabellini ESPN, notte per notte${CF.at?` · controllo di questo telefono alle ${CF.at}`:""}. Dove Dunkest manca di un giocatore, ESPN diventa il dato ufficiale finché Dunkest non lo carica o lo corregge (free agent e G-League dalle 07:30; squadre per l'ultima notte, le notti più recenti le gestisce il live).</p>
+  <div class="cfch">${ns.map(N=>{const k=tot(N);return`<button class="cfc${N===sel?" on":""}" data-cfn="${N}">${lab(N)} ${k?`<b class="ko">${k}</b>`:"✅"}</button>`}).join("")}</div>
+  <div class="cfch cfg">${["sq","fa","gl"].map(k=>{const n=nIss(cmp(sel,k));return`<button class="cfc${k===g?" on":""}" data-cfg="${k}">${GN[k]} ${n?`<b class="ko">${n}</b>`:"✅"}</button>`}).join("")}</div>`;
+  if(g==="fa"&&typeof FAG==="undefined"){try{faLoadG()}catch(e){}setTimeout(()=>{if(cur==="novita")render()},1500);return h+`<div class="cfsec"><small>Caricamento dei dati free agent…</small></div>`}
+  const ahead=sel>L||!c.n.d;
+  if(ahead&&!c.n.d)h+=`<div class="cfsec"><div class="cfh"><b>Dunkest non ha ancora questa notte per ${GN[g].toLowerCase()}</b><span>ℹ️ ESPN ${c.n.e} giocatori</span></div><small>${sel>L||sel===L?"Finché non arriva il report Dunkest i dati ESPN sono usati come ufficiali":"Nessun dato Dunkest per questo gruppo in questa notte"}.</small></div>`;
+  else{
+  h+=sec(`Giocatori che hanno giocato · ${GN[g]}`,!c.miss.length&&!c.extra.length,`ESPN ${c.n.e} · Dunkest ${c.n.d}`,
+    (c.miss.length?`<p class="cfp"><b>Mancano su Dunkest</b> (${c.miss.length}): ${E(c.miss.join(", "))}.${sel>=L?" Usato il dato ESPN come ufficiale finché non viene corretto.":""}</p>`:"")+(c.extra.length?`<p class="cfp"><b>Su Dunkest ma non su ESPN</b> (${c.extra.length}): ${E(c.extra.join(", "))}</p>`:""));
   h+=sec("Punti PDK",!c.pdk.length,c.pdk.length?`${c.pdk.length} diversi (oltre 2)`:`${c.both} coincidono (±2)`,tbl(["Giocatore","Dunkest","ESPN"],c.pdk));
   h+=sec("Minuti giocati",!c.min.length,c.min.length?`${c.min.length} diversi (oltre 1,5')`:`${c.both} coincidono`,tbl(["Giocatore","Dunkest","ESPN"],c.min));
-  h+=sec("Statistiche (punti/rimbalzi/assist)",!c.st.length,c.st.length?`${c.st.length} diverse`:`${c.both} coincidono`,tbl(["Giocatore","Dunkest","ESPN"],c.st));
-  if(CF.inj){const mine={};INFORTUNI.lista.forEach(x=>{if(x.stato!=="ok")mine[x.p]=x.stato});const th=Object.keys(CF.inj),m1=th.filter(k=>!mine[k]),m2=Object.keys(mine).filter(k=>!(k in CF.inj)),df=th.filter(k=>mine[k]&&MAP(CF.inj[k])!==mine[k]);
-    h+=sec("Infortunati",!m1.length&&!m2.length&&!df.length,`ESPN ${th.length} · nostra lista ${Object.keys(mine).length}`,
+  h+=sec("Statistiche (punti/rimbalzi/assist)",!c.st.length,c.st.length?`${c.st.length} diverse`:`${c.both} coincidono`,tbl(["Giocatore","Dunkest","ESPN"],c.st))}
+  if(g==="sq"){if(CF.inj){const mine={};INFORTUNI.lista.forEach(x=>{if(x.stato!=="ok")mine[x.p]=x.stato});const th=Object.keys(CF.inj),m1=th.filter(k=>!mine[k]),m2=Object.keys(mine).filter(k=>!(k in CF.inj)),df=th.filter(k=>mine[k]&&MAP(CF.inj[k])!==mine[k]);
+    h+=sec("Infortunati (nostre squadre)",!m1.length&&!m2.length&&!df.length,`ESPN ${th.length} · nostra lista ${Object.keys(mine).length}`,
       (m1.length?`<p class="cfp"><b>Su ESPN, non da noi</b> (${m1.length}): ${E(m1.map(k=>k+" ("+CF.inj[k]+")").join(", "))}</p>`:"")+(m2.length?`<p class="cfp"><b>Da noi, non su ESPN</b> (${m2.length}): ${E(m2.map(k=>k+" ("+mine[k]+")").join(", "))}</p>`:"")+tbl(["Stato diverso","Nostro","ESPN"],df.map(k=>[k,mine[k],CF.inj[k]])))}
-  else h+=`<section class="cfsec"><div class="cfh"><b>Infortunati</b><span>ℹ️ lista ESPN non raggiungibile</span></div></section>`;
+  else h+=`<section class="cfsec"><div class="cfh"><b>Infortunati</b><span>ℹ️ lista ESPN non raggiungibile</span></div></section>`}
+  const used=CF.oth.length;if(used&&g!=="sq")h+=`<p class="note">ESPN usato come ufficiale per ${CF.oth.filter(u=>u.k===g).length} partite di ${GN[g].toLowerCase()} (in attesa di Dunkest).</p>`;
   return h};
-document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-cfn]");if(b){CF.sel=b.dataset.cfn;render()}});
-const st=document.createElement("style");st.textContent=`.cfsec{margin:8px 0;padding:9px 11px;border-radius:12px;border:1px solid rgba(128,128,128,.35);border-left:4px solid #22c55e;background:rgba(128,128,128,.08)}.cfsec.ko{border-left-color:#ef4444}.cfh{display:flex;justify-content:space-between;gap:8px;font-size:13px}.cfh span{opacity:.9;text-align:right}.cfp{margin:6px 0 0;font-size:12.5px;line-height:1.4}.cft{width:100%!important;min-width:0!important;table-layout:fixed;border-collapse:collapse;font-size:12px;margin-top:6px;display:table!important}.cft th,.cft td{text-align:left!important;padding:3px 4px!important;height:auto!important;font-size:12px!important;letter-spacing:0!important;font-style:normal!important;text-transform:none!important;border-top:1px solid rgba(128,128,128,.25);overflow-wrap:anywhere;background:none!important;position:static!important}.cft tr{background:none!important;border:0!important;height:auto!important}.cft th{opacity:.7;font-weight:700}.cft th:first-child,.cft td:first-child{width:48%}.cfch{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.cfc{border:1px solid rgba(128,128,128,.4);background:none;color:inherit;border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer}.cfc.on{background:rgba(250,204,21,.22);border-color:#facc15;font-weight:800}.cfc b.ko{background:#ef4444;color:#fff;border-radius:8px;padding:0 5px;margin-left:2px}`;document.head.appendChild(st);
+document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest("[data-cfn],[data-cfg]");if(t){if(t.dataset.cfn)CF.sel=t.dataset.cfn;if(t.dataset.cfg)CF.grp=t.dataset.cfg;render()}});
+const st=document.createElement("style");st.textContent=`.cfsec{margin:8px 0;padding:9px 11px;border-radius:12px;border:1px solid rgba(128,128,128,.35);border-left:4px solid #22c55e;background:rgba(128,128,128,.08)}.cfsec.ko{border-left-color:#ef4444}.cfh{display:flex;justify-content:space-between;gap:8px;font-size:13px}.cfh span{opacity:.9;text-align:right}.cfp{margin:6px 0 0;font-size:12.5px;line-height:1.4}.cft{width:100%!important;min-width:0!important;table-layout:fixed;border-collapse:collapse;font-size:12px;margin-top:6px;display:table!important}.cft th,.cft td{text-align:left!important;padding:3px 4px!important;height:auto!important;font-size:12px!important;letter-spacing:0!important;font-style:normal!important;text-transform:none!important;border-top:1px solid rgba(128,128,128,.25);overflow-wrap:anywhere;background:none!important;position:static!important}.cft tr{background:none!important;border:0!important;height:auto!important}.cft th{opacity:.7;font-weight:700}.cft th:first-child,.cft td:first-child{width:48%}.cfch{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.cfc{border:1px solid rgba(128,128,128,.4);background:none;color:inherit;border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer}.cfc.on{background:rgba(250,204,21,.22);border-color:#facc15;font-weight:800}.cfc b.ko{background:#ef4444;color:#fff;border-radius:8px;padding:0 5px;margin-left:2px}.cfg .cfc{font-weight:700}`;document.head.appendChild(st);
 cfStart();
 })();
 </script>
