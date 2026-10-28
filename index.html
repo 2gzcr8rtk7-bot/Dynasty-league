@@ -4451,12 +4451,34 @@ function shPill(c,v,x,y,w,h,fs,txt){const[bg,fg]=SH_PK[pdkLvl(v)];shRR(c,x,y,w,h
 function shDrLogo(c,x,y,L){c.save();shRR(c,x,y,L,L,L*.27);const g=c.createRadialGradient(x+L*.3,y+L*.2,0,x+L*.3,y+L*.2,L*1.05);g.addColorStop(0,"#a78bfa");g.addColorStop(.6,"#6d28d9");g.addColorStop(1,"#3b0f80");c.fillStyle=g;c.shadowColor="rgba(139,92,246,.75)";c.shadowBlur=L*.35;c.fill();c.shadowBlur=0;
   c.strokeStyle="rgba(255,255,255,.22)";c.lineWidth=Math.max(1.5,L*.02);c.stroke();c.translate(x+L*.18,y+L*.18);c.scale(L*.64/24,L*.64/24);c.fillStyle="#fff";c.shadowColor="rgba(255,255,255,.6)";c.shadowBlur=6;c.fill(new Path2D("M12 2.5l2.2 6.6 6.8.1-5.5 4.1 2 6.6L12 16l-5.5 3.9 2-6.6L3 9.2l6.8-.1z"));c.restore()}
 function shDrTxt(c,t,X,Y,L){const w=c.measureText(t).width,off=(L+24)/2;const sb=c.shadowBlur;c.fillText(t,X+off,Y);c.shadowBlur=0;shDrLogo(c,X+off-w/2-24-L,Y-L*.86,L);c.shadowBlur=sb}
+/* (229) LE IMMAGINI CONDIVISE SEGUONO LO STILE GRAFICO DREAMERS di chi condivide (tasto 🎨): i disegni usano colori viola fissi,
+   quindi con uno stile diverso da Galassia il contesto canvas rimappa ogni viola/indaco per luminosità (chiaro = colore evidenza,
+   medio = accento, scuro = pannelli) e lo sfondo viene ridisegnato. Rossi/verdi/oro/team e il viola semantico #8b5cf6 (PDK top) restano. */
+const SH_THEMES={1:{bg:["#0a0f1f","#141c38"],deep:[6,9,20],pan:[19,27,54],pan2:[40,52,100],acc:[255,77,94],lt:[255,212,94],stripe:"rgba(255,255,255,.035)",ang:115},
+  3:{bg:["#b9763a","#9b5f2c"],deep:[30,15,5],pan:[48,25,10],pan2:[104,56,22],acc:[242,112,26],lt:[255,184,108],stripe:"rgba(0,0,0,.07)",ang:90},
+  5:{bg:["#0b0d10","#161a20"],deep:[8,9,11],pan:[27,32,39],pan2:[52,60,72],acc:[255,176,0],lt:[255,225,77],stripe:"rgba(255,176,0,.06)",ang:45}};
+function shTheme(){try{const b=DR_BASE_TH[DR.th];return SH_THEMES[b]||null}catch(e){return null}}
+function shThemeBg(c,W,H,T){const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,T.bg[0]);g.addColorStop(1,T.bg[1]);c.fillStyle=g;c.fillRect(0,0,W,H);
+  c.save();c.strokeStyle=T.stripe;c.lineWidth=T.ang===90?26:18;c.beginPath();const D=Math.max(W,H)*2;
+  if(T.ang===90){for(let x=0;x<W;x+=60){c.moveTo(x,0);c.lineTo(x,H)}}else{for(let x=-H;x<W+H;x+=T.ang===45?46:40){c.moveTo(x,0);c.lineTo(x+(T.ang===45?H:-H*.47),H)}}c.stroke();c.restore()}
+function shThemeCtx(c,T){const cache={};const map=v=>{if(typeof v!=="string")return v;if(cache[v]!==undefined)return cache[v];let r,g,b,a=1,m;
+    if(m=v.match(/^#([0-9a-f]{6})$/i)){const n=parseInt(m[1],16);r=n>>16;g=n>>8&255;b=n&255}
+    else if(m=v.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)$/)){r=+m[1];g=+m[2];b=+m[3];if(m[4]!=null)a=+m[4]}
+    else return cache[v]=v;
+    if(v.toLowerCase()==="#8b5cf6")return cache[v]=v;
+    const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn,L=(mx+mn)/510;let out=v;
+    if(d>0){const S=d/(255-Math.abs(mx+mn-255));let h;if(mx===r)h=((g-b)/d+6)%6;else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;
+      if(h>=225&&h<=300&&S>.25){const q=L>=.78?T.lt:L>=.55?T.acc:L>=.3?T.pan2:L>=.08?T.pan:T.deep;out=`rgba(${q[0]},${q[1]},${q[2]},${a})`}}
+    return cache[v]=out};
+  for(const k of["fillStyle","strokeStyle","shadowColor"]){const ds=Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype,k);Object.defineProperty(c,k,{configurable:true,get(){return ds.get.call(c)},set(v){ds.set.call(c,map(v))}})}
+  for(const k of["createLinearGradient","createRadialGradient"]){const f=c[k].bind(c);c[k]=(...a)=>{const g=f(...a),ac=g.addColorStop.bind(g);g.addColorStop=(o,col)=>ac(o,map(col));return g}}}
 async function shBase(H,WW,noBrand,noSz){try{await Promise.all([document.fonts.load(SH_F(800,40,1)),document.fonts.load(SH_F(700,40)),document.fonts.load(SH_B(500,30)),document.fonts.load(SH_B(600,30))])}catch(e){}
-  const W=WW||1080,cv=document.createElement("canvas");cv.width=W;cv.height=H;const c=cv.getContext("2d");
-  let g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,"#2a1260");g.addColorStop(.45,"#160a38");g.addColorStop(1,"#0a0618");c.fillStyle=g;c.fillRect(0,0,W,H);
+  const W=WW||1080,cv=document.createElement("canvas");cv.width=W;cv.height=H;const c=cv.getContext("2d"),TH=shTheme();let g;
+  if(TH){shThemeBg(c,W,H,TH);shThemeCtx(c,TH)}else{
+  g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,"#2a1260");g.addColorStop(.45,"#160a38");g.addColorStop(1,"#0a0618");c.fillStyle=g;c.fillRect(0,0,W,H);
   g=c.createRadialGradient(200,0,0,200,0,760);g.addColorStop(0,"rgba(168,85,247,.55)");g.addColorStop(1,"rgba(168,85,247,0)");c.fillStyle=g;c.fillRect(0,0,W,H);
   g=c.createRadialGradient(980,140,0,980,140,620);g.addColorStop(0,"rgba(59,130,246,.35)");g.addColorStop(1,"rgba(59,130,246,0)");c.fillStyle=g;c.fillRect(0,0,W,H);
-  let s=7;const rnd=()=>(s=(s*16807)%2147483647)/2147483647;for(let i=0;i<Math.round(H/14);i++){c.globalAlpha=.25+rnd()*.6;c.fillStyle=rnd()<.3?"#e9d5ff":"#fff";c.beginPath();c.arc(rnd()*W,rnd()*H,.8+rnd()*1.8,0,7);c.fill()}c.globalAlpha=1;
+  let s=7;const rnd=()=>(s=(s*16807)%2147483647)/2147483647;for(let i=0;i<Math.round(H/14);i++){c.globalAlpha=.25+rnd()*.6;c.fillStyle=rnd()<.3?"#e9d5ff":"#fff";c.beginPath();c.arc(rnd()*W,rnd()*H,.8+rnd()*1.8,0,7);c.fill()}c.globalAlpha=1}
   if(!noBrand)shDrLogo(c,56,56,76);
   c.textBaseline="alphabetic";c.textAlign="left";if(!noBrand){c.font=SH_F(800,48,1);c.letterSpacing="6px";const bg=c.createLinearGradient(150,0,420,0);bg.addColorStop(0,"#e9d5ff");bg.addColorStop(.5,"#c084fc");bg.addColorStop(1,"#a5b4fc");c.fillStyle=bg;c.shadowColor="rgba(168,85,247,.8)";c.shadowBlur=18;c.fillText("DREAMERS",150,102);c.shadowBlur=0;c.letterSpacing="3px";c.font=SH_F(700,19,1);c.fillStyle="rgba(233,213,255,.8)";c.fillText("FANTA PDK",153,128);c.letterSpacing="0px"}
   if(!noSz&&(!noBrand||W>1500)){c.font=SH_F(700,28,1);c.textAlign="right";c.fillStyle="rgba(233,213,255,.75)";c.fillText("STAGIONE 26/27",W-56,100)}
