@@ -1884,6 +1884,7 @@ nav button>span{white-space:nowrap}
 .duw{display:grid;justify-items:center;align-content:center;height:32px;border-radius:5px;background:rgba(255,255,255,.05);overflow:hidden}.duw.none{grid-column:1/-1;background:none}.duw.none i{font-size:10px!important}
 .duw i{font-style:normal;font-size:8px;font-weight:800;letter-spacing:.04em;color:#8f89b5;line-height:1}.duw b{font-family:var(--display);font-style:italic;font-weight:800;font-size:10.5px;line-height:1.2;color:#e5e7ff;white-space:nowrap;letter-spacing:-.03em;max-width:100%;padding:0 1px}
 .duw.off{background:rgba(255,255,255,.025)}.duw.duu{background:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.28)}.duw.duu.lv{box-shadow:inset 0 0 0 1px #ff4d5e}.duw.duu.lv b{color:#ff8a95}
+@keyframes lvbd{0%,100%{box-shadow:inset 0 0 0 2px #ff4d5e,0 0 8px rgba(255,77,94,.7)}50%{box-shadow:inset 0 0 0 2px rgba(255,77,94,.25),0 0 0 rgba(255,77,94,0)}}.duw.dug.lv,.duw.duu.lv{animation:lvbd 1.2s infinite}.dwr.lv{animation:lvbd 1.2s infinite}@media (prefers-reduced-motion:reduce){.duw.dug.lv,.duw.duu.lv,.dwr.lv{animation:none;box-shadow:inset 0 0 0 2px #ff4d5e}}
 .duw.dun0 b{color:#7f79a8}
 .duw.dug i{color:rgba(0,0,0,.55)}.duw.dug b{color:#111}.duw.dug.r{background:#ef4444}.duw.dug.y{background:#f5b400}.duw.dug.g{background:#22c55e}.duw.dug.v{background:#8b5cf6}.duw.dug.r b,.duw.dug.v b{color:#fff}.duw.dug.r i,.duw.dug.v i{color:rgba(255,255,255,.7)}
 .duf{font-size:9.5px;color:#8f89b5}
@@ -4609,7 +4610,7 @@ function drWkOpen(n){const C=CAMPO_DR;if(!C||!n)return;const T=C.T,x=[...T.top,.
   const i=T.top.indexOf(x),pos=i===0?"Capitano · ×1,5":i>0&&i<5?"In campo · punteggio pieno":i===5?"6° uomo · punteggio pieno":i>=6?"Panchina · ×½":"Tribuna · non conta nel turno";
   const S=drSettimana(n,C.W),GG=["Dom","Lun","Mar","Mer","Gio","Ven","Sab"],p=(ROSTER[C.t]||[]).find(y=>y[0]===n)||[n,"",ruoloDi(n),""];
   const rows=S.map((y,k)=>{if(!y)return"";const o=y.opp.startsWith("@")?`@ ${y.opp.slice(1)}`:`vs ${y.opp}`,best=y.v!=null&&x.e!=null&&y.v===x.e;
-    return`<div class="dwr${best?" best":""}"><span class="dwd"><b>${GG[new Date(y.d+"T00:00:00Z").getUTCDay()]}</b><small>${y.d.slice(8)}/${y.d.slice(5,7)}</small></span><span class="dwo">${o}${best?'<small>miglior PDK · conta questo</small>':""}</span><span class="dwv">${y.v!=null?pdkB(y.v,pdkF(y.v)):y.lv?'<em class="lv">Live</em>':y.fin?"<em>Non ha giocato</em>":"<em>Da giocare</em>"}</span></div>`}).join("");
+    return`<div class="dwr${best?" best":""}${y.lv?" lv":""}"><span class="dwd"><b>${GG[new Date(y.d+"T00:00:00Z").getUTCDay()]}</b><small>${y.d.slice(8)}/${y.d.slice(5,7)}</small></span><span class="dwo">${o}${best?'<small>miglior PDK · conta questo</small>':""}</span><span class="dwv">${y.v!=null?pdkB(y.v,pdkF(y.v)):y.lv?'<em class="lv">Live</em>':y.fin?"<em>Non ha giocato</em>":"<em>Da giocare</em>"}</span></div>`}).join("");
   const el=document.createElement("div");el.className="dwsh";
   el.innerHTML=`<div class="dwbox" role="dialog" aria-label="Partite del turno"><button class="dwx" aria-label="Chiudi">✕</button>
    <div class="dwhd">${jersey(C.t,p[1],n)}<div><b>${RTR(n)}${n}</b><small>${({G:"Guardia",F:"Ala",C:"Centro"})[p[2]]||""} · ${p[3]} · ${pos}</small></div></div>
@@ -5483,7 +5484,7 @@ function drDuel(k,a,b,W,P){const A=drTeam(k,a,W),B=drTeam(k,b,W),f1=v=>v==null?"
     const ml=x.cal&&slot!=="cap"?"media stagione":slot==="cap"?"×1,5":slot==="half"?"×½":slot==="full"?"×1":slot==="trib"?"tribuna":W.closed?"non ha giocato":"attesa";
     const pt=x.f!=null&&(slot==="cap"||slot==="half")?` = ${f1(x.f)}`:"";
     const GG=["DOM","LUN","MAR","MER","GIO","VEN","SAB"],wk=S.map((y,i)=>{if(!y)return"";const gg=GG[new Date(y.d+"T00:00:00Z").getUTCDay()];
-      if(y.v!=null)return`<span class="duw dug ${pdkLvl(y.v)}" title="${y.opp}"><i>${gg}</i><b>${f1(y.v)}</b></span>`;
+      if(y.v!=null)return`<span class="duw dug ${pdkLvl(y.v)}${y.lv?" lv":""}" title="${y.opp}${y.lv?" · live":""}"><i>${gg}</i><b>${f1(y.v)}</b></span>`;
       if(y.fin)return`<span class="duw dun0" title="${y.opp} · non ha giocato"><i>${gg}</i><b>NG</b></span>`;
       return`<span class="duw duu${y.lv?" lv":""}"><i>${gg}</i><b>${y.opp}</b></span>`}).join("");
     return`<div class="du ${slot} ru-${r[2]||"x"}" data-rn="${({G:"Guardia",F:"Ala",C:"Centro"})[r[2]]||""}"><div class="duh"><span class="duj">${jersey(t,r[1],x.n)}</span><div class="dun"><b>${RTR(x.n)}${x.n}</b><small>${({G:"G",F:"A",C:"C"})[r[2]]||""} · ${r[3]}</small></div></div>
