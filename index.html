@@ -6962,7 +6962,7 @@ window.cfBlock=function(){cfStart();let h=`<div class="nvdt">Dunkest ↔ ESPN ·
 /* SEZIONE A PARTE: errori specifici giorno per giorno */
 window.vCfErr=function(){cfStart();const L=drNightOfAgg(EFF.agg),top=topNight(),MIN="2026-10-20";let N=CF.sel2||top;if(N>top)N=top;if(N<MIN)N=MIN;CF.sel2=N;const g=CF.grp2||"sq";
   let h=`<button class="gback" id="cfback">‹ Cronologia modifiche</button><h2><span class="t">Errori Dunkest ↔ ESPN</span></h2>
-  <p class="note">Scegli una notte (data della partita NBA) e vedi cosa non coincide tra Dunkest ed ESPN. Dove i due dati sono diversi, nell'app vale Dunkest: ha sostituito il dato ESPN, che non viene più usato. ESPN vale solo quando Dunkest manca di un giocatore.</p>
+  <p class="note">Scegli una notte (data della partita NBA) e vedi, giocatore per giocatore, minuti, PDK e statistiche (punti, rimbalzi, assist) che non coincidono tra Dunkest ed ESPN. Dove i due dati sono diversi, nell'app vale Dunkest: ha sostituito il dato ESPN, che non viene più usato. ESPN vale solo quando Dunkest manca di un giocatore.</p>
   <div class="cfnav"><button data-cfd="-1" aria-label="Giorno prima">‹</button><input type="date" id="cfdate" value="${N}" min="${MIN}" max="${top}"><button data-cfd="1" aria-label="Giorno dopo"${N>=top?" disabled":""}>›</button></div>`;
   cfLoadDay(N);const D=dayData(N);
   if(!D)return h+`<div class="cfsec"><small>Caricamento della notte ${lab(N)}…</small></div>`;
@@ -6977,11 +6977,11 @@ window.vCfErr=function(){cfStart();const L=drNightOfAgg(EFF.agg),top=topNight(),
   if(!c.miss.length&&!c.extra.length&&!c.opp.length&&!c.pdk.length&&!c.min.length&&!c.st.length)h+=`<div class="cfsec ok"><div class="cfh"><b>Tutto coincide</b><span>✅ ${c.both} giocatori</span></div></div>`;
   if(c.miss.length)h+=sec("Mancano su Dunkest (solo ESPN)",false,`${c.miss.length}`,`<p class="cfp">${E(c.miss.join(", "))}</p><p class="cfp"><b>${used?"ESPN usato come dato ufficiale finché Dunkest non lo corregge.":"Non usato: la notte è già stata chiusa da Dunkest senza questi giocatori."}</b></p>`);
   if(c.extra.length)h+=sec("Solo su Dunkest (non su ESPN)",false,`${c.extra.length}`,`<p class="cfp">${E(c.extra.join(", "))}</p><p class="cfp"><b>Tenuto il dato Dunkest, nessuna sostituzione.</b></p>`);
-  const fx="<p class=\"cfp\"><b>Dunkest ha sostituito il dato ESPN</b>: nell'app vale Dunkest.</p>";
-  if(c.opp.length)h+=sec("Avversario diverso",false,`${c.opp.length}`,tbl(["Giocatore","Dunkest","ESPN"],c.opp)+fx);
-  if(c.pdk.length)h+=sec("Punti PDK diversi (oltre 2)",false,`${c.pdk.length}`,tbl(["Giocatore","Dunkest","ESPN"],c.pdk)+fx);
-  if(c.min.length)h+=sec("Minuti diversi (oltre 1,5')",false,`${c.min.length}`,tbl(["Giocatore","Dunkest","ESPN"],c.min)+fx);
-  if(c.st.length)h+=sec("Statistiche diverse (punti/rimbalzi/assist)",false,`${c.st.length}`,tbl(["Giocatore","Dunkest","ESPN"],c.st)+fx);
+  const P={},add=(k,d,x,y)=>{(P[k]=P[k]||[]).push([d,x,y])};
+  c.opp.forEach(([k,x,y])=>add(k,"Avversario",x,y));c.min.forEach(([k,x,y])=>add(k,"Minuti",x,y));c.pdk.forEach(([k,x,y])=>add(k,"PDK",x,y));
+  c.st.forEach(([k,x,y])=>{const a=x.split("/"),b=y.split("/");["Punti","Rimbalzi","Assist"].forEach((n,i)=>{if(a[i]!==b[i])add(k,n,a[i],b[i])})});
+  const ks=Object.keys(P).sort((p,q)=>p.localeCompare(q));
+  if(ks.length)h+=`<section class="cfsec ko"><div class="cfh"><b>Dati diversi · ${E(lab(N))}</b><span>⚠️ ${ks.length} giocator${ks.length===1?"e":"i"}</span></div><table class="cft"><tr><th>Giocatore</th><th>Dato</th><th>Dunkest</th><th>ESPN</th></tr>${ks.map(k=>P[k].map((r,i)=>`<tr>${i?"<td></td>":`<td rowspan="${P[k].length}"><b>${E(k)}</b></td>`}<td>${r[0]}</td><td>${E(r[1])}</td><td>${E(r[2])}</td></tr>`).join("")).join("")}</table><p class="cfp"><b>Dunkest ha sostituito il dato ESPN</b>: nell'app vale il dato Dunkest.</p></section>`;
   return h};
 VIEWS.cferr=window.vCfErr;
 document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest("[data-cfg],[data-cfd],[data-cfgo],#cfback");if(!t)return;
