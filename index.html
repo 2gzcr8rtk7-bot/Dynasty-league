@@ -931,6 +931,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .tvst b.lv{display:inline-flex;align-items:center;gap:5px;background:#c8102e}.tvst b.lv i{width:7px;height:7px;border-radius:50%;background:#fff;transform:skewX(10deg)}
 @media (prefers-reduced-motion:no-preference){.tvst b.lv i{animation:tvpulse 1.2s ease-in-out infinite}@keyframes tvpulse{50%{opacity:.25}}}
 .tvg.live{border-color:#c8102e;box-shadow:inset 3px 0 0 #c8102e}.tvg.live .tvsc{color:#fff}
+.tvg.drtvg.live .tvt .tvsc{color:#8e98b8}.tvg.drtvg.live .tvt.win .tvsc{color:#fff}
 .tvst small{font-style:normal;font-weight:700;font-size:10.5px;letter-spacing:.06em;color:var(--muted);max-width:110px}
 .tvtop{grid-column:1/-1;border-top:1px solid rgba(255,255,255,.07);padding-top:6px;font-size:12px;color:#cfd6ea;display:flex;gap:10px;flex-wrap:wrap}
 .tvtop span b{color:#fff;font-weight:700}
@@ -6199,7 +6200,7 @@ function tvDreamers(d){try{if(typeof drWeek!=="function"||d<DR_START)return"";co
   const prov=[...DR_PROV].some(x=>x>=W.start&&x<=W.end),liveOggi=(TVD().days[flUsaOggi()]||[]).some(g=>g[5]==="L")&&flUsaOggi()>=W.start&&flUsaOggi()<=W.end;
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
   const row=(T,w)=>`<div class="tvt${w?" win":""}"><span class="drtvl" style="--tc:${TEAMS[T.t].bg}">${badge(T.t)}</span><span class="tvnm"><b>${TEAMS[T.t].nick}</b><small>${T.played}/10 titolari${W.closed?"":" finora"}</small></span><span class="tvsc">${T.score==null?"":drScore(T.score)}</span></div>`;
-  const cards=pairs.map(([a,b])=>{const A=drTeam(k,a,W),B=drTeam(k,b,W),fin=W.closed&&!prov,lv=!W.closed&&(liveOggi||prov)&&W.started,wa=W.closed&&A.score!=null&&B.score!=null&&A.score>B.score,wb=W.closed&&A.score!=null&&B.score!=null&&B.score>A.score;
+  const cards=pairs.map(([a,b])=>{const A=drTeam(k,a,W),B=drTeam(k,b,W),fin=W.closed&&!prov,lv=!W.closed&&(liveOggi||prov)&&W.started,wa=A.score!=null&&B.score!=null&&A.score>B.score,wb=A.score!=null&&B.score!=null&&B.score>A.score;/* (257) vantaggio sempre evidenziato (anche a turno in corso): chi è avanti ha il punteggio bianco candido, l'altro attenuato, come nelle partite NBA */
     const cap=[A,B].map(T=>{const c=T.top.find(x=>x.cap&&x.e!=null);return c?`<b>${sur(c.n)}</b> (${T.t}) ${pdkB(c.e,pdkF(c.e))}`:""}).filter(Boolean).join(" · ");
     return`<button class="tvg drtvg${lv?" live":""}" data-drtv="${k}|${a}|${b}" aria-label="Dreamers ${TEAMS[a].nick} contro ${TEAMS[b].nick}"><div class="tvteams">${row(A,wa)}${row(B,wb)}</div>
       <div class="tvst">${fin?`<b>Finale</b><small>turno ${k} · sfida ›</small>`:lv?`<b class="lv"><i></i>Live</b><small>${prov?"PDK provvisori · ":""}sfida ›</small>`:W.started?`<b class="pre">In corso</b><small>${W.nights}/${W.len} notti · sfida ›</small>`:`<b class="pre">Da giocare</b><small>dal ${drFmt(W.start)} · sfida ›</small>`}</div>
