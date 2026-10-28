@@ -2659,7 +2659,7 @@ function vRoster(){
   const st=standings().find(x=>x.t===curTeam),c=TEAMS[curTeam],r=ROSTER[curTeam];
   const chips=Object.keys(TEAMS).map(t=>`<button class="chip" data-t="${t}" aria-pressed="${t===curTeam}">${badge(t)}${TEAMS[t].nick}</button>`).join("");
   return `<div class="chips">${chips}</div>
-  <div class="teamhead" style="${dlHeadSty(t)}">
+  <div class="teamhead" style="${dlHeadSty(curTeam)}">
    ${LOGO[curTeam]?`<img class="hlogo" data-t="${curTeam}" src="${LOGO[curTeam]}" alt=""${dlHeadLogo(curTeam)}>`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div><div class="rec">${CREDITI[curTeam]??"–"}<small>CREDITI</small></div></div><button class="bshare hsh" data-rshare="${curTeam}" aria-label="Condividi roster"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
   <div class="sumrow"><span>${r.length} giocatori</span></div>
   ${(()=>{const R={G:"Guardia",F:"Ala",C:"Centro"},L={G:"G",F:"A",C:"C"};
