@@ -5967,7 +5967,7 @@ function tvGame(key){const T=TVD(),[d,g]=key.split("_"),G=(T.days[d]||[]).find(x
   const lead=(lab,x,i)=>`<div><small>${lab}</small><p>${tvLogo(x[0]==="a"?a:h)}<span>${sur(x[1][0])}</span><b>${x[1][i]}</b></p></div>`;
   const side=TVS.side==="h"?"h":"a",P=b[side],tc=side==="a"?a:h,TS=side==="a"?A:Hh;
   const f1=v=>v==null?"—":String(v).replace(".",",");
-  const LV=b&&b.live&&G[5]==="L",pr=p=>`<tr><td><div class="tvpn"><div>${p[0]}<small>${p[1]?"Quintetto":"Panchina"}</small></div>${tvOwn(p[0])}</div></td><td class="pdkl ${p[19]==null?"":+p[19]<20?"pr":+p[19]<30?"py":+p[19]<40?"pg":"pv"}">${LV?'<i class="lvd"></i>':""}<span class="pdkb">${f1(p[19])}</span></td><td>${p[2]}</td><td class="pts">${p[3]}</td><td>${p[6]}</td><td>${p[7]}</td><td>${p[8]}</td><td>${p[9]}</td><td>${p[10]}</td><td>${p[12]}-${p[13]}</td><td>${p[14]}-${p[15]}</td><td>${p[16]}-${p[17]}</td><td>${p[4]}</td><td>${p[5]}</td><td>${p[11]}</td><td class="${p[18]>0?"pos":p[18]<0?"neg":""}">${p[18]==null?"—":(p[18]>0?"+":"")+p[18]}</td></tr>`;
+  const LV=b&&b.live&&G[5]==="L",pr=p=>`<tr><td><div class="tvpn"><div>${p[0]}<small>${p[1]?"Quintetto":"Panchina"}</small></div>${tvOwn(p[0])}</div></td><td class="pdkl ${p[19]==null?"":+p[19]<20?"pr":+p[19]<30?"py":+p[19]<40?"pg":"pv"}">${LV&&(!b.oc||!b.oc.length||b.oc.includes(tvNm(p[0])))?'<i class="lvd"></i>':""}<span class="pdkb">${f1(p[19])}</span></td><td>${p[2]}</td><td class="pts">${p[3]}</td><td>${p[6]}</td><td>${p[7]}</td><td>${p[8]}</td><td>${p[9]}</td><td>${p[10]}</td><td>${p[12]}-${p[13]}</td><td>${p[14]}-${p[15]}</td><td>${p[16]}-${p[17]}</td><td>${p[4]}</td><td>${p[5]}</td><td>${p[11]}</td><td class="${p[18]>0?"pos":p[18]<0?"neg":""}">${p[18]==null?"—":(p[18]>0?"+":"")+p[18]}</td></tr>`;
   const st=P.filter(p=>p[1]),bn=P.filter(p=>!p[1]);
   const tot=`<tr class="tot"><td>Totale squadra</td><td class="pdkl">${f1(Math.round(TS.pdk*100)/100)}</td><td></td><td>${side==="a"?sa:sh}</td><td>${TS.reb}</td><td>${TS.ast}</td><td>${TS.stl}</td><td>${TS.blk}</td><td>${TS.tov}</td><td>${TS.fgm}-${TS.fga}</td><td>${TS.tpm}-${TS.tpa}</td><td>${TS.ftm}-${TS.fta}</td><td>${TS.oreb}</td><td>${TS.reb-TS.oreb}</td><td>${TS.pf}</td><td></td></tr>
    <tr class="pct"><td>Percentuali</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>${pc(TS.fgm,TS.fga)}</td><td>${pc(TS.tpm,TS.tpa)}</td><td>${pc(TS.ftm,TS.fta)}</td><td></td><td></td><td></td><td></td><td></td></tr>`;
@@ -6006,6 +6006,11 @@ async function tvEspn(dd){const r=await fetch("https://site.api.espn.com/apis/si
     try{const b=await fetch(`https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${ev.id}&t=`+Date.now(),{cache:"no-store"});if(b.ok){const B=await b.json(),P=(B.boxscore&&B.boxscore.players)||[],pa=P.find(x=>esAb(x.team.abbreviation)===a),ph=P.find(x=>esAb(x.team.abbreviation)===hm);
       if(pa&&ph){const aw=fin&&G[2]>G[3],hw=fin&&G[3]>G[2];TV.box[key]={a:esSide(pa,aw),h:esSide(ph,hw),live:1,fin:fin?1:0,src:"ESPN"}}}}catch(e){}}
   if(typeof tvRecalcRec==="function")tvRecalcRec();TVL.last=new Date().toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit",second:"2-digit"});TVL.src="ESPN";return true}
+/* Chi è in campo adesso: lo dice solo il boxscore NBA (campo "oncourt"); ESPN no. Si aggiorna ogni giro, se NBA non risponde i pallini restano su tutti i live. */
+const tvOcNames=B=>[...(B.awayTeam.players||[]),...(B.homeTeam.players||[])].filter(p=>p.oncourt==="1").map(p=>tvNm(p.name));
+async function tvOnCourt(){try{const live=[];for(const d in TV.days)for(const G of TV.days[d])if(G[5]==="L"&&G[7]&&TV.box[G[7]]&&!TV.box[G[7]].fin)live.push(G[7]);if(!live.length)return;
+  if(live.some(k=>!TVL.gid[k])){const r=await fetch("https://cdn.nba.com/static/json/liveData/scoreboard/todaysScoreboard_00.json?t="+Date.now(),{cache:"no-store"});if(r.ok){const J=await r.json();for(const g of(J.scoreboard&&J.scoreboard.games)||[]){const gc=g.gameCode||"",d=gc.slice(0,4)+"-"+gc.slice(4,6)+"-"+gc.slice(6,8);TVL.gid[d+"_"+g.awayTeam.teamTricode+g.homeTeam.teamTricode]=g.gameId}}}
+  await Promise.all(live.map(async k=>{const id=TVL.gid[k];if(!id)return;try{const r=await fetch(`https://cdn.nba.com/static/json/liveData/boxscore/boxscore_${id}.json?t=`+Date.now(),{cache:"no-store"});if(!r.ok)return;const B=(await r.json()).game;if(TV.box[k])TV.box[k].oc=tvOcNames(B)}catch(e){}}))}catch(e){}}
 async function tvLiveTick(){if(cur!=="tv"||document.hidden||typeof TV==="undefined")return;
   let espnOk=false;try{espnOk=await tvEspn();TVL.err=!espnOk}catch(e){espnOk=false}
   if(!espnOk)try{const r=await fetch("https://cdn.nba.com/static/json/liveData/scoreboard/todaysScoreboard_00.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)throw 0;TVL.src="NBA";const J=await r.json();TVL.err=false;
@@ -6018,10 +6023,11 @@ async function tvLiveTick(){if(cur!=="tv"||document.hidden||typeof TV==="undefin
       TVL.st[key]=fin?"Finale"+(g.period>4?" · OT":""):(g.gameStatusText||"Live").trim();
       if(fin&&TV.box[key]&&!TV.box[key].live)continue;/* tabellino ufficiale del report: non lo tocco */
       if(fin&&TV.box[key]&&TV.box[key].fin)continue;/* già preso a partita finita */
-      try{const b=await fetch(`https://cdn.nba.com/static/json/liveData/boxscore/boxscore_${g.gameId}.json?t=`+Date.now(),{cache:"no-store"});if(b.ok){const B=(await b.json()).game,aw=fin&&B.awayTeam.score>B.homeTeam.score,hw=fin&&B.homeTeam.score>B.awayTeam.score;TV.box[key]={a:tvLiveSide(B.awayTeam,aw),h:tvLiveSide(B.homeTeam,hw),live:1,fin:fin?1:0}}}catch(e){}}
+      try{const b=await fetch(`https://cdn.nba.com/static/json/liveData/boxscore/boxscore_${g.gameId}.json?t=`+Date.now(),{cache:"no-store"});if(b.ok){const B=(await b.json()).game,aw=fin&&B.awayTeam.score>B.homeTeam.score,hw=fin&&B.homeTeam.score>B.awayTeam.score;TV.box[key]={a:tvLiveSide(B.awayTeam,aw),h:tvLiveSide(B.homeTeam,hw),live:1,fin:fin?1:0,oc:fin?[]:tvOcNames(B)}}}catch(e){}}
     tvRecalcRec();
     TVL.last=new Date().toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
   }catch(e){TVL.err=!espnOk}
+  if(espnOk)await tvOnCourt();
   /* autonomia: calendario e risultati dal programma NBA, tabellini mancanti del giorno scelto */
   try{await tvSched()}catch(e){}
   try{await tvBoxes(TVS.d)}catch(e){}
