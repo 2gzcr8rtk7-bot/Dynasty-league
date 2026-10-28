@@ -5621,7 +5621,7 @@ function drTeamPage(t){const D=drTeamData(t),c=TEAMS[t],S=D.S,f1=v=>v==null?"—
     const mf=sel.reduce((q,x)=>q+x.pf,0)/sel.length,ma=sel.reduce((q,x)=>q+x.pa,0)/sel.length;
     chart=`<svg class="dtchart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Andamento PDK fatti e subiti">${gl}${ln("pa","#f87171",1)}${ln("pf","#a78bfa",0)}${dots("pa","#f87171")}${dots("pf","#a78bfa")}${xl}</svg>
     <div class="dtleg"><span><i class="f"></i>PDK fatti · media ${f1(mf)}</span><span><i class="s"></i>PDK subiti · media ${f1(ma)}</span></div>`}
-  const trend=`<div class="dtsec"><h4>Trend PDK<small>scegli il periodo della stagione</small></h4><div class="dtrng"><label>Dal<select data-drsel="tf">${opts(a)}</select></label><label>Al<select data-drsel="tt">${opts(b)}</select></label></div>${chart}<p class="note">Pallino vuoto = dato non definitivo: giornate 1–2 (Dunkest) mostrate come media delle due giornate perché il punteggio di ognuna non è disponibile, oppure turno ancora in corso.</p></div>`;
+  const trend=`<div class="dtsec"><h4>Trend PDK squadra<small>scegli il periodo della stagione</small></h4><div class="dtrng"><label>Dal<select data-drsel="tf">${opts(a)}</select></label><label>Al<select data-drsel="tt">${opts(b)}</select></label></div>${chart}<p class="note">Pallino vuoto = dato non definitivo: giornate 1–2 (Dunkest) mostrate come media delle due giornate perché il punteggio di ognuna non è disponibile, oppure turno ancora in corso.</p></div>`;
   const rg=D.recG,cap=D.cap,num=cap&&((ROSTER[t]||[]).find(p=>p[0]===cap.n)||[])[1];
   const card=(l,v,sub,cls)=>`<div class="dtc ${cls||""}"><small>${l}</small><b>${v}</b>${sub?`<em>${sub}</em>`:""}</div>`;
   return`<button class="gback" data-dr="tclose">‹ Classifica</button>
