@@ -1027,3 +1027,4 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 - Scheda `.du`: riga nome (maglia + "N. Cognome" + ruolo·NBA), poi `.dus` = colonna 42px sotto la maglia (`.dufl`: pillola OUT/DUB, vuota se sano) + bottone PDK grande (`.dubig`, 56px, numero 34px) a destra. Tolto il testo "×1"; restano didascalie piccole dentro il bottone solo per capitano ("44,9 ×1,5"), panchina ("×½ = …"), tribuna, attesa, media stagione.
 - Nomi: iniziale + punto + cognome (maiuscolo CourtBlock), mai rimpiccioliti: vanno a capo se servono (nbsp tra iniziale e cognome; `duFit` toglie il nbsp se un cognome lungo non entra in riga, poi tracking -0,02em come ultima risorsa). `.duh` min-height 46px per tenere allineate le righe.
 - Non toccata l'immagine condivisa del duello (`shDuel`), che ha il suo disegno.
+- (312) Bottone PDK scelto dall'utente: larghezza 67% della colonna, attaccato al bordo destro (`justify-self:end`).
