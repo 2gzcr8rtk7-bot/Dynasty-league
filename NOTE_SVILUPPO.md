@@ -988,5 +988,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 - Logo in alto `#lgreload` (immagine base64 160px): sostituita solo l'immagine, il tocco aggiorna ancora l'app (verificato). Nello stile Parquet resta il filtro arancione `html.dlt-parquet .lglogo`.
 - Tasto Dreamers della Home `.hdrm`: sfondo con la stessa sfumatura, icona SVG = stella a 4 punte (path `M12 1.4C12.53 7.93 15.14 11.71 22 12…`, ricavato dal logo).
 - Immagini condivise `shDrLogo()`: stessa sfumatura e stessa stella al 72% del quadrato.
-### (303) Campo › Live › Turno: frecce per cambiare turno
+### (304) Campo › Live › Turno: frecce per cambiare turno
 - Accanto a Notte/Turno compare `‹ N ›` (`.cltn`, `CLK` = turno scelto, null = in corso; `data-clmk` ∓1). Si può andare indietro fino al primo turno Dreamers (Turno 3) e avanti fino a quello in corso; la nota sotto la tabella cambia per i turni passati. Le frecce si attivano man mano che passano i turni (ora esiste solo il Turno 3).
