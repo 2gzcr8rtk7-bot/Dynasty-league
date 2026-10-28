@@ -1014,24 +1014,24 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 ### (309) Swipe cambio squadra solo dal campo in giù
 - Nel touchstart dello swipe tra squadre (cur==='campo') si ignora il gesto se il dito parte sopra `#main .court` (banner, bacheca, cassa, tabellone): così si può scorrere gli indici senza cambiare squadra.
 
-### (310) Playoff al meglio delle 3 e regular season fino al 9/3 (IN CODA, NON pubblicato)
+### (310) Playoff al meglio delle 3 e regular season fino al 9/3 (pubblicato)
 - `drPO`: serie a 2 vittorie (prima 3); 3 round (quarti, semifinali con vincenti/perdenti, finali per tutte le posizioni 1–8) = max 9 turni. Un round chiude appena tutte le serie sono decise (2-0 → round dopo subito). Simulazione su 300 casi: 7–9 turni, sempre 8 posizioni definite.
 - `DR_REG=40` (giornate 3–42, 6 gironi, regular season finisce 9/3/2027, turno medio 2,92 giorni), `DR_TOT=49` (playoff dal 10/3, max 9 turni, medio 2,89 gg). Le finestre `DR_TURNI` (49) sono invariate; cambia solo il confine regular/playoff. `DR_ZERO` invariato (turni 5, 8, 29, 34, 38, 39, 40). Turni dopo il 17/3 provvisori (calendario NBA non noto).
 - Testi aggiornati: regolamento Dreamers (durata, serie al meglio delle 3), note del tabellone, footer immagine playoff.
 
-### (311) Regolamento Art. 5: premi divisi regular season / playoff (IN CODA, NON pubblicato)
+### (311) Regolamento Art. 5: premi divisi regular season / playoff (pubblicato)
 - Tabella premi a 4 colonne (Posizione, Regular season, Playoff, Totale): 1° 20-10, 2° 25-15, 3° 35-15, 4° 100-50, 5° 130-70, 6° 200-100, 7° 270-130, 8° 330-170 (totali invariati: 30…500; regular 1110 cr, playoff 560 cr). Box "Novità". Più si è in basso più si prende, in entrambe.
 - Da aggiornare a parte (non richiesto): Art. 4 e Art. 9 citano "giornata 64 = fine regular season"; Art. 5 slot Rookie "dal 4° all'8° posto" (classifica di riferimento da chiarire: regular season o finale playoff).
 
 ### (304) Dynasty TV: dalle 15:00 si apre sulla notte successiva + calendario automatico da ESPN (richiesta utente 28/10/2026)
 - `tvDefDay()`: 1) se c'è una partita live → quel giorno; 2) dalle 15:00 ora italiana → la notte che arriva (data USA = data italiana di oggi, o il primo giorno successivo con partite); 3) prima delle 15:00 → l'ultima notte con partite finite (come prima). Ogni nuova apertura di Dynasty TV riparte dal giorno giusto: `render()` mette `TVS.out=1` quando sei fuori da `tv`, `vTV0()` allora azzera `TVS.d`. Verificato con orologio simulato 10:00/14:59 → 27/10, 15:00/22:00 → 28/10.
 - Calendario: `tools/calendario_espn.mjs` (ESPN scoreboard, data USA, ora italiana "HH:MM+N") aggiorna in `tv-data.js` i prossimi 45 giorni, SOLO i giorni in cui nessuna partita è iniziata (niente risultati/tabellini, nessuna partita non "pre" su ESPN); non cancella mai giorni. Lo lancia GitHub: `.github/workflows/calendario.yml` (ogni giorno 12:17 e 05:47 UTC + manuale), nessun costo Claude. Si riallinea a origin/main prima di scrivere e riprova fino a 3 volte.
-### (312) Duelli Dreamers: PDK grande al posto della pillola, pillola OUT/DUB sotto la maglia, nomi "N. Cognome" (IN CODA, NON pubblicato)
+### (312) Duelli Dreamers: PDK grande al posto della pillola, pillola OUT/DUB sotto la maglia, nomi "N. Cognome" (pubblicato)
 - Scheda `.du`: riga nome (maglia + "N. Cognome" + ruolo·NBA), poi `.dus` = colonna 42px sotto la maglia (`.dufl`: pillola OUT/DUB, vuota se sano) + bottone PDK grande (`.dubig`, 56px, numero 34px) a destra. Tolto il testo "×1"; restano didascalie piccole dentro il bottone solo per capitano ("44,9 ×1,5"), panchina ("×½ = …"), tribuna, attesa, media stagione.
 - Nomi: iniziale + punto + cognome (maiuscolo CourtBlock), mai rimpiccioliti: vanno a capo se servono (nbsp tra iniziale e cognome; `duFit` toglie il nbsp se un cognome lungo non entra in riga, poi tracking -0,02em come ultima risorsa). `.duh` min-height 46px per tenere allineate le righe.
 - Non toccata l'immagine condivisa del duello (`shDuel`), che ha il suo disegno.
 - (312) Bottone PDK scelto dall'utente: larghezza 67% della colonna, attaccato al bordo destro (`justify-self:end`).
 
-### (313) Turno 3 accorciato, turno 4 allungato (IN CODA, NON pubblicato)
-- `DR_TURNI[0]`: 25/10–30/10 (era fino al 1/11); `DR_TURNI[1]`: 31/10–3/11 (era 2–3/11). Dal calendario in `tv-data.js` (ESPN): turno 4 prima = 30 squadre NBA con 1 sola partita; ora 22 squadre con 2 partite e 8 con 1, nessuna con 3 (il 3/11 non ha gare). Turno 3: 5 squadre con 2 partite, 20 con 3, 5 con 4. Il turno 5 (4–6/11) resta uguale.
+### (313) Turno 3 accorciato, turno 4 allungato
+- SCELTA FINALE (opzione B): `DR_TURNI[0]`: 25/10–29/10 (era fino al 1/11); `DR_TURNI[1]`: 30/10–3/11 (era 2–3/11): turno 4 = 18 squadre NBA con 2 partite e 12 con 3; turno 3 = 1 squadra con 1, 18 con 2, 11 con 3. (La prima versione era 25–30/10 e 31/10–3/11.) Dal calendario in `tv-data.js` (ESPN): turno 4 prima = 30 squadre NBA con 1 sola partita; ora 22 squadre con 2 partite e 8 con 1, nessuna con 3 (il 3/11 non ha gare). Turno 3: 5 squadre con 2 partite, 20 con 3, 5 con 4. Il turno 5 (4–6/11) resta uguale.
 - Nota: `DR_ZERO["5"]=["ATL"]` risulta superato dal calendario ESPN aggiornato (tutte le squadre hanno almeno 1 gara il 4–6/11): da rigenerare per tutti i turni quando serve.
