@@ -1881,7 +1881,7 @@ nav button>span{white-space:nowrap}
 .du.cap{border-color:#f5b400;box-shadow:0 0 0 1px rgba(245,180,0,.3),0 6px 18px rgba(245,180,0,.15)}.du.half{border-color:rgba(219,39,119,.45)}.du.trib,.du.wait{opacity:.65}
 .du-vuoto{place-content:center;justify-items:center;color:#8f89b5;font-size:11px;border-style:dashed}.du-vuoto b{font-family:var(--display);font-style:italic;font-size:16px;color:#c9c3e8}.du-nulla{visibility:hidden}
 .duh{display:grid;grid-template-columns:34px minmax(0,1fr);gap:6px;align-items:center;height:38px}
-.duj{width:34px;height:38px;display:grid;place-items:center}.duj svg{width:34px;height:38px}
+.duj{width:34px;height:38px;display:grid;place-items:center;position:relative}.injx{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:1.5em;height:1.5em;border-radius:50%;background:rgba(220,38,38,.92);color:#fff!important;font-style:normal;font-weight:900;font-size:13px;line-height:1;box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.5);pointer-events:none;z-index:3}.pj .injx{font-size:17px}.pj svg,.duj svg{opacity:.88}.duj svg{width:34px;height:38px}
 .dun{min-width:0}.dun b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dun small{font-size:10px;color:#a9a3cc}
 .dus{display:flex;align-items:center;justify-content:space-between;gap:4px;height:24px}.dus .pdkx{font-size:15px;min-width:46px}.dus em{font-style:normal;font-weight:800;font-size:10.5px;color:#c9c3e8;white-space:nowrap}
 .duwk{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;min-height:32px}
@@ -3902,7 +3902,18 @@ function vGiocatore(){
 }
 
 const STATI={out:["Out","Fuori"],dubbio:["Doubtful","In dubbio"],quest:["Questionable","In forse"],dtd:["Day-to-day","Giorno per giorno"],ok:["Disponibile","Monitorati"]};
-const INJ={};INFORTUNI.lista.forEach(x=>INJ[x.p]=x);
+const INJ={},INJ_RIENTRI=[];
+/* Collegamento Centro Medico ↔ campo/duelli: un infortunato "out" porta una X rossa (vale 0). Se compare una sua partita giocata (minuti>0)
+   dal giorno del bollettino in poi (dati ufficiali o live ESPN) viene tolto in automatico dal Centro Medico e vale il suo punteggio. */
+const injKey=dm=>{const[d,m]=dm.split("/").map(Number);return(m>=8?m:m+12)*100+d};
+function injSync(){Object.keys(INJ).forEach(k=>delete INJ[k]);INJ_RIENTRI.length=0;
+  const a=(INFORTUNI.agg.match(/(\d{2}\/\d{2})/)||[])[1],k0=a?injKey(a):0;
+  INFORTUNI.lista.forEach(x=>{if(x.stato==="ok"){INJ[x.p]=x;return}
+    const g=((typeof PARTITE!=="undefined"&&PARTITE[x.p])||[]).filter(r=>r&&typeof r[0]==="string"&&+r[2]>0&&injKey(r[0])>=k0).sort((u,v)=>injKey(v[0])-injKey(u[0]))[0];
+    if(g)INJ_RIENTRI.push({...x,gioc:g[0]});else INJ[x.p]=x})}
+injSync();
+const injOut=n=>!!(INJ[n]&&INJ[n].stato==="out");
+const injX=n=>{const i=INJ[n];return i&&i.stato==="out"?`<i class="injx" title="Infortunato · vale 0 (${(i.tipo||"").replace(/"/g,"&quot;")})">✕</i>`:""};
 /* Manichino infortuni: evidenzia la zona del corpo letta dalla descrizione (destra = lato sinistro del disegno, vista frontale) */
 function bodyMap(tipo,stato){
   const t=(tipo||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
@@ -3931,8 +3942,8 @@ function bodyMap(tipo,stato){
   return `<svg class="bmap" viewBox="0 0 40 80" role="img" aria-label="${hit.length?"Zona: "+tipo:all?"Tutto il corpo: "+tipo:"Nessuna zona specifica"}">${base}${hl}</svg>`;
 }
 let injTeam=null;
-function vInfortuni(){
-  const all=INFORTUNI.lista,L=injTeam?all.filter(x=>x.t===injTeam):[];
+function vInfortuni(){injSync();
+  const all=INFORTUNI.lista.filter(x=>!INJ_RIENTRI.some(r=>r.p===x.p)),L=injTeam?all.filter(x=>x.t===injTeam):[];
   const bad=t=>all.filter(x=>x.t===t&&x.stato!=="ok").length;
   const chips=`<div class="chips ichips">${Object.keys(TEAMS).map(t=>`<button class="chip ichip" data-it="${t}" aria-pressed="${injTeam===t}">${badge(t)}${TEAMS[t].nick}${bad(t)?`<b class="icnt">${bad(t)}</b>`:""}</button>`).join("")}</div>`;
   const groups=Object.keys(STATI).map(k=>[k,L.filter(x=>x.stato===k)]).filter(([k,l])=>l.length);
@@ -3941,6 +3952,7 @@ function vInfortuni(){
   ${!injTeam?`<div class="ipick">Scegli una squadra per vedere i suoi giocatori in infermeria.</div>`:`<div class="ihead" style="--tc:${TEAMS[injTeam].bg}">${badge(injTeam)}<b>${TEAMS[injTeam].name}</b></div>
   <div class="isum">${Object.keys(STATI).filter(k=>k!=="ok").map(k=>`<span class="ipill ${k}">${STATI[k][0]} <b>${L.filter(x=>x.stato===k).length}</b></span>`).join("")}</div>
   ${groups.length?groups.map(([k,l])=>`<section class="igrp"><h4 class="ih ${k}"><span>${STATI[k][1]}</span></h4><div class="tbl-wrap ilist">${l.map(x=>`<div class="irow ${k}">${wedge(x.t)}<div class="ib"><div class="it"><b>${x.p}</b><span class="ipill ${k}">${STATI[k][0]}</span></div><small>${TEAMS[x.t].nick} · ${x.nba}</small><p>${x.tipo}${x.rientro?` · <em>${x.rientro}</em>`:""}</p>${x.nota?`<p class="inote">${x.nota}</p>`:""}<div class="isrc">${x.fonti.map(f=>`<span>${f}</span>`).join("")}</div></div>${bodyMap(x.tipo,x.stato)}</div>`).join("")}</div></section>`).join(""):`<div class="iok">✓ Nessun giocatore segnalato: rosa al completo.</div>`}`}
+  ${INJ_RIENTRI.length?`<section class="igrp"><h4 class="ih ok"><span>Rientrati · tolti in automatico</span></h4><div class="tbl-wrap ilist">${INJ_RIENTRI.map(x=>`<div class="irow ok">${wedge(x.t)}<div class="ib"><div class="it"><b>${x.p}</b><span class="ipill ok">Ha giocato</span></div><small>${TEAMS[x.t].nick} · ${x.nba}</small><p>Partita del ${x.gioc}: ora vale il suo punteggio.</p></div></div>`).join("")}</div></section>`:""}
   <p class="note">Fonti consultate: ${INFORTUNI.fonti.join(" · ")}. Più fonti per la stessa notizia sono indicate sotto ogni giocatore; se non concordano è segnalato.</p>`;
 }
 
@@ -4789,7 +4801,7 @@ function pnmFit(){try{document.querySelectorAll(".pnm .pn").forEach(b=>{b.style.
   if(w>av&&av>0){const k=av/w;b.style.transformOrigin="left center";b.style.transform=`scaleX(${k.toFixed(3)})`;b.style.marginRight=`-${(w-av).toFixed(1)}px`}})}catch(e){}}
 function drGioc(t,x,cl){if(!x)return`<span class="pj"></span><span class="pnm">—</span>${drPcd(null)}`;
   const p=(ROSTER[t]||[]).find(y=>y[0]===x.n)||[x.n,"",ruoloDi(x.n),""],r=p[2],sn=drSur(x.n);
-  return`<span class="pj">${jersey(t,p[1],x.n)}${cl==="cap"?'<i class="pjc" title="Capitano ×1,5">C</i>':""}</span><span class="pnm ${r}"><i>${({G:"G",F:"A",C:"C"})[r]||""}</i>${pnmTxt(sn)}</span>${drPcd(x,cl)}`}
+  return`<span class="pj">${jersey(t,p[1],x.n)}${injX(x.n)}${cl==="cap"?'<i class="pjc" title="Capitano ×1,5">C</i>':""}</span><span class="pnm ${r}"><i>${({G:"G",F:"A",C:"C"})[r]||""}</i>${pnmTxt(sn)}</span>${drPcd(x,cl)}`}
 /* Tabellone elettronico della pagina squadra (fuori dalla modalità notte): punteggio Dreamers della squadra nel turno in corso,
    somma dei 10 titolari con capitano ×1,5, pieni ×1, panchina ×½ (DT.score), cifre a 7 segmenti; si aggiorna col live di Dynasty TV. */
 const SEG={0:"abcdef",1:"bc",2:"abged",3:"abgcd",4:"fgbc",5:"afgcd",6:"afgedc",7:"abc",8:"abcdefg",9:"abcdfg","-":"g"," ":""};
@@ -4830,7 +4842,7 @@ function drTabellone(t,T,k,P,on){const W=T.W,btn=`<button class="cntbtn${on?" on
 /* modalità notte: stesso blocco giocatore (maglia + targhetta + cartellino) con il PDK della notte; pallino rosso = in campo ora */
 function drGiocN(t,p,m){const r=p[2],sn=drSur(p[0]),v=m?m.p:null;
   const card=v==null?`<span class="pcd na"><b>${m?"—":"Non gioca"}</b></span>`:`<span class="pcd ${pdkLvl(v)}">${m.lv?'<i class="pcdlv" title="In campo ora"></i>':""}<b>${pdkF(v)}</b></span>`;
-  return`<span class="pj">${jersey(t,p[1],p[0])}</span><span class="pnm ${r}"><i>${({G:"G",F:"A",C:"C"})[r]||""}</i>${pnmTxt(sn)}</span>${card}`}
+  return`<span class="pj">${jersey(t,p[1],p[0])}${injX(p[0])}</span><span class="pnm ${r}"><i>${({G:"G",F:"A",C:"C"})[r]||""}</i>${pnmTxt(sn)}</span>${card}`}
 function drPanca(t,T){const rp=n=>(ROSTER[t]||[]).find(p=>p[0]===n)||[n,"",ruoloDi(n),""];
   const card=(x,cl)=>x?`<button class="dpc ${cl}" data-pl="${x.n}">${drGioc(t,x,cl)}</button>`:`<div class="dpc ${cl}">${drGioc(t,null,cl)}</div>`;
   const tr=[...T.trib,...T.wait];
@@ -5736,7 +5748,7 @@ function drSettimana(n,W){const p=Object.values(ROSTER).flat().find(x=>x[0]===n)
     out.push({d,opp:(casa?"":"@")+opp,v:typeof v==="number"?v:null,fin:g[5]==="F"||v!=null,lv:g[5]==="L"})}
   return out}
 function drProiez(k,t,W){/* chi non ha ancora giocato ma ha partite in settimana vale il suo PDK medio (pdkMix) */
-  const A={...W.acc};const F=drForm(k)[t]||{t:[],r:[]};[...F.t,...F.r].forEach(n=>{if(A[n])return;const s=drSettimana(n,W);if(s.some(x=>x&&!x.fin)){const m=pdkMix(n);if(m!=null)A[n]={s:m,g:1,b:m}}});
+  const A={...W.acc};const F=drForm(k)[t]||{t:[],r:[]};[...F.t,...F.r].forEach(n=>{if(A[n])return;const s=drSettimana(n,W);if(s.some(x=>x&&!x.fin)){const m=injOut(n)?null:pdkMix(n);if(m!=null)A[n]={s:m,g:1,b:m}}});
   return drTeam(k,t,{...W,acc:A,closed:true}).score}
 function drDuel(k,a,b,W,P){const A=drTeam(k,a,W),B=drTeam(k,b,W),f1=v=>v==null?"—":pdkF(v);
   const pa=W.closed?null:drProiez(k,a,W),pb=W.closed?null:drProiez(k,b,W);
@@ -5749,7 +5761,7 @@ function drDuel(k,a,b,W,P){const A=drTeam(k,a,W),B=drTeam(k,b,W),f1=v=>v==null?"
       if(y.v!=null)return`<span class="duw dug ${pdkLvl(y.v)}${y.lv?" lv":""}" title="${y.opp}${y.lv?" · live":""}"><i>${gg}</i><b>${f1(y.v)}</b></span>`;
       if(y.fin)return`<span class="duw dun0" title="${y.opp} · non ha giocato"><i>${gg}</i><b>NG</b></span>`;
       return`<span class="duw duu${y.lv?" lv":""}"><i>${gg}</i><b>${y.opp}</b></span>`}).join("");
-    return`<div class="du ${slot} ru-${r[2]||"x"}" data-rn="${({G:"Guardia",F:"Ala",C:"Centro"})[r[2]]||""}"><div class="duh"><span class="duj">${jersey(t,r[1],x.n)}</span><div class="dun"><b>${RTR(x.n)}${x.n}</b><small>${({G:"G",F:"A",C:"C"})[r[2]]||""} · ${r[3]}</small></div></div>
+    return`<div class="du ${slot} ru-${r[2]||"x"}" data-rn="${({G:"Guardia",F:"Ala",C:"Centro"})[r[2]]||""}"><div class="duh"><span class="duj">${jersey(t,r[1],x.n)}${injX(x.n)}</span><div class="dun"><b>${RTR(x.n)}${x.n}</b><small>${({G:"G",F:"A",C:"C"})[r[2]]||""} · ${r[3]}</small></div></div>
       <div class="dus">${slot==="cap"&&x.f!=null?`<span class="pdkx dugold">${f1(x.f)}</span><em class="dunb">${f1(x.e)} ×1,5${x.cal?" · media":""}</em>`:`${x.e==null?'<span class="pdkx na">—</span>':pdkB(x.e,f1(x.e))}<em>${ml}${pt}</em>`}</div>
       <div class="duwk">${wk||'<span class="duw none"><i>${x.cal?"calendario: nessuna partita":"nessuna partita"}</i></span>'}</div><div class="duf">${fatte}/${gi.length} partite giocate</div></div>`};
   const sezioni=[["cap","Capitano ×1,5",0,1],["full","Punteggio pieno",1,6],["half","Panchina · ½",6,10]];
@@ -6743,7 +6755,7 @@ window.dataCheck=function(){const it=[],add=(ok,t,w)=>it.push({ok,t,w:!!w});
   }catch(e){add(false,"Controllo non riuscito: "+e.message)}
   return{ok:it.every(x=>x.ok),n:it.length,bad:it.filter(x=>!x.ok).length,it}};
 window.ulEvents=function(){ulCheck();return ulGet(ULK,[]).filter(x=>/^(dk|espn|live):/.test(x.k)).slice().reverse().map(x=>({t:fmt(x.t),x:x.x,c:evc(x.k)}))};
-{const R1=render;render=function(){const x=R1.apply(this,arguments);ulCheck();lvSync();return x}}
+{const R1=render;render=function(){try{injSync()}catch(e){}const x=R1.apply(this,arguments);ulCheck();lvSync();return x}}
 /* (259) dalle 07:30 alle 18:00 (ora italiana) le animazioni partono solo con una partita iniziata e finiscono alle 07:30 a prescindere: html.lvoff le spegne tutte le animazioni "live" (puntini, bordi lampeggianti, linee del campo, pulsante LIVE…) */
 function lvSync(){try{document.documentElement.classList.toggle("lvoff",!lvNotte())}catch(e){}}
 window.lvSync=lvSync;setInterval(lvSync,20000);lvSync();

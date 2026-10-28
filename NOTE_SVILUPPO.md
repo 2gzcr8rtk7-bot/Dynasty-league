@@ -861,3 +861,8 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 
 ## (265) Controllo dati con orario del telefono
 - Nel riquadro "Controllo dati" l'esito riporta l'ora in cui QUESTO telefono ha fatto il controllo: "Aggiornamenti ok · controllo di questo telefono alle HH:MM" oppure "Problema tecnico" con elenco di cosa non torna. Gli eventi sotto restano identici per tutti.
+
+## (266) Centro Medico collegato a campo e duelli
+- `injSync()` ricostruisce `INJ` a ogni render: un giocatore "out" porta la X rossa (`injX`, classe `.injx`) in campo/panchina (`drGioc`, `drGiocN`) e nelle carte del duello (`drDuel`). Vale 0 e non viene più proiettato a media in `drProiez`.
+- Rientro automatico: se in `PARTITE` c'è una partita con minuti>0 dalla data del bollettino (`INFORTUNI.agg`) in poi (dati ufficiali o live ESPN) il giocatore esce dal Centro Medico (sezione "Rientrati · tolti in automatico") e la X sparisce.
+- Solo stato "out" ha la X. Resta da aggiornare a mano `INFORTUNI.lista` come prima.
