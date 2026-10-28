@@ -905,4 +905,4 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 - Nella carta del duello (`drDuel`, classe `.du.fin`) un lucchetto giallo (26px, `.fin-b`) accanto al "×1" segna che il giocatore ha concluso tutte le partite del turno e nessuna è in corso: punteggio definitivo.
 
 ## (276) Linea di stato tra cartellino nome e PDK sul campo
-- Sul campo e in panchina (`.cpl`, `.dpc`) l'attributo `data-ist` (`injSt`: out / dub / ok) colora una linea di 3px tra tagliandino nome e tagliandino PDK: rosso = out (con la croce), arancione = dubbio/in forse/giorno per giorno, verde = disponibile.
+- Sul campo e in panchina (`.cpl`, `.dpc`) l'attributo `data-ist` (`injSt`: out / dub / ok) disegna tra tagliandino nome e tagliandino PDK una barretta di 3px su fondo grigio, riempita in proporzione (come Dunkest): rosso 9% = out (con la croce), arancione 50% = dubbio/in forse/giorno per giorno, verde 100% = disponibile.
