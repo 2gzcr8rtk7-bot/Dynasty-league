@@ -2038,6 +2038,7 @@ html.notte:not(.dreamfs){background-color:#0d0620}
 /* (142) Tasto Condividi (Live stanotte, Dreamers in Dynasty TV) e foglio di anteprima */
 .shbtn{margin-left:auto;flex:0 0 32px;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid rgba(196,181,253,.45);border-radius:999px;background:rgba(124,58,237,.22);color:#e9d5ff;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;position:relative;z-index:2}
 .shbtn:active{transform:scale(.96)}
+.clbox td:first-child{position:relative;padding-right:44px}.clbox .rsh{position:absolute;right:6px;top:50%;transform:translateY(-50%);margin:0;width:28px;height:28px;flex:none}
 .shsheet{position:fixed;inset:0;z-index:2000;background:rgba(5,2,15,.82);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:max(14px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom))}
 .shbox{max-width:520px;width:100%;max-height:100%;display:flex;flex-direction:column;gap:12px;align-items:center}
 .shbox img{max-width:100%;max-height:calc(100vh - 140px);object-fit:contain;border-radius:16px;box-shadow:0 10px 40px rgba(124,58,237,.45)}
@@ -4684,11 +4685,11 @@ function campoLive(t){const turno=CLM==="turno",d=campoNotte();
   const R=Object.values(best);R.sort((a,b)=>(+b.r[19]||0)-(+a.r[19]||0));
   const dd=d?tvDt(d):null,nlv=R.filter(x=>x.lv).length,tot=R.reduce((s,x)=>s+(+x.r[19]||0),0);
   if(!turno)lab=`${TV_GG[dd.getUTCDay()]} ${dd.getUTCDate()} ${TV_MM[dd.getUTCMonth()]}`;
-  const row=x=>`<tr class="${x.lv?"lvr":""}"><td>${x.n}${x.gl?' <i class="clgl">G</i>':""}<small>${x.tm} vs ${x.opp}${turno?` · ${x.dl}`:""} · ${x.lv?`<b class="clv"><i></i>${x.st}</b>`:x.st}</small></td><td class="pdkl">${pdkB(+x.r[19],String(x.r[19]).replace(".",","))}</td><td>${x.r[2]}</td><td class="pts">${x.r[3]}</td><td>${x.r[6]}</td><td>${x.r[7]}</td></tr>`;
+  const row=(x,i)=>`<tr class="${x.lv?"lvr":""}"><td>${x.n}${x.gl?' <i class="clgl">G</i>':""}<small>${x.tm} vs ${x.opp}${turno?` · ${x.dl}`:""} · ${x.lv?`<b class="clv"><i></i>${x.st}</b>`:x.st}</small><button class="shbtn rsh" data-shpc="${i}" aria-label="Condividi la prestazione di ${x.n}" title="Condividi la prestazione">${SH_ICO}</button></td><td class="pdkl">${pdkB(+x.r[19],String(x.r[19]).replace(".",","))}</td><td>${x.r[2]}</td><td class="pts">${x.r[3]}</td><td>${x.r[6]}</td><td>${x.r[7]}</td></tr>`;
   SHR_CAMPO=R.length?{t,lab,R,tot,nlv,turno}:null;
   return`${H(titolo,`${turno&&!nlv?"":`<em>${turno?"":`${dd.getUTCDate()}/${dd.getUTCMonth()+1}`}${nlv?`${turno?"":" · "}${nlv} live`:""}</em>`}${R.length?shBtn("campo"):""}`)}<div class="cltgw">${tg}</div>
   ${R.length?`<div class="tbl-wrap"><table class="ptbl tvbox drbox clbox"><thead><tr><th>Giocatore</th><th class="pdkl">PDK</th><th>Min</th><th>Pt</th><th>Rim</th><th>Ass</th></tr></thead>
-  <tbody>${R.map(row).join("")}<tr class="tot"><td>${turno?"Somma migliori":"Totale notte"}</td><td class="pdkl">${pdkF(tot)}</td><td></td><td></td><td></td><td></td></tr></tbody></table></div>`:`<p class="note">${turno?"Nel turno nessun giocatore di questa squadra è ancora sceso in campo.":"Stanotte nessun giocatore di questa squadra è ancora sceso in campo."}</p>`}
+  <tbody>${R.map((x,i)=>row(x,i)).join("")}<tr class="tot"><td>${turno?"Somma migliori":"Totale notte"}</td><td class="pdkl">${pdkF(tot)}</td><td></td><td></td><td></td><td></td></tr></tbody></table></div>`:`<p class="note">${turno?"Nel turno nessun giocatore di questa squadra è ancora sceso in campo.":"Stanotte nessun giocatore di questa squadra è ancora sceso in campo."}</p>`}
   <p class="note">${turno?(kSel<kc?`Per ogni giocatore la partita col PDK più alto del turno ${kSel+DR_OFF} Dreamers (turno passato). Usa le frecce per cambiare turno.`:"Per ogni giocatore la partita col PDK più alto del turno Dreamers in corso (anche prima di stanotte). Gli stessi numeri contano per la formazione. Con le frecce vedi i turni passati."):"Solo dati di Dynasty TV della notte (data USA), aggiornati in automatico mentre i giocatori sono in campo; PDK con la formula Dunkest, provvisori fino al report ufficiale. Alla prima partita della notte successiva il box si azzera."}</p>`}
 /* ===== CONDIVIDI (142): tasto piccolo su "Live stanotte" (Campo) e "Dreamers" (Dynasty TV).
    Disegna un'immagine 1080px elegante (stile Dreamers) con tutte le info e la apre in un foglio con "Condividi" (share sheet
@@ -4761,6 +4762,41 @@ async function shCampo(nn){const S=SHR_CAMPO;if(!S)return null;const nn0=nn&&nn<
   const yt=y+R.length*rh;c.textAlign="left";c.textBaseline="middle";c.font=SH_F(800,40,1);c.fillStyle="#e9d5ff";if(S.turno)c.font=SH_F(800,34,1);c.fillText(part?"SOMMA PRIME "+nn0:S.turno?"SOMMA MIGLIORI":"TOTALE NOTTE",80,yt+rh/2);
   c.textAlign="center";c.font=SH_F(800,52,1);c.fillStyle="#fff";c.shadowColor="rgba(192,132,252,.9)";c.shadowBlur=20;c.fillText(pdkF(part?R.reduce((a,x)=>a+(+x.r[19]||0),0):S.tot),X.pdk,yt+rh/2+2);c.shadowBlur=0;
   shFoot(c,W,H,"PDK formula Dunkest · provvisori fino al report ufficiale");return cv}
+/* (340) Condividi una prestazione: mini campo (come quello della formazione, ma piccolo) con logo e nome della squadra e DENTRO solo il giocatore:
+   maglia + tagliandino col PDK della partita. Niente capitano, niente punteggio pieno/normale. */
+let SHR_PC=null;
+async function shPcard(){const S=SHR_PC;if(!S)return null;const x=S.x,t=S.t,tm=TEAMS[t],W=1080,H=1520;const{cv,c}=await shBase(H);
+  const lg=await shLogo(t);let y=190;if(lg){c.shadowColor="rgba(192,132,252,.55)";c.shadowBlur=34;c.drawImage(lg,W/2-90,y,180,180);c.shadowBlur=0}
+  c.textAlign="center";c.textBaseline="alphabetic";
+  {const nm=tm.name.toUpperCase();let fs=70;c.font=SH_F(800,fs,1);while(fs>44&&c.measureText(nm).width>W-140){fs-=2;c.font=SH_F(800,fs,1)}c.fillStyle="#d8b4fe";c.shadowColor="rgba(192,38,211,.95)";c.shadowBlur=26;c.fillText(nm,W/2,y+262);c.shadowBlur=0}
+  /* mini campo */
+  const cx0=90,cy0=500,cw=W-180,ch=770,tc=(typeof NOTTE_ACC==="function"?NOTTE_ACC(t):tm.bg)||tm.bg;
+  c.save();shRR(c,cx0,cy0,cw,ch,26);c.clip();
+  let g=c.createLinearGradient(0,cy0,0,cy0+ch);g.addColorStop(0,"#4a4a52");g.addColorStop(1,"#232327");c.fillStyle=g;c.fillRect(cx0,cy0,cw,ch);
+  for(let xx=cx0;xx<cx0+cw;xx+=54){if(((xx-cx0)/54|0)%2){c.fillStyle="rgba(255,255,255,.03)";c.fillRect(xx,cy0,54,ch)}}
+  c.strokeStyle="#f3f4f6";c.lineWidth=9;c.lineJoin="round";
+  const lx=cx0+cw/2-185,lw=370,lh=560;c.strokeRect(lx,cy0+8,lw,lh);                 /* area */
+  c.beginPath();c.arc(cx0+cw/2,cy0+8+lh,150,Math.PI,0,true);c.stroke();                 /* cerchio tiro libero (tratteggiato sotto) */
+  c.setLineDash([26,22]);c.beginPath();c.arc(cx0+cw/2,cy0+8+lh,150,0,Math.PI,false);c.stroke();c.setLineDash([]);
+  c.beginPath();c.moveTo(cx0+60,cy0+8);c.lineTo(cx0+60,cy0+250);c.arc(cx0+cw/2,cy0+250,cw/2-60,Math.PI,0,true);c.lineTo(cx0+cw-60,cy0+8);c.stroke();   /* linea da tre punti */
+  c.restore();
+  c.strokeStyle=tc;c.lineWidth=14;shRR(c,cx0,cy0,cw,ch,26);c.stroke();
+  /* maglia */
+  const num=((ROSTER[t]||[]).find(p=>p[0]===x.n)||[0,""])[1];
+  const js=await ldImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jersey(t,num,x.n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')));
+  const jh=440;if(js){const r=jh/js.height,jw=js.width*r;c.shadowColor="rgba(0,0,0,.55)";c.shadowBlur=30;c.shadowOffsetY=14;c.drawImage(js,W/2-jw/2,cy0+60,jw,jh);c.shadowBlur=0;c.shadowOffsetY=0}
+  /* tagliandino: ruolo + cognome, filo del livello, PDK */
+  const v=+x.r[19],lv=pdkLvl(v),[pbg,pfg]=SH_PK[lv],rl=({G:"G",F:"A",C:"C"})[ruoloDi(x.n)]||"",nm=(DU_SOLO.test(x.n)?drSur(x.n):drSur(x.n)).toUpperCase();
+  const tw=470,th1=84,th2=96,tx=W/2-tw/2,ty=cy0+60+jh-34;
+  shRR(c,tx,ty,tw,th1+th2+10,20);c.save();c.clip();c.fillStyle="#0b0b10";c.fillRect(tx,ty,tw,th1);c.fillStyle=pbg;c.fillRect(tx,ty+th1,tw,10);c.fillStyle=pbg;const g2=c.createLinearGradient(0,ty+th1+10,0,ty+th1+10+th2);g2.addColorStop(0,pbg);g2.addColorStop(1,pbg);c.fillStyle=g2;c.fillRect(tx,ty+th1+10,tw,th2);c.restore();
+  c.shadowColor="rgba(0,0,0,.5)";c.shadowBlur=18;c.shadowOffsetY=8;shRR(c,tx,ty,tw,th1+th2+10,20);c.strokeStyle="rgba(255,255,255,.18)";c.lineWidth=2;c.stroke();c.shadowBlur=0;c.shadowOffsetY=0;
+  c.textBaseline="middle";c.textAlign="left";c.font=SH_F(800,52,1);const nmw=c.measureText(nm).width,rw=rl?44:0,gap=rl?14:0,fw=rw+gap+nmw,fx=W/2-fw/2;
+  if(rl){c.fillStyle="#9aa3b2";c.fillText(rl,fx,ty+th1/2+3)}c.fillStyle="#fff";c.fillText(nm,fx+rw+gap,ty+th1/2+3);
+  c.textAlign="center";c.font=SH_F(800,84,1);c.fillStyle=pfg;c.fillText(pdkF(v),W/2,ty+th1+10+th2/2+4);
+  /* dettaglio sotto il campo */
+  c.textBaseline="alphabetic";c.textAlign="center";c.font=SH_B(600,34);c.fillStyle="#e9d5ff";c.fillText(`${x.tm} vs ${x.opp} · ${x.st}${x.dl?" · "+x.dl:""}`,W/2,cy0+ch+62);
+  c.font=SH_F(700,34,1);c.fillStyle="rgba(196,181,253,.9)";c.letterSpacing="3px";c.fillText(`${x.r[3]} PT · ${x.r[6]} RIM · ${x.r[7]} ASS · ${x.r[2]} MIN`,W/2,cy0+ch+112);c.letterSpacing="0px";
+  shFoot(c,W,H,"PDK formula Dunkest · provvisorio fino al report ufficiale");return cv}
 async function shDreamers(){const S=SHR_DR;if(!S)return null;const ch=356,H=420+S.cards.length*(ch+32)+150-150;const{cv,c,W}=await shBase(H,0,1);c.translate(0,-150);
   let y=215;c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,108,1);c.letterSpacing="14px";
   const tg=c.createLinearGradient(240,0,840,0);tg.addColorStop(0,"#e9d5ff");tg.addColorStop(.5,"#c084fc");tg.addColorStop(1,"#a5b4fc");c.fillStyle=tg;c.shadowColor="rgba(168,85,247,.8)";c.shadowBlur=30;shDrTxt(c,"DREAMERS",W/2+7,y+100,96);c.shadowBlur=0;c.letterSpacing="0px";
@@ -4986,17 +5022,18 @@ async function shPlayer(){const S=SHR_PL;if(!S)return null;
 async function shOpen(k){const old=document.querySelector(".shsheet");if(old)old.remove();
   const sh=document.createElement("div");sh.className="shsheet";sh.innerHTML='<div class="shbox"><p class="shwait">Preparo l\'immagine…</p></div>';document.body.appendChild(sh);
   sh.addEventListener("click",e=>{if(e.target===sh||e.target.closest(".shx"))sh.remove()});
-  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="gr"?await shGrafico():k==="pl"?await shPlayer():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
+  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="gr"?await shGrafico():k==="pl"?await shPlayer():k==="pc"?await shPcard():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
   if(!cv){sh.querySelector(".shbox").innerHTML='<p class="shwait">Niente da condividere adesso.</p><button class="shx">Chiudi</button>';return}
-  const name=(k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pl"?"scheda-"+((SHR_PL&&SHR_PL.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="card"?"grafico":"dreamers")+".png";
+  const name=(k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pl"?"scheda-"+((SHR_PL&&SHR_PL.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pc"?"prestazione-"+((SHR_PC&&SHR_PC.x.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="card"?"grafico":"dreamers")+".png";
   let file=null,url="";const mk=async c=>{const blob=await new Promise(r=>c.toBlob(r,"image/png"));file=new File([blob],name,{type:"image/png"});if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(blob)};await mk(cv);
   /* Campo: cursore "fino a dove condividere" (si parte sempre dall'alto: prime N righe) */
   const NR=k==="campo"&&SHR_CAMPO?SHR_CAMPO.R.length:0,sl=NR>1?`<div class="shcut"><div><b>Condividi dalla 1ª alla <output>${NR}</output>ª riga</b><small>su ${NR} · trascina per fermarti prima</small></div><input type="range" min="1" max="${NR}" value="${NR}" step="1" aria-label="Fino a quale riga condividere"></div>`:"";
   sh.querySelector(".shbox").innerHTML=`<img src="${url}" alt="Anteprima da condividere"><div class="shfoot">${sl}<div class="shbar"><button class="shx">Chiudi</button><a class="shsv" href="${url}" download="${name}">Salva</a><button class="shgo">${SH_ICO} Condividi</button></div></div>`;
   const go=sh.querySelector(".shgo");if(!(navigator.canShare&&navigator.canShare({files:[file]})))go.remove();
-  else go.addEventListener("click",async()=>{try{await navigator.share({files:[file],title:k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"Migliori del turno":"Live stanotte"):k==="duel"?"Dreamers · sfida":k==="po"?"Dreamers · playoff":k==="pl"?(SHR_PL?SHR_PL.n:"Giocatore"):"Dreamers"})}catch(e){}});
+  else go.addEventListener("click",async()=>{try{await navigator.share({files:[file],title:k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"Migliori del turno":"Live stanotte"):k==="duel"?"Dreamers · sfida":k==="po"?"Dreamers · playoff":k==="pl"?(SHR_PL?SHR_PL.n:"Giocatore"):k==="pc"?(SHR_PC?SHR_PC.x.n:"Prestazione"):"Dreamers"})}catch(e){}});
   const rg=sh.querySelector(".shcut input");if(rg){let busy=false,again=false;const upd=async()=>{if(busy){again=true;return}busy=true;do{again=false;const n=+rg.value;sh.querySelector(".shcut output").textContent=n;try{const c2=await shCampo(n);await mk(c2);sh.querySelector(".shbox img").src=url;const sv=sh.querySelector(".shsv");if(sv)sv.href=url}catch(e){console.error(e)}}while(again);busy=false};rg.addEventListener("input",upd)}}
-document.addEventListener("click",e=>{const b=e.target.closest("[data-share]");if(!b)return;e.preventDefault();e.stopPropagation();shOpen(b.dataset.share)},true);
+document.addEventListener("click",e=>{const pb=e.target.closest("[data-shpc]");if(pb){e.preventDefault();e.stopPropagation();const S=SHR_CAMPO;if(S&&S.R[+pb.dataset.shpc]){SHR_PC={x:S.R[+pb.dataset.shpc],t:S.t};shOpen("pc")}return}
+  const b=e.target.closest("[data-share]");if(!b)return;e.preventDefault();e.stopPropagation();shOpen(b.dataset.share)},true);
 let CNT=false;
 function campoNotteMap(t){const d=campoNotte(),o={};if(!d)return o;const mine={};(ROSTER[t]||[]).forEach(p=>mine[tvNm(p[0])]=p[0]);
   for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
