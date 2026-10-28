@@ -5928,6 +5928,9 @@ function drSettimana(n,W){const p=Object.values(ROSTER).flat().find(x=>x[0]===n)
 function drProiez(k,t,W){/* chi non ha ancora giocato ma ha partite in settimana vale il suo PDK medio (pdkMix) */
   const A={...W.acc};const F=drForm(k)[t]||{t:[],r:[]};[...F.t,...F.r].forEach(n=>{if(A[n])return;const s=drSettimana(n,W);if(s.some(x=>x&&!x.fin)){const m=injOut(n)?null:pdkMix(n);if(m!=null)A[n]={s:m,g:1,b:m}}});
   return drTeam(k,t,{...W,acc:A,closed:true}).score}
+/* (318) nome nella carta della sfida: "I. Cognome"; per i cognomi più lunghi (Wembanyama, Antetokounmpo) eccezionalmente solo il cognome, così entrano interi */
+const DU_SOLO=/\s(Wembanyama|Antetokounmpo)$/i;
+function duNm(n){const m=DU_SOLO.exec(n);return m?m[1]:n.replace(/^(\S)\S*\s+(.+)$/,"$1.\u00a0$2")}
 function drDuel(k,a,b,W,P){const A=drTeam(k,a,W),B=drTeam(k,b,W),f1=v=>v==null?"—":pdkF(v);
   const pa=W.closed?null:drProiez(k,a,W),pb=W.closed?null:drProiez(k,b,W);
   let pw=50;if(W.closed){pw=A.score>B.score?100:A.score<B.score?0:50}else if(pa!=null&&pb!=null){const left=Math.max(.15,1-W.nights/(W.len||7));pw=Math.round(100/(1+Math.exp(-(pa-pb)/(40*left+8))))}
@@ -5941,7 +5944,7 @@ function drDuel(k,a,b,W,P){const A=drTeam(k,a,W),B=drTeam(k,b,W),f1=v=>v==null?"
       if(injOut(x.n))return`<span class="duw dung" title="${y.opp} · infortunato: non gioca"><i>${gg}</i><b>NG</b></span>`;
       return`<span class="duw duu${y.lv?" lv":""}"><i>${gg}</i><b>${y.opp}</b></span>`}).join("");
     const dfin=gi.length>0&&fatte===gi.length&&!gi.some(y=>y.lv);
-    return`<div class="du ${slot} ru-${r[2]||"x"}${dfin?" fin":""}" data-rn="${({G:"Guardia",F:"Ala",C:"Centro"})[r[2]]||""}"><div class="duh"><div class="dul"><span class="duj">${jersey(t,r[1],x.n)}</span><span class="dufl">${injOut(x.n)?`<em class="duo" title="Infortunato · vale 0">OUT</em>`:injSt(x.n)==="dub"?`<em class="duo dub" title="In dubbio: potrebbe giocare">DUB</em>`:""}</span></div><div class="dur"><div class="dun"><b title="${x.n}">${x.n.replace(/^(\S)\S*\s+(.+)$/,"$1.\u00a0$2")}</b><small>${({G:"G",F:"A",C:"C"})[r[2]]||""} · ${r[3]}</small></div>
+    return`<div class="du ${slot} ru-${r[2]||"x"}${dfin?" fin":""}" data-rn="${({G:"Guardia",F:"Ala",C:"Centro"})[r[2]]||""}"><div class="duh"><div class="dul"><span class="duj">${jersey(t,r[1],x.n)}</span><span class="dufl">${injOut(x.n)?`<em class="duo" title="Infortunato · vale 0">OUT</em>`:injSt(x.n)==="dub"?`<em class="duo dub" title="In dubbio: potrebbe giocare">DUB</em>`:""}</span></div><div class="dur"><div class="dun"><b title="${x.n}">${duNm(x.n)}</b><small>${({G:"G",F:"A",C:"C"})[r[2]]||""} · ${r[3]}</small></div>
       <div class="dus">${dfin?`<i class="fin-b" title="Punteggio definitivo"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1zm2 0h6V8a3 3 0 0 0-6 0z"/></svg></i>`:""}${(()=>{const cp=x.cal?"media":slot==="trib"?"tribuna":x.e==null?(W.closed?"NG":"attesa"):"";return`<span class="pdkx ${slot==="cap"&&x.f!=null?"dugold":x.e==null?"na":pdkLvl(x.e)} dubig"><b>${slot==="cap"&&x.f!=null?f1(x.f):x.e==null?"—":f1(x.e)}</b>${cp?`<i>${cp}</i>`:""}</span>`})()}</div></div></div>
       <div class="duwk">${wk||'<span class="duw none"><i>${x.cal?"calendario: nessuna partita":"nessuna partita"}</i></span>'}</div><div class="duf">${fatte}/${gi.length} partite giocate</div></div>`};
   const sezioni=[["cap","Capitano ×1,5",0,1],["full","Punteggio pieno",1,6],["half","Panchina · ½",6,10]];
