@@ -912,3 +912,6 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 
 ## (278) Età con i mesi nella scheda giocatore
 - Nel riquadro in alto della scheda giocatore, sotto "Ruolo · SQUADRA · #n", compare l'età (es. "22 anni 9 mesi"), calcolata ogni volta da `NASCITA[nome]` (data di nascita) e dalla data di oggi (`etaTxt`): si aggiorna da sola, nessun caricamento. Tutti i 115 giocatori delle rose hanno la data; per un nuovo giocatore aggiungere la sua data in `NASCITA` (serve già anche per i valori). Senza data la riga non compare.
+
+## (279) Tasto "Segui" a contrasto con la testata squadra
+- `.ghead .segrow .segi` eredita il colore del testo della testata (`c.txt||c.fg`), con bordo dello stesso colore: nero sui Ducks, bianco/colore della squadra sulle altre; stato "Seguito" con fondo leggermente più pieno.
