@@ -2154,6 +2154,8 @@ html.dlt-parquet .teamhead .hlogo,html.dlt-parquet .teamhead .badge{filter:none!
 html.dlt-parquet .chip[aria-pressed="true"],html.dlt-parquet .chip[aria-pressed="true"] *{background-color:#f2701a!important;color:#fff!important;border-color:#c2410c!important}
 html.dlt-parquet .chip[aria-pressed="true"] .badge{background-color:transparent!important}
 /* logo Dreamers arancione (il PNG è viola) */
+html.dlt-parquet .subnav button{color:#b8410a}html.dlt-parquet .subnav button:hover{background:rgba(232,90,12,.12)}html.dlt-parquet .subnav button[aria-selected="true"]{background:#e85a0c;color:#fff}
+html.dlt-parquet .tstar.stl g:first-of-type{fill:rgba(43,22,8,.25)}
 html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.05)}
 .gv.gvlive{outline:2px solid #a78bfa;outline-offset:1px;animation:gvlp 1.2s ease-in-out infinite}@keyframes gvlp{0%,100%{outline-color:#a78bfa}50%{outline-color:rgba(167,139,250,.15)}}@media (prefers-reduced-motion:reduce){.gv.gvlive{animation:none}}
 .shfoot{position:sticky;bottom:0;width:100%;display:grid;gap:8px;padding-top:6px;background:linear-gradient(180deg,transparent,rgba(10,6,30,.92) 14px)}.shcut{width:100%;display:grid;gap:8px;padding:10px 12px;border-radius:14px;background:rgba(30,20,70,.8);border:1px solid rgba(196,181,253,.35);color:#fff;box-sizing:border-box}.shcut b{font:800 15px var(--display);font-style:italic;letter-spacing:.04em;text-transform:uppercase}.shcut small{display:block;color:#c4b5fd;font-size:12px}.shcut input{width:100%;accent-color:#a855f7;height:28px}
@@ -2805,7 +2807,7 @@ const DLT={
  oceano:{n:"Oceano",v:{bg:"#031219",panel:"#081f2c",panel2:"#0d2f42",line:"#164862",muted:"#8fb2c4",glow:"#0b4a6b",hd1:"#0a3a55",hd2:"#04202f",red:"#0891b2",red2:"#22d3ee",gold:"#67e8f9",onred:"#ffffff",pn1:"#0e3347",pn2:"#081f2c"}},
  neon:{n:"Neon",v:{bg:"#0a0618",panel:"#160d30",panel2:"#22124a",line:"#3b2478",muted:"#a99bd6",glow:"#4c1d95",hd1:"#2e1065",hd2:"#150a35",red:"#9333ea",red2:"#c084fc",gold:"#f0abfc",onred:"#ffffff",pn1:"#261452",pn2:"#150a35"}},
  tabellone:{n:"Tabellone",v:{bg:"#0b0d10",panel:"#1b2027",panel2:"#262d37",line:"#3a424e",muted:"#9aa3af",glow:"#3a2a00",hd1:"#1b2027",hd2:"#0b0d10",red:"#ffb000",red2:"#ffd166",gold:"#ffe14d",onred:"#14100a",pn1:"#232a33",pn2:"#171b21"}},
- parquet:{n:"Parquet",v:{fg:"#2b1608",bg:"#c88a4c",panel:"#fff6e4",panel2:"#f6e2bd",line:"#d9b27a",muted:"#7a5632",glow:"#e9b878",hd1:"#f2701a",hd2:"#c2410c",red:"#f2701a",red2:"#c2410c",gold:"#b45309",onred:"#ffffff",pn1:"#fff6e4",pn2:"#f6e2bd"}},
+ parquet:{n:"Parquet",v:{fg:"#2b1608",bg:"#c88a4c",panel:"#fff6e4",panel2:"#f6e2bd",line:"#d9b27a",muted:"#7a5632",glow:"#e9b878",hd1:"#e85a0c",hd2:"#c2410c",red:"#e85a0c",red2:"#c2410c",gold:"#b45309",onred:"#ffffff",pn1:"#fff6e4",pn2:"#f6e2bd"}},
  oro:{n:"Carbone e oro",v:{bg:"#070707",panel:"#141414",panel2:"#1e1e1e",line:"#3a3320",muted:"#a8a08a",glow:"#2a2208",hd1:"#1c1c1c",hd2:"#0b0b0b",red:"#c9a227",red2:"#f2cf5b",gold:"#f5d76e",onred:"#14100a",pn1:"#1d1d1d",pn2:"#101010"}}
 };
 const dlMix=(a,b,t)=>{const A=parseInt(a.slice(1),16),B=parseInt(b.slice(1),16);const g=(x,y)=>Math.round(x*(1-t)+y*t).toString(16).padStart(2,"0");return"#"+g(A>>16,B>>16)+g(A>>8&255,B>>8&255)+g(A&255,B&255)};
@@ -6616,5 +6618,47 @@ l.addEventListener("click",go);l.addEventListener("keydown",e=>{if(e.key==="Ente
 try{const r=JSON.parse(sessionStorage.getItem("dl_reload")||"null");sessionStorage.removeItem("dl_reload");
   if(r&&Date.now()-r.t<30000){Object.entries(r.o).forEach(([n,j])=>{try{const c=get(n);if(c&&typeof c==="object")Object.assign(c,JSON.parse(j));else(0,eval)(n+"="+j)}catch(e){}});render();setTimeout(()=>window.scrollTo(0,r.y||0),60)}}catch(e){}
 })()</script>
+
+<script>
+/* (248) CONTRASTO AUTOMATICO tema Parquet: dopo ogni render, ogni testo con contrasto < 3,4 sul suo sfondo viene corretto: bianco su sfondi scuri/arancioni, arancione scuro (o la stessa tinta scurita) su sfondi chiari. Le stelle vuote si scuriscono sui fondi chiari. Si annulla uscendo dal tema. */
+(function(){
+const PQL=[];
+const pr=c=>{const m=c&&c.match(/rgba?\(([^)]+)\)/);if(!m)return null;const a=m[1].split(",").map(parseFloat);return{r:a[0],g:a[1],b:a[2],a:a.length>3?a[3]:1}};
+const lum=c=>{const f=v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)};return .2126*f(c.r)+.7152*f(c.g)+.0722*f(c.b)};
+const cr=(a,b)=>{const x=lum(a),y=lum(b);return(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+const mix=(c,t,k)=>({r:c.r+(t.r-c.r)*k,g:c.g+(t.g-c.g)*k,b:c.b+(t.b-c.b)*k});
+function pqClean(){while(PQL.length){const e=PQL.pop();try{e.style.removeProperty("color");e.removeAttribute("data-pq")}catch(_){}}}
+function pqFix(){try{
+  if(!document.documentElement.classList.contains("dlt-parquet")){if(PQL.length)pqClean();return}
+  const cache=new Map();
+  const bgOf=el=>{if(cache.has(el))return cache.get(el);let res;const cs=getComputedStyle(el);let c=null;
+    const gi=cs.backgroundImage;if(gi&&gi!=="none"&&!/^url/.test(gi)){const m=gi.match(/rgba?\([^)]+\)/);if(m)c=pr(m[0])}
+    const bc=pr(cs.backgroundColor);if(!c||c.a<.95){if(bc&&bc.a>0&&(!c||bc.a>=.95))c=bc}
+    if(c&&c.a>=.95)res=c;else{const par=el.parentElement;const under=par?bgOf(par):{r:255,g:246,b:228};res=c&&c.a>0?{r:c.r*c.a+under.r*(1-c.a),g:c.g*c.a+under.g*(1-c.a),b:c.b*c.a+under.b*(1-c.a)}:under}
+    cache.set(el,res);return res};
+  const W={r:255,g:255,b:255},DK={r:43,g:22,b:8},OR={r:184,g:65,b:10};
+  document.querySelectorAll("header *,main *,#subnav *,#subnav2 *").forEach(el=>{
+    if(el.tagName==="svg"||el.closest("svg"))return;
+    if(el.classList&&el.classList.contains("tstar")){const b=bgOf(el);el.classList.toggle("stl",lum(b)>.4);return}
+    let has=false;for(const n of el.childNodes)if(n.nodeType===3&&n.textContent.trim().length>0){has=true;break}
+    if(!has)return;const r=el.getBoundingClientRect();if(r.width<2||r.height<2)return;
+    const cs=getComputedStyle(el);if(cs.visibility==="hidden"||+cs.opacity===0)return;
+    const fg=pr(cs.color);if(!fg)return;const bg=bgOf(el);
+    const f=fg.a<1?mix(bg,fg,fg.a):fg;if(cr(f,bg)>=3.4)return;
+    let n;const L=lum(bg);
+    if(L<.3){n=cr(W,bg)>=cr(DK,bg)?W:DK}
+    else{const sat=Math.max(fg.r,fg.g,fg.b)-Math.min(fg.r,fg.g,fg.b)>90;
+      if(sat){let k=.1;n=mix(fg,{r:0,g:0,b:0},k);while(cr(n,bg)<4.2&&k<.9){k+=.1;n=mix(fg,{r:0,g:0,b:0},k)}}
+      else n=cr(OR,bg)>=3.4?OR:DK}
+    if(cr(n,bg)<3&&n!==W&&n!==DK)n=cr(W,bg)>cr(DK,bg)?W:DK;
+    el.style.setProperty("color",`rgb(${n.r|0},${n.g|0},${n.b|0})`,"important");el.setAttribute("data-pq","1");PQL.push(el)});
+}catch(e){}}
+window.pqFix=pqFix;
+{const R0=render;render=function(){const x=R0.apply(this,arguments);pqFix();return x}}
+{const S0=syncMenu;syncMenu=function(){const x=S0.apply(this,arguments);pqFix();return x}}
+{const D0=dlsApply;let was=false;dlsApply=function(){const x=D0.apply(this,arguments);const on=document.documentElement.classList.contains("dlt-parquet");if(on!==was){was=on;pqClean();pqFix()}return x}}
+pqFix();
+})();
+</script>
 </body>
 </html>
