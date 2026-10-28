@@ -2388,12 +2388,16 @@ const pctf=p=>p===1?"1.000":p.toFixed(3).replace(/^0/,"");
 
 const H=(t,sub="")=>`<h2><span class="t"><span>${t}</span></span>${sub}</h2>`;
 const wedge=t=>`<span class="wedge" style="--tc:${TEAMS[t].bg}">${badge(t)}</span>`;
+/* (237) la Classifica del Centro gestione è la classifica DREAMERS (drStand: V/P turno per turno, PF/PS = PDK fatti/subiti, serie = ultimi risultati), non più quella dei dati Dunkest */
+const drFormT=t=>{const o=[];for(let k=1;k<=DR_REG;k++){const w=drWeek(k);if(!w.closed)continue;const pr=DR_SCHED[k-1].find(p=>p.includes(t));if(!pr)continue;const o2=pr[0]===t?pr[1]:pr[0];o.push(drTeam(k,t,w).score>=drTeam(k,o2,w).score?"V":"P")}return[...(DR_BASE[t]?DR_BASE[t].f.split(""):[]),...o]};
+function drClassArr(){const a=drStand().map(x=>({...x,pct:x.w+x.l?x.w/(x.w+x.l):0,last:drFormT(x.t)})),top=a[0];a.forEach(x=>x.gb=((top.w-x.w)+(x.l-top.l))/2);return a}
 function vClassifica(){
-  const rows=standings().map((x,i)=>`<tr><td class="rk">${i+1}</td><td class="tm"><div class="tmcell">${wedge(x.t)}<div><b>${TEAMS[x.t].nick}</b><small>${TEAMS[x.t].city}</small></div></div></td>
+  const DA=drClassArr(),nT=DA.reduce((m,x)=>Math.max(m,x.n),0);
+  const rows=DA.map((x,i)=>`<tr><td class="rk">${i+1}</td><td class="tm"><div class="tmcell">${wedge(x.t)}<div><b>${TEAMS[x.t].nick}</b><small>${TEAMS[x.t].city}</small></div></div></td>
   <td class="w">${x.w}</td><td class="l">${x.l}</td><td>${pctf(x.pct)}</td><td>${x.gb===0?"–":x.gb.toFixed(1)}</td><td>${f1(x.pf)}</td><td>${f1(x.pa)}</td><td>${streak(x.last)}</td></tr>`).join("");
-  return `${H("Classifica",`<em>Dopo la giornata ${CHIUSE.length}</em>`)}
+  return `${H("Classifica",`<em>Dreamers · turno ${nT}</em>`)}
   <div class="tbl-wrap clf"><table><thead><tr><th>#</th><th>Squadra</th><th>V</th><th>P</th><th>%</th><th>GB</th><th>PF</th><th>PS</th><th>Serie</th></tr></thead><tbody>${rows}</tbody></table></div>
-  <p class="note">${GIORNATE.some(g=>g.live)?"La giornata in corso entra in classifica quando è conclusa. ":""}Ordinata per percentuale di vittorie. A parità: scontro diretto, poi punti fatti (PF). GB = partite di distacco dalla prima.</p>`;
+  <p class="note">Classifica Dreamers: il turno in corso entra quando è chiuso. Ordinata per vittorie; a parità, media PDK fatti. PF e PS = PDK fatti e subiti, GB = partite di distacco dalla prima, Serie = ultimi risultati.</p>`;
 }
 function vRisultati(){
   const lg=t=>`<span class="rgl" style="--tc:${TEAMS[t].bg}">${badge(t)}</span>`;
