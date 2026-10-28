@@ -2027,7 +2027,7 @@ html.notte:not(.dreamfs){background-color:#0d0620}
       <button role="tab" id="t-gi" data-v="tv" aria-selected="false"><span>Dynasty TV</span></button>
       <button role="tab" id="t-ef" data-v="efficienza" aria-selected="false"><span>Statistiche</span></button>
       <button role="tab" id="t-dk" data-v="dunkest" data-menu="subnav" aria-haspopup="true" aria-expanded="false" aria-selected="false"><span>Dunkest<i class="car">▾</i></span></button>
-      <button role="tab" id="t-cs" data-v="valtrade" aria-selected="false"><span>Scambi</span></button>
+      <button role="tab" id="t-cs" data-v="valtrade" data-menu="subnav2" aria-haspopup="true" aria-expanded="false" aria-selected="false"><span>Scambi<i class="car">▾</i></span></button>
       <button role="tab" id="t-gd" data-v="gdreamers" aria-selected="false"><span>G Dreamers</span></button>
       <button role="tab" id="t-gm" data-v="storia" aria-selected="false"><span>Sala Trofei</span></button>
       <button role="tab" id="t-ar" data-v="giochi" aria-selected="false"><span>Giochi</span></button>
@@ -2042,6 +2042,10 @@ html.notte:not(.dreamfs){background-color:#0d0620}
       <button data-v="gleague" aria-selected="false"><span>G League</span></button>
       <button data-v="infortuni" aria-selected="false"><span>Centro Medico</span></button>
       <button data-v="regolamento" aria-selected="false"><span>Regolamento</span></button>
+    </div>
+    <div class="subnav" id="subnav2" role="menu" hidden>
+      <button data-v="valtrade" aria-selected="false"><span>Calcolatore trade</span></button>
+      <button data-v="osserv" aria-selected="false"><span>Osservatorio</span></button>
     </div>
   </div>
 </header>
@@ -6062,14 +6066,13 @@ document.getElementById("main").addEventListener("click",e=>{if(cur!=="tv")retur
   if(bk){TVS.g=null;TVS.dr=null;render();window.scrollTo(0,0);return}
   if(sd){TVS.side=sd.dataset.tvside;const y=window.scrollY;render();window.scrollTo(0,y)}});
 const vTVlive=()=>{tvLiveStart();if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();return vTV()};
-function scOpen(){if(document.getElementById("scmod"))return;const d=document.createElement("div");d.id="scmod";d.className="scmod";d.innerHTML=`<div class="scbox" role="dialog" aria-label="Scambi"><h3>Scambi</h3><button data-sc="valtrade"><b>Calcolatore trade</b><small>Valuta uno scambio tra squadre</small></button><button data-sc="osserv"><b>Osservatorio</b><small>I giocatori che segui · ${SEGUI.length}</small></button><button class="scx" data-sc="">Chiudi</button></div>`;d.onclick=e=>{if(e.target===d){d.remove();return}const b=e.target.closest("[data-sc]");if(!b)return;d.remove();if(b.dataset.sc){cur=b.dataset.sc;render();window.scrollTo(0,0)}};document.body.appendChild(d)}
 const VIEWS={fa:vFA,faplayer:vFAP,tv:vTVlive,college:vCollege,trend:vTrend,statnotte:vStatNotte,cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeague,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.osserv=vOsserv;VIEWS.grafico=vGrafico;
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
   document.body.dataset.v=cur;{const nt=typeof CNT!=="undefined"&&CNT;document.body.classList.toggle("notte",nt);document.documentElement.classList.toggle("notte",nt);const tc=document.querySelector('meta[name="theme-color"]');if(tc&&!document.body.classList.contains("dreamfs"))tc.content=nt?"#2a1260":TH_BAR}
   {const fs=cur==="giochi"&&(GAME==="dream"||GAME==="gdream");document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=(fs||(typeof CNT!=="undefined"&&CNT))?"#2a1260":TH_BAR}
-  const eff=cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"?"home":cur==="osserv"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen)||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
+  const eff=cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"?"home":cur==="osserv"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));try{const nv=document.querySelector("nav"),sb=nv&&nv.querySelector('[aria-selected="true"]');if(sb)nv.scrollTo({left:Math.max(0,sb.offsetLeft-24)})}catch(e){}
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -6130,16 +6133,16 @@ let dkOpen=false;
 function syncMenu(){
   document.querySelectorAll("nav button[data-menu]").forEach(b=>{
     const p=document.getElementById(b.dataset.menu);if(!p)return;
-    b.setAttribute("aria-expanded",dkOpen);p.hidden=!dkOpen;
+    const op=dkOpen===b.dataset.menu;b.setAttribute("aria-expanded",op);p.hidden=!op;
     const eff=cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
-    b.setAttribute("aria-selected",dkOpen||inside);
-    if(dkOpen){const w=b.closest(".wrap").getBoundingClientRect(),r=b.getBoundingClientRect();
+    b.setAttribute("aria-selected",op||inside);
+    if(op){const w=b.closest(".wrap").getBoundingClientRect(),r=b.getBoundingClientRect();
       const width=Math.max(r.width,180);let left=r.left-w.left+r.width/2-width/2;left=Math.max(0,Math.min(left,w.width-width));
       p.style.minWidth=width+"px";p.style.left=left+"px";p.style.top=(r.bottom-w.top+4)+"px"}
   });
 }
-document.querySelectorAll("nav button").forEach(b=>b.onclick=e=>{e.stopPropagation();if(b.id==="t-cs"){dkOpen=false;scOpen();return}if(b.dataset.menu){dkOpen=!dkOpen;syncMenu();return}dkOpen=false;cur=b.dataset.v;if(cur==="infortuni")injTeam=null;if(cur==="dreamers"||cur==="gdreamers"||cur==="giochi"){GAME=cur==="dreamers"?"dream":cur==="gdreamers"?"gdream":"arcade";cur="giochi"}if(cur==="giochi"){TR.run=false;if(SIM.timer){clearInterval(SIM.timer);SIM.timer=null}}render();window.scrollTo(0,0)});
-document.querySelectorAll("#subnav button").forEach(b=>b.onclick=e=>{e.stopPropagation();dkOpen=false;cur=b.dataset.v;render();window.scrollTo(0,0)});
+document.querySelectorAll("nav button").forEach(b=>b.onclick=e=>{e.stopPropagation();if(b.dataset.menu){dkOpen=dkOpen===b.dataset.menu?false:b.dataset.menu;syncMenu();return}dkOpen=false;cur=b.dataset.v;if(cur==="infortuni")injTeam=null;if(cur==="dreamers"||cur==="gdreamers"||cur==="giochi"){GAME=cur==="dreamers"?"dream":cur==="gdreamers"?"gdream":"arcade";cur="giochi"}if(cur==="giochi"){TR.run=false;if(SIM.timer){clearInterval(SIM.timer);SIM.timer=null}}render();window.scrollTo(0,0)});
+document.querySelectorAll("#subnav button,#subnav2 button").forEach(b=>b.onclick=e=>{e.stopPropagation();dkOpen=false;cur=b.dataset.v;render();window.scrollTo(0,0)});
 document.addEventListener("click",e=>{if(dkOpen&&!e.target.closest(".subnav")){dkOpen=false;syncMenu()}});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&dkOpen){dkOpen=false;syncMenu()}});
 addEventListener("resize",()=>{if(dkOpen)syncMenu()});
