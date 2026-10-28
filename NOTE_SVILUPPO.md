@@ -846,3 +846,4 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (260) **Cronologia modifiche cliccabile** — il footer "Ultimo aggiornamento: … ›" (`#updbtn`) apre la vista `novita` (`vNovita()`, array `NV_LOG` nel `<script>` finale): elenco per data, dal più recente, con titolo e mini specifica di ogni modifica; "‹ Indietro" torna alla pagina di provenienza. **REGOLA: ogni nuova modifica pubblicata va aggiunta in CIMA a `NV_LOG`** (data, titolo, una frase), oltre alla voce numerata in questo file.
 
 (report) 28/10/2026 — report Dunkest automatico caricato: notti 27/10 (4 partite)
+(261) **Cronologia modifiche: niente area segreta** — tolta da `NV_LOG` la voce sul registro aggiornamenti dell'Ufficio Scouting (area riservata Ducks). REGOLA: le modifiche dell'Ufficio Scouting non vanno mai scritte nella cronologia pubblica.
