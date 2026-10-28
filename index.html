@@ -5876,7 +5876,9 @@ function vTV0(){setTimeout(tvWeekPos,0);const T=TVD(),ks=Object.keys(T.days).sor
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
   /* striscia giorni: tutta la stagione, scorre col dito, centrata sul giorno scelto */
   const wk=[],d0=tvDt(ks[0]),d1=tvDt(ks[ks.length-1]);for(let x=new Date(d0);x<=d1;x.setUTCDate(x.getUTCDate()+1)){const s=x.toISOString().slice(0,10),n=(T.days[s]||[]).length;wk.push(`<button class="tvday${n?"":" off"}" data-tvd="${s}" aria-pressed="${s===d}"${n?"":" disabled"}><span>${TV_G3[x.getUTCDay()]}</span><b>${x.getUTCDate()}</b><small>${n?n+" part.":"—"}</small></button>`)}
-  const cards=G.map(g=>{const[a,h,sa,sh,ot,st,tm,key]=g,lv=st==="L",fin=st==="F",sc=fin||lv,wa=fin&&sa>sh,wh=fin&&sh>sa;let top="";
+  /* ordine delle partite reali (28/10/2026): prima quelle LIVE, poi quelle in programma, in fondo le FINITE (a parità resta l'ordine d'inizio) */
+  const rkG=g=>g[5]==="L"?0:g[5]==="F"?2:1,GS=[...G].sort((x,y)=>rkG(x)-rkG(y));
+  const cards=GS.map(g=>{const[a,h,sa,sh,ot,st,tm,key]=g,lv=st==="L",fin=st==="F",sc=fin||lv,wa=fin&&sa>sh,wh=fin&&sh>sa;let top="";
     if(sc&&T.box[key]){const L=tvLead(T.box[key]),pp=L.pdk;top=`<div class="tvtop"><span>Top: <b>${sur(pp[1][0])}</b> (${pp[0]==="a"?a:h}) ${pp[1][3]} pt · ${pp[1][6]} rb · ${pp[1][7]} as · ${pdkB(pp[1][19],String(pp[1][19]).replace(".",","))} PDK</span></div>`}
     const row=(c,s,w)=>`<div class="tvt${w?" win":""}">${tvLogo(c)}<span class="tvnm"><b>${tvNick(c)}</b><small>${c} · ${tvRec(c)}</small></span><span class="tvsc">${sc?s:""}</span></div>`;
     return`<button class="tvg${lv?" live":""}" ${sc&&key&&T.box[key]?`data-tvg="${key}"`:"disabled"} aria-label="${a} contro ${h}"><div class="tvteams">${row(a,sa,wa)}${row(h,sh,wh)}</div>
