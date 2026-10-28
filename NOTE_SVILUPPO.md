@@ -965,3 +965,4 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 ### (298) Osservatorio › Generale: Ultima con cartellino colorato + colonna Trend
 - Colonna Ultima ora usa `pdkB(last,pdkF(last))` (cartellino colorato come PDK) in entrambe le viste. Nuova colonna Trend stagionale: `grTrend` sulla serie cronologica di PDK (o efficienza se scelta) delle partite in `PARTITE`, min. 3 partite; ▲/▼ con %, ＝ se |trend|<3%.
 - Per farci stare Trend su mobile: colonna Gare spostata nella riga piccola sotto il nome ("4 gare · Dolphins · DEN"), classe `.osgen` con padding/intestazioni più compatti, segnalibro ridotto.
+- (298b) Osservatorio: toccando nome/logo di un giocatore seguito si apre il suo profilo (`[data-osk]`): giocatore Dreamers → scheda, Free Agent → scheda FA, G-League → sezione G-League sul giocatore (`segInfo` ora restituisce `k` per la G-League). Il segnalibro continua a togliere/mettere il segui.
