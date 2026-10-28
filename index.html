@@ -1935,6 +1935,7 @@ nav button>span{white-space:nowrap}
 .setprev{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--hh,150px) - 3px);z-index:4;background:var(--bg,#0a1330);padding:6px 0 8px;margin:0 -2px 6px;border-bottom:1px solid rgba(255,255,255,.12)}
 html.setpg header{position:relative!important;top:auto!important}html.setpg .setprev{top:env(safe-area-inset-top,0px)}
 .setprev .pvc{zoom:.5;width:calc(100vw - 32px);max-width:560px;margin:0 auto;pointer-events:none}.setprev .pvc .court{margin:0 auto;box-shadow:0 6px 16px rgba(0,0,0,.5)}.setprev .pvc .dpan{margin-top:6px}
+.setrow .rst{margin-left:auto;background:#dc2626!important;color:#fff!important;border-color:#ef4444!important;font-weight:800}.setrow .rst.arm{background:#7f1d1d!important;animation:rstp .8s infinite alternate}@keyframes rstp{to{box-shadow:0 0 0 3px rgba(239,68,68,.55)}}
 .setrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:4px 0 8px}
 .setsec{margin:16px 0 6px;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold,#f5b400)}
 .sset{display:grid;gap:3px;margin:8px 0}.sset span{display:flex;justify-content:space-between;font-size:13px;font-weight:700}.sset b{font-family:var(--display);font-style:italic;color:#fff}
@@ -6565,13 +6566,16 @@ window.vImpostazioni=function(){
    altro:C("Dettagli del campo e dei giocatori",tg)+`<div class="setrow"><button data-dlsreset="1">Ripristina tutto</button></div><p class="setnote">Le impostazioni valgono su questo dispositivo. Quelle generali si applicano a tutte le squadre; quelle di «Squadra» solo alla squadra scelta.</p>`};
   if(!PAG[STAB])STAB="campo";
   return`<button class="gback" id="setback">‹ Indietro</button>${H("Impostazioni",`<em>grafica</em>`)}
-  <div class="setprev"><div class="setrow"><button data-dlsv="pvNight|0" aria-pressed="${!DLS.pvNight}">Giorno</button><button data-dlsv="pvNight|1" aria-pressed="${!!DLS.pvNight}">Notte</button><button data-dlst="pvHide" aria-pressed="${!!DLS.pvHide}">${DLS.pvHide?"Mostra anteprima":"Nascondi anteprima"}</button></div>${DLS.pvHide?"":`<div class="pvc" id="setpv">${dlsPrev()}</div>`}</div>
+  <div class="setprev"><div class="setrow"><button data-dlsv="pvNight|0" aria-pressed="${!DLS.pvNight}">Giorno</button><button data-dlsv="pvNight|1" aria-pressed="${!!DLS.pvNight}">Notte</button><button data-dlst="pvHide" aria-pressed="${!!DLS.pvHide}">${DLS.pvHide?"Mostra":"Nascondi"}</button><button class="rst${RSTARM?" arm":""}" data-dlsrst="1">${RSTARM?"Confermi?":"↺ Ripristina"}</button></div>${DLS.pvHide?"":`<div class="pvc" id="setpv">${dlsPrev()}</div>`}</div>
   <div class="setchips setteams" aria-label="Squadra">${tm}</div>
   <nav class="settabs" role="tablist">${TABS.map(([k,ic,l])=>`<button role="tab" data-stab="${k}" aria-selected="${STAB===k}"><span>${ic}</span>${l}</button>`).join("")}</nav>
   <div class="setpage">${PAG[STAB]}</div>`};
 window.dlsPrev=function(){const n=CNT,t=curTeam;try{CNT=!!DLS.pvNight;if(DLS.pvTeam)curTeam=DLS.pvTeam;const d=document.createElement("div");d.innerHTML=vCampo();const c=d.querySelector(".court"),h=d.querySelector(".teamhead");return c?(h?h.outerHTML:"")+c.outerHTML:""}catch(e){return""}finally{CNT=n;curTeam=t}};
 const hh=()=>{const h=document.querySelector("header");if(h)document.documentElement.style.setProperty("--hh",h.offsetHeight+"px")};hh();addEventListener("resize",hh);try{new ResizeObserver(hh).observe(document.querySelector("header"))}catch(e){}
 const refPrev=()=>{const e=document.getElementById("setpv");if(e){e.innerHTML=dlsPrev();try{pnmFit()}catch(_){}}};
+let RSTARM=false,RSTT=0;
+/* (246) Ripristina: azzera ogni scelta grafica (DLS: campo, maglie, colori squadra, tema app) e lo stile Dreamers/G-Dreamers; resta solo la squadra/giorno-notte mostrati nell'anteprima */
+function dlsResetAll(){const k=DLS.pvTeam,n=DLS.pvNight;DLS=JSON.parse(JSON.stringify({...DLS_DEF,pvTeam:k,pvNight:n}));dlSyncDr("classico");dlsSave();dlsApply();full()}
 const full=()=>{const y=window.scrollY;render();window.scrollTo(0,y)};
 VIEWS.impostazioni=vImpostazioni;
 document.addEventListener("click",e=>{
@@ -6586,7 +6590,8 @@ document.addEventListener("click",e=>{
   if(e.target.closest("[data-pjpall]")){DLS.pjp={};dlsSave();full();return}
   if(e.target.closest("[data-tmreset]")){const T=DLS.pvTeam||curTeam;DLS.tm=DLS.tm||{};delete DLS.tm[T];dlsSave();full();return}
   if(e.target.closest("[data-tmall]")){const T=DLS.pvTeam||curTeam,o=dlTm(T);DLS.tm=DLS.tm||{};Object.keys(TEAMS).forEach(x=>DLS.tm[x]={...o});dlsSave();full();return}
-  if(e.target.closest("[data-dlsreset]")){const k=DLS.pvTeam,n=DLS.pvNight;DLS={...DLS_DEF,pvTeam:k,pvNight:n};dlsSave();dlsApply();full()}
+  if(e.target.closest("[data-dlsreset]")){dlsResetAll();return}
+  if(e.target.closest("[data-dlsrst]")){if(RSTARM){clearTimeout(RSTT);RSTARM=false;dlsResetAll()}else{RSTARM=true;RSTT=setTimeout(()=>{RSTARM=false;if(cur==="impostazioni")full()},4000);full()}return}
 });
 document.addEventListener("change",e=>{const q=e.target.closest("[data-pjp]");if(!q||cur!=="impostazioni")return;DLS.pjp=DLS.pjp||{};if(q.value)DLS.pjp[q.dataset.pjp]=q.value;else delete DLS.pjp[q.dataset.pjp];dlsSave();refPrev()});
 document.addEventListener("input",e=>{const tc=e.target.closest("[data-tmc],[data-tms]");if(tc&&cur==="impostazioni"){const T=DLS.pvTeam||curTeam,k=tc.dataset.tmc||tc.dataset.tms;DLS.tm=DLS.tm||{};const o=DLS.tm[T]=DLS.tm[T]||{};o[k]=tc.dataset.tms?+tc.value:tc.value;if(tc.dataset.tms){const v=document.getElementById("tv-"+k);if(v)v.textContent=Math.round(o[k]*100)+"%"}dlsSave();refPrev();return}
