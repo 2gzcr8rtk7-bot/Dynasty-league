@@ -1061,3 +1061,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (324) Campo: tolto il bordo e l'alone giallo attorno al tagliandino PDK del capitano (`.pcd.cap`): ora ha la stessa ombra degli altri, il capitano si riconosce dalla C fluo. pubblicato.
 
 (325) Campo e panchina: maglie e tagliandini nome/PDK ingranditi del 5% (campo: `scale(calc(var(--k)*var(--g5,1.05)))` su `.court .cpl.dr`; panchina: `.dpan .dpc{zoom:1.05}`). Per tornare indietro basta `--g5:1` / togliere lo zoom. pubblicato.
+
+(326) PDK e lucchetto centrati in altezza nel tagliandino (campo e panchina): misurato sullo screenshot del telefono di Francesco (poco spazio sopra, molto sotto): padding 5px/0 + cifra giù di 0,5px, lucchetto giù di 1,6px; altezza del tagliandino invariata. IN CODA, NON pubblicato. Nota: nel sandbox il font è diverso (fallback), quindi il controllo finale va fatto sul telefono.
