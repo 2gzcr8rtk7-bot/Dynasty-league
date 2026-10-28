@@ -139,7 +139,7 @@
 .rdr .rk{font-weight:800;color:var(--muted);font-size:12px}.rdr .nm b{display:block;font-size:13.5px}.rdr .nm small{display:block;font-size:10.5px;color:var(--muted);line-height:1.3}.rdr .pf{font-style:normal;color:#facc15;font-weight:700}
 .rdr .hd{text-align:right}.rdr .hd b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:19px;color:#facc15}.rdr .hd small,.rdr .lv small{display:block;font-size:9px;color:var(--muted);font-weight:500}
 .rdr .lv{text-align:center;font-size:11px;font-weight:800;text-transform:uppercase;border-radius:8px;padding:4px 2px}.rdr .lv.a{background:rgba(74,222,128,.15);color:#4ade80}.rdr .lv.b{background:rgba(250,204,21,.15);color:#facc15}.rdr .lv.c{background:rgba(248,113,113,.15);color:#f87171}
-.colsec{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:#111;padding:5px;border-radius:16px;margin:4px 0 6px}.colsec button{border:0;border-radius:12px;padding:11px;background:transparent;color:#facc15;font-weight:800;font-size:15px;cursor:pointer}.colsec button[aria-pressed="true"]{background:#facc15;color:#111}
+.colsec{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#111;padding:5px;border-radius:16px;margin:4px 0 6px}.colsec button{border:0;border-radius:12px;padding:11px;background:transparent;color:#facc15;font-weight:800;font-size:15px;cursor:pointer}.colsec button[aria-pressed="true"]{background:#facc15;color:#111}
 .corig{margin-bottom:16px}.corig h4{display:flex;align-items:baseline;gap:8px;margin:4px 0 8px;padding-bottom:6px;border-bottom:2px solid var(--rc);color:var(--rc);font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase}.corig h4 small{font-family:inherit;font-style:normal;font-size:11px;color:var(--muted);text-transform:none;font-weight:600}.corig .pot{color:var(--rc)!important}.corig tr{cursor:pointer}
 .nhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.nhead small{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.nhead b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:24px;color:#facc15}.nhead em{font-style:normal;font-size:11px;color:var(--muted)}
 .ncfg{display:grid;gap:6px;margin-bottom:12px}.nseg{display:flex;gap:4px;background:rgba(255,255,255,.05);padding:3px;border-radius:10px}.nseg button{flex:1;border:0;border-radius:8px;padding:7px 4px;background:transparent;color:#cbd5e1;font-weight:700;font-size:12px;cursor:pointer}.nseg button[aria-pressed="true"]{background:#facc15;color:#111}
@@ -4492,12 +4492,12 @@ function vCollege(){if(!COL.d){cur="campo";return vCampo()}COL.sec=COL.sec||"col
    :`<input id="colq" class="colq" type="search" placeholder="Cerca giocatore" value="${COL.q.replace(/"/g,"&quot;")}" aria-label="Cerca giocatore">
   <div class="coltbl"><table><thead><tr><th>#</th><th class="nm">Giocatore</th><th>POT</th><th>PDK/min</th><th>USG</th><th>NBA</th></tr></thead><tbody id="collist">${colList()}</tbody></table></div>
   <p class="note">POT = PDK/min riportato al 27% di usage. NBA = PDK nella migliore stagione NBA. Tocca un giocatore per la scheda. * = ruolo da confermare.</p>`;
-  const lg=LOGO2.DUC||LOGO.DUC,isC=COL.sec==="college",isL=COL.sec==="log";
+  const lg=LOGO2.DUC||LOGO.DUC,isC=COL.sec==="college";
   return`<div class="colroom"><button class="gback" id="colback">‹ Campo Ducks</button>
-  <div class="colhd">${lg?`<img src="${lg}" alt="Texas Ducks">`:""}<div><small>Texas Ducks · area riservata del GM</small><b>Ufficio Scouting</b><em>${isL?"Registro degli aggiornamenti dei dati":isC?"College · archivio al "+COL_ENC.agg:"NBA · trend delle ultime settimane"}</em></div></div>
+  <div class="colhd">${lg?`<img src="${lg}" alt="Texas Ducks">`:""}<div><small>Texas Ducks · area riservata del GM</small><b>Ufficio Scouting</b><em>${isC?"College · archivio al "+COL_ENC.agg:"NBA · trend delle ultime settimane"}</em></div></div>
   <button class="colgbtn" data-colleg="1">📖 Legenda</button>
-  <div class="colsec"><button data-colsec="college" aria-pressed="${isC}">🎓 College</button><button data-colsec="nba" aria-pressed="${!isC&&!isL}">🏀 NBA</button><button data-colsec="log" aria-pressed="${isL}">🔄 Aggiornamenti</button></div>
-  ${isL?`<div class="grcard">${vUpdLog()}</div>`:isC?`<div class="ctabs coltabs">${tabs.map(([k,l])=>`<button data-coltab="${k}" aria-pressed="${COL.tab===k}">${l}</button>`).join("")}</div>
+  <div class="colsec"><button data-colsec="college" aria-pressed="${isC}">🎓 College</button><button data-colsec="nba" aria-pressed="${!isC}">🏀 NBA</button></div>
+  ${isC?`<div class="ctabs coltabs">${tabs.map(([k,l])=>`<button data-coltab="${k}" aria-pressed="${COL.tab===k}">${l}</button>`).join("")}</div>
   ${["usage","radar","orig","ris"].includes(COL.tab)?"":`<div class="trseg colrl">${COL_RL.map(([k,l])=>`<button class="${k}" data-colr="${k}" aria-pressed="${COL.r===k}">${l} <small>${(COL.d[k]||[]).length}</small></button>`).join("")}</div>`}
   ${body}`:`<div class="grcard">${vNbaSec()}</div>`}<p class="colft">🦆 Texas Ducks Scouting · uso interno</p>${isC&&COL.sel?`<div class="colsheet">${colCard()}</div>`:""}${COL.leg?colLegend():""}</div>`}
 /* ===== CAMPO: BOX SCORE LIVE DELLA NOTTE (solo dati di DYNASTY TV, non Dunkest) =====
@@ -6719,16 +6719,30 @@ function ulCheck(){try{
 }catch(e){}}
 const fmt=t=>{try{return new Intl.DateTimeFormat("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(new Date(t)).replace(",","")}catch(e){return new Date(t).toLocaleString()}};
 const evc=k=>/^(dk|base):/.test(k)?"r":k.startsWith("espn:")?"g":k.startsWith("live:")?"v":"y";
+/* (263) CONTROLLO DATI: verifica automatica di completezza e coerenza dopo ogni caricamento; l'esito è in cima alla Cronologia modifiche. */
+window.dataCheck=function(){const it=[],add=(ok,t,w)=>it.push({ok,t,w:!!w});
+  try{
+  const miss=[],extra=[],noUlt=[],diff=[],dup=[],mism=[];let nPl=0,nG=0;
+  for(const t in ROSTER)for(const r of ROSTER[t]){nPl++;const e=(EFF.gioc[t]||[]).find(x=>x[0]===r[0]);if(!e){miss.push(r[0]);continue}
+    if(e[2]>0){nG++;const u=ULTIMA.gioc[r[0]];if(u===undefined)noUlt.push(r[0]);else if(e[5]!=null&&Math.abs(u-e[5])>.005)diff.push(r[0]);
+      if((PARTITE[r[0]]||[]).length!==e[2])mism.push(r[0]+" ("+(PARTITE[r[0]]||[]).length+" vs "+e[2]+")")}}
+  for(const t in EFF.gioc)for(const e of EFF.gioc[t])if(!(ROSTER[t]||[]).some(r=>r[0]===e[0]))extra.push(e[0]);
+  const lastOff=drNightOfAgg(EFF.agg);
+  for(const n in PARTITE)for(const g of PARTITE[n])if(g[8]!=null){const d=(()=>{const[dd,mm]=g[0].split("/");const y=lastOff.slice(0,4);let x=`${y}-${mm}-${dd}`;if(x<y+"-08-01"&&lastOff>=y+"-08-01"&&mm<"08")x=`${+y+1}-${mm}-${dd}`;return x})();if(d<=lastOff)dup.push(n+" "+g[0])}
+  add(!miss.length,miss.length?`Giocatori delle rose senza dati: ${miss.slice(0,4).join(", ")}${miss.length>4?"…":""}`:`Tutti i ${nPl} giocatori delle rose hanno i dati`);
+  add(!extra.length,extra.length?`Giocatori nei dati ma non in rosa: ${extra.slice(0,4).join(", ")}`:"Nessun giocatore estraneo alle rose");
+  add(!noUlt.length&&!diff.length,noUlt.length||diff.length?`Ultima partita incoerente: ${[...noUlt,...diff].slice(0,4).join(", ")}`:`Ultima partita coerente con le medie (${nG} giocatori con partite)`);
+  add(!mism.length,mism.length?`Partite diverse tra riepilogo e dettaglio: ${mism.slice(0,3).join(", ")}`:"Partite del riepilogo = partite del dettaglio per ogni giocatore");
+  add(!dup.length,dup.length?`Righe ESPN ancora presenti dopo i dati ufficiali: ${dup.slice(0,3).join(", ")}`:"Nessun doppione ESPN/Dunkest");
+  const st=(document.getElementById("updbtn")||{textContent:""}).textContent.match(/(\d{2})\/(\d{2})\/(\d{4})\s*·\s*(\d{2}):(\d{2})/);
+  if(st){const now=new Date(),rp=Object.fromEntries(new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(now).map(x=>[x.type,+x.value]));
+    const today=Date.UTC(rp.year,rp.month-1,rp.day),fd=Date.UTC(+st[3],+st[2]-1,+st[1]),days=Math.round((today-fd)/864e5),mm=(rp.hour%24)*60+rp.minute;
+    if(days>=2)add(false,`Il file dati Dunkest è fermo al ${st[1]}/${st[2]} (${days} giorni fa)`,true);
+    else if(days===1&&mm>=11*60+30)add(false,`I dati Dunkest di oggi non sono ancora arrivati (file del ${st[1]}/${st[2]} ${st[4]}:${st[5]})`,true);
+    else add(true,days===1&&mm<11*60+30?`In attesa dei dati Dunkest di oggi (di solito ~10:30); file attuale del ${st[1]}/${st[2]} ${st[4]}:${st[5]}`:`File Dunkest aggiornato (${st[1]}/${st[2]} ${st[4]}:${st[5]})`)}
+  }catch(e){add(false,"Controllo non riuscito: "+e.message)}
+  return{ok:it.every(x=>x.ok),n:it.length,bad:it.filter(x=>!x.ok).length,it}};
 window.ulEvents=function(){ulCheck();return ulGet(ULK,[]).filter(x=>/^(dk|espn|live):/.test(x.k)).slice().reverse().map(x=>({t:fmt(x.t),x:x.x,c:evc(x.k)}))};
-window.vUpdLog=function(){ulCheck();
-  const L=ulGet(ULK,[]).slice().reverse(),live=(typeof PLV!=="undefined"&&PLV.length)?[...new Set(PLV.map(x=>x[1][0]))]:[],np=(typeof PLV!=="undefined")?new Set(PLV.map(x=>x[0])).size:0;
-  const esc=x=>String(x).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
-  return`<div class="ulst"><div><small>Dati ufficiali Dunkest</small><b>Dati al ${esc(EFF.agg)}</b><em>file aggiornato ${esc(stampOf()||"—")}</em></div>
-  <div><small>Statistiche ESPN</small><b>${live.length?"IN USO · notte "+live.join(", "):"Non in uso"}</b><em>${live.length?np+" giocatori · sostituite dai dati Dunkest appena arrivano":"entrano alle 07:30 (ora italiana) finché Dunkest non pubblica la notte"}</em></div></div>
-  <div class="ulh"><b>Registro</b><button class="sh" data-ulclear="1"><span>Cancella</span></button></div>
-  ${L.length?`<ul class="ullog">${L.map(x=>`<li class="ev-${evc(x.k)}"><time>${fmt(x.t)}</time><span>${esc(x.x)}</span></li>`).join("")}</ul>`:`<p class="note">Ancora nessun evento registrato.</p>`}
-  <p class="note">Il registro si scrive quando l'app, aperta su questo telefono, rileva il cambiamento: l'orario è quello del rilevamento (ora italiana). Ogni file Dunkest porta anche il proprio orario di aggiornamento.</p>`};
-document.getElementById("main").addEventListener("click",e=>{const c=e.target.closest("[data-ulclear]");if(!c)return;try{localStorage.removeItem(ULK)}catch(_){}render()});
 {const R1=render;render=function(){const x=R1.apply(this,arguments);ulCheck();lvSync();return x}}
 /* (259) dalle 07:30 alle 18:00 (ora italiana) le animazioni partono solo con una partita iniziata e finiscono alle 07:30 a prescindere: html.lvoff le spegne tutte le animazioni "live" (puntini, bordi lampeggianti, linee del campo, pulsante LIVE…) */
 function lvSync(){try{document.documentElement.classList.toggle("lvoff",!lvNotte())}catch(e){}}
@@ -6744,6 +6758,7 @@ ulCheck();
 /* (260) CRONOLOGIA MODIFICHE: il footer "Ultimo aggiornamento" è cliccabile e apre questa pagina (vista "novita").
    OGNI nuova modifica pubblicata va aggiunta in CIMA a NV_LOG (data, titolo, mini spiegazione). */
 const NV_LOG=[
+ ["28/10/2026","Controllo dati automatico","In cima alla cronologia: ✅ se i dati caricati sono completi e coerenti, ⚠️ con l'elenco dei problemi se qualcosa non torna (giocatori mancanti, partite che non coincidono, doppioni ESPN/Dunkest, file in ritardo)."],
  ["28/10/2026","Eventi dati in cima alla cronologia","In rosso il caricamento dei dati Dunkest con il suo orario, in verde le statistiche ESPN che entrano nell'app alle 07:30, in viola l'inizio della modalità live quando parte una partita."],
  ["28/10/2026","Animazioni live legate alle partite","Puntini, bordi lampeggianti e linee del campo partono solo quando una partita è davvero iniziata (anche a mezzogiorno) e si fermano alle 07:30."],
  ["28/10/2026","Sfide Dreamers in Dynasty TV","Chi è in vantaggio ha il punteggio bianco candido, l'altro attenuato, come nelle partite NBA."],
@@ -6773,7 +6788,8 @@ window.vNovita=function(){const by={};NV_LOG.forEach(x=>(by[x[0]]=by[x[0]]||[]).
   return`<button class="gback" id="nvback">‹ Indietro</button><h2><span class="t">Cronologia modifiche</span></h2>
   <p class="note">Tutto ciò che è cambiato nell'app, dal più recente. Ultimo aggiornamento dati: ${e((document.getElementById("updbtn")||{textContent:""}).textContent.replace(/Ultimo aggiornamento:\s*/,"").replace("›","").trim())}.</p>
   ${(()=>{const ev=(window.ulEvents?ulEvents():[]),st=((document.getElementById("updbtn")||{textContent:""}).textContent.match(/\d{2}\/\d{2}\/\d{4}\s*·\s*\d{2}:\d{2}/)||[""])[0].replace(/\s+/g," ");
-   return`<section class="nvd"><div class="nvdt">Eventi dati</div><div class="nvleg"><span class="r">Dunkest</span><span class="g">ESPN</span><span class="v">Live</span></div>
+   const ck=window.dataCheck?dataCheck():null;
+   return`<section class="nvd">${ck?`<div class="nvdt">Controllo dati</div><div class="nvck ${ck.ok?"ok":"ko"}"><b>${ck.ok?"✅ Tutto a posto":"⚠️ "+ck.bad+(ck.bad===1?" anomalia":" anomalie")}</b><small>${ck.n} controlli automatici sui dati caricati</small><ul>${ck.it.map(x=>`<li class="${x.ok?"y":x.w?"w":"n"}">${x.ok?"✓":x.w?"!":"✗"} ${e(x.t)}</li>`).join("")}</ul></div>`:""}<div class="nvdt">Eventi dati</div><div class="nvleg"><span class="r">Dunkest</span><span class="g">ESPN</span><span class="v">Live</span></div>
    <article class="nvi nv-r"><b>Ultimo caricamento dati Dunkest</b><span>${e(st||"—")}</span></article>
    ${ev.length?ev.map(x=>`<article class="nvi nv-${x.c}"><b>${e(x.t)}</b><span>${e(x.x)}</span></article>`).join(""):`<p class="note">Gli eventi (dati Dunkest, statistiche ESPN dalle 07:30, inizio modalità live) compaiono qui quando l'app, aperta su questo telefono, li rileva.</p>`}</section>`})()}
   ${Object.keys(by).map(d=>`<section class="nvd"><div class="nvdt">${d}</div>${by[d].map(x=>`<article class="nvi"><b>${e(x[1])}</b><span>${e(x[2])}</span></article>`).join("")}</section>`).join("")}`};
@@ -6784,7 +6800,8 @@ let NV_FROM="home";
  document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.id==="updbtn"){e.preventDefault();go()}})}
 </script>
 <style>footer.upd#updbtn{cursor:pointer;-webkit-tap-highlight-color:transparent}footer.upd#updbtn .updar{display:inline-block;margin-left:6px;font-weight:900;opacity:.85}footer.upd#updbtn:active{opacity:.7}
-.nvd{margin:14px 0}.nvdt{font-family:var(--display);font-style:italic;font-weight:800;letter-spacing:.1em;font-size:14px;color:var(--gold,#facc15);margin:0 0 6px}.nvi{display:grid;gap:2px;padding:10px 12px;margin:0 0 6px;border-radius:12px;background:var(--panel,rgba(255,255,255,.06));border:1px solid var(--line,rgba(255,255,255,.14));border-left:4px solid var(--red,#e4163a)}.nvi.nv-r{border-left-color:#ef4444}.nvi.nv-r b{color:#f87171}.nvi.nv-g{border-left-color:#22c55e}.nvi.nv-g b{color:#4ade80}.nvi.nv-v{border-left-color:#a855f7}.nvi.nv-v b{color:#c084fc}.nvleg{display:flex;gap:6px;margin:0 0 8px}.nvleg span{font-size:11px;font-weight:800;padding:3px 9px;border-radius:99px;color:#fff}.nvleg .r{background:#dc2626}.nvleg .g{background:#16a34a}.nvleg .v{background:#9333ea}
+.nvd{margin:14px 0}.nvdt{font-family:var(--display);font-style:italic;font-weight:800;letter-spacing:.1em;font-size:14px;color:var(--gold,#facc15);margin:0 0 6px}.nvi{display:grid;gap:2px;padding:10px 12px;margin:0 0 6px;border-radius:12px;background:var(--panel,rgba(255,255,255,.06));border:1px solid var(--line,rgba(255,255,255,.14));border-left:4px solid var(--red,#e4163a)}.nvi.nv-r{border-left-color:#ef4444}.nvi.nv-r b{color:#f87171}.nvi.nv-g{border-left-color:#22c55e}.nvi.nv-g b{color:#4ade80}.nvi.nv-v{border-left-color:#a855f7}.nvi.nv-v b{color:#c084fc}.nvck{border-radius:12px;padding:10px 12px;margin:0 0 10px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05)}.nvck.ok{border-color:#22c55e}.nvck.ko{border-color:#f59e0b}.nvck b{font-size:15px}.nvck small{display:block;opacity:.75;font-size:12px;margin:2px 0 6px}.nvck ul{list-style:none;margin:0;padding:0;display:grid;gap:3px}.nvck li{font-size:12.5px;line-height:1.35}.nvck li.y{opacity:.85}.nvck li.n{color:#f87171;font-weight:700}.nvck li.w{color:#fbbf24;font-weight:700}
+.nvleg{display:flex;gap:6px;margin:0 0 8px}.nvleg span{font-size:11px;font-weight:800;padding:3px 9px;border-radius:99px;color:#fff}.nvleg .r{background:#dc2626}.nvleg .g{background:#16a34a}.nvleg .v{background:#9333ea}
 .nvi b{font-size:15px}.nvi span{font-size:13px;line-height:1.35;opacity:.85}</style>
 </body>
 </html>
