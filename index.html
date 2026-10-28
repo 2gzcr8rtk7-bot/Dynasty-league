@@ -3564,6 +3564,16 @@ function vFAP(){
 /* PROFILO G LEAGUE: stessa logica del profilo dei giocatori di squadra */
 let GLP=null;
 function glVai(k){GLP=k;cur="glplayer";render();scrollTo(0,0)}
+/* (339) OVUNQUE nell'app, toccare il NOME di un giocatore (anche dove non c'è un tasto dedicato) apre il suo profilo:
+   prima squadra → scheda giocatore, G League → profilo G League, Free Agent → profilo FA. Non interferisce con tasti, righe o link che hanno già una loro azione. */
+function plOpen(n){const I=segInfo(n);if(!I||I.kind==="?")return false;TRN.det=null;document.querySelector(".trsheet")?.remove();
+  if(I.kind==="T"){const from=cur;curTeam=I.t;curPlayer=n;gFrom=from;cur="giocatore"}else if(I.kind==="F"){faFrom=cur==="home"?"home":"fa";faP=n;faPS=null;cur="faplayer"}else if(I.kind==="G"&&I.k){glVai(I.k);return true}else return false;
+  render();scrollTo(0,0);return true}
+document.addEventListener("click",e=>{if(e.defaultPrevented)return;const el=e.target;if(!(el instanceof Element))return;const po=el.closest("[data-plopen]");if(po){e.preventDefault();plOpen(po.dataset.plopen);return}
+  const mm=document.getElementById("main");if(!mm||!(mm.contains(el)||el.closest(".colsheet")))return;
+  for(let n=el;n&&n!==mm&&n!==document.body;n=n.parentElement){if(n.matches("button,a,input,select,textarea,label,summary,[role=button],[onclick],[tabindex]")||n.onclick)return;for(const at of n.attributes)if(at.name.startsWith("data-"))return}
+  const tx=(el.textContent||"").replace(/\s+/g," ").trim();if(tx.length<3||tx.length>42)return;
+  for(let k=0;k<=3&&k<tx.length-2;k++){const nm=tx.slice(k).trim();if(/^[A-ZÀ-Ý]/.test(nm)&&plOpen(nm)){e.preventDefault();return}}});
 function vGLP(){
   const S=typeof GL_STATS!=="undefined"?GL_STATS:{},k=GLP||"",[t,...rest]=k.split("|"),nm=rest.join("|"),b=S[k],c=TEAMS[t];
   if(!b||!c)return `<button class="gback" id="glpback">‹ G-Dreamers</button><p class="note">Giocatore non trovato.</p>`;
@@ -3804,7 +3814,9 @@ function trCol(t){const c=TEAMS[t];const l=h=>{const n=parseInt(h.slice(1),16);r
   for(const h of[c.bg,c.trim,c.fg,c.stroke])if(h&&/^#[0-9a-f]{6}$/i.test(h)&&l(h)>.28)return h;return"#93c5fd"}
 /* Dettaglio di un giocatore nel Calcola il trend: grafico personale per PDK, minuti ed efficienza sullo stesso periodo,
    da dove partiva (primo punto) a dove è arrivato (ultimo punto), media del periodo e trend %. */
-function trDetail(n){const C=TRN._ctx;if(!C)return"";const p=Object.entries(ROSTER).flatMap(([t,a])=>a.map(x=>({n:x[0],t,num:x[1],r:x[2]}))).find(x=>x.n===n);if(!p)return"";
+/* giocatore del trend: prima squadra (maglia) oppure G League (gl:1, logo G League al posto della maglia) */
+function trPl(n){const q=Object.entries(ROSTER).flatMap(([t,a])=>a.map(x=>({n:x[0],t,num:x[1],r:x[2]}))).find(x=>x.n===n);if(q)return q;const g=glPlayers().find(x=>x.n===n);return g?{n:g.n,t:g.t,num:"",r:g.r,gl:1}:null}
+function trDetail(n){const C=TRN._ctx;if(!C)return"";const p=trPl(n);if(!p)return"";
   const g=grGames(n,C.SZR.length>1?"all":C.sz).filter(x=>C.SZR.includes(x.sz)&&C.inP(x.dt));const c=TEAMS[p.t];
   const M=new Map();g.forEach(x=>{const k=trKey(x,C.by);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});const K=[...M.keys()].sort();
   const mets=[["pdk","PDK","#22c55e"],["min","Minuti","#facc15"],["eff","Efficienza","#a855f7"]];
@@ -3819,12 +3831,12 @@ function trDetail(n){const C=TRN._ctx;if(!C)return"";const p=Object.entries(ROST
     return`<div class="tdbox" style="--c:${col}"><div class="tdh"><b>${l}</b><span>media periodo ${f(k,grAvg(g,x=>x[k]))}${tr&&pts.length>=3?` · trend ${tr.pct>=0?"+":"−"}${Math.abs(Math.round(tr.pct))}%`:""}</span></div>
       <div class="tdv"><div><small>Partiva da</small><b>${f(k,a)}</b><em>${trLab(K[0],C.by).replace("|"," ")}</em></div><i>→</i><div><small>Ora</small><b>${f(k,z)}</b><em>${trLab(K[K.length-1],C.by).replace("|"," ")}</em></div><div class="tdd ${up?"up":"dn"}"><small>Differenza</small><b>${up?"+":"−"}${f(k,Math.abs(d))}</b><em>${dp==null?"":(up?"+":"−")+Math.abs(Math.round(dp))+"%"}</em></div></div>${chart(k,col)}</div>`};
   return`<div class="colsheet trsheet"><div class="ccard" style="--rc:${c.bg}"><button class="ccx" data-trdx="1" aria-label="Chiudi">×</button>
-   <div class="tdhd">${jersey(p.t,p.num,n)}<div><b>${n}</b><small>${c.name} · ${{G:"Guardia",F:"Ala",C:"Centro"}[p.r]} · ${g.length} partite · ${C.by==="s"?"media per stagione":C.by==="m"?"media per mese":C.by==="w"?"media per settimana":"partita per partita"}</small></div></div>
+   <div class="tdhd">${p.gl?glBadge(p.t,"trlg"):jersey(p.t,p.num,n)}<div><b>${n}</b><small>${p.gl?"G-":""}${c.name} · ${{G:"Guardia",F:"Ala",C:"Centro"}[p.r]} · ${g.length} partite · ${C.by==="s"?"media per stagione":C.by==="m"?"media per mese":C.by==="w"?"media per settimana":"partita per partita"}</small></div></div>
    ${mets.map(box).join("")}
    <button class="cshare" data-trshare="${n.replace(/"/g,"&quot;")}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Condividi</span></button>
-   <button class="cshare alt" data-grafico="${p.t}" data-grp="${n.replace(/"/g,"&quot;")}"><span>📈 Apri il grafico completo</span></button></div></div>`}
+   <button class="cshare alt" data-grafico="${p.t}" data-grp="${n.replace(/"/g,"&quot;")}"><span>📈 Apri il grafico completo</span></button><button class="cshare alt" data-plopen="${n.replace(/"/g,"&quot;")}"><span>👤 Apri il profilo del giocatore</span></button></div></div>`}
 /* Condivisione del dettaglio trend: immagine 1080×1350 con i 3 riquadri (partiva da → ora) e i grafici. */
-async function trShare(n,btn){const C=TRN._ctx;if(!C)return;const p=Object.entries(ROSTER).flatMap(([t,a])=>a.map(x=>({n:x[0],t,num:x[1],r:x[2]}))).find(x=>x.n===n);if(!p)return;
+async function trShare(n,btn){const C=TRN._ctx;if(!C)return;const p=trPl(n);if(!p)return;
   const g=grGames(n,C.SZR.length>1?"all":C.sz).filter(x=>C.SZR.includes(x.sz)&&C.inP(x.dt));const c=TEAMS[p.t];
   const M=new Map();g.forEach(x=>{const k=trKey(x,C.by);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});const K=[...M.keys()].sort();
   try{await document.fonts.load('800 italic 40px "Barlow Condensed"')}catch(e){}
