@@ -6705,22 +6705,28 @@ function ulCheck(){try{
   if(typeof EFF==="undefined"||!EFF.agg)return;
   const st=stampOf(),seen=ulGet(ULS,null);
   if(!seen)ulPush("base:"+EFF.agg+"|"+st,`Dati ufficiali Dunkest in uso: dati al ${EFF.agg} (file aggiornato ${st})`);
-  else if(seen.agg!==EFF.agg||seen.stamp!==st)ulPush("dk:"+EFF.agg+"|"+st,`📥 Caricati i dati ufficiali Dunkest: dati al ${EFF.agg} (file aggiornato ${st})`);
+  else if(seen.agg!==EFF.agg||seen.stamp!==st)ulPush("dk:"+EFF.agg+"|"+st,`Dati ufficiali Dunkest caricati · file delle ${(st.match(/\d{2}:\d{2}$/)||[""])[0]} (${st.split(" ")[0]}) · dati al ${EFF.agg}`);
   ulSet(ULS,{agg:EFF.agg,stamp:st});
   const nights={};(typeof PLV!=="undefined"?PLV:[]).forEach(([n,e])=>{(nights[e[0]]=nights[e[0]]||[]).push(n)});
   const lastOff=drNightOfAgg(EFF.agg);
   for(const lab in nights){const [dd,mm]=lab.split("/");const yy=lastOff.slice(0,4);let d=`${yy}-${mm}-${dd}`;if(d<lastOff.slice(0,4)+"-01-01")d=`${+yy+1}-${mm}-${dd}`;
-    ulPush("espn:"+lab,`⚡ Statistiche ESPN caricate per la notte ${lab}: ${nights[lab].length} ${nights[lab].length===1?"giocatore":"giocatori"} (provvisorie, valide fino ai dati ufficiali)`,d)}
+    ulPush("espn:"+lab,`Statistiche ESPN ufficiali nell'app dalle 07:30 · notte ${lab} · ${nights[lab].length} ${nights[lab].length===1?"giocatore":"giocatori"} (valide fino ai dati Dunkest)`,d)}
+  try{const cut=lvCut(),days=TVD().days;let any=false;
+    for(const d of Object.keys(days)){if(d<drAdd(flUsaOggi(),-2)||d>drAdd(flUsaOggi(),1))continue;
+      for(const g of days[d]){if(g[5]!=="L")continue;const t=lvTip(d,g[6]);if(t!=null&&t<cut)continue;any=true;ulPush("live:"+d+":"+g[0]+g[1],`Modalità live iniziata · ${g[0]}–${g[1]} · inizio partita ${(g[6]||"").replace(/\+\d$/,"")}`)}}
+    if(!any&&window.LVS&&window.LVS>=cut)ulPush("live:espn:"+window.LVS,`Modalità live iniziata · inizio partita ${new Intl.DateTimeFormat("it-IT",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date(window.LVS))}`)}catch(e){}
   ulGet(ULK,[]).filter(x=>x.k.startsWith("espn:")&&x.d&&x.d<=lastOff).forEach(x=>ulPush("sost:"+x.k.slice(5),`🔁 Sostituzione completata: la notte ${x.k.slice(5)} usa ora i dati ufficiali Dunkest (dati al ${EFF.agg}, file aggiornato ${st}); le statistiche ESPN sono state tolte`))
 }catch(e){}}
 const fmt=t=>{try{return new Intl.DateTimeFormat("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(new Date(t)).replace(",","")}catch(e){return new Date(t).toLocaleString()}};
+const evc=k=>/^(dk|base):/.test(k)?"r":k.startsWith("espn:")?"g":k.startsWith("live:")?"v":"y";
+window.ulEvents=function(){ulCheck();return ulGet(ULK,[]).filter(x=>/^(dk|espn|live):/.test(x.k)).slice().reverse().map(x=>({t:fmt(x.t),x:x.x,c:evc(x.k)}))};
 window.vUpdLog=function(){ulCheck();
   const L=ulGet(ULK,[]).slice().reverse(),live=(typeof PLV!=="undefined"&&PLV.length)?[...new Set(PLV.map(x=>x[1][0]))]:[],np=(typeof PLV!=="undefined")?new Set(PLV.map(x=>x[0])).size:0;
   const esc=x=>String(x).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
   return`<div class="ulst"><div><small>Dati ufficiali Dunkest</small><b>Dati al ${esc(EFF.agg)}</b><em>file aggiornato ${esc(stampOf()||"—")}</em></div>
   <div><small>Statistiche ESPN</small><b>${live.length?"IN USO · notte "+live.join(", "):"Non in uso"}</b><em>${live.length?np+" giocatori · sostituite dai dati Dunkest appena arrivano":"entrano alle 07:30 (ora italiana) finché Dunkest non pubblica la notte"}</em></div></div>
   <div class="ulh"><b>Registro</b><button class="sh" data-ulclear="1"><span>Cancella</span></button></div>
-  ${L.length?`<ul class="ullog">${L.map(x=>`<li><time>${fmt(x.t)}</time><span>${esc(x.x)}</span></li>`).join("")}</ul>`:`<p class="note">Ancora nessun evento registrato.</p>`}
+  ${L.length?`<ul class="ullog">${L.map(x=>`<li class="ev-${evc(x.k)}"><time>${fmt(x.t)}</time><span>${esc(x.x)}</span></li>`).join("")}</ul>`:`<p class="note">Ancora nessun evento registrato.</p>`}
   <p class="note">Il registro si scrive quando l'app, aperta su questo telefono, rileva il cambiamento: l'orario è quello del rilevamento (ora italiana). Ogni file Dunkest porta anche il proprio orario di aggiornamento.</p>`};
 document.getElementById("main").addEventListener("click",e=>{const c=e.target.closest("[data-ulclear]");if(!c)return;try{localStorage.removeItem(ULK)}catch(_){}render()});
 {const R1=render;render=function(){const x=R1.apply(this,arguments);ulCheck();lvSync();return x}}
@@ -6731,12 +6737,14 @@ ulCheck();
 })();
 </script>
 <style>html.lvoff :is(.tvdot,.tvbox .lvd,.lbm.live,.lbm.live .lbmd,.pcdlv,.tag.live .dot,h2 .live .dot,.tvst b.lv i,.ntch .ntst,.drlive i,.clbox .clv i,.duw.lv,.dwr.lv,.hseg b.lvb,.court.clive .cln,.cntbtn.on i,.cnlv,.tvgmc.lv .tvlv i,.gv.gvlive,.snbtn.live,.snlvd,.navlive,.navlive *){animation:none!important}html.lvoff .gv.gvlive{outline:none!important}
-.ulst{display:grid;gap:8px;margin:4px 0 12px}.ulst>div{background:rgba(255,255,255,.06);border:1px solid rgba(250,204,21,.35);border-radius:12px;padding:10px 12px;display:grid;gap:2px}.ulst small{font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.75}.ulst b{font-size:16px}.ulst em{font-style:normal;font-size:12.5px;opacity:.8}.ulh{display:flex;justify-content:space-between;align-items:center;margin:6px 0}.ulh .sh{padding:6px 12px}.ullog{list-style:none;margin:0;padding:0;display:grid;gap:6px}.ullog li{display:grid;gap:2px;padding:9px 11px;border-radius:10px;background:rgba(255,255,255,.05);border-left:3px solid #facc15}.ullog time{font-size:12px;font-weight:800;letter-spacing:.04em;color:#facc15}.ullog span{font-size:13.5px;line-height:1.35}</style>
+.ulst{display:grid;gap:8px;margin:4px 0 12px}.ulst>div{background:rgba(255,255,255,.06);border:1px solid rgba(250,204,21,.35);border-radius:12px;padding:10px 12px;display:grid;gap:2px}.ulst small{font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.75}.ulst b{font-size:16px}.ulst em{font-style:normal;font-size:12.5px;opacity:.8}.ulh{display:flex;justify-content:space-between;align-items:center;margin:6px 0}.ulh .sh{padding:6px 12px}.ullog{list-style:none;margin:0;padding:0;display:grid;gap:6px}.ullog li{display:grid;gap:2px;padding:9px 11px;border-radius:10px;background:rgba(255,255,255,.05);border-left:3px solid #facc15}.ullog li.ev-r{border-left-color:#ef4444}.ullog li.ev-r time{color:#f87171}.ullog li.ev-g{border-left-color:#22c55e}.ullog li.ev-g time{color:#4ade80}.ullog li.ev-v{border-left-color:#a855f7}.ullog li.ev-v time{color:#c084fc}
+.ullog time{font-size:12px;font-weight:800;letter-spacing:.04em;color:#facc15}.ullog span{font-size:13.5px;line-height:1.35}</style>
 
 <script>
 /* (260) CRONOLOGIA MODIFICHE: il footer "Ultimo aggiornamento" è cliccabile e apre questa pagina (vista "novita").
    OGNI nuova modifica pubblicata va aggiunta in CIMA a NV_LOG (data, titolo, mini spiegazione). */
 const NV_LOG=[
+ ["28/10/2026","Eventi dati in cima alla cronologia","In rosso il caricamento dei dati Dunkest con il suo orario, in verde le statistiche ESPN che entrano nell'app alle 07:30, in viola l'inizio della modalità live quando parte una partita."],
  ["28/10/2026","Animazioni live legate alle partite","Puntini, bordi lampeggianti e linee del campo partono solo quando una partita è davvero iniziata (anche a mezzogiorno) e si fermano alle 07:30."],
  ["28/10/2026","Sfide Dreamers in Dynasty TV","Chi è in vantaggio ha il punteggio bianco candido, l'altro attenuato, come nelle partite NBA."],
  ["28/10/2026","Stile Parquet: via gli aloni sui numeri","Nessuna sfumatura viola (o arancione) dietro i punteggi dentro Dreamers; il leader è arancione pieno."],
@@ -6764,6 +6772,10 @@ window.vNovita=function(){const by={};NV_LOG.forEach(x=>(by[x[0]]=by[x[0]]||[]).
   const e=x=>String(x).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
   return`<button class="gback" id="nvback">‹ Indietro</button><h2><span class="t">Cronologia modifiche</span></h2>
   <p class="note">Tutto ciò che è cambiato nell'app, dal più recente. Ultimo aggiornamento dati: ${e((document.getElementById("updbtn")||{textContent:""}).textContent.replace(/Ultimo aggiornamento:\s*/,"").replace("›","").trim())}.</p>
+  ${(()=>{const ev=(window.ulEvents?ulEvents():[]),st=((document.getElementById("updbtn")||{textContent:""}).textContent.match(/\d{2}\/\d{2}\/\d{4}\s*·\s*\d{2}:\d{2}/)||[""])[0].replace(/\s+/g," ");
+   return`<section class="nvd"><div class="nvdt">Eventi dati</div><div class="nvleg"><span class="r">Dunkest</span><span class="g">ESPN</span><span class="v">Live</span></div>
+   <article class="nvi nv-r"><b>Ultimo caricamento dati Dunkest</b><span>${e(st||"—")}</span></article>
+   ${ev.length?ev.map(x=>`<article class="nvi nv-${x.c}"><b>${e(x.t)}</b><span>${e(x.x)}</span></article>`).join(""):`<p class="note">Gli eventi (dati Dunkest, statistiche ESPN dalle 07:30, inizio modalità live) compaiono qui quando l'app, aperta su questo telefono, li rileva.</p>`}</section>`})()}
   ${Object.keys(by).map(d=>`<section class="nvd"><div class="nvdt">${d}</div>${by[d].map(x=>`<article class="nvi"><b>${e(x[1])}</b><span>${e(x[2])}</span></article>`).join("")}</section>`).join("")}`};
 VIEWS.novita=vNovita;
 let NV_FROM="home";
@@ -6772,6 +6784,7 @@ let NV_FROM="home";
  document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.id==="updbtn"){e.preventDefault();go()}})}
 </script>
 <style>footer.upd#updbtn{cursor:pointer;-webkit-tap-highlight-color:transparent}footer.upd#updbtn .updar{display:inline-block;margin-left:6px;font-weight:900;opacity:.85}footer.upd#updbtn:active{opacity:.7}
-.nvd{margin:14px 0}.nvdt{font-family:var(--display);font-style:italic;font-weight:800;letter-spacing:.1em;font-size:14px;color:var(--gold,#facc15);margin:0 0 6px}.nvi{display:grid;gap:2px;padding:10px 12px;margin:0 0 6px;border-radius:12px;background:var(--panel,rgba(255,255,255,.06));border:1px solid var(--line,rgba(255,255,255,.14));border-left:4px solid var(--red,#e4163a)}.nvi b{font-size:15px}.nvi span{font-size:13px;line-height:1.35;opacity:.85}</style>
+.nvd{margin:14px 0}.nvdt{font-family:var(--display);font-style:italic;font-weight:800;letter-spacing:.1em;font-size:14px;color:var(--gold,#facc15);margin:0 0 6px}.nvi{display:grid;gap:2px;padding:10px 12px;margin:0 0 6px;border-radius:12px;background:var(--panel,rgba(255,255,255,.06));border:1px solid var(--line,rgba(255,255,255,.14));border-left:4px solid var(--red,#e4163a)}.nvi.nv-r{border-left-color:#ef4444}.nvi.nv-r b{color:#f87171}.nvi.nv-g{border-left-color:#22c55e}.nvi.nv-g b{color:#4ade80}.nvi.nv-v{border-left-color:#a855f7}.nvi.nv-v b{color:#c084fc}.nvleg{display:flex;gap:6px;margin:0 0 8px}.nvleg span{font-size:11px;font-weight:800;padding:3px 9px;border-radius:99px;color:#fff}.nvleg .r{background:#dc2626}.nvleg .g{background:#16a34a}.nvleg .v{background:#9333ea}
+.nvi b{font-size:15px}.nvi span{font-size:13px;line-height:1.35;opacity:.85}</style>
 </body>
 </html>

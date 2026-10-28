@@ -847,3 +847,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 
 (report) 28/10/2026 — report Dunkest automatico caricato: notti 27/10 (4 partite)
 (261) **Cronologia modifiche: niente area segreta** — tolta da `NV_LOG` la voce sul registro aggiornamenti dell'Ufficio Scouting (area riservata Ducks). REGOLA: le modifiche dell'Ufficio Scouting non vanno mai scritte nella cronologia pubblica.
+
+(262) **Eventi dati colorati nella cronologia pubblica** — la pagina Cronologia (footer cliccabile) ha in cima "Eventi dati": 🔴 rosso = dati ufficiali Dunkest caricati (con l'orario del file, riga fissa "Ultimo caricamento" + eventi rilevati), 🟢 verde = statistiche ESPN ufficiali nell'app dalle 07:30 (notte, n. giocatori), 🟣 viola = inizio modalità live (partita, orario d'inizio). Stessi eventi (`dl_updlog`, `ulCheck()`, chiavi `dk:`/`espn:`/`live:`) e stessi colori anche nel registro dell'Ufficio Scouting. REGOLA (Francesco): le modifiche dell'area segreta Scouting Ducks NON vanno mai in `NV_LOG`.
