@@ -5932,15 +5932,23 @@ const FANTA_LIVE=[
   {attivo:()=>["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur),da:()=>FANTA_LIVE[0].da()},
   {attivo:()=>cur==="home"&&SEGUI.length>0,soft:true,da:()=>FANTA_LIVE[0].da()},
   {attivo:()=>cur==="statnotte"&&CNT,da:()=>FANTA_LIVE[0].da()},
-  {attivo:()=>cur==="giochi"&&GAME==="gdream",da:()=>{if(GD_LASTOFF==null)try{gdData()}catch(e){}return GD_LASTOFF?drAdd(GD_LASTOFF,1):GD_START}}];
+  {attivo:()=>cur==="giochi"&&GAME==="gdream",da:()=>{if(GD_LASTOFF==null)try{gdData()}catch(e){}return GD_LASTOFF?drAdd(GD_LASTOFF,1):GD_START}},
+  /* (345) SOTTOFONDO: da QUALSIASI sezione dell'app (scambi, regolamento, impostazioni…) i dati live si scaricano comunque, senza ridisegnare la pagina (soft).
+     Ogni 45 s se c'è una partita in corso, altrimenti ogni 5 minuti. App chiusa o in background: il telefono ferma il codice, quindi nulla; al rientro parte subito un controllo. */
+  {attivo:()=>true,soft:true,fondo:true,da:()=>FANTA_LIVE[0].da()}];
 async function fantaLiveScarica(da){if(FL.run||typeof tvEspn!=="function"||typeof TV==="undefined")return false;FL.run=true;let ch=false;
   try{for(const d of fantaLiveNotti(da)){if(FL.fin[d])continue;const prima=JSON.stringify(fantaLiveNotte(d));try{await tvEspn(d)}catch(e){}
     const G=TV.days[d]||[];if(G.length&&G.every(g=>g[5]==="F"&&g[7]&&TV.box[g[7]]))FL.fin[d]=1;if(JSON.stringify(fantaLiveNotte(d))!==prima)ch=true}}catch(e){}
   FL.run=false;return ch}
+function fantaLiveInCorso(){try{const o=flUsaOggi();return[o,drAdd(o,-1)].some(d=>(TV.days[d]||[]).some(g=>g[5]==="L"))}catch(e){return false}}
 function fantaLiveAvvia(){const go=()=>{if(document.hidden)return;const A=FANTA_LIVE.filter(f=>{try{return f.attivo()}catch(e){return false}});if(!A.length)return;
+    if(A.every(f=>f.fondo)){if(!fantaLiveInCorso()&&Date.now()-(FL.bg||0)<285000)return;FL.bg=Date.now()}
     const da=A.map(f=>f.da()).sort()[0];fantaLiveScarica(da).then(c=>{if(c){const ac=A.filter(f=>f.attivo());if(ac.length&&ac.every(f=>f.soft))segBadge();else if(ac.length){const y=scrollY;render();scrollTo(0,y)}}})};
   /* subito alla prima apertura di ogni fanta/sezione (non aspettare il giro da 60 s), poi ogni 45 s */
   if(!FL.t){FL.t=setInterval(go,45000)}if(Date.now()-(FL.ult||0)>15000){FL.ult=Date.now();setTimeout(go,0)}}
+/* (345) parte da sola all'apertura dell'app e a ogni rientro in primo piano, da qualsiasi sezione */
+setTimeout(()=>{try{fantaLiveAvvia()}catch(e){}},4000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){try{FL.bg=0;fantaLiveAvvia()}catch(e){}}});
 
 
 const drLast=()=>{const k=Object.keys(drNotti()).sort();return k[k.length-1]||null};
