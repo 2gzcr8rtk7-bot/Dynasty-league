@@ -6788,7 +6788,7 @@ ulCheck();
 /* (260) CRONOLOGIA MODIFICHE: il footer "Ultimo aggiornamento" è cliccabile e apre questa pagina (vista "novita").
    OGNI nuova modifica pubblicata va aggiunta in CIMA a NV_LOG (data, titolo, mini spiegazione). */
 const NV_LOG=[
- ["28/10/2026","Confronto Dunkest ↔ ESPN","Nuovo controllo numerico, notte per notte e diviso in Squadre, Free agent e G-League: chi ha giocato, punti PDK, minuti e statistiche letti da ESPN e confrontati con i dati Dunkest. Se Dunkest non ha un giocatore che ESPN dice aver giocato, l'app usa ESPN come dato ufficiale e lo segnala. Il controllo precedente si chiama ora Controllo di coerenza."],
+ ["28/10/2026","Confronto Dunkest ↔ ESPN","Nel centro aggiornamenti ora si vedono solo i giocatori mancanti tra Dunkest ed ESPN (squadre, free agent, G-League) e cosa ha fatto l\'app: ESPN usato dove manca Dunkest, dato Dunkest tenuto dove manca ESPN. Una sezione a parte, Errori Dunkest ↔ ESPN per data, mostra giorno per giorno punti PDK, minuti, statistiche e avversari che non coincidevano: Dunkest sostituisce sempre il dato ESPN. Dalle 07:30 ESPN rende ufficiali anche free agent e G-League finché non arriva Dunkest."],
  ["28/10/2026","Controllo dati automatico","In cima alla cronologia: ✅ se i dati caricati sono completi e coerenti, ⚠️ con l'elenco dei problemi se qualcosa non torna (giocatori mancanti, partite che non coincidono, doppioni ESPN/Dunkest, file in ritardo)."],
  ["28/10/2026","Eventi dati in cima alla cronologia","In rosso il caricamento dei dati Dunkest con il suo orario, in verde le statistiche ESPN che entrano nell'app alle 07:30, in viola l'inizio della modalità live quando parte una partita."],
  ["28/10/2026","Animazioni live legate alle partite","Puntini, bordi lampeggianti e linee del campo partono solo quando una partita è davvero iniziata (anche a mezzogiorno) e si fermano alle 07:30."],
@@ -6889,7 +6889,7 @@ function grp(){if(GR)return GR;const m={};
   Object.values(ROSTER).flat().forEach(p=>m[tvNm(p[0])]={n:p[0],g:"sq"});return GR=m}
 const GN={sq:"Squadre",fa:"Free agent",gl:"G-League"};
 /* dati Dunkest ufficiali di una notte per gruppo (le righe "E" sono quelle messe da ESPN, non contano) */
-function dunk(N,g){const l=lab(N),o={},ok=r=>r&&r[0]===l&&r[8]==null&&r[8]!=="E",row=r=>({min:+r[2]||0,p:+r[3]||0,pts:+r[5]||0,reb:+r[6]||0,ast:+r[7]||0}),G=grp();
+function dunk(N,g){const l=lab(N),o={},ok=r=>r&&r[0]===l&&r[8]==null&&r[8]!=="E",row=r=>({min:+r[2]||0,p:+r[3]||0,pts:+r[5]||0,reb:+r[6]||0,ast:+r[7]||0,opp:String(r[1]||"").replace("@","").toUpperCase()}),G=grp();
   for(const k in G){const x=G[k];if(x.g!==g)continue;let r=null;
     if(g==="gl"){const st=GL_STATS[x.key];r=((st&&st.log)||[]).find(ok)}
     if(g==="fa"&&typeof FAG!=="undefined"){r=(((FAG[x.n]||{})[FAK])||[]).find(ok)}
@@ -6936,33 +6936,61 @@ const E=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]
 function cmp(N,g){const all=CF.d[N];if(!all)return null;const esp={};for(const k in all)if(all[k].g===g)esp[k]=all[k];const off=dunk(N,g),ek=Object.keys(esp).filter(k=>esp[k].min>0),dk=Object.keys(off),both=ek.filter(k=>off[k]);
   const f1=v=>(Math.round(v*10)/10).toString().replace(".",",");
   return{n:{e:ek.length,d:dk.length},miss:ek.filter(k=>!off[k]),extra:dk.filter(k=>!(esp[k]&&esp[k].min>0)),
+    opp:both.filter(k=>off[k].opp&&esp[k].opp&&off[k].opp!==String(esp[k].opp).toUpperCase()).map(k=>[k,off[k].opp,esp[k].opp]),
     pdk:both.filter(k=>Math.abs(off[k].p-esp[k].p)>2).map(k=>[k,f1(off[k].p),f1(esp[k].p)]),
     min:both.filter(k=>Math.abs(off[k].min-esp[k].min)>1.5).map(k=>[k,f1(off[k].min)+"'",f1(esp[k].min)+"'"]),
     st:both.filter(k=>off[k].pts!==esp[k].pts||off[k].reb!==esp[k].reb||off[k].ast!==esp[k].ast).map(k=>[k,`${off[k].pts}/${off[k].reb}/${off[k].ast}`,`${esp[k].pts}/${esp[k].reb}/${esp[k].ast}`]),both:both.length}}
-const nIss=c=>c?c.miss.length+c.extra.length+c.pdk.length+c.min.length+c.st.length:null;
+const nIss=c=>c?c.miss.length+c.extra.length+c.pdk.length+c.min.length+c.st.length+c.opp.length:null;
 const sec=(ttl,ok,sum,body)=>`<section class="cfsec ${ok?"ok":"ko"}"><div class="cfh"><b>${ttl}</b><span>${ok?"✅":"⚠️"} ${sum}</span></div>${body||""}</section>`;
 const tbl=(h,rows,more)=>rows.length?`<table class="cft"><tr>${h.map(x=>`<th>${x}</th>`).join("")}</tr>${rows.slice(0,more||15).map(r=>`<tr>${r.map(x=>`<td>${E(x)}</td>`).join("")}</tr>`).join("")}</table>${rows.length>(more||15)?`<small>…e altri ${rows.length-(more||15)}</small>`:""}`:"";
-window.cfBlock=function(){cfStart();let h=`<div class="nvdt">Confronto Dunkest ↔ ESPN</div>`;
-  if(CF.err&&!Object.keys(CF.d).length)return h+`<div class="cfsec ko"><div class="cfh"><b>Confronto non riuscito</b></div><small>${E(CF.err)} · riprovo tra poco</small></div>`;
-  if(!Object.keys(CF.d).length)return h+`<div class="cfsec"><small>Confronto in corso…</small></div>`;
-  const ns=Object.keys(CF.d).sort().reverse(),sel=CF.d[CF.sel]?CF.sel:ns[0],g=CF.grp,L=drNightOfAgg(EFF.agg),c=cmp(sel,g);
-  const tot=N=>["sq","fa","gl"].reduce((a,k)=>a+(nIss(cmp(N,k))||0),0);
-  h+=`<p class="note">Confronta i dati Dunkest dell'app con i tabellini ESPN, notte per notte${CF.at?` · controllo di questo telefono alle ${CF.at}`:""}. Dove Dunkest manca di un giocatore, ESPN diventa il dato ufficiale finché Dunkest non lo carica o lo corregge (free agent e G-League dalle 07:30; squadre per l'ultima notte, le notti più recenti le gestisce il live).</p>
-  <div class="cfch">${ns.map(N=>{const k=tot(N);return`<button class="cfc${N===sel?" on":""}" data-cfn="${N}">${lab(N)} ${k?`<b class="ko">${k}</b>`:"✅"}</button>`}).join("")}</div>
-  <div class="cfch cfg">${["sq","fa","gl"].map(k=>{const n=nIss(cmp(sel,k));return`<button class="cfc${k===g?" on":""}" data-cfg="${k}">${GN[k]} ${n?`<b class="ko">${n}</b>`:"✅"}</button>`}).join("")}</div>`;
-  if(g==="fa"&&typeof FAG==="undefined"){try{faLoadG()}catch(e){}setTimeout(()=>{if(cur==="novita")render()},1500);return h+`<div class="cfsec"><small>Caricamento dei dati free agent…</small></div>`}
-  const ahead=sel>L||!c.n.d;
-  if(ahead&&!c.n.d)h+=`<div class="cfsec"><div class="cfh"><b>Dunkest non ha ancora questa notte per ${GN[g].toLowerCase()}</b><span>ℹ️ ESPN ${c.n.e} giocatori</span></div><small>${sel>L||sel===L?"Finché non arriva il report Dunkest i dati ESPN sono usati come ufficiali":"Nessun dato Dunkest per questo gruppo in questa notte"}.</small></div>`;
-  else{
-  h+=sec(`Giocatori che hanno giocato · ${GN[g]}`,!c.miss.length&&!c.extra.length,`ESPN ${c.n.e} · Dunkest ${c.n.d}`,
-    (c.miss.length?`<p class="cfp"><b>Mancano su Dunkest</b> (${c.miss.length}): ${E(c.miss.join(", "))}.${sel>=L?" Usato il dato ESPN come ufficiale finché non viene corretto.":""}</p>`:"")+(c.extra.length?`<p class="cfp"><b>Su Dunkest ma non su ESPN</b> (${c.extra.length}): ${E(c.extra.join(", "))}</p>`:""));
-  h+=sec("Punti PDK",!c.pdk.length,c.pdk.length?`${c.pdk.length} diversi (oltre 2)`:`${c.both} coincidono (±2)`,tbl(["Giocatore","Dunkest","ESPN"],c.pdk));
-  h+=sec("Minuti giocati",!c.min.length,c.min.length?`${c.min.length} diversi (oltre 1,5')`:`${c.both} coincidono`,tbl(["Giocatore","Dunkest","ESPN"],c.min));
-  h+=sec("Statistiche (punti/rimbalzi/assist)",!c.st.length,c.st.length?`${c.st.length} diverse`:`${c.both} coincidono`,tbl(["Giocatore","Dunkest","ESPN"],c.st))}
-  const used=CF.oth.length;if(used&&g!=="sq")h+=`<p class="note">ESPN usato come ufficiale per ${CF.oth.filter(u=>u.k===g).length} partite di ${GN[g].toLowerCase()} (in attesa di Dunkest).</p>`;
+/* giorno ESPN caricato a richiesta (calendario) */
+const CL={};async function cfLoadDay(N){if(CF.d[N]||CL[N])return;CL[N]=1;try{CF.d[N]=await night(N,grp())}catch(e){CF.d[N]={};CF.d[N]._err=e.message||"errore"}CL[N]=0;if(cur==="cferr"||cur==="novita")render()}
+const topNight=()=>{const L=drNightOfAgg(EFF.agg),Z=espnNight();return Z>L?Z:L};
+const cleanDay=d=>{const o={};for(const k in d||{})if(k!=="_err")o[k]=d[k];return o};
+const dayData=N=>{const d=CF.d[N];if(!d)return null;if(d._err)return{err:d._err};return d};
+/* BLOCCO SEMPLICE nella cronologia: solo giocatori mancanti (ESPN ↔ Dunkest) dell'ultima notte */
+window.cfBlock=function(){cfStart();let h=`<div class="nvdt">Dunkest ↔ ESPN · giocatori</div>`;
+  const L=drNightOfAgg(EFF.agg),Z=topNight(),N=CF.d[L]&&!CF.d[L]._err?L:null;
+  if(!N){h+=CF.err?`<div class="cfsec"><small>Confronto non riuscito: ${E(CF.err)} · riprovo tra poco</small></div>`:`<div class="cfsec"><small>Confronto in corso…</small></div>`}
+  else{if(typeof FAG==="undefined"){try{faLoadG()}catch(e){}setTimeout(()=>{if(cur==="novita")render()},1500)}
+    if(Z>L)h+=`<div class="cfsec"><div class="cfh"><b>Notte ${lab(Z)}</b><span>ℹ️ Dunkest non ancora caricato</span></div><small>ESPN è il dato ufficiale provvisorio finché non arriva il report Dunkest.</small></div>`;
+    const ln=["sq","fa","gl"].map(g=>{if(g==="fa"&&typeof FAG==="undefined")return"";const c=cmp(N,g);if(!c)return"";
+      if(!c.miss.length&&!c.extra.length)return`<li class="y">✓ ${GN[g]}: stessi giocatori su Dunkest ed ESPN (${c.n.e})</li>`;
+      return(c.miss.length?`<li class="n">✗ ${GN[g]} · mancano su Dunkest (${c.miss.length}): ${E(c.miss.join(", "))} → <b>usato ESPN come dato ufficiale</b> finché Dunkest non lo corregge</li>`:"")+(c.extra.length?`<li class="w">! ${GN[g]} · solo su Dunkest (${c.extra.length}): ${E(c.extra.join(", "))} → <b>tenuto il dato Dunkest</b>, nessuna sostituzione</li>`:"")}).join("");
+    h+=`<div class="nvck ${/class="n"/.test(ln)?"ko":"ok"}"><b>Notte ${lab(N)}${CF.at?" · controllo di questo telefono alle "+CF.at:""}</b><small>Dunkest sostituisce sempre ESPN quando arriva</small><ul>${ln}</ul></div>`}
+  return h+`<button class="cfgo" data-cfgo="1">Errori Dunkest ↔ ESPN per data ›</button>`};
+/* SEZIONE A PARTE: errori specifici giorno per giorno */
+window.vCfErr=function(){cfStart();const L=drNightOfAgg(EFF.agg),top=topNight(),MIN="2026-10-20";let N=CF.sel2||top;if(N>top)N=top;if(N<MIN)N=MIN;CF.sel2=N;const g=CF.grp2||"sq";
+  let h=`<button class="gback" id="cfback">‹ Cronologia modifiche</button><h2><span class="t">Errori Dunkest ↔ ESPN</span></h2>
+  <p class="note">Scegli una notte (data della partita NBA) e vedi cosa non coincide tra Dunkest ed ESPN. Dove i due dati sono diversi, nell'app vale Dunkest: ha sostituito il dato ESPN, che non viene più usato. ESPN vale solo quando Dunkest manca di un giocatore.</p>
+  <div class="cfnav"><button data-cfd="-1" aria-label="Giorno prima">‹</button><input type="date" id="cfdate" value="${N}" min="${MIN}" max="${top}"><button data-cfd="1" aria-label="Giorno dopo"${N>=top?" disabled":""}>›</button></div>`;
+  cfLoadDay(N);const D=dayData(N);
+  if(!D)return h+`<div class="cfsec"><small>Caricamento della notte ${lab(N)}…</small></div>`;
+  if(D.err)return h+`<div class="cfsec ko"><div class="cfh"><b>Notte ${lab(N)}</b><span>⚠️ non riuscito</span></div><small>${E(D.err)}</small></div>`;
+  if(typeof FAG==="undefined"){try{faLoadG()}catch(e){}setTimeout(()=>{if(cur==="cferr")render()},1500)}
+  h+=`<div class="cfch cfg">${["sq","fa","gl"].map(k=>{const n=nIss(cmp(N,k));return`<button class="cfc${k===g?" on":""}" data-cfg="${k}">${GN[k]} ${n==null?"":n?`<b class="ko">${n}</b>`:"✅"}</button>`}).join("")}</div>`;
+  if(g==="fa"&&typeof FAG==="undefined")return h+`<div class="cfsec"><small>Caricamento dei dati free agent…</small></div>`;
+  const c=cmp(N,g);
+  if(N>L)return h+`<div class="cfsec"><div class="cfh"><b>Dunkest non ha ancora questa notte</b><span>ℹ️ ESPN ${c.n.e} giocatori</span></div><small>Per ora l'app usa ESPN; quando arriva il report Dunkest lo sostituisce e qui comparirà il confronto.</small></div>`;
+  if(!c.n.d&&!c.n.e)return h+`<div class="cfsec"><small>Nessun dato per ${GN[g].toLowerCase()} in questa notte (da entrambe le fonti).</small></div>`;
+  const used=N>=L;
+  if(!c.miss.length&&!c.extra.length&&!c.opp.length&&!c.pdk.length&&!c.min.length&&!c.st.length)h+=`<div class="cfsec ok"><div class="cfh"><b>Tutto coincide</b><span>✅ ${c.both} giocatori</span></div></div>`;
+  if(c.miss.length)h+=sec("Mancano su Dunkest (solo ESPN)",false,`${c.miss.length}`,`<p class="cfp">${E(c.miss.join(", "))}</p><p class="cfp"><b>${used?"ESPN usato come dato ufficiale finché Dunkest non lo corregge.":"Non usato: la notte è già stata chiusa da Dunkest senza questi giocatori."}</b></p>`);
+  if(c.extra.length)h+=sec("Solo su Dunkest (non su ESPN)",false,`${c.extra.length}`,`<p class="cfp">${E(c.extra.join(", "))}</p><p class="cfp"><b>Tenuto il dato Dunkest, nessuna sostituzione.</b></p>`);
+  const fx="<p class=\"cfp\"><b>Dunkest ha sostituito il dato ESPN</b>: nell'app vale Dunkest.</p>";
+  if(c.opp.length)h+=sec("Avversario diverso",false,`${c.opp.length}`,tbl(["Giocatore","Dunkest","ESPN"],c.opp)+fx);
+  if(c.pdk.length)h+=sec("Punti PDK diversi (oltre 2)",false,`${c.pdk.length}`,tbl(["Giocatore","Dunkest","ESPN"],c.pdk)+fx);
+  if(c.min.length)h+=sec("Minuti diversi (oltre 1,5')",false,`${c.min.length}`,tbl(["Giocatore","Dunkest","ESPN"],c.min)+fx);
+  if(c.st.length)h+=sec("Statistiche diverse (punti/rimbalzi/assist)",false,`${c.st.length}`,tbl(["Giocatore","Dunkest","ESPN"],c.st)+fx);
   return h};
-document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest("[data-cfn],[data-cfg]");if(t){if(t.dataset.cfn)CF.sel=t.dataset.cfn;if(t.dataset.cfg)CF.grp=t.dataset.cfg;render()}});
-const st=document.createElement("style");st.textContent=`.cfsec{margin:8px 0;padding:9px 11px;border-radius:12px;border:1px solid rgba(128,128,128,.35);border-left:4px solid #22c55e;background:rgba(128,128,128,.08)}.cfsec.ko{border-left-color:#ef4444}.cfh{display:flex;justify-content:space-between;gap:8px;font-size:13px}.cfh span{opacity:.9;text-align:right}.cfp{margin:6px 0 0;font-size:12.5px;line-height:1.4}.cft{width:100%!important;min-width:0!important;table-layout:fixed;border-collapse:collapse;font-size:12px;margin-top:6px;display:table!important}.cft th,.cft td{text-align:left!important;padding:3px 4px!important;height:auto!important;font-size:12px!important;letter-spacing:0!important;font-style:normal!important;text-transform:none!important;border-top:1px solid rgba(128,128,128,.25);overflow-wrap:anywhere;background:none!important;position:static!important}.cft tr{background:none!important;border:0!important;height:auto!important}.cft th{opacity:.7;font-weight:700}.cft th:first-child,.cft td:first-child{width:48%}.cfch{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.cfc{border:1px solid rgba(128,128,128,.4);background:none;color:inherit;border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer}.cfc.on{background:rgba(250,204,21,.22);border-color:#facc15;font-weight:800}.cfc b.ko{background:#ef4444;color:#fff;border-radius:8px;padding:0 5px;margin-left:2px}.cfg .cfc{font-weight:700}`;document.head.appendChild(st);
+VIEWS.cferr=window.vCfErr;
+document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest("[data-cfg],[data-cfd],[data-cfgo],#cfback");if(!t)return;
+  if(t.dataset.cfgo){cur="cferr";render();window.scrollTo(0,0);return}
+  if(t.id==="cfback"){cur="novita";render();window.scrollTo(0,0);return}
+  if(t.dataset.cfg){CF.grp2=t.dataset.cfg;render();return}
+  if(t.dataset.cfd){const d=new Date((CF.sel2||topNight())+"T00:00:00Z");d.setUTCDate(d.getUTCDate()+(+t.dataset.cfd));CF.sel2=d.toISOString().slice(0,10);render()}});
+document.addEventListener("change",e=>{if(e.target&&e.target.id==="cfdate"&&e.target.value){CF.sel2=e.target.value;render()}});
+const st=document.createElement("style");st.textContent=`.cfsec{margin:8px 0;padding:9px 11px;border-radius:12px;border:1px solid rgba(128,128,128,.35);border-left:4px solid #22c55e;background:rgba(128,128,128,.08)}.cfsec.ko{border-left-color:#ef4444}.cfh{display:flex;justify-content:space-between;gap:8px;font-size:13px}.cfh span{opacity:.9;text-align:right}.cfp{margin:6px 0 0;font-size:12.5px;line-height:1.4}.cft{width:100%!important;min-width:0!important;table-layout:fixed;border-collapse:collapse;font-size:12px;margin-top:6px;display:table!important}.cft th,.cft td{text-align:left!important;padding:3px 4px!important;height:auto!important;font-size:12px!important;letter-spacing:0!important;font-style:normal!important;text-transform:none!important;border-top:1px solid rgba(128,128,128,.25);overflow-wrap:anywhere;background:none!important;position:static!important}.cft tr{background:none!important;border:0!important;height:auto!important}.cft th{opacity:.7;font-weight:700}.cft th:first-child,.cft td:first-child{width:48%}.cfch{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.cfc{border:1px solid rgba(128,128,128,.4);background:none;color:inherit;border-radius:999px;padding:4px 10px;font-size:12px;cursor:pointer}.cfc.on{background:rgba(250,204,21,.22);border-color:#facc15;font-weight:800}.cfc b.ko{background:#ef4444;color:#fff;border-radius:8px;padding:0 5px;margin-left:2px}.cfg .cfc{font-weight:700}.nvck li b{display:inline!important;font:inherit!important;font-weight:800!important;color:inherit!important;letter-spacing:0!important}.cfnav{display:flex;gap:8px;align-items:center;margin:10px 0}.cfnav button{width:40px;height:40px;border-radius:10px;border:1px solid rgba(128,128,128,.45);background:rgba(128,128,128,.12);color:inherit;font-size:20px;cursor:pointer}.cfnav button:disabled{opacity:.35}.cfnav input{flex:1;min-width:0;height:40px;border-radius:10px;border:1px solid rgba(128,128,128,.45);background:rgba(128,128,128,.12);color:inherit;font:700 15px var(--body);padding:0 10px}.cfgo{display:block;width:100%;margin:8px 0 14px;padding:11px;border-radius:12px;border:1px solid rgba(250,204,21,.6);background:rgba(250,204,21,.12);color:inherit;font:800 13px var(--display);font-style:italic;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}`;document.head.appendChild(st);
 /* (269) INFORTUNI AUTOMATICI DA ESPN: gli infortunati delle nostre squadre vengono SOLO da ESPN (lista NBA Injuries), riletta all'apertura dell'app, ogni 5 minuti e quando si torna sull'app.
    Sostituisce INFORTUNI.lista (la lista manuale resta solo come ripiego se ESPN non risponde). Stato, tipo, rientro e nota vengono da ESPN; il Centro Medico, la X rossa e il rientro automatico seguono da soli. */
 const TRI={ankle:"caviglia",knee:"ginocchio",foot:"piede",toe:"alluce",hand:"mano",wrist:"polso",finger:"dito",thumb:"pollice",shoulder:"spalla",elbow:"gomito",back:"schiena",hip:"anca",hamstring:"posteriore coscia",groin:"inguine",calf:"polpaccio",quadriceps:"quadricipite",thigh:"coscia",achilles:"tendine d'Achille",leg:"gamba",head:"testa",neck:"collo",rib:"costola",ribs:"costole",eye:"occhio",nose:"naso",illness:"malattia",knee_:"",sprain:"distorsione",strain:"stiramento",soreness:"fastidio",surgery:"intervento",fracture:"frattura",contusion:"contusione",bruise:"contusione",tendinitis:"tendinite",injury:"infortunio",concussion:"commozione cerebrale",rest:"riposo",management:"gestione",left:"sinistro/a",right:"destro/a"};
