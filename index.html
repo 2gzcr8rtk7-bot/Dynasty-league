@@ -6643,7 +6643,7 @@ function pqFix(){try{
     const bc=pr(cs.backgroundColor);if(!c||c.a<.95){if(bc&&bc.a>0&&(!c||bc.a>=.95))c=bc}
     if(c&&c.a>=.95)res=c;else{const par=el.parentElement;const under=par?bgOf(par):{r:255,g:246,b:228};res=c&&c.a>0?{r:c.r*c.a+under.r*(1-c.a),g:c.g*c.a+under.g*(1-c.a),b:c.b*c.a+under.b*(1-c.a)}:under}
     cache.set(el,res);return res};
-  const W={r:255,g:255,b:255},DK={r:43,g:22,b:8},OR={r:184,g:65,b:10};
+  const W={r:255,g:255,b:255},DK={r:43,g:22,b:8},OR={r:184,g:65,b:10},ORD={r:124,g:45,b:5};
   document.querySelectorAll(app?"header *,main *,#subnav *,#subnav2 *":'.drroom[data-th="3"] *').forEach(el=>{
     if(el.tagName==="svg"||el.closest("svg"))return;
     if(el.closest(".htile"))return;
@@ -6659,9 +6659,12 @@ function pqFix(){try{
     let shadow=false;
     if(L<.3)n=W;
     else{const sat=Math.max(fg.r,fg.g,fg.b)-Math.min(fg.r,fg.g,fg.b)>90;
-      if(sat){let k=.1;n=mix(fg,{r:0,g:0,b:0},k);while(cr(n,bg)<4.2&&k<.9){k+=.1;n=mix(fg,{r:0,g:0,b:0},k)}}
+      if(sat){let k=.1;n=mix(fg,{r:0,g:0,b:0},k);while(cr(n,bg)<3.4&&k<.9){k+=.1;n=mix(fg,{r:0,g:0,b:0},k)}}
       else n=OR;
-      if(cr(n,bg)<3.4){n=W;shadow=true}}/* sul legno: bianco con contorno marrone */
+      if(cr(n,bg)<3.4){const wood=bg.r>170&&bg.g>120&&bg.r>bg.g&&bg.g>bg.b&&bg.r-bg.b>80&&bg.r-bg.b<145;
+        if(wood){n=W;shadow=true}/* sul legno: bianco con contorno marrone */
+        else if(cr(ORD,bg)>=3.4)n=ORD;/* su colori vivaci (verde, giallo, viola…): arancione bruciato */
+        else{n=W;shadow=true}}}
     if(shadow)el.style.setProperty("text-shadow","0 1px 0 #6b3a10,0 -1px 0 #6b3a10,1px 0 0 #6b3a10,-1px 0 0 #6b3a10,0 2px 6px rgba(60,25,0,.6)","important");
     el.style.setProperty("color",`rgb(${n.r|0},${n.g|0},${n.b|0})`,"important");el.setAttribute("data-pq","1");PQL.push(el)});
 }catch(e){}}
