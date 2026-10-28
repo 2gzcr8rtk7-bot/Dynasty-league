@@ -1031,3 +1031,7 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 - Nomi: iniziale + punto + cognome (maiuscolo CourtBlock), mai rimpiccioliti: vanno a capo se servono (nbsp tra iniziale e cognome; `duFit` toglie il nbsp se un cognome lungo non entra in riga, poi tracking -0,02em come ultima risorsa). `.duh` min-height 46px per tenere allineate le righe.
 - Non toccata l'immagine condivisa del duello (`shDuel`), che ha il suo disegno.
 - (312) Bottone PDK scelto dall'utente: larghezza 67% della colonna, attaccato al bordo destro (`justify-self:end`).
+
+### (313) Turno 3 accorciato, turno 4 allungato (IN CODA, NON pubblicato)
+- `DR_TURNI[0]`: 25/10–30/10 (era fino al 1/11); `DR_TURNI[1]`: 31/10–3/11 (era 2–3/11). Dal calendario in `tv-data.js` (ESPN): turno 4 prima = 30 squadre NBA con 1 sola partita; ora 22 squadre con 2 partite e 8 con 1, nessuna con 3 (il 3/11 non ha gare). Turno 3: 5 squadre con 2 partite, 20 con 3, 5 con 4. Il turno 5 (4–6/11) resta uguale.
+- Nota: `DR_ZERO["5"]=["ATL"]` risulta superato dal calendario ESPN aggiornato (tutte le squadre hanno almeno 1 gara il 4–6/11): da rigenerare per tutti i turni quando serve.
