@@ -1003,3 +1003,9 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 - `vFA()` ora include anche `faOthers()`: giocatori delle 8 rose (ROSTER, stagione corrente da PARTITE, passate da STAGIONI) e della G League (GL_STATS.log / GL_PAST), righe `.faoth` nascoste finché la ricerca non le trova. Stesse colonne PG/Min/PDK/Eff, filtri stagione e ruolo; filtro "G League" esclude i giocatori di squadra. Logo squadra (`badge`) o G-League (`glBadge`) accanto al nome. Giocatori G League già presenti tra i FA non sono duplicati.
 - Click: squadra → scheda giocatore (gFrom="fa"), G League → `glVai`. La query di ricerca (`faQ`) resta al ritorno e al cambio stagione/ruolo.
 - Voce pubblica in NV_LOG.
+
+### (308) Condividi scheda giocatore
+- Accanto a "Segui" (nella `.segrow` dell'intestazione di scheda squadra, free agent e G League) c'è il tasto "Condividi" (`plShBtn()`, `data-share="pl"`), che usa il foglio di condivisione esistente (`shOpen("pl")`).
+- `shPlayer()` disegna un'immagine 1080×1350: maglia (squadra) o logo G League, nome, ruolo · squadra NBA · numero, età in anni, PDK medi (pillola colorata), efficienza media (pallino per livello), minuti medi, partite, ultima gara, proiezione 36', grafico del trend PDK partita per partita con linea della media, "ultime N gare vs media" e rank lega PDK (solo giocatori di squadra). Stagione = quella scelta nel menu della scheda.
+- I dati vengono da `SHR_PL`, impostato in `vGiocatore` / `vFAP` / `vGLP` a ogni render. Con 0 partite mostra "Nessuna partita NBA in questa stagione". Grafico dalla 2ª partita.
+- `.segrow` ora è flex (gap 8px) per affiancare i due tasti.
