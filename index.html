@@ -2213,7 +2213,7 @@ html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.0
   </div>
 </header>
 <main class="wrap" id="main"></main>
-<footer class="wrap upd">Ultimo aggiornamento: 27/10/2026 · 10:32</footer>
+<footer class="wrap upd" id="updbtn" role="button" tabindex="0" aria-label="Apri la cronologia delle modifiche">Ultimo aggiornamento: 27/10/2026 · 10:32 <span class="updar">›</span></footer>
 
 <script src="dreamers-data.js"></script>
 <script src="tv-data.js"></script>
@@ -6733,5 +6733,47 @@ ulCheck();
 </script>
 <style>html.lvoff :is(.tvdot,.tvbox .lvd,.lbm.live,.lbm.live .lbmd,.pcdlv,.tag.live .dot,h2 .live .dot,.tvst b.lv i,.ntch .ntst,.drlive i,.clbox .clv i,.duw.lv,.dwr.lv,.hseg b.lvb,.court.clive .cln,.cntbtn.on i,.cnlv,.tvgmc.lv .tvlv i,.gv.gvlive,.snbtn.live,.snlvd,.navlive,.navlive *){animation:none!important}html.lvoff .gv.gvlive{outline:none!important}
 .ulst{display:grid;gap:8px;margin:4px 0 12px}.ulst>div{background:rgba(255,255,255,.06);border:1px solid rgba(250,204,21,.35);border-radius:12px;padding:10px 12px;display:grid;gap:2px}.ulst small{font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.75}.ulst b{font-size:16px}.ulst em{font-style:normal;font-size:12.5px;opacity:.8}.ulh{display:flex;justify-content:space-between;align-items:center;margin:6px 0}.ulh .sh{padding:6px 12px}.ullog{list-style:none;margin:0;padding:0;display:grid;gap:6px}.ullog li{display:grid;gap:2px;padding:9px 11px;border-radius:10px;background:rgba(255,255,255,.05);border-left:3px solid #facc15}.ullog time{font-size:12px;font-weight:800;letter-spacing:.04em;color:#facc15}.ullog span{font-size:13.5px;line-height:1.35}</style>
+
+<script>
+/* (260) CRONOLOGIA MODIFICHE: il footer "Ultimo aggiornamento" è cliccabile e apre questa pagina (vista "novita").
+   OGNI nuova modifica pubblicata va aggiunta in CIMA a NV_LOG (data, titolo, mini spiegazione). */
+const NV_LOG=[
+ ["28/10/2026","Animazioni live legate alle partite","Puntini, bordi lampeggianti e linee del campo partono solo quando una partita è davvero iniziata (anche a mezzogiorno) e si fermano alle 07:30."],
+ ["28/10/2026","Registro aggiornamenti dati","Ufficio Scouting → 🔄 Aggiornamenti: scrive quando arrivano le statistiche ESPN (dalle 07:30) e quando Dunkest pubblica i dati ufficiali e le sostituisce."],
+ ["28/10/2026","Sfide Dreamers in Dynasty TV","Chi è in vantaggio ha il punteggio bianco candido, l'altro attenuato, come nelle partite NBA."],
+ ["28/10/2026","Stile Parquet: via gli aloni sui numeri","Nessuna sfumatura viola (o arancione) dietro i punteggi dentro Dreamers; il leader è arancione pieno."],
+ ["28/10/2026","Pulsante Stile nelle Impostazioni","Non è più in alto accanto all'ingranaggio: lo trovi in Impostazioni → App (🎨 Cambia stile)."],
+ ["28/10/2026","Parquet: leggibilità ovunque","Arancione su fondi chiari, bianco su arancione, niente scritte nere; menu a tendina e stelline corretti."],
+ ["28/10/2026","Parquet: caselle squadra della Home","Sfondo a doghe di parquet con cornice chiara e nomi bianchi."],
+ ["28/10/2026","Trade e Trade speciali unite","Una sola voce \"Trade\" con due schede: Tutte le trade e Trade speciale."],
+ ["28/10/2026","Tasto Ripristina","Nelle Impostazioni, rosso, con conferma: riporta a zero tutte le scelte grafiche."],
+ ["28/10/2026","Anteprima campo fissa","Nelle Impostazioni l'anteprima sale in cima scorrendo e poi resta ferma, senza tremolii."],
+ ["28/10/2026","Sezione Giochi rimossa","Tolta la scheda Giochi (Arcade) dalla barra; Dreamers e G-Dreamers restano."],
+ ["28/10/2026","Statistiche live ESPN","Dalle 07:30 i dati della notte (ESPN) entrano in medie, grafici, pagina giocatore ed efficienza; i dati ufficiali Dunkest li sostituiscono appena arrivano."],
+ ["27/10/2026","Stile Parquet dell'app","Tema arancione/crema, loghi pieni, logo Dreamers arancione; sincronizzato con lo stile di Dreamers."],
+ ["27/10/2026","Stile Tabellone e pulsante Stile","Tema nero/ambra per tutta l'app, con pulsante per cambiare stile."],
+ ["27/10/2026","Risultati a turni Dreamers","Centro gestione → Risultati scorre i turni Dreamers (passati, presenti e futuri)."],
+ ["27/10/2026","Classifica Dreamers","La classifica non usa più i dati Dunkest ma i risultati Dreamers."],
+ ["27/10/2026","G-Dreamers nel Centro gestione","Dunkest diventa Centro gestione; la G League diventa G-Dreamers con due viste: Squadre e Campionato."],
+ ["27/10/2026","Sfida: Campo, Panchina, Tribuna","Nella pagina della sfida le tre zone sono distinte con riquadri colorati."],
+ ["27/10/2026","Punteggi sempre incolonnati","I punteggi delle squadre restano allineati in ogni stile e in ogni turno."],
+ ["27/10/2026","Bordino rosso live del tabellone","Le partite live sono segnate da un bordino rosso lampeggiante, non più da un riempimento rosso."],
+ ["27/10/2026","Loghi senza ombra","Nelle grafiche di Dreamers i loghi non hanno più l'ombra dietro."],
+ ["27/10/2026","Condivisione con la tua grafica","Il tasto Condividi crea l'immagine con lo stile scelto da chi condivide."],
+ ["27/10/2026","Stile predefinito","Senza modalità notte parte lo stile App; con la notte resta quello verde/viola."]
+];
+window.vNovita=function(){const by={};NV_LOG.forEach(x=>(by[x[0]]=by[x[0]]||[]).push(x));
+  const e=x=>String(x).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+  return`<button class="gback" id="nvback">‹ Indietro</button><h2><span class="t">Cronologia modifiche</span></h2>
+  <p class="note">Tutto ciò che è cambiato nell'app, dal più recente. Ultimo aggiornamento dati: ${e((document.getElementById("updbtn")||{textContent:""}).textContent.replace(/Ultimo aggiornamento:\s*/,"").replace("›","").trim())}.</p>
+  ${Object.keys(by).map(d=>`<section class="nvd"><div class="nvdt">${d}</div>${by[d].map(x=>`<article class="nvi"><b>${e(x[1])}</b><span>${e(x[2])}</span></article>`).join("")}</section>`).join("")}`};
+VIEWS.novita=vNovita;
+let NV_FROM="home";
+{const go=()=>{if(cur!=="novita")NV_FROM=cur;cur="novita";render();window.scrollTo(0,0)};
+ document.addEventListener("click",e=>{if(e.target.closest("#updbtn")){go();return}if(e.target.closest("#nvback")){cur=NV_FROM||"home";render();window.scrollTo(0,0)}});
+ document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.id==="updbtn"){e.preventDefault();go()}})}
+</script>
+<style>footer.upd#updbtn{cursor:pointer;-webkit-tap-highlight-color:transparent}footer.upd#updbtn .updar{display:inline-block;margin-left:6px;font-weight:900;opacity:.85}footer.upd#updbtn:active{opacity:.7}
+.nvd{margin:14px 0}.nvdt{font-family:var(--display);font-style:italic;font-weight:800;letter-spacing:.1em;font-size:14px;color:var(--gold,#facc15);margin:0 0 6px}.nvi{display:grid;gap:2px;padding:10px 12px;margin:0 0 6px;border-radius:12px;background:var(--panel,rgba(255,255,255,.06));border:1px solid var(--line,rgba(255,255,255,.14));border-left:4px solid var(--red,#e4163a)}.nvi b{font-size:15px}.nvi span{font-size:13px;line-height:1.35;opacity:.85}</style>
 </body>
 </html>
