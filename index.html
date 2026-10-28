@@ -2249,9 +2249,9 @@ const LOGO2={"DUC":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeAAAAF+CAYAAA
 /* LOGO DUCKS PERSONALIZZATO (area riservata › Personalizzazioni): scelta salvata su questo telefono; vale ovunque (Home, campo, banner, immagini condivise) tranne la G League, che ha il suo logo in GLEAGUE */
 const LOGO_DUC0={a:LOGO.DUC,b:LOGO2.DUC};
 const DUC_LOGHI=[["1","Bandana Texas","loghi/duc-1.webp"],["2","Fulmine blu","loghi/duc-2.webp"],["3","Cowboy oro","loghi/duc-3.webp"],["4","Cowboy bianco","loghi/duc-4.webp"],["5","Sceriffo","loghi/duc-5.webp"],["6","Pazzo","loghi/duc-6.webp"],["7","Pazzo lingua","loghi/duc-7.webp?v=2"],["8","Pazzo furioso","loghi/duc-8.webp?v=2"]];
-let DUC_L="";try{DUC_L=localStorage.getItem("dl_ducl")||""}catch(e){}
-function ducLogoApply(){const f=DUC_LOGHI.find(x=>x[0]===DUC_L),u=f?f[2]:null;LOGO.DUC=u||LOGO_DUC0.a;LOGO2.DUC=u||LOGO_DUC0.b;let st=document.getElementById("ducl");if(!st){st=document.createElement("style");st.id="ducl";document.head.appendChild(st)}st.textContent=u?`.lg-DUC,.hlg .lg-DUC{background-image:url(${u})}`:""}
-function ducLogoSet(k){DUC_L=k||"";try{k?localStorage.setItem("dl_ducl",k):localStorage.removeItem("dl_ducl")}catch(e){}ducLogoApply()}
+let DUC_L="",DUC_C="",DUC_CURL=null;try{DUC_L=localStorage.getItem("dl_ducl")||"";DUC_C=localStorage.getItem("dl_ducc")||""}catch(e){}
+function ducLogoApply(){const f=DUC_LOGHI.find(x=>x[0]===DUC_L),u=f?f[2]:null,g=DUC_LOGHI.find(x=>x[0]===DUC_C),v=g?g[2]:null;DUC_CURL=v;LOGO.DUC=u||LOGO_DUC0.a;LOGO2.DUC=v||LOGO_DUC0.b;let st=document.getElementById("ducl");if(!st){st=document.createElement("style");st.id="ducl";document.head.appendChild(st)}st.textContent=u?`.lg-DUC,.hlg .lg-DUC{background-image:url(${u})}`:""}
+function ducLogoSet(k,w){if(w==="c"){DUC_C=k||"";try{k?localStorage.setItem("dl_ducc",k):localStorage.removeItem("dl_ducc")}catch(e){}}else{DUC_L=k||"";try{k?localStorage.setItem("dl_ducl",k):localStorage.removeItem("dl_ducl")}catch(e){}}ducLogoApply()}
 ducLogoApply();
 /* Crediti disponibili di ogni franchigia */
 /* ===== CASSA =====
@@ -4967,7 +4967,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>CNT?(nv(b[0])??-1e9)-(nv(a[0])??-1e9):(pdkMed(b[0])??-99)-(pdkMed(a[0])??-99));  /* panchina in ordine di efficienza media stagionale (stesso valore mostrato), si riordina a ogni aggiornamento */
   return `<button class="gback" id="cback">‹ Home</button>
   <div class="teamhead" style="${dlHeadSty(curTeam)}">
-   ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${LOGO[t]}" alt=""${dlHeadLogo(t)}>`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
+   ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${(t==="DUC"&&DUC_CURL)||LOGO[t]}" alt=""${dlHeadLogo(t)}>`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
   ${bacheca(t)}
   ${cassa(t)}
   ${CNT&&DT2?drTabellone(t,DT2,DK2,DP2,true):CNT?H(CNT?"Modalità notte":"Quintetto",`<em>${CNT?(()=>{const d=campoNotte();if(!d)return"nessuna partita";const dd=tvDt(d);return`${dd.getUTCDate()}/${dd.getUTCMonth()+1}`})():`Dreamers · ${DR_PH(DK,DP)}`}</em>${kitBtn(t)}<button class="cntbtn${CNT?" on":""}" id="cntbtn" aria-pressed="${CNT}" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`):drTabellone(t,DT,DK,DP)}
@@ -7148,14 +7148,17 @@ function sala(){if(!COL.d){cur="campo";return vCampo()}
   <button class="hoftile" data-hof="soft"><span class="hi">⚙️</span><span><b>Software</b><small>Cap · Multe</small></span><i>›</i></button>
  </div><p class="hoftt">🦆 Texas Ducks · uso interno</p></div>`}
 function pers(){if(!COL.d){cur="campo";return vCampo()}
- const cur0=DUC_L,orig=LOGO_DUC0.b||LOGO_DUC0.a,sel=DUC_LOGHI.find(x=>x[0]===cur0);
- const opt=(k,nm,u)=>`<button class="hlo${(cur0||"")===k?" on":""}" data-hlo="${k}" aria-pressed="${(cur0||"")===k}"><span style="background-image:url(${u})"></span><small>${E(nm)}</small></button>`;
- return`<div class="hof"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
- <div class="hofhd"><div style="grid-column:1/3"><small>Texas Ducks · area riservata del GM</small><b>Personalizzazioni</b><em>Il look della tua app</em></div></div>
- <section class="hofcard"><h4>Logo Texas Ducks</h4><p class="setnote">Scegli il logo: cambia ovunque nell'app (Home, campo, classifiche, immagini condivise) tranne che nella G League. La scelta vale su questo telefono.</p>
+ const orig=LOGO_DUC0.b||LOGO_DUC0.a;
+ const card=(w,tit,nota)=>{const c0=w==="c"?DUC_C:DUC_L,sel=DUC_LOGHI.find(x=>x[0]===c0);
+  const opt=(k,nm,u)=>`<button class="hlo${(c0||"")===k?" on":""}" data-hlo="${k}" data-hw="${w}" aria-pressed="${(c0||"")===k}"><span style="background-image:url(${u})"></span><small>${E(nm)}</small></button>`;
+  return`<section class="hofcard"><h4>${tit}</h4><p class="setnote">${nota}</p>
  <div class="hlprev"><span style="background-image:url(${sel?sel[2]:orig})"></span><div><b>${sel?E(sel[1]):"Logo originale"}</b><small>In uso adesso</small></div></div>
  <div class="hlgrid">${opt("","Originale",orig)}${DUC_LOGHI.map(x=>opt(x[0],x[1],x[2])).join("")}</div>
- <button class="hlreset" data-hlo=""${cur0?"":" disabled"}>↺ Ripristina logo originale</button></section>
+ <button class="hlreset" data-hlo="" data-hw="${w}"${c0?"":" disabled"}>↺ Ripristina logo originale</button></section>`};
+ return`<div class="hof"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
+ <div class="hofhd"><div style="grid-column:1/3"><small>Texas Ducks · area riservata del GM</small><b>Personalizzazioni</b><em>Il look della tua app</em></div></div>
+ ${card("p","Logo dei profili","L'immagine della squadra nei profili: Home, liste, classifiche, chip e pagina squadra. Non cambia nella G League. Vale su questo telefono.")}
+ ${card("c","Logo del campo","Il logo nel banner e al centro del campo, nelle immagini condivise e nella bacheca. Scelta indipendente da quella dei profili.")}
  <p class="hoftt">🦆 Texas Ducks · uso interno</p></div>`}
 function soft(){if(!COL.d){cur="campo";return vCampo()}
  return`<div class="hof"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
@@ -7167,7 +7170,7 @@ document.addEventListener("click",e=>{
  if(!["sala","pers","soft"].includes(cur))return;
  if(e.target.closest("#hofback")){cur=cur==="sala"?"campo":"sala";render();scrollTo(0,0);return}
  const h=e.target.closest("[data-hof]");if(h){cur=h.dataset.hof;render();scrollTo(0,0);return}
- const l=e.target.closest("[data-hlo]");if(l&&!l.disabled){const y=scrollY;ducLogoSet(l.dataset.hlo);render();scrollTo(0,y)}
+ const l=e.target.closest("[data-hlo]");if(l&&!l.disabled){const y=scrollY;ducLogoSet(l.dataset.hlo,l.dataset.hw);render();scrollTo(0,y)}
 });
 })();
 </script>
