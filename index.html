@@ -1909,7 +1909,7 @@ nav button>span{white-space:nowrap}
 </style><style>.cnrow{display:inline-flex;align-items:center;gap:5px}.cnlv{flex:none;width:8px;height:8px;border-radius:50%;background:#ff2d3d;box-shadow:0 0 6px #ff2d3d;animation:lvp 1.4s infinite}</style><style></style><style>
 /* Campo: occupa tutta la larghezza disponibile (prima max 380px) e maglie, nomi e PDK crescono in proporzione (unità cqw = % della larghezza del campo) */
 .court{max-width:560px;container-type:inline-size}
-.court .cpl{width:26cqw}
+.court .cpl{width:26cqw}.court .cpl.dr{transform:translate(-50%,-50%) scale(var(--k,1))}
 .court .cpl svg{width:14.6cqw;height:17.5cqw}
 .court .cnm{font-size:3.3cqw;width:24cqw;max-width:24cqw}
 .court .cev,.court .pdkx{font-size:3.8cqw;min-width:0;padding:.15em .5em}
@@ -4671,11 +4671,13 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   const ROWY={C:26.2,F:54.6,G:83.2},/* proporzioni stile Dunkest, uguali in formazione Dreamers e in modalità notte */XS={C:[33,67],G:[33,67],F:[21,79]};const pos={};
   /* massimo 2 giocatori per fila: chi è in più va nella fila vicina meno piena (C↔F↔G), anche se non è il suo ruolo */
   const FILA={C:[],F:[],G:[]};q.forEach(p=>(FILA[p[2]]||FILA.F).push(p));const VIC={C:["F","G"],F:["C","G"],G:["F","C"]};
-  for(let k=0;k<6;k++)for(const r of["C","F","G"])while(FILA[r].length>2){const dst=VIC[r].filter(x=>FILA[x].length<2).sort((x,y)=>FILA[x].length-FILA[y].length||VIC[r].indexOf(x)-VIC[r].indexOf(y))[0];if(!dst)break;
+  for(let k=0;k<6;k++)if(CNT)for(const r of["C","F","G"])while(FILA[r].length>2){const dst=VIC[r].filter(x=>FILA[x].length<2).sort((x,y)=>FILA[x].length-FILA[y].length||VIC[r].indexOf(x)-VIC[r].indexOf(y))[0];if(!dst)break;
     const sc=p=>CNT&&NM&&NM[p[0]]?NM[p[0]].p:(pdkMed(p[0])??0);const L=FILA[r].slice().sort((x,y)=>sc(x)-sc(y));const m=L[0];FILA[r].splice(FILA[r].indexOf(m),1);FILA[dst].push(m)}
-  ["G","F","C"].forEach(r=>{const l=FILA[r];l.forEach((p,i)=>pos[p[0]]=[l.length===2&&XS[r]?XS[r][i]:(i+1)/(l.length+1)*100,ROWY[r]])});
-  const onCourt=CNT?q.map((p,i)=>`<button class="cpl dr" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${drGiocN(t,p,NM[p[0]])}</button>`).join("")
-    :q.map((p,i)=>`<button class="cpl dr" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%">${drGioc(t,DX(p[0]),i===0?"cap":"full")}</button>`).join("");
+  /* formazione Dreamers: ogni giocatore resta nella fila del suo ruolo (anche 3 o più affiancati: maglie ridotte, --k) */
+  const KS=n=>n<=3?1:n===4?.7:.55,XN={3:[18,50,82],4:[11,37,63,89],5:[9,29,50,71,91]};
+  ["G","F","C"].forEach(r=>{const l=FILA[r],n=l.length;l.forEach((p,i)=>pos[p[0]]=[n===2&&XS[r]?XS[r][i]:XN[n]?XN[n][i]:(i+1)/(n+1)*100,ROWY[r],KS(n)])});
+  const onCourt=CNT?q.map((p,i)=>`<button class="cpl dr" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%;--k:${pos[p[0]][2]}">${drGiocN(t,p,NM[p[0]])}</button>`).join("")
+    :q.map((p,i)=>`<button class="cpl dr" data-pl="${p[0]}" style="left:${pos[p[0]][0]}%;top:${pos[p[0]][1]}%;--k:${pos[p[0]][2]}">${drGioc(t,DX(p[0]),i===0?"cap":"full")}</button>`).join("");
   const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>CNT?(nv(b[0])??-1e9)-(nv(a[0])??-1e9):(pdkMed(b[0])??-99)-(pdkMed(a[0])??-99));  /* panchina in ordine di efficienza media stagionale (stesso valore mostrato), si riordina a ogni aggiornamento */
   return `<button class="gback" id="cback">‹ Home</button>
   <div class="teamhead" style="${dlHeadSty(curTeam)}">
