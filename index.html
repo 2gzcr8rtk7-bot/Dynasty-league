@@ -6207,14 +6207,24 @@ addEventListener("popstate",()=>{if(navBack()){try{history.pushState({dl:1},"")}
         requestAnimationFrame(()=>requestAnimationFrame(()=>{m.style.transition="transform .2s ease-out,opacity .2s ease-out";m.style.transform="";m.style.opacity="";setTimeout(()=>reset(m),230)}))},150)}
     else{e2.style.transition="transform .18s ease-out";e2.style.transform="";setTimeout(()=>reset(e2),200)}};
   addEventListener("touchend",end);addEventListener("touchcancel",end)})();
-/* Campo di una squadra: swipe orizzontale sul contenuto = franchigia precedente/successiva, nell'ordine della Home (Object.keys(TEAMS)). Il bordo schermo resta al gesto "indietro". */
-(()=>{let sx=0,sy=0,t0=0,on=false;
-  addEventListener("touchstart",e=>{on=false;if(cur!=="campo"||e.touches.length!==1)return;const t=e.touches[0];if(t.clientX<=40||t.clientX>=innerWidth-40)return;if(e.target.closest("input,textarea,select,.dwsh,.colsheet,.dwbox,#scmod"))return;sx=t.clientX;sy=t.clientY;t0=Date.now();on=true},{passive:true});
-  addEventListener("touchend",e=>{if(!on)return;on=false;const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)<70||Math.abs(dy)>Math.abs(dx)*.6||Date.now()-t0>800)return;
-    const K=Object.keys(TEAMS),i=K.indexOf(curTeam);if(i<0)return;const nx=K[(i+(dx>0?-1:1)+K.length)%K.length],dir=dx>0?1:-1,m=document.getElementById("main");
-    const enter=()=>{curTeam=nx;try{localStorage.setItem("team",curTeam)}catch(_){}render();scrollTo(0,0);const n=document.getElementById("main");if(!n)return;n.style.transition="none";n.style.transform=`translate3d(${-dir*innerWidth*.6}px,0,0)`;n.style.opacity=".3";requestAnimationFrame(()=>requestAnimationFrame(()=>{n.style.transition="transform .22s ease-out,opacity .22s ease-out";n.style.transform="";n.style.opacity="";setTimeout(()=>{n.style.transition=""},260)}))};
-    if(!m){enter();return}m.style.transition="transform .14s ease-in,opacity .14s ease-in";m.style.transform=`translate3d(${dir*innerWidth*.6}px,0,0)`;m.style.opacity=".2";setTimeout(enter,140)},{passive:true});
-})();
+/* Campo di una squadra: swipe orizzontale sul contenuto = franchigia precedente/successiva, nell'ordine della Home (Object.keys(TEAMS)). La pagina segue il dito; al rilascio esce di lato ed entra la nuova squadra dal lato opposto. Il bordo schermo (40px) resta al gesto "indietro". */
+(()=>{let sx=0,sy=0,t0=0,on=false,lock=false,dx=0,busy=false,raf=0;const M=()=>document.getElementById("main");
+  const paint=()=>{raf=0;const m=M();if(!m)return;m.style.transform=`translate3d(${dx}px,0,0)`;m.style.opacity=String(1-Math.min(.55,Math.abs(dx)/innerWidth*.9))};
+  const clean=m=>{m.style.transition="";m.style.transform="";m.style.opacity="";m.style.willChange=""};
+  addEventListener("touchstart",e=>{on=false;lock=false;if(busy||cur!=="campo"||e.touches.length!==1)return;const t=e.touches[0];if(t.clientX<=40||t.clientX>=innerWidth-40)return;if(e.target.closest("input,textarea,select,.dwsh,.colsheet,.dwbox"))return;sx=t.clientX;sy=t.clientY;t0=Date.now();dx=0;on=true},{passive:true});
+  addEventListener("touchmove",e=>{if(!on)return;const t=e.touches[0],mx=t.clientX-sx,my=t.clientY-sy;
+    if(!lock){if(Math.abs(my)>10&&Math.abs(my)>Math.abs(mx)*.8){on=false;return}if(Math.abs(mx)<12)return;lock=true;const m=M();m.style.transition="none";m.style.willChange="transform,opacity"}
+    if(e.cancelable)e.preventDefault();dx=mx;if(!raf)raf=requestAnimationFrame(paint)},{passive:false});
+  const end=()=>{if(!on)return;on=false;if(raf){cancelAnimationFrame(raf);raf=0}if(!lock)return;lock=false;const m=M();if(!m)return;
+    const ms=Math.max(1,Date.now()-t0),go=Math.abs(dx)>innerWidth*.28||(Math.abs(dx)>50&&Math.abs(dx)/ms>.45);
+    if(!go){m.style.transition="transform .18s ease-out,opacity .18s ease-out";m.style.transform="";m.style.opacity="";setTimeout(()=>clean(m),200);return}
+    const K=Object.keys(TEAMS),i=K.indexOf(curTeam);if(i<0){clean(m);return}const dir=dx>0?1:-1,nx=K[(i-dir+K.length)%K.length];busy=true;
+    m.style.transition="transform .15s ease-in,opacity .15s ease-in";m.style.transform=`translate3d(${dir*innerWidth}px,0,0)`;m.style.opacity="0";
+    setTimeout(()=>{curTeam=nx;try{localStorage.setItem("team",curTeam)}catch(_){}render();scrollTo(0,0);const n=M();if(!n){busy=false;return}
+      n.style.transition="none";n.style.transform=`translate3d(${-dir*innerWidth}px,0,0)`;n.style.opacity="0";void n.offsetWidth;
+      n.style.transition="transform .24s cubic-bezier(.2,.8,.25,1),opacity .24s ease-out";n.style.transform="translate3d(0,0,0)";n.style.opacity="1";
+      setTimeout(()=>{clean(n);busy=false},270)},160)};
+  addEventListener("touchend",end);addEventListener("touchcancel",end)})();
 </script>
 <script>
 /* Pallino LIVE sul tasto Entertainment: ogni 2 minuti (app aperta e visibile) un controllo leggero sul tabellone ESPN
