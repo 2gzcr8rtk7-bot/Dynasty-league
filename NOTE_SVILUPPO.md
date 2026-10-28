@@ -978,3 +978,6 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 ### (301) Tasto indietro: torna sempre da dove arrivi
 - Il ‹ della scheda G League tornava a G-Dreamers anche arrivando dall'Osservatorio (il mio handler `#glpback` scattava prima della pila `NAVH`): ora usa la pila e ripiega su G-Dreamers solo se la pila è vuota.
 - Aggiunti alla pila `BK_IDS` anche `#effback` (Efficienza squadra), `#cback` (Campo/Cassa), `[data-cupback]` e `[data-snback]` (Efficienza/Statistiche): prima tornavano sempre alla loro sezione fissa (Statistiche / Home), ora al punto da cui si era arrivati; l'etichetta del tasto dice dove porta.
+
+### (302) Banda dell'intestazione fino in cima allo schermo in tutti i temi
+- Prima solo in notte/Dreamers: sotto l'orario dell'iPhone c'era una fascia piatta (`body::before`). Ora `html:not(.dreamfs){padding-top:0}`, `body:not(.dreamfs) header{top:0;padding-top:env(safe-area-inset-top)}` e la fascia è nascosta (resta solo in Impostazioni, dove l'intestazione non è fissa e l'anteprima sticky ne ha bisogno). Verificato in Home (anche scorrendo), Campo, Scheda giocatore, Impostazioni con safe-area simulata a 59px.

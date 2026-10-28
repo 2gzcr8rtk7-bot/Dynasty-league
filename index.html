@@ -2000,7 +2000,7 @@ body.notte nav button{background:rgba(30,20,70,.65)!important;border-color:rgba(
 body.notte nav button[aria-selected="true"]{background:linear-gradient(180deg,#a855f7,#6d28d9)!important;color:#fff;box-shadow:0 4px 14px rgba(168,85,247,.5)}
 </style><style>body.notte[data-v=home] #main{position:relative}body.notte[data-v=home] #main::before{content:"";position:absolute;inset:0;background-image:radial-gradient(1.4px 1.4px at 12% 18%,#fff,transparent),radial-gradient(1px 1px at 72% 8%,#fff,transparent),radial-gradient(1.2px 1.2px at 45% 30%,#e9d5ff,transparent),radial-gradient(1px 1px at 88% 40%,#fff,transparent),radial-gradient(1.3px 1.3px at 30% 62%,#c4b5fd,transparent),radial-gradient(1px 1px at 60% 80%,#fff,transparent),radial-gradient(1.1px 1.1px at 8% 90%,#e9d5ff,transparent),radial-gradient(1.2px 1.2px at 94% 70%,#fff,transparent);opacity:.6;pointer-events:none;z-index:0}body.notte[data-v=home] #main>*{position:relative;z-index:1}</style><style>
 /* (139) MODALITÀ NOTTE: niente fascia blu sotto l'orario dell'iPhone. L'header viola Dreamers sale fino in cima allo schermo (padding-top safe-area), così il viola è continuo dalla barra di stato al menu */
-html.notte:not(.dreamfs){padding-top:0!important}
+html.notte:not(.dreamfs){padding-top:0!important}/* (302) come Dreamers e notte: la banda dell'intestazione sale fino in cima allo schermo, sotto l'orario, in tutti i temi */html:not(.dreamfs){padding-top:0!important}body:not(.dreamfs) header{top:0!important;padding-top:env(safe-area-inset-top,0px)!important}html:not(.setpg) body:not(.dreamfs)::before{display:none}
 body.notte:not(.dreamfs)::before{display:none!important}
 body.notte:not(.dreamfs) header{top:0!important;padding-top:env(safe-area-inset-top,0px)!important}
 </style><style>
