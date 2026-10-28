@@ -858,3 +858,6 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 - Verde: 07:30 italiane del giorno dopo la notte (ora legale corretta per ogni data, `romeAt`), solo per notti con partite finite.
 - Viola: orario della prima partita della notte dal tabellone ESPN (`tipFetch`), salvato in `dl_tipev` (le notti finite non cambiano).
 - Nessuna menzione di Scouting Ducks nel registro pubblico.
+
+## (265) Controllo dati con orario del telefono
+- Nel riquadro "Controllo dati" l'esito riporta l'ora in cui QUESTO telefono ha fatto il controllo: "Aggiornamenti ok · controllo di questo telefono alle HH:MM" oppure "Problema tecnico" con elenco di cosa non torna. Gli eventi sotto restano identici per tutti.
