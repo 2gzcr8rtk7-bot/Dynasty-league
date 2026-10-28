@@ -1022,3 +1022,8 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 ### (311) Regolamento Art. 5: premi divisi regular season / playoff (IN CODA, NON pubblicato)
 - Tabella premi a 4 colonne (Posizione, Regular season, Playoff, Totale): 1° 20-10, 2° 25-15, 3° 35-15, 4° 100-50, 5° 130-70, 6° 200-100, 7° 270-130, 8° 330-170 (totali invariati: 30…500; regular 1110 cr, playoff 560 cr). Box "Novità". Più si è in basso più si prende, in entrambe.
 - Da aggiornare a parte (non richiesto): Art. 4 e Art. 9 citano "giornata 64 = fine regular season"; Art. 5 slot Rookie "dal 4° all'8° posto" (classifica di riferimento da chiarire: regular season o finale playoff).
+
+### (312) Duelli Dreamers: PDK grande al posto della pillola, pillola OUT/DUB sotto la maglia, nomi "N. Cognome" (IN CODA, NON pubblicato)
+- Scheda `.du`: riga nome (maglia + "N. Cognome" + ruolo·NBA), poi `.dus` = colonna 42px sotto la maglia (`.dufl`: pillola OUT/DUB, vuota se sano) + bottone PDK grande (`.dubig`, 56px, numero 34px) a destra. Tolto il testo "×1"; restano didascalie piccole dentro il bottone solo per capitano ("44,9 ×1,5"), panchina ("×½ = …"), tribuna, attesa, media stagione.
+- Nomi: iniziale + punto + cognome (maiuscolo CourtBlock), mai rimpiccioliti: vanno a capo se servono (nbsp tra iniziale e cognome; `duFit` toglie il nbsp se un cognome lungo non entra in riga, poi tracking -0,02em come ultima risorsa). `.duh` min-height 46px per tenere allineate le righe.
+- Non toccata l'immagine condivisa del duello (`shDuel`), che ha il suo disegno.
