@@ -993,3 +993,7 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 ### (305) Dreamers › sfida: nomi stile NBA e maglie più grandi
 - `.du .dun b`: font `CourtBlock` (quello a blocchi del campo, già incluso), maiuscolo, 16,9px; maglia `.duj` 44×49 (sporge di 1,5px sopra/sotto, riga sempre 46px). `duFit()` (chiamata dopo ogni `render`) riduce il nome di battesimo all'iniziale solo se il nome non entra ("S. GILGEOUS-ALEXANDER"), con `title` = nome completo.
+
+### (306) Duelli Dreamers: pillola DUB/OUT e maglia
+- La pillola DUB/OUT è stata abbassata nella zona tra la riga del nome e il testo della riga punteggio (`.du .duo{top:calc(50% + 18px)}`).
+- Maglia ridotta (svg 40×44,5px, margin-top -1,5px) così l'ombra non tocca più la pillola del punteggio.
