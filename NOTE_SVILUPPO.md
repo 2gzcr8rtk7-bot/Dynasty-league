@@ -961,3 +961,7 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 ### (297) Grafico condiviso più alto quando è lungo
 - `shGrafico()`: altezza immagine `H=clamp(W*0.3, 1040, 1800)` invece di 1040 fisso (W≈300+punti×74/110). Fino a ~16 punti resta 1040; con molte giornate l'area del grafico cresce in verticale e i valori si leggono meglio.
+
+### (298) Osservatorio › Generale: Ultima con cartellino colorato + colonna Trend
+- Colonna Ultima ora usa `pdkB(last,pdkF(last))` (cartellino colorato come PDK) in entrambe le viste. Nuova colonna Trend stagionale: `grTrend` sulla serie cronologica di PDK (o efficienza se scelta) delle partite in `PARTITE`, min. 3 partite; ▲/▼ con %, ＝ se |trend|<3%.
+- Per farci stare Trend su mobile: colonna Gare spostata nella riga piccola sotto il nome ("4 gare · Dolphins · DEN"), classe `.osgen` con padding/intestazioni più compatti, segnalibro ridotto.
