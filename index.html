@@ -2863,7 +2863,7 @@ function dlSyncDr(th){try{if(th==="tabellone")DR._th=5;else if(th==="parquet")DR
 /* colori di disponibilità/PDK e stacco del trattino (Impostazioni › Giocatori): override CSS generati solo per ciò che è diverso dal predefinito */
 function stApply(){const D=DLS_DEF,c=DLS,rs=document.documentElement.style,tx=h=>{const n=parseInt(String(h).slice(1),16);return(0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255>.6?"#111":"#fff"};
   rs.setProperty("--sepw",(c.sepOn===false?0:Math.max(0,+c.sepW||0))+"px");rs.setProperty("--sepc",c.sepC||D.sepC);
-  let o="";if(c.cOk&&c.cOk!==ST_BASE.cOk)o+=`[data-ist]{--ist:${c.cOk}}`;
+  let o="";if(c.cOk&&c.cOk!==ST_BASE.cOk)o+=`[data-ist]:not([data-ist="out"]):not([data-ist="dub"]){--ist:${c.cOk}}`;
   if(c.cOut&&c.cOut!==D.cOut)o+=`[data-ist="out"]{--ist:${c.cOut}}.pj .injx,.injx,.duo,.bnm small .injo{background:${c.cOut}}`;
   if(c.cDub&&c.cDub!==D.cDub)o+=`[data-ist="dub"]{--ist:${c.cDub}}.duo.dub{background:${c.cDub}}`;
   [["v","pV"],["g","pG"],["y","pY"],["r","pR"]].forEach(([k,key])=>{const C=c[key];if(!C||C===(ST_BASE[key]||D[key]))return;const t=tx(C);o+=`.pcd.${k}{background:linear-gradient(180deg,color-mix(in srgb,${C} 70%,#fff),${C});color:${t}}.cev.${k},.pdkx.${k},.gv.${k}{background:${C};color:${t}}.ev.${k} i{background:${C}}`});

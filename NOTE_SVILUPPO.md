@@ -955,3 +955,6 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 ### (295) Nuovi verdi ufficiali (disponibilità e PDK buono)
 - Campionati da screenshot del GM: `cOk` #22c55e → **#5dcb3c** (trattino disponibilità), `pG` #16a34a → **#3ba764** (PDK buono verde). `DLS_DEF` aggiornato; `ST_BASE` conserva i vecchi valori del CSS statico così `stApply()` applica sempre l'override; chi aveva salvato i vecchi default viene migrato ai nuovi (`DLS[k]===ST_BASE[k]`). Restano personalizzabili in Impostazioni › Giocatori. Voce in NV_LOG "Nuovi verdi".
+
+### (296) Fix: il colore "Disponibile" sovrascriveva anche OUT e Dubbio
+- L'override `[data-ist]{--ist:cOk}` in `stApply()` aveva la stessa specificità di `[data-ist="out"]`/`"dub"` ma veniva dopo nel CSS, quindi colorava anche i trattini di OUT e dubbio. Ora esclude `out` e `dub` con `:not()`; `prob` segue il colore di Disponibile (è verde al 75%).
