@@ -909,3 +909,6 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 
 ## (277) Dubbi dal commento ESPN
 - Il Centro Medico mostra già Out / In dubbio (Doubtful) / In forse (Questionable) / Giorno per giorno. Da ESPN lo stato "Day-To-Day" viene affinato leggendo fantasyStatus e il commento ("doubtful" → dubbio, "questionable" → in forse, altrimenti giorno per giorno). "Out" resta out.
+
+## (278) Età con i mesi nella scheda giocatore
+- Nel riquadro in alto della scheda giocatore, sotto "Ruolo · SQUADRA · #n", compare l'età (es. "22 anni 9 mesi"), calcolata ogni volta da `NASCITA[nome]` (data di nascita) e dalla data di oggi (`etaTxt`): si aggiorna da sola, nessun caricamento. Tutti i 115 giocatori delle rose hanno la data; per un nuovo giocatore aggiungere la sua data in `NASCITA` (serve già anche per i valori). Senza data la riga non compare.
