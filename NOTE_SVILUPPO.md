@@ -900,3 +900,6 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 
 ## (274) Partite future degli infortunati = NG rosso
 - Nel duello (`drDuel`, caselle della settimana) le partite non ancora giocate di un giocatore "out" (`injOut`) mostrano "NG" in rosso (`.duw.dung`) invece dell'avversario. Se il giocatore gioca, `injSync` lo toglie dagli infortunati e le caselle tornano normali con i PDK registrati.
+
+## (275) Lucchetto "punteggio definitivo" nel duello
+- Nella carta del duello (`drDuel`, classe `.du.fin`) un lucchetto giallo (26px, `.fin-b`) accanto al "×1" segna che il giocatore ha concluso tutte le partite del turno e nessuna è in corso: punteggio definitivo.
