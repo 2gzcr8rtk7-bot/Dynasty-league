@@ -3916,7 +3916,7 @@ function injSync(){Object.keys(INJ).forEach(k=>delete INJ[k]);INJ_RIENTRI.length
     if(g)INJ_RIENTRI.push({...x,gioc:g[0]});else INJ[x.p]=x})}
 injSync();
 const injOut=n=>!!(INJ[n]&&INJ[n].stato==="out");
-const injTag=n=>{const i=INJ[n];if(!i||i.stato!=="out")return"";const m=(i.rientro||"").match(/(\d{2}\/\d{2})/);return`<em class="injo" title="Infortunato · vale 0${i.tipo?" · "+String(i.tipo).replace(/"/g,"&quot;"):""}">OUT${m?`<i>rientro ${m[1]}</i>`:""}</em>`};
+const injTag=n=>{const i=INJ[n];if(!i||i.stato!=="out")return"";const m=(i.rientro||"").match(/(\d{2}\/\d{2})/);return`<em class="injo" title="Infortunato · vale 0${i.tipo?" · "+String(i.tipo).replace(/"/g,"&quot;"):""}">OUT</em>`};
 const injX=n=>{const i=INJ[n];return i&&i.stato==="out"?`<i class="injx" title="Infortunato · vale 0 (${(i.tipo||"").replace(/"/g,"&quot;")})">✕</i>`:""};
 /* Manichino infortuni: evidenzia la zona del corpo letta dalla descrizione (destra = lato sinistro del disegno, vista frontale) */
 function bodyMap(tipo,stato){

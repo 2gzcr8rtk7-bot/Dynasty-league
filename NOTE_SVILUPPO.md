@@ -887,4 +887,4 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 - Non provato con ESPN reale (rete bloccata nel sandbox): formato dell'endpoint assunto (injuries[].injuries[] con athlete, status, details.returnDate/side/detail/type, fantasyStatus) e provato con risposta simulata; se il formato fosse diverso la lista resta quella manuale.
 
 ## (270) OUT anche in tribuna/panchina
-- `injTag(nome)` aggiunge dopo "Ruolo · SQUADRA" una pillola rossa "OUT" (+ "rientro gg/mm" se ESPN ha la data) nelle righe tribuna (`drPanca`) e nella panchina modalità notte; la maglia ha lo stesso alone rosso del campo. Solo stato "out".
+- `injTag(nome)` aggiunge dopo "Ruolo · SQUADRA" una pillola rossa "OUT" (solo "OUT", senza data) nelle righe tribuna (`drPanca`) e nella panchina modalità notte; la maglia ha lo stesso alone rosso del campo. Solo stato "out".
