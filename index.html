@@ -3330,7 +3330,7 @@ document.addEventListener("click",e=>{
     document.querySelectorAll(".segi").forEach(x=>{if(x.dataset.seg===n){x.classList.toggle("on",on);x.setAttribute("aria-pressed",on);const em=x.querySelector("em");x.innerHTML=SEG_SVG(on)+(em?`<em>${on?"Seguito":"Segui"}</em>`:"")}});
     if(cur==="osserv"){const y=scrollY;render();scrollTo(0,y)}return}
   if(cur!=="osserv")return;
-  if(e.target.closest("#osback")){cur="home";render();scrollTo(0,0);return}
+  if(e.target.closest("#osback")&&!NAVH.length){cur="home";render();scrollTo(0,0);return}
   const ov=e.target.closest("[data-osv]");if(ov){const[k,v]=ov.dataset.osv.split("|");OSV[k]=v;const y=scrollY;render();scrollTo(0,y);return}
   const oc=e.target.closest("[data-osc]");if(oc){const a=oc.dataset.osc;
     if(a==="copy"){const t=document.getElementById("osta");try{navigator.clipboard.writeText(t.value)}catch(er){t.select();try{document.execCommand("copy")}catch(e2){}}oc.textContent="Copiato ✓";setTimeout(()=>oc.textContent="Copia",1500)}
@@ -6189,7 +6189,13 @@ render();
    Ordine: 1) chiude il foglio aperto (.colsheet), 2) usa il tasto ‹ indietro della pagina (anche se nascosto),
    3) solo per il tasto/gesto indietro di Android: torna alla sezione precedente (pila NAVH). Lo SWIPE invece funziona solo dove c'è un tasto ‹ visibile o un foglio aperto (navTarget(1)); dove non si può tornare indietro non parte. */
 const NAVH=[];let navLast=cur,navT=0;
-(function(){const r0=render;render=function(){if(navLast!==null&&cur!==navLast){if(NAVH[NAVH.length-1]===cur)NAVH.pop();else{NAVH.push(navLast);if(NAVH.length>40)NAVH.shift()}}navLast=cur;return r0.apply(this,arguments)}})();
+(function(){const r0=render;render=function(){if(navLast!==null&&cur!==navLast){if(NAVH[NAVH.length-1]===cur)NAVH.pop();else{NAVH.push(navLast);if(NAVH.length>40)NAVH.shift()}}navLast=cur;const rr=r0.apply(this,arguments);try{fixBackLabels()}catch(e){}return rr}})();
+/* TASTO INDIETRO SEMPLICE: ogni "‹" della scheda giocatore, Campo, Cassa, Osservatorio ecc. riporta alla schermata da cui si è arrivati (pila NAVH) e la sua scritta dice dove porta */
+const BK_IDS="#gback,#faback,#capback,#mulback,#colback,#cassaback,#osback";
+function backLabel(v){const n=(TEAMS[curTeam]||{}).nick||"";const M={home:"Home",campo:"Campo "+n,roster:"Roster "+n,fa:"Free Agent",valtrade:"Calcolatore trade",osserv:"Osservatorio",efficienza:"Statistiche",effsquadra:"Efficienza "+n,effcup:"Efficienza",tv:"Dynasty TV",risultati:"Risultati",classifica:"Classifica",trade:"Trade",speciali:"Trade speciali",gleague:"G League",college:"Ufficio Scouting",cassa:"Cassa "+n,cap:"Cap",multe:"Multe",trend:"Trend",statnotte:"Statistiche notte",grafico:"Grafico",dunkest:"Dunkest",storia:"Sala Trofei",regolamento:"Regolamento",infortuni:"Centro Medico",gdreamers:"G Dreamers",faplayer:"Free Agent"};
+  return v==="giochi"?(GAME==="dream"?"Dreamers":GAME==="gdream"?"G Dreamers":"Giochi"):(M[v]||"Indietro")}
+function fixBackLabels(){const v=NAVH[NAVH.length-1];if(!v)return;document.querySelectorAll("#main "+BK_IDS.split(",").map(x=>x).join(",#main ")).forEach(b=>{b.textContent="‹ "+backLabel(v)})}
+document.addEventListener("click",e=>{const b=e.target.closest(BK_IDS);if(!b||!b.closest("#main"))return;const v=NAVH[NAVH.length-1];if(!v)return;e.preventDefault();e.stopImmediatePropagation();gFrom="roster";faFrom="home";cur=v;render();window.scrollTo(0,0)},true);
 function navTarget(btnOnly){const sh=[...document.querySelectorAll(".colsheet")].filter(x=>x.offsetParent!==null||getComputedStyle(x).position==="fixed");
   if(sh.length){const x=sh[sh.length-1].querySelector(".ccx,[data-trdx],[data-colleg]");if(x)return{el:x}}
   const b=[...document.querySelectorAll("#main .gback,#main .grback")].filter(x=>!(btnOnly&&x.matches('[data-nt="back"]'))&&x.offsetParent!==null);if(b.length)return{el:b[b.length-1]};
