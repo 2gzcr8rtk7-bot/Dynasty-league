@@ -2153,6 +2153,7 @@ html.dlt-parquet .chip[aria-pressed="true"],html.dlt-parquet .chip[aria-pressed=
 html.dlt-parquet .chip[aria-pressed="true"] .badge{background-color:transparent!important}
 /* logo Dreamers arancione (il PNG è viola) */
 html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.05)}
+.gv.gvlive{outline:2px solid #a78bfa;outline-offset:1px;animation:gvlp 1.2s ease-in-out infinite}@keyframes gvlp{0%,100%{outline-color:#a78bfa}50%{outline-color:rgba(167,139,250,.15)}}@media (prefers-reduced-motion:reduce){.gv.gvlive{animation:none}}
 .shfoot{position:sticky;bottom:0;width:100%;display:grid;gap:8px;padding-top:6px;background:linear-gradient(180deg,transparent,rgba(10,6,30,.92) 14px)}.shcut{width:100%;display:grid;gap:8px;padding:10px 12px;border-radius:14px;background:rgba(30,20,70,.8);border:1px solid rgba(196,181,253,.35);color:#fff;box-sizing:border-box}.shcut b{font:800 15px var(--display);font-style:italic;letter-spacing:.04em;text-transform:uppercase}.shcut small{display:block;color:#c4b5fd;font-size:12px}.shcut input{width:100%;accent-color:#a855f7;height:28px}
 .shbar{display:flex;gap:10px;width:100%}
 .shbar>*{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px;border-radius:14px;border:1px solid rgba(196,181,253,.35);background:rgba(30,20,70,.8);color:#fff;font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;letter-spacing:.05em;text-transform:uppercase;text-decoration:none;cursor:pointer}
@@ -2877,7 +2878,7 @@ function vEffSquadra(){
   const cols=Array.from({length:nmax},(_,i)=>`<th class="gcol"><b>${esqMese==="tutta"?"G"+(i+1):(i+1)+"ª"}</b></th>`).join("");
   const mchips=`<div class="chips esqm"><label class="szchip" aria-pressed="${esqMese==="tutta"}"><select id="gseason" data-szchip="1" aria-label="Stagione">${esqMese!=="tutta"?`<option value="" selected hidden>${SZ_LBL[sz]}</option>`:""}${SZ_ALL.map(s=>`<option value="${s}"${esqMese==="tutta"&&s===sz?" selected":""}>${SZ_LBL[s]}</option>`).join("")}</select></label>${mesi.map(m=>`<button class="chip" data-esqm="${m}" aria-pressed="${esqMese===m}">${MESI_N[m]}</button>`).join("")}</div>`;
   const rows=ps.map(p=>{const L=sel(gl(p[0]));
-    return `<tr data-plt="${t}" data-pln="${p[0]}" class="plink"><td class="pnm">${p[0]} <span class="plgo">›</span><small>${nba(p[0])}</small></td>${Array.from({length:nmax},(_,i)=>{const x=L[i];return `<td class="gcell">${x?`<span class="gv ${MET().l(x.g[MET().i])}">${MET().f(x.g[MET().i])}</span><small class="gd">${x.g[1]}</small>`:""}</td>`}).join("")}</tr>`}).join("");
+    return `<tr data-plt="${t}" data-pln="${p[0]}" class="plink"><td class="pnm">${p[0]} <span class="plgo">›</span><small>${nba(p[0])}</small></td>${Array.from({length:nmax},(_,i)=>{const x=L[i];return `<td class="gcell">${x?`<span class="gv ${MET().l(x.g[MET().i])}${x.g[8]?" gvlive":""}">${MET().f(x.g[MET().i])}</span><small class="gd">${x.g[1]}</small>`:""}</td>`}).join("")}</tr>`}).join("");
   return `<button class="gback esqback" id="effback">‹ Statistiche squadre</button>
   <div class="esqhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 60%,#000) 100%);color:${c.txt||c.fg};border-bottom:4px solid ${c.trim}">${badge(t)}<div class="esqt"><small>${c.name}</small><h3>${c.nick}</h3></div></div>
   <div class="esqk"><div><small>Eff. stagionale</small>${eff(s[4])}</div>${E.past?`<div><small>Stagione</small><b>${sz}</b></div>`:`<div><small>Notte · ${s[1]} in campo</small>${eff(s[3])}</div>`}<div><small>Posizione lega</small><b>${pos}ª</b></div></div>
@@ -5578,13 +5579,26 @@ const flUsaOggi=()=>new Date().toLocaleDateString("en-CA",{timeZone:"America/New
 function fantaLiveNotti(da){const out=[],oggi=flUsaOggi();if(!da)return out;for(let d=da,i=0;d<=oggi&&i<10;d=drAdd(d,1),i++)out.push(d);return out}
 function fantaLiveNotte(d){const o={};if(typeof TV==="undefined")return o;
   for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
-    [["a",g[1]],["h",g[0]]].forEach(([sd,opp])=>(B[sd]||[]).forEach(r=>{if(r[19]==null)return;const mm=String(r[2]||"0").split(":");o[tvNm(r[0])]={p:+r[19],min:(+mm[0]||0)+(+mm[1]||0)/60,opp,nm:r[0],prov:!!B.live}}))}
+    [["a",g[1]],["h",g[0]]].forEach(([sd,opp])=>(B[sd]||[]).forEach(r=>{if(r[19]==null)return;const mm=String(r[2]||"0").split(":");o[tvNm(r[0])]={p:+r[19],min:(+mm[0]||0)+(+mm[1]||0)/60,opp,nm:r[0],prov:!!B.live,pts:+r[3]||0,reb:+r[6]||0,ast:+r[7]||0}}))}
   return o}
+/* (242) STATISTICHE LIVE nelle stats dei giocatori: dalle 07:30 italiane la notte appena finita (tabellini ESPN via Dynasty TV, formula Dunkest) viene aggiunta in coda a PARTITE[nome] con un 9° valore "L" (partita in corso) o "P" (finita, ancora provvisoria). Si rimuove e si ricalcola a ogni render. Appena il report ufficiale Dunkest (~10:30) porta la notte in PARTITE (data <= ultima notte ufficiale) la riga live non viene più aggiunta: nessun doppione. */
+let PLV=[];
+function liveSync(){try{PLV.forEach(([n,e])=>{const a=PARTITE[n];if(!a)return;const i=a.indexOf(e);if(i>=0)a.splice(i,1)});PLV=[];
+  if(typeof TV==="undefined"||typeof EFF==="undefined"||!EFF.agg)return;
+  const lastOff=drNightOfAgg(EFF.agg),nm={};Object.values(ROSTER).flat().forEach(p=>nm[tvNm(p[0])]=p[0]);
+  const p2=v=>String(v).padStart(2,"0");
+  /* le notti ESPN entrano nelle statistiche dalle 07:30 (ora italiana) del giorno dopo la notte; prima restano solo nelle viste live */
+  let rk="";try{const q=new Intl.DateTimeFormat("sv-SE",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date());rk=q.replace("T"," ").slice(0,16)}catch(e){rk="9999"}
+  for(const d of fantaLiveNotti(drAdd(lastOff,1))){if(rk<drAdd(d,1)+" 07:30")continue;const L=fantaLiveNotte(d),lab=`${d.slice(8)}/${d.slice(5,7)}`;
+    for(const k in L){const n=nm[k];if(!n)continue;const x=L[k];if(!(x.min>0))continue;
+      const A=PARTITE[n]||(PARTITE[n]=[]);if(A.some(g=>g[0]===lab&&g[8]==null))continue;
+      const e=[lab,x.opp,Math.round(x.min*10)/10,Math.round(x.p*100)/100,x.min?Math.round(x.p/x.min*100)/100:0,x.pts,x.reb,x.ast,x.prov?"L":"P"];A.push(e);PLV.push([n,e])}}}catch(e){}}
 const FANTA_LIVE=[
   {attivo:()=>cur==="campo",da:()=>{const a=drAdd(flUsaOggi(),-1),b=FANTA_LIVE[1].da();return b<a?b:a}},/* ieri + oggi (data USA) e, fuori dalla modalità notte, tutta la settimana Dreamers *//* ieri + oggi (data USA): dopo mezzanotte ET la notte in corso è "ieri" */
   {attivo:()=>cur==="giochi"&&GAME==="dream",da:()=>{const N={...DRD.notti},n=drNightOfAgg(EFF.agg);if(n>=DR_START)N[n]=1;const k=Object.keys(N).sort(),l=k[k.length-1];return l&&l>=DR_START?drAdd(l,1):DR_START}},
   {attivo:()=>cur==="tv",da:()=>FANTA_LIVE[0].da()},
   {attivo:()=>cur==="osserv",da:()=>FANTA_LIVE[0].da()},
+  {attivo:()=>["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur),da:()=>FANTA_LIVE[0].da()},
   {attivo:()=>cur==="home"&&SEGUI.length>0,soft:true,da:()=>FANTA_LIVE[0].da()},
   {attivo:()=>cur==="statnotte"&&CNT,da:()=>FANTA_LIVE[0].da()},
   {attivo:()=>cur==="giochi"&&GAME==="gdream",da:()=>{if(GD_LASTOFF==null)try{gdData()}catch(e){}return GD_LASTOFF?drAdd(GD_LASTOFF,1):GD_START}}];
@@ -6335,6 +6349,7 @@ const VIEWS={fa:vFA,faplayer:vFAP,tv:vTVlive,college:vCollege,trend:vTrend,statn
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
+  liveSync();if(["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur))fantaLiveAvvia();
   document.body.dataset.v=cur;{const nt=typeof CNT!=="undefined"&&CNT;document.body.classList.toggle("notte",nt);document.documentElement.classList.toggle("notte",nt);const tc=document.querySelector('meta[name="theme-color"]');if(tc&&!document.body.classList.contains("dreamfs"))tc.content=nt?"#2a1260":TH_BAR}
   {const fs=cur==="giochi"&&(GAME==="dream"||GAME==="gdream");document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=(fs||(typeof CNT!=="undefined"&&CNT))?"#2a1260":TH_BAR}
   const eff=cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"?"home":cur==="osserv"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
