@@ -5800,8 +5800,10 @@ function drDuel(k,a,b,W,P){const A=drTeam(k,a,W),B=drTeam(k,b,W),f1=v=>v==null?"
   let r1="",r2="",r3="";for(const[cl,lab,i0,i1]of sezioni){let any=false,h="";for(let i=i0;i<i1;i++){const x=A.top[i],y=B.top[i];if(!x&&!y&&!W.closed)continue;if(!x&&!y&&i>=Math.max(A.top.length,B.top.length)&&!W.closed)continue;any=true;
       h+=`<div class="durow">${card(x,a,cl)}<span class="duslot ${cl}">${cl==="cap"?"C":cl==="half"?"½":i+1}</span>${card(y,b,cl)}</div>`}
     if(any){const z=`<div class="dusec ${cl}">${lab}</div>${h}`;if(cl==="half")r2+=z;else r1+=z}}
-  const resto=(arr,cl,lab)=>{const n=Math.max(arr[0].length,arr[1].length);if(!n)return"";let h=`<div class="dusec ${cl}">${lab}</div>`;for(let i=0;i<n;i++)h+=`<div class="durow">${arr[0][i]?card(arr[0][i],a,cl):'<div class="du du-nulla"></div>'}<span class="duslot ${cl}">·</span>${arr[1][i]?card(arr[1][i],b,cl):'<div class="du du-nulla"></div>'}</div>`;return h};
-  r3=resto([A.trib,B.trib],"trib","Fuori dai 10")+resto([A.wait,B.wait],"wait",W.closed?"Non hanno giocato":"In attesa");
+  /* Fuori dai 10: prima chi ha un punteggio (tribuna), subito dopo chi è ancora in attesa / non ha giocato: stesso elenco, senza stacco né titolo a parte */
+  const resto=(arr,lab)=>{const n=Math.max(arr[0].length,arr[1].length);if(!n)return"";let h=`<div class="dusec trib">${lab}</div>`;for(let i=0;i<n;i++)h+=`<div class="durow">${arr[0][i]?card(arr[0][i][0],a,arr[0][i][1]):'<div class="du du-nulla"></div>'}<span class="duslot trib">·</span>${arr[1][i]?card(arr[1][i][0],b,arr[1][i][1]):'<div class="du du-nulla"></div>'}</div>`;return h};
+  const tg=(T)=>[...T.trib.map(x=>[x,"trib"]),...T.wait.map(x=>[x,"wait"])];
+  r3=resto([tg(A),tg(B)],"Fuori dai 10");
   const zona=(h,z,t)=>h?`<section class="duz z-${z}"><div class="duzt"><span>${t}</span></div>${h}</section>`:"";
   const rows=zona(r1,"campo","In campo")+zona(r2,"panch","Panchina")+zona(r3,"trib","Tribuna");
   const ld=A.score!=null&&B.score!=null&&A.score!==B.score?(A.score>B.score?a:b):null;
