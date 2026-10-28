@@ -2127,7 +2127,7 @@ html.dlt-tabellone body{background:repeating-linear-gradient(45deg,#0b0d10 0 22p
 /* (241) tema Parquet dell'app: arancione/crema, loghi senza sfondo colorato, logo Dreamers arancione */
 html.dlt-parquet body{background:repeating-linear-gradient(90deg,#c88a4c 0 26px,#be8043 26px 52px)!important;color:#2b1608}
 html.dlt-parquet header,html.dlt-parquet header *{color:#fff}
-html.dlt-parquet header nav button[aria-selected="false"] span{color:rgba(255,255,255,.88)}
+html.dlt-parquet header nav button[aria-selected="false"] span{color:#fff!important;text-shadow:0 1px 2px rgba(90,30,0,.55)}
 html.dlt-parquet header .brand span{color:#ffe9c4}
 html.dlt-parquet main :is(b,span,td,th,p,li,button,em,small,h2,h3,h4,i,label,summary,sup):not(.htile *,.teamhead *,.rgh *,.htile,.teamhead,.rgh,.pdkx,.pdkb,.pdkx *,.pdkb *,.grl,.rl,.vtrh *,.vtrh,.medal,.avviso,.avviso *,.tvgo,.tvgo *,.hseg.on,.hdrm,.hnt *,.drnav button,.t,.t *,.tbl-wrap thead *,.badge,.ev,.ev *,.rok,.chip[aria-pressed="true"],.chip[aria-pressed="true"] *,.cntbtn *,.shbtn *,.bshare *){color:#2b1608}
 html.dlt-parquet main :is(small,.note,.setnote):not(.htile *,.teamhead *,.rgh *){color:#4a2f14}
@@ -6646,6 +6646,7 @@ function pqFix(){try{
     const fg=pr(cs.color);if(!fg)return;const bg=bgOf(el);
     const f=fg.a<1?mix(bg,fg,fg.a):fg;if(cr(f,bg)>=3.4)return;
     let n;const L=lum(bg);
+    if(el.closest("header")){el.style.setProperty("color","#fff","important");el.setAttribute("data-pq","1");PQL.push(el);return}
     if(L<.3){n=cr(W,bg)>=cr(DK,bg)?W:DK}
     else{const sat=Math.max(fg.r,fg.g,fg.b)-Math.min(fg.r,fg.g,fg.b)>90;
       if(sat){let k=.1;n=mix(fg,{r:0,g:0,b:0},k);while(cr(n,bg)<4.2&&k<.9){k+=.1;n=mix(fg,{r:0,g:0,b:0},k)}}
