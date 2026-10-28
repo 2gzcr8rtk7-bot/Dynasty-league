@@ -2149,7 +2149,8 @@ html.dlt-parquet .htile .badge,html.dlt-parquet .htile .logo{filter:none!importa
 /* (250) caselle squadra Home in stile parquet: doghe, cornice chiara come le linee del campo, barra col colore squadra */
 html.dlt-parquet .htile{background:repeating-linear-gradient(90deg,#dba867 0 22px,#d19b59 22px 44px)!important;border:0!important;box-shadow:inset 0 0 0 3px rgba(255,246,228,.9),inset 0 0 0 5px rgba(120,70,20,.35),0 8px 16px rgba(90,50,10,.35)!important;border-radius:6px!important;position:relative;padding-bottom:14px!important}
 html.dlt-parquet .htile::after{display:block!important;content:"";position:absolute;left:50%;bottom:3px;width:44%;height:7px;transform:translateX(-50%);background:var(--tc);border-radius:6px}
-html.dlt-parquet .htile small{color:#4a2a0c!important}
+html.dlt-parquet .htile b,html.dlt-parquet .htile .hnm b,html.dlt-parquet .htile small,html.dlt-parquet .htile .hnm small{color:#fff!important;text-shadow:0 1px 0 #6b3a10,0 -1px 0 #6b3a10,1px 0 0 #6b3a10,-1px 0 0 #6b3a10,0 2px 6px rgba(60,25,0,.7)!important}
+html.dlt-parquet .htile .hrec,html.dlt-parquet .htile .hrec *{text-shadow:none!important}
 html.dlt-parquet .htile .badge,html.dlt-parquet .htile .logo,html.dlt-parquet .htile .hlogo{filter:drop-shadow(0 3px 3px rgba(60,30,5,.45))!important}
 html.dlt-parquet .teamhead{background:#fff6e4!important;border:1px solid #e3c28d!important;border-bottom:6px solid var(--tc)!important;color:#2b1608!important;box-shadow:0 6px 14px rgba(90,50,10,.22)!important}
 html.dlt-parquet .teamhead *{color:#2b1608!important;text-shadow:none!important}
@@ -6644,6 +6645,7 @@ function pqFix(){try{
   const W={r:255,g:255,b:255},DK={r:43,g:22,b:8},OR={r:184,g:65,b:10};
   document.querySelectorAll("header *,main *,#subnav *,#subnav2 *").forEach(el=>{
     if(el.tagName==="svg"||el.closest("svg"))return;
+    if(el.closest(".htile"))return;
     if(el.classList&&el.classList.contains("tstar")){const b=bgOf(el);el.classList.toggle("stl",lum(b)>.4);return}
     let has=false;for(const n of el.childNodes)if(n.nodeType===3&&n.textContent.trim().length>0){has=true;break}
     if(!has)return;const r=el.getBoundingClientRect();if(r.width<2||r.height<2)return;

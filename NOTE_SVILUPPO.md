@@ -824,3 +824,5 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 (249) **Parquet: scritte dell'intestazione sempre bianche** — `pqFix()` forza `#fff` su tutti i testi dentro `header` (prima sceglieva il marrone sulle schede della barra); le schede non selezionate hanno anche una leggera ombra del testo.
 
 (250) **Parquet: caselle squadra della Home a doghe di parquet** — `html.dlt-parquet .htile` non è più crema: doghe di legno, cornice chiara interna (come le linee del campo), barra col colore squadra in basso al centro, loghi con ombra morbida, sottotitoli marrone scuro. Toccata solo la casella Home (`.htile`); testata squadra (`.teamhead`) e altre card restano crema.
+
+(251) **Parquet: nomi squadra bianchi nelle caselle Home** — `.htile b/small` bianchi con contorno marrone sottile (text-shadow) per leggersi sul legno; il record `.hrec` resta senza ombra. `pqFix()` salta gli elementi dentro `.htile` per non riscurirli.
