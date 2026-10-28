@@ -894,3 +894,6 @@ REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo 
 
 ## (272) Cap e Multe solo nell'Ufficio Scouting
 - Tolti i tasti Cap e Multe dal campo; ora sono (stessi id `#ccap`/`#cmul`) in cima all'Ufficio Scouting (`vCollege`, sotto "Legenda"). Le pagine Cap/Multe tornano con "‹ Ufficio Scouting" (`cur="college"`). Come da regola, nessuna voce nel registro pubblico (`NV_LOG`).
+
+## (273) Segno infortunato leggero sul campo
+- Sul campo e in panchina gli "out" hanno un quadratino rosso con croce bianca (`.injx`, 24px) in basso a sinistra della maglia, appoggiato al tagliandino nome/PDK (dietro di esso, z-index 1). Tolto l'alone rosso sulla maglia. Resta: pillola OUT nel duello (`.duo`) e in tribuna (`.injo`).
