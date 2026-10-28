@@ -1082,3 +1082,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (332) Playoff Dreamers — premio "80 crediti" sopra la Finale 5°–6° (al posto della coppa, che resta solo sul lato titolo): moneta dorata + "80 CREDITI" nell'immagine di condivisione e nel tabellone 5ª–8ª dell'app. IN CODA, NON pubblicato. (Importo 80 dalla proposta di Francesco; altri premi da definire.)
 
 (333) Playoff Dreamers — immagine: coppa viola Dreamers più grande (≈112px) e luminosa con riflesso; premio "80 crediti" più sobrio (oro spento, senza bagliore). Nota: i colori viola dell'immagine seguono il tema scelto (tema "App" li rende rossi, "Galassia" viola) tramite shThemeCtx. IN CODA, NON pubblicato.
+
+(334) Playoff Dreamers — premio "80 crediti" allineato: moneta centrata sull'altezza delle cifre, "80" e "CREDITI" sulla stessa linea di base, gruppo centrato sulla Finale 5°–6° (immagine e app). IN CODA, NON pubblicato.
