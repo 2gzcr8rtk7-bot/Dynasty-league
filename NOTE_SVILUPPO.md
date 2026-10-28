@@ -1058,4 +1058,4 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 (323) Lucchetto sul campo: tornato standard il tondino scuro con lucchetto giallo (ordine di Francesco, 28/10 sera, con screenshot); il lucchetto semplice nel colore del numero è l'opzione in Impostazioni › Giocatori. `DLS.lk` = "tondo" (default, anche se non impostato) | "testo". Annulla l'inversione della (319). pubblicato.
 
-(324) Campo: tolto il bordo e l'alone giallo attorno al tagliandino PDK del capitano (`.pcd.cap`): ora ha la stessa ombra degli altri, il capitano si riconosce dalla C fluo. IN CODA, NON pubblicato.
+(324) Campo: tolto il bordo e l'alone giallo attorno al tagliandino PDK del capitano (`.pcd.cap`): ora ha la stessa ombra degli altri, il capitano si riconosce dalla C fluo. pubblicato.
