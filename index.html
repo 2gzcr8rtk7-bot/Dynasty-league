@@ -1888,7 +1888,7 @@ nav button>span{white-space:nowrap}
 .duw.dun0 b{color:#7f79a8}
 .duw.dug i{color:rgba(0,0,0,.55)}.duw.dug b{color:#111}.duw.dug.r{background:#ef4444}.duw.dug.y{background:#f5b400}.duw.dug.g{background:#22c55e}.duw.dug.v{background:#8b5cf6}.duw.dug.r b,.duw.dug.v b{color:#fff}.duw.dug.r i,.duw.dug.v i{color:rgba(255,255,255,.7)}
 .duf{font-size:9.5px;color:#8f89b5}
-</style><style>.hseg{flex:none;position:relative;display:grid;place-items:center;width:40px;height:38px;border:0;border-radius:11px;cursor:pointer;color:#1a1203;background:radial-gradient(circle at 30% 20%,#ffe27a,#f5b400 60%,#b87f00);box-shadow:0 0 12px rgba(245,180,0,.5),inset 0 0 0 1px rgba(255,255,255,.3)}.hseg svg{width:19px;height:19px}.hseg b{position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:#e4163a;color:#fff;font:800 10px/17px var(--body,Arial);text-align:center}
+</style><style>.hseg{flex:none;position:relative;display:grid;place-items:center;width:40px;height:38px;border:0;border-radius:11px;cursor:pointer;color:#1a1203;background:radial-gradient(circle at 30% 20%,#ffe27a,#f5b400 60%,#b87f00);box-shadow:0 0 12px rgba(245,180,0,.5),inset 0 0 0 1px rgba(255,255,255,.3)}.hseg svg{width:19px;height:19px}@keyframes segbl{0%,100%{opacity:1;transform:scale(1.12);box-shadow:0 0 8px #ff4d5e}50%{opacity:.25;transform:scale(.9);box-shadow:none}}.hseg b.lvb{animation:segbl .9s ease-in-out infinite}@media (prefers-reduced-motion:reduce){.hseg b.lvb{animation:none}}.hseg b{position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:#e4163a;color:#fff;font:800 10px/17px var(--body,Arial);text-align:center}
 .hbar .hsrch{flex:1 1 0;min-width:0;padding:8px 10px}.hbar .hsrch input{font-size:13px}.hbar{gap:6px}
 .hbar .tvgo,.hbar .hseg,.hbar .hdrm{box-sizing:border-box;width:40px;height:38px;padding:0;justify-content:center;align-items:center}.hbar .tvgo{display:flex;gap:4px}
 .segi{display:inline-flex;align-items:center;gap:5px;flex:none;color:#aab3c8;cursor:pointer;padding:6px;border-radius:9px;-webkit-tap-highlight-color:transparent}.segi svg{width:19px;height:19px}.segi.on{color:#f5b400}.segi em{font:800 12px var(--display);font-style:italic;text-transform:uppercase;letter-spacing:.04em}.segrow{margin:6px 0 2px}.segrow .segi{border:1px solid rgba(245,180,0,.55);padding:5px 11px;background:rgba(245,180,0,.08)}
@@ -3298,6 +3298,11 @@ function osNight(){const o={};if(typeof TV==="undefined")return o;const d=campoN
   for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
     [["a",g[1]],["h",g[0]]].forEach(([sd,opp])=>(B[sd]||[]).forEach(r=>{if(r[19]==null)return;const mm=String(r[2]||"0").split(":");o[tvNm(r[0])]={p:+r[19],min:(+mm[0]||0)+(+mm[1]||0)/60,mt:r[2],pt:r[3],rb:r[6],as:r[7],opp,lv:g[5]==="L",st:g[5]==="L"?(TVL.st[g[7]]||"Live"):"Finale"}}))}
   return o}
+/* Notifica sul tasto Osservatorio: quanti seguiti stanno giocando live (lampeggia) o hanno giocato la notte (fino a mezzogiorno, ora del telefono) */
+function segStato(){let lv=0,nt=0;if(!SEGUI.length)return{n:0,lv:0};const NI=osNight();SEGUI.forEach(n=>{const N=NI[tvNm(n)];if(!N)return;if(N.lv)lv++;else nt++});const mattina=new Date().getHours()<12;return{n:lv+(mattina?nt:0),lv}}
+function segBadgeHtml(){const S=segStato();return S.n?`<b${S.lv?' class="lvb"':""}>${S.n}</b>`:""}
+function segBadge(){const b=document.getElementById("hseg");if(b){b.querySelector("b")?.remove();b.insertAdjacentHTML("beforeend",segBadgeHtml())}}
+setInterval(()=>{if(cur==="home")segBadge()},60000);
 function vOsserv(){fantaLiveAvvia();
   const per=OSV.per,mt=OSV.m,NI=osNight(),tg=(k,opts)=>`<span class="cltg" role="group">${opts.map(([v,l])=>`<button data-osv="${k}|${v}" aria-pressed="${OSV[k]===v}">${l}</button>`).join("")}</span>`;
   const rows=SEGUI.map(n=>{const I=segInfo(n),N=NI[tvNm(n)]||null,G=PARTITE[n]||[];let v=null,x={};
@@ -3333,7 +3338,7 @@ document.addEventListener("click",e=>{
 },true);
 function vHome(){
   const st=standings();
-  return `<div class="hbar"><label class="hsrch"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><input id="hq" type="search" placeholder="Cerca giocatore" autocomplete="off" aria-label="Cerca giocatore"></label><button class="hseg" id="hseg" aria-label="Apri Osservatorio (giocatori seguiti)">${SEG_SVG(false).replace('fill="none"','fill="currentColor"')}${SEGUI.length?`<b>${SEGUI.length}</b>`:""}</button><button class="tvgo" id="tvgo" aria-label="Apri Dynasty TV"><i class="tvdot"></i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="2.5" fill="currentColor"/><path d="M16.5 10.2l5-3v9.6l-5-3z" fill="currentColor"/></svg></button><button class="hdrm" id="hdrm" aria-label="Apri Dreamers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.2 6.6 6.8.1-5.5 4.1 2 6.6L12 16l-5.5 3.9 2-6.6L3 9.2l6.8-.1z" fill="currentColor"/></svg></button><button class="hnt${CNT?" on":""}" id="hnt" role="switch" aria-checked="${CNT}" aria-label="Modalità notte"><span class="hntk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></span></button></div><div class="hres" id="hres" hidden></div><div class="hgrid">${Object.keys(TEAMS).map(t=>{const c=TEAMS[t],x=st.find(y=>y.t===t);return `<button class="htile" data-team="${t}" style="--tc:${c.bg};--tt:${c.trim}" aria-label="Roster ${c.name}"><span class="hlg">${badge(t)}</span><span class="hnm"><small>${c.city}</small><b>${c.nick}</b></span><span class="hrec">${x.w}-${x.l}</span></button>`}).join("")}</div>`;
+  return `<div class="hbar"><label class="hsrch"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><input id="hq" type="search" placeholder="Cerca giocatore" autocomplete="off" aria-label="Cerca giocatore"></label><button class="hseg" id="hseg" aria-label="Apri Osservatorio (giocatori seguiti)">${SEG_SVG(false).replace('fill="none"','fill="currentColor"')}${segBadgeHtml()}</button><button class="tvgo" id="tvgo" aria-label="Apri Dynasty TV"><i class="tvdot"></i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="2.5" fill="currentColor"/><path d="M16.5 10.2l5-3v9.6l-5-3z" fill="currentColor"/></svg></button><button class="hdrm" id="hdrm" aria-label="Apri Dreamers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.2 6.6 6.8.1-5.5 4.1 2 6.6L12 16l-5.5 3.9 2-6.6L3 9.2l6.8-.1z" fill="currentColor"/></svg></button><button class="hnt${CNT?" on":""}" id="hnt" role="switch" aria-checked="${CNT}" aria-label="Modalità notte"><span class="hntk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></span></button></div><div class="hres" id="hres" hidden></div><div class="hgrid">${Object.keys(TEAMS).map(t=>{const c=TEAMS[t],x=st.find(y=>y.t===t);return `<button class="htile" data-team="${t}" style="--tc:${c.bg};--tt:${c.trim}" aria-label="Roster ${c.name}"><span class="hlg">${badge(t)}</span><span class="hnm"><small>${c.city}</small><b>${c.nick}</b></span><span class="hrec">${x.w}-${x.l}</span></button>`}).join("")}</div>`;
 }
 
 let curPlayer=null;
@@ -5380,6 +5385,7 @@ const FANTA_LIVE=[
   {attivo:()=>cur==="giochi"&&GAME==="dream",da:()=>{const N={...DRD.notti},n=drNightOfAgg(EFF.agg);if(n>=DR_START)N[n]=1;const k=Object.keys(N).sort(),l=k[k.length-1];return l&&l>=DR_START?drAdd(l,1):DR_START}},
   {attivo:()=>cur==="tv",da:()=>FANTA_LIVE[0].da()},
   {attivo:()=>cur==="osserv",da:()=>FANTA_LIVE[0].da()},
+  {attivo:()=>cur==="home"&&SEGUI.length>0,soft:true,da:()=>FANTA_LIVE[0].da()},
   {attivo:()=>cur==="statnotte"&&CNT,da:()=>FANTA_LIVE[0].da()},
   {attivo:()=>cur==="giochi"&&GAME==="gdream",da:()=>{if(GD_LASTOFF==null)try{gdData()}catch(e){}return GD_LASTOFF?drAdd(GD_LASTOFF,1):GD_START}}];
 async function fantaLiveScarica(da){if(FL.run||typeof tvEspn!=="function"||typeof TV==="undefined")return false;FL.run=true;let ch=false;
@@ -5387,7 +5393,7 @@ async function fantaLiveScarica(da){if(FL.run||typeof tvEspn!=="function"||typeo
     const G=TV.days[d]||[];if(G.length&&G.every(g=>g[5]==="F"&&g[7]&&TV.box[g[7]]))FL.fin[d]=1;if(JSON.stringify(fantaLiveNotte(d))!==prima)ch=true}}catch(e){}
   FL.run=false;return ch}
 function fantaLiveAvvia(){const go=()=>{if(document.hidden)return;const A=FANTA_LIVE.filter(f=>{try{return f.attivo()}catch(e){return false}});if(!A.length)return;
-    const da=A.map(f=>f.da()).sort()[0];fantaLiveScarica(da).then(c=>{if(c&&A.some(f=>f.attivo())){const y=scrollY;render();scrollTo(0,y)}})};
+    const da=A.map(f=>f.da()).sort()[0];fantaLiveScarica(da).then(c=>{if(c){const ac=A.filter(f=>f.attivo());if(ac.length&&ac.every(f=>f.soft))segBadge();else if(ac.length){const y=scrollY;render();scrollTo(0,y)}}})};
   /* subito alla prima apertura di ogni fanta/sezione (non aspettare il giro da 60 s), poi ogni 45 s */
   if(!FL.t){FL.t=setInterval(go,45000)}if(Date.now()-(FL.ult||0)>15000){FL.ult=Date.now();setTimeout(go,0)}}
 
@@ -6094,7 +6100,7 @@ function render(){
     const vq=m.querySelector("#vtq");if(vq)vq.oninput=()=>{const q=vq.value.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");m.querySelectorAll(".vtlist .vtrow").forEach(r=>{const t=(r.dataset.pln+" "+(TEAMS[r.dataset.plt]||{}).nick).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");r.style.display=!q||t.includes(q)?"":"none"})};
   const tvk=m.querySelector("#tvback");if(tvk)tvk.onclick=()=>{TVS.g=null;cur="home";GAME="menu";render();window.scrollTo(0,0)};
   const tvg=m.querySelector("#tvgo");if(tvg)tvg.onclick=()=>{cur="tv";render();window.scrollTo(0,0)};
-  const hsg=m.querySelector("#hseg");if(hsg)hsg.onclick=()=>{cur="osserv";render();window.scrollTo(0,0)};
+  if(SEGUI.length)fantaLiveAvvia();const hsg=m.querySelector("#hseg");if(hsg)hsg.onclick=()=>{cur="osserv";render();window.scrollTo(0,0)};
   const hd=m.querySelector("#hdrm");if(hd)hd.onclick=()=>{GAME="dream";cur="giochi";render();window.scrollTo(0,0)};
   const hn=m.querySelector("#hnt");if(hn)hn.onclick=()=>{CNT=!CNT;const y=scrollY;render();scrollTo(0,y)};
   const cb=m.querySelector("#cback");if(cb)cb.onclick=()=>{cur="home";render();window.scrollTo(0,0)};
