@@ -1065,3 +1065,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (326) PDK e lucchetto centrati in altezza nel tagliandino (campo e panchina): misurato sullo screenshot del telefono di Francesco (poco spazio sopra, molto sotto): padding 5px/0 + cifra giù di 0,5px, lucchetto giù di 1,6px; altezza del tagliandino invariata. pubblicato. Nota: nel sandbox il font è diverso (fallback), quindi il controllo finale va fatto sul telefono.
 
 (327) PDK e lucchetto nel tagliandino: dopo la (326) risultava troppo basso; scelta la versione A di 6 prove (Francesco, 28/10 sera): rispetto all'originale scende di soli 0,5pt (padding 2,5px/2,5px, cifra +0,5px, lucchetto +0,7px). Sostituisce i valori della (326). pubblicato.
+
+(328) Regolamento Art. 5 (IN CODA, NON pubblicato): gli slot Rookie dalla 4ª all'8ª posizione sono assegnati secondo l'arrivo (classifica finale) della regular season, non dei playoff (ordine di Francesco, 28/10 sera). Aggiornato il box «Slot Rookie», aggiunta la «Novità» e la voce pubblica in NV_LOG. Chiude il punto aperto sul criterio dello slot Rookie. `regolamento.pdf` NON modificato (resta la versione vecchia).
