@@ -1010,3 +1010,6 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 - I dati vengono da `SHR_PL`, impostato in `vGiocatore` / `vFAP` / `vGLP` a ogni render. Con 0 partite mostra "Nessuna partita NBA in questa stagione". Grafico dalla 2ª partita.
 - `.segrow` ora è flex (gap 8px) per affiancare i due tasti.
 - (308) Intestazione dell'immagine con lo sfondo della squadra (come la scheda in app: gradiente, strisce, bordo trim, testo `txt||fg`); G League col suo colore; free agent resta neutro viola.
+
+### (309) Swipe cambio squadra solo dal campo in giù
+- Nel touchstart dello swipe tra squadre (cur==='campo') si ignora il gesto se il dito parte sopra `#main .court` (banner, bacheca, cassa, tabellone): così si può scorrere gli indici senza cambiare squadra.

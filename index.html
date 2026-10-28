@@ -6722,7 +6722,7 @@ addEventListener("popstate",()=>{if(navBack()){try{history.pushState({dl:1},"")}
 (()=>{let sx=0,sy=0,t0=0,on=false,lock=false,dx=0,busy=false,raf=0;const M=()=>document.getElementById("main");
   const paint=()=>{raf=0;const m=M();if(!m)return;m.style.transform=`translate3d(${dx}px,0,0)`;m.style.opacity=String(1-Math.min(.55,Math.abs(dx)/innerWidth*.9))};
   const clean=m=>{m.style.transition="";m.style.transform="";m.style.opacity="";m.style.willChange=""};
-  addEventListener("touchstart",e=>{on=false;lock=false;if(busy||cur!=="campo"||e.touches.length!==1)return;const t=e.touches[0];if(t.clientX<=40||t.clientX>=innerWidth-40)return;if(e.target.closest("input,textarea,select,.dwsh,.colsheet,.dwbox"))return;sx=t.clientX;sy=t.clientY;t0=Date.now();dx=0;on=true},{passive:true});
+  addEventListener("touchstart",e=>{on=false;lock=false;if(busy||cur!=="campo"||e.touches.length!==1)return;const t=e.touches[0];if(t.clientX<=40||t.clientX>=innerWidth-40)return;if(e.target.closest("input,textarea,select,.dwsh,.colsheet,.dwbox"))return;{const ct=document.querySelector("#main .court");if(ct&&t.clientY<ct.getBoundingClientRect().top)return}/* lo swipe cambia squadra solo dal campo in giù (non su banner, tabellone, cassa) */sx=t.clientX;sy=t.clientY;t0=Date.now();dx=0;on=true},{passive:true});
   addEventListener("touchmove",e=>{if(!on)return;const t=e.touches[0],mx=t.clientX-sx,my=t.clientY-sy;
     if(!lock){if(Math.abs(my)>10&&Math.abs(my)>Math.abs(mx)*.8){on=false;return}if(Math.abs(mx)<12)return;lock=true;const m=M();m.style.transition="none";m.style.willChange="transform,opacity"}
     if(e.cancelable)e.preventDefault();dx=mx;if(!raf)raf=requestAnimationFrame(paint)},{passive:false});
