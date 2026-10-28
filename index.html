@@ -2099,6 +2099,7 @@ body.dreamfs .drroom[data-th="5"]{background:linear-gradient(180deg,#0b0d10,#161
 .drroom[data-col][data-th="1"] .drr.w em,.drroom[data-col][data-th="1"] .drms .drr.slead em,.drroom[data-col][data-th="1"] .drms .drr.sgold em{color:#ffd45e!important}
 .drroom[data-col][data-th="5"] .drr.w em,.drroom[data-col][data-th="5"] .drms .drr.slead em,.drroom[data-col][data-th="5"] .drms .drr.sgold em{color:#ffe14d!important}
 /* punteggi allineati in colonna: cifre di larghezza uguale, virgola sempre nello stesso punto */.drr em,.drms .drr em{font-variant-numeric:tabular-nums lining-nums!important;font-feature-settings:"tnum" 1,"lnum" 1!important;min-width:84px!important;text-align:right!important;display:block}
+/* zone della sfida (In campo / Panchina / Tribuna): wrapper pronto, titoli nascosti finché non si sceglie la grafica (A titoli centrali o B sfondi colorati) */.duzt{display:none}
 .shfoot{position:sticky;bottom:0;width:100%;display:grid;gap:8px;padding-top:6px;background:linear-gradient(180deg,transparent,rgba(10,6,30,.92) 14px)}.shcut{width:100%;display:grid;gap:8px;padding:10px 12px;border-radius:14px;background:rgba(30,20,70,.8);border:1px solid rgba(196,181,253,.35);color:#fff;box-sizing:border-box}.shcut b{font:800 15px var(--display);font-style:italic;letter-spacing:.04em;text-transform:uppercase}.shcut small{display:block;color:#c4b5fd;font-size:12px}.shcut input{width:100%;accent-color:#a855f7;height:28px}
 .shbar{display:flex;gap:10px;width:100%}
 .shbar>*{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px;border-radius:14px;border:1px solid rgba(196,181,253,.35);background:rgba(30,20,70,.8);color:#fff;font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;letter-spacing:.05em;text-transform:uppercase;text-decoration:none;cursor:pointer}
@@ -5621,11 +5622,13 @@ function drDuel(k,a,b,W,P){const A=drTeam(k,a,W),B=drTeam(k,b,W),f1=v=>v==null?"
       <div class="dus">${slot==="cap"&&x.f!=null?`<span class="pdkx dugold">${f1(x.f)}</span><em class="dunb">${f1(x.e)} ×1,5${x.cal?" · media":""}</em>`:`${x.e==null?'<span class="pdkx na">—</span>':pdkB(x.e,f1(x.e))}<em>${ml}${pt}</em>`}</div>
       <div class="duwk">${wk||'<span class="duw none"><i>${x.cal?"calendario: nessuna partita":"nessuna partita"}</i></span>'}</div><div class="duf">${fatte}/${gi.length} partite giocate</div></div>`};
   const sezioni=[["cap","Capitano ×1,5",0,1],["full","Punteggio pieno",1,6],["half","Panchina · ½",6,10]];
-  let rows="";for(const[cl,lab,i0,i1]of sezioni){let any=false,h="";for(let i=i0;i<i1;i++){const x=A.top[i],y=B.top[i];if(!x&&!y&&!W.closed)continue;if(!x&&!y&&i>=Math.max(A.top.length,B.top.length)&&!W.closed)continue;any=true;
+  let r1="",r2="",r3="";for(const[cl,lab,i0,i1]of sezioni){let any=false,h="";for(let i=i0;i<i1;i++){const x=A.top[i],y=B.top[i];if(!x&&!y&&!W.closed)continue;if(!x&&!y&&i>=Math.max(A.top.length,B.top.length)&&!W.closed)continue;any=true;
       h+=`<div class="durow">${card(x,a,cl)}<span class="duslot ${cl}">${cl==="cap"?"C":cl==="half"?"½":i+1}</span>${card(y,b,cl)}</div>`}
-    if(any)rows+=`<div class="dusec ${cl}">${lab}</div>${h}`}
+    if(any){const z=`<div class="dusec ${cl}">${lab}</div>${h}`;if(cl==="half")r2+=z;else r1+=z}}
   const resto=(arr,cl,lab)=>{const n=Math.max(arr[0].length,arr[1].length);if(!n)return"";let h=`<div class="dusec ${cl}">${lab}</div>`;for(let i=0;i<n;i++)h+=`<div class="durow">${arr[0][i]?card(arr[0][i],a,cl):'<div class="du du-nulla"></div>'}<span class="duslot ${cl}">·</span>${arr[1][i]?card(arr[1][i],b,cl):'<div class="du du-nulla"></div>'}</div>`;return h};
-  rows+=resto([A.trib,B.trib],"trib","Tribuna")+resto([A.wait,B.wait],"wait",W.closed?"Non hanno giocato":"In attesa");
+  r3=resto([A.trib,B.trib],"trib","Fuori dai 10")+resto([A.wait,B.wait],"wait",W.closed?"Non hanno giocato":"In attesa");
+  const zona=(h,z,t)=>h?`<section class="duz z-${z}"><div class="duzt"><span>${t}</span></div>${h}</section>`:"";
+  const rows=zona(r1,"campo","In campo")+zona(r2,"panch","Panchina")+zona(r3,"trib","Tribuna");
   const ld=A.score!=null&&B.score!=null&&A.score!==B.score?(A.score>B.score?a:b):null;
   const tm=(t,T,pj,r)=>`<div class="dut${r?" r":""}${ld===t?" lead":""}"><span class="dulg">${drLg(t)}</span><div><b>${drScore(T.score)}</b><small>${pj!=null?`proiez. ${pdkF(pj)}`:`${T.played}/10 titolari`}</small></div></div>`;
   SHR_DUEL={ph:DR_PH(k,P),range:`${drFmt(W.start)}–${drFmt(W.end)}`,a,b,A,B,pa,pb,pw,W,closed:W.closed,prov:[...DR_PROV].some(x=>x>=W.start&&x<=W.end)};
