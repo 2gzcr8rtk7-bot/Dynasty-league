@@ -2266,7 +2266,7 @@ const LOGO2={"DUC":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeAAAAF+CAYAAA
 (()=>{const st=document.createElement("style");st.textContent=Object.entries(LOGO).map(([t,u])=>`.lg-${t}{background-image:url(${u})}`).join("")+Object.entries(LOGO2).map(([t,u])=>`.lg-${t}{background-image:url(${u})}.hlg .lg-${t}{background-image:url(${LOGO[t]})}`).join("");document.head.appendChild(st)})();
 /* LOGO DUCKS PERSONALIZZATO (area riservata › Personalizzazioni): scelta salvata su questo telefono; vale ovunque (Home, campo, banner, immagini condivise) tranne la G League, che ha il suo logo in GLEAGUE */
 const LOGO_DUC0={a:LOGO.DUC,b:LOGO2.DUC};
-const DUC_LOGHI=[["1","Bandana Texas","loghi/duc-1.webp?v=3"],["2","Fulmine blu","loghi/duc-2.webp?v=3"],["3","Cowboy oro","loghi/duc-3.webp?v=3"],["4","Cowboy bianco","loghi/duc-4.webp?v=3"],["5","Sceriffo","loghi/duc-5.webp?v=3"],["6","Pazzo","loghi/duc-6.webp?v=3"],["7","Pazzo lingua","loghi/duc-7.webp?v=3"],["8","Pazzo furioso","loghi/duc-8.webp?v=3"]];
+const DUC_LOGHI=[["0","Originale",LOGO_DUC0.b||LOGO_DUC0.a],["1","Bandana Texas","loghi/duc-1.webp?v=3"],["2","Fulmine blu","loghi/duc-2.webp?v=3"],["3","Cowboy oro","loghi/duc-3.webp?v=3"],["4","Cowboy bianco","loghi/duc-4.webp?v=3"],["5","Sceriffo","loghi/duc-5.webp?v=3"],["6","Pazzo","loghi/duc-6.webp?v=3"],["7","Pazzo lingua","loghi/duc-7.webp?v=3"],["8","Pazzo furioso","loghi/duc-8.webp?v=3"]];
 let DUC_L="",DUC_C="",DUC_CURL=null;try{DUC_L=localStorage.getItem("dl_ducl")||"";DUC_C=localStorage.getItem("dl_ducc")||""}catch(e){}
 function ducLogoApply(){const f=DUC_LOGHI.find(x=>x[0]===DUC_L),u=f?f[2]:null,g=DUC_LOGHI.find(x=>x[0]===DUC_C),v=g?g[2]:null;DUC_CURL=v;LOGO.DUC=u||LOGO_DUC0.a;LOGO2.DUC=v||LOGO_DUC0.b;let st=document.getElementById("ducl");if(!st){st=document.createElement("style");st.id="ducl";document.head.appendChild(st)}st.textContent=u?`.lg-DUC,.hlg .lg-DUC{background-image:url(${u})}`:""}
 function ducLogoSet(k,w){if(w==="c"){DUC_C=k||"";try{k?localStorage.setItem("dl_ducc",k):localStorage.removeItem("dl_ducc")}catch(e){}}else{DUC_L=k||"";try{k?localStorage.setItem("dl_ducl",k):localStorage.removeItem("dl_ducl")}catch(e){}}ducLogoApply()}
@@ -7464,13 +7464,12 @@ function sala(){if(!COL.d){cur="campo";return vCampo()}
   <button class="hoftile" data-hof="soft"><span class="hi">⚙️</span><span><b>Software</b><small>Cap · Multe</small></span><i>›</i></button>
  </div><p class="hoftt">🦆 Texas Ducks · uso interno</p></div>`}
 function pers(){if(!COL.d){cur="campo";return vCampo()}
- const orig=LOGO_DUC0.b||LOGO_DUC0.a;
- const card=(w,tit,nota)=>{const c0=w==="c"?DUC_C:DUC_L,sel=DUC_LOGHI.find(x=>x[0]===c0);
+ const card=(w,tit,nota)=>{const orig=w==="c"?(LOGO_DUC0.b||LOGO_DUC0.a):LOGO_DUC0.a;const c0=w==="c"?DUC_C:DUC_L,sel=DUC_LOGHI.find(x=>x[0]===c0);
   const opt=(k,nm,u)=>`<button class="hlo${(c0||"")===k?" on":""}" data-hlo="${k}" data-hw="${w}" aria-pressed="${(c0||"")===k}"><span style="background-image:url(${u})"></span><small>${E(nm)}</small></button>`;
   return`<section class="hofcard"><h4>${tit}</h4><p class="setnote">${nota}</p>
- <div class="hlprev"><span style="background-image:url(${sel?sel[2]:orig})"></span><div><b>${sel?E(sel[1]):"Logo originale"}</b><small>In uso adesso</small></div></div>
- <div class="hlgrid">${opt("","Originale",orig)}${DUC_LOGHI.map(x=>opt(x[0],x[1],x[2])).join("")}</div>
- <button class="hlreset" data-hlo="" data-hw="${w}"${c0?"":" disabled"}>↺ Ripristina logo originale</button></section>`};
+ <div class="hlprev"><span style="background-image:url(${sel?sel[2]:orig})"></span><div><b>${sel?E(sel[1]):"Logo ufficiale"}</b><small>In uso adesso</small></div></div>
+ <div class="hlgrid">${DUC_LOGHI.map(x=>opt(x[0],x[1],x[2])).join("")}</div>
+ <button class="hlreset" data-hlo="" data-hw="${w}"${c0?"":" disabled"}>↺ Ripristina situazione ufficiale</button></section>`};
  return`<div class="hof"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
  <div class="hofhd"><div style="grid-column:1/3"><small>Texas Ducks · area riservata del GM</small><b>Personalizzazioni</b><em>Il look della tua app</em></div></div>
  ${card("p","Logo dei profili","L'immagine della squadra nei profili: Home, liste, classifiche, chip e pagina squadra. Non cambia nella G League. Vale su questo telefono.")}
