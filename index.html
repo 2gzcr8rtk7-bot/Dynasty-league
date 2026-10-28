@@ -6640,8 +6640,13 @@ async function tvEspn(dd){const r=await fetch("https://site.api.espn.com/apis/si
     TVL.st[key]=fin?"Finale"+(per>4?" · OT":""):(ty.shortDetail||"Live").replace(/ - /g," ");
     if(fin&&TV.box[key]&&(!TV.box[key].live||TV.box[key].fin))continue;
     try{const b=await fetch(`https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${ev.id}&t=`+Date.now(),{cache:"no-store"});if(b.ok){const B=await b.json(),P=(B.boxscore&&B.boxscore.players)||[],pa=P.find(x=>esAb(x.team.abbreviation)===a),ph=P.find(x=>esAb(x.team.abbreviation)===hm);
-      if(pa&&ph){const aw=fin&&G[2]>G[3],hw=fin&&G[3]>G[2];TV.box[key]={a:esSide(pa,aw),h:esSide(ph,hw),live:1,fin:fin?1:0,src:"ESPN"}}}}catch(e){}}
+      if(pa&&ph){const aw=fin&&G[2]>G[3],hw=fin&&G[3]>G[2];TV.box[key]={a:esSide(pa,aw),h:esSide(ph,hw),live:1,fin:fin?1:0,src:"ESPN",oc:fin?[]:esOnCourt(B,[pa,ph])}}}}catch(e){}}
   if(typeof tvRecalcRec==="function")tvRecalcRec();TVL.last=new Date().toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit",second:"2-digit"});TVL.src="ESPN";return true}
+/* In campo adesso da ESPN: parte dai 5 titolari e applica in ordine tutte le sostituzioni del play-by-play ("X enters the game for Y"). Poi, se risponde, il boxscore NBA corregge. */
+function esOnCourt(B,sides){try{const on=new Set();for(const sd of sides)for(const st of(sd.statistics||[]))for(const a of(st.athletes||[]))if(a.starter&&a.athlete)on.add(tvNm(a.athlete.displayName));
+ if(on.size<2)return[];const re=/^(.+?) enters the game for (.+?)\.?$/;
+ for(const p of(B.plays||[])){const m=re.exec((p.text||"").trim());if(m){on.delete(tvNm(m[2]));on.add(tvNm(m[1]))}}
+ return on.size>=2&&on.size<=10?[...on]:[]}catch(e){return[]}}
 /* Chi è in campo adesso: lo dice solo il boxscore NBA (campo "oncourt"); ESPN no. Si aggiorna ogni giro, se NBA non risponde i pallini restano su tutti i live. */
 const tvOcNames=B=>[...(B.awayTeam.players||[]),...(B.homeTeam.players||[])].filter(p=>p.oncourt==="1").map(p=>tvNm(p.name));
 async function tvOnCourt(){try{const live=[];for(const d in TV.days)for(const G of TV.days[d])if(G[5]==="L"&&G[7]&&TV.box[G[7]]&&!TV.box[G[7]].fin)live.push(G[7]);if(!live.length)return;
