@@ -3729,7 +3729,7 @@ function hnScopeSet(v){if(!["all","team"].includes(v))return;HN_S=v;try{localSto
 function homeFase(mnTest){try{const o=flUsaOggi(),G=(TV.days[o]||[]);let mn=mnTest;if(typeof mn!=="number"){const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date());mn=+f.find(x=>x.type==="hour").value*60+ +f.find(x=>x.type==="minute").value}
   const hasS=G.some(g=>g[5]==="S"),started=G.some(g=>g[5]==="L"||g[5]==="F");return hasS&&!started&&!(mn>=360&&mn<510)?o:null}catch(e){return null}}
 const HN_DEFC={};function hnDef(opp,role){const k=opp+"|"+role,n=Date.now(),c=HN_DEFC[k];if(c&&n-c.t<600000)return c.v;let v=null;try{v=capDef(opp,role)}catch(e){}HN_DEFC[k]={t:n,v};return v}
-let HN_SO="";try{HN_SO=localStorage.getItem("dl_hso")==="team"?"team":""}catch(e){}
+const HN_ORD=["DUC","DOL","FOX","PEA","SPI","EAG","TUR","MOO"];let HN_SO="",HN_SI=0;try{HN_SO=localStorage.getItem("dl_hso")==="team"?"team":"";HN_SI=Math.max(0,Math.min(7,+localStorage.getItem("dl_hsi")||0))}catch(e){}
 let HN_T="";try{HN_T=localStorage.getItem("dl_hnt")||""}catch(e){}
 const homeMyT=()=>{if(HN_T&&TEAMS[HN_T])return HN_T;let t=curTeam;try{const x=localStorage.getItem("team");if(x&&TEAMS[x])t=x}catch(e){}return t};
 function hnOptsHtml(){const sc=(k)=>k==="5"?`<div class="hnsch"><div style="display:grid;grid-template-columns:repeat(8,1fr);gap:2px">${"<i style='height:9px'></i>".repeat(8)}</div><b style="height:11px"></b><b style="height:15px"></b><b style="height:15px"></b></div>`:k==="6"?`<div class="hnsch" style="grid-template-columns:9px 1fr;gap:4px"><div style="display:grid;gap:2px">${"<i style='height:5px'></i>".repeat(8)}</div><div style="display:grid;gap:3px;align-content:start"><b style="height:11px"></b><b style="height:20px"></b><b style="height:20px"></b></div></div>`:`<div class="hnsch" style="grid-template-columns:1fr 1fr;gap:3px">${"<i style='height:12px'></i>".repeat(8)}</div>`;
@@ -3751,8 +3751,8 @@ function homeNotte(st){
   const row=(n,N,sub,own)=>`<div class="hmp" ${N.k?`data-hgo="${N.dy}|${N.k}|${N.sd}"`:`data-hpn="${String(n).replace(/"/g,"&quot;")}"`} role="link" tabindex="0"><span class="hmn">${N&&N.lv?'<i class="hmd"></i>':""}${own?`<i class="hmo">${badge(own)}</i>`:""}${String(n).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}<small>${sub}</small></span>${pdkB(N.p,pdkF(N.p))}</div>`;
   let mine=[];try{const M=campoNotteMap(myT);mine=Object.keys(M).map(n=>({n,N:M[n]}))}catch(e){}
   const OFF=hnScope()==="all";
-  const hsoHead=(tit,on,n,r)=>on?`<div class="hmh"><span><button type="button" class="hso${HN_SO==="team"?" on":""}" data-hso="team">${tit}</button></span><span><button type="button" class="hso${HN_SO==="team"?"":" on"}" data-hso="pdk">${n} GIOCATORI</button></span></div>`:`<div class="hmh"><span>${tit}</span><span>${r}</span></div>`;
-  const hsoOrd=x=>{const i=teamOrd().indexOf(x.own);return i<0?99:i};
+  const hsoHead=(tit,on,n,r)=>on?`<div class="hmh"><span><button type="button" class="hso${HN_SO==="team"?" on":""}" data-hso="team">${tit}${HN_SO==="team"?" · "+(TEAMS[HN_ORD[HN_SI]]||{nick:""}).nick.toUpperCase():""}</button></span><span><button type="button" class="hso${HN_SO==="team"?"":" on"}" data-hso="pdk">${n} GIOCATORI</button></span></div>`:`<div class="hmh"><span>${tit}</span><span>${r}</span></div>`;
+  const hsoOrd=x=>{const i=HN_ORD.indexOf(x.own);return i<0?99:(i-HN_SI+8)%8};
   if(OFF){mine=[];teamOrd().forEach(t=>{try{const M=campoNotteMap(t);Object.keys(M).forEach(n=>mine.push({n,N:M[n],own:t}))}catch(e){}})}
   mine.sort((a,b)=>(b.N.lv-a.N.lv)||(b.N.p-a.N.p));
   if(OFF&&HN_SO==="team")mine.sort((a,b)=>hsoOrd(a)-hsoOrd(b));
@@ -3787,7 +3787,7 @@ function hnDrag(root){const hq=root.querySelector(".hmq"),q=root.querySelector("
   hq.addEventListener("pointerup",end);hq.addEventListener("pointercancel",end);hq.addEventListener("pointerleave",e=>{if(id===e.pointerId&&e.pointerType==="mouse")end(e)});
   hq.addEventListener("click",e=>{if(mv){e.stopPropagation();e.preventDefault();mv=false}},true)}
 function bindHomeNotte(root){root.querySelectorAll(".hrl").forEach(b=>b.onclick=()=>{curTeam=b.dataset.team;try{localStorage.setItem("team",curTeam)}catch(e){}cur="campo";render();window.scrollTo(0,0)});
-  root.querySelectorAll("[data-hso]").forEach(b=>b.onclick=e=>{e.stopPropagation();HN_SO=b.dataset.hso==="team"?"team":"";try{HN_SO?localStorage.setItem("dl_hso","team"):localStorage.removeItem("dl_hso")}catch(_){}homeNotteRefresh()});
+  root.querySelectorAll("[data-hso]").forEach(b=>b.onclick=e=>{e.stopPropagation();if(b.dataset.hso==="team"){HN_SI=HN_SO==="team"?(HN_SI+1)%8:0;HN_SO="team"}else HN_SO="";try{HN_SO?(localStorage.setItem("dl_hso","team"),localStorage.setItem("dl_hsi",HN_SI)):localStorage.removeItem("dl_hso")}catch(_){}homeNotteRefresh()});
   root.querySelectorAll("[data-hdr]").forEach(b=>b.onclick=()=>{TVS.dr=b.dataset.hdr;TVS.drs="a";TVS.g=null;cur="tv";render();window.scrollTo(0,0)});
   root.querySelectorAll("[data-hpn]").forEach(b=>b.onclick=()=>{plOpen(b.dataset.hpn)});
   root.querySelectorAll("[data-hgo]").forEach(b=>b.onclick=()=>{const[dy,key,sd]=b.dataset.hgo.split("|");TVS.d=dy;TVS.g=key&&TV.box[key]?key:null;TVS.side=sd==="h"?"h":"a";cur="tv";render();window.scrollTo(0,0)});
