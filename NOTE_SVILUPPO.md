@@ -1235,3 +1235,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (421) Home: il carosello delle partite e degli avvisi (`.hmqrow`) ora occupa tutta la larghezza, sopra; la colonna dei loghi delle squadre parte più in basso, accanto alle schede (non nella versione TOP, dove resta com'era). In coda, non pubblicato.
 
 (422) Home: i loghi delle schede Dreamers (`.hmdl`) ora 34px come quelli NBA (`.hml`), stesso posto e stessa altezza delle righe; il fattore `--k` ridimensiona solo il disegno dentro la casella. In coda, non pubblicato.
+
+(423) Area DAX › Gestione equilibrio trade: accanto a ogni parametro (Parametri di interesse + Conversione crediti e pick nel tab Valori) un tastino «i»: apre un riquadro con «Cosa calcola» e «Come cambia le cose» (alto/basso) in parole semplici. Testi in `EQ_INFO`, stato `EQ.inf`. SEGRETO, non in NV_LOG. pubblicato.
