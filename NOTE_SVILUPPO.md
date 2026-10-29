@@ -1141,6 +1141,6 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 (363) Impostazioni grafica: l'anteprima del campo (con Giorno/Notte/Nascondi/Ripristina) e i tasti squadra compaiono solo nelle schede Campo, Giocatori e Squadra; nelle schede App, Home e Altro restano chiusi (`PVON` in `vImpostazioni`). pubblicato.
 
-(364) Live stanotte: la colonna Giocatore (parte blu scura) e piu larga (158-170px, padding destro 42px) e il tasto condividi sta tutto dentro, senza toccare il testo rosso del quarto/minuto live e senza essere tagliato (`.clbox td:first-child`, riga CSS "(142)"). IN CODA, NON pubblicato.
+(364) Live stanotte: la colonna Giocatore (parte blu scura) e piu larga (158-170px, padding destro 42px) e il tasto condividi sta tutto dentro, senza toccare il testo rosso del quarto/minuto live e senza essere tagliato (`.clbox td:first-child`, riga CSS "(142)"). pubblicato.
 
-(365) Home (tutte le versioni): il tempo di gioco della partita (es. "3:02 3rd") sta sotto il nome, dove era gia, ma ora e in ROSSO (classe `.hmc`) per le partite live; "Finale" resta com'era. Vale in tabella giocatori e seguiti. IN CODA, NON pubblicato.
+(365) Home (tutte le versioni): il tempo di gioco della partita (es. "3:02 3rd") sta sotto il nome, dove era gia, ma ora e in ROSSO (classe `.hmc`) per le partite live; "Finale" resta com'era. Vale in tabella giocatori e seguiti. pubblicato.
