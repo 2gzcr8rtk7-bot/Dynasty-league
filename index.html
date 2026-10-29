@@ -3228,7 +3228,7 @@ const EQ_DEF={wnb:.6,wvs:.4,vsk:1.25,sck:2.6,thA:.62,thM:.42,dlmax:.45,
  dpk:.40,dpw:.70,inc:.35,npr:.60,sgf:.25,sbal:.15,smix:.60,mmin:.55};
 const EQP={...EQ_DEF};
 let IA={np:3,noMore:false,lv:"eq",mode:"",any:false,want:[],keep:[],tf:"",q:"",st:1,team:"",needs:["","",""],give:[],cr:{c:0,p:0,d:0},n:2,out:[],seen:{},pool:null,key:"",rd:0};
-const IA_LV={eq:[0,.10,0],win:[.10,.40,.25],scam:[.40,.80,.55]},IA_R={G:"Guardia",F:"Ala",C:"Centro"},IA_RP={G:"guardie",F:"ali",C:"centri"},IA_W=[1,.6,.35],IA_LIM={p:10,d:30},IA_MAXR=15;
+const IA_LV={eq:[0,.10,0],win:[.10,.30,.20],scam:[.30,.80,.50]},IA_R={G:"Guardia",F:"Ala",C:"Centro"},IA_RP={G:"guardie",F:"ali",C:"centri"},IA_W=[1,.6,.35],IA_LIM={p:10,d:30},IA_MAXR=15;
 let iaCache={};
 const iaTeam=()=>IA.team&&TEAMS[IA.team]?IA.team:(TEAMS[curTeam]?curTeam:"DUC");
 /* Crediti post-Draft = debiti da pagare: si può promettere solo ciò che è GARANTITO dalla regular season. Premi per posizione finale: 30/40/50/150/150/250/350/450 (cresce col piazzamento peggiore),
@@ -3642,7 +3642,7 @@ function trCols(R,T,me){const B=trBal(R),W=false;/* (415) 4-5 squadre: una riga 
     <div class="iacb">${(r.pl||[]).map(p=>iaPlC(p.n,p.from)).join("")}${(r.pk||[]).map(p=>`<div class="iacc">Pick ${p.p} · ${PICK_CR[p.p]} cr<small class="iafrm">da ${TEAMS[p.from].nick}</small></div>`).join("")}${(r.cr||[]).map(c=>`<div class="iacc">+ ${c.v} cr<small class="iafrm">da ${TEAMS[c.from].nick}</small></div>`).join("")}${(r.pl||[]).length||(r.cr||[]).length||(r.pk||[]).length?"":'<em class="iaem">niente</em>'}</div></div>`}).join("")}</div>${W?'</div><p class="iarot">↻ Ruota il telefono in orizzontale per vedere tutte le squadre insieme</p>':""}`}
 function trRecVT(){const T=VT.t,R={};T.forEach((t,k)=>{const o=1-k;R[t]={pl:VT.pl[o].map(n=>({n,from:T[o]})),pk:VT.pk[o].map(p=>({p,from:T[o]})),cr:+VT.cr[o]?[{v:+VT.cr[o],from:T[o]}]:[]}});return R}
 function trRecV3(){const T=V3.t,R={};T.forEach(t=>R[t]={pl:[],cr:[],pk:[]});V3.it.forEach(x=>{const r=R[T[x.to]],f=T[x.k];if(x.ty==="pl")r.pl.push({n:x.n,from:f});else if(x.ty==="pk")r.pk.push({p:x.p,from:f});else r.cr.push({v:+x.v,from:f})});return R}
-function iaCard(x,i){const A=iaTeam(),cl=(d)=>d<.10?"ok":d<.40?"mid":"bad",pc=Math.round(x.d*100),bt=IA.lv==="eq"?`±${pc}%`:`${IA.lv==="scam"?"Truffa":"Vinci"} +${pc}%`;
+function iaCard(x,i){const A=iaTeam(),cl=(d)=>d<.10?"ok":d<.30?"mid":"bad",pc=Math.round(x.d*100),bt=IA.lv==="eq"?`±${pc}%`:`${IA.lv==="scam"?"Truffa":"Vinci"} +${pc}%`;
   const R=iaRec(x),T=x.ty===6?x.T:x.ty===2?[A,x.B]:x.ty===5?[A,x.g,x.r]:[A,x.B,x.C],crs=iaCrTxt(x.cr).map(t=>`<div class="iacr">+ ${t}</div>`).join("");
   const lab=`<span class="iah"><b>${T.length===2?"Scambio a 2":x.ty===6?"Scambio a "+T.length+" · ragnatela":x.ty===5?"Scambio a 3 · incrocio":"Scambio a 3 · giro"}</b></span>`;
   const body=`${trCols(R,T,A)}${crs?`<div class="iacrn"><small>Crediti che dai, da dove arrivano</small>${crs}</div>`:""}`;
@@ -3673,7 +3673,7 @@ function iaListHTML(){const A=iaTeam(),q=vnz(IA.q||""),others=Object.keys(ROSTER
   const teamsSel=new Set(IA.want.map(iaOwner)),full=teamsSel.size>=2;
   return l.map(x=>{const on=IA.want.includes(x.n),dis=!on&&(IA.want.length>=3||(full&&!teamsSel.has(x.t)));
     return `<button class="iapl ${on?"on":""}" ${dis?"disabled":""} data-ia="want" data-n="${x.n.replace(/"/g,"&quot;")}"><i class="rc ${x.r}"></i><span>${x.n}${iaOut(x.n)?' <em class="iaout">OUT</em>':""}${iaSp(x.n)?' <em class="iasp">SPECIALE</em>':""}${q.length>=2?`<small class="iatn">${TEAMS[x.t].nick}</small>`:""}</span>${starH(x.n)}<b>${x.v??"—"}</b></button>`}).join("")||'<p class="iasub">Nessun giocatore trovato.</p>'}
-const iaLvSel=()=>`<div class="iaq" role="group" aria-label="Guadagno">${[["eq","Equilibrata","fino a ±10%"],["win","Vinco io","+10% / +40%"],["scam","Truffo","oltre +40%"]].map(([k,l,sub])=>`<button data-ia="lv" data-k="${k}" aria-pressed="${IA.lv===k}"><b>${l}</b><small>${sub}</small></button>`).join("")}</div>`;
+const iaLvSel=()=>`<div class="iaq" role="group" aria-label="Guadagno">${[["eq","Equilibrata","fino a ±10%"],["win","Vinco io","+10% / +30%"],["scam","Truffo","oltre +30%"]].map(([k,l,sub])=>`<button data-ia="lv" data-k="${k}" aria-pressed="${IA.lv===k}"><b>${l}</b><small>${sub}</small></button>`).join("")}</div>`;
 const iaNSel=()=>{const one=IA.mode!=="pl"||new Set(IA.want.map(iaOwner)).size<=1;
   if(true)return one?`<div class="iaq iaq4" role="group" aria-label="Squadre coinvolte">${[2,3,4,5].map(n=>`<button data-ia="np" data-n="${n}" aria-pressed="${IA.np===n}"><b>${n}</b><small>${n===2?"squadre":"fino a "+n}</small></button>`).join("")}</div>`:`<p class="iasub">Due giocatori di squadre diverse: scambio a 3 squadre.</p>`;
   return `<div class="iaq iaq2" role="group" aria-label="Squadre coinvolte">${[2,3].map(n=>`<button data-ia="n" data-n="${n}" aria-pressed="${IA.n===n}"><b>${n}</b><small>${n} squadre</small></button>`).join("")}</div>`};
@@ -3862,8 +3862,8 @@ valApply();
 const vtPts=v=>Math.pow(Math.max(0,v)/1000,VAL_EXP)*1000;
 const VT={tab:"calc",t:["DUC","PEA"],pl:[[],[]],cr:[0,0],pk:[[],[]]};
 function vtSide(k){const pts=VT.pl[k].reduce((s,n)=>s+vtPts(valOf(n)??VAL_FALLBACK),0);const cr=(+VT.cr[k]||0)+VT.pk[k].reduce((s,p)=>s+PICK_CR[p],0);return pts+cr*VAL_CR}
-/* esito scambio: <10% equilibrata, 10-40% vincitore, oltre 40% grande truffa */
-const tradeVerdict=(d,t)=>d<.10?["Trade equilibrata","ok"]:d<.40?[`Vincitore trade ${TEAMS[t].nick}`,"mid"]:[`Grande truffa dei ${TEAMS[t].nick}`,"bad"];
+/* esito scambio: <10% equilibrata, 10-30% vincitore, oltre 30% grande truffa */
+const tradeVerdict=(d,t)=>d<.10?["Trade equilibrata","ok"]:d<.30?[`Vincitore trade ${TEAMS[t].nick}`,"mid"]:[`Grande truffa dei ${TEAMS[t].nick}`,"bad"];
 function vtResHTML(){
   const A=vtSide(0),B=vtSide(1),[ta,tb]=VT.t,ca=TEAMS[ta],cb=TEAMS[tb];
   if(!A&&!B)return "";
@@ -3980,7 +3980,7 @@ async function shareTrade(btn,M0,NI0){
       X.fillStyle="rgba(255,255,255,.1)";X.fillRect(cx+24,yy+o.h-10,cw-48,2);yy+=o.h})}
   y+=colH+10;
   y+=30;const ok=M.d<.10,lab=tradeVerdict(M.d,M.fav)[0].toUpperCase();
-  X.fillStyle=ok?"#22c55e":M.d<.40?"#f59e0b":"#ef4444";X.fillRect(60,y,W-120,96);X.fillStyle="#fff";X.textAlign="center";X.font=F(800,48);X.fillText(lab,W/2,y+64);y+=130;
+  X.fillStyle=ok?"#22c55e":M.d<.30?"#f59e0b":"#ef4444";X.fillRect(60,y,W-120,96);X.fillStyle="#fff";X.textAlign="center";X.font=F(800,48);X.fillText(lab,W/2,y+64);y+=130;
   X.fillStyle="#dfe5f5";X.font=FB(500,30);X.fillText(`Squilibrio ${Math.round(M.d*100)}%${M.sug?" · "+M.sug:""}`,W/2,y);
   const NI=NI0||(()=>{try{return iaCalcInts()}catch(e){return[]}})();
   if(NI.length){y+=64;X.textAlign="left";X.fillStyle="#fff";X.font=F(800,40);X.fillText("INTERESSE DELLE SQUADRE",60,y);
@@ -5961,10 +5961,10 @@ function histVerdictSide(M,k,i,mode){const N=M.sides.length,sd=M.sides[k],o=N===
   /* senza intenzioni (scambi a 3-4 squadre, squadre senza giocatori): giudizio sul solo saldo di valore */
   if(!sh){let tag,title,col,txt;
     if(!sd.pl.length){tag="cash";title="INCASSA CREDITI";col="#38bdf8";txt=V([`${nick} non riceve giocatori ma incassa ${sd.cr} cr: mossa di cassa, la partita vera arriva dopo.`,`Prima si fa spazio e si raccolgono crediti, poi si compra: ${nick} prepara qualcosa.`,`${nick} si alleggerisce (${sd.cr} cr in cassa): vedremo dove li spenderà.`])}
-    else if(pc>=40){tag="scam";title="SCIPPO";col="#4ade80";txt=V([`${nick} porta a casa ${ab}% di valore in più: ${N===2?on+" ha firmato senza leggere":"gli altri hanno firmato senza leggere"}.`,`Affare enorme per ${nick}: ${sg(pc)} sui numeri. Dall'altra parte dovranno spiegare.`,`${nick} esce con ${sg(pc)} di valore: scippo in piena regola.`])}
-    else if(pc>=20){tag="good";title="BUON AFFARE";col="#86efac";txt=V([`${nick} ci guadagna ${ab}% di valore: scambio ben fatto.`,`Colpo pulito: ${sg(pc)} per ${nick}.`,`${nick} ha fiuto: ${sg(pc)} di valore senza strappi.`])}
-    else if(pc>-20){tag="even";title="SCAMBIO PARI";col="#facc15";txt=V([`${nick} resta in pari (${sg(pc)}): né furti né regali, decide il campo.`,`Valori allineati per ${nick}: la calcolatrice non ha nulla da dire.`,`Nessuno ruba niente a ${nick} (${sg(pc)}): scambio equilibrato.`])}
-    else if(pc>-40){tag="pays";title="PREZZO ALTO";col="#fb923c";txt=V([`${nick} paga caro: ${sg(pc)} di valore. Servirà che il campo gli dia ragione.`,`Il conto per ${nick} è salato (${sg(pc)}): speriamo ne valga la pena.`,`${nick} lascia ${ab}% di valore sul tavolo: coraggio o fretta?`])}
+    else if(pc>=30){tag="scam";title="SCIPPO";col="#4ade80";txt=V([`${nick} porta a casa ${ab}% di valore in più: ${N===2?on+" ha firmato senza leggere":"gli altri hanno firmato senza leggere"}.`,`Affare enorme per ${nick}: ${sg(pc)} sui numeri. Dall'altra parte dovranno spiegare.`,`${nick} esce con ${sg(pc)} di valore: scippo in piena regola.`])}
+    else if(pc>=15){tag="good";title="BUON AFFARE";col="#86efac";txt=V([`${nick} ci guadagna ${ab}% di valore: scambio ben fatto.`,`Colpo pulito: ${sg(pc)} per ${nick}.`,`${nick} ha fiuto: ${sg(pc)} di valore senza strappi.`])}
+    else if(pc>-15){tag="even";title="SCAMBIO PARI";col="#facc15";txt=V([`${nick} resta in pari (${sg(pc)}): né furti né regali, decide il campo.`,`Valori allineati per ${nick}: la calcolatrice non ha nulla da dire.`,`Nessuno ruba niente a ${nick} (${sg(pc)}): scambio equilibrato.`])}
+    else if(pc>-30){tag="pays";title="PREZZO ALTO";col="#fb923c";txt=V([`${nick} paga caro: ${sg(pc)} di valore. Servirà che il campo gli dia ragione.`,`Il conto per ${nick} è salato (${sg(pc)}): speriamo ne valga la pena.`,`${nick} lascia ${ab}% di valore sul tavolo: coraggio o fretta?`])}
     else{tag="victim";title="PAGA CARISSIMO";col="#f87171";txt=V([`${nick} regala ${ab}% di valore: qui qualcuno ha lasciato il portafoglio a casa.`,`Conto da brividi per ${nick}: ${sg(pc)}. Una truffa, e si vede.`,`${nick} si fa spennare (${sg(pc)}): scambio da dimenticare.`])}
     if(mode>=2)txt=first(txt);return{tag,title,col,txt,vo:1}}
   const c0=sh.pre,L0=sh.L0,strong=Math.abs(c0)>=.25,
@@ -5974,19 +5974,19 @@ function histVerdictSide(M,k,i,mode){const N=M.sides.length,sd=M.sides[k],o=N===
   const num=`Cede ${sh.aG!=null?f1(sh.aG)+" anni e PDK "+f1(sh.pG):"—"}, riceve ${sh.aR!=null?f1(sh.aR)+" anni e PDK "+f1(sh.pR):"—"}; saldo di valore ${sg(pc)}.`;
   let tag,title,col,txt;
   if(!strong){tag="open";title="DECIDE LA STRADA";col="#facc15";txt=`${nick} ${goal}: con questo scambio ${s>=.2?"sceglie di puntare sul presente":s<=-.2?"sceglie di costruire sul futuro":"resta in mezzo al guado"}. ${num}`+(pc>=25?` Almeno ci guadagna sui numeri: ${sg(pc)}.`:pc<=-25?` E ci rimette parecchio (${sg(pc)}): scelta di strada pagata cara.`:"")}
-  else if(coh&&pc>=20){tag="perfect";title="COLPO DA MANUALE";col="#4ade80";txt=V([`${nick} ${goal} e fa esattamente ciò che serve, ${dirS}, portandosi a casa pure ${sg(pc)} di valore. Più centrato di così si muore.`,`Scambio chirurgico: coerente col progetto (${goalS}) e in attivo (${sg(pc)}). Qui si vede chi ha un piano.`,`Doppietta: segue la propria strada e ci guadagna (${sg(pc)}). Gli altri prendano appunti.`])+" "+num}
-  else if(coh&&pc>-20){tag="logic";title="MOSSA COERENTE";col="#86efac";txt=V([`${nick} ${goal}, e lo scambio va nella direzione giusta: ${dirS}. Nessun colpo di genio sui numeri (${sg(pc)}), ma ha senso.`,`Nulla da obiettare: ${goalS} era il piano e questo scambio lo conferma (${sg(pc)} di valore). Noioso, ma corretto.`,`Mossa pulita: coerente con ciò che ${nick} sta costruendo (${goalS}).`])+" "+num}
+  else if(coh&&pc>=15){tag="perfect";title="COLPO DA MANUALE";col="#4ade80";txt=V([`${nick} ${goal} e fa esattamente ciò che serve, ${dirS}, portandosi a casa pure ${sg(pc)} di valore. Più centrato di così si muore.`,`Scambio chirurgico: coerente col progetto (${goalS}) e in attivo (${sg(pc)}). Qui si vede chi ha un piano.`,`Doppietta: segue la propria strada e ci guadagna (${sg(pc)}). Gli altri prendano appunti.`])+" "+num}
+  else if(coh&&pc>-15){tag="logic";title="MOSSA COERENTE";col="#86efac";txt=V([`${nick} ${goal}, e lo scambio va nella direzione giusta: ${dirS}. Nessun colpo di genio sui numeri (${sg(pc)}), ma ha senso.`,`Nulla da obiettare: ${goalS} era il piano e questo scambio lo conferma (${sg(pc)} di valore). Noioso, ma corretto.`,`Mossa pulita: coerente con ciò che ${nick} sta costruendo (${goalS}).`])+" "+num}
   else if(coh){tag="pays";title="CARO, MA VOLUTO";col="#fbbf24";txt=V([`${nick} sa cosa vuole (${goalS}) e lo paga caro: ${sg(pc)} di valore. Se la strada è giusta, il prezzo è alto ma comprensibile.`,`Il progetto è chiaro, il conto è salato (${sg(pc)}): coerenza sì, affare no.`,`Direzione giusta, portafoglio più leggero (${sg(pc)}): è il prezzo di avere fretta.`])+" "+num}
-  else if(just&&pc>-40){tag="just";title="SVOLTA GIUSTIFICATA";col="#fde047";txt=V([`Il progetto diceva «${goalS}», ma i risultati di quest'anno (PDK ${f1(sh.pR)} contro ${f1(sh.pG)}) dicono che ${nick} si sente pronta a fare il salto: sacrifica potenziale per produzione immediata. Scelta discutibile sul futuro, sensata sul presente.`,`${nick} cambia idea e lo fa con un motivo: chi arriva rende di più adesso (PDK ${f1(sh.pR)} contro ${f1(sh.pG)}). Dalla ricostruzione al «proviamoci» in una mossa.`,`Strada cambiata in corsa: da «${goalS}» a voglia di risultati subito. I numeri di quest'anno la sostengono (PDK ${f1(sh.pR)} contro ${f1(sh.pG)}).`])+" "+num}
+  else if(just&&pc>-30){tag="just";title="SVOLTA GIUSTIFICATA";col="#fde047";txt=V([`Il progetto diceva «${goalS}», ma i risultati di quest'anno (PDK ${f1(sh.pR)} contro ${f1(sh.pG)}) dicono che ${nick} si sente pronta a fare il salto: sacrifica potenziale per produzione immediata. Scelta discutibile sul futuro, sensata sul presente.`,`${nick} cambia idea e lo fa con un motivo: chi arriva rende di più adesso (PDK ${f1(sh.pR)} contro ${f1(sh.pG)}). Dalla ricostruzione al «proviamoci» in una mossa.`,`Strada cambiata in corsa: da «${goalS}» a voglia di risultati subito. I numeri di quest'anno la sostengono (PDK ${f1(sh.pR)} contro ${f1(sh.pG)}).`])+" "+num}
   else if(just){tag="justpay";title="SVOLTA CARISSIMA";col="#fb923c";txt=V([`${nick} sente di essere pronta a vincere: lascia la ricostruzione (${goalS}) e sacrifica gioventù e potenziale per chi rende adesso (PDK ${f1(sh.pR)} contro ${f1(sh.pG)}). La logica sportiva c'è, ma il conto è da brividi: ${sg(pc)} di valore.`,`Da «${goalS}» a «vogliamo risultati»: i numeri di quest'anno (PDK ${f1(sh.pR)} contro ${f1(sh.pG)}) spiegano la fretta di ${nick}, non lo sconto che regala a ${on} (${sg(pc)}).`,`${nick} ha deciso che il momento è adesso e si vede dal rendimento di chi arriva (PDK ${f1(sh.pR)}). Peccato averlo pagato ${ab}% di valore in più: idea giusta, prezzo sbagliato.`])+" "+num}
-  else if(con&&pc>=20){tag="opp";title="FURBO, MA INCOERENTE";col="#fb923c";txt=V([`Sui numeri è un affare (${sg(pc)}), ma contraddice il progetto: ${nick} ${goal} e invece va ${dirS}. Si prende il valore e fa finta di non vedere.`,`${nick} incassa ${sg(pc)} di valore ma dimentica ciò che voleva essere (${goalS}). Bravo a trattare, meno a decidere.`])+" "+num}
-  else if(pc<=-40){tag="victim";title="RAPINA IN PIENO GIORNO";col="#f87171";txt=V([`${nick} ci rimette ${sg(pc)} di valore${con?" e per giunta va contro il suo progetto ("+goalS+")":""}. Qui qualcuno ha dimenticato il portafoglio a casa: ${on} ringrazia.`,`Scambio senza senso: ${nick} lascia sul tavolo ${ab}% di valore${con?", tradisce il piano ("+goalS+")":""} e non ha nemmeno la scusa dei risultati.`,`È una truffa e si vede: ${ab}% di valore regalato a ${on}${con?", in più contro la propria strada":""}.`])+" "+num}
+  else if(con&&pc>=15){tag="opp";title="FURBO, MA INCOERENTE";col="#fb923c";txt=V([`Sui numeri è un affare (${sg(pc)}), ma contraddice il progetto: ${nick} ${goal} e invece va ${dirS}. Si prende il valore e fa finta di non vedere.`,`${nick} incassa ${sg(pc)} di valore ma dimentica ciò che voleva essere (${goalS}). Bravo a trattare, meno a decidere.`])+" "+num}
+  else if(pc<=-30){tag="victim";title="RAPINA IN PIENO GIORNO";col="#f87171";txt=V([`${nick} ci rimette ${sg(pc)} di valore${con?" e per giunta va contro il suo progetto ("+goalS+")":""}. Qui qualcuno ha dimenticato il portafoglio a casa: ${on} ringrazia.`,`Scambio senza senso: ${nick} lascia sul tavolo ${ab}% di valore${con?", tradisce il piano ("+goalS+")":""} e non ha nemmeno la scusa dei risultati.`,`È una truffa e si vede: ${ab}% di valore regalato a ${on}${con?", in più contro la propria strada":""}.`])+" "+num}
   else{tag="wrong";title="NON HA MOLTO SENSO";col="#f87171";txt=V([`${nick} ${goal}, eppure va ${dirS}${pc<=-10?` e ci perde pure ${ab}% di valore`:""}. Le intenzioni dicono una cosa, lo scambio un'altra: confusione totale.`,`Scelta che non quadra: ${goalS} era il piano e questo scambio va dall'altra parte${pc<=-10?`, con ${sg(pc)} di valore in meno`:""}. Qualcuno spieghi il ragionamento.`,`Direzione sbagliata rispetto al progetto (${goalS})${pc<=-10?` e saldo negativo (${sg(pc)})`:""}: poteva andare meglio.`])+" "+num}
   if(mode>=1)txt=txt.replace(" "+num,"");if(mode>=2)txt=first(txt);
   return{tag,title,col,txt}}
 function histFinal(M,i){const N=M.sides.length,T=M.vd,good=t=>["perfect","logic","just","justpay","pays","good","scam"].includes(t.tag),bad=t=>["wrong","victim"].includes(t.tag),nk=k=>TEAMS[M.sides[k].t].nick,fav=TEAMS[M.fav].nick,li=M.sides.reduce((m,s,k)=>s.pc<M.sides[m].pc?k:m,0),lose=nk(li),p=Math.round(M.d*100),V=a=>a[i%a.length];
   if(!T.length)return"";
-  if(M.d>=.40)return V([`TRUFFA CONFERMATA: ${fav} esce con ${p}% di valore in più. ${lose} ${bad(T[li])&&!T[li].vo?"non ha nemmeno un piano che giustifichi la cosa":T[li].vo?"ha firmato un conto molto salato":"aveva le sue ragioni, ma il conto resta salato"}.`,`Scambio da denuncia: ${p}% di squilibrio a favore di ${fav}. ${lose} ha firmato, noi abbiamo preso nota.`]);
+  if(M.d>=.30)return V([`TRUFFA CONFERMATA: ${fav} esce con ${p}% di valore in più. ${lose} ${bad(T[li])&&!T[li].vo?"non ha nemmeno un piano che giustifichi la cosa":T[li].vo?"ha firmato un conto molto salato":"aveva le sue ragioni, ma il conto resta salato"}.`,`Scambio da denuncia: ${p}% di squilibrio a favore di ${fav}. ${lose} ha firmato, noi abbiamo preso nota.`]);
   if(T.every(good)&&M.d<.10)return V([`Scambio fatto bene: ${N>2?"tutte le squadre hanno un buon motivo":"entrambe le squadre vanno nella direzione dei propri piani"} e il valore è pari. Così si tratta.`,`Win-win vero: valore equilibrato e nessuno ha tradito se stesso. Applausi.`]);
   if(T.every(bad))return V([`Nessuno ha seguito il proprio progetto: scambio da dimenticare in fretta.`,`Complimenti: ${N} squadre, zero logica. Questo scambio non si spiega neanche con la matematica.`]);
   if(T.some(bad))return V([`Qualcuno ha fatto un buon affare, qualcun altro no: ${lose} ha qualcosa da spiegarci.`,`Scambio a metà: ${fav} sa quello che fa, ${lose} molto meno.`]);
@@ -6125,7 +6125,7 @@ async function shHistTrade(i){const M=histTradeModel(i);if(!M)return null;
   /* PARERE */
   shRR(c,56,y,IN,parH,26);c.fillStyle="rgba(10,6,24,.72)";c.fill();c.strokeStyle="rgba(196,181,253,.28)";c.lineWidth=2;c.stroke();
   c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_F(800,40,1);c.fillStyle="#e9d5ff";c.fillText("IL PARERE DI CLAUDE",92,y+62);
-  const vcol=M.d<.10?"#22c55e":M.d<.40?"#f59e0b":"#ef4444";shRR(c,92,y+82,W-184,80,16);c.fillStyle=vcol;c.fill();c.fillStyle="#fff";c.textAlign="center";c.textBaseline="middle";c.font=SH_F(800,46,1);c.fillText(M.verdict[0].toUpperCase(),W/2,y+123);
+  const vcol=M.d<.10?"#22c55e":M.d<.30?"#f59e0b":"#ef4444";shRR(c,92,y+82,W-184,80,16);c.fillStyle=vcol;c.fill();c.fillStyle="#fff";c.textAlign="center";c.textBaseline="middle";c.font=SH_F(800,46,1);c.fillText(M.verdict[0].toUpperCase(),W/2,y+123);
   c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_B(500,27);c.fillStyle="#dfe5f5";let ty=y+210;sumL.forEach(l=>{c.fillText(l,92,ty);ty+=38});ty+=14-0;
   await shCardsDraw(c,its,W,ty);
   shFoot(c,W,H,"Dreamers · Trade Alert");return cv}
@@ -8950,7 +8950,7 @@ function eqSim(){
   return`<section class="hofcard"><h4>Simulatore</h4>
   <div class="eqrow">${[2,3,4,5].map(nb).join("")}</div>
   <div class="eqrow">${md("eq","⚖️ Equilibrate (±10%)")}${md("win","🏆 Vinco io")}${md("scam","🎭 Truffa")}</div>
-  ${EQ.mode==="eq"?`<p class="setnote">Mostro in automatico le proposte considerate equilibrate (saldo fino a ±10% tra le squadre).</p>`:`<label class="eqpct"><span>${EQ.mode==="win"?"Percentuale di vittoria":"Percentuale di truffa"}</span><input type="number" inputmode="decimal" min="1" max="80" step="1" value="${EQ.pct}" data-eq="pct"><b>%</b></label><p class="setnote">Cerco proposte in cui il tuo vantaggio è circa ${EQ.pct}% (±3). Consiglio: vittoria 10-40%, truffa oltre 40%.</p>`}
+  ${EQ.mode==="eq"?`<p class="setnote">Mostro in automatico le proposte considerate equilibrate (saldo fino a ±10% tra le squadre).</p>`:`<label class="eqpct"><span>${EQ.mode==="win"?"Percentuale di vittoria":"Percentuale di truffa"}</span><input type="number" inputmode="decimal" min="1" max="80" step="1" value="${EQ.pct}" data-eq="pct"><b>%</b></label><p class="setnote">Cerco proposte in cui il tuo vantaggio è circa ${EQ.pct}% (±3). Consiglio: vittoria 10-30%, truffa oltre 30%.</p>`}
   ${eqScHTML()}
   <div class="eqrow"><button class="eqgo" data-eq="new"${EQ.busy?" disabled":""}>${EQ.busy?"⏳ Calcolo…":"🔄 Nuova simulazione (Aggiorna)"}</button>${EQ.sc?`<button class="eqb" data-eq="again">↻ Stesso scenario</button>`:""}</div></section>
   ${EQ.sc&&!EQ.busy?`<section class="hofcard"><h4>${EQ.tot||0} proposte a ${EQ.n} squadre</h4>${EQ.tot?"":`<p class="setnote">Nessuna combinazione con questi parametri e questo scenario. Premi Nuova simulazione, oppure cambia i parametri/valori.</p>`}
@@ -9018,7 +9018,7 @@ async function eqShare(kind){/* valori di serie letti FUORI dal simulatore (dent
  document.addEventListener("click",e=>{if(cur!=="eq")return;const b=e.target.closest("[data-eq]");if(!b||b.tagName==="INPUT")return;const k=b.dataset.eq,v=b.dataset.v;
   if(k==="tab"){EQ.tab=v;EQ.msg="";render();scrollTo(0,0)}
   else if(k==="n"){EQ.n=+v;keep()}
-  else if(k==="mode"){EQ.mode=v;if(v==="win"&&(EQ.pct<5||EQ.pct>=40))EQ.pct=15;if(v==="scam"&&EQ.pct<40)EQ.pct=50;keep()}
+  else if(k==="mode"){EQ.mode=v;if(v==="win"&&(EQ.pct<5||EQ.pct>=30))EQ.pct=15;if(v==="scam"&&EQ.pct<30)EQ.pct=40;keep()}
   else if(k==="new"||k==="again"){EQ.busy=true;if(k==="new"){const s=eqWith(eqNewSc);if(s)EQ.sc=s}EQ.keyRun="";EQ.all=false;keep();setTimeout(()=>{EQ.busy=false;keep()},40)}
   else if(k==="more"){EQ.all=true;keep()}
   else if(k==="rsp"){EQO.p={};eqSave();EQ.msg="";keep()}
