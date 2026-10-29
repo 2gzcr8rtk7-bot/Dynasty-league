@@ -1128,3 +1128,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (356) Home ufficiale notte: la tabella "Tutte le squadre" è alta circa 7 righe (312 px, a scorrimento) così sotto resta subito visibile lo spazio dei seguiti. IN CODA, NON pubblicato.
 
 (357) Impostazioni (rotellina) › nuova scheda "🌙 Notte" per TUTTI: scelta della Home in modalità notte (Ufficiale tutte le squadre · Griglia · Versione A · Versione B) e "La mia squadra" con le 8 squadre (dl_hnt): A e B mostrano i giocatori della squadra scelta, quindi ogni GM ha la sua versione personale. Spostata qui dalla sezione Personalizzazioni dell'area segreta (rimossa da lì). IN CODA, NON pubblicato.
+
+(358) Impostazioni › Notte: aspetto e dati ora sono indipendenti. Aspetto: Griglia / Loghi a lato / Loghi in cima (dl_hnl). Dati: "Tutte le squadre · ufficiale" oppure "La mia squadra" (dl_hns) + scelta delle 8 squadre (dl_hnt). Quindi entrambe le grafiche con i dati esistono sia in versione ufficiale sia in versione squadra. Chi aveva già scelto A/B mantiene la versione squadra; chi non ha scelto ha lato + ufficiale. IN CODA, NON pubblicato.
