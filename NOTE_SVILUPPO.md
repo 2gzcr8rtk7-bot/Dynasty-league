@@ -1222,4 +1222,6 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 (415) IA Trade e calcolatore: con 4 o 5 squadre le colonne non si allargano più oltre lo schermo (la scheda usciva dal bordo): ogni squadra è una RIGA a tutta larghezza, giocatori e crediti a sinistra, logo/nome/«riceve»/% a destra (`.iarows` in `trCols`; tolto lo scorrimento orizzontale e l'avviso di ruotare il telefono). Con 2-3 squadre restano le colonne. pubblicato.
 
-(416) IA Trade «Per giocatore»: ora 2 passi invece di «Voglio» e «Opzioni» separati. Passo 1 «Voglio e opzioni»: squadra, quante squadre (2-5), guadagno e scelta dei giocatori voluti; passo 2 «Intoccabili» (finestra successiva, prima del risultato): giocatori che NON vuoi dare + crediti, poi «Trova scambi». Risultato invariato (i riepiloghi in alto riportano ai due passi). IN CODA, NON pubblicato.
+(416) IA Trade «Per giocatore»: ora 2 passi invece di «Voglio» e «Opzioni» separati. Passo 1 «Voglio e opzioni»: squadra, quante squadre (2-5), guadagno e scelta dei giocatori voluti; passo 2 «Intoccabili» (finestra successiva, prima del risultato): giocatori che NON vuoi dare + crediti, poi «Trova scambi». Risultato invariato (i riepiloghi in alto riportano ai due passi). pubblicato.
+
+(417) IA Trade «Per giocatore»: i passi non sono più tasti ma una linguetta-titolo non cliccabile (`.iatab`) con la sezione in cui ci si trova (Voglio e opzioni · Intoccabili · Risultato). pubblicato.
