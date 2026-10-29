@@ -1137,4 +1137,4 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 (361) Home ufficiale anche di GIORNO, nei colori dello stile dell'app (Classico blu, Tabellone nero, ecc.: usa le variabili del tema --pn1/--pn2/--line/--gold/--fg/--muted); di notte resta viola. Stesse funzioni e stessa logica (08:30, live, scorrimento, tocco). Prima la griglia grande era la Home di giorno: ora lo è solo scegliendo "Griglia" in Impostazioni › Home (la scheda 🌙 Notte è ora 🏠 Home). Il passaggio vale per tutti i telefoni che non hanno scelto Griglia. IN CODA, NON pubblicato.
 
-(362) Home nuova: i loghi della barra laterale/superiore non hanno più la tessera colorata (sfondo, bordo, alone): ora sono loghi puliti con una leggera ombra. Tocco e record sotto il logo invariati. IN CODA, NON pubblicato.
+(362) Home nuova: nei temi giorno (Classico blu e Tabellone nero) i loghi della barra hanno la tessera colorata con i colori della squadra (gradiente, bordo, alone, righe); in modalità notte restano loghi puliti senza tessera. IN CODA, NON pubblicato.
