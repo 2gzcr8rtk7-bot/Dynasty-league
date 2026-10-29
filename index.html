@@ -37,6 +37,7 @@
 .pgg{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}.pgc{min-width:0}
 .pgc small{display:block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pgc small em{font-style:normal;text-transform:none;letter-spacing:0;opacity:.85}
 .pgsw{display:flex;align-items:center;gap:6px;margin-top:3px}.pgsw svg{flex:none}.pgsw b{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}.pgnd{font-size:11px;color:var(--muted)}
+.pgnote .pgdr{color:var(--gold);font-weight:700;display:block;margin-bottom:3px}
 .pgnote{font-size:11px;color:var(--muted);margin:10px 0 0}
 .vtrow[data-pln]{cursor:pointer}
 .ctools{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 16px}
@@ -3207,7 +3208,7 @@ function pagellaHTML(n){const P=pagella(n),S=P.s,v=(VALORI[n]||[])[1],pr=v!=null
   <div class="pgg">${c("PDK",f1(P.pdk),S.pdk,PG_COL.pdk,P.rk)}${c("Giovinezza",P.age?Math.floor(P.age)+" anni":"",S.gio,PG_COL.gio)}
   ${c("Infortuni",INF_STELLE[n]==null&&P.rk?"neutro":"",S.inj,PG_COL.inj)}${c("Minutaggio",P.mn!=null?f1(P.mn)+"'":"",S.min,PG_COL.min)}
   ${c(P.young?"Efficienza giovani":"Efficienza esperti",P.ef!=null?P.ef.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2}):"",S.eff,P.young?PG_COL.effg:PG_COL.effe)}${c("Spazio in squadra","",S.spa,PG_COL.spa)}</div>
-  <p class="pgnote">Più stelle = meglio (Infortuni: più stelle = più sano). ${P.rk?"Stella azzurra = rookie. ":""}${P.young?`${P.yr}° anno NBA: efficienza confrontata con la soglia del ruolo.`:""}</p></div>`}
+  <p class="pgnote">${draftOf(n)?`<b class="pgdr">Draft ${draftOf(n)[0]} · scelta n. ${draftOf(n)[1]}</b> `:""}Più stelle = meglio (Infortuni: più stelle = più sano). ${P.rk?"Stella azzurra = rookie. ":""}${P.young?`${P.yr}° anno NBA: efficienza confrontata con la soglia del ruolo.`:""}</p></div>`}
 let TRS="tutte";
 /* (384) IA TRADE — dentro Trade. Il GM sceglie cosa cerca (ruoli in ordine di priorità), cosa offre (giocatori + crediti) e se vuole una trade a 2 o a 3 squadre;
    l'app propone 5 scambi alla volta con la matematica del calcolatore (punti trade = (valore/1000)^2×1000, crediti a VAL_CR), corretta dalle stelline di ogni giocatore
@@ -3222,7 +3223,7 @@ const EQ_DEF={wnb:.6,wvs:.4,vsk:1.25,sck:2.6,thA:.62,thM:.42,dlmax:.45,
  pl10:.25,prevw:.5,prevc:.4,ptr:.22,
  eta0:.07,eta1:.10,perf:.40,rook:.22,win:.60,reb:.30,
  iwS0:.12,iwS1:.04,iwSm:.50,iwA:.62,isA:3.5,isT:1.2,pvA:.25,pvC:.15,pg0:5,pg1:20,pws:.65,pgr:12,
- sgf:.25,sbal:.15,smix:.60,mmin:.55};
+ dpk:.22,sgf:.25,sbal:.15,smix:.60,mmin:.55};
 const EQP={...EQ_DEF};
 let IA={np:3,noMore:false,lv:"eq",mode:"",any:false,want:[],keep:[],tf:"",q:"",st:1,team:"",needs:["","",""],give:[],cr:{c:0,p:0,d:0},n:2,out:[],seen:{},pool:null,key:"",rd:0};
 const IA_LV={eq:[0,.10,0],win:[.10,.40,.25],scam:[.40,.80,.55]},IA_R={G:"Guardia",F:"Ala",C:"Centro"},IA_RP={G:"guardie",F:"ali",C:"centri"},IA_W=[1,.6,.35],IA_LIM={p:10,d:30},IA_MAXR=15;
@@ -3242,7 +3243,7 @@ function iaPfMax(t){try{const owed=DEBITI.filter(x=>x.da===t&&x.tipo==="portafog
 const iaCassa=t=>Math.max(0,+(CREDITI[t]||0));
 const iaQ=n=>{if(iaCache[n]!=null)return iaCache[n];let q=.5;try{const s=pagella(n).s,a=[s.pdk,s.gio,s.inj,s.min,s.eff,s.spa].filter(v=>v!=null&&!isNaN(v));if(a.length)q=a.reduce((x,y)=>x+y,0)/a.length/5}catch(e){}return iaCache[n]=q};
 const iaOut=n=>{try{return injOut(n)}catch(e){return false}};
-const iaP=n=>vtPts(valOf(n)??VAL_FALLBACK)*(1+EQP.star*(iaQ(n)-.5));
+const iaP=n=>vtPts(valOf(n)??VAL_FALLBACK)*(1+EQP.star*(iaQ(n)-.5))*(1+iaDraft(n));
 const iaG=n=>iaP(n)*(iaOut(n)?EQP.outq:1);
 const iaSum=(a,f)=>a.reduce((s,x)=>s+f(x),0);
 const iaRand=(()=>{let s=1;return{seed:v=>{s=(v>>>0)||1},n:()=>{s^=s<<13;s>>>=0;s^=s>>>17;s^=s<<5;s>>>=0;return s/4294967296}}})();
@@ -3309,7 +3310,7 @@ function iaPerf(n){const k="p:"+n;if(iaPC[k])return iaPC[k];let base=iaProd(n),g
   const pd=g.map(x=>x.pdk),sea=pd.length?pd.reduce((a,b)=>a+b,0)/pd.length:null,l10=pd.length>=3?(()=>{const l=pd.slice(-10);return l.reduce((a,b)=>a+b,0)/l.length})():null;
   const ef=g.map(x=>x.eff).filter(v=>v!=null&&!isNaN(v)),eff=ef.length?ef.reduce((a,b)=>a+b,0)/ef.length:null;
   if(isRookie(n)){const role=ruoloDi(n),thr=IA_RKT[role]||.66,opt=IA_RKO[role]||.66;let v=pd.length>=2?sea:(base||sea||0);if(!v)v=base||0;const er=eff==null?null:eff/thr;if(er!=null)v*=1+iaCl(er-1,.25)*.6;
-    const c01=x=>Math.max(0,Math.min(1,x)),rq=.5*c01(((v||0)-12)/12)+.5*(eff==null?.4:c01((eff-(thr-.1))/(opt-thr+.2)));
+    const c01=x=>Math.max(0,Math.min(1,x)),rq0=.5*c01(((v||0)-12)/12)+.5*(eff==null?.4:c01((eff-(thr-.1))/(opt-thr+.2))),dd=draftOf(n),rq=rq0*(.55+.25*iaAgeF(iaAge(n))+.2*(dd?iaDrF(dd[1]):0));
     return iaPC[k]={v:v||0,rk:true,sea,eff,thr,opt,rq,label:rq>=.65?"ottimo rookie":rq>=.4?"buon rookie":"rookie da valutare",rel:null}}
   /* (451) INIZIO STAGIONE: pesa soprattutto il rendimento dell'anno scorso (media della stagione di riferimento); la stagione in corso entra gradualmente
      dalla gara pg0 e a pieno regime (pws) alla gara pg1. Le ultime 10 gare sono una quota (pl10) della parte "stagione in corso". */
@@ -3744,6 +3745,21 @@ let VAL_EXP=2,VAL_CR=Math.pow(1.15,2)*1000/300,VAL_FALLBACK=400,PICK_CR={1:300,2
 const vnz=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/ş/g,"s").replace(/[.'’]/g,"").replace(/\s+(jr|sr|ii|iii|iv)$/,"").replace(/\s+/g," ").trim();
 const VALMAP=(()=>{const m={};Object.entries(VALORI).forEach(([n,a])=>m[vnz(n)]=a);return m})();
 const valOf=n=>{const a=VALMAP[vnz(n)];return a?a[1]:null};
+/* (453) ARCHIVIO DRAFT: anno e numero di scelta di chi è stato scelto ai draft 2022-2026 (più le scelte alte 2020-2021), in ordine di scelta. Serve a pesare i giovani scelti in alto (vedi iaDraft). Per aggiungere un anno: nuova riga con i nomi in ordine di scelta. */
+const DRAFT_RAW={2026:"AJ Dybantsa|Darryn Peterson|Cameron Boozer|Caleb Wilson|Keaton Wagler|Mikel Brown Jr.|Darius Acuff Jr.|Kingston Flemings|Morez Johnson Jr.|Brayden Burries|Yaxel Lendeborg|Aday Mara|Nate Ament|Hannes Steinbach|Dailyn Swain|Bennett Stirtz|Ebuka Okorie|Christian Anderson Jr.|Allen Graves|Jayden Quaintance|Karim Lopez|Labaron Philon Jr.|Zuby Ejiofor|Cameron Carr|Sergio De Larrea|Tarris Reed Jr.|Chris Cenac Jr.|Joshua Jefferson|Alex Karaban|Koa Peat",
+ 2025:"Cooper Flagg|Dylan Harper|VJ Edgecombe|Kon Knueppel|Ace Bailey|Tre Johnson|Jeremiah Fears|Egor Dëmin|Collin Murray-Boyles|Khaman Maluach|Cedric Coward|Noa Essengue|Derik Queen|Carter Bryant|Thomas Sorber|Yang Hansen|Joan Beringer|Walter Clayton Jr.|Nolan Traore|Kasparas Jakucionis|Will Riley|Drake Powell|Asa Newell|Nique Clifford|Jase Richardson|Ben Saraf|Danny Wolf|Hugo Gonzalez|Liam McNeeley|Yanic Niederhauser",
+ 2024:"Zaccharie Risacher|Alex Sarr|Reed Sheppard|Stephon Castle|Ron Holland|Tidjane Salaün|Donovan Clingan|Rob Dillingham|Zach Edey|Cody Williams|Matas Buzelis|Nikola Topic|Devin Carter|Bub Carrington|Kel'el Ware|Jared McCain|Dalton Knecht|Tristan da Silva|Ja'Kobe Walter|Jaylen Tyson|Yves Missi|DaRon Holmes II|AJ Johnson|Kyshawn George|Pacôme Dadiet|Dillon Jones|Terrence Shannon Jr.|Ryan Dunn|Isaiah Collier|Baylor Scheierman",
+ 2023:"Victor Wembanyama|Brandon Miller|Scoot Henderson|Amen Thompson|Ausar Thompson|Anthony Black|Bilal Coulibaly|Jarace Walker|Taylor Hendricks|Cason Wallace|Jett Howard|Dereck Lively II|Gradey Dick|Jordan Hawkins|Kobe Bufkin|Keyonte George|Jalen Hood-Schifino|Jaime Jaquez Jr.|Brandin Podziemski|Cam Whitmore|Noah Clowney|Dariq Whitehead|Kris Murray|Olivier-Maxence Prosper|Marcus Sasser|Ben Sheppard|Nick Smith Jr.|Brice Sensabaugh|Julian Strawther|Kobe Brown|James Nnaji|Jalen Pickett|Leonard Miller|Colby Jones|Julian Phillips|Andre Jackson Jr.|Hunter Tyson|Jordan Walsh|Mouhamed Gueye|Maxwell Lewis|Amari Bailey|Tristan Vukčević|Rayan Rupert|Sidy Cissoko|GG Jackson|Seth Lundy|Mojave King|Jordan Miller|Emoni Bates|Keyontae Johnson|Jalen Wilson|Toumani Camara|Jaylen Clark|Jalen Slawson|Isaiah Wong|Tarik Biberović|Trayce Jackson-Davis|Chris Livingston",
+ 2022:"Paolo Banchero|Chet Holmgren|Jabari Smith Jr.|Keegan Murray|Jaden Ivey|Bennedict Mathurin|Shaedon Sharpe|Dyson Daniels|Jeremy Sochan|Johnny Davis|Ousmane Dieng|Jalen Williams|Jalen Duren|Ochai Agbaji|Mark Williams|AJ Griffin|Tari Eason|Dalen Terry|Jake LaRavia|Malaki Branham|Christian Braun|Walker Kessler|David Roddy|MarJon Beauchamp|Blake Wesley|Wendell Moore Jr.|Nikola Jović|Patrick Baldwin Jr.|TyTy Washington Jr.|Peyton Watson|Andrew Nembhard|Caleb Houstan|Christian Koloko|Jaylin Williams|Max Christie|Gabriele Procida|Jaden Hardy|Kennedy Chandler|Khalifa Diop|Bryce McGowens|EJ Liddell|Trevor Keels|Moussa Diabaté|Ryan Rollins|Josh Minott|Ismaël Kamagate|Vince Williams Jr.|Kendall Brown|Isaiah Mobley|Matteo Spagnolo|Tyrese Martin|Karlo Matković|JD Davison|Yannick Nzosa|Gui Santos|Luke Travers|Jabari Walker|Hugo Besson"};
+/* classi 2020-2021: solo i giocatori ancora rilevanti (scelte alte), numeri di scelta ufficiali (da verificare se servono altri) */
+const DRAFT_EXTRA={2021:{1:"Cade Cunningham",2:"Jalen Green",3:"Evan Mobley",4:"Scottie Barnes",6:"Josh Giddey",7:"Jonathan Kuminga",8:"Franz Wagner",16:"Alperen Şengün",17:"Trey Murphy III",20:"Jalen Johnson"},2020:{1:"Anthony Edwards",3:"LaMelo Ball",6:"Onyeka Okongwu",9:"Deni Avdija",12:"Tyrese Haliburton",21:"Tyrese Maxey"}};
+const DRAFT=(()=>{const m={};Object.entries(DRAFT_EXTRA).forEach(([y,o])=>Object.entries(o).forEach(([p,n])=>{m[vnz(n)]=[+y,+p]}));Object.entries(DRAFT_RAW).forEach(([y,l])=>l.split("|").forEach((n,i)=>{m[vnz(n)]=[+y,i+1]}));return m})();
+const draftOf=n=>DRAFT[vnz(n)]||null;
+/* Peso del draft: scelta tra le prime 5 = 1 (futuri campioni, quasi incedibili); poi scende (6ª = 0,8 … 10ª = 0,4; 11ª = 0,3 … 15ª = 0,1; oltre 15ª = 0).
+   Fattore età: pieno fino a 21 anni, 0 a 25,5 (un rookie di 24 anni non è un talento da draft alto: ha già «pochi anni davanti»). */
+const iaDrF=p=>p<=5?1:p<=10?.8-(p-6)*.1:p<=15?.3-(p-11)*.05:0;
+const iaAgeF=a=>a==null?0:Math.max(0,Math.min(1,(25.5-a)/4.5));
+const iaDraft=n=>{const d=draftOf(n);if(!d)return 0;return EQP.dpk*iaDrF(d[1])*iaAgeF(iaAge(n))};
 /* Prezzo consigliato in crediti (curva tarata da Francesco su esempi reali: Brazile 14, Steinbach 40-60, Booker 30-50,
    Mara 160, Ware 210, Knueppel 250-300, Barnes 400). Crescita esponenziale con il valore, più alta per i giovani, e per ruolo
    (ali più rare → più care, poi centri, guardie le più economiche). Oltre valore 1300 cresce col quadrato del valore (evita cifre assurde).
@@ -8522,6 +8538,7 @@ const EQ_PAR=[
   ["prevc","Tetto confronto stagione prec.","Massima differenza",.05],
   ["ptr","Trend sul rendimento","Effetto del trend",.01]]],
  ["Valore e proposte","Valore del giocatore e punteggio delle proposte",[
+  ["dpk","Premio draft (scelte alte e giovani)","Quanto vale in più un giovane scelto tra i primi 5 (0,22 = +22%); scende fino alla 15ª scelta e con l'età",.01],
   ["star","Qualità (stelline) sul valore","Con 16 la qualità sposta il valore di ±8%",.01],
   ["outq","Valore di un infortunato (OUT)","1 = pieno",.05],
   ["nx","Bisogno: peso del valore","Ruoli carenti in valore",.05],
@@ -8555,6 +8572,7 @@ prvcap:["Il tetto alla differenza considerata: oltre questo valore il confronto 
 lowT:["I crediti in cassa sotto cui una squadra \"si sente scoperta\" (di serie 30, il prezzo minimo di una trade speciale).","Se lo alzi, più squadre risultano povere e cercano crediti negli scambi. Se lo abbassi, meno squadre sentono il bisogno di crediti. È in crediti veri, non su 100."],
 lowIn:["Quanto una squadra sotto soglia apprezza uno scambio che le porta crediti fino alla soglia.","Più è alto, più le squadre povere dicono sì a chi dà loro crediti (anche pagando in valore). A 0 la cassa non conta quando ricevono."],
 lowOut:["Quanto una squadra rifiuta uno scambio che la lascia sotto la soglia di crediti.","Più è alto, più le squadre difendono la cassa e dicono no a scambi che le fanno scendere sotto soglia. A 0 la cassa non frena le cessioni di crediti."],
+dpk:["Quanto in più vale per l'IA Trade un giovane scelto in alto al draft (prime 5 scelte = effetto pieno, 6ª-10ª scende da 80% a 40%, 11ª-15ª da 30% a 10%, oltre la 15ª nessun premio), moltiplicato per l'età (pieno fino a 21 anni, zero a 25,5).","Alto: Wilson, Boozer, Dybantsa, Flagg diventano quasi incedibili e costano molto di più; i rookie vecchi (es. Lendeborg) restano al loro valore. A 0 il draft non conta."],
 isA:["Quanti anni sopra o sotto la media della lega servono perché una squadra sia del tutto «vincere subito» (vecchia) o «ricostruisce» (giovane).","Basso: bastano pochi anni di scarto e quasi tutte le squadre prendono una direzione netta. Alto: solo i roster molto vecchi o molto giovani hanno un'intenzione chiara."],
 isT:["Di quanto il talento dei 6 migliori (in deviazioni standard) deve staccarsi dalla media lega per contare al massimo.","Basso: basta poco per essere «forti» o «deboli». Alto: solo le squadre molto sopra o sotto la media hanno un segnale di talento pieno."],
 iwA:["Nel segnale di roster, quanta parte spetta all'età media (il resto è talento).","Alto: decide l'età (Eagles vecchi = vogliono vincere anche se non fortissimi). Basso: decide il talento (Ducks giovani ma forti = vogliono vincere)."],

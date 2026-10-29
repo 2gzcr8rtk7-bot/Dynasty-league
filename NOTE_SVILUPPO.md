@@ -1303,3 +1303,12 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 - Prova: caso Eagles–Davis (3 giocatori + 15 cr per Davis): da interesse medio a BASSO (Eagles c=+0,28, perdono rendimento PDK 18,2 contro 38,5). Su 400 scambi casuali equilibrati: alto 123, medio 168, basso 412 (prima 139/221/338): le squadre sono più selettive. MOO/TUR: giovane per veterano = interesse alto (1,00), veterano per giovane = basso.
 
 (452) DAX › Parametri: aggiunte le descrizioni «i» (EQ_INFO) per i parametri nuovi della nota 451; i valori di serie mostrati nell'area riservata sono quelli di `EQ_DEF` (perf 40 · win 60 · reb 30 e i nuovi). pubblicato (CACHE dynasty-v102). Le modifiche locali salvate sul telefono (`dl_eq`) restano finché non si preme «Ripristina parametri».
+
+(453) IA TRADE · ARCHIVIO DRAFT E PREMIO PER LE SCELTE ALTE (da test di Francesco, caso Wilson/Lendeborg). In coda su `coda`, non pubblicato; i numeri sono segreti, niente in `NV_LOG`.
+- Nuovo archivio `DRAFT_RAW` (+ `DRAFT_EXTRA` per le scelte alte 2020-2021): anno e numero di scelta di tutti i giocatori scelti ai draft 2022-2026 (fonte: Fadeaway World, controllato sui nomi dell'app); `draftOf(nome)` → [anno, scelta]. Le scelte 2020-2021 in `DRAFT_EXTRA` vengono dalla memoria dei numeri ufficiali (verificare se si aggiungono altri giocatori).
+- `iaDraft(n)` = `dpk` (0,22) × peso scelta (`iaDrF`: prime 5 = 1; 6ª 0,8 … 10ª 0,4; 11ª 0,3 … 15ª 0,1; oltre 0) × peso età (`iaAgeF`: pieno fino a 21 anni, 0 a 25,5). Il valore usato dall'IA Trade (`iaP`) è moltiplicato per (1 + iaDraft): Wilson 1240→1513, Boozer 1349→1646, Dybantsa 1250→1525, Flagg 1700→2074, Brown (6ª) 699→~840, Lendeborg (11ª, 24 anni) 730→~745. Il calcolatore scambi e i VALORI pubblici NON cambiano (solo l'IA Trade).
+- Rookie: la qualità rookie `rq` è scalata per età e scelta (rookie di 24 anni = 0,69× di uno di 20 anni scelto in alto).
+- Pagella giocatore: riga gialla «Draft AAAA · scelta n. N».
+- DAX › Parametri: nuovo `dpk` («Premio draft») con descrizione «i».
+- Caso dello screenshot: ora Eagles ricevono ~1945 punti IA contro ~1687 ceduti (prima 1598/1676): non è più uno scambio «±1%».
+- Feedback dei test raccolti in `tools/FEEDBACK_IA_TRADE.md` (anche il glitch grafico della riga #2).
