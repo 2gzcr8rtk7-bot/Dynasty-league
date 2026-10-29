@@ -3229,6 +3229,8 @@ function iaTrend(n){if(n in IA_TR)return IA_TR[n];let r=null;try{const g=grGames
    - Classifica: 1ª-2ª (3ª solo se ancora in corsa) = squadre forti, preferiscono giocatori più forti (stelle, PDK, trend); in zona bassa preferiscono giovani, con più valore rispetto ai crediti
      e con buona efficienza. All'inizio della stagione il segnale è smorzato (pochi turni giocati). */
 let iaPC={};
+/* forza del trend: curva convessa, trend lievi pesano poco, trend molto forti molto di più (0 a 0%, ~0,35 a +30%, 1 da ±60%) */
+const iaTs=p=>Math.sign(p)*Math.pow(Math.min(1,Math.abs(p)/60),1.5);
 const iaAge=n=>{try{return etaEsatta(n)}catch(e){return null}};
 const iaCrOf=n=>{for(const t in ROSTER){const p=ROSTER[t].find(x=>x[0]===n);if(p)return +p[4]||0}return 0};
 const iaAvg=a=>{const v=a.filter(x=>x!=null&&!isNaN(x));return v.length?v.reduce((s,x)=>s+x,0)/v.length:null};
@@ -3251,8 +3253,8 @@ function iaPerf(n){const k="p:"+n;if(iaPC[k])return iaPC[k];let base=iaProd(n),g
   const ws=sea==null?0:.35*Math.min(1,pd.length/10),wl=l10==null?0:.10,wb=base>0?.35:0;let v=0,w=0;if(wb){v+=wb*base;w+=wb}if(ws){v+=ws*sea;w+=ws}if(wl){v+=wl*l10;w+=wl}v=w?v/w:0;
   try{pg=grGames(n,"2025/26").filter(x=>x.pdk!=null&&!isNaN(x.pdk)).map(x=>x.pdk)}catch(e){}
   const prev=pg.length>=15?pg.reduce((a,b)=>a+b,0)/pg.length:null;let rel=null;
-  if(prev&&sea!=null&&pd.length>=3){rel=(sea-prev)/prev;v*=1+iaCl(rel,.4)*.75*Math.min(1,pd.length/8)}
-  const T=iaTrend(n);if(T)v*=1+iaCl(T.pct/100,.3)*.3;return iaPC[k]={v,base,sea,l10,prev,rel,ng:pd.length,tr:T?T.pct:null}}
+  const T=iaTrend(n);if(prev&&sea!=null&&pd.length>=3){rel=(sea-prev)/prev;if(T&&Math.sign(T.pct)!==Math.sign(rel))rel*=1-Math.min(.75,Math.abs(T.pct)/80);v*=1+iaCl(rel,.4)*.5*Math.min(1,pd.length/8)}
+  if(T)v*=1+.22*iaTs(T.pct);return iaPC[k]={v,base,sea,l10,prev,rel,ng:pd.length,tr:T?T.pct:null}}
 const iaRs=n=>{const cr=iaCrOf(n);return Math.max(.05,(iaP(n)/VAL_CR)/Math.max(1,cr))};
 const iaEf=n=>{try{const v=pagella(n).s.eff;return v==null||isNaN(v)?null:v/5}catch(e){return null}};
 const iaCl=(v,a)=>Math.max(-a,Math.min(a,v));
@@ -3289,13 +3291,13 @@ function iaInt(S,t,recv,gave,adv){const nb=iaNeed(S,t,recv,gave),vs=Math.max(0,M
   if(adv<=-.10)p.push(`ci rimette circa il ${Math.round(-adv*100)}% di valore`);else if(adv>=.10)p.push(`ci guadagna circa il ${Math.round(adv*100)}% di valore`);
   /* trend dell'ultimo mese dei giocatori che cede: se è in salita non ha voglia di darlo, se è in calo se ne libera volentieri */
   let dl=0;const tot=gave.reduce((a,x)=>a+Math.max(1,x.v||x.val||1),0)||1,up=[],dn=[];
-  gave.forEach(x=>{const T=iaTrend(x.n);if(!T||Math.abs(T.pct)<10)return;const w=Math.max(1,x.v||x.val||1)/tot,c=Math.max(-.5,Math.min(.5,T.pct/100));dl-=c*.5*Math.max(.4,w);
-    (T.pct>0?up:dn).push(`${x.n.split(" ").slice(-1)[0]} ${T.pct>0?"+":"−"}${Math.round(Math.abs(T.pct))}%`+(Math.abs(T.pct)>=20?" (forte)":""))});
+  gave.forEach(x=>{const T=iaTrend(x.n);if(!T||Math.abs(T.pct)<10)return;const w=Math.max(1,x.v||x.val||1)/tot,c=iaTs(T.pct);dl-=c*.45*Math.max(.4,w);
+    (T.pct>0?up:dn).push(`${x.n.split(" ").slice(-1)[0]} ${T.pct>0?"+":"−"}${Math.round(Math.abs(T.pct))}%`+(Math.abs(T.pct)>=40?" (fortissimo)":Math.abs(T.pct)>=20?" (forte)":""))});
   if(up.length)p.push(`non ha voglia di cedere ${up.join(", ")}: in salita nell'ultimo mese`);if(dn.length)p.push(`volentieri cede ${dn.join(", ")}: in calo nell'ultimo mese`);
   /* trend dei giocatori che riceve (quelli che gli offro): in salita lo interessano di più, in calo meno */
   const totR=recv.reduce((a,x)=>a+Math.max(1,x.v||x.val||1),0)||1,rU=[],rD=[];
-  recv.forEach(x=>{const T=iaTrend(x.n);if(!T||Math.abs(T.pct)<10)return;const w=Math.max(1,x.v||x.val||1)/totR,c=Math.max(-.5,Math.min(.5,T.pct/100));dl+=c*.5*Math.max(.4,w);
-    (T.pct>0?rU:rD).push(`${x.n.split(" ").slice(-1)[0]} ${T.pct>0?"+":"−"}${Math.round(Math.abs(T.pct))}%`+(Math.abs(T.pct)>=20?" (forte)":""))});
+  recv.forEach(x=>{const T=iaTrend(x.n);if(!T||Math.abs(T.pct)<10)return;const w=Math.max(1,x.v||x.val||1)/totR,c=iaTs(T.pct);dl+=c*.45*Math.max(.4,w);
+    (T.pct>0?rU:rD).push(`${x.n.split(" ").slice(-1)[0]} ${T.pct>0?"+":"−"}${Math.round(Math.abs(T.pct))}%`+(Math.abs(T.pct)>=40?" (fortissimo)":Math.abs(T.pct)>=20?" (forte)":""))});
   if(rU.length)p.push(`gli interessa di più perché ${rU.join(", ")} è in salita nell'ultimo mese`);if(rD.length)p.push(`gli interessa meno perché ${rD.join(", ")} è in calo nell'ultimo mese`);
   /* confronto con la STAGIONE PRECEDENTE (parametro chiave): chi cede un giocatore in calo rispetto all'anno scorso se ne libera volentieri, se è in crescita non lo vuole dare; per chi riceve è il contrario */
   {const vs=(L,sg)=>{const a=[],tt=L.reduce((x,y)=>x+Math.max(1,y.v||1),0)||1;L.forEach(x=>{const q=iaPerf(x.n);if(q.rk||q.rel==null||Math.abs(q.rel)<.12)return;dl+=sg*iaCl(q.rel,.5)*.6*Math.max(.4,Math.max(1,x.v||1)/tt)*Math.min(1,(q.ng||0)/8);a.push(`${x.n.split(" ").slice(-1)[0]} ${q.rel>0?"in crescita":"in calo"} (PDK ${q.prev.toFixed(1).replace(".",",")} → ${q.sea.toFixed(1).replace(".",",")})`)});return a},
