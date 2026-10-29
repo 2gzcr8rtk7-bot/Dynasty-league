@@ -8325,7 +8325,9 @@ function eqSim(){
   ${eqScHTML()}
   <div class="eqrow"><button class="eqgo" data-eq="new"${EQ.busy?" disabled":""}>${EQ.busy?"⏳ Calcolo…":"🔄 Nuova simulazione (Aggiorna)"}</button>${EQ.sc?`<button class="eqb" data-eq="again">↻ Stesso scenario</button>`:""}</div></section>
   ${EQ.sc&&!EQ.busy?`<section class="hofcard"><h4>${EQ.tot||0} proposte a ${EQ.n} squadre</h4>${EQ.tot?"":`<p class="setnote">Nessuna combinazione con questi parametri e questo scenario. Premi Nuova simulazione, oppure cambia i parametri/valori.</p>`}
-  ${(EQ.html||[]).map((h,i)=>`<details class="eqd"><summary><b>#${i+1}</b> <span>${EQ.mode!=="eq"?"+":"±"}${Math.round((ch[i]?ch[i].d:0)*100)}%</span> ${(ch[i]?ch[i].i:[]).map(y=>`<em class="eqi ${y[1]}">${TEAMS[y[0]].nick} ${y[1]} ${y[2]}</em>`).join("")}</summary>${h}</details>`).join("")}
+  ${(EQ.html||[]).slice(0,1).map(h=>h).join("")}
+  ${(EQ.html||[]).length>1?`<p class="setnote eqmore">Altre proposte per lo stesso scenario (tocca per aprire)</p>`:""}
+  ${(EQ.html||[]).map((h,i)=>i===0?"":`<details class="eqd"><summary><b>#${i+1}</b> <span>${EQ.mode!=="eq"?"+":"±"}${Math.round((ch[i]?ch[i].d:0)*100)}%</span> ${(ch[i]?ch[i].i:[]).map(y=>`<em class="eqi ${y[1]}">${TEAMS[y[0]].nick} ${y[1]} ${y[2]}</em>`).join("")}</summary>${h}</details>`).join("")}
   ${EQ.tot>(EQ.html||[]).length?`<button class="eqb" data-eq="more">Mostra tutte (${EQ.tot})</button>`:""}</section>`:""}`}
 function eqVal(def,cur,key,grp,step){const ch=def!=null&&Math.abs(cur-def)>1e-9;return`<label class="eqr${ch?" chg":""}"><input type="number" inputmode="decimal" step="${step||.01}" value="${cur==null?"":cur}" data-eqv="${grp}" data-k="${key}" data-def="${def==null?"":def}"></label>`}
 function eqPar(){const q=vnz(EQ.pt||"");const n=Object.keys(EQO.p).length;

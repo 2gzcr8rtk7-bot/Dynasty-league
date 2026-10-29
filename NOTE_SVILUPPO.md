@@ -1225,3 +1225,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (416) IA Trade «Per giocatore»: ora 2 passi invece di «Voglio» e «Opzioni» separati. Passo 1 «Voglio e opzioni»: squadra, quante squadre (2-5), guadagno e scelta dei giocatori voluti; passo 2 «Intoccabili» (finestra successiva, prima del risultato): giocatori che NON vuoi dare + crediti, poi «Trova scambi». Risultato invariato (i riepiloghi in alto riportano ai due passi). pubblicato.
 
 (417) IA Trade «Per giocatore»: i passi non sono più tasti ma una linguetta-titolo non cliccabile (`.iatab`) con la sezione in cui ci si trova (Voglio e opzioni · Intoccabili · Risultato). pubblicato.
+
+(418) Gestione equilibrio trade › Simulatore: dopo «Aggiorna» la prima proposta si vede subito a scheda piena, con la stessa grafica dell'IA Trade ufficiale (colonne/righe per squadra con i giocatori che ricevono, crediti, interessi); le altre proposte dello stesso scenario sono sotto, apribili, con saldo % e interesse di ogni squadra. SEGRETO. IN CODA, NON pubblicato.
