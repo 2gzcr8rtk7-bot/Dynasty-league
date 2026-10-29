@@ -1141,4 +1141,4 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 (363) Impostazioni grafica: l'anteprima del campo (con Giorno/Notte/Nascondi/Ripristina) e i tasti squadra compaiono solo nelle schede Campo, Giocatori e Squadra; nelle schede App, Home e Altro restano chiusi (`PVON` in `vImpostazioni`). pubblicato.
 
-(364) Live stanotte: tasto condividi spostato piu a destra (right:-7px, cella con z-index) cosi non tocca la scritta rossa del quarto/minuto live. IN CODA, NON pubblicato.
+(364) Live stanotte: la colonna Giocatore (parte blu scura) e piu larga (158-170px, padding destro 42px) e il tasto condividi sta tutto dentro, senza toccare il testo rosso del quarto/minuto live e senza essere tagliato (`.clbox td:first-child`, riga CSS "(142)"). IN CODA, NON pubblicato.
