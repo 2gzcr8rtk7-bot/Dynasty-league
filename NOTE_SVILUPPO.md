@@ -1283,3 +1283,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (444) pubblicato (CACHE dynasty-v96).
 
 (445) Correzione a mano di 32 valori (da DAX › Gestione equilibrio trade › prompt «Condividi valori»): nuovi numeri in `VALORI` (solo il valore, ruolo e flag rookie invariati) e in `VAL_BASE[nome]` = ["2026-10-26" (lunedì di questa settimana), stelle infortuni attuali da `INF_STELLE`]; registrata in `VAL_CORREZ` (29/10/2026) così compare nel registro del lunedì. Nessun prezzo, pick o conversione in crediti modificati (il prompt non ne conteneva): `PREZZO_FISSO`, `PICK_CR`, `VAL_CR`, `VAL_EXP` invariati; i prezzi fissi esistenti (es. Buzelis 120) seguono comunque il valore col calcolo del lunedì. Nota: non in `NV_LOG` (area segreta). pubblicato (CACHE dynasty-v97).
+
+(446) Collin Murray-Boyles: valore 1010 → 900 in `VALORI` (VAL_BASE già ["2026-10-26",2.5], stelle invariate) e annotato in `VAL_CORREZ` (29/10/2026). Nessun prezzo fisso. pubblicato (CACHE dynasty-v98).
