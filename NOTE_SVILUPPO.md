@@ -1409,3 +1409,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 479. **Rinomina «Foto scambio» → «Pic-Trade»** (scheda in Trade, titolo, scritte della foto, nome file) — pubblicato (v120, 29/10/2026).
 
 480. **Pic-Trade spostato nel menu «Scambi»** — pubblicato (v121, 29/10/2026). Non è più una scheda dentro Trade: è una voce del menu a tendina Scambi (Calcolatore trade, Osservatorio, IA Trade, Comparatore, Pic-Trade), vista propria `pictrade` (`vPicTrade`). Il link `?scambio=…` apre direttamente Pic-Trade.
+
+481. **Pic-Trade: niente blocco durante il turno** — in coda, NON pubblicato. Foto e «Copia per Claude» sono sempre attivi (servono solo per la foto e il prompt). Il prompt spiega a Claude la validità: lo scambio conta dal turno che inizia dopo quello in corso (`taWin()` → `k`, `from`, `cur`); se si è tra un turno e l'altro vale dal turno che sta per iniziare. La foto riporta «Conta in Dreamers dal turno N (data)».
