@@ -1140,3 +1140,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (362) Loghi della Home di giorno SEMPRE su tessera colorata con i colori della squadra (gradiente, bordo, alone, righe) per tutti, in Classico (blu) e Tabellone (nero) e negli altri stili giorno; in modalità notte resta la tessera viola. Le versioni a loghi non colorati NON esistono più (scelta dell'utente). In area riservata Ducks › Personalizzazioni nuova sezione "Home Ducks · i miei giocatori" (SEGRETO, non in `NV_LOG`): due tasti Classico/Tabellone che impostano stile app + Home solo Ducks (`hnScopeSet("team")`, `hnTeam("DUC")`) e tasto per tornare alla Home ufficiale (tutte le squadre). pubblicato.
 
 (363) Impostazioni grafica: l'anteprima del campo (con Giorno/Notte/Nascondi/Ripristina) e i tasti squadra compaiono solo nelle schede Campo, Giocatori e Squadra; nelle schede App, Home e Altro restano chiusi (`PVON` in `vImpostazioni`). pubblicato.
+
+(364) Live stanotte: tasto condividi spostato piu a destra (right:-7px, cella con z-index) cosi non tocca la scritta rossa del quarto/minuto live. IN CODA, NON pubblicato.
