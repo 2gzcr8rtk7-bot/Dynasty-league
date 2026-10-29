@@ -3282,7 +3282,7 @@ function iaStats(){const R=["G","F","C"],S={},avg={},avgP={};
   /* (454) la CARENZA di ruolo si misura con il valore PERCEPITO dalla squadra (iaMul): per chi ricostruisce, guardie giovani e promettenti sono già un punto di forza (non una carenza); per chi vuole vincere subito contano di più i veterani */
   Object.keys(ROSTER).forEach(t=>{const P0=iaProf(t);S[t]={cnt:{},top:{},topP:{}};R.forEach(r=>{const l=iaEff(t).filter(p=>p[2]===r),a=l.map(p=>iaP(p[0])*iaMul(P0,t,p[0])).sort((x,y)=>y-x),b=l.map(p=>iaProd(p[0])).sort((x,y)=>y-x);S[t].cnt[r]=l.length;S[t].top[r]=((a[0]||0)+(a[1]||0))/2;S[t].topP[r]=((b[0]||0)+(b[1]||0))/2})});
   R.forEach(r=>{const n=Math.max(1,Object.keys(S).length);avg[r]=iaSum(Object.keys(S),t=>S[t].top[r])/n||1;avgP[r]=iaSum(Object.keys(S),t=>S[t].topP[r])/n||1});
-  Object.keys(S).forEach(t=>{S[t].def={};S[t].defP={};R.forEach(r=>{S[t].def[r]=Math.max(-.3,Math.min(.6,(avg[r]-S[t].top[r])/avg[r]));S[t].defP[r]=Math.max(-.3,Math.min(.6,(avgP[r]-S[t].topP[r])/avgP[r]))})});
+  Object.keys(S).forEach(t=>{S[t].def={};S[t].defP={};S[t].avg=avg;R.forEach(r=>{S[t].def[r]=Math.max(-.3,Math.min(.6,(avg[r]-S[t].top[r])/avg[r]));S[t].defP[r]=Math.max(-.3,Math.min(.6,(avgP[r]-S[t].topP[r])/avgP[r]))})});
   return S}
 /* firma dei ruoli di un gruppo di giocatori: i giocatori in trade speciale non contano (si scambiano senza contropartita) */
 const iaSig=a=>a.filter(x=>!iaSp(x.n)).map(x=>x.r).sort().join("")
@@ -3396,9 +3396,9 @@ function iaPref(t,recv,gave){const P=iaProf(t),o={dl:0,parts:[]},f1=v=>v.toFixed
   /* rookie: chi punta a vincere non li prende; chi ricostruisce li cerca, soprattutto se già rendono (PDK ed efficienza del ruolo) */
   {const rI=recv.filter(x=>iaPerf(x.n).rk),rO=gave.filter(x=>iaPerf(x.n).rk),rd=iaSum(rI,x=>iaPerf(x.n).rq)-iaSum(rO,x=>iaPerf(x.n).rq);
    if(rI.length||rO.length){o.dl+=EQP.rook*(-P.c)*iaCl(rd,1);
-     const dsc=x=>{const q=iaPerf(x.n);return`${x.n.split(" ").slice(-1)[0]} (${q.sea!=null?"PDK "+f1(q.sea):"nessuna gara"}${q.eff!=null?", efficienza "+q.eff.toFixed(2).replace(".",","):""} · ${q.label})`};
+     const dsc=x=>{const q=iaPerf(x.n);return`${iaSur(x.n)} (${q.sea!=null?"PDK "+f1(q.sea):"nessuna gara"}${q.eff!=null?", efficienza "+q.eff.toFixed(2).replace(".",","):""} · ${q.label})`};
      if(P.r&&P.c<=-.25){if(rI.length)o.parts.push(`ricostruisce: riceve il rookie ${rI.map(dsc).join(", ")}`);if(rO.length)o.parts.push(`ricostruisce: cede malvolentieri il rookie ${rO.map(dsc).join(", ")}`)}
-     else if(P.r&&P.c>=.3){if(rI.length)o.parts.push(`punta a vincere: non è interessata ai rookie (${rI.map(x=>x.n.split(" ").slice(-1)[0]).join(", ")})`);if(rO.length)o.parts.push(`punta a vincere: cede volentieri il rookie ${rO.map(x=>x.n.split(" ").slice(-1)[0]).join(", ")}`)}}}
+     else if(P.r&&P.c>=.3){if(rI.length)o.parts.push(`punta a vincere: non è interessata ai rookie (${rI.map(x=>iaSur(x.n)).join(", ")})`);if(rO.length)o.parts.push(`punta a vincere: cede volentieri il rookie ${rO.map(x=>iaSur(x.n)).join(", ")}`)}}}
   /* classifica */
   if(P.r&&Math.abs(P.c)>=.25){
     if(P.c>0){const qd=iaCl((iaAvg(recv.map(x=>iaQ(x.n)))??.5)-(iaAvg(gave.map(x=>iaQ(x.n)))??.5),.5)*2,
@@ -3417,28 +3417,30 @@ function iaMul(P,t,n){const a=iaAge(n);if(a==null)return 1;const u=Math.max(-1,M
   return Math.max(.5,1+EQP.pvA*(-P.c)*u+(P.c<0&&u>0?EQP.pvC*cash*(-P.c)*u:0))}
 function iaInt(S,t,recv,gave,adv0,cr){const P0=iaProf(t),mR=iaSum(recv,x=>x.v),mG=iaSum(gave,x=>x.v),dvp=(iaSum(recv,x=>x.v*(iaMul(P0,t,x.n)-1))-iaSum(gave,x=>x.v*(iaMul(P0,t,x.n)-1)))/Math.max(1,mR,mG),adv=Math.max(-1,Math.min(1,adv0+dvp));
   const nb=iaNeed(S,t,recv,gave),vs=Math.max(0,Math.min(1,.5+adv*EQP.vsk)),sc=.5+(EQP.wnb*nb+EQP.wvs*vs-.5)*EQP.sck,l=sc>=EQP.thA?"alto":sc>=EQP.thM?"medio":"basso",d=S[t].def,nick=TEAMS[t].nick,p=[];
-  const need=[...new Set(recv.filter(x=>!iaSp(x.n)&&d[x.r]>.12).map(x=>IA_RP[x.r]))],needR=[...new Set(recv.filter(x=>!iaSp(x.n)&&d[x.r]>.12).map(x=>x.r))],sur=[...new Set(gave.filter(x=>!iaSp(x.n)&&d[x.r]<-.08).map(x=>IA_RP[x.r]))];
+  /* (466) la carenza si giudica sul reparto DOPO lo scambio: ricevere un'ala dando via un'ala non copre una carenza, e dare via il miglior centro non la risolve di certo */
+  const avgR=S[t].avg,tp=r=>{const base=iaEff(t).filter(p=>p[2]===r&&!gave.some(g=>g.n===p[0])).map(p=>iaP(p[0])*iaMul(P0,t,p[0])),add=recv.filter(x=>x.r===r&&!iaSp(x.n)).map(x=>iaP(x.n)*iaMul(P0,t,x.n)),a=[...base,...add].sort((x,y)=>y-x);return((a[0]||0)+(a[1]||0))/2},post=r=>avgR?Math.max(-.3,Math.min(.6,(avgR[r]-tp(r))/avgR[r])):d[r];
+  const needR=[...new Set(recv.filter(x=>!iaSp(x.n)&&d[x.r]>.12&&post(x.r)<d[x.r]-.02).map(x=>x.r))],need=needR.map(r=>IA_RP[r]),weak=[...new Set(gave.filter(x=>!iaSp(x.n)&&post(x.r)>d[x.r]+.08&&post(x.r)>.12).map(x=>x.r))].map(r=>IA_RP[r]),sur=[...new Set(gave.filter(x=>!iaSp(x.n)&&d[x.r]<-.08).map(x=>IA_RP[x.r]))];
   p.push(`intenzioni: ${iaIntent(P0)} (${iaWhyC(P0)})`);
-  if(need.length){const ag=iaAvg(recv.filter(x=>needR.includes(x.r)).map(x=>iaAge(x.n))),ctx=ag==null?"":P0.c<=-.25&&ag>P0.age+2?` ma sono veterani (${ag.toFixed(1).replace(".",",")} anni): poco in linea con la ricostruzione`:P0.c>=.25&&ag<P0.age-3?` ma sono giovani (${ag.toFixed(1).replace(".",",")} anni): poco in linea con la voglia di vincere subito`:"";p.push(`riceve ${need.join(" e ")}, ruolo in cui è carente${ctx?","+ctx:""}`)}if(sur.length)p.push(`cede ${sur.join(" e ")}, ruolo in cui abbonda`);
-  if(!need.length&&!sur.length)p.push("ruoli già coperti: per il suo roster è quasi neutro");
+  if(need.length){const ag=iaAvg(recv.filter(x=>needR.includes(x.r)).map(x=>iaAge(x.n))),ctx=ag==null?"":P0.c<=-.25&&ag>P0.age+2?` ma sono veterani (${ag.toFixed(1).replace(".",",")} anni): poco in linea con la ricostruzione`:P0.c>=.25&&ag<P0.age-3?` ma sono giovani (${ag.toFixed(1).replace(".",",")} anni): poco in linea con la voglia di vincere subito`:"";p.push(`riceve ${need.join(" e ")}, ruolo in cui è carente${ctx?","+ctx:""}`)}if(weak.length)p.push(`indebolisce ${weak.join(" e ")}: il reparto scende ancora sotto la media della lega`);if(sur.length)p.push(`cede ${sur.join(" e ")}, ruolo in cui abbonda`);
+  if(!need.length&&!sur.length&&!weak.length)p.push("ruoli già coperti: per il suo roster è quasi neutro");
   if(adv<=-.10)p.push(`ci rimette circa il ${Math.round(-adv*100)}% di valore`);else if(adv>=.10)p.push(`ci guadagna circa il ${Math.round(adv*100)}% di valore`);
   if(Math.abs(dvp)>=.04)p.push(`per le sue intenzioni (${P0.c>=.25?"vuole vincere subito":P0.c<=-.25?"ricostruisce":"strada ancora aperta"}) i giocatori valgono ${dvp>0?"di più":"di meno"} di quanto dicono i numeri: saldo ${Math.round(adv0*100)}% → ${Math.round(adv*100)}%`);
   /* trend dell'ultimo mese dei giocatori che cede: se è in salita non ha voglia di darlo, se è in calo se ne libera volentieri */
   let dl=0;const tot=gave.reduce((a,x)=>a+Math.max(1,x.v||x.val||1),0)||1,up=[],dn=[];
   gave.forEach(x=>{const T=iaTrend(x.n);if(!T||Math.abs(T.pct)<EQP.trmin)return;const w=Math.max(1,x.v||x.val||1)/tot,c=iaTs(T.pct,T.n);dl-=c*EQP.trg*Math.max(.4,w);
-    (T.pct>0?up:dn).push(`${x.n.split(" ").slice(-1)[0]} ${T.pct>0?"+":"−"}${Math.round(Math.abs(T.pct))}%`+(Math.abs(T.pct)>=40?" (fortissimo)":Math.abs(T.pct)>=20?" (forte)":""))});
+    (T.pct>0?up:dn).push(`${iaSur(x.n)} ${T.pct>0?"+":"−"}${Math.round(Math.abs(T.pct))}%`+(Math.abs(T.pct)>=40?" (fortissimo)":Math.abs(T.pct)>=20?" (forte)":""))});
   if(up.length)p.push(`non ha voglia di cedere ${up.join(", ")}: in salita nell'ultimo mese`);if(dn.length)p.push(`volentieri cede ${dn.join(", ")}: in calo nell'ultimo mese`);
   /* trend dei giocatori che riceve (quelli che gli offro): in salita lo interessano di più, in calo meno */
   const totR=recv.reduce((a,x)=>a+Math.max(1,x.v||x.val||1),0)||1,rU=[],rD=[];
   recv.forEach(x=>{const T=iaTrend(x.n);if(!T||Math.abs(T.pct)<EQP.trmin)return;const w=Math.max(1,x.v||x.val||1)/totR,c=iaTs(T.pct,T.n);dl+=c*EQP.trr*Math.max(.4,w);
-    (T.pct>0?rU:rD).push(`${x.n.split(" ").slice(-1)[0]} ${T.pct>0?"+":"−"}${Math.round(Math.abs(T.pct))}%`+(Math.abs(T.pct)>=40?" (fortissimo)":Math.abs(T.pct)>=20?" (forte)":""))});
+    (T.pct>0?rU:rD).push(`${iaSur(x.n)} ${T.pct>0?"+":"−"}${Math.round(Math.abs(T.pct))}%`+(Math.abs(T.pct)>=40?" (fortissimo)":Math.abs(T.pct)>=20?" (forte)":""))});
   if(rU.length)p.push(`gli interessa di più perché ${rU.join(", ")} è in salita nell'ultimo mese`);if(rD.length)p.push(`gli interessa meno perché ${rD.join(", ")} è in calo nell'ultimo mese`);
   /* confronto con la STAGIONE PRECEDENTE (parametro chiave): chi cede un giocatore in calo rispetto all'anno scorso se ne libera volentieri, se è in crescita non lo vuole dare; per chi riceve è il contrario */
-  {const vs=(L,sg)=>{const a=[],tt=L.reduce((x,y)=>x+Math.max(1,y.v||1),0)||1;L.forEach(x=>{const q=iaPerf(x.n);if(q.rk||q.rel==null||Math.abs(q.rel)<EQP.prvmin)return;dl+=sg*iaCl(q.rel,EQP.prvcap)*EQP.prv*Math.max(.4,Math.max(1,x.v||1)/tt)*Math.min(1,(q.ng||0)/8);a.push(`${x.n.split(" ").slice(-1)[0]} ${q.rel>0?"in crescita":"in calo"} (PDK ${q.prev.toFixed(1).replace(".",",")} → ${q.sea.toFixed(1).replace(".",",")})`)});return a},
+  {const vs=(L,sg)=>{const a=[],tt=L.reduce((x,y)=>x+Math.max(1,y.v||1),0)||1;L.forEach(x=>{const q=iaPerf(x.n);if(q.rk||q.rel==null||Math.abs(q.rel)<EQP.prvmin)return;dl+=sg*iaCl(q.rel,EQP.prvcap)*EQP.prv*Math.max(.4,Math.max(1,x.v||1)/tt)*Math.min(1,(q.ng||0)/8);a.push(`${iaSur(x.n)} ${q.rel>0?"in crescita":"in calo"} (PDK ${q.prev.toFixed(1).replace(".",",")} → ${q.sea.toFixed(1).replace(".",",")})`)});return a},
     gU=vs(gave,-1),rU2=vs(recv,1);if(gU.length)p.push(`rispetto alla scorsa stagione: cede ${gU.join(", ")}`);if(rU2.length)p.push(`rispetto alla scorsa stagione: riceve ${rU2.join(", ")}`)}
   const pf=iaPref(t,recv,gave);dl+=pf.dl;pf.parts.forEach(x=>p.push(x));
   /* (456) INCEDIBILI: chi cede un giocatore scelto in alto al draft da poco (premio draft alto) lo dà solo per molto di più: malus proporzionale al peso sul valore ceduto */
-  {const tg=iaSum(gave,x=>x.v)||1,el=gave.filter(x=>EQP.dpk>0&&iaDraft(x.n)/EQP.dpk>=.4);if(el.length){dl-=EQP.inc*iaSum(el,x=>iaDraft(x.n)/EQP.dpk*x.v)/tg;p.push(`cede malvolentieri ${el.map(x=>{const d=draftOf(x.n),y=iaDraftY(x.n);return`${x.n.split(" ").slice(-1)[0]} (scelta n. ${d[1]} al draft ${d[0]}${y===0?", primo anno":""})`}).join(", ")}: giocatori su cui si costruisce, quasi incedibili`)}}
+  {const tg=iaSum(gave,x=>x.v)||1,el=gave.filter(x=>EQP.dpk>0&&iaDraft(x.n)/EQP.dpk>=.4);if(el.length){dl-=EQP.inc*iaSum(el,x=>iaDraft(x.n)/EQP.dpk*x.v)/tg;p.push(`cede malvolentieri ${el.map(x=>{const d=draftOf(x.n),y=iaDraftY(x.n);return`${iaSur(x.n)} (scelta n. ${d[1]} al draft ${d[0]}${y===0?", primo anno":""})`}).join(", ")}: giocatori su cui si costruisce, quasi incedibili`)}}
   /* (411, corretta) soglia 30 crediti = prezzo minimo di una trade speciale. Chi ha meno di 30 crediti è interessato a ricevere crediti quando lo scambio lo porta a 30 o più di cassa utile subito (interesse pieno; meno se ci arriva solo in parte); cedere crediti che la lasciano sotto 30 non le piace */
   {const low=iaCassa(t);if(cr){const ci=cr.in||0,co=cr.out||0,after=low+ci-co;
     if(low<EQP.lowT&&ci>0&&co===0){const full=after>=EQP.lowT;dl+=EQP.lowIn*(full?1:Math.min(1,ci/Math.max(1,EQP.lowT-low))*.5);p.push(full?`ha ${low} crediti, sotto i ${EQP.lowT}: con i ${ci} cr ricevuti arriva a ${after} e può fare trade speciali subito`:`ha ${low} crediti, sotto i ${EQP.lowT}: i ${ci} cr ricevuti la avvicinano alla soglia (arriva a ${after})`)}
