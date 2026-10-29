@@ -3729,6 +3729,7 @@ function hnScopeSet(v){if(!["all","team"].includes(v))return;HN_S=v;try{localSto
 function homeFase(mnTest){try{const o=flUsaOggi(),G=(TV.days[o]||[]);let mn=mnTest;if(typeof mn!=="number"){const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date());mn=+f.find(x=>x.type==="hour").value*60+ +f.find(x=>x.type==="minute").value}
   const hasS=G.some(g=>g[5]==="S"),started=G.some(g=>g[5]==="L"||g[5]==="F");return hasS&&!started&&!(mn>=360&&mn<840)?o:null}catch(e){return null}}
 const HN_DEFC={};function hnDef(opp,role){const k=opp+"|"+role,n=Date.now(),c=HN_DEFC[k];if(c&&n-c.t<600000)return c.v;let v=null;try{v=capDef(opp,role)}catch(e){}HN_DEFC[k]={t:n,v};return v}
+let HN_NOCLK=0;document.addEventListener("click",e=>{if(performance.now()<HN_NOCLK){e.stopPropagation();e.preventDefault()}},true);
 let HN_H={};try{HN_H=JSON.parse(localStorage.getItem("dl_hh")||"{}")||{}}catch(e){HN_H={}}
 const HN_ORD=["DUC","DOL","FOX","PEA","SPI","EAG","TUR","MOO"];let HN_SO="",HN_SI=0;try{HN_SO=localStorage.getItem("dl_hso")==="team"?"team":"";HN_SI=Math.max(0,Math.min(7,+localStorage.getItem("dl_hsi")||0))}catch(e){}
 let HN_T="";try{HN_T=localStorage.getItem("dl_hnt")||""}catch(e){}
@@ -3800,11 +3801,11 @@ function bindHomeNotte(root){root.querySelectorAll(".hrl").forEach(b=>b.onclick=
   root.querySelectorAll("[data-hdr]").forEach(b=>b.onclick=()=>{TVS.dr=b.dataset.hdr;TVS.drs="a";TVS.g=null;cur="tv";render();window.scrollTo(0,0)});
   root.querySelectorAll("[data-hpn]").forEach(b=>b.onclick=()=>{plOpen(b.dataset.hpn)});
   root.querySelectorAll("[data-hgo]").forEach(b=>b.onclick=()=>{const[dy,key,sd]=b.dataset.hgo.split("|");TVS.d=dy;TVS.g=key&&TV.box[key]?key:null;TVS.side=sd==="h"?"h":"a";cur="tv";render();window.scrollTo(0,0)});
-  root.querySelectorAll(".hmgrip").forEach(g=>{const sc=g.previousElementSibling,c=g.dataset.grip;let y0=0,h0=0,id=null;
+  root.querySelectorAll(".hmgrip").forEach(g=>{const sc=g.previousElementSibling,c=g.dataset.grip;let y0=0,h0=0,id=null,mvd=false;
     const save=()=>{try{Object.keys(HN_H).length?localStorage.setItem("dl_hh",JSON.stringify(HN_H)):localStorage.removeItem("dl_hh")}catch(_){}};
-    g.addEventListener("pointerdown",e=>{if(e.button>0||!sc)return;e.stopPropagation();id=e.pointerId;y0=e.clientY;h0=sc.offsetHeight;HN_DRAG=true;try{g.setPointerCapture(id)}catch(_){}g.classList.add("on")});
-    g.addEventListener("pointermove",e=>{if(id!==e.pointerId)return;const h=Math.max(90,Math.min(900,Math.round(h0+e.clientY-y0)));sc.style.maxHeight=h+"px";HN_H[c]=h});
-    const end=e=>{if(id!==e.pointerId)return;id=null;HN_DRAG=false;g.classList.remove("on");save()};
+    g.addEventListener("pointerdown",e=>{if(e.button>0||!sc)return;e.stopPropagation();id=e.pointerId;y0=e.clientY;h0=sc.offsetHeight;mvd=false;HN_DRAG=true;try{g.setPointerCapture(id)}catch(_){}g.classList.add("on")});
+    g.addEventListener("pointermove",e=>{if(id!==e.pointerId)return;if(Math.abs(e.clientY-y0)>3)mvd=true;if(mvd)HN_NOCLK=performance.now()+700;const h=Math.max(90,Math.min(900,Math.round(h0+e.clientY-y0)));sc.style.maxHeight=h+"px";HN_H[c]=h});
+    const end=e=>{if(id!==e.pointerId)return;id=null;HN_DRAG=false;g.classList.remove("on");if(mvd)HN_NOCLK=performance.now()+700;save()};
     g.addEventListener("pointerup",end);g.addEventListener("pointercancel",end);
     g.addEventListener("dblclick",()=>{delete HN_H[c];sc.style.maxHeight="";save()});
     g.addEventListener("click",e=>e.stopPropagation())});
