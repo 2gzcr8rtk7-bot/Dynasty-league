@@ -3863,14 +3863,17 @@ const vtPts=v=>Math.pow(Math.max(0,v)/1000,VAL_EXP)*1000;
 const VT={tab:"calc",t:["DUC","PEA"],pl:[[],[]],cr:[0,0],pk:[[],[]]};
 function vtSide(k){const pts=VT.pl[k].reduce((s,n)=>s+vtPts(valOf(n)??VAL_FALLBACK),0);const cr=(+VT.cr[k]||0)+VT.pk[k].reduce((s,p)=>s+PICK_CR[p],0);return pts+cr*VAL_CR}
 /* esito scambio: <10% equilibrata, 10-30% vincitore, oltre 30% grande truffa */
-const tradeVerdict=(d,t)=>d<.10?["Trade equilibrata","ok"]:d<.30?[`Vincitore trade ${TEAMS[t].nick}`,"mid"]:[`Grande truffa dei ${TEAMS[t].nick}`,"bad"];
+const trLose=M=>M.S.reduce((m,x)=>x.s<m.s?x:m,M.S[0]).t;
+const trArt=n=>/^[aeiou]/i.test(n)?"gli":"i";
+/* equilibrata <10% · vincitore 10-30% · grande truffa 30-40% · truffa pazzesca 40-50% · mamma mia 50-60% · oltre 60% "ne capisce di basket?" (l = squadra che perde) */
+const tradeVerdict=(d,t,l)=>d<.10?["Trade equilibrata","ok"]:d<.30?[`Vincitore trade ${TEAMS[t].nick}`,"mid"]:d<.40?[`Grande truffa dei ${TEAMS[t].nick}`,"bad"]:d<.50?[`Truffa pazzesca dei ${TEAMS[t].nick}`,"bad"]:d<.60?["Mamma mia che inculata","bad"]:[l&&TEAMS[l]?`Ma ${trArt(TEAMS[l].nick)} ${TEAMS[l].nick} ne capiscono di basket?`:"Ma ne capiscono di basket?","bad"];
 function vtResHTML(){
   const A=vtSide(0),B=vtSide(1),[ta,tb]=VT.t,ca=TEAMS[ta],cb=TEAMS[tb];
   if(!A&&!B)return "";
   const mx=Math.max(A,B),d=Math.abs(A-B)/mx,pa=A/(A+B)*100;
   // chi dà di più è svantaggiato: favorito = squadra che dà meno
   const fav=A>B?tb:ta,give=A>B?ta:tb;const cr=Math.round(Math.abs(A-B)/VAL_CR/5)*5;
-  const [lab,cls]=tradeVerdict(d,fav);
+  const [lab,cls]=tradeVerdict(d,fav,give);
   return `<div class="vtres ${cls}"><button class="bshare vtsh" data-tshare="1" aria-label="Condividi scambio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     ${trCols(trRecVT(),VT.t)}
     <div class="vtbar"><i style="width:${100-pa}%;background:${ca.bg};">${Math.round(100-pa)}%</i><i style="width:${pa}%;background:${cb.bg};">${Math.round(pa)}%</i><em style="left:50%"></em></div>
@@ -3901,7 +3904,7 @@ function v3Res(){
   if(!V3.it.length)return "";
   const mx=Math.max(1,...S.map(x=>Math.abs(x.s))),base=Math.max(1,...S.map(x=>Math.max(x.R,x.G))),d=Math.max(...S.map(x=>Math.abs(x.s)))/base;
   const w=S.slice().sort((a,b)=>b.s-a.s)[0],l=S.slice().sort((a,b)=>a.s-b.s)[0];
-  const [lab,cls]=tradeVerdict(d,w.t);
+  const [lab,cls]=tradeVerdict(d,w.t,l.t);
   const cr=Math.round(Math.min(w.s,-l.s)/VAL_CR/5)*5;
   const col=x=>Math.abs(x.s)/base<.10?"y":x.s>0?"g":"r";
   return `<div class="vtres ${cls}"><button class="bshare vtsh" data-tshare="1" aria-label="Condividi scambio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>${trCols(trRecV3(),V3.t)}
@@ -3979,8 +3982,8 @@ async function shareTrade(btn,M0,NI0){
       X.fillStyle=o.it.v!=null?"#93c5fd":"#f5b400";X.font=F(800,Fz-2);const sub=(o.it.v!=null?o.it.v+" · ":"")+"da "+TEAMS[o.it.from].nick.toUpperCase();X.fillText(sub,cx+cw/2,ty+2);
       X.fillStyle="rgba(255,255,255,.1)";X.fillRect(cx+24,yy+o.h-10,cw-48,2);yy+=o.h})}
   y+=colH+10;
-  y+=30;const ok=M.d<.10,lab=tradeVerdict(M.d,M.fav)[0].toUpperCase();
-  X.fillStyle=ok?"#22c55e":M.d<.30?"#f59e0b":"#ef4444";X.fillRect(60,y,W-120,96);X.fillStyle="#fff";X.textAlign="center";X.font=F(800,48);X.fillText(lab,W/2,y+64);y+=130;
+  y+=30;const ok=M.d<.10,lab=tradeVerdict(M.d,M.fav,trLose(M))[0].toUpperCase();
+  X.fillStyle=ok?"#22c55e":M.d<.30?"#f59e0b":"#ef4444";X.fillRect(60,y,W-120,96);X.fillStyle="#fff";X.textAlign="center";let fz=48;X.font=F(800,fz);while(fz>26&&X.measureText(lab).width>W-160){fz-=2;X.font=F(800,fz)}X.fillText(lab,W/2,y+64);y+=130;
   X.fillStyle="#dfe5f5";X.font=FB(500,30);X.fillText(`Squilibrio ${Math.round(M.d*100)}%${M.sug?" · "+M.sug:""}`,W/2,y);
   const NI=NI0||(()=>{try{return iaCalcInts()}catch(e){return[]}})();
   if(NI.length){y+=64;X.textAlign="left";X.fillStyle="#fff";X.font=F(800,40);X.fillText("INTERESSE DELLE SQUADRE",60,y);
@@ -3989,7 +3992,7 @@ async function shareTrade(btn,M0,NI0){
       X.fillStyle="#dfe5f5";L.slice(0,6).forEach(l=>{y+=34;X.fillText(l,84,y)});X.fillStyle=col;X.fillRect(60,y-34*Math.min(L.length,6)-34,8,34*Math.min(L.length,6)+46);y+=6})}
   y+=60;X.fillStyle="#5d678a";X.font=F(700,26);X.textAlign="center";X.fillText("Valori Dreamers · 300 crediti ≈ un giocatore da 1150",W/2,y);
   const out=document.createElement("canvas");out.width=W;out.height=Math.min(Hh,y+40);out.getContext("2d").drawImage(cv,0,0);
-  shSend(out,"scambio.png",`🔁 Calcolatore scambi: ${tradeVerdict(M.d,M.fav)[0]} (${Math.round(M.d*100)}%)`,btn)}
+  shSend(out,"scambio.png",`🔁 Calcolatore scambi: ${tradeVerdict(M.d,M.fav,trLose(M))[0]} (${Math.round(M.d*100)}%)`,btn)}
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-tshare]");if(!b||cur!=="valtrade")return;e.preventDefault();e.stopPropagation();shareTrade(b)});
 function vValTrade(){
   const tabs=`<div class="ctabs vttabs"><button data-vt="tab" data-k="calc" aria-pressed="${VT.tab==="calc"}">2 squadre</button><button data-vt="tab" data-k="calc3" aria-pressed="${VT.tab==="calc3"}">3 squadre</button><button data-vt="tab" data-k="list" aria-pressed="${VT.tab==="list"}">Valori lega</button></div>`;
@@ -6040,7 +6043,7 @@ function histTradeModel(i){const T=TRADES[i];if(!histTradeOk(T))return null;
     try{IA_TR_FROM=i;iaPC={};const post=sides.map(sd=>({...iaProf(sd.t)}));if(pre)shift=sides.map((sd,k)=>iaShiftTxt(sd,sides[1-k],pre[k],post[k]))}catch(e){console.error(e)}finally{IA_TR_FROM=0;iaPC={};iaCache={}}}
   /* quanto scrivere: scambi piccoli = commento completo; con 3-4 giocatori per lato o 3+ squadre = frasi più brevi */
   const load=Math.max(...sides.map(sd=>sd.pl.length)),mode=(N>=3||load>=4)?2:load>=2?1:0,lim=N>=4?1:mode===2?2:mode===1?3:4;
-  const M={T,sides,N,d,fav,ints,shift,mode,lim,verdict:tradeVerdict(d,fav)};
+  const M={T,sides,N,d,fav,ints,shift,mode,lim,verdict:tradeVerdict(d,fav,sides.reduce((m,x)=>x.R<m.R?x:m,sides[0]).t)};
   try{M.tech=sides.map((sd,k)=>histTechLines(M,k,lim))}catch(e){console.error(e);M.tech=sides.map(()=>[])}
   try{M.vd=sides.map((sd,k)=>histVerdictSide(M,k,i,mode));M.final=histFinal(M,i)}catch(e){console.error(e);M.vd=[];M.final=""}
   return M}
@@ -6125,7 +6128,7 @@ async function shHistTrade(i){const M=histTradeModel(i);if(!M)return null;
   /* PARERE */
   shRR(c,56,y,IN,parH,26);c.fillStyle="rgba(10,6,24,.72)";c.fill();c.strokeStyle="rgba(196,181,253,.28)";c.lineWidth=2;c.stroke();
   c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_F(800,40,1);c.fillStyle="#e9d5ff";c.fillText("IL PARERE DI CLAUDE",92,y+62);
-  const vcol=M.d<.10?"#22c55e":M.d<.30?"#f59e0b":"#ef4444";shRR(c,92,y+82,W-184,80,16);c.fillStyle=vcol;c.fill();c.fillStyle="#fff";c.textAlign="center";c.textBaseline="middle";c.font=SH_F(800,46,1);c.fillText(M.verdict[0].toUpperCase(),W/2,y+123);
+  const vcol=M.d<.10?"#22c55e":M.d<.30?"#f59e0b":"#ef4444";shRR(c,92,y+82,W-184,80,16);c.fillStyle=vcol;c.fill();c.fillStyle="#fff";c.textAlign="center";c.textBaseline="middle";let vz=46;c.font=SH_F(800,vz,1);const vt=M.verdict[0].toUpperCase();while(vz>26&&c.measureText(vt).width>W-184-40){vz-=2;c.font=SH_F(800,vz,1)}c.fillText(vt,W/2,y+123);
   c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_B(500,27);c.fillStyle="#dfe5f5";let ty=y+210;sumL.forEach(l=>{c.fillText(l,92,ty);ty+=38});ty+=14-0;
   await shCardsDraw(c,its,W,ty);
   shFoot(c,W,H,"Dreamers · Trade Alert");return cv}
