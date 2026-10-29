@@ -1279,3 +1279,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (443) REPARATO sw.js: dalla pubblicazione cf025b4 il file risultava VUOTO (service worker senza cache, i numeri di versione non si aggiornavano). Ripristinato dal commit d39dd96 con `CACHE="dynasty-v95"`. Controllare sempre `wc -c sw.js` dopo ogni bump. pubblicato.
 
 (444) Home › card «Tutte le squadre»: il pulsante in testata non ordina più per squadra ma FILTRA la lista ai soli giocatori di quella squadra (`hsoF`). Ogni click passa alla squadra successiva (saltando quelle senza giocatori, `HN_OWN`); dopo l'ultima si torna alla lista completa. Il pulsante «N GIOCATORI» riporta subito alla lista completa. «1 GIOCATORE» al singolare. In coda su `coda`, non ancora pubblicato.
+
+(444) pubblicato (CACHE dynasty-v96).
