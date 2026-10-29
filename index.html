@@ -7138,8 +7138,22 @@ const drLast=()=>{const k=Object.keys(drNotti()).sort();return k[k.length-1]||nu
 const DR_GATE_MIN=12*60+30;
 function drGate(e){try{const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(window.DR_NOW||new Date()),g=t=>f.find(x=>x.type===t).value,rd=`${g("year")}-${g("month")}-${g("day")}`,mn=+g("hour")*60+ +g("minute"),n=drAdd(e,1);return rd>n||(rd===n&&mn>=DR_GATE_MIN)}catch(x){return true}}
 function drCurWeek(P){const l=drLast();let k=DR_TURNI.findIndex(x=>!drGate(x[1]))+1;if(!k)k=DR_TOT;if(l){const k2=DR_TURNI.findIndex(x=>l<=x[1])+1;if(k2>k)k=k2}return Math.max(1,Math.min(P?P.end:DR_TOT,k))}
-function drForm(k){if(DRD.form[k])return DRD.form[k];
-  const f={};Object.entries(ROSTER).forEach(([t,a])=>{const s=a.map(p=>p[0]).sort((x,y)=>(valOf(y)??DR_FALLBACK)-(valOf(x)??DR_FALLBACK));f[t]={t:s.slice(0,10),r:s.slice(10)}});return f}
+/* REGOLA SCAMBI (utente, 29/10/2026): un giocatore scambiato non gioca MAI il turno già iniziato per la nuova squadra:
+   conta per la squadra di prima fino alla fine del turno e per la nuova dal turno successivo.
+   Turno iniziato = aperto (12:30 ora italiana del giorno dopo l'ultima notte del turno precedente; turno 1 dal DR_START).
+   drForm(k) parte dalla formazione archiviata (o dai ROSTER attuali) e rimette alla squadra di prima i giocatori degli
+   "Scambio" a 2 squadre in TRADES con data+ora >= apertura del turno k (senza ora = 00:00). Per scambi a 3+ squadre serve il campo da:{giocatore:squadra}. */
+const DR_REGOLA_SCAMBI="2026-10-29 00:00"; /* la regola vale per gli scambi da questa data (decisione utente: il turno 1 resta com'era per Diabaté 25/10 e Jaquez/J. Williams 26/10) */
+function drOpen(k){const T=DR_TURNI;if(k<=1||!T[k-2])return DR_START+" 00:00";return drAdd(T[k-2][1],1)+" 12:30"}
+function drTrTime(x){const m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(x.data||"");return m?`${m[3]}-${m[2]}-${m[1]} ${x.ora||"00:00"}`:""}
+function drUndoTrades(f,k){if(typeof TRADES==="undefined")return f;const op=drOpen(k),mv=[];
+  TRADES.forEach(x=>{if(!/^scambio/i.test(x.titolo||"")||!x.lati)return;const ts=drTrTime(x);if(!ts||ts<op||ts<DR_REGOLA_SCAMBI)return;
+    const tm=x.lati.map(l=>l[0]);x.lati.forEach(([to,its])=>(its||[]).forEach(n=>{const fr=(x.da&&x.da[n])||(tm.length===2?tm.find(t=>t!==to):null);if(fr&&fr!==to)mv.push([n,to,fr])}))});
+  if(!mv.length)return f;const g={};Object.entries(f).forEach(([t,o])=>g[t]=[...o.t,...o.r]);const tocc=new Set();
+  mv.forEach(([n,to,fr])=>{if(!g[to]||!g[fr])return;const i=g[to].indexOf(n);if(i<0)return;g[to].splice(i,1);g[fr].push(n);tocc.add(to);tocc.add(fr)});
+  const o={...f};tocc.forEach(t=>{const s=g[t].slice().sort((x,y)=>(valOf(y)??DR_FALLBACK)-(valOf(x)??DR_FALLBACK));o[t]={t:s.slice(0,10),r:s.slice(10)}});return o}
+function drForm(k){if(DRD.form[k])return drUndoTrades(DRD.form[k],k);
+  const f={};Object.entries(ROSTER).forEach(([t,a])=>{const s=a.map(p=>p[0]).sort((x,y)=>(valOf(y)??DR_FALLBACK)-(valOf(x)??DR_FALLBACK));f[t]={t:s.slice(0,10),r:s.slice(10)}});return drUndoTrades(f,k)}
 /* CALENDARIO SCONTRI = quello di Dunkest (GM League, foto del 27/10/2026): 14 giornate, poi si ripete uguale (la 15ª = la 1ª).
    Le giornate 1 e 2 sono già state giocate su Dunkest (DR_BASE = classifica di partenza); il turno 1 di Dreamers = giornata 3 di Dunkest (in corso),
    quindi Dreamers gioca le giornate 3-39 (37 turni, DR_REG). Le etichette dei turni seguono la numerazione Dunkest (DR_OFF). */
