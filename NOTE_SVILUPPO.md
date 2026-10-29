@@ -1243,3 +1243,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (425) Trade speciale De Larrea (DUC, Speciale 40): scadenza fissata al 6 febbraio 2027 = turno Dreamers 31 (5-7/2) = giornata 33 (giornata = turno + 2), invece della G40 da regolamento. `SPECIALI` ora accetta `scad` (giornata di scadenza) e `fine` (data a parole, mostrata nella scheda). Countdown: 31 giornate (era 38). In coda, non pubblicato.
 
 (426) Trade speciale Ingram (DUC, Speciale 30): scadenza al 15 dicembre 2026 = turno Dreamers 13 (12-15/12) = giornata 15 (invece della G20). Se serve far finire un turno dopo: `scad:16` (16-18/12). In coda, non pubblicato.
+
+(427) Trade speciale Rollins (PEA, Speciale 30): scadenza al 15 dicembre 2026 (G15), come Ingram. In coda, non pubblicato.
