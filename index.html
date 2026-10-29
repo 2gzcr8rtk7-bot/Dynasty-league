@@ -852,7 +852,7 @@ body.notte .hn6{--hnbg:linear-gradient(160deg,rgba(76,29,149,.85),rgba(17,10,48,
 .iacols{display:grid;grid-template-columns:1fr 1fr;gap:10px}.iacols small,.iastep small{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800;margin-bottom:4px}.iacyc{display:grid;gap:8px}.iastep{background:var(--panel2);border-radius:10px;padding:8px 10px}
 .iap{display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px}.iap .ian{flex:1;min-width:0;font-weight:600;line-height:1.15}.iap b{font-family:var(--display);font-size:12px;color:var(--muted)}.iap svg{height:11px;width:auto;flex:none}.iacr{font-weight:700;font-size:12.5px;color:#facc15;padding:3px 0}.iaem{font-size:12px;color:var(--muted)}.iasp{font-style:normal;font-size:9px;font-weight:800;background:#7c3aed;color:#fff;border-radius:6px;padding:1px 4px}.iaout{font-style:normal;font-size:9px;font-weight:800;background:#ef4444;color:#fff;border-radius:6px;padding:1px 4px}
 .iawhy{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0 8px}.iawhy span{font-size:11px;padding:3px 8px;border-radius:999px;background:rgba(148,163,184,.16);color:var(--muted);font-weight:600}.iaopen{width:100%;padding:9px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);color:inherit;font:inherit;font-weight:700;font-size:12.5px;cursor:pointer}.iaref{margin-top:12px}
-.hmcard.m{position:relative;touch-action:pan-y}.hmdots{display:flex;justify-content:center;gap:7px;padding:5px 0 3px}.hmdots button{all:unset;cursor:pointer;width:7px;height:7px;border-radius:50%;background:var(--hnh);opacity:.35;box-sizing:content-box;padding:3px;background-clip:content-box}.hmdots button.on{opacity:1}
+.hmcard.m{position:relative}.hmmulti{min-width:0}.hmcar{width:0;min-width:100%;overflow:hidden;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:pan-y;transition:height .28s ease}.hmtrk{display:flex;align-items:flex-start;will-change:transform;backface-visibility:hidden}.hmtrk.anim{transition:transform .34s cubic-bezier(.22,.8,.3,1)}.hmslot{flex:0 0 100%;min-width:0}.hmdots{display:flex;justify-content:center;gap:7px;padding:5px 0 3px}.hmdots button{all:unset;cursor:pointer;width:7px;height:7px;border-radius:50%;background:var(--hnh);opacity:.35;box-sizing:content-box;padding:3px;background-clip:content-box}.hmdots button.on{opacity:1}
 .hmnv{align-items:center}.hmar{all:unset;cursor:pointer;width:30px;height:26px;display:grid;place-items:center;font-size:20px;line-height:1;color:var(--hnh)}.hmar:disabled{opacity:.25;cursor:default}.hmnt{flex:1;text-align:center;display:block}.hmnt b{display:block;font-size:13px;letter-spacing:.12em}.hmnt small{font-size:10px;letter-spacing:.1em;color:var(--hnsub);font-style:normal}
 .hmp.hmrs{display:grid;grid-template-columns:64px 1fr 64px;align-items:center;gap:6px;padding:8px 2px}.hmtm{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0}.hmtm small{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--hnmu);max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hmrl{display:block;width:34px;height:34px}.hmrl .badge{width:100%!important;height:100%!important;display:block}
 .hmsc{display:grid;grid-template-columns:1fr auto 1fr;align-items:baseline;justify-items:center;column-gap:6px;font-family:var(--display);font-style:italic}.hmsc b{font-size:22px;font-weight:800;color:var(--hnfg);opacity:.62}.hmsc b.w{opacity:1;color:#facc15}.hmsc b.l{opacity:.55}.hmsc b:first-child{justify-self:end}.hmsc b:nth-of-type(2){justify-self:start}.hmsc em{font-style:normal;opacity:.5}.hmsc small{grid-column:1/-1;font-family:var(--body,inherit);font-style:normal;font-size:10px;color:var(--hnsub);letter-spacing:.04em;margin-top:2px;font-weight:600}
@@ -4133,17 +4133,36 @@ function hnResCard(){try{const st=drStand(),P=drPO(st),MAXK=P.end;let k=HN_RK==n
   const rows=pr.map(([a,b])=>{const A=drTeam(k,a,W),B=drTeam(k,b,W),has=A.score!=null&&B.score!=null,la=has&&A.score>B.score,lb=has&&B.score>A.score,d=has?Math.abs(A.score-B.score):null;
     return`<div class="hmp hmrs" data-hrs="${k}|${a}|${b}" role="link" tabindex="0"><span class="hmtm"><i class="hmrl">${badge(a)}</i><small>${TEAMS[a].nick}</small></span><span class="hmsc"><b class="${la?"w":lb?"l":""}">${drScore(A.score)}</b><em>–</em><b class="${lb?"w":la?"l":""}">${drScore(B.score)}</b><small>${stt==="LIVE"?'<span class="hmlv">LIVE</span> ':""}${stt==="FINALE"?"finale":stt==="DA GIOCARE"?"da giocare":"parziale"}${d!=null?" · scarto "+drScore(d):""}</small></span><span class="hmtm"><i class="hmrl">${badge(b)}</i><small>${TEAMS[b].nick}</small></span></div>`}).join("");
   const body=pr.length?W_(rows):`<p class="hmvu">${k>DR_REG?"Turno di playoff: gli accoppiamenti si conoscono a fine settimana.":"Accoppiamenti non ancora definiti."}</p>`;
-  return`<div class="hmcard m hmpg">${head}${body}${hnDots()}</div>`}catch(e){return`<div class="hmcard m hmpg"><p class="hmvu">Risultati non disponibili.</p>${hnDots()}</div>`}}
+  return`${head}${body}`}catch(e){return`<p class="hmvu">Risultati non disponibili.</p>`}}
 function hnClaCard(){try{const st=drStand(),ld=st[0]?st[0].w:0;
   const head=`<div class="hmh"><span>CLASSIFICA DREAMERS</span><span>V · P · MEDIA</span></div>`;
   const rows=st.map((x,i)=>`<div class="hmp hmcl" data-hcl="${x.t}" role="link" tabindex="0"><span class="hmps">${i+1}</span><i class="hmrl">${badge(x.t)}</i><span class="hmn">${TEAMS[x.t].nick}<small>${x.n?x.n+(x.n===1?" turno giocato":" turni giocati"):"nessun turno giocato"}${i>0&&ld>x.w?" · −"+(ld-x.w)+" V":""}</small></span><span class="hmwl"><b>${x.w}</b><b class="l">${x.l}</b><b class="a">${x.avg==null?"—":pdkF(x.avg)}</b></span></div>`).join("");
-  return`<div class="hmcard m hmpg">${head}${W_(rows)}${hnDots()}</div>`}catch(e){return`<div class="hmcard m hmpg"><p class="hmvu">Classifica non disponibile.</p>${hnDots()}</div>`}}
+  return`${head}${W_(rows)}`}catch(e){return`<p class="hmvu">Classifica non disponibile.</p>`}}
 const W_=h=>`<div class="hmscroll"${HN_H.m?` style="max-height:${HN_H.m}px"`:""}>${h}</div><div class="hmgrip" data-grip="m" role="separator" aria-label="Trascina per allungare o accorciare l'elenco"><i></i></div>`;
-/* swipe orizzontale sulla casellina: non interferisce con lo scroll verticale */
-function hnSwipe(root){const c=root.querySelector(".hmcard.m");if(!c||c.dataset.sw)return;c.dataset.sw=1;let x0=0,y0=0,t0=0,on=false;
-  c.addEventListener("touchstart",e=>{if(e.touches.length!==1||e.target.closest(".hmgrip"))return;x0=e.touches[0].clientX;y0=e.touches[0].clientY;t0=Date.now();on=true},{passive:true});
-  c.addEventListener("touchend",e=>{if(!on)return;on=false;const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.6&&Date.now()-t0<900){HN_NOCLK=performance.now()+500;hnGo((HN_PG+(dx>0?1:2))%3)}},{passive:true})}
-function hnGo(p){HN_PG=p;const el=document.querySelector(".hn6");if(!el)return;try{const h=document.createElement("div");h.innerHTML=homeNotte(standings());const n=h.firstElementChild;if(n){el.innerHTML=n.innerHTML;bindHomeNotte(el)}}catch(e){}}
+/* CAROSELLO della casellina: 5 slot [Giocatori', Classifica, Risultati, Giocatori, Classifica'] (i due estremi sono copie per il giro continuo).
+   Il dito trascina la pista in modo fluido (translateX), al rilascio scatta alla pagina più vicina con una curva morbida; verso destra = pagina successiva
+   (Giocatori → Risultati → Classifica → Giocatori). Non scorre da solo. */
+const HN_MAP=[0,2,1,0,2];
+function hnRe(){const el=document.querySelector(".hn6");if(!el)return;try{const h=document.createElement("div");h.innerHTML=homeNotte(standings());const n=h.firstElementChild;if(n){el.innerHTML=n.innerHTML;bindHomeNotte(el)}}catch(e){}}
+function hnGo(p){const c=document.querySelector(".hmcar");if(c&&c._to){c._to(3-p);return}HN_PG=p;hnRe()}
+function hnCar(root){const car=root.querySelector(".hmcar");if(!car)return;const trk=car.firstElementChild,sl=[...trk.children];let idx=3-HN_PG,ro=null;
+  const dots=()=>root.querySelectorAll(".hmdots button").forEach((b,i)=>{b.classList.toggle("on",i===HN_PG);b.setAttribute("aria-selected",i===HN_PG)});
+  const setH=()=>{car.style.height=sl[idx].offsetHeight+"px"};
+  const watch=()=>{try{if(ro)ro.disconnect();ro=new ResizeObserver(setH);ro.observe(sl[idx])}catch(e){}};
+  const pos=(px,anim)=>{trk.classList.toggle("anim",!!anim);trk.style.transform=`translate3d(${-idx*car.clientWidth+px}px,0,0)`};
+  const settle=()=>{if(idx<=0){idx=3;pos(0,false)}else if(idx>=4){idx=1;pos(0,false)}HN_PG=HN_MAP[idx];dots();watch();setH()};
+  const to=i=>{idx=Math.max(0,Math.min(4,i));HN_PG=HN_MAP[idx];dots();setH();pos(0,true);watch();const end=()=>{trk.removeEventListener("transitionend",end);clearTimeout(tm);if(idx<=0||idx>=4)settle()},tm=setTimeout(end,450);trk.addEventListener("transitionend",end)};
+  car._to=to;pos(0,false);setH();watch();
+  let id=null,x0=0,y0=0,t0=0,dx=0,mv=false,lock=null;
+  car.addEventListener("pointerdown",e=>{if(e.button>0||e.target.closest(".hmgrip")||id!=null)return;id=e.pointerId;x0=e.clientX;y0=e.clientY;t0=performance.now();dx=0;mv=false;lock=null;HN_DRAG=true});
+  car.addEventListener("pointermove",e=>{if(id!==e.pointerId)return;const ax=e.clientX-x0,ay=e.clientY-y0;
+    if(lock==null&&(Math.abs(ax)>7||Math.abs(ay)>7)){lock=Math.abs(ax)>Math.abs(ay)*1.2?"x":"y";if(lock==="x"){try{car.setPointerCapture(id)}catch(_){}}}
+    if(lock!=="x")return;mv=true;dx=ax;pos(dx,false)});
+  const end=e=>{if(id!==e.pointerId)return;try{car.releasePointerCapture(id)}catch(_){}id=null;HN_DRAG=false;if(!mv){return}HN_NOCLK=performance.now()+500;
+    const w=car.clientWidth,v=dx/Math.max(1,performance.now()-t0);let t=idx;if(dx>w*.22||v>.45)t=idx-1;else if(dx<-w*.22||v<-.45)t=idx+1;idx=Math.max(0,Math.min(4,t));HN_PG=HN_MAP[idx];dots();setH();pos(0,true);watch();
+    const fin=()=>{trk.removeEventListener("transitionend",fin);clearTimeout(tm);if(idx<=0||idx>=4)settle()},tm=setTimeout(fin,450);trk.addEventListener("transitionend",fin)};
+  car.addEventListener("pointerup",end);car.addEventListener("pointercancel",e=>{if(id!==e.pointerId)return;id=null;HN_DRAG=false;if(mv){pos(0,true)}});
+  car.addEventListener("click",e=>{if(mv){e.stopPropagation();e.preventDefault();mv=false}},true)}
 function homeNotte(st){
   const myT=homeMyT(),pre=homeFase(),d=pre||campoNotte()||flUsaOggi(),GG=(typeof TV!=="undefined"&&TV.days[d]||[]).filter(g=>pre?g[5]==="S":(g[5]==="L"||g[5]==="F"||g[5]==="S"));
   const gm=g=>{const L=g[5]==="L",F=g[5]==="F",S0=g[5]==="S",sc=v=>S0?"":v==null?"–":v;return`<div class="hmg" data-hgo="${d}|${g[7]||""}|a" role="link" tabindex="0"><div class="hmr">${tvLogo(g[1],"hml")}<span>${sc(g[3])}</span></div><div class="hmr">${tvLogo(g[0],"hml")}<span>${sc(g[2])}</span></div><small>${L?`<span class="hmlv">LIVE</span> ${((TVL.st[g[7]]||"").replace(/^Live\s*-?\s*/i,""))}`:F?"FINALE":"🕐 "+String(g[6]||"").replace("+1","")}</small></div>`};
@@ -4186,7 +4205,8 @@ function homeNotte(st){
   const panel=(tit,cls,list,vuoto,tot)=>{const ph=list.length?[]:(cls==="m"?phM:phS);return`<div class="hmcard ${cls}${OFF&&cls==="m"?" all":""}${ph.length?" hmph":""}">${hsoHead(tit,OFF&&cls==="m",list.length||ph.length,ph.length?"MEDIA PDK":"PDK"+((cls==="m"?mLv:sLv)?" LIVE":""))}${list.length?W(cls,list.map(x=>row(x.n,x.N,`vs ${x.N.opp} · ${x.N.lv?`<b class="hmc">${x.N.st||"Live"}</b>`:"Finale"}`,OFF&&cls==="m"?x.own:null)).join("")):ph.length?W(cls,ph.map(x=>phRow(x,OFF&&cls==="m")).join("")):`<p class="hmvu">${vuoto}</p>`}${tot!=null&&list.length?`<div class="hmt"><span>TOTALE</span><b>${pdkF(tot)}</b></div>`:""}</div>`};
   const TOP=hnLay()==="5";
   const mC=pre?prePanel(OFF?"TUTTE LE SQUADRE":"I MIEI STANOTTE · "+TEAMS[myT].nick.toUpperCase(),"m",preL(OFF?Object.values(ROSTER).flat().map(p=>p[0]):(ROSTER[myT]||[]).map(p=>p[0]),true),OFF?"Nessun giocatore gioca stanotte.":"Nessuno dei tuoi giocatori gioca stanotte."):panel(OFF?"TUTTE LE SQUADRE":"I MIEI · "+TEAMS[myT].nick.toUpperCase(),"m",mine,OFF?"Nessun giocatore in campo stanotte.":"Nessuno dei tuoi giocatori in campo stanotte.",OFF?null:mTot);
-  const mCard=HN_PG===1?hnResCard():HN_PG===2?hnClaCard():mC.replace(/<\/div>$/,hnDots()+"</div>");
+  const mCls=(mC.match(/^<div class="([^"]*)">/)||[0,"hmcard m"])[1],mIn=mC.replace(/^<div class="[^"]*">/,"").replace(/<\/div>$/,""),rIn=hnResCard(),cIn=hnClaCard(),sl=h=>`<div class="hmslot">${h}</div>`;
+  const mCard=`<div class="${mCls} hmmulti"><div class="hmcar"><div class="hmtrk">${[mIn,cIn,rIn,mIn,cIn].map(sl).join("")}</div></div>${hnDots()}</div>`;
   return`<div class="hn6${TOP?" top":""}${OFF?"":" tm"}" style="--tc:${TEAMS[myT].bg}"><div class="hmrail">${teamOrd().map(t=>{const x=st.find(y=>y.t===t)||{w:0,l:0};return`<button class="hrl" data-team="${t}" style="--tc:${TEAMS[t].bg}" aria-label="Roster ${TEAMS[t].name} ${x.w}-${x.l}" title="${TEAMS[t].name} ${x.w}-${x.l}">${badge(t)}${TOP?`<small>${x.w}-${x.l}</small>`:""}</button>`}).join("")}</div>
   <div class="hmmain" id="hmmain">${TOP?`<div class="hmsec"><span>${pre?"PARTITE DI STANOTTE":GG.some(g=>g[5]==="L")?"LIVE ADESSO":"PARTITE DELLA NOTTE"}</span><span>${GG.length} PARTITE</span></div>`:""}${banner}${mCard}${pre?prePanel("★ SEGUITI STANOTTE","s",preL(SEGUI),SEGUI.length?"Nessuno dei tuoi seguiti gioca stanotte.":"Tocca il segnalibro su un giocatore per seguirlo."):panel("★ SEGUITI","s",seg,SEGUI.length?"Nessuno dei tuoi seguiti in campo stanotte.":"Tocca il segnalibro su un giocatore per seguirlo.",null)}</div></div>`}
 setInterval(()=>{try{if(cur==="home"&&!document.hidden&&document.querySelector(".hn6 .hmph"))homeNotteRefresh()}catch(e){}},4000);
@@ -4214,10 +4234,10 @@ function bindHomeNotte(root){root.querySelectorAll(".hrl").forEach(b=>b.onclick=
     g.addEventListener("dblclick",()=>{delete HN_H[c];sc.style.maxHeight="";save()});
     g.addEventListener("click",e=>e.stopPropagation())});
   root.querySelectorAll("[data-hpg]").forEach(b=>b.onclick=e=>{e.stopPropagation();hnGo(+b.dataset.hpg)});
-  root.querySelectorAll("[data-hrk]").forEach(b=>b.onclick=e=>{e.stopPropagation();try{const P=drPO(drStand());HN_RK=Math.max(1,Math.min(P.end,(HN_RK==null?drCurWeek(P):HN_RK)+(+b.dataset.hrk)))}catch(_){}hnGo(1)});
-  root.querySelectorAll("[data-hrs]").forEach(b=>b.onclick=()=>{if(performance.now()<HN_NOCLK)return;const[k,x,y]=b.dataset.hrs.split("|");DR.k=+k;DR.tab="turno";DR.open=[x,y];DR.team=null;DR.rules=false;GAME="dream";cur="giochi";render();window.scrollTo(0,0)});
-  root.querySelectorAll("[data-hcl]").forEach(b=>b.onclick=()=>{if(performance.now()<HN_NOCLK)return;DR.tab="cla";DR.open=null;DR.rules=false;DR.team=b.dataset.hcl;DR.tf=null;DR.tt=null;GAME="dream";cur="giochi";render();window.scrollTo(0,0)});
-  hnSwipe(root);hnDrag(root);hnPhase(root)}
+  root.querySelectorAll("[data-hrk]").forEach(b=>b.onclick=e=>{e.stopPropagation();try{const P=drPO(drStand());HN_RK=Math.max(1,Math.min(P.end,(HN_RK==null?drCurWeek(P):HN_RK)+(+b.dataset.hrk)))}catch(_){}HN_PG=1;hnRe()});
+  root.querySelectorAll("[data-hrs]").forEach(b=>b.onclick=()=>{if(performance.now()<HN_NOCLK)return;const[k,x,y]=b.dataset.hrs.split("|");DR.k=+k;DR.tab="turno";DR.open=[x,y];DR.team=null;DR.rules=false;DR.fh=true;GAME="dream";cur="giochi";render();window.scrollTo(0,0)});
+  root.querySelectorAll("[data-hcl]").forEach(b=>b.onclick=()=>{if(performance.now()<HN_NOCLK)return;DR.tab="cla";DR.open=null;DR.rules=false;DR.team=b.dataset.hcl;DR.tf=null;DR.tt=null;DR.fh=true;GAME="dream";cur="giochi";render();window.scrollTo(0,0)});
+  hnCar(root);hnDrag(root);hnPhase(root)}
 /* il banner parte da un orologio unico: dopo ogni aggiornamento o ridisegno riprende dal punto giusto, senza tornare all'inizio */
 let HN_T0=performance.now(),HN_DRAG=false;
 
@@ -6629,7 +6649,7 @@ function drDuel(k,a,b,W,P){const A=drTeam(k,a,W),B=drTeam(k,b,W),f1=v=>v==null?"
   const ld=A.score!=null&&B.score!=null&&A.score!==B.score?(A.score>B.score?a:b):null;
   const tm=(t,T,pj,r)=>`<div class="dut${r?" r":""}${ld===t?" lead":""}"><span class="dulg">${drLg(t)}</span><div><b>${drScore(T.score)}</b><small>${pj!=null?`proiez. ${pdkF(pj)}`:`${T.played}/10 titolari`}</small></div></div>`;
   SHR_DUEL={ph:DR_PH(k,P),range:`${drFmt(W.start)}–${drFmt(W.end)}`,a,b,A,B,pa,pb,pw,W,closed:W.closed,prov:[...DR_PROV].some(x=>x>=W.start&&x<=W.end)};
-  return`<div class="dutop"><button class="gback" data-dr="close">‹ ${DR_PH(k,P)}</button>${(()=>{const nv=d=>{const k2=k+d;if(k2<0||k2>P.end)return false;return(drPairs(k2,null,P)||[]).some(x=>x.includes(a))};return`<button class="shbtn dunav first" data-dr="duk" data-d="-1" aria-label="Turno precedente" title="Turno precedente"${nv(-1)?"":" disabled"}>‹</button><button class="shbtn dunav" data-dr="duk" data-d="1" aria-label="Turno successivo" title="Turno successivo"${nv(1)?"":" disabled"}>›</button>`})()}${shBtn("duel")}</div>
+  return`<div class="dutop"><button class="gback" data-dr="close">‹ ${DR.fh?"Home":DR_PH(k,P)}</button>${(()=>{const nv=d=>{const k2=k+d;if(k2<0||k2>P.end)return false;return(drPairs(k2,null,P)||[]).some(x=>x.includes(a))};return`<button class="shbtn dunav first" data-dr="duk" data-d="-1" aria-label="Turno precedente" title="Turno precedente"${nv(-1)?"":" disabled"}>‹</button><button class="shbtn dunav" data-dr="duk" data-d="1" aria-label="Turno successivo" title="Turno successivo"${nv(1)?"":" disabled"}>›</button>`})()}${shBtn("duel")}</div>
   <div class="duhd">${tm(a,A,pa,0)}<span class="duvs">VS</span>${tm(b,B,pb,1)}
    <div class="dunm"><span>${TEAMS[a].nick}</span><span>${TEAMS[b].nick}</span></div>
    <div class="dubar"><i style="width:${pw}%"></i></div><div class="dupct"><span>${pw}% ${W.closed?"":"vittoria"}</span><span>${100-pw}%</span></div></div>
@@ -6740,7 +6760,7 @@ function drTeamPage(t){const D=drTeamData(t),c=TEAMS[t],S=D.S,f1=v=>v==null?"—
   const trend=`<div class="dtsec"><h4>Trend PDK squadra<small>scegli il periodo della stagione</small></h4><div class="dtrng"><label>Dal<select data-drsel="tf">${opts(a)}</select></label><label>Al<select data-drsel="tt">${opts(b)}</select></label></div>${chart}<p class="note">Pallino vuoto = dato non definitivo: giornate 1–2 (Dunkest) mostrate come media delle due giornate perché il punteggio di ognuna non è disponibile, oppure turno ancora in corso.</p></div>`;
   const rg=D.recG,cap=D.cap,num=cap&&((ROSTER[t]||[]).find(p=>p[0]===cap.n)||[])[1];
   const card=(l,v,sub,cls)=>`<div class="dtc ${cls||""}"><small>${l}</small><b>${v}</b>${sub?`<em>${sub}</em>`:""}</div>`;
-  return`<button class="gback" data-dr="tclose">‹ Classifica</button>
+  return`<button class="gback" data-dr="tclose">‹ ${DR.fh?"Home":"Classifica"}</button>
   <div class="dthead tint" style="--tc:${c.bg}">${drLg(t,"l")}<div><h3>${c.name}</h3><p>${D.pos}º in classifica · ${S.n} turni giocati</p></div></div>
   <div class="dtsec"><h4>Bilancio<small>vittorie e sconfitte</small></h4><div class="dtg dtg2">${card("Vittorie",S.w,"","g")}${card("Sconfitte",S.l,"","r")}</div></div>
   <div class="dtsec"><h4>PDK fatti<small>somma dei punteggi dei turni</small></h4><div class="dtg">${card("Totale",f1(S.pf))}${card("Media a turno",f1(avgF))}${card("Record in un turno",rg?f1(rg.pf):"—",rg?`turno ${rg.g} · vs ${TEAMS[rg.opp].nick}`:"nessun turno Dreamers chiuso")}</div>
@@ -6749,15 +6769,15 @@ function drTeamPage(t){const D=drTeamData(t),c=TEAMS[t],S=D.S,f1=v=>v==null?"—
   ${h2h}${trend}
   <p class="note">Il totale e le medie comprendono le giornate 1–2 giocate su Dunkest. Record e dettaglio per avversario in punti usano solo i turni Dreamers chiusi.</p>`}
 document.getElementById("main").addEventListener("change",e=>{const k=e.target.dataset&&e.target.dataset.drsel;if(!k||!DR.team)return;DR[k]=+e.target.value;const y=scrollY;render();scrollTo(0,y)});
-function drAct(b){const d=b.dataset;
+function drAct(b){const d=b.dataset;if(["tab","wk","go","cteam","open"].includes(d.dr))DR.fh=false;
   if(d.dr==="tab"){DR.tab=d.k;DR.open=null;DR.rules=false;DR.team=null}
   else if(d.dr==="theme"){drThemeNext();const y=scrollY;render();scrollTo(0,y);return}
   else if(d.dr==="cteam"){DR.team=d.t;DR.tf=null;DR.tt=null}
-  else if(d.dr==="tclose"){DR.team=null}
+  else if(d.dr==="tclose"){if(DR.fh){DR.fh=false;DR.team=null;GAME="menu";cur="home";render();window.scrollTo(0,0);return}DR.team=null}
   else if(d.dr==="wk"){DR.k=Math.max(1,Math.min(drPO(drStand()).end,DR.k+(+d.d)));DR.open=null}
   else if(d.dr==="go"){DR.k=+d.k;DR.tab="turno";DR.open=null}
   else if(d.dr==="open"){DR.open=[d.a,d.b]}
-  else if(d.dr==="close"){DR.open=null}
+  else if(d.dr==="close"){if(DR.fh){DR.fh=false;DR.open=null;GAME="menu";cur="home";render();window.scrollTo(0,0);return}DR.open=null}
   else if(d.dr==="duk"){/* (317) turno precedente/successivo: resta sulla sfida della stessa squadra (quella a sinistra) */const P=drPO(drStand()),a=DR.open&&DR.open[0],k2=(DR.k||0)+(+d.d),pr=a&&k2>=0&&k2<=P.end?(drPairs(k2,null,P)||[]).find(x=>x.includes(a)):null;if(pr){DR.k=k2;DR.open=pr[0]===a?[pr[0],pr[1]]:[pr[1],pr[0]]}else return}
   else if(d.dr==="rules"){DR.rules=!DR.rules;DR.open=null}
   render();window.scrollTo(0,0)}
