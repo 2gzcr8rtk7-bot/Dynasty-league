@@ -889,6 +889,8 @@ body:not(.notte) .hrl{position:relative;width:56px;height:56px;padding:3px;borde
 .hrl:active{transform:scale(.96)}.hrl .badge{width:100%!important;height:100%!important;display:block;border-radius:0}
 .hmmain{display:grid;gap:10px;min-width:0}
 .hmqrow{grid-column:1/-1;min-width:0}
+/* (430) loghi a destra, elenchi a sinistra: più comodo col pollice destro */
+.hn6:not(.top){grid-template-columns:minmax(0,1fr) 56px}.hn6:not(.top) .hmqrow{grid-row:1}.hn6:not(.top) .hmmain{grid-column:1;grid-row:2}.hn6:not(.top) .hmrail{grid-column:2;grid-row:2}
 .hmq{overflow:hidden;border-radius:14px;min-width:0;touch-action:pan-y;-webkit-user-select:none;user-select:none}
 .hmqt{display:flex;width:max-content;animation:hmq 30s linear infinite;will-change:transform;backface-visibility:hidden}
 @keyframes hmq{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
