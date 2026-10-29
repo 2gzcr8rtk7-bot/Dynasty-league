@@ -1301,3 +1301,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 - Parametri nuovi in `EQ_DEF`/`EQ_PAR`/`EQ_SC` (nuovo gruppo «Intenzioni della squadra» e righe nel gruppo rendimento). Parametri già in coda (nota 450): perf 0,40 · win 0,60 · reb 0,30.
 - Testi di interesse: «punta a vincere subito / guarda al futuro / dovrebbe ricostruire (N-ª in classifica · età media · talento)».
 - Prova: caso Eagles–Davis (3 giocatori + 15 cr per Davis): da interesse medio a BASSO (Eagles c=+0,28, perdono rendimento PDK 18,2 contro 38,5). Su 400 scambi casuali equilibrati: alto 123, medio 168, basso 412 (prima 139/221/338): le squadre sono più selettive. MOO/TUR: giovane per veterano = interesse alto (1,00), veterano per giovane = basso.
+
+(452) DAX › Parametri: aggiunte le descrizioni «i» (EQ_INFO) per i parametri nuovi della nota 451; i valori di serie mostrati nell'area riservata sono quelli di `EQ_DEF` (perf 40 · win 60 · reb 30 e i nuovi). pubblicato (CACHE dynasty-v102). Le modifiche locali salvate sul telefono (`dl_eq`) restano finché non si preme «Ripristina parametri».
