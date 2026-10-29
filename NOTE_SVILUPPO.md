@@ -1253,5 +1253,3 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (430) Home: colonna dei loghi squadra a DESTRA e elenchi (Tutte le squadre / Seguiti) a SINISTRA, per usarla col pollice destro; il carosello partite/avvisi resta a tutta larghezza in alto. Solo CSS (`.hn6:not(.top)`), notte, Blu e Nero. Nella versione TOP (loghi in riga) non cambia. pubblicato.
 
 (431) Banner avvisi della Home: durata portata da 12 a 24 ore dall'orario indicato (`H12` in `hnAvvisi`, il nome è rimasto). Lo scambio TUR↔MOO (ora 12:30 del 29/10) resta quindi fino alle 12:30 del 30/10. In coda, non pubblicato.
-
-(432) IA Trade: tolta la modalità «Per ruolo» (e il doppio pulsante in alto): resta solo quella «per giocatore», senza nome (schede «Voglio e opzioni» → «Intoccabili» → risultato). Eliminati `iaBuild` (generatore per ruolo), i rami di `vIA` per ruolo e le azioni `mode/any/need/n`; `IA.mode` resta «pl» (serve ancora all'area DAX). Verificato: nessuna barra modalità, flusso fino ai risultati e Gestione equilibrio trade ancora funzionanti. In coda, non pubblicato.
