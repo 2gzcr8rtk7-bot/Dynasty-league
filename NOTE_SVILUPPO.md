@@ -1186,3 +1186,4 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 (393) **Home: la casellina dei giocatori diventa a 3 pagine.** Giocatori (come prima, anche le previsioni pre-14:00) · Risultati Dreamers (turno in corso, frecce ‹ › per sfogliare i turni, punteggi, scarto, LIVE) · Classifica Dreamers (posizione, V, P, media PDK). Si cambia con lo swipe orizzontale (verso destra = pagina successiva, verso sinistra = precedente, in ciclo) o toccando i puntini sotto. La forma e la linguetta di ridimensionamento restano. Toccando una sfida si apre il match Dreamers; toccando una squadra della classifica si apre la sua scheda Dreamers (record ecc.). Stato `HN_PG`/`HN_RK`; stile con le variabili della Home (giorno/notte/squadra). pubblicato.
 (394) Home casellina: loghi della classifica e dei risultati allineati (colonne a larghezza fissa). pubblicato.
+(report) 29/10/2026 — report Dunkest automatico caricato: notti 28/10
