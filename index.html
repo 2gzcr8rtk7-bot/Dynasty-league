@@ -3762,7 +3762,8 @@ function homeNotte(st){
   const mLv=mine.some(x=>x.N.lv),sLv=seg.some(x=>x.N.lv);
   const W=(cls,h)=>`<div class="hmscroll">${h}</div>`;
   const esc=n=>String(n).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-  const preL=(names,mineF)=>{const out=[];names.forEach(n=>{try{const nba=(segInfo(n)||{}).nba;if(!nba)return;const g=GG.find(x=>x[0]===nba||x[1]===nba);if(!g)return;const opp=g[0]===nba?g[1]:g[0],sd=g[0]===nba?"a":"h",cur=(PARTITE[n]||[]).map(x=>+x[3]).filter(v=>!isNaN(v)),best=cur.length?Math.max(...cur):null;
+  let WKB={acc:{}};try{const dT=DR_TURNI.findIndex(x=>x[0]<=d&&d<=x[1])+1;WKB=drWeek(dT||drCurWeek(drPO(drStand())))}catch(e){}
+  const preL=(names,mineF)=>{const out=[];names.forEach(n=>{try{const nba=(segInfo(n)||{}).nba;if(!nba)return;const g=GG.find(x=>x[0]===nba||x[1]===nba);if(!g)return;const opp=g[0]===nba?g[1]:g[0],sd=g[0]===nba?"a":"h",best=(WKB.acc[n]||{}).b??null;
       const all=[...(PARTITE[n]||[]),...((STAGIONI["2025/26"]||{})[n]||[]),...((STAGIONI["2024/25"]||{})[n]||[])].filter(x=>x[1]===opp&&x[3]!=null&&!isNaN(+x[3])),avg=all.length?all.reduce((a,x)=>a+ +x[3],0)/all.length:null;
       let pred=null,def=null,tr=null;
       const I0=segInfo(n)||{},role=I0.kind==='T'?((ROSTER[I0.t]||[]).find(p=>p[0]===n)||[])[2]:null;
