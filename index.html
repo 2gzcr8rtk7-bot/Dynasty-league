@@ -6253,6 +6253,8 @@ async function shHistTrade(i,O){O=O||{};const PRE=!!O.T,M=histTradeModel(i,O.T);
     for(let k=0;k<2;k++){const sd=M.sides[k],tm=TEAMS[sd.t],x0=56+k*(pw+24),panH=topH;
       c.save();shRR(c,x0,y,pw,panH,28);c.clip();c.fillStyle="rgba(10,6,24,.62)";c.fillRect(x0,y,pw,panH);
       const gg=c.createLinearGradient(x0,y,x0+pw,y+210);gg.addColorStop(0,tm.bg);gg.addColorStop(1,"rgba(10,6,24,.2)");c.fillStyle=gg;c.fillRect(x0,y,pw,210);
+      if(PRE){const h=tm.bg.replace("#",""),rgb=[0,2,4].map(i=>parseInt(h.slice(i,i+2),16)),lum=(.299*rgb[0]+.587*rgb[1]+.114*rgb[2])/255,kk=Math.max(0,Math.min(.62,(lum-.2)*1.1)),dk=rgb.map(v=>Math.round(v*(1-kk)));
+        const bg2=c.createLinearGradient(x0,y,x0,y+panH);bg2.addColorStop(0,tm.bg);bg2.addColorStop(.3,`rgb(${dk})`);bg2.addColorStop(1,`rgb(${dk.map(v=>Math.round(v*.72))})`);c.fillStyle=bg2;c.fillRect(x0,y,pw,panH)}
       c.fillStyle=tm.trim||"#fff";c.fillRect(x0,y+210,pw,8);c.restore();
       shRR(c,x0,y,pw,panH,28);c.strokeStyle="rgba(196,181,253,.28)";c.lineWidth=2;c.stroke();
       await shLogoAt(c,sd.t,x0+22,y+24,140);
