@@ -6861,7 +6861,7 @@ function render(){
   if(cur!=="tv")TVS.out=1;liveSync();if(["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur))fantaLiveAvvia();
   document.body.dataset.v=cur;{const nt=typeof CNT!=="undefined"&&CNT;document.body.classList.toggle("notte",nt);document.documentElement.classList.toggle("notte",nt);const tc=document.querySelector('meta[name="theme-color"]');if(tc&&!document.body.classList.contains("dreamfs"))tc.content=nt?"#2a1260":TH_BAR}
   {document.documentElement.classList.toggle("setpg",cur==="impostazioni");/* (245) */const fs=cur==="giochi"&&(GAME==="dream"||GAME==="gdream");document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=(fs||(typeof CNT!=="undefined"&&CNT))?"#2a1260":TH_BAR}
-  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="fa"?"fa":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"?"home":cur==="osserv"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
+  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="fa"?"fa":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"?"home":cur==="osserv"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));try{const nv=document.querySelector("nav"),sb=nv&&nv.querySelector('[aria-selected="true"]');if(sb)nv.scrollTo({left:Math.max(0,sb.offsetLeft-24)})}catch(e){}
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -6924,7 +6924,7 @@ function syncMenu(){
   document.querySelectorAll("nav button[data-menu]").forEach(b=>{
     const p=document.getElementById(b.dataset.menu);if(!p)return;
     const op=dkOpen===b.dataset.menu;b.setAttribute("aria-expanded",op);p.hidden=!op;
-    const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="fa"?"fa":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
+    const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="fa"?"fa":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
     b.setAttribute("aria-selected",op||inside);
     if(op){const w=b.closest(".wrap").getBoundingClientRect(),r=b.getBoundingClientRect();
       const width=Math.max(r.width,180);let left=r.left-w.left+r.width/2-width/2;left=Math.max(0,Math.min(left,w.width-width));
@@ -7542,6 +7542,8 @@ cfStart();
 .hofpal{display:grid;gap:6px;margin:4px 0 16px}.hofrow{display:grid;grid-template-columns:24px auto auto 1fr;gap:8px;align-items:center;padding:9px 12px;border-radius:12px;background:linear-gradient(90deg,rgba(245,196,0,.18),rgba(245,196,0,.04));border:1px solid rgba(245,196,0,.45)}
 .hofrow i{font-style:normal;font-size:16px}.hofrow b{font-family:var(--display);font-style:italic;font-weight:800;text-transform:uppercase;color:#ffd75e;font-size:15px}.hofrow span{font-size:12px;color:#e5dcff;font-weight:700}.hofrow em{font-style:normal;font-size:11px;text-align:right;color:#fff}
 .hofrow.nx{background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.22)}.hofrow.nx b,.hofrow.nx i{color:#b9aee0}.hofrow.nx em{color:#b9aee0}
+.hofmini{float:right;margin-top:-3px;padding:4px 10px;border-radius:999px;border:1px solid rgba(245,196,0,.55);background:rgba(245,196,0,.12);color:#ffd75e;font:800 12px var(--display);font-style:italic;letter-spacing:.06em;cursor:pointer}
+.orr{display:grid;grid-template-columns:78px minmax(0,1fr);gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.1)}.orr>b{font:800 16px var(--display);font-style:italic;color:#ffd75e;white-space:nowrap}.orr strong{display:block;font-size:14px;color:#fff}.orr small{display:block;margin-top:2px;font-size:12.5px;line-height:1.35;color:#c4b5fd}
 .hofsec{font-family:var(--display);font-style:italic;font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:13px;color:#ffd75e;margin:6px 2px 10px}
 .hoft{display:grid;gap:12px}.hoftile{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:12px;width:100%;box-sizing:border-box;align-items:center;text-align:left;padding:16px;min-height:88px;border-radius:18px;border:1.5px solid rgba(245,196,0,.55);background:linear-gradient(135deg,#241046,#120a28 70%);color:#fff;box-shadow:0 8px 20px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.12);cursor:pointer}
 .hoftile:active{transform:scale(.985)}.hoftile .hi{width:62px;height:62px;border-radius:16px;display:grid;place-items:center;font-size:32px;background:linear-gradient(180deg,#ffe27a,#d9a400);box-shadow:0 0 18px rgba(245,196,0,.45)}
@@ -7606,7 +7608,7 @@ function sala(){if(!COL.d){cur="campo";return vCampo()}
  return`<div class="hof"><button class="gback" id="hofback">‹ Campo Ducks</button>
  <div class="hofhd">${lg?`<img src="${lg}" alt="Texas Ducks">`:""}<div><small>Texas Ducks · area riservata del GM</small><b>Hall of Fame Ducks</b><em>Archivio dei successi</em></div></div>
  ${cab()}${palm()}
- <div class="hofsec">Entra in una sezione</div>
+ <div class="hofsec">Entra in una sezione<button class="hofmini" data-hof="orari" type="button">🕐 Orari</button></div>
  <div class="hoft">
   <button class="hoftile" data-hof="college"><span class="hi">🔭</span><span><b>Scouting</b><small>Ufficio Scouting · college, NBA, prospetti</small></span><i>›</i></button>
   <button class="hoftile" data-hof="pers"><span class="hi">🎨</span><span><b>Personalizzazioni</b><small>Loghi e look della tua app</small></span><i>›</i></button>
@@ -7632,9 +7634,30 @@ function soft(){if(!COL.d){cur="campo";return vCampo()}
  <div class="hofhd"><div style="grid-column:1/3"><small>Texas Ducks · area riservata del GM</small><b>Software</b><em>Strumenti di gestione</em></div></div>
  <div class="ctools hofct"><button class="ctool" id="ccap"><span class="ci">C</span>Cap<small>Chi mettere capitano</small></button><button class="ctool" id="cmul"><span class="ci mul">€</span>Multe<small>Capitano senza multa</small></button></div>
  <p class="hoftt">🦆 Texas Ducks · uso interno</p></div>`}
-VIEWS.sala=sala;VIEWS.pers=pers;VIEWS.soft=soft;
+/* (373) ORARI: promemoria di tutto cio che si aggiorna a un'ora fissa (ora italiana). Se cambia un orario nel codice, aggiornare anche questa pagina. */
+function orari(){if(!COL.d){cur="campo";return vCampo()}
+ const R=(h,t,d)=>`<div class="orr"><b>${h}</b><div><strong>${t}</strong><small>${d}</small></div></div>`;
+ const card=(t,n,rows)=>`<section class="hofcard"><h4>${t}</h4>${n?`<p class="setnote">${n}</p>`:""}${rows.join("")}</section>`;
+ return`<div class="hof"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
+ <div class="hofhd"><div style="grid-column:1/3"><small>Texas Ducks · area riservata del GM</small><b>Orari</b><em>Quando si aggiorna cosa · ora italiana</em></div></div>
+ ${card("Ogni giorno","Gli orari sono in ora italiana. «Notte» = la notte NBA (data USA).",[
+  R("06:00","Cambia la data USA","È la mezzanotte di New York: da qui la «notte» corrente è quella nuova. Fino alle 08:30 la Home continua a mostrare i risultati della notte appena finita."),
+  R("06:47","Calendario NBA (ripasso del mattino)","Automatico da ESPN (GitHub): aggiorna gli orari delle partite dei prossimi giorni in Dynasty TV. L'orario reale può slittare di qualche minuto."),
+  R("07:30","ESPN diventa ufficiale nelle statistiche","I PDK della notte entrano nelle statistiche dei giocatori, nell'efficienza stagionale, in «Notte · in campo» e in FA e G-League. Alle 07:30 si spengono anche le animazioni live (puntini LIVE, bordo lampeggiante)."),
+  R("08:30","La Home passa alle partite della prossima notte","Dalle 08:30 fino alla prima partita la Home non mostra più i risultati: mostra i prossimi scontri (avversario, orario, PDK da superare, previsione e trend) e nel banner le partite in arrivo. Appena ESPN segna la prima partita in corso torna live da sola."),
+  R("12:30","Chiusura e apertura dei turni Dreamers","Un turno si chiude, e si apre il successivo, solo dalle 12:30 del giorno dopo la sua ultima notte USA, così i dati Dunkest sono già caricati. A quell'ora si aggiornano classifica ufficiale, playoff e banner Dreamers della Home. Prima di quell'ora il turno resta «in corso»."),
+  R("13:17","Calendario NBA (pomeriggio)","Secondo giro automatico da ESPN. Il server lo lancia alle 12:17 UTC: con l'ora solare è 13:17, con l'ora legale 14:17.")])}
+ ${card("Ogni settimana","",[
+  R("Lun 12:00","Valori e prezzi dei giocatori","Ogni lunedì alle 12:00 scattano i nuovi valori (e i prezzi in crediti). Prima di quell'ora restano quelli della settimana precedente. Il registro del lunedì è in Cronologia modifiche.")])}
+ ${card("Senza orario fisso","",[
+  R("Dunkest","Report ufficiale","Non ha un orario: i dati ufficiali Dunkest valgono da quando vengono caricati (la riga «Ultimo aggiornamento» in fondo alla Home mostra l'ora del file). In «Eventi dati» della Cronologia il rosso segna il caricamento."),
+  R("Ogni 45 s","Dati live ESPN","Mentre c'è una partita in corso l'app riscarica punteggi e tabellini ogni 45 secondi circa. In attesa dei dati la Home controlla ogni 4 secondi."),
+  R("Ogni 60 s","Home","Aggiorna da sola banner e tabelle mentre è aperta."),
+  R("Release","Archivio Dreamers","Quando si pubblica una nuova versione dell'app l'archivio delle notti Dreamers si rigenera da solo.")])}
+ <p class="hoftt">🦆 Texas Ducks · uso interno</p></div>`}
+VIEWS.sala=sala;VIEWS.pers=pers;VIEWS.soft=soft;VIEWS.orari=orari;
 document.addEventListener("click",e=>{
- if(!["sala","pers","soft"].includes(cur))return;
+ if(!["sala","pers","soft","orari"].includes(cur))return;
  if(e.target.closest("#hofback")){cur=cur==="sala"?"campo":"sala";render();scrollTo(0,0);return}
  const h=e.target.closest("[data-hof]");if(h){cur=h.dataset.hof;render();scrollTo(0,0);return}
  const hn=e.target.closest("[data-hnl]");if(hn){const y=scrollY;hnSet(hn.dataset.hnl);render();scrollTo(0,y);return}
