@@ -3216,7 +3216,7 @@ const EQ_DEF={wnb:.6,wvs:.4,vsk:1.25,sck:2.6,thA:.62,thM:.42,dlmax:.45,
  eta0:.07,eta1:.10,perf:.10,rook:.22,win:.40,reb:.22,
  sgf:.25,sbal:.15,smix:.60,mmin:.55};
 const EQP={...EQ_DEF};
-let IA={np:3,noMore:false,lv:"eq",mode:"role",any:false,want:[],keep:[],tf:"",q:"",st:1,team:"",needs:["","",""],give:[],cr:{c:0,p:0,d:0},n:2,out:[],seen:{},pool:null,key:"",rd:0};
+let IA={np:3,noMore:false,lv:"eq",mode:"pl",any:false,want:[],keep:[],tf:"",q:"",st:1,team:"",needs:["","",""],give:[],cr:{c:0,p:0,d:0},n:2,out:[],seen:{},pool:null,key:"",rd:0};
 const IA_LV={eq:[0,.10,0],win:[.10,.40,.25],scam:[.40,.80,.55]},IA_R={G:"Guardia",F:"Ala",C:"Centro"},IA_RP={G:"guardie",F:"ali",C:"centri"},IA_W=[1,.6,.35],IA_LIM={p:10,d:30},IA_MAXR=15;
 let iaCache={};
 const iaTeam=()=>IA.team&&TEAMS[IA.team]?IA.team:(TEAMS[curTeam]?curTeam:"DUC");
@@ -3366,43 +3366,6 @@ function iaCalcInts(){iaPC={};const S=iaStats(),mk=n=>iaPl(n),out=[];
 const iaMix=I=>{const v=I.map(x=>x.sc);return{minI:Math.min(...v),avgI:v.reduce((a,b)=>a+b,0)/v.length,mix:EQP.mmin*Math.min(...v)+(1-EQP.mmin)*v.reduce((a,b)=>a+b,0)/v.length}};
 /* livello equilibrato: se ci sono abbastanza scambi che interessano almeno "abbastanza" a tutti (interesse ≥ medio), restano solo quelli */
 const iaTop=(o,lv)=>{if(lv!=="eq")return o;const g=o.filter(x=>x.minI>=.42);return g.length>=10?g:o};
-function iaBuild(){iaCache={};iaPC={};const A=iaTeam(),S=iaStats(),give=IA.give.filter(n=>ROSTER[A].some(p=>p[0]===n)),w={};IA.needs.forEach((r,i)=>{if(r)w[r]=IA_W[i]});if(IA.any)["G","F","C"].forEach(r=>w[r]=1);
-  const subs=iaSubs(give,3).map(s=>({...s,sig:iaSig(s.a.map(iaPl))})),tot=iaTot(),out=[],lv=IA.lv||"eq",LV=IA_LV[lv];
-  const fit=T=>iaSum(T,x=>x.v*(w[x.r]||.1))/Math.max(1,iaSum(T,x=>x.v)),nick=t=>TEAMS[t].nick;
-  const needTxt=(t,recv)=>{const d=S[t].def,r=recv.map(x=>x.r).sort((a,b)=>d[b]-d[a])[0];return r&&d[r]>.12?`I ${nick(t)} sono corti di ${IA_RP[r]}`:""};
-  if(IA.n===2){
-    Object.keys(ROSTER).forEach(B=>{if(B===A)return;
-      iaSets(B,w).forEach(T=>{const vT=iaSum(T,x=>x.v),sg=iaSig(T);subs.forEach(s=>{
-        if(s.sig!==sg||(!s.a.length&&!tot))return;const gap=vT-s.v;let need=0,back=0,R,G,d,adv=0,bal;
-        if(lv==="eq"){
-          if(gap/VAL_CR>2){need=Math.ceil(gap/VAL_CR/5)*5;if(need>tot)return}
-          else if(-gap/VAL_CR>=10){back=Math.min(Math.floor(-gap/VAL_CR/5)*5,iaCassa(B),30)}
-          R=vT+back*VAL_CR;G=s.v+need*VAL_CR;d=Math.abs(R-G)/Math.max(R,G,1);if(d>.10)return;bal=1-d/.10}
-        else{if(!s.a.length)return;R=vT;G=s.v;adv=(R-G)/Math.max(R,G,1);if(adv<=LV[0]||adv>LV[1])return;d=adv;bal=Math.max(0,1-Math.abs(adv-LV[2])/.3)}
-        const gv=s.a.map(iaPl),f=fit(T),qs=iaSum(T,x=>iaQ(x.n))/T.length,it=iaInt(S,B,gv,T,(G-R)/Math.max(R,G,1),{in:need,out:back}),mx=iaMix([it]);
-        const sc=.22*f+.08*qs+.15*bal+.55*mx.mix+(s.a.length?0:-.04);
-        out.push({ty:2,B,give:s.a,take:T.map(x=>x.n),cr:iaAlloc(need),need,back,d,adv,sc,minI:mx.minI,int:[it],why:iaWhy(A,T,[],s.a),key:"2|"+B+"|"+s.a.join(",")+"|"+T.map(x=>x.n).join(",")+"|"+need})})})})
-  }else{
-    const teams=Object.keys(ROSTER).filter(t=>t!==A);
-    teams.forEach(C=>teams.forEach(B=>{if(B===C)return;
-      const bset=[],cB=ROSTER[B].filter(p=>!iaOut(p[0])).map(p=>({n:p[0],r:p[2],v:iaP(p[0])}));cB.forEach((a,i)=>{bset.push([a]);for(let j=i+1;j<cB.length;j++)bset.push([a,cB[j]])});
-      iaSets(C,w).forEach(T=>{const vT=iaSum(T,x=>x.v),sg=iaSig(T),bs=bset.filter(g=>iaSig(g)===sg);if(!bs.length)return;
-        const cand=subs.map(s=>{if(s.sig!==sg||(!s.a.length&&!tot))return null;const gap=vT-s.v;let need=0;
-          if(lv==="eq"){if(gap/VAL_CR>2){need=Math.ceil(gap/VAL_CR/5)*5;if(need>tot)return null}else if(-gap/VAL_CR>=10)return null;
-            const G=s.v+need*VAL_CR;return{s,need,G,dd:Math.abs(G-vT)/Math.max(G,vT,1)}}
-          if(!s.a.length)return null;const G=s.v,adv=(vT-G)/Math.max(vT,G,1);if(adv<=LV[0]||adv>LV[1])return null;return{s,need:0,G,adv,dd:Math.abs(adv-LV[2])}
-        }).filter(x=>x&&(lv!=="eq"||x.dd<=.10)).sort((a,b)=>a.dd-b.dd).slice(0,6);
-        cand.forEach(c=>{const gA=c.s.a.map(iaPl);
-          bs.forEach(GB=>{const vB=iaSum(GB,x=>x.v);let d,adv=0,bal;
-            if(lv==="eq"){const dB=Math.abs(vB-c.G)/Math.max(vB,c.G,1);if(dB>.13)return;
-              const dC=Math.abs(vB-vT)/Math.max(vB,vT,1);d=Math.max(c.dd,dB,dC);if(d>.14)return;bal=1-d/.14}
-            else{if(vB<Math.min(c.G,vT)||vB>Math.max(c.G,vT))return;adv=c.adv;d=adv;bal=Math.max(0,1-Math.abs(adv-LV[2])/.3)}
-            const f=fit(T),qs=iaSum(T,x=>iaQ(x.n))/T.length,its=[iaInt(S,B,gA,GB,(c.G-vB)/Math.max(c.G,vB,1),{in:c.need}),iaInt(S,C,GB,T,(vB-vT)/Math.max(vB,vT,1))],mx=iaMix(its);
-            const sc=.22*f+.08*qs+.15*bal+.55*mx.mix;
-            out.push({ty:3,B,C,give:c.s.a,mid:GB.map(x=>x.n),take:T.map(x=>x.n),cr:iaAlloc(c.need),need:c.need,d,adv,sc,minI:mx.minI,int:its,why:iaWhy(A,T,[],c.s.a),key:"3|"+B+"|"+C+"|"+c.s.a.join(",")+"|"+GB.map(x=>x.n).join(",")+"|"+T.map(x=>x.n).join(",")+"|"+c.need})})})})}))
-  }
-  out.sort((a,b)=>b.sc-a.sc);return iaTop(out,lv).slice(0,400)}
-/* IA Trade · modo "per giocatore": scelgo io i giocatori che voglio (da 1 o 2 squadre) e l'app costruisce cosa dare. Una squadra = trade a 2; due squadre = trade a 3 in automatico. */
 function iaOwner(n){return Object.keys(ROSTER).find(t=>ROSTER[t].some(p=>p[0]===n))}
 function iaBuildPl(){iaCache={};iaPC={};const A=iaTeam(),S=iaStats(),lv=IA.lv||"eq",LV=IA_LV[lv],tot=iaTot(),out=[],nick=t=>TEAMS[t].nick;
   const want=IA.want.filter(n=>iaOwner(n)&&iaOwner(n)!==A).map(iaPl),byT={};want.forEach(x=>{const t=iaOwner(x.n);(byT[t]=byT[t]||[]).push(x)});
@@ -3520,7 +3483,7 @@ function iaBuildWeb(A,want,lv,nmax,S){
         why:["Giocatore scelto da te",`Scambio a ${K} squadre: ogni squadra dà e riceve gli stessi ruoli`,...(cx.length?[`Crediti compensati con ${cx.length} ${cx.length===1?"pagamento":"pagamenti"} tra le squadre`]:[])],key})}});
   return out}
 function iaKey(){const A=iaTeam();IA.cr.d=Math.min(IA.cr.d,iaPostMax(A).max);IA.cr.p=Math.min(IA.cr.p,iaPfMax(A).max);IA.cr.c=Math.min(IA.cr.c,iaCassa(A));return JSON.stringify([iaTeam(),IA.mode,IA.any,IA.needs,IA.give,IA.want,IA.keep,IA.cr,IA.n,IA.np,IA.lv])}
-function iaNext(){if(!IA.pool||IA.key!==iaKey()){IA.key=iaKey();IA.pool=IA.mode==="pl"?iaBuildPl():iaBuild();IA.seen={};IA.rd=0;IA.out=[];IA.noMore=false}
+function iaNext(){if(!IA.pool||IA.key!==iaKey()){IA.key=iaKey();IA.pool=iaBuildPl();IA.seen={};IA.rd=0;IA.out=[];IA.noMore=false}
   /* uno scambio alla volta: il primo è il migliore, poi ogni "Aggiorna" ne dà un altro; finiti, resta lo stesso con l'avviso */
   const avail=IA.pool.filter(x=>!IA.seen[x.key]);
   if(!avail.length){if(IA.out.length)IA.noMore=true;else if(IA.pool.length)IA.out=[IA.pool[0]];return}
@@ -3588,8 +3551,7 @@ const iaLvSel=()=>`<div class="iaq" role="group" aria-label="Guadagno">${[["eq",
 const iaNSel=()=>{const one=new Set(IA.want.map(iaOwner)).size<=1;
   if(IA.mode==="pl")return one?`<div class="iaq iaq4" role="group" aria-label="Squadre coinvolte">${[2,3,4,5].map(n=>`<button data-ia="np" data-n="${n}" aria-pressed="${IA.np===n}"><b>${n}</b><small>${n===2?"squadre":"fino a "+n}</small></button>`).join("")}</div>`:`<p class="iasub">Due giocatori di squadre diverse: scambio a 3 squadre.</p>`;
   return `<div class="iaq iaq2" role="group" aria-label="Squadre coinvolte">${[2,3].map(n=>`<button data-ia="n" data-n="${n}" aria-pressed="${IA.n===n}"><b>${n}</b><small>${n} squadre</small></button>`).join("")}</div>`};
-function vIA(){const A=iaTeam(),c=TEAMS[A],st=IA.st,pl=IA.mode==="pl",ok1=pl?IA.want.some(n=>iaOwner(n)&&iaOwner(n)!==A):(!!IA.needs[0]||IA.any),ok2=IA.give.length>0||iaTot()>0;
-  const modeBar=`<div class="iamode" role="tablist">${[["role","Per ruolo","Dico cosa mi serve"],["pl","Per giocatore","Scelgo chi voglio"]].map(([k,l,sub])=>`<button data-ia="mode" data-k="${k}" role="tab" aria-selected="${IA.mode===k}"><b>${l}</b><small>${sub}</small></button>`).join("")}</div>`;
+function vIA(){const A=iaTeam(),c=TEAMS[A],st=IA.st,pl=true,ok1=IA.want.some(n=>iaOwner(n)&&iaOwner(n)!==A);
   const steps=pl?[["1","Voglio e opzioni"],["2","Intoccabili"]]:[["1","Cerco"],["2","Offro"],["3","Squadre"]],last=steps.length,reach=k=>k===1||(k===2&&ok1)||(k>=3&&ok1&&ok2);
   const bar0=`<div class="iabar">${steps.map(([k,l])=>`<button data-ia="go" data-s="${k}" aria-pressed="${st===+k||(st===4&&+k===last)}" ${(pl?(+k===1||ok1):reach(+k))?"":"disabled"}><b>${k}</b>${l}</button>`).join("")}</div>`;
   const bar=pl?`<div class="iatab"><span>${st===4?"Risultato":st===2?"Intoccabili":"Voglio e opzioni"}</span></div>`:bar0;
@@ -3608,53 +3570,31 @@ function vIA(){const A=iaTeam(),c=TEAMS[A],st=IA.st,pl=IA.mode==="pl",ok1=pl?IA.
     body=`<div class="iabox"><h4>Intoccabili (facoltativo)</h4><p class="iasub">Tocca i giocatori che NON vuoi dare: userò tutti gli altri del tuo roster. Ogni giocatore che dai deve tornare con uno dello stesso ruolo; solo i giocatori in trade speciale si scambiano senza contropartita.</p>
      <div class="iaros">${iaRosHTML(A,IA.keep,"keep")}</div>${iaCredHTML(A)}
      <div class="iabtn2"><button class="iabk" data-ia="go" data-s="1">‹ Indietro</button><button class="iago" data-ia="find">Trova scambi ›</button></div></div>`}
-  else if(!pl&&st===1){
-    body=`<div class="iabox">${teamSel()}
-     <h4>Che ruolo cerchi?</h4><p class="iasub">Scegli prima la necessità principale, poi (se vuoi) la seconda e la terza. Oppure lascia che decida io: nessuna preferenza di ruolo.</p>
-     ${[0,1,2].map(i=>`<div class="iarow ${i>0&&!IA.needs[i-1]?"off":""}"><span>${["1ª","2ª","3ª"][i]} necessità</span><div>${["G","F","C"].map(r=>`<button class="iarb ${r}" data-ia="need" data-i="${i}" data-r="${r}" aria-pressed="${IA.needs[i]===r}" ${i>0&&!IA.needs[i-1]?"disabled":""}>${IA_R[r]}</button>`).join("")}${i>0?`<button class="iarb x" data-ia="need" data-i="${i}" data-r="" ${IA.needs[i]?"":"disabled"} aria-label="Nessuna">✕</button>`:""}</div></div>`).join("")}
-     <button class="iaany" data-ia="any" aria-pressed="${IA.any}"><b>Indifferente</b><small>Nessuna preferenza: valuta tutti i ruoli</small></button>
-     <button class="iago" data-ia="go" data-s="2" ${ok1?"":"disabled"}>Avanti · cosa offri ›</button></div>`}
-  else if(!pl&&st===2){
-    body=`<div class="iabox"><h4>Cosa sei disposto a dare?</h4><p class="iasub">Tocca i giocatori di cui ti vuoi liberare: l'app userà solo quelli che servono. Ogni giocatore che dai deve tornare con uno dello stesso ruolo (il roster non può restare scoperto); solo i giocatori in trade speciale (fuori rosa) si scambiano senza contropartita.</p>
-     <div class="iaros">${iaRosHTML(A,IA.give,"pl")}</div>${iaCredHTML(A)}
-     ${ok2?"":`<p class="iaerr">Scegli almeno un giocatore o dei crediti da offrire.</p>`}
-     <div class="iabtn2"><button class="iabk" data-ia="go" data-s="1">‹ Indietro</button><button class="iago" data-ia="go" data-s="3" ${ok2?"":"disabled"}>Avanti · squadre ›</button></div></div>`}
-  else if(!pl&&st===3){
-    body=`<div class="iabox"><h4>Trade a quante squadre?</h4><p class="iasub">A 3 squadre il giro è: tu → squadra 2 → squadra 3 → tu; funziona anche quando chi ha il giocatore che ti serve non vuole i tuoi.</p>
-     <div class="ian2">${[2,3].map(n=>`<button data-ia="n" data-n="${n}" aria-pressed="${IA.n===n}"><b>${n}</b><span>${n} squadre</span></button>`).join("")}</div>
-     <div class="iabtn2"><button class="iabk" data-ia="go" data-s="2">‹ Indietro</button><button class="iago" data-ia="find">Trova scambi ›</button></div></div>`}
   else{
     if(!IA.out.length)iaNext();
-    const need=IA.any?"Qualsiasi ruolo":IA.needs.filter(Boolean).map(r=>IA_R[r]).join(" › "),off=[IA.give.length?`${IA.give.length} giocator${IA.give.length===1?"e":"i"}`:"",iaTot()?`${iaTot()} cr`:""].filter(Boolean).join(" + ");
     const nTeams=new Set(IA.want.map(iaOwner)).size;
-    const sum=pl?`<div class="iasum"><button data-ia="go" data-s="1"><small>Voglio</small>${IA.want.map(n=>drSur(n)).join(", ")}</button><button data-ia="go" data-s="2"><small>Opzioni</small>${IA.keep.length?`${IA.keep.length} intoccabili`:"nessuna"}${iaTot()?` · ${iaTot()} cr`:""}</button><button data-ia="go" data-s="1"><small>Squadre</small>${nTeams>=2?3:"fino a "+IA.np}</button></div>`
-      :`<div class="iasum"><button data-ia="go" data-s="1"><small>Cerco</small>${need}</button><button data-ia="go" data-s="2"><small>Offro</small>${off}</button><button data-ia="go" data-s="3"><small>Squadre</small>${IA.n}</button></div>`;
+    const sum=`<div class="iasum"><button data-ia="go" data-s="1"><small>Voglio</small>${IA.want.map(n=>drSur(n)).join(", ")}</button><button data-ia="go" data-s="2"><small>Opzioni</small>${IA.keep.length?`${IA.keep.length} intoccabili`:"nessuna"}${iaTot()?` · ${iaTot()} cr`:""}</button><button data-ia="go" data-s="1"><small>Squadre</small>${nTeams>=2?3:"fino a "+IA.np}</button></div>`;
     body=`${sum}
      <div class="iactl"><small>Quante squadre</small>${iaNSel()}<small>Guadagno</small>${iaLvSel()}</div>
      ${IA.out.length?`${IA.noMore?'<p class="iano">Non ci sono altre possibilità con queste scelte: ti mostro sempre lo stesso scambio.</p>':""}<div class="iares">${IA.out.map(iaCard).join("")}</div>`:`<div class="iabox"><p class="iaerr">Nessuno scambio di questo livello con queste scelte. Prova ad aggiungere giocatori o crediti, oppure cambia le scelte.</p></div>`}
      <button class="iago iaref iarf${IA.spin?" spin":""}" data-ia="refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.5-5.8M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>${IA.out.length?"Aggiorna":"Riprova"}</span></button>
      <p class="note">Valori Dreamers al ${VALORI_AGG}: punti trade (valore/1000)<sup>2</sup>×1000 corretti di ±8% con le stelline del giocatore, crediti come nel calcolatore. L'altra squadra è favorita a rispondere sì quando è debole nei ruoli che le dai e forte in quelli che cede; ogni giocatore in uscita è compensato da uno dello stesso ruolo (tranne quelli in trade speciale, che non hanno bisogno di contropartita). Livello: equilibrata fino a ±10%, "vinco io" tra +10% e +40% a tuo favore, "truffo" oltre +40% (stesse soglie del calcolatore). Equilibrio = differenza tra quanto dai e quanto ricevi. Negli scambi a più squadre i crediti sono compensati a rete tra tutte le squadre e ogni percentuale mostrata è il vantaggio o svantaggio della squadra.</p>`}
-  return `${H("IA Trade",`<em>${c.nick}</em>`)}${modeBar}${bar}${body}`}
+  return `${H("IA Trade",`<em>${c.nick}</em>`)}${bar}${body}`}
 function iaAct(b){const d=b.dataset,a=d.ia;
   if(a==="go"){IA.st=+d.s}
   else if(a==="team"){IA.team=b.value;IA.give=[];IA.keep=[];IA.want=IA.want.filter(n=>iaOwner(n)!==b.value);IA.pool=null;IA.out=[]}
-  else if(a==="mode"){IA.mode=d.k;IA.st=1;IA.pool=null;IA.out=[]}
-  else if(a==="any"){IA.any=!IA.any;if(IA.any)IA.needs=["","",""];IA.pool=null;IA.out=[]}
   else if(a==="want"){const n=d.n,i=IA.want.indexOf(n);if(i>=0)IA.want.splice(i,1);else if(IA.want.length<3){const t=new Set(IA.want.map(iaOwner));t.add(iaOwner(n));if(t.size<=2)IA.want.push(n)}IA.pool=null;IA.out=[]}
   else if(a==="keep"){const n=d.n,i=IA.keep.indexOf(n);if(i>=0)IA.keep.splice(i,1);else IA.keep.push(n);IA.pool=null;IA.out=[]}
   else if(a==="tf"){IA.tf=d.t;IA.q=""}
-  else if(a==="need"){const i=+d.i,r=d.r,old=IA.needs[i];IA.any=false;if(r){const j=IA.needs.indexOf(r);if(j>=0&&j!==i)IA.needs[j]=old||"";IA.needs[i]=r}else IA.needs[i]="";
-    for(let k=1;k<3;k++)if(!IA.needs[k-1])IA.needs[k]="";IA.pool=null;IA.out=[]}
   else if(a==="pl"){const n=d.n,i=IA.give.indexOf(n);if(i>=0)IA.give.splice(i,1);else IA.give.push(n);IA.pool=null;IA.out=[]}
   else if(a==="cr"){const k=d.k,mx=k==="c"?iaCassa(iaTeam()):k==="d"?iaPostMax(iaTeam()).max:iaPfMax(iaTeam()).max;IA.cr[k]=Math.max(0,Math.min(mx,IA.cr[k]+ +d.d));IA.pool=null;IA.out=[]}
-  else if(a==="n"){IA.n=+d.n;IA.pool=null;IA.out=[]}
   else if(a==="np"){IA.np=+d.n;IA.pool=null;IA.out=[]}
   else if(a==="lv"){IA.lv=d.k;IA.pool=null;IA.out=[]}
   else if(a==="find"){IA.st=4;IA.out=[];IA.pool=null;IA.noMore=false}
   else if(a==="refresh"){iaNext();IA.spin=true;setTimeout(()=>{IA.spin=false},800)}
   else if(a==="open"){iaOpen(+d.i);return}
   else if(a==="share"){iaShare(+d.i,b);return}
-  const y=window.scrollY;render();window.scrollTo(0,a==="go"||a==="find"||a==="mode"?0:y)}
+  const y=window.scrollY;render();window.scrollTo(0,a==="go"||a==="find"?0:y)}
 
 /* (247) Trade e Trade speciali unite: due categorie dentro la stessa pagina */
 function vTrade(){
@@ -7960,6 +7900,7 @@ ulCheck();
 /* (260) CRONOLOGIA MODIFICHE: il footer "Ultimo aggiornamento" è cliccabile e apre questa pagina (vista "novita").
    OGNI nuova modifica pubblicata va aggiunta in CIMA a NV_LOG (data, titolo, mini spiegazione). */
 const NV_LOG=[
+ ["29/10/2026","IA Trade: solo per giocatore","L'IA Trade ora ha una sola modalità, quella in cui scegli i giocatori che vuoi: la modalità «Per ruolo» è stata tolta."],
  ["29/10/2026","Nuovo: Comparatore","Nel menu Scambi c'è il Comparatore: scegli due giocatori con «Cerca», il periodo e la misura (PDK, Minuti, Efficienza) e li vedi sullo stesso grafico, con i dati a confronto. Nel profilo di ogni giocatore c'è il tasto «Confronta». Il tasto condividi crea l'immagine con le due maglie, i dati e il grafico."],
  ["29/10/2026","Trade speciali: nuove scadenze","Le trade speciali di De Larrea (6 febbraio), Ingram e Rollins (15 dicembre) hanno ora la scadenza reale e il countdown aggiornato."],
  ["29/10/2026","Home: banner scambi e cassa","Dopo uno scambio, una trade speciale, un'asta o una variazione di cassa, nel carosello in alto della Home compare per 24 ore una scheda scorrevole con i loghi, i giocatori coinvolti e i crediti; poi sparisce da sola."],
