@@ -861,6 +861,7 @@ body:not(.notte) .hrl{position:relative;width:56px;height:56px;padding:3px;borde
 @media (prefers-reduced-motion:reduce){.hmqt{animation:none}.hmq{overflow-x:auto}}
 .hmg{flex:0 0 128px;margin-right:9px;padding:9px 10px;border-radius:14px;color:var(--hnfg);background:var(--hnbg);border:1px solid var(--hnbd);box-shadow:var(--hnsh)}
 .hmnone{flex:1 1 auto;margin:0}
+.hml{width:24px;height:24px}.hml em{font-size:9px}.hmgd{border-color:rgba(250,204,21,.55)}.hmdl{display:block;width:26px;height:26px}.hmdl .badge{width:100%!important;height:100%!important;display:block}
 .hmr{display:flex;justify-content:space-between;align-items:center;font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;line-height:1.25}
 .hmr em{font-style:normal;font-size:13px;letter-spacing:.06em;color:var(--hnem)}
 .hmg small{display:block;margin-top:3px;font-size:10px;letter-spacing:.1em;color:var(--hnsub);font-weight:700}
@@ -3742,9 +3743,11 @@ function hnTeam(t){if(!TEAMS[t])return;HN_T=t;try{localStorage.setItem("dl_hnt",
 
 function homeNotte(st){
   const myT=homeMyT(),pre=homeFase(),d=pre||campoNotte()||flUsaOggi(),GG=(typeof TV!=="undefined"&&TV.days[d]||[]).filter(g=>pre?g[5]==="S":(g[5]==="L"||g[5]==="F"||g[5]==="S"));
-  const gm=g=>{const L=g[5]==="L",F=g[5]==="F",S0=g[5]==="S",sc=v=>S0?"":v==null?"–":v;return`<div class="hmg" data-hgo="${d}|${g[7]||""}|a" role="link" tabindex="0"><div class="hmr"><em>${g[1]}</em><span>${sc(g[3])}</span></div><div class="hmr"><em>${g[0]}</em><span>${sc(g[2])}</span></div><small>${L?`<span class="hmlv">LIVE</span> ${((TVL.st[g[7]]||"").replace(/^Live\s*-?\s*/i,""))}`:F?"FINALE":"🕐 "+String(g[6]||"").replace("+1","")}</small></div>`};
-  const CW=137,PPS=40,rep=GG.length?Math.max(1,Math.ceil(520/(GG.length*CW))):1,one=GG.map(gm).join("").repeat(rep),dur=Math.max(20,Math.round(GG.length*rep*CW/PPS));
-  const banner=GG.length?`<div class="hmq"><div class="hmqt" data-d="${dur}" style="animation-duration:${dur}s">${one}${one}</div></div>`:`<div class="hmq"><div class="hmg hmnone"><small>Nessuna partita NBA stanotte</small></div></div>`;
+  const gm=g=>{const L=g[5]==="L",F=g[5]==="F",S0=g[5]==="S",sc=v=>S0?"":v==null?"–":v;return`<div class="hmg" data-hgo="${d}|${g[7]||""}|a" role="link" tabindex="0"><div class="hmr">${tvLogo(g[1],"hml")}<span>${sc(g[3])}</span></div><div class="hmr">${tvLogo(g[0],"hml")}<span>${sc(g[2])}</span></div><small>${L?`<span class="hmlv">LIVE</span> ${((TVL.st[g[7]]||"").replace(/^Live\s*-?\s*/i,""))}`:F?"FINALE":"🕐 "+String(g[6]||"").replace("+1","")}</small></div>`};
+  /* (367) 4 banner Dreamers (le sfide del turno) con i loghi delle squadre, davanti alle partite NBA (anche queste con i loghi) */
+  const DC=(()=>{try{const stt=drStand(),P=drPO(stt),k=DR_TURNI.findIndex(x=>d>=x[0]&&d<=x[1])+1;if(k<1||k>DR_TOT||k>P.end)return[];const W=drWeek(k),pr=drPairs(k,stt,P)||[];return pr.map(([a,b])=>{const A=drTeam(k,a,W),B=drTeam(k,b,W),lv=!W.closed&&W.started&&((TV.days[flUsaOggi()]||[]).some(g=>g[5]==="L")||[...DR_PROV].some(x=>x>=W.start&&x<=W.end)),sc=T=>T.score==null?"–":drScore(T.score);return{k,a,b,h:`<div class="hmg hmgd" data-hdr="${k}|${a}|${b}" role="link" tabindex="0"><div class="hmr"><i class="hmdl">${badge(a)}</i><span>${sc(A)}</span></div><div class="hmr"><i class="hmdl">${badge(b)}</i><span>${sc(B)}</span></div><small>${W.closed?"FINALE · T"+k:lv?'<span class="hmlv">LIVE</span> T'+k:W.started?"IN CORSO · T"+k:"🕐 DAL "+drFmt(W.start)}</small></div>`}}).slice(0,4)}catch(e){return[]}})();
+  const NB=GG.length+DC.length,CW=137,PPS=40,rep=NB?Math.max(1,Math.ceil(520/(NB*CW))):1,one=(DC.map(x=>x.h).join("")+GG.map(gm).join("")).repeat(rep),dur=Math.max(20,Math.round(NB*rep*CW/PPS));
+  const banner=NB?`<div class="hmq"><div class="hmqt" data-d="${dur}" style="animation-duration:${dur}s">${one}${one}</div></div>`:`<div class="hmq"><div class="hmg hmnone"><small>Nessuna partita NBA stanotte</small></div></div>`;
   const row=(n,N,sub,own)=>`<div class="hmp" ${N.k?`data-hgo="${N.dy}|${N.k}|${N.sd}"`:`data-hpn="${String(n).replace(/"/g,"&quot;")}"`} role="link" tabindex="0"><span class="hmn">${N&&N.lv?'<i class="hmd"></i>':""}${own?`<i class="hmo">${badge(own)}</i>`:""}${String(n).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}<small>${sub}</small></span>${pdkB(N.p,pdkF(N.p))}</div>`;
   let mine=[];try{const M=campoNotteMap(myT);mine=Object.keys(M).map(n=>({n,N:M[n]}))}catch(e){}
   const OFF=hnScope()==="all";
@@ -3776,6 +3779,7 @@ function homeNotte(st){
 function homeNotteRefresh(){if(cur!=="home"||HN_L==="0")return;const el=document.querySelector(".hn6");if(!el)return;try{const h=document.createElement("div");h.innerHTML=homeNotte(standings());const n=h.firstElementChild;if(n&&n.innerHTML!==el.innerHTML){const q=el.querySelector(".hmqt"),old=q?q.style.animationDelay:"";el.innerHTML=n.innerHTML;bindHomeNotte(el)}}catch(e){}}
 function bindHomeNotte(root){root.querySelectorAll(".hrl").forEach(b=>b.onclick=()=>{curTeam=b.dataset.team;try{localStorage.setItem("team",curTeam)}catch(e){}cur="campo";render();window.scrollTo(0,0)});
   root.querySelectorAll("[data-hso]").forEach(b=>b.onclick=e=>{e.stopPropagation();HN_SO=b.dataset.hso==="team"?"team":"";try{HN_SO?localStorage.setItem("dl_hso","team"):localStorage.removeItem("dl_hso")}catch(_){}homeNotteRefresh()});
+  root.querySelectorAll("[data-hdr]").forEach(b=>b.onclick=()=>{TVS.dr=b.dataset.hdr;TVS.drs="a";TVS.g=null;cur="tv";render();window.scrollTo(0,0)});
   root.querySelectorAll("[data-hpn]").forEach(b=>b.onclick=()=>{plOpen(b.dataset.hpn)});
   root.querySelectorAll("[data-hgo]").forEach(b=>b.onclick=()=>{const[dy,key,sd]=b.dataset.hgo.split("|");TVS.d=dy;TVS.g=key&&TV.box[key]?key:null;TVS.side=sd==="h"?"h":"a";cur="tv";render();window.scrollTo(0,0)});
   hnPhase(root)}
