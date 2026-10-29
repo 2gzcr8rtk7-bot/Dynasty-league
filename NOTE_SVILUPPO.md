@@ -1359,7 +1359,7 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 463. **Verdetti più forti sopra il 40%** — in coda su `coda` (non pubblicato). `tradeVerdict(d,vincitore,perdente)`: <10% equilibrata · 10-30% vincitore · 30-40% «Grande truffa dei X» · 40-50% «Truffa pazzesca dei X» · 50-60% «Mamma mia che inculata» · oltre 60% «Ma i/gli [squadra che perde] ne capiscono di basket?». Vale per calcolatore (2 e 3 squadre), Trade Alert e i due tasti Condividi (`trLose` trova la squadra che perde). Il titolo nelle immagini si rimpicciolisce da solo se è lungo.
 
-464. **Highlights YouTube in Dynasty TV** — in coda su `coda`, NON pubblicato (l'utente pubblica con "esegui").
+464. **Highlights YouTube in Dynasty TV** — pubblicato (v107, 29/10/2026). Chiave `YT_API_KEY` messa dall'utente.
    - Partita finita con video abbinato: piccolo logo YouTube sotto "FINALE" nel tabellone (`.tvyt`, niente barra rossa). Senza video il logo non compare.
    - Tocco sul logo: si guarda dentro l'app (`tvYtOpen`): sigla stile telegiornale "DYNASTY TV · HIGHLIGHTS" con risultato e data (circa 3,3 s, jingle con Web Audio), poi player ufficiale YouTube (`youtube-nocookie.com/embed`). Tasto ✕ ed "Apri su YouTube" come riserva se il video non si può incorporare.
    - Abbinamenti in `hl-data.js` (oggetto `TVHL`, chiave = chiave partita di tv-data.js, es. "2026-10-28_MIAATL"). Attenzione: `HL` esiste già (gioco Higher/Lower), per questo si chiama `TVHL`.
