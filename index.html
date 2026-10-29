@@ -4902,7 +4902,7 @@ async function shCampo(nn){const S=SHR_CAMPO;if(!S)return null;const nn0=nn&&nn<
    parquet chiaro, linee bianche) in versione piccola, con DENTRO solo il giocatore: maglia + tagliandino col PDK della partita.
    Niente capitano, niente punteggio pieno/normale. */
 let SHR_PC=null;
-async function shPcCourt(S){const x=S.x,t=S.t,c=TEAMS[t],OT=dlTm(t),SC=1.25,W=560*SC,k=W/100;
+async function shPcCourt(S){const x=S.x,t=S.t,c=TEAMS[t],OT=dlTm(t),SC=1.375,W=560*SC,k=W/100;
   try{await Promise.all([document.fonts.load('40px "CourtBlock"'),document.fonts.load('800 italic 40px "Barlow Condensed"')])}catch(e){}
   const shade=(h,q)=>{const n=parseInt(h.slice(1),16);const f=v=>Math.round(v*(1-q)).toString(16).padStart(2,"0");return"#"+f(n>>16)+f(n>>8&255)+f(n&255)};
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255};
@@ -4945,12 +4945,10 @@ async function shPcCourt(S){const x=S.x,t=S.t,c=TEAMS[t],OT=dlTm(t),SC=1.25,W=56
   X.textAlign="center";X.font=`italic 800 ${hp*.8}px "Barlow Condensed","Arial Narrow",Arial,sans-serif`;X.fillStyle=SH_PK[lv][1];X.fillText(pdkF(v),W/2,ty+hb+hl+hp/2+2);
   return cv}
 /* pagina "prestazione": sfondo viola Dreamers (come le altre immagini), logo e nome squadra, campetto compatto con il giocatore, dettagli partita */
-async function shPcard(){const S=SHR_PC;if(!S)return null;const x=S.x,t=S.t,tm=TEAMS[t],court=await shPcCourt(S),W=1080,H=1440;const{cv,c}=await shBase(H);
+async function shPcard(){const S=SHR_PC;if(!S)return null;const x=S.x,t=S.t,tm=TEAMS[t],court=await shPcCourt(S),W=1080,H=1380;const{cv,c}=await shBase(H);
   {const im=await ldImg(LOGO2[t]||LOGO[t]);if(im){const bw=420,bh=320,r=Math.min(bw/im.width,bh/im.height),w=im.width*r,h=im.height*r;c.shadowColor="rgba(192,132,252,.55)";c.shadowBlur=40;c.drawImage(im,W/2-w/2,150+(bh-h)/2,w,h);c.shadowBlur=0}}/* logo originale, proporzioni intatte */
   const cy=520;c.shadowColor="rgba(0,0,0,.55)";c.shadowBlur=40;c.shadowOffsetY=16;c.drawImage(court,(W-court.width)/2,cy);c.shadowBlur=0;c.shadowOffsetY=0;
-  const by=cy+court.height;c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_B(600,34);c.fillStyle="#e9d5ff";c.fillText(`${x.tm} vs ${x.opp} · ${x.st}${x.dl?" · "+x.dl:""}`,W/2,by+70);
-  c.font=SH_F(700,34,1);c.fillStyle="rgba(196,181,253,.9)";c.letterSpacing="3px";c.fillText(`${x.r[3]} PT · ${x.r[6]} RIM · ${x.r[7]} ASS · ${x.r[2]} MIN`,W/2,by+120);c.letterSpacing="0px";
-  shFoot(c,W,H,"PDK formula Dunkest · provvisorio fino al report ufficiale");return cv}
+  const by=cy+court.height;c.textAlign="center";c.textBaseline="alphabetic";  c.font=SH_F(700,34,1);c.fillStyle="rgba(196,181,253,.9)";c.letterSpacing="3px";c.fillText(`${x.r[3]} PT · ${x.r[6]} RIM · ${x.r[7]} ASS · ${x.r[2]} MIN`,W/2,by+78);c.letterSpacing="0px";return cv}
 async function shDreamers(){const S=SHR_DR;if(!S)return null;const ch=356,H=420+S.cards.length*(ch+32)+150-150;const{cv,c,W}=await shBase(H,0,1);c.translate(0,-150);
   let y=215;c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,108,1);c.letterSpacing="14px";
   const tg=c.createLinearGradient(240,0,840,0);tg.addColorStop(0,"#e9d5ff");tg.addColorStop(.5,"#c084fc");tg.addColorStop(1,"#a5b4fc");c.fillStyle=tg;c.shadowColor="rgba(168,85,247,.8)";c.shadowBlur=30;shDrTxt(c,"DREAMERS",W/2+7,y+100,96);c.shadowBlur=0;c.letterSpacing="0px";
