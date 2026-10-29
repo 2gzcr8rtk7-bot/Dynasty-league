@@ -892,6 +892,21 @@ body:not(.notte) .hrl{position:relative;width:56px;height:56px;padding:3px;borde
 .hmqt{display:flex;width:max-content;animation:hmq 30s linear infinite;will-change:transform;backface-visibility:hidden}
 @keyframes hmq{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
 @media (prefers-reduced-motion:reduce){.hmqt{animation:none}.hmq{overflow-x:auto}}
+/* (420) banner avvisi (scambi, trade speciali, variazioni di cassa) nel carosello della Home, per 12 ore */
+.hmqt .tmc{flex:0 0 auto;margin-right:9px;display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:14px;color:#fff;background:linear-gradient(160deg,rgba(120,80,10,.55),rgba(17,10,48,.95) 55%,rgba(76,29,149,.8));border:1px solid #facc15;box-shadow:0 0 14px rgba(250,204,21,.25)}
+.tmc .tmtag{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 9px;border-radius:9px;background:#facc15;color:#1b1233;font:800 10px var(--display);font-style:italic;text-transform:uppercase;letter-spacing:.06em;text-align:center;line-height:1.1}
+.tmc .tmtag b{font-size:9px;opacity:.75;font-weight:800}
+.tmc .tmsd{display:flex;align-items:center;gap:8px;flex:none}
+.tmc .tmlg{display:inline-block;flex:none;width:34px;height:34px}.tmc .tmlg .badge{width:100%!important;height:100%!important;display:block}
+.tmc .tmtx{display:flex;flex-direction:column;gap:3px}
+.tmc .tmnm{font:800 10.5px var(--display);font-style:italic;text-transform:uppercase;letter-spacing:.06em;color:#f0abfc;white-space:nowrap}
+.tmc .tmpl{display:flex;gap:6px;flex-wrap:nowrap}
+.tmc .tmp{display:flex;align-items:center;gap:5px;white-space:nowrap;font-weight:800;font-size:12.5px;background:rgba(255,255,255,.1);border-radius:8px;padding:3px 8px}
+.tmc .tmp i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.tmc .tmp i.G{background:#ef4444}.tmc .tmp i.F{background:#3b82f6}.tmc .tmp i.C{background:#facc15}
+.tmc .tmp small{font-size:10px;color:rgba(255,255,255,.6);font-weight:700}
+.tmc .tmcr{white-space:nowrap;font:800 10.5px var(--display);color:#1b1233;background:#fde68a;border-radius:999px;padding:2px 8px}
+.tmc .tmar{font-size:20px;color:#facc15;font-weight:800;flex:none}
 .hmg{flex:0 0 128px;margin-right:9px;padding:9px 10px;border-radius:14px;color:var(--hnfg);background:var(--hnbg);border:1px solid var(--hnbd);box-shadow:var(--hnsh)}
 .hmnone{flex:1 1 auto;margin:0}
 .hml{width:24px;height:24px}.hml em{font-size:9px}.hmgd{border-color:rgba(250,204,21,.55)}.hmdl{display:block;width:calc(24.4px*var(--k,1));height:calc(24.4px*var(--k,1))}.hmdl .badge{width:100%!important;height:100%!important;display:block}
@@ -2485,8 +2500,12 @@ function vSpeciali(){
   ${teams.length?teams.map(t=>`<section class="spteam"><div class="spth" style="--tc:${TEAMS[t].bg}">${wedge(t)}<b>${TEAMS[t].nick}</b><small>${by[t].length} trade special${by[t].length===1?"e":"i"}</small></div><div class="spgrid">${by[t].map(card).join("")}</div></section>`).join(""):`<div class="cempty">Nessuna trade speciale attiva.</div>`}
   <p class="note">Durata da regolamento: Speciale 30 = 20 giornate · Speciale 40 = 40 giornate · Speciale 50 = fino alla G64. Il numero indica le giornate che mancano alla scadenza, giornata in corso compresa.</p>`;
 }
+/* (420) AVV_HOME: variazioni di cassa o altre comunicazioni che non sono scambi. Compaiono 12 ore nel carosello della Home.
+   Formato: {data:"gg/mm/aaaa",ora:"HH:MM",titolo:"Cassa",lati:[["SIGLA",["+30 cr","motivo"]]]}  (come TRADES).
+   Anche gli scambi/aste/speciali in TRADES con il campo ora:"HH:MM" compaiono da soli. */
+const AVV_HOME=[];window.__avvisi=AVV_HOME;
 const TRADES=[
- {data:"29/10/2026",titolo:"Scambio",lati:[["TUR",["Cedric Coward"],"in Dreamers conta dal turno 2 (30/10)"],["MOO",["Jeremiah Fears"],"in Dreamers conta dal turno 2 (30/10)"]]},
+ {data:"29/10/2026",ora:"12:30",titolo:"Scambio",lati:[["TUR",["Cedric Coward"],"in Dreamers conta dal turno 2 (30/10)"],["MOO",["Jeremiah Fears"],"in Dreamers conta dal turno 2 (30/10)"]]},
  {data:"26/10/2026",titolo:"Scambio",lati:[["DOL",["Jaime Jaquez Jr."]],["MOO",["Jalen Williams","30 cr a credito post-Draft (debito Dolphins)"]]]},
  {data:"25/10/2026",titolo:"G League",lati:[["PEA",["Trevon Brazile"],"sale dalla G League (slot rookie)"],["PEA",["Nate Ament"],"scende in G League"]]},
  {data:"25/10/2026",titolo:"Asta",lati:[["PEA",["Trevon Brazile","14 crediti (10 commissione + 4 di lista)"],"acquista"]]},
@@ -4286,13 +4305,29 @@ function hnCar(root){const car=root.querySelector(".hmcar");if(!car)return;const
   bar.addEventListener("pointerup",end);bar.addEventListener("pointercancel",e=>{if(id!==e.pointerId)return;id=null;HN_DRAG=false;if(mv){go(idx)}});
   bar.addEventListener("click",e=>{if(mv){e.stopPropagation();e.preventDefault();mv=false}},true);
   bar.querySelectorAll("[data-hdir]").forEach(b=>b.addEventListener("click",e=>{e.stopPropagation();car._to(idx+ +b.dataset.hdir)}))}
+function hnAvvisi(){
+  const now=Date.now(),H12=12*3600*1000,isPl=n=>{try{return Object.keys(ROSTER).some(t=>ROSTER[t].some(p=>p[0]===n))}catch(e){return false}};
+  const ts=x=>{if(!x.data||!x.ora)return 0;const[d,m,y]=x.data.split("/").map(Number),[hh,mm]=x.ora.split(":").map(Number);return new Date(y,m-1,d,hh,mm).getTime()};
+  const L=[...AVV_HOME,...TRADES].filter(x=>{const t=ts(x);return t&&now>=t&&now-t<H12}).sort((a,b)=>ts(b)-ts(a));
+  let w=0;
+  const esc=v=>String(v).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+  const html=L.map(x=>{const left=Math.max(0,H12-(now-ts(x))),hh=Math.floor(left/3600000),mi=Math.floor(left%3600000/60000);
+    const two=x.lati.length>1&&x.lati[0][0]!==x.lati[1][0];
+    const side=(l)=>{const t=l[0],its=l[1]||[],pl=its.filter(isPl),ot=its.filter(n=>!isPl(n));
+      const verb=two?"ricevono":(/asta/i.test(x.titolo)?"acquistano":/cassa/i.test(x.titolo)?"cassa":"novità");
+      w+=46+pl.length*112+ot.length*92;
+      return`<div class="tmsd"><span class="tmlg">${badge(t)}</span><div class="tmtx"><span class="tmnm">${esc(TEAMS[t]?TEAMS[t].nick:t)} ${verb}</span><div class="tmpl">${pl.map(n=>{let m=null;try{m=pdkMed(n)}catch(e){}return`<span class="tmp"><i class="${ruoloDi(n)}"></i>${esc(nmAb(n))}${m!=null?` <small>${String(Math.round(m*10)/10).replace(".",",")}</small>`:""}</span>`}).join("")}${ot.map(n=>`<span class="tmcr">${esc(n)}</span>`).join("")}</div></div></div>`};
+    const sides=x.lati.length>2&&!two?[x.lati[0]]:x.lati;
+    w+=110+(sides.length>1?30:0);
+    return`<div class="tmc"><div class="tmtag">${esc(x.titolo)}<b>scade ${hh}h ${String(mi).padStart(2,"0")}m</b></div>${sides.map(side).join('<span class="tmar">⇄</span>')}</div>`}).join("");
+  return{html,w,n:L.length}}
 function homeNotte(st){
   const myT=homeMyT(),pre=homeFase(),d=pre||campoNotte()||flUsaOggi(),GG=(typeof TV!=="undefined"&&TV.days[d]||[]).filter(g=>pre?g[5]==="S":(g[5]==="L"||g[5]==="F"||g[5]==="S"));
   const gm=g=>{const L=g[5]==="L",F=g[5]==="F",S0=g[5]==="S",sc=v=>S0?"":v==null?"–":v;return`<div class="hmg" data-hgo="${d}|${g[7]||""}|a" role="link" tabindex="0"><div class="hmr">${tvLogo(g[1],"hml")}<span>${sc(g[3])}</span></div><div class="hmr">${tvLogo(g[0],"hml")}<span>${sc(g[2])}</span></div><small>${L?`<span class="hmlv">LIVE</span> ${((TVL.st[g[7]]||"").replace(/^Live\s*-?\s*/i,""))}`:F?"FINALE":"🕐 "+String(g[6]||"").replace("+1","")}</small></div>`};
   /* (367) 4 banner Dreamers (le sfide del turno) con i loghi delle squadre, davanti alle partite NBA (anche queste con i loghi) */
   const DC=(()=>{try{const stt=drStand(),P=drPO(stt),k=drCurWeek(P);if(k<1||k>DR_TOT||k>P.end)return[];const W=drWeek(k),pr=drPairs(k,stt,P)||[];return pr.map(([a,b])=>{const A=drTeam(k,a,W),B=drTeam(k,b,W),lv=!pre&&!W.closed&&W.started&&((TV.days[flUsaOggi()]||[]).some(g=>g[5]==="L")||[...DR_PROV].some(x=>x>=W.start&&x<=W.end)),sc=T=>T.score==null?"–":drScore(T.score);return{k,a,b,h:`<div class="hmg hmgd" data-hdr="${k}|${a}|${b}" role="link" tabindex="0"><div class="hmr"><i class="hmdl"${["PEA","MOO","EAG"].includes(a)?' style="--k:.9"':""}>${badge(a)}</i><span>${sc(A)}</span></div><div class="hmr"><i class="hmdl"${["PEA","MOO","EAG"].includes(b)?' style="--k:.9"':""}>${badge(b)}</i><span>${sc(B)}</span></div><small>${W.closed?"FINALE · T"+k:lv?'<span class="hmlv">LIVE</span> T'+k:W.started?"IN CORSO · T"+k:"🕐 DAL "+drFmt(W.start)}</small></div>`}}).slice(0,4)}catch(e){return[]}})();
-  const NB=GG.length+DC.length,CW=137,PPS=40,rep=NB?Math.max(1,Math.ceil(520/(NB*CW))):1,one=(pre?GG.map(gm).join("")+DC.map(x=>x.h).join(""):DC.map(x=>x.h).join("")+GG.map(gm).join("")).repeat(rep),dur=Math.max(20,Math.round(NB*rep*CW/PPS));
-  const banner=NB?`<div class="hmq"><div class="hmqt" data-d="${dur}" style="animation-duration:${dur}s">${one}${one}</div></div>`:`<div class="hmq"><div class="hmg hmnone"><small>Nessuna partita NBA stanotte</small></div></div>`;
+  const AV=(()=>{try{return hnAvvisi()}catch(e){return{html:"",w:0,n:0}}})(),NB=GG.length+DC.length,CW=137,PPS=40,rep=NB?Math.max(1,Math.ceil((520-AV.w)/(NB*CW))):1,one=AV.html+(pre?GG.map(gm).join("")+DC.map(x=>x.h).join(""):DC.map(x=>x.h).join("")+GG.map(gm).join("")).repeat(rep),dur=Math.max(20,Math.round((NB*rep*CW+AV.w)/PPS));
+  const banner=(NB||AV.n)?`<div class="hmq"><div class="hmqt" data-d="${dur}" style="animation-duration:${dur}s">${one}${one}</div></div>`:`<div class="hmq"><div class="hmg hmnone"><small>Nessuna partita NBA stanotte</small></div></div>`;
   const row=(n,N,sub,own)=>`<div class="hmp" ${N.k?`data-hgo="${N.dy}|${N.k}|${N.sd}"`:`data-hpn="${String(n).replace(/"/g,"&quot;")}"`} role="link" tabindex="0"><span class="hmn">${N&&N.lv?'<i class="hmd"></i>':""}${own?`<i class="hmo">${badge(own)}</i>`:""}<span class="plk" data-plopen="${String(n).replace(/"/g,"&quot;")}">${String(n).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}</span><small>${sub}</small></span>${pdkB(N.p,pdkF(N.p))}</div>`;
   let mine=[];try{const M=campoNotteMap(myT);mine=Object.keys(M).map(n=>({n,N:M[n]}))}catch(e){}
   const OFF=hnScope()==="all";
@@ -7806,6 +7841,7 @@ ulCheck();
 /* (260) CRONOLOGIA MODIFICHE: il footer "Ultimo aggiornamento" è cliccabile e apre questa pagina (vista "novita").
    OGNI nuova modifica pubblicata va aggiunta in CIMA a NV_LOG (data, titolo, mini spiegazione). */
 const NV_LOG=[
+ ["29/10/2026","Home: banner scambi e cassa","Dopo uno scambio, una trade speciale, un'asta o una variazione di cassa, nel carosello in alto della Home compare per 12 ore una scheda scorrevole con i loghi, i giocatori coinvolti e i crediti; poi sparisce da sola."],
  ["28/10/2026","Regolamento: nuovi premi","Premi regular season (classifica finale): 1° 30 cr, 2° 40, 3° 50, 4° 150 + slot Rookie, 5° 150 + slot, 6° 250 + slot, 7° 350 + slot, 8° 450 + slot. Ai playoff le prime 4 si giocano solo il titolo; dal 5° all'8° posto si giocano crediti in più: 80 / 50 / 40 / 30 cr."],
  ["28/10/2026","Regular season a 37 turni e playoff al meglio delle 5","La regular season Dreamers si chiude dopo 37 turni (fino al 1° marzo). I playoff partono il 2 marzo, in due tabelloni (1ª–4ª per il titolo, 5ª–8ª per i piazzamenti), con serie al meglio delle 5 gare e al massimo 10 turni (fino al 29 marzo). Il tabellone ora è a sinistra le prime 4 e a destra le ultime 4, ognuno con la sua finale; sotto le finali 3°–4° e 7°–8°."],
  ["28/10/2026","Playoff Dreamers: due tabelloni","I playoff sono ora due tabelloni giocati in contemporanea: 1ª–4ª si giocano il titolo (1ª–4ª e 2ª–3ª), 5ª–8ª hanno il loro (5ª–8ª e 6ª–7ª); poi le finali per tutte e 8 le posizioni. Serie al meglio delle 5, al massimo 10 turni. Nuova schermata Playoff, più semplice, e immagine da condividere aggiornata."],
