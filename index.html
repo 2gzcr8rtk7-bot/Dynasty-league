@@ -2468,10 +2468,10 @@ const INFORTUNI={agg:"26/10/2026 · 18:30",
 /* Trade Alert: dalla più recente. stato: "corso" | "chiusa" | "mercato". lati: [squadra, [cosa riceve]] */
 /* ===== Trade speciali =====
    t = franchigia, entra/esce = giocatori, tipo = 30/40/50 (crediti), inizio = giornata in cui parte,
-   extra = giornate extra acquistate (opzionale). Durata da regolamento: 30 → 20 giornate, 40 → 40, 50 → fino alla G64. */
+   scad = giornata di scadenza se diversa dal regolamento (es. 33 = turno che contiene il 6/2/2027; giornata = turno Dreamers + 2), fine = data a parole da mostrare, extra = giornate extra acquistate (opzionale). Durata da regolamento: 30 → 20 giornate, 40 → 40, 50 → fino alla G64. */
 const SPECIALI=[
   {t:"PEA",entra:"Damian Lillard",esce:"Ryan Rollins",tipo:30,inizio:1},
-  {t:"DUC",entra:"Sergio De Larrea",esce:"Brayden Burries",tipo:40,inizio:1},
+  {t:"DUC",entra:"Sergio De Larrea",esce:"Brayden Burries",tipo:40,inizio:1,scad:33,fine:"6 febbraio"},
   {t:"DUC",entra:"Kyshawn George",esce:"Brandon Ingram",tipo:30,inizio:1}
 ];
 const SP_DUR={30:20,40:40},SP_FINE=64;
@@ -2479,7 +2479,7 @@ const SP_DUR={30:20,40:40},SP_FINE=64;
 const spFuori=n=>SPECIALI.some(x=>x.esce===n&&spInfo(x).left>0);
 function spInfo(x){
   const cur=GIORNATE.length?GIORNATE[GIORNATE.length-1].n:1;
-  const scad=x.tipo===50?SP_FINE:x.inizio-1+(SP_DUR[x.tipo]||20)+(x.extra||0);
+  const scad=x.scad||(x.tipo===50?SP_FINE:x.inizio-1+(SP_DUR[x.tipo]||20)+(x.extra||0));
   const dur=scad-x.inizio+1,left=Math.max(0,scad-cur+1),fr=dur>0?left/dur:0;
   return{cur,scad,dur,left,fr};
 }
@@ -2498,7 +2498,7 @@ function vSpeciali(){
       <div class="sppl"><div class="spj in">${jersey(x.t,NUM[x.entra],x.entra)}<span><i class="tar in"><svg viewBox="0 0 16 12"><path d="M15 6H3M7 1.5 2.2 6 7 10.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i>${x.entra}</span></div>
         <div class="spj out">${jersey(x.t,NUM[x.esce],x.esce)}<span><i class="tar out"><svg viewBox="0 0 16 12"><path d="M1 6h12M9 1.5 13.8 6 9 10.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i>${x.esce}</span></div></div>
       <div class="spbar"><i style="width:${pct}%"></i></div>
-      <div class="spfoot"><span>Dalla G${x.inizio} alla G${I.scad}${x.extra?` (+${x.extra} extra)`:""}</span><b>${exp?"0%":pct+"% rimasto"}</b></div></div>`};
+      <div class="spfoot"><span>Dalla G${x.inizio} alla G${I.scad}${x.extra?` (+${x.extra} extra)`:""}${x.fine?` · fino al ${x.fine}`:""}</span><b>${exp?"0%":pct+"% rimasto"}</b></div></div>`};
   const teams=Object.keys(TEAMS).filter(t=>by[t]);
   return `${H("Trade speciali",`<em>Giornata ${cur}</em>`)}
   <div class="splg"><span><i style="background:rgb(134,239,172)"></i>80%+</span><span><i style="background:rgb(250,204,21)"></i>50%</span><span><i style="background:rgb(249,115,22)"></i>30%</span><span><i style="background:rgb(239,68,68)"></i>15%</span><em>tempo rimasto</em></div>
