@@ -1366,3 +1366,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
    - Li scrive GitHub: workflow `highlights-youtube` (`.github/workflows/highlights.yml`, ogni ora 06:23-15:23 ora italiana) con `tools/highlights_yt.mjs`: legge gli ultimi 150 video del canale @thegametimehighlights con l'API ufficiale YouTube Data v3 e abbina il titolo alle partite (le due squadre nel titolo + data nel titolo o partita più recente prima della pubblicazione, entro 3 giorni; esclusi top 10, mix, interviste). `--prova` stampa senza scrivere.
    - SERVE la chiave API YouTube nel segreto del repository `YT_API_KEY` (Settings › Secrets and variables › Actions). Senza chiave il workflow non fa nulla.
    - `sw.js`: hl-data.js aggiunto ai file salvati per l'offline (alla pubblicazione alzare la versione della cache).
+
+465. **Quinta correzione a mano: Coward a 605** — Cedric Coward 480→605 in `VALORI` (e quindi `VAL_MAN`), annotazione in `VAL_CORREZ`. Il parere sull'ultima trade (Coward/Fears) si ricalcola da solo: squilibrio 54% → 27%, ora «Vincitore trade Mooses» (non più truffa), Turtles «Svolta giustificata», Mooses «Colpo da manuale». Pubblicato (v108).
