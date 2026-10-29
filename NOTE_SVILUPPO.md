@@ -1251,3 +1251,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (429) Comparatore: il tasto condividi del riquadro del grafico crea un'immagine dedicata (`shCompar`, dati in `SHR_CM`, chiave `cm` in `shOpen`): in alto le due maglie affiancate (G League: logo) con nome, ruolo e squadra, sotto i dati a confronto (partite, PDK medio, minuti medi, efficienza, trend; in verde chi è meglio), in fondo il grafico con le due linee. pubblicato.
 
 (430) Home: colonna dei loghi squadra a DESTRA e elenchi (Tutte le squadre / Seguiti) a SINISTRA, per usarla col pollice destro; il carosello partite/avvisi resta a tutta larghezza in alto. Solo CSS (`.hn6:not(.top)`), notte, Blu e Nero. Nella versione TOP (loghi in riga) non cambia. pubblicato.
+
+(431) Banner avvisi della Home: durata portata da 12 a 24 ore dall'orario indicato (`H12` in `hnAvvisi`, il nome è rimasto). Lo scambio TUR↔MOO (ora 12:30 del 29/10) resta quindi fino alle 12:30 del 30/10. In coda, non pubblicato.
