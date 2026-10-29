@@ -8246,7 +8246,7 @@ const EQ_PAR=[
   ["tsrel","Gare per affidabilità piena","Gare dell'ultimo mese oltre le 4 per fidarsi del trend",1]]],
  ["Confronto con la stagione precedente","Chi rende più/meno dell'anno scorso",[
   ["prv","Peso del confronto","Effetto sull'interesse",.01],
-  ["prvmin","Differenza minima","Sotto questa differenza (es. 0,12 = 12%) è ignorato",.01],
+  ["prvmin","Differenza minima","Sotto questa differenza (12 = 12%) è ignorato",.01],
   ["prvcap","Tetto del confronto","Massima differenza considerata",.05]]],
  ["Pochi crediti in cassa","Squadra a corto di crediti",[
   ["lowT","Soglia cassa utile (trade speciale)","Sotto questi crediti la squadra vuole riceverne fino ad arrivarci (prezzo minimo trade speciale)",1],
@@ -8267,7 +8267,7 @@ const EQ_PAR=[
   ["prevc","Tetto confronto stagione prec.","Massima differenza",.05],
   ["ptr","Trend sul rendimento","Effetto del trend",.01]]],
  ["Valore e proposte","Valore del giocatore e punteggio delle proposte",[
-  ["star","Qualità (stelline) sul valore","±8% con 0,16: la qualità sposta il valore",.01],
+  ["star","Qualità (stelline) sul valore","Con 16 la qualità sposta il valore di ±8%",.01],
   ["outq","Valore di un infortunato (OUT)","1 = pieno",.05],
   ["nx","Bisogno: peso del valore","Ruoli carenti in valore",.05],
   ["np","Bisogno: peso del PDK","Ruoli carenti in rendimento",.05],
@@ -8275,6 +8275,11 @@ const EQ_PAR=[
   ["sbal","Punteggio proposta: equilibrio","Peso nel punteggio",.01],
   ["smix","Punteggio proposta: interesse","Peso nel punteggio",.01],
   ["mmin","Interesse: peso della squadra meno interessata","Il resto è la media",.05]]]];
+/* scala umana 0-100 dei parametri: l'app converte da sola nel valore tecnico (min + h/100 x (max-min)) e viceversa; senza voce = 0..1 (percentuale diretta); "raw" = numero vero (crediti) */
+const EQ_SC={vsk:[0,2.5],sck:[0,5],trmin:[0,100],tsx:[0,100],tse:[0,3],tsrel:[0,20],lowT:"raw"};
+const eqRg=k=>EQ_SC[k]||[0,1];
+const eqH=(k,v)=>{const r=eqRg(k);if(r==="raw")return v;return Math.round((v-r[0])/(r[1]-r[0])*1000)/10};
+const eqT=(k,h)=>{const r=eqRg(k);if(r==="raw")return h;return Math.round((r[0]+h/100*(r[1]-r[0]))*1e6)/1e6};
 const EQ_LAB={};EQ_PAR.forEach(g=>g[2].forEach(r=>EQ_LAB[r[0]]=r));
 const EQ={tab:"sim",n:2,mode:"eq",pct:15,sc:null,keyRun:"",res:[],shown:12,all:false,msg:"",prompt:"",pt:"",vq:"",vt:"",busy:false};
 let EQO={p:{},v:{},pr:{},rc:{},pk:{},g:{}};
@@ -8323,11 +8328,11 @@ function eqSim(){
   ${EQ.tot>(EQ.html||[]).length?`<button class="eqb" data-eq="more">Mostra tutte (${EQ.tot})</button>`:""}</section>`:""}`}
 function eqVal(def,cur,key,grp,step){const ch=def!=null&&Math.abs(cur-def)>1e-9;return`<label class="eqr${ch?" chg":""}"><input type="number" inputmode="decimal" step="${step||.01}" value="${cur==null?"":cur}" data-eqv="${grp}" data-k="${key}" data-def="${def==null?"":def}"></label>`}
 function eqPar(){const q=vnz(EQ.pt||"");const n=Object.keys(EQO.p).length;
-  return`<section class="hofcard"><h4>Parametri di interesse</h4><p class="setnote">Sono i numeri con cui l'IA decide quanto una squadra è interessata a uno scambio. Cambiali e torna al Simulatore: ricalcola da solo sullo stesso scenario. Il valore di serie è sotto ogni casella.</p>
+  return`<section class="hofcard"><h4>Parametri di interesse</h4><p class="setnote">Ogni parametro si regola da <b>0 a 100</b>: 0 = non pesa per niente, 100 = pesa il massimo. Scrivi quanto pesa secondo te: l'app lo traduce da sola nel numero tecnico preciso (nel prompt per Claude ci sono entrambi). Poi torna al Simulatore: ricalcola sullo stesso scenario. Sotto ogni casella c'è il valore di serie.</p>
   <input class="vtq" type="search" placeholder="🔍 Cerca un parametro" value="${EQ.pt||""}" data-eq="pt" autocomplete="off">
   <div class="eqrow"><button class="hlreset eqrs" data-eq="rsp"${n?"":" disabled"}>↺ Ripristina parametri (${n})</button><button class="eqb" data-eq="shp"${n?"":" disabled"}>📤 Condividi parametri</button></div>
   ${EQ.msg&&EQ.prompt&&EQ.pr==="p"?eqPromptBox():""}</section>
-  ${EQ_PAR.map(g=>{const rows=g[2].filter(r=>!q||vnz(r[1]+" "+r[0]+" "+r[2]).includes(q));return rows.length?`<section class="hofcard"><h4>${g[0]}</h4><p class="setnote">${g[1]}</p>${rows.map(r=>{const c=EQO.p[r[0]]!=null?EQO.p[r[0]]:EQ_DEF[r[0]];return`<div class="eqpr${EQO.p[r[0]]!=null?" chg":""}"><div><b>${r[1]}</b><small>${r[2]}</small></div><div class="eqin">${eqVal(EQ_DEF[r[0]],c,r[0],"p",r[3])}<small>serie ${eqNum(EQ_DEF[r[0]])}</small></div></div>`}).join("")}</section>`:""}).join("")}`}
+  ${EQ_PAR.map(g=>{const rows=g[2].filter(r=>!q||vnz(r[1]+" "+r[0]+" "+r[2]).includes(q));return rows.length?`<section class="hofcard"><h4>${g[0]}</h4><p class="setnote">${g[1]}</p>${rows.map(r=>{const c=EQO.p[r[0]]!=null?EQO.p[r[0]]:EQ_DEF[r[0]];return`<div class="eqpr${EQO.p[r[0]]!=null?" chg":""}"><div><b>${r[1]}</b><small>${r[2]}</small></div><div class="eqin">${eqVal(eqH(r[0],EQ_DEF[r[0]]),eqH(r[0],c),r[0],"p",eqRg(r[0])==="raw"?1:.5)}<small>${eqRg(r[0])==="raw"?"crediti":"su 100"} · serie ${eqNum(eqH(r[0],EQ_DEF[r[0]]))}</small></div></div>`}).join("")}</section>`:""}).join("")}`}
 function eqPromptBox(){return`<textarea class="eqta" readonly rows="9">${EQ.prompt.replace(/</g,"&lt;")}</textarea><p class="setnote">${EQ.msg}</p>`}
 function eqValues(){const q=vnz(EQ.vq||""),T=Object.keys(ROSTER),tf=EQ.vt||"",n=Object.keys(EQO.v).length+Object.keys(EQO.pr).length+Object.keys(EQO.rc).length+Object.keys(EQO.pk).length+Object.keys(EQO.g).length;
   const rows=[];if(tf||q)T.forEach(t=>{if(tf&&tf!==t)return;ROSTER[t].forEach(p=>{if(q&&!vnz(p[0]).includes(q))return;rows.push([t,p])})});
@@ -8355,8 +8360,8 @@ function eqView(){if(!COL.d){cur="campo";return vCampo()}
   <p class="hoftt">🦆 Texas Ducks · uso interno · le modifiche valgono solo qui, su questo telefono</p></div>`}
 VIEWS.eq=()=>eqWith(eqView);window.__eq={EQ,get EQO(){return EQO},eqWith,eqPrompt};
 function eqPrompt(kind){const L=[];
-  if(kind==="p"){Object.keys(EQO.p).forEach(k=>{const r=EQ_LAB[k];L.push(`- ${k} (${r?r[1]:k}): ${eqNum(EQ_DEF[k])} → ${eqNum(EQO.p[k])}`)});
-   return`Ciao Claude, nell'app Dreamers (area riservata Ducks › Gestione equilibrio trade) ho simulato diversi scambi e ho trovato questi PARAMETRI DI INTERESSE dell'IA Trade che bilanciano meglio le proposte.\n\nParametri cambiati (nome in EQ_DEF di index.html: valore di serie → valore nuovo):\n${L.join("\n")}\n\nPer favore: 1) scrivi questi nuovi numeri in EQ_DEF (lascia gli altri parametri com'erano), 2) aggiungi la nota in NOTE_SVILUPPO.md, 3) controlla che l'IA Trade funzioni, 4) lascia la modifica in coda e pubblica solo quando ti scrivo "pubblica". Non va scritta nella cronologia pubblica NV_LOG se riguarda solo il bilanciamento interno.`}
+  if(kind==="p"){Object.keys(EQO.p).forEach(k=>{const r=EQ_LAB[k];L.push(`- ${k} (${r?r[1]:k}): ${eqRg(k)==="raw"?"in crediti":"scala 0-100"}: ${eqNum(eqH(k,EQ_DEF[k]))} → ${eqNum(eqH(k,EQO.p[k]))} · VALORE TECNICO da scrivere in EQ_DEF: ${eqNum(EQ_DEF[k])} → ${eqNum(EQO.p[k])}`)});
+   return`Ciao Claude, nell'app Dreamers (area riservata Ducks › Gestione equilibrio trade) ho simulato diversi scambi e ho trovato questi PARAMETRI DI INTERESSE dell'IA Trade che bilanciano meglio le proposte.\n\nParametri cambiati (nome in EQ_DEF di index.html). Li ho regolati su una scala 0-100 e l'app ha già fatto la conversione: scrivi in EQ_DEF il VALORE TECNICO indicato (non rifare la conversione):\n${L.join("\n")}\n\nPer favore: 1) scrivi questi nuovi numeri in EQ_DEF (lascia gli altri parametri com'erano), 2) aggiungi la nota in NOTE_SVILUPPO.md, 3) controlla che l'IA Trade funzioni, 4) lascia la modifica in coda e pubblica solo quando ti scrivo "pubblica". Non va scritta nella cronologia pubblica NV_LOG se riguarda solo il bilanciamento interno.`}
   Object.keys(EQO.v).forEach(n=>L.push(`- ${n}: valore ${valOf(n)} → ${EQO.v[n]}`));Object.keys(EQO.pr).forEach(n=>{const v=valOf(n);L.push(`- ${n}: prezzo ${v==null?"?":prezzo(v,n)} → ${EQO.pr[n]} cr`)});Object.keys(EQO.rc).forEach(n=>L.push(`- ${n}: crediti di contratto ${iaCrOf(n)} → ${EQO.rc[n]}`));
   Object.keys(EQO.pk).forEach(k=>L.push(`- Pick ${k}: ${PICK_CR[k]} → ${EQO.pk[k]} cr (PICK_CR)`));if(EQO.g.vcr!=null)L.push(`- 1 credito = punti trade (VAL_CR): ${eqNum(VAL_CR)} → ${eqNum(EQO.g.vcr)}`);if(EQO.g.exp!=null)L.push(`- Esponente dei punti (VAL_EXP): ${VAL_EXP} → ${EQO.g.exp}`);
   return`Ciao Claude, nell'app Dreamers (area riservata Ducks › Gestione equilibrio trade) ho simulato diversi scambi e ho trovato questi VALORI e CREDITI che bilanciano meglio gli scambi.\n\nModifiche:\n${L.join("\n")}\n\nPer favore: 1) scrivi i nuovi numeri in VALORI / PREZZO_FISSO e in VAL_BASE[nome] (data del lunedì di questa settimana, stelle infortuni di adesso) come spiegato nel commento "VALORI AUTOMATICI SETTIMANALI", e per pick/conversione in PICK_CR / VAL_CR / VAL_EXP; 2) annota la correzione in VAL_CORREZ così compare nel registro del lunedì; 3) aggiungi la nota in NOTE_SVILUPPO.md; 4) pubblica solo quando ti scrivo "pubblica".`}
@@ -8379,7 +8384,7 @@ async function eqShare(kind){EQ.prompt=eqWith(()=>eqPrompt(kind));EQ.pr=kind;let
   else if(t.dataset.eq==="pt"||t.dataset.eq==="vq"){EQ[t.dataset.eq]=t.value;const pos=t.selectionStart,key=t.dataset.eq;render();const n=document.querySelector(`[data-eq="${key}"]`);if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(x){}}}});
  document.addEventListener("change",e=>{if(cur!=="eq")return;const t=e.target,g=t.dataset.eqv;if(t.dataset.eq==="pct"){keep();return}if(!g)return;const k=t.dataset.k,v=parseFloat(String(t.value).replace(",",".")),d=parseFloat(t.dataset.def);
   const map=g==="p"?EQO.p:g==="v"?EQO.v:g==="pr"?EQO.pr:g==="rc"?EQO.rc:g==="pk"?EQO.pk:EQO.g;
-  if(isNaN(v)||Math.abs(v-d)<1e-9)delete map[k];else map[k]=v;eqSave();keep()});
+  if(isNaN(v)||Math.abs(v-d)<1e-9)delete map[k];else map[k]=g==="p"?eqT(k,eqRg(k)==="raw"?Math.max(0,v):Math.max(0,Math.min(100,v))):v;eqSave();setTimeout(keep,0)});
 })();
 VIEWS.sala=sala;VIEWS.pers=pers;VIEWS.soft=soft;VIEWS.orari=orari;
 document.addEventListener("click",e=>{
