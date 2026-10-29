@@ -1,0 +1,23 @@
+# ANTEPRIMA (ramo anteprima-inviato, non pubblicato): genera la voce dell'inviato con Kokoro e la salva nel ramo.
+name: anteprima-inviato
+on:
+  push:
+    branches: [anteprima-inviato]
+    paths: [anteprima_inviato/testo.json, tools/inviato_tts.py]
+permissions:
+  contents: write
+jobs:
+  voce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq espeak-ng
+          pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -q "kokoro>=0.9.4" soundfile
+          python tools/inviato_tts.py anteprima_inviato/testo.json anteprima_inviato/voce
+          git config user.name "inviato-bot"; git config user.email "inviato-bot@users.noreply.github.com"
+          git add anteprima_inviato/voce && git commit -m "Anteprima inviato: voce generata [automatico]" && git push
