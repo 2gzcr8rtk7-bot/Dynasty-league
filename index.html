@@ -6082,7 +6082,7 @@ const shWrapT=(c,t,w)=>{const L=[];let cu="";String(t).split(" ").forEach(x=>{co
 async function shJersey(t,n){try{return await shImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jersey(t,NUM[n],n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')))}catch(e){return null}}
 async function shLogoAt(c,t,x,y,z){const lg=await shLogo(t);if(lg){const r=Math.min(z/lg.width,z/lg.height);c.drawImage(lg,x+(z-lg.width*r)/2,y+(z-lg.height*r)/2,lg.width*r,lg.height*r)}}
 function shTri(c,cx,cy,up,col){c.beginPath();if(up){c.moveTo(cx,cy-9);c.lineTo(cx+9,cy+7);c.lineTo(cx-9,cy+7)}else{c.moveTo(cx,cy+9);c.lineTo(cx+9,cy-7);c.lineTo(cx-9,cy-7)}c.closePath();c.fillStyle=col;c.fill()}
-function shPill(c,t,x,y,h,fill,fg,fs,right){c.font=SH_F(800,fs,1);const w=c.measureText(t).width+34,px=right?x-w:x;shRR(c,px,y,w,h,h/2);c.fillStyle=fill;c.fill();c.fillStyle=fg;c.textAlign="center";c.textBaseline="middle";c.fillText(t,px+w/2,y+h/2+1);c.textAlign="left";c.textBaseline="alphabetic";return w}
+function shTag(c,t,x,y,h,fill,fg,fs,right){c.font=SH_F(800,fs,1);const w=c.measureText(t).width+34,px=right?x-w:x;shRR(c,px,y,w,h,h/2);c.fillStyle=fill;c.fill();c.fillStyle=fg;c.textAlign="center";c.textBaseline="middle";c.fillText(t,px+w/2,y+h/2+1);c.textAlign="left";c.textBaseline="alphabetic";return w}
 /* schede del parere (una per squadra o per argomento): intestazione nei colori della squadra + testo + segnali ▲▼ */
 function shCardsPrep(mc,items,W,FS,HH){const LH=FS+10,tw=W-152-56,tg=34;mc.font=SH_B(500,FS);
   return items.map(it=>{const S=shWrapT(mc,it.txt||"",tw),Tc=(it.tech||[]).map(t=>({pos:t.pos,L:shWrapT(mc,t.txt,tw-tg)}));return{...it,S,Tc,LH,FS,HH,h:HH+18+S.length*LH+(Tc.length?14:0)+Tc.reduce((u,t)=>u+t.L.length*LH+10,0)+26}})}
@@ -6091,7 +6091,7 @@ async function shCardsDraw(c,its,W,ty){const x=76,w=W-152;
     c.save();shRR(c,x,ty,w,o.h,24);c.clip();c.fillStyle="rgba(255,255,255,.045)";c.fillRect(x,ty,w,o.h);const g=c.createLinearGradient(x,ty,x+w,ty);g.addColorStop(0,tm.bg);g.addColorStop(1,"rgba(10,6,24,.25)");c.fillStyle=g;c.fillRect(x,ty,w,HH);c.fillStyle=acc;c.fillRect(x,ty+HH,w,6);c.restore();
     shRR(c,x,ty,w,o.h,24);c.strokeStyle=acc;c.globalAlpha=.55;c.lineWidth=2;c.stroke();c.globalAlpha=1;
     await shLogoAt(c,o.t,x+20,ty+16,z);c.textAlign="left";c.textBaseline="alphabetic";let fs=HH>=100?46:38;c.font=SH_F(800,fs,1);c.fillStyle=tc;const hd=String(o.head||TEAMS[o.t].nick).toUpperCase();const maxw=w-z-60-(o.title?c.measureText(o.title).width*.5+120:0);while(fs>24&&c.measureText(hd).width>maxw){fs-=2;c.font=SH_F(800,fs,1)}c.fillText(hd,x+z+34,ty+HH/2+fs*.35);
-    if(o.title)shPill(c,o.title,x+w-22,ty+(HH-(HH>=100?48:40))/2,HH>=100?48:40,o.col,"#10091f",HH>=100?24:20,true);
+    if(o.title)shTag(c,o.title,x+w-22,ty+(HH-(HH>=100?48:40))/2,HH>=100?48:40,o.col,"#10091f",HH>=100?24:20,true);
     c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_B(500,o.FS);let ly=ty+HH+18;
     o.S.forEach(l=>{ly+=o.LH;c.fillStyle="#f1f5ff";c.fillText(l,x+28,ly-8)});
     if(o.Tc.length){ly+=14;o.Tc.forEach(t=>{t.L.forEach((l,j)=>{ly+=o.LH;if(j===0)shTri(c,x+38,ly-o.FS/2-4,t.pos>0,t.pos>0?"#4ade80":"#f87171");c.fillStyle="#cbd5e1";c.fillText(l,x+28+34,ly-8)});ly+=10})}
@@ -6197,7 +6197,7 @@ async function shSpecial(i){const S=histSpModel(i);if(!S)return null;
   c.save();shRR(c,x0,y,IN,topH,28);c.clip();c.fillStyle="rgba(10,6,24,.62)";c.fillRect(x0,y,IN,topH);const gg=c.createLinearGradient(x0,y,x0+IN,y);gg.addColorStop(0,tm.bg);gg.addColorStop(1,"rgba(10,6,24,.2)");c.fillStyle=gg;c.fillRect(x0,y,IN,150);c.fillStyle=tm.trim||"#fff";c.fillRect(x0,y+150,IN,8);c.restore();
   shRR(c,x0,y,IN,topH,28);c.strokeStyle="rgba(196,181,253,.28)";c.lineWidth=2;c.stroke();
   await shLogoAt(c,S.t,x0+24,y+16,118);c.textAlign="left";c.textBaseline="alphabetic";c.fillStyle=tm.txt||tm.fg||"#fff";c.font=SH_F(800,64,1);c.fillText(tm.nick.toUpperCase(),x0+166,y+80);c.font=SH_F(700,26,1);c.globalAlpha=.85;c.fillText("TRADE SPECIALE",x0+168,y+120);c.globalAlpha=1;
-  shPill(c,"SPECIALE "+x.tipo+" · "+x.tipo+" CR",x0+IN-24,y+50,54,"rgba(10,6,24,.7)","#fde047",28,true);
+  shTag(c,"SPECIALE "+x.tipo+" · "+x.tipo+" CR",x0+IN-24,y+50,54,"rgba(10,6,24,.7)","#fde047",28,true);
   const cw=(IN-60)/2;let cy=y+190;
   for(let k=0;k<2;k++){const n=k?S.ns:S.ne,cx=x0+22+k*(cw+16),role=ruoloDi(n),rc=role==="G"?"#ef4444":role==="F"?"#60a5fa":"#fbbf24",d0=draftOf(n),ic=await shJersey(S.t,n);
     shRR(c,cx,cy,cw,236,20);c.fillStyle="rgba(255,255,255,.05)";c.fill();c.strokeStyle=k?"rgba(251,146,60,.5)":"rgba(74,222,128,.5)";c.lineWidth=2;c.stroke();
