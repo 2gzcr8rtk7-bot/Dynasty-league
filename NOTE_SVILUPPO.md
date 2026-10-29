@@ -1264,4 +1264,6 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 (436) Home, colonna «Previsione» (variante 4 scelta): box azzurro `.hmv.pv .pdkx` con bordo sottile e barretta del livello (var `--lv`) al posto del riempimento verde/giallo/rosso, così non sembra un PDK già fatto; «Da superare» resta invariato. Override per Parquet. pubblicato.
 
-(437) IA Trade: le spiegazioni delle due modalità non stanno più dentro (tolto `.iaintro`), ma sotto ciascun pulsante nella schermata di scelta (`.iach` = pulsante + `<p>`), così la pagina è più piena e si sceglie già informati. Dentro le modalità restano solo «‹ Modalità» e il titolo. In coda su `coda`, non pubblicato.
+(437) IA Trade: le spiegazioni delle due modalità non stanno più dentro (tolto `.iaintro`), ma sotto ciascun pulsante nella schermata di scelta (`.iach` = pulsante + `<p>`), così la pagina è più piena e si sceglie già informati. Dentro le modalità restano solo «‹ Modalità» e il titolo. pubblicato.
+
+(438) Etichette turno: banner Home (`IN CORSO · T`, `FINALE · T`, `LIVE T`) e card sfida nelle partite TV (`turno N · sfida`) mostravano il turno interno k (1) invece del numero Dunkest k+DR_OFF (3). Ora ovunque il turno in corso è T3 (verificato sul testo di Home, TV, Risultati, Classifica; le altre viste usavano già DR_OFF). pubblicato.
