@@ -1150,3 +1150,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (367) Home, banner partite scorrevoli: (1) davanti alle partite NBA ci sono 4 banner DREAMERS (le sfide del turno in corso, `drPairs`/`drTeam`) con i loghi delle nostre squadre, punteggio Dreamers e stato (IN CORSO / LIVE / FINALE · Tn / DAL data); bordo oro; tocco = apre la sfida (`TVS.dr`). (2) Anche le partite NBA usano i loghi (`tvLogo`, classe `.hml`) al posto delle sigle; le sigle restano solo finche il logo non carica. IN CODA, NON pubblicato.
 
 (368) Banner Dreamers in Home: loghi delle squadre -6% (26px -> 24,4px); Peacocks, Mooses ed Eagles -10% rispetto agli altri (22px) tramite `--k:.9` sul contenitore `.hmdl`. IN CODA, NON pubblicato.
+
+(369) Home, banner partite scorrevole: si puo trascinare con il dito (o il mouse). Al tocco il banner si ferma, segue il dito (infinito, senza stacchi), al rilascio riparte da dove e rimasto (`hnDrag`, Web Animations: `currentTime`; `HN_T0` riallineato, `HN_DRAG` blocca gli aggiornamenti mentre si trascina). Un trascinamento non apre la partita; un tocco semplice si. CSS `touch-action:pan-y` su `.hmq`. IN CODA, NON pubblicato.

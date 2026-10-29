@@ -855,7 +855,7 @@ body.notte .hn6{--hnbg:linear-gradient(160deg,rgba(76,29,149,.85),rgba(17,10,48,
 body:not(.notte) .hrl{position:relative;width:56px;height:56px;padding:3px;border-radius:14px;border:1px solid color-mix(in srgb,var(--tc) 55%,#fff);border-bottom:3px solid color-mix(in srgb,var(--tc) 40%,#000);background:linear-gradient(160deg,var(--tc),color-mix(in srgb,var(--tc) 45%,#000));box-shadow:0 6px 14px rgba(0,0,0,.4),0 0 12px color-mix(in srgb,var(--tc) 45%,transparent);overflow:hidden}body:not(.notte) .hrl::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.06) 0 10px,transparent 10px 22px);pointer-events:none}body:not(.notte) .hn6.top .hrl{width:auto;height:auto;padding:4px 2px 3px}
 .hrl:active{transform:scale(.96)}.hrl .badge{width:100%!important;height:100%!important;display:block;border-radius:0}
 .hmmain{display:grid;gap:10px;min-width:0}
-.hmq{overflow:hidden;border-radius:14px;min-width:0}
+.hmq{overflow:hidden;border-radius:14px;min-width:0;touch-action:pan-y;-webkit-user-select:none;user-select:none}
 .hmqt{display:flex;width:max-content;animation:hmq 30s linear infinite;will-change:transform;backface-visibility:hidden}
 @keyframes hmq{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
 @media (prefers-reduced-motion:reduce){.hmqt{animation:none}.hmq{overflow-x:auto}}
@@ -3776,15 +3776,25 @@ function homeNotte(st){
   const panel=(tit,cls,list,vuoto,tot)=>`<div class="hmcard ${cls}${OFF&&cls==="m"?" all":""}">${hsoHead(tit,OFF&&cls==="m",list.length,"PDK"+((cls==="m"?mLv:sLv)?" LIVE":""))}${list.length?W(cls,list.map(x=>row(x.n,x.N,`vs ${x.N.opp} · ${x.N.lv?`<b class="hmc">${x.N.st||"Live"}</b>`:"Finale"}`,OFF&&cls==="m"?x.own:null)).join("")):`<p class="hmvu">${vuoto}</p>`}${tot!=null&&list.length?`<div class="hmt"><span>TOTALE</span><b>${pdkF(tot)}</b></div>`:""}</div>`;
   const TOP=hnLay()==="5";return`<div class="hn6${TOP?" top":""}${OFF?"":" tm"}" style="--tc:${TEAMS[myT].bg}"><div class="hmrail">${teamOrd().map(t=>{const x=st.find(y=>y.t===t)||{w:0,l:0};return`<button class="hrl" data-team="${t}" style="--tc:${TEAMS[t].bg}" aria-label="Roster ${TEAMS[t].name} ${x.w}-${x.l}" title="${TEAMS[t].name} ${x.w}-${x.l}">${badge(t)}${TOP?`<small>${x.w}-${x.l}</small>`:""}</button>`}).join("")}</div>
   <div class="hmmain" id="hmmain">${TOP?`<div class="hmsec"><span>${pre?"PARTITE DI STANOTTE":GG.some(g=>g[5]==="L")?"LIVE ADESSO":"PARTITE DELLA NOTTE"}</span><span>${GG.length} PARTITE</span></div>`:""}${banner}${pre?prePanel(OFF?"TUTTE LE SQUADRE":"I MIEI STANOTTE · "+TEAMS[myT].nick.toUpperCase(),"m",preL(OFF?Object.values(ROSTER).flat().map(p=>p[0]):(ROSTER[myT]||[]).map(p=>p[0]),true),OFF?"Nessun giocatore gioca stanotte.":"Nessuno dei tuoi giocatori gioca stanotte.")+prePanel("★ SEGUITI STANOTTE","s",preL(SEGUI),SEGUI.length?"Nessuno dei tuoi seguiti gioca stanotte.":"Tocca il segnalibro su un giocatore per seguirlo."):panel(OFF?"TUTTE LE SQUADRE":"I MIEI · "+TEAMS[myT].nick.toUpperCase(),"m",mine,OFF?"Nessun giocatore in campo stanotte.":"Nessuno dei tuoi giocatori in campo stanotte.",OFF?null:mTot)+panel("★ SEGUITI","s",seg,SEGUI.length?"Nessuno dei tuoi seguiti in campo stanotte.":"Tocca il segnalibro su un giocatore per seguirlo.",null)}</div></div>`}
-function homeNotteRefresh(){if(cur!=="home"||HN_L==="0")return;const el=document.querySelector(".hn6");if(!el)return;try{const h=document.createElement("div");h.innerHTML=homeNotte(standings());const n=h.firstElementChild;if(n&&n.innerHTML!==el.innerHTML){const q=el.querySelector(".hmqt"),old=q?q.style.animationDelay:"";el.innerHTML=n.innerHTML;bindHomeNotte(el)}}catch(e){}}
+function homeNotteRefresh(){if(cur!=="home"||HN_L==="0"||HN_DRAG)return;const el=document.querySelector(".hn6");if(!el)return;try{const h=document.createElement("div");h.innerHTML=homeNotte(standings());const n=h.firstElementChild;if(n&&n.innerHTML!==el.innerHTML){const q=el.querySelector(".hmqt"),old=q?q.style.animationDelay:"";el.innerHTML=n.innerHTML;bindHomeNotte(el)}}catch(e){}}
+/* (369) Il banner scorre da solo, ma si puo anche trascinare con il dito (o il mouse): al tocco si ferma, si muove con il dito, al rilascio riparte da dove e rimasto. Un trascinamento non apre la partita. */
+function hnDrag(root){const hq=root.querySelector(".hmq"),q=root.querySelector(".hmqt");if(!hq||!q)return;let a=null,x0=0,p0=0,mv=false,id=null,dur=30000,dl=0;
+  const prog=()=>{try{const t=a.effect.getComputedTiming();return t.progress==null?0:t.progress}catch(e){return 0}};
+  const half=()=>Math.max(1,q.scrollWidth/2);
+  hq.addEventListener("pointerdown",e=>{if(e.button>0)return;a=(q.getAnimations()||[])[0];if(!a)return;id=e.pointerId;x0=e.clientX;mv=false;dur=a.effect.getComputedTiming().duration;dl=a.effect.getTiming().delay||0;p0=prog();a.pause();HN_DRAG=true});
+  hq.addEventListener("pointermove",e=>{if(id!==e.pointerId||!a)return;const dx=e.clientX-x0;if(Math.abs(dx)>6)mv=true;if(!mv)return;const p=(((p0-dx/half())%1)+1)%1;let ct=p*dur+dl;while(ct<0)ct+=dur;a.currentTime=ct});
+  const end=e=>{if(id!==e.pointerId||!a)return;id=null;const p=prog();try{a.play()}catch(_){}HN_T0=performance.now()-p*(dur/1000)*1000;HN_DRAG=false;a=null};
+  hq.addEventListener("pointerup",end);hq.addEventListener("pointercancel",end);hq.addEventListener("pointerleave",e=>{if(id===e.pointerId&&e.pointerType==="mouse")end(e)});
+  hq.addEventListener("click",e=>{if(mv){e.stopPropagation();e.preventDefault();mv=false}},true)}
 function bindHomeNotte(root){root.querySelectorAll(".hrl").forEach(b=>b.onclick=()=>{curTeam=b.dataset.team;try{localStorage.setItem("team",curTeam)}catch(e){}cur="campo";render();window.scrollTo(0,0)});
   root.querySelectorAll("[data-hso]").forEach(b=>b.onclick=e=>{e.stopPropagation();HN_SO=b.dataset.hso==="team"?"team":"";try{HN_SO?localStorage.setItem("dl_hso","team"):localStorage.removeItem("dl_hso")}catch(_){}homeNotteRefresh()});
   root.querySelectorAll("[data-hdr]").forEach(b=>b.onclick=()=>{TVS.dr=b.dataset.hdr;TVS.drs="a";TVS.g=null;cur="tv";render();window.scrollTo(0,0)});
   root.querySelectorAll("[data-hpn]").forEach(b=>b.onclick=()=>{plOpen(b.dataset.hpn)});
   root.querySelectorAll("[data-hgo]").forEach(b=>b.onclick=()=>{const[dy,key,sd]=b.dataset.hgo.split("|");TVS.d=dy;TVS.g=key&&TV.box[key]?key:null;TVS.side=sd==="h"?"h":"a";cur="tv";render();window.scrollTo(0,0)});
-  hnPhase(root)}
+  hnDrag(root);hnPhase(root)}
 /* il banner parte da un orologio unico: dopo ogni aggiornamento o ridisegno riprende dal punto giusto, senza tornare all'inizio */
-const HN_T0=performance.now();
+let HN_T0=performance.now(),HN_DRAG=false;
+
 function hnPhase(root){const q=root.querySelector(".hmqt");if(q){const d=+q.dataset.d||30;q.style.animationDelay=-(((performance.now()-HN_T0)/1000)%d).toFixed(3)+"s"}}
 
 let curPlayer=null;
