@@ -827,6 +827,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .tar.in{color:var(--win)}
 .tar.out{color:var(--loss)}
 /* home */
+/* (351) */.clgo{cursor:pointer}
 /* (349) Home notte */
 .hn6.top{grid-template-columns:minmax(0,1fr)}.hn6.top .hmrail{grid-template-columns:repeat(8,minmax(0,1fr));gap:5px}
 .hn6.top .hrl{width:auto;height:auto;padding:4px 2px 3px;display:grid;gap:2px;justify-items:center;border-radius:12px}
@@ -4738,12 +4739,12 @@ function campoLive(t){const turno=CLM==="turno",d=campoNotte();
   else{if(!d)return`${H("Live stanotte",`<em>dati Dynasty TV</em>`)}<div class="cltgw">${tg}</div><p class="note">Nessuna partita NBA iniziata stanotte: il box score si riempie da solo appena i giocatori della squadra scendono in campo.</p>`;days=[d]}
   const best={};
   for(const dy of days)for(const g of TV.days[dy]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;const dt=tvDt(dy),dl=`${dt.getUTCDate()}/${dt.getUTCMonth()+1}`;
-    [["a",g[0],g[1]],["h",g[1],g[0]]].forEach(([sd,tm,opp])=>(B[sd]||[]).forEach(r=>{const m=mine[tvNm(r[0])];if(!m||r[19]==null)return;const o={n:m.n,gl:m.gl,tm,opp,r,lv:g[5]==="L",st:g[5]==="L"?(TVL.st[g[7]]||"Live"):"Finale",key:g[7],dl};
+    [["a",g[0],g[1]],["h",g[1],g[0]]].forEach(([sd,tm,opp])=>(B[sd]||[]).forEach(r=>{const m=mine[tvNm(r[0])];if(!m||r[19]==null)return;const o={n:m.n,gl:m.gl,tm,opp,r,lv:g[5]==="L",st:g[5]==="L"?(TVL.st[g[7]]||"Live"):"Finale",key:g[7],dl,sd,dy};
       if(turno){if(!best[m.n]||(+r[19])>(+best[m.n].r[19]))best[m.n]=o}else best[m.n+"|"+g[7]]=o}))}
   const R=Object.values(best);R.sort((a,b)=>(+b.r[19]||0)-(+a.r[19]||0));
   const dd=d?tvDt(d):null,nlv=R.filter(x=>x.lv).length,tot=R.reduce((s,x)=>s+(+x.r[19]||0),0);
   if(!turno)lab=`${TV_GG[dd.getUTCDay()]} ${dd.getUTCDate()} ${TV_MM[dd.getUTCMonth()]}`;
-  const row=(x,i)=>`<tr class="${x.lv?"lvr":""}"><td>${x.n}${x.gl?' <i class="clgl">G</i>':""}<small>${x.tm} vs ${x.opp}${turno?` · ${x.dl}`:""} · ${x.lv?`<b class="clv"><i></i>${x.st}</b>`:x.st}</small><button class="shbtn rsh" data-shpc="${i}" aria-label="Condividi la prestazione di ${x.n}" title="Condividi la prestazione">${SH_ICO}</button></td><td class="pdkl">${pdkB(+x.r[19],String(x.r[19]).replace(".",","))}</td><td>${x.r[2]}</td><td class="pts">${x.r[3]}</td><td>${x.r[6]}</td><td>${x.r[7]}</td></tr>`;
+  const row=(x,i)=>`<tr class="${x.lv?"lvr":""} clgo" data-clgo="${x.dy}|${x.key}|${x.sd}" role="link" tabindex="0" aria-label="Apri la partita di ${x.n} su Dynasty TV"><td>${x.n}${x.gl?' <i class="clgl">G</i>':""}<small>${x.tm} vs ${x.opp}${turno?` · ${x.dl}`:""} · ${x.lv?`<b class="clv"><i></i>${x.st}</b>`:x.st}</small><button class="shbtn rsh" data-shpc="${i}" aria-label="Condividi la prestazione di ${x.n}" title="Condividi la prestazione">${SH_ICO}</button></td><td class="pdkl">${pdkB(+x.r[19],String(x.r[19]).replace(".",","))}</td><td>${x.r[2]}</td><td class="pts">${x.r[3]}</td><td>${x.r[6]}</td><td>${x.r[7]}</td></tr>`;
   SHR_CAMPO=R.length?{t,lab,R,tot,nlv,turno}:null;
   return`${H(titolo,`${turno&&!nlv?"":`<em>${turno?"":`${dd.getUTCDate()}/${dd.getUTCMonth()+1}`}${nlv?`${turno?"":" · "}${nlv} live`:""}</em>`}${R.length?shBtn("campo"):""}`)}<div class="cltgw">${tg}</div>
   ${R.length?`<div class="tbl-wrap"><table class="ptbl tvbox drbox clbox"><thead><tr><th>Giocatore</th><th class="pdkl">PDK</th><th>Min</th><th>Pt</th><th>RIM</th><th>AST</th></tr></thead>
@@ -5108,6 +5109,8 @@ async function shOpen(k){const old=document.querySelector(".shsheet");if(old)old
   const go=sh.querySelector(".shgo");if(!(navigator.canShare&&navigator.canShare({files:[file]})))go.remove();
   else go.addEventListener("click",async()=>{try{await navigator.share({files:[file],title:k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"Migliori del turno":"Live stanotte"):k==="duel"?"Dreamers · sfida":k==="po"?"Dreamers · playoff":k==="pl"?(SHR_PL?SHR_PL.n:"Giocatore"):k==="pc"?(SHR_PC?SHR_PC.x.n:"Prestazione"):"Dreamers"})}catch(e){}});
   const rg=sh.querySelector(".shcut input");if(rg){let busy=false,again=false;const upd=async()=>{if(busy){again=true;return}busy=true;do{again=false;const n=+rg.value;sh.querySelector(".shcut output").textContent=n;try{const c2=await shCampo(n);await mk(c2);sh.querySelector(".shbox img").src=url;const sv=sh.querySelector(".shsv");if(sv)sv.href=url}catch(e){console.error(e)}}while(again);busy=false};rg.addEventListener("input",upd)}}
+/* (351) Tocco su una riga di "Live stanotte" / "Migliori del turno": apre Dynasty TV direttamente sulla partita giusta, con il box della squadra del giocatore. */
+document.addEventListener("click",e=>{const r=e.target.closest("[data-clgo]");if(!r||e.target.closest(".shbtn"))return;const[dy,key,sd]=r.dataset.clgo.split("|");if(!TV.box[key])return;TVS.d=dy;TVS.g=key;TVS.side=sd==="h"?"h":"a";cur="tv";render();window.scrollTo(0,0)});
 document.addEventListener("click",e=>{const pb=e.target.closest("[data-shpc]");if(pb){e.preventDefault();e.stopPropagation();const S=SHR_CAMPO;if(S&&S.R[+pb.dataset.shpc]){SHR_PC={x:S.R[+pb.dataset.shpc],t:S.t};shOpen("pc")}return}
   const b=e.target.closest("[data-share]");if(!b)return;e.preventDefault();e.stopPropagation();shOpen(b.dataset.share)},true);
 let CNT=false;
