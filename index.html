@@ -2307,6 +2307,7 @@ html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.0
     <div class="subnav" id="subnav2" role="menu" hidden>
       <button data-v="valtrade" aria-selected="false"><span>Calcolatore trade</span></button>
       <button data-v="osserv" aria-selected="false"><span>Osservatorio</span></button>
+      <button data-v="iatrade" aria-selected="false"><span>IA Trade</span></button>
     </div>
   </div>
 </header>
@@ -3314,11 +3315,11 @@ function iaAct(b){const d=b.dataset,a=d.ia;
 
 /* (247) Trade e Trade speciali unite: due categorie dentro la stessa pagina */
 function vTrade(){
-  const sw=`<div class="gdmsw" role="tablist">${[["tutte","Tutte le trade"],["sp","Trade speciale"],["ia","IA Trade"]].map(([k,l])=>`<button data-trs="${k}" role="tab" aria-selected="${TRS===k}">${l}</button>`).join("")}</div>`;
-  return sw+(TRS==="ia"?vIA():TRS==="sp"?vSpeciali():vTradeAll());
+  const sw=`<div class="gdmsw" role="tablist">${[["tutte","Tutte le trade"],["sp","Trade speciale"]].map(([k,l])=>`<button data-trs="${k}" role="tab" aria-selected="${TRS===k}">${l}</button>`).join("")}</div>`;
+  return sw+(TRS==="sp"?vSpeciali():vTradeAll());
 }
-document.getElementById("main").addEventListener("click",e=>{if(cur!=="trade")return;const b=e.target.closest("[data-ia]");if(b&&b.tagName!=="SELECT"&&!b.disabled){e.preventDefault();iaAct(b)}});
-document.getElementById("main").addEventListener("change",e=>{if(cur!=="trade")return;const b=e.target;if(b&&b.dataset&&b.dataset.ia==="team"){IA.cr.c=Math.min(IA.cr.c,iaCassa(b.value));iaAct(b)}});
+document.getElementById("main").addEventListener("click",e=>{if(cur!=="iatrade")return;const b=e.target.closest("[data-ia]");if(b&&b.tagName!=="SELECT"&&!b.disabled){e.preventDefault();iaAct(b)}});
+document.getElementById("main").addEventListener("change",e=>{if(cur!=="iatrade")return;const b=e.target;if(b&&b.dataset&&b.dataset.ia==="team"){IA.cr.c=Math.min(IA.cr.c,iaCassa(b.value));iaAct(b)}});
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-trs]");if(!b||cur!=="trade")return;TRS=b.dataset.trs;render();window.scrollTo(0,0)});
 function vTradeAll(){
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
@@ -7036,14 +7037,14 @@ document.getElementById("main").addEventListener("click",e=>{if(cur!=="tv")retur
   if(bk){TVS.g=null;TVS.dr=null;render();window.scrollTo(0,0);return}
   if(sd){TVS.side=sd.dataset.tvside;const y=window.scrollY;render();window.scrollTo(0,y)}});
 const vTVlive=()=>{tvLiveStart();if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();return vTV()};
-const VIEWS={glplayer:vGLP,fa:vFA,faplayer:vFAP,tv:vTVlive,college:vCollege,trend:vTrend,statnotte:vStatNotte,cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeagueM,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.osserv=vOsserv;VIEWS.grafico=vGrafico;
+const VIEWS={glplayer:vGLP,fa:vFA,faplayer:vFAP,tv:vTVlive,college:vCollege,trend:vTrend,statnotte:vStatNotte,cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeagueM,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.osserv=vOsserv;VIEWS.iatrade=vIA;VIEWS.grafico=vGrafico;
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
   if(cur!=="tv")TVS.out=1;liveSync();if(["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur))fantaLiveAvvia();
   document.body.dataset.v=cur;{const nt=typeof CNT!=="undefined"&&CNT;document.body.classList.toggle("notte",nt);document.documentElement.classList.toggle("notte",nt);const tc=document.querySelector('meta[name="theme-color"]');if(tc&&!document.body.classList.contains("dreamfs"))tc.content=nt?"#2a1260":TH_BAR}
   {document.documentElement.classList.toggle("setpg",cur==="impostazioni");/* (245) */const fs=cur==="giochi"&&(GAME==="dream"||GAME==="gdream");document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=(fs||(typeof CNT!=="undefined"&&CNT))?"#2a1260":TH_BAR}
-  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="fa"?"fa":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"?"home":cur==="osserv"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
+  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="fa"?"fa":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"?"home":cur==="osserv"||cur==="iatrade"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));try{const nv=document.querySelector("nav"),sb=nv&&nv.querySelector('[aria-selected="true"]');if(sb)nv.scrollTo({left:Math.max(0,sb.offsetLeft-24)})}catch(e){}
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -7142,7 +7143,7 @@ const NAVH=[];let navLast=cur,navT=0;
 (function(){const r0=render;render=function(){if(navLast!==null&&cur!==navLast){if(NAVH[NAVH.length-1]===cur)NAVH.pop();else{NAVH.push(navLast);if(NAVH.length>40)NAVH.shift()}}navLast=cur;const rr=r0.apply(this,arguments);try{fixBackLabels()}catch(e){}try{if(document.querySelector(".du .dun b"))document.fonts.load("16px CourtBlock").catch(()=>{}).then(()=>requestAnimationFrame(duFit))}catch(e){}return rr}})();
 /* TASTO INDIETRO SEMPLICE: ogni "‹" della scheda giocatore, Campo, Cassa, Osservatorio ecc. riporta alla schermata da cui si è arrivati (pila NAVH) e la sua scritta dice dove porta */
 const BK_IDS="#gback,#faback,#glpback,#effback,#cback,[data-cupback],[data-snback],#capback,#mulback,#colback,#cassaback,#osback";
-function backLabel(v){const n=(TEAMS[curTeam]||{}).nick||"";const M={home:"Home",campo:"Campo "+n,roster:"Roster "+n,fa:"Giocatori",valtrade:"Calcolatore trade",osserv:"Osservatorio",efficienza:"Statistiche",effsquadra:"Efficienza "+n,effcup:"Efficienza",tv:"Dynasty TV",risultati:"Risultati",classifica:"Classifica",trade:"Trade",speciali:"Trade speciali",gleague:"G-Dreamers",college:"Ufficio Scouting",cassa:"Cassa "+n,cap:"Cap",multe:"Multe",trend:"Trend",statnotte:"Statistiche notte",grafico:"Grafico",dunkest:"Centro gestione",storia:"Sala Trofei",regolamento:"Regolamento",infortuni:"Centro Medico",gdreamers:"G-Dreamers",faplayer:"Giocatori",glplayer:"G-Dreamers"};
+function backLabel(v){const n=(TEAMS[curTeam]||{}).nick||"";const M={home:"Home",campo:"Campo "+n,roster:"Roster "+n,fa:"Giocatori",valtrade:"Calcolatore trade",osserv:"Osservatorio",iatrade:"IA Trade",efficienza:"Statistiche",effsquadra:"Efficienza "+n,effcup:"Efficienza",tv:"Dynasty TV",risultati:"Risultati",classifica:"Classifica",trade:"Trade",speciali:"Trade speciali",gleague:"G-Dreamers",college:"Ufficio Scouting",cassa:"Cassa "+n,cap:"Cap",multe:"Multe",trend:"Trend",statnotte:"Statistiche notte",grafico:"Grafico",dunkest:"Centro gestione",storia:"Sala Trofei",regolamento:"Regolamento",infortuni:"Centro Medico",gdreamers:"G-Dreamers",faplayer:"Giocatori",glplayer:"G-Dreamers"};
   return v==="giochi"?(GAME==="dream"?"Dreamers":GAME==="gdream"?"G-Dreamers":"Giochi"):(M[v]||"Indietro")}
 /* nomi troppo lunghi per la card: nome di battesimo ridotto all'iniziale ("S. GILGEOUS-ALEXANDER") */
 function duFit(){document.querySelectorAll(".du .duh").forEach(h=>h.style.minHeight="");document.querySelectorAll(".du .dun b").forEach(b=>{if(b.scrollWidth<=b.clientWidth+1)return;b.innerHTML=b.innerHTML.replace(/&nbsp;|\u00a0/g," ");if(b.scrollWidth>b.clientWidth+1)b.style.letterSpacing="-.02em"});document.querySelectorAll(".durow").forEach(r=>{const hs=[...r.querySelectorAll(".du .duh")];if(hs.length<2)return;const m=Math.max(...hs.map(h=>h.getBoundingClientRect().height));hs.forEach(h=>h.style.minHeight=m+"px")})}/* (312) nomi già in formato "N. Cognome" e a capo se servono: mai rimpiccioliti né tagliati */
