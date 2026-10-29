@@ -3182,7 +3182,7 @@ let TRS="tutte";
 const EQ_DEF={wnb:.6,wvs:.4,vsk:1.25,sck:2.6,thA:.62,thM:.42,dlmax:.45,
  trg:.45,trr:.45,trmin:10,tsx:60,tse:1.5,tsrel:8,
  prv:.6,prvmin:.12,prvcap:.5,
- lowT:29,lowIn:.25,lowOut:.22,lowSc:30,
+ lowT:30,lowIn:.25,lowOut:.22,
  nx:.5,np:.5,star:.16,outq:.7,
  pbase:.35,psea:.35,pl10:.10,prevw:.5,prevc:.4,ptr:.22,
  eta0:.07,eta1:.10,perf:.10,rook:.22,win:.40,reb:.22,
@@ -3320,8 +3320,10 @@ function iaInt(S,t,recv,gave,adv,cr){const nb=iaNeed(S,t,recv,gave),vs=Math.max(
   {const vs=(L,sg)=>{const a=[],tt=L.reduce((x,y)=>x+Math.max(1,y.v||1),0)||1;L.forEach(x=>{const q=iaPerf(x.n);if(q.rk||q.rel==null||Math.abs(q.rel)<EQP.prvmin)return;dl+=sg*iaCl(q.rel,EQP.prvcap)*EQP.prv*Math.max(.4,Math.max(1,x.v||1)/tt)*Math.min(1,(q.ng||0)/8);a.push(`${x.n.split(" ").slice(-1)[0]} ${q.rel>0?"in crescita":"in calo"} (PDK ${q.prev.toFixed(1).replace(".",",")} → ${q.sea.toFixed(1).replace(".",",")})`)});return a},
     gU=vs(gave,-1),rU2=vs(recv,1);if(gU.length)p.push(`rispetto alla scorsa stagione: cede ${gU.join(", ")}`);if(rU2.length)p.push(`rispetto alla scorsa stagione: riceve ${rU2.join(", ")}`)}
   const pf=iaPref(t,recv,gave);dl+=pf.dl;pf.parts.forEach(x=>p.push(x));
-  /* (411) poca cassa (29 crediti o meno): ricevere crediti nello scambio le interessa di più, cederne meno */
-  {const low=iaCassa(t);if(cr&&low<=EQP.lowT){const ci=cr.in||0,co=cr.out||0;if(ci>0){dl+=Math.min(1,ci/EQP.lowSc)*EQP.lowIn;p.push(`ha pochi crediti (${low}): le fa comodo ricevere ${ci} cr`)}if(co>0){dl-=Math.min(1,co/EQP.lowSc)*EQP.lowOut;p.push(`ha pochi crediti (${low}) e ne cederebbe ${co}`)}}}
+  /* (411, corretta) soglia 30 crediti = prezzo minimo di una trade speciale. Chi ha meno di 30 crediti è interessato a ricevere crediti quando lo scambio lo porta a 30 o più di cassa utile subito (interesse pieno; meno se ci arriva solo in parte); cedere crediti che la lasciano sotto 30 non le piace */
+  {const low=iaCassa(t);if(cr){const ci=cr.in||0,co=cr.out||0,after=low+ci-co;
+    if(low<EQP.lowT&&ci>0&&co===0){const full=after>=EQP.lowT;dl+=EQP.lowIn*(full?1:Math.min(1,ci/Math.max(1,EQP.lowT-low))*.5);p.push(full?`ha ${low} crediti, sotto i ${EQP.lowT}: con i ${ci} cr ricevuti arriva a ${after} e può fare trade speciali subito`:`ha ${low} crediti, sotto i ${EQP.lowT}: i ${ci} cr ricevuti la avvicinano alla soglia (arriva a ${after})`)}
+    if(co>0&&after<EQP.lowT){dl-=EQP.lowOut;p.push(low>=EQP.lowT?`cedendo ${co} cr scende a ${after}, sotto i ${EQP.lowT} necessari per una trade speciale`:`ha già pochi crediti (${low}) e ne cederebbe ${co}`)}}}
   dl=Math.max(-EQP.dlmax,Math.min(EQP.dlmax,dl));const sc2=Math.max(0,Math.min(1,sc+dl)),l2=sc2>=EQP.thA?"alto":sc2>=EQP.thM?"medio":"basso";
   return{t,l:l2,sc:sc2,txt:`${nick}: ${p.join(" · ")}`}}
 const iaIntHTML=a=>a&&a.length?`<div class="iaint">${a.map(i=>`<div class="iaint1 ${i.l}"><span><b>Interesse ${i.l}</b></span><small>${i.txt}</small></div>`).join("")}</div>`:"";
@@ -8248,10 +8250,9 @@ const EQ_PAR=[
   ["prvmin","Differenza minima","Sotto questa differenza (es. 0,12 = 12%) è ignorato",.01],
   ["prvcap","Tetto del confronto","Massima differenza considerata",.05]]],
  ["Pochi crediti in cassa","Squadra a corto di crediti",[
-  ["lowT","Soglia 'pochi crediti'","Da questa cassa in giù la squadra è a corto",1],
-  ["lowIn","Interesse a ricevere crediti","Bonus massimo",.01],
-  ["lowOut","Disinteresse a cedere crediti","Malus massimo",.01],
-  ["lowSc","Crediti per effetto pieno","Quanti crediti danno l'effetto massimo",1]]],
+  ["lowT","Soglia cassa utile (trade speciale)","Sotto questi crediti la squadra vuole riceverne fino ad arrivarci (prezzo minimo trade speciale)",1],
+  ["lowIn","Interesse a raggiungere la soglia","Bonus se lo scambio la porta alla soglia",.01],
+  ["lowOut","Disinteresse a scendere sotto soglia","Malus se cede crediti e resta sotto la soglia",.01]]],
  ["Rendimento, età, classifica","Preferenze di ogni squadra",[
   ["perf","Peso del rendimento (PDK)","A tutti non piace perdere rendimento",.01],
   ["eta0","Età: peso base","Preferenza per giocatori della propria età",.01],
