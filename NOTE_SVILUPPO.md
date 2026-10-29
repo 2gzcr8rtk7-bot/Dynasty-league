@@ -1143,4 +1143,4 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 (364) Live stanotte: la colonna Giocatore (parte blu scura) e piu larga (158-170px, padding destro 42px) e il tasto condividi sta tutto dentro, senza toccare il testo rosso del quarto/minuto live e senza essere tagliato (`.clbox td:first-child`, riga CSS "(142)"). IN CODA, NON pubblicato.
 
-(365) Home (tutte le versioni): colonna col tempo di GIOCO della partita, in rosso, tra nome e PDK (es. "8:54 3Q", "34.2 4Q", "INT" all'intervallo; "FINALE" grigio se finita), sia nella tabella giocatori sia nei seguiti; sotto il nome resta solo "vs XXX". Funzione `hnClk`, classe `.hmc`. IN CODA, NON pubblicato.
+(365) Home (tutte le versioni): il tempo di gioco della partita (es. "3:02 3rd") sta sotto il nome, dove era gia, ma ora e in ROSSO (classe `.hmc`) per le partite live; "Finale" resta com'era. Vale in tabella giocatori e seguiti. IN CODA, NON pubblicato.
