@@ -832,7 +832,7 @@ body.notte .hn6{--hnbg:linear-gradient(160deg,rgba(76,29,149,.85),rgba(17,10,48,
 .hmvs{display:flex;gap:7px;flex:0 0 auto}.hmv{display:grid;justify-items:center;gap:2px}.hmv small{font-size:8.5px!important;letter-spacing:.08em;color:var(--hnmu);font-weight:800}
 .hmtr{font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;padding:2px 9px;border-radius:8px;white-space:nowrap}.hmtr.u{background:#16a34a}.hmtr.d{background:#e11d48}.hmtr.s{background:#475569}
 .hmcard.all .hmlist,.hmcard.all{--hl:1}
-.hmscroll{max-height:312px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;margin:0 -6px;padding:0 6px}
+.hmgrip{height:16px;margin:0 -6px -4px;display:flex;align-items:center;justify-content:center;cursor:ns-resize;touch-action:none;-webkit-tap-highlight-color:transparent}.hmgrip i{display:block;width:46px;height:3px;border-radius:3px;background:currentColor;opacity:.32;transition:opacity .15s,width .15s}.hmgrip.on i,.hmgrip:hover i{opacity:.75;width:60px}.hmscroll{max-height:312px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;margin:0 -6px;padding:0 6px}
 .hmo{display:inline-block;width:18px;height:18px;vertical-align:-4px;margin-right:6px}.hmo .badge{width:18px!important;height:18px!important;display:block;font-size:8px}
 .hnvl{display:block;height:44px}.hnvl .badge{width:44px!important;height:44px!important;display:block;margin:0 auto}.hnvs{display:grid;place-items:center;height:44px;font-size:30px;color:var(--hns)}
 .hn6.tm .hmcard{border-color:color-mix(in srgb,var(--tc) 70%,#e879f9);box-shadow:0 0 0 1px color-mix(in srgb,var(--tc) 45%,transparent),0 0 22px color-mix(in srgb,var(--tc) 55%,transparent)}
@@ -3729,6 +3729,7 @@ function hnScopeSet(v){if(!["all","team"].includes(v))return;HN_S=v;try{localSto
 function homeFase(mnTest){try{const o=flUsaOggi(),G=(TV.days[o]||[]);let mn=mnTest;if(typeof mn!=="number"){const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date());mn=+f.find(x=>x.type==="hour").value*60+ +f.find(x=>x.type==="minute").value}
   const hasS=G.some(g=>g[5]==="S"),started=G.some(g=>g[5]==="L"||g[5]==="F");return hasS&&!started&&!(mn>=360&&mn<840)?o:null}catch(e){return null}}
 const HN_DEFC={};function hnDef(opp,role){const k=opp+"|"+role,n=Date.now(),c=HN_DEFC[k];if(c&&n-c.t<600000)return c.v;let v=null;try{v=capDef(opp,role)}catch(e){}HN_DEFC[k]={t:n,v};return v}
+let HN_H={};try{HN_H=JSON.parse(localStorage.getItem("dl_hh")||"{}")||{}}catch(e){HN_H={}}
 const HN_ORD=["DUC","DOL","FOX","PEA","SPI","EAG","TUR","MOO"];let HN_SO="",HN_SI=0;try{HN_SO=localStorage.getItem("dl_hso")==="team"?"team":"";HN_SI=Math.max(0,Math.min(7,+localStorage.getItem("dl_hsi")||0))}catch(e){}
 let HN_T="";try{HN_T=localStorage.getItem("dl_hnt")||""}catch(e){}
 const homeMyT=()=>{if(HN_T&&TEAMS[HN_T])return HN_T;let t=curTeam;try{const x=localStorage.getItem("team");if(x&&TEAMS[x])t=x}catch(e){}return t};
@@ -3760,7 +3761,7 @@ function homeNotte(st){
   let seg=[];try{const NI=osNight();seg=SEGUI.map(n=>({n,N:NI[tvNm(n)]})).filter(x=>x.N)}catch(e){}
   seg.sort((a,b)=>(b.N.lv-a.N.lv)||(b.N.p-a.N.p));
   const mLv=mine.some(x=>x.N.lv),sLv=seg.some(x=>x.N.lv);
-  const W=(cls,h)=>`<div class="hmscroll">${h}</div>`;
+  const W=(cls,h)=>`<div class="hmscroll"${HN_H[cls]?` style="max-height:${HN_H[cls]}px"`:""}>${h}</div><div class="hmgrip" data-grip="${cls}" role="separator" aria-label="Trascina per allungare o accorciare l'elenco"><i></i></div>`;
   const esc=n=>String(n).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   let WKB={acc:{}};try{const dT=DR_TURNI.findIndex(x=>x[0]<=d&&d<=x[1])+1;WKB=drWeek(dT||drCurWeek(drPO(drStand())))}catch(e){}
   const preL=(names,mineF)=>{const out=[];names.forEach(n=>{try{const nba=(segInfo(n)||{}).nba;if(!nba)return;const g=GG.find(x=>x[0]===nba||x[1]===nba);if(!g)return;const opp=g[0]===nba?g[1]:g[0],sd=g[0]===nba?"a":"h",best=(WKB.acc[n]||{}).b??null;
@@ -3799,6 +3800,14 @@ function bindHomeNotte(root){root.querySelectorAll(".hrl").forEach(b=>b.onclick=
   root.querySelectorAll("[data-hdr]").forEach(b=>b.onclick=()=>{TVS.dr=b.dataset.hdr;TVS.drs="a";TVS.g=null;cur="tv";render();window.scrollTo(0,0)});
   root.querySelectorAll("[data-hpn]").forEach(b=>b.onclick=()=>{plOpen(b.dataset.hpn)});
   root.querySelectorAll("[data-hgo]").forEach(b=>b.onclick=()=>{const[dy,key,sd]=b.dataset.hgo.split("|");TVS.d=dy;TVS.g=key&&TV.box[key]?key:null;TVS.side=sd==="h"?"h":"a";cur="tv";render();window.scrollTo(0,0)});
+  root.querySelectorAll(".hmgrip").forEach(g=>{const sc=g.previousElementSibling,c=g.dataset.grip;let y0=0,h0=0,id=null;
+    const save=()=>{try{Object.keys(HN_H).length?localStorage.setItem("dl_hh",JSON.stringify(HN_H)):localStorage.removeItem("dl_hh")}catch(_){}};
+    g.addEventListener("pointerdown",e=>{if(e.button>0||!sc)return;e.stopPropagation();id=e.pointerId;y0=e.clientY;h0=sc.offsetHeight;HN_DRAG=true;try{g.setPointerCapture(id)}catch(_){}g.classList.add("on")});
+    g.addEventListener("pointermove",e=>{if(id!==e.pointerId)return;const h=Math.max(90,Math.min(900,Math.round(h0+e.clientY-y0)));sc.style.maxHeight=h+"px";HN_H[c]=h});
+    const end=e=>{if(id!==e.pointerId)return;id=null;HN_DRAG=false;g.classList.remove("on");save()};
+    g.addEventListener("pointerup",end);g.addEventListener("pointercancel",end);
+    g.addEventListener("dblclick",()=>{delete HN_H[c];sc.style.maxHeight="";save()});
+    g.addEventListener("click",e=>e.stopPropagation())});
   hnDrag(root);hnPhase(root)}
 /* il banner parte da un orologio unico: dopo ogni aggiornamento o ridisegno riprende dal punto giusto, senza tornare all'inizio */
 let HN_T0=performance.now(),HN_DRAG=false;
