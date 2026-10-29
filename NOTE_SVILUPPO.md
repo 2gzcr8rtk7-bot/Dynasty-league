@@ -1148,3 +1148,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (366) Home ufficiale (tutte le squadre): il titolo "TUTTE LE SQUADRE" e "N GIOCATORI" sono tasti. Tocco su "Tutte le squadre" = giocatori raggruppati per franchigia (ordine delle squadre in Home, dentro ciascuna per PDK); tocco su "N giocatori" = ordine PDK decrescente (come prima, predefinito). Vale in live e nel pre-partita. Scelta salvata su questo telefono (`dl_hso`, `HN_SO`, `hsoHead`). IN CODA, NON pubblicato.
 
 (367) Home, banner partite scorrevoli: (1) davanti alle partite NBA ci sono 4 banner DREAMERS (le sfide del turno in corso, `drPairs`/`drTeam`) con i loghi delle nostre squadre, punteggio Dreamers e stato (IN CORSO / LIVE / FINALE · Tn / DAL data); bordo oro; tocco = apre la sfida (`TVS.dr`). (2) Anche le partite NBA usano i loghi (`tvLogo`, classe `.hml`) al posto delle sigle; le sigle restano solo finche il logo non carica. IN CODA, NON pubblicato.
+
+(368) Banner Dreamers in Home: loghi delle squadre -6% (26px -> 24,4px) e logo Peacocks ulteriormente -7% (22,7px) tramite `--k:.93` sul contenitore `.hmdl`. IN CODA, NON pubblicato.
