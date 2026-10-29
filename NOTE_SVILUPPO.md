@@ -1369,6 +1369,6 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 465. **Quinta correzione a mano: Coward a 605** — Cedric Coward 480→605 in `VALORI` (e quindi `VAL_MAN`), annotazione in `VAL_CORREZ`. Il parere sull'ultima trade (Coward/Fears) si ricalcola da solo: squilibrio 54% → 27%, ora «Vincitore trade Mooses» (non più truffa), Turtles «Svolta giustificata», Mooses «Colpo da manuale». Pubblicato (v108).
 
-466. **Sigla highlights stile NBA + video automatico** — in coda su `coda`, NON pubblicato.
+466. **Sigla highlights stile NBA + video automatico** — pubblicato (v109, 29/10/2026), scelta dall'utente la variante A.
    - Nuova musica originale `tvSigla(C,dest,v)` (Web Audio, nessun file audio): rullante che accelera + riser, colpo di ottoni con cassa e piatto a 0,9 s (quando appare DYNASTY TV), una battuta di groove funk con basso e stacchi di ottoni, accordo finale a 3,6 s. Variante "A" (rullante) o "B" (palleggi + sirena da palazzetto): costante `TV_SIGLA_V`. Lampo e "pulsazione" della scritta sul colpo finale.
    - Video automatico: il player YouTube si carica subito al tocco (muto, in pausa dietro la sigla, comandi via postMessage con `enablejsapi=1`); a 3,9 s riparte da 0 con l'audio. Se il telefono blocca l'audio automatico (iPhone) il video parte muto con l'avviso "🔇 Tocca il video per attivare l'audio".
