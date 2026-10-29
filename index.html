@@ -5937,7 +5937,7 @@ async function shCompar(){const S=SHR_CM;if(!S||!S.P[0]||!S.P[1])return null;
   shFoot(c,W,H,`Dreamers · confronto ${S.P[0].n} / ${S.P[1].n} · ${by}`);return cv}
 /* (458) CONDIVIDI UNA TRADE CHIUSA (Trade Alert): immagine con maglie, loghi, statistiche e PARERE dell'IA (saldo di valore + interesse di ogni squadra con le sue intenzioni).
    Il parere è calcolato con le squadre COM'ERANO prima dello scambio (si rimettono temporaneamente i giocatori al loro posto). */
-let SHR_HT=-1;
+let SHR_HT=-1,SHR_ST=1;
 document.addEventListener("click",e=>{const b=e.target.closest("[data-hti]");if(b)SHR_HT=+b.dataset.hti},true);
 /* come uno scambio cambia (o conferma) le intenzioni di una squadra: testo costruito con numeri (età, rendimento di quest'anno, valore, intenzioni prima e dopo) */
 function iaShiftTxt(sd,o,pre,post){const f1=v=>v.toFixed(1).replace(".",","),f2=v=>(v>=0?"+":"−")+Math.abs(v).toFixed(2).replace(".",","),lab=c=>c>=.25?"vincere subito":c<=-.25?"ricostruire":"strada aperta";
@@ -6036,7 +6036,13 @@ async function shHistTrade(i){const M=histTradeModel(i);if(!M)return null;
     return(M.final||"")+(M.d<.10?` (Valori: scambio equilibrato, squilibrio ${Math.round(M.d*100)}%.)`:` (Valori: vantaggio ${f}, squilibrio ${Math.round(M.d*100)}%.)`)})();
   const blocks=M.ints.map((x,k)=>{const body=x.txt.replace(/^[^:]+:\s*/,"").replace(/^intenzioni:[^(]*\([^)]*\)\s*·?\s*/,"").replace(/^[^(·]*\)\s*·?\s*/,""),sh=M.shift[k],vd=M.vd&&M.vd[k],ww=W-56*2-52;
     return{x,sh,vd,S:wrap(mc,vd?vd.txt:(sh?sh.txt:""),ww).slice(0,9),Tc:(M.tech[k]||[]).map(t=>({pos:t.pos,L:wrap(mc,"› "+t.txt,ww).slice(0,3)})),L:[]}});
-  const parH=210+wrap(mc,sumTxt,W-112-40).length*38+14+blocks.reduce((q,b)=>q+24+34+(b.S.length?b.S.length*36+16:0)+b.Tc.reduce((u,t)=>u+t.L.length*36+8,0)+(b.Tc.length?10:0)+b.L.length*36,0)+16;
+  const ST=SHR_ST,FS=ST===4?24:26,LH=FS+10,tw=ST===4?((W-112-60)/2-44):ST===1?W-152-56:ST===2?W-112-96:W-112-72,tg=ST===4?30:34;
+  mc.font=SH_B(500,FS);
+  const IT=blocks.map((b,k)=>{const Tc=(M.tech[k]||[]).map(t=>({pos:t.pos,L:wrap(mc,t.txt,tw-tg-(ST===3?24:0))}));return{b,k,S:wrap(mc,b.vd?b.vd.txt:"",tw),Tc}});
+  const HH=[0,104,64,84,150][ST],PAD=[0,26,10,22,26][ST],GAP=[0,24,30,18,0][ST],TOP=[0,18,8,20,18][ST];
+  IT.forEach(o=>{o.h=HH+TOP+o.S.length*LH+(o.Tc.length?(ST===3?34:14):0)+o.Tc.reduce((u,t)=>u+t.L.length*LH+10,0)+PAD});
+  const colH=Math.max(...IT.map(o=>o.h)),sumL=(mc.font=SH_B(500,27),wrap(mc,sumTxt,W-112-40));mc.font=SH_B(500,FS);
+  const parH=210+sumL.length*38+14+(ST===4?colH:IT.reduce((q,o)=>q+o.h+GAP,0))+(ST===4?30:16);
   const H=190+panH+40+parH+130;
   const{cv,c}=await shBase(H,W,0,1);
   c.font=SH_F(700,28,1);c.textAlign="right";c.textBaseline="alphabetic";c.fillStyle="rgba(233,213,255,.75)";c.fillText("TRADE ALERT · "+(M.T.data||"")+" "+(M.T.ora||""),W-56,100);
@@ -6070,11 +6076,23 @@ async function shHistTrade(i){const M=histTradeModel(i);if(!M)return null;
   c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_F(800,40,1);c.fillStyle="#e9d5ff";c.fillText("IL PARERE DI CLAUDE",92,y+62);
   const vcol=M.d<.10?"#22c55e":M.d<.40?"#f59e0b":"#ef4444";shRR(c,92,y+82,W-184,80,16);c.fillStyle=vcol;c.fill();c.fillStyle="#fff";c.textAlign="center";c.textBaseline="middle";c.font=SH_F(800,46,1);c.fillText(M.verdict[0].toUpperCase(),W/2,y+123);
   c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_B(500,27);c.fillStyle="#dfe5f5";let ty=y+210;wrap(c,sumTxt,W-112-40).forEach(l=>{c.fillText(l,92,ty);ty+=38});ty+=14;
-  blocks.forEach(b=>{const col=b.x.l==="alto"?"#4ade80":b.x.l==="medio"?"#facc15":"#f87171",tn=TEAMS[b.x.t].nick.toUpperCase();
-    const hc=b.vd?b.vd.col:col;c.font=SH_F(800,34,1);c.fillStyle=hc;c.fillText(`${tn} · ${b.vd?b.vd.title:"INTERESSE "+b.x.l.toUpperCase()}`,92,ty+24);
-    c.font=SH_B(500,25);let ly=ty+24;if(b.S.length){c.fillStyle="#fde047";b.S.forEach(l=>{ly+=36;c.fillText(l,92,ly)});ly+=16}
-    if(b.Tc.length){b.Tc.forEach(t=>{c.fillStyle=t.pos>0?"#86efac":t.pos<0?"#fca5a5":"#bae6fd";t.L.forEach(l=>{ly+=36;c.fillText(l,92,ly)});ly+=8});ly+=10}
-    c.fillStyle="#b8c0d8";b.L.forEach(l=>{ly+=36;c.fillText(l,92,ly)});c.fillStyle=hc;c.fillRect(70,ty-2,6,ly-ty+10);ty=ly+34});
+  const tri=(cx,cy,up,col)=>{c.beginPath();if(up){c.moveTo(cx,cy-9);c.lineTo(cx+9,cy+7);c.lineTo(cx-9,cy+7)}else{c.moveTo(cx,cy+9);c.lineTo(cx+9,cy-7);c.lineTo(cx-9,cy-7)}c.closePath();c.fillStyle=col;c.fill()};
+  const pill=(t,x,yy,h,fill,fg,fs,right)=>{c.font=SH_F(800,fs,1);const w=c.measureText(t).width+34;const px=right?x-w:x;shRR(c,px,yy,w,h,h/2);c.fillStyle=fill;c.fill();c.fillStyle=fg;c.textAlign="center";c.textBaseline="middle";c.fillText(t,px+w/2,yy+h/2+1);c.textAlign="left";c.textBaseline="alphabetic";return w};
+  const logoAt=async(t,x,yy,z)=>{const lg=await shLogo(t);if(lg){const r=Math.min(z/lg.width,z/lg.height);c.drawImage(lg,x+(z-lg.width*r)/2,yy+(z-lg.height*r)/2,lg.width*r,lg.height*r)}};
+  const GRN="#4ade80",RED="#f87171";
+  for(const o of IT){const b=o.b,tm=TEAMS[b.x.t],tt=b.vd?b.vd.title:"",nk=tm.nick.toUpperCase(),acc=tm.trim||tm.bg,tc=tm.txt||tm.fg||"#fff";
+    let x,cy,w,bx;
+    if(ST===1){x=76;w=W-152;c.save();shRR(c,x,ty,w,o.h,24);c.clip();c.fillStyle="rgba(255,255,255,.045)";c.fillRect(x,ty,w,o.h);const g=c.createLinearGradient(x,ty,x+w,ty);g.addColorStop(0,tm.bg);g.addColorStop(1,"rgba(10,6,24,.25)");c.fillStyle=g;c.fillRect(x,ty,w,HH);c.fillStyle=acc;c.fillRect(x,ty+HH,w,6);c.restore();shRR(c,x,ty,w,o.h,24);c.strokeStyle=acc;c.globalAlpha=.55;c.lineWidth=2;c.stroke();c.globalAlpha=1;
+      await logoAt(b.x.t,x+20,ty+16,72);c.font=SH_F(800,46,1);c.fillStyle=tc;c.textAlign="left";c.fillText(nk,x+110,ty+68);pill(tt,x+w-22,ty+28,48,b.vd.col,"#10091f",24,true);bx=x+28;cy=ty+HH+TOP}
+    else if(ST===2){x=76;w=W-152;c.fillStyle=acc;shRR(c,x,ty,8,o.h,4);c.fill();await logoAt(b.x.t,x+28,ty+4,52);c.font=SH_F(800,40,1);c.fillStyle=tc;c.fillText(nk,x+92,ty+44);pill(tt,W-92,ty+8,46,"rgba(255,255,255,.1)",b.vd.col,22,true);bx=x+28;cy=ty+HH+TOP}
+    else if(ST===3){x=56;w=W-112;c.save();shRR(c,x,ty,w,o.h,0);c.clip();const g=c.createLinearGradient(x,ty,x+w,ty);g.addColorStop(0,tm.bg);g.addColorStop(1,"rgba(10,6,24,.1)");c.fillStyle=g;c.fillRect(x,ty,w,HH);c.fillStyle=acc;c.fillRect(x,ty+HH-5,w,5);c.restore();await logoAt(b.x.t,x+30,ty+10,64);c.font=SH_F(800,44,1);c.fillStyle=tc;c.fillText(nk,x+108,ty+56);c.font=SH_F(800,26,1);c.fillStyle="#fff";c.textAlign="right";c.fillText(tt,x+w-30,ty+54);c.textAlign="left";bx=92;cy=ty+HH+TOP}
+    else{x=76+o.k*(colH?(W-152-20)/2+20:0);w=(W-152-20)/2;c.save();shRR(c,x,ty,w,colH,24);c.clip();c.fillStyle="rgba(255,255,255,.045)";c.fillRect(x,ty,w,colH);const g=c.createLinearGradient(x,ty,x+w,ty+HH);g.addColorStop(0,tm.bg);g.addColorStop(1,"rgba(10,6,24,.25)");c.fillStyle=g;c.fillRect(x,ty,w,HH);c.fillStyle=acc;c.fillRect(x,ty+HH,w,6);c.restore();shRR(c,x,ty,w,colH,24);c.strokeStyle=acc;c.globalAlpha=.55;c.lineWidth=2;c.stroke();c.globalAlpha=1;
+      await logoAt(b.x.t,x+18,ty+14,64);c.font=SH_F(800,40,1);c.fillStyle=tc;c.textAlign="left";c.fillText(nk,x+96,ty+60);pill(tt,x+22,ty+88,44,b.vd.col,"#10091f",20,false);bx=x+22;cy=ty+HH+TOP}
+    c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_B(500,FS);c.fillStyle="#eef2ff";let ly=cy;
+    o.S.forEach(l=>{ly+=LH;c.fillStyle="#f1f5ff";c.fillText(l,bx,ly-8)});
+    if(o.Tc.length){ly+=ST===3?10:14;if(ST===3){const th=o.Tc.reduce((u,t)=>u+t.L.length*LH+10,0)+14;shRR(c,bx-16,ly-2,W-112-40+0,th,16);c.fillStyle="rgba(255,255,255,.06)";c.fill();ly+=10}
+      o.Tc.forEach(t=>{c.fillStyle="#cbd5e1";c.font=SH_B(500,FS);t.L.forEach((l,j)=>{ly+=LH;if(j===0)tri(bx+10,ly-FS/2-4,t.pos>0,t.pos>0?GRN:RED);c.fillStyle="#cbd5e1";c.fillText(l,bx+tg,ly-8)});ly+=10})}
+    ty+=(ST===4?0:o.h+GAP)}
   shFoot(c,W,H,"Dreamers · Trade Alert");return cv}
 async function shOpen(k){const old=document.querySelector(".shsheet");if(old)old.remove();
   const sh=document.createElement("div");sh.className="shsheet";sh.innerHTML='<div class="shbox"><p class="shwait">Preparo l\'immagine…</p></div>';document.body.appendChild(sh);
