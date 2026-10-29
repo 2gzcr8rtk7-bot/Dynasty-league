@@ -3223,7 +3223,7 @@ const EQ_DEF={wnb:.6,wvs:.4,vsk:1.25,sck:2.6,thA:.62,thM:.42,dlmax:.45,
  pl10:.25,prevw:.5,prevc:.4,ptr:.22,
  eta0:.07,eta1:.10,perf:.40,rook:.22,win:.60,reb:.30,
  iwS0:.12,iwS1:.04,iwSm:.50,iwA:.62,isA:3.5,isT:1.2,pvA:.25,pvC:.15,pg0:5,pg1:20,pws:.65,pgr:12,
- dpk:.22,sgf:.25,sbal:.15,smix:.60,mmin:.55};
+ dpk:.22,npr:.60,sgf:.25,sbal:.15,smix:.60,mmin:.55};
 const EQP={...EQ_DEF};
 let IA={np:3,noMore:false,lv:"eq",mode:"",any:false,want:[],keep:[],tf:"",q:"",st:1,team:"",needs:["","",""],give:[],cr:{c:0,p:0,d:0},n:2,out:[],seen:{},pool:null,key:"",rd:0};
 const IA_LV={eq:[0,.10,0],win:[.10,.40,.25],scam:[.40,.80,.55]},IA_R={G:"Guardia",F:"Ala",C:"Centro"},IA_RP={G:"guardie",F:"ali",C:"centri"},IA_W=[1,.6,.35],IA_LIM={p:10,d:30},IA_MAXR=15;
@@ -3252,7 +3252,8 @@ const iaProd=n=>{try{return pdkMix(n)||0}catch(e){return 0}};
 /* giocatori di una squadra che contano davvero nel roster (quelli sotto trade speciale sono fuori rosa) */
 const iaEff=t=>(ROSTER[t]||[]).filter(p=>!iaSp(p[0]));
 function iaStats(){const R=["G","F","C"],S={},avg={},avgP={};
-  Object.keys(ROSTER).forEach(t=>{S[t]={cnt:{},top:{},topP:{}};R.forEach(r=>{const l=iaEff(t).filter(p=>p[2]===r),a=l.map(p=>iaP(p[0])).sort((x,y)=>y-x),b=l.map(p=>iaProd(p[0])).sort((x,y)=>y-x);S[t].cnt[r]=l.length;S[t].top[r]=((a[0]||0)+(a[1]||0))/2;S[t].topP[r]=((b[0]||0)+(b[1]||0))/2})});
+  /* (454) la CARENZA di ruolo si misura con il valore PERCEPITO dalla squadra (iaMul): per chi ricostruisce, guardie giovani e promettenti sono già un punto di forza (non una carenza); per chi vuole vincere subito contano di più i veterani */
+  Object.keys(ROSTER).forEach(t=>{const P0=iaProf(t);S[t]={cnt:{},top:{},topP:{}};R.forEach(r=>{const l=iaEff(t).filter(p=>p[2]===r),a=l.map(p=>iaP(p[0])*iaMul(P0,t,p[0])).sort((x,y)=>y-x),b=l.map(p=>iaProd(p[0])).sort((x,y)=>y-x);S[t].cnt[r]=l.length;S[t].top[r]=((a[0]||0)+(a[1]||0))/2;S[t].topP[r]=((b[0]||0)+(b[1]||0))/2})});
   R.forEach(r=>{const n=Math.max(1,Object.keys(S).length);avg[r]=iaSum(Object.keys(S),t=>S[t].top[r])/n||1;avgP[r]=iaSum(Object.keys(S),t=>S[t].topP[r])/n||1});
   Object.keys(S).forEach(t=>{S[t].def={};S[t].defP={};R.forEach(r=>{S[t].def[r]=Math.max(-.3,Math.min(.6,(avg[r]-S[t].top[r])/avg[r]));S[t].defP[r]=Math.max(-.3,Math.min(.6,(avgP[r]-S[t].topP[r])/avgP[r]))})});
   return S}
@@ -3262,7 +3263,7 @@ const iaSig=a=>a.filter(x=>!iaSp(x.n)).map(x=>x.r).sort().join("")
 function iaNeed(S,t,recv,gave){const d=S[t].def,dp=S[t].defP,vol=Math.max(1,iaSum(recv,x=>x.v)+iaSum(gave,x=>x.v)),pv=Math.max(1,iaSum(recv,x=>iaProd(x.n))+iaSum(gave,x=>iaProd(x.n)));
   const xv=(iaSum(recv,y=>y.v*d[y.r])-iaSum(gave,y=>y.v*d[y.r]))/vol,xp=(iaSum(recv,y=>iaProd(y.n)*dp[y.r])-iaSum(gave,y=>iaProd(y.n)*dp[y.r]))/pv;
   /* valore (potenziale, età) e rendimento attuale (PDK): l'altra squadra sale dove è più debole */
-  return Math.max(0,Math.min(1,.5+EQP.nx*xv+EQP.np*xp+.06*(recv.filter(y=>!iaSp(y.n)).length?0:0)))}
+  return Math.max(0,Math.min(1,.5+EQP.nx*xv+EQP.np*Math.max(.3,1-EQP.npr*Math.max(0,-iaProf(t).c))*xp+.06*(recv.filter(y=>!iaSp(y.n)).length?0:0)))}
 function iaAlloc(n){let r=n;const o={d:0,p:0,c:0};[["d",IA.cr.d],["p",IA.cr.p],["c",IA.cr.c]].forEach(([k,mx])=>{const u=Math.min(r,mx);o[k]=u;r-=u});return o}
 const iaTot=()=>IA.cr.c+IA.cr.p+IA.cr.d;
 function iaSubs(names,mx){const o=[[]];const rec=(i,cur)=>{for(let j=i;j<names.length;j++){const c=[...cur,names[j]];o.push(c);if(c.length<mx)rec(j+1,c)}};rec(0,[]);return o.map(a=>({a,v:iaSum(a,iaG)}))}
@@ -8538,6 +8539,7 @@ const EQ_PAR=[
   ["prevc","Tetto confronto stagione prec.","Massima differenza",.05],
   ["ptr","Trend sul rendimento","Effetto del trend",.01]]],
  ["Valore e proposte","Valore del giocatore e punteggio delle proposte",[
+  ["npr","Bisogno: PDK meno importante per chi ricostruisce","Chi ricostruisce guarda meno il rendimento attuale dei ruoli (0,6 = fino a −60% al massimo della ricostruzione)",.01],
   ["dpk","Premio draft (scelte alte e giovani)","Quanto vale in più un giovane scelto tra i primi 5 (0,22 = +22%); scende fino alla 15ª scelta e con l'età",.01],
   ["star","Qualità (stelline) sul valore","Con 16 la qualità sposta il valore di ±8%",.01],
   ["outq","Valore di un infortunato (OUT)","1 = pieno",.05],
@@ -8572,6 +8574,7 @@ prvcap:["Il tetto alla differenza considerata: oltre questo valore il confronto 
 lowT:["I crediti in cassa sotto cui una squadra \"si sente scoperta\" (di serie 30, il prezzo minimo di una trade speciale).","Se lo alzi, più squadre risultano povere e cercano crediti negli scambi. Se lo abbassi, meno squadre sentono il bisogno di crediti. È in crediti veri, non su 100."],
 lowIn:["Quanto una squadra sotto soglia apprezza uno scambio che le porta crediti fino alla soglia.","Più è alto, più le squadre povere dicono sì a chi dà loro crediti (anche pagando in valore). A 0 la cassa non conta quando ricevono."],
 lowOut:["Quanto una squadra rifiuta uno scambio che la lascia sotto la soglia di crediti.","Più è alto, più le squadre difendono la cassa e dicono no a scambi che le fanno scendere sotto soglia. A 0 la cassa non frena le cessioni di crediti."],
+npr:["Quanto pesa meno, per una squadra che ricostruisce, la carenza di PDK in un ruolo.","Alto: Turtles e Moose guardano quasi solo età e potenziale nel dire che un ruolo è scoperto. A 0 il PDK conta come per tutte le altre."],
 dpk:["Quanto in più vale per l'IA Trade un giovane scelto in alto al draft (prime 5 scelte = effetto pieno, 6ª-10ª scende da 80% a 40%, 11ª-15ª da 30% a 10%, oltre la 15ª nessun premio), moltiplicato per l'età (pieno fino a 21 anni, zero a 25,5).","Alto: Wilson, Boozer, Dybantsa, Flagg diventano quasi incedibili e costano molto di più; i rookie vecchi (es. Lendeborg) restano al loro valore. A 0 il draft non conta."],
 isA:["Quanti anni sopra o sotto la media della lega servono perché una squadra sia del tutto «vincere subito» (vecchia) o «ricostruisce» (giovane).","Basso: bastano pochi anni di scarto e quasi tutte le squadre prendono una direzione netta. Alto: solo i roster molto vecchi o molto giovani hanno un'intenzione chiara."],
 isT:["Di quanto il talento dei 6 migliori (in deviazioni standard) deve staccarsi dalla media lega per contare al massimo.","Basso: basta poco per essere «forti» o «deboli». Alto: solo le squadre molto sopra o sotto la media hanno un segnale di talento pieno."],

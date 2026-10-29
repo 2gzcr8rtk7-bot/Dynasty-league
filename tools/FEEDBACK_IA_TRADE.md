@@ -9,3 +9,5 @@ Ogni voce: data · cosa ha visto · cosa ci si aspetta · stato.
    Stato: FATTO in coda (nota 453): `DRAFT_RAW`/`draftOf`, `iaDraft` (premio dpk × scelta × età) dentro `iaP`, qualità rookie scalata per età e scelta, «Draft 2026 · scelta n. 4» nella pagella.
 2. 29/10/2026 · Nella lista «Altre proposte per lo stesso scenario» la riga #2 è rovinata (testo «Mooses basso 15» sovrapposto al logo, font serif, logo mancante). Da controllare (forse logo che non carica sul telefono).
    Stato: DA FARE.
+3. 29/10/2026 · Turtles ricevono Adebayo + Castle (+25 cr) da Spiders per Queen + Peterson: interesse basso GIUSTO, ma la frase «riceve centri e guardie, ruolo in cui è carente» è sbagliata: i Turtles hanno guardie giovani e promettenti, esattamente il loro percorso (ricostruzione). La carenza di ruolo va letta in base a età media e potenziale del ruolo rispetto alle intenzioni della squadra.
+   Stato: FATTO in coda (nota 454): la carenza di ruolo usa il valore PERCEPITO dalla squadra (`iaMul`) e il peso del PDK nel bisogno scende per chi ricostruisce (`npr`).

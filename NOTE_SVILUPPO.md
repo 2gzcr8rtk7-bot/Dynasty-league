@@ -1312,3 +1312,8 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 - DAX › Parametri: nuovo `dpk` («Premio draft») con descrizione «i».
 - Caso dello screenshot: ora Eagles ricevono ~1945 punti IA contro ~1687 ceduti (prima 1598/1676): non è più uno scambio «±1%».
 - Feedback dei test raccolti in `tools/FEEDBACK_IA_TRADE.md` (anche il glitch grafico della riga #2).
+
+(454) IA TRADE · CARENZA DI RUOLO LETTA CON LE INTENZIONI (test di Francesco, caso Turtles). In coda su `coda`, non pubblicato; niente in `NV_LOG`.
+- `iaStats`: il valore dei migliori giocatori di ogni ruolo (da cui nasce la carenza `def`) ora è il valore PERCEPITO dalla squadra (`iaP × iaMul`): una squadra che ricostruisce considera già forte un ruolo con giovani promettenti (età + premio draft); una che vuole vincere subito dà più peso ai veterani. La media di lega si calcola con gli stessi valori percepiti.
+- `iaNeed`: il peso della carenza di PDK (`np`) scende per chi ricostruisce: × max(0,3; 1 − `npr` × |c|), `npr` = 0,60 (nuovo parametro in DAX › Parametri). Chi vuole vincere subito invariato.
+- Effetto sul caso: guardie dei Turtles da carenza 0,13 → 0,06 (sotto la soglia 0,12): la frase diventa «riceve centri, ruolo in cui è carente». Moose guardie 0,45 → 0,28.
