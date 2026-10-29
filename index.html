@@ -3177,6 +3177,17 @@ let TRS="tutte";
 /* (384) IA TRADE — dentro Trade. Il GM sceglie cosa cerca (ruoli in ordine di priorità), cosa offre (giocatori + crediti) e se vuole una trade a 2 o a 3 squadre;
    l'app propone 5 scambi alla volta con la matematica del calcolatore (punti trade = (valore/1000)^2×1000, crediti a VAL_CR), corretta dalle stelline di ogni giocatore
    (±8%), dai bisogni dell'altra squadra (ruoli deboli per valore) e dal vincolo roster. "Aggiorna" mostra altri 5 senza ripetere, all'infinito. */
+/* (412) PARAMETRI DI INTERESSE dell'IA Trade: tutti i numeri che pesano sull'interesse delle squadre stanno qui (valori di serie in EQ_DEF).
+   La sezione segreta "Gestione equilibrio trade" (area riservata Ducks) li può cambiare SOLO per simulare sul telefono: fuori da quella sezione valgono sempre quelli di serie. */
+const EQ_DEF={wnb:.6,wvs:.4,vsk:1.25,sck:2.6,thA:.62,thM:.42,dlmax:.45,
+ trg:.45,trr:.45,trmin:10,tsx:60,tse:1.5,tsrel:8,
+ prv:.6,prvmin:.12,prvcap:.5,
+ lowT:29,lowIn:.25,lowOut:.22,lowSc:30,
+ nx:.5,np:.5,star:.16,outq:.7,
+ pbase:.35,psea:.35,pl10:.10,prevw:.5,prevc:.4,ptr:.22,
+ eta0:.07,eta1:.10,perf:.10,rook:.22,win:.40,reb:.22,
+ sgf:.25,sbal:.15,smix:.60,mmin:.55};
+const EQP={...EQ_DEF};
 let IA={np:3,noMore:false,lv:"eq",mode:"role",any:false,want:[],keep:[],tf:"",q:"",st:1,team:"",needs:["","",""],give:[],cr:{c:0,p:0,d:0},n:2,out:[],seen:{},pool:null,key:"",rd:0};
 const IA_LV={eq:[0,.10,0],win:[.10,.40,.25],scam:[.40,.80,.55]},IA_R={G:"Guardia",F:"Ala",C:"Centro"},IA_RP={G:"guardie",F:"ali",C:"centri"},IA_W=[1,.6,.35],IA_LIM={p:10,d:30},IA_MAXR=15;
 let iaCache={};
@@ -3195,8 +3206,8 @@ function iaPfMax(t){try{const owed=DEBITI.filter(x=>x.da===t&&x.tipo==="portafog
 const iaCassa=t=>Math.max(0,+(CREDITI[t]||0));
 const iaQ=n=>{if(iaCache[n]!=null)return iaCache[n];let q=.5;try{const s=pagella(n).s,a=[s.pdk,s.gio,s.inj,s.min,s.eff,s.spa].filter(v=>v!=null&&!isNaN(v));if(a.length)q=a.reduce((x,y)=>x+y,0)/a.length/5}catch(e){}return iaCache[n]=q};
 const iaOut=n=>{try{return injOut(n)}catch(e){return false}};
-const iaP=n=>vtPts(valOf(n)??VAL_FALLBACK)*(1+.16*(iaQ(n)-.5));
-const iaG=n=>iaP(n)*(iaOut(n)?.7:1);
+const iaP=n=>vtPts(valOf(n)??VAL_FALLBACK)*(1+EQP.star*(iaQ(n)-.5));
+const iaG=n=>iaP(n)*(iaOut(n)?EQP.outq:1);
 const iaSum=(a,f)=>a.reduce((s,x)=>s+f(x),0);
 const iaRand=(()=>{let s=1;return{seed:v=>{s=(v>>>0)||1},n:()=>{s^=s<<13;s>>>=0;s^=s>>>17;s^=s<<5;s>>>=0;return s/4294967296}}})();
 const iaSp=n=>{try{return spFuori(n)}catch(e){return false}};
@@ -3214,7 +3225,7 @@ const iaSig=a=>a.filter(x=>!iaSp(x.n)).map(x=>x.r).sort().join("")
 function iaNeed(S,t,recv,gave){const d=S[t].def,dp=S[t].defP,vol=Math.max(1,iaSum(recv,x=>x.v)+iaSum(gave,x=>x.v)),pv=Math.max(1,iaSum(recv,x=>iaProd(x.n))+iaSum(gave,x=>iaProd(x.n)));
   const xv=(iaSum(recv,y=>y.v*d[y.r])-iaSum(gave,y=>y.v*d[y.r]))/vol,xp=(iaSum(recv,y=>iaProd(y.n)*dp[y.r])-iaSum(gave,y=>iaProd(y.n)*dp[y.r]))/pv;
   /* valore (potenziale, età) e rendimento attuale (PDK): l'altra squadra sale dove è più debole */
-  return Math.max(0,Math.min(1,.5+.5*xv+.5*xp+.06*(recv.filter(y=>!iaSp(y.n)).length?0:0)))}
+  return Math.max(0,Math.min(1,.5+EQP.nx*xv+EQP.np*xp+.06*(recv.filter(y=>!iaSp(y.n)).length?0:0)))}
 function iaAlloc(n){let r=n;const o={d:0,p:0,c:0};[["d",IA.cr.d],["p",IA.cr.p],["c",IA.cr.c]].forEach(([k,mx])=>{const u=Math.min(r,mx);o[k]=u;r-=u});return o}
 const iaTot=()=>IA.cr.c+IA.cr.p+IA.cr.d;
 function iaSubs(names,mx){const o=[[]];const rec=(i,cur)=>{for(let j=i;j<names.length;j++){const c=[...cur,names[j]];o.push(c);if(c.length<mx)rec(j+1,c)}};rec(0,[]);return o.map(a=>({a,v:iaSum(a,iaG)}))}
@@ -3236,7 +3247,7 @@ function iaTrend(n){if(n in IA_TR)return IA_TR[n];let r=null;try{const g=grGames
      e con buona efficienza. All'inizio della stagione il segnale è smorzato (pochi turni giocati). */
 let iaPC={};
 /* forza del trend: curva convessa, trend lievi pesano poco, trend molto forti molto di più (0 a 0%, ~0,35 a +30%, 1 da ±60%) */
-const iaTs=(p,n)=>Math.sign(p)*Math.pow(Math.min(1,Math.abs(p)/60),1.5)*Math.min(1,Math.max(0,((n==null?12:n)-4)/8));/* affidabilità: pieno solo con 12+ gare nell'ultimo mese (6 gare = 25%) */
+const iaTs=(p,n)=>Math.sign(p)*Math.pow(Math.min(1,Math.abs(p)/EQP.tsx),EQP.tse)*Math.min(1,Math.max(0,((n==null?12:n)-4)/EQP.tsrel));/* affidabilità: pieno solo con 12+ gare nell'ultimo mese (6 gare = 25%) */
 const iaAge=n=>{try{return etaEsatta(n)}catch(e){return null}};
 const iaCrOf=n=>{for(const t in ROSTER){const p=ROSTER[t].find(x=>x[0]===n);if(p)return +p[4]||0}return 0};
 const iaAvg=a=>{const v=a.filter(x=>x!=null&&!isNaN(x));return v.length?v.reduce((s,x)=>s+x,0)/v.length:null};
@@ -3256,11 +3267,11 @@ function iaPerf(n){const k="p:"+n;if(iaPC[k])return iaPC[k];let base=iaProd(n),g
   if(isRookie(n)){const role=ruoloDi(n),thr=IA_RKT[role]||.66,opt=IA_RKO[role]||.66;let v=pd.length>=2?sea:(base||sea||0);if(!v)v=base||0;const er=eff==null?null:eff/thr;if(er!=null)v*=1+iaCl(er-1,.25)*.6;
     const c01=x=>Math.max(0,Math.min(1,x)),rq=.5*c01(((v||0)-12)/12)+.5*(eff==null?.4:c01((eff-(thr-.1))/(opt-thr+.2)));
     return iaPC[k]={v:v||0,rk:true,sea,eff,thr,opt,rq,label:rq>=.65?"ottimo rookie":rq>=.4?"buon rookie":"rookie da valutare",rel:null}}
-  const ws=sea==null?0:.35*Math.min(1,pd.length/10),wl=l10==null?0:.10,wb=base>0?.35:0;let v=0,w=0;if(wb){v+=wb*base;w+=wb}if(ws){v+=ws*sea;w+=ws}if(wl){v+=wl*l10;w+=wl}v=w?v/w:0;
+  const ws=sea==null?0:EQP.psea*Math.min(1,pd.length/10),wl=l10==null?0:EQP.pl10,wb=base>0?EQP.pbase:0;let v=0,w=0;if(wb){v+=wb*base;w+=wb}if(ws){v+=ws*sea;w+=ws}if(wl){v+=wl*l10;w+=wl}v=w?v/w:0;
   try{pg=grGames(n,"2025/26").filter(x=>x.pdk!=null&&!isNaN(x.pdk)).map(x=>x.pdk)}catch(e){}
   const prev=pg.length>=15?pg.reduce((a,b)=>a+b,0)/pg.length:null;let rel=null;
-  const T=iaTrend(n);if(prev&&sea!=null&&pd.length>=3){rel=(sea-prev)/prev;if(T&&Math.sign(T.pct)!==Math.sign(rel))rel*=1-Math.min(.75,Math.abs(T.pct)/80*Math.min(1,Math.max(0,(T.n-4)/8)));v*=1+iaCl(rel,.4)*.5*Math.min(1,pd.length/8)}
-  if(T)v*=1+.22*iaTs(T.pct,T.n);return iaPC[k]={v,base,sea,l10,prev,rel,ng:pd.length,tr:T?T.pct:null}}
+  const T=iaTrend(n);if(prev&&sea!=null&&pd.length>=3){rel=(sea-prev)/prev;if(T&&Math.sign(T.pct)!==Math.sign(rel))rel*=1-Math.min(.75,Math.abs(T.pct)/80*Math.min(1,Math.max(0,(T.n-4)/8)));v*=1+iaCl(rel,EQP.prevc)*EQP.prevw*Math.min(1,pd.length/8)}
+  if(T)v*=1+EQP.ptr*iaTs(T.pct,T.n);return iaPC[k]={v,base,sea,l10,prev,rel,ng:pd.length,tr:T?T.pct:null}}
 const iaRs=n=>{const cr=iaCrOf(n);return Math.max(.05,(iaP(n)/VAL_CR)/Math.max(1,cr))};
 const iaEf=n=>{try{const v=pagella(n).s.eff;return v==null||isNaN(v)?null:v/5}catch(e){return null}};
 const iaCl=(v,a)=>Math.max(-a,Math.min(a,v));
@@ -3268,14 +3279,14 @@ function iaPref(t,recv,gave){const P=iaProf(t),o={dl:0,parts:[]},f1=v=>v.toFixed
   if(!recv.length&&!gave.length)return o;
   /* età */
   const aI=iaAvg(recv.map(x=>iaAge(x.n))),aO=iaAvg(gave.map(x=>iaAge(x.n)));
-  if(P.age!=null&&aI!=null){const dI=Math.abs(aI-P.age),dO=aO==null?dI:Math.abs(aO-P.age),fit=iaCl((dO-dI)/5,1),w=.07+.10*Math.min(1,Math.abs(P.age-P.lg)/2.5);o.dl+=w*fit;
+  if(P.age!=null&&aI!=null){const dI=Math.abs(aI-P.age),dO=aO==null?dI:Math.abs(aO-P.age),fit=iaCl((dO-dI)/5,1),w=EQP.eta0+EQP.eta1*Math.min(1,Math.abs(P.age-P.lg)/2.5);o.dl+=w*fit;
     if(fit>=.2)o.parts.push(`età media ${f1(P.age)} anni: riceve giocatori più in linea con la sua età (${f1(aI)} anni${aO!=null?` contro ${f1(aO)} di quelli che cede`:""})`);else if(fit<=-.2)o.parts.push(`età media ${f1(P.age)} anni: riceve giocatori meno in linea con la sua età (${f1(aI)} anni${aO!=null?` contro ${f1(aO)} di quelli che cede`:""})`)}
   /* rendimento (media di riferimento + stagione + ultime 10 + trend): a tutti non piace perdere rendimento a parità di valore */
-  const pI=iaAvg(recv.map(x=>iaPerf(x.n).v))||0,pO=iaAvg(gave.map(x=>iaPerf(x.n).v))||0,pd=iaCl((pI-pO)/Math.max(10,pI,pO),1);o.dl+=.10*pd;
+  const pI=iaAvg(recv.map(x=>iaPerf(x.n).v))||0,pO=iaAvg(gave.map(x=>iaPerf(x.n).v))||0,pd=iaCl((pI-pO)/Math.max(10,pI,pO),1);o.dl+=EQP.perf*pd;
   if(!(P.r&&P.c>=.25)&&Math.abs(pd)>=.2)o.parts.push(pd>0?`ci guadagna in rendimento (PDK ${f1(pI)} contro ${f1(pO)})`:`ci perde in rendimento (PDK ${f1(pI)} contro ${f1(pO)})`);
   /* rookie: chi punta a vincere non li prende; chi ricostruisce li cerca, soprattutto se già rendono (PDK ed efficienza del ruolo) */
   {const rI=recv.filter(x=>iaPerf(x.n).rk),rO=gave.filter(x=>iaPerf(x.n).rk),rd=iaSum(rI,x=>iaPerf(x.n).rq)-iaSum(rO,x=>iaPerf(x.n).rq);
-   if(rI.length||rO.length){o.dl+=.22*(-P.c)*iaCl(rd,1);
+   if(rI.length||rO.length){o.dl+=EQP.rook*(-P.c)*iaCl(rd,1);
      const dsc=x=>{const q=iaPerf(x.n);return`${x.n.split(" ").slice(-1)[0]} (${q.sea!=null?"PDK "+f1(q.sea):"nessuna gara"}${q.eff!=null?", efficienza "+q.eff.toFixed(2).replace(".",","):""} · ${q.label})`};
      if(P.r&&P.c<=-.25){if(rI.length)o.parts.push(`ricostruisce: riceve il rookie ${rI.map(dsc).join(", ")}`);if(rO.length)o.parts.push(`ricostruisce: cede malvolentieri il rookie ${rO.map(dsc).join(", ")}`)}
      else if(P.r&&P.c>=.3){if(rI.length)o.parts.push(`punta a vincere: non è interessata ai rookie (${rI.map(x=>x.n.split(" ").slice(-1)[0]).join(", ")})`);if(rO.length)o.parts.push(`punta a vincere: cede volentieri il rookie ${rO.map(x=>x.n.split(" ").slice(-1)[0]).join(", ")}`)}}}
@@ -3283,35 +3294,35 @@ function iaPref(t,recv,gave){const P=iaProf(t),o={dl:0,parts:[]},f1=v=>v.toFixed
   if(P.r&&Math.abs(P.c)>=.25){
     if(P.c>0){const qd=iaCl((iaAvg(recv.map(x=>iaQ(x.n)))??.5)-(iaAvg(gave.map(x=>iaQ(x.n)))??.5),.5)*2,
         tI=iaAvg(recv.map(x=>{const T=iaTrend(x.n);return T?T.pct:null})),tO=iaAvg(gave.map(x=>{const T=iaTrend(x.n);return T?T.pct:null})),tr=(tI!=null||tO!=null)?iaCl(((tI||0)-(tO||0))/60,1):0,
-        q=.30*qd+.50*pd+.20*tr;o.dl+=.40*P.c*q;
+        q=.30*qd+.50*pd+.20*tr;o.dl+=EQP.win*P.c*q;
       if(q>=.15)o.parts.push(`è ${P.r}ª in classifica e punta al titolo: riceve giocatori che rendono di più (PDK ${f1(pI)} contro ${f1(pO)}${tr>.15?", trend in crescita":""})`);else if(q<=-.15)o.parts.push(`è ${P.r}ª in classifica e punta al titolo, ma riceve giocatori che rendono meno (PDK ${f1(pI)} contro ${f1(pO)} di quelli che cede)`)}
     else{const yo=iaCl(((aO??aI??0)-(aI??aO??0))/5,1),rI=iaAvg(recv.map(x=>Math.log(iaRs(x.n)))),rO=iaAvg(gave.map(x=>Math.log(iaRs(x.n)))),rs=rI==null||rO==null?0:iaCl(rI-rO,1),eI=iaAvg(recv.map(x=>iaEf(x.n))),eO=iaAvg(gave.map(x=>iaEf(x.n))),ef=eI==null||eO==null?0:iaCl((eI-eO)*2,1),
-        q=.4*yo+.35*rs+.25*ef;o.dl+=.22*(-P.c)*q;
+        q=.4*yo+.35*rs+.25*ef;o.dl+=EQP.reb*(-P.c)*q;
       if(q>=.15)o.parts.push(`è ${P.r}ª in classifica: guarda al futuro, riceve giocatori ${yo>.15?"più giovani":""}${yo>.15&&(rs>.15||ef>.15)?", ":""}${rs>.15?"con più valore rispetto ai crediti":""}${rs>.15&&ef>.15?" e ":""}${ef>.15&&rs<=.15&&yo<=.15?"molto efficienti":ef>.15?"efficienti":""}`.replace(/, $/,""));else if(q<=-.15)o.parts.push(`è ${P.r}ª in classifica e dovrebbe ricostruire, ma riceve giocatori meno giovani/promettenti di quelli che cede`)}}
   return o}
 /* Interesse dell'altra squadra (3 livelli): conta il bisogno di ruolo (riceve un ruolo dove è corta, cede un ruolo dove abbonda) e il saldo di valore dal suo punto di vista */
-function iaInt(S,t,recv,gave,adv,cr){const nb=iaNeed(S,t,recv,gave),vs=Math.max(0,Math.min(1,.5+adv*1.25)),sc=.5+(.6*nb+.4*vs-.5)*2.6,l=sc>=.62?"alto":sc>=.42?"medio":"basso",d=S[t].def,nick=TEAMS[t].nick,p=[];
+function iaInt(S,t,recv,gave,adv,cr){const nb=iaNeed(S,t,recv,gave),vs=Math.max(0,Math.min(1,.5+adv*EQP.vsk)),sc=.5+(EQP.wnb*nb+EQP.wvs*vs-.5)*EQP.sck,l=sc>=EQP.thA?"alto":sc>=EQP.thM?"medio":"basso",d=S[t].def,nick=TEAMS[t].nick,p=[];
   const need=[...new Set(recv.filter(x=>!iaSp(x.n)&&d[x.r]>.12).map(x=>IA_RP[x.r]))],sur=[...new Set(gave.filter(x=>!iaSp(x.n)&&d[x.r]<-.08).map(x=>IA_RP[x.r]))];
   if(need.length)p.push(`riceve ${need.join(" e ")}, ruolo in cui è carente`);if(sur.length)p.push(`cede ${sur.join(" e ")}, ruolo in cui abbonda`);
   if(!need.length&&!sur.length)p.push("ruoli già coperti: per il suo roster è quasi neutro");
   if(adv<=-.10)p.push(`ci rimette circa il ${Math.round(-adv*100)}% di valore`);else if(adv>=.10)p.push(`ci guadagna circa il ${Math.round(adv*100)}% di valore`);
   /* trend dell'ultimo mese dei giocatori che cede: se è in salita non ha voglia di darlo, se è in calo se ne libera volentieri */
   let dl=0;const tot=gave.reduce((a,x)=>a+Math.max(1,x.v||x.val||1),0)||1,up=[],dn=[];
-  gave.forEach(x=>{const T=iaTrend(x.n);if(!T||Math.abs(T.pct)<10)return;const w=Math.max(1,x.v||x.val||1)/tot,c=iaTs(T.pct,T.n);dl-=c*.45*Math.max(.4,w);
+  gave.forEach(x=>{const T=iaTrend(x.n);if(!T||Math.abs(T.pct)<EQP.trmin)return;const w=Math.max(1,x.v||x.val||1)/tot,c=iaTs(T.pct,T.n);dl-=c*EQP.trg*Math.max(.4,w);
     (T.pct>0?up:dn).push(`${x.n.split(" ").slice(-1)[0]} ${T.pct>0?"+":"−"}${Math.round(Math.abs(T.pct))}%`+(Math.abs(T.pct)>=40?" (fortissimo)":Math.abs(T.pct)>=20?" (forte)":""))});
   if(up.length)p.push(`non ha voglia di cedere ${up.join(", ")}: in salita nell'ultimo mese`);if(dn.length)p.push(`volentieri cede ${dn.join(", ")}: in calo nell'ultimo mese`);
   /* trend dei giocatori che riceve (quelli che gli offro): in salita lo interessano di più, in calo meno */
   const totR=recv.reduce((a,x)=>a+Math.max(1,x.v||x.val||1),0)||1,rU=[],rD=[];
-  recv.forEach(x=>{const T=iaTrend(x.n);if(!T||Math.abs(T.pct)<10)return;const w=Math.max(1,x.v||x.val||1)/totR,c=iaTs(T.pct,T.n);dl+=c*.45*Math.max(.4,w);
+  recv.forEach(x=>{const T=iaTrend(x.n);if(!T||Math.abs(T.pct)<EQP.trmin)return;const w=Math.max(1,x.v||x.val||1)/totR,c=iaTs(T.pct,T.n);dl+=c*EQP.trr*Math.max(.4,w);
     (T.pct>0?rU:rD).push(`${x.n.split(" ").slice(-1)[0]} ${T.pct>0?"+":"−"}${Math.round(Math.abs(T.pct))}%`+(Math.abs(T.pct)>=40?" (fortissimo)":Math.abs(T.pct)>=20?" (forte)":""))});
   if(rU.length)p.push(`gli interessa di più perché ${rU.join(", ")} è in salita nell'ultimo mese`);if(rD.length)p.push(`gli interessa meno perché ${rD.join(", ")} è in calo nell'ultimo mese`);
   /* confronto con la STAGIONE PRECEDENTE (parametro chiave): chi cede un giocatore in calo rispetto all'anno scorso se ne libera volentieri, se è in crescita non lo vuole dare; per chi riceve è il contrario */
-  {const vs=(L,sg)=>{const a=[],tt=L.reduce((x,y)=>x+Math.max(1,y.v||1),0)||1;L.forEach(x=>{const q=iaPerf(x.n);if(q.rk||q.rel==null||Math.abs(q.rel)<.12)return;dl+=sg*iaCl(q.rel,.5)*.6*Math.max(.4,Math.max(1,x.v||1)/tt)*Math.min(1,(q.ng||0)/8);a.push(`${x.n.split(" ").slice(-1)[0]} ${q.rel>0?"in crescita":"in calo"} (PDK ${q.prev.toFixed(1).replace(".",",")} → ${q.sea.toFixed(1).replace(".",",")})`)});return a},
+  {const vs=(L,sg)=>{const a=[],tt=L.reduce((x,y)=>x+Math.max(1,y.v||1),0)||1;L.forEach(x=>{const q=iaPerf(x.n);if(q.rk||q.rel==null||Math.abs(q.rel)<EQP.prvmin)return;dl+=sg*iaCl(q.rel,EQP.prvcap)*EQP.prv*Math.max(.4,Math.max(1,x.v||1)/tt)*Math.min(1,(q.ng||0)/8);a.push(`${x.n.split(" ").slice(-1)[0]} ${q.rel>0?"in crescita":"in calo"} (PDK ${q.prev.toFixed(1).replace(".",",")} → ${q.sea.toFixed(1).replace(".",",")})`)});return a},
     gU=vs(gave,-1),rU2=vs(recv,1);if(gU.length)p.push(`rispetto alla scorsa stagione: cede ${gU.join(", ")}`);if(rU2.length)p.push(`rispetto alla scorsa stagione: riceve ${rU2.join(", ")}`)}
   const pf=iaPref(t,recv,gave);dl+=pf.dl;pf.parts.forEach(x=>p.push(x));
   /* (411) poca cassa (29 crediti o meno): ricevere crediti nello scambio le interessa di più, cederne meno */
-  {const low=iaCassa(t);if(cr&&low<=29){const ci=cr.in||0,co=cr.out||0;if(ci>0){dl+=Math.min(1,ci/30)*.25;p.push(`ha pochi crediti (${low}): le fa comodo ricevere ${ci} cr`)}if(co>0){dl-=Math.min(1,co/30)*.22;p.push(`ha pochi crediti (${low}) e ne cederebbe ${co}`)}}}
-  dl=Math.max(-.45,Math.min(.45,dl));const sc2=Math.max(0,Math.min(1,sc+dl)),l2=sc2>=.62?"alto":sc2>=.42?"medio":"basso";
+  {const low=iaCassa(t);if(cr&&low<=EQP.lowT){const ci=cr.in||0,co=cr.out||0;if(ci>0){dl+=Math.min(1,ci/EQP.lowSc)*EQP.lowIn;p.push(`ha pochi crediti (${low}): le fa comodo ricevere ${ci} cr`)}if(co>0){dl-=Math.min(1,co/EQP.lowSc)*EQP.lowOut;p.push(`ha pochi crediti (${low}) e ne cederebbe ${co}`)}}}
+  dl=Math.max(-EQP.dlmax,Math.min(EQP.dlmax,dl));const sc2=Math.max(0,Math.min(1,sc+dl)),l2=sc2>=EQP.thA?"alto":sc2>=EQP.thM?"medio":"basso";
   return{t,l:l2,sc:sc2,txt:`${nick}: ${p.join(" · ")}`}}
 const iaIntHTML=a=>a&&a.length?`<div class="iaint">${a.map(i=>`<div class="iaint1 ${i.l}"><span><b>Interesse ${i.l}</b></span><small>${i.txt}</small></div>`).join("")}</div>`:"";
 /* interesse nel calcolatore (stato attuale di VT / V3) */
@@ -3322,7 +3333,7 @@ function iaCalcInts(){iaPC={};const S=iaStats(),mk=n=>iaPl(n),out=[];
     out.push(iaInt(S,ta,VT.pl[1].map(mk),VT.pl[0].map(mk),(B-A)/Math.max(A,B,1),{in:+VT.cr[1]||0,out:+VT.cr[0]||0}),iaInt(S,tb,VT.pl[0].map(mk),VT.pl[1].map(mk),(A-B)/Math.max(A,B,1),{in:+VT.cr[0]||0,out:+VT.cr[1]||0}))}
   const f=out.filter(x=>x.t!==curTeam);return f.length?f:out}
 /* INTERESSE REALE di tutte le squadre coinvolte: lo scambio migliore è quello che interessa di più a tutti (conta soprattutto il meno interessato) */
-const iaMix=I=>{const v=I.map(x=>x.sc);return{minI:Math.min(...v),avgI:v.reduce((a,b)=>a+b,0)/v.length,mix:.55*Math.min(...v)+.45*v.reduce((a,b)=>a+b,0)/v.length}};
+const iaMix=I=>{const v=I.map(x=>x.sc);return{minI:Math.min(...v),avgI:v.reduce((a,b)=>a+b,0)/v.length,mix:EQP.mmin*Math.min(...v)+(1-EQP.mmin)*v.reduce((a,b)=>a+b,0)/v.length}};
 /* livello equilibrato: se ci sono abbastanza scambi che interessano almeno "abbastanza" a tutti (interesse ≥ medio), restano solo quelli */
 const iaTop=(o,lv)=>{if(lv!=="eq")return o;const g=o.filter(x=>x.minI>=.42);return g.length>=10?g:o};
 function iaBuild(){iaCache={};iaPC={};const A=iaTeam(),S=iaStats(),give=IA.give.filter(n=>ROSTER[A].some(p=>p[0]===n)),w={};IA.needs.forEach((r,i)=>{if(r)w[r]=IA_W[i]});if(IA.any)["G","F","C"].forEach(r=>w[r]=1);
@@ -3378,7 +3389,7 @@ function iaBuildPl(){iaCache={};iaPC={};const A=iaTeam(),S=iaStats(),lv=IA.lv||"
     return{B,T,s,vT,need,back,R,G,d,adv,bal}};
   if(teams.length===1){const B=teams[0],T=byT[B],sg=iaSig(T);
     (bySig[sg]||[]).forEach(s=>{const p=part(B,T,s);if(!p)return;if(lv!=="eq"&&(p.adv<=LV[0]||p.adv>LV[1]))return;
-      const bal=lv==="eq"?p.bal:Math.max(0,1-Math.abs(p.adv-LV[2])/.3),it=iaInt(S,B,s.a.map(iaPl),T,(p.G-p.R)/Math.max(p.G,p.R,1),{in:p.need,out:p.back}),mx=iaMix([it]),sc=.25*gf(s.a)+.15*bal+.60*mx.mix-.02*s.a.length;
+      const bal=lv==="eq"?p.bal:Math.max(0,1-Math.abs(p.adv-LV[2])/.3),it=iaInt(S,B,s.a.map(iaPl),T,(p.G-p.R)/Math.max(p.G,p.R,1),{in:p.need,out:p.back}),mx=iaMix([it]),sc=EQP.sgf*gf(s.a)+EQP.sbal*bal+EQP.smix*mx.mix-.02*s.a.length;
       out.push({ty:2,B,give:s.a,take:T.map(x=>x.n),cr:iaAlloc(p.need),need:p.need,back:p.back,d:p.d,adv:p.adv,sc,minI:mx.minI,int:[it],why:["Giocatori scelti da te",...(s.a.some(n=>!iaSp(n))?["Ruoli compensati: dai e ricevi lo stesso ruolo"]:[]),...T.filter(x=>iaSp(x.n)).map(x=>`${x.n}: trade speciale, senza contropartita`)],key:"p2|"+B+"|"+s.a.join(",")+"|"+T.map(x=>x.n).join(",")+"|"+p.need})})
   }else{
     /* TRADE A 3 VERA: scelgo giocatori di due squadre (g e r). Tutte e tre le squadre si scambiano giocatori:
@@ -3401,7 +3412,7 @@ function iaBuildPl(){iaCache={};iaPC={};const A=iaTeam(),S=iaStats(),lv=IA.lv||"
           else{Rg=vTg+M.v;Gg=ag.v;Rr=vTr;Gr=ar.v+M.v;const R=vTg+vTr,G=ag.v+ar.v;if(!ag.a.length&&!ar.a.length)return;adv=(R-G)/Math.max(R,G,1);if(adv<=LV[0]||adv>LV[1])return;d=adv;bal=Math.max(0,1-Math.abs(adv-LV[2])/.3)}
           const all=[...ag.a,...ar.a],gG=ag.a.map(iaPl),gR=ar.a.map(iaPl),need=ng+nr,
             its=[iaInt(S,g,gG,[...Tg,M],(Gg-Rg)/Math.max(Gg,Rg,1),{in:ng,out:bg}),iaInt(S,r,[...gR,M],Tr,(Gr-Rr)/Math.max(Gr,Rr,1),{in:nr,out:br})],mx=iaMix(its),
-            sc=.25*gf(all)+.15*bal+.60*mx.mix-.02*all.length;
+            sc=EQP.sgf*gf(all)+EQP.sbal*bal+EQP.smix*mx.mix-.02*all.length;
           out.push({ty:5,g,r,ag:ag.a,ar:ar.a,Tg:Tg.map(x=>x.n),Tr:Tr.map(x=>x.n),M:M.n,ng,bg,nr,br,cr:iaAlloc(need),need,d,adv,sc,minI:mx.minI,
             int:its,
             why:["Giocatori scelti da te","Trade a 3 vera: tutte e tre le squadre si scambiano giocatori",`${TEAMS[g].nick} → ${TEAMS[r].nick}: ${M.n}`,"Ruoli compensati per ogni squadra (a parte le speciali) e crediti che tornano"],
@@ -3474,7 +3485,7 @@ function iaBuildWeb(A,want,lv,nmax,S){
       const key="w|"+U.slice().sort().join("")+"|"+mv.map(m=>m.n+">"+m.to).sort().join(",")+"|"+cx.map(c=>c.from+c.to+c.v).sort().join(",");
       if(seenK.has(key))continue;seenK.add(key);
       const its=U.filter(t=>t!==A).map(t=>iaInt(S,t,recv[t].map(iaPl),gave[t].map(iaPl),(Rc[t]-Gc[t])/Math.max(Rc[t],Gc[t],1),{in:iaSum(cx.filter(c=>c.to===t),c=>c.v),out:iaSum(cx.filter(c=>c.from===t),c=>c.v)})),mx=iaMix(its),
-        bl=lv==="eq"?1-dmax/.10:Math.max(0,1-Math.abs(advA-LV[2])/.3),sc=.25*iaGf(S,A,gave[A])+.15*bl+.60*mx.mix-.02*gave[A].length-.035*(K-2);
+        bl=lv==="eq"?1-dmax/.10:Math.max(0,1-Math.abs(advA-LV[2])/.3),sc=EQP.sgf*iaGf(S,A,gave[A])+EQP.sbal*bl+EQP.smix*mx.mix-.02*gave[A].length-.035*(K-2);
       out.push({ty:6,T:U,mv,cx,d:lv==="eq"?dmax:advA,adv:advA,sc,minI:mx.minI,int:its,cr:iaAlloc(myPay),need:myPay,
         why:["Giocatore scelto da te",`Scambio a ${K} squadre: ogni squadra dà e riceve gli stessi ruoli`,...(cx.length?[`Crediti compensati con ${cx.length} ${cx.length===1?"pagamento":"pagamenti"} tra le squadre`]:[])],key})}});
   return out}
@@ -3518,7 +3529,7 @@ function iaCard(x,i){const A=iaTeam(),cl=(d)=>d<.10?"ok":d<.40?"mid":"bad",pc=Ma
   const body=`${trCols(R,T,A)}${crs?`<div class="iacrn"><small>Crediti che dai, da dove arrivano</small>${crs}</div>`:""}`;
   return `<div class="iacard"><div class="iahd"><span class="ian1">${i+1}</span>${lab}<span class="iabal ${IA.lv==="eq"?"ok":cl(x.d)}">${bt}</span></div>${body}
    <div class="iawhy">${x.why.map(w=>`<span>${w}</span>`).join("")}</div>${iaIntHTML(x.int)}
-   <div class="iaact">${x.ty===6&&x.T.length>3?"":`<button class="iaopen" data-ia="open" data-i="${i}">Apri nel calcolatore</button>`}<button class="bshare iash" data-ia="share" data-i="${i}" aria-label="Condividi scambio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div>`}
+   ${window.EQ_NA?"":`<div class="iaact">${x.ty===6&&x.T.length>3?"":`<button class="iaopen" data-ia="open" data-i="${i}">Apri nel calcolatore</button>`}<button class="bshare iash" data-ia="share" data-i="${i}" aria-label="Condividi scambio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>`}</div>`}
 function iaApply(x){const A=iaTeam();
   if(x.ty===6){if(x.T.length>3)return;V3.t=x.T.slice();const ix=t=>x.T.indexOf(t);V3.it=[...x.mv.map(m=>({k:ix(m.from),to:ix(m.to),ty:"pl",n:m.n})),...x.cx.map(c=>({k:ix(c.from),to:ix(c.to),ty:"cr",v:c.v}))];VT.tab="calc3"}
   else if(x.ty===2){VT.t=[A,x.B];VT.pl=[[...x.give],[...x.take]];VT.cr=[x.need,x.back||0];VT.pk=[[],[]];VT.tab="calc"}
@@ -3643,7 +3654,7 @@ function vTradeAll(){
    Giocatori non in lista: VAL_FALLBACK. Per aggiornare: rigenerare VALORI con la stessa formula. */
 let VALORI_AGG="26/10/2026";
 const VALORI={"Victor Wembanyama":["C",3250],"Nikola Jokić":["C",3150],"Luka Dončić":["G",2500],"Jalen Johnson":["F",1993],"Jalen Duren":["C",1500],"Cade Cunningham":["G",1900],"Shai Gilgeous-Alexander":["G",1750],"Domantas Sabonis":["C",1850],"Donovan Clingan":["C",1250],"Josh Giddey":["G",1850],"Giannis Antetokounmpo":["F",1950],"Alperen Şengün":["C",1610],"Cameron Boozer":["F",1499,1],"Tyrese Haliburton":["G",1420],"Cooper Flagg":["F",1700],"Tyrese Maxey":["G",1505],"Stephon Castle":["G",1230],"Jayson Tatum":["F",1510],"Chet Holmgren":["F",1260],"Scottie Barnes":["F",1350],"Deni Avdija":["F",1261],"Karl-Anthony Towns":["C",1250],"Evan Mobley":["F",1248],"LaMelo Ball":["G",1150],"Alex Sarr":["C",980],"Trae Young":["G",1210],"Anthony Davis":["F",1199],"Paolo Banchero":["F",1350],"Anthony Edwards":["G",1260],"AJ Dybantsa":["F",1250,1],"Walker Kessler":["C",1160],"Amen Thompson":["G",1310],"Keyonte George":["G",1163],"Caleb Wilson":["F",1240,1],"Kon Knueppel":["G",1229],"Jamal Murray":["G",1141],"Kel'el Ware":["C",1080],"Donovan Mitchell":["G",1160],"Dyson Daniels":["G",989],"Darryn Peterson":["G",1158,1],"Bam Adebayo":["C",999],"Aday Mara":["C",950,1],"Ja Morant":["G",1060],"Joel Embiid":["C",1265],"Brandon Miller":["F",900],"Jarrett Allen":["C",985],"Jaylen Brown":["F",1050],"Lauri Markkanen":["F",914],"Trey Murphy III":["F",919],"Onyeka Okongwu":["C",910],"Michael Porter Jr.":["F",908],"VJ Edgecombe":["G",1155],"Darius Acuff Jr.":["G",900,1],"Isaiah Hartenstein":["C",300],"Derik Queen":["C",1190],"Kawhi Leonard":["F",750],"Mikel Brown Jr.":["G",840,1],"Jalen Williams":["F",597],"Jalen Brunson":["G",869],"Austin Reaves":["G",967],"Keaton Wagler":["G",780,1],"Franz Wagner":["F",1045],"Zion Williamson":["F",839],"Ryan Rollins":["G",550],"Brayden Burries":["G",830,1],"Darius Garland":["G",820],"Ivica Zubac":["C",1100],"Devin Booker":["G",790],"Zach Edey":["C",690],"Moussa Diabaté":["C",400],"Tyler Herro":["G",781],"Kyshawn George":["F",780],"Sergio De Larrea":["G",599,1],"Immanuel Quickley":["G",650],"Matas Buzelis":["F",940],"Damian Lillard":["G",758],"Yaxel Lendeborg":["F",750,1],"De'Aaron Fox":["G",747],"Ausar Thompson":["F",650],"Jabari Smith Jr.":["F",726],"Cedric Coward":["G",380],"James Harden":["G",1001],"Julius Randle":["F",705],"Dylan Harper":["G",1220],"Kingston Flemings":["G",700,1],"Dejounte Murray":["G",650],"Maxime Raynaud":["C",687],"Collin Murray-Boyles":["F",1010],"Pascal Siakam":["F",780],"Desmond Bane":["G",636],"RJ Barrett":["F",590],"Rudy Gobert":["C",630],"Kyrie Irving":["G",629],"Miles Bridges":["F",605],"Jaime Jaquez Jr.":["F",604],"Josh Hart":["F",595],"Stephen Curry":["G",594],"Brandon Ingram":["F",390],"Ace Bailey":["F",660],"LeBron James":["F",980],"Jeremiah Fears":["G",800],"Kristaps Porziņģis":["C",30],"Allen Graves":["F",380,1],"Morez Johnson Jr.":["F",300,1],"Kevin Durant":["F",960],"Naz Reid":["F",300],"Egor Dëmin":["G",527],"Jalen Green":["G",472],"Paul George":["F",250],"Jonathan Kuminga":["F",170],"Danny Wolf":["F",150],"Oso Ighodaro":["C",90],"Trevon Brazile":["F",90,1],"Hannes Steinbach":["C",380,1],"Khaman Maluach":["C",450]};
-const VAL_EXP=2,VAL_CR=Math.pow(1.15,2)*1000/300,VAL_FALLBACK=400,PICK_CR={1:300,2:250,3:200,4:150,5:100};
+let VAL_EXP=2,VAL_CR=Math.pow(1.15,2)*1000/300,VAL_FALLBACK=400,PICK_CR={1:300,2:250,3:200,4:150,5:100};
 const vnz=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/ş/g,"s").replace(/[.'’]/g,"").replace(/\s+(jr|sr|ii|iii|iv)$/,"").replace(/\s+/g," ").trim();
 const VALMAP=(()=>{const m={};Object.entries(VALORI).forEach(([n,a])=>m[vnz(n)]=a);return m})();
 const valOf=n=>{const a=VALMAP[vnz(n)];return a?a[1]:null};
@@ -7870,7 +7881,7 @@ function vValReg(){const e=x=>String(x).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&
   ${VAL_CORREZ.map(c=>`<article class="nvi"><b>${e(c[0])} · ${e(c[1])}</b><span>${e(c[2])}</span></article>`).join("")}`}
 VIEWS.valreg=vValReg;
 document.addEventListener("input",e=>{if(e.target.id!=="vrq")return;const q=e.target.value.trim().toLowerCase();document.querySelectorAll(".vrr").forEach(r=>{r.style.display=!q||r.dataset.vrn.includes(q)?"":"none"});if(q)document.querySelectorAll(".vrw").forEach(d=>d.open=true)});
-document.addEventListener("click",e=>{if(e.target.closest("#vrback")){cur="novita";render();window.scrollTo(0,0)}});
+document.addEventListener("click",e=>{if(e.target.closest("#vrback")){cur=window.EQ_FROM?"eq":"novita";window.EQ_FROM=0;render();window.scrollTo(0,0)}});
 window.vNovita=function(){const by={};NV_LOG.forEach(x=>(by[x[0]]=by[x[0]]||[]).push(x));
   const e=x=>String(x).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
   return`<button class="gback" id="nvback">‹ Indietro</button><h2><span class="t">Cronologia modifiche</span></h2>
@@ -8090,6 +8101,14 @@ cfStart();
 .hofpal{display:grid;gap:6px;margin:4px 0 16px}.hofrow{display:grid;grid-template-columns:24px auto auto 1fr;gap:8px;align-items:center;padding:9px 12px;border-radius:12px;background:linear-gradient(90deg,rgba(245,196,0,.18),rgba(245,196,0,.04));border:1px solid rgba(245,196,0,.45)}
 .hofrow i{font-style:normal;font-size:16px}.hofrow b{font-family:var(--display);font-style:italic;font-weight:800;text-transform:uppercase;color:#ffd75e;font-size:15px}.hofrow span{font-size:12px;color:#e5dcff;font-weight:700}.hofrow em{font-style:normal;font-size:11px;text-align:right;color:#fff}
 .hofrow.nx{background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.22)}.hofrow.nx b,.hofrow.nx i{color:#b9aee0}.hofrow.nx em{color:#b9aee0}
+.eqtabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}.eqtab,.eqb,.eqgo{padding:9px 8px;border-radius:12px;border:1px solid rgba(245,196,0,.45);background:rgba(245,196,0,.08);color:#ffd75e;font:800 13px var(--display);cursor:pointer}.eqtab.on,.eqb.on{background:#f5c400;color:#1a1030}.eqgo{flex:1;background:#f5c400;color:#1a1030;font-size:15px;padding:12px}.eqgo:disabled{opacity:.6}
+.eqrow{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.eqrow .eqb{flex:1 1 auto}.eqrow .eqtm{padding:4px 4px;flex:0 0 auto}.eqbd{width:26px;height:26px;display:inline-block;vertical-align:middle;border-radius:6px}
+.eqpct{display:flex;align-items:center;gap:8px;color:#fff;margin:6px 0}.eqpct input{width:72px;padding:8px;border-radius:10px;border:1px solid rgba(245,196,0,.5);background:#0e0820;color:#fff;font:800 16px var(--display)}
+.eqd{border:1px solid rgba(255,255,255,.18);border-radius:12px;margin:8px 0;padding:6px 8px;background:rgba(255,255,255,.04)}.eqd summary{cursor:pointer;color:#fff;font-size:13px}.eqi{font-style:normal;font-size:11px;font-weight:800;padding:1px 6px;border-radius:8px;margin-left:3px;background:rgba(255,255,255,.12);display:inline-block}.eqi.alto{background:#1f8f4d}.eqi.medio{background:#b88a00}.eqi.basso{background:#b3262e}
+.eqpr,.eqpl{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid rgba(255,255,255,.1);color:#fff}.eqpr b{font-size:13px;display:block}.eqpr small{display:block;color:rgba(255,255,255,.62);font-size:11px;line-height:1.25}.eqpr.chg b,.eqpl.chg .eqn{color:#ffd75e}
+.eqin{text-align:right}.eqin small{text-align:right}.eqr input{width:84px;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,.3);background:#0e0820;color:#fff;font:700 15px var(--display);text-align:right;box-sizing:border-box}.eqr.chg input{border-color:#f5c400;background:#2a1c00;color:#ffd75e}
+.eqpl{grid-template-columns:1fr}.eqn{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700}.eqin3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.eqin3 .eqr input{width:100%}.eqhd{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;color:rgba(255,255,255,.6);font-size:11px;text-align:center;margin-top:6px}.eqhd span:first-child{display:none}
+.eqta{width:100%;box-sizing:border-box;border-radius:10px;border:1px solid rgba(245,196,0,.5);background:#0e0820;color:#fff;font-size:12px;padding:8px;margin-top:8px}.eqrs:disabled,.eqb:disabled{opacity:.45}.eqreg{width:100%}
 .hofmini{float:right;margin-top:-3px;padding:4px 10px;border-radius:999px;border:1px solid rgba(245,196,0,.55);background:rgba(245,196,0,.12);color:#ffd75e;font:800 12px var(--display);font-style:italic;letter-spacing:.06em;cursor:pointer}
 .orr{display:grid;grid-template-columns:78px minmax(0,1fr);gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.1)}.orr>b{font:800 16px var(--display);font-style:italic;color:#ffd75e;white-space:nowrap}.orr strong{display:block;font-size:14px;color:#fff}.orr small{display:block;margin-top:2px;font-size:12.5px;line-height:1.35;color:#c4b5fd}
 .hofsec{font-family:var(--display);font-style:italic;font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:13px;color:#ffd75e;margin:6px 2px 10px}
@@ -8158,6 +8177,7 @@ function sala(){if(!COL.d){cur="campo";return vCampo()}
  ${cab()}${palm()}
  <div class="hofsec">Entra in una sezione<button class="hofmini" data-hof="orari" type="button">🕐 Orari</button></div>
  <div class="hoft">
+  <button class="hoftile" data-hof="eq"><span class="hi">⚖️</span><span><b>Gestione equilibrio trade</b><small>Simulatore · parametri · valori · registro</small></span><i>›</i></button>
   <button class="hoftile" data-hof="college"><span class="hi">🔭</span><span><b>Scouting</b><small>Ufficio Scouting · college, NBA, prospetti</small></span><i>›</i></button>
   <button class="hoftile" data-hof="pers"><span class="hi">🎨</span><span><b>Personalizzazioni</b><small>Loghi e look della tua app</small></span><i>›</i></button>
   <button class="hoftile" data-hof="soft"><span class="hi">⚙️</span><span><b>Software</b><small>Cap · Multe</small></span><i>›</i></button>
@@ -8203,9 +8223,167 @@ function orari(){if(!COL.d){cur="campo";return vCampo()}
   R("Ogni 60 s","Home","Aggiorna da sola banner e tabelle mentre è aperta."),
   R("Release","Archivio Dreamers","Quando si pubblica una nuova versione dell'app l'archivio delle notti Dreamers si rigenera da solo.")])}
  <p class="hoftt">🦆 Texas Ducks · uso interno</p></div>`}
+/* (412) GESTIONE EQUILIBRIO TRADE (area riservata Ducks — SEGRETO, non in NV_LOG).
+   Simulatore di trade casuali a 2-5 squadre con i parametri di interesse dell'IA (EQP) e i valori dei giocatori; ogni numero si può cambiare SOLO qui,
+   solo su questo telefono (localStorage dl_eq) e SOLO dentro eqWith(): fuori da questa sezione l'app usa sempre i valori ufficiali. Due ripristini separati
+   (parametri / valori e crediti) e due "Condividi" che producono un prompt per Claude con i numeri cambiati. */
+const EQ_PAR=[
+ ["Interesse dell'altra squadra","Come si costruisce il punteggio di interesse (alto / medio / basso) di una squadra per lo scambio",[
+  ["wnb","Peso del bisogno di ruolo","Quanto conta ricevere un ruolo in cui è corta (con il peso del valore fa 1)",.01],
+  ["wvs","Peso del saldo di valore","Quanto conta il guadagno/perdita di valore dal suo punto di vista",.01],
+  ["vsk","Sensibilità al saldo di valore","Un saldo del 10% sposta il punteggio di 10 × questo numero",.05],
+  ["sck","Amplificazione del punteggio","Quanto si allontana dal 50% il punteggio base",.1],
+  ["thA","Soglia interesse ALTO","Punteggio da cui l'interesse è alto",.01],
+  ["thM","Soglia interesse MEDIO","Punteggio da cui l'interesse è medio",.01],
+  ["dlmax","Tetto delle correzioni","Massimo spostamento dovuto a trend, stagione precedente, età, classifica, crediti",.01]]],
+ ["Trend dell'ultimo mese","Giocatori in salita o in calo",[
+  ["trg","Peso trend dei giocatori ceduti","Se in salita non li vuole cedere",.01],
+  ["trr","Peso trend dei giocatori ricevuti","Se in salita li vuole di più",.01],
+  ["trmin","Trend minimo (%)","Sotto questa variazione % il trend è ignorato",1],
+  ["tsx","Trend a effetto pieno (%)","Variazione % che dà l'effetto massimo",5],
+  ["tse","Curvatura del trend","Esponente: più alto = i piccoli trend contano meno",.1],
+  ["tsrel","Gare per affidabilità piena","Gare dell'ultimo mese oltre le 4 per fidarsi del trend",1]]],
+ ["Confronto con la stagione precedente","Chi rende più/meno dell'anno scorso",[
+  ["prv","Peso del confronto","Effetto sull'interesse",.01],
+  ["prvmin","Differenza minima","Sotto questa differenza (es. 0,12 = 12%) è ignorato",.01],
+  ["prvcap","Tetto del confronto","Massima differenza considerata",.05]]],
+ ["Pochi crediti in cassa","Squadra a corto di crediti",[
+  ["lowT","Soglia 'pochi crediti'","Da questa cassa in giù la squadra è a corto",1],
+  ["lowIn","Interesse a ricevere crediti","Bonus massimo",.01],
+  ["lowOut","Disinteresse a cedere crediti","Malus massimo",.01],
+  ["lowSc","Crediti per effetto pieno","Quanti crediti danno l'effetto massimo",1]]],
+ ["Rendimento, età, classifica","Preferenze di ogni squadra",[
+  ["perf","Peso del rendimento (PDK)","A tutti non piace perdere rendimento",.01],
+  ["eta0","Età: peso base","Preferenza per giocatori della propria età",.01],
+  ["eta1","Età: peso extra","Se la squadra è molto diversa dalla media lega",.01],
+  ["rook","Peso dei rookie","Chi ricostruisce li cerca, chi punta a vincere no",.01],
+  ["win","Squadra che punta al titolo","Peso della ricerca di rendimento",.01],
+  ["reb","Squadra che ricostruisce","Peso della ricerca di giovani/valore",.01]]],
+ ["Rendimento di un giocatore","Come si calcola il PDK usato",[
+  ["pbase","Media di riferimento","Peso della media storica",.01],
+  ["psea","Media stagionale","Peso (cresce con le gare)",.01],
+  ["pl10","Ultime 10 gare","Peso",.01],
+  ["prevw","Confronto stagione prec.","Effetto sul rendimento",.05],
+  ["prevc","Tetto confronto stagione prec.","Massima differenza",.05],
+  ["ptr","Trend sul rendimento","Effetto del trend",.01]]],
+ ["Valore e proposte","Valore del giocatore e punteggio delle proposte",[
+  ["star","Qualità (stelline) sul valore","±8% con 0,16: la qualità sposta il valore",.01],
+  ["outq","Valore di un infortunato (OUT)","1 = pieno",.05],
+  ["nx","Bisogno: peso del valore","Ruoli carenti in valore",.05],
+  ["np","Bisogno: peso del PDK","Ruoli carenti in rendimento",.05],
+  ["sgf","Punteggio proposta: bisogno di ruolo","Peso nel punteggio",.01],
+  ["sbal","Punteggio proposta: equilibrio","Peso nel punteggio",.01],
+  ["smix","Punteggio proposta: interesse","Peso nel punteggio",.01],
+  ["mmin","Interesse: peso della squadra meno interessata","Il resto è la media",.05]]]];
+const EQ_LAB={};EQ_PAR.forEach(g=>g[2].forEach(r=>EQ_LAB[r[0]]=r));
+const EQ={tab:"sim",n:2,mode:"eq",pct:15,sc:null,keyRun:"",res:[],shown:12,all:false,msg:"",prompt:"",pt:"",vq:"",vt:"",busy:false};
+let EQO={p:{},v:{},pr:{},rc:{},pk:{},g:{}};
+try{const o=JSON.parse(localStorage.getItem("dl_eq")||"null");if(o)EQO={...EQO,...o}}catch(e){}
+const eqSave=()=>{try{localStorage.setItem("dl_eq",JSON.stringify(EQO))}catch(e){}};
+const eqNum=x=>String(Math.round(x*1000)/1000).replace(".",",");
+function eqWith(fn){const sv={P:{},V:[],PR:[],RC:[],PK:{},VC:VAL_CR,VE:VAL_EXP,LV:IA_LV.cus,IA:{lv:IA.lv,np:IA.np,team:IA.team,want:IA.want,keep:IA.keep,cr:IA.cr,mode:IA.mode,pool:IA.pool,out:IA.out}};
+  const wipe=()=>{iaCache={};iaPC={};IA.pool=null};
+  try{Object.keys(EQO.p).forEach(k=>{if(k in EQP){sv.P[k]=EQP[k];EQP[k]=EQO.p[k]}});
+   Object.keys(EQO.v).forEach(n=>{const k=vnz(n),a=VALMAP[k];if(a){sv.V.push([a,a[1]]);a[1]=EQO.v[n]}else{VALMAP[k]=[ruoloDi(n),EQO.v[n]];sv.V.push([k,null])}});
+   Object.keys(EQO.pr).forEach(n=>{sv.PR.push([n,PREZZO_FISSO[n]]);PREZZO_FISSO[n]=EQO.pr[n]});
+   Object.keys(EQO.rc).forEach(n=>{for(const t in ROSTER){const p=ROSTER[t].find(x=>x[0]===n);if(p){sv.RC.push([p,p[4]]);p[4]=EQO.rc[n]}}});
+   Object.keys(EQO.pk).forEach(k=>{sv.PK[k]=PICK_CR[k];PICK_CR[k]=EQO.pk[k]});
+   if(EQO.g.vcr!=null)VAL_CR=EQO.g.vcr;if(EQO.g.exp!=null)VAL_EXP=EQO.g.exp;
+   wipe();return fn()}
+  finally{Object.keys(sv.P).forEach(k=>EQP[k]=sv.P[k]);sv.V.forEach(([a,o])=>{if(typeof a==="string")delete VALMAP[a];else a[1]=o});
+   sv.PR.forEach(([n,o])=>{if(o==null)delete PREZZO_FISSO[n];else PREZZO_FISSO[n]=o});sv.RC.forEach(([p,o])=>p[4]=o);Object.keys(sv.PK).forEach(k=>PICK_CR[k]=sv.PK[k]);
+   VAL_CR=sv.VC;VAL_EXP=sv.VE;if(sv.LV)IA_LV.cus=sv.LV;else delete IA_LV.cus;Object.assign(IA,sv.IA);wipe()}}
+const eqTeams=x=>x.ty===6?x.T.length:x.ty===2?2:3;
+function eqLv(){if(EQ.mode==="eq")return"eq";const p=Math.max(1,Math.min(80,+EQ.pct||15))/100;IA_LV.cus=[Math.max(0,p-.03),p+.03,p];return"cus"}
+function eqNewSc(){const T=Object.keys(ROSTER);let tries=0;while(tries++<60){const A=T[Math.floor(Math.random()*T.length)],O=T.filter(t=>t!==A),B=O[Math.floor(Math.random()*O.length)],
+   L=ROSTER[B].filter(p=>!iaOut(p[0])&&!iaSp(p[0])).map(p=>p[0]);if(L.length<2)continue;const w=[L[Math.floor(Math.random()*L.length)]];if(Math.random()<.4){const o=L.filter(x=>x!==w[0]);w.push(o[Math.floor(Math.random()*o.length)])}
+   return{A,want:w}}return null}
+function eqRun(){const sc=EQ.sc;if(!sc){EQ.res=[];return}
+  const lv=eqLv();IA.team=sc.A;IA.want=sc.want.slice();IA.keep=[];IA.mode="pl";IA.lv=lv;IA.np=Math.max(EQ.n,3);IA.cr={c:Math.min(iaCassa(sc.A),100),p:0,d:0};
+  let r=[];try{r=iaBuildPl()}catch(e){console.error(e)}
+  r=r.filter(x=>eqTeams(x)===EQ.n);EQ.res=r;
+  EQ.html=r.slice(0,EQ.all?400:EQ.shown).map((x,i)=>{window.EQ_NA=1;try{return iaCard(x,i)}finally{window.EQ_NA=0}});EQ.hd=r.slice(0,EQ.all?400:EQ.shown).map(x=>({d:x.d,i:(x.int||[]).map(y=>[y.t,y.l,Math.round(y.sc*100)])}));
+  EQ.tot=r.length}
+function eqScHTML(){const sc=EQ.sc;if(!sc)return`<p class="setnote">Premi <b>Nuova simulazione</b>: l'app sceglie a caso una squadra e uno o due giocatori che vuole da un'altra squadra, poi mostra tutte le proposte a ${EQ.n} squadre secondo i parametri.</p>`;
+  return`<p class="setnote">${badge(sc.A,"eqbd")} <b>${TEAMS[sc.A].nick}</b> vuole ${sc.want.map(n=>`<b>${nmAb(n)}</b>`).join(" e ")} dei <b>${TEAMS[iaOwner(sc.want[0])].nick}</b> · cassa ${iaCassa(sc.A)} cr · ${EQ.n} squadre</p>`}
+function eqSim(){
+  const kr=JSON.stringify([EQ.sc,EQ.n,EQ.mode,EQ.mode==="eq"?0:EQ.pct,EQO,EQ.all]);
+  if(EQ.sc&&!EQ.busy&&EQ.keyRun!==kr){EQ.keyRun=kr;eqRun()}
+  const nb=b=>`<button class="eqb${EQ.n===b?" on":""}" data-eq="n" data-v="${b}">${b} squadre</button>`;
+  const md=(k,l)=>`<button class="eqb${EQ.mode===k?" on":""}" data-eq="mode" data-v="${k}">${l}</button>`;
+  const ch=EQ.hd||[];
+  return`<section class="hofcard"><h4>Simulatore</h4>
+  <div class="eqrow">${[2,3,4,5].map(nb).join("")}</div>
+  <div class="eqrow">${md("eq","⚖️ Equilibrate (±10%)")}${md("win","🏆 Vinco io")}${md("scam","🎭 Truffa")}</div>
+  ${EQ.mode==="eq"?`<p class="setnote">Mostro in automatico le proposte considerate equilibrate (saldo fino a ±10% tra le squadre).</p>`:`<label class="eqpct"><span>${EQ.mode==="win"?"Percentuale di vittoria":"Percentuale di truffa"}</span><input type="number" inputmode="decimal" min="1" max="80" step="1" value="${EQ.pct}" data-eq="pct"><b>%</b></label><p class="setnote">Cerco proposte in cui il tuo vantaggio è circa ${EQ.pct}% (±3). Consiglio: vittoria 10-40%, truffa oltre 40%.</p>`}
+  ${eqScHTML()}
+  <div class="eqrow"><button class="eqgo" data-eq="new"${EQ.busy?" disabled":""}>${EQ.busy?"⏳ Calcolo…":"🔄 Nuova simulazione (Aggiorna)"}</button>${EQ.sc?`<button class="eqb" data-eq="again">↻ Stesso scenario</button>`:""}</div></section>
+  ${EQ.sc&&!EQ.busy?`<section class="hofcard"><h4>${EQ.tot||0} proposte a ${EQ.n} squadre</h4>${EQ.tot?"":`<p class="setnote">Nessuna combinazione con questi parametri e questo scenario. Premi Nuova simulazione, oppure cambia i parametri/valori.</p>`}
+  ${(EQ.html||[]).map((h,i)=>`<details class="eqd"><summary><b>#${i+1}</b> <span>${EQ.mode!=="eq"?"+":"±"}${Math.round((ch[i]?ch[i].d:0)*100)}%</span> ${(ch[i]?ch[i].i:[]).map(y=>`<em class="eqi ${y[1]}">${TEAMS[y[0]].nick} ${y[1]} ${y[2]}</em>`).join("")}</summary>${h}</details>`).join("")}
+  ${EQ.tot>(EQ.html||[]).length?`<button class="eqb" data-eq="more">Mostra tutte (${EQ.tot})</button>`:""}</section>`:""}`}
+function eqVal(def,cur,key,grp,step){const ch=def!=null&&Math.abs(cur-def)>1e-9;return`<label class="eqr${ch?" chg":""}"><input type="number" inputmode="decimal" step="${step||.01}" value="${cur==null?"":cur}" data-eqv="${grp}" data-k="${key}" data-def="${def==null?"":def}"></label>`}
+function eqPar(){const q=vnz(EQ.pt||"");const n=Object.keys(EQO.p).length;
+  return`<section class="hofcard"><h4>Parametri di interesse</h4><p class="setnote">Sono i numeri con cui l'IA decide quanto una squadra è interessata a uno scambio. Cambiali e torna al Simulatore: ricalcola da solo sullo stesso scenario. Il valore di serie è sotto ogni casella.</p>
+  <input class="vtq" type="search" placeholder="🔍 Cerca un parametro" value="${EQ.pt||""}" data-eq="pt" autocomplete="off">
+  <div class="eqrow"><button class="hlreset eqrs" data-eq="rsp"${n?"":" disabled"}>↺ Ripristina parametri (${n})</button><button class="eqb" data-eq="shp"${n?"":" disabled"}>📤 Condividi parametri</button></div>
+  ${EQ.msg&&EQ.prompt&&EQ.pr==="p"?eqPromptBox():""}</section>
+  ${EQ_PAR.map(g=>{const rows=g[2].filter(r=>!q||vnz(r[1]+" "+r[0]+" "+r[2]).includes(q));return rows.length?`<section class="hofcard"><h4>${g[0]}</h4><p class="setnote">${g[1]}</p>${rows.map(r=>{const c=EQO.p[r[0]]!=null?EQO.p[r[0]]:EQ_DEF[r[0]];return`<div class="eqpr${EQO.p[r[0]]!=null?" chg":""}"><div><b>${r[1]}</b><small>${r[2]}</small></div><div class="eqin">${eqVal(EQ_DEF[r[0]],c,r[0],"p",r[3])}<small>serie ${eqNum(EQ_DEF[r[0]])}</small></div></div>`}).join("")}</section>`:""}).join("")}`}
+function eqPromptBox(){return`<textarea class="eqta" readonly rows="9">${EQ.prompt.replace(/</g,"&lt;")}</textarea><p class="setnote">${EQ.msg}</p>`}
+function eqValues(){const q=vnz(EQ.vq||""),T=Object.keys(ROSTER),tf=EQ.vt||"",n=Object.keys(EQO.v).length+Object.keys(EQO.pr).length+Object.keys(EQO.rc).length+Object.keys(EQO.pk).length+Object.keys(EQO.g).length;
+  const rows=[];if(tf||q)T.forEach(t=>{if(tf&&tf!==t)return;ROSTER[t].forEach(p=>{if(q&&!vnz(p[0]).includes(q))return;rows.push([t,p])})});
+  const cur=(map,nm,def)=>map[nm]!=null?map[nm]:def;
+  return`<section class="hofcard"><h4>Valori e crediti</h4><p class="setnote">Valore (punti trade), prezzo e crediti di contratto di ogni giocatore, più i crediti delle pick e la conversione crediti → punti. Scegli una squadra o cerca un nome. Le modifiche valgono solo nel simulatore.</p>
+  <div class="eqrow">${T.map(t=>`<button class="eqb eqtm${tf===t?" on":""}" data-eq="vt" data-v="${t}">${badge(t,"eqbd")}</button>`).join("")}</div>
+  <input class="vtq" type="search" placeholder="🔍 Cerca un giocatore" value="${EQ.vq||""}" data-eq="vq" autocomplete="off">
+  <div class="eqrow"><button class="hlreset eqrs" data-eq="rsv"${n?"":" disabled"}>↺ Ripristina valori e crediti (${n})</button><button class="eqb" data-eq="shv"${n?"":" disabled"}>📤 Condividi valori</button></div>
+  ${EQ.msg&&EQ.prompt&&EQ.pr==="v"?eqPromptBox():""}
+  <button class="eqb eqreg" data-eq="reg">📅 Registro dei lunedì (modifiche ai valori)</button></section>
+  <section class="hofcard"><h4>Conversione crediti e pick</h4>
+  <div class="eqpr"><div><b>1 credito = punti trade</b><small>Serie ${eqNum(VAL_CR)}</small></div><div class="eqin">${eqVal(Math.round(VAL_CR*1000)/1000,cur(EQO.g,"vcr",Math.round(VAL_CR*1000)/1000),"vcr","g",.05)}</div></div>
+  <div class="eqpr"><div><b>Esponente dei punti</b><small>(valore/1000)^esp · serie ${VAL_EXP}</small></div><div class="eqin">${eqVal(VAL_EXP,cur(EQO.g,"exp",VAL_EXP),"exp","g",.05)}</div></div>
+  ${[1,2,3,4,5].map(k=>`<div class="eqpr"><div><b>Pick ${k}</b><small>crediti · serie ${PICK_CR[k]}</small></div><div class="eqin">${eqVal(PICK_CR[k],cur(EQO.pk,k,PICK_CR[k]),k,"pk",5)}</div></div>`).join("")}</section>
+  <section class="hofcard"><h4>Giocatori${tf?" · "+TEAMS[tf].nick:""}</h4>${rows.length?`<div class="eqhd"><span></span><span>Valore</span><span>Prezzo</span><span>Cr. contr.</span></div>`:`<p class="setnote">Scegli una squadra o cerca un nome.</p>`}
+  ${rows.map(([t,p])=>{const nm=p[0],v=valOf(nm),pr=v==null?null:prezzo(v,nm),ch=EQO.v[nm]!=null||EQO.pr[nm]!=null||EQO.rc[nm]!=null;
+   return`<div class="eqpl${ch?" chg":""}"><div class="eqn"><i class="rc ${p[2]}"></i><span>${nmAb(nm)}</span></div>
+   <div class="eqin3">${eqVal(v,cur(EQO.v,nm,v),nm,"v",5)}${eqVal(pr,cur(EQO.pr,nm,pr),nm,"pr",5)}${eqVal(+p[4]||0,cur(EQO.rc,nm,+p[4]||0),nm,"rc",1)}</div></div>`}).join("")}</section>`}
+function eqView(){if(!COL.d){cur="campo";return vCampo()}
+  const tb=(k,l)=>`<button class="eqtab${EQ.tab===k?" on":""}" data-eq="tab" data-v="${k}">${l}</button>`;
+  return`<div class="hof eqv"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
+  <div class="hofhd"><div style="grid-column:1/3"><small>Texas Ducks · area riservata del GM</small><b>Gestione equilibrio trade</b><em>Simula, cambia i numeri, condividi con Claude</em></div></div>
+  <div class="eqtabs">${tb("sim","🎲 Simulatore")}${tb("par","🎛 Parametri")}${tb("val","💰 Valori")}</div>
+  ${EQ.tab==="sim"?eqSim():EQ.tab==="par"?eqPar():eqValues()}
+  <p class="hoftt">🦆 Texas Ducks · uso interno · le modifiche valgono solo qui, su questo telefono</p></div>`}
+VIEWS.eq=()=>eqWith(eqView);window.__eq={EQ,get EQO(){return EQO},eqWith,eqPrompt};
+function eqPrompt(kind){const L=[];
+  if(kind==="p"){Object.keys(EQO.p).forEach(k=>{const r=EQ_LAB[k];L.push(`- ${k} (${r?r[1]:k}): ${eqNum(EQ_DEF[k])} → ${eqNum(EQO.p[k])}`)});
+   return`Ciao Claude, nell'app Dreamers (area riservata Ducks › Gestione equilibrio trade) ho simulato diversi scambi e ho trovato questi PARAMETRI DI INTERESSE dell'IA Trade che bilanciano meglio le proposte.\n\nParametri cambiati (nome in EQ_DEF di index.html: valore di serie → valore nuovo):\n${L.join("\n")}\n\nPer favore: 1) scrivi questi nuovi numeri in EQ_DEF (lascia gli altri parametri com'erano), 2) aggiungi la nota in NOTE_SVILUPPO.md, 3) controlla che l'IA Trade funzioni, 4) lascia la modifica in coda e pubblica solo quando ti scrivo "pubblica". Non va scritta nella cronologia pubblica NV_LOG se riguarda solo il bilanciamento interno.`}
+  Object.keys(EQO.v).forEach(n=>L.push(`- ${n}: valore ${valOf(n)} → ${EQO.v[n]}`));Object.keys(EQO.pr).forEach(n=>{const v=valOf(n);L.push(`- ${n}: prezzo ${v==null?"?":prezzo(v,n)} → ${EQO.pr[n]} cr`)});Object.keys(EQO.rc).forEach(n=>L.push(`- ${n}: crediti di contratto ${iaCrOf(n)} → ${EQO.rc[n]}`));
+  Object.keys(EQO.pk).forEach(k=>L.push(`- Pick ${k}: ${PICK_CR[k]} → ${EQO.pk[k]} cr (PICK_CR)`));if(EQO.g.vcr!=null)L.push(`- 1 credito = punti trade (VAL_CR): ${eqNum(VAL_CR)} → ${eqNum(EQO.g.vcr)}`);if(EQO.g.exp!=null)L.push(`- Esponente dei punti (VAL_EXP): ${VAL_EXP} → ${EQO.g.exp}`);
+  return`Ciao Claude, nell'app Dreamers (area riservata Ducks › Gestione equilibrio trade) ho simulato diversi scambi e ho trovato questi VALORI e CREDITI che bilanciano meglio gli scambi.\n\nModifiche:\n${L.join("\n")}\n\nPer favore: 1) scrivi i nuovi numeri in VALORI / PREZZO_FISSO e in VAL_BASE[nome] (data del lunedì di questa settimana, stelle infortuni di adesso) come spiegato nel commento "VALORI AUTOMATICI SETTIMANALI", e per pick/conversione in PICK_CR / VAL_CR / VAL_EXP; 2) annota la correzione in VAL_CORREZ così compare nel registro del lunedì; 3) aggiungi la nota in NOTE_SVILUPPO.md; 4) pubblica solo quando ti scrivo "pubblica".`}
+async function eqShare(kind){EQ.prompt=eqWith(()=>eqPrompt(kind));EQ.pr=kind;let ok=false;try{await navigator.clipboard.writeText(EQ.prompt);ok=true}catch(e){}
+  EQ.msg=ok?"✅ Prompt copiato: incollalo a Claude.":"Seleziona il testo qui sopra e copialo, poi incollalo a Claude.";render()}
+(function(){
+ const keep=()=>{const y=scrollY;render();scrollTo(0,y)};
+ document.addEventListener("click",e=>{if(cur!=="eq")return;const b=e.target.closest("[data-eq]");if(!b||b.tagName==="INPUT")return;const k=b.dataset.eq,v=b.dataset.v;
+  if(k==="tab"){EQ.tab=v;EQ.msg="";render();scrollTo(0,0)}
+  else if(k==="n"){EQ.n=+v;keep()}
+  else if(k==="mode"){EQ.mode=v;if(v==="win"&&(EQ.pct<5||EQ.pct>=40))EQ.pct=15;if(v==="scam"&&EQ.pct<40)EQ.pct=50;keep()}
+  else if(k==="new"||k==="again"){EQ.busy=true;if(k==="new"){const s=eqWith(eqNewSc);if(s)EQ.sc=s}EQ.keyRun="";EQ.all=false;keep();setTimeout(()=>{EQ.busy=false;keep()},40)}
+  else if(k==="more"){EQ.all=true;keep()}
+  else if(k==="rsp"){EQO.p={};eqSave();EQ.msg="";keep()}
+  else if(k==="rsv"){EQO.v={};EQO.pr={};EQO.rc={};EQO.pk={};EQO.g={};eqSave();EQ.msg="";keep()}
+  else if(k==="shp")eqShare("p");else if(k==="shv")eqShare("v");
+  else if(k==="vt"){EQ.vt=EQ.vt===v?"":v;keep()}
+  else if(k==="reg"){window.EQ_FROM=1;cur="valreg";render();scrollTo(0,0)}});
+ document.addEventListener("input",e=>{if(cur!=="eq")return;const t=e.target;if(t.dataset.eq==="pct"){EQ.pct=+t.value||0}
+  else if(t.dataset.eq==="pt"||t.dataset.eq==="vq"){EQ[t.dataset.eq]=t.value;const pos=t.selectionStart,key=t.dataset.eq;render();const n=document.querySelector(`[data-eq="${key}"]`);if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(x){}}}});
+ document.addEventListener("change",e=>{if(cur!=="eq")return;const t=e.target,g=t.dataset.eqv;if(t.dataset.eq==="pct"){keep();return}if(!g)return;const k=t.dataset.k,v=parseFloat(String(t.value).replace(",",".")),d=parseFloat(t.dataset.def);
+  const map=g==="p"?EQO.p:g==="v"?EQO.v:g==="pr"?EQO.pr:g==="rc"?EQO.rc:g==="pk"?EQO.pk:EQO.g;
+  if(isNaN(v)||Math.abs(v-d)<1e-9)delete map[k];else map[k]=v;eqSave();keep()});
+})();
 VIEWS.sala=sala;VIEWS.pers=pers;VIEWS.soft=soft;VIEWS.orari=orari;
 document.addEventListener("click",e=>{
- if(!["sala","pers","soft","orari"].includes(cur))return;
+ if(!["sala","pers","soft","orari","eq"].includes(cur))return;
  if(e.target.closest("#hofback")){cur=cur==="sala"?"campo":"sala";render();scrollTo(0,0);return}
  const h=e.target.closest("[data-hof]");if(h){cur=h.dataset.hof;render();scrollTo(0,0);return}
  const hn=e.target.closest("[data-hnl]");if(hn){const y=scrollY;hnSet(hn.dataset.hnl);render();scrollTo(0,y);return}
