@@ -1144,3 +1144,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (364) Live stanotte: la colonna Giocatore (parte blu scura) e piu larga (158-170px, padding destro 42px) e il tasto condividi sta tutto dentro, senza toccare il testo rosso del quarto/minuto live e senza essere tagliato (`.clbox td:first-child`, riga CSS "(142)"). pubblicato.
 
 (365) Home (tutte le versioni): il tempo di gioco della partita (es. "3:02 3rd") sta sotto il nome, dove era gia, ma ora e in ROSSO (classe `.hmc`) per le partite live; "Finale" resta com'era. Vale in tabella giocatori e seguiti. pubblicato.
+
+(366) Home ufficiale (tutte le squadre): il titolo "TUTTE LE SQUADRE" e "N GIOCATORI" sono tasti. Tocco su "Tutte le squadre" = giocatori raggruppati per franchigia (ordine delle squadre in Home, dentro ciascuna per PDK); tocco su "N giocatori" = ordine PDK decrescente (come prima, predefinito). Vale in live e nel pre-partita. Scelta salvata su questo telefono (`dl_hso`, `HN_SO`, `hsoHead`). IN CODA, NON pubblicato.
