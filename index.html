@@ -828,6 +828,16 @@ nav button{font-size:15px;letter-spacing:.04em}
 .tar.out{color:var(--loss)}
 /* home */
 /* (349) Home notte */
+.hn6.top{grid-template-columns:minmax(0,1fr)}.hn6.top .hmrail{grid-template-columns:repeat(8,minmax(0,1fr));gap:5px}
+.hn6.top .hrl{width:auto;height:auto;padding:4px 2px 3px;display:grid;gap:2px;justify-items:center;border-radius:12px}
+.hn6.top .hrl .badge{width:100%!important;height:auto!important;aspect-ratio:1}
+.hn6.top .hrl small{font-size:10px;font-weight:700;color:#c4b5fd}
+.hmsec{display:flex;justify-content:space-between;font-family:var(--display);font-style:italic;font-weight:800;letter-spacing:.14em;font-size:12px;color:#d8b4fe;margin:2px 2px -2px}
+.hnopt{display:grid;gap:7px;padding:9px 6px 8px;border-radius:14px;border:1px solid rgba(196,181,253,.25);background:rgba(30,20,70,.55);color:#e9ddff;cursor:pointer;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px}
+.hnopt.on{background:linear-gradient(180deg,#a855f7,#6d28d9);color:#fff;box-shadow:0 4px 14px rgba(168,85,247,.5);border-color:transparent}
+.hnopt small{font-family:var(--body);font-style:normal;font-weight:500;font-size:10.5px;opacity:.85}
+.hnsch{display:grid;gap:3px;height:58px;align-content:start}.hnsch i{display:block;border-radius:3px;background:rgba(255,255,255,.55)}.hnsch b{display:block;border-radius:3px;background:rgba(255,255,255,.28)}
+.hngrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .hn6{display:grid;grid-template-columns:56px minmax(0,1fr);gap:10px;align-items:start;margin-top:10px}
 .hmrail{display:grid;gap:7px;align-content:start}
 .hrl{width:56px;height:56px;padding:3px;border-radius:14px;border:1px solid rgba(232,121,249,.55);cursor:pointer;background:linear-gradient(160deg,rgba(76,29,149,.85),rgba(17,10,48,.95) 60%,rgba(30,58,138,.8));box-shadow:0 0 0 1px rgba(168,85,247,.25),0 0 14px rgba(168,85,247,.4);display:grid;place-items:center}
@@ -3692,10 +3702,12 @@ document.addEventListener("click",e=>{
 },true);
 function vHome(){
   const st=standings();
-  return `<div class="hbar"><label class="hsrch"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><input id="hq" type="search" placeholder="Cerca giocatore" autocomplete="off" aria-label="Cerca giocatore"></label><button class="hseg" id="hseg" aria-label="Apri Osservatorio (giocatori seguiti)">${SEG_SVG(false).replace('fill="none"','fill="currentColor"')}${segBadgeHtml()}</button><button class="tvgo" id="tvgo" aria-label="Apri Dynasty TV"><i class="tvdot"></i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="2.5" fill="currentColor"/><path d="M16.5 10.2l5-3v9.6l-5-3z" fill="currentColor"/></svg></button><button class="hdrm" id="hdrm" aria-label="Apri Dreamers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.4C12.53 7.93 15.14 11.71 22 12C15.14 12.29 12.53 16.07 12 22.6C11.47 16.07 8.86 12.29 2 12C8.86 11.71 11.47 7.93 12 1.4Z" fill="currentColor"/></svg></button><button class="hnt${CNT?" on":""}" id="hnt" role="switch" aria-checked="${CNT}" aria-label="Modalità notte"><span class="hntk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></span></button></div><div class="hres" id="hres" hidden></div>${CNT?homeNotte(st):`<div class="hgrid">${teamOrd().map(t=>{const c=TEAMS[t],x=st.find(y=>y.t===t);return `<button class="htile" data-team="${t}" style="--tc:${c.bg};--tt:${c.trim}" aria-label="Roster ${c.name}"><span class="hlg">${badge(t)}</span><span class="hnm"><small>${c.city}</small><b>${c.nick}</b></span><span class="hrec">${x.w}-${x.l}</span></button>`}).join("")}</div>`}`;
+  return `<div class="hbar"><label class="hsrch"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><input id="hq" type="search" placeholder="Cerca giocatore" autocomplete="off" aria-label="Cerca giocatore"></label><button class="hseg" id="hseg" aria-label="Apri Osservatorio (giocatori seguiti)">${SEG_SVG(false).replace('fill="none"','fill="currentColor"')}${segBadgeHtml()}</button><button class="tvgo" id="tvgo" aria-label="Apri Dynasty TV"><i class="tvdot"></i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="2.5" fill="currentColor"/><path d="M16.5 10.2l5-3v9.6l-5-3z" fill="currentColor"/></svg></button><button class="hdrm" id="hdrm" aria-label="Apri Dreamers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.4C12.53 7.93 15.14 11.71 22 12C15.14 12.29 12.53 16.07 12 22.6C11.47 16.07 8.86 12.29 2 12C8.86 11.71 11.47 7.93 12 1.4Z" fill="currentColor"/></svg></button><button class="hnt${CNT?" on":""}" id="hnt" role="switch" aria-checked="${CNT}" aria-label="Modalità notte"><span class="hntk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></span></button></div><div class="hres" id="hres" hidden></div>${CNT&&HN_L?homeNotte(st):`<div class="hgrid">${teamOrd().map(t=>{const c=TEAMS[t],x=st.find(y=>y.t===t);return `<button class="htile" data-team="${t}" style="--tc:${c.bg};--tt:${c.trim}" aria-label="Roster ${c.name}"><span class="hlg">${badge(t)}</span><span class="hnm"><small>${c.city}</small><b>${c.nick}</b></span><span class="hrec">${x.w}-${x.l}</span></button>`}).join("")}</div>`}`;
 }
 
 /* (349) HOME in modalità notte: colonna loghi a sinistra (+15%), a destra banner partite NBA che scorrono da destra a sinistra restando nel suo spazio, i miei giocatori live e i giocatori seguiti live. Fuori dalla notte resta la griglia di prima. */
+let HN_L="";try{HN_L=localStorage.getItem("dl_hnl")||""}catch(e){}if(!["5","6"].includes(HN_L))HN_L="";
+function hnSet(k){HN_L=["5","6"].includes(k)?k:"";try{HN_L?localStorage.setItem("dl_hnl",HN_L):localStorage.removeItem("dl_hnl")}catch(e){}}
 const homeMyT=()=>{let t=curTeam;try{const x=localStorage.getItem("team");if(x&&TEAMS[x])t=x}catch(e){}return t};
 function homeNotte(st){
   const myT=homeMyT(),d=campoNotte()||flUsaOggi(),GG=(typeof TV!=="undefined"&&TV.days[d]||[]).filter(g=>g[5]==="L"||g[5]==="F"||g[5]==="S");
@@ -3709,9 +3721,9 @@ function homeNotte(st){
   seg.sort((a,b)=>(b.N.lv-a.N.lv)||(b.N.p-a.N.p));
   const mLv=mine.some(x=>x.N.lv),sLv=seg.some(x=>x.N.lv);
   const panel=(tit,cls,list,vuoto,tot)=>`<div class="hmcard ${cls}"><div class="hmh"><span>${tit}</span><span>PDK${(cls==="m"?mLv:sLv)?" LIVE":""}</span></div>${list.length?list.slice(0,6).map(x=>row(x.n,x.N,`vs ${x.N.opp} · ${x.N.lv?(x.N.st||"Live"):"Finale"}`)).join(""):`<p class="hmvu">${vuoto}</p>`}${tot!=null&&list.length?`<div class="hmt"><span>TOTALE</span><b>${pdkF(tot)}</b></div>`:""}</div>`;
-  return`<div class="hn6"><div class="hmrail">${teamOrd().map(t=>{const x=st.find(y=>y.t===t)||{w:0,l:0};return`<button class="hrl" data-team="${t}" style="--tc:${TEAMS[t].bg}" aria-label="Roster ${TEAMS[t].name} ${x.w}-${x.l}" title="${TEAMS[t].name} ${x.w}-${x.l}">${badge(t)}</button>`}).join("")}</div>
-  <div class="hmmain" id="hmmain">${banner}${panel("I MIEI · "+TEAMS[myT].nick.toUpperCase(),"m",mine,"Nessuno dei tuoi giocatori in campo stanotte.",mTot)}${panel("★ SEGUITI","s",seg,SEGUI.length?"Nessuno dei tuoi seguiti in campo stanotte.":"Tocca il segnalibro su un giocatore per seguirlo.",null)}</div></div>`}
-function homeNotteRefresh(){if(cur!=="home"||!CNT)return;const el=document.querySelector(".hn6");if(!el)return;try{const h=document.createElement("div");h.innerHTML=homeNotte(standings());const n=h.firstElementChild;if(n&&n.innerHTML!==el.innerHTML){const q=el.querySelector(".hmqt"),old=q?q.style.animationDelay:"";el.innerHTML=n.innerHTML;bindHomeNotte(el)}}catch(e){}}
+  const TOP=HN_L==="5";return`<div class="hn6${TOP?" top":""}"><div class="hmrail">${teamOrd().map(t=>{const x=st.find(y=>y.t===t)||{w:0,l:0};return`<button class="hrl" data-team="${t}" style="--tc:${TEAMS[t].bg}" aria-label="Roster ${TEAMS[t].name} ${x.w}-${x.l}" title="${TEAMS[t].name} ${x.w}-${x.l}">${badge(t)}${TOP?`<small>${x.w}-${x.l}</small>`:""}</button>`}).join("")}</div>
+  <div class="hmmain" id="hmmain">${TOP?`<div class="hmsec"><span>${GG.some(g=>g[5]==="L")?"LIVE ADESSO":"PARTITE DELLA NOTTE"}</span><span>${GG.length} PARTITE</span></div>`:""}${banner}${panel("I MIEI · "+TEAMS[myT].nick.toUpperCase(),"m",mine,"Nessuno dei tuoi giocatori in campo stanotte.",mTot)}${panel("★ SEGUITI","s",seg,SEGUI.length?"Nessuno dei tuoi seguiti in campo stanotte.":"Tocca il segnalibro su un giocatore per seguirlo.",null)}</div></div>`}
+function homeNotteRefresh(){if(cur!=="home"||!CNT||!HN_L)return;const el=document.querySelector(".hn6");if(!el)return;try{const h=document.createElement("div");h.innerHTML=homeNotte(standings());const n=h.firstElementChild;if(n&&n.innerHTML!==el.innerHTML){const q=el.querySelector(".hmqt"),old=q?q.style.animationDelay:"";el.innerHTML=n.innerHTML;bindHomeNotte(el)}}catch(e){}}
 function bindHomeNotte(root){root.querySelectorAll(".hrl").forEach(b=>b.onclick=()=>{curTeam=b.dataset.team;try{localStorage.setItem("team",curTeam)}catch(e){}cur="campo";render();window.scrollTo(0,0)});
   root.querySelectorAll("[data-hpn]").forEach(b=>b.onclick=()=>{plOpen(b.dataset.hpn)})}
 
@@ -7525,6 +7537,9 @@ function pers(){if(!COL.d){cur="campo";return vCampo()}
  return`<div class="hof"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
  <div class="hofhd"><div style="grid-column:1/3"><small>Texas Ducks · area riservata del GM</small><b>Personalizzazioni</b><em>Il look della tua app</em></div></div>
  ${card("p","Logo dei profili","L'immagine della squadra nei profili: Home, liste, classifiche, chip e pagina squadra. Non cambia nella G League. Vale su questo telefono.")}
+${(()=>{const sc=(k)=>k==="5"?`<div class="hnsch"><div style="display:grid;grid-template-columns:repeat(8,1fr);gap:2px">${"<i style='height:9px'></i>".repeat(8)}</div><b style="height:11px"></b><b style="height:15px"></b><b style="height:15px"></b></div>`:k==="6"?`<div class="hnsch" style="grid-template-columns:9px 1fr;gap:4px"><div style="display:grid;gap:2px">${"<i style='height:5px'></i>".repeat(8)}</div><div style="display:grid;gap:3px;align-content:start"><b style="height:11px"></b><b style="height:20px"></b><b style="height:20px"></b></div></div>`:`<div class="hnsch" style="grid-template-columns:1fr 1fr;gap:3px">${"<i style='height:12px'></i>".repeat(8)}</div>`;
+ const o=(k,n,d)=>`<button class="hnopt${HN_L===k?" on":""}" data-hnl="${k}" aria-pressed="${HN_L===k}">${sc(k)}<span>${n}</span><small>${d}</small></button>`;
+ return`<section class="hofcard"><h4>Home in modalità notte</h4><p class="setnote">Come si presenta la Home quando la modalità notte è accesa. Scelta solo per questo telefono; senza modalità notte resta la griglia classica.</p><div class="hngrid">${o("","Classica","Griglia grande")}${o("5","Versione A","Loghi in cima")}${o("6","Versione B","Loghi a lato")}</div></section>`})()}
  ${card("c","Logo del campo","Il logo nel banner e al centro del campo, nelle immagini condivise e nella bacheca. Scelta indipendente da quella dei profili.")}
  <p class="hoftt">🦆 Texas Ducks · uso interno</p></div>`}
 function soft(){if(!COL.d){cur="campo";return vCampo()}
@@ -7537,6 +7552,7 @@ document.addEventListener("click",e=>{
  if(!["sala","pers","soft"].includes(cur))return;
  if(e.target.closest("#hofback")){cur=cur==="sala"?"campo":"sala";render();scrollTo(0,0);return}
  const h=e.target.closest("[data-hof]");if(h){cur=h.dataset.hof;render();scrollTo(0,0);return}
+ const hn=e.target.closest("[data-hnl]");if(hn){const y=scrollY;hnSet(hn.dataset.hnl);render();scrollTo(0,y);return}
  const l=e.target.closest("[data-hlo]");if(l&&!l.disabled){const y=scrollY;ducLogoSet(l.dataset.hlo,l.dataset.hw);render();scrollTo(0,y)}
 });
 })();
