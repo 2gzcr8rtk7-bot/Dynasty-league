@@ -1245,3 +1245,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (426) Trade speciale Ingram (DUC, Speciale 30): scadenza al 15 dicembre 2026 = turno Dreamers 13 (12-15/12) = giornata 15 (invece della G20). Se serve far finire un turno dopo: `scad:16` (16-18/12). In coda, non pubblicato.
 
 (427) Trade speciale Rollins (PEA, Speciale 30): scadenza al 15 dicembre 2026 (G15), come Ingram. In coda, non pubblicato.
+
+(428) COMPARATORE (menu Scambi › Comparatore, vista `compar`, stato `CMR`): due giocatori (roster + G League) scelti con «Cerca» e mostrati sullo stesso grafico, con lo stesso Periodo a calendario e «Media per» del Grafico; una misura alla volta (PDK, Minuti, Efficienza), linea continua azzurra per A e tratteggiata rosa per B, legenda con media e trend 

@@ -2343,6 +2343,7 @@ html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.0
       <button data-v="valtrade" aria-selected="false"><span>Calcolatore trade</span></button>
       <button data-v="osserv" aria-selected="false"><span>Osservatorio</span></button>
       <button data-v="iatrade" aria-selected="false"><span>IA Trade</span></button>
+      <button data-v="compar" aria-selected="false"><span>Comparatore</span></button>
     </div>
   </div>
 </header>
@@ -4111,7 +4112,7 @@ function extProfilo(o){
     games=`${H("Partita per partita",`<em>${GL.length} ${GL.length===1?"gara":"gare"}</em>`)}`+ms.map((m,i)=>{const l=by[m],dk=l.reduce((q,g)=>q+g[3],0),mn=l.reduce((q,g)=>q+g[2],0),av=mn?dk/mn:null;
       return `<details class="gmese"${i===0?" open":""}><summary><span class="gmn">${MESI[m]}</span><span class="gmesi">${l.length} ${l.length===1?"gara":"gare"} · media</span>${eff(av)}</summary>
       <div class="tbl-wrap"><table class="gtab"><thead><tr><th>Data</th><th>Min</th><th>Dunkest</th><th>Eff.</th><th>Proj 36'</th></tr></thead><tbody>${l.slice().reverse().map(g=>`<tr><td class="gd"><b>${g[0]} <i>vs ${g[1]}</i></b>${g[5]!=null?`<small>${g[5]} pt · ${g[6]} rb · ${g[7]} as</small>`:""}</td><td>${n1(g[2])}</td><td class="gdk">${pdkB(g[3],f2(g[3]))}</td><td>${eff(g[4])}</td><td class="gpj">${n1(g[4]*36)}</td></tr>`).join("")}</tbody></table></div></details>`}).join("")}
-  return `<button class="advbtn ggrbtn" ${o.gr}>📈 Grafico</button>
+  return `<button class="advbtn ggrbtn" ${o.gr}>📈 Grafico</button>${o.cm?`<button class="advbtn ggrbtn" data-cmpa="${o.cm.replace(/"/g,"&quot;")}">⚖ Confronta con un altro giocatore</button>`:""}
   ${H("PDK ed efficienza",`<em>${SZ_LBL[o.sz]||""} · ${o.sz}</em>`)}
   ${o.sel}
   ${!a?`<p class="note">${o.vuoto}</p>`:`
@@ -4161,7 +4162,7 @@ function vGLP(){
     <div class="gjer">${glBadge(t)}</div>
     <div class="gtit"><small>G League · ${c.name}</small><h3>${pn}</h3><div class="segrow">${segBtn(pn,1)}${plShBtn()}</div><p>${R[rl]||"—"}${b.nba?" · "+b.nba:""}${etaTxt(pn)?`<span style="display:block">${etaTxt(pn)}</span>`:""}</p></div>
   </div>
-  ${extProfilo({sz,sel,a,GL,gr:`data-grafico="${t}" data-grp="${pn.replace(/"/g,"&quot;")}"`,vuoto:past?"Nessuna partita NBA in questa stagione: non era in NBA o non ha giocato.":"Non è ancora sceso in campo in questa stagione."})}
+  ${extProfilo({sz,sel,a,GL,cm:pn,gr:`data-grafico="${t}" data-grp="${pn.replace(/"/g,"&quot;")}"`,vuoto:past?"Nessuna partita NBA in questa stagione: non era in NBA o non ha giocato.":"Non è ancora sceso in campo in questa stagione."})}
   <p class="note">PDK = punti Dunkest medi a partita, Eff. = PDK per minuto, Proj 36' = PDK su 36 minuti. Statistiche ufficiali Dunkest, regular season.</p>`}
 document.addEventListener("click",e=>{const sm=e.target.closest("details.glp>summary");if(sm){const d=sm.parentElement;if(d.dataset.glk){e.preventDefault();e.stopPropagation();glVai(d.dataset.glk)}return}
   if(e.target.closest("#glpback")&&cur==="glplayer"&&!NAVH.length){cur="gleague";render();scrollTo(0,0)}},true);
@@ -4442,7 +4443,7 @@ function perBy(g){if(!g.length)return"w";if(new Set(g.map(x=>x.sz)).size>1)retur
 function perOk(g){return{s:new Set(g.map(x=>x.sz)).size>1,m:new Set(g.map(x=>grMk(x.dt))).size>1,g:g.length>=2}}
 function perGranBtns(key,ok,by){const L=[["s","Stagioni"],["m","Mesi"],["g","Giorni"]];
   return`<div class="pergr"><span>Media per</span><div>${L.map(([k,l])=>`<button data-pgran="${key}|${k}" aria-pressed="${by===k}" ${ok[k]?"":"disabled"} title="${ok[k]?"":"Non disponibile per questo periodo"}">${l}</button>`).join("")}</div></div>`}
-document.addEventListener("click",e=>{const b=e.target.closest("[data-pgran]");if(!b||b.disabled)return;e.preventDefault();const[k,v]=b.dataset.pgran.split("|"),o=k==="gr"?GR:TRN;o.gran=v;if(k==="tr")TRN.on=null;const y=scrollY;render();scrollTo(0,y)});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-pgran]");if(!b||b.disabled)return;e.preventDefault();const[k,v]=b.dataset.pgran.split("|"),o=k==="gr"?GR:k==="cm"?CMR:TRN;o.gran=v;if(k==="tr")TRN.on=null;const y=scrollY;render();scrollTo(0,y)});
 const perGg=(da,a)=>Math.round((Date.parse(a)-Date.parse(da))/864e5)+1;
 const perFmt=iso=>{if(!iso)return"—";const[y,m,d]=iso.split("-");return`${d}/${m}/${y.slice(2)}`};
 const perIn=(da,a)=>d=>{const x=d.toISOString().slice(0,10);return x>=da&&x<=a};
@@ -4754,6 +4755,7 @@ function vGiocatore(){
     <div class="gtit"><small>${c.name}</small><h3>${p[0]}</h3><div class="segrow">${segBtn(p[0],1)}${plShBtn()}</div><p>${ruolo} · ${p[3]} · #${p[1]}${etaTxt(p[0])?`<span style="display:block">${etaTxt(p[0])}</span>`:""}</p>${INJ[p[0]]&&INJ[p[0]].stato!=="ok"?`<div class="injtag ${INJ[p[0]].stato}">${STATI[INJ[p[0]].stato][0]} · ${INJ[p[0]].tipo}</div>`:""}${ROOKIE.includes(p[0])?`<div class="rookie">Slot Rookie</div>`:""}${AVVISI[p[0]]?`<div class="avviso">${AVVISI[p[0]]}</div>`:""}</div>
   </div>
   <button class="advbtn ggrbtn" data-grafico="${t}" data-grp="${p[0]}">📈 Grafico</button>
+  <button class="advbtn ggrbtn" data-cmpa="${p[0].replace(/"/g,"&quot;")}">⚖ Confronta con un altro giocatore</button>
   ${H("PDK ed efficienza",`<em>${past?SZ_LBL[sz]+" · "+sz:"Agg. "+EFF.agg}</em>`)}
   ${szSel}
   ${e[1]==null?`<p class="note">${past?"Nessuna partita NBA in questa stagione: non era in NBA o non ha giocato.":"Nessuna partita giocata finora: i dati compariranno dopo la prima gara."}</p>`:`
@@ -7454,14 +7456,79 @@ document.getElementById("main").addEventListener("click",e=>{if(cur!=="tv")retur
   if(bk){TVS.g=null;TVS.dr=null;render();window.scrollTo(0,0);return}
   if(sd){TVS.side=sd.dataset.tvside;const y=window.scrollY;render();window.scrollTo(0,y)}});
 const vTVlive=()=>{tvLiveStart();if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();return vTV()};
-const VIEWS={glplayer:vGLP,fa:vFA,faplayer:vFAP,tv:vTVlive,college:vCollege,trend:vTrend,statnotte:vStatNotte,cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeagueM,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.osserv=vOsserv;VIEWS.iatrade=vIA;VIEWS.grafico=vGrafico;
+/* ===== (428) COMPARATORE (menu Scambi): due giocatori sullo stesso grafico, stesso periodo a calendario del Grafico =====
+   Si scelgono i due giocatori con «Cerca» (roster + G League), il periodo e UNA misura (PDK, Minuti o Efficienza).
+   Punti = media per stagione / mese / settimana / giorno come nel Trend (trKey/trLab); le notti uguali restano allineate.
+   Dal profilo giocatore il tasto «Confronta» apre il Comparatore con quel giocatore già nel primo posto. */
+let CMR={pa:null,pb:null,met:"pdk",q:"",slot:null,from:null};
+const CM_COL=["#38bdf8","#f472b6"];
+PER_CB.cm=(da,a)=>{CMR.da=da;CMR.a=a};
+function cmAll(){const L=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>L.push({n:p[0],t,r:p[2]})));try{glPlayers().forEach(p=>L.push({n:p.n,t:p.t,r:p.r,gl:1}))}catch(e){}return L}
+function cmGames(n,SZR,inP){return n&&SZR.length?grGames(n,SZR.length>1?"all":SZR[0]).filter(x=>SZR.includes(x.sz)&&inP(x.dt)):[]}
+function cmSlot(i){const n=CMR[i?"pb":"pa"],p=n?trPl(n):null,col=CM_COL[i],sl=i?"b":"a",on=CMR.slot===sl;
+  const e=s=>String(s).replace(/"/g,"&quot;");
+  return p?`<div class="cmslot" style="--c:${col}"><i class="cmdot"></i>${p.gl?glBadge(p.t,"cmlg"):badge(p.t,"cmlg")}<span class="cmnm"><b>${p.n}</b><small>${p.gl?"G-":""}${TEAMS[p.t].nick} · ${{G:"Guardia",F:"Ala",C:"Centro"}[p.r]||""}</small></span><button class="cmx" data-cm="slot|${sl}" aria-label="Cambia">↻</button><button class="cmx" data-cm="clr|${sl}" aria-label="Togli">✕</button></div>`
+   :`<button class="cmslot empty${on?" on":""}" style="--c:${col}" data-cm="slot|${sl}"><i class="cmdot"></i><span>🔍 Cerca il giocatore ${i?"B":"A"}</span></button>`}
+function cmList(){const q=vnz(CMR.q||""),other=CMR[CMR.slot==="a"?"pb":"pa"];
+  const R=cmAll().filter(p=>p.n!==other&&(!q||vnz(p.n+" "+TEAMS[p.t].nick+" "+TEAMS[p.t].name).includes(q)));
+  const e=s=>String(s).replace(/"/g,"&quot;");
+  return R.slice(0,40).map(p=>`<button class="cmrow" data-cm="pick|${e(p.n)}">${p.gl?glBadge(p.t,"cmlg"):badge(p.t,"cmlg")}<span class="cmnm"><b>${p.n}</b><small>${p.gl?"G-":""}${TEAMS[p.t].nick} · ${{G:"Guardia",F:"Ala",C:"Centro"}[p.r]||""}</small></span></button>`).join("")+(R.length>40?`<p class="note">Altri ${R.length-40} giocatori: scrivi per restringere la ricerca.</p>`:"")||`<p class="note">Nessun giocatore trovato.</p>`}
+function vCompar(){
+  perNorm(CMR);const SZR=perSzr(CMR.da,CMR.a),inP=perIn(CMR.da,CMR.a),met=CMR.met,isE=met==="eff";
+  const gA=cmGames(CMR.pa,SZR,inP),gB=cmGames(CMR.pb,SZR,inP),both=[...gA,...gB];
+  const GOK=perOk(both);let by=perBy(both);const forz=!!(CMR.gran&&GOK[CMR.gran]);if(forz)by=CMR.gran;
+  const keyset=g=>new Set(g.map(x=>trKey(x,by)));
+  if(!forz&&by!=="s"){const ks=keyset(both);const mx=Math.max(gA.length,gB.length);if(ks.size<2||mx<=8)by="g"}
+  const fmt=v=>v==null?"—":isE?v.toFixed(2).replace(".",","):v.toFixed(1).replace(".",","),f1=v=>v==null?"—":v.toFixed(1).replace(".",","),f2=v=>v==null?"—":v.toFixed(2).replace(".",",");
+  const ser=g=>{const M=new Map();g.forEach(x=>{const k=trKey(x,by);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});return[...M.entries()].map(([k,a])=>({k,v:grAvg(a,x=>x[met])})).filter(q=>q.v!=null).sort((a,b)=>a.k<b.k?-1:1)};
+  const S=[ser(gA),ser(gB)],K=[...new Set(S.flat().map(q=>q.k))].sort();
+  const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
+  const chart=(()=>{const have=[0,1].filter(i=>S[i].length);
+    if(!CMR.pa&&!CMR.pb)return`<div class="grempty">Scegli i due giocatori da confrontare.</div>`;
+    if(!CMR.pa||!CMR.pb)return`<div class="grempty">Scegli anche l'altro giocatore per vedere il confronto.</div>`;
+    if(!have.length)return`<div class="grempty">Nessuna partita in questo periodo.</div>`;
+    const W=chW(),H=250,L=32,Rr=16,T=18,B=32,iw=W-L-Rr,ih=H-T-B,vals=S.flat().map(q=>q.v),SC=grNice(Math.min(...vals),Math.max(...vals),isE,4);
+    const X=k=>K.length===1?L+iw/2:L+K.indexOf(k)*iw/(K.length-1),Y=v=>T+ih-(v-SC[0])/(SC[1]-SC[0])*ih;
+    let grid="";for(let v=SC[0];v<=SC[1]+1e-9;v+=SC[2]){const y=Y(v);grid+=`<line x1="${L}" x2="${W-Rr}" y1="${y}" y2="${y}" class="grg"/><text x="${L-5}" y="${y+3}" class="gry l">${isE?v.toFixed(2).replace(".",","):Math.round(v)}</text>`}
+    const step=Math.max(1,Math.ceil(K.length/6));const xl=K.map((k,i)=>{if(i%step&&i!==K.length-1)return"";const[a,b]=trLab(k,by).split("|");return`<text x="${X(k)}" y="${H-B+15}" class="grx big">${a}</text><text x="${X(k)}" y="${H-B+26}" class="grx">${b}</text>`}).join("");
+    const lines=[0,1].map(i=>{const p=S[i].map(q=>[X(q.k),Y(q.v)]);if(!p.length)return"";const c=CM_COL[i],e=p[p.length-1],last=S[i][S[i].length-1].v;
+      const w=fmt(last).length*5.6+10,cx=Math.min(W-Rr-w/2+8,Math.max(L+w/2,e[0])),ty=e[1]+(i?16:-10);
+      return`<polyline points="${p.map(q=>q[0].toFixed(1)+","+q[1].toFixed(1)).join(" ")}" fill="none" stroke="${c}" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round"${i?' stroke-dasharray="7 4"':""}/>`
+        +p.map(q=>`<circle cx="${q[0].toFixed(1)}" cy="${q[1].toFixed(1)}" r="3.2" fill="${c}" stroke="#0b1022" stroke-width="1.5"/>`).join("")
+        +`<g class="grtag"><rect x="${(cx-w/2).toFixed(1)}" y="${(ty-8).toFixed(1)}" width="${w.toFixed(1)}" height="13" rx="6.5" fill="${c}"/><text x="${cx.toFixed(1)}" y="${(ty+1.8).toFixed(1)}">${fmt(last)}</text></g>`}).join("");
+    return`<svg class="grsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Confronto">${grid}${xl}<text x="4" y="10" class="gry ax" text-anchor="start">${GR_LAB[met].toUpperCase()}</text>${lines}</svg>`})();
+  const leg=[0,1].map(i=>{const n=CMR[i?"pb":"pa"];if(!n)return"";const g=i?gB:gA,tr=grTrend(S[i].map(q=>q.v)),pc=tr?tr.pct:null,cls=pc==null||Math.abs(pc)<3?"eq":pc>0?"up":"dn";
+    return`<div class="cmleg" style="--c:${CM_COL[i]}"><svg width="30" height="8"><line x1="1" y1="4" x2="29" y2="4" stroke="${CM_COL[i]}" stroke-width="3" stroke-linecap="round"${i?' stroke-dasharray="7 4"':""}/></svg><b>${sur(n)}</b><span>${fmt(grAvg(g,x=>x[met]))}</span><em class="${cls}">${pc==null?"—":cls==="eq"?"▶ stabile":(cls==="up"?"▲ +":"▼ ")+pc.toFixed(0).replace("-","−")+"%"}</em></div>`}).join("");
+  const rows=[["Partite",g=>String(g.length),null],["PDK medio",g=>f1(grAvg(g,x=>x.pdk)),g=>grAvg(g,x=>x.pdk)],["Minuti medi",g=>f1(grAvg(g,x=>x.min)),g=>grAvg(g,x=>x.min)],["Efficienza",g=>f2(grAvg(g,x=>x.eff)),g=>grAvg(g,x=>x.eff)]];
+  const tab=CMR.pa&&CMR.pb?`<div class="cmtab"><div class="cmth"><span></span><b style="color:${CM_COL[0]}">${sur(CMR.pa)}</b><b style="color:${CM_COL[1]}">${sur(CMR.pb)}</b></div>${rows.map(([l,f,v])=>{const a=v?v(gA):null,b=v?v(gB):null,wa=a!=null&&b!=null&&a>b,wb=a!=null&&b!=null&&b>a;return`<div class="cmtr"><span>${l}</span><b class="${wa?"w":""}">${f(gA)}</b><b class="${wb?"w":""}">${f(gB)}</b></div>`}).join("")}</div>`:"";
+  const seg=(k,opts)=>`<div class="trseg">${opts.map(([v,l])=>`<button data-cm="met|${v}" aria-pressed="${CMR.met===v}">${l}</button>`).join("")}</div>`;
+  const srch=CMR.slot?`<div class="cmsrch"><input id="cmq" class="vtq" type="search" placeholder="🔍 Cerca il giocatore ${CMR.slot.toUpperCase()}" value="${(CMR.q||"").replace(/"/g,"&quot;")}" autocomplete="off"><div id="cmList" class="cmlist">${cmList()}</div><button class="advbtn" data-cm="close|x">Chiudi la ricerca</button></div>`:"";
+  return`<div class="grroom trroom cmroom" style="--tc:#16213f;--tf:#fff">
+  ${CMR.from?`<button class="grback" data-cm="back|x">‹ Indietro</button>`:""}
+  <div class="grhd"><div><small>Scambi · due giocatori sullo stesso grafico</small><b>Comparatore</b></div></div>
+  <div class="cmslots">${cmSlot(0)}${cmSlot(1)}</div>${srch}
+  <div class="trctl">${perBtn("cm",CMR.da,CMR.a)}${perGranBtns("cm",GOK,by)}</div>
+  <div class="trlab">Cosa confrontare</div>${seg("met",[["pdk","PDK"],["min","Minuti"],["eff","Efficienza"]])}
+  <div class="grcard">${leg?`<div class="cmlegs">${leg}</div>`:""}${chart}<div class="grfoot">${by==="s"?"media di ogni stagione":by==="m"?"media di ogni mese":by==="w"?"media di ogni settimana":"ogni partita"} · periodo ${perFmt(CMR.da)} → ${perFmt(CMR.a)}</div></div>
+  ${tab}
+  <p class="note">Come nel Grafico: ogni punto è la media del periodo (stagione, mese, settimana o singola partita). Il trend è la retta che passa meglio tra i punti, in % sulla media. Il tasto «Confronta» nel profilo di un giocatore lo mette già al primo posto.</p></div>`}
+document.getElementById("main").addEventListener("click",e=>{if(cur!=="compar")return;const b=e.target.closest("[data-cm]");if(!b)return;e.preventDefault();const[k,v]=b.dataset.cm.split("|");const y=scrollY;
+  if(k==="slot"){CMR.slot=CMR.slot===v?null:v;CMR.q="";render();const q=document.getElementById("cmq");if(q)q.focus();return}
+  if(k==="clr"){CMR[v==="a"?"pa":"pb"]=null;render();scrollTo(0,y);return}
+  if(k==="pick"){const sl=CMR.slot||(CMR.pa?"b":"a");CMR[sl==="a"?"pa":"pb"]=v;CMR.slot=null;CMR.q="";if(!CMR.pa||!CMR.pb){CMR.slot=!CMR.pa?"a":"b"}render();scrollTo(0,y);return}
+  if(k==="close"){CMR.slot=null;CMR.q="";render();scrollTo(0,y);return}
+  if(k==="met"){CMR.met=v;render();scrollTo(0,y);return}
+  if(k==="back"){const f=CMR.from;CMR.from=null;if(f){cur=f.cur;curTeam=f.curTeam;curPlayer=f.curPlayer;gFrom=f.gFrom}else cur="valtrade";render();scrollTo(0,0)}});
+document.getElementById("main").addEventListener("input",e=>{if(cur!=="compar"||e.target.id!=="cmq")return;CMR.q=e.target.value;const L=document.getElementById("cmList");if(L)L.innerHTML=cmList()});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-cmpa]");if(!b)return;e.preventDefault();CMR.from={cur,curTeam,curPlayer,gFrom};CMR.pa=b.dataset.cmpa;if(CMR.pb===CMR.pa)CMR.pb=null;CMR.slot=CMR.pb?null:"b";CMR.q="";cur="compar";render();scrollTo(0,0)});
+const VIEWS={glplayer:vGLP,fa:vFA,faplayer:vFAP,tv:vTVlive,college:vCollege,trend:vTrend,statnotte:vStatNotte,cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeagueM,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.osserv=vOsserv;VIEWS.iatrade=vIA;VIEWS.grafico=vGrafico;VIEWS.compar=vCompar;
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 function render(){
   if(cur!=="tv")TVS.out=1;liveSync();if(["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur))fantaLiveAvvia();
   document.body.dataset.v=cur;{const nt=typeof CNT!=="undefined"&&CNT;document.body.classList.toggle("notte",nt);document.documentElement.classList.toggle("notte",nt);const tc=document.querySelector('meta[name="theme-color"]');if(tc&&!document.body.classList.contains("dreamfs"))tc.content=nt?"#2a1260":TH_BAR}
   {document.documentElement.classList.toggle("setpg",cur==="impostazioni");/* (245) */const fs=cur==="giochi"&&(GAME==="dream"||GAME==="gdream");document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=(fs||(typeof CNT!=="undefined"&&CNT))?"#2a1260":TH_BAR}
-  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="fa"?"fa":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"?"home":cur==="osserv"||cur==="iatrade"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
+  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="fa"?"fa":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"?"home":cur==="osserv"||cur==="iatrade"||cur==="compar"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));try{const nv=document.querySelector("nav"),sb=nv&&nv.querySelector('[aria-selected="true"]');if(sb)nv.scrollTo({left:Math.max(0,sb.offsetLeft-24)})}catch(e){}
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -7560,7 +7627,7 @@ const NAVH=[];let navLast=cur,navT=0;
 (function(){const r0=render;render=function(){if(navLast!==null&&cur!==navLast){if(NAVH[NAVH.length-1]===cur)NAVH.pop();else{NAVH.push(navLast);if(NAVH.length>40)NAVH.shift()}}navLast=cur;const rr=r0.apply(this,arguments);try{navUniv()}catch(e){}try{fixBackLabels()}catch(e){}try{if(document.querySelector(".du .dun b"))document.fonts.load("16px CourtBlock").catch(()=>{}).then(()=>requestAnimationFrame(duFit))}catch(e){}return rr}})();
 /* TASTO INDIETRO SEMPLICE: ogni "‹" della scheda giocatore, Campo, Cassa, Osservatorio ecc. riporta alla schermata da cui si è arrivati (pila NAVH) e la sua scritta dice dove porta */
 const BK_IDS="#gback,#faback,#glpback,#effback,#cback,[data-cupback],[data-snback],#capback,#mulback,#colback,#cassaback,#osback,#tvback,#hofback,#vrback,#cfback,#setback,#nvback,#navbk";
-function backLabel(v){const n=(TEAMS[curTeam]||{}).nick||"";const M={home:"Home",campo:"Campo "+n,roster:"Roster "+n,fa:"Giocatori",valtrade:"Calcolatore trade",osserv:"Osservatorio",iatrade:"IA Trade",efficienza:"Statistiche",effsquadra:"Efficienza "+n,effcup:"Efficienza",tv:"Dynasty TV",risultati:"Risultati",classifica:"Classifica",trade:"Trade",speciali:"Trade speciali",gleague:"G-Dreamers",college:"Ufficio Scouting",cassa:"Cassa "+n,cap:"Cap",multe:"Multe",trend:"Trend",statnotte:"Statistiche notte",grafico:"Grafico",dunkest:"Centro gestione",storia:"Sala Trofei",regolamento:"Regolamento",infortuni:"Centro Medico",gdreamers:"G-Dreamers",faplayer:"Giocatori",glplayer:"G-Dreamers"};
+function backLabel(v){const n=(TEAMS[curTeam]||{}).nick||"";const M={home:"Home",campo:"Campo "+n,roster:"Roster "+n,fa:"Giocatori",valtrade:"Calcolatore trade",osserv:"Osservatorio",iatrade:"IA Trade",compar:"Comparatore",efficienza:"Statistiche",effsquadra:"Efficienza "+n,effcup:"Efficienza",tv:"Dynasty TV",risultati:"Risultati",classifica:"Classifica",trade:"Trade",speciali:"Trade speciali",gleague:"G-Dreamers",college:"Ufficio Scouting",cassa:"Cassa "+n,cap:"Cap",multe:"Multe",trend:"Trend",statnotte:"Statistiche notte",grafico:"Grafico",dunkest:"Centro gestione",storia:"Sala Trofei",regolamento:"Regolamento",infortuni:"Centro Medico",gdreamers:"G-Dreamers",faplayer:"Giocatori",glplayer:"G-Dreamers"};
   return v==="giochi"?(GAME==="dream"?"Dreamers":GAME==="gdream"?"G-Dreamers":"Giochi"):(M[v]||"Indietro")}
 /* nomi troppo lunghi per la card: nome di battesimo ridotto all'iniziale ("S. GILGEOUS-ALEXANDER") */
 function duFit(){document.querySelectorAll(".du .duh").forEach(h=>h.style.minHeight="");document.querySelectorAll(".du .dun b").forEach(b=>{if(b.scrollWidth<=b.clientWidth+1)return;b.innerHTML=b.innerHTML.replace(/&nbsp;|\u00a0/g," ");if(b.scrollWidth>b.clientWidth+1)b.style.letterSpacing="-.02em"});document.querySelectorAll(".durow").forEach(r=>{const hs=[...r.querySelectorAll(".du .duh")];if(hs.length<2)return;const m=Math.max(...hs.map(h=>h.getBoundingClientRect().height));hs.forEach(h=>h.style.minHeight=m+"px")})}/* (312) nomi già in formato "N. Cognome" e a capo se servono: mai rimpiccioliti né tagliati */
@@ -8152,6 +8219,15 @@ cfStart();
 .eqd{border:1px solid rgba(255,255,255,.18);border-radius:12px;margin:8px 0;padding:6px 8px;background:rgba(255,255,255,.04)}.eqd summary{cursor:pointer;color:#fff;font-size:13px}.eqi{font-style:normal;font-size:11px;font-weight:800;padding:1px 6px;border-radius:8px;margin-left:3px;background:rgba(255,255,255,.12);display:inline-block}.eqi.alto{background:#1f8f4d}.eqi.medio{background:#b88a00}.eqi.basso{background:#b3262e}
 .eqi{display:inline-grid;place-items:center;width:18px;height:18px;margin-left:4px;padding:0;border-radius:50%;border:1px solid rgba(245,196,0,.7);background:transparent;color:#f5c400;font:italic 800 11px/1 serif;vertical-align:1px;cursor:pointer}.eqi.on{background:#f5c400;color:#1b1233}
 .eqinf{grid-column:1/-1;background:rgba(245,196,0,.08);border:1px solid rgba(245,196,0,.35);border-radius:10px;padding:8px 10px}.eqinf b{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#f5c400}.eqinf p{margin:2px 0 6px;font-size:12.5px;line-height:1.35;color:#fff}.eqinf p:last-child{margin-bottom:0}
+/* (428) Comparatore */
+.cmslots{display:grid;gap:8px;margin:10px 0}.cmslot{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;border:1.5px solid var(--c);background:rgba(255,255,255,.05);color:var(--fg,#fff);text-align:left;font:inherit;min-width:0}
+.cmslot.empty{justify-content:flex-start;border-style:dashed;cursor:pointer;font-weight:700}.cmslot.empty.on{background:color-mix(in srgb,var(--c) 18%,transparent)}
+.cmdot{width:10px;height:10px;border-radius:50%;background:var(--c);flex:none}.cmlg{width:34px;height:34px;flex:none;display:block}
+.cmnm{display:grid;min-width:0;flex:1}.cmnm b{font-size:14px;line-height:1.15}.cmnm small{font-size:11px;opacity:.7}
+.cmx{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:transparent;color:inherit;font-size:14px;cursor:pointer;flex:none}
+.cmsrch{margin:0 0 10px}.cmlist{display:grid;gap:4px;max-height:300px;overflow:auto;margin-bottom:8px}.cmrow{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:inherit;font:inherit;text-align:left;cursor:pointer}
+.cmlegs{padding-left:44px;display:flex;flex-wrap:wrap;gap:6px 14px;margin:0 0 6px;font-size:12.5px}.cmleg{display:flex;align-items:center;gap:6px}.cmleg b{color:var(--c)}.cmleg em{font-style:normal;font-size:11px;font-weight:800}.cmleg em.up{color:#4ade80}.cmleg em.dn{color:#f87171}.cmleg em.eq{color:#cbd5e1}
+.cmtab{margin:10px 0;border:1px solid var(--line);border-radius:12px;overflow:hidden}.cmth,.cmtr{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:6px;padding:7px 10px;align-items:center}.cmth{background:rgba(255,255,255,.06);font-size:12px}.cmtr{border-top:1px solid var(--line);font-size:13px}.cmtr span{opacity:.75}.cmtr b.w{color:#4ade80}
 .eqpr,.eqpl{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid rgba(255,255,255,.1);color:#fff}.eqpr b{font-size:13px;display:block}.eqpr small{display:block;color:rgba(255,255,255,.62);font-size:11px;line-height:1.25}.eqpr.chg b,.eqpl.chg .eqn{color:#ffd75e}
 .eqin{text-align:right}.eqin small{text-align:right}.eqr input{width:84px;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,.3);background:#0e0820;color:#fff;font:700 15px var(--display);text-align:right;box-sizing:border-box}.eqr.chg input{border-color:#f5c400;background:#2a1c00;color:#ffd75e}
 .eqpl{grid-template-columns:1fr}.eqn{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700}.eqin3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.eqin3 .eqr input{width:100%}.eqhd{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;color:rgba(255,255,255,.6);font-size:11px;text-align:center;margin-top:6px}.eqhd span:first-child{display:none}
