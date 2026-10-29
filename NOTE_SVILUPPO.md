@@ -1263,3 +1263,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (435) IA Trade: entrando si vedono SOLO due grandi pulsanti «Per ruolo» / «Per giocatore» (`IA.mode` parte vuoto → schermata `.iachoose`); dentro ogni modalità in alto c'è «‹ Modalità» (torna alla scelta) e il titolo, e al primo passo un riquadro `.iaintro` che spiega in due righe come funziona. La modalità per ruolo aveva già il selettore 2-5 squadre (nota 433): verificato che i risultati a 4-5 squadre usano il layout in righe (`.iarows`, loghi a destra) anche per ruolo. pubblicato.
 
 (436) Home, colonna «Previsione» (variante 4 scelta): box azzurro `.hmv.pv .pdkx` con bordo sottile e barretta del livello (var `--lv`) al posto del riempimento verde/giallo/rosso, così non sembra un PDK già fatto; «Da superare» resta invariato. Override per Parquet. pubblicato.
+
+(437) IA Trade: le spiegazioni delle due modalità non stanno più dentro (tolto `.iaintro`), ma sotto ciascun pulsante nella schermata di scelta (`.iach` = pulsante + `<p>`), così la pagina è più piena e si sceglie già informati. Dentro le modalità restano solo «‹ Modalità» e il titolo. In coda su `coda`, non pubblicato.
