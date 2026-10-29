@@ -2304,8 +2304,6 @@ html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.0
       <button role="tab" id="t-gm" data-v="storia" aria-selected="false"><span>Sala Trofei</span></button>
     </nav>
     <div class="subnav" id="subnav" role="menu" hidden>
-      <button data-v="risultati" aria-selected="false"><span>Risultati</span></button>
-      <button data-v="classifica" aria-selected="false"><span>Classifica</span></button>
       <button data-v="roster" aria-selected="false"><span>Roster</span></button>
       <button data-v="fa" aria-selected="false"><span>Giocatori</span></button>
       <button data-v="trade" aria-selected="false"><span>Trade</span></button>
@@ -7394,13 +7392,16 @@ render();
    Ordine: 1) chiude il foglio aperto (.colsheet), 2) usa il tasto ‹ indietro della pagina (anche se nascosto),
    3) solo per il tasto/gesto indietro di Android: torna alla sezione precedente (pila NAVH). Lo SWIPE invece funziona solo dove c'è un tasto ‹ visibile o un foglio aperto (navTarget(1)); dove non si può tornare indietro non parte. */
 const NAVH=[];let navLast=cur,navT=0;
-(function(){const r0=render;render=function(){if(navLast!==null&&cur!==navLast){if(NAVH[NAVH.length-1]===cur)NAVH.pop();else{NAVH.push(navLast);if(NAVH.length>40)NAVH.shift()}}navLast=cur;const rr=r0.apply(this,arguments);try{fixBackLabels()}catch(e){}try{if(document.querySelector(".du .dun b"))document.fonts.load("16px CourtBlock").catch(()=>{}).then(()=>requestAnimationFrame(duFit))}catch(e){}return rr}})();
+(function(){const r0=render;render=function(){if(navLast!==null&&cur!==navLast){if(NAVH[NAVH.length-1]===cur)NAVH.pop();else{NAVH.push(navLast);if(NAVH.length>40)NAVH.shift()}}navLast=cur;const rr=r0.apply(this,arguments);try{navUniv()}catch(e){}try{fixBackLabels()}catch(e){}try{if(document.querySelector(".du .dun b"))document.fonts.load("16px CourtBlock").catch(()=>{}).then(()=>requestAnimationFrame(duFit))}catch(e){}return rr}})();
 /* TASTO INDIETRO SEMPLICE: ogni "‹" della scheda giocatore, Campo, Cassa, Osservatorio ecc. riporta alla schermata da cui si è arrivati (pila NAVH) e la sua scritta dice dove porta */
-const BK_IDS="#gback,#faback,#glpback,#effback,#cback,[data-cupback],[data-snback],#capback,#mulback,#colback,#cassaback,#osback";
+const BK_IDS="#gback,#faback,#glpback,#effback,#cback,[data-cupback],[data-snback],#capback,#mulback,#colback,#cassaback,#osback,#tvback,#hofback,#vrback,#cfback,#setback,#nvback,#navbk";
 function backLabel(v){const n=(TEAMS[curTeam]||{}).nick||"";const M={home:"Home",campo:"Campo "+n,roster:"Roster "+n,fa:"Giocatori",valtrade:"Calcolatore trade",osserv:"Osservatorio",iatrade:"IA Trade",efficienza:"Statistiche",effsquadra:"Efficienza "+n,effcup:"Efficienza",tv:"Dynasty TV",risultati:"Risultati",classifica:"Classifica",trade:"Trade",speciali:"Trade speciali",gleague:"G-Dreamers",college:"Ufficio Scouting",cassa:"Cassa "+n,cap:"Cap",multe:"Multe",trend:"Trend",statnotte:"Statistiche notte",grafico:"Grafico",dunkest:"Centro gestione",storia:"Sala Trofei",regolamento:"Regolamento",infortuni:"Centro Medico",gdreamers:"G-Dreamers",faplayer:"Giocatori",glplayer:"G-Dreamers"};
   return v==="giochi"?(GAME==="dream"?"Dreamers":GAME==="gdream"?"G-Dreamers":"Giochi"):(M[v]||"Indietro")}
 /* nomi troppo lunghi per la card: nome di battesimo ridotto all'iniziale ("S. GILGEOUS-ALEXANDER") */
 function duFit(){document.querySelectorAll(".du .duh").forEach(h=>h.style.minHeight="");document.querySelectorAll(".du .dun b").forEach(b=>{if(b.scrollWidth<=b.clientWidth+1)return;b.innerHTML=b.innerHTML.replace(/&nbsp;|\u00a0/g," ");if(b.scrollWidth>b.clientWidth+1)b.style.letterSpacing="-.02em"});document.querySelectorAll(".durow").forEach(r=>{const hs=[...r.querySelectorAll(".du .duh")];if(hs.length<2)return;const m=Math.max(...hs.map(h=>h.getBoundingClientRect().height));hs.forEach(h=>h.style.minHeight=m+"px")})}/* (312) nomi già in formato "N. Cognome" e a capo se servono: mai rimpiccioliti né tagliati */
+/* TASTO INDIETRO UNIVERSALE: se la sezione non ha un proprio tasto ‹, ne compare uno sotto il menu in alto a sinistra, che riporta alla schermata da cui si è arrivati */
+function navUniv(){const m=document.getElementById("main");if(!m||cur==="home"||!NAVH.length||document.body.classList.contains("dreamfs"))return;const v=m.firstElementChild;if(!v||m.querySelector("#navbk,.gback,.grback,.drexit,.osbk,[data-snback],[data-cupback]"))return;
+  const b=document.createElement("button");b.className="gback";b.id="navbk";b.textContent="‹ "+backLabel(NAVH[NAVH.length-1]);v.insertBefore(b,v.firstChild)}
 function fixBackLabels(){const v=NAVH[NAVH.length-1];if(!v)return;document.querySelectorAll("#main "+BK_IDS.split(",").map(x=>x).join(",#main ")).forEach(b=>{b.textContent="‹ "+backLabel(v)})}
 document.addEventListener("click",e=>{const b=e.target.closest(BK_IDS);if(!b||!b.closest("#main"))return;const v=NAVH[NAVH.length-1];if(!v)return;e.preventDefault();e.stopImmediatePropagation();gFrom="roster";faFrom="home";cur=v;render();window.scrollTo(0,0)},true);
 function navTarget(btnOnly){const sh=[...document.querySelectorAll(".colsheet")].filter(x=>x.offsetParent!==null||getComputedStyle(x).position==="fixed");
