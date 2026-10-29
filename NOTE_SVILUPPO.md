@@ -1394,3 +1394,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
    - **Pareri sulle trade**: nuove frasi sul percorso (terzo anno non esploso, in ritardo al secondo, fenomeno, 35/40 di PDK, guardia matura da 30, ala/centro giovane da 30). Fenomeni 1º/2º anno quasi incedibili.
    - Soglia efficienza dei centri nella pagella: 0,75 → 0,90.
    - Taratura: sui 24 scambi del questionario la direzione coincide in 22 casi (restano diversi Turtles-Foxes e Mooses-Barnes, dove il giudizio dipendeva dal percorso delle squadre). Non toccati i crediti (1 cr = 4,41 punti): i suoi esempi indicano circa 9-12 punti a credito per piccole somme e meno per grandi somme, da decidere a parte.
+
+474. **Secondo anno: base 24,5 PDK** — pubblicato (29/10/2026). Al secondo anno anche 24,5 PDK è ancora nei termini (meglio 26-27): la soglia sotto cui, con efficienza bassa, un giocatore risulta «in ritardo sul percorso» scende da 26 a 24,5 (`iaPath`). Ora Knueppel (24,7) e Harper non sono penalizzati dalla soglia; Queen (20,7) e Fears (11,2) restano in ritardo.
