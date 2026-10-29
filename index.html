@@ -3234,8 +3234,15 @@ const iaCrOf=n=>{for(const t in ROSTER){const p=ROSTER[t].find(x=>x[0]===n);if(p
 const iaAvg=a=>{const v=a.filter(x=>x!=null&&!isNaN(x));return v.length?v.reduce((s,x)=>s+x,0)/v.length:null};
 function iaProf(t){if(iaPC[t])return iaPC[t];
   if(!iaPC._lg){const all=Object.keys(ROSTER).map(x=>iaAvg(iaEff(x).map(p=>iaAge(p[0]))));iaPC._lg=iaAvg(all)||26;
-    iaPC._pos={};try{const st=drStand(),ld=st[0]?st[0].w:0;st.forEach((x,i)=>{const rem=Math.max(0,DR_REG-x.n);let c=[1,1,.6,.2,-.2,-.5,-.8,-1][i]??0;if(i>0&&ld-x.w>rem*.45)c=Math.min(c,-.1);c*=Math.min(1,(x.n+1)/10);iaPC._pos[x.t]={r:i+1,c,n:x.n}})}catch(e){}}
+    iaPC._pos={};try{const st=drStand(),ld=st[0]?st[0].w:0;st.forEach((x,i)=>{const rem=Math.max(0,DR_REG-x.n);let c=[1,1,.6,.2,-.2,-.5,-.8,-1][i]??0;if(i>0&&ld-x.w>rem*.45)c=Math.min(c,-.1);c*=Math.min(1,(x.n+3)/8);iaPC._pos[x.t]={r:i+1,c,n:x.n}})}catch(e){}}
   const ps=iaPC._pos[t]||{r:0,c:0,n:0};return iaPC[t]={age:iaAvg(iaEff(t).map(p=>iaAge(p[0]))),lg:iaPC._lg,r:ps.r,c:ps.c,n:ps.n}}
+/* RENDIMENTO di un giocatore (PDK): mix di media di riferimento (pdkMix), media stagionale, media delle ultime 10 gare e trend dell'ultimo mese.
+   Pesi: riferimento 40%, stagione 30% (cresce con le partite giocate), ultime 10 gare 30% (servono ≥3 gare); il trend sposta il risultato fino a ±9%. */
+function iaPerf(n){const k="p:"+n;if(iaPC[k])return iaPC[k];let base=iaProd(n),sea=null,l10=null,g=[];
+  try{g=grGames(n,GR_SZ[0]).map(x=>x.pdk).filter(v=>v!=null&&!isNaN(v))}catch(e){}
+  if(g.length){sea=g.reduce((a,b)=>a+b,0)/g.length;if(g.length>=3){const l=g.slice(-10);l10=l.reduce((a,b)=>a+b,0)/l.length}}
+  const ws=sea==null?0:.3*Math.min(1,g.length/10),wl=l10==null?0:.3,wb=base>0?.4:0;let v=0,w=0;if(wb){v+=wb*base;w+=wb}if(ws){v+=ws*sea;w+=ws}if(wl){v+=wl*l10;w+=wl}
+  v=w?v/w:0;const T=iaTrend(n);if(T)v*=1+iaCl(T.pct/100,.3)*.3;return iaPC[k]={v,base,sea,l10,tr:T?T.pct:null}}
 const iaRs=n=>{const cr=iaCrOf(n);return Math.max(.05,(iaP(n)/VAL_CR)/Math.max(1,cr))};
 const iaEf=n=>{try{const v=pagella(n).s.eff;return v==null||isNaN(v)?null:v/5}catch(e){return null}};
 const iaCl=(v,a)=>Math.max(-a,Math.min(a,v));
@@ -3245,12 +3252,15 @@ function iaPref(t,recv,gave){const P=iaProf(t),o={dl:0,parts:[]},f1=v=>v.toFixed
   const aI=iaAvg(recv.map(x=>iaAge(x.n))),aO=iaAvg(gave.map(x=>iaAge(x.n)));
   if(P.age!=null&&aI!=null){const dI=Math.abs(aI-P.age),dO=aO==null?dI:Math.abs(aO-P.age),fit=iaCl((dO-dI)/5,1),w=.07+.10*Math.min(1,Math.abs(P.age-P.lg)/2.5);o.dl+=w*fit;
     if(fit>=.2)o.parts.push(`età media ${f1(P.age)} anni: riceve giocatori più in linea con la sua età (${f1(aI)} anni${aO!=null?` contro ${f1(aO)} di quelli che cede`:""})`);else if(fit<=-.2)o.parts.push(`età media ${f1(P.age)} anni: riceve giocatori meno in linea con la sua età (${f1(aI)} anni${aO!=null?` contro ${f1(aO)} di quelli che cede`:""})`)}
+  /* rendimento (media di riferimento + stagione + ultime 10 + trend): a tutti non piace perdere rendimento a parità di valore */
+  const pI=iaAvg(recv.map(x=>iaPerf(x.n).v))||0,pO=iaAvg(gave.map(x=>iaPerf(x.n).v))||0,pd=iaCl((pI-pO)/Math.max(10,pI,pO),1);o.dl+=.10*pd;
+  if(!(P.r&&P.c>=.25)&&Math.abs(pd)>=.2)o.parts.push(pd>0?`ci guadagna in rendimento (PDK ${f1(pI)} contro ${f1(pO)})`:`ci perde in rendimento (PDK ${f1(pI)} contro ${f1(pO)})`);
   /* classifica */
   if(P.r&&Math.abs(P.c)>=.25){
-    if(P.c>0){const qd=iaCl((iaAvg(recv.map(x=>iaQ(x.n)))??.5)-(iaAvg(gave.map(x=>iaQ(x.n)))??.5),.5)*2,pdI=iaAvg(recv.map(x=>iaProd(x.n)))||0,pdO=iaAvg(gave.map(x=>iaProd(x.n)))||0,pd=iaCl((pdI-pdO)/Math.max(10,pdI,pdO),1),
+    if(P.c>0){const qd=iaCl((iaAvg(recv.map(x=>iaQ(x.n)))??.5)-(iaAvg(gave.map(x=>iaQ(x.n)))??.5),.5)*2,
         tI=iaAvg(recv.map(x=>{const T=iaTrend(x.n);return T?T.pct:null})),tO=iaAvg(gave.map(x=>{const T=iaTrend(x.n);return T?T.pct:null})),tr=(tI!=null||tO!=null)?iaCl(((tI||0)-(tO||0))/60,1):0,
-        q=.4*qd+.4*pd+.2*tr;o.dl+=.22*P.c*q;
-      if(q>=.15)o.parts.push(`è ${P.r}ª in classifica e punta al titolo: riceve giocatori più forti (stelline e PDK${tr>.15?", trend in crescita":""})`);else if(q<=-.15)o.parts.push(`è ${P.r}ª in classifica e punta al titolo, ma riceve giocatori meno forti di quelli che cede`)}
+        q=.30*qd+.50*pd+.20*tr;o.dl+=.40*P.c*q;
+      if(q>=.15)o.parts.push(`è ${P.r}ª in classifica e punta al titolo: riceve giocatori che rendono di più (PDK ${f1(pI)} contro ${f1(pO)}${tr>.15?", trend in crescita":""})`);else if(q<=-.15)o.parts.push(`è ${P.r}ª in classifica e punta al titolo, ma riceve giocatori che rendono meno (PDK ${f1(pI)} contro ${f1(pO)} di quelli che cede)`)}
     else{const yo=iaCl(((aO??aI??0)-(aI??aO??0))/5,1),rI=iaAvg(recv.map(x=>Math.log(iaRs(x.n)))),rO=iaAvg(gave.map(x=>Math.log(iaRs(x.n)))),rs=rI==null||rO==null?0:iaCl(rI-rO,1),eI=iaAvg(recv.map(x=>iaEf(x.n))),eO=iaAvg(gave.map(x=>iaEf(x.n))),ef=eI==null||eO==null?0:iaCl((eI-eO)*2,1),
         q=.4*yo+.35*rs+.25*ef;o.dl+=.22*(-P.c)*q;
       if(q>=.15)o.parts.push(`è ${P.r}ª in classifica: guarda al futuro, riceve giocatori ${yo>.15?"più giovani":""}${yo>.15&&(rs>.15||ef>.15)?", ":""}${rs>.15?"con più valore rispetto ai crediti":""}${rs>.15&&ef>.15?" e ":""}${ef>.15&&rs<=.15&&yo<=.15?"molto efficienti":ef>.15?"efficienti":""}`.replace(/, $/,""));else if(q<=-.15)o.parts.push(`è ${P.r}ª in classifica e dovrebbe ricostruire, ma riceve giocatori meno giovani/promettenti di quelli che cede`)}}
