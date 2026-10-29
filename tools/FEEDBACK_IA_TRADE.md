@@ -11,3 +11,5 @@ Ogni voce: data · cosa ha visto · cosa ci si aspetta · stato.
    Stato: DA FARE.
 3. 29/10/2026 · Turtles ricevono Adebayo + Castle (+25 cr) da Spiders per Queen + Peterson: interesse basso GIUSTO, ma la frase «riceve centri e guardie, ruolo in cui è carente» è sbagliata: i Turtles hanno guardie giovani e promettenti, esattamente il loro percorso (ricostruzione). La carenza di ruolo va letta in base a età media e potenziale del ruolo rispetto alle intenzioni della squadra.
    Stato: FATTO in coda (nota 454): la carenza di ruolo usa il valore PERCEPITO dalla squadra (`iaMul`) e il peso del PDK nel bisogno scende per chi ricostruisce (`npr`).
+4. 29/10/2026 · Richiesta generale: le frasi devono tener conto delle intenzioni della squadra, ricavate in automatico da tutti i dati (età media, classifica, media PDK recente, ultimi scambi, correlazioni utili).
+   Stato: FATTO in coda (nota 455): intenzione `c` con 4 segnali (età, talento+PDK, classifica+differenza punti, ultimi scambi `iaTradeSig`), peso del PDK scalato dalle intenzioni (`pwi`), frase «intenzioni: …» + contesto sul ruolo carente.

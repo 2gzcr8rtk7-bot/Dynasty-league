@@ -3222,7 +3222,7 @@ const EQ_DEF={wnb:.6,wvs:.4,vsk:1.25,sck:2.6,thA:.62,thM:.42,dlmax:.45,
  nx:.5,np:.5,star:.16,outq:.7,
  pl10:.25,prevw:.5,prevc:.4,ptr:.22,
  eta0:.07,eta1:.10,perf:.40,rook:.22,win:.60,reb:.30,
- iwS0:.12,iwS1:.04,iwSm:.50,iwA:.62,isA:3.5,isT:1.2,pvA:.25,pvC:.15,pg0:5,pg1:20,pws:.65,pgr:12,
+ iwR:.18,pwi:.50,iwS0:.12,iwS1:.04,iwSm:.50,iwA:.62,isA:3.5,isT:1.2,pvA:.25,pvC:.15,pg0:5,pg1:20,pws:.65,pgr:12,
  dpk:.22,npr:.60,sgf:.25,sbal:.15,smix:.60,mmin:.55};
 const EQP={...EQ_DEF};
 let IA={np:3,noMore:false,lv:"eq",mode:"",any:false,want:[],keep:[],tf:"",q:"",st:1,team:"",needs:["","",""],give:[],cr:{c:0,p:0,d:0},n:2,out:[],seen:{},pool:null,key:"",rd:0};
@@ -3289,6 +3289,26 @@ const iaTs=(p,n)=>Math.sign(p)*Math.pow(Math.min(1,Math.abs(p)/EQP.tsx),EQP.tse)
 const iaAge=n=>{try{return etaEsatta(n)}catch(e){return null}};
 const iaCrOf=n=>{for(const t in ROSTER){const p=ROSTER[t].find(x=>x[0]===n);if(p)return +p[4]||0}return 0};
 const iaAvg=a=>{const v=a.filter(x=>x!=null&&!isNaN(x));return v.length?v.reduce((s,x)=>s+x,0)/v.length:null};
+/* (455) SEGNALE DAGLI ULTIMI SCAMBI (TRADES, dal più recente): per ogni squadra si guarda cosa ha preso e cosa ha dato.
+   Prendere veterani/stelle (età sopra 25) o pagare crediti = mentalità «vincere subito»; prendere giovani o crediti dando veterani = «ricostruzione».
+   Ogni scambio pesa 0,8 volte il precedente (più recente = più peso). Risultato da −1 a +1 per squadra, con la lista dei movimenti per spiegare la frase. */
+function iaTradeSig(){if(iaPC._tr)return iaPC._tr;const out={};Object.keys(ROSTER).forEach(t=>out[t]={v:0,w:0,why:[]});
+  const cr=x=>{const m=/(\d+)\s*(?:cr\b|crediti)/i.exec(x);return m?+m[1]:0},uA=a=>Math.max(-1,Math.min(1,(a-25)/4));
+  const pl=a=>a.filter(x=>valOf(x)!=null),crs=a=>a.reduce((q,x)=>q+(pl([x]).length?0:cr(x)),0);
+  let k=0;TRADES.forEach(T=>{if(T.titolo==="G League")return;const side=T.lati.map(l=>({t:l[0],as:l[1],tag:l[2]||""}));let rec=0;
+    const per={};side.forEach(sd=>{const P=per[sd.t]=per[sd.t]||{rp:[],gp:[],rc:0,gc:0};
+      if(T.titolo==="Trade speciale"){if(/esce/.test(sd.tag))P.gp.push(...pl(sd.as));else P.rp.push(...pl(sd.as));return}
+      if(T.titolo==="Asta"){P.rp.push(...pl(sd.as));P.gc+=crs(sd.as);return}
+      P.rp.push(...pl(sd.as));P.rc+=crs(sd.as)});
+    if(T.titolo==="Scambio"&&side.length===2){const [A,B]=[side[0].t,side[1].t];if(A!==B){per[A].gp.push(...per[B].rp);per[A].gc+=per[B].rc;per[B].gp.push(...per[A].rp.slice(0,per[A].rp.length));per[B].gc+=per[A].rc}}
+    const wd=Math.pow(.8,k);k++;
+    Object.entries(per).forEach(([t,P])=>{if(!out[t])return;const wv=x=>Math.min(2,(valOf(x)||400)/1000),ag=x=>iaAge(x);
+      let v=0;P.rp.forEach(x=>{const a=ag(x);if(a!=null)v+=wv(x)*uA(a)});P.gp.forEach(x=>{const a=ag(x);if(a!=null){const u=uA(a);v-=wv(x)*(u>0?u:.4*u)}});
+      v+=.35*(P.gc-P.rc)/100;
+      if(!P.rp.length&&!P.gp.length&&!P.rc&&!P.gc)return;
+      out[t].v+=wd*v;out[t].w+=wd;if(Math.abs(v)>=.25&&out[t].why.length<2)out[t].why.push({v,date:T.data||"",rp:P.rp.slice(0,2),gp:P.gp.slice(0,2),rc:P.rc,gc:P.gc})})});
+  Object.values(out).forEach(o=>{o.s=o.w?Math.max(-1,Math.min(1,Math.tanh(o.v/1.2))):0});return iaPC._tr=out}
+const ROSTER_HAS=n=>Object.values(ROSTER).some(a=>a.some(p=>p[0]===n));
 /* (451) INTENZIONI DELLA SQUADRA: c da −1 (ricostruisce) a +1 (vuole vincere subito), costruito con TRE segnali che lavorano insieme:
    età media del roster (vecchia = vuole vincere ora, giovane = costruisce), talento (media del valore dei 6 migliori rispetto alla lega) e classifica (grezza, senza smorzamento).
    La classifica pesa poco all'inizio (iwS0 + iwS1 × turni giocati, fino a iwSm) e di più col passare dei turni: i primi due segnali decidono la fase iniziale.
@@ -3296,11 +3316,15 @@ const iaAvg=a=>{const v=a.filter(x=>x!=null&&!isNaN(x));return v.length?v.reduce
 function iaProf(t){if(iaPC[t])return iaPC[t];
   if(!iaPC._lg){const all=Object.keys(ROSTER).map(x=>iaAvg(iaEff(x).map(p=>iaAge(p[0]))));iaPC._lg=iaAvg(all)||26;
     const sv=Object.keys(ROSTER).map(x=>{const v=iaEff(x).map(p=>valOf(p[0])||0).sort((a,b)=>b-a).slice(0,6);return v.reduce((a,b)=>a+b,0)/Math.max(1,v.length)}),mu=iaAvg(sv)||1,sd=Math.sqrt(iaAvg(sv.map(v=>(v-mu)*(v-mu)))||1)||1;
-    iaPC._str={};Object.keys(ROSTER).forEach((x,i)=>iaPC._str[x]={v:sv[i],z:(sv[i]-mu)/sd});
-    iaPC._pos={};try{const st=drStand(),ld=st[0]?st[0].w:0;st.forEach((x,i)=>{const rem=Math.max(0,DR_REG-x.n);let c=[1,1,.6,.2,-.2,-.5,-.8,-1][i]??0;if(i>0&&ld-x.w>rem*.45)c=Math.min(c,-.1);iaPC._pos[x.t]={r:i+1,c,n:x.n}})}catch(e){}}
-  const ps=iaPC._pos[t]||{r:0,c:0,n:0},age=iaAvg(iaEff(t).map(p=>iaAge(p[0]))),lg=iaPC._lg,st=iaPC._str[t]||{v:0,z:0},cl=(v,a)=>Math.max(-a,Math.min(a,v));
-  const A=age==null?0:cl((age-lg)/EQP.isA,1),T=cl(st.z/EQP.isT,1),wS=Math.min(EQP.iwSm,EQP.iwS0+EQP.iwS1*ps.n),wA=(1-wS)*EQP.iwA,wT=(1-wS)*(1-EQP.iwA),c=cl(wA*A+wT*T+wS*ps.c,1);
-  return iaPC[t]={age,lg,r:ps.r,c,n:ps.n,A,T,S:ps.c,wS,str:st.v}}
+    /* PDK dei 6 migliori (rendimento atteso: anno scorso + stagione in corso, vedi iaPerf) */
+    const sp=Object.keys(ROSTER).map(x=>{const v=iaEff(x).map(p=>iaPerf(p[0]).v||0).sort((a,b)=>b-a).slice(0,6);return v.reduce((a,b)=>a+b,0)/Math.max(1,v.length)}),mp=iaAvg(sp)||1,sdp=Math.sqrt(iaAvg(sp.map(v=>(v-mp)*(v-mp)))||1)||1;
+    iaPC._str={};Object.keys(ROSTER).forEach((x,i)=>iaPC._str[x]={v:sv[i],p:sp[i],z:.6*(sv[i]-mu)/sd+.4*(sp[i]-mp)/sdp});
+    iaPC._pos={};try{const st=drStand(),ld=st[0]?st[0].w:0,mg=st.map(x=>x.n?(x.pf-x.pa)/x.n:0),mm=iaAvg(mg)||0,ms=Math.sqrt(iaAvg(mg.map(v=>(v-mm)*(v-mm)))||1)||1;
+      st.forEach((x,i)=>{const rem=Math.max(0,DR_REG-x.n);let c=[1,1,.6,.2,-.2,-.5,-.8,-1][i]??0;if(i>0&&ld-x.w>rem*.45)c=Math.min(c,-.1);
+        const zm=Math.max(-1,Math.min(1,((x.n?(x.pf-x.pa)/x.n:0)-mm)/ms/1.5));iaPC._pos[x.t]={r:i+1,c:.65*c+.35*zm,cr:c,m:zm,n:x.n}})}catch(e){}}
+  const ps=iaPC._pos[t]||{r:0,c:0,n:0,m:0},age=iaAvg(iaEff(t).map(p=>iaAge(p[0]))),lg=iaPC._lg,st=iaPC._str[t]||{v:0,p:0,z:0},cl=(v,a)=>Math.max(-a,Math.min(a,v)),TS=iaTradeSig()[t]||{s:0,w:0,why:[]};
+  const A=age==null?0:cl((age-lg)/EQP.isA,1),T=cl(st.z/EQP.isT,1),wS=Math.min(EQP.iwSm,EQP.iwS0+EQP.iwS1*ps.n),wR=TS.w?EQP.iwR:0,wA=(1-wS-wR)*EQP.iwA,wT=(1-wS-wR)*(1-EQP.iwA),c=cl(wA*A+wT*T+wS*ps.c+wR*TS.s,1);
+  return iaPC[t]={age,lg,r:ps.r,c,n:ps.n,A,T,S:ps.c,M:ps.m,Tr:TS.s,trw:TS.why,wS,wR,str:st.v,pdk:st.p}}
 /* RENDIMENTO di un giocatore (PDK).
    - Veterano: media di riferimento (pdkMix) 35% + media stagionale 35% (cresce con le gare) + ultime 10 gare 10% (≥3 gare); poi il CONFRONTO CON LA STAGIONE PRECEDENTE
      (parametro chiave, ±30%: chi rende meno dell'anno scorso perde valore, chi rende di più ne guadagna; servono ≥3 gare quest'anno e ≥15 l'anno scorso) e il trend dell'ultimo mese (±9%).
@@ -3324,7 +3348,10 @@ function iaPerf(n){const k="p:"+n;if(iaPC[k])return iaPC[k];let base=iaProd(n),g
 const iaRs=n=>{const cr=iaCrOf(n);return Math.max(.05,(iaP(n)/VAL_CR)/Math.max(1,cr))};
 const iaEf=n=>{try{const v=pagella(n).s.eff;return v==null||isNaN(v)?null:v/5}catch(e){return null}};
 const iaCl=(v,a)=>Math.max(-a,Math.min(a,v));
-const iaWhyC=P=>`${P.r}ª in classifica · età media ${P.age.toFixed(1).replace(".",",")} anni · talento ${P.T>=.25?"alto":P.T<=-.25?"basso":"medio"}`;
+const iaWhyC=P=>{const nm=a=>a.map(x=>x.split(" ").slice(-1)[0]).join(", "),f1=v=>v.toFixed(1).replace(".",","),w=[`${P.r}ª in classifica`,`età media ${f1(P.age)} anni`,`talento ${P.T>=.25?"alto":P.T<=-.25?"basso":"medio"}`];
+  if(Math.abs(P.Tr)>=.25){const x=(P.trw||[])[0];w.push(P.Tr>0?`ultimi scambi da squadra che vuole vincere${x&&x.rp.length?` (ha preso ${nm(x.rp)})`:""}`:`ultimi scambi da squadra che ricostruisce${x&&x.rp.length?` (ha preso ${nm(x.rp)})`:""}`)}
+  if(Math.abs(P.M)>=.5)w.push(P.M>0?"differenza punti positiva":"differenza punti negativa");return w.join(" · ")};
+const iaIntent=P=>P.c>=.25?"vuole vincere subito":P.c<=-.25?"ricostruisce":"strada ancora aperta";
 function iaPref(t,recv,gave){const P=iaProf(t),o={dl:0,parts:[]},f1=v=>v.toFixed(1).replace(".",",");
   if(!recv.length&&!gave.length)return o;
   /* età */
@@ -3332,8 +3359,8 @@ function iaPref(t,recv,gave){const P=iaProf(t),o={dl:0,parts:[]},f1=v=>v.toFixed
   if(P.age!=null&&aI!=null){const dI=Math.abs(aI-P.age),dO=aO==null?dI:Math.abs(aO-P.age),fit=iaCl((dO-dI)/5,1),w=EQP.eta0+EQP.eta1*Math.min(1,Math.abs(P.age-P.lg)/2.5);o.dl+=w*fit;
     if(fit>=.2)o.parts.push(`età media ${f1(P.age)} anni: riceve giocatori più in linea con la sua età (${f1(aI)} anni${aO!=null?` contro ${f1(aO)} di quelli che cede`:""})`);else if(fit<=-.2)o.parts.push(`età media ${f1(P.age)} anni: riceve giocatori meno in linea con la sua età (${f1(aI)} anni${aO!=null?` contro ${f1(aO)} di quelli che cede`:""})`)}
   /* rendimento (media di riferimento + stagione + ultime 10 + trend): a tutti non piace perdere rendimento a parità di valore */
-  const pI=iaAvg(recv.map(x=>iaPerf(x.n).v))||0,pO=iaAvg(gave.map(x=>iaPerf(x.n).v))||0,pd=iaCl((pI-pO)/Math.max(10,pI,pO),1);o.dl+=EQP.perf*pd;
-  if(!(P.r&&P.c>=.25)&&Math.abs(pd)>=.2)o.parts.push(pd>0?`ci guadagna in rendimento (PDK ${f1(pI)} contro ${f1(pO)})`:`ci perde in rendimento (PDK ${f1(pI)} contro ${f1(pO)})`);
+  const pI=iaAvg(recv.map(x=>iaPerf(x.n).v))||0,pO=iaAvg(gave.map(x=>iaPerf(x.n).v))||0,pd=iaCl((pI-pO)/Math.max(10,pI,pO),1);o.dl+=EQP.perf*Math.max(.4,Math.min(1.5,1+EQP.pwi*P.c))*pd;
+  if(!(P.r&&P.c>=.25)&&!(P.c<=-.4&&Math.abs(pd)<.5)&&Math.abs(pd)>=.2)o.parts.push(pd>0?`ci guadagna in rendimento (PDK ${f1(pI)} contro ${f1(pO)})`:`ci perde in rendimento (PDK ${f1(pI)} contro ${f1(pO)})`);
   /* rookie: chi punta a vincere non li prende; chi ricostruisce li cerca, soprattutto se già rendono (PDK ed efficienza del ruolo) */
   {const rI=recv.filter(x=>iaPerf(x.n).rk),rO=gave.filter(x=>iaPerf(x.n).rk),rd=iaSum(rI,x=>iaPerf(x.n).rq)-iaSum(rO,x=>iaPerf(x.n).rq);
    if(rI.length||rO.length){o.dl+=EQP.rook*(-P.c)*iaCl(rd,1);
@@ -3345,10 +3372,10 @@ function iaPref(t,recv,gave){const P=iaProf(t),o={dl:0,parts:[]},f1=v=>v.toFixed
     if(P.c>0){const qd=iaCl((iaAvg(recv.map(x=>iaQ(x.n)))??.5)-(iaAvg(gave.map(x=>iaQ(x.n)))??.5),.5)*2,
         tI=iaAvg(recv.map(x=>{const T=iaTrend(x.n);return T?T.pct:null})),tO=iaAvg(gave.map(x=>{const T=iaTrend(x.n);return T?T.pct:null})),tr=(tI!=null||tO!=null)?iaCl(((tI||0)-(tO||0))/60,1):0,
         q=.30*qd+.50*pd+.20*tr;o.dl+=EQP.win*P.c*q;
-      if(q>=.15)o.parts.push(`punta a vincere subito (${iaWhyC(P)}): riceve giocatori che rendono di più (PDK ${f1(pI)} contro ${f1(pO)}${tr>.15?", trend in crescita":""})`);else if(q<=-.15)o.parts.push(`punta a vincere subito (${iaWhyC(P)}), ma riceve giocatori che rendono meno (PDK ${f1(pI)} contro ${f1(pO)} di quelli che cede)`)}
+      if(q>=.15)o.parts.push(`punta a vincere subito: riceve giocatori che rendono di più (PDK ${f1(pI)} contro ${f1(pO)}${tr>.15?", trend in crescita":""})`);else if(q<=-.15)o.parts.push(`punta a vincere subito, ma riceve giocatori che rendono meno (PDK ${f1(pI)} contro ${f1(pO)} di quelli che cede)`)}
     else{const yo=iaCl(((aO??aI??0)-(aI??aO??0))/5,1),rI=iaAvg(recv.map(x=>Math.log(iaRs(x.n)))),rO=iaAvg(gave.map(x=>Math.log(iaRs(x.n)))),rs=rI==null||rO==null?0:iaCl(rI-rO,1),eI=iaAvg(recv.map(x=>iaEf(x.n))),eO=iaAvg(gave.map(x=>iaEf(x.n))),ef=eI==null||eO==null?0:iaCl((eI-eO)*2,1),
         q=.4*yo+.35*rs+.25*ef;o.dl+=EQP.reb*(-P.c)*q;
-      if(q>=.15)o.parts.push(`guarda al futuro (${iaWhyC(P)}): riceve giocatori ${yo>.15?"più giovani":""}${yo>.15&&(rs>.15||ef>.15)?", ":""}${rs>.15?"con più valore rispetto ai crediti":""}${rs>.15&&ef>.15?" e ":""}${ef>.15&&rs<=.15&&yo<=.15?"molto efficienti":ef>.15?"efficienti":""}`.replace(/, $/,""));else if(q<=-.15)o.parts.push(`dovrebbe ricostruire (${iaWhyC(P)}), ma riceve giocatori meno giovani/promettenti di quelli che cede`)}}
+      if(q>=.15)o.parts.push(`guarda al futuro: riceve giocatori ${yo>.15?"più giovani":""}${yo>.15&&(rs>.15||ef>.15)?", ":""}${rs>.15?"con più valore rispetto ai crediti":""}${rs>.15&&ef>.15?" e ":""}${ef>.15&&rs<=.15&&yo<=.15?"molto efficienti":ef>.15?"efficienti":""}`.replace(/, $/,""));else if(q<=-.15)o.parts.push(`dovrebbe ricostruire, ma riceve giocatori meno giovani/promettenti di quelli che cede`)}}
   return o}
 /* Interesse dell'altra squadra (3 livelli): conta il bisogno di ruolo (riceve un ruolo dove è corta, cede un ruolo dove abbonda) e il saldo di valore dal suo punto di vista */
 /* (451) VALORE PERCEPITO: il valore di un giocatore non è uguale per tutti, dipende dalle intenzioni della squadra che lo riceve o lo cede.
@@ -3358,8 +3385,9 @@ function iaMul(P,t,n){const a=iaAge(n);if(a==null)return 1;const u=Math.max(-1,M
   return Math.max(.5,1+EQP.pvA*(-P.c)*u+(P.c<0&&u>0?EQP.pvC*cash*(-P.c)*u:0))}
 function iaInt(S,t,recv,gave,adv0,cr){const P0=iaProf(t),mR=iaSum(recv,x=>x.v),mG=iaSum(gave,x=>x.v),dvp=(iaSum(recv,x=>x.v*(iaMul(P0,t,x.n)-1))-iaSum(gave,x=>x.v*(iaMul(P0,t,x.n)-1)))/Math.max(1,mR,mG),adv=Math.max(-1,Math.min(1,adv0+dvp));
   const nb=iaNeed(S,t,recv,gave),vs=Math.max(0,Math.min(1,.5+adv*EQP.vsk)),sc=.5+(EQP.wnb*nb+EQP.wvs*vs-.5)*EQP.sck,l=sc>=EQP.thA?"alto":sc>=EQP.thM?"medio":"basso",d=S[t].def,nick=TEAMS[t].nick,p=[];
-  const need=[...new Set(recv.filter(x=>!iaSp(x.n)&&d[x.r]>.12).map(x=>IA_RP[x.r]))],sur=[...new Set(gave.filter(x=>!iaSp(x.n)&&d[x.r]<-.08).map(x=>IA_RP[x.r]))];
-  if(need.length)p.push(`riceve ${need.join(" e ")}, ruolo in cui è carente`);if(sur.length)p.push(`cede ${sur.join(" e ")}, ruolo in cui abbonda`);
+  const need=[...new Set(recv.filter(x=>!iaSp(x.n)&&d[x.r]>.12).map(x=>IA_RP[x.r]))],needR=[...new Set(recv.filter(x=>!iaSp(x.n)&&d[x.r]>.12).map(x=>x.r))],sur=[...new Set(gave.filter(x=>!iaSp(x.n)&&d[x.r]<-.08).map(x=>IA_RP[x.r]))];
+  p.push(`intenzioni: ${iaIntent(P0)} (${iaWhyC(P0)})`);
+  if(need.length){const ag=iaAvg(recv.filter(x=>needR.includes(x.r)).map(x=>iaAge(x.n))),ctx=ag==null?"":P0.c<=-.25&&ag>P0.age+2?` ma sono veterani (${ag.toFixed(1).replace(".",",")} anni): poco in linea con la ricostruzione`:P0.c>=.25&&ag<P0.age-3?` ma sono giovani (${ag.toFixed(1).replace(".",",")} anni): poco in linea con la voglia di vincere subito`:"";p.push(`riceve ${need.join(" e ")}, ruolo in cui è carente${ctx?","+ctx:""}`)}if(sur.length)p.push(`cede ${sur.join(" e ")}, ruolo in cui abbonda`);
   if(!need.length&&!sur.length)p.push("ruoli già coperti: per il suo roster è quasi neutro");
   if(adv<=-.10)p.push(`ci rimette circa il ${Math.round(-adv*100)}% di valore`);else if(adv>=.10)p.push(`ci guadagna circa il ${Math.round(adv*100)}% di valore`);
   if(Math.abs(dvp)>=.04)p.push(`per le sue intenzioni (${P0.c>=.25?"vuole vincere subito":P0.c<=-.25?"ricostruisce":"strada ancora aperta"}) i giocatori valgono ${dvp>0?"di più":"di meno"} di quanto dicono i numeri: saldo ${Math.round(adv0*100)}% → ${Math.round(adv*100)}%`);
@@ -8524,6 +8552,8 @@ const EQ_PAR=[
   ["isA","Età: anni di scarto per l'effetto pieno","Quanti anni sopra/sotto la media lega bastano per essere del tutto «vincere subito» / «ricostruire»",.5],
   ["isT","Talento: scarto per l'effetto pieno","Quanto il talento (6 migliori) deve distaccarsi dalla media lega per contare al massimo",.1],
   ["iwA","Età contro talento","Quota dell'età nel segnale di roster (il resto è talento)",.01],
+  ["pwi","Rendimento (PDK): effetto delle intenzioni","Chi vuole vincere subito dà fino a +50% al peso del rendimento, chi ricostruisce fino a −50% (minimo 40% del peso)",.01],
+  ["iwR","Ultimi scambi: peso","Quanto contano gli scambi fatti (prendere veterani/pagare crediti = vincere subito; vendere veterani per giovani/crediti = ricostruire)",.01],
   ["iwS0","Classifica: peso di partenza","Peso della classifica a inizio stagione",.01],
   ["iwS1","Classifica: peso in più per turno giocato","Cresce a ogni turno",.01],
   ["iwSm","Classifica: peso massimo","Tetto del peso della classifica",.01],
@@ -8579,6 +8609,8 @@ dpk:["Quanto in più vale per l'IA Trade un giovane scelto in alto al draft (pri
 isA:["Quanti anni sopra o sotto la media della lega servono perché una squadra sia del tutto «vincere subito» (vecchia) o «ricostruisce» (giovane).","Basso: bastano pochi anni di scarto e quasi tutte le squadre prendono una direzione netta. Alto: solo i roster molto vecchi o molto giovani hanno un'intenzione chiara."],
 isT:["Di quanto il talento dei 6 migliori (in deviazioni standard) deve staccarsi dalla media lega per contare al massimo.","Basso: basta poco per essere «forti» o «deboli». Alto: solo le squadre molto sopra o sotto la media hanno un segnale di talento pieno."],
 iwA:["Nel segnale di roster, quanta parte spetta all'età media (il resto è talento).","Alto: decide l'età (Eagles vecchi = vogliono vincere anche se non fortissimi). Basso: decide il talento (Ducks giovani ma forti = vogliono vincere)."],
+pwi:["Di quanto le intenzioni cambiano il peso del rendimento (PDK) nel giudizio di una squadra.","Alto: chi vuole vincere subito guarda molto il PDK, chi ricostruisce quasi non lo guarda. A 0 il PDK pesa uguale per tutte."],
+iwR:["Quanto pesano, nelle intenzioni di una squadra, gli scambi già fatti (più recenti = più peso).","Alto: chi ha venduto veterani per giovani e crediti è considerato in ricostruzione anche se la classifica dice altro. A 0 gli scambi non contano."],
 iwS0:["Peso della classifica a inizio stagione, con zero turni giocati.","Alto: la classifica decide subito le intenzioni anche con pochi turni, ma è rumorosa. Basso: all'inizio contano soprattutto età e talento."],
 iwS1:["Quanto cresce il peso della classifica a ogni turno giocato.","Alto: la classifica prende presto il comando. Basso: le intenzioni restano a lungo legate a età e talento."],
 iwSm:["Il peso massimo che la classifica può raggiungere nelle intenzioni.","Alto: a stagione avanzata la classifica decide quasi tutto. Basso: età e talento restano sempre importanti."],
