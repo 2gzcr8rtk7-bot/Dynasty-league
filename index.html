@@ -4902,7 +4902,7 @@ async function shCampo(nn){const S=SHR_CAMPO;if(!S)return null;const nn0=nn&&nn<
    parquet chiaro, linee bianche) in versione piccola, con DENTRO solo il giocatore: maglia + tagliandino col PDK della partita.
    Niente capitano, niente punteggio pieno/normale. */
 let SHR_PC=null;
-async function shPcCourt(S){const x=S.x,t=S.t,c=TEAMS[t],OT=dlTm(t),W=560,k=W/100;
+async function shPcCourt(S){const x=S.x,t=S.t,c=TEAMS[t],OT=dlTm(t),SC=1.25,W=560*SC,k=W/100;
   try{await Promise.all([document.fonts.load('40px "CourtBlock"'),document.fonts.load('800 italic 40px "Barlow Condensed"')])}catch(e){}
   const shade=(h,q)=>{const n=parseInt(h.slice(1),16);const f=v=>Math.round(v*(1-q)).toString(16).padStart(2,"0");return"#"+f(n>>16)+f(n>>8&255)+f(n&255)};
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255};
@@ -4910,8 +4910,8 @@ async function shPcCourt(S){const x=S.x,t=S.t,c=TEAMS[t],OT=dlTm(t),W=560,k=W/10
   const aL=Math.max(c.city.length,c.nick.length),afs=Math.min(7.2,(35-(aL-1)*.5)/(aL*.49))/Math.max(1,LK*.95),TX=9.5*LK+1.5,ay=8+afs*.43;
   const lc=OT.lc||(DLS_LN[DLS.line]||DLS_LN.white)[0];
   /* campo PICCOLO: cornice (apron) sottile attorno al giocatore (~mezzo cm), intestazione con logo e nome, parquet chiaro con area, tiro libero e linea da tre */
-  const jw=200,jh=jw*77/64,tw2=340,hb=56,hl=6,hp=54,thh=hb+hl+hp,tot=jh+thh-W*.02,M=34,HH=16*k,AP=16,H=Math.round(HH+M+tot+M+AP);
-  const wx=AP,wy=HH,ww=W-2*AP,wh=H-HH-AP,cx=W/2,wl=3.6,ly=(f)=>wy+wh*f;
+  const jw=200*SC,jh=jw*77/64,tw2=340*SC,hb=56*SC,hl=6*SC,hp=54*SC,thh=hb+hl+hp,tot=jh+thh-W*.02,M=34*SC,HH=16*k,AP=16*SC,H=Math.round(HH+M+tot+M+AP);
+  const wx=AP,wy=HH,ww=W-2*AP,wh=H-HH-AP,cx=W/2,wl=3.6*SC,ly=(f)=>wy+wh*f;
   const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><defs><linearGradient id="wood" x1="0" x2="1"><stop offset="0" stop-color="#b9793f"/><stop offset=".5" stop-color="#dba567"/><stop offset="1" stop-color="#b9793f"/></linearGradient>${woodPat("doghe","planks")}<linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".55" stop-color="#fff" stop-opacity=".03"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></linearGradient><radialGradient id="shine" cx=".5" cy=".3" r=".75"><stop offset="0" stop-color="#fff" stop-opacity=".2"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></radialGradient></defs>
    <rect width="${W}" height="${H}" fill="${apron}"/><rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="url(#wood)"/><g transform="translate(${wx},${wy}) scale(${k*.94/1},${k*.94})"><rect width="${ww/(k*.94)}" height="${wh/(k*.94)}" fill="url(#planks)"/></g><rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="url(#shine)" opacity=".8"/>
    <g fill="none" stroke="${lc}" stroke-opacity=".92" stroke-width="${wl}" stroke-linejoin="round"><rect x="${wx+wl/2}" y="${wy+wl/2}" width="${ww-wl}" height="${wh-wl}"/>
@@ -4945,7 +4945,7 @@ async function shPcCourt(S){const x=S.x,t=S.t,c=TEAMS[t],OT=dlTm(t),W=560,k=W/10
   X.textAlign="center";X.font=`italic 800 ${hp*.8}px "Barlow Condensed","Arial Narrow",Arial,sans-serif`;X.fillStyle=SH_PK[lv][1];X.fillText(pdkF(v),W/2,ty+hb+hl+hp/2+2);
   return cv}
 /* pagina "prestazione": sfondo viola Dreamers (come le altre immagini), logo e nome squadra, campetto compatto con il giocatore, dettagli partita */
-async function shPcard(){const S=SHR_PC;if(!S)return null;const x=S.x,t=S.t,tm=TEAMS[t],court=await shPcCourt(S),W=1080,H=1310;const{cv,c}=await shBase(H);
+async function shPcard(){const S=SHR_PC;if(!S)return null;const x=S.x,t=S.t,tm=TEAMS[t],court=await shPcCourt(S),W=1080,H=1440;const{cv,c}=await shBase(H);
   {const im=await ldImg(LOGO2[t]||LOGO[t]);if(im){const bw=420,bh=320,r=Math.min(bw/im.width,bh/im.height),w=im.width*r,h=im.height*r;c.shadowColor="rgba(192,132,252,.55)";c.shadowBlur=40;c.drawImage(im,W/2-w/2,150+(bh-h)/2,w,h);c.shadowBlur=0}}/* logo originale, proporzioni intatte */
   const cy=520;c.shadowColor="rgba(0,0,0,.55)";c.shadowBlur=40;c.shadowOffsetY=16;c.drawImage(court,(W-court.width)/2,cy);c.shadowBlur=0;c.shadowOffsetY=0;
   const by=cy+court.height;c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_B(600,34);c.fillStyle="#e9d5ff";c.fillText(`${x.tm} vs ${x.opp} · ${x.st}${x.dl?" · "+x.dl:""}`,W/2,by+70);
