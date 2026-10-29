@@ -5774,12 +5774,53 @@ async function shPlayer(){const S=SHR_PL;if(!S)return null;
   else{c.textAlign="center";c.font=SH_F(700,40,1);c.fillStyle="rgba(196,181,253,.8)";c.fillText(GL.length?"Il trend compare dopo la seconda partita":"Partite non ancora disponibili",W/2,yt+th/2+20)}
   if(S.rk)shFoot(c,W,H,`Lega · PDK ${S.rk[0]}° su ${S.rk[1]} · dati Dunkest al ${EFF.agg}`);else shFoot(c,W,H,`Dati Dunkest al ${EFF.agg}`);
   return cv}
+let SHR_CM=null;
+/* IMMAGINE CONDIVISA DEL COMPARATORE: in alto le due maglie (G League: logo) affiancate, sotto i dati a confronto, in fondo il grafico con le due linee */
+async function shCompar(){const S=SHR_CM;if(!S||!S.P[0]||!S.P[1])return null;
+  const W=1080,pw=(W-112-24)/2,y0=170,hh=330,rh=74,rows=S.st.length+1,y1=y0+hh+36,y2=y1+rows*rh+40,ch=720,H=y2+ch+150;
+  const{cv,c}=await shBase(H,W,0,1),COL=["#38bdf8","#f472b6"],MET={pdk:"PDK",min:"MINUTI",eff:"EFFICIENZA"}[S.met];
+  const fmt=(v,d)=>v==null||isNaN(v)?"—":v.toLocaleString("it-IT",{minimumFractionDigits:d,maximumFractionDigits:d});
+  const dk=(h,k)=>{const v=parseInt(h.slice(1),16),q=x=>Math.round(x*(1-k)).toString(16).padStart(2,"0");return"#"+q(v>>16)+q((v>>8)&255)+q(v&255)};
+  c.font=SH_F(700,28,1);c.textAlign="right";c.textBaseline="alphabetic";c.fillStyle="rgba(233,213,255,.75)";c.fillText("CONFRONTO · "+perFmt(S.da)+" → "+perFmt(S.a),W-56,100);
+  /* due pannelli con la maglia */
+  for(let i=0;i<2;i++){const p=S.P[i],tm=TEAMS[p.t],gx=p.gl&&typeof GLEAGUE!=="undefined"?GLEAGUE.find(x=>x.t===p.t):null,bg=gx&&gx.bg?gx.bg:tm.bg,trim=gx&&gx.trim?gx.trim:tm.trim,tx=p.gl?"#fff":(tm.txt||tm.fg),x0=56+i*(pw+24);
+    c.save();shRR(c,x0,y0,pw,hh,28);c.clip();const gg=c.createLinearGradient(x0,y0,x0+pw,y0+hh);gg.addColorStop(0,bg);gg.addColorStop(1,dk(bg,.4));c.fillStyle=gg;c.fillRect(x0,y0,pw,hh);
+    c.strokeStyle="rgba(255,255,255,.07)";c.lineWidth=16;c.beginPath();for(let x=-hh;x<pw;x+=40){c.moveTo(x+x0,y0+hh);c.lineTo(x+x0+hh,y0)}c.stroke();c.fillStyle=COL[i];c.fillRect(x0,y0+hh-14,pw,14);c.restore();
+    let ic=null;try{if(!p.gl)ic=await shImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jersey(p.t,p.num,p.n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')));else{ic=await(gx&&gx.logo?shImg(gx.logo):shLogo(p.t))}}catch(e){}
+    if(ic){const bx=190,r=Math.min(bx/ic.width,bx/ic.height),w=ic.width*r,h=ic.height*r;c.drawImage(ic,x0+(pw-w)/2,y0+16+(170-h)/2,w,h)}
+    c.textAlign="center";c.fillStyle=tx;const nm=p.n.toUpperCase();let fs=58;c.font=SH_F(800,fs,1);while(fs>30&&c.measureText(nm).width>pw-40){fs-=2;c.font=SH_F(800,fs,1)}c.textBaseline="alphabetic";c.fillText(nm,x0+pw/2,y0+250);
+    c.font=SH_F(700,28,1);c.globalAlpha=.85;c.fillText(shFit(c,[({G:"GUARDIA",F:"ALA",C:"CENTRO"})[p.r]||"",(p.gl?"G LEAGUE ":"")+tm.nick.toUpperCase()].filter(Boolean).join(" · "),pw-40),x0+pw/2,y0+292);c.globalAlpha=1;
+    /* indicatore della linea nel grafico */
+    c.strokeStyle="#fff";c.lineWidth=0}
+  /* dati a confronto: valore A | misura | valore B (in verde chi è meglio) */
+  c.textBaseline="middle";const cx=W/2;
+  const all=S.st.map(r=>({l:r[0],a:r[1],b:r[2],d:r[3],w:r[4]}));all.push({l:"TREND "+MET,a:S.tr[0],b:S.tr[1],t:1});
+  all.forEach((r,i)=>{const y=y1+i*rh;shRR(c,56,y,W-112,rh-10,16);c.fillStyle=i%2?"rgba(17,10,48,.55)":"rgba(76,29,149,.28)";c.fill();
+    const wa=r.w&&r.a!=null&&r.b!=null&&r.a>r.b,wb=r.w&&r.a!=null&&r.b!=null&&r.b>r.a,t=v=>v==null?"—":(Math.abs(v)<3?"▶ STABILE":(v>0?"▲ +":"▼ −")+Math.abs(v).toFixed(0)+"%");
+    const va=r.t?t(r.a):fmt(r.a,r.d),vb=r.t?t(r.b):fmt(r.b,r.d),cA=r.t?(r.a==null||Math.abs(r.a)<3?"#cbd5e1":r.a>0?"#4ade80":"#f87171"):wa?"#4ade80":"#fff",cB=r.t?(r.b==null||Math.abs(r.b)<3?"#cbd5e1":r.b>0?"#4ade80":"#f87171"):wb?"#4ade80":"#fff";
+    c.font=SH_F(800,44,1);c.textAlign="center";c.fillStyle=cA;c.fillText(va,56+pw/2,y+(rh-10)/2+2);c.fillStyle=cB;c.fillText(vb,56+pw+24+pw/2,y+(rh-10)/2+2);
+    c.font=SH_F(700,22,1);c.fillStyle="rgba(233,213,255,.75)";c.fillText(r.l,cx,y+(rh-10)/2+2)});
+  /* grafico */
+  const gy=y2,L=130,R=100,T=gy+30,B=gy+ch-90,iw=W-L-R-0,ih=B-T,K=S.K,n=K.length;
+  shRR(c,40,gy-10,W-80,ch,26);c.fillStyle="rgba(10,6,24,.72)";c.fill();c.strokeStyle="rgba(196,181,253,.18)";c.lineWidth=2;c.stroke();
+  const vals=S.S.flat().map(q=>q.v);if(!vals.length||n<1){c.textAlign="center";c.font=SH_F(700,40,1);c.fillStyle="rgba(196,181,253,.8)";c.fillText("Nessuna partita nel periodo",W/2,gy+ch/2);shFoot(c,W,H,"Dreamers · confronto");return cv}
+  const isE=S.met==="eff",st=isE?.1:10;let lo=Math.floor(Math.min(...vals)/st)*st,hi=Math.max(...vals);if(!isE&&lo>0&&lo<15)lo=0;const sp=Math.max(5*st,Math.ceil((hi-lo)/(5*st))*5*st),sc=[lo,lo+sp];
+  const X=k=>L+(n===1?iw/2:K.indexOf(k)*iw/(n-1)),Y=v=>B-(v-sc[0])/(sc[1]-sc[0])*(B-T);
+  for(let k=0;k<=5;k++){const v=sc[0]+(sc[1]-sc[0])*k/5,yy=Y(v);c.strokeStyle="rgba(196,181,253,.12)";c.lineWidth=1.5;c.beginPath();c.moveTo(L,yy);c.lineTo(W-R,yy);c.stroke();c.font=SH_B(600,22);c.fillStyle="rgba(226,232,240,.6)";c.textAlign="right";c.fillText(isE?fmt(v,2):fmt(v,0),L-14,yy)}
+  const step=Math.max(1,Math.ceil(n/(Math.floor(iw/110)||1)));K.forEach((k,i)=>{const xx=X(k);c.strokeStyle="rgba(196,181,253,.07)";c.lineWidth=1;c.beginPath();c.moveTo(xx,T);c.lineTo(xx,B);c.stroke();
+    if(i%step&&i!==n-1)return;const[a,b]=trLab(k,S.by).split("|");c.textAlign="center";c.font=SH_F(700,24,1);c.fillStyle="rgba(241,245,249,.9)";c.fillText(shFit(c,a||"",100),xx,B+34);if(b){c.font=SH_B(500,19);c.fillStyle="rgba(203,213,225,.65)";c.fillText(b,xx,B+60)}});
+  c.textAlign="left";c.font=SH_F(800,24,1);c.fillStyle="rgba(233,213,255,.85)";c.fillText(MET,L,T-8);
+  for(let i=0;i<2;i++){const pts=S.S[i].map(q=>[X(q.k),Y(q.v),q.v]);if(!pts.length)continue;c.strokeStyle=COL[i];c.lineWidth=6;c.lineJoin="round";c.lineCap="round";c.setLineDash(i?[18,12]:[]);c.beginPath();pts.forEach((q,j)=>j?c.lineTo(q[0],q[1]):c.moveTo(q[0],q[1]));c.stroke();c.setLineDash([]);
+    pts.forEach((q,j)=>{c.beginPath();c.arc(q[0],q[1],9,0,7);c.fillStyle=COL[i];c.fill();c.lineWidth=3;c.strokeStyle="#0a0618";c.stroke();
+      if(n<=12||j===pts.length-1){const txt=fmt(q[2],isE?2:1);c.font=SH_F(800,24,1);const tw=c.measureText(txt).width+18,th=32,ty=q[1]+(i?th+10:-th-14);shRR(c,q[0]-tw/2,ty,tw,th,9);c.fillStyle=COL[i];c.fill();c.fillStyle="#0a0618";c.textAlign="center";c.fillText(txt,q[0],ty+th/2+1)}})}
+  const by={s:"media di ogni stagione",m:"media di ogni mese",w:"media di ogni settimana",g:"ogni partita"}[S.by]||"";
+  shFoot(c,W,H,`Dreamers · confronto ${S.P[0].n} / ${S.P[1].n} · ${by}`);return cv}
 async function shOpen(k){const old=document.querySelector(".shsheet");if(old)old.remove();
   const sh=document.createElement("div");sh.className="shsheet";sh.innerHTML='<div class="shbox"><p class="shwait">Preparo l\'immagine…</p></div>';document.body.appendChild(sh);
   sh.addEventListener("click",e=>{if(e.target===sh||e.target.closest(".shx"))sh.remove()});
-  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="gr"?await shGrafico():k==="pl"?await shPlayer():k==="pc"?await shPcard():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
+  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="gr"?await shGrafico():k==="cm"?await shCompar():k==="pl"?await shPlayer():k==="pc"?await shPcard():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
   if(!cv){sh.querySelector(".shbox").innerHTML='<p class="shwait">Niente da condividere adesso.</p><button class="shx">Chiudi</button>';return}
-  const name=(k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pl"?"scheda-"+((SHR_PL&&SHR_PL.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pc"?"prestazione-"+((SHR_PC&&SHR_PC.x.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="card"?"grafico":"dreamers")+".png";
+  const name=(k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="cm"?"confronto-"+((SHR_CM&&SHR_CM.P[0]&&SHR_CM.P[1])?(SHR_CM.P[0].n+"-"+SHR_CM.P[1].n):"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pl"?"scheda-"+((SHR_PL&&SHR_PL.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pc"?"prestazione-"+((SHR_PC&&SHR_PC.x.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="card"?"grafico":"dreamers")+".png";
   let file=null,url="";const mk=async c=>{const blob=await new Promise(r=>c.toBlob(r,"image/png"));file=new File([blob],name,{type:"image/png"});if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(blob)};await mk(cv);
   /* Campo: cursore "fino a dove condividere" (si parte sempre dall'alto: prime N righe) */
   const NR=k==="campo"&&SHR_CAMPO?SHR_CAMPO.R.length:0,sl=NR>1?`<div class="shcut"><div><b>Condividi dalla 1ª alla <output>${NR}</output>ª riga</b><small>su ${NR} · trascina per fermarti prima</small></div><input type="range" min="1" max="${NR}" value="${NR}" step="1" aria-label="Fino a quale riga condividere"></div>`:"";
@@ -7503,13 +7544,17 @@ function vCompar(){
   const tab=CMR.pa&&CMR.pb?`<div class="cmtab"><div class="cmth"><span></span><b style="color:${CM_COL[0]}">${sur(CMR.pa)}</b><b style="color:${CM_COL[1]}">${sur(CMR.pb)}</b></div>${rows.map(([l,f,v])=>{const a=v?v(gA):null,b=v?v(gB):null,wa=a!=null&&b!=null&&a>b,wb=a!=null&&b!=null&&b>a;return`<div class="cmtr"><span>${l}</span><b class="${wa?"w":""}">${f(gA)}</b><b class="${wb?"w":""}">${f(gB)}</b></div>`}).join("")}</div>`:"";
   const seg=(k,opts)=>`<div class="trseg">${opts.map(([v,l])=>`<button data-cm="met|${v}" aria-pressed="${CMR.met===v}">${l}</button>`).join("")}</div>`;
   const srch=CMR.slot?`<div class="cmsrch"><input id="cmq" class="vtq" type="search" placeholder="🔍 Cerca il giocatore ${CMR.slot.toUpperCase()}" value="${(CMR.q||"").replace(/"/g,"&quot;")}" autocomplete="off"><div id="cmList" class="cmlist">${cmList()}</div><button class="advbtn" data-cm="close|x">Chiudi la ricerca</button></div>`:"";
+  const _pl=n=>{const p=n?trPl(n):null;if(!p)return null;const r=(ROSTER[p.t]||[]).find(x=>x[0]===n);return{n,t:p.t,gl:!!p.gl,r:p.r,num:r?r[1]:null,nba:r?r[3]:null}};
+  SHR_CM=CMR.pa&&CMR.pb?{P:[_pl(CMR.pa),_pl(CMR.pb)],S,K,by,met,da:CMR.da,a:CMR.a,
+    st:[["PARTITE",gA.length,gB.length,0,0],["PDK MEDIO",grAvg(gA,x=>x.pdk),grAvg(gB,x=>x.pdk),1,1],["MINUTI MEDI",grAvg(gA,x=>x.min),grAvg(gB,x=>x.min),1,1],["EFFICIENZA",grAvg(gA,x=>x.eff),grAvg(gB,x=>x.eff),2,1]],
+    tr:[0,1].map(i=>{const t=grTrend(S[i].map(q=>q.v));return t?t.pct:null})}:null;
   return`<div class="grroom trroom cmroom" style="--tc:#16213f;--tf:#fff">
   ${CMR.from?`<button class="grback" data-cm="back|x">‹ Indietro</button>`:""}
   <div class="grhd"><div><small>Scambi · due giocatori sullo stesso grafico</small><b>Comparatore</b></div></div>
   <div class="cmslots">${cmSlot(0)}${cmSlot(1)}</div>${srch}
   <div class="trctl">${perBtn("cm",CMR.da,CMR.a)}${perGranBtns("cm",GOK,by)}</div>
   <div class="trlab">Cosa confrontare</div>${seg("met",[["pdk","PDK"],["min","Minuti"],["eff","Efficienza"]])}
-  <div class="grcard">${leg?`<div class="cmlegs">${leg}</div>`:""}${chart}<div class="grfoot">${by==="s"?"media di ogni stagione":by==="m"?"media di ogni mese":by==="w"?"media di ogni settimana":"ogni partita"} · periodo ${perFmt(CMR.da)} → ${perFmt(CMR.a)}</div></div>
+  <div class="grcard grshc">${CMR.pa&&CMR.pb?shBtn("cm"):""}${leg?`<div class="cmlegs">${leg}</div>`:""}${chart}<div class="grfoot">${by==="s"?"media di ogni stagione":by==="m"?"media di ogni mese":by==="w"?"media di ogni settimana":"ogni partita"} · periodo ${perFmt(CMR.da)} → ${perFmt(CMR.a)}</div></div>
   ${tab}
   <p class="note">Come nel Grafico: ogni punto è la media del periodo (stagione, mese, settimana o singola partita). Il trend è la retta che passa meglio tra i punti, in % sulla media. Il tasto «Confronta» nel profilo di un giocatore lo mette già al primo posto.</p></div>`}
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="compar")return;const b=e.target.closest("[data-cm]");if(!b)return;e.preventDefault();const[k,v]=b.dataset.cm.split("|");const y=scrollY;
