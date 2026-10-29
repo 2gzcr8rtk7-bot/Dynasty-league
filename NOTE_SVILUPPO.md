@@ -1149,4 +1149,4 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 (367) Home, banner partite scorrevoli: (1) davanti alle partite NBA ci sono 4 banner DREAMERS (le sfide del turno in corso, `drPairs`/`drTeam`) con i loghi delle nostre squadre, punteggio Dreamers e stato (IN CORSO / LIVE / FINALE · Tn / DAL data); bordo oro; tocco = apre la sfida (`TVS.dr`). (2) Anche le partite NBA usano i loghi (`tvLogo`, classe `.hml`) al posto delle sigle; le sigle restano solo finche il logo non carica. IN CODA, NON pubblicato.
 
-(368) Banner Dreamers in Home: loghi delle squadre -6% (26px -> 24,4px) e logo Peacocks ulteriormente -7% (22,7px) tramite `--k:.93` sul contenitore `.hmdl`. IN CODA, NON pubblicato.
+(368) Banner Dreamers in Home: loghi delle squadre -6% (26px -> 24,4px); Peacocks, Mooses ed Eagles -10% rispetto agli altri (22px) tramite `--k:.9` sul contenitore `.hmdl`. IN CODA, NON pubblicato.
