@@ -18,3 +18,5 @@ Ogni voce: data · cosa ha visto · cosa ci si aspetta · stato.
 
 6. Parere sulle trade chiuse: deve dedurre matematicamente le intenzioni (Turtles: Coward più anziano ma più forte al posto di Fears = si sentono pronti, escono dalla ricostruzione) e riconciliarle col saldo di valore; frasi decise, anche ironiche (truffa, senza senso). → fatto (458: `histVerdictSide`).
 7. Aggiungere pareri tecnici: ultima partita, minutaggio (es. Murray che prende minuti a un compagno), età, media, trend, confronto con l'anno scorso, tante varianti. → fatto (`histTechLines`).
+
+8. Condividi: solo PDK, frasi più sintetiche con scambi grossi (3-4 squadre), versione dedicata alle speciali con commento tecnico (scommessa/vincere ora/chi lasciar andare a scadenza). → fatto (459).

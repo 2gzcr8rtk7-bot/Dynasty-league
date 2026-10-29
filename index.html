@@ -1809,7 +1809,7 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .spgrid{display:grid;gap:8px;margin-top:8px}
 .spc{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-left:6px solid var(--sc);padding:10px 12px 10px}
 .spc.exp{opacity:.55}
-.sptop{display:flex;align-items:center;justify-content:space-between}
+.sptop{display:flex;align-items:center;justify-content:space-between}.sptop .spsh{margin:0 auto 0 10px}
 .sptype{font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#0a0f1f;background:var(--gold);padding:1px 8px;transform:skewX(-10deg)}
 .spleft{display:flex;align-items:baseline;gap:5px}
 .spleft b{font-family:var(--display);font-style:italic;font-weight:800;font-size:34px;line-height:1;color:var(--sc)}
@@ -2506,7 +2506,7 @@ function vSpeciali(){
   const cur=GIORNATE.length?GIORNATE[GIORNATE.length-1].n:1;
   const card=x=>{const I=spInfo(x),col=spColor(I.fr),pct=Math.round(I.fr*100),exp=I.left===0;
     return `<div class="spc ${exp?"exp":""}" style="--sc:${col}">
-      <div class="sptop"><span class="sptype">Speciale ${x.tipo}</span><span class="spleft"><b>${exp?"Scaduta":I.left}</b>${exp?"":`<small>giornat${I.left===1?"a":"e"}</small>`}</span></div>
+      <div class="sptop"><span class="sptype">Speciale ${x.tipo}</span><button class="bshare spsh" data-share="sp" data-spi="${SPECIALI.indexOf(x)}" aria-label="Condividi trade speciale"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="spleft"><b>${exp?"Scaduta":I.left}</b>${exp?"":`<small>giornat${I.left===1?"a":"e"}</small>`}</span></div>
       <div class="sppl"><div class="spj in">${jersey(x.t,NUM[x.entra],x.entra)}<span><i class="tar in"><svg viewBox="0 0 16 12"><path d="M15 6H3M7 1.5 2.2 6 7 10.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i>${x.entra}</span></div>
         <div class="spj out">${jersey(x.t,NUM[x.esce],x.esce)}<span><i class="tar out"><svg viewBox="0 0 16 12"><path d="M1 6h12M9 1.5 13.8 6 9 10.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i>${x.esce}</span></div></div>
       <div class="spbar"><i style="width:${pct}%"></i></div>
@@ -3765,7 +3765,7 @@ function vTradeAll(){
   const arw=d=>d==="in"?`<i class="tar in" title="Entra"><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M15 6H3M7 1.5 2.2 6 7 10.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i>`:d==="out"?`<i class="tar out" title="Esce"><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M1 6h12M9 1.5 13.8 6 9 10.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i>`:"";
   const cell=(x,neg)=>x?`<div class="tc">${wedge(x[0])}<div class="tct"><small>${TEAMS[x[0]].nick}${x[2]?" · "+x[2]:""}</small><div class="trc tdir">${arw(dir(x[2]))}<div>${rec(x[1],neg&&x[2]==="acquista")}</div></div></div></div>`:`<div class="tc"></div>`;
   const rows=TRADES.map((x,i)=>{const tipo=/asta/i.test(x.titolo)?"Asta":/speciale/i.test(x.titolo)?"Speciale":/g league/i.test(x.titolo)?"G League":"Scambio";
-    return `<div class="tr3"><div class="tty3"><span>${tipo}${x.data?" "+x.data.slice(0,5):""}</span></div>${cell(x.lati[0],tipo==="Asta")}${cell(x.lati[1],tipo==="Asta")}<div class="trshc">${histTradeOk(x)?`<button class="bshare" data-share="ht" data-hti="${i}" aria-label="Condividi scambio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`:""}</div></div>`}).join("");
+    return `<div class="tr3"><div class="tty3"><span>${tipo}${x.data?" "+x.data.slice(0,5):""}</span></div>${cell(x.lati[0],tipo==="Asta")}${cell(x.lati[1],tipo==="Asta")}<div class="trshc">${histTradeOk(x)?`<button class="bshare" data-share="ht" data-hti="${i}" aria-label="Condividi scambio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`:(si=>si>=0?`<button class="bshare" data-share="sp" data-spi="${si}" aria-label="Condividi trade speciale"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`:"")(/speciale/i.test(x.titolo)?SPECIALI.findIndex(sp=>x.lati.some(l=>l[1].includes(sp.entra))):-1)}</div></div>`}).join("");
   return `${H("Trade Alert",`<em>Operazioni chiuse</em>`)}<div class="tbl-wrap ttab">${rows}</div>`;
 }
 
@@ -5937,8 +5937,8 @@ async function shCompar(){const S=SHR_CM;if(!S||!S.P[0]||!S.P[1])return null;
   shFoot(c,W,H,`Dreamers · confronto ${S.P[0].n} / ${S.P[1].n} · ${by}`);return cv}
 /* (458) CONDIVIDI UNA TRADE CHIUSA (Trade Alert): immagine con maglie, loghi, statistiche e PARERE dell'IA (saldo di valore + interesse di ogni squadra con le sue intenzioni).
    Il parere è calcolato con le squadre COM'ERANO prima dello scambio (si rimettono temporaneamente i giocatori al loro posto). */
-let SHR_HT=-1,SHR_ST=1;
-document.addEventListener("click",e=>{const b=e.target.closest("[data-hti]");if(b)SHR_HT=+b.dataset.hti},true);
+let SHR_HT=-1,SHR_SP=-1;
+document.addEventListener("click",e=>{const b=e.target.closest("[data-hti]");if(b)SHR_HT=+b.dataset.hti;const q=e.target.closest("[data-spi]");if(q)SHR_SP=+q.dataset.spi},true);
 /* come uno scambio cambia (o conferma) le intenzioni di una squadra: testo costruito con numeri (età, rendimento di quest'anno, valore, intenzioni prima e dopo) */
 function iaShiftTxt(sd,o,pre,post){const f1=v=>v.toFixed(1).replace(".",","),f2=v=>(v>=0?"+":"−")+Math.abs(v).toFixed(2).replace(".",","),lab=c=>c>=.25?"vincere subito":c<=-.25?"ricostruire":"strada aperta";
   const ag=a=>iaAvg(a.map(n=>iaAge(n))),sea=a=>iaAvg(a.map(n=>{const q=iaPerf(n);return q.ng>=3&&q.sea!=null?q.sea:q.v})),nm=a=>{const l=a.map(iaSur);return l.length>1?l.slice(0,-1).join(", ")+" e "+l[l.length-1]:l[0]};
@@ -5952,29 +5952,41 @@ function iaShiftTxt(sd,o,pre,post){const f1=v=>v.toFixed(1).replace(".",","),f2=
   return{txt:w.join(" · "),L0,L1,d,pre:pre.c,post:post.c,da:(aR!=null&&aG!=null)?aR-aG:0,dp:(pR!=null&&pG!=null)?pR-pG:0,aR,aG,pR,pG}}
 /* (458) GIUDIZIO SULLO SCAMBIO PER OGNI SQUADRA: incrocia 1) intenzioni di partenza (c prima), 2) direzione dello scambio (età, rendimento di quest'anno, crediti), 3) saldo di valore.
    Coerente = lo scambio va nella direzione delle sue intenzioni; contraddice = va contro; giustificata = contraddice ma i risultati di quest'anno (PDK +6 o più) sostengono la svolta. Frasi decise e un po' ironiche, scelte in modo stabile (indice dello scambio). */
-function histVerdictSide(M,k,i){const sd=M.sides[k],o=M.sides[1-k],sh=M.shift[k],nick=TEAMS[sd.t].nick,on=TEAMS[o.t].nick,pc=sd.pc,c0=sh.pre,L0=sh.L0,cl=(v,a)=>Math.max(-a,Math.min(a,v)),f1=v=>v.toFixed(1).replace(".",","),sg=v=>(v>0?"+":v<0?"−":"")+Math.abs(v)+"%";
-  const s=cl(.5*cl(sh.da/4,1)+.5*cl(sh.dp/12,1)+.15*Math.sign(o.cr-sd.cr),1),strong=Math.abs(c0)>=.25,al=strong?s*Math.sign(c0):0,coh=strong&&al>=.2,con=strong&&al<=-.2,just=con&&sh.dp>=6,win=c0>0;
+function histVerdictSide(M,k,i,mode){const N=M.sides.length,sd=M.sides[k],o=N===2?M.sides[1-k]:null,sh=N===2&&M.shift[k]&&M.shift[k].pre!=null?M.shift[k]:null,nick=TEAMS[sd.t].nick,on=o?TEAMS[o.t].nick:"gli altri",pc=sd.pc,cl=(v,a)=>Math.max(-a,Math.min(a,v)),f1=v=>v.toFixed(1).replace(".",","),sg=v=>(v>0?"+":v<0?"−":"")+Math.abs(v)+"%",ab=Math.abs(pc);
+  const V=a=>a[(i+k)%a.length],first=t=>t.split(/(?<=[.!?])\s+/)[0];
+  /* senza intenzioni (scambi a 3-4 squadre, squadre senza giocatori): giudizio sul solo saldo di valore */
+  if(!sh){let tag,title,col,txt;
+    if(!sd.pl.length){tag="cash";title="INCASSA CREDITI";col="#38bdf8";txt=V([`${nick} non riceve giocatori ma incassa ${sd.cr} cr: mossa di cassa, la partita vera arriva dopo.`,`Prima si fa spazio e si raccolgono crediti, poi si compra: ${nick} prepara qualcosa.`,`${nick} si alleggerisce (${sd.cr} cr in cassa): vedremo dove li spenderà.`])}
+    else if(pc>=40){tag="scam";title="SCIPPO";col="#4ade80";txt=V([`${nick} porta a casa ${ab}% di valore in più: ${N===2?on+" ha firmato senza leggere":"gli altri hanno firmato senza leggere"}.`,`Affare enorme per ${nick}: ${sg(pc)} sui numeri. Dall'altra parte dovranno spiegare.`,`${nick} esce con ${sg(pc)} di valore: scippo in piena regola.`])}
+    else if(pc>=20){tag="good";title="BUON AFFARE";col="#86efac";txt=V([`${nick} ci guadagna ${ab}% di valore: scambio ben fatto.`,`Colpo pulito: ${sg(pc)} per ${nick}.`,`${nick} ha fiuto: ${sg(pc)} di valore senza strappi.`])}
+    else if(pc>-20){tag="even";title="SCAMBIO PARI";col="#facc15";txt=V([`${nick} resta in pari (${sg(pc)}): né furti né regali, decide il campo.`,`Valori allineati per ${nick}: la calcolatrice non ha nulla da dire.`,`Nessuno ruba niente a ${nick} (${sg(pc)}): scambio equilibrato.`])}
+    else if(pc>-40){tag="pays";title="PREZZO ALTO";col="#fb923c";txt=V([`${nick} paga caro: ${sg(pc)} di valore. Servirà che il campo gli dia ragione.`,`Il conto per ${nick} è salato (${sg(pc)}): speriamo ne valga la pena.`,`${nick} lascia ${ab}% di valore sul tavolo: coraggio o fretta?`])}
+    else{tag="victim";title="PAGA CARISSIMO";col="#f87171";txt=V([`${nick} regala ${ab}% di valore: qui qualcuno ha lasciato il portafoglio a casa.`,`Conto da brividi per ${nick}: ${sg(pc)}. Una truffa, e si vede.`,`${nick} si fa spennare (${sg(pc)}): scambio da dimenticare.`])}
+    if(mode>=2)txt=first(txt);return{tag,title,col,txt,vo:1}}
+  const c0=sh.pre,L0=sh.L0,strong=Math.abs(c0)>=.25,
+    s=cl(.5*cl(sh.da/4,1)+.5*cl(sh.dp/12,1)+.15*Math.sign(o.cr-sd.cr),1),al=strong?s*Math.sign(c0):0,coh=strong&&al>=.2,con=strong&&al<=-.2,just=con&&sh.dp>=6;
   const goal=c0>=.25?"vuole vincere subito":c0<=-.25?"sta ricostruendo":"non ha ancora scelto la strada",goalS=c0>=.25?"vincere subito":c0<=-.25?"ricostruire":"la strada ancora aperta";
   const dirS=s>=.2?"verso il presente (più esperienza e rendimento)":s<=-.2?"verso il futuro (più giovani e potenziale)":"senza spostare l'equilibrio";
   const num=`Cede ${sh.aG!=null?f1(sh.aG)+" anni e PDK "+f1(sh.pG):"—"}, riceve ${sh.aR!=null?f1(sh.aR)+" anni e PDK "+f1(sh.pR):"—"}; saldo di valore ${sg(pc)}.`;
-  const V=(a)=>a[(i+k)%a.length];let tag,title,col,txt;
+  let tag,title,col,txt;
   if(!strong){tag="open";title="DECIDE LA STRADA";col="#facc15";txt=`${nick} ${goal}: con questo scambio ${s>=.2?"sceglie di puntare sul presente":s<=-.2?"sceglie di costruire sul futuro":"resta in mezzo al guado"}. ${num}`+(pc>=25?` Almeno ci guadagna sui numeri: ${sg(pc)}.`:pc<=-25?` E ci rimette parecchio (${sg(pc)}): scelta di strada pagata cara.`:"")}
   else if(coh&&pc>=20){tag="perfect";title="COLPO DA MANUALE";col="#4ade80";txt=V([`${nick} ${goal} e fa esattamente ciò che serve, ${dirS}, portandosi a casa pure ${sg(pc)} di valore. Più centrato di così si muore.`,`Scambio chirurgico: coerente col progetto (${goalS}) e in attivo (${sg(pc)}). Qui si vede chi ha un piano.`,`Doppietta: segue la propria strada e ci guadagna (${sg(pc)}). Gli altri prendano appunti.`])+" "+num}
   else if(coh&&pc>-20){tag="logic";title="MOSSA COERENTE";col="#86efac";txt=V([`${nick} ${goal}, e lo scambio va nella direzione giusta: ${dirS}. Nessun colpo di genio sui numeri (${sg(pc)}), ma ha senso.`,`Nulla da obiettare: ${goalS} era il piano e questo scambio lo conferma (${sg(pc)} di valore). Noioso, ma corretto.`,`Mossa pulita: coerente con ciò che ${nick} sta costruendo (${goalS}).`])+" "+num}
   else if(coh){tag="pays";title="CARO, MA VOLUTO";col="#fbbf24";txt=V([`${nick} sa cosa vuole (${goalS}) e lo paga caro: ${sg(pc)} di valore. Se la strada è giusta, il prezzo è alto ma comprensibile.`,`Il progetto è chiaro, il conto è salato (${sg(pc)}): coerenza sì, affare no.`,`Direzione giusta, portafoglio più leggero (${sg(pc)}): è il prezzo di avere fretta.`])+" "+num}
   else if(just&&pc>-40){tag="just";title="SVOLTA GIUSTIFICATA";col="#fde047";txt=V([`Il progetto diceva «${goalS}», ma i risultati di quest'anno (PDK ${f1(sh.pR)} contro ${f1(sh.pG)}) dicono che ${nick} si sente pronta a fare il salto: sacrifica potenziale per produzione immediata. Scelta discutibile sul futuro, sensata sul presente.`,`${nick} cambia idea e lo fa con un motivo: chi arriva rende di più adesso (PDK ${f1(sh.pR)} contro ${f1(sh.pG)}). Dalla ricostruzione al «proviamoci» in una mossa.`,`Strada cambiata in corsa: da «${goalS}» a voglia di risultati subito. I numeri di quest'anno la sostengono (PDK ${f1(sh.pR)} contro ${f1(sh.pG)}).`])+" "+num}
-  else if(just){tag="justpay";title="SVOLTA CARISSIMA";col="#fb923c";txt=V([`${nick} sente di essere pronta a vincere: lascia la ricostruzione (${goalS}) e sacrifica gioventù e potenziale per chi rende adesso (PDK ${f1(sh.pR)} contro ${f1(sh.pG)}). La logica sportiva c'è, ma il conto è da brividi: ${sg(pc)} di valore.`,`Da «${goalS}» a «vogliamo risultati»: i numeri di quest'anno (PDK ${f1(sh.pR)} contro ${f1(sh.pG)}) spiegano la fretta di ${nick}, non lo sconto che regala a ${on} (${sg(pc)}).`,`${nick} ha deciso che il momento è adesso e si vede dal rendimento di chi arriva (PDK ${f1(sh.pR)}). Peccato averlo pagato ${Math.abs(pc)}% di valore in più: idea giusta, prezzo sbagliato.`])+" "+num}
+  else if(just){tag="justpay";title="SVOLTA CARISSIMA";col="#fb923c";txt=V([`${nick} sente di essere pronta a vincere: lascia la ricostruzione (${goalS}) e sacrifica gioventù e potenziale per chi rende adesso (PDK ${f1(sh.pR)} contro ${f1(sh.pG)}). La logica sportiva c'è, ma il conto è da brividi: ${sg(pc)} di valore.`,`Da «${goalS}» a «vogliamo risultati»: i numeri di quest'anno (PDK ${f1(sh.pR)} contro ${f1(sh.pG)}) spiegano la fretta di ${nick}, non lo sconto che regala a ${on} (${sg(pc)}).`,`${nick} ha deciso che il momento è adesso e si vede dal rendimento di chi arriva (PDK ${f1(sh.pR)}). Peccato averlo pagato ${ab}% di valore in più: idea giusta, prezzo sbagliato.`])+" "+num}
   else if(con&&pc>=20){tag="opp";title="FURBO, MA INCOERENTE";col="#fb923c";txt=V([`Sui numeri è un affare (${sg(pc)}), ma contraddice il progetto: ${nick} ${goal} e invece va ${dirS}. Si prende il valore e fa finta di non vedere.`,`${nick} incassa ${sg(pc)} di valore ma dimentica ciò che voleva essere (${goalS}). Bravo a trattare, meno a decidere.`])+" "+num}
-  else if(pc<=-40){tag="victim";title="RAPINA IN PIENO GIORNO";col="#f87171";txt=V([`${nick} ci rimette ${sg(pc)} di valore${con?" e per giunta va contro il suo progetto ("+goalS+")":""}. Qui qualcuno ha dimenticato il portafoglio a casa: ${on} ringrazia.`,`Scambio senza senso: ${nick} lascia sul tavolo ${Math.abs(pc)}% di valore${con?", tradisce il piano ("+goalS+")":""} e non ha nemmeno la scusa dei risultati.`,`È una truffa e si vede: ${Math.abs(pc)}% di valore regalato a ${on}${con?", in più contro la propria strada":""}.`])+" "+num}
-  else{tag="wrong";title="NON HA MOLTO SENSO";col="#f87171";txt=V([`${nick} ${goal}, eppure va ${dirS}${pc<=-10?` e ci perde pure ${Math.abs(pc)}% di valore`:""}. Le intenzioni dicono una cosa, lo scambio un'altra: confusione totale.`,`Scelta che non quadra: ${goalS} era il piano e questo scambio va dall'altra parte${pc<=-10?`, con ${sg(pc)} di valore in meno`:""}. Qualcuno spieghi il ragionamento.`,`Direzione sbagliata rispetto al progetto (${goalS})${pc<=-10?` e saldo negativo (${sg(pc)})`:""}: poteva andare meglio.`])+" "+num}
+  else if(pc<=-40){tag="victim";title="RAPINA IN PIENO GIORNO";col="#f87171";txt=V([`${nick} ci rimette ${sg(pc)} di valore${con?" e per giunta va contro il suo progetto ("+goalS+")":""}. Qui qualcuno ha dimenticato il portafoglio a casa: ${on} ringrazia.`,`Scambio senza senso: ${nick} lascia sul tavolo ${ab}% di valore${con?", tradisce il piano ("+goalS+")":""} e non ha nemmeno la scusa dei risultati.`,`È una truffa e si vede: ${ab}% di valore regalato a ${on}${con?", in più contro la propria strada":""}.`])+" "+num}
+  else{tag="wrong";title="NON HA MOLTO SENSO";col="#f87171";txt=V([`${nick} ${goal}, eppure va ${dirS}${pc<=-10?` e ci perde pure ${ab}% di valore`:""}. Le intenzioni dicono una cosa, lo scambio un'altra: confusione totale.`,`Scelta che non quadra: ${goalS} era il piano e questo scambio va dall'altra parte${pc<=-10?`, con ${sg(pc)} di valore in meno`:""}. Qualcuno spieghi il ragionamento.`,`Direzione sbagliata rispetto al progetto (${goalS})${pc<=-10?` e saldo negativo (${sg(pc)})`:""}: poteva andare meglio.`])+" "+num}
+  if(mode>=1)txt=txt.replace(" "+num,"");if(mode>=2)txt=first(txt);
   return{tag,title,col,txt}}
-function histFinal(M,i){const T=M.sides.map((sd,k)=>M.vd[k]),good=t=>["perfect","logic","just","justpay","pays"].includes(t.tag),bad=t=>["wrong","victim"].includes(t.tag),nk=k=>TEAMS[M.sides[k].t].nick,fav=TEAMS[M.fav].nick,ls=M.sides.find(x=>x.t!==M.fav),lose=TEAMS[ls.t].nick,p=Math.round(M.d*100);
-  const V=a=>a[i%a.length];
-  if(M.d>=.40)return V([`TRUFFA CONFERMATA: ${fav} esce con ${p}% di valore in più. ${lose} ${bad(T[M.sides.indexOf(ls)])?"non ha nemmeno un piano che giustifichi la cosa":"aveva le sue ragioni, ma il conto resta salato"}.`,`Scambio da denuncia: ${p}% di squilibrio a favore di ${fav}. ${lose} ha firmato, noi abbiamo preso nota.`]);
-  if(T.every(good)&&M.d<.10)return V([`Scambio fatto bene: tutte e due le squadre vanno nella direzione dei propri piani e il valore è pari. Così si tratta.`,`Win-win vero: valore equilibrato e intenzioni rispettate da entrambe. Applausi.`]);
-  if(T.every(bad))return V([`Nessuno dei due ha seguito il proprio progetto: scambio da dimenticare in fretta.`,`Complimenti: due squadre, zero logica. Questo scambio non si spiega neanche con la matematica.`]);
-  if(T.some(bad))return V([`Una delle due ha fatto un buon affare, l'altra no: ${bad(T[0])?nk(0):nk(1)} ha qualcosa da spiegarci.`,`Scambio a metà: ${good(T[0])&&!bad(T[0])?nk(0):nk(1)} sa quello che fa, l'altra molto meno.`]);
-  return V([`Scambio sensato, senza eccessi: ${M.d<.10?"valori pari":`vantaggio ${fav} del ${p}%`} e intenzioni nel complesso rispettate.`,`Niente drammi: lo scambio ${M.d<.10?"è equilibrato":`pende per ${fav} (${p}%)`} e non tradisce i piani delle squadre.`])}
+function histFinal(M,i){const N=M.sides.length,T=M.vd,good=t=>["perfect","logic","just","justpay","pays","good","scam"].includes(t.tag),bad=t=>["wrong","victim"].includes(t.tag),nk=k=>TEAMS[M.sides[k].t].nick,fav=TEAMS[M.fav].nick,li=M.sides.reduce((m,s,k)=>s.pc<M.sides[m].pc?k:m,0),lose=nk(li),p=Math.round(M.d*100),V=a=>a[i%a.length];
+  if(!T.length)return"";
+  if(M.d>=.40)return V([`TRUFFA CONFERMATA: ${fav} esce con ${p}% di valore in più. ${lose} ${bad(T[li])&&!T[li].vo?"non ha nemmeno un piano che giustifichi la cosa":T[li].vo?"ha firmato un conto molto salato":"aveva le sue ragioni, ma il conto resta salato"}.`,`Scambio da denuncia: ${p}% di squilibrio a favore di ${fav}. ${lose} ha firmato, noi abbiamo preso nota.`]);
+  if(T.every(good)&&M.d<.10)return V([`Scambio fatto bene: ${N>2?"tutte le squadre hanno un buon motivo":"entrambe le squadre vanno nella direzione dei propri piani"} e il valore è pari. Così si tratta.`,`Win-win vero: valore equilibrato e nessuno ha tradito se stesso. Applausi.`]);
+  if(T.every(bad))return V([`Nessuno ha seguito il proprio progetto: scambio da dimenticare in fretta.`,`Complimenti: ${N} squadre, zero logica. Questo scambio non si spiega neanche con la matematica.`]);
+  if(T.some(bad))return V([`Qualcuno ha fatto un buon affare, qualcun altro no: ${lose} ha qualcosa da spiegarci.`,`Scambio a metà: ${fav} sa quello che fa, ${lose} molto meno.`]);
+  return V([`Scambio sensato, senza eccessi: ${M.d<.10?"valori pari":`vantaggio ${fav} del ${p}%`} e piani nel complesso rispettati.`,`Niente drammi: lo scambio ${M.d<.10?"è equilibrato":`pende per ${fav} (${p}%)`} e non tradisce nessuno.`])}
 /* (458) COMMENTI TECNICI: per ogni giocatore dello scambio quantifica ultima partita, trend ultime 3, minutaggio, confronto con la stagione scorsa, età e chi gli sta rubando minuti nella stessa squadra NBA. Frasi con varianti scelte a caso: ogni condivisione ha un tono diverso. */
 function histTech(n){const cur=(PARTITE[n]||[]).filter(g=>+g[2]>0),ly=((STAGIONI["2025/26"]||{})[n]||[]).filter(g=>+g[2]>0);if(!cur.length)return null;
   const av=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null,pd=cur.map(g=>+g[3]),mi=cur.map(g=>+g[2]),k=cur.length,
@@ -5983,7 +5995,7 @@ function histTech(n){const cur=(PARTITE[n]||[]).filter(g=>+g[2]>0),ly=((STAGIONI
   let rob=null;if(k>=2&&mLast<mAvg-3){const nb=(Object.values(ROSTER).flat().find(p=>p[0]===n)||[])[3];
     if(nb)Object.values(ROSTER).forEach(a=>a.forEach(p=>{if(p[0]===n||p[3]!==nb)return;const c2=(PARTITE[p[0]]||[]).filter(g=>+g[2]>0);if(c2.length<3)return;const m2=c2.map(g=>+g[2]),a2=av(m2.slice(0,-2)),l2=av(m2.slice(-2));if(l2-a2>=4&&(!rob||l2-a2>rob.up))rob={n:p[0],up:l2-a2,m:l2}}))}
   return{n,k,avg,last,mAvg,mLast,l3,pre,lyAvg,lyMin,rob,age:eta(n)}}
-function histTechLines(M,k){const R=a=>a[Math.floor(Math.random()*a.length)],f=v=>v.toFixed(1).replace(".",","),o=[],sd=M.sides[k],og=M.sides[1-k],nick=TEAMS[sd.t].nick,onk=TEAMS[og.t].nick;
+function histTechLines(M,k,lim,sp){const R=a=>a[Math.floor(Math.random()*a.length)],f=v=>v.toFixed(1).replace(".",","),o=[],sd=M.sides[k],og=M.sides.length===2?M.sides[1-k]:{t:sd.t,pl:[]},nick=TEAMS[sd.t].nick,onk=M.sides.length===2?TEAMS[og.t].nick:"gli altri";
   const one=(n,inn)=>{const t=histTech(n);if(!t)return;const S=iaSur(n),L=[],push=(w,x)=>L.push({w:Math.abs(w),txt:x,pos:(w>0)===inn?1:-1,raw:w});
     const dl=t.last-t.avg;
     if(t.k>=2&&dl>=8)push(dl,inn?R([`${S} arriva in fiamme: ultima partita a ${f(t.last)} PDK contro una media di ${f(t.avg)}.`,`${S} è in serata di grazia (ultima ${f(t.last)} PDK, media ${f(t.avg)}): ${nick} ha preso il treno in corsa.`,`Ultima uscita da protagonista per ${S}: ${f(t.last)} PDK, ${f(dl)} sopra la sua media.`]):R([`${S} se ne va nel momento migliore: ultima gara ${f(t.last)} PDK (media ${f(t.avg)}). ${onk} ringrazia.`,`${nick} cede ${S} proprio quando esplode (${f(t.last)} PDK nell'ultima): tempismo discutibile.`]));
@@ -5997,109 +6009,181 @@ function histTechLines(M,k){const R=a=>a[Math.floor(Math.random()*a.length)],f=v
     if(t.age>=31)push(-3,inn?`${S} ha ${Math.round(t.age)} anni: in un dynasty il tempo corre contro ${nick}.`:`${S} ha ${Math.round(t.age)} anni: ${nick} lo cede prima che il valore evapori.`);
     else if(t.age<=22)push(3,inn?`${S} ha solo ${Math.round(t.age)} anni: asset che si rivaluta col tempo.`:`${nick} cede un ${Math.round(t.age)}enne: il futuro lo paga ${onk}.`);
     return L};
-  const all=[...sd.pl.flatMap(n=>one(n,true)||[]),...og.pl.flatMap(n=>one(n,false)||[])].filter(x=>x.w>=2).sort((a,b)=>b.w-a.w).slice(0,4);
+  const all=[...sd.pl.flatMap(n=>one(n,true)||[]),...og.pl.flatMap(n=>one(n,false)||[])].filter(x=>x.w>=2).sort((a,b)=>b.w-a.w).slice(0,lim||4);
   const good=all.filter(x=>x.pos>0).length,bad=all.filter(x=>x.pos<0).length;
-  if(all.length>=2&&good>=3&&bad===0)all.push({txt:R([`Lettura tecnica: tutti i segnali recenti sono dalla parte di ${nick}.`,`Bilancio tecnico: ${nick} compra forma e vende calo. Scelta di tempo perfetta.`]),pos:1});
-  else if(all.length>=2&&bad>=3&&good===0)all.push({txt:R([`Lettura tecnica: i segnali recenti remano contro ${nick}.`,`Bilancio tecnico: ${nick} compra in calo e vende in crescita. Tempismo da rivedere.`]),pos:-1});
+  if((lim||4)>=3&&all.length>=2&&good>=3&&bad===0)all.push({txt:R([`Lettura tecnica: tutti i segnali recenti sono dalla parte di ${nick}.`,`Bilancio tecnico: ${nick} compra forma e vende calo. Scelta di tempo perfetta.`]),pos:1});
+  else if((lim||4)>=3&&all.length>=2&&bad>=3&&good===0)all.push({txt:R([`Lettura tecnica: i segnali recenti remano contro ${nick}.`,`Bilancio tecnico: ${nick} compra in calo e vende in crescita. Tempismo da rivedere.`]),pos:-1});
   return all}
-function histTradeOk(x){return x&&/scambio/i.test(x.titolo)&&x.lati.length===2&&x.lati[0][0]!==x.lati[1][0]&&x.lati.every(l=>l[1].some(a=>valOf(a)!=null))}
+function histTradeOk(x){return x&&/scambio/i.test(x.titolo)&&x.lati.length>=2&&x.lati.length<=4&&new Set(x.lati.map(l=>l[0])).size===x.lati.length&&x.lati.some(l=>l[1].some(a=>valOf(a)!=null))}
 function histTradeModel(i){const T=TRADES[i];if(!histTradeOk(T))return null;
   const crN=a=>{const m=/(\d+)\s*(?:cr\b|crediti)/i.exec(a);return m?+m[1]:0};
   const sides=T.lati.map(l=>{const pl=l[1].filter(a=>valOf(a)!=null),oth=l[1].filter(a=>valOf(a)==null),cr=oth.reduce((q,a)=>q+crN(a),0);
-    return{t:l[0],pl,cr,ex:oth.filter(a=>!crN(a)).map(a=>a.replace(/^Diritti su /,"Diritti su ")),crTxt:oth.filter(a=>crN(a)).map(a=>a.replace(/\s*crediti.*$/i," cr").replace(/\s+a credito.*$/i," cr a credito"))}});
-  const pts=sd=>sd.pl.reduce((q,n)=>q+vtPts(valOf(n)??VAL_FALLBACK),0)+sd.cr*VAL_CR;
-  sides.forEach(sd=>sd.R=pts(sd));sides[0].G=sides[1].R;sides[1].G=sides[0].R;const mx=Math.max(sides[0].R,sides[1].R,1);
-  sides.forEach(sd=>sd.pc=Math.round((sd.R-sd.G)/mx*100));const d=Math.abs(sides[0].R-sides[1].R)/mx,fav=sides[0].R>sides[1].R?sides[0].t:sides[1].t;
-  /* interesse con le rose di PRIMA dello scambio */
-  const bk={};sides.forEach(sd=>{bk[sd.t]=ROSTER[sd.t]});const moved=[];
-  let ints=[];
-  try{sides.forEach((sd,k)=>{const from=sides[1-k].t;sd.pl.forEach(n=>{const f=ROSTER[sd.t].findIndex(p=>p[0]===n);if(f>=0){const row=ROSTER[sd.t][f];moved.push([sd.t,from,row])}})});
-    moved.forEach(([to,from,row])=>{ROSTER[to]=ROSTER[to].filter(p=>p!==row);ROSTER[from]=[...ROSTER[from],row]});
-    iaPC={};iaCache={};const S=iaStats();
-    ints=sides.map((sd,k)=>{const o=sides[1-k];return iaInt(S,sd.t,sd.pl.map(n=>iaPl(n)),o.pl.map(n=>iaPl(n)),(sd.R-sd.G)/mx,{in:sd.cr,out:o.cr})})}
-  catch(e){console.error(e);ints=[]}
-  let pre=null;try{IA_TR_FROM=i+1;iaPC={};pre=sides.map(sd=>({...iaProf(sd.t)}))}catch(e){console.error(e)}
-  finally{Object.keys(bk).forEach(t=>ROSTER[t]=bk[t]);iaPC={};iaCache={}}
-  let post=null,shift=[];try{IA_TR_FROM=i;iaPC={};post=sides.map(sd=>({...iaProf(sd.t)}));if(pre)shift=sides.map((sd,k)=>iaShiftTxt(sd,sides[1-k],pre[k],post[k]))}catch(e){console.error(e)}finally{IA_TR_FROM=0;iaPC={};iaCache={}}
-  const M={T,sides,d,fav,ints,shift,verdict:tradeVerdict(d,fav)};try{M.tech=sides.map((sd,k)=>histTechLines(M,k))}catch(e){console.error(e);M.tech=[[],[]]}
-  try{M.vd=sides.map((sd,k)=>histVerdictSide(M,k,i));M.final=histFinal(M,i)}catch(e){console.error(e);M.vd=[];M.final=""}
+    return{t:l[0],pl,cr,ex:oth.filter(a=>!crN(a)).map(a=>a.replace(/^Diritti su /,"Diritti su ")),crTxt:oth.filter(a=>crN(a)).map(a=>/a credito/i.test(a)?crN(a)+" cr a credito":crN(a)+" cr")}});
+  const N=sides.length,pts=sd=>sd.pl.reduce((q,n)=>q+vtPts(valOf(n)??VAL_FALLBACK),0)+sd.cr*VAL_CR;
+  sides.forEach(sd=>sd.R=pts(sd));const tot=sides.reduce((q,sd)=>q+sd.R,0),mx=Math.max(...sides.map(sd=>sd.R),1),mn=Math.min(...sides.map(sd=>sd.R));
+  sides.forEach(sd=>{sd.G=(tot-sd.R)/(N-1);sd.pc=Math.round((sd.R-sd.G)/mx*100)});
+  const d=(mx-mn)/mx,fav=sides.reduce((m,sd)=>sd.R>m.R?sd:m,sides[0]).t;
+  let ints=[],shift=[];
+  if(N===2&&sides.every(sd=>sd.pl.length)){
+    const bk={};sides.forEach(sd=>{bk[sd.t]=ROSTER[sd.t]});const moved=[];
+    try{sides.forEach((sd,k)=>{const from=sides[1-k].t;sd.pl.forEach(n=>{const f=ROSTER[sd.t].findIndex(p=>p[0]===n);if(f>=0){const row=ROSTER[sd.t][f];moved.push([sd.t,from,row])}})});
+      moved.forEach(([to,from,row])=>{ROSTER[to]=ROSTER[to].filter(p=>p!==row);ROSTER[from]=[...ROSTER[from],row]});
+      iaPC={};iaCache={};const S=iaStats();
+      ints=sides.map((sd,k)=>{const o=sides[1-k];return iaInt(S,sd.t,sd.pl.map(n=>iaPl(n)),o.pl.map(n=>iaPl(n)),(sd.R-sd.G)/mx,{in:sd.cr,out:o.cr})})}
+    catch(e){console.error(e);ints=[]}
+    let pre=null;try{IA_TR_FROM=i+1;iaPC={};pre=sides.map(sd=>({...iaProf(sd.t)}))}catch(e){console.error(e)}
+    finally{Object.keys(bk).forEach(t=>ROSTER[t]=bk[t]);iaPC={};iaCache={}}
+    try{IA_TR_FROM=i;iaPC={};const post=sides.map(sd=>({...iaProf(sd.t)}));if(pre)shift=sides.map((sd,k)=>iaShiftTxt(sd,sides[1-k],pre[k],post[k]))}catch(e){console.error(e)}finally{IA_TR_FROM=0;iaPC={};iaCache={}}}
+  /* quanto scrivere: scambi piccoli = commento completo; con 3-4 giocatori per lato o 3+ squadre = frasi più brevi */
+  const load=Math.max(...sides.map(sd=>sd.pl.length)),mode=(N>=3||load>=4)?2:load>=2?1:0,lim=N>=4?1:mode===2?2:mode===1?3:4;
+  const M={T,sides,N,d,fav,ints,shift,mode,lim,verdict:tradeVerdict(d,fav)};
+  try{M.tech=sides.map((sd,k)=>histTechLines(M,k,lim))}catch(e){console.error(e);M.tech=sides.map(()=>[])}
+  try{M.vd=sides.map((sd,k)=>histVerdictSide(M,k,i,mode));M.final=histFinal(M,i)}catch(e){console.error(e);M.vd=[];M.final=""}
   return M}
+/* (459) Helpers comuni delle immagini "scambio" e "speciale" */
+const shWrapT=(c,t,w)=>{const L=[];let cu="";String(t).split(" ").forEach(x=>{const q=cu?cu+" "+x:x;if(c.measureText(q).width>w&&cu){L.push(cu);cu=x}else cu=q});if(cu)L.push(cu);return L};
+async function shJersey(t,n){try{return await shImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jersey(t,NUM[n],n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')))}catch(e){return null}}
+async function shLogoAt(c,t,x,y,z){const lg=await shLogo(t);if(lg){const r=Math.min(z/lg.width,z/lg.height);c.drawImage(lg,x+(z-lg.width*r)/2,y+(z-lg.height*r)/2,lg.width*r,lg.height*r)}}
+function shTri(c,cx,cy,up,col){c.beginPath();if(up){c.moveTo(cx,cy-9);c.lineTo(cx+9,cy+7);c.lineTo(cx-9,cy+7)}else{c.moveTo(cx,cy+9);c.lineTo(cx+9,cy-7);c.lineTo(cx-9,cy-7)}c.closePath();c.fillStyle=col;c.fill()}
+function shPill(c,t,x,y,h,fill,fg,fs,right){c.font=SH_F(800,fs,1);const w=c.measureText(t).width+34,px=right?x-w:x;shRR(c,px,y,w,h,h/2);c.fillStyle=fill;c.fill();c.fillStyle=fg;c.textAlign="center";c.textBaseline="middle";c.fillText(t,px+w/2,y+h/2+1);c.textAlign="left";c.textBaseline="alphabetic";return w}
+/* schede del parere (una per squadra o per argomento): intestazione nei colori della squadra + testo + segnali ▲▼ */
+function shCardsPrep(mc,items,W,FS,HH){const LH=FS+10,tw=W-152-56,tg=34;mc.font=SH_B(500,FS);
+  return items.map(it=>{const S=shWrapT(mc,it.txt||"",tw),Tc=(it.tech||[]).map(t=>({pos:t.pos,L:shWrapT(mc,t.txt,tw-tg)}));return{...it,S,Tc,LH,FS,HH,h:HH+18+S.length*LH+(Tc.length?14:0)+Tc.reduce((u,t)=>u+t.L.length*LH+10,0)+26}})}
+async function shCardsDraw(c,its,W,ty){const x=76,w=W-152;
+  for(const o of its){const tm=TEAMS[o.t],acc=tm.trim||tm.bg,tc=tm.txt||tm.fg||"#fff",HH=o.HH,z=HH-32;
+    c.save();shRR(c,x,ty,w,o.h,24);c.clip();c.fillStyle="rgba(255,255,255,.045)";c.fillRect(x,ty,w,o.h);const g=c.createLinearGradient(x,ty,x+w,ty);g.addColorStop(0,tm.bg);g.addColorStop(1,"rgba(10,6,24,.25)");c.fillStyle=g;c.fillRect(x,ty,w,HH);c.fillStyle=acc;c.fillRect(x,ty+HH,w,6);c.restore();
+    shRR(c,x,ty,w,o.h,24);c.strokeStyle=acc;c.globalAlpha=.55;c.lineWidth=2;c.stroke();c.globalAlpha=1;
+    await shLogoAt(c,o.t,x+20,ty+16,z);c.textAlign="left";c.textBaseline="alphabetic";let fs=HH>=100?46:38;c.font=SH_F(800,fs,1);c.fillStyle=tc;const hd=String(o.head||TEAMS[o.t].nick).toUpperCase();const maxw=w-z-60-(o.title?c.measureText(o.title).width*.5+120:0);while(fs>24&&c.measureText(hd).width>maxw){fs-=2;c.font=SH_F(800,fs,1)}c.fillText(hd,x+z+34,ty+HH/2+fs*.35);
+    if(o.title)shPill(c,o.title,x+w-22,ty+(HH-(HH>=100?48:40))/2,HH>=100?48:40,o.col,"#10091f",HH>=100?24:20,true);
+    c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_B(500,o.FS);let ly=ty+HH+18;
+    o.S.forEach(l=>{ly+=o.LH;c.fillStyle="#f1f5ff";c.fillText(l,x+28,ly-8)});
+    if(o.Tc.length){ly+=14;o.Tc.forEach(t=>{t.L.forEach((l,j)=>{ly+=o.LH;if(j===0)shTri(c,x+38,ly-o.FS/2-4,t.pos>0,t.pos>0?"#4ade80":"#f87171");c.fillStyle="#cbd5e1";c.fillText(l,x+28+34,ly-8)});ly+=10})}
+    ty+=o.h+24}
+  return ty}
+const SHF=x=>x==null?"—":x.toLocaleString("it-IT",{maximumFractionDigits:1});
 async function shHistTrade(i){const M=histTradeModel(i);if(!M)return null;
-  const W=1080,pw=(W-112-24)/2,rowH=186,SC=1.18;
-  const{cv:cv0,c:c0}=await shBase(300,W,0,1);
-  const mc=document.createElement("canvas").getContext("2d");
-  const wrap=(c,t,w)=>{const L=[];let cu="";String(t).split(" ").forEach(x=>{const q=cu?cu+" "+x:x;if(c.measureText(q).width>w&&cu){L.push(cu);cu=x}else cu=q});if(cu)L.push(cu);return L};
-  const pH=M.sides.map(sd=>230+Math.round(sd.pl.length*rowH*SC)+((sd.crTxt.length+sd.ex.length)?84:0)+24),panH=Math.max(...pH);
-  /* testi del parere */
-  mc.font=SH_B(500,27);const sumTxt=(()=>{const f=TEAMS[M.fav].nick,l=M.sides.find(x=>x.t!==M.fav),lk=M.ints.map((x,k)=>x&&x.sc).map(v=>v??0);
-    const best=lk[0]>=lk[1]?0:1,t0=TEAMS[M.sides[best].t].nick,t1=TEAMS[M.sides[1-best].t].nick;
-    return(M.final||"")+(M.d<.10?` (Valori: scambio equilibrato, squilibrio ${Math.round(M.d*100)}%.)`:` (Valori: vantaggio ${f}, squilibrio ${Math.round(M.d*100)}%.)`)})();
-  const blocks=M.ints.map((x,k)=>{const body=x.txt.replace(/^[^:]+:\s*/,"").replace(/^intenzioni:[^(]*\([^)]*\)\s*·?\s*/,"").replace(/^[^(·]*\)\s*·?\s*/,""),sh=M.shift[k],vd=M.vd&&M.vd[k],ww=W-56*2-52;
-    return{x,sh,vd,S:wrap(mc,vd?vd.txt:(sh?sh.txt:""),ww).slice(0,9),Tc:(M.tech[k]||[]).map(t=>({pos:t.pos,L:wrap(mc,"› "+t.txt,ww).slice(0,3)})),L:[]}});
-  const ST=SHR_ST,FS=ST===4?24:26,LH=FS+10,tw=ST===4?((W-112-60)/2-44):ST===1?W-152-56:ST===2?W-112-96:W-112-72,tg=ST===4?30:34;
-  mc.font=SH_B(500,FS);
-  const IT=blocks.map((b,k)=>{const Tc=(M.tech[k]||[]).map(t=>({pos:t.pos,L:wrap(mc,t.txt,tw-tg-(ST===3?24:0))}));return{b,k,S:wrap(mc,b.vd?b.vd.txt:"",tw),Tc}});
-  const HH=[0,104,64,84,150][ST],PAD=[0,26,10,22,26][ST],GAP=[0,24,30,18,0][ST],TOP=[0,18,8,20,18][ST];
-  IT.forEach(o=>{o.h=HH+TOP+o.S.length*LH+(o.Tc.length?(ST===3?34:14):0)+o.Tc.reduce((u,t)=>u+t.L.length*LH+10,0)+PAD});
-  const colH=Math.max(...IT.map(o=>o.h)),sumL=(mc.font=SH_B(500,27),wrap(mc,sumTxt,W-112-40));mc.font=SH_B(500,FS);
-  const parH=210+sumL.length*38+14+(ST===4?colH:IT.reduce((q,o)=>q+o.h+GAP,0))+(ST===4?30:16);
-  const H=190+panH+40+parH+130;
+  const N=M.N,W=1080,IN=W-112,mc=document.createElement("canvas").getContext("2d"),load=Math.max(...M.sides.map(s=>s.pl.length)),rowH=186,SC=load<=1?1.18:load===2?1.0:load===3?.86:.74,pw=(IN-24)/2;
+  /* schede del parere */
+  const FS=M.mode===2?24:26,HH=N>=3?84:104;
+  const items=M.sides.map((sd,k)=>({t:sd.t,title:M.vd[k]?M.vd[k].title:"",col:M.vd[k]?M.vd[k].col:"#facc15",txt:M.vd[k]?M.vd[k].txt:"",tech:M.tech[k]||[]}));
+  const its=shCardsPrep(mc,items,W,FS,HH);
+  mc.font=SH_B(500,27);const sumTxt=(M.final||"")+(M.d<.10?` (Valori: scambio equilibrato, squilibrio ${Math.round(M.d*100)}%.)`:` (Valori: vantaggio ${TEAMS[M.fav].nick}, squilibrio ${Math.round(M.d*100)}%.)`),sumL=shWrapT(mc,sumTxt,IN-40);
+  const parH=210+sumL.length*38+14+its.reduce((q,o)=>q+o.h+24,0)+16;
+  /* pannelli in alto */
+  const extraOf=sd=>[...sd.crTxt.map(t=>"+ "+t.toUpperCase()),...sd.ex.map(t=>t.toUpperCase())];
+  let topH;const cw=(IN-44)/3,cellH=132;
+  if(N===2){const pH=M.sides.map(sd=>230+Math.round(sd.pl.length*rowH*SC)+(extraOf(sd).length?84:0)+24);topH=Math.max(...pH);M.panH=topH}
+  else{M.pHs=M.sides.map(sd=>160+Math.ceil(sd.pl.length/3)*cellH+(extraOf(sd).length?72:0)+16);topH=M.pHs.reduce((q,h)=>q+h+20,0)-20}
+  const H=190+topH+40+parH+130;
   const{cv,c}=await shBase(H,W,0,1);
   c.font=SH_F(700,28,1);c.textAlign="right";c.textBaseline="alphabetic";c.fillStyle="rgba(233,213,255,.75)";c.fillText("TRADE ALERT · "+(M.T.data||"")+" "+(M.T.ora||""),W-56,100);
   let y=190;
-  for(let k=0;k<2;k++){const sd=M.sides[k],tm=TEAMS[sd.t],x0=56+k*(pw+24),other=M.sides[1-k].t;
-    c.save();shRR(c,x0,y,pw,panH,28);c.clip();c.fillStyle="rgba(10,6,24,.62)";c.fillRect(x0,y,pw,panH);
-    const gg=c.createLinearGradient(x0,y,x0+pw,y+210);gg.addColorStop(0,tm.bg);gg.addColorStop(1,"rgba(10,6,24,.2)");c.fillStyle=gg;c.fillRect(x0,y,pw,210);
-    c.fillStyle=tm.trim||"#fff";c.fillRect(x0,y+210,pw,8);c.restore();
-    shRR(c,x0,y,pw,panH,28);c.strokeStyle="rgba(196,181,253,.28)";c.lineWidth=2;c.stroke();
-    const lg=await shLogo(sd.t);if(lg){const z=140,r=Math.min(z/lg.width,z/lg.height);c.drawImage(lg,x0+22,y+24+(z-lg.height*r)/2,lg.width*r,lg.height*r)}
-    c.textAlign="left";c.textBaseline="alphabetic";c.fillStyle=tm.txt||tm.fg||"#fff";let fs=64;c.font=SH_F(800,fs,1);const nk=tm.nick.toUpperCase();while(fs>34&&c.measureText(nk).width>pw-190){fs-=2;c.font=SH_F(800,fs,1)}c.fillText(nk,x0+178,y+86);
-    c.font=SH_F(700,28,1);c.globalAlpha=.85;c.fillText("RICEVE",x0+178,y+126);c.globalAlpha=1;
-    const pc=sd.pc,col=pc>=3?"#4ade80":pc<=-3?"#f87171":"#facc15",ptxt=(pc>0?"+":"")+pc+"%";shRR(c,x0+178,y+142,150,54,14);c.fillStyle="rgba(10,6,24,.7)";c.fill();c.fillStyle=col;c.font=SH_F(800,42,1);c.textAlign="center";c.textBaseline="middle";c.fillText(ptxt,x0+178+75,y+170);
-    c.textAlign="left";c.font=SH_F(700,20,1);c.fillStyle=col;c.fillText(trPcWord(pc).toUpperCase(),x0+338,y+170);
-    let yy=y+230;
-    for(const n of sd.pl){c.save();c.translate(x0*(1-SC),yy*(1-SC));c.scale(SC,SC);const own=Object.entries(ROSTER).find(([t,a])=>a.some(p=>p[0]===n)),num=NUM[n],role=ruoloDi(n),rc=role==="G"?"#ef4444":role==="F"?"#60a5fa":"#fbbf24";
-      let ic=null;try{ic=await shImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jersey(sd.t,num,n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')))}catch(e){}
-      if(ic){const bx=150,r=Math.min(bx/ic.width,bx/ic.height);c.drawImage(ic,x0+16+(bx-ic.width*r)/2,yy+(rowH-12-ic.height*r)/2,ic.width*r,ic.height*r)}
-      c.textAlign="left";c.textBaseline="alphabetic";const tx=x0+170,mw=pw/SC-170-12;c.fillStyle="#fff";let f2=40;c.font=SH_F(800,f2,1);const nn=n.toUpperCase();while(f2>26&&c.measureText(nn).width>mw){f2-=2;c.font=SH_F(800,f2,1)}c.fillText(nn,tx,yy+44);
-      c.beginPath();c.arc(tx+8,yy+68,8,0,7);c.fillStyle=rc;c.fill();c.fillStyle="rgba(233,213,255,.85)";c.font=SH_F(700,21,1);c.fillText(`${({G:"GUARDIA",F:"ALA",C:"CENTRO"})[role]||""} · ${Math.round(eta(n))} ANNI · ${String(TEAMS[other].nick).toUpperCase()}`.replace(/ · [A-Z ]+$/,""),tx+24,yy+75);
-      const v=valOf(n),pd=pdkMix(n),st=stelle(n),d0=draftOf(n);const fmt=x=>x==null?"—":x.toLocaleString("it-IT",{maximumFractionDigits:1});
-      const chips=[["VALORE",String(v??"—"),"#93c5fd"],["PDK",fmt(pd),"#fde047"],["STELLE",st==null?"—":fmt(st),"#fbbf24"]];let cx=tx;
-      chips.forEach(([l,val,cl])=>{c.font=SH_F(700,18,1);const w1=c.measureText(l).width;c.font=SH_F(800,32,1);const w2=c.measureText(val).width,w=Math.max(w1,w2)+4;c.font=SH_F(700,18,1);c.fillStyle="rgba(226,232,240,.6)";c.fillText(l,cx,yy+108);c.font=SH_F(800,32,1);c.fillStyle=cl;c.fillText(val,cx,yy+140);cx+=w+4});
-      if(d0&&d0[1]<=15&&iaYrF(DRAFT_ANNO-d0[0])>0){const tt=`DRAFT ${d0[0]} · #${d0[1]}`;c.font=SH_F(800,20,1);const w=c.measureText(tt).width+22;shRR(c,tx,yy+148,w,28,8);c.fillStyle="rgba(245,180,0,.9)";c.fill();c.fillStyle="#1b1200";c.textAlign="left";c.textBaseline="middle";c.fillText(tt,tx+11,yy+163);c.textBaseline="alphabetic"}
-      c.fillStyle="rgba(255,255,255,.08)";c.fillRect(x0+22,yy+rowH-8,pw/SC-44,2);c.restore();yy+=rowH*SC}
-    const extra=[...sd.crTxt.map(t=>"+ "+t.toUpperCase()),...sd.ex.map(t=>t.toUpperCase())];
-    if(extra.length){let ex=x0+22,ey=yy+10;c.textBaseline="middle";extra.forEach(t=>{c.font=SH_F(800,28,1);const w=c.measureText(t).width+28;if(ex+w>x0+pw-18){ex=x0+22;ey+=50}shRR(c,ex,ey,w,42,12);c.fillStyle="rgba(245,180,0,.2)";c.fill();c.strokeStyle="rgba(245,180,0,.7)";c.lineWidth=2;c.stroke();c.fillStyle="#fde047";c.textAlign="left";c.fillText(t,ex+14,ey+22);ex+=w+10})}}
-  y+=panH+40;
+  const pcCol=pc=>pc>=3?"#4ade80":pc<=-3?"#f87171":"#facc15",extraDraw=(sd,x0,yy,wd)=>{const extra=extraOf(sd);if(!extra.length)return;let ex=x0+22,ey=yy+10;c.textBaseline="middle";c.textAlign="left";extra.forEach(t=>{c.font=SH_F(800,28,1);const w=c.measureText(t).width+28;if(ex+w>x0+wd-18){ex=x0+22;ey+=50}shRR(c,ex,ey,w,42,12);c.fillStyle="rgba(245,180,0,.2)";c.fill();c.strokeStyle="rgba(245,180,0,.6)";c.lineWidth=2;c.stroke();c.fillStyle="#fcd34d";c.fillText(t,ex+14,ey+22);ex+=w+10});c.textBaseline="alphabetic"};
+  if(N===2){
+    for(let k=0;k<2;k++){const sd=M.sides[k],tm=TEAMS[sd.t],x0=56+k*(pw+24),panH=topH;
+      c.save();shRR(c,x0,y,pw,panH,28);c.clip();c.fillStyle="rgba(10,6,24,.62)";c.fillRect(x0,y,pw,panH);
+      const gg=c.createLinearGradient(x0,y,x0+pw,y+210);gg.addColorStop(0,tm.bg);gg.addColorStop(1,"rgba(10,6,24,.2)");c.fillStyle=gg;c.fillRect(x0,y,pw,210);
+      c.fillStyle=tm.trim||"#fff";c.fillRect(x0,y+210,pw,8);c.restore();
+      shRR(c,x0,y,pw,panH,28);c.strokeStyle="rgba(196,181,253,.28)";c.lineWidth=2;c.stroke();
+      await shLogoAt(c,sd.t,x0+22,y+24,140);
+      c.textAlign="left";c.textBaseline="alphabetic";c.fillStyle=tm.txt||tm.fg||"#fff";let fs=64;c.font=SH_F(800,fs,1);const nk=tm.nick.toUpperCase();while(fs>34&&c.measureText(nk).width>pw-190){fs-=2;c.font=SH_F(800,fs,1)}c.fillText(nk,x0+178,y+86);
+      c.font=SH_F(700,28,1);c.globalAlpha=.85;c.fillText("RICEVE",x0+178,y+126);c.globalAlpha=1;
+      const pc=sd.pc,col=pcCol(pc),ptxt=(pc>0?"+":"")+pc+"%";shRR(c,x0+178,y+142,150,54,14);c.fillStyle="rgba(10,6,24,.7)";c.fill();c.fillStyle=col;c.font=SH_F(800,42,1);c.textAlign="center";c.textBaseline="middle";c.fillText(ptxt,x0+178+75,y+170);
+      c.textAlign="left";c.font=SH_F(700,20,1);c.fillStyle=col;c.fillText(trPcWord(pc).toUpperCase(),x0+338,y+170);
+      let yy=y+230;
+      for(const n of sd.pl){c.save();c.translate(x0*(1-SC),yy*(1-SC));c.scale(SC,SC);const role=ruoloDi(n),rc=role==="G"?"#ef4444":role==="F"?"#60a5fa":"#fbbf24";
+        const ic=await shJersey(sd.t,n);
+        if(ic){const bx=150,r=Math.min(bx/ic.width,bx/ic.height);c.drawImage(ic,x0+16+(bx-ic.width*r)/2,yy+(rowH-12-ic.height*r)/2,ic.width*r,ic.height*r)}
+        c.textAlign="left";c.textBaseline="alphabetic";const tx=x0+170,mw=pw/SC-170-12;c.fillStyle="#fff";let f2=40;c.font=SH_F(800,f2,1);const nn=n.toUpperCase();while(f2>26&&c.measureText(nn).width>mw){f2-=2;c.font=SH_F(800,f2,1)}c.fillText(nn,tx,yy+44);
+        c.beginPath();c.arc(tx+8,yy+68,8,0,7);c.fillStyle=rc;c.fill();c.fillStyle="rgba(233,213,255,.85)";c.font=SH_F(700,21,1);c.fillText(`${({G:"GUARDIA",F:"ALA",C:"CENTRO"})[role]||""} · ${Math.round(eta(n))} ANNI`,tx+24,yy+75);
+        const pd=pdkMix(n),d0=draftOf(n);
+        c.font=SH_F(700,22,1);c.fillStyle="rgba(226,232,240,.65)";c.fillText("PDK",tx,yy+134);c.font=SH_F(800,58,1);c.fillStyle="#fde047";c.fillText(SHF(pd),tx+62,yy+138);
+        if(d0&&d0[1]<=15&&iaYrF(DRAFT_ANNO-d0[0])>0){const tt=`DRAFT ${d0[0]} · #${d0[1]}`;c.font=SH_F(800,20,1);const w=c.measureText(tt).width+22;shRR(c,tx,yy+152,w,28,8);c.fillStyle="rgba(245,180,0,.9)";c.fill();c.fillStyle="#1b1200";c.textAlign="left";c.textBaseline="middle";c.fillText(tt,tx+11,yy+167);c.textBaseline="alphabetic"}
+        c.fillStyle="rgba(255,255,255,.08)";c.fillRect(x0+22,yy+rowH-8,pw/SC-44,2);c.restore();yy+=rowH*SC}
+      extraDraw(sd,x0,yy,pw)}
+    y+=topH+40}
+  else{
+    for(let k=0;k<N;k++){const sd=M.sides[k],tm=TEAMS[sd.t],x0=56,ph=M.pHs[k];
+      c.save();shRR(c,x0,y,IN,ph,28);c.clip();c.fillStyle="rgba(10,6,24,.62)";c.fillRect(x0,y,IN,ph);
+      const gg=c.createLinearGradient(x0,y,x0+IN,y);gg.addColorStop(0,tm.bg);gg.addColorStop(1,"rgba(10,6,24,.2)");c.fillStyle=gg;c.fillRect(x0,y,IN,132);c.fillStyle=tm.trim||"#fff";c.fillRect(x0,y+132,IN,6);c.restore();
+      shRR(c,x0,y,IN,ph,28);c.strokeStyle="rgba(196,181,253,.28)";c.lineWidth=2;c.stroke();
+      await shLogoAt(c,sd.t,x0+22,y+16,100);c.textAlign="left";c.textBaseline="alphabetic";c.fillStyle=tm.txt||tm.fg||"#fff";c.font=SH_F(800,56,1);c.fillText(tm.nick.toUpperCase(),x0+144,y+68);c.font=SH_F(700,24,1);c.globalAlpha=.85;c.fillText("RICEVE",x0+146,y+104);c.globalAlpha=1;
+      const pc=sd.pc,col=pcCol(pc),ptxt=(pc>0?"+":"")+pc+"%";c.font=SH_F(800,42,1);const pwd=c.measureText(ptxt).width+36;shRR(c,x0+IN-24-pwd,y+30,pwd,64,16);c.fillStyle="rgba(10,6,24,.7)";c.fill();c.fillStyle=col;c.textAlign="center";c.textBaseline="middle";c.fillText(ptxt,x0+IN-24-pwd/2,y+63);c.textAlign="right";c.textBaseline="alphabetic";c.font=SH_F(700,20,1);c.fillText(trPcWord(pc).toUpperCase(),x0+IN-24-pwd-14,y+70);c.textAlign="left";
+      let idx=0;for(const n of sd.pl){const cx=x0+22+(idx%3)*(cw+0),cy=y+150+Math.floor(idx/3)*cellH;idx++;
+        const role=ruoloDi(n),rc=role==="G"?"#ef4444":role==="F"?"#60a5fa":"#fbbf24",ic=await shJersey(sd.t,n);
+        if(ic){const bx=104,r=Math.min(bx/ic.width,bx/ic.height);c.drawImage(ic,cx+(bx-ic.width*r)/2,cy+(cellH-12-ic.height*r)/2,ic.width*r,ic.height*r)}
+        const tx=cx+112,mw=cw-112-6;c.textAlign="left";c.textBaseline="alphabetic";c.fillStyle="#fff";let f2=30;c.font=SH_F(800,f2,1);const sn=iaSur(n).toUpperCase();while(f2>20&&c.measureText(sn).width>mw){f2-=2;c.font=SH_F(800,f2,1)}c.fillText(sn,tx,cy+36);
+        c.beginPath();c.arc(tx+6,cy+56,6,0,7);c.fillStyle=rc;c.fill();c.fillStyle="rgba(233,213,255,.85)";c.font=SH_F(700,18,1);c.fillText(`${({G:"GUARDIA",F:"ALA",C:"CENTRO"})[role]||""} · ${Math.round(eta(n))} ANNI`,tx+20,cy+62);
+        c.font=SH_F(700,18,1);c.fillStyle="rgba(226,232,240,.65)";c.fillText("PDK",tx,cy+104);c.font=SH_F(800,42,1);c.fillStyle="#fde047";c.fillText(SHF(pdkMix(n)),tx+48,cy+106)}
+      extraDraw(sd,x0,y+150+Math.ceil(sd.pl.length/3)*cellH,IN);
+      y+=ph+20}
+    y+=20}
   /* PARERE */
-  shRR(c,56,y,W-112,parH,26);c.fillStyle="rgba(10,6,24,.72)";c.fill();c.strokeStyle="rgba(196,181,253,.28)";c.lineWidth=2;c.stroke();
+  shRR(c,56,y,IN,parH,26);c.fillStyle="rgba(10,6,24,.72)";c.fill();c.strokeStyle="rgba(196,181,253,.28)";c.lineWidth=2;c.stroke();
   c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_F(800,40,1);c.fillStyle="#e9d5ff";c.fillText("IL PARERE DI CLAUDE",92,y+62);
   const vcol=M.d<.10?"#22c55e":M.d<.40?"#f59e0b":"#ef4444";shRR(c,92,y+82,W-184,80,16);c.fillStyle=vcol;c.fill();c.fillStyle="#fff";c.textAlign="center";c.textBaseline="middle";c.font=SH_F(800,46,1);c.fillText(M.verdict[0].toUpperCase(),W/2,y+123);
-  c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_B(500,27);c.fillStyle="#dfe5f5";let ty=y+210;wrap(c,sumTxt,W-112-40).forEach(l=>{c.fillText(l,92,ty);ty+=38});ty+=14;
-  const tri=(cx,cy,up,col)=>{c.beginPath();if(up){c.moveTo(cx,cy-9);c.lineTo(cx+9,cy+7);c.lineTo(cx-9,cy+7)}else{c.moveTo(cx,cy+9);c.lineTo(cx+9,cy-7);c.lineTo(cx-9,cy-7)}c.closePath();c.fillStyle=col;c.fill()};
-  const pill=(t,x,yy,h,fill,fg,fs,right)=>{c.font=SH_F(800,fs,1);const w=c.measureText(t).width+34;const px=right?x-w:x;shRR(c,px,yy,w,h,h/2);c.fillStyle=fill;c.fill();c.fillStyle=fg;c.textAlign="center";c.textBaseline="middle";c.fillText(t,px+w/2,yy+h/2+1);c.textAlign="left";c.textBaseline="alphabetic";return w};
-  const logoAt=async(t,x,yy,z)=>{const lg=await shLogo(t);if(lg){const r=Math.min(z/lg.width,z/lg.height);c.drawImage(lg,x+(z-lg.width*r)/2,yy+(z-lg.height*r)/2,lg.width*r,lg.height*r)}};
-  const GRN="#4ade80",RED="#f87171";
-  for(const o of IT){const b=o.b,tm=TEAMS[b.x.t],tt=b.vd?b.vd.title:"",nk=tm.nick.toUpperCase(),acc=tm.trim||tm.bg,tc=tm.txt||tm.fg||"#fff";
-    let x,cy,w,bx;
-    if(ST===1){x=76;w=W-152;c.save();shRR(c,x,ty,w,o.h,24);c.clip();c.fillStyle="rgba(255,255,255,.045)";c.fillRect(x,ty,w,o.h);const g=c.createLinearGradient(x,ty,x+w,ty);g.addColorStop(0,tm.bg);g.addColorStop(1,"rgba(10,6,24,.25)");c.fillStyle=g;c.fillRect(x,ty,w,HH);c.fillStyle=acc;c.fillRect(x,ty+HH,w,6);c.restore();shRR(c,x,ty,w,o.h,24);c.strokeStyle=acc;c.globalAlpha=.55;c.lineWidth=2;c.stroke();c.globalAlpha=1;
-      await logoAt(b.x.t,x+20,ty+16,72);c.font=SH_F(800,46,1);c.fillStyle=tc;c.textAlign="left";c.fillText(nk,x+110,ty+68);pill(tt,x+w-22,ty+28,48,b.vd.col,"#10091f",24,true);bx=x+28;cy=ty+HH+TOP}
-    else if(ST===2){x=76;w=W-152;c.fillStyle=acc;shRR(c,x,ty,8,o.h,4);c.fill();await logoAt(b.x.t,x+28,ty+4,52);c.font=SH_F(800,40,1);c.fillStyle=tc;c.fillText(nk,x+92,ty+44);pill(tt,W-92,ty+8,46,"rgba(255,255,255,.1)",b.vd.col,22,true);bx=x+28;cy=ty+HH+TOP}
-    else if(ST===3){x=56;w=W-112;c.save();shRR(c,x,ty,w,o.h,0);c.clip();const g=c.createLinearGradient(x,ty,x+w,ty);g.addColorStop(0,tm.bg);g.addColorStop(1,"rgba(10,6,24,.1)");c.fillStyle=g;c.fillRect(x,ty,w,HH);c.fillStyle=acc;c.fillRect(x,ty+HH-5,w,5);c.restore();await logoAt(b.x.t,x+30,ty+10,64);c.font=SH_F(800,44,1);c.fillStyle=tc;c.fillText(nk,x+108,ty+56);c.font=SH_F(800,26,1);c.fillStyle="#fff";c.textAlign="right";c.fillText(tt,x+w-30,ty+54);c.textAlign="left";bx=92;cy=ty+HH+TOP}
-    else{x=76+o.k*(colH?(W-152-20)/2+20:0);w=(W-152-20)/2;c.save();shRR(c,x,ty,w,colH,24);c.clip();c.fillStyle="rgba(255,255,255,.045)";c.fillRect(x,ty,w,colH);const g=c.createLinearGradient(x,ty,x+w,ty+HH);g.addColorStop(0,tm.bg);g.addColorStop(1,"rgba(10,6,24,.25)");c.fillStyle=g;c.fillRect(x,ty,w,HH);c.fillStyle=acc;c.fillRect(x,ty+HH,w,6);c.restore();shRR(c,x,ty,w,colH,24);c.strokeStyle=acc;c.globalAlpha=.55;c.lineWidth=2;c.stroke();c.globalAlpha=1;
-      await logoAt(b.x.t,x+18,ty+14,64);c.font=SH_F(800,40,1);c.fillStyle=tc;c.textAlign="left";c.fillText(nk,x+96,ty+60);pill(tt,x+22,ty+88,44,b.vd.col,"#10091f",20,false);bx=x+22;cy=ty+HH+TOP}
-    c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_B(500,FS);c.fillStyle="#eef2ff";let ly=cy;
-    o.S.forEach(l=>{ly+=LH;c.fillStyle="#f1f5ff";c.fillText(l,bx,ly-8)});
-    if(o.Tc.length){ly+=ST===3?10:14;if(ST===3){const th=o.Tc.reduce((u,t)=>u+t.L.length*LH+10,0)+14;shRR(c,bx-16,ly-2,W-112-40+0,th,16);c.fillStyle="rgba(255,255,255,.06)";c.fill();ly+=10}
-      o.Tc.forEach(t=>{c.fillStyle="#cbd5e1";c.font=SH_B(500,FS);t.L.forEach((l,j)=>{ly+=LH;if(j===0)tri(bx+10,ly-FS/2-4,t.pos>0,t.pos>0?GRN:RED);c.fillStyle="#cbd5e1";c.fillText(l,bx+tg,ly-8)});ly+=10})}
-    ty+=(ST===4?0:o.h+GAP)}
+  c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_B(500,27);c.fillStyle="#dfe5f5";let ty=y+210;sumL.forEach(l=>{c.fillText(l,92,ty);ty+=38});ty+=14-0;
+  await shCardsDraw(c,its,W,ty);
   shFoot(c,W,H,"Dreamers · Trade Alert");return cv}
+/* (459) TRADE SPECIALE condivisibile: entra un giocatore (a pagamento), un altro esce dalla rosa ma resta di proprietà. A scadenza si sceglie chi lasciar andare tra i giocatori di quel ruolo. */
+function histSpModel(i){const x=SPECIALI[i];if(!x||NUM[x.entra]===undefined)return null;
+  const R=a=>a[Math.floor(Math.random()*a.length)],f1=v=>v==null?"—":v.toFixed(1).replace(".",","),t=x.t,nick=TEAMS[t].nick,ne=x.entra,ns=x.esce,Se=iaSur(ne),Ss=iaSur(ns),I=spInfo(x),
+    pe=pdkMix(ne),ps=pdkMix(ns),ae=eta(ne),as=eta(ns),dp=(pe!=null&&ps!=null)?pe-ps:0,role=ruoloDi(ne),rn=({G:"guardie",F:"ali",C:"centri"})[role]||"giocatori",cpg=x.tipo/Math.max(1,I.dur),de=draftOf(ne),ds=draftOf(ns),
+    top=de&&de[1]<=10&&iaYrF(DRAFT_ANNO-de[0])>0,topS=ds&&ds[1]<=10&&iaYrF(DRAFT_ANNO-ds[0])>0;
+  let tag,title,col,why;
+  if(dp<=-4){tag="odd";title="NON SI CAPISCE";col="#f87171";why=R([`${nick} paga ${x.tipo} cr per un giocatore che rende meno di quello che tiene fuori (PDK ${f1(pe)} contro ${f1(ps)}). A meno di motivi che i numeri non vedono, tipo infortuni o minutaggio, la mossa lascia perplessi.`,`${Se} (PDK ${f1(pe)}) al posto di ${Ss} (PDK ${f1(ps)}): sui numeri è un passo indietro pagato ${x.tipo} cr. Qualcuno spieghi il piano.`])}
+  else if(dp>=6){tag="up";title="UPGRADE NETTO";col="#4ade80";why=R([`${nick} spende ${x.tipo} cr e si porta in casa ${f1(dp)} PDK in più (${f1(pe)} contro ${f1(ps)}): upgrade immediato, ${ae>=27?"con un'età che parla di vittoria adesso":"e pure con prospettiva"}.`,`Ottimo uso dei crediti: ${Se} rende molto più di ${Ss} (PDK ${f1(pe)} contro ${f1(ps)}) e ${nick} intanto non perde i diritti su nessuno dei due.`])}
+  else if(ae<=23||top){tag="bet";title="SCOMMESSA SUL FUTURO";col="#fde047";why=R([`${Se} ha ${Math.round(ae)} anni${top?` ed è una scelta alta del draft ${de[0]}`:""}: ${nick} lo prende per scommettere sulla crescita, e poi può rivenderlo con valore più alto o tenerlo. Non è una mossa da corsa al titolo, è da investitore.`,`Spesa da investitore: ${x.tipo} cr su un ${Math.round(ae)}enne (PDK ${f1(pe)}) che col tempo può valere di più. Se esplode, ${nick} rivende bene o se lo tiene stretto.`])}
+  else if(ae>=28){tag="win";title="ALL-IN PER VINCERE";col="#fb923c";why=R([`${Se} ha ${Math.round(ae)} anni: non si compra per rivenderlo, si compra per vincere adesso. ${nick} spende ${x.tipo} cr per un rendimento immediato (PDK ${f1(pe)}).`,`Mossa da squadra che vuole risultati subito: ${x.tipo} cr per ${Se}, ${Math.round(ae)} anni, PDK ${f1(pe)}. Il futuro può aspettare.`])}
+  else{tag="swap";title="SCELTA TECNICA";col="#facc15";why=R([`Cambio di rotazione senza drammi: ${Se} (PDK ${f1(pe)}) prende il posto di ${Ss} (PDK ${f1(ps)}) per ${x.tipo} cr. Si paga il minutaggio, non il blasone.`,`${nick} paga ${x.tipo} cr per ruotare i giocatori del ruolo: ${Se} dentro, ${Ss} fuori ma ancora suo.`])}
+  const txt=`${why} Costo: ${x.tipo} cr per ${I.dur} giornate, circa ${f1(cpg)} cr a giornata.`;
+  /* commenti tecnici su chi entra e su chi esce */
+  let teIn=[];try{teIn=histTechLines({sides:[{t,pl:[ne],cr:0}]},0,3,true)}catch(e){console.error(e)}
+  const th=histTech(ns),out=[];
+  if(th){if(pe!=null&&ps!=null&&Math.abs(dp)>=2)out.push({pos:dp>0?1:-1,txt:dp>0?`${Ss} resta fuori rosa con PDK ${f1(ps)} contro ${f1(pe)} di ${Se}: il cambio si capisce.`:`${Ss} rende più di ${Se} (PDK ${f1(ps)} contro ${f1(pe)}) e resta in panchina: scelta da verificare.`});
+    if(th.k>=2&&th.mLast<th.mAvg-4)out.push({pos:1,txt:`${Ss} sta perdendo minuti (${Math.round(th.mLast)} nell'ultima, ${Math.round(th.mAvg)} di media): metterlo fuori ha una logica.`});
+    if(th.lyAvg!=null&&th.k>=3&&th.avg-th.lyAvg<=-4)out.push({pos:1,txt:`${Ss} rende meno dell'anno scorso (PDK ${f1(th.avg)} contro ${f1(th.lyAvg)}): ${nick} se ne sta liberando in modo morbido.`});
+    else if(th.lyAvg!=null&&th.k>=3&&th.avg-th.lyAvg>=4)out.push({pos:-1,txt:`${Ss} sta migliorando (PDK ${f1(th.avg)} contro ${f1(th.lyAvg)} dello scorso anno): metterlo fuori è un rischio.`})}
+  /* chi lasciar andare a scadenza */
+  const same=[...new Set([...(ROSTER[t]||[]).map(p=>p[0]),ne,ns])].filter(n=>ruoloDi(n)===role).map(n=>({n,p:pdkMix(n)??0,a:eta(n),dr:draftOf(n)})).sort((a,b)=>a.p-b.p),wk=same[0];
+  let dec=`Alla scadenza ${nick} dovrà scegliere chi lasciar andare tra ${same.length>=3?"le sue ":""}${rn} (${same.slice(0,4).map(q=>iaSur(q.n)+" "+f1(q.p)).join(", ")}). `;
+  if(wk){dec+=wk.n===ns?`Il candidato naturale è proprio ${Ss}, quello uscito: PDK ${f1(wk.p)}, il più basso del ruolo.`:wk.n===ne?`Occhio: il più debole del ruolo è ${Se} stesso (PDK ${f1(wk.p)}): se non decolla, la speciale sarà stata soldi buttati.`:`Oggi il più in difficoltà del ruolo è ${iaSur(wk.n)} (PDK ${f1(wk.p)}, ${Math.round(wk.a)} anni): ${wk.a<=23?"giovane, magari da tenere e rivendere":"il primo da valutare"}.`;
+    if(wk.n!==ns&&(as<=23||topS))dec+=` ${Ss} ha ${Math.round(as)} anni${topS?` ed è una scelta alta (#${ds[1]} del ${ds[0]})`:""}: tenerlo ha senso, è un asset.`}
+  return{x,I,t,nick,ne,ns,tag,title,col,txt,teIn,out,dec,pe,ps,ae,as}}
+async function shSpecial(i){const S=histSpModel(i);if(!S)return null;
+  const W=1080,IN=W-112,mc=document.createElement("canvas").getContext("2d"),tm=TEAMS[S.t],x=S.x,I=S.I;
+  const its=shCardsPrep(mc,[{t:S.t,head:"Come la vedo",title:S.title,col:S.col,txt:S.txt,tech:S.teIn.slice(0,3)},{t:S.t,head:"Alla scadenza",txt:S.dec,tech:S.out.slice(0,3)}],W,26,92);
+  const topH=170+30+236+40+66,parH=96+its.reduce((q,o)=>q+o.h+24,0)+8,H=190+topH+40+parH+130;
+  const{cv,c}=await shBase(H,W,0,1);
+  c.font=SH_F(700,28,1);c.textAlign="right";c.textBaseline="alphabetic";c.fillStyle="rgba(233,213,255,.75)";c.fillText("TRADE SPECIALE · GIORNATA "+I.cur,W-56,100);
+  let y=190;const x0=56;
+  c.save();shRR(c,x0,y,IN,topH,28);c.clip();c.fillStyle="rgba(10,6,24,.62)";c.fillRect(x0,y,IN,topH);const gg=c.createLinearGradient(x0,y,x0+IN,y);gg.addColorStop(0,tm.bg);gg.addColorStop(1,"rgba(10,6,24,.2)");c.fillStyle=gg;c.fillRect(x0,y,IN,150);c.fillStyle=tm.trim||"#fff";c.fillRect(x0,y+150,IN,8);c.restore();
+  shRR(c,x0,y,IN,topH,28);c.strokeStyle="rgba(196,181,253,.28)";c.lineWidth=2;c.stroke();
+  await shLogoAt(c,S.t,x0+24,y+16,118);c.textAlign="left";c.textBaseline="alphabetic";c.fillStyle=tm.txt||tm.fg||"#fff";c.font=SH_F(800,64,1);c.fillText(tm.nick.toUpperCase(),x0+166,y+80);c.font=SH_F(700,26,1);c.globalAlpha=.85;c.fillText("TRADE SPECIALE",x0+168,y+120);c.globalAlpha=1;
+  shPill(c,"SPECIALE "+x.tipo+" · "+x.tipo+" CR",x0+IN-24,y+50,54,"rgba(10,6,24,.7)","#fde047",28,true);
+  const cw=(IN-60)/2;let cy=y+190;
+  for(let k=0;k<2;k++){const n=k?S.ns:S.ne,cx=x0+22+k*(cw+16),role=ruoloDi(n),rc=role==="G"?"#ef4444":role==="F"?"#60a5fa":"#fbbf24",d0=draftOf(n),ic=await shJersey(S.t,n);
+    shRR(c,cx,cy,cw,236,20);c.fillStyle="rgba(255,255,255,.05)";c.fill();c.strokeStyle=k?"rgba(251,146,60,.5)":"rgba(74,222,128,.5)";c.lineWidth=2;c.stroke();
+    c.font=SH_F(800,22,1);c.textAlign="left";c.fillStyle=k?"#fb923c":"#4ade80";c.fillText(k?"ESCE · RESTA TUO":"ENTRA IN SQUADRA",cx+20,cy+34);
+    if(ic){const bx=140,r=Math.min(bx/ic.width,bx/ic.height);c.drawImage(ic,cx+12+(bx-ic.width*r)/2,cy+50+(170-ic.height*r)/2,ic.width*r,ic.height*r)}
+    const tx=cx+162,mw=cw-162-12;c.fillStyle="#fff";let f2=34;c.font=SH_F(800,f2,1);const nn=n.toUpperCase();while(f2>22&&c.measureText(nn).width>mw){f2-=2;c.font=SH_F(800,f2,1)}c.fillText(nn,tx,cy+86);
+    c.beginPath();c.arc(tx+7,cy+110,7,0,7);c.fillStyle=rc;c.fill();c.fillStyle="rgba(233,213,255,.85)";c.font=SH_F(700,20,1);c.fillText(`${({G:"GUARDIA",F:"ALA",C:"CENTRO"})[role]||""} · ${Math.round(eta(n))} ANNI`,tx+22,cy+116);
+    c.font=SH_F(700,20,1);c.fillStyle="rgba(226,232,240,.65)";c.fillText("PDK",tx,cy+170);c.font=SH_F(800,56,1);c.fillStyle="#fde047";c.fillText(SHF(pdkMix(n)),tx+54,cy+174);
+    if(d0&&d0[1]<=15&&iaYrF(DRAFT_ANNO-d0[0])>0){const tt=`DRAFT ${d0[0]} · #${d0[1]}`;c.font=SH_F(800,18,1);const w=c.measureText(tt).width+20;shRR(c,tx,cy+190,w,26,8);c.fillStyle="rgba(245,180,0,.9)";c.fill();c.fillStyle="#1b1200";c.textBaseline="middle";c.fillText(tt,tx+10,cy+204);c.textBaseline="alphabetic"}}
+  /* barra del tempo */
+  const by=cy+236+34,pct=Math.round(I.fr*100),exp=I.left===0;c.font=SH_F(800,30,1);c.fillStyle=spColor(I.fr);c.textAlign="left";c.fillText(exp?"SCADUTA":`${I.left} GIORNAT${I.left===1?"A":"E"} RIMAST${I.left===1?"A":"E"}`,x0+24,by+8);c.textAlign="right";c.font=SH_F(700,24,1);c.fillStyle="rgba(226,232,240,.75)";c.fillText(`${exp?"0%":pct+"%"} · dalla G${x.inizio} alla G${I.scad}${x.fine?" · fino al "+x.fine:""}`,x0+IN-24,by+8);
+  shRR(c,x0+24,by+26,IN-48,22,11);c.fillStyle="rgba(255,255,255,.1)";c.fill();if(pct>0){shRR(c,x0+24,by+26,Math.max(22,(IN-48)*I.fr),22,11);c.fillStyle=spColor(I.fr);c.fill()}
+  y+=topH+40;
+  shRR(c,56,y,IN,parH,26);c.fillStyle="rgba(10,6,24,.72)";c.fill();c.strokeStyle="rgba(196,181,253,.28)";c.lineWidth=2;c.stroke();
+  c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_F(800,40,1);c.fillStyle="#e9d5ff";c.fillText("IL PARERE DI CLAUDE",92,y+62);
+  await shCardsDraw(c,its,W,y+96);
+  shFoot(c,W,H,"Dreamers · Trade speciali");return cv}
 async function shOpen(k){const old=document.querySelector(".shsheet");if(old)old.remove();
   const sh=document.createElement("div");sh.className="shsheet";sh.innerHTML='<div class="shbox"><p class="shwait">Preparo l\'immagine…</p></div>';document.body.appendChild(sh);
   sh.addEventListener("click",e=>{if(e.target===sh||e.target.closest(".shx"))sh.remove()});
-  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="gr"?await shGrafico():k==="cm"?await shCompar():k==="ht"?await shHistTrade(SHR_HT):k==="pl"?await shPlayer():k==="pc"?await shPcard():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
+  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="gr"?await shGrafico():k==="cm"?await shCompar():k==="ht"?await shHistTrade(SHR_HT):k==="sp"?await shSpecial(SHR_SP):k==="pl"?await shPlayer():k==="pc"?await shPcard():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
   if(!cv){sh.querySelector(".shbox").innerHTML='<p class="shwait">Niente da condividere adesso.</p><button class="shx">Chiudi</button>';return}
-  const name=(k==="ht"?("scambio-"+((TRADES[SHR_HT]&&TRADES[SHR_HT].data)||"").replace(/\D+/g,"-")):k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="cm"?"confronto-"+((SHR_CM&&SHR_CM.P[0]&&SHR_CM.P[1])?(SHR_CM.P[0].n+"-"+SHR_CM.P[1].n):"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pl"?"scheda-"+((SHR_PL&&SHR_PL.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pc"?"prestazione-"+((SHR_PC&&SHR_PC.x.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="card"?"grafico":"dreamers")+".png";
+  const name=(k==="sp"?("trade-speciale-"+vnz((SPECIALI[SHR_SP]||{}).entra||"").replace(/ /g,"-")):k==="ht"?("scambio-"+((TRADES[SHR_HT]&&TRADES[SHR_HT].data)||"").replace(/\D+/g,"-")):k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="cm"?"confronto-"+((SHR_CM&&SHR_CM.P[0]&&SHR_CM.P[1])?(SHR_CM.P[0].n+"-"+SHR_CM.P[1].n):"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pl"?"scheda-"+((SHR_PL&&SHR_PL.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pc"?"prestazione-"+((SHR_PC&&SHR_PC.x.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="card"?"grafico":"dreamers")+".png";
   let file=null,url="";const mk=async c=>{const blob=await new Promise(r=>c.toBlob(r,"image/png"));file=new File([blob],name,{type:"image/png"});if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(blob)};await mk(cv);
   /* Campo: cursore "fino a dove condividere" (si parte sempre dall'alto: prime N righe) */
   const NR=k==="campo"&&SHR_CAMPO?SHR_CAMPO.R.length:0,sl=NR>1?`<div class="shcut"><div><b>Condividi dalla 1ª alla <output>${NR}</output>ª riga</b><small>su ${NR} · trascina per fermarti prima</small></div><input type="range" min="1" max="${NR}" value="${NR}" step="1" aria-label="Fino a quale riga condividere"></div>`:"";

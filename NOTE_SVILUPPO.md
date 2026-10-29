@@ -1342,3 +1342,11 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
    - `histTech`/`histTechLines`: commenti tecnici quantificati per giocatore: ultima partita vs media, ultime 3 vs precedenti, minutaggio, chi nella stessa squadra NBA gli sta rubando minuti, confronto con la stagione scorsa, età. Varianti scelte a caso: ogni condivisione ha parole diverse. Verde = segnale a favore della squadra, rosso = contro.
 
    - (458, aggiornamento) tolta dal parere la riga "Interesse alto/basso"; righe giocatore ingrandite del 18% (`SC`) per dare più peso a maglie e statistiche.
+
+459. **Condividi trade: layout definitivo, 3-4 squadre, speciali** — pubblicato.
+   - Stile unico a "schede" (una per squadra, nei colori del club); tolti VALORE e STELLE dalle immagini: resta solo il PDK (grande); tolta la riga "Interesse alto/basso".
+   - Scambi a 2-4 squadre (`histTradeOk`: 2-4 squadre diverse, almeno un giocatore con valore): con 3+ squadre pannelli a tutta larghezza con i giocatori in griglia da 3. Squadre che ricevono solo crediti (es. 5 cr a credito) ora sono gestite ("INCASSA CREDITI").
+   - Quantità di testo adattiva (`mode` 0/1/2 e `lim`): 1 giocatore per lato = commento completo con numeri; 2-3 giocatori = senza riga numerica; 4+ giocatori o 3+ squadre = una frase e 2 commenti tecnici (1 con 4 squadre). Le righe dei giocatori si rimpiccioliscono (`SC`) al crescere del numero.
+   - Senza intenzioni calcolabili (3+ squadre, lato senza giocatori) il verdetto usa solo il saldo di valore (`vo`): SCIPPO / BUON AFFARE / SCAMBIO PARI / PREZZO ALTO / PAGA CARISSIMO.
+   - **Trade speciali** (`histSpModel`/`shSpecial`, tasto sulle card della pagina speciali e sulle righe "Speciale" di Trade Alert): entra un giocatore a pagamento, l'altro esce ma resta di proprietà. Parere: UPGRADE NETTO / SCOMMESSA SUL FUTURO (giovane, rivendibile) / ALL-IN PER VINCERE (età alta) / SCELTA TECNICA / NON SI CAPISCE, costo per giornata, commenti tecnici su chi entra e su chi esce (PDK, minuti, anno scorso) e blocco "Alla scadenza": tra i giocatori del ruolo dovrà scegliere chi lasciar andare (più debole per PDK, giovani da tenere come asset).
+   - Bug corretto: "5 cr cr a credito".
