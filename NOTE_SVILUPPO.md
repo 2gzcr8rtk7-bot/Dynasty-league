@@ -1170,3 +1170,4 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (380) Home, elenchi "Tutte le squadre" e "Seguiti": sottile linguetta in fondo (barretta grigia) da trascinare in su/giù per accorciare o allungare l'elenco (90-900 px); l'altezza si ricorda su questo telefono (dl_hh), doppio tocco = torna all'altezza standard. pubblicato.
 (381) Linguetta Home: dopo il trascinamento il tocco non apre più il giocatore che si trova sotto il dito (i click vengono ignorati per 0,7 s dopo un ridimensionamento). pubblicato.
 (382) Linguetta Home: ora ha il colore dell'intestazione della Home del momento (viola di notte, oro di giorno, colore squadra nelle viste di squadra), lo stesso della sottolineatura del titolo. pubblicato.
+(383) Linguetta del riquadro Seguiti: stessa tinta di quella dell'altro elenco (viola di notte, oro di giorno); prima di notte era gialla come il titolo. IN CODA, NON pubblicato.
