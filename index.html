@@ -895,6 +895,10 @@ body:not(.notte) .hrl{position:relative;width:56px;height:56px;padding:3px;borde
 @media (prefers-reduced-motion:reduce){.hmqt{animation:none}.hmq{overflow-x:auto}}
 /* (420) banner avvisi (scambi, trade speciali, variazioni di cassa) nel carosello della Home, per 12 ore */
 .hmqt .tmc{flex:0 0 auto;margin-right:9px;display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:14px;color:#fff;background:linear-gradient(160deg,rgba(120,80,10,.55),rgba(17,10,48,.95) 55%,rgba(76,29,149,.8));border:1px solid #facc15;box-shadow:0 0 14px rgba(250,204,21,.25)}
+body:not(.notte) .hmqt .tmc{background:linear-gradient(160deg,var(--pn1),var(--pn2));border-color:var(--gold);box-shadow:0 0 0 1px color-mix(in srgb,var(--gold) 30%,transparent),0 6px 16px rgba(0,0,0,.35)}
+body:not(.notte) .tmc .tmtag{background:var(--gold);color:#101010}
+body:not(.notte) .tmc .tmnm{color:var(--gold)}body:not(.notte) .tmc .tmar{color:var(--gold)}
+body:not(.notte) .tmc .tmp{background:color-mix(in srgb,var(--fg) 9%,transparent);border:1px solid var(--line)}
 .tmc .tmtag{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 9px;border-radius:9px;background:#facc15;color:#1b1233;font:800 10px var(--display);font-style:italic;text-transform:uppercase;letter-spacing:.06em;text-align:center;line-height:1.1}
 .tmc .tmtag b{font-size:9px;opacity:.75;font-weight:800}
 .tmc .tmsd{display:flex;align-items:center;gap:8px;flex:none}

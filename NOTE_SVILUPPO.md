@@ -1237,3 +1237,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (422) Home: i loghi delle schede Dreamers (`.hmdl`) ora 34px come quelli NBA (`.hml`), stesso posto e stessa altezza delle righe; il fattore `--k` ridimensiona solo il disegno dentro la casella. In coda, non pubblicato.
 
 (423) Area DAX › Gestione equilibrio trade: accanto a ogni parametro (Parametri di interesse + Conversione crediti e pick nel tab Valori) un tastino «i»: apre un riquadro con «Cosa calcola» e «Come cambia le cose» (alto/basso) in parole semplici. Testi in `EQ_INFO`, stato `EQ.inf`. SEGRETO, non in NV_LOG. pubblicato.
+
+(424) Banner avvisi della Home: di giorno (stile Blu e stile Nero) usa i colori del tema (sfondo `--pn1/--pn2`, bordo e scritte `--gold`, bordi `--line`); la modalità notte resta viola come prima. In coda, non pubblicato.
