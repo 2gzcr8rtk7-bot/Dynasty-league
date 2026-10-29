@@ -1324,3 +1324,11 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 - `iaInt`: nuova prima frase «intenzioni: … (N-ª in classifica · età media · talento · ultimi scambi …)»; la carenza di ruolo aggiunge il contesto «ma sono veterani: poco in linea con la ricostruzione» (o «ma sono giovani … vincere subito»); il peso del rendimento PDK è ×(1+`pwi`·c) (0,4–1,5; `pwi` 0,50) e la frase «ci guadagna in rendimento» non compare per chi ricostruisce con PDK poco rilevante.
 - DAX › Parametri: nuovi `iwR`, `pwi`.
 - Idee non ancora fatte (da chiedere a Francesco): infortuni (OUT) come segnale di «non può vincere ora», crediti spesi alle aste, pick di draft posseduti, età dei soli titolari.
+
+(456) IA TRADE · ROOKIE DI ALTA SCELTA INCEDIBILI NEL PRIMO ANNO (test Boozer). In coda su `coda`, non pubblicato; niente in `NV_LOG`.
+- `iaDraft` ora = `dpk` (0,40) × peso scelta (`iaDrF`: prime 3 = 1; 4ª-5ª 0,75; 6ª 0,6 … 10ª 0,2; 11ª-15ª ~0,15→0,03) × peso età (`iaAgeF`) × ANNI DAL DRAFT (`iaYrF`: 1º anno ×1, 2º ×0,6, 3º ×0,3, 4º ×0,1, poi 0; `DRAFT_ANNO`=2026: da aggiornare a ogni nuova stagione). Valori IA: Boozer 1349→1889, Dybantsa 1250→1750, Wilson 1240→1612, Peterson ~1620, Flagg (2º anno) 1700→2108, Harper 1220→1513; Lendeborg (11ª, 24 anni) invariato.
+- `iaPotBlend`: il PDK usato dall'IA (`iaPerf`) per un giovane scelto in alto si avvicina al PDK atteso dalla scelta (20 + 16 × peso scelta; es. top-3 = 36) con peso `dpw` 0,70 × scelta × età × anni: Boozer 25,7→33,6. Quindi nel primo anno vale la scelta più del rendimento reale.
+- `iaInt`: malus `inc` (0,35) quando una squadra deve cedere un giocatore con premio draft ≥ 40% del massimo + frase «cede malvolentieri Boozer (scelta n. 3 al draft 2026, primo anno): giocatori su cui si costruisce, quasi incedibili».
+- Caso dello screenshot: Spiders cederebbero circa 3674 punti IA e ne riceverebbero circa 2841: non più «±6%» (l'IA non lo propone).
+- DAX › Parametri: `dpk` (ora 0,40, con descrizione aggiornata), nuovi `dpw` e `inc`.
+- Nota: `DRAFT_ANNO` va portato a 2027 dopo il draft 2027 (cambia il peso degli anni).

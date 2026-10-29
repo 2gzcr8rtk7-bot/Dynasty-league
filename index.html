@@ -3223,7 +3223,7 @@ const EQ_DEF={wnb:.6,wvs:.4,vsk:1.25,sck:2.6,thA:.62,thM:.42,dlmax:.45,
  pl10:.25,prevw:.5,prevc:.4,ptr:.22,
  eta0:.07,eta1:.10,perf:.40,rook:.22,win:.60,reb:.30,
  iwR:.18,pwi:.50,iwS0:.12,iwS1:.04,iwSm:.50,iwA:.62,isA:3.5,isT:1.2,pvA:.25,pvC:.15,pg0:5,pg1:20,pws:.65,pgr:12,
- dpk:.22,npr:.60,sgf:.25,sbal:.15,smix:.60,mmin:.55};
+ dpk:.40,dpw:.70,inc:.35,npr:.60,sgf:.25,sbal:.15,smix:.60,mmin:.55};
 const EQP={...EQ_DEF};
 let IA={np:3,noMore:false,lv:"eq",mode:"",any:false,want:[],keep:[],tf:"",q:"",st:1,team:"",needs:["","",""],give:[],cr:{c:0,p:0,d:0},n:2,out:[],seen:{},pool:null,key:"",rd:0};
 const IA_LV={eq:[0,.10,0],win:[.10,.40,.25],scam:[.40,.80,.55]},IA_R={G:"Guardia",F:"Ala",C:"Centro"},IA_RP={G:"guardie",F:"ali",C:"centri"},IA_W=[1,.6,.35],IA_LIM={p:10,d:30},IA_MAXR=15;
@@ -3336,7 +3336,7 @@ function iaPerf(n){const k="p:"+n;if(iaPC[k])return iaPC[k];let base=iaProd(n),g
   const ef=g.map(x=>x.eff).filter(v=>v!=null&&!isNaN(v)),eff=ef.length?ef.reduce((a,b)=>a+b,0)/ef.length:null;
   if(isRookie(n)){const role=ruoloDi(n),thr=IA_RKT[role]||.66,opt=IA_RKO[role]||.66;let v=pd.length>=2?sea:(base||sea||0);if(!v)v=base||0;const er=eff==null?null:eff/thr;if(er!=null)v*=1+iaCl(er-1,.25)*.6;
     const c01=x=>Math.max(0,Math.min(1,x)),rq0=.5*c01(((v||0)-12)/12)+.5*(eff==null?.4:c01((eff-(thr-.1))/(opt-thr+.2))),dd=draftOf(n),rq=rq0*(.55+.25*iaAgeF(iaAge(n))+.2*(dd?iaDrF(dd[1]):0));
-    return iaPC[k]={v:v||0,rk:true,sea,eff,thr,opt,rq,label:rq>=.65?"ottimo rookie":rq>=.4?"buon rookie":"rookie da valutare",rel:null}}
+    return iaPC[k]={v:iaPotBlend(n,v||0),rk:true,sea,eff,thr,opt,rq,label:rq>=.65?"ottimo rookie":rq>=.4?"buon rookie":"rookie da valutare",rel:null}}
   /* (451) INIZIO STAGIONE: pesa soprattutto il rendimento dell'anno scorso (media della stagione di riferimento); la stagione in corso entra gradualmente
      dalla gara pg0 e a pieno regime (pws) alla gara pg1. Le ultime 10 gare sono una quota (pl10) della parte "stagione in corso". */
   const rf=(()=>{try{const a=pgRef(n).filter(x=>x[3]!=null);return a.length?a.reduce((q,x)=>q+(+x[3]||0),0)/a.length:null}catch(e){return null}})(),prior=rf!=null?rf:(base>0?base:null),cur=sea==null?null:(l10==null?sea:(1-EQP.pl10)*sea+EQP.pl10*l10),
@@ -3344,7 +3344,7 @@ function iaPerf(n){const k="p:"+n;if(iaPC[k])return iaPC[k];let base=iaProd(n),g
   try{pg=grGames(n,"2025/26").filter(x=>x.pdk!=null&&!isNaN(x.pdk)).map(x=>x.pdk)}catch(e){}
   const prev=pg.length>=15?pg.reduce((a,b)=>a+b,0)/pg.length:null;let rel=null;
   const T=iaTrend(n);if(prev&&sea!=null&&pd.length>=3){rel=(sea-prev)/prev;if(T&&Math.sign(T.pct)!==Math.sign(rel))rel*=1-Math.min(.75,Math.abs(T.pct)/80*Math.min(1,Math.max(0,(T.n-4)/8)));v*=1+iaCl(rel,EQP.prevc)*EQP.prevw*Math.max(0,Math.min(1,(pd.length-3)/EQP.pgr))}
-  if(T)v*=1+EQP.ptr*iaTs(T.pct,T.n);return iaPC[k]={v,base,sea,l10,prev,rel,ng:pd.length,tr:T?T.pct:null}}
+  if(T)v*=1+EQP.ptr*iaTs(T.pct,T.n);return iaPC[k]={v:iaPotBlend(n,v),base,sea,l10,prev,rel,ng:pd.length,tr:T?T.pct:null}}
 const iaRs=n=>{const cr=iaCrOf(n);return Math.max(.05,(iaP(n)/VAL_CR)/Math.max(1,cr))};
 const iaEf=n=>{try{const v=pagella(n).s.eff;return v==null||isNaN(v)?null:v/5}catch(e){return null}};
 const iaCl=(v,a)=>Math.max(-a,Math.min(a,v));
@@ -3405,6 +3405,8 @@ function iaInt(S,t,recv,gave,adv0,cr){const P0=iaProf(t),mR=iaSum(recv,x=>x.v),m
   {const vs=(L,sg)=>{const a=[],tt=L.reduce((x,y)=>x+Math.max(1,y.v||1),0)||1;L.forEach(x=>{const q=iaPerf(x.n);if(q.rk||q.rel==null||Math.abs(q.rel)<EQP.prvmin)return;dl+=sg*iaCl(q.rel,EQP.prvcap)*EQP.prv*Math.max(.4,Math.max(1,x.v||1)/tt)*Math.min(1,(q.ng||0)/8);a.push(`${x.n.split(" ").slice(-1)[0]} ${q.rel>0?"in crescita":"in calo"} (PDK ${q.prev.toFixed(1).replace(".",",")} → ${q.sea.toFixed(1).replace(".",",")})`)});return a},
     gU=vs(gave,-1),rU2=vs(recv,1);if(gU.length)p.push(`rispetto alla scorsa stagione: cede ${gU.join(", ")}`);if(rU2.length)p.push(`rispetto alla scorsa stagione: riceve ${rU2.join(", ")}`)}
   const pf=iaPref(t,recv,gave);dl+=pf.dl;pf.parts.forEach(x=>p.push(x));
+  /* (456) INCEDIBILI: chi cede un giocatore scelto in alto al draft da poco (premio draft alto) lo dà solo per molto di più: malus proporzionale al peso sul valore ceduto */
+  {const tg=iaSum(gave,x=>x.v)||1,el=gave.filter(x=>EQP.dpk>0&&iaDraft(x.n)/EQP.dpk>=.4);if(el.length){dl-=EQP.inc*iaSum(el,x=>iaDraft(x.n)/EQP.dpk*x.v)/tg;p.push(`cede malvolentieri ${el.map(x=>{const d=draftOf(x.n),y=iaDraftY(x.n);return`${x.n.split(" ").slice(-1)[0]} (scelta n. ${d[1]} al draft ${d[0]}${y===0?", primo anno":""})`}).join(", ")}: giocatori su cui si costruisce, quasi incedibili`)}}
   /* (411, corretta) soglia 30 crediti = prezzo minimo di una trade speciale. Chi ha meno di 30 crediti è interessato a ricevere crediti quando lo scambio lo porta a 30 o più di cassa utile subito (interesse pieno; meno se ci arriva solo in parte); cedere crediti che la lasciano sotto 30 non le piace */
   {const low=iaCassa(t);if(cr){const ci=cr.in||0,co=cr.out||0,after=low+ci-co;
     if(low<EQP.lowT&&ci>0&&co===0){const full=after>=EQP.lowT;dl+=EQP.lowIn*(full?1:Math.min(1,ci/Math.max(1,EQP.lowT-low))*.5);p.push(full?`ha ${low} crediti, sotto i ${EQP.lowT}: con i ${ci} cr ricevuti arriva a ${after} e può fare trade speciali subito`:`ha ${low} crediti, sotto i ${EQP.lowT}: i ${ci} cr ricevuti la avvicinano alla soglia (arriva a ${after})`)}
@@ -3786,9 +3788,14 @@ const DRAFT=(()=>{const m={};Object.entries(DRAFT_EXTRA).forEach(([y,o])=>Object
 const draftOf=n=>DRAFT[vnz(n)]||null;
 /* Peso del draft: scelta tra le prime 5 = 1 (futuri campioni, quasi incedibili); poi scende (6ª = 0,8 … 10ª = 0,4; 11ª = 0,3 … 15ª = 0,1; oltre 15ª = 0).
    Fattore età: pieno fino a 21 anni, 0 a 25,5 (un rookie di 24 anni non è un talento da draft alto: ha già «pochi anni davanti»). */
-const iaDrF=p=>p<=5?1:p<=10?.8-(p-6)*.1:p<=15?.3-(p-11)*.05:0;
+const iaDrF=p=>p<=3?1:p<=5?.75:p<=10?.6-(p-6)*.1:p<=15?.15-(p-11)*.03:0;
 const iaAgeF=a=>a==null?0:Math.max(0,Math.min(1,(25.5-a)/4.5));
-const iaDraft=n=>{const d=draftOf(n);if(!d)return 0;return EQP.dpk*iaDrF(d[1])*iaAgeF(iaAge(n))};
+/* (456) ANNI DAL DRAFT: nel primo anno (draft 2026 → stagione 2026/27) il peso della scelta è pieno e conta quasi più del rendimento in campo; poi scende: 2º anno 0,6 · 3º anno 0,3 · 4º anno 0,1 · poi 0 (contano i PDK veri) */
+const DRAFT_ANNO=2026,iaYrF=y=>y==null?0:[1,.6,.3,.1][Math.max(0,y)]||0;
+const iaDraftY=n=>{const d=draftOf(n);return d?DRAFT_ANNO-d[0]:null};
+const iaDraft=n=>{const d=draftOf(n);if(!d)return 0;return EQP.dpk*iaDrF(d[1])*iaAgeF(iaAge(n))*iaYrF(DRAFT_ANNO-d[0])};
+/* rendimento «da scelta»: chi è stato scelto in alto da poco vale per ciò che promette (scelta, età, efficienza) più che per i PDK di oggi: il PDK usato si avvicina a quello atteso (20 + 16 × peso scelta) */
+const iaPotBlend=(n,v)=>{const d=draftOf(n);if(!d)return v;const w=EQP.dpw*iaDrF(d[1])*iaAgeF(iaAge(n))*iaYrF(DRAFT_ANNO-d[0]);return w?(1-w)*v+w*Math.max(v,20+16*iaDrF(d[1])):v};
 /* Prezzo consigliato in crediti (curva tarata da Francesco su esempi reali: Brazile 14, Steinbach 40-60, Booker 30-50,
    Mara 160, Ware 210, Knueppel 250-300, Barnes 400). Crescita esponenziale con il valore, più alta per i giovani, e per ruolo
    (ali più rare → più care, poi centri, guardie le più economiche). Oltre valore 1300 cresce col quadrato del valore (evita cifre assurde).
@@ -8570,7 +8577,9 @@ const EQ_PAR=[
   ["ptr","Trend sul rendimento","Effetto del trend",.01]]],
  ["Valore e proposte","Valore del giocatore e punteggio delle proposte",[
   ["npr","Bisogno: PDK meno importante per chi ricostruisce","Chi ricostruisce guarda meno il rendimento attuale dei ruoli (0,6 = fino a −60% al massimo della ricostruzione)",.01],
-  ["dpk","Premio draft (scelte alte e giovani)","Quanto vale in più un giovane scelto tra i primi 5 (0,22 = +22%); scende fino alla 15ª scelta e con l'età",.01],
+  ["dpk","Premio draft (scelte alte e giovani)","Quanto vale in più un giovane scelto tra i primi 3 al primo anno (0,40 = +40%); scende fino alla 15ª scelta, con l'età e negli anni (2º anno ×0,6, 3º ×0,3)",.01],
+  ["dpw","Draft: PDK atteso al posto di quello reale","Quanto il rendimento di un giovane scelto in alto si avvicina a quello atteso dalla scelta (primo anno: pieno)",.01],
+  ["inc","Draft: incedibili","Malus di interesse quando una squadra cede un giovane scelto in alto",.01],
   ["star","Qualità (stelline) sul valore","Con 16 la qualità sposta il valore di ±8%",.01],
   ["outq","Valore di un infortunato (OUT)","1 = pieno",.05],
   ["nx","Bisogno: peso del valore","Ruoli carenti in valore",.05],
@@ -8605,7 +8614,9 @@ lowT:["I crediti in cassa sotto cui una squadra \"si sente scoperta\" (di serie 
 lowIn:["Quanto una squadra sotto soglia apprezza uno scambio che le porta crediti fino alla soglia.","Più è alto, più le squadre povere dicono sì a chi dà loro crediti (anche pagando in valore). A 0 la cassa non conta quando ricevono."],
 lowOut:["Quanto una squadra rifiuta uno scambio che la lascia sotto la soglia di crediti.","Più è alto, più le squadre difendono la cassa e dicono no a scambi che le fanno scendere sotto soglia. A 0 la cassa non frena le cessioni di crediti."],
 npr:["Quanto pesa meno, per una squadra che ricostruisce, la carenza di PDK in un ruolo.","Alto: Turtles e Moose guardano quasi solo età e potenziale nel dire che un ruolo è scoperto. A 0 il PDK conta come per tutte le altre."],
-dpk:["Quanto in più vale per l'IA Trade un giovane scelto in alto al draft (prime 5 scelte = effetto pieno, 6ª-10ª scende da 80% a 40%, 11ª-15ª da 30% a 10%, oltre la 15ª nessun premio), moltiplicato per l'età (pieno fino a 21 anni, zero a 25,5).","Alto: Wilson, Boozer, Dybantsa, Flagg diventano quasi incedibili e costano molto di più; i rookie vecchi (es. Lendeborg) restano al loro valore. A 0 il draft non conta."],
+dpk:["Quanto in più vale per l'IA Trade un giovane scelto in alto al draft: prime 3 scelte effetto pieno, 4ª-5ª ×0,75, poi scende fino alla 15ª. Si moltiplica per l'età (pieno fino a 21 anni, zero a 25,5) e per gli anni dal draft (1º anno ×1, 2º ×0,6, 3º ×0,3, 4º ×0,1).","Alto: Boozer, Dybantsa, Peterson, Wilson, Flagg sono quasi incedibili. Basso: contano soprattutto valore e PDK. A 0 il draft non conta."],
+dpw:["Quanto il PDK di un giovane scelto in alto viene sostituito da quello che ci si aspetta dalla sua scelta (20 + 16 × peso scelta), con gli stessi fattori età e anni dal draft.","Alto: nel primo anno conta la scelta più dei PDK reali (un top-3 vale come un futuro 36 PDK). A 0 contano solo i PDK veri."],
+inc:["Quanto cala l'interesse di una squadra che deve cedere un giovane scelto in alto (peso sul valore ceduto).","Alto: nessuno cede mai Boozer o Dybantsa per pacchetti. Basso: valgono solo i punti-valore."],
 isA:["Quanti anni sopra o sotto la media della lega servono perché una squadra sia del tutto «vincere subito» (vecchia) o «ricostruisce» (giovane).","Basso: bastano pochi anni di scarto e quasi tutte le squadre prendono una direzione netta. Alto: solo i roster molto vecchi o molto giovani hanno un'intenzione chiara."],
 isT:["Di quanto il talento dei 6 migliori (in deviazioni standard) deve staccarsi dalla media lega per contare al massimo.","Basso: basta poco per essere «forti» o «deboli». Alto: solo le squadre molto sopra o sotto la media hanno un segnale di talento pieno."],
 iwA:["Nel segnale di roster, quanta parte spetta all'età media (il resto è talento).","Alto: decide l'età (Eagles vecchi = vogliono vincere anche se non fortissimi). Basso: decide il talento (Ducks giovani ma forti = vogliono vincere)."],
