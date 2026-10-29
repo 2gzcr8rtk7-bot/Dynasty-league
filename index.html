@@ -910,6 +910,7 @@ body:not(.notte) .hmqt .tmc{background:linear-gradient(160deg,var(--pn1),var(--p
 body:not(.notte) .tmc .tmtag{background:var(--gold);color:#101010}
 body:not(.notte) .tmc .tmnm{color:var(--gold)}body:not(.notte) .tmc .tmar{color:var(--gold)}
 body:not(.notte) .tmc .tmp{background:color-mix(in srgb,var(--fg) 9%,transparent);border:1px solid var(--line)}
+.tmc[data-tmgo]{cursor:pointer;-webkit-tap-highlight-color:transparent}.tmc[data-tmgo]:active{filter:brightness(1.15)}
 .tmc .tmtag{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 9px;border-radius:9px;background:#facc15;color:#1b1233;font:800 10px var(--display);font-style:italic;text-transform:uppercase;letter-spacing:.06em;text-align:center;line-height:1.1}
 .tmc .tmtag b{font-size:9px;opacity:.75;font-weight:800}
 .tmc .tmsd{display:flex;align-items:center;gap:8px;flex:none}
@@ -3757,6 +3758,9 @@ function vTrade(){
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="iatrade")return;const b=e.target.closest("[data-ia]");if(b&&b.tagName!=="SELECT"&&!b.disabled){e.preventDefault();iaAct(b)}});
 document.getElementById("main").addEventListener("input",e=>{if(cur!=="iatrade"||e.target.id!=="iaq")return;IA.q=e.target.value;const L=document.getElementById("iaList");if(L)L.innerHTML=iaListHTML()});
 document.getElementById("main").addEventListener("change",e=>{if(cur!=="iatrade")return;const b=e.target;if(b&&b.dataset&&b.dataset.ia==="team"){IA.cr.c=Math.min(IA.cr.c,iaCassa(b.value));iaAct(b)}});
+/* (461) il banner delle trade nella Home è cliccabile: porta a Trade (scambi, aste, G League) o a Trade speciale in base alla categoria */
+document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-tmgo]");if(!b)return;e.preventDefault();TRS=b.dataset.tmgo==="sp"?"sp":"tutte";cur="trade";render();window.scrollTo(0,0)});
+document.getElementById("main").addEventListener("keydown",e=>{if(e.key!=="Enter")return;const b=e.target.closest&&e.target.closest("[data-tmgo]");if(b)b.click()});
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-trs]");if(!b||cur!=="trade")return;TRS=b.dataset.trs;render();window.scrollTo(0,0)});
 function vTradeAll(){
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
@@ -4443,7 +4447,7 @@ function hnAvvisi(){
       return`<div class="tmsd"><span class="tmlg">${badge(t)}</span><div class="tmtx"><span class="tmnm">${esc(TEAMS[t]?TEAMS[t].nick:t)} ${verb}</span><div class="tmpl">${pl.map(n=>{let m=null;try{m=pdkMed(n)}catch(e){}return`<span class="tmp"><i class="${ruoloDi(n)}"></i>${esc(nmAb(n))}${m!=null?` <small>${String(Math.round(m*10)/10).replace(".",",")}</small>`:""}</span>`}).join("")}${ot.map(n=>`<span class="tmcr">${esc(n)}</span>`).join("")}</div></div></div>`};
     const sides=x.lati.length>2&&!two?[x.lati[0]]:x.lati;
     w+=110+(sides.length>1?30:0);
-    return`<div class="tmc"><div class="tmtag">${esc(x.titolo)}<b>scade ${hh}h ${String(mi).padStart(2,"0")}m</b></div>${sides.map(side).join('<span class="tmar">⇄</span>')}</div>`}).join("");
+    return`<div class="tmc"${/cassa/i.test(x.titolo)?"":` data-tmgo="${/speciale/i.test(x.titolo)?"sp":"tutte"}" role="link" tabindex="0" aria-label="Apri ${esc(x.titolo)} nella sezione trade"`}><div class="tmtag">${esc(x.titolo)}<b>scade ${hh}h ${String(mi).padStart(2,"0")}m</b></div>${sides.map(side).join('<span class="tmar">⇄</span>')}</div>`}).join("");
   return{html,w,n:L.length}}
 function homeNotte(st){
   const myT=homeMyT(),pre=homeFase(),d=pre||campoNotte()||flUsaOggi(),GG=(typeof TV!=="undefined"&&TV.days[d]||[]).filter(g=>pre?g[5]==="S":(g[5]==="L"||g[5]==="F"||g[5]==="S"));
