@@ -3811,12 +3811,6 @@ document.getElementById("main").addEventListener("click",e=>{const b=e.target.cl
 let TA={t:["",""],pl:[[],[]],cr:[0,0],cp:[0,0],sr:["",""],sg:[10,10],ex:["",""]};
 const taNow=()=>{const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(window.DR_NOW||new Date()),g=t=>f.find(x=>x.type===t).value;return{d:`${g("year")}-${g("month")}-${g("day")}`,h:`${g("hour")}:${g("minute")}`}};
 const taFd=s=>s.slice(8,10)+"/"+s.slice(5,7);
-function taWin(){try{const n=taNow(),ns=n.d+" "+n.h,k=drCurWeek(),T=DR_TURNI[k-1];if(!T)return{ok:false,k:k,from:"",msg:"La stagione di Dreamers è conclusa."};
-  const s0=drAdd(T[0],1)+" 01:00",open=ns<s0;/* open = il turno k non è ancora iniziato: siamo tra un turno e l'altro */
-  const cnt=open?k:k+1,C=DR_TURNI[cnt-1];if(!C)return{ok:false,k:cnt,from:"",cur:k,msg:`Turno ${k} in corso · ultimo turno della stagione.`};
-  const from=taFd(C[0]);
-  return open?{ok:true,k:cnt,from,cur:k,msg:`Tra un turno e l'altro · lo scambio conta dal turno ${cnt} (${from}).`}
-   :{ok:false,k:cnt,from,cur:k,msg:`Turno ${k} in corso · lo scambio conta dal turno ${cnt} (${from}): fino ad allora i giocatori restano alla squadra di prima.`}}catch(e){return{ok:false,k:"?",from:"",msg:""}}}
 const taCassa=t=>t?iaCassa(t):0;
 function taItems(s){const t=TA.t[s],g=t&&TEAMS[t]?TEAMS[t].nick:"",L=[...TA.pl[s]];
   if(TA.cr[s]>0)L.push(TA.cr[s]+" crediti");
@@ -3825,23 +3819,25 @@ function taItems(s){const t=TA.t[s],g=t&&TEAMS[t]?TEAMS[t].nick:"",L=[...TA.pl[s
   if(TA.ex[s].trim())L.push(TA.ex[s].trim());
   return L}
 /* chi RICEVE ciò che l'altra squadra cede */
-function taTrade(){const n=taNow(),W=taWin();return{data:n.d.slice(8,10)+"/"+n.d.slice(5,7)+"/"+n.d.slice(0,4),ora:n.h,titolo:"Scambio",lati:[[TA.t[0],taItems(1)],[TA.t[1],taItems(0)]]}}
-const taSub=()=>{const W=taWin();return W.from?`Conta in Dreamers dal turno ${W.k} (${W.from})`:""};
+function taTrade(){const n=taNow();return{data:n.d.slice(8,10)+"/"+n.d.slice(5,7)+"/"+n.d.slice(0,4),ora:n.h,titolo:"Scambio",lati:[[TA.t[0],taItems(1)],[TA.t[1],taItems(0)]]}}
+const taSub=()=>"";
 function taErr(){const e=[];if(!TA.t[0]||!TA.t[1])e.push("Scegli le due squadre.");
   else{if(!TA.pl[0].length&&!TA.pl[1].length)e.push("Metti almeno un giocatore nello scambio.");
     for(let s=0;s<2;s++){if(!taItems(s).length)e.push(`${TEAMS[TA.t[s]].nick} non cede niente.`);if(TA.cr[s]>taCassa(TA.t[s]))e.push(`${TEAMS[TA.t[s]].nick} ha solo ${taCassa(TA.t[s])} cr in cassa.`)}}
   return e}
-function taPrompt(){const T=taTrade(),W=taWin(),nk=t=>TEAMS[t].nick,k=W.k||"?",from=W.from||"";
-  const side=l=>{const np=l[1].filter(x=>NUM[x]!==undefined).length;return`["${l[0]}",[${l[1].map(x=>JSON.stringify(x)).join(",")}]${np?`,"in Dreamers ${np>1?"contano":"conta"} dal turno ${k} (${from})"`:""}]`};
+function taPrompt(){const T=taTrade(),nk=t=>TEAMS[t].nick;
+  const side=l=>`["${l[0]}",[${l[1].map(x=>JSON.stringify(x)).join(",")}]]`;
   const ent=`{data:"${T.data}",ora:"${T.ora}",titolo:"Scambio",lati:[${T.lati.map(side).join(",")}]}`;
   const link=location.origin+location.pathname+"?scambio="+encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify({t:TA.t,pl:TA.pl,cr:TA.cr,cp:TA.cp,sr:TA.sr,sg:TA.sg,ex:TA.ex})))));
   return `Claude, registra e pubblica questo scambio di Dreamers già concordato tra i due GM.
 
-SCAMBIO concordato il ${T.data} alle ${T.ora} (ora italiana). VALIDITÀ: lo scambio vale dal turno ${k} (${from}); ${W.ok?"siamo tra un turno e l'altro, quindi i giocatori giocano subito per le nuove squadre":"il turno "+W.cur+" è ancora in corso, quindi fino alla sua fine i giocatori contano per la squadra di prima"}:
+SCAMBIO concordato il ${T.data} alle ${T.ora} (ora italiana):
 ${T.lati.map(l=>`- ${nk(l[0])} riceve: ${l[1].join(", ")}`).join("\n")}
 
+VALIDITÀ (importante): se in questo momento c'è un turno di Dreamers in corso, lo scambio è valido solo a turno finito: i giocatori contano per la squadra di prima fino alla fine del turno e per la nuova squadra dal turno successivo (è la regola 11 di NOTE_SVILUPPO.md: la applica da solo drUndoTrades leggendo data e ora della riga, quindi metti sempre data e ora). Se nessun turno è in corso, lo scambio è valido subito.
+
 Fai come per tutti gli scambi precedenti:
-1. aggiungi in cima a TRADES (index.html) questa riga, con data e ora già messe (da lì parte da solo il banner in Home per 24 ore e la regola dei turni, drUndoTrades, tiene i giocatori alla squadra di prima fino all'apertura del turno ${k}):
+1. aggiungi in cima a TRADES (index.html) questa riga, con data e ora già messe (da lì parte da solo il banner in Home per 24 ore):
 ${ent}
 2. aggiorna ROSTER e CREDITI (giocatori, crediti ceduti e crediti a credito post-Draft come debito), poi la nota in NOTE_SVILUPPO.md;
 3. segui le regole di NOTE_SVILUPPO.md (in particolare: pubblica su main solo se Francesco te lo ordina con «pubblica»).
@@ -3849,7 +3845,7 @@ ${ent}
 Link con lo scambio già compilato: ${link}`}
 function vPicTrade(){return vAllerta()}
 function vAllerta(){
-  const W=taWin(),ks=Object.keys(ROSTER);if(!TA.t[0]){try{TA.t[0]=homeMyT()}catch(e){}if(!ks.includes(TA.t[0]))TA.t[0]=ks[0]}
+  const ks=Object.keys(ROSTER);if(!TA.t[0]){try{TA.t[0]=homeMyT()}catch(e){}if(!ks.includes(TA.t[0]))TA.t[0]=ks[0]}
   const errs=taErr(),can=!errs.length;
   const nick=t=>t&&TEAMS[t]?TEAMS[t].nick:"…";
   const step=(lab,key,s,max)=>`<div class="tast"><span>${lab}</span><div><button type="button" data-ta="dn" data-k="${key}" data-s="${s}" aria-label="meno">−</button><b>${TA[key][s]}</b><button type="button" data-ta="up" data-k="${key}" data-s="${s}" data-max="${max}" aria-label="più">+</button></div></div>`;
@@ -3861,10 +3857,9 @@ function vAllerta(){
     <input class="taex" data-ta="ex" data-s="${s}" type="text" maxlength="90" placeholder="Altro (diritti, scelte, note)…" value="${esc2(TA.ex[s])}">`:`<p class="tain">Scegli la squadra per vedere i suoi giocatori.</p>`}</section>`};
   const sum=!errs.length?`<div class="tasm">${[0,1].map(s=>`<p><b>${nick(TA.t[1-s])}</b> riceve: ${taItems(s).map(esc2).join(", ")}</p>`).join("")}</div>`:`<ul class="taer">${errs.map(e=>`<li>${e}</li>`).join("")}</ul>`;
   return`${H("Pic-Trade",`<em>Scambio ufficiale</em>`)}
-  <div class="tawin ${W.ok?"ok":"mid"}">${W.msg}</div>
   <div class="tagrid">${side(0)}<div class="taarr">⇄</div>${side(1)}</div>${sum}
   <div class="tabtn"><button type="button" class="tab1" data-share="ta"${can?"":" disabled"}>📸 Fai la foto</button><button type="button" class="tab2" data-ta="copy"${can?"":" disabled"}>🔗 Copia per Claude</button></div>
-  <p class="note">La foto è l'immagine da condividere con maglie, PDK, età e «Scambio ufficiale». «Copia per Claude» copia il prompt con il link: incollalo a Claude per registrare lo scambio e far partire il banner di 24 ore in Home. Lo scambio conta sempre dal turno che inizia dopo quello in corso: il prompt lo spiega a Claude.</p>`}
+  <p class="note">La foto è l'immagine da condividere con maglie, PDK, età e «Scambio ufficiale». «Copia per Claude» copia il prompt con il link: incollalo a Claude per registrare lo scambio e far partire il banner di 24 ore in Home. Nel prompt c'è scritto a Claude che, se un turno è in corso, lo scambio vale solo a turno finito.</p>`}
 const esc2=v=>String(v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 document.addEventListener("click",e=>{if(cur!=="pictrade")return;const b=e.target.closest("[data-ta]");if(!b||b.disabled)return;const a=b.dataset.ta,s=+b.dataset.s,y=scrollY;
   if(a==="pl"){const i=TA.pl[s].indexOf(b.dataset.n);i<0?TA.pl[s].push(b.dataset.n):TA.pl[s].splice(i,1)}
@@ -6297,7 +6292,7 @@ async function shHistTrade(i,O){O=O||{};const PRE=!!O.T,M=histTradeModel(i,O.T);
       y+=ph+20}
     y+=20}
   /* PARERE */
-  if(PRE){const gg=c.createLinearGradient(56,y,56+IN,y);gg.addColorStop(0,"#16a34a");gg.addColorStop(1,"#15803d");shRR(c,56,y,IN,150,26);c.fillStyle=gg;c.fill();c.strokeStyle="rgba(255,255,255,.35)";c.lineWidth=3;c.stroke();c.textAlign="center";c.textBaseline="alphabetic";c.fillStyle="#fff";c.font=SH_F(800,66,1);c.fillText("✔ SCAMBIO UFFICIALE",56+IN/2,y+78);c.font=SH_B(600,28);c.fillStyle="rgba(255,255,255,.92)";c.fillText(O.sub||"",56+IN/2,y+122);c.textAlign="left"}else{
+  if(PRE){const gg=c.createLinearGradient(56,y,56+IN,y);gg.addColorStop(0,"#16a34a");gg.addColorStop(1,"#15803d");shRR(c,56,y,IN,150,26);c.fillStyle=gg;c.fill();c.strokeStyle="rgba(255,255,255,.35)";c.lineWidth=3;c.stroke();c.textAlign="center";c.textBaseline="alphabetic";c.fillStyle="#fff";c.font=SH_F(800,66,1);c.fillText("✔ SCAMBIO UFFICIALE",56+IN/2,y+(O.sub?78:95));c.font=SH_B(600,28);c.fillStyle="rgba(255,255,255,.92)";c.fillText(O.sub||"",56+IN/2,y+122);c.textAlign="left"}else{
   shRR(c,56,y,IN,parH,26);c.fillStyle="rgba(10,6,24,.72)";c.fill();c.strokeStyle="rgba(196,181,253,.28)";c.lineWidth=2;c.stroke();
   c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_F(800,40,1);c.fillStyle="#e9d5ff";c.fillText("IL PARERE DI CLAUDE",92,y+62);
   const vcol=M.d<.10?"#22c55e":M.d<.30?"#f59e0b":"#ef4444";shRR(c,92,y+82,W-184,80,16);c.fillStyle=vcol;c.fill();c.fillStyle="#fff";c.textAlign="center";c.textBaseline="middle";let vz=46;c.font=SH_F(800,vz,1);const vt=M.verdict[0].toUpperCase();while(vz>26&&c.measureText(vt).width>W-184-40){vz-=2;c.font=SH_F(800,vz,1)}c.fillText(vt,W/2,y+123);
