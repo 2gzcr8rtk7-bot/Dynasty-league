@@ -833,6 +833,10 @@ body.notte .hn6{--hnbg:linear-gradient(160deg,rgba(76,29,149,.85),rgba(17,10,48,
 .hmtr{font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;padding:2px 9px;border-radius:8px;white-space:nowrap}.hmtr.u{background:#16a34a}.hmtr.d{background:#e11d48}.hmtr.s{background:#475569}
 .hmcard.all .hmlist,.hmcard.all{--hl:1}
 /* (384) IA Trade */
+.iamode{display:flex;gap:8px;margin:6px 0 8px}.iamode button{flex:1;display:grid;gap:1px;justify-items:center;padding:9px 6px;border-radius:14px;border:2px solid var(--line);background:var(--panel);color:inherit;font:inherit;cursor:pointer}.iamode b{font-family:var(--display);font-style:italic;font-weight:800;letter-spacing:.05em;text-transform:uppercase;font-size:14px}.iamode small{font-size:10.5px;color:var(--muted);font-weight:600}.iamode button[aria-selected="true"]{border-color:#c026d3;background:rgba(192,38,211,.2)}
+.iaany{width:100%;margin-top:12px;display:grid;gap:1px;justify-items:center;padding:10px;border-radius:12px;border:2px dashed var(--line);background:transparent;color:inherit;font:inherit;cursor:pointer}.iaany b{font-size:14px}.iaany small{font-size:11px;color:var(--muted)}.iaany[aria-pressed="true"]{border-style:solid;border-color:#c026d3;background:rgba(192,38,211,.18)}
+.iawant{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}.iachip{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;border:1px solid #c026d3;background:rgba(192,38,211,.18);color:inherit;font:inherit;font-weight:700;font-size:12.5px;cursor:pointer}.iachip i{font-style:normal;opacity:.7}.iachip .drlg{width:22px!important;height:22px!important;flex:0 0 22px!important}
+.iatf{display:flex;gap:6px;margin:10px 0;overflow-x:auto}.iatf button{flex:none;width:44px;height:44px;padding:0;border-radius:12px;border:2px solid var(--line);background:var(--panel2);cursor:pointer;display:grid;place-items:center}.iatf button[aria-pressed="true"]{border-color:#c026d3}.iatn{display:block;font-size:10.5px;color:var(--muted);font-weight:600}.iapl:disabled{opacity:.35;cursor:default}
 .iabar{display:flex;gap:6px;margin:6px 0 10px}.iabar button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 6px;border-radius:12px;border:1px solid rgba(148,163,184,.35);background:rgba(148,163,184,.12);color:inherit;font:inherit;font-weight:700;font-size:12.5px;cursor:pointer}.iabar button b{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:rgba(148,163,184,.3);font-size:11px}.iabar button[aria-pressed="true"]{background:linear-gradient(135deg,#7c3aed,#c026d3);border-color:transparent;color:#fff}.iabar button[aria-pressed="true"] b{background:rgba(255,255,255,.28)}.iabar button:disabled{opacity:.4;cursor:default}
 .iabox{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 14px 16px;margin-bottom:10px}.iabox h4{margin:14px 0 4px;font-family:var(--display);font-style:italic;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:15px}.iabox h4:first-child{margin-top:0}.iasub{font-size:12px;color:var(--muted);margin:0 0 10px;line-height:1.4}
 .iatm{display:flex;align-items:center;gap:8px;margin-bottom:10px}.iatm select{flex:1;background:var(--panel2);color:inherit;border:1px solid var(--line);border-radius:10px;padding:8px;font:inherit;font-weight:700}
@@ -3162,7 +3166,7 @@ let TRS="tutte";
 /* (384) IA TRADE — dentro Trade. Il GM sceglie cosa cerca (ruoli in ordine di priorità), cosa offre (giocatori + crediti) e se vuole una trade a 2 o a 3 squadre;
    l'app propone 5 scambi alla volta con la matematica del calcolatore (punti trade = (valore/1000)^2×1000, crediti a VAL_CR), corretta dalle stelline di ogni giocatore
    (±8%), dai bisogni dell'altra squadra (ruoli deboli per valore) e dal vincolo roster. "Aggiorna" mostra altri 5 senza ripetere, all'infinito. */
-let IA={lv:"eq",st:1,team:"",needs:["","",""],give:[],cr:{c:0,p:0,d:0},n:2,out:[],seen:{},pool:null,key:"",rd:0};
+let IA={lv:"eq",mode:"role",any:false,want:[],keep:[],tf:"",q:"",st:1,team:"",needs:["","",""],give:[],cr:{c:0,p:0,d:0},n:2,out:[],seen:{},pool:null,key:"",rd:0};
 const IA_LV={eq:[0,.10,0],win:[.10,.40,.25],scam:[.40,.80,.55]},IA_R={G:"Guardia",F:"Ala",C:"Centro"},IA_RP={G:"guardie",F:"ali",C:"centri"},IA_W=[1,.6,.35],IA_LIM={p:10,d:30},IA_MAXR=15;
 let iaCache={};
 const iaTeam=()=>IA.team&&TEAMS[IA.team]?IA.team:(TEAMS[curTeam]?curTeam:"DUC");
@@ -3209,7 +3213,7 @@ function iaWhy(A,T,extra,S0){const w=[];
   T.filter(x=>iaSp(x.n)).forEach(x=>w.push(`${x.n}: trade speciale, senza contropartita`));
   if(S0&&S0.some(n=>!iaSp(n)))w.push("Ruoli compensati: dai e ricevi lo stesso ruolo");T.forEach(x=>{const i=IA.needs.indexOf(x.r);if(i>=0)w.push(`${IA_R[x.r]}: ${["1ª","2ª","3ª"][i]} necessità`)});
   const q=iaSum(T,x=>iaQ(x.n))/T.length*5;if(q>=3.2)w.push(`Stelline medie ${q.toFixed(1).replace(".",",")}`);return[...new Set(w)].concat(extra||[])}
-function iaBuild(){iaCache={};const A=iaTeam(),S=iaStats(),give=IA.give.filter(n=>ROSTER[A].some(p=>p[0]===n)),w={};IA.needs.forEach((r,i)=>{if(r)w[r]=IA_W[i]});
+function iaBuild(){iaCache={};const A=iaTeam(),S=iaStats(),give=IA.give.filter(n=>ROSTER[A].some(p=>p[0]===n)),w={};IA.needs.forEach((r,i)=>{if(r)w[r]=IA_W[i]});if(IA.any)["G","F","C"].forEach(r=>w[r]=1);
   const subs=iaSubs(give,3).map(s=>({...s,sig:iaSig(s.a.map(iaPl))})),tot=iaTot(),out=[],lv=IA.lv||"eq",LV=IA_LV[lv];
   const fit=T=>iaSum(T,x=>x.v*(w[x.r]||.1))/Math.max(1,iaSum(T,x=>x.v)),nick=t=>TEAMS[t].nick;
   const needTxt=(t,recv)=>{const d=S[t].def,r=recv.map(x=>x.r).sort((a,b)=>d[b]-d[a])[0];return r&&d[r]>.12?`I ${nick(t)} sono corti di ${IA_RP[r]}`:""};
@@ -3245,8 +3249,36 @@ function iaBuild(){iaCache={};const A=iaTeam(),S=iaStats(),give=IA.give.filter(n
             out.push({ty:3,B,C,give:c.s.a,mid:GB.map(x=>x.n),take:T.map(x=>x.n),cr:iaAlloc(c.need),need:c.need,d,adv,sc,why:iaWhy(A,T,[needTxt(B,gA),needTxt(C,GB)].filter(Boolean),c.s.a),key:"3|"+B+"|"+C+"|"+c.s.a.join(",")+"|"+GB.map(x=>x.n).join(",")+"|"+T.map(x=>x.n).join(",")+"|"+c.need})})})})}))
   }
   out.sort((a,b)=>b.sc-a.sc);return out.slice(0,400)}
-function iaKey(){const A=iaTeam();IA.cr.d=Math.min(IA.cr.d,iaPostMax(A).max);IA.cr.p=Math.min(IA.cr.p,iaPfMax(A).max);IA.cr.c=Math.min(IA.cr.c,iaCassa(A));return JSON.stringify([iaTeam(),IA.needs,IA.give,IA.cr,IA.n,IA.lv])}
-function iaNext(){if(!IA.pool||IA.key!==iaKey()){IA.key=iaKey();IA.pool=iaBuild();IA.seen={};IA.rd=0}
+/* IA Trade · modo "per giocatore": scelgo io i giocatori che voglio (da 1 o 2 squadre) e l'app costruisce cosa dare. Una squadra = trade a 2; due squadre = trade a 3 in automatico. */
+function iaOwner(n){return Object.keys(ROSTER).find(t=>ROSTER[t].some(p=>p[0]===n))}
+function iaBuildPl(){iaCache={};const A=iaTeam(),S=iaStats(),lv=IA.lv||"eq",LV=IA_LV[lv],tot=iaTot(),out=[],nick=t=>TEAMS[t].nick;
+  const want=IA.want.filter(n=>iaOwner(n)&&iaOwner(n)!==A).map(iaPl),byT={};want.forEach(x=>{const t=iaOwner(x.n);(byT[t]=byT[t]||[]).push(x)});
+  const teams=Object.keys(byT);if(!teams.length||teams.length>2)return[];
+  const pool=(ROSTER[A]||[]).filter(p=>!IA.keep.includes(p[0])).map(p=>p[0]),subsAll=iaSubs(pool,3).map(s=>({...s,sig:iaSig(s.a.map(iaPl))})),bySig={};
+  subsAll.forEach(s=>(bySig[s.sig]=bySig[s.sig]||[]).push(s));
+  const gf=a=>{const g=a.map(iaPl),v=Math.max(1,iaSum(g,x=>x.v));return Math.max(0,Math.min(1,.5-iaSum(g,x=>x.v*S[A].def[x.r])/v))};
+  const needTxt=(t,recv)=>{const d=S[t].def,r=recv.map(x=>x.r).sort((a,b)=>d[b]-d[a])[0];return r&&d[r]>.12?`I ${nick(t)} sono corti di ${IA_RP[r]}`:""};
+  /* una parte = scambio con una squadra: dai s.a, ricevi T */
+  const part=(B,T,s)=>{const vT=iaSum(T,x=>x.v),gap=vT-s.v;let need=0,back=0,R,G,d,adv=0,bal;
+    if(lv==="eq"){if(gap/VAL_CR>2){need=Math.ceil(gap/VAL_CR/5)*5;if(need>tot)return null}else if(-gap/VAL_CR>=10){back=Math.min(Math.floor(-gap/VAL_CR/5)*5,iaCassa(B),30)}
+      R=vT+back*VAL_CR;G=s.v+need*VAL_CR;d=Math.abs(R-G)/Math.max(R,G,1);if(d>.10)return null;bal=1-d/.10}
+    else{if(!s.a.length)return null;R=vT;G=s.v;adv=(R-G)/Math.max(R,G,1);d=adv;bal=0}
+    return{B,T,s,vT,need,back,R,G,d,adv,bal}};
+  if(teams.length===1){const B=teams[0],T=byT[B],sg=iaSig(T);
+    (bySig[sg]||[]).forEach(s=>{const p=part(B,T,s);if(!p)return;if(lv!=="eq"&&(p.adv<=LV[0]||p.adv>LV[1]))return;
+      const bal=lv==="eq"?p.bal:Math.max(0,1-Math.abs(p.adv-LV[2])/.3),nb=iaNeed(S,B,s.a.map(iaPl),T),sc=.45*nb+.30*bal+.25*gf(s.a)-.02*s.a.length;
+      out.push({ty:2,B,give:s.a,take:T.map(x=>x.n),cr:iaAlloc(p.need),need:p.need,back:p.back,d:p.d,adv:p.adv,sc,why:["Giocatori scelti da te",...(s.a.some(n=>!iaSp(n))?["Ruoli compensati: dai e ricevi lo stesso ruolo"]:[]),...T.filter(x=>iaSp(x.n)).map(x=>`${x.n}: trade speciale, senza contropartita`),needTxt(B,s.a.map(iaPl))].filter(Boolean),key:"p2|"+B+"|"+s.a.join(",")+"|"+T.map(x=>x.n).join(",")+"|"+p.need})})
+  }else{const[X,Y]=teams,TX=byT[X],TY=byT[Y],cap=lv==="eq"?14:40;
+    const lst=(B,T)=>(bySig[iaSig(T)]||[]).map(s=>part(B,T,s)).filter(Boolean).sort((a,b)=>lv==="eq"?a.d-b.d:Math.abs(a.adv-LV[2])-Math.abs(b.adv-LV[2])).slice(0,cap);
+    const LX=lst(X,TX),LY=lst(Y,TY);
+    LX.forEach(px=>LY.forEach(py=>{if(px.s.a.some(n=>py.s.a.includes(n)))return;const need=px.need+py.need;if(need>tot)return;
+      let d,adv=0,bal;if(lv==="eq"){d=Math.max(px.d,py.d);bal=1-d/.10}else{const R=px.R+py.R,G=px.G+py.G;adv=(R-G)/Math.max(R,G,1);if(adv<=LV[0]||adv>LV[1])return;d=adv;bal=Math.max(0,1-Math.abs(adv-LV[2])/.3)}
+      const all=[...px.s.a,...py.s.a],nb=(iaNeed(S,X,px.s.a.map(iaPl),TX)+iaNeed(S,Y,py.s.a.map(iaPl),TY))/2,sc=.45*nb+.30*bal+.25*gf(all)-.02*all.length;
+      out.push({ty:5,parts:[{B:X,give:px.s.a,take:TX.map(x=>x.n),need:px.need,back:px.back},{B:Y,give:py.s.a,take:TY.map(x=>x.n),need:py.need,back:py.back}],cr:iaAlloc(need),need,d,adv,sc,
+        why:["Giocatori scelti da te","Trade a 3: due squadre in un solo scambio",needTxt(X,px.s.a.map(iaPl)),needTxt(Y,py.s.a.map(iaPl))].filter(Boolean),key:"p3|"+X+"|"+Y+"|"+px.s.a.join(",")+"|"+py.s.a.join(",")+"|"+need})}))}
+  out.sort((a,b)=>b.sc-a.sc);return out.slice(0,400)}
+function iaKey(){const A=iaTeam();IA.cr.d=Math.min(IA.cr.d,iaPostMax(A).max);IA.cr.p=Math.min(IA.cr.p,iaPfMax(A).max);IA.cr.c=Math.min(IA.cr.c,iaCassa(A));return JSON.stringify([iaTeam(),IA.mode,IA.any,IA.needs,IA.give,IA.want,IA.keep,IA.cr,IA.n,IA.lv])}
+function iaNext(){if(!IA.pool||IA.key!==iaKey()){IA.key=iaKey();IA.pool=IA.mode==="pl"?iaBuildPl():iaBuild();IA.seen={};IA.rd=0}
   let avail=IA.pool.filter(x=>!IA.seen[x.key]);if(avail.length<5&&IA.pool.length){IA.seen={};avail=IA.pool.slice()}
   iaRand.seed(Date.now()+IA.rd*7919);IA.rd++;const top=avail.slice(0,Math.max(5,Math.min(avail.length,60))),pick=[],cnt={};
   const wt=top.map((x,i)=>Math.pow(Math.max(.01,x.sc),3)*(1+iaRand.n()*2));
@@ -3257,9 +3289,10 @@ const iaPlR=n=>`<div class="iap"><i class="rc ${ruoloDi(n)}"></i><span class="ia
 function iaCrTxt(c){const p=[];if(c.d)p.push(`${c.d} cr post-Draft`);if(c.p)p.push(`${c.p} cr portafoglio (postdatati)`);if(c.c)p.push(`${c.c} cr dalla cassa`);return p}
 function iaCard(x,i){const A=iaTeam(),cl=(d)=>d<.10?"ok":d<.40?"mid":"bad",pc=Math.round(x.d*100),bt=IA.lv==="eq"?`±${pc}%`:`${IA.lv==="scam"?"Truffa":"Vinci"} +${pc}%`;
   const crs=iaCrTxt(x.cr).map(t=>`<div class="iacr">+ ${t}</div>`).join("");
-  const lab=x.ty===2?`<span class="iah">${wedge(x.B)}<b>${TEAMS[x.B].nick}</b></span>`:`<span class="iah">${wedge(x.B)}<i>→</i>${wedge(x.C)}<b>${TEAMS[x.B].nick} + ${TEAMS[x.C].nick}</b></span>`;
+  const lab=x.ty===2?`<span class="iah">${wedge(x.B)}<b>${TEAMS[x.B].nick}</b></span>`:x.ty===5?`<span class="iah">${wedge(x.parts[0].B)}${wedge(x.parts[1].B)}<b>${TEAMS[x.parts[0].B].nick} + ${TEAMS[x.parts[1].B].nick}</b></span>`:`<span class="iah">${wedge(x.B)}<i>→</i>${wedge(x.C)}<b>${TEAMS[x.B].nick} + ${TEAMS[x.C].nick}</b></span>`;
   let body;
-  if(x.ty===2){body=`<div class="iacols"><div><small>Dai</small>${x.give.map(iaPlR).join("")||'<em class="iaem">solo crediti</em>'}${crs}</div><div><small>Ricevi</small>${x.take.map(iaPlR).join("")}${x.back?`<div class="iacr">+ ${x.back} cr dai ${TEAMS[x.B].nick}</div>`:""}</div></div>`}
+  if(x.ty===5){body=`<div class="iacyc">${x.parts.map(p=>`<div class="iastep"><small>Con ${TEAMS[p.B].nick}</small><div class="iacols"><div><small>Dai</small>${p.give.map(iaPlR).join("")||'<em class="iaem">solo crediti</em>'}${p.need?`<div class="iacr">+ ${p.need} cr</div>`:""}</div><div><small>Ricevi</small>${p.take.map(iaPlR).join("")}${p.back?`<div class="iacr">+ ${p.back} cr dai ${TEAMS[p.B].nick}</div>`:""}</div></div></div>`).join("")}${crs?`<div class="iastep"><small>Crediti usati in totale</small>${crs}</div>`:""}</div>`}
+  else if(x.ty===2){body=`<div class="iacols"><div><small>Dai</small>${x.give.map(iaPlR).join("")||'<em class="iaem">solo crediti</em>'}${crs}</div><div><small>Ricevi</small>${x.take.map(iaPlR).join("")}${x.back?`<div class="iacr">+ ${x.back} cr dai ${TEAMS[x.B].nick}</div>`:""}</div></div>`}
   else{body=`<div class="iacyc"><div class="iastep"><small>Tu → ${TEAMS[x.B].nick}</small>${x.give.map(iaPlR).join("")||'<em class="iaem">solo crediti</em>'}${crs}</div>
     <div class="iastep"><small>${TEAMS[x.B].nick} → ${TEAMS[x.C].nick}</small>${x.mid.map(iaPlR).join("")}</div>
     <div class="iastep"><small>${TEAMS[x.C].nick} → Tu</small>${x.take.map(iaPlR).join("")}</div></div>`}
@@ -3268,43 +3301,75 @@ function iaCard(x,i){const A=iaTeam(),cl=(d)=>d<.10?"ok":d<.40?"mid":"bad",pc=Ma
    <button class="iaopen" data-ia="open" data-i="${i}">Apri nel calcolatore</button></div>`}
 function iaOpen(i){const x=IA.out[i],A=iaTeam();if(!x)return;
   if(x.ty===2){VT.t=[A,x.B];VT.pl=[[...x.give],[...x.take]];VT.cr=[x.need,x.back||0];VT.pk=[[],[]];VT.tab="calc"}
+  else if(x.ty===5){const[p,q]=x.parts;V3.t=[A,p.B,q.B];V3.it=[...p.give.map(n=>({k:0,to:1,ty:"pl",n})),...(p.need?[{k:0,to:1,ty:"cr",v:p.need}]:[]),...p.take.map(n=>({k:1,to:0,ty:"pl",n})),...(p.back?[{k:1,to:0,ty:"cr",v:p.back}]:[]),
+    ...q.give.map(n=>({k:0,to:2,ty:"pl",n})),...(q.need?[{k:0,to:2,ty:"cr",v:q.need}]:[]),...q.take.map(n=>({k:2,to:0,ty:"pl",n})),...(q.back?[{k:2,to:0,ty:"cr",v:q.back}]:[])];VT.tab="calc3"}
   else{V3.t=[A,x.B,x.C];V3.it=[...x.give.map(n=>({k:0,to:1,ty:"pl",n})),...(x.need?[{k:0,to:1,ty:"cr",v:x.need}]:[]),...x.mid.map(n=>({k:1,to:2,ty:"pl",n})),...x.take.map(n=>({k:2,to:0,ty:"pl",n}))];VT.tab="calc3"}
   cur="valtrade";render();window.scrollTo(0,0)}
-function vIA(){const A=iaTeam(),c=TEAMS[A],st=IA.st,ok1=!!IA.needs[0],ok2=IA.give.length>0||iaTot()>0;
-  const steps=[["1","Cerco"],["2","Offro"],["3","Squadre"]],reach=k=>k===1||(k===2&&ok1)||(k>=3&&ok1&&ok2);
-  const bar=`<div class="iabar">${steps.map(([k,l])=>`<button data-ia="go" data-s="${k}" aria-pressed="${st===+k||(st===4&&k==="3")}" ${reach(+k)?"":"disabled"}><b>${k}</b>${l}</button>`).join("")}</div>`;
+const iaRoleOrd=a=>a.slice().sort((x,y)=>({G:0,F:1,C:2}[x.r]-{G:0,F:1,C:2}[y.r])||((y.v??0)-(x.v??0)));
+function iaCredHTML(A){const cas=iaCassa(A),pf=iaPfMax(A),pm=iaPostMax(A),pmTxt=`Tetto ${pm.max} cr · miglior piazzamento ancora possibile: ${pm.best}° (premio garantito ${pm.lim} cr)${pm.owed?` − ${pm.owed} già promessi`:""}`,
+  stp=(k,lab,mx,sub)=>{const v=IA.cr[k];return `<div class="iacrr ${mx?"":"off"}"><div><b>${lab}</b><small>${sub}</small></div><div class="iast"><button data-ia="cr" data-k="${k}" data-d="-5" ${v>0?"":"disabled"}>−</button><output>${v}</output><button data-ia="cr" data-k="${k}" data-d="5" ${v+5<=mx?"":"disabled"}>+</button></div></div>`};
+  return `<h4>Crediti</h4>${stp("c","Dalla cassa",cas,cas?`Disponibili ${cas} cr`:"Cassa a 0: non puoi darne")}${stp("p","Di portafoglio (postdatati)",pf.max,`Tetto ${pf.max} cr · massimo ${pf.lim} per tutti${pf.owed?` − ${pf.owed} già promessi`:""}`)}${stp("d","Post-Draft (debito)",pm.max,pmTxt)}`}
+function iaRosHTML(A,sel,act){return iaRoleOrd((ROSTER[A]||[]).map(p=>({n:p[0],r:p[2],v:valOf(p[0])}))).map((p,i,a)=>`${i===0||a[i-1].r!==p.r?`<div class="vtrh ${p.r}">${{G:"Guardie",F:"Ali",C:"Centri"}[p.r]}</div>`:""}<button class="iapl ${sel.includes(p.n)?"on":""}" data-ia="${act}" data-n="${p.n.replace(/"/g,"&quot;")}"><i class="rc ${p.r}"></i><span>${p.n}${iaOut(p.n)?' <em class="iaout">OUT</em>':""}${iaSp(p.n)?' <em class="iasp">SPECIALE</em>':""}</span>${starH(p.n)}<b>${p.v??"—"}</b></button>`).join("")}
+function iaListHTML(){const A=iaTeam(),q=vnz(IA.q||""),others=Object.keys(ROSTER).filter(t=>t!==A),tf=others.includes(IA.tf)?IA.tf:others[0];
+  let l=q.length>=2?others.flatMap(t=>ROSTER[t].map(p=>({n:p[0],r:p[2],t,v:valOf(p[0])}))).filter(x=>vnz(x.n).includes(q)).slice(0,40):iaRoleOrd(ROSTER[tf].map(p=>({n:p[0],r:p[2],t:tf,v:valOf(p[0])})));
+  const teamsSel=new Set(IA.want.map(iaOwner)),full=teamsSel.size>=2;
+  return l.map(x=>{const on=IA.want.includes(x.n),dis=!on&&(IA.want.length>=3||(full&&!teamsSel.has(x.t)));
+    return `<button class="iapl ${on?"on":""}" ${dis?"disabled":""} data-ia="want" data-n="${x.n.replace(/"/g,"&quot;")}"><i class="rc ${x.r}"></i><span>${x.n}${iaOut(x.n)?' <em class="iaout">OUT</em>':""}${iaSp(x.n)?' <em class="iasp">SPECIALE</em>':""}${q.length>=2?`<small class="iatn">${TEAMS[x.t].nick}</small>`:""}</span>${starH(x.n)}<b>${x.v??"—"}</b></button>`}).join("")||'<p class="iasub">Nessun giocatore trovato.</p>'}
+function vIA(){const A=iaTeam(),c=TEAMS[A],st=IA.st,pl=IA.mode==="pl",ok1=pl?IA.want.some(n=>iaOwner(n)&&iaOwner(n)!==A):(!!IA.needs[0]||IA.any),ok2=IA.give.length>0||iaTot()>0;
+  const modeBar=`<div class="iamode" role="tablist">${[["role","Per ruolo","Dico cosa mi serve"],["pl","Per giocatore","Scelgo chi voglio"]].map(([k,l,sub])=>`<button data-ia="mode" data-k="${k}" role="tab" aria-selected="${IA.mode===k}"><b>${l}</b><small>${sub}</small></button>`).join("")}</div>`;
+  const steps=pl?[["1","Voglio"],["2","Opzioni"]]:[["1","Cerco"],["2","Offro"],["3","Squadre"]],last=steps.length,reach=k=>k===1||(k===2&&ok1)||(k>=3&&ok1&&ok2);
+  const bar=`<div class="iabar">${steps.map(([k,l])=>`<button data-ia="go" data-s="${k}" aria-pressed="${st===+k||(st===4&&+k===last)}" ${(pl?(+k===1||ok1):reach(+k))?"":"disabled"}><b>${k}</b>${l}</button>`).join("")}</div>`;
+  const teamSel=()=>`<label class="iatm">${wedge(A)}<select data-ia="team" aria-label="La tua squadra">${Object.keys(TEAMS).map(t=>`<option value="${t}" ${t===A?"selected":""}>${TEAMS[t].name}</option>`).join("")}</select></label>`;
   let body="";
-  if(st===1){
-    const opts=Object.keys(TEAMS).map(t=>`<option value="${t}" ${t===A?"selected":""}>${TEAMS[t].name}</option>`).join("");
-    body=`<div class="iabox"><label class="iatm">${wedge(A)}<select data-ia="team" aria-label="La tua squadra">${opts}</select></label>
-     <h4>Che ruolo cerchi?</h4><p class="iasub">Scegli prima la necessità principale, poi (se vuoi) la seconda e la terza. Ne serve almeno una.</p>
+  if(pl&&st===1){
+    const others=Object.keys(ROSTER).filter(t=>t!==A),tf=others.includes(IA.tf)?IA.tf:others[0],tsel=new Set(IA.want.map(iaOwner));
+    body=`<div class="iabox">${teamSel()}<h4>Quali giocatori vuoi?</h4><p class="iasub">Scegli fino a 3 giocatori. Se sono di una squadra sola ti propongo una trade a 2; se sono di due squadre diverse, una trade a 3 in automatico.</p>
+     <div class="iawant">${IA.want.map(n=>`<button class="iachip" data-ia="want" data-n="${n.replace(/"/g,"&quot;")}">${drLg(iaOwner(n),"s")}<span>${n}</span><i>✕</i></button>`).join("")||'<em class="iaem">Nessun giocatore scelto</em>'}</div>
+     <input id="iaq" class="vtq" type="search" placeholder="🔍 Cerca un giocatore in tutta la lega" autocomplete="off" value="${(IA.q||"").replace(/"/g,"&quot;")}" aria-label="Cerca giocatore">
+     <div class="iatf">${others.map(t=>`<button data-ia="tf" data-t="${t}" aria-pressed="${tf===t&&!(IA.q||"").trim()}" aria-label="${TEAMS[t].nick}">${drLg(t,"s")}</button>`).join("")}</div>
+     <div class="iaros" id="iaList">${iaListHTML()}</div>
+     ${tsel.size>=2?`<p class="iasub">Giocatori di 2 squadre: ti propongo una trade a 3.</p>`:""}
+     <button class="iago" data-ia="go" data-s="2" ${ok1?"":"disabled"}>Avanti · opzioni ›</button></div>`}
+  else if(pl&&st===2){
+    body=`<div class="iabox"><h4>Intoccabili (facoltativo)</h4><p class="iasub">Tocca i giocatori che NON vuoi dare: userò tutti gli altri del tuo roster. Ogni giocatore che dai deve tornare con uno dello stesso ruolo; solo i giocatori in trade speciale si scambiano senza contropartita.</p>
+     <div class="iaros">${iaRosHTML(A,IA.keep,"keep")}</div>${iaCredHTML(A)}
+     <div class="iabtn2"><button class="iabk" data-ia="go" data-s="1">‹ Indietro</button><button class="iago" data-ia="find">Trova scambi ›</button></div></div>`}
+  else if(!pl&&st===1){
+    body=`<div class="iabox">${teamSel()}
+     <h4>Che ruolo cerchi?</h4><p class="iasub">Scegli prima la necessità principale, poi (se vuoi) la seconda e la terza. Oppure lascia che decida io: nessuna preferenza di ruolo.</p>
      ${[0,1,2].map(i=>`<div class="iarow ${i>0&&!IA.needs[i-1]?"off":""}"><span>${["1ª","2ª","3ª"][i]} necessità</span><div>${["G","F","C"].map(r=>`<button class="iarb ${r}" data-ia="need" data-i="${i}" data-r="${r}" aria-pressed="${IA.needs[i]===r}" ${i>0&&!IA.needs[i-1]?"disabled":""}>${IA_R[r]}</button>`).join("")}${i>0?`<button class="iarb x" data-ia="need" data-i="${i}" data-r="" ${IA.needs[i]?"":"disabled"} aria-label="Nessuna">✕</button>`:""}</div></div>`).join("")}
+     <button class="iaany" data-ia="any" aria-pressed="${IA.any}"><b>Indifferente</b><small>Nessuna preferenza: valuta tutti i ruoli</small></button>
      <button class="iago" data-ia="go" data-s="2" ${ok1?"":"disabled"}>Avanti · cosa offri ›</button></div>`}
-  else if(st===2){
-    const ros=(ROSTER[A]||[]).map(p=>({n:p[0],r:p[2],v:valOf(p[0])})).sort((a,b)=>({G:0,F:1,C:2}[a.r]-{G:0,F:1,C:2}[b.r])||((b.v??0)-(a.v??0))),cas=iaCassa(A);
-    const pf=iaPfMax(A),pm=iaPostMax(A),pmTxt=`Tetto ${pm.max} cr · miglior piazzamento ancora possibile: ${pm.best}° (premio garantito ${pm.lim} cr)${pm.owed?` − ${pm.owed} già promessi`:""}`,stp=(k,lab,mx,sub)=>{const v=IA.cr[k];return `<div class="iacrr ${mx?"":"off"}"><div><b>${lab}</b><small>${sub}</small></div><div class="iast"><button data-ia="cr" data-k="${k}" data-d="-5" ${v>0?"":"disabled"}>−</button><output>${v}</output><button data-ia="cr" data-k="${k}" data-d="5" ${v+5<=mx?"":"disabled"}>+</button></div></div>`};
+  else if(!pl&&st===2){
     body=`<div class="iabox"><h4>Cosa sei disposto a dare?</h4><p class="iasub">Tocca i giocatori di cui ti vuoi liberare: l'app userà solo quelli che servono. Ogni giocatore che dai deve tornare con uno dello stesso ruolo (il roster non può restare scoperto); solo i giocatori in trade speciale (fuori rosa) si scambiano senza contropartita.</p>
-     <div class="iaros">${ros.map((p,i)=>`${i===0||ros[i-1].r!==p.r?`<div class="vtrh ${p.r}">${{G:"Guardie",F:"Ali",C:"Centri"}[p.r]}</div>`:""}<button class="iapl ${IA.give.includes(p.n)?"on":""}" data-ia="pl" data-n="${p.n.replace(/"/g,"&quot;")}"><i class="rc ${p.r}"></i><span>${p.n}${iaOut(p.n)?' <em class="iaout">OUT</em>':""}${iaSp(p.n)?' <em class="iasp">SPECIALE</em>':""}</span>${starH(p.n)}<b>${p.v??"—"}</b></button>`).join("")}</div>
-     <h4>Crediti</h4>${stp("c","Dalla cassa",cas,cas?`Disponibili ${cas} cr`:"Cassa a 0: non puoi darne")}${stp("p","Di portafoglio (postdatati)",pf.max,`Tetto ${pf.max} cr · massimo ${pf.lim} per tutti${pf.owed?` − ${pf.owed} già promessi`:""}`)}${stp("d","Post-Draft (debito)",pm.max,pmTxt)}
+     <div class="iaros">${iaRosHTML(A,IA.give,"pl")}</div>${iaCredHTML(A)}
      ${ok2?"":`<p class="iaerr">Scegli almeno un giocatore o dei crediti da offrire.</p>`}
      <div class="iabtn2"><button class="iabk" data-ia="go" data-s="1">‹ Indietro</button><button class="iago" data-ia="go" data-s="3" ${ok2?"":"disabled"}>Avanti · squadre ›</button></div></div>`}
-  else if(st===3){
+  else if(!pl&&st===3){
     body=`<div class="iabox"><h4>Trade a quante squadre?</h4><p class="iasub">A 3 squadre il giro è: tu → squadra 2 → squadra 3 → tu; funziona anche quando chi ha il giocatore che ti serve non vuole i tuoi.</p>
      <div class="ian2">${[2,3].map(n=>`<button data-ia="n" data-n="${n}" aria-pressed="${IA.n===n}"><b>${n}</b><span>${n} squadre</span></button>`).join("")}</div>
      <div class="iabtn2"><button class="iabk" data-ia="go" data-s="2">‹ Indietro</button><button class="iago" data-ia="find">Trova scambi ›</button></div></div>`}
   else{
     if(!IA.out.length)iaNext();
-    const need=IA.needs.filter(Boolean).map(r=>IA_R[r]).join(" › "),off=[IA.give.length?`${IA.give.length} giocator${IA.give.length===1?"e":"i"}`:"",iaTot()?`${iaTot()} cr`:""].filter(Boolean).join(" + ");
-    body=`<div class="iasum"><button data-ia="go" data-s="1"><small>Cerco</small>${need}</button><button data-ia="go" data-s="2"><small>Offro</small>${off}</button><button data-ia="go" data-s="3"><small>Squadre</small>${IA.n}</button></div>
+    const need=IA.any?"Qualsiasi ruolo":IA.needs.filter(Boolean).map(r=>IA_R[r]).join(" › "),off=[IA.give.length?`${IA.give.length} giocator${IA.give.length===1?"e":"i"}`:"",iaTot()?`${iaTot()} cr`:""].filter(Boolean).join(" + ");
+    const nTeams=new Set(IA.want.map(iaOwner)).size;
+    const sum=pl?`<div class="iasum"><button data-ia="go" data-s="1"><small>Voglio</small>${IA.want.map(n=>drSur(n)).join(", ")}</button><button data-ia="go" data-s="2"><small>Opzioni</small>${IA.keep.length?`${IA.keep.length} intoccabili`:"nessuna"}${iaTot()?` · ${iaTot()} cr`:""}</button><button data-ia="go" data-s="1"><small>Squadre</small>${nTeams>=2?3:2}</button></div>`
+      :`<div class="iasum"><button data-ia="go" data-s="1"><small>Cerco</small>${need}</button><button data-ia="go" data-s="2"><small>Offro</small>${off}</button><button data-ia="go" data-s="3"><small>Squadre</small>${IA.n}</button></div>`;
+    body=`${sum}
      <div class="iaq" role="group" aria-label="Livello di equilibrio">${[["eq","Equilibrata","fino a ±10%"],["win","Vinco io","+10% / +40%"],["scam","Truffo","oltre +40%"]].map(([k,l,sub])=>`<button data-ia="lv" data-k="${k}" aria-pressed="${IA.lv===k}"><b>${l}</b><small>${sub}</small></button>`).join("")}</div>
-     ${IA.out.length?`<div class="iares">${IA.out.map(iaCard).join("")}</div>`:`<div class="iabox"><p class="iaerr">Nessuno scambio di questo livello con queste scelte. Prova ad aggiungere giocatori o crediti, oppure cambia i ruoli.</p></div>`}
+     ${IA.out.length?`<div class="iares">${IA.out.map(iaCard).join("")}</div>`:`<div class="iabox"><p class="iaerr">Nessuno scambio di questo livello con queste scelte. Prova ad aggiungere giocatori o crediti, oppure cambia le scelte.</p></div>`}
      <button class="iago iaref" data-ia="refresh">${IA.out.length?"Aggiorna · altri 5 scambi":"Riprova"}</button>
      <p class="note">Valori Dreamers al ${VALORI_AGG}: punti trade (valore/1000)<sup>2</sup>×1000 corretti di ±8% con le stelline del giocatore, crediti come nel calcolatore. L'altra squadra è favorita a rispondere sì quando è debole nei ruoli che le dai e forte in quelli che cede; ogni giocatore in uscita è compensato da uno dello stesso ruolo (tranne quelli in trade speciale, che non hanno bisogno di contropartita). Livello: equilibrata fino a ±10%, "vinco io" tra +10% e +40% a tuo favore, "truffo" oltre +40% (stesse soglie del calcolatore). Equilibrio = differenza tra quanto dai e quanto ricevi.</p>`}
-  return `${H("IA Trade",`<em>${c.nick}</em>`)}${bar}${body}`}
+  return `${H("IA Trade",`<em>${c.nick}</em>`)}${modeBar}${bar}${body}`}
 function iaAct(b){const d=b.dataset,a=d.ia;
   if(a==="go"){IA.st=+d.s}
-  else if(a==="team"){IA.team=b.value;IA.give=[];IA.pool=null;IA.out=[]}
-  else if(a==="need"){const i=+d.i,r=d.r,old=IA.needs[i];if(r){const j=IA.needs.indexOf(r);if(j>=0&&j!==i)IA.needs[j]=old||"";IA.needs[i]=r}else IA.needs[i]="";
+  else if(a==="team"){IA.team=b.value;IA.give=[];IA.keep=[];IA.want=IA.want.filter(n=>iaOwner(n)!==b.value);IA.pool=null;IA.out=[]}
+  else if(a==="mode"){IA.mode=d.k;IA.st=1;IA.pool=null;IA.out=[]}
+  else if(a==="any"){IA.any=!IA.any;if(IA.any)IA.needs=["","",""];IA.pool=null;IA.out=[]}
+  else if(a==="want"){const n=d.n,i=IA.want.indexOf(n);if(i>=0)IA.want.splice(i,1);else if(IA.want.length<3){const t=new Set(IA.want.map(iaOwner));t.add(iaOwner(n));if(t.size<=2)IA.want.push(n)}IA.pool=null;IA.out=[]}
+  else if(a==="keep"){const n=d.n,i=IA.keep.indexOf(n);if(i>=0)IA.keep.splice(i,1);else IA.keep.push(n);IA.pool=null;IA.out=[]}
+  else if(a==="tf"){IA.tf=d.t;IA.q=""}
+  else if(a==="need"){const i=+d.i,r=d.r,old=IA.needs[i];IA.any=false;if(r){const j=IA.needs.indexOf(r);if(j>=0&&j!==i)IA.needs[j]=old||"";IA.needs[i]=r}else IA.needs[i]="";
     for(let k=1;k<3;k++)if(!IA.needs[k-1])IA.needs[k]="";IA.pool=null;IA.out=[]}
   else if(a==="pl"){const n=d.n,i=IA.give.indexOf(n);if(i>=0)IA.give.splice(i,1);else IA.give.push(n);IA.pool=null;IA.out=[]}
   else if(a==="cr"){const k=d.k,mx=k==="c"?iaCassa(iaTeam()):k==="d"?iaPostMax(iaTeam()).max:iaPfMax(iaTeam()).max;IA.cr[k]=Math.max(0,Math.min(mx,IA.cr[k]+ +d.d));IA.pool=null;IA.out=[]}
@@ -3313,7 +3378,7 @@ function iaAct(b){const d=b.dataset,a=d.ia;
   else if(a==="find"){IA.st=4;IA.out=[];IA.pool=null}
   else if(a==="refresh"){iaNext()}
   else if(a==="open"){iaOpen(+d.i);return}
-  const y=window.scrollY;render();window.scrollTo(0,a==="go"||a==="find"?0:y)}
+  const y=window.scrollY;render();window.scrollTo(0,a==="go"||a==="find"||a==="mode"?0:y)}
 
 /* (247) Trade e Trade speciali unite: due categorie dentro la stessa pagina */
 function vTrade(){
@@ -3321,6 +3386,7 @@ function vTrade(){
   return sw+(TRS==="sp"?vSpeciali():vTradeAll());
 }
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="iatrade")return;const b=e.target.closest("[data-ia]");if(b&&b.tagName!=="SELECT"&&!b.disabled){e.preventDefault();iaAct(b)}});
+document.getElementById("main").addEventListener("input",e=>{if(cur!=="iatrade"||e.target.id!=="iaq")return;IA.q=e.target.value;const L=document.getElementById("iaList");if(L)L.innerHTML=iaListHTML()});
 document.getElementById("main").addEventListener("change",e=>{if(cur!=="iatrade")return;const b=e.target;if(b&&b.dataset&&b.dataset.ia==="team"){IA.cr.c=Math.min(IA.cr.c,iaCassa(b.value));iaAct(b)}});
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-trs]");if(!b||cur!=="trade")return;TRS=b.dataset.trs;render();window.scrollTo(0,0)});
 function vTradeAll(){
