@@ -1424,3 +1424,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 487. **Home: loghi a sinistra per i mancini** — pubblicato (v125, 29/10/2026). Personalizzazioni › Stile dell'app › «Lato dei loghi in Home»: 👉 loghi a destra (standard) / 👈 loghi a sinistra (mancini). Salvato su questo telefono in `DLS.hand` ("r"/"l"), applicato come `html[data-hand]`; solo CSS (griglia di `.hn6` ribaltata), nessun cambio alla Home. Il «Ripristina tutto» delle personalizzazioni non lo azzera.
 
 488. **Lato dei loghi spostato in Impostazioni › Home** — pubblicato (v126, 29/10/2026). La scelta «Lato dei loghi in Home» (nota 487) era nella scheda App; ora sta nella scheda Home, subito sotto «Aspetto della Home» (dove Francesco la cerca).
+
+489. **Loghi a sinistra = Home ufficiale, a destra = personalizzazione** — in coda, NON pubblicato. Inverso della nota 487/488: di default (nessuna scelta) la Home ha i loghi delle squadre a SINISTRA e gli elenchi a destra; chi vuole i loghi a destra lo sceglie in Impostazioni › Home › Lato dei loghi (`DLS.hand="r"`, `html[data-hand="r"]`). Chi aveva già scelto «mancini» (`l`) resta a sinistra.
