@@ -4139,7 +4139,7 @@ function hnTeam(t){if(!TEAMS[t])return;HN_T=t;try{localStorage.setItem("dl_hnt",
 /* (393) Casellina della Home a 3 pagine: Giocatori (come prima) · Risultati Dreamers · Classifica Dreamers. Si cambia con lo swipe orizzontale (verso destra = pagina successiva, verso sinistra = precedente) o toccando i puntini. */
 let HN_PG=0,HN_RK=null;
 const HN_PGN=["Giocatori","Risultati","Classifica"];
-const HN_CTL="arr"; /* "wheel" = rotella · "arr" = freccette */
+const HN_CTL="one"; /* "wheel" = rotella · "arr" = freccette */
 function hnDots(){const d=HN_PGN.map((n,i)=>`<button type="button" class="${i===HN_PG?"on":""}" data-hpg="${i}" aria-label="${n}" role="tab" aria-selected="${i===HN_PG}"></button>`).join("");
   if(HN_CTL==="one")return`<div class="hmdots one"><button type="button" class="hmarr hmone" data-hdir="1" aria-label="Pagina successiva (giro infinito)">›</button></div>`;
   return`<div class="hmdots ${HN_CTL}" role="tablist" aria-label="Pagine">${HN_CTL==="arr"?'<button type="button" class="hmarr" data-hdir="-1" aria-label="Pagina precedente">‹</button>':""}<span class="hmwh">${d}</span>${HN_CTL==="arr"?'<button type="button" class="hmarr" data-hdir="1" aria-label="Pagina successiva">›</button>':""}</div>`}
