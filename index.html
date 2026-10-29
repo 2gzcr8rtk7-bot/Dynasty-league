@@ -610,6 +610,12 @@ nav button[aria-expanded="true"] .car{transform:rotate(180deg)}
 .fanum{flex:none;width:58px;height:58px;display:grid;place-items:center;border-radius:50%;background:rgba(0,0,0,.35);border:2px solid var(--gold);font-family:var(--display);font-style:italic;font-weight:800;font-size:22px;color:#fff}
 .faown{margin-left:auto}.faown .badge{width:48px;height:48px}
 .hrfan{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.08);font-family:var(--display);font-style:italic;font-weight:800;color:var(--gold)}
+.trshc{display:flex;align-items:center;justify-content:center;border-left:1px solid rgba(255,255,255,.06)}.trshc .shbtn{margin:0;flex:0 0 30px;width:30px;height:30px}
+.tr3.trhl{animation:trhl 1.2s ease-in-out 3;box-shadow:inset 0 0 0 2px var(--gold)}@keyframes trhl{50%{background:rgba(245,180,0,.18)}}
+.tmc[data-htr]{cursor:pointer}
+.tvhl{display:grid;grid-template-columns:34px 1fr;grid-template-rows:auto auto;column-gap:10px;align-items:center;margin:-8px 0 14px;padding:9px 14px;border-radius:12px;text-decoration:none;color:#fff;background:linear-gradient(180deg,#ff2a2a,#c4001a);box-shadow:0 6px 16px rgba(220,0,30,.35)}
+.tvhl svg{grid-row:1/3;width:34px;height:24px}.tvhl span{font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;letter-spacing:.06em;text-transform:uppercase;line-height:1.1}.tvhl small{font-size:11px;opacity:.85}
+.tvhl.off{background:rgba(255,255,255,.06);box-shadow:none;color:var(--muted)}.tvhl.off svg rect{fill:#6b7280}
 </style>
 
 
@@ -808,7 +814,7 @@ nav button{font-size:15px;letter-spacing:.04em}
 .trc span:not(:last-child)::after{content:", ";color:var(--muted)}
 .trc span.tcr2{color:var(--gold)}
 .ttab{overflow:hidden}
-.tr3{display:grid;grid-template-columns:18px minmax(0,1fr) minmax(0,1fr);border-bottom:1px solid rgba(255,255,255,.06)}
+.tr3{display:grid;grid-template-columns:18px minmax(0,1fr) minmax(0,1fr) 40px;border-bottom:1px solid rgba(255,255,255,.06)}
 .tr3:nth-child(even){background:rgba(255,255,255,.025)}
 .tr3:last-child{border-bottom:0}
 .tty3{background:#091129;border-right:2px solid var(--red);display:grid;place-items:center}
@@ -3720,14 +3726,15 @@ document.getElementById("main").addEventListener("click",e=>{if(cur!=="iatrade")
 document.getElementById("main").addEventListener("input",e=>{if(cur!=="iatrade"||e.target.id!=="iaq")return;IA.q=e.target.value;const L=document.getElementById("iaList");if(L)L.innerHTML=iaListHTML()});
 document.getElementById("main").addEventListener("change",e=>{if(cur!=="iatrade")return;const b=e.target;if(b&&b.dataset&&b.dataset.ia==="team"){IA.cr.c=Math.min(IA.cr.c,iaCassa(b.value));iaAct(b)}});
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-trs]");if(!b||cur!=="trade")return;TRS=b.dataset.trs;render();window.scrollTo(0,0)});
+let TR_HL=-1;
 function vTradeAll(){
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
   const rec=(l,neg)=>l.map(n=>NUM[n]!==undefined?`<span>${sur(n)}${starH(n)}</span>`:`<span class="tcr2">${/credit/i.test(n)?(/^debito/i.test(n)?"":neg?"−":"+")+n.replace(/\s*crediti.*$/i," cr"):n.replace(/^Diritti su /,"").replace(/Slot ala per 10 giornate/,"Slot ala 10g")}</span>`).join("");
   const dir=v=>v==="entra"||v==="acquista"?"in":v==="esce"?"out":"";
   const arw=d=>d==="in"?`<i class="tar in" title="Entra"><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M15 6H3M7 1.5 2.2 6 7 10.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i>`:d==="out"?`<i class="tar out" title="Esce"><svg viewBox="0 0 16 12" aria-hidden="true"><path d="M1 6h12M9 1.5 13.8 6 9 10.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i>`:"";
   const cell=(x,neg)=>x?`<div class="tc">${wedge(x[0])}<div class="tct"><small>${TEAMS[x[0]].nick}${x[2]?" · "+x[2]:""}</small><div class="trc tdir">${arw(dir(x[2]))}<div>${rec(x[1],neg&&x[2]==="acquista")}</div></div></div></div>`:`<div class="tc"></div>`;
-  const rows=TRADES.map(x=>{const tipo=/asta/i.test(x.titolo)?"Asta":/speciale/i.test(x.titolo)?"Speciale":/g league/i.test(x.titolo)?"G League":"Scambio";
-    return `<div class="tr3"><div class="tty3"><span>${tipo}${x.data?" "+x.data.slice(0,5):""}</span></div>${cell(x.lati[0],tipo==="Asta")}${cell(x.lati[1],tipo==="Asta")}</div>`}).join("");
+  const rows=TRADES.map((x,i)=>{const tipo=/asta/i.test(x.titolo)?"Asta":/speciale/i.test(x.titolo)?"Speciale":/g league/i.test(x.titolo)?"G League":"Scambio";
+    return `<div class="tr3 trsh${TR_HL===i?" trhl":""}" id="trr${i}"><div class="tty3"><span>${tipo}${x.data?" "+x.data.slice(0,5):""}</span></div>${cell(x.lati[0],tipo==="Asta")}${cell(x.lati[1],tipo==="Asta")}<div class="trshc">${shBtn("tr:"+i)}</div></div>`}).join("");
   return `${H("Trade Alert",`<em>Operazioni chiuse</em>`)}<div class="tbl-wrap ttab">${rows}</div>`;
 }
 
@@ -4385,7 +4392,7 @@ function hnAvvisi(){
       return`<div class="tmsd"><span class="tmlg">${badge(t)}</span><div class="tmtx"><span class="tmnm">${esc(TEAMS[t]?TEAMS[t].nick:t)} ${verb}</span><div class="tmpl">${pl.map(n=>{let m=null;try{m=pdkMed(n)}catch(e){}return`<span class="tmp"><i class="${ruoloDi(n)}"></i>${esc(nmAb(n))}${m!=null?` <small>${String(Math.round(m*10)/10).replace(".",",")}</small>`:""}</span>`}).join("")}${ot.map(n=>`<span class="tmcr">${esc(n)}</span>`).join("")}</div></div></div>`};
     const sides=x.lati.length>2&&!two?[x.lati[0]]:x.lati;
     w+=110+(sides.length>1?30:0);
-    return`<div class="tmc"><div class="tmtag">${esc(x.titolo)}<b>scade ${hh}h ${String(mi).padStart(2,"0")}m</b></div>${sides.map(side).join('<span class="tmar">⇄</span>')}</div>`}).join("");
+    return`<div class="tmc"${TRADES.indexOf(x)>=0?` data-htr="${TRADES.indexOf(x)}" role="link" tabindex="0"`:""}><div class="tmtag">${esc(x.titolo)}<b>scade ${hh}h ${String(mi).padStart(2,"0")}m</b></div>${sides.map(side).join('<span class="tmar">⇄</span>')}</div>`}).join("");
   return{html,w,n:L.length}}
 function homeNotte(st){
   const myT=homeMyT(),pre=homeFase(),d=pre||campoNotte()||flUsaOggi(),GG=(typeof TV!=="undefined"&&TV.days[d]||[]).filter(g=>pre?g[5]==="S":(g[5]==="L"||g[5]==="F"||g[5]==="S"));
@@ -4450,6 +4457,7 @@ function bindHomeNotte(root){root.querySelectorAll(".hrl").forEach(b=>b.onclick=
   root.querySelectorAll("[data-hso]").forEach(b=>b.onclick=e=>{e.stopPropagation();if(b.dataset.hso==="team"){const av=i=>!HN_OWN.size||HN_OWN.has(HN_ORD[i]);let i=HN_SO==="team"?HN_SI+1:0;while(i<8&&!av(i))i++;if(i>7)HN_SO="";else{HN_SO="team";HN_SI=i}}else HN_SO="";try{HN_SO?(localStorage.setItem("dl_hso","team"),localStorage.setItem("dl_hsi",HN_SI)):localStorage.removeItem("dl_hso")}catch(_){}homeNotteRefresh()});
   root.querySelectorAll("[data-hdr]").forEach(b=>b.onclick=()=>{TVS.dr=b.dataset.hdr;TVS.drs="a";TVS.g=null;cur="tv";render();window.scrollTo(0,0)});
   root.querySelectorAll("[data-hpn]").forEach(b=>b.onclick=()=>{plOpen(b.dataset.hpn)});
+  root.querySelectorAll("[data-htr]").forEach(b=>b.onclick=()=>{TR_HL=+b.dataset.htr;TRS="tutte";cur="trade";render();setTimeout(()=>{const r=document.getElementById("trr"+TR_HL);if(r)r.scrollIntoView({block:"center"});else window.scrollTo(0,0);setTimeout(()=>{TR_HL=-1;const q=document.querySelector(".tr3.trhl");if(q)q.classList.remove("trhl")},4000)},60)});
   root.querySelectorAll("[data-hgo]").forEach(b=>b.onclick=e=>{if(e&&e.target.closest&&e.target.closest("[data-plopen]"))return;const[dy,key,sd]=b.dataset.hgo.split("|");TVS.d=dy;TVS.g=key&&TV.box[key]?key:null;TVS.side=sd==="h"?"h":"a";cur="tv";render();window.scrollTo(0,0)});
   root.querySelectorAll(".hmgrip").forEach(g=>{const sc=g.previousElementSibling,c=g.dataset.grip;let y0=0,h0=0,id=null,mvd=false;
     const save=()=>{try{Object.keys(HN_H).length?localStorage.setItem("dl_hh",JSON.stringify(HN_H)):localStorage.removeItem("dl_hh")}catch(_){}};
@@ -5877,18 +5885,37 @@ async function shCompar(){const S=SHR_CM;if(!S||!S.P[0]||!S.P[1])return null;
       if(n<=12||j===pts.length-1){const txt=fmt(q[2],isE?2:1);c.font=SH_F(800,24,1);const tw=c.measureText(txt).width+18,th=32,ty=q[1]+(i?th+10:-th-14);shRR(c,q[0]-tw/2,ty,tw,th,9);c.fillStyle=COL[i];c.fill();c.fillStyle="#0a0618";c.textAlign="center";c.fillText(txt,q[0],ty+th/2+1)}})}
   const by={s:"media di ogni stagione",m:"media di ogni mese",w:"media di ogni settimana",g:"ogni partita"}[S.by]||"";
   shFoot(c,W,H,`Dreamers · confronto ${S.P[0].n} / ${S.P[1].n} · ${by}`);return cv}
-async function shOpen(k){const old=document.querySelector(".shsheet");if(old)old.remove();
+let SHR_TR=null;
+/* immagine di uno scambio/asta/trade speciale (Trade Alert) */
+async function shTrade(){const x=SHR_TR;if(!x)return null;
+  const tipo=/asta/i.test(x.titolo)?"ASTA":/speciale/i.test(x.titolo)?"TRADE SPECIALE":/g league/i.test(x.titolo)?"G LEAGUE":"SCAMBIO";
+  const isPl=n=>Object.values(ROSTER).some(a=>a.some(p=>p[0]===n));
+  const L=x.lati,two=L.length>1&&L[0][0]!==L[1][0],ih=58,cardH=l=>150+l[1].length*ih;
+  const H=420+L.reduce((a,l)=>a+cardH(l)+(two?0:26),0)+(two?90:0)+150;const{cv,c,W}=await shBase(H);
+  let y=200;c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,84,1);c.letterSpacing="10px";
+  const tg=c.createLinearGradient(240,0,840,0);tg.addColorStop(0,"#e9d5ff");tg.addColorStop(.5,"#c084fc");tg.addColorStop(1,"#a5b4fc");c.fillStyle=tg;c.shadowColor="rgba(168,85,247,.8)";c.shadowBlur=26;c.fillText("TRADE ALERT",W/2+5,y+70);c.shadowBlur=0;c.letterSpacing="4px";
+  c.font=SH_F(700,32,1);c.fillStyle="rgba(233,213,255,.85)";c.fillText(`${tipo}${x.data?" · "+x.data:""}${x.ora?" · "+x.ora:""}`,W/2,y+122);c.letterSpacing="0px";
+  y=380;for(let i=0;i<L.length;i++){const l=L[i],t=l[0],tm=TEAMS[t],ch=cardH(l);
+    shRR(c,56,y,W-112,ch,28);const cg=c.createLinearGradient(56,0,W-56,0);cg.addColorStop(0,tm.bg+"88");cg.addColorStop(1,"rgba(17,10,48,.8)");c.fillStyle=cg;c.fill();c.strokeStyle="rgba(196,181,253,.35)";c.lineWidth=3;c.stroke();
+    const lg=await shLogo(t);if(lg)c.drawImage(lg,80,y+22,104,104);
+    c.textAlign="left";c.font=SH_F(800,50,1);c.fillStyle="#fff";c.fillText(shFit(c,tm.name.toUpperCase(),W-340),206,y+74);
+    const verb=two?"RICEVE":l[2]==="esce"?"ESCE":l[2]==="entra"?"ENTRA":/asta/i.test(x.titolo)?"ACQUISTA":(l[2]||"").toUpperCase();
+    c.font=SH_F(700,28,1);c.fillStyle="rgba(233,213,255,.85)";c.fillText(verb,206,y+112);
+    l[1].forEach((n,j)=>{const yy=y+150+j*ih;const pl=isPl(n);c.font=pl?SH_F(800,40,1):SH_B(600,30);c.fillStyle=pl?"#fff":"#facc15";c.fillText(shFit(c,(pl?"• ":"+ ")+n,W-200),96,yy+10)});
+    y+=ch;if(two&&i===0){c.textAlign="center";c.font=SH_F(800,64,1);c.fillStyle="#c084fc";c.fillText("⇄",W/2,y+66);y+=90}else y+=26}
+  shFoot(c,W,H,"Dynasty League · Trade Alert");return cv}
+async function shOpen(k){if(/^tr:\d+$/.test(k)){SHR_TR=TRADES[+k.slice(3)];k="tr"}const old=document.querySelector(".shsheet");if(old)old.remove();
   const sh=document.createElement("div");sh.className="shsheet";sh.innerHTML='<div class="shbox"><p class="shwait">Preparo l\'immagine…</p></div>';document.body.appendChild(sh);
   sh.addEventListener("click",e=>{if(e.target===sh||e.target.closest(".shx"))sh.remove()});
-  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="gr"?await shGrafico():k==="cm"?await shCompar():k==="pl"?await shPlayer():k==="pc"?await shPcard():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
+  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="gr"?await shGrafico():k==="cm"?await shCompar():k==="pl"?await shPlayer():k==="pc"?await shPcard():k==="card"?await shCardImg(SH_CARD):k==="tr"?await shTrade():await shDreamers()}catch(e){console.error(e)}
   if(!cv){sh.querySelector(".shbox").innerHTML='<p class="shwait">Niente da condividere adesso.</p><button class="shx">Chiudi</button>';return}
-  const name=(k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="cm"?"confronto-"+((SHR_CM&&SHR_CM.P[0]&&SHR_CM.P[1])?(SHR_CM.P[0].n+"-"+SHR_CM.P[1].n):"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pl"?"scheda-"+((SHR_PL&&SHR_PL.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pc"?"prestazione-"+((SHR_PC&&SHR_PC.x.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="card"?"grafico":"dreamers")+".png";
+  const name=(k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="cm"?"confronto-"+((SHR_CM&&SHR_CM.P[0]&&SHR_CM.P[1])?(SHR_CM.P[0].n+"-"+SHR_CM.P[1].n):"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pl"?"scheda-"+((SHR_PL&&SHR_PL.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pc"?"prestazione-"+((SHR_PC&&SHR_PC.x.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="card"?"grafico":k==="tr"?"trade-"+((SHR_TR&&SHR_TR.lati||[]).map(l=>l[0]).join("-")).toLowerCase():"dreamers")+".png";
   let file=null,url="";const mk=async c=>{const blob=await new Promise(r=>c.toBlob(r,"image/png"));file=new File([blob],name,{type:"image/png"});if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(blob)};await mk(cv);
   /* Campo: cursore "fino a dove condividere" (si parte sempre dall'alto: prime N righe) */
   const NR=k==="campo"&&SHR_CAMPO?SHR_CAMPO.R.length:0,sl=NR>1?`<div class="shcut"><div><b>Condividi dalla 1ª alla <output>${NR}</output>ª riga</b><small>su ${NR} · trascina per fermarti prima</small></div><input type="range" min="1" max="${NR}" value="${NR}" step="1" aria-label="Fino a quale riga condividere"></div>`:"";
   sh.querySelector(".shbox").innerHTML=`<img src="${url}" alt="Anteprima da condividere"><div class="shfoot">${sl}<div class="shbar"><button class="shx">Chiudi</button><a class="shsv" href="${url}" download="${name}">Salva</a><button class="shgo">${SH_ICO} Condividi</button></div></div>`;
   const go=sh.querySelector(".shgo");if(!(navigator.canShare&&navigator.canShare({files:[file]})))go.remove();
-  else go.addEventListener("click",async()=>{try{await navigator.share({files:[file],title:k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"Migliori del turno":"Live stanotte"):k==="duel"?"Dreamers · sfida":k==="po"?"Dreamers · playoff":k==="pl"?(SHR_PL?SHR_PL.n:"Giocatore"):k==="pc"?(SHR_PC?SHR_PC.x.n:"Prestazione"):"Dreamers"})}catch(e){}});
+  else go.addEventListener("click",async()=>{try{await navigator.share({files:[file],title:k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"Migliori del turno":"Live stanotte"):k==="duel"?"Dreamers · sfida":k==="po"?"Dreamers · playoff":k==="pl"?(SHR_PL?SHR_PL.n:"Giocatore"):k==="pc"?(SHR_PC?SHR_PC.x.n:"Prestazione"):k==="tr"?"Dynasty League · Trade Alert":"Dreamers"})}catch(e){}});
   const rg=sh.querySelector(".shcut input");if(rg){let busy=false,again=false;const upd=async()=>{if(busy){again=true;return}busy=true;do{again=false;const n=+rg.value;sh.querySelector(".shcut output").textContent=n;try{const c2=await shCampo(n);await mk(c2);sh.querySelector(".shbox img").src=url;const sv=sh.querySelector(".shsv");if(sv)sv.href=url}catch(e){console.error(e)}}while(again);busy=false};rg.addEventListener("input",upd)}}
 document.addEventListener("click",e=>{if(cur!=="impostazioni")return;const a=e.target.closest("[data-hnl]"),v=e.target.closest("[data-hnv]");if(!a&&!v)return;const y=scrollY;if(a)hnSet(a.dataset.hnl);else if(v.dataset.hnv==="all")hnScopeSet("all");else{hnScopeSet("team");hnTeam(v.dataset.hnv)}render();scrollTo(0,y)});
 /* (351) Tocco su una riga di "Live stanotte" / "Migliori del turno": apre Dynasty TV direttamente sulla partita giusta, con il box della squadra del giocatore. */
@@ -7439,6 +7466,13 @@ function tvOwn(n){if(!TVOWN){TVOWN={};TVGL={};for(const t in ROSTER)for(const r 
     try{glPlayers().forEach(p=>{const k=tvNm(p.n);if(!TVOWN[k])TVGL[k]=p.t});if(typeof FA_OWN!=="undefined")for(const m in FA_OWN){const k=tvNm(m);if(!TVOWN[k])TVGL[k]=FA_OWN[m]}}catch(e){}}
   {const g=TVGL[tvNm(n)];if(g&&!TVOWN[tvNm(n)])return`<span class="tvown">${glBadge(g,"tvob")}</span>`}
   const T=TVOWN[tvNm(n)];return`<span class="tvown">${T?T.map(t=>badge(t,"tvob")).join(""):""}</span>`}
+/* Highlights YouTube (canale The Game Time Highlights): ricerca della partita nel canale, con squadre e data USA in inglese */
+const TV_EN=["January","February","March","April","May","June","July","August","September","October","November","December"];
+function tvHLurl(a,h,d){const n=c=>(TVD().teams[c]||[c])[0],dt=tvDt(d),q=`${n(a)} vs ${n(h)} ${TV_EN[dt.getUTCMonth()]} ${dt.getUTCDate()} ${dt.getUTCFullYear()} highlights`;
+  return"https://www.youtube.com/@thegametimehighlights/search?query="+encodeURIComponent(q)}
+function tvHL(a,h,d,st){const yt='<svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#fff"/><path d="M11 5.5v9l8-4.5z" fill="#e00"/></svg>';
+  return st==="F"?`<a class="tvhl" href="${tvHLurl(a,h,d)}" target="_blank" rel="noopener">${yt}<span>Guarda gli highlights</span><small>YouTube · The Game Time Highlights</small></a>`
+    :`<div class="tvhl off">${yt}<span>Highlights a fine partita</span><small>YouTube · The Game Time Highlights</small></div>`}
 function tvGame(key){const T=TVD(),[d,g]=key.split("_"),G=(T.days[d]||[]).find(x=>x[7]===key);if(!G)return"";const[a,h,sa,sh,ot]=G,b=T.box[key],ca=(T.teams[a]||[])[2]||"#333",ch=(T.teams[h]||[])[2]||"#333",dd=tvDt(d);
   const sum=(L,i)=>L.reduce((s,p)=>s+(+p[i]||0),0),pc=(m,x)=>x?(m/x*100).toFixed(1).replace(".",",")+"%":"—";
   const S=L=>({fgm:sum(L,12),fga:sum(L,13),tpm:sum(L,14),tpa:sum(L,15),ftm:sum(L,16),fta:sum(L,17),reb:sum(L,6),oreb:sum(L,4),ast:sum(L,7),stl:sum(L,8),blk:sum(L,9),tov:sum(L,10),pf:sum(L,11),pdk:sum(L,19)});
@@ -7457,6 +7491,7 @@ function tvGame(key){const T=TVD(),[d,g]=key.split("_"),G=(T.days[d]||[]).find(x
   <div class="tvsb" style="--ca:${ca};--ch:${ch}"><div class="tside">${tvLogo(a)}<b>${tvNick(a)}</b><small>${tvRec(a)} · trasferta</small></div>
    <div class="tmid"><div><span class="${sa<sh?"lo":""}">${sa}</span><i>–</i><span class="${sh<sa?"lo":""}">${sh}</span></div><small>${G[5]==="L"?"Live · "+(TVL.st[key]||""):"Finale"+(ot?" · OT":"")}</small></div>
    <div class="tside">${tvLogo(h)}<b>${tvNick(h)}</b><small>${tvRec(h)} · casa</small></div></div>
+  ${tvHL(a,h,d,G[5])}
   <div class="tvtabs"><button class="tvtab" data-tvside="a" aria-pressed="${side==="a"}">${tvLogo(a)}${tvNick(a)}</button><button class="tvtab" data-tvside="h" aria-pressed="${side==="h"}">${tvLogo(h)}${tvNick(h)}</button></div>
   <div class="tbl-wrap"><table class="ptbl tvbox"><thead><tr><th>Giocatore</th><th class="pdkl">${LV?"PDK live":"PDK"}</th><th>Min</th><th>Pt</th><th>RIM</th><th>AST</th><th>STL</th><th>Stp</th><th>TOV</th><th>Tiri</th><th>Da 3</th><th>Liberi</th><th>Off</th><th>Dif</th><th>Falli</th><th>+/−</th></tr></thead>
   <tbody><tr class="grp"><td>Quintetto</td><td colspan="15"></td></tr>${st.map(pr).join("")}<tr class="grp"><td>Panchina</td><td colspan="15"></td></tr>${bn.map(pr).join("")}${tot}</tbody></table></div>
