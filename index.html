@@ -3236,13 +3236,23 @@ function iaProf(t){if(iaPC[t])return iaPC[t];
   if(!iaPC._lg){const all=Object.keys(ROSTER).map(x=>iaAvg(iaEff(x).map(p=>iaAge(p[0]))));iaPC._lg=iaAvg(all)||26;
     iaPC._pos={};try{const st=drStand(),ld=st[0]?st[0].w:0;st.forEach((x,i)=>{const rem=Math.max(0,DR_REG-x.n);let c=[1,1,.6,.2,-.2,-.5,-.8,-1][i]??0;if(i>0&&ld-x.w>rem*.45)c=Math.min(c,-.1);c*=Math.min(1,(x.n+3)/8);iaPC._pos[x.t]={r:i+1,c,n:x.n}})}catch(e){}}
   const ps=iaPC._pos[t]||{r:0,c:0,n:0};return iaPC[t]={age:iaAvg(iaEff(t).map(p=>iaAge(p[0]))),lg:iaPC._lg,r:ps.r,c:ps.c,n:ps.n}}
-/* RENDIMENTO di un giocatore (PDK): mix di media di riferimento (pdkMix), media stagionale, media delle ultime 10 gare e trend dell'ultimo mese.
-   Pesi: riferimento 40%, stagione 30% (cresce con le partite giocate), ultime 10 gare 30% (servono ≥3 gare); il trend sposta il risultato fino a ±9%. */
-function iaPerf(n){const k="p:"+n;if(iaPC[k])return iaPC[k];let base=iaProd(n),sea=null,l10=null,g=[];
-  try{g=grGames(n,GR_SZ[0]).map(x=>x.pdk).filter(v=>v!=null&&!isNaN(v))}catch(e){}
-  if(g.length){sea=g.reduce((a,b)=>a+b,0)/g.length;if(g.length>=3){const l=g.slice(-10);l10=l.reduce((a,b)=>a+b,0)/l.length}}
-  const ws=sea==null?0:.3*Math.min(1,g.length/10),wl=l10==null?0:.3,wb=base>0?.4:0;let v=0,w=0;if(wb){v+=wb*base;w+=wb}if(ws){v+=ws*sea;w+=ws}if(wl){v+=wl*l10;w+=wl}
-  v=w?v/w:0;const T=iaTrend(n);if(T)v*=1+iaCl(T.pct/100,.3)*.3;return iaPC[k]={v,base,sea,l10,tr:T?T.pct:null}}
+/* RENDIMENTO di un giocatore (PDK).
+   - Veterano: media di riferimento (pdkMix) 35% + media stagionale 35% (cresce con le gare) + ultime 10 gare 10% (≥3 gare); poi il CONFRONTO CON LA STAGIONE PRECEDENTE
+     (parametro chiave, ±30%: chi rende meno dell'anno scorso perde valore, chi rende di più ne guadagna; servono ≥3 gare quest'anno e ≥15 l'anno scorso) e il trend dell'ultimo mese (±9%).
+   - Rookie: contano punteggio PDK e efficienza del primo anno rispetto alla soglia del ruolo (guardia 0,60 · ala 0,66 · centro 0,80; ottimo 0,60 / 0,66 / 0,85 e oltre): l'efficienza sposta il rendimento fino a ±15%. */
+const IA_RKT={G:.60,F:.66,C:.80},IA_RKO={G:.60,F:.66,C:.85};
+function iaPerf(n){const k="p:"+n;if(iaPC[k])return iaPC[k];let base=iaProd(n),g=[],pg=[];
+  try{g=grGames(n,GR_SZ[0]).filter(x=>x.pdk!=null&&!isNaN(x.pdk))}catch(e){}
+  const pd=g.map(x=>x.pdk),sea=pd.length?pd.reduce((a,b)=>a+b,0)/pd.length:null,l10=pd.length>=3?(()=>{const l=pd.slice(-10);return l.reduce((a,b)=>a+b,0)/l.length})():null;
+  const ef=g.map(x=>x.eff).filter(v=>v!=null&&!isNaN(v)),eff=ef.length?ef.reduce((a,b)=>a+b,0)/ef.length:null;
+  if(isRookie(n)){const role=ruoloDi(n),thr=IA_RKT[role]||.66,opt=IA_RKO[role]||.66;let v=pd.length>=2?sea:(base||sea||0);if(!v)v=base||0;const er=eff==null?null:eff/thr;if(er!=null)v*=1+iaCl(er-1,.25)*.6;
+    const c01=x=>Math.max(0,Math.min(1,x)),rq=.5*c01(((v||0)-12)/12)+.5*(eff==null?.4:c01((eff-(thr-.1))/(opt-thr+.2)));
+    return iaPC[k]={v:v||0,rk:true,sea,eff,thr,opt,rq,label:rq>=.65?"ottimo rookie":rq>=.4?"buon rookie":"rookie da valutare",rel:null}}
+  const ws=sea==null?0:.35*Math.min(1,pd.length/10),wl=l10==null?0:.10,wb=base>0?.35:0;let v=0,w=0;if(wb){v+=wb*base;w+=wb}if(ws){v+=ws*sea;w+=ws}if(wl){v+=wl*l10;w+=wl}v=w?v/w:0;
+  try{pg=grGames(n,"2025/26").filter(x=>x.pdk!=null&&!isNaN(x.pdk)).map(x=>x.pdk)}catch(e){}
+  const prev=pg.length>=15?pg.reduce((a,b)=>a+b,0)/pg.length:null;let rel=null;
+  if(prev&&sea!=null&&pd.length>=3){rel=(sea-prev)/prev;v*=1+iaCl(rel,.4)*.75*Math.min(1,pd.length/8)}
+  const T=iaTrend(n);if(T)v*=1+iaCl(T.pct/100,.3)*.3;return iaPC[k]={v,base,sea,l10,prev,rel,ng:pd.length,tr:T?T.pct:null}}
 const iaRs=n=>{const cr=iaCrOf(n);return Math.max(.05,(iaP(n)/VAL_CR)/Math.max(1,cr))};
 const iaEf=n=>{try{const v=pagella(n).s.eff;return v==null||isNaN(v)?null:v/5}catch(e){return null}};
 const iaCl=(v,a)=>Math.max(-a,Math.min(a,v));
@@ -3255,6 +3265,12 @@ function iaPref(t,recv,gave){const P=iaProf(t),o={dl:0,parts:[]},f1=v=>v.toFixed
   /* rendimento (media di riferimento + stagione + ultime 10 + trend): a tutti non piace perdere rendimento a parità di valore */
   const pI=iaAvg(recv.map(x=>iaPerf(x.n).v))||0,pO=iaAvg(gave.map(x=>iaPerf(x.n).v))||0,pd=iaCl((pI-pO)/Math.max(10,pI,pO),1);o.dl+=.10*pd;
   if(!(P.r&&P.c>=.25)&&Math.abs(pd)>=.2)o.parts.push(pd>0?`ci guadagna in rendimento (PDK ${f1(pI)} contro ${f1(pO)})`:`ci perde in rendimento (PDK ${f1(pI)} contro ${f1(pO)})`);
+  /* rookie: chi punta a vincere non li prende; chi ricostruisce li cerca, soprattutto se già rendono (PDK ed efficienza del ruolo) */
+  {const rI=recv.filter(x=>iaPerf(x.n).rk),rO=gave.filter(x=>iaPerf(x.n).rk),rd=iaSum(rI,x=>iaPerf(x.n).rq)-iaSum(rO,x=>iaPerf(x.n).rq);
+   if(rI.length||rO.length){o.dl+=.22*(-P.c)*iaCl(rd,1);
+     const dsc=x=>{const q=iaPerf(x.n);return`${x.n.split(" ").slice(-1)[0]} (${q.sea!=null?"PDK "+f1(q.sea):"nessuna gara"}${q.eff!=null?", efficienza "+q.eff.toFixed(2).replace(".",","):""} · ${q.label})`};
+     if(P.r&&P.c<=-.25){if(rI.length)o.parts.push(`ricostruisce: riceve il rookie ${rI.map(dsc).join(", ")}`);if(rO.length)o.parts.push(`ricostruisce: cede malvolentieri il rookie ${rO.map(dsc).join(", ")}`)}
+     else if(P.r&&P.c>=.3){if(rI.length)o.parts.push(`punta a vincere: non è interessata ai rookie (${rI.map(x=>x.n.split(" ").slice(-1)[0]).join(", ")})`);if(rO.length)o.parts.push(`punta a vincere: cede volentieri il rookie ${rO.map(x=>x.n.split(" ").slice(-1)[0]).join(", ")}`)}}}
   /* classifica */
   if(P.r&&Math.abs(P.c)>=.25){
     if(P.c>0){const qd=iaCl((iaAvg(recv.map(x=>iaQ(x.n)))??.5)-(iaAvg(gave.map(x=>iaQ(x.n)))??.5),.5)*2,
@@ -3281,6 +3297,9 @@ function iaInt(S,t,recv,gave,adv){const nb=iaNeed(S,t,recv,gave),vs=Math.max(0,M
   recv.forEach(x=>{const T=iaTrend(x.n);if(!T||Math.abs(T.pct)<10)return;const w=Math.max(1,x.v||x.val||1)/totR,c=Math.max(-.5,Math.min(.5,T.pct/100));dl+=c*.5*Math.max(.4,w);
     (T.pct>0?rU:rD).push(`${x.n.split(" ").slice(-1)[0]} ${T.pct>0?"+":"−"}${Math.round(Math.abs(T.pct))}%`+(Math.abs(T.pct)>=20?" (forte)":""))});
   if(rU.length)p.push(`gli interessa di più perché ${rU.join(", ")} è in salita nell'ultimo mese`);if(rD.length)p.push(`gli interessa meno perché ${rD.join(", ")} è in calo nell'ultimo mese`);
+  /* confronto con la STAGIONE PRECEDENTE (parametro chiave): chi cede un giocatore in calo rispetto all'anno scorso se ne libera volentieri, se è in crescita non lo vuole dare; per chi riceve è il contrario */
+  {const vs=(L,sg)=>{const a=[],tt=L.reduce((x,y)=>x+Math.max(1,y.v||1),0)||1;L.forEach(x=>{const q=iaPerf(x.n);if(q.rk||q.rel==null||Math.abs(q.rel)<.12)return;dl+=sg*iaCl(q.rel,.5)*.6*Math.max(.4,Math.max(1,x.v||1)/tt)*Math.min(1,(q.ng||0)/8);a.push(`${x.n.split(" ").slice(-1)[0]} ${q.rel>0?"in crescita":"in calo"} (PDK ${q.prev.toFixed(1).replace(".",",")} → ${q.sea.toFixed(1).replace(".",",")})`)});return a},
+    gU=vs(gave,-1),rU2=vs(recv,1);if(gU.length)p.push(`rispetto alla scorsa stagione: cede ${gU.join(", ")}`);if(rU2.length)p.push(`rispetto alla scorsa stagione: riceve ${rU2.join(", ")}`)}
   const pf=iaPref(t,recv,gave);dl+=pf.dl;pf.parts.forEach(x=>p.push(x));
   dl=Math.max(-.45,Math.min(.45,dl));const sc2=Math.max(0,Math.min(1,sc+dl)),l2=sc2>=.62?"alto":sc2>=.42?"medio":"basso";
   return{t,l:l2,sc:sc2,txt:`${nick}: ${p.join(" · ")}`}}
