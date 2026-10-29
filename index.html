@@ -845,8 +845,8 @@ nav button{font-size:15px;letter-spacing:.04em}
 .hrl:active{transform:scale(.96)}.hrl .badge{width:100%!important;height:100%!important;display:block;border-radius:0}
 .hmmain{display:grid;gap:10px;min-width:0}
 .hmq{overflow:hidden;border-radius:14px;min-width:0}
-.hmqt{display:flex;width:max-content;animation:hmq 30s linear infinite}
-@keyframes hmq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.hmqt{display:flex;width:max-content;animation:hmq 30s linear infinite;will-change:transform;backface-visibility:hidden}
+@keyframes hmq{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
 @media (prefers-reduced-motion:reduce){.hmqt{animation:none}.hmq{overflow-x:auto}}
 .hmg{flex:0 0 128px;margin-right:9px;padding:9px 10px;border-radius:14px;color:#fff;background:linear-gradient(160deg,rgba(76,29,149,.85),rgba(17,10,48,.95) 60%,rgba(30,58,138,.8));border:1px solid rgba(232,121,249,.5);box-shadow:0 0 0 1px rgba(168,85,247,.25),0 0 16px rgba(168,85,247,.35)}
 .hmnone{flex:1 1 auto;margin:0}
@@ -3658,7 +3658,7 @@ function segInfo(n){
   return{t:null,own:"—",nba:"",kind:"?"}}
 function osNight(){const o={};if(typeof TV==="undefined")return o;const d=campoNotte();if(!d)return o;
   for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
-    [["a",g[1]],["h",g[0]]].forEach(([sd,opp])=>(B[sd]||[]).forEach(r=>{if(r[19]==null)return;const mm=String(r[2]||"0").split(":");o[tvNm(r[0])]={p:+r[19],min:(+mm[0]||0)+(+mm[1]||0)/60,mt:r[2],pt:r[3],rb:r[6],as:r[7],opp,lv:g[5]==="L",st:g[5]==="L"?(TVL.st[g[7]]||"Live"):"Finale"}}))}
+    [["a",g[1]],["h",g[0]]].forEach(([sd,opp])=>(B[sd]||[]).forEach(r=>{if(r[19]==null)return;const mm=String(r[2]||"0").split(":");o[tvNm(r[0])]={p:+r[19],min:(+mm[0]||0)+(+mm[1]||0)/60,mt:r[2],pt:r[3],rb:r[6],as:r[7],opp,lv:g[5]==="L",st:g[5]==="L"?(TVL.st[g[7]]||"Live"):"Finale",k:g[7],sd,dy:d}}))}
   return o}
 /* Notifica sul tasto Osservatorio: quanti seguiti stanno giocando live (lampeggia) o hanno giocato la notte (fino a mezzogiorno, ora del telefono) */
 function segStato(){let lv=0,nt=0;if(!SEGUI.length)return{n:0,lv:0};const NI=osNight();SEGUI.forEach(n=>{const N=NI[tvNm(n)];if(!N)return;if(N.lv)lv++;else nt++});const mattina=new Date().getHours()<12;return{n:lv+(mattina?nt:0),lv}}
@@ -3712,9 +3712,10 @@ function hnSet(k){HN_L=["5","6"].includes(k)?k:"";try{HN_L?localStorage.setItem(
 const homeMyT=()=>{let t=curTeam;try{const x=localStorage.getItem("team");if(x&&TEAMS[x])t=x}catch(e){}return t};
 function homeNotte(st){
   const myT=homeMyT(),d=campoNotte()||flUsaOggi(),GG=(typeof TV!=="undefined"&&TV.days[d]||[]).filter(g=>g[5]==="L"||g[5]==="F"||g[5]==="S");
-  const gm=g=>{const L=g[5]==="L",F=g[5]==="F",sc=v=>v==null?"–":v;return`<div class="hmg"><div class="hmr"><em>${g[1]}</em><span>${sc(g[3])}</span></div><div class="hmr"><em>${g[0]}</em><span>${sc(g[2])}</span></div><small>${L?`<span class="hmlv">LIVE</span> ${((TVL.st[g[7]]||"").replace(/^Live\s*-?\s*/i,""))}`:F?"FINALE":(g[6]||"")}</small></div>`};
-  const banner=GG.length?`<div class="hmq"><div class="hmqt" style="animation-duration:${Math.max(24,GG.length*7)}s">${GG.map(gm).join("")}${GG.map(gm).join("")}</div></div>`:`<div class="hmq"><div class="hmg hmnone"><small>Nessuna partita NBA stanotte</small></div></div>`;
-  const row=(n,N,sub)=>`<div class="hmp" data-hpn="${String(n).replace(/"/g,"&quot;")}" role="button" tabindex="0"><span class="hmn">${N&&N.lv?'<i class="hmd"></i>':""}${String(n).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}<small>${sub}</small></span>${pdkB(N.p,pdkF(N.p))}</div>`;
+  const gm=g=>{const L=g[5]==="L",F=g[5]==="F",sc=v=>v==null?"–":v;return`<div class="hmg" data-hgo="${d}|${g[7]||""}|a" role="link" tabindex="0"><div class="hmr"><em>${g[1]}</em><span>${sc(g[3])}</span></div><div class="hmr"><em>${g[0]}</em><span>${sc(g[2])}</span></div><small>${L?`<span class="hmlv">LIVE</span> ${((TVL.st[g[7]]||"").replace(/^Live\s*-?\s*/i,""))}`:F?"FINALE":(g[6]||"")}</small></div>`};
+  const CW=137,PPS=40,rep=GG.length?Math.max(1,Math.ceil(520/(GG.length*CW))):1,one=GG.map(gm).join("").repeat(rep),dur=Math.max(20,Math.round(GG.length*rep*CW/PPS));
+  const banner=GG.length?`<div class="hmq"><div class="hmqt" data-d="${dur}" style="animation-duration:${dur}s">${one}${one}</div></div>`:`<div class="hmq"><div class="hmg hmnone"><small>Nessuna partita NBA stanotte</small></div></div>`;
+  const row=(n,N,sub)=>`<div class="hmp" ${N.k?`data-hgo="${N.dy}|${N.k}|${N.sd}"`:`data-hpn="${String(n).replace(/"/g,"&quot;")}"`} role="link" tabindex="0"><span class="hmn">${N&&N.lv?'<i class="hmd"></i>':""}${String(n).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}<small>${sub}</small></span>${pdkB(N.p,pdkF(N.p))}</div>`;
   let mine=[];try{const M=campoNotteMap(myT);mine=Object.keys(M).map(n=>({n,N:M[n]}))}catch(e){}
   mine.sort((a,b)=>(b.N.lv-a.N.lv)||(b.N.p-a.N.p));
   const mTot=mine.reduce((a,x)=>a+(x.N.p||0),0);
@@ -3726,7 +3727,12 @@ function homeNotte(st){
   <div class="hmmain" id="hmmain">${TOP?`<div class="hmsec"><span>${GG.some(g=>g[5]==="L")?"LIVE ADESSO":"PARTITE DELLA NOTTE"}</span><span>${GG.length} PARTITE</span></div>`:""}${banner}${panel("I MIEI · "+TEAMS[myT].nick.toUpperCase(),"m",mine,"Nessuno dei tuoi giocatori in campo stanotte.",mTot)}${panel("★ SEGUITI","s",seg,SEGUI.length?"Nessuno dei tuoi seguiti in campo stanotte.":"Tocca il segnalibro su un giocatore per seguirlo.",null)}</div></div>`}
 function homeNotteRefresh(){if(cur!=="home"||!CNT||!HN_L)return;const el=document.querySelector(".hn6");if(!el)return;try{const h=document.createElement("div");h.innerHTML=homeNotte(standings());const n=h.firstElementChild;if(n&&n.innerHTML!==el.innerHTML){const q=el.querySelector(".hmqt"),old=q?q.style.animationDelay:"";el.innerHTML=n.innerHTML;bindHomeNotte(el)}}catch(e){}}
 function bindHomeNotte(root){root.querySelectorAll(".hrl").forEach(b=>b.onclick=()=>{curTeam=b.dataset.team;try{localStorage.setItem("team",curTeam)}catch(e){}cur="campo";render();window.scrollTo(0,0)});
-  root.querySelectorAll("[data-hpn]").forEach(b=>b.onclick=()=>{plOpen(b.dataset.hpn)})}
+  root.querySelectorAll("[data-hpn]").forEach(b=>b.onclick=()=>{plOpen(b.dataset.hpn)});
+  root.querySelectorAll("[data-hgo]").forEach(b=>b.onclick=()=>{const[dy,key,sd]=b.dataset.hgo.split("|");TVS.d=dy;TVS.g=key&&TV.box[key]?key:null;TVS.side=sd==="h"?"h":"a";cur="tv";render();window.scrollTo(0,0)});
+  hnPhase(root)}
+/* il banner parte da un orologio unico: dopo ogni aggiornamento o ridisegno riprende dal punto giusto, senza tornare all'inizio */
+const HN_T0=performance.now();
+function hnPhase(root){const q=root.querySelector(".hmqt");if(q){const d=+q.dataset.d||30;q.style.animationDelay=-(((performance.now()-HN_T0)/1000)%d).toFixed(3)+"s"}}
 
 let curPlayer=null;
 let gFrom="roster";
@@ -5116,7 +5122,7 @@ document.addEventListener("click",e=>{const pb=e.target.closest("[data-shpc]");i
 let CNT=false;
 function campoNotteMap(t){const d=campoNotte(),o={};if(!d)return o;const mine={};(ROSTER[t]||[]).forEach(p=>mine[tvNm(p[0])]=p[0]);
   for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
-    [["a",g[1]],["h",g[0]]].forEach(([sd,opp])=>(B[sd]||[]).forEach(r=>{const n=mine[tvNm(r[0])];if(n&&r[19]!=null)o[n]={p:+r[19],opp,lv:g[5]==="L",st:g[5]==="L"?(TVL.st[g[7]]||"Live"):"Finale"}}))}
+    [["a",g[1]],["h",g[0]]].forEach(([sd,opp])=>(B[sd]||[]).forEach(r=>{const n=mine[tvNm(r[0])];if(n&&r[19]!=null)o[n]={p:+r[19],opp,lv:g[5]==="L",st:g[5]==="L"?(TVL.st[g[7]]||"Live"):"Finale",k:g[7],sd,dy:d}}))}
   return o}
 /* Campo fuori dalla modalità notte: 6° uomo (punteggio pieno) + panchina Dreamers (×½) in stile Dunkest con le maglie, poi tribuna */
 /* Formazione Dreamers nella pagina squadra: stesso blocco (maglia + targhetta + cartellino PDK) per campo, 6° uomo e panchina.
