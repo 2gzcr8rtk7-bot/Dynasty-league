@@ -4374,11 +4374,13 @@ function homeNotte(st){
   const row=(n,N,sub,own)=>`<div class="hmp" ${N.k?`data-hgo="${N.dy}|${N.k}|${N.sd}"`:`data-hpn="${String(n).replace(/"/g,"&quot;")}"`} role="link" tabindex="0"><span class="hmn">${N&&N.lv?'<i class="hmd"></i>':""}${own?`<i class="hmo">${badge(own)}</i>`:""}<span class="plk" data-plopen="${String(n).replace(/"/g,"&quot;")}">${String(n).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}</span><small>${sub}</small></span>${pdkB(N.p,pdkF(N.p))}</div>`;
   let mine=[];try{const M=campoNotteMap(myT);mine=Object.keys(M).map(n=>({n,N:M[n]}))}catch(e){}
   const OFF=hnScope()==="all";
-  const hsoHead=(tit,on,n,r)=>on?`<div class="hmh"><span><button type="button" class="hso${HN_SO==="team"?" on":""}" data-hso="team">${tit}${HN_SO==="team"?" · "+(TEAMS[HN_ORD[HN_SI]]||{nick:""}).nick.toUpperCase():""}</button></span><span><button type="button" class="hso${HN_SO==="team"?"":" on"}" data-hso="pdk">${n} GIOCATORI</button></span></div>`:`<div class="hmh"><span>${tit}</span><span>${r}</span></div>`;
+  const hsoHead=(tit,on,n,r)=>on?`<div class="hmh"><span><button type="button" class="hso${HN_SO==="team"?" on":""}" data-hso="team">${tit}${HN_SO==="team"?" · "+(TEAMS[HN_ORD[HN_SI]]||{nick:""}).nick.toUpperCase():""}</button></span><span><button type="button" class="hso${HN_SO==="team"?"":" on"}" data-hso="pdk">${n} ${n==1?"GIOCATORE":"GIOCATORI"}</button></span></div>`:`<div class="hmh"><span>${tit}</span><span>${r}</span></div>`;
   const hsoOrd=x=>{const i=HN_ORD.indexOf(x.own);return i<0?99:(i-HN_SI+8)%8};
+  /* (444) il pulsante «Tutte le squadre» FILTRA: con HN_SO==="team" restano solo i giocatori della squadra HN_ORD[HN_SI]; HN_OWN = squadre che hanno giocatori in lista (il giro salta le altre) */
+  window.HN_OWN=new Set();const hsoF=l=>(OFF&&HN_SO==="team")?l.filter(x=>x.own===HN_ORD[HN_SI]):l;
   if(OFF){mine=[];teamOrd().forEach(t=>{try{const M=campoNotteMap(t);Object.keys(M).forEach(n=>mine.push({n,N:M[n],own:t}))}catch(e){}})}
   mine.sort((a,b)=>(b.N.lv-a.N.lv)||(b.N.p-a.N.p));
-  if(OFF&&HN_SO==="team")mine.sort((a,b)=>hsoOrd(a)-hsoOrd(b));
+  if(OFF){mine.forEach(x=>HN_OWN.add(x.own));mine=hsoF(mine)}
   const mTot=mine.reduce((a,x)=>a+(x.N.p||0),0);
   let seg=[];try{const NI=osNight();seg=SEGUI.map(n=>({n,N:NI[tvNm(n)]})).filter(x=>x.N)}catch(e){}
   seg.sort((a,b)=>(b.N.lv-a.N.lv)||(b.N.p-a.N.p));
@@ -4396,12 +4398,12 @@ function homeNotte(st){
   const preRow=(x,mn)=>{const cap=x.def&&x.def.n?`${x.def.pct>=10?"difesa morbida":x.def.pct<=-10?"difesa dura":"difesa nella media"} vs ${({G:"guardie",F:"ali",C:"centri"})[x.role]||"ruolo"} (${x.def.pct>0?"+":""}${Math.round(x.def.pct)}%)`:"";
     const right=mn?`<span class="hmv pv"><small>PREVISIONE</small>${pdkB(x.pred,x.pred==null?"—":pdkF(x.pred))}</span><span class="hmv"><small>DA SUPERARE</small>${pdkB(x.best,x.best==null?"—":pdkF(x.best))}</span>`:`<span class="hmv"><small>TREND</small>${x.tr?`<span class="hmtr ${Math.abs(x.tr.pct)<3?"s":x.tr.pct>0?"u":"d"}">${Math.abs(x.tr.pct)<3?"=":(x.tr.pct>0?"▲ +":"▼ −")+Math.abs(x.tr.pct).toFixed(0)+"%"}</span>`:'<span class="dash">—</span>'}</span>`;
     return`<div class="hmp" data-hgo="${d}|${x.g[7]||""}|${x.sd}" role="link" tabindex="0"><span class="hmn">${OFF&&x.own?`<i class="hmo">${badge(x.own)}</i>`:""}${esc(x.n)}<small>vs ${x.opp} · ${x.t.replace("+1","")}</small><small>Media vs ${x.opp}: ${x.avg==null?"nessuna gara":pdkF(x.avg)+" · "+x.c+(x.c===1?" gara":" gare")}</small>${mn&&cap?`<small>${cap}</small>`:""}</span><span class="hmvs">${right}</span></div>`};
-  const prePanel=(tit,cls,list,vuoto)=>`<div class="hmcard ${cls}${OFF&&cls==="m"?" all":""}">${hsoHead(tit,OFF&&cls==="m",list.length,"")}${list.length?W(cls,(OFF&&cls==="m"&&HN_SO==="team"?list.slice().sort((a,b)=>hsoOrd(a)-hsoOrd(b)):list).map(x=>preRow(x,cls==="m")).join("")):`<p class="hmvu">${vuoto}</p>`}</div>`;
+  const prePanel=(tit,cls,list,vuoto)=>{if(OFF&&cls==="m"){list.forEach(x=>HN_OWN.add(x.own));list=hsoF(list)}return`<div class="hmcard ${cls}${OFF&&cls==="m"?" all":""}">${hsoHead(tit,OFF&&cls==="m",list.length,"")}${list.length?W(cls,list.map(x=>preRow(x,cls==="m")).join("")):`<p class="hmvu">${vuoto}</p>`}</div>`};
   /* (372) in attesa dei dati (nessun giocatore ancora in campo / dati non ancora caricati) la tabella non resta vuota: mostra i giocatori con la MEDIA PDK; appena arrivano i dati della notte viene sostituita da sola */
   const avgP=n=>{try{let v=(PARTITE[n]||[]).map(x=>+x[3]).filter(x=>!isNaN(x));if(!v.length)v=((STAGIONI["2025/26"]||{})[n]||[]).map(x=>+x[3]).filter(x=>!isNaN(x));return v.length?v.reduce((a,b)=>a+b,0)/v.length:null}catch(e){return null}};
   const phList=names=>names.map(x=>({n:x.n,own:x.own,a:avgP(x.n)})).filter(x=>x.a!=null).sort((a,b)=>b.a-a.a);
-  const phM=OFF?phList(Object.keys(ROSTER).flatMap(t=>(ROSTER[t]||[]).map(p=>({n:p[0],own:t})))):phList((ROSTER[myT]||[]).map(p=>({n:p[0],own:myT}))),phS=phList(SEGUI.map(n=>({n,own:null})));
-  if(OFF&&HN_SO==="team")phM.sort((a,b)=>hsoOrd(a)-hsoOrd(b));
+  let phM=OFF?phList(Object.keys(ROSTER).flatMap(t=>(ROSTER[t]||[]).map(p=>({n:p[0],own:t})))):phList((ROSTER[myT]||[]).map(p=>({n:p[0],own:myT}))),phS=phList(SEGUI.map(n=>({n,own:null})));
+  if(OFF){phM.forEach(x=>HN_OWN.add(x.own));phM=hsoF(phM)}
   const phRow=(x,own)=>row(x.n,{p:x.a,lv:false},`${((segInfo(x.n)||{}).nba||"")} · media PDK`,own?x.own:null);
   const panel=(tit,cls,list,vuoto,tot)=>{const ph=list.length?[]:(cls==="m"?phM:phS);return`<div class="hmcard ${cls}${OFF&&cls==="m"?" all":""}${ph.length?" hmph":""}">${hsoHead(tit,OFF&&cls==="m",list.length||ph.length,ph.length?"MEDIA PDK":"PDK"+((cls==="m"?mLv:sLv)?" LIVE":""))}${list.length?W(cls,list.map(x=>row(x.n,x.N,`vs ${x.N.opp} · ${x.N.lv?`<b class="hmc">${x.N.st||"Live"}</b>`:"Finale"}`,OFF&&cls==="m"?x.own:null)).join("")):ph.length?W(cls,ph.map(x=>phRow(x,OFF&&cls==="m")).join("")):`<p class="hmvu">${vuoto}</p>`}${tot!=null&&list.length?`<div class="hmt"><span>TOTALE</span><b>${pdkF(tot)}</b></div>`:""}</div>`};
   const TOP=hnLay()==="5";
@@ -4422,7 +4424,7 @@ function hnDrag(root){const hq=root.querySelector(".hmq"),q=root.querySelector("
   hq.addEventListener("pointerup",end);hq.addEventListener("pointercancel",end);hq.addEventListener("pointerleave",e=>{if(id===e.pointerId&&e.pointerType==="mouse")end(e)});
   hq.addEventListener("click",e=>{if(mv){e.stopPropagation();e.preventDefault();mv=false}},true)}
 function bindHomeNotte(root){root.querySelectorAll(".hrl").forEach(b=>b.onclick=()=>{curTeam=b.dataset.team;try{localStorage.setItem("team",curTeam)}catch(e){}cur="campo";render();window.scrollTo(0,0)});
-  root.querySelectorAll("[data-hso]").forEach(b=>b.onclick=e=>{e.stopPropagation();if(b.dataset.hso==="team"){HN_SI=HN_SO==="team"?(HN_SI+1)%8:0;HN_SO="team"}else HN_SO="";try{HN_SO?(localStorage.setItem("dl_hso","team"),localStorage.setItem("dl_hsi",HN_SI)):localStorage.removeItem("dl_hso")}catch(_){}homeNotteRefresh()});
+  root.querySelectorAll("[data-hso]").forEach(b=>b.onclick=e=>{e.stopPropagation();if(b.dataset.hso==="team"){const av=i=>!HN_OWN.size||HN_OWN.has(HN_ORD[i]);let i=HN_SO==="team"?HN_SI+1:0;while(i<8&&!av(i))i++;if(i>7)HN_SO="";else{HN_SO="team";HN_SI=i}}else HN_SO="";try{HN_SO?(localStorage.setItem("dl_hso","team"),localStorage.setItem("dl_hsi",HN_SI)):localStorage.removeItem("dl_hso")}catch(_){}homeNotteRefresh()});
   root.querySelectorAll("[data-hdr]").forEach(b=>b.onclick=()=>{TVS.dr=b.dataset.hdr;TVS.drs="a";TVS.g=null;cur="tv";render();window.scrollTo(0,0)});
   root.querySelectorAll("[data-hpn]").forEach(b=>b.onclick=()=>{plOpen(b.dataset.hpn)});
   root.querySelectorAll("[data-hgo]").forEach(b=>b.onclick=e=>{if(e&&e.target.closest&&e.target.closest("[data-plopen]"))return;const[dy,key,sd]=b.dataset.hgo.split("|");TVS.d=dy;TVS.g=key&&TV.box[key]?key:null;TVS.side=sd==="h"?"h":"a";cur="tv";render();window.scrollTo(0,0)});
