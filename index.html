@@ -6025,17 +6025,17 @@ function histTradeModel(i){const T=TRADES[i];if(!histTradeOk(T))return null;
   try{M.vd=sides.map((sd,k)=>histVerdictSide(M,k,i));M.final=histFinal(M,i)}catch(e){console.error(e);M.vd=[];M.final=""}
   return M}
 async function shHistTrade(i){const M=histTradeModel(i);if(!M)return null;
-  const W=1080,pw=(W-112-24)/2,rowH=186;
+  const W=1080,pw=(W-112-24)/2,rowH=186,SC=1.18;
   const{cv:cv0,c:c0}=await shBase(300,W,0,1);
   const mc=document.createElement("canvas").getContext("2d");
   const wrap=(c,t,w)=>{const L=[];let cu="";String(t).split(" ").forEach(x=>{const q=cu?cu+" "+x:x;if(c.measureText(q).width>w&&cu){L.push(cu);cu=x}else cu=q});if(cu)L.push(cu);return L};
-  const pH=M.sides.map(sd=>230+sd.pl.length*rowH+((sd.crTxt.length+sd.ex.length)?84:0)+24),panH=Math.max(...pH);
+  const pH=M.sides.map(sd=>230+Math.round(sd.pl.length*rowH*SC)+((sd.crTxt.length+sd.ex.length)?84:0)+24),panH=Math.max(...pH);
   /* testi del parere */
   mc.font=SH_B(500,27);const sumTxt=(()=>{const f=TEAMS[M.fav].nick,l=M.sides.find(x=>x.t!==M.fav),lk=M.ints.map((x,k)=>x&&x.sc).map(v=>v??0);
     const best=lk[0]>=lk[1]?0:1,t0=TEAMS[M.sides[best].t].nick,t1=TEAMS[M.sides[1-best].t].nick;
     return(M.final||"")+(M.d<.10?` (Valori: scambio equilibrato, squilibrio ${Math.round(M.d*100)}%.)`:` (Valori: vantaggio ${f}, squilibrio ${Math.round(M.d*100)}%.)`)})();
   const blocks=M.ints.map((x,k)=>{const body=x.txt.replace(/^[^:]+:\s*/,"").replace(/^intenzioni:[^(]*\([^)]*\)\s*·?\s*/,"").replace(/^[^(·]*\)\s*·?\s*/,""),sh=M.shift[k],vd=M.vd&&M.vd[k],ww=W-56*2-52;
-    return{x,sh,vd,S:wrap(mc,vd?vd.txt:(sh?sh.txt:""),ww).slice(0,9),Tc:(M.tech[k]||[]).map(t=>({pos:t.pos,L:wrap(mc,"› "+t.txt,ww).slice(0,3)})),L:wrap(mc,"Interesse "+x.l+": "+body.split(" · ").slice(0,3).join(" · "),ww).slice(0,4)}});
+    return{x,sh,vd,S:wrap(mc,vd?vd.txt:(sh?sh.txt:""),ww).slice(0,9),Tc:(M.tech[k]||[]).map(t=>({pos:t.pos,L:wrap(mc,"› "+t.txt,ww).slice(0,3)})),L:[]}});
   const parH=210+wrap(mc,sumTxt,W-112-40).length*38+14+blocks.reduce((q,b)=>q+24+34+(b.S.length?b.S.length*36+16:0)+b.Tc.reduce((u,t)=>u+t.L.length*36+8,0)+(b.Tc.length?10:0)+b.L.length*36,0)+16;
   const H=190+panH+40+parH+130;
   const{cv,c}=await shBase(H,W,0,1);
@@ -6052,16 +6052,16 @@ async function shHistTrade(i){const M=histTradeModel(i);if(!M)return null;
     const pc=sd.pc,col=pc>=3?"#4ade80":pc<=-3?"#f87171":"#facc15",ptxt=(pc>0?"+":"")+pc+"%";shRR(c,x0+178,y+142,150,54,14);c.fillStyle="rgba(10,6,24,.7)";c.fill();c.fillStyle=col;c.font=SH_F(800,42,1);c.textAlign="center";c.textBaseline="middle";c.fillText(ptxt,x0+178+75,y+170);
     c.textAlign="left";c.font=SH_F(700,20,1);c.fillStyle=col;c.fillText(trPcWord(pc).toUpperCase(),x0+338,y+170);
     let yy=y+230;
-    for(const n of sd.pl){const own=Object.entries(ROSTER).find(([t,a])=>a.some(p=>p[0]===n)),num=NUM[n],role=ruoloDi(n),rc=role==="G"?"#ef4444":role==="F"?"#60a5fa":"#fbbf24";
+    for(const n of sd.pl){c.save();c.translate(x0*(1-SC),yy*(1-SC));c.scale(SC,SC);const own=Object.entries(ROSTER).find(([t,a])=>a.some(p=>p[0]===n)),num=NUM[n],role=ruoloDi(n),rc=role==="G"?"#ef4444":role==="F"?"#60a5fa":"#fbbf24";
       let ic=null;try{ic=await shImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jersey(sd.t,num,n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')))}catch(e){}
       if(ic){const bx=150,r=Math.min(bx/ic.width,bx/ic.height);c.drawImage(ic,x0+16+(bx-ic.width*r)/2,yy+(rowH-12-ic.height*r)/2,ic.width*r,ic.height*r)}
-      c.textAlign="left";c.textBaseline="alphabetic";const tx=x0+178,mw=pw-178-18;c.fillStyle="#fff";let f2=40;c.font=SH_F(800,f2,1);const nn=n.toUpperCase();while(f2>26&&c.measureText(nn).width>mw){f2-=2;c.font=SH_F(800,f2,1)}c.fillText(nn,tx,yy+44);
-      c.beginPath();c.arc(tx+8,yy+68,8,0,7);c.fillStyle=rc;c.fill();c.fillStyle="rgba(233,213,255,.85)";c.font=SH_F(700,24,1);c.fillText(`${({G:"GUARDIA",F:"ALA",C:"CENTRO"})[role]||""} · ${Math.round(eta(n))} ANNI · ${String(TEAMS[other].nick).toUpperCase()}`.replace(/ · [A-Z ]+$/,""),tx+24,yy+75);
+      c.textAlign="left";c.textBaseline="alphabetic";const tx=x0+170,mw=pw/SC-170-12;c.fillStyle="#fff";let f2=40;c.font=SH_F(800,f2,1);const nn=n.toUpperCase();while(f2>26&&c.measureText(nn).width>mw){f2-=2;c.font=SH_F(800,f2,1)}c.fillText(nn,tx,yy+44);
+      c.beginPath();c.arc(tx+8,yy+68,8,0,7);c.fillStyle=rc;c.fill();c.fillStyle="rgba(233,213,255,.85)";c.font=SH_F(700,21,1);c.fillText(`${({G:"GUARDIA",F:"ALA",C:"CENTRO"})[role]||""} · ${Math.round(eta(n))} ANNI · ${String(TEAMS[other].nick).toUpperCase()}`.replace(/ · [A-Z ]+$/,""),tx+24,yy+75);
       const v=valOf(n),pd=pdkMix(n),st=stelle(n),d0=draftOf(n);const fmt=x=>x==null?"—":x.toLocaleString("it-IT",{maximumFractionDigits:1});
       const chips=[["VALORE",String(v??"—"),"#93c5fd"],["PDK",fmt(pd),"#fde047"],["STELLE",st==null?"—":fmt(st),"#fbbf24"]];let cx=tx;
-      chips.forEach(([l,val,cl])=>{c.font=SH_F(700,18,1);const w1=c.measureText(l).width;c.font=SH_F(800,32,1);const w2=c.measureText(val).width,w=Math.max(w1,w2)+4;c.font=SH_F(700,18,1);c.fillStyle="rgba(226,232,240,.6)";c.fillText(l,cx,yy+108);c.font=SH_F(800,32,1);c.fillStyle=cl;c.fillText(val,cx,yy+140);cx+=w+22});
+      chips.forEach(([l,val,cl])=>{c.font=SH_F(700,18,1);const w1=c.measureText(l).width;c.font=SH_F(800,32,1);const w2=c.measureText(val).width,w=Math.max(w1,w2)+4;c.font=SH_F(700,18,1);c.fillStyle="rgba(226,232,240,.6)";c.fillText(l,cx,yy+108);c.font=SH_F(800,32,1);c.fillStyle=cl;c.fillText(val,cx,yy+140);cx+=w+4});
       if(d0&&d0[1]<=15&&iaYrF(DRAFT_ANNO-d0[0])>0){const tt=`DRAFT ${d0[0]} · #${d0[1]}`;c.font=SH_F(800,20,1);const w=c.measureText(tt).width+22;shRR(c,tx,yy+148,w,28,8);c.fillStyle="rgba(245,180,0,.9)";c.fill();c.fillStyle="#1b1200";c.textAlign="left";c.textBaseline="middle";c.fillText(tt,tx+11,yy+163);c.textBaseline="alphabetic"}
-      c.fillStyle="rgba(255,255,255,.08)";c.fillRect(x0+22,yy+rowH-8,pw-44,2);yy+=rowH}
+      c.fillStyle="rgba(255,255,255,.08)";c.fillRect(x0+22,yy+rowH-8,pw/SC-44,2);c.restore();yy+=rowH*SC}
     const extra=[...sd.crTxt.map(t=>"+ "+t.toUpperCase()),...sd.ex.map(t=>t.toUpperCase())];
     if(extra.length){let ex=x0+22,ey=yy+10;c.textBaseline="middle";extra.forEach(t=>{c.font=SH_F(800,28,1);const w=c.measureText(t).width+28;if(ex+w>x0+pw-18){ex=x0+22;ey+=50}shRR(c,ex,ey,w,42,12);c.fillStyle="rgba(245,180,0,.2)";c.fill();c.strokeStyle="rgba(245,180,0,.7)";c.lineWidth=2;c.stroke();c.fillStyle="#fde047";c.textAlign="left";c.fillText(t,ex+14,ey+22);ex+=w+10})}}
   y+=panH+40;
