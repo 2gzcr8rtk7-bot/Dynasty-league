@@ -3562,21 +3562,21 @@ const iaNSel=()=>{const one=new Set(IA.want.map(iaOwner)).size<=1;
   return `<div class="iaq iaq2" role="group" aria-label="Squadre coinvolte">${[2,3].map(n=>`<button data-ia="n" data-n="${n}" aria-pressed="${IA.n===n}"><b>${n}</b><small>${n} squadre</small></button>`).join("")}</div>`};
 function vIA(){const A=iaTeam(),c=TEAMS[A],st=IA.st,pl=IA.mode==="pl",ok1=pl?IA.want.some(n=>iaOwner(n)&&iaOwner(n)!==A):(!!IA.needs[0]||IA.any),ok2=IA.give.length>0||iaTot()>0;
   const modeBar=`<div class="iamode" role="tablist">${[["role","Per ruolo","Dico cosa mi serve"],["pl","Per giocatore","Scelgo chi voglio"]].map(([k,l,sub])=>`<button data-ia="mode" data-k="${k}" role="tab" aria-selected="${IA.mode===k}"><b>${l}</b><small>${sub}</small></button>`).join("")}</div>`;
-  const steps=pl?[["1","Voglio"],["2","Opzioni"]]:[["1","Cerco"],["2","Offro"],["3","Squadre"]],last=steps.length,reach=k=>k===1||(k===2&&ok1)||(k>=3&&ok1&&ok2);
+  const steps=pl?[["1","Voglio e opzioni"],["2","Intoccabili"]]:[["1","Cerco"],["2","Offro"],["3","Squadre"]],last=steps.length,reach=k=>k===1||(k===2&&ok1)||(k>=3&&ok1&&ok2);
   const bar=`<div class="iabar">${steps.map(([k,l])=>`<button data-ia="go" data-s="${k}" aria-pressed="${st===+k||(st===4&&+k===last)}" ${(pl?(+k===1||ok1):reach(+k))?"":"disabled"}><b>${k}</b>${l}</button>`).join("")}</div>`;
   const teamSel=()=>`<label class="iatm">${wedge(A)}<select data-ia="team" aria-label="La tua squadra">${Object.keys(TEAMS).map(t=>`<option value="${t}" ${t===A?"selected":""}>${TEAMS[t].name}</option>`).join("")}</select></label>`;
   let body="";
   if(pl&&st===1){
     const others=Object.keys(ROSTER).filter(t=>t!==A),tf=others.includes(IA.tf)?IA.tf:others[0],tsel=new Set(IA.want.map(iaOwner));
-    body=`<div class="iabox">${teamSel()}<h4>Quali giocatori vuoi?</h4><p class="iasub">Scegli fino a 3 giocatori. Se sono di una squadra sola, nelle opzioni scegli con quante squadre (fino a 5) costruire lo scambio; se sono di due squadre diverse, una trade a 3 in automatico.</p>
+    body=`<div class="iabox">${teamSel()}<h4>Quante squadre coinvolgo?</h4><p class="iasub">Scelgo io le squadre da coinvolgere, fino al numero che indichi: ognuna deve avere interesse a fare lo scambio con cui arrivi al giocatore.</p>${iaNSel()}<h4>Che guadagno cerchi?</h4>${iaLvSel()}<h4>Quali giocatori vuoi?</h4><p class="iasub">Scegli fino a 3 giocatori. Se sono di una squadra sola uso il numero di squadre che hai indicato sopra (fino a 5); se sono di due squadre diverse, una trade a 3 in automatico.</p>
      <div class="iawant">${IA.want.map(n=>`<button class="iachip" data-ia="want" data-n="${n.replace(/"/g,"&quot;")}">${drLg(iaOwner(n),"s")}<span>${n}</span><i>✕</i></button>`).join("")||'<em class="iaem">Nessun giocatore scelto</em>'}</div>
      <input id="iaq" class="vtq" type="search" placeholder="🔍 Cerca un giocatore in tutta la lega" autocomplete="off" value="${(IA.q||"").replace(/"/g,"&quot;")}" aria-label="Cerca giocatore">
      <div class="iatf">${others.map(t=>`<button data-ia="tf" data-t="${t}" aria-pressed="${tf===t&&!(IA.q||"").trim()}" aria-label="${TEAMS[t].nick}">${drLg(t,"s")}</button>`).join("")}</div>
      <div class="iaros" id="iaList">${iaListHTML()}</div>
      ${tsel.size>=2?`<p class="iasub">Giocatori di 2 squadre: ti propongo una trade a 3.</p>`:""}
-     <button class="iago" data-ia="go" data-s="2" ${ok1?"":"disabled"}>Avanti · opzioni ›</button></div>`}
+     <button class="iago" data-ia="go" data-s="2" ${ok1?"":"disabled"}>Avanti · intoccabili ›</button></div>`}
   else if(pl&&st===2){
-    body=`<div class="iabox"><h4>Quante squadre coinvolgo?</h4><p class="iasub">Scelgo io le squadre da coinvolgere, fino al numero che indichi: ognuna deve avere interesse a fare lo scambio con cui arrivi al giocatore.</p>${iaNSel()}<h4>Che guadagno cerchi?</h4>${iaLvSel()}<h4>Intoccabili (facoltativo)</h4><p class="iasub">Tocca i giocatori che NON vuoi dare: userò tutti gli altri del tuo roster. Ogni giocatore che dai deve tornare con uno dello stesso ruolo; solo i giocatori in trade speciale si scambiano senza contropartita.</p>
+    body=`<div class="iabox"><h4>Intoccabili (facoltativo)</h4><p class="iasub">Tocca i giocatori che NON vuoi dare: userò tutti gli altri del tuo roster. Ogni giocatore che dai deve tornare con uno dello stesso ruolo; solo i giocatori in trade speciale si scambiano senza contropartita.</p>
      <div class="iaros">${iaRosHTML(A,IA.keep,"keep")}</div>${iaCredHTML(A)}
      <div class="iabtn2"><button class="iabk" data-ia="go" data-s="1">‹ Indietro</button><button class="iago" data-ia="find">Trova scambi ›</button></div></div>`}
   else if(!pl&&st===1){
