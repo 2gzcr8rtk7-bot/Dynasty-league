@@ -851,8 +851,8 @@ body.notte .hn6{--hnbg:linear-gradient(160deg,rgba(76,29,149,.85),rgba(17,10,48,
 .hngrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .hn6{display:grid;grid-template-columns:56px minmax(0,1fr);gap:10px;align-items:start;margin-top:10px}
 .hmrail{display:grid;gap:7px;align-content:start}
-.hrl{width:56px;height:56px;padding:0;border:0;border-radius:0;cursor:pointer;background:none;box-shadow:none;display:grid;place-items:center;position:relative}.hrl .badge{position:relative;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5))}
-body:not(.notte) .hrl{width:56px;height:56px;padding:3px;border-radius:14px;border:1px solid color-mix(in srgb,var(--tc) 55%,#fff);border-bottom:3px solid color-mix(in srgb,var(--tc) 40%,#000);background:linear-gradient(160deg,var(--tc),color-mix(in srgb,var(--tc) 45%,#000));box-shadow:0 6px 14px rgba(0,0,0,.4),0 0 12px color-mix(in srgb,var(--tc) 45%,transparent);overflow:hidden}body:not(.notte) .hrl::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.06) 0 10px,transparent 10px 22px);pointer-events:none}body:not(.notte) .hrl .badge{filter:none}body:not(.notte) .hn6.top .hrl{width:auto;height:auto;padding:4px 2px 3px}
+.hrl{width:56px;height:56px;padding:3px;border-radius:14px;border:1px solid var(--hnbd);cursor:pointer;background:var(--hnbg);box-shadow:var(--hnsh);display:grid;place-items:center}
+html.hlcC:not(.dlt-tabellone):not(.dlt-parquet) body:not(.notte) .hrl,html.hlcT.dlt-tabellone body:not(.notte) .hrl{position:relative;width:56px;height:56px;padding:3px;border-radius:14px;border:1px solid color-mix(in srgb,var(--tc) 55%,#fff);border-bottom:3px solid color-mix(in srgb,var(--tc) 40%,#000);background:linear-gradient(160deg,var(--tc),color-mix(in srgb,var(--tc) 45%,#000));box-shadow:0 6px 14px rgba(0,0,0,.4),0 0 12px color-mix(in srgb,var(--tc) 45%,transparent);overflow:hidden}html.hlcC:not(.dlt-tabellone):not(.dlt-parquet) body:not(.notte) .hrl::before,html.hlcT.dlt-tabellone body:not(.notte) .hrl::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.06) 0 10px,transparent 10px 22px);pointer-events:none}html.hlcC:not(.dlt-tabellone):not(.dlt-parquet) body:not(.notte) .hn6.top .hrl,html.hlcT.dlt-tabellone body:not(.notte) .hn6.top .hrl{width:auto;height:auto;padding:4px 2px 3px}
 .hrl:active{transform:scale(.96)}.hrl .badge{width:100%!important;height:100%!important;display:block;border-radius:0}
 .hmmain{display:grid;gap:10px;min-width:0}
 .hmq{overflow:hidden;border-radius:14px;min-width:0}
@@ -2314,6 +2314,7 @@ const LOGO2={"DUC":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeAAAAF+CAYAAA
 (()=>{const st=document.createElement("style");st.textContent=Object.entries(LOGO).map(([t,u])=>`.lg-${t}{background-image:url(${u})}`).join("")+Object.entries(LOGO2).map(([t,u])=>`.lg-${t}{background-image:url(${u})}.hlg .lg-${t}{background-image:url(${LOGO[t]})}`).join("");document.head.appendChild(st)})();
 /* LOGO DUCKS PERSONALIZZATO (area riservata › Personalizzazioni): scelta salvata su questo telefono; vale ovunque (Home, campo, banner, immagini condivise) tranne la G League, che ha il suo logo in GLEAGUE */
 const LOGO_DUC0={a:LOGO.DUC,b:LOGO2.DUC};
+try{const v=localStorage.getItem("dl_hlc")||"";if(v.includes("c"))document.documentElement.classList.add("hlcC");if(v.includes("t"))document.documentElement.classList.add("hlcT")}catch(e){}
 const DUC_LOGHI=[["0","Originale",LOGO_DUC0.b||LOGO_DUC0.a],["1","Bandana Texas","loghi/duc-1.webp?v=3"],["2","Fulmine blu","loghi/duc-2.webp?v=3"],["3","Cowboy oro","loghi/duc-3.webp?v=3"],["4","Cowboy bianco","loghi/duc-4.webp?v=3"],["5","Sceriffo","loghi/duc-5.webp?v=3"],["6","Pazzo","loghi/duc-6.webp?v=3"],["7","Pazzo lingua","loghi/duc-7.webp?v=3"],["8","Pazzo furioso","loghi/duc-8.webp?v=3"]];
 let DUC_L="",DUC_C="",DUC_CURL=null;try{DUC_L=localStorage.getItem("dl_ducl")||"";DUC_C=localStorage.getItem("dl_ducc")||""}catch(e){}
 function ducLogoApply(){const f=DUC_LOGHI.find(x=>x[0]===DUC_L),u=f?f[2]:null,g=DUC_LOGHI.find(x=>x[0]===DUC_C),v=g?g[2]:null;DUC_CURL=v;LOGO.DUC=u||LOGO_DUC0.a;LOGO2.DUC=v||LOGO_DUC0.b;let st=document.getElementById("ducl");if(!st){st=document.createElement("style");st.id="ducl";document.head.appendChild(st)}st.textContent=u?`.lg-DUC,.hlg .lg-DUC{background-image:url(${u})}`:""}
@@ -7519,7 +7520,7 @@ cfStart();
 .hlprev{display:flex;gap:14px;align-items:center;padding:10px;border-radius:14px;background:rgba(255,255,255,.05);margin-bottom:12px}.hlprev span{width:96px;height:96px;flex:none;background:center/contain no-repeat;filter:drop-shadow(0 4px 8px rgba(0,0,0,.6))}.hlprev b{display:block;font-size:16px;color:#fff}.hlprev small{color:#b9aee0}
 .hlgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.hlo{display:grid;gap:4px;justify-items:center;padding:8px 4px 6px;border-radius:12px;border:1.5px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#fff;cursor:pointer}.hlo span{width:100%;height:72px;background:center/contain no-repeat}.hlo small{font-size:10.5px;font-weight:700;text-align:center;color:#d8ccff}
 .hlo.on{border-color:#f5c400;background:rgba(245,196,0,.16);box-shadow:0 0 14px rgba(245,196,0,.35)}.hlo.on small{color:#ffd75e}
-.hlreset{width:100%;margin-top:12px;padding:12px;border-radius:12px;border:1px solid #ef4444;background:rgba(239,68,68,.15);color:#fff;font-weight:800;font-size:14px;cursor:pointer}.hlreset:disabled{opacity:.35;cursor:default}
+.hlrow{margin-top:10px}.hlrow>b{display:block;font-size:13px;margin-bottom:6px;color:#ffd75e}.hlreset{width:100%;margin-top:12px;padding:12px;border-radius:12px;border:1px solid #ef4444;background:rgba(239,68,68,.15);color:#fff;font-weight:800;font-size:14px;cursor:pointer}.hlreset:disabled{opacity:.35;cursor:default}
 .hoftt{text-align:center;font-size:11px;color:#8d80b8;margin:22px 0 0}
 .hofct{grid-template-columns:1fr!important}.hofct .ctool{background:linear-gradient(135deg,#241046,#120a28);border-color:rgba(245,196,0,.55);color:#fff;padding:14px}.hofct .ctool small{color:#d8ccff}
 </style>
@@ -7592,6 +7593,8 @@ function pers(){if(!COL.d){cur="campo";return vCampo()}
  <div class="hofhd"><div style="grid-column:1/3"><small>Texas Ducks · area riservata del GM</small><b>Personalizzazioni</b><em>Il look della tua app</em></div></div>
  ${card("p","Logo dei profili","L'immagine della squadra nei profili: Home, liste, classifiche, chip e pagina squadra. Non cambia nella G League. Vale su questo telefono.")}
  ${card("c","Logo del campo","Il logo nel banner e al centro del campo, nelle immagini condivise e nella bacheca. Scelta indipendente da quella dei profili.")}
+ <section class="hofcard"><h4>Loghi della Home (giorno)</h4><p class="setnote">Per ogni stile dell'app scegli se i loghi delle squadre stanno senza sfondo particolare (versione ufficiale, uguale per tutti) o su una tessera con i colori della squadra (versione Ducks). In modalità notte non cambia nulla. Vale su questo telefono.</p>
+ ${[["c","Classico (blu)","hlcC"],["t","Tabellone (nero)","hlcT"]].map(([k,n,cl])=>{const on=document.documentElement.classList.contains(cl);return`<div class="hlrow"><b>${n}</b><div class="hlgrid" style="grid-template-columns:1fr 1fr"><button class="hlo${on?"":" on"}" data-hlc="${k}0"><small>Ufficiale</small></button><button class="hlo${on?" on":""}" data-hlc="${k}1"><small>Ducks · sfondo colorato</small></button></div></div>`}).join("")}</section>
  <p class="hoftt">🦆 Texas Ducks · uso interno</p></div>`}
 function soft(){if(!COL.d){cur="campo";return vCampo()}
  return`<div class="hof"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
@@ -7604,6 +7607,7 @@ document.addEventListener("click",e=>{
  if(e.target.closest("#hofback")){cur=cur==="sala"?"campo":"sala";render();scrollTo(0,0);return}
  const h=e.target.closest("[data-hof]");if(h){cur=h.dataset.hof;render();scrollTo(0,0);return}
  const hn=e.target.closest("[data-hnl]");if(hn){const y=scrollY;hnSet(hn.dataset.hnl);render();scrollTo(0,y);return}
+ const hc=e.target.closest("[data-hlc]");if(hc){const y=scrollY,k=hc.dataset.hlc[0],on=hc.dataset.hlc[1]==="1";document.documentElement.classList.toggle(k==="c"?"hlcC":"hlcT",on);try{const v=(document.documentElement.classList.contains("hlcC")?"c":"")+(document.documentElement.classList.contains("hlcT")?"t":"");v?localStorage.setItem("dl_hlc",v):localStorage.removeItem("dl_hlc")}catch(_){}render();scrollTo(0,y);return}
  const l=e.target.closest("[data-hlo]");if(l&&!l.disabled){const y=scrollY;ducLogoSet(l.dataset.hlo,l.dataset.hw);render();scrollTo(0,y)}
 });
 })();
