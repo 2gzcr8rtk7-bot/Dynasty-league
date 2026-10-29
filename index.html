@@ -2293,6 +2293,18 @@ body.dreamfs .drroom[data-th="5"],.drroom.gdemb[data-th="5"]{background:linear-g
 .drroom[data-th="3"] .bkt b,.drroom[data-th="3"] .bkt em{color:#2b1608!important}.drroom[data-th="3"] .bkt i{color:#7a5632}.drroom[data-th="3"] .bkt.l b,.drroom[data-th="3"] .bkt.l em{color:#9a8470!important}.drroom[data-th="3"] .bkt.w em{color:#c2410c!important}.drroom[data-th="3"] .bkm.tbd .bkt b{color:#7a5632!important}
 /* punteggi del Turno più a destra (la linguetta di stato è larga 22px): stesso padding su tutte le righe, quindi restano incolonnati */.drms .drr{padding-right:36px!important}
 .drroom.gdemb{border-radius:22px;padding:12px 10px 18px;margin-top:4px;position:relative;overflow:hidden}.drroom.gdemb:not([data-th]){background:linear-gradient(180deg,#2a1260,#160a38 70%)}
+
+.tawin{padding:9px 12px;border-radius:12px;font-weight:800;font-size:13px;margin:6px 0 10px;line-height:1.35}.tawin.ok{background:rgba(34,197,94,.16);border:1px solid #22c55e;color:#86efac}.tawin.no{background:rgba(239,68,68,.13);border:1px solid #ef4444;color:#fca5a5}
+.tagrid{display:grid;gap:8px}.taarr{text-align:center;font-size:22px;color:#facc15;font-weight:800;line-height:1}
+.tasd{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:color-mix(in srgb,var(--fg) 5%,transparent);padding-bottom:10px}
+.tash{display:flex;align-items:center;gap:10px;padding:8px 10px;background:linear-gradient(90deg,var(--tc),rgba(0,0,0,.25))}.tash select{flex:1;min-width:0;font:800 15px var(--display);background:rgba(0,0,0,.35);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:9px;padding:6px 8px}.tash em{font-style:italic;font-weight:800;color:#fff;text-transform:uppercase;font-size:12px;letter-spacing:.06em}
+.tapl{display:flex;flex-wrap:wrap;gap:6px;padding:10px 10px 4px}.tapc{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:transparent;color:inherit;font:inherit;font-weight:700;font-size:13px;cursor:pointer}.tapc.on{background:#facc15;border-color:#facc15;color:#1b1233}
+.tapc i{width:8px;height:8px;border-radius:50%;display:inline-block}.tapc i.G{background:#ef4444}.tapc i.F{background:#3b82f6}.tapc i.C{background:#facc15}.tapc.on i{box-shadow:0 0 0 1.5px #1b1233}
+.tast{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;font-weight:700;font-size:13px}.tast>div{display:flex;align-items:center;gap:8px}.tast b{min-width:34px;text-align:center;font-size:16px}
+.tast button{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:transparent;color:inherit;font:800 18px var(--display);cursor:pointer}.tast select,.taex{font:inherit;font-size:13px;border-radius:9px;border:1px solid var(--line);background:transparent;color:inherit;padding:6px 8px}
+.tain{display:block;padding:0 12px;color:var(--muted);font-size:11px}.taex{display:block;width:calc(100% - 24px);margin:6px 12px 0}
+.tasm{margin:12px 0 4px;padding:10px 12px;border-radius:12px;background:rgba(250,204,21,.1);border:1px solid rgba(250,204,21,.45);font-size:13px}.tasm p{margin:3px 0}.taer{margin:12px 0 4px;padding:0 0 0 18px;color:#fca5a5;font-size:13px;font-weight:700}
+.tabtn{display:flex;gap:8px;margin:12px 0 8px}.tabtn button{flex:1;padding:13px 10px;border-radius:12px;border:0;font:800 15px var(--display);cursor:pointer}.tab1{background:#facc15;color:#1b1233}.tab2{background:rgba(148,163,184,.2);color:inherit;border:1px solid var(--line)!important}.tabtn button[disabled]{opacity:.4;cursor:not-allowed}
 .gdmsw{display:flex;gap:6px;margin:6px 0 10px}.gdmsw button{flex:1;padding:9px 10px;border-radius:12px;border:1px solid rgba(148,163,184,.35);background:rgba(148,163,184,.12);color:inherit;font:inherit;font-weight:800;letter-spacing:.04em;cursor:pointer}.gdmsw button[aria-selected="true"]{background:#10b981;border-color:#10b981;color:#04201a}
 .drroom[data-th="3"] .gdtot small,.drroom[data-th="3"] .gdtot em,.drroom[data-th="3"] .gdinfo small{color:#7a5632!important}.drroom[data-th="3"] .gdtot b{color:#2b1608!important}
 /* (240) pulsante Stile accanto alle impostazioni: cambia lo stile di tutta l'app (Classico <-> Tabellone) */
@@ -3782,8 +3794,8 @@ function iaAct(b){const d=b.dataset,a=d.ia;
 
 /* (247) Trade e Trade speciali unite: due categorie dentro la stessa pagina */
 function vTrade(){
-  const sw=`<div class="gdmsw" role="tablist">${[["tutte","Tutte le trade"],["sp","Trade speciale"]].map(([k,l])=>`<button data-trs="${k}" role="tab" aria-selected="${TRS===k}">${l}</button>`).join("")}</div>`;
-  return sw+(TRS==="sp"?vSpeciali():vTradeAll());
+  const sw=`<div class="gdmsw" role="tablist">${[["tutte","Tutte le trade"],["sp","Trade speciale"],["allerta","Allerta trade"]].map(([k,l])=>`<button data-trs="${k}" role="tab" aria-selected="${TRS===k}">${l}</button>`).join("")}</div>`;
+  return sw+(TRS==="sp"?vSpeciali():TRS==="allerta"?vAllerta():vTradeAll());
 }
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="iatrade")return;const b=e.target.closest("[data-ia]");if(b&&b.tagName!=="SELECT"&&!b.disabled){e.preventDefault();iaAct(b)}});
 document.getElementById("main").addEventListener("input",e=>{if(cur!=="iatrade"||e.target.id!=="iaq")return;IA.q=e.target.value;const L=document.getElementById("iaList");if(L)L.innerHTML=iaListHTML()});
@@ -3792,6 +3804,76 @@ document.getElementById("main").addEventListener("change",e=>{if(cur!=="iatrade"
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-tmgo]");if(!b)return;e.preventDefault();TRS=b.dataset.tmgo==="sp"?"sp":"tutte";cur="trade";render();window.scrollTo(0,0)});
 document.getElementById("main").addEventListener("keydown",e=>{if(e.key!=="Enter")return;const b=e.target.closest&&e.target.closest("[data-tmgo]");if(b)b.click()});
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-trs]");if(!b||cur!=="trade")return;TRS=b.dataset.trs;render();window.scrollTo(0,0)});
+
+/* (477) ALLERTA TRADE: il GM compone lo scambio (giocatori, crediti, crediti a credito post-Draft, slot, note), poi «Fai la foto» (stessa immagine degli scambi con maglie, PDK, età, draft e «Scambio ufficiale») oppure «Copia per Claude» (prompt + link) per far registrare e pubblicare il banner di 24 ore.
+   Si scambia SOLO tra un turno e l'altro: dall'apertura del turno (12:30 italiane del giorno dopo l'ultima notte del precedente) fino alla prima partita del suo primo turno (≈01:00 italiane). Durante un turno il modulo si compila ma foto e prompt restano bloccati. */
+let TA={t:["",""],pl:[[],[]],cr:[0,0],cp:[0,0],sr:["",""],sg:[10,10],ex:["",""]};
+const taNow=()=>{const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(window.DR_NOW||new Date()),g=t=>f.find(x=>x.type===t).value;return{d:`${g("year")}-${g("month")}-${g("day")}`,h:`${g("hour")}:${g("minute")}`}};
+const taFd=s=>s.slice(8,10)+"/"+s.slice(5,7);
+function taWin(){try{const n=taNow(),ns=n.d+" "+n.h,k=drCurWeek(),T=DR_TURNI[k-1];if(!T)return{ok:false,msg:"La stagione di Dreamers è conclusa."};
+  const op=drOpen(k),s0=drAdd(T[0],1)+" 01:00";
+  if(ns>=op&&ns<s0)return{ok:true,k,from:taFd(T[0]),msg:`Scambi aperti · i giocatori contano dal turno ${k} (${taFd(T[0])}). Si chiude alla prima partita del turno (${taFd(s0)} verso l'01:00).`};
+  const k2=ns<op?k:k+1,T2=DR_TURNI[k2-1];if(!T2)return{ok:false,msg:"Scambi chiusi: non ci sono altri turni."};
+  const o2=drOpen(k2);return{ok:false,k:k2,msg:`Scambi chiusi: il turno ${k2>k?k:k} è in corso. Si riapre il ${taFd(o2.slice(0,10))} alle ${o2.slice(11)} (turno ${k2}).`}}catch(e){return{ok:false,msg:"Scambi chiusi: stato del turno non disponibile."}}}
+const taCassa=t=>t?iaCassa(t):0;
+function taItems(s){const t=TA.t[s],g=t&&TEAMS[t]?TEAMS[t].nick:"",L=[...TA.pl[s]];
+  if(TA.cr[s]>0)L.push(TA.cr[s]+" crediti");
+  if(TA.cp[s]>0)L.push(TA.cp[s]+" cr a credito post-Draft (debito "+g+")");
+  if(TA.sr[s])L.push("Slot "+TA.sr[s]+" per "+TA.sg[s]+" giornate");
+  if(TA.ex[s].trim())L.push(TA.ex[s].trim());
+  return L}
+/* chi RICEVE ciò che l'altra squadra cede */
+function taTrade(){const n=taNow(),W=taWin();return{data:n.d.slice(8,10)+"/"+n.d.slice(5,7)+"/"+n.d.slice(0,4),ora:n.h,titolo:"Scambio",lati:[[TA.t[0],taItems(1)],[TA.t[1],taItems(0)]]}}
+const taSub=()=>{const W=taWin();return W.ok?`Conta in Dreamers dal turno ${W.k} (${W.from}) · fatto tra un turno e l'altro`:""};
+function taErr(){const e=[];if(!TA.t[0]||!TA.t[1])e.push("Scegli le due squadre.");
+  else{if(!TA.pl[0].length&&!TA.pl[1].length)e.push("Metti almeno un giocatore nello scambio.");
+    for(let s=0;s<2;s++){if(!taItems(s).length)e.push(`${TEAMS[TA.t[s]].nick} non cede niente.`);if(TA.cr[s]>taCassa(TA.t[s]))e.push(`${TEAMS[TA.t[s]].nick} ha solo ${taCassa(TA.t[s])} cr in cassa.`)}}
+  return e}
+function taPrompt(){const T=taTrade(),W=taWin(),nk=t=>TEAMS[t].nick,k=W.k||"?",from=W.from||"";
+  const side=l=>{const np=l[1].filter(x=>NUM[x]!==undefined).length;return`["${l[0]}",[${l[1].map(x=>JSON.stringify(x)).join(",")}]${np?`,"in Dreamers ${np>1?"contano":"conta"} dal turno ${k} (${from})"`:""}]`};
+  const ent=`{data:"${T.data}",ora:"${T.ora}",titolo:"Scambio",lati:[${T.lati.map(side).join(",")}]}`;
+  const link=location.origin+location.pathname+"?scambio="+encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify({t:TA.t,pl:TA.pl,cr:TA.cr,cp:TA.cp,sr:TA.sr,sg:TA.sg,ex:TA.ex})))));
+  return `Claude, registra e pubblica questo scambio di Dreamers già concordato tra i due GM.
+
+SCAMBIO (fatto tra un turno e l'altro, ${T.data} ore ${T.ora} italiane; i giocatori contano dal turno ${k}, ${from}):
+${T.lati.map(l=>`- ${nk(l[0])} riceve: ${l[1].join(", ")}`).join("\n")}
+
+Fai come per tutti gli scambi precedenti:
+1. aggiungi in cima a TRADES (index.html) questa riga, con data e ora già messe (da lì parte da solo il banner in Home per 24 ore):
+${ent}
+2. aggiorna ROSTER e CREDITI (giocatori, crediti ceduti e crediti a credito post-Draft come debito), poi la nota in NOTE_SVILUPPO.md;
+3. segui le regole di NOTE_SVILUPPO.md (in particolare: pubblica su main solo se Francesco te lo ordina con «pubblica»).
+
+Link con lo scambio già compilato: ${link}`}
+function vAllerta(){
+  const W=taWin(),ks=Object.keys(ROSTER);if(!TA.t[0]){try{TA.t[0]=homeMyT()}catch(e){}if(!ks.includes(TA.t[0]))TA.t[0]=ks[0]}
+  const errs=taErr(),can=W.ok&&!errs.length;
+  const nick=t=>t&&TEAMS[t]?TEAMS[t].nick:"…";
+  const step=(lab,key,s,max)=>`<div class="tast"><span>${lab}</span><div><button type="button" data-ta="dn" data-k="${key}" data-s="${s}" aria-label="meno">−</button><b>${TA[key][s]}</b><button type="button" data-ta="up" data-k="${key}" data-s="${s}" data-max="${max}" aria-label="più">+</button></div></div>`;
+  const side=s=>{const t=TA.t[s],o=TA.t[1-s],pl=t?ROSTER[t].map(p=>p[0]).sort((a,b)=>(valOf(b)??0)-(valOf(a)??0)):[],cas=taCassa(t);
+    return`<section class="tasd" style="--tc:${t&&TEAMS[t]?TEAMS[t].bg:"#64748b"}"><div class="tash">${t?wedge(t):""}<select data-ta="team" data-s="${s}" aria-label="Squadra ${s+1}"><option value="">Scegli la squadra</option>${ks.filter(x=>x!==o).map(x=>`<option value="${x}"${x===t?" selected":""}>${TEAMS[x].nick}</option>`).join("")}</select><em>cede</em></div>
+    ${t?`<div class="tapl">${pl.map(n=>`<button type="button" class="tapc${TA.pl[s].includes(n)?" on":""}" data-ta="pl" data-s="${s}" data-n="${esc2(n)}"><i class="${ruoloDi(n)}"></i>${esc2(nmAb(n))}</button>`).join("")}</div>
+    ${step("Crediti","cr",s,cas)}<small class="tain">In cassa: ${cas} cr</small>${step("Crediti a credito post-Draft","cp",s,999)}
+    <div class="tast"><span>Slot</span><div><select data-ta="sr" data-s="${s}"><option value="">nessuno</option>${["ala","guardia","centro"].map(r=>`<option value="${r}"${TA.sr[s]===r?" selected":""}>${r}</option>`).join("")}</select> <select data-ta="sg" data-s="${s}">${[5,10,15,20,30,40].map(g=>`<option value="${g}"${TA.sg[s]==g?" selected":""}>${g} giornate</option>`).join("")}</select></div></div>
+    <input class="taex" data-ta="ex" data-s="${s}" type="text" maxlength="90" placeholder="Altro (diritti, scelte, note)…" value="${esc2(TA.ex[s])}">`:`<p class="tain">Scegli la squadra per vedere i suoi giocatori.</p>`}</section>`};
+  const sum=!errs.length?`<div class="tasm">${[0,1].map(s=>`<p><b>${nick(TA.t[1-s])}</b> riceve: ${taItems(s).map(esc2).join(", ")}</p>`).join("")}</div>`:`<ul class="taer">${errs.map(e=>`<li>${e}</li>`).join("")}</ul>`;
+  return`${H("Allerta trade",`<em>Scambio ufficiale</em>`)}
+  <div class="tawin ${W.ok?"ok":"no"}">${W.msg}</div>
+  <div class="tagrid">${side(0)}<div class="taarr">⇄</div>${side(1)}</div>${sum}
+  <div class="tabtn"><button type="button" class="tab1" data-share="ta"${can?"":" disabled"}>📸 Fai la foto</button><button type="button" class="tab2" data-ta="copy"${can?"":" disabled"}>🔗 Copia per Claude</button></div>
+  <p class="note">La foto è l'immagine da condividere con maglie, PDK, età e «Scambio ufficiale». «Copia per Claude» copia il prompt con il link: incollalo a Claude per registrare lo scambio e far partire il banner di 24 ore in Home. Si scambia solo tra un turno e l'altro.</p>`}
+const esc2=v=>String(v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+document.addEventListener("click",e=>{if(cur!=="trade"||TRS!=="allerta")return;const b=e.target.closest("[data-ta]");if(!b||b.disabled)return;const a=b.dataset.ta,s=+b.dataset.s,y=scrollY;
+  if(a==="pl"){const i=TA.pl[s].indexOf(b.dataset.n);i<0?TA.pl[s].push(b.dataset.n):TA.pl[s].splice(i,1)}
+  else if(a==="up"){const k=b.dataset.k;TA[k][s]=Math.min(+b.dataset.max,TA[k][s]+(k==="cr"?1:5))}
+  else if(a==="dn"){const k=b.dataset.k;TA[k][s]=Math.max(0,TA[k][s]-(k==="cr"?1:5))}
+  else if(a==="copy"){const t=taPrompt(),ok=()=>{b.textContent="✔ Copiato";setTimeout(()=>{b.textContent="🔗 Copia per Claude"},1800)};if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,()=>{window.prompt("Copia questo testo:",t)});else window.prompt("Copia questo testo:",t);return}
+  else return;render();scrollTo(0,y)});
+document.addEventListener("change",e=>{if(cur!=="trade"||TRS!=="allerta")return;const b=e.target.closest("select[data-ta]");if(!b)return;const a=b.dataset.ta,s=+b.dataset.s,y=scrollY;
+  if(a==="team"){TA.t[s]=b.value;TA.pl[s]=[];TA.cr[s]=0;TA.cp[s]=0}else if(a==="sr")TA.sr[s]=b.value;else if(a==="sg")TA.sg[s]=+b.value;render();scrollTo(0,y)});
+document.addEventListener("input",e=>{if(cur!=="trade"||TRS!=="allerta")return;const b=e.target;if(b.dataset&&b.dataset.ta==="ex")TA.ex[+b.dataset.s]=b.value});
+/* link «?scambio=…»: apre Allerta trade già compilata */
+try{const q=new URLSearchParams(location.search).get("scambio");if(q){const o=JSON.parse(decodeURIComponent(escape(atob(q))));if(o&&o.t&&o.pl){TA=Object.assign(TA,o);window.__taOpen=1}}}catch(e){}
 function vTradeAll(){
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
   const rec=(l,neg)=>l.map(n=>NUM[n]!==undefined?`<span>${sur(n)}${starH(n)}</span>`:`<span class="tcr2">${/credit/i.test(n)?(/^debito/i.test(n)?"":neg?"−":"+")+n.replace(/\s*crediti.*$/i," cr"):n.replace(/^Diritti su /,"").replace(/Slot ala per 10 giornate/,"Slot ala 10g")}</span>`).join("");
@@ -6101,16 +6183,16 @@ function histTechLines(M,k,lim,sp){const R=a=>a[Math.floor(Math.random()*a.lengt
   else if((lim||4)>=3&&all.length>=2&&bad>=3&&good===0)all.push({txt:R([`Lettura tecnica: i segnali recenti remano contro ${nick}.`,`Bilancio tecnico: ${nick} compra in calo e vende in crescita. Tempismo da rivedere.`]),pos:-1});
   return all}
 function histTradeOk(x){return x&&/scambio/i.test(x.titolo)&&x.lati.length>=2&&x.lati.length<=4&&new Set(x.lati.map(l=>l[0])).size===x.lati.length&&x.lati.some(l=>l[1].some(a=>valOf(a)!=null))}
-function histTradeModel(i){const T=TRADES[i];if(!histTradeOk(T))return null;
+function histTradeModel(i,T0){const T=T0||TRADES[i];if(!histTradeOk(T))return null;
   const crN=a=>{const m=/(\d+)\s*(?:cr\b|crediti)/i.exec(a);return m?+m[1]:0};
   const sides=T.lati.map(l=>{const pl=l[1].filter(a=>valOf(a)!=null),oth=l[1].filter(a=>valOf(a)==null),cr=oth.reduce((q,a)=>q+crN(a),0);
-    return{t:l[0],pl,cr,ex:oth.filter(a=>!crN(a)).map(a=>a.replace(/^Diritti su /,"Diritti su ")),crTxt:oth.filter(a=>crN(a)).map(a=>/a credito/i.test(a)?crN(a)+" cr a credito":crN(a)+" cr")}});
+    return{t:l[0],pl,cr,ex:oth.filter(a=>!crN(a)).map(a=>a.replace(/^Diritti su /,"Diritti su ")),crTxt:oth.filter(a=>crN(a)).map(a=>/a credito/i.test(a)?crN(a)+" cr a credito"+(/post/i.test(a)?" post-Draft":""):crN(a)+" cr")}});
   const N=sides.length,pts=sd=>sd.pl.reduce((q,n)=>q+vtPts(valOf(n)??VAL_FALLBACK)*(1+iaPerc(n)),0)+sd.cr*VAL_CR;
   sides.forEach(sd=>sd.R=pts(sd));const tot=sides.reduce((q,sd)=>q+sd.R,0),mx=Math.max(...sides.map(sd=>sd.R),1),mn=Math.min(...sides.map(sd=>sd.R));
   sides.forEach(sd=>{sd.G=(tot-sd.R)/(N-1);sd.pc=Math.round((sd.R-sd.G)/mx*100)});
   const d=(mx-mn)/mx,fav=sides.reduce((m,sd)=>sd.R>m.R?sd:m,sides[0]).t;
   let ints=[],shift=[];
-  if(N===2&&sides.every(sd=>sd.pl.length)){
+  if(N===2&&sides.every(sd=>sd.pl.length)&&!T0){
     const bk={};sides.forEach(sd=>{bk[sd.t]=ROSTER[sd.t]});const moved=[];
     try{sides.forEach((sd,k)=>{const from=sides[1-k].t;sd.pl.forEach(n=>{const f=ROSTER[sd.t].findIndex(p=>p[0]===n);if(f>=0){const row=ROSTER[sd.t][f];moved.push([sd.t,from,row])}})});
       moved.forEach(([to,from,row])=>{ROSTER[to]=ROSTER[to].filter(p=>p!==row);ROSTER[from]=[...ROSTER[from],row]});
@@ -6123,6 +6205,7 @@ function histTradeModel(i){const T=TRADES[i];if(!histTradeOk(T))return null;
   /* quanto scrivere: scambi piccoli = commento completo; con 3-4 giocatori per lato o 3+ squadre = frasi più brevi */
   const load=Math.max(...sides.map(sd=>sd.pl.length)),mode=(N>=3||load>=4)?2:load>=2?1:0,lim=N>=4?1:mode===2?2:mode===1?3:4;
   const M={T,sides,N,d,fav,ints,shift,mode,lim,verdict:tradeVerdict(d,fav,sides.reduce((m,x)=>x.R<m.R?x:m,sides[0]).t)};
+  if(T0){M.tech=sides.map(()=>[]);M.vd=[];M.final="";return M}
   try{M.tech=sides.map((sd,k)=>histTechLines(M,k,lim))}catch(e){console.error(e);M.tech=sides.map(()=>[])}
   try{M.vd=sides.map((sd,k)=>histVerdictSide(M,k,i,mode));M.final=histFinal(M,i)}catch(e){console.error(e);M.vd=[];M.final=""}
   return M}
@@ -6147,24 +6230,25 @@ async function shCardsDraw(c,its,W,ty){const x=76,w=W-152;
     ty+=o.h+24}
   return ty}
 const SHF=x=>x==null?"—":x.toLocaleString("it-IT",{maximumFractionDigits:1});
-async function shHistTrade(i){const M=histTradeModel(i);if(!M)return null;
+async function shHistTrade(i,O){O=O||{};const PRE=!!O.T,M=histTradeModel(i,O.T);if(!M)return null;
   const N=M.N,W=1080,IN=W-112,mc=document.createElement("canvas").getContext("2d"),load=Math.max(...M.sides.map(s=>s.pl.length)),rowH=186,SC=load<=1?1.18:load===2?1.0:load===3?.86:.74,pw=(IN-24)/2;
   /* schede del parere */
   const FS=M.mode===2?24:26,HH=N>=3?84:104;
   const items=M.sides.map((sd,k)=>({t:sd.t,title:M.vd[k]?M.vd[k].title:"",col:M.vd[k]?M.vd[k].col:"#facc15",txt:M.vd[k]?M.vd[k].txt:"",tech:M.tech[k]||[]}));
   const its=shCardsPrep(mc,items,W,FS,HH);
   mc.font=SH_B(500,27);const sumTxt=(M.final||"")+(M.d<.10?` (Valori: scambio equilibrato, squilibrio ${Math.round(M.d*100)}%.)`:` (Valori: vantaggio ${TEAMS[M.fav].nick}, squilibrio ${Math.round(M.d*100)}%.)`),sumL=shWrapT(mc,sumTxt,IN-40);
-  const parH=210+sumL.length*38+14+its.reduce((q,o)=>q+o.h+24,0)+16;
+  const parH=PRE?0:210+sumL.length*38+14+its.reduce((q,o)=>q+o.h+24,0)+16;
   /* pannelli in alto */
   const extraOf=sd=>[...sd.crTxt.map(t=>"+ "+t.toUpperCase()),...sd.ex.map(t=>t.toUpperCase())];
+  const exH=(sd,wd)=>{const ex=extraOf(sd);if(!ex.length)return 0;mc.textBaseline="alphabetic";let x=22,rows=1;ex.forEach(t=>{let f=28;mc.font=SH_F(800,f,1);while(f>18&&mc.measureText(t).width+28>wd-40){f-=2;mc.font=SH_F(800,f,1)}const w=mc.measureText(t).width+28;if(x+w>wd-18){x=22;rows++}x+=w+10});return 34+rows*50};
   let topH;const cw=(IN-44)/3,cellH=132;
-  if(N===2){const pH=M.sides.map(sd=>230+Math.round(sd.pl.length*rowH*SC)+(extraOf(sd).length?84:0)+24);topH=Math.max(...pH);M.panH=topH}
-  else{M.pHs=M.sides.map(sd=>160+Math.ceil(sd.pl.length/3)*cellH+(extraOf(sd).length?72:0)+16);topH=M.pHs.reduce((q,h)=>q+h+20,0)-20}
-  const H=190+topH+40+parH+130;
+  if(N===2){const pH=M.sides.map(sd=>230+Math.round(sd.pl.length*rowH*SC)+exH(sd,pw)+24);topH=Math.max(...pH);M.panH=topH}
+  else{M.pHs=M.sides.map(sd=>160+Math.ceil(sd.pl.length/3)*cellH+exH(sd,IN)+16);topH=M.pHs.reduce((q,h)=>q+h+20,0)-20}
+  const H=190+topH+40+(PRE?170:parH)+130;
   const{cv,c}=await shBase(H,W,0,1);
-  c.font=SH_F(700,28,1);c.textAlign="right";c.textBaseline="alphabetic";c.fillStyle="rgba(233,213,255,.75)";c.fillText("TRADE ALERT · "+(M.T.data||"")+" "+(M.T.ora||""),W-56,100);
+  c.font=SH_F(700,28,1);c.textAlign="right";c.textBaseline="alphabetic";c.fillStyle="rgba(233,213,255,.75)";c.fillText((PRE?"ALLERTA TRADE · ":"TRADE ALERT · ")+(M.T.data||"")+" "+(M.T.ora||""),W-56,100);
   let y=190;
-  const pcCol=pc=>pc>=3?"#4ade80":pc<=-3?"#f87171":"#facc15",extraDraw=(sd,x0,yy,wd)=>{const extra=extraOf(sd);if(!extra.length)return;let ex=x0+22,ey=yy+10;c.textBaseline="middle";c.textAlign="left";extra.forEach(t=>{c.font=SH_F(800,28,1);const w=c.measureText(t).width+28;if(ex+w>x0+wd-18){ex=x0+22;ey+=50}shRR(c,ex,ey,w,42,12);c.fillStyle="rgba(245,180,0,.2)";c.fill();c.strokeStyle="rgba(245,180,0,.6)";c.lineWidth=2;c.stroke();c.fillStyle="#fcd34d";c.fillText(t,ex+14,ey+22);ex+=w+10});c.textBaseline="alphabetic"};
+  const exFs=(t,wd)=>{let f=28;c.font=SH_F(800,f,1);while(f>18&&c.measureText(t).width+28>wd-40){f-=2;c.font=SH_F(800,f,1)}return f},pcCol=pc=>pc>=3?"#4ade80":pc<=-3?"#f87171":"#facc15",extraDraw=(sd,x0,yy,wd)=>{const extra=extraOf(sd);if(!extra.length)return;let ex=x0+22,ey=yy+10;c.textBaseline="middle";c.textAlign="left";extra.forEach(t=>{c.font=SH_F(800,exFs(t,wd),1);const w=c.measureText(t).width+28;if(ex+w>x0+wd-18){ex=x0+22;ey+=50}shRR(c,ex,ey,w,42,12);c.fillStyle="rgba(245,180,0,.2)";c.fill();c.strokeStyle="rgba(245,180,0,.6)";c.lineWidth=2;c.stroke();c.fillStyle="#fcd34d";c.fillText(t,ex+14,ey+22);ex+=w+10});c.textBaseline="alphabetic"};
   if(N===2){
     for(let k=0;k<2;k++){const sd=M.sides[k],tm=TEAMS[sd.t],x0=56+k*(pw+24),panH=topH;
       c.save();shRR(c,x0,y,pw,panH,28);c.clip();c.fillStyle="rgba(10,6,24,.62)";c.fillRect(x0,y,pw,panH);
@@ -6174,8 +6258,8 @@ async function shHistTrade(i){const M=histTradeModel(i);if(!M)return null;
       await shLogoAt(c,sd.t,x0+22,y+24,140);
       c.textAlign="left";c.textBaseline="alphabetic";c.fillStyle=tm.txt||tm.fg||"#fff";let fs=64;c.font=SH_F(800,fs,1);const nk=tm.nick.toUpperCase();while(fs>34&&c.measureText(nk).width>pw-190){fs-=2;c.font=SH_F(800,fs,1)}c.fillText(nk,x0+178,y+86);
       c.font=SH_F(700,28,1);c.globalAlpha=.85;c.fillText("RICEVE",x0+178,y+126);c.globalAlpha=1;
-      const pc=sd.pc,col=pcCol(pc),ptxt=(pc>0?"+":"")+pc+"%";shRR(c,x0+178,y+142,150,54,14);c.fillStyle="rgba(10,6,24,.7)";c.fill();c.fillStyle=col;c.font=SH_F(800,42,1);c.textAlign="center";c.textBaseline="middle";c.fillText(ptxt,x0+178+75,y+170);
-      c.textAlign="left";c.font=SH_F(700,20,1);c.fillStyle=col;c.fillText(trPcWord(pc).toUpperCase(),x0+338,y+170);
+      const pc=sd.pc,col=pcCol(pc),ptxt=(pc>0?"+":"")+pc+"%";if(!PRE){shRR(c,x0+178,y+142,150,54,14);c.fillStyle="rgba(10,6,24,.7)";c.fill();c.fillStyle=col;c.font=SH_F(800,42,1);c.textAlign="center";c.textBaseline="middle";c.fillText(ptxt,x0+178+75,y+170);
+      c.textAlign="left";c.font=SH_F(700,20,1);c.fillStyle=col;c.fillText(trPcWord(pc).toUpperCase(),x0+338,y+170)}
       let yy=y+230;
       for(const n of sd.pl){c.save();c.translate(x0*(1-SC),yy*(1-SC));c.scale(SC,SC);const role=ruoloDi(n),rc=role==="G"?"#ef4444":role==="F"?"#60a5fa":"#fbbf24";
         const ic=await shJersey(sd.t,n);
@@ -6205,12 +6289,13 @@ async function shHistTrade(i){const M=histTradeModel(i);if(!M)return null;
       y+=ph+20}
     y+=20}
   /* PARERE */
+  if(PRE){const gg=c.createLinearGradient(56,y,56+IN,y);gg.addColorStop(0,"#16a34a");gg.addColorStop(1,"#15803d");shRR(c,56,y,IN,150,26);c.fillStyle=gg;c.fill();c.strokeStyle="rgba(255,255,255,.35)";c.lineWidth=3;c.stroke();c.textAlign="center";c.textBaseline="alphabetic";c.fillStyle="#fff";c.font=SH_F(800,66,1);c.fillText("✔ SCAMBIO UFFICIALE",56+IN/2,y+78);c.font=SH_B(600,28);c.fillStyle="rgba(255,255,255,.92)";c.fillText(O.sub||"",56+IN/2,y+122);c.textAlign="left"}else{
   shRR(c,56,y,IN,parH,26);c.fillStyle="rgba(10,6,24,.72)";c.fill();c.strokeStyle="rgba(196,181,253,.28)";c.lineWidth=2;c.stroke();
   c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_F(800,40,1);c.fillStyle="#e9d5ff";c.fillText("IL PARERE DI CLAUDE",92,y+62);
   const vcol=M.d<.10?"#22c55e":M.d<.30?"#f59e0b":"#ef4444";shRR(c,92,y+82,W-184,80,16);c.fillStyle=vcol;c.fill();c.fillStyle="#fff";c.textAlign="center";c.textBaseline="middle";let vz=46;c.font=SH_F(800,vz,1);const vt=M.verdict[0].toUpperCase();while(vz>26&&c.measureText(vt).width>W-184-40){vz-=2;c.font=SH_F(800,vz,1)}c.fillText(vt,W/2,y+123);
   c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_B(500,27);c.fillStyle="#dfe5f5";let ty=y+210;sumL.forEach(l=>{c.fillText(l,92,ty);ty+=38});ty+=14-0;
-  await shCardsDraw(c,its,W,ty);
-  shFoot(c,W,H,"Dreamers · Trade Alert");return cv}
+  await shCardsDraw(c,its,W,ty);}
+  shFoot(c,W,H,PRE?"Dreamers · Allerta trade":"Dreamers · Trade Alert");return cv}
 /* (459) TRADE SPECIALE condivisibile: entra un giocatore (a pagamento), un altro esce dalla rosa ma resta di proprietà. A scadenza si sceglie chi lasciar andare tra i giocatori di quel ruolo. */
 function histSpModel(i){const x=SPECIALI[i];if(!x||NUM[x.entra]===undefined)return null;
   const R=a=>a[Math.floor(Math.random()*a.length)],f1=v=>v==null?"—":v.toFixed(1).replace(".",","),t=x.t,nick=TEAMS[t].nick,ne=x.entra,ns=x.esce,Se=iaSur(ne),Ss=iaSur(ns),I=spInfo(x),
@@ -6267,15 +6352,15 @@ async function shSpecial(i){const S=histSpModel(i);if(!S)return null;
 async function shOpen(k){const old=document.querySelector(".shsheet");if(old)old.remove();
   const sh=document.createElement("div");sh.className="shsheet";sh.innerHTML='<div class="shbox"><p class="shwait">Preparo l\'immagine…</p></div>';document.body.appendChild(sh);
   sh.addEventListener("click",e=>{if(e.target===sh||e.target.closest(".shx"))sh.remove()});
-  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="gr"?await shGrafico():k==="cm"?await shCompar():k==="ht"?await shHistTrade(SHR_HT):k==="sp"?await shSpecial(SHR_SP):k==="pl"?await shPlayer():k==="pc"?await shPcard():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
+  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="gr"?await shGrafico():k==="cm"?await shCompar():k==="ht"?await shHistTrade(SHR_HT):k==="ta"?await shHistTrade(-1,{T:taTrade(),sub:taSub()}):k==="sp"?await shSpecial(SHR_SP):k==="pl"?await shPlayer():k==="pc"?await shPcard():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
   if(!cv){sh.querySelector(".shbox").innerHTML='<p class="shwait">Niente da condividere adesso.</p><button class="shx">Chiudi</button>';return}
-  const name=(k==="sp"?("trade-speciale-"+vnz((SPECIALI[SHR_SP]||{}).entra||"").replace(/ /g,"-")):k==="ht"?("scambio-"+((TRADES[SHR_HT]&&TRADES[SHR_HT].data)||"").replace(/\D+/g,"-")):k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="cm"?"confronto-"+((SHR_CM&&SHR_CM.P[0]&&SHR_CM.P[1])?(SHR_CM.P[0].n+"-"+SHR_CM.P[1].n):"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pl"?"scheda-"+((SHR_PL&&SHR_PL.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pc"?"prestazione-"+((SHR_PC&&SHR_PC.x.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="card"?"grafico":"dreamers")+".png";
+  const name=(k==="ta"?"allerta-trade":k==="sp"?("trade-speciale-"+vnz((SPECIALI[SHR_SP]||{}).entra||"").replace(/ /g,"-")):k==="ht"?("scambio-"+((TRADES[SHR_HT]&&TRADES[SHR_HT].data)||"").replace(/\D+/g,"-")):k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="cm"?"confronto-"+((SHR_CM&&SHR_CM.P[0]&&SHR_CM.P[1])?(SHR_CM.P[0].n+"-"+SHR_CM.P[1].n):"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pl"?"scheda-"+((SHR_PL&&SHR_PL.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pc"?"prestazione-"+((SHR_PC&&SHR_PC.x.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="card"?"grafico":"dreamers")+".png";
   let file=null,url="";const mk=async c=>{const blob=await new Promise(r=>c.toBlob(r,"image/png"));file=new File([blob],name,{type:"image/png"});if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(blob)};await mk(cv);
   /* Campo: cursore "fino a dove condividere" (si parte sempre dall'alto: prime N righe) */
   const NR=k==="campo"&&SHR_CAMPO?SHR_CAMPO.R.length:0,sl=NR>1?`<div class="shcut"><div><b>Condividi dalla 1ª alla <output>${NR}</output>ª riga</b><small>su ${NR} · trascina per fermarti prima</small></div><input type="range" min="1" max="${NR}" value="${NR}" step="1" aria-label="Fino a quale riga condividere"></div>`:"";
   sh.querySelector(".shbox").innerHTML=`<img src="${url}" alt="Anteprima da condividere"><div class="shfoot">${sl}<div class="shbar"><button class="shx">Chiudi</button><a class="shsv" href="${url}" download="${name}">Salva</a><button class="shgo">${SH_ICO} Condividi</button></div></div>`;
   const go=sh.querySelector(".shgo");if(!(navigator.canShare&&navigator.canShare({files:[file]})))go.remove();
-  else go.addEventListener("click",async()=>{try{await navigator.share({files:[file],title:k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"Migliori del turno":"Live stanotte"):k==="duel"?"Dreamers · sfida":k==="po"?"Dreamers · playoff":k==="pl"?(SHR_PL?SHR_PL.n:"Giocatore"):k==="pc"?(SHR_PC?SHR_PC.x.n:"Prestazione"):"Dreamers"})}catch(e){}});
+  else go.addEventListener("click",async()=>{try{await navigator.share({files:[file],title:k==="ta"?"Dreamers · Allerta trade":k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"Migliori del turno":"Live stanotte"):k==="duel"?"Dreamers · sfida":k==="po"?"Dreamers · playoff":k==="pl"?(SHR_PL?SHR_PL.n:"Giocatore"):k==="pc"?(SHR_PC?SHR_PC.x.n:"Prestazione"):"Dreamers"})}catch(e){}});
   const rg=sh.querySelector(".shcut input");if(rg){let busy=false,again=false;const upd=async()=>{if(busy){again=true;return}busy=true;do{again=false;const n=+rg.value;sh.querySelector(".shcut output").textContent=n;try{const c2=await shCampo(n);await mk(c2);sh.querySelector(".shbox img").src=url;const sv=sh.querySelector(".shsv");if(sv)sv.href=url}catch(e){console.error(e)}}while(again);busy=false};rg.addEventListener("input",upd)}}
 document.addEventListener("click",e=>{if(cur!=="impostazioni")return;const a=e.target.closest("[data-hnl]"),v=e.target.closest("[data-hnv]");if(!a&&!v)return;const y=scrollY;if(a)hnSet(a.dataset.hnl);else if(v.dataset.hnv==="all")hnScopeSet("all");else{hnScopeSet("team");hnTeam(v.dataset.hnv)}render();scrollTo(0,y)});
 /* (351) Tocco su una riga di "Live stanotte" / "Migliori del turno": apre Dynasty TV direttamente sulla partita giusta, con il box della squadra del giocatore. */
@@ -8119,6 +8204,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-cmpa]");if
 const VIEWS={glplayer:vGLP,fa:vFA,faplayer:vFAP,tv:vTVlive,college:vCollege,trend:vTrend,statnotte:vStatNotte,cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeagueM,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.osserv=vOsserv;VIEWS.iatrade=vIA;VIEWS.grafico=vGrafico;VIEWS.compar=vCompar;
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
+if(window.__taOpen){cur="trade";TRS="allerta"}
 function render(){
   if(cur!=="tv")TVS.out=1;liveSync();if(["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur))fantaLiveAvvia();
   document.body.dataset.v=cur;{const nt=typeof CNT!=="undefined"&&CNT;document.body.classList.toggle("notte",nt);document.documentElement.classList.toggle("notte",nt);const tc=document.querySelector('meta[name="theme-color"]');if(tc&&!document.body.classList.contains("dreamfs"))tc.content=nt?"#2a1260":TH_BAR}
