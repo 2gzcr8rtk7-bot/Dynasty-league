@@ -1,8 +1,508 @@
-{"voci":[["im_nicola",1.08]],
-"frasi":[
-"Buongiorno Dynasty League, qui a bordo campo, ed è stata una notte pazzesca!",
-"Il re della notte è Victor Wembanyama: trentasei punti, quattordici rimbalzi, e sessantasette punti Dunkest. I Ducks ringraziano!",
-"Dietro di lui, Steph Curry: quarantaquattro punti con sei triple, quasi cinquantaquattro punti Dunkest per gli Eagles.",
-"E Nikola Jokić firma la tripla doppia: ventuno punti, tredici rimbalzi, dieci assist. Sorridono i Dolphins.",
-"Notte da dimenticare invece per Austin Reaves: appena due punti Dunkest in trenta minuti. Ai Foxes non sarà piaciuto.",
-"Dal campo è tutto. Linea alle immagini!"]}
+{
+"clips": [
+{
+"id": "it114_0",
+"lang": "i",
+"voice": "im_nicola",
+"speed": 1.15,
+"text": "Signore e signori, siamo a bordo campo, e qui è una bolgia!"
+},
+{
+"id": "it114_1",
+"lang": "i",
+"voice": "im_nicola",
+"speed": 1.15,
+"text": "Victor Wembanyama è semplicemente illegale! Trentasei punti, quattordici rimbalzi, sessantasette punti Dunkest! I Ducks fanno festa!"
+},
+{
+"id": "it114_2",
+"lang": "i",
+"voice": "im_nicola",
+"speed": 1.15,
+"text": "Steph Curry, da un altro pianeta! Sei triple, quarantaquattro punti! Cinquantaquattro Dunkest per gli Eagles!"
+},
+{
+"id": "it114_3",
+"lang": "i",
+"voice": "im_nicola",
+"speed": 1.15,
+"text": "Jokić? Tripla doppia, tanto per cambiare! Dolphins felicissimi!"
+},
+{
+"id": "it114_4",
+"lang": "i",
+"voice": "im_nicola",
+"speed": 1.15,
+"text": "E attenzione, notte da incubo per Austin Reaves: appena due punti Dunkest! Foxes, che dolore!"
+},
+{
+"id": "it114_5",
+"lang": "i",
+"voice": "im_nicola",
+"speed": 1.15,
+"text": "Linea alle immagini, ragazzi!"
+},
+{
+"id": "it125_0",
+"lang": "i",
+"voice": "im_nicola",
+"speed": 1.25,
+"text": "Signore e signori, siamo a bordo campo, e qui è una bolgia!"
+},
+{
+"id": "it125_1",
+"lang": "i",
+"voice": "im_nicola",
+"speed": 1.25,
+"text": "Victor Wembanyama è semplicemente illegale! Trentasei punti, quattordici rimbalzi, sessantasette punti Dunkest! I Ducks fanno festa!"
+},
+{
+"id": "it125_2",
+"lang": "i",
+"voice": "im_nicola",
+"speed": 1.25,
+"text": "Steph Curry, da un altro pianeta! Sei triple, quarantaquattro punti! Cinquantaquattro Dunkest per gli Eagles!"
+},
+{
+"id": "it125_3",
+"lang": "i",
+"voice": "im_nicola",
+"speed": 1.25,
+"text": "Jokić? Tripla doppia, tanto per cambiare! Dolphins felicissimi!"
+},
+{
+"id": "it125_4",
+"lang": "i",
+"voice": "im_nicola",
+"speed": 1.25,
+"text": "E attenzione, notte da incubo per Austin Reaves: appena due punti Dunkest! Foxes, che dolore!"
+},
+{
+"id": "it125_5",
+"lang": "i",
+"voice": "im_nicola",
+"speed": 1.25,
+"text": "Linea alle immagini, ragazzi!"
+},
+{
+"id": "def_af_heart",
+"lang": "a",
+"voice": "af_heart",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_af_heart",
+"lang": "a",
+"voice": "af_heart",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_af_heart",
+"lang": "a",
+"voice": "af_heart",
+"speed": 1.0,
+"text": "Let's go!"
+},
+{
+"id": "def_af_bella",
+"lang": "a",
+"voice": "af_bella",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_af_bella",
+"lang": "a",
+"voice": "af_bella",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_af_bella",
+"lang": "a",
+"voice": "af_bella",
+"speed": 1.0,
+"text": "Let's go!"
+},
+{
+"id": "def_af_nicole",
+"lang": "a",
+"voice": "af_nicole",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_af_nicole",
+"lang": "a",
+"voice": "af_nicole",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_af_nicole",
+"lang": "a",
+"voice": "af_nicole",
+"speed": 1.0,
+"text": "Let's go!"
+},
+{
+"id": "def_af_sarah",
+"lang": "a",
+"voice": "af_sarah",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_af_sarah",
+"lang": "a",
+"voice": "af_sarah",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_af_sarah",
+"lang": "a",
+"voice": "af_sarah",
+"speed": 1.0,
+"text": "Let's go!"
+},
+{
+"id": "def_af_sky",
+"lang": "a",
+"voice": "af_sky",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_af_sky",
+"lang": "a",
+"voice": "af_sky",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_af_sky",
+"lang": "a",
+"voice": "af_sky",
+"speed": 1.0,
+"text": "Let's go!"
+},
+{
+"id": "def_af_jessica",
+"lang": "a",
+"voice": "af_jessica",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_af_jessica",
+"lang": "a",
+"voice": "af_jessica",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_af_jessica",
+"lang": "a",
+"voice": "af_jessica",
+"speed": 1.0,
+"text": "Let's go!"
+},
+{
+"id": "def_af_river",
+"lang": "a",
+"voice": "af_river",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_af_river",
+"lang": "a",
+"voice": "af_river",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_af_river",
+"lang": "a",
+"voice": "af_river",
+"speed": 1.0,
+"text": "Let's go!"
+},
+{
+"id": "def_am_adam",
+"lang": "a",
+"voice": "am_adam",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_am_adam",
+"lang": "a",
+"voice": "am_adam",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_am_adam",
+"lang": "a",
+"voice": "am_adam",
+"speed": 1.0,
+"text": "Let's go!"
+},
+{
+"id": "def_am_michael",
+"lang": "a",
+"voice": "am_michael",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_am_michael",
+"lang": "a",
+"voice": "am_michael",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_am_michael",
+"lang": "a",
+"voice": "am_michael",
+"speed": 1.0,
+"text": "Let's go!"
+},
+{
+"id": "def_am_echo",
+"lang": "a",
+"voice": "am_echo",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_am_echo",
+"lang": "a",
+"voice": "am_echo",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_am_echo",
+"lang": "a",
+"voice": "am_echo",
+"speed": 1.0,
+"text": "Let's go!"
+},
+{
+"id": "def_am_eric",
+"lang": "a",
+"voice": "am_eric",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_am_eric",
+"lang": "a",
+"voice": "am_eric",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_am_eric",
+"lang": "a",
+"voice": "am_eric",
+"speed": 1.0,
+"text": "Let's go!"
+},
+{
+"id": "def_am_fenrir",
+"lang": "a",
+"voice": "am_fenrir",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_am_fenrir",
+"lang": "a",
+"voice": "am_fenrir",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_am_fenrir",
+"lang": "a",
+"voice": "am_fenrir",
+"speed": 1.0,
+"text": "Let's go!"
+},
+{
+"id": "def_am_liam",
+"lang": "a",
+"voice": "am_liam",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_am_liam",
+"lang": "a",
+"voice": "am_liam",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_am_liam",
+"lang": "a",
+"voice": "am_liam",
+"speed": 1.0,
+"text": "Let's go!"
+},
+{
+"id": "def_am_onyx",
+"lang": "a",
+"voice": "am_onyx",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_am_onyx",
+"lang": "a",
+"voice": "am_onyx",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_am_onyx",
+"lang": "a",
+"voice": "am_onyx",
+"speed": 1.0,
+"text": "Let's go!"
+},
+{
+"id": "def_am_puck",
+"lang": "a",
+"voice": "am_puck",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_am_puck",
+"lang": "a",
+"voice": "am_puck",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_am_puck",
+"lang": "a",
+"voice": "am_puck",
+"speed": 1.0,
+"text": "Let's go!"
+},
+{
+"id": "def_bm_george",
+"lang": "b",
+"voice": "bm_george",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_bm_george",
+"lang": "b",
+"voice": "bm_george",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_bm_george",
+"lang": "b",
+"voice": "bm_george",
+"speed": 1.0,
+"text": "Let's go!"
+},
+{
+"id": "def_bm_lewis",
+"lang": "b",
+"voice": "bm_lewis",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_bm_lewis",
+"lang": "b",
+"voice": "bm_lewis",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_bm_lewis",
+"lang": "b",
+"voice": "bm_lewis",
+"speed": 1.0,
+"text": "Let's go!"
+},
+{
+"id": "def_bm_daniel",
+"lang": "b",
+"voice": "bm_daniel",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_bm_daniel",
+"lang": "b",
+"voice": "bm_daniel",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_bm_daniel",
+"lang": "b",
+"voice": "bm_daniel",
+"speed": 1.0,
+"text": "Let's go!"
+},
+{
+"id": "def_bf_emma",
+"lang": "b",
+"voice": "bf_emma",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_bf_emma",
+"lang": "b",
+"voice": "bf_emma",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_bf_emma",
+"lang": "b",
+"voice": "bf_emma",
+"speed": 1.0,
+"text": "Let's go!"
+},
+{
+"id": "def_bf_isabella",
+"lang": "b",
+"voice": "bf_isabella",
+"speed": 0.9,
+"text": "Dee! Fense!"
+},
+{
+"id": "woo_bf_isabella",
+"lang": "b",
+"voice": "bf_isabella",
+"speed": 0.8,
+"text": "Woooooo!"
+},
+{
+"id": "go_bf_isabella",
+"lang": "b",
+"voice": "bf_isabella",
+"speed": 1.0,
+"text": "Let's go!"
+}
+]
+}
