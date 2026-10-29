@@ -2391,6 +2391,7 @@ html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.0
       <button data-v="osserv" aria-selected="false"><span>Osservatorio</span></button>
       <button data-v="iatrade" aria-selected="false"><span>IA Trade</span></button>
       <button data-v="compar" aria-selected="false"><span>Comparatore</span></button>
+      <button data-v="pictrade" aria-selected="false"><span>Pic-Trade</span></button>
     </div>
   </div>
 </header>
@@ -3794,8 +3795,8 @@ function iaAct(b){const d=b.dataset,a=d.ia;
 
 /* (247) Trade e Trade speciali unite: due categorie dentro la stessa pagina */
 function vTrade(){
-  const sw=`<div class="gdmsw" role="tablist">${[["tutte","Tutte le trade"],["sp","Trade speciale"],["allerta","Pic-Trade"]].map(([k,l])=>`<button data-trs="${k}" role="tab" aria-selected="${TRS===k}">${l}</button>`).join("")}</div>`;
-  return sw+(TRS==="sp"?vSpeciali():TRS==="allerta"?vAllerta():vTradeAll());
+  const sw=`<div class="gdmsw" role="tablist">${[["tutte","Tutte le trade"],["sp","Trade speciale"]].map(([k,l])=>`<button data-trs="${k}" role="tab" aria-selected="${TRS===k}">${l}</button>`).join("")}</div>`;
+  return sw+(TRS==="sp"?vSpeciali():vTradeAll());
 }
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="iatrade")return;const b=e.target.closest("[data-ia]");if(b&&b.tagName!=="SELECT"&&!b.disabled){e.preventDefault();iaAct(b)}});
 document.getElementById("main").addEventListener("input",e=>{if(cur!=="iatrade"||e.target.id!=="iaq")return;IA.q=e.target.value;const L=document.getElementById("iaList");if(L)L.innerHTML=iaListHTML()});
@@ -3845,6 +3846,7 @@ ${ent}
 3. segui le regole di NOTE_SVILUPPO.md (in particolare: pubblica su main solo se Francesco te lo ordina con «pubblica»).
 
 Link con lo scambio già compilato: ${link}`}
+function vPicTrade(){return vAllerta()}
 function vAllerta(){
   const W=taWin(),ks=Object.keys(ROSTER);if(!TA.t[0]){try{TA.t[0]=homeMyT()}catch(e){}if(!ks.includes(TA.t[0]))TA.t[0]=ks[0]}
   const errs=taErr(),can=W.ok&&!errs.length;
@@ -3863,15 +3865,15 @@ function vAllerta(){
   <div class="tabtn"><button type="button" class="tab1" data-share="ta"${can?"":" disabled"}>📸 Fai la foto</button><button type="button" class="tab2" data-ta="copy"${can?"":" disabled"}>🔗 Copia per Claude</button></div>
   <p class="note">La foto è l'immagine da condividere con maglie, PDK, età e «Scambio ufficiale». «Copia per Claude» copia il prompt con il link: incollalo a Claude per registrare lo scambio e far partire il banner di 24 ore in Home. Si scambia solo tra un turno e l'altro.</p>`}
 const esc2=v=>String(v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-document.addEventListener("click",e=>{if(cur!=="trade"||TRS!=="allerta")return;const b=e.target.closest("[data-ta]");if(!b||b.disabled)return;const a=b.dataset.ta,s=+b.dataset.s,y=scrollY;
+document.addEventListener("click",e=>{if(cur!=="pictrade")return;const b=e.target.closest("[data-ta]");if(!b||b.disabled)return;const a=b.dataset.ta,s=+b.dataset.s,y=scrollY;
   if(a==="pl"){const i=TA.pl[s].indexOf(b.dataset.n);i<0?TA.pl[s].push(b.dataset.n):TA.pl[s].splice(i,1)}
   else if(a==="up"){const k=b.dataset.k;TA[k][s]=Math.min(+b.dataset.max,TA[k][s]+(k==="cr"?1:5))}
   else if(a==="dn"){const k=b.dataset.k;TA[k][s]=Math.max(0,TA[k][s]-(k==="cr"?1:5))}
   else if(a==="copy"){const t=taPrompt(),ok=()=>{b.textContent="✔ Copiato";setTimeout(()=>{b.textContent="🔗 Copia per Claude"},1800)};if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,()=>{window.prompt("Copia questo testo:",t)});else window.prompt("Copia questo testo:",t);return}
   else return;render();scrollTo(0,y)});
-document.addEventListener("change",e=>{if(cur!=="trade"||TRS!=="allerta")return;const b=e.target.closest("select[data-ta]");if(!b)return;const a=b.dataset.ta,s=+b.dataset.s,y=scrollY;
+document.addEventListener("change",e=>{if(cur!=="pictrade")return;const b=e.target.closest("select[data-ta]");if(!b)return;const a=b.dataset.ta,s=+b.dataset.s,y=scrollY;
   if(a==="team"){TA.t[s]=b.value;TA.pl[s]=[];TA.cr[s]=0;TA.cp[s]=0}else if(a==="sr")TA.sr[s]=b.value;else if(a==="sg")TA.sg[s]=+b.value;render();scrollTo(0,y)});
-document.addEventListener("input",e=>{if(cur!=="trade"||TRS!=="allerta")return;const b=e.target;if(b.dataset&&b.dataset.ta==="ex")TA.ex[+b.dataset.s]=b.value});
+document.addEventListener("input",e=>{if(cur!=="pictrade")return;const b=e.target;if(b.dataset&&b.dataset.ta==="ex")TA.ex[+b.dataset.s]=b.value});
 /* link «?scambio=…»: apre Pic-Trade già compilata */
 try{const q=new URLSearchParams(location.search).get("scambio");if(q){const o=JSON.parse(decodeURIComponent(escape(atob(q))));if(o&&o.t&&o.pl){TA=Object.assign(TA,o);window.__taOpen=1}}}catch(e){}
 function vTradeAll(){
@@ -8206,15 +8208,15 @@ document.getElementById("main").addEventListener("click",e=>{if(cur!=="compar")r
   if(k==="back"){const f=CMR.from;CMR.from=null;if(f){cur=f.cur;curTeam=f.curTeam;curPlayer=f.curPlayer;gFrom=f.gFrom}else cur="valtrade";render();scrollTo(0,0)}});
 document.getElementById("main").addEventListener("input",e=>{if(cur!=="compar"||e.target.id!=="cmq")return;CMR.q=e.target.value;const L=document.getElementById("cmList");if(L)L.innerHTML=cmList()});
 document.addEventListener("click",e=>{const b=e.target.closest("[data-cmpa]");if(!b)return;e.preventDefault();CMR.from={cur,curTeam,curPlayer,gFrom};CMR.pa=b.dataset.cmpa;if(CMR.pb===CMR.pa)CMR.pb=null;CMR.slot=CMR.pb?null:"b";CMR.q="";cur="compar";render();scrollTo(0,0)});
-const VIEWS={glplayer:vGLP,fa:vFA,faplayer:vFAP,tv:vTVlive,college:vCollege,trend:vTrend,statnotte:vStatNotte,cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeagueM,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.osserv=vOsserv;VIEWS.iatrade=vIA;VIEWS.grafico=vGrafico;VIEWS.compar=vCompar;
+const VIEWS={glplayer:vGLP,fa:vFA,faplayer:vFAP,tv:vTVlive,college:vCollege,trend:vTrend,statnotte:vStatNotte,cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,pictrade:vPicTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeagueM,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.osserv=vOsserv;VIEWS.iatrade=vIA;VIEWS.grafico=vGrafico;VIEWS.compar=vCompar;
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
-if(window.__taOpen){cur="trade";TRS="allerta"}
+if(window.__taOpen)cur="pictrade"
 function render(){
   if(cur!=="tv")TVS.out=1;liveSync();if(["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur))fantaLiveAvvia();
   document.body.dataset.v=cur;{const nt=typeof CNT!=="undefined"&&CNT;document.body.classList.toggle("notte",nt);document.documentElement.classList.toggle("notte",nt);const tc=document.querySelector('meta[name="theme-color"]');if(tc&&!document.body.classList.contains("dreamfs"))tc.content=nt?"#2a1260":TH_BAR}
   {document.documentElement.classList.toggle("setpg",cur==="impostazioni");/* (245) */const fs=cur==="giochi"&&(GAME==="dream"||GAME==="gdream");document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=(fs||(typeof CNT!=="undefined"&&CNT))?"#2a1260":TH_BAR}
-  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="fa"?"fa":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"?"home":cur==="osserv"||cur==="iatrade"||cur==="compar"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
+  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="fa"?"fa":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"?"home":cur==="osserv"||cur==="iatrade"||cur==="compar"||cur==="pictrade"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));try{const nv=document.querySelector("nav"),sb=nv&&nv.querySelector('[aria-selected="true"]');if(sb)nv.scrollTo({left:Math.max(0,sb.offsetLeft-24)})}catch(e){}
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -8316,7 +8318,7 @@ const BK_IDS="#gback,#faback,#glpback,#effback,#cback,[data-cupback],[data-snbac
 /* SOTTO-SCHERMATE: se dentro una sezione c'è un livello interno (es. IA Trade → Per ruolo / Per giocatore), il tasto ‹ e il gesto indietro tornano prima a quel livello e solo dopo alla schermata precedente. Aggiungere qui ogni nuova sotto-schermata. */
 const NAV_SUB=[{ok:()=>cur==="iatrade"&&(IA.mode==="role"||IA.mode==="pl"),lab:"IA Trade",back:()=>{IA.mode="";render()}},{ok:()=>cur==="eq"&&EQ.vl,lab:"Valori e crediti",back:()=>{EQ.vl=false;EQ.msg="";render()}}];
 const navSub=()=>NAV_SUB.find(x=>{try{return x.ok()}catch(e){return false}});
-function backLabel(v){const n=(TEAMS[curTeam]||{}).nick||"";const M={home:"Home",campo:"Campo "+n,roster:"Roster "+n,fa:"Giocatori",valtrade:"Calcolatore trade",osserv:"Osservatorio",iatrade:"IA Trade",compar:"Comparatore",efficienza:"Statistiche",effsquadra:"Efficienza "+n,effcup:"Efficienza",tv:"Dynasty TV",risultati:"Risultati",classifica:"Classifica",trade:"Trade",speciali:"Trade speciali",gleague:"G-Dreamers",college:"Ufficio Scouting",cassa:"Cassa "+n,cap:"Cap",multe:"Multe",trend:"Trend",statnotte:"Statistiche notte",grafico:"Grafico",dunkest:"Centro gestione",storia:"Sala Trofei",regolamento:"Regolamento",infortuni:"Centro Medico",gdreamers:"G-Dreamers",faplayer:"Giocatori",glplayer:"G-Dreamers"};
+function backLabel(v){const n=(TEAMS[curTeam]||{}).nick||"";const M={home:"Home",campo:"Campo "+n,roster:"Roster "+n,fa:"Giocatori",valtrade:"Calcolatore trade",osserv:"Osservatorio",iatrade:"IA Trade",pictrade:"Pic-Trade",compar:"Comparatore",efficienza:"Statistiche",effsquadra:"Efficienza "+n,effcup:"Efficienza",tv:"Dynasty TV",risultati:"Risultati",classifica:"Classifica",trade:"Trade",speciali:"Trade speciali",gleague:"G-Dreamers",college:"Ufficio Scouting",cassa:"Cassa "+n,cap:"Cap",multe:"Multe",trend:"Trend",statnotte:"Statistiche notte",grafico:"Grafico",dunkest:"Centro gestione",storia:"Sala Trofei",regolamento:"Regolamento",infortuni:"Centro Medico",gdreamers:"G-Dreamers",faplayer:"Giocatori",glplayer:"G-Dreamers"};
   return v==="giochi"?(GAME==="dream"?"Dreamers":GAME==="gdream"?"G-Dreamers":"Giochi"):(M[v]||"Indietro")}
 /* nomi troppo lunghi per la card: nome di battesimo ridotto all'iniziale ("S. GILGEOUS-ALEXANDER") */
 function duFit(){document.querySelectorAll(".du .duh").forEach(h=>h.style.minHeight="");document.querySelectorAll(".du .dun b").forEach(b=>{if(b.scrollWidth<=b.clientWidth+1)return;b.innerHTML=b.innerHTML.replace(/&nbsp;|\u00a0/g," ");if(b.scrollWidth>b.clientWidth+1)b.style.letterSpacing="-.02em"});document.querySelectorAll(".durow").forEach(r=>{const hs=[...r.querySelectorAll(".du .duh")];if(hs.length<2)return;const m=Math.max(...hs.map(h=>h.getBoundingClientRect().height));hs.forEach(h=>h.style.minHeight=m+"px")})}/* (312) nomi già in formato "N. Cognome" e a capo se servono: mai rimpiccioliti né tagliati */
