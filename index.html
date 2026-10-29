@@ -1080,12 +1080,13 @@ body:not(.notte) .tmc .tmp{background:color-mix(in srgb,var(--fg) 9%,transparent
 #tvplay .tvpb.b{top:52%;height:9%;background:linear-gradient(90deg,transparent,#1d428a 25%,#3d7bff 50%,#1d428a 75%,transparent);animation:tvpbar2 1.1s .35s cubic-bezier(.2,.8,.2,1) forwards}
 @keyframes tvpbar{to{transform:skewY(-8deg) translateX(0)}}@keyframes tvpbar2{from{transform:skewY(-8deg) translateX(110%)}to{transform:skewY(-8deg) translateX(0)}}
 #tvplay .tvpt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center}
-#tvplay .tvpt b{font-family:var(--display);font-style:italic;font-weight:900;font-size:clamp(34px,11vw,84px);letter-spacing:.02em;color:#fff;text-shadow:0 4px 0 rgba(0,0,0,.35),0 0 30px rgba(61,123,255,.55);opacity:0;transform:scale(2.4);animation:tvpzoom .7s .9s cubic-bezier(.2,.9,.25,1.2) forwards}
+#tvplay .tvpt b{font-family:var(--display);font-style:italic;font-weight:900;font-size:clamp(34px,11vw,84px);letter-spacing:.02em;color:#fff;text-shadow:0 4px 0 rgba(0,0,0,.35),0 0 30px rgba(61,123,255,.55);opacity:0;transform:scale(2.4);animation:tvpzoom .7s .9s cubic-bezier(.2,.9,.25,1.2) forwards,tvppulse .45s 3.62s ease-out}
 #tvplay .tvpt b i{font-style:inherit;color:#f5b400}
 #tvplay .tvpt span{font:800 clamp(11px,3.2vw,18px) var(--display);font-style:italic;letter-spacing:.32em;text-transform:uppercase;color:#cfe0ff;opacity:0;animation:tvpfade .5s 1.5s forwards}
 #tvplay .tvpt em{margin-top:8px;padding:5px 14px;font:800 clamp(12px,3.4vw,20px) var(--display);font-style:italic;text-transform:uppercase;color:#fff;background:#c8102e;opacity:0;transform:translateY(14px);animation:tvpup .5s 1.9s forwards}
-@keyframes tvpzoom{to{opacity:1;transform:scale(1)}}@keyframes tvpfade{to{opacity:1}}@keyframes tvpup{to{opacity:1;transform:none}}
-#tvplay .tvpf{position:absolute;inset:0;background:#fff;opacity:0;animation:tvpflash .45s .85s ease-out}
+@keyframes tvpzoom{to{opacity:1;transform:scale(1)}}@keyframes tvppulse{0%{transform:scale(1.14);filter:brightness(1.6)}100%{transform:scale(1)}}
+#tvplay .tvph{position:absolute;left:50%;bottom:12px;z-index:2;transform:translate(-50%,8px);padding:7px 14px;border-radius:999px;background:rgba(0,0,0,.75);color:#fff;font-size:13px;font-weight:700;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s}#tvplay .tvph.on{opacity:1;transform:translate(-50%,0)}@keyframes tvpfade{to{opacity:1}}@keyframes tvpup{to{opacity:1;transform:none}}
+#tvplay .tvpf{position:absolute;inset:0;background:#fff;opacity:0;animation:tvpflash .45s .85s ease-out,tvpflash .4s 3.58s ease-out}
 @keyframes tvpflash{0%{opacity:.85}100%{opacity:0}}
 #tvplay .tvpl{margin-top:14px;display:flex;gap:10px;align-items:center;font-size:13px;color:#aab3c8}
 #tvplay .tvpl a{color:#fff;font-weight:700;text-decoration:none;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.1)}
@@ -7796,29 +7797,88 @@ function tvGame(key){const T=TVD(),[d,g]=key.split("_"),G=(T.days[d]||[]).find(x
   <tbody><tr class="grp"><td>Quintetto</td><td colspan="15"></td></tr>${st.map(pr).join("")}<tr class="grp"><td>Panchina</td><td colspan="15"></td></tr>${bn.map(pr).join("")}${tot}</tbody></table></div>
   <p class="note">${b.live?`Tabellino dati ${b.src==="ESPN"?"ESPN":"NBA.com"} live${G[5]==="L"?", si aggiorna ogni 30 secondi; PDK provvisorio (formula Dunkest, il +5% vittoria si aggiunge a fine partita)":"; PDK calcolato con la formula Dunkest, quello ufficiale arriva con il report del mattino"}.`:"Tabellino ufficiale (dati Dunkest)."} Pt punti, RIM rimbalzi, AST assist, STL palle rubate, Stp stoppate, TOV palle perse, Off/Dif rimbalzi offensivi/difensivi, +/− punti di scarto con il giocatore in campo, PDK punteggio Dunkest. Scorri a destra per tutte le colonne.</p>`}
 /* ===== DYNASTY TV HIGHLIGHTS: video del canale YouTube "The Game Time Highlights" associati alle partite (hl-data.js, lo aggiorna GitHub: tools/highlights_yt.mjs) =====
-   Logo YouTube sotto "Finale" solo se la partita ha il suo video. Si guarda dentro l'app: sigla DYNASTY TV (circa 3 s, con jingle) e poi il video (player ufficiale YouTube). */
+   Logo YouTube sotto "Finale" solo se la partita ha il suo video. Si guarda dentro l'app: sigla DYNASTY TV in stile NBA (circa 4 s, musica originale sintetizzata, tvSigla) e poi il video parte da solo (player ufficiale YouTube). */
 const TVYT_SVG='<svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#ff0000"/><path d="M11 5.6v8.8l7.6-4.4z" fill="#fff"/></svg>';
 const tvHL=k=>typeof TVHL!=="undefined"&&TVHL[k]?(Array.isArray(TVHL[k])?TVHL[k][0]:TVHL[k]):"";
-function tvJingle(){try{const C=new(window.AudioContext||window.webkitAudioContext)(),t=C.currentTime,M=C.createGain();M.gain.value=.22;M.connect(C.destination);
-  const nt=(f,a,d,ty="sawtooth",v=1)=>{const o=C.createOscillator(),g=C.createGain(),fl=C.createBiquadFilter();o.type=ty;o.frequency.value=f;fl.type="lowpass";fl.frequency.value=2600;g.gain.setValueAtTime(0,t+a);g.gain.linearRampToValueAtTime(v,t+a+.02);g.gain.exponentialRampToValueAtTime(.001,t+a+d);o.connect(fl);fl.connect(g);g.connect(M);o.start(t+a);o.stop(t+a+d+.05)};
-  /* rullo iniziale + fanfara da telegiornale */
-  [0,.07,.14,.21,.28,.35,.42,.49].forEach((a,i)=>nt(110+i*8,a,.09,"square",.25+i*.06));
-  [[392,.9,.18],[523.25,1.05,.18],[659.25,1.2,.18],[783.99,1.35,1.3]].forEach(([f,a,d])=>{nt(f,a,d);nt(f/2,a,d,"triangle",.7)});
-  [523.25,659.25,783.99,1046.5].forEach(f=>nt(f,1.35,1.4,"triangle",.35));
-  setTimeout(()=>C.close().catch(()=>{}),3600)}catch(e){}}
+/* Sigla DYNASTY TV in stile NBA (originale): sintetizzata con Web Audio, funziona con AudioContext e OfflineAudioContext.
+   tvSigla(C, dest, v): v="A" prime time (riser + colpo di ottoni + groove funk), v="B" arena (palleggi, sirena, ottoni). Durata ~4,2 s */
+function tvSigla(C,dest,v){
+  const t0=C.currentTime+.03,sr=C.sampleRate;
+  const noiseBuf=(()=>{const b=C.createBuffer(1,sr*2,sr),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return b})();
+  /* riverbero da palazzetto */
+  const rv=C.createConvolver();{const len=sr*1.6,b=C.createBuffer(2,len,sr);for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3.2)}rv.buffer=b}
+  const M=C.createGain();M.gain.value=.3;const comp=C.createDynamicsCompressor();comp.threshold.value=-14;comp.ratio.value=4;comp.attack.value=.003;comp.release.value=.15;
+  M.connect(comp);comp.connect(dest);const W=C.createGain();W.gain.value=.22;rv.connect(W);W.connect(M);
+  const out=(n,wet=.3)=>{n.connect(M);if(wet){const g=C.createGain();g.gain.value=wet;n.connect(g);g.connect(rv)}};
+  const env=(g,a,peak,att,dec)=>{g.gain.setValueAtTime(0,a);g.gain.linearRampToValueAtTime(peak,a+att);g.gain.exponentialRampToValueAtTime(.0008,a+att+dec)};
+  const noise=(a,d,type,f,q,peak,wet=.2,att=.002)=>{const s=C.createBufferSource();s.buffer=noiseBuf;const fl=C.createBiquadFilter();fl.type=type;fl.frequency.value=f;fl.Q.value=q;const g=C.createGain();env(g,a,peak,att,d);s.connect(fl);fl.connect(g);out(g,wet);s.start(a,Math.random());s.stop(a+att+d+.05);return fl};
+  const kick=(a,p=1)=>{const o=C.createOscillator(),g=C.createGain();o.frequency.setValueAtTime(160,a);o.frequency.exponentialRampToValueAtTime(42,a+.12);env(g,a,1.1*p,.002,.32);o.connect(g);out(g,.05);o.start(a);o.stop(a+.4);noise(a,.02,"highpass",3000,.7,.25*p,0)};
+  const snare=(a,p=1)=>{noise(a,.16,"bandpass",2200,.8,.75*p,.35);const o=C.createOscillator(),g=C.createGain();o.type="triangle";o.frequency.setValueAtTime(230,a);o.frequency.exponentialRampToValueAtTime(160,a+.08);env(g,a,.45*p,.001,.09);o.connect(g);out(g,.2);o.start(a);o.stop(a+.15)};
+  const clap=a=>{[0,.011,.023].forEach(x=>noise(a+x,.05,"bandpass",1500,1.2,.5,.4));noise(a+.03,.18,"bandpass",1400,1,.35,.5)};
+  const hat=(a,p=1,open=false)=>noise(a,open?.18:.035,"highpass",8000,.7,.22*p,.05);
+  const crash=(a,p=1)=>noise(a,1.6,"highpass",5200,.5,.45*p,.5,.004);
+  const bass=(f,a,d,p=1)=>{const o=C.createOscillator(),o2=C.createOscillator(),fl=C.createBiquadFilter(),g=C.createGain();o.type="sawtooth";o2.type="sine";o.frequency.value=f;o2.frequency.value=f/2;fl.type="lowpass";fl.frequency.setValueAtTime(900,a);fl.frequency.exponentialRampToValueAtTime(220,a+d);fl.Q.value=6;env(g,a,.55*p,.006,d);o.connect(fl);o2.connect(fl);fl.connect(g);out(g,.05);[o,o2].forEach(x=>{x.start(a);x.stop(a+d+.1)})};
+  /* ottoni: 3 seghe stonate per nota, filtro che si apre (attacco "brass") */
+  const brass=(fs,a,d,p=1,fall=false)=>fs.forEach(f=>{const fl=C.createBiquadFilter(),g=C.createGain();fl.type="lowpass";fl.Q.value=2;fl.frequency.setValueAtTime(500,a);fl.frequency.linearRampToValueAtTime(4200,a+.05);fl.frequency.exponentialRampToValueAtTime(1300,a+d);
+    g.gain.setValueAtTime(0,a);g.gain.linearRampToValueAtTime(.16*p,a+.025);g.gain.setValueAtTime(.13*p,a+Math.max(.03,d-.08));g.gain.exponentialRampToValueAtTime(.0008,a+d+.12);
+    [-9,0,8].forEach(dt=>{const o=C.createOscillator();o.type="sawtooth";o.frequency.value=f;o.detune.value=dt;if(fall){o.frequency.setValueAtTime(f,a+d*.55);o.frequency.exponentialRampToValueAtTime(f*.8,a+d+.1)}o.connect(fl);o.start(a);o.stop(a+d+.15)});fl.connect(g);out(g,.45)});
+  const riser=(a,d)=>{const fl=noise(a,d,"bandpass",400,3,.0001,.4,d*.95);fl.frequency.setValueAtTime(300,a);fl.frequency.exponentialRampToValueAtTime(7000,a+d);
+    const s=C.createBufferSource();s.buffer=noiseBuf;const f2=C.createBiquadFilter();f2.type="bandpass";f2.Q.value=2.5;f2.frequency.setValueAtTime(300,a);f2.frequency.exponentialRampToValueAtTime(6500,a+d);const g=C.createGain();g.gain.setValueAtTime(.0001,a);g.gain.exponentialRampToValueAtTime(.5,a+d);g.gain.linearRampToValueAtTime(0,a+d+.02);s.connect(f2);f2.connect(g);out(g,.3);s.start(a);s.stop(a+d+.05)};
+  const buzzer=(a,d)=>{[0,7].forEach(dt=>{const o=C.createOscillator(),fl=C.createBiquadFilter(),g=C.createGain();o.type="square";o.frequency.value=196;o.detune.value=dt;fl.type="bandpass";fl.frequency.value=900;fl.Q.value=.8;env(g,a,.13,.01,d);g.gain.setValueAtTime(.13,a+d*.85);o.connect(fl);fl.connect(g);out(g,.5);o.start(a);o.stop(a+d+.1)})};
+  const N={Bb2:116.54,C3:130.81,D3:146.83,Eb3:155.56,F3:174.61,G3:196,Ab3:207.65,Bb3:233.08,C4:261.63,D4:293.66,Eb4:311.13,F4:349.23,G4:392,Ab4:415.3,Bb4:466.16,C5:523.25,D5:587.33,Eb5:622.25,F5:698.46};
+  const HIT=.9,b=60/112,s=b/4; /* 112 bpm, colpo principale a 0,9 s (quando appare DYNASTY TV) */
+  if(v==="B"){
+    /* palleggi che accelerano + sirena da arena, poi colpo */
+    [0,.3,.55,.72,.83].forEach((x,i)=>{const o=C.createOscillator(),g=C.createGain();o.frequency.setValueAtTime(110,t0+x);o.frequency.exponentialRampToValueAtTime(55,t0+x+.08);env(g,t0+x,.6+i*.08,.002,.12);o.connect(g);out(g,.25);o.start(t0+x);o.stop(t0+x+.2);noise(t0+x,.03,"bandpass",900,1.5,.25,.3)});
+    riser(t0+.1,HIT-.1);
+  }else{
+    /* rullante che accelera + riser */
+    let x=0,st=.11;while(x<HIT-.03){snare(t0+x,.25+x*.8);x+=st;st=Math.max(.035,st*.86)}riser(t0,HIT);
+  }
+  const h=t0+HIT;
+  /* COLPO: cassa + piatto + accordo di ottoni Bb7sus */
+  kick(h,1.2);crash(h,1.1);snare(h,1);brass([N.Bb3,N.F4,N.Ab4,N.C5,N.Eb5],h,.42,1.15,true);bass(N.Bb2,h,.4,1.1);
+  /* groove: 2 battute in 4/4 (funk) */
+  const g0=h+b;
+  hat(h+b/2,.7);
+  /* battuta funk dopo il colpo */
+  const pat="K..k..S...K.S..h";/* 16 sedicesimi */
+  for(let r=0;r<2;r++)[...pat].forEach((c,i)=>{const a=g0+r*16*s+i*s;if(c==="K")kick(a);if(c==="k")kick(a,.7);if(c==="S"){snare(a);clap(a)}hat(a,i%2?.45:.8,c==="h")});
+  const bl=[[0,N.Bb2,.18],[3,N.Bb2,.1],[6,N.Db3||138.59,.1],[8,N.C3,.18],[11,N.Eb3,.1],[14,N.F3,.12]];
+  for(let r=0;r<1;r++)bl.forEach(([i,f,d])=>bass(f,g0+r*16*s+i*s,d+.05));
+  /* stacchi di ottoni sul groove: melodia originale, sincopata */
+  const mel=v==="B"?[[2,[N.Bb3,N.D4,N.F4],.12],[5,[N.C4,N.Eb4,N.G4],.12],[8,[N.D4,N.F4,N.Bb4],.2],[11,[N.Eb4,N.G4,N.C5],.12],[13,[N.F4,N.A4||440,N.C5],.12]]
+                 :[[2,[N.F4,N.Bb4],.1],[3,[N.F4,N.Bb4],.1],[6,[N.Ab4,N.C5],.16],[10,[N.G4,N.Bb4],.1],[11,[N.Ab4,N.C5],.1],[13,[N.Bb4,N.D5],.2]];
+  mel.forEach(([i,f,d])=>brass(f,g0+i*s,d,.85));
+  /* FINALE: sirena (B) o colpo con caduta (A), accordo lungo */
+  const fin=g0+16*s;
+  kick(fin,1.2);crash(fin,1);brass([N.Bb3,N.D4,N.F4,N.Bb4,N.D5,N.F5],fin,.85,1.1);bass(N.Bb2,fin,.8,1.1);
+  if(v==="B")buzzer(fin+.02,.75);
+  return fin+1.2-t0;
+}
+const TV_SIGLA_V="A";
+function tvJingle(){try{const C=new(window.AudioContext||window.webkitAudioContext)();if(C.state==="suspended")C.resume();tvSigla(C,C.destination,TV_SIGLA_V);setTimeout(()=>C.close().catch(()=>{}),6500)}catch(e){}}
 function tvYtOpen(key){const id=tvHL(key);if(!id)return;const T=TVD(),[d]=key.split("_"),G=(T.days[d]||[]).find(x=>x[7]===key);if(!G)return;
   const[a,h,sa,sh]=G,dd=tvDt(d),old=document.getElementById("tvplay");if(old)old.remove();
   const el=document.createElement("div");el.id="tvplay";el.setAttribute("role","dialog");
-  el.innerHTML=`<button class="tvpx" aria-label="Chiudi">✕</button><div class="tvpv"><div class="tvpi"><div class="tvpg"></div><div class="tvpb r"></div><div class="tvpb b"></div><div class="tvpf"></div>
+  el.innerHTML=`<button class="tvpx" aria-label="Chiudi">✕</button><div class="tvpv"><div class="tvph">🔇 Tocca il video per attivare l'audio</div><div class="tvpi"><div class="tvpg"></div><div class="tvpb r"></div><div class="tvpb b"></div><div class="tvpf"></div>
    <div class="tvpt"><b>DYNASTY <i>TV</i></b><span>Highlights</span><em>${tvNick(a)} ${sa} – ${sh} ${tvNick(h)} · ${dd.getUTCDate()} ${TV_MM[dd.getUTCMonth()]}</em></div></div></div>
    <div class="tvpl"><span>The Game Time Highlights</span><a href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">Apri su YouTube</a></div>`;
   document.body.appendChild(el);document.documentElement.style.overflow="hidden";tvJingle();
-  const close=()=>{clearTimeout(el._t);el.remove();document.documentElement.style.overflow=""};
+  /* il player si carica subito (muto, dietro la sigla) e si mette in pausa; a fine sigla riparte da 0 con l'audio.
+     Se il telefono non permette l'audio automatico (iPhone), il video parte muto con l'avviso "tocca per l'audio". */
+  const f=document.createElement("iframe"),yo="https://www.youtube-nocookie.com",st={s:-1,m:true,go:false};
+  f.src=`${yo}/embed/${id}?enablejsapi=1&autoplay=1&mute=1&playsinline=1&rel=0&modestbranding=1&origin=${encodeURIComponent(location.origin)}`;
+  f.allow="autoplay; encrypted-media; picture-in-picture; fullscreen";f.allowFullscreen=true;f.title="Highlights";el.querySelector(".tvpv").prepend(f);
+  const cmd=(func,args=[])=>{try{f.contentWindow.postMessage(JSON.stringify({event:"command",func,args}),"*")}catch(e){}};
+  const onMsg=e=>{if(e.source!==f.contentWindow)return;let d;try{d=typeof e.data==="string"?JSON.parse(e.data):e.data}catch(x){return}const i=d&&d.info;if(!i)return;
+    if(typeof i.playerState==="number"){st.s=i.playerState;if(st.s===1&&!st.go)cmd("pauseVideo")}if(typeof i.muted==="boolean")st.m=i.muted};
+  window.addEventListener("message",onMsg);
+  const listen=()=>{try{f.contentWindow.postMessage(JSON.stringify({event:"listening",id:1,channel:"widget"}),"*")}catch(e){}};f.addEventListener("load",()=>{listen();setTimeout(listen,400)});
+  const close=()=>{clearTimeout(el._t);clearTimeout(el._t2);window.removeEventListener("message",onMsg);el.remove();document.documentElement.style.overflow=""};
   el.querySelector(".tvpx").onclick=close;el._k=e=>{if(e.key==="Escape")close()};
-  /* il video parte dopo la sigla */
-  el._t=setTimeout(()=>{if(!el.isConnected)return;const f=document.createElement("iframe");
-    f.src=`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1&rel=0&modestbranding=1`;f.allow="autoplay; encrypted-media; picture-in-picture; fullscreen";f.allowFullscreen=true;f.title="Highlights";
-    el.querySelector(".tvpv").prepend(f);el.querySelector(".tvpi").classList.add("out")},3300)}
+  el._t=setTimeout(()=>{if(!el.isConnected)return;st.go=true;cmd("seekTo",[0,true]);cmd("unMute");cmd("setVolume",[100]);cmd("playVideo");el.querySelector(".tvpi").classList.add("out");
+    el._t2=setTimeout(()=>{if(!el.isConnected)return;if(st.s!==1){cmd("mute");cmd("playVideo")}if(st.s!==1||st.m){const h=el.querySelector(".tvph");h.classList.add("on");setTimeout(()=>h.classList.remove("on"),5000)}},1300)},3900)}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-tvyt]");if(b){e.preventDefault();e.stopPropagation();tvYtOpen(b.dataset.tvyt)}},true);
 document.addEventListener("keydown",e=>{const el=document.getElementById("tvplay");if(el&&el._k)el._k(e)});
 /* ===== DYNASTY TV LIVE: dati in diretta NBA letti dal telefono (cdn.nba.com), solo mentre la sezione è aperta ===== */
