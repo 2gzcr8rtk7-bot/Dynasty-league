@@ -525,7 +525,7 @@ details.glp.glhit{animation:glhit 2.2s ease}@keyframes glhit{0%,40%{box-shadow:i
 .dwd b{display:block;font-family:var(--display);font-style:italic;font-weight:800;text-transform:uppercase;font-size:14px}.dwd small{font-size:11px;color:var(--muted)}
 .dwo{font-weight:700;font-size:14px}.dwo small{display:block;font-weight:600;font-size:10.5px;color:#a78bfa}
 .dwv em{font-style:normal;font-size:11.5px;font-weight:700;color:var(--muted)}.dwv em.lv{color:#f87171}
-.bev[data-drwk]{cursor:pointer}
+.bev[data-drwk]{cursor:pointer}.bevp{display:flex;align-items:center;justify-content:flex-end;gap:5px}.bevp .lkx{width:14px;height:14px;color:#facc15;flex:none}
 .bench{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:16px}
 .bpl{display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,var(--panel2),var(--panel));border:0;padding:6px 12px 6px 8px;cursor:pointer;text-align:left;color:var(--fg)}
 .bpl svg{width:34px;height:41px;flex:none}
@@ -5264,7 +5264,7 @@ function drPanca(t,T){const rp=n=>(ROSTER[t]||[]).find(p=>p[0]===n)||[n,"",ruolo
   return`<div class="dpan">
    <div class="dpsix"><h5 aria-label="6° uomo"><small>100% PDK</small></h5>${card(T.top[5],"six")}</div>
    <div class="dphalf"><h5 aria-label="Panchina"><small>50% PDK</small></h5><div class="dpg">${[6,7,8,9].map(i=>card(T.top[i],"half")).join("")}</div></div></div>
-  ${tr.length?`${H("Tribuna",`<em>non contano nel turno</em>`)}<div class="bench dptrib">${tr.map(x=>{const p=rp(x.n);return`<button class="bpl" data-pl="${x.n}">${jersey(t,p[1],x.n)}<span class="bnm">${RTR(x.n)}${x.n}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]||""} · ${p[3]}${injTag(p[0])}</small></span><span class="bev" data-drwk="${x.n}">${x.e==null?`<span class="cev wait">In attesa</span>`:pillP(x.e)}<small>${x.e==null?"partite del turno ›":"PDK del turno ›"}</small></span></button>`}).join("")}</div>`:""}`}
+  ${tr.length?`${H("Tribuna",`<em>non contano nel turno</em>`)}<div class="bench dptrib">${tr.map(x=>{const p=rp(x.n);return`<button class="bpl" data-pl="${x.n}">${jersey(t,p[1],x.n)}<span class="bnm">${RTR(x.n)}${x.n}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]||""} · ${p[3]}${injTag(p[0])}</small></span><span class="bev" data-drwk="${x.n}">${x.e==null?`<span class="cev wait">In attesa</span>`:`<span class="bevp">${drFinito(x)?DR_LKX:""}${pillP(x.e)}</span>`}<small>${x.e==null?"partite del turno ›":"PDK del turno ›"}</small></span></button>`}).join("")}</div>`:""}`}
 /* foglio con le partite del turno del giocatore (come le caselle della sfida Dreamers) */
 function drWkOpen(n){const C=CAMPO_DR;if(!C||!n)return;const T=C.T,x=[...T.top,...T.trib,...T.wait].find(y=>y.n===n);if(!x)return;
   const i=T.top.indexOf(x),pos=i===0?"Capitano · ×1,5":i>0&&i<5?"In campo · punteggio pieno":i===5?"6° uomo · punteggio pieno":i>=6?"Panchina · ×½":"Tribuna · non conta nel turno";
