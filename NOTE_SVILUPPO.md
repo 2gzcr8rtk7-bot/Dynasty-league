@@ -1241,3 +1241,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 (424) Banner avvisi della Home: di giorno (stile Blu e stile Nero) usa i colori del tema (sfondo `--pn1/--pn2`, bordo e scritte `--gold`, bordi `--line`); la modalità notte resta viola come prima. In coda, non pubblicato.
 
 (425) Trade speciale De Larrea (DUC, Speciale 40): scadenza fissata al 6 febbraio 2027 = turno Dreamers 31 (5-7/2) = giornata 33 (giornata = turno + 2), invece della G40 da regolamento. `SPECIALI` ora accetta `scad` (giornata di scadenza) e `fine` (data a parole, mostrata nella scheda). Countdown: 31 giornate (era 38). In coda, non pubblicato.
+
+(426) Trade speciale Ingram (DUC, Speciale 30): scadenza al 15 dicembre 2026 = turno Dreamers 13 (12-15/12) = giornata 15 (invece della G20). Se serve far finire un turno dopo: `scad:16` (16-18/12). In coda, non pubblicato.
