@@ -3282,6 +3282,10 @@ function iaCalcInts(){iaPC={};const S=iaStats(),mk=n=>iaPl(n),out=[];
   else{const[ta,tb]=VT.t,A=vtSide(0),B=vtSide(1);if(!A&&!B)return[];
     out.push(iaInt(S,ta,VT.pl[1].map(mk),VT.pl[0].map(mk),(B-A)/Math.max(A,B,1)),iaInt(S,tb,VT.pl[0].map(mk),VT.pl[1].map(mk),(A-B)/Math.max(A,B,1)))}
   const f=out.filter(x=>x.t!==curTeam);return f.length?f:out}
+/* INTERESSE REALE di tutte le squadre coinvolte: lo scambio migliore è quello che interessa di più a tutti (conta soprattutto il meno interessato) */
+const iaMix=I=>{const v=I.map(x=>x.sc);return{minI:Math.min(...v),avgI:v.reduce((a,b)=>a+b,0)/v.length,mix:.55*Math.min(...v)+.45*v.reduce((a,b)=>a+b,0)/v.length}};
+/* livello equilibrato: se ci sono abbastanza scambi che interessano almeno "abbastanza" a tutti (interesse ≥ medio), restano solo quelli */
+const iaTop=(o,lv)=>{if(lv!=="eq")return o;const g=o.filter(x=>x.minI>=.42);return g.length>=10?g:o};
 function iaBuild(){iaCache={};iaPC={};const A=iaTeam(),S=iaStats(),give=IA.give.filter(n=>ROSTER[A].some(p=>p[0]===n)),w={};IA.needs.forEach((r,i)=>{if(r)w[r]=IA_W[i]});if(IA.any)["G","F","C"].forEach(r=>w[r]=1);
   const subs=iaSubs(give,3).map(s=>({...s,sig:iaSig(s.a.map(iaPl))})),tot=iaTot(),out=[],lv=IA.lv||"eq",LV=IA_LV[lv];
   const fit=T=>iaSum(T,x=>x.v*(w[x.r]||.1))/Math.max(1,iaSum(T,x=>x.v)),nick=t=>TEAMS[t].nick;
@@ -3295,9 +3299,9 @@ function iaBuild(){iaCache={};iaPC={};const A=iaTeam(),S=iaStats(),give=IA.give.
           else if(-gap/VAL_CR>=10){back=Math.min(Math.floor(-gap/VAL_CR/5)*5,iaCassa(B),30)}
           R=vT+back*VAL_CR;G=s.v+need*VAL_CR;d=Math.abs(R-G)/Math.max(R,G,1);if(d>.10)return;bal=1-d/.10}
         else{if(!s.a.length)return;R=vT;G=s.v;adv=(R-G)/Math.max(R,G,1);if(adv<=LV[0]||adv>LV[1])return;d=adv;bal=Math.max(0,1-Math.abs(adv-LV[2])/.3)}
-        const gv=s.a.map(iaPl),nb=iaNeed(S,B,gv,T),f=fit(T),qs=iaSum(T,x=>iaQ(x.n))/T.length;
-        const sc=.40*f+.30*nb+.20*bal+.10*qs+(s.a.length?0:-.05)+.5*iaPref(B,gv,T).dl;
-        out.push({ty:2,B,give:s.a,take:T.map(x=>x.n),cr:iaAlloc(need),need,back,d,adv,sc,int:[iaInt(S,B,gv,T,(G-R)/Math.max(R,G,1))],why:iaWhy(A,T,[],s.a),key:"2|"+B+"|"+s.a.join(",")+"|"+T.map(x=>x.n).join(",")+"|"+need})})})})
+        const gv=s.a.map(iaPl),f=fit(T),qs=iaSum(T,x=>iaQ(x.n))/T.length,it=iaInt(S,B,gv,T,(G-R)/Math.max(R,G,1)),mx=iaMix([it]);
+        const sc=.22*f+.08*qs+.15*bal+.55*mx.mix+(s.a.length?0:-.04);
+        out.push({ty:2,B,give:s.a,take:T.map(x=>x.n),cr:iaAlloc(need),need,back,d,adv,sc,minI:mx.minI,int:[it],why:iaWhy(A,T,[],s.a),key:"2|"+B+"|"+s.a.join(",")+"|"+T.map(x=>x.n).join(",")+"|"+need})})})})
   }else{
     const teams=Object.keys(ROSTER).filter(t=>t!==A);
     teams.forEach(C=>teams.forEach(B=>{if(B===C)return;
@@ -3313,11 +3317,11 @@ function iaBuild(){iaCache={};iaPC={};const A=iaTeam(),S=iaStats(),give=IA.give.
             if(lv==="eq"){const dB=Math.abs(vB-c.G)/Math.max(vB,c.G,1);if(dB>.13)return;
               const dC=Math.abs(vB-vT)/Math.max(vB,vT,1);d=Math.max(c.dd,dB,dC);if(d>.14)return;bal=1-d/.14}
             else{if(vB<Math.min(c.G,vT)||vB>Math.max(c.G,vT))return;adv=c.adv;d=adv;bal=Math.max(0,1-Math.abs(adv-LV[2])/.3)}
-            const nb=iaNeed(S,B,gA,GB),nc=iaNeed(S,C,GB,T),f=fit(T),qs=iaSum(T,x=>iaQ(x.n))/T.length;
-            const sc=.34*f+.24*nb+.24*nc+.12*bal+.06*qs+.3*(iaPref(B,gA,GB).dl+iaPref(C,GB,T).dl);
-            out.push({ty:3,B,C,give:c.s.a,mid:GB.map(x=>x.n),take:T.map(x=>x.n),cr:iaAlloc(c.need),need:c.need,d,adv,sc,int:[iaInt(S,B,gA,GB,(c.G-vB)/Math.max(c.G,vB,1)),iaInt(S,C,GB,T,(vB-vT)/Math.max(vB,vT,1))],why:iaWhy(A,T,[],c.s.a),key:"3|"+B+"|"+C+"|"+c.s.a.join(",")+"|"+GB.map(x=>x.n).join(",")+"|"+T.map(x=>x.n).join(",")+"|"+c.need})})})})}))
+            const f=fit(T),qs=iaSum(T,x=>iaQ(x.n))/T.length,its=[iaInt(S,B,gA,GB,(c.G-vB)/Math.max(c.G,vB,1)),iaInt(S,C,GB,T,(vB-vT)/Math.max(vB,vT,1))],mx=iaMix(its);
+            const sc=.22*f+.08*qs+.15*bal+.55*mx.mix;
+            out.push({ty:3,B,C,give:c.s.a,mid:GB.map(x=>x.n),take:T.map(x=>x.n),cr:iaAlloc(c.need),need:c.need,d,adv,sc,minI:mx.minI,int:its,why:iaWhy(A,T,[],c.s.a),key:"3|"+B+"|"+C+"|"+c.s.a.join(",")+"|"+GB.map(x=>x.n).join(",")+"|"+T.map(x=>x.n).join(",")+"|"+c.need})})})})}))
   }
-  out.sort((a,b)=>b.sc-a.sc);return out.slice(0,400)}
+  out.sort((a,b)=>b.sc-a.sc);return iaTop(out,lv).slice(0,400)}
 /* IA Trade · modo "per giocatore": scelgo io i giocatori che voglio (da 1 o 2 squadre) e l'app costruisce cosa dare. Una squadra = trade a 2; due squadre = trade a 3 in automatico. */
 function iaOwner(n){return Object.keys(ROSTER).find(t=>ROSTER[t].some(p=>p[0]===n))}
 function iaBuildPl(){iaCache={};iaPC={};const A=iaTeam(),S=iaStats(),lv=IA.lv||"eq",LV=IA_LV[lv],tot=iaTot(),out=[],nick=t=>TEAMS[t].nick;
@@ -3335,8 +3339,8 @@ function iaBuildPl(){iaCache={};iaPC={};const A=iaTeam(),S=iaStats(),lv=IA.lv||"
     return{B,T,s,vT,need,back,R,G,d,adv,bal}};
   if(teams.length===1){const B=teams[0],T=byT[B],sg=iaSig(T);
     (bySig[sg]||[]).forEach(s=>{const p=part(B,T,s);if(!p)return;if(lv!=="eq"&&(p.adv<=LV[0]||p.adv>LV[1]))return;
-      const bal=lv==="eq"?p.bal:Math.max(0,1-Math.abs(p.adv-LV[2])/.3),nb=iaNeed(S,B,s.a.map(iaPl),T),sc=.45*nb+.30*bal+.25*gf(s.a)-.02*s.a.length+.5*iaPref(B,s.a.map(iaPl),T).dl;
-      out.push({ty:2,B,give:s.a,take:T.map(x=>x.n),cr:iaAlloc(p.need),need:p.need,back:p.back,d:p.d,adv:p.adv,sc,int:[iaInt(S,B,s.a.map(iaPl),T,(p.G-p.R)/Math.max(p.G,p.R,1))],why:["Giocatori scelti da te",...(s.a.some(n=>!iaSp(n))?["Ruoli compensati: dai e ricevi lo stesso ruolo"]:[]),...T.filter(x=>iaSp(x.n)).map(x=>`${x.n}: trade speciale, senza contropartita`)],key:"p2|"+B+"|"+s.a.join(",")+"|"+T.map(x=>x.n).join(",")+"|"+p.need})})
+      const bal=lv==="eq"?p.bal:Math.max(0,1-Math.abs(p.adv-LV[2])/.3),it=iaInt(S,B,s.a.map(iaPl),T,(p.G-p.R)/Math.max(p.G,p.R,1)),mx=iaMix([it]),sc=.25*gf(s.a)+.15*bal+.60*mx.mix-.02*s.a.length;
+      out.push({ty:2,B,give:s.a,take:T.map(x=>x.n),cr:iaAlloc(p.need),need:p.need,back:p.back,d:p.d,adv:p.adv,sc,minI:mx.minI,int:[it],why:["Giocatori scelti da te",...(s.a.some(n=>!iaSp(n))?["Ruoli compensati: dai e ricevi lo stesso ruolo"]:[]),...T.filter(x=>iaSp(x.n)).map(x=>`${x.n}: trade speciale, senza contropartita`)],key:"p2|"+B+"|"+s.a.join(",")+"|"+T.map(x=>x.n).join(",")+"|"+p.need})})
   }else{
     /* TRADE A 3 VERA: scelgo giocatori di due squadre (g e r). Tutte e tre le squadre si scambiano giocatori:
        io → g, io → r, e g → r (un giocatore di g va a r). Ogni squadra rispetta i ruoli (a parte le speciali) e i crediti totali tornano. */
@@ -3357,14 +3361,14 @@ function iaBuildPl(){iaCache={};iaPC={};const A=iaTeam(),S=iaStats(),lv=IA.lv||"
             const Ra=vTg+vTr+(bg+br)*VAL_CR,Ga=ag.v+ar.v+(ng+nr)*VAL_CR,dA=Math.abs(Ra-Ga)/Math.max(Ra,Ga,1);d=Math.max(pg.dd,pr.dd,dA);if(d>.14)return;bal=1-d/.14}
           else{Rg=vTg+M.v;Gg=ag.v;Rr=vTr;Gr=ar.v+M.v;const R=vTg+vTr,G=ag.v+ar.v;if(!ag.a.length&&!ar.a.length)return;adv=(R-G)/Math.max(R,G,1);if(adv<=LV[0]||adv>LV[1])return;d=adv;bal=Math.max(0,1-Math.abs(adv-LV[2])/.3)}
           const all=[...ag.a,...ar.a],gG=ag.a.map(iaPl),gR=ar.a.map(iaPl),need=ng+nr,
-            nbg=iaNeed(S,g,gG,[...Tg,M]),nbr=iaNeed(S,r,[...gR,M],Tr),pfg=iaPref(g,gG,[...Tg,M]),pfr=iaPref(r,[...gR,M],Tr),
-            sc=.38*(nbg+nbr)/2+.28*bal+.20*gf(all)-.02*all.length+.35*(pfg.dl+pfr.dl);
-          out.push({ty:5,g,r,ag:ag.a,ar:ar.a,Tg:Tg.map(x=>x.n),Tr:Tr.map(x=>x.n),M:M.n,ng,bg,nr,br,cr:iaAlloc(need),need,d,adv,sc,
-            int:[iaInt(S,g,gG,[...Tg,M],(Gg-Rg)/Math.max(Gg,Rg,1)),iaInt(S,r,[...gR,M],Tr,(Gr-Rr)/Math.max(Gr,Rr,1))],
+            its=[iaInt(S,g,gG,[...Tg,M],(Gg-Rg)/Math.max(Gg,Rg,1)),iaInt(S,r,[...gR,M],Tr,(Gr-Rr)/Math.max(Gr,Rr,1))],mx=iaMix(its),
+            sc=.25*gf(all)+.15*bal+.60*mx.mix-.02*all.length;
+          out.push({ty:5,g,r,ag:ag.a,ar:ar.a,Tg:Tg.map(x=>x.n),Tr:Tr.map(x=>x.n),M:M.n,ng,bg,nr,br,cr:iaAlloc(need),need,d,adv,sc,minI:mx.minI,
+            int:its,
             why:["Giocatori scelti da te","Trade a 3 vera: tutte e tre le squadre si scambiano giocatori",`${TEAMS[g].nick} → ${TEAMS[r].nick}: ${M.n}`,"Ruoli compensati per ogni squadra (a parte le speciali) e crediti che tornano"],
             key:"p3|"+g+"|"+r+"|"+ag.a.join(",")+"|"+ar.a.join(",")+"|"+M.n+"|"+need})}))})};
     run(teams[0],teams[1]);run(teams[1],teams[0])}
-  out.sort((a,b)=>b.sc-a.sc);return out.slice(0,400)}
+  out.sort((a,b)=>b.sc-a.sc);return iaTop(out,lv).slice(0,400)}
 function iaKey(){const A=iaTeam();IA.cr.d=Math.min(IA.cr.d,iaPostMax(A).max);IA.cr.p=Math.min(IA.cr.p,iaPfMax(A).max);IA.cr.c=Math.min(IA.cr.c,iaCassa(A));return JSON.stringify([iaTeam(),IA.mode,IA.any,IA.needs,IA.give,IA.want,IA.keep,IA.cr,IA.n,IA.lv])}
 function iaNext(){if(!IA.pool||IA.key!==iaKey()){IA.key=iaKey();IA.pool=IA.mode==="pl"?iaBuildPl():iaBuild();IA.seen={};IA.rd=0}
   let avail=IA.pool.filter(x=>!IA.seen[x.key]);if(avail.length<5&&IA.pool.length){IA.seen={};avail=IA.pool.slice()}
