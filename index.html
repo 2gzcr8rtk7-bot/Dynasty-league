@@ -3725,9 +3725,9 @@ let HN_S="";try{HN_S=localStorage.getItem("dl_hns")||""}catch(e){}if(!["all","te
 const hnLay=()=>HN_L===""?"6":HN_L,hnScope=()=>HN_S||(HN_L===""?"all":"team");
 function hnSet(k){const sc=hnScope();HN_L=["0","5","6"].includes(k)?k:"";HN_S=sc;try{HN_L?localStorage.setItem("dl_hnl",HN_L):localStorage.removeItem("dl_hnl");localStorage.setItem("dl_hns",HN_S)}catch(e){}}
 function hnScopeSet(v){if(!["all","team"].includes(v))return;HN_S=v;try{localStorage.setItem("dl_hns",v)}catch(e){}}
-/* (353) Fase della Home notte: dalle 08:30 (ora italiana) fino alla prima partita della notte USA mostra le partite che stanno per arrivare (restituisce la data USA), poi torna live. Prima delle 08:30 restano i risultati della notte appena finita. */
+/* (353) Fase della Home notte: dalle 14:00 (ora italiana, era 08:30) fino alla prima partita della notte USA mostra le partite che stanno per arrivare (restituisce la data USA), poi torna live. Prima delle 08:30 restano i risultati della notte appena finita. */
 function homeFase(mnTest){try{const o=flUsaOggi(),G=(TV.days[o]||[]);let mn=mnTest;if(typeof mn!=="number"){const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date());mn=+f.find(x=>x.type==="hour").value*60+ +f.find(x=>x.type==="minute").value}
-  const hasS=G.some(g=>g[5]==="S"),started=G.some(g=>g[5]==="L"||g[5]==="F");return hasS&&!started&&!(mn>=360&&mn<510)?o:null}catch(e){return null}}
+  const hasS=G.some(g=>g[5]==="S"),started=G.some(g=>g[5]==="L"||g[5]==="F");return hasS&&!started&&!(mn>=360&&mn<840)?o:null}catch(e){return null}}
 const HN_DEFC={};function hnDef(opp,role){const k=opp+"|"+role,n=Date.now(),c=HN_DEFC[k];if(c&&n-c.t<600000)return c.v;let v=null;try{v=capDef(opp,role)}catch(e){}HN_DEFC[k]={t:n,v};return v}
 const HN_ORD=["DUC","DOL","FOX","PEA","SPI","EAG","TUR","MOO"];let HN_SO="",HN_SI=0;try{HN_SO=localStorage.getItem("dl_hso")==="team"?"team":"";HN_SI=Math.max(0,Math.min(7,+localStorage.getItem("dl_hsi")||0))}catch(e){}
 let HN_T="";try{HN_T=localStorage.getItem("dl_hnt")||""}catch(e){}
@@ -7641,12 +7641,12 @@ function orari(){if(!COL.d){cur="campo";return vCampo()}
  return`<div class="hof"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
  <div class="hofhd"><div style="grid-column:1/3"><small>Texas Ducks · area riservata del GM</small><b>Orari</b><em>Quando si aggiorna cosa · ora italiana</em></div></div>
  ${card("Ogni giorno","Gli orari sono in ora italiana. «Notte» = la notte NBA (data USA).",[
-  R("06:00","Cambia la data USA","È la mezzanotte di New York: da qui la «notte» corrente è quella nuova. Fino alle 08:30 la Home continua a mostrare i risultati della notte appena finita."),
+  R("06:00","Cambia la data USA","È la mezzanotte di New York: da qui la «notte» corrente è quella nuova. Fino alle 14:00 la Home continua a mostrare i risultati della notte appena finita."),
   R("06:47","Calendario NBA (ripasso del mattino)","Automatico da ESPN (GitHub): aggiorna gli orari delle partite dei prossimi giorni in Dynasty TV. L'orario reale può slittare di qualche minuto."),
   R("07:30","ESPN diventa ufficiale nelle statistiche","I PDK della notte entrano nelle statistiche dei giocatori, nell'efficienza stagionale, in «Notte · in campo» e in FA e G-League. Alle 07:30 si spengono anche le animazioni live (puntini LIVE, bordo lampeggiante)."),
-  R("08:30","La Home passa alle partite della prossima notte","Dalle 08:30 fino alla prima partita la Home non mostra più i risultati: mostra i prossimi scontri (avversario, orario, PDK da superare, previsione e trend) e nel banner le partite in arrivo. Appena ESPN segna la prima partita in corso torna live da sola."),
   R("12:30","Chiusura e apertura dei turni Dreamers","Un turno si chiude, e si apre il successivo, solo dalle 12:30 del giorno dopo la sua ultima notte USA, così i dati Dunkest sono già caricati. A quell'ora si aggiornano classifica ufficiale, playoff e banner Dreamers della Home. Prima di quell'ora il turno resta «in corso»."),
-  R("13:17","Calendario NBA (pomeriggio)","Secondo giro automatico da ESPN. Il server lo lancia alle 12:17 UTC: con l'ora solare è 13:17, con l'ora legale 14:17.")])}
+  R("13:17","Calendario NBA (pomeriggio)","Secondo giro automatico da ESPN. Il server lo lancia alle 12:17 UTC: con l'ora solare è 13:17, con l'ora legale 14:17."),
+  R("14:00","La Home passa alle partite della prossima notte","Dalle 14:00 fino alla prima partita la Home non mostra più i risultati: mostra i prossimi scontri (avversario, orario, PDK da superare, previsione e trend) e nel banner le partite in arrivo. Appena ESPN segna la prima partita in corso torna live da sola."),])}
  ${card("Ogni settimana","",[
   R("Lun 12:00","Valori e prezzi dei giocatori","Ogni lunedì alle 12:00 scattano i nuovi valori (e i prezzi in crediti). Prima di quell'ora restano quelli della settimana precedente. Il registro del lunedì è in Cronologia modifiche.")])}
  ${card("Senza orario fisso","",[
