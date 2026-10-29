@@ -3673,7 +3673,7 @@ function iaRec(x){const A=iaTeam(),R={};const add=(t,k,v)=>{(R[t]=R[t]||{pl:[],c
   else{P(x.B,x.give,A);C(x.B,x.need,A);P(x.C,x.mid,x.B);P(A,x.take,x.C);[A,x.B,x.C].forEach(t=>R[t]=R[t]||{pl:[],cr:[]})}
   return R}
 /* Bilancio per squadra da una mappa R {t:{pl:[{n,from}],cr:[{v,from}],pk:[{p,from}]}}: ricevuto, dato, saldo e % di vantaggio/svantaggio (saldo ÷ volume massimo scambiato) */
-const trPts=(k,o)=>k==="pl"?vtPts(valOf(o.n)??VAL_FALLBACK):k==="pk"?PICK_CR[o.p]*VAL_CR:(+o.v||0)*VAL_CR;
+const trPts=(k,o)=>k==="pl"?vtPts(valOf(o.n)??VAL_FALLBACK)*iaOutF(o.n):k==="pk"?PICK_CR[o.p]*VAL_CR:(+o.v||0)*VAL_CR;
 function trBal(R){const B={};Object.keys(R).forEach(t=>B[t]={R:0,G:0});
   Object.entries(R).forEach(([t,r])=>["pl","cr","pk"].forEach(k=>(r[k]||[]).forEach(o=>{const p=trPts(k,o);B[t].R+=p;if(B[o.from])B[o.from].G+=p})));
   const base=Math.max(1,...Object.values(B).map(b=>Math.max(b.R,b.G)));
@@ -3700,7 +3700,7 @@ function iaApply(x){const A=iaTeam();
   else{V3.t=[A,x.B,x.C];V3.it=[...x.give.map(n=>({k:0,to:1,ty:"pl",n})),...(x.need?[{k:0,to:1,ty:"cr",v:x.need}]:[]),...x.mid.map(n=>({k:1,to:2,ty:"pl",n})),...x.take.map(n=>({k:2,to:0,ty:"pl",n}))];VT.tab="calc3"}}
 function iaOpen(i){const x=IA.out[i];if(!x)return;iaApply(x);cur="valtrade";render();window.scrollTo(0,0)}
 /* condividere uno scambio dell'IA: carica un attimo lo scambio nel calcolatore, genera l'immagine, poi ripristina il calcolatore */
-function iaModel6(x){const pt=n=>vtPts(valOf(n)??VAL_FALLBACK),S=x.T.map(t=>{const rc=x.mv.filter(m=>m.to===t),gv=x.mv.filter(m=>m.from===t),cr=x.cx.filter(c=>c.to===t),cg=x.cx.filter(c=>c.from===t),
+function iaModel6(x){const pt=n=>vtPts(valOf(n)??VAL_FALLBACK)*iaOutF(n),S=x.T.map(t=>{const rc=x.mv.filter(m=>m.to===t),gv=x.mv.filter(m=>m.from===t),cr=x.cx.filter(c=>c.to===t),cg=x.cx.filter(c=>c.from===t),
       R=iaSum(rc,m=>pt(m.n))+iaSum(cr,c=>c.v)*VAL_CR,G=iaSum(gv,m=>pt(m.n))+iaSum(cg,c=>c.v)*VAL_CR;
     return{t,R,G,s:R-G,items:[...rc.map(m=>({l:m.n,v:valOf(m.n)??VAL_FALLBACK,from:m.from})),...cr.map(c=>({l:c.v+" crediti",v:null,from:c.from}))]}}),
     base=Math.max(1,...S.map(y=>Math.max(y.R,y.G))),d=Math.max(...S.map(y=>Math.abs(y.s)))/base,w=S.slice().sort((a,b)=>b.s-a.s)[0];return{S,d,fav:w.t,sug:""}}
@@ -3939,7 +3939,10 @@ function iaAgeAdj(n){const a=iaAge(n);if(a==null)return 0;const f=1+IA_PF.kA*iaC
 function iaPerc(n){const k="~c"+n;if(iaCache[k]!=null)return iaCache[k];return iaCache[k]=Math.max(-.6,iaPath(n).adj+iaTier(n)+iaAgeAdj(n))}
 /* quanto dura l'infortunio: giorni al rientro. Brevi (fino a 3 settimane) ininfluenti, lunghi e lunghissimi pesano molto */
 function iaInjDays(n){const i=INJ[n];if(!i||i.stato!=="out")return 0;const m=(i.rientro||"").match(/(\d{2})\/(\d{2})/);if(!m)return /lungo|stagione|non è con|indefinit|operaz|crociat|achille/i.test(i.rientro||i.tipo||"")?200:null;const mo=+m[2],y=mo>=8?2026:2027,t=new Date(Date.UTC(y,mo-1,+m[1])),d=(t-Date.now())/864e5;return Math.max(0,d)}
-function iaOutF(n){const d=iaInjDays(n);if(d===0)return 1;if(d==null)return .75;return d<=21?1:d<=60?.85:d<=120?.65:.5}
+/* (484) CURVA INFORTUNI (Francesco, 29/10/2026): fino a 3 settimane al rientro il valore non cala; oltre 3 settimane −10%, oltre 3 mesi (90 gg) −50%, oltre 5 mesi (150 gg) −70%, e tra un punto e l'altro scende in modo continuo (fattore 1 → 0,90 → 0,50 → 0,30). Rientro non noto = 0,75. Si applica da solo a ogni valutazione di scambio (calcolatore, IA, confronti) finché il giocatore è OUT; col rientro il fattore torna 1. */
+const INJ_PT=[[21,.90],[90,.50],[150,.30]];
+const injCurve=d=>{if(d<=21)return 1;if(d>=150)return .30;for(let i=1;i<INJ_PT.length;i++){const a=INJ_PT[i-1],b=INJ_PT[i];if(d<=b[0])return a[1]+(b[1]-a[1])*(d-a[0])/(b[0]-a[0])}return .30};
+function iaOutF(n){const d=iaInjDays(n);if(d===0)return 1;if(d==null)return .75;return injCurve(d)}
 /* copertura di ruolo: gli infortunati lunghi e le scommesse acerbe non coprono davvero un ruolo */
 function iaCov(n,P0){let c=iaOutF(n),fr=INF_STELLE[n];if(fr!=null&&fr<3)c*=Math.max(.82,.82+.06*fr);const p=iaPath(n);if(p.y!=null&&p.y<=2&&(p.pdk||0)<22)c*=.6+.4*iaCm(P0?-P0.c:0,0,1);return c}/* chi ricostruisce conta sulle proprie scommesse: per lui un giovane acerbo copre il ruolo */
 /* rendimento «da scelta»: chi è stato scelto in alto da poco vale per ciò che promette (scelta, età, efficienza) più che per i PDK di oggi: il PDK usato si avvicina a quello atteso (20 + 16 × peso scelta) */
@@ -3999,7 +4002,7 @@ const valDelta=n=>{const a=VAL_MAN[n],b=VALORI[n]&&VALORI[n][1];if(a==null||b==n
 valApply();
 const vtPts=v=>Math.pow(Math.max(0,v)/1000,VAL_EXP)*1000;
 const VT={tab:"calc",t:["DUC","PEA"],pl:[[],[]],cr:[0,0],pk:[[],[]]};
-function vtSide(k){const pts=VT.pl[k].reduce((s,n)=>s+vtPts(valOf(n)??VAL_FALLBACK),0);const cr=(+VT.cr[k]||0)+VT.pk[k].reduce((s,p)=>s+PICK_CR[p],0);return pts+cr*VAL_CR}
+function vtSide(k){const pts=VT.pl[k].reduce((s,n)=>s+vtPts(valOf(n)??VAL_FALLBACK)*iaOutF(n),0);const cr=(+VT.cr[k]||0)+VT.pk[k].reduce((s,p)=>s+PICK_CR[p],0);return pts+cr*VAL_CR}
 /* esito scambio: <10% equilibrata, 10-30% vincitore, oltre 30% grande truffa */
 const trLose=M=>M.S.reduce((m,x)=>x.s<m.s?x:m,M.S[0]).t;
 const trArt=n=>/^[aeiou]/i.test(n)?"gli":"i";
@@ -4035,7 +4038,7 @@ function vtCard(k){
 /* ===== Scambio a 3 squadre =====
    Ogni pezzo (giocatore, pick, crediti) ha chi lo dà (k) e chi lo riceve (to). Saldo squadra = riceve − dà (punti trade). */
 const V3={t:["DUC","PEA","DOL"],it:[]};
-const v3Pts=x=>x.ty==="pl"?vtPts(valOf(x.n)??VAL_FALLBACK):x.ty==="pk"?PICK_CR[x.p]*VAL_CR:(+x.v||0)*VAL_CR;
+const v3Pts=x=>x.ty==="pl"?vtPts(valOf(x.n)??VAL_FALLBACK)*iaOutF(x.n):x.ty==="pk"?PICK_CR[x.p]*VAL_CR:(+x.v||0)*VAL_CR;
 const v3Lab=x=>x.ty==="pl"?x.n:x.ty==="pk"?`Pick ${x.p} · ${PICK_CR[x.p]} cr`:`${x.v} crediti`;
 function v3Res(){
   const T=V3.t,S=T.map((t,k)=>{const R=V3.it.filter(x=>x.to===k).reduce((a,x)=>a+v3Pts(x),0),G=V3.it.filter(x=>x.k===k).reduce((a,x)=>a+v3Pts(x),0);return{t,k,R,G,s:R-G}});
