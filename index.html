@@ -3165,6 +3165,15 @@ let IA={lv:"eq",st:1,team:"",needs:["","",""],give:[],cr:{c:0,p:0,d:0},n:2,out:[
 const IA_LV={eq:[0,.10,0],win:[.10,.40,.25],scam:[.40,.80,.55]},IA_R={G:"Guardia",F:"Ala",C:"Centro"},IA_RP={G:"guardie",F:"ali",C:"centri"},IA_W=[1,.6,.35],IA_LIM={p:10,d:30},IA_MAXR=15;
 let iaCache={};
 const iaTeam=()=>IA.team&&TEAMS[IA.team]?IA.team:(TEAMS[curTeam]?curTeam:"DUC");
+/* Crediti post-Draft = debiti da pagare: si può promettere solo ciò che è GARANTITO dalla regular season. Premi per posizione finale: 30/40/50/150/150/250/350/450 (cresce col piazzamento peggiore),
+   quindi il minimo garantito è il premio della MIGLIORE posizione ancora raggiungibile. Una squadra può ancora arrivare al posto 1+(squadre che hanno già più vittorie di quante lei ne potrà mai fare).
+   All'inizio vale 30 per tutti; più la classifica si consolida, più il tetto sale. Si sottraggono i debiti post-Draft già aperti. I premi dei playoff non contano. */
+const DR_PREMI=[30,40,50,150,150,250,350,450];
+function iaPostMax(t){try{const st=drStand(),rem={};Object.keys(TEAMS).forEach(x=>rem[x]=0);
+  for(let k=1;k<=DR_REG;k++){if(drWeek(k).closed)continue;(DR_SCHED[k-1]||[]).forEach(([a,b])=>{rem[a]++;rem[b]++})}
+  const me=st.find(x=>x.t===t),best=1+st.filter(x=>x.t!==t&&x.w>me.w+rem[t]).length,lim=DR_PREMI[Math.min(7,best-1)],
+    owed=DEBITI.filter(x=>x.da===t&&x.tipo==="post"&&!x.saldato).reduce((a,x)=>a+x.v,0);
+  return{lim,best,owed,max:Math.max(0,lim-owed)}}catch(e){return{lim:30,best:1,owed:0,max:30}}}
 const iaCassa=t=>Math.max(0,+(CREDITI[t]||0));
 const iaQ=n=>{if(iaCache[n]!=null)return iaCache[n];let q=.5;try{const s=pagella(n).s,a=[s.pdk,s.gio,s.inj,s.min,s.eff,s.spa].filter(v=>v!=null&&!isNaN(v));if(a.length)q=a.reduce((x,y)=>x+y,0)/a.length/5}catch(e){}return iaCache[n]=q};
 const iaOut=n=>{try{return injOut(n)}catch(e){return false}};
@@ -3233,7 +3242,7 @@ function iaBuild(){iaCache={};const A=iaTeam(),S=iaStats(),give=IA.give.filter(n
             out.push({ty:3,B,C,give:c.s.a,mid:GB.map(x=>x.n),take:T.map(x=>x.n),cr:iaAlloc(c.need),need:c.need,d,adv,sc,why:iaWhy(A,T,[needTxt(B,gA),needTxt(C,GB)].filter(Boolean),c.s.a),key:"3|"+B+"|"+C+"|"+c.s.a.join(",")+"|"+GB.map(x=>x.n).join(",")+"|"+T.map(x=>x.n).join(",")+"|"+c.need})})})})}))
   }
   out.sort((a,b)=>b.sc-a.sc);return out.slice(0,400)}
-function iaKey(){return JSON.stringify([iaTeam(),IA.needs,IA.give,IA.cr,IA.n,IA.lv])}
+function iaKey(){const A=iaTeam();IA.cr.d=Math.min(IA.cr.d,iaPostMax(A).max);IA.cr.c=Math.min(IA.cr.c,iaCassa(A));return JSON.stringify([iaTeam(),IA.needs,IA.give,IA.cr,IA.n,IA.lv])}
 function iaNext(){if(!IA.pool||IA.key!==iaKey()){IA.key=iaKey();IA.pool=iaBuild();IA.seen={};IA.rd=0}
   let avail=IA.pool.filter(x=>!IA.seen[x.key]);if(avail.length<5&&IA.pool.length){IA.seen={};avail=IA.pool.slice()}
   iaRand.seed(Date.now()+IA.rd*7919);IA.rd++;const top=avail.slice(0,Math.max(5,Math.min(avail.length,60))),pick=[],cnt={};
@@ -3270,10 +3279,10 @@ function vIA(){const A=iaTeam(),c=TEAMS[A],st=IA.st,ok1=!!IA.needs[0],ok2=IA.giv
      <button class="iago" data-ia="go" data-s="2" ${ok1?"":"disabled"}>Avanti · cosa offri ›</button></div>`}
   else if(st===2){
     const ros=(ROSTER[A]||[]).map(p=>({n:p[0],r:p[2],v:valOf(p[0])})).sort((a,b)=>({G:0,F:1,C:2}[a.r]-{G:0,F:1,C:2}[b.r])||((b.v??0)-(a.v??0))),cas=iaCassa(A);
-    const stp=(k,lab,mx,sub)=>{const v=IA.cr[k];return `<div class="iacrr ${mx?"":"off"}"><div><b>${lab}</b><small>${sub}</small></div><div class="iast"><button data-ia="cr" data-k="${k}" data-d="-5" ${v>0?"":"disabled"}>−</button><output>${v}</output><button data-ia="cr" data-k="${k}" data-d="5" ${v+5<=mx?"":"disabled"}>+</button></div></div>`};
+    const pm=iaPostMax(A),pmTxt=`Tetto ${pm.max} cr · miglior piazzamento ancora possibile: ${pm.best}° (premio garantito ${pm.lim} cr)${pm.owed?` − ${pm.owed} già promessi`:""}`,stp=(k,lab,mx,sub)=>{const v=IA.cr[k];return `<div class="iacrr ${mx?"":"off"}"><div><b>${lab}</b><small>${sub}</small></div><div class="iast"><button data-ia="cr" data-k="${k}" data-d="-5" ${v>0?"":"disabled"}>−</button><output>${v}</output><button data-ia="cr" data-k="${k}" data-d="5" ${v+5<=mx?"":"disabled"}>+</button></div></div>`};
     body=`<div class="iabox"><h4>Cosa sei disposto a dare?</h4><p class="iasub">Tocca i giocatori di cui ti vuoi liberare: l'app userà solo quelli che servono. Ogni giocatore che dai deve tornare con uno dello stesso ruolo (il roster non può restare scoperto); solo i giocatori in trade speciale (fuori rosa) si scambiano senza contropartita.</p>
      <div class="iaros">${ros.map((p,i)=>`${i===0||ros[i-1].r!==p.r?`<div class="vtrh ${p.r}">${{G:"Guardie",F:"Ali",C:"Centri"}[p.r]}</div>`:""}<button class="iapl ${IA.give.includes(p.n)?"on":""}" data-ia="pl" data-n="${p.n.replace(/"/g,"&quot;")}"><i class="rc ${p.r}"></i><span>${p.n}${iaOut(p.n)?' <em class="iaout">OUT</em>':""}${iaSp(p.n)?' <em class="iasp">SPECIALE</em>':""}</span>${starH(p.n)}<b>${p.v??"—"}</b></button>`).join("")}</div>
-     <h4>Crediti</h4>${stp("c","Dalla cassa",cas,cas?`Disponibili ${cas} cr`:"Cassa a 0: non puoi darne")}${stp("p","Di portafoglio (postdatati)",IA_LIM.p,"Massimo 10 cr")}${stp("d","Post-Draft",IA_LIM.d,"Massimo 30 cr")}
+     <h4>Crediti</h4>${stp("c","Dalla cassa",cas,cas?`Disponibili ${cas} cr`:"Cassa a 0: non puoi darne")}${stp("p","Di portafoglio (postdatati)",IA_LIM.p,"Massimo 10 cr")}${stp("d","Post-Draft (debito)",pm.max,pmTxt)}
      ${ok2?"":`<p class="iaerr">Scegli almeno un giocatore o dei crediti da offrire.</p>`}
      <div class="iabtn2"><button class="iabk" data-ia="go" data-s="1">‹ Indietro</button><button class="iago" data-ia="go" data-s="3" ${ok2?"":"disabled"}>Avanti · squadre ›</button></div></div>`}
   else if(st===3){
@@ -3295,7 +3304,7 @@ function iaAct(b){const d=b.dataset,a=d.ia;
   else if(a==="need"){const i=+d.i,r=d.r,old=IA.needs[i];if(r){const j=IA.needs.indexOf(r);if(j>=0&&j!==i)IA.needs[j]=old||"";IA.needs[i]=r}else IA.needs[i]="";
     for(let k=1;k<3;k++)if(!IA.needs[k-1])IA.needs[k]="";IA.pool=null;IA.out=[]}
   else if(a==="pl"){const n=d.n,i=IA.give.indexOf(n);if(i>=0)IA.give.splice(i,1);else IA.give.push(n);IA.pool=null;IA.out=[]}
-  else if(a==="cr"){const k=d.k,mx=k==="c"?iaCassa(iaTeam()):IA_LIM[k];IA.cr[k]=Math.max(0,Math.min(mx,IA.cr[k]+ +d.d));IA.pool=null;IA.out=[]}
+  else if(a==="cr"){const k=d.k,mx=k==="c"?iaCassa(iaTeam()):k==="d"?iaPostMax(iaTeam()).max:IA_LIM[k];IA.cr[k]=Math.max(0,Math.min(mx,IA.cr[k]+ +d.d));IA.pool=null;IA.out=[]}
   else if(a==="n"){IA.n=+d.n;IA.pool=null;IA.out=[]}
   else if(a==="lv"){IA.lv=d.k;IA.pool=null;IA.out=[]}
   else if(a==="find"){IA.st=4;IA.out=[];IA.pool=null}
