@@ -1582,3 +1582,7 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 ## 545 — G-Dreamers con la modalità notte: vetro liquido verde
 - Con la modalità notte la scheda «G League» di G-Dreamers usa lo stesso stile spaziale/trasparente di Dreamers in verde: titoli a pillola in vetro, tabelle e schede translucide con sfocatura e bordo luminoso, selettore Stagione in vetro. Di giorno resta il verde pieno della 543.
 - Stato: pubblicato (v148, 30/10/2026).
+
+## 546 — Home: bordo oro che pulsa negli scontri diretti a pari vittorie
+- Nel carosello della Home, il banner di uno scontro Dreamers tra due squadre con le stesse vittorie in classifica (solo regular season) ha il bordino oro che pulsa piano (2,8 s, con leggero alone); con «riduci animazioni» attivo resta oro fisso.
+- Stato: in coda, non pubblicato.
