@@ -1556,8 +1556,11 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 ## 540 — Statistiche: Giocatori e Squadre grandi, Efficienza Cup e Trend piccoli
 - In alto Giocatori (rosso) e Squadre (giallo), grandi e a tutta larghezza con icona e freccia in cerchio; sotto, affiancati e più piccoli, Efficienza Cup (viola) e Calcola il trend (verde). La lista della notte resta sotto.
-- Stato: in coda, non pubblicato.
+- Stato: pubblicato (v147, 30/10/2026).
 
-## 541 — Pulsanti Statistiche nello stile dell'app (giorno e notte)
-- Niente angoli arrotondati: blocchi netti inclinati come i titoli rossi, con ombra piena sfalsata. Giorno: colori pieni (rosso, giallo, viola, verde). Modalità notte: vetro viola con bordo e alone neon del colore del pulsante e stelline, come le tile della Home.
-- Stato: in coda, non pubblicato.
+## 541 — (annullata) pulsanti Statistiche in stile inclinato
+- Provato uno stile con blocchi inclinati (giorno) e vetro neon (notte); Francesco ha scelto di tenere lo stile card già pubblicato e cambiare solo la posizione. Nessuna modifica di stile rimasta.
+
+## 542 — Statistiche notte: frecce tra le notti anche in modalità notte
+- Con la modalità notte la lista parte dalla notte live; la freccia ‹ porta alle notti passate (dati ufficiali), con ‹ › per scorrerle e › sull'ultima per tornare alla live. Senza modalità notte restano le frecce di prima.
+- Stato: pubblicato (v147, 30/10/2026).

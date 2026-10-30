@@ -1835,26 +1835,6 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .effpair2 .cupbtn svg,.effpair2 .trbtn svg{width:20px!important;height:20px!important;padding:0!important;background:none!important}
 .effpair2 .cupbtn span,.effpair2 .trbtn span{flex:none!important;font-size:13.5px!important;letter-spacing:.04em!important;text-align:center!important}
 .effpair2 .cupbtn i,.effpair2 .trbtn i,.effpair2 .cupbtn::after,.effpair2 .trbtn::after{display:none!important}
-/* (541) Statistiche: pulsanti nello stile dell'app — blocchi netti inclinati come i titoli, colori pieni; con modalità notte vetro viola con bordo neon */
-.effbig,.effpair2 .cupbtn,.effpair2 .trbtn{border-radius:0!important;clip-path:none!important;transform:skewX(-8deg);box-shadow:5px 5px 0 rgba(0,0,0,.4)!important;border:0!important;overflow:visible!important}
-.effbig:active,.effpair2 .cupbtn:active,.effpair2 .trbtn:active{transform:skewX(-8deg) scale(.98)}
-.effbig>*,.effpair2 .cupbtn>*{transform:skewX(8deg)}.effpair2 .trbtn>*{transform:skewX(8deg)}
-.effbig::after,.effpair2 .cupbtn::after,.effpair2 .trbtn::after{display:none!important}
-.effbig{width:calc(100% - 8px);margin:0 0 14px 6px;padding:20px 18px}
-.effbig svg{width:34px;height:34px;padding:0;background:none;border-radius:0}
-.effbig i{background:none;width:auto;height:auto;line-height:1;font-size:30px;border-radius:0}
-.effbig span{font-size:30px;letter-spacing:.1em}
-.effbig.pl{background:#e11d48!important;color:#fff}.effbig.sq{background:#facc15!important;color:#1a1200}
-.effpair2{gap:14px;margin:4px 0 16px 6px;width:calc(100% - 8px)}
-.effpair2 .cupbtn{background:#6d4bd8!important;color:#fff!important}.effpair2 .trbtn{background:#22c55e!important;color:#052e16!important}
-.effpair2 .cupbtn svg,.effpair2 .trbtn svg{background:none!important}
-/* modalità notte: vetro viola, bordo e alone neon del colore del pulsante */
-body.notte .effbig,body.notte .effpair2 .cupbtn,body.notte .effpair2 .trbtn{background:linear-gradient(160deg,rgba(76,29,149,.85),rgba(17,10,48,.95) 60%,rgba(30,58,138,.8))!important;color:#fff!important;box-shadow:inset 0 0 0 1.5px var(--nc),0 0 18px var(--nc)!important}
-body.notte .effbig span,body.notte .effpair2 span{text-shadow:0 0 10px var(--nc)}
-body.notte .effbig svg,body.notte .effpair2 svg{color:var(--nc);filter:drop-shadow(0 0 5px var(--nc))}
-body.notte .effbig i{color:var(--nc)}
-body.notte .effbig.pl{--nc:#fb3a63}body.notte .effbig.sq{--nc:#fde047}body.notte .effpair2 .cupbtn{--nc:#c4a1ff}body.notte .effpair2 .trbtn{--nc:#4ade80}
-body.notte .effbig::before,body.notte .effpair2 .cupbtn::before,body.notte .effpair2 .trbtn::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.8;background:radial-gradient(1.4px 1.4px at 84% 18%,#fff,transparent),radial-gradient(1.1px 1.1px at 58% 78%,#e9d5ff,transparent),radial-gradient(1px 1px at 30% 24%,#fff,transparent),radial-gradient(1.2px 1.2px at 94% 70%,#fff,transparent);transform:none}
 
 
 /* (538) pulsanti Statistiche: card con icona in tondo */
@@ -2448,7 +2428,7 @@ html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.0
 .snbtn.live{background:linear-gradient(180deg,#ef4444,#be123c)!important;box-shadow:0 0 0 0 rgba(239,68,68,.6);animation:snlp 1.6s ease-out infinite}
 @keyframes snlp{0%{box-shadow:0 0 0 0 rgba(239,68,68,.65)}70%{box-shadow:0 0 0 12px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
 .snlvd{display:inline-block;width:10px;height:10px;border-radius:50%;background:#fff;margin-right:8px;vertical-align:middle;animation:lvp 1.2s ease-in-out infinite}
-.sndate.snlive{grid-template-columns:1fr!important;display:grid;text-align:center}.sndate.snlive .snlvd{background:#ef4444}
+.sndate.snlive{grid-template-columns:auto 1fr auto!important;display:grid;text-align:center}.sndate.snlive .snlvd{background:#ef4444}
 .snrow.lvr{box-shadow:inset 3px 0 0 #ef4444}
 @media (prefers-reduced-motion:reduce){.snbtn.live,.snlvd{animation:none}}
 </style></head>
@@ -5011,7 +4991,9 @@ async function trShare(n,btn){const C=TRN._ctx;if(!C)return;const p=trPl(n);if(!
 function glPlayers(){const S=typeof GL_STATS!=="undefined"?GL_STATS:{},inR=new Set(Object.values(ROSTER).flat().map(p=>p[0]));
   return Object.entries(S).filter(([k,v])=>v&&v.n&&!inR.has(v.n)).map(([k,v])=>({t:k.split("|")[0],n:v.n,r:v.r,nba:v.nba||""}))}
 /* ===== STATISTICHE NOTTE: PDK di tutti i giocatori delle franchigie in una notte (dati PARTITE, data USA) ===== */
-const SN={d:null,m:"pdk"};
+const SN={d:null,m:"pdk",hist:false};
+/* (542) con la modalità notte la lista parte dalla notte live; le frecce portano alle notti passate (SN.hist) e di nuovo alla live */
+const snLiveKey=()=>{const d=typeof campoNotte==="function"?campoNotte():null;return d?+d.replace(/-/g,""):Infinity};
 const snKey=d=>{const[g,m]=d.split("/").map(Number);return(m>=7?2026:2027)*10000+m*100+g};
 function snNights(){const o={};for(const n in PARTITE)for(const g of PARTITE[n])o[g[0]]=1;return Object.keys(o).sort((a,b)=>snKey(a)-snKey(b))}
 /* (147) STATISTICHE LIVE: con la modalità notte attiva la sezione mostra la notte in corso (data USA) dai tabellini live di Dynasty TV
@@ -5030,11 +5012,11 @@ function vStatLive(){fantaLiveAvvia();const d=campoNotte(),E=SN.m==="eff";
   const rows=L.map((x,k)=>`<div class="snrow${x.lv?" lvr":""}">${wedge(x.t)}<div class="sninfo"><b><i>${k+1}</i>${RTR(x.n)}${x.n}</b><small>vs ${x.opp} · ${x.r[2]} min · ${x.r[3]} pt ${x.r[6]} rb ${x.r[7]} as${x.lv?` · <b class="clv"><i></i>${x.st}</b>`:""}</small></div><span class="snp ${cl(val(x))}">${fv(val(x))}</span></div>`).join("");
   return`${head}
   ${H("Statistiche live",`<em>${L.length} giocatori${nlv?` · ${nlv} in campo`:""}</em>`)}
-  <div class="sndate snlive"><div><b><span class="snlvd"></span>Notte del ${dd.getUTCDate()} ${TV_MM[dd.getUTCMonth()].slice(0,3)}</b><small>data USA · media ${L.length?fv(tot/L.length):"—"} ${E?"eff.":"PDK"} · si aggiorna da sola</small></div></div>
+  <div class="sndate snlive"><button data-snlv="prev" aria-label="Notte precedente"${snNights().some(n=>snKey(n)<snLiveKey())?"":" disabled"}>‹</button><div><b><span class="snlvd"></span>Notte del ${dd.getUTCDate()} ${TV_MM[dd.getUTCMonth()].slice(0,3)}</b><small>data USA · media ${L.length?fv(tot/L.length):"—"} ${E?"eff.":"PDK"} · si aggiorna da sola</small></div><button disabled aria-label="Notte successiva">›</button></div>
   <div class="snsw"><button data-snm="pdk" aria-pressed="${!E}">PDK</button><button data-snm="eff" aria-pressed="${E}">Eff.</button></div>
   <div class="snlist">${rows||'<p class="note">Stanotte nessun giocatore delle franchigie è ancora sceso in campo.</p>'}</div>
-  <p class="note">Modalità notte: PDK live della notte in corso (Dynasty TV, formula Dunkest), provvisori fino al report ufficiale. Spegni la modalità notte per tornare alle statistiche ufficiali delle notti passate.</p>`}
-function vStatNotte(){if(CNT)return vStatLive();const N=snNights();if(!N.length)return`<button class="gback" data-snback="1">‹ Statistiche</button>${H("Statistiche notte")}<p class="note">Nessuna partita registrata.</p>`;
+  <p class="note">Modalità notte: PDK live della notte in corso (Dynasty TV, formula Dunkest), provvisori fino al report ufficiale. Con la freccia ‹ vedi le notti passate (dati ufficiali).</p>`}
+function vStatNotte(){if(CNT&&!SN.hist)return vStatLive();const N=snNights().filter(n=>!CNT||snKey(n)<snLiveKey());if(!N.length)return`<button class="gback" data-snback="1">‹ Statistiche</button>${H("Statistiche notte")}<p class="note">Nessuna partita registrata.</p>`;
   if(!SN.d||!N.includes(SN.d))SN.d=N[N.length-1];const d=SN.d,i=N.indexOf(d);
   const L=[];for(const t in ROSTER)for(const r of ROSTER[t]){const g=(PARTITE[r[0]]||[]).find(x=>x[0]===d);if(g)L.push({n:r[0],t,g})}
   const E=SN.m==="eff",val=x=>E?x.g[4]:x.g[3];L.sort((a,b)=>val(b)-val(a));
@@ -5045,7 +5027,7 @@ function vStatNotte(){if(CNT)return vStatLive();const N=snNights();if(!N.length)
   const rows=L.map((x,k)=>`<div class="snrow">${wedge(x.t)}<div class="sninfo"><b><i>${k+1}</i>${RTR(x.n)}${x.n}</b><small>vs ${x.g[1]} · ${String(x.g[2]).replace(".",",")} min · ${x.g[5]} pt ${x.g[6]} rb ${x.g[7]} as</small></div><span class="snp ${cl(val(x))}">${fv(val(x))}</span></div>`).join("");
   return`<button class="gback" data-snback="1">‹ Statistiche</button>
   ${H("Statistiche notte",`<em>${L.length} giocatori</em>`)}
-  <div class="sndate"><button data-snd="${N[i-1]||""}" aria-label="Notte precedente"${i<=0?" disabled":""}>‹</button><div><b>Notte del ${dl(d)}</b><small>data USA · media ${L.length?fv(tot/L.length):"—"} ${E?"eff.":"PDK"}</small></div><button data-snd="${N[i+1]||""}" aria-label="Notte successiva"${i>=N.length-1?" disabled":""}>›</button></div>
+  <div class="sndate"><button data-snd="${N[i-1]||""}" aria-label="Notte precedente"${i<=0?" disabled":""}>‹</button><div><b>Notte del ${dl(d)}</b><small>data USA · media ${L.length?fv(tot/L.length):"—"} ${E?"eff.":"PDK"}</small></div>${i>=N.length-1&&CNT?`<button data-snlv="live" aria-label="Torna alla notte live">›</button>`:`<button data-snd="${N[i+1]||""}" aria-label="Notte successiva"${i>=N.length-1?" disabled":""}>›</button>`}</div>
   <div class="snsw"><button data-snm="pdk" aria-pressed="${!E}">PDK</button><button data-snm="eff" aria-pressed="${E}">Eff.</button></div>
   <div class="snlist">${rows||'<p class="note">Nessun giocatore delle franchigie in campo.</p>'}</div>
   <p class="note">${E?"Efficienza della notte (PDK ÷ minuti)":"PDK Dunkest della notte"} di tutti i giocatori delle 8 franchigie scesi in campo, dal più alto. Colori: ${E?"rosso sotto 0,80, giallo 0,80-1,10, verde oltre 1,10, viola da 1,50":"rosso sotto 20, giallo 20-29,99, verde 30-39,99, viola da 40"}.</p>`}
@@ -6788,6 +6770,7 @@ document.getElementById("main").addEventListener("click",e=>{
   if(e.target.closest("[data-sngo]")){e.preventDefault();SN.d=null;cur="statnotte";render();window.scrollTo(0,0);return}
   if(e.target.closest("[data-snback]")){e.preventDefault();cur="efficienza";render();window.scrollTo(0,0);return}
   {const b=e.target.closest("[data-snm]");if(b){e.preventDefault();SN.m=b.dataset.snm;const y=window.scrollY;render();window.scrollTo(0,y);return}}
+  {const b=e.target.closest("[data-snlv]");if(b){e.preventDefault();if(b.dataset.snlv==="prev"){const q=snNights().filter(n=>snKey(n)<snLiveKey());SN.d=q[q.length-1]||null;SN.hist=true}else SN.hist=false;const y=window.scrollY;render();window.scrollTo(0,y);return}}
   {const b=e.target.closest("[data-snd]");if(b&&!b.disabled){e.preventDefault();SN.d=b.dataset.snd;const y=window.scrollY;render();window.scrollTo(0,y);return}}
   if(cur!=="trend")return;
   if(e.target.closest("[data-trclose]")){e.preventDefault();cur=TRN.from||"efficienza";render();window.scrollTo(0,0);return}
@@ -8329,7 +8312,7 @@ async function tvBoxes(d){if(typeof TV==="undefined"||!d||!TV.days[d])return fal
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&cur==="tv")tvLiveTick()});
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="campo")return;const kb=e.target.closest("#kitbtn");if(kb){e.preventDefault();const t=kb.dataset.kitt;KITG=(kitDi(t)+1)%5;kitSalva();const y=scrollY;render();scrollTo(0,y);return}});
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="campo")return;const go=e.target.closest(".lbm[data-drgo]");if(!go)return;const[k,x,y]=go.dataset.drgo.split("|");DR.k=+k;DR.tab="turno";DR.open=[x,y];DR.rules=false;GAME="dream";cur="giochi";render();window.scrollTo(0,0)});
-document.getElementById("main").addEventListener("click",e=>{if(cur==="campo"&&e.target.closest("#cntbtn")){e.preventDefault();CNT=!CNT;const y=scrollY;render();scrollTo(0,y)}});
+document.getElementById("main").addEventListener("click",e=>{if(cur==="campo"&&e.target.closest("#cntbtn")){e.preventDefault();CNT=!CNT;SN.hist=false;const y=scrollY;render();scrollTo(0,y)}});
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="tv")return;const T=TVD(),ks=Object.keys(T.days).sort();
   {const dv=e.target.closest("[data-drtv]");if(dv){TVS.dr=dv.dataset.drtv;TVS.drs="a";render();window.scrollTo(0,0);return}}
   {const go=e.target.closest("[data-drgo]");if(go){const[k,x,y]=go.dataset.drgo.split("|");TVS.dr=null;DR.k=+k;DR.tab="turno";DR.open=[x,y];GAME="dream";cur="giochi";render();window.scrollTo(0,0);return}}
@@ -8435,7 +8418,7 @@ function render(){
   const tvg=m.querySelector("#tvgo");if(tvg)tvg.onclick=()=>{cur="tv";render();window.scrollTo(0,0)};
   if(SEGUI.length)fantaLiveAvvia();const hsg=m.querySelector("#hseg");if(hsg)hsg.onclick=()=>{cur="osserv";render();window.scrollTo(0,0)};
   const hd=m.querySelector("#hdrm");if(hd)hd.onclick=()=>{GAME="dream";cur="giochi";render();window.scrollTo(0,0)};
-  const hn=m.querySelector("#hnt");if(hn)hn.onclick=()=>{CNT=!CNT;const y=scrollY;render();scrollTo(0,y)};
+  const hn=m.querySelector("#hnt");if(hn)hn.onclick=()=>{CNT=!CNT;SN.hist=false;const y=scrollY;render();scrollTo(0,y)};
   const cb=m.querySelector("#cback");if(cb)cb.onclick=()=>{cur="home";render();window.scrollTo(0,0)};
   const cc=m.querySelector("#ccap");if(cc)cc.onclick=()=>{capLoad(curTeam);cur="cap";render();window.scrollTo(0,0)};
   const cmu=m.querySelector("#cmul");if(cmu)cmu.onclick=()=>{mulLoad(curTeam);cur="multe";render();window.scrollTo(0,0)};
@@ -8808,6 +8791,7 @@ ulCheck();
 /* (260) CRONOLOGIA MODIFICHE: il footer "Ultimo aggiornamento" è cliccabile e apre questa pagina (vista "novita").
    OGNI nuova modifica pubblicata va aggiunta in CIMA a NV_LOG (data, titolo, mini spiegazione). */
 const NV_LOG=[
+ ["30/10/2026","Statistiche: pulsanti e notti","Giocatori e Squadre sono i pulsanti grandi in alto; Efficienza Cup e Calcola il trend più piccoli sotto. In modalità notte la lista live ha la freccia ‹ per vedere le notti passate."],
  ["30/10/2026","G-Dreamers dentro Dreamers","G-Dreamers non è più nel Centro gestione: in Dreamers c'è l'interruttore Dreamers | G-Dreamers sotto il titolo. Le statistiche G League sono nella scheda «G League»."],
  ["29/10/2026","Previsione ben distinta","Nella Home la colonna «Previsione» ora ha un box azzurro con bordo sottile e una barretta sotto che indica il livello (verde, giallo, rosso, viola): si capisce subito che è il punteggio atteso e non uno già fatto."],
  ["29/10/2026","Età di tutti i giocatori","Ora tutti i giocatori, free agent e G-League compresi, hanno la data di nascita, e quindi l'età. Nel Comparatore la prima riga dei dati mostra l'età dei due giocatori, anche nell'immagine da condividere."],
