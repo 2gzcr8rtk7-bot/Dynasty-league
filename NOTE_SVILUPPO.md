@@ -1450,4 +1450,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 ## 496 — Card Turno Home: scarto sopra, LIVE + condividi sotto
 - "scarto" ora sta sopra i punteggi; sotto, LIVE (o "finale") affiancato al tasto condividi, che è centrato esattamente sotto il trattino dei punteggi.
+- Righe compattate (67 px, come prima del cambio): la tabella risultati ha di nuovo altezza fissa e mostra tutti i 4 scontri senza scorrere.
 - Stato: in coda (branch coda), non pubblicato.
