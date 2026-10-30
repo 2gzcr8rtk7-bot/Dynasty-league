@@ -1956,6 +1956,18 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .sqpkn{padding-left:6px;flex:1}
 .sqpkn b{display:block;font:800 italic 22px var(--display);letter-spacing:.06em;text-transform:uppercase;color:#fff}
 .sqpkn small{display:block;color:#8fa3c8;letter-spacing:.14em;text-transform:uppercase;font-size:11px}
+
+.cnsgo{display:flex;align-items:center;gap:10px;width:100%;margin:0 0 12px;padding:12px 14px;border:0;border-radius:14px;cursor:pointer;text-align:left;color:#fff;background:linear-gradient(135deg,#3b1d7a,#7c3aed);box-shadow:0 6px 16px rgba(0,0,0,.4);-webkit-tap-highlight-color:transparent;flex-wrap:wrap}
+.cnsgo span{font-size:24px}.cnsgo b{font:800 italic 17px var(--display);letter-spacing:.06em;text-transform:uppercase}.cnsgo small{flex-basis:100%;margin-left:34px;margin-top:-6px;color:#d8c8ff;font-size:12px}.cnsgo i{margin-left:auto;font-style:normal;font-size:24px;font-weight:900;order:2;margin-top:-30px}
+.cnslist{display:flex;flex-direction:column;gap:10px}
+.cns{border-radius:14px;background:#101a30;box-shadow:0 4px 12px rgba(0,0,0,.35);overflow:hidden}
+.cns summary{display:flex;align-items:center;gap:0;list-style:none;cursor:pointer;min-height:62px;-webkit-tap-highlight-color:transparent}.cns summary::-webkit-details-marker{display:none}
+.cnsw{width:76px;align-self:stretch;flex:none;background:linear-gradient(135deg,var(--tc),color-mix(in srgb,var(--tc) 55%,#000));display:flex;align-items:center;justify-content:center;clip-path:polygon(0 0,100% 0,84% 100%,0 100%)}.cnsw .badge{width:46px;height:46px}
+.cnsn{padding-left:8px;flex:1;min-width:0}.cnsn b{display:block;font:800 italic 19px var(--display);letter-spacing:.06em;text-transform:uppercase;color:#fff}.cnsn small{display:block;color:#8fa3c8;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.cnsc{margin-right:12px;padding:4px 10px;border-radius:20px;font:800 10.5px var(--display);letter-spacing:.08em;text-transform:uppercase;background:#2a3556;color:#dbe6ff;white-space:nowrap}
+.f-vetta .cnsc{background:#f5b400;color:#1b1200}.f-caccia .cnsc{background:#e11d48;color:#fff}.f-declino .cnsc{background:#f97316;color:#1b0b00}.f-dinastia .cnsc{background:#7c3aed;color:#fff}.f-rifondazione .cnsc{background:#16a34a;color:#fff}.f-costruzione .cnsc{background:#0d9488;color:#fff}.f-limbo .cnsc{background:#64748b;color:#fff}.f-insegue .cnsc{background:#d97706;color:#fff}.f-aperta .cnsc{background:#475569;color:#fff}
+.cnsb{padding:2px 14px 14px;font-size:14.5px;line-height:1.45;color:#dbe6ff}.cnsb p{margin:8px 0}.cnsb ul{margin:6px 0 8px;padding:0;list-style:none}.cnsb li{position:relative;padding:6px 0 6px 26px;border-top:1px solid rgba(255,255,255,.07)}.cnsb li::before{content:"💡";position:absolute;left:0;top:6px;font-size:15px}
+.cnsv{font-style:italic;font-weight:700;color:#ffe08a}
 .sqpk i{margin-right:16px;color:var(--muted);font-style:normal;font-size:26px;font-weight:900}
 .effsub[data-effsub=pl]{background:linear-gradient(135deg,#4c0519,#e11d48)!important}
 .effsub[data-effsub=sq]{background:linear-gradient(135deg,#713f12,#eab308)!important}
@@ -3322,9 +3334,18 @@ const ESP={da:null,a:null,sz:"2026/27"};let esqRole="GFC",esqFOpen=false;
 const espPad=v=>String(v).padStart(2,"0");
 function espMonth(sz,m){const y0=+sz.slice(0,4),y=m>=8?y0:y0+1,last=new Date(Date.UTC(y,m,0)).getUTCDate(),mx=perOggi();let da=`${y}-${espPad(m)}-01`,a=`${y}-${espPad(m)}-${espPad(last)}`;if(m===+mx.slice(5,7)&&a>mx)a=mx;if(da<PER_MIN)da=PER_MIN;return{da,a}}
 function espInit(){if(ESP.da)return;const t=perOggi(),m=+t.slice(5,7),y=+t.slice(0,4),sz=m>=8?`${y}/${String(y+1).slice(2)}`:`${y-1}/${String(y).slice(2)}`;ESP.sz=PER_ORD.includes(sz)?sz:PER_ORD[2];if([10,11,12,1,2,3,4].includes(m)){const r=espMonth(ESP.sz,m);ESP.da=r.da;ESP.a=r.a}else{const r=perSzRange(ESP.sz);ESP.da=r[0];ESP.a=r[1]}}
+
+/* (594) Spazio SUGGERIMENTI del TG: per ogni squadra fase, diagnosi, mosse consigliate. Stessa fonte degli articoli del TG (gzEdizione().cons). */
+function vConsigli(){let E=null;try{E=typeof window.gzEdizione==="function"?window.gzEdizione():null}catch(e){}
+  const C=E&&E.cons;const back=`<button class="gback" id="cnsback">‹ Squadre</button>`;
+  if(!C)return back+H("Suggerimenti del TG",`<em>non disponibili</em>`)+`<p class="note">I suggerimenti si calcolano con i dati dell'app: riprova tra poco.</p>`;
+  const bd=t=>{const q=document.createElement("div");return t};
+  const cards=C.schede.map(z=>`<details class="cns f-${z.fase}"><summary><span class="cnsw" style="--tc:${TEAMS[z.t].bg}">${badge(z.t)}</span><span class="cnsn"><b>${TEAMS[z.t].nick}</b><small>${z.r}ª · ${z.w}-${z.l}</small></span><span class="cnsc">${z.label}</span></summary>
+    <div class="cnsb"><p class="cnsd">${z.diag} ${z.mk}</p><ul>${z.tips.map(t=>`<li>${t}</li>`).join("")}</ul><p class="cnsv">${z.ver}</p></div></details>`).join("");
+  return back+H("Suggerimenti del TG",`<em>n. ${E.num} · ${E.dm}</em>`)+`<p class="note" style="margin:0 0 12px">Il Tg guarda ogni squadra: età media, classifica, talento, ultimi scambi, ruoli scoperti, crediti. Poi dice che strada sembra quella giusta. Cambia ogni giorno alle 7:30. Sono solo suggerimenti: decidono i GM.</p><div class="cnslist">${cards}</div><div style="height:22px"></div>`}
 function vSqPick(){
   const rows=Object.keys(TEAMS).map(t=>{const c=TEAMS[t];return `<div class="sqpk" data-sqpick="${t}" role="button" tabindex="0" aria-label="Statistiche ${c.nick}"><span class="sqpkw" style="--tc:${c.bg}">${badge(t)}</span><span class="sqpkn"><b>${c.nick}</b><small>${c.city}</small></span><i>›</i></div>`}).join("");
-  return `<button class="gback esqback" id="effback">‹ Statistiche</button>${H("Squadre",`<em>scegli una squadra</em>`)}<div class="sqpklist">${rows}</div><div style="height:22px"></div>`}
+  return `<button class="gback esqback" id="effback">‹ Statistiche</button>${H("Squadre",`<em>scegli una squadra</em>`)}<button class="cnsgo" data-cnsgo="1" type="button"><span>💡</span><b>Suggerimenti del TG</b><small>Chi vende, chi compra, chi è nel limbo</small><i>›</i></button><div class="sqpklist">${rows}</div><div style="height:22px"></div>`}
 function vEffSquadra(){
   if(effSqPick)return vSqPick();
   espInit();if(ESP.da<PER_MIN)ESP.da=PER_MIN;if(ESP.a<ESP.da){const q=ESP.a;ESP.a=ESP.da;ESP.da=q}
@@ -7009,7 +7030,7 @@ document.getElementById("main").addEventListener("click",e=>{
   const r=e.target.closest("[data-trln]");if(r&&!e.target.closest("[data-grafico]")&&!e.target.closest("[data-trtog]")){e.preventDefault();TRN.det=r.dataset.trln;const y=window.scrollY;render();window.scrollTo(0,y);return}
   if(r&&e.target.closest("[data-trtog]")){e.preventDefault();const n=r.dataset.trln;TRN.on=TRN.on||[];const i=TRN.on.indexOf(n);if(i>=0)TRN.on.splice(i,1);else{TRN.on.push(n);if(TRN.on.length>TR_MAXL)TRN.on.shift()}const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.addEventListener("click",e=>{const b=e.target.closest("[data-effsub]");if(!b||cur!=="efficienza")return;e.preventDefault();const v=b.dataset.effsub;if(v==="pl"){faFrom="fa";cur="fa";render();scrollTo(0,0)}else{effSq=effSq||curTeam;effSqPick=true;cur="effsquadra";render();scrollTo(0,0)}});
-document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-sqpick]");if(!b||cur!=="effsquadra")return;e.preventDefault();effSq=b.dataset.sqpick;effSqPick=false;render();scrollTo(0,0)});
+document.getElementById("main").addEventListener("click",e=>{const g=e.target.closest("[data-cnsgo]");if(g&&cur==="effsquadra"){e.preventDefault();cur="consigli";render();scrollTo(0,0);return}const bk=e.target.closest("#cnsback");if(bk&&cur==="consigli"){e.preventDefault();effSqPick=true;cur="effsquadra";render();scrollTo(0,0);return}const b=e.target.closest("[data-sqpick]");if(!b||cur!=="effsquadra")return;e.preventDefault();effSq=b.dataset.sqpick;effSqPick=false;render();scrollTo(0,0)});
 document.getElementById("main").addEventListener("keydown",e=>{const b=e.target.closest("[data-sqpick]");if(!b||cur!=="effsquadra"||(e.key!=="Enter"&&e.key!==" "))return;e.preventDefault();b.click()});
 document.getElementById("main").addEventListener("change",e=>{const fs=e.target.closest("select[data-fasel]");if(fs&&cur==="fa"){if(fs.dataset.fasel==="nba")faNba=fs.value;else faDt=fs.value;const y=window.scrollY;render();window.scrollTo(0,y);return}const s=e.target.closest("select[data-tr]");if(!s||cur!=="trend")return;const k=s.dataset.tr;
   if(k==="sz"||k==="sz2"){TRN[k]=s.value;TRN.mese="";TRN.mese2=""}else if(k==="mese"){TRN.mese=s.value;TRN.mese2=s.value}else TRN[k]=s.value;TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y)});
@@ -8680,7 +8701,7 @@ function render(){
   if(cur!=="tv")TVS.out=1;liveSync();if(["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur))fantaLiveAvvia();
   document.body.dataset.v=cur;{const nt=typeof CNT!=="undefined"&&CNT;document.body.classList.toggle("notte",nt);document.documentElement.classList.toggle("notte",nt);const tc=document.querySelector('meta[name="theme-color"]');if(tc&&!document.body.classList.contains("dreamfs"))tc.content=nt?"#2a1260":TH_BAR}
   {document.documentElement.classList.toggle("setpg",cur==="impostazioni");/* (245) */const fs=cur==="giochi"&&(GAME==="dream"||GAME==="gdream");document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=(fs||(typeof CNT!=="undefined"&&CNT))?"#2a1260":TH_BAR}
-  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"efficienza":cur==="faplayer"?(faFrom==="home"?"home":"efficienza"):cur==="giocatore"?(gFrom==="fa"?"efficienza":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="fa"||cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="osserv"||cur==="iatrade"||cur==="compar"||cur==="pictrade"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
+  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"efficienza":cur==="faplayer"?(faFrom==="home"?"home":"efficienza"):cur==="giocatore"?(gFrom==="fa"?"efficienza":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="fa"||cur==="effsquadra"||cur==="consigli"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="osserv"||cur==="iatrade"||cur==="compar"||cur==="pictrade"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));try{const nv=document.querySelector("nav"),sb=nv&&nv.querySelector('[aria-selected="true"]');if(sb)nv.scrollTo({left:Math.max(0,sb.offsetLeft-24)})}catch(e){}
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -8743,7 +8764,7 @@ function syncMenu(){
   document.querySelectorAll("nav button[data-menu]").forEach(b=>{
     const p=document.getElementById(b.dataset.menu);if(!p)return;
     const op=dkOpen===b.dataset.menu;b.setAttribute("aria-expanded",op);p.hidden=!op;
-    const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"efficienza":cur==="faplayer"?(faFrom==="home"?"home":"efficienza"):cur==="giocatore"?(gFrom==="fa"?"efficienza":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="fa"||cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
+    const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"efficienza":cur==="faplayer"?(faFrom==="home"?"home":"efficienza"):cur==="giocatore"?(gFrom==="fa"?"efficienza":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="fa"||cur==="effsquadra"||cur==="consigli"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
     b.setAttribute("aria-selected",op||inside);
     if(op){const w=b.closest(".wrap").getBoundingClientRect(),r=b.getBoundingClientRect();
       const width=Math.max(r.width,180);let left=r.left-w.left+r.width/2-width/2;left=Math.max(0,Math.min(left,w.width-width));
@@ -9847,10 +9868,177 @@ function gzFatti(){const o=gzOra(),F={oggi:o.d,st:[],pos:{}};
   /* infortuni importanti */
   F.inj=[];try{INFORTUNI.lista.forEach(x=>{if(x.stato!=="out"||!INJ[x.p])return;const pm=pdkMed(x.p);if(pm!=null&&pm>=28)F.inj.push({n:x.p,t:gzTeamOf(x.p)||x.t,tipo:x.tipo,rientro:x.rientro,pdk:pm})});F.inj.sort((a,b)=>b.pdk-a.pdk)}catch(e){}
   return F}
+
+/* ===== (594) ANALISI DELLE SQUADRE per il TG: profilo (fase, età, ruoli scoperti, cassa, trend) + suggerimenti di mercato =====
+   Fase: vetta (lotta per il primo posto) · caccia (vuole vincere subito, è in zona buona) · declino (veterani ma indietro) · dinastia (giovane e forte)
+         · rifondazione / costruzione (giovane, in basso, punta sul futuro) · limbo (a metà in tutto e ferma sul mercato) · aperta (nessuna strada netta).
+   Tutto deriva dai segnali già usati dall'IA trade: iaProf (età media, talento, classifica, mosse di mercato), iaStats (carenze e surplus per ruolo), valori, PDK, trend, crediti. */
+let GZ_PC={k:"",v:null};
+function gzProf(F){const key=F.oggi+"|"+(F.st||[]).map(x=>x.w+"-"+x.l).join(",");if(GZ_PC.k===key&&GZ_PC.v)return GZ_PC.v;
+  try{iaPC={};iaCache={};const S=iaStats(),T={},TS=Object.keys(ROSTER).filter(t=>TEAMS[t]);
+    TS.forEach(t=>{const P=iaProf(t),x=(F.st||[]).find(z=>z.t===t)||{w:0,l:0,n:0},r=F.pos[t]||P.r||0,c=P.c;
+      const pl=iaEff(t).map(q=>{const n=q[0],a=iaAge(n),v=valOf(n)??VAL_FALLBACK,pf=iaPerf(n);let tr=null;try{tr=iaTrend(n)}catch(e){}
+        return{n,r:q[2],a,v,pdk:pf&&pf.v||0,cr:+q[4]||0,out:iaOut(n),tr,rk:isRookie(n),pg:iaP(n)}}).sort((a,b)=>b.v-a.v);
+      const core=pl.slice(0,6),coreAge=iaAvg(core.map(q=>q.a)),A=P.A,Tz=P.T,Tr=P.Tr;
+      let fase="aperta";
+      if(r&&r<=4&&Tz>.35&&A<-.15)fase="dinastia";
+      else if(r&&r<=2&&c>=-.1)fase="vetta";
+      else if(c>=.35&&r<=5)fase="caccia";
+      else if(c>=.2&&r>=6)fase="declino";
+      else if(c<=-.35)fase="rifondazione";
+      else if(c<=-.15)fase="costruzione";
+      else if(Math.abs(c)<.22&&r>=4&&r<=6&&Math.abs(A)<.6&&Math.abs(Tz)<.6)fase="limbo";
+      T[t]={t,P,c,A,Tz,Tr,fase,r,w:x.w,l:x.l,n:x.n,age:P.age,lg:P.lg,coreAge,def:S[t].def,cnt:S[t].cnt,cash:iaCassa(t),pl,
+        vets:pl.filter(q=>q.a!=null&&q.a>=30),yng:pl.filter(q=>q.a!=null&&q.a<=23.5)}});
+    const ords=TS.slice().sort((a,b)=>(T[b].age||0)-(T[a].age||0));ords.forEach((t,i)=>T[t].ageRk=i+1);
+    const L={T,S,ord:TS.slice().sort((a,b)=>T[a].r-T[b].r),vecchia:ords[0],giovane:ords[ords.length-1]};
+    GZ_PC={k:key,v:L};return L}catch(e){console.warn("gzProf",e);return null}}
+window.gzProf=gzProf;
+
+/* proposte di scambio per il TG: la squadra che cerca un ruolo (carenza) chiede un veterano a chi ricostruisce o è a metà; il prezzo è un suo giocatore + crediti, scelto in modo che il calcolatore trade la giudichi equilibrata (scarto sotto il 10%) */
+function gzMercatoCand(L){const out=[],T=L.T,ids=Object.keys(T),pts=q=>vtPts(q.v)*(q.out?.75:1);
+  const buyer=t=>["vetta","caccia","declino","insegue","aperta","dinastia"].includes(T[t].fase),seller=t=>["rifondazione","costruzione","limbo","declino"].includes(T[t].fase)||(T[t].c<-.1&&!["dinastia","vetta"].includes(T[t].fase));
+  ids.forEach(b=>{if(!buyer(b))return;const B=T[b];["G","F","C"].forEach(r=>{const def=B.def[r];if(def<.05)return;
+    ids.forEach(s=>{if(s===b||!seller(s)||T[s].c>B.c-.1)return;const S=T[s];
+      S.pl.filter(q=>q.r===r&&q.a!=null&&q.a>=25&&!q.out&&q.v>=500).forEach(tg=>{
+        const need=pts(tg),core=B.pl.slice(0,2).map(q=>q.n),pool=B.pl.filter(q=>!core.includes(q.n)&&!q.out&&q.n!==tg.n);
+        let best=null;pool.forEach(q=>{const pq=pts(q);if(pq>need*1.1)return;const gap=need-pq,cr=Math.max(0,Math.ceil(gap/VAL_CR));if(cr>B.cash)return;
+          /* a chi ricostruisce piacciono i giovani; a chi vuole vincere conviene dare chi serve meno: si preferisce il ruolo in surplus */
+          const sc=(q.a!=null&&q.a<=25?1:0)+(B.def[q.r]<-.1?.5:0)-cr/Math.max(50,B.cash+1)*.6;
+          if(!best||sc>best.sc)best={q,cr,sc}});
+        if(!best)return;const A=pts(best.q)+best.cr*VAL_CR,Bv=need,d=Math.abs(A-Bv)/Math.max(A,Bv,1);if(d>=.1)return;
+        out.push({b,s,r,tg,give:best.q,cr:best.cr,d,sc:def*2+tg.v/1500+(best.q.a<=25?.4:0)+(T[s].c<-.3?.3:0)})})})})});
+  /* il contrario: chi ricostruisce e ha liquidità compra un giovane di talento da chi punta a vincere, pagando in crediti */
+  ids.forEach(b=>{const B=T[b];if(!["rifondazione","costruzione","limbo"].includes(B.fase)||B.cash<60)return;
+    ids.forEach(s=>{if(s===b||!["vetta","caccia","declino","insegue"].includes(T[s].fase))return;
+      T[s].pl.filter(q=>q.a!=null&&q.a<=24.5&&!q.out&&q.v>=600).forEach(tg=>{const cr=Math.ceil(pts(tg)/VAL_CR);if(cr>B.cash)return;
+        out.push({b,s,r:tg.r,tg,give:null,cr,d:0,yng:true,sc:tg.v/1500+B.cash/1000+(T[s].fase==="declino"?.3:0)})})})});
+  out.sort((x,y)=>y.sc-x.sc);return out}
+window.gzMercatoCand=gzMercatoCand;
 const gzDa=t=>GZ_GLI.test(gzNk(t))?"dagli "+gzNk(t):"dai "+gzNk(t);
 const GZ_ORDP=["","primi","secondi","terzi","quarti","quinti","sesti","settimi","ottavi","noni","decimi","undicesimi","dodicesimi"];
 const gzCap=s=>String(s).replace(/^./,c=>c.toUpperCase());
 const GZ_GGS=["domenica","lunedì","martedì","mercoledì","giovedì","venerdì","sabato"];
+/* ===== (594) TG: articoli e spazio SUGGERIMENTI. Tutto è composto da pezzi di frase combinabili (sacchetto deterministico P): fase della squadra × mercato recente × suggerimenti × verdetto ===== */
+const GZ_FASE={vetta:"In lotta per il titolo",caccia:"Vuole vincere subito",declino:"Esperta ma indietro",dinastia:"Giovane e già forte",rifondazione:"Rifondazione",costruzione:"In costruzione",limbo:"Nel limbo",insegue:"All'inseguimento",aperta:"Strada ancora aperta"};
+const GZ_RA={G:"una guardia",F:"un'ala",C:"un centro"},GZ_RL={G:"le guardie",F:"le ali",C:"i centri"},GZ_RD={G:"delle guardie",F:"delle ali",C:"dei centri"},GZ_RS={G:"guardia",F:"ala",C:"centro"};
+let GZ_CCK="",GZ_CCV=null;
+function gzConsigli(H){const{P,F,pos,ordp,recS,n1,DN}=H,L=gzProf(F);if(!L)return null;const key=F.oggi+"|"+DN+"|"+JSON.stringify((F.st||[]).map(x=>x.w+"-"+x.l))+"|"+(F.inj||[]).map(x=>x.n).join(",");if(GZ_CCK===key&&GZ_CCV)return GZ_CCV;const ARTS=[],push=a=>ARTS.push(a);
+  const T=L.T,ids=L.ord,sn=q=>gzSur(q.n),ag=q=>Math.floor(q.a),I=gzI,C=t=>gzCap(gzI(t)),NK=gzNk;
+  const rem=t=>Math.max(0,DR_REG-T[t].n),remT=t=>rem(t)===1?"Manca un solo turno":"Mancano "+gzNum(rem(t))+" turni",jit=(t,salt)=>{const R=gzRng(gzHash(t+salt+F.oggi+DN));return R()};
+  const cands=gzMercatoCand(L);
+  const ageP=t=>{const x=T[t],a=gzF1(x.age),l=gzF1(x.lg);
+    if(x.ageRk===1)return P("ap1"+t,`la rosa più vecchia della lega, con ${a} anni di media`,`${a} anni di età media, la più alta del campionato`,`una rosa da ${a} anni di media, la più esperta (e la più anziana) della lega`);
+    if(x.ageRk===ids.length)return P("ap8"+t,`la rosa più giovane della lega, con ${a} anni di media`,`appena ${a} anni di età media, la più bassa del campionato`,`una rosa da ${a} anni di media, la più giovane del Dreamers`);
+    if(x.A>.45)return P("apa"+t,`${a} anni di media, sopra i ${l} della lega`,`una rosa da ${a} anni, più esperta della media (${l})`,`${a} anni di età media contro i ${l} del campionato`);
+    if(x.A<-.45)return P("apb"+t,`${a} anni di media, sotto i ${l} della lega`,`una rosa da ${a} anni, più giovane della media (${l})`,`${a} anni di età media contro i ${l} del campionato`);
+    return P("apc"+t,`${a} anni di media, in linea con la lega`,`un'età media di ${a} anni, nella norma del campionato`,`una rosa da ${a} anni, né vecchia né giovane`)};
+  const sit=t=>`${ordp(t)} con ${recS(t)}`;
+  /* DIAGNOSI per fase */
+  const diag=(t,salt)=>{const x=T[t],i=I(t),c=C(t),s=sit(t),a=ageP(t),k=salt+t;
+    switch(x.fase){
+      case"vetta":return P("dg-v"+k,`${c} sono ${s}: sono in zona altissima, e con ${a} hanno la solidità per restarci.`,`Con ${recS(t)} ${i} guardano tutti dall'alto, ${ordp(t)}: la rosa ha ${a}, e l'identità è chiara.`,`${c} guidano il gruppo di testa: ${s}, ${a}. Chi vuole il primo posto deve passare da qui.`,`Il Dreamers, per ora, passa ${gzDa(t)}: ${ordp(t)} in classifica, ${a}.`,`${c} sono ${ordp(t)} e hanno ${recS(t)}. Non c'è bisogno di rivoluzioni: contano i dettagli.`);
+      case"caccia":return P("dg-c"+k,`${c} vogliono vincere subito: ${s}, ${a}, e una classifica ancora tutta da scalare.`,`L'identità di ${gzNk(t)} è chiara: ${a}, giocano per il presente. Sono ${s}.`,`${c} hanno fretta, e si vede: ${a}, ${s}. Il tempo, per una rosa così, è un fattore.`,`Sono ${s}, e ${gzI(t)} lo sanno: ${a} vuol dire una finestra aperta ora, non tra due anni.`,`${c} stanno costruendo per vincere oggi: ${a}, ${s}.`);
+      case"declino":return P("dg-d"+k,`${c} sono ${s}, con ${a}: l'ambizione è da primi, la classifica da inseguitori, e il tempo lavora contro.`,`C'è un problema ${gzDi(t)}: ${a}, ma ${ordp(t)} con ${recS(t)}. Una squadra esperta che non vince è la combinazione peggiore.`,`${c} hanno esperienza da vendere e risultati da recuperare: ${s}, ${a}.`,`Con ${a} e ${recS(t)}, ${gzI(t)} rischiano di ritrovarsi vecchi prima di aver vinto.`,`${c}, ${ordp(t)} con ${recS(t)}: una rosa pensata per vincere, che sta ancora aspettando di farlo.`);
+      case"dinastia":return P("dg-n"+k,`${c} hanno ${a} e sono ${s}: giovani e già forti, con il tempo che lavora dalla loro parte.`,`${c}, ${s}: il talento c'è, l'età pure, e nel lungo periodo è la combinazione più pericolosa del campionato.`,`${c} sono ${ordp(t)} con una rosa tra le più giovani e più forti della lega: ${a}. Il ciclo è appena iniziato.`,`Quando una squadra ha ${a} e viaggia ${ordp(t)} con ${recS(t)}, gli altri GM devono preoccuparsi per gli anni a venire.`,`${c} sono giovani e forti: ${s}, ${a}.`);
+      case"rifondazione":return P("dg-r"+k,`${c} stanno ricostruendo: ${s}, ${a}. L'obiettivo non è la classifica di oggi, è quella di fra due anni.`,`${c} hanno scelto la strada lunga: ${a}, ${ordp(t)} con ${recS(t)}. Qui si semina.`,`Rifondazione in corso in casa ${gzDi(t)}: ${s}, ${a}, e un futuro tutto da costruire.`,`${c} sono ${s}: poco importa, con ${a}. Contano i giovani che crescono e le scelte che si accumulano.`,`Per ${gzI(t)} il presente è un laboratorio: ${a}, ${s}.`);
+      case"costruzione":return P("dg-k"+k,`${c} sono in costruzione: ${a}, ${s}. Il progetto guarda avanti, ma non vuole rinunciare del tutto al presente.`,`Una squadra che cresce: ${gzI(t)} hanno ${a} e sono ${s}.`,`${c}, ${s}, hanno ${a}: la rosa è giovane e il margine di crescita c'è, il punto è quanto rapidamente.`,`C'è un progetto ${gzDi(t)}: ${a}, ${s}.`,`${c} stanno mettendo mattoni: ${s}, ${a}.`);
+      case"limbo":return P("dg-l"+k,`${c} sono ${s}, con ${a}: non abbastanza forti per sognare, non abbastanza giovani per aspettare. Il limbo, appunto.`,`${c} sono nel mezzo di tutto: ${s}, ${a}, talento nella media. Una posizione comoda solo in apparenza.`,`C'è una zona del campionato dove si resta fermi per anni: ${gzI(t)} ci sono dentro, ${s}, con ${a}.`,`Né in cima né in fondo, né vecchi né giovani: ${gzI(t)} sono ${s}, ${a}, e nessuna mossa che indichi una direzione.`,`${c}, ${s}: la rosa è nella media in tutto, età compresa (${a}). È la posizione più difficile da lasciare.`);
+      default:return P("dg-a"+k,`${c} sono ${s}, con ${a}: non hanno ancora scelto che squadra essere, e la classifica comincia a chiederlo.`,`${c} sono ${s}. La rosa (${a}) lascia aperte più strade: servirebbe sceglierne una.`,`Una squadra con le idee ancora da chiarire: ${gzI(t)}, ${s}, ${a}.`,`${c}, ${s}: la direzione non è ancora netta, e il mercato è il posto dove deciderla.`,`${c} sono ${s} e hanno ${a}. Il quadro resta aperto.`)}};
+  const mkt=t=>{const x=T[t],i=I(t);
+    if(x.Tr>.3&&["rifondazione","costruzione"].includes(x.fase))return P("mr-q"+t,`Strano però il mercato recente: ${i} hanno preso più esperienza di quanta ne abbiano ceduta.`,`Sul mercato, invece, ${i} sembrano pensare al presente: dentro veterani, fuori meno di quanti ne siano entrati.`);
+    if(x.Tr<-.3&&["vetta","caccia"].includes(x.fase))return P("mr-w"+t,`Strano però il mercato recente: ${i} hanno ceduto più esperienza di quanta ne abbiano presa.`,`Sul mercato, invece, ${i} sembrano pensare al futuro: via i veterani, dentro i giovani.`);
+    if(x.Tr>.3)return P("mr-p"+t,`Il mercato recente racconta voglia di vincere subito: ${i} hanno preso più esperienza di quanta ne abbiano ceduta.`,`Gli ultimi scambi ${gzDi(t)} vanno in una direzione sola: veterani e rendimento immediato.`,`Sul mercato ${gzI(t)} hanno cambiato marcia: dentro i giocatori che servono adesso.`);
+    if(x.Tr<-.3)return P("mr-n"+t,`Gli ultimi scambi vanno nella direzione opposta: via i veterani, dentro giovani e crediti.`,`Il mercato recente dice ricostruzione: ${i} hanno ceduto esperienza e raccolto futuro.`,`Dalle ultime trattative si capisce tutto: ${i} stanno investendo sul domani.`);
+    return P("mr-z"+t,`Sul mercato, per ora, poco o niente: ${i} stanno a guardare.`,`Gli ultimi scambi non indicano una direzione precisa: ${i} non si sono ancora mossi davvero.`,`Il mercato ${gzDi(t)} è fermo: nessun segnale, né di corsa al titolo né di ricostruzione.`)};
+  const ver=t=>{const x=T[t];
+    const M={vetta:["Il consiglio: proteggere il nucleo e muoversi solo per coprire infortuni e panchina.","Strategia semplice: non toccare ciò che funziona e tenere pronto un piano B per gli infortuni.","Il TG non ha dubbi: continuità, e occhi aperti sul mercato per chi può fare male da fuori."],
+      caccia:["Il consiglio: rinforzare il reparto più debole adesso, finché la finestra è aperta.","Strategia: comprare esperienza dove serve e non regalare giovani a caso.","Il TG consiglia di accelerare: una buona trattativa oggi vale più di tre domani."],
+      declino:["Il consiglio è scegliere: o ci si rinforza davvero adesso, o si vende prima che il valore dei veterani cali.","Il TG è severo: una rosa esperta che non vince ha un valore che scende di giorno in giorno.","La scelta è tra un ultimo grande colpo e un inizio di ricostruzione. Restare in mezzo è l'unica strada sbagliata."],
+      dinastia:["Il consiglio: pazienza, e pochi scambi: il tempo lavora a favore.","Strategia: tenere insieme il gruppo e non farsi tentare dai veterani.","Il TG non vede problemi: l'unica domanda è come gestire una rosa così giovane quando i contratti pesano."],
+      rifondazione:["Il consiglio: vendere i pochi veterani di valore e comprare giovani e crediti, senza fretta.","Strategia: accumulare scelte e talento, e lasciare la classifica ad altri.","Il TG consiglia di vendere tutto quello che invecchia e comprare tutto quello che cresce."],
+      costruzione:["Il consiglio: continuare a crescere, vendendo qualcuno dei più anziani prima che il valore scenda.","Strategia: un piede nel futuro e uno nel presente, con la prossima mossa a favore dei giovani.","Il TG vede un progetto che funziona: basta non farsi distrarre da una vittoria in più."],
+      limbo:["Il consiglio è uscire dal mezzo: o si compra per vincere, o si vende per ricostruire. Restare fermi è la scelta peggiore.","Il TG avverte: nel limbo si può restare anni. Serve una decisione, anche scomoda.","Strategia: scegliere una direzione entro poche settimane, perché ogni giornata persa in mezzo vale come una sconfitta."],
+      insegue:["Il consiglio: capire se il treno è ancora raggiungibile, e in quel caso rinforzare subito il reparto più scoperto.","Strategia: valutare con onestà le possibilità e muoversi di conseguenza.","Il TG consiglia di non aspettare: chi insegue ha meno tempo di chi comanda."],
+      aperta:["Il consiglio: decidere in che direzione andare, prima che la classifica lo faccia al posto vostro.","Strategia: un reparto da sistemare e una direzione da scegliere, in quest'ordine.","Il TG suggerisce di fissare un obiettivo e muoversi di conseguenza."]};
+    return P("vr-"+x.fase+t,...(M[x.fase]||M.aperta))};
+  /* SUGGERIMENTI */
+  const roleOf=x=>["G","F","C"].map(r=>[r,x.def[r]]).sort((a,b)=>b[1]-a[1]);
+  const tipsFor=(t,n,salt)=>{const x=T[t],i=I(t),c=C(t),f=x.fase,Cs=[],reb=["rifondazione","costruzione","limbo","declino"].includes(f),win=["vetta","caccia","declino","insegue","aperta"].includes(f);
+    const med=x.pl.length?x.pl[x.pl.length>>1].v:0,k=salt+t;
+    const old=x.pl.filter((q,ix)=>q.a!=null&&q.a>=29&&q.v>=Math.max(600,med)&&(f!=="declino"||ix>=2)).sort((a,b)=>b.v-a.v)[0];
+    if(reb&&old)Cs.push({k:"vecchio",pri:f==="declino"?64:80,t:()=>P("tp-v"+k,`Vendere ${sn(old)} adesso: ha ${ag(old)} anni e un valore ancora alto, ma da quell'età il calcolatore trade lo svaluta ogni anno che passa.`,`${sn(old)} è la moneta di scambio più pregiata e più a rischio: ${ag(old)} anni, ${n1(old.pdk)} PDK di rendimento. Per chi guarda avanti è il momento di monetizzarlo.`,`Primo nome da mettere sul mercato: ${old.n}. Con ${ag(old)} anni vale ancora molto, tra un anno vale meno.`,`${sn(old)} (${ag(old)} anni) rende ${n1(old.pdk)} PDK ma non ha più il tempo dalla sua parte: ${i} dovrebbero venderlo prima che la lega lo faccia pagare meno.`)});
+    const yc=cands.find(z=>z.b===t&&z.yng);
+    if(["rifondazione","costruzione","limbo"].includes(f)&&yc)Cs.push({k:"giovane",pri:72,t:()=>P("tp-y"+k,`Con ${x.cash} crediti in cassa ${i} possono permettersi un nome come ${yc.tg.n}, ${ag(yc.tg)} anni, ${gzDi(yc.s)}: costo stimato ${yc.cr} crediti.`,`Un nome da cerchiare: ${sn(yc.tg)} ${gzDi(yc.s)}, ${ag(yc.tg)} anni, ${GZ_RS[yc.tg.r]}, il tipo di giocatore su cui si costruisce il prossimo ciclo. La cassa (${x.cash} crediti) permette di chiedere.`,`Un obiettivo per il futuro: ${yc.tg.n}, ${ag(yc.tg)} anni. Pagarlo in crediti, circa ${yc.cr}, evita di dover cedere qualcuno.`)});
+    const rl=roleOf(x)[0],nc=cands.find(z=>z.b===t&&!z.yng&&z.r===rl[0]);
+    if(win&&rl[1]>=.1)Cs.push({k:"ruolo",pri:70+rl[1]*60,t:()=>nc?P("tp-r"+k,`Il reparto ${GZ_RD[rl[0]]} è il punto debole. Un nome su cui chiedere informazioni: ${nc.tg.n}, ${ag(nc.tg)} anni, ${gzDi(nc.s)}.`,`Serve ${GZ_RA[rl[0]]}: tra le opzioni c'è ${sn(nc.tg)} (${gzNk(nc.s)}), ${ag(nc.tg)} anni e ${n1(nc.tg.pdk)} PDK di media.`,`Dove si perde di più? Nel reparto ${GZ_RD[rl[0]]}. ${gzCap(gzI(nc.s))} hanno ${sn(nc.tg)}, e potrebbero ascoltare un'offerta.`):P("tp-r2"+k,`Il reparto ${GZ_RD[rl[0]]} è la zona scoperta: lì va concentrata la prossima mossa di mercato.`,`Se c'è un buco da riempire, riguarda ${GZ_RL[rl[0]]}: il resto della rosa regge, quel reparto no.`,`Rispetto alle altre squadre, ${GZ_RL[rl[0]]} sono il punto debole ${gzDi(t)}.`)});
+    const sr=roleOf(x).slice().reverse()[0];
+    if(sr[1]<=-.2&&x.cnt[sr[0]]>=3)Cs.push({k:"surplus",pri:42,t:()=>P("tp-s"+k,`Tra ${GZ_RL[sr[0]]} ${i} sono più forti della media della lega: uno di loro può diventare la moneta di uno scambio.`,`Abbondanza ${GZ_RD[sr[0]]}: in rosa ce ne sono ${gzNum(x.cnt[sr[0]])}, e il livello è sopra la media. Si può trattare da una posizione di forza.`,`${GZ_RL[sr[0]]} sono il punto di forza ${gzDi(t)}: cederne uno per coprire un'altra posizione sarebbe una mossa naturale.`)});
+    if(x.cash>=100)Cs.push({k:"cassa",pri:58,t:()=>P("tp-c"+k,`Hanno ${x.cash} crediti in cassa: in questa lega è il vero potere, perché permette di dire sì a scambi che altri non possono permettersi.`,`${gzCap(i)} siedono su ${x.cash} crediti. ${reb?"Chi ricostruisce con una cassa così ha un vantaggio enorme: può comprare giovani senza vendere nessuno.":"Una cassa così è una leva negoziale: va usata, non conservata."}`,`Con ${x.cash} crediti da spendere ${i} possono permettersi di ragionare in grande, al momento giusto.`)});
+    else if(x.cash===0&&win)Cs.push({k:"cassa0",pri:34,t:()=>P("tp-z"+k,`Cassa vuota: ogni acquisto di ${i} deve passare da uno scambio di giocatori, e questo restringe le strade.`,`Zero crediti in cassa: per muoversi ${i} dovranno cedere qualcuno, e lo sanno anche gli avversari.`)});
+    const hot=x.pl.filter(q=>q.tr&&q.tr.pct>=25&&q.tr.n>=8).sort((a,b)=>b.tr.pct-a.tr.pct)[0];
+    if(hot)Cs.push({k:"caldo",pri:62,t:()=>(hot.a>=28||reb)?P("tp-h"+k,`${sn(hot)} sta vivendo un grande momento: in forte crescita nell'ultimo mese. Vendere quando il valore sale è la mossa che i GM bravi sanno fare.`,`Sull'onda dell'ultimo mese ${hot.n} vale più di quanto valesse: se qualcuno lo vuole, ora paga di più.`):P("tp-h2"+k,`${sn(hot)} è in forte crescita nell'ultimo mese: finché dura, ${i} fanno bene a tenerlo ben stretto.`,`Momento d'oro per ${hot.n}: è il caso di non cederlo per niente al mondo, almeno finché il rendimento regge.`)});
+    const lw=[];ids.forEach(o=>{if(o===t)return;T[o].pl.forEach(q=>{if(q.tr&&q.tr.pct<=-25&&q.tr.n>=8&&q.v>=700&&q.a!=null&&q.a<=29&&!q.out)lw.push({q,o})})});lw.sort((a,b)=>b.q.v-a.q.v);
+    if(lw.length&&(x.cash>=40||win)){const z=lw[Math.floor(jit(t,"lw")*Math.min(3,lw.length))];Cs.push({k:"basso",pri:46,t:()=>P("tp-b"+k,`${sn(z.q)} ${gzDi(z.o)} è in un periodo di calo, ma ha ${ag(z.q)} anni e un valore di fondo alto: i giocatori in discesa costano meno, ed è il momento di chiedere.`,`Per chi cerca occasioni: ${z.q.n} (${NK(z.o)}), ${ag(z.q)} anni, vive un calo recente. Un'occasione, se la caduta è passeggera.`)})}
+    const inj=(F.inj||[]).find(z=>z.t===t);
+    if(inj)Cs.push({k:"infortunio",pri:88,t:()=>P("tp-i"+k,`${gzSur(inj.n)} è fuori (${(inj.tipo||"infortunio").toLowerCase()}): chi punta ai risultati deve cercare un sostituto adesso, chi ricostruisce può aspettare.`,`L'assenza di ${inj.n} pesa: ${i} devono decidere se tamponare con un free agent o cercare un nome vero sul mercato.`,`Con ${gzSur(inj.n)} ai box ${i} perdono una fonte di PDK: il mercato dei free agent è il primo posto in cui guardare.`)});
+    if(x.ageRk===1||x.ageRk===ids.length)Cs.push({k:"eta",pri:44,t:()=>x.ageRk===1?P("tp-e1"+k,`La rosa più vecchia della lega perde valore tutta insieme: ${i} dovrebbero programmare qualche uscita prima che accada.`,`Con l'età media più alta del campionato (${gzF1(x.age)} anni), ogni mese che passa sposta un po' di valore fuori dalla rosa.`):P("tp-e8"+k,`La rosa più giovane del campionato (${gzF1(x.age)} anni) ha un valore destinato a salire: tenere, non svendere.`,`Con l'età media più bassa del Dreamers, ${i} hanno il tempo dalla loro parte: l'errore da evitare è la fretta.`)});
+    const cr=x.pl.filter(q=>q.cr>=8&&q.pdk>0).map(q=>({q,r:q.pdk/q.cr})).sort((a,b)=>a.r-b.r);
+    if(cr.length>=4){const m=cr[cr.length>>1].r,w=cr[0],bb=cr[cr.length-1];
+      if(w.r<m*.7)Cs.push({k:"caro",pri:38,t:()=>P("tp-k"+k,`${sn(w.q)} costa ${w.q.cr} crediti e rende ${n1(w.q.pdk)} PDK: è il contratto meno conveniente della rosa.`,`Il giocatore più caro rispetto al rendimento? ${w.q.n}: ${w.q.cr} crediti per ${n1(w.q.pdk)} PDK.`)});
+      else if(bb.r>m*1.35)Cs.push({k:"affare",pri:30,t:()=>P("tp-f"+k,`${sn(bb.q)} è l'affare della rosa: ${n1(bb.q.pdk)} PDK per ${bb.q.cr} crediti.`,`Il miglior rapporto qualità-prezzo ${gzDi(t)} è ${bb.q.n}, con ${n1(bb.q.pdk)} PDK a ${bb.q.cr} crediti.`)})}
+    if(f==="limbo")Cs.push({k:"limbo",pri:92,t:()=>P("tp-l"+k,`${remT(t)} alla fine della stagione regolare: chi è nel limbo deve scegliere ora se comprare o vendere, perché da fermi non si sale.`,`Il rischio ${gzDi(t)} è l'immobilismo. ${rem(t)===1?"Con un solo turno ancora da giocare":"Con "+gzNum(rem(t))+" turni ancora da giocare"}, restare fermi in questa zona vuol dire restarci.`,`Nel limbo si resta per sempre solo se non si sceglie: ${i} devono decidere se alzare l'asticella o ricominciare.`)});
+    Cs.forEach(z=>z.s=z.pri+jit(t,z.k+salt)*28);Cs.sort((a,b)=>b.s-a.s);const o=[],seen={};Cs.forEach(z=>{if(o.length<n&&!seen[z.k]){seen[z.k]=1;o.push(gzCap(z.t()))}});return o};
+  const lab=t=>GZ_FASE[T[t].fase],fx=t=>T[t].fase;
+  /* squadra sotto la lente: ogni squadra a rotazione, tutte comprese ogni otto giorni */
+  const tL=P("ln-t",...ids),t2=(()=>{let k=P("cn-t",...ids);if(k===tL)k=ids[(ids.indexOf(k)+3)%ids.length];return k})();
+  const dd=(t,sa)=>diag(t,sa);
+  const lenteH={vetta:t=>[`${C(t)} in testa: cosa fare per restarci`,`Il segreto per restare primi, secondo ${gzI(t)}`,`${C(t)} al comando, ma il mercato non dorme`],
+    caccia:t=>[`${C(t)} vogliono vincere subito: ecco cosa serve`,`Tutto e subito: la strategia ${gzDi(t)}`,`${C(t)} hanno fretta: i consigli del Tg`],
+    declino:t=>[`${C(t)}, esperienza ma poca classifica: la scelta`,`Vecchi e indietro? Il caso ${gzDi(t)}`,`${C(t)} a un bivio: ultimo colpo o rifondazione`],
+    dinastia:t=>[`${C(t)}, giovani e già forti: e adesso?`,`Il futuro è ${gzDi(t)}, ma il presente pure`,`${C(t)} costruiscono una dinastia: i consigli`],
+    rifondazione:t=>[`${C(t)} ricostruiscono: ecco come`,`Il piano ${gzDi(t)}: vendere il vecchio, comprare il nuovo`,`${C(t)} guardano al futuro: i suggerimenti`],
+    costruzione:t=>[`${C(t)} in costruzione: la prossima mossa`,`Cantiere aperto in casa ${gzDi(t)}: cosa fare adesso`,`${C(t)} crescono: i consigli del Tg`],
+    limbo:t=>[`${C(t)} nel limbo: il rischio di non muoversi`,`Né carne né pesce: il caso ${gzDi(t)}`,`${C(t)}, la zona più pericolosa del campionato`],
+    insegue:t=>[`${C(t)} all'inseguimento: i consigli`,`${C(t)} possono ancora recuperare, ma devono muoversi`,`Il Tg dà una mano ${gzAl(t)}: cosa fare adesso`],
+    aperta:t=>[`${C(t)} alla ricerca di un'identità`,`Che squadra vogliono essere ${gzI(t)}?`,`${C(t)} e la strada ancora aperta`]};
+  {const t=tL,x=T[t],tp=tipsFor(t,3,"L");if(tp.length){
+    push({p:fx(t)==="limbo"?76:72,sq:[t],big:null,tag:"LA LENTE SULLE SQUADRE",
+      op:P("ln-op","Mettiamo una squadra sotto la lente.","Oggi analizziamo una squadra da vicino.","Un po' di analisi, con i numeri dell'app.","Spazio ai suggerimenti.","Dal campo al mercato: chi sta facendo cosa, e cosa dovrebbe fare.","Il taccuino delle strategie si apre su una sola squadra."),
+      h:P("ln-h"+fx(t),...lenteH[fx(t)](t)),
+      ctx:dd(t,"L"),fact:mkt(t),txt:[...tp,ver(t)]})}}
+  /* proposta di mercato */
+  const mc=cands.filter(z=>!z.yng).slice(0,9),my=cands.filter(z=>z.yng).slice(0,6),pool=[...mc,...my];
+  if(pool.length){const z=P("mc-pick",...pool),b=z.b,s=z.s,tg=z.tg,gv=z.give,ta=T[b],ts=T[s];
+    const chiede=z.yng?P("mc-y1",`${C(b)} hanno ${gzNum(ta.cash)} crediti in cassa e una rosa che guarda avanti: potrebbero chiedere ${tg.n}, ${ag(tg)} anni, ${GZ_RS[tg.r]} ${gzDi(s)}, pagando circa ${gzNum(z.cr)} crediti.`,`Idea per ${gzI(b)}: con ${gzNum(ta.cash)} crediti disponibili, un colpo per il futuro si chiama ${tg.n}, ${ag(tg)} anni, in forza ${gzAl(s)}. Il prezzo stimato è ${gzNum(z.cr)} crediti.`,`${gzCap(gzI(b))} possono permettersi di guardare in alto, anzi, avanti: ${tg.n} (${ag(tg)} anni, ${GZ_RS[tg.r]}, in forza ${gzAl(s)}) vale circa ${gzNum(z.cr)} crediti, e la cassa ne ha ${gzNum(ta.cash)}.`):P("mc-c1",`${C(b)} hanno un punto debole nel reparto ${GZ_RD[z.r]}: potrebbero chiedere ${tg.n}, ${ag(tg)} anni, ${gzAl(s)}, offrendo ${gv.n}${z.cr?` più ${gzNum(z.cr)} crediti`:""}.`,`La proposta del Tg: ${gzI(b)} chiedono ${tg.n} (${ag(tg)} anni, ${GZ_RS[tg.r]}) ${gzDi(s)} e danno in cambio ${gv.n}${z.cr?`, con ${gzNum(z.cr)} crediti di conguaglio`:""}.`,`Un'idea di mercato: ${tg.n} ${gzDa(s)} ${gzAl(b)}, in cambio di ${gv.n}${z.cr?` e ${gzNum(z.cr)} crediti`:""}. Il reparto ${GZ_RD[z.r]} ${gzDi(b)} ringrazia.`);
+    push({p:66,sq:[b,s],big:null,tag:"SUGGERIMENTO DI MERCATO",
+      op:P("mc-op","Un'idea di mercato, direttamente dal Tg.","Proviamo a immaginare uno scambio.","Il mercato secondo il Tg: una proposta concreta.","Se fossimo un GM, oggi telefoneremmo a qualcuno.","Il suggerimento di mercato della mattina."),
+      h:z.yng?P("mc-hy",`${C(b)} e il colpo per il futuro: ${sn(tg)}`,`Una proposta per ${gzI(b)}: ${sn(tg)}, ${ag(tg)} anni`,`${sn(tg)} per ${gzI(b)}: il Tg ci prova`):P("mc-hc",`${C(b)} cercano ${GZ_RA[z.r]}: l'idea è ${sn(tg)}`,`Uno scambio possibile: ${sn(tg)} ${gzAl(b)}`,`Mercato: ${gzI(b)} bussano ${gzAl(s)} per ${sn(tg)}`),
+      ctx:chiede,
+      fact:z.yng?P("mc-fy",`${C(s)} sono ${GZ_FASE[ts.fase].toLowerCase()}, e potrebbero incassare crediti per un giovane che non è il centro del loro progetto.`,`Dalla parte ${gzDi(s)} c'è un incasso utile: i crediti servono per il mercato.`):P("mc-fc",`Per ${gzI(s)}, che sono ${GZ_FASE[ts.fase].toLowerCase()}, è un'occasione di ${tg.a>=28?"monetizzare un giocatore non più giovanissimo":"ricevere un giovane in cambio di un veterano"}.`,`${C(s)} guadagnano in età: cedono ${ag(tg)} anni e ricevono ${gv.a!=null?ag(gv):"un volto nuovo"}.`),
+      txt:[P("mc-vd",`Il calcolatore trade la giudicherebbe equilibrata: nessuna delle due squadre ci perde.`,`Secondo i valori dell'app è una trattativa alla pari: lo scarto è sotto il dieci per cento.`,`Le cifre tornano: il calcolatore parla di scambio equilibrato.`),P("mc-cl","Naturalmente, il Tg propone: decidono i GM.","Se i due GM sono d'accordo, il telefono è lì.","Il Tg non decide nulla: suggerisce, e aspetta di vedere se qualcuno risponde.")]})}
+  /* compratori e venditori */
+  {const grp=a=>ids.filter(t=>a.includes(fx(t))),buy=grp(["vetta","caccia","declino","insegue","dinastia"]),sel=grp(["rifondazione","costruzione"]),lim=grp(["limbo","aperta"]);
+   const rich=ids.slice().sort((a,b)=>T[b].cash-T[a].cash)[0],vec=L.vecchia,gio=L.giovane;
+   if(buy.length&&(sel.length||lim.length)){const nb=buy.length>1,ns=sel.length>1,nl=lim.length>1;
+    const extra=[T[rich].cash>=100?`La cassa più pesante è ${gzDi(rich)}: ${gzNum(T[rich].cash)} crediti, e chi ha liquidità, nel mercato, comanda.`:"",
+      `La rosa più anziana è quella ${gzDi(vec)}, con ${gzF1(T[vec].age)} anni di media; la più giovane quella ${gzDi(gio)}, con ${gzF1(T[gio].age)}.`,
+      `Se c'è un ponte tra i due mondi, è la differenza d'età: ${gzF1(T[vec].age)} anni di media per ${gzI(vec)}, ${gzF1(T[gio].age)} per ${gzI(gio)}. Da lì nascono gli scambi.`,
+      `In un mercato dove la liquidità conta, ${gzI(rich)} hanno ${gzNum(T[rich].cash)} crediti: potere negoziale puro.`].filter(Boolean);
+    push({p:54,sq:[buy[0],(sel[0]||lim[0])],big:null,tag:"COMPRATORI E VENDITORI",
+    op:P("cv-op","Una fotografia del mercato.","Chi compra e chi vende, secondo i numeri.","La mappa delle intenzioni.","Il mercato visto dall'alto.","Quattro righe sul mercato, con i dati alla mano.","Chi ha fame di giocatori e chi ha giocatori da piazzare."),
+    h:P("cv-h",`Mercato: ${nb?"i compratori sono":"il compratore è"} ${gzLst(buy.map(t=>NK(t)))}`,`Chi compra, chi vende e chi resta fermo`,`La mappa del mercato: attenzione a ${lim.length?NK(lim[0]):NK(buy[0])}`,`${gzLst(buy.slice(0,2).map(t=>NK(t)))} cercano rinforzi, ${sel.length?gzLst(sel.slice(0,2).map(t=>NK(t)))+" ascoltano":"nessuno vende"}`,`Venditori e compratori: la fotografia del giorno`),
+    ctx:P("cv-c",`Mettendo insieme età, classifica, talento e ultimi scambi, ${gzLst(buy.map(I))} ${nb?"sono i compratori naturali":"è il compratore naturale"}.`,`In base ai segnali dell'app, ${gzLst(buy.map(I))} ${nb?"vogliono":"vuole"} rinforzarsi.`,`Per età, classifica e mosse recenti, ${gzLst(buy.map(I))} ${nb?"hanno":"ha"} fame di giocatori.`,`I numeri dicono che il fronte di chi compra è questo: ${gzLst(buy.map(I))}.`),
+    fact:sel.length?P("cv-f",`${gzCap(gzLst(sel.map(I)))} ${ns?"sono invece venditori":"è invece venditore"}: ${ns?"hanno":"ha"} giocatori di valore che invecchiano, e un futuro da costruire.`,`Dall'altra parte ${gzLst(sel.map(I))}: ${ns?"guardano":"guarda"} avanti, e ${ns?"sono i candidati":"è il candidato"} a vendere.`,`Sul fronte opposto ${gzLst(sel.map(I))}: la ricostruzione li rende interlocutori ideali per chi ha fretta.`,`${gzCap(gzLst(sel.map(I)))} ${ns?"hanno":"ha"} il profilo di chi vende: giovane, in basso, orientato al futuro.`):P("cv-f0","Non ci sono venditori dichiarati, e questo restringe il mercato.","Nessuna squadra ha ancora il profilo del venditore: il mercato è fermo, in attesa di una scintilla."),
+    txt:[lim.length?P("cv-l",`${nl?"In mezzo ci sono":"In mezzo c'è"} ${gzLst(lim.map(I))}: ${nl?"non hanno":"non ha"} ancora scelto, e il tempo passa.`,`${gzCap(gzLst(lim.map(I)))} ${nl?"sono":"è"} nella zona grigia: né compratori né venditori.`,`Resta da capire cosa faranno ${gzLst(lim.map(I))}, ancora senza una direzione precisa.`):"",P("cv-x",...extra),P("cv-cl","Chi si muove per primo, di solito, ha un vantaggio.","Il mercato premia chi decide prima degli altri.","Attenzione: quando tutti vogliono la stessa cosa, il prezzo sale.","Il telefono dei GM, stamattina, potrebbe squillare più del solito.","Nel mercato di una lega piccola, ogni trattativa cambia gli equilibri.")]})}}
+  /* consiglio breve */
+  {const t=t2,tp=tipsFor(t,1,"C");if(tp.length)push({p:46,sq:[t],big:null,tag:"IL CONSIGLIO DEL TG",
+    op:P("cc-op","Per chiudere la parte di mercato, un consiglio veloce.","Un consiglio rapido.","Un suggerimento, e poi andiamo avanti.","Piccola nota di mercato."),
+    h:P("cc-h"+fx(t),`${C(t)}: ${lab(t).toLowerCase()}`,`Consiglio per ${gzI(t)}`,`Una dritta per ${gzI(t)}`),
+    ctx:dd(t,"C"),fact:tp[0],txt:[ver(t)]})}
+  /* schede per lo spazio Suggerimenti */
+  return GZ_CCK=key,GZ_CCV={arts:ARTS,ids,T,schede:ids.map(t=>({t,fase:fx(t),label:lab(t),diag:dd(t,"S"),mk:mkt(t),tips:tipsFor(t,3,"S"),ver:ver(t),r:T[t].r,w:T[t].w,l:T[t].l,rec:recS(t),age:T[t].age,cash:T[t].cash}))}}
+
 function gzEdizione(){
   const F=gzFatti(),num=Math.max(1,Math.round((Date.parse(F.oggi+"T00:00:00Z")-Date.parse("2026-10-19T00:00:00Z"))/864e5)),dm=F.oggi.slice(8)+"/"+F.oggi.slice(5,7),DN=num+GZ.seed*3;
   /* sacchetto deterministico: ogni gruppo di frasi viene usato per intero, in ordine mescolato, prima di ripetersi; stesso giorno = stessa scelta per tutti */
@@ -9937,11 +10125,13 @@ function gzEdizione(){
     ctx:P("c-c",`In testa alla classifica ci sono ${gzI(L.t)}, con ${vit(L.w)} e ${scf(L.l)}${S2?`; ${S2.w===L.w&&S2.l===L.l?"a pari record":"subito dietro"} ${gzI(S2.t)}, con ${vit(S2.w)} e ${scf(S2.l)}`:""}.`,`${gzCap(gzI(L.t))} guidano il Dreamers con ${vit(L.w)} e ${scf(L.l)}${S2?`, davanti ${gzAl(S2.t)}`:""}.`,`La vetta è ${gzDi(L.t)}, che vantano ${vit(L.w)} e ${scf(L.l)}${S2?`; dietro ${gzI(S2.t)} con ${vit(S2.w)} e ${scf(S2.l)}`:""}.`),
     fact:P("c-f",`Ecco le prime quattro: ${F.st.slice(0,4).map((x,i)=>`${["prima","seconda","terza","quarta"][i]} ${gzNk(x.t)}, con ${vit(x.w)} e ${scf(x.l)}`).join("; ")}.`,`La parte alta della classifica: ${F.st.slice(0,4).map((x,i)=>`${["al primo posto","al secondo","al terzo","al quarto"][i]} ${gzI(x.t)}`).join(", ")}.`),
     txt:[ULT&&ULT.t!==L.t?P("c-col",`In fondo alla classifica ci sono ${gzI(ULT.t)}, con ${vit(ULT.w)} e ${scf(ULT.l)}: la risalita comincia da qui.`,`L'ultimo posto è ${gzDi(ULT.t)}, con ${vit(ULT.w)} e ${scf(ULT.l)}. Ma c'è tutto il tempo per rimediare.`,`A chiudere ${gzI(ULT.t)}, ${vit(ULT.w)} e ${scf(ULT.l)}: a un certo punto ci sarà una rimonta, e sarà meritata.`):"",P("c-cl","Il campionato è lungo, e la classifica ha una memoria corta.","I punti, qui, si muovono in fretta: nulla è deciso.","Chi sta in alto non si illuda, e chi sta in basso non si arrenda.","La stagione è appena cominciata, e promette ancora molte sorprese.")]});
+  /* (594) ANALISI DELLE SQUADRE e SUGGERIMENTI */
+  let CONS=null;try{CONS=gzConsigli({P,F,pos,ordp,recS,n1,DN});if(CONS)CONS.arts.forEach(push)}catch(e){console.warn("gzConsigli",e)}
   art.sort((x,y)=>y.p-x.p);
-  const dt=new Date(F.oggi+"T00:00:00Z"),gs=GZ_GGS[dt.getUTCDay()],ndt=Math.min(7,art.length);
+  const dt=new Date(F.oggi+"T00:00:00Z"),gs=GZ_GGS[dt.getUTCDay()],ndt=Math.min(9,art.length);
   const intro=P("e-in",`Buongiorno, e benvenuti al Tg Dreamers. Oggi è ${gs}, edizione numero ${num}: ecco cosa è successo nella notte.`,`Buongiorno dal Tg Dreamers, edizione numero ${num}. È ${gs} mattina, e abbiamo ${gzNum(ndt)} notizie per voi.`,`Siamo al numero ${num} del Tg Dreamers. Buongiorno a tutti: ${gs}, il caffè è pronto, le notizie anche.`,`Tg Dreamers, edizione ${num}. Ecco le notizie del ${gs}, con un occhio al campo e uno al mercato.`,`Benvenuti, sono le sette e trenta di ${gs} e questo è il Tg Dreamers, edizione ${num}.`,`Un nuovo ${gs}, una nuova edizione: la numero ${num}. Cominciamo.`);
   const outro=P("e-out","Questo è tutto per oggi. Vi diamo appuntamento a domani mattina, alle sette e trenta. Buona giornata, e che la prossima notte sia clemente con tutti voi.","Fine dell'edizione. Domani alle sette e trenta, nuove notizie, nuovi scambi e nuove polemiche. Buona giornata.","Per oggi è tutto. Ci rivediamo domani, alla solita ora. Nel frattempo, controllate gli infortuni e non fidatevi dei calcolatori.","Questo era il Tg Dreamers. Ci sentiamo domani alle sette e trenta, con tutte le novità del campionato.","Chiudiamo qui. Domani ci aspetta un'altra notte di campo, e un'altra edizione. Buona giornata a tutti.","Il Tg Dreamers vi saluta, e vi aspetta domani mattina. Buon campionato.");
-  return{num,data:F.oggi,dm,art:art.slice(0,7),F,intro,outro}}
+  return{num,data:F.oggi,dm,art:art.slice(0,9),F,intro,outro,cons:CONS}}
 function giornale(){if(!COL.d){cur="campo";return vCampo()}
   const o=gzOra(),pronto=o.h>="07:30";
   if(!pronto)return`<div class="hof gz"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button><div class="gzmast"><small>Il Dreamers Post</small><b>IN TIPOGRAFIA</b></div><p class="note">Il numero di oggi esce alle 7:30. Torna a controllare: il pulsante diventerà oro.</p></div>`;
@@ -9998,7 +10188,7 @@ function gzBannerTG(E){const a=E.art[0];if(!a)return"";return`<div class="nztg" 
 /* TG a schermo intero */
 const TGS={i:0,play:true,sound:true,S:[],tm:null,on:false};
 function tgSlides(E){const S=[{k:"sigla",t:"TG DREAMERS",sub:`Edizione n. ${E.num} · ${E.dm}`,say:E.intro||`Tg Dreamers, edizione numero ${E.num}. Ecco le notizie di oggi.`}];
-  E.art.slice(0,6).forEach(a=>S.push({k:"news",a,say:gzTxt(a)}));
+  E.art.slice(0,8).forEach(a=>S.push({k:"news",a,say:gzTxt(a)}));
   S.push({k:"fine",t:"Fine edizione",sub:"A domani, alle 7:30.",say:E.outro||"Fine dell'edizione. A domani, alle sette e trenta."});return S}
 function tgHtml(){const S=TGS.S[TGS.i],E=TGS.E,pr=((TGS.i+1)/TGS.S.length*100).toFixed(1);
   const head=`<div class="tgtop"><span class="nzlive">● LIVE</span><b>TG DREAMERS</b><small>${E.dm}</small><button data-tgx="close" aria-label="Chiudi">✕</button></div>`;
@@ -10049,7 +10239,7 @@ function notizie(){if(!COL.d){cur="campo";return vCampo()}
   ${box(5,"TG Dreamers a schermo intero","Sigla, una schermata per notizia con loghi e numeri, striscia dei titoli in basso, e la voce che legge. Si può mettere in pausa, saltare, spegnere la voce.",`<button class="advbtn nzplay" data-nzplay="1" type="button">▶ Guarda il TG Dreamers</button><p class="note">${ok?"La voce parte da sola dopo il tocco.":"Questo browser non ha la voce: il TG scorre da solo con i testi."}</p>`,"un pulsante «Guarda il TG» nell'articolo e nel banner: a schermo intero, si chiude con ✕.")}
   ${box(6,"Voce","Quella del telefono, in italiano. Qui puoi provarla e cambiarla.",`<div class="nzvc"><button class="advbtn" data-nzvoce="prova" type="button">🔊 Prova la voce</button><button class="advbtn" data-nzvoce="rate" type="button">Velocità ×${String(GZV.rate).replace(".",",")}</button><button class="advbtn" data-nzvoce="voce" type="button">Voce: ${(gzVoce()||{}).name||"non disponibile"}</button></div><p class="note">${ok?voci+" voci italiane trovate su questo dispositivo. La qualità cambia da telefono a telefono.":"Voce non supportata da questo browser."}</p>`,"nel tasto «Ascolta» di ogni articolo; funziona solo dopo un tocco (limite di iPhone e Android).")}
   <p class="note">Tutto è composto dall'app senza di me, con frasi preimpostate e i dati veri. Le notizie di oggi: ${E.art.map(a=>a.tag.toLowerCase()).join(", ")}.</p></div>`}
-window.gzEdizione=gzEdizione;window.gzPulisci=gzPulisci;window.gzPronto=gzPronto;window.gzOraOk=()=>gzOra().h>="07:30";VIEWS.giornale=giornale;VIEWS.notizie=notizie;VIEWS.sala=sala;VIEWS.pers=pers;VIEWS.soft=soft;VIEWS.orari=orari;
+window.gzEdizione=gzEdizione;window.gzFatti=gzFatti;window.GZ=GZ;window.gzPulisci=gzPulisci;window.gzPronto=gzPronto;window.gzOraOk=()=>gzOra().h>="07:30";VIEWS.giornale=giornale;VIEWS.consigli=vConsigli;VIEWS.notizie=notizie;VIEWS.sala=sala;VIEWS.pers=pers;VIEWS.soft=soft;VIEWS.orari=orari;
 /* il codice del giornale si carica dopo il primo disegno della Home: ridisegno la Home una volta, così la scheda TG compare subito (senza dover passare da altre sezioni) */
 try{if(cur==="home")render()}catch(e){}
 document.addEventListener("click",e=>{
