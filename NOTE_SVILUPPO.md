@@ -1705,3 +1705,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 611 — Scritta DREAMERS: l effetto viola dura solo il tempo del tocco (animazione breve, circa 0,3 secondi, e anche finché è premuta) poi torna subito bianca; alone più leggero.
 
 612 — Home: tolti dalla barra in alto i tasti Dynasty TV (rosso) e Dreamers (viola); la barra Cerca giocatore si allunga e copre lo spazio recuperato (restano segnalibro e modalità notte).
+
+613 — Giocatori, modalità BOX: il PDK è allineato alla riga delle caselle delle statistiche e accanto alla linguetta compare la scritta «Stats medie a partita». Nella pagina del giocatore (box partita per partita) la scritta non c è.
