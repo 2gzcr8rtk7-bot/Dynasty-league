@@ -1568,3 +1568,11 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 ## 543 — G-Dreamers: scheda «G League» nei colori verdi di G-Dreamers
 - Dentro la stanza G-Dreamers le variabili colore (pannelli, bordi, accenti) sono verdi: titoli, classifica G League, selettore Stagione, numeri di posizione, schede delle squadre satellite e tabelle giocatori non usano più il blu/rosso/oro dell'app versione giorno. Le altre schede (Classifica, Giornate, Squadre) erano già verdi.
 - Stato: in coda, non pubblicato.
+
+## 544 — Dreamers › Classifica: tasto condividi
+- Titolo «Classifica» con il tasto condividi: crea l'immagine con le 8 squadre (posizione, logo, forma V/P, record V–P, distacco in vittorie, media punteggio).
+- Stato: in coda, non pubblicato.
+
+## 545 — G-Dreamers con la modalità notte: vetro liquido verde
+- Con la modalità notte la scheda «G League» di G-Dreamers usa lo stesso stile spaziale/trasparente di Dreamers in verde: titoli a pillola in vetro, tabelle e schede translucide con sfocatura e bordo luminoso, selettore Stagione in vetro. Di giorno resta il verde pieno della 543.
+- Stato: in coda, non pubblicato.

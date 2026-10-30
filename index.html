@@ -223,6 +223,19 @@
 body.dreamfs .drroom.gdroom,.drroom.gdroom{background:radial-gradient(ellipse at 20% 0%,rgba(16,185,129,.5),transparent 55%),radial-gradient(ellipse at 90% 10%,rgba(59,130,246,.3),transparent 50%),linear-gradient(180deg,#073a2b,#04130f 75%)!important}
 /* (543) G-Dreamers: tutto il contenuto (anche tabelle e titoli di «G League») nei colori verdi di G-Dreamers, non in quelli dell'app */
 .gdroom{--panel:#07271e;--panel2:#0b3a2b;--line:rgba(52,211,153,.28);--gold:#6ee7b7;--red:#059669;--onred:#fff;--muted:#a3d3bf}
+/* (545) modalità notte: G-Dreamers tutto in vetro liquido verde, spaziale e trasparente, senza il look dell'app giorno */
+body.notte .gdroom{--panel:rgba(255,255,255,.05);--panel2:rgba(255,255,255,.09);--line:rgba(110,231,183,.3);--muted:#b6e8d3}
+body.notte .gdroom h2 .t,body.notte .gdroom .hgreen h2 .t{transform:none;border-radius:999px;padding:5px 16px;background:linear-gradient(135deg,rgba(52,211,153,.55),rgba(6,95,70,.5));border:1px solid rgba(110,231,183,.55);box-shadow:0 0 16px rgba(16,185,129,.35),inset 0 1px 0 rgba(255,255,255,.25);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+body.notte .gdroom h2 .t>span{transform:none}
+body.notte .gdroom h2::after,body.notte .gdroom .hgreen h2::after{background:linear-gradient(90deg,rgba(110,231,183,.6),transparent)}
+body.notte .gdroom .eboard,body.notte .gdroom .gcard{background:linear-gradient(160deg,rgba(255,255,255,.1),rgba(255,255,255,.03))!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(110,231,183,.35);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 22px rgba(16,185,129,.18),inset 0 1px 0 rgba(255,255,255,.22)}
+body.notte .gdroom .ghd{border-bottom:1px solid rgba(110,231,183,.4)}
+body.notte .gdroom .glsum{background:rgba(110,231,183,.18)}body.notte .gdroom .glsum>div{background:rgba(255,255,255,.04)}
+body.notte .gdroom .gldet{background:rgba(255,255,255,.04)}
+body.notte .gdroom .glhd{background:rgba(110,231,183,.06)}
+body.notte .gdroom .trow,body.notte .gdroom .glp{border-color:rgba(110,231,183,.15)}
+body.notte .gdroom .gszn select{border:1px solid rgba(110,231,183,.45);border-radius:14px;background:rgba(255,255,255,.08);backdrop-filter:blur(8px);box-shadow:0 0 14px rgba(16,185,129,.2)}
+body.notte .gdroom .glk>div{border-radius:10px;background:rgba(255,255,255,.04);border-color:rgba(110,231,183,.25)}
 .gdroom .hgreen h2 .t{background:#059669}.gdroom .hgreen h2::after{background:linear-gradient(90deg,#34d399,transparent)}
 .gdroom .gszn select{border-left-color:#34d399;background:linear-gradient(180deg,#0b3a2b,#07271e)}
 .gdroom .gszn select:focus-visible{outline-color:#34d399}
