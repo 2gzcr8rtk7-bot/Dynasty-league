@@ -1703,3 +1703,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 610 — Scritta DREAMERS in alto: al tocco (ritorno alla Home) diventa viola con un alone luminoso che svanisce in circa un secondo.
 
 611 — Scritta DREAMERS: l effetto viola dura solo il tempo del tocco (animazione breve, circa 0,3 secondi, e anche finché è premuta) poi torna subito bianca; alone più leggero.
+
+612 — Home: tolti dalla barra in alto i tasti Dynasty TV (rosso) e Dreamers (viola); la barra Cerca giocatore si allunga e copre lo spazio recuperato (restano segnalibro e modalità notte).
