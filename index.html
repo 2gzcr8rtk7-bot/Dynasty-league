@@ -491,6 +491,13 @@ nav::-webkit-scrollbar{display:none}
 h2.lbmh{margin-top:4px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px}
 h2.lbmh::after{display:none}
 h2.lbmh>.cntbtn{justify-self:end;margin-left:0}
+/* (595) frecce turno nel tabellone del Campo */
+h2.lbmh>.lbmw{display:flex;align-items:center;gap:5px;justify-self:center}
+.lbma{flex:none;display:inline-grid;place-items:center;width:30px;height:34px;padding:0;border-radius:9px;border:1px solid rgba(255,255,255,.18);background:#141b36;color:#7bffb0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s}
+.lbma svg{width:16px;height:16px}.lbma:active:not(:disabled){transform:scale(.9)}.lbma:disabled{opacity:.28;cursor:default}
+.lbmcap{margin:-4px 0 8px;text-align:center;font:700 11px var(--display);letter-spacing:.08em;text-transform:uppercase;color:#9fb0d0}
+.lbmcap button{border:0;background:none;padding:0;color:#7bffb0;font:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer;text-decoration:underline}
+
 /* tastino divise: stessa misura del tasto notte, a sinistra */
 .kitbtn{flex:none;display:inline-grid;place-items:center;width:38px;height:28px;padding:0;border-radius:9px;border:1px solid rgba(255,255,255,.18);background:#141b36;cursor:pointer;margin-left:auto}
 .kitbtn svg{width:19px;height:19px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.5))}
@@ -6799,7 +6806,7 @@ function campoNotteMap(t){const d=campoNotte(),o={};if(!d)return o;const mine={}
 /* Campo fuori dalla modalità notte: 6° uomo (punteggio pieno) + panchina Dreamers (×½) in stile Dunkest con le maglie, poi tribuna */
 /* Formazione Dreamers nella pagina squadra: stesso blocco (maglia + targhetta + cartellino PDK) per campo, 6° uomo e panchina.
    Maglie tutte della stessa misura; cartellino colorato come i PDK (pdkLvl), largo quanto la targhetta. Tocca il cartellino = partite del turno. */
-let CAMPO_DR=null;
+let CAMPO_DR=null,CAMPO_K=null;/* (595) turno mostrato in Campo: null = turno in corso, altrimenti un turno passato (frecce ‹ › accanto al tabellone) */
 const drSur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
 function drPcd(x,cl,fin){if(!x)return`<span class="pcd na"><b>Posto vuoto</b></span>`;
   if(x.e==null)return`<span class="pcd na" data-drwk="${x.n}" role="button" tabindex="0"><b>In attesa</b></span>`;
@@ -6853,7 +6860,11 @@ function drTabellone(t,T,k,P,on){const W=T.W,btn=`<button class="cntbtn${on?" on
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255},C=TEAMS[t];
   const sc=lum(C.bg)>=.33?C.bg:(lum(C.fg)>=.33&&lum(C.fg)<.95?C.fg:`color-mix(in srgb,${C.bg} 62%,#fff)`);
   const gioc=(X,tt)=>{const g=drGare(tt,k,W);return`<span class="lbmg"><b>${g.done}/${g.tot}</b><small>giocato</small></span>`};
-  return`<h2 class="lbmh">${kitBtn(t)}<span class="lbm ${st}"${lvAttr} style="--sc:${sc}"${o?` data-drgo="${k}|${pr[0]}|${pr[1]}" role="button" tabindex="0"`:""} aria-label="${TEAMS[t].nick} ${T.score==null?"in attesa":pdkF(T.score)}, ${T.played} su 10 hanno giocato${o?`, contro ${TEAMS[o].nick} ${O.score==null?"in attesa":pdkF(O.score)}, ${O.played} su 10 hanno giocato`:""}">${lg(t)}${gioc(T,t)}<span class="lbmn${lead==="b"?" dim":""}">${T.score==null?"—":pdkF(T.score)}</span>${o?`<span class="lbmx"></span><span class="lbmn${lead==="a"?" dim":""}">${O.score==null?"—":pdkF(O.score)}</span>${gioc(O,o)}${lg(o)}`:""}</span>${btn}</h2>`}
+  /* (595) frecce per rivedere i turni passati e tornare avanti (non in modalità notte) */
+  let kc=k;try{kc=drCurWeek(P)}catch(e){}
+  const arr=d=>on?"":`<button class="lbma" type="button" data-cmpk="${k+d}" aria-label="${d<0?"Turno precedente":"Turno successivo"}"${(d<0?k<=1:k>=kc)?" disabled":""}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d<0?"M15 5l-7 7 7 7":"M9 5l7 7-7 7"}" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`;
+  const cap=!on&&k<kc?`<p class="lbmcap">Turno ${k+DR_OFF} · ${drFmt(W.start)}–${drFmt(W.end)} · ${W.closed?"concluso":"in corso"} · <button type="button" data-cmpk="${kc}">torna al turno attuale ›</button></p>`:"";
+  return`<h2 class="lbmh">${kitBtn(t)}<span class="lbmw">${arr(-1)}<span class="lbm ${st}"${lvAttr} style="--sc:${sc}"${o?` data-drgo="${k}|${pr[0]}|${pr[1]}" role="button" tabindex="0"`:""} aria-label="${TEAMS[t].nick} ${T.score==null?"in attesa":pdkF(T.score)}, ${T.played} su 10 hanno giocato${o?`, contro ${TEAMS[o].nick} ${O.score==null?"in attesa":pdkF(O.score)}, ${O.played} su 10 hanno giocato`:""}">${lg(t)}${gioc(T,t)}<span class="lbmn${lead==="b"?" dim":""}">${T.score==null?"—":pdkF(T.score)}</span>${o?`<span class="lbmx"></span><span class="lbmn${lead==="a"?" dim":""}">${O.score==null?"—":pdkF(O.score)}</span>${gioc(O,o)}${lg(o)}`:""}</span>${arr(1)}</span>${btn}</h2>${cap}`}
 /* modalità notte: stesso blocco giocatore (maglia + targhetta + cartellino) con il PDK della notte; pallino rosso = in campo ora */
 function drGiocN(t,p,m){const r=p[2],sn=drSur(p[0]),v=m?m.p:null;
   const card=v==null?`<span class="pcd na"><b>${m?"—":"Non gioca"}</b></span>`:`<span class="pcd ${pdkLvl(v)}">${m.lv?'<i class="pcdlv" title="In campo ora"></i>':""}<b>${pdkF(v)}</b></span>`;
@@ -6888,7 +6899,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
      (drTeam: ruoli 4G/4A/2C, miglior PDK della settimana, live da Dynasty TV poi report Dunkest). In campo i primi 5 (il 1° è capitano ×1,5),
      6° uomo = 6° titolare (punteggio pieno), panchina = 7°–10° (×½), il resto in tribuna. Senza PDK nel turno: ordine per PDK medio, "In attesa". */
   let DT=null,DK=null;
-  let DP=null;if(!CNT){DP=drPO(drStand());DK=drCurWeek(DP);const DW=drWeek(DK);DT=drTeam(DK,t,DW);DT.W=DW;
+  let DP=null;if(!CNT){DP=drPO(drStand());DK=drCurWeek(DP);const DKC=DK;if(CAMPO_K!=null)DK=Math.max(1,Math.min(DKC,CAMPO_K));if(DK===DKC)CAMPO_K=null;const DW=drWeek(DK);DT=drTeam(DK,t,DW);DT.W=DW;
     const rp=n=>(ROSTER[t]||[]).find(p=>p[0]===n)||[n,"",ruoloDi(n),""];q=DT.top.slice(0,5).map(x=>rp(x.n));qs=new Set(q.map(p=>p[0]))}
   /* modalità notte: al posto della scritta "Modalità notte" c'è lo stesso tabellone live della sfida Dreamers (la formazione in campo resta quella della notte) */
   let DT2=null,DK2=null,DP2=null;if(CNT){try{DP2=drPO(drStand());DK2=drCurWeek(DP2);const W2=drWeek(DK2);DT2=drTeam(DK2,t,W2);DT2.W=W2}catch(e){DT2=null}}
@@ -7030,7 +7041,7 @@ document.getElementById("main").addEventListener("click",e=>{
   const r=e.target.closest("[data-trln]");if(r&&!e.target.closest("[data-grafico]")&&!e.target.closest("[data-trtog]")){e.preventDefault();TRN.det=r.dataset.trln;const y=window.scrollY;render();window.scrollTo(0,y);return}
   if(r&&e.target.closest("[data-trtog]")){e.preventDefault();const n=r.dataset.trln;TRN.on=TRN.on||[];const i=TRN.on.indexOf(n);if(i>=0)TRN.on.splice(i,1);else{TRN.on.push(n);if(TRN.on.length>TR_MAXL)TRN.on.shift()}const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.addEventListener("click",e=>{const b=e.target.closest("[data-effsub]");if(!b||cur!=="efficienza")return;e.preventDefault();const v=b.dataset.effsub;if(v==="pl"){faFrom="fa";cur="fa";render();scrollTo(0,0)}else{effSq=effSq||curTeam;effSqPick=true;cur="effsquadra";render();scrollTo(0,0)}});
-document.getElementById("main").addEventListener("click",e=>{const g=e.target.closest("[data-cnsgo]");if(g&&cur==="effsquadra"){e.preventDefault();cur="consigli";render();scrollTo(0,0);return}const bk=e.target.closest("#cnsback");if(bk&&cur==="consigli"){e.preventDefault();effSqPick=true;cur="effsquadra";render();scrollTo(0,0);return}const b=e.target.closest("[data-sqpick]");if(!b||cur!=="effsquadra")return;e.preventDefault();effSq=b.dataset.sqpick;effSqPick=false;render();scrollTo(0,0)});
+document.getElementById("main").addEventListener("click",e=>{const km=e.target.closest("[data-cmpk]");if(km&&cur==="campo"&&!km.disabled){e.preventDefault();e.stopPropagation();CAMPO_K=+km.dataset.cmpk;const y=scrollY;render();scrollTo(0,y);return}const g=e.target.closest("[data-cnsgo]");if(g&&cur==="effsquadra"){e.preventDefault();cur="consigli";render();scrollTo(0,0);return}const bk=e.target.closest("#cnsback");if(bk&&cur==="consigli"){e.preventDefault();effSqPick=true;cur="effsquadra";render();scrollTo(0,0);return}const b=e.target.closest("[data-sqpick]");if(!b||cur!=="effsquadra")return;e.preventDefault();effSq=b.dataset.sqpick;effSqPick=false;render();scrollTo(0,0)});
 document.getElementById("main").addEventListener("keydown",e=>{const b=e.target.closest("[data-sqpick]");if(!b||cur!=="effsquadra"||(e.key!=="Enter"&&e.key!==" "))return;e.preventDefault();b.click()});
 document.getElementById("main").addEventListener("change",e=>{const fs=e.target.closest("select[data-fasel]");if(fs&&cur==="fa"){if(fs.dataset.fasel==="nba")faNba=fs.value;else faDt=fs.value;const y=window.scrollY;render();window.scrollTo(0,y);return}const s=e.target.closest("select[data-tr]");if(!s||cur!=="trend")return;const k=s.dataset.tr;
   if(k==="sz"||k==="sz2"){TRN[k]=s.value;TRN.mese="";TRN.mese2=""}else if(k==="mese"){TRN.mese=s.value;TRN.mese2=s.value}else TRN[k]=s.value;TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y)});
@@ -8698,6 +8709,7 @@ const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 if(window.__taOpen)cur="pictrade"
 function render(){
   if(cur!=="effsquadra")effSqPick=false;
+  if(cur!=="campo")CAMPO_K=null;
   if(cur!=="tv")TVS.out=1;liveSync();if(["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur))fantaLiveAvvia();
   document.body.dataset.v=cur;{const nt=typeof CNT!=="undefined"&&CNT;document.body.classList.toggle("notte",nt);document.documentElement.classList.toggle("notte",nt);const tc=document.querySelector('meta[name="theme-color"]');if(tc&&!document.body.classList.contains("dreamfs"))tc.content=nt?"#2a1260":TH_BAR}
   {document.documentElement.classList.toggle("setpg",cur==="impostazioni");/* (245) */const fs=cur==="giochi"&&(GAME==="dream"||GAME==="gdream");document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=(fs||(typeof CNT!=="undefined"&&CNT))?"#2a1260":TH_BAR}
