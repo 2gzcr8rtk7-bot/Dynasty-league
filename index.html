@@ -9575,7 +9575,9 @@ let SHR_DM=null;
 function dmOpen(k,a,b){try{const st=drStand(),P=drPO(st),W=drWeek(k),A=drTeam(k,a,W),B=drTeam(k,b,W);
   SHR_DM={k,a,b,A,B,ph:DR_PH(k,P),range:`${drFmt(W.start)}–${drFmt(W.end)}`,lv:!W.closed&&W.started,closed:W.closed};shOpen("dm")}catch(e){console.error(e)}}
 document.addEventListener("click",e=>{const x=e.target.closest("[data-drsh]");if(!x)return;e.preventDefault();e.stopPropagation();const[k,a,b]=x.dataset.drsh.split("|");dmOpen(+k,a,b)},true);
-async function dmJer(t,p){const num=((ROSTER[t]||[]).find(q=>q[0]===p.n)||[0,""])[1];return ldImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jersey(t,num,p.n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')))}
+async function dmJer(t,p){let e=(ROSTER[t]||[]).find(q=>q[0]===p.n);if(!e)for(const k in ROSTER){e=(ROSTER[k]||[]).find(q=>q[0]===p.n);if(e)break}
+const num=e?e[1]:"";let sv=jersey(t,num,p.n).replace(/<text[^>]*filter="[^"]*"[^>]*>[^<]*<\/text>/g,"").replace(/stroke-width="3\.6"/g,'stroke-width="1.8"').replace(/stroke-width="3\.2"/g,'stroke-width="1.6"').replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"');
+return ldImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(sv))}
 /* giocatore: maglia + targhetta nome (ruolo + cognome) + cartellino PDK; cx = centro, y = alto della maglia */
 async function dmPlayer(c,t,p,cx,y,jw,fsN,pw,ph,cap){const im=await dmJer(t,p),jh=jw*77/64;
   if(im){c.save();c.shadowColor="rgba(0,0,0,.45)";c.shadowBlur=jw*.12;c.shadowOffsetY=jw*.06;c.drawImage(im,cx-jw/2,y,jw,jh);c.restore()}
