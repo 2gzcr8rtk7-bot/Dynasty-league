@@ -1634,3 +1634,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 577 — Area Ducks: tolto il pulsante 📰 Giornale dalla Hall. Scheda TG in Home: resta visibile tutto il giorno (non sparisce dopo la lettura) fino alle 7:30 del giorno dopo, quando esce il nuovo numero (`gzOra()` prima delle 7:30 restituisce la data di ieri). Si vede anche dopo una ricarica, senza rimettere la password: dopo il primo accesso all'area Ducks su quel telefono si salva `dl_dax` in localStorage. In coda su `coda`.
 
 578 — Area Ducks: tolta la tessera «Notizie» (vetrina non più necessaria: si è scelto il banner TG in Home). In coda su `coda`.
+
+579 — Banner Home: eliminato lo scatto. `homeNotteRefresh` confrontava il DOM vivo (con lo stile inline dell'animazione) con quello nuovo, quindi ridisegnava tutto a ogni giro (ogni 4 s quando c'è `.hmph`) e il banner ripartiva con una fase leggermente diversa. Ora confronta con l'ultimo HTML generato (`el._hnL`) e, quando i dati cambiano davvero, riparte dalla stessa frazione di giro (progress), senza salto. In coda su `coda`.
