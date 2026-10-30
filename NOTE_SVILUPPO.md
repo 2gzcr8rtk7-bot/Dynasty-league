@@ -1614,3 +1614,4 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 565. (non pubblicata, in coda) Dettaglio previsione: equazione chiara «migliore prevista + bonus occasioni = valore del turno» al posto della frase lunga.
 566. (non pubblicata, in coda) Dettaglio previsione in 3 passi numerati: 1 le partite previste (barre selezionabili), 2 migliore + bonus = valore del turno con la spiegazione del perché il bonus è basso/medio/alto, 3 dettaglio della partita scelta.
 567. (non pubblicata, in coda) Statistiche squadra: tolte PDK medio ed Eff. media; sotto la previsione una striscia Infortunati / Partite del prossimo turno (tutti i giocatori) / Trend squadra (ultime 4 partite dei giocatori contro il loro rendimento precedente); sotto Media e Record a turno.
+568. (non pubblicata, in coda) Striscia squadra: Infortunati in rosso (se ci sono), «Partite turno» sempre su una riga anche con doppie cifre (sotto «T4 · 31 giocabili»).
