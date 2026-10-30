@@ -1670,3 +1670,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 595 — Campo (formazione Dreamers): due frecce ‹ › ai lati del tabellone per rivedere i turni passati (formazione, punteggi e tabellone di quel turno) e tornare avanti fino al turno in corso; sotto compare «Turno N · date · concluso» con il link «torna al turno attuale». Non in modalità notte. Stato `CAMPO_K` (si azzera uscendo dal Campo).
 
 596 — Condividi roster (immagine): ora mostra i PDK medi della stagione (non più l'efficienza), con colori viola da 40, verde 30-40, giallo 20-30, rosso sotto 20; giocatori ordinati per PDK dentro ogni reparto; piè di pagina «PDK medio stagionale».
+
+596 (agg.) — nella condivisione roster i PDK sono in pillola colorata come nell'app (viola/verde/giallo/rosso).

@@ -6990,9 +6990,14 @@ async function shareRoster(t,btn){
   RO.forEach(([k,lab,cl],i)=>{const x=40+i*(cw+16);
     X.fillStyle=cl;X.fillRect(x,430,cw,60);X.fillStyle="#0a0f1f";X.textAlign="center";X.font=F(800,40);X.fillText(lab,x+cw/2,474);
     col[i].forEach((p,j)=>{const y=top+j*CH;X.fillStyle=j%2?"rgba(255,255,255,.035)":"rgba(255,255,255,.07)";X.fillRect(x,y,cw,CH-10);X.fillStyle=cl;X.fillRect(x,y,6,CH-10);
-      const pts=p[0].split(" "),sfx=/^(Jr\.?|Sr\.?|II|III|IV)$/i.test(pts[pts.length-1]),nm=(pts.length>1?pts.slice(1).join(" "):p[0]).toUpperCase(),fn=pts.length>1?pts[0]:"";X.textAlign="left";X.fillStyle="#fff";fit(nm,800,38,cw-150);X.fillText(nm,x+20,y+48);
+      const pts=p[0].split(" "),sfx=/^(Jr\.?|Sr\.?|II|III|IV)$/i.test(pts[pts.length-1]),nm=(pts.length>1?pts.slice(1).join(" "):p[0]).toUpperCase(),fn=pts.length>1?pts[0]:"";X.textAlign="left";X.fillStyle="#fff";fit(nm,800,38,cw-170);X.fillText(nm,x+20,y+48);
       X.fillStyle="#8e98b8";X.font=F(700,26);X.fillText((fn?fn+" · ":"")+"#"+p[1]+" · "+p[3]+(ROOKIE.includes(p[0])?" · R":""),x+20,y+88);
-      const e=pdkMed(p[0]);X.textAlign="right";X.fillStyle=e==null?"#8e98b8":e>=40?"#c4a2ff":e>=30?"#4ade80":e>=20?"#facc15":"#f87171";X.font=F(800,40);X.fillText(e==null?"—":pdkF(e),x+cw-14,y+50)})});
+      const e=pdkMed(p[0]);X.textAlign="right";
+      if(e==null){X.fillStyle="#8e98b8";X.font=F(800,40);X.fillText("—",x+cw-18,y+52)}
+      else{/* pillola PDK come nell'app: viola da 40, verde 30-40, giallo 20-30, rosso sotto 20 */
+        const lv=pdkLvl(e),bgc={v:"#8b5cf6",g:"#22c55e",y:"#f5b400",r:"#ef4444"}[lv],fg=(lv==="v"||lv==="r")?"#fff":"#0b0b0b",txt=pdkF(e);X.font=F(900,38);const pw=Math.max(96,X.measureText(txt).width+34),ph=54,px=x+cw-14-pw,py=y+12;
+        X.fillStyle=bgc;shRR(X,px,py,pw,ph,12);X.fill();X.save();shRR(X,px,py,pw,ph,12);X.clip();X.fillStyle="rgba(0,0,0,.18)";X.fillRect(px,py+ph-5,pw,5);X.restore();
+        X.fillStyle=fg;X.textAlign="center";X.fillText(txt,px+pw/2,py+ph/2+13)}})});
   X.textAlign="center";X.fillStyle="#5d678a";X.font=F(700,28);X.fillText("PDK medio stagionale · DREAMERS · "+EFF.agg,W/2,Hh-45);
   shSend(cv,`roster-${c.nick.toLowerCase()}.png`,`🏀 Roster ${c.name}`,btn)}
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-effmet]");if(b&&cur==="efficienza"){e.preventDefault();effMet=b.dataset.effmet;esqMet=effMet;const y=window.scrollY;render();window.scrollTo(0,y)}});
