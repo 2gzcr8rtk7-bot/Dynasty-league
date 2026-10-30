@@ -1234,6 +1234,7 @@ body:not(.notte) .tmc .tmar{color:var(--gold)}
 .rcg .gpl li.rrow:nth-child(odd){border-right:1px solid rgba(255,255,255,.05)}
 .rcg .rnm b{font-size:13.5px}
 .rcg .rnm small{font-size:10px;letter-spacing:.06em}
+.rcg .rnm small .pdkx{font-size:10.5px;padding:0 4px;letter-spacing:0;vertical-align:1px}
 .rcg .rav{margin:1px 0 0;font-size:9.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:1px 4px}
 .rcg .rtags{gap:3px;align-items:center;flex-direction:row-reverse}
 .rcg .rtags .injtag{font-size:9px;padding:1px 4px;max-width:54px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -3077,8 +3078,8 @@ function vRoster(){
   <div class="sumrow"><span>${r.length} giocatori</span></div>
   ${(()=>{const R={G:"Guardia",F:"Ala",C:"Centro"},L={G:"G",F:"A",C:"C"};
     const RN={G:"Guardie",F:"Ali",C:"Centri"};
-    const row=p=>`<li class="rrow" data-pl="${p[0]}" role="button" tabindex="0"><span class="rnm"><b>${p[0]}</b><small>#${p[1]} · ${p[3]}</small>${AVVISI[p[0]]?`<span class="avviso rav">${AVVISI[p[0]]}</span>`:""}</span><span class="rtags">${INJ[p[0]]&&INJ[p[0]].stato!=="ok"?`<span class="injtag ${INJ[p[0]].stato}">${STATI[INJ[p[0]].stato][0]}</span>`:""}${ROOKIE.includes(p[0])?`<span class="rookie">R</span>`:""}${segBtn(p[0])}</span></li>`;
-    return `<div class="rostc">${"GFC".split("").map(k=>{const L=r.filter(p=>p[2]===k);return L.length?`<section class="rcg ${k}"><h4><span class="grl ${k}">${{G:"G",F:"A",C:"C"}[k]}</span>${RN[k]}<em>${L.length}</em></h4><ul class="gpl">${L.map(row).join("")}</ul></section>`:""}).join("")}</div>`})()}`;
+    const row=p=>`<li class="rrow" data-pl="${p[0]}" role="button" tabindex="0"><span class="rnm"><b>${p[0]}</b><small>#${p[1]} · ${p[3]}${pdkMed(p[0])!=null?` · ${pdkB(pdkMed(p[0]))}`:""}</small>${AVVISI[p[0]]?`<span class="avviso rav">${AVVISI[p[0]]}</span>`:""}</span><span class="rtags">${INJ[p[0]]&&INJ[p[0]].stato!=="ok"?`<span class="injtag ${INJ[p[0]].stato}">${STATI[INJ[p[0]].stato][0]}</span>`:""}${ROOKIE.includes(p[0])?`<span class="rookie">R</span>`:""}${segBtn(p[0])}</span></li>`;
+    return `<div class="rostc">${"GFC".split("").map(k=>{const sp=p=>AVVISI[p[0]]||ROOKIE.includes(p[0])?1:0,L=r.filter(p=>p[2]===k).map((p,i)=>[p,i]).sort((x,y)=>sp(x[0])-sp(y[0])||x[1]-y[1]).map(x=>x[0]);return L.length?`<section class="rcg ${k}"><h4><span class="grl ${k}">${{G:"G",F:"A",C:"C"}[k]}</span>${RN[k]}<em>${L.length}</em></h4><ul class="gpl">${L.map(row).join("")}</ul></section>`:""}).join("")}</div>`})()}`;
 }
 
 const f2=n=>n.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
