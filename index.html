@@ -496,6 +496,7 @@ h2.lbmh>.lbmw{display:flex;align-items:center;gap:5px;justify-self:center}
 .lbma{flex:none;display:inline-grid;place-items:center;width:30px;height:34px;padding:0;border-radius:9px;border:1px solid rgba(255,255,255,.18);background:#141b36;color:#7bffb0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s}
 .lbma svg{width:16px;height:16px}.lbma:active:not(:disabled){transform:scale(.9)}.lbma:disabled{opacity:.28;cursor:default}
 .lbmcap{margin:-4px 0 8px;text-align:center;font:700 11px var(--display);letter-spacing:.08em;text-transform:uppercase;color:#9fb0d0}
+.lbmcap.lbmnt{margin:-6px 0 3px;line-height:1}.lbmcap.lbmnt b{color:#7bffb0;font-weight:800}
 .lbmcap button{border:0;background:none;padding:0;color:#7bffb0;font:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer;text-decoration:underline}
 
 /* tastino divise: stessa misura del tasto notte, a sinistra */
@@ -6890,7 +6891,7 @@ function drTabellone(t,T,k,P,on){const W=T.W,btn=`<button class="cntbtn${on?" on
   const gioc=(X,tt)=>{if(past)return"";const A=drGare(tt,k,W),g=drGare(tt,k,W,true);return`<span class="lbmg" title="Sopra: partite giocate sul totale completo. Sotto: sul totale senza gli infortunati, che contano solo dal rientro (Centro Medico)"><i>${A.done}/${A.tot}</i><b>${g.done}/${g.tot}</b></span>`};
   /* (595) frecce per rivedere i turni passati e tornare avanti (non in modalità notte) */
   const arr=d=>on?"":`<button class="lbma" type="button" data-cmpk="${k+d}" aria-label="${d<0?"Turno precedente":"Turno successivo"}"${(d<0?k<=1:k>=kc)?" disabled":""}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d<0?"M15 5l-7 7 7 7":"M9 5l7 7-7 7"}" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`;
-  const cap=!on&&k<kc?`<p class="lbmcap">Turno ${k+DR_OFF} · ${drFmt(W.start)}–${drFmt(W.end)} · ${W.closed?"concluso":"in corso"} · <button type="button" data-cmpk="${kc}">torna al turno attuale ›</button></p>`:"";
+  const cap=!on&&k<kc?`<p class="lbmcap">Turno ${k+DR_OFF} · ${drFmt(W.start)}–${drFmt(W.end)} · ${W.closed?"concluso":"in corso"} · <button type="button" data-cmpk="${kc}">torna al turno attuale ›</button></p>`:(!on&&!W.closed&&k===kc?`<p class="lbmcap lbmnt" title="Notte del turno in corso">Notte <b>${Math.min(W.len,(W.nights||0)+1)}/${W.len}</b></p>`:"");
   return`<h2 class="lbmh">${kitBtn(t)}<span class="lbmw">${arr(-1)}<span class="lbm ${st}"${lvAttr} style="--sc:${sc}"${o?` data-drgo="${k}|${pr[0]}|${pr[1]}" role="button" tabindex="0"`:""} aria-label="${TEAMS[t].nick} ${T.score==null?"in attesa":pdkF(T.score)}, ${T.played} su 10 hanno giocato${o?`, contro ${TEAMS[o].nick} ${O.score==null?"in attesa":pdkF(O.score)}, ${O.played} su 10 hanno giocato`:""}">${lg(t)}${gioc(T,t)}<span class="lbmn${lead==="b"?" dim":""}">${T.score==null?"—":pdkF(T.score)}</span>${o?`<span class="lbmx"></span><span class="lbmn${lead==="a"?" dim":""}">${O.score==null?"—":pdkF(O.score)}</span>${gioc(O,o)}${lg(o)}`:""}</span>${arr(1)}</span>${btn}</h2>${cap}`}
 /* modalità notte: stesso blocco giocatore (maglia + targhetta + cartellino) con il PDK della notte; pallino rosso = in campo ora */
 function drGiocN(t,p,m){const r=p[2],sn=drSur(p[0]),v=m?m.p:null;

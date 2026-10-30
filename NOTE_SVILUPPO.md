@@ -1678,3 +1678,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 598 — Tabellone del Campo: sotto ogni squadra due righe senza scritte: sopra giocate/totale completo (grigio), sotto giocate/totale senza gli infortunati (verde). Il calcolo usa injRit(): data di rientro dal Centro Medico (data esplicita, assenza singola, durata in settimane, "prime N partite", altrimenti fuori tutto il turno). I giocatori contano solo dal rientro e il numero sale se rientrano. Nei turni passati il contatore è nascosto. Le stime (durata, partite, ignoto) sono approssimate; bollettino al 26/10.
 
 599 — Valore di Alperen Şengün portato da 1610 a 1695 (valore di partenza).
+
+600 — Campo: sotto il tabellone la scritta «Notte N/T» (N = notti già giocate del turno + 1, T = notti del turno) che si aggiorna da sola; visibile solo nel turno in corso, non nei turni passati né in modalità notte. Spazio tra tabellone e campo leggermente ridotto.
