@@ -1628,3 +1628,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 574 — Home (solo area Ducks, `COL.d` e dopo le 7:30): il TG Dreamers è una scheda della striscia scorrevole delle trade/partite (`.tmc.tgc`, prima delle trade); toccandola parte il TG a schermo intero. In coda su `coda`, non pubblicato.
 
 575 — Scheda TG nella striscia Home senza finestre: al tocco la striscia si ferma con la scheda a sinistra, il TG gira dentro la scheda (loghi/titolo che cambiano, barra di avanzamento, voce) e a fine TG la striscia riparte; secondo tocco = stop. L'overlay a schermo intero resta solo nella vetrina «Notizie». In coda su `coda`, non pubblicato.
+
+576 — Scheda TG in Home: compariva solo se il giornale non era ancora stato letto (usava `gzPronto`); ora dipende solo dall'orario (dopo le 7:30) e dall'area Ducks sbloccata (`gzOraOk`). In coda su `coda`.
