@@ -9372,6 +9372,7 @@ document.addEventListener("click",e=>{
 .btlg{width:34px;height:34px;object-fit:contain;flex:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))}
 .btmid{font-family:var(--display);font-style:italic;font-weight:800;color:#ffe27a;font-size:13px;letter-spacing:.1em}
 .btsub{margin:8px 0 0;font-size:11.5px;color:#f3b8c1;line-height:1.35}
+.btmode{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 10px}.btmode button{padding:9px;border-radius:12px;border:1.5px solid rgba(255,226,122,.35);background:rgba(0,0,0,.3);color:#ffd0d6;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px}.btmode button[aria-pressed=true]{background:linear-gradient(180deg,#ffe27a,#f5b400);color:#2a0610;border-color:#ffe27a}.btmxi{font-size:12px;color:#ffd0d6;margin:0 0 10px;line-height:1.35}.btlegs{max-height:100px;overflow:auto;margin:0 0 8px}.btleg{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,226,122,.18)}.btleg b{font-size:13px;display:block}.btleg small{font-size:11px;color:#ffd0d6}.btmq{display:flex;justify-content:space-between;align-items:center;margin:0 0 8px;font-size:12px;color:#ffd0d6}.btmq i{font-style:normal;color:#8cf0a8}.btmq b{font-family:var(--display);font-style:italic;font-size:22px;color:#ffe27a}.btgo:disabled{opacity:.45}
 .btslip{position:sticky;bottom:10px;z-index:6;margin:12px 0 0;padding:12px;border-radius:16px;background:linear-gradient(160deg,#2a0610,#12030a);border:1.5px solid #ffe27a;box-shadow:0 8px 28px rgba(0,0,0,.65),0 0 18px rgba(255,214,90,.3)}
 .btsl1{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.btsl1 b{font-size:13.5px;line-height:1.2}.btsl1 span{display:block;font-size:12px;color:#ffe27a;font-weight:800;margin-top:2px}
 .btx{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,226,122,.5);background:transparent;color:#ffe27a;cursor:pointer}
@@ -9424,7 +9425,7 @@ const meseNow=()=>{const o={};new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/
 const bLoad=()=>{try{const j=JSON.parse(localStorage.getItem(KEY));if(j&&j.v===1&&Array.isArray(j.bets))return j}catch(e){}return null};
 let BW=bLoad()||{v:1,mese:meseNow(),saldo:START,iniz:START,bets:[]};
 const bSave=()=>{try{localStorage.setItem(KEY,JSON.stringify(BW))}catch(e){}};
-let BS={tab:"sf",sel:null,stake:50,msg:"",ok:false,bk:""};
+let BS={tab:"sf",sel:null,stake:50,msg:"",ok:false,bk:"",mx:false,legs:[]};
 const SELMAP={};
 /* --- mercati --- */
 function cand(){const d=flUsaOggi(),G=TV.days[d]||[],now=Date.now(),out=[];
@@ -9450,13 +9451,38 @@ function sfide(){try{const stt=drStand(),P=drPO(stt);let k=drCurWeek(P),W=null;
 /* --- liquidazione automatica con dati ufficiali --- */
 const rowFor=(n,d)=>(PARTITE[n]||[]).find(r=>r[0]===d.slice(8)+"/"+d.slice(5,7));
 function pay(b,st){b.s=st;if(st==="v"){b.pay=Math.round(b.st*b.q);BW.saldo+=b.pay}else if(st==="x"){b.pay=b.st;BW.saldo+=b.pay}else b.pay=0}
-function settle(){let ch=false;const now=Date.now(),T72=72*3600*1000;
+/* esito di una singola scelta: "v" vinta, "p" persa, "x" annullata/pari, null ancora aperta (usata da singole e multiple) */
+function lres(b){const now=Date.now(),T72=72*3600*1000;
+ if(b.m==="ou"){const r=rowFor(b.n,b.d);if(r&&!isNaN(+r[3]))return(b.sel==="o")===(+r[3]>b.L)?"v":"p";if((b.ko&&now>b.ko+T72)||(!r&&drDkHas(b.d)))return"x";return null}
+ if(b.m==="du"){const ra=rowFor(b.a,b.d),rb=rowFor(b.b,b.d);if(ra&&rb&&!isNaN(+ra[3])&&!isNaN(+rb[3])){const va=+ra[3],vb=+rb[3];return va===vb?"x":(b.sel==="a")===(va>vb)?"v":"p"}if((b.ko&&now>b.ko+T72)||((!ra||!rb)&&drDkHas(b.d)))return"x";return null}
+ if(b.m==="sf"){const W=drWeek(b.k);if(W&&W.closed){const sa=drTeam(b.k,b.a,W).score,sb=drTeam(b.k,b.b,W).score;if(sa!=null&&sb!=null)return sa===sb?"x":(b.sel==="a")===(sa>sb)?"v":"p"}}
+ return null}
+/* MULTIPLA: quote moltiplicate; dalla 3ª scelta bonus +3% ciascuna (max +18% con 8 scelte); quota totale max 200 */
+const MXMIN=2,MXMAX=8,MXB=.03,MXCAP=200;
+const mxBonus=n=>n>=3?1+MXB*(n-2):1,mxQ=L=>{const raw=L.reduce((a,l)=>a*l.q,1),bo=mxBonus(L.length);return{raw,bo,q:Math.min(MXCAP,Math.round(raw*bo*100)/100)}};
+function settle(){let ch=false;
  BW.bets.forEach(b=>{if(b.s!=="a")return;try{
-  if(b.m==="ou"){const r=rowFor(b.n,b.d);if(r&&!isNaN(+r[3])){pay(b,(b.sel==="o")===(+r[3]>b.L)?"v":"p");ch=true}else if((b.ko&&now>b.ko+T72)||(!r&&drDkHas(b.d))){pay(b,"x");ch=true}}
-  else if(b.m==="du"){const ra=rowFor(b.a,b.d),rb=rowFor(b.b,b.d);if(ra&&rb&&!isNaN(+ra[3])&&!isNaN(+rb[3])){const va=+ra[3],vb=+rb[3];pay(b,va===vb?"x":(b.sel==="a")===(va>vb)?"v":"p");ch=true}else if((b.ko&&now>b.ko+T72)||((!ra||!rb)&&drDkHas(b.d))){pay(b,"x");ch=true}}
-  else if(b.m==="sf"){const W=drWeek(b.k);if(W&&W.closed){const sa=drTeam(b.k,b.a,W).score,sb=drTeam(b.k,b.b,W).score;if(sa!=null&&sb!=null){pay(b,sa===sb?"x":(b.sel==="a")===(sa>sb)?"v":"p");ch=true}}}
+  if(b.m==="mx"){let lose=false,open=false;b.legs.forEach(l=>{if(!l.r){const x=lres(l);if(x)l.r=x}if(l.r==="p")lose=true;else if(!l.r)open=true});
+   if(lose){pay(b,"p");ch=true}
+   else if(!open){const w=b.legs.filter(l=>l.r==="v");if(!w.length){pay(b,"x")}else{b.q=mxQ(w).q;pay(b,"v")}ch=true}
+   else ch=true;return}
+  const x=lres(b);if(x){pay(b,x);ch=true}
  }catch(e){}});
  if(ch)bSave()}
+function mxCon(L,s){const pl=x=>x.m==="ou"?[x.n]:x.m==="du"?[x.a,x.b]:[];const P=pl(s);return L.find(l=>l.key!==s.key&&pl(l).some(p=>P.includes(p)))}
+function placeMx(){const L=BS.legs;BS.ok=false;
+ if(L.length<MXMIN){BS.msg="Scegli almeno "+MXMIN+" quote per la multipla.";return}
+ if(L.some(l=>!l.open||(l.ko&&Date.now()>=l.ko))){BS.msg="Una scelta è già chiusa: toglila dalla multipla.";return}
+ const st=Math.floor(+BS.stake||0);
+ if(st<MINS){BS.msg="Puntata minima "+ni(MINS)+" gettoni.";return}
+ if(st>MAXS){BS.msg="Puntata massima "+ni(MAXS)+" gettoni.";return}
+ if(st>BW.saldo){BS.msg="Saldo insufficiente.";return}
+ const key="mx|"+L.map(l=>l.id).sort().join(";");
+ if(BW.bets.some(b=>b.key===key)){BS.msg="Hai già giocato questa multipla.";return}
+ const M=mxQ(L);BW.saldo-=st;
+ BW.bets.unshift({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),ts:Date.now(),m:"mx",key,q:M.q,st,ko:Math.min(...L.map(l=>l.ko||9e15)),desc:"Multipla · "+L.length+" scelte",pick:"quota "+nf(M.raw,2)+(M.bo>1?" +bonus "+Math.round((M.bo-1)*100)+"%":""),s:"a",pay:0,
+  legs:L.map(l=>({m:l.m,key:l.key,d:l.d,k:l.k,n:l.n,a:l.a,b:l.b,sel:l.side,L:l.L,q:l.q,ko:l.ko,desc:l.desc,pick:l.pick,r:null}))});
+ bSave();BS.legs=[];BS.ok=true;BS.msg="Multipla registrata: "+st+" gettoni a quota "+nf(M.q,2)+"."}
 /* --- scommessa --- */
 function place(){const S=BS.sel;BS.ok=false;if(!S){return}
  const st=Math.floor(+BS.stake||0);
@@ -9474,7 +9500,7 @@ function bkIn(t){const m=String(t||"").trim().match(/^DRBET1\.([A-Za-z0-9+/=]+)\
 /* --- grafica --- */
 const logo=t=>{const u=(typeof LOGO2!=="undefined"&&LOGO2[t])||(typeof LOGO!=="undefined"&&LOGO[t])||"";return u?`<img class="btlg" src="${u}" alt="${E((TEAMS[t]||{}).nick||t)}">`:""};
 const lockTag=(open,ko)=>open?`<span class="btlock">🔓 chiude tra ${hms(ko-Date.now())||"poco"}</span>`:`<span class="btlock off">🔒 chiusa</span>`;
-const odd=(id,sel,label,q,open)=>{SELMAP[id]=sel;return`<button class="btq${BS.sel&&BS.sel.id===id?" on":""}" data-bq="${E(id)}"${open?"":" disabled"}><small>${E(label)}</small><b>${nf(q,2)}</b></button>`};
+const odd=(id,sel,label,q,open)=>{SELMAP[id]=sel;return`<button class="btq${(BS.mx?BS.legs.some(l=>l.id===id):BS.sel&&BS.sel.id===id)?" on":""}" data-bq="${E(id)}"${open?"":" disabled"}><small>${E(label)}</small><b>${nf(q,2)}</b></button>`};
 function tabSf(){const S=sfide();if(!S)return`<div class="btcard"><p class="btsub">Nessuna sfida Dreamers aperta in questo momento: compariranno prima dell'inizio del prossimo turno.</p></div>`;
  return`<div class="btsec">Sfide Dreamers · ${S.lab}<small>${S.len} notti · ${S.open?"chiude tra "+hms(S.ko-Date.now()):"chiuse"}</small></div>`+S.list.map(x=>{const key=`sf|${S.k}|${x.a}|${x.b}`,na=(TEAMS[x.a]||{}).nick||x.a,nb=(TEAMS[x.b]||{}).nick||x.b,desc=`${na} vs ${nb} · ${S.lab}`;
   const mk=(side,t,q)=>odd(key+"|"+side,{id:key+"|"+side,m:"sf",key,k:S.k,a:x.a,b:x.b,side,q,open:S.open,ko:S.ko,desc,pick:side==="a"?na:nb},(TEAMS[t]||{}).nick||t,q,S.open);
@@ -9493,7 +9519,7 @@ function tabDu(D){if(!D.length)return`<div class="btcard"><p class="btsub">Nessu
   <div class="btodds">${mk("a",x.a,x.qa)}${mk("b",x.b,x.qb)}</div>
   <p class="btsub">Media: ${E(x.a.n)} ${nf(x.a.M.mu,1)} (${x.a.nba}) · ${E(x.b.n)} ${nf(x.b.M.mu,1)} (${x.b.nba}). Vince chi totalizza più PDK stanotte.</p></div>`}).join("")}
 function tabMy(){const B=BW.bets,stl={a:"In corso",v:"Vinta",p:"Persa",x:"Rimborsata (non ha giocato / pari)"};
- const list=B.length?B.map(b=>`<div class="btbet ${b.s}"><div><b>${E(b.desc)}</b><small>${E(b.pick||"")} @ ${nf(b.q,2)} · puntati ${ni(b.st)}</small></div><div class="btst">${b.s==="v"?"+"+ni(b.pay-b.st):b.s==="p"?"−"+ni(b.st):b.s==="x"?"0":"…"}<small>${stl[b.s]}</small></div></div>`).join(""):`<div class="btcard"><p class="btsub">Non hai ancora giocato. Scegli una quota nelle altre schede.</p></div>`;
+ const list=B.length?B.map(b=>`<div class="btbet ${b.s}"><div><b>${E(b.desc)}</b><small>${E(b.pick||"")} @ ${nf(b.q,2)} · puntati ${ni(b.st)}</small>${b.legs?b.legs.map(l=>`<small>${l.r==="v"?"✅":l.r==="p"?"❌":l.r==="x"?"↩️":"⏳"} ${E(l.desc)} → ${E(l.pick)} @ ${nf(l.q,2)}</small>`).join(""):""}</div><div class="btst">${b.s==="v"?"+"+ni(b.pay-b.st):b.s==="p"?"−"+ni(b.st):b.s==="x"?"0":"…"}<small>${stl[b.s]}</small></div></div>`).join(""):`<div class="btcard"><p class="btsub">Non hai ancora giocato. Scegli una quota nelle altre schede.</p></div>`;
  return`<div class="btsec">Le mie giocate<small>${B.length} totali</small></div>${list}${BS.msg?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:""}
  <div class="btsec" style="margin-top:14px">Salvataggio<small>i dati stanno su questo telefono</small></div>
  <div class="btbk"><button data-bbk="copy">📋 Copia backup</button><textarea id="btbk" placeholder="Incolla qui un backup per ripristinare">${E(BS.bk)}</textarea><button data-bbk="rest">♻️ Ripristina da backup</button></div>`}
@@ -9503,7 +9529,12 @@ function vBet(){if(!COL.d){cur="campo";return vCampo()}
  const T=[["sf","Sfide"],["ou","Giocatori"],["du","Duelli"],["my","Giocate"]];
  const body=BS.tab==="sf"?tabSf():BS.tab==="ou"?tabOu(C):BS.tab==="du"?tabDu(D):tabMy();
  const S=BS.sel,win=S?Math.floor((+BS.stake||0)*S.q):0;
- const slip=S&&BS.tab!=="my"?`<div class="btslip"><div class="btsl1"><div><b>${E(S.desc)}</b><span>${E(S.pick)} · quota ${nf(S.q,2)}</span></div><button class="btx" data-bx aria-label="Annulla selezione">✕</button></div>
+ const MQ=BS.mx&&BS.legs.length?mxQ(BS.legs):null,mwin=MQ?Math.floor((+BS.stake||0)*MQ.q):0;
+ const mslip=BS.mx&&BS.tab!=="my"&&BS.legs.length?`<div class="btslip"><div class="btlegs">${BS.legs.map(l=>`<div class="btleg"><span><b>${E(l.pick)}</b><small>${E(l.desc)} · ${nf(l.q,2)}</small></span><button class="btx" data-blx="${E(l.id)}" aria-label="Togli">✕</button></div>`).join("")}</div>
+  <div class="btmq"><span>${BS.legs.length} scelte · quota ${nf(MQ.raw,2)}${MQ.bo>1?` <i>bonus +${Math.round((MQ.bo-1)*100)}%</i>`:""}</span><b>${nf(MQ.q,2)}</b></div>
+  <div class="btsl2"><div class="btchips">${[20,50,100,200].map(v=>`<button data-bst="${v}" class="${+BS.stake===v?"on":""}">${v}</button>`).join("")}</div><input class="btin" id="btin" type="number" inputmode="numeric" min="${MINS}" max="${MAXS}" value="${E(BS.stake)}" aria-label="Gettoni da puntare"></div>
+  <div class="btsl3"><span>Vincita possibile<b><i id="btwin">${ni(mwin)}</i> gett.</b></span><button class="btgo" data-bgo${BS.legs.length<MXMIN?" disabled":""}>Punta multipla</button></div>${BS.msg?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:""}</div>`:"";
+ const slip=BS.mx?mslip||(BS.msg&&BS.tab!=="my"?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:""):S&&BS.tab!=="my"?`<div class="btslip"><div class="btsl1"><div><b>${E(S.desc)}</b><span>${E(S.pick)} · quota ${nf(S.q,2)}</span></div><button class="btx" data-bx aria-label="Annulla selezione">✕</button></div>
   <div class="btsl2"><div class="btchips">${[20,50,100,200].map(v=>`<button data-bst="${v}" class="${+BS.stake===v?"on":""}">${v}</button>`).join("")}</div><input class="btin" id="btin" type="number" inputmode="numeric" min="${MINS}" max="${MAXS}" value="${E(BS.stake)}" aria-label="Gettoni da puntare"></div>
   <div class="btsl3"><span>Vincita possibile<b><i id="btwin">${ni(win)}</i> gett.</b></span><button class="btgo" data-bgo>Punta</button></div>${BS.msg?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:""}</div>`:(BS.msg&&BS.tab!=="my"?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:"");
  return`<div class="bt"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
@@ -9512,19 +9543,26 @@ function vBet(){if(!COL.d){cur="campo";return vCampo()}
  <div class="btstats"><div><small>In gioco</small><b>${ni(open)}</b></div><div><small>Bilancio</small><b class="${net>0?"pos":net<0?"neg":""}">${net>0?"+":""}${ni(net)}</b></div><div><small>Giocate</small><b>${BW.bets.length}</b></div></div>
  <p class="btrule">${ni(CR)} gettoni = 1 credito · puntata ${ni(MINS)}–${ni(MAXS)} · le puntate si chiudono al fischio d'inizio · se un giocatore non gioca la giocata è annullata e i gettoni tornano · le quote includono un margine del banco del ${Math.round(MARG*100)}%.</p></div>
  <div class="bttabs" role="tablist">${T.map(t=>`<button data-bt="${t[0]}" aria-pressed="${BS.tab===t[0]}">${t[1]}</button>`).join("")}</div>
- ${body}${slip}<p class="btft">🦆 Texas Ducks · uso interno · scommesse a gettoni, solo per gioco</p></div>`}
+ ${BS.tab!=="my"?`<div class="btmode"><button data-bm="s" aria-pressed="${!BS.mx}">Singola</button><button data-bm="m" aria-pressed="${BS.mx}">Multipla · bonus</button></div>${BS.mx?`<p class="btmxi">Metti insieme da ${MXMIN} a ${MXMAX} scelte (anche di schede diverse): le quote si <b>moltiplicano</b>, ma vinci solo se le indovini <b>tutte</b>. Dalla 3ª scelta c'è un bonus del ${Math.round(MXB*100)}% per ognuna (fino a +${Math.round(MXB*(MXMAX-2)*100)}%). Se una scelta viene annullata (giocatore che non gioca) esce dalla multipla.</p>`:""}`:""}${body}${slip}<p class="btft">🦆 Texas Ducks · uso interno · scommesse a gettoni, solo per gioco</p></div>`}
 VIEWS.bet=vBet;
 document.addEventListener("click",e=>{if(cur!=="bet")return;
  const t=e.target.closest("[data-bt]");if(t){BS.tab=t.dataset.bt;BS.sel=null;BS.msg="";render();scrollTo(0,0);return}
- const q=e.target.closest("[data-bq]");if(q&&!q.disabled){const s=SELMAP[q.dataset.bq];if(!s)return;BS.sel=BS.sel&&BS.sel.id===s.id?null:s;BS.msg="";const y=scrollY;render();scrollTo(0,y);return}
+ const md=e.target.closest("[data-bm]");if(md){BS.mx=md.dataset.bm==="m";BS.sel=null;BS.legs=[];BS.msg="";const y=scrollY;render();scrollTo(0,y);return}
+ const lx=e.target.closest("[data-blx]");if(lx){BS.legs=BS.legs.filter(l=>l.id!==lx.dataset.blx);BS.msg="";const y=scrollY;render();scrollTo(0,y);return}
+ const q=e.target.closest("[data-bq]");if(q&&!q.disabled){const s=SELMAP[q.dataset.bq];if(!s)return;
+  if(BS.mx){const ex=BS.legs.find(l=>l.id===s.id);BS.msg="";BS.ok=false;
+   if(ex)BS.legs=BS.legs.filter(l=>l.id!==s.id);
+   else{const cf=mxCon(BS.legs,s);if(cf)BS.msg="Non puoi combinare due scelte sullo stesso giocatore.";else{BS.legs=BS.legs.filter(l=>l.key!==s.key);if(BS.legs.length>=MXMAX)BS.msg="Massimo "+MXMAX+" scelte nella multipla.";else BS.legs.push(s)}}
+   const y=scrollY;render();scrollTo(0,y);return}
+  BS.sel=BS.sel&&BS.sel.id===s.id?null:s;BS.msg="";const y=scrollY;render();scrollTo(0,y);return}
  const c=e.target.closest("[data-bst]");if(c){BS.stake=+c.dataset.bst;BS.msg="";const y=scrollY;render();scrollTo(0,y);return}
- if(e.target.closest("[data-bx]")){BS.sel=null;BS.msg="";const y=scrollY;render();scrollTo(0,y);return}
- if(e.target.closest("[data-bgo]")){const y=scrollY;place();render();scrollTo(0,y);return}
+ if(e.target.closest("[data-bx]")){BS.sel=null;if(BS.mx)BS.legs=[];BS.msg="";const y=scrollY;render();scrollTo(0,y);return}
+ if(e.target.closest("[data-bgo]")){const y=scrollY;if(BS.mx)placeMx();else place();render();scrollTo(0,y);return}
  const k=e.target.closest("[data-bbk]");if(k){const y=scrollY;
   if(k.dataset.bbk==="copy"){const code=bkOut();let okc=false;try{navigator.clipboard.writeText(code).catch(()=>{});okc=true}catch(x){}BS.bk=code;BS.msg=okc?"Backup copiato: incollalo in un posto sicuro (note, WhatsApp).":"Copia il codice qui sotto e conservalo.";BS.ok=true;render();scrollTo(0,y)}
   else{const ta=document.getElementById("btbk"),r=bkIn(ta?ta.value:"");BS.bk="";BS.msg=r||"Backup ripristinato.";BS.ok=!r;render();scrollTo(0,y)}
   return}});
-document.addEventListener("input",e=>{if(cur!=="bet"||e.target.id!=="btin")return;BS.stake=+e.target.value||0;const w=document.getElementById("btwin");if(w&&BS.sel)w.textContent=ni(Math.floor(BS.stake*BS.sel.q))});
+document.addEventListener("input",e=>{if(cur!=="bet"||e.target.id!=="btin")return;BS.stake=+e.target.value||0;const w=document.getElementById("btwin");if(w){if(BS.mx&&BS.legs.length)w.textContent=ni(Math.floor(BS.stake*mxQ(BS.legs).q));else if(BS.sel)w.textContent=ni(Math.floor(BS.stake*BS.sel.q))}});
 })();
 </script>
 <style>/* Condividi dal profilo giocatore: scelta tra scheda e ultima notte (nota 491) */
