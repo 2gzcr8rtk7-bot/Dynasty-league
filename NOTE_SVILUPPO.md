@@ -1739,3 +1739,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 
 627. Home, 4 pagine anche a partite iniziate: dalle 14:00 la Previsione e' sostituita dalla pagina live e la Notte appena avvenuta (giorno USA precedente) resta come ultima pagina; prima delle 14 restano 3 pagine.
 628. Pagina Notte appena avvenuta: swipe da sinistra a destra (o freccia ‹ in alto) per tornare alle notti precedenti con box score, freccia › per tornare avanti; elenco = tutte le notti con box disponibili.
+
+629. Pagina Notte della Home: barra in alto piu' sottile, solo "NOTTE DEL gg/mm" (tolta la riga "scorri a destra"); resta lo swipe e le frecce.
