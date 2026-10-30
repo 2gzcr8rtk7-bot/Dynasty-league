@@ -1603,4 +1603,4 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 554. PUBBLICATA (v154) Tabellone della stanza Dreamers: «giocato» non più x/10 ma partite NBA già giocate/totale a disposizione della squadra nel turno (somma su tutti i giocatori), così si vede chi ha più partite.
 555. PUBBLICATA (v155) No spoiler: nelle impostazioni si sceglie se avere il tasto in testata (accanto all'ingranaggio, 👀/🙈); dalla Home chi lo ha lo accende e spegne. Se il tasto è tolto i risultati sono sempre visibili; chi aveva il no spoiler attivo mantiene il tasto.
 556. (non pubblicata, in coda) Tasto No spoiler in testata nello stile del tasto modalità notte (occhio + pallino rosso, viola quando attivo); 4 varianti provvisorie a/b/c/d in attesa di scelta (ora attiva a).
-557. (non pubblicata, in coda) Tasto No spoiler: scelta variante B (40×40 come l'ingranaggio), senza pallino rosso, occhio aperto/barrato.
+557. PUBBLICATA (v156) Tasto No spoiler: scelta variante B (40×40 come l'ingranaggio), senza pallino rosso, occhio aperto/barrato.
