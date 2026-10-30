@@ -3614,6 +3614,15 @@ const iaQ=n=>{if(iaCache[n]!=null)return iaCache[n];let q=.5;try{const s=pagella
 const iaOut=n=>{try{return injOut(n)}catch(e){return false}};
 const iaP=n=>vtPts(valOf(n)??VAL_FALLBACK)*(1+EQP.star*(iaQ(n)-.5))*(1+iaPerc(n));
 const iaG=n=>iaP(n)*iaOutF(n);
+/* (632) SLOT DI ROSTER: gli slot a fine anno sono sempre quelli (13), quindi chi riceve più giocatori di quanti ne dà (e non ha slot liberi) deve tagliarne: i pezzi in più valgono solo una frazione (SLF) e un 977 vale più di tre da 1600 totali.
+   Nessuna eccezione per i fuoriclasse (un solo fenomeno occupa un solo slot, per averlo servono pacchetti più ricchi della somma): lo sconto dipende dalla qualità del pezzo in più (sotto 800 vale il 30%, da 1600 per intero). Chi ha slot liberi (rosa sotto i 13) non ha sconto. */
+const SLF=.15,SL_MAX=13;
+function slotFree(t){try{return Math.max(0,SL_MAX-(ROSTER[t]||[]).filter(p=>p[5]!=="G").length)}catch(e){return 0}}
+const slotF=(n,t)=>{const v=valOf(n)??VAL_FALLBACK,a=iaAge(n),fv=SLF+(1-SLF)*Math.max(0,Math.min(1,(v-800)/800));
+  /* il potenziale salva il pezzo in più: giovane o scelto alto al draft (Peterson, Burries, Wagner…) vale quasi per intero; un veterano che in NBA non ha mai combinato niente vale quasi zero */
+  const pot=Math.max(iaAgeF(a),EQP.dpk>0?Math.min(1,iaDraft(n)/EQP.dpk):0),wc=(()=>{try{return Math.max(.15,Math.min(.9,.5-.45*iaProf(t).c))}catch(e){return .5}})(),fp=SLF+(1-SLF)*wc*pot,f=Math.max(fv,fp);return a!=null&&a>=28&&v<1200?f*.5:f};/* sotto 800 vale il 15%, da 1600 per intero; il potenziale pesa fino al 90% per chi ricostruisce, poco per chi vuole vincere subito */
+function slotEff(t,recvPts,recvNames,nGive,gaveNames){const n=recvPts.length,sur=n-nGive-slotFree(t);if(sur<=0||n<2)return recvPts.reduce((a,b)=>a+b,0);
+  const a=recvPts.map((v,i)=>({v,f:slotF(recvNames[i],t)})).sort((x,y)=>y.v-x.v);return a.reduce((s,x,i)=>s+(i<n-sur?x.v:x.v*x.f),0)}
 const iaSum=(a,f)=>a.reduce((s,x)=>s+f(x),0);
 const iaRand=(()=>{let s=1;return{seed:v=>{s=(v>>>0)||1},n:()=>{s^=s<<13;s>>>=0;s^=s>>>17;s^=s<<5;s>>>=0;return s/4294967296}}})();
 const iaSp=n=>{try{return spFuori(n)}catch(e){return false}};
@@ -3760,7 +3769,7 @@ function iaPref(t,recv,gave){const P=iaProf(t),o={dl:0,parts:[]},f1=v=>v.toFixed
    Giovane/veterano: 26,5 anni è il centro, ±5 anni = effetto pieno. Il saldo di valore dello scambio si corregge con questi moltiplicatori. */
 function iaMul(P,t,n){const a=iaAge(n);if(a==null)return 1;const u=Math.max(-1,Math.min(1,(26.5-a)/5)),cash=Math.max(0,Math.min(1,(iaCassa(t)-30)/200));
   return Math.max(.5,1+EQP.pvA*(-P.c)*u+(P.c<0&&u>0?EQP.pvC*cash*(-P.c)*u:0))}
-function iaInt(S,t,recv,gave,adv0,cr){const P0=iaProf(t),mR=iaSum(recv,x=>x.v),mG=iaSum(gave,x=>x.v),dvp=(iaSum(recv,x=>x.v*(iaMul(P0,t,x.n)-1))-iaSum(gave,x=>x.v*(iaMul(P0,t,x.n)-1)))/Math.max(1,mR,mG),adv=Math.max(-1,Math.min(1,adv0+dvp));
+function iaInt(S,t,recv,gave,adv0,cr){const P0=iaProf(t),mR=iaSum(recv,x=>x.v),mG=iaSum(gave,x=>x.v),dvp=(iaSum(recv,x=>x.v*(iaMul(P0,t,x.n)-1))-iaSum(gave,x=>x.v*(iaMul(P0,t,x.n)-1)))/Math.max(1,mR,mG),adv=Math.max(-1,Math.min(1,adv0+dvp+((rv,ef)=>(ef-rv)/Math.max(1,mR,mG))(mR,slotEff(t,recv.map(x=>x.v),recv.map(x=>x.n),gave.length,gave.map(x=>x.n)))));
   const nb=iaNeed(S,t,recv,gave),vs=Math.max(0,Math.min(1,.5+adv*EQP.vsk)),sc=.5+(EQP.wnb*nb+EQP.wvs*vs-.5)*EQP.sck,l=sc>=EQP.thA?"alto":sc>=EQP.thM?"medio":"basso",d=S[t].def,nick=TEAMS[t].nick,p=[];
   /* (466) la carenza si giudica sul reparto DOPO lo scambio: ricevere un'ala dando via un'ala non copre una carenza, e dare via il miglior centro non la risolve di certo */
   const avgR=S[t].avg,tp=r=>{const base=iaEff(t).filter(p=>p[2]===r&&!gave.some(g=>g.n===p[0])).map(p=>iaLin(P0,t,p[0])*iaCov(p[0],P0)),add=recv.filter(x=>x.r===r&&!iaSp(x.n)).map(x=>iaLin(P0,t,x.n)*iaCov(x.n,P0)),a=[...base,...add].sort((x,y)=>y-x);return((a[0]||0)+(a[1]||0))/2},post=r=>avgR?Math.max(-.3,Math.min(.6,(avgR[r]-tp(r))/avgR[r])):d[r];
@@ -4004,7 +4013,10 @@ function iaRec(x){const A=iaTeam(),R={};const add=(t,k,v)=>{(R[t]=R[t]||{pl:[],c
 /* Bilancio per squadra da una mappa R {t:{pl:[{n,from}],cr:[{v,from}],pk:[{p,from}]}}: ricevuto, dato, saldo e % di vantaggio/svantaggio (saldo ÷ volume massimo scambiato) */
 const trPts=(k,o)=>k==="pl"?vtPts(valOf(o.n)??VAL_FALLBACK)*iaOutF(o.n):k==="pk"?PICK_CR[o.p]*VAL_CR:(+o.v||0)*VAL_CR;
 function trBal(R){const B={};Object.keys(R).forEach(t=>B[t]={R:0,G:0});
-  Object.entries(R).forEach(([t,r])=>["pl","cr","pk"].forEach(k=>(r[k]||[]).forEach(o=>{const p=trPts(k,o);B[t].R+=p;if(B[o.from])B[o.from].G+=p})));
+  /* (632) slot di roster: i giocatori in più rispetto a quelli ceduti (senza slot liberi) valgono solo una frazione per chi li riceve */
+  const MU={};Object.entries(R).forEach(([t,r])=>{try{const pl=(r.pl||[]).map(o=>({n:o.n,v:trPts("pl",o)})),gv=Object.values(R).flatMap(x=>(x.pl||[]).filter(o=>o.from===t)).map(o=>o.n);if(pl.length<2)return;const tot=pl.reduce((a,x)=>a+x.v,0),ef=slotEff(t,pl.map(x=>x.v),pl.map(x=>x.n),gv.length,gv);if(ef>=tot-.01)return;
+    const sur=pl.length-gv.length-slotFree(t);pl.slice().sort((a,b)=>b.v-a.v).forEach((x,i)=>{if(i>=pl.length-sur)MU[t+"|"+x.n]=slotF(x.n,t)})}catch(e){}});
+  Object.entries(R).forEach(([t,r])=>["pl","cr","pk"].forEach(k=>(r[k]||[]).forEach(o=>{const p=trPts(k,o)*(k==="pl"?(MU[t+"|"+o.n]??1):1);B[t].R+=p;if(B[o.from])B[o.from].G+=p})));
   const base=Math.max(1,...Object.values(B).map(b=>Math.max(b.R,b.G)));
   Object.values(B).forEach(b=>{b.s=b.R-b.G;b.pc=Math.round(b.s/base*100)});return B}
 const trPcCls=pc=>pc>=3?"g":pc<=-3?"r":"y",trPcTxt=pc=>(pc>0?"+":pc<0?"−":"±")+Math.abs(pc)+"%",trPcWord=pc=>pc>=3?"vantaggio":pc<=-3?"svantaggio":"alla pari";
@@ -4221,7 +4233,7 @@ function vTradeAll(){
    Giocatori non in lista: VAL_FALLBACK. Per aggiornare: rigenerare VALORI con la stessa formula. */
 let VALORI_AGG="26/10/2026";
 const VALORI={"Victor Wembanyama":["C",3250],"Nikola Jokić":["C",3150],"Luka Dončić":["G",2500],"Jalen Johnson":["F",1993],"Jalen Duren":["C",1340],"Cade Cunningham":["G",1900],"Shai Gilgeous-Alexander":["G",1750],"Domantas Sabonis":["C",1850],"Donovan Clingan":["C",1250],"Josh Giddey":["G",1650],"Giannis Antetokounmpo":["F",1950],"Alperen Şengün":["C",1695],"Cameron Boozer":["F",1349,1],"Tyrese Haliburton":["G",1580],"Cooper Flagg":["F",1700],"Tyrese Maxey":["G",1490],"Stephon Castle":["G",1230],"Jayson Tatum":["F",1690],"Chet Holmgren":["F",1260],"Scottie Barnes":["F",1350],"Deni Avdija":["F",1360],"Karl-Anthony Towns":["C",1349],"Evan Mobley":["F",1248],"LaMelo Ball":["G",1150],"Alex Sarr":["C",920],"Trae Young":["G",1240],"Anthony Davis":["F",1199],"Paolo Banchero":["F",1410],"Anthony Edwards":["G",1260],"AJ Dybantsa":["F",1250,1],"Walker Kessler":["C",1160],"Amen Thompson":["G",1310],"Keyonte George":["G",1163],"Caleb Wilson":["F",1240,1],"Kon Knueppel":["G",1229],"Jamal Murray":["G",1141],"Kel'el Ware":["C",950],"Donovan Mitchell":["G",1160],"Dyson Daniels":["G",820],"Darryn Peterson":["G",1158,1],"Bam Adebayo":["C",999],"Aday Mara":["C",670,1],"Ja Morant":["G",985],"Joel Embiid":["C",1300],"Brandon Miller":["F",900],"Jarrett Allen":["C",985],"Jaylen Brown":["F",1050],"Lauri Markkanen":["F",700],"Trey Murphy III":["F",919],"Onyeka Okongwu":["C",690],"Michael Porter Jr.":["F",975],"VJ Edgecombe":["G",1155],"Darius Acuff Jr.":["G",750,1],"Isaiah Hartenstein":["C",300],"Derik Queen":["C",1156],"Kawhi Leonard":["F",650],"Mikel Brown Jr.":["G",649,1],"Jalen Williams":["F",400],"Jalen Brunson":["G",999],"Austin Reaves":["G",967],"Keaton Wagler":["G",649,1],"Franz Wagner":["F",1045],"Zion Williamson":["F",810],"Ryan Rollins":["G",590],"Brayden Burries":["G",610,1],"Darius Garland":["G",820],"Ivica Zubac":["C",1100],"Devin Booker":["G",850],"Zach Edey":["C",660],"Moussa Diabaté":["C",430],"Tyler Herro":["G",815],"Kyshawn George":["F",640],"Sergio De Larrea":["G",450,1],"Immanuel Quickley":["G",690],"Matas Buzelis":["F",700],"Damian Lillard":["G",758],"Yaxel Lendeborg":["F",740,1],"De'Aaron Fox":["G",720],"Ausar Thompson":["F",520],"Jabari Smith Jr.":["F",715],"Cedric Coward":["G",520],"James Harden":["G",1001],"Julius Randle":["F",900],"Dylan Harper":["G",1220],"Kingston Flemings":["G",670,1],"Dejounte Murray":["G",610],"Maxime Raynaud":["C",499],"Collin Murray-Boyles":["F",977],"Pascal Siakam":["F",899],"Desmond Bane":["G",710],"RJ Barrett":["F",690],"Rudy Gobert":["C",720],"Kyrie Irving":["G",810],"Miles Bridges":["F",750],"Jaime Jaquez Jr.":["F",680],"Josh Hart":["F",700],"Stephen Curry":["G",820],"Brandon Ingram":["F",330],"Ace Bailey":["F",840],"LeBron James":["F",980],"Jeremiah Fears":["G",699],"Kristaps Porziņģis":["C",90],"Allen Graves":["F",379,1],"Morez Johnson Jr.":["F",300,1],"Kevin Durant":["F",960],"Naz Reid":["F",490],"Egor Dëmin":["G",480],"Jalen Green":["G",455],"Paul George":["F",250],"Jonathan Kuminga":["F",170],"Danny Wolf":["F",150],"Oso Ighodaro":["C",90],"Trevon Brazile":["F",110,1],"Hannes Steinbach":["C",360,1],"Khaman Maluach":["C",519]};
-let VAL_EXP=2,VAL_CR=Math.pow(1.15,2)*1000/300,VAL_FALLBACK=400,PICK_CR={1:300,2:250,3:200,4:150,5:100};
+let VAL_EXP=1.4,VAL_CR=Math.pow(1.15,1.4)*1000/300,VAL_FALLBACK=400,PICK_CR={1:300,2:250,3:200,4:150,5:100};
 const vnz=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/ş/g,"s").replace(/[.'’]/g,"").replace(/\s+(jr|sr|ii|iii|iv)$/,"").replace(/\s+/g," ").trim();
 const VALMAP=(()=>{const m={};Object.entries(VALORI).forEach(([n,a])=>m[vnz(n)]=a);return m})();
 const valOf=n=>{const a=VALMAP[vnz(n)];return a?a[1]:null};
@@ -4339,7 +4351,7 @@ const valDelta=n=>{const a=VAL_MAN[n],b=VALORI[n]&&VALORI[n][1];if(a==null||b==n
 valApply();
 const vtPts=v=>Math.pow(Math.max(0,v)/1000,VAL_EXP)*1000;
 const VT={tab:"calc",t:["DUC","PEA"],pl:[[],[]],cr:[0,0],pk:[[],[]]};
-function vtSide(k){const pts=VT.pl[k].reduce((s,n)=>s+vtPts(valOf(n)??VAL_FALLBACK)*iaOutF(n),0);const cr=(+VT.cr[k]||0)+VT.pk[k].reduce((s,p)=>s+PICK_CR[p],0);return pts+cr*VAL_CR}
+function vtSide(k){const arr=VT.pl[k].map(n=>vtPts(valOf(n)??VAL_FALLBACK)*iaOutF(n)),pts=VT.tab==='calc3'?arr.reduce((a,b)=>a+b,0):slotEff(VT.t[1-k],arr,VT.pl[k],VT.pl[1-k].length,VT.pl[1-k]);const cr=(+VT.cr[k]||0)+VT.pk[k].reduce((s,p)=>s+PICK_CR[p],0);return pts+cr*VAL_CR}
 /* esito scambio: <10% equilibrata, 10-30% vincitore, oltre 30% grande truffa */
 const trLose=M=>M.S.reduce((m,x)=>x.s<m.s?x:m,M.S[0]).t;
 const trArt=n=>/^[aeiou]/i.test(n)?"gli":"i";
@@ -7956,8 +7968,8 @@ function drSettimana(n,W){const p=Object.values(ROSTER).flat().find(x=>x[0]===n)
     if(!g){out.push(null);continue}const casa=g[1]===nba,opp=casa?g[0]:g[1],v=N[d]&&N[d][n];
     out.push({d,opp:(casa?"":"@")+opp,v:typeof v==="number"?v:null,fin:g[5]==="F"||v!=null,lv:g[5]==="L"})}
   return out}
-function drProiez(k,t,W){/* chi non ha ancora giocato ma ha partite in settimana vale il suo PDK medio (pdkMix) */
-  const A={...W.acc};const F=drForm(k)[t]||{t:[],r:[]};[...F.t,...F.r].forEach(n=>{if(A[n])return;const s=drSettimana(n,W);if(s.some(x=>x&&!x.fin)){const m=injOut(n)?null:pdkMix(n);if(m!=null)A[n]={s:m,g:1,b:m}}});
+function drProiez(k,t,W){/* chi non ha ancora giocato ma ha partite in settimana vale il suo valore atteso della Previsione (avversari, difesa, trend, più partite = bonus); se manca, il PDK medio (pdkMix). Così «proiez.» e «Previsione · turno» della scheda squadra sono lo stesso numero. */
+  const A={...W.acc},em={};try{const R=drPrevisione(t,k);if(R)[...R.top,...R.trib].forEach(x=>{if(x.e!=null)em[x.n]=x.e})}catch(e){}const F=drForm(k)[t]||{t:[],r:[]};[...F.t,...F.r].forEach(n=>{if(A[n])return;const s=drSettimana(n,W);if(s.some(x=>x&&!x.fin)){const m=injOut(n)?null:(em[n]??pdkMix(n));if(m!=null)A[n]={s:m,g:1,b:m}}});
   return drTeam(k,t,{...W,acc:A,closed:true}).score}
 /* (318) nome nella carta della sfida: "I. Cognome"; per i cognomi più lunghi (Wembanyama, Antetokounmpo) eccezionalmente solo il cognome, così entrano interi */
 const DU_SOLO=/\s(Wembanyama|Antetokounmpo)$/i;
@@ -8094,8 +8106,8 @@ function drGare(t,k,W,eff){let tot=0,done=0;try{const F=drForm(k)[t]||{t:[],r:[]
   [...F.t,...F.r].forEach(n=>{const nba=(segInfo(n)||{}).nba;if(!nba)return;
     const rt=eff&&!W.closed?injRit(n):null;
     ds.forEach(d=>(TV.days[d]||[]).forEach(g=>{if(g[0]===nba||g[1]===nba){if(rt&&(!rt.da||d<rt.da))return;tot++;if(g[5]==="F"||g[5]==="L")done++}}))})}catch(e){}return{tot,done}}
-function drPrevisione(t){try{
-  const st=drStand(),P=drPO(st);let k=drCurWeek(P);let W=drWeek(k);if(W.closed||W.started)k++;if(k>DR_REG)return null;W=drWeek(k);
+function drPrevisione(t,kk){try{
+  const st=drStand(),P=drPO(st);let k=drCurWeek(P);let W=drWeek(k);if(W.closed||W.started)k++;if(kk!=null)k=kk;if(k>DR_REG)return null;W=drWeek(k);
   const F0=drForm(k)[t]||{t:[],r:[]},names=[...F0.t,...F0.r].filter(n=>!spFuori(n));
   const dates=[];for(let d=W.start;d<=W.end;d=drAdd(d,1))dates.push(d);
   const dk=d2=>{const[a,b]=String(d2).split("/").map(Number);return(b>=8?0:12)*100+b*100+a};
@@ -8869,7 +8881,7 @@ function atGen(){const me=AT_PR&&AT_PR.t;if(!me)return null;const pool=t=>ROSTER
   return best}
 const atTot=atSum;
 /* (624) INDICE GUSTO: calibrato sui report dei GM (361 risposte; validazione incrociata: AUC 0,60 -> 0,80). Punti di valore % corretti per età (3,5 punti per anno di differenza media pesata sul valore, ricevuti più vecchi = peggio) e per dimensione del pacchetto (12 punti per ogni giocatore oltre il primo ricevuto). + = lo scambio piace a chi riceve. */
-const GUSTO={age:3.5,pack:12};
+const GUSTO={age:3.5,pack:0};
 const gustoAge=P=>P.length?P.reduce((s,p)=>s+p.e*(p.v+1),0)/P.reduce((s,p)=>s+p.v+1,0):0;
 function gustoIdx(give,get){const vg=atSum(give),vr=atSum(get);return atDf(vg,vr)*100-GUSTO.age*(gustoAge(get)-gustoAge(give))-GUSTO.pack*Math.max(0,get.length-1)}
 const atWho=()=>AT_PR?TEAMS[AT_PR.t].nick:"";
