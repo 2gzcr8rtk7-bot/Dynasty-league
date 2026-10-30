@@ -1225,6 +1225,19 @@ body:not(.notte) .tmc .tmar{color:var(--gold)}
 .rost .gpl li.rrow:hover{background:rgba(255,255,255,.04)}
 .rost .gpl li.rrow:active{background:rgba(255,255,255,.07)}
 .rost .gpl li.rrow:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.rostc{display:grid;gap:8px}
+.rcg{background:var(--card,#16213f);border:1px solid rgba(255,255,255,.07);border-radius:10px;overflow:hidden}
+.rcg h4{margin:0;display:flex;align-items:center;gap:8px;padding:5px 10px;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#cbd5e1;background:rgba(255,255,255,.04)}
+.rcg h4 em{margin-left:auto;font-style:normal;color:var(--muted)}
+.rcg .gpl{display:grid;grid-template-columns:1fr 1fr;padding:0}
+.rcg .gpl li.rrow{display:flex;align-items:center;gap:4px;padding:5px 8px;min-width:0;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.05)}
+.rcg .gpl li.rrow:nth-child(odd){border-right:1px solid rgba(255,255,255,.05)}
+.rcg .rnm b{font-size:13.5px}
+.rcg .rnm small{font-size:10px;letter-spacing:.06em}
+.rcg .rav{margin:1px 0 0;font-size:9.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:1px 4px}
+.rcg .rtags{gap:3px;align-items:center;flex-direction:row-reverse}
+.rcg .rtags .injtag{font-size:9px;padding:1px 4px;max-width:54px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rcg .rtags .rookie{font-size:9px;padding:1px 4px}
 .rnm{flex:1;min-width:0;display:grid}
 .rnm b{font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;color:#fff;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rnm small{font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
@@ -3063,8 +3076,9 @@ function vRoster(){
    ${LOGO[curTeam]?`<img class="hlogo" data-t="${curTeam}" src="${LOGO[curTeam]}" alt=""${dlHeadLogo(curTeam)}>`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div><div class="rec">${CREDITI[curTeam]??"–"}<small>CREDITI</small></div></div><button class="bshare hsh" data-rshare="${curTeam}" aria-label="Condividi roster"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
   <div class="sumrow"><span>${r.length} giocatori</span></div>
   ${(()=>{const R={G:"Guardia",F:"Ala",C:"Centro"},L={G:"G",F:"A",C:"C"};
-    const pl=r.slice().sort((a,b)=>"GFC".indexOf(a[2])-"GFC".indexOf(b[2]));
-    return `<div class="gcard rost"><ul class="gpl">${pl.map(p=>`<li class="rrow" data-pl="${p[0]}" role="button" tabindex="0"><span class="grl ${p[2]}" title="${R[p[2]]}">${L[p[2]]}</span><span class="rnm"><b>${p[0]}</b><small>#${p[1]} · ${p[3]}</small></span><span class="rtags">${segBtn(p[0])}${INJ[p[0]]&&INJ[p[0]].stato!=="ok"?`<span class="injtag ${INJ[p[0]].stato}">${STATI[INJ[p[0]].stato][0]}</span>`:""}${ROOKIE.includes(p[0])?`<span class="rookie">Rookie</span>`:""}</span><span class="rgo">›</span>${AVVISI[p[0]]?`<span class="avviso rav">${AVVISI[p[0]]}</span>`:""}</li>`).join("")}</ul></div>`})()}`;
+    const RN={G:"Guardie",F:"Ali",C:"Centri"};
+    const row=p=>`<li class="rrow" data-pl="${p[0]}" role="button" tabindex="0"><span class="rnm"><b>${p[0]}</b><small>#${p[1]} · ${p[3]}</small>${AVVISI[p[0]]?`<span class="avviso rav">${AVVISI[p[0]]}</span>`:""}</span><span class="rtags">${INJ[p[0]]&&INJ[p[0]].stato!=="ok"?`<span class="injtag ${INJ[p[0]].stato}">${STATI[INJ[p[0]].stato][0]}</span>`:""}${ROOKIE.includes(p[0])?`<span class="rookie">R</span>`:""}${segBtn(p[0])}</span></li>`;
+    return `<div class="rostc">${"GFC".split("").map(k=>{const L=r.filter(p=>p[2]===k);return L.length?`<section class="rcg ${k}"><h4><span class="grl ${k}">${{G:"G",F:"A",C:"C"}[k]}</span>${RN[k]}<em>${L.length}</em></h4><ul class="gpl">${L.map(row).join("")}</ul></section>`:""}).join("")}</div>`})()}`;
 }
 
 const f2=n=>n.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
