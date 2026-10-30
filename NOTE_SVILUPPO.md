@@ -1745,3 +1745,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 630. Barra Notte del: ancora un po' piu' sottile (20px, titolo 13px).
 
 631. Home: aggiunta una freccia ‹ in basso a sinistra del riquadro a pagine (speculare a ›) per tornare alla pagina precedente.
+
+632. Scambi (calcolatore, schede IA Trade, interesse): slot di roster. A fine anno gli slot sono 13, quindi chi riceve più giocatori di quanti ne dà (e non ha slot liberi) deve tagliarne: i pezzi in più valgono il 30% (SLF). Un 977 non vale tre da 1600 totali. Eccezione: se chi cede vende un fuoriclasse (valore grezzo 1000→1500, es. Jokic) lo sconto sparisce gradualmente. Applicato in trBal (percentuali), vtSide e iaInt (interesse). Tolta la penalità 'pacchetto' dall'indice gusto (GUSTO.pack=0) perché già coperta.

@@ -3614,6 +3614,13 @@ const iaQ=n=>{if(iaCache[n]!=null)return iaCache[n];let q=.5;try{const s=pagella
 const iaOut=n=>{try{return injOut(n)}catch(e){return false}};
 const iaP=n=>vtPts(valOf(n)??VAL_FALLBACK)*(1+EQP.star*(iaQ(n)-.5))*(1+iaPerc(n));
 const iaG=n=>iaP(n)*iaOutF(n);
+/* (632) SLOT DI ROSTER: gli slot a fine anno sono sempre quelli (13), quindi chi riceve più giocatori di quanti ne dà (e non ha slot liberi) deve tagliarne: i pezzi in più valgono solo una frazione (SLF) e un 977 vale più di tre da 1600 totali.
+   Eccezione: se chi cede vende un fuoriclasse (valore grezzo da 1000 a 1500) c'è margine per prendere tanti pezzi di qualità più bassa e lo sconto sparisce. Chi ha slot liberi (rosa sotto i 13) non ha sconto. */
+const SLF=.30,SL_MAX=13;
+function slotFree(t){try{return Math.max(0,SL_MAX-(ROSTER[t]||[]).filter(p=>p[5]!=="G").length)}catch(e){return 0}}
+function slotEff(t,recvPts,recvNames,nGive,gaveNames){const n=recvPts.length,sur=n-nGive-slotFree(t);if(sur<=0||n<2)return recvPts.reduce((a,b)=>a+b,0);
+  const top=Math.max(0,...gaveNames.map(g=>valOf(g)??0)),star=Math.max(0,Math.min(1,(top-1000)/500)),f=SLF+(1-SLF)*star,a=[...recvPts].sort((x,y)=>y-x);
+  return a.reduce((s,v,i)=>s+(i<n-sur?v:v*f),0)}
 const iaSum=(a,f)=>a.reduce((s,x)=>s+f(x),0);
 const iaRand=(()=>{let s=1;return{seed:v=>{s=(v>>>0)||1},n:()=>{s^=s<<13;s>>>=0;s^=s>>>17;s^=s<<5;s>>>=0;return s/4294967296}}})();
 const iaSp=n=>{try{return spFuori(n)}catch(e){return false}};
@@ -3760,7 +3767,7 @@ function iaPref(t,recv,gave){const P=iaProf(t),o={dl:0,parts:[]},f1=v=>v.toFixed
    Giovane/veterano: 26,5 anni è il centro, ±5 anni = effetto pieno. Il saldo di valore dello scambio si corregge con questi moltiplicatori. */
 function iaMul(P,t,n){const a=iaAge(n);if(a==null)return 1;const u=Math.max(-1,Math.min(1,(26.5-a)/5)),cash=Math.max(0,Math.min(1,(iaCassa(t)-30)/200));
   return Math.max(.5,1+EQP.pvA*(-P.c)*u+(P.c<0&&u>0?EQP.pvC*cash*(-P.c)*u:0))}
-function iaInt(S,t,recv,gave,adv0,cr){const P0=iaProf(t),mR=iaSum(recv,x=>x.v),mG=iaSum(gave,x=>x.v),dvp=(iaSum(recv,x=>x.v*(iaMul(P0,t,x.n)-1))-iaSum(gave,x=>x.v*(iaMul(P0,t,x.n)-1)))/Math.max(1,mR,mG),adv=Math.max(-1,Math.min(1,adv0+dvp));
+function iaInt(S,t,recv,gave,adv0,cr){const P0=iaProf(t),mR=iaSum(recv,x=>x.v),mG=iaSum(gave,x=>x.v),dvp=(iaSum(recv,x=>x.v*(iaMul(P0,t,x.n)-1))-iaSum(gave,x=>x.v*(iaMul(P0,t,x.n)-1)))/Math.max(1,mR,mG),adv=Math.max(-1,Math.min(1,adv0+dvp+((rv,ef)=>(ef-rv)/Math.max(1,mR,mG))(mR,slotEff(t,recv.map(x=>x.v),recv.map(x=>x.n),gave.length,gave.map(x=>x.n)))));
   const nb=iaNeed(S,t,recv,gave),vs=Math.max(0,Math.min(1,.5+adv*EQP.vsk)),sc=.5+(EQP.wnb*nb+EQP.wvs*vs-.5)*EQP.sck,l=sc>=EQP.thA?"alto":sc>=EQP.thM?"medio":"basso",d=S[t].def,nick=TEAMS[t].nick,p=[];
   /* (466) la carenza si giudica sul reparto DOPO lo scambio: ricevere un'ala dando via un'ala non copre una carenza, e dare via il miglior centro non la risolve di certo */
   const avgR=S[t].avg,tp=r=>{const base=iaEff(t).filter(p=>p[2]===r&&!gave.some(g=>g.n===p[0])).map(p=>iaLin(P0,t,p[0])*iaCov(p[0],P0)),add=recv.filter(x=>x.r===r&&!iaSp(x.n)).map(x=>iaLin(P0,t,x.n)*iaCov(x.n,P0)),a=[...base,...add].sort((x,y)=>y-x);return((a[0]||0)+(a[1]||0))/2},post=r=>avgR?Math.max(-.3,Math.min(.6,(avgR[r]-tp(r))/avgR[r])):d[r];
@@ -4004,7 +4011,10 @@ function iaRec(x){const A=iaTeam(),R={};const add=(t,k,v)=>{(R[t]=R[t]||{pl:[],c
 /* Bilancio per squadra da una mappa R {t:{pl:[{n,from}],cr:[{v,from}],pk:[{p,from}]}}: ricevuto, dato, saldo e % di vantaggio/svantaggio (saldo ÷ volume massimo scambiato) */
 const trPts=(k,o)=>k==="pl"?vtPts(valOf(o.n)??VAL_FALLBACK)*iaOutF(o.n):k==="pk"?PICK_CR[o.p]*VAL_CR:(+o.v||0)*VAL_CR;
 function trBal(R){const B={};Object.keys(R).forEach(t=>B[t]={R:0,G:0});
-  Object.entries(R).forEach(([t,r])=>["pl","cr","pk"].forEach(k=>(r[k]||[]).forEach(o=>{const p=trPts(k,o);B[t].R+=p;if(B[o.from])B[o.from].G+=p})));
+  /* (632) slot di roster: i giocatori in più rispetto a quelli ceduti (senza slot liberi) valgono solo una frazione per chi li riceve */
+  const MU={};Object.entries(R).forEach(([t,r])=>{try{const pl=(r.pl||[]).map(o=>({n:o.n,v:trPts("pl",o)})),gv=Object.values(R).flatMap(x=>(x.pl||[]).filter(o=>o.from===t)).map(o=>o.n);if(pl.length<2)return;const tot=pl.reduce((a,x)=>a+x.v,0),ef=slotEff(t,pl.map(x=>x.v),pl.map(x=>x.n),gv.length,gv);if(ef>=tot-.01)return;
+    const top=Math.max(0,...gv.map(g=>valOf(g)??0)),f=SLF+(1-SLF)*Math.max(0,Math.min(1,(top-1000)/500)),sur=pl.length-gv.length-slotFree(t);pl.slice().sort((a,b)=>b.v-a.v).forEach((x,i)=>{if(i>=pl.length-sur)MU[t+"|"+x.n]=f})}catch(e){}});
+  Object.entries(R).forEach(([t,r])=>["pl","cr","pk"].forEach(k=>(r[k]||[]).forEach(o=>{const p=trPts(k,o)*(k==="pl"?(MU[t+"|"+o.n]??1):1);B[t].R+=p;if(B[o.from])B[o.from].G+=p})));
   const base=Math.max(1,...Object.values(B).map(b=>Math.max(b.R,b.G)));
   Object.values(B).forEach(b=>{b.s=b.R-b.G;b.pc=Math.round(b.s/base*100)});return B}
 const trPcCls=pc=>pc>=3?"g":pc<=-3?"r":"y",trPcTxt=pc=>(pc>0?"+":pc<0?"−":"±")+Math.abs(pc)+"%",trPcWord=pc=>pc>=3?"vantaggio":pc<=-3?"svantaggio":"alla pari";
@@ -4339,7 +4349,7 @@ const valDelta=n=>{const a=VAL_MAN[n],b=VALORI[n]&&VALORI[n][1];if(a==null||b==n
 valApply();
 const vtPts=v=>Math.pow(Math.max(0,v)/1000,VAL_EXP)*1000;
 const VT={tab:"calc",t:["DUC","PEA"],pl:[[],[]],cr:[0,0],pk:[[],[]]};
-function vtSide(k){const pts=VT.pl[k].reduce((s,n)=>s+vtPts(valOf(n)??VAL_FALLBACK)*iaOutF(n),0);const cr=(+VT.cr[k]||0)+VT.pk[k].reduce((s,p)=>s+PICK_CR[p],0);return pts+cr*VAL_CR}
+function vtSide(k){const arr=VT.pl[k].map(n=>vtPts(valOf(n)??VAL_FALLBACK)*iaOutF(n)),pts=VT.tab==='calc3'?arr.reduce((a,b)=>a+b,0):slotEff(VT.t[1-k],arr,VT.pl[k],VT.pl[1-k].length,VT.pl[1-k]);const cr=(+VT.cr[k]||0)+VT.pk[k].reduce((s,p)=>s+PICK_CR[p],0);return pts+cr*VAL_CR}
 /* esito scambio: <10% equilibrata, 10-30% vincitore, oltre 30% grande truffa */
 const trLose=M=>M.S.reduce((m,x)=>x.s<m.s?x:m,M.S[0]).t;
 const trArt=n=>/^[aeiou]/i.test(n)?"gli":"i";
@@ -8869,7 +8879,7 @@ function atGen(){const me=AT_PR&&AT_PR.t;if(!me)return null;const pool=t=>ROSTER
   return best}
 const atTot=atSum;
 /* (624) INDICE GUSTO: calibrato sui report dei GM (361 risposte; validazione incrociata: AUC 0,60 -> 0,80). Punti di valore % corretti per età (3,5 punti per anno di differenza media pesata sul valore, ricevuti più vecchi = peggio) e per dimensione del pacchetto (12 punti per ogni giocatore oltre il primo ricevuto). + = lo scambio piace a chi riceve. */
-const GUSTO={age:3.5,pack:12};
+const GUSTO={age:3.5,pack:0};
 const gustoAge=P=>P.length?P.reduce((s,p)=>s+p.e*(p.v+1),0)/P.reduce((s,p)=>s+p.v+1,0):0;
 function gustoIdx(give,get){const vg=atSum(give),vr=atSum(get);return atDf(vg,vr)*100-GUSTO.age*(gustoAge(get)-gustoAge(give))-GUSTO.pack*Math.max(0,get.length-1)}
 const atWho=()=>AT_PR?TEAMS[AT_PR.t].nick:"";
