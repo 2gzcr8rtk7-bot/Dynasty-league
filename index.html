@@ -734,6 +734,15 @@ header::after{content:"";position:absolute;inset:0;background:repeating-linear-g
 .brandwrap{display:flex;align-items:center;gap:12px}
 .lglogo{width:48px;height:48px;border-radius:22%;object-fit:cover;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s}
 .lglogo:active{transform:scale(.9)}
+/* (592) anello di caricamento dati (ESPN / NBA) attorno al logo: si riempie davvero in base alle richieste completate */
+.brandwrap{position:relative}
+#lgring{position:absolute;pointer-events:none;border-radius:28%;padding:3px;opacity:0;transition:opacity .35s;background:conic-gradient(from 0deg,#35e0a1 calc(var(--p,0)*1turn),rgba(53,224,161,.18) 0);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+#lgring.on{opacity:1}
+#lgring.on:not(.fin){animation:lgpulse 1.1s ease-in-out infinite}
+#lgring.fin{filter:drop-shadow(0 0 6px #35e0a1)}
+@keyframes lgpulse{50%{filter:drop-shadow(0 0 7px rgba(53,224,161,.8))}}
+@media (prefers-reduced-motion:reduce){#lgring.on:not(.fin){animation:none}}
+
 .lglogo.spin{animation:lgspin .6s ease-in-out}
 @keyframes lgspin{to{transform:rotate(360deg)}}
 .brand{font-family:var(--display);font-style:italic;font-weight:800;font-size:28px;letter-spacing:.01em;text-transform:uppercase;line-height:.9}
@@ -2598,6 +2607,16 @@ html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.0
 <script src="dreamers-data.js"></script>
 <script src="tv-data.js"></script>
 <script src="hl-data.js"></script>
+<script>
+/* (592) anello di caricamento dati: conta le richieste verso ESPN / NBA e riempie l'anello attorno al logo */
+(function(){const F=window.fetch;if(!F)return;let n=0,d=0,t=null,el=null;
+const ring=()=>{if(el)return el;const lg=document.querySelector(".lglogo");if(!lg)return null;el=document.createElement("div");el.id="lgring";lg.parentNode.insertBefore(el,lg);return el};
+const pos=()=>{const lg=document.querySelector(".lglogo");if(!lg||!el)return;const w=lg.offsetWidth+8;el.style.cssText+=`;width:${w}px;height:${w}px;left:-4px;top:${lg.offsetTop-4}px`};
+const draw=()=>{const r=ring();if(!r)return;pos();r.classList.remove("fin");r.classList.add("on");r.style.setProperty("--p",Math.max(.06,n?d/n:0))};
+const end=()=>{clearTimeout(t);t=setTimeout(()=>{if(d<n)return;const r=ring();if(!r)return;r.style.setProperty("--p",1);r.classList.add("fin");setTimeout(()=>{r.classList.remove("on","fin");n=d=0},700)},350)};
+window.fetch=function(u,o){const url=typeof u==="string"?u:(u&&u.url)||"";if(!/espn\.com|nba\.com/.test(url))return F.apply(this,arguments);
+ n++;draw();const done=()=>{d++;draw();end()};const p=F.apply(this,arguments);p.then(done,done);return p}})();
+</script>
 <script src="spazio-data.js"></script>
 <script>
 const TEAMS={
