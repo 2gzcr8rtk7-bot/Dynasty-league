@@ -3191,17 +3191,7 @@ function vEfficienza(){
   <div class="effbar">${szSelect(sz)}<div class="metsw effsw"><button data-effmet="eff" aria-pressed="${!isP}">Eff.</button><button data-effmet="pdk" aria-pressed="${isP}">PDK</button></div></div>
   <div class="eboard">${sq}</div>
   <p class="note">${isP?"PDK medio = media dei PDK a partita dei giocatori della rosa (stagione scelta). Notte = media dei PDK di chi è sceso in campo. Colori: viola da 40, verde 30–40, giallo 20–30, rosso sotto 20.":"Efficienza stagionale = Dunkest totali ÷ minuti giocati da tutta la rosa. Dk = Dunkest stagionali di squadra."} Tocca una squadra per la tabella dei suoi giocatori.</p>
-  <div style="height:22px"></div>
-  <div class="hgreen">${H("Top 10 lega",`<em>min. 10 minuti</em>`)}</div>
-  <div class="eboard">${top}</div>
-  <div style="height:22px"></div>
-  <div class="hred">${H("Flop 10 lega",`<em>min. 10 minuti</em>`)}</div>
-  <div class="eboard">${flop}</div>
-  <div style="height:22px"></div>
-  <div class="hyellow">${H("Giocatori")}</div>
-  <div class="chips">${chips}</div>
-  <div class="tbl-wrap"><table class="ptbl"><thead><tr><th>Giocatore</th><th>${isP?"PDK":"Eff."}</th><th>PG</th><th>Min</th></tr></thead><tbody>${rows}</tbody></table></div>
-  <p class="note">${isP?`<span class="pdkx v">da 40</span> <span class="pdkx g">30–40</span> <span class="pdkx y">20–30</span> <span class="pdkx r">sotto 20</span> &nbsp; PDK = punti Dunkest medi a partita (senza capitano).`:`<span class="ev g"><i></i>sopra 1,10</span> &nbsp; <span class="ev y"><i></i>0,80–1,10</span> &nbsp; <span class="ev r"><i></i>sotto 0,80</span> &nbsp; Efficienza = Dunkest per minuto (punteggi ufficiali Dunkest, senza capitano).`} Stagioni passate: regular season dei giocatori delle rose attuali.</p>`;
+  <div style="height:22px"></div>`;
 }
 
 const NUM={};Object.values(ROSTER).forEach(a=>a.forEach(p=>NUM[p[0]]=p[1]));
