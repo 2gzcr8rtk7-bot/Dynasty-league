@@ -7374,8 +7374,6 @@ function vGLeague(){
     <div class="glhd"><span></span><span>Giocatore</span><span>PG</span><span>Min</span><span>PDK</span><span>Eff.</span></div>${rows}</article>`}).join("");
   return `${H("Statistiche G League",`<em>${past?SZ_LBL[sz]+" · regular season "+sz:"Agg. "+EFF.agg}</em>`)}
   ${szSelect(sz)}
-  <div class="hgreen">${H("Classifica G League",`<em>efficienza di squadra</em>`)}</div>
-  <div class="eboard glrank">${rank}</div>
   ${H("Squadre satellite",`<em>tocca un giocatore</em>`)}
   <div class="ggrid">${cards}</div>
   <p class="note">Statistiche ufficiali Dunkest (stagione in corso, oppure le due stagioni passate con il menu Stagione: solo regular season), come per la prima squadra: PG = partite, Min e PDK = medie a partita, Eff. = PDK ÷ minuti. Tocca un giocatore per forma delle ultime 5 (▲▼ se si scosta almeno del 5% dalla media), ultima partita e partita per partita. Eff. squadra = PDK totali ÷ minuti totali dei 5 giocatori. Regole nella voce Regolamento → G-League.</p>`;

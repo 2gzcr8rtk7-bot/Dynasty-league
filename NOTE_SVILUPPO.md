@@ -1658,3 +1658,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 589 — Profili giocatore (squadre ed esterni FA/G League): tolta la barra rossa «PDK ed efficienza» con «Agg. …» (inutile). Il selettore Stagione resta subito sotto i pulsanti, con un po' più di margine. In coda su `coda`.
 
 590. **Sala Trofei «Velluto reale e oro»**: sfondo bordeaux con raggi di luce e puntini dorati, corona sul titolo (oro sfumato, serif spaziato), doppia cornice dorata, nessun rosso nei bordi, prima in classifica con riga evidenziata e ♛, medaglie metalliche oro/argento/bronzo, punti in oro. Stile limitato alla vista Sala Trofei (`.sala-oro`). Su `coda`, non ancora pubblicato.
+
+591 — G League: eliminata la «Classifica G League · efficienza di squadra». Restano le schede delle squadre satellite (con Eff. squadra al loro interno).
