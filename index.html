@@ -9582,13 +9582,13 @@ async function dmJer(t,p){let e=(ROSTER[t]||[]).find(q=>q[0]===p.n);if(!e)for(co
 const num=e?e[1]:"";let sv=jersey(t,num,p.n).replace(/<text[^>]*filter="[^"]*"[^>]*>[^<]*<\/text>/g,"").replace(/stroke-width="3\.6"/g,'stroke-width="1.8"').replace(/stroke-width="3\.2"/g,'stroke-width="1.6"').replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"');
 return ldImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(sv))}
 /* giocatore: maglia + targhetta nome (ruolo + cognome) + cartellino PDK; cx = centro, y = alto della maglia */
-async function dmPlayer(c,t,p,cx,y,jw,fsN,pw,ph,cap){const im=await dmJer(t,p),jh=jw*77/64;
+async function dmPlayer(c,t,p,cx,y,jw,fsN,pw,ph,cap,mul){mul=mul||1;const im=await dmJer(t,p),jh=jw*77/64;
   if(im){c.save();c.shadowColor="rgba(0,0,0,.45)";c.shadowBlur=jw*.12;c.shadowOffsetY=jw*.06;c.drawImage(im,cx-jw/2,y,jw,jh);c.restore()}
   const bh=fsN*1.5,by=y+jh-jw*.03,bw=pw;shRR(c,cx-bw/2,by,bw,bh,bh*.3);c.fillStyle="#0b0b10";c.fill();c.strokeStyle="rgba(255,255,255,.28)";c.lineWidth=2;c.stroke();
   const rl=jw>80?({G:"G",F:"A",C:"C"})[p.r]||"":"",nm=drSur(p.n).toUpperCase();let fq=fsN;c.font=SH_F(800,fq,1);while(c.measureText((rl?rl+"  ":"")+nm).width>bw-14&&fq>fsN*.72){fq-=1;c.font=SH_F(800,fq,1)}let s=nm;while(c.measureText((rl?rl+"  ":"")+s).width>bw-14&&s.length>3)s=s.slice(0,-1);if(s!==nm)s+="…";
   const rw=rl?c.measureText(rl).width+fsN*.3:0,tw=rw+c.measureText(s).width,fx=cx-tw/2;c.textAlign="left";c.textBaseline="middle";
   if(rl){c.fillStyle="#9aa3b2";c.fillText(rl,fx,by+bh/2+1)}c.fillStyle="#fff";c.fillText(s,fx+rw,by+bh/2+1);
-  shPill(c,p.e==null?null:p.e,cx-pw/2,by+bh+4,pw,ph,ph*.7,p.e==null?"—":undefined);
+  shPill(c,p.e==null?null:p.e,cx-pw/2,by+bh+4,pw,ph,ph*.7,p.e==null?"—":(mul!==1?String(Math.round(p.e*mul*100)/100).replace(".",","):undefined));
   if(cap){const r=jw*.17,cx2=cx-jw*.42,cy2=y+r+2;c.beginPath();c.arc(cx2,cy2,r,0,7);c.fillStyle="#f5b400";c.fill();c.strokeStyle="#111";c.lineWidth=2;c.stroke();c.fillStyle="#111";c.font=SH_F(800,r*1.25,1);c.textAlign="center";c.textBaseline="middle";c.fillText("C",cx2,cy2+1)}
   return by+bh+4+ph}
 const dmShade=(h,q)=>{const n=parseInt(h.slice(1),16),f=v=>Math.round(v*(1-q)).toString(16).padStart(2,"0");return"#"+f(n>>16)+f(n>>8&255)+f(n&255)};
@@ -9606,7 +9606,7 @@ async function dmCourt(c,t,T,x,y,w,h){const C=TEAMS[t],OT=(typeof dlTm==="functi
   c.beginPath();c.moveTo(wx+ww*.0426,wy);c.lineTo(wx+ww*.0426,wy+wh*.13);c.arc(cx,wy+wh*.13,ww*.457,Math.PI,0,true);c.lineTo(wx+ww*.9574,wy);c.stroke();c.globalAlpha=1;c.restore();
   const atxt=Math.abs(dmLum(C.fg)-dmLum(apron))>.35?C.fg:(dmLum(apron)>.55?"#111":"#fff");c.textAlign="center";c.textBaseline="middle";c.fillStyle=atxt;let fs=40;c.font=SH_F(800,fs,1);const nm=(C.city+" "+C.nick).toUpperCase();while(c.measureText(nm).width>w-60&&fs>22){fs-=2;c.font=SH_F(800,fs,1)}c.letterSpacing="2px";c.fillText(nm,x+w/2,y+hb/2+2);c.letterSpacing="0px";
   const R={C:0,F:1,G:2},st=T.top.slice(0,5).map((p,i)=>({...p,cap:i===0})).sort((a,b)=>(R[a.r]??3)-(R[b.r]??3)),jw=92,top0=wy+12,rowH=186,P=[[.5,0],[.25,1],[.75,1],[.25,2],[.75,2]];
-  for(let i=0;i<st.length;i++)await dmPlayer(c,t,st[i],wx+ww*P[i][0],top0+rowH*P[i][1],jw,25,176,34,st[i].cap)}
+  for(let i=0;i<st.length;i++)await dmPlayer(c,t,st[i],wx+ww*P[i][0],top0+rowH*P[i][1],jw,25,176,34,st[i].cap,st[i].cap?1.5:1)}
 async function shDM(){const S=SHR_DM;if(!S)return null;const H=1540,{cv,c,W}=await shBase(H);
   const{a,b,A,B}=S,sa=A.score,sb=B.score,has=sa!=null&&sb!=null,wa=has&&sa>sb,wb=has&&sb>sa;
   c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(700,30,1);c.fillStyle="rgba(233,213,255,.9)";c.letterSpacing="4px";c.fillText(`${S.ph.toUpperCase()} · ${S.range}`,W/2,196);c.letterSpacing="0px";
@@ -9622,7 +9622,7 @@ async function shDM(){const S=SHR_DM;if(!S)return null;const H=1540,{cv,c,W}=awa
   for(const[t,T,x]of[[a,A,xs[0]],[b,B,xs[1]]]){await dmCourt(c,t,T,x,cy,cw,chh);
    const by=cy+chh+22;c.textBaseline="alphabetic";c.textAlign="left";c.font=SH_F(800,19,1);c.letterSpacing="1px";c.fillStyle="#fcd34d";c.fillText("6° UOMO",x+6,by+20);c.fillStyle="#c4b5fd";c.fillText("PANCHINA ×½",x+98+26,by+20);c.letterSpacing="0px";
    for(let i=0;i<5;i++){const p=T.top[5+i];if(!p)continue;const cx=x+49+i*98;if(i===0){shRR(c,cx-47,by+30,94,152,14);c.fillStyle="rgba(245,180,0,.14)";c.fill();c.strokeStyle="rgba(245,180,0,.55)";c.lineWidth=2;c.stroke()}
-    await dmPlayer(c,t,p,cx,by+38,64,18,92,32,false)}}
+    await dmPlayer(c,t,p,cx,by+38,64,18,92,32,false,i===0?1:.5)}}
   shFoot(c,W,H,"PDK formula Dunkest · capitano ×1,5 · panchina ×½"+(S.lv?" · punteggi provvisori":""));return cv}
 </script>
 </body>
