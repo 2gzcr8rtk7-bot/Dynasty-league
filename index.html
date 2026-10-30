@@ -2225,16 +2225,11 @@ html[data-si="x"] [data-ist] .pcd::before{display:none}html[data-si="line"] .inj
 .dls-sq .pnm,.dls-sq .pcd{border-radius:0!important}
 .noanim *,.noanim *::before,.noanim *::after{animation:none!important;transition:none!important}
 .setbtn{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;padding:0}
-/* (556) tasto No spoiler nello stile del tasto modalità notte; varianti a/b/c/d via data-nsv sul tasto (provvisorie) */
-.nsbtn{position:relative;width:38px;height:28px;border-radius:9px;border:1px solid rgba(255,255,255,.18);background:#141b36;color:#c9d2f5}
-.nsbtn svg{width:16px;height:16px}.nsbtn i{position:absolute;top:4px;right:5px;width:6px;height:6px;border-radius:50%;background:#ef4444;opacity:.5}
-.nsbtn.on{background:linear-gradient(180deg,#3b2a8a,#1b1240);border-color:#8b5cf6;color:#fff;box-shadow:0 0 12px rgba(139,92,246,.6)}.nsbtn.on i{opacity:1;animation:lvp 1.4s infinite}
+/* (556) tasto No spoiler nello stile del tasto modalità notte, grande come l'ingranaggio: occhio aperto (spento) / occhio barrato (acceso) */
+.nsbtn{position:relative;width:40px;height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:#141b36;color:#c9d2f5}
+.nsbtn svg{width:21px;height:21px}
+.nsbtn.on{background:linear-gradient(180deg,#3b2a8a,#1b1240);border-color:#8b5cf6;color:#fff;box-shadow:0 0 12px rgba(139,92,246,.6)}
 .nsbtn[hidden]{display:none}
-.nsbtn[data-nsv=b]{width:40px;height:40px;border-radius:12px}.nsbtn[data-nsv=b] svg{width:21px;height:21px}.nsbtn[data-nsv=b] i{top:6px;right:7px}
-.nsbtn[data-nsv=c].on{background:linear-gradient(180deg,#7a5200,#3a2700);border-color:#f5b400;box-shadow:0 0 12px rgba(245,180,0,.55)}.nsbtn[data-nsv=c].on i{background:#f5b400}
-.nsbtn[data-nsv=c]{width:40px;height:40px;border-radius:12px}.nsbtn[data-nsv=c] svg{width:21px;height:21px}
-.nsbtn[data-nsv=d]{width:auto;padding:0 10px 0 9px;display:inline-flex;gap:6px;align-items:center;height:28px}.nsbtn[data-nsv=d]::after{content:"SPOILER";font-family:var(--display);font-style:italic;font-weight:800;font-size:11px;letter-spacing:.06em}
-.nsbtn[data-nsv=d].on::after{content:"NASCOSTI"}.nsbtn[data-nsv=d] i{top:3px;right:3px}
 .setbtn svg{width:24px;height:24px}.setbtn:active{transform:scale(.94)}
 .setprev{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--hh,150px) - 3px);z-index:4;background:var(--bg,#0a1330);padding:6px 0 8px;margin:0 -2px 6px;border-bottom:1px solid rgba(255,255,255,.12)}
 html.setpg header{position:relative!important;top:auto!important}html.setpg .setprev{top:env(safe-area-inset-top,0px)}
@@ -3120,7 +3115,7 @@ const ST_BASE={cOk:"#22c55e",pG:"#16a34a"};
 let DLS={...DLS_DEF};try{Object.assign(DLS,JSON.parse(localStorage.getItem("dl_set")||"{}"))}catch(e){}
 /* (555) No spoiler: chi lo aveva già attivo conserva il tasto in testata (nsb) */
 if(DLS.nsb===undefined&&DLS.ns)DLS.nsb=true;
-function nsBtn(){const b=document.getElementById("nsbtn");if(!b)return;b.hidden=!DLS.nsb;b.classList.toggle("on",!!DLS.ns);b.innerHTML=DLS.ns?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M10.6 5.2A9.6 9.6 0 0 1 12 5c6 0 9.5 7 9.5 7a15 15 0 0 1-3.2 4M6.3 7.4C3.6 9.300 2.500 12 2.500 12S6 19 12 19c1.500 0 2.800-.4 4-.9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><i></i>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 12S5.5 4.5 12 4.5 22.5 12 22.5 12 18.5 19.5 12 19.5 1.5 12 1.5 12Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.2" fill="currentColor"/></svg><i></i>';b.title=b.ariaLabel=DLS.ns?"No spoiler attivo: tocca per mostrare i risultati":"No spoiler spento: tocca per nasconderli"}
+function nsBtn(){const b=document.getElementById("nsbtn");if(!b)return;b.hidden=!DLS.nsb;b.classList.toggle("on",!!DLS.ns);b.innerHTML=DLS.ns?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M10.6 5.2A9.6 9.6 0 0 1 12 5c6 0 9.5 7 9.5 7a15 15 0 0 1-3.2 4M6.3 7.4C3.6 9.300 2.500 12 2.500 12S6 19 12 19c1.500 0 2.800-.4 4-.9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 12S5.5 4.5 12 4.5 22.5 12 22.5 12 18.5 19.5 12 19.5 1.5 12 1.5 12Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.2" fill="currentColor"/></svg>';b.title=b.ariaLabel=DLS.ns?"No spoiler attivo: tocca per mostrare i risultati":"No spoiler spento: tocca per nasconderli"}
 document.addEventListener("click",e=>{if(e.target.closest("#nsbtn")){DLS.ns=!DLS.ns;dlsSave();nsBtn();try{render()}catch(_){}}});
 for(const k in ST_BASE)if(DLS[k]===ST_BASE[k])DLS[k]=DLS_DEF[k];
 const DLS_FL={classic:["#b9793f","#dba567","Parquet classico"],maple:["#d9b98a","#f0d8aa","Acero chiaro"],walnut:["#6b3f22","#8a5a36","Noce scuro"],ebony:["#1c1d22","#34353c","Ebano nero"],blue:["#1e3a8a","#2f5fd0","Blu arena"],street:["#6b7280","#9ca3af","Cemento street"],purple:["#2b0a5e","#6d28d9","Viola neon"],green:["#14532d","#22863a","Verde"],cherry:["#7a2e1d","#b0502f","Ciliegio"],ash:["#a8a092","#d3ccbd","Frassino grigio"],mahogany:["#4a1a12","#7a301f","Mogano"],bamboo:["#b79a45","#dcc673","Bambù"],natale:["#14532d","#1f8a45","🎄 Natale"],halloween:["#1a1033","#3b1d6b","🎃 Halloween"],team:["","","Colori squadra"]};
