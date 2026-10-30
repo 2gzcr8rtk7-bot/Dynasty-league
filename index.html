@@ -4906,6 +4906,7 @@ const hnLay=()=>HN_L===""?"6":HN_L,hnScope=()=>"all";/* (413) solo Home ufficial
 function hnSet(k){const sc=hnScope();HN_L=["0","5","6"].includes(k)?k:"";HN_S=sc;try{HN_L?localStorage.setItem("dl_hnl",HN_L):localStorage.removeItem("dl_hnl");localStorage.setItem("dl_hns",HN_S)}catch(e){}}
 function hnScopeSet(v){if(!["all","team"].includes(v))return;HN_S=v;try{localStorage.setItem("dl_hns",v)}catch(e){}}
 /* (353) Fase della Home notte: dalle 14:00 (ora italiana, era 08:30) fino alla prima partita della notte USA mostra le partite che stanno per arrivare (restituisce la data USA), poi torna live. Prima delle 08:30 restano i risultati della notte appena finita. */
+function hnNowMn(){const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date());return +f.find(x=>x.type==="hour").value*60+ +f.find(x=>x.type==="minute").value}
 function homeFase(mnTest){try{const o=flUsaOggi(),G=(TV.days[o]||[]);let mn=mnTest;if(typeof mn!=="number"){const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date());mn=+f.find(x=>x.type==="hour").value*60+ +f.find(x=>x.type==="minute").value}
   const hasS=G.some(g=>g[5]==="S"),started=G.some(g=>g[5]==="L"||g[5]==="F");return hasS&&!started&&!(mn>=360&&mn<840)?o:null}catch(e){return null}}
 const HN_DEFC={};function hnDef(opp,role){const k=opp+"|"+role,n=Date.now(),c=HN_DEFC[k];if(c&&n-c.t<600000)return c.v;let v=null;try{v=capDef(opp,role)}catch(e){}HN_DEFC[k]={t:n,v};return v}
@@ -4928,7 +4929,7 @@ function hnTeamsHtml(){return`<div class="setchips">${teamOrd().map(t=>`<button 
 function hnTeam(t){if(!TEAMS[t])return;HN_T=t;try{localStorage.setItem("dl_hnt",t)}catch(e){}}
 
 /* (393) Casellina della Home a 3 pagine: Giocatori (come prima) · Risultati Dreamers · Classifica Dreamers. Si cambia con lo swipe orizzontale (verso destra = pagina successiva, verso sinistra = precedente) o toccando i puntini. */
-let HN_PG=0,HN_RK=null;
+let HN_PG=0,HN_RK=null,HN_NO=0;
 /* (626) dalle 14:00 (fase pre) il giro ha una 4a pagina: Previsione > Risultati > Classifica > Notte appena avvenuta > Previsione. Prima delle 14 la notte appena avvenuta è la pagina predefinita e la Previsione non esiste. */
 const HN_PGN4=["Previsione","Risultati","Classifica","Notte"],HN_PGN3=["Giocatori","Risultati","Classifica"];let HN_PGN=HN_PGN3;
 const HN_CTL="one"; /* "wheel" = rotella · "arr" = freccette */
@@ -5043,7 +5044,12 @@ function homeNotte(st){
   if(OFF){mine=[];teamOrd().forEach(t=>{try{const M=campoNotteMap(t);Object.keys(M).forEach(n=>mine.push({n,N:M[n],own:t}))}catch(e){}})}
   mine.sort((a,b)=>(b.N.lv-a.N.lv)||(b.N.p-a.N.p));
   if(OFF){mine.forEach(x=>HN_OWN.add(x.own));mine=hsoF(mine)}
-  const mTot=mine.reduce((a,x)=>a+(x.N.p||0),0);
+  /* (627) dalle 14:00 la pagina "Notte appena avvenuta" resta anche a partite iniziate (la Previsione e' sostituita dalla live); (628) con lo swipe da sinistra a destra (o la freccia ‹) si torna alle notti precedenti */
+  let liveNow=false,mineP=[],NN=[],dN=null;try{const mn=hnNowMn();liveNow=!pre&&!(mn>=360&&mn<840)&&campoNotte()===flUsaOggi();
+    if(pre||liveNow){const base=pre?campoNotte():drAdd(flUsaOggi(),-1);NN=Object.keys(TV.days).filter(x=>x<=base&&(TV.days[x]||[]).some(g=>g[5]==="F"&&g[7]&&TV.box[g[7]])).sort().reverse();HN_NO=Math.max(0,Math.min(HN_NO,NN.length-1));dN=NN[HN_NO]||null;
+      if(dN){if(OFF){teamOrd().forEach(t=>{try{const M=campoNotteMap(t,dN);Object.keys(M).forEach(n=>mineP.push({n,N:M[n],own:t}))}catch(e){}})}else{const M=campoNotteMap(myT,dN);mineP=Object.keys(M).map(n=>({n,N:M[n]}))}}
+      mineP.sort((a,b)=>(b.N.lv-a.N.lv)||(b.N.p-a.N.p));if(OFF){mineP.forEach(x=>HN_OWN.add(x.own));mineP=hsoF(mineP)}}}catch(e){liveNow=false}
+  const mTot=mine.reduce((a,x)=>a+(x.N.p||0),0),mTotP=mineP.reduce((a,x)=>a+(x.N.p||0),0);
   let seg=[];try{const NI=osNight();seg=SEGUI.map(n=>({n,N:NI[tvNm(n)]})).filter(x=>x.N)}catch(e){}
   seg.sort((a,b)=>(b.N.lv-a.N.lv)||(b.N.p-a.N.p));
   const mLv=mine.some(x=>x.N.lv),sLv=seg.some(x=>x.N.lv);
@@ -5071,7 +5077,7 @@ function homeNotte(st){
   const TOP=hnLay()==="5";
   const mC=pre?prePanel(OFF?"TUTTE LE SQUADRE":"I MIEI STANOTTE · "+TEAMS[myT].nick.toUpperCase(),"m",preL(OFF?Object.values(ROSTER).flat().map(p=>p[0]):(ROSTER[myT]||[]).map(p=>p[0]),true),OFF?"Nessun giocatore gioca stanotte.":"Nessuno dei tuoi giocatori gioca stanotte."):panel(OFF?"TUTTE LE SQUADRE":"I MIEI · "+TEAMS[myT].nick.toUpperCase(),"m",mine,OFF?"Nessun giocatore in campo stanotte.":"Nessuno dei tuoi giocatori in campo stanotte.",OFF?null:mTot);
   const mCls=(mC.match(/^<div class="([^"]*)">/)||[0,"hmcard m"])[1],mIn=mC.replace(/^<div class="[^"]*">/,"").replace(/<\/div>$/,""),rIn=hnResCard(),cIn=hnClaCard(),sl=h=>`<div class="hmslot">${h}</div>`;
-  let nIn=null;if(pre){try{const nC=panel(OFF?"NOTTE APPENA AVVENUTA":"NOTTE APPENA AVVENUTA · "+TEAMS[myT].nick.toUpperCase(),"m",mine,OFF?"Nessun giocatore in campo la notte scorsa.":"Nessuno dei tuoi giocatori in campo la notte scorsa.",OFF?null:mTot);nIn=nC.replace(/^<div class="[^"]*">/,"").replace(/<\/div>$/,"")}catch(e){nIn=null}}
+  let nIn=null;if(pre||liveNow){try{const nC=panel(OFF?"TUTTE LE SQUADRE":"I MIEI · "+TEAMS[myT].nick.toUpperCase(),"m",mineP,OFF?"Nessun giocatore in campo quella notte.":"Nessuno dei tuoi giocatori in campo quella notte.",OFF?null:mTotP),dl=dN?dN.slice(8,10)+"/"+dN.slice(5,7):"",nav=`<div class="hmh hmnv"><button type="button" class="hmar" data-hno="1" ${HN_NO>=NN.length-1?"disabled":""} aria-label="Notte precedente">‹</button><span class="hmnt"><b>${HN_NO?"NOTTE DEL "+dl:"NOTTE APPENA AVVENUTA"}</b><small>${dl} · scorri a destra per le notti prima</small></span><button type="button" class="hmar" data-hno="-1" ${HN_NO<=0?"disabled":""} aria-label="Notte successiva">›</button></div>`;nIn='<div class="hmnn4">'+nav+nC.replace(/^<div class="[^"]*">/,"").replace(/<\/div>$/,"")+"</div>"}catch(e){nIn=null}}
   const PG=nIn?[mIn,rIn,cIn,nIn]:[mIn,rIn,cIn];HN_PGN=nIn?HN_PGN4:HN_PGN3;
   const mCard=`<div class="${mCls} hmmulti"><div class="hmcar"><div class="hmtrk">${[PG[PG.length-1],...PG,PG[0]].map(sl).join("")}</div></div>${hnDots()}</div>`;
   return`<div class="hn6${TOP?" top":""}${OFF?"":" tm"}" style="--tc:${TEAMS[myT].bg}">${TOP?"":`<div class="hmqrow">${banner}</div>`}<div class="hmrail">${teamOrd().map(t=>{const x=st.find(y=>y.t===t)||{w:0,l:0};return`<button class="hrl" data-team="${t}" style="--tc:${TEAMS[t].bg}" aria-label="Roster ${TEAMS[t].name} ${x.w}-${x.l}" title="${TEAMS[t].name} ${x.w}-${x.l}">${badge(t)}${TOP?`<small>${x.w}-${x.l}</small>`:""}</button>`}).join("")}</div>
@@ -5106,6 +5112,8 @@ function bindHomeNotte(root){root.querySelectorAll(".hrl").forEach(b=>b.onclick=
     g.addEventListener("dblclick",()=>{delete HN_H[c];sc.style.maxHeight="";save()});
     g.addEventListener("click",e=>e.stopPropagation())});
   root.querySelectorAll("[data-hpg]").forEach(b=>b.onclick=e=>{e.stopPropagation();hnGo(+b.dataset.hpg)});
+  root.querySelectorAll("[data-hno]").forEach(b=>b.onclick=e=>{e.stopPropagation();HN_NO=Math.max(0,HN_NO+(+b.dataset.hno));HN_PG=3;hnRe()});
+  root.querySelectorAll(".hmnn4").forEach(sl=>{let x0=null,y0=0;sl.style.touchAction="pan-y";sl.addEventListener("pointerdown",e=>{if(e.button>0)return;x0=e.clientX;y0=e.clientY});sl.addEventListener("pointerup",e=>{if(x0==null)return;const dx=e.clientX-x0,dy=e.clientY-y0;x0=null;if(Math.abs(dx)>50&&Math.abs(dx)>1.6*Math.abs(dy)){HN_NOCLK=performance.now()+400;HN_NO=Math.max(0,HN_NO+(dx>0?1:-1));HN_PG=3;hnRe()}});sl.addEventListener("pointercancel",()=>{x0=null})});
   root.querySelectorAll("[data-hrk]").forEach(b=>b.onclick=e=>{e.stopPropagation();try{const P=drPO(drStand());HN_RK=Math.max(1,Math.min(P.end,(HN_RK==null?drCurWeek(P):HN_RK)+(+b.dataset.hrk)))}catch(_){}HN_PG=1;hnRe()});
   root.querySelectorAll("[data-hrs]").forEach(b=>b.onclick=()=>{if(performance.now()<HN_NOCLK)return;const[k,x,y]=b.dataset.hrs.split("|");DR.k=+k;DR.tab="turno";DR.open=[x,y];DR.team=null;DR.rules=false;DR.fh=true;GAME="dream";cur="giochi";render();window.scrollTo(0,0)});
   root.querySelectorAll("[data-hcl]").forEach(b=>b.onclick=()=>{if(performance.now()<HN_NOCLK)return;DR.tab="cla";DR.open=null;DR.rules=false;DR.team=b.dataset.hcl;DR.tf=null;DR.tt=null;DR.fh=true;GAME="dream";cur="giochi";render();window.scrollTo(0,0)});
@@ -6922,7 +6930,7 @@ document.addEventListener("click",e=>{const r=e.target.closest("[data-clgo]");if
 document.addEventListener("click",e=>{const pb=e.target.closest("[data-shpc]");if(pb){e.preventDefault();e.stopPropagation();const S=SHR_CAMPO;if(S&&S.R[+pb.dataset.shpc]){SHR_PC={x:S.R[+pb.dataset.shpc],t:S.t};shOpen("pc")}return}
   const b=e.target.closest("[data-share]");if(!b)return;e.preventDefault();e.stopPropagation();if(b.dataset.share==="pl"){plShAsk();return}shOpen(b.dataset.share)},true);
 let CNT=false;
-function campoNotteMap(t){const d=campoNotte(),o={};if(!d)return o;const mine={};(ROSTER[t]||[]).forEach(p=>mine[tvNm(p[0])]=p[0]);
+function campoNotteMap(t,dd){const d=dd||campoNotte(),o={};if(!d)return o;const mine={};(ROSTER[t]||[]).forEach(p=>mine[tvNm(p[0])]=p[0]);
   for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
     [["a",g[1]],["h",g[0]]].forEach(([sd,opp])=>(B[sd]||[]).forEach(r=>{const n=mine[tvNm(r[0])];if(n&&r[19]!=null)o[n]={p:+r[19],opp,lv:g[5]==="L",st:g[5]==="L"?(TVL.st[g[7]]||"Live"):"Finale",k:g[7],sd,dy:d}}))}
   return o}

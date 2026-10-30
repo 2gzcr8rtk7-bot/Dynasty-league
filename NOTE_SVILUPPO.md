@@ -1736,3 +1736,6 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 625. Home live: nuova scelta PDK/BOX in Impostazioni > Home > Aspetto della Home. Con BOX ogni giocatore live (Tutte le squadre e Seguiti, in entrambe le Home live) mostra il PDK accanto al cognome, la riga avversario + timer rosso e sotto il box score con gli stessi colori di Statistiche notte (PT RB AS ST BL 3P TO e tiri sbagliati). Default: PDK come prima.
 
 626. Home, giro delle pagine: dalle 14:00 (fase pre) Previsione > Risultati > Classifica > Notte appena avvenuta > Previsione; prima delle 14 la notte appena avvenuta e' la pagina predefinita e la Previsione non c'e' (giro a 3 pagine). Previsione ordinata per PDK previsionale (dal piu' alto). Versione BOX ora predefinita; in Impostazioni la scelta e' BOX / Snella (solo PDK).
+
+627. Home, 4 pagine anche a partite iniziate: dalle 14:00 la Previsione e' sostituita dalla pagina live e la Notte appena avvenuta (giorno USA precedente) resta come ultima pagina; prima delle 14 restano 3 pagine.
+628. Pagina Notte appena avvenuta: swipe da sinistra a destra (o freccia ‹ in alto) per tornare alle notti precedenti con box score, freccia › per tornare avanti; elenco = tutte le notti con box disponibili.
