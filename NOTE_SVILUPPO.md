@@ -1701,3 +1701,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 609 — Toccando la scritta DREAMERS in alto accanto al logo si torna alla Home (il logo continua ad aggiornare la pagina).
 
 610 — Scritta DREAMERS in alto: al tocco (ritorno alla Home) diventa viola con un alone luminoso che svanisce in circa un secondo.
+
+611 — Scritta DREAMERS: l effetto viola dura solo il tempo del tocco (animazione breve, circa 0,3 secondi, e anche finché è premuta) poi torna subito bianca; alone più leggero.
