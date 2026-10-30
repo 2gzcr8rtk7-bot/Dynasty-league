@@ -1688,3 +1688,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 603 — Statistiche notte: BOX è il tasto predefinito; palle perse chiamate TO (rosso da 3 in su); tiri sbagliati rossi se oltre il 60% dei tentati (almeno 5 tiri, liberi compresi); aggiunta la casella 3P (triple segnate, verde da 3 in su, come il bonus PDK).
 
 604 — Statistiche notte, tasto BOX: il PDK a destra è allineato in verticale alle caselle delle statistiche (layout a griglia, il logo copre tutta l altezza della riga).
+
+605 — Box notte: le statistiche che compongono doppia/tripla/quadrupla doppia hanno solo il bordino viola; i numeri seguono sempre le soglie verdi (non più gialli).
