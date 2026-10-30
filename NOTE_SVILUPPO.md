@@ -1630,3 +1630,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 575 — Scheda TG nella striscia Home senza finestre: al tocco la striscia si ferma con la scheda a sinistra, il TG gira dentro la scheda (loghi/titolo che cambiano, barra di avanzamento, voce) e a fine TG la striscia riparte; secondo tocco = stop. L'overlay a schermo intero resta solo nella vetrina «Notizie». In coda su `coda`, non pubblicato.
 
 576 — Scheda TG in Home: compariva solo se il giornale non era ancora stato letto (usava `gzPronto`); ora dipende solo dall'orario (dopo le 7:30) e dall'area Ducks sbloccata (`gzOraOk`). In coda su `coda`.
+
+577 — Area Ducks: tolto il pulsante 📰 Giornale dalla Hall. Scheda TG in Home: resta visibile tutto il giorno (non sparisce dopo la lettura) fino alle 7:30 del giorno dopo, quando esce il nuovo numero (`gzOra()` prima delle 7:30 restituisce la data di ieri). Si vede anche dopo una ricarica, senza rimettere la password: dopo il primo accesso all'area Ducks su quel telefono si salva `dl_dax` in localStorage. In coda su `coda`.
