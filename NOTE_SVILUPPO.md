@@ -1564,3 +1564,10 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 ## 542 — Statistiche notte: frecce tra le notti anche in modalità notte
 - Con la modalità notte la lista parte dalla notte live; la freccia ‹ porta alle notti passate (dati ufficiali), con ‹ › per scorrerle e › sull'ultima per tornare alla live. Senza modalità notte restano le frecce di prima.
 - Stato: pubblicato (v147, 30/10/2026).
+
+
+## No spoiler (30/10/2026, richiesta dell'utente) — pubblicato
+- Impostazioni › Home: prima voce «No spoiler» (`DLS.ns`, tasto `data-dlst="ns"`, salvato sul telefono).
+- Se acceso: in Dynasty TV (lista partite di `vTV`) le partite FINITE non mostrano punteggio, freccetta della vincente e riga «Top» (`tvNoSp(key)`); al loro posto «🙈 Risultato nascosto (no spoiler) · apri la partita per vederlo». Le LIVE restano visibili.
+- Aprire la partita (`tvGame`) la segna come vista (`tvSeen`, localStorage `dl_tvseen`): da lì il risultato di quella partita resta visibile.
+- Non toccati: carosello della Home e sfide DREAMERS (mostrano ancora i risultati). Patch: /home/claude/patch_nospoiler2.py (sessione dei report).
