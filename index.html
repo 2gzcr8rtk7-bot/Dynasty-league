@@ -2666,7 +2666,7 @@ const TEAMS={
   DOL:{name:"Salt Lake Dolphins",city:"Salt Lake",nick:"Dolphins",bg:"#1747c9",fg:"#ffffff",trim:"#0b0b0b"},
   DUC:{name:"Texas Ducks",city:"Texas",nick:"Ducks",bg:"#facc15",fg:"#111111",trim:"#111111",stroke:"#ffffff"},
   FOX:{name:"Detroit Foxes",city:"Detroit",nick:"Foxes",bg:"#f97316",fg:"#111111",trim:"#111111"},
-  PEA:{name:"Dakota Peacocks",city:"Dakota",nick:"Peacocks",bg:"#2f6bff",fg:"#ff7a1a",trim:"#ff7a1a",txt:"#ffffff"},
+  PEA:{name:"Dakota Peacocks",city:"Dakota",nick:"Peacocks",bg:"#f70990",fg:"#ff7a1a",trim:"#ff7a1a",txt:"#ffffff"},
   SPI:{name:"Sacramento Spiders",city:"Sacramento",nick:"Spiders",bg:"#8cc9f5",fg:"#0f1f3d",trim:"#1e3a8a"},
   TUR:{name:"California Turtles",city:"California",nick:"Turtles",bg:"#16a34a",fg:"#7dd3fc",trim:"#7dd3fc"},
   EAG:{name:"San Diego Eagles",city:"San Diego",nick:"Eagles",bg:"#0f1b4d",fg:"#facc15",trim:"#facc15"},
@@ -2999,7 +2999,7 @@ let KIT={};try{KIT=JSON.parse(localStorage.getItem("dl_kit")||"{}")||{}}catch(e)
 let KITG=null;try{const v=localStorage.getItem("dl_kitg");if(v!==null&&v!=="")KITG=+v}catch(e){}
 function kitSalva(){try{if(KITG==null)localStorage.removeItem("dl_kitg");else localStorage.setItem("dl_kitg",String(KITG))}catch(e){}}
 function kitDi(t){const nt=typeof CNT!=="undefined"&&CNT&&cur==="campo";if(KITG!=null)return KITG;return nt?1:0}/* la scelta della maglia vale in TUTTE le sezioni (giocatore, scontri, trade...) */
-function kitC(t,k){const T=TEAMS[t];
+function kitC(t,k){const T=t==="PEA"?{...TEAMS[t],bg:"#2f6bff"}/* 30/10: sfondo Peacocks rosa, maglie invariate */:TEAMS[t];
   const casa=t==="DUC"?{...T,bg:"#facc15"}:t==="SPI"?{...T,bg:"#ffffff",fg:"#111111"}:t==="DOL"?{...T,bg:"#f4f6f8",fg:"#1747c9",trim:"#1747c9",jstroke:"#ffffff",outer:"#1747c9"}:T;
   if(k===1)return t==="DUC"?{...T,bg:"#141414",fg:"#facc15",trim:"#facc15"}:t==="PEA"?{...T,bg:"#0f6b3f",fg:"#ffffff",trim:"#2f6bff",jstroke:"#062e1b",outer:"#2f6bff"}/* Peacocks: maglia "notte" verde pavone invece che nera */:{...T,bg:"#151515",fg:"#ffffff",trim:NOTTE_ACC(t),jstroke:"#000000",outer:NOTTE_ACC(t)};
   if(k===2){const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
