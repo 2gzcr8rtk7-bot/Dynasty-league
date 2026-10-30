@@ -1692,3 +1692,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 605 — Box notte: le statistiche che compongono doppia/tripla/quadrupla doppia hanno solo il bordino viola; i numeri seguono sempre le soglie verdi (non più gialli).
 
 606 — Giocatori: linguetta BOX/PDK attaccata al titolo. In BOX la classifica resta quella del PDK ma ogni riga mostra le medie a partita (PT RB AS ST BL 3P TO) calcolate dai box di Dynasty TV nel periodo scelto; toccando un giocatore si apre la pagina con tutti i suoi box score partita per partita (data, avversario, minuti, tiri, caselle colorate, bordino viola per doppie/triple doppie, PDK). Solo giocatori NBA con box in Dynasty TV (non G League).
+
+607 — Giocatori: la linguetta BOX/PDK si sposta sotto il filtro Periodo, attaccata in alto a sinistra alla lista.
