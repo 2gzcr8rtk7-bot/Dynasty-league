@@ -10715,6 +10715,8 @@ function plShAsk(){const S=SHR_PL;if(!S){return}
 .hmrs .hmsc{position:relative}
 .hmp.hmrs{padding:5px 2px}.hmsc .hmsd{grid-row:1;margin:0;line-height:1.1}.hmrs .hmsc b{line-height:1.05}.hmsc .hmact{text-align:right;display:grid;grid-template-columns:1fr 18px 1fr;align-items:center;column-gap:6px;width:100%;margin-top:2px;margin-bottom:0}.hmsc .hmact>:first-child:not(.hmshr){justify-self:end;grid-column:1}.hmsc .hmact .hmshr{grid-column:2}.hmsc .hmshr{position:static;margin:0;width:18px;height:18px;flex:none;display:inline-flex;padding:0}
 .hmsc .hmshr svg{width:10px;height:10px}
+/* (30/10 17:40) iPhone app da Home: sotto l'orario la fascia era a righe/sfumata e iOS la sfocava. Striscia a tinta unita (colore alto dell'intestazione) solo nell'area della barra di stato; nel browser l'area è 0 e non cambia nulla. Solo tema normale (non notte, non Dreamers a schermo intero) */
+html body:not(.notte):not(.dreamfs)::before{display:block!important;content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--hd1)!important}
 </style>
 <script>/* ===== CONDIVIDI LO SCONTRO DREAMERS (Home › card turno, 30/10/2026) =====
    Immagine 1080 px: loghi e punteggio in alto, poi i due campi (capitano + 4 in campo) e sotto il 6° uomo e la panchina (×½) di ciascuna squadra. */
