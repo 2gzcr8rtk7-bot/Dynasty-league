@@ -1564,3 +1564,7 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 ## 542 — Statistiche notte: frecce tra le notti anche in modalità notte
 - Con la modalità notte la lista parte dalla notte live; la freccia ‹ porta alle notti passate (dati ufficiali), con ‹ › per scorrerle e › sull'ultima per tornare alla live. Senza modalità notte restano le frecce di prima.
 - Stato: pubblicato (v147, 30/10/2026).
+
+## 543 — G-Dreamers: scheda «G League» nei colori verdi di G-Dreamers
+- Dentro la stanza G-Dreamers le variabili colore (pannelli, bordi, accenti) sono verdi: titoli, classifica G League, selettore Stagione, numeri di posizione, schede delle squadre satellite e tabelle giocatori non usano più il blu/rosso/oro dell'app versione giorno. Le altre schede (Classifica, Giornate, Squadre) erano già verdi.
+- Stato: in coda, non pubblicato.
