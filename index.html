@@ -303,6 +303,7 @@ h2:has(.hsrch)::after{display:none}h2:has(.hsrch) .tvgo{margin-left:auto}
 .gbig .ev{font-size:56px;gap:12px}
 .gbig .ev i{width:16px;height:16px}
 .gbig small{color:var(--muted);font-size:13px;letter-spacing:.08em;text-transform:uppercase;font-family:var(--display);font-weight:700}
+.ggrbtn+.gszn,.ggrbtn~.gszn{margin-top:12px}
 .gszn{display:flex;align-items:center;gap:10px;margin:0 0 14px}
 .gszn label{font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .gszn select{flex:1;max-width:260px;appearance:none;-webkit-appearance:none;background:linear-gradient(180deg,var(--panel2),var(--panel)) padding-box;color:#fff;border:1px solid var(--line);border-left:4px solid var(--gold);font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;letter-spacing:.06em;text-transform:uppercase;padding:8px 34px 8px 12px;cursor:pointer;background-image:linear-gradient(45deg,transparent 50%,var(--gold) 50%),linear-gradient(135deg,var(--gold) 50%,transparent 50%);background-position:calc(100% - 18px) 55%,calc(100% - 12px) 55%;background-size:6px 6px,6px 6px;background-repeat:no-repeat}
@@ -4614,7 +4615,6 @@ function extProfilo(o){
       return `<details class="gmese"${i===0?" open":""}><summary><span class="gmn">${MESI[m]}</span><span class="gmesi">${l.length} ${l.length===1?"gara":"gare"} · media</span>${eff(av)}</summary>
       <div class="tbl-wrap"><table class="gtab"><thead><tr><th>Data</th><th>Min</th><th>Dunkest</th><th>Eff.</th><th>Proj 36'</th></tr></thead><tbody>${l.slice().reverse().map(g=>`<tr><td class="gd"><b>${g[0]} <i>vs ${g[1]}</i></b>${g[5]!=null?`<small>${g[5]} pt · ${g[6]} rb · ${g[7]} as</small>`:""}</td><td>${n1(g[2])}</td><td class="gdk">${pdkB(g[3],f2(g[3]))}</td><td>${eff(g[4])}</td><td class="gpj">${n1(g[4]*36)}</td></tr>`).join("")}</tbody></table></div></details>`}).join("")}
   return `<button class="advbtn ggrbtn ggy" ${o.gr}>📈 Grafico</button>${o.cm?`<button class="advbtn ggrbtn ggy" data-cmpa="${o.cm.replace(/"/g,"&quot;")}">⚖ Confronta con un altro giocatore</button>`:""}
-  ${H("PDK ed efficienza",`<em>${SZ_LBL[o.sz]||""} · ${o.sz}</em>`)}
   ${o.sel}
   ${!a?`<p class="note">${o.vuoto}</p>`:`
   <div class="gbig g2"><div><b class="gpdk">${o.a.pdk==null?"—":`<span class="pdkx big ${pdkLvl(o.a.pdk)}">${f2(o.a.pdk)}</span>`}</b><small>PDK medi a partita</small></div><div>${eff(a.eff)}<small>Efficienza media</small></div></div>
@@ -5352,7 +5352,6 @@ function vGiocatore(){
   </div>
   <button class="advbtn ggrbtn ggy" data-grafico="${t}" data-grp="${p[0]}">📈 Grafico</button>
   <button class="advbtn ggrbtn ggy" data-cmpa="${p[0].replace(/"/g,"&quot;")}">⚖ Confronta con un altro giocatore</button>
-  ${H("PDK ed efficienza",`<em>${past?SZ_LBL[sz]+" · "+sz:"Agg. "+EFF.agg}</em>`)}
   ${szSel}
   ${e[1]==null?`<p class="note">${past?"Nessuna partita NBA in questa stagione: non era in NBA o non ha giocato.":"Nessuna partita giocata finora: i dati compariranno dopo la prima gara."}</p>`:`
   <div class="gbig g2"><div><b class="gpdk">${(()=>{const g=GL;const v=g.length?g.reduce((a,x)=>a+x[3],0)/g.length:(e[1]!=null&&e[3]!=null?e[1]*e[3]:null);return v==null?"—":`<span class="pdkx big ${pdkLvl(v)}">${f2(v)}</span>`})()}</b><small>PDK medi a partita</small></div><div>${eff(e[1])}<small>Efficienza media</small></div></div>
