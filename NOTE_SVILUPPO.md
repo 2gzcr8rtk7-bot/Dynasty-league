@@ -1694,3 +1694,8 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 606 — Giocatori: linguetta BOX/PDK attaccata al titolo. In BOX la classifica resta quella del PDK ma ogni riga mostra le medie a partita (PT RB AS ST BL 3P TO) calcolate dai box di Dynasty TV nel periodo scelto; toccando un giocatore si apre la pagina con tutti i suoi box score partita per partita (data, avversario, minuti, tiri, caselle colorate, bordino viola per doppie/triple doppie, PDK). Solo giocatori NBA con box in Dynasty TV (non G League).
 
 607 — Giocatori: la linguetta BOX/PDK si sposta sotto il filtro Periodo, attaccata in alto a sinistra alla lista.
+
+608 — Home, tasto PREVISIONE di un giocatore (partite di stanotte): apre la pagina «Come si calcola la previsione» con tutti i dati: indice (storico vs avversario 40 orretto verso la media di stagione, forma recente 35
+608 — Home, tasto PREVISIONE di un giocatore (partite di stanotte): apre la pagina «Come si calcola la previsione» con tutti i dati: indice (storico vs avversario 40% corretto verso la media di stagione, forma recente 35%, stagione 25%), difesa dell'avversario contro il ruolo con le prestazioni campione, correzione, risultato, gare contro l'avversario e ultime gare. Il tasto ‹ riporta alla Home.
+
+609 — Toccando la scritta DREAMERS in alto accanto al logo si torna alla Home (il logo continua ad aggiornare la pagina).
