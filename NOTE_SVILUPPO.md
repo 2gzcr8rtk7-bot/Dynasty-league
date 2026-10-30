@@ -1716,3 +1716,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 616. Vecchia Home (8 loghi) e testata del Campo: i record V-P usano la classifica Dreamers (drStand) e si aggiornano a ogni turno chiuso, non piu' i vecchi 2-0 dei dati Dunkest.
 
 (peacocks) 30/10/2026 (Claude, account del secondo utente) — Peacocks: colore/sfondo squadra TEAMS.PEA.bg = rosa #f70990 (Home, testate, campo, banner, condivisioni). Maglie invariate: kitC usa ancora il blu #2f6bff per PEA. PUBBLICATO.
+
+(peacocks-maglie) 30/10/2026 (Claude, account del secondo utente) — Maglie Peacocks rifatte (kitC, blocco if(t==="PEA")): Casa = blu del logo #012dd5 con colletto/spalle e contorno verdi #16b35a; Notte = rosa #f70990 con colletto/spalle e contorno nome/numero blu #012dd5; Alternativa "piuma di pavone" = verde petrolio #0b4b57, nome/numero rosa bordati di bianco, colletto/spalle rosa. Tutte con gli occhi di pavone sui fianchi (DECO.PEA, campo feather). PUBBLICATO (solo queste: l Allenamento IA Trade 617-618 dell altra sessione resta in coda).
