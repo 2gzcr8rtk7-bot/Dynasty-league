@@ -1595,3 +1595,4 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 ## 548 — «Trade» diventa «Storico trade» e passa nel menu Scambi
 - La voce «Trade» è uscita dal menu Centro gestione (restano Roster, Centro Medico, Regolamento) ed è la prima voce del menu Scambi con il nome «Storico trade»; la scheda Scambi resta evidenziata quando la pagina è aperta. Il tasto indietro dai dettagli usa lo stesso nome.
 - Stato: pubblicato (v152, 30/10/2026).
+549. (non pubblicata, in coda) Statistiche › Squadre: previsione del punteggio Dreamers del prossimo turno (drPrevisione: per ogni giocatore tutte le partite NBA del turno, indice Cap + difesa avversaria + trend, valore atteso del massimo; poi meritocrazia 4G/4A/2C con capitano ×1,5, panchina ×½, tribuna), tessere Media a turno e Record a turno, numeri più grandi.
