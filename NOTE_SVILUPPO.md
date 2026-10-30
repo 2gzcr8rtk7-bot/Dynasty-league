@@ -1743,3 +1743,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 629. Pagina Notte della Home: barra in alto piu' sottile, solo "NOTTE DEL gg/mm" (tolta la riga "scorri a destra"); resta lo swipe e le frecce.
 
 630. Barra Notte del: ancora un po' piu' sottile (20px, titolo 13px).
+
+631. Home: aggiunta una freccia ‹ in basso a sinistra del riquadro a pagine (speculare a ›) per tornare alla pagina precedente.
