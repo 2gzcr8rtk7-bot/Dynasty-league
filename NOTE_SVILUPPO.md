@@ -1565,9 +1565,23 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 - Con la modalità notte la lista parte dalla notte live; la freccia ‹ porta alle notti passate (dati ufficiali), con ‹ › per scorrerle e › sull'ultima per tornare alla live. Senza modalità notte restano le frecce di prima.
 - Stato: pubblicato (v147, 30/10/2026).
 
+<<<<<<< HEAD
 
 ## No spoiler (30/10/2026, richiesta dell'utente) — pubblicato
 - Impostazioni › Home: prima voce «No spoiler» (`DLS.ns`, tasto `data-dlst="ns"`, salvato sul telefono).
 - Se acceso: in Dynasty TV (lista partite di `vTV`) le partite FINITE non mostrano punteggio, freccetta della vincente e riga «Top» (`tvNoSp(key)`); al loro posto «🙈 Risultato nascosto (no spoiler) · apri la partita per vederlo». Le LIVE restano visibili.
 - Aprire la partita (`tvGame`) la segna come vista (`tvSeen`, localStorage `dl_tvseen`): da lì il risultato di quella partita resta visibile.
 - Non toccati: carosello della Home e sfide DREAMERS (mostrano ancora i risultati). Patch: /home/claude/patch_nospoiler2.py (sessione dei report).
+=======
+## 543 — G-Dreamers: scheda «G League» nei colori verdi di G-Dreamers
+- Dentro la stanza G-Dreamers le variabili colore (pannelli, bordi, accenti) sono verdi: titoli, classifica G League, selettore Stagione, numeri di posizione, schede delle squadre satellite e tabelle giocatori non usano più il blu/rosso/oro dell'app versione giorno. Le altre schede (Classifica, Giornate, Squadre) erano già verdi.
+- Stato: pubblicato (v148, 30/10/2026).
+
+## 544 — Dreamers › Classifica: tasto condividi
+- Titolo «Classifica» con il tasto condividi: crea l'immagine con le 8 squadre (posizione, logo, forma V/P, record V–P, distacco in vittorie, media punteggio).
+- Stato: pubblicato (v148, 30/10/2026).
+
+## 545 — G-Dreamers con la modalità notte: vetro liquido verde
+- Con la modalità notte la scheda «G League» di G-Dreamers usa lo stesso stile spaziale/trasparente di Dreamers in verde: titoli a pillola in vetro, tabelle e schede translucide con sfocatura e bordo luminoso, selettore Stagione in vetro. Di giorno resta il verde pieno della 543.
+- Stato: pubblicato (v148, 30/10/2026).
+>>>>>>> coda
