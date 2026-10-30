@@ -4562,7 +4562,7 @@ function hnResCard(){try{const st=drStand(),P=drPO(st),MAXK=P.end;let k=HN_RK==n
   const stt=W.closed?"FINALE":W.started?"LIVE":"DA GIOCARE";
   const head=`<div class="hmh hmnv"><button type="button" class="hmar" data-hrk="-1" ${k<=1?"disabled":""} aria-label="Turno precedente">‹</button><span class="hmnt"><b>${DR_PH(k,P).toUpperCase()}</b><small>${drFmt(W.start)} – ${drFmt(W.end)}</small></span><button type="button" class="hmar" data-hrk="1" ${k>=MAXK?"disabled":""} aria-label="Turno successivo">›</button></div>`;
   const rows=pr.map(([a,b])=>{const A=drTeam(k,a,W),B=drTeam(k,b,W),has=A.score!=null&&B.score!=null,la=has&&A.score>B.score,lb=has&&B.score>A.score,d=has?Math.abs(A.score-B.score):null;
-    return`<div class="hmp hmrs" data-hrs="${k}|${a}|${b}" role="link" tabindex="0"><span class="hmtm"><i class="hmrl">${badge(a)}</i><small>${TEAMS[a].nick}</small></span><span class="hmsc"><b class="${la?"w":lb?"l":""}">${drScore(A.score)}</b><em>–</em><b class="${lb?"w":la?"l":""}">${drScore(B.score)}</b><small>${stt==="LIVE"?'<span class="hmlv">LIVE</span> ':""}${stt==="FINALE"?"finale":stt==="DA GIOCARE"?"da giocare":"parziale"}${d!=null?" · scarto "+drScore(d):""}</small></span><span class="hmtm"><i class="hmrl">${badge(b)}</i><small>${TEAMS[b].nick}</small></span></div>`}).join("");
+    return`<div class="hmp hmrs" data-hrs="${k}|${a}|${b}" role="link" tabindex="0"><span class="hmtm"><i class="hmrl">${badge(a)}</i><small>${TEAMS[a].nick}</small></span><span class="hmsc"><b class="${la?"w":lb?"l":""}">${drScore(A.score)}</b><em>–</em><b class="${lb?"w":la?"l":""}">${drScore(B.score)}</b><small>${stt==="LIVE"?'<span class="hmlv">LIVE</span> ':""}${stt==="FINALE"?"finale":stt==="DA GIOCARE"?"da giocare":""}${d!=null?(stt==="LIVE"?"scarto ":" · scarto ")+drScore(d):""}${stt!=="DA GIOCARE"?`<button type="button" class="shbtn hmshr" data-drsh="${k}|${a}|${b}" aria-label="Condividi lo scontro ${TEAMS[a].nick} contro ${TEAMS[b].nick}" title="Condividi lo scontro">${SH_ICO}</button>`:""}</small></span><span class="hmtm"><i class="hmrl">${badge(b)}</i><small>${TEAMS[b].nick}</small></span></div>`}).join("");
   const body=pr.length?W_(rows):`<p class="hmvu">${k>DR_REG?"Turno di playoff: gli accoppiamenti si conoscono a fine settimana.":"Accoppiamenti non ancora definiti."}</p>`;
   return`${head}${body}`}catch(e){return`<p class="hmvu">Risultati non disponibili.</p>`}}
 function hnClaCard(){try{const st=drStand(),ld=st[0]?st[0].w:0;
@@ -6368,15 +6368,15 @@ async function shSpecial(i){const S=histSpModel(i);if(!S)return null;
 async function shOpen(k){const old=document.querySelector(".shsheet");if(old)old.remove();
   const sh=document.createElement("div");sh.className="shsheet";sh.innerHTML='<div class="shbox"><p class="shwait">Preparo l\'immagine…</p></div>';document.body.appendChild(sh);
   sh.addEventListener("click",e=>{if(e.target===sh||e.target.closest(".shx"))sh.remove()});
-  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="gr"?await shGrafico():k==="cm"?await shCompar():k==="ht"?await shHistTrade(SHR_HT):k==="ta"?await shHistTrade(-1,{T:taTrade(),sub:taSub(),look:window.TA_LOOK}):k==="sp"?await shSpecial(SHR_SP):k==="pl"?await shPlayer():k==="pc"?await shPcard():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
+  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="gr"?await shGrafico():k==="cm"?await shCompar():k==="ht"?await shHistTrade(SHR_HT):k==="ta"?await shHistTrade(-1,{T:taTrade(),sub:taSub(),look:window.TA_LOOK}):k==="sp"?await shSpecial(SHR_SP):k==="pl"?await shPlayer():k==="pc"?await shPcard():k==="dm"?await shDM():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
   if(!cv){sh.querySelector(".shbox").innerHTML='<p class="shwait">Niente da condividere adesso.</p><button class="shx">Chiudi</button>';return}
-  const name=(k==="ta"?"pic-trade":k==="sp"?("trade-speciale-"+vnz((SPECIALI[SHR_SP]||{}).entra||"").replace(/ /g,"-")):k==="ht"?("scambio-"+((TRADES[SHR_HT]&&TRADES[SHR_HT].data)||"").replace(/\D+/g,"-")):k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="cm"?"confronto-"+((SHR_CM&&SHR_CM.P[0]&&SHR_CM.P[1])?(SHR_CM.P[0].n+"-"+SHR_CM.P[1].n):"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pl"?"scheda-"+((SHR_PL&&SHR_PL.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pc"?"prestazione-"+((SHR_PC&&SHR_PC.x.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="card"?"grafico":"dreamers")+".png";
+  const name=(k==="ta"?"pic-trade":k==="sp"?("trade-speciale-"+vnz((SPECIALI[SHR_SP]||{}).entra||"").replace(/ /g,"-")):k==="ht"?("scambio-"+((TRADES[SHR_HT]&&TRADES[SHR_HT].data)||"").replace(/\D+/g,"-")):k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="cm"?"confronto-"+((SHR_CM&&SHR_CM.P[0]&&SHR_CM.P[1])?(SHR_CM.P[0].n+"-"+SHR_CM.P[1].n):"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pl"?"scheda-"+((SHR_PL&&SHR_PL.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pc"?"prestazione-"+((SHR_PC&&SHR_PC.x.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="dm"?"scontro-"+((SHR_DM&&SHR_DM.a+"-"+SHR_DM.b)||"").toLowerCase():k==="card"?"grafico":"dreamers")+".png";
   let file=null,url="";const mk=async c=>{const blob=await new Promise(r=>c.toBlob(r,"image/png"));file=new File([blob],name,{type:"image/png"});if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(blob)};await mk(cv);
   /* Campo: cursore "fino a dove condividere" (si parte sempre dall'alto: prime N righe) */
   const NR=k==="campo"&&SHR_CAMPO?SHR_CAMPO.R.length:0,sl=NR>1?`<div class="shcut"><div><b>Condividi dalla 1ª alla <output>${NR}</output>ª riga</b><small>su ${NR} · trascina per fermarti prima</small></div><input type="range" min="1" max="${NR}" value="${NR}" step="1" aria-label="Fino a quale riga condividere"></div>`:"";
   sh.querySelector(".shbox").innerHTML=`<img src="${url}" alt="Anteprima da condividere"><div class="shfoot">${sl}<div class="shbar"><button class="shx">Chiudi</button><a class="shsv" href="${url}" download="${name}">Salva</a><button class="shgo">${SH_ICO} Condividi</button></div></div>`;
   const go=sh.querySelector(".shgo");if(!(navigator.canShare&&navigator.canShare({files:[file]})))go.remove();
-  else go.addEventListener("click",async()=>{try{await navigator.share({files:[file],title:k==="ta"?"Dreamers · Pic-Trade":k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"Migliori del turno":"Live stanotte"):k==="duel"?"Dreamers · sfida":k==="po"?"Dreamers · playoff":k==="pl"?(SHR_PL?SHR_PL.n:"Giocatore"):k==="pc"?(SHR_PC?SHR_PC.x.n:"Prestazione"):"Dreamers"})}catch(e){}});
+  else go.addEventListener("click",async()=>{try{await navigator.share({files:[file],title:k==="ta"?"Dreamers · Pic-Trade":k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"Migliori del turno":"Live stanotte"):k==="duel"?"Dreamers · sfida":k==="po"?"Dreamers · playoff":k==="pl"?(SHR_PL?SHR_PL.n:"Giocatore"):k==="pc"?(SHR_PC?SHR_PC.x.n:"Prestazione"):k==="dm"?"Dreamers · scontro":"Dreamers"})}catch(e){}});
   const rg=sh.querySelector(".shcut input");if(rg){let busy=false,again=false;const upd=async()=>{if(busy){again=true;return}busy=true;do{again=false;const n=+rg.value;sh.querySelector(".shcut output").textContent=n;try{const c2=await shCampo(n);await mk(c2);sh.querySelector(".shbox img").src=url;const sv=sh.querySelector(".shsv");if(sv)sv.href=url}catch(e){console.error(e)}}while(again);busy=false};rg.addEventListener("input",upd)}}
 document.addEventListener("click",e=>{if(cur!=="impostazioni")return;const a=e.target.closest("[data-hnl]"),v=e.target.closest("[data-hnv]");if(!a&&!v)return;const y=scrollY;if(a)hnSet(a.dataset.hnl);else if(v.dataset.hnv==="all")hnScopeSet("all");else{hnScopeSet("team");hnTeam(v.dataset.hnv)}render();scrollTo(0,y)});
 /* (351) Tocco su una riga di "Live stanotte" / "Migliori del turno": apre Dynasty TV direttamente sulla partita giusta, con il box della squadra del giocatore. */
@@ -9563,6 +9563,61 @@ function plShAsk(){const S=SHR_PL;if(!S){return}
  document.body.appendChild(sh);
  sh.addEventListener("click",e=>{const b=e.target.closest("[data-shc]");if(e.target===sh||(b&&b.dataset.shc==="x")){sh.remove();return}
   if(!b||b.disabled)return;if(b.dataset.shc==="pl"){shOpen("pl")}else if(U){SHR_PC=U;shOpen("pc")}})}
+</script>
+<style>/* Home: tasto condividi sullo scontro del turno (nota 493) */
+.hmsc .hmshr{width:24px;height:24px;flex:0 0 24px;margin-left:7px;display:inline-flex;vertical-align:middle;padding:0}
+.hmsc .hmshr svg{width:12px;height:12px}
+</style>
+<script>/* ===== CONDIVIDI LO SCONTRO DREAMERS (Home › card turno, 30/10/2026) =====
+   Immagine 1080 px: loghi e punteggio in alto, poi i due campi (capitano + 4 in campo) e sotto il 6° uomo e la panchina (×½) di ciascuna squadra. */
+let SHR_DM=null;
+function dmOpen(k,a,b){try{const st=drStand(),P=drPO(st),W=drWeek(k),A=drTeam(k,a,W),B=drTeam(k,b,W);
+  SHR_DM={k,a,b,A,B,ph:DR_PH(k,P),range:`${drFmt(W.start)}–${drFmt(W.end)}`,lv:!W.closed&&W.started,closed:W.closed};shOpen("dm")}catch(e){console.error(e)}}
+document.addEventListener("click",e=>{const x=e.target.closest("[data-drsh]");if(!x)return;e.preventDefault();e.stopPropagation();const[k,a,b]=x.dataset.drsh.split("|");dmOpen(+k,a,b)},true);
+async function dmJer(t,p){const num=((ROSTER[t]||[]).find(q=>q[0]===p.n)||[0,""])[1];return ldImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jersey(t,num,p.n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')))}
+/* giocatore: maglia + targhetta nome (ruolo + cognome) + cartellino PDK; cx = centro, y = alto della maglia */
+async function dmPlayer(c,t,p,cx,y,jw,fsN,pw,ph,cap){const im=await dmJer(t,p),jh=jw*77/64;
+  if(im){c.save();c.shadowColor="rgba(0,0,0,.45)";c.shadowBlur=jw*.12;c.shadowOffsetY=jw*.06;c.drawImage(im,cx-jw/2,y,jw,jh);c.restore()}
+  const bh=fsN*1.5,by=y+jh-jw*.03,bw=pw;shRR(c,cx-bw/2,by,bw,bh,bh*.3);c.fillStyle="#0b0b10";c.fill();c.strokeStyle="rgba(255,255,255,.28)";c.lineWidth=2;c.stroke();
+  const rl=jw>80?({G:"G",F:"A",C:"C"})[p.r]||"":"",nm=drSur(p.n).toUpperCase();let fq=fsN;c.font=SH_F(800,fq,1);while(c.measureText((rl?rl+"  ":"")+nm).width>bw-14&&fq>fsN*.72){fq-=1;c.font=SH_F(800,fq,1)}let s=nm;while(c.measureText((rl?rl+"  ":"")+s).width>bw-14&&s.length>3)s=s.slice(0,-1);if(s!==nm)s+="…";
+  const rw=rl?c.measureText(rl).width+fsN*.3:0,tw=rw+c.measureText(s).width,fx=cx-tw/2;c.textAlign="left";c.textBaseline="middle";
+  if(rl){c.fillStyle="#9aa3b2";c.fillText(rl,fx,by+bh/2+1)}c.fillStyle="#fff";c.fillText(s,fx+rw,by+bh/2+1);
+  shPill(c,p.e==null?null:p.e,cx-pw/2,by+bh+4,pw,ph,ph*.7,p.e==null?"—":undefined);
+  if(cap){const r=jw*.17,cx2=cx-jw*.42,cy2=y+r+2;c.beginPath();c.arc(cx2,cy2,r,0,7);c.fillStyle="#f5b400";c.fill();c.strokeStyle="#111";c.lineWidth=2;c.stroke();c.fillStyle="#111";c.font=SH_F(800,r*1.25,1);c.textAlign="center";c.textBaseline="middle";c.fillText("C",cx2,cy2+1)}
+  return by+bh+4+ph}
+const dmShade=(h,q)=>{const n=parseInt(h.slice(1),16),f=v=>Math.round(v*(1-q)).toString(16).padStart(2,"0");return"#"+f(n>>16)+f(n>>8&255)+f(n&255)};
+const dmLum=h=>{const n=parseInt(h.slice(1),16);return(.299*(n>>16)+.587*(n>>8&255)+.114*(n&255))/255};
+/* campo con i 5 in campo: cornice del colore squadra con il nome, parquet chiaro, linee bianche */
+async function dmCourt(c,t,T,x,y,w,h){const C=TEAMS[t],OT=(typeof dlTm==="function"&&dlTm(t))||{},apron=OT.ac||dmShade(C.bg,.18),lc=OT.lc||"#ffffff",hb=58,ap=14;
+  c.save();shRR(c,x,y,w,h,22);c.clip();c.fillStyle=apron;c.fillRect(x,y,w,h);
+  const wx=x+ap,wy=y+hb,ww=w-2*ap,wh=h-hb-ap,g=c.createLinearGradient(wx,0,wx+ww,0);g.addColorStop(0,"#b9793f");g.addColorStop(.5,"#dba567");g.addColorStop(1,"#b9793f");c.fillStyle=g;c.fillRect(wx,wy,ww,wh);
+  c.strokeStyle="rgba(90,50,15,.10)";c.lineWidth=2;c.beginPath();for(let px=wx+21;px<wx+ww;px+=21){c.moveTo(px,wy);c.lineTo(px,wy+wh)}c.stroke();
+  const sh=c.createLinearGradient(0,wy,0,wy+wh);sh.addColorStop(0,"rgba(255,255,255,.14)");sh.addColorStop(.6,"rgba(255,255,255,.02)");sh.addColorStop(1,"rgba(0,0,0,.12)");c.fillStyle=sh;c.fillRect(wx,wy,ww,wh);
+  c.strokeStyle=lc;c.globalAlpha=.9;c.lineWidth=4;c.lineJoin="round";const cx=wx+ww/2;
+  c.strokeRect(wx+2,wy+2,ww-4,wh-4);c.strokeRect(cx-ww*.17,wy+2,ww*.34,wh*.58);
+  c.beginPath();c.arc(cx,wy+wh*.6,ww*.117,0,Math.PI,false);c.stroke();c.setLineDash([12,10]);c.beginPath();c.arc(cx,wy+wh*.6,ww*.117,Math.PI,2*Math.PI,false);c.stroke();c.setLineDash([]);
+  c.beginPath();c.arc(cx,wy+wh*.1,ww*.043,0,Math.PI,false);c.stroke();
+  c.beginPath();c.moveTo(wx+ww*.0426,wy);c.lineTo(wx+ww*.0426,wy+wh*.13);c.arc(cx,wy+wh*.13,ww*.457,Math.PI,0,true);c.lineTo(wx+ww*.9574,wy);c.stroke();c.globalAlpha=1;c.restore();
+  const atxt=Math.abs(dmLum(C.fg)-dmLum(apron))>.35?C.fg:(dmLum(apron)>.55?"#111":"#fff");c.textAlign="center";c.textBaseline="middle";c.fillStyle=atxt;let fs=40;c.font=SH_F(800,fs,1);const nm=(C.city+" "+C.nick).toUpperCase();while(c.measureText(nm).width>w-60&&fs>22){fs-=2;c.font=SH_F(800,fs,1)}c.letterSpacing="2px";c.fillText(nm,x+w/2,y+hb/2+2);c.letterSpacing="0px";
+  const R={C:0,F:1,G:2},st=T.top.slice(0,5).map((p,i)=>({...p,cap:i===0})).sort((a,b)=>(R[a.r]??3)-(R[b.r]??3)),jw=92,top0=wy+12,rowH=186,P=[[.5,0],[.25,1],[.75,1],[.25,2],[.75,2]];
+  for(let i=0;i<st.length;i++)await dmPlayer(c,t,st[i],wx+ww*P[i][0],top0+rowH*P[i][1],jw,25,176,34,st[i].cap)}
+async function shDM(){const S=SHR_DM;if(!S)return null;const H=1540,{cv,c,W}=await shBase(H);
+  const{a,b,A,B}=S,sa=A.score,sb=B.score,has=sa!=null&&sb!=null,wa=has&&sa>sb,wb=has&&sb>sa;
+  c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(700,30,1);c.fillStyle="rgba(233,213,255,.9)";c.letterSpacing="4px";c.fillText(`${S.ph.toUpperCase()} · ${S.range}`,W/2,196);c.letterSpacing="0px";
+  const L=224,ly=222,[la,lb]=await Promise.all([shLogo(a),shLogo(b)]);
+  for(const[im,x]of[[la,70],[lb,W-70-L]]){if(im){const r=Math.min(L/im.width,L/im.height),w=im.width*r,h=im.height*r;c.shadowColor="rgba(192,132,252,.5)";c.shadowBlur=30;c.drawImage(im,x+L/2-w/2,ly+L/2-h/2,w,h);c.shadowBlur=0}}
+  const sf=v=>v==null?"—":pdkF(v);let fs=104;c.font=SH_F(800,fs,1);while(c.measureText(sf(sa)).width+c.measureText(sf(sb)).width>W-2*(70+L)-110&&fs>56){fs-=4;c.font=SH_F(800,fs,1)}
+  const my=ly+L/2+fs*.34;c.textAlign="right";c.fillStyle=wa||!has?"#fff":"rgba(255,255,255,.5)";c.fillText(sf(sa),W/2-40,my);c.textAlign="left";c.fillStyle=wb||!has?"#fff":"rgba(255,255,255,.5)";c.fillText(sf(sb),W/2+40,my);c.textAlign="center";c.fillStyle="rgba(233,213,255,.7)";c.fillText("–",W/2,my);
+  if(has){c.font=SH_F(700,36,1);c.fillStyle="#e9d5ff";c.letterSpacing="4px";c.fillText("SCARTO "+pdkF(Math.abs(sa-sb)),W/2,my+60);c.letterSpacing="0px"}
+  if(S.lv){c.font=SH_F(800,30,1);const t="LIVE",w=c.measureText(t).width+60;shRR(c,W/2-w/2,ly-8,w,46,12);c.fillStyle="#e11d48";c.fill();c.beginPath();c.arc(W/2-w/2+26,ly+15,7,0,7);c.fillStyle="#fff";c.fill();c.textAlign="left";c.textBaseline="middle";c.fillText(t,W/2-w/2+44,ly+16);c.textBaseline="alphabetic"}
+  else if(S.closed){c.font=SH_F(800,30,1);c.fillStyle="rgba(233,213,255,.8)";c.textAlign="center";c.letterSpacing="5px";c.fillText("FINALE",W/2,ly+24);c.letterSpacing="0px"}
+  c.textAlign="center";c.font=SH_F(800,40,1);c.fillStyle="#f3e8ff";c.letterSpacing="3px";c.fillText(TEAMS[a].nick.toUpperCase(),70+L/2,ly+L+50);c.fillText(TEAMS[b].nick.toUpperCase(),W-70-L/2,ly+L+50);c.letterSpacing="0px";
+  const cw=490,cy=ly+L+86,chh=660,xs=[40,W-40-cw];
+  for(const[t,T,x]of[[a,A,xs[0]],[b,B,xs[1]]]){await dmCourt(c,t,T,x,cy,cw,chh);
+   const by=cy+chh+22;c.textBaseline="alphabetic";c.textAlign="left";c.font=SH_F(800,19,1);c.letterSpacing="1px";c.fillStyle="#fcd34d";c.fillText("6° UOMO",x+6,by+20);c.fillStyle="#c4b5fd";c.fillText("PANCHINA ×½",x+98+26,by+20);c.letterSpacing="0px";
+   for(let i=0;i<5;i++){const p=T.top[5+i];if(!p)continue;const cx=x+49+i*98;if(i===0){shRR(c,cx-47,by+30,94,152,14);c.fillStyle="rgba(245,180,0,.14)";c.fill();c.strokeStyle="rgba(245,180,0,.55)";c.lineWidth=2;c.stroke()}
+    await dmPlayer(c,t,p,cx,by+38,64,18,92,32,false)}}
+  shFoot(c,W,H,"PDK formula Dunkest · capitano ×1,5 · panchina ×½"+(S.lv?" · punteggi provvisori":""));return cv}
 </script>
 </body>
 </html>
