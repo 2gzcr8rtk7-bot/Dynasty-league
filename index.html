@@ -9760,7 +9760,7 @@ function gzFatti(){const o=gzOra(),F={oggi:o.d,st:[],pos:{}};
   /* ultima notte: l'ultima data presente nelle partite dei giocatori */
   let last=null;Object.keys(PARTITE).forEach(n=>(PARTITE[n]||[]).forEach(r=>{if(r&&typeof r[0]==="string"&&+r[2]>0&&(last==null||injKey(r[0])>injKey(last)))last=r[0]}));
   F.notte=last;F.nl=[];
-  if(last)Object.keys(PARTITE).forEach(n=>{const r=(PARTITE[n]||[]).find(x=>x[0]===last&&+x[2]>0);if(r)F.nl.push({n,t:gzTeamOf(n),opp:r[1],min:+r[2],pdk:+r[3]})});
+  if(last)Object.keys(PARTITE).forEach(n=>{const r=(PARTITE[n]||[]).find(x=>x[0]===last&&+x[2]>0);if(r)F.nl.push({n,t:gzTeamOf(n),opp:gzOpp(r[1]),min:+r[2],pdk:+r[3]})});
   F.nl.sort((a,b)=>b.pdk-a.pdk);
   /* scambi degli ultimi 7 giorni */
   const dd=x=>{const m=/(\d+)\/(\d+)\/(\d+)/.exec(x||"");return m?Date.UTC(+m[3],+m[2]-1,+m[1]):0},t0=Date.parse(o.d+"T00:00:00Z");
@@ -9833,7 +9833,29 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-gzseed]");
    La voce è quella integrata nel telefono (Web Speech): parte solo dopo un tocco. Niente file audio/video: tutto è disegnato dall'app coi dati veri. */
 const GZV={ok:typeof speechSynthesis!=="undefined"&&typeof SpeechSynthesisUtterance!=="undefined",rate:1,v:null,cur:null};
 function gzVoce(){if(!GZV.ok)return null;const L=speechSynthesis.getVoices()||[];const it=L.filter(v=>/^it/i.test(v.lang));return it.find(v=>GZV.v&&v.name===GZV.v)||it.find(v=>/premium|enhanced|siri|alice|federica|luca/i.test(v.name))||it[0]||null}
-const gzPulisci=t=>String(t).replace(/<[^>]+>/g,"").replace(/PDK/g,"pi di cappa").replace(/\bcr\b/g,"crediti").replace(/[–—]/g,", ").replace(/º/g,"°").replace(/\bvs\b/gi,"contro");
+const GZ_U=["zero","uno","due","tre","quattro","cinque","sei","sette","otto","nove","dieci","undici","dodici","tredici","quattordici","quindici","sedici","diciassette","diciotto","diciannove"],GZ_T=["","","venti","trenta","quaranta","cinquanta","sessanta","settanta","ottanta","novanta"];
+function gzNum(n){n=Math.floor(+n);if(!isFinite(n)||n<0)return String(n);if(n<20)return GZ_U[n];
+  if(n<100){const d=Math.floor(n/10),u=n%10;let t=GZ_T[d];if(u===1||u===8)t=t.slice(0,-1);return t+(u?(u===3?"tré":GZ_U[u]):"")}
+  if(n<1000){const c=Math.floor(n/100),r=n%100;let h=c===1?"cento":GZ_U[c]+"cento";if(r>=80&&r<90&&false)h=h.slice(0,-1);return h+(r?gzNum(r):"")}
+  if(n<1e6){const m=Math.floor(n/1000),r=n%1000;return (m===1?"mille":gzNum(m)+"mila")+(r?(r<100&&false?"e":"")+gzNum(r):"")}
+  return String(n)}
+const GZ_ORD=["","primo","secondo","terzo","quarto","quinto","sesto","settimo","ottavo","nono","decimo"],GZ_MESI=["","gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
+/* sigle NBA → nome per esteso (usato sia nel testo scritto sia per la voce) */
+const GZ_NBA={ATL:"Atlanta",BOS:"Boston",BKN:"Brooklyn",BRK:"Brooklyn",CHA:"Charlotte",CHO:"Charlotte",CHI:"Chicago",CLE:"Cleveland",DAL:"Dallas",DEN:"Denver",DET:"Detroit",GSW:"Golden State",GS:"Golden State",HOU:"Houston",IND:"Indiana",LAC:"i Clippers",LAL:"i Lakers",MEM:"Memphis",MIA:"Miami",MIL:"Milwaukee",MIN:"Minnesota",NOP:"New Orleans",NO:"New Orleans",NYK:"New York",NY:"New York",OKC:"Oklahoma City",ORL:"Orlando",PHI:"Philadelphia",PHX:"Phoenix",PHO:"Phoenix",POR:"Portland",SAC:"Sacramento",SAS:"San Antonio",SA:"San Antonio",TOR:"Toronto",UTA:"Utah",UTAH:"Utah",WAS:"Washington",WSH:"Washington"};
+const gzOpp=a=>{const k=String(a||"").trim().toUpperCase();return GZ_NBA[k]||a};
+/* pronuncia dei nomi inglesi delle squadre per la voce italiana */
+const GZ_FON={Ducks:"Dacs",Foxes:"Fòcsiz",Turtles:"Tèrtols",Mooses:"Mùsiz",Eagles:"Igols",Peacocks:"Picòcs",Spiders:"Spàiders",Dolphins:"Dòlfins",Texas:"Tèxas"};
+function gzPulisci(t){let x=String(t).replace(/<[^>]+>/g," ");
+  Object.keys(GZ_NBA).sort((a,b)=>b.length-a.length).forEach(k=>{x=x.replace(new RegExp("\\b"+k+"\\b","g"),GZ_NBA[k])});
+  x=x.replace(/\bn\.\s*(?=\d)/gi,"numero ").replace(/\bPDK\b/g,"pi di cappa").replace(/\bcr\b/gi,"crediti").replace(/\bvs\b\.?/gi,"contro").replace(/\bG[- ]?League\b/gi,"G Lig");
+  Object.keys(GZ_FON).forEach(k=>{x=x.replace(new RegExp("\\b"+k+"\\b","g"),GZ_FON[k])});
+  x=x.replace(/\b(\d{1,2})\/(\d{1,2})\b/g,(m,d,mo)=>+mo>=1&&+mo<=12&&+d>=1&&+d<=31?(+d===1?"primo":gzNum(+d))+" "+GZ_MESI[+mo]:m);
+  x=x.replace(/(\d+)\s*[º°ª]/g,(m,n)=>+n>=1&&+n<=10?GZ_ORD[+n]:gzNum(+n));
+  x=x.replace(/(\d+)(?:,(\d+))?\s*%/g,(m,a,b)=>gzNum(+a)+(b&&+b?" virgola "+gzNum(+b):"")+" per cento");
+  x=x.replace(/(\d+)\s*[–—-]\s*(\d+)/g,(m,a,b)=>gzNum(+a)+" a "+gzNum(+b));
+  x=x.replace(/(\d+),(\d+)/g,(m,a,b)=>{if(/^0+$/.test(b))return gzNum(+a);const z=b.match(/^0+/);return gzNum(+a)+" virgola "+(z?z[0].split("").map(()=>"zero ").join(""):"")+gzNum(+b)});
+  x=x.replace(/\d+/g,m=>gzNum(+m));
+  return x.replace(/[·•]/g,", ").replace(/[()]/g,", ").replace(/\s*[–—]\s*/g,", ").replace(/\s{2,}/g," ").replace(/\s+([,.;:!?])/g,"$1").replace(/,\s*,/g,",").trim()}
 function gzParla(txt,fine){if(!GZV.ok){fine&&setTimeout(fine,Math.max(3500,txt.length*55));return false}
   try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(gzPulisci(txt)),v=gzVoce();u.lang="it-IT";if(v)u.voice=v;u.rate=GZV.rate;u.onend=()=>{GZV.cur===u&&fine&&fine()};u.onerror=()=>{GZV.cur===u&&fine&&fine()};GZV.cur=u;speechSynthesis.speak(u);return true}catch(e){fine&&setTimeout(fine,3500);return false}}
 function gzStop(){try{GZV.cur=null;speechSynthesis&&speechSynthesis.cancel()}catch(e){}}
@@ -9895,7 +9917,7 @@ function notizie(){if(!COL.d){cur="campo";return vCampo()}
   ${box(5,"TG Dreamers a schermo intero","Sigla, una schermata per notizia con loghi e numeri, striscia dei titoli in basso, e la voce che legge. Si può mettere in pausa, saltare, spegnere la voce.",`<button class="advbtn nzplay" data-nzplay="1" type="button">▶ Guarda il TG Dreamers</button><p class="note">${ok?"La voce parte da sola dopo il tocco.":"Questo browser non ha la voce: il TG scorre da solo con i testi."}</p>`,"un pulsante «Guarda il TG» nell'articolo e nel banner: a schermo intero, si chiude con ✕.")}
   ${box(6,"Voce","Quella del telefono, in italiano. Qui puoi provarla e cambiarla.",`<div class="nzvc"><button class="advbtn" data-nzvoce="prova" type="button">🔊 Prova la voce</button><button class="advbtn" data-nzvoce="rate" type="button">Velocità ×${String(GZV.rate).replace(".",",")}</button><button class="advbtn" data-nzvoce="voce" type="button">Voce: ${(gzVoce()||{}).name||"non disponibile"}</button></div><p class="note">${ok?voci+" voci italiane trovate su questo dispositivo. La qualità cambia da telefono a telefono.":"Voce non supportata da questo browser."}</p>`,"nel tasto «Ascolta» di ogni articolo; funziona solo dopo un tocco (limite di iPhone e Android).")}
   <p class="note">Tutto è composto dall'app senza di me, con frasi preimpostate e i dati veri. Le notizie di oggi: ${E.art.map(a=>a.tag.toLowerCase()).join(", ")}.</p></div>`}
-window.gzEdizione=gzEdizione;window.gzPronto=gzPronto;window.gzOraOk=()=>gzOra().h>="07:30";VIEWS.giornale=giornale;VIEWS.notizie=notizie;VIEWS.sala=sala;VIEWS.pers=pers;VIEWS.soft=soft;VIEWS.orari=orari;
+window.gzEdizione=gzEdizione;window.gzPulisci=gzPulisci;window.gzPronto=gzPronto;window.gzOraOk=()=>gzOra().h>="07:30";VIEWS.giornale=giornale;VIEWS.notizie=notizie;VIEWS.sala=sala;VIEWS.pers=pers;VIEWS.soft=soft;VIEWS.orari=orari;
 document.addEventListener("click",e=>{
  if(!["sala","pers","soft","orari","eq","bet","giornale","notizie"].includes(cur))return;
  if(e.target.closest("#hofback")){cur=cur==="sala"?"campo":"sala";render();scrollTo(0,0);return}
