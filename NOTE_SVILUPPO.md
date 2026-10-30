@@ -1585,4 +1585,7 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 ## 546 — Home: bordo oro che pulsa negli scontri diretti a pari vittorie
 - Nel carosello della Home, il banner di uno scontro Dreamers tra due squadre con le stesse vittorie in classifica (solo regular season) ha il bordino oro che pulsa piano (2,8 s, con leggero alone); con «riduci animazioni» attivo resta oro fisso.
-- Stato: in coda, non pubblicato.
+- Stato: pubblicato (v149, 30/10/2026).
+
+## 547 — G-Dreamers: tolta la scheda «Squadre»
+- La scheda «Squadre» (le rose dei satelliti) ripeteva la Classifica, dove toccando una squadra si apre già il dettaglio con i suoi giocatori. G-Dreamers ha ora tre schede: Classifica, Giornate, G League.

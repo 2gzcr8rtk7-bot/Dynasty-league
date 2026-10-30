@@ -1559,6 +1559,7 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .drsw{display:grid;grid-template-columns:1fr 1fr;margin:0 0 14px;border-radius:999px;overflow:hidden;border:1px solid rgba(196,181,253,.35);background:rgba(15,8,40,.7)}
 .drsw button{padding:11px 6px;border:0;background:transparent;color:#c4b5fd;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
 .drsw button[aria-selected="true"]{color:#fff;background:linear-gradient(180deg,#a78bfa,#7c3aed);box-shadow:0 0 14px rgba(139,92,246,.5)}
+.gdroom .drtabs{grid-template-columns:repeat(3,1fr)}
 .gdroom .drsw{border-color:rgba(52,211,153,.4)}.gdroom .drsw button{color:#6ee7b7}
 .gdroom .drsw button[aria-selected="true"]{color:#fff;background:linear-gradient(180deg,#34d399,#059669);box-shadow:0 0 14px rgba(16,185,129,.5)}
 .drtabs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:14px}
@@ -7792,10 +7793,10 @@ const gdDay=d=>{const[y,m,g]=d.split("-");return g+"/"+m};
 function gdLg(t,cls=""){const x=GLEAGUE.find(z=>z.t===t);return`<span class="drlg ${cls}">${x&&x.logo?`<img src="${x.logo}" alt="">`:badge(t)}</span>`}
 /* Colori delle squadre in G-DREAMERS: quelli della G League (GLEAGUE.bg) quando ci sono, altrimenti della prima squadra. */
 const gdBg=t=>{const x=GLEAGUE.find(z=>z.t===t);return x&&x.bg||TEAMS[t].bg};
-function vGDream(emb){fantaLiveAvvia();const TH=drThG();const D=gdData(),last=D.nights[D.nights.length-1],prev=D.nights[D.nights.length-2];
+function vGDream(emb){fantaLiveAvvia();if(GD.tab==="rose")GD.tab="cla";const TH=drThG();const D=gdData(),last=D.nights[D.nights.length-1],prev=D.nights[D.nights.length-2];
   const rankAt=d=>{const tot={};Object.keys(D.T).forEach(t=>tot[t]=0);D.nights.filter(n=>n<=d).forEach(n=>Object.entries(D.N[n]).forEach(([t,v])=>tot[t]+=v));return Object.keys(tot).sort((a,b)=>tot[b]-tot[a])};
   const pr=prev?rankAt(prev):null;
-  const tabs=[["cla","Classifica"],["gio","Giornate"],["rose","Squadre"],["stat","G League"]].map(([x,l])=>`<button data-gd="tab" data-k="${x}" aria-pressed="${GD.tab===x}">${l}</button>`).join("");
+  const tabs=[["cla","Classifica"],["gio","Giornate"],["stat","G League"]].map(([x,l])=>`<button data-gd="tab" data-k="${x}" aria-pressed="${GD.tab===x}">${l}</button>`).join("");
   let body="";
   if(GD.open){const tm=D.T[GD.open],pos=D.cla.indexOf(tm)+1;
     body=`<button class="gback" data-gd="close">‹ Classifica</button><div class="gdteam tint" style="--tc:${gdBg(tm.t)};--tf:${drTfH(gdBg(tm.t))}">${gdLg(tm.t)}<div><small>${pos}° posto · satellite di ${TEAMS[tm.t].name}</small><b>${gdNm(tm.t)}</b></div><em>${gdF(tm.tot)}<small>PDK totali</small></em></div>
@@ -8841,6 +8842,7 @@ ulCheck();
 /* (260) CRONOLOGIA MODIFICHE: il footer "Ultimo aggiornamento" è cliccabile e apre questa pagina (vista "novita").
    OGNI nuova modifica pubblicata va aggiunta in CIMA a NV_LOG (data, titolo, mini spiegazione). */
 const NV_LOG=[
+ ["30/10/2026","Home e G-Dreamers","Nella Home il bordino oro pulsa negli scontri Dreamers tra squadre a pari vittorie. In G-Dreamers la scheda «Squadre» è stata tolta (le rose si vedono toccando una squadra in Classifica)."],
  ["30/10/2026","G-Dreamers e classifica","G-Dreamers ha tutto in verde (di notte in vetro liquido come Dreamers) e la Classifica Dreamers ha il tasto condividi."],
  ["30/10/2026","Statistiche: pulsanti e notti","Giocatori e Squadre sono i pulsanti grandi in alto; Efficienza Cup e Calcola il trend più piccoli sotto. In modalità notte la lista live ha la freccia ‹ per vedere le notti passate."],
  ["30/10/2026","G-Dreamers dentro Dreamers","G-Dreamers non è più nel Centro gestione: in Dreamers c'è l'interruttore Dreamers | G-Dreamers sotto il titolo. Le statistiche G League sono nella scheda «G League»."],
