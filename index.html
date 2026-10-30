@@ -6368,7 +6368,7 @@ async function shSpecial(i){const S=histSpModel(i);if(!S)return null;
 async function shOpen(k){const old=document.querySelector(".shsheet");if(old)old.remove();
   const sh=document.createElement("div");sh.className="shsheet";sh.innerHTML='<div class="shbox"><p class="shwait">Preparo l\'immagine…</p></div>';document.body.appendChild(sh);
   sh.addEventListener("click",e=>{if(e.target===sh||e.target.closest(".shx"))sh.remove()});
-  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="gr"?await shGrafico():k==="cm"?await shCompar():k==="ht"?await shHistTrade(SHR_HT):k==="ta"?await shHistTrade(-1,{T:taTrade(),sub:taSub(),look:window.TA_LOOK}):k==="sp"?await shSpecial(SHR_SP):k==="pl"?await shPlayer():k==="pc"?await shPcard():k==="dm"?await shDM():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
+  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="gr"?await shGrafico():k==="cm"?await shCompar():k==="ht"?await shHistTrade(SHR_HT):k==="ta"?await shHistTrade(-1,{T:taTrade(),sub:taSub(),look:window.TA_LOOK}):k==="sp"?await shSpecial(SHR_SP):k==="pl"?await shPlayer():k==="pc"?await shPcard():k==="dm"?await shDM():k==="bt"?await window.shBT():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
   if(!cv){sh.querySelector(".shbox").innerHTML='<p class="shwait">Niente da condividere adesso.</p><button class="shx">Chiudi</button>';return}
   const name=(k==="ta"?"pic-trade":k==="sp"?("trade-speciale-"+vnz((SPECIALI[SHR_SP]||{}).entra||"").replace(/ /g,"-")):k==="ht"?("scambio-"+((TRADES[SHR_HT]&&TRADES[SHR_HT].data)||"").replace(/\D+/g,"-")):k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="cm"?"confronto-"+((SHR_CM&&SHR_CM.P[0]&&SHR_CM.P[1])?(SHR_CM.P[0].n+"-"+SHR_CM.P[1].n):"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pl"?"scheda-"+((SHR_PL&&SHR_PL.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pc"?"prestazione-"+((SHR_PC&&SHR_PC.x.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="dm"?"scontro-"+((SHR_DM&&SHR_DM.a+"-"+SHR_DM.b)||"").toLowerCase():k==="card"?"grafico":"dreamers")+".png";
   let file=null,url="";const mk=async c=>{const blob=await new Promise(r=>c.toBlob(r,"image/png"));file=new File([blob],name,{type:"image/png"});if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(blob)};await mk(cv);
@@ -9372,7 +9372,7 @@ document.addEventListener("click",e=>{
 .btlg{width:34px;height:34px;object-fit:contain;flex:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))}
 .btmid{font-family:var(--display);font-style:italic;font-weight:800;color:#ffe27a;font-size:13px;letter-spacing:.1em}
 .btsub{margin:8px 0 0;font-size:11.5px;color:#f3b8c1;line-height:1.35}
-.btmode{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 10px}.btmode button{padding:9px;border-radius:12px;border:1.5px solid rgba(255,226,122,.35);background:rgba(0,0,0,.3);color:#ffd0d6;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px}.btmode button[aria-pressed=true]{background:linear-gradient(180deg,#ffe27a,#f5b400);color:#2a0610;border-color:#ffe27a}.btmxi{font-size:12px;color:#ffd0d6;margin:0 0 10px;line-height:1.35}.btlegs{max-height:100px;overflow:auto;margin:0 0 8px}.btleg{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,226,122,.18)}.btleg b{font-size:13px;display:block}.btleg small{font-size:11px;color:#ffd0d6}.btmq{display:flex;justify-content:space-between;align-items:center;margin:0 0 8px;font-size:12px;color:#ffd0d6}.btmq i{font-style:normal;color:#8cf0a8}.btmq b{font-family:var(--display);font-style:italic;font-size:22px;color:#ffe27a}.btgo:disabled{opacity:.45}
+.btmode{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 10px}.btmode button{padding:9px;border-radius:12px;border:1.5px solid rgba(255,226,122,.35);background:rgba(0,0,0,.3);color:#ffd0d6;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px}.btmode button[aria-pressed=true]{background:linear-gradient(180deg,#ffe27a,#f5b400);color:#2a0610;border-color:#ffe27a}.btmxi{font-size:12px;color:#ffd0d6;margin:0 0 10px;line-height:1.35}.btlegs{max-height:100px;overflow:auto;margin:0 0 8px}.btleg{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,226,122,.18)}.btleg b{font-size:13px;display:block}.btleg small{font-size:11px;color:#ffd0d6}.btmq{display:flex;justify-content:space-between;align-items:center;margin:0 0 8px;font-size:12px;color:#ffd0d6}.btmq i{font-style:normal;color:#8cf0a8}.btmq b{font-family:var(--display);font-style:italic;font-size:22px;color:#ffe27a}.btgo:disabled{opacity:.45}.btsm{padding:6px 12px;border-radius:10px;border:1.5px solid #ffe27a;background:rgba(0,0,0,.3);color:#ffe27a;font-weight:800;font-size:12px}
 .btslip{position:sticky;bottom:10px;z-index:6;margin:12px 0 0;padding:12px;border-radius:16px;background:linear-gradient(160deg,#2a0610,#12030a);border:1.5px solid #ffe27a;box-shadow:0 8px 28px rgba(0,0,0,.65),0 0 18px rgba(255,214,90,.3)}
 .btsl1{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.btsl1 b{font-size:13.5px;line-height:1.2}.btsl1 span{display:block;font-size:12px;color:#ffe27a;font-weight:800;margin-top:2px}
 .btx{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,226,122,.5);background:transparent;color:#ffe27a;cursor:pointer}
@@ -9425,7 +9425,7 @@ const meseNow=()=>{const o={};new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/
 const bLoad=()=>{try{const j=JSON.parse(localStorage.getItem(KEY));if(j&&j.v===1&&Array.isArray(j.bets))return j}catch(e){}return null};
 let BW=bLoad()||{v:1,mese:meseNow(),saldo:START,iniz:START,bets:[]};
 const bSave=()=>{try{localStorage.setItem(KEY,JSON.stringify(BW))}catch(e){}};
-let BS={tab:"sf",sel:null,stake:50,msg:"",ok:false,bk:"",mx:false,legs:[]};
+let BS={tab:"sf",sel:null,stake:50,msg:"",ok:false,bk:"",mx:false,legs:[],vr:null};
 const SELMAP={};
 /* --- mercati --- */
 function cand(){const d=flUsaOggi(),G=TV.days[d]||[],now=Date.now(),out=[];
@@ -9520,7 +9520,10 @@ function tabDu(D){if(!D.length)return`<div class="btcard"><p class="btsub">Nessu
   <p class="btsub">Media: ${E(x.a.n)} ${nf(x.a.M.mu,1)} (${x.a.nba}) · ${E(x.b.n)} ${nf(x.b.M.mu,1)} (${x.b.nba}). Vince chi totalizza più PDK stanotte.</p></div>`}).join("")}
 function tabMy(){const B=BW.bets,stl={a:"In corso",v:"Vinta",p:"Persa",x:"Rimborsata (non ha giocato / pari)"};
  const list=B.length?B.map(b=>`<div class="btbet ${b.s}"><div><b>${E(b.desc)}</b><small>${E(b.pick||"")} @ ${nf(b.q,2)} · puntati ${ni(b.st)}</small>${b.legs?b.legs.map(l=>`<small>${l.r==="v"?"✅":l.r==="p"?"❌":l.r==="x"?"↩️":"⏳"} ${E(l.desc)} → ${E(l.pick)} @ ${nf(l.q,2)}</small>`).join(""):""}</div><div class="btst">${b.s==="v"?"+"+ni(b.pay-b.st):b.s==="p"?"−"+ni(b.st):b.s==="x"?"0":"…"}<small>${stl[b.s]}</small></div></div>`).join(""):`<div class="btcard"><p class="btsub">Non hai ancora giocato. Scegli una quota nelle altre schede.</p></div>`;
- return`<div class="btsec">Le mie giocate<small>${B.length} totali</small></div>${list}${BS.msg?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:""}
+ const I=incInfo(),INC=(BW.inc||[]).map(x=>`<div class="btbet x"><div><b>${x.cr} ${x.cr===1?"credito":"crediti"} · ${itDT(x.ts)}</b><small>ID ${E(x.id.toUpperCase())}</small></div><div class="btst"><button class="btsm" data-binc="show|${E(x.id)}">Rivedi</button></div></div>`).join("");
+ const incCard=`<div class="btsec">Incassa i tuoi gettoni<small>${ni(CR)} gettoni = 1 credito</small></div><div class="btcard"><p class="btsub">Guadagno sopra i ${ni(START)} iniziali: <b>${ni(I.profit)}</b> gettoni${I.gia?` · già incassati questo mese: ${I.gia} cr`:""}. Massimo ${INCMAX} crediti al mese.</p><button class="btgo" data-binc="go"${I.n<1?" disabled":""} style="width:100%;margin-top:8px">💰 Incassa ${I.n>0?I.n+(I.n===1?" credito":" crediti"):""}</button><p class="btsub" style="margin-top:8px">Si genera uno scontrino con codice firmato: salvalo e mandalo all'admin, che ti accredita i crediti in lega.</p></div>${INC?`<div class="btsec">Scontrini emessi<small>${(BW.inc||[]).length}</small></div>${INC}`:""}
+ <div class="btsec">Verifica scontrino<small>per l'admin</small></div><div class="btbk"><textarea id="btvr" placeholder="Incolla qui il codice DRINC1…"></textarea><button data-binc="ver">🔎 Verifica</button>${BS.vr?`<p class="btmsg${BS.vr.ok?" ok":""}">${E(BS.vr.t)}</p>`:""}</div>`;
+ return`${incCard}<div class="btsec">Le mie giocate<small>${B.length} totali</small></div>${list}${BS.msg?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:""}
  <div class="btsec" style="margin-top:14px">Salvataggio<small>i dati stanno su questo telefono</small></div>
  <div class="btbk"><button data-bbk="copy">📋 Copia backup</button><textarea id="btbk" placeholder="Incolla qui un backup per ripristinare">${E(BS.bk)}</textarea><button data-bbk="rest">♻️ Ripristina da backup</button></div>`}
 function vBet(){if(!COL.d){cur="campo";return vCampo()}
@@ -9544,9 +9547,41 @@ function vBet(){if(!COL.d){cur="campo";return vCampo()}
  <p class="btrule">${ni(CR)} gettoni = 1 credito · puntata ${ni(MINS)}–${ni(MAXS)} · le puntate si chiudono al fischio d'inizio · se un giocatore non gioca la giocata è annullata e i gettoni tornano · le quote includono un margine del banco del ${Math.round(MARG*100)}%.</p></div>
  <div class="bttabs" role="tablist">${T.map(t=>`<button data-bt="${t[0]}" aria-pressed="${BS.tab===t[0]}">${t[1]}</button>`).join("")}</div>
  ${BS.tab!=="my"?`<div class="btmode"><button data-bm="s" aria-pressed="${!BS.mx}">Singola</button><button data-bm="m" aria-pressed="${BS.mx}">Multipla · bonus</button></div>${BS.mx?`<p class="btmxi">Metti insieme da ${MXMIN} a ${MXMAX} scelte (anche di schede diverse): le quote si <b>moltiplicano</b>, ma vinci solo se le indovini <b>tutte</b>. Dalla 3ª scelta c'è un bonus del ${Math.round(MXB*100)}% per ognuna (fino a +${Math.round(MXB*(MXMAX-2)*100)}%). Se una scelta viene annullata (giocatore che non gioca) esce dalla multipla.</p>`:""}`:""}${body}${slip}<p class="btft">🦆 Texas Ducks · uso interno · scommesse a gettoni, solo per gioco</p></div>`}
+/* ===== INCASSO: gettoni → crediti, con scontrino firmato ===== */
+const INCMAX=10,INCSEC="dr|duc|incasso|v1|"+"Qx7!";
+const incMese=()=>(BW.inc||[]).filter(x=>x.m===meseNow()).reduce((a,x)=>a+x.cr,0);
+function incInfo(){const profit=Math.max(0,BW.saldo-START),gia=incMese(),room=Math.max(0,INCMAX-gia),n=Math.min(room,Math.floor(profit/CR));return{profit,gia,room,n}}
+const incSig=j=>h32(INCSEC+j);
+function incCode(p){const j=JSON.stringify(p);return"DRINC1."+btoa(unescape(encodeURIComponent(j)))+"."+incSig(j)}
+function incRead(t){const m=String(t||"").trim().replace(/\s+/g,"").match(/^DRINC1\.([A-Za-z0-9+/=]+)\.([a-z0-9]+)$/);if(!m)return{err:"Codice non valido."};try{const j=decodeURIComponent(escape(atob(m[1])));if(incSig(j)!==m[2])return{err:"Codice modificato: scontrino NON valido."};return{p:JSON.parse(j)}}catch(e){return{err:"Codice non valido."}}}
+function incassa(){const I=incInfo();BS.ok=false;
+ if(I.n<1){BS.msg=I.room<1?"Hai già incassato il massimo del mese ("+INCMAX+" crediti).":"Per incassare servono almeno "+ni(CR)+" gettoni di guadagno oltre ai "+ni(START)+" iniziali.";return null}
+ const tk=I.n*CR,id=Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+ const op=BW.bets.filter(b=>b.s==="a").length;
+ BW.saldo-=tk;
+ const p={v:1,id,sq:"DUC",m:meseNow(),cr:I.n,tk,sd:BW.saldo,g:BW.bets.length,w:BW.bets.filter(b=>b.s==="v").length,ts:Date.now(),op};
+ const rec={id,m:p.m,cr:p.cr,tk,ts:p.ts,code:incCode(p)};(BW.inc=BW.inc||[]).unshift(rec);bSave();
+ try{navigator.clipboard.writeText(rec.code).catch(()=>{})}catch(e){}
+ BS.ok=true;BS.msg="Incasso registrato: "+p.cr+" crediti. Scontrino pronto: salvalo e mandalo all'admin (codice già copiato).";return rec}
+const itDT=ts=>new Intl.DateTimeFormat("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(new Date(ts));
+window.shBT=async function(){const rec=(BW.inc||[]).find(x=>x.id===window.SHR_BT);if(!rec)return null;const R=incRead(rec.code).p;if(!R)return null;
+ const H=1280,{cv,c,W}=await shBase(H);c.textBaseline="alphabetic";c.textAlign="center";
+ c.font=SH_F(800,46,1);c.fillStyle="#fcd34d";c.letterSpacing="6px";c.fillText("SCONTRINO INCASSO",W/2,206);c.letterSpacing="0px";
+ c.font=SH_F(700,28,1);c.fillStyle="rgba(233,213,255,.85)";c.fillText("Centro scommesse · Texas Ducks",W/2,252);
+ shRR(c,56,290,W-112,250,28);c.fillStyle="rgba(245,180,0,.12)";c.fill();c.strokeStyle="rgba(252,211,77,.6)";c.lineWidth=3;c.stroke();
+ c.font=SH_F(800,150,1);c.fillStyle="#fcd34d";c.fillText(String(R.cr),W/2,452);c.font=SH_F(800,44,1);c.fillStyle="#fff";c.fillText(R.cr===1?"CREDITO":"CREDITI",W/2,512);
+ const rows=[["Gettoni convertiti",ni(R.tk)],["Saldo dopo l'incasso",ni(R.sd)+" gettoni"],["Giocate / vinte",R.g+" / "+R.w],["Mese",R.m],["Emesso il",itDT(R.ts)],["ID scontrino",R.id.toUpperCase()]];
+ let y=620;c.textAlign="left";for(const[a,b]of rows){c.font=SH_B(600,30);c.fillStyle="rgba(233,213,255,.8)";c.textAlign="left";c.fillText(a,90,y);c.font=SH_F(800,34,1);c.fillStyle="#fff";c.textAlign="right";c.fillText(b,W-90,y);y+=62}
+ c.textAlign="center";c.font=SH_F(700,24,1);c.fillStyle="#fcd34d";c.letterSpacing="3px";c.fillText("CODICE DI VERIFICA",W/2,y+30);c.letterSpacing="0px";
+ c.font="22px ui-monospace,Menlo,Consolas,monospace";c.fillStyle="rgba(233,213,255,.9)";const code=rec.code,per=62;let yy=y+68;for(let i=0;i<code.length&&yy<H-130;i+=per){c.fillText(code.slice(i,i+per),W/2,yy);yy+=30}
+ shFoot(c,W,H,"Non modificare l'immagine né il codice: lo scontrino è firmato");return cv};
 VIEWS.bet=vBet;
 document.addEventListener("click",e=>{if(cur!=="bet")return;
  const t=e.target.closest("[data-bt]");if(t){BS.tab=t.dataset.bt;BS.sel=null;BS.msg="";render();scrollTo(0,0);return}
+ const bi=e.target.closest("[data-binc]");if(bi){const y=scrollY,a=bi.dataset.binc;
+  if(a==="go"){const rec=incassa();render();scrollTo(0,y);if(rec){window.SHR_BT=rec.id;shOpen("bt")}return}
+  if(a.startsWith("show|")){window.SHR_BT=a.slice(5);shOpen("bt");return}
+  if(a==="ver"){const ta=document.getElementById("btvr"),R=incRead(ta?ta.value:"");if(R.err)BS.vr={ok:false,t:R.err};else{const p=R.p,dup=(BW.inc||[]).some(x=>x.id===p.id);BS.vr={ok:true,t:`VALIDO · ${p.cr} crediti (${ni(p.tk)} gettoni) · squadra ${p.sq} · mese ${p.m} · ID ${String(p.id).toUpperCase()} · emesso ${itDT(p.ts)} · giocate ${p.g}, vinte ${p.w}, saldo dopo ${ni(p.sd)}.`+(dup?"":" Attenzione: questo ID non è tra gli scontrini di questo telefono.")}}render();scrollTo(0,y);return}}
  const md=e.target.closest("[data-bm]");if(md){BS.mx=md.dataset.bm==="m";BS.sel=null;BS.legs=[];BS.msg="";const y=scrollY;render();scrollTo(0,y);return}
  const lx=e.target.closest("[data-blx]");if(lx){BS.legs=BS.legs.filter(l=>l.id!==lx.dataset.blx);BS.msg="";const y=scrollY;render();scrollTo(0,y);return}
  const q=e.target.closest("[data-bq]");if(q&&!q.disabled){const s=SELMAP[q.dataset.bq];if(!s)return;
