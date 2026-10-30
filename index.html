@@ -4914,13 +4914,13 @@ let HN_H={};try{HN_H=JSON.parse(localStorage.getItem("dl_hh")||"{}")||{}}catch(e
 const HN_ORD=["DUC","DOL","FOX","PEA","SPI","EAG","TUR","MOO"];let HN_SO="",HN_SI=0;try{HN_SO=localStorage.getItem("dl_hso")==="team"?"team":"";HN_SI=Math.max(0,Math.min(7,+localStorage.getItem("dl_hsi")||0))}catch(e){}
 let HN_T="";try{HN_T=localStorage.getItem("dl_hnt")||""}catch(e){}
 /* (625) Home live: "pdk" (solo PDK, come prima) o "box" (box score sotto il nome, PDK accanto al cognome); scelta in Impostazioni > Aspetto della Home, vale per le due Home live e per i seguiti */
-let HN_BX="";try{HN_BX=localStorage.getItem("dl_hbx")==="1"?"1":""}catch(e){}
-function hnBxSet(v){HN_BX=v==="1"?"1":"";try{HN_BX?localStorage.setItem("dl_hbx","1"):localStorage.removeItem("dl_hbx")}catch(e){}}
+let HN_BX="1";try{HN_BX=localStorage.getItem("dl_hbx")==="0"?"":"1"}catch(e){}
+function hnBxSet(v){HN_BX=v==="1"?"1":"";try{HN_BX?localStorage.removeItem("dl_hbx"):localStorage.setItem("dl_hbx","0")}catch(e){}}
 function hnBoxHtml(n,N){try{if(!HN_BX||!N||!N.k||!TV.box[N.k])return"";const k=tvNm(n),B=TV.box[N.k],r=(B[N.sd]||[]).find(p=>tvNm(p[0])===k);return r?snBoxR(r).replace(/<em class="bxt">.*?<\/em>/,""):""}catch(e){return""}}
 const homeMyT=()=>{if(HN_T&&TEAMS[HN_T])return HN_T;let t=curTeam;try{const x=localStorage.getItem("team");if(x&&TEAMS[x])t=x}catch(e){}return t};
 function hnOptsHtml(){const sc=(k)=>k==="5"?`<div class="hnsch"><div style="display:grid;grid-template-columns:repeat(8,1fr);gap:2px">${"<i style='height:9px'></i>".repeat(8)}</div><b style="height:11px"></b><b style="height:15px"></b><b style="height:15px"></b></div>`:k==="6"?`<div class="hnsch" style="grid-template-columns:9px 1fr;gap:4px"><div style="display:grid;gap:2px">${"<i style='height:5px'></i>".repeat(8)}</div><div style="display:grid;gap:3px;align-content:start"><b style="height:11px"></b><b style="height:20px"></b><b style="height:20px"></b></div></div>`:`<div class="hnsch" style="grid-template-columns:1fr 1fr;gap:3px">${"<i style='height:12px'></i>".repeat(8)}</div>`;
   const L=hnLay(),o=(k,n,d)=>`<button class="hnopt${L===k?" on":""}" data-hnl="${k}" aria-pressed="${L===k}">${sc(k)}<span>${n}</span><small>${d}</small></button>`;
-  return`<div class="hngrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${o("0","Griglia","Come prima")}${o("6","Loghi a lato","Con i dati")}${o("5","Loghi in cima","Con i dati")}</div><p class="setnote" style="margin:10px 0 6px">Dati dei giocatori nelle partite live (e nei giocatori seguiti):</p><div class="setchips"><button data-hbx="" aria-pressed="${HN_BX!=="1"}">PDK</button><button data-hbx="1" aria-pressed="${HN_BX==="1"}">BOX · box score + PDK</button></div>`}
+  return`<div class="hngrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${o("0","Griglia","Come prima")}${o("6","Loghi a lato","Con i dati")}${o("5","Loghi in cima","Con i dati")}</div><p class="setnote" style="margin:10px 0 6px">Dati dei giocatori nelle partite live (e nei giocatori seguiti):</p><div class="setchips"><button data-hbx="1" aria-pressed="${HN_BX==="1"}">BOX · box score + PDK</button><button data-hbx="" aria-pressed="${HN_BX!=="1"}">Snella · solo PDK</button></div>`}
 function hnVerHtml(){const S=hnScope(),T=homeMyT(),on=(v)=>v==="all"?S==="all":S==="team"&&T===v;
   const tile=(v,lg,n,d)=>`<button class="hnopt hnv${on(v)?" on":""}" data-hnv="${v}" aria-pressed="${on(v)}"><span class="hnvl">${lg}</span><span>${n}</span><small>${d}</small></button>`;
   return`<div class="hngrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${tile("all",'<b class="hnvs">★</b>',"Ufficiale","Tutte le squadre")}${teamOrd().map(t=>tile(t,badge(t),TEAMS[t].nick,"Solo i suoi giocatori")).join("")}</div>`}
@@ -4929,7 +4929,8 @@ function hnTeam(t){if(!TEAMS[t])return;HN_T=t;try{localStorage.setItem("dl_hnt",
 
 /* (393) Casellina della Home a 3 pagine: Giocatori (come prima) · Risultati Dreamers · Classifica Dreamers. Si cambia con lo swipe orizzontale (verso destra = pagina successiva, verso sinistra = precedente) o toccando i puntini. */
 let HN_PG=0,HN_RK=null;
-const HN_PGN=["Giocatori","Risultati","Classifica"];
+/* (626) dalle 14:00 (fase pre) il giro ha una 4a pagina: Previsione > Risultati > Classifica > Notte appena avvenuta > Previsione. Prima delle 14 la notte appena avvenuta è la pagina predefinita e la Previsione non esiste. */
+const HN_PGN4=["Previsione","Risultati","Classifica","Notte"],HN_PGN3=["Giocatori","Risultati","Classifica"];let HN_PGN=HN_PGN3;
 const HN_CTL="one"; /* "wheel" = rotella · "arr" = freccette */
 function hnDots(){const d=HN_PGN.map((n,i)=>`<button type="button" class="${i===HN_PG?"on":""}" data-hpg="${i}" aria-label="${n}" role="tab" aria-selected="${i===HN_PG}"></button>`).join("");
   if(HN_CTL==="one")return`<div class="hmdots one"><button type="button" class="hmarr hmone" data-hdir="1" aria-label="Pagina successiva (giro infinito)">›</button></div>`;
@@ -4949,22 +4950,22 @@ const W_=h=>`<div class="hmscroll"${HN_H.m?` style="max-height:${HN_H.m}px"`:""}
 /* CAROSELLO della casellina: 5 slot [Giocatori', Classifica, Risultati, Giocatori, Classifica'] (i due estremi sono copie per il giro continuo).
    Il dito trascina la pista in modo fluido (translateX), al rilascio scatta alla pagina più vicina con una curva morbida; verso destra = pagina successiva
    (Giocatori → Risultati → Classifica → Giocatori). Non scorre da solo. */
-const HN_MAP=[2,0,1,2,0];
+
 function hnRe(){const el=document.querySelector(".hn6");if(!el)return;try{const h=document.createElement("div");h.innerHTML=homeNotte(standings());const n=h.firstElementChild;if(n){el.innerHTML=n.innerHTML;bindHomeNotte(el)}}catch(e){}}
 function hnGo(p){const c=document.querySelector(".hmcar");if(c&&c._to){c._to(1+p);return}HN_PG=p;hnRe()}
-function hnCar(root){const car=root.querySelector(".hmcar");if(!car)return;const bar=root.querySelector(".hmdots"),trk=car.firstElementChild,sl=[...trk.children];let idx=1+HN_PG,ro=null;
+function hnCar(root){const car=root.querySelector(".hmcar");if(!car)return;const bar=root.querySelector(".hmdots"),trk=car.firstElementChild,sl=[...trk.children];const NP=Math.max(1,trk.children.length-2);if(HN_PG>=NP)HN_PG=0;let idx=1+HN_PG,ro=null;
   const dots=()=>root.querySelectorAll(".hmdots button[data-hpg]").forEach((b,i)=>{b.classList.toggle("on",i===HN_PG);b.setAttribute("aria-selected",i===HN_PG)});
   const setH=()=>{car.style.height=sl[idx].offsetHeight+"px"};
   const watch=()=>{try{if(ro)ro.disconnect();ro=new ResizeObserver(setH);ro.observe(sl[idx])}catch(e){}};
   const pos=(px,anim)=>{trk.classList.toggle("anim",!!anim);trk.style.transform=`translate3d(${-idx*car.clientWidth+px}px,0,0)`;if(bar)bar.style.setProperty("--wx",((-idx*car.clientWidth+px)*.16)+"px")};
-  const settle=()=>{if(idx<=0){idx=3;pos(0,false)}else if(idx>=4){idx=1;pos(0,false)}HN_PG=HN_MAP[idx];dots();watch();setH()};
+  const settle=()=>{if(idx<=0){idx=NP;pos(0,false)}else if(idx>=NP+1){idx=1;pos(0,false)}HN_PG=(idx-1)%NP;dots();watch();setH()};
   /* transitionend dei figli (barre, ecc.) non deve chiudere la corsa: conta solo quello della pista */
-  const go=i=>{idx=Math.max(0,Math.min(4,i));HN_PG=HN_MAP[idx];dots();setH();pos(0,true);watch();let done=false;const fin=ev=>{if(done||(ev&&ev.target!==trk))return;done=true;trk.removeEventListener("transitionend",fin);clearTimeout(tm);if(idx<=0||idx>=4)settle()},tm=setTimeout(fin,420);trk.addEventListener("transitionend",fin)};
-  car._to=i=>{if(trk.classList.contains("anim")&&(idx<=0||idx>=4))settle();go(i)};pos(0,false);setH();watch();
+  const go=i=>{idx=Math.max(0,Math.min(NP+1,i));HN_PG=((idx-1)%NP+NP)%NP;dots();setH();pos(0,true);watch();let done=false;const fin=ev=>{if(done||(ev&&ev.target!==trk))return;done=true;trk.removeEventListener("transitionend",fin);clearTimeout(tm);if(idx<=0||idx>=NP+1)settle()},tm=setTimeout(fin,420);trk.addEventListener("transitionend",fin)};
+  car._to=i=>{if(trk.classList.contains("anim")&&(idx<=0||idx>=NP+1))settle();go(i)};pos(0,false);setH();watch();
   if(!bar)return;
   /* lo swipe si fa solo sulla barra sotto la casella (rotella / freccette): la casella resta ferma e fluida */
   let id=null,x0=0,t0=0,dx=0,mv=false;
-  bar.addEventListener("pointerdown",e=>{if(e.button>0||id!=null)return;if(idx<=0||idx>=4)settle();id=e.pointerId;x0=e.clientX;t0=performance.now();dx=0;mv=false;HN_DRAG=true});
+  bar.addEventListener("pointerdown",e=>{if(e.button>0||id!=null)return;if(idx<=0||idx>=NP+1)settle();id=e.pointerId;x0=e.clientX;t0=performance.now();dx=0;mv=false;HN_DRAG=true});
   bar.addEventListener("pointermove",e=>{if(id!==e.pointerId)return;const ax=e.clientX-x0;
     if(!mv&&Math.abs(ax)>6){mv=true;try{bar.setPointerCapture(id)}catch(_){}car.style.height=Math.max(sl[idx].offsetHeight,sl[idx-1]?sl[idx-1].offsetHeight:0,sl[idx+1]?sl[idx+1].offsetHeight:0)+"px"}
     if(!mv)return;dx=ax*1.6;pos(dx,false)});
@@ -5055,7 +5056,7 @@ function homeNotte(st){
       const I0=segInfo(n)||{},role=I0.kind==='T'?((ROSTER[I0.t]||[]).find(p=>p[0]===n)||[])[2]:null;
       if(mineF&&role){const dd=capDati(n,opp);def=role?hnDef(opp,role):null;const w=def&&def.n?Math.min(1,def.n/6):0;pred=dd.idx==null?null:dd.idx*(1+(def&&def.n?def.pct:0)/100*w*.6)}
       else{const dk=d2=>{const[a,b]=String(d2).split("/").map(Number);return(b>=8?0:12)*100+b*100+a},ser=(PARTITE[n]||[]).slice().sort((a,b)=>dk(a[0])-dk(b[0])).map(x=>+x[3]).filter(v=>!isNaN(v));tr=ser.length>=3?grTrend(ser):null}
-      out.push({n,g,opp,sd,best,avg,c:all.length,t:String(g[6]||""),pred,def,tr,role,own:I0.kind==="T"?I0.t:null})}catch(e){}});out.sort((a,b)=>a.t.localeCompare(b.t)||((b.pred??-1)-(a.pred??-1))||a.n.localeCompare(b.n));return out};
+      out.push({n,g,opp,sd,best,avg,c:all.length,t:String(g[6]||""),pred,def,tr,role,own:I0.kind==="T"?I0.t:null})}catch(e){}});out.sort((a,b)=>((b.pred??-1)-(a.pred??-1))||a.t.localeCompare(b.t)||a.n.localeCompare(b.n));return out};
   const preRow=(x,mn)=>{const cap=x.def&&x.def.n?`${x.def.pct>=10?"difesa morbida":x.def.pct<=-10?"difesa dura":"difesa nella media"} vs ${({G:"guardie",F:"ali",C:"centri"})[x.role]||"ruolo"} (${x.def.pct>0?"+":""}${Math.round(x.def.pct)}%)`:"";
     const right=mn?`<span class="hmv pv" data-hprev="${String(x.n).replace(/"/g,"&quot;")}|${x.opp}" role="link" tabindex="0" aria-label="Come si calcola la previsione"><small>PREVISIONE</small>${pdkB(x.pred,x.pred==null?"—":pdkF(x.pred))}</span><span class="hmv"><small>DA SUPERARE</small>${pdkB(x.best,x.best==null?"—":pdkF(x.best))}</span>`:`<span class="hmv"><small>TREND</small>${x.tr?`<span class="hmtr ${Math.abs(x.tr.pct)<3?"s":x.tr.pct>0?"u":"d"}">${Math.abs(x.tr.pct)<3?"=":(x.tr.pct>0?"▲ +":"▼ −")+Math.abs(x.tr.pct).toFixed(0)+"%"}</span>`:'<span class="dash">—</span>'}</span>`;
     return`<div class="hmp" data-hpn="${String(x.n).replace(/"/g,"&quot;")}" role="link" tabindex="0"><span class="hmn"><span class="hmnl">${OFF&&x.own?`<i class="hmo">${badge(x.own)}</i>`:""}<span class="hmnn">${esc(x.n)}</span></span><small>vs ${x.opp} · ${x.t.replace("+1","")}</small><small>Media vs ${x.opp}: ${x.avg==null?"nessuna gara":pdkF(x.avg)+" · "+x.c+(x.c===1?" gara":" gare")}</small>${mn&&cap?`<small>${cap}</small>`:""}</span><span class="hmvs">${right}</span></div>`};
@@ -5070,7 +5071,9 @@ function homeNotte(st){
   const TOP=hnLay()==="5";
   const mC=pre?prePanel(OFF?"TUTTE LE SQUADRE":"I MIEI STANOTTE · "+TEAMS[myT].nick.toUpperCase(),"m",preL(OFF?Object.values(ROSTER).flat().map(p=>p[0]):(ROSTER[myT]||[]).map(p=>p[0]),true),OFF?"Nessun giocatore gioca stanotte.":"Nessuno dei tuoi giocatori gioca stanotte."):panel(OFF?"TUTTE LE SQUADRE":"I MIEI · "+TEAMS[myT].nick.toUpperCase(),"m",mine,OFF?"Nessun giocatore in campo stanotte.":"Nessuno dei tuoi giocatori in campo stanotte.",OFF?null:mTot);
   const mCls=(mC.match(/^<div class="([^"]*)">/)||[0,"hmcard m"])[1],mIn=mC.replace(/^<div class="[^"]*">/,"").replace(/<\/div>$/,""),rIn=hnResCard(),cIn=hnClaCard(),sl=h=>`<div class="hmslot">${h}</div>`;
-  const mCard=`<div class="${mCls} hmmulti"><div class="hmcar"><div class="hmtrk">${[cIn,mIn,rIn,cIn,mIn].map(sl).join("")}</div></div>${hnDots()}</div>`;
+  let nIn=null;if(pre){try{const nC=panel(OFF?"NOTTE APPENA AVVENUTA":"NOTTE APPENA AVVENUTA · "+TEAMS[myT].nick.toUpperCase(),"m",mine,OFF?"Nessun giocatore in campo la notte scorsa.":"Nessuno dei tuoi giocatori in campo la notte scorsa.",OFF?null:mTot);nIn=nC.replace(/^<div class="[^"]*">/,"").replace(/<\/div>$/,"")}catch(e){nIn=null}}
+  const PG=nIn?[mIn,rIn,cIn,nIn]:[mIn,rIn,cIn];HN_PGN=nIn?HN_PGN4:HN_PGN3;
+  const mCard=`<div class="${mCls} hmmulti"><div class="hmcar"><div class="hmtrk">${[PG[PG.length-1],...PG,PG[0]].map(sl).join("")}</div></div>${hnDots()}</div>`;
   return`<div class="hn6${TOP?" top":""}${OFF?"":" tm"}" style="--tc:${TEAMS[myT].bg}">${TOP?"":`<div class="hmqrow">${banner}</div>`}<div class="hmrail">${teamOrd().map(t=>{const x=st.find(y=>y.t===t)||{w:0,l:0};return`<button class="hrl" data-team="${t}" style="--tc:${TEAMS[t].bg}" aria-label="Roster ${TEAMS[t].name} ${x.w}-${x.l}" title="${TEAMS[t].name} ${x.w}-${x.l}">${badge(t)}${TOP?`<small>${x.w}-${x.l}</small>`:""}</button>`}).join("")}</div>
   <div class="hmmain" id="hmmain">${TOP?`<div class="hmsec"><span>${pre?"PARTITE DI STANOTTE":GG.some(g=>g[5]==="L")?"LIVE ADESSO":"PARTITE DELLA NOTTE"}</span><span>${GG.length} PARTITE</span></div>${banner}`:""}${mCard}${pre?prePanel("★ SEGUITI STANOTTE","s",preL(SEGUI),SEGUI.length?"Nessuno dei tuoi seguiti gioca stanotte.":"Tocca il segnalibro su un giocatore per seguirlo."):panel("★ SEGUITI","s",seg,SEGUI.length?"Nessuno dei tuoi seguiti in campo stanotte.":"Tocca il segnalibro su un giocatore per seguirlo.",null)}</div></div>`}
 setInterval(()=>{try{if(cur==="home"&&!document.hidden&&document.querySelector(".hn6 .hmph"))homeNotteRefresh()}catch(e){}},4000);
