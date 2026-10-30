@@ -2881,6 +2881,8 @@ function standings(){
     A.h2h[b]=(A.h2h[b]||0)+(aw?1:0);B.h2h[a]=(B.h2h[a]||0)+(aw?0:1);
     A.last.push(aw?"W":"L");B.last.push(aw?"L":"W");
   }));
+  /* (616) i record V-P di Home e Campo sono quelli DREAMERS (drStand, aggiornati turno per turno), non quelli vecchi dei dati Dunkest (CHIUSE) */
+  try{drStand().forEach(d=>{if(s[d.t]){s[d.t].w=d.w;s[d.t].l=d.l;s[d.t].pf=d.pf;s[d.t].pa=d.pa}})}catch(e){}
   const arr=Object.values(s).map(x=>({...x,pct:x.w+x.l?x.w/(x.w+x.l):0}));
   arr.sort((x,y)=>y.pct-x.pct||y.w-x.w||((y.h2h[x.t]||0)-(x.h2h[y.t]||0))||y.pf-x.pf);
   const top=arr[0];arr.forEach(x=>x.gb=((top.w-x.w)+(x.l-top.l))/2);
