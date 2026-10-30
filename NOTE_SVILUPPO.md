@@ -1548,3 +1548,8 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 ## 538 — Pulsanti Statistiche in stile «card con icona in tondo»
 - Efficienza Cup viola, Calcola il trend verde, Giocatori rosso, Squadre giallo: sfumato scuro→colore, angoli arrotondati, icona e freccia in cerchi traslucidi, tondo decorativo nell'angolo.
 - Stato: pubblicato (v145, 30/10/2026).
+
+## 539 — G-Dreamers dentro Dreamers (interruttore) e fuori dal Centro gestione
+- Sotto il titolo di Dreamers e di G-Dreamers c'è l'interruttore «Dreamers | G-Dreamers» (viola/verde): passa da un campionato all'altro nella stessa stanza a schermo intero.
+- Tolta la voce «G-Dreamers» dal menu Centro gestione. Le statistiche dei satelliti G League (prima «Squadre» in quella pagina) sono ora la 4ª scheda «G League» dentro G-Dreamers; il tasto indietro dal profilo giocatore G League torna lì.
+- Stato: pubblicato (v146, 30/10/2026).
