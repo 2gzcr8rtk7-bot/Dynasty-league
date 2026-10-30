@@ -3112,40 +3112,49 @@ function advStats(n){const dk=d=>{const[g,m]=d.split("/").map(Number);return (m>
   let tr=null;const T=E.slice(-10);if(T.length>=5){const m=T.length,mx=(m-1)/2,my=avg(T);let nu=0,de=0;T.forEach((y,i)=>{nu+=(i-mx)*(y-my);de+=(i-mx)**2});tr=nu/de*5}
   const md=avg(E),l7=avg(E.slice(-7));
   return{k,media:md,min:avg(L.map(g=>g[2])),l30:last(30),l15:last(15),l5:last(5),tr,d7:k>=2&&md!=null?l7-md:null}}
+/* (533) SQUADRE = scheda squadra con squadra + periodo + filtri. Il periodo (ESP) pilota tutto: i tasti stagione/mese sono scorciatoie, il calendario dà il periodo libero. */
+const ESP={da:null,a:null,sz:"2026/27"};let esqRole="GFC",esqFOpen=false;
+const espPad=v=>String(v).padStart(2,"0");
+function espMonth(sz,m){const y0=+sz.slice(0,4),y=m>=8?y0:y0+1,last=new Date(Date.UTC(y,m,0)).getUTCDate(),mx=perOggi();let da=`${y}-${espPad(m)}-01`,a=`${y}-${espPad(m)}-${espPad(last)}`;if(m===+mx.slice(5,7)&&a>mx)a=mx;if(da<PER_MIN)da=PER_MIN;return{da,a}}
+function espInit(){if(ESP.da)return;const t=perOggi(),m=+t.slice(5,7),y=+t.slice(0,4),sz=m>=8?`${y}/${String(y+1).slice(2)}`:`${y-1}/${String(y).slice(2)}`;ESP.sz=PER_ORD.includes(sz)?sz:PER_ORD[2];if([10,11,12,1,2,3,4].includes(m)){const r=espMonth(ESP.sz,m);ESP.da=r.da;ESP.a=r.a}else{const r=perSzRange(ESP.sz);ESP.da=r[0];ESP.a=r[1]}}
 function vEffSquadra(){
-  const sz=SZ_ALL.includes(gSeason)?gSeason:SZ_ALL[0],E=sz===SZ_ALL[0]?EFF:effPast(sz),PT=E.past?(STAGIONI[sz]||{}):PARTITE;PTcur=E.past?PT:null;
-  const t=effSq||effTeam||curTeam,c=TEAMS[t];if(!c||!E.gioc[t])return `<p class="note">Squadra non trovata.</p>`;
-  const s=E.squadre.find(x=>x[0]===t)||[t,0,0,null,null,0];
-  const pos=E.squadre.findIndex(x=>x[0]===t)+1;
-  const nba=n=>{const p=(ROSTER[t]||[]).find(x=>x[0]===n);return p?p[3]:"—"};
-  const d1=v=>v==null?'<span class="dash">—</span>':v.toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1});
-  const ar=(cur,base,thr)=>{if(cur==null||base==null)return"";const df=cur-base;return df>=thr&&df>0?'<span class="tr u">▲</span>':df<=-thr&&df<0?'<span class="tr d">▼</span>':'<span class="tr s">▶</span>'};
-  const ps=E.gioc[t].slice().sort((a,b)=>esqMet==="pdk"?(advStats(b[0]).media??-99)-(advStats(a[0]).media??-99):(b[1]??-9)-(a[1]??-9));
-  let best=null;ps.forEach(p=>{if(p[5]!=null&&(best==null||p[5]>best[5]))best=p});
-  /* Colonne = partite del giocatore in ordine (G1 = sua 1ª partita, G2 = 2ª…), dal database PT.
-     Nessun buco: chi ha giocato meno partite ha le ultime celle vuote finché il report non aggiunge la gara. */
+  espInit();if(ESP.da<PER_MIN)ESP.da=PER_MIN;if(ESP.a<ESP.da){const q=ESP.a;ESP.a=ESP.da;ESP.da=q}
+  const t=effSq||effTeam||curTeam,c=TEAMS[t];if(!c)return `<p class="note">Squadra non trovata.</p>`;
+  const SZR=perSzr(ESP.da,ESP.a),sz=SZ_ALL.includes(ESP.sz)?ESP.sz:SZ_ALL[0];
+  const rowsOf=(n,z)=>z===PER_ORD[2]?(PARTITE[n]||[]):((STAGIONI[z]||{})[n]||[]);
   const dk=d=>{const[g,m]=d.split("/").map(Number);return (m>=8?0:12)*100+m*100+g};
-  const gl=n=>(PT[n]||[]).slice().sort((x,y)=>dk(x[0])-dk(y[0]));
-  /* Filtro per mese: "tutta" = tutte le partite; un mese = solo le partite di quel mese (sempre senza buchi).
-     Nella cella resta il numero di partita stagionale (G7 ecc.). */
-  const MESI_N=["","Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
-  const conDati=[...new Set(Object.values(PT).flat().map(g=>+g[0].slice(3)))].sort((x,y)=>dk("01/"+x)-dk("01/"+y));
-  const mesi=[10,11,12,1,2,3,4]; /* regular season: ottobre → aprile, sempre selezionabili anche se ancora vuoti */
-  if(esqMese!=="tutta"&&!mesi.includes(esqMese))esqMese=conDati.length?conDati[conDati.length-1]:"tutta";
-  const sel=L=>L.map((g,i)=>({g,n:i+1})).filter(x=>esqMese==="tutta"||+x.g[0].slice(3)===esqMese);
-  const nmax=Math.max(1,...ps.map(p=>sel(gl(p[0])).length));
-  const cols=Array.from({length:nmax},(_,i)=>`<th class="gcol"><b>${esqMese==="tutta"?"G"+(i+1):(i+1)+"ª"}</b></th>`).join("");
-  const mchips=`<div class="chips esqm"><label class="szchip" aria-pressed="${esqMese==="tutta"}"><select id="gseason" data-szchip="1" aria-label="Stagione">${esqMese!=="tutta"?`<option value="" selected hidden>${SZ_LBL[sz]}</option>`:""}${SZ_ALL.map(s=>`<option value="${s}"${esqMese==="tutta"&&s===sz?" selected":""}>${SZ_LBL[s]}</option>`).join("")}</select></label>${mesi.map(m=>`<button class="chip" data-esqm="${m}" aria-pressed="${esqMese===m}">${MESI_N[m]}</button>`).join("")}</div>`;
-  const rows=ps.map(p=>{const L=sel(gl(p[0]));
-    return `<tr data-plt="${t}" data-pln="${p[0]}" class="plink"><td class="pnm">${p[0]} <span class="plgo">›</span><small>${nba(p[0])}</small></td>${Array.from({length:nmax},(_,i)=>{const x=L[i];return `<td class="gcell">${x?`<span class="gv ${MET().l(x.g[MET().i])}${x.g[8]?" gvlive":""}">${MET().f(x.g[MET().i])}</span><small class="gd">${x.g[1]}</small>`:""}</td>`}).join("")}</tr>`}).join("");
-  return `<button class="gback esqback" id="effback">‹ Statistiche squadre</button>
+  const PT={},ros=(ROSTER[t]||[]).filter(p=>esqRole.includes(p[2]));
+  ros.forEach(p=>{let all=[];SZR.forEach(z=>{all=all.concat(faRowsIn(rowsOf(p[0],z),z,ESP.da,ESP.a).slice().sort((x,y)=>dk(x[0])-dk(y[0])))});PT[p[0]]=all});
+  PTcur=PT;
+  const M=MET(),avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
+  const ps=ros.map(p=>[p[0],null,0,null,null,null,null,null,p]).sort((a,b)=>(advStats(b[0]).media??-99)-(advStats(a[0]).media??-99));
+  const nba=n=>{const p=(ROSTER[t]||[]).find(x=>x[0]===n);return p?p[3]:"—"};
+  const all=Object.values(PT).flat(),tmn=all.reduce((x,g)=>x+g[2],0),tdk=all.reduce((x,g)=>x+g[3],0);
+  const nmax=Math.max(1,...ps.map(p=>PT[p[0]].length)),short=perGg(ESP.da,ESP.a)<=31;
+  const cols=Array.from({length:nmax},(_,i)=>`<th class="gcol"><b>${short?(i+1)+"ª":"G"+(i+1)}</b></th>`).join("");
+  const MESI_N=["","Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"],mesi=[10,11,12,1,2,3,4];
+  const onM=m=>{const r=espMonth(sz,m);return ESP.da===r.da&&ESP.a===r.a},sr=perSzRange(sz),onS=ESP.da===sr[0]&&ESP.a===sr[1];
+  const chips=`<div class="chips esqm"><label class="szchip" aria-pressed="${onS||!mesi.some(onM)}"><select data-esqsz="1" aria-label="Stagione">${mesi.some(onM)?`<option value="" selected hidden>${SZ_LBL[sz]}</option>`:""}${SZ_ALL.map(z=>`<option value="${z}"${!mesi.some(onM)&&z===sz?" selected":""}>${SZ_LBL[z]}</option>`).join("")}</select></label>${mesi.map(m=>`<button class="chip" data-esqm="${m}" aria-pressed="${onM(m)}">${MESI_N[m]}</button>`).join("")}</div>`;
+  const tchips=`<div class="chips">${Object.keys(TEAMS).map(k=>`<button class="chip" data-esqt="${k}" aria-pressed="${k===t}">${badge(k)}${TEAMS[k].nick}</button>`).join("")}</div>`;
+  const fn=(esqRole!=="GFC"?1:0)+(esqMet!=="eff"?1:0)+(esqAdv?1:0);
+  const fpan=esqFOpen?`<div class="fapan"><div class="fapl">Cosa misurare</div><div class="fapr">${[["eff","Efficienza"],["pdk","PDK"]].map(([v,l])=>`<button class="fach" data-esqmet="${v}" aria-pressed="${esqMet===v}">${esqMet===v?"✓ ":""}${l}</button>`).join("")}</div>
+  <div class="fapl">Vista</div><div class="fapr">${[[0,"Partita per partita"],[1,"Statistiche avanzate"]].map(([v,l])=>`<button class="fach" data-esqadv="${v}" aria-pressed="${!!esqAdv===!!v}">${!!esqAdv===!!v?"✓ ":""}${l}</button>`).join("")}</div>
+  <div class="fapl">Ruoli</div><div class="fapr">${[["G","Guardie"],["F","Ali"],["C","Centri"]].map(([v,l])=>`<button class="fach" data-esqrole="${v}" aria-pressed="${esqRole.includes(v)}">${esqRole.includes(v)?"✓ ":""}${l}</button>`).join("")}</div>
+  <button class="fareset" data-esqreset="1">Azzera i filtri</button></div>`:"";
+  const rows=ps.map(p=>{const L=PT[p[0]];
+    return `<tr data-plt="${t}" data-pln="${p[0]}" class="plink"><td class="pnm">${p[0]} <span class="plgo">›</span><small>${nba(p[0])}</small></td>${Array.from({length:nmax},(_,i)=>{const x=L[i];return `<td class="gcell">${x?`<span class="gv ${M.l(x[M.i])}${x[8]?" gvlive":""}">${M.f(x[M.i])}</span><small class="gd">${x[1]}</small>`:""}</td>`}).join("")}</tr>`}).join("");
+  const body=!all.length?`<div class="cempty">Nessuna partita di ${c.nick} nel periodo scelto.</div>`:esqAdv?advTable(t,ps,nba):`<div class="tbl-wrap esqwrap"><table class="ptbl esqtbl esqg"><thead><tr><th>Giocatore</th>${cols}</tr></thead><tbody>${rows}</tbody></table></div>`;
+  return `<button class="gback esqback" id="effback">‹ Statistiche</button>
+  ${tchips}
   <div class="esqhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 60%,#000) 100%);color:${c.txt||c.fg};border-bottom:4px solid ${c.trim}">${badge(t)}<div class="esqt"><small>${c.name}</small><h3>${c.nick}</h3></div></div>
-  <div class="esqk"><div><small>Eff. stagionale</small>${eff(s[4])}</div>${E.past?`<div><small>Stagione</small><b>${sz}</b></div>`:`<div><small>Notte · ${s[1]} in campo</small>${eff(s[3])}</div>`}<div><small>Posizione lega</small><b>${pos}ª</b></div></div>
-  ${H(c.nick,`<em>${E.past?SZ_LBL[sz]+" · "+sz:"Agg. "+E.agg}</em>`)}
-  <div class="esqctl"><div class="metsw"><button data-esqmet="eff" aria-pressed="${esqMet==="eff"}">Efficienza</button><button data-esqmet="pdk" aria-pressed="${esqMet==="pdk"}">PDK</button></div><button class="advbtn" data-esqadv="1" aria-pressed="${esqAdv}">${esqAdv?"‹ Partita per partita":"Statistiche avanzate"}</button><button class="advbtn grbtn" data-grafico="${t}">📈 Grafico</button></div>
-  ${esqAdv?advTable(t,ps,nba):`${mchips}${esqMese!=="tutta"&&!conDati.includes(esqMese)?`<div class="cempty">Nessuna partita ancora a ${MESI_N[esqMese].toLowerCase()}: la tabella si riempie da sola con i report.</div>`:`<div class="tbl-wrap esqwrap"><table class="ptbl esqtbl esqg"><thead><tr><th>Giocatore</th>${cols}</tr></thead><tbody>${rows}</tbody></table></div>`}`}
-  <p class="note">Filtra per mese con i bottoni sopra la tabella (si apre sul mese in corso). In "Stagione" ogni colonna è una partita del giocatore in ordine: G1 la sua prima, G2 la seconda e così via; nei mesi le colonne sono le partite di quel mese (1ª, 2ª…) Sotto ogni valore: la squadra avversaria. Chi ha giocato meno partite ha le ultime caselle vuote finché il report non aggiunge la gara. Scorri a destra per le partite successive; giocatori in ordine di efficienza media.</p>
-  <p class="note"><span class="ev g"><i></i>sopra 1,10</span> &nbsp; <span class="ev y"><i></i>0,80–1,10</span> &nbsp; <span class="ev r"><i></i>sotto 0,80</span></p>`;
+  <div class="esqk"><div><small>PDK medio</small>${all.length?pdkB(tdk/all.length):"—"}</div><div><small>Eff. media</small>${tmn?eff(tdk/tmn):"—"}</div><div><small>Giocatori in campo</small><b>${ps.filter(p=>PT[p[0]].length).length}</b></div></div>
+  <div class="fabar">${perBtn("esq",ESP.da,ESP.a)}<button class="fafil${fn?" on":""}" data-esqfil="1" aria-expanded="${esqFOpen}"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4-2v-4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Filtri${fn?` <i>${fn}</i>`:""}</button></div>
+  ${fpan}
+  ${chips}
+  <div class="esqctl"><button class="advbtn ggy grbtn" data-grafico="${t}">📈 Grafico</button></div>
+  ${body}
+  <p class="note">Il periodo si sceglie col calendario o con stagione e mesi sopra la tabella. Ogni colonna è una partita del giocatore nel periodo (G1, G2… oppure 1ª, 2ª… se il periodo è un solo mese); sotto ogni valore l'avversario. Giocatori in ordine di ${M.nome} media.</p>
+  <p class="note">${esqMet==="pdk"?'<span class="pdkx v">da 40</span> <span class="pdkx g">30–40</span> <span class="pdkx y">20–30</span> <span class="pdkx r">sotto 20</span>':'<span class="ev g"><i></i>sopra 1,10</span> &nbsp; <span class="ev y"><i></i>0,80–1,10</span> &nbsp; <span class="ev r"><i></i>sotto 0,80</span>'}</p>`;
 }
 function advTable(t,ps,nba){
   const A=ps.map(p=>({p,a:advStats(p[0])})).sort((x,y)=>(y.a.media??-9)-(x.a.media??-9));
@@ -4815,6 +4824,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-per]");if(
     let a0=PK.s0,b0=iso;if(b0<a0){const t=a0;a0=b0;b0=t}PK.s0=null;PK.da=a0;PK.a=b0;perDisegna();setTimeout(()=>perFine(a0,b0),260)}});
 PER_CB.gr=(da,a)=>{GR.da=da;GR.a=a};
 PER_CB.fa=(da,a)=>{FPR.da=da;FPR.a=a};
+PER_CB.esq=(da,a)=>{ESP.da=da;ESP.a=a;const z=perSzr(da,a);if(z.length)ESP.sz=z[z.length-1]};
 PER_CB.tr=(da,a)=>{TRN.da=da;TRN.a=a;TRN.on=null};
 PER_CB.nbg=(da,a)=>{NB.g.from=da;NB.g.to=a};
 PER_CB.nbr=(da,a)=>{NB.mode="r";NB.from=da;NB.to=a};
@@ -6673,7 +6683,7 @@ document.getElementById("main").addEventListener("click",e=>{
   if(e.target.classList&&e.target.classList.contains("trsheet")){TRN.det=null;e.target.remove();return}
   const r=e.target.closest("[data-trln]");if(r&&!e.target.closest("[data-grafico]")&&!e.target.closest("[data-trtog]")){e.preventDefault();TRN.det=r.dataset.trln;const y=window.scrollY;render();window.scrollTo(0,y);return}
   if(r&&e.target.closest("[data-trtog]")){e.preventDefault();const n=r.dataset.trln;TRN.on=TRN.on||[];const i=TRN.on.indexOf(n);if(i>=0)TRN.on.splice(i,1);else{TRN.on.push(n);if(TRN.on.length>TR_MAXL)TRN.on.shift()}const y=window.scrollY;render();window.scrollTo(0,y)}});
-document.addEventListener("click",e=>{const b=e.target.closest("[data-effsub]");if(!b||cur!=="efficienza")return;e.preventDefault();const v=b.dataset.effsub;if(v==="pl"){faFrom="fa";cur="fa";render();scrollTo(0,0)}else{effSub=v;render();scrollTo(0,0)}});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-effsub]");if(!b||cur!=="efficienza")return;e.preventDefault();const v=b.dataset.effsub;if(v==="pl"){faFrom="fa";cur="fa";render();scrollTo(0,0)}else{effSq=effSq||curTeam;cur="effsquadra";render();scrollTo(0,0)}});
 document.getElementById("main").addEventListener("change",e=>{const fs=e.target.closest("select[data-fasel]");if(fs&&cur==="fa"){if(fs.dataset.fasel==="nba")faNba=fs.value;else faDt=fs.value;const y=window.scrollY;render();window.scrollTo(0,y);return}const s=e.target.closest("select[data-tr]");if(!s||cur!=="trend")return;const k=s.dataset.tr;
   if(k==="sz"||k==="sz2"){TRN[k]=s.value;TRN.mese="";TRN.mese2=""}else if(k==="mese"){TRN.mese=s.value;TRN.mese2=s.value}else TRN[k]=s.value;TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y)});
 /* Grafico: apertura, chiusura, menu e linee */
@@ -6683,8 +6693,14 @@ document.getElementById("main").addEventListener("click",e=>{
   const tg=e.target.closest("[data-grtg]");if(tg){e.preventDefault();GR.show[tg.dataset.grtg]=!GR.show[tg.dataset.grtg];const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("change",e=>{const s=e.target.closest("select[data-gr]");if(!s)return;const k=s.dataset.gr;
   if(k==="Giocatore")GR.p=s.value;else if(k==="Dalla stagione"){GR.sz=s.value;GR.mese="";GR.mese2=""}else if(k==="Alla stagione"){GR.sz2=s.value;GR.mese="";GR.mese2=""}else if(k==="Dal mese"){GR.mese=s.value;GR.mese2=s.value}else if(k==="Al mese")GR.mese2=s.value;const y=window.scrollY;render();window.scrollTo(0,y)});
-document.getElementById("main").addEventListener("click",e=>{const a=e.target.closest("[data-esqadv]");if(a&&cur==="effsquadra"){e.preventDefault();esqAdv=!esqAdv;const y=window.scrollY;render();window.scrollTo(0,y)}});
-document.getElementById("main").addEventListener("click",e=>{const m=e.target.closest("[data-esqm]");if(m&&cur==="effsquadra"){e.preventDefault();esqMese=m.dataset.esqm==="tutta"?"tutta":+m.dataset.esqm;const y=window.scrollY;render();window.scrollTo(0,y)}});
+document.getElementById("main").addEventListener("click",e=>{const a=e.target.closest("[data-esqadv]");if(a&&cur==="effsquadra"){e.preventDefault();esqAdv=!!+a.dataset.esqadv;const y=window.scrollY;render();window.scrollTo(0,y)}});
+document.getElementById("main").addEventListener("click",e=>{const m=e.target.closest("[data-esqm]");if(m&&cur==="effsquadra"){e.preventDefault();const rg=espMonth(ESP.sz,+m.dataset.esqm);ESP.da=rg.da;ESP.a=rg.a;const y=window.scrollY;render();window.scrollTo(0,y)}});
+document.getElementById("main").addEventListener("click",e=>{if(cur!=="effsquadra")return;const b=e.target.closest("[data-esqt],[data-esqfil],[data-esqrole],[data-esqreset]");if(!b)return;e.preventDefault();
+  if(b.dataset.esqt)effSq=b.dataset.esqt;if(b.dataset.esqfil)esqFOpen=!esqFOpen;
+  if(b.dataset.esqrole){const v=b.dataset.esqrole;let n=esqRole.includes(v)?esqRole.replace(v,""):esqRole+v;esqRole=n?"GFC".split("").filter(q=>n.includes(q)).join(""):"GFC"}
+  if(b.dataset.esqreset){esqRole="GFC";esqMet="eff";esqAdv=false}
+  const y=window.scrollY;render();window.scrollTo(0,y)});
+document.getElementById("main").addEventListener("change",e=>{const z=e.target.closest("select[data-esqsz]");if(!z||cur!=="effsquadra"||!z.value)return;ESP.sz=z.value;const rg=perSzRange(z.value);ESP.da=rg[0];ESP.a=rg[1];const y=window.scrollY;render();window.scrollTo(0,y)});
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-rshare]");if(!b)return;e.preventDefault();e.stopPropagation();shareRoster(b.dataset.rshare,b)});
 /* Condividi la cassa di una squadra come immagine: logo, nome, crediti, bilancio, registro e debiti/crediti */
 async function shareCassa(t,btn){
