@@ -1001,7 +1001,7 @@ html[data-hand="r"] .hn6:not(.top){grid-template-columns:minmax(0,1fr) 56px}html
 .hmq{overflow:hidden;border-radius:14px;min-width:0;touch-action:pan-y;-webkit-user-select:none;user-select:none}
 .hmqt{display:flex;width:max-content;animation:hmq 30s linear infinite;will-change:transform;backface-visibility:hidden}
 @keyframes hmq{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
-@media (prefers-reduced-motion:reduce){.hmqt{animation:none}.hmq{overflow-x:auto}}
+/* (564) il banner scorre anche con «Riduci movimento» del telefono (prima restava fermo e non si poteva nemmeno scorrere a mano) */
 /* (420) banner avvisi (scambi, trade speciali, variazioni di cassa) nel carosello della Home, per 24 ore */
 .hmqt .tmc{flex:0 0 auto;margin-right:9px;display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 9px;border-radius:14px;color:#fff;background:linear-gradient(160deg,rgba(120,80,10,.55),rgba(17,10,48,.95) 55%,rgba(76,29,149,.8));border:1px solid #facc15;box-shadow:0 0 14px rgba(250,204,21,.25)}
 body:not(.notte) .hmqt .tmc{background:linear-gradient(160deg,var(--pn1),var(--pn2));border-color:var(--gold);box-shadow:0 0 0 1px color-mix(in srgb,var(--gold) 30%,transparent),0 6px 16px rgba(0,0,0,.35)}
@@ -4912,6 +4912,9 @@ function bindHomeNotte(root){root.querySelectorAll(".hrl").forEach(b=>b.onclick=
 /* il banner parte da un orologio unico: dopo ogni aggiornamento o ridisegno riprende dal punto giusto, senza tornare all'inizio */
 let HN_T0=performance.now(),HN_DRAG=false;
 
+/* (564) controllo: se per qualunque motivo l'animazione del banner resta in pausa (tocco interrotto, pagina tornata in primo piano) la riavvio */
+setInterval(()=>{try{if(HN_DRAG||document.hidden)return;document.querySelectorAll(".hmqt").forEach(q=>{const a=(q.getAnimations()||[])[0];if(a&&a.playState==="paused")a.play()})}catch(e){}},3000);
+document.addEventListener("visibilitychange",()=>{try{if(!document.hidden)document.querySelectorAll(".hmqt").forEach(q=>{const a=(q.getAnimations()||[])[0];if(a&&a.playState==="paused"&&!HN_DRAG)a.play()})}catch(e){}});
 function hnPhase(root){const q=root.querySelector(".hmqt");if(q){const d=+q.dataset.d||30;q.style.animationDelay=-(((performance.now()-HN_T0)/1000)%d).toFixed(3)+"s"}}
 
 let curPlayer=null;
