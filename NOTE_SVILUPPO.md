@@ -1590,3 +1590,4 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 ## 547 — G-Dreamers: tolta la scheda «Squadre»
 - La scheda «Squadre» (le rose dei satelliti) ripeteva la Classifica, dove toccando una squadra si apre già il dettaglio con i suoi giocatori. G-Dreamers ha ora tre schede: Classifica, Giornate, G League.
 - (30/10 11:30) Dentro la partita: con No spoiler acceso e partita finita non ancora vista, niente punteggio (solo «FINALE» + logo YouTube) e al posto del tabellino la schermata «Allerta spoiler» con tasto «Mostra i risultati per questa partita» (`data-tvrev` → `tvSeen`). Aprire la partita NON la segna più come vista. Patch: /home/claude/patch_nospoiler3.py.
+- (30/10 11:35) Grafica iniziale degli highlights (tvYtOpen): tolto SEMPRE il punteggio, resta «Squadra – Squadra · data» (richiesta utente).

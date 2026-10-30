@@ -8260,7 +8260,7 @@ function tvYtOpen(key){const id=tvHL(key);if(!id)return;const T=TVD(),[d]=key.sp
   const[a,h,sa,sh]=G,dd=tvDt(d),old=document.getElementById("tvplay");if(old)old.remove();
   const el=document.createElement("div");el.id="tvplay";el.setAttribute("role","dialog");
   el.innerHTML=`<button class="tvpx" aria-label="Chiudi">✕</button><div class="tvpv"><div class="tvph">🔇 Tocca il video per attivare l'audio</div><div class="tvpi"><div class="tvpg"></div><div class="tvpb r"></div><div class="tvpb b"></div><div class="tvpf"></div>
-   <div class="tvpt"><b>DYNASTY <i>TV</i></b><span>Highlights</span><em>${tvNick(a)} ${sa} – ${sh} ${tvNick(h)} · ${dd.getUTCDate()} ${TV_MM[dd.getUTCMonth()]}</em></div></div></div>
+   <div class="tvpt"><b>DYNASTY <i>TV</i></b><span>Highlights</span><em>${tvNick(a)} – ${tvNick(h)} · ${dd.getUTCDate()} ${TV_MM[dd.getUTCMonth()]}</em></div></div></div>
    <div class="tvpl"><span>The Game Time Highlights</span><a href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener">Apri su YouTube</a></div>`;
   document.body.appendChild(el);document.documentElement.style.overflow="hidden";tvJingle();
   /* il player si carica subito ma resta NASCOSTO e fermo (niente autoplay: prima il video spuntava sotto la sigla); a fine sigla parte da 0 con l'audio.
