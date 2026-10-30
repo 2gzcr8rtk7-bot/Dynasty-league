@@ -3618,9 +3618,11 @@ const iaG=n=>iaP(n)*iaOutF(n);
    Nessuna eccezione per i fuoriclasse (un solo fenomeno occupa un solo slot, per averlo servono pacchetti più ricchi della somma): lo sconto dipende dalla qualità del pezzo in più (sotto 800 vale il 30%, da 1600 per intero). Chi ha slot liberi (rosa sotto i 13) non ha sconto. */
 const SLF=.15,SL_MAX=13;
 function slotFree(t){try{return Math.max(0,SL_MAX-(ROSTER[t]||[]).filter(p=>p[5]!=="G").length)}catch(e){return 0}}
-const slotF=n=>SLF+(1-SLF)*Math.max(0,Math.min(1,((valOf(n)??VAL_FALLBACK)-800)/800));/* pezzo in più: sotto 800 vale il 30%, da 1600 in su vale per intero */
+const slotF=(n,t)=>{const v=valOf(n)??VAL_FALLBACK,a=iaAge(n),fv=SLF+(1-SLF)*Math.max(0,Math.min(1,(v-800)/800));
+  /* il potenziale salva il pezzo in più: giovane o scelto alto al draft (Peterson, Burries, Wagner…) vale quasi per intero; un veterano che in NBA non ha mai combinato niente vale quasi zero */
+  const pot=Math.max(iaAgeF(a),EQP.dpk>0?Math.min(1,iaDraft(n)/EQP.dpk):0),wc=(()=>{try{return Math.max(.15,Math.min(.9,.5-.45*iaProf(t).c))}catch(e){return .5}})(),fp=SLF+(1-SLF)*wc*pot,f=Math.max(fv,fp);return a!=null&&a>=28&&v<1200?f*.5:f};/* sotto 800 vale il 15%, da 1600 per intero; il potenziale pesa fino al 90% per chi ricostruisce, poco per chi vuole vincere subito */
 function slotEff(t,recvPts,recvNames,nGive,gaveNames){const n=recvPts.length,sur=n-nGive-slotFree(t);if(sur<=0||n<2)return recvPts.reduce((a,b)=>a+b,0);
-  const a=recvPts.map((v,i)=>({v,f:slotF(recvNames[i])})).sort((x,y)=>y.v-x.v);return a.reduce((s,x,i)=>s+(i<n-sur?x.v:x.v*x.f),0)}
+  const a=recvPts.map((v,i)=>({v,f:slotF(recvNames[i],t)})).sort((x,y)=>y.v-x.v);return a.reduce((s,x,i)=>s+(i<n-sur?x.v:x.v*x.f),0)}
 const iaSum=(a,f)=>a.reduce((s,x)=>s+f(x),0);
 const iaRand=(()=>{let s=1;return{seed:v=>{s=(v>>>0)||1},n:()=>{s^=s<<13;s>>>=0;s^=s>>>17;s^=s<<5;s>>>=0;return s/4294967296}}})();
 const iaSp=n=>{try{return spFuori(n)}catch(e){return false}};
@@ -4013,7 +4015,7 @@ const trPts=(k,o)=>k==="pl"?vtPts(valOf(o.n)??VAL_FALLBACK)*iaOutF(o.n):k==="pk"
 function trBal(R){const B={};Object.keys(R).forEach(t=>B[t]={R:0,G:0});
   /* (632) slot di roster: i giocatori in più rispetto a quelli ceduti (senza slot liberi) valgono solo una frazione per chi li riceve */
   const MU={};Object.entries(R).forEach(([t,r])=>{try{const pl=(r.pl||[]).map(o=>({n:o.n,v:trPts("pl",o)})),gv=Object.values(R).flatMap(x=>(x.pl||[]).filter(o=>o.from===t)).map(o=>o.n);if(pl.length<2)return;const tot=pl.reduce((a,x)=>a+x.v,0),ef=slotEff(t,pl.map(x=>x.v),pl.map(x=>x.n),gv.length,gv);if(ef>=tot-.01)return;
-    const sur=pl.length-gv.length-slotFree(t);pl.slice().sort((a,b)=>b.v-a.v).forEach((x,i)=>{if(i>=pl.length-sur)MU[t+"|"+x.n]=slotF(x.n)})}catch(e){}});
+    const sur=pl.length-gv.length-slotFree(t);pl.slice().sort((a,b)=>b.v-a.v).forEach((x,i)=>{if(i>=pl.length-sur)MU[t+"|"+x.n]=slotF(x.n,t)})}catch(e){}});
   Object.entries(R).forEach(([t,r])=>["pl","cr","pk"].forEach(k=>(r[k]||[]).forEach(o=>{const p=trPts(k,o)*(k==="pl"?(MU[t+"|"+o.n]??1):1);B[t].R+=p;if(B[o.from])B[o.from].G+=p})));
   const base=Math.max(1,...Object.values(B).map(b=>Math.max(b.R,b.G)));
   Object.values(B).forEach(b=>{b.s=b.R-b.G;b.pc=Math.round(b.s/base*100)});return B}
