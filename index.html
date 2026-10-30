@@ -352,6 +352,7 @@ h2:has(.hsrch)::after{display:none}h2:has(.hsrch) .tvgo{margin-left:auto}
 .pvn b{font-family:var(--display);font-style:italic;font-weight:800;font-size:64px;line-height:.95;letter-spacing:-.02em;font-variant-numeric:tabular-nums;background:linear-gradient(180deg,#fff,color-mix(in srgb,var(--tc,#a78bfa) 55%,#fff));-webkit-background-clip:text;background-clip:text;color:transparent}
 .pvn span{font-family:var(--display);font-weight:700;font-size:15px;color:var(--muted)}
 .pvh .pvs{font-size:12px;color:var(--muted);margin:0 0 10px}
+.pvd summary{cursor:pointer;font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--tc,#a78bfa);filter:brightness(1.6);padding:6px 0;list-style:none}.pvd summary::after{content:" ▾"}.pvd[open] summary::after{content:" ▴"}.pvd summary::-webkit-details-marker{display:none}
 .pvl{display:grid;gap:0;border-top:1px solid var(--line)}
 .pvg{font-family:var(--display);font-weight:700;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:8px 0 3px}
 .pvr{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.06)}
@@ -3231,11 +3232,11 @@ function vEffSquadra(){
   ${tchips}
   <div class="esqhead" style="background:linear-gradient(115deg,${c.bg} 0%,color-mix(in srgb,${c.bg} 60%,#000) 100%);color:${c.txt||c.fg};border-bottom:4px solid ${c.trim}">${badge(t)}<div class="esqt"><small>${c.name}</small><h3>${c.nick}</h3></div></div>
   ${(()=>{const D=drTeamData(t),S=D.S,rg=D.recG,R=drPrevisione(t),tc=`style="--tc:${c.bg}"`,f1=v=>v==null?"—":pdkF(v),tag=x=>x.e==null?"—":Math.round(x.e);
-    const row=x=>`<div class="pvr${x.slot==="trib"?" tr":""}"><div><b>${x.n}</b><em>${x.r} · ${x.g?x.opps.map(o=>o.o).join(", ")||x.g+" gare":"nessuna partita"}</em></div><strong>${x.e==null?"—":Math.round(x.f!=null&&x.slot!=="trib"?x.f:x.e)}${x.slot==="cap"?'<i class="pvm">×1,5</i>':x.slot==="half"?'<i class="pvm">×½</i>':""}</strong></div>`;
-    const hero=R?`<div class="pvh" ${tc}><small>Previsione · turno ${R.k+DR_OFF}</small><div class="pvn"><b>${Math.round(R.score)}</b><span>PDK</span></div><p class="pvs">Probabile fra ${Math.round(R.score-R.sd)} e ${Math.round(R.score+R.sd)} · ${R.ng} partite NBA dei tuoi giocatori nel turno. Per ognuno conta la sua partita migliore.</p><div class="pvl"><div class="pvg">Capitano</div>${row(R.top[0])}<div class="pvg">In campo</div>${R.top.slice(1,6).map(row).join("")}<div class="pvg">Panchina ½</div>${R.top.slice(6).map(row).join("")}${R.trib.length?`<div class="pvg">Tribuna</div>${R.trib.map(row).join("")}`:""}</div></div>`:"";
+    const row=x=>`<div class="pvr${x.slot==="trib"?" tr":""}"><div><b>${x.n}</b><em>${x.r} · ${x.g?x.opps.map(o=>o.o).join(", ")||x.g+" gare":x.ijs==="out"?"infortunato · fuori nel turno":"nessuna partita"}${x.g&&x.ijs&&x.ijs!=="ok"?" · "+STATI[x.ijs][1].toLowerCase():""}</em></div><strong>${x.e==null?"—":Math.round(x.f!=null&&x.slot!=="trib"?x.f:x.e)}${x.slot==="cap"?'<i class="pvm">×1,5</i>':x.slot==="half"?'<i class="pvm">×½</i>':""}</strong></div>`;
+    const hero=R?`<div class="pvh" ${tc}><small>Previsione · turno ${R.k+DR_OFF}</small><div class="pvn"><b>${Math.round(R.score)}</b><span>PDK</span></div><p class="pvs">Probabile fra ${Math.round(R.score-R.sd)} e ${Math.round(R.score+R.sd)} · ${R.ng} partite NBA dei tuoi giocatori nel turno. Per ognuno conta la sua partita migliore.</p><details class="pvd"><summary>Dettaglio giocatore per giocatore</summary><div class="pvl"><div class="pvg">Capitano</div>${row(R.top[0])}<div class="pvg">In campo</div>${R.top.slice(1,6).map(row).join("")}<div class="pvg">Panchina ½</div>${R.top.slice(6).map(row).join("")}${R.trib.length?`<div class="pvg">Tribuna</div>${R.trib.map(row).join("")}`:""}</div></details></div>`:"";
     const k2=`<div class="esqk esqk2" ${tc}><div><small>Media a turno</small><b>${S.n?f1(S.pf/S.n):"—"}</b><em>${S.n} turni Dreamers</em></div><div><small>Record a turno</small><b>${rg?f1(rg.pf):"—"}</b><em>${rg?`turno ${rg.g} · vs ${TEAMS[rg.opp].nick}`:"nessun turno chiuso"}</em></div></div>`;
     return hero+k2})()}
-  <div class="esqk" style="--tc:${c.bg}"><div><small>PDK medio</small>${all.length?pdkB(tdk/all.length):"—"}</div><div><small>Eff. media</small>${tmn?eff(tdk/tmn):"—"}</div><div><small>Giocatori in campo</small><b>${ps.filter(p=>PT[p[0]].length).length}</b></div></div>
+  <div class="esqk" style="--tc:${c.bg}"><div><small>PDK medio</small>${all.length?pdkB(tdk/all.length):"—"}</div><div><small>Eff. media</small>${tmn?eff(tdk/tmn):"—"}</div><div><small>Infortunati</small><b>${(ROSTER[t]||[]).filter(p=>INJ[p[0]]&&INJ[p[0]].stato!=="ok").length}</b></div></div>
   <div class="fabar">${perBtn("esq",ESP.da,ESP.a)}<button class="fafil${fn?" on":""}" data-esqfil="1" aria-expanded="${esqFOpen}"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4-2v-4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Filtri${fn?` <i>${fn}</i>`:""}</button></div>
   ${fpan}
   ${chips}
@@ -7762,7 +7763,10 @@ function drPrevisione(t){try{
   const dates=[];for(let d=W.start;d<=W.end;d=drAdd(d,1))dates.push(d);
   const dk=d2=>{const[a,b]=String(d2).split("/").map(Number);return(b>=8?0:12)*100+b*100+a};
   const rows=names.map((n,i)=>{const role=ruoloDi(n),nba=(segInfo(n)||{}).nba||"";const opps=[];
-    dates.forEach(d=>(TV.days[d]||[]).forEach(g=>{if(nba&&(g[0]===nba||g[1]===nba))opps.push({d,o:g[0]===nba?g[1]:g[0]})}));
+    const ij=INJ[n],ijs=ij&&ij.stato!=="ok"?ij.stato:null,rm=ij&&ij.stato==="out"?String(ij.rientro||"").match(/(\d{2})\/(\d{2})/):null;
+    /* infortunato out: partite prima del rientro escluse; senza data di rientro (o stagione/lungo) fuori tutto il turno */
+    const retIso=rm?`${+rm[2]>=8?2026:2027}-${rm[2]}-${rm[1]}`:null,outAll=ijs==="out"&&!rm,av={dubbio:.5,quest:.8,dtd:.9,prob:.95}[ijs]||1;
+    let tot=0;dates.forEach(d=>(TV.days[d]||[]).forEach(g=>{if(nba&&(g[0]===nba||g[1]===nba)){tot++;if(outAll||(retIso&&d<retIso))return;opps.push({d,o:g[0]===nba?g[1]:g[0]})}}));
     const ser=(PARTITE[n]||[]).slice().sort((a,b)=>dk(a[0])-dk(b[0])).map(x=>+x[3]).filter(v=>!isNaN(v));
     const tr=ser.length>=3?grTrend(ser):null,tf=tr&&tr.pct!=null?1+Math.max(-20,Math.min(20,tr.pct))/100*.25:1;
     const base=pdkMed(n)??(()=>{const g=pgRef(n);return g.length?g.reduce((a,x)=>a+(+x[3]||0),0)/g.length:null})();
@@ -7770,7 +7774,7 @@ function drPrevisione(t){try{
     const ms=opps.map(x=>{const dd=capDati(n,x.o);const ck=x.o+"|"+role;if(!(ck in PV_CACHE)){let v=null;try{v=hnDef(x.o,role)}catch(e){}PV_CACHE[ck]=v}const def=PV_CACHE[ck],w=def&&def.n?Math.min(1,def.n/6):0;
       const mu=dd.idx==null?base:dd.idx*(1+(def&&def.n?def.pct:0)/100*w*.6);return mu==null?null:{...x,mu:mu*tf}}).filter(Boolean);
     const sg=Math.max(5,sdv??(base?base*.3:8)),R=pvMaxE(ms.map(x=>x.mu),sg);
-    return{n,i,r:role,nba,opps:ms,g:opps.length,e:R?R.e:null,sd:R?R.sd:0,tr:tr?tr.pct:null,base}});
+    return{n,i,r:role,nba,opps:ms,g:opps.length,tot,ijs,e:R?R.e*av:null,sd:R?R.sd:0,tr:tr?tr.pct:null,base}});
   const key=x=>x.e==null?-1e9:x.e,med=x=>x.e==null?(pdkMed(x.n)??-99):0,ord=(a,b)=>key(b)-key(a)||med(b)-med(a)||a.i-b.i;
   let sel=[];for(const ro of["G","F","C"]){const l=rows.filter(x=>x.r===ro&&x.e!=null).sort(ord);sel.push(...l.slice(0,DR_QUOTE[ro]))}
   sel.sort(ord);let A=sel.slice(0,5),B=sel.slice(5);
