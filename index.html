@@ -9452,8 +9452,8 @@ const rowFor=(n,d)=>(PARTITE[n]||[]).find(r=>r[0]===d.slice(8)+"/"+d.slice(5,7))
 function pay(b,st){b.s=st;if(st==="v"){b.pay=Math.round(b.st*b.q);BW.saldo+=b.pay}else if(st==="x"){b.pay=b.st;BW.saldo+=b.pay}else b.pay=0}
 function settle(){let ch=false;const now=Date.now(),T72=72*3600*1000;
  BW.bets.forEach(b=>{if(b.s!=="a")return;try{
-  if(b.m==="ou"){const r=rowFor(b.n,b.d);if(r&&!isNaN(+r[3])){pay(b,(b.sel==="o")===(+r[3]>b.L)?"v":"p");ch=true}else if(b.ko&&now>b.ko+T72){pay(b,"x");ch=true}}
-  else if(b.m==="du"){const ra=rowFor(b.a,b.d),rb=rowFor(b.b,b.d);if(ra&&rb&&!isNaN(+ra[3])&&!isNaN(+rb[3])){const va=+ra[3],vb=+rb[3];pay(b,va===vb?"x":(b.sel==="a")===(va>vb)?"v":"p");ch=true}else if(b.ko&&now>b.ko+T72){pay(b,"x");ch=true}}
+  if(b.m==="ou"){const r=rowFor(b.n,b.d);if(r&&!isNaN(+r[3])){pay(b,(b.sel==="o")===(+r[3]>b.L)?"v":"p");ch=true}else if((b.ko&&now>b.ko+T72)||(!r&&drDkHas(b.d))){pay(b,"x");ch=true}}
+  else if(b.m==="du"){const ra=rowFor(b.a,b.d),rb=rowFor(b.b,b.d);if(ra&&rb&&!isNaN(+ra[3])&&!isNaN(+rb[3])){const va=+ra[3],vb=+rb[3];pay(b,va===vb?"x":(b.sel==="a")===(va>vb)?"v":"p");ch=true}else if((b.ko&&now>b.ko+T72)||((!ra||!rb)&&drDkHas(b.d))){pay(b,"x");ch=true}}
   else if(b.m==="sf"){const W=drWeek(b.k);if(W&&W.closed){const sa=drTeam(b.k,b.a,W).score,sb=drTeam(b.k,b.b,W).score;if(sa!=null&&sb!=null){pay(b,sa===sb?"x":(b.sel==="a")===(sa>sb)?"v":"p");ch=true}}}
  }catch(e){}});
  if(ch)bSave()}
@@ -9492,7 +9492,7 @@ function tabDu(D){if(!D.length)return`<div class="btcard"><p class="btsub">Nessu
   return`<div class="btcard${x.open?"":" cl"}"><div class="btrow"><span class="btwho"><span class="btbd">${badge(x.a.t)}</span><span class="btmid">VS</span><span class="btbd">${badge(x.b.t)}</span></span>${lockTag(x.open,x.ko)}</div>
   <div class="btodds">${mk("a",x.a,x.qa)}${mk("b",x.b,x.qb)}</div>
   <p class="btsub">Media: ${E(x.a.n)} ${nf(x.a.M.mu,1)} (${x.a.nba}) · ${E(x.b.n)} ${nf(x.b.M.mu,1)} (${x.b.nba}). Vince chi totalizza più PDK stanotte.</p></div>`}).join("")}
-function tabMy(){const B=BW.bets,stl={a:"In corso",v:"Vinta",p:"Persa",x:"Rimborsata"};
+function tabMy(){const B=BW.bets,stl={a:"In corso",v:"Vinta",p:"Persa",x:"Rimborsata (non ha giocato / pari)"};
  const list=B.length?B.map(b=>`<div class="btbet ${b.s}"><div><b>${E(b.desc)}</b><small>${E(b.pick||"")} @ ${nf(b.q,2)} · puntati ${ni(b.st)}</small></div><div class="btst">${b.s==="v"?"+"+ni(b.pay-b.st):b.s==="p"?"−"+ni(b.st):b.s==="x"?"0":"…"}<small>${stl[b.s]}</small></div></div>`).join(""):`<div class="btcard"><p class="btsub">Non hai ancora giocato. Scegli una quota nelle altre schede.</p></div>`;
  return`<div class="btsec">Le mie giocate<small>${B.length} totali</small></div>${list}${BS.msg?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:""}
  <div class="btsec" style="margin-top:14px">Salvataggio<small>i dati stanno su questo telefono</small></div>
@@ -9510,7 +9510,7 @@ function vBet(){if(!COL.d){cur="campo";return vCampo()}
  <div class="bthd"><span class="bti">🎰</span><div><small>Texas Ducks · area riservata del GM</small><b>Centro scommesse</b><em>Quote automatiche · gettoni</em></div></div>
  <div class="btbank"><small>Il tuo saldo</small><div class="btbal"><b>${ni(BW.saldo)}</b><span>gettoni · ${nf(BW.saldo/CR,2)} cr</span></div>
  <div class="btstats"><div><small>In gioco</small><b>${ni(open)}</b></div><div><small>Bilancio</small><b class="${net>0?"pos":net<0?"neg":""}">${net>0?"+":""}${ni(net)}</b></div><div><small>Giocate</small><b>${BW.bets.length}</b></div></div>
- <p class="btrule">${ni(CR)} gettoni = 1 credito · puntata ${ni(MINS)}–${ni(MAXS)} · le puntate si chiudono al fischio d'inizio · le quote includono un margine del banco del ${Math.round(MARG*100)}%.</p></div>
+ <p class="btrule">${ni(CR)} gettoni = 1 credito · puntata ${ni(MINS)}–${ni(MAXS)} · le puntate si chiudono al fischio d'inizio · se un giocatore non gioca la giocata è annullata e i gettoni tornano · le quote includono un margine del banco del ${Math.round(MARG*100)}%.</p></div>
  <div class="bttabs" role="tablist">${T.map(t=>`<button data-bt="${t[0]}" aria-pressed="${BS.tab===t[0]}">${t[1]}</button>`).join("")}</div>
  ${body}${slip}<p class="btft">🦆 Texas Ducks · uso interno · scommesse a gettoni, solo per gioco</p></div>`}
 VIEWS.bet=vBet;
