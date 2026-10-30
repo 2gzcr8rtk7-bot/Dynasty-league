@@ -1662,3 +1662,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 591 — G League: eliminata la «Classifica G League · efficienza di squadra». Restano le schede delle squadre satellite (con Eff. squadra al loro interno).
 
 592 — Anello di caricamento attorno al logo: mentre l'app scarica i dati da ESPN / NBA.com si riempie un anello viola scuro (frazione di richieste completate), poi lampeggia pieno e viene rimosso del tutto dalla pagina (esiste solo durante lo scarico). Il progresso è reale (richieste fatte / richieste lanciate), non finto. Su `coda`.
+
+593 — Statistiche › Squadre: ora si apre prima l'elenco delle 8 squadre (righe con cuneo colorato, logo sul suo sfondo, nome e città); toccando una squadra si entra nelle sue statistiche (stessa pagina di prima). Le altre strade verso le statistiche di squadra (dalla classifica efficienza, dai profili) restano dirette. Stato `effSqPick`.

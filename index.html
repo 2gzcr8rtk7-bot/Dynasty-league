@@ -1946,6 +1946,17 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .cupbtn,.trbtn,.effsub{border:0!important;border-radius:16px;padding:16px 18px!important;color:#fff!important;justify-content:flex-start!important;box-shadow:0 8px 20px rgba(0,0,0,.35)!important;overflow:hidden;position:relative}
 .cupbtn{background:linear-gradient(135deg,#2e1065,#6d4bd8)!important}
 .trbtn{background:linear-gradient(135deg,#052e16,#16a34a)!important;margin:-4px 0 14px!important}
+
+/* (593) Squadre: prima l'elenco degli 8 loghi con il loro sfondo, poi le statistiche della squadra scelta */
+.sqpklist{display:flex;flex-direction:column;gap:8px}
+.sqpk{display:flex;align-items:center;height:70px;border-radius:14px;overflow:hidden;background:#101a30;box-shadow:0 4px 12px rgba(0,0,0,.35);cursor:pointer;transition:transform .12s;-webkit-tap-highlight-color:transparent}
+.sqpk:active{transform:scale(.985)}
+.sqpkw{width:96px;align-self:stretch;flex:none;background:linear-gradient(135deg,var(--tc),color-mix(in srgb,var(--tc) 55%,#000));display:flex;align-items:center;justify-content:center;clip-path:polygon(0 0,100% 0,82% 100%,0 100%)}
+.sqpkw .badge{width:56px;height:56px}
+.sqpkn{padding-left:6px;flex:1}
+.sqpkn b{display:block;font:800 italic 22px var(--display);letter-spacing:.06em;text-transform:uppercase;color:#fff}
+.sqpkn small{display:block;color:#8fa3c8;letter-spacing:.14em;text-transform:uppercase;font-size:11px}
+.sqpk i{margin-right:16px;color:var(--muted);font-style:normal;font-size:26px;font-weight:900}
 .effsub[data-effsub=pl]{background:linear-gradient(135deg,#4c0519,#e11d48)!important}
 .effsub[data-effsub=sq]{background:linear-gradient(135deg,#713f12,#eab308)!important}
 .cupbtn::after,.trbtn::after,.effsub::after{content:"";position:absolute;right:-26px;top:-26px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.12);pointer-events:none}
@@ -3291,7 +3302,7 @@ const f2=n=>n.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDig
 const lvl=e=>e==null?"na":e>1.10?"g":e>=.80?"y":"r";
 const eff=e=>e==null?'<span class="ev na">—</span>':`<span class="ev ${lvl(e)}"><i></i>${f2(e)}</span>`;
 let effTeam=null;
-let effSq=null;
+let effSq=null,effSqPick=false;
 let esqMese=null,esqAdv=false,esqMet="pdk";
 /* Metrica della tabella squadra: "eff" = efficienza (Dunkest/minuto, PARTITE[..][4]) o "pdk" = punti Dunkest della partita (PARTITE[..][3]).
    Soglie colori PDK: verde ≥ 35, giallo 20–35, rosso < 20. */
@@ -3311,7 +3322,11 @@ const ESP={da:null,a:null,sz:"2026/27"};let esqRole="GFC",esqFOpen=false;
 const espPad=v=>String(v).padStart(2,"0");
 function espMonth(sz,m){const y0=+sz.slice(0,4),y=m>=8?y0:y0+1,last=new Date(Date.UTC(y,m,0)).getUTCDate(),mx=perOggi();let da=`${y}-${espPad(m)}-01`,a=`${y}-${espPad(m)}-${espPad(last)}`;if(m===+mx.slice(5,7)&&a>mx)a=mx;if(da<PER_MIN)da=PER_MIN;return{da,a}}
 function espInit(){if(ESP.da)return;const t=perOggi(),m=+t.slice(5,7),y=+t.slice(0,4),sz=m>=8?`${y}/${String(y+1).slice(2)}`:`${y-1}/${String(y).slice(2)}`;ESP.sz=PER_ORD.includes(sz)?sz:PER_ORD[2];if([10,11,12,1,2,3,4].includes(m)){const r=espMonth(ESP.sz,m);ESP.da=r.da;ESP.a=r.a}else{const r=perSzRange(ESP.sz);ESP.da=r[0];ESP.a=r[1]}}
+function vSqPick(){
+  const rows=Object.keys(TEAMS).map(t=>{const c=TEAMS[t];return `<div class="sqpk" data-sqpick="${t}" role="button" tabindex="0" aria-label="Statistiche ${c.nick}"><span class="sqpkw" style="--tc:${c.bg}">${badge(t)}</span><span class="sqpkn"><b>${c.nick}</b><small>${c.city}</small></span><i>›</i></div>`}).join("");
+  return `<button class="gback esqback" id="effback">‹ Statistiche</button>${H("Squadre",`<em>scegli una squadra</em>`)}<div class="sqpklist">${rows}</div><div style="height:22px"></div>`}
 function vEffSquadra(){
+  if(effSqPick)return vSqPick();
   espInit();if(ESP.da<PER_MIN)ESP.da=PER_MIN;if(ESP.a<ESP.da){const q=ESP.a;ESP.a=ESP.da;ESP.da=q}
   const t=effSq||effTeam||curTeam,c=TEAMS[t];if(!c)return `<p class="note">Squadra non trovata.</p>`;
   const SZR=perSzr(ESP.da,ESP.a),sz=SZ_ALL.includes(ESP.sz)?ESP.sz:SZ_ALL[0];
@@ -6993,7 +7008,9 @@ document.getElementById("main").addEventListener("click",e=>{
   if(e.target.classList&&e.target.classList.contains("trsheet")){TRN.det=null;e.target.remove();return}
   const r=e.target.closest("[data-trln]");if(r&&!e.target.closest("[data-grafico]")&&!e.target.closest("[data-trtog]")){e.preventDefault();TRN.det=r.dataset.trln;const y=window.scrollY;render();window.scrollTo(0,y);return}
   if(r&&e.target.closest("[data-trtog]")){e.preventDefault();const n=r.dataset.trln;TRN.on=TRN.on||[];const i=TRN.on.indexOf(n);if(i>=0)TRN.on.splice(i,1);else{TRN.on.push(n);if(TRN.on.length>TR_MAXL)TRN.on.shift()}const y=window.scrollY;render();window.scrollTo(0,y)}});
-document.addEventListener("click",e=>{const b=e.target.closest("[data-effsub]");if(!b||cur!=="efficienza")return;e.preventDefault();const v=b.dataset.effsub;if(v==="pl"){faFrom="fa";cur="fa";render();scrollTo(0,0)}else{effSq=effSq||curTeam;cur="effsquadra";render();scrollTo(0,0)}});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-effsub]");if(!b||cur!=="efficienza")return;e.preventDefault();const v=b.dataset.effsub;if(v==="pl"){faFrom="fa";cur="fa";render();scrollTo(0,0)}else{effSq=effSq||curTeam;effSqPick=true;cur="effsquadra";render();scrollTo(0,0)}});
+document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-sqpick]");if(!b||cur!=="effsquadra")return;e.preventDefault();effSq=b.dataset.sqpick;effSqPick=false;render();scrollTo(0,0)});
+document.getElementById("main").addEventListener("keydown",e=>{const b=e.target.closest("[data-sqpick]");if(!b||cur!=="effsquadra"||(e.key!=="Enter"&&e.key!==" "))return;e.preventDefault();b.click()});
 document.getElementById("main").addEventListener("change",e=>{const fs=e.target.closest("select[data-fasel]");if(fs&&cur==="fa"){if(fs.dataset.fasel==="nba")faNba=fs.value;else faDt=fs.value;const y=window.scrollY;render();window.scrollTo(0,y);return}const s=e.target.closest("select[data-tr]");if(!s||cur!=="trend")return;const k=s.dataset.tr;
   if(k==="sz"||k==="sz2"){TRN[k]=s.value;TRN.mese="";TRN.mese2=""}else if(k==="mese"){TRN.mese=s.value;TRN.mese2=s.value}else TRN[k]=s.value;TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y)});
 /* Grafico: apertura, chiusura, menu e linee */
@@ -8659,6 +8676,7 @@ let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 if(window.__taOpen)cur="pictrade"
 function render(){
+  if(cur!=="effsquadra")effSqPick=false;
   if(cur!=="tv")TVS.out=1;liveSync();if(["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur))fantaLiveAvvia();
   document.body.dataset.v=cur;{const nt=typeof CNT!=="undefined"&&CNT;document.body.classList.toggle("notte",nt);document.documentElement.classList.toggle("notte",nt);const tc=document.querySelector('meta[name="theme-color"]');if(tc&&!document.body.classList.contains("dreamfs"))tc.content=nt?"#2a1260":TH_BAR}
   {document.documentElement.classList.toggle("setpg",cur==="impostazioni");/* (245) */const fs=cur==="giochi"&&(GAME==="dream"||GAME==="gdream");document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=(fs||(typeof CNT!=="undefined"&&CNT))?"#2a1260":TH_BAR}
@@ -8714,7 +8732,7 @@ function render(){
   {const hn6=m.querySelector(".hn6");if(hn6)bindHomeNotte(hn6)}
   m.querySelectorAll(".htile").forEach(b=>b.onclick=()=>{curTeam=b.dataset.team;try{localStorage.setItem("team",curTeam)}catch(e){}cur="campo";render();window.scrollTo(0,0)});
   m.querySelectorAll(".echip").forEach(b=>b.onclick=()=>{effTeam=b.dataset.t;render()});
-  m.querySelectorAll("[data-effsq]").forEach(b=>{const go=()=>{effSq=b.dataset.effsq;cur="effsquadra";render();window.scrollTo(0,0)};b.onclick=go;b.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}}});
+  m.querySelectorAll("[data-effsq]").forEach(b=>{const go=()=>{effSq=b.dataset.effsq;effSqPick=false;cur="effsquadra";render();window.scrollTo(0,0)};b.onclick=go;b.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}}});
   const eb=m.querySelector("#effback");if(eb)eb.onclick=()=>{cur="efficienza";render();window.scrollTo(0,0)};
   if(cur==="giochi")bindGiochi(m);
   m.querySelectorAll(".chip:not(.echip):not(.ichip):not([data-trt]):not([data-cstag]):not([data-esqm]):not([data-nt]):not([data-vt])").forEach(b=>b.onclick=()=>{curTeam=b.dataset.t;try{localStorage.setItem("team",curTeam)}catch(e){}render()});
