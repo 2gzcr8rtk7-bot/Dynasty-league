@@ -76,6 +76,9 @@
 .mnm b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;text-transform:uppercase}.mnm small{font-size:10.5px;color:var(--muted)}
 .mvd{margin-top:8px}.mvd small{display:block;font-size:11.5px;color:var(--muted);margin-top:4px}.mvd small.mi{color:#facc15}
 .mv{display:inline-block;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:4px 10px;border-radius:7px}.mv.ok{background:rgba(74,222,128,.16);color:#4ade80}.mv.ko{background:rgba(248,113,113,.16);color:#f87171}.mv.nd{background:rgba(255,255,255,.06);color:var(--muted);text-transform:none;letter-spacing:0;font-weight:600}
+.effpair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 14px}
+.effsub{display:flex;align-items:center;justify-content:center;gap:10px;padding:13px 14px;border:0;cursor:pointer;color:#0a0f1f;background:#facc15;font-family:var(--display);font-style:italic;font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:.04em}
+.effsub i{font-style:normal;font-size:22px;line-height:1}
 .trbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:-4px 0 14px;padding:9px 14px;border:0;cursor:pointer;color:#03291b;background:#2fb385;box-shadow:none}
 .trbtn svg{width:20px;height:20px;flex:none}.trbtn span{font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;letter-spacing:.22em;text-transform:uppercase;line-height:1}.trbtn i{font-style:normal;font-family:var(--display);font-weight:800;font-size:20px;line-height:1}
 .trbtn:active{transform:scale(.98)}
@@ -2405,7 +2408,6 @@ html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.0
     </nav>
     <div class="subnav" id="subnav" role="menu" hidden>
       <button data-v="roster" aria-selected="false"><span>Roster</span></button>
-      <button data-v="fa" aria-selected="false"><span>Giocatori</span></button>
       <button data-v="trade" aria-selected="false"><span>Trade</span></button>
       <button data-v="gleague" aria-selected="false"><span>G-Dreamers</span></button>
       <button data-v="infortuni" aria-selected="false"><span>Centro Medico</span></button>
@@ -3166,6 +3168,7 @@ let effMet="eff";
    PDK della notte = media dei PDK della notte di chi è sceso in campo (EFF.gioc colonna 5, solo stagione in corso) */
 function teamPdk(t,PT){const v=(ROSTER[t]||[]).map(p=>PT[p[0]]||[]).filter(g=>g.length).map(g=>g.reduce((a,x)=>a+x[3],0)/g.length);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null}
 function teamPdkNight(t){const v=(EFF.gioc[t]||[]).filter(p=>p[4]!=null).map(p=>p[4]);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null}
+let effSub="";
 function vEfficienza(){
   const sz=SZ_ALL.includes(gSeason)?gSeason:SZ_ALL[0],E=sz===SZ_ALL[0]?EFF:effPast(sz);
   const t0=TEAMS[effTeam]?effTeam:TEAMS[curTeam]?curTeam:"DOL";
@@ -3184,14 +3187,16 @@ function vEfficienza(){
   const chips=Object.keys(TEAMS).map(t=>`<button class="chip echip" data-t="${t}" aria-pressed="${t===t0}">${badge(t)}${TEAMS[t].nick}</button>`).join("");
   const rv=p=>isP?pdkOf(p[0]):p[1];
   const rows=E.gioc[t0].slice().sort((a,b)=>(rv(b)??-99)-(rv(a)??-99)).map(p=>`<tr><td class="pnm">${p[0]}</td><td>${shw(rv(p))}</td><td>${p[2]}</td><td>${p[3]==null?"—":p[3].toLocaleString("it-IT",{minimumFractionDigits:1})}</td></tr>`).join("");
-  return `<button class="cupbtn" data-cupgo="1"><svg class="cupt" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v4a5 5 0 0 1-10 0V4zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M12 13v4M8.5 20h7M10 17h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Efficienza Cup</span><i>›</i></button>
+  return `${effSub==="sq"?"":`<button class="cupbtn" data-cupgo="1"><svg class="cupt" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v4a5 5 0 0 1-10 0V4zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M12 13v4M8.5 20h7M10 17h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Efficienza Cup</span><i>›</i></button>
   <button class="trbtn" data-trgo="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8M15 7h6v6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Calcola il trend</span><i>›</i></button>
   ${CNT?`<button class="snbtn live" data-sngo="1"><b class="snlvd" aria-hidden="true"></b><span>Statistiche live</span><i>›</i></button>`:`<button class="snbtn" data-sngo="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Statistiche notte</span><i>›</i></button>`}
+  <div class="effpair"><button class="effsub" data-effsub="pl"><span>Giocatori</span><i>›</i></button><button class="effsub" data-effsub="sq"><span>Squadre</span><i>›</i></button></div>`}
+  ${effSub==="sq"?`<button class="gback" data-effsub="">‹ Statistiche</button>
   ${H("Statistiche squadre",`<em>${E.past?SZ_LBL[sz]+" · "+sz:"Agg. "+E.agg}</em>`)}
   <div class="effbar">${szSelect(sz)}<div class="metsw effsw"><button data-effmet="eff" aria-pressed="${!isP}">Eff.</button><button data-effmet="pdk" aria-pressed="${isP}">PDK</button></div></div>
   <div class="eboard">${sq}</div>
   <p class="note">${isP?"PDK medio = media dei PDK a partita dei giocatori della rosa (stagione scelta). Notte = media dei PDK di chi è sceso in campo. Colori: viola da 40, verde 30–40, giallo 20–30, rosso sotto 20.":"Efficienza stagionale = Dunkest totali ÷ minuti giocati da tutta la rosa. Dk = Dunkest stagionali di squadra."} Tocca una squadra per la tabella dei suoi giocatori.</p>
-  <div style="height:22px"></div>`;
+  <div style="height:22px"></div>`:""}`;
 }
 
 const NUM={};Object.values(ROSTER).forEach(a=>a.forEach(p=>NUM[p[0]]=p[1]));
@@ -6668,6 +6673,7 @@ document.getElementById("main").addEventListener("click",e=>{
   if(e.target.classList&&e.target.classList.contains("trsheet")){TRN.det=null;e.target.remove();return}
   const r=e.target.closest("[data-trln]");if(r&&!e.target.closest("[data-grafico]")&&!e.target.closest("[data-trtog]")){e.preventDefault();TRN.det=r.dataset.trln;const y=window.scrollY;render();window.scrollTo(0,y);return}
   if(r&&e.target.closest("[data-trtog]")){e.preventDefault();const n=r.dataset.trln;TRN.on=TRN.on||[];const i=TRN.on.indexOf(n);if(i>=0)TRN.on.splice(i,1);else{TRN.on.push(n);if(TRN.on.length>TR_MAXL)TRN.on.shift()}const y=window.scrollY;render();window.scrollTo(0,y)}});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-effsub]");if(!b||cur!=="efficienza")return;e.preventDefault();const v=b.dataset.effsub;if(v==="pl"){faFrom="fa";cur="fa";render();scrollTo(0,0)}else{effSub=v;render();scrollTo(0,0)}});
 document.getElementById("main").addEventListener("change",e=>{const fs=e.target.closest("select[data-fasel]");if(fs&&cur==="fa"){if(fs.dataset.fasel==="nba")faNba=fs.value;else faDt=fs.value;const y=window.scrollY;render();window.scrollTo(0,y);return}const s=e.target.closest("select[data-tr]");if(!s||cur!=="trend")return;const k=s.dataset.tr;
   if(k==="sz"||k==="sz2"){TRN[k]=s.value;TRN.mese="";TRN.mese2=""}else if(k==="mese"){TRN.mese=s.value;TRN.mese2=s.value}else TRN[k]=s.value;TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y)});
 /* Grafico: apertura, chiusura, menu e linee */
@@ -8277,7 +8283,7 @@ function render(){
   if(cur!=="tv")TVS.out=1;liveSync();if(["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur))fantaLiveAvvia();
   document.body.dataset.v=cur;{const nt=typeof CNT!=="undefined"&&CNT;document.body.classList.toggle("notte",nt);document.documentElement.classList.toggle("notte",nt);const tc=document.querySelector('meta[name="theme-color"]');if(tc&&!document.body.classList.contains("dreamfs"))tc.content=nt?"#2a1260":TH_BAR}
   {document.documentElement.classList.toggle("setpg",cur==="impostazioni");/* (245) */const fs=cur==="giochi"&&(GAME==="dream"||GAME==="gdream");document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=(fs||(typeof CNT!=="undefined"&&CNT))?"#2a1260":TH_BAR}
-  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="fa"?"fa":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="osserv"||cur==="iatrade"||cur==="compar"||cur==="pictrade"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
+  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"efficienza":cur==="faplayer"?(faFrom==="home"?"home":"efficienza"):cur==="giocatore"?(gFrom==="fa"?"efficienza":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="fa"||cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="osserv"||cur==="iatrade"||cur==="compar"||cur==="pictrade"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));try{const nv=document.querySelector("nav"),sb=nv&&nv.querySelector('[aria-selected="true"]');if(sb)nv.scrollTo({left:Math.max(0,sb.offsetLeft-24)})}catch(e){}
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -8340,7 +8346,7 @@ function syncMenu(){
   document.querySelectorAll("nav button[data-menu]").forEach(b=>{
     const p=document.getElementById(b.dataset.menu);if(!p)return;
     const op=dkOpen===b.dataset.menu;b.setAttribute("aria-expanded",op);p.hidden=!op;
-    const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="fa"?"fa":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
+    const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"efficienza":cur==="faplayer"?(faFrom==="home"?"home":"efficienza"):cur==="giocatore"?(gFrom==="fa"?"efficienza":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="fa"||cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
     b.setAttribute("aria-selected",op||inside);
     if(op){const w=b.closest(".wrap").getBoundingClientRect(),r=b.getBoundingClientRect();
       const width=Math.max(r.width,180);let left=r.left-w.left+r.width/2-width/2;left=Math.max(0,Math.min(left,w.width-width));
@@ -8377,7 +8383,7 @@ const NAVH=[];let navLast=cur,navT=0;
 /* TASTO INDIETRO SEMPLICE: ogni "‹" della scheda giocatore, Campo, Cassa, Osservatorio ecc. riporta alla schermata da cui si è arrivati (pila NAVH) e la sua scritta dice dove porta */
 const BK_IDS="#gback,#faback,#glpback,#effback,#cback,[data-cupback],[data-snback],#capback,#mulback,#colback,#cassaback,#osback,#tvback,#hofback,#vrback,#cfback,#setback,#nvback,#navbk";
 /* SOTTO-SCHERMATE: se dentro una sezione c'è un livello interno (es. IA Trade → Per ruolo / Per giocatore), il tasto ‹ e il gesto indietro tornano prima a quel livello e solo dopo alla schermata precedente. Aggiungere qui ogni nuova sotto-schermata. */
-const NAV_SUB=[{ok:()=>cur==="iatrade"&&(IA.mode==="role"||IA.mode==="pl"),lab:"IA Trade",back:()=>{IA.mode="";render()}},{ok:()=>cur==="eq"&&EQ.vl,lab:"Valori e crediti",back:()=>{EQ.vl=false;EQ.msg="";render()}}];
+const NAV_SUB=[{ok:()=>cur==="efficienza"&&effSub==="sq",lab:"Statistiche",back:()=>{effSub="";render()}},{ok:()=>cur==="iatrade"&&(IA.mode==="role"||IA.mode==="pl"),lab:"IA Trade",back:()=>{IA.mode="";render()}},{ok:()=>cur==="eq"&&EQ.vl,lab:"Valori e crediti",back:()=>{EQ.vl=false;EQ.msg="";render()}}];
 const navSub=()=>NAV_SUB.find(x=>{try{return x.ok()}catch(e){return false}});
 function backLabel(v){const n=(TEAMS[curTeam]||{}).nick||"";const M={home:"Home",campo:"Campo "+n,roster:"Roster "+n,fa:"Giocatori",valtrade:"Calcolatore trade",osserv:"Osservatorio",iatrade:"IA Trade",pictrade:"Pic-Trade",compar:"Comparatore",efficienza:"Statistiche",effsquadra:"Efficienza "+n,effcup:"Efficienza",tv:"Dynasty TV",risultati:"Risultati",classifica:"Classifica",trade:"Trade",speciali:"Trade speciali",gleague:"G-Dreamers",college:"Ufficio Scouting",cassa:"Cassa "+n,cap:"Cap",multe:"Multe",trend:"Trend",statnotte:"Statistiche notte",grafico:"Grafico",dunkest:"Centro gestione",storia:"Sala Trofei",regolamento:"Regolamento",infortuni:"Centro Medico",gdreamers:"G-Dreamers",faplayer:"Giocatori",glplayer:"G-Dreamers"};
   return v==="giochi"?(GAME==="dream"?"Dreamers":GAME==="gdream"?"G-Dreamers":"Giochi"):(M[v]||"Indietro")}
