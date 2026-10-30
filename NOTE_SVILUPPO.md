@@ -1706,3 +1706,11 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 
 612 — Home: tolti dalla barra in alto i tasti Dynasty TV (rosso) e Dreamers (viola); la barra Cerca giocatore si allunga e copre lo spazio recuperato (restano segnalibro e modalità notte).
 - (30/10 17:40) Barra di stato iPhone (app da Home, tema normale): striscia a tinta unita var(--hd1) in body::before al posto della fascia a righe che appariva sfocata.
+
+613 — Giocatori, modalità BOX: il PDK è allineato alla riga delle caselle delle statistiche e accanto alla linguetta compare la scritta «Stats medie a partita». Nella pagina del giocatore (box partita per partita) la scritta non c è.
+
+614. Banner Home: le sfide Dreamers (tutte, senza limite a 4) passano davanti alle partite NBA in ogni fase (prima in fase pre venivano dopo le 10 NBA e restavano in fondo al giro), seguite da TG/avvisi e partite NBA.
+
+615. Date dei turni sostituite in tutta l'app dal conteggio notti (es. "1 su 5 notti"; turno concluso "5 su 5"; turno futuro "5 notti"): Home, Dreamers, Campo, Dynasty TV, condivisioni, calendario turni (solo "N notti").
+
+616. Vecchia Home (8 loghi) e testata del Campo: i record V-P usano la classifica Dreamers (drStand) e si aggiornano a ogni turno chiuso, non piu' i vecchi 2-0 dei dati Dunkest.
