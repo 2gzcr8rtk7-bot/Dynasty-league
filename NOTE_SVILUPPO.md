@@ -1648,3 +1648,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 584 — Il TG Dreamers in Home non dipende più dall'area Ducks: visibile a tutti, sempre, finché non esce quello nuovo alle 7:30 (tolto il controllo `COL.d`/`dl_dax`). Tolta la battuta «Sì, ci siamo anche noi» (testi pubblici). Aggiunta voce in `NV_LOG` (registro pubblico, nessun dato riservato). In coda su `coda`.
 
 585 — Fix scheda TG Home: il codice del giornale viene eseguito dopo il primo disegno della Home, quindi al primo caricamento la scheda mancava e compariva solo dopo aver cambiato sezione. Ora, finita la definizione, la Home viene ridisegnata una volta (`render()` se `cur==="home"`). Testato: caricamento e ricarica a freddo, senza password né localStorage. In coda su `coda`.
+
+586 — Home: la scheda TG non è più la prima della striscia (dopo la prima scheda: trade o partite), così l'eventuale scatto quando il giro ricomincia non colpisce il TG. In coda su `coda`.
