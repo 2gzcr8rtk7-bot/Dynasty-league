@@ -4562,7 +4562,7 @@ function hnResCard(){try{const st=drStand(),P=drPO(st),MAXK=P.end;let k=HN_RK==n
   const stt=W.closed?"FINALE":W.started?"LIVE":"DA GIOCARE";
   const head=`<div class="hmh hmnv"><button type="button" class="hmar" data-hrk="-1" ${k<=1?"disabled":""} aria-label="Turno precedente">‹</button><span class="hmnt"><b>${DR_PH(k,P).toUpperCase()}</b><small>${drFmt(W.start)} – ${drFmt(W.end)}</small></span><button type="button" class="hmar" data-hrk="1" ${k>=MAXK?"disabled":""} aria-label="Turno successivo">›</button></div>`;
   const rows=pr.map(([a,b])=>{const A=drTeam(k,a,W),B=drTeam(k,b,W),has=A.score!=null&&B.score!=null,la=has&&A.score>B.score,lb=has&&B.score>A.score,d=has?Math.abs(A.score-B.score):null;
-    return`<div class="hmp hmrs" data-hrs="${k}|${a}|${b}" role="link" tabindex="0"><span class="hmtm"><i class="hmrl">${badge(a)}</i><small>${TEAMS[a].nick}</small></span><span class="hmsc"><b class="${la?"w":lb?"l":""}">${drScore(A.score)}</b><em>–</em><b class="${lb?"w":la?"l":""}">${drScore(B.score)}</b><small>${stt==="LIVE"?'<span class="hmlv">LIVE</span> ':""}${stt==="FINALE"?"finale":stt==="DA GIOCARE"?"da giocare":""}${d!=null?(stt==="LIVE"?"scarto ":" · scarto ")+drScore(d):""}${stt!=="DA GIOCARE"?`<button type="button" class="shbtn hmshr" data-drsh="${k}|${a}|${b}" aria-label="Condividi lo scontro ${TEAMS[a].nick} contro ${TEAMS[b].nick}" title="Condividi lo scontro">${SH_ICO}</button>`:""}</small></span><span class="hmtm"><i class="hmrl">${badge(b)}</i><small>${TEAMS[b].nick}</small></span></div>`}).join("");
+    return`<div class="hmp hmrs" data-hrs="${k}|${a}|${b}" role="link" tabindex="0"><span class="hmtm"><i class="hmrl">${badge(a)}</i><small>${TEAMS[a].nick}</small></span><span class="hmsc">${d!=null?`<small class="hmsd">scarto ${drScore(d)}</small>`:""}<b class="${la?"w":lb?"l":""}">${drScore(A.score)}</b><em>–</em><b class="${lb?"w":la?"l":""}">${drScore(B.score)}</b><small class="hmact">${stt==="LIVE"?'<span class="hmlv">LIVE</span>':""}${stt==="FINALE"?"finale":stt==="DA GIOCARE"?"da giocare":""}${stt!=="DA GIOCARE"?`<button type="button" class="shbtn hmshr" data-drsh="${k}|${a}|${b}" aria-label="Condividi lo scontro ${TEAMS[a].nick} contro ${TEAMS[b].nick}" title="Condividi lo scontro">${SH_ICO}</button>`:""}</small></span><span class="hmtm"><i class="hmrl">${badge(b)}</i><small>${TEAMS[b].nick}</small></span></div>`}).join("");
   const body=pr.length?W_(rows):`<p class="hmvu">${k>DR_REG?"Turno di playoff: gli accoppiamenti si conoscono a fine settimana.":"Accoppiamenti non ancora definiti."}</p>`;
   return`${head}${body}`}catch(e){return`<p class="hmvu">Risultati non disponibili.</p>`}}
 function hnClaCard(){try{const st=drStand(),ld=st[0]?st[0].w:0;
@@ -9566,7 +9566,7 @@ function plShAsk(){const S=SHR_PL;if(!S){return}
 </script>
 <style>/* Home: tasto condividi sullo scontro del turno (nota 493) */
 .hmrs .hmsc{position:relative}
-.hmsc .hmshr{position:absolute;right:2px;bottom:-5px;margin:0;width:22px;height:22px;flex:none;display:inline-flex;padding:0}
+.hmsc .hmsd{grid-row:1;margin:0 0 1px}.hmsc .hmact{text-align:right;display:grid;grid-template-columns:1fr 22px 1fr;align-items:center;column-gap:6px;width:100%;margin-top:3px}.hmsc .hmact>:first-child:not(.hmshr){justify-self:end;grid-column:1}.hmsc .hmact .hmshr{grid-column:2}.hmsc .hmshr{position:static;margin:0;width:22px;height:22px;flex:none;display:inline-flex;padding:0}
 .hmsc .hmshr svg{width:11px;height:11px}
 </style>
 <script>/* ===== CONDIVIDI LO SCONTRO DREAMERS (Home › card turno, 30/10/2026) =====

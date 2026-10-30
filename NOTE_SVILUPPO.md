@@ -1447,3 +1447,7 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 - Il numero maglia si cerca in tutti i roster (Fears e i giocatori appena scambiati non restano più senza numero).
 - Tolta l'ombra sfocata del numero e ridotto il contorno del testo nelle maglie dell'immagine (l'SVG rasterizzato non usa i font della pagina, per questo risultava troppo pesante).
 - Stato: in coda (branch coda), non pubblicato.
+
+## 496 — Card Turno Home: scarto sopra, LIVE + condividi sotto
+- "scarto" ora sta sopra i punteggi; sotto, LIVE (o "finale") affiancato al tasto condividi, che è centrato esattamente sotto il trattino dei punteggi.
+- Stato: in coda (branch coda), non pubblicato.
