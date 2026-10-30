@@ -1626,3 +1626,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 573 — Ducks: banner con logo wordmark non più tagliato (`.teamhead .hlogo[data-t="DUC"]{object-fit:contain}`). Area riservata › Personalizzazioni: aggiunto il logo «Papero (solo banner e Home)» (chiave `p`, `DUC_BAN`, localStorage `dl_ducb`): se scelto compare solo nel banner Ducks (`ducBan()`), il resto dell'app resta con la scelta/ufficiale. Scegliere un altro logo o «Ripristina» lo toglie. SEGRETO, non in NV_LOG. In coda su `coda`, non pubblicato.
 
 574 — Home (solo area Ducks, `COL.d` e dopo le 7:30): il TG Dreamers è una scheda della striscia scorrevole delle trade/partite (`.tmc.tgc`, prima delle trade); toccandola parte il TG a schermo intero. In coda su `coda`, non pubblicato.
+
+575 — Scheda TG nella striscia Home senza finestre: al tocco la striscia si ferma con la scheda a sinistra, il TG gira dentro la scheda (loghi/titolo che cambiano, barra di avanzamento, voce) e a fine TG la striscia riparte; secondo tocco = stop. L'overlay a schermo intero resta solo nella vetrina «Notizie». In coda su `coda`, non pubblicato.
