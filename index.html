@@ -506,7 +506,7 @@ h2 .kitbtn+.cntbtn{margin-left:6px}
 .lbm{flex:none;display:inline-flex;align-items:center;gap:6px;height:34px;box-sizing:border-box;padding:0 9px;border-radius:9px;background:rgba(255,255,255,.06);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.13);box-shadow:0 6px 18px rgba(0,0,0,.3);cursor:pointer;font-variant-numeric:tabular-nums}
 .lbmn{font-family:var(--display);font-style:italic;font-weight:800;font-size:21px;line-height:1;color:var(--sc,#f1f5f9);letter-spacing:-.02em}.lbmn.dim{opacity:.5}
 .lbmx{width:1px;height:20px;background:rgba(255,255,255,.2)}
-.lbmg{display:grid;justify-items:center;line-height:1.05}.lbmg b{font-size:10.5px;font-weight:800;color:#cbd5e1}.lbmg small{font-size:7px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:#8b93a7}
+.lbmg{display:grid;justify-items:center;line-height:1.1;gap:1px}.lbmg i{font-style:normal;font-size:9.5px;font-weight:800;color:#94a3b8}.lbmg b{font-size:11.5px;font-weight:800;color:#7bffb0}
 .lbml{display:inline-grid;place-items:center;width:22px;height:22px}
 .lbml .badge{width:22px!important;height:22px!important;font-size:9px}
 .lbmd{width:5px;height:5px;margin-right:-2px;border-radius:50%;background:#64748b}
@@ -5484,6 +5484,32 @@ function injSync(){Object.keys(INJ).forEach(k=>delete INJ[k]);INJ_RIENTRI.length
     if(g)INJ_RIENTRI.push({...x,gioc:g[0]});else INJ[x.p]=x})}
 injSync();
 const injOut=n=>!!(INJ[n]&&INJ[n].stato==="out");
+/* (598) RITORNO STIMATO DALL'INFORTUNIO («giocabili» del tabellone). Il testo di «rientro» del Centro Medico si legge così, in quest'ordine:
+   1) data di rientro esplicita (rientro stimato / ESPN: gg/mm / rientra il / fino al): da quel giorno è disponibile;
+   2) assenza di una sola partita («Out il 25/10», «tenuto fuori il…», «out stasera»): manca solo quel giorno, il giorno dopo è disponibile (se la data è passata è già tornato);
+   3) durata («4-6 settimane», «2 mesi», «10 giorni»): dal giorno di inizio (INJ_STORIA, altrimenti il giorno del bollettino) + la durata (media dell'intervallo);
+   4) numero di partite («le prime 5-6 partite»): fuori finché la squadra NBA non ha giocato quelle partite della stagione (si usa il numero più alto);
+   5) altrimenti (lungo stop, non è con la squadra, diagnosi attesa): fuori tutto il turno.
+   Ritorna {da:"AAAA-MM-GG"|null, tipo, sicuro}: il giocatore NON è disponibile nei giorni PRIMA di «da»; da=null = fuori sempre. Non fuori (stato diverso da out) = null. */
+function injRit(n){const i=INJ[n];if(!i||i.stato!=="out")return null;
+  const iso=(d,m)=>`${m>=8?2026:2027}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`,add=(s,k)=>{const d=new Date(s+"T00:00:00Z");d.setUTCDate(d.getUTCDate()+k);return d.toISOString().slice(0,10)};
+  const ag=(INFORTUNI.agg.match(/(\d{2})\/(\d{2})/)||[]),bol=ag[1]?iso(+ag[1],+ag[2]):null,st=INJ_STORIA[n]?(()=>{const q=INJ_STORIA[n].split("/").map(Number);return iso(q[0],q[1])})():null,ref=st||bol;
+  const tx=String(i.rientro||""),T=tx.toLowerCase(),tipo=String(i.tipo||"").toLowerCase();
+  const dates=[...tx.matchAll(/(\d{1,2})\/(\d{1,2})/g)].map(m=>iso(+m[1],+m[2]));
+  const sing=/\b(out|fuori|assente|assenza|riposo)\b[^.]*\b(il|stasera|stanotte|questa notte)\b|tenuto fuori|\bstasera\b|\bstanotte\b/.test(T)||/^riposo/.test(tipo);
+  const expl=/rientr|stimat|esp[nn]:|fino al|tornerà|rivalutazion/.test(T);
+  if(dates.length&&expl&&!/^out il |tenuto fuori il /.test(T)){const d=dates[dates.length-1];return{da:d,tipo:"data",sicuro:true}}
+  if(sing){const d=dates.length?dates[0]:(bol||null);return d?{da:add(d,1),tipo:"singola",sicuro:true}:{da:null,tipo:"ignoto",sicuro:false}}
+  if(dates.length&&!expl)return{da:add(dates[0],1),tipo:"singola",sicuro:false};
+  const w=T.match(/(\d+)(?:\s*[-–]\s*(\d+))?\s*(settiman|mes|giorn)/);
+  if(w&&ref){const a=+w[1],b=w[2]?+w[2]:a,u=w[3]==="settiman"?7:w[3]==="mes"?30:1;return{da:add(ref,Math.round((a+b)/2*u)),tipo:"durata",sicuro:false}}
+  const g=T.match(/(?:prime|primi)\s+(\d+)(?:\s*[-–]\s*(\d+))?\s+partit/);
+  if(g){const N=+(g[2]||g[1]),nba=((Object.values(ROSTER).flat().find(x=>x[0]===n))||[])[3],ds=Object.keys(TV.days||{}).sort();let c=0,dd=null;
+    for(const d of ds){if((TV.days[d]||[]).some(x=>x[0]===nba||x[1]===nba)){c++;if(c===N){dd=d;break}}}
+    if(dd)return{da:add(dd,1),tipo:"partite",sicuro:false}}
+  return{da:null,tipo:"ignoto",sicuro:false}}
+window.injRit=injRit;
+
 const injTag=n=>{const i=INJ[n];if(!i||i.stato!=="out")return"";const m=(i.rientro||"").match(/(\d{2}\/\d{2})/);return`<em class="injo" title="Infortunato · vale 0${i.tipo?" · "+String(i.tipo).replace(/"/g,"&quot;"):""}">OUT</em>`};
 const injSt=n=>{const i=INJ[n];return!i||i.stato==="ok"?"ok":i.stato==="out"?"out":i.stato==="prob"?"prob":"dub"};
 const injX=n=>{const i=INJ[n];return i&&i.stato==="out"?`<i class="injx" title="Infortunato · vale 0 (${(i.tipo||"").replace(/"/g,"&quot;")})">✕</i>`:""};
@@ -6861,7 +6887,7 @@ function drTabellone(t,T,k,P,on){const W=T.W,btn=`<button class="cntbtn${on?" on
   const sc=lum(C.bg)>=.33?C.bg:(lum(C.fg)>=.33&&lum(C.fg)<.95?C.fg:`color-mix(in srgb,${C.bg} 62%,#fff)`);
   let kc=k;try{kc=drCurWeek(P)}catch(e){}
   const past=!on&&k<kc;/* turno passato: niente contatore «giocato» (è sempre completo), così il tabellone resta largo come prima */
-  const gioc=(X,tt)=>{if(past)return"";const g=drGare(tt,k,W,true);return`<span class="lbmg" title="Partite giocate su quelle giocabili: gli infortunati contano solo dal rientro"><b>${g.done}/${g.tot}</b><small>giocabili</small></span>`};
+  const gioc=(X,tt)=>{if(past)return"";const A=drGare(tt,k,W),g=drGare(tt,k,W,true);return`<span class="lbmg" title="Sopra: partite giocate sul totale completo. Sotto: sul totale senza gli infortunati, che contano solo dal rientro (Centro Medico)"><i>${A.done}/${A.tot}</i><b>${g.done}/${g.tot}</b></span>`};
   /* (595) frecce per rivedere i turni passati e tornare avanti (non in modalità notte) */
   const arr=d=>on?"":`<button class="lbma" type="button" data-cmpk="${k+d}" aria-label="${d<0?"Turno precedente":"Turno successivo"}"${(d<0?k<=1:k>=kc)?" disabled":""}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d<0?"M15 5l-7 7 7 7":"M9 5l7 7-7 7"}" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`;
   const cap=!on&&k<kc?`<p class="lbmcap">Turno ${k+DR_OFF} · ${drFmt(W.start)}–${drFmt(W.end)} · ${W.closed?"concluso":"in corso"} · <button type="button" data-cmpk="${kc}">torna al turno attuale ›</button></p>`:"";
@@ -7958,8 +7984,8 @@ function pvMaxE(ms,sd){/* valore atteso e sd del massimo di normali indipendenti
 /* (597) eff=true: partite GIOCABILI, cioè senza quelle degli infortunati «out» prima del rientro indicato nel Centro Medico (senza data: fuori tutto il turno); se il Centro Medico li fa rientrare, il totale sale da solo. Solo per il turno ancora aperto. */
 function drGare(t,k,W,eff){let tot=0,done=0;try{const F=drForm(k)[t]||{t:[],r:[]},ds=[];for(let d=W.start;d<=W.end;d=drAdd(d,1))ds.push(d);
   [...F.t,...F.r].forEach(n=>{const nba=(segInfo(n)||{}).nba;if(!nba)return;
-    const ij=eff&&!W.closed?INJ[n]:null,out=!!(ij&&ij.stato==="out"),rm=out?String(ij.rientro||"").match(/(\d{2})\/(\d{2})/):null,ret=rm?`${+rm[2]>=8?2026:2027}-${rm[2]}-${rm[1]}`:null;
-    ds.forEach(d=>(TV.days[d]||[]).forEach(g=>{if(g[0]===nba||g[1]===nba){if(out&&(!ret||d<ret))return;tot++;if(g[5]==="F"||g[5]==="L")done++}}))})}catch(e){}return{tot,done}}
+    const rt=eff&&!W.closed?injRit(n):null;
+    ds.forEach(d=>(TV.days[d]||[]).forEach(g=>{if(g[0]===nba||g[1]===nba){if(rt&&(!rt.da||d<rt.da))return;tot++;if(g[5]==="F"||g[5]==="L")done++}}))})}catch(e){}return{tot,done}}
 function drPrevisione(t){try{
   const st=drStand(),P=drPO(st);let k=drCurWeek(P);let W=drWeek(k);if(W.closed||W.started)k++;if(k>DR_REG)return null;W=drWeek(k);
   const F0=drForm(k)[t]||{t:[],r:[]},names=[...F0.t,...F0.r].filter(n=>!spFuori(n));

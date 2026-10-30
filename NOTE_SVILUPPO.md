@@ -1674,3 +1674,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 596 (agg.) — nella condivisione roster i PDK sono in pillola colorata come nell'app (viola/verde/giallo/rosso).
 
 597 — Tabellone del Campo: il contatore «giocato» diventa «giocabili»: partite giocate su quelle realmente giocabili. Gli infortunati «out» del Centro Medico non contano fino alla data di rientro indicata (senza data: fuori tutto il turno); se il Centro Medico li fa rientrare il totale sale da solo. Solo nel turno ancora aperto (i turni passati non hanno il contatore). `drGare(t,k,W,eff)`.
+
+598 — Tabellone del Campo: sotto ogni squadra due righe senza scritte: sopra giocate/totale completo (grigio), sotto giocate/totale senza gli infortunati (verde). Il calcolo usa injRit(): data di rientro dal Centro Medico (data esplicita, assenza singola, durata in settimane, "prime N partite", altrimenti fuori tutto il turno). I giocatori contano solo dal rientro e il numero sale se rientrano. Nei turni passati il contatore è nascosto. Le stime (durata, partite, ignoto) sono approssimate; bollettino al 26/10.
