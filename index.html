@@ -8225,7 +8225,7 @@ function render(){
   if(cur!=="tv")TVS.out=1;liveSync();if(["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur))fantaLiveAvvia();
   document.body.dataset.v=cur;{const nt=typeof CNT!=="undefined"&&CNT;document.body.classList.toggle("notte",nt);document.documentElement.classList.toggle("notte",nt);const tc=document.querySelector('meta[name="theme-color"]');if(tc&&!document.body.classList.contains("dreamfs"))tc.content=nt?"#2a1260":TH_BAR}
   {document.documentElement.classList.toggle("setpg",cur==="impostazioni");/* (245) */const fs=cur==="giochi"&&(GAME==="dream"||GAME==="gdream");document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=(fs||(typeof CNT!=="undefined"&&CNT))?"#2a1260":TH_BAR}
-  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="fa"?"fa":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"?"home":cur==="osserv"||cur==="iatrade"||cur==="compar"||cur==="pictrade"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
+  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="fa"?"fa":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="osserv"||cur==="iatrade"||cur==="compar"||cur==="pictrade"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));try{const nv=document.querySelector("nav"),sb=nv&&nv.querySelector('[aria-selected="true"]');if(sb)nv.scrollTo({left:Math.max(0,sb.offsetLeft-24)})}catch(e){}
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -8288,7 +8288,7 @@ function syncMenu(){
   document.querySelectorAll("nav button[data-menu]").forEach(b=>{
     const p=document.getElementById(b.dataset.menu);if(!p)return;
     const op=dkOpen===b.dataset.menu;b.setAttribute("aria-expanded",op);p.hidden=!op;
-    const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="fa"?"fa":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
+    const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"fa":cur==="faplayer"?(faFrom==="home"?"home":"fa"):cur==="giocatore"?(gFrom==="fa"?"fa":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="effsquadra"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
     b.setAttribute("aria-selected",op||inside);
     if(op){const w=b.closest(".wrap").getBoundingClientRect(),r=b.getBoundingClientRect();
       const width=Math.max(r.width,180);let left=r.left-w.left+r.width/2-width/2;left=Math.max(0,Math.min(left,w.width-width));
@@ -9020,6 +9020,7 @@ function sala(){if(!COL.d){cur="campo";return vCampo()}
   <button class="hoftile" data-hof="eq"><span class="hi">⚖️</span><span><b>Gestione equilibrio trade</b><small>Simulatore · parametri · valori · registro</small></span><i>›</i></button>
   <button class="hoftile" data-hof="college"><span class="hi">🔭</span><span><b>Scouting</b><small>Ufficio Scouting · college, NBA, prospetti</small></span><i>›</i></button>
   <button class="hoftile" data-hof="pers"><span class="hi">🎨</span><span><b>Personalizzazioni</b><small>Loghi e look della tua app</small></span><i>›</i></button>
+  <button class="hoftile" data-hof="bet"><span class="hi">🎰</span><span><b>Centro scommesse</b><small>Gettoni · sfide · sopra/sotto · duelli</small></span><i>›</i></button>
   <button class="hoftile" data-hof="soft"><span class="hi">⚙️</span><span><b>Software</b><small>Cap · Multe</small></span><i>›</i></button>
  </div><p class="hoftt">🦆 Texas Ducks · uso interno</p></div>`}
 function pers(){if(!COL.d){cur="campo";return vCampo()}
@@ -9323,13 +9324,204 @@ async function eqShare(kind){/* valori di serie letti FUORI dal simulatore (dent
 })();
 VIEWS.sala=sala;VIEWS.pers=pers;VIEWS.soft=soft;VIEWS.orari=orari;
 document.addEventListener("click",e=>{
- if(!["sala","pers","soft","orari","eq"].includes(cur))return;
+ if(!["sala","pers","soft","orari","eq","bet"].includes(cur))return;
  if(e.target.closest("#hofback")){cur=cur==="sala"?"campo":"sala";render();scrollTo(0,0);return}
  const h=e.target.closest("[data-hof]");if(h){cur=h.dataset.hof;render();scrollTo(0,0);return}
  const hn=e.target.closest("[data-hnl]");if(hn){const y=scrollY;hnSet(hn.dataset.hnl);render();scrollTo(0,y);return}
  const hd=e.target.closest("[data-hld]");if(hd&&!hd.disabled){const y=scrollY,v=hd.dataset.hld;DLS.th=v;dlSyncDr(v);dlsSave();dlsApply();hnScopeSet("all");render();scrollTo(0,y);return}
  const l=e.target.closest("[data-hlo]");if(l&&!l.disabled){const y=scrollY;ducLogoSet(l.dataset.hlo,l.dataset.hw);render();scrollTo(0,y)}
 });
+})();
+</script>
+<style>/* CENTRO SCOMMESSE (area riservata Ducks) — rosso e oro premium, stile Efficienza Cup */
+.bt{margin:-14px -16px 0;padding:14px 16px 96px;min-height:100vh;color:#fff;background:radial-gradient(ellipse at 50% 0%,#b5122e 0%,#6e0a1b 38%,#2a0610 72%,#12030a 100%);border-top:3px solid #ff2a4d}
+.bt .gback{color:#ffe27a;text-shadow:none}
+.bthd{display:grid;grid-template-columns:58px 1fr;gap:12px;align-items:center;margin:4px 0 12px}
+.bthd .bti{width:58px;height:58px;border-radius:16px;display:grid;place-items:center;font-size:30px;background:linear-gradient(180deg,#ffe27a,#d9a400);box-shadow:0 0 18px rgba(255,214,90,.45),inset 0 0 0 2px rgba(255,255,255,.35)}
+.bthd small{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:#ffd0d6}
+.bthd b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:29px;text-transform:uppercase;line-height:1.02;background:linear-gradient(180deg,#fff3b0,#f5c400 55%,#b8860b);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 0 #4a0710)}
+.bthd em{font-style:normal;font-size:12px;font-weight:600;color:#ffd0d6}
+.btbank{position:relative;border-radius:18px;padding:14px 16px;margin:0 0 12px;background:linear-gradient(160deg,rgba(0,0,0,.42),rgba(40,4,14,.7));border:1.5px solid #ffe27a;box-shadow:0 0 22px rgba(255,214,90,.22),inset 0 0 0 1px rgba(255,226,122,.18)}
+.btbank:before{content:"";position:absolute;inset:0;border-radius:18px;pointer-events:none;background:repeating-linear-gradient(135deg,rgba(255,226,122,.045) 0 2px,transparent 2px 12px)}
+.btbank small{display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:#ffd0d6}
+.btbal{display:flex;align-items:baseline;gap:8px;margin:2px 0 8px}.btbal b{font-family:var(--display);font-style:italic;font-weight:800;font-size:44px;line-height:1;background:linear-gradient(180deg,#fff3b0,#f5c400 60%,#c8920a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.btbal span{font-size:13px;font-weight:700;color:#ffd0d6}
+.btstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.btstats div{padding:7px 8px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid rgba(255,226,122,.22)}
+.btstats b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;color:#ffe27a}.btstats b.neg{color:#ff8a9a}.btstats b.pos{color:#8cf0a8}
+.btrule{margin:8px 0 0;font-size:11px;line-height:1.35;color:#f3b8c1}
+.bttabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 12px}
+.bttabs button{padding:10px 2px;border-radius:12px;border:1px solid rgba(255,226,122,.4);background:rgba(0,0,0,.3);color:#ffe27a;font:800 12.5px var(--display);font-style:italic;letter-spacing:.04em;text-transform:uppercase;cursor:pointer}
+.bttabs button[aria-pressed="true"]{background:linear-gradient(180deg,#ffe27a,#f5b400);color:#2a1700;border-color:#ffe27a;box-shadow:0 0 14px rgba(255,214,90,.4)}
+.btsec{font-family:var(--display);font-style:italic;font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:13px;color:#ffe27a;margin:4px 2px 8px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}.btsec small{font-family:inherit;font-size:10px;letter-spacing:.08em;color:#ffd0d6;font-weight:700;text-transform:none;font-style:normal}
+.btcard{border-radius:16px;padding:12px;margin:0 0 10px;background:linear-gradient(160deg,rgba(0,0,0,.4),rgba(52,6,18,.72));border:1px solid rgba(255,226,122,.38);box-shadow:inset 0 0 0 1px rgba(255,226,122,.08)}
+.btcard.cl{opacity:.62}
+.btrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px}
+.btwho{display:flex;align-items:center;gap:8px;min-width:0}.btwho b{font-size:15px;line-height:1.1;color:#fff}.btwho small{display:block;font-size:11px;color:#ffd0d6;font-weight:600}
+.btbd{display:inline-grid;place-items:center;flex:none}
+.btlock{flex:none;font-size:11px;font-weight:800;padding:3px 8px;border-radius:999px;border:1px solid rgba(255,226,122,.5);color:#ffe27a;background:rgba(0,0,0,.3);white-space:nowrap}.btlock.off{border-color:#ff8a9a;color:#ff8a9a}
+.btline{text-align:center;margin:2px 0 8px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:800;color:#ffd0d6}.btline b{font-family:var(--display);font-style:italic;font-size:22px;letter-spacing:0;color:#ffe27a;margin:0 4px}
+.btodds{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btq{display:grid;gap:1px;justify-items:center;padding:9px 6px;border-radius:12px;border:1.5px solid rgba(255,226,122,.55);background:linear-gradient(180deg,rgba(255,226,122,.16),rgba(255,226,122,.05));color:#fff;cursor:pointer;min-width:0}
+.btq small{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#ffd0d6;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btq b{font-family:var(--display);font-style:italic;font-weight:800;font-size:24px;line-height:1.05;color:#ffe27a}
+.btq.on{background:linear-gradient(180deg,#ffe27a,#f5b400);border-color:#fff3b0;box-shadow:0 0 16px rgba(255,214,90,.55)}.btq.on small,.btq.on b{color:#2a1700}
+.btq:disabled{opacity:.4;cursor:default}
+.btlg{width:34px;height:34px;object-fit:contain;flex:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))}
+.btmid{font-family:var(--display);font-style:italic;font-weight:800;color:#ffe27a;font-size:13px;letter-spacing:.1em}
+.btsub{margin:8px 0 0;font-size:11.5px;color:#f3b8c1;line-height:1.35}
+.btslip{position:sticky;bottom:10px;z-index:6;margin:12px 0 0;padding:12px;border-radius:16px;background:linear-gradient(160deg,#2a0610,#12030a);border:1.5px solid #ffe27a;box-shadow:0 8px 28px rgba(0,0,0,.65),0 0 18px rgba(255,214,90,.3)}
+.btsl1{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.btsl1 b{font-size:13.5px;line-height:1.2}.btsl1 span{display:block;font-size:12px;color:#ffe27a;font-weight:800;margin-top:2px}
+.btx{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,226,122,.5);background:transparent;color:#ffe27a;cursor:pointer}
+.btsl2{display:flex;gap:6px;align-items:center;margin:10px 0 8px}.btchips{display:flex;gap:6px;flex:1}.btchips button{flex:1;padding:8px 0;border-radius:10px;border:1px solid rgba(255,226,122,.5);background:rgba(255,226,122,.08);color:#ffe27a;font:800 14px var(--display);font-style:italic;cursor:pointer}.btchips button.on{background:#ffe27a;color:#2a1700}
+.btin{width:74px;padding:8px;border-radius:10px;border:1px solid rgba(255,226,122,.6);background:#12030a;color:#fff;font:800 16px var(--display);text-align:right;box-sizing:border-box}
+.btsl3{display:flex;justify-content:space-between;align-items:center;gap:10px}.btsl3 span{font-size:12px;color:#ffd0d6}.btsl3 span b{display:block;font-family:var(--display);font-style:italic;font-size:20px;color:#8cf0a8}
+.btgo{flex:none;padding:11px 26px;border-radius:12px;border:1px solid #fff3b0;background:linear-gradient(180deg,#ffe27a,#f5b400);color:#2a1700;font:800 16px var(--display);font-style:italic;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.btmsg{margin:8px 0 0;font-size:12px;font-weight:700;color:#ffb3be}.btmsg.ok{color:#8cf0a8}
+.btbet{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;padding:10px 12px;border-radius:14px;margin:0 0 8px;background:rgba(0,0,0,.34);border:1px solid rgba(255,226,122,.25)}
+.btbet b{font-size:13.5px;line-height:1.2}.btbet small{display:block;font-size:11.5px;color:#ffd0d6;margin-top:2px}
+.btst{justify-self:end;text-align:right;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px}.btst small{font-family:system-ui,sans-serif;font-style:normal;font-weight:600}
+.btbet.v{border-color:#4ade80}.btbet.v .btst{color:#8cf0a8}.btbet.p{border-color:rgba(255,138,154,.6)}.btbet.p .btst{color:#ff8a9a}.btbet.x .btst{color:#ffd0d6}.btbet.a .btst{color:#ffe27a}
+.btbk{display:grid;gap:8px}.btbk button,.btbk textarea{width:100%;box-sizing:border-box;border-radius:12px}.btbk button{padding:11px;border:1px solid #ffe27a;background:rgba(255,226,122,.12);color:#ffe27a;font:800 14px var(--display);font-style:italic;cursor:pointer}
+.btbk textarea{min-height:64px;padding:8px;border:1px solid rgba(255,226,122,.45);background:#12030a;color:#fff;font-size:11px}
+.btft{text-align:center;font-size:11px;color:#c98a96;margin:18px 0 0}
+</style>
+<script>/* ===== CENTRO SCOMMESSE (area riservata Ducks, SEGRETO: niente in NV_LOG) =====
+   Gettoni (100 gett. = 1 cr) salvati sul telefono (dl_bet). Quote automatiche, margine banco 7%:
+   · Sopra/Sotto: linea = mediana pesata dei PDK recenti (mezza unità), P da normale con memoria 10 gare, calibrata sullo storico 2024-26 (13.000 casi).
+   · Duello: P(A>B) da differenza di due normali, calibrata (136.000 coppie).
+   · Sfida Dreamers: forza rosa = somma dei migliori 8 PDK medi (corr. 0,92 con i punteggi dei turni), scala per notti del turno.
+   Puntata chiusa al fischio d'inizio; pagamento automatico con i dati ufficiali (PARTITE / punteggi turno). */
+(function(){
+const KEY="dl_bet",START=500,MAXS=100,MINS=5,MARG=.07,CR=100;
+const E=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const nf=(v,d=1)=>(+v).toLocaleString("it-IT",{minimumFractionDigits:d,maximumFractionDigits:d});
+const ni=v=>Math.round(+v).toLocaleString("it-IT");
+const erf=x=>{const s=Math.sign(x);x=Math.abs(x);const t=1/(1+0.3275911*x);return s*(1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x))};
+const Phi=z=>0.5*(1+erf(z/Math.SQRT2));
+const dk=d=>{const[a,b]=String(d).split("/").map(Number);return(b>=8?0:12)*100+b*100+a};
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+/* --- serie PDK cronologica (2024/25, 2025/26, stagione in corso), solo gare con almeno 5 minuti --- */
+function seq(n){const out=[];["2024/25","2025/26"].forEach(s=>{((STAGIONI[s]||{})[n]||[]).slice().sort((a,b)=>dk(a[0])-dk(b[0])).forEach(x=>out.push(x))});
+ (PARTITE[n]||[]).slice().sort((a,b)=>dk(a[0])-dk(b[0])).forEach(x=>out.push(x));
+ return out.filter(x=>+x[2]>=5&&!isNaN(+x[3])).map(x=>+x[3])}
+function model(vs,min){const n=vs.length;if(n<(min||8))return null;const w=vs.map((_,i)=>Math.pow(.5,(n-1-i)/10)),W=w.reduce((a,b)=>a+b,0);
+ const mu=vs.reduce((a,v,i)=>a+w[i]*v,0)/W,sd=Math.sqrt(vs.reduce((a,v,i)=>a+w[i]*(v-mu)**2,0)/W);
+ return{n,mu,sd:Math.max(sd,4,.22*mu),w,W,vs}}
+function wmed(M){const ix=M.vs.map((_,i)=>i).sort((a,b)=>M.vs[a]-M.vs[b]);let c=0;for(const i of ix){c+=M.w[i];if(c>=M.W/2)return M.vs[i]}return M.mu}
+const pOU=(M,L)=>clamp(.5+.85*((1-Phi((L-M.mu)/M.sd))-.5)-.012,.30,.70);
+const pDuel=(A,B)=>clamp(.5+.85*(Phi((A.mu-B.mu)/Math.sqrt(A.sd**2+B.sd**2))-.5)+.01,.15,.85);
+const qt=p=>clamp(Math.round((1-MARG)/p*100)/100,1.10,8);
+/* --- orari (ora italiana) --- */
+function tzOff(ts){const o={};new Intl.DateTimeFormat("en-US",{timeZone:"Europe/Rome",hourCycle:"h23",year:"numeric",month:"numeric",day:"numeric",hour:"numeric",minute:"numeric"}).formatToParts(new Date(ts)).forEach(p=>o[p.type]=+p.value);return(Date.UTC(o.year,o.month-1,o.day,o.hour,o.minute)-Math.floor(ts/60000)*60000)/60000}
+function itTs(y,mo,d,h,mi){const g=Date.UTC(y,mo-1,d,h,mi);return g-tzOff(g-tzOff(g)*60000)*60000}
+function koTs(d,t){const m=String(t||"").match(/^(\d{1,2}):(\d{2})(\+1)?$/);if(!m)return null;const[y,mo,da]=d.split("-").map(Number),dt=new Date(Date.UTC(y,mo-1,da+(m[3]?1:0)));return itTs(dt.getUTCFullYear(),dt.getUTCMonth()+1,dt.getUTCDate(),+m[1],+m[2])}
+function hms(ms){if(ms<=0)return"";const m=Math.floor(ms/60000),h=Math.floor(m/60),g=Math.floor(h/24);return g>0?g+"g "+(h%24)+"h":h>0?h+"h "+(m%60)+"m":m+"m"}
+/* --- portafoglio (solo su questo telefono) --- */
+const meseNow=()=>{const o={};new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit"}).formatToParts(new Date()).forEach(p=>o[p.type]=p.value);return o.year+"-"+o.month};
+const bLoad=()=>{try{const j=JSON.parse(localStorage.getItem(KEY));if(j&&j.v===1&&Array.isArray(j.bets))return j}catch(e){}return null};
+let BW=bLoad()||{v:1,mese:meseNow(),saldo:START,iniz:START,bets:[]};
+const bSave=()=>{try{localStorage.setItem(KEY,JSON.stringify(BW))}catch(e){}};
+let BS={tab:"sf",sel:null,stake:25,msg:"",ok:false,bk:""};
+const SELMAP={};
+/* --- mercati --- */
+function cand(){const d=flUsaOggi(),G=TV.days[d]||[],now=Date.now(),out=[];
+ Object.keys(ROSTER).forEach(t=>ROSTER[t].forEach(p=>{const n=p[0];if(injOut(n))return;const nba=(segInfo(n)||{}).nba;if(!nba)return;
+  const g=G.find(x=>x[0]===nba||x[1]===nba);if(!g)return;const M=model(seq(n));if(!M)return;
+  const ko=koTs(d,g[6]),open=g[5]==="S"&&(!ko||now<ko),L=Math.floor(wmed(M))+.5,pp=pOU(M,L);
+  out.push({n,t,nba,opp:g[0]===nba?g[1]:g[0],away:g[0]===nba,ko,tm:String(g[6]||"").replace("+1",""),open,M,L,p:pp,qo:qt(pp),qu:qt(1-pp),d,inj:injSt(n)})}));
+ return out.sort((a,b)=>b.M.mu-a.M.mu)}
+function duels(C){const o=C.filter(x=>x.open&&x.inj!=="dub").slice(0,26),used=new Set(),out=[];
+ for(let i=0;i<o.length&&out.length<6;i++){const a=o[i];if(used.has(a.n))continue;
+  for(let j=i+1;j<o.length;j++){const b=o[j];if(used.has(b.n)||b.nba===a.nba||b.nba===a.opp||Math.abs(a.M.mu-b.M.mu)>.25*a.M.mu)continue;
+   const p=pDuel(a.M,b.M);if(p<.30||p>.70)continue;used.add(a.n);used.add(b.n);out.push({a,b,p,qa:qt(p),qb:qt(1-p),open:a.open&&b.open,ko:Math.min(a.ko||1e15,b.ko||1e15),d:a.d});break}}
+ return out}
+const S8=t=>ROSTER[t].map(p=>{const n=p[0];if(injOut(n))return 0;const M=model(seq(n),3);return M?M.mu:0}).sort((a,b)=>b-a).slice(0,8).reduce((a,b)=>a+b,0);
+function sfide(){try{const stt=drStand(),P=drPO(stt);let k=drCurWeek(P),W=null;
+  for(let i=0;i<4;i++,k++){const w=drWeek(k);if(w&&!w.started){W=w;break}}
+  if(!W)return null;const pr=drPairs(k,stt,P);if(!pr||!pr.length)return null;
+  const G=TV.days[W.start]||[];let ko=null;G.forEach(g=>{const t=koTs(W.start,g[6]);if(t&&(ko==null||t<ko))ko=t});
+  if(ko==null){const[y,mo,da]=W.start.split("-").map(Number);ko=itTs(y,mo,da,23,0)}
+  const sc=Math.max(.4,(W.len||3)/3),sg=45*Math.sqrt(sc),now=Date.now();
+  const lab=k<=DR_REG?"T"+(k+DR_OFF):"Playoff";
+  return{k,lab,len:W.len||3,start:W.start,end:W.end,ko,open:now<ko,list:pr.map(([a,b])=>{const sa=S8(a),sb=S8(b),p=clamp(.5+.8*(Phi((sa-sb)*sc/sg)-.5),.15,.85);return{a,b,sa,sb,p,qa:qt(p),qb:qt(1-p)}})}}catch(e){return null}}
+/* --- liquidazione automatica con dati ufficiali --- */
+const rowFor=(n,d)=>(PARTITE[n]||[]).find(r=>r[0]===d.slice(8)+"/"+d.slice(5,7));
+function pay(b,st){b.s=st;if(st==="v"){b.pay=Math.round(b.st*b.q);BW.saldo+=b.pay}else if(st==="x"){b.pay=b.st;BW.saldo+=b.pay}else b.pay=0}
+function settle(){let ch=false;const now=Date.now(),T72=72*3600*1000;
+ BW.bets.forEach(b=>{if(b.s!=="a")return;try{
+  if(b.m==="ou"){const r=rowFor(b.n,b.d);if(r&&!isNaN(+r[3])){pay(b,(b.sel==="o")===(+r[3]>b.L)?"v":"p");ch=true}else if(b.ko&&now>b.ko+T72){pay(b,"x");ch=true}}
+  else if(b.m==="du"){const ra=rowFor(b.a,b.d),rb=rowFor(b.b,b.d);if(ra&&rb&&!isNaN(+ra[3])&&!isNaN(+rb[3])){const va=+ra[3],vb=+rb[3];pay(b,va===vb?"x":(b.sel==="a")===(va>vb)?"v":"p");ch=true}else if(b.ko&&now>b.ko+T72){pay(b,"x");ch=true}}
+  else if(b.m==="sf"){const W=drWeek(b.k);if(W&&W.closed){const sa=drTeam(b.k,b.a,W).score,sb=drTeam(b.k,b.b,W).score;if(sa!=null&&sb!=null){pay(b,sa===sb?"x":(b.sel==="a")===(sa>sb)?"v":"p");ch=true}}}
+ }catch(e){}});
+ if(ch)bSave()}
+/* --- scommessa --- */
+function place(){const S=BS.sel;BS.ok=false;if(!S){return}
+ const st=Math.floor(+BS.stake||0);
+ if(!S.open||(S.ko&&Date.now()>=S.ko)){BS.msg="Mercato chiuso: la partita è iniziata.";return}
+ if(st<MINS){BS.msg="Puntata minima "+MINS+" gettoni.";return}
+ if(st>MAXS){BS.msg="Puntata massima "+MAXS+" gettoni.";return}
+ if(st>BW.saldo){BS.msg="Saldo insufficiente.";return}
+ if(BW.bets.some(b=>b.key===S.key)){BS.msg="Hai già giocato questo mercato.";return}
+ BW.saldo-=st;BW.bets.unshift({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),ts:Date.now(),m:S.m,key:S.key,d:S.d,k:S.k,n:S.n,a:S.a,b:S.b,sel:S.side,L:S.L,q:S.q,st,ko:S.ko,desc:S.desc,pick:S.pick,s:"a",pay:0});
+ bSave();BS.sel=null;BS.ok=true;BS.msg="Giocata registrata: "+st+" gettoni a quota "+nf(S.q,2)+"."}
+/* --- backup --- */
+function h32(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}
+function bkOut(){const j=JSON.stringify(BW);return"DRBET1."+btoa(unescape(encodeURIComponent(j)))+"."+h32("dr|"+j)}
+function bkIn(t){const m=String(t||"").trim().match(/^DRBET1\.([A-Za-z0-9+/=]+)\.([a-z0-9]+)$/);if(!m)return"Codice non valido.";try{const j=decodeURIComponent(escape(atob(m[1])));if(h32("dr|"+j)!==m[2])return"Codice modificato o incompleto.";const o=JSON.parse(j);if(!o||o.v!==1||!Array.isArray(o.bets))return"Codice non valido.";BW=o;bSave();return""}catch(e){return"Codice non valido."}}
+/* --- grafica --- */
+const logo=t=>{const u=(typeof LOGO2!=="undefined"&&LOGO2[t])||(typeof LOGO!=="undefined"&&LOGO[t])||"";return u?`<img class="btlg" src="${u}" alt="${E((TEAMS[t]||{}).nick||t)}">`:""};
+const lockTag=(open,ko)=>open?`<span class="btlock">🔓 chiude tra ${hms(ko-Date.now())||"poco"}</span>`:`<span class="btlock off">🔒 chiusa</span>`;
+const odd=(id,sel,label,q,open)=>{SELMAP[id]=sel;return`<button class="btq${BS.sel&&BS.sel.id===id?" on":""}" data-bq="${E(id)}"${open?"":" disabled"}><small>${E(label)}</small><b>${nf(q,2)}</b></button>`};
+function tabSf(){const S=sfide();if(!S)return`<div class="btcard"><p class="btsub">Nessuna sfida Dreamers aperta in questo momento: compariranno prima dell'inizio del prossimo turno.</p></div>`;
+ return`<div class="btsec">Sfide Dreamers · ${S.lab}<small>${S.len} notti · ${S.open?"chiude tra "+hms(S.ko-Date.now()):"chiuse"}</small></div>`+S.list.map(x=>{const key=`sf|${S.k}|${x.a}|${x.b}`,na=(TEAMS[x.a]||{}).nick||x.a,nb=(TEAMS[x.b]||{}).nick||x.b,desc=`${na} vs ${nb} · ${S.lab}`;
+  const mk=(side,t,q)=>odd(key+"|"+side,{id:key+"|"+side,m:"sf",key,k:S.k,a:x.a,b:x.b,side,q,open:S.open,ko:S.ko,desc,pick:side==="a"?na:nb},(TEAMS[t]||{}).nick||t,q,S.open);
+  return`<div class="btcard${S.open?"":" cl"}"><div class="btrow"><span class="btwho">${logo(x.a)}<span class="btmid">VS</span>${logo(x.b)}</span>${lockTag(S.open,S.ko)}</div>
+  <div class="btodds">${mk("a",x.a,x.qa)}${mk("b",x.b,x.qb)}</div>
+  <p class="btsub">Forza rosa (migliori 8 PDK medi): ${E(na)} ${nf(x.sa,0)} · ${E(nb)} ${nf(x.sb,0)}. Vince chi totalizza più punti nel turno.</p></div>`}).join("")}
+function tabOu(C){const open=C.filter(x=>x.open),cl=C.length-open.length;if(!C.length)return`<div class="btcard"><p class="btsub">Stanotte nessuna partita con giocatori della lega.</p></div>`;
+ return`<div class="btsec">Giocatori · sopra / sotto PDK<small>${open.length} aperti${cl?" · "+cl+" chiusi":""}</small></div>`+C.map(x=>{const key=`ou|${x.d}|${x.n}`,desc=`${x.n} · PDK stanotte (linea ${nf(x.L,1)})`;
+  const mk=(side,q,lab)=>odd(key+"|"+side,{id:key+"|"+side,m:"ou",key,d:x.d,n:x.n,side,L:x.L,q,open:x.open,ko:x.ko,desc,pick:lab+" "+nf(x.L,1)},lab+" "+nf(x.L,1),q,x.open);
+  return`<div class="btcard${x.open?"":" cl"}"><div class="btrow"><span class="btwho"><span class="btbd">${badge(x.t)}</span><span><b>${E(x.n)}</b><small>${x.away?"@":"vs"} ${x.opp} · ${x.tm} · media ${nf(x.M.mu,1)}${x.inj==="prob"?" · probabile":""}</small></span></span>${lockTag(x.open,x.ko)}</div>
+  <div class="btodds">${mk("o",x.qo,"Sopra")}${mk("u",x.qu,"Sotto")}</div></div>`}).join("")}
+function tabDu(D){if(!D.length)return`<div class="btcard"><p class="btsub">Nessun duello disponibile per stanotte.</p></div>`;
+ return`<div class="btsec">Duelli · chi fa più PDK<small>${D.length} sfide generate</small></div>`+D.map(x=>{const key=`du|${x.d}|${x.a.n}|${x.b.n}`,desc=`${x.a.n} vs ${x.b.n} · PDK stanotte`;
+  const mk=(side,P,q)=>odd(key+"|"+side,{id:key+"|"+side,m:"du",key,d:x.d,a:x.a.n,b:x.b.n,side,q,open:x.open,ko:x.ko,desc,pick:P.n},P.n,q,x.open);
+  return`<div class="btcard${x.open?"":" cl"}"><div class="btrow"><span class="btwho"><span class="btbd">${badge(x.a.t)}</span><span class="btmid">VS</span><span class="btbd">${badge(x.b.t)}</span></span>${lockTag(x.open,x.ko)}</div>
+  <div class="btodds">${mk("a",x.a,x.qa)}${mk("b",x.b,x.qb)}</div>
+  <p class="btsub">Media: ${E(x.a.n)} ${nf(x.a.M.mu,1)} (${x.a.nba}) · ${E(x.b.n)} ${nf(x.b.M.mu,1)} (${x.b.nba}). Vince chi totalizza più PDK stanotte.</p></div>`}).join("")}
+function tabMy(){const B=BW.bets,stl={a:"In corso",v:"Vinta",p:"Persa",x:"Rimborsata"};
+ const list=B.length?B.map(b=>`<div class="btbet ${b.s}"><div><b>${E(b.desc)}</b><small>${E(b.pick||"")} @ ${nf(b.q,2)} · puntati ${ni(b.st)}</small></div><div class="btst">${b.s==="v"?"+"+ni(b.pay-b.st):b.s==="p"?"−"+ni(b.st):b.s==="x"?"0":"…"}<small>${stl[b.s]}</small></div></div>`).join(""):`<div class="btcard"><p class="btsub">Non hai ancora giocato. Scegli una quota nelle altre schede.</p></div>`;
+ return`<div class="btsec">Le mie giocate<small>${B.length} totali</small></div>${list}${BS.msg?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:""}
+ <div class="btsec" style="margin-top:14px">Salvataggio<small>i dati stanno su questo telefono</small></div>
+ <div class="btbk"><button data-bbk="copy">📋 Copia backup</button><textarea id="btbk" placeholder="Incolla qui un backup per ripristinare">${E(BS.bk)}</textarea><button data-bbk="rest">♻️ Ripristina da backup</button></div>`}
+function vBet(){if(!COL.d){cur="campo";return vCampo()}
+ settle();const lg=LOGO2.DUC||LOGO.DUC;let C=[],D=[];try{C=cand();D=duels(C)}catch(e){}
+ const open=BW.bets.filter(b=>b.s==="a").reduce((a,b)=>a+b.st,0),done=BW.bets.filter(b=>b.s!=="a"),net=done.reduce((a,b)=>a+(b.s==="v"?b.pay-b.st:b.s==="p"?-b.st:0),0);
+ const T=[["sf","Sfide"],["ou","Giocatori"],["du","Duelli"],["my","Giocate"]];
+ const body=BS.tab==="sf"?tabSf():BS.tab==="ou"?tabOu(C):BS.tab==="du"?tabDu(D):tabMy();
+ const S=BS.sel,win=S?Math.floor((+BS.stake||0)*S.q):0;
+ const slip=S&&BS.tab!=="my"?`<div class="btslip"><div class="btsl1"><div><b>${E(S.desc)}</b><span>${E(S.pick)} · quota ${nf(S.q,2)}</span></div><button class="btx" data-bx aria-label="Annulla selezione">✕</button></div>
+  <div class="btsl2"><div class="btchips">${[10,25,50,100].map(v=>`<button data-bst="${v}" class="${+BS.stake===v?"on":""}">${v}</button>`).join("")}</div><input class="btin" id="btin" type="number" inputmode="numeric" min="${MINS}" max="${MAXS}" value="${E(BS.stake)}" aria-label="Gettoni da puntare"></div>
+  <div class="btsl3"><span>Vincita possibile<b><i id="btwin">${ni(win)}</i> gett.</b></span><button class="btgo" data-bgo>Punta</button></div>${BS.msg?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:""}</div>`:(BS.msg&&BS.tab!=="my"?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:"");
+ return`<div class="bt"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
+ <div class="bthd"><span class="bti">🎰</span><div><small>Texas Ducks · area riservata del GM</small><b>Centro scommesse</b><em>Quote automatiche · gettoni</em></div></div>
+ <div class="btbank"><small>Il tuo saldo</small><div class="btbal"><b>${ni(BW.saldo)}</b><span>gettoni · ${nf(BW.saldo/CR,2)} cr</span></div>
+ <div class="btstats"><div><small>In gioco</small><b>${ni(open)}</b></div><div><small>Bilancio</small><b class="${net>0?"pos":net<0?"neg":""}">${net>0?"+":""}${ni(net)}</b></div><div><small>Giocate</small><b>${BW.bets.length}</b></div></div>
+ <p class="btrule">100 gettoni = 1 credito · puntata ${MINS}–${MAXS} · le puntate si chiudono al fischio d'inizio · le quote includono un margine del banco del ${Math.round(MARG*100)}%.</p></div>
+ <div class="bttabs" role="tablist">${T.map(t=>`<button data-bt="${t[0]}" aria-pressed="${BS.tab===t[0]}">${t[1]}</button>`).join("")}</div>
+ ${body}${slip}<p class="btft">🦆 Texas Ducks · uso interno · scommesse a gettoni, solo per gioco</p></div>`}
+VIEWS.bet=vBet;
+document.addEventListener("click",e=>{if(cur!=="bet")return;
+ const t=e.target.closest("[data-bt]");if(t){BS.tab=t.dataset.bt;BS.sel=null;BS.msg="";render();scrollTo(0,0);return}
+ const q=e.target.closest("[data-bq]");if(q&&!q.disabled){const s=SELMAP[q.dataset.bq];if(!s)return;BS.sel=BS.sel&&BS.sel.id===s.id?null:s;BS.msg="";const y=scrollY;render();scrollTo(0,y);return}
+ const c=e.target.closest("[data-bst]");if(c){BS.stake=+c.dataset.bst;BS.msg="";const y=scrollY;render();scrollTo(0,y);return}
+ if(e.target.closest("[data-bx]")){BS.sel=null;BS.msg="";const y=scrollY;render();scrollTo(0,y);return}
+ if(e.target.closest("[data-bgo]")){const y=scrollY;place();render();scrollTo(0,y);return}
+ const k=e.target.closest("[data-bbk]");if(k){const y=scrollY;
+  if(k.dataset.bbk==="copy"){const code=bkOut();let okc=false;try{navigator.clipboard.writeText(code).catch(()=>{});okc=true}catch(x){}BS.bk=code;BS.msg=okc?"Backup copiato: incollalo in un posto sicuro (note, WhatsApp).":"Copia il codice qui sotto e conservalo.";BS.ok=true;render();scrollTo(0,y)}
+  else{const ta=document.getElementById("btbk"),r=bkIn(ta?ta.value:"");BS.bk="";BS.msg=r||"Backup ripristinato.";BS.ok=!r;render();scrollTo(0,y)}
+  return}});
+document.addEventListener("input",e=>{if(cur!=="bet"||e.target.id!=="btin")return;BS.stake=+e.target.value||0;const w=document.getElementById("btwin");if(w&&BS.sel)w.textContent=ni(Math.floor(BS.stake*BS.sel.q))});
 })();
 </script>
 </body>
