@@ -9339,6 +9339,10 @@ cfStart();
 .vlrow{gap:6px}.vlrow .vtvp{min-width:0;justify-items:center}.vlrow .vtrk{width:20px}.vlrow .vtvp small{white-space:nowrap;font-size:8.5px}.vlrow .vtvp small i{font-style:normal;color:#f5c400}.vlrow .vtnm{font-size:14px}.vlnote{margin:6px 0 10px;font-size:12.5px;color:var(--muted)}
 .eqpl{grid-template-columns:1fr}.eqn{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700}.eqin3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.eqin3 .eqr input{width:100%}.eqhd{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;color:rgba(255,255,255,.6);font-size:11px;text-align:center;margin-top:6px}.eqhd span:first-child{display:none}
 .eqta{width:100%;box-sizing:border-box;border-radius:10px;border:1px solid rgba(245,196,0,.5);background:#0e0820;color:#fff;font-size:12px;padding:8px;margin-top:8px}.eqrs:disabled,.eqb:disabled{opacity:.45}.eqreg{width:100%}
+.hofminis{display:inline-flex;gap:6px}.gznb{border-color:rgba(255,255,255,.7)!important;color:#fff}.gznb.on{border-color:#facc15!important;color:#1a1200!important;background:linear-gradient(180deg,#fde047,#eab308)!important;box-shadow:0 0 14px rgba(250,204,21,.65);animation:gzglow 2s ease-in-out infinite}@keyframes gzglow{50%{box-shadow:0 0 22px rgba(250,204,21,.95)}}
+.gz .gzmast{text-align:center;border-top:4px double #fff;border-bottom:4px double #fff;padding:10px 0 8px;margin:6px 0 14px}.gz .gzmast small{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}.gz .gzmast b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:38px;line-height:1.05;letter-spacing:.01em}.gz .gzmast em{display:block;font-style:normal;font-size:11px;color:var(--muted);margin-top:3px}
+.gztag{display:inline-block;font-family:var(--display);font-weight:800;font-size:10.5px;letter-spacing:.12em;padding:3px 8px;background:#e11d48;color:#fff;margin-bottom:6px}.gzap{border-bottom:2px solid rgba(255,255,255,.25);padding-bottom:14px;margin-bottom:12px}.gzap h2{font-family:var(--display);font-style:italic;font-weight:800;font-size:31px;line-height:1.05;margin:2px 0 8px}.gzsub{font-weight:700;color:#cbd5e1;margin:0 0 8px;font-size:14px}.gz article p{font-size:14px;line-height:1.5;margin:0 0 8px}.gz article p.gzsub{margin-bottom:8px}
+.gzar{border-bottom:1px solid var(--line);padding:10px 0}.gzar h3{font-family:var(--display);font-weight:800;font-size:20px;line-height:1.15;margin:2px 0 6px}.gzar .gztag{background:#334155}.gzfoot{margin-top:14px;text-align:center}
 .hofmini{float:right;margin-top:-3px;padding:4px 10px;border-radius:999px;border:1px solid rgba(245,196,0,.55);background:rgba(245,196,0,.12);color:#ffd75e;font:800 12px var(--display);font-style:italic;letter-spacing:.06em;cursor:pointer}
 .orr{display:grid;grid-template-columns:78px minmax(0,1fr);gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.1)}.orr>b{font:800 16px var(--display);font-style:italic;color:#ffd75e;white-space:nowrap}.orr strong{display:block;font-size:14px;color:#fff}.orr small{display:block;margin-top:2px;font-size:12.5px;line-height:1.35;color:#c4b5fd}
 .hofsec{font-family:var(--display);font-style:italic;font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:13px;color:#ffd75e;margin:6px 2px 10px}
@@ -9405,7 +9409,7 @@ function sala(){if(!COL.d){cur="campo";return vCampo()}
  return`<div class="hof"><button class="gback" id="hofback">‹ Campo Ducks</button>
  <div class="hofhd">${lg?`<img src="${lg}" alt="Texas Ducks">`:""}<div><small>Texas Ducks · area riservata del GM</small><b>Hall of Fame Ducks</b><em>Archivio dei successi</em></div></div>
  ${cab()}${palm()}
- <div class="hofsec">Entra in una sezione<button class="hofmini" data-hof="orari" type="button">🕐 Orari</button></div>
+ <div class="hofsec">Entra in una sezione<span class="hofminis"><button class="hofmini gznb${gzPronto()?" on":""}" data-hof="giornale" type="button" aria-label="Il giornale del giorno${gzPronto()?" (nuovo numero)":""}">📰 Giornale</button><button class="hofmini" data-hof="orari" type="button">🕐 Orari</button></span></div>
  <div class="hoft">
   <button class="hoftile" data-hof="eq"><span class="hi">⚖️</span><span><b>Gestione equilibrio trade</b><small>Simulatore · parametri · valori · registro</small></span><i>›</i></button>
   <button class="hoftile" data-hof="college"><span class="hi">🔭</span><span><b>Scouting</b><small>Ufficio Scouting · college, NBA, prospetti</small></span><i>›</i></button>
@@ -9712,9 +9716,103 @@ async function eqShare(kind){/* valori di serie letti FUORI dal simulatore (dent
   const map=g==="p"?EQO.p:g==="v"?EQO.v:g==="pr"?EQO.pr:g==="rc"?EQO.rc:g==="pk"?EQO.pk:EQO.g;
   if(isNaN(v)||Math.abs(v-d)<1e-9)delete map[k];else map[k]=g==="p"?eqT(k,eqRg(k)==="raw"?Math.max(0,v):Math.max(0,Math.min(100,v))):v;eqSave();setTimeout(keep,0)});
 })();
-VIEWS.sala=sala;VIEWS.pers=pers;VIEWS.soft=soft;VIEWS.orari=orari;
+/* ===== (571) IL DREAMERS POST: giornale quotidiano (prova nell'area riservata Ducks) =====
+   Un solo numero al giorno, in edicola alle 7:30 (ora italiana). Nessuna IA: l'app compone l'articolo da modelli di frasi (varianti scelte con un seme
+   legato alla data, quindi lo stesso giorno esce sempre lo stesso pezzo) e dai dati veri: classifica, scontri del turno con le previsioni, infortuni importanti,
+   scambi recenti valutati con il calcolatore trade, e il «karma»: un giocatore scambiato da pochi giorni che stanotte esplode (o crolla).
+   Tono: ironico, pungente ma amichevole, si scherza su squadre e GM senza offese. Pulsante 📰 nella Hall of Fame Ducks: oro = numero nuovo da leggere, bianco = già letto o non ancora uscito. */
+const GZ={seed:0,KEY:"dl_gz_read"};
+const gzHash=t=>{let h=2166136261;for(const c of String(t)){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0};
+const gzRng=sd=>{let a=sd>>>0;return()=>{a+=0x6D2B79F5;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}};
+function gzOra(){try{const x=new Date().toLocaleString("sv-SE",{timeZone:"Europe/Rome"});return{d:x.slice(0,10),h:x.slice(11,16)}}catch(e){const n=new Date();return{d:n.toISOString().slice(0,10),h:n.toISOString().slice(11,16)}}}
+const gzLetto=()=>{try{return localStorage.getItem(GZ.KEY)}catch(e){return null}};
+const gzPronto=()=>{const o=gzOra();return o.h>="07:30"&&gzLetto()!==o.d};
+const gzIeri=iso=>{const t=new Date(iso+"T00:00:00Z");t.setUTCDate(t.getUTCDate()-1);return t.toISOString().slice(0,10)};
+const gzSur=n=>{const q=String(n).replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return q.length>1?q.slice(1).join(" "):q[0]};
+const gzF1=v=>v==null?"—":(+v).toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1});
+const gzTeamOf=n=>{for(const t in ROSTER)if(ROSTER[t].some(p=>p[0]===n))return t;return null};
+const gzNk=t=>TEAMS[t]?TEAMS[t].nick:t;
+const gzI=t=>"i "+gzNk(t); /* i Dolphins */
+const gzArtN=t=>/^[aeiou]/i.test(gzNk(t))?"gli":"i";
+const gzAl=t=>(/^[aeiou]/i.test(gzNk(t))?"agli ":"ai ")+gzNk(t);
+const gzDi=t=>/^[aeiou]/i.test(gzNk(t))?"degli "+gzNk(t):"dei "+gzNk(t);
+const gzLst=a=>a.length<2?(a[0]||""):a.slice(0,-1).join(", ")+" e "+a[a.length-1];
+function gzFatti(){const o=gzOra(),F={oggi:o.d,st:[],pos:{}};
+  try{F.st=drStand();F.st.forEach((x,i)=>F.pos[x.t]=i+1)}catch(e){}
+  /* ultima notte: l'ultima data presente nelle partite dei giocatori */
+  let last=null;Object.keys(PARTITE).forEach(n=>(PARTITE[n]||[]).forEach(r=>{if(r&&typeof r[0]==="string"&&+r[2]>0&&(last==null||injKey(r[0])>injKey(last)))last=r[0]}));
+  F.notte=last;F.nl=[];
+  if(last)Object.keys(PARTITE).forEach(n=>{const r=(PARTITE[n]||[]).find(x=>x[0]===last&&+x[2]>0);if(r)F.nl.push({n,t:gzTeamOf(n),opp:r[1],min:+r[2],pdk:+r[3]})});
+  F.nl.sort((a,b)=>b.pdk-a.pdk);
+  /* scambi degli ultimi 7 giorni */
+  const dd=x=>{const m=/(\d+)\/(\d+)\/(\d+)/.exec(x||"");return m?Date.UTC(+m[3],+m[2]-1,+m[1]):0},t0=Date.parse(o.d+"T00:00:00Z");
+  const cr=x=>{const m=/(\d+)\s*cr/i.exec(x);return m?+m[1]:0};
+  F.tr=[];TRADES.forEach(x=>{if(x.titolo!=="Scambio"||x.lati.length!==2)return;const gg=Math.round((t0-dd(x.data))/864e5);if(gg<0||gg>7)return;
+    const S=x.lati.map(l=>{const pl=l[1].filter(v=>!/\bcr\b|slot|pick|credit/i.test(v)),c=l[1].reduce((a,v)=>a+cr(v),0);return{t:l[0],pl,c,v:pl.reduce((a,n)=>a+vtPts(valOf(n)??VAL_FALLBACK),0)+c*VAL_CR}});
+    const A=S[0].v,B=S[1].v,mx=Math.max(A,B,1),d=Math.abs(A-B)/mx,fav=A>=B?S[0].t:S[1].t,los=A>=B?S[1].t:S[0].t;
+    F.tr.push({gg,S,d,fav,los,data:x.data,ver:tradeVerdict(d,fav,los)})});
+  /* karma: un giocatore scambiato da pochi giorni che stanotte esplode o crolla */
+  F.karma=[];F.tr.forEach(T=>T.S.forEach((s,i)=>s.pl.forEach(n=>{const g=F.nl.find(x=>x.n===n);if(!g||g.min<12)return;const old=T.S[1-i].t;
+    if(g.pdk>=40)F.karma.push({k:"hot",n,pdk:g.pdk,min:g.min,opp:g.opp,nw:s.t,old,gg:T.gg,T,altri:T.S[1-i].pl});else if(g.pdk<=10)F.karma.push({k:"cold",n,pdk:g.pdk,min:g.min,opp:g.opp,nw:s.t,old,gg:T.gg,T,altri:T.S[1-i].pl})})));
+  F.karma.sort((a,b)=>(b.k==="hot")-(a.k==="hot")||(b.k==="hot"?b.pdk-a.pdk:a.pdk-b.pdk));
+  /* scontri del turno */
+  try{const P=drPO(F.st),k=drCurWeek(P),pr=(drPairs(k,F.st,P)||[]).map(([a,b])=>({a,b,pa:F.pos[a],pb:F.pos[b]})).sort((x,y)=>(x.pa+x.pb)-(y.pa+y.pb));
+    F.k=k;F.match=pr;if(pr[0]){pr[0].ra=drPrevisione(pr[0].a);pr[0].rb=drPrevisione(pr[0].b)}if(pr[1]){pr[1].ra=drPrevisione(pr[1].a);pr[1].rb=drPrevisione(pr[1].b)}}catch(e){F.match=[]}
+  /* infortuni importanti */
+  F.inj=[];try{INFORTUNI.lista.forEach(x=>{if(x.stato!=="out"||!INJ[x.p])return;const pm=pdkMed(x.p);if(pm!=null&&pm>=28)F.inj.push({n:x.p,t:gzTeamOf(x.p)||x.t,tipo:x.tipo,rientro:x.rientro,pdk:pm})});F.inj.sort((a,b)=>b.pdk-a.pdk)}catch(e){}
+  return F}
+function gzEdizione(){const F=gzFatti(),R=gzRng(gzHash(F.oggi)+GZ.seed*7919),pk=a=>a[Math.floor(R()*a.length)],dm=F.oggi.slice(8)+"/"+F.oggi.slice(5,7);
+  const num=Math.max(1,Math.round((Date.parse(F.oggi+"T00:00:00Z")-Date.parse("2026-10-19T00:00:00Z"))/864e5));
+  const art=[];const pos=t=>F.pos[t]||"?",rec=t=>{const x=F.st.find(z=>z.t===t);return x?x.w+"–"+x.l:""};
+  /* KARMA */
+  const hot=F.karma.find(x=>x.k==="hot"),cold=F.karma.find(x=>x.k==="cold");
+  if(hot){const S=gzSur(hot.n),giorni=hot.gg===0?"oggi":hot.gg===1?"ieri":hot.gg+" giorni fa",pdk=gzF1(hot.pdk).replace(",0","");
+    art.push({p:100,tag:"IL CASO DEL GIORNO",h:pk([`${S} fa ${pdk} PDK e ${gzI(hot.old)} si mangiano le mani`,`${S}, ${pdk} PDK: lo scambio più rimpianto d'Italia (con ${gzI(hot.old)} in testa)`,`Cedere ${S}? ${gzArtN(hot.old).replace(/^./,c=>c.toUpperCase())} ${gzNk(hot.old)} chiedono scusa al campo`]),
+      sub:pk([`Ceduto ${giorni}, stanotte ha chiuso con ${pdk} PDK in ${Math.round(hot.min)} minuti contro ${hot.opp}.`,`Ex ${gzNk(hot.old)}, oggi pietra angolare dei ${gzNk(hot.nw)}: ${pdk} PDK contro ${hot.opp}.`]),
+      txt:[pk([`Lo scambio risale a ${giorni}: ${gzI(hot.nw)} hanno preso ${S}, ${gzI(hot.old)} hanno ottenuto ${gzLst(hot.altri.map(gzSur))}. Stanotte ${S} ha risposto con ${pdk} PDK in ${Math.round(hot.min)} minuti contro ${hot.opp}.`,`Fate pure i conti: ${giorni} ${gzI(hot.old)} hanno lasciato partire ${S} per ${gzLst(hot.altri.map(gzSur))}. Stanotte il giocatore ha messo a referto ${pdk} PDK contro ${hot.opp}.`]),
+        pk([`Il GM dei ${gzNk(hot.old)}, a quanto ci risulta, avrebbe visto «un'altra cosa». Noi vediamo soltanto ${pdk}.`,`Al GM dei ${gzNk(hot.old)} consigliamo di non guardare il tabellino prima di colazione. Neanche dopo.`,`Se ${gzI(hot.old)} cercavano un modo originale per regalare un'esplosione al vicino di classifica, ce l'hanno fatta.`]),
+        (pos(hot.nw)>=6?`Nel frattempo ${gzI(hot.nw)} restano ${pos(hot.nw)}º (${rec(hot.nw)}), ma almeno adesso hanno ${S}.`:`Nel frattempo ${gzI(hot.nw)} sono ${pos(hot.nw)}º (${rec(hot.nw)}) e ringraziano.`)]})}
+  if(cold){const S=gzSur(cold.n);art.push({p:60,tag:"BIDONE DELLA NOTTE",h:pk([`${S} si spegne: ${gzF1(cold.pdk)} PDK`,`${gzArtN(cold.nw).replace(/^./,c=>c.toUpperCase())} ${gzNk(cold.nw)} pagano pegno: ${S} chiude a ${gzF1(cold.pdk)}`]),sub:`Arrivato da ${gzNk(cold.old)} ${cold.gg===1?"ieri":cold.gg+" giorni fa"}, stanotte ${gzF1(cold.pdk)} PDK contro ${cold.opp}.`,txt:[pk([`Non una gran notte per ${S}: ${gzF1(cold.pdk)} PDK in ${Math.round(cold.min)} minuti. ${gzI(cold.old)} sorridono con garbo.`,`${gzF1(cold.pdk)} PDK per ${S}. Il GM dei ${gzNk(cold.old)} ha spento il telefono per non ridere in vivavoce.`])]})}
+  /* SCONTRO */
+  const m=F.match&&F.match[0];
+  if(m){const top=m.pa<=2&&m.pb<=2,vic=Math.abs(m.pa-m.pb)<=1,ra=m.ra&&m.ra.score,rb=m.rb&&m.rb.score,A=m.a,B=m.b,fav=ra!=null&&rb!=null?(ra>=rb?A:B):null,dif=ra!=null&&rb!=null?Math.abs(ra-rb):null;
+    const noi=A==="DUC"||B==="DUC";
+    art.push({p:top?90:vic?70:40,tag:top?"SCONTRO PER LA VETTA":"IL MATCH DEL TURNO",h:top?pk([`${gzNk(A)}–${gzNk(B)}: chi perde guarda l'altro dal basso`,`Primo posto in palio: ${gzNk(A)} contro ${gzNk(B)}`,`${gzNk(A)} e ${gzNk(B)}, il Dreamers decide in ${F.k>0?"un turno":"questa sera"}`]):pk([`${gzNk(A)} contro ${gzNk(B)}: ${vic?"due vicine di classifica, un solo vincitore":"la sfida più interessante del turno"}`,`Occhi su ${gzNk(A)}–${gzNk(B)}`]),
+      sub:`${pos(A)}º ${gzNk(A)} (${rec(A)}) contro ${pos(B)}º ${gzNk(B)} (${rec(B)})${dif!=null?` · proiezione ${Math.round(ra)}–${Math.round(rb)}`:""}.`,
+      txt:[pk([`Nel turno ${F.k+DR_OFF} si incrociano ${gzI(A)} e ${gzI(B)}, ${pos(A)}º e ${pos(B)}º in classifica.${noi?" Sì, noi.":""}`,`Ci sono sfide che valgono tre punti e sfide che valgono il tavolo al bar: ${gzNk(A)}–${gzNk(B)} vale entrambe.`]),
+        dif!=null?pk([`Per il nostro modello ${gzArtN(fav)} ${gzNk(fav)} sono avanti di ${gzF1(dif)} punti: ${dif<8?"meno di una tripla sbagliata, quindi tutto aperto":dif<25?"un margine che a questo punto della stagione si perde in un quarto":"un margine da liturgia, ma si sa come vanno le liturgie"}.`,`La previsione dice ${gzNk(A)} ${Math.round(ra)}, ${gzNk(B)} ${Math.round(rb)}: ${dif<8?"praticamente un lancio della moneta":"c'è chi parte avanti, ma il parquet ha la sua opinione"}.`]):""]})}
+  /* INFORTUNIO */
+  const ij=F.inj[0];
+  if(ij){const S=gzSur(ij.n);art.push({p:ij.pdk>=36?85:55,tag:"BOLLETTINO MEDICO",h:pk([`${S} fuori: ${gzI(ij.t)} chiamano l'infermeria`,`Stop per ${S}, ${gzI(ij.t)} trattengono il fiato`,`Sale la febbre ${gzAl(ij.t)}: ${S} ai box`]),sub:`${ij.tipo||"Infortunio"} · rientro: ${ij.rientro||"da definire"} · media ${gzF1(ij.pdk)} PDK.`,
+      txt:[pk([`${ij.n} (${gzNk(ij.t)}, media ${gzF1(ij.pdk)} PDK) è out: ${ij.tipo||"problema fisico"}. Rientro: ${ij.rientro||"da definire"}.`]),pk([`Il GM dei ${gzNk(ij.t)} ha già aperto il tab «free agent» e chiuso quello «speranze».`,`Si consiglia a ${gzI(ij.t)} una scorta di pazienza e un secondo piano. Il primo piano è appena uscito dal campo.`])]})}
+  /* SCAMBI */
+  F.tr.filter(T=>T.gg<=4).sort((a,b)=>b.d-a.d).slice(0,2).forEach(T=>{const [lab,cls]=T.ver,A=T.S[0],B=T.S[1],pcs=Math.round(T.d*100),tag=cls==="bad"?"LA TRUFFA DEL GIORNO":cls==="mid"?"MERCATO":"AFFARE EQUO";
+    art.push({p:cls==="bad"?80:cls==="mid"?50:35,tag,h:cls==="bad"?pk([`${gzArtN(T.fav).replace(/^./,c=>c.toUpperCase())} ${gzNk(T.fav)} ringraziano: ${gzNk(T.los)} regalano ${gzLst(T.S.find(x=>x.t===T.fav).pl.map(gzSur))||"crediti"}`,`Scambio o donazione? ${gzArtN(T.los).replace(/^./,c=>c.toUpperCase())} ${gzNk(T.los)} fanno beneficenza`]):cls==="mid"?pk([`${gzArtN(T.fav).replace(/^./,c=>c.toUpperCase())} ${gzNk(T.fav)} vincono lo scambio (di poco)`,`Mercato: lo scambio pende per ${gzNk(T.fav)}`]):pk([`Scambio pari e patta fra ${gzNk(A.t)} e ${gzNk(B.t)}`,`Quando il mercato è onesto: ${gzNk(A.t)}–${gzNk(B.t)}`]),
+      sub:`${gzNk(A.t)} ricevono ${gzLst(A.pl.map(gzSur))}${A.c?" + "+A.c+" cr":""}; ${gzNk(B.t)} ricevono ${gzLst(B.pl.map(gzSur))}${B.c?" + "+B.c+" cr":""}. ${lab}${pcs>=10?` (scarto ${pcs}%)`:""}.`,
+      txt:[pk(cls==="bad"?[`Per il calcolatore trade lo scarto è del ${pcs}%: ${gzI(T.fav)} incassano, ${gzI(T.los)} salutano. Le trattative si fanno in due, ma non è detto che i due sappiano fare i conti.`,`${pcs}% di differenza di valore. Non è uno scambio, è un bonifico.`]:cls==="mid"?[`Scarto del ${pcs}%: niente scandalo, ma ${gzI(T.fav)} hanno il sorriso di chi ha visto il prezzo e ha detto «ok».`,`Valore a favore ${gzDi(T.fav)} per il ${pcs}%: per ora hanno ragione loro, poi decide il campo.`]:[`Scarto sotto il 10%: valori pari, piani coerenti. Non succede quasi mai, quindi segnatelo sul calendario.`,`Un mercato in cui tutti hanno dato e tutti hanno preso. Fa quasi tenerezza.`])]})});
+  /* MIGLIORI DELLA NOTTE */
+  const b=F.nl[0];
+  if(b)art.push({p:45,tag:"LA NOTTE IN CIFRE",h:`${gzSur(b.n)} è il migliore: ${gzF1(b.pdk)} PDK`,sub:`${b.n}${b.t?" ("+gzNk(b.t)+")":""} contro ${b.opp}, ${Math.round(b.min)} minuti. Secondo: ${F.nl[1]?gzSur(F.nl[1].n)+" "+gzF1(F.nl[1].pdk):"—"}.`,txt:[pk([`La classifica della notte del ${F.notte}: ${F.nl.slice(0,3).map((x,i)=>`${i+1}. ${gzSur(x.n)} ${gzF1(x.pdk)}`).join(" · ")}.`,`Podio: ${F.nl.slice(0,3).map(x=>gzSur(x.n)+" ("+gzF1(x.pdk)+")").join(", ")}. Gli altri hanno partecipato.`])]});
+  /* CLASSIFICA */
+  const L=F.st[0],S2=F.st[1];
+  if(L)art.push({p:30,tag:"CLASSIFICA",h:`${gzArtN(L.t).replace(/^./,c=>c.toUpperCase())} ${gzNk(L.t)} comandano${S2?`, ${gzI(S2.t)} a ${S2.w===L.w?"pari vittorie":(L.w-S2.w)+" vittorie"}`:""}`,sub:F.st.slice(0,4).map((x,i)=>`${i+1}. ${gzNk(x.t)} ${x.w}–${x.l}`).join(" · "),txt:[]});
+  art.sort((x,y)=>y.p-x.p);
+  return{num,data:F.oggi,dm,art:art.slice(0,7),F}}
+function giornale(){if(!COL.d){cur="campo";return vCampo()}
+  const o=gzOra(),pronto=o.h>="07:30";
+  if(!pronto)return`<div class="hof gz"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button><div class="gzmast"><small>Il Dreamers Post</small><b>IN TIPOGRAFIA</b></div><p class="note">Il numero di oggi esce alle 7:30. Torna a controllare: il pulsante diventerà oro.</p></div>`;
+  try{localStorage.setItem(GZ.KEY,o.d)}catch(e){}
+  const E=gzEdizione(),[A,...R]=E.art,GG=["domenica","lunedì","martedì","mercoledì","giovedì","venerdì","sabato"],MM=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"],dt=new Date(E.data+"T00:00:00Z");
+  const body=a=>a.txt.filter(Boolean).map(t=>`<p>${t}</p>`).join("");
+  return`<div class="hof gz"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
+  <div class="gzmast"><small>Lega Dreamers · fondato nel 2024 · edizione n. ${E.num}</small><b>Il Dreamers Post</b><em>${GG[dt.getUTCDay()]} ${dt.getUTCDate()} ${MM[dt.getUTCMonth()]} ${dt.getUTCFullYear()} · in edicola alle 7:30 · ${gzNk("DUC")} Edition</em></div>
+  ${A?`<article class="gzap"><span class="gztag">${A.tag}</span><h2>${A.h}</h2><p class="gzsub">${A.sub}</p>${body(A)}</article>`:`<p class="note">Oggi non è successo niente. Una notizia già di per sé.</p>`}
+  ${R.map(a=>`<article class="gzar"><span class="gztag">${a.tag}</span><h3>${a.h}</h3><p class="gzsub">${a.sub}</p>${body(a)}</article>`).join("")}
+  <div class="gzfoot"><button class="advbtn" data-gzseed="1" type="button">🔁 Altra variante (prova)</button><p class="note">Prova nell'area Ducks. Un solo numero al giorno, in edicola alle 7:30. Gli articoli sono composti dall'app con frasi preimpostate e dati veri (classifica, scontri e previsioni, infortuni, scambi valutati dal calcolatore, karma dei giocatori scambiati). L'ironia è sempre amichevole.</p></div></div>`}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-gzseed]");if(b&&cur==="giornale"){GZ.seed++;const y=scrollY;render();scrollTo(0,y)}});
+window.gzEdizione=gzEdizione;VIEWS.giornale=giornale;VIEWS.sala=sala;VIEWS.pers=pers;VIEWS.soft=soft;VIEWS.orari=orari;
 document.addEventListener("click",e=>{
- if(!["sala","pers","soft","orari","eq","bet"].includes(cur))return;
+ if(!["sala","pers","soft","orari","eq","bet","giornale"].includes(cur))return;
  if(e.target.closest("#hofback")){cur=cur==="sala"?"campo":"sala";render();scrollTo(0,0);return}
  const h=e.target.closest("[data-hof]");if(h){cur=h.dataset.hof;render();scrollTo(0,0);return}
  const hn=e.target.closest("[data-hnl]");if(hn){const y=scrollY;hnSet(hn.dataset.hnl);render();scrollTo(0,y);return}
