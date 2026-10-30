@@ -1732,3 +1732,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 623. Allenamento IA Trade, tempi: soglie assolute. Fino a 2 secondi = lampo (peso pieno), 2-3 s = istintiva (peso .8), oltre 3 s il peso scende rapidamente.
 
 624. Indice gusto calibrato sui report GM (361 risposte, validazione incrociata AUC 0,60 -> 0,80): valore % corretto per eta' (3,5 punti/anno) e dimensione pacchetto (12 punti per giocatore extra). Usato: nel generatore di Allenamento IA Trade (le proposte cadono vicino al punto di indifferenza), nel report (percentuali accettati per fascia di indice) e nel Calcolatore trade 2 squadre (riga con la squadra a cui lo scambio piace di piu').
+
+625. Home live: nuova scelta PDK/BOX in Impostazioni > Home > Aspetto della Home. Con BOX ogni giocatore live (Tutte le squadre e Seguiti, in entrambe le Home live) mostra il PDK accanto al cognome, la riga avversario + timer rosso e sotto il box score con gli stessi colori di Statistiche notte (PT RB AS ST BL 3P TO e tiri sbagliati). Default: PDK come prima.
