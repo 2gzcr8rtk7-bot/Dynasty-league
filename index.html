@@ -1530,6 +1530,11 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .drrul{display:flex;width:max-content;max-width:100%;white-space:nowrap;flex:none;align-items:center;gap:6px;margin:12px auto 0;padding:7px 14px;border:1px solid rgba(196,181,253,.45);border-radius:999px;background:rgba(15,8,40,.6);color:#fff;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}.drrul[aria-pressed="true"]{background:#a78bfa;color:#120826;border-color:#a78bfa}
 .drhd .drrul{clear:both}
 .drrul.drrulb{margin:18px auto 4px}/* tasto Regolamento in basso, sotto le sfide */.drrules{display:grid;gap:10px}.drrs{background:rgba(15,8,40,.55);border:1px solid rgba(196,181,253,.25);border-radius:14px;padding:12px 14px}.drrs h4{margin:0 0 6px;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;letter-spacing:.06em;text-transform:uppercase;color:#e9d5ff}.drrs ol{margin:0;padding-left:20px;display:grid;gap:5px}.drrs li{font-size:13.5px;line-height:1.45;color:#ede9fe}.drrs li::marker{color:#c4b5fd;font-weight:800}.drrs b{color:#fff}
+.drsw{display:grid;grid-template-columns:1fr 1fr;margin:0 0 14px;border-radius:999px;overflow:hidden;border:1px solid rgba(196,181,253,.35);background:rgba(15,8,40,.7)}
+.drsw button{padding:11px 6px;border:0;background:transparent;color:#c4b5fd;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.drsw button[aria-selected="true"]{color:#fff;background:linear-gradient(180deg,#a78bfa,#7c3aed);box-shadow:0 0 14px rgba(139,92,246,.5)}
+.gdroom .drsw{border-color:rgba(52,211,153,.4)}.gdroom .drsw button{color:#6ee7b7}
+.gdroom .drsw button[aria-selected="true"]{color:#fff;background:linear-gradient(180deg,#34d399,#059669);box-shadow:0 0 14px rgba(16,185,129,.5)}
 .drtabs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:14px}
 .drtabs button{padding:9px 2px;border:1px solid rgba(196,181,253,.25);background:rgba(15,8,40,.6);color:#ddd6fe;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;text-transform:uppercase;cursor:pointer}
 .drtabs button[aria-pressed="true"]{background:linear-gradient(180deg,#a78bfa,#7c3aed);color:#fff;border-color:#c4b5fd;box-shadow:0 0 14px rgba(139,92,246,.5)}
@@ -2429,7 +2434,6 @@ html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.0
     <div class="subnav" id="subnav" role="menu" hidden>
       <button data-v="roster" aria-selected="false"><span>Roster</span></button>
       <button data-v="trade" aria-selected="false"><span>Trade</span></button>
-      <button data-v="gleague" aria-selected="false"><span>G-Dreamers</span></button>
       <button data-v="infortuni" aria-selected="false"><span>Centro Medico</span></button>
       <button data-v="regolamento" aria-selected="false"><span>Regolamento</span></button>
     </div>
@@ -4510,7 +4514,7 @@ function vGLP(){
   ${extProfilo({sz,sel,a,GL,cm:pn,gr:`data-grafico="${t}" data-grp="${pn.replace(/"/g,"&quot;")}"`,vuoto:past?"Nessuna partita NBA in questa stagione: non era in NBA o non ha giocato.":"Non è ancora sceso in campo in questa stagione."})}
   <p class="note">PDK = punti Dunkest medi a partita, Eff. = PDK per minuto, Proj 36' = PDK su 36 minuti. Statistiche ufficiali Dunkest, regular season.</p>`}
 document.addEventListener("click",e=>{const sm=e.target.closest("details.glp>summary");if(sm){const d=sm.parentElement;if(d.dataset.glk){e.preventDefault();e.stopPropagation();glVai(d.dataset.glk)}return}
-  if(e.target.closest("#glpback")&&cur==="glplayer"&&!NAVH.length){cur="gleague";render();scrollTo(0,0)}},true);
+  if(e.target.closest("#glpback")&&cur==="glplayer"&&!NAVH.length){cur="giochi";GAME="gdream";GD.tab="stat";GD.open=null;render();scrollTo(0,0)}},true);
 document.getElementById("main").addEventListener("click",e=>{
   const b=e.target.closest("[data-fan],[data-fat],[data-fag],[data-fafil],[data-fareset],[data-fasrc],[data-farole],[data-faps],[data-fasrt],#faback");if(!b)return;
   if(b.dataset.fasrt!==undefined){const k=+b.dataset.fasrt,y=scrollY;faSrt=faSrt.k===k?{k,d:-faSrt.d}:{k,d:-1};render();scrollTo(0,y);return}
@@ -7157,7 +7161,7 @@ function vGLeague(){
     return `<article class="gcard glstat"><div class="ghd" style="--tc:${c.bg};--tt:${c.trim}"><span class="glg">${x.logo?`<img src="${x.logo}" alt="">`:`${badge(x.t)}`}</span><span class="gnm"><b>G-${c.nick}</b><small>Satellite di ${c.name}</small></span></div>
     <div class="glsum"><div><small>Eff. squadra</small>${eff(e)}</div><div><small>PDK totali</small><b>${d1(d)}</b></div><div><small>Partite</small><b>${g}</b></div></div>
     <div class="glhd"><span></span><span>Giocatore</span><span>PG</span><span>Min</span><span>PDK</span><span>Eff.</span></div>${rows}</article>`}).join("");
-  return `${H("G-Dreamers",`<em>${past?SZ_LBL[sz]+" · regular season "+sz:"Agg. "+EFF.agg}</em>`)}
+  return `${H("Statistiche G League",`<em>${past?SZ_LBL[sz]+" · regular season "+sz:"Agg. "+EFF.agg}</em>`)}
   ${szSelect(sz)}
   <div class="hgreen">${H("Classifica G League",`<em>efficienza di squadra</em>`)}</div>
   <div class="eboard glrank">${rank}</div>
@@ -7646,7 +7650,7 @@ function vDream(){fantaLiveAvvia();
     ${blk("b","Tabellone 5ª–8ª","5ª–8ª · posizioni dal 5° all'8°",[R0[2],R0[3]],[R1[2],R1[3]],["5ª vs 8ª","6ª vs 7ª","Finale 5°–6°","Finale 7°–8° posto"])}
     <h4 class="drplh">Classifica finale</h4>
     <div class="drfinal">${Array.from({length:8},(_,i)=>{const t=P.fin[i];return `<div class="drfr ${t?"tint":""} ${i===0&&t?"gold":""}" style="${t?"--tc:"+TEAMS[t].bg:""}"><span class="drpos">${i+1}</span>${t?`<span class="bklg" style="--tc:${TEAMS[t].bg}">${badge(t)}</span><b>${TEAMS[t].name}</b>`:`<em>da decidere</em>`}</div>`}).join("")}</div>`}
-  const DTH=typeof CNT!=="undefined"&&CNT?0:DR.th;return `<div class="drroom"${DTH?` data-th="${DR_BASE_TH[DTH]}"`:""}${DTH>5?` data-col="1"`:""}><button class="drexit" data-game="menu">‹ Torna all'app</button><div class="drhd"><span class="drlogo">DREAMERS</span><small>Fanta PDK · stagione ${STAGIONE_CORRENTE}</small>${DR.rules?`<br><button class="drrul" data-dr="rules" aria-pressed="true">‹ Torna al gioco</button>`:""}</div>
+  const DTH=typeof CNT!=="undefined"&&CNT?0:DR.th;return `<div class="drroom"${DTH?` data-th="${DR_BASE_TH[DTH]}"`:""}${DTH>5?` data-col="1"`:""}><button class="drexit" data-game="menu">‹ Torna all'app</button><div class="drhd"><span class="drlogo">DREAMERS</span><small>Fanta PDK · stagione ${STAGIONE_CORRENTE}</small>${DR.rules?`<br><button class="drrul" data-dr="rules" aria-pressed="true">‹ Torna al gioco</button>`:""}</div>${drSw("dream")}
   <div class="drtabs">${tabs}</div>${(()=>{const pv=[...DR_PROV].filter(d=>d>=W.start&&d<=W.end).sort();return pv.length?`<div class="drlive"><i></i><span><b>Live</b> · ${pv.length===1?"notte":"notti"} ${pv.map(drFmt).join(", ")}: PDK provvisori (ESPN, formula Dunkest). Si sostituiscono da soli con i dati ufficiali Dunkest quando arriva il report.</span></div>`:""})()}${body}<div class="drfoot"><button class="drrul drrulb" data-dr="rules" aria-pressed="${!!DR.rules}">${DR.rules?"‹ Torna al gioco":"📜 Regolamento"}</button><button class="drrul drrulb drth" data-dr="theme" aria-label="Cambia stile grafico">🎨 Stile<small>${DR_TH[DR.th]}</small></button></div></div>
   <p class="note">Meritocrazia: ogni settimana i 10 giocatori della rosa con la miglior prestazione (PDK più alto in una singola partita) diventano titolari rispettando i ruoli (4 guardie, 4 ali, 2 centri; almeno uno per ruolo tra capitano e pieni), gli altri vanno in tribuna. Punteggio squadra = somma dei punti dei 10 titolari (ognuno porta la sua MIGLIOR partita del turno: il PDK più alto tra le sue gare); il migliore è capitano ×1,5, dal 2° al 6° punteggio pieno e dal 7° al 10° valgono la metà (provvisori durante la settimana, definitivi a turno chiuso). Dati aggiornati al ${EFF.agg}.</p>`}
 
@@ -7728,7 +7732,7 @@ const gdBg=t=>{const x=GLEAGUE.find(z=>z.t===t);return x&&x.bg||TEAMS[t].bg};
 function vGDream(emb){fantaLiveAvvia();const TH=drThG();const D=gdData(),last=D.nights[D.nights.length-1],prev=D.nights[D.nights.length-2];
   const rankAt=d=>{const tot={};Object.keys(D.T).forEach(t=>tot[t]=0);D.nights.filter(n=>n<=d).forEach(n=>Object.entries(D.N[n]).forEach(([t,v])=>tot[t]+=v));return Object.keys(tot).sort((a,b)=>tot[b]-tot[a])};
   const pr=prev?rankAt(prev):null;
-  const tabs=[["cla","Classifica"],["gio","Giornate"],["rose","Squadre"]].map(([x,l])=>`<button data-gd="tab" data-k="${x}" aria-pressed="${GD.tab===x}">${l}</button>`).join("");
+  const tabs=[["cla","Classifica"],["gio","Giornate"],["rose","Squadre"],["stat","G League"]].map(([x,l])=>`<button data-gd="tab" data-k="${x}" aria-pressed="${GD.tab===x}">${l}</button>`).join("");
   let body="";
   if(GD.open){const tm=D.T[GD.open],pos=D.cla.indexOf(tm)+1;
     body=`<button class="gback" data-gd="close">‹ Classifica</button><div class="gdteam tint" style="--tc:${gdBg(tm.t)};--tf:${drTfH(gdBg(tm.t))}">${gdLg(tm.t)}<div><small>${pos}° posto · satellite di ${TEAMS[tm.t].name}</small><b>${gdNm(tm.t)}</b></div><em>${gdF(tm.tot)}<small>PDK totali</small></em></div>
@@ -7740,9 +7744,12 @@ function vGDream(emb){fantaLiveAvvia();const TH=drThG();const D=gdData(),last=D.
     <p class="note">Classifica generale: somma di tutti i PDK fatti dai 5 giocatori di ogni G League dal ${gdDay(GD_START)}. Tutti sempre titolari, niente capitano, nessuno scontro diretto e niente playoff. Tocca una squadra per i suoi giocatori.</p>`}
   else if(GD.tab==="gio"){
     body=D.nights.length?`<div class="gdnights">${D.nights.slice().reverse().map(n=>{const E=Object.entries(D.N[n]).sort((a,b)=>b[1]-a[1]),mx=E[0]?E[0][1]:1;return`<div class="gdn"><h5>Notte del ${gdDay(n)}<small>${E.length} squadre in campo</small></h5>${E.map(([t,v],i)=>`<div class="gdnr"><span class="gdnt">${gdLg(t,"s")}<b>${gdNm(t)}</b></span><i><u style="width:${Math.max(3,v/mx*100)}%;background:${(GLEAGUE.find(z=>z.t===t)||{}).bg||trCol(t)}"></u></i><em>${i===0?"👑 ":""}${v>=0?"+":"−"}${gdF(Math.abs(v))}</em></div>`).join("")}</div>`}).join("")}</div>`:`<div class="cempty">Nessuna partita ancora.</div>`}
+  else if(GD.tab==="stat")body=vGLeague();
   else{body=`<div class="gdrose">${D.cla.map(x=>`<button class="gdrc tint" style="--tc:${gdBg(x.t)}" data-gd="open" data-t="${x.t}">${gdLg(x.t)}<b>${gdNm(x.t)}</b><span>${x.pl.map(p=>`<i>${p.n.split(" ").slice(-1)[0]} <small>${gdF(p.tot)}</small></i>`).join("")}</span></button>`).join("")}</div>`}
-  return`<div class="drroom gdroom${emb?" gdemb":""}"${TH?` data-th="${DR_BASE_TH[TH]}"`:""}${TH>5?` data-col="1"`:""}>${emb?"":`<button class="drexit" data-game="menu">‹ Torna all'app</button>`}<div class="drhd"><span class="drlogo">G-DREAMERS</span><small>Fanta G League · stagione ${STAGIONE_CORRENTE}</small></div>
+  return`<div class="drroom gdroom${emb?" gdemb":""}"${TH?` data-th="${DR_BASE_TH[TH]}"`:""}${TH>5?` data-col="1"`:""}>${emb?"":`<button class="drexit" data-game="menu">‹ Torna all'app</button>`}<div class="drhd"><span class="drlogo">G-DREAMERS</span><small>Fanta G League · stagione ${STAGIONE_CORRENTE}</small></div>${emb?"":drSw("gdream")}
   <div class="drtabs">${tabs}</div>${D.prov.length?`<div class="drlive"><i></i><span><b>Live</b> · ${D.prov.length===1?"notte":"notti"} ${D.prov.map(gdDay).join(", ")}: PDK provvisori (tabellini di Dynasty TV, formula Dunkest). Si sostituiscono da soli con i dati ufficiali Dunkest quando arriva il report.</span></div>`:""}${body}${GD.open?"":`<div class="drfoot"><button class="drrul drrulb drth" data-gdth="1" aria-label="Cambia stile grafico">🎨 Stile<small>${DR_TH[TH]}</small></button></div>`}</div>`}
+/* (539) interruttore di campionato nelle stanze fanta: Dreamers | G-Dreamers (G-Dreamers non è più nel Centro gestione) */
+const drSw=a=>`<div class="drsw" role="tablist">${[["dream","Dreamers"],["gdream","G-Dreamers"]].map(([k,l])=>`<button data-game="${k}" role="tab" aria-selected="${a===k}">${l}</button>`).join("")}</div>`;
 function gdAct(b){const d=b.dataset;if(d.gd==="tab"){GD.tab=d.k;GD.open=null}else if(d.gd==="open"){GD.open=d.t}else if(d.gd==="close"){GD.open=null}render();window.scrollTo(0,0)}
 const GAMES=[
   {k:"hl",a:1,t:"Più o Meno",d:"Due giocatori della lega: il secondo ha l'efficienza più alta o più bassa? Allunga la serie.",i:"⇅",c:"#2fd36b"},
@@ -8766,6 +8773,7 @@ ulCheck();
 /* (260) CRONOLOGIA MODIFICHE: il footer "Ultimo aggiornamento" è cliccabile e apre questa pagina (vista "novita").
    OGNI nuova modifica pubblicata va aggiunta in CIMA a NV_LOG (data, titolo, mini spiegazione). */
 const NV_LOG=[
+ ["30/10/2026","G-Dreamers dentro Dreamers","G-Dreamers non è più nel Centro gestione: in Dreamers c'è l'interruttore Dreamers | G-Dreamers sotto il titolo. Le statistiche G League sono nella scheda «G League»."],
  ["29/10/2026","Previsione ben distinta","Nella Home la colonna «Previsione» ora ha un box azzurro con bordo sottile e una barretta sotto che indica il livello (verde, giallo, rosso, viola): si capisce subito che è il punteggio atteso e non uno già fatto."],
  ["29/10/2026","Età di tutti i giocatori","Ora tutti i giocatori, free agent e G-League compresi, hanno la data di nascita, e quindi l'età. Nel Comparatore la prima riga dei dati mostra l'età dei due giocatori, anche nell'immagine da condividere."],
  ["29/10/2026","IA Trade «Per ruolo» potenziata","La modalità «Per ruolo» ora usa lo stesso motore di quella «Per giocatore»: sceglie da sola i giocatori giusti per il ruolo che cerchi e trova anche scambi intrecciati a 3, 4 e 5 squadre, tenendo conto di bisogni e interesse di ogni squadra. Entrando in IA Trade scegli prima la modalità con due grandi pulsanti, ognuna con la sua spiegazione."],
