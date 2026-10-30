@@ -1589,3 +1589,7 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 ## 547 — G-Dreamers: tolta la scheda «Squadre»
 - La scheda «Squadre» (le rose dei satelliti) ripeteva la Classifica, dove toccando una squadra si apre già il dettaglio con i suoi giocatori. G-Dreamers ha ora tre schede: Classifica, Giornate, G League.
+
+## 548 — «Trade» diventa «Storico trade» e passa nel menu Scambi
+- La voce «Trade» è uscita dal menu Centro gestione (restano Roster, Centro Medico, Regolamento) ed è la prima voce del menu Scambi con il nome «Storico trade»; la scheda Scambi resta evidenziata quando la pagina è aperta. Il tasto indietro dai dettagli usa lo stesso nome.
+- Stato: in coda, non pubblicato.

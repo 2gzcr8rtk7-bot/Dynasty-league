@@ -2475,11 +2475,11 @@ html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.0
     </nav>
     <div class="subnav" id="subnav" role="menu" hidden>
       <button data-v="roster" aria-selected="false"><span>Roster</span></button>
-      <button data-v="trade" aria-selected="false"><span>Trade</span></button>
       <button data-v="infortuni" aria-selected="false"><span>Centro Medico</span></button>
       <button data-v="regolamento" aria-selected="false"><span>Regolamento</span></button>
     </div>
     <div class="subnav" id="subnav2" role="menu" hidden>
+      <button data-v="trade" aria-selected="false"><span>Storico trade</span></button>
       <button data-v="valtrade" aria-selected="false"><span>Calcolatore trade</span></button>
       <button data-v="osserv" aria-selected="false"><span>Osservatorio</span></button>
       <button data-v="iatrade" aria-selected="false"><span>IA Trade</span></button>
@@ -8555,7 +8555,7 @@ const BK_IDS="#gback,#faback,#glpback,#effback,#cback,[data-cupback],[data-snbac
 /* SOTTO-SCHERMATE: se dentro una sezione c'è un livello interno (es. IA Trade → Per ruolo / Per giocatore), il tasto ‹ e il gesto indietro tornano prima a quel livello e solo dopo alla schermata precedente. Aggiungere qui ogni nuova sotto-schermata. */
 const NAV_SUB=[{ok:()=>cur==="efficienza"&&effSub==="sq",lab:"Statistiche",back:()=>{effSub="";render()}},{ok:()=>cur==="iatrade"&&(IA.mode==="role"||IA.mode==="pl"),lab:"IA Trade",back:()=>{IA.mode="";render()}},{ok:()=>cur==="eq"&&EQ.vl,lab:"Valori e crediti",back:()=>{EQ.vl=false;EQ.msg="";render()}}];
 const navSub=()=>NAV_SUB.find(x=>{try{return x.ok()}catch(e){return false}});
-function backLabel(v){const n=(TEAMS[curTeam]||{}).nick||"";const M={home:"Home",campo:"Campo "+n,roster:"Roster "+n,fa:"Giocatori",valtrade:"Calcolatore trade",osserv:"Osservatorio",iatrade:"IA Trade",pictrade:"Pic-Trade",compar:"Comparatore",efficienza:"Statistiche",effsquadra:"Efficienza "+n,effcup:"Efficienza",tv:"Dynasty TV",risultati:"Risultati",classifica:"Classifica",trade:"Trade",speciali:"Trade speciali",gleague:"G-Dreamers",college:"Ufficio Scouting",cassa:"Cassa "+n,cap:"Cap",multe:"Multe",trend:"Trend",statnotte:"Statistiche notte",grafico:"Grafico",dunkest:"Centro gestione",storia:"Sala Trofei",regolamento:"Regolamento",infortuni:"Centro Medico",gdreamers:"G-Dreamers",faplayer:"Giocatori",glplayer:"G-Dreamers"};
+function backLabel(v){const n=(TEAMS[curTeam]||{}).nick||"";const M={home:"Home",campo:"Campo "+n,roster:"Roster "+n,fa:"Giocatori",valtrade:"Calcolatore trade",osserv:"Osservatorio",iatrade:"IA Trade",pictrade:"Pic-Trade",compar:"Comparatore",efficienza:"Statistiche",effsquadra:"Efficienza "+n,effcup:"Efficienza",tv:"Dynasty TV",risultati:"Risultati",classifica:"Classifica",trade:"Storico trade",speciali:"Trade speciali",gleague:"G-Dreamers",college:"Ufficio Scouting",cassa:"Cassa "+n,cap:"Cap",multe:"Multe",trend:"Trend",statnotte:"Statistiche notte",grafico:"Grafico",dunkest:"Centro gestione",storia:"Sala Trofei",regolamento:"Regolamento",infortuni:"Centro Medico",gdreamers:"G-Dreamers",faplayer:"Giocatori",glplayer:"G-Dreamers"};
   return v==="giochi"?(GAME==="dream"?"Dreamers":GAME==="gdream"?"G-Dreamers":"Giochi"):(M[v]||"Indietro")}
 /* nomi troppo lunghi per la card: nome di battesimo ridotto all'iniziale ("S. GILGEOUS-ALEXANDER") */
 function duFit(){document.querySelectorAll(".du .duh").forEach(h=>h.style.minHeight="");document.querySelectorAll(".du .dun b").forEach(b=>{if(b.scrollWidth<=b.clientWidth+1)return;b.innerHTML=b.innerHTML.replace(/&nbsp;|\u00a0/g," ");if(b.scrollWidth>b.clientWidth+1)b.style.letterSpacing="-.02em"});document.querySelectorAll(".durow").forEach(r=>{const hs=[...r.querySelectorAll(".du .duh")];if(hs.length<2)return;const m=Math.max(...hs.map(h=>h.getBoundingClientRect().height));hs.forEach(h=>h.style.minHeight=m+"px")})}/* (312) nomi già in formato "N. Cognome" e a capo se servono: mai rimpiccioliti né tagliati */
