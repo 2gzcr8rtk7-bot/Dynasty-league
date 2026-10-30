@@ -1722,3 +1722,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 618. Allenamento IA Trade: la scheda e' scritta come un'offerta di Claude: prima "TI OFFRO" (quello che ricevi), poi "RICEVO" (quello che dai), senza loghi ne' nomi delle squadre.
 
 619. Allenamento IA Trade per tutti i GM: prima di iniziare ci si presenta (nome + squadra, obbligatori); le proposte sono sempre sulla squadra del GM (1-3 giocatori per lato, anche scambi a 3 squadre con la terza squadra indicata), tasto Tratto al posto di Cambia, il report riporta nome e squadra del GM.
+
+620. Allenamento IA Trade: le proposte sono sempre a pari quantita' (1vs1, 2vs2, 3vs3), anche a 3 squadre.

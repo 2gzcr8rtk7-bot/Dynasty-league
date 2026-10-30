@@ -8840,10 +8840,10 @@ const atK=()=>[1,1,1,2,2,2,3][Math.random()*7|0];
 function atGen(){const me=AT_PR&&AT_PR.t;if(!me)return null;const pool=t=>ROSTER[t].map(p=>p[0]).filter(n=>valOf(n)>0),mine=pool(me),others=Object.keys(ROSTER).filter(t=>t!==me);
   const rec=new Set(AT_LOG.slice(-10).map(x=>x.give.map(g=>g.n).join()+"|"+x.get.map(g=>g.n).join()));
   const tol=[.05,.12,.2,.32][Math.random()*4|0],tg=(Math.random()*2-1)*tol;let best=null,bs=9;
-  const T3=Math.random()<.3;for(let i=0;i<600;i++){const t3=T3,sh=atSample(others,2),ot=sh[0];if(!mine.length)break;
-    const g=atSample(mine,Math.min(t3?2:atK(),mine.length)).map(atInfo);let r,m=null,mt=null,db=0;
-    if(t3){mt=sh[1];const th=pool(ot),th2=pool(mt);if(!th.length||!th2.length)continue;m=atSample(th,Math.min(1+(Math.random()<.4),th.length)).map(atInfo);r=atSample(th2,Math.min(1+(Math.random()<.4),th2.length)).map(atInfo);db=atDf(atSum(g),atSum(m))}
-    else{const th=pool(ot);if(!th.length)continue;r=atSample(th,Math.min(atK(),th.length)).map(atInfo)}
+  const T3=Math.random()<.3,KK=[1,1,2,2,3][Math.random()*5|0];for(let i=0;i<600;i++){const t3=T3,sh=atSample(others,2),ot=sh[0];if(!mine.length)break;
+    const g=atSample(mine,KK).map(atInfo);if(g.length<KK)break;let r,m=null,mt=null,db=0;
+    if(t3){mt=sh[1];const th=pool(ot),th2=pool(mt);if(!th.length||!th2.length)continue;m=atSample(th,KK).map(atInfo);r=atSample(th2,KK).map(atInfo);if(m.length<KK||r.length<KK)continue;db=atDf(atSum(g),atSum(m))}
+    else{const th=pool(ot);r=atSample(th,KK).map(atInfo);if(r.length<KK)continue}
     const vg=atSum(g),vr=atSum(r),d=atDf(vg,vr);let sc=Math.abs(d-tg)+Math.abs(db)*.4+(rec.has(g.map(x=>x.n).join()+"|"+r.map(x=>x.n).join())?5:0);
     if(sc<bs){bs=sc;best={t:me,ot:t3?mt:ot,give:g,get:r,d,mid:t3?{t:ot,in:g,out:m,to:mt}:null}}}
   return best}
