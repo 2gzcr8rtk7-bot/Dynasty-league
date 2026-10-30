@@ -1243,6 +1243,7 @@ body:not(.notte) .tmc .tmar{color:var(--gold)}
 .rcg .rtags{gap:4px;align-items:center}
 .rcg .rnm small .injtag{font-size:9.5px;padding:0 5px;vertical-align:1px}
 .rcg .rtags .rookie{font-size:9px;padding:1px 4px}
+.grplf{margin:6px 0 4px}.grplf .fapl{display:flex;align-items:center;justify-content:space-between}.grall{border:0;background:transparent;color:#facc15;font-family:var(--display);font-weight:800;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-size:13px}.grpl{flex-wrap:wrap}
 .fabar{display:grid;grid-template-columns:1fr auto;gap:8px;margin:2px 0 10px}
 .fafil{display:inline-flex;align-items:center;gap:6px;font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.04em;padding:0 16px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.04);color:#fff;border-radius:10px;cursor:pointer}
 .fafil.on,.fafil[aria-expanded=true]{border-color:#facc15;color:#facc15}
@@ -3151,7 +3152,7 @@ function vEffSquadra(){
   <div class="fabar">${perBtn("esq",ESP.da,ESP.a)}<button class="fafil${fn?" on":""}" data-esqfil="1" aria-expanded="${esqFOpen}"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4-2v-4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Filtri${fn?` <i>${fn}</i>`:""}</button></div>
   ${fpan}
   ${chips}
-  <div class="esqctl"><button class="advbtn ggy grbtn" data-grafico="${t}">📈 Grafico</button></div>
+  <div class="esqctl"><button class="advbtn ggy grbtn" data-grafico="${t}" data-grteam="1">📈 Grafico squadra</button></div>
   ${body}
   <p class="note">Il periodo si sceglie col calendario o con stagione e mesi sopra la tabella. Ogni colonna è una partita del giocatore nel periodo (G1, G2… oppure 1ª, 2ª… se il periodo è un solo mese); sotto ogni valore l'avversario. Giocatori in ordine di ${M.nome} media.</p>
   <p class="note">${esqMet==="pdk"?'<span class="pdkx v">da 40</span> <span class="pdkx g">30–40</span> <span class="pdkx y">20–30</span> <span class="pdkx r">sotto 20</span>':'<span class="ev g"><i></i>sopra 1,10</span> &nbsp; <span class="ev y"><i></i>0,80–1,10</span> &nbsp; <span class="ev r"><i></i>sotto 0,80</span>'}</p>`;
@@ -5054,8 +5055,9 @@ function vGrafico(){const FAm=!!GR.fa;if(FAm&&typeof FAG==="undefined"){faLoadG(
   /* livello automatico: Tutte → stagioni; stagione → mesi; mese → settimane; settimana → partite */
   /* intervallo di stagioni consecutive: Dalla stagione → Alla stagione (più stagioni = un punto per stagione) */
   /* periodo a calendario: GR.da → GR.a; stagioni toccate = SZR; livello: più stagioni → stagioni, oltre 45 giorni → mesi, altrimenti settimane */
+  const TM=!!GR.team&&!FAm;if(TM&&(GR.incT!==t||!GR.inc)){GR.inc=(ROSTER[t]||[]).map(x=>x[0]);GR.incT=t}const INC=TM?GR.inc:[];
   const ORD=PER_ORD;perNorm(GR);const SZR=perSzr(GR.da,GR.a),multi=SZR.length>1,inP=perIn(GR.da,GR.a);
-  const gAll=SZR.length?grGames(GR.p,multi?"all":SZR[0]).filter(x=>SZR.includes(x.sz)):[],g=gAll.filter(x=>inP(x.dt));
+  const gAll=SZR.length?(TM?INC.flatMap(n=>grGames(n,multi?"all":SZR[0])):grGames(GR.p,multi?"all":SZR[0])).filter(x=>SZR.includes(x.sz)):[],g=gAll.filter(x=>inP(x.dt));
   GR.by=perBy(g);const GOK=perOk(g),forz=!!(GR.gran&&GOK[GR.gran]);if(forz)GR.by=GR.gran;/* scelta Stagioni/Mesi/Giorni dell'utente, se possibile nel periodo */
   /* se il periodo dà un solo punto (es. stagione appena iniziata, un solo mese) scendo di livello: settimane, poi partite */
   if(!forz&&GR.by!=="s"&&g.length>=2&&g.length<=8)GR.by="g";/* poche partite: mostrale una per una */
@@ -5069,13 +5071,14 @@ function vGrafico(){const FAm=!!GR.fa;if(FAm&&typeof FAG==="undefined"){faLoadG(
   const gle=(FAm||isGL)&&typeof GLEAGUE!=="undefined"?GLEAGUE.find(x=>x.t===t):null,gbg=gle&&gle.bg?gle.bg:c.bg,gtf=gle&&gle.bg?"#fff":(c.txt||c.fg);
   return`<div class="grroom" style="--tc:${gbg};--tf:${gtf}">
   <button class="grback" data-grclose="1">‹ Indietro</button>
-  <div class="grhd"><span class="grlg">${TEAMS[t]?(FAm||isGL?glBadge(t):badge(t)):`<span class="grfa">FA</span>`}</span><div><small>${FAm?"Free Agent"+(fo?" · G League "+c.nick:""):isGL?"G League "+c.nick:c.name} · grafici</small><b>${GR.p}</b></div></div>
-  <div class="grtop"><div class="grctl">${FAm?"":sel("Giocatore",ros.map(n=>[n,glN.includes(n)?n+" (G League)":n]),GR.p)}
+  <div class="grhd"><span class="grlg">${TEAMS[t]?(FAm||isGL?glBadge(t):badge(t)):`<span class="grfa">FA</span>`}</span><div><small>${FAm?"Free Agent"+(fo?" · G League "+c.nick:""):isGL?"G League "+c.nick:c.name} · grafici</small><b>${TM?c.nick+" · squadra":GR.p}</b></div></div>
+  <div class="grtop"><div class="grctl">${FAm||TM?"":sel("Giocatore",ros.map(n=>[n,glN.includes(n)?n+" (G League)":n]),GR.p)}
   ${perBtn("gr",GR.da,GR.a)}</div>
-  ${FAm||isGL?"":`<div class="grjs">${(()=>{const r=(ROSTER[t]||[]).find(x=>x[0]===GR.p);return jersey(t,r?r[1]:null,GR.p)})()}</div>`}</div>
+  ${FAm||isGL||TM?"":`<div class="grjs">${(()=>{const r=(ROSTER[t]||[]).find(x=>x[0]===GR.p);return jersey(t,r?r[1]:null,GR.p)})()}</div>`}</div>
   ${perGranBtns("gr",GOK,GR.by)}
+  ${TM?`<div class="grplf"><div class="fapl">Giocatori nel grafico <button class="grall" data-grinc="*">Tutti</button></div><div class="chips grpl">${(ROSTER[t]||[]).map(x=>`<button class="chip" data-grinc="${x[0].replace(/"/g,"&quot;")}" aria-pressed="${INC.includes(x[0])}">${INC.includes(x[0])?"✓ ":""}${x[0].replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ").slice(-1)[0]}</button>`).join("")}</div></div>`:""}
   <div class="grtgs">${tg("pdk")}${tg("min")}${tg("eff")}</div>
-  ${(SHR_GR={t,p:GR.p,c:{bg:gbg,fg:gtf},fa:FAm,gl:isGL,P,show:{...GR.show},by:GR.by,da:GR.da,a:GR.a,n:g.length,avg:{pdk:avg("pdk"),min:avg("min"),eff:avg("eff")}},"")}
+  ${(SHR_GR={t,tm:TM?INC.length+(INC.length===1?" GIOCATORE":" GIOCATORI"):"",p:TM?c.nick+" (squadra)":GR.p,c:{bg:gbg,fg:gtf},fa:FAm,gl:isGL,P,show:{...GR.show},by:GR.by,da:GR.da,a:GR.a,n:g.length,avg:{pdk:avg("pdk"),min:avg("min"),eff:avg("eff")}},"")}
   <div class="grcard grshc">${shBtn("gr")}${grChart(P,GR.show)}<div class="grfoot">${g.length} ${g.length===1?"partita":"partite"} · ${GR.by==="s"?"media di ogni stagione":GR.by==="m"?"media di ogni mese":GR.by==="w"?"media di ogni settimana":"ogni partita"}</div></div></div>`}
 
 function vGiocatore(){
@@ -5968,7 +5971,7 @@ async function shGrafico(){const S=SHR_GR;if(!S||!S.P||S.P.length<1)return null;
   const lg=TEAMS[S.t]?await shLogo(S.t):null;if(lg)c.drawImage(lg,56,40,130,130);
   c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_F(800,72,1);c.fillStyle="#fff";c.fillText(S.p.toUpperCase(),210,112);
   const by={s:"media di ogni stagione",m:"media di ogni mese",w:"media di ogni settimana",g:"ogni partita"}[S.by]||"";
-  c.font=SH_F(700,30,1);c.fillStyle="rgba(233,213,255,.85)";c.fillText(`${TEAMS[S.t]?(S.gl||S.fa?"G League ":"")+TEAMS[S.t].name.toUpperCase():"FREE AGENT"} · ${perFmt(S.da)} → ${perFmt(S.a)} · ${S.n} PARTITE · ${by.toUpperCase()}`,214,156);
+  c.font=SH_F(700,30,1);c.fillStyle="rgba(233,213,255,.85)";c.fillText(`${S.tm?S.tm:TEAMS[S.t]?(S.gl||S.fa?"G League ":"")+TEAMS[S.t].name.toUpperCase():"FREE AGENT"} · ${perFmt(S.da)} → ${perFmt(S.a)} · ${S.n} PARTITE · ${by.toUpperCase()}`,214,156);
   /* riquadri medie */
   let bx=W-56;on.slice().reverse().forEach(k=>{const w=230;bx-=w;shRR(c,bx,46,w-16,110,18);c.fillStyle="rgba(17,10,48,.75)";c.fill();c.strokeStyle=COL[k];c.lineWidth=3;c.stroke();
     c.textAlign="center";c.font=SH_F(800,24,1);c.fillStyle=COL[k];c.fillText(LAB[k]+" MEDIA",bx+(w-16)/2,86);c.font=SH_F(800,46,1);c.fillStyle="#fff";c.fillText(fv(k,S.avg[k]),bx+(w-16)/2,138)});
@@ -6688,7 +6691,8 @@ document.getElementById("main").addEventListener("change",e=>{const fs=e.target.
   if(k==="sz"||k==="sz2"){TRN[k]=s.value;TRN.mese="";TRN.mese2=""}else if(k==="mese"){TRN.mese=s.value;TRN.mese2=s.value}else TRN[k]=s.value;TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y)});
 /* Grafico: apertura, chiusura, menu e linee */
 document.getElementById("main").addEventListener("click",e=>{
-  const o=e.target.closest("[data-grafico]");if(o){e.preventDefault();GR.t=o.dataset.grafico;GR.p=o.dataset.grp||null;GR.fa=GR.t==="FA"?GR.p:null;GR.from=cur;GR.sz=GR.fa?(o.dataset.grsz||"2026/27"):SZ_ALL.includes(gSeason)?gSeason:SZ_ALL[0];GR.sz2=GR.sz;GR.mese="";GR.mese2="";{const r=perSzRange(GR.sz);GR.da=r[0];GR.a=r[1]}if(cur==="trend"){perNorm(TRN);GR.da=TRN.da;GR.a=TRN.a;GR.show={pdk:TRN.met==="pdk",min:TRN.met==="min",eff:TRN.met==="eff"}}cur="grafico";render();window.scrollTo(0,0);return}
+  const o=e.target.closest("[data-grafico]");if(o){e.preventDefault();GR.t=o.dataset.grafico;GR.p=o.dataset.grp||null;GR.fa=GR.t==="FA"?GR.p:null;GR.from=cur;GR.sz=GR.fa?(o.dataset.grsz||"2026/27"):SZ_ALL.includes(gSeason)?gSeason:SZ_ALL[0];GR.sz2=GR.sz;GR.team=!!o.dataset.grteam;GR.mese="";GR.mese2="";{const r=perSzRange(GR.sz);GR.da=r[0];GR.a=r[1]}if(GR.team&&ESP.da){GR.da=ESP.da;GR.a=ESP.a;const rg=perSzRange(ESP.sz);if(GR.a>perOggi())GR.a=perOggi();if(GR.da>GR.a)GR.da=GR.a;GR.sz=ESP.sz}if(cur==="trend"){perNorm(TRN);GR.da=TRN.da;GR.a=TRN.a;GR.show={pdk:TRN.met==="pdk",min:TRN.met==="min",eff:TRN.met==="eff"}}cur="grafico";render();window.scrollTo(0,0);return}
+  const gi=e.target.closest("[data-grinc]");if(gi&&cur==="grafico"&&GR.team){e.preventDefault();const all=(ROSTER[GR.t]||[]).map(x=>x[0]),n=gi.dataset.grinc;if(n==="*")GR.inc=all.slice();else{const i=GR.inc.indexOf(n);if(i>=0)GR.inc.splice(i,1);else GR.inc.push(n);if(!GR.inc.length)GR.inc=all.slice()}const y=window.scrollY;render();window.scrollTo(0,y);return}
   if(e.target.closest("[data-grclose]")){e.preventDefault();cur=GR.from||"efficienza";render();window.scrollTo(0,0);return}
   const tg=e.target.closest("[data-grtg]");if(tg){e.preventDefault();GR.show[tg.dataset.grtg]=!GR.show[tg.dataset.grtg];const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("change",e=>{const s=e.target.closest("select[data-gr]");if(!s)return;const k=s.dataset.gr;
