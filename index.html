@@ -7968,8 +7968,8 @@ function drSettimana(n,W){const p=Object.values(ROSTER).flat().find(x=>x[0]===n)
     if(!g){out.push(null);continue}const casa=g[1]===nba,opp=casa?g[0]:g[1],v=N[d]&&N[d][n];
     out.push({d,opp:(casa?"":"@")+opp,v:typeof v==="number"?v:null,fin:g[5]==="F"||v!=null,lv:g[5]==="L"})}
   return out}
-function drProiez(k,t,W){/* chi non ha ancora giocato ma ha partite in settimana vale il suo PDK medio (pdkMix) */
-  const A={...W.acc};const F=drForm(k)[t]||{t:[],r:[]};[...F.t,...F.r].forEach(n=>{if(A[n])return;const s=drSettimana(n,W);if(s.some(x=>x&&!x.fin)){const m=injOut(n)?null:pdkMix(n);if(m!=null)A[n]={s:m,g:1,b:m}}});
+function drProiez(k,t,W){/* chi non ha ancora giocato ma ha partite in settimana vale il suo valore atteso della Previsione (avversari, difesa, trend, più partite = bonus); se manca, il PDK medio (pdkMix). Così «proiez.» e «Previsione · turno» della scheda squadra sono lo stesso numero. */
+  const A={...W.acc},em={};try{const R=drPrevisione(t,k);if(R)[...R.top,...R.trib].forEach(x=>{if(x.e!=null)em[x.n]=x.e})}catch(e){}const F=drForm(k)[t]||{t:[],r:[]};[...F.t,...F.r].forEach(n=>{if(A[n])return;const s=drSettimana(n,W);if(s.some(x=>x&&!x.fin)){const m=injOut(n)?null:(em[n]??pdkMix(n));if(m!=null)A[n]={s:m,g:1,b:m}}});
   return drTeam(k,t,{...W,acc:A,closed:true}).score}
 /* (318) nome nella carta della sfida: "I. Cognome"; per i cognomi più lunghi (Wembanyama, Antetokounmpo) eccezionalmente solo il cognome, così entrano interi */
 const DU_SOLO=/\s(Wembanyama|Antetokounmpo)$/i;
@@ -8106,8 +8106,8 @@ function drGare(t,k,W,eff){let tot=0,done=0;try{const F=drForm(k)[t]||{t:[],r:[]
   [...F.t,...F.r].forEach(n=>{const nba=(segInfo(n)||{}).nba;if(!nba)return;
     const rt=eff&&!W.closed?injRit(n):null;
     ds.forEach(d=>(TV.days[d]||[]).forEach(g=>{if(g[0]===nba||g[1]===nba){if(rt&&(!rt.da||d<rt.da))return;tot++;if(g[5]==="F"||g[5]==="L")done++}}))})}catch(e){}return{tot,done}}
-function drPrevisione(t){try{
-  const st=drStand(),P=drPO(st);let k=drCurWeek(P);let W=drWeek(k);if(W.closed||W.started)k++;if(k>DR_REG)return null;W=drWeek(k);
+function drPrevisione(t,kk){try{
+  const st=drStand(),P=drPO(st);let k=drCurWeek(P);let W=drWeek(k);if(W.closed||W.started)k++;if(kk!=null)k=kk;if(k>DR_REG)return null;W=drWeek(k);
   const F0=drForm(k)[t]||{t:[],r:[]},names=[...F0.t,...F0.r].filter(n=>!spFuori(n));
   const dates=[];for(let d=W.start;d<=W.end;d=drAdd(d,1))dates.push(d);
   const dk=d2=>{const[a,b]=String(d2).split("/").map(Number);return(b>=8?0:12)*100+b*100+a};
