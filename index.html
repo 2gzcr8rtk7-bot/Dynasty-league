@@ -6859,9 +6859,10 @@ function drTabellone(t,T,k,P,on){const W=T.W,btn=`<button class="cntbtn${on?" on
   /* punteggi nel colore della squadra padrona della pagina; se il colore è troppo scuro sul fondo scuro si usa il secondo colore o una versione schiarita */
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255},C=TEAMS[t];
   const sc=lum(C.bg)>=.33?C.bg:(lum(C.fg)>=.33&&lum(C.fg)<.95?C.fg:`color-mix(in srgb,${C.bg} 62%,#fff)`);
-  const gioc=(X,tt)=>{const g=drGare(tt,k,W);return`<span class="lbmg"><b>${g.done}/${g.tot}</b><small>giocato</small></span>`};
-  /* (595) frecce per rivedere i turni passati e tornare avanti (non in modalità notte) */
   let kc=k;try{kc=drCurWeek(P)}catch(e){}
+  const past=!on&&k<kc;/* turno passato: niente contatore «giocato» (è sempre completo), così il tabellone resta largo come prima */
+  const gioc=(X,tt)=>{if(past)return"";const g=drGare(tt,k,W);return`<span class="lbmg"><b>${g.done}/${g.tot}</b><small>giocato</small></span>`};
+  /* (595) frecce per rivedere i turni passati e tornare avanti (non in modalità notte) */
   const arr=d=>on?"":`<button class="lbma" type="button" data-cmpk="${k+d}" aria-label="${d<0?"Turno precedente":"Turno successivo"}"${(d<0?k<=1:k>=kc)?" disabled":""}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d<0?"M15 5l-7 7 7 7":"M9 5l7 7-7 7"}" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`;
   const cap=!on&&k<kc?`<p class="lbmcap">Turno ${k+DR_OFF} · ${drFmt(W.start)}–${drFmt(W.end)} · ${W.closed?"concluso":"in corso"} · <button type="button" data-cmpk="${kc}">torna al turno attuale ›</button></p>`:"";
   return`<h2 class="lbmh">${kitBtn(t)}<span class="lbmw">${arr(-1)}<span class="lbm ${st}"${lvAttr} style="--sc:${sc}"${o?` data-drgo="${k}|${pr[0]}|${pr[1]}" role="button" tabindex="0"`:""} aria-label="${TEAMS[t].nick} ${T.score==null?"in attesa":pdkF(T.score)}, ${T.played} su 10 hanno giocato${o?`, contro ${TEAMS[o].nick} ${O.score==null?"in attesa":pdkF(O.score)}, ${O.played} su 10 hanno giocato`:""}">${lg(t)}${gioc(T,t)}<span class="lbmn${lead==="b"?" dim":""}">${T.score==null?"—":pdkF(T.score)}</span>${o?`<span class="lbmx"></span><span class="lbmn${lead==="a"?" dim":""}">${O.score==null?"—":pdkF(O.score)}</span>${gioc(O,o)}${lg(o)}`:""}</span>${arr(1)}</span>${btn}</h2>${cap}`}
