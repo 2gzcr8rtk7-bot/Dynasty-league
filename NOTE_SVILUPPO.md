@@ -1726,3 +1726,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 620. Allenamento IA Trade: le proposte sono sempre a pari quantita' (1vs1, 2vs2, 3vs3), anche a 3 squadre.
 
 621. Allenamento IA Trade: la presentazione chiede solo la squadra (niente nome); ogni risposta registra i secondi impiegati e il report calcola il tempo medio e se le risposte piu' rapide della media riguardano scambi piu' favorevoli o piu' svantaggiosi (Δ medio veloci vs lenti, % accettati, correlazione).
+
+622. Allenamento IA Trade, tempi: le risposte istintive (sotto meta' della mediana) pesano di piu', le lente molto meno (distrazioni; peso 1/(1+(t/mediana)^2), escluse le pause oltre 2 minuti); il report confronta istintive e altre e da' le percentuali ponderate.
