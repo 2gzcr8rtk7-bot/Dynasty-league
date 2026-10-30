@@ -1682,3 +1682,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 600 — Campo: sotto il tabellone la scritta «Notte N/T» (N = notti già giocate del turno + 1, T = notti del turno) che si aggiorna da sola; visibile solo nel turno in corso, non nei turni passati né in modalità notte. Spazio tra tabellone e campo leggermente ridotto.
 
 601 — Box score di Dynasty TV: la colonna delle stoppate ora si chiama BLK (prima Stp).
+
+602 — Statistiche notte: terzo tasto BOX (accanto a PDK ed Eff.). La classifica resta per PDK e sotto ogni giocatore compaiono le caselle PT RB AS ST BL PP e tiri sbagliati, più tiri/da 3/liberi e titolare. Numeri verdi: 3+ rubate, 3+ stoppate, 7+ rimbalzi, 25+ punti, 7+ assist; gialli al posto del verde se fanno doppia, tripla o quadrupla doppia (10+ in almeno due tra PT RB AS ST BL); rossi: 4+ palle perse, 8+ tiri sbagliati. Dati dai box score di Dynasty TV.

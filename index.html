@@ -2600,6 +2600,7 @@ html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.0
 @keyframes snlp{0%{box-shadow:0 0 0 0 rgba(239,68,68,.65)}70%{box-shadow:0 0 0 12px rgba(239,68,68,0)}100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}}
 .snlvd{display:inline-block;width:10px;height:10px;border-radius:50%;background:#fff;margin-right:8px;vertical-align:middle;animation:lvp 1.2s ease-in-out infinite}
 .sndate.snlive{grid-template-columns:auto 1fr auto!important;display:grid;text-align:center}.sndate.snlive .snlvd{background:#ef4444}
+.bxs{display:grid;grid-template-columns:repeat(5,1fr) 1fr 2.1fr;gap:3px;margin:4px 0 0}.bxs span{background:#26335f;border:1px solid #3d4d82;border-radius:6px;text-align:center;padding:3px 0 2px;line-height:1.05;min-width:0}.bxs b{display:block;font:800 13px var(--display);color:#e5e9f5;white-space:nowrap}.bxs small{display:block;font:700 7.5px var(--display);letter-spacing:.05em;color:#9aa8cf;white-space:nowrap}.bxs .gv b{color:#4ade80}.bxs .gy b{color:#facc15}.bxs .gr2 b{color:#ff4d4d}.bxt{font-style:normal;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#8b93a7;margin-top:3px}
 .snrow.lvr{box-shadow:inset 3px 0 0 #ef4444}
 @media (prefers-reduced-motion:reduce){.snbtn.live,.snlvd{animation:none}}
 </style></head>
@@ -5255,21 +5256,27 @@ function vStatLive(){fantaLiveAvvia();const d=campoNotte(),E=SN.m==="eff";
   <div class="snsw"><button data-snm="pdk" aria-pressed="${!E}">PDK</button><button data-snm="eff" aria-pressed="${E}">Eff.</button></div>
   <div class="snlist">${rows||'<p class="note">Stanotte nessun giocatore delle franchigie è ancora sceso in campo.</p>'}</div>
   <p class="note">Modalità notte: PDK live della notte in corso (Dynasty TV, formula Dunkest), provvisori fino al report ufficiale. Con la freccia ‹ vedi le notti passate (dati ufficiali).</p>`}
+/* (602) tasto BOX in Statistiche notte: sotto ogni giocatore le statistiche del box score. Verde = 3+ rubate, 3+ stoppate, 7+ rimbalzi, 25+ punti, 7+ assist; giallo al posto del verde per le statistiche che compongono doppia, tripla o quadrupla doppia (10+ in almeno due tra PT RB AS ST BL); rosso = 4+ palle perse, 8+ tiri sbagliati */
+function snBox(n,d){const[g,m]=d.split("/").map(Number),iso=`${m>=7?2026:2027}-${String(m).padStart(2,"0")}-${String(g).padStart(2,"0")}`,k=tvNm(n);let r=null;
+  for(const G of TV.days[iso]||[]){const Bx=G[7]&&TV.box[G[7]];if(!Bx)continue;for(const sd of["a","h"]){const f=(Bx[sd]||[]).find(p=>tvNm(p[0])===k);if(f){r=f;break}}if(r)break}
+  if(!r)return"";const miss=(r[13]-r[12])+(r[17]-r[16]),pp=+r[10]||0,v={PT:+r[3]||0,RB:+r[6]||0,AS:+r[7]||0,ST:+r[8]||0,BL:+r[9]||0},dd=Object.values(v).filter(z=>z>=10).length>=2,
+  gr={PT:25,RB:7,AS:7,ST:3,BL:3},c=(l,x)=>dd&&x>=10?" gy":x>=gr[l]?" gv":"",cell=(l,x,cl)=>`<span class="${cl.trim()}"><b>${x}</b><small>${l}</small></span>`;
+  return`<div class="bxs">${["PT","RB","AS","ST","BL"].map(l=>cell(l,v[l],c(l,v[l]))).join("")}${cell("PP",pp,pp>=4?"gr2":"")}${cell("TIRI SBAGL.","-"+miss,miss>=8?"gr2":"")}</div><em class="bxt">${r[12]}/${r[13]} tiri · ${r[14]}/${r[15]} da 3 · ${r[16]}/${r[17]} tl${r[1]?" · titolare +1":""}</em>`}
 function vStatNotte(){if(CNT&&!SN.hist)return vStatLive();const N=snNights().filter(n=>!CNT||snKey(n)<snLiveKey());if(!N.length)return`<button class="gback" data-snback="1">‹ Statistiche</button>${H("Statistiche notte")}<p class="note">Nessuna partita registrata.</p>`;
   if(!SN.d||!N.includes(SN.d))SN.d=N[N.length-1];const d=SN.d,i=N.indexOf(d);
   const L=[];for(const t in ROSTER)for(const r of ROSTER[t]){const g=(PARTITE[r[0]]||[]).find(x=>x[0]===d);if(g)L.push({n:r[0],t,g})}
-  const E=SN.m==="eff",val=x=>E?x.g[4]:x.g[3];L.sort((a,b)=>val(b)-val(a));
+  const E=SN.m==="eff",B=SN.m==="box",val=x=>E?x.g[4]:x.g[3];L.sort((a,b)=>val(b)-val(a));
   const f2=v=>(Math.round(v*100)/100).toLocaleString("it-IT",{maximumFractionDigits:2});
   const cl=v=>E?(v<.8?"pr":v<=1.1?"py":v<1.5?"pg":"pv"):(v<20?"pr":v<30?"py":v<40?"pg":"pv");
   const MM=["","gen","feb","mar","apr","mag","giu","lug","ago","set","ott","nov","dic"],dl=x=>{const[g,m]=x.split("/").map(Number);return`${g} ${MM[m]}`};
   const tot=L.reduce((a,x)=>a+val(x),0),fv=v=>E?v.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2}):f2(v);
-  const rows=L.map((x,k)=>`<div class="snrow">${wedge(x.t)}<div class="sninfo"><b><i>${k+1}</i>${RTR(x.n)}${x.n}</b><small>vs ${x.g[1]} · ${String(x.g[2]).replace(".",",")} min · ${x.g[5]} pt ${x.g[6]} rb ${x.g[7]} as</small></div><span class="snp ${cl(val(x))}">${fv(val(x))}</span></div>`).join("");
+  const rows=L.map((x,k)=>`<div class="snrow">${wedge(x.t)}<div class="sninfo"><b><i>${k+1}</i>${RTR(x.n)}${x.n}</b><small>vs ${x.g[1]} · ${String(x.g[2]).replace(".",",")} min · ${x.g[5]} pt ${x.g[6]} rb ${x.g[7]} as</small>${B?snBox(x.n,d):""}</div><span class="snp ${cl(val(x))}">${fv(val(x))}</span></div>`).join("");
   return`<button class="gback" data-snback="1">‹ Statistiche</button>
   ${H("Statistiche notte",`<em>${L.length} giocatori</em>`)}
   <div class="sndate"><button data-snd="${N[i-1]||""}" aria-label="Notte precedente"${i<=0?" disabled":""}>‹</button><div><b>Notte del ${dl(d)}</b><small>data USA · media ${L.length?fv(tot/L.length):"—"} ${E?"eff.":"PDK"}</small></div>${i>=N.length-1&&CNT?`<button data-snlv="live" aria-label="Torna alla notte live">›</button>`:`<button data-snd="${N[i+1]||""}" aria-label="Notte successiva"${i>=N.length-1?" disabled":""}>›</button>`}</div>
-  <div class="snsw"><button data-snm="pdk" aria-pressed="${!E}">PDK</button><button data-snm="eff" aria-pressed="${E}">Eff.</button></div>
+  <div class="snsw"><button data-snm="pdk" aria-pressed="${!E&&!B}">PDK</button><button data-snm="eff" aria-pressed="${E}">Eff.</button><button data-snm="box" aria-pressed="${B}">Box</button></div>
   <div class="snlist">${rows||'<p class="note">Nessun giocatore delle franchigie in campo.</p>'}</div>
-  <p class="note">${E?"Efficienza della notte (PDK ÷ minuti)":"PDK Dunkest della notte"} di tutti i giocatori delle 8 franchigie scesi in campo, dal più alto. Colori: ${E?"rosso sotto 0,80, giallo 0,80-1,10, verde oltre 1,10, viola da 1,50":"rosso sotto 20, giallo 20-29,99, verde 30-39,99, viola da 40"}.</p>`}
+  <p class="note">${E?"Efficienza della notte (PDK ÷ minuti)":B?"Box score della notte, classifica per PDK. Numeri verdi: 3+ rubate o stoppate, 7+ rimbalzi o assist, 25+ punti; gialli se fanno doppia, tripla o quadrupla doppia; rossi: 4+ palle perse, 8+ tiri sbagliati. PDK Dunkest":"PDK Dunkest della notte"} di tutti i giocatori delle 8 franchigie scesi in campo, dal più alto. Colori: ${E?"rosso sotto 0,80, giallo 0,80-1,10, verde oltre 1,10, viola da 1,50":"rosso sotto 20, giallo 20-29,99, verde 30-39,99, viola da 40"}.</p>`}
 /* (526) colore della linea nel trend = colore della maglia NBA del giocatore (NBA_KIT): il primo tra base, secondo colore, filetto, contorno abbastanza chiaro per il fondo scuro; senza squadra NBA resta quello della squadra Dreamers */
 function trNba(n){const q=Object.values(ROSTER).flat().find(p=>p[0]===n);if(q)return q[3];const g=typeof GL_STATS!=="undefined"?Object.values(GL_STATS).find(x=>x.n===n):null;if(g&&g.nba)return g.nba;const f=FA.find(x=>x[0]===n);return f?f[1]:""}
 function trColN(nba,t){const k=nba&&NBA_KIT[nba];if(!k)return TEAMS[t]?trCol(t):"#93c5fd";const l=h=>{const v=parseInt(h.slice(1),16);return(0.299*(v>>16)+0.587*((v>>8)&255)+0.114*(v&255))/255};
