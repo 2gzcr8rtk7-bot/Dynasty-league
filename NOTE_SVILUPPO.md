@@ -1600,3 +1600,4 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 551. (non pubblicata, in coda) Banner previsione turno più compatto: numero a sinistra, testo a destra, dettaglio giocatori apribile.
 552. (non pubblicata, in coda) Statistiche squadra: previsione nella casella azzurra con trattino come in Home (verde se sopra la media a turno, oro se sotto), record a turno in casella oro; 4 varianti di colore (v1–v4) in attesa di scelta, ora attiva v1.
 553. PUBBLICATA (v153) Statistiche squadra: scelta opzione 4 (casella previsione tratteggiata, record con trofeo oro).
+554. (non pubblicata, in coda) Tabellone della stanza Dreamers: «giocato» non più x/10 ma partite NBA già giocate/totale a disposizione della squadra nel turno (somma su tutti i giocatori), così si vede chi ha più partite.

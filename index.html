@@ -6687,8 +6687,8 @@ function drTabellone(t,T,k,P,on){const W=T.W,btn=`<button class="cntbtn${on?" on
   /* punteggi nel colore della squadra padrona della pagina; se il colore è troppo scuro sul fondo scuro si usa il secondo colore o una versione schiarita */
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255},C=TEAMS[t];
   const sc=lum(C.bg)>=.33?C.bg:(lum(C.fg)>=.33&&lum(C.fg)<.95?C.fg:`color-mix(in srgb,${C.bg} 62%,#fff)`);
-  const gioc=X=>`<span class="lbmg"><b>${X.played}/10</b><small>giocato</small></span>`;
-  return`<h2 class="lbmh">${kitBtn(t)}<span class="lbm ${st}"${lvAttr} style="--sc:${sc}"${o?` data-drgo="${k}|${pr[0]}|${pr[1]}" role="button" tabindex="0"`:""} aria-label="${TEAMS[t].nick} ${T.score==null?"in attesa":pdkF(T.score)}, ${T.played} su 10 hanno giocato${o?`, contro ${TEAMS[o].nick} ${O.score==null?"in attesa":pdkF(O.score)}, ${O.played} su 10 hanno giocato`:""}">${lg(t)}${gioc(T)}<span class="lbmn${lead==="b"?" dim":""}">${T.score==null?"—":pdkF(T.score)}</span>${o?`<span class="lbmx"></span><span class="lbmn${lead==="a"?" dim":""}">${O.score==null?"—":pdkF(O.score)}</span>${gioc(O)}${lg(o)}`:""}</span>${btn}</h2>`}
+  const gioc=(X,tt)=>{const g=drGare(tt,k,W);return`<span class="lbmg"><b>${g.done}/${g.tot}</b><small>giocato</small></span>`};
+  return`<h2 class="lbmh">${kitBtn(t)}<span class="lbm ${st}"${lvAttr} style="--sc:${sc}"${o?` data-drgo="${k}|${pr[0]}|${pr[1]}" role="button" tabindex="0"`:""} aria-label="${TEAMS[t].nick} ${T.score==null?"in attesa":pdkF(T.score)}, ${T.played} su 10 hanno giocato${o?`, contro ${TEAMS[o].nick} ${O.score==null?"in attesa":pdkF(O.score)}, ${O.played} su 10 hanno giocato`:""}">${lg(t)}${gioc(T,t)}<span class="lbmn${lead==="b"?" dim":""}">${T.score==null?"—":pdkF(T.score)}</span>${o?`<span class="lbmx"></span><span class="lbmn${lead==="a"?" dim":""}">${O.score==null?"—":pdkF(O.score)}</span>${gioc(O,o)}${lg(o)}`:""}</span>${btn}</h2>`}
 /* modalità notte: stesso blocco giocatore (maglia + targhetta + cartellino) con il PDK della notte; pallino rosso = in campo ora */
 function drGiocN(t,p,m){const r=p[2],sn=drSur(p[0]),v=m?m.p:null;
   const card=v==null?`<span class="pcd na"><b>${m?"—":"Non gioca"}</b></span>`:`<span class="pcd ${pdkLvl(v)}">${m.lv?'<i class="pcdlv" title="In campo ora"></i>':""}<b>${pdkF(v)}</b></span>`;
@@ -7772,6 +7772,9 @@ function pvMaxE(ms,sd){/* valore atteso e sd del massimo di normali indipendenti
   const lo=Math.min(...ms)-4*sd,hi=Math.max(...ms)+4*sd,N=240,h=(hi-lo)/N;let prev=0,e=0,e2=0;
   for(let i=1;i<=N;i++){const x=lo+i*h;let F=1;ms.forEach(m=>F*=pvPhi((x-m)/sd));const d=F-prev;prev=F;const xm=x-h/2;e+=xm*d;e2+=xm*xm*d}
   return{e,sd:Math.sqrt(Math.max(0,e2-e*e))}}
+/* (554) partite NBA a disposizione di una squadra nel turno (somma su tutti i suoi giocatori) e quante già giocate/in corso */
+function drGare(t,k,W){let tot=0,done=0;try{const F=drForm(k)[t]||{t:[],r:[]},ds=[];for(let d=W.start;d<=W.end;d=drAdd(d,1))ds.push(d);
+  [...F.t,...F.r].forEach(n=>{const nba=(segInfo(n)||{}).nba;if(!nba)return;ds.forEach(d=>(TV.days[d]||[]).forEach(g=>{if(g[0]===nba||g[1]===nba){tot++;if(g[5]==="F"||g[5]==="L")done++}}))})}catch(e){}return{tot,done}}
 function drPrevisione(t){try{
   const st=drStand(),P=drPO(st);let k=drCurWeek(P);let W=drWeek(k);if(W.closed||W.started)k++;if(k>DR_REG)return null;W=drWeek(k);
   const F0=drForm(k)[t]||{t:[],r:[]},names=[...F0.t,...F0.r].filter(n=>!spFuori(n));
