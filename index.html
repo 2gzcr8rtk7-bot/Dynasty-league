@@ -9392,7 +9392,7 @@ document.addEventListener("click",e=>{
    · Sfida Dreamers: forza rosa = somma dei migliori 8 PDK medi (corr. 0,92 con i punteggi dei turni), scala per notti del turno.
    Puntata chiusa al fischio d'inizio; pagamento automatico con i dati ufficiali (PARTITE / punteggi turno). */
 (function(){
-const KEY="dl_bet",START=5000,MAXS=1000,MINS=50,MARG=.07,CR=1000;
+const KEY="dl_bet",START=1000,MAXS=200,MINS=10,MARG=.07,CR=1000;
 const E=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const nf=(v,d=1)=>(+v).toLocaleString("it-IT",{minimumFractionDigits:d,maximumFractionDigits:d});
 const ni=v=>Math.round(+v).toLocaleString("it-IT");
@@ -9421,7 +9421,7 @@ const meseNow=()=>{const o={};new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/
 const bLoad=()=>{try{const j=JSON.parse(localStorage.getItem(KEY));if(j&&j.v===1&&Array.isArray(j.bets))return j}catch(e){}return null};
 let BW=bLoad()||{v:1,mese:meseNow(),saldo:START,iniz:START,bets:[]};
 const bSave=()=>{try{localStorage.setItem(KEY,JSON.stringify(BW))}catch(e){}};
-let BS={tab:"sf",sel:null,stake:250,msg:"",ok:false,bk:""};
+let BS={tab:"sf",sel:null,stake:50,msg:"",ok:false,bk:""};
 const SELMAP={};
 /* --- mercati --- */
 function cand(){const d=flUsaOggi(),G=TV.days[d]||[],now=Date.now(),out=[];
@@ -9501,7 +9501,7 @@ function vBet(){if(!COL.d){cur="campo";return vCampo()}
  const body=BS.tab==="sf"?tabSf():BS.tab==="ou"?tabOu(C):BS.tab==="du"?tabDu(D):tabMy();
  const S=BS.sel,win=S?Math.floor((+BS.stake||0)*S.q):0;
  const slip=S&&BS.tab!=="my"?`<div class="btslip"><div class="btsl1"><div><b>${E(S.desc)}</b><span>${E(S.pick)} · quota ${nf(S.q,2)}</span></div><button class="btx" data-bx aria-label="Annulla selezione">✕</button></div>
-  <div class="btsl2"><div class="btchips">${[100,250,500,1000].map(v=>`<button data-bst="${v}" class="${+BS.stake===v?"on":""}">${v}</button>`).join("")}</div><input class="btin" id="btin" type="number" inputmode="numeric" min="${MINS}" max="${MAXS}" value="${E(BS.stake)}" aria-label="Gettoni da puntare"></div>
+  <div class="btsl2"><div class="btchips">${[20,50,100,200].map(v=>`<button data-bst="${v}" class="${+BS.stake===v?"on":""}">${v}</button>`).join("")}</div><input class="btin" id="btin" type="number" inputmode="numeric" min="${MINS}" max="${MAXS}" value="${E(BS.stake)}" aria-label="Gettoni da puntare"></div>
   <div class="btsl3"><span>Vincita possibile<b><i id="btwin">${ni(win)}</i> gett.</b></span><button class="btgo" data-bgo>Punta</button></div>${BS.msg?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:""}</div>`:(BS.msg&&BS.tab!=="my"?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:"");
  return`<div class="bt"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
  <div class="bthd"><span class="bti">🎰</span><div><small>Texas Ducks · area riservata del GM</small><b>Centro scommesse</b><em>Quote automatiche · gettoni</em></div></div>
