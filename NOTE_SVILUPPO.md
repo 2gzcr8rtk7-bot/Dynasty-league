@@ -1699,3 +1699,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 608 — Home, tasto PREVISIONE di un giocatore (partite di stanotte): apre la pagina «Come si calcola la previsione» con tutti i dati: indice (storico vs avversario 40% corretto verso la media di stagione, forma recente 35%, stagione 25%), difesa dell'avversario contro il ruolo con le prestazioni campione, correzione, risultato, gare contro l'avversario e ultime gare. Il tasto ‹ riporta alla Home.
 
 609 — Toccando la scritta DREAMERS in alto accanto al logo si torna alla Home (il logo continua ad aggiornare la pagina).
+
+610 — Scritta DREAMERS in alto: al tocco (ritorno alla Home) diventa viola con un alone luminoso che svanisce in circa un secondo.
