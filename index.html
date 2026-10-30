@@ -6368,7 +6368,7 @@ async function shSpecial(i){const S=histSpModel(i);if(!S)return null;
 async function shOpen(k){const old=document.querySelector(".shsheet");if(old)old.remove();
   const sh=document.createElement("div");sh.className="shsheet";sh.innerHTML='<div class="shbox"><p class="shwait">Preparo l\'immagine…</p></div>';document.body.appendChild(sh);
   sh.addEventListener("click",e=>{if(e.target===sh||e.target.closest(".shx"))sh.remove()});
-  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="gr"?await shGrafico():k==="cm"?await shCompar():k==="ht"?await shHistTrade(SHR_HT):k==="ta"?await shHistTrade(-1,{T:taTrade(),sub:taSub(),look:window.TA_LOOK}):k==="sp"?await shSpecial(SHR_SP):k==="pl"?await shPlayer():k==="pc"?await shPcard():k==="dm"?await shDM():k==="bt"?await window.shBT():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
+  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="gr"?await shGrafico():k==="cm"?await shCompar():k==="ht"?await shHistTrade(SHR_HT):k==="ta"?await shHistTrade(-1,{T:taTrade(),sub:taSub(),look:window.TA_LOOK}):k==="sp"?await shSpecial(SHR_SP):k==="pl"?await shPlayer():k==="pc"?await shPcard():k==="dm"?await shDM():k==="bt"?await window.shBT():k==="bs"?await window.shBS():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
   if(!cv){sh.querySelector(".shbox").innerHTML='<p class="shwait">Niente da condividere adesso.</p><button class="shx">Chiudi</button>';return}
   const name=(k==="ta"?"pic-trade":k==="sp"?("trade-speciale-"+vnz((SPECIALI[SHR_SP]||{}).entra||"").replace(/ /g,"-")):k==="ht"?("scambio-"+((TRADES[SHR_HT]&&TRADES[SHR_HT].data)||"").replace(/\D+/g,"-")):k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="cm"?"confronto-"+((SHR_CM&&SHR_CM.P[0]&&SHR_CM.P[1])?(SHR_CM.P[0].n+"-"+SHR_CM.P[1].n):"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pl"?"scheda-"+((SHR_PL&&SHR_PL.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pc"?"prestazione-"+((SHR_PC&&SHR_PC.x.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="dm"?"scontro-"+((SHR_DM&&SHR_DM.a+"-"+SHR_DM.b)||"").toLowerCase():k==="card"?"grafico":"dreamers")+".png";
   let file=null,url="";const mk=async c=>{const blob=await new Promise(r=>c.toBlob(r,"image/png"));file=new File([blob],name,{type:"image/png"});if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(blob)};await mk(cv);
@@ -9372,7 +9372,7 @@ document.addEventListener("click",e=>{
 .btlg{width:34px;height:34px;object-fit:contain;flex:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))}
 .btmid{font-family:var(--display);font-style:italic;font-weight:800;color:#ffe27a;font-size:13px;letter-spacing:.1em}
 .btsub{margin:8px 0 0;font-size:11.5px;color:#f3b8c1;line-height:1.35}
-.btmode{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 10px}.btmode button{padding:9px;border-radius:12px;border:1.5px solid rgba(255,226,122,.35);background:rgba(0,0,0,.3);color:#ffd0d6;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px}.btmode button[aria-pressed=true]{background:linear-gradient(180deg,#ffe27a,#f5b400);color:#2a0610;border-color:#ffe27a}.btmxi{font-size:12px;color:#ffd0d6;margin:0 0 10px;line-height:1.35}.btlegs{max-height:100px;overflow:auto;margin:0 0 8px}.btleg{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,226,122,.18)}.btleg b{font-size:13px;display:block}.btleg small{font-size:11px;color:#ffd0d6}.btmq{display:flex;justify-content:space-between;align-items:center;margin:0 0 8px;font-size:12px;color:#ffd0d6}.btmq i{font-style:normal;color:#8cf0a8}.btmq b{font-family:var(--display);font-style:italic;font-size:22px;color:#ffe27a}.btgo:disabled{opacity:.45}.btsm{padding:6px 12px;border-radius:10px;border:1.5px solid #ffe27a;background:rgba(0,0,0,.3);color:#ffe27a;font-weight:800;font-size:12px}
+.btmode{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 10px}.btmode button{padding:9px;border-radius:12px;border:1.5px solid rgba(255,226,122,.35);background:rgba(0,0,0,.3);color:#ffd0d6;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px}.btmode button[aria-pressed=true]{background:linear-gradient(180deg,#ffe27a,#f5b400);color:#2a0610;border-color:#ffe27a}.btmxi{font-size:12px;color:#ffd0d6;margin:0 0 10px;line-height:1.35}.btlegs{max-height:100px;overflow:auto;margin:0 0 8px}.btleg{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,226,122,.18)}.btleg b{font-size:13px;display:block}.btleg small{font-size:11px;color:#ffd0d6}.btmq{display:flex;justify-content:space-between;align-items:center;margin:0 0 8px;font-size:12px;color:#ffd0d6}.btmq i{font-style:normal;color:#8cf0a8}.btmq b{font-family:var(--display);font-style:italic;font-size:22px;color:#ffe27a}.btgo:disabled{opacity:.45}.btinc{position:absolute;top:12px;right:14px;padding:8px 14px;border-radius:12px;border:1.5px solid #ff8a9a;background:linear-gradient(180deg,#ef4444,#b91c1c);color:#fff;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;box-shadow:0 0 14px rgba(239,68,68,.55)}.btfz{margin:8px 0 0;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.4);border:1px solid rgba(255,226,122,.4);font-size:12px;color:#ffe27a}.btsqs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 12px}.btsq{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 2px;border-radius:12px;border:1.5px solid rgba(255,226,122,.3);background:rgba(0,0,0,.3);color:#ffd0d6;font-size:11px;font-weight:700}.btsq .btlg{width:40px;height:40px;object-fit:contain}.btsq.on{border-color:#ffe27a;background:rgba(245,180,0,.22);color:#fff;box-shadow:0 0 12px rgba(255,214,90,.4)}.btst .btsm{margin-top:6px}.btsm{padding:6px 12px;border-radius:10px;border:1.5px solid #ffe27a;background:rgba(0,0,0,.3);color:#ffe27a;font-weight:800;font-size:12px}
 .btslip{position:sticky;bottom:10px;z-index:6;margin:12px 0 0;padding:12px;border-radius:16px;background:linear-gradient(160deg,#2a0610,#12030a);border:1.5px solid #ffe27a;box-shadow:0 8px 28px rgba(0,0,0,.65),0 0 18px rgba(255,214,90,.3)}
 .btsl1{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.btsl1 b{font-size:13.5px;line-height:1.2}.btsl1 span{display:block;font-size:12px;color:#ffe27a;font-weight:800;margin-top:2px}
 .btx{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,226,122,.5);background:transparent;color:#ffe27a;cursor:pointer}
@@ -9425,7 +9425,7 @@ const meseNow=()=>{const o={};new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/
 const bLoad=()=>{try{const j=JSON.parse(localStorage.getItem(KEY));if(j&&j.v===1&&Array.isArray(j.bets))return j}catch(e){}return null};
 let BW=bLoad()||{v:1,mese:meseNow(),saldo:START,iniz:START,bets:[]};
 const bSave=()=>{try{localStorage.setItem(KEY,JSON.stringify(BW))}catch(e){}};
-let BS={tab:"sf",sel:null,stake:50,msg:"",ok:false,bk:"",mx:false,legs:[],vr:null};
+let BS={tab:"sf",sel:null,stake:50,msg:"",ok:false,bk:"",mx:false,legs:[],view:""};
 const SELMAP={};
 /* --- mercati --- */
 function cand(){const d=flUsaOggi(),G=TV.days[d]||[],now=Date.now(),out=[];
@@ -9450,7 +9450,7 @@ function sfide(){try{const stt=drStand(),P=drPO(stt);let k=drCurWeek(P),W=null;
   return{k,lab,len:W.len||3,start:W.start,end:W.end,ko,open:now<ko,list:pr.map(([a,b])=>{const sa=S8(a),sb=S8(b),p=clamp(.5+.8*(Phi((sa-sb)*sc/sg)-.5),.15,.85);return{a,b,sa,sb,p,qa:qt(p),qb:qt(1-p)}})}}catch(e){return null}}
 /* --- liquidazione automatica con dati ufficiali --- */
 const rowFor=(n,d)=>(PARTITE[n]||[]).find(r=>r[0]===d.slice(8)+"/"+d.slice(5,7));
-function pay(b,st){b.s=st;if(st==="v"){b.pay=Math.round(b.st*b.q);BW.saldo+=b.pay}else if(st==="x"){b.pay=b.st;BW.saldo+=b.pay}else b.pay=0}
+function pay(b,st){b.s=st;const mv=b.fz?0:1;if(st==="v"){b.pay=Math.round(b.st*b.q);BW.saldo+=b.pay*mv}else if(st==="x"){b.pay=b.st;BW.saldo+=b.pay*mv}else b.pay=0}
 /* esito di una singola scelta: "v" vinta, "p" persa, "x" annullata/pari, null ancora aperta (usata da singole e multiple) */
 function lres(b){const now=Date.now(),T72=72*3600*1000;
  if(b.m==="ou"){const r=rowFor(b.n,b.d);if(r&&!isNaN(+r[3]))return(b.sel==="o")===(+r[3]>b.L)?"v":"p";if((b.ko&&now>b.ko+T72)||(!r&&drDkHas(b.d)))return"x";return null}
@@ -9476,11 +9476,11 @@ function placeMx(){const L=BS.legs;BS.ok=false;
  const st=Math.floor(+BS.stake||0);
  if(st<MINS){BS.msg="Puntata minima "+ni(MINS)+" gettoni.";return}
  if(st>MAXS){BS.msg="Puntata massima "+ni(MAXS)+" gettoni.";return}
- if(st>BW.saldo){BS.msg="Saldo insufficiente.";return}
+ const fz=frozen();if(!fz&&st>BW.saldo){BS.msg="Saldo insufficiente.";return}
  const key="mx|"+L.map(l=>l.id).sort().join(";");
  if(BW.bets.some(b=>b.key===key)){BS.msg="Hai già giocato questa multipla.";return}
- const M=mxQ(L);BW.saldo-=st;
- BW.bets.unshift({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),ts:Date.now(),m:"mx",key,q:M.q,st,ko:Math.min(...L.map(l=>l.ko||9e15)),desc:"Multipla · "+L.length+" scelte",pick:"quota "+nf(M.raw,2)+(M.bo>1?" +bonus "+Math.round((M.bo-1)*100)+"%":""),s:"a",pay:0,
+ const M=mxQ(L);if(!fz)BW.saldo-=st;
+ BW.bets.unshift({fz,id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),ts:Date.now(),m:"mx",key,q:M.q,st,ko:Math.min(...L.map(l=>l.ko||9e15)),desc:"Multipla · "+L.length+" scelte",pick:"quota "+nf(M.raw,2)+(M.bo>1?" +bonus "+Math.round((M.bo-1)*100)+"%":""),s:"a",pay:0,
   legs:L.map(l=>({m:l.m,key:l.key,d:l.d,k:l.k,n:l.n,a:l.a,b:l.b,sel:l.side,L:l.L,q:l.q,ko:l.ko,desc:l.desc,pick:l.pick,r:null}))});
  bSave();BS.legs=[];BS.ok=true;BS.msg="Multipla registrata: "+st+" gettoni a quota "+nf(M.q,2)+"."}
 /* --- scommessa --- */
@@ -9489,9 +9489,9 @@ function place(){const S=BS.sel;BS.ok=false;if(!S){return}
  if(!S.open||(S.ko&&Date.now()>=S.ko)){BS.msg="Mercato chiuso: la partita è iniziata.";return}
  if(st<MINS){BS.msg="Puntata minima "+ni(MINS)+" gettoni.";return}
  if(st>MAXS){BS.msg="Puntata massima "+ni(MAXS)+" gettoni.";return}
- if(st>BW.saldo){BS.msg="Saldo insufficiente.";return}
+ const fz=frozen();if(!fz&&st>BW.saldo){BS.msg="Saldo insufficiente.";return}
  if(BW.bets.some(b=>b.key===S.key)){BS.msg="Hai già giocato questo mercato.";return}
- BW.saldo-=st;BW.bets.unshift({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),ts:Date.now(),m:S.m,key:S.key,d:S.d,k:S.k,n:S.n,a:S.a,b:S.b,sel:S.side,L:S.L,q:S.q,st,ko:S.ko,desc:S.desc,pick:S.pick,s:"a",pay:0});
+ if(!fz)BW.saldo-=st;BW.bets.unshift({fz,id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),ts:Date.now(),m:S.m,key:S.key,d:S.d,k:S.k,n:S.n,a:S.a,b:S.b,sel:S.side,L:S.L,q:S.q,st,ko:S.ko,desc:S.desc,pick:S.pick,s:"a",pay:0});
  bSave();BS.sel=null;BS.ok=true;BS.msg="Giocata registrata: "+st+" gettoni a quota "+nf(S.q,2)+"."}
 /* --- backup --- */
 function h32(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}
@@ -9519,15 +9519,12 @@ function tabDu(D){if(!D.length)return`<div class="btcard"><p class="btsub">Nessu
   <div class="btodds">${mk("a",x.a,x.qa)}${mk("b",x.b,x.qb)}</div>
   <p class="btsub">Media: ${E(x.a.n)} ${nf(x.a.M.mu,1)} (${x.a.nba}) · ${E(x.b.n)} ${nf(x.b.M.mu,1)} (${x.b.nba}). Vince chi totalizza più PDK stanotte.</p></div>`}).join("")}
 function tabMy(){const B=BW.bets,stl={a:"In corso",v:"Vinta",p:"Persa",x:"Rimborsata (non ha giocato / pari)"};
- const list=B.length?B.map(b=>`<div class="btbet ${b.s}"><div><b>${E(b.desc)}</b><small>${E(b.pick||"")} @ ${nf(b.q,2)} · puntati ${ni(b.st)}</small>${b.legs?b.legs.map(l=>`<small>${l.r==="v"?"✅":l.r==="p"?"❌":l.r==="x"?"↩️":"⏳"} ${E(l.desc)} → ${E(l.pick)} @ ${nf(l.q,2)}</small>`).join(""):""}</div><div class="btst">${b.s==="v"?"+"+ni(b.pay-b.st):b.s==="p"?"−"+ni(b.st):b.s==="x"?"0":"…"}<small>${stl[b.s]}</small></div></div>`).join(""):`<div class="btcard"><p class="btsub">Non hai ancora giocato. Scegli una quota nelle altre schede.</p></div>`;
- const I=incInfo(),INC=(BW.inc||[]).map(x=>`<div class="btbet x"><div><b>${x.cr} ${x.cr===1?"credito":"crediti"} · ${itDT(x.ts)}</b><small>ID ${E(x.id.toUpperCase())}</small></div><div class="btst"><button class="btsm" data-binc="show|${E(x.id)}">Rivedi</button></div></div>`).join("");
- const incCard=`<div class="btsec">Incassa i tuoi gettoni<small>${ni(CR)} gettoni = 1 credito</small></div><div class="btcard"><p class="btsub">Guadagno sopra i ${ni(START)} iniziali: <b>${ni(I.profit)}</b> gettoni${I.gia?` · già incassati questo mese: ${I.gia} cr`:""}. Massimo ${INCMAX} crediti al mese.</p><button class="btgo" data-binc="go"${I.n<1?" disabled":""} style="width:100%;margin-top:8px">💰 Incassa ${I.n>0?I.n+(I.n===1?" credito":" crediti"):""}</button><p class="btsub" style="margin-top:8px">Si genera uno scontrino con codice firmato: salvalo e mandalo all'admin, che ti accredita i crediti in lega.</p></div>${INC?`<div class="btsec">Scontrini emessi<small>${(BW.inc||[]).length}</small></div>${INC}`:""}
- <div class="btsec">Verifica scontrino<small>per l'admin</small></div><div class="btbk"><textarea id="btvr" placeholder="Incolla qui il codice DRINC1…"></textarea><button data-binc="ver">🔎 Verifica</button>${BS.vr?`<p class="btmsg${BS.vr.ok?" ok":""}">${E(BS.vr.t)}</p>`:""}</div>`;
- return`${incCard}<div class="btsec">Le mie giocate<small>${B.length} totali</small></div>${list}${BS.msg?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:""}
+ const list=B.length?B.map(b=>`<div class="btbet ${b.s}"><div><b>${E(b.desc)}</b><small>${E(b.pick||"")} @ ${nf(b.q,2)} · puntati ${ni(b.st)}</small>${b.legs?b.legs.map(l=>`<small>${l.r==="v"?"✅":l.r==="p"?"❌":l.r==="x"?"↩️":"⏳"} ${E(l.desc)} → ${E(l.pick)} @ ${nf(l.q,2)}</small>`).join(""):""}</div><div class="btst">${b.s==="v"?"+"+ni(b.pay-b.st):b.s==="p"?"−"+ni(b.st):b.s==="x"?"0":"…"}<small>${stl[b.s]}${b.fz?" · per gioco":""}</small><button class="btsm" data-binc="bsh|${E(b.id)}">Condividi</button></div></div>`).join(""):`<div class="btcard"><p class="btsub">Non hai ancora giocato. Scegli una quota nelle altre schede.</p></div>`;
+ return`<div class="btsec">Le mie giocate<small>${B.length} totali</small></div>${list}${BS.msg?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:""}
  <div class="btsec" style="margin-top:14px">Salvataggio<small>i dati stanno su questo telefono</small></div>
  <div class="btbk"><button data-bbk="copy">📋 Copia backup</button><textarea id="btbk" placeholder="Incolla qui un backup per ripristinare">${E(BS.bk)}</textarea><button data-bbk="rest">♻️ Ripristina da backup</button></div>`}
 function vBet(){if(!COL.d){cur="campo";return vCampo()}
- settle();const lg=LOGO2.DUC||LOGO.DUC;let C=[],D=[];try{C=cand();D=duels(C)}catch(e){}
+ settle();if(BS.view==="inc")return vInc();const lg=LOGO2.DUC||LOGO.DUC;let C=[],D=[];try{C=cand();D=duels(C)}catch(e){}
  const open=BW.bets.filter(b=>b.s==="a").reduce((a,b)=>a+b.st,0),done=BW.bets.filter(b=>b.s!=="a"),net=done.reduce((a,b)=>a+(b.s==="v"?b.pay-b.st:b.s==="p"?-b.st:0),0);
  const T=[["sf","Sfide"],["ou","Giocatori"],["du","Duelli"],["my","Giocate"]];
  const body=BS.tab==="sf"?tabSf():BS.tab==="ou"?tabOu(C):BS.tab==="du"?tabDu(D):tabMy();
@@ -9542,46 +9539,82 @@ function vBet(){if(!COL.d){cur="campo";return vCampo()}
   <div class="btsl3"><span>Vincita possibile<b><i id="btwin">${ni(win)}</i> gett.</b></span><button class="btgo" data-bgo>Punta</button></div>${BS.msg?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:""}</div>`:(BS.msg&&BS.tab!=="my"?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:"");
  return`<div class="bt"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
  <div class="bthd"><span class="bti">🎰</span><div><small>Texas Ducks · area riservata del GM</small><b>Centro scommesse</b><em>Quote automatiche · gettoni</em></div></div>
- <div class="btbank"><small>Il tuo saldo</small><div class="btbal"><b>${ni(BW.saldo)}</b><span>gettoni · ${nf(BW.saldo/CR,2)} cr</span></div>
+ <div class="btbank"><button class="btinc" data-binc="open">💰 Incassa</button><small>Il tuo saldo</small><div class="btbal"><b>${ni(BW.saldo)}</b><span>gettoni · ${nf(BW.saldo/CR,2)} cr</span></div>
  <div class="btstats"><div><small>In gioco</small><b>${ni(open)}</b></div><div><small>Bilancio</small><b class="${net>0?"pos":net<0?"neg":""}">${net>0?"+":""}${ni(net)}</b></div><div><small>Giocate</small><b>${BW.bets.length}</b></div></div>
- <p class="btrule">${ni(CR)} gettoni = 1 credito · puntata ${ni(MINS)}–${ni(MAXS)} · le puntate si chiudono al fischio d'inizio · se un giocatore non gioca la giocata è annullata e i gettoni tornano · le quote includono un margine del banco del ${Math.round(MARG*100)}%.</p></div>
+ ${frozen()?`<p class="btfz">🔒 Cassa bloccata: hai incassato il massimo dell'anno. Le scommesse sono solo per gioco, il saldo non cambia.</p>`:""}<p class="btrule">${ni(CR)} gettoni = 1 credito · puntata ${ni(MINS)}–${ni(MAXS)} · le puntate si chiudono al fischio d'inizio · se un giocatore non gioca la giocata è annullata e i gettoni tornano · le quote includono un margine del banco del ${Math.round(MARG*100)}%.</p></div>
  <div class="bttabs" role="tablist">${T.map(t=>`<button data-bt="${t[0]}" aria-pressed="${BS.tab===t[0]}">${t[1]}</button>`).join("")}</div>
  ${BS.tab!=="my"?`<div class="btmode"><button data-bm="s" aria-pressed="${!BS.mx}">Singola</button><button data-bm="m" aria-pressed="${BS.mx}">Multipla · bonus</button></div>${BS.mx?`<p class="btmxi">Metti insieme da ${MXMIN} a ${MXMAX} scelte (anche di schede diverse): le quote si <b>moltiplicano</b>, ma vinci solo se le indovini <b>tutte</b>. Dalla 3ª scelta c'è un bonus del ${Math.round(MXB*100)}% per ognuna (fino a +${Math.round(MXB*(MXMAX-2)*100)}%). Se una scelta viene annullata (giocatore che non gioca) esce dalla multipla.</p>`:""}`:""}${body}${slip}<p class="btft">🦆 Texas Ducks · uso interno · scommesse a gettoni, solo per gioco</p></div>`}
-/* ===== INCASSO: gettoni → crediti, con scontrino firmato ===== */
-const INCMAX=10,INCSEC="dr|duc|incasso|v1|"+"Qx7!";
-const incMese=()=>(BW.inc||[]).filter(x=>x.m===meseNow()).reduce((a,x)=>a+x.cr,0);
-function incInfo(){const profit=Math.max(0,BW.saldo-START),gia=incMese(),room=Math.max(0,INCMAX-gia),n=Math.min(room,Math.floor(profit/CR));return{profit,gia,room,n}}
+/* ===== INCASSO: gettoni → crediti (max 5 crediti all'anno), scontrino firmato leggibile da Claude ===== */
+const INCY=5,INCSEC="dr|duc|incasso|v1|"+"Qx7!";
+const annoNow=()=>meseNow().slice(0,4);
+const incYear=()=>(BW.inc||[]).filter(x=>x.y===annoNow()).reduce((a,x)=>a+x.cr,0);
+const frozen=()=>incYear()>=INCY;
+function incInfo(){const profit=Math.max(0,BW.saldo-START),gia=incYear(),room=Math.max(0,INCY-gia),n=Math.min(room,Math.floor(profit/CR));return{profit,gia,room,n}}
 const incSig=j=>h32(INCSEC+j);
-function incCode(p){const j=JSON.stringify(p);return"DRINC1."+btoa(unescape(encodeURIComponent(j)))+"."+incSig(j)}
-function incRead(t){const m=String(t||"").trim().replace(/\s+/g,"").match(/^DRINC1\.([A-Za-z0-9+/=]+)\.([a-z0-9]+)$/);if(!m)return{err:"Codice non valido."};try{const j=decodeURIComponent(escape(atob(m[1])));if(incSig(j)!==m[2])return{err:"Codice modificato: scontrino NON valido."};return{p:JSON.parse(j)}}catch(e){return{err:"Codice non valido."}}}
+function incCode(p){const j=JSON.stringify(p);return"DRINC2."+btoa(unescape(encodeURIComponent(j)))+"."+incSig(j)}
+function incRead(t){const m=String(t||"").trim().replace(/\s+/g,"").match(/^DRINC2\.([A-Za-z0-9+/=]+)\.([a-z0-9]+)$/);if(!m)return{err:"Codice non valido."};try{const j=decodeURIComponent(escape(atob(m[1])));if(incSig(j)!==m[2])return{err:"Codice modificato: scontrino NON valido."};return{p:JSON.parse(j)}}catch(e){return{err:"Codice non valido."}}}
 function incassa(){const I=incInfo();BS.ok=false;
- if(I.n<1){BS.msg=I.room<1?"Hai già incassato il massimo del mese ("+INCMAX+" crediti).":"Per incassare servono almeno "+ni(CR)+" gettoni di guadagno oltre ai "+ni(START)+" iniziali.";return null}
- const tk=I.n*CR,id=Date.now().toString(36)+Math.random().toString(36).slice(2,5);
- const op=BW.bets.filter(b=>b.s==="a").length;
+ if(!BW.sq||!TEAMS[BW.sq]){BS.msg="Scegli prima la tua squadra.";return null}
+ if(I.n<1){BS.msg=I.room<1?"Hai già incassato il massimo dell'anno ("+INCY+" crediti).":"Per incassare servono almeno "+ni(CR)+" gettoni di guadagno oltre ai "+ni(START)+" iniziali.";return null}
+ const tk=I.n*CR,id=Date.now().toString(36)+Math.random().toString(36).slice(2,5),blocca=I.gia+I.n>=INCY;
+ if(blocca)BW.bets.forEach(b=>{if(b.s==="a"&&!b.fz){BW.saldo+=b.st;b.fz=true}});/* alla chiusura della cassa le giocate aperte diventano "per gioco" e la posta torna */
  BW.saldo-=tk;
- const p={v:1,id,sq:"DUC",m:meseNow(),cr:I.n,tk,sd:BW.saldo,g:BW.bets.length,w:BW.bets.filter(b=>b.s==="v").length,ts:Date.now(),op};
- const rec={id,m:p.m,cr:p.cr,tk,ts:p.ts,code:incCode(p)};(BW.inc=BW.inc||[]).unshift(rec);bSave();
+ const p={v:2,id,sq:BW.sq,cr:I.n,tk,y:annoNow(),m:meseNow(),ts:Date.now(),sd:BW.saldo,g:BW.bets.length,w:BW.bets.filter(b=>b.s==="v").length,blocco:blocca?1:0,
+  istr:"CLAUDE: scontrino incasso scommesse Dreamers. Verifica con `python3 tools/incasso.py <codice>` (firma + anti-doppio + max 5 crediti/anno per squadra); se valido e nuovo, con --registra, accredita cr crediti a sq (CREDITI[sq] in index.html + nota in NOTE_SVILUPPO.md) e conferma a Francesco. Se non valido o già usato, rifiuta e spiega perché."};
+ const rec={id,y:p.y,m:p.m,sq:p.sq,cr:p.cr,tk,ts:p.ts,code:incCode(p)};(BW.inc=BW.inc||[]).unshift(rec);bSave();
  try{navigator.clipboard.writeText(rec.code).catch(()=>{})}catch(e){}
- BS.ok=true;BS.msg="Incasso registrato: "+p.cr+" crediti. Scontrino pronto: salvalo e mandalo all'admin (codice già copiato).";return rec}
+ BS.ok=true;BS.msg="Scontrino pronto: "+p.cr+" crediti per "+TEAMS[p.sq].nick+(blocca?". Cassa bloccata: da ora le scommesse sono solo per gioco.":".");return rec}
 const itDT=ts=>new Intl.DateTimeFormat("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(new Date(ts));
 window.shBT=async function(){const rec=(BW.inc||[]).find(x=>x.id===window.SHR_BT);if(!rec)return null;const R=incRead(rec.code).p;if(!R)return null;
  const H=1280,{cv,c,W}=await shBase(H);c.textBaseline="alphabetic";c.textAlign="center";
  c.font=SH_F(800,46,1);c.fillStyle="#fcd34d";c.letterSpacing="6px";c.fillText("SCONTRINO INCASSO",W/2,206);c.letterSpacing="0px";
- c.font=SH_F(700,28,1);c.fillStyle="rgba(233,213,255,.85)";c.fillText("Centro scommesse · Texas Ducks",W/2,252);
+ c.font=SH_F(700,28,1);c.fillStyle="rgba(233,213,255,.85)";c.fillText("Centro scommesse · "+TEAMS[R.sq].city+" "+TEAMS[R.sq].nick,W/2,252);
  shRR(c,56,290,W-112,250,28);c.fillStyle="rgba(245,180,0,.12)";c.fill();c.strokeStyle="rgba(252,211,77,.6)";c.lineWidth=3;c.stroke();
  c.font=SH_F(800,150,1);c.fillStyle="#fcd34d";c.fillText(String(R.cr),W/2,452);c.font=SH_F(800,44,1);c.fillStyle="#fff";c.fillText(R.cr===1?"CREDITO":"CREDITI",W/2,512);
- const rows=[["Gettoni convertiti",ni(R.tk)],["Saldo dopo l'incasso",ni(R.sd)+" gettoni"],["Giocate / vinte",R.g+" / "+R.w],["Mese",R.m],["Emesso il",itDT(R.ts)],["ID scontrino",R.id.toUpperCase()]];
- let y=620;c.textAlign="left";for(const[a,b]of rows){c.font=SH_B(600,30);c.fillStyle="rgba(233,213,255,.8)";c.textAlign="left";c.fillText(a,90,y);c.font=SH_F(800,34,1);c.fillStyle="#fff";c.textAlign="right";c.fillText(b,W-90,y);y+=62}
- c.textAlign="center";c.font=SH_F(700,24,1);c.fillStyle="#fcd34d";c.letterSpacing="3px";c.fillText("CODICE DI VERIFICA",W/2,y+30);c.letterSpacing="0px";
- c.font="22px ui-monospace,Menlo,Consolas,monospace";c.fillStyle="rgba(233,213,255,.9)";const code=rec.code,per=62;let yy=y+68;for(let i=0;i<code.length&&yy<H-130;i+=per){c.fillText(code.slice(i,i+per),W/2,yy);yy+=30}
- shFoot(c,W,H,"Non modificare l'immagine né il codice: lo scontrino è firmato");return cv};
+ const rows=[["Squadra",TEAMS[R.sq].nick],["Gettoni convertiti",ni(R.tk)],["Giocate / vinte",R.g+" / "+R.w],["Anno",R.y],["Emesso il",itDT(R.ts)],["ID scontrino",R.id.toUpperCase()]];
+ let y=620;for(const[a,b]of rows){c.font=SH_B(600,30);c.fillStyle="rgba(233,213,255,.8)";c.textAlign="left";c.fillText(a,90,y);c.font=SH_F(800,34,1);c.fillStyle="#fff";c.textAlign="right";c.fillText(b,W-90,y);y+=62}
+ c.textAlign="center";c.font=SH_F(700,24,1);c.fillStyle="#fcd34d";c.letterSpacing="3px";c.fillText("CODICE",W/2,y+30);c.letterSpacing="0px";
+ c.font="21px ui-monospace,Menlo,Consolas,monospace";c.fillStyle="rgba(233,213,255,.9)";const code=rec.code,per=64;let yy=y+66;for(let i=0;i<code.length&&yy<H-120;i+=per){c.fillText(code.slice(i,i+per),W/2,yy);yy+=28}
+ shFoot(c,W,H,"Da consegnare a Claude · firmato, non modificare");return cv};
+/* immagine di una scommessa da condividere (come la schedina vera) */
+window.shBS=async function(){const b=BW.bets.find(x=>x.id===window.SHR_BS);if(!b)return null;
+ const legs=b.legs||[{desc:b.desc,pick:b.pick,q:b.q,r:b.s==="v"?"v":b.s==="p"?"p":b.s==="x"?"x":null}],n=legs.length,H=Math.max(800,350+n*118+330),{cv,c,W}=await shBase(H);c.textBaseline="alphabetic";c.textAlign="center";
+ const lab={a:"IN CORSO",v:"VINTA",p:"PERSA",x:"RIMBORSATA"}[b.s],col={a:"#fcd34d",v:"#4ade80",p:"#ff8a9a",x:"#c4b5fd"}[b.s];
+ c.font=SH_F(800,46,1);c.fillStyle="#fcd34d";c.letterSpacing="6px";c.fillText(b.legs?"MULTIPLA":"SCOMMESSA",W/2,206);c.letterSpacing="0px";
+ c.font=SH_F(800,34,1);const tw=c.measureText(lab).width+70;shRR(c,W/2-tw/2,236,tw,60,16);c.fillStyle=col;c.fill();c.fillStyle="#1a0a2e";c.fillText(lab,W/2,279);
+ let y=350;legs.forEach(l=>{shRR(c,56,y,W-112,104,20);c.fillStyle="rgba(255,255,255,.07)";c.fill();c.strokeStyle="rgba(196,181,253,.25)";c.lineWidth=2;c.stroke();
+  const ic=l.r==="v"?"✔":l.r==="p"?"✘":l.r==="x"?"↩":"";c.textAlign="left";c.font=SH_F(800,34,1);c.fillStyle="#fff";let t=String(l.pick||"");while(c.measureText(t).width>W-112-190&&t.length>6)t=t.slice(0,-1);c.fillText(t+(t!==l.pick?"…":""),84,y+44);
+  c.font=SH_B(500,24);c.fillStyle="rgba(233,213,255,.75)";let d=String(l.desc||"");while(c.measureText(d).width>W-112-190&&d.length>6)d=d.slice(0,-1);c.fillText(d+(d!==l.desc?"…":""),84,y+84);
+  c.textAlign="right";c.font=SH_F(800,42,1);c.fillStyle="#fcd34d";c.fillText(nf(l.q,2),W-84,y+62);if(ic){c.font=SH_F(800,30,1);c.fillStyle=l.r==="v"?"#4ade80":l.r==="p"?"#ff8a9a":"#c4b5fd";c.fillText(ic,W-84-110,y+60)}y+=118});
+ y+=30;const win=b.s==="v"?b.pay:Math.floor(b.st*b.q);
+ const rows=[["Quota totale",nf(b.q,2)],["Puntati",ni(b.st)+" gettoni"],[b.s==="v"?"Vincita":b.s==="p"?"Persa":"Vincita possibile",b.s==="p"?"—":ni(win)+" gettoni"]];
+ for(const[a,v]of rows){c.textAlign="left";c.font=SH_B(600,32);c.fillStyle="rgba(233,213,255,.85)";c.fillText(a,90,y+40);c.textAlign="right";c.font=SH_F(800,44,1);c.fillStyle="#fff";c.fillText(v,W-90,y+44);y+=70}
+ shFoot(c,W,H,"Centro scommesse Dreamers · gettoni, solo per gioco"+(b.fz?" · cassa chiusa":""));return cv};
+function vInc(){const I=incInfo(),sq=BW.sq,fz=frozen();
+ const T=Object.keys(TEAMS).map(t=>`<button class="btsq${sq===t?" on":""}" data-binc="sq|${t}" aria-pressed="${sq===t}">${logo(t)}<span>${E(TEAMS[t].nick)}</span></button>`).join("");
+ const INC=(BW.inc||[]).map(x=>`<div class="btbet x"><div><b>${x.cr} ${x.cr===1?"credito":"crediti"} · ${E((TEAMS[x.sq]||{}).nick||x.sq)}</b><small>${itDT(x.ts)} · ID ${E(x.id.toUpperCase())}</small></div><div class="btst"><button class="btsm" data-binc="show|${E(x.id)}">Rivedi</button></div></div>`).join("");
+ return`<div class="bt"><button class="gback" data-binc="back">‹ Centro scommesse</button>
+ <div class="bthd"><span class="bti">💰</span><div><small>Texas Ducks · area riservata del GM</small><b>Incasso</b><em>Gettoni → crediti</em></div></div>
+ <div class="btbank"><small>Incassati quest'anno</small><div class="btbal"><b>${incYear()}</b><span>su ${INCY} crediti · ${ni(INCY*CR)} gettoni</span></div>
+ <p class="btrule">Si incassa solo il guadagno oltre i ${ni(START)} gettoni iniziali (${ni(CR)} gettoni = 1 credito), massimo ${INCY} crediti all'anno. Raggiunto il massimo la cassa si blocca: puoi continuare a scommettere e condividere le giocate, ma i gettoni non salgono né scendono più.</p></div>
+ ${fz?`<div class="btcard"><p class="btsub"><b>Cassa bloccata a ${ni(BW.saldo)} gettoni.</b> Hai incassato il massimo dell'anno: le scommesse restano solo per gioco.</p></div>`:`
+ <div class="btsec">1 · Chi sei?<small>${sq?E(TEAMS[sq].nick):"scegli la tua squadra"}</small></div><div class="btsqs">${T}</div>
+ <div class="btsec">2 · Genera lo scontrino<small>guadagno ${ni(I.profit)} gett.</small></div>
+ <div class="btcard"><p class="btsub">Puoi incassare ora: <b>${I.n} ${I.n===1?"credito":"crediti"}</b>${I.gia?` (già incassati ${I.gia} su ${INCY})`:""}.</p>
+ <button class="btgo" data-binc="go" style="width:100%;margin-top:8px"${(!sq||I.n<1)?" disabled":""}>🧾 Genera scontrino${I.n>0?" · "+I.n+" cr":""}</button>
+ <p class="btsub" style="margin-top:8px">Salva l'immagine e mandala a Claude: legge il codice, lo verifica e accredita i crediti alla squadra.</p>${BS.msg?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:""}</div>`}
+ ${INC?`<div class="btsec">Scontrini emessi<small>${(BW.inc||[]).length}</small></div>${INC}`:""}</div>`}
 VIEWS.bet=vBet;
 document.addEventListener("click",e=>{if(cur!=="bet")return;
  const t=e.target.closest("[data-bt]");if(t){BS.tab=t.dataset.bt;BS.sel=null;BS.msg="";render();scrollTo(0,0);return}
- const bi=e.target.closest("[data-binc]");if(bi){const y=scrollY,a=bi.dataset.binc;
+ const bi=e.target.closest("[data-binc]");if(bi){const a=bi.dataset.binc;
+  if(a==="open"){BS.view="inc";BS.msg="";render();scrollTo(0,0);return}
+  if(a==="back"){BS.view="";BS.msg="";render();scrollTo(0,0);return}
+  const y=scrollY;
+  if(a.startsWith("sq|")){BW.sq=a.slice(3);bSave();BS.msg="";render();scrollTo(0,y);return}
   if(a==="go"){const rec=incassa();render();scrollTo(0,y);if(rec){window.SHR_BT=rec.id;shOpen("bt")}return}
   if(a.startsWith("show|")){window.SHR_BT=a.slice(5);shOpen("bt");return}
-  if(a==="ver"){const ta=document.getElementById("btvr"),R=incRead(ta?ta.value:"");if(R.err)BS.vr={ok:false,t:R.err};else{const p=R.p,dup=(BW.inc||[]).some(x=>x.id===p.id);BS.vr={ok:true,t:`VALIDO · ${p.cr} crediti (${ni(p.tk)} gettoni) · squadra ${p.sq} · mese ${p.m} · ID ${String(p.id).toUpperCase()} · emesso ${itDT(p.ts)} · giocate ${p.g}, vinte ${p.w}, saldo dopo ${ni(p.sd)}.`+(dup?"":" Attenzione: questo ID non è tra gli scontrini di questo telefono.")}}render();scrollTo(0,y);return}}
+  if(a.startsWith("bsh|")){window.SHR_BS=a.slice(4);shOpen("bs");return}}
  const md=e.target.closest("[data-bm]");if(md){BS.mx=md.dataset.bm==="m";BS.sel=null;BS.legs=[];BS.msg="";const y=scrollY;render();scrollTo(0,y);return}
  const lx=e.target.closest("[data-blx]");if(lx){BS.legs=BS.legs.filter(l=>l.id!==lx.dataset.blx);BS.msg="";const y=scrollY;render();scrollTo(0,y);return}
  const q=e.target.closest("[data-bq]");if(q&&!q.disabled){const s=SELMAP[q.dataset.bq];if(!s)return;
