@@ -2058,6 +2058,12 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .cbil{min-width:0}
 .cbil th,.cbil td{padding-left:8px;padding-right:10px}
 .cbil td{height:46px}
+.atsq{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin:0 0 10px}.atsq select{background:var(--panel);color:var(--text,#fff);border:1px solid var(--line);border-radius:8px;padding:5px 8px;font-size:14px}
+.atc{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:10px;margin:0 0 12px}.atside{display:flex;flex-direction:column;gap:6px}.athd{display:flex;align-items:center;gap:8px;font-family:var(--display);font-style:italic;font-weight:800;letter-spacing:.04em;font-size:14px}.athd .badge{width:28px;height:28px}.athd b{flex:1}.athd span{color:var(--gold,#facc15);font-size:18px}
+.atp{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;column-gap:8px;text-align:left;width:100%;padding:9px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:inherit;font:inherit}.atp .atn{font-weight:700;font-size:16px}.atp small{grid-column:1;color:var(--muted);font-size:12px}.atp b{grid-column:2;grid-row:1/3;align-self:center;font-family:var(--display);font-style:italic;font-size:20px}.atp.rm{border-color:#f87171;background:rgba(248,113,113,.16);text-decoration:line-through}
+.atmid{text-align:center;font-size:20px;color:var(--muted);margin:6px 0}.atdiff{text-align:center;margin-top:10px;font-size:13px;color:var(--muted)}.atdiff b{font-size:16px}.atdiff.up b{color:#4ade80}.atdiff.dn b{color:#f87171}
+.atbtns{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:8px;margin:0 0 10px}.atbtns.two{grid-template-columns:1fr 1fr}.atbtns:has(.rp),.atbtns:has(.atb.ko:only-child){grid-template-columns:1fr}.atb{height:52px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:inherit;font-family:var(--display);font-style:italic;font-weight:800;font-size:16px}.atb.ok{background:#16a34a;border-color:#4ade80;color:#fff}.atb.ko{background:rgba(248,113,113,.18);border-color:#f87171}.atb.mod{background:rgba(250,204,21,.16);border-color:#facc15}.atb.rp{height:44px;font-size:14px}.atb:disabled{opacity:.4}
+.atnote{width:100%;box-sizing:border-box;margin:0 0 10px;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:inherit;font-size:16px}.atrep{width:100%;box-sizing:border-box;height:380px;margin:0 0 10px;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:inherit;font:12px/1.4 ui-monospace,monospace}
 .ctabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 14px}
 .ctabs button{background:var(--panel);border:1px solid var(--line);color:var(--muted);font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;line-height:1.1;letter-spacing:.03em;text-transform:uppercase;padding:9px 4px;cursor:pointer}
 .ctabs button[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#0a0f1f}
@@ -2641,6 +2647,7 @@ html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.0
       <button data-v="iatrade" aria-selected="false"><span>IA Trade</span></button>
       <button data-v="compar" aria-selected="false"><span>Comparatore</span></button>
       <button data-v="pictrade" aria-selected="false"><span>Pic-Trade</span></button>
+      <button data-v="iaallena" aria-selected="false"><span>Allenamento IA Trade</span></button>
     </div>
   </div>
 </header>
@@ -8813,7 +8820,60 @@ document.getElementById("main").addEventListener("click",e=>{if(cur!=="compar")r
   if(k==="back"){const f=CMR.from;CMR.from=null;if(f){cur=f.cur;curTeam=f.curTeam;curPlayer=f.curPlayer;gFrom=f.gFrom}else cur="valtrade";render();scrollTo(0,0)}});
 document.getElementById("main").addEventListener("input",e=>{if(cur!=="compar"||e.target.id!=="cmq")return;CMR.q=e.target.value;const L=document.getElementById("cmList");if(L)L.innerHTML=cmList()});
 document.addEventListener("click",e=>{const b=e.target.closest("[data-cmpa]");if(!b)return;e.preventDefault();CMR.from={cur,curTeam,curPlayer,gFrom};CMR.pa=b.dataset.cmpa;if(CMR.pb===CMR.pa)CMR.pb=null;CMR.slot=CMR.pb?null:"b";CMR.q="";cur="compar";render();scrollTo(0,0)});
-const VIEWS={previsione:vPrevisione,glplayer:vGLP,fa:vFA,faplayer:vFAP,fabox:vFaBox,tv:vTVlive,college:vCollege,trend:vTrend,statnotte:vStatNotte,cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,pictrade:vPicTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeagueM,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.osserv=vOsserv;VIEWS.iatrade=vIA;VIEWS.grafico=vGrafico;VIEWS.compar=vCompar;
+/* (617) ALLENAMENTO IA TRADE: l'IA propone uno scambio, tu rispondi Accetto / Rifiuto / Cambia; il report finale serve a ricalibrare valori e algoritmi */
+const AT_K="attr1";
+let AT={c:null,chg:false,rem:new Set(),note:"",rep:false,t:null};
+const atLoad=()=>{try{return JSON.parse(localStorage.getItem(AT_K)||"[]")}catch(e){return[]}};
+let AT_LOG=atLoad();
+const atSave=()=>{try{localStorage.setItem(AT_K,JSON.stringify(AT_LOG))}catch(e){}};
+const atEsc=s=>String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+const atInfo=n=>({n,v:valOf(n)||0,e:Math.round(eta(n)),r:ruoloDi(n)});
+function atSample(a,k){const b=a.slice(),o=[];while(o.length<k&&b.length)o.push(b.splice(Math.random()*b.length|0,1)[0]);return o}
+function atGen(){const me=AT.t||iaTeam(),mine=ROSTER[me].map(p=>p[0]).filter(n=>valOf(n)>0),others=Object.keys(ROSTER).filter(t=>t!==me);
+  const rec=new Set(AT_LOG.slice(-10).map(x=>x.ot+"|"+x.give.map(g=>g.n).join()+"|"+x.get.map(g=>g.n).join()));
+  const tol=[.05,.12,.2,.32][Math.random()*4|0],tg=(Math.random()*2-1)*tol;let best=null,bs=9;
+  for(let i=0;i<500;i++){const ot=others[Math.random()*others.length|0],th=ROSTER[ot].map(p=>p[0]).filter(n=>valOf(n)>0);if(!th.length||!mine.length)continue;
+    const g=atSample(mine,Math.random()<.35?2:1).map(atInfo),r=atSample(th,Math.random()<.35?2:1).map(atInfo),vg=g.reduce((s,x)=>s+x.v,0),vr=r.reduce((s,x)=>s+x.v,0),d=(vr-vg)/Math.max(vg,vr,1);
+    let sc=Math.abs(d-tg)+(rec.has(ot+"|"+g.map(x=>x.n).join()+"|"+r.map(x=>x.n).join())?5:0);if(sc<bs){bs=sc;best={t:me,ot,give:g,get:r,d}}}
+  return best}
+const atTot=a=>a.reduce((s,x)=>s+x.v,0);
+function atReport(){const L=AT_LOG,N=L.length,pc=x=>(x*100>0?"+":"")+(x*100).toFixed(0)+"%",avg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:null,f1=x=>x==null?"n.d.":x.toFixed(1);
+  const Y=L.filter(x=>x.res==="y"),Nn=L.filter(x=>x.res==="n"),C=L.filter(x=>x.res==="c"),dd=a=>avg(a.map(x=>x.d));
+  const age=(a,k)=>avg(a.flatMap(x=>x[k].map(p=>p.e))),o=[];
+  o.push(`ALLENAMENTO IA TRADE · report del ${new Date().toLocaleDateString("it-IT")}`,`Risposte: ${N} (accettati ${Y.length}, rifiutati ${Nn.length}, da cambiare ${C.length})`,"");
+  o.push("SBILANCIAMENTO (valore ricevuto − dato, in % sul maggiore; + = ricevo di più)",`- media accettati: ${dd(Y)==null?"n.d.":pc(dd(Y))}`,`- media rifiutati: ${dd(Nn)==null?"n.d.":pc(dd(Nn))}`,`- media da cambiare: ${dd(C)==null?"n.d.":pc(dd(C))}`);
+  const worst=Y.length?Math.min(...Y.map(x=>x.d)):null;o.push(`- peggior scambio che ho accettato: ${worst==null?"n.d.":pc(worst)}`,"");
+  o.push("ETÀ MEDIA (ricevuti / dati)",`- accettati: ${f1(age(Y,"get"))} / ${f1(age(Y,"give"))}`,`- rifiutati: ${f1(age(Nn,"get"))} / ${f1(age(Nn,"give"))}`,"");
+  o.push("RUOLO RICEVUTO: % accettati");["G","F","C"].forEach(r=>{const s=L.filter(x=>x.get.some(p=>p.r===r));o.push(`- ${r}: ${s.length?Math.round(s.filter(x=>x.res==="y").length/s.length*100)+"% su "+s.length:"n.d."}`)});o.push("");
+  const cnt=(res,k)=>{const m={};L.filter(x=>x.res===res).forEach(x=>x[k].forEach(p=>m[p.n]=(m[p.n]||0)+1));return Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([n,c])=>`${n} (${c})`).join(", ")||"—"};
+  o.push("GIOCATORI",`- volentieri ricevuti: ${cnt("y","get")}`,`- rifiutati da ricevere: ${cnt("n","get")}`,`- volentieri ceduti: ${cnt("y","give")}`,`- rifiutati da cedere: ${cnt("n","give")}`,"");
+  const ch=C.filter(x=>(x.rem&&x.rem.length)||x.note);if(ch.length){o.push("MODIFICHE RICHIESTE");ch.forEach(x=>o.push(`- ${x.rem&&x.rem.length?"toglierei "+x.rem.join(", ")+" · ":""}${x.note||""} [su: dà ${x.give.map(p=>p.n).join(" + ")} / riceve ${x.get.map(p=>p.n).join(" + ")}]`));o.push("")}
+  o.push("ELENCO COMPLETO");L.forEach((x,i)=>o.push(`${i+1}. [${x.res==="y"?"SÌ":x.res==="n"?"NO":"MOD"}] ${TEAMS[x.t].nick} dà ${x.give.map(p=>`${p.n} (${p.v}, ${p.e}a, ${p.r})`).join(" + ")} → riceve ${x.get.map(p=>`${p.n} (${p.v}, ${p.e}a, ${p.r})`).join(" + ")} da ${TEAMS[x.ot].nick} · Δ ${pc(x.d)}${x.rem&&x.rem.length?" · toglie "+x.rem.join(", "):""}${x.note?" · «"+x.note+"»":""}`));
+  return o.join("\n")}
+function vAtr(){const me=AT.t||iaTeam();
+  if(AT.rep){const T=atReport();return`${H("Allenamento IA Trade",`<em>Report</em>`)}<p class="note">Copia il testo e mandalo a Claude: ricalibro valori e algoritmi sulle tue risposte.</p><textarea class="atrep" readonly>${atEsc(T)}</textarea><div class="atbtns two"><button class="atb" data-at="copy">Copia report</button><button class="atb" data-at="back">‹ Torna alle proposte</button></div><div class="atbtns"><button class="atb ko" data-at="reset">Azzera sessione</button></div>`}
+  if(!AT.c)AT.c=atGen();const c=AT.c;if(!c)return`${H("Allenamento IA Trade","")}<p class="note">Non ci sono abbastanza giocatori con un valore per proporre scambi.</p>`;
+  const row=(p,s)=>`<button type="button" class="atp${AT.rem.has(p.n)?" rm":""}" data-at="tg" data-n="${atEsc(p.n)}"><span class="atn">${atEsc(p.n)}</span><small>${p.r} · ${p.e} anni</small><b>${p.v}</b></button>`,vg=atTot(c.give),vr=atTot(c.get),dp=Math.round(c.d*100);
+  const sel=`<label class="atsq">Allenati come <select data-at="team">${Object.keys(TEAMS).map(t=>`<option value="${t}"${t===me?" selected":""}>${TEAMS[t].nick}</option>`).join("")}</select></label>`;
+  return`${H("Allenamento IA Trade",`<em>${AT_LOG.length} risposte</em>`)}${sel}
+  <div class="atc"><div class="atside"><div class="athd">${badge(c.t)}<b>DAI</b><span>${vg}</span></div>${c.give.map(p=>row(p)).join("")}</div>
+  <div class="atmid">⇅</div>
+  <div class="atside get"><div class="athd">${badge(c.ot)}<b>RICEVI da ${TEAMS[c.ot].nick}</b><span>${vr}</span></div>${c.get.map(p=>row(p)).join("")}</div>
+  <div class="atdiff ${dp>=0?"up":"dn"}">Differenza di valore <b>${dp>0?"+":""}${dp}%</b></div></div>
+  ${AT.chg?`<p class="note">Tocca i giocatori che toglieresti, poi scrivi cosa cambieresti.</p><input class="atnote" id="atn" placeholder="Es. al posto suo vorrei un lungo più giovane" value="${atEsc(AT.note)}"><div class="atbtns two"><button class="atb ok" data-at="send">Invia</button><button class="atb" data-at="cancel">Annulla</button></div>`:`<div class="atbtns"><button class="atb ko" data-at="n">✕ Rifiuto</button><button class="atb mod" data-at="chg">✎ Cambia</button><button class="atb ok" data-at="y">✓ Accetto</button></div>`}
+  <div class="atbtns"><button class="atb rp" data-at="rep"${AT_LOG.length?"":" disabled"}>🖨 Stampa report (${AT_LOG.length})</button></div>
+  <p class="note">Valori = quelli del Calcolatore trade. Scelte e crediti non sono inclusi: contano solo i giocatori.</p>`}
+function atAns(res){const c=AT.c;if(!c)return;AT_LOG.push({ts:Date.now(),t:c.t,ot:c.ot,give:c.give,get:c.get,d:c.d,res,rem:[...AT.rem],note:(res==="c"?AT.note:"").trim()});atSave();AT.c=null;AT.chg=false;AT.rem=new Set();AT.note="";render();window.scrollTo(0,0)}
+document.addEventListener("input",e=>{if(cur==="iaallena"&&e.target.id==="atn")AT.note=e.target.value});
+document.addEventListener("change",e=>{const b=e.target;if(cur==="iaallena"&&b.dataset&&b.dataset.at==="team"){AT.t=b.value;AT.c=null;AT.chg=false;AT.rem=new Set();render()}});
+document.addEventListener("click",e=>{if(cur!=="iaallena")return;const b=e.target.closest("[data-at]");if(!b||b.tagName==="SELECT"||b.disabled)return;const a=b.dataset.at;
+  if(a==="y"||a==="n")atAns(a);else if(a==="chg"){AT.chg=true;render()}else if(a==="cancel"){AT.chg=false;AT.rem=new Set();AT.note="";render()}
+  else if(a==="send")atAns("c");else if(a==="tg"){if(!AT.chg)return;const n=b.dataset.n;AT.rem.has(n)?AT.rem.delete(n):AT.rem.add(n);b.classList.toggle("rm")}
+  else if(a==="rep"){AT.rep=true;render();window.scrollTo(0,0)}else if(a==="back"){AT.rep=false;render()}
+  else if(a==="copy"){const t=document.querySelector(".atrep");if(!t)return;t.select();let ok=false;try{ok=document.execCommand("copy")}catch(x){}try{navigator.clipboard&&navigator.clipboard.writeText(t.value);ok=true}catch(x){}b.textContent=ok?"Copiato ✓":"Seleziona e copia";setTimeout(()=>{b.textContent="Copia report"},1800)}
+  else if(a==="reset"){if(b.dataset.s!=="1"){b.dataset.s="1";b.textContent="Tocca ancora per azzerare";return}AT_LOG=[];atSave();AT.rep=false;AT.c=null;render()}});
+
+const VIEWS={previsione:vPrevisione,glplayer:vGLP,fa:vFA,faplayer:vFAP,fabox:vFaBox,tv:vTVlive,college:vCollege,trend:vTrend,statnotte:vStatNotte,cap:vCap,multe:vMulte,effcup:vEffCup,valtrade:vValTrade,pictrade:vPicTrade,speciali:vSpeciali,cassa:vCassa,giochi:vGiochiHub,gleague:vGLeagueM,regolamento:vRegolamento,storia:vStoria,campo:vCampo,infortuni:vInfortuni,giocatore:vGiocatore,home:vHome,classifica:vClassifica,risultati:vRisultati,roster:vRoster,efficienza:vEfficienza,trade:vTrade};VIEWS.effsquadra=vEffSquadra;VIEWS.osserv=vOsserv;VIEWS.iatrade=vIA;VIEWS.iaallena=vAtr;VIEWS.grafico=vGrafico;VIEWS.compar=vCompar;
 let cur="home";
 const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 if(window.__taOpen)cur="pictrade"
@@ -8823,7 +8883,7 @@ function render(){
   if(cur!=="tv")TVS.out=1;liveSync();if(["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur))fantaLiveAvvia();
   document.body.dataset.v=cur;{const nt=typeof CNT!=="undefined"&&CNT;document.body.classList.toggle("notte",nt);document.documentElement.classList.toggle("notte",nt);const tc=document.querySelector('meta[name="theme-color"]');if(tc&&!document.body.classList.contains("dreamfs"))tc.content=nt?"#2a1260":TH_BAR}
   {document.documentElement.classList.toggle("setpg",cur==="impostazioni");/* (245) */const fs=cur==="giochi"&&(GAME==="dream"||GAME==="gdream");document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=(fs||(typeof CNT!=="undefined"&&CNT))?"#2a1260":TH_BAR}
-  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"efficienza":(cur==="faplayer"||cur==="fabox")?(faFrom==="home"?"home":"efficienza"):cur==="giocatore"?(gFrom==="fa"?"efficienza":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="fa"||cur==="effsquadra"||cur==="consigli"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="osserv"||cur==="iatrade"||cur==="compar"||cur==="pictrade"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
+  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"efficienza":(cur==="faplayer"||cur==="fabox")?(faFrom==="home"?"home":"efficienza"):cur==="giocatore"?(gFrom==="fa"?"efficienza":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="fa"||cur==="effsquadra"||cur==="consigli"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="osserv"||cur==="iatrade"||cur==="compar"||cur==="pictrade"||cur==="iaallena"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));try{const nv=document.querySelector("nav"),sb=nv&&nv.querySelector('[aria-selected="true"]');if(sb)nv.scrollTo({left:Math.max(0,sb.offsetLeft-24)})}catch(e){}
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -8928,7 +8988,7 @@ const BK_IDS="#gback,#faback,#glpback,#effback,#cback,[data-cupback],[data-snbac
 /* SOTTO-SCHERMATE: se dentro una sezione c'è un livello interno (es. IA Trade → Per ruolo / Per giocatore), il tasto ‹ e il gesto indietro tornano prima a quel livello e solo dopo alla schermata precedente. Aggiungere qui ogni nuova sotto-schermata. */
 const NAV_SUB=[{ok:()=>cur==="efficienza"&&effSub==="sq",lab:"Statistiche",back:()=>{effSub="";render()}},{ok:()=>cur==="iatrade"&&(IA.mode==="role"||IA.mode==="pl"),lab:"IA Trade",back:()=>{IA.mode="";render()}},{ok:()=>cur==="eq"&&EQ.vl,lab:"Valori e crediti",back:()=>{EQ.vl=false;EQ.msg="";render()}}];
 const navSub=()=>NAV_SUB.find(x=>{try{return x.ok()}catch(e){return false}});
-function backLabel(v){const n=(TEAMS[curTeam]||{}).nick||"";const M={home:"Home",campo:"Campo "+n,roster:"Roster "+n,fa:"Giocatori",valtrade:"Calcolatore trade",osserv:"Osservatorio",iatrade:"IA Trade",pictrade:"Pic-Trade",compar:"Comparatore",efficienza:"Statistiche",effsquadra:"Efficienza "+n,effcup:"Efficienza",tv:"Dynasty TV",risultati:"Risultati",classifica:"Classifica",trade:"Storico trade",speciali:"Trade speciali",gleague:"G-Dreamers",college:"Ufficio Scouting",cassa:"Cassa "+n,cap:"Cap",multe:"Multe",trend:"Trend",statnotte:"Statistiche notte",grafico:"Grafico",dunkest:"Centro gestione",storia:"Sala Trofei",regolamento:"Regolamento",infortuni:"Centro Medico",gdreamers:"G-Dreamers",faplayer:"Giocatori",glplayer:"G-Dreamers"};
+function backLabel(v){const n=(TEAMS[curTeam]||{}).nick||"";const M={home:"Home",campo:"Campo "+n,roster:"Roster "+n,fa:"Giocatori",valtrade:"Calcolatore trade",osserv:"Osservatorio",iatrade:"IA Trade",iaallena:"Allenamento IA Trade",pictrade:"Pic-Trade",compar:"Comparatore",efficienza:"Statistiche",effsquadra:"Efficienza "+n,effcup:"Efficienza",tv:"Dynasty TV",risultati:"Risultati",classifica:"Classifica",trade:"Storico trade",speciali:"Trade speciali",gleague:"G-Dreamers",college:"Ufficio Scouting",cassa:"Cassa "+n,cap:"Cap",multe:"Multe",trend:"Trend",statnotte:"Statistiche notte",grafico:"Grafico",dunkest:"Centro gestione",storia:"Sala Trofei",regolamento:"Regolamento",infortuni:"Centro Medico",gdreamers:"G-Dreamers",faplayer:"Giocatori",glplayer:"G-Dreamers"};
   return v==="giochi"?(GAME==="dream"?"Dreamers":GAME==="gdream"?"G-Dreamers":"Giochi"):(M[v]||"Indietro")}
 /* nomi troppo lunghi per la card: nome di battesimo ridotto all'iniziale ("S. GILGEOUS-ALEXANDER") */
 function duFit(){document.querySelectorAll(".du .duh").forEach(h=>h.style.minHeight="");document.querySelectorAll(".du .dun b").forEach(b=>{if(b.scrollWidth<=b.clientWidth+1)return;b.innerHTML=b.innerHTML.replace(/&nbsp;|\u00a0/g," ");if(b.scrollWidth>b.clientWidth+1)b.style.letterSpacing="-.02em"});document.querySelectorAll(".durow").forEach(r=>{const hs=[...r.querySelectorAll(".du .duh")];if(hs.length<2)return;const m=Math.max(...hs.map(h=>h.getBoundingClientRect().height));hs.forEach(h=>h.style.minHeight=m+"px")})}/* (312) nomi già in formato "N. Cognome" e a capo se servono: mai rimpiccioliti né tagliati */

@@ -1714,3 +1714,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 615. Date dei turni sostituite in tutta l'app dal conteggio notti (es. "1 su 5 notti"; turno concluso "5 su 5"; turno futuro "5 notti"): Home, Dreamers, Campo, Dynasty TV, condivisioni, calendario turni (solo "N notti").
 
 616. Vecchia Home (8 loghi) e testata del Campo: i record V-P usano la classifica Dreamers (drStand) e si aggiornano a ogni turno chiuso, non piu' i vecchi 2-0 dei dati Dunkest.
+
+617. Nuova voce "Allenamento IA Trade" (ultima in Scambi): scheda con scambio proposto (Dai/Ricevi, valori, eta', differenza %), tasti Accetto/Rifiuto/Cambia (tocchi i giocatori da togliere + nota), sessione infinita salvata sul telefono, "Stampa report" con medie sbilanciamento, eta', ruoli, giocatori piu' accettati/rifiutati, modifiche e elenco completo, da copiare e mandare a Claude per ricalibrare i valori.
