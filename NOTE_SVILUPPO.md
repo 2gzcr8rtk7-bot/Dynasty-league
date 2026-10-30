@@ -1741,3 +1741,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 628. Pagina Notte appena avvenuta: swipe da sinistra a destra (o freccia ‹ in alto) per tornare alle notti precedenti con box score, freccia › per tornare avanti; elenco = tutte le notti con box disponibili.
 
 629. Pagina Notte della Home: barra in alto piu' sottile, solo "NOTTE DEL gg/mm" (tolta la riga "scorri a destra"); resta lo swipe e le frecce.
+
+630. Barra Notte del: ancora un po' piu' sottile (20px, titolo 13px).
