@@ -1243,7 +1243,13 @@ body:not(.notte) .tmc .tmar{color:var(--gold)}
 .rcg .rtags{gap:4px;align-items:center}
 .rcg .rnm small .injtag{font-size:9.5px;padding:0 5px;vertical-align:1px}
 .rcg .rtags .rookie{font-size:9px;padding:1px 4px}
-.grtc[aria-pressed=true]{border-color:var(--c,#facc15)!important;box-shadow:inset 0 -3px 0 var(--c,#facc15)}.grleg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.grleg>div{display:flex;align-items:center;gap:8px;font-size:12px;color:#cbd5e1;flex-wrap:wrap}.grleg i{width:14px;height:6px;border-radius:3px;flex:none}.grleg b{font-family:var(--display);font-style:italic;font-size:15px;text-transform:uppercase;color:#fff}.grleg span{flex-basis:100%;margin-left:22px;color:#94a3b8}
+.grpl{gap:9px!important}
+.grtc{all:unset;box-sizing:border-box;display:inline-flex;align-items:baseline;gap:8px;padding:9px 14px;border-radius:10px;cursor:pointer;background:rgba(255,255,255,.05);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.16);color:#94a3b8;transition:.18s}
+.grtc .grd{display:none}
+.grtc .grn{font:italic 800 14px/1 var(--display,Arial);text-transform:uppercase;letter-spacing:.05em}
+.grtc .gra{font:800 11px/1 Arial;font-style:normal;opacity:.7}
+.grtc[aria-pressed=true]{color:#fff;background:color-mix(in srgb,var(--c) 22%,rgba(8,12,34,.8));border-color:var(--c);box-shadow:0 0 14px color-mix(in srgb,var(--c) 70%,transparent),inset 0 0 12px color-mix(in srgb,var(--c) 35%,transparent);text-shadow:0 0 8px color-mix(in srgb,var(--c) 80%,transparent)}
+.grtc[aria-pressed=true] .gra{color:var(--c);opacity:1;filter:brightness(1.4)}.grleg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.grleg>div{display:flex;align-items:center;gap:8px;font-size:12px;color:#cbd5e1;flex-wrap:wrap}.grleg i{width:14px;height:6px;border-radius:3px;flex:none}.grleg b{font-family:var(--display);font-style:italic;font-size:15px;text-transform:uppercase;color:#fff}.grleg span{flex-basis:100%;margin-left:22px;color:#94a3b8}
 .grplf{margin:6px 0 4px}.grplf .fapl{display:flex;align-items:center;justify-content:space-between}.grall{border:0;background:transparent;color:#facc15;font-family:var(--display);font-weight:800;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-size:13px}.grpl{flex-wrap:wrap}
 .fabar{display:grid;grid-template-columns:1fr auto;gap:8px;margin:2px 0 10px}
 .fafil{display:inline-flex;align-items:center;gap:6px;font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.04em;padding:0 16px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.04);color:#fff;border-radius:10px;cursor:pointer}
@@ -5082,7 +5088,7 @@ function vGrTeam(){
   SHR_GT={t,c,S,K,by,met,da:GR.da,a:GR.a,fmt};
   const svg=tgSvg(S,K,by,met);
   const sur=n=>{const q=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return q.length>1?q.slice(1).join(" "):q[0]};
-  const chips=names.map(n=>{const on=GR.inc.includes(n),st=S.find(x=>x.n===n);return`<button class="chip grtc" data-grinc="${n.replace(/"/g,"&quot;")}" aria-pressed="${on}"${on&&st?` style="--c:${st.c}"`:""}>${on?"✓ ":""}${sur(n)}</button>`}).join("");
+  const chips=names.map(n=>{const on=GR.inc.includes(n),st=S.find(x=>x.n===n),cl=st?st.c:trColN(trNba(n),t),av=avgOf(n);return`<button class="chip grtc" data-grinc="${n.replace(/"/g,"&quot;")}" aria-pressed="${on}" style="--c:${cl}"><i class="grd"></i><span class="grn">${sur(n)}</span><em class="gra">${G.get(n).length?fmt(av):"—"}</em></button>`}).join("");
   const seg=`<div class="trseg">${[["pdk","PDK"],["min","Minuti"],["eff","Efficienza"]].map(([v,l])=>`<button data-grtm="${v}" aria-pressed="${met===v}">${l}</button>`).join("")}</div>`;
   return`<div class="grroom" style="--tc:${c.bg};--tf:${c.txt||c.fg}">
   <button class="grback" data-grclose="1">‹ Indietro</button>
