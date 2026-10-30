@@ -77,9 +77,10 @@
 .mvd{margin-top:8px}.mvd small{display:block;font-size:11.5px;color:var(--muted);margin-top:4px}.mvd small.mi{color:#facc15}
 .mv{display:inline-block;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:4px 10px;border-radius:7px}.mv.ok{background:rgba(74,222,128,.16);color:#4ade80}.mv.ko{background:rgba(248,113,113,.16);color:#f87171}.mv.nd{background:rgba(255,255,255,.06);color:var(--muted);text-transform:none;letter-spacing:0;font-weight:600}
 .effpair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 14px}
+.effsub[data-effsub=pl]{background:#e11d48!important;color:#fff!important}.snemb{margin-top:14px}
 .effsub{display:flex;align-items:center;justify-content:center;gap:10px;padding:13px 14px;border:0;cursor:pointer;color:#0a0f1f;background:#facc15;font-family:var(--display);font-style:italic;font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:.04em}
 .effsub i{font-style:normal;font-size:22px;line-height:1}
-.trbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:-4px 0 14px;padding:9px 14px;border:0;cursor:pointer;color:#03291b;background:#2fb385;box-shadow:none}
+.trbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:-4px 0 14px;padding:9px 14px;border:0;cursor:pointer;color:#052e16;background:#22c55e;box-shadow:none}
 .trbtn svg{width:20px;height:20px;flex:none}.trbtn span{font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;letter-spacing:.22em;text-transform:uppercase;line-height:1}.trbtn i{font-style:normal;font-family:var(--display);font-weight:800;font-size:20px;line-height:1}
 .trbtn:active{transform:scale(.98)}
 .trctl{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.trctl .grsel{min-width:0}
@@ -1810,12 +1811,23 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .vtnm{flex:1;min-width:0;display:grid;font-weight:700}.vtnm small{font-size:11px;color:var(--muted);font-weight:500}
 .vtrow b{font-family:var(--display);font-weight:800;font-size:17px;color:#93c5fd}.vtvp{display:grid;justify-items:end;min-width:52px}.vtvp small{font-size:9.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}.vtvp.pr b{color:var(--gold)}
 .trow.cup .ev{white-space:nowrap;flex:none}.trow.cup .trk,.trow.cup .cupm{width:30px;min-width:30px;margin:0;justify-self:center;flex:none;box-sizing:border-box}.trow.cup .cupm{height:30px}.trow.cup .trk{text-align:center}.trow.cup .tnm{min-width:0}.trow.cup .tnm b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cupbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:0 0 14px;padding:9px 14px;border:0;cursor:pointer;color:#2a1c00;background:#d4a72c;box-shadow:none}
+.cupbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:0 0 14px;padding:9px 14px;border:0;cursor:pointer;color:#fff;background:#6d4bd8;box-shadow:none}
 .cupbtn span{font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;letter-spacing:.22em;text-transform:uppercase;line-height:1}
 .cupbtn .cupt{width:18px;height:18px;flex:none}
 .cupbtn i{font-style:normal;font-family:var(--display);font-weight:800;font-size:20px;line-height:1;margin-left:2px}
 .cupic{font-size:28px;line-height:1}
 .cupbtn:active{transform:scale(.98)}
+/* (538) pulsanti Statistiche: card con icona in tondo */
+.cupbtn,.trbtn,.effsub{border:0!important;border-radius:16px;padding:16px 18px!important;color:#fff!important;justify-content:flex-start!important;box-shadow:0 8px 20px rgba(0,0,0,.35)!important;overflow:hidden;position:relative}
+.cupbtn{background:linear-gradient(135deg,#2e1065,#6d4bd8)!important}
+.trbtn{background:linear-gradient(135deg,#052e16,#16a34a)!important;margin:-4px 0 14px!important}
+.effsub[data-effsub=pl]{background:linear-gradient(135deg,#4c0519,#e11d48)!important}
+.effsub[data-effsub=sq]{background:linear-gradient(135deg,#713f12,#eab308)!important}
+.cupbtn::after,.trbtn::after,.effsub::after{content:"";position:absolute;right:-26px;top:-26px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.12);pointer-events:none}
+.cupbtn svg,.trbtn svg{width:30px!important;height:30px!important;padding:8px;border-radius:50%;background:rgba(255,255,255,.18);box-sizing:content-box}
+.cupbtn span,.trbtn span{flex:1;text-align:left;letter-spacing:.1em!important;font-size:19px!important}
+.cupbtn i,.trbtn i{width:30px;height:30px;line-height:30px;text-align:center;border-radius:50%;background:rgba(255,255,255,.2)}
+.effsub{font-size:21px!important}.effsub i{margin-left:auto}.effpair{gap:12px!important}
 .cuproom{margin:4px -16px 0;padding:16px;background:radial-gradient(ellipse at 50% 0%,#b5122e 0%,#6e0a1b 45%,#2a0610 100%);border-top:3px solid #ff2a4d;border-bottom:3px solid #ff2a4d}
 .cuphd{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .cuphd{position:relative}
@@ -3206,8 +3218,8 @@ function vEfficienza(){
   const rows=E.gioc[t0].slice().sort((a,b)=>(rv(b)??-99)-(rv(a)??-99)).map(p=>`<tr><td class="pnm">${p[0]}</td><td>${shw(rv(p))}</td><td>${p[2]}</td><td>${p[3]==null?"—":p[3].toLocaleString("it-IT",{minimumFractionDigits:1})}</td></tr>`).join("");
   return `${effSub==="sq"?"":`<button class="cupbtn" data-cupgo="1"><svg class="cupt" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v4a5 5 0 0 1-10 0V4zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M12 13v4M8.5 20h7M10 17h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Efficienza Cup</span><i>›</i></button>
   <button class="trbtn" data-trgo="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8M15 7h6v6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Calcola il trend</span><i>›</i></button>
-  ${CNT?`<button class="snbtn live" data-sngo="1"><b class="snlvd" aria-hidden="true"></b><span>Statistiche live</span><i>›</i></button>`:`<button class="snbtn" data-sngo="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Statistiche notte</span><i>›</i></button>`}
-  <div class="effpair"><button class="effsub" data-effsub="pl"><span>Giocatori</span><i>›</i></button><button class="effsub" data-effsub="sq"><span>Squadre</span><i>›</i></button></div>`}
+  <div class="effpair"><button class="effsub" data-effsub="pl"><span>Giocatori</span><i>›</i></button><button class="effsub" data-effsub="sq"><span>Squadre</span><i>›</i></button></div>
+  <div class="snemb">${vStatNotte().replace('<button class="gback" data-snback="1">‹ Statistiche</button>',"")}</div>`}
   ${effSub==="sq"?`<button class="gback" data-effsub="">‹ Statistiche</button>
   ${H("Statistiche squadre",`<em>${E.past?SZ_LBL[sz]+" · "+sz:"Agg. "+E.agg}</em>`)}
   <div class="effbar">${szSelect(sz)}<div class="metsw effsw"><button data-effmet="eff" aria-pressed="${!isP}">Eff.</button><button data-effmet="pdk" aria-pressed="${isP}">PDK</button></div></div>
@@ -6736,8 +6748,8 @@ document.getElementById("main").addEventListener("click",e=>{
   if(e.target.closest("[data-trgo]")){e.preventDefault();TRN.from=cur;cur="trend";render();window.scrollTo(0,0);return}
   if(e.target.closest("[data-sngo]")){e.preventDefault();SN.d=null;cur="statnotte";render();window.scrollTo(0,0);return}
   if(e.target.closest("[data-snback]")){e.preventDefault();cur="efficienza";render();window.scrollTo(0,0);return}
-  {const b=e.target.closest("[data-snm]");if(b){e.preventDefault();SN.m=b.dataset.snm;render();return}}
-  {const b=e.target.closest("[data-snd]");if(b&&!b.disabled){e.preventDefault();SN.d=b.dataset.snd;render();return}}
+  {const b=e.target.closest("[data-snm]");if(b){e.preventDefault();SN.m=b.dataset.snm;const y=window.scrollY;render();window.scrollTo(0,y);return}}
+  {const b=e.target.closest("[data-snd]");if(b&&!b.disabled){e.preventDefault();SN.d=b.dataset.snd;const y=window.scrollY;render();window.scrollTo(0,y);return}}
   if(cur!=="trend")return;
   if(e.target.closest("[data-trclose]")){e.preventDefault();cur=TRN.from||"efficienza";render();window.scrollTo(0,0);return}
   const b=e.target.closest("[data-trset]");if(b){e.preventDefault();TRN[b.dataset.trset]=b.dataset.v;if(b.dataset.trset!=="on")TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y);return}
@@ -7398,7 +7410,7 @@ const FANTA_LIVE=[
   {attivo:()=>cur==="osserv",da:()=>FANTA_LIVE[0].da()},
   {attivo:()=>["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur),da:()=>FANTA_LIVE[0].da()},
   {attivo:()=>cur==="home"&&(SEGUI.length>0||HN_L!=="0"),soft:true,da:()=>FANTA_LIVE[0].da()},
-  {attivo:()=>cur==="statnotte"&&CNT,da:()=>FANTA_LIVE[0].da()},
+  {attivo:()=>(cur==="statnotte"||cur==="efficienza"&&effSub!=="sq")&&CNT,da:()=>FANTA_LIVE[0].da()},
   {attivo:()=>cur==="giochi"&&GAME==="gdream",da:()=>{if(GD_LASTOFF==null)try{gdData()}catch(e){}return GD_LASTOFF?drAdd(GD_LASTOFF,1):GD_START}},
   /* (345) SOTTOFONDO: da QUALSIASI sezione dell'app (scambi, regolamento, impostazioni…) i dati live si scaricano comunque, senza ridisegnare la pagina (soft).
      Ogni 45 s se c'è una partita in corso, altrimenti ogni 5 minuti. App chiusa o in background: il telefono ferma il codice, quindi nulla; al rientro parte subito un controllo. */
