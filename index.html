@@ -1239,6 +1239,14 @@ body:not(.notte) .tmc .tmar{color:var(--gold)}
 .rcg .rtags{gap:4px;align-items:center}
 .rcg .rnm small .injtag{font-size:9.5px;padding:0 5px;vertical-align:1px}
 .rcg .rtags .rookie{font-size:9px;padding:1px 4px}
+.fabar{display:grid;grid-template-columns:1fr auto;gap:8px;margin:2px 0 10px}
+.fafil{display:inline-flex;align-items:center;gap:6px;font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.04em;padding:0 16px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.04);color:#fff;border-radius:10px;cursor:pointer}
+.fafil.on,.fafil[aria-expanded=true]{border-color:#facc15;color:#facc15}
+.fafil i{font-style:normal;background:#facc15;color:#0a0f1f;border-radius:99px;min-width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+.fapan{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 12px 12px;margin:0 0 10px}
+.fapl{font-family:var(--display);font-weight:800;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:8px 0 5px}
+.fapr{display:flex;flex-wrap:wrap;gap:6px}.fapr.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fareset{margin-top:12px;width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.18);background:transparent;color:#cbd5e1;font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.08em;cursor:pointer}
 .rnm{flex:1;min-width:0;display:grid}
 .rnm b{font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;color:#fff;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rnm small{font-family:var(--display);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
@@ -4336,7 +4344,8 @@ const FA=[["Ty Jerome","MEM","G","2",{"24/25":[70,19.9,16.8,0.84,12.5,2.5,3.4],"
 /* Proprietario G League dei free agent (logo nella lista) */
 const FA_OWN={"Koa Peat":"FOX","Joan Beringer":"FOX","Jared McCain":"FOX","Jock Landale":"FOX","Jayden Quaintance":"FOX","Christian Anderson":"DUC","Leonard Miller":"DUC","Ousmane Dieng":"DUC","Tarris Reed Jr.":"DUC","Reed Sheppard":"DUC","Brandin Podziemski":"PEA","Nate Ament":"PEA","Zuby Ejiofor":"PEA","Asa Newell":"PEA","Jalen Smith":"PEA","Jaden McDaniels":"EAG","Bennedict Mathurin":"EAG","Davion Mitchell":"EAG","Yves Missi":"EAG","Collin Gillespie":"EAG","Isaiah Collier":"DOL","Karim Lopez":"DOL","Keegan Murray":"DOL","Jalen Suggs":"DOL","Ryan Kalkbrenner":"DOL","Chris Cenac Jr.":"SPI","Cameron Carr":"SPI","Dylan Cardwell":"SPI","Yang Hansen":"SPI","Day'Ron Sharpe":"MOO","Gui Santos":"MOO","Hugo Gonzalez":"MOO","Ajay Mitchell":"MOO","Meleek Thomas":"MOO","Peyton Watson":"TUR","Dereck Lively II":"TUR","Rui Hachimura":"TUR","Kyle Filipowski":"TUR","Scoot Henderson":"TUR"};
 
-let faSz="26/27",faRole="GFC",faGL=false,faFA=false,faP=null,faFrom="fa";
+let faSz="26/27",faRole="GFC",faGL=false,faFA=false,faSq=false,faNba="",faDt="",faOpen=false,faP=null,faFrom="fa";
+const FPR={da:null,a:null,sz:"2026/27"};/* periodo della lista Giocatori (default: stagione in corso) */
 /* (510) ordinamento della lista Giocatori: di default PDK medio decrescente; toccando PG / MIN / PDK / EFF si ordina per quella statistica (primo tocco decrescente, secondo crescente). k = indice in s: 0 PG, 1 Min, 2 PDK, 3 Eff. */
 let faSrt={k:2,d:-1};
 const faCmp=(sa,sb,na,nb)=>{const va=sa?sa[faSrt.k]:null,vb=sb?sb[faSrt.k]:null;if(va==null&&vb==null)return na.localeCompare(nb);if(va==null)return 1;if(vb==null)return -1;return(va-vb)*faSrt.d||na.localeCompare(nb)};
@@ -4349,35 +4358,47 @@ const FA_SZL={"24/25":"Stagione 1","25/26":"Stagione 2","26/27":"Stagione 3"};
 let faQ="";
 const faSzFull=z=>"20"+z;
 function faAvg(g){if(!g||!g.length)return null;const mn=g.reduce((a,x)=>a+x[2],0),dk=g.reduce((a,x)=>a+x[3],0);return[g.length,mn/g.length,dk/g.length,mn?dk/mn:null]}
+/* (525) media nel periodo scelto: le partite di ogni stagione toccata dal periodo, filtrate per data (stesso formato "g/m" di grGames) */
+const faRowsIn=(rows,z,da,a)=>{const y0=+z.slice(0,4);return(rows||[]).filter(x=>{const[d,m]=String(x[0]).split("/").map(Number);if(!d||!m)return false;const y=m>=8?y0:y0+1;const iso=`${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`;return iso>=da&&iso<=a})};
+function faPerAvg(rowsOf){perNorm(FPR);let all=[];perSzr(FPR.da,FPR.a).forEach(z=>{all=all.concat(faRowsIn(rowsOf(z),z,FPR.da,FPR.a))});return faAvg(all)}
 function faOthers(){
-  const z=faSzFull(faSz),cur0=z==="2026/27",S=cur0?null:(STAGIONI[z]||{}),PS=cur0?null:((typeof GL_PAST!=="undefined"&&GL_PAST[z])||{}),GS=typeof GL_STATS!=="undefined"?GL_STATS:{};
-  const fa=new Set(FA.map(x=>faNz(x[0]))),out=[],seen=new Set();
-  Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>{if(!faRole.includes(p[2]))return;out.push({kind:"T",t,n:p[0],r:p[2],nba:p[3],s:faAvg(cur0?PARTITE[p[0]]:S[p[0]])})}));
-  if(typeof GLEAGUE!=="undefined")GLEAGUE.forEach(x=>x.g.forEach(p=>{const k=x.t+"|"+p[0],st=GS[k]||{},n=st.n||p[0];if(fa.has(faNz(n))||seen.has(faNz(n)))return;seen.add(faNz(n));const r=(p[1]||st.r);if(!faRole.includes(r))return;
-    out.push({kind:"G",t:x.t,k,n,r,nba:st.nba||"",s:faAvg(cur0?st.log:PS[k])})}));
-  return out.filter(o=>FA_R[o.r]).map(o=>(o.kind==="T"&&faGL?null:o)).filter(Boolean).sort((a,b)=>faCmp(a.s,b.s,a.n,b.n));
+  const GS=typeof GL_STATS!=="undefined"?GL_STATS:{},GP=z=>(typeof GL_PAST!=="undefined"&&GL_PAST[z])||{};
+  const fa=new Set(FA.map(x=>faNz(x[0]))),out=[],seen=new Set(),ok=(r,nba)=>faRole.includes(r)&&(!faNba||nba===faNba);
+  if(!faFA&&!faGL)Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>{if(!ok(p[2],p[3])||(faDt&&t!==faDt))return;out.push({kind:"T",t,n:p[0],r:p[2],nba:p[3],s:faPerAvg(z=>z===PER_ORD[2]?PARTITE[p[0]]:(STAGIONI[z]||{})[p[0]])})}));
+  if(!faFA&&!faSq&&typeof GLEAGUE!=="undefined")GLEAGUE.forEach(x=>x.g.forEach(p=>{const k=x.t+"|"+p[0],st=GS[k]||{},n=st.n||p[0];if(fa.has(faNz(n))||seen.has(faNz(n)))return;seen.add(faNz(n));const r=(p[1]||st.r);if(!ok(r,st.nba||"")||(faDt&&x.t!==faDt))return;
+    out.push({kind:"G",t:x.t,k,n,r,nba:st.nba||"",s:faPerAvg(z=>z===PER_ORD[2]?st.log:GP(z)[k])})}));
+  return out.filter(o=>FA_R[o.r]).sort((a,b)=>faCmp(a.s,b.s,a.n,b.n));
 }
+/* media di un free agent nel periodo: dalle partite (fa-games.js) se caricate, altrimenti dalle medie di stagione */
+function faFaAvg(x){if(typeof FAG!=="undefined")return faPerAvg(z=>(FAG[x[0]]||{})[z]);
+  const l=perSzr(FPR.da,FPR.a).map(z=>x[4][z.slice(2)]).filter(Boolean);if(!l.length)return null;const G=l.reduce((q,v)=>q+v[0],0),w=i=>l.reduce((q,v)=>q+v[0]*v[i],0)/G;const mn=w(1),dk=w(2);return[G,mn,dk,mn?dk/mn:null]}
 function vFA(){
   const q=faNz(faQ.trim());
-  const L=FA.filter(x=>faRole.includes(x[2])&&(!faGL||FA_OWN[x[0]])).map(x=>({x,s:x[4][faSz]}));
+  perNorm(FPR);if(typeof FAG==="undefined")faLoadG();
+  const L=(faSq?[]:FA.filter(x=>faRole.includes(x[2])&&(!faGL||FA_OWN[x[0]])&&(!faNba||x[1]===faNba)&&(!faDt||FA_OWN[x[0]]===faDt))).map(x=>({x,s:faFaAvg(x)}));
   /* (522) «Tutti» mostra anche i giocatori delle squadre e della G League: un'unica classifica con i free agent. Il filtro «Free agent» li esclude. */
   const items=[];
   L.forEach(({x,s})=>{const has=!!s,fs=faNz(x[0]+" "+x[1]);items.push({s,n:x[0],has,f:k=>`<tr class="farow${has?"":" fanone"}" data-fan="${x[0].replace(/"/g,"&quot;")}" data-fs="${fs}"${(q?!fs.includes(q):!has)?" hidden":""}><td class="fark">${has?k:"–"}</td><td class="fanm"><b>${RTR(x[0])}${x[0]}</b>${faGL1(x[0])}<small>${x[1]} · ${FA_R[x[2]]}</small></td><td>${has?s[0]:"—"}</td><td>${has?faNum(s[1]):"—"}</td><td class="fapdk">${has?pdkB(s[2],faNum(s[2])):"—"}</td><td>${has?eff(s[3]):"—"}</td></tr>`})});
-  (faFA?[]:faOthers()).forEach(o=>{const s=o.s,has=!!s,fs=faNz(o.n+" "+(o.nba||"")+" "+TEAMS[o.t].name+" "+TEAMS[o.t].nick),nn=o.n.replace(/"/g,"&quot;");
+  faOthers().forEach(o=>{const s=o.s,has=!!s,fs=faNz(o.n+" "+(o.nba||"")+" "+TEAMS[o.t].name+" "+TEAMS[o.t].nick),nn=o.n.replace(/"/g,"&quot;");
     const logo=o.kind==="T"?`<span class="fagl" title="${TEAMS[o.t].nick}">${badge(o.t,"faglb")}</span>`:`<span class="fagl" title="G League ${TEAMS[o.t].nick}">${glBadge(o.t,"faglb")}</span>`;
     items.push({s,n:o.n,has,f:k=>`<tr class="farow faoth${has?"":" fanone"}" ${o.kind==="T"?`data-fat="${o.t}" data-fap="${nn}"`:`data-fag="${o.k.replace(/"/g,"&quot;")}"`} data-fs="${fs}"${(q?!fs.includes(q):!has)?" hidden":""}><td class="fark">${has?k:"–"}</td><td class="fanm"><b>${RTR(o.n)}${o.n}</b>${logo}<small>${o.kind==="T"?TEAMS[o.t].nick:"G-"+TEAMS[o.t].nick} · ${FA_R[o.r]}${o.nba?" · "+o.nba:""}</small></td><td>${has?s[0]:"—"}</td><td>${has?faNum(s[1]):"—"}</td><td class="fapdk">${has?pdkB(s[2],faNum(s[2])):"—"}</td><td>${has?eff(s[3]):"—"}</td></tr>`})});
   items.sort((a,b)=>faCmp(a.s,b.s,a.n,b.n));
+  const faN=(faSq||faGL||faFA?1:0)+(faRole!=="GFC"?1:0)+(faNba?1:0)+(faDt?1:0),faNbaL=[...new Set([...FA.map(x=>x[1]),...Object.values(ROSTER).flat().map(p=>p[3])].filter(Boolean))].sort();
   let k=0;const rows=items.map(o=>o.f(o.has?++k:0)).join(""),oth="";
   const ch=(attr,val,lab,on)=>`<button class="fach" ${attr}="${val}" aria-pressed="${on}">${lab}</button>`;
-  return `${H("Giocatori",`<em>${FA.length} giocatori</em>`)}
+  return `${H("Giocatori",`<em>${k} giocatori</em>`)}
   <input id="faq" class="vtq" type="search" placeholder="🔍 Cerca giocatore o squadra NBA" autocomplete="off" aria-label="Cerca giocatore" value="${faQ.replace(/"/g,"&quot;")}">
-  <div class="fasel"><div>${["24/25","25/26","26/27"].map(z=>ch("data-fasz",z,FA_SZL[z],faSz===z)).join("")}</div><div>${ch("data-fasrc","",'Tutti',!faGL&&!faFA)}${ch("data-fagl","1","G League",faGL)}${ch("data-fafa","1","Free agent",faFA)}</div><div>${[["G","G"],["F","A"],["C","C"]].map(([v,l])=>ch("data-farole",v,l,faRole.includes(v))).join("")}</div></div>
+  <div class="fabar">${perBtn("fa",FPR.da,FPR.a)}<button class="fafil${faN?" on":""}" data-fafil="1" aria-expanded="${faOpen}"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4-2v-4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Filtri${faN?` <i>${faN}</i>`:""}</button></div>
+  ${faOpen?`<div class="fapan"><div class="fapl">Origine</div><div class="fapr">${[["","Tutti"],["sq","Solo squadre"],["gl","Solo G League"],["fa","Solo free agent"]].map(([v,l])=>ch("data-fasrc",v,l,(faSq?"sq":faGL?"gl":faFA?"fa":"")===v)).join("")}</div>
+  <div class="fapl">Ruoli</div><div class="fapr">${[["G","Guardie"],["F","Ali"],["C","Centri"]].map(([v,l])=>ch("data-farole",v,l,faRole.includes(v))).join("")}</div>
+  <div class="fapl">Squadra</div><div class="fapr two"><label class="grsel"><span>Squadra NBA</span><select data-fasel="nba"><option value="">Tutte</option>${faNbaL.map(t=>`<option value="${t}"${t===faNba?" selected":""}>${t}</option>`).join("")}</select></label><label class="grsel"><span>Squadra Dreamers</span><select data-fasel="dt"><option value="">Tutte</option>${Object.keys(TEAMS).map(t=>`<option value="${t}"${t===faDt?" selected":""}>${TEAMS[t].nick}</option>`).join("")}</select></label></div>
+  <button class="fareset" data-fareset="1">Azzera i filtri</button></div>`:""}
   <div class="tbl-wrap"><table class="fatbl"><thead><tr><th>#</th><th>Giocatore</th>${[[0,"PG"],[1,"Min"],[2,"PDK"],[3,"Eff."]].map(([k,l])=>`<th class="fasrt${faSrt.k===k?" on":""}" data-fasrt="${k}" role="button" tabindex="0" aria-label="Ordina per ${l}${faSrt.k===k?(faSrt.d<0?", ora decrescente":", ora crescente"):""}">${l}${faSrt.k===k?(faSrt.d<0?" ▼":" ▲"):""}</th>`).join("")}</tr></thead><tbody>${rows}${oth}</tbody></table></div>
   <p class="note">«Tutti» mostra free agent, giocatori delle squadre ufficiali e delle G League (con il logo della squadra proprietaria) in un'unica classifica; «Free agent» tiene solo i free agent. Media per partita della stagione scelta (solo regular season). <span class="fagl">${badge("DOL","faglb")}<i>G</i></span> = giocatore nella G League di quella franchigia. PDK ufficiali Dunkest (dunkest.com). Dati al ${FA_AGG}. Tocca un giocatore per la scheda.</p>`;
 }
 let faPS=null,faGLoad=false;
 function faLoadG(){if(typeof FAG!=="undefined"||faGLoad===true)return;faGLoad=true;const s=document.createElement("script");s.src="fa-games.js";
-  s.onload=()=>{if(cur==="faplayer"){const y=scrollY;render();scrollTo(0,y)}};s.onerror=()=>{faGLoad="err";if(cur==="faplayer")render()};document.head.appendChild(s)}
+  s.onload=()=>{if(cur==="faplayer"||cur==="fa"){const y=scrollY;render();scrollTo(0,y)}};s.onerror=()=>{faGLoad="err";if(cur==="faplayer")render()};document.head.appendChild(s)}
 function faGames(x){
   if(typeof FAG==="undefined"){faLoadG();return `${H("Partita per partita")}<p class="note">${faGLoad==="err"?"Partite non disponibili in questo momento (serve la connessione).":"Caricamento delle partite…"}</p>`}
   const G=FAG[x[0]]||{},SZ=["2026/27","2025/26","2024/25"],have=SZ.filter(z=>G[z]&&G[z].length);
@@ -4463,14 +4484,18 @@ function vGLP(){
 document.addEventListener("click",e=>{const sm=e.target.closest("details.glp>summary");if(sm){const d=sm.parentElement;if(d.dataset.glk){e.preventDefault();e.stopPropagation();glVai(d.dataset.glk)}return}
   if(e.target.closest("#glpback")&&cur==="glplayer"&&!NAVH.length){cur="gleague";render();scrollTo(0,0)}},true);
 document.getElementById("main").addEventListener("click",e=>{
-  const b=e.target.closest("[data-fan],[data-fat],[data-fag],[data-fasz],[data-fasrc],[data-farole],[data-fagl],[data-fafa],[data-faps],[data-fasrt],#faback");if(!b)return;
+  const b=e.target.closest("[data-fan],[data-fat],[data-fag],[data-fafil],[data-fareset],[data-fasrc],[data-farole],[data-faps],[data-fasrt],#faback");if(!b)return;
   if(b.dataset.fasrt!==undefined){const k=+b.dataset.fasrt,y=scrollY;faSrt=faSrt.k===k?{k,d:-faSrt.d}:{k,d:-1};render();scrollTo(0,y);return}
   if(b.dataset.fat){curTeam=b.dataset.fat;curPlayer=b.dataset.fap;gFrom="fa";cur="giocatore";render();scrollTo(0,0);return}
   if(b.dataset.fag){glVai(b.dataset.fag);return}
   if(b.dataset.faps){faPS=b.dataset.faps;const y=scrollY;render();scrollTo(0,y);return}
   if(b.id==="faback"){cur=faFrom==="home"?"home":"fa";render();scrollTo(0,0);return}
   if(b.dataset.fan!==undefined){faFrom=cur==="home"?"home":"fa";faP=b.dataset.fan;faPS=null;cur="faplayer";render();scrollTo(0,0);return}
-  if(b.dataset.fasz)faSz=b.dataset.fasz;if(b.dataset.fasrc!==undefined){faGL=false;faFA=false}if(b.dataset.farole!==undefined){const v=b.dataset.farole;let n=faRole.includes(v)?faRole.replace(v,""):faRole+v;faRole=n?"GFC".split("").filter(c=>n.includes(c)).join(""):"GFC"}if(b.dataset.fagl){faGL=!faGL;if(faGL)faFA=false}if(b.dataset.fafa){faFA=!faFA;if(faFA)faGL=false}render()});
+  if(b.dataset.fafil){faOpen=!faOpen}
+  if(b.dataset.fasrc!==undefined){const v=b.dataset.fasrc;faSq=v==="sq";faGL=v==="gl";faFA=v==="fa"}
+  if(b.dataset.farole!==undefined){const v=b.dataset.farole;let n=faRole.includes(v)?faRole.replace(v,""):faRole+v;faRole=n?"GFC".split("").filter(c=>n.includes(c)).join(""):"GFC"}
+  if(b.dataset.fareset){faSq=faGL=faFA=false;faRole="GFC";faNba="";faDt=""}
+  render()});
 document.getElementById("main").addEventListener("change",e=>{if(e.target.id!=="fapsz")return;faPS=e.target.value;const y=scrollY;render();scrollTo(0,y)});
 document.getElementById("main").addEventListener("input",e=>{if(e.target.id!=="faq")return;faQ=e.target.value;const q=faNz(faQ.trim());
   document.querySelectorAll(".farow").forEach(r=>{r.hidden=q?!r.dataset.fs.includes(q):r.classList.contains("fanone")})});
@@ -4790,6 +4815,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-per]");if(
   const pd=e.target.closest("[data-pd]");if(pd&&!pd.disabled){const iso=pd.dataset.pd;if(!PK.s0){PK.s0=iso;perDisegna();return}
     let a0=PK.s0,b0=iso;if(b0<a0){const t=a0;a0=b0;b0=t}PK.s0=null;PK.da=a0;PK.a=b0;perDisegna();setTimeout(()=>perFine(a0,b0),260)}});
 PER_CB.gr=(da,a)=>{GR.da=da;GR.a=a};
+PER_CB.fa=(da,a)=>{FPR.da=da;FPR.a=a};
 PER_CB.tr=(da,a)=>{TRN.da=da;TRN.a=a;TRN.on=null};
 PER_CB.nbg=(da,a)=>{NB.g.from=da;NB.g.to=a};
 PER_CB.nbr=(da,a)=>{NB.mode="r";NB.from=da;NB.to=a};
@@ -6644,7 +6670,7 @@ document.getElementById("main").addEventListener("click",e=>{
   if(e.target.classList&&e.target.classList.contains("trsheet")){TRN.det=null;e.target.remove();return}
   const r=e.target.closest("[data-trln]");if(r&&!e.target.closest("[data-grafico]")&&!e.target.closest("[data-trtog]")){e.preventDefault();TRN.det=r.dataset.trln;const y=window.scrollY;render();window.scrollTo(0,y);return}
   if(r&&e.target.closest("[data-trtog]")){e.preventDefault();const n=r.dataset.trln;TRN.on=TRN.on||[];const i=TRN.on.indexOf(n);if(i>=0)TRN.on.splice(i,1);else{TRN.on.push(n);if(TRN.on.length>TR_MAXL)TRN.on.shift()}const y=window.scrollY;render();window.scrollTo(0,y)}});
-document.getElementById("main").addEventListener("change",e=>{const s=e.target.closest("select[data-tr]");if(!s||cur!=="trend")return;const k=s.dataset.tr;
+document.getElementById("main").addEventListener("change",e=>{const fs=e.target.closest("select[data-fasel]");if(fs&&cur==="fa"){if(fs.dataset.fasel==="nba")faNba=fs.value;else faDt=fs.value;const y=window.scrollY;render();window.scrollTo(0,y);return}const s=e.target.closest("select[data-tr]");if(!s||cur!=="trend")return;const k=s.dataset.tr;
   if(k==="sz"||k==="sz2"){TRN[k]=s.value;TRN.mese="";TRN.mese2=""}else if(k==="mese"){TRN.mese=s.value;TRN.mese2=s.value}else TRN[k]=s.value;TRN.on=null;const y=window.scrollY;render();window.scrollTo(0,y)});
 /* Grafico: apertura, chiusura, menu e linee */
 document.getElementById("main").addEventListener("click",e=>{
