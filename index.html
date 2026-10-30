@@ -1229,9 +1229,9 @@ body:not(.notte) .tmc .tmar{color:var(--gold)}
 .rcg{background:var(--card,#16213f);border:1px solid rgba(255,255,255,.07);border-radius:10px;overflow:hidden}
 .rcg h4{margin:0;display:flex;align-items:center;gap:8px;padding:5px 10px;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#cbd5e1;background:rgba(255,255,255,.04)}
 .rcg h4 em{margin-left:auto;font-style:normal;color:var(--muted)}
-.rcg .gpl{display:grid;grid-template-columns:1fr 1fr;padding:0}
+.rcg .gpl{display:grid;grid-template-columns:1fr 1fr;grid-auto-flow:column;padding:0}
 .rcg .gpl li.rrow{display:flex;align-items:center;gap:4px;padding:5px 8px;min-width:0;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.05)}
-.rcg .gpl li.rrow:nth-child(odd){border-right:1px solid rgba(255,255,255,.05)}
+.rcg .gpl li.rrow.lc{border-right:1px solid rgba(255,255,255,.05)}
 .rcg .rnm b{font-size:13.5px}
 .rcg .rnm small{font-size:10px;letter-spacing:.06em}
 .rcg .rpdk .pdkx{font-size:15px;padding:1px 7px}.rcg .rpdk .dash{color:var(--muted)}
@@ -3079,7 +3079,7 @@ function vRoster(){
   ${(()=>{const R={G:"Guardia",F:"Ala",C:"Centro"},L={G:"G",F:"A",C:"C"};
     const RN={G:"Guardie",F:"Ali",C:"Centri"};
     const row=p=>{const ij=INJ[p[0]]&&INJ[p[0]].stato!=="ok"?`<span class="injtag ${INJ[p[0]].stato}">${STATI[INJ[p[0]].stato][0]}</span>`:"",pm=pdkMed(p[0]);return `<li class="rrow" data-pl="${p[0]}" role="button" tabindex="0"><span class="rnm"><b>${p[0]}</b><small>#${p[1]} · ${p[3]}${ij?` · ${ij}`:""}</small>${AVVISI[p[0]]?`<span class="avviso rav">${AVVISI[p[0]]}</span>`:""}</span><span class="rtags">${ROOKIE.includes(p[0])?`<span class="rookie">R</span>`:""}<span class="rpdk">${pm!=null?pdkB(pm):'<span class="dash">—</span>'}</span></span></li>`};
-    return `<div class="rostc">${"GFC".split("").map(k=>{const sp=p=>AVVISI[p[0]]||ROOKIE.includes(p[0])?1:0,L=r.filter(p=>p[2]===k).map((p,i)=>[p,i]).sort((x,y)=>{const a=pdkMed(x[0][0]),b=pdkMed(y[0][0]);return sp(x[0])-sp(y[0])||(b==null?-1:a==null?1:b-a)||x[1]-y[1]}).map(x=>x[0]);return L.length?`<section class="rcg ${k}"><h4><span class="grl ${k}">${{G:"G",F:"A",C:"C"}[k]}</span>${RN[k]}<em>${L.length}</em></h4><ul class="gpl">${L.map(row).join("")}</ul></section>`:""}).join("")}</div>`})()}`;
+    return `<div class="rostc">${"GFC".split("").map(k=>{const sp=p=>AVVISI[p[0]]||ROOKIE.includes(p[0])?1:0,L=r.filter(p=>p[2]===k).map((p,i)=>[p,i]).sort((x,y)=>{const a=pdkMed(x[0][0]),b=pdkMed(y[0][0]);return sp(x[0])-sp(y[0])||(b==null?-1:a==null?1:b-a)||x[1]-y[1]}).map(x=>x[0]);return L.length?`<section class="rcg ${k}"><h4><span class="grl ${k}">${{G:"G",F:"A",C:"C"}[k]}</span>${RN[k]}<em>${L.length}</em></h4><ul class="gpl" style="grid-template-rows:repeat(${Math.ceil(L.length/2)},auto)">${L.map((p,i)=>row(p).replace("<li class=\"rrow\"",i<Math.ceil(L.length/2)?"<li class=\"rrow lc\"":"<li class=\"rrow\"")).join("")}</ul></section>`:""}).join("")}</div>`})()}`;
 }
 
 const f2=n=>n.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
