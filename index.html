@@ -2977,7 +2977,7 @@ const DECO={
  FOX:(c,k)=>`<pattern id="${k}p" width="7" height="10" patternUnits="userSpaceOnUse"><rect width="1.2" height="10" fill="#111" opacity=".55"/></pattern><rect width="120" height="146" fill="url(#${k}p)"/>
    <path d="M4 54 L16 54 L14 130 L2 130 Z M116 54 L104 54 L106 130 L118 130 Z" fill="#111"/>`,
  PEA:(c,k)=>c.feather?(()=>{const eye=(x,y,r,f)=>`<g transform="translate(${x} ${y}) rotate(${f})"><ellipse rx="${r*1.25}" ry="${r*1.9}" fill="#16b35a"/><ellipse rx="${r*.95}" ry="${r*1.35}" fill="#ff8a1f"/><ellipse rx="${r*.62}" ry="${r*.85}" fill="#2f6bff"/><ellipse rx="${r*.3}" ry="${r*.42}" fill="#0a1f3d"/></g>`;
-    return`<rect width="120" height="146" fill="#16b35a" opacity=".12"/>${eye(10,74,5,-18)}${eye(13,98,5,-10)}${eye(9,122,5,-4)}${eye(110,74,5,18)}${eye(107,98,5,10)}${eye(111,122,5,4)}<path d="M20 52 L22 146 M100 52 L98 146" stroke="#2f6bff" stroke-width="1.6"/>`})():`<g fill="none" stroke="${c.dec||"#ff7a1a"}" stroke-width="4"><path d="M2 70 L16 80 L2 90"/><path d="M2 88 L16 98 L2 108"/><path d="M2 106 L16 116 L2 126"/><path d="M118 70 L104 80 L118 90"/><path d="M118 88 L104 98 L118 108"/><path d="M118 106 L104 116 L118 126"/></g>
+    return`${c.ftint?`<rect width="120" height="146" fill="#16b35a" opacity=".12"/>`:""}${eye(10,74,5,-18)}${eye(13,98,5,-10)}${eye(9,122,5,-4)}${eye(110,74,5,18)}${eye(107,98,5,10)}${eye(111,122,5,4)}<path d="M20 52 L22 146 M100 52 L98 146" stroke="${c.fline||"#2f6bff"}" stroke-width="1.6"/>`})():`<g fill="none" stroke="${c.dec||"#ff7a1a"}" stroke-width="4"><path d="M2 70 L16 80 L2 90"/><path d="M2 88 L16 98 L2 108"/><path d="M2 106 L16 116 L2 126"/><path d="M118 70 L104 80 L118 90"/><path d="M118 88 L104 98 L118 108"/><path d="M118 106 L104 116 L118 126"/></g>
    <g fill="#22c55e" opacity=".9"><ellipse cx="9" cy="62" rx="4" ry="6"/><ellipse cx="111" cy="62" rx="4" ry="6"/></g><g fill="#0b2a8a"><circle cx="9" cy="63" r="2"/><circle cx="111" cy="63" r="2"/></g>`,
  SPI:(c,k)=>`<g stroke="#111" stroke-width="1" fill="none" opacity=".55">${[0,1,2,3,4,5,6].map(i=>`<path d="M120 146 L${120-i*22} 0"/><path d="M120 146 L0 ${146-i*24}"/>`).join("")}${[30,55,80,105,130].map(r=>`<path d="M${120-r} 146 Q${120-r*.8} ${146-r*.8} 120 ${146-r}"/>`).join("")}</g>
    <path d="M4 54 L14 54 L12 130 L2 130 Z M116 54 L106 54 L108 130 L118 130 Z" fill="#111"/>`,
@@ -3002,9 +3002,9 @@ function kitSalva(){try{if(KITG==null)localStorage.removeItem("dl_kitg");else lo
 function kitDi(t){const nt=typeof CNT!=="undefined"&&CNT&&cur==="campo";if(KITG!=null)return KITG;return nt?1:0}/* la scelta della maglia vale in TUTTE le sezioni (giocatore, scontri, trade...) */
 function kitC(t,k){const T=t==="PEA"?{...TEAMS[t],bg:"#2f6bff"}/* 30/10: sfondo Peacocks rosa, maglie invariate */:TEAMS[t];
   if(t==="PEA"){/* 30/10/2026 Peacocks: 1 blu con dettagli verdi, 2 rosa (colore sfondo) con dettagli verdi, 3 "piuma di pavone" */
-    if(k===1)return{...T,bg:"#f70990",fg:"#ffffff",trim:"#16b35a",jstroke:"#0b5e30",outer:"#16b35a",dec:"#16b35a"};
-    if(k===2)return{...T,bg:"#0b4b57",fg:"#ff8a1f",trim:"#16b35a",tline:"#2f6bff",tlw:1.6,jstroke:"#0a1f3d",outer:"#16b35a",feather:1};
-    if(k===0)return{...T,bg:"#2f6bff",fg:"#ffffff",trim:"#16b35a",jstroke:"#0b5e30",outer:"#16b35a",dec:"#16b35a"};}
+    if(k===1)return{...T,bg:"#f70990",fg:"#ffffff",trim:"#16b35a",jstroke:"#0b5e30",outer:"#16b35a",feather:1,fline:"#16b35a"};
+    if(k===2)return{...T,bg:"#0b4b57",fg:"#f70990",trim:"#16b35a",tline:"#2f6bff",tlw:1.6,jstroke:"#ffffff",outer:"#0a1f3d",feather:1,ftint:1,fline:"#2f6bff"};
+    if(k===0)return{...T,bg:"#012dd5",fg:"#ffffff",trim:"#16b35a",jstroke:"#0b5e30",outer:"#16b35a",feather:1,fline:"#16b35a"};}
   const casa=t==="DUC"?{...T,bg:"#facc15"}:t==="SPI"?{...T,bg:"#ffffff",fg:"#111111"}:t==="DOL"?{...T,bg:"#f4f6f8",fg:"#1747c9",trim:"#1747c9",jstroke:"#ffffff",outer:"#1747c9"}:T;
   if(k===1)return t==="DUC"?{...T,bg:"#141414",fg:"#facc15",trim:"#facc15"}:t==="PEA"?{...T,bg:"#0f6b3f",fg:"#ffffff",trim:"#2f6bff",jstroke:"#062e1b",outer:"#2f6bff"}/* Peacocks: maglia "notte" verde pavone invece che nera */:{...T,bg:"#151515",fg:"#ffffff",trim:NOTTE_ACC(t),jstroke:"#000000",outer:NOTTE_ACC(t)};
   if(k===2){const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
