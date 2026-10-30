@@ -6255,7 +6255,7 @@ async function shHistTrade(i,O){O=O||{};const PRE=!!O.T,M=histTradeModel(i,O.T);
   let topH;const cw=(IN-44)/3,cellH=132;
   if(N===2){const pH=M.sides.map(sd=>230+Math.round(sd.pl.length*rowH*SC)+exH(sd,pw)+24);topH=Math.max(...pH);M.panH=topH}
   else{M.pHs=M.sides.map(sd=>160+Math.ceil(sd.pl.length/3)*cellH+exH(sd,IN)+16);topH=M.pHs.reduce((q,h)=>q+h+20,0)-20}
-  const H=190+topH+40+(PRE?170:parH)+130;
+  const H=190+topH+40+(PRE?125:parH)+130;
   const{cv,c}=await shBase(H,W,0,1);
   c.font=SH_F(700,28,1);c.textAlign="right";c.textBaseline="alphabetic";c.fillStyle="rgba(233,213,255,.75)";c.fillText((PRE?"PIC-TRADE · ":"TRADE ALERT · ")+(M.T.data||"")+" "+(M.T.ora||""),W-56,100);
   let y=190;
@@ -6305,7 +6305,7 @@ async function shHistTrade(i,O){O=O||{};const PRE=!!O.T,M=histTradeModel(i,O.T);
       y+=ph+20}
     y+=20}
   /* PARERE */
-  if(PRE){const gg=c.createLinearGradient(56,y,56+IN,y);gg.addColorStop(0,"#16a34a");gg.addColorStop(1,"#15803d");shRR(c,56,y,IN,150,26);c.fillStyle=gg;c.fill();c.strokeStyle="rgba(255,255,255,.35)";c.lineWidth=3;c.stroke();c.textAlign="center";c.textBaseline="alphabetic";c.fillStyle="#fff";c.font=SH_F(800,66,1);c.fillText("✔ SCAMBIO UFFICIALE",56+IN/2,y+(O.sub?78:95));c.font=SH_B(600,28);c.fillStyle="rgba(255,255,255,.92)";c.fillText(O.sub||"",56+IN/2,y+122);c.textAlign="left"}else{
+  if(PRE){const gg=c.createLinearGradient(56,y,56+IN,y);gg.addColorStop(0,"#7c3aed");gg.addColorStop(.55,"#a855f7");gg.addColorStop(1,"#6366f1");shRR(c,56,y,IN,105,22);c.fillStyle=gg;c.fill();c.strokeStyle="rgba(233,213,255,.55)";c.lineWidth=3;c.stroke();c.textAlign="center";c.textBaseline="alphabetic";c.fillStyle="#fff";c.font=SH_F(800,46,1);c.letterSpacing="2px";c.fillText("✔ SCAMBIO UFFICIALE",56+IN/2,y+(O.sub?50:67));c.letterSpacing="0px";c.font=SH_B(600,22);c.fillStyle="rgba(255,255,255,.92)";c.fillText(O.sub||"",56+IN/2,y+86);c.textAlign="left"}else{
   shRR(c,56,y,IN,parH,26);c.fillStyle="rgba(10,6,24,.72)";c.fill();c.strokeStyle="rgba(196,181,253,.28)";c.lineWidth=2;c.stroke();
   c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_F(800,40,1);c.fillStyle="#e9d5ff";c.fillText("IL PARERE DI CLAUDE",92,y+62);
   const vcol=M.d<.10?"#22c55e":M.d<.30?"#f59e0b":"#ef4444";shRR(c,92,y+82,W-184,80,16);c.fillStyle=vcol;c.fill();c.fillStyle="#fff";c.textAlign="center";c.textBaseline="middle";let vz=46;c.font=SH_F(800,vz,1);const vt=M.verdict[0].toUpperCase();while(vz>26&&c.measureText(vt).width>W-184-40){vz-=2;c.font=SH_F(800,vz,1)}c.fillText(vt,W/2,y+123);
