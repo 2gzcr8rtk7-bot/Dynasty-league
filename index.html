@@ -4371,7 +4371,7 @@ function vFA(){
   const ch=(attr,val,lab,on)=>`<button class="fach" ${attr}="${val}" aria-pressed="${on}">${lab}</button>`;
   return `${H("Giocatori",`<em>${FA.length} giocatori</em>`)}
   <input id="faq" class="vtq" type="search" placeholder="🔍 Cerca giocatore o squadra NBA" autocomplete="off" aria-label="Cerca giocatore" value="${faQ.replace(/"/g,"&quot;")}">
-  <div class="fasel"><div>${["24/25","25/26","26/27"].map(z=>ch("data-fasz",z,FA_SZL[z],faSz===z)).join("")}</div><div>${[["","Tutti"],["G","G"],["F","A"],["C","C"]].map(([v,l])=>ch("data-farole",v,l,faRole===v)).join("")}${ch("data-fagl","1","G League",faGL)}${ch("data-fafa","1","Free agent",faFA)}</div></div>
+  <div class="fasel"><div>${["24/25","25/26","26/27"].map(z=>ch("data-fasz",z,FA_SZL[z],faSz===z)).join("")}</div><div>${[["","Tutti"],["G","G"],["F","A"],["C","C"]].map(([v,l])=>ch("data-farole",v,l,v===""?(!faRole&&!faGL&&!faFA):faRole===v)).join("")}${ch("data-fagl","1","G League",faGL)}${ch("data-fafa","1","Free agent",faFA)}</div></div>
   <div class="tbl-wrap"><table class="fatbl"><thead><tr><th>#</th><th>Giocatore</th>${[[0,"PG"],[1,"Min"],[2,"PDK"],[3,"Eff."]].map(([k,l])=>`<th class="fasrt${faSrt.k===k?" on":""}" data-fasrt="${k}" role="button" tabindex="0" aria-label="Ordina per ${l}${faSrt.k===k?(faSrt.d<0?", ora decrescente":", ora crescente"):""}">${l}${faSrt.k===k?(faSrt.d<0?" ▼":" ▲"):""}</th>`).join("")}</tr></thead><tbody>${rows}${oth}</tbody></table></div>
   <p class="note">«Tutti» mostra free agent, giocatori delle squadre ufficiali e delle G League (con il logo della squadra proprietaria) in un'unica classifica; «Free agent» tiene solo i free agent. Media per partita della stagione scelta (solo regular season). <span class="fagl">${badge("DOL","faglb")}<i>G</i></span> = giocatore nella G League di quella franchigia. PDK ufficiali Dunkest (dunkest.com). Dati al ${FA_AGG}. Tocca un giocatore per la scheda.</p>`;
 }
@@ -4470,7 +4470,7 @@ document.getElementById("main").addEventListener("click",e=>{
   if(b.dataset.faps){faPS=b.dataset.faps;const y=scrollY;render();scrollTo(0,y);return}
   if(b.id==="faback"){cur=faFrom==="home"?"home":"fa";render();scrollTo(0,0);return}
   if(b.dataset.fan!==undefined){faFrom=cur==="home"?"home":"fa";faP=b.dataset.fan;faPS=null;cur="faplayer";render();scrollTo(0,0);return}
-  if(b.dataset.fasz)faSz=b.dataset.fasz;if(b.dataset.farole!==undefined)faRole=b.dataset.farole;if(b.dataset.fagl)faGL=!faGL;if(b.dataset.fafa)faFA=!faFA;render()});
+  if(b.dataset.fasz)faSz=b.dataset.fasz;if(b.dataset.farole!==undefined){faRole=b.dataset.farole;if(faRole===""){faGL=false;faFA=false}}if(b.dataset.fagl){faGL=!faGL;if(faGL)faFA=false}if(b.dataset.fafa){faFA=!faFA;if(faFA)faGL=false}render()});
 document.getElementById("main").addEventListener("change",e=>{if(e.target.id!=="fapsz")return;faPS=e.target.value;const y=scrollY;render();scrollTo(0,y)});
 document.getElementById("main").addEventListener("input",e=>{if(e.target.id!=="faq")return;faQ=e.target.value;const q=faNz(faQ.trim());
   document.querySelectorAll(".farow").forEach(r=>{r.hidden=q?!r.dataset.fs.includes(q):r.classList.contains("fanone")})});
