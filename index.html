@@ -331,7 +331,7 @@ h2:has(.hsrch)::after{display:none}h2:has(.hsrch) .tvgo{margin-left:auto}
 .metsw{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line)}
 .metsw button,.advbtn{height:34px;padding:0 8px;border:0;background:var(--panel);color:var(--muted);font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
 .metsw button[aria-pressed="true"]{background:var(--gold);color:#0a0f1f}
-.advbtn{display:block;width:100%;border:1px solid var(--line)}.advbtn[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
+.advbtn{display:block;width:100%;border:1px solid var(--line)}.advbtn.ggy{color:#facc15;border-color:rgba(250,204,21,.55);font-size:14px}.advbtn[aria-pressed="true"]{border-color:var(--gold);color:var(--gold)}
 .esqadv{min-width:760px}.esqadv td{text-align:center!important}.esqadv td.pnm{text-align:left!important}.esqadv th{text-align:center}
 .esqadv .part{opacity:.5}.esqadv .ev{font-size:14px}
 .trd,.dl{font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;white-space:nowrap}
@@ -4388,7 +4388,7 @@ function extProfilo(o){
     games=`${H("Partita per partita",`<em>${GL.length} ${GL.length===1?"gara":"gare"}</em>`)}`+ms.map((m,i)=>{const l=by[m],dk=l.reduce((q,g)=>q+g[3],0),mn=l.reduce((q,g)=>q+g[2],0),av=mn?dk/mn:null;
       return `<details class="gmese"${i===0?" open":""}><summary><span class="gmn">${MESI[m]}</span><span class="gmesi">${l.length} ${l.length===1?"gara":"gare"} · media</span>${eff(av)}</summary>
       <div class="tbl-wrap"><table class="gtab"><thead><tr><th>Data</th><th>Min</th><th>Dunkest</th><th>Eff.</th><th>Proj 36'</th></tr></thead><tbody>${l.slice().reverse().map(g=>`<tr><td class="gd"><b>${g[0]} <i>vs ${g[1]}</i></b>${g[5]!=null?`<small>${g[5]} pt · ${g[6]} rb · ${g[7]} as</small>`:""}</td><td>${n1(g[2])}</td><td class="gdk">${pdkB(g[3],f2(g[3]))}</td><td>${eff(g[4])}</td><td class="gpj">${n1(g[4]*36)}</td></tr>`).join("")}</tbody></table></div></details>`}).join("")}
-  return `<button class="advbtn ggrbtn" ${o.gr}>📈 Grafico</button>${o.cm?`<button class="advbtn ggrbtn" data-cmpa="${o.cm.replace(/"/g,"&quot;")}">⚖ Confronta con un altro giocatore</button>`:""}
+  return `<button class="advbtn ggrbtn ggy" ${o.gr}>📈 Grafico</button>${o.cm?`<button class="advbtn ggrbtn ggy" data-cmpa="${o.cm.replace(/"/g,"&quot;")}">⚖ Confronta con un altro giocatore</button>`:""}
   ${H("PDK ed efficienza",`<em>${SZ_LBL[o.sz]||""} · ${o.sz}</em>`)}
   ${o.sel}
   ${!a?`<p class="note">${o.vuoto}</p>`:`
@@ -5044,8 +5044,8 @@ function vGiocatore(){
     <div class="gjer">${jersey(t,p[1],p[0])}</div>
     <div class="gtit"><small>${c.name}</small><h3>${p[0]}</h3><div class="segrow">${segBtn(p[0],1)}${plShBtn()}</div><p>${ruolo} · ${p[3]} · #${p[1]}${etaTxt(p[0])?`<span style="display:block">${etaTxt(p[0])}</span>`:""}</p>${INJ[p[0]]&&INJ[p[0]].stato!=="ok"?`<div class="injtag ${INJ[p[0]].stato}">${STATI[INJ[p[0]].stato][0]} · ${INJ[p[0]].tipo}</div>`:""}${ROOKIE.includes(p[0])?`<div class="rookie">Slot Rookie</div>`:""}${AVVISI[p[0]]?`<div class="avviso">${AVVISI[p[0]]}</div>`:""}</div>
   </div>
-  <button class="advbtn ggrbtn" data-grafico="${t}" data-grp="${p[0]}">📈 Grafico</button>
-  <button class="advbtn ggrbtn" data-cmpa="${p[0].replace(/"/g,"&quot;")}">⚖ Confronta con un altro giocatore</button>
+  <button class="advbtn ggrbtn ggy" data-grafico="${t}" data-grp="${p[0]}">📈 Grafico</button>
+  <button class="advbtn ggrbtn ggy" data-cmpa="${p[0].replace(/"/g,"&quot;")}">⚖ Confronta con un altro giocatore</button>
   ${H("PDK ed efficienza",`<em>${past?SZ_LBL[sz]+" · "+sz:"Agg. "+EFF.agg}</em>`)}
   ${szSel}
   ${e[1]==null?`<p class="note">${past?"Nessuna partita NBA in questa stagione: non era in NBA o non ha giocato.":"Nessuna partita giocata finora: i dati compariranno dopo la prima gara."}</p>`:`
