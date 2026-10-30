@@ -1543,4 +1543,8 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 ## 537 — Statistiche: «Statistiche notte» aperta di default sotto i pulsanti
 - Tolto il pulsante «Statistiche notte» (o «live» con modalità notte): la lista della notte (con frecce tra le notti e PDK/Eff.) è ora sempre aperta sotto i pulsanti, che restano.
 - Giocatori rosso, Squadre giallo. «Calcola il trend» in verde #22c55e, lo stesso verde dei PDK 30–40.
-- Stato: in coda, non pubblicato.
+- Stato: pubblicato (v145, 30/10/2026).
+
+## 538 — Pulsanti Statistiche in stile «card con icona in tondo»
+- Efficienza Cup viola, Calcola il trend verde, Giocatori rosso, Squadre giallo: sfumato scuro→colore, angoli arrotondati, icona e freccia in cerchi traslucidi, tondo decorativo nell'angolo.
+- Stato: pubblicato (v145, 30/10/2026).

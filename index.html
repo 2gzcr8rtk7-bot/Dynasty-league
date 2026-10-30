@@ -1811,12 +1811,23 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .vtnm{flex:1;min-width:0;display:grid;font-weight:700}.vtnm small{font-size:11px;color:var(--muted);font-weight:500}
 .vtrow b{font-family:var(--display);font-weight:800;font-size:17px;color:#93c5fd}.vtvp{display:grid;justify-items:end;min-width:52px}.vtvp small{font-size:9.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}.vtvp.pr b{color:var(--gold)}
 .trow.cup .ev{white-space:nowrap;flex:none}.trow.cup .trk,.trow.cup .cupm{width:30px;min-width:30px;margin:0;justify-self:center;flex:none;box-sizing:border-box}.trow.cup .cupm{height:30px}.trow.cup .trk{text-align:center}.trow.cup .tnm{min-width:0}.trow.cup .tnm b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cupbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:0 0 14px;padding:9px 14px;border:0;cursor:pointer;color:#2a1c00;background:#d4a72c;box-shadow:none}
+.cupbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:0 0 14px;padding:9px 14px;border:0;cursor:pointer;color:#fff;background:#6d4bd8;box-shadow:none}
 .cupbtn span{font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;letter-spacing:.22em;text-transform:uppercase;line-height:1}
 .cupbtn .cupt{width:18px;height:18px;flex:none}
 .cupbtn i{font-style:normal;font-family:var(--display);font-weight:800;font-size:20px;line-height:1;margin-left:2px}
 .cupic{font-size:28px;line-height:1}
 .cupbtn:active{transform:scale(.98)}
+/* (538) pulsanti Statistiche: card con icona in tondo */
+.cupbtn,.trbtn,.effsub{border:0!important;border-radius:16px;padding:16px 18px!important;color:#fff!important;justify-content:flex-start!important;box-shadow:0 8px 20px rgba(0,0,0,.35)!important;overflow:hidden;position:relative}
+.cupbtn{background:linear-gradient(135deg,#2e1065,#6d4bd8)!important}
+.trbtn{background:linear-gradient(135deg,#052e16,#16a34a)!important;margin:-4px 0 14px!important}
+.effsub[data-effsub=pl]{background:linear-gradient(135deg,#4c0519,#e11d48)!important}
+.effsub[data-effsub=sq]{background:linear-gradient(135deg,#713f12,#eab308)!important}
+.cupbtn::after,.trbtn::after,.effsub::after{content:"";position:absolute;right:-26px;top:-26px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.12);pointer-events:none}
+.cupbtn svg,.trbtn svg{width:30px!important;height:30px!important;padding:8px;border-radius:50%;background:rgba(255,255,255,.18);box-sizing:content-box}
+.cupbtn span,.trbtn span{flex:1;text-align:left;letter-spacing:.1em!important;font-size:19px!important}
+.cupbtn i,.trbtn i{width:30px;height:30px;line-height:30px;text-align:center;border-radius:50%;background:rgba(255,255,255,.2)}
+.effsub{font-size:21px!important}.effsub i{margin-left:auto}.effpair{gap:12px!important}
 .cuproom{margin:4px -16px 0;padding:16px;background:radial-gradient(ellipse at 50% 0%,#b5122e 0%,#6e0a1b 45%,#2a0610 100%);border-top:3px solid #ff2a4d;border-bottom:3px solid #ff2a4d}
 .cuphd{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .cuphd{position:relative}
