@@ -3079,7 +3079,7 @@ function vRoster(){
   ${(()=>{const R={G:"Guardia",F:"Ala",C:"Centro"},L={G:"G",F:"A",C:"C"};
     const RN={G:"Guardie",F:"Ali",C:"Centri"};
     const row=p=>{const ij=INJ[p[0]]&&INJ[p[0]].stato!=="ok"?`<span class="injtag ${INJ[p[0]].stato}">${STATI[INJ[p[0]].stato][0]}</span>`:"",pm=pdkMed(p[0]);return `<li class="rrow" data-pl="${p[0]}" role="button" tabindex="0"><span class="rnm"><b>${p[0]}</b><small>#${p[1]} · ${p[3]}${ij?` · ${ij}`:""}</small>${AVVISI[p[0]]?`<span class="avviso rav">${AVVISI[p[0]]}</span>`:""}</span><span class="rtags">${ROOKIE.includes(p[0])?`<span class="rookie">R</span>`:""}<span class="rpdk">${pm!=null?pdkB(pm):'<span class="dash">—</span>'}</span></span></li>`};
-    return `<div class="rostc">${"GFC".split("").map(k=>{const sp=p=>AVVISI[p[0]]||ROOKIE.includes(p[0])?1:0,L=r.filter(p=>p[2]===k).map((p,i)=>[p,i]).sort((x,y)=>sp(x[0])-sp(y[0])||x[1]-y[1]).map(x=>x[0]);return L.length?`<section class="rcg ${k}"><h4><span class="grl ${k}">${{G:"G",F:"A",C:"C"}[k]}</span>${RN[k]}<em>${L.length}</em></h4><ul class="gpl">${L.map(row).join("")}</ul></section>`:""}).join("")}</div>`})()}`;
+    return `<div class="rostc">${"GFC".split("").map(k=>{const sp=p=>AVVISI[p[0]]||ROOKIE.includes(p[0])?1:0,L=r.filter(p=>p[2]===k).map((p,i)=>[p,i]).sort((x,y)=>{const a=pdkMed(x[0][0]),b=pdkMed(y[0][0]);return sp(x[0])-sp(y[0])||(b==null?-1:a==null?1:b-a)||x[1]-y[1]}).map(x=>x[0]);return L.length?`<section class="rcg ${k}"><h4><span class="grl ${k}">${{G:"G",F:"A",C:"C"}[k]}</span>${RN[k]}<em>${L.length}</em></h4><ul class="gpl">${L.map(row).join("")}</ul></section>`:""}).join("")}</div>`})()}`;
 }
 
 const f2=n=>n.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
