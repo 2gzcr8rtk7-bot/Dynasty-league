@@ -1057,7 +1057,7 @@ body:not(.notte) .tmc .tmar{color:var(--gold)}
 .htile[data-team="DUC"] .hlg .badge{transform:translateY(-3px) scale(1.12)}
 .tlogo .lg-DUC{width:31px!important;height:31px!important}
 .chip .logo.lg-DUC{width:34px!important;height:34px!important;margin:-4px -2px}
-.teamhead .hlogo[data-t="DUC"]{width:74px;height:74px;margin:-10px -4px -10px -6px}
+.teamhead .hlogo[data-t="DUC"]{width:74px;height:74px;margin:-10px -4px -10px -6px;object-fit:contain}
 @media (max-width:420px){.teamhead .hlogo[data-t="DUC"]{width:72px;height:72px;margin:-10px -4px -10px -6px}}
 @media (max-width:420px){.teamhead:has(.rec+.rec) .hlogo[data-t="DUC"]{width:66px;height:66px;margin:-8px -10px -8px -8px}}
 .hrec{position:absolute;top:6px;right:8px;font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;background:rgba(0,0,0,.45);padding:1px 7px}
@@ -2584,10 +2584,11 @@ const LOGO2={"DUC":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeAAAAF+CAYAAA
 (()=>{const st=document.createElement("style");st.textContent=Object.entries(LOGO).map(([t,u])=>`.lg-${t}{background-image:url(${u})}`).join("")+Object.entries(LOGO2).map(([t,u])=>`.lg-${t}{background-image:url(${u})}.hlg .lg-${t}{background-image:url(${LOGO[t]})}`).join("");document.head.appendChild(st)})();
 /* LOGO DUCKS PERSONALIZZATO (area riservata › Personalizzazioni): scelta salvata su questo telefono; vale ovunque (Home, campo, banner, immagini condivise) tranne la G League, che ha il suo logo in GLEAGUE */
 const LOGO_DUC0={a:LOGO.DUC,b:LOGO2.DUC};
-const DUC_LOGHI=[["0","Originale",LOGO_DUC0.b||LOGO_DUC0.a],["1","Bandana Texas","loghi/duc-1.webp?v=3"],["2","Fulmine blu","loghi/duc-2.webp?v=3"],["3","Cowboy oro","loghi/duc-3.webp?v=3"],["4","Cowboy bianco","loghi/duc-4.webp?v=3"],["5","Sceriffo","loghi/duc-5.webp?v=3"],["6","Pazzo","loghi/duc-6.webp?v=3"],["7","Pazzo lingua","loghi/duc-7.webp?v=3"],["8","Pazzo furioso","loghi/duc-8.webp?v=3"]];
-let DUC_L="",DUC_C="",DUC_CURL=null;try{DUC_L=localStorage.getItem("dl_ducl")||"";DUC_C=localStorage.getItem("dl_ducc")||""}catch(e){}
-function ducLogoApply(){const f=DUC_LOGHI.find(x=>x[0]===DUC_L),u=f?f[2]:null,g=DUC_LOGHI.find(x=>x[0]===DUC_C),v=g?g[2]:null;DUC_CURL=v;LOGO.DUC=u||LOGO_DUC0.a;LOGO2.DUC=v||LOGO_DUC0.b;let st=document.getElementById("ducl");if(!st){st=document.createElement("style");st.id="ducl";document.head.appendChild(st)}st.textContent=u?`.lg-DUC,.hlg .lg-DUC{background-image:url(${u})}`:""}
-function ducLogoSet(k,w){if(w==="c"){DUC_C=k||"";try{k?localStorage.setItem("dl_ducc",k):localStorage.removeItem("dl_ducc")}catch(e){}}else{DUC_L=k||"";try{k?localStorage.setItem("dl_ducl",k):localStorage.removeItem("dl_ducl")}catch(e){}}ducLogoApply()}
+const DUC_LOGHI=[["0","Originale",LOGO_DUC0.b||LOGO_DUC0.a],["p","Papero (solo banner e Home)",LOGO_DUC0.a],["1","Bandana Texas","loghi/duc-1.webp?v=3"],["2","Fulmine blu","loghi/duc-2.webp?v=3"],["3","Cowboy oro","loghi/duc-3.webp?v=3"],["4","Cowboy bianco","loghi/duc-4.webp?v=3"],["5","Sceriffo","loghi/duc-5.webp?v=3"],["6","Pazzo","loghi/duc-6.webp?v=3"],["7","Pazzo lingua","loghi/duc-7.webp?v=3"],["8","Pazzo furioso","loghi/duc-8.webp?v=3"]];
+let DUC_L="",DUC_C="",DUC_CURL=null,DUC_BAN="";try{DUC_BAN=localStorage.getItem("dl_ducb")||"";DUC_L=localStorage.getItem("dl_ducl")||"";DUC_C=localStorage.getItem("dl_ducc")||""}catch(e){}
+const ducBan=()=>DUC_BAN==="p"?LOGO_DUC0.a:null;
+function ducLogoApply(){const f=DUC_LOGHI.find(x=>x[0]===DUC_L&&x[0]!=="p"),u=f?f[2]:null,g=DUC_LOGHI.find(x=>x[0]===DUC_C&&x[0]!=="p"),v=g?g[2]:null;DUC_CURL=v;LOGO.DUC=u||LOGO_DUC0.a;LOGO2.DUC=v||LOGO_DUC0.b;let st=document.getElementById("ducl");if(!st){st=document.createElement("style");st.id="ducl";document.head.appendChild(st)}st.textContent=u?`.lg-DUC,.hlg .lg-DUC{background-image:url(${u})}`:""}
+function ducLogoSet(k,w){if(k==="p"){DUC_BAN="p";try{localStorage.setItem("dl_ducb","p")}catch(e){}return}if(DUC_BAN){DUC_BAN="";try{localStorage.removeItem("dl_ducb")}catch(e){}}if(!k&&!DUC_BAN){}if(w==="c"){DUC_C=k||"";try{k?localStorage.setItem("dl_ducc",k):localStorage.removeItem("dl_ducc")}catch(e){}}else{DUC_L=k||"";try{k?localStorage.setItem("dl_ducl",k):localStorage.removeItem("dl_ducl")}catch(e){}}ducLogoApply()}
 ducLogoApply();
 /* Crediti disponibili di ogni franchigia */
 /* ===== CASSA =====
@@ -3227,7 +3228,7 @@ function vRoster(){
   const chips=Object.keys(TEAMS).map(t=>`<button class="chip" data-t="${t}" aria-pressed="${t===curTeam}">${badge(t)}${TEAMS[t].nick}</button>`).join("");
   return `<div class="chips">${chips}</div>
   <div class="teamhead" style="${dlHeadSty(curTeam)}">
-   ${LOGO[curTeam]?`<img class="hlogo" data-t="${curTeam}" src="${LOGO[curTeam]}" alt=""${dlHeadLogo(curTeam)}>`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div><div class="rec">${CREDITI[curTeam]??"–"}<small>CREDITI</small></div></div><button class="bshare hsh" data-rshare="${curTeam}" aria-label="Condividi roster"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+   ${LOGO[curTeam]?`<img class="hlogo" data-t="${curTeam}" src="${(curTeam==="DUC"&&ducBan())||LOGO[curTeam]}" alt=""${dlHeadLogo(curTeam)}>`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div><div class="rec">${CREDITI[curTeam]??"–"}<small>CREDITI</small></div></div><button class="bshare hsh" data-rshare="${curTeam}" aria-label="Condividi roster"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
   <div class="sumrow"><span>${r.length} giocatori</span></div>
   ${(()=>{const R={G:"Guardia",F:"Ala",C:"Centro"},L={G:"G",F:"A",C:"C"};
     const RN={G:"Guardie",F:"Ali",C:"Centri"};
@@ -6843,7 +6844,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>CNT?(nv(b[0])??-1e9)-(nv(a[0])??-1e9):(pdkMed(b[0])??-99)-(pdkMed(a[0])??-99));  /* panchina in ordine di efficienza media stagionale (stesso valore mostrato), si riordina a ogni aggiornamento */
   return `<button class="gback" id="cback">‹ Home</button>
   <div class="teamhead" style="${dlHeadSty(curTeam)}">
-   ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${(t==="DUC"&&DUC_CURL)||LOGO[t]}" alt=""${dlHeadLogo(t)}>`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
+   ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${(t==="DUC"&&(ducBan()||DUC_CURL))||LOGO[t]}" alt=""${dlHeadLogo(t)}>`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
   ${bacheca(t)}
   ${cassa(t)}
   ${CNT&&DT2?drTabellone(t,DT2,DK2,DP2,true):CNT?H(CNT?"Modalità notte":"Quintetto",`<em>${CNT?(()=>{const d=campoNotte();if(!d)return"nessuna partita";const dd=tvDt(d);return`${dd.getUTCDate()}/${dd.getUTCMonth()+1}`})():`Dreamers · ${DR_PH(DK,DP)}`}</em>${kitBtn(t)}<button class="cntbtn${CNT?" on":""}" id="cntbtn" aria-pressed="${CNT}" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`):drTabellone(t,DT,DK,DP)}
@@ -9431,7 +9432,7 @@ function sala(){if(!COL.d){cur="campo";return vCampo()}
   <button class="hoftile" data-hof="soft"><span class="hi">⚙️</span><span><b>Software</b><small>Cap · Multe</small></span><i>›</i></button>
  </div><p class="hoftt">🦆 Texas Ducks · uso interno</p></div>`}
 function pers(){if(!COL.d){cur="campo";return vCampo()}
- const card=(w,tit,nota)=>{const orig=w==="c"?(LOGO_DUC0.b||LOGO_DUC0.a):LOGO_DUC0.a;const c0=w==="c"?DUC_C:DUC_L,sel=DUC_LOGHI.find(x=>x[0]===c0);
+ const card=(w,tit,nota)=>{const orig=w==="c"?(LOGO_DUC0.b||LOGO_DUC0.a):LOGO_DUC0.a;const c0=DUC_BAN?"p":(w==="c"?DUC_C:DUC_L),sel=DUC_LOGHI.find(x=>x[0]===c0);
   const opt=(k,nm,u)=>`<button class="hlo${(c0||"")===k?" on":""}" data-hlo="${k}" data-hw="${w}" aria-pressed="${(c0||"")===k}"><span style="background-image:url(${u})"></span><small>${E(nm)}</small></button>`;
   return`<section class="hofcard"><h4>${tit}</h4><p class="setnote">${nota}</p>
  <div class="hlprev"><span style="background-image:url(${sel?sel[2]:orig})"></span><div><b>${sel?E(sel[1]):"Logo ufficiale"}</b><small>In uso adesso</small></div></div>

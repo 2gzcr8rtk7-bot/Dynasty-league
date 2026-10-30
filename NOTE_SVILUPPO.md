@@ -1622,3 +1622,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 
 ## 572 — Sede giornalistica «Notizie» (area Ducks, NON pubblicata, branch coda)
 Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 oro/bianco, pagina articolo, striscia ULTIM'ORA, banner TG, TG Dreamers a schermo intero con sigla/slide/striscia/controlli, prova voce). Voce = Web Speech it-IT (parte dopo un tocco). Ogni articolo del Post ha «🔊 Ascolta». Nessun numero segreto nel NV_LOG.
+
+573 — Ducks: banner con logo wordmark non più tagliato (`.teamhead .hlogo[data-t="DUC"]{object-fit:contain}`). Area riservata › Personalizzazioni: aggiunto il logo «Papero (solo banner e Home)» (chiave `p`, `DUC_BAN`, localStorage `dl_ducb`): se scelto compare solo nel banner Ducks (`ducBan()`), il resto dell'app resta con la scelta/ufficiale. Scegliere un altro logo o «Ripristina» lo toglie. SEGRETO, non in NV_LOG. In coda su `coda`, non pubblicato.
