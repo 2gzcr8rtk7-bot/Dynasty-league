@@ -1615,3 +1615,4 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 566. PUBBLICATA (v163) Dettaglio previsione in 3 passi numerati: 1 le partite previste (barre selezionabili), 2 migliore + bonus = valore del turno con la spiegazione del perché il bonus è basso/medio/alto, 3 dettaglio della partita scelta.
 567. PUBBLICATA (v163) Statistiche squadra: tolte PDK medio ed Eff. media; sotto la previsione una striscia Infortunati / Partite del prossimo turno (tutti i giocatori) / Trend squadra (ultime 4 partite dei giocatori contro il loro rendimento precedente); sotto Media e Record a turno.
 568. PUBBLICATA (v163) Striscia squadra: Infortunati in rosso (se ci sono), «Partite turno» sempre su una riga anche con doppie cifre (sotto «T4 · 31 giocabili»).
+569. (non pubblicata, in coda) Statistiche: tasti grandi Giocatori e Squadre più bassi del 15% (da 98 a 83 px).
