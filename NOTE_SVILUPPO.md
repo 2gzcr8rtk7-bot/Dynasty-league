@@ -1661,4 +1661,4 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 
 591 — G League: eliminata la «Classifica G League · efficienza di squadra». Restano le schede delle squadre satellite (con Eff. squadra al loro interno).
 
-592 — Anello di caricamento attorno al logo: mentre l'app scarica i dati da ESPN / NBA.com si riempie un anello verde (frazione di richieste completate), poi lampeggia pieno e sparisce. Il progresso è reale (richieste fatte / richieste lanciate), non finto. Su `coda`.
+592 — Anello di caricamento attorno al logo: mentre l'app scarica i dati da ESPN / NBA.com si riempie un anello viola scuro (frazione di richieste completate), poi lampeggia pieno e sparisce. Il progresso è reale (richieste fatte / richieste lanciate), non finto. Su `coda`.

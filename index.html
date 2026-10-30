@@ -736,11 +736,11 @@ header::after{content:"";position:absolute;inset:0;background:repeating-linear-g
 .lglogo:active{transform:scale(.9)}
 /* (592) anello di caricamento dati (ESPN / NBA) attorno al logo: si riempie davvero in base alle richieste completate */
 .brandwrap{position:relative}
-#lgring{position:absolute;pointer-events:none;border-radius:28%;padding:3px;opacity:0;transition:opacity .35s;background:conic-gradient(from 0deg,#35e0a1 calc(var(--p,0)*1turn),rgba(53,224,161,.18) 0);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+#lgring{position:absolute;pointer-events:none;border-radius:28%;padding:3px;opacity:0;transition:opacity .35s;background:conic-gradient(from 0deg,#6d28d9 calc(var(--p,0)*1turn),rgba(109,40,217,.22) 0);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
 #lgring.on{opacity:1}
 #lgring.on:not(.fin){animation:lgpulse 1.1s ease-in-out infinite}
-#lgring.fin{filter:drop-shadow(0 0 6px #35e0a1)}
-@keyframes lgpulse{50%{filter:drop-shadow(0 0 7px rgba(53,224,161,.8))}}
+#lgring.fin{filter:drop-shadow(0 0 6px #6d28d9)}
+@keyframes lgpulse{50%{filter:drop-shadow(0 0 7px rgba(109,40,217,.9))}}
 @media (prefers-reduced-motion:reduce){#lgring.on:not(.fin){animation:none}}
 
 .lglogo.spin{animation:lgspin .6s ease-in-out}
