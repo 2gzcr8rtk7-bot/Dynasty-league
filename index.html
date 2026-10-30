@@ -8861,10 +8861,10 @@ function vAtr(){const me=AT.t||iaTeam();
   const row=(p,s)=>`<button type="button" class="atp${AT.rem.has(p.n)?" rm":""}" data-at="tg" data-n="${atEsc(p.n)}"><span class="atn">${atEsc(p.n)}</span><small>${p.r} · ${p.e} anni</small><b>${p.v}</b></button>`,vg=atTot(c.give),vr=atTot(c.get),dp=Math.round(c.d*100);
   const sel=`<label class="atsq">Allenati come <select data-at="team">${Object.keys(TEAMS).map(t=>`<option value="${t}"${t===me?" selected":""}>${TEAMS[t].nick}</option>`).join("")}</select></label>`;
   return`${H("Allenamento IA Trade",`<em>${AT_LOG.length} risposte</em>`)}${sel}
-  <div class="atc"><div class="atside"><div class="athd">${badge(c.t)}<b>DAI</b><span>${vg}</span></div>${c.give.map(p=>row(p)).join("")}</div>
+  <div class="atc"><div class="atside get"><div class="athd"><b>TI OFFRO</b><span>${vr}</span></div>${c.get.map(p=>row(p)).join("")}</div>
   <div class="atmid">⇅</div>
-  <div class="atside get"><div class="athd">${badge(c.ot)}<b>RICEVI da ${TEAMS[c.ot].nick}</b><span>${vr}</span></div>${c.get.map(p=>row(p)).join("")}</div>
-  <div class="atdiff ${dp>=0?"up":"dn"}">Differenza di valore <b>${dp>0?"+":""}${dp}%</b></div></div>
+  <div class="atside"><div class="athd"><b>RICEVO</b><span>${vg}</span></div>${c.give.map(p=>row(p)).join("")}</div>
+  <div class="atdiff ${dp>=0?"up":"dn"}">Differenza di valore per te <b>${dp>0?"+":""}${dp}%</b></div></div>
   ${AT.chg?`<p class="note">Tocca i giocatori che toglieresti, poi scrivi cosa cambieresti.</p><input class="atnote" id="atn" placeholder="Es. al posto suo vorrei un lungo più giovane" value="${atEsc(AT.note)}"><div class="atbtns two"><button class="atb ok" data-at="send">Invia</button><button class="atb" data-at="cancel">Annulla</button></div>`:`<div class="atbtns"><button class="atb ko" data-at="n">✕ Rifiuto</button><button class="atb mod" data-at="chg">✎ Cambia</button><button class="atb ok" data-at="y">✓ Accetto</button></div>`}
   <div class="atbtns"><button class="atb rp" data-at="rep"${AT_LOG.length?"":" disabled"}>🖨 Stampa report (${AT_LOG.length})</button></div>
   <p class="note">Valori = quelli del Calcolatore trade. Scelte e crediti non sono inclusi: contano solo i giocatori.</p>`}
