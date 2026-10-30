@@ -7286,7 +7286,10 @@ const drLast=()=>{const k=Object.keys(drNotti()).sort();return k[k.length-1]||nu
 /* (371) CHIUSURA/APERTURA TURNI ALLE 12:30 (ora italiana): un turno si chiude, e il successivo si apre, solo dalle 12:30 del giorno italiano dopo l'ultima notte USA del turno (cosi i dati Dunkest sono gia caricati). Prima di quell'ora resta "in corso" anche se la sua ultima notte e finita. */
 const DR_GATE_MIN=12*60+30;
 function drGate(e){try{const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(window.DR_NOW||new Date()),g=t=>f.find(x=>x.type===t).value,rd=`${g("year")}-${g("month")}-${g("day")}`,mn=+g("hour")*60+ +g("minute"),n=drAdd(e,1);return rd>n||(rd===n&&mn>=DR_GATE_MIN)}catch(x){return true}}
-function drCurWeek(P){const l=drLast();let k=DR_TURNI.findIndex(x=>!drGate(x[1]))+1;if(!k)k=DR_TOT;if(l){const k2=DR_TURNI.findIndex(x=>l<=x[1])+1;if(k2>k)k=k2}return Math.max(1,Math.min(P?P.end:DR_TOT,k))}
+/* (497) turno CHIUSO = dati Dunkest dell'ultima notte caricati (a prescindere dall'ora) OPPURE dalle 12:30 del giorno dopo (chiusura forzata anche senza Dunkest) */
+function drDkHas(d){try{return !!DRD.notti[d]||drNightOfAgg(EFF.agg)>=d}catch(x){return false}}
+const drShut=e=>drDkHas(e)||drGate(e);
+function drCurWeek(P){const l=drLast();let k=DR_TURNI.findIndex(x=>!drShut(x[1]))+1;if(!k)k=DR_TOT;if(l){const k2=DR_TURNI.findIndex(x=>l<=x[1])+1;if(k2>k)k=k2}return Math.max(1,Math.min(P?P.end:DR_TOT,k))}
 /* REGOLA SCAMBI (utente, 29/10/2026): un giocatore scambiato non gioca MAI il turno già iniziato per la nuova squadra:
    conta per la squadra di prima fino alla fine del turno e per la nuova dal turno successivo.
    Turno iniziato = aperto (12:30 ora italiana del giorno dopo l'ultima notte del turno precedente; turno 1 dal DR_START).
@@ -7318,7 +7321,7 @@ const DR_BASE={DUC:{w:2,l:0,pf:527.99,pa:351.58,f:"VV"},FOX:{w:2,l:0,pf:542.68,p
 function drWeek(k){ // efficienze settimanali dei giocatori
   const N=drNotti(),s=drWeekStart(k),e=drWeekEnd(k),len=Math.round((Date.parse(e)-Date.parse(s))/864e5)+1,acc={};let nights=0;
   for(let i=0;i<len;i++){const n=N[drAdd(s,i)];if(!n)continue;nights++;Object.entries(n).forEach(([p,e])=>{const a=acc[p]||(acc[p]={s:0,g:0,b:null});const v=(typeof e==="number"?e:0);a.s+=v;a.g++;a.b=a.b==null?v:Math.max(a.b,v)})}
-  const l=drLast(),closed=!!l&&l>=e&&drGate(e);
+  const l=drLast(),closed=!!l&&l>=s&&drShut(e);
   return{acc,nights,len,closed,started:!!l&&l>=s,start:s,end:e}}
 const drEff=a=>a?(a.b!=null?a.b:a.s/a.g):null; // MIGLIOR PDK della settimana (dal 27/10/2026; prima era la media)
 /* RUOLI DREAMERS (regola invalicabile, 27/10/2026): i 10 titolari sono SEMPRE 4 guardie, 4 ali e 2 centri,

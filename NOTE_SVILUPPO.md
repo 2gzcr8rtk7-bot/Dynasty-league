@@ -1452,3 +1452,5 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 - "scarto" ora sta sopra i punteggi; sotto, LIVE (o "finale") affiancato al tasto condividi, che è centrato esattamente sotto il trattino dei punteggi.
 - Righe compattate (67 px, come prima del cambio): la tabella risultati ha di nuovo altezza fissa e mostra tutti i 4 scontri senza scorrere.
 - Stato: pubblicato (v131, 30/10/2026).
+
+497. **Chiusura turno: Dunkest oppure 12:30 forzata** — (30/10/2026, richiesta di Francesco). Un turno è chiuso (`drWeek().closed`) e il successivo parte (`drCurWeek`) appena sono caricati i dati Dunkest dell'ultima notte del turno (`drDkHas(e)`: notte nel report salvato `DRD.notti` o nell'ultimo report `EFF.agg`; i dati ESPN/tabellini non contano), a prescindere dall'ora; oppure dalle 12:30 italiane del giorno dopo anche senza dati Dunkest (`drGate`). Nuova `drShut(e)=drDkHas(e)||drGate(e)`. Testato con `window.DR_NOW`: T3 (interno 1) resta LIVE alle 06:00 del 30/10 e si chiude alle 13:00. Stato: in coda (branch coda), non pubblicato.
