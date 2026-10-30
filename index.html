@@ -4408,7 +4408,7 @@ function vFAP(){
   SHR_PL={k:"F",n:x[0],t:o||null,num:x[3],r:FA_R[x[2]],nba:x[1],sz,GL:GL||[],a:s?{g:s[0],min:s[1],pdk:s[2],eff:s[3]}:null,rk:null};
   return `<button class="gback" id="faback">‹ ${faFrom==="home"?"Home":"Giocatori"}</button>
   <div class="fahead"${c?` style="--tc:${c.bg}"`:""}><span class="fanum">${x[3]?"#"+x[3]:FA_R[x[2]][0]}</span><div><small>Free Agent${o?` · G League ${c.nick}`:""}</small><h3>${x[0]}</h3><div class="segrow">${segBtn(x[0],1)}${plShBtn()}</div><p>${FA_R[x[2]]} · ${x[1]}${etaTxt(x[0])?`<span style="display:block">${etaTxt(x[0])}</span>`:""}</p></div>${o?`<span class="faown">${glBadge(o)}</span>`:""}</div>
-  ${extProfilo({sz,sel,a:s?{g:s[0],min:s[1],pdk:s[2],eff:s[3],pt:s[4],rb:s[5],as:s[6]}:null,GL,gr:`data-grafico="FA" data-grp="${x[0].replace(/"/g,"&quot;")}" data-grsz="${sz}"`,vuoto:"Nessuna partita NBA in questa stagione: non era in NBA o non ha giocato."})}
+  ${extProfilo({sz,sel,a:s?{g:s[0],min:s[1],pdk:s[2],eff:s[3],pt:s[4],rb:s[5],as:s[6]}:null,GL,cm:x[0],gr:`data-grafico="FA" data-grp="${x[0].replace(/"/g,"&quot;")}" data-grsz="${sz}"`,vuoto:"Nessuna partita NBA in questa stagione: non era in NBA o non ha giocato."})}
   ${H("Stagioni",`<em>media per partita</em>`)}
   <div class="tbl-wrap"><table class="fatbl faptbl"><thead><tr><th>Stag.</th><th>PG</th><th>Min</th><th>PDK</th><th>Eff.</th><th>Proj 36'</th><th>Pt</th><th>Rb</th><th>As</th></tr></thead><tbody>${rows}</tbody></table></div>
   <p class="note">${o?`Diritti G League: ${c.name}. `:""}PDK = punti Dunkest medi a partita, Eff. = PDK per minuto, Proj 36' = PDK su 36 minuti. Fonte: dati ufficiali Dunkest (dunkest.com), regular season.</p>`;
@@ -4776,7 +4776,7 @@ PER_CB.gr=(da,a)=>{GR.da=da;GR.a=a};
 PER_CB.tr=(da,a)=>{TRN.da=da;TRN.a=a;TRN.on=null};
 PER_CB.nbg=(da,a)=>{NB.g.from=da;NB.g.to=a};
 PER_CB.nbr=(da,a)=>{NB.mode="r";NB.from=da;NB.to=a};
-function grGames(n,sz){const one=s=>{let a=s===GR_SZ[0]?(PARTITE[n]||[]):((STAGIONI[s]||{})[n]||[]);if(!a.length&&GR.fa===n&&typeof FAG!=="undefined"&&FAG[n])a=FAG[n][s]||[];const y0=+s.slice(0,4);
+function grGames(n,sz){const one=s=>{let a=s===GR_SZ[0]?(PARTITE[n]||[]):((STAGIONI[s]||{})[n]||[]);if(!a.length&&typeof FAG!=="undefined"&&FAG[n])a=FAG[n][s]||[];const y0=+s.slice(0,4);
     return a.map(x=>{const[d,m]=x[0].split("/").map(Number);const y=m>=8?y0:y0+1;return{dt:new Date(Date.UTC(y,m-1,d)),sz:s,opp:x[1],min:+x[2]||0,pdk:+x[3]||0,eff:x[4]==null?null:+x[4]}})};
   const g=sz==="all"?GR_SZ.slice().reverse().flatMap(one):one(sz);return g.sort((a,b)=>a.dt-b.dt)}
 const grAvg=(a,f)=>{const v=a.map(f).filter(v=>v!=null);return v.length?v.reduce((s,y)=>s+y,0)/v.length:null};
@@ -4848,7 +4848,7 @@ function trCol(t){const c=TEAMS[t];const l=h=>{const n=parseInt(h.slice(1),16);r
 /* Dettaglio di un giocatore nel Calcola il trend: grafico personale per PDK, minuti ed efficienza sullo stesso periodo,
    da dove partiva (primo punto) a dove è arrivato (ultimo punto), media del periodo e trend %. */
 /* giocatore del trend: prima squadra (maglia) oppure G League (gl:1, logo G League al posto della maglia) */
-function trPl(n){const q=Object.entries(ROSTER).flatMap(([t,a])=>a.map(x=>({n:x[0],t,num:x[1],r:x[2]}))).find(x=>x.n===n);if(q)return q;const g=glPlayers().find(x=>x.n===n);return g?{n:g.n,t:g.t,num:"",r:g.r,gl:1}:null}
+function trPl(n){const q=Object.entries(ROSTER).flatMap(([t,a])=>a.map(x=>({n:x[0],t,num:x[1],r:x[2]}))).find(x=>x.n===n);if(q)return q;const g=glPlayers().find(x=>x.n===n);if(g)return{n:g.n,t:g.t,num:"",r:g.r,gl:1};const f=typeof FA!=="undefined"?FA.find(x=>x[0]===n):null;return f?{n:f[0],t:"FA",num:f[3]||"",r:f[2],fa:1}:null}
 function trDetail(n){const C=TRN._ctx;if(!C)return"";const p=trPl(n);if(!p)return"";
   const g=grGames(n,C.SZR.length>1?"all":C.sz).filter(x=>C.SZR.includes(x.sz)&&C.inP(x.dt));const c=TEAMS[p.t];
   const M=new Map();g.forEach(x=>{const k=trKey(x,C.by);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});const K=[...M.keys()].sort();
@@ -8162,17 +8162,18 @@ const vTVlive=()=>{tvLiveStart();if(typeof fantaLiveAvvia==="function")fantaLive
 let CMR={pa:null,pb:null,met:"pdk",q:"",slot:null,from:null};
 const CM_COL=["#38bdf8","#f472b6"];
 PER_CB.cm=(da,a)=>{CMR.da=da;CMR.a=a};
-function cmAll(){const L=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>L.push({n:p[0],t,r:p[2]})));try{glPlayers().forEach(p=>L.push({n:p.n,t:p.t,r:p.r,gl:1}))}catch(e){}return L}
+const FAT={nick:"Free agent",name:"Free Agent"};
+function cmAll(){const L=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>L.push({n:p[0],t,r:p[2]})));try{glPlayers().forEach(p=>L.push({n:p.n,t:p.t,r:p.r,gl:1}))}catch(e){}try{const have=new Set(L.map(x=>x.n));FA.forEach(f=>{if(!have.has(f[0]))L.push({n:f[0],t:"FA",r:f[2],fa:1})})}catch(e){}return L}
 function cmGames(n,SZR,inP){return n&&SZR.length?grGames(n,SZR.length>1?"all":SZR[0]).filter(x=>SZR.includes(x.sz)&&inP(x.dt)):[]}
 function cmSlot(i){const n=CMR[i?"pb":"pa"],p=n?trPl(n):null,col=CM_COL[i],sl=i?"b":"a",on=CMR.slot===sl;
   const e=s=>String(s).replace(/"/g,"&quot;");
-  return p?`<div class="cmslot" style="--c:${col}"><i class="cmdot"></i>${p.gl?glBadge(p.t,"cmlg"):badge(p.t,"cmlg")}<span class="cmnm"><b>${p.n}</b><small>${p.gl?"G-":""}${TEAMS[p.t].nick} · ${{G:"Guardia",F:"Ala",C:"Centro"}[p.r]||""}</small></span><button class="cmx" data-cm="slot|${sl}" aria-label="Cambia">↻</button><button class="cmx" data-cm="clr|${sl}" aria-label="Togli">✕</button></div>`
+  return p?`<div class="cmslot" style="--c:${col}"><i class="cmdot"></i>${p.fa?`<span class="cmlg" style="display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:11px">FA</span>`:p.gl?glBadge(p.t,"cmlg"):badge(p.t,"cmlg")}<span class="cmnm"><b>${p.n}</b><small>${p.gl?"G-":""}${(TEAMS[p.t]||FAT).nick} · ${{G:"Guardia",F:"Ala",C:"Centro"}[p.r]||""}</small></span><button class="cmx" data-cm="slot|${sl}" aria-label="Cambia">↻</button><button class="cmx" data-cm="clr|${sl}" aria-label="Togli">✕</button></div>`
    :`<button class="cmslot empty${on?" on":""}" style="--c:${col}" data-cm="slot|${sl}"><i class="cmdot"></i><span>🔍 Cerca il giocatore ${i?"B":"A"}</span></button>`}
 function cmList(){const q=vnz(CMR.q||""),other=CMR[CMR.slot==="a"?"pb":"pa"];
-  const R=cmAll().filter(p=>p.n!==other&&(!q||vnz(p.n+" "+TEAMS[p.t].nick+" "+TEAMS[p.t].name).includes(q)));
+  const R=cmAll().filter(p=>p.n!==other&&(!q||vnz(p.n+" "+(TEAMS[p.t]||FAT).nick+" "+(TEAMS[p.t]||FAT).name).includes(q)));
   const e=s=>String(s).replace(/"/g,"&quot;");
   return R.slice(0,40).map(p=>`<button class="cmrow" data-cm="pick|${e(p.n)}">${p.gl?glBadge(p.t,"cmlg"):badge(p.t,"cmlg")}<span class="cmnm"><b>${p.n}</b><small>${p.gl?"G-":""}${TEAMS[p.t].nick} · ${{G:"Guardia",F:"Ala",C:"Centro"}[p.r]||""}</small></span></button>`).join("")+(R.length>40?`<p class="note">Altri ${R.length-40} giocatori: scrivi per restringere la ricerca.</p>`:"")||`<p class="note">Nessun giocatore trovato.</p>`}
-function vCompar(){
+function vCompar(){if(typeof FAG==="undefined")faLoadG();
   perNorm(CMR);const SZR=perSzr(CMR.da,CMR.a),inP=perIn(CMR.da,CMR.a),met=CMR.met,isE=met==="eff";
   const gA=cmGames(CMR.pa,SZR,inP),gB=cmGames(CMR.pb,SZR,inP),both=[...gA,...gB];
   const GOK=perOk(both);let by=perBy(both);const forz=!!(CMR.gran&&GOK[CMR.gran]);if(forz)by=CMR.gran;
