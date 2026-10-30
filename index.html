@@ -9386,13 +9386,13 @@ document.addEventListener("click",e=>{
 .btft{text-align:center;font-size:11px;color:#c98a96;margin:18px 0 0}
 </style>
 <script>/* ===== CENTRO SCOMMESSE (area riservata Ducks, SEGRETO: niente in NV_LOG) =====
-   Gettoni (100 gett. = 1 cr) salvati sul telefono (dl_bet). Quote automatiche, margine banco 7%:
+   Gettoni (1.000 gett. = 1 cr) salvati sul telefono (dl_bet). Quote automatiche, margine banco 7%:
    · Sopra/Sotto: linea = mediana pesata dei PDK recenti (mezza unità), P da normale con memoria 10 gare, calibrata sullo storico 2024-26 (13.000 casi).
    · Duello: P(A>B) da differenza di due normali, calibrata (136.000 coppie).
    · Sfida Dreamers: forza rosa = somma dei migliori 8 PDK medi (corr. 0,92 con i punteggi dei turni), scala per notti del turno.
    Puntata chiusa al fischio d'inizio; pagamento automatico con i dati ufficiali (PARTITE / punteggi turno). */
 (function(){
-const KEY="dl_bet",START=500,MAXS=100,MINS=5,MARG=.07,CR=100;
+const KEY="dl_bet",START=5000,MAXS=1000,MINS=50,MARG=.07,CR=1000;
 const E=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const nf=(v,d=1)=>(+v).toLocaleString("it-IT",{minimumFractionDigits:d,maximumFractionDigits:d});
 const ni=v=>Math.round(+v).toLocaleString("it-IT");
@@ -9421,7 +9421,7 @@ const meseNow=()=>{const o={};new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/
 const bLoad=()=>{try{const j=JSON.parse(localStorage.getItem(KEY));if(j&&j.v===1&&Array.isArray(j.bets))return j}catch(e){}return null};
 let BW=bLoad()||{v:1,mese:meseNow(),saldo:START,iniz:START,bets:[]};
 const bSave=()=>{try{localStorage.setItem(KEY,JSON.stringify(BW))}catch(e){}};
-let BS={tab:"sf",sel:null,stake:25,msg:"",ok:false,bk:""};
+let BS={tab:"sf",sel:null,stake:250,msg:"",ok:false,bk:""};
 const SELMAP={};
 /* --- mercati --- */
 function cand(){const d=flUsaOggi(),G=TV.days[d]||[],now=Date.now(),out=[];
@@ -9458,8 +9458,8 @@ function settle(){let ch=false;const now=Date.now(),T72=72*3600*1000;
 function place(){const S=BS.sel;BS.ok=false;if(!S){return}
  const st=Math.floor(+BS.stake||0);
  if(!S.open||(S.ko&&Date.now()>=S.ko)){BS.msg="Mercato chiuso: la partita è iniziata.";return}
- if(st<MINS){BS.msg="Puntata minima "+MINS+" gettoni.";return}
- if(st>MAXS){BS.msg="Puntata massima "+MAXS+" gettoni.";return}
+ if(st<MINS){BS.msg="Puntata minima "+ni(MINS)+" gettoni.";return}
+ if(st>MAXS){BS.msg="Puntata massima "+ni(MAXS)+" gettoni.";return}
  if(st>BW.saldo){BS.msg="Saldo insufficiente.";return}
  if(BW.bets.some(b=>b.key===S.key)){BS.msg="Hai già giocato questo mercato.";return}
  BW.saldo-=st;BW.bets.unshift({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),ts:Date.now(),m:S.m,key:S.key,d:S.d,k:S.k,n:S.n,a:S.a,b:S.b,sel:S.side,L:S.L,q:S.q,st,ko:S.ko,desc:S.desc,pick:S.pick,s:"a",pay:0});
@@ -9501,13 +9501,13 @@ function vBet(){if(!COL.d){cur="campo";return vCampo()}
  const body=BS.tab==="sf"?tabSf():BS.tab==="ou"?tabOu(C):BS.tab==="du"?tabDu(D):tabMy();
  const S=BS.sel,win=S?Math.floor((+BS.stake||0)*S.q):0;
  const slip=S&&BS.tab!=="my"?`<div class="btslip"><div class="btsl1"><div><b>${E(S.desc)}</b><span>${E(S.pick)} · quota ${nf(S.q,2)}</span></div><button class="btx" data-bx aria-label="Annulla selezione">✕</button></div>
-  <div class="btsl2"><div class="btchips">${[10,25,50,100].map(v=>`<button data-bst="${v}" class="${+BS.stake===v?"on":""}">${v}</button>`).join("")}</div><input class="btin" id="btin" type="number" inputmode="numeric" min="${MINS}" max="${MAXS}" value="${E(BS.stake)}" aria-label="Gettoni da puntare"></div>
+  <div class="btsl2"><div class="btchips">${[100,250,500,1000].map(v=>`<button data-bst="${v}" class="${+BS.stake===v?"on":""}">${v}</button>`).join("")}</div><input class="btin" id="btin" type="number" inputmode="numeric" min="${MINS}" max="${MAXS}" value="${E(BS.stake)}" aria-label="Gettoni da puntare"></div>
   <div class="btsl3"><span>Vincita possibile<b><i id="btwin">${ni(win)}</i> gett.</b></span><button class="btgo" data-bgo>Punta</button></div>${BS.msg?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:""}</div>`:(BS.msg&&BS.tab!=="my"?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:"");
  return`<div class="bt"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
  <div class="bthd"><span class="bti">🎰</span><div><small>Texas Ducks · area riservata del GM</small><b>Centro scommesse</b><em>Quote automatiche · gettoni</em></div></div>
  <div class="btbank"><small>Il tuo saldo</small><div class="btbal"><b>${ni(BW.saldo)}</b><span>gettoni · ${nf(BW.saldo/CR,2)} cr</span></div>
  <div class="btstats"><div><small>In gioco</small><b>${ni(open)}</b></div><div><small>Bilancio</small><b class="${net>0?"pos":net<0?"neg":""}">${net>0?"+":""}${ni(net)}</b></div><div><small>Giocate</small><b>${BW.bets.length}</b></div></div>
- <p class="btrule">100 gettoni = 1 credito · puntata ${MINS}–${MAXS} · le puntate si chiudono al fischio d'inizio · le quote includono un margine del banco del ${Math.round(MARG*100)}%.</p></div>
+ <p class="btrule">${ni(CR)} gettoni = 1 credito · puntata ${ni(MINS)}–${ni(MAXS)} · le puntate si chiudono al fischio d'inizio · le quote includono un margine del banco del ${Math.round(MARG*100)}%.</p></div>
  <div class="bttabs" role="tablist">${T.map(t=>`<button data-bt="${t[0]}" aria-pressed="${BS.tab===t[0]}">${t[1]}</button>`).join("")}</div>
  ${body}${slip}<p class="btft">🦆 Texas Ducks · uso interno · scommesse a gettoni, solo per gioco</p></div>`}
 VIEWS.bet=vBet;
