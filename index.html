@@ -3215,7 +3215,7 @@ const lvl=e=>e==null?"na":e>1.10?"g":e>=.80?"y":"r";
 const eff=e=>e==null?'<span class="ev na">—</span>':`<span class="ev ${lvl(e)}"><i></i>${f2(e)}</span>`;
 let effTeam=null;
 let effSq=null;
-let esqMese=null,esqAdv=false,esqMet="eff";
+let esqMese=null,esqAdv=false,esqMet="pdk";
 /* Metrica della tabella squadra: "eff" = efficienza (Dunkest/minuto, PARTITE[..][4]) o "pdk" = punti Dunkest della partita (PARTITE[..][3]).
    Soglie colori PDK: verde ≥ 35, giallo 20–35, rosso < 20. */
 const MET=()=>esqMet==="pdk"?{i:3,f:v=>v.toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1}),l:v=>pdkLvl(v),trS:1,dS:2,nome:"PDK"}:{i:4,f:f2,l:lvl,trS:.03,dS:.05,nome:"Eff."};
@@ -3253,8 +3253,8 @@ function vEffSquadra(){
   const onM=m=>{const r=espMonth(sz,m);return ESP.da===r.da&&ESP.a===r.a},sr=perSzRange(sz),onS=ESP.da===sr[0]&&ESP.a===sr[1];
   const chips=`<div class="chips esqm"><label class="szchip" aria-pressed="${onS||!mesi.some(onM)}"><select data-esqsz="1" aria-label="Stagione">${mesi.some(onM)?`<option value="" selected hidden>${SZ_LBL[sz]}</option>`:""}${SZ_ALL.map(z=>`<option value="${z}"${!mesi.some(onM)&&z===sz?" selected":""}>${SZ_LBL[z]}</option>`).join("")}</select></label>${mesi.map(m=>`<button class="chip" data-esqm="${m}" aria-pressed="${onM(m)}">${MESI_N[m]}</button>`).join("")}</div>`;
   const tchips=`<div class="chips">${Object.keys(TEAMS).map(k=>`<button class="chip" data-esqt="${k}" aria-pressed="${k===t}">${badge(k)}${TEAMS[k].nick}</button>`).join("")}</div>`;
-  const fn=(esqRole!=="GFC"?1:0)+(esqMet!=="eff"?1:0)+(esqAdv?1:0);
-  const fpan=esqFOpen?`<div class="fapan"><div class="fapl">Cosa misurare</div><div class="fapr">${[["eff","Efficienza"],["pdk","PDK"]].map(([v,l])=>`<button class="fach" data-esqmet="${v}" aria-pressed="${esqMet===v}">${esqMet===v?"✓ ":""}${l}</button>`).join("")}</div>
+  const fn=(esqRole!=="GFC"?1:0)+(esqMet!=="pdk"?1:0)+(esqAdv?1:0);
+  const fpan=esqFOpen?`<div class="fapan"><div class="fapl">Cosa misurare</div><div class="fapr">${[["pdk","PDK"],["eff","Efficienza"]].map(([v,l])=>`<button class="fach" data-esqmet="${v}" aria-pressed="${esqMet===v}">${esqMet===v?"✓ ":""}${l}</button>`).join("")}</div>
   <div class="fapl">Vista</div><div class="fapr">${[[0,"Partita per partita"],[1,"Statistiche avanzate"]].map(([v,l])=>`<button class="fach" data-esqadv="${v}" aria-pressed="${!!esqAdv===!!v}">${!!esqAdv===!!v?"✓ ":""}${l}</button>`).join("")}</div>
   <div class="fapl">Ruoli</div><div class="fapr">${[["G","Guardie"],["F","Ali"],["C","Centri"]].map(([v,l])=>`<button class="fach" data-esqrole="${v}" aria-pressed="${esqRole.includes(v)}">${esqRole.includes(v)?"✓ ":""}${l}</button>`).join("")}</div>
   <button class="fareset" data-esqreset="1">Azzera i filtri</button></div>`:"";
@@ -3310,7 +3310,7 @@ function effPast(sz){const S=STAGIONI[sz]||{},gioc={},squadre=[];
   squadre.sort((a,b)=>(b[4]??-9)-(a[4]??-9));return{agg:sz,squadre,gioc,past:true}}
 const SZ_ALL=["2026/27","2025/26","2024/25"],SZ_LBL={"2026/27":"Stagione 3","2025/26":"Stagione 2","2024/25":"Stagione 1"};let PTcur=null;
 function szSelect(sz){return `<div class="gszn"><label for="gseason">Stagione</label><select id="gseason">${SZ_ALL.map((s,i)=>`<option value="${s}"${s===sz?" selected":""}>${SZ_LBL[s]} · ${s}</option>`).join("")}</select></div>`}
-let effMet="eff";
+let effMet="pdk";
 /* PDK medio di squadra = media dei PDK medi a partita dei giocatori della rosa che hanno giocato (dati della stagione scelta);
    PDK della notte = media dei PDK della notte di chi è sceso in campo (EFF.gioc colonna 5, solo stagione in corso) */
 function teamPdk(t,PT){const v=(ROSTER[t]||[]).map(p=>PT[p[0]]||[]).filter(g=>g.length).map(g=>g.reduce((a,x)=>a+x[3],0)/g.length);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null}
@@ -3340,7 +3340,7 @@ function vEfficienza(){
   <div class="snemb">${vStatNotte().replace('<button class="gback" data-snback="1">‹ Statistiche</button>',"")}</div>`}
   ${effSub==="sq"?`<button class="gback" data-effsub="">‹ Statistiche</button>
   ${H("Statistiche squadre",`<em>${E.past?SZ_LBL[sz]+" · "+sz:"Agg. "+E.agg}</em>`)}
-  <div class="effbar">${szSelect(sz)}<div class="metsw effsw"><button data-effmet="eff" aria-pressed="${!isP}">Eff.</button><button data-effmet="pdk" aria-pressed="${isP}">PDK</button></div></div>
+  <div class="effbar">${szSelect(sz)}<div class="metsw effsw"><button data-effmet="pdk" aria-pressed="${isP}">PDK</button><button data-effmet="eff" aria-pressed="${!isP}">Eff.</button></div></div>
   <div class="eboard">${sq}</div>
   <p class="note">${isP?"PDK medio = media dei PDK a partita dei giocatori della rosa (stagione scelta). Notte = media dei PDK di chi è sceso in campo. Colori: viola da 40, verde 30–40, giallo 20–30, rosso sotto 20.":"Efficienza stagionale = Dunkest totali ÷ minuti giocati da tutta la rosa. Dk = Dunkest stagionali di squadra."} Tocca una squadra per la tabella dei suoi giocatori.</p>
   <div style="height:22px"></div>`:""}`;
@@ -6915,7 +6915,7 @@ document.getElementById("main").addEventListener("click",e=>{const m=e.target.cl
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="effsquadra")return;const b=e.target.closest("[data-esqt],[data-esqfil],[data-esqrole],[data-esqreset]");if(!b)return;e.preventDefault();
   if(b.dataset.esqt)effSq=b.dataset.esqt;if(b.dataset.esqfil)esqFOpen=!esqFOpen;
   if(b.dataset.esqrole){const v=b.dataset.esqrole;let n=esqRole.includes(v)?esqRole.replace(v,""):esqRole+v;esqRole=n?"GFC".split("").filter(q=>n.includes(q)).join(""):"GFC"}
-  if(b.dataset.esqreset){esqRole="GFC";esqMet="eff";esqAdv=false}
+  if(b.dataset.esqreset){esqRole="GFC";esqMet="pdk";esqAdv=false}
   const y=window.scrollY;render();window.scrollTo(0,y)});
 document.getElementById("main").addEventListener("change",e=>{const z=e.target.closest("select[data-esqsz]");if(!z||cur!=="effsquadra"||!z.value)return;ESP.sz=z.value;const rg=perSzRange(z.value);ESP.da=rg[0];ESP.a=rg[1];const y=window.scrollY;render();window.scrollTo(0,y)});
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-rshare]");if(!b)return;e.preventDefault();e.stopPropagation();shareRoster(b.dataset.rshare,b)});
