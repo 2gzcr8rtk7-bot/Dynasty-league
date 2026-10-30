@@ -6978,7 +6978,7 @@ function shSend(cv,fn,txt,btn){cv.toBlob(bl=>{const file=new File([bl],fn,{type:
 /* Condividi il roster: 3 colonne (Guardie, Ali, Centri) */
 async function shareRoster(t,btn){
   const c=TEAMS[t],r=ROSTER[t]||[],RO=[["G","GUARDIE","#ef4444"],["F","ALI","#60a5fa"],["C","CENTRI","#fbbf24"]];
-  const col=RO.map(([k])=>r.filter(p=>p[2]===k).sort((a,b)=>(effMed(t,b[0])??-9)-(effMed(t,a[0])??-9)));
+  const col=RO.map(([k])=>r.filter(p=>p[2]===k).sort((a,b)=>(pdkMed(b[0])??-9)-(pdkMed(a[0])??-9)));
   try{await document.fonts.load('800 italic 40px "Barlow Condensed"')}catch(e){}
   const W=1080,CH=118,top=520,n=Math.max(...col.map(x=>x.length),1),Hh=top+n*CH+130;
   const cv=document.createElement("canvas");cv.width=W;cv.height=Hh;const X=cv.getContext("2d");
@@ -6990,10 +6990,10 @@ async function shareRoster(t,btn){
   RO.forEach(([k,lab,cl],i)=>{const x=40+i*(cw+16);
     X.fillStyle=cl;X.fillRect(x,430,cw,60);X.fillStyle="#0a0f1f";X.textAlign="center";X.font=F(800,40);X.fillText(lab,x+cw/2,474);
     col[i].forEach((p,j)=>{const y=top+j*CH;X.fillStyle=j%2?"rgba(255,255,255,.035)":"rgba(255,255,255,.07)";X.fillRect(x,y,cw,CH-10);X.fillStyle=cl;X.fillRect(x,y,6,CH-10);
-      const pts=p[0].split(" "),sfx=/^(Jr\.?|Sr\.?|II|III|IV)$/i.test(pts[pts.length-1]),nm=(pts.length>1?pts.slice(1).join(" "):p[0]).toUpperCase(),fn=pts.length>1?pts[0]:"";X.textAlign="left";X.fillStyle="#fff";fit(nm,800,38,cw-125);X.fillText(nm,x+20,y+48);
+      const pts=p[0].split(" "),sfx=/^(Jr\.?|Sr\.?|II|III|IV)$/i.test(pts[pts.length-1]),nm=(pts.length>1?pts.slice(1).join(" "):p[0]).toUpperCase(),fn=pts.length>1?pts[0]:"";X.textAlign="left";X.fillStyle="#fff";fit(nm,800,38,cw-150);X.fillText(nm,x+20,y+48);
       X.fillStyle="#8e98b8";X.font=F(700,26);X.fillText((fn?fn+" · ":"")+"#"+p[1]+" · "+p[3]+(ROOKIE.includes(p[0])?" · R":""),x+20,y+88);
-      const e=effMed(t,p[0]);X.textAlign="right";X.fillStyle=e==null?"#8e98b8":e>1.1?"#4ade80":e>=.8?"#facc15":"#f87171";X.font=F(800,40);X.fillText(e==null?"—":f2(e),x+cw-14,y+50)})});
-  X.textAlign="center";X.fillStyle="#5d678a";X.font=F(700,28);X.fillText("Efficienza media stagionale · DREAMERS · "+EFF.agg,W/2,Hh-45);
+      const e=pdkMed(p[0]);X.textAlign="right";X.fillStyle=e==null?"#8e98b8":e>=40?"#c4a2ff":e>=30?"#4ade80":e>=20?"#facc15":"#f87171";X.font=F(800,40);X.fillText(e==null?"—":pdkF(e),x+cw-14,y+50)})});
+  X.textAlign="center";X.fillStyle="#5d678a";X.font=F(700,28);X.fillText("PDK medio stagionale · DREAMERS · "+EFF.agg,W/2,Hh-45);
   shSend(cv,`roster-${c.nick.toLowerCase()}.png`,`🏀 Roster ${c.name}`,btn)}
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-effmet]");if(b&&cur==="efficienza"){e.preventDefault();effMet=b.dataset.effmet;esqMet=effMet;const y=window.scrollY;render();window.scrollTo(0,y)}});
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-esqmet]");if(b&&cur==="effsquadra"){e.preventDefault();esqMet=b.dataset.esqmet;const y=window.scrollY;render();window.scrollTo(0,y)}});
