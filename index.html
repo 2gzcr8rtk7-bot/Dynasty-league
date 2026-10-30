@@ -2058,6 +2058,36 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .gmh td.yr small{display:block;font-size:11px;font-style:normal;letter-spacing:.08em;color:var(--muted)}
 .gmh th.c{text-align:center}
 .gmh td.ttl{text-align:center;font-family:var(--display);font-style:italic;font-weight:800;font-size:19px;white-space:nowrap}
+
+/* (590) SALA TROFEI «Velluto reale e oro»: bordeaux con raggi di luce, corona, cornice dorata, medaglie metalliche, prima in evidenza */
+.view:has(.sala-oro){background:
+ radial-gradient(circle at 12% 14%,rgba(255,226,140,.55) 0 1px,transparent 2px),radial-gradient(circle at 82% 9%,rgba(255,226,140,.5) 0 1px,transparent 2px),radial-gradient(circle at 64% 31%,rgba(255,226,140,.4) 0 1px,transparent 2px),radial-gradient(circle at 25% 47%,rgba(255,226,140,.4) 0 1px,transparent 2px),radial-gradient(circle at 90% 60%,rgba(255,226,140,.4) 0 1px,transparent 2px),
+ radial-gradient(ellipse at 50% -10%,#7a1d3d 0%,#3a0f26 38%,#14070f 75%,#0a040a 100%);margin:0 -14px;padding:14px 14px 30px;position:relative;overflow:hidden}
+.view:has(.sala-oro)::before{content:"";position:absolute;left:50%;top:-40px;width:900px;height:620px;transform:translateX(-50%);background:conic-gradient(from 180deg at 50% 0%,transparent 0deg,rgba(255,215,120,.18) 10deg,transparent 20deg,rgba(255,215,120,.11) 32deg,transparent 44deg,transparent 316deg,rgba(255,215,120,.11) 328deg,transparent 340deg,rgba(255,215,120,.18) 350deg,transparent 360deg);pointer-events:none}
+.view:has(.sala-oro)>*{position:relative}
+.view:has(.sala-oro) .gback{color:#f0cf7a!important}
+.sala-oro h2{flex-direction:column;align-items:center;gap:6px;margin:6px 0 20px}
+.sala-oro h2::before{content:"👑";font-size:34px;filter:drop-shadow(0 4px 10px rgba(255,200,80,.6))}
+.sala-oro h2::after{display:none!important}
+.sala-oro h2 .t{background:none!important;transform:none!important;border-top:2px solid #e8c15a;border-bottom:2px solid #e8c15a;padding:6px 22px!important;font:italic 800 21px/1.1 Georgia,"Times New Roman",serif!important;letter-spacing:.2em!important;text-shadow:0 2px 12px rgba(255,190,70,.5)}
+.sala-oro h2 .t>span{transform:none!important;background-image:linear-gradient(180deg,#fff3c0,#e8c15a 60%,#a47a1a);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.sala-oro h2 em{color:#e7c978}
+.sala-oro .gmseason h2::before{content:"✦";font-size:16px;filter:none;color:#f0cf7a}
+.sala-oro .tbl-wrap{position:relative;border:2px solid #d9b24c!important;border-radius:4px;background:linear-gradient(180deg,rgba(20,6,14,.85),rgba(40,10,26,.85))!important;outline:1px solid rgba(217,178,76,.5);outline-offset:5px;box-shadow:0 18px 50px rgba(0,0,0,.65),inset 0 0 40px rgba(255,200,80,.05)}
+.sala-oro .gmh th,.sala-oro .ssn th{color:#f0cf7a!important;border-bottom:1px solid #d9b24c!important;font-family:Georgia,"Times New Roman",serif;letter-spacing:.12em}
+.sala-oro .gmh td,.sala-oro .ssn td{border-bottom:1px solid rgba(217,178,76,.2)!important}
+.sala-oro .gmh tr.lead td,.sala-oro .gmh tr.lead td.pt{background:rgba(255,215,120,.2)!important}
+.sala-oro .gmh tr.lead{box-shadow:inset 4px 0 0 #ffd36b}
+.sala-oro .gmh tr.lead td.tm b::before{content:"♛ ";color:#ffd36b}
+.sala-oro td.tm b{color:#fbebc0}
+.sala-oro tr.lead td.tm b{color:#fff1b8;text-shadow:0 0 12px rgba(255,200,80,.6)}
+.sala-oro .medal{box-shadow:0 2px 6px rgba(0,0,0,.6),inset 0 1px 1px rgba(255,255,255,.6)!important}
+.sala-oro .medal.m1{background:linear-gradient(135deg,#fff0b0,#e0a92b,#8a5a0a)!important;color:#2a1700!important;box-shadow:0 0 14px rgba(255,200,80,.7)!important}
+.sala-oro .medal.m2{background:radial-gradient(circle at 30% 25%,#fff,#c6c6ce 55%,#6f6f78)!important;color:#1b1b20!important}
+.sala-oro .medal.m3{background:radial-gradient(circle at 30% 25%,#ffdcb6,#c98642 55%,#6b3c12)!important;color:#2a1200!important}
+.sala-oro .gmh td.pt,.sala-oro .ssn td.pt,.sala-oro .ssn td.sp{background:none!important;box-shadow:none!important;color:#ffe08a!important;text-shadow:0 0 10px rgba(255,200,80,.45)}
+.sala-oro .gmh td.ttl b{color:#ffd36b!important}
+.sala-oro .note{color:#dcc3a0;font-style:italic}
 .gmh td.pt{font-family:var(--display);font-style:italic;font-weight:800;font-size:26px;color:#fff;background:linear-gradient(90deg,transparent,rgba(228,22,58,.22));box-shadow:inset -4px 0 0 var(--red)}
 .gmh tr.lead td.pt{color:var(--gold)}
 .ssn td.pt{font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;color:#cfd6ea;white-space:nowrap}
@@ -7094,10 +7124,10 @@ function vStoria(){
    ${x.p.map(q=>`<td class="yr">${q?pts(q):"–"}<small>${q?q+"°":""}</small></td>`).join("")}<td class="ttl">${x.tit?`<b style="color:var(--gold)">${x.tit}</b>`:"–"}</td><td class="pt">${x.pt}</td></tr>`).join("");
   const seasons=STORIA.slice().reverse().map(s=>`<section class="gmseason">${H("Anno "+s.anno,`<em>Campione: ${TEAMS[s.ordine[0]].nick}</em>`)}
    <div class="tbl-wrap"><table class="ssn" style="min-width:0"><tbody>${s.ordine.map((t,i)=>`<tr><td class="rk">${med(i+1)}</td><td class="tm"><div class="tmcell">${wedge(t)}<div><b>${TEAMS[t].nick}</b><small>${TEAMS[t].city}</small></div></div></td><td class="pt">+${pts(i+1)} pt</td></tr>`).join("")}</tbody></table></div></section>`).join("");
-  return `${H("Classifica competenza")}
+  return `<div class="sala-oro">${H("Classifica competenza")}
   <div class="tbl-wrap"><table class="gmh"><thead><tr><th>#</th><th>Squadra</th>${yrs}<th class="c" title="Titoli">🏆</th><th>Pt</th></tr></thead><tbody>${rows}</tbody></table></div>
   <p class="note">A1, A2… = punti in ogni anno (sotto il piazzamento). 🏆 = titoli vinti. Ogni stagione: ${N} punti al 1°, ${N-1} al 2° e così via fino a 1 punto all'ultimo. A parità di punti conta chi ha più titoli, poi più secondi posti e così via; poi il piazzamento nella stagione più recente.</p>
-  ${seasons}`;
+  ${seasons}</div>`;
 }
 /* Regolamento ufficiale (testo dal PDF regolamento.pdf) */
 const REGOLAMENTO=`<details class="rart" id="reg-1"><summary><span class="rn">01</span><span class="rt">Organizzazione e votazioni<small>Articolo 1</small></span><span class="rnew">Novità</span></summary><div class="rbody">

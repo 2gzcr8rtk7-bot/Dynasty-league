@@ -1656,3 +1656,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 588 — TG Dreamers non ufficiale: interruttore in Impostazioni › Home › «TG Dreamers» (`DLS.tgh`, spento di default). Con l'interruttore spento la scheda TG non compare in Home. Aggiornata la voce in `NV_LOG`.
 
 589 — Profili giocatore (squadre ed esterni FA/G League): tolta la barra rossa «PDK ed efficienza» con «Agg. …» (inutile). Il selettore Stagione resta subito sotto i pulsanti, con un po' più di margine. In coda su `coda`.
+
+590. **Sala Trofei «Velluto reale e oro»**: sfondo bordeaux con raggi di luce e puntini dorati, corona sul titolo (oro sfumato, serif spaziato), doppia cornice dorata, nessun rosso nei bordi, prima in classifica con riga evidenziata e ♛, medaglie metalliche oro/argento/bronzo, punti in oro. Stile limitato alla vista Sala Trofei (`.sala-oro`). Su `coda`, non ancora pubblicato.
