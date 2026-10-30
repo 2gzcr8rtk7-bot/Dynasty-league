@@ -4354,6 +4354,7 @@ function vtResHTML(){
     ${trCols(trRecVT(),VT.t)}
     <div class="vtbar"><i style="width:${100-pa}%;background:${ca.bg};">${Math.round(100-pa)}%</i><i style="width:${pa}%;background:${cb.bg};">${Math.round(pa)}%</i><em style="left:50%"></em></div>
     <div class="vtver"><b>${lab}</b><span>${d<.10?"Differenza":"Ci guadagnano i "+TEAMS[fav].nick+" del"} ${Math.round(d*100)}%</span></div>
+    ${(()=>{try{const P0=VT.pl[0].map(atInfo),P1=VT.pl[1].map(atInfo);if(!P0.length||!P1.length)return"";const g=gustoIdx(P0,P1),st=Math.abs(Math.round(g));if(st<4)return`<p class="vtsug">Con età e dimensione dei pacchetti (gusti dei GM) lo scambio resta in equilibrio.</p>`;const win=g>0?ta:tb;return`<p class="vtsug">Con età e dimensione dei pacchetti (gusti dei GM) piace di più ai <b>${TEAMS[win].nick}</b>, di circa <b>${st} punti</b> di valore.</p>`}catch(e){return""}})()}
     ${d>=.10&&cr>0?`<p class="vtsug">Per pareggiare: i <b>${TEAMS[fav].nick}</b> dovrebbero aggiungere circa <b>${cr} crediti</b> (o i ${TEAMS[give].nick} togliere qualcosa).</p>`:""}
     ${(()=>{try{return iaIntHTML(iaCalcInts())}catch(e){return""}})()}
   </div>`}
@@ -8839,15 +8840,19 @@ function atSample(a,k){const b=a.slice(),o=[];while(o.length<k&&b.length)o.push(
 const atK=()=>[1,1,1,2,2,2,3][Math.random()*7|0];
 function atGen(){const me=AT_PR&&AT_PR.t;if(!me)return null;const pool=t=>ROSTER[t].map(p=>p[0]).filter(n=>valOf(n)>0),mine=pool(me),others=Object.keys(ROSTER).filter(t=>t!==me);
   const rec=new Set(AT_LOG.slice(-10).map(x=>x.give.map(g=>g.n).join()+"|"+x.get.map(g=>g.n).join()));
-  const tol=[.05,.12,.2,.32][Math.random()*4|0],tg=(Math.random()*2-1)*tol;let best=null,bs=9;
+  const tol=[.05,.12,.2,.32][Math.random()*4|0],tg=(Math.random()*2-1)*tol*100;let best=null,bs=9;
   const T3=Math.random()<.3,KK=[1,1,2,2,3][Math.random()*5|0];for(let i=0;i<600;i++){const t3=T3,sh=atSample(others,2),ot=sh[0];if(!mine.length)break;
     const g=atSample(mine,KK).map(atInfo);if(g.length<KK)break;let r,m=null,mt=null,db=0;
     if(t3){mt=sh[1];const th=pool(ot),th2=pool(mt);if(!th.length||!th2.length)continue;m=atSample(th,KK).map(atInfo);r=atSample(th2,KK).map(atInfo);if(m.length<KK||r.length<KK)continue;db=atDf(atSum(g),atSum(m))}
     else{const th=pool(ot);r=atSample(th,KK).map(atInfo);if(r.length<KK)continue}
-    const vg=atSum(g),vr=atSum(r),d=atDf(vg,vr);let sc=Math.abs(d-tg)+Math.abs(db)*.4+(rec.has(g.map(x=>x.n).join()+"|"+r.map(x=>x.n).join())?5:0);
-    if(sc<bs){bs=sc;best={t:me,ot:t3?mt:ot,give:g,get:r,d,mid:t3?{t:ot,in:g,out:m,to:mt}:null}}}
+    const vg=atSum(g),vr=atSum(r),d=atDf(vg,vr),gi=gustoIdx(g,r);let sc=(Math.abs(gi-tg)/100)+(Math.abs(d)>.45?3:0)+Math.abs(db)*.4+(rec.has(g.map(x=>x.n).join()+"|"+r.map(x=>x.n).join())?5:0);
+    if(sc<bs){bs=sc;best={t:me,ot:t3?mt:ot,give:g,get:r,d,g:gi,mid:t3?{t:ot,in:g,out:m,to:mt}:null}}}
   return best}
 const atTot=atSum;
+/* (624) INDICE GUSTO: calibrato sui report dei GM (361 risposte; validazione incrociata: AUC 0,60 -> 0,80). Punti di valore % corretti per età (3,5 punti per anno di differenza media pesata sul valore, ricevuti più vecchi = peggio) e per dimensione del pacchetto (12 punti per ogni giocatore oltre il primo ricevuto). + = lo scambio piace a chi riceve. */
+const GUSTO={age:3.5,pack:12};
+const gustoAge=P=>P.length?P.reduce((s,p)=>s+p.e*(p.v+1),0)/P.reduce((s,p)=>s+p.v+1,0):0;
+function gustoIdx(give,get){const vg=atSum(give),vr=atSum(get);return atDf(vg,vr)*100-GUSTO.age*(gustoAge(get)-gustoAge(give))-GUSTO.pack*Math.max(0,get.length-1)}
 const atWho=()=>AT_PR?TEAMS[AT_PR.t].nick:"";
 function atReport(){const L=AT_LOG,N=L.length,pc=x=>(x*100>0?"+":"")+(x*100).toFixed(0)+"%",avg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:null,f1=x=>x==null?"n.d.":x.toFixed(1);
   const Y=L.filter(x=>x.res==="y"),Nn=L.filter(x=>x.res==="n"),C=L.filter(x=>x.res==="c"),dd=a=>avg(a.map(x=>x.d));
@@ -8867,7 +8872,10 @@ function atReport(){const L=AT_LOG,N=L.length,pc=x=>(x*100>0?"+":"")+(x*100).toF
     const dI=I.length&&R2.length?avg(I.map(x=>x.d))-avg(R2.map(x=>x.d)):null,wy=wa(TT,x=>x.res==="y"?1:0),wd=wa(TT,x=>x.d);
     o.push("TEMPI DI RISPOSTA (1-3 secondi = risposta istintiva, peso massimo sotto i 2s; le lente pesano molto meno, possibili distrazioni; escluse le pause oltre 2 minuti)",`- media: ${f1(m)}s · mediana ${f1(md)}s · accettati ${tm(TT.filter(x=>x.res==="y"))} · rifiutati ${tm(TT.filter(x=>x.res==="n"))}`,`- lampo (fino a 2s, ${I2.length}): ${ya(I2)} accettati, Δ medio ${dm(I2)}`,`- istintive (fino a 3s, ${I.length}): ${ya(I)} accettati, Δ medio ${dm(I)}, Δ medio degli accettati ${dm(I.filter(x=>x.res==="y"))}, rifiutati ${dm(I.filter(x=>x.res==="n"))}`,`- più lente (oltre 3s, ${R2.length}): ${ya(R2)} accettati, Δ medio ${dm(R2)}`,`- ponderate (gli istinti contano di più): ${wy==null?"n.d.":Math.round(wy*100)+"%"} accettati, Δ medio ${wd==null?"n.d.":pc(wd)}`,`- lettura: ${dI==null||I.length<3?"troppe poche risposte istintive per concludere":Math.abs(dI)<.02?"le risposte istintive non si distinguono per favorevolezza dello scambio":dI>0?"le risposte istintive riguardano scambi più favorevoli ("+pc(dI)+" di Δ rispetto alle altre)":"le risposte istintive riguardano scambi più svantaggiosi ("+pc(dI)+" di Δ rispetto alle altre)"}`,"")}
   const ps=p=>`${p.n} (${p.v}, ${p.e}a, ${p.r})`;
-  o.push("ELENCO COMPLETO");L.forEach((x,i)=>o.push(`${i+1}. [${x.res==="y"?"SÌ":x.res==="n"?"NO":"MOD"}] ${TEAMS[x.t].nick} dà ${x.give.map(ps).join(" + ")} → riceve ${x.get.map(ps).join(" + ")} (da ${TEAMS[x.ot].nick})${x.mid?` · a 3 squadre: ${TEAMS[x.mid.t].nick} passa ${x.mid.out.map(p=>p.n).join(" + ")} a ${TEAMS[x.mid.to].nick}`:""} · Δ ${pc(x.d)}${x.ms!=null?" · "+Math.round(x.ms/1000)+"s":""}${x.rem&&x.rem.length?" · toglie "+x.rem.join(", "):""}${x.note?" · «"+x.note+"»":""}`));
+  const GI=x=>gustoIdx(x.give,x.get),bins=[[-99,-15],[-15,-5],[-5,5],[5,15],[15,99]];
+  o.push(`INDICE GUSTO (Δ valore corretto per età e dimensione del pacchetto: ${GUSTO.age} punti/anno, ${GUSTO.pack} punti per giocatore extra)`,`- medio accettati: ${Y.length?pc(avg(Y.map(GI))/100):"n.d."} · rifiutati: ${Nn.length?pc(avg(Nn.map(GI))/100):"n.d."}`);
+  bins.forEach(([a,b])=>{const s2=L.filter(x=>{const g=GI(x);return x.res!=="c"&&g>=a&&g<b});o.push(`- da ${a<=-99?"meno":a} a ${b>=99?"più":b}: ${s2.length?Math.round(s2.filter(x=>x.res==="y").length/s2.length*100)+"% accettati su "+s2.length:"n.d."}`)});o.push("");
+  o.push("ELENCO COMPLETO");L.forEach((x,i)=>o.push(`${i+1}. [${x.res==="y"?"SÌ":x.res==="n"?"NO":"MOD"}] ${TEAMS[x.t].nick} dà ${x.give.map(ps).join(" + ")} → riceve ${x.get.map(ps).join(" + ")} (da ${TEAMS[x.ot].nick})${x.mid?` · a 3 squadre: ${TEAMS[x.mid.t].nick} passa ${x.mid.out.map(p=>p.n).join(" + ")} a ${TEAMS[x.mid.to].nick}`:""} · Δ ${pc(x.d)} · gusto ${pc(GI(x)/100)}${x.ms!=null?" · "+Math.round(x.ms/1000)+"s":""}${x.rem&&x.rem.length?" · toglie "+x.rem.join(", "):""}${x.note?" · «"+x.note+"»":""}`));
   return o.join("\n")}
 function vAtr(){
   if(!AT_PR||!AT_PR.t||AT.edit){const ok=!!AT.tm;return`${H("Allenamento IA Trade","")}<div class="atpres"><p class="atwel">Prima di iniziare dimmi chi sei.</p><p class="note">Ti proporrò scambi sulla <b>tua squadra</b>, quella che conosci meglio: tu mi dici subito se accetti, rifiuti o vuoi trattare. Così capisco i tuoi gusti e correggo i valori dei giocatori.</p><select class="atnote" id="attm" aria-label="La tua squadra"><option value="">Scegli la tua squadra</option>${Object.keys(TEAMS).map(t=>`<option value="${t}"${t===AT.tm?" selected":""}>${TEAMS[t].city} ${TEAMS[t].nick}</option>`).join("")}</select><div class="atbtns"><button class="atb ok" data-at="start" ${ok?"":"disabled"}>Inizia l'allenamento</button></div></div>`}
@@ -8884,7 +8892,7 @@ function vAtr(){
   ${AT.chg?`<p class="note">Tocca i giocatori che toglieresti, poi scrivi cosa cambieresti.</p><input class="atnote" id="atn" placeholder="Es. al posto suo vorrei un lungo più giovane" value="${atEsc(AT.note)}"><div class="atbtns two"><button class="atb ok" data-at="send">Invia</button><button class="atb" data-at="cancel">Annulla</button></div>`:`<div class="atbtns"><button class="atb ko" data-at="n">✕ Rifiuto</button><button class="atb mod" data-at="chg">✎ Tratto</button><button class="atb ok" data-at="y">✓ Accetto</button></div>`}
   <div class="atbtns"><button class="atb rp" data-at="rep"${AT_LOG.length?"":" disabled"}>🖨 Stampa report (${AT_LOG.length})</button></div>
   <p class="note">Valori = quelli del Calcolatore trade. Scelte e crediti non sono inclusi: contano solo i giocatori.</p>`}
-function atAns(res){const c=AT.c;if(!c)return;const ms=AT.t0?Date.now()-AT.t0:null;AT.t0=0;AT_LOG.push({ts:Date.now(),ms,t:c.t,ot:c.ot,give:c.give,get:c.get,d:c.d,mid:c.mid,res,rem:[...AT.rem],note:(res==="c"?AT.note:"").trim()});atSave();AT.c=null;AT.chg=false;AT.rem=new Set();AT.note="";render();window.scrollTo(0,0)}
+function atAns(res){const c=AT.c;if(!c)return;const ms=AT.t0?Date.now()-AT.t0:null;AT.t0=0;AT_LOG.push({ts:Date.now(),ms,g:c.g,t:c.t,ot:c.ot,give:c.give,get:c.get,d:c.d,mid:c.mid,res,rem:[...AT.rem],note:(res==="c"?AT.note:"").trim()});atSave();AT.c=null;AT.chg=false;AT.rem=new Set();AT.note="";render();window.scrollTo(0,0)}
 document.addEventListener("input",e=>{if(cur!=="iaallena")return;if(e.target.id==="atn")AT.note=e.target.value;});
 document.addEventListener("change",e=>{const b=e.target;if(cur==="iaallena"&&b.id==="attm"){AT.tm=b.value;const s=document.querySelector('[data-at="start"]');if(s)s.disabled=!AT.tm}});
 document.addEventListener("click",e=>{if(cur!=="iaallena")return;const b=e.target.closest("[data-at]");if(!b||b.disabled)return;const a=b.dataset.at;
