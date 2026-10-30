@@ -1539,3 +1539,8 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 - Stato: pubblicato (v144, 30/10/2026).
 - Chip trasparenti con bordo e alone nel colore della maglia NBA del giocatore (anche da non selezionati, attenuati); nome + media del periodo accanto.
 
+
+## 537 — Statistiche: «Statistiche notte» aperta di default sotto i pulsanti
+- Tolto il pulsante «Statistiche notte» (o «live» con modalità notte): la lista della notte (con frecce tra le notti e PDK/Eff.) è ora sempre aperta sotto i pulsanti, che restano.
+- Giocatori rosso, Squadre giallo. «Calcola il trend» in verde #22c55e, lo stesso verde dei PDK 30–40.
+- Stato: in coda, non pubblicato.
