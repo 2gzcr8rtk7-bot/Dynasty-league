@@ -1234,10 +1234,10 @@ body:not(.notte) .tmc .tmar{color:var(--gold)}
 .rcg .gpl li.rrow:nth-child(odd){border-right:1px solid rgba(255,255,255,.05)}
 .rcg .rnm b{font-size:13.5px}
 .rcg .rnm small{font-size:10px;letter-spacing:.06em}
-.rcg .rnm small .pdkx{font-size:10.5px;padding:0 4px;letter-spacing:0;vertical-align:1px}
+.rcg .rpdk .pdkx{font-size:15px;padding:1px 7px}.rcg .rpdk .dash{color:var(--muted)}
 .rcg .rav{margin:1px 0 0;font-size:9.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:1px 4px}
-.rcg .rtags{gap:3px;align-items:center;flex-direction:row-reverse}
-.rcg .rtags .injtag{font-size:9px;padding:1px 4px;max-width:54px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rcg .rtags{gap:4px;align-items:center}
+.rcg .rnm small .injtag{font-size:9.5px;padding:0 5px;vertical-align:1px}
 .rcg .rtags .rookie{font-size:9px;padding:1px 4px}
 .rnm{flex:1;min-width:0;display:grid}
 .rnm b{font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;color:#fff;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -3078,7 +3078,7 @@ function vRoster(){
   <div class="sumrow"><span>${r.length} giocatori</span></div>
   ${(()=>{const R={G:"Guardia",F:"Ala",C:"Centro"},L={G:"G",F:"A",C:"C"};
     const RN={G:"Guardie",F:"Ali",C:"Centri"};
-    const row=p=>`<li class="rrow" data-pl="${p[0]}" role="button" tabindex="0"><span class="rnm"><b>${p[0]}</b><small>#${p[1]} · ${p[3]}${pdkMed(p[0])!=null?` · ${pdkB(pdkMed(p[0]))}`:""}</small>${AVVISI[p[0]]?`<span class="avviso rav">${AVVISI[p[0]]}</span>`:""}</span><span class="rtags">${INJ[p[0]]&&INJ[p[0]].stato!=="ok"?`<span class="injtag ${INJ[p[0]].stato}">${STATI[INJ[p[0]].stato][0]}</span>`:""}${ROOKIE.includes(p[0])?`<span class="rookie">R</span>`:""}${segBtn(p[0])}</span></li>`;
+    const row=p=>{const ij=INJ[p[0]]&&INJ[p[0]].stato!=="ok"?`<span class="injtag ${INJ[p[0]].stato}">${STATI[INJ[p[0]].stato][0]}</span>`:"",pm=pdkMed(p[0]);return `<li class="rrow" data-pl="${p[0]}" role="button" tabindex="0"><span class="rnm"><b>${p[0]}</b><small>#${p[1]} · ${p[3]}${ij?` · ${ij}`:""}</small>${AVVISI[p[0]]?`<span class="avviso rav">${AVVISI[p[0]]}</span>`:""}</span><span class="rtags">${ROOKIE.includes(p[0])?`<span class="rookie">R</span>`:""}<span class="rpdk">${pm!=null?pdkB(pm):'<span class="dash">—</span>'}</span></span></li>`};
     return `<div class="rostc">${"GFC".split("").map(k=>{const sp=p=>AVVISI[p[0]]||ROOKIE.includes(p[0])?1:0,L=r.filter(p=>p[2]===k).map((p,i)=>[p,i]).sort((x,y)=>sp(x[0])-sp(y[0])||x[1]-y[1]).map(x=>x[0]);return L.length?`<section class="rcg ${k}"><h4><span class="grl ${k}">${{G:"G",F:"A",C:"C"}[k]}</span>${RN[k]}<em>${L.length}</em></h4><ul class="gpl">${L.map(row).join("")}</ul></section>`:""}).join("")}</div>`})()}`;
 }
 
