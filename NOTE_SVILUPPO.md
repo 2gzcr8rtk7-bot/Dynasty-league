@@ -1745,3 +1745,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 630. Barra Notte del: ancora un po' piu' sottile (20px, titolo 13px).
 
 631. Home: aggiunta una freccia ‹ in basso a sinistra del riquadro a pagine (speculare a ›) per tornare alla pagina precedente.
+
+(numero) 30/10/2026 (Claude, account del secondo utente) — Michael Porter Jr. (PEA): numero di maglia 17 (prima 1). PUBBLICATO.
