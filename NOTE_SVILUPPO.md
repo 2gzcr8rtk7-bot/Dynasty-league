@@ -1717,3 +1717,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 
 617. Nuova voce "Allenamento IA Trade" (ultima in Scambi): scheda con scambio proposto (Dai/Ricevi, valori, eta', differenza %), tasti Accetto/Rifiuto/Cambia (tocchi i giocatori da togliere + nota), sessione infinita salvata sul telefono, "Stampa report" con medie sbilanciamento, eta', ruoli, giocatori piu' accettati/rifiutati, modifiche e elenco completo, da copiare e mandare a Claude per ricalibrare i valori.
 (peacocks) 30/10/2026 (Claude, account del secondo utente) — Peacocks: colore/sfondo squadra TEAMS.PEA.bg = rosa #f70990 (Home, testate, campo, banner, condivisioni). Maglie invariate: kitC usa ancora il blu #2f6bff per PEA. PUBBLICATO.
+
+618. Allenamento IA Trade: la scheda e' scritta come un'offerta di Claude: prima "TI OFFRO" (quello che ricevi), poi "RICEVO" (quello che dai), senza loghi ne' nomi delle squadre.
