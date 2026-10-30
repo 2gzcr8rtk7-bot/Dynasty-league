@@ -1616,3 +1616,4 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 567. PUBBLICATA (v163) Statistiche squadra: tolte PDK medio ed Eff. media; sotto la previsione una striscia Infortunati / Partite del prossimo turno (tutti i giocatori) / Trend squadra (ultime 4 partite dei giocatori contro il loro rendimento precedente); sotto Media e Record a turno.
 568. PUBBLICATA (v163) Striscia squadra: Infortunati in rosso (se ci sono), «Partite turno» sempre su una riga anche con doppie cifre (sotto «T4 · 31 giocabili»).
 569. (non pubblicata, in coda) Statistiche: tasti grandi Giocatori e Squadre più bassi del 15% (da 98 a 83 px).
+569. PUBBLICATA Statistiche: tasti grandi Giocatori e Squadre più bassi di circa il 15% (da 83 a 69 px, icone e scritta ridotte in proporzione).
