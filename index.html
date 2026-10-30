@@ -6861,7 +6861,7 @@ function drTabellone(t,T,k,P,on){const W=T.W,btn=`<button class="cntbtn${on?" on
   const sc=lum(C.bg)>=.33?C.bg:(lum(C.fg)>=.33&&lum(C.fg)<.95?C.fg:`color-mix(in srgb,${C.bg} 62%,#fff)`);
   let kc=k;try{kc=drCurWeek(P)}catch(e){}
   const past=!on&&k<kc;/* turno passato: niente contatore «giocato» (è sempre completo), così il tabellone resta largo come prima */
-  const gioc=(X,tt)=>{if(past)return"";const g=drGare(tt,k,W);return`<span class="lbmg"><b>${g.done}/${g.tot}</b><small>giocato</small></span>`};
+  const gioc=(X,tt)=>{if(past)return"";const g=drGare(tt,k,W,true);return`<span class="lbmg" title="Partite giocate su quelle giocabili: gli infortunati contano solo dal rientro"><b>${g.done}/${g.tot}</b><small>giocabili</small></span>`};
   /* (595) frecce per rivedere i turni passati e tornare avanti (non in modalità notte) */
   const arr=d=>on?"":`<button class="lbma" type="button" data-cmpk="${k+d}" aria-label="${d<0?"Turno precedente":"Turno successivo"}"${(d<0?k<=1:k>=kc)?" disabled":""}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d<0?"M15 5l-7 7 7 7":"M9 5l7 7-7 7"}" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`;
   const cap=!on&&k<kc?`<p class="lbmcap">Turno ${k+DR_OFF} · ${drFmt(W.start)}–${drFmt(W.end)} · ${W.closed?"concluso":"in corso"} · <button type="button" data-cmpk="${kc}">torna al turno attuale ›</button></p>`:"";
@@ -7955,8 +7955,11 @@ function pvMaxE(ms,sd){/* valore atteso e sd del massimo di normali indipendenti
   for(let i=1;i<=N;i++){const x=lo+i*h;let F=1;ms.forEach(m=>F*=pvPhi((x-m)/sd));const d=F-prev;prev=F;const xm=x-h/2;e+=xm*d;e2+=xm*xm*d}
   return{e,sd:Math.sqrt(Math.max(0,e2-e*e))}}
 /* (554) partite NBA a disposizione di una squadra nel turno (somma su tutti i suoi giocatori) e quante già giocate/in corso */
-function drGare(t,k,W){let tot=0,done=0;try{const F=drForm(k)[t]||{t:[],r:[]},ds=[];for(let d=W.start;d<=W.end;d=drAdd(d,1))ds.push(d);
-  [...F.t,...F.r].forEach(n=>{const nba=(segInfo(n)||{}).nba;if(!nba)return;ds.forEach(d=>(TV.days[d]||[]).forEach(g=>{if(g[0]===nba||g[1]===nba){tot++;if(g[5]==="F"||g[5]==="L")done++}}))})}catch(e){}return{tot,done}}
+/* (597) eff=true: partite GIOCABILI, cioè senza quelle degli infortunati «out» prima del rientro indicato nel Centro Medico (senza data: fuori tutto il turno); se il Centro Medico li fa rientrare, il totale sale da solo. Solo per il turno ancora aperto. */
+function drGare(t,k,W,eff){let tot=0,done=0;try{const F=drForm(k)[t]||{t:[],r:[]},ds=[];for(let d=W.start;d<=W.end;d=drAdd(d,1))ds.push(d);
+  [...F.t,...F.r].forEach(n=>{const nba=(segInfo(n)||{}).nba;if(!nba)return;
+    const ij=eff&&!W.closed?INJ[n]:null,out=!!(ij&&ij.stato==="out"),rm=out?String(ij.rientro||"").match(/(\d{2})\/(\d{2})/):null,ret=rm?`${+rm[2]>=8?2026:2027}-${rm[2]}-${rm[1]}`:null;
+    ds.forEach(d=>(TV.days[d]||[]).forEach(g=>{if(g[0]===nba||g[1]===nba){if(out&&(!ret||d<ret))return;tot++;if(g[5]==="F"||g[5]==="L")done++}}))})}catch(e){}return{tot,done}}
 function drPrevisione(t){try{
   const st=drStand(),P=drPO(st);let k=drCurWeek(P);let W=drWeek(k);if(W.closed||W.started)k++;if(k>DR_REG)return null;W=drWeek(k);
   const F0=drForm(k)[t]||{t:[],r:[]},names=[...F0.t,...F0.r].filter(n=>!spFuori(n));

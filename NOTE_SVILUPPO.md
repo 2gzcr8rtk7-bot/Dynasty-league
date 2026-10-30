@@ -1672,3 +1672,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 596 — Condividi roster (immagine): ora mostra i PDK medi della stagione (non più l'efficienza), con colori viola da 40, verde 30-40, giallo 20-30, rosso sotto 20; giocatori ordinati per PDK dentro ogni reparto; piè di pagina «PDK medio stagionale».
 
 596 (agg.) — nella condivisione roster i PDK sono in pillola colorata come nell'app (viola/verde/giallo/rosso).
+
+597 — Tabellone del Campo: il contatore «giocato» diventa «giocabili»: partite giocate su quelle realmente giocabili. Gli infortunati «out» del Centro Medico non contano fino alla data di rientro indicata (senza data: fuori tutto il turno); se il Centro Medico li fa rientrare il totale sale da solo. Solo nel turno ancora aperto (i turni passati non hanno il contatore). `drGare(t,k,W,eff)`.
