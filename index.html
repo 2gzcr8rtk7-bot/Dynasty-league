@@ -6382,7 +6382,7 @@ document.addEventListener("click",e=>{if(cur!=="impostazioni")return;const a=e.t
 /* (351) Tocco su una riga di "Live stanotte" / "Migliori del turno": apre Dynasty TV direttamente sulla partita giusta, con il box della squadra del giocatore. */
 document.addEventListener("click",e=>{const r=e.target.closest("[data-clgo]");if(!r||e.target.closest(".shbtn,[data-plopen]"))return;const[dy,key,sd]=r.dataset.clgo.split("|");if(!TV.box[key])return;TVS.d=dy;TVS.g=key;TVS.side=sd==="h"?"h":"a";cur="tv";render();window.scrollTo(0,0)});
 document.addEventListener("click",e=>{const pb=e.target.closest("[data-shpc]");if(pb){e.preventDefault();e.stopPropagation();const S=SHR_CAMPO;if(S&&S.R[+pb.dataset.shpc]){SHR_PC={x:S.R[+pb.dataset.shpc],t:S.t};shOpen("pc")}return}
-  const b=e.target.closest("[data-share]");if(!b)return;e.preventDefault();e.stopPropagation();shOpen(b.dataset.share)},true);
+  const b=e.target.closest("[data-share]");if(!b)return;e.preventDefault();e.stopPropagation();if(b.dataset.share==="pl"){plShAsk();return}shOpen(b.dataset.share)},true);
 let CNT=false;
 function campoNotteMap(t){const d=campoNotte(),o={};if(!d)return o;const mine={};(ROSTER[t]||[]).forEach(p=>mine[tvNm(p[0])]=p[0]);
   for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
@@ -9523,6 +9523,46 @@ document.addEventListener("click",e=>{if(cur!=="bet")return;
   return}});
 document.addEventListener("input",e=>{if(cur!=="bet"||e.target.id!=="btin")return;BS.stake=+e.target.value||0;const w=document.getElementById("btwin");if(w&&BS.sel)w.textContent=ni(Math.floor(BS.stake*BS.sel.q))});
 })();
+</script>
+<style>/* Condividi dal profilo giocatore: scelta tra scheda e ultima notte (nota 491) */
+.shch{align-items:flex-end}
+.shchb{width:100%;max-width:520px;display:grid;gap:10px;padding:16px 16px 14px;border-radius:22px 22px 18px 18px;background:linear-gradient(180deg,#241046,#120a28);border:1px solid rgba(196,181,253,.4);box-shadow:0 -10px 40px rgba(124,58,237,.35)}
+.shchh b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:24px;text-transform:uppercase;line-height:1.05;color:#fff}
+.shchh small{display:block;margin-top:2px;font-size:12.5px;font-weight:700;color:#c9b8ff}
+.shco{display:grid;grid-template-columns:50px minmax(0,1fr);gap:12px;align-items:center;width:100%;box-sizing:border-box;text-align:left;padding:12px;border-radius:16px;border:1.5px solid rgba(196,181,253,.45);background:rgba(30,20,70,.8);color:#fff;font:inherit;cursor:pointer}
+.shco:active{transform:scale(.985)}
+.shco .shci{width:50px;height:50px;border-radius:14px;display:grid;place-items:center;font-size:25px;background:linear-gradient(180deg,#a855f7,#6d28d9);box-shadow:0 4px 14px rgba(168,85,247,.45)}
+.shco b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;line-height:1.1}
+.shco small{display:block;margin-top:3px;font-size:12px;line-height:1.3;color:#d8ccff}
+.shco:disabled{opacity:.45;cursor:default}
+.shchx{padding:12px;border-radius:14px;border:1px solid rgba(196,181,253,.35);background:transparent;color:#e9d5ff;font:800 14px var(--display);font-style:italic;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+</style>
+<script>/* ===== Condividi dal profilo giocatore: «Condividi profilo» oppure «Condividi ultima notte» (30/10/2026) =====
+   L'ultima notte riusa la grafica «prestazione» (SHR_PC → shPcard): maglia + PDK della partita. Si prende l'ultima gara con box ESPN
+   (TV.box), altrimenti l'ultima riga Dunkest (PARTITE). Solo per i giocatori delle 8 squadre (serve la squadra per il campo). */
+function plUltima(S){if(!S||!S.t||!TEAMS[S.t])return null;const key=tvNm(S.n),max=flUsaOggi();
+ const days=Object.keys(TV.days).filter(d=>d<=max).sort().reverse();
+ for(const dy of days)for(const g of TV.days[dy]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
+  for(const[sd,tm,opp]of[["a",g[0],g[1]],["h",g[1],g[0]]]){const r=(B[sd]||[]).find(q=>tvNm(q[0])===key&&q[19]!=null&&q[19]!==""&&!isNaN(+q[19]));
+   if(r){const dt=tvDt(dy);return{x:{n:S.n,gl:false,tm,opp,r,lv:g[5]==="L",st:g[5]==="L"?"Live":"Finale",key:g[7],dl:`${dt.getUTCDate()}/${dt.getUTCMonth()+1}`,sd,dy},t:S.t}}}}
+ const rows=(typeof PARTITE!=="undefined"&&PARTITE[S.n]||[]).filter(q=>+q[2]>0&&!isNaN(+q[3])).sort((a,b)=>injKey(b[0])-injKey(a[0]));
+ if(rows.length){const q=rows[0],m=+q[2],mm=Math.floor(m),ss=Math.round((m-mm)*60),r=[];r[2]=mm+":"+String(ss===60?59:ss).padStart(2,"0");r[3]=q[5];r[6]=q[6];r[7]=q[7];r[19]=+q[3];
+  return{x:{n:S.n,gl:false,tm:S.t,opp:q[1],r,lv:false,st:"Finale",key:"",dl:q[0],sd:"h",dy:""},t:S.t}}
+ return null}
+function plShAsk(){const S=SHR_PL;if(!S){return}
+ const old=document.querySelector(".shsheet");if(old)old.remove();
+ let U=null;try{U=plUltima(S)}catch(e){}
+ const nm=String(S.n).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+ const pf=v=>(+v).toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1});
+ const sub=U?`vs ${U.x.opp} · ${U.x.dl}${U.x.lv?" · live":""} · ${pf(U.x.r[19])} PDK`:(S.t&&TEAMS[S.t]?"Nessuna partita giocata":"Disponibile per i giocatori delle 8 squadre");
+ const sh=document.createElement("div");sh.className="shsheet shch";
+ sh.innerHTML=`<div class="shchb" role="dialog" aria-label="Cosa vuoi condividere"><div class="shchh"><b>Condividi</b><small>${nm}</small></div>
+  <button class="shco" data-shc="pl"><span class="shci">👤</span><span><b>Condividi profilo</b><small>Scheda con età, PDK, efficienza e andamento</small></span></button>
+  <button class="shco" data-shc="nt"${U?"":" disabled"}><span class="shci">🌙</span><span><b>Condividi ultima notte</b><small>${sub}</small></span></button>
+  <button class="shchx" data-shc="x">Annulla</button></div>`;
+ document.body.appendChild(sh);
+ sh.addEventListener("click",e=>{const b=e.target.closest("[data-shc]");if(e.target===sh||(b&&b.dataset.shc==="x")){sh.remove();return}
+  if(!b||b.disabled)return;if(b.dataset.shc==="pl"){shOpen("pl")}else if(U){SHR_PC=U;shOpen("pc")}})}
 </script>
 </body>
 </html>
