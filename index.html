@@ -4949,7 +4949,7 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   if(!forz){const ks=new Set();let mx=0;G.forEach(g=>{let c=0;g.forEach(x=>{if(inP(x.dt)){ks.add(trKey(x,by));c++}});if(c>mx)mx=c});if(by!=="s"&&(ks.size<2||mx<=8))by="g"}
   TRN._ctx={SZR,inP,by,sz};
   const keysAll=new Set(),R=[];
-  PL.forEach(p=>{if(TRN.team&&p.t!==TRN.team)return;if(TRN.grp==="sq"&&(p.gl||p.fa))return;if(TRN.grp==="gl"&&!p.gl)return;if(TRN.grp==="fa"&&!p.fa)return;if(!TRN.ruoli.includes(p.r))return;const g=G.get(p.n).filter(x=>inP(x.dt));if(g.length<+TRN.minp)return;
+  PL.forEach(p=>{if(TRN.team&&TRN.grp!=="fa"&&p.t!==TRN.team)return;if(TRN.grp==="sq"&&(p.gl||p.fa))return;if(TRN.grp==="gl"&&!p.gl)return;if(TRN.grp==="fa"&&!p.fa)return;if(!TRN.ruoli.includes(p.r))return;const g=G.get(p.n).filter(x=>inP(x.dt));if(g.length<+TRN.minp)return;
     const M=new Map();g.forEach(x=>{const k=trKey(x,by);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});
     const pts=[...M.entries()].map(([k,a])=>({k,v:grAvg(a,x=>x[met])})).filter(q=>q.v!=null).sort((a,b)=>a.k<b.k?-1:1);
     if(pts.length<2)return;const tr=grTrend(pts.map(q=>q.v));if(!tr)return;
@@ -4984,7 +4984,7 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   <div class="grhd"><div><small>Ricerca per numeri · tutti i giocatori della lega</small><b>Calcola il trend</b></div></div>
   <div class="trctl">${perBtn("tr",TRN.da,TRN.a)}${perGranBtns("tr",GOK,by)}
   ${sel("grp","Giocatori",[["","Tutti"],["sq","Squadre"],["gl","G-League"],["fa","Free agent"]],TRN.grp)}
-  ${sel("team","Squadra",[["","Tutte le squadre"],...Object.keys(TEAMS).map(t=>[t,TEAMS[t].nick])],TRN.team)}</div>
+  ${sel("team","Squadra",[["","Tutte le squadre"],...Object.keys(TEAMS).map(t=>[t,TEAMS[t].nick])],TRN.grp==="fa"?"":TRN.team,TRN.grp==="fa")}</div>
   <div class="trlab">Ruoli</div><div class="trseg trrl">${[["G","Guardie"],["F","Ali"],["C","Centri"]].map(([r,l])=>`<button class="${r}" data-trrole="${r}" aria-pressed="${TRN.ruoli.includes(r)}">${l}</button>`).join("")}</div>
   <div class="trlab">Cosa misurare</div>${seg("met",[["pdk","PDK"],["min","Minuti"],["eff","Efficienza"]])}
   <div class="trlab">Trend cercato</div>${seg("dir",[["up","▲ In crescita"],["down","▼ In calo"]])}
