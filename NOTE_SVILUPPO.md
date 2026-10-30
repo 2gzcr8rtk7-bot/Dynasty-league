@@ -1686,3 +1686,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 602 — Statistiche notte: terzo tasto BOX (accanto a PDK ed Eff.). La classifica resta per PDK e sotto ogni giocatore compaiono le caselle PT RB AS ST BL PP e tiri sbagliati, più tiri/da 3/liberi e titolare. Numeri verdi: 3+ rubate, 3+ stoppate, 7+ rimbalzi, 25+ punti, 7+ assist; gialli al posto del verde se fanno doppia, tripla o quadrupla doppia (10+ in almeno due tra PT RB AS ST BL); rossi: 4+ palle perse, 8+ tiri sbagliati. Dati dai box score di Dynasty TV.
 
 603 — Statistiche notte: BOX è il tasto predefinito; palle perse chiamate TO (rosso da 3 in su); tiri sbagliati rossi se oltre il 60% dei tentati (almeno 5 tiri, liberi compresi); aggiunta la casella 3P (triple segnate, verde da 3 in su, come il bonus PDK).
+
+604 — Statistiche notte, tasto BOX: il PDK a destra è allineato in verticale alle caselle delle statistiche (layout a griglia, il logo copre tutta l altezza della riga).
