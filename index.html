@@ -3002,7 +3002,7 @@ function kitSalva(){try{if(KITG==null)localStorage.removeItem("dl_kitg");else lo
 function kitDi(t){const nt=typeof CNT!=="undefined"&&CNT&&cur==="campo";if(KITG!=null)return KITG;return nt?1:0}/* la scelta della maglia vale in TUTTE le sezioni (giocatore, scontri, trade...) */
 function kitC(t,k){const T=t==="PEA"?{...TEAMS[t],bg:"#2f6bff"}/* 30/10: sfondo Peacocks rosa, maglie invariate */:TEAMS[t];
   if(t==="PEA"){/* 30/10/2026 Peacocks: 1 blu con dettagli verdi, 2 rosa (colore sfondo) con dettagli verdi, 3 "piuma di pavone" */
-    if(k===1)return{...T,bg:"#f70990",fg:"#ffffff",trim:"#012dd5",jstroke:"#0b5e30",outer:"#16b35a",feather:1,fline:"#16b35a"};
+    if(k===1)return{...T,bg:"#f70990",fg:"#ffffff",trim:"#012dd5",jstroke:"#012dd5",outer:"#012dd5",feather:1,fline:"#16b35a"};
     if(k===2)return{...T,bg:"#0b4b57",fg:"#f70990",trim:"#f70990",jstroke:"#ffffff",outer:"#0a1f3d",feather:1,ftint:1,fline:"#2f6bff"};
     if(k===0)return{...T,bg:"#012dd5",fg:"#ffffff",trim:"#16b35a",jstroke:"#0b5e30",outer:"#16b35a",feather:1,fline:"#16b35a"};}
   const casa=t==="DUC"?{...T,bg:"#facc15"}:t==="SPI"?{...T,bg:"#ffffff",fg:"#111111"}:t==="DOL"?{...T,bg:"#f4f6f8",fg:"#1747c9",trim:"#1747c9",jstroke:"#ffffff",outer:"#1747c9"}:T;
