@@ -4981,6 +4981,10 @@ function vStatNotte(){if(CNT)return vStatLive();const N=snNights();if(!N.length)
   <div class="snsw"><button data-snm="pdk" aria-pressed="${!E}">PDK</button><button data-snm="eff" aria-pressed="${E}">Eff.</button></div>
   <div class="snlist">${rows||'<p class="note">Nessun giocatore delle franchigie in campo.</p>'}</div>
   <p class="note">${E?"Efficienza della notte (PDK ÷ minuti)":"PDK Dunkest della notte"} di tutti i giocatori delle 8 franchigie scesi in campo, dal più alto. Colori: ${E?"rosso sotto 0,80, giallo 0,80-1,10, verde oltre 1,10, viola da 1,50":"rosso sotto 20, giallo 20-29,99, verde 30-39,99, viola da 40"}.</p>`}
+/* (526) colore della linea nel trend = colore della maglia NBA del giocatore (NBA_KIT): il primo tra base, secondo colore, filetto, contorno abbastanza chiaro per il fondo scuro; senza squadra NBA resta quello della squadra Dreamers */
+function trNba(n){const q=Object.values(ROSTER).flat().find(p=>p[0]===n);if(q)return q[3];const g=typeof GL_STATS!=="undefined"?Object.values(GL_STATS).find(x=>x.n===n):null;if(g&&g.nba)return g.nba;const f=FA.find(x=>x[0]===n);return f?f[1]:""}
+function trColN(nba,t){const k=nba&&NBA_KIT[nba];if(!k)return TEAMS[t]?trCol(t):"#93c5fd";const l=h=>{const v=parseInt(h.slice(1),16);return(0.299*(v>>16)+0.587*((v>>8)&255)+0.114*(v&255))/255};
+  for(const h of[k.bg,k.p2,k.trim,k.jstroke,k.fg])if(h&&/^#[0-9a-f]{6}$/i.test(h)&&l(h)>.28)return h;return"#93c5fd"}
 function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>PL.push({n:p[0],t,r:p[2]})));glPlayers().forEach(p=>PL.push({n:p.n,t:p.t,r:p.r,gl:1}));
   if(typeof FAG==="undefined")faLoadG();{const have=new Set(PL.map(x=>x.n));FA.forEach(f=>{if(!have.has(f[0]))PL.push({n:f[0],t:"FA",r:f[2],fa:1})})}
   /* periodo a calendario: TRN.da → TRN.a (stesse regole del Grafico) */
@@ -5003,7 +5007,7 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   const K=[...keysAll].sort(),isE=met==="eff",fmt=v=>isE?v.toFixed(2).replace(".",","):v.toFixed(1).replace(".",",");
   const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
   /* colori: colore squadra; più giocatori della stessa squadra = tratteggi diversi */
-  const used={},sty={};TRN.on.forEach(n=>{const x=R.find(y=>y.n===n);const i=used[x.t]=(used[x.t]??-1)+1;sty[n]={c:trCol(x.t),d:TR_DASH[i%TR_DASH.length]}});
+  const used={},sty={};TRN.on.forEach(n=>{const x=R.find(y=>y.n===n);const c=trColN(trNba(n),x.t);const i=used[c]=(used[c]??-1)+1;sty[n]={c,d:TR_DASH[i%TR_DASH.length]}});
   const chart=(()=>{const S=R.filter(x=>TRN.on.includes(x.n));if(!S.length||K.length<2)return`<div class="grempty">${R.length?"Tocca un giocatore della lista per vederne la linea.":"Nessun giocatore con questo trend nel periodo scelto."}</div>`;
     const W=chW(),H=250,L=32,Rr=62,T=18,B=32,iw=W-L-Rr,ih=H-T-B,vals=S.flatMap(x=>x.pts.map(q=>q.v)),SC=grNice(Math.min(...vals),Math.max(...vals),isE,4);
     const X=k=>L+K.indexOf(k)*iw/(K.length-1),Y=v=>T+ih-(v-SC[0])/(SC[1]-SC[0])*ih;
