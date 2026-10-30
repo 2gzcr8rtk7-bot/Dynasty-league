@@ -9922,6 +9922,8 @@ function notizie(){if(!COL.d){cur="campo";return vCampo()}
   ${box(6,"Voce","Quella del telefono, in italiano. Qui puoi provarla e cambiarla.",`<div class="nzvc"><button class="advbtn" data-nzvoce="prova" type="button">🔊 Prova la voce</button><button class="advbtn" data-nzvoce="rate" type="button">Velocità ×${String(GZV.rate).replace(".",",")}</button><button class="advbtn" data-nzvoce="voce" type="button">Voce: ${(gzVoce()||{}).name||"non disponibile"}</button></div><p class="note">${ok?voci+" voci italiane trovate su questo dispositivo. La qualità cambia da telefono a telefono.":"Voce non supportata da questo browser."}</p>`,"nel tasto «Ascolta» di ogni articolo; funziona solo dopo un tocco (limite di iPhone e Android).")}
   <p class="note">Tutto è composto dall'app senza di me, con frasi preimpostate e i dati veri. Le notizie di oggi: ${E.art.map(a=>a.tag.toLowerCase()).join(", ")}.</p></div>`}
 window.gzEdizione=gzEdizione;window.gzPulisci=gzPulisci;window.gzPronto=gzPronto;window.gzOraOk=()=>gzOra().h>="07:30";VIEWS.giornale=giornale;VIEWS.notizie=notizie;VIEWS.sala=sala;VIEWS.pers=pers;VIEWS.soft=soft;VIEWS.orari=orari;
+/* il codice del giornale si carica dopo il primo disegno della Home: ridisegno la Home una volta, così la scheda TG compare subito (senza dover passare da altre sezioni) */
+try{if(cur==="home")render()}catch(e){}
 document.addEventListener("click",e=>{
  if(!["sala","pers","soft","orari","eq","bet","giornale","notizie"].includes(cur))return;
  if(e.target.closest("#hofback")){cur=cur==="sala"?"campo":"sala";render();scrollTo(0,0);return}
