@@ -4321,7 +4321,7 @@ const FA=[["Ty Jerome","MEM","G","2",{"24/25":[70,19.9,16.8,0.84,12.5,2.5,3.4],"
 /* Proprietario G League dei free agent (logo nella lista) */
 const FA_OWN={"Koa Peat":"FOX","Joan Beringer":"FOX","Jared McCain":"FOX","Jock Landale":"FOX","Jayden Quaintance":"FOX","Christian Anderson":"DUC","Leonard Miller":"DUC","Ousmane Dieng":"DUC","Tarris Reed Jr.":"DUC","Reed Sheppard":"DUC","Brandin Podziemski":"PEA","Nate Ament":"PEA","Zuby Ejiofor":"PEA","Asa Newell":"PEA","Jalen Smith":"PEA","Jaden McDaniels":"EAG","Bennedict Mathurin":"EAG","Davion Mitchell":"EAG","Yves Missi":"EAG","Collin Gillespie":"EAG","Isaiah Collier":"DOL","Karim Lopez":"DOL","Keegan Murray":"DOL","Jalen Suggs":"DOL","Ryan Kalkbrenner":"DOL","Chris Cenac Jr.":"SPI","Cameron Carr":"SPI","Dylan Cardwell":"SPI","Yang Hansen":"SPI","Day'Ron Sharpe":"MOO","Gui Santos":"MOO","Hugo Gonzalez":"MOO","Ajay Mitchell":"MOO","Meleek Thomas":"MOO","Peyton Watson":"TUR","Dereck Lively II":"TUR","Rui Hachimura":"TUR","Kyle Filipowski":"TUR","Scoot Henderson":"TUR"};
 
-let faSz="26/27",faRole="",faGL=false,faP=null,faFrom="fa";
+let faSz="26/27",faRole="",faGL=false,faFA=false,faP=null,faFrom="fa";
 /* (510) ordinamento della lista Giocatori: di default PDK medio decrescente; toccando PG / MIN / PDK / EFF si ordina per quella statistica (primo tocco decrescente, secondo crescente). k = indice in s: 0 PG, 1 Min, 2 PDK, 3 Eff. */
 let faSrt={k:2,d:-1};
 const faCmp=(sa,sb,na,nb)=>{const va=sa?sa[faSrt.k]:null,vb=sb?sb[faSrt.k]:null;if(va==null&&vb==null)return na.localeCompare(nb);if(va==null)return 1;if(vb==null)return -1;return(va-vb)*faSrt.d||na.localeCompare(nb)};
@@ -4348,13 +4348,13 @@ function vFA(){
   L.sort((a,b)=>faCmp(a.s,b.s,a.x[0],b.x[0]));
   let k=0;
   const rows=L.map(({x,s})=>{const has=!!s;if(has)k++;const fs=faNz(x[0]+" "+x[1]);return `<tr class="farow${has?"":" fanone"}" data-fan="${x[0].replace(/"/g,"&quot;")}" data-fs="${fs}"${(q?!fs.includes(q):!has)?" hidden":""}><td class="fark">${has?k:"–"}</td><td class="fanm"><b>${RTR(x[0])}${x[0]}</b>${faGL1(x[0])}<small>${x[1]} · ${FA_R[x[2]]}</small></td><td>${has?s[0]:"—"}</td><td>${has?faNum(s[1]):"—"}</td><td class="fapdk">${has?pdkB(s[2],faNum(s[2])):"—"}</td><td>${has?eff(s[3]):"—"}</td></tr>`}).join("");
-  const oth=faOthers().map(o=>{const s=o.s,has=!!s,fs=faNz(o.n+" "+(o.nba||"")+" "+TEAMS[o.t].name+" "+TEAMS[o.t].nick),nn=o.n.replace(/"/g,"&quot;");
+  const oth=(faFA?[]:faOthers()).map(o=>{const s=o.s,has=!!s,fs=faNz(o.n+" "+(o.nba||"")+" "+TEAMS[o.t].name+" "+TEAMS[o.t].nick),nn=o.n.replace(/"/g,"&quot;");
     const logo=o.kind==="T"?`<span class="fagl" title="${TEAMS[o.t].nick}">${badge(o.t,"faglb")}</span>`:`<span class="fagl" title="G League ${TEAMS[o.t].nick}">${glBadge(o.t,"faglb")}</span>`;
     return `<tr class="farow faoth" ${o.kind==="T"?`data-fat="${o.t}" data-fap="${nn}"`:`data-fag="${o.k.replace(/"/g,"&quot;")}"`} data-fs="${fs}"${q&&fs.includes(q)?"":" hidden"}><td class="fark">–</td><td class="fanm"><b>${RTR(o.n)}${o.n}</b>${logo}<small>${o.kind==="T"?TEAMS[o.t].nick:"G-"+TEAMS[o.t].nick} · ${FA_R[o.r]}${o.nba?" · "+o.nba:""}</small></td><td>${has?s[0]:"—"}</td><td>${has?faNum(s[1]):"—"}</td><td class="fapdk">${has?pdkB(s[2],faNum(s[2])):"—"}</td><td>${has?eff(s[3]):"—"}</td></tr>`}).join("");
   const ch=(attr,val,lab,on)=>`<button class="fach" ${attr}="${val}" aria-pressed="${on}">${lab}</button>`;
   return `${H("Giocatori",`<em>${FA.length} giocatori</em>`)}
   <input id="faq" class="vtq" type="search" placeholder="🔍 Cerca giocatore o squadra NBA" autocomplete="off" aria-label="Cerca giocatore" value="${faQ.replace(/"/g,"&quot;")}">
-  <div class="fasel"><div>${["26/27","25/26","24/25"].map(z=>ch("data-fasz",z,FA_SZL[z],faSz===z)).join("")}</div><div>${[["","Tutti"],["G","G"],["F","A"],["C","C"]].map(([v,l])=>ch("data-farole",v,l,faRole===v)).join("")}${ch("data-fagl","1","G League",faGL)}</div></div>
+  <div class="fasel"><div>${["26/27","25/26","24/25"].map(z=>ch("data-fasz",z,FA_SZL[z],faSz===z)).join("")}</div><div>${[["","Tutti"],["G","G"],["F","A"],["C","C"]].map(([v,l])=>ch("data-farole",v,l,faRole===v)).join("")}${ch("data-fagl","1","G League",faGL)}${ch("data-fafa","1","Free agent",faFA)}</div></div>
   <div class="tbl-wrap"><table class="fatbl"><thead><tr><th>#</th><th>Giocatore</th>${[[0,"PG"],[1,"Min"],[2,"PDK"],[3,"Eff."]].map(([k,l])=>`<th class="fasrt${faSrt.k===k?" on":""}" data-fasrt="${k}" role="button" tabindex="0" aria-label="Ordina per ${l}${faSrt.k===k?(faSrt.d<0?", ora decrescente":", ora crescente"):""}">${l}${faSrt.k===k?(faSrt.d<0?" ▼":" ▲"):""}</th>`).join("")}</tr></thead><tbody>${rows}${oth}</tbody></table></div>
   <p class="note">I giocatori NBA non presenti nei roster della lega (free agent) sono sempre in lista; cercando per nome compaiono anche quelli delle squadre ufficiali e delle G League, con il logo della squadra proprietaria. Media per partita della stagione scelta (solo regular season). <span class="fagl">${badge("DOL","faglb")}<i>G</i></span> = giocatore nella G League di quella franchigia. PDK ufficiali Dunkest (dunkest.com). Dati al ${FA_AGG}. Tocca un giocatore per la scheda.</p>`;
 }
@@ -4446,14 +4446,14 @@ function vGLP(){
 document.addEventListener("click",e=>{const sm=e.target.closest("details.glp>summary");if(sm){const d=sm.parentElement;if(d.dataset.glk){e.preventDefault();e.stopPropagation();glVai(d.dataset.glk)}return}
   if(e.target.closest("#glpback")&&cur==="glplayer"&&!NAVH.length){cur="gleague";render();scrollTo(0,0)}},true);
 document.getElementById("main").addEventListener("click",e=>{
-  const b=e.target.closest("[data-fan],[data-fat],[data-fag],[data-fasz],[data-farole],[data-fagl],[data-faps],[data-fasrt],#faback");if(!b)return;
+  const b=e.target.closest("[data-fan],[data-fat],[data-fag],[data-fasz],[data-farole],[data-fagl],[data-fafa],[data-faps],[data-fasrt],#faback");if(!b)return;
   if(b.dataset.fasrt!==undefined){const k=+b.dataset.fasrt,y=scrollY;faSrt=faSrt.k===k?{k,d:-faSrt.d}:{k,d:-1};render();scrollTo(0,y);return}
   if(b.dataset.fat){curTeam=b.dataset.fat;curPlayer=b.dataset.fap;gFrom="fa";cur="giocatore";render();scrollTo(0,0);return}
   if(b.dataset.fag){glVai(b.dataset.fag);return}
   if(b.dataset.faps){faPS=b.dataset.faps;const y=scrollY;render();scrollTo(0,y);return}
   if(b.id==="faback"){cur=faFrom==="home"?"home":"fa";render();scrollTo(0,0);return}
   if(b.dataset.fan!==undefined){faFrom=cur==="home"?"home":"fa";faP=b.dataset.fan;faPS=null;cur="faplayer";render();scrollTo(0,0);return}
-  if(b.dataset.fasz)faSz=b.dataset.fasz;if(b.dataset.farole!==undefined)faRole=b.dataset.farole;if(b.dataset.fagl)faGL=!faGL;render()});
+  if(b.dataset.fasz)faSz=b.dataset.fasz;if(b.dataset.farole!==undefined)faRole=b.dataset.farole;if(b.dataset.fagl)faGL=!faGL;if(b.dataset.fafa)faFA=!faFA;render()});
 document.getElementById("main").addEventListener("change",e=>{if(e.target.id!=="fapsz")return;faPS=e.target.value;const y=scrollY;render();scrollTo(0,y)});
 document.getElementById("main").addEventListener("input",e=>{if(e.target.id!=="faq")return;faQ=e.target.value;const q=faNz(faQ.trim());
   document.querySelectorAll(".farow").forEach(r=>{r.hidden=q?!r.dataset.fs.includes(q):(r.classList.contains("fanone")||r.classList.contains("faoth"))})});
