@@ -4838,19 +4838,20 @@ function grChart(P,show){if(!P.length)return`<div class="grempty">Nessuna partit
    ogni settimana fissa (1-7, 8-14, 15-21, 22-fine) se il periodo è un solo mese. Trend = retta dei minimi quadrati
    (grTrend): variazione dal primo all'ultimo punto in % sulla media. Si cercano tutti i giocatori della lega con trend
    ≥ soglia (in crescita) o ≤ −soglia (in calo), con almeno TRN.minp partite nel periodo e almeno 2 punti. */
-let TRN={ruoli:"GFC",sz:"2026/27",sz2:"2026/27",mese:"",mese2:"",met:"pdk",dir:"up",soglia:"10",minp:"3",team:"",on:null,from:null};
+let TRN={ruoli:"GFC",sz:"2026/27",sz2:"2026/27",mese:"",mese2:"",met:"pdk",dir:"up",soglia:"10",minp:"3",team:"",grp:"",on:null,from:null};
 const TR_MAXL=8,TR_DASH=["","6 4","2 3","8 3 2 3"];
 function trKey(x,by){const d=x.dt;if(by==="g")return d.toISOString().slice(0,10);if(by==="w")return grMk(d)+"#"+Math.min(3,Math.floor((d.getUTCDate()-1)/7));if(by==="m")return grMk(d);return x.sz}
 function trLab(k,by){if(by==="g"){const[y,m,d]=k.split("-");return d+"/"+m+"|"+y}if(by==="w"){const[mk,q]=k.split("#"),[yy,mm]=mk.split("-").map(Number),last=new Date(Date.UTC(yy,mm,0)).getUTCDate(),a0=+q*7+1,a1=+q===3?last:a0+6,f=v=>String(v).padStart(2,"0");return"Sett. "+(+q+1)+"|"+f(a0)+"–"+f(a1)+"/"+f(mm)}
   if(by==="m"){const[y,m]=k.split("-");return GR_MESI[+m-1]+"|"+y}return SZ_LBL[k]+"|"+k.slice(2)}
-function trCol(t){const c=TEAMS[t];const l=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
+const FAC={name:"Free Agent",nick:"FA",bg:"#2b3a67",fg:"#fff",trim:"#93c5fd",stroke:"#93c5fd"};
+function trCol(t){const c=TEAMS[t]||FAC;const l=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
   for(const h of[c.bg,c.trim,c.fg,c.stroke])if(h&&/^#[0-9a-f]{6}$/i.test(h)&&l(h)>.28)return h;return"#93c5fd"}
 /* Dettaglio di un giocatore nel Calcola il trend: grafico personale per PDK, minuti ed efficienza sullo stesso periodo,
    da dove partiva (primo punto) a dove è arrivato (ultimo punto), media del periodo e trend %. */
 /* giocatore del trend: prima squadra (maglia) oppure G League (gl:1, logo G League al posto della maglia) */
 function trPl(n){const q=Object.entries(ROSTER).flatMap(([t,a])=>a.map(x=>({n:x[0],t,num:x[1],r:x[2]}))).find(x=>x.n===n);if(q)return q;const g=glPlayers().find(x=>x.n===n);if(g)return{n:g.n,t:g.t,num:"",r:g.r,gl:1};const f=typeof FA!=="undefined"?FA.find(x=>x[0]===n):null;return f?{n:f[0],t:"FA",num:f[3]||"",r:f[2],fa:1}:null}
 function trDetail(n){const C=TRN._ctx;if(!C)return"";const p=trPl(n);if(!p)return"";
-  const g=grGames(n,C.SZR.length>1?"all":C.sz).filter(x=>C.SZR.includes(x.sz)&&C.inP(x.dt));const c=TEAMS[p.t];
+  const g=grGames(n,C.SZR.length>1?"all":C.sz).filter(x=>C.SZR.includes(x.sz)&&C.inP(x.dt));const c=TEAMS[p.t]||FAC;
   const M=new Map();g.forEach(x=>{const k=trKey(x,C.by);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});const K=[...M.keys()].sort();
   const mets=[["pdk","PDK","#22c55e"],["min","Minuti","#facc15"],["eff","Efficienza","#a855f7"]];
   const f=(k,v)=>v==null?"—":k==="eff"?cf2(v):cf1(v);
@@ -4864,20 +4865,20 @@ function trDetail(n){const C=TRN._ctx;if(!C)return"";const p=trPl(n);if(!p)retur
     return`<div class="tdbox" style="--c:${col}"><div class="tdh"><b>${l}</b><span>media periodo ${f(k,grAvg(g,x=>x[k]))}${tr&&pts.length>=3?` · trend ${tr.pct>=0?"+":"−"}${Math.abs(Math.round(tr.pct))}%`:""}</span></div>
       <div class="tdv"><div><small>Partiva da</small><b>${f(k,a)}</b><em>${trLab(K[0],C.by).replace("|"," ")}</em></div><i>→</i><div><small>Ora</small><b>${f(k,z)}</b><em>${trLab(K[K.length-1],C.by).replace("|"," ")}</em></div><div class="tdd ${up?"up":"dn"}"><small>Differenza</small><b>${up?"+":"−"}${f(k,Math.abs(d))}</b><em>${dp==null?"":(up?"+":"−")+Math.abs(Math.round(dp))+"%"}</em></div></div>${chart(k,col)}</div>`};
   return`<div class="colsheet trsheet"><div class="ccard" style="--rc:${c.bg}"><button class="ccx" data-trdx="1" aria-label="Chiudi">×</button>
-   <div class="tdhd">${p.gl?glBadge(p.t,"trlg"):jersey(p.t,p.num,n)}<div><b>${n}</b><small>${p.gl?"G-":""}${c.name} · ${{G:"Guardia",F:"Ala",C:"Centro"}[p.r]} · ${g.length} partite · ${C.by==="s"?"media per stagione":C.by==="m"?"media per mese":C.by==="w"?"media per settimana":"partita per partita"}</small></div></div>
+   <div class="tdhd">${p.fa?`<span class="trlg" style="display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:11px">FA</span>`:p.gl?glBadge(p.t,"trlg"):jersey(p.t,p.num,n)}<div><b>${n}</b><small>${p.gl?"G-":""}${c.name} · ${{G:"Guardia",F:"Ala",C:"Centro"}[p.r]} · ${g.length} partite · ${C.by==="s"?"media per stagione":C.by==="m"?"media per mese":C.by==="w"?"media per settimana":"partita per partita"}</small></div></div>
    ${mets.map(box).join("")}
    <button class="cshare" data-trshare="${n.replace(/"/g,"&quot;")}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Condividi</span></button>
    <button class="cshare alt" data-grafico="${p.t}" data-grp="${n.replace(/"/g,"&quot;")}"><span>📈 Apri il grafico completo</span></button><button class="cshare alt" data-plopen="${n.replace(/"/g,"&quot;")}"><span>👤 Apri il profilo del giocatore</span></button></div></div>`}
 /* Condivisione del dettaglio trend: immagine 1080×1350 con i 3 riquadri (partiva da → ora) e i grafici. */
 async function trShare(n,btn){const C=TRN._ctx;if(!C)return;const p=trPl(n);if(!p)return;
-  const g=grGames(n,C.SZR.length>1?"all":C.sz).filter(x=>C.SZR.includes(x.sz)&&C.inP(x.dt));const c=TEAMS[p.t];
+  const g=grGames(n,C.SZR.length>1?"all":C.sz).filter(x=>C.SZR.includes(x.sz)&&C.inP(x.dt));const c=TEAMS[p.t]||FAC;
   const M=new Map();g.forEach(x=>{const k=trKey(x,C.by);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});const K=[...M.keys()].sort();
   try{await document.fonts.load('800 italic 40px "Barlow Condensed"')}catch(e){}
   const W=1080,H=1350,cv=document.createElement("canvas");cv.width=W;cv.height=H;const X=cv.getContext("2d");
   const F=(w,s2)=>`italic ${w} ${s2}px "Barlow Condensed","Arial Narrow",Arial,sans-serif`,B=(w,s2)=>`${w} ${s2}px system-ui,-apple-system,Segoe UI,Arial,sans-serif`;
   const bg=X.createLinearGradient(0,0,0,H);bg.addColorStop(0,"#1c2338");bg.addColorStop(1,"#070a12");X.fillStyle=bg;X.fillRect(0,0,W,H);
   const hd=X.createLinearGradient(0,0,W,0);const dk=(h,k)=>{const v=parseInt(h.slice(1),16),q=x=>Math.round(x*(1-k)).toString(16).padStart(2,"0");return"#"+q(v>>16)+q((v>>8)&255)+q(v&255)};hd.addColorStop(0,c.bg);hd.addColorStop(1,dk(c.bg,.28));X.fillStyle=hd;X.fillRect(0,0,W,250);X.fillStyle="#facc15";X.fillRect(0,250,W,6);
-  const js=await ldImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jersey(p.t,p.num,n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')));if(js){const s2=190,r=Math.min(s2/js.width,s2/js.height);X.drawImage(js,50,30,js.width*r,js.height*r)}
+  const js=p.fa?null:await ldImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jersey(p.t,p.num,n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')));if(js){const s2=190,r=Math.min(s2/js.width,s2/js.height);X.drawImage(js,50,30,js.width*r,js.height*r)}
   const lum=(h=>{const v=parseInt(h.slice(1),16);return(0.299*(v>>16)+0.587*((v>>8)&255)+0.114*(v&255))/255})(c.bg),tc=lum>.6?"#111":"#fff";
   X.fillStyle=tc;X.font=F(800,26);X.textAlign="left";X.fillText("CALCOLA IL TREND · DREAMERS",270,72);
   let z=86;X.font=F(800,z);const nm=n.toUpperCase();while(X.measureText(nm).width>W-310&&z>40){z-=4;X.font=F(800,z)}X.fillText(nm,270,158);
@@ -4938,6 +4939,7 @@ function vStatNotte(){if(CNT)return vStatLive();const N=snNights();if(!N.length)
   <div class="snlist">${rows||'<p class="note">Nessun giocatore delle franchigie in campo.</p>'}</div>
   <p class="note">${E?"Efficienza della notte (PDK ÷ minuti)":"PDK Dunkest della notte"} di tutti i giocatori delle 8 franchigie scesi in campo, dal più alto. Colori: ${E?"rosso sotto 0,80, giallo 0,80-1,10, verde oltre 1,10, viola da 1,50":"rosso sotto 20, giallo 20-29,99, verde 30-39,99, viola da 40"}.</p>`}
 function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>PL.push({n:p[0],t,r:p[2]})));glPlayers().forEach(p=>PL.push({n:p.n,t:p.t,r:p.r,gl:1}));
+  if(typeof FAG==="undefined")faLoadG();{const have=new Set(PL.map(x=>x.n));FA.forEach(f=>{if(!have.has(f[0]))PL.push({n:f[0],t:"FA",r:f[2],fa:1})})}
   /* periodo a calendario: TRN.da → TRN.a (stesse regole del Grafico) */
   const ORD=PER_ORD;perNorm(TRN);const SZR=perSzr(TRN.da,TRN.a),multi=SZR.length>1,sz=multi?"all":(SZR[0]||ORD[2]),met=TRN.met,inP=perIn(TRN.da,TRN.a);
   const G=new Map(PL.map(p=>[p.n,SZR.length?grGames(p.n,sz).filter(x=>SZR.includes(x.sz)):[]]));
@@ -4947,7 +4949,7 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   if(!forz){const ks=new Set();let mx=0;G.forEach(g=>{let c=0;g.forEach(x=>{if(inP(x.dt)){ks.add(trKey(x,by));c++}});if(c>mx)mx=c});if(by!=="s"&&(ks.size<2||mx<=8))by="g"}
   TRN._ctx={SZR,inP,by,sz};
   const keysAll=new Set(),R=[];
-  PL.forEach(p=>{if(TRN.team&&p.t!==TRN.team)return;if(!TRN.ruoli.includes(p.r))return;const g=G.get(p.n).filter(x=>inP(x.dt));if(g.length<+TRN.minp)return;
+  PL.forEach(p=>{if(TRN.team&&p.t!==TRN.team)return;if(TRN.grp==="sq"&&(p.gl||p.fa))return;if(TRN.grp==="gl"&&!p.gl)return;if(TRN.grp==="fa"&&!p.fa)return;if(!TRN.ruoli.includes(p.r))return;const g=G.get(p.n).filter(x=>inP(x.dt));if(g.length<+TRN.minp)return;
     const M=new Map();g.forEach(x=>{const k=trKey(x,by);if(!M.has(k))M.set(k,[]);M.get(k).push(x)});
     const pts=[...M.entries()].map(([k,a])=>({k,v:grAvg(a,x=>x[met])})).filter(q=>q.v!=null).sort((a,b)=>a.k<b.k?-1:1);
     if(pts.length<2)return;const tr=grTrend(pts.map(q=>q.v));if(!tr)return;
@@ -4974,13 +4976,14 @@ function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(
   const seg=(k,opts)=>`<div class="trseg">${opts.map(([v,l])=>`<button data-trset="${k}" data-v="${v}" aria-pressed="${TRN[k]===v}">${l}</button>`).join("")}</div>`;
   const rows=R.map((x,i)=>{const on=TRN.on.includes(x.n),st=sty[x.n];return`<div class="trrow${on?" on":""}" data-trln="${x.n.replace(/"/g,"&quot;")}" role="button" tabindex="0">
     <span class="trsw" data-trtog="1" title="Mostra/nascondi la linea"${on?` style="--c:${st.c}"`:""}>${on?`<svg viewBox="0 0 26 8" width="26" height="8"><line x1="1" y1="4" x2="25" y2="4" stroke="${st.c}" stroke-width="3" ${st.d?`stroke-dasharray="${st.d}"`:""} stroke-linecap="round"/></svg>`:""}</span>
-    ${x.gl?glBadge(x.t,"trlg"):badge(x.t,"trlg")}<span class="trnm"><b>${RTR(x.n)}${x.n}</b><small>${x.gl?"G-":""}${TEAMS[x.t].nick} · ${{G:"Guardia",F:"Ala",C:"Centro"}[x.r]} · ${x.N} partite · media ${fmt(x.m)}</small></span>
+    ${x.fa?`<span class="trlg" style="display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:11px">FA</span>`:x.gl?glBadge(x.t,"trlg"):badge(x.t,"trlg")}<span class="trnm"><b>${RTR(x.n)}${x.n}</b><small>${x.gl?"G-":""}${(TEAMS[x.t]||FAC).nick} · ${{G:"Guardia",F:"Ala",C:"Centro"}[x.r]} · ${x.N} partite · media ${fmt(x.m)}</small></span>
     <span class="trpc ${x.pct>=0?"up":"dn"}">${x.pct>=0?"▲ +":"▼ −"}${Math.abs(x.pct).toFixed(0)}%</span>
     <button class="trgr" data-grafico="${x.t}" data-grp="${x.n.replace(/"/g,"&quot;")}" aria-label="Grafico di ${x.n}">📈</button></div>`}).join("");
   return`<div class="grroom trroom" style="--tc:#16213f;--tf:#fff">
   <button class="grback" data-trclose="1">‹ Indietro</button>
   <div class="grhd"><div><small>Ricerca per numeri · tutti i giocatori della lega</small><b>Calcola il trend</b></div></div>
   <div class="trctl">${perBtn("tr",TRN.da,TRN.a)}${perGranBtns("tr",GOK,by)}
+  ${sel("grp","Giocatori",[["","Tutti"],["sq","Squadre"],["gl","G-League"],["fa","Free agent"]],TRN.grp)}
   ${sel("team","Squadra",[["","Tutte le squadre"],...Object.keys(TEAMS).map(t=>[t,TEAMS[t].nick])],TRN.team)}</div>
   <div class="trlab">Ruoli</div><div class="trseg trrl">${[["G","Guardie"],["F","Ali"],["C","Centri"]].map(([r,l])=>`<button class="${r}" data-trrole="${r}" aria-pressed="${TRN.ruoli.includes(r)}">${l}</button>`).join("")}</div>
   <div class="trlab">Cosa misurare</div>${seg("met",[["pdk","PDK"],["min","Minuti"],["eff","Efficienza"]])}
