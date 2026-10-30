@@ -4360,18 +4360,20 @@ function faOthers(){
 function vFA(){
   const q=faNz(faQ.trim());
   const L=FA.filter(x=>(!faRole||x[2]===faRole)&&(!faGL||FA_OWN[x[0]])).map(x=>({x,s:x[4][faSz]}));
-  L.sort((a,b)=>faCmp(a.s,b.s,a.x[0],b.x[0]));
-  let k=0;
-  const rows=L.map(({x,s})=>{const has=!!s;if(has)k++;const fs=faNz(x[0]+" "+x[1]);return `<tr class="farow${has?"":" fanone"}" data-fan="${x[0].replace(/"/g,"&quot;")}" data-fs="${fs}"${(q?!fs.includes(q):!has)?" hidden":""}><td class="fark">${has?k:"–"}</td><td class="fanm"><b>${RTR(x[0])}${x[0]}</b>${faGL1(x[0])}<small>${x[1]} · ${FA_R[x[2]]}</small></td><td>${has?s[0]:"—"}</td><td>${has?faNum(s[1]):"—"}</td><td class="fapdk">${has?pdkB(s[2],faNum(s[2])):"—"}</td><td>${has?eff(s[3]):"—"}</td></tr>`}).join("");
-  const oth=(faFA?[]:faOthers()).map(o=>{const s=o.s,has=!!s,fs=faNz(o.n+" "+(o.nba||"")+" "+TEAMS[o.t].name+" "+TEAMS[o.t].nick),nn=o.n.replace(/"/g,"&quot;");
+  /* (522) «Tutti» mostra anche i giocatori delle squadre e della G League: un'unica classifica con i free agent. Il filtro «Free agent» li esclude. */
+  const items=[];
+  L.forEach(({x,s})=>{const has=!!s,fs=faNz(x[0]+" "+x[1]);items.push({s,n:x[0],has,f:k=>`<tr class="farow${has?"":" fanone"}" data-fan="${x[0].replace(/"/g,"&quot;")}" data-fs="${fs}"${(q?!fs.includes(q):!has)?" hidden":""}><td class="fark">${has?k:"–"}</td><td class="fanm"><b>${RTR(x[0])}${x[0]}</b>${faGL1(x[0])}<small>${x[1]} · ${FA_R[x[2]]}</small></td><td>${has?s[0]:"—"}</td><td>${has?faNum(s[1]):"—"}</td><td class="fapdk">${has?pdkB(s[2],faNum(s[2])):"—"}</td><td>${has?eff(s[3]):"—"}</td></tr>`})});
+  (faFA?[]:faOthers()).forEach(o=>{const s=o.s,has=!!s,fs=faNz(o.n+" "+(o.nba||"")+" "+TEAMS[o.t].name+" "+TEAMS[o.t].nick),nn=o.n.replace(/"/g,"&quot;");
     const logo=o.kind==="T"?`<span class="fagl" title="${TEAMS[o.t].nick}">${badge(o.t,"faglb")}</span>`:`<span class="fagl" title="G League ${TEAMS[o.t].nick}">${glBadge(o.t,"faglb")}</span>`;
-    return `<tr class="farow faoth" ${o.kind==="T"?`data-fat="${o.t}" data-fap="${nn}"`:`data-fag="${o.k.replace(/"/g,"&quot;")}"`} data-fs="${fs}"${q&&fs.includes(q)?"":" hidden"}><td class="fark">–</td><td class="fanm"><b>${RTR(o.n)}${o.n}</b>${logo}<small>${o.kind==="T"?TEAMS[o.t].nick:"G-"+TEAMS[o.t].nick} · ${FA_R[o.r]}${o.nba?" · "+o.nba:""}</small></td><td>${has?s[0]:"—"}</td><td>${has?faNum(s[1]):"—"}</td><td class="fapdk">${has?pdkB(s[2],faNum(s[2])):"—"}</td><td>${has?eff(s[3]):"—"}</td></tr>`}).join("");
+    items.push({s,n:o.n,has,f:k=>`<tr class="farow faoth${has?"":" fanone"}" ${o.kind==="T"?`data-fat="${o.t}" data-fap="${nn}"`:`data-fag="${o.k.replace(/"/g,"&quot;")}"`} data-fs="${fs}"${(q?!fs.includes(q):!has)?" hidden":""}><td class="fark">${has?k:"–"}</td><td class="fanm"><b>${RTR(o.n)}${o.n}</b>${logo}<small>${o.kind==="T"?TEAMS[o.t].nick:"G-"+TEAMS[o.t].nick} · ${FA_R[o.r]}${o.nba?" · "+o.nba:""}</small></td><td>${has?s[0]:"—"}</td><td>${has?faNum(s[1]):"—"}</td><td class="fapdk">${has?pdkB(s[2],faNum(s[2])):"—"}</td><td>${has?eff(s[3]):"—"}</td></tr>`})});
+  items.sort((a,b)=>faCmp(a.s,b.s,a.n,b.n));
+  let k=0;const rows=items.map(o=>o.f(o.has?++k:0)).join(""),oth="";
   const ch=(attr,val,lab,on)=>`<button class="fach" ${attr}="${val}" aria-pressed="${on}">${lab}</button>`;
   return `${H("Giocatori",`<em>${FA.length} giocatori</em>`)}
   <input id="faq" class="vtq" type="search" placeholder="🔍 Cerca giocatore o squadra NBA" autocomplete="off" aria-label="Cerca giocatore" value="${faQ.replace(/"/g,"&quot;")}">
   <div class="fasel"><div>${["24/25","25/26","26/27"].map(z=>ch("data-fasz",z,FA_SZL[z],faSz===z)).join("")}</div><div>${[["","Tutti"],["G","G"],["F","A"],["C","C"]].map(([v,l])=>ch("data-farole",v,l,faRole===v)).join("")}${ch("data-fagl","1","G League",faGL)}${ch("data-fafa","1","Free agent",faFA)}</div></div>
   <div class="tbl-wrap"><table class="fatbl"><thead><tr><th>#</th><th>Giocatore</th>${[[0,"PG"],[1,"Min"],[2,"PDK"],[3,"Eff."]].map(([k,l])=>`<th class="fasrt${faSrt.k===k?" on":""}" data-fasrt="${k}" role="button" tabindex="0" aria-label="Ordina per ${l}${faSrt.k===k?(faSrt.d<0?", ora decrescente":", ora crescente"):""}">${l}${faSrt.k===k?(faSrt.d<0?" ▼":" ▲"):""}</th>`).join("")}</tr></thead><tbody>${rows}${oth}</tbody></table></div>
-  <p class="note">I giocatori NBA non presenti nei roster della lega (free agent) sono sempre in lista; cercando per nome compaiono anche quelli delle squadre ufficiali e delle G League, con il logo della squadra proprietaria. Media per partita della stagione scelta (solo regular season). <span class="fagl">${badge("DOL","faglb")}<i>G</i></span> = giocatore nella G League di quella franchigia. PDK ufficiali Dunkest (dunkest.com). Dati al ${FA_AGG}. Tocca un giocatore per la scheda.</p>`;
+  <p class="note">«Tutti» mostra free agent, giocatori delle squadre ufficiali e delle G League (con il logo della squadra proprietaria) in un'unica classifica; «Free agent» tiene solo i free agent. Media per partita della stagione scelta (solo regular season). <span class="fagl">${badge("DOL","faglb")}<i>G</i></span> = giocatore nella G League di quella franchigia. PDK ufficiali Dunkest (dunkest.com). Dati al ${FA_AGG}. Tocca un giocatore per la scheda.</p>`;
 }
 let faPS=null,faGLoad=false;
 function faLoadG(){if(typeof FAG!=="undefined"||faGLoad===true)return;faGLoad=true;const s=document.createElement("script");s.src="fa-games.js";
@@ -4471,7 +4473,7 @@ document.getElementById("main").addEventListener("click",e=>{
   if(b.dataset.fasz)faSz=b.dataset.fasz;if(b.dataset.farole!==undefined)faRole=b.dataset.farole;if(b.dataset.fagl)faGL=!faGL;if(b.dataset.fafa)faFA=!faFA;render()});
 document.getElementById("main").addEventListener("change",e=>{if(e.target.id!=="fapsz")return;faPS=e.target.value;const y=scrollY;render();scrollTo(0,y)});
 document.getElementById("main").addEventListener("input",e=>{if(e.target.id!=="faq")return;faQ=e.target.value;const q=faNz(faQ.trim());
-  document.querySelectorAll(".farow").forEach(r=>{r.hidden=q?!r.dataset.fs.includes(q):(r.classList.contains("fanone")||r.classList.contains("faoth"))})});
+  document.querySelectorAll(".farow").forEach(r=>{r.hidden=q?!r.dataset.fs.includes(q):r.classList.contains("fanone")})});
 
 /* ===== OSSERVATORIO (28/10/2026): giocatori che "segui" (tasto segnalibro), salvati SOLO su questo dispositivo (localStorage "dl_seg").
    Vista dal pulsante giallo in Home: classifica Live (chi gioca ora) · Notte (tutta la notte) · Generale (stagione), ordinabile per PDK o efficienza. ===== */
