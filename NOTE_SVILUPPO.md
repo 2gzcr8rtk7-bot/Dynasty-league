@@ -1553,3 +1553,7 @@ Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp
 - Sotto il titolo di Dreamers e di G-Dreamers c'è l'interruttore «Dreamers | G-Dreamers» (viola/verde): passa da un campionato all'altro nella stessa stanza a schermo intero.
 - Tolta la voce «G-Dreamers» dal menu Centro gestione. Le statistiche dei satelliti G League (prima «Squadre» in quella pagina) sono ora la 4ª scheda «G League» dentro G-Dreamers; il tasto indietro dal profilo giocatore G League torna lì.
 - Stato: pubblicato (v146, 30/10/2026).
+
+## 540 — Statistiche: Giocatori e Squadre grandi, Efficienza Cup e Trend piccoli
+- In alto Giocatori (rosso) e Squadre (giallo), grandi e a tutta larghezza con icona e freccia in cerchio; sotto, affiancati e più piccoli, Efficienza Cup (viola) e Calcola il trend (verde). La lista della notte resta sotto.
+- Stato: in coda, non pubblicato.
