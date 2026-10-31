@@ -2727,6 +2727,15 @@ html.dlt-parquet:not(.notte) .tvbox td:first-child button:not(#z){background:#e8
 html.dlt-parquet:not(.notte) .tvbox td:first-child button svg:not(#z){color:#fff!important;stroke:#fff}
 html.dlt-parquet:not(.notte) .tvtabs .tvtab[aria-pressed="true"]:not(#z){background:linear-gradient(180deg,#e8631a,#cf5410)!important;color:#fff!important;border-color:#cf5410!important}
 html.dlt-parquet:not(.notte) .tvtabs .tvtab[aria-pressed="true"] *:not(#z){color:#fff!important}
+/* (733) colori scelti con l'Editor colori, ufficializzati nel Parquet */
+html.dlt-parquet:not(.notte) div.teamhead:not(#dx){color:#fefffd!important;-webkit-text-fill-color:#fefffd!important;border-color:#ffffff!important;}
+html.dlt-parquet:not(.notte) button.shbtn:not(#dx){color:#fffdfb!important;-webkit-text-fill-color:#fffdfb!important;}
+html.dlt-parquet:not(.notte) svg.cbg:not(#dx){color:#000000!important;-webkit-text-fill-color:#000000!important;border-color:#000000!important;}
+html.dlt-parquet:not(.notte) th.fasrt:not(#dx){background:#dc5c15!important;background-image:none!important;}
+html.dlt-parquet:not(.notte) div.ghead:not(#dx){border-color:#ffffff!important;}
+html.dlt-parquet:not(.notte) div.cmth:not(#dx){background:#d34d0c!important;background-image:none!important;}
+html.dlt-parquet:not(.notte) span.t:not(#dx){background:#e56316!important;background-image:none!important;}
+html.dlt-parquet:not(.notte) div.gszn:not(#dx){color:#fff9f7!important;-webkit-text-fill-color:#fff9f7!important;}
 html.dlt-parquet:not(.notte) .dphalf h5,html.dlt-parquet:not(.notte) .dphalf h5 small{color:#fff!important;text-shadow:0 1px 2px rgba(80,30,0,.5)!important}
 html.dlt-parquet:not(.notte) .dphalf.pqw,html.dlt-parquet:not(.notte) .dphalf{background:linear-gradient(180deg,color-mix(in srgb,var(--loss) 16%,transparent),transparent 75%)!important;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--loss) 55%,transparent)!important}
 html.dlt-parquet .pqw{background:#fff!important;background-image:none!important;border-color:rgba(217,86,11,.35)!important;box-shadow:0 2px 6px rgba(120,60,10,.15)}
@@ -9778,7 +9787,7 @@ function pqFix(){try{
     if(el.tagName==="svg"||el.closest("svg"))return;
     if(el.closest(".htile"))return;
     if(el.closest(".cltg,.cltn,.tvpnl .tvdate,.tvpnl .tvday"))return;
-    if(window.__dxSkip&&window.__dxSkip(el))return;
+    if(window.__dxSkip&&window.__dxSkip(el))return;if(el.matches&&el.matches("div.teamhead,div.teamhead *,button.shbtn,div.gszn"))return;
     if(el.classList&&el.classList.contains("tstar")){const b=bgSel(el);el.classList.toggle("stl",lum(b)>.4);return}
     let has=false;for(const n of el.childNodes)if(n.nodeType===3&&n.textContent.trim().length>0){has=true;break}
     if(!has)return;const r=el.getBoundingClientRect();if(r.width<2||r.height<2)return;
