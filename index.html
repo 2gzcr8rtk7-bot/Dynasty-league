@@ -4921,7 +4921,9 @@ function hnScopeSet(v){if(!["all","team"].includes(v))return;HN_S=v;try{localSto
 /* (353) Fase della Home notte: dalle 14:00 (ora italiana, era 08:30) fino alla prima partita della notte USA mostra le partite che stanno per arrivare (restituisce la data USA), poi torna live. Prima delle 08:30 restano i risultati della notte appena finita. */
 function hnNowMn(){const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date());return +f.find(x=>x.type==="hour").value*60+ +f.find(x=>x.type==="minute").value}
 function homeFase(mnTest){try{const o=flUsaOggi(),G=(TV.days[o]||[]);let mn=mnTest;if(typeof mn!=="number"){const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date());mn=+f.find(x=>x.type==="hour").value*60+ +f.find(x=>x.type==="minute").value}
-  const hasS=G.some(g=>g[5]==="S"),started=G.some(g=>g[5]==="L"||g[5]==="F");return hasS&&!started&&!(mn>=360&&mn<840)?o:null}catch(e){return null}}
+  const hasS=G.some(g=>g[5]==="S"),started=G.some(g=>g[5]==="L"||g[5]==="F");/* (635) all'una di notte ET la data USA passa al giorno dopo (circa le 05:00-06:00 italiane): senza questo controllo la Previsione riappariva mentre la notte appena giocata non era ancora archiviata. La Previsione vale solo dalle 14:00 italiane fino alla prima partita. */
+  let eh=12;try{eh=+new Intl.DateTimeFormat("en-GB",{timeZone:"America/New_York",hour:"2-digit",hourCycle:"h23"}).format(new Date())}catch(e){}
+  return hasS&&!started&&!(mn>=360&&mn<840)&&!(typeof mnTest!=="number"&&eh<9)?o:null}catch(e){return null}}
 const HN_DEFC={};function hnDef(opp,role){const k=opp+"|"+role,n=Date.now(),c=HN_DEFC[k];if(c&&n-c.t<600000)return c.v;let v=null;try{v=capDef(opp,role)}catch(e){}HN_DEFC[k]={t:n,v};return v}
 let HN_NOCLK=0;document.addEventListener("click",e=>{if(performance.now()<HN_NOCLK){e.stopPropagation();e.preventDefault()}},true);
 let HN_H={};try{HN_H=JSON.parse(localStorage.getItem("dl_hh")||"{}")||{}}catch(e){HN_H={}}
