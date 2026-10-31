@@ -153,7 +153,7 @@ Voto del GM: Ingram Infortuni ½.
 Stima ricavata dai valori fissati a mano (VALORI al 26/10/2026), controllata lasciando fuori un giocatore alla volta:
 errore mediano 12%, 3 giocatori su 4 entro il 25%.
 
-    Valore ≈ 3,11 × PDK^1,78 × 0,93^(età − 25) × 0,925^(max(0; 2,5 − stelle infortuni))
+    Valore ≈ 3,11 × PDK^1,78 × 0,93^(età − 25) × 0,925^(max(0; 2,5 − stelle infortuni))   [dal 31/10/2026 nell'app 0,80: i GM scontano molto di più i giocatori fragili, vedi NOTE_SVILUPPO 764]
 
 - PDK = media PDK a partita della stagione 2025/26, con la 2024/25 a peso dimezzato. La stagione in corso (poche partite) per ora non sposta i valori.
 - Ogni anno di età in più = −7% circa (a parità di PDK); ogni stella infortuni sotto 2,5 = −7,5%.
