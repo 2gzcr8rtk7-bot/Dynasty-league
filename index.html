@@ -11053,6 +11053,7 @@ function gzEdizione(){
         fact:cA&&cB?P("up-f",`Nello scontro del turno ${gzI(m0.a)} hanno ${gzNum(cA.c)} giocatori in campo, ${gzI(m0.b)} ${gzNum(cB.c)}${cA.c===cB.c?": parità di uomini, decideranno i nomi":cA.c>cB.c?`: un piccolo vantaggio ${gzDi(m0.a)}`:`: un piccolo vantaggio ${gzDi(m0.b)}`}.`,`Per il match del turno: ${gzNk(m0.a)} ${gzNum(cA.c)} uomini in campo, ${gzNk(m0.b)} ${gzNum(cB.c)}.`):"",
         txt:[B&&B.L.length>=3?P("up-g",`La partita da guardare è ${gzOpp(B.g[0])} contro ${gzOpp(B.g[1])}: ci sono ${gzNum(B.L.length)} giocatori del Dreamers, tra cui ${gzLst(B.L.slice(0,3).map(q=>gzSur(q.n)+" "+gzDi(q.t)))}.`,`Occhio a ${gzOpp(B.g[0])} contro ${gzOpp(B.g[1])}: ${gzNum(B.L.length)} nostri giocatori in campo, con ${gzLst(B.L.slice(0,3).map(q=>gzSur(q.n)))} in prima fila.`):"",W.L[0]?`Il nome di punta ${gzDi(W.t)} che scende in campo è ${gzSur(W.L[0][0])}.`:""]})}
   }catch(e){console.warn("gzNuove",e)}
+  try{gzExtra({P,F,HS,push,DN,ordp})}catch(e){console.warn("gzExtra",e)}
   /* (594) ANALISI DELLE SQUADRE e SUGGERIMENTI */
   let CONS=null;try{CONS=gzConsigli({P,F,pos,ordp,recS,n1,DN});if(CONS)CONS.arts.filter(a=>HS.ok(a.tag+":"+(a.sq||[]).join(""),"",4)).forEach(push)}catch(e){console.warn("gzConsigli",e)}
   /* (675) un po' di casualità giornaliera sulle notizie non in apertura, così ogni giorno l'ordine e la scelta cambiano */
@@ -11178,6 +11179,109 @@ function notizie(){if(!COL.d){cur="campo";return vCampo()}
   ${box(5,"TG Dreamers a schermo intero","Sigla, una schermata per notizia con loghi e numeri, striscia dei titoli in basso, e la voce che legge. Si può mettere in pausa, saltare, spegnere la voce.",`<button class="advbtn nzplay" data-nzplay="1" type="button">▶ Guarda il TG Dreamers</button><p class="note">${ok?"La voce parte da sola dopo il tocco.":"Questo browser non ha la voce: il TG scorre da solo con i testi."}</p>`,"un pulsante «Guarda il TG» nell'articolo e nel banner: a schermo intero, si chiude con ✕.")}
   ${box(6,"Voce","Quella del telefono, in italiano. Qui puoi provarla e cambiarla.",`<div class="nzvc"><button class="advbtn" data-nzvoce="prova" type="button">🔊 Prova la voce</button><button class="advbtn" data-nzvoce="rate" type="button">Velocità ×${String(GZV.rate).replace(".",",")}</button><button class="advbtn" data-nzvoce="voce" type="button">Voce: ${(gzVoce()||{}).name||"non disponibile"}</button></div><p class="note">${ok?voci+" voci italiane trovate su questo dispositivo. La qualità cambia da telefono a telefono.":"Voce non supportata da questo browser."}</p>`,"nel tasto «Ascolta» di ogni articolo; funziona solo dopo un tocco (limite di iPhone e Android).")}
   <p class="note">Tutto è composto dall'app senza di me, con frasi preimpostate e i dati veri. Le notizie di oggi: ${E.art.map(a=>a.tag.toLowerCase()).join(", ")}.</p></div>`}
+/* (747) TG DREAMERS 2.0 — nuove rubriche, memoria tra i giorni, testi più parlati (niente record vittorie/sconfitte).
+   Rubriche: LA SQUADRA DEL GIORNO (analisi a rotazione, tocca a tutte e otto prima di ripetere), LA MOVIOLA (chi sta vincendo
+   uno scambio fatto da più di una settimana, contando i PDK prodotti dopo lo scambio), IL CONSIGLIO DI MERCATO (scambio 1 contro 1
+   pensato sui gusti di un GM che ha fatto l'Allenamento IA, vedi GM_GUSTI), CHI SALE E CHI SCENDE (trend dell'ultimo mese),
+   VI AVEVAMO DETTO (riprende i giocatori citati nei giorni scorsi e verifica se avevamo ragione).
+   Memoria: localStorage dl_gz_mem = {an:{squadra:data}, cl:[{d,n,kind}]}. */
+const GZM_K="dl_gz_mem";
+function gzMemGet(){try{return JSON.parse(localStorage.getItem(GZM_K)||"{}")||{}}catch(e){return{}}}
+function gzMemSet(m){try{localStorage.setItem(GZM_K,JSON.stringify(m))}catch(e){}}
+const gzRP={G:"le guardie",F:"le ali",C:"i centri"};
+const gzDataP=s=>{const m=/(\d+)\/(\d+)/.exec(s||"");if(!m)return"";return(+m[1]===1?"primo":gzNum(+m[1]))+" "+GZ_MESI[+m[2]]};
+const gzDK=s=>{const m=/(\d+)\/(\d+)(?:\/(\d+))?/.exec(s||"");if(!m)return 0;const mo=+m[2],y=m[3]?+m[3]:(mo>=7?2026:2027);return y*10000+mo*100+ +m[1]};
+const gzVolte=p=>{const v=Math.max(1,Math.min(9,Math.round(p*10)));return gzNum(v)+" volte su dieci"};
+function gzExtra(X){const{P,F,HS,push,DN,ordp}=X,mem=gzMemGet(),oggi=F.oggi,C=t=>gzCap(gzI(t)),jt=k=>gzRng(gzHash(k+"|"+DN))();
+  let L=null;try{L=gzProf(F)}catch(e){}
+  const dd=(a,b)=>Math.round((Date.parse(a+"T00:00:00Z")-Date.parse(b+"T00:00:00Z"))/864e5);
+
+  /* 1. LA SQUADRA DEL GIORNO */
+  try{if(L&&L.T){const an=mem.an||{},ids=Object.keys(L.T).sort((a,b)=>((an[a]||"")<(an[b]||"")?-1:(an[a]||"")>(an[b]||"")?1:jt("an"+a)-jt("an"+b)));
+    const t=ids[0],T=L.T[t];if(t&&T&&(!an[t]||dd(oggi,an[t])>=1)){
+      const FASE={vetta:"costruita per vincere adesso",caccia:"che vuole vincere subito",declino:"esperta, ma in affanno",dinastia:"giovane e già fortissima",rifondazione:"che guarda al futuro",costruzione:"ancora in costruzione",limbo:"rimasta a metà strada",aperta:"ancora tutta da decifrare"};
+      const pl=T.pl.filter(q=>!q.out),best=pl.slice().sort((a,b)=>b.pdk-a.pdk)[0];
+      const roles=["G","F","C"].filter(r=>T.def&&T.def[r]>.12).sort((a,b)=>T.def[b]-T.def[a]),forte=["G","F","C"].filter(r=>T.def&&T.def[r]<-.1).sort((a,b)=>T.def[a]-T.def[b]);
+      const hot=pl.filter(q=>q.tr&&q.tr.pct>=10).sort((a,b)=>b.tr.pct-a.tr.pct)[0],cold=pl.filter(q=>q.tr&&q.tr.pct<=-10).sort((a,b)=>a.tr.pct-b.tr.pct)[0];
+      const G=(typeof GM_GUSTI!=="undefined")&&GM_GUSTI[t],lik=G?Object.keys(G.pl).filter(n=>G.pl[n]>=5&&gzTeamOf(n)!==t).sort((a,b)=>G.pl[b]-G.pl[a]):[];
+      const ca=T.coreAge;
+      push({p:62,k:"an:"+t,sg:oggi,sq:[t],tag:"LA SQUADRA DEL GIORNO",claim:hot?{n:hot.n,kind:"hot"}:cold?{n:cold.n,kind:"cold"}:null,an:t,
+        op:P("an-op","E adesso la nostra rubrica: la squadra del giorno.","Oggi la lente si posa su una squadra in particolare.","Ogni giorno una squadra sotto la lente: oggi tocca a loro.","Spazio all'analisi."),
+        h:P("an-h"+t,`Sotto la lente: ${gzI(t)}`,`${C(t)} ai raggi X`,`Viaggio in casa ${gzDi(t)}`,`Chi sono davvero ${gzI(t)}?`),
+        ctx:P("an-c"+t,`${C(t)} sono ${ordp(t)}, e la rosa racconta una squadra ${FASE[T.fase]||FASE.aperta}.`,`${C(t)}, ${ordp(t)} in classifica: una squadra ${FASE[T.fase]||FASE.aperta}.`,`Partiamo dalla classifica: ${gzI(t)} sono ${ordp(t)}. E guardando la rosa, è una squadra ${FASE[T.fase]||FASE.aperta}.`),
+        fact:best?P("an-f"+t,`Il trascinatore è ${gzSur(best.n)}, che viaggia a circa ${gzNum(Math.round(best.pdk))} PDK a partita.`,`Tutto passa da ${gzSur(best.n)}: circa ${gzNum(Math.round(best.pdk))} PDK a sera.`,`L'uomo in più si chiama ${gzSur(best.n)}, intorno ai ${gzNum(Math.round(best.pdk))} PDK di media.`):"",
+        txt:[roles[0]?P("an-w"+t,`Il punto debole sono ${gzRP[roles[0]]}: è lì che il GM dovrebbe guardare sul mercato.`,`Dove migliorare? Soprattutto ${gzRP[roles[0]]}.`,`Se c'è un buco, è tra ${gzRP[roles[0]]}.`):forte[0]?P("an-s"+t,`Il reparto più solido sono ${gzRP[forte[0]]}: da lì si può anche pescare per uno scambio.`,`Abbondanza tra ${gzRP[forte[0]]}: una risorsa da usare sul mercato.`):"",
+          hot?P("an-h2"+t,`Da tenere d'occhio ${gzSur(hot.n)}, in netta crescita nell'ultimo mese.`,`Sale la forma di ${gzSur(hot.n)}: l'ultimo mese è il suo migliore.`):cold?P("an-c2"+t,`Preoccupa ${gzSur(cold.n)}, in calo nelle ultime settimane.`,`Qualche pensiero in più per ${gzSur(cold.n)}, che ha rallentato.`):"",
+          ca&&ca<=23.5?`È una delle rose più giovani della lega: il meglio deve ancora venire.`:ca&&ca>=29?`È una delle rose più esperte: il tempo per vincere è adesso.`:"",
+          T.cash>=100?P("an-$"+t,`E in cassa ci sono ${gzNum(Math.round(T.cash))} crediti: abbastanza per tentare un colpo.`,`Con ${gzNum(Math.round(T.cash))} crediti da parte, un colpo di mercato non è fantascienza.`):"",
+          lik[0]?P("an-g"+t,`Un'ultima cosa: dai test del suo GM sappiamo che ${gzSur(lik[0])} gli piace parecchio.`,`E un nome che in casa ${gzDi(t)} piace molto: ${gzSur(lik[0])}.`):""]})}}}catch(e){console.warn("gzx an",e)}
+
+  /* 2. LA MOVIOLA DEGLI SCAMBI */
+  try{const t0=Date.parse(oggi+"T00:00:00Z"),ok=[];
+    (typeof TRADES!=="undefined"?TRADES:[]).forEach(x=>{if(x.titolo!=="Scambio"||!x.lati||x.lati.length!==2)return;const m=/(\d+)\/(\d+)\/(\d+)/.exec(x.data||"");if(!m)return;const gg=Math.round((t0-Date.UTC(+m[3],+m[2]-1,+m[1]))/864e5);if(gg<7||gg>90)return;
+      const k0=gzDK(x.data),S=x.lati.map(l=>{const pl=l[1].filter(v=>!/\bcr\b|slot|pick|credit/i.test(v)&&PARTITE[v]);let s=0,g=0;pl.forEach(n=>(PARTITE[n]||[]).forEach(r=>{if(+r[2]>0&&gzDK(r[0])>k0){s+=+r[3]||0;g++}}));return{t:l[0],pl,s,g}});
+      if(!S[0].pl.length||!S[1].pl.length||S[0].g+S[1].g<6)return;const w=S[0].s>=S[1].s?0:1,mg=Math.abs(S[0].s-S[1].s)/Math.max(1,S[0].s,S[1].s),key="mv:"+x.data+S[0].t+S[1].t;
+      if(HS.ok(key,w,9))ok.push({x,S,w,mg,gg,key})});
+    ok.sort((a,b)=>(b.mg+jt(b.key)*.3)-(a.mg+jt(a.key)*.3));const M=ok[0];
+    if(M){const W=M.S[M.w],Lo=M.S[1-M.w],nm=a=>gzLst(a.pl.slice(0,3).map(gzSur)),net=M.mg>=.3,par=M.mg<.1;
+      push({p:par?42:net?68:55,k:M.key,sg:M.w,sq:[W.t,Lo.t],tag:"LA MOVIOLA",
+        op:P("mv-op","Torniamo su un vecchio scambio: la moviola.","Il mercato si giudica col tempo. Ecco la moviola.","Riavvolgiamo il nastro su uno scambio."),
+        h:par?P("mv-hp",`${gzCap(gzI(W.t))} e ${gzI(Lo.t)}: scambio ancora in equilibrio`,`Scambio alla pari, per ora`):net?P("mv-hn",`Lo scambio lo stanno vincendo ${gzI(W.t)}, e nettamente`,`${gzCap(gzI(W.t))} ci hanno visto lungo`):P("mv-hm",`Per ora sorridono ${gzI(W.t)}`,`Lo scambio pende verso ${gzI(W.t)}`),
+        ctx:P("mv-c",`Era il ${gzDataP(M.x.data)}: ${gzI(M.S[0].t)} prendevano ${nm(M.S[0])}, ${gzI(M.S[1].t)} ${nm(M.S[1])}.`,`Il ${gzDataP(M.x.data)} ${gzI(M.S[0].t)} prendevano ${nm(M.S[0])}, ${gzI(M.S[1].t)} ${nm(M.S[1])}.`),
+        fact:P("mv-f",`Da allora ${nm(W)} ${W.pl.length>1?"hanno":"ha"} portato ${gzNum(Math.round(W.s))} PDK ${gzAl(W.t)}, contro i ${gzNum(Math.round(Lo.s))} di ${nm(Lo)}.`,`Il conto dei PDK dopo lo scambio: ${gzNum(Math.round(W.s))} per ${gzI(W.t)}, ${gzNum(Math.round(Lo.s))} per ${gzI(Lo.t)}.`),
+        txt:[par?P("mv-tp","Uno di quegli scambi che fanno contenti tutti, almeno per adesso.","Nessun vincitore, per ora: se ne riparla tra qualche settimana."):net?P("mv-tn",`${gzCap(gzI(Lo.t))} sperano che il vento cambi.`,`Per ${gzI(Lo.t)} è il momento di avere pazienza.`):P("mv-tm","Il margine non è enorme, e la stagione è lunga.","Niente di definitivo: basta una buona settimana per ribaltare tutto.")]})}}catch(e){console.warn("gzx mv",e)}
+
+  /* 3. IL CONSIGLIO DI MERCATO, sui gusti dei GM */
+  try{const GG=(typeof GM_GUSTI!=="undefined")?GM_GUSTI:{},best=[];
+    Object.keys(GG).filter(t=>ROSTER[t]).forEach(t=>{const mine=ROSTER[t].map(p=>p[0]).filter(n=>(valOf(n)||0)>200&&!iaOut(n));
+      Object.keys(ROSTER).forEach(o=>{if(o===t)return;ROSTER[o].forEach(p=>{const q=p[0],vq=valOf(q)||0;if(vq<300||iaOut(q))return;
+        mine.forEach(g=>{const vg=valOf(g)||0,d=Math.abs(vq-vg)/Math.max(vq,vg,1);if(d>.12)return;const pa=gmProb(t,[g],[q]);if(pa==null||pa<.62)return;const pb=GG[o]?gmProb(o,[q],[g]):null;if(pb!=null&&pb<.45)return;
+          const key="gg:"+t+":"+q;if(!HS.ok(key,"",6))return;best.push({t,o,g,q,pa,pb,key,s:pa+(pb||.5)*.5+jt(key)*.25})})})})});
+    best.sort((a,b)=>b.s-a.s);const B=best[0];
+    if(B){const ag=iaAge(B.g),aq=iaAge(B.q),G=GG[B.t],lik=(G.pl[B.q]||0)>=5,meno=(G.pl[B.g]||0)<=-5;
+      push({p:60,k:B.key,sg:"",sq:[B.t,B.o],tag:"IL CONSIGLIO DI MERCATO",
+        op:P("gg-op","E adesso un consiglio di mercato, su misura.","Facciamo un po' di mercato: un'idea su misura.","Dal nostro osservatorio, un'idea di scambio."),
+        h:P("gg-h",`Un'idea per ${gzI(B.t)}: ${gzSur(B.q)}`,`${gzCap(gzI(B.t))}, pensateci: ${gzSur(B.q)}`,`${gzSur(B.q)} ${gzAl(B.t)}? Ha senso`),
+        ctx:P("gg-c",`Dai test del GM ${gzDi(B.t)} sappiamo cosa gli piace, e ${gzSur(B.q)} ${gzDi(B.o)} è il profilo giusto.`,`Abbiamo studiato i gusti del GM ${gzDi(B.t)}, e c'è un nome che fa al caso suo: ${gzSur(B.q)} ${gzDi(B.o)}.`),
+        fact:P("gg-f",`L'idea: ${gzSur(B.g)} per ${gzSur(B.q)}. Per il calcolatore è quasi alla pari, e secondo i suoi gusti gli piacerebbe ${gzVolte(B.pa)}.`,`Lo scambio: ${gzSur(B.g)} per ${gzSur(B.q)}, quasi alla pari per il calcolatore. Sui gusti del GM, piacerebbe ${gzVolte(B.pa)}.`),
+        txt:[lik?`${gzSur(B.q)} è uno dei giocatori che piacciono di più in casa ${gzDi(B.t)}.`:"",meno?`E ${gzSur(B.g)} è proprio uno di quelli che lasciano partire volentieri.`:"",
+          ag!=null&&aq!=null&&aq-ag>=3?`Si prende un giocatore più esperto, pronto subito.`:ag!=null&&aq!=null&&ag-aq>=3?`Si ringiovanisce la rosa, senza perdere qualità.`:"",
+          B.pb!=null?`E anche ${gzI(B.o)}, a giudicare dai loro test, potrebbero dire di sì.`:P("gg-o",`Resta da convincere ${gzI(B.o)}.`,`La palla passa ${gzAl(B.o)}.`)]})}}catch(e){console.warn("gzx gg",e)}
+
+  /* 4. CHI SALE E CHI SCENDE */
+  try{const A=[];Object.keys(ROSTER).forEach(t=>ROSTER[t].forEach(p=>{let r=null;try{r=iaTrend(p[0])}catch(e){}if(r&&r.n>=6&&Math.abs(r.pct)>=12)A.push({n:p[0],t,pct:r.pct})}));
+    const up=A.filter(x=>x.pct>0).sort((a,b)=>b.pct-a.pct)[0],dn=A.filter(x=>x.pct<0).sort((a,b)=>a.pct-b.pct)[0],sg=(up?up.n:"")+(dn?dn.n:"");
+    if((up||dn)&&HS.ok("ss",sg,4)){const pc=v=>gzNum(Math.min(99,Math.round(Math.abs(v))));
+      push({p:46,k:"ss",sg,sq:[up&&up.t,dn&&dn.t].filter(Boolean),tag:"CHI SALE E CHI SCENDE",claim:up?{n:up.n,kind:"hot"}:{n:dn.n,kind:"cold"},
+        op:P("ss-op","Il borsino dei giocatori: chi sale e chi scende.","Ed ecco il borsino.","Diamo un'occhiata alle quotazioni."),
+        h:up&&dn?P("ss-h",`Vola ${gzSur(up.n)}, frena ${gzSur(dn.n)}`,`${gzSur(up.n)} su, ${gzSur(dn.n)} giù`):up?`${gzSur(up.n)} è l'uomo del momento`:`Momento no per ${gzSur(dn.n)}`,
+        ctx:up?P("ss-u",`In crescita ${gzSur(up.n)} ${gzDi(up.t)}: nell'ultimo mese rende circa il ${pc(up.pct)} per cento in più.`,`Il titolo del mese è ${gzSur(up.n)} ${gzDi(up.t)}, salito di circa il ${pc(up.pct)} per cento.`):"",
+        fact:dn?P("ss-d",`Chi scende è ${gzSur(dn.n)} ${gzDi(dn.t)}, calato di circa il ${pc(dn.pct)} per cento.`,`In discesa invece ${gzSur(dn.n)} ${gzDi(dn.t)}: meno ${pc(dn.pct)} per cento nell'ultimo mese.`):"",
+        txt:[P("ss-t","Le tendenze non sono sentenze, ma qualcosa dicono.","Un mese è poco per giudicare, ma abbastanza per accorgersene.","Chi ha questi giocatori in rosa, prenda nota.")]})}}catch(e){console.warn("gzx ss",e)}
+
+  /* 5. VI AVEVAMO DETTO */
+  try{const cl=(mem.cl||[]).filter(c=>c.d<oggi&&dd(oggi,c.d)<=5);const seen=new Set(),R=[];
+    cl.slice().reverse().forEach(c=>{if(seen.has(c.n))return;seen.add(c.n);const g=F.nl.find(x=>x.n===c.n&&x.min>=10);if(!g||g.av==null)return;
+      const good=g.pdk>=g.av+4,bad=g.pdk<=g.av-4;if(!good&&!bad)return;const giusto=(c.kind==="hot")===good;R.push({c,g,giusto})});
+    const Z=R.sort((a,b)=>Math.abs(b.g.pdk-b.g.av)-Math.abs(a.g.pdk-a.g.av))[0];
+    if(Z&&HS.ok("va:"+Z.c.n,F.notte,3)){const n=gzSur(Z.c.n),q=gl=>gl===1?"ieri":"qualche giorno fa",quando=q(dd(oggi,Z.c.d)),pts=gzNum(Math.round(Z.g.pdk));
+      push({p:52,k:"va:"+Z.c.n,sg:F.notte,sq:Z.g.t?[Z.g.t]:[],tag:"VI AVEVAMO DETTO",
+        op:P("va-op","Una verifica su quello che vi avevamo detto.","Torniamo su una nostra previsione.","Avevamo fatto un nome: vediamo com'è andata."),
+        h:Z.giusto?P("va-hg",`${n}: ci avevamo visto giusto`,`Previsione azzeccata su ${n}`):P("va-hb",`${n} ci smentisce`,`Su ${n} ci eravamo sbagliati, per ora`),
+        ctx:Z.c.kind==="hot"?`${gzCap(quando)} vi avevamo parlato di ${n}, in grande forma.`:`${gzCap(quando)} vi avevamo detto che ${n} stava rallentando.`,
+        fact:`Stanotte ${Z.g.pdk>=Z.g.av?"ha fatto":"si è fermato a"} ${pts} PDK${Z.g.opp?" contro "+Z.g.opp:""}.`,
+        txt:[Z.giusto?P("va-tg","Questa volta il fiuto non ci ha tradito.","Una piccola soddisfazione, ce la prendiamo.","Teniamo il punto, e lo segniamo sul taccuino."):P("va-tb","Il basket ci ricorda sempre che le previsioni valgono quello che valgono.","Ci prendiamo la smentita con il sorriso.","Una notte non fa una stagione, ma questa volta ha ragione lui.")]})}}catch(e){console.warn("gzx va",e)}
+}
+/* toglie i record «tre vittorie e zero sconfitte»: si parla di posizioni, non di numeri */
+function gzPulisciRec(s){if(!s)return s;return String(s)
+  .replace(/\s*,?\s*(?:che vantano |vantano |con )?(?:una vittoria|[a-zà-ù]+ vittorie) e (?:una sconfitta|[a-zà-ù]+ sconfitte)/gi,"")
+  .replace(/(\d+),(\d+)(\s*PDK)?/g,(m,a,b,p)=>String(Math.round(+(a+"."+b)))+(p||"")).replace(/\s+([,.;:!?])/g,"$1").replace(/,\s*([.;:])/g,"$1").replace(/:\s*\./g,".").replace(/\s{2,}/g," ").trim()}
+{const GE0=gzEdizione;gzEdizione=function(){const E=GE0.apply(this,arguments);try{
+  (E.art||[]).forEach(a=>{["h","ctx","fact","op"].forEach(k=>{if(a[k])a[k]=gzPulisciRec(a[k])});a.txt=(a.txt||[]).map(gzPulisciRec).filter(Boolean);a.sub=[a.ctx,a.fact].filter(Boolean).join(" ");a.voce=[a.ctx,a.fact,...a.txt].filter(Boolean).join(" ")});
+  const m=gzMemGet(),oggi=E.data;m.an=m.an||{};m.cl=(m.cl||[]).filter(c=>c.d!==oggi&&Date.parse(oggi)-Date.parse(c.d)<=8*864e5);
+  (E.art||[]).forEach(a=>{if(a.an)m.an[a.an]=oggi;if(a.claim&&a.claim.n)m.cl.push({d:oggi,n:a.claim.n,kind:a.claim.kind});const k=a.k||"";if(/^tu:/.test(k))m.cl.push({d:oggi,n:k.slice(3),kind:"hot"});if(/^td:/.test(k))m.cl.push({d:oggi,n:k.slice(3),kind:"cold"})});
+  gzMemSet(m)}catch(e){console.warn("gzx mem",e)}return E}}
+
 window.gzEdizione=gzEdizione;window.gzFatti=gzFatti;window.GZ=GZ;window.gzPulisci=gzPulisci;window.gzPronto=gzPronto;window.gzOraOk=()=>gzOra().h>="07:30";VIEWS.giornale=giornale;VIEWS.consigli=vConsigli;VIEWS.notizie=notizie;VIEWS.sala=sala;VIEWS.pers=pers;VIEWS.soft=soft;VIEWS.orari=orari;
 /* il codice del giornale si carica dopo il primo disegno della Home: ridisegno la Home una volta, così la scheda TG compare subito (senza dover passare da altre sezioni) */
 try{if(cur==="home")render()}catch(e){}
