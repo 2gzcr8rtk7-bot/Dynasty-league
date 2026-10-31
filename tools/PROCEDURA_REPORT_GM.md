@@ -17,6 +17,8 @@ Richiesta di Francesco (31/10/2026): ogni report dell'Allenamento IA va usato pe
 4. Aggiornare anche `GM_DESCR[squadra]` in index.html (scheda «Scopri i gusti dei GM»: cosa cercano, come chiudono, infortuni, cosa manca) con quello che si è capito; i numeri della scheda vengono da GM_GUSTI da soli.
 5. Le sezioni FOCUS dei report (fragili, OUT, trend, rookie, ritoccati) vanno lette e annotate qui sotto nel registro.
 
+**Attenzione (segnalazione dei GM, 31/10):** «ceduto volentieri» / «rifiutato da cedere» vanno SEMPRE pesati col vantaggio dello scambio. Si usa il residuo del modello (accettato − probabilità attesa dal Δ valore, età, ruoli) per ogni giocatore ceduto: solo un residuo positivo vuol dire «se ne libera volentieri». Script: tools/gm_residui.py (lista dei report da aggiornare dentro, dizionario F); nel report ora c'è il Δ medio accanto a ogni nome.
+
 ## 2. Correzioni dei valori (quando c'è consenso)
 - **Quando correggere.** Un valore si corregge solo se almeno **2 profili** concordano sul segno e la media dei loro `pl` è almeno **4 punti**.
 - **Quanto correggere.** Si applica il **70%** della media, arrotondato a 5. I valori di partenza sono di Francesco: il suo è un solo parere, ma non si butta.
