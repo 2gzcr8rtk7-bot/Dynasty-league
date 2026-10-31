@@ -2,6 +2,8 @@
 
 Richiesta di Francesco (31/10/2026): ogni report dell'Allenamento IA va usato per **imparare** e trasformare quello che si impara in regole **automatiche**. I report di altre squadre si applicano e si pubblicano subito, poi si avvisa Francesco (non serve chiedere).
 
+**Autonomia (Francesco, 31/10/2026 17:18):** Claude può cambiare LIBERAMENTE valori, pesi della formula del lunedì (età, infortuni, forma…) e regole, senza chiedere, quando l'INCROCIO di più GM lo giustifica (mai sul parere di un solo GM). Ogni cambio: nota in NOTE_SVILUPPO, riga nella tabella del §3, registro VAL_CORREZ se tocca i valori, pubblicazione e avviso a cose fatte.
+
 ## 1. A ogni report (subito)
 1. `python3 tools/gm_fit.py vals` (valori di ADESSO: i report hanno i valori del momento in cui il GM ha risposto).
 2. In base al tipo di report:
@@ -28,8 +30,8 @@ F = PDKrif^1,78 × 0,93^(età−25) × `VAL_INJ_B`^max(0; 2,5 − stelle). Conta
 |---|---|---|---|
 | `VAL_INJ_B` (stelle infortuni) | 0,80 (era 0,925) | Valutazioni Spiders+Dolphins: sconto dichiarato ~58% sotto 1,5★, ~41% 1,5–2,5★, ~5% sopra 2,5★. Si prende circa metà. | Dolphins 29 valutazioni: rischio 7–8 → 46%, 9–10 → 98% (confermano). Spiders: più bassi (35%). Se la media di 4+ GM resta sopra 40% sotto 2★, scendere a 0,75. |
 | Regola RICADUTA (stelle) | −0,5 al 3° infortunio serio in 3 stagioni | Holmgren 31/10 | Spiders lo scontano ~25% dopo la notizia; noi −20% sul valore + curva OUT negli scambi. |
-| Curva OUT (`INJ_PT`) | di Francesco (29/10) | Foxes: infortunati ricevuti accettati 8% (Δ −24%); Spiders 22% (Δ −16%) | Proposta in attesa: per lo stesso infortunio non sommare curva OUT e calo stelle finché è fuori. |
-| Età | 0,93/anno nel calcolo | Gusti età dei GM (punti valore per anno in più ricevuto): TUR 2,25 · SPI 1,4 · DOL 1,2 · PEA 0,75 · FOX 1,5 | Media ~1,4: i GM vogliono i giovani un po' più di quanto dicono i valori. Se resta così con 6+ squadre, valutare una correzione dei valori di partenza per età (non della formula settimanale, dove l'età quasi non cambia). |
+| Curva OUT (`INJ_PT`) + stelle | curva di Francesco (29/10); dal 31/10 il calo delle stelle per l'infortunio in INJ_STORIA aspetta il rientro (niente doppio sconto) | Foxes: OUT ricevuti accettati 8% (Δ −24%); Spiders 22% (Δ −16%); Holmgren −25% (Spiders) | Se i GM scontano gli OUT molto meno della curva (−10% a 3 settimane, −50% a 3 mesi), proporre a Francesco di ammorbidirla. |
+| Età | 0,93/anno nel calcolo; valori di partenza −0,5% per anno sopra i 26 (+0,5% sotto, max ±6%) dal 31/10 | Gusti età (proposte): TUR 2,25 · SPI 1,4 · DOL 1,2 · PEA 0,75 · FOX 1,5 (media ~1,4); nei confronti: DOL +1,2 · PEA +0,3 · SPI −0,9. Applicato circa un terzo; profili ridotti di 0,5; GUSTO.age 3,5 → 1. | Se con nuovi report i profili restano tutti positivi sopra 1, aggiungere un altro −0,3%/anno. |
 | Trend / forma | PDKrif pesato g/(g+15) | FOCUS trend nei report | In attesa di dati. |
 
 ## 4. Registro delle osservazioni (aggiungere in fondo)
@@ -37,3 +39,4 @@ F = PDKrif^1,78 × 0,93^(età−25) × `VAL_INJ_B`^max(0; 2,5 − stelle). Conta
 - 31/10 · Consenso dopo la prima correzione ancora negativo su Quickley, Allen, Bridges, Daniels: da riguardare con risposte successive alla correzione.
 - 31/10 · Rookie ricevuti poco graditi (Spiders 20%, Foxes 14%) ma ceduti volentieri (Spiders 80%): i rookie sono sopravvalutati nei valori? Servono più dati.
 - 31/10 · Reaves: i Foxes non lo cedono, Spiders e Dolphins lo valutano più di noi; la correzione verso l'alto è confermata.
+- 31/10 17:20 · Seconda correzione per consenso (16 valori, 5 profili): giù Allen, Wilson, Barrett, Bailey, Quickley, Porter, Ball, Queen, Okongwu; su Thompson A., Avdija, Wembanyama, Curry, Giddey, Buzelis, Mara. Holmgren escluso (il suo calo e' gia' nelle regole infortuni).
