@@ -12388,6 +12388,7 @@ function search(){const A=myT(),others=Object.keys(ROSTER).filter(t=>t!==A),maxk
     if(!R)continue;const key=R.mv.map(m=>m.n+">"+m.to).sort().join("|");if(!best.has(key))best.set(key,{D:{T,mv:R.mv},R});
     if(SELL){const sold=R.io[A].give.filter(n=>SELL.includes(n)).sort();if(sold.length){const ck=sold.join(" + "),dk=R.mv.map(m=>m.n+">"+m.to).sort().join("|"),G=BUY[ck]=BUY[ck]||{};if(!G[dk])G[dk]={P:R.P,x:{D:{T,mv:R.mv},R}};}}}
   GU.iter=it;GU.buy=SELL?BUY:null;const all=[...best.values()].sort((a,b)=>b.R.P-a.R.P).filter((x,i,a)=>a.slice(0,i).filter(y=>y.D.T.length===x.D.T.length&&y.D.mv.filter(m=>x.D.mv.some(z=>z.n===m.n)).length>=x.D.mv.length-1).length<2);
+  /* (822) vendita: un solo elenco ordinato per «si chiude al», con i giocatori venduti da soli e insieme (le 3 migliori per ogni gruppo, poi le altre) */if(SELL){const F=[];Object.values(BUY).forEach(G=>Object.values(G).sort((a,b)=>b.P-a.P).filter((o,i,a)=>a.findIndex(z=>z.x.D.T.slice().sort().join()===o.x.D.T.slice().sort().join())===i).slice(0,3).forEach(o=>F.push({D:o.x.D,R:o.x.R})));return F.sort((a,b)=>b.R.P-a.R.P).slice(0,20)}
   const pick=new Set(all.slice(0,6));for(let k=3;k<=maxk;k++)all.filter(x=>x.D.T.length===k).slice(0,2).forEach(x=>pick.add(x));return[...pick].sort((a,b)=>b.R.P-a.R.P).slice(0,16)}
 /* perché: la ragione principale per ogni squadra */
 function why(t,r){const G=prof(t),f=v=>(v>0?"+":"")+Math.round(v);const L=[];
@@ -12452,7 +12453,6 @@ function vGusti(){if(!GU.page)return vGustiHome();if(GU.page==='scopri')return v
   <h4>Con che valori</h4><div class="guseg"><button type="button" data-gu="gs" data-v="1" class="${GU.gusti!==false?"on":""}">🎯 Usa i gusti dei GM</button><button type="button" data-gu="gs" data-v="0" class="${GU.gusti===false?"on":""}">📊 Valori ufficiali</button></div>
     ${GU.mode==="sell"?"":`<h4>Cedo <small>(tocca chi vorresti cedere; se non scegli nessuno l'IA può usare tutti)</small></h4><div class="gukeep">${keep}</div>`}
   <button type="button" class="gugo" data-gu="go"${GU.busy||(GU.mode==="pl"&&!tgt)||(GU.mode==="sell"&&!GU.sell.size)?" disabled":""}>${GU.busy?"⏳ Cerco tra migliaia di combinazioni…":res?"🔄 Cerca ancora (altre combinazioni)":"🔎 Cerca gli scambi"}</button></section>
-  ${res&&GU.mode==="sell"&&GU.buy?buyers():""}
   ${res?`<section class="gures"><h4>${res.length?`Le ${res.length} proposte più gradite`:"Nessuno scambio trovato"}</h4>${res.length?`<p class="setnote">Verde sopra 60%, giallo 40–60%, rosso sotto. Tocca una proposta per aprirla.</p>`:`<p class="setnote">Prova con più squadre, un valore minimo più basso o meno giocatori bloccati.</p>`}${res.map(card).join("")}</section>`:""}`}
 const vx0=n=>{try{return valOf(n)||0}catch(e){return 0}};
 /* (799) acquirenti possibili per ogni giocatore in vendita: per ogni squadra lo scambio migliore trovato in cui lo riceve */
