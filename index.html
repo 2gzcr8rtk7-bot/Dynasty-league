@@ -2603,6 +2603,13 @@ html.dlt-parquet .pqw{background:#fff!important;background-image:none!important;
 .tvps{font-style:normal;font-weight:700;letter-spacing:.06em;margin:0;opacity:1}
 .tvw{margin-left:-14px;margin-right:-14px;border-radius:0}.tvbox{min-width:0!important}.tvbox td{padding:0 4px!important}.tvbox th{padding:8px 4px!important}.tvbox td:first-child{min-width:122px!important;max-width:122px!important;padding-left:8px!important;font-size:13px}.tvbox td:first-child small{font-size:10px}.tvbox .tvown{right:-4px!important}.tvbox .tvob{width:46px!important;height:46px!important;line-height:46px!important}.tvbox td .pdkb{min-width:46px!important;padding:3px 5px!important}.tvbox .plk{white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis}
 .tvsb{margin-left:-14px!important;margin-right:-14px!important}.tvtabs{margin-left:-14px!important;margin-right:-14px!important;gap:0!important}
+/* (718) Osservatorio Parquet: tasti arancio leggibili + tabella a tutta larghezza */
+html.dlt-parquet main .cltn,html.dlt-parquet main .cltg{background:#fff!important;border:1px solid rgba(217,86,11,.5)!important}
+html.dlt-parquet main .cltn button,html.dlt-parquet main .cltg button{background:#fff!important;color:var(--pq-ac,#d9560b)!important;text-shadow:none!important}
+html.dlt-parquet main .cltn button[aria-pressed="true"],html.dlt-parquet main .cltg button[aria-pressed="true"],html.dlt-parquet main .cltn button.on,html.dlt-parquet main .cltg button.on{background:linear-gradient(180deg,#e8631a,#cf5410)!important;color:#fff!important}
+html.dlt-parquet main .cltn b{background:linear-gradient(180deg,#e8631a,#cf5410)!important;color:#fff!important;text-shadow:none!important}
+html.dlt-parquet main .tbl-wrap:has(.osbox){margin-left:-14px!important;margin-right:-14px!important;width:auto!important;max-width:none!important}
+html.dlt-parquet main .osbox{width:100%!important;min-width:0!important}
 html.dlt-parquet footer,html.dlt-parquet main .foot{color:var(--pq-ink,#2b1608)}
 html.dlt-parquet .rgh b{color:var(--pq-ink,#2b1608)}
 html.dlt-parquet main h2 .t,html.dlt-parquet main h2 .t *{color:#fff}
@@ -9498,6 +9505,7 @@ function pqFix(){try{
   document.querySelectorAll(app?"header *,main *,#subnav *,#subnav2 *":'.drroom[data-th="3"] *').forEach(el=>{
     if(el.tagName==="svg"||el.closest("svg"))return;
     if(el.closest(".htile"))return;
+    if(el.closest(".cltg,.cltn"))return;
     if(el.classList&&el.classList.contains("tstar")){const b=bgOf(el);el.classList.toggle("stl",lum(b)>.4);return}
     let has=false;for(const n of el.childNodes)if(n.nodeType===3&&n.textContent.trim().length>0){has=true;break}
     if(!has)return;const r=el.getBoundingClientRect();if(r.width<2||r.height<2)return;
