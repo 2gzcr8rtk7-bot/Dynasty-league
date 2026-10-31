@@ -2772,28 +2772,30 @@ html.dlt-parquet .tstar.stl g:first-of-type{fill:rgba(43,22,8,.25)}
 html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.05)}
 
 /* 3) CORREZIONI: tasti, campi, pannelli (bianco/crema + arancio; selezionato arancio con scritta bianca) */
-html.dlt-parquet main :is(.kitbtn,.cntbtn,.lbma,.capch,.cupbtn,.grtg,.fafil,.fareset,.perbtn>b,.fapan select,.szchip,.chip:not([aria-pressed="true"]),.fach:not([aria-pressed="true"]),.fbxt button:not([aria-pressed="true"])){background:var(--pq-box)!important;background-image:none!important;color:var(--pq-tx)!important;border:1px solid var(--pq-line)!important;box-shadow:none!important;text-shadow:none!important}
-html.dlt-parquet main :is(.cntbtn.on,.cupbtn.on,.grtg.on,.grtg[aria-pressed="true"],.fafil.on,.fafil[aria-expanded="true"],.capch.on,.capch[aria-pressed="true"],.fach[aria-pressed="true"],.fbxt button[aria-pressed="true"]),html.dlt-parquet main .chip[aria-pressed="true"]{background:var(--pq-btn)!important;background-image:var(--pq-btn)!important;color:var(--pq-on)!important;border:1px solid var(--pq-b2)!important;text-shadow:none!important}
-html.dlt-parquet main .chip[aria-pressed="true"] *{color:var(--pq-on)!important}
-html.dlt-parquet main .chip[aria-pressed="true"] .badge{background:transparent!important}
-html.dlt-parquet main :is(.cntbtn,.lbma,.fafil) svg{color:var(--pq-tx)!important}
-html.dlt-parquet main .cntbtn.on svg,html.dlt-parquet main .fafil.on svg,html.dlt-parquet main .fafil[aria-expanded="true"] svg{color:var(--pq-on)!important}
-html.dlt-parquet main .fapan .fach{font-size:12px;padding:7px 3px;letter-spacing:0;overflow-wrap:anywhere}
-html.dlt-parquet main .fafil i{background:var(--pq-btn)!important;color:var(--pq-on)!important}
-html.dlt-parquet main .perbtn>span{color:var(--pq-tx)!important;text-shadow:none!important}
-html.dlt-parquet main .perbtn svg{color:var(--pq-tx)!important}
-html.dlt-parquet main .fapan{background:var(--pq-box)!important;background-image:none!important;border:1px solid var(--pq-line)!important}
-html.dlt-parquet main .fapan :is(label,small,b,span,p,h4,.fapl,.fapr){color:var(--pq-tx)!important;text-shadow:none!important}
-html.dlt-parquet main .fapan .chip[aria-pressed="true"] :is(b,span,small,i){color:var(--pq-on)!important}
-html.dlt-parquet main :is(select,option){color:var(--pq-tx)}
-html.dlt-parquet main :is(textarea,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file])){background:var(--pq-box)!important;color:var(--pq-tx)!important;border:1px solid var(--pq-line)!important}
-html.dlt-parquet main :is(textarea,input)::placeholder{color:var(--pq-tx);opacity:.6}
-html.dlt-parquet main :is(.trophies,.cassa){background:var(--pq-card)!important;background-image:var(--pq-card)!important;border:1px solid var(--pq-line)!important;box-shadow:var(--pq-sh)}
-html.dlt-parquet main :is(.trophies,.cassa) :is(small,.cgo,.rl){color:var(--pq-tx)!important;text-shadow:none!important}
-html.dlt-parquet main :is(.trophies,.cassa) :is(b,em,i,strong){color:var(--pq-ink,#2b1608)!important;text-shadow:none!important}
-html.dlt-parquet main .pvn b{background:none!important;background-image:none!important;-webkit-text-fill-color:var(--pq-tx)!important;color:var(--pq-tx)!important}
-html.dlt-parquet main :is(.tvst b.pre){background:var(--pq-btn)!important;color:var(--pq-on)!important}
+html.dlt-parquet:not(.notte) main :is(.kitbtn,.cntbtn,.lbma,.capch,.cupbtn,.grtg,.fafil,.fareset,.perbtn>b,.fapan select,.szchip,.chip:not([aria-pressed="true"]),.fach:not([aria-pressed="true"]),.fbxt button:not([aria-pressed="true"])){background:var(--pq-box)!important;background-image:none!important;color:var(--pq-tx)!important;border:1px solid var(--pq-line)!important;box-shadow:none!important;text-shadow:none!important}
+html.dlt-parquet:not(.notte) main :is(.cntbtn.on,.cupbtn.on,.grtg.on,.grtg[aria-pressed="true"],.fafil.on,.fafil[aria-expanded="true"],.capch.on,.capch[aria-pressed="true"],.fach[aria-pressed="true"],.fbxt button[aria-pressed="true"]),html.dlt-parquet:not(.notte) main .chip[aria-pressed="true"]{background:var(--pq-btn)!important;background-image:var(--pq-btn)!important;color:var(--pq-on)!important;border:1px solid var(--pq-b2)!important;text-shadow:none!important}
+html.dlt-parquet:not(.notte) main .chip[aria-pressed="true"] *{color:var(--pq-on)!important}
+html.dlt-parquet:not(.notte) main .chip[aria-pressed="true"] .badge{background:transparent!important}
+html.dlt-parquet:not(.notte) main :is(.cntbtn,.lbma,.fafil) svg{color:var(--pq-tx)!important}
+html.dlt-parquet:not(.notte) main .cntbtn.on svg,html.dlt-parquet:not(.notte) main .fafil.on svg,html.dlt-parquet:not(.notte) main .fafil[aria-expanded="true"] svg{color:var(--pq-on)!important}
+html.dlt-parquet:not(.notte) main .fapan .fach{font-size:12px;padding:7px 3px;letter-spacing:0;overflow-wrap:anywhere}
+html.dlt-parquet:not(.notte) main .fafil i{background:var(--pq-btn)!important;color:var(--pq-on)!important}
+html.dlt-parquet:not(.notte) main .perbtn>span{color:var(--pq-tx)!important;text-shadow:none!important}
+html.dlt-parquet:not(.notte) main .perbtn svg{color:var(--pq-tx)!important}
+html.dlt-parquet:not(.notte) main .fapan{background:var(--pq-box)!important;background-image:none!important;border:1px solid var(--pq-line)!important}
+html.dlt-parquet:not(.notte) main .fapan :is(label,small,b,span,p,h4,.fapl,.fapr){color:var(--pq-tx)!important;text-shadow:none!important}
+html.dlt-parquet:not(.notte) main .fapan .chip[aria-pressed="true"] :is(b,span,small,i){color:var(--pq-on)!important}
+html.dlt-parquet:not(.notte) main :is(select,option){color:var(--pq-tx)}
+html.dlt-parquet:not(.notte) main :is(textarea,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file])){background:var(--pq-box)!important;color:var(--pq-tx)!important;border:1px solid var(--pq-line)!important}
+html.dlt-parquet:not(.notte) main :is(textarea,input)::placeholder{color:var(--pq-tx);opacity:.6}
+html.dlt-parquet:not(.notte) main :is(.trophies,.cassa){background:var(--pq-card)!important;background-image:var(--pq-card)!important;border:1px solid var(--pq-line)!important;box-shadow:var(--pq-sh)}
+html.dlt-parquet:not(.notte) main :is(.trophies,.cassa) :is(small,.cgo,.rl){color:var(--pq-tx)!important;text-shadow:none!important}
+html.dlt-parquet:not(.notte) main :is(.trophies,.cassa) :is(b,em,i,strong){color:var(--pq-ink,#2b1608)!important;text-shadow:none!important}
+html.dlt-parquet:not(.notte) main .pvn b{background:none!important;background-image:none!important;-webkit-text-fill-color:var(--pq-tx)!important;color:var(--pq-tx)!important}
+html.dlt-parquet:not(.notte) main :is(.tvst b.pre){background:var(--pq-btn)!important;color:var(--pq-on)!important}
 
+html.dlt-parquet.notte .chip[aria-pressed="true"],html.dlt-parquet.notte .chip[aria-pressed="true"] *{background-color:var(--pq-ac,#f2701a)!important;color:#fff!important;border-color:var(--pq-ac2,#c2410c)!important}
+html.dlt-parquet.notte .chip[aria-pressed="true"] .badge{background-color:transparent!important}
 /* ================== fine blocco Parquet ================== */
 
 
@@ -9721,7 +9723,7 @@ try{const r=JSON.parse(sessionStorage.getItem("dl_reload")||"null");sessionStora
     const cs=getComputedStyle(e);if(cs.position==="fixed"||cs.display==="none"||cs.visibility==="hidden")return;
     const al=trans(e);if(al<=.02||al>=.97)return;if(e.getAttribute("aria-pressed")==="true"||e.getAttribute("aria-selected")==="true"||e.classList.contains("on"))return;
     const r=e.getBoundingClientRect();if(r.width<36||r.height<24)return;if(!onWood(e))return;e.classList.add("pqw");e.querySelectorAll("[data-pq]").forEach(x=>{if(x.matches(".pdkx,.pdkb,.gv,.gr2,.badge,.injtag,[class*=\"lg-\"]"))return;x.style.removeProperty("color");x.style.removeProperty("text-shadow");x.removeAttribute("data-pq")})})}
-  const go=()=>{if(t)return;t=setTimeout(()=>{try{(window.requestIdleCallback||setTimeout)(()=>{run();try{window.pqFix&&window.pqFix()}catch(e){}})}catch(e){}},180)};
+  const go=()=>{if(t)return;t=setTimeout(()=>{try{(window.requestIdleCallback||setTimeout)(()=>{run();try{if(!document.documentElement.classList.contains("notte")&&window.pqFix)window.pqFix()}catch(e){}})}catch(e){}},180)};
   window.__pqw=()=>{t=null;run()};new MutationObserver(go).observe(document.body,{childList:true,subtree:true});document.addEventListener("click",go);window.addEventListener("load",go)})();
 })()</script>
 
@@ -9737,8 +9739,14 @@ function pqClean(){while(PQL.length){const e=PQL.pop();try{e.style.removePropert
 function pqFix(){try{
   const app=document.documentElement.classList.contains("dlt-parquet"),dr=!!document.querySelector('.drroom[data-th="3"]');
   if(!app&&!dr){if(PQL.length)pqClean();return}
-  pqClean();if(app&&window.__pqw)window.__pqw();/* (722) prima il pannello bianco (pqw), poi il contrasto: così le scritte non restano bianche su bianco */
+  if(!document.documentElement.classList.contains("notte")){pqClean();if(app&&window.__pqw)window.__pqw()}/* (722) prima il pannello bianco (pqw), poi il contrasto: così le scritte non restano bianche su bianco */
   const cache=new Map();
+  const bgOfOld=el=>{if(cache.has(el))return cache.get(el);let res;const cs=getComputedStyle(el);let c=null;
+    const gi=cs.backgroundImage;if(gi&&gi!=="none"&&!/^url/.test(gi)){const m=gi.match(/rgba?\([^)]+\)/);if(m)c=pr(m[0])}
+    const bc=pr(cs.backgroundColor);if(!c||c.a<.95){if(bc&&bc.a>0&&(!c||bc.a>=.95))c=bc}
+    if(c&&c.a>=.95)res=c;else{const par=el.parentElement;const under=par?bgOfOld(par):{r:255,g:246,b:228};res=c&&c.a>0?{r:c.r*c.a+under.r*(1-c.a),g:c.g*c.a+under.g*(1-c.a),b:c.b*c.a+under.b*(1-c.a)}:under}
+    cache.set(el,res);return res};
+  const NT=document.documentElement.classList.contains("notte");/* (724) in modalità notte il correttore lavora come prima della v253 */
   const colRe=/rgba?\([^)]*\)|color\(srgb [^)]*\)/g;
   const pc=t=>{const m=t.match(/[-\d.]+/g);if(!m)return null;if(t.startsWith("color(")){return{r:+m[0]*255,g:+m[1]*255,b:+m[2]*255,a:m.length>3?+m[3]:1}}return{r:+m[0],g:+m[1],b:+m[2],a:m.length>3?+m[3]:1}};
   const splitTop=str=>{const o=[];let d=0,cur="";for(const ch of str){if(ch==="(")d++;if(ch===")")d--;if(ch===","&&d===0){o.push(cur);cur=""}else cur+=ch}if(cur.trim())o.push(cur);return o};
@@ -9749,17 +9757,18 @@ function pqFix(){try{
     const gi=cs.backgroundImage;
     if(gi&&gi!=="none"){const layers=splitTop(gi);for(let i=layers.length-1;i>=0;i--){const st=(layers[i].match(colRe)||[]).map(pc).filter(Boolean);if(!st.length)continue;const n=st.length;const m={r:st.reduce((q,x)=>q+x.r,0)/n,g:st.reduce((q,x)=>q+x.g,0)/n,b:st.reduce((q,x)=>q+x.b,0)/n,a:st.reduce((q,x)=>q+x.a,0)/n};m.r=st.reduce((q,x)=>q+x.r*x.a,0)/Math.max(.001,st.reduce((q,x)=>q+x.a,0));m.g=st.reduce((q,x)=>q+x.g*x.a,0)/Math.max(.001,st.reduce((q,x)=>q+x.a,0));m.b=st.reduce((q,x)=>q+x.b*x.a,0)/Math.max(.001,st.reduce((q,x)=>q+x.a,0));base=over(m,base)}}
     cache.set(el,base);return base};
+  const bgOfNew=bgOf;const bgSel=el=>NT?bgOfOld(el):bgOfNew(el);
   const W={r:255,g:255,b:255},DK={r:43,g:22,b:8},OR={r:184,g:65,b:10},ORD={r:124,g:45,b:5};
   document.querySelectorAll(app?"header *,main *,#subnav *,#subnav2 *":'.drroom[data-th="3"] *').forEach(el=>{
     if(el.tagName==="svg"||el.closest("svg"))return;
     if(el.closest(".htile"))return;
     if(el.closest(".cltg,.cltn,.tvpnl .tvdate,.tvpnl .tvday"))return;
     if(window.__dxSkip&&window.__dxSkip(el))return;
-    if(el.classList&&el.classList.contains("tstar")){const b=bgOf(el);el.classList.toggle("stl",lum(b)>.4);return}
+    if(el.classList&&el.classList.contains("tstar")){const b=bgSel(el);el.classList.toggle("stl",lum(b)>.4);return}
     let has=false;for(const n of el.childNodes)if(n.nodeType===3&&n.textContent.trim().length>0){has=true;break}
     if(!has)return;const r=el.getBoundingClientRect();if(r.width<2||r.height<2)return;
     const cs=getComputedStyle(el);if(cs.visibility==="hidden"||+cs.opacity===0)return;
-    const fg=pr(cs.color);if(!fg||fg.a===0)return;const bg=bgOf(el);
+    const fg=pr(cs.color);if(!fg||fg.a===0)return;const bg=bgSel(el);
     const f=fg.a<1?mix(bg,fg,fg.a):fg;const dark=lum(f)<.07;/* niente scritte nere: nero/marrone scurissimo diventa arancione (fondo chiaro) o bianco (fondo scuro) */
     if(cr(f,bg)>=3.4&&!dark)return;
     let n;const L=lum(bg);
