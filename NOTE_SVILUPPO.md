@@ -1760,3 +1760,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 637. Home: a partita finita si vedono i minuti giocati. Versione BOX: prima cella tratteggiata «MIN» nel box score (anche in Seguiti e nella pagina Notte); versione snella: «Finale · 28 min» sotto il nome. Durante la partita non compaiono.
 
 638. Campo in modalità notte: toccando il PDK di un giocatore (in campo, panchina, anche 'Non gioca') si apre il foglio con la partita di stanotte (punteggio live con quarto e minuti, oppure Finale, PDK del giocatore) e l'elenco delle partite che gli restano nel turno, con il conteggio. Toccando la maglia si apre ancora la scheda del giocatore.
+
+639. Campo (formazione Dreamers): finché i giocatori sono «in attesa» (nessun punteggio nel turno) l'ordine non è più per PDK medio ma per orario di inizio della prima partita ancora da giocare: nei 5 in campo, nel 6° uomo e nella panchina; a parità, PDK medio. Chi ha già un punteggio resta ordinato per punteggio. La scelta di chi entra nei 10 e nei 5 resta quella di prima (drNextTs, ord2 in drTeam).

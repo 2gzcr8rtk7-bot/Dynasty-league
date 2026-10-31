@@ -7941,21 +7941,25 @@ const DR_QUOTE={G:4,F:4,C:2};
 const DR_TURNI=[["2026-10-25","2026-10-29"],["2026-10-30","2026-11-03"],["2026-11-04","2026-11-06"],["2026-11-07","2026-11-09"],["2026-11-10","2026-11-12"],["2026-11-13","2026-11-15"],["2026-11-16","2026-11-18"],["2026-11-19","2026-11-21"],["2026-11-22","2026-11-23"],["2026-11-24","2026-11-27"],["2026-11-28","2026-11-30"],["2026-12-01","2026-12-03"],["2026-12-12","2026-12-15"],["2026-12-16","2026-12-18"],["2026-12-19","2026-12-22"],["2026-12-23","2026-12-25"],["2026-12-26","2026-12-28"],["2026-12-29","2026-12-31"],["2027-01-01","2027-01-03"],["2027-01-04","2027-01-06"],["2027-01-07","2027-01-08"],["2027-01-09","2027-01-11"],["2027-01-12","2027-01-14"],["2027-01-15","2027-01-17"],["2027-01-18","2027-01-20"],["2027-01-21","2027-01-23"],["2027-01-24","2027-01-26"],["2027-01-27","2027-01-29"],["2027-01-30","2027-02-01"],["2027-02-02","2027-02-04"],["2027-02-05","2027-02-07"],["2027-02-08","2027-02-09"],["2027-02-10","2027-02-12"],["2027-02-13","2027-02-15"],["2027-02-16","2027-02-18"],["2027-02-25","2027-02-26"],["2027-02-27","2027-03-01"],["2027-03-02","2027-03-03"],["2027-03-04","2027-03-06"],["2027-03-07","2027-03-09"],["2027-03-10","2027-03-11"],["2027-03-12","2027-03-14"],["2027-03-15","2027-03-17"],["2027-03-18","2027-03-20"],["2027-03-21","2027-03-23"],["2027-03-24","2027-03-26"],["2027-03-27","2027-03-29"],["2027-03-30","2027-04-01"],["2027-04-02","2027-04-04"]];
 const DR_ZERO={"5":["ATL"],"8":["MIA"],"29":["LAC"],"34":["LAL"],"38":["CLE"],"39":["DEN"],"40":["TOR"]};
 function drCalZero(n,k){const p=Object.values(ROSTER).flat().find(x=>x[0]===n);return !!(p&&DR_ZERO[k]&&DR_ZERO[k].includes(p[3]))}
+/* (639) orario di inizio (in minuti assoluti) della prima partita non finita del giocatore nel turno: serve a ordinare chi è ancora "in attesa" per chi gioca per primo */
+function drNextTs(n,W){try{const p=Object.values(ROSTER).flat().find(x=>x[0]===n),nba=p&&p[3];if(!nba)return 1e15;let best=1e15;for(let i=0;i<(W.len||7);i++){const d=drAdd(W.start,i),g=(TV.days[d]||[]).find(x=>x[0]===nba||x[1]===nba);if(!g||g[5]==="F")continue;const m=/^(\d{1,2}):(\d{2})(\+1)?/.exec(String(g[6]||""));const ts=Date.parse(d+"T00:00:00Z")/60000+(m?(+m[1]*60+ +m[2]+(m[3]?1440:0)):1439);if(ts<best)best=ts}return best}catch(e){return 1e15}}
 function drTeam(k,t,W){W=W||drWeek(k);const F0=drForm(k)[t]||{t:[],r:[]},F={t:F0.t.filter(n=>!spFuori(n)),r:F0.r.filter(n=>!spFuori(n))};
   /* MERITOCRAZIA dentro i ruoli: per ogni ruolo entrano i migliori PDK della settimana (4 G, 4 A, 2 C).
      Ordinati per punteggio: il migliore è capitano ×1,5, dal 2° al 6° pieno, dal 7° al 10° metà; se tra i 5 in campo manca un ruolo,
      sale il migliore di quel ruolo e scende (6° uomo o panchina) il peggiore dei 5 (di un ruolo che ne ha almeno 2). Il resto va in tribuna.
      Chi è nei 10 ma non ha (ancora) giocato occupa il posto: a turno chiuso vale 0. */
-  const pool=[...F.t,...F.r].map((n,i)=>{let e=drEff(W.acc[n]),cal=false;if(e==null&&drCalZero(n,k)){const m=pdkMed(n);if(m!=null){e=m;cal=true}}return{n,i,r:ruoloDi(n),e,a:W.acc[n],cal}});
+  const pool=[...F.t,...F.r].map((n,i)=>{let e=drEff(W.acc[n]),cal=false;if(e==null&&drCalZero(n,k)){const m=pdkMed(n);if(m!=null){e=m;cal=true}}return{n,i,r:ruoloDi(n),e,a:W.acc[n],cal,ts:e==null&&!W.closed?drNextTs(n,W):0}});
   const key=x=>x.e==null?-1e9:x.e,med=x=>x.e==null?(pdkMed(x.n)??-99):0,ord=(p,q)=>key(q)-key(p)||med(q)-med(p)||p.i-q.i; /* senza punteggio nel turno: in ordine di PDK medio */
   let sel=[],zeros=0;for(const r of["G","F","C"]){const l=pool.filter(x=>x.r===r).sort(ord),q=DR_QUOTE[r];sel.push(...l.slice(0,q));zeros+=Math.max(0,q-l.length)}
   sel.sort(ord);let A=sel.slice(0,5),B=sel.slice(5);/* i 5 IN CAMPO devono avere almeno 1 C, 1 A, 1 G; il 6° uomo è libero (punteggio pieno) */
   for(const r of["C","F","G"]){if(A.some(x=>x.r===r))continue;const up=B.find(x=>x.r===r);if(!up)continue;
     const cnt=x=>A.filter(y=>y.r===x.r).length,down=[...A].reverse().find(x=>cnt(x)>1);if(!down)continue;
     A=A.filter(x=>x!==down).concat(up).sort(ord);B=B.filter(x=>x!==up).concat(down).sort(ord)}
-  B.sort(ord);
+  /* chi non ha ancora punteggio si ordina per orario di inizio della prima partita (poi PDK medio); la scelta dei 10 e dei 5 in campo resta quella di prima */
+  const ord2=(p,q)=>key(q)-key(p)||(p.e==null&&q.e==null?p.ts-q.ts:0)||med(q)-med(p)||p.i-q.i;
+  A.sort(ord2);B.sort(ord2);
   const top=[...A,...B],inT=new Set(top);
-  const rest=pool.filter(x=>!inT.has(x)),trib=rest.filter(x=>x.e!=null).sort(ord),wait=rest.filter(x=>x.e==null);
+  const rest=pool.filter(x=>!inT.has(x)),trib=rest.filter(x=>x.e!=null).sort(ord),wait=rest.filter(x=>x.e==null).sort(ord2);
   top.forEach((x,i)=>{x.m=i===0?1.5:i>=6?.5:1;x.cap=i===0;x.half=x.m===.5;x.f=x.e!=null?x.e*x.m:(W.closed?0:null)});
   const played=top.filter(x=>x.e!=null).length;
   const score=played||W.closed?top.reduce((a,x)=>a+(x.f||0),0):null; /* punteggio squadra = SOMMA dei punti dei titolari (deciso 27/10/2026) */
