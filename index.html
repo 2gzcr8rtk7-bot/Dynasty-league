@@ -2615,6 +2615,17 @@ html.dlt-parquet .segi,html.dlt-parquet .segi.on,html.dlt-parquet .hmadd{color:v
 html.dlt-parquet .hmadd{border-color:var(--pq-ac,#d9560b)!important}html.dlt-parquet .hmadd.on{background:var(--pq-ac,#d9560b)!important;color:#fff!important}
 html.dlt-parquet :is(.tvbox,.ptbl,.osbox,.clbox,.drbox) td:first-child :is(.segi,.segi.on),html.dlt-parquet :is(.ghead,.fahead,.gtit) :is(.segi,.segi.on,.segi.shpl,.segi em){color:#fff!important}
 html.dlt-parquet :is(.ghead,.fahead,.gtit) .segi{border-color:rgba(255,255,255,.75)!important}
+/* (720) Dreamers/G-Dreamers in Parquet: tasti arancio/bianco, scritte leggibili, bordini arancio */
+.drroom[data-th="3"] .drsw{background:#fff!important;border:2px solid #d9560b!important;box-shadow:0 3px 10px rgba(120,60,10,.25)}
+.drroom[data-th="3"] .drsw button{background:#fff!important;color:#d9560b!important;text-shadow:none!important;box-shadow:none!important}
+.drroom[data-th="3"] .drsw button[aria-selected="true"]{background:linear-gradient(180deg,#f2701a,#c2410c)!important;color:#fff!important}
+.drroom[data-th="3"] .drtabs button{background:#fff!important;color:#d9560b!important;border:2px solid #d9560b!important;text-shadow:none!important}
+.drroom[data-th="3"] .drtabs button[aria-pressed="true"]{background:linear-gradient(180deg,#f2701a,#c2410c)!important;color:#fff!important;border-color:#c2410c!important}
+.drroom[data-th="3"] .drcr{border:2px solid rgba(217,86,11,.7)!important;box-shadow:0 3px 10px rgba(120,60,10,.25)}
+.drroom[data-th="3"] .drcr .drpos,.drroom[data-th="3"] .drcr .drpos *{color:#d9560b!important}
+.drroom[data-th="3"] .drcr small,.drroom[data-th="3"] .drcr .drn small,.drroom[data-th="3"] .drcr .drm small{color:#8a3a0c!important}
+.drroom[data-th="3"] .drlogo{background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;color:#fff!important;-webkit-text-stroke:0;text-shadow:0 3px 0 #b8470a,0 0 14px rgba(217,86,11,.6)!important;filter:none!important}
+.drroom[data-th="3"] .drexit{background:#fff!important;color:#d9560b!important;border:2px solid #d9560b!important;box-shadow:0 3px 10px rgba(120,60,10,.25)!important}
 html.dlt-parquet footer,html.dlt-parquet main .foot{color:var(--pq-ink,#2b1608)}
 html.dlt-parquet .rgh b{color:var(--pq-ink,#2b1608)}
 html.dlt-parquet main h2 .t,html.dlt-parquet main h2 .t *{color:#fff}
@@ -9483,7 +9494,7 @@ try{const r=JSON.parse(sessionStorage.getItem("dl_reload")||"null");sessionStora
   m.querySelectorAll("*").forEach(e=>{if(e.classList.contains("pqw")||e.closest("svg,#tgo,.tgo,.nzmq,header"))return;const tg=e.tagName;if(tg==="SVG"||tg==="PATH"||tg==="IMG"||tg==="INPUT"||tg==="OPTION"||tg==="TR"||tg==="TD"||tg==="TH"||tg==="TABLE"||tg==="THEAD"||tg==="TBODY")return;
     const cs=getComputedStyle(e);if(cs.position==="fixed"||cs.display==="none"||cs.visibility==="hidden")return;
     const al=trans(e);if(al<=.02||al>=.97)return;if(e.getAttribute("aria-pressed")==="true"||e.getAttribute("aria-selected")==="true"||e.classList.contains("on"))return;
-    const r=e.getBoundingClientRect();if(r.width<36||r.height<24)return;if(!onWood(e))return;e.classList.add("pqw")})}
+    const r=e.getBoundingClientRect();if(r.width<36||r.height<24)return;if(!onWood(e))return;e.classList.add("pqw");e.querySelectorAll("[data-pq]").forEach(x=>{if(x.matches(".pdkx,.pdkb,.gv,.gr2,.badge,.injtag,[class*=\"lg-\"]"))return;x.style.removeProperty("color");x.style.removeProperty("text-shadow");x.removeAttribute("data-pq")})})}
   const go=()=>{if(t)return;t=setTimeout(()=>{try{(window.requestIdleCallback||setTimeout)(run)}catch(e){}},180)};
   new MutationObserver(go).observe(document.body,{childList:true,subtree:true});document.addEventListener("click",go);window.addEventListener("load",go)})();
 })()</script>
