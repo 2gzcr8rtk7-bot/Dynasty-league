@@ -4940,7 +4940,7 @@ let HN_T="";try{HN_T=localStorage.getItem("dl_hnt")||""}catch(e){}
 /* (625) Home live: "pdk" (solo PDK, come prima) o "box" (box score sotto il nome, PDK accanto al cognome); scelta in Impostazioni > Aspetto della Home, vale per le due Home live e per i seguiti */
 let HN_BX="1";try{HN_BX=localStorage.getItem("dl_hbx")==="0"?"":"1"}catch(e){}
 function hnBxSet(v){HN_BX=v==="1"?"1":"";try{HN_BX?localStorage.removeItem("dl_hbx"):localStorage.setItem("dl_hbx","0")}catch(e){}}
-function hnBoxHtml(n,N){try{if(!HN_BX||!N||!N.k||!TV.box[N.k])return"";const k=tvNm(n),B=TV.box[N.k],r=(B[N.sd]||[]).find(p=>tvNm(p[0])===k);if(!r)return"";let h=snBoxR(r).replace(/<em class="bxt">.*?<\/em>/,"");const m=hnMinF(r);if(!N.lv&&m!=null)h=h.replace('<div class="bxs">','<div class="bxs mn">'+`<span><b>${m}'</b><small>MIN</small></span>`);return h}catch(e){return""}}
+function hnBoxHtml(n,N){try{if(!HN_BX||!N||!N.k||!TV.box[N.k])return"";const k=tvNm(n),B=TV.box[N.k],r=(B[N.sd]||[]).find(p=>tvNm(p[0])===k);if(!r)return"";let h=snBoxR(r).replace(/<em class="bxt">.*?<\/em>/,"");const m=hnMinF(r);if(!N.lv&&m!=null)h=h.replace('<div class="bxs">','<div class="bxs mn">'+`<span class="${m>30?"gv":m<26?"gr2":""}"><b>${m}'</b><small>MIN</small></span>`);return h}catch(e){return""}}
 /* (637) a partita finita nella Home si vedono anche i minuti giocati (box: prima cella MIN; versione snella: accanto a "Finale") */
 function hnMinF(r){const mm=String(r&&r[2]||"").split(":"),v=(+mm[0]||0)+(+mm[1]||0)/60;return r&&r[2]!=null&&r[2]!==""?Math.round(v):null}
 function hnMinN(n,N){try{if(!N||N.lv||!N.k||!TV.box[N.k])return null;const k=tvNm(n),r=(TV.box[N.k][N.sd]||[]).find(p=>tvNm(p[0])===k);return r?hnMinF(r):null}catch(e){return null}}
