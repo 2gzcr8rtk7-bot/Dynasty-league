@@ -12526,5 +12526,22 @@ const T0=x=>teamOrd().find(t=>t!==x);
 <style>.hpcard h4{margin:14px 0 6px}.hpteams{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}.hpteams button{border:2px solid transparent;border-radius:12px;background:#fdf3e1;padding:3px;cursor:pointer}.hpteams .badge{width:100%;height:auto;aspect-ratio:1}.hpteams button.on{border-color:#d9560b;box-shadow:0 0 0 2px rgba(217,86,11,.25)}
 .hpseg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}.hpseg button{flex:1;min-width:64px;padding:9px 8px;border-radius:10px;border:1px solid rgba(217,86,11,.45);background:#fdf3e1;color:#b8410a;font-weight:800;cursor:pointer}.hpseg button.on{background:#d9560b;color:#fff;border-color:#d9560b}
 .hpplay{width:100%;margin-top:16px;padding:16px;border:0;border-radius:14px;background:linear-gradient(180deg,#f2701a,#d9560b);color:#fff;font-weight:900;font-size:19px;cursor:pointer;box-shadow:0 6px 0 #9a3a0c}</style>
+<script>
+/* (787) STILI INDIPENDENTI. Bug: all'avvio a freddo con la notte accesa il primo dlsApply partiva PRIMA che fosse installato l'involucro della notte,
+   quindi le variabili dei colori restavano quelle del Parquet (scritta DREAMERS marrone, menu crema, caselle crema). Ora, a ogni cambio di stile
+   (notte, Parquet, stile scelto), anche all'avvio, al ritorno nell'app e dalla notte automatica: si riapplica lo stile da zero e si tolgono
+   TUTTI i residui scritti sugli elementi dallo stile precedente (colori del contrasto Parquet, caselle crema, pannelli bianchi). */
+(function(){let sig=null;
+ const clean=()=>{document.querySelectorAll("[data-pq]").forEach(x=>{x.style.removeProperty("color");x.style.removeProperty("text-shadow");x.style.removeProperty("-webkit-text-fill-color");x.removeAttribute("data-pq")});
+  document.querySelectorAll("[data-pqc]").forEach(x=>{x.style.removeProperty("background-color");x.removeAttribute("data-pqc")});document.querySelectorAll(".pqw").forEach(x=>x.classList.remove("pqw"));window.__pqKey=undefined};
+ const now=()=>((typeof CNT!=="undefined"&&CNT)?"N":"D")+"|"+(typeof DLS!=="undefined"?DLS.th:"")+"|"+((typeof DLS!=="undefined"&&DLS.th&&typeof DLT!=="undefined"&&DLT[DLS.th])?"c":"");
+ function chk(force){try{const s=now();if(!force&&s===sig)return false;const first=sig===null;sig=s;clean();dlsApply();try{window.pqFix&&window.pqFix()}catch(e){}try{window.pqCrema&&window.pqCrema()}catch(e){}return !first}catch(e){return false}}
+ window.styleSync=chk;chk(true);
+ const R0=render;render=function(){chk();return R0.apply(this,arguments)};
+ document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(()=>{if(chk())try{const y=scrollY;render();scrollTo(0,y)}catch(e){}},30)});
+ window.addEventListener("pageshow",()=>chk(true));
+ /* controllo di sicurezza: se qualcuno cambia notte o stile senza passare dal render, entro 1,5 s si riallinea */
+ setInterval(()=>{if(!document.hidden&&chk())try{const y=scrollY;render();scrollTo(0,y)}catch(e){}},1500)})();
+</script>
 </body>
 </html>
