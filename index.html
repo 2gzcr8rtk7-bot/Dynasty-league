@@ -11930,6 +11930,9 @@ document.addEventListener("click",e=>{if(cur!=="iaallena")return;const b=e.targe
  const L=k==="undo-t"?AT_LOG:k==="undo-v"?AV_LOG:CF_LOG;if(!L.length){b.textContent="Nessuna risposta da annullare";setTimeout(()=>render(),1200);return}
  L.pop();try{k==="undo-t"?atSave():k==="undo-v"?avSave():cfSave()}catch(_){}b.textContent="Annullata ✓";setTimeout(()=>{const y=scrollY;render();scrollTo(0,y)},500)},true);
 </script>
-<style>.atrst{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 10px}.atrst .atb{padding:9px 8px;font-size:13px}</style>
+<style>.atrst{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 10px}.atrst .atb{padding:9px 8px;font-size:13px}/* (31/10) Campo, barra del tabellone: su telefono stava larga e il tasto notte usciva dal bordo a destra. Colonne auto | centro | auto e tabellone più compatto */
+.lbmh{grid-template-columns:auto minmax(0,1fr) auto!important;gap:4px!important}.lbmh>.lbmw{min-width:0;gap:3px!important}
+@media (max-width:430px){.lbmh .lbma{width:24px!important}.lbmh .lbm{gap:3px!important;padding:0 5px!important}.lbmh .lbmn{font-size:17px!important}.lbmh .lbml{width:19px!important;height:19px!important}.lbmh .lbml svg,.lbmh .lbml img{max-width:19px;max-height:19px}.lbmh .lbmg{font-size:9.5px}}
+</style>
 </body>
 </html>
