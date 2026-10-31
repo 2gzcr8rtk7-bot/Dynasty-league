@@ -2369,7 +2369,7 @@ html.setpg header{position:relative!important;top:auto!important}html.setpg .set
 .dlt-nostripe header::after{display:none}.dlt-thin header{border-bottom-width:1px}
 .dlt-pill nav button{transform:none!important;border-radius:999px}.dlt-pill nav button>span{transform:none!important}
 .setcard.colz{padding-bottom:10px}.setcard .colh{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0;margin:0;background:none;border:0;color:inherit;cursor:pointer;text-align:left}.setcard .colh h4{margin:0}.setcard .colh i{flex:none;font-style:normal;font-size:20px;line-height:1;padding:4px 10px;color:var(--gold,#ffd36b);transition:transform .2s}.setcard.colz.open .colh i{transform:rotate(180deg)}.setcard.colz.open .colh{margin-bottom:6px}
-.setcard{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 12px 8px;margin:10px 0}.setcard h4{margin:0 0 6px;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold,#f5b400)}.setcard>.setnote:first-of-type{margin-top:0}.settabs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:10px 0 4px;padding:4px;border:1px solid rgba(255,255,255,.14);border-radius:14px;background:rgba(0,0,0,.25)}.settabs button{display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 2px;border:0;border-radius:10px;background:transparent;color:#aab3c8;font-family:var(--display);font-style:normal;font-weight:800;font-size:10px;letter-spacing:0;text-transform:uppercase;cursor:pointer;min-width:0;overflow:hidden}.settabs button{font-style:normal!important;font-size:9.5px!important;letter-spacing:-.02em!important;font-stretch:condensed}.settabs button span{font-size:17px;line-height:1}.settabs button[aria-selected="true"]{background:linear-gradient(180deg,var(--red2),var(--red));color:var(--onred)}.setteams{margin-top:8px}.setpage{padding-bottom:20px}
+.setcard{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 12px 8px;margin:10px 0}.setcard h4{margin:0 0 6px;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold,#f5b400)}.setcard>.setnote:first-of-type{margin-top:0}.settabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:10px 0 4px;padding:4px;border:1px solid rgba(255,255,255,.14);border-radius:14px;background:rgba(0,0,0,.25)}.settabs button{display:flex;flex-direction:column;align-items:center;gap:1px;padding:7px 2px;border:0;border-radius:10px;background:transparent;color:#aab3c8;font-family:var(--display);font-style:normal;font-weight:800;font-size:10px;letter-spacing:0;text-transform:uppercase;cursor:pointer;min-width:0;overflow:hidden}.settabs button{font-style:normal!important;font-size:9.5px!important;letter-spacing:-.02em!important;font-stretch:condensed}.settabs button span{font-size:17px;line-height:1}.settabs button[aria-selected="true"]{background:linear-gradient(180deg,var(--red2),var(--red));color:var(--onred)}.setteams{margin-top:8px}.setpage{padding-bottom:20px}
 .pjl{display:flex;flex-direction:column;gap:4px;margin:6px 0}.pjr{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;font-weight:700;padding:4px 8px;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:rgba(255,255,255,.04)}.pjr select{background:#0f1938;color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:6px 8px;font-size:13px;max-width:52%}
 .setcol{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0;font-size:13px;font-weight:700}
 .setcol input[type=color]{width:56px;height:34px;border:1px solid rgba(255,255,255,.3);border-radius:8px;background:none;padding:2px;cursor:pointer}
@@ -11238,7 +11238,9 @@ async function shDM(){const S=SHR_DM;if(!S)return null;const H=1540,{cv,c,W}=awa
 .s3info{position:absolute;left:78px;right:132px;bottom:calc(env(safe-area-inset-bottom,0px) + 76px);z-index:19;margin:0 auto;padding:10px 12px;border:1px solid #e8c15a;border-radius:14px;background:rgba(18,5,42,.86);text-align:center;box-shadow:0 0 22px rgba(150,90,255,.6);opacity:0;transform:translateY(10px);transition:.35s;pointer-events:none}
 
 .s3nl{display:none}
+body.s3on>*:not(#s3):not(script):not(style){display:none!important}
 .s3t.s3run{background-color:#c98a45!important;background-image:repeating-linear-gradient(90deg,rgba(80,40,10,.18) 0 2px,transparent 2px 33px)!important;background-size:100% 100%!important;border-left:6px solid #fff!important;border-right:6px solid #fff!important}
+.s3wl{background-color:#241056;background-image:radial-gradient(circle at 6px 7px,#e8c15a 0 2.6px,transparent 3.2px),radial-gradient(circle at 18px 13px,#b58cff 0 3px,transparent 3.6px),radial-gradient(circle at 12px 21px,#fff 0 2.4px,transparent 3px),repeating-linear-gradient(0deg,#2c1670 0 40px,#4a2a9a 40px 46px);background-size:28px 28px,28px 28px,28px 28px,100% 100%;-webkit-mask-image:linear-gradient(0deg,#000 55%,transparent);mask-image:linear-gradient(0deg,#000 55%,transparent)}
 .s3stT{background-color:#3a1c80;background-image:radial-gradient(circle at 6px 7px,#e8c15a 0 2.6px,transparent 3.2px),radial-gradient(circle at 18px 13px,#b58cff 0 3px,transparent 3.6px),radial-gradient(circle at 12px 21px,#ffffff 0 2.4px,transparent 3px),radial-gradient(circle at 26px 4px,#ff8fd0 0 2.6px,transparent 3.2px);background-size:28px 28px}
 .s3stR{background-color:#2a1262;background-image:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,0)),repeating-linear-gradient(90deg,#8a55f0 0 15px,#3a1c80 15px 22px)}
 .s3bn{background:linear-gradient(#2a1262,#150633);border:2px solid #e8c15a;border-top:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:14px;color:#fff2c4;font:italic 800 13px/1 var(--display),Georgia,serif;letter-spacing:.1em;text-transform:uppercase;box-shadow:0 0 22px rgba(160,100,255,.6)}
@@ -11272,7 +11274,7 @@ function open(){
  const o=document.createElement("div");o.id="s3";o.className="s3";
  let h=`<div class="s3sky"></div><div class="s3st a"></div><div class="s3st b"></div>`;
  h+=`<div class="s3fog"></div><div class="s3w"><div class="s3c"><div class="s3o" id="s3o">`;
- const T=400;for(let x=-XL;x<XL;x+=T)for(let z=ZF-200;z<ZN+260;z+=T)h+=`<div class="s3t" data-cu="${x+T/2},${z+T/2},${T}" style="left:${-T/2}px;top:${-T/2}px;width:${T}px;height:${T}px;transform:translate3d(${x+T/2}px,${EYE}px,${z+T/2}px) rotateX(90deg)"></div>`;
+ {const CHF=700,zA=ZF-200,zB=ZN+260;for(let z=zA;z<zB;z+=CHF){const L=Math.min(CHF,zB-z);[-1,1].forEach(sd=>{const w=XL-AIS+60,xc=sd*(AIS+w/2-30);h+=`<div class="s3t" data-cu="${xc},${z+L/2},${L/2+w/2}" style="left:${-w/2}px;top:${-L/2}px;width:${w}px;height:${L}px;transform:translate3d(${xc}px,${EYE}px,${z+L/2}px) rotateX(90deg)"></div>`})}}
  const zc0=(ZF+ZN)/2;
  /* passatoia centrale */
  for(let z=ZF-30;z<ZN+30;z+=500){const L=Math.min(500,ZN+30-z);h+=`<div class="s3t s3run" data-cu="0,${z+L/2},${L}" style="left:-${AIS-10}px;top:${-L/2}px;width:${(AIS-10)*2}px;height:${L}px;transform:translate3d(0,${EYE-1}px,${z+L/2}px) rotateX(90deg)"></div>`}
@@ -11287,19 +11289,11 @@ function open(){
  const lumH=c=>{const n=parseInt(String(c).slice(1,7),16);return isNaN(n)?0:(.299*(n>>16)+.587*((n>>8)&255)+.114*(n&255))/255};
  const accOf=t=>{const T=TEAMS[t],c=[T.bg,T.fg,T.trim].filter(x=>/^#[0-9a-f]{6}$/i.test(x||"")).sort((a,b)=>lumH(b)-lumH(a))[0];return lumH(c)>.42?c:"#ffd36b"};
  /* ARENA: tribune a gradoni con pubblico su tre lati, striscioni delle squadre, tabellone sospeso e parquet al centro */
- {const TD=100,RH=95,NT=6,ZA=ZF-40-NT*TD,ZB=ZN+260,LZ=ZB-ZA,zm=(ZA+ZB)/2;
-  const CH=700;
+ {const TD=100,RH=95,NT=2,ZA=ZF-40-NT*TD,ZB=ZN+260,LZ=ZB-ZA,zm=(ZA+ZB)/2;
+  const CH=700,WH=470;
   for(let z0=ZA;z0<ZB;z0+=CH){const L=Math.min(CH,ZB-z0),zc=z0+L/2;
-   [-1,1].forEach(sd=>{h+=`<div class="s3o" data-cu="${sd*(XL+NT*TD/2)},${zc},${L/2+NT*TD/2}">`;
-    for(let i=0;i<NT;i++){const yT=EYE-(i+1)*RH,yB=EYE-i*RH,xi=sd*(XL+i*TD),xc=sd*(XL+i*TD+TD/2);
-     h+=`<div class="s3t s3stT" style="left:${-TD/2}px;top:${-L/2}px;width:${TD}px;height:${L}px;transform:translate3d(${xc}px,${yT}px,${zc}px) rotateX(90deg)"></div>`;
-     h+=`<div class="s3o" style="transform:translate3d(${xi}px,${yB}px,${zc}px) rotateY(90deg)"><div class="s3f s3stR" style="left:${-L/2}px;top:${-RH}px;width:${L}px;height:${RH}px"></div></div>`}
-    h+=`</div>`})}
-  h+=`<div class="s3o" data-cu="0,${ZF-40-NT*TD/2},${XL+NT*TD}">`;
-  for(let i=0;i<NT;i++){const yT=EYE-(i+1)*RH,yB=EYE-i*RH,xw=2*XL,zi=ZF-40-i*TD,zc=zi-TD/2;
-   h+=`<div class="s3t s3stT" style="left:${-XL}px;top:${-TD/2}px;width:${xw}px;height:${TD}px;transform:translate3d(0,${yT}px,${zc}px) rotateX(90deg)"></div>`;
-   h+=`<div class="s3o" style="transform:translate3d(0,${yB}px,${zi}px)"><div class="s3f s3stR" style="left:${-XL}px;top:${-RH}px;width:${xw}px;height:${RH}px"></div></div>`}
-  h+=`</div>`;
+   [-1,1].forEach(sd=>{h+=`<div class="s3o" data-cu="${sd*(XL+60)},${zc},${L/2+60}" style="transform:translate3d(${sd*(XL+60)}px,${EYE}px,${zc}px) rotateY(90deg)"><div class="s3f s3wl" style="left:${-L/2}px;top:${-WH}px;width:${L}px;height:${WH}px"></div></div>`})}
+  h+=`<div class="s3o" data-cu="0,${ZA},${XL}" style="transform:translate3d(0,${EYE}px,${ZF-60}px)"><div class="s3f s3wl" style="left:${-XL}px;top:${-WH}px;width:${2*XL}px;height:${WH}px"></div></div>`;
   /* striscioni delle 8 squadre appesi davanti alle tribune */
   B.forEach((b,k)=>{const sd=k%2?1:-1,z=Z0-Math.floor(k/2)*SPZ-SPZ*.35,x=sd*(XL+30),c=TEAMS[b.t];
    h+=`<div class="s3o" style="transform:translate3d(${x}px,${EYE-560}px,${z}px) rotateY(${sd>0?-90:90}deg)"><div class="s3f s3bn" style="left:-70px;top:0;width:140px;height:210px;border-color:${accOf(b.t)}">${badge(b.t)}<span>${c.nick}</span></div></div>`});
@@ -11353,10 +11347,10 @@ function open(){
  h+=`<div class="s3hint" id="s3hint" style="display:none"></div>`;
  h+=`<canvas class="s3hud s3mm" width="224" height="224"></canvas><div class="s3info" id="s3info"></div>`;
  h+=`<div class="s3nl" id="s3nl"></div>`;
- o.innerHTML=h;document.body.appendChild(o);
+ o.innerHTML=h;window.__s3y=window.scrollY;document.body.appendChild(o);document.body.classList.add("s3on");
  const fog=o.querySelector(".s3fog"),cam=o.querySelector(".s3c"),bbs=[...o.querySelectorAll(".s3bb")],st=[...o.querySelectorAll(".s3st")],mm=o.querySelector(".s3mm"),mc=mm.getContext("2d"),info=o.querySelector("#s3info"),hint=o.querySelector("#s3hint"),nl=o.querySelector("#s3nl"),W=o.querySelector(".s3w");
  const V={x:0,z:ZN-110,yaw:0,pitch:3},P=330;const CU=[...o.querySelectorAll("[data-cu]")].map(el=>{const q=el.dataset.cu.split(",").map(Number);return{el,x:q[0],z:q[1],r:q[2],on:true}});bbs.forEach(el=>CU.push({el,x:+el.dataset.bx,z:+el.dataset.bz,r:80,on:true,bb:1}));
- function cull(){const fx=Math.sin(V.yaw*Math.PI/180),fz=-Math.cos(V.yaw*Math.PI/180);for(const c of CU){const dx=c.x-V.x,dz=c.z-V.z,d=Math.hypot(dx,dz),dot=dx*fx+dz*fz,vis=d<c.r+700||(dot>-c.r*.5&&d<3200);if(vis!==c.on){c.on=vis;c.el.style.display=vis?"":"none"}}}
+ function cull(){const fx=Math.sin(V.yaw*Math.PI/180),fz=-Math.cos(V.yaw*Math.PI/180);for(const c of CU){const dx=c.x-V.x,dz=c.z-V.z,d=Math.hypot(dx,dz),dot=dx*fx+dz*fz,vis=d<c.r+450||(dot>-c.r*.3&&d<1900);if(vis!==c.on){c.on=vis;c.el.style.display=vis?"":"none"}}}
 let dirty=true,tw=null,walk=0,cur=-1,keys={};
  const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
  function collide(){V.x=cl(V.x,-AX,AX);V.z=cl(V.z,ZF+60,ZN-50)}
@@ -11397,7 +11391,7 @@ let dirty=true,tw=null,walk=0,cur=-1,keys={};
  collide();render();raf=requestAnimationFrame(loop);setTimeout(()=>{hint.style.opacity=0},6500);
  window.s3Dbg={V,fly,goB,B,render:()=>{dirty=true}};
 }
-function close(){const o=document.getElementById("s3");if(o){o._stop&&o._stop();o.remove()}}
+function close(){const o=document.getElementById("s3");if(o){o._stop&&o._stop();o.remove()}document.body.classList.remove("s3on");try{window.scrollTo(0,window.__s3y||0)}catch(e){}}
 document.addEventListener("click",e=>{if(e.target.closest("[data-s3]"))open()});
 window.s3Open=open;
 })();
