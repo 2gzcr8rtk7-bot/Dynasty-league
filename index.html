@@ -8530,7 +8530,11 @@ const TV_GG=["Domenica","Lunedì","Martedì","Mercoledì","Giovedì","Venerdì",
 const tvDt=s=>new Date(s+"T12:00:00Z");
 /* (460) loghi NBA: prima la copia interna (loghi/nba/<id>.svg, stessa qualità di cdn.nba.com), se manca il sito NBA, se manca anche quello resta la sigla */
 function nbaLgFb(i){if(i.dataset.f){i.remove();return}i.dataset.f=1;i.src="https://cdn.nba.com/logos/nba/"+i.dataset.id+"/primary/L/logo.svg"}
-function tvLogo(c,cls=""){const t=TVD().teams[c]||[c,0,"#333"];return`<span class="tvlw ${cls}" style="background:${t[2]}"><em>${c}</em>${t[1]?`<img src="loghi/nba/${t[1]}.svg" alt="" loading="lazy" data-id="${t[1]}" onload="this.parentNode.classList.add('ok')" onerror="nbaLgFb(this)">`:""}</span>`}
+/* (645) niente lampeggio dei loghi NBA quando la pagina si ridisegna: i loghi già caricati si ricordano (NBA_LG_OK) e partono subito visibili ("ok"), tutti i 30 si precaricano all'avvio e non sono più "lazy" */
+const NBA_LG_OK=new Set();
+function nbaLgOk(i){NBA_LG_OK.add(i.dataset.id);i.parentNode.classList.add("ok")}
+function tvLogo(c,cls=""){const t=TVD().teams[c]||[c,0,"#333"];return`<span class="tvlw ${cls}${t[1]&&NBA_LG_OK.has(String(t[1]))?" ok":""}" style="background:${t[2]}"><em>${c}</em>${t[1]?`<img src="loghi/nba/${t[1]}.svg" alt="" data-id="${t[1]}" onload="nbaLgOk(this)" onerror="nbaLgFb(this)">`:""}</span>`}
+setTimeout(()=>{try{Object.values(TVD().teams).forEach(t=>{if(!t[1])return;const im=new Image();im.onload=()=>{NBA_LG_OK.add(String(t[1]))};im.src="loghi/nba/"+t[1]+".svg";(window.NBA_LG_KEEP=window.NBA_LG_KEEP||[]).push(im)})}catch(e){}},50);
 const tvNick=c=>{const n=(TVD().teams[c]||[c])[0];return n.split(" ").slice(-1)[0]==="Blazers"?"Trail Blazers":n.split(" ").slice(-1)[0]};
 const tvRec=c=>{const r=TVD().rec[c];return r?r[0]+"-"+r[1]:""};
 /* (304) giorno di default di Dynasty TV: partita live → quel giorno; dalle 15:00 (ora italiana) le partite della notte che arriva
