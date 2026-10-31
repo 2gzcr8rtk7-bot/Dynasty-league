@@ -9872,7 +9872,7 @@ function pqFix(){try{
 window.pqFix=pqFix;
 {const R0=render;render=function(){const x=R0.apply(this,arguments);pqFix();return x}}
 {const S0=syncMenu;syncMenu=function(){const x=S0.apply(this,arguments);pqFix();return x}}
-{const D0=dlsApply;let was=false,wn=false,lt;dlsApply=function(){const _t=DLS.th,_n=typeof CNT!=="undefined"&&CNT;if(_n&&_t!=="viola")DLS.th="classico";let x;try{x=D0.apply(this,arguments)}finally{DLS.th=_t}{const pq=DLS.th==="parquet"||!!(DLT[DLS.th]&&DLT[DLS.th].pq);if(lt!==undefined&&lt!==DLS.th&&pq&&typeof CNT!=="undefined"&&CNT){CNT=false;try{cntSave()}catch(e){}try{D0.apply(this,arguments)}catch(e){}document.documentElement.classList.toggle("dlt-parquet",true);document.documentElement.classList.remove("notte");document.body.classList.remove("notte")}lt=DLS.th}{const H=document.documentElement,pq=DLS.th==="parquet"||!!(DLT[DLS.th]&&DLT[DLS.th].pq);if(typeof CNT!=="undefined")H.classList.toggle("dlt-parquet",pq&&!CNT)}const on=document.documentElement.classList.contains("dlt-parquet"),nn=document.documentElement.classList.contains("notte");if(on!==was||nn!==wn){was=on;wn=nn;pqClean();pqFix()}return x}}
+{const D0=dlsApply;let was=false,wn=false,lt,dep=0;dlsApply=function(){const _t=DLS.th,_n=typeof CNT!=="undefined"&&CNT;if(_n&&_t!=="viola")DLS.th="classico";let x;dep++;try{x=D0.apply(this,arguments)}finally{DLS.th=_t;dep--}if(dep>0)return x;/* (759) una chiamata annidata non deve aggiornare lt, se no la notte si spegne da sola */{const pq=DLS.th==="parquet"||!!(DLT[DLS.th]&&DLT[DLS.th].pq);if(lt!==undefined&&lt!==DLS.th&&pq&&typeof CNT!=="undefined"&&CNT){CNT=false;try{cntSave()}catch(e){}try{D0.apply(this,arguments)}catch(e){}document.documentElement.classList.toggle("dlt-parquet",true);document.documentElement.classList.remove("notte");document.body.classList.remove("notte")}lt=DLS.th}{const H=document.documentElement,pq=DLS.th==="parquet"||!!(DLT[DLS.th]&&DLT[DLS.th].pq);if(typeof CNT!=="undefined")H.classList.toggle("dlt-parquet",pq&&!CNT)}const on=document.documentElement.classList.contains("dlt-parquet"),nn=document.documentElement.classList.contains("notte");if(on!==was||nn!==wn){was=on;wn=nn;pqClean();pqFix()}return x}}
 pqFix();
 })();
 </script>
@@ -12100,20 +12100,27 @@ dlsSave=function(){try{if(LAST){DLS.bxM=DLS.bxM||{};DLS.bxM[LAST]=snap()}}catch(
 try{sync();bxApply()}catch(e){}
 /* salvataggi */
 const HK=()=>[...new Set([...["bxS","bxC","bxB","bxBc","bxG","bxR","bxN","bxT","th","cb","ca","cg","hs","ht","np","hand","ord","nsb","tgh","noanim"],"bxM"])];
-const take=()=>{const o={};HK().forEach(k=>{if(DLS[k]!==undefined)o[k]=cp(DLS[k])});return o};
-const put=o=>{HK().forEach(k=>{if(k in o)DLS[k]=cp(o[k]);else if(k in DLS_DEF)DLS[k]=cp(DLS_DEF[k]);else delete DLS[k]});LAST=mode();load(LAST)};
+const take=()=>{const o={};HK().forEach(k=>{if(DLS[k]!==undefined)o[k]=cp(DLS[k])});o._cnt=!!CNT;return o};
+const put=o=>{HK().forEach(k=>{if(k in o)DLS[k]=cp(o[k]);else if(k in DLS_DEF)DLS[k]=cp(DLS_DEF[k]);else delete DLS[k]});if("_cnt" in o){CNT=!!o._cnt;try{cntSave()}catch(e){}}LAST=mode();load(LAST)};
+/* (759) luna della Home = un salvataggio scelto (DLS.hpreMoon) */
+const moonOn=()=>DLS.hpreMoon!=null&&!!(DLS.hpre||[])[DLS.hpreMoon]&&DLS.hpreOn===DLS.hpreMoon;
+const moonFlip=()=>{const L=DLS.hpre||[],i=DLS.hpreMoon;if(i==null||!L[i])return false;if(moonOn()){if(DLS.hpreBak)put(DLS.hpreBak);DLS.hpreOn=null;DLS.hpreBak=null}else{if(DLS.hpreOn==null)DLS.hpreBak=take();put(L[i].s);DLS.hpreOn=i}dlsSave();try{dlsApply()}catch(_){}return true};
+document.addEventListener("click",e=>{const h=e.target.closest&&e.target.closest("#hnt");if(!h)return;if(DLS.hpreMoon==null||!(DLS.hpre||[])[DLS.hpreMoon])return;e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();if(moonFlip()){SN.hist=false;const y=scrollY;render();scrollTo(0,y)}},true);
+{const R1=render;render=function(){const r=R1.apply(this,arguments);try{const h=document.getElementById("hnt");if(h&&DLS.hpreMoon!=null&&(DLS.hpre||[])[DLS.hpreMoon]){const on=moonOn();h.classList.toggle("on",on);h.setAttribute("aria-checked",on);h.classList.add("hntme");h.setAttribute("aria-label","Luna: "+DLS.hpre[DLS.hpreMoon].n)}}catch(e){}return r}}
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 window.hpreHtml=function(){const L=DLS.hpre||[],on=DLS.hpreOn;
  return`<div class="hpre"><p class="setnote">Salva com'è adesso la tua Home: stile, colori, loghi e box score di tutti e tre gli stili. Quando ne attivi uno, quello che avevi prima resta da parte e con «Disattiva» torna com'era.</p>
+ <p class="setnote hpmn">🌙 <b>La tua notte:</b> tocca la luna accanto a un salvataggio e il pulsante luna della Home passerà da com'è adesso (es. Parquet) a quel salvataggio e ritorno. Ritocca la luna per tornare alla notte classica.</p>
  <div class="hprow"><input id="hpname" maxlength="30" placeholder="Nome, es. La mia notte"><button type="button" data-hp="save">💾 Salva</button></div>
- ${L.length?L.map((p,i)=>`<div class="hpit${on===i?" on":""}"><div><b>${esc(p.n)}</b><small>${esc(p.d)}${on===i?" · attivo":""}</small></div><span>${on===i?`<button type="button" data-hp="off">Disattiva</button>`:`<button type="button" data-hp="on" data-i="${i}">Attiva</button>`}<button type="button" data-hp="upd" data-i="${i}" title="Aggiorna con com'è adesso">↻</button><button type="button" data-hp="del" data-i="${i}" title="Elimina">🗑</button></span></div>`).join(""):`<p class="setnote">Nessun salvataggio ancora.</p>`}</div>`};
+ ${L.length?L.map((p,i)=>`<div class="hpit${on===i?" on":""}"><div><b>${esc(p.n)}</b><small>${esc(p.d)}${on===i?" · attivo":""}${DLS.hpreMoon===i?" · 🌙 sulla luna":""}</small></div><span>${on===i?`<button type="button" data-hp="off">Disattiva</button>`:`<button type="button" data-hp="on" data-i="${i}">Attiva</button>`}<button type="button" data-hp="moon" data-i="${i}" class="hpm${DLS.hpreMoon===i?" on":""}" title="Usalo con il pulsante luna della Home">🌙</button><button type="button" data-hp="upd" data-i="${i}" title="Aggiorna con com'è adesso">↻</button><button type="button" data-hp="del" data-i="${i}" title="Elimina">🗑</button></span></div>`).join(""):`<p class="setnote">Nessun salvataggio ancora.</p>`}</div>`};
 document.addEventListener("click",e=>{const b=e.target.closest("[data-hp]");if(!b||cur!=="impostazioni")return;e.preventDefault();const a=b.dataset.hp,i=+b.dataset.i;DLS.hpre=DLS.hpre||[];
  const now=new Date(),dt=now.toLocaleDateString("it-IT",{day:"numeric",month:"short"})+" "+now.toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"});
  if(a==="save"){const inp=document.getElementById("hpname");const n=(inp&&inp.value.trim())||("Home "+(DLS.hpre.length+1));DLS.hpre.push({n,d:dt,s:take()})}
  else if(a==="on"){const p=DLS.hpre[i];if(!p)return;if(DLS.hpreOn==null)DLS.hpreBak=take();put(p.s);DLS.hpreOn=i}
  else if(a==="off"){if(DLS.hpreBak)put(DLS.hpreBak);DLS.hpreOn=null;DLS.hpreBak=null}
+ else if(a==="moon"){if(DLS.hpreMoon===i){if(moonOn()){if(DLS.hpreBak)put(DLS.hpreBak);DLS.hpreOn=null;DLS.hpreBak=null}DLS.hpreMoon=null}else DLS.hpreMoon=i}
  else if(a==="upd"){const p=DLS.hpre[i];if(!p)return;p.s=take();p.d=dt}
- else if(a==="del"){if(b.dataset.s!=="1"){b.dataset.s="1";b.textContent="Sicuro?";return}DLS.hpre.splice(i,1);if(DLS.hpreOn===i){DLS.hpreOn=null}else if(DLS.hpreOn>i)DLS.hpreOn--}
+ else if(a==="del"){if(b.dataset.s!=="1"){b.dataset.s="1";b.textContent="Sicuro?";return}DLS.hpre.splice(i,1);if(DLS.hpreOn===i){DLS.hpreOn=null}else if(DLS.hpreOn>i)DLS.hpreOn--;if(DLS.hpreMoon===i)DLS.hpreMoon=null;else if(DLS.hpreMoon>i)DLS.hpreMoon--}
  dlsSave();try{dlsApply()}catch(_){}const y=scrollY;render();scrollTo(0,y)},true);
 })();
 </script>
@@ -12121,6 +12128,6 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-hp]");if(!
 .hpre .hprow button,.hpre .hpit button{padding:9px 12px;border-radius:10px;border:1px solid rgba(217,86,11,.45);background:#fdf3e1;color:#b8410a;font-weight:800;cursor:pointer}
 .hpre .hpit{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 10px;border-radius:12px;border:1px solid rgba(217,86,11,.25);margin:6px 0}
 .hpre .hpit.on{border-color:#d9560b;box-shadow:0 0 0 2px rgba(217,86,11,.25)}.hpre .hpit>div{display:grid;min-width:0}.hpre .hpit small{opacity:.75}.hpre .hpit span{display:flex;gap:6px;flex:none}
-.hpre .hpit [data-hp="on"]{background:#d9560b;color:#fff}.setnote.bxmode{margin-top:0}</style>
+.hpre .hpit [data-hp="on"]{background:#d9560b;color:#fff}.hpre .hpit .hpm.on{background:linear-gradient(180deg,#3b2a8a,#1b1240);color:#fff;border-color:#8b5cf6}.hpre .hpmn{margin-top:-4px}.setnote.bxmode{margin-top:0}</style>
 </body>
 </html>
