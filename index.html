@@ -7380,7 +7380,7 @@ function vStoria(){
    ${x.p.map(q=>`<td class="yr">${q?pts(q):"–"}<small>${q?q+"°":""}</small></td>`).join("")}<td class="ttl">${x.tit?`<b style="color:var(--gold)">${x.tit}</b>`:"–"}</td><td class="pt">${x.pt}</td></tr>`).join("");
   const seasons=STORIA.slice().reverse().map(s=>`<section class="gmseason">${H("Anno "+s.anno,`<em>Campione: ${TEAMS[s.ordine[0]].nick}</em>`)}
    <div class="tbl-wrap"><table class="ssn" style="min-width:0"><tbody>${s.ordine.map((t,i)=>`<tr><td class="rk">${med(i+1)}</td><td class="tm"><div class="tmcell">${wedge(t)}<div><b>${TEAMS[t].nick}</b><small>${TEAMS[t].city}</small></div></div></td><td class="pt">+${pts(i+1)} pt</td></tr>`).join("")}</tbody></table></div></section>`).join("");
-  return `<div class="sala-oro"><button class="s3go" data-s3="1">✦ Entra nella Sala 3D ✦<small>Scorri tra i trofei vinti dalle squadre</small></button>${H("Classifica competenza")}
+  return `<div class="sala-oro"><button class="s3go" data-s3="1">✦ Sala trofei Dreamers ✦<small>Entra e scorri tra i trofei vinti dalle squadre</small></button>${H("Classifica competenza")}
   <div class="tbl-wrap"><table class="gmh"><thead><tr><th>#</th><th>Squadra</th>${yrs}<th class="c" title="Titoli">🏆</th><th>Pt</th></tr></thead><tbody>${rows}</tbody></table></div>
   <p class="note">A1, A2… = punti in ogni anno (sotto il piazzamento). 🏆 = titoli vinti. Ogni stagione: ${N} punti al 1°, ${N-1} al 2° e così via fino a 1 punto all'ultimo. A parità di punti conta chi ha più titoli, poi più secondi posti e così via; poi il piazzamento nella stagione più recente.</p>
   ${seasons}</div>`;
