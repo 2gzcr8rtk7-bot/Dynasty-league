@@ -4,6 +4,9 @@ Richiesta di Francesco (31/10/2026): ogni report dell'Allenamento IA va usato pe
 
 **Autonomia (Francesco, 31/10/2026 17:18):** Claude può cambiare LIBERAMENTE valori, pesi della formula del lunedì (età, infortuni, forma…) e regole, senza chiedere, quando l'INCROCIO di più GM lo giustifica (mai sul parere di un solo GM). Ogni cambio: nota in NOTE_SVILUPPO, riga nella tabella del §3, registro VAL_CORREZ se tocca i valori, pubblicazione e avviso a cose fatte.
 
+## 0. Rifare tutti i profili da zero
+`python3 tools/gm_fit.py vals` e poi `python3 tools/studio/rifai_profili.py` (aggiornare l'elenco dei file in tools/studio/common.py): rifà i profili da tutti i report con le regole di oggi (pacchetti pesati sui forti, riempitivi solo tra riempitivi). Poi riapplicare a mano le correzioni dette da Francesco (vedi rifai_profili.py, in fondo).
+
 ## 1. A ogni report (subito)
 1. `python3 tools/gm_fit.py vals` (valori di ADESSO: i report hanno i valori del momento in cui il GM ha risposto).
 2. In base al tipo di report:
