@@ -1885,3 +1885,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 727. Parquet: tolto il rettangolo interno nella barra Cerca giocatore.
 
 728. Modalita' notte a se' stante: con la notte accesa il tema Parquet viene spento del tutto (nessuna classe Parquet), cosi' la notte e' identica a quella sopra la base originale. Spegnendo la notte il Parquet torna.
+
+729. Notte come filtro a se': passando a notte si puliscono tutti i colori lasciati dal Parquet (titolo, cerca, ecc.); scegliendo il Parquet con la notte accesa, la notte si spegne e resta solo il Parquet.

@@ -9745,7 +9745,7 @@ function pqFix(){try{
   const key=(app?"p":"")+(document.documentElement.classList.contains("notte")?"n":"")+(dr?"d":"");
   if(window.__pqKey!==undefined&&window.__pqKey!==key){pqClean();document.querySelectorAll(".pqw").forEach(x=>x.classList.remove("pqw"));document.querySelectorAll("[data-pq]").forEach(x=>{x.style.removeProperty("color");x.style.removeProperty("text-shadow");x.removeAttribute("data-pq")})}
   window.__pqKey=key}
-  if(!app&&!dr){if(PQL.length)pqClean();return}
+  if(!app&&!dr){pqClean();document.querySelectorAll(".pqw").forEach(x=>x.classList.remove("pqw"));document.querySelectorAll("[data-pq]").forEach(x=>{x.style.removeProperty("color");x.style.removeProperty("text-shadow");x.removeAttribute("data-pq")});window.__pqKey="";return}
   if(!document.documentElement.classList.contains("notte")){pqClean();if(app&&window.__pqw)window.__pqw()}/* (722) prima il pannello bianco (pqw), poi il contrasto: così le scritte non restano bianche su bianco */
   const cache=new Map();
   const bgOfOld=el=>{if(cache.has(el))return cache.get(el);let res;const cs=getComputedStyle(el);let c=null;
@@ -9795,7 +9795,7 @@ function pqFix(){try{
 window.pqFix=pqFix;
 {const R0=render;render=function(){const x=R0.apply(this,arguments);pqFix();return x}}
 {const S0=syncMenu;syncMenu=function(){const x=S0.apply(this,arguments);pqFix();return x}}
-{const D0=dlsApply;let was=false,wn=false;dlsApply=function(){const x=D0.apply(this,arguments);{const H=document.documentElement,pq=DLS.th==="parquet"||!!(DLT[DLS.th]&&DLT[DLS.th].pq);if(typeof CNT!=="undefined")H.classList.toggle("dlt-parquet",pq&&!CNT)}const on=document.documentElement.classList.contains("dlt-parquet"),nn=document.documentElement.classList.contains("notte");if(on!==was||nn!==wn){was=on;wn=nn;pqClean();pqFix()}return x}}
+{const D0=dlsApply;let was=false,wn=false,lt;dlsApply=function(){const x=D0.apply(this,arguments);{const pq=DLS.th==="parquet"||!!(DLT[DLS.th]&&DLT[DLS.th].pq);if(lt!==undefined&&lt!==DLS.th&&pq&&typeof CNT!=="undefined"&&CNT){CNT=false;try{cntSave()}catch(e){}document.documentElement.classList.toggle("dlt-parquet",true);document.documentElement.classList.remove("notte");document.body.classList.remove("notte")}lt=DLS.th}{const H=document.documentElement,pq=DLS.th==="parquet"||!!(DLT[DLS.th]&&DLT[DLS.th].pq);if(typeof CNT!=="undefined")H.classList.toggle("dlt-parquet",pq&&!CNT)}const on=document.documentElement.classList.contains("dlt-parquet"),nn=document.documentElement.classList.contains("notte");if(on!==was||nn!==wn){was=on;wn=nn;pqClean();pqFix()}return x}}
 pqFix();
 })();
 </script>
