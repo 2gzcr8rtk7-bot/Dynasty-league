@@ -117,6 +117,7 @@ function update(dt){if(C.over||C.paused){IN.press={};IN.rel={};return}
     tickPlayers(dt);IN.press={};IN.rel={};return}
   if(C.phase==="dead"){C.deadT-=dt;tickPlayers(dt,true);if(C.deadT<=0)C.phase="live";IN.press={};IN.rel={};return}
   if(C.phase==="ft"){ftTick(dt);IN.press={};IN.rel={};return}
+  if(C.phase==="inb"){inbTick(dt);IN.press={};IN.rel={};C.camX+=(clamp(C.ball.x,21,73)-C.camX)*Math.min(1,dt*3);return}
   if(C.phase==="qend"){C.deadT-=dt;if(C.deadT<=0)nextQuarter();IN.press={};IN.rel={};return}
   /* orologi */
   const live=C.ball.st!=="shot"||true;C.clock-=dt*(12/cfg.qlen);C.shot-=dt*clamp(12/cfg.qlen/2.5,1,2);/* 24 secondi accelerati quanto basta: le partite corte restano giocabili */
@@ -181,10 +182,31 @@ function foul(d,o,shooting){const T=C.T[d.team];T.fouls++;SFX.whistle();
   if(shooting||(T.fouls>4&&cfg.fouls)){say(shooting?"Fallo su tiro: "+(shooting)+" liberi":"Bonus: 2 tiri liberi",1.6);startFT(o,shooting||2);return}
   say("Fallo di "+d.sur+" ("+T.fouls+" di squadra)");inbound(o.team,"side",o)}
 function turnover(team,where){C.T[team].to++;const b=C.ball;if(b.h)b.h.s.to++;inbound(1-team,where)}
-function inbound(team,where,who){const b=C.ball;try{trySubs()}catch(e){}const T=C.T[team];const p=who&&who.team===team?who:T.on[0];
-  if(where==="base"){const ox=ownX(team);p.x=ox+(ox<47?4:-4);p.y=25+rnd(-6,6)}
-  else{p.x=clamp(b.x,8,86);p.y=b.y<25?1:49}
-  b.h=null;giveBall(p,.9);C.shot=24;b.x=p.x;b.y=p.y}
+/* (791) RIMESSE vere: chi rimette sta fuori dal campo (fondo dopo un canestro, lato o fondo dove è uscita la palla, metà campo a inizio quarto),
+   i compagni si smarcano, orologi fermi finché la palla non è passata; 5 secondi per rimettere. Tu: scegli con la levetta e PASSA (o TIRO). */
+function inbound(team,where,who){const b=C.ball;try{trySubs()}catch(e){}const T=C.T[team];const bxp=b.x,byp=b.y;let x0,y0;
+  if(where==="base"){const ox=ownX(team);x0=ox<47?-1.4:L+1.4;y0=25+(Math.random()<.5?-6:6)}
+  else if(where==="mid"){x0=47;y0=-1.4}
+  else if(bxp<0||bxp>L){x0=bxp<0?-1.4:L+1.4;y0=clamp(byp,3,47);if(Math.abs(y0-25)<4)y0=25+(y0<25?-4:4)}
+  else{x0=clamp(bxp,6,L-6);y0=byp<25?-1.4:W+.5}
+  const cand=T.on.filter(q=>q!==who&&q!==T.on[0]);const p=(cand.length?cand:T.on).slice().sort((u,v)=>dist(u.x,u.y,x0,y0)-dist(v.x,v.y,x0,y0))[0];
+  allOn().forEach(q=>{q.inb=false;if(q.z<=0&&q.st!=="idle")q.st="idle"});
+  p.x=x0;p.y=y0;p.z=0;p.vx=p.vy=p.vz=0;p.st="idle";p.inb=true;p.reenter=true;p.released=false;p.face=x0<1?1:x0>L-1?-1:(rimX(team)>47?1:-1);
+  b.h=p;b.st="held";b.sh=null;b.pass=null;b.last=team;b.x=p.x;b.y=p.y;b.z=3;
+  if(C.poss!==team){C.poss=team;resetUser()}C.shot=24;C.phase="inb";C.inb={p,t:0,team,wait:rnd(1,1.8),x:x0,y:y0};userCtl();
+  if(team===0&&!cfg.auto)say("Rimessa: scegli con la levetta e PASSA",1.8)}
+function inbTick(dt){const I=C.inb,p=I.p,b=C.ball;I.t+=dt;p.vx=p.vy=0;p.x=I.x;p.y=I.y;const user=I.team===0&&!cfg.auto;
+  b.h=p;b.st="held";b.x=p.x+p.face*.6;b.y=p.y+.4;b.z=3.2;
+  const into={x:clamp(p.x+(p.x<1?9:p.x>L-1?-9:0),3,L-3),y:clamp(p.y+(p.y<0?10:p.y>W?-10:0),4,W-4)},side=p.x>1&&p.x<L-1;
+  const M=C.T[I.team].on.filter(q=>q!==p).sort((u,v)=>dist(u.x,u.y,p.x,p.y)-dist(v.x,v.y,p.x,p.y));
+  if(user){C.ctl=p;if(IN.press.b||IN.press.a){doPass(p,axis());if(b.st==="pass"){p.inb=false;C.phase="live";C.inb=null}}}
+  else if(I.team===1&&!cfg.auto)userControl(dt);
+  allOn().forEach(q=>{if(q===p||q.stun>0)return;if(q===C.ctl&&q.team===0&&!cfg.auto)return;
+    if(q.team===I.team){const k=M.indexOf(q);if(k===0)moveTo(q,into.x,into.y,1);else if(k===1)moveTo(q,into.x+(side?(into.x<47?8:-8):0),into.y+(side?0:(into.y<25?9:-9)),1);else offBallAI(q,dt)}
+    else defendAI(q,dt)});
+  tickPlayers(dt);
+  if(C.phase==="inb"&&!user&&I.t>I.wait){const o=M.slice().sort((u,v)=>contest(v).k-contest(u).k)[0];if(o){p.inb=false;passTo(p,o);C.phase="live";C.inb=null}}
+  if(C.phase==="inb"&&I.t>5){SFX.whistle();say("5 secondi! Palla agli avversari");C.T[I.team].to++;p.inb=false;b.x=p.x;b.y=p.y;inbound(1-I.team,"side")}}
 function score(p,pts,dunked){const b=C.ball;C.score[p.team]+=pts;p.s.pts+=pts;p.s.fgm++;if(pts===3)p.s.tpm++;
   if(C.assist&&C.assist.t>C.t-3.5&&C.assist.p!==p&&C.assist.p.team===p.team)C.assist.p.s.ast++;C.assist=null;
   SFX.cheer(p.team===0?4:2.5);b.h=null;b.st="net";b.t=0;b.x=rimX(p.team);b.y=25;b.z=RIM_Z;b.scorer=p.team;p.st="idle"}
@@ -197,7 +219,7 @@ function endQuarter(){SFX.buzzer();C.phase="qend";C.deadT=2.4;const b=C.ball;if(
   if(C.q>=4&&C.score[0]!==C.score[1]){C.over=true;C.phase="over";SFX.cheer(5);return}
   say(C.q===2?"Fine primo tempo":C.q>=4?"Supplementare!":"Fine "+C.q+"° quarto",2.4)}
 function nextQuarter(){C.q++;C.clock=C.q>4?300:720;C.shot=24;C.T.forEach(T=>T.fouls=0);trySubs();const t=C.arrow;C.arrow=1-C.arrow;
-  allOn().forEach(p=>{p.vx=p.vy=0;p.z=0;p.st="idle"});inbound(t,"base");say((C.q>4?"Supplementare":C.q+"° quarto"),1.6);SFX.whistle()}
+  allOn().forEach(p=>{p.vx=p.vy=0;p.z=0;p.st="idle"});inbound(t,"mid");say((C.q>4?"Supplementare":C.q+"° quarto"),1.6);SFX.whistle()}
 
 function ballTick(dt){const b=C.ball;b.t+=dt;
   if(b.st==="held"&&b.h){const p=b.h;const moving=Math.hypot(p.vx,p.vy)>2;const ph=(C.t*(moving?7:5))%(Math.PI);b.x=p.x+p.face*.75;b.y=p.y+.6;
@@ -270,7 +292,7 @@ function tickPlayers(dt,frozen){const P=allOn();P.forEach(p=>{p.cd=Math.max(0,p.
     if(!frozen){p.x+=p.vx*dt;p.y+=p.vy*dt}
     if(p.z>0||p.vz>0){p.vz-=G*dt;p.z+=p.vz*dt;if(p.z<=0){p.z=0;p.vz=0;if(p.st==="jump")p.st="idle";if(p.st==="shoot"||p.st==="dunk"){if(p.st==="shoot"&&!p.released&&C.ball.h===p){/* atterrato senza tirare: passi */SFX.whistle();say("Passi!");p.st="idle";turnover(p.team,"side")}p.st="idle";p.released=false;p.dunked=false}}}
     if(p.st!=="shoot"&&p.st!=="dunk"&&p.z<=0&&!p.released)p.released=false;
-    p.x=clamp(p.x,.5,L-.5);p.y=clamp(p.y,.5,W-.5);p.phase+=Math.hypot(p.vx,p.vy)*dt*.9});
+    if(p.reenter){if(p.x>.5&&p.x<L-.5&&p.y>.5&&p.y<W-.5)p.reenter=false}else{p.x=clamp(p.x,.5,L-.5);p.y=clamp(p.y,.5,W-.5)}p.phase+=Math.hypot(p.vx,p.vy)*dt*.9});
   /* niente sovrapposizioni */
   for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){const a=P[i],b=P[j],dx=b.x-a.x,dy=(b.y-a.y)*1.4,d=Math.hypot(dx,dy);if(d<1.5&&d>0){const k=(1.5-d)/2;a.x-=dx/d*k;a.y-=dy/d*k/1.4;b.x+=dx/d*k;b.y+=dy/d*k/1.4}}}
 
@@ -379,7 +401,7 @@ function buildCrowd(){const H=cfg.arena==='away'?C.T[1]:C.T[0],A=cfg.arena==='aw
     return c});
   C._crowd=fr}
 function drawArena(g){if(!C._court||(!C._cl&&C.T.some(T=>T.logo&&T.logo.complete&&T.logo.naturalWidth)))buildCourt();if(!C._crowd)buildCrowd();
-  const ox=Math.round((C.camX-CX0)*BS-BW/2);const cheer=C.msgT>0||C.phase==="ft"?Math.floor(C.t*7)%2:(Math.floor(C.t*1.3)%5===0?1:0);
+  const ox=Math.round((C.camX-CX0)*BS-BW/2);const tt=Math.abs(C.t||0),cheer=C.msgT>0||C.phase==="ft"?Math.floor(tt*7)%2:(Math.floor(tt*1.3)%5===0?1:0);
   g.drawImage(C._crowd[cheer],ox,0,BW,CY0,0,0,BW,CY0);
   /* panchine con i giocatori veri */
   const H0=cfg.arena==='away'?1:0;C.T.forEach((T,t)=>{const B=T.all.filter(p=>!T.on.includes(p)).slice(0,8);const side=t===H0?[14,38]:[56,80];
