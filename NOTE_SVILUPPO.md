@@ -1820,3 +1820,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 667. Box score: la cella «TIRI SBAGL.» è rossa quando la percentuale dal campo (FG%) è sotto il 43% (con almeno 5 tiri dal campo tentati; prima la regola era «oltre il 60% di tiri sbagliati tra campo e liberi»). Vale in tutti i box (Home, Statistiche live, Dynasty TV, box giocatori free agent).
 
 668. Box score: la cella «TIRI SBAGL.» è anche verde quando la FG% è sopra il 50% (rossa sotto il 43%; neutra tra 43 e 50). Sempre con almeno 5 tiri dal campo tentati.
+
+669. Confronto giocatori: tolta la livella dei crediti. Sotto ogni giocatore tre tasti: «Poco meglio lui», «Meglio lui», «Molto meglio lui»; al centro «Pari». Si sceglie e si salva con «Salva e prossimo». Report: accordo sul vincitore, distanza nostra (crediti dal Calcolatore) media e mediana per ogni grado di risposta (per tarare le soglie), % di Pari/Poco/Meglio/Molto/vince l'altro per fascia di distanza, età, disaccordi, elenco. I vecchi dati con crediti (`atc1`) restano leggibili come «meglio».
