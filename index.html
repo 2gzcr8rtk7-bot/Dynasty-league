@@ -12437,38 +12437,52 @@ document.getElementById("main").addEventListener("change",e=>{if(cur!=="gusti")r
 document.getElementById("main").addEventListener("input",e=>{if(cur!=="gusti"||e.target.id!=="guq")return;GU.q=e.target.value;const pos=e.target.selectionStart;render();const n=document.getElementById("guq");if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(_){}}});
 })();
 </script>
-<style>.guintro{background:var(--pq-box,#fdf3e1);border:1px solid rgba(217,86,11,.3);border-radius:14px;padding:12px 14px;margin:8px 0 12px;font-size:14px;line-height:1.45}
-.guintro p{margin:0 0 8px}.gulk{border:0;background:none;color:#d9560b;font-weight:800;padding:2px 0;cursor:pointer;text-decoration:underline}
+<style>/* (795) GUSTI DEI GM e menu di HOOP DREAMERS riscritti a variabili: ogni elemento usa SOLO le variabili --gu-*,
+   e ogni stile ha la sua tavolozza completa e separata (base scura dell'app, Parquet di giorno, Notte). Nessun colore fisso,
+   nessuna regola «html.notte» di rattoppo: cambiare uno stile non può toccare gli altri. */
+:root{--gu-card:var(--panel);--gu-box:var(--panel2);--gu-fg:var(--fg);--gu-mut:var(--muted);--gu-ttl:var(--fg);--gu-num:var(--gold);--gu-bd:var(--line);--gu-btn:var(--panel2);--gu-btnfg:var(--fg);--gu-on:var(--red);--gu-onfg:#fff;--gu-up:#4ade80;--gu-dn:#f87171;--gu-upbg:rgba(34,197,94,.18);--gu-dnbg:rgba(239,68,68,.18);--gu-neu:rgba(255,255,255,.08);--gu-note:rgba(250,204,21,.12);--gu-bar:rgba(255,255,255,.08);--gu-fill:linear-gradient(90deg,#f2701a,#d9560b);--gu-go:linear-gradient(180deg,#f2701a,#d9560b);--gu-go-sh:#9a3a0c;--gu-sh:0 6px 14px rgba(0,0,0,.3);--gu-me:rgba(255,255,255,.05);--gu-row:rgba(255,255,255,.07)}
+html.dlt-parquet:not(.notte){--gu-card:#fffaf2;--gu-box:#fdf3e1;--gu-fg:#2b1608;--gu-mut:#8a5a3a;--gu-ttl:#b8410a;--gu-num:#b8410a;--gu-bd:rgba(217,86,11,.3);--gu-btn:#fdf3e1;--gu-btnfg:#b8410a;--gu-on:#d9560b;--gu-onfg:#fff;--gu-up:#15803d;--gu-dn:#b91c1c;--gu-upbg:#dcfce7;--gu-dnbg:#fee2e2;--gu-neu:#eee;--gu-note:#fff4d6;--gu-bar:#f3e3c8;--gu-sh:0 6px 14px rgba(70,30,0,.18);--gu-me:rgba(217,86,11,.06);--gu-row:rgba(0,0,0,.07)}
+html.notte{--gu-card:rgba(30,20,60,.85);--gu-box:rgba(255,255,255,.08);--gu-fg:#ede9fe;--gu-mut:#c4b5fd;--gu-ttl:#fff;--gu-num:#fdba74;--gu-bd:rgba(167,139,250,.35);--gu-btn:rgba(255,255,255,.08);--gu-btnfg:#ede9fe;--gu-on:#7c3aed;--gu-onfg:#fff;--gu-up:#4ade80;--gu-dn:#f87171;--gu-upbg:rgba(34,197,94,.2);--gu-dnbg:rgba(239,68,68,.2);--gu-neu:rgba(255,255,255,.1);--gu-note:rgba(250,204,21,.13);--gu-bar:rgba(255,255,255,.1);--gu-fill:linear-gradient(90deg,#a855f7,#7c3aed);--gu-sh:0 6px 14px rgba(0,0,0,.35);--gu-me:rgba(167,139,250,.1);--gu-row:rgba(167,139,250,.18)}
+/* pagina iniziale */
+.guintro{background:var(--gu-card);color:var(--gu-fg);border:1px solid var(--gu-bd);border-radius:14px;padding:12px 14px;margin:8px 0 12px;font-size:14px;line-height:1.45}
+.guintro p{margin:0 0 8px}.gulk{border:0;background:none;color:var(--gu-num);font-weight:800;padding:2px 0;cursor:pointer;text-decoration:underline}
 .gupr{display:grid;gap:6px;margin-top:8px}.gupr>div{display:grid;grid-template-columns:28px auto 1fr;align-items:center;gap:8px}.gupr .badge{width:26px;height:26px}.gupr small{opacity:.8;grid-column:2/4}
-.gubox,.gures{background:#fff;border:1px solid rgba(217,86,11,.25);border-radius:14px;padding:12px;margin:0 0 12px}
-.gubox h4,.gures h4{margin:12px 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:#b8410a}.gubox h4:first-child,.gures h4:first-child{margin-top:0}.gubox h4 small{text-transform:none;letter-spacing:0;color:#888;font-weight:600}
-.gurowc{display:flex;flex-wrap:wrap;gap:6px}.guchip{border:2px solid transparent;border-radius:12px;background:#fdf3e1;padding:4px;cursor:pointer}.guchip .badge{width:34px;height:34px}.guchip.on{border-color:#d9560b;box-shadow:0 0 0 2px rgba(217,86,11,.25)}
-.guseg{display:flex;gap:6px;flex-wrap:wrap}.guseg button{flex:1;min-width:52px;padding:9px 10px;border-radius:10px;border:1px solid rgba(217,86,11,.45);background:#fdf3e1;color:#b8410a;font-weight:800;cursor:pointer}.guseg button.on{background:#d9560b;color:#fff;border-color:#d9560b}
-.gulist{display:grid;gap:4px;margin-top:6px;max-height:340px;overflow:auto}.guli{display:grid;grid-template-columns:30px 1fr auto;gap:8px;align-items:center;text-align:left;border:1px solid rgba(0,0,0,.08);border-radius:10px;background:#fffaf2;padding:6px 8px;cursor:pointer;color:#2b1608}.guli .badge{width:28px;height:28px}.guli small{display:block;opacity:.7;font-size:11.5px}.guli b{color:#b8410a}
-.gutg{display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center;background:#fdf3e1;border-radius:12px;padding:8px}.gutg .badge{width:32px;height:32px}.gutg small{grid-column:2;opacity:.75}.gutg button{grid-row:1/3;grid-column:3;border:1px solid #d9560b;background:#fff;color:#d9560b;border-radius:9px;padding:6px 10px;font-weight:800}
-.gumin{display:flex;align-items:center;gap:8px;margin-top:8px;font-weight:700}.gumin select{padding:6px 8px;border-radius:8px}
-.gukeep{display:flex;flex-wrap:wrap;gap:5px}.guk{border:1px solid rgba(0,0,0,.12);background:#fffaf2;border-radius:999px;padding:5px 10px;font-size:12.5px;cursor:pointer;color:#2b1608}.guk.on{background:#2b1608;color:#fff}
-.gugo{width:100%;margin-top:14px;padding:13px;border:0;border-radius:12px;background:linear-gradient(180deg,#f2701a,#d9560b);color:#fff;font-weight:900;font-size:15.5px;cursor:pointer}.gugo:disabled{opacity:.55}
-.gucard{border:1px solid rgba(217,86,11,.3);border-radius:12px;margin:8px 0;background:#fffaf2;overflow:hidden}.gucard>summary{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;list-style:none;font-weight:800}.gucard>summary::-webkit-details-marker{display:none}
-.gun{color:#b8410a}.gutt{flex:1;font-size:13.5px}
-.gup small{font-size:10.5px;font-weight:700;opacity:.9;margin-right:2px}.gup{white-space:nowrap;min-width:46px;text-align:center;border-radius:8px;padding:3px 7px;font-weight:900;color:#fff}.gup.hi{background:#15a04a}.gup.md{background:#e0a106}.gup.lo{background:#e02424}
-.gurow{border-top:1px solid rgba(0,0,0,.07);padding:9px 12px}.gurow.me{background:rgba(217,86,11,.06)}.guth{display:flex;align-items:center;gap:8px}.guth .badge{width:26px;height:26px}.guth b{flex:1}.gust{font-size:11px;font-style:normal;color:#888;border:1px dashed #bbb;border-radius:6px;padding:1px 5px}
-.guio{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}.guio small{display:block;font-size:11px;text-transform:uppercase;color:#8a5a3a;font-weight:800}.gupl{display:block;font-size:13px;font-weight:700;color:#2b1608}.gupl em{font-style:normal;font-weight:500;color:#8a5a3a;font-size:11.5px}.gupl .rc{margin-right:4px}
-.guwhy{margin:6px 0 0;font-size:12.5px;color:#5a3a22}
-html.notte .guintro,html.notte .gubox,html.notte .gures,html.notte .gucard,html.notte .guli,html.notte .guk,html.notte .gutg{background:rgba(30,20,60,.85);color:#ede9fe;border-color:rgba(167,139,250,.35)}html.notte .gupl,html.notte .guli{color:#ede9fe}
-</style>
-<style>.guhome{display:grid;gap:12px;margin:6px 0 14px}.guhb{display:grid;gap:6px;text-align:left;padding:18px 16px;border-radius:16px;border:2px solid rgba(217,86,11,.45);background:#fffaf2;color:#2b1608;cursor:pointer;box-shadow:0 6px 14px rgba(70,30,0,.18)}.guhb b{font-size:20px;color:#b8410a}.guhb span{font-size:14px;line-height:1.4}
-.gmsc{display:grid;grid-template-columns:44px 1fr;gap:10px;background:#fffaf2;border:1px solid rgba(217,86,11,.3);border-radius:14px;padding:12px;margin:0 0 12px;color:#2b1608}.gmsc>.badge{width:42px;height:42px}.gmsc h4{margin:0;font-size:20px;color:#b8410a}.gmsc small{opacity:.75}.gmsc p{margin:8px 0 0;font-size:14px;line-height:1.45}.gmsc ul{margin:4px 0 0;padding-left:18px;font-size:14px;line-height:1.45}
-.gmaff{position:relative;margin:8px 0 2px;background:#f3e3c8;border-radius:8px;height:22px;overflow:hidden;display:flex;justify-content:space-between;align-items:center;padding:0 8px;font-size:12px;font-weight:800}.gmaff span,.gmaff b{position:relative;z-index:1}.gmaff i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#f2701a,#d9560b);opacity:.35}
-.gmnum{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}.gmnum>div{background:#fdf3e1;border-radius:10px;padding:6px;text-align:center}.gmnum small{display:block;font-size:11px}.gmnum b{font-size:17px;color:#b8410a}
-.gmros{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.gmro{border-radius:999px;padding:3px 10px;font-size:12.5px;font-weight:800;background:#eee}.gmro.su{background:#dcfce7;color:#15803d}.gmro.giu{background:#fee2e2;color:#b91c1c}
-.gmpl em{font-style:normal;font-weight:800}.gmpl em.su{color:#15803d}.gmpl em.giu{color:#b91c1c}.gmnd{background:#fff4d6;border-radius:10px;padding:8px 10px}.gmsc.nd{opacity:.92}
-html.notte .guhb,html.notte .gmsc{background:rgba(30,20,60,.85);color:#ede9fe;border-color:rgba(167,139,250,.35)}html.notte .gmsc h4{color:#fff}html.notte .gmnum>div{background:rgba(255,255,255,.08)}</style>
-<style>/* (780) IA Gusti: spazi tra i gruppi di tasti, select chiaro, loghi su una riga */
+.guhome{display:grid;gap:12px;margin:6px 0 14px}.guhb{display:grid;gap:6px;text-align:left;padding:18px 16px;border-radius:16px;border:2px solid var(--gu-bd);background:var(--gu-card);color:var(--gu-fg);cursor:pointer;box-shadow:var(--gu-sh)}.guhb b{font-size:20px;color:var(--gu-ttl)}.guhb span{font-size:14px;line-height:1.4}
+/* schede «Scopri i gusti» */
+.gmsc{display:grid;grid-template-columns:44px 1fr;gap:10px;background:var(--gu-card);border:1px solid var(--gu-bd);border-radius:14px;padding:12px;margin:0 0 12px;color:var(--gu-fg)}.gmsc>.badge{width:42px;height:42px}.gmsc h4{margin:0;font-size:20px;color:var(--gu-ttl)}.gmsc small{color:var(--gu-mut)}.gmsc p{margin:8px 0 0;font-size:14px;line-height:1.45}.gmsc ul{margin:4px 0 0;padding-left:18px;font-size:14px;line-height:1.45}
+.gmaff{position:relative;margin:8px 0 2px;background:var(--gu-bar);color:var(--gu-fg);border-radius:8px;height:22px;overflow:hidden;display:flex;justify-content:space-between;align-items:center;padding:0 8px;font-size:12px;font-weight:800}.gmaff span,.gmaff b{position:relative;z-index:1}.gmaff i{position:absolute;left:0;top:0;bottom:0;background:var(--gu-fill);opacity:.45}
+.gmnum{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}.gmnum>div{background:var(--gu-box);border-radius:10px;padding:6px;text-align:center}.gmnum small{display:block;font-size:11px}.gmnum b{font-size:17px;color:var(--gu-num)}
+.gmros{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.gmro{border-radius:999px;padding:3px 10px;font-size:12.5px;font-weight:800;background:var(--gu-neu);color:var(--gu-fg)}.gmro.su{background:var(--gu-upbg);color:var(--gu-up)}.gmro.giu{background:var(--gu-dnbg);color:var(--gu-dn)}
+.gmpl em{font-style:normal;font-weight:800}.gmpl em.su{color:var(--gu-up)}.gmpl em.giu{color:var(--gu-dn)}.gmnd{background:var(--gu-note);color:var(--gu-fg);border-radius:10px;padding:8px 10px}.gmsc.nd{opacity:.92}
+/* IA Gusti */
+.gubox,.gures{background:var(--gu-card);color:var(--gu-fg);border:1px solid var(--gu-bd);border-radius:14px;padding:12px;margin:0 0 12px}
+.gubox h4,.gures h4{margin:12px 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--gu-ttl)}.gubox h4:first-child,.gures h4:first-child{margin-top:0}.gubox h4 small{text-transform:none;letter-spacing:0;color:var(--gu-mut);font-weight:600}
+.gurowc{display:flex;flex-wrap:wrap;gap:6px}.guchip{border:2px solid transparent;border-radius:12px;background:var(--gu-box);padding:4px;cursor:pointer}.guchip .badge{width:34px;height:34px}.guchip.on{border-color:var(--gu-on);box-shadow:0 0 0 2px var(--gu-me)}
+.guseg{display:flex;gap:6px;flex-wrap:wrap}.guseg button{flex:1;min-width:52px;padding:9px 10px;border-radius:10px;border:1px solid var(--gu-bd);background:var(--gu-btn);color:var(--gu-btnfg);font-weight:800;cursor:pointer}.guseg button.on{background:var(--gu-on);color:var(--gu-onfg);border-color:var(--gu-on)}
+.gulist{display:grid;gap:4px;margin-top:6px;max-height:340px;overflow:auto}.guli{display:grid;grid-template-columns:30px 1fr auto;gap:8px;align-items:center;text-align:left;border:1px solid var(--gu-row);border-radius:10px;background:var(--gu-box);padding:6px 8px;cursor:pointer;color:var(--gu-fg)}.guli .badge{width:28px;height:28px}.guli small{display:block;color:var(--gu-mut);font-size:11.5px}.guli b{color:var(--gu-num)}
+.gutg{display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center;background:var(--gu-box);color:var(--gu-fg);border-radius:12px;padding:8px}.gutg .badge{width:32px;height:32px}.gutg small{grid-column:2;color:var(--gu-mut)}.gutg button{grid-row:1/3;grid-column:3;border:1px solid var(--gu-on);background:var(--gu-card);color:var(--gu-btnfg);border-radius:9px;padding:6px 10px;font-weight:800}
+.gumin{display:flex;align-items:center;gap:8px;margin-top:8px;font-weight:700}
+.gukeep{display:flex;flex-wrap:wrap;gap:5px}.guk{border:1px solid var(--gu-row);background:var(--gu-box);border-radius:999px;padding:5px 10px;font-size:12.5px;cursor:pointer;color:var(--gu-fg)}.guk.on{background:var(--gu-on);color:var(--gu-onfg);border-color:var(--gu-on)}
+.gugo{width:100%;margin-top:14px;padding:13px;border:0;border-radius:12px;background:var(--gu-go);color:#fff;font-weight:900;font-size:15.5px;cursor:pointer}.gugo:disabled{opacity:.55}
+.gucard{border:1px solid var(--gu-bd);border-radius:12px;margin:8px 0;background:var(--gu-card);color:var(--gu-fg);overflow:hidden}.gucard>summary{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;list-style:none;font-weight:800}.gucard>summary::-webkit-details-marker{display:none}
+.gun{color:var(--gu-num)}.gutt{flex:1;font-size:13.5px}
+.gup small{font-size:10.5px;font-weight:700;opacity:.9;margin-right:2px}.gup{white-space:nowrap;min-width:46px;text-align:center;border-radius:8px;padding:3px 7px;font-weight:900;color:#fff}.gup.hi{background:#15a04a}.gup.md{background:#c98a00}.gup.lo{background:#d42020}
+.gurow{border-top:1px solid var(--gu-row);padding:9px 12px}.gurow.me{background:var(--gu-me)}.guth{display:flex;align-items:center;gap:8px}.guth .badge{width:26px;height:26px}.guth b{flex:1}.gust{font-size:11px;font-style:normal;color:var(--gu-mut);border:1px dashed var(--gu-mut);border-radius:6px;padding:1px 5px}
+.guio{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}.guio small{display:block;font-size:11px;text-transform:uppercase;color:var(--gu-mut);font-weight:800}.gupl{display:block;font-size:13px;font-weight:700;color:var(--gu-fg)}.gupl em{font-style:normal;font-weight:500;color:var(--gu-mut);font-size:11.5px}.gupl .rc{margin-right:4px}
+.guwhy{margin:6px 0 0;font-size:12.5px;color:var(--gu-mut)}
+/* (780) spazi tra i gruppi di tasti, select, loghi su una riga */
 .gubox .guseg{gap:8px}.gubox .guseg+.guseg,.gubox .guseg+.gutg,.gubox .guseg+#guq,.gubox .guseg+.gumin{margin-top:12px}.gubox .guseg+.vtq{margin-top:12px}
-.gubox .gumin{margin-top:14px}.gubox .gumin select{background:#fdf3e1!important;color:#b8410a!important;border:1px solid rgba(217,86,11,.45)!important;font-weight:800;padding:8px 12px;border-radius:10px;-webkit-appearance:none;appearance:none}
+.gubox .gumin{margin-top:14px}.gubox .gumin select{background:var(--gu-btn)!important;color:var(--gu-btnfg)!important;border:1px solid var(--gu-bd)!important;font-weight:800;padding:8px 12px;border-radius:10px;-webkit-appearance:none;appearance:none}
+.gubox .gumin select option{background:#fff;color:#111}
 .gubox .gurowc{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}.gubox .guchip{padding:3px;display:grid;place-items:center}.gubox .guchip .badge{width:100%;height:auto;aspect-ratio:1}
-.gubox h4{margin-top:18px}.gukeep{gap:7px}.guk{padding:6px 11px}.gugo{margin-top:18px}</style>
+.gubox h4{margin-top:18px}.gukeep{gap:7px}.guk{padding:6px 11px}.gugo{margin-top:18px}
+/* menu di Hoop Dreamers (area Ducks) */
+.hpcard h4{margin:14px 0 6px}.hpteams{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}.hpteams button{border:2px solid transparent;border-radius:12px;background:var(--gu-box);padding:3px;cursor:pointer}.hpteams .badge{width:100%;height:auto;aspect-ratio:1}.hpteams button.on{border-color:var(--gu-on);box-shadow:0 0 0 2px var(--gu-me)}
+.hpseg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}.hpseg button{flex:1;min-width:64px;padding:9px 8px;border-radius:10px;border:1px solid var(--gu-bd);background:var(--gu-btn);color:var(--gu-btnfg);font-weight:800;cursor:pointer}.hpseg button.on{background:var(--gu-on);color:var(--gu-onfg);border-color:var(--gu-on)}
+.hpplay{width:100%;margin-top:16px;padding:16px;border:0;border-radius:14px;background:var(--gu-go);color:#fff;font-weight:900;font-size:19px;cursor:pointer;box-shadow:0 6px 0 var(--gu-go-sh)}</style>
+
+
+
 <script>
 /* (31/10) NOTTE AUTOMATICA: modalità notte (CNT) accesa dall'inizio della prima partita della notte alla fine dell'ultima. Orari tv-data.js = ora italiana ("01:30+1" = giorno dopo) */
 function antTs(d,t){const m=/^(\d\d):(\d\d)(\+1)?$/.exec(t||"");if(!m||+m[1]>23)return null;const[y,mo,da]=d.split("-").map(Number);
@@ -12524,9 +12538,7 @@ document.addEventListener("click",e=>{if(cur!=="hoop")return;const b=e.target.cl
 const T0=x=>teamOrd().find(t=>t!==x);
 })();
 </script>
-<style>.hpcard h4{margin:14px 0 6px}.hpteams{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}.hpteams button{border:2px solid transparent;border-radius:12px;background:#fdf3e1;padding:3px;cursor:pointer}.hpteams .badge{width:100%;height:auto;aspect-ratio:1}.hpteams button.on{border-color:#d9560b;box-shadow:0 0 0 2px rgba(217,86,11,.25)}
-.hpseg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}.hpseg button{flex:1;min-width:64px;padding:9px 8px;border-radius:10px;border:1px solid rgba(217,86,11,.45);background:#fdf3e1;color:#b8410a;font-weight:800;cursor:pointer}.hpseg button.on{background:#d9560b;color:#fff;border-color:#d9560b}
-.hpplay{width:100%;margin-top:16px;padding:16px;border:0;border-radius:14px;background:linear-gradient(180deg,#f2701a,#d9560b);color:#fff;font-weight:900;font-size:19px;cursor:pointer;box-shadow:0 6px 0 #9a3a0c}</style>
+
 <script>
 /* (787) STILI INDIPENDENTI. Bug: all'avvio a freddo con la notte accesa il primo dlsApply partiva PRIMA che fosse installato l'involucro della notte,
    quindi le variabili dei colori restavano quelle del Parquet (scritta DREAMERS marrone, menu crema, caselle crema). Ora, a ogni cambio di stile
