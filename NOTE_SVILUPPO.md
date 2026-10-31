@@ -1913,3 +1913,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 741. Pagina Campo (Home della squadra: intestazione, bacheca, cassa, campo da basket, panchina, tribuna, live): bordino laterale di 6px su telefono, invece di 0 (prima della 739 erano 16px).
 
 742. Pagina Campo: il bordino di 6px resta su intestazione, bacheca, cassa, campo e panchina/tribuna; la tabella Live stanotte (con Notte/Turno, .clwrap) torna fino al bordo dello schermo.
+
+743. Pagina Campo: banner squadra, bacheca, cassa, campo, panchina e tribuna tornano esattamente come prima delle modifiche 739/741 (la regola delle sezioni a tutta larghezza non si applica piu' a campo/college); solo la tabella Live stanotte (.clwrap) resta fino al bordo dello schermo.
