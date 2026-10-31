@@ -1055,7 +1055,8 @@ body:not(.notte) .tmc .tmar{color:var(--gold)}
 .hmcard.s .hmh{color:var(--hns)}
 .hmcard .hmgrip{color:var(--hnh)}.hn6.tm .hmcard.m .hmgrip{color:color-mix(in srgb,var(--tc) 35%,#fff)}.hmgrip i{opacity:.7}.hmgrip.on i,.hmgrip:hover i{opacity:1}
 .hmnn4 .hmnv{padding-top:0;padding-bottom:0;min-height:0}.hmnn4 .hmnv .hmar{height:20px;line-height:1;font-size:18px}.hmnn4 .hmnv .hmnt b{font-size:13px;line-height:1}.hmnn4 .hmnv{margin-top:-2px;margin-bottom:-3px}
-.hmp.lvx{display:block;padding:8px 2px}.lvx .lvh{display:flex;align-items:center;gap:6px;min-width:0}.lvx .lvh .plk{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lvx .lvh>:last-child{flex:none;margin-left:2px;transform:scale(.85);transform-origin:left center}.lvx .lvs{display:block;font-size:11px;color:var(--hnmu);font-weight:500;margin:1px 0 0 14px}.lvx .bxs{margin:5px 0 0}.lvx .bxs b{font-size:13px}.lvx .bxs.mn{grid-template-columns:1.15fr repeat(6,1fr) 1fr 2fr}.lvx .bxs.mn>span:first-child{background:#1e2a52;border-style:dashed}
+.hmp.lvx{display:block;padding:8px 2px}.lvx .lvh{display:flex;align-items:center;gap:6px;min-width:0}.lvx .lvh .plk{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lvx .lvh>:last-child{flex:none;margin-left:2px;transform:scale(.85);transform-origin:left center}.lvx .lvs{display:block;font-size:11px;color:var(--hnmu);font-weight:500;margin:1px 0 0 14px}.nwg{margin:10px 0 6px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12)}.nwg.lv{border-color:#ef4444;box-shadow:0 0 0 1px #ef444455}.nwg small{display:block;font:800 10px var(--display);letter-spacing:.12em;color:var(--hnmu,#9aa8cf)}.nwsc{display:flex;align-items:center;justify-content:center;gap:10px;margin:6px 0 4px;font:800 26px var(--display);color:#fff}.nwsc i{font-style:normal;opacity:.6}.nwsc b{white-space:nowrap}.nwst{display:flex;align-items:center;justify-content:center;gap:12px;font-size:13px}.nwst em{font-style:normal;font-weight:700}.nwst em.lv{color:#ef4444}.nwp{display:inline-flex;align-items:center;gap:6px;font:800 11px var(--display);letter-spacing:.06em}[data-nwk]{cursor:pointer}
+.lvx .bxs{margin:5px 0 0}.lvx .bxs b{font-size:13px}.lvx .bxs.mn{grid-template-columns:1.15fr repeat(6,1fr) 1fr 2fr}.lvx .bxs.mn>span:first-child{background:#1e2a52;border-style:dashed}
 .hmp{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 2px;border-top:1px solid var(--hnln);font-size:13px;font-weight:600;cursor:pointer;text-align:left}
 .hmn{min-width:0}.hmc{color:#ff4d5e;font-weight:800}.hmn small{display:block;font-size:10px;color:var(--hnmu);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hmd{display:inline-block;width:7px;height:7px;border-radius:50%;background:#ff4d5e;margin-right:6px;animation:lvp 1.4s infinite}
@@ -7017,7 +7018,7 @@ function drTabellone(t,T,k,P,on){const W=T.W,btn=`<button class="cntbtn${on?" on
   return`<h2 class="lbmh">${kitBtn(t)}<span class="lbmw">${arr(-1)}<span class="lbm ${st}"${lvAttr} style="--sc:${sc}"${o?` data-drgo="${k}|${pr[0]}|${pr[1]}" role="button" tabindex="0"`:""} aria-label="${TEAMS[t].nick} ${T.score==null?"in attesa":pdkF(T.score)}, ${T.played} su 10 hanno giocato${o?`, contro ${TEAMS[o].nick} ${O.score==null?"in attesa":pdkF(O.score)}, ${O.played} su 10 hanno giocato`:""}">${lg(t)}${gioc(T,t)}<span class="lbmn${lead==="b"?" dim":""}">${T.score==null?"—":pdkF(T.score)}</span>${o?`<span class="lbmx"></span><span class="lbmn${lead==="a"?" dim":""}">${O.score==null?"—":pdkF(O.score)}</span>${gioc(O,o)}${lg(o)}`:""}</span>${arr(1)}</span>${btn}</h2>${cap}`}
 /* modalità notte: stesso blocco giocatore (maglia + targhetta + cartellino) con il PDK della notte; pallino rosso = in campo ora */
 function drGiocN(t,p,m){const r=p[2],sn=drSur(p[0]),v=m?m.p:null;
-  const card=v==null?`<span class="pcd na"><b>${m?"—":"Non gioca"}</b></span>`:`<span class="pcd ${pdkLvl(v)}">${m.lv?'<i class="pcdlv" title="In campo ora"></i>':""}<b>${pdkF(v)}</b></span>`;
+  const card=v==null?`<span class="pcd na" data-nwk="${p[0]}" role="button" tabindex="0"><b>${m?"—":"Non gioca"}</b></span>`:`<span class="pcd ${pdkLvl(v)}" data-nwk="${p[0]}" role="button" tabindex="0">${m.lv?'<i class="pcdlv" title="In campo ora"></i>':""}<b>${pdkF(v)}</b></span>`;
   return`<span class="pj">${jersey(t,p[1],p[0])}${injX(p[0])}</span><span class="pnm ${r}"><i>${({G:"G",F:"A",C:"C"})[r]||""}</i>${pnmTxt(sn)}</span>${card}`}
 function drPanca(t,T){const rp=n=>(ROSTER[t]||[]).find(p=>p[0]===n)||[n,"",ruoloDi(n),""];
   const card=(x,cl)=>x?`<button class="dpc ${cl}" data-ist="${injSt(x.n)}" data-pl="${x.n}">${drGioc(t,x,cl)}</button>`:`<div class="dpc ${cl}">${drGioc(t,null,cl)}</div>`;
@@ -7039,6 +7040,24 @@ function drWkOpen(n){const C=CAMPO_DR;if(!C||!n)return;const T=C.T,x=[...T.top,.
    <div class="dwl">${rows||'<p class="note">Nessuna partita NBA in questo turno.</p>'}</div>
    <p class="note">Dreamers: conta il miglior PDK del turno. PDK live da Dynasty TV, poi ufficiali dal report Dunkest.</p></div>`;
   const chiudi=()=>el.remove();el.onclick=e=>{if(e.target===el||e.target.closest(".dwx"))chiudi()};document.body.appendChild(el)}
+/* (638) Modalità notte del Campo: toccando il PDK di un giocatore si apre il foglio con la partita di stanotte (punteggio live o finale) e le partite che gli restano nel turno */
+function nWkOpen(n){try{const t=curTeam,p=(ROSTER[t]||[]).find(y=>y[0]===n)||[n,"",ruoloDi(n),""],nba=p[3],NM=campoNotteMap(t),N=NM[n],d=campoNotte()||flUsaOggi();
+  let g=null;if(N&&N.k)g=(TV.days[N.dy]||[]).find(x=>x[7]===N.k);if(!g)g=(TV.days[d]||[]).find(x=>x[0]===nba||x[1]===nba)||(TV.days[flUsaOggi()]||[]).find(x=>x[0]===nba||x[1]===nba);
+  const P=drPO(drStand()),K=drCurWeek(P),W=drWeek(K),S=drSettimana(n,W),GGn=["Dom","Lun","Mar","Mer","Gio","Ven","Sab"];
+  const live=g&&g[5]==="L",fin=g&&g[5]==="F",gd=g?(N&&N.dy)||d:null;
+  let cur0="";if(g){const hm=g[1]===nba,opp=hm?g[0]:g[1],sc=g[5]==="S"||g[2]==null?"":`<b>${g[0]} ${g[2]}</b><i>–</i><b>${g[3]} ${g[1]}</b>`,st=live?`<em class="lv">Live · ${(TVL.st[g[7]]||"in corso")}</em>`:fin?`<em>Finale</em>`:`<em>Da giocare · ${String(g[6]||"").replace("+1","")}</em>`;
+    cur0=`<div class="nwg${live?" lv":""}"><small>${live?"PARTITA IN CORSO":fin?"PARTITA DI STANOTTE · FINALE":"PARTITA DI STANOTTE"}</small><div class="nwsc">${sc||`<b>${g[0]}</b><i>@</i><b>${g[1]}</b>`}</div><div class="nwst">${st}${N?`<span class="nwp">PDK ${pdkB(N.p,pdkF(N.p))}</span>`:""}</div></div>`}
+  else cur0=`<div class="nwg"><small>STANOTTE</small><div class="nwsc"><b>${nba}</b></div><div class="nwst"><em>Non gioca stanotte</em></div></div>`;
+  /* partite che restano nel turno: quelle non ancora giocate e non in corso (la partita di stanotte è già sopra) */
+  const rem=S.filter(y=>y&&!y.fin&&!y.lv&&!(g&&g[5]==="S"&&y.d===gd)),
+    rows=S.map(y=>{if(!y)return"";const isNow=g&&y.d===gd&&(live||fin);if(isNow)return"";const o=y.opp.startsWith("@")?`@ ${y.opp.slice(1)}`:`vs ${y.opp}`;return`<div class="dwr${y.lv?" lv":""}"><span class="dwd"><b>${GGn[new Date(y.d+"T00:00:00Z").getUTCDay()]}</b><small>${y.d.slice(8)}/${y.d.slice(5,7)}</small></span><span class="dwo">${o}</span><span class="dwv">${y.v!=null?pdkB(y.v,pdkF(y.v)):y.fin?"<em>Non ha giocato</em>":"<em>Da giocare</em>"}</span></div>`}).join("");
+  const el=document.createElement("div");el.className="dwsh";
+  el.innerHTML=`<div class="dwbox" role="dialog" aria-label="Partite del giocatore"><button class="dwx" aria-label="Chiudi">✕</button>
+   <div class="dwhd">${jersey(t,p[1],n)}<div><b>${RTR(n)}${n}</b><small>${({G:"Guardia",F:"Ala",C:"Centro"})[p[2]]||""} · ${nba}</small></div></div>
+   ${cur0}
+   <div class="dwsum"><span>${DR_PH(K,P)} · ${drNn(W)}</span><span>Partite che restano nel turno: <b>${rem.length}</b></span></div>
+   <div class="dwl">${rows||'<p class="note">Nessun\'altra partita NBA in questo turno.</p>'}</div></div>`;
+  el.onclick=e=>{if(e.target===el||e.target.closest(".dwx"))el.remove()};document.body.appendChild(el)}catch(e){console.error(e)}}
 function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   const t=curTeam,c=TEAMS[t],st=standings().find(x=>x.t===t);
   let {auto,q}=quintetto(t);let qs=new Set(q.map(p=>p[0]));
@@ -7102,7 +7121,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   ${CNT&&DT2?drTabellone(t,DT2,DK2,DP2,true):CNT?H(CNT?"Modalità notte":"Quintetto",`<em>${CNT?(()=>{const d=campoNotte();if(!d)return"nessuna partita";const dd=tvDt(d);return`${dd.getUTCDate()}/${dd.getUTCMonth()+1}`})():`Dreamers · ${DR_PH(DK,DP)}`}</em>${kitBtn(t)}<button class="cntbtn${CNT?" on":""}" id="cntbtn" aria-pressed="${CNT}" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`):drTabellone(t,DT,DK,DP)}
   <div class="court${CNT?" cdark":""}${CNT&&(()=>{try{const d=campoNotte();return d&&(TV.days[d]||[]).some(g=>g[5]==="L")}catch(e){return false}})()?" clive":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg};border-color:${shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}${CNT&&!q.length?`<div class="cnone">Nessuno in campo stanotte</div>`:""}</div>
   ${CNT?`${H("Panchina",`<em>notte · per punteggio</em>`)}
-  <div class="bench${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg}">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${RTR(p[0])}${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}${injTag(p[0])}</small></span><span class="bev">${CNT?`<span class="cnrow">${NM[p[0]]&&NM[p[0]].lv?'<i class="cnlv" title="In campo ora"></i>':""}${pillN(p[0])}</span><small>${NM[p[0]]?`vs ${NM[p[0]].opp} · ${NM[p[0]].st}`:"non ha giocato"}</small>`:`${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}`}</span></button>`).join("")}</div>`:drPanca(t,DT)}
+  <div class="bench${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg}">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${RTR(p[0])}${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}${injTag(p[0])}</small></span><span class="bev">${CNT?`<span class="cnrow" data-nwk="${p[0]}" role="button" tabindex="0">${NM[p[0]]&&NM[p[0]].lv?'<i class="cnlv" title="In campo ora"></i>':""}${pillN(p[0])}</span><small>${NM[p[0]]?`vs ${NM[p[0]].opp} · ${NM[p[0]].st}`:"non ha giocato"}</small>`:`${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}`}</span></button>`).join("")}</div>`:drPanca(t,DT)}
   <div class="crwrap"><button class="croster" id="croster">Roster completo ›</button>${t==="DUC"?`<button class="cpow" id="cpow" aria-label="Accesso riservato"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v8M7.1 6.3a8 8 0 1 0 9.8 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>`:""}</div>
   <div class="clwrap">${campoLive(t)}</div>`;
 }
@@ -8955,6 +8974,7 @@ function render(){
   if(typeof syncMenu==="function")syncMenu();
   const m=document.getElementById("main");m.innerHTML=`<div class="view">${VIEWS[cur]()}</div>`;
   m.querySelectorAll(".cpl[data-pl],.bpl[data-pl],.dpc[data-pl]").forEach(b=>b.onclick=()=>{curPlayer=b.dataset.pl;cur="giocatore";render();window.scrollTo(0,0)});
+  m.querySelectorAll("[data-nwk]").forEach(b=>{const go=e=>{e.stopPropagation();e.preventDefault();nWkOpen(b.dataset.nwk)};b.onclick=go;b.onkeydown=e=>{if(e.key==="Enter")go(e)}});
   m.querySelectorAll("[data-drwk]").forEach(b=>{const go=e=>{e.stopPropagation();e.preventDefault();drWkOpen(b.dataset.drwk)};b.onclick=go;b.onkeydown=e=>{if(e.key==="Enter")go(e)}});
   m.querySelectorAll("[data-cassa]").forEach(b=>{const go=()=>{curTeam=b.dataset.cassa;cassaTab="bil";cassaStag="tutte";cur="cassa";render();window.scrollTo(0,0)};b.onclick=go;b.onkeydown=e=>{if(e.key==="Enter")go()}});
   const cbk=m.querySelector("#cassaback");if(cbk)cbk.onclick=()=>{cur="campo";render();window.scrollTo(0,0)};

@@ -1758,3 +1758,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 636. Osservatorio (tasto Segui): nella vista 'Notte' e 'Live' i seguiti che stanno giocando vengono prima, poi gli altri per PDK decrescente (prima era solo per PDK). Nella Home la finestra 'Seguiti' era già ordinata così (live prima, poi PDK); il problema visto alle 05:14 era la Previsione che riappariva (nota 635).
 
 637. Home: a partita finita si vedono i minuti giocati. Versione BOX: prima cella tratteggiata «MIN» nel box score (anche in Seguiti e nella pagina Notte); versione snella: «Finale · 28 min» sotto il nome. Durante la partita non compaiono.
+
+638. Campo in modalità notte: toccando il PDK di un giocatore (in campo, panchina, anche 'Non gioca') si apre il foglio con la partita di stanotte (punteggio live con quarto e minuti, oppure Finale, PDK del giocatore) e l'elenco delle partite che gli restano nel turno, con il conteggio. Toccando la maglia si apre ancora la scheda del giocatore.
