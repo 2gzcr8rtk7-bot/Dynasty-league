@@ -9754,6 +9754,7 @@ function pqFix(){try{
     if(el.tagName==="svg"||el.closest("svg"))return;
     if(el.closest(".htile"))return;
     if(el.closest(".cltg,.cltn,.tvpnl .tvdate,.tvpnl .tvday"))return;
+    if(window.__dxSkip&&window.__dxSkip(el))return;
     if(el.classList&&el.classList.contains("tstar")){const b=bgOf(el);el.classList.toggle("stl",lum(b)>.4);return}
     let has=false;for(const n of el.childNodes)if(n.nodeType===3&&n.textContent.trim().length>0){has=true;break}
     if(!has)return;const r=el.getBoundingClientRect();if(r.width<2||r.height<2)return;
@@ -10278,6 +10279,7 @@ function sala(){if(!COL.d){cur="campo";return vCampo()}
  <div class="hoft">
   <button class="hoftile" data-hof="eq"><span class="hi">⚖️</span><span><b>Gestione equilibrio trade</b><small>Simulatore · parametri · valori · registro</small></span><i>›</i></button>
   <button class="hoftile" data-hof="college"><span class="hi">🔭</span><span><b>Scouting</b><small>Ufficio Scouting · college, NBA, prospetti</small></span><i>›</i></button>
+  <button class="hoftile" data-hof="dxcol"><span class="hi">🖌️</span><span><b>Editor colori</b><small>Parquet · Base · Notte · tocca e scegli</small></span><i>›</i></button>
   <button class="hoftile" data-hof="pers"><span class="hi">🎨</span><span><b>Personalizzazioni</b><small>Loghi e look della tua app</small></span><i>›</i></button>
   <button class="hoftile" data-hof="bet"><span class="hi">🎰</span><span><b>Centro scommesse</b><small>Gettoni · sfide · sopra/sotto · duelli</small></span><i>›</i></button>
   <button class="hoftile" data-hof="soft"><span class="hi">⚙️</span><span><b>Software</b><small>Cap · Multe</small></span><i>›</i></button>
@@ -11723,5 +11725,81 @@ window.s3Open=open;
 })();
 </script>
 
+<script>
+/* (723) EDITOR COLORI (area riservata Ducks › Editor colori): tocchi un elemento dell'app e ne scegli sfondo, testo e bordo.
+   Lavora separatamente su Parquet, Base (originale) e Notte. Le scelte restano su questo telefono (localStorage "dl_dxcol") e si esportano come testo per Claude. */
+(function(){
+const K="dl_dxcol";let DX={rules:{parquet:{},base:{},notte:{}},tok:{parquet:{},base:{},notte:{}}};
+try{const j=JSON.parse(localStorage.getItem(K)||"null");if(j&&j.rules)DX=Object.assign(DX,j)}catch(e){}
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(DX))}catch(e){}};
+const R=document.documentElement;
+const mode=()=>R.classList.contains("notte")?"notte":R.classList.contains("dlt-parquet")?"parquet":"base";
+const PFX={parquet:"html.dlt-parquet:not(.notte)",base:"html:not(.dlt-parquet):not(.notte)",notte:"html.notte"};
+const NM={parquet:"Parquet",base:"Base (originale)",notte:"Notte"};
+const hex=c=>{const m=(c||"").match(/[\d.]+/g);if(!m||m.length<3)return"#ffffff";if(m.length>3&&+m[3]===0)return"";return"#"+[0,1,2].map(i=>Math.round(+m[i]).toString(16).padStart(2,"0")).join("")};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const TOKS={parquet:[["--pq-tx","Scritte arancio","#d9560b"],["--pq-b1","Tasto attivo (alto)","#e8631a"],["--pq-b2","Tasto attivo (basso)","#cf5410"],["--pq-box","Caselle bianche","#ffffff"],["--pq-ink","Testo scuro","#2b1608"],["--pq-a","Parquet strisce A","#c88a4c"],["--pq-b","Parquet strisce B","#be8043"]],
+ base:[["--bg","Sfondo","#0a1330"],["--panel","Pannello","#141c33"],["--panel2","Pannello 2","#1b2644"],["--line","Linee","#2a3556"],["--muted","Testo secondario","#9aa3b8"],["--red","Accento","#e11d48"],["--gold","Oro","#f5b400"]],
+ notte:[["--bg","Sfondo","#0c0820"],["--panel","Pannello","#241030"],["--panel2","Pannello 2","#351845"],["--line","Linee","#5c2b66"],["--muted","Testo secondario","#d3a8cb"],["--red","Accento","#e11d74"],["--gold","Oro","#fdba74"]]};
+const tokVal=(m,k,d)=>{if(DX.tok[m]&&DX.tok[m][k])return DX.tok[m][k];const v=getComputedStyle(R).getPropertyValue(k).trim();return/^#[0-9a-f]{6}$/i.test(v)?v:(/^#[0-9a-f]{3}$/i.test(v)?"#"+v.slice(1).split("").map(x=>x+x).join(""):d)};
+let st=document.getElementById("dxcolst");if(!st){st=document.createElement("style");st.id="dxcolst";document.head.appendChild(st)}
+function css(){let o="";for(const m of ["parquet","base","notte"]){const p=PFX[m];const T=DX.tok[m]||{};const tk=Object.keys(T).map(k=>`${k}:${T[k]}`).join(";");if(tk)o+=`${p}{${tk}}\n`;
+  const r=DX.rules[m]||{};for(const sel in r){const x=r[sel];const S=sel+":not(#dx)";let d="";if(x.bg)d+=`background:${x.bg}!important;background-image:none!important;`;if(x.fg)d+=`color:${x.fg}!important;-webkit-text-fill-color:${x.fg}!important;`;if(x.bd)d+=`border-color:${x.bd}!important;`;
+   if(d)o+=`${p} ${S}{${d}}\n`;if(x.fg&&x.deep)o+=`${p} ${S} *{color:${x.fg}!important;-webkit-text-fill-color:${x.fg}!important}\n`}}
+ st.textContent=o}
+css();
+window.__dxSkip=el=>{try{const r=DX.rules[mode()]||{};for(const sel in r){if(r[sel].fg&&(el.matches(sel)||(r[sel].deep&&el.closest(sel))))return true}}catch(e){}return false};
+const SKIPC=/^(pqw|pqo|pqn|pqt|on|sel|act|active|open|show)$/;
+function selOf(e){let a=e,n=0;while(a&&a!==document.body&&a.nodeType===1){const cl=[...a.classList].filter(c=>!SKIPC.test(c));if(cl.length)break;a=a.parentElement;n++;if(n>4)break}
+ if(!a||a===document.body)a=e;return a}
+function selFor(a){const cl=[...a.classList].filter(c=>!SKIPC.test(c)).slice(0,3).map(c=>"."+CSS.escape(c)).join("");let s=a.tagName.toLowerCase()+cl;
+ if(a.getAttribute("aria-pressed")==="true")s+='[aria-pressed="true"]';else if(a.getAttribute("aria-pressed")==="false")s+='[aria-pressed="false"]';
+ if(a.getAttribute("aria-selected")==="true")s+='[aria-selected="true"]';else if(a.getAttribute("aria-selected")==="false")s+='[aria-selected="false"]';
+ if(a.classList.contains("on")&&!/aria-/.test(s))s+=".on";return s}
+let PICK=false,TARGET=null,UP=0;
+const bar=document.createElement("div");bar.id="dxbar";bar.style.cssText="position:fixed;left:8px;right:8px;bottom:8px;z-index:2147483000;display:none;gap:6px;font:700 13px system-ui;";
+bar.innerHTML='<button data-dx="pick" style="flex:1"></button><button data-dx="panel">📋 Pannello</button><button data-dx="off">✕</button>';
+const bs="padding:11px 10px;border-radius:12px;border:2px solid #fff;background:#111;color:#fff;font:800 13px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.5)";
+bar.querySelectorAll("button").forEach(b=>b.style.cssText=bs);document.body.appendChild(bar);
+const sheet=document.createElement("div");sheet.id="dxsheet";sheet.style.cssText="position:fixed;left:0;right:0;bottom:0;z-index:2147483001;display:none;background:#fff;color:#222;border-radius:18px 18px 0 0;padding:12px 14px 16px;box-shadow:0 -8px 28px rgba(0,0,0,.45);font:14px system-ui;max-height:62vh;overflow:auto";document.body.appendChild(sheet);
+function barUpd(){bar.style.display=PICK!==null&&window.__dxOn?"flex":"none";bar.querySelector('[data-dx="pick"]').textContent=PICK?"🎯 Seleziona: attivo (tocca per navigare)":"👆 Naviga (tocca per selezionare)"}
+function openSheet(a){TARGET=a;const m=mode();const sel=selFor(a);const cs=getComputedStyle(a);const cur=(DX.rules[m]||{})[sel]||{};
+ const bgc=hex(cs.backgroundColor),fgc=hex(cs.color),bdc=hex(cs.borderTopColor);
+ const row=(k,l,v)=>`<div style="display:flex;align-items:center;gap:8px;margin:8px 0"><b style="width:70px">${l}</b><input type="color" data-k="${k}" value="${cur[k]||v||"#ffffff"}" style="width:54px;height:36px;border:1px solid #bbb;border-radius:8px;padding:0"><button data-dxc="${k}" style="padding:7px 10px;border:1px solid #bbb;border-radius:8px;background:#f4f4f4">${cur[k]?"Togli":"Originale"}</button><small style="color:#777">${cur[k]||"non modificato"}</small></div>`;
+ sheet.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><b>${NM[m]}</b><span><button data-dxs="up" style="padding:6px 10px;border:1px solid #bbb;border-radius:8px;background:#f4f4f4">⬆ più grande</button> <button data-dxs="close" style="padding:6px 10px;border:1px solid #bbb;border-radius:8px;background:#222;color:#fff">Fine</button></span></div><code style="display:block;margin:6px 0;font-size:12px;word-break:break-all;color:#555">${esc(sel)}</code>${row("bg","Sfondo",bgc)}${row("fg","Testo",fgc)}${row("bd","Bordo",bdc)}<label style="display:flex;gap:8px;align-items:center;margin:6px 0"><input type="checkbox" data-dxd ${cur.deep?"checked":""}> Testo anche negli elementi interni</label><button data-dxs="reset" style="padding:8px 12px;border:1px solid #c33;border-radius:8px;background:#fff;color:#c33">Azzera questo elemento</button>`;
+ sheet.style.display="block"}
+function setRule(k,v){const m=mode();if(!TARGET)return;const sel=selFor(TARGET);const r=DX.rules[m]=DX.rules[m]||{};const x=r[sel]=r[sel]||{};if(v)x[k]=v;else delete x[k];if(!x.bg&&!x.fg&&!x.bd)delete r[sel];save();css();try{window.pqFix&&window.pqFix()}catch(e){}}
+sheet.addEventListener("input",e=>{const i=e.target.closest("[data-k]");if(i){setRule(i.dataset.k,i.value);i.nextElementSibling.textContent="Togli";i.nextElementSibling.nextElementSibling.textContent=i.value}const d=e.target.closest("[data-dxd]");if(d&&TARGET){const m=mode(),sel=selFor(TARGET),r=DX.rules[m]=DX.rules[m]||{};const x=r[sel]=r[sel]||{};x.deep=d.checked;save();css()}});
+sheet.addEventListener("click",e=>{const c=e.target.closest("[data-dxc]");if(c){setRule(c.dataset.dxc,null);openSheet(TARGET);return}const s=e.target.closest("[data-dxs]");if(!s)return;const a=s.dataset.dxs;if(a==="close"){sheet.style.display="none";TARGET=null}else if(a==="up"&&TARGET&&TARGET.parentElement&&TARGET.parentElement!==document.body){openSheet(selOf(TARGET.parentElement))}else if(a==="reset"&&TARGET){const m=mode();delete (DX.rules[m]||{})[selFor(TARGET)];save();css();openSheet(TARGET)}});
+document.addEventListener("click",e=>{
+ const b=e.target.closest("#dxbar [data-dx]");if(b){e.preventDefault();e.stopPropagation();const a=b.dataset.dx;if(a==="pick"){PICK=!PICK;if(!PICK)sheet.style.display="none";barUpd()}else if(a==="panel"){PICK=false;sheet.style.display="none";cur="dxcol";render();scrollTo(0,0);barUpd()}else if(a==="off"){window.__dxOn=false;PICK=false;sheet.style.display="none";barUpd()}return}
+ if(!PICK||!window.__dxOn||e.target.closest("#dxsheet,#dxbar"))return;
+ e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();openSheet(selOf(e.target))},true);
+document.addEventListener("touchend",e=>{if(PICK&&window.__dxOn&&!e.target.closest("#dxsheet,#dxbar"))e.preventDefault()},{capture:true,passive:false});
+function tokRows(m){return TOKS[m].map(([k,l,d])=>`<div class="dxr"><span>${l}</span><input type="color" data-dxt="${k}" value="${tokVal(m,k,d)}"><button data-dxtr="${k}">↺</button></div>`).join("")}
+function listRows(m){const r=DX.rules[m]||{};const ks=Object.keys(r);return ks.length?ks.map(k=>{const x=r[k];return`<div class="dxr"><span style="word-break:break-all;font-size:12px">${esc(k)}</span><i style="width:22px;height:22px;border-radius:6px;border:1px solid #888;background:${x.bg||"transparent"}"></i><i style="width:22px;height:22px;border-radius:6px;border:1px solid #888;background:${x.fg||"transparent"}"></i><i style="width:22px;height:22px;border-radius:6px;border:2px solid ${x.bd||"#888"}"></i><button data-dxdel="${esc(k)}">✕</button></div>`}).join(""):"<p class='setnote'>Nessuna modifica per questa modalità.</p>"}
+function exportTxt(){const o={app:"Dreamers",nota:"Colori scelti dall'editor. Per ogni modalità: 'rules' = selettore CSS → sfondo (bg), testo (fg), bordo (bd), deep = testo anche negli elementi interni; 'tok' = variabili di base. Ufficializzali nel tema corrispondente.",rules:DX.rules,tok:DX.tok};return "EDITOR COLORI · ufficializza questi colori nel tema indicato (parquet / base / notte):\n"+JSON.stringify(o)}
+window.vDxcol=function(){const m=mode();
+ return`<div class="hof dxp"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
+ <div class="hofhd"><div><small>Texas Ducks · area riservata del GM</small><b>Editor colori</b><em>Tocca un elemento e scegli i colori</em></div></div>
+ <section class="hofcard"><h4>1 · Modalità da modificare</h4><p class="setnote">Le modifiche valgono solo per la modalità attiva. Ora: <b>${NM[m]}</b>.</p>
+ <div class="dxm">${["parquet","base","notte"].map(x=>`<button data-dxm="${x}" aria-pressed="${m===x}">${NM[x]}</button>`).join("")}</div></section>
+ <section class="hofcard"><h4>2 · Seleziona gli elementi</h4><p class="setnote">Si apre l'app: tocca un elemento (tasto, riquadro, scritta…) e cambia sfondo, testo, bordo. «⬆ più grande» passa al contenitore. Con «Naviga» cambi schermata, con «Seleziona» scegli.</p><button class="cfgo dxgo" data-dxstart="1">🎯 Inizia a selezionare</button></section>
+ <section class="hofcard"><h4>3 · Colori di base · ${NM[m]}</h4><p class="setnote">Partono dai colori attuali. ↺ ripristina.</p>${tokRows(m)}</section>
+ <section class="hofcard"><h4>4 · Modifiche salvate · ${NM[m]}</h4>${listRows(m)}</section>
+ <section class="hofcard"><h4>5 · Esporta per Claude</h4><p class="setnote">Copia il testo e mandalo a Claude per ufficializzare.</p><textarea id="dxout" readonly style="width:100%;height:90px;font-size:11px">${esc(exportTxt())}</textarea><button class="cfgo dxgo" data-dxcopy="1">📋 Copia</button> <button class="cfgo dxgo" data-dxclr="1" style="background:#fff;color:#c33">Azzera tutto (${NM[m]})</button></section></div>`}
+VIEWS.dxcol=window.vDxcol;
+document.addEventListener("click",e=>{const t=e.target;if(cur!=="dxcol")return;
+ const mb=t.closest("[data-dxm]");if(mb){const x=mb.dataset.dxm;if(x==="parquet"){DLS.th="parquet";CNT=false}else if(x==="base"){DLS.th="classico";CNT=false}else{CNT=true}try{dlsSave();cntSave()}catch(_){}dlsApply();render();return}
+ if(t.closest("[data-dxstart]")){window.__dxOn=true;PICK=true;cur="home";render();scrollTo(0,0);barUpd();return}
+ const tr=t.closest("[data-dxtr]");if(tr){const m=mode();delete DX.tok[m][tr.dataset.dxtr];save();css();render();return}
+ const del=t.closest("[data-dxdel]");if(del){delete DX.rules[mode()][del.dataset.dxdel];save();css();render();return}
+ if(t.closest("[data-dxcopy]")){const x=document.getElementById("dxout");x.value=exportTxt();x.select();try{navigator.clipboard.writeText(x.value)}catch(_){try{document.execCommand("copy")}catch(__){}}t.textContent="✔ Copiato";return}
+ if(t.closest("[data-dxclr]")){const m=mode();DX.rules[m]={};DX.tok[m]={};save();css();render()}});
+document.addEventListener("input",e=>{const i=e.target.closest("[data-dxt]");if(!i)return;const m=mode();DX.tok[m]=DX.tok[m]||{};DX.tok[m][i.dataset.dxt]=i.value;save();css()});
+const sty=document.createElement("style");sty.textContent=".dxp .dxm{display:flex;gap:6px;flex-wrap:wrap}.dxp .dxm button{flex:1;padding:10px 6px;border-radius:10px;border:1px solid #888;background:#fff;color:#333;font-weight:800}.dxp .dxm button[aria-pressed=true]{background:#d9560b;color:#fff;border-color:#d9560b}.dxp .dxr{display:flex;align-items:center;gap:8px;margin:7px 0;justify-content:space-between}.dxp .dxr span{flex:1}.dxp .dxr input[type=color]{width:54px;height:34px;padding:0;border:1px solid #888;border-radius:8px}.dxp .dxr button{padding:6px 10px;border-radius:8px;border:1px solid #888;background:#f4f4f4;color:#333}.dxp .dxgo{display:block;width:100%;margin:8px 0}";document.head.appendChild(sty);
+const H0=render;render=function(){const x=H0.apply(this,arguments);barUpd();return x};
+})();
+</script>
 </body>
 </html>
