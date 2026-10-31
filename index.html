@@ -7872,9 +7872,10 @@ const FANTA_LIVE=[
   /* (345) SOTTOFONDO: da QUALSIASI sezione dell'app (scambi, regolamento, impostazioni…) i dati live si scaricano comunque, senza ridisegnare la pagina (soft).
      Ogni 45 s se c'è una partita in corso, altrimenti ogni 5 minuti. App chiusa o in background: il telefono ferma il codice, quindi nulla; al rientro parte subito un controllo. */
   {attivo:()=>true,soft:true,fondo:true,da:()=>FANTA_LIVE[0].da()}];
-async function fantaLiveScarica(da){if(FL.run||typeof tvEspn!=="function"||typeof TV==="undefined")return false;FL.run=true;let ch=false;
-  try{for(const d of fantaLiveNotti(da)){if(FL.fin[d])continue;const prima=JSON.stringify(fantaLiveNotte(d));try{await tvEspn(d)}catch(e){}
-    const G=TV.days[d]||[];if(G.length&&G.every(g=>g[5]==="F"&&g[7]&&TV.box[g[7]]))FL.fin[d]=1;if(JSON.stringify(fantaLiveNotte(d))!==prima)ch=true}}catch(e){}
+async function fantaLiveScarica(da){if((FL.run&&Date.now()-FL.run<25000)||typeof tvEspn!=="function"||typeof TV==="undefined")return false;FL.run=Date.now();let ch=false;
+  /* (640) le notti si scaricano insieme (prima una dopo l'altra) e il blocco "già in corso" scade dopo 25 s, così una richiesta rimasta appesa non ferma più tutto */
+  try{await Promise.all(fantaLiveNotti(da).filter(d=>!FL.fin[d]).map(async d=>{const prima=JSON.stringify(fantaLiveNotte(d));try{await tvEspn(d)}catch(e){}
+    const G=TV.days[d]||[];if(G.length&&G.every(g=>g[5]==="F"&&g[7]&&TV.box[g[7]]))FL.fin[d]=1;if(JSON.stringify(fantaLiveNotte(d))!==prima)ch=true}))}catch(e){}
   FL.run=false;return ch}
 function fantaLiveInCorso(){try{const o=flUsaOggi();return[o,drAdd(o,-1)].some(d=>(TV.days[d]||[]).some(g=>g[5]==="L"))}catch(e){return false}}
 function fantaLiveAvvia(){const go=()=>{if(document.hidden)return;const A=FANTA_LIVE.filter(f=>{try{return f.attivo()}catch(e){return false}});if(!A.length)return;
@@ -7883,8 +7884,9 @@ function fantaLiveAvvia(){const go=()=>{if(document.hidden)return;const A=FANTA_
   /* subito alla prima apertura di ogni fanta/sezione (non aspettare il giro da 60 s), poi ogni 45 s */
   if(!FL.t){FL.t=setInterval(go,45000)}if(Date.now()-(FL.ult||0)>15000){FL.ult=Date.now();setTimeout(go,0)}}
 /* (345) parte da sola all'apertura dell'app e a ogni rientro in primo piano, da qualsiasi sezione */
-setTimeout(()=>{try{fantaLiveAvvia()}catch(e){}},4000);
-document.addEventListener("visibilitychange",()=>{if(!document.hidden){try{FL.bg=0;fantaLiveAvvia()}catch(e){}}});
+setTimeout(()=>{try{fantaLiveAvvia()}catch(e){}},300);/* (640) subito, non dopo 4 s */
+window.addEventListener("pageshow",()=>{try{FL.bg=0;FL.ult=0;fantaLiveAvvia()}catch(e){}});window.addEventListener("online",()=>{try{FL.ult=0;fantaLiveAvvia()}catch(e){}});
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){try{FL.bg=0;FL.ult=0;FL.run=false;fantaLiveAvvia()}catch(e){}}});
 
 
 const drLast=()=>{const k=Object.keys(drNotti()).sort();return k[k.length-1]||null};
@@ -8733,7 +8735,9 @@ function esSide(t,win){const S=(t.statistics||[])[0]||{},lab=(S.labels||S.names|
     const st={points:num(g("PTS")),reboundsOffensive:num(g("OREB")),reboundsDefensive:num(g("DREB")),reboundsTotal:num(g("REB")),assists:num(g("AST")),steals:num(g("STL")),blocks:num(g("BLK")),blocksReceived:0,turnovers:num(g("TO")),foulsPersonal:num(g("PF")),fieldGoalsMade:fgm,fieldGoalsAttempted:fga,threePointersMade:tpm,threePointersAttempted:tpa,freeThrowsMade:ftm,freeThrowsAttempted:fta,plusMinusPoints:num(g("+/-"))};
     const mn=String(g("MIN")||"0"),mm=mn.includes(":")?mn:`${parseInt(mn)||0}:00`;if(mm==="0:00"&&!st.points&&!st.reboundsTotal&&!st.assists)return null;
     return[(p.athlete||{}).displayName||"",p.starter?1:0,mm,st.points,st.reboundsOffensive,st.reboundsDefensive,st.reboundsTotal,st.assists,st.steals,st.blocks,st.turnovers,st.foulsPersonal,fgm,fga,tpm,tpa,ftm,fta,Math.round(st.plusMinusPoints),tvPdk(st,!!p.starter,win)]}).filter(Boolean).sort((x,y)=>y[1]-x[1])}
-async function tvEspn(dd){const r=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?"+(dd?"dates="+dd.replace(/-/g,"")+"&":"")+"t="+Date.now(),{cache:"no-store"});if(!r.ok)return false;const J=await r.json();
+/* (640) fetch con scadenza: dopo il sonno del telefono le connessioni possono restare appese e bloccare i caricamenti (prima non c'era un limite) */
+const fTO=(u,ms=9000)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);return fetch(u,{cache:"no-store",signal:c.signal}).finally(()=>clearTimeout(t))};
+async function tvEspn(dd){const r=await fTO("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?"+(dd?"dates="+dd.replace(/-/g,"")+"&":"")+"t="+Date.now());if(!r.ok)return false;const J=await r.json();const PP=[];
   for(const ev of J.events||[]){const c=(ev.competitions||[])[0];if(!c||!c.competitors)continue;const Hc=c.competitors.find(x=>x.homeAway==="home"),Ac=c.competitors.find(x=>x.homeAway==="away");if(!Hc||!Ac)continue;
     const a=esAb(Ac.team.abbreviation),hm=esAb(Hc.team.abbreviation);if(!TV.teams[a]||!TV.teams[hm])continue;
     const d=new Date(ev.date).toLocaleDateString("en-CA",{timeZone:"America/New_York"}),key=d+"_"+a+hm,st=ev.status||c.status||{},ty=st.type||{};
@@ -8742,9 +8746,9 @@ async function tvEspn(dd){const r=await fetch("https://site.api.espn.com/apis/si
     const fin=ty.state==="post"||!!ty.completed,per=st.period||0;G[2]=+Ac.score||0;G[3]=+Hc.score||0;G[4]=per>4?1:0;G[5]=fin?"F":"L";G[7]=key;
     TVL.st[key]=fin?"Finale"+(per>4?" · OT":""):(ty.shortDetail||"Live").replace(/ - /g," ");
     if(fin&&TV.box[key]&&(!TV.box[key].live||TV.box[key].fin))continue;
-    try{const b=await fetch(`https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${ev.id}&t=`+Date.now(),{cache:"no-store"});if(b.ok){const B=await b.json(),P=(B.boxscore&&B.boxscore.players)||[],pa=P.find(x=>esAb(x.team.abbreviation)===a),ph=P.find(x=>esAb(x.team.abbreviation)===hm);
-      if(pa&&ph){const aw=fin&&G[2]>G[3],hw=fin&&G[3]>G[2];TV.box[key]={a:esSide(pa,aw),h:esSide(ph,hw),live:1,fin:fin?1:0,src:"ESPN",oc:fin?[]:esOnCourt(B,[pa,ph])}}}}catch(e){}}
-  if(typeof tvRecalcRec==="function")tvRecalcRec();TVL.last=new Date().toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit",second:"2-digit"});TVL.src="ESPN";return true}
+    PP.push((async()=>{try{const b=await fTO(`https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${ev.id}&t=`+Date.now());if(b.ok){const B=await b.json(),P=(B.boxscore&&B.boxscore.players)||[],pa=P.find(x=>esAb(x.team.abbreviation)===a),ph=P.find(x=>esAb(x.team.abbreviation)===hm);
+      if(pa&&ph){const aw=fin&&G[2]>G[3],hw=fin&&G[3]>G[2];TV.box[key]={a:esSide(pa,aw),h:esSide(ph,hw),live:1,fin:fin?1:0,src:"ESPN",oc:fin?[]:esOnCourt(B,[pa,ph])}}}}catch(e){}})())}
+  await Promise.all(PP);if(typeof tvRecalcRec==="function")tvRecalcRec();TVL.last=new Date().toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit",second:"2-digit"});TVL.src="ESPN";return true}
 /* In campo adesso da ESPN: parte dai 5 titolari e applica in ordine tutte le sostituzioni del play-by-play ("X enters the game for Y"). Poi, se risponde, il boxscore NBA corregge. */
 function esOnCourt(B,sides){try{const on=new Set();for(const sd of sides)for(const st of(sd.statistics||[]))for(const a of(st.athletes||[]))if(a.starter&&a.athlete)on.add(tvNm(a.athlete.displayName));
  if(on.size<2)return[];const re=/^(.+?) enters the game for (.+?)\.?$/;
@@ -8987,7 +8991,7 @@ function render(){
     const vq=m.querySelector("#vtq");if(vq)vq.oninput=()=>{const q=vq.value.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");m.querySelectorAll(".vtlist .vtrow").forEach(r=>{const t=(r.dataset.pln+" "+(TEAMS[r.dataset.plt]||{}).nick).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");r.style.display=!q||t.includes(q)?"":"none"})};
   const tvk=m.querySelector("#tvback");if(tvk)tvk.onclick=()=>{TVS.g=null;cur="home";GAME="menu";render();window.scrollTo(0,0)};
   const tvg=m.querySelector("#tvgo");if(tvg)tvg.onclick=()=>{cur="tv";render();window.scrollTo(0,0)};
-  if(SEGUI.length)fantaLiveAvvia();const hsg=m.querySelector("#hseg");if(hsg)hsg.onclick=()=>{cur="osserv";render();window.scrollTo(0,0)};
+  fantaLiveAvvia();const hsg=m.querySelector("#hseg");if(hsg)hsg.onclick=()=>{cur="osserv";render();window.scrollTo(0,0)};
   const hd=m.querySelector("#hdrm");if(hd)hd.onclick=()=>{GAME="dream";cur="giochi";render();window.scrollTo(0,0)};
   const hn=m.querySelector("#hnt");if(hn)hn.onclick=()=>{CNT=!CNT;SN.hist=false;const y=scrollY;render();scrollTo(0,y)};
   const cb=m.querySelector("#cback");if(cb)cb.onclick=()=>{cur="home";render();window.scrollTo(0,0)};
