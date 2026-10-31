@@ -1796,3 +1796,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 655. Home, navigatore notti: in avanti si può andare di UNA sola notte (la prossima con le Previsioni), non all'infinito. Chiarimento: le frecce in alto scorrono le notti dentro il box score; le frecce in basso (‹ ›) cambiano schermata (Box score / Risultati scontri / Classifica).
 
 656. Home, schede Dreamers in alto: accanto al turno (T4) compare in piccolo la notte del turno su quante, es. «T4 · 2/5» (stessa logica di `drNn`: turno concluso = tutte, in corso = notti giocate + 1). Nelle schede del turno futuro («DAL …») non compare.
+
+657. Home, navigatore notti: le frecce ‹ › in alto sono un po' più staccate da «Tutte le squadre / N giocatori» (margine sotto da −3px a +4px, circa 7px in più) per evitare i tocchi sbagliati senza sprecare spazio.
