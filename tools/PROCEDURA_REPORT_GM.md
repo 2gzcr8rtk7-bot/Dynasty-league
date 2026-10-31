@@ -10,6 +10,8 @@ Richiesta di Francesco (31/10/2026): ogni report dell'Allenamento IA va usato pe
    - **Proposte**: `gm_fit.py proposte <tutti i report Proposte di quella squadra>` → `req`, `age`, `sc`, `role`. Se ci sono vecchi parametri, fare la media pesata sul numero di risposte.
    - **Confronto**: `gm_fit.py confronto <report>` → bonus `pl`. Si fonde con i vecchi `pl`: media dove ci sono entrambi, unione altrove; si tolgono i bonus sotto ±2,5.
    - **Valutazione**: `gm_fit.py valutazione <report>` → solo i giocatori nuovi: bonus ≈ Δ voto × 4 (tetto ±12). Se la risposta è su un valore poi corretto, si conta solo la parte non ancora corretta.
+     - Aggiungere TUTTI i giocatori valutati in `AV_FATTI[squadra]` (index.html): non gli ricapiteranno nei prossimi allenamenti.
+     - Dal 31/10 ogni GM valuta prima i SUOI giocatori: la sezione «I SUOI GIOCATORI» del report (risposta «Se un GM lo chiede, tu…») va usata per la scheda GM_DESCR (intoccabili, ceduti volentieri) e, per gli intoccabili, per `GM_INTOCC` nell'IA Trade.
 3. Aggiornare `GM_GUSTI[squadra]`:
    - campi `n` (≈ risposte equivalenti; 150 = peso pieno), `agg` e `fonte`;
    - nota in `NOTE_SVILUPPO.md`;
