@@ -8752,7 +8752,16 @@ async function tvEspn(dd){const r=await fTO("https://site.api.espn.com/apis/site
     if(fin&&TV.box[key]&&(!TV.box[key].live||TV.box[key].fin))continue;
     PP.push((async()=>{try{const b=await fTO(`https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${ev.id}&t=`+Date.now());if(b.ok){const B=await b.json(),P=(B.boxscore&&B.boxscore.players)||[],pa=P.find(x=>esAb(x.team.abbreviation)===a),ph=P.find(x=>esAb(x.team.abbreviation)===hm);
       if(pa&&ph){const aw=fin&&G[2]>G[3],hw=fin&&G[3]>G[2];TV.box[key]={a:esSide(pa,aw),h:esSide(ph,hw),live:1,fin:fin?1:0,src:"ESPN",oc:fin?[]:esOnCourt(B,[pa,ph])}}}}catch(e){}})())}
-  await Promise.all(PP);if(typeof tvRecalcRec==="function")tvRecalcRec();TVL.last=new Date().toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit",second:"2-digit"});TVL.src="ESPN";return true}
+  await Promise.all(PP);tvCacheSave();if(typeof tvRecalcRec==="function")tvRecalcRec();TVL.last=new Date().toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit",second:"2-digit"});TVL.src="ESPN";return true}
+/* (642) CACHE LOCALE della notte: gli ultimi dati ESPN (partite e tabellini di oggi, ieri e l'altro ieri USA) si salvano sul telefono a ogni scaricamento e si ripristinano all'apertura dell'app, prima del primo disegno: la Home mostra subito box score e PDK invece di restare sulle medie finché ESPN non risponde. Una partita salvata come "live" da più di 4 ore è certamente finita: si ripristina come Finale e ESPN la corregge appena risponde. */
+const TVC_K="dl_tvc1";
+function tvCacheSave(dates){try{const o=flUsaOggi(),ds=dates||[o,drAdd(o,-1),drAdd(o,-2)],out={t:Date.now(),d:{},b:{},s:{}};
+  ds.forEach(d=>{const G=TV.days[d];if(!G)return;const L=G.filter(g=>g[5]==="L"||g[5]==="F");if(!L.length)return;out.d[d]=L.map(g=>g.slice(0,8));L.forEach(g=>{const k=g[7];if(k&&TV.box[k]){out.b[k]=TV.box[k];if(TVL.st[k])out.s[k]=TVL.st[k]}})});
+  const j=JSON.stringify(out);if(j.length<2.5e6)localStorage.setItem(TVC_K,j)}catch(e){}}
+function tvCacheLoad(){try{const j=localStorage.getItem(TVC_K);if(!j)return 0;const c=JSON.parse(j);if(!c||!c.t||Date.now()-c.t>36*36e5)return 0;const vecchio=Date.now()-c.t>4*36e5;let n=0;
+  for(const d in c.d){const day=TV.days[d];if(!day)continue;c.d[d].forEach(s=>{const G=day.find(x=>x[0]===s[0]&&x[1]===s[1]);if(!G)return;if(G[5]==="F"&&G[7]&&TV.box[G[7]]&&!TV.box[G[7]].live)return;
+    G[2]=s[2];G[3]=s[3];G[4]=s[4];G[5]=vecchio&&s[5]==="L"?"F":s[5];G[7]=s[7];if(s[7]&&c.s[s[7]])TVL.st[s[7]]=vecchio&&s[5]==="L"?"Finale":c.s[s[7]];n++})}
+  for(const k in c.b)if(!TV.box[k]||TV.box[k].live)TV.box[k]=c.b[k];return n}catch(e){return 0}}
 /* In campo adesso da ESPN: parte dai 5 titolari e applica in ordine tutte le sostituzioni del play-by-play ("X enters the game for Y"). Poi, se risponde, il boxscore NBA corregge. */
 function esOnCourt(B,sides){try{const on=new Set();for(const sd of sides)for(const st of(sd.statistics||[]))for(const a of(st.athletes||[]))if(a.starter&&a.athlete)on.add(tvNm(a.athlete.displayName));
  if(on.size<2)return[];const re=/^(.+?) enters the game for (.+?)\.?$/;
@@ -9057,6 +9066,7 @@ document.addEventListener("click",e=>{if(dkOpen&&!e.target.closest(".subnav")){d
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&dkOpen){dkOpen=false;syncMenu()}});
 addEventListener("resize",()=>{if(dkOpen)syncMenu()});
 document.querySelector("nav").addEventListener("scroll",()=>{if(dkOpen)syncMenu()});
+try{tvCacheLoad()}catch(e){}
 render();
 </script>
 
