@@ -11159,16 +11159,16 @@ async function shDM(){const S=SHR_DM;if(!S)return null;const H=1540,{cv,c,W}=awa
 .s3go small{display:block;margin-top:5px;font:600 10.5px/1 system-ui,sans-serif;letter-spacing:.08em;color:#d9c7ff;text-transform:none}
 .s3{position:fixed;inset:0;z-index:99999;overflow:hidden;background:#05010d;color:#fff;font-family:var(--display),system-ui,sans-serif;-webkit-user-select:none;user-select:none;touch-action:none;-webkit-tap-highlight-color:transparent}
 .s3 *{box-sizing:border-box}
-.s3sky{position:absolute;inset:0;background:radial-gradient(ellipse 70% 40% at 50% 100%,#8a3dff 0,transparent 70%),radial-gradient(ellipse 50% 35% at 12% 60%,#c13fb8cc 0,transparent 70%),radial-gradient(ellipse 55% 40% at 90% 45%,#2f4fe0cc 0,transparent 70%),linear-gradient(#04010c,#12062a 55%,#2a0f55)}
+.s3sky{position:absolute;inset:0;background:radial-gradient(ellipse 90% 40% at 50% 50%,#b48cf0 0,#8b5fd8 35%,transparent 75%),linear-gradient(#150a35 0%,#2d1566 28%,#5a31a8 50%,#7b4cc9 62%,#3a1c78 100%)}
 .s3st{position:absolute;inset:-10% -50%;background-repeat:repeat}
-.s3st.a{background-image:radial-gradient(1.5px 1.5px at 20px 40px,#fff,transparent),radial-gradient(1px 1px at 90px 120px,#d9c7ff,transparent),radial-gradient(1.5px 1.5px at 160px 70px,#fff,transparent),radial-gradient(1px 1px at 230px 190px,#ffe9a8,transparent),radial-gradient(1px 1px at 300px 30px,#fff,transparent),radial-gradient(1.5px 1.5px at 60px 250px,#c9a6ff,transparent);background-size:340px 300px}
-.s3st.b{background-image:radial-gradient(2px 2px at 50px 90px,#fff,transparent),radial-gradient(2.5px 2.5px at 200px 200px,#ffd98a,transparent),radial-gradient(2px 2px at 330px 40px,#fff,transparent);background-size:420px 360px;animation:s3tw 3.4s ease-in-out infinite alternate}
+.s3st.a{background-image:radial-gradient(1.3px 1.3px at 40px 60px,rgba(255,255,255,.9),transparent),radial-gradient(1px 1px at 210px 150px,rgba(235,220,255,.8),transparent),radial-gradient(1.2px 1.2px at 380px 40px,rgba(255,240,210,.85),transparent),radial-gradient(1px 1px at 120px 270px,rgba(255,255,255,.7),transparent);background-size:520px 360px}
+.s3st.b{background-image:radial-gradient(1.6px 1.6px at 90px 120px,rgba(255,255,255,.95),transparent),radial-gradient(1.6px 1.6px at 430px 230px,rgba(255,225,170,.9),transparent);background-size:640px 420px;animation:s3tw 4.2s ease-in-out infinite alternate}
 @keyframes s3tw{from{opacity:.35}to{opacity:1}}
 .s3pn{position:absolute;border-radius:50%;filter:blur(.5px)}
 .s3w{position:absolute;inset:0;perspective:330px;perspective-origin:50% 50%;overflow:hidden}
 .s3c{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;will-change:transform}
 .s3o{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d}
-.s3t{position:absolute;backface-visibility:visible;background-color:#0e0424;background-image:linear-gradient(rgba(190,130,255,.55) 2px,transparent 2px),linear-gradient(90deg,rgba(190,130,255,.55) 2px,transparent 2px),radial-gradient(circle at 50% 50%,rgba(120,60,220,.35),rgba(10,2,30,.0) 75%);background-size:65px 65px,65px 65px,100% 100%}
+.s3t{position:absolute;backface-visibility:visible;background-color:#3a1d78;background-image:radial-gradient(circle at 50% 50%,rgba(255,255,255,.085) 0 3.5px,transparent 4.5px),linear-gradient(45deg,rgba(0,0,0,.07) 25%,transparent 25%,transparent 75%,rgba(0,0,0,.07) 75%),radial-gradient(ellipse at 50% 50%,rgba(150,100,230,.28),rgba(40,15,90,0) 72%);background-size:26px 26px,52px 52px,100% 100%}
 .s3sp{position:absolute;border-radius:50%;pointer-events:none}
 .s3f{position:absolute;backface-visibility:visible}
 .s3ped .s3f{background:linear-gradient(90deg,#150633,#4b2399 50%,#150633);border-top:3px solid #e8c15a;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff2c4;box-shadow:inset 0 -30px 40px rgba(0,0,0,.5)}
@@ -11217,6 +11217,8 @@ async function shDM(){const S=SHR_DM;if(!S)return null;const H=1540,{cv,c,W}=awa
 .s3info span{display:block;margin-top:4px;font:600 11px/1.3 system-ui,sans-serif;color:#cdb4ff;letter-spacing:.06em}
 .s3hint{position:absolute;left:0;right:0;top:46%;z-index:18;text-align:center;font:600 13px/1.5 system-ui,sans-serif;color:#efe3ff;text-shadow:0 0 12px #000;letter-spacing:.06em;pointer-events:none;transition:opacity 1s}
 .s3hint b{display:block;font:italic 800 28px/1.1 var(--display),Georgia,serif;letter-spacing:.2em;color:#ffe7a0;margin-bottom:8px;text-shadow:0 0 18px rgba(180,120,255,.95)}
+.s3fog{position:absolute;left:0;right:0;top:50%;height:46%;margin-top:-23%;pointer-events:none;z-index:0;background:linear-gradient(rgba(150,105,225,0),rgba(175,135,240,.5) 50%,rgba(150,105,225,0))}
+.s3run{background-color:#4a1f7c!important;background-image:repeating-linear-gradient(90deg,rgba(255,215,130,.16) 0 2px,transparent 2px 36px),radial-gradient(circle at 50% 50%,rgba(255,255,255,.07) 0 3px,transparent 4px)!important;background-size:100% 100%,24px 24px!important;border-left:6px double rgba(255,214,130,.7);border-right:6px double rgba(255,214,130,.7)}
 </style>
 <script>
 (function(){
@@ -11235,13 +11237,11 @@ function open(){
  const toW=(b,lx,lz)=>{const r=b.rot*Math.PI/180;return{x:b.cx+lx*Math.cos(r)+lz*Math.sin(r),z:b.cz-lx*Math.sin(r)+lz*Math.cos(r)}};
  const o=document.createElement("div");o.id="s3";o.className="s3";
  let h=`<div class="s3sky"></div><div class="s3st a"></div><div class="s3st b"></div>`;
- h+=`<div class="s3pn" style="left:62%;top:8%;width:130px;height:130px;background:radial-gradient(circle at 35% 30%,#ffd9fb,#a64be0 45%,#2a0f5a 85%);box-shadow:0 0 50px rgba(190,110,255,.8)"></div><div class="s3pn" style="left:8%;top:22%;width:60px;height:60px;background:radial-gradient(circle at 35% 30%,#bfe3ff,#4a6be0 50%,#10143a 90%);box-shadow:0 0 30px rgba(90,130,255,.7)"></div>`;
- h+=`<div class="s3w"><div class="s3c"><div class="s3o" id="s3o">`;
- const T=260;for(let x=-XL;x<XL;x+=T)for(let z=Math.floor(ZF/T)*T;z<ZN;z+=T)h+=`<div class="s3t" style="left:${-T/2}px;top:${-T/2}px;width:${T}px;height:${T}px;transform:translate3d(${x+T/2}px,${EYE}px,${z+T/2}px) rotateX(90deg)"></div>`;
- const zc0=(ZF+ZN)/2,strip=(x,z,w,d)=>`<div class="s3t" style="left:${-w/2}px;top:${-d/2}px;width:${w}px;height:${d}px;background:linear-gradient(90deg,#ffd36b,#c18bff,#ffd36b);box-shadow:0 0 40px #b07bff;transform:translate3d(${x}px,${EYE-1}px,${z}px) rotateX(90deg)"></div>`;
- h+=strip(-XL,zc0,10,ZN-ZF)+strip(XL,zc0,10,ZN-ZF)+strip(0,Math.floor(ZF/T)*T,XL*2,10)+strip(0,ZN,XL*2,10);
- /* corsia centrale illuminata */
- h+=`<div class="s3t" style="left:-${AIS}px;top:${-(ZN-ZF)/2}px;width:${AIS*2}px;height:${ZN-ZF}px;background:linear-gradient(90deg,transparent,rgba(190,130,255,.28) 20%,rgba(190,130,255,.28) 80%,transparent);transform:translate3d(0,${EYE-1}px,${zc0}px) rotateX(90deg)"></div>`;
+ h+=`<div class="s3fog"></div><div class="s3w"><div class="s3c"><div class="s3o" id="s3o">`;
+ const T=400;for(let x=-1600;x<1600;x+=T)for(let z=-2800;z<ZN;z+=T)h+=`<div class="s3t" style="left:${-T/2}px;top:${-T/2}px;width:${T}px;height:${T}px;transform:translate3d(${x+T/2}px,${EYE}px,${z+T/2}px) rotateX(90deg)"></div>`;
+ const zc0=(ZF+ZN)/2;
+ /* passatoia centrale */
+ h+=`<div class="s3t s3run" style="left:-${AIS-10}px;top:${-(ZN-ZF+60)/2}px;width:${(AIS-10)*2}px;height:${ZN-ZF+60}px;transform:translate3d(0,${EYE-1}px,${zc0}px) rotateX(90deg)"></div>`;
  /* parti di scena: piano posizionato in coordinate locali del gruppo */
  const F=(x,y,z,w,hh,ry,st,inn,cls)=>`<div class="s3f ${cls||""}" style="left:${-w/2}px;top:${-hh}px;width:${w}px;height:${hh}px;transform:translate3d(${x}px,${y}px,${z}px) rotateY(${ry}deg);${st||""}">${inn||""}</div>`;
  /* arco d'ingresso e fondale */
@@ -11289,8 +11289,8 @@ function open(){
    h+=`<div class="s3o s3bb" data-bx="${w0.x}" data-by="${EYE-BH-60}" data-bz="${w0.z}"><div class="s3bi"><div class="s3tg" style="border-color:${ac}">${badge(b.t)}${E(T2.nick)}<small>${b.nt} ${b.nt===1?"titolo":"titoli"} · ${b.na} All-Star</small></div></div></div>`;
    b.items.forEach((it,k)=>{if(it.k!=="t")return;const w=toW(b,TX[k],-34);for(let q=0;q<4;q++){const a=q*1.7+k;h+=`<div class="s3o s3bb" data-bx="${w.x+Math.cos(a)*50}" data-by="${EYE-DA-58-30-q*38}" data-bz="${w.z+Math.sin(a)*50}"><div class="s3bi s3gl" style="width:7px;height:7px;background:radial-gradient(#fff,#ffd36b 55%,transparent 72%);animation-delay:${(q*.3).toFixed(1)}s;transform:translate(-50%,-50%)"></div></div>`}});
  });
- for(let k=0;k<14;k++){const x=(k%2?1:-1)*(XL+120+((k*71)%260)),z=ZN-((k*197)%(ZN-ZF+300)),y=EYE-120-((k*89)%420),w=34+((k*13)%34);
-   h+=`<div class="s3o s3bb" data-bx="${x}" data-by="${y}" data-bz="${z}"><div class="s3bi s3gl" style="width:${w}px;height:${w*2.2}px;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);background:linear-gradient(135deg,#f0dcff,#9a5bff 55%,#3a1a8a);animation-duration:${(2+(k%4)*.7).toFixed(1)}s;transform:translate(-50%,-50%)"></div></div>`}
+ for(let k=0;k<26;k++){const x=((k*149)%(AX*2+300))-AX-150,z=ZN-60-((k*263)%(ZN-ZF-100)),y=EYE-90-((k*97)%300),w=6+((k*5)%7);
+   h+=`<div class="s3o s3bb" data-bx="${x}" data-by="${y}" data-bz="${z}"><div class="s3bi s3gl" style="width:${w}px;height:${w}px;background:radial-gradient(#fff,rgba(255,225,170,.9) 45%,transparent 72%);animation-duration:${(2.2+(k%5)*.6).toFixed(1)}s;animation-delay:${(k*.27).toFixed(1)}s;transform:translate(-50%,-50%)"></div></div>`}
  h+=`</div></div></div>`;
  h+=`<div class="s3top2"><button class="s3x" aria-label="Esci">✕</button><div class="s3ttl">SALA TROFEI<small>DREAMERS</small></div><div style="width:40px"></div></div>`;
  h+=`<div class="s3hint" id="s3hint"><b>BENVENUTO</b>trascina per guardarti intorno<br>tocca il pavimento o una bacheca per avvicinarti</div>`;
@@ -11298,13 +11298,13 @@ function open(){
  h+=`<canvas class="s3hud s3mm" width="224" height="224"></canvas><div class="s3info" id="s3info"></div>`;
  h+=`<div class="s3hud s3nv"><button data-n="-1" aria-label="Bacheca precedente">‹</button><span id="s3nl">Tour bacheche</span><button data-n="1" aria-label="Bacheca successiva">›</button></div>`;
  o.innerHTML=h;document.body.appendChild(o);
- const cam=o.querySelector(".s3c"),bbs=[...o.querySelectorAll(".s3bb")],st=[...o.querySelectorAll(".s3st")],pn=[...o.querySelectorAll(".s3pn")],mm=o.querySelector(".s3mm"),mc=mm.getContext("2d"),info=o.querySelector("#s3info"),hint=o.querySelector("#s3hint"),nl=o.querySelector("#s3nl"),W=o.querySelector(".s3w");
+ const fog=o.querySelector(".s3fog"),cam=o.querySelector(".s3c"),bbs=[...o.querySelectorAll(".s3bb")],st=[...o.querySelectorAll(".s3st")],mm=o.querySelector(".s3mm"),mc=mm.getContext("2d"),info=o.querySelector("#s3info"),hint=o.querySelector("#s3hint"),nl=o.querySelector("#s3nl"),W=o.querySelector(".s3w");
  const V={x:0,z:ZN-110,yaw:0,pitch:3},P=330;let dirty=true,tw=null,walk=0,cur=-1,keys={};
  const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
  function collide(){V.x=cl(V.x,-AX,AX);V.z=cl(V.z,ZF+60,ZN-50)}
  function render(){const r=V.yaw*Math.PI/180;cam.style.transform=`translateZ(${P}px) rotateX(${V.pitch}deg) rotateY(${V.yaw}deg) translate3d(${-V.x}px,0,${-V.z}px)`;
   bbs.forEach(q=>{q.style.transform=`translate3d(${q.dataset.bx}px,${q.dataset.by}px,${q.dataset.bz}px) rotateY(${-V.yaw}deg)`});
-  const px=-V.yaw*5;st[0].style.transform=`translate(${px*.5}px,${V.pitch*4}px)`;st[1].style.transform=`translate(${px}px,${V.pitch*7}px)`;pn[0].style.transform=`translate(${px*.3}px,${V.pitch*3}px)`;pn[1].style.transform=`translate(${px*.2}px,${V.pitch*2}px)`;
+  const px=-V.yaw*5;st[0].style.transform=`translate(${px*.5}px,${V.pitch*4}px)`;st[1].style.transform=`translate(${px}px,${V.pitch*7}px)`;fog.style.transform=`translateY(${(P*Math.tan(V.pitch*Math.PI/180)).toFixed(0)}px)`;
   const w=mm.width,hh=mm.height,sx=w/(XL*2+100),sz=hh/(ZN-ZF+100),X=x=>w/2+x*sx,Z=z=>(z-ZF+50)*sz;mc.clearRect(0,0,w,hh);mc.fillStyle="rgba(120,70,220,.3)";mc.fillRect(X(-XL),Z(ZF),XL*2*sx,(ZN-ZF)*sz);mc.strokeStyle="#e8c15a";mc.lineWidth=2;mc.strokeRect(X(-XL),Z(ZF),XL*2*sx,(ZN-ZF)*sz);
   B.forEach(b=>{mc.fillStyle=TEAMS[b.t].bg;mc.globalAlpha=b.i===cur?1:.8;const x0=X(b.left?-AIS-BD:AIS),zz=Z(b.cz-BW/2);mc.fillRect(x0,zz,BD*sx,BW*sz);mc.globalAlpha=1;mc.strokeStyle=b.i===cur?"#fff":TEAMS[b.t].trim||"#fff";mc.lineWidth=b.i===cur?4:2;mc.strokeRect(x0,zz,BD*sx,BW*sz);if(b.items.length){mc.fillStyle="#fff";mc.font="bold 20px system-ui";mc.fillText("★".repeat(Math.min(3,b.items.length)),x0+6,zz+BW*sz/2+7)}});
   mc.save();mc.translate(X(V.x),Z(V.z));mc.rotate(r);mc.fillStyle="#fff";mc.shadowColor="#b07bff";mc.shadowBlur=10;mc.beginPath();mc.moveTo(0,-13);mc.lineTo(8,9);mc.lineTo(-8,9);mc.closePath();mc.fill();mc.restore()}
