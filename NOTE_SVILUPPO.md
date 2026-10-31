@@ -1814,3 +1814,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 664. Allenamento IA Trade: terzo tasto «Confronto giocatori». Due giocatori senza valori (accoppiati con distanza nostra ragionevole); sotto ognuno «Meglio lui», al centro «Pari»; se uno dei due è meglio compare la livella da 1 a 3000 crediti (più campo numerico per scrivere il valore esatto), obbligatoria; con «Pari» la livella non compare e si salva subito. Squadra chiesta a ogni avvio. Report: accordo sul vincitore, crediti del GM contro i nostri (punti trade del Calcolatore convertiti con VAL_CR) per fascia e rapporto, «pari», preferenza per il più giovane, disaccordi, elenco. Dati in localStorage `atc1`.
 
 665. Confronto giocatori: la livella dei crediti è facoltativa. Scelto «Meglio lui» si può salvare anche senza crediti (vale il solo parere); il report conta il vincitore e lascia fuori i crediti mancanti dalle medie («vincitore senza crediti: N»).
+
+666. Valutazione giocatori: tolta la domanda «Quanto lo conosci?» (tutti conoscono bene i giocatori). Il report non separa più per conoscenza: tutte le risposte contano nelle medie.
