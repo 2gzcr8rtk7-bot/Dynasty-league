@@ -1756,3 +1756,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 635. Home: la schermata Previsione riappariva verso le 05:00-06:00 italiane (all'una di notte ET la data USA passa al giorno dopo e la notte appena giocata non contava più come 'in corso'). Ora la Previsione compare solo dalle 14:00 italiane fino alla prima partita; dopo l'inizio delle partite resta la live e, finite, la notte appena avvenuta fino alle 14:00 successive. homeFase controlla anche l'ora ET (< 09:00 = niente Previsione).
 
 636. Osservatorio (tasto Segui): nella vista 'Notte' e 'Live' i seguiti che stanno giocando vengono prima, poi gli altri per PDK decrescente (prima era solo per PDK). Nella Home la finestra 'Seguiti' era già ordinata così (live prima, poi PDK); il problema visto alle 05:14 era la Previsione che riappariva (nota 635).
+
+637. Home: a partita finita si vedono i minuti giocati. Versione BOX: prima cella tratteggiata «MIN» nel box score (anche in Seguiti e nella pagina Notte); versione snella: «Finale · 28 min» sotto il nome. Durante la partita non compaiono.
