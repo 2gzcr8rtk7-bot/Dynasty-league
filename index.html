@@ -2626,6 +2626,15 @@ html.dlt-parquet :is(.ghead,.fahead,.gtit) .segi{border-color:rgba(255,255,255,.
 .drroom[data-th="3"] .drcr small,.drroom[data-th="3"] .drcr .drn small,.drroom[data-th="3"] .drcr .drm small{color:#8a3a0c!important}
 .drroom[data-th="3"] .drlogo{background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;color:#fff!important;-webkit-text-stroke:0;text-shadow:0 3px 0 #b8470a,0 0 14px rgba(217,86,11,.6)!important;filter:none!important}
 .drroom[data-th="3"] .drexit{background:#fff!important;color:#d9560b!important;border:2px solid #d9560b!important;box-shadow:0 3px 10px rgba(120,60,10,.25)!important}
+/* (721) Dynasty TV in Parquet: pannello crema (come i cartellini) dietro banner, data e giorni */
+html.dlt-parquet .tvpnl{background:linear-gradient(180deg,#fbeedb,#fdf3e1);margin:0 -14px 12px;padding:12px 14px 4px;border-top:3px solid #d9560b;border-bottom:3px solid #d9560b;box-shadow:0 6px 14px rgba(90,40,5,.25)}
+html.dlt-parquet .tvpnl .tvhero{margin-left:0!important;margin-right:0!important}
+html.dlt-parquet .tvpnl .tvdate .tvdl,html.dlt-parquet .tvpnl .tvdate .tvdl *{color:#d9560b!important;text-shadow:none!important;-webkit-text-stroke:0!important}
+html.dlt-parquet .tvpnl .tvdate button{background:#fff8ec!important;border:2px solid #d9560b!important;color:#d9560b!important}
+html.dlt-parquet .tvpnl .tvday{background:#fff8ec!important;border:2px solid #d9560b!important}
+html.dlt-parquet .tvpnl .tvday,html.dlt-parquet .tvpnl .tvday *{color:#d9560b!important;text-shadow:none!important}
+html.dlt-parquet .tvpnl .tvday[aria-pressed="true"]{background:linear-gradient(180deg,#f2701a,#c2410c)!important;border-color:#c2410c!important}
+html.dlt-parquet .tvpnl .tvday[aria-pressed="true"],html.dlt-parquet .tvpnl .tvday[aria-pressed="true"] *{color:#fff!important}
 html.dlt-parquet footer,html.dlt-parquet main .foot{color:var(--pq-ink,#2b1608)}
 html.dlt-parquet .rgh b{color:var(--pq-ink,#2b1608)}
 html.dlt-parquet main h2 .t,html.dlt-parquet main h2 .t *{color:#fff}
@@ -8698,9 +8707,9 @@ function vTV0(){setTimeout(tvWeekPos,0);const T=TVD(),ks=Object.keys(T.days).sor
     return`<button class="tvg${lv?" live":""}" ${(fin||lv)&&key&&T.box[key]?`data-tvg="${key}"`:"disabled"} aria-label="${a} contro ${h}"><div class="tvteams">${row(a,sa,wa)}${row(h,sh,wh)}</div>
       <div class="tvst">${lv?`<b class="lv"><i></i>Live</b><small>${TVL.st[key]||""}${T.box[key]?" · tabellino ›":""}</small>`:fin?`<b>Finale${ot?" · OT":""}</b><small>${TVL.st[key]&&T.box[key]&&T.box[key].live?"dati NBA live · ":""}tabellino ›</small>`:`<b class="pre">${tm.replace("+1","")}</b><small>ora italiana${tm.includes("+1")?" · notte tra "+dd.getUTCDate()+" e "+(dd.getUTCDate()+1>new Date(Date.UTC(dd.getUTCFullYear(),dd.getUTCMonth()+1,0)).getUTCDate()?1:dd.getUTCDate()+1):""}</small>`}</div>${top}</button>`}).join("");
   const nf=G.filter(g=>g[5]==="F").length;
-  return`<div class="tvhero"><b>Dynasty TV <i>NBA</i></b><small>Calendario, risultati e tabellini · stagione 2026/27</small></div>
+  return`<div class="tvpnl"><div class="tvhero"><b>Dynasty TV <i>NBA</i></b><small>Calendario, risultati e tabellini · stagione 2026/27</small></div>
   <div class="tvdate"><button data-tvnav="-1" aria-label="Giorno precedente"${i<=0?" disabled":""}>‹</button><div class="tvdl"><b>${TV_GG[dd.getUTCDay()]} ${dd.getUTCDate()} ${TV_MM[dd.getUTCMonth()]}</b><small>${G.length} ${G.length===1?"partita":"partite"}${G.some(g=>g[5]==="L")?` · ${G.filter(g=>g[5]==="L").length} in corso`:""}${nf?` · ${nf===G.length?"tutte finite":nf+" finite"}`:G.some(g=>g[5]==="L")?"":" · in programma"} · data USA</small></div><button data-tvnav="1" aria-label="Giorno successivo"${i>=ks.length-1?" disabled":""}>›</button></div>
-  <div class="tvweek" id="tvweek">${wk.join("")}</div>
+  <div class="tvweek" id="tvweek">${wk.join("")}</div></div>
   <div class="tvlist">${cards||`<div class="tvempty">Nessuna partita in questa data.</div>`}</div>
   ${tvDreamers(d)}
   <p class="note">${TVL.err?"Dati live NBA non raggiungibili in questo momento: restano i dati del report. ":TVL.last?`Live: dati ${TVL.src==="ESPN"?"ESPN":"NBA.com"} aggiornati ogni 30 secondi (ultimo ${TVL.last}); il PDK delle partite in corso è calcolato con la formula Dunkest ed è provvisorio. `:""}${T.src||""} Orari d'inizio in ora italiana. Tocca una partita in corso o finita per il tabellino completo. Aggiornato ${T.upd||""}.</p>`}
@@ -9521,7 +9530,7 @@ function pqFix(){try{
   document.querySelectorAll(app?"header *,main *,#subnav *,#subnav2 *":'.drroom[data-th="3"] *').forEach(el=>{
     if(el.tagName==="svg"||el.closest("svg"))return;
     if(el.closest(".htile"))return;
-    if(el.closest(".cltg,.cltn"))return;
+    if(el.closest(".cltg,.cltn,.tvpnl .tvdate,.tvpnl .tvday"))return;
     if(el.classList&&el.classList.contains("tstar")){const b=bgOf(el);el.classList.toggle("stl",lum(b)>.4);return}
     let has=false;for(const n of el.childNodes)if(n.nodeType===3&&n.textContent.trim().length>0){has=true;break}
     if(!has)return;const r=el.getBoundingClientRect();if(r.width<2||r.height<2)return;
