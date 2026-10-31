@@ -3,7 +3,11 @@
 name: highlights-youtube
 on:
   schedule:
-    - cron: "23 5-14 * * *"   # ogni ora dalle 06:23 alle 15:23 ora italiana (inverno), quando escono i video della notte
+    # (31/10, richiesta utente) highlights della notte pubblicati entro le 7:30 italiane: dalle 5:03 ogni 10 minuti fino alle 7:53,
+    # poi ogni 15 minuti fino alle 16:53 solo per i video che mancano (se la notte è completa lo script esce subito senza chiamare YouTube).
+    # Orari in UTC (Italia inverno = UTC+1; con l'ora legale scattano un'ora più tardi). GitHub può ritardare qualche minuto le esecuzioni programmate.
+    - cron: "3,13,23,33,43,53 4-6 * * *"
+    - cron: "8,23,38,53 7-15 * * *"
   workflow_dispatch:
 permissions:
   contents: write

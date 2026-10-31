@@ -9,6 +9,11 @@ const api=async(path,q)=>{const u=new URL("https://www.googleapis.com/youtube/v3
   const r=await fetch(u);if(!r.ok)throw new Error(`YouTube API ${path}: ${r.status} ${(await r.text()).slice(0,300)}`);return r.json()};
 const load=f=>{const s=fs.readFileSync(f,"utf8");return Function(s.replace(/^\s*const\s+(\w+)\s*=/m,"return "))()};
 const TV=load("tv-data.js"),TVHL0=fs.existsSync("hl-data.js")?load("hl-data.js"):{};
+// (31/10) notte già completa (tutte le partite hanno il video)? allora niente chiamate a YouTube. Notte = data USA (New York) di 12 ore fa.
+{const nt=new Date(Date.now()-12*3600e3).toLocaleDateString("en-CA",{timeZone:"America/New_York"}),G=TV.days[nt]||[];
+ const manca=G.filter(g=>!TVHL0[g[7]||nt+"_"+g[0]+g[1]]);
+ if(!PROVA&&!process.argv.includes("--forza")){if(G.length&&!manca.length){console.log(`Notte ${nt}: ${G.length}/${G.length} highlights già presenti, niente da fare`);process.exit(0)}
+  console.log(`Notte ${nt}: mancano ${manca.length}/${G.length} highlights (${manca.map(g=>g[0]+"-"+g[1]).join(", ")})`)}}
 
 // 1) ultimi video caricati dal canale (playlist "uploads")
 const ch=await api("channels",{part:"contentDetails",forHandle:HANDLE});
@@ -29,7 +34,9 @@ const MESI=["january","february","march","april","may","june","july","august","s
 const dateIn=t=>{const s=norm(t);let m=s.match(new RegExp(`(${MESI.map(x=>x.slice(0,3)).join("|")})[a-z]* (\\d{1,2})(?: (20\\d\\d))?`));
   if(m)return{m:MESI.findIndex(x=>x.startsWith(m[1]))+1,d:+m[2],y:m[3]?+m[3]:null};
   m=t.match(/\b(\d{1,2})[\/.](\d{1,2})(?:[\/.](\d{2,4}))?\b/);if(m)return{m:+m[1],d:+m[2],y:m[3]?(+m[3]<100?2000+ +m[3]:+m[3]):null};return null};
-const games=[];for(const[d,L]of Object.entries(TV.days))for(const g of L)if(g[5]==="F")games.push({d,a:g[0],h:g[1],key:g[7]});
+// (31/10) tutte le partite, anche quelle non ancora segnate finite in tv-data.js (il dato ufficiale arriva col caricamento Dunkest delle 10:30):
+// la chiave è la stessa che l'app usa per le partite finite in live (data_OSPITECASA), così gli highlights compaiono già dal primo giro del mattino
+const games=[];for(const[d,L]of Object.entries(TV.days))for(const g of L)games.push({d,a:g[0],h:g[1],key:g[7]||d+"_"+g[0]+g[1]});
 const day=s=>Date.parse(s+"T12:00:00Z");
 // esclude video che non sono la sintesi della partita (giocatori singoli, top 10, ecc.)
 const NOGAME=/\b(top \d+|top plays|mix|career|all time|press conference|postgame|interview|full game replay)\b/;
