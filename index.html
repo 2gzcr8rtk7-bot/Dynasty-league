@@ -9738,6 +9738,10 @@ const mix=(c,t,k)=>({r:c.r+(t.r-c.r)*k,g:c.g+(t.g-c.g)*k,b:c.b+(t.b-c.b)*k});
 function pqClean(){while(PQL.length){const e=PQL.pop();try{e.style.removeProperty("color");e.style.removeProperty("text-shadow");e.removeAttribute("data-pq")}catch(_){}}}
 function pqFix(){try{
   const app=document.documentElement.classList.contains("dlt-parquet"),dr=!!document.querySelector('.drroom[data-th="3"]');
+  {/* (725) cambio di modalità (base ↔ Parquet ↔ notte): via tutti i residui del tema precedente (colori scritti sugli elementi e caselle bianche) */
+  const key=(app?"p":"")+(document.documentElement.classList.contains("notte")?"n":"")+(dr?"d":"");
+  if(window.__pqKey!==undefined&&window.__pqKey!==key){pqClean();document.querySelectorAll(".pqw").forEach(x=>x.classList.remove("pqw"));document.querySelectorAll("[data-pq]").forEach(x=>{x.style.removeProperty("color");x.style.removeProperty("text-shadow");x.removeAttribute("data-pq")})}
+  window.__pqKey=key}
   if(!app&&!dr){if(PQL.length)pqClean();return}
   if(!document.documentElement.classList.contains("notte")){pqClean();if(app&&window.__pqw)window.__pqw()}/* (722) prima il pannello bianco (pqw), poi il contrasto: così le scritte non restano bianche su bianco */
   const cache=new Map();
@@ -9788,7 +9792,7 @@ function pqFix(){try{
 window.pqFix=pqFix;
 {const R0=render;render=function(){const x=R0.apply(this,arguments);pqFix();return x}}
 {const S0=syncMenu;syncMenu=function(){const x=S0.apply(this,arguments);pqFix();return x}}
-{const D0=dlsApply;let was=false;dlsApply=function(){const x=D0.apply(this,arguments);const on=document.documentElement.classList.contains("dlt-parquet");if(on!==was){was=on;pqClean();pqFix()}return x}}
+{const D0=dlsApply;let was=false,wn=false;dlsApply=function(){const x=D0.apply(this,arguments);const on=document.documentElement.classList.contains("dlt-parquet"),nn=document.documentElement.classList.contains("notte");if(on!==was||nn!==wn){was=on;wn=nn;pqClean();pqFix()}return x}}
 pqFix();
 })();
 </script>
