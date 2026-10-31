@@ -2562,6 +2562,10 @@ body.dreamfs .drroom[data-th="5"],.drroom.gdemb[data-th="5"]{background:linear-g
 .stylecyc{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(148,163,184,.4);background:var(--red,#e4163a);color:var(--onred,#fff);font:inherit;font-weight:800;font-size:15px;cursor:pointer}.stylecyc b{font-weight:900}
 .topbtns{display:flex;align-items:center;gap:8px;flex:none}.setbtn.stylebtn{width:34px;height:34px;border-radius:10px}.setbtn.stylebtn svg{width:19px;height:19px}
 html.dlt-tabellone body{background:repeating-linear-gradient(45deg,#0b0d10 0 22px,#12151a 22px 44px) fixed!important}
+/* (641) la modalità notte vince sempre sui temi Tabellone e Parquet: prima, sotto i riquadri (zona del footer) e nella fascia in basso, comparivano le righe del tema giorno */
+html.notte.dlt-tabellone body.notte,html.notte.dlt-parquet body.notte{background:radial-gradient(ellipse at 20% 0%,rgba(168,85,247,.45),transparent 55%) fixed,radial-gradient(ellipse at 90% 10%,rgba(59,130,246,.28),transparent 50%) fixed,linear-gradient(180deg,#1f0d4a,#0c0820 70%) fixed!important;color:inherit}
+html.notte.dlt-tabellone body.notte:not([data-v=home]),html.notte.dlt-parquet body.notte:not([data-v=home]){background-image:linear-gradient(rgba(6,2,18,0.68),rgba(6,2,18,0.68)),radial-gradient(at 20% 0%,rgba(168,85,247,.45),rgba(0,0,0,0) 55%),radial-gradient(at 90% 10%,rgba(59,130,246,.28),rgba(0,0,0,0) 50%),linear-gradient(#1f0d4a,#0c0820 70%)!important}
+html.notte,html.notte.dlt-tabellone,html.notte.dlt-parquet{background:#0c0820!important}
 /* (241) tema Parquet dell'app: arancione/crema, loghi senza sfondo colorato, logo Dreamers arancione */
 html.dlt-parquet body{background:repeating-linear-gradient(90deg,#c88a4c 0 26px,#be8043 26px 52px)!important;color:#2b1608}
 html.dlt-parquet header,html.dlt-parquet header *{color:#fff}
