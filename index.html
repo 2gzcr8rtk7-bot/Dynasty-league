@@ -3620,6 +3620,8 @@ const DLS_DEF={sepOn:true,sepW:1,sepC:"#0b0b12",cOut:"#dc2626",cDub:"#f59e0b",cO
 const ST_BASE={cOk:"#22c55e",pG:"#16a34a"};
 let DLS={...DLS_DEF};try{Object.assign(DLS,JSON.parse(localStorage.getItem("dl_set")||"{}"))}catch(e){}
 /* (748) Parquet diventa lo stile UFFICIALE per tutti: una sola volta per dispositivo, chiunque abbia un altro stile passa al Parquet (poi può tornare agli altri dalle Impostazioni, sezione «Personalizzati»). La modalità notte non cambia. */
+/* (772) ORDINE UFFICIALE DEI LOGHI (Francesco 31/10/2026): Dolphins, Ducks, Foxes, Mooses, Turtles, Spiders, Eagles, Peacocks. Applicato una volta a tutti; poi ognuno può cambiarlo nelle impostazioni */
+const ORD_UFF=["DOL","DUC","FOX","MOO","TUR","SPI","EAG","PEA"];DLS_DEF.ord=ORD_UFF.slice();try{if(!localStorage.getItem("dl_ord_uff")){DLS.ord=ORD_UFF.slice();localStorage.setItem("dl_set",JSON.stringify(DLS));localStorage.setItem("dl_ord_uff","1")}}catch(e){}
 try{if(!localStorage.getItem("dl_pq_uff")){DLS.th="parquet";localStorage.setItem("dl_set",JSON.stringify(DLS));localStorage.setItem("dl_drth","3");localStorage.setItem("dl_pq_uff","1")}}catch(e){}
 /* (555) No spoiler: chi lo aveva già attivo conserva il tasto in testata (nsb) */
 if(DLS.nsb===undefined&&DLS.ns)DLS.nsb=true;
