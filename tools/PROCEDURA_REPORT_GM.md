@@ -25,6 +25,8 @@ Richiesta di Francesco (31/10/2026): ogni report dell'Allenamento IA va usato pe
 - **Dove scrivere.** Il nuovo numero va in `VALORI` e in `VAL_CORREZ` (registro del lunedì). `VAL_BASE` resta com'è se data e stelle non cambiano. I prezzi fissati non si toccano.
 - **Niente doppio conteggio.** In ogni profilo si sottrae la correzione applicata dal `pl` di quel giocatore. La lista `AT_RIT` (giocatori «ritoccati» negli allenamenti) va aggiornata con i nuovi nomi.
 - **Prima di ricorreggere** lo stesso giocatore servono risposte arrivate **dopo** la correzione: i report ora hanno data e ora per ogni risposta.
+- **Nel consenso non contano** (dal 31/10, report Ducks): i giocatori della squadra stessa del GM (ogni GM sopravvaluta i suoi), i fragili sotto 2 stelle (li gestiscono le regole infortuni) e i giocatori ritoccati nello stesso giorno se le risposte sono precedenti.
+- **Report Proposte senza Confronto**: i bonus `pl` si ricavano dai residui del modello (vedi gm_residui.py; per i ricevuti col segno diretto, per i ceduti col segno opposto), scalati per min(1, apparizioni/8).
 
 ## 3. Formula automatica del lunedì (`valF`): cosa si sta imparando
 F = PDKrif^1,78 × 0,93^(età−25) × `VAL_INJ_B`^max(0; 2,5 − stelle). Conta solo il rapporto F(oggi)/F(partenza): i fattori pesano quando cambiano (forma, stelle infortuni, età).
@@ -45,3 +47,4 @@ F = PDKrif^1,78 × 0,93^(età−25) × `VAL_INJ_B`^max(0; 2,5 − stelle). Conta
 - 31/10 17:20 · Seconda correzione per consenso (16 valori, 5 profili): giù Allen, Wilson, Barrett, Bailey, Quickley, Porter, Ball, Queen, Okongwu; su Thompson A., Avdija, Wembanyama, Curry, Giddey, Buzelis, Mara. Holmgren escluso (il suo calo e' gia' nelle regole infortuni).
 - 31/10 17:30 · Foxes Valutazione 20: sconto infortuni solo per rischio 9-10 (43%). Giddey: Foxes -8 contro Turtles/Dolphins + : disaccordo, nessuna correzione. Curry: Spiders, Foxes, Dolphins, Peacocks tutti + anche dopo la correzione: candidato a un'altra correzione con risposte nuove.
 - 31/10 19:15 · Foxes Confronto 85: nona correzione (Fox, Clingan, Rollins giu'; Jokic, Curry su). Foxes nei confronti preferiscono i piu' anziani (-1,1/anno; giovane scelto 42%): il gusto eta' non e' piu' positivo per tutti i GM, l'inclinazione eta' resta com'e'. In attesa: Holmgren/Embiid (regole infortuni), Mara, Castle, Morant (servono risposte dopo la correzione), Harper e Steinbach (TUR+DOL, DOL+FOX positivi).
+- 31/10 20:20 · Ducks Proposte 201 (risposte del 30/10, prima delle correzioni): profilo DUC (age 2,75: il GM piu' sensibile all'eta'; req 6; ali si', guardie no). Decima correzione: Boozer, J. Brown su; Hart, K. George, Knueppel, James giu'. Ora 6 profili su 8 (mancano Eagles e Mooses).
