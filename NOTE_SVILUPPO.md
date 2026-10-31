@@ -1997,3 +1997,4 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 805. IA Trade, pagina iniziale (Francesco): tolta la spiegazione; tasto grande «🤖 IA TRADE» (gradiente arancio, in notte viola-fucsia, ombra piena, effetto pressione) che apre la simulazione (intestazione «IA Trade»); «I gusti dei GM» diventa una nota informativa con bordo tratteggiato e testo grande (ℹ️, «Nota informativa: cosa cerca ogni squadra · N su 8 squadre»).
 806. IA Trade: «Voglio vendere» e' la prima scelta a sinistra ed e' quella selezionata all'apertura (GU.mode 'sell').
 807. IA Trade › Voglio vendere › Chi li compra: da chiusa ogni squadra mostra solo logo, nome e «lo scambio si chiude al X%»; il «dice si' al» di ogni GM e i giocatori scambiati si vedono solo aprendo (in testa: squadre, giocatori e con chi viene ceduto insieme).
+808. IA Trade: tasti «Cerco ruolo» e «Cerco giocatore» (prima «Per ruolo», «Per giocatore»).
