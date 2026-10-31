@@ -1855,3 +1855,4 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 700. Impostazioni: la barra a 3 sezioni (Home, Campo, Giocatori) ora riempie tutta la larghezza.
 701. Parquet: box score con caselle bianche translucide e scritta arancio; numeri verdi (buoni) e rossi (negativi) come nelle altre modalita', bordo viola per le doppie; interruttore Dreamers/G-Dreamers e tab attivi bianchi con scritta arancio.
 702. Parquet: le righe blu della lista squadre in Statistiche diventano bianche con scritta arancio.
+703. Parquet: roster squadra (Guardie/Ali/Centri) con base bianca e nomi arancio al posto del blu; badge PDK e intestazioni di ruolo invariati.
