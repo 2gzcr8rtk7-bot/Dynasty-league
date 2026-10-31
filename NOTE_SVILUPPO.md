@@ -1798,3 +1798,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 656. Home, schede Dreamers in alto: accanto al turno (T4) compare in piccolo la notte del turno su quante, es. «T4 · 2/5» (stessa logica di `drNn`: turno concluso = tutte, in corso = notti giocate + 1). Nelle schede del turno futuro («DAL …») non compare.
 
 657. Home, navigatore notti: le frecce ‹ › in alto sono un po' più staccate da «Tutte le squadre / N giocatori» (margine sotto da −3px a +4px, circa 7px in più) per evitare i tocchi sbagliati senza sprecare spazio.
+
+658. Numero di notte del turno (T4 · 1/5, «1 su 5 notti» in Dreamers/Campo/condivisioni): era sbagliato di +1 (2/5 con una sola notte giocata) perché la notte live/appena finita era già contata tra le notti con dati e poi si aggiungeva ancora 1. Ora `drNnN(W)` = notti dall'inizio del turno fino alla notte mostrata (`hnPresent()`); prima della prima notte resta «5 notti».
