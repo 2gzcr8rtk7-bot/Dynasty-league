@@ -7380,7 +7380,7 @@ function vStoria(){
    ${x.p.map(q=>`<td class="yr">${q?pts(q):"–"}<small>${q?q+"°":""}</small></td>`).join("")}<td class="ttl">${x.tit?`<b style="color:var(--gold)">${x.tit}</b>`:"–"}</td><td class="pt">${x.pt}</td></tr>`).join("");
   const seasons=STORIA.slice().reverse().map(s=>`<section class="gmseason">${H("Anno "+s.anno,`<em>Campione: ${TEAMS[s.ordine[0]].nick}</em>`)}
    <div class="tbl-wrap"><table class="ssn" style="min-width:0"><tbody>${s.ordine.map((t,i)=>`<tr><td class="rk">${med(i+1)}</td><td class="tm"><div class="tmcell">${wedge(t)}<div><b>${TEAMS[t].nick}</b><small>${TEAMS[t].city}</small></div></div></td><td class="pt">+${pts(i+1)} pt</td></tr>`).join("")}</tbody></table></div></section>`).join("");
-  return `<div class="sala-oro">${H("Classifica competenza")}
+  return `<div class="sala-oro"><button class="s3go" data-s3="1">✦ Entra nella Sala 3D ✦<small>Scorri tra i trofei vinti dalle squadre</small></button>${H("Classifica competenza")}
   <div class="tbl-wrap"><table class="gmh"><thead><tr><th>#</th><th>Squadra</th>${yrs}<th class="c" title="Titoli">🏆</th><th>Pt</th></tr></thead><tbody>${rows}</tbody></table></div>
   <p class="note">A1, A2… = punti in ogni anno (sotto il piazzamento). 🏆 = titoli vinti. Ogni stagione: ${N} punti al 1°, ${N-1} al 2° e così via fino a 1 punto all'ultimo. A parità di punti conta chi ha più titoli, poi più secondi posti e così via; poi il piazzamento nella stagione più recente.</p>
   ${seasons}</div>`;
@@ -11058,5 +11058,105 @@ async function shDM(){const S=SHR_DM;if(!S)return null;const H=1540,{cv,c,W}=awa
     await dmPlayer(c,t,p,cx,by+38,64,18,92,32,false,i===0?1:.5)}}
   shFoot(c,W,H,"PDK formula Dunkest · capitano ×1,5 · panchina ×½"+(S.lv?" · punteggi provvisori":""));return cv}
 </script>
+<style id="s3css">
+.s3go{display:block;width:100%;margin:2px 0 16px;padding:15px 12px;border:1.5px solid #e8c15a;border-radius:12px;color:#fff3c0;font:italic 800 16px/1.1 var(--display),Georgia,serif;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;background:radial-gradient(ellipse at 50% 0,#7b3fe4 0,#35127a 55%,#14062f);box-shadow:0 0 24px rgba(140,80,255,.55),inset 0 0 18px rgba(255,255,255,.12);text-shadow:0 0 10px rgba(255,210,120,.7)}
+.s3go small{display:block;margin-top:5px;font:600 10.5px/1 system-ui,sans-serif;letter-spacing:.08em;color:#d9c7ff;text-transform:none}
+.s3{position:fixed;inset:0;z-index:99999;overflow:hidden;background:#05010d;color:#fff;font-family:var(--display),system-ui,sans-serif;-webkit-user-select:none;user-select:none}
+.s3 *{box-sizing:border-box}
+.s3sky{position:absolute;inset:0;background:radial-gradient(ellipse 80% 55% at 50% 8%,#6d2cd6 0,transparent 62%),radial-gradient(ellipse 60% 40% at 15% 45%,#c13fb8aa 0,transparent 65%),radial-gradient(ellipse 60% 45% at 88% 38%,#2f4fe0aa 0,transparent 65%),linear-gradient(#0b0220,#1a0838 55%,#07010f);animation:s3hue 24s ease-in-out infinite alternate}
+@keyframes s3hue{to{filter:hue-rotate(28deg) brightness(1.12)}}
+.s3st{position:absolute;top:0;bottom:30%;left:0;width:300%;background-repeat:repeat-x;will-change:transform}
+.s3st.a{background-image:radial-gradient(1.5px 1.5px at 20px 40px,#fff,transparent),radial-gradient(1px 1px at 90px 120px,#d9c7ff,transparent),radial-gradient(1.5px 1.5px at 160px 70px,#fff,transparent),radial-gradient(1px 1px at 230px 190px,#ffe9a8,transparent),radial-gradient(1px 1px at 300px 30px,#fff,transparent),radial-gradient(1.5px 1.5px at 60px 250px,#c9a6ff,transparent);background-size:340px 300px}
+.s3st.b{background-image:radial-gradient(2px 2px at 50px 90px,#fff,transparent),radial-gradient(2.5px 2.5px at 200px 200px,#ffd98a,transparent),radial-gradient(2px 2px at 330px 40px,#fff,transparent);background-size:420px 360px;animation:s3tw 3.4s ease-in-out infinite alternate}
+@keyframes s3tw{from{opacity:.35}to{opacity:1}}
+.s3col{position:absolute;left:0;top:6%;bottom:26%;width:300%;will-change:transform;background:repeating-linear-gradient(90deg,transparent 0 120px,rgba(150,90,255,.16) 120px 128px,rgba(60,20,130,.35) 128px 190px,rgba(150,90,255,.16) 190px 198px,transparent 198px 330px);-webkit-mask-image:linear-gradient(transparent,#000 25%,#000 85%,transparent);mask-image:linear-gradient(transparent,#000 25%,#000 85%,transparent);opacity:.7}
+.s3fl{position:absolute;left:-50%;right:-50%;bottom:0;height:34%;perspective:380px;perspective-origin:50% 0;overflow:hidden}
+.s3fl:before{content:"";position:absolute;left:0;right:0;top:-1px;height:60px;background:linear-gradient(#a56bff88,transparent);z-index:2}
+.s3pl{position:absolute;inset:0;transform-origin:50% 0;transform:rotateX(66deg);background-color:#12052b;background-image:linear-gradient(90deg,rgba(180,120,255,.55) 1.5px,transparent 1.5px),linear-gradient(rgba(180,120,255,.45) 1.5px,transparent 1.5px);background-size:70px 70px;-webkit-mask-image:linear-gradient(transparent,#000 35%);mask-image:linear-gradient(transparent,#000 35%)}
+.s3top{position:absolute;left:0;right:0;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top,0px) + 12px) 14px 8px}
+.s3x{width:40px;height:40px;border-radius:50%;border:1.5px solid #e8c15a;background:rgba(20,6,45,.7);color:#ffe7a0;font-size:19px;line-height:1;cursor:pointer}
+.s3ttl{flex:1;text-align:center;font:italic 800 13px/1.15 var(--display),Georgia,serif;letter-spacing:.24em;color:#ffe7a0;text-shadow:0 0 12px rgba(255,200,90,.7)}
+.s3ttl small{display:block;margin-top:3px;font:600 10px/1 system-ui,sans-serif;letter-spacing:.16em;color:#cdb4ff}
+.s3cnt{min-width:40px;text-align:right;font:700 12px system-ui,sans-serif;color:#cdb4ff}
+.s3tk{position:absolute;inset:0;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;perspective:900px;perspective-origin:50% 38%;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:0 calc(50% - min(39vw,170px))}
+.s3tk::-webkit-scrollbar{display:none}
+.s3sl{flex:0 0 min(78vw,340px);height:100%;scroll-snap-align:center;scroll-snap-stop:always;position:relative}
+.s3in{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform,opacity}
+.s3lab{position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 64px);text-align:center}
+.s3lab b{display:block;font:italic 800 34px/1 var(--display),Georgia,serif;color:#fff;text-shadow:0 0 22px rgba(170,110,255,.9)}
+.s3lab span{display:inline-block;margin-top:7px;padding:4px 14px;border:1px solid #e8c15a;border-radius:20px;font:700 11px/1 system-ui,sans-serif;letter-spacing:.2em;color:#ffe7a0;background:rgba(20,6,45,.55)}
+.s3bm{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + 48px);bottom:calc(19vh + 20px);width:130%;transform:translateX(-50%);clip-path:polygon(40% 0,60% 0,100% 100%,0 100%);background:linear-gradient(rgba(230,205,255,.5),rgba(140,90,255,.12) 70%,rgba(140,90,255,.03));filter:blur(3px);pointer-events:none}
+.s3sl.g .s3bm{background:linear-gradient(rgba(255,236,170,.55),rgba(255,190,70,.14) 70%,rgba(255,190,70,.03))}
+.s3tr{position:absolute;left:50%;bottom:calc(19vh + 10px);width:min(60vw,230px);transform:translateX(-50%);animation:s3fl 4.6s ease-in-out infinite alternate;filter:drop-shadow(0 0 22px rgba(190,140,255,.75))}
+.s3sl.g .s3tr{width:min(70vw,270px);filter:drop-shadow(0 0 30px rgba(255,200,80,.85))}
+.s3tr svg{display:block;width:100%;height:auto}
+@keyframes s3fl{from{transform:translate(-50%,0)}to{transform:translate(-50%,-12px)}}
+.s3sp{position:absolute;width:9px;height:9px;background:radial-gradient(#fff,transparent 70%);border-radius:50%;animation:s3tw 1.6s ease-in-out infinite alternate}
+.s3pd{position:absolute;left:50%;bottom:9vh;width:min(66vw,270px);height:calc(10vh + 20px);transform:translateX(-50%)}
+.s3pd:before{content:"";position:absolute;left:-6%;right:-6%;top:-14px;height:28px;border-radius:50%;background:radial-gradient(ellipse,#b78bff,#4b1ea0 70%);box-shadow:0 0 28px rgba(160,100,255,.9)}
+.s3fr{position:absolute;inset:0;border-radius:3px 3px 8px 8px;background:linear-gradient(90deg,#14062e,#432082 50%,#14062e);border-top:2px solid #e8c15a;box-shadow:0 22px 40px rgba(0,0,0,.8),0 0 30px rgba(140,80,255,.45);display:flex;align-items:center;justify-content:center;gap:10px;padding:0 8px}
+.s3tm{text-align:left;min-width:0}
+.s3tm b{display:block;font:italic 800 clamp(15px,5vw,21px)/1 var(--display),Georgia,serif;color:#fff2c4;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.s3tm small{display:block;margin-top:3px;font:600 10px/1 system-ui,sans-serif;letter-spacing:.16em;color:#cdb4ff;text-transform:uppercase}
+.s3md{flex:0 0 auto;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#fff3b0,#e0a92b 60%,#8a5a0a);box-shadow:0 0 14px rgba(255,200,80,.7)}
+.s3md .wedge{transform:scale(.62)}
+.s3hint{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);text-align:center;font:600 11px system-ui,sans-serif;letter-spacing:.2em;color:#cdb4ff;text-transform:uppercase;animation:s3tw 1.4s ease-in-out infinite alternate}
+.s3dots{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 32px);display:flex;gap:6px;justify-content:center;z-index:20}
+.s3dots i{width:6px;height:6px;border-radius:50%;background:#5b3aa0;transition:.25s}.s3dots i.on{width:20px;border-radius:4px;background:#ffd36b;box-shadow:0 0 8px #ffd36b}
+.s3in2{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);width:86%;text-align:center}
+.s3in2 h1{margin:0;font:italic 800 clamp(30px,10vw,44px)/1.02 var(--display),Georgia,serif;color:#fff;text-shadow:0 0 28px rgba(180,120,255,.95)}
+.s3in2 h1 em{display:block;font-style:normal;font-size:13px;letter-spacing:.34em;color:#ffe7a0;margin-bottom:12px}
+.s3in2 p{margin:16px 0 0;font:600 13px/1.4 system-ui,sans-serif;color:#d9c7ff}
+.s3in2 .s3cr{font-size:64px;filter:drop-shadow(0 0 22px rgba(255,200,80,.9));animation:s3fy 4s ease-in-out infinite alternate;display:block;margin-bottom:12px}
+@keyframes s3fy{from{transform:translateY(0)}to{transform:translateY(-12px)}}
+</style>
+<script>
+(function(){
+const E=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const POS={1:"Campione",2:"Secondo posto",3:"Terzo posto"};
+function slots(){
+ const L=[];
+ STORIA.forEach(s=>[1,2,3].forEach(p=>{const t=s.ordine[p-1];if(t)L.push({k:"t",anno:s.anno,pos:p,t})}));
+ return L;
+}
+function sp(n){let h="";for(let i=0;i<n;i++)h+=`<i class="s3sp" style="left:${8+((i*37)%84)}%;top:${10+((i*53)%70)}%;animation-delay:${(i*.37).toFixed(2)}s"></i>`;return h}
+function open(){
+ if(document.getElementById("s3"))return;
+ const S=slots(),n=S.length+2;
+ const o=document.createElement("div");o.id="s3";o.className="s3";
+ const intro=`<div class="s3sl"><div class="s3in"><div class="s3in2"><span class="s3cr">🏆</span><h1><em>DREAMERS LEAGUE</em>SALA<br>DEI TROFEI</h1><p>Una stanza fuori dal tempo e dallo spazio, dove vivono i campioni.<br>Scorri verso sinistra per entrare →</p></div></div></div>`;
+ const trs=S.map((x,i)=>{const T=TEAMS[x.t],g=x.pos===1;
+  return`<div class="s3sl${g?" g":""}"><div class="s3in">
+   <div class="s3lab"><b>ANNO ${x.anno}</b><span>${POS[x.pos].toUpperCase()}</span></div>
+   <div class="s3bm"></div><div class="s3tr">${cupSvg(x.pos,"s3c"+i)}${sp(g?9:5)}</div>
+   <div class="s3pd"><div class="s3fr"><div class="s3md">${wedge(x.t)}</div><div class="s3tm"><b>${E(T.nick)}</b><small>${E(T.city)} · ${x.pos}° posto</small></div></div></div>
+  </div></div>`}).join("");
+ const next=`<div class="s3sl"><div class="s3in"><div class="s3in2"><span class="s3cr" style="filter:grayscale(1) brightness(.6);opacity:.7">🏆</span><h1><em>PROSSIMA STAGIONE</em>Il piedistallo<br>ti aspetta</h1><p>Il prossimo nome inciso sarà il tuo?</p></div></div></div>`;
+ o.innerHTML=`<div class="s3sky"></div><div class="s3st a"></div><div class="s3st b"></div><div class="s3col"></div>
+ <div class="s3fl"><div class="s3pl"></div></div>
+ <div class="s3top"><button class="s3x" aria-label="Esci">✕</button><div class="s3ttl">SALA TROFEI<small>DREAMERS</small></div><div class="s3cnt"></div></div>
+ <div class="s3tk">${intro}${trs}${next}</div>
+ <div class="s3dots">${Array.from({length:n},(_,i)=>`<i${i?"":' class="on"'}></i>`).join("")}</div><div class="s3hint">scorri ‹ ›</div>`;
+ document.body.appendChild(o);
+ const tk=o.querySelector(".s3tk"),sl=[...tk.querySelectorAll(".s3sl")],st=o.querySelectorAll(".s3st"),col=o.querySelector(".s3col"),fl=o.querySelector(".s3pl"),dots=[...o.querySelectorAll(".s3dots i")],cnt=o.querySelector(".s3cnt"),hint=o.querySelector(".s3hint");
+ let raf=0;
+ function upd(){raf=0;const x=tk.scrollLeft,c=tk.clientWidth/2,w=sl[0].offsetWidth;let best=0,bd=9;
+  sl.forEach((s,i)=>{const d=(s.offsetLeft+w/2-x-c)/w,a=Math.abs(d);if(a<bd){bd=a;best=i}
+   const k=Math.min(a,2);s.firstChild.style.transform=`translateZ(${-k*260}px) rotateY(${(-d*42).toFixed(2)}deg) scale(${(1-k*.07).toFixed(3)})`;s.firstChild.style.opacity=Math.max(0,1-k*.42).toFixed(2)});
+  st[0].style.transform=`translateX(${-x*.12}px)`;st[1].style.transform=`translateX(${-x*.25}px)`;col.style.transform=`translateX(${-x*.45}px)`;fl.style.backgroundPosition=`${-x*1.2}px 0,0 0`;
+  dots.forEach((d,i)=>d.classList.toggle("on",i===best));cnt.textContent=best>0&&best<sl.length-1?best+"/"+(sl.length-2):"";hint.style.opacity=x>20?0:""}
+ tk.addEventListener("scroll",()=>{if(!raf)raf=requestAnimationFrame(upd)},{passive:true});
+ window.s3Go=i=>{tk.scrollTo({left:sl[i].offsetLeft-(tk.clientWidth-sl[i].offsetWidth)/2,behavior:"auto"});upd()};
+ upd();
+ o.querySelector(".s3x").addEventListener("click",close);
+ document.addEventListener("keydown",esc);
+}
+function esc(e){if(e.key==="Escape")close()}
+function close(){const o=document.getElementById("s3");if(o)o.remove();document.removeEventListener("keydown",esc)}
+document.addEventListener("click",e=>{if(e.target.closest("[data-s3]"))open()});
+window.s3Open=open;
+})();
+</script>
+
 </body>
 </html>
