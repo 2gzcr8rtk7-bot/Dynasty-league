@@ -2000,3 +2000,4 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 808. IA Trade: tasti «Cerco ruolo» e «Cerco giocatore» (prima «Per ruolo», «Per giocatore»).
 809. IA Trade: le proposte chiuse mostrano solo il numero (#2), «lo scambio si chiude al X%» e la freccia; tolti loghi, «N squadre · M giocatori» e nomi delle squadre (si vedono gia' aprendo).
 810. IA Trade (Cerco ruolo / Cerco giocatore): «Non cedo» diventa «Cedo»: tocchi i giocatori che vorresti cedere (💸) e la tua squadra cede solo quelli; se non ne scegli nessuno l'IA puo' usare tutta la rosa.
+811. Profilo Ducks (Francesco, GM dei Ducks): non e' vero che non cedono Steinbach e Kyshawn George. Tolti dalla scheda GM_DESCR.DUC e tolti i loro bonus dal profilo GM_GUSTI.DUC.pl (non pesano piu' negli scambi simulati).
