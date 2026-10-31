@@ -1853,5 +1853,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 698. Impostazioni: tolta la scheda «Altro» (vuota): le decorazioni delle feste sono in Campo › Dettagli del campo, «Riduci le animazioni» in Home › Funzioni. Il tasto «Ripristina questa sezione» (con conferma) è in fondo a ogni scheda (Home, Campo, Giocatori) e ripristina solo le impostazioni di quella scheda, senza toccare le altre. Tolto il Ripristina globale dalla barra dell'anteprima.
 699. Sala trofei, anti-crash 2: gradinate a gradoni sostituite da pareti leggere, pavimento a due strisce, app nascosta mentre la sala e' aperta, culling piu' stretto (memoria GPU ~39 -> ~19 Mpx nel caso peggiore).
 700. Impostazioni: la barra a 3 sezioni (Home, Campo, Giocatori) ora riempie tutta la larghezza.
-701. Parquet: box score con caselle bianche translucide e scritta arancio; caselle di prestazione arancio con scritta bianca (rosse per le negative), bordo viola per le doppie; interruttore Dreamers/G-Dreamers e tab attivi bianchi con scritta arancio.
-702. Parquet: le righe blu della lista squadre in Statistiche diventano arancio con scritta bianca.
+701. Parquet: box score con caselle bianche translucide e scritta arancio; numeri verdi (buoni) e rossi (negativi) come nelle altre modalita', bordo viola per le doppie; interruttore Dreamers/G-Dreamers e tab attivi bianchi con scritta arancio.
+702. Parquet: le righe blu della lista squadre in Statistiche diventano bianche con scritta arancio.
