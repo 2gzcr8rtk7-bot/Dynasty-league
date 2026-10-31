@@ -12486,5 +12486,10 @@ setTimeout(autoNotte,1500);setInterval(autoNotte,60000);document.addEventListene
 document.addEventListener("click",e=>{if(e.target.closest('[data-dlst="autont"]'))setTimeout(autoNotte,50)});
 </script>
 <style>/* (781) Parquet: tasti Statistiche › Giocatori blu notte e Squadre arancio (scelta 4 di Francesco) */html.dlt-parquet main .effbig.pl{background:linear-gradient(135deg,#101a3a,#2a3f7a)!important}html.dlt-parquet main .effbig.sq{background:linear-gradient(135deg,#b8410a,#f2701a)!important}</style>
+<style>/* (783) DREAMERS nel Parquet: sfide del turno e righe della classifica in stile «crema con bordo arancio» (scelta 4 di Francesco): niente sfumature delle squadre, bordo arancio spesso, ombra piena sotto */
+html.dlt-parquet body .drroom button.drm:not(#q1):not(#q2){background:#fdf3e1!important;border:3px solid #d9560b!important;box-shadow:0 6px 0 #9a3a0c!important;border-radius:18px!important}
+html.dlt-parquet body .drroom button.drm:not(#q1):not(#q2) .drr{background:none!important;border-color:rgba(217,86,11,.35)!important}html.dlt-parquet body .drroom button.drm:not(#q1):not(#q2) .drn b{color:#b8410a!important;-webkit-text-fill-color:#b8410a!important}html.dlt-parquet body .drroom button.drm:not(#q1):not(#q2) .drn small{color:#8a5a3a!important}html.dlt-parquet body .drroom button.drm:not(#q1):not(#q2) em{color:#9a3a0c!important;-webkit-text-fill-color:#9a3a0c!important}html.dlt-parquet body .drroom button.drm:not(#q1):not(#q2) .drst{background:#d9560b!important;color:#fff!important}
+html.dlt-parquet body .drroom .drcla .drcr:not(#q1):not(#q2){background:#fdf3e1!important;border:3px solid #d9560b!important;box-shadow:0 6px 0 #9a3a0c!important;border-radius:18px!important}
+html.dlt-parquet body .drroom .drcla .drcr:not(#q1):not(#q2).lead{border-color:#b8410a!important;box-shadow:0 6px 0 #7c2d12!important}</style>
 </body>
 </html>
