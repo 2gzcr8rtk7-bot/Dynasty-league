@@ -2002,3 +2002,4 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 810. IA Trade (Cerco ruolo / Cerco giocatore): «Non cedo» diventa «Cedo»: tocchi i giocatori che vorresti cedere (💸) e la tua squadra cede solo quelli; se non ne scegli nessuno l'IA puo' usare tutta la rosa.
 811. Profilo Ducks (Francesco, GM dei Ducks): non e' vero che non cedono Steinbach e Kyshawn George. Tolti dalla scheda GM_DESCR.DUC e tolti i loro bonus dal profilo GM_GUSTI.DUC.pl (non pesano piu' negli scambi simulati).
 812. Profilo Ducks (Francesco): non e' vero che cede volentieri Amen Thompson e Buzelis. Tolta la frase dalla scheda GM_DESCR.DUC e tolti i loro malus da GM_GUSTI.DUC.pl.
+813. Profilo Ducks (Francesco): cede volentieri SOLO Steinbach, Kyshawn George, Daniels e De Larrea. Scheda aggiornata; in GM_GUSTI.DUC.pl -6 a ciascuno dei quattro (= se ne libera volentieri), tolto il -4 di Burries.
