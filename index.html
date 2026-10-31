@@ -12316,36 +12316,46 @@ function gsc(t,give,get){const G=prof(t),vg=give.reduce((a,n)=>a+vx(n),0),vr=get
 /* ricerca */
 const rnd=a=>a[Math.random()*a.length|0];
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
-function evalDeal(D){/* D: {T:[teams], mv:[{n,from,to,fix}]} */
-  const io={};D.T.forEach(t=>io[t]={give:[],get:[]});D.mv.forEach(m=>{io[m.from].give.push(m.n);io[m.to].get.push(m.n)});
-  for(const t of D.T){const x=io[t];if(!x.give.length||!x.get.length)return null;if(Math.abs(x.get.length-x.give.length)>1)return null;if((ROSTER[t]||[]).length-x.give.length+x.get.length>IA_MAXR)return null}
+/* (779) REGOLA DEI RUOLI: ogni squadra riceve esattamente i ruoli che dà (dai un centro e un'ala = ricevi un centro e un'ala).
+   Unica eccezione: i giocatori in trade speciale (fuori rosa, iaSp) si spostano senza contropartita.
+   Lo scambio si costruisce come unione di GIRI per ruolo (A→B→C→A per i centri, A→D→A per le ali…): ogni giro rispetta la regola
+   e giri diversi con direzioni diverse fanno la ragnatela. */
+function buildIO(D){const io={};D.T.forEach(t=>io[t]={give:[],get:[],free:0});const mv=[];
+  D.cy.forEach(c=>c.seq.forEach((t,i)=>{const to=c.seq[(i+1)%c.seq.length],n=c.pl[i];mv.push({n,from:t,to,fix:c.fix&&i===0});io[t].give.push(n);io[to].get.push(n)}));
+  (D.fr||[]).forEach(f=>{mv.push({n:f.n,from:f.from,to:f.to,free:1});io[f.from].give.push(f.n);io[f.to].get.push(f.n);io[f.from].free--;io[f.to].free++});return{io,mv}}
+function evalDeal(D){const{io,mv}=buildIO(D);
+  if(mv.length>Math.max(4,2*D.T.length+1))return null;/* scambi leggibili: al massimo 3 giocatori dati per squadra e circa 2 per squadra in tutto */for(const t of D.T){const x=io[t];if(!x.give.length||!x.get.length||x.give.length>3)return null;if((ROSTER[t]||[]).length+x.free>IA_MAXR)return null}
+  if(new Set(mv.map(m=>m.n)).size!==mv.length)return null;
   let P=1;const S={};for(const t of D.T){const r=gsc(t,io[t].give,io[t].get);if(r.d<-45)return null;S[t]=r;P*=r.p}
-  return{P,S,io}}
+  return{P,S,io,mv}}
 function search(){const A=myT(),others=Object.keys(ROSTER).filter(t=>t!==A),maxk=Math.max(2,Math.min(6,GU.maxk));PA=profAvg();VX={};AX={};
-  const P={};Object.keys(ROSTER).forEach(t=>P[t]=pool(t).filter(n=>!(t===A&&GU.keep.has(n))));
+  const P={},SP={};Object.keys(ROSTER).forEach(t=>{const L=(ROSTER[t]||[]).filter(p=>p[5]!=="G"&&(valOf(p[0])||0)>0&&!(t===A&&GU.keep.has(p[0]))).map(p=>p[0]);P[t]={G:[],F:[],C:[]};SP[t]=[];L.forEach(n=>{if(iaSp(n))SP[t].push(n);else(P[t][ruoloDi(n)]||(P[t][ruoloDi(n)]=[])).push(n)})});
   let tg=null,need=null;if(GU.mode==="pl"){tg=GU.target;if(!tg||!iaOwner(tg)||iaOwner(tg)===A)return[]}else need={r:GU.role,v:+GU.minv||0};
-  const cand=need?others.flatMap(t=>P[t].filter(n=>ruoloDi(n)===need.r&&vx(n)>=need.v).map(n=>({n,t}))):[];if(need&&!cand.length)return[];
+  const cand=need?others.flatMap(t=>P[t][need.r].filter(n=>vx(n)>=need.v).map(n=>({n,t}))):[];if(need&&!cand.length)return[];
+  const used=D=>new Set([...D.cy.flatMap(c=>c.pl),...(D.fr||[]).map(f=>f.n)]);
+  /* un giro del ruolo r sulla sequenza di squadre seq (ognuna dà alla successiva); fixN = giocatore obbligato del primo */
+  const mkCycle=(r,seq,U,fixN)=>{const pl=[];for(let i=0;i<seq.length;i++){if(i===0&&fixN){pl.push(fixN);continue}const L=P[seq[i]][r].filter(n=>!U.has(n)&&!pl.includes(n));if(!L.length)return null;pl.push(rnd(L))}return{r,seq,pl,fix:!!fixN}};
   const best=new Map(),t0=performance.now();let it=0;
   while(performance.now()-t0<2200&&it<12000){it++;
     const k=2+Math.floor(Math.pow(Math.random(),1.3)*(maxk-1));
-    const f=tg?{n:tg,t:iaOwner(tg)}:rnd(cand);const T=[A,f.t];shuffle(others.filter(t=>t!==f.t)).slice(0,k-2).forEach(t=>T.push(t));
-    if(T.length<2)continue;
-    const mv=[{n:f.n,from:f.t,to:A,fix:1}];
-    T.forEach(t=>{const L=shuffle(P[t].filter(n=>n!==f.n)),q=t===f.t?Math.random()<.5?0:1:1+(Math.random()<.35?1:0);for(let i=0;i<q&&i<L.length;i++)mv.push({n:L[i],from:t,to:null})});
-    /* destinatari a ragnatela: ognuno riceve almeno uno, poi a caso */
-    const open=mv.filter(m=>!m.fix);shuffle(open);const needR=T.filter(t=>t!==A);
-    needR.forEach(t=>{const m=open.find(m=>m.to==null&&m.from!==t);if(m)m.to=t});
-    open.forEach(m=>{if(m.to==null)m.to=rnd(T.filter(t=>t!==m.from))});
-    let D={T,mv},R=evalDeal(D);
-    for(let s=0;s<40;s++){const D2={T,mv:D.mv.map(m=>({...m}))},op=Math.random(),fr=D2.mv.filter(m=>!m.fix);
-      if(op<.35&&fr.length){const m=rnd(fr),alt=P[m.from].filter(n=>!D2.mv.some(x=>x.n===n));if(!alt.length)continue;m.n=rnd(alt)}
-      else if(op<.6&&fr.length){const m=rnd(fr);m.to=rnd(T.filter(t=>t!==m.from))}
-      else if(op<.8){const t=rnd(T),alt=P[t].filter(n=>!D2.mv.some(x=>x.n===n));if(!alt.length||D2.mv.filter(m=>m.from===t).length>=3)continue;D2.mv.push({n:rnd(alt),from:t,to:rnd(T.filter(u=>u!==t))})}
-      else if(fr.length>1){const m=rnd(fr);D2.mv=D2.mv.filter(x=>x!==m)}
-      const R2=evalDeal(D2);if(R2&&(!R||R2.P>R.P)){D=D2;R=R2}}
-    if(!R)continue;const key=D.mv.map(m=>m.n+">"+m.to).sort().join("|");if(!best.has(key))best.set(key,{D,R})}
-  GU.iter=it;const all=[...best.values()].sort((a,b)=>b.R.P-a.R.P).filter((x,i,a)=>{/* varietà: niente proposte quasi uguali */return a.slice(0,i).filter(y=>y.D.T.length===x.D.T.length&&y.D.mv.filter(m=>x.D.mv.some(z=>z.n===m.n)).length>=x.D.mv.length-1).length<2});
-  /* più squadre = più persone da convincere, quindi la probabilità scende: oltre alle migliori in assoluto si tengono le 2 migliori per ogni numero di squadre */
+    const f=tg?{n:tg,t:iaOwner(tg)}:rnd(cand);if(iaSp(f.n))continue;const r0=ruoloDi(f.n);
+    const T=[A,f.t];shuffle(others.filter(t=>t!==f.t)).slice(0,k-2).forEach(t=>T.push(t));
+    /* giro obbligato: il proprietario dà il giocatore cercato ad A, poi il ruolo gira fino a tornare al proprietario */
+    const mid=shuffle(T.filter(t=>t!==A&&t!==f.t)).slice(0,Math.random()*(T.length-1)|0);
+    const D={T,cy:[],fr:[]};let c0=mkCycle(r0,[f.t,A,...mid],new Set(),f.n);if(!c0)continue;D.cy.push(c0);
+    /* chi non è ancora coinvolto entra con un altro giro (ruolo a caso), anche in direzione diversa: è la ragnatela */
+    let ok=true;for(let g=0;g<6;g++){const inv=new Set(D.cy.flatMap(c=>c.seq)),miss=T.filter(t=>!inv.has(t));if(!miss.length)break;
+      const t=miss[0],rr=rnd(["G","F","C"]),pals=shuffle(T.filter(u=>u!==t)).slice(0,1+(Math.random()<.4?1:0)),c=mkCycle(rr,shuffle([t,...pals]),used(D));if(c)D.cy.push(c);else if(g===5)ok=false}
+    if(!ok)continue;let R=evalDeal(D),cur2=D;
+    for(let s=0;s<40;s++){const D2={T,cy:cur2.cy.map(c=>({...c,seq:c.seq.slice(),pl:c.pl.slice()})),fr:(cur2.fr||[]).map(x=>({...x}))},op=Math.random(),U=used(D2);
+      if(op<.45){/* cambio giocatore dello stesso ruolo e stessa squadra */const c=rnd(D2.cy),i=Math.random()*c.seq.length|0;if(c.fix&&i===0)continue;const L=P[c.seq[i]][c.r].filter(n=>!U.has(n));if(!L.length)continue;c.pl[i]=rnd(L)}
+      else if(op<.65){/* nuovo giro corto */const rr=rnd(["G","F","C"]),seq=shuffle(T.slice()).slice(0,2+(Math.random()<.3?1:0)),c=mkCycle(rr,seq,U);if(!c)continue;D2.cy.push(c)}
+      else if(op<.8){/* togli un giro non obbligato */const fr=D2.cy.filter(c=>!c.fix);if(!fr.length)continue;const c=rnd(fr);D2.cy=D2.cy.filter(x=>x!==c)}
+      else if(op<.9){/* giocatore in trade speciale: si sposta senza contropartita */const t=rnd(T),L=SP[t].filter(n=>!U.has(n));if(!L.length)continue;D2.fr.push({n:rnd(L),from:t,to:rnd(T.filter(u=>u!==t))})}
+      else if((D2.fr||[]).length){D2.fr.pop()}
+      const R2=evalDeal(D2);if(R2&&(!R||R2.P>R.P)){cur2=D2;R=R2}}
+    if(!R)continue;const key=R.mv.map(m=>m.n+">"+m.to).sort().join("|");if(!best.has(key))best.set(key,{D:{T,mv:R.mv},R})}
+  GU.iter=it;const all=[...best.values()].sort((a,b)=>b.R.P-a.R.P).filter((x,i,a)=>a.slice(0,i).filter(y=>y.D.T.length===x.D.T.length&&y.D.mv.filter(m=>x.D.mv.some(z=>z.n===m.n)).length>=x.D.mv.length-1).length<2);
   const pick=new Set(all.slice(0,6));for(let k=3;k<=maxk;k++)all.filter(x=>x.D.T.length===k).slice(0,2).forEach(x=>pick.add(x));return[...pick].sort((a,b)=>b.R.P-a.R.P).slice(0,16)}
 /* perché: la ragione principale per ogni squadra */
 function why(t,r){const G=prof(t),f=v=>(v>0?"+":"")+Math.round(v);const L=[];
@@ -12357,10 +12367,10 @@ function why(t,r){const G=prof(t),f=v=>(v>0?"+":"")+Math.round(v);const L=[];
 const pc=p=>Math.round(p*100)+"%",cl=p=>p>=.6?"hi":p>=.4?"md":"lo";
 function card(x,i){const{D,R}=x,A=myT();
   const rows=D.T.slice().sort((a,b)=>a===A?-1:b===A?1:0).map(t=>{const io=R.io[t],r=R.S[t],G=prof(t),from=n=>{const m=D.mv.find(m=>m.n===n);return m?m.from:""},to=n=>{const m=D.mv.find(m=>m.n===n);return m?m.to:""};
-    return`<div class="gurow${t===A?" me":""}"><div class="guth">${badge(t)}<b>${TEAMS[t].nick}</b>${G.stima?'<em class="gust">stima</em>':""}<span class="gup ${cl(r.p)}">${pc(r.p)}</span></div>
-    <div class="guio"><div><small>Riceve</small>${io.get.map(n=>`<span class="gupl"><i class="rc ${ruoloDi(n)}"></i>${E(nmAb(n))} <em>da ${TEAMS[from(n)].nick}</em></span>`).join("")}</div><div><small>Dà</small>${io.give.map(n=>`<span class="gupl"><i class="rc ${ruoloDi(n)}"></i>${E(nmAb(n))} <em>a ${TEAMS[to(n)].nick}</em></span>`).join("")}</div></div>
+    return`<div class="gurow${t===A?" me":""}"><div class="guth">${badge(t)}<b>${TEAMS[t].nick}</b>${G.stima?'<em class="gust">stima</em>':""}<span class="gup ${cl(r.p)}"><small>dice sì al</small> ${pc(r.p)}</span></div>
+    <div class="guio"><div><small>Riceve</small>${io.get.map(n=>`<span class="gupl"><i class="rc ${ruoloDi(n)}"></i>${E(nmAb(n))} <em>da ${TEAMS[from(n)].nick}</em></span>`).join("")}</div><div><small>Dà</small>${io.give.map(n=>`<span class="gupl"><i class="rc ${ruoloDi(n)}"></i>${E(nmAb(n))} <em>a ${TEAMS[to(n)].nick}${(D.mv.find(m=>m.n===n)||{}).free?" · trade speciale":""}</em></span>`).join("")}</div></div>
     <p class="guwhy">${why(t,r)}</p></div>`}).join("");
-  return`<details class="gucard"${i<2?" open":""}><summary><span class="gun">#${i+1}</span><span class="gutt">${D.T.length} squadre · ${D.mv.length} giocatori</span><span class="gup ${cl(R.P)}" title="probabilità che dicano sì tutti">${pc(R.P)}</span></summary>${rows}</details>`}
+  return`<details class="gucard"${i<2?" open":""}><summary><span class="gun">#${i+1}</span><span class="gutt">${D.T.length} squadre · ${D.mv.length} giocatori</span><span class="gup ${cl(R.P)}" title="probabilità che dicano sì tutti"><small>si chiude al</small> ${pc(R.P)}</span></summary>${rows}</details>`}
 function vGusti(){const A=myT(),T=Object.keys(TEAMS),prs=Object.keys(GM_GUSTI);
   const tch=T.map(t=>`<button type="button" class="guchip${t===A?" on":""}" data-gu="team" data-v="${t}" aria-pressed="${t===A}">${badge(t)}</button>`).join("");
   const q=(GU.q||"").toLowerCase(),list=GU.mode==="pl"?T.filter(t=>t!==A).flatMap(t=>pool(t).map(n=>({n,t}))).filter(x=>!q||x.n.toLowerCase().includes(q)||TEAMS[x.t].nick.toLowerCase().includes(q)).sort((a,b)=>vx0(b.n)-vx0(a.n)).slice(0,q?40:16):[];
@@ -12370,7 +12380,7 @@ function vGusti(){const A=myT(),T=Object.keys(TEAMS),prs=Object.keys(GM_GUSTI);
   return`${H("Mercato dei gusti",`<em>scambi fino a 6 squadre</em>`)}
   <div class="guintro"><p><b>A cosa serve.</b> Trova gli scambi che hanno più probabilità di essere <b>accettati davvero</b>: non quelli più giusti sulla carta, ma quelli che <b>piacciono</b> ai GM delle squadre coinvolte. Qui contano soprattutto gli <b>interessi</b> di ogni GM (età, ruoli, giocatori che ama o che non sopporta, quanto vantaggio pretende) e molto meno i valori assoluti del Calcolatore.</p>
   <p><b>Chi decide i gusti.</b> Sono i GM stessi: ogni report che mandano dall'<b>Allenamento IA Trade</b> sposta i valori dei giocatori <b>nella loro testa</b> (in più o in meno) e il loro modo di trattare. Più report manda una squadra, più le sue percentuali sono affidabili. Le squadre che non hanno ancora mandato report usano il gusto medio della lega (segnate «stima»).</p>
-  <p><b>Come funziona.</b> Scegli la tua squadra, cosa cerchi (un giocatore o un ruolo) e fino a quante squadre. Gli scambi sono <b>a ragnatela</b>: ogni giocatore può andare a qualsiasi squadra dello scambio, non solo alla successiva. La percentuale grande è la probabilità che dicano sì <b>tutti</b>; accanto a ogni squadra c'è la sua e il motivo principale.</p>
+  <p><b>Come funziona.</b> Scegli la tua squadra, cosa cerchi (un giocatore o un ruolo) e fino a quante squadre. Gli scambi sono <b>a ragnatela</b>: ogni giocatore può andare a qualsiasi squadra dello scambio, non solo alla successiva. Vale sempre la <b>regola dei ruoli</b>: ogni squadra riceve gli stessi ruoli che dà (dai un centro e un'ala, ricevi un centro e un'ala); solo i giocatori in trade speciale si spostano senza contropartita. Accanto a ogni squadra c'è «dice sì al…» (quanto le piace) e il motivo principale; in alto «si chiude al…» è la probabilità che accettino tutte insieme.</p>
   <button type="button" class="gulk" data-gu="info">${GU.info?"Nascondi":"Mostra"} i profili dei GM (${prs.length} squadre)</button>
   ${GU.info?`<div class="gupr">${T.map(t=>{const G=GM_GUSTI[t];return`<div>${badge(t)}<b>${TEAMS[t].nick}</b><small>${G?`report del ${G.agg||"—"} · affidabilità ${Math.round(Math.min(1,(G.n||0)/150)*100)}% · vuole +${Math.round(G.req||0)}% di vantaggio · età ${(G.age||0).toFixed(1)} · ${Object.keys(G.pl||{}).length} giocatori con un gusto`:"nessun report: usa il gusto medio (stima)"}</small></div>`}).join("")}</div>`:""}</div>
   <section class="gubox"><h4>La tua squadra</h4><div class="gurowc">${tch}</div>
@@ -12380,7 +12390,7 @@ function vGusti(){const A=myT(),T=Object.keys(TEAMS),prs=Object.keys(GM_GUSTI);
   <h4>Fino a quante squadre</h4><div class="guseg">${[2,3,4,5,6].map(k=>`<button type="button" data-gu="k" data-v="${k}" class="${GU.maxk===k?"on":""}">${k}</button>`).join("")}</div>
   <h4>Non cedo <small>(tocca per bloccare)</small></h4><div class="gukeep">${keep}</div>
   <button type="button" class="gugo" data-gu="go"${GU.busy||(GU.mode==="pl"&&!tgt)?" disabled":""}>${GU.busy?"⏳ Cerco tra migliaia di combinazioni…":res?"🔄 Cerca ancora (altre combinazioni)":"🔎 Cerca gli scambi"}</button></section>
-  ${res?`<section class="gures"><h4>${res.length?`Le ${res.length} proposte più gradite`:"Nessuno scambio trovato"}</h4>${res.length?`<p class="setnote">Percentuale grande = tutti dicono sì. Verde sopra 60%, giallo 40–60%, rosso sotto. Tocca una proposta per aprirla.</p>`:`<p class="setnote">Prova con più squadre, un valore minimo più basso o meno giocatori bloccati.</p>`}${res.map(card).join("")}</section>`:""}`}
+  ${res?`<section class="gures"><h4>${res.length?`Le ${res.length} proposte più gradite`:"Nessuno scambio trovato"}</h4>${res.length?`<p class="setnote"><b>«Dice sì al»</b> (accanto a ogni squadra) = quanto è probabile che quel GM accetti, secondo i suoi gusti. <b>«Si chiude al»</b> (in alto, su ogni proposta) = quanto è probabile che lo scambio vada in porto, cioè che dicano sì <b>tutte</b> le squadre insieme: si moltiplicano le loro percentuali (es. 70% × 60% = 42%). Per questo più squadre ci sono, più si abbassa, anche se ognuna è contenta. Verde sopra 60%, giallo 40–60%, rosso sotto. Tocca una proposta per aprirla.</p>`:`<p class="setnote">Prova con più squadre, un valore minimo più basso o meno giocatori bloccati.</p>`}${res.map(card).join("")}</section>`:""}`}
 const vx0=n=>{try{return valOf(n)||0}catch(e){return 0}};
 VIEWS.gusti=vGusti;
 const keepY=()=>{const y=scrollY;render();scrollTo(0,y)};
@@ -12408,7 +12418,7 @@ document.getElementById("main").addEventListener("input",e=>{if(cur!=="gusti"||e
 .gugo{width:100%;margin-top:14px;padding:13px;border:0;border-radius:12px;background:linear-gradient(180deg,#f2701a,#d9560b);color:#fff;font-weight:900;font-size:15.5px;cursor:pointer}.gugo:disabled{opacity:.55}
 .gucard{border:1px solid rgba(217,86,11,.3);border-radius:12px;margin:8px 0;background:#fffaf2;overflow:hidden}.gucard>summary{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;list-style:none;font-weight:800}.gucard>summary::-webkit-details-marker{display:none}
 .gun{color:#b8410a}.gutt{flex:1;font-size:13.5px}
-.gup{min-width:46px;text-align:center;border-radius:8px;padding:3px 7px;font-weight:900;color:#fff}.gup.hi{background:#15a04a}.gup.md{background:#e0a106}.gup.lo{background:#e02424}
+.gup small{font-size:10.5px;font-weight:700;opacity:.9;margin-right:2px}.gup{white-space:nowrap;min-width:46px;text-align:center;border-radius:8px;padding:3px 7px;font-weight:900;color:#fff}.gup.hi{background:#15a04a}.gup.md{background:#e0a106}.gup.lo{background:#e02424}
 .gurow{border-top:1px solid rgba(0,0,0,.07);padding:9px 12px}.gurow.me{background:rgba(217,86,11,.06)}.guth{display:flex;align-items:center;gap:8px}.guth .badge{width:26px;height:26px}.guth b{flex:1}.gust{font-size:11px;font-style:normal;color:#888;border:1px dashed #bbb;border-radius:6px;padding:1px 5px}
 .guio{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}.guio small{display:block;font-size:11px;text-transform:uppercase;color:#8a5a3a;font-weight:800}.gupl{display:block;font-size:13px;font-weight:700;color:#2b1608}.gupl em{font-style:normal;font-weight:500;color:#8a5a3a;font-size:11.5px}.gupl .rc{margin-right:4px}
 .guwhy{margin:6px 0 0;font-size:12.5px;color:#5a3a22}
