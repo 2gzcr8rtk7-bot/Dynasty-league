@@ -1802,3 +1802,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 658. Numero di notte del turno (T4 · 1/5, «1 su 5 notti» in Dreamers/Campo/condivisioni): era sbagliato di +1 (2/5 con una sola notte giocata) perché la notte live/appena finita era già contata tra le notti con dati e poi si aggiungeva ancora 1. Ora `drNnN(W)` = notti dall'inizio del turno fino alla notte mostrata (`hnPresent()`); prima della prima notte resta «5 notti».
 
 659. Home, box score a partita finita: la cella MIN è verde oltre i 30 minuti, rossa sotto i 26, neutra tra 26 e 30 (stesse classi `gv`/`gr2` delle altre celle). Solo nel box (non nella versione snella).
+
+660. Home, minuti a partita finita: tolta la cella MIN dal box (659); i minuti ora stanno accanto a «Finale» («vs POR · Finale · 38 min»), anche nella versione snella. Colori: verde da 30 minuti in su, rosso da 25 in giù, azzurro tra 26 e 29 (classi `mnb mg/mr`). Sostituisce la 659.
