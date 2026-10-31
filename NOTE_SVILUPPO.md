@@ -1879,3 +1879,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 724. Modalità notte ripristinata com'era prima della v253: le correzioni nuove del blocco Parquet (tasti, campi, Bacheca/Cassa, pannelli) valgono solo fuori dalla notte; in notte il correttore dei contrasti usa di nuovo il calcolo e l'ordine di prima e i tasti scelti tornano com'erano. Il lavoro sul Parquet di giorno resta invariato.
 
 725. Passaggio tra modalita' (base, Parquet, notte): al cambio di modalita' vengono tolti tutti i residui del tema precedente (colori scritti sugli elementi, caselle bianche del Parquet), cosi' niente resta nel posto sbagliato. Vale per tutti gli stili. Provato solo nel browser simulato.
+
+726. Parquet: tolta la base bianca dietro la panchina (50% PDK) nella formazione; la scritta 50% PDK e' bianca come le altre.
