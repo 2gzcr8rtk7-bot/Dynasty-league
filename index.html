@@ -6952,7 +6952,8 @@ document.addEventListener("click",e=>{if(cur!=="impostazioni")return;const bx=e.
 document.addEventListener("click",e=>{const r=e.target.closest("[data-clgo]");if(!r||e.target.closest(".shbtn,[data-plopen]"))return;if(!r.classList.contains("lvr")){const pn=r.querySelector("[data-plopen]");if(pn&&plOpen(pn.dataset.plopen)!==false)return}/* (503) partita finita: il tocco sulla riga apre il PROFILO del giocatore; Dynasty TV solo se è in campo */const[dy,key,sd]=r.dataset.clgo.split("|");if(!TV.box[key])return;TVS.d=dy;TVS.g=key;TVS.side=sd==="h"?"h":"a";cur="tv";render();window.scrollTo(0,0)});
 document.addEventListener("click",e=>{const pb=e.target.closest("[data-shpc]");if(pb){e.preventDefault();e.stopPropagation();const S=SHR_CAMPO;if(S&&S.R[+pb.dataset.shpc]){SHR_PC={x:S.R[+pb.dataset.shpc],t:S.t};shOpen("pc")}return}
   const b=e.target.closest("[data-share]");if(!b)return;e.preventDefault();e.stopPropagation();if(b.dataset.share==="pl"){plShAsk();return}shOpen(b.dataset.share)},true);
-let CNT=false;
+let CNT=false;try{CNT=localStorage.getItem("dl_cnt")==="1"}catch(e){}/* (643) la modalità notte resta com'è all'apertura dell'app */
+const cntSave=()=>{try{CNT?localStorage.setItem("dl_cnt","1"):localStorage.removeItem("dl_cnt")}catch(e){}};
 function campoNotteMap(t,dd){const d=dd||campoNotte(),o={};if(!d)return o;const mine={};(ROSTER[t]||[]).forEach(p=>mine[tvNm(p[0])]=p[0]);
   for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
     [["a",g[1]],["h",g[0]]].forEach(([sd,opp])=>(B[sd]||[]).forEach(r=>{const n=mine[tvNm(r[0])];if(n&&r[19]!=null)o[n]={p:+r[19],opp,lv:g[5]==="L",st:g[5]==="L"?(TVL.st[g[7]]||"Live"):"Finale",k:g[7],sd,dy:d}}))}
@@ -8821,7 +8822,7 @@ async function tvBoxes(d){if(typeof TV==="undefined"||!d||!TV.days[d])return fal
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&cur==="tv")tvLiveTick()});
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="campo")return;const kb=e.target.closest("#kitbtn");if(kb){e.preventDefault();const t=kb.dataset.kitt;KITG=(kitDi(t)+1)%5;kitSalva();const y=scrollY;render();scrollTo(0,y);return}});
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="campo")return;const go=e.target.closest(".lbm[data-drgo]");if(!go)return;const[k,x,y]=go.dataset.drgo.split("|");DR.k=+k;DR.tab="turno";DR.open=[x,y];DR.rules=false;GAME="dream";cur="giochi";render();window.scrollTo(0,0)});
-document.getElementById("main").addEventListener("click",e=>{if(cur==="campo"&&e.target.closest("#cntbtn")){e.preventDefault();CNT=!CNT;SN.hist=false;const y=scrollY;render();scrollTo(0,y)}});
+document.getElementById("main").addEventListener("click",e=>{if(cur==="campo"&&e.target.closest("#cntbtn")){e.preventDefault();CNT=!CNT;cntSave();SN.hist=false;const y=scrollY;render();scrollTo(0,y)}});
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="tv")return;const T=TVD(),ks=Object.keys(T.days).sort();
   {const dv=e.target.closest("[data-drtv]");if(dv){TVS.dr=dv.dataset.drtv;TVS.drs="a";render();window.scrollTo(0,0);return}}
   {const go=e.target.closest("[data-drgo]");if(go){const[k,x,y]=go.dataset.drgo.split("|");TVS.dr=null;DR.k=+k;DR.tab="turno";DR.open=[x,y];GAME="dream";cur="giochi";render();window.scrollTo(0,0);return}}
@@ -9006,7 +9007,7 @@ function render(){
   const tvg=m.querySelector("#tvgo");if(tvg)tvg.onclick=()=>{cur="tv";render();window.scrollTo(0,0)};
   fantaLiveAvvia();const hsg=m.querySelector("#hseg");if(hsg)hsg.onclick=()=>{cur="osserv";render();window.scrollTo(0,0)};
   const hd=m.querySelector("#hdrm");if(hd)hd.onclick=()=>{GAME="dream";cur="giochi";render();window.scrollTo(0,0)};
-  const hn=m.querySelector("#hnt");if(hn)hn.onclick=()=>{CNT=!CNT;SN.hist=false;const y=scrollY;render();scrollTo(0,y)};
+  const hn=m.querySelector("#hnt");if(hn)hn.onclick=()=>{CNT=!CNT;cntSave();SN.hist=false;const y=scrollY;render();scrollTo(0,y)};
   const cb=m.querySelector("#cback");if(cb)cb.onclick=()=>{cur="home";render();window.scrollTo(0,0)};
   const cc=m.querySelector("#ccap");if(cc)cc.onclick=()=>{capLoad(curTeam);cur="cap";render();window.scrollTo(0,0)};
   const cmu=m.querySelector("#cmul");if(cmu)cmu.onclick=()=>{mulLoad(curTeam);cur="multe";render();window.scrollTo(0,0)};

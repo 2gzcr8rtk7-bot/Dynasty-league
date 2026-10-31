@@ -1768,3 +1768,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 641. Bug grafico in modalità notte: sotto i riquadri (zona del footer «Ultimo aggiornamento») e nella fascia in fondo comparivano le righe diagonali del tema giorno «Tabellone» (e lo sfondo del Parquet). Ora la notte vince su entrambi i temi, in tutte le schermate, e il fondo della pagina (zona sicura dell'iPhone) è dello stesso viola scuro.
 
 642. Home: cache locale della notte. Ogni scaricamento ESPN salva sul telefono partite e tabellini di oggi, ieri e l'altro ieri (USA); all'apertura dell'app vengono ripristinati prima del primo disegno, così la Home mostra subito box score e PDK già visti invece delle sole medie. Una partita salvata come live da più di 4 ore torna come Finale; dati oltre 36 ore non si usano. ESPN poi aggiorna come prima.
+
+643. La modalità notte (luna in Home e nel Campo) ora si ricorda: resta accesa o spenta anche dopo aver chiuso e riaperto l'app (localStorage dl_cnt).
