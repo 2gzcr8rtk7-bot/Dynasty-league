@@ -11200,16 +11200,15 @@ async function shDM(){const S=SHR_DM;if(!S)return null;const H=1540,{cv,c,W}=awa
 .s3nv{left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 14px);display:flex;gap:10px;align-items:center}
 .s3nv button{width:46px;height:46px;font-size:18px}
 .s3nv span{min-width:96px;text-align:center;font:700 11px system-ui,sans-serif;letter-spacing:.14em;color:#cdb4ff;text-transform:uppercase}
-.s3brd{position:absolute;inset:0;display:flex;flex-direction:column;padding:12px 14px;color:var(--fg);text-align:left}
+.s3brd{position:absolute;inset:0;display:flex;flex-direction:column;padding:12px 14px;color:#fff;text-align:left}
 .s3brd .hd{display:flex;align-items:center;gap:12px}
 .s3brd .hd .badge{width:62px;height:62px;flex:none;background-color:transparent!important;box-shadow:none!important;border-radius:0;filter:drop-shadow(0 3px 8px rgba(0,0,0,.5))}
-.s3brd .hd b{display:block;font:italic 800 26px/1 var(--display),Georgia,serif;letter-spacing:.05em;text-transform:uppercase}
+.s3brd .hd b{display:block;font:italic 800 24px/1 var(--display),Georgia,serif;letter-spacing:.05em;text-transform:uppercase;color:var(--ac);text-shadow:0 0 14px var(--ac)}
 .s3brd .hd small{display:block;margin-top:4px;font:700 11px/1 system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;opacity:.9}
-.s3jr{display:flex;justify-content:space-around;margin-top:14px;padding:0 6px}
-.s3jr div{position:relative;width:84px;padding-top:16px}
-.s3jr div:before{content:"";position:absolute;left:50%;top:0;width:1px;height:14px;background:var(--fg);opacity:.7}
-.s3jr div:after{content:"";position:absolute;left:50%;top:10px;width:22px;height:8px;margin-left:-11px;border:2px solid var(--fg);border-bottom:0;border-radius:11px 11px 0 0;opacity:.8}
-.s3jr svg{display:block;width:84px;height:auto;filter:drop-shadow(0 6px 8px rgba(0,0,0,.45))}
+.s3rod{position:absolute;left:18px;right:18px;top:96px;height:5px;border-radius:3px;background:linear-gradient(#f1ecff,#7d7599);box-shadow:0 3px 8px rgba(0,0,0,.6)}
+.s3jr div{position:absolute;top:100px;width:86px;padding-top:16px}
+.s3jr div:before{content:"";position:absolute;left:50%;top:0;width:12px;height:12px;margin-left:-6px;border:2px solid #cfc7e8;border-bottom:0;border-radius:6px 6px 0 0}
+.s3jr svg{display:block;width:86px;height:auto;filter:drop-shadow(0 8px 10px rgba(0,0,0,.6))}
 .s3emp{margin-top:auto;margin-bottom:26px;text-align:center;font:italic 700 15px/1.2 var(--display),Georgia,serif;letter-spacing:.1em;opacity:.85;text-transform:uppercase}
 .s3lint{display:flex;align-items:center;justify-content:center;font:italic 800 15px/1 var(--display),Georgia,serif;letter-spacing:.3em;text-transform:uppercase}
 .s3info{position:absolute;left:78px;right:132px;bottom:calc(env(safe-area-inset-bottom,0px) + 76px);z-index:19;margin:0 auto;padding:10px 12px;border:1px solid #e8c15a;border-radius:14px;background:rgba(18,5,42,.86);text-align:center;box-shadow:0 0 22px rgba(150,90,255,.6);opacity:0;transform:translateY(10px);transition:.35s;pointer-events:none}
@@ -11249,35 +11248,46 @@ function open(){
  [-250,250].forEach(x=>{h+=`<div class="s3o s3col" style="transform:translate3d(${x}px,${EYE}px,${ZN-30}px)">`+[["translateZ(23px)",46],["rotateY(180deg) translateZ(23px)",46],["rotateY(90deg) translateZ(23px)",46],["rotateY(-90deg) translateZ(23px)",46]].map(f=>`<div class="s3f" style="left:-23px;top:-430px;width:46px;height:430px;transform:${f[0]}"></div>`).join("")+`</div>`});
  h+=`<div class="s3o" style="transform:translate3d(0,${EYE-430}px,${ZN-30}px)"><div class="s3f s3lint" style="left:-290px;top:-22px;width:580px;height:44px;background:linear-gradient(90deg,#3a1a7a,#b07bff,#3a1a7a);box-shadow:0 0 30px #b07bff;border:2px solid #e8c15a;color:#1a0838">SALA TROFEI DREAMERS</div></div>`;
  h+=`<div class="s3o" style="transform:translate3d(0,${EYE}px,${ZF+10}px)">${F(0,0,0,640,330,0,"background:linear-gradient(rgba(60,20,130,.75),rgba(20,6,50,.85));border:2px solid #e8c15a;box-shadow:0 0 40px #8a4dff",`<div style="position:absolute;left:0;right:0;top:70px;text-align:center;font:italic 800 46px/1 var(--display),Georgia,serif;letter-spacing:.14em;color:#fff;text-shadow:0 0 26px #b07bff">DREAMERS</div><div style="position:absolute;left:0;right:0;top:128px;text-align:center;font:700 14px system-ui,sans-serif;letter-spacing:.34em;color:#ffd36b">LA STANZA DEI CAMPIONI</div><div style="position:absolute;left:0;right:0;top:170px;text-align:center;font:600 13px system-ui,sans-serif;letter-spacing:.1em;color:#d9c7ff">${(()=>{const nt=B.reduce((a,b)=>a+b.nt,0),na=B.reduce((a,b)=>a+b.na,0);return nt+" titoli · "+na+" trofei All-Star Game"})()}</div>`)}</div>`;
- /* le 8 bacheche */
- B.forEach(b=>{const T2=TEAMS[b.t],bg=T2.bg,fg=T2.fg,tr=T2.trim||fg,n=b.items.length;
+ /* le 8 bacheche: vetrine illuminate da faretti, interno scuro, maglie appese (le tre divise) e trofei */
+ const lumH=c=>{const n=parseInt(String(c).slice(1,7),16);return isNaN(n)?0:(.299*(n>>16)+.587*((n>>8)&255)+.114*(n&255))/255};
+ const accOf=t=>{const T=TEAMS[t],c=[T.bg,T.fg,T.trim].filter(x=>/^#[0-9a-f]{6}$/i.test(x||"")).sort((a,b)=>lumH(b)-lumH(a))[0];return lumH(c)>.42?c:"#ffd36b"};
+ const jer=(t,k,num)=>{const sv=KITG;KITG=k;let r="";try{r=jersey(t,num,"")}catch(e){}KITG=sv;return r};
+ const JX=[-118,0,118],pool=(x,z,r,col,a)=>`<div class="s3f" style="left:${-r}px;top:${-r}px;width:${r*2}px;height:${r*2}px;background:radial-gradient(circle,${col},transparent 68%);opacity:${a};transform:translate3d(${x}px,${-DA-1}px,${z}px) rotateX(90deg)"></div>`;
+ const lamp=(x,z)=>`<div class="s3f" style="left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle,#fff,#ffe9b0 55%,#8a7a50);box-shadow:0 0 16px 6px rgba(255,235,180,.85);transform:translate3d(${x}px,${-BH+6}px,${z}px) rotateX(90deg)"></div>`;
+ B.forEach(b=>{const T2=TEAMS[b.t],bg=T2.bg,ac=accOf(b.t),n=b.items.length;
+   const sp=n>1?Math.min(120,(BW-110)/(n-1)):0,TX=b.items.map((it,k)=>n>1?-sp*(n-1)/2+k*sp:0);
    h+=`<div class="s3o" data-b="${b.i}" style="transform:translate3d(${b.cx}px,${EYE}px,${b.cz}px) rotateY(${b.rot}deg)">`;
-   /* pedana */
-   h+=F(0,-DA,0,BW,BD,0,`background:linear-gradient(180deg,${bg},color-mix(in srgb,${bg} 45%,#000));border:3px solid ${tr};box-shadow:0 0 34px ${bg}aa;transform-origin:center`,"")
-     .replace(`transform:translate3d(0px,${-DA}px,0px) rotateY(0deg)`,`transform:translate3d(0,${-DA}px,0) rotateX(90deg)`).replace(`top:${-BD}px`,`top:${-BD/2}px`);
-   [["translateZ("+BD/2+"px)",BW],["rotateY(180deg) translateZ("+BD/2+"px)",BW],["rotateY(90deg) translateZ("+BW/2+"px)",BD],["rotateY(-90deg) translateZ("+BW/2+"px)",BD]].forEach(f=>{h+=`<div class="s3f" style="left:${-f[1]/2}px;top:${-DA}px;width:${f[1]}px;height:${DA}px;background:linear-gradient(${bg},color-mix(in srgb,${bg} 55%,#000));border-top:3px solid ${tr};transform:${f[0]}"></div>`});
-   /* fondale con logo, nome e maglie appese */
-   const jr=(ROSTER[b.t]||[]).slice(0,3).map(p=>`<div>${jersey(b.t,p[1],p[0])}</div>`).join("");
-   h+=F(0,-DA,-BD/2,BW,BH,0,`background:linear-gradient(160deg,${bg},color-mix(in srgb,${bg} 40%,#000));border:3px solid ${tr};border-bottom:0;box-shadow:0 0 40px ${bg}88;--fg:${fg}`,
-     `<div class="s3brd"><div class="hd">${badge(b.t)}<div><b>${E(T2.nick)}</b><small>${E(T2.city)} · ${b.nt} ${b.nt===1?"titolo":"titoli"} · ${b.na} All-Star</small></div></div><div class="s3jr">${jr}</div>${n?"":`<div class="s3emp">Bacheca ancora vuota</div>`}</div>`);
-   /* vetrate laterali */
-   [-BW/2,BW/2].forEach(x=>{h+=F(x,-DA,0,BD,BH,90,`border:2px solid ${tr};border-bottom:0;background:linear-gradient(rgba(220,190,255,.16),rgba(220,190,255,.03));box-shadow:0 0 22px ${bg}99`,"")});
-   /* architrave davanti con il nome */
-   h+=F(0,-DA-BH+12,BD/2,BW+16,34,0,`background:linear-gradient(90deg,color-mix(in srgb,${bg} 55%,#000),${bg},color-mix(in srgb,${bg} 55%,#000));border:2px solid ${tr};color:${fg};box-shadow:0 0 22px ${bg}`,E(T2.nick),"s3lint");
-   [-BW/2,BW/2].forEach(x=>{h+=F(x,-DA,BD/2,16,BH,0,`background:linear-gradient(90deg,${tr},${bg},${tr});box-shadow:0 0 14px ${bg}`,"")});
+   /* base lucida scura con filo del colore squadra, e piano illuminato */
+   [["translateZ("+BD/2+"px)",BW],["rotateY(180deg) translateZ("+BD/2+"px)",BW],["rotateY(90deg) translateZ("+BW/2+"px)",BD],["rotateY(-90deg) translateZ("+BW/2+"px)",BD]].forEach(f=>{h+=`<div class="s3f" style="left:${-f[1]/2}px;top:${-DA}px;width:${f[1]}px;height:${DA}px;background:linear-gradient(#1c1233,#07030f);border-top:2px solid ${ac};box-shadow:0 0 14px ${ac}66;transform:${f[0]}"></div>`});
+   h+=`<div class="s3f" style="left:${-BW/2}px;top:${-BD/2}px;width:${BW}px;height:${BD}px;background:radial-gradient(ellipse at 50% 60%,color-mix(in srgb,${bg} 42%,#0c0618),#06020d 78%);border:2px solid ${ac}88;transform:translate3d(0,${-DA}px,0) rotateX(90deg)"></div>`;
+   /* fondale scuro con alone del colore squadra, logo, nome e maglie */
+   const jr=JX.map((x,k)=>`<div style="left:calc(50% + ${x}px - 43px)">${jer(b.t,k,(ROSTER[b.t]||[])[k]?ROSTER[b.t][k][1]:k+1)}</div>`).join("");
+   h+=F(0,-DA,-BD/2,BW,BH,0,`background:radial-gradient(ellipse at 50% 38%,color-mix(in srgb,${bg} 46%,#0a0414),#05020b 82%),repeating-linear-gradient(90deg,rgba(255,255,255,.025) 0 2px,transparent 2px 22px);border:2px solid ${ac}66;border-bottom:0;box-shadow:0 0 30px ${bg}55;--ac:${ac}`,
+     `<div class="s3brd"><div class="hd">${badge(b.t)}<div><b>${E(T2.nick)}</b><small>${E(T2.city)} · ${b.nt} ${b.nt===1?"titolo":"titoli"} · ${b.na} All-Star</small></div></div><div class="s3rod"></div><div class="s3jr">${jr}</div>${n?"":`<div class="s3emp">Bacheca ancora vuota</div>`}</div>`);
+   /* vetrate laterali con riflesso */
+   [-BW/2,BW/2].forEach(x=>{h+=F(x,-DA,0,BD,BH,90,`border:1.5px solid ${ac}88;border-bottom:0;background:linear-gradient(115deg,rgba(255,255,255,.14),rgba(255,255,255,.02) 35%,rgba(255,255,255,.07) 60%,rgba(255,255,255,.01));box-shadow:0 0 18px ${ac}44`,"")});
+   /* soffitto con strisce LED e faretti */
+   h+=F(0,-BH,0,BW,BD,0,`background:linear-gradient(180deg,#0a0418,#150a2a);border:2px solid ${ac}77;box-shadow:0 0 26px ${ac}66;transform:translate3d(0,${-BH}px,0) rotateX(90deg)`,"").replace(/transform:translate3d\(0px,-?[0-9]+px,0px\) rotateY\(0deg\);/,"");
+   h+=lamp(JX[0],-BD/2+34)+lamp(JX[1],-BD/2+34)+lamp(JX[2],-BD/2+34);TX.forEach(x=>{h+=lamp(x,-34)});
+   /* architrave sottile col nome e montanti metallici */
+   h+=F(0,-BH,BD/2,BW,30,0,`background:linear-gradient(180deg,#1d1236,#0b0618);border:1.5px solid ${ac};color:${ac};box-shadow:0 0 22px ${ac}aa,inset 0 -8px 12px rgba(0,0,0,.5);text-shadow:0 0 10px ${ac}`,E(T2.nick),"s3lint");
+   [-BW/2,BW/2].forEach(x=>{h+=F(x,-DA,BD/2,9,BH,0,`background:linear-gradient(90deg,#8e86a5,#e9e4f5,#6f6788);box-shadow:0 0 10px ${ac}88`,"")});
+   /* pozze di luce sul piano sotto ogni faretto */
+   JX.forEach(x=>{h+=pool(x,-BD/2+60,70,"rgba(255,236,190,.55)",.9)});TX.forEach(x=>{h+=pool(x,-34,78,"rgba(255,240,200,.75)",1)});
    /* trofei */
-   const sp=n>1?Math.min(120,(BW-110)/(n-1)):0;
-   b.items.forEach((it,k)=>{const lx=n>1?-sp*(n-1)/2+k*sp:0,lz=-34,t=it.k==="t",pw=t?80:62,ph=t?58:42,cw=t?150:100,chh=t?172:116,id="s3c"+b.i+"_"+k;
+   b.items.forEach((it,k)=>{const lx=TX[k],lz=-34,t=it.k==="t",pw=t?80:62,ph=t?58:42,cw=t?150:100,chh=t?172:116,id="s3c"+b.i+"_"+k;
      h+=`<div class="s3o" data-tr="${b.i}:${k}" style="transform:translate3d(${lx}px,${-DA}px,${lz}px)">`;
-     [["translateZ("+pw/2+"px)"],["rotateY(180deg) translateZ("+pw/2+"px)"],["rotateY(90deg) translateZ("+pw/2+"px)"],["rotateY(-90deg) translateZ("+pw/2+"px)"]].forEach(f=>{h+=`<div class="s3f" style="left:${-pw/2}px;top:${-ph}px;width:${pw}px;height:${ph}px;transform:${f[0]};background:linear-gradient(90deg,#150633,#4b2399 50%,#150633);border-top:3px solid ${t?"#e8c15a":"#8cc8ff"};display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff2c4;font:700 8px/1.2 system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;text-align:center"><b style="font:italic 800 ${t?12:10}px/1 var(--display),Georgia,serif;letter-spacing:.08em">${t?"Titolo":"All-Star"}</b>Anno ${it.anno}</div>`});
-     h+=`<div class="s3f s3top" style="left:${-pw/2}px;top:${-ph-pw/2}px;width:${pw}px;height:${pw}px;transform:rotateX(90deg);background:radial-gradient(circle,#c9a5ff,#5a2bb5 70%);border:2px solid ${t?"#e8c15a":"#8cc8ff"}"></div>`;
-     h+=`<div class="s3o s3spin" style="transform:translateY(${-ph-2}px)">`+[0,45,90,135].map(a=>`<div class="s3pl" style="left:${-cw/2}px;top:${-chh}px;width:${cw}px;height:${chh}px;transform:rotateY(${a}deg);filter:${a%90?"brightness(.82)":"none"}">${t?cupSvg(1,id+"_"+a):asgSvg(id+"_"+a)}</div>`).join("")+`</div></div>`});
-   if(!n)h+=`<div class="s3o" style="transform:translate3d(0,${-DA}px,-30px)">`+[["translateZ(36px)"],["rotateY(180deg) translateZ(36px)"],["rotateY(90deg) translateZ(36px)"],["rotateY(-90deg) translateZ(36px)"]].map(f=>`<div class="s3f" style="left:-36px;top:-46px;width:72px;height:46px;transform:${f[0]};background:linear-gradient(90deg,#0d0420,#2a1260 50%,#0d0420);border-top:3px solid #6a4aa8;opacity:.9"></div>`).join("")+`</div>`;
+     [["translateZ("+pw/2+"px)"],["rotateY(180deg) translateZ("+pw/2+"px)"],["rotateY(90deg) translateZ("+pw/2+"px)"],["rotateY(-90deg) translateZ("+pw/2+"px)"]].forEach(f=>{h+=`<div class="s3f" style="left:${-pw/2}px;top:${-ph}px;width:${pw}px;height:${ph}px;transform:${f[0]};background:linear-gradient(90deg,#120728,#3a1c80 50%,#120728);border-top:2px solid ${t?"#ffd36b":"#8cc8ff"};display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff2c4;font:700 8px/1.2 system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;text-align:center"><b style="font:italic 800 ${t?12:10}px/1 var(--display),Georgia,serif;letter-spacing:.08em">${t?"Titolo":"All-Star"}</b>Anno ${it.anno}</div>`});
+     h+=`<div class="s3f s3top" style="left:${-pw/2}px;top:${-ph-pw/2}px;width:${pw}px;height:${pw}px;transform:rotateX(90deg);background:radial-gradient(circle,#fff2c8,#a984e8 70%);border:2px solid ${t?"#ffd36b":"#8cc8ff"}"></div>`;
+     h+=`<div class="s3o s3spin" style="transform:translateY(${-ph-2}px)">`+[0,45,90,135].map(a=>`<div class="s3pl" style="left:${-cw/2}px;top:${-chh}px;width:${cw}px;height:${chh}px;transform:rotateY(${a}deg);filter:${a%90?"brightness(.85)":"none"}">${t?cupSvg(1,id+"_"+a):asgSvg(id+"_"+a)}</div>`).join("")+`</div></div>`});
+   if(!n)h+=`<div class="s3o" style="transform:translate3d(0,${-DA}px,-30px)">`+[["translateZ(36px)"],["rotateY(180deg) translateZ(36px)"],["rotateY(90deg) translateZ(36px)"],["rotateY(-90deg) translateZ(36px)"]].map(f=>`<div class="s3f" style="left:-36px;top:-46px;width:72px;height:46px;transform:${f[0]};background:linear-gradient(90deg,#0d0420,#2a1260 50%,#0d0420);border-top:2px solid #6a4aa8;opacity:.9"></div>`).join("")+`</div>`;
    h+=`</div>`;
-   /* insegna sospesa sopra l'ingresso della bacheca (sempre rivolta verso chi guarda) */
+   /* fasci dei faretti (verso chi guarda) e insegna sospesa */
+   TX.forEach(x=>{const w=toW(b,x,-34);h+=`<div class="s3o s3bb" data-bx="${w.x}" data-by="${EYE-DA}" data-bz="${w.z}"><div class="s3bi s3beam g" style="width:150px;height:${BH-36}px"></div></div>`});
+   JX.forEach(x=>{const w=toW(b,x,-BD/2+34);h+=`<div class="s3o s3bb" data-bx="${w.x}" data-by="${EYE-DA-70}" data-bz="${w.z}"><div class="s3bi s3beam g" style="width:120px;height:${BH-120}px;opacity:.8"></div></div>`});
    const w0=toW(b,0,BD/2-6);
-   h+=`<div class="s3o s3bb" data-bx="${w0.x}" data-by="${EYE-BH-70}" data-bz="${w0.z}"><div class="s3bi"><div class="s3tg" style="border-color:${tr}">${badge(b.t)}${E(T2.nick)}<small>${b.nt} ${b.nt===1?"titolo":"titoli"} · ${b.na} All-Star</small></div></div></div>`;
-   b.items.forEach((it,k)=>{if(it.k!=="t")return;const n2=b.items.length,sp2=n2>1?Math.min(120,(BW-110)/(n2-1)):0,lx=n2>1?-sp2*(n2-1)/2+k*sp2:0,w=toW(b,lx,-34);for(let q=0;q<4;q++){const a=q*1.7+k;h+=`<div class="s3o s3bb" data-bx="${w.x+Math.cos(a)*50}" data-by="${EYE-DA-58-30-q*38}" data-bz="${w.z+Math.sin(a)*50}"><div class="s3bi s3gl" style="width:7px;height:7px;background:radial-gradient(#fff,#ffd36b 55%,transparent 72%);animation-delay:${(q*.3).toFixed(1)}s;transform:translate(-50%,-50%)"></div></div>`}});
+   h+=`<div class="s3o s3bb" data-bx="${w0.x}" data-by="${EYE-BH-60}" data-bz="${w0.z}"><div class="s3bi"><div class="s3tg" style="border-color:${ac}">${badge(b.t)}${E(T2.nick)}<small>${b.nt} ${b.nt===1?"titolo":"titoli"} · ${b.na} All-Star</small></div></div></div>`;
+   b.items.forEach((it,k)=>{if(it.k!=="t")return;const w=toW(b,TX[k],-34);for(let q=0;q<4;q++){const a=q*1.7+k;h+=`<div class="s3o s3bb" data-bx="${w.x+Math.cos(a)*50}" data-by="${EYE-DA-58-30-q*38}" data-bz="${w.z+Math.sin(a)*50}"><div class="s3bi s3gl" style="width:7px;height:7px;background:radial-gradient(#fff,#ffd36b 55%,transparent 72%);animation-delay:${(q*.3).toFixed(1)}s;transform:translate(-50%,-50%)"></div></div>`}});
  });
  for(let k=0;k<14;k++){const x=(k%2?1:-1)*(XL+120+((k*71)%260)),z=ZN-((k*197)%(ZN-ZF+300)),y=EYE-120-((k*89)%420),w=34+((k*13)%34);
    h+=`<div class="s3o s3bb" data-bx="${x}" data-by="${y}" data-bz="${z}"><div class="s3bi s3gl" style="width:${w}px;height:${w*2.2}px;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);background:linear-gradient(135deg,#f0dcff,#9a5bff 55%,#3a1a8a);animation-duration:${(2+(k%4)*.7).toFixed(1)}s;transform:translate(-50%,-50%)"></div></div>`}
