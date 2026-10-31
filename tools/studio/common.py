@@ -1,4 +1,5 @@
-"""(823) Studio a ritroso dei report dei GM. Uso: python3 tools/gm_fit.py vals, poi python3 tools/studio/confronta_modelli.py (quale modo di contare i pacchetti spiega meglio le risposte) e python3 tools/studio/rifai_profili.py (rifà i profili GM_GUSTI da tutti i report: scrive /tmp/gm_profili_nuovi.json).
+"""(823-824) Studio a ritroso dei report dei GM. Uso: python3 tools/gm_fit.py vals; python3 tools/studio/confronta_modelli3.py (quale modo di contare i pacchetti spiega meglio le risposte); python3 tools/studio/rifai_profili.py (rifa' i profili da tutti i report -> /tmp/gm_profili_nuovi.json).
+Regola dei pacchetti in uso (824): k = 3*(valore del piu' forte dello scambio - 1000)/300 tra 0 e 3; ogni giocatore conta punti*(punti/migliore del suo lato)^k: feats3(R,1000,300,3,True).
 I report stanno nella cartella degli allegati (D): aggiornare PROP/CONF/VALU con i nuovi file.
 """
 import re,json,math
@@ -63,5 +64,20 @@ def feats2(R,lo,hi,eps):
   X=[]
   for y,g,r in R:
     vg,vr,W=sides2(g,r,lo,hi,eps)
+    X.append(((vr-vg)/max(vg,vr,1)*100,age(r,W)-age(g,W),r,y,g,W))
+  return X
+def kOf(vtop,a,span,kmax):
+  return kmax*min(1,max(0,(vtop-a)/span))
+def pkK(L,a,span,kmax,vtop=None):
+  if not L:return 0,{}
+  ps={n:pts(n) for n,_ in L};mx=max(ps.values()) or 1
+  vt=vtop if vtop is not None else max(val(n) for n,_ in L)
+  k=kOf(vt,a,span,kmax);w={n:(p/mx)**k for n,p in ps.items()}
+  return sum(ps[n]*w[n] for n in ps),w
+def feats3(R,a,span,kmax,trade=False):
+  X=[]
+  for y,g,r in R:
+    vt=max(val(n) for n,_ in g+r) if trade else None
+    vg,wg=pkK(g,a,span,kmax,vt);vr,wr=pkK(r,a,span,kmax,vt);W={**wg,**wr}
     X.append(((vr-vg)/max(vg,vr,1)*100,age(r,W)-age(g,W),r,y,g,W))
   return X

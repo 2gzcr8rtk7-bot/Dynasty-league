@@ -21,10 +21,13 @@ for t in ["TUR","SPI","DOL","PEA","FOX","DUC"]:
   src={};npro=0
   R=rows(t)
   if R:
-    X=feats(R,"k2");f=fit(X);prof.update(req=f["req"],age=f["age"],sc=f["sc"],role=f["role"]);npro=len(R)
+    X=feats3(R,1000,300,3,True);f=fit(X);prof.update(req=f["req"],age=f["age"],sc=f["sc"],role=f["role"]);npro=len(R)
     res={}
     for d,da,r,y,g,W in X:
-      z=d-f["age"]*da-f["req"]+sum(f["role"][x[1]] for x in r)/len(r);p=1/(1+math.exp(-z/f["sc"]));cr=credit(g,r)
+      z=d-f["age"]*da-f["req"]+sum(f["role"][x[1]] for x in r)/len(r);p=1/(1+math.exp(-z/f["sc"]));cr={}
+      for side in (g,r):
+        ws={n:pts(n)*W[n] for n,_ in side};sw=sum(ws.values()) or 1
+        for n in ws: cr[n]=ws[n]/sw
       for n,q in cr.items():
         if q<=0:continue
         sgn=1 if any(n==x for x,_ in r) else -1

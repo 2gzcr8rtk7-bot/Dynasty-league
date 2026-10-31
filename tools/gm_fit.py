@@ -39,9 +39,13 @@ def proposte(files):
             rows.append(dict(y=1 if m.group(1) == "SÌ" else 0, give=fx(pp(m.group(2))), get=fx(pp(m.group(3)))))
     def pkg(P):
         # (820) valore di pacchetto: punti del migliore per intero, gli altri x (punti/punti del migliore)^2 (i riempitivi contano poco)
+        # (824) k = 3*(valore del piu' forte dello scambio - 1000)/300 tra 0 e 3
         ps = sorted([Vv[x[0]]["c"] if x[0] in Vv else (x[1] / 1000) ** 1.4 * 1000 for x in P], reverse=True)
-        return sum(q * (q / ps[0]) ** 2 for q in ps) if ps and ps[0] > 0 else 0
+        k = 3 * min(1, max(0, (VT[0] - 1000) / 300))
+        return sum(q * (q / ps[0]) ** k for q in ps) if ps and ps[0] > 0 else 0
+    VT = [0]
     def feats(r):
+        VT[0] = max(x[1] for x in r["give"] + r["get"])
         vg = pkg(r["give"]); vr = pkg(r["get"])
         ag = lambda P: sum(x[1] * x[2] for x in P) / max(1, sum(x[1] for x in P))
         return (vr - vg) / max(vg, vr, 1) * 100, ag(r["get"]) - ag(r["give"])
