@@ -8,6 +8,8 @@
 
 Regole fisse (31/10/2026): si usano SEMPRE i valori di adesso (non quelli scritti nel report); bonus giocatore =
 logit/beta/2 (crediti ~ valore^2) × min(1, apparizioni/8), tetto ±12, scartati i giocatori sotto 40 crediti.
+Dal 31/10 (820): nelle proposte il valore di ogni lato e' un PACCHETTO (il migliore per intero, gli altri x (punti/migliore)^2);
+nei residui per giocatore il merito/colpa va diviso per la quota del giocatore nel pacchetto (i riempitivi non prendono bonus).
 """
 import sys, re, json, math, itertools
 VALS = "/tmp/gm_vals.json"
@@ -35,8 +37,12 @@ def proposte(files):
             if not m: continue
             fx = lambda L: [(a, Vv[a]["v"] if a in Vv else b, c, d) for a, b, c, d in L]
             rows.append(dict(y=1 if m.group(1) == "SÌ" else 0, give=fx(pp(m.group(2))), get=fx(pp(m.group(3)))))
+    def pkg(P):
+        # (820) valore di pacchetto: punti del migliore per intero, gli altri x (punti/punti del migliore)^2 (i riempitivi contano poco)
+        ps = sorted([Vv[x[0]]["c"] if x[0] in Vv else (x[1] / 1000) ** 1.4 * 1000 for x in P], reverse=True)
+        return sum(q * (q / ps[0]) ** 2 for q in ps) if ps and ps[0] > 0 else 0
     def feats(r):
-        vg = sum(x[1] for x in r["give"]); vr = sum(x[1] for x in r["get"])
+        vg = pkg(r["give"]); vr = pkg(r["get"])
         ag = lambda P: sum(x[1] * x[2] for x in P) / max(1, sum(x[1] for x in P))
         return (vr - vg) / max(vg, vr, 1) * 100, ag(r["get"]) - ag(r["give"])
     F = [feats(r) for r in rows]

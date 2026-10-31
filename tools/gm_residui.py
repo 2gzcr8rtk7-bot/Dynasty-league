@@ -37,7 +37,9 @@ for t,fs in F.items():
       ag=lambda L:sum(V.get(n,{}).get('v',0)*V.get(n,{}).get('e',26) for n,_ in L)/max(1,sum(V.get(n,{}).get('v',0) for n,_ in L))
       d=(vr-vg)/max(vg,vr,1)*100;z=d-g['age']*(ag(get)-ag(give))-g['req']+sum(g['role'].get(r,0) for _,r in get)/len(get)
       p=1/(1+math.exp(-z/(g.get('sc') or 12.5)))
-      for n,_ in give: r=res.setdefault(n,[0,0]);r[0]+=1;r[1]+=y-p
+      # (820) quota di ogni giocatore nel pacchetto: i riempitivi non prendono merito ne' colpa
+      cs={n:V.get(n,{}).get('c',0) for n,_ in give};mx=max(cs.values() or [1]) or 1;wq={n:c*(c/mx)**2 for n,c in cs.items()};sw=sum(wq.values()) or 1
+      for n,_ in give: r=res.setdefault(n,[0,0]);r[0]+=wq[n]/sw;r[1]+=(y-p)*wq[n]/sw
   for n,(c,rs) in res.items():
     if c<4 or n in g['pl'] or V.get(n,{}).get('v',0)<300: continue
     v=-max(-10,min(10,rs/c/0.2*(g.get('sc') or 12.5)*0.5))
