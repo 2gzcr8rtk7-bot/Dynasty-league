@@ -11934,5 +11934,30 @@ document.addEventListener("click",e=>{if(cur!=="iaallena")return;const b=e.targe
 .lbmh{grid-template-columns:auto minmax(0,1fr) auto!important;gap:4px!important}.lbmh>.lbmw{min-width:0;gap:3px!important}
 @media (max-width:430px){.lbmh .lbma{width:24px!important}.lbmh .lbm{gap:3px!important;padding:0 5px!important}.lbmh .lbmn{font-size:17px!important}.lbmh .lbml{width:19px!important;height:19px!important}.lbmh .lbml svg,.lbmh .lbml img{max-width:19px;max-height:19px}.lbmh .lbmg{font-size:9.5px}}
 </style>
+<style>.atrst{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 10px}.atrst .atb{padding:9px 8px;font-size:13px}</style>
+<script>
+/* (746) GUSTI DEI GM nell'IA Trade. Ogni squadra che manda il report dell'Allenamento IA ha un profilo (GM_GUSTI): dalle sue risposte
+   (regressione logistica su Δ valore ed età) si ricavano: age = punti di valore per anno di età in più ricevuto, req = vantaggio % che
+   chiede per dire sì al 50%, role = preferenza per ruolo ricevuto (punti %), pl = giocatori che valuta più/meno del calcolatore (punti %, ridotti
+   se visti poche volte). Quando una squadra usa l'IA Trade (squadra scelta in alto) le proposte vengono riordinate in base alla probabilità che
+   le piacciano; se anche l'altra squadra ha un profilo, conta anche la probabilità che accetti. Peso del profilo = min(.6, risposte/150):
+   pochi dati = si resta vicini all'IA normale. Resta la scelta casuale tra le migliori 12 (iaNext). */
+const GM_GUSTI={"TUR": {"n": 79, "agg": "31/10/2026", "age": 2.25, "req": 7.5, "role": {"G": -2, "F": 2, "C": 2}, "pl": {"Chet Holmgren": -9.2, "Derik Queen": -11.8, "Darryn Peterson": -7.1, "Jalen Duren": 9.3, "Josh Giddey": 9.8, "Matas Buzelis": 8.9, "Kyrie Irving": 5.4, "Tyrese Maxey": -11.5, "Ivica Zubac": -12.2, "Egor Dëmin": -10.2, "Jayson Tatum": -8.8, "Trey Murphy III": -7.7, "Collin Murray-Boyles": -7.2, "Trae Young": -7.2, "LaMelo Ball": -6.9, "Karl-Anthony Towns": -4.6}}};
+function gmProb(t,give,get,cin,cout){cin=cin||0;cout=cout||0;const G=GM_GUSTI[t];if(!G||!give.length||!get.length)return null;
+ const v=n=>{let x=valOf(n)||0;const b=G.pl[n];return x};const CR=(typeof VAL_CR!=="undefined"?VAL_CR:0),vg=give.reduce((a,n)=>a+v(n),0)+cout*CR,vr=get.reduce((a,n)=>a+v(n),0)+cin*CR;if(!vg&&!vr)return null;
+ const ag=L=>{const sv=L.reduce((a,n)=>a+(valOf(n)||0),0)||1;return L.reduce((a,n)=>a+(valOf(n)||0)*(iaAge(n)??26),0)/sv};
+ const d=(vr-vg)/Math.max(vg,vr,1)*100;let g=d-G.age*(ag(get)-ag(give))-G.req;
+ get.forEach(n=>{g+=(G.role[ruoloDi(n)]||0)/get.length+(G.pl[n]||0)});give.forEach(n=>{g-=(G.pl[n]||0)});
+ return 1/(1+Math.exp(-g/12.5))}
+function gmSides(x){const R=iaRec(x),o={};for(const t in R){const get=R[t].pl.map(p=>p.n),give=[];let cin=R[t].cr.reduce((a,c)=>a+(+c.v||0),0),cout=0;for(const u in R){R[u].pl.forEach(p=>{if(p.from===t)give.push(p.n)});R[u].cr.forEach(c=>{if(c.from===t)cout+=(+c.v||0)})}o[t]={give,get,cin,cout}}return o}
+function gmWeigh(pool){const A=iaTeam();if(!pool||!pool.length)return pool;let any=false;
+ pool.forEach(x=>{try{const S=gmSides(x);let w=1;x.gm=null;for(const t in S){const G=GM_GUSTI[t];if(!G)continue;const p=gmProb(t,S[t].give,S[t].get,S[t].cin,S[t].cout);if(p==null)continue;const k=Math.min(.6,G.n/150);w*=(1-k)+k*2*p;(x.gm=x.gm||{})[t]=p;any=true}x.sc0=x.sc0??x.sc;x.sc=x.sc0*w}catch(e){}});
+ if(any)pool.sort((a,b)=>b.sc-a.sc);return pool}
+{const N0=iaNext;iaNext=function(){const fresh=!IA.pool||IA.key!==iaKey();const r=N0.apply(this,arguments);if(fresh&&IA.pool){gmWeigh(IA.pool);IA.seen={};IA.rd=0;IA.out=[];IA.noMore=false;N0.apply(this,arguments)}return r}}
+{const C0=iaCard;iaCard=function(x,i){let h=C0.apply(this,arguments);try{if(x.gm){const A=iaTeam(),t=Object.keys(x.gm),f=p=>Math.round(p*100)+"%",
+  txt=t.map(u=>u===A?`ti piace al ${f(x.gm[u])}`:`${TEAMS[u].nick} accetterebbe al ${f(x.gm[u])}`).join(" · ");
+  h=h.replace(/<\/(div|article|section)>\s*$/,`<p class="gmgu">🎯 Sui gusti dei GM: ${txt}</p></$1>`)}}catch(e){}return h}}
+</script>
+<style>.gmgu{margin:8px 0 0;padding:7px 10px;border-radius:10px;background:rgba(124,58,237,.12);font-size:12.5px;font-weight:600}</style>
 </body>
 </html>
