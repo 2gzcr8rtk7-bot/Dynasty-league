@@ -5051,7 +5051,7 @@ function vPrevisione(){const n=PRV.n,opp=PRV.opp,I0=segInfo(n)||{},own=I0.kind==
   <div class="prsec"><h4>Ultime gare di stagione</h4><div class="tbl-wrap"><table class="gtab prt2"><thead><tr><th>Data</th><th>Avversario</th><th>Min</th><th>PDK</th></tr></thead><tbody>${cur26}</tbody></table></div></div>
   <p class="note">Stima statistica, non una garanzia: usa solo i PDK già giocati. Tocca ‹ per tornare alla Home.</p>`}
 function hnPresent(){const L=Object.keys(TV.days).filter(x=>(TV.days[x]||[]).some(g=>g[5]==="L"||g[5]==="F")).sort();return campoNotte()||L[L.length-1]||flUsaOggi()}
-function hnFuture(h){return Object.keys(TV.days).filter(x=>x>h&&(TV.days[x]||[]).some(g=>g[5]==="S")).sort()}
+function hnFuture(h){return Object.keys(TV.days).filter(x=>x>h&&(TV.days[x]||[]).some(g=>g[5]==="S")).sort().slice(0,1)}/* una sola notte avanti */
 function hnPast(h){return Object.keys(TV.days).filter(x=>x<h&&(TV.days[x]||[]).some(g=>g[5]==="F"&&g[7]&&TV.box[g[7]])).sort().reverse()}
 function homeNotte(st){
   const myT=homeMyT(),HNP=hnPresent(),FUTD=hnFuture(HNP),PN=hnPast(HNP);HN_NO=Math.max(-FUTD.length,Math.min(PN.length,HN_NO));const pre=HN_NO<0?FUTD[-HN_NO-1]:null,d=pre||HNP,GG=(typeof TV!=="undefined"&&TV.days[d]||[]).filter(g=>pre?g[5]==="S":(g[5]==="L"||g[5]==="F"||g[5]==="S"));
