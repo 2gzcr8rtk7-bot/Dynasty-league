@@ -1915,3 +1915,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 742. Pagina Campo: il bordino di 6px resta su intestazione, bacheca, cassa, campo e panchina/tribuna; la tabella Live stanotte (con Notte/Turno, .clwrap) torna fino al bordo dello schermo.
 
 743. Pagina Campo: banner squadra, bacheca, cassa, campo, panchina e tribuna tornano esattamente come prima delle modifiche 739/741 (la regola delle sezioni a tutta larghezza non si applica piu' a campo/college); solo la tabella Live stanotte (.clwrap) resta fino al bordo dello schermo.
+
+744. Parquet: caselle bianche -> crema (#fdf3e1) solo nelle pagine scelte dall'utente: Home, Giocatori, Roster, Pic-trade, Efficienza Cup, Cap, Calcola il trend (funzione pqCrema dopo ogni render e dopo i tocchi). Esclusi badge PDK, campo, loghi Home, tasti selezionati. Restano bianchi Campo, Trade alert e Statistiche (non richiesti).

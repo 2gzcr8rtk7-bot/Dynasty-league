@@ -11912,5 +11912,17 @@ const sty=document.createElement("style");sty.textContent=".dxp .dxm{display:fle
 const H0=render;render=function(){const x=H0.apply(this,arguments);barUpd();return x};
 })();
 </script>
+<script>
+/* (744) Parquet: nelle pagine scelte dall'utente (Home, Giocatori, Roster, Pic-trade, Efficienza Cup, Cap, Calcola il trend)
+   ogni casella con fondo BIANCO pieno diventa CREMA (#fdf3e1). Esclusi badge PDK, campo, loghi Home, tasti selezionati. */
+(function(){const C="#fdf3e1",V=new Set(["home","fa","roster","pictrade","effcup","cap","trend"]);
+function crema(){try{const R=document.documentElement;if(!R.classList.contains("dlt-parquet")||R.classList.contains("notte"))return;
+ if(!V.has(document.body.dataset.v))return;const m=document.querySelector("main");if(!m)return;
+ for(const e of m.querySelectorAll("*")){if(e.dataset.pqc||e.closest(".pdkx,.pdkb,svg,.court,.htile"))continue;const c=getComputedStyle(e);if(c.backgroundImage!=="none")continue;
+  if(!/^rgba?\(25[0-5], 25[0-5], 25[0-5](, 1)?\)$/.test(c.backgroundColor))continue;if(e.getAttribute("aria-pressed")==="true"||e.getAttribute("aria-selected")==="true")continue;
+  const r=e.getBoundingClientRect();if(r.width<24||r.height<16)continue;e.style.setProperty("background-color",C,"important");e.dataset.pqc="1"}}catch(_){}}
+window.pqCrema=crema;const R0=render;render=function(){const x=R0.apply(this,arguments);crema();setTimeout(crema,80);return x};
+document.addEventListener("click",()=>setTimeout(crema,60),true);setTimeout(crema,300)})();
+</script>
 </body>
 </html>
