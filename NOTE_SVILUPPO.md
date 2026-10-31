@@ -1858,3 +1858,4 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 703. Parquet: roster squadra (Guardie/Ali/Centri) con base bianca e nomi arancio al posto del blu; badge PDK e intestazioni di ruolo invariati.
 704. Parquet: pagina Scambi con caselle a base bianca (non trasparente) e scritte arancio: carta squadra, giocatori, crediti, slot, note e tasti Fai la foto / Copia per Claude.
 705. Parquet: pagine Comparatore e Trend (sala grafici) senza fondo blu: parquet dietro, riquadri bianchi con scritte arancio, tasto attivo arancio con scritta bianca.
+706. Parquet: interruttore Modalita' notte arancio quando e' spento (pallino bianco con luna arancio); da acceso resta viola.
