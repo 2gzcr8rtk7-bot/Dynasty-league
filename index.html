@@ -4443,7 +4443,7 @@ const iaLvSel=()=>`<div class="iaq" role="group" aria-label="Guadagno">${[["eq",
 const iaNSel=()=>{const one=IA.mode!=="pl"||new Set(IA.want.map(iaOwner)).size<=1;
   if(true)return one?`<div class="iaq iaq4" role="group" aria-label="Squadre coinvolte">${[2,3,4,5].map(n=>`<button data-ia="np" data-n="${n}" aria-pressed="${IA.np===n}"><b>${n}</b><small>${n===2?"squadre":"fino a "+n}</small></button>`).join("")}</div>`:`<p class="iasub">Due giocatori di squadre diverse: scambio a 3 squadre.</p>`;
   return `<div class="iaq iaq2" role="group" aria-label="Squadre coinvolte">${[2,3].map(n=>`<button data-ia="n" data-n="${n}" aria-pressed="${IA.n===n}"><b>${n}</b><small>${n} squadre</small></button>`).join("")}</div>`};
-function vIA(){if(IA.mode!=="role"&&IA.mode!=="pl"){const A0=iaTeam();return`${H("IA Trade",`<em>${TEAMS[A0].nick}</em>`)}<div class="iachoose" role="group" aria-label="Modalità"><div class="iach"><button data-ia="mode" data-k="role">Per ruolo</button><p>Hai bisogno di un ruolo (guardia, ala o centro)? Scegli che ruolo cerchi e cosa sei disposto a dare: l'IA trova da sola i giocatori giusti e le squadre con cui scambiare, anche a 4&#8209;5 squadre.</p></div><div class="iach"><button data-ia="mode" data-k="pl">Per giocatore</button><p>Hai in mente uno o più giocatori precisi? Scegli quelli che vuoi e quelli che non vuoi dare: l'IA costruisce gli scambi per arrivarci, anche a 4&#8209;5 squadre.</p></div><div class="iach"><button data-ia="gusti">Per gusti</button><p>Contano gli interessi dei GM più dei valori: trova gli scambi che hanno più probabilità di essere accettati davvero, a ragnatela fino a 6 squadre. I gusti li decidono i GM con i report dell'Allenamento IA.</p></div></div>`}
+function vIA(){if(IA.mode!=="role"&&IA.mode!=="pl"){const A0=iaTeam();return`${H("IA Trade",`<em>${TEAMS[A0].nick}</em>`)}<div class="iachoose" role="group" aria-label="Modalità"><div class="iach"><button data-ia="mode" data-k="role">Per ruolo</button><p>Hai bisogno di un ruolo (guardia, ala o centro)? Scegli che ruolo cerchi e cosa sei disposto a dare: l'IA trova da sola i giocatori giusti e le squadre con cui scambiare, anche a 4&#8209;5 squadre.</p></div><div class="iach"><button data-ia="mode" data-k="pl">Per giocatore</button><p>Hai in mente uno o più giocatori precisi? Scegli quelli che vuoi e quelli che non vuoi dare: l'IA costruisce gli scambi per arrivarci, anche a 4&#8209;5 squadre.</p></div><div class="iach"><button data-ia="gusti">Per gusti</button><p>Contano gli interessi dei GM più dei valori: trova gli scambi che hanno più probabilità di essere accettati davvero, a ragnatela fino a 6 squadre. I gusti li decidono i GM con i report dell'Allenamento IA.</p></div><div class="iach"><button data-ia="cedi">Per cessione</button><p>Hai giocatori di cui ti vuoi liberare? Sceglili: l'IA, con i gusti dei GM, trova tutti i possibili acquirenti e gli scambi che potresti chiudere, a due squadre o a 3&#8209;4.</p></div></div>`}
   const A=iaTeam(),c=TEAMS[A],st=IA.st,pl=IA.mode==="pl",ok1=pl?IA.want.some(n=>iaOwner(n)&&iaOwner(n)!==A):(!!IA.needs[0]||IA.any),
     /* Per ruolo: per ricevere un ruolo devi offrirne almeno uno dello stesso ruolo (le trade speciali non contano), altrimenti i ruoli non si compensano */
     giveR=r=>IA.give.some(n=>{const p=ROSTER[A].find(x=>x[0]===n);return p&&p[2]===r&&!iaSp(n)}),missR=pl||IA.any?[]:IA.needs.filter(Boolean).filter(r=>!giveR(r)),
@@ -4521,7 +4521,7 @@ function vTrade(){
   const sw=`<div class="gdmsw" role="tablist">${[["tutte","Tutte le trade"],["sp","Trade speciale"]].map(([k,l])=>`<button data-trs="${k}" role="tab" aria-selected="${TRS===k}">${l}</button>`).join("")}</div>`;
   return sw+(TRS==="sp"?vSpeciali():vTradeAll());
 }
-document.getElementById("main").addEventListener("click",e=>{if(cur!=="iatrade")return;const b=e.target.closest("[data-ia]");if(b&&b.dataset.ia==="gusti"){e.preventDefault();e.stopImmediatePropagation();/* (778) terza scelta dell'IA Trade: Mercato dei gusti, con la squadra scelta qui */try{if(window.GU){window.GU.team=iaTeam();window.GU.page=null}}catch(_){}cur="gusti";render();scrollTo(0,0);return}if(b&&b.tagName!=="SELECT"&&!b.disabled){e.preventDefault();iaAct(b)}});
+document.getElementById("main").addEventListener("click",e=>{if(cur!=="iatrade")return;const b=e.target.closest("[data-ia]");if(b&&b.dataset.ia==="cedi"){e.preventDefault();e.stopImmediatePropagation();/* (799) quarta scelta: cessione, nel motore dei gusti */try{if(window.GU){const G=window.GU;if(G.team!==iaTeam())G.sell=new Set();G.team=iaTeam();G.page="ia";G.mode="sell";G.res=null;G.maxk=Math.min(G.maxk||4,4)}}catch(_){}cur="gusti";render();scrollTo(0,0);return}if(b&&b.dataset.ia==="gusti"){e.preventDefault();e.stopImmediatePropagation();/* (778) terza scelta dell'IA Trade: Mercato dei gusti, con la squadra scelta qui */try{if(window.GU){window.GU.team=iaTeam();window.GU.page=null}}catch(_){}cur="gusti";render();scrollTo(0,0);return}if(b&&b.tagName!=="SELECT"&&!b.disabled){e.preventDefault();iaAct(b)}});
 document.getElementById("main").addEventListener("input",e=>{if(cur!=="iatrade"||e.target.id!=="iaq")return;IA.q=e.target.value;const L=document.getElementById("iaList");if(L)L.innerHTML=iaListHTML()});
 document.getElementById("main").addEventListener("change",e=>{if(cur!=="iatrade")return;const b=e.target;if(b&&b.dataset&&b.dataset.ia==="team"){IA.cr.c=Math.min(IA.cr.c,iaCassa(b.value));iaAct(b)}});
 /* (461) il banner delle trade nella Home è cliccabile: porta a Trade (scambi, aste, G League) o a Trade speciale in base alla categoria */
@@ -12299,7 +12299,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-hp]");if(!
    le squadre senza report usano il gusto medio della lega («stima»). Gli infortunati OUT valgono come negli scambi (curva iaOutF).
    Punteggio di una proposta = probabilità che dicano sì TUTTI (prodotto). Ricerca: tante partenze casuali + miglioramenti locali. */
 (function(){
-const GU={page:null,team:null,mode:"pl",target:null,q:"",role:"C",minv:900,maxk:4,keep:new Set(),res:null,busy:false,info:false};window.GU=GU;
+const GU={page:null,team:null,mode:"pl",target:null,q:"",role:"C",minv:900,maxk:4,keep:new Set(),sell:new Set(),buy:null,res:null,busy:false,info:false};window.GU=GU;
 const E=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const RN={G:"guardia",F:"ala",C:"centro"},RP={G:"Guardie",F:"Ali",C:"Centri"};
 const myT=()=>GU.team&&TEAMS[GU.team]?GU.team:(TEAMS[curTeam]?curTeam:"DUC");
@@ -12331,11 +12331,14 @@ function buildIO(D){const io={};D.T.forEach(t=>io[t]={give:[],get:[],free:0});co
 function evalDeal(D){const{io,mv}=buildIO(D);
   if(mv.length>Math.max(4,2*D.T.length+1))return null;/* scambi leggibili: al massimo 3 giocatori dati per squadra e circa 2 per squadra in tutto */for(const t of D.T){const x=io[t];if(!x.give.length||!x.get.length||x.give.length>3)return null;if((ROSTER[t]||[]).length+x.free>IA_MAXR)return null}
   if(new Set(mv.map(m=>m.n)).size!==mv.length)return null;
+  if(GU.mode==="sell"){const A=myT();if(io[A]&&io[A].give.some(n=>!GU.sell.has(n)))return null}
   let P=1;const S={};for(const t of D.T){const r=gsc(t,io[t].give,io[t].get);if(r.d<-45)return null;S[t]=r;P*=r.p}
   return{P,S,io,mv}}
 function search(){const A=myT(),others=Object.keys(ROSTER).filter(t=>t!==A),maxk=Math.max(2,Math.min(6,GU.maxk));PA=profAvg();VX={};AX={};
   const P={},SP={};Object.keys(ROSTER).forEach(t=>{const L=(ROSTER[t]||[]).filter(p=>p[5]!=="G"&&(valOf(p[0])||0)>0&&!(t===A&&GU.keep.has(p[0]))).map(p=>p[0]);P[t]={G:[],F:[],C:[]};SP[t]=[];L.forEach(n=>{if(iaSp(n))SP[t].push(n);else(P[t][ruoloDi(n)]||(P[t][ruoloDi(n)]=[])).push(n)})});
-  let tg=null,need=null;if(GU.mode==="pl"){tg=GU.target;if(!tg||!iaOwner(tg)||iaOwner(tg)===A)return[]}else need={r:GU.role,v:+GU.minv||0};
+  let tg=null,need=null;const SELL=GU.mode==="sell"?[...GU.sell].filter(n=>iaOwner(n)===A&&!iaSp(n)):null;if(SELL&&!SELL.length)return[];
+  if(GU.mode==="pl"){tg=GU.target;if(!tg||!iaOwner(tg)||iaOwner(tg)===A)return[]}else if(!SELL)need={r:GU.role,v:+GU.minv||0};
+  const BUY={};SELL&&SELL.forEach(n=>BUY[n]={});
   const cand=need?others.flatMap(t=>P[t][need.r].filter(n=>vx(n)>=need.v).map(n=>({n,t}))):[];if(need&&!cand.length)return[];
   const used=D=>new Set([...D.cy.flatMap(c=>c.pl),...(D.fr||[]).map(f=>f.n)]);
   /* un giro del ruolo r sulla sequenza di squadre seq (ognuna dà alla successiva); fixN = giocatore obbligato del primo */
@@ -12343,11 +12346,17 @@ function search(){const A=myT(),others=Object.keys(ROSTER).filter(t=>t!==A),maxk
   const best=new Map(),t0=performance.now();let it=0;
   while(performance.now()-t0<2200&&it<12000){it++;
     const k=2+Math.floor(Math.pow(Math.random(),1.3)*(maxk-1));
-    const f=tg?{n:tg,t:iaOwner(tg)}:rnd(cand);if(iaSp(f.n))continue;const r0=ruoloDi(f.n);
-    const T=[A,f.t];shuffle(others.filter(t=>t!==f.t)).slice(0,k-2).forEach(t=>T.push(t));
+    let T,D;
+    if(SELL){/* (799) CESSIONE: A dà i giocatori scelti (uno o più) a uno o più acquirenti; ogni acquirente ricambia lo stesso ruolo, anche passando da altre squadre */
+      const ss=Math.random()<.35?SELL.slice():shuffle(SELL.slice()).slice(0,1+(Math.random()*SELL.length|0));const b0=others[it%others.length];
+      T=[A,b0];shuffle(others.filter(t=>t!==b0)).slice(0,k-2).forEach(t=>T.push(t));D={T,cy:[],fr:[]};let bad=false;
+      ss.forEach((n,j)=>{if(bad)return;const by=j===0?b0:rnd(T.filter(t=>t!==A));const mid=shuffle(T.filter(t=>t!==A&&t!==by)).slice(0,Math.random()*(T.length-1)|0);
+        const c=mkCycle(ruoloDi(n),[A,by,...mid],new Set(D.cy.flatMap(c=>c.pl)),n);if(!c)bad=true;else D.cy.push(c)});if(bad)continue}
+    else{const f=tg?{n:tg,t:iaOwner(tg)}:rnd(cand);if(iaSp(f.n))continue;const r0=ruoloDi(f.n);
+    T=[A,f.t];shuffle(others.filter(t=>t!==f.t)).slice(0,k-2).forEach(t=>T.push(t));
     /* giro obbligato: il proprietario dà il giocatore cercato ad A, poi il ruolo gira fino a tornare al proprietario */
     const mid=shuffle(T.filter(t=>t!==A&&t!==f.t)).slice(0,Math.random()*(T.length-1)|0);
-    const D={T,cy:[],fr:[]};let c0=mkCycle(r0,[f.t,A,...mid],new Set(),f.n);if(!c0)continue;D.cy.push(c0);
+    D={T,cy:[],fr:[]};let c0=mkCycle(r0,[f.t,A,...mid],new Set(),f.n);if(!c0)continue;D.cy.push(c0)}
     /* chi non è ancora coinvolto entra con un altro giro (ruolo a caso), anche in direzione diversa: è la ragnatela */
     let ok=true;for(let g=0;g<6;g++){const inv=new Set(D.cy.flatMap(c=>c.seq)),miss=T.filter(t=>!inv.has(t));if(!miss.length)break;
       const t=miss[0],rr=rnd(["G","F","C"]),pals=shuffle(T.filter(u=>u!==t)).slice(0,1+(Math.random()<.4?1:0)),c=mkCycle(rr,shuffle([t,...pals]),used(D));if(c)D.cy.push(c);else if(g===5)ok=false}
@@ -12359,8 +12368,9 @@ function search(){const A=myT(),others=Object.keys(ROSTER).filter(t=>t!==A),maxk
       else if(op<.9){/* giocatore in trade speciale: si sposta senza contropartita */const t=rnd(T),L=SP[t].filter(n=>!U.has(n));if(!L.length)continue;D2.fr.push({n:rnd(L),from:t,to:rnd(T.filter(u=>u!==t))})}
       else if((D2.fr||[]).length){D2.fr.pop()}
       const R2=evalDeal(D2);if(R2&&(!R||R2.P>R.P)){cur2=D2;R=R2}}
-    if(!R)continue;const key=R.mv.map(m=>m.n+">"+m.to).sort().join("|");if(!best.has(key))best.set(key,{D:{T,mv:R.mv},R})}
-  GU.iter=it;const all=[...best.values()].sort((a,b)=>b.R.P-a.R.P).filter((x,i,a)=>a.slice(0,i).filter(y=>y.D.T.length===x.D.T.length&&y.D.mv.filter(m=>x.D.mv.some(z=>z.n===m.n)).length>=x.D.mv.length-1).length<2);
+    if(!R)continue;const key=R.mv.map(m=>m.n+">"+m.to).sort().join("|");if(!best.has(key))best.set(key,{D:{T,mv:R.mv},R});
+    if(SELL)R.mv.forEach(m=>{if(m.from===A&&BUY[m.n]){const o=BUY[m.n][m.to];if(!o||R.P>o.P)BUY[m.n][m.to]={P:R.P,k:T.length,p:R.S[m.to].p,back:R.io[m.to].give.filter(x=>R.mv.find(y=>y.n===x&&y.to===A)),with:R.io[A].give.filter(x=>x!==m.n)}}})}
+  GU.iter=it;GU.buy=SELL?BUY:null;const all=[...best.values()].sort((a,b)=>b.R.P-a.R.P).filter((x,i,a)=>a.slice(0,i).filter(y=>y.D.T.length===x.D.T.length&&y.D.mv.filter(m=>x.D.mv.some(z=>z.n===m.n)).length>=x.D.mv.length-1).length<2);
   const pick=new Set(all.slice(0,6));for(let k=3;k<=maxk;k++)all.filter(x=>x.D.T.length===k).slice(0,2).forEach(x=>pick.add(x));return[...pick].sort((a,b)=>b.R.P-a.R.P).slice(0,16)}
 /* perché: la ragione principale per ogni squadra */
 function why(t,r){const G=prof(t),f=v=>(v>0?"+":"")+Math.round(v);const L=[];
@@ -12420,21 +12430,26 @@ function vGusti(){if(!GU.page)return vGustiHome();if(GU.page==='scopri')return v
   <button type="button" class="gulk" data-gu="info">${GU.info?"Nascondi":"Mostra"} i profili dei GM (${prs.length} squadre)</button>
   ${GU.info?`<div class="gupr">${T.map(t=>{const G=GM_GUSTI[t];return`<div>${badge(t)}<b>${TEAMS[t].nick}</b><small>${G?`report del ${G.agg||"—"} · affidabilità ${Math.round(Math.min(1,(G.n||0)/150)*100)}% · vuole +${Math.round(G.req||0)}% di vantaggio · età ${(G.age||0).toFixed(1)} · ${Object.keys(G.pl||{}).length} giocatori con un gusto`:"nessun report: usa il gusto medio (stima)"}</small></div>`}).join("")}</div>`:""}</div>
   <section class="gubox"><h4>La tua squadra</h4><div class="gurowc">${tch}</div>
-  <h4>Cosa cerchi</h4><div class="guseg"><button type="button" data-gu="mode" data-v="pl" class="${GU.mode==="pl"?"on":""}">Un giocatore</button><button type="button" data-gu="mode" data-v="role" class="${GU.mode==="role"?"on":""}">Un ruolo</button></div>
-  ${GU.mode==="pl"?`${tgt?`<div class="gutg">${badge(iaOwner(tgt))}<b>${E(tgt)}</b><small>${RN[ruoloDi(tgt)]} · ${TEAMS[iaOwner(tgt)].nick} · valore ${valOf(tgt)}</small><button type="button" data-gu="untg">cambia</button></div>`:`<input class="vtq" id="guq" type="search" placeholder="🔍 Cerca il giocatore che vuoi" value="${E(GU.q||"")}" autocomplete="off"><div class="gulist">${list.map(x=>`<button type="button" class="guli" data-gu="tg" data-v="${E(x.n)}">${badge(x.t)}<span>${E(x.n)}<small>${RN[ruoloDi(x.n)]} · ${TEAMS[x.t].nick}</small></span><b>${valOf(x.n)}</b></button>`).join("")}</div>`}`
+  <h4>Cosa cerchi</h4><div class="guseg"><button type="button" data-gu="mode" data-v="pl" class="${GU.mode==="pl"?"on":""}">Un giocatore</button><button type="button" data-gu="mode" data-v="role" class="${GU.mode==="role"?"on":""}">Un ruolo</button><button type="button" data-gu="mode" data-v="sell" class="${GU.mode==="sell"?"on":""}">Voglio cedere</button></div>
+  ${GU.mode==="sell"?`<p class="setnote">Tocca i giocatori di cui ti vuoi liberare (uno o più): l'IA cerca chi li compra, da sola o in scambi a più squadre, e cosa ti darebbero in cambio (sempre lo stesso ruolo).</p><div class="gukeep">${pool(A).sort((a,b)=>vx0(b)-vx0(a)).map(n=>`<button type="button" class="guk${GU.sell.has(n)?" on":""}" data-gu="sell" data-v="${E(n)}">${GU.sell.has(n)?"💸 ":""}${E(nmAb(n))} <small>${vx0(n)}</small></button>`).join("")}</div>`
+  :GU.mode==="pl"?`${tgt?`<div class="gutg">${badge(iaOwner(tgt))}<b>${E(tgt)}</b><small>${RN[ruoloDi(tgt)]} · ${TEAMS[iaOwner(tgt)].nick} · valore ${valOf(tgt)}</small><button type="button" data-gu="untg">cambia</button></div>`:`<input class="vtq" id="guq" type="search" placeholder="🔍 Cerca il giocatore che vuoi" value="${E(GU.q||"")}" autocomplete="off"><div class="gulist">${list.map(x=>`<button type="button" class="guli" data-gu="tg" data-v="${E(x.n)}">${badge(x.t)}<span>${E(x.n)}<small>${RN[ruoloDi(x.n)]} · ${TEAMS[x.t].nick}</small></span><b>${valOf(x.n)}</b></button>`).join("")}</div>`}`
   :`<div class="guseg">${["G","F","C"].map(r=>`<button type="button" data-gu="role" data-v="${r}" class="${GU.role===r?"on":""}">${RP[r]}</button>`).join("")}</div><label class="gumin">Valore minimo <select data-gu="minv">${[0,500,700,900,1100,1300,1600].map(v=>`<option value="${v}"${+GU.minv===v?" selected":""}>${v?v+"+":"qualsiasi"}</option>`).join("")}</select></label>`}
   <h4>Fino a quante squadre</h4><div class="guseg">${[2,3,4,5,6].map(k=>`<button type="button" data-gu="k" data-v="${k}" class="${GU.maxk===k?"on":""}">${k}</button>`).join("")}</div>
-  <h4>Non cedo <small>(tocca per bloccare)</small></h4><div class="gukeep">${keep}</div>
-  <button type="button" class="gugo" data-gu="go"${GU.busy||(GU.mode==="pl"&&!tgt)?" disabled":""}>${GU.busy?"⏳ Cerco tra migliaia di combinazioni…":res?"🔄 Cerca ancora (altre combinazioni)":"🔎 Cerca gli scambi"}</button></section>
+  ${GU.mode==="sell"?"":`<h4>Non cedo <small>(tocca per bloccare)</small></h4><div class="gukeep">${keep}</div>`}
+  <button type="button" class="gugo" data-gu="go"${GU.busy||(GU.mode==="pl"&&!tgt)||(GU.mode==="sell"&&!GU.sell.size)?" disabled":""}>${GU.busy?"⏳ Cerco tra migliaia di combinazioni…":res?"🔄 Cerca ancora (altre combinazioni)":"🔎 Cerca gli scambi"}</button></section>
+  ${res&&GU.mode==="sell"&&GU.buy?buyers():""}
   ${res?`<section class="gures"><h4>${res.length?`Le ${res.length} proposte più gradite`:"Nessuno scambio trovato"}</h4>${res.length?`<p class="setnote"><b>«Dice sì al»</b> (accanto a ogni squadra) = quanto è probabile che quel GM accetti, secondo i suoi gusti. <b>«Si chiude al»</b> (in alto, su ogni proposta) = quanto è probabile che lo scambio vada in porto, cioè che dicano sì <b>tutte</b> le squadre insieme: si moltiplicano le loro percentuali (es. 70% × 60% = 42%). Per questo più squadre ci sono, più si abbassa, anche se ognuna è contenta. Verde sopra 60%, giallo 40–60%, rosso sotto. Tocca una proposta per aprirla.</p>`:`<p class="setnote">Prova con più squadre, un valore minimo più basso o meno giocatori bloccati.</p>`}${res.map(card).join("")}</section>`:""}`}
 const vx0=n=>{try{return valOf(n)||0}catch(e){return 0}};
+/* (799) acquirenti possibili per ogni giocatore in vendita: per ogni squadra lo scambio migliore trovato in cui lo riceve */
+function buyers(){const B=GU.buy,A=myT();return`<section class="gures"><h4>Chi li compra</h4><p class="setnote">Per ogni giocatore che vuoi cedere, le squadre che lo prenderebbero: <b>«dice sì al»</b> = quanto piace a quel GM riceverlo in quello scambio, <b>«si chiude al»</b> = probabilità che lo scambio intero vada in porto (tra parentesi quante squadre). Sotto, le proposte complete.</p>
+  ${Object.keys(B).map(n=>{const L=Object.entries(B[n]).sort((a,b)=>b[1].P-a[1].P);return`<div class="gubuy"><b class="gubn">${E(n)} <small>${RN[ruoloDi(n)]} · valore ${vx0(n)}</small></b>${L.length?L.map(([t,o])=>`<div class="gubr">${badge(t)}<span>${TEAMS[t].nick}${prof(t).stima?' <em class="gust">stima</em>':""}<small>${o.with.length?"insieme a "+o.with.map(x=>E(nmAb(x))).join(", ")+" · ":""}${o.back.length?"ti dà "+o.back.map(x=>E(nmAb(x))).join(", "):"il cambio arriva da un'altra squadra"} · ${o.k} squadre</small></span><span class="gup ${cl(o.p)}"><small>dice sì al</small> ${pc(o.p)}</span><span class="gup ${cl(o.P)}"><small>si chiude al</small> ${pc(o.P)}</span></div>`).join(""):`<p class="setnote">Nessun acquirente trovato: prova con più squadre o cedendolo insieme ad altri.</p>`}</div>`}).join("")}</section>`}
 VIEWS.gusti=vGusti;
 const keepY=()=>{const y=scrollY;render();scrollTo(0,y)};
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="gusti")return;const b=e.target.closest("[data-gu]");if(!b||b.tagName==="SELECT"||b.disabled)return;e.preventDefault();const a=b.dataset.gu,v=b.dataset.v;
-  if(a==="page"){GU.page=v;render();scrollTo(0,0);return}if(a==="team"){GU.team=v;GU.keep=new Set();GU.res=null;if(GU.target&&iaOwner(GU.target)===v)GU.target=null;keepY()}
+  if(a==="page"){GU.page=v;render();scrollTo(0,0);return}if(a==="team"){GU.team=v;GU.keep=new Set();GU.sell=new Set();GU.res=null;if(GU.target&&iaOwner(GU.target)===v)GU.target=null;keepY()}
   else if(a==="mode"){GU.mode=v;GU.res=null;keepY()}else if(a==="tg"){GU.target=v;GU.q="";GU.res=null;keepY()}else if(a==="untg"){GU.target=null;GU.res=null;keepY()}
   else if(a==="role"){GU.role=v;GU.res=null;keepY()}else if(a==="k"){GU.maxk=+v;keepY()}
-  else if(a==="keep"){GU.keep.has(v)?GU.keep.delete(v):GU.keep.add(v);keepY()}else if(a==="info"){GU.info=!GU.info;keepY()}
+  else if(a==="keep"){GU.keep.has(v)?GU.keep.delete(v):GU.keep.add(v);keepY()}else if(a==="sell"){GU.sell.has(v)?GU.sell.delete(v):GU.sell.add(v);GU.res=null;keepY()}else if(a==="info"){GU.info=!GU.info;keepY()}
   else if(a==="go"){GU.busy=true;keepY();setTimeout(()=>{try{GU.res=search()}catch(err){console.error(err);GU.res=[]}GU.busy=false;const y=scrollY;render();const r=document.querySelector(".gures");if(r)r.scrollIntoView({behavior:"smooth",block:"start"});else scrollTo(0,y)},40)}});
 document.getElementById("main").addEventListener("change",e=>{if(cur!=="gusti")return;const s=e.target;if(s.dataset&&s.dataset.gu==="minv"){GU.minv=+s.value;GU.res=null;keepY()}});
 document.getElementById("main").addEventListener("input",e=>{if(cur!=="gusti"||e.target.id!=="guq")return;GU.q=e.target.value;const pos=e.target.selectionStart;render();const n=document.getElementById("guq");if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(_){}}});
@@ -12478,6 +12493,7 @@ html.notte{--gu-card:rgba(30,20,60,.85);--gu-box:rgba(255,255,255,.08);--gu-fg:#
 .gubox .gumin{margin-top:14px}.gubox .gumin select{background:var(--gu-btn)!important;color:var(--gu-btnfg)!important;border:1px solid var(--gu-bd)!important;font-weight:800;padding:8px 12px;border-radius:10px;-webkit-appearance:none;appearance:none}
 .gubox .gumin select option{background:#fff;color:#111}
 .gubox .gurowc{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}.gubox .guchip{padding:3px;display:grid;place-items:center}.gubox .guchip .badge{width:100%;height:auto;aspect-ratio:1}
+.gubuy{border-top:1px solid var(--gu-row);padding:10px 0 4px}.gubuy:first-of-type{border-top:0}.gubn{display:block;margin-bottom:6px}.gubn small{font-weight:600;color:var(--gu-mut)}.gubr{display:grid;grid-template-columns:28px 1fr auto auto;gap:6px;align-items:center;padding:5px 0}.gubr .badge{width:26px;height:26px}.gubr small{display:block;font-size:11.5px;color:var(--gu-mut)}.guk small{color:var(--gu-mut);font-weight:700}.guk.on small{color:inherit}
 .gubox h4{margin-top:18px}.gukeep{gap:7px}.guk{padding:6px 11px}.gugo{margin-top:18px}
 /* menu di Hoop Dreamers (area Ducks) */
 .hpcard h4{margin:14px 0 6px}.hpteams{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}.hpteams button{border:2px solid transparent;border-radius:12px;background:var(--gu-box);padding:3px;cursor:pointer}.hpteams .badge{width:100%;height:auto;aspect-ratio:1}.hpteams button.on{border-color:var(--gu-on);box-shadow:0 0 0 2px var(--gu-me)}
