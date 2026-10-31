@@ -1818,3 +1818,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 666. Valutazione giocatori: tolta la domanda «Quanto lo conosci?» (tutti conoscono bene i giocatori). Il report non separa più per conoscenza: tutte le risposte contano nelle medie.
 
 667. Box score: la cella «TIRI SBAGL.» è rossa quando la percentuale dal campo (FG%) è sotto il 43% (con almeno 5 tiri dal campo tentati; prima la regola era «oltre il 60% di tiri sbagliati tra campo e liberi»). Vale in tutti i box (Home, Statistiche live, Dynasty TV, box giocatori free agent).
+
+668. Box score: la cella «TIRI SBAGL.» è anche verde quando la FG% è sopra il 50% (rossa sotto il 43%; neutra tra 43 e 50). Sempre con almeno 5 tiri dal campo tentati.
