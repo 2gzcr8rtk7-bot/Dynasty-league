@@ -11121,16 +11121,24 @@ function gzPulisci(t){let x=gzNomiVoce(String(t).replace(/<[^>]+>/g," "));
   x=x.replace(/\d+/g,m=>gzNum(+m));
   return x.replace(/[·•]/g,", ").replace(/[()]/g,", ").replace(/\s*[–—]\s*/g,", ").replace(/\s{2,}/g," ").replace(/\s+([,.;:!?])/g,"$1").replace(/,\s*,/g,",").trim()}
 function gzParla(txt,fine){if(!GZV.ok){fine&&setTimeout(fine,Math.max(3500,txt.length*55));return false}
-  try{speechSynthesis.cancel();const v=gzVoce(),tok={};GZV.cur=tok;
+  /* (762) voce più robusta: su iPhone capita che una frase non mandi mai «fine» (oggetti voce persi, speak subito dopo cancel, sintesi in pausa)
+     e il TG restava fermo sulla notizia. Ora: le frasi restano in memoria, partono un attimo dopo il cancel, e un controllo
+     passa comunque avanti se la voce non dà segni di vita per troppo tempo. */
+  try{speechSynthesis.cancel();clearTimeout(GZV.wd);const v=gzVoce(),tok={};GZV.cur=tok;
     const P=gzPulisci(txt).split(/(?<=[.!?;:])\s+/).reduce((r,f)=>{const l=r[r.length-1];if(l&&(l.length+f.length)<110)r[r.length-1]=l+" "+f;else r.push(f);return r},[]).filter(f=>f.trim());
     if(!P.length){fine&&fine();return false}
-    P.forEach((f,i)=>{const u=new SpeechSynthesisUtterance(f);u.lang="it-IT";if(v)u.voice=v;u.rate=GZV.rate;u.pitch=1;const end=()=>{if(GZV.cur===tok&&i===P.length-1)fine&&fine()};u.onend=end;u.onerror=end;speechSynthesis.speak(u)});
+    let done=false,k=0,st=false;const fin=()=>{if(done||GZV.cur!==tok)return;done=true;clearTimeout(GZV.wd);GZV.q=null;fine&&fine()};
+    const ms=f=>Math.max(4000,f.length*95/(GZV.rate||1))+3500;
+    const arm=()=>{clearTimeout(GZV.wd);if(done||GZV.cur!==tok)return;GZV.wd=setTimeout(()=>{if(done||GZV.cur!==tok)return;if(!st){/* la voce non è mai partita: lettura «muta» a tempo, come senza voce */try{speechSynthesis.cancel()}catch(e){}GZV.wd=setTimeout(fin,Math.max(0,Math.min(14000,Math.max(5000,txt.length*62))-5000));return}try{if(speechSynthesis.paused){speechSynthesis.resume();arm();return}}catch(e){}k++;if(k>=P.length){try{speechSynthesis.cancel()}catch(e){}fin()}else arm()},st?ms(P[Math.min(k,P.length-1)]):5000)};
+    GZV.q=P.map((f,i)=>{const u=new SpeechSynthesisUtterance(f);u.lang="it-IT";if(v)u.voice=v;u.rate=GZV.rate;u.pitch=1;
+      u.onstart=()=>{if(GZV.cur!==tok)return;st=true;k=i;arm()};const end=()=>{if(GZV.cur!==tok)return;if(i===P.length-1)fin();else{k=i+1;arm()}};u.onend=end;u.onerror=end;return u});
+    const Q=GZV.q;setTimeout(()=>{if(GZV.cur!==tok)return;try{Q.forEach(u=>speechSynthesis.speak(u));if(speechSynthesis.paused)speechSynthesis.resume()}catch(e){fin()}},90);arm();
     GZV.keep&&GZV.keep();return true}catch(e){fine&&setTimeout(fine,3500);return false}}
 /* ascolto con schermo spento / app in secondo piano: tiene sveglio lo schermo, mostra i comandi nel centro di controllo e, se il telefono ferma la voce, la riprende dalla notizia in corso */
 GZV.keep=()=>{try{if(navigator.wakeLock&&!GZV.wl)navigator.wakeLock.request("screen").then(w=>{GZV.wl=w;w.addEventListener("release",()=>{GZV.wl=null})}).catch(()=>{})}catch(e){}
   try{if("mediaSession"in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:"Tg Dreamers",artist:"Dreamers",album:"Edizione del giorno"});const mk=(a,f)=>{try{navigator.mediaSession.setActionHandler(a,f)}catch(e){}};mk("play",()=>{if(TGI.on&&TGI.paused){TGI.paused=false;tgiStep(TGI.i)}else if(TGS.on&&!TGS.play){TGS.play=true;tgGo(TGS.i)}});mk("pause",()=>{if(TGI.on){TGI.paused=true;clearTimeout(TGI.tm);gzStop();tgiShow()}else if(TGS.on){TGS.play=false;clearTimeout(TGS.tm);gzStop();tgRender()}});mk("nexttrack",()=>{TGI.on?tgiStep(TGI.i+1):TGS.on&&tgGo(TGS.i+1)});mk("previoustrack",()=>{TGI.on?tgiStep(TGI.i-1):TGS.on&&tgGo(TGS.i-1)})}}catch(e){}};
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState!=="visible")return;try{if(TGI.on&&!TGI.paused&&!speechSynthesis.speaking)tgiStep(TGI.i);else if(TGS.on&&TGS.play&&!speechSynthesis.speaking)tgGo(TGS.i)}catch(e){}});
-function gzStop(){try{GZV.cur=null;speechSynthesis&&speechSynthesis.cancel()}catch(e){}}
+function gzStop(){try{GZV.cur=null;clearTimeout(GZV.wd);GZV.q=null;speechSynthesis&&speechSynthesis.cancel()}catch(e){}}
 const gzTxt=a=>a.voce?[a.op,a.voce].filter(Boolean).join(" "):[a.h,a.sub,...(a.txt||[])].filter(Boolean).join(". ");
 /* striscia ULTIM'ORA e banner TG */
 function gzStriscia(E){const T=E.art.map(a=>`<span><b>${a.tag}</b> ${a.h}</span>`).join("<i>●</i>");return`<div class="nzult"><span class="nzu">ULTIM'ORA</span><div class="nzmq"><div class="nzmt">${T}<i>●</i>${T}</div></div></div>`}
