@@ -9,6 +9,11 @@ const api=async(path,q)=>{const u=new URL("https://www.googleapis.com/youtube/v3
   const r=await fetch(u);if(!r.ok)throw new Error(`YouTube API ${path}: ${r.status} ${(await r.text()).slice(0,300)}`);return r.json()};
 const load=f=>{const s=fs.readFileSync(f,"utf8");return Function(s.replace(/^\s*const\s+(\w+)\s*=/m,"return "))()};
 const TV=load("tv-data.js"),TVHL0=fs.existsSync("hl-data.js")?load("hl-data.js"):{};
+// (31/10) notte già completa (tutte le partite hanno il video)? allora niente chiamate a YouTube. Notte = data USA (New York) di 12 ore fa.
+{const nt=new Date(Date.now()-12*3600e3).toLocaleDateString("en-CA",{timeZone:"America/New_York"}),G=TV.days[nt]||[];
+ const manca=G.filter(g=>!TVHL0[g[7]||nt+"_"+g[0]+g[1]]);
+ if(!PROVA&&!process.argv.includes("--forza")){if(G.length&&!manca.length){console.log(`Notte ${nt}: ${G.length}/${G.length} highlights già presenti, niente da fare`);process.exit(0)}
+  console.log(`Notte ${nt}: mancano ${manca.length}/${G.length} highlights (${manca.map(g=>g[0]+"-"+g[1]).join(", ")})`)}}
 
 // 1) ultimi video caricati dal canale (playlist "uploads")
 const ch=await api("channels",{part:"contentDetails",forHandle:HANDLE});
