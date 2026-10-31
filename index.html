@@ -11211,6 +11211,15 @@ async function shDM(){const S=SHR_DM;if(!S)return null;const H=1540,{cv,c,W}=awa
 .s3emp{margin-top:auto;margin-bottom:26px;text-align:center;font:italic 700 15px/1.2 var(--display),Georgia,serif;letter-spacing:.1em;opacity:.85;text-transform:uppercase}
 .s3lint{display:flex;align-items:center;justify-content:center;font:italic 800 15px/1 var(--display),Georgia,serif;letter-spacing:.3em;text-transform:uppercase}
 .s3info{position:absolute;left:78px;right:132px;bottom:calc(env(safe-area-inset-bottom,0px) + 76px);z-index:19;margin:0 auto;padding:10px 12px;border:1px solid #e8c15a;border-radius:14px;background:rgba(18,5,42,.86);text-align:center;box-shadow:0 0 22px rgba(150,90,255,.6);opacity:0;transform:translateY(10px);transition:.35s;pointer-events:none}
+
+.s3nl{display:none}
+.s3t.s3run{background-color:#c98a45!important;background-image:repeating-linear-gradient(90deg,rgba(80,40,10,.18) 0 2px,transparent 2px 33px),linear-gradient(rgba(255,255,255,.12),rgba(0,0,0,.18))!important;background-size:100% 100%!important;border-left:6px solid #fff!important;border-right:6px solid #fff!important}
+.s3stT{background-color:#3a1c80;background-image:radial-gradient(circle at 6px 7px,#e8c15a 0 2.6px,transparent 3.2px),radial-gradient(circle at 18px 13px,#b58cff 0 3px,transparent 3.6px),radial-gradient(circle at 12px 21px,#ffffff 0 2.4px,transparent 3px),radial-gradient(circle at 26px 4px,#ff8fd0 0 2.6px,transparent 3.2px);background-size:28px 28px}
+.s3stR{background-color:#2a1262;background-image:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,0)),repeating-linear-gradient(90deg,#8a55f0 0 15px,#3a1c80 15px 22px)}
+.s3bn{background:linear-gradient(#2a1262,#150633);border:2px solid #e8c15a;border-top:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:14px;color:#fff2c4;font:italic 800 13px/1 var(--display),Georgia,serif;letter-spacing:.1em;text-transform:uppercase;box-shadow:0 0 22px rgba(160,100,255,.6)}
+.s3bn .badge{width:70px;height:70px;margin-bottom:8px;background-color:transparent!important;box-shadow:none!important;border-radius:0}
+.s3jb{background:linear-gradient(135deg,#3a1a7a,#8a4dff 50%,#3a1a7a);border:3px solid #e8c15a;box-shadow:0 0 50px #8a4dff;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;font:italic 800 44px/1 var(--display),Georgia,serif;letter-spacing:.14em;text-shadow:0 0 22px #fff}
+.s3jb small{margin-top:10px;font:700 14px system-ui,sans-serif;letter-spacing:.34em;color:#ffd36b;text-shadow:none}
 .s3info.on{opacity:1;transform:none}
 .s3info b{display:block;font:italic 800 18px/1.1 var(--display),Georgia,serif;color:#fff2c4;letter-spacing:.06em;text-transform:uppercase}
 .s3info span{display:block;margin-top:4px;font:600 11px/1.3 system-ui,sans-serif;color:#cdb4ff;letter-spacing:.06em}
@@ -11241,6 +11250,7 @@ function open(){
  const zc0=(ZF+ZN)/2;
  /* passatoia centrale */
  h+=`<div class="s3t s3run" style="left:-${AIS-10}px;top:${-(ZN-ZF+60)/2}px;width:${(AIS-10)*2}px;height:${ZN-ZF+60}px;transform:translate3d(0,${EYE-1}px,${zc0}px) rotateX(90deg)"></div>`;
+
  /* parti di scena: piano posizionato in coordinate locali del gruppo */
  const F=(x,y,z,w,hh,ry,st,inn,cls)=>`<div class="s3f ${cls||""}" style="left:${-w/2}px;top:${-hh}px;width:${w}px;height:${hh}px;transform:translate3d(${x}px,${y}px,${z}px) rotateY(${ry}deg);${st||""}">${inn||""}</div>`;
  /* arco d'ingresso e fondale */
@@ -11250,6 +11260,23 @@ function open(){
  /* le 8 bacheche: vetrine illuminate da faretti, interno scuro, maglie appese (le tre divise) e trofei */
  const lumH=c=>{const n=parseInt(String(c).slice(1,7),16);return isNaN(n)?0:(.299*(n>>16)+.587*((n>>8)&255)+.114*(n&255))/255};
  const accOf=t=>{const T=TEAMS[t],c=[T.bg,T.fg,T.trim].filter(x=>/^#[0-9a-f]{6}$/i.test(x||"")).sort((a,b)=>lumH(b)-lumH(a))[0];return lumH(c)>.42?c:"#ffd36b"};
+ /* ARENA: tribune a gradoni con pubblico su tre lati, striscioni delle squadre, tabellone sospeso e parquet al centro */
+ {const TD=100,RH=95,NT=8,ZA=ZF-40-NT*TD,ZB=ZN+260,LZ=ZB-ZA,zm=(ZA+ZB)/2;
+  for(let i=0;i<NT;i++){const hT=(i+1)*RH,yT=EYE-hT,yB=EYE-i*RH;
+   [-1,1].forEach(sd=>{const xi=sd*(XL+i*TD),xc=sd*(XL+i*TD+TD/2);
+    h+=`<div class="s3t s3stT" style="left:${-TD/2}px;top:${-LZ/2}px;width:${TD}px;height:${LZ}px;transform:translate3d(${xc}px,${yT}px,${zm}px) rotateX(90deg)"></div>`;
+    h+=`<div class="s3o" style="transform:translate3d(${xi}px,${yB}px,${zm}px) rotateY(90deg)"><div class="s3f s3stR" style="left:${-LZ/2}px;top:${-RH}px;width:${LZ}px;height:${RH}px"></div></div>`});
+   const xw=2*XL,zi=ZF-40-i*TD,zc=zi-TD/2;
+   h+=`<div class="s3t s3stT" style="left:${-XL}px;top:${-TD/2}px;width:${xw}px;height:${TD}px;transform:translate3d(0,${yT}px,${zc}px) rotateX(90deg)"></div>`;
+   h+=`<div class="s3o" style="transform:translate3d(0,${yB}px,${zi}px)"><div class="s3f s3stR" style="left:${-XL}px;top:${-RH}px;width:${xw}px;height:${RH}px"></div></div>`}
+  /* striscioni delle 8 squadre appesi davanti alle tribune */
+  B.forEach((b,k)=>{const sd=k%2?1:-1,z=Z0-Math.floor(k/2)*SPZ-SPZ*.35,x=sd*(XL+30),c=TEAMS[b.t];
+   h+=`<div class="s3o" style="transform:translate3d(${x}px,${EYE-560}px,${z}px) rotateY(${sd>0?-90:90}deg)"><div class="s3f s3bn" style="left:-70px;top:0;width:140px;height:210px;border-color:${accOf(b.t)}">${badge(b.t)}<span>${c.nick}</span></div></div>`});
+  /* tabellone sospeso */
+  const jz=Z0-SPZ*1.6,jy=EYE-640;
+  h+=`<div class="s3o" style="transform:translate3d(0,${jy}px,${jz}px)">`+[["translateZ(130px)",0],["rotateY(180deg) translateZ(130px)",0],["rotateY(90deg) translateZ(130px)",0],["rotateY(-90deg) translateZ(130px)",0]].map(f=>`<div class="s3f s3jb" style="left:-130px;top:-90px;width:260px;height:180px;transform:${f[0]}">DREAMERS<small>SALA TROFEI</small></div>`).join("")+`<div class="s3f" style="left:-3px;top:-420px;width:6px;height:330px;background:#bcb0d8;transform:none"></div></div>`;
+  /* cerchio di centrocampo sul parquet */
+  h+=`<div class="s3f" style="left:-110px;top:-110px;width:220px;height:220px;border-radius:50%;border:6px solid #fff;background:radial-gradient(circle,#7a3fd0,#4a1f9c);box-shadow:0 0 30px rgba(255,255,255,.4);transform:translate3d(0,${EYE-2}px,${Z0-SPZ*1.5}px) rotateX(90deg)"></div>`}
  const jer=(t,k,num)=>{const sv=KITG;KITG=k;let r="";try{r=jersey(t,num,"")}catch(e){}KITG=sv;return r};
  const JX=[-118,0,118],pool=(x,z,r,col,a)=>`<div class="s3f" style="left:${-r}px;top:${-r}px;width:${r*2}px;height:${r*2}px;background:radial-gradient(circle,${col},transparent 68%);opacity:${a};transform:translate3d(${x}px,${-DA-1}px,${z}px) rotateX(90deg)"></div>`;
  const lamp=(x,z)=>`<div class="s3f" style="left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle,#fff,#ffe9b0 55%,#8a7a50);box-shadow:0 0 16px 6px rgba(255,235,180,.85);transform:translate3d(${x}px,${-BH+6}px,${z}px) rotateX(90deg)"></div>`;
@@ -11292,10 +11319,9 @@ function open(){
    h+=`<div class="s3o s3bb" data-bx="${x}" data-by="${y}" data-bz="${z}"><div class="s3bi s3gl" style="width:${w}px;height:${w}px;background:radial-gradient(#fff,rgba(255,225,170,.9) 45%,transparent 72%);animation-duration:${(2.2+(k%5)*.6).toFixed(1)}s;animation-delay:${(k*.27).toFixed(1)}s;transform:translate(-50%,-50%)"></div></div>`}
  h+=`</div></div></div>`;
  h+=`<div class="s3top2"><button class="s3x" aria-label="Esci">✕</button><div class="s3ttl">SALA TROFEI<small>DREAMERS</small></div><div style="width:40px"></div></div>`;
- h+=`<div class="s3hint" id="s3hint"><b>BENVENUTO</b>trascina per guardarti intorno<br>tocca il pavimento o una bacheca per avvicinarti</div>`;
- h+=`<div class="s3hud s3pad"><button data-w="1" aria-label="Avanti">▲</button><button data-w="-1" aria-label="Indietro">▼</button></div>`;
+ h+=`<div class="s3hint" id="s3hint"><b>BENVENUTO</b>trascina per guardarti intorno<br>tocca il pavimento o una bacheca per avvicinarti<br>(sul PC: rotellina per camminare)</div>`;
  h+=`<canvas class="s3hud s3mm" width="224" height="224"></canvas><div class="s3info" id="s3info"></div>`;
- h+=`<div class="s3hud s3nv"><button data-n="-1" aria-label="Bacheca precedente">‹</button><span id="s3nl">Tour bacheche</span><button data-n="1" aria-label="Bacheca successiva">›</button></div>`;
+ h+=`<div class="s3nl" id="s3nl"></div>`;
  o.innerHTML=h;document.body.appendChild(o);
  const fog=o.querySelector(".s3fog"),cam=o.querySelector(".s3c"),bbs=[...o.querySelectorAll(".s3bb")],st=[...o.querySelectorAll(".s3st")],mm=o.querySelector(".s3mm"),mc=mm.getContext("2d"),info=o.querySelector("#s3info"),hint=o.querySelector("#s3hint"),nl=o.querySelector("#s3nl"),W=o.querySelector(".s3w");
  const V={x:0,z:ZN-110,yaw:0,pitch:3},P=330;let dirty=true,tw=null,walk=0,cur=-1,keys={};
