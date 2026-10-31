@@ -1774,3 +1774,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 644. Statistiche live della notte: terzo tasto «Box» accanto a PDK ed Eff. (come nelle notti passate), sotto ogni giocatore PT RB AS ST BL 3P TO e tiri sbagliati con i colori del box score. È il tasto selezionato di default (SN.m=box).
 
 645. Loghi NBA di Dynasty TV senza lampeggio: erano già file nostri (loghi/nba/*.svg) ma a ogni ridisegno l'immagine ripartiva nascosta finché non finiva di caricare (e col caricamento «lazy»). Ora: i loghi già caricati si ricordano e partono subito visibili, tutti i 30 si precaricano all'avvio, niente più lazy; il service worker li salva (precache) e li serve prima dalla copia locale. Quindi anche offline o con rete lenta restano stabili.
+
+646. Statistiche notte: anche in modalità giorno, se esiste una notte live (o appena finita, senza ancora dati ufficiali) è quella la prima schermata, con Box/PDK/EFF. La freccia ‹ porta all'ultima notte ufficiale e › dall'ultima ufficiale torna alla live. Senza notte live nulla cambia.
