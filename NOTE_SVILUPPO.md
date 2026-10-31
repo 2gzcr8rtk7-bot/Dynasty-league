@@ -1859,3 +1859,4 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 704. Parquet: pagina Scambi con caselle a base bianca (non trasparente) e scritte arancio: carta squadra, giocatori, crediti, slot, note e tasti Fai la foto / Copia per Claude.
 705. Parquet: pagine Comparatore e Trend (sala grafici) senza fondo blu: parquet dietro, riquadri bianchi con scritte arancio, tasto attivo arancio con scritta bianca.
 706. Parquet: interruttore Modalita' notte arancio quando e' spento (pallino bianco con luna arancio); da acceso resta viola.
+707. Tg Dreamers: l'apertura dice sempre giorno della settimana, numero e mese (es. 'sabato trentuno ottobre'). Voce: testi ripuliti meglio per la lettura (orari a parole, 12/20 -> dodici su venti, sigle NBA/GM/Tg/G-Dreamers, numeri con #, virgolette), lettura a frasi brevi per evitare i tagli di iOS, schermo tenuto acceso e comandi nel centro di controllo, ripresa automatica della notizia al ritorno nell'app.
