@@ -40,3 +40,4 @@ F = PDKrif^1,78 × 0,93^(età−25) × `VAL_INJ_B`^max(0; 2,5 − stelle). Conta
 - 31/10 · Rookie ricevuti poco graditi (Spiders 20%, Foxes 14%) ma ceduti volentieri (Spiders 80%): i rookie sono sopravvalutati nei valori? Servono più dati.
 - 31/10 · Reaves: i Foxes non lo cedono, Spiders e Dolphins lo valutano più di noi; la correzione verso l'alto è confermata.
 - 31/10 17:20 · Seconda correzione per consenso (16 valori, 5 profili): giù Allen, Wilson, Barrett, Bailey, Quickley, Porter, Ball, Queen, Okongwu; su Thompson A., Avdija, Wembanyama, Curry, Giddey, Buzelis, Mara. Holmgren escluso (il suo calo e' gia' nelle regole infortuni).
+- 31/10 17:30 · Foxes Valutazione 20: sconto infortuni solo per rischio 9-10 (43%). Giddey: Foxes -8 contro Turtles/Dolphins + : disaccordo, nessuna correzione. Curry: Spiders, Foxes, Dolphins, Peacocks tutti + anche dopo la correzione: candidato a un'altra correzione con risposte nuove.
