@@ -2576,42 +2576,42 @@ html.notte.dlt-tabellone body.notte,html.notte.dlt-parquet body.notte{background
 html.notte.dlt-tabellone body.notte:not([data-v=home]),html.notte.dlt-parquet body.notte:not([data-v=home]){background-image:linear-gradient(rgba(6,2,18,0.68),rgba(6,2,18,0.68)),radial-gradient(at 20% 0%,rgba(168,85,247,.45),rgba(0,0,0,0) 55%),radial-gradient(at 90% 10%,rgba(59,130,246,.28),rgba(0,0,0,0) 50%),linear-gradient(#1f0d4a,#0c0820 70%)!important}
 html.notte,html.notte.dlt-tabellone,html.notte.dlt-parquet{background:#0c0820!important}
 /* (241) tema Parquet dell'app: arancione/crema, loghi senza sfondo colorato, logo Dreamers arancione */
-html.dlt-parquet body{background:repeating-linear-gradient(90deg,#c88a4c 0 26px,#be8043 26px 52px)!important;color:#2b1608}
+html.dlt-parquet body{background:repeating-linear-gradient(90deg,var(--pq-a,#c88a4c) 0 26px,var(--pq-b,#be8043) 26px 52px)!important;color:var(--pq-ink,#2b1608)}
 html.dlt-parquet header,html.dlt-parquet header *{color:#fff}
 html.dlt-parquet header nav button[aria-selected="false"] span{color:#fff!important;text-shadow:0 1px 2px rgba(90,30,0,.55)}
 html.dlt-parquet header .brand span{color:#ffe9c4}
-html.dlt-parquet main :is(b,span,td,th,p,li,button,em,small,h2,h3,h4,i,label,summary,sup):not(.htile *,.teamhead *,.rgh *,.htile,.teamhead,.rgh,.pdkx,.pdkb,.pdkx *,.pdkb *,.grl,.rl,.vtrh *,.vtrh,.medal,.avviso,.avviso *,.tvgo,.tvgo *,.hseg.on,.hdrm,.hnt *,.drnav button,.t,.t *,.tbl-wrap thead *,.badge,.ev,.ev *,.rok,.chip[aria-pressed="true"],.chip[aria-pressed="true"] *,.cntbtn *,.shbtn *,.bshare *){color:#2b1608}
-html.dlt-parquet main :is(small,.note,.setnote):not(.htile *,.teamhead *,.rgh *){color:#4a2f14}
+html.dlt-parquet main :is(b,span,td,th,p,li,button,em,small,h2,h3,h4,i,label,summary,sup):not(.htile *,.teamhead *,.rgh *,.htile,.teamhead,.rgh,.pdkx,.pdkb,.pdkx *,.pdkb *,.grl,.rl,.vtrh *,.vtrh,.medal,.avviso,.avviso *,.tvgo,.tvgo *,.hseg.on,.hdrm,.hnt *,.drnav button,.t,.t *,.tbl-wrap thead *,.badge,.ev,.ev *,.rok,.chip[aria-pressed="true"],.chip[aria-pressed="true"] *,.cntbtn *,.shbtn *,.bshare *){color:var(--pq-ink,#2b1608)}
+html.dlt-parquet main :is(small,.note,.setnote):not(.htile *,.teamhead *,.rgh *){color:var(--pq-mu2,#4a2f14)}
 html.dlt-parquet main .htile small,html.dlt-parquet main .htile .hnm small{color:rgba(255,255,255,.85)}
 html.dlt-parquet main .teamhead small,html.dlt-parquet main .teamhead span,html.dlt-parquet main .teamhead b,html.dlt-parquet main .teamhead em{color:#fff}
-html.dlt-parquet .rgnav button{background:#fff6e4;color:#2b1608;border-color:#d9b27a}
-html.dlt-parquet main .upd,html.dlt-parquet main [class*="agg"],html.dlt-parquet footer,html.dlt-parquet main .foot{color:#2b1608}
-html.dlt-parquet .rgh b{color:#2b1608}
+html.dlt-parquet .rgnav button{background:var(--pq-cream,#fff6e4);color:var(--pq-ink,#2b1608);border-color:var(--pq-bd,#d9b27a)}
+html.dlt-parquet main .upd,html.dlt-parquet main [class*="agg"],html.dlt-parquet footer,html.dlt-parquet main .foot{color:var(--pq-ink,#2b1608)}
+html.dlt-parquet .rgh b{color:var(--pq-ink,#2b1608)}
 html.dlt-parquet main h2 .t,html.dlt-parquet main h2 .t *{color:#fff}
 html.dlt-parquet .tbl-wrap table thead th{color:#fff}
 /* loghi senza sfondo colorato: card crema, colore squadra solo come filo e dettagli */
-html.dlt-parquet .htile{background:#fff6e4!important;border:1px solid #e3c28d!important;border-bottom:6px solid var(--tc)!important;box-shadow:0 6px 14px rgba(90,50,10,.22)!important;color:#2b1608!important}
-html.dlt-parquet .htile *{color:#2b1608!important;text-shadow:none!important}
-html.dlt-parquet .htile small{color:#7a5632!important}
+html.dlt-parquet .htile{background:var(--pq-cream,#fff6e4)!important;border:1px solid var(--pq-bd,#e3c28d)!important;border-bottom:6px solid var(--tc)!important;box-shadow:0 6px 14px rgba(90,50,10,.22)!important;color:var(--pq-ink,#2b1608)!important}
+html.dlt-parquet .htile *{color:var(--pq-ink,#2b1608)!important;text-shadow:none!important}
+html.dlt-parquet .htile small{color:var(--pq-mu,#7a5632)!important}
 html.dlt-parquet .htile::before,html.dlt-parquet .htile::after{display:none!important}
 html.dlt-parquet .htile .hrec{background:rgba(43,22,8,.88)!important;color:#fff!important;border-radius:6px}
 html.dlt-parquet .htile .hrec *{color:#fff!important}
 html.dlt-parquet .htile .badge,html.dlt-parquet .htile .logo{filter:none!important;box-shadow:none!important}
 /* (250) caselle squadra Home in stile parquet: doghe, cornice chiara come le linee del campo, barra col colore squadra */
-html.dlt-parquet .htile{background:repeating-linear-gradient(90deg,#dba867 0 22px,#d19b59 22px 44px)!important;border:0!important;box-shadow:inset 0 0 0 3px rgba(255,246,228,.9),inset 0 0 0 5px rgba(120,70,20,.35),0 8px 16px rgba(90,50,10,.35)!important;border-radius:6px!important;position:relative;padding-bottom:14px!important}
+html.dlt-parquet .htile{background:repeating-linear-gradient(90deg,var(--pq-c,#dba867) 0 22px,var(--pq-d,#d19b59) 22px 44px)!important;border:0!important;box-shadow:inset 0 0 0 3px rgba(255,246,228,.9),inset 0 0 0 5px rgba(120,70,20,.35),0 8px 16px rgba(90,50,10,.35)!important;border-radius:6px!important;position:relative;padding-bottom:14px!important}
 html.dlt-parquet .htile::after{display:block!important;content:"";position:absolute;left:50%;bottom:3px;width:44%;height:7px;transform:translateX(-50%);background:var(--tc);border-radius:6px}
-html.dlt-parquet .htile b,html.dlt-parquet .htile .hnm b,html.dlt-parquet .htile small,html.dlt-parquet .htile .hnm small{color:#fff!important;text-shadow:0 1px 0 #6b3a10,0 -1px 0 #6b3a10,1px 0 0 #6b3a10,-1px 0 0 #6b3a10,0 2px 6px rgba(60,25,0,.7)!important}
+html.dlt-parquet .htile b,html.dlt-parquet .htile .hnm b,html.dlt-parquet .htile small,html.dlt-parquet .htile .hnm small{color:#fff!important;text-shadow:0 1px 0 var(--pq-ol,#6b3a10),0 -1px 0 var(--pq-ol,#6b3a10),1px 0 0 var(--pq-ol,#6b3a10),-1px 0 0 var(--pq-ol,#6b3a10),0 2px 6px rgba(60,25,0,.7)!important}
 html.dlt-parquet .htile .hrec,html.dlt-parquet .htile .hrec *{text-shadow:none!important}
 html.dlt-parquet .htile .badge,html.dlt-parquet .htile .logo,html.dlt-parquet .htile .hlogo{filter:drop-shadow(0 3px 3px rgba(60,30,5,.45))!important}
-html.dlt-parquet .teamhead{background:#fff6e4!important;border:1px solid #e3c28d!important;border-bottom:6px solid var(--tc)!important;color:#2b1608!important;box-shadow:0 6px 14px rgba(90,50,10,.22)!important}
-html.dlt-parquet .teamhead *{color:#2b1608!important;text-shadow:none!important}
-html.dlt-parquet .teamhead small{color:#7a5632!important}
+html.dlt-parquet .teamhead{background:var(--pq-cream,#fff6e4)!important;border:1px solid var(--pq-bd,#e3c28d)!important;border-bottom:6px solid var(--tc)!important;color:var(--pq-ink,#2b1608)!important;box-shadow:0 6px 14px rgba(90,50,10,.22)!important}
+html.dlt-parquet .teamhead *{color:var(--pq-ink,#2b1608)!important;text-shadow:none!important}
+html.dlt-parquet .teamhead small{color:var(--pq-mu,#7a5632)!important}
 html.dlt-parquet .teamhead::before,html.dlt-parquet .teamhead::after{display:none!important}
 html.dlt-parquet .teamhead .hlogo,html.dlt-parquet .teamhead .badge{filter:none!important;box-shadow:none!important}
-html.dlt-parquet .chip[aria-pressed="true"],html.dlt-parquet .chip[aria-pressed="true"] *{background-color:#f2701a!important;color:#fff!important;border-color:#c2410c!important}
+html.dlt-parquet .chip[aria-pressed="true"],html.dlt-parquet .chip[aria-pressed="true"] *{background-color:var(--pq-ac,#f2701a)!important;color:#fff!important;border-color:var(--pq-ac2,#c2410c)!important}
 html.dlt-parquet .chip[aria-pressed="true"] .badge{background-color:transparent!important}
 /* logo Dreamers arancione (il PNG è viola) */
-html.dlt-parquet .subnav button{color:#b8410a}html.dlt-parquet .subnav button:hover{background:rgba(232,90,12,.12)}html.dlt-parquet .subnav button[aria-selected="true"]{background:#e85a0c;color:#fff}
+html.dlt-parquet .subnav button{color:var(--pq-ac2,#b8410a)}html.dlt-parquet .subnav button:hover{background:color-mix(in srgb,var(--pq-ac,#e85a0c) 14%,transparent)}html.dlt-parquet .subnav button[aria-selected="true"]{background:var(--pq-ac,#e85a0c);color:#fff}
 html.dlt-parquet .tstar.stl g:first-of-type{fill:rgba(43,22,8,.25)}
 html.dlt-parquet .lglogo{filter:hue-rotate(128deg) saturate(1.25) brightness(1.05)}
 .gv.gvlive{outline:2px solid #a78bfa;outline-offset:1px;animation:gvlp 1.2s ease-in-out infinite}@keyframes gvlp{0%,100%{outline-color:#a78bfa}50%{outline-color:rgba(167,139,250,.15)}}@media (prefers-reduced-motion:reduce){.gv.gvlive{animation:none}}
@@ -3330,6 +3330,12 @@ const DLT={
  ghiaccio:{n:"Ghiaccio",v:{fg:"#0b1c2c",bg:"#d9eefa",panel:"#ffffff",panel2:"#e4f3fc",line:"#b3d6ea",muted:"#4c6b80",glow:"#bfe3f5",hd1:"#9ad6f4",hd2:"#62b8e2",red:"#1e78b0",red2:"#0e5a8a",gold:"#0a7a9c",onred:"#ffffff",pn1:"#ffffff",pn2:"#e4f3fc"}},
  sakura:{n:"Sakura",v:{fg:"#3a0f24",bg:"#ffe0ec",panel:"#fff7fa",panel2:"#ffd3e4",line:"#f1a8c7",muted:"#8a4a66",glow:"#ffc2db",hd1:"#ffa6cc",hd2:"#f477ac",red:"#db2777",red2:"#be185d",gold:"#9d174d",onred:"#ffffff",pn1:"#fff7fa",pn2:"#ffd3e4"}},
  cyber:{n:"Cyber",v:{bg:"#04070d",panel:"#0a1220",panel2:"#101c33",line:"#1c3a63",muted:"#8fb0d0",glow:"#0b3a5a",hd1:"#0a1a33",hd2:"#040a14",red:"#00c8e0",red2:"#7df3ff",gold:"#ff2bd6",onred:"#001018",pn1:"#0d1830",pn2:"#070e1c"}},
+ pqacero:{n:"Parquet Acero",pq:{"a": "#e6c690", "b": "#dcba82", "c": "#f1d6a6", "d": "#e7c88f", "cream": "#fffaf0", "bd": "#ecd6ad", "ink": "#3a2a14", "mu": "#7d6440", "mu2": "#5a4524", "ol": "#8a6a30", "ac": "#d98a1e", "ac2": "#a8650c"},v:{"fg": "#3a2a14", "bg": "#e6c690", "panel": "#fffaf0", "panel2": "#f7e6c4", "line": "#ecd6ad", "muted": "#7d6440", "glow": "#f1d6a6", "hd1": "#e0962b", "hd2": "#b8741a", "red": "#d98a1e", "red2": "#a8650c", "gold": "#a8650c", "onred": "#ffffff", "pn1": "#fffaf0", "pn2": "#f7e6c4"}},
+ pqwenge:{n:"Parquet Wengé",pq:{"a": "#4b2f1d", "b": "#3f2717", "c": "#5c3a24", "d": "#51331f", "cream": "#3a2517", "bd": "#6b4527", "ink": "#fbead0", "mu": "#d8b894", "mu2": "#e7cfae", "ol": "#1a0d04", "ac": "#c9741c", "ac2": "#e08a2c"},v:{"fg": "#fbead0", "bg": "#4b2f1d", "panel": "#3a2517", "panel2": "#4a3020", "line": "#6b4527", "muted": "#d8b894", "glow": "#5c3a24", "hd1": "#6a3f1c", "hd2": "#2e1a0c", "red": "#c9741c", "red2": "#e08a2c", "gold": "#e08a2c", "onred": "#ffffff", "pn1": "#3a2517", "pn2": "#4a3020"}},
+ pqciliegio:{n:"Parquet Ciliegio",pq:{"a": "#8c3a2c", "b": "#7d3025", "c": "#a24a38", "d": "#963f2f", "cream": "#fff0e8", "bd": "#e8b9a6", "ink": "#2e0f0a", "mu": "#8a4a3a", "mu2": "#5d2418", "ol": "#4a1209", "ac": "#c0392b", "ac2": "#8e1f14"},v:{"fg": "#2e0f0a", "bg": "#8c3a2c", "panel": "#fff0e8", "panel2": "#fbd9c9", "line": "#e8b9a6", "muted": "#8a4a3a", "glow": "#a24a38", "hd1": "#c0392b", "hd2": "#8e1f14", "red": "#c0392b", "red2": "#8e1f14", "gold": "#8e1f14", "onred": "#ffffff", "pn1": "#fff0e8", "pn2": "#fbd9c9"}},
+ pqebano:{n:"Parquet Ebano e oro",pq:{"a": "#2b2623", "b": "#211d1a", "c": "#3a342f", "d": "#322d29", "cream": "#2f2a26", "bd": "#6b5a2a", "ink": "#f6e7c1", "mu": "#cdb88a", "mu2": "#e6d4a4", "ol": "#0e0b08", "ac": "#b8860b", "ac2": "#8f6b05"},v:{"fg": "#f6e7c1", "bg": "#2b2623", "panel": "#2f2a26", "panel2": "#3a342e", "line": "#6b5a2a", "muted": "#cdb88a", "glow": "#3a342f", "hd1": "#b8860b", "hd2": "#6e4f06", "red": "#b8860b", "red2": "#8f6b05", "gold": "#8f6b05", "onred": "#ffffff", "pn1": "#2f2a26", "pn2": "#3a342e"}},
+ pqbosco:{n:"Parquet Bosco",pq:{"a": "#5f7d50", "b": "#547146", "c": "#759a63", "d": "#6a8c58", "cream": "#f2f7e8", "bd": "#bdd1a6", "ink": "#14260f", "mu": "#52693f", "mu2": "#2f4522", "ol": "#1f3a14", "ac": "#3d8a3a", "ac2": "#2a6228"},v:{"fg": "#14260f", "bg": "#5f7d50", "panel": "#f2f7e8", "panel2": "#dfeccb", "line": "#bdd1a6", "muted": "#52693f", "glow": "#759a63", "hd1": "#3d8a3a", "hd2": "#235a22", "red": "#3d8a3a", "red2": "#2a6228", "gold": "#2a6228", "onred": "#ffffff", "pn1": "#f2f7e8", "pn2": "#dfeccb"}},
+ pqblu:{n:"Parquet Blu",pq:{"a": "#3f628d", "b": "#355680", "c": "#5b80ac", "d": "#4e729e", "cream": "#eef4fb", "bd": "#b5cbe3", "ink": "#0f1c2e", "mu": "#47617f", "mu2": "#223a58", "ol": "#14284a", "ac": "#2f6fd0", "ac2": "#1f4fa0"},v:{"fg": "#0f1c2e", "bg": "#3f628d", "panel": "#eef4fb", "panel2": "#d8e6f6", "line": "#b5cbe3", "muted": "#47617f", "glow": "#5b80ac", "hd1": "#2f6fd0", "hd2": "#1b4590", "red": "#2f6fd0", "red2": "#1f4fa0", "gold": "#1f4fa0", "onred": "#ffffff", "pn1": "#eef4fb", "pn2": "#d8e6f6"}},
  oro:{n:"Carbone e oro",v:{bg:"#070707",panel:"#141414",panel2:"#1e1e1e",line:"#3a3320",muted:"#a8a08a",glow:"#2a2208",hd1:"#1c1c1c",hd2:"#0b0b0b",red:"#c9a227",red2:"#f2cf5b",gold:"#f5d76e",onred:"#14100a",pn1:"#1d1d1d",pn2:"#101010"}}
 };
 const dlMix=(a,b,t)=>{const A=parseInt(a.slice(1),16),B=parseInt(b.slice(1),16);const g=(x,y)=>Math.round(x*(1-t)+y*t).toString(16).padStart(2,"0");return"#"+g(A>>16,B>>16)+g(A>>8&255,B>>8&255)+g(A&255,B&255)};
@@ -3337,7 +3343,7 @@ function dlThemeVars(){if(DLS.th==="custom"){const B=DLS.cb,A=DLS.ca,G=DLS.cg,K=
   return{bg:dlMix(B,K,.9),panel:dlMix(B,K,.82),panel2:dlMix(B,K,.74),line:dlMix(B,K,.62),muted:dlMix(B,"#ffffff",.62),glow:dlMix(B,K,.66),hd1:dlMix(B,K,.7),hd2:dlMix(B,K,.86),red:A,red2:dlMix(A,"#ffffff",.25),gold:G,onred:lum>.6?"#14100a":"#ffffff",pn1:dlMix(B,K,.76),pn2:dlMix(B,K,.86)}}
   return DLT[DLS.th]?DLT[DLS.th].v:null}
 /* (241) scegliere lo stile dell'app (Tabellone / Parquet / Classico) imposta in automatico anche lo stile di Dreamers e G-Dreamers (Tabellone=5, Parquet=3, Classico=predefinito) */
-function dlSyncDr(th){try{if(th==="tabellone")DR._th=5;else if(th==="parquet")DR._th=3;else if(th==="classico")DR._th=null;else return;if(DR._th==null)localStorage.removeItem("dl_drth");else localStorage.setItem("dl_drth",DR._th)}catch(e){}}
+function dlSyncDr(th){try{if(th==="tabellone")DR._th=5;else if(th==="parquet"||(DLT[th]&&DLT[th].pq))DR._th=3;else if(th==="classico")DR._th=null;else return;if(DR._th==null)localStorage.removeItem("dl_drth");else localStorage.setItem("dl_drth",DR._th)}catch(e){}}
 /* colori di disponibilità/PDK e stacco del trattino (Impostazioni › Giocatori): override CSS generati solo per ciò che è diverso dal predefinito */
 function stApply(){const D=DLS_DEF,c=DLS,rs=document.documentElement.style,tx=h=>{const n=parseInt(String(h).slice(1),16);return(0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255>.6?"#111":"#fff"};
   rs.setProperty("--sepw",(c.sepOn===false?0:Math.max(0,+c.sepW||0))+"px");rs.setProperty("--sepc",c.sepC||D.sepC);
@@ -3348,7 +3354,7 @@ function stApply(){const D=DLS_DEF,c=DLS,rs=document.documentElement.style,tx=h=
   let st=document.getElementById("stc");if(!st){st=document.createElement("style");st.id="stc";document.head.appendChild(st)}st.textContent=o}
 function dlsApply(){stApply();try{nsBtn()}catch(e){}try{const nt=(typeof CNT!=="undefined"&&CNT)||DLS.th==="viola";document.body.classList.toggle("notte",nt);document.documentElement.classList.toggle("notte",nt);const tc=document.querySelector('meta[name="theme-color"]');if(tc&&nt)tc.content="#2a1260"}catch(e){}const TV_=dlThemeVars(),rs=document.documentElement.style;document.documentElement.dataset.lk=DLS.lk==="testo"?"testo":"tondo";document.documentElement.dataset.hand=DLS.hand==="r"?"r":"l";document.documentElement.dataset.si=DLS.si==="x"||DLS.si==="line"?DLS.si:"both";["fg","bg","panel","panel2","line","muted","glow","hd1","hd2","red","red2","gold","onred","pn1","pn2"].forEach(k=>TV_?rs.setProperty("--"+k,TV_[k]):rs.removeProperty("--"+k));TH_BAR=TV_?TV_.hd2:"#0a1330";
   try{const tc=document.querySelector('meta[name="theme-color"]'),bc=document.body&&document.body.classList;if(tc&&bc&&!bc.contains("dreamfs")&&!bc.contains("notte"))tc.content=TH_BAR}catch(e){}
-  document.documentElement.classList.toggle("dlt-tabellone",DLS.th==="tabellone");document.documentElement.classList.toggle("dlt-parquet",DLS.th==="parquet");document.documentElement.classList.toggle("dlt-nostripe",!DLS.hs);document.documentElement.classList.toggle("dlt-thin",!!DLS.ht);document.documentElement.classList.toggle("dlt-pill",!!DLS.np);const r=document.documentElement,st=r.style;st.setProperty("--sj",DLS.sj);st.setProperty("--sn",DLS.sn);st.setProperty("--st",DLS.st);st.setProperty("--sp",DLS.sp);st.setProperty("--sov",DLS.sov);
+  document.documentElement.classList.toggle("dlt-tabellone",DLS.th==="tabellone");{const pqt=DLS.th==="parquet"||!!(DLT[DLS.th]&&DLT[DLS.th].pq),PQK=["a","b","c","d","cream","bd","ink","mu","mu2","ol","ac","ac2"],pqv=DLT[DLS.th]&&DLT[DLS.th].pq;document.documentElement.classList.toggle("dlt-parquet",pqt);PQK.forEach(k=>pqv?document.documentElement.style.setProperty("--pq-"+k,pqv[k]):document.documentElement.style.removeProperty("--pq-"+k))}document.documentElement.classList.toggle("dlt-nostripe",!DLS.hs);document.documentElement.classList.toggle("dlt-thin",!!DLS.ht);document.documentElement.classList.toggle("dlt-pill",!!DLS.np);const r=document.documentElement,st=r.style;st.setProperty("--sj",DLS.sj);st.setProperty("--sn",DLS.sn);st.setProperty("--st",DLS.st);st.setProperty("--sp",DLS.sp);st.setProperty("--sov",DLS.sov);
   const c=r.classList;c.toggle("dls-norole",!DLS.role);c.toggle("dls-nocap",!DLS.cap);c.toggle("dls-nosh",!DLS.shadow);c.toggle("dls-sq",!!DLS.sq);c.toggle("noanim",!!DLS.noanim)}
 dlsApply();
 let curTeam="DOL";
