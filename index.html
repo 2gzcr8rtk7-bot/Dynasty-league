@@ -9365,7 +9365,7 @@ function vAtrT(){
   if(!AT.c){AT.c=atGen();AT.t0=0}const c=AT.c;if(c&&!AT.t0)AT.t0=Date.now();if(!c)return`${H("Allenamento IA Trade","")}<p class="note">Non ci sono abbastanza giocatori con un valore per proporre scambi.</p>`;
   const row=p=>`<button type="button" class="atp${AT.rem.has(p.n)?" rm":""}" data-at="tg" data-n="${atEsc(p.n)}"><span class="atn">${atEsc(p.n)}</span><small>${p.r} · ${p.e} anni</small><b>${p.v}</b></button>`,vg=atSum(c.give),vr=atSum(c.get),dp=Math.round(c.d*100),m=c.mid;
   const sub=(l,t)=>m?`<small class="atsub">${l} ${TEAMS[t].nick}</small>`:"";
-  return`${H("Allenamento IA Trade",`<em>${AT_LOG.length} risposte</em>`)}<p class="atwho">${TEAMS[AT_PR.t].city} ${TEAMS[AT_PR.t].nick} <button type="button" class="atlk" data-at="edit">cambia</button> · <button type="button" class="atlk" data-at="menu">menu</button></p>
+  return`${H("Allenamento IA Trade",`<em>${AT_LOG.length} risposte</em>`)}<p class="atwho">${TEAMS[AT_PR.t].city} ${TEAMS[AT_PR.t].nick} <button type="button" class="atlk" data-at="edit">cambia</button> · <button type="button" class="atlk" data-at="menu">menu</button></p><div class="atrst"><button type="button" class="atb" data-at="undo-t">↶ Annulla l'ultima risposta</button><button type="button" class="atb ko" data-at="reset">Ricomincia da capo</button></div>
   <div class="atc">${m?`<p class="at3">Scambio a 3 squadre</p>`:""}<div class="atside get"><div class="athd"><b>TI OFFRO</b>${sub("da",c.ot)}<span>${vr}</span></div>${c.get.map(row).join("")}</div>
   <div class="atmid">⇅</div>
   <div class="atside"><div class="athd"><b>RICEVO</b>${sub("per",m?m.t:c.ot)}<span>${vg}</span></div>${c.give.map(row).join("")}</div>
@@ -9412,7 +9412,7 @@ const avSave=()=>{try{localStorage.setItem("atv1",JSON.stringify(AV_LOG))}catch(
 const avSc=v=>{const a=[];Object.keys(ROSTER).forEach(t=>ROSTER[t].forEach(p=>{const x=valOf(p[0]);if(x>0)a.push(x)}));if(!a.length)return 5;const r=a.filter(x=>x<v).length/a.length;return Math.max(1,Math.min(10,Math.ceil(r*10+1e-9)))};
 function avGen(){const done=new Set(AV_LOG.map(x=>x.n)),L=[];Object.keys(ROSTER).forEach(t=>ROSTER[t].forEach(p=>{const v=valOf(p[0]);if(v>0&&!done.has(p[0]))L.push({n:p[0],t,v,e:Math.round(eta(p[0])),r:ruoloDi(p[0])})}));
  if(!L.length)return null;const w=L.map(x=>Math.sqrt(x.v)),S=w.reduce((a,b)=>a+b,0);let r=Math.random()*S;for(let i=0;i<L.length;i++){r-=w[i];if(r<=0)return L[i]}return L[L.length-1]}
-function vAv(){const hd=`${H("Valutazione giocatori",`<em>${AV_LOG.length} risposte</em>`)}<p class="atwho">${atWho()} <button type="button" class="atlk" data-at="menu">menu</button></p>`;
+function vAv(){const hd=`${H("Valutazione giocatori",`<em>${AV_LOG.length} risposte</em>`)}<p class="atwho">${atWho()} <button type="button" class="atlk" data-at="menu">menu</button></p><div class="atrst"><button type="button" class="atb" data-at="undo-v">↶ Annulla l'ultima risposta</button><button type="button" class="atb ko" data-at="vreset">Ricomincia da capo</button></div>`;
  if(AV.rep)return`${H("Valutazione giocatori",`<em>Report</em>`)}<p class="note">Copia il testo e mandalo a Claude: peso i valori sulle tue risposte.</p><textarea class="atrep" readonly>${atEsc(avReport())}</textarea><div class="atbtns two"><button class="atb" data-at="vcopy">Copia report</button><button class="atb" data-at="vback">‹ Torna ai giocatori</button></div><div class="atbtns"><button class="atb ko" data-at="vreset">Azzera valutazioni</button></div>`;
  if(!AV.c){AV.c=avGen();AV.a={s:0};AV.t0=0}const c=AV.c;if(!c)return`${hd}<p class="note">Hai valutato tutti i giocatori disponibili.</p><div class="atbtns"><button class="atb rp" data-at="vrep">🖨 Stampa report (${AV_LOG.length})</button></div>`;
  if(!AV.t0)AV.t0=Date.now();const ok=AV_Q.every(q=>!q.req||AV.a[q.k]!=null);
@@ -9455,7 +9455,7 @@ function cfGen(){const used=new Set(CF_LOG.map(x=>[x.a.n,x.b.n].sort().join("|")
   const C=L.filter(x=>x.n!==A.n&&Math.abs(x.c-A.c)<=Math.max(150,A.c*.7)&&!used.has([A.n,x.n].sort().join("|")));if(!C.length)continue;const B=C[Math.random()*C.length|0];
   return Math.random()<.5?{a:A,b:B}:{a:B,b:A}}
  return null}
-function vCf(){const hd=`${H("Confronto giocatori",`<em>${CF_LOG.length} risposte</em>`)}<p class="atwho">${atWho()} <button type="button" class="atlk" data-at="menu">menu</button></p>`;
+function vCf(){const hd=`${H("Confronto giocatori",`<em>${CF_LOG.length} risposte</em>`)}<p class="atwho">${atWho()} <button type="button" class="atlk" data-at="menu">menu</button></p><div class="atrst"><button type="button" class="atb" data-at="undo-c">↶ Annulla l'ultima risposta</button><button type="button" class="atb ko" data-at="creset">Ricomincia da capo</button></div>`;
  if(CF.rep)return`${H("Confronto giocatori",`<em>Report</em>`)}<p class="note">Copia il testo e mandalo a Claude: calibro quanto distano i giocatori.</p><textarea class="atrep" readonly>${atEsc(cfReport())}</textarea><div class="atbtns two"><button class="atb" data-at="ccopy">Copia report</button><button class="atb" data-at="cback">‹ Torna ai confronti</button></div><div class="atbtns"><button class="atb ko" data-at="creset">Azzera confronti</button></div>`;
  if(!CF.c){CF.c=cfGen();CF.sel=null;CF.t0=0}const c=CF.c;if(!c)return`${hd}<p class="note">Non ci sono altre coppie da confrontare.</p><div class="atbtns"><button class="atb rp" data-at="crep">🖨 Stampa report (${CF_LOG.length})</button></div>`;
  if(!CF.t0)CF.t0=Date.now();
@@ -9599,7 +9599,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
 document.addEventListener("DOMContentLoaded",()=>{const b=document.querySelector(".brand");if(b){b.setAttribute("role","link");b.setAttribute("tabindex","0");b.setAttribute("aria-label","Vai alla Home");b.style.cursor="pointer"}});
 const BK_IDS="#gback,#faback,#glpback,#effback,#cback,[data-cupback],[data-snback],#capback,#mulback,#colback,#cassaback,#osback,#tvback,#hofback,#vrback,#cfback,#setback,#nvback,#navbk";
 /* SOTTO-SCHERMATE: se dentro una sezione c'è un livello interno (es. IA Trade → Per ruolo / Per giocatore), il tasto ‹ e il gesto indietro tornano prima a quel livello e solo dopo alla schermata precedente. Aggiungere qui ogni nuova sotto-schermata. */
-const NAV_SUB=[{ok:()=>cur==="efficienza"&&effSub==="sq",lab:"Statistiche",back:()=>{effSub="";render()}},{ok:()=>cur==="iatrade"&&(IA.mode==="role"||IA.mode==="pl"),lab:"IA Trade",back:()=>{IA.mode="";render()}},{ok:()=>cur==="eq"&&EQ.vl,lab:"Valori e crediti",back:()=>{EQ.vl=false;EQ.msg="";render()}}];
+const NAV_SUB=[{ok:()=>cur==="iaallena"&&(AT.mode||AT.rep||AV.rep||CF.rep||(AT.edit&&AT_PR&&AT_PR.t)),lab:"Allenamenti",back:()=>{AT.mode=null;AT.edit=false;AT.rep=false;AV.rep=false;CF.rep=false;AT.chg=false;AT.rem=new Set();AT.note="";AT.c=null;AV.c=null;AV.a={};CF.c=null;CF.sel=null;render()}},{ok:()=>cur==="efficienza"&&effSub==="sq",lab:"Statistiche",back:()=>{effSub="";render()}},{ok:()=>cur==="iatrade"&&(IA.mode==="role"||IA.mode==="pl"),lab:"IA Trade",back:()=>{IA.mode="";render()}},{ok:()=>cur==="eq"&&EQ.vl,lab:"Valori e crediti",back:()=>{EQ.vl=false;EQ.msg="";render()}}];
 const navSub=()=>NAV_SUB.find(x=>{try{return x.ok()}catch(e){return false}});
 function backLabel(v){const n=(TEAMS[curTeam]||{}).nick||"";const M={home:"Home",campo:"Campo "+n,roster:"Roster "+n,fa:"Giocatori",valtrade:"Calcolatore trade",osserv:"Osservatorio",iatrade:"IA Trade",iaallena:"Allenamento IA Trade",pictrade:"Pic-Trade",compar:"Comparatore",efficienza:"Statistiche",effsquadra:"Efficienza "+n,effcup:"Efficienza",tv:"Dynasty TV",risultati:"Risultati",classifica:"Classifica",trade:"Storico trade",speciali:"Trade speciali",gleague:"G-Dreamers",college:"Ufficio Scouting",cassa:"Cassa "+n,cap:"Cap",multe:"Multe",trend:"Trend",statnotte:"Statistiche notte",grafico:"Grafico",dunkest:"Centro gestione",storia:"Sala Trofei",regolamento:"Regolamento",infortuni:"Centro Medico",gdreamers:"G-Dreamers",faplayer:"Giocatori",glplayer:"G-Dreamers"};
   return v==="giochi"?(GAME==="dream"?"Dreamers":GAME==="gdream"?"G-Dreamers":"Giochi"):(M[v]||"Indietro")}
@@ -11924,5 +11924,12 @@ function crema(){try{const R=document.documentElement;if(!R.classList.contains("
 window.pqCrema=crema;const R0=render;render=function(){const x=R0.apply(this,arguments);crema();setTimeout(crema,80);return x};
 document.addEventListener("click",()=>setTimeout(crema,60),true);setTimeout(crema,300)})();
 </script>
+<script>
+/* (745) Allenamento IA Trade: «↶ Annulla l'ultima risposta» (toglie l'ultima risposta salvata e ripropone la stessa domanda) e «Ricomincia da capo» (azzera tutte le risposte di quell'allenamento, chiede conferma con un secondo tocco) dentro ogni allenamento; il tasto ‹ in alto torna al menu dei tre allenamenti */
+document.addEventListener("click",e=>{if(cur!=="iaallena")return;const b=e.target.closest("[data-at^='undo-']");if(!b)return;e.preventDefault();e.stopImmediatePropagation();const k=b.dataset.at;
+ const L=k==="undo-t"?AT_LOG:k==="undo-v"?AV_LOG:CF_LOG;if(!L.length){b.textContent="Nessuna risposta da annullare";setTimeout(()=>render(),1200);return}
+ L.pop();try{k==="undo-t"?atSave():k==="undo-v"?avSave():cfSave()}catch(_){}b.textContent="Annullata ✓";setTimeout(()=>{const y=scrollY;render();scrollTo(0,y)},500)},true);
+</script>
+<style>.atrst{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 10px}.atrst .atb{padding:9px 8px;font-size:13px}</style>
 </body>
 </html>

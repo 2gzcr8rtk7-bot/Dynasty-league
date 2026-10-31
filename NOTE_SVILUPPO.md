@@ -1917,3 +1917,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 743. Pagina Campo: banner squadra, bacheca, cassa, campo, panchina e tribuna tornano esattamente come prima delle modifiche 739/741 (la regola delle sezioni a tutta larghezza non si applica piu' a campo/college); solo la tabella Live stanotte (.clwrap) resta fino al bordo dello schermo.
 
 744. Parquet: caselle bianche -> crema (#fdf3e1) solo nelle pagine scelte dall'utente: Home, Giocatori, Roster, Pic-trade, Efficienza Cup, Cap, Calcola il trend (funzione pqCrema dopo ogni render e dopo i tocchi). Esclusi badge PDK, campo, loghi Home, tasti selezionati. Restano bianchi Campo, Trade alert e Statistiche (non richiesti).
+
+745. Allenamento IA Trade: dentro ognuno dei tre allenamenti (Proposte di scambio, Valutazione giocatori, Confronto giocatori) il tasto ‹ in alto e' «‹ Allenamenti» e torna al menu dei tre allenamenti (voce in NAV_SUB; prima usciva dalla sezione). Aggiunti «↶ Annulla l'ultima risposta» (toglie l'ultima risposta salvata) e «Ricomincia da capo» (azzera tutte le risposte di quell'allenamento, con secondo tocco di conferma).
