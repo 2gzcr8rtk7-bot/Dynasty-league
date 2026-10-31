@@ -1788,3 +1788,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 651. Valutazione giocatori: blocco infortuni al posto di «Affidabilità». Rischio percepito 1-10 (1 di ferro, 10 sempre rotto, obbligatoria), quanto abbassa il valore per il GM (per niente / −10% / −25% / −50% / mai), tipo di problema (gravi e lunghi / tanti stop brevi / minuti gestiti / nessuno). Report: rischio medio, sconto dichiarato per fascia di rischio, giocatori più a rischio e più affidabili per il GM, rischio nell'elenco completo.
 
 652. Valutazione giocatori, infortuni: lo sconto sul valore non ha più risposte predefinite ma una livella 0–100% (passi da 5) che il GM fa scorrere; obbligatoria (va toccata). Il report usa la percentuale esatta.
+
+653. Home, box score a notte finita (es. 06:00–14:00): la pagina Giocatori ora è la «Notte del GG/MM» con le frecce ‹ › per sfogliare le notti precedenti (prima le frecce c'erano solo nella pagina Notte, che compare con live/previsione). Flag `fin` in `homeNotte`; il tocco sulle frecce resta sulla stessa pagina.
