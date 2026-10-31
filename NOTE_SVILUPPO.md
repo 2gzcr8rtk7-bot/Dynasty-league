@@ -1880,4 +1880,4 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 
 725. Passaggio tra modalita' (base, Parquet, notte): al cambio di modalita' vengono tolti tutti i residui del tema precedente (colori scritti sugli elementi, caselle bianche del Parquet), cosi' niente resta nel posto sbagliato. Vale per tutti gli stili. Provato solo nel browser simulato.
 
-726. Parquet: tolta la base bianca dietro la panchina (50% PDK) nella formazione; la scritta 50% PDK e' bianca come le altre.
+726. Parquet: tolta la base bianca dietro la panchina (50% PDK) nella formazione; la panchina ha ora il contorno rosso leggero come il 6° uomo ha il verde; scritta 50% PDK bianca.
