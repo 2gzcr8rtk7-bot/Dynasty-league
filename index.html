@@ -2603,6 +2603,20 @@ html.dlt-parquet .pqw{background:#fff!important;background-image:none!important;
 .tvps{font-style:normal;font-weight:700;letter-spacing:.06em;margin:0;opacity:1}
 .tvw{margin-left:-14px;margin-right:-14px;border-radius:0}.tvbox{min-width:0!important}.tvbox td{padding:0 4px!important}.tvbox th{padding:8px 4px!important}.tvbox td:first-child{min-width:122px!important;max-width:122px!important;padding-left:8px!important;font-size:13px}.tvbox td:first-child small{font-size:10px}.tvbox .tvown{right:-4px!important}.tvbox .tvob{width:46px!important;height:46px!important;line-height:46px!important}.tvbox td .pdkb{min-width:46px!important;padding:3px 5px!important}.tvbox .plk{white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis}
 .tvsb{margin-left:-14px!important;margin-right:-14px!important}.tvtabs{margin-left:-14px!important;margin-right:-14px!important;gap:0!important}
+/* (718) Parquet: niente blu/viola, base bianca + arancio, testo sempre leggibile */
+html.dlt-parquet main .drlive{background:#fff!important;border:1px solid rgba(217,86,11,.45)!important;color:var(--pq-ac,#d9560b)!important}
+html.dlt-parquet main .drlive *{color:var(--pq-ac,#d9560b)!important}
+html.dlt-parquet main .drlive i{background:#ef4444!important}
+html.dlt-parquet main .cltn,html.dlt-parquet main .cltg{background:#fff!important;border:1px solid rgba(217,86,11,.5)!important}
+html.dlt-parquet main .cltn button,html.dlt-parquet main .cltg button{background:#fff!important;color:var(--pq-ac,#d9560b)!important}
+html.dlt-parquet main .cltn b,html.dlt-parquet main .cltg button[aria-pressed="true"],html.dlt-parquet main .cltn button[aria-pressed="true"],html.dlt-parquet main .cltn button.on{background:linear-gradient(180deg,#e8631a,#cf5410)!important;color:#fff!important}
+/* (718) niente blu/viola e niente bianco su bianco: classi pqo/pqn/pqt assegnate dallo script in fondo */
+html.dlt-parquet .pqo{background:linear-gradient(180deg,#e8631a,#cf5410)!important;background-image:linear-gradient(180deg,#e8631a,#cf5410)!important;border-color:#cf5410!important;color:#fff!important}
+html.dlt-parquet .pqo :is(span,b,small,i,em,strong,p,label,a,button,li,div,td,th):not(.pdkx):not(.pdkb):not(.gv):not(.gr2):not(.badge):not(.injtag):not([class*="lg-"]){color:#fff!important}
+html.dlt-parquet .pqn{background:#fff!important;background-image:none!important;border-color:rgba(217,86,11,.4)!important;color:var(--pq-ac,#d9560b)!important}
+html.dlt-parquet .pqn :is(span,b,small,i,em,strong,p,label,a,button,li,div,td,th):not(.pdkx):not(.pdkb):not(.gv):not(.gr2):not(.badge):not(.injtag):not([class*="lg-"]){color:var(--pq-ac,#d9560b)!important}
+html.dlt-parquet .pqt{color:var(--pq-ac,#d9560b)!important}
+html.dlt-parquet main .court{border-color:#fff!important}
 html.dlt-parquet footer,html.dlt-parquet main .foot{color:var(--pq-ink,#2b1608)}
 html.dlt-parquet .rgh b{color:var(--pq-ink,#2b1608)}
 html.dlt-parquet main h2 .t,html.dlt-parquet main h2 .t *{color:#fff}
@@ -6418,7 +6432,7 @@ async function shPcCourt(S){const x=S.x,t=S.t,c=TEAMS[t],OT=dlTm(t),SC=1.375,W=5
   try{await Promise.all([document.fonts.load('40px "CourtBlock"'),document.fonts.load('800 italic 40px "Barlow Condensed"')])}catch(e){}
   const shade=(h,q)=>{const n=parseInt(h.slice(1),16);const f=v=>Math.round(v*(1-q)).toString(16).padStart(2,"0");return"#"+f(n>>16)+f(n>>8&255)+f(n&255)};
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255};
-  const apron=OT.ac||shade(c.bg,.18),LK=OT.cl||1,lg=LOGO2[t]||LOGO[t],atxt=Math.abs(lum(c.fg)-lum(apron))>.35?c.fg:(lum(apron)>.55?"#111":"#fff"),astk=lum(atxt)>.5?shade(c.bg,.55):apron;
+  const PQA=document.documentElement.classList.contains("dlt-parquet"),apron=PQA?"#ffffff":(OT.ac||shade(c.bg,.18)),LK=OT.cl||1,lg=LOGO2[t]||LOGO[t],atxt=PQA?"#d9560b":(Math.abs(lum(c.fg)-lum(apron))>.35?c.fg:(lum(apron)>.55?"#111":"#fff")),astk=PQA?"#ffffff":(lum(atxt)>.5?shade(c.bg,.55):apron);
   const aL=Math.max(c.city.length,c.nick.length),afs=Math.min(7.2,(35-(aL-1)*.5)/(aL*.49))/Math.max(1,LK*.95),TX=9.5*LK+1.5,ay=8+afs*.43;
   const lc=OT.lc||(DLS_LN[DLS.line]||DLS_LN.white)[0];
   /* campo PICCOLO: cornice (apron) sottile attorno al giocatore (~mezzo cm), intestazione con logo e nome, parquet chiaro con area, tiro libero e linea da tre */
@@ -7153,7 +7167,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   const pill=v=>v==null?`<span class="cev na">—</span>`:`<span class="cev ${lvl(v)}">${f2(v)}</span>`;
   const shade=(h,k)=>{const n=parseInt(h.slice(1),16);const f=v=>Math.round(v*(1-k)).toString(16).padStart(2,"0");return "#"+f(n>>16)+f(n>>8&255)+f(n&255)};
   const lum=h=>{const n=parseInt(h.slice(1),16);return (0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255};
-  const OT=dlTm(t),apron=OT.ac||DLS_AP[DLS.apron]||shade(c.bg,.18),LK=OT.cl||1,lg=LOGO2[t]||LOGO[t],atxt=Math.abs(lum(c.fg)-lum(apron))>.35?c.fg:(lum(apron)>.55?"#111":"#fff"),astk=lum(atxt)>.5?shade(c.bg,.55):apron;
+  const OT=dlTm(t),PQA=document.documentElement.classList.contains("dlt-parquet"),apron=PQA?"#ffffff":(OT.ac||DLS_AP[DLS.apron]||shade(c.bg,.18)),LK=OT.cl||1,lg=LOGO2[t]||LOGO[t],atxt=PQA?"#d9560b":(Math.abs(lum(c.fg)-lum(apron))>.35?c.fg:(lum(apron)>.55?"#111":"#fff")),astk=PQA?"#ffffff":(lum(atxt)>.5?shade(c.bg,.55):apron);
   const aL=Math.max(c.city.length,c.nick.length),afs=Math.min(7.2,(35-(aL-1)*.5)/(aL*.49))/Math.max(1,LK*.95),TX=9.5*LK+1.5,ay=(8+afs*.43).toFixed(2);
   const court=`<svg class="cbg" viewBox="0 0 100 128.8" preserveAspectRatio="none" aria-hidden="true">
     <defs><linearGradient id="wood" x1="0" x2="1">${(()=>{let a,b;if(OT.fc){a=shade(OT.fc,.25);b=OT.fc}else if(DLS.floor==="team"){a=shade(c.bg,.35);b=c.bg}else if(DLS_FL[DLS.floor]){a=DLS_FL[DLS.floor][0];b=DLS_FL[DLS.floor][1]}else if(CNT){a="#1c1d22";b="#34353c"}else{a="#b9793f";b="#dba567"}return`<stop offset="0" stop-color="${a}"/><stop offset=".5" stop-color="${b}"/><stop offset="1" stop-color="${a}"/>`})()}</linearGradient>
@@ -9474,7 +9488,28 @@ try{const r=JSON.parse(sessionStorage.getItem("dl_reload")||"null");sessionStora
     const r=e.getBoundingClientRect();if(r.width<36||r.height<24)return;if(!onWood(e))return;e.classList.add("pqw")})}
   const go=()=>{if(t)return;t=setTimeout(()=>{try{(window.requestIdleCallback||setTimeout)(run)}catch(e){}},180)};
   new MutationObserver(go).observe(document.body,{childList:true,subtree:true});document.addEventListener("click",go);window.addEventListener("load",go)})();
-})()</script>
+})();
+/* (718) Parquet: sostituisce blu/viola con arancio e corregge bianco-su-bianco, ovunque */
+(function(){let t=null;const EXC=".pdkx,.pdkb,.gv,.gr2,.badge,.injtag,[class*='lg-']";
+const P=c=>{const m=c&&c.match(/rgba?\(([^)]+)\)/);if(!m)return null;const a=m[1].trim().split(/[\s,\/]+/).map(parseFloat);return{r:a[0],g:a[1],b:a[2],a:a.length>3?a[3]:1}};
+const Lm=c=>{const f=v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)};return .2126*f(c.r)+.7152*f(c.g)+.0722*f(c.b)};
+function run(){t=null;const R=document.documentElement;if(!R.classList.contains("dlt-parquet"))return;
+ document.querySelectorAll(".pqo,.pqn,.pqt").forEach(e=>{e.classList.remove("pqo","pqn","pqt");if(e.dataset.pqo0!=null){const [v,p,sh]=e.dataset.pqo0.split("\u0001");e.style.removeProperty("color");if(v)e.style.setProperty("color",v,p);e.style.removeProperty("text-shadow");if(sh)e.style.setProperty("text-shadow",sh,"important");delete e.dataset.pqo0}});
+ const SK=new Set(["SVG","PATH","IMG","CANVAS","SCRIPT","STYLE","OPTION","VIDEO","IFRAME"]);
+ document.body.querySelectorAll("*").forEach(e=>{if(SK.has(e.tagName.toUpperCase())||e.closest("svg,#tgo,.tgo,canvas")||e.matches(EXC))return;
+  const cs=getComputedStyle(e);if(cs.display==="none"||cs.visibility==="hidden")return;
+  let bg=P(cs.backgroundColor);const gi=cs.backgroundImage;
+  if(gi&&gi!=="none"){const st=(gi.match(/rgba?\([^)]+\)/g)||[]).map(P).filter(x=>x&&x.a>.5);const bl=st.find(x=>x.b>x.r+22&&x.b>=x.g+10);if(bl)bg=bl;else if(st.length){bg={r:st.reduce((q,x)=>q+x.r,0)/st.length,g:st.reduce((q,x)=>q+x.g,0)/st.length,b:st.reduce((q,x)=>q+x.b,0)/st.length,a:1}}}
+  if(bg&&bg.a>.6){
+   if(bg.b>bg.r+22&&bg.b>=bg.g+10){const r=e.getBoundingClientRect();if(r.width<1||r.height<1)return;
+    e.classList.add(r.width*r.height>20000?"pqn":"pqo");return}}
+  let tx="";for(const n of e.childNodes)if(n.nodeType===3)tx+=n.textContent;if(!tx.trim())return;
+  const fg=P(cs.color);if(!fg||Lm(fg)<.7)return;
+  for(let a=e;a&&a!==document.documentElement;a=a.parentElement){const c=getComputedStyle(a);const b=P(c.backgroundColor);if(c.backgroundImage&&c.backgroundImage!=="none"&&!/url\(/.test(c.backgroundImage)&&b&&b.a<.6)return;if(b&&b.a>.6){if(Lm(b)>.7){e.classList.add("pqt");e.dataset.pqo0=[e.style.getPropertyValue("color"),e.style.getPropertyPriority("color"),e.style.getPropertyValue("text-shadow")].join("\u0001");e.style.setProperty("color","#d9560b","important");e.style.removeProperty("text-shadow")}return}}
+ })}
+const go=()=>{if(t)return;t=setTimeout(()=>{try{(window.requestIdleCallback||setTimeout)(run)}catch(e){}},220)};
+new MutationObserver(go).observe(document.body,{childList:true,subtree:true});document.addEventListener("click",()=>setTimeout(go,60));window.addEventListener("load",go);window.__pqfix=run})();
+</script>
 
 <script>
 /* (248) CONTRASTO AUTOMATICO tema Parquet: dopo ogni render, ogni testo con contrasto < 3,4 sul suo sfondo viene corretto: bianco su sfondi scuri/arancioni, arancione scuro (o la stessa tinta scurita) su sfondi chiari. Le stelle vuote si scuriscono sui fondi chiari. Si annulla uscendo dal tema. */
