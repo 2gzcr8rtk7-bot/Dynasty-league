@@ -1770,3 +1770,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 642. Home: cache locale della notte. Ogni scaricamento ESPN salva sul telefono partite e tabellini di oggi, ieri e l'altro ieri (USA); all'apertura dell'app vengono ripristinati prima del primo disegno, così la Home mostra subito box score e PDK già visti invece delle sole medie. Una partita salvata come live da più di 4 ore torna come Finale; dati oltre 36 ore non si usano. ESPN poi aggiorna come prima.
 
 643. La modalità notte (luna in Home e nel Campo) ora si ricorda: resta accesa o spenta anche dopo aver chiuso e riaperto l'app (localStorage dl_cnt).
+
+644. Statistiche live della notte: terzo tasto «Box» accanto a PDK ed Eff. (come nelle notti passate), sotto ogni giocatore PT RB AS ST BL 3P TO e tiri sbagliati con i colori del box score. È il tasto selezionato di default (SN.m=box).

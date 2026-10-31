@@ -5357,7 +5357,7 @@ const snKey=d=>{const[g,m]=d.split("/").map(Number);return(m>=7?2026:2027)*10000
 function snNights(){const o={};for(const n in PARTITE)for(const g of PARTITE[n])o[g[0]]=1;return Object.keys(o).sort((a,b)=>snKey(a)-snKey(b))}
 /* (147) STATISTICHE LIVE: con la modalità notte attiva la sezione mostra la notte in corso (data USA) dai tabellini live di Dynasty TV
    (ESPN, PDK formula Dunkest, provvisori). Solo giocatori delle 8 franchigie principali (niente G League). Si aggiorna da sola (FANTA_LIVE). */
-function vStatLive(){fantaLiveAvvia();const d=campoNotte(),E=SN.m==="eff";
+function vStatLive(){fantaLiveAvvia();const d=campoNotte(),E=SN.m==="eff",B=SN.m==="box";
   const head=`<button class="gback" data-snback="1">‹ Statistiche</button>`;
   if(!d)return`${head}${H("Statistiche live",`<em>dati Dynasty TV</em>`)}<p class="note">Nessuna partita NBA iniziata stanotte: la lista si riempie da sola appena i giocatori scendono in campo.</p>`;
   const who={};for(const t in ROSTER)for(const r of ROSTER[t])who[tvNm(r[0])]={n:r[0],t};
@@ -5368,13 +5368,13 @@ function vStatLive(){fantaLiveAvvia();const d=campoNotte(),E=SN.m==="eff";
   const f2=v=>(Math.round(v*100)/100).toLocaleString("it-IT",{maximumFractionDigits:2}),fv=v=>E?v.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2}):f2(v);
   const cl=v=>E?(v<.8?"pr":v<=1.1?"py":v<1.5?"pg":"pv"):(v<20?"pr":v<30?"py":v<40?"pg":"pv");
   const dd=tvDt(d),nlv=L.filter(x=>x.lv).length,tot=L.reduce((a,x)=>a+val(x),0);
-  const rows=L.map((x,k)=>`<div class="snrow${x.lv?" lvr":""}">${wedge(x.t)}<div class="sninfo"><b><i>${k+1}</i>${RTR(x.n)}${x.n}</b><small>vs ${x.opp} · ${x.r[2]} min · ${x.r[3]} pt ${x.r[6]} rb ${x.r[7]} as${x.lv?` · <b class="clv"><i></i>${x.st}</b>`:""}</small></div><span class="snp ${cl(val(x))}">${fv(val(x))}</span></div>`).join("");
+  const rows=L.map((x,k)=>`<div class="snrow${x.lv?" lvr":""}${B?" bxm":""}">${wedge(x.t)}<div class="sninfo"><b><i>${k+1}</i>${RTR(x.n)}${x.n}</b><small>vs ${x.opp} · ${x.r[2]} min${B?"":` · ${x.r[3]} pt ${x.r[6]} rb ${x.r[7]} as`}${x.lv?` · <b class="clv"><i></i>${x.st}</b>`:""}</small>${B?snBoxR(x.r):""}</div><span class="snp ${cl(val(x))}">${fv(val(x))}</span></div>`).join("");
   return`${head}
   ${H("Statistiche live",`<em>${L.length} giocatori${nlv?` · ${nlv} in campo`:""}</em>`)}
   <div class="sndate snlive"><button data-snlv="prev" aria-label="Notte precedente"${snNights().some(n=>snKey(n)<snLiveKey())?"":" disabled"}>‹</button><div><b><span class="snlvd"></span>Notte del ${dd.getUTCDate()} ${TV_MM[dd.getUTCMonth()].slice(0,3)}</b><small>data USA · media ${L.length?fv(tot/L.length):"—"} ${E?"eff.":"PDK"} · si aggiorna da sola</small></div><button disabled aria-label="Notte successiva">›</button></div>
-  <div class="snsw"><button data-snm="pdk" aria-pressed="${!E}">PDK</button><button data-snm="eff" aria-pressed="${E}">Eff.</button></div>
+  <div class="snsw"><button data-snm="pdk" aria-pressed="${!E&&!B}">PDK</button><button data-snm="eff" aria-pressed="${E}">Eff.</button><button data-snm="box" aria-pressed="${B}">Box</button></div>
   <div class="snlist">${rows||'<p class="note">Stanotte nessun giocatore delle franchigie è ancora sceso in campo.</p>'}</div>
-  <p class="note">Modalità notte: PDK live della notte in corso (Dynasty TV, formula Dunkest), provvisori fino al report ufficiale. Con la freccia ‹ vedi le notti passate (dati ufficiali).</p>`}
+  <p class="note">${B?"Box score live: sotto ogni giocatore PT, RB, AS, ST, BL, triple, palle perse e tiri sbagliati. ":""}Modalità notte: PDK live della notte in corso (Dynasty TV, formula Dunkest), provvisori fino al report ufficiale. Con la freccia ‹ vedi le notti passate (dati ufficiali).</p>`}
 /* (602) tasto BOX in Statistiche notte: sotto ogni giocatore le statistiche del box score. Verde = 3+ rubate, 3+ stoppate, 7+ rimbalzi, 25+ punti, 7+ assist; giallo al posto del verde per le statistiche che compongono doppia, tripla o quadrupla doppia (10+ in almeno due tra PT RB AS ST BL); rosso = 3+ palle perse (TO), tiri sbagliati oltre il 60% dei tentati (almeno 5 tiri) */
 function snBox(n,d){const[g,m]=d.split("/").map(Number),iso=`${m>=7?2026:2027}-${String(m).padStart(2,"0")}-${String(g).padStart(2,"0")}`,k=tvNm(n);let r=null;
   for(const G of TV.days[iso]||[]){const Bx=G[7]&&TV.box[G[7]];if(!Bx)continue;for(const sd of["a","h"]){const f=(Bx[sd]||[]).find(p=>tvNm(p[0])===k);if(f){r=f;break}}if(r)break}
