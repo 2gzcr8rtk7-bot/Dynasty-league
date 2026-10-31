@@ -12466,6 +12466,7 @@ html.notte .guhb,html.notte .gmsc{background:rgba(30,20,60,.85);color:#ede9fe;bo
 .gubox .gumin{margin-top:14px}.gubox .gumin select{background:#fdf3e1!important;color:#b8410a!important;border:1px solid rgba(217,86,11,.45)!important;font-weight:800;padding:8px 12px;border-radius:10px;-webkit-appearance:none;appearance:none}
 .gubox .gurowc{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}.gubox .guchip{padding:3px;display:grid;place-items:center}.gubox .guchip .badge{width:100%;height:auto;aspect-ratio:1}
 .gubox h4{margin-top:18px}.gukeep{gap:7px}.guk{padding:6px 11px}.gugo{margin-top:18px}</style>
+<<<<<<< HEAD
 <script>
 /* (31/10) NOTTE AUTOMATICA: modalità notte (CNT) accesa dall'inizio della prima partita della notte alla fine dell'ultima. Orari tv-data.js = ora italiana ("01:30+1" = giorno dopo) */
 function antTs(d,t){const m=/^(\d\d):(\d\d)(\+1)?$/.exec(t||"");if(!m||+m[1]>23)return null;const[y,mo,da]=d.split("-").map(Number);
@@ -12484,5 +12485,8 @@ function autoNotte(){try{if(typeof DLS==="undefined"||typeof CNT==="undefined")r
 setTimeout(autoNotte,1500);setInterval(autoNotte,60000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)autoNotte()});
 document.addEventListener("click",e=>{if(e.target.closest('[data-dlst="autont"]'))setTimeout(autoNotte,50)});
 </script>
+=======
+<style>/* (781) Parquet: tasti Statistiche › Giocatori blu notte e Squadre arancio (scelta 4 di Francesco) */html.dlt-parquet main .effbig.pl{background:linear-gradient(135deg,#101a3a,#2a3f7a)!important}html.dlt-parquet main .effbig.sq{background:linear-gradient(135deg,#b8410a,#f2701a)!important}</style>
+>>>>>>> coda
 </body>
 </html>
