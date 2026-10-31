@@ -12129,5 +12129,16 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-hp]");if(!
 .hpre .hpit{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 10px;border-radius:12px;border:1px solid rgba(217,86,11,.25);margin:6px 0}
 .hpre .hpit.on{border-color:#d9560b;box-shadow:0 0 0 2px rgba(217,86,11,.25)}.hpre .hpit>div{display:grid;min-width:0}.hpre .hpit small{opacity:.75}.hpre .hpit span{display:flex;gap:6px;flex:none}
 .hpre .hpit [data-hp="on"]{background:#d9560b;color:#fff}.hpre .hpit .hpm.on{background:linear-gradient(180deg,#3b2a8a,#1b1240);color:#fff;border-color:#8b5cf6}.hpre .hpmn{margin-top:-4px}.setnote.bxmode{margin-top:0}</style>
+<script>
+/* (760) DREAMERS / G-DREAMERS SEGUONO SEMPRE LO STILE DELL'APP: niente più tasto 🎨 Stile nelle due sezioni.
+   Lo stile si sceglie solo in Impostazioni (o con la luna): notte → Galassia, Parquet → Parquet, Tabellone → Tabellone, il resto → App.
+   DR._th diventa un valore calcolato: le vecchie scelte salvate (dl_drth) e il tasto non possono più creare stili diversi. */
+(function(){try{
+ const der=()=>{if(typeof CNT!=="undefined"&&CNT)return 0;const t=DLS.th;if(t==="tabellone")return 5;if(t==="parquet"||(DLT[t]&&DLT[t].pq))return 3;return 1};
+ Object.defineProperty(DR,"_th",{get:der,set(){},configurable:true,enumerable:true});
+ try{localStorage.removeItem("dl_drth")}catch(e){}
+}catch(e){}})();
+</script>
+<style>.drroom .drth,.gdroom .drth,[data-gdth],[data-dr="theme"]{display:none!important}</style>
 </body>
 </html>
