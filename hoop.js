@@ -95,7 +95,7 @@ function bindInput(){
     if(C.over){endTap(p);return}if(C.paused){pauseTap(p);return}
     if(p.x>VW-70&&p.y<60){C.paused=true;SFX.whistle();return}
     const b=btnAt(p);if(b){IN.btn[b]=e.pointerId;IN.press[b]=1;return}
-    const leftSide=cfg.left?p.x>VW*.55:p.x<VW*.5;if(leftSide&&!IN.stick)IN.stick={id:e.pointerId,ox:p.x,oy:p.y,x:p.x,y:p.y}},{passive:false});
+    const leftSide=cfg.left?p.x>VW*.55:p.x<VW*.5;if(leftSide&&!IN.stick){const ox=clamp(p.x,78,VW-78),oy=clamp(p.y,150,VH-75);IN.stick={id:e.pointerId,ox,oy,x:p.x,y:p.y}}},{passive:false});
   cv.addEventListener("pointermove",e=>{if(IN.stick&&IN.stick.id===e.pointerId){const p=pt(e);IN.stick.x=p.x;IN.stick.y=p.y}});
   const up=e=>{if(IN.stick&&IN.stick.id===e.pointerId)IN.stick=null;for(const k in IN.btn)if(IN.btn[k]===e.pointerId){delete IN.btn[k];IN.rel[k]=1}};
   cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);
@@ -104,7 +104,7 @@ const KEYS={KeyJ:"a",KeyK:"b",KeyL:"c",Space:"a",KeyX:"b",KeyC:"c",KeyZ:"a"};
 function kd(e){if(!C)return;if(e.code==="Escape"||e.code==="KeyP"){C.paused=!C.paused;return}const b=KEYS[e.code];if(b&&!IN.kb[e.code]){IN.press[b]=1;IN.btn[b]="kb"}IN.kb[e.code]=1;if(/Arrow|Key[WASDJKLXCZ]|Space/.test(e.code))e.preventDefault()}
 function ku(e){if(!C)return;const b=KEYS[e.code];if(b&&IN.btn[b]==="kb"){delete IN.btn[b];IN.rel[b]=1}delete IN.kb[e.code]}
 function axis(){let x=0,y=0;const k=IN.kb;if(k.ArrowLeft||k.KeyA)x-=1;if(k.ArrowRight||k.KeyD)x+=1;if(k.ArrowUp||k.KeyW)y-=1;if(k.ArrowDown||k.KeyS)y+=1;
-  if(IN.stick){const dx=IN.stick.x-IN.stick.ox,dy=IN.stick.y-IN.stick.oy,m=Math.hypot(dx,dy);if(m>8){x=dx/Math.max(m,55);y=dy/Math.max(m,55)}}const m=Math.hypot(x,y);if(m>1){x/=m;y/=m}return{x,y}}
+  if(IN.stick){const dx=IN.stick.x-IN.stick.ox,dy=IN.stick.y-IN.stick.oy,m=Math.hypot(dx,dy);if(m>6){x=dx/Math.max(m,50);y=dy/Math.max(m,50)}}const m=Math.hypot(x,y);if(m>1){x/=m;y/=m}return{x,y}}
 const BTN=()=>{const R=cfg.left?[[90,440],[200,470],[110,320]]:[[VW-90,440],[VW-200,470],[VW-110,320]];return{a:{x:R[0][0],y:R[0][1],r:58},b:{x:R[1][0],y:R[1][1],r:46},c:{x:R[2][0],y:R[2][1],r:44}}};
 function btnAt(p){const B=BTN();for(const k in B){if(dist(p.x,p.y,B[k].x,B[k].y)<B[k].r+10)return k}return null}
 
@@ -347,8 +347,12 @@ function drawHUD(g){const A=C.T[0],B=C.T[1];
   if(p&&p.rel&&p.relT===undefined)p.relT=C.t;if(p&&p.rel&&C.t-p.relT<1.1){g.textAlign="center";g.font="bold 16px system-ui";g.fillStyle=p.rel==="PERFETTO"?"#22c55e":"#facc15";g.fillText(p.rel,sx(p.x),sy(p.y)-9.6*S)}else if(p&&p.rel&&C.t-p.relT>=1.1){p.rel=null;p.relT=undefined}
   /* comandi */const off=C.ball.h&&C.ball.h.team===0;const B2=BTN(),lab=off?{a:"TIRO",b:"PASSA",c:"PALLEGGIO"}:{a:"SALTO",b:"RUBA",c:"CAMBIA"};
   for(const k in B2){const b=B2[k],on=!!IN.btn[k];g.fillStyle=on?"rgba(249,115,22,.85)":"rgba(15,18,32,.55)";g.strokeStyle="rgba(255,255,255,.75)";g.lineWidth=2.5;g.beginPath();g.arc(b.x,b.y,b.r,0,7);g.fill();g.stroke();g.fillStyle="#fff";g.font=`bold ${k==="a"?16:13}px system-ui,sans-serif`;g.textAlign="center";g.fillText(lab[k],b.x,b.y+5)}
-  if(IN.stick){const s=IN.stick;g.fillStyle="rgba(255,255,255,.12)";g.beginPath();g.arc(s.ox,s.oy,55,0,7);g.fill();const dx=s.x-s.ox,dy=s.y-s.oy,m=Math.hypot(dx,dy),k=m>55?55/m:1;g.fillStyle="rgba(255,255,255,.55)";g.beginPath();g.arc(s.ox+dx*k,s.oy+dy*k,26,0,7);g.fill()}
-  else{const x=cfg.left?VW-110:110;g.fillStyle="rgba(255,255,255,.08)";g.beginPath();g.arc(x,440,55,0,7);g.fill();g.fillStyle="rgba(255,255,255,.35)";g.font="12px system-ui";g.textAlign="center";g.fillText("muoviti",x,444)}
+  /* (786) JOYSTICK sempre visibile: base fissa in basso; si può toccare ovunque nella metà dello schermo e la base si sposta sotto il dito */
+  {const hx=cfg.left?VW-125:125,hy=420,s=IN.stick,ox=s?s.ox:hx,oy=s?s.oy:hy;let kx=ox,ky=oy;if(s){const dx=s.x-s.ox,dy=s.y-s.oy,m=Math.hypot(dx,dy),k=m>62?62/m:1;kx=ox+dx*k;ky=oy+dy*k}
+    g.fillStyle="rgba(15,18,32,.5)";g.strokeStyle="rgba(255,255,255,.85)";g.lineWidth=3;g.beginPath();g.arc(ox,oy,70,0,7);g.fill();g.stroke();
+    g.strokeStyle="rgba(255,255,255,.35)";g.lineWidth=2;[[0,-1],[0,1],[-1,0],[1,0]].forEach(([a,b])=>{g.beginPath();g.moveTo(ox+a*52-b*8,oy+b*52-a*8);g.lineTo(ox+a*62,oy+b*62);g.lineTo(ox+a*52+b*8,oy+b*52+a*8);g.stroke()});
+    const gr=g.createRadialGradient(kx-8,ky-8,4,kx,ky,32);gr.addColorStop(0,"#ffd2a8");gr.addColorStop(1,"#d9560b");g.fillStyle=gr;g.beginPath();g.arc(kx,ky,30,0,7);g.fill();g.strokeStyle="rgba(255,255,255,.9)";g.lineWidth=2.5;g.stroke();
+    if(!s&&C.t<12){g.fillStyle="#fff";g.font="bold 13px system-ui";g.textAlign="center";g.fillText("MUOVITI",ox,oy-80)}}
   if(C.phase==="ft"&&C.ft){g.fillStyle="#fff";g.font="bold 18px system-ui";g.textAlign="center";g.fillText("Tiri liberi: "+C.ft.p.sur+" ("+C.ft.k+"/"+C.ft.n+")",VW/2,96)}}
 function drawPause(g){g.fillStyle="rgba(5,7,15,.82)";g.fillRect(0,0,VW,VH);g.fillStyle="#fff";g.textAlign="center";g.font="bold 34px system-ui";g.fillText("PAUSA",VW/2,110);
   const it=[["Riprendi","r"],["Sonoro: "+(SND.on?"sì":"no"),"s"],["Difficoltà: "+["facile","normale","difficile"][cfg.diff],"d"],["Velocità: "+["lenta","normale","veloce"][[.8,1,1.25].indexOf(cfg.speed)>=0?[.8,1,1.25].indexOf(cfg.speed):1],"v"],["Cambi automatici: "+(cfg.subs?"sì":"no"),"c"],["Statistiche partita","b"],["Esci dalla partita","x"]];
