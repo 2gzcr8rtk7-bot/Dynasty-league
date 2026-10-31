@@ -9362,12 +9362,13 @@ function atSample(a,k){const b=a.slice(),o=[];while(o.length<k&&b.length)o.push(
 const atK=()=>[1,1,1,2,2,2,3][Math.random()*7|0];
 function atGen(){const me=AT_PR&&AT_PR.t;if(!me)return null;const pool=t=>ROSTER[t].map(p=>p[0]).filter(n=>valOf(n)>0),mine=pool(me),others=Object.keys(ROSTER).filter(t=>t!==me);
   const rec=new Set(AT_LOG.slice(-10).map(x=>x.give.map(g=>g.n).join()+"|"+x.get.map(g=>g.n).join()));
-  const tol=[.05,.12,.2,.32][Math.random()*4|0],tg=(Math.random()*2-1)*tol*100;let best=null,bs=9;
+  /* (819) scambi EQUILIBRATI (Francesco): con un pacchetto molto favorevole si accetta tutto, anche cedendo chi si ama; per capire chi un GM vuole davvero cedere servono offerte vicine alla pari. 3 su 4 entro ±5%, le altre entro ±10% */
+  const tol=[.03,.05,.05,.1][Math.random()*4|0],tg=(Math.random()*2-1)*tol*100;let best=null,bs=9;
   const T3=false/* (765) niente scambi a 3 squadre: difficili da leggere */,FOC=Math.random()<.7,KK=[1,1,2,2,3][Math.random()*5|0];for(let i=0;i<600;i++){const t3=T3,sh=atSample(others,2),ot=sh[0];if(!mine.length)break;
     const g=atSample(mine,KK).map(atInfo);if(g.length<KK)break;let r,m=null,mt=null,db=0;
     if(t3){mt=sh[1];const th=pool(ot),th2=pool(mt);if(!th.length||!th2.length)continue;m=atSample(th,KK).map(atInfo);r=atSample(th2,KK).map(atInfo);if(m.length<KK||r.length<KK)continue;db=atDf(atSum(g),atSum(m))}
     else{const th=pool(ot);r=atSample(th,KK).map(atInfo);if(r.length<KK)continue}
-    const vg=atSum(g),vr=atSum(r),d=atDf(vg,vr),gi=gustoIdx(g,r);let sc=(Math.abs(gi-tg)/100)+(Math.abs(d)>.45?3:0)+Math.abs(db)*.4+(rec.has(g.map(x=>x.n).join()+"|"+r.map(x=>x.n).join())?5:0)+(FOC&&!g.concat(r).some(x=>x.f&&x.f.length)?.3:0);
+    const vg=atSum(g),vr=atSum(r),d=atDf(vg,vr),gi=gustoIdx(g,r);let sc=(Math.abs(gi-tg)/100)+(Math.abs(d)>.12?3:0)+Math.abs(d)*.5+Math.abs(db)*.4+(rec.has(g.map(x=>x.n).join()+"|"+r.map(x=>x.n).join())?5:0)+(FOC&&!g.concat(r).some(x=>x.f&&x.f.length)?.3:0);
     if(sc<bs){bs=sc;best={t:me,ot:t3?mt:ot,give:g,get:r,d,g:gi,mid:t3?{t:ot,in:g,out:m,to:mt}:null}}}
   return best}
 const atTot=atSum;
@@ -9389,7 +9390,11 @@ function atReport(){const L=AT_LOG,N=L.length,pc=x=>(x*100>0?"+":"")+(x*100).toF
   o.push("NUMERO DI GIOCATORI RICEVUTI: % accettati",`- 1: ${sz(1,"get")} · 2: ${sz(2,"get")} · 3: ${sz(3,"get")}`,"");
   /* (782) accanto a ogni nome il Δ medio di quegli scambi: «ceduto volentieri» in uno scambio a +25% non vuol dire che non lo vuole (segnalazione dei GM) */
   const cnt=(res,k)=>{const m={};L.filter(x=>x.res===res).forEach(x=>x[k].forEach(p=>{(m[p.n]=m[p.n]||[]).push(x.d)}));return Object.entries(m).sort((a,b)=>b[1].length-a[1].length).slice(0,6).map(([n,ds])=>`${n} (${ds.length}, Δ medio ${pc(ds.reduce((a,b)=>a+b,0)/ds.length)})`).join(", ")||"—"};
-  o.push("GIOCATORI (Δ medio = quanto ci guadagnavo in quegli scambi: un sì con Δ alto non vuol dire che il giocatore non mi interessa)",`- volentieri ricevuti: ${cnt("y","get")}`,`- rifiutati da ricevere: ${cnt("n","get")}`,`- volentieri ceduti: ${cnt("y","give")}`,`- rifiutati da cedere: ${cnt("n","give")}`,"");
+  o.push("GIOCATORI (Δ medio = quanto ci guadagnavo in quegli scambi: un sì con Δ alto NON vuol dire che lo cedo volentieri, vuol dire che l'offerta era buona)",`- accettato di riceverlo: ${cnt("y","get")}`,`- rifiutato di riceverlo: ${cnt("n","get")}`,`- accettato di cederlo: ${cnt("y","give")}`,`- rifiutato di cederlo: ${cnt("n","give")}`,"");
+  /* (819) il segnale vero: solo scambi alla pari (Δ tra −6% e +6%) */
+  {const E=L.filter(x=>Math.abs(x.d)<=.06),m={};E.forEach(x=>x.give.forEach(p=>{const r=m[p.n]=m[p.n]||[0,0];r[0]++;if(x.res==="y")r[1]++}));const R=Object.entries(m).filter(([n,r])=>r[0]>=2).sort((a,b)=>b[1][1]/b[1][0]-a[1][1]/a[1][0]||b[1][0]-a[1][0]);
+   o.push(`SCAMBI ALLA PARI (Δ tra −6% e +6%: ${E.length} risposte, ${E.length?Math.round(E.filter(x=>x.res==="y").length/E.length*100):0}% accettati) · chi cede davvero e chi no`);
+   if(R.length){o.push(`- li cede anche alla pari: ${R.filter(([n,r])=>r[1]/r[0]>=.5).map(([n,r])=>`${n} (${r[1]} su ${r[0]})`).join(", ")||"—"}`,`- alla pari non li cede: ${R.filter(([n,r])=>r[1]/r[0]<.5).map(([n,r])=>`${n} (${r[1]} su ${r[0]})`).join(", ")||"—"}`)}else o.push("- ancora troppo poche risposte alla pari per giocatore");o.push("")}
   const ch=C.filter(x=>(x.rem&&x.rem.length)||x.note);if(ch.length){o.push("MODIFICHE RICHIESTE");ch.forEach(x=>o.push(`- ${x.rem&&x.rem.length?"toglierei "+x.rem.join(", ")+" · ":""}${x.note||""} [su: dà ${x.give.map(p=>p.n).join(" + ")} / riceve ${x.get.map(p=>p.n).join(" + ")}]`));o.push("")}
   const TT=L.filter(x=>x.ms!=null&&x.ms<=120000);if(TT.length>=6){const sd=x=>x.ms/1000,ts=TT.map(sd).sort((a,b)=>a-b),md=ts[Math.floor(ts.length/2)],m=avg(ts),w=x=>{const t=sd(x);return t<=2?1:t<=3?.8:.8/(1+((t-3)/6)**2)},wa=(a,f)=>{const sw=a.reduce((s,x)=>s+w(x),0);return sw?a.reduce((s,x)=>s+w(x)*f(x),0)/sw:null};
     const I=TT.filter(x=>sd(x)<=3),R2=TT.filter(x=>sd(x)>3),I2=TT.filter(x=>sd(x)<=2),ya=a=>a.length?Math.round(a.filter(x=>x.res==="y").length/a.length*100)+"%":"n.d.",dm=a=>a.length?pc(avg(a.map(x=>x.d))):"n.d.",tm=a=>a.length?f1(avg(a.map(sd)))+"s":"n.d.";

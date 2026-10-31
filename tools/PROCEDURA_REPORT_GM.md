@@ -19,6 +19,8 @@ Richiesta di Francesco (31/10/2026): ogni report dell'Allenamento IA va usato pe
 4. Aggiornare anche `GM_DESCR[squadra]` in index.html (scheda «Scopri i gusti dei GM»: cosa cercano, come chiudono, infortuni, cosa manca) con quello che si è capito; i numeri della scheda vengono da GM_GUSTI da soli.
 5. Le sezioni FOCUS dei report (fragili, OUT, trend, rookie, ritoccati) vanno lette e annotate qui sotto nel registro.
 
+**Regola ferma (Francesco, 31/10 21:12):** un sì a uno scambio FAVOREVOLE non vuol dire che il GM vuole liberarsi del giocatore (con Jokić in cambio chiunque cede Johnson e Thompson). «Cede volentieri» / «se ne vuole liberare» si scrive SOLO da: sezione «SCAMBI ALLA PARI» del report, residui positivi del modello, o risposta «Lo cedo volentieri» del GM sui SUOI giocatori nella Valutazione. In caso di dubbio non si scrive.
+
 **Attenzione (segnalazione dei GM, 31/10):** «ceduto volentieri» / «rifiutato da cedere» vanno SEMPRE pesati col vantaggio dello scambio. Si usa il residuo del modello (accettato − probabilità attesa dal Δ valore, età, ruoli) per ogni giocatore ceduto: solo un residuo positivo vuol dire «se ne libera volentieri». Script: tools/gm_residui.py (lista dei report da aggiornare dentro, dizionario F); nel report ora c'è il Δ medio accanto a ogni nome.
 
 ## 2. Correzioni dei valori (quando c'è consenso)
