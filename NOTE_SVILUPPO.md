@@ -1883,3 +1883,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 726. Parquet: tolta la base bianca dietro la panchina (50% PDK) nella formazione; la panchina ha ora il contorno rosso leggero come il 6° uomo ha il verde; scritta 50% PDK bianca.
 
 727. Parquet: tolto il rettangolo interno nella barra Cerca giocatore.
+
+728. Modalita' notte a se' stante: con la notte accesa il tema Parquet viene spento del tutto (nessuna classe Parquet), cosi' la notte e' identica a quella sopra la base originale. Spegnendo la notte il Parquet torna.
