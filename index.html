@@ -10415,6 +10415,7 @@ function sala(){if(!COL.d){cur="campo";return vCampo()}
   <button class="hoftile" data-hof="college"><span class="hi">🔭</span><span><b>Scouting</b><small>Ufficio Scouting · college, NBA, prospetti</small></span><i>›</i></button>
   <button class="hoftile" data-hof="dxcol"><span class="hi">🖌️</span><span><b>Editor colori</b><small>Parquet · Base · Notte · tocca e scegli</small></span><i>›</i></button>
   <button class="hoftile" data-hof="pers"><span class="hi">🎨</span><span><b>Personalizzazioni</b><small>Loghi e look della tua app</small></span><i>›</i></button>
+  <button class="hoftile" data-hof="hoop"><span class="hi">🏀</span><span><b>Hoop Dreamers</b><small>Basket 5 contro 5 · le nostre squadre · palazzetto e sonoro</small></span><i>›</i></button>
   <button class="hoftile" data-hof="bet"><span class="hi">🎰</span><span><b>Centro scommesse</b><small>Gettoni · sfide · sopra/sotto · duelli</small></span><i>›</i></button>
   <button class="hoftile" data-hof="soft"><span class="hi">⚙️</span><span><b>Software</b><small>Cap · Multe</small></span><i>›</i></button>
  </div><p class="hoftt">🦆 Texas Ducks · uso interno</p></div>`}
@@ -11439,7 +11440,7 @@ window.gzEdizione=gzEdizione;window.gzFatti=gzFatti;window.GZ=GZ;window.gzPulisc
 /* il codice del giornale si carica dopo il primo disegno della Home: ridisegno la Home una volta, così la scheda TG compare subito (senza dover passare da altre sezioni) */
 try{if(cur==="home")render()}catch(e){}
 document.addEventListener("click",e=>{
- if(!["sala","pers","soft","orari","eq","bet","giornale","notizie"].includes(cur))return;
+ if(!["sala","pers","soft","orari","eq","bet","giornale","notizie","hoop"].includes(cur))return;
  if(e.target.closest("#hofback")){cur=cur==="sala"?"campo":"sala";render();scrollTo(0,0);return}
  const h=e.target.closest("[data-hof]");if(h){cur=h.dataset.hof;render();scrollTo(0,0);return}
  const hn=e.target.closest("[data-hnl]");if(hn){const y=scrollY;hnSet(hn.dataset.hnl);render();scrollTo(0,y);return}
@@ -12492,5 +12493,38 @@ html.dlt-parquet body .drroom button.drm:not(#q1):not(#q2) .drr{background:none!
 html.dlt-parquet body .drroom .drcla .drcr:not(#q1):not(#q2){background:#fdf3e1!important;border:3px solid #d9560b!important;box-shadow:0 6px 0 #9a3a0c!important;border-radius:18px!important}
 html.dlt-parquet body .drroom .drcla .drcr:not(#q1):not(#q2).lead{border-color:#b8410a!important;box-shadow:0 6px 0 #7c2d12!important}</style>
 <style>/* (784) Dreamers nel Parquet: chi è in vantaggio ha il punteggio più scuro, chi è dietro più chiaro e sbiadito */html.dlt-parquet body .drroom button.drm:not(#q1):not(#q2):not(#q3):not(#q4) .drr.slead em{color:#6b240a!important;-webkit-text-fill-color:#6b240a!important}html.dlt-parquet body .drroom button.drm:not(#q1):not(#q2):not(#q3):not(#q4) .drr.strail em{color:#c9a98a!important;-webkit-text-fill-color:#c9a98a!important}</style>
+<script>
+/* (785) HOOP DREAMERS (area riservata Ducks): menu e impostazioni; il gioco vero è in hoop.js, caricato solo quando si preme «Gioca». */
+(function(){
+const HK="dl_hoop",D={arena:"home",auto:false,home:"DUC",away:"DOL",qlen:3,diff:1,speed:1,sound:true,crowd:.5,left:false,subs:true,names:true,fouls:true};
+const P=()=>{try{return{...D,...JSON.parse(localStorage.getItem(HK)||"{}")}}catch(e){return{...D}}},SV=o=>{try{localStorage.setItem(HK,JSON.stringify(o))}catch(e){}};
+function loadHoop(cb){if(window.HOOP)return cb();const s=document.createElement("script");s.src="hoop.js?v="+(window.HOOP_V||Date.now());s.onload=cb;s.onerror=()=>alert("Gioco non caricato: controlla la connessione");document.head.appendChild(s)}
+function seg(k,opts,cur){return`<div class="hpseg">${opts.map(([v,l])=>`<button type="button" data-hp2="${k}" data-v="${v}" class="${String(cur)===String(v)?"on":""}">${l}</button>`).join("")}</div>`}
+function vHoop(){if(!COL.d){cur="campo";return vCampo()}const o=P(),T=teamOrd();
+  const pick=k=>`<div class="hpteams">${T.map(t=>`<button type="button" data-hp2="${k}" data-v="${t}" class="${o[k]===t?"on":""}" aria-label="${TEAMS[t].nick}">${badge(t)}</button>`).join("")}</div>`;
+  return`<div class="hof"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
+  <div class="hofhd"><div style="grid-column:1/3"><small>Texas Ducks · area riservata del GM</small><b>Hoop Dreamers</b><em>Basket 5 contro 5 con le nostre squadre</em></div></div>
+  <section class="hofcard hpcard"><h4>La tua squadra</h4>${pick("home")}<h4>Avversaria</h4>${pick("away")}
+  <h4>Palazzetto</h4>${seg("arena",[["home","Il tuo ("+TEAMS[o.home].nick+")"],["away","Il loro ("+TEAMS[o.away].nick+")"]],o.arena)}
+  <h4>Modalità</h4>${seg("auto",[[false,"Gioca tu"],[true,"Guarda CPU contro CPU"]],o.auto)}
+  <h4>Durata di un quarto (minuti veri)</h4>${seg("qlen",[[2,"2"],[3,"3"],[4,"4"],[6,"6"],[8,"8"],[12,"12"]],o.qlen)}
+  <h4>Difficoltà</h4>${seg("diff",[[0,"Facile"],[1,"Normale"],[2,"Difficile"]],o.diff)}
+  <h4>Velocità di gioco</h4>${seg("speed",[[.8,"Lenta"],[1,"Normale"],[1.25,"Veloce"]],o.speed)}
+  <h4>Sonoro</h4>${seg("sound",[[true,"Sì"],[false,"No"]],o.sound)}<h4>Pubblico</h4>${seg("crowd",[[.2,"Tranquillo"],[.5,"Normale"],[.9,"Bolgia"]],o.crowd)}
+  <h4>Comandi</h4>${seg("left",[[false,"Levetta a sinistra"],[true,"Levetta a destra"]],o.left)}
+  <h4>Regole</h4>${seg("fouls",[[true,"Falli e liberi"],[false,"Senza falli"]],o.fouls)}${seg("subs",[[true,"Cambi automatici"],[false,"Sempre i titolari"]],o.subs)}${seg("names",[[true,"Nomi sopra i giocatori"],[false,"Senza nomi"]],o.names)}
+  <button type="button" class="hpplay" data-hp2="play">▶ Gioca</button></section>
+  <section class="hofcard"><h4>Come si gioca</h4><p class="setnote"><b>Attacco:</b> levetta per muoverti · <b>TIRO</b> tieni premuto per saltare e lascia in cima al salto (barra verde = tiro perfetto; vicino al ferro schiacci) · <b>PASSA</b> verso dove punti la levetta (o al compagno più libero) · <b>PALLEGGIO</b> crossover veloce: se il difensore è vicino puoi rompergli le caviglie.<br><b>Difesa:</b> <b>SALTO</b> per stoppare, contestare e prendere rimbalzi · <b>RUBA</b> vicino a chi palleggia (attento ai falli) · <b>CAMBIA</b> passi al difensore più vicino alla palla.<br>Tiri da tre, 24 secondi, falli di squadra (dal 5° ci sono i liberi), stoppate, rimbalzi, intercetti, quarti e supplementari. I giocatori sono quelli veri delle rose, con forza ricavata da valore e ruolo; si stancano e vengono cambiati. Tastiera: frecce, J K L, P pausa.</p></section>
+  <p class="hoftt">🦆 Texas Ducks · uso interno</p></div>`}
+VIEWS.hoop=vHoop;
+document.addEventListener("click",e=>{if(cur!=="hoop")return;const b=e.target.closest("[data-hp2]");if(!b)return;e.preventDefault();const k=b.dataset.hp2,o=P();
+  if(k==="play"){loadHoop(()=>{window.HOOP.onclose=()=>{try{render()}catch(_){}};window.HOOP.open(P())});return}
+  let v=b.dataset.v;if(v==="true")v=true;else if(v==="false")v=false;else if(!isNaN(+v)&&k!=="home"&&k!=="away")v=+v;o[k]=v;if(k==="home"&&o.away===v)o.away=T0(v);if(k==="away"&&o.home===v)o.home=T0(v);SV(o);const y=scrollY;render();scrollTo(0,y)});
+const T0=x=>teamOrd().find(t=>t!==x);
+})();
+</script>
+<style>.hpcard h4{margin:14px 0 6px}.hpteams{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}.hpteams button{border:2px solid transparent;border-radius:12px;background:#fdf3e1;padding:3px;cursor:pointer}.hpteams .badge{width:100%;height:auto;aspect-ratio:1}.hpteams button.on{border-color:#d9560b;box-shadow:0 0 0 2px rgba(217,86,11,.25)}
+.hpseg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}.hpseg button{flex:1;min-width:64px;padding:9px 8px;border-radius:10px;border:1px solid rgba(217,86,11,.45);background:#fdf3e1;color:#b8410a;font-weight:800;cursor:pointer}.hpseg button.on{background:#d9560b;color:#fff;border-color:#d9560b}
+.hpplay{width:100%;margin-top:16px;padding:16px;border:0;border-radius:14px;background:linear-gradient(180deg,#f2701a,#d9560b);color:#fff;font-weight:900;font-size:19px;cursor:pointer;box-shadow:0 6px 0 #9a3a0c}</style>
 </body>
 </html>
