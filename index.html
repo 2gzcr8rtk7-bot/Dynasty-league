@@ -10263,7 +10263,7 @@ cfStart();
 .hofpal{display:grid;gap:6px;margin:4px 0 16px}.hofrow{display:grid;grid-template-columns:24px auto auto 1fr;gap:8px;align-items:center;padding:9px 12px;border-radius:12px;background:linear-gradient(90deg,rgba(245,196,0,.18),rgba(245,196,0,.04));border:1px solid rgba(245,196,0,.45)}
 .hofrow i{font-style:normal;font-size:16px}.hofrow b{font-family:var(--display);font-style:italic;font-weight:800;text-transform:uppercase;color:#ffd75e;font-size:15px}.hofrow span{font-size:12px;color:#e5dcff;font-weight:700}.hofrow em{font-style:normal;font-size:11px;text-align:right;color:#fff}
 .hofrow.nx{background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.22)}.hofrow.nx b,.hofrow.nx i{color:#b9aee0}.hofrow.nx em{color:#b9aee0}
-.eqtabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}.eqtab,.eqb,.eqgo{padding:9px 8px;border-radius:12px;border:1px solid rgba(245,196,0,.45);background:rgba(245,196,0,.08);color:#ffd75e;font:800 13px var(--display);cursor:pointer}.eqtab.on,.eqb.on{background:#f5c400;color:#1a1030}.eqgo{flex:1;background:#f5c400;color:#1a1030;font-size:15px;padding:12px}.eqgo:disabled{opacity:.6}
+.eqtabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}.eqtab,.eqb,.eqgo{padding:9px 8px;border-radius:12px;border:1px solid rgba(245,196,0,.45);background:rgba(245,196,0,.08);color:#ffd75e;font:800 13px var(--display);cursor:pointer}.eqtab.on,.eqb.on{background:#f5c400;color:#1a1030}.eqgo{flex:1;background:#f5c400;color:#1a1030;font-size:15px;padding:12px}.eqgo:disabled{opacity:.6}
 .eqrow{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.eqrow .eqb{flex:1 1 auto}.eqrow .eqtm{padding:4px 4px;flex:0 0 auto}.eqbd{width:26px;height:26px;display:inline-block;vertical-align:middle;border-radius:6px}
 .eqpct{display:flex;align-items:center;gap:8px;color:#fff;margin:6px 0}.eqpct input{width:72px;padding:8px;border-radius:10px;border:1px solid rgba(245,196,0,.5);background:#0e0820;color:#fff;font:800 16px var(--display)}
 .eqd{border:1px solid rgba(255,255,255,.18);border-radius:12px;margin:8px 0;padding:6px 8px;background:rgba(255,255,255,.04)}.eqd summary{cursor:pointer;color:#fff;font-size:13px}.eqi{font-style:normal;font-size:11px;font-weight:800;padding:1px 6px;border-radius:8px;margin-left:3px;background:rgba(255,255,255,.12);display:inline-block}.eqi.alto{background:#1f8f4d}.eqi.medio{background:#b88a00}.eqi.basso{background:#b3262e}
@@ -10676,6 +10676,100 @@ async function eqShare(kind){/* valori di serie letti FUORI dal simulatore (dent
   const map=g==="p"?EQO.p:g==="v"?EQO.v:g==="pr"?EQO.pr:g==="rc"?EQO.rc:g==="pk"?EQO.pk:EQO.g;
   if(isNaN(v)||Math.abs(v-d)<1e-9)delete map[k];else map[k]=g==="p"?eqT(k,eqRg(k)==="raw"?Math.max(0,v):Math.max(0,Math.min(100,v))):v;eqSave();setTimeout(keep,0)});
 })();
+/* (763) GESTIONE EQUILIBRIO TRADE (DAX) · tab «🎯 Gusti GM» + simulatore allineato all'IA Trade di adesso.
+   - Tutti i parametri dei gusti si cambiano qui SOLO per simulare (EQO.gg, dentro eqWith): per squadra n/req/age/sc/ruoli G-F-C e bonus giocatori (pl),
+     più le costanti GM_K (peso massimo del profilo, risposte per il peso pieno, sensibilità di serie) e l'indice gusto di lega GUSTO (età, pacchetto).
+     Le squadre senza profilo possono averne uno di prova. «Condividi gusti» = prompt per Claude con i nomi tecnici.
+   - Il simulatore riordina le proposte coi gusti dei GM (gmWeigh), come fa l'IA Trade vera, e mostra le percentuali «accetterebbe».
+   - All'apertura spariscono le modifiche locali che ormai coincidono coi numeri ufficiali (già applicati da Claude): restano solo le differenze vere. */
+(function(){
+const cl=o=>JSON.parse(JSON.stringify(o));let GGB=null,GKB=null,GUB=null;const base=()=>{if(!GGB){GGB=cl(GM_GUSTI);GKB={...GM_K};GUB={...GUSTO}}};
+const gg=()=>{EQO.gg=EQO.gg||{};const g=EQO.gg;g.t=g.t||{};g.pl=g.pl||{};g.k=g.k||{};g.lg=g.lg||{};g.nw=g.nw||{};return g};
+const TF=[["n","Risposte (peso del profilo)",1,"Quante risposte ha dato: con più risposte il profilo pesa di più (fino al peso massimo)"],["req","Vantaggio chiesto (%)",.5,"Quanto deve guadagnare in valore per dire sì al 50%"],["age","Età: punti per anno",.1,"Punti di valore persi per ogni anno in più ricevuto (pesato sul valore)"],["sc","Sensibilità (vuoto = serie)",.5,"Più è alto, più le probabilità restano vicine al 50%: risposte meno nette"]];
+const RF=[["G","Guardie"],["F","Ali"],["C","Centri"]];
+/* applica le modifiche dentro eqWith */
+const W0=eqWith;eqWith=function(fn){base();const s={G:cl(GM_GUSTI),K:{...GM_K},U:{...GUSTO}};
+  try{const g=gg();Object.keys(g.nw).forEach(t=>{if(!GM_GUSTI[t])GM_GUSTI[t]={n:40,age:2,req:3,role:{G:0,F:0,C:0},pl:{},prova:1}});
+   Object.keys(g.t).forEach(t=>{const G=GM_GUSTI[t];if(!G)return;Object.keys(g.t[t]).forEach(f=>{const v=g.t[t][f];if(f==="G"||f==="F"||f==="C"){G.role=G.role||{};G.role[f]=v}else G[f]=v})});
+   Object.keys(g.pl).forEach(t=>{const G=GM_GUSTI[t];if(!G)return;G.pl=G.pl||{};Object.keys(g.pl[t]).forEach(n=>{const v=g.pl[t][n];if(v===null)delete G.pl[n];else G.pl[n]=v})});
+   Object.keys(g.k).forEach(k=>GM_K[k]=g.k[k]);Object.keys(g.lg).forEach(k=>GUSTO[k]=g.lg[k]);
+   return W0.call(this,fn)}
+  finally{Object.keys(GM_GUSTI).forEach(t=>{if(!s.G[t])delete GM_GUSTI[t]});Object.keys(s.G).forEach(t=>GM_GUSTI[t]=s.G[t]);Object.assign(GM_K,s.K);Object.assign(GUSTO,s.U)}};
+/* simulatore = IA Trade di adesso (con i gusti dei GM) */
+eqRun=function(){const sc=EQ.sc;if(!sc){EQ.res=[];return}
+  const lv=eqLv();IA.team=sc.A;IA.want=sc.want.slice();IA.keep=[];IA.mode="pl";IA.lv=lv;IA.np=Math.max(EQ.n,3);IA.cr={c:Math.min(iaCassa(sc.A),100),p:0,d:0};
+  let r=[];try{r=iaBuildPl()}catch(e){console.error(e)}
+  r=r.filter(x=>eqTeams(x)===EQ.n);try{gmWeigh(r)}catch(e){}EQ.res=r;
+  EQ.html=r.slice(0,EQ.all?400:EQ.shown).map((x,i)=>{window.EQ_NA=1;try{return iaCard(x,i)}finally{window.EQ_NA=0}});EQ.hd=r.slice(0,EQ.all?400:EQ.shown).map(x=>({d:x.d,i:(x.int||[]).map(y=>[y.t,y.l,Math.round(y.sc*100)])}));
+  EQ.tot=r.length};
+/* pulizia: modifiche locali uguali ai numeri ufficiali di adesso */
+let pulito=false;function pulisci(){base();if(pulito)return;pulito=true;let n=0;const eq=(a,b)=>a!=null&&b!=null&&Math.abs(+a-+b)<1e-9;
+  try{Object.keys(EQO.p||{}).forEach(k=>{if(eq(EQO.p[k],EQ_DEF[k])){delete EQO.p[k];n++}});
+   Object.keys(EQO.v||{}).forEach(k=>{if(eq(EQO.v[k],valOf(k))){delete EQO.v[k];n++}});
+   Object.keys(EQO.pr||{}).forEach(k=>{const v=valOf(k);if(v!=null&&eq(EQO.pr[k],prezzo(v,k))){delete EQO.pr[k];n++}});
+   Object.keys(EQO.rc||{}).forEach(k=>{try{if(eq(EQO.rc[k],iaCrOf(k))){delete EQO.rc[k];n++}}catch(e){}});
+   Object.keys(EQO.pk||{}).forEach(k=>{if(eq(EQO.pk[k],PICK_CR[k])){delete EQO.pk[k];n++}});
+   if(EQO.g&&eq(EQO.g.vcr,VAL_CR)){delete EQO.g.vcr;n++}if(EQO.g&&eq(EQO.g.exp,VAL_EXP)){delete EQO.g.exp;n++}
+   const g=gg();Object.keys(g.t).forEach(t=>{Object.keys(g.t[t]).forEach(f=>{const B=GGB[t];const d=B?(f in RFk?(B.role||{})[f]:B[f]):undefined;if(d!==undefined&&eq(g.t[t][f],d)){delete g.t[t][f];n++}});if(!Object.keys(g.t[t]).length)delete g.t[t]});
+   Object.keys(g.pl).forEach(t=>{Object.keys(g.pl[t]).forEach(p=>{const B=GGB[t];if(B&&eq(g.pl[t][p],(B.pl||{})[p])){delete g.pl[t][p];n++}});if(!Object.keys(g.pl[t]).length)delete g.pl[t]});
+   Object.keys(g.k).forEach(k=>{if(eq(g.k[k],GKB[k])){delete g.k[k];n++}});Object.keys(g.lg).forEach(k=>{if(eq(g.lg[k],GUB[k])){delete g.lg[k];n++}});
+   Object.keys(g.nw).forEach(t=>{if(GGB[t])delete g.nw[t]});
+  }catch(e){}if(n)eqSave();EQ.cln=n}
+const RFk={G:1,F:1,C:1};
+const nG=()=>{const g=gg();let n=Object.keys(g.k).length+Object.keys(g.lg).length+Object.keys(g.nw).length;Object.keys(g.t).forEach(t=>n+=Object.keys(g.t[t]).length);Object.keys(g.pl).forEach(t=>n+=Object.keys(g.pl[t]).length);return n};
+const fx=v=>v==null||v===""?"":String(Math.round(v*100)/100);
+const inp=(f,k,def,curv,step,ph)=>{const ch=curv!=null&&def!=null?Math.abs(curv-def)>1e-9:curv!=null&&def==null;return`<label class="eqr${ch?" chg":""}"><input type="number" inputmode="decimal" step="${step}" value="${fx(curv)}" placeholder="${ph||""}" data-eqg="${f}" data-k="${String(k).replace(/"/g,"&quot;")}" data-def="${def==null?"":def}"></label>`};
+function eqGusti(){const g=gg(),T=Object.keys(TEAMS),t=EQ.gt&&TEAMS[EQ.gt]?EQ.gt:(Object.keys(GGB)[0]||T[0]),B=GGB[t],C=GM_GUSTI[t],n=nG();
+  const row=(lab,sub,html,key)=>`<div class="eqpr${html.includes(" chg")?" chg":""}"><div><b>${lab}</b><small>${sub}</small></div><div class="eqin">${html}</div></div>`;
+  const kk=(k,lab,sub,st)=>row(lab,sub+` · serie ${eqNum(GKB[k])}`,inp("k",k,GKB[k],GM_K[k],st));
+  const lg=(k,lab,sub,st)=>row(lab,sub+` · serie ${eqNum(GUB[k])}`,inp("lg",k,GUB[k],GUSTO[k],st));
+  const prof=C?`${TF.map(([f,l,st,sub])=>{const d=B?B[f]:null,c=C[f];return row(l,sub+(d!=null?` · serie ${eqNum(d)}`:f==="sc"?` · ora usa la sensibilità di serie (${eqNum(GM_K.sc)})`:""),inp("t",t+"|"+f,d==null&&f==="sc"?null:d,c==null?null:c,st,f==="sc"?eqNum(GM_K.sc):""))}).join("")}
+   ${RF.map(([f,l])=>{const d=B?(B.role||{})[f]||0:0,c=(C.role||{})[f]||0;return row("Ruolo ricevuto: "+l,`Punti % in più (o in meno) quando riceve un giocatore di questo ruolo · serie ${eqNum(d)}`,inp("t",t+"|"+f,d,c,.5))}).join("")}`
+   :`<p class="setnote">I <b>${TEAMS[t].nick}</b> non hanno ancora un profilo (nessun report dell'Allenamento IA). Puoi crearne uno di prova per vedere come cambierebbero le proposte.</p><button class="eqb" data-eq="gnew">➕ Crea profilo di prova</button>`;
+  const pls=C?Object.keys(C.pl||{}).sort((a,b)=>(C.pl[b]-C.pl[a])):[];
+  const plh=C?`<section class="hofcard"><h4>Giocatori: come li valuta ${TEAMS[t].nick}</h4><p class="setnote">Punti % rispetto al calcolatore: + = li vuole più di quanto valgono, − = meno. Si sommano quando li riceve e si tolgono quando li cede. Scrivi vuoto per togliere un giocatore.</p>
+   ${pls.length?pls.map(p=>{const d=B&&B.pl&&B.pl[p]!=null?B.pl[p]:null;return`<div class="eqpl eqgpl${(d==null||Math.abs(d-C.pl[p])>1e-9)?" chg":""}"><div class="eqn"><i class="rc ${ruoloDi(p)}"></i><span>${nmAb(p)}</span><small class="eggs">${d==null?"nuovo":"serie "+eqNum(d)}</small></div><div class="eqin">${inp("pl",t+"|"+p,d,C.pl[p],.5)}</div></div>`}).join(""):`<p class="setnote">Nessun giocatore con un gusto particolare.</p>`}
+   <div class="eqrow eqadd"><input class="vtq" list="eqgdl" placeholder="➕ Aggiungi giocatore" data-eqgadd="1" autocomplete="off"><datalist id="eqgdl">${Object.keys(ROSTER).flatMap(u=>ROSTER[u].map(p=>p[0])).filter(p=>!(C.pl||{}).hasOwnProperty(p)).sort().map(p=>`<option value="${p.replace(/"/g,"&quot;")}">`).join("")}</datalist></div></section>`:"";
+  return`<section class="hofcard"><h4>Gusti dei GM</h4><p class="setnote">I profili costruiti con i report dell'Allenamento IA: l'IA Trade riordina le proposte in base alla probabilità che piacciano a chi la usa e che le altre squadre con un profilo accettino. Qui puoi cambiarli <b>solo per simulare</b>: torna al Simulatore e vedi le percentuali «accetterebbe» sulle proposte.</p>
+  <div class="eqrow"><button class="hlreset eqrs" data-eq="rsg"${n?"":" disabled"}>↺ Ripristina gusti (${n})</button><button class="eqb" data-eq="shg"${n?"":" disabled"}>📤 Condividi gusti</button></div>
+  ${EQ.msg&&EQ.prompt&&EQ.pr==="g"?eqPromptBox():""}</section>
+  <section class="hofcard"><h4>Peso dei profili (tutte le squadre)</h4><p class="setnote">Peso del profilo di una squadra = il più piccolo tra «peso massimo» e risposte ÷ «risposte per il peso pieno». Pochi dati = l'IA resta vicina a quella normale.</p>
+  ${kk("max","Peso massimo del profilo","0,6 = la proposta può valere da 0,4 a 1,6 volte",.05)}${kk("n","Risposte per il peso pieno","Con 150 risposte e peso massimo 0,6 il pieno arriva a 90 risposte",5)}${kk("sc","Sensibilità di serie","Per i profili senza una sensibilità propria",.5)}</section>
+  <section class="hofcard"><h4>Indice gusto di lega (Allenamento e calcolatore)</h4><p class="setnote">Il «gusto medio» dei GM usato nell'Allenamento IA e nella frase «piace di più ai…» del calcolatore.</p>
+  ${lg("age","Età: punti per anno","Punti di valore tolti per ogni anno in più ricevuto",.1)}${lg("pack","Pacchetto: punti per giocatore in più","Punti tolti per ogni giocatore ricevuto oltre il primo",.5)}</section>
+  <section class="hofcard"><h4>Profilo per squadra</h4><div class="eqrow">${T.map(u=>`<button class="eqb eqtm${t===u?" on":""}" data-eq="gt" data-v="${u}">${badge(u,"eqbd")}${GM_GUSTI[u]?"":"<i class=\"eqno\">–</i>"}</button>`).join("")}</div>
+  <p class="setnote"><b>${TEAMS[t].nick}</b>${C?` · ${B?`aggiornato ${B.agg||"—"}${B.fonte?" · "+B.fonte:""}`:"profilo di prova"} · peso attuale ${Math.round(Math.min(GM_K.max,(C.n||0)/GM_K.n)*100)}%`:""}</p>${prof}${C&&!B?`<button class="hlreset" data-eq="gdel" data-v="${t}">🗑 Elimina profilo di prova</button>`:""}</section>${plh}`}
+const V0=eqView;eqView=function(){if(!COL.d){cur="campo";return vCampo()}
+  const tb=(k,l)=>`<button class="eqtab${EQ.tab===k?" on":""}" data-eq="tab" data-v="${k}">${l}</button>`;
+  return`<div class="hof eqv"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
+  <div class="hofhd"><div style="grid-column:1/3"><small>Texas Ducks · area riservata del GM</small><b>Gestione equilibrio trade</b><em>Simula, cambia i numeri, condividi con Claude</em></div></div>
+  <div class="eqtabs">${tb("sim","🎲 Simulatore")}${tb("par","🎛 Parametri")}${tb("val","💰 Valori")}${tb("gg","🎯 Gusti GM")}</div>
+  ${EQ.cln?`<p class="setnote eqcln">✔ Tolte ${EQ.cln} modifiche locali che ormai coincidono con i numeri ufficiali.</p>`:""}
+  ${EQ.tab==="sim"?eqSim():EQ.tab==="par"?eqPar():EQ.tab==="gg"?eqGusti():eqValues()}
+  <p class="hoftt">🦆 Texas Ducks · uso interno · le modifiche valgono solo qui, su questo telefono</p></div>`};
+VIEWS.eq=()=>{pulisci();return eqWith(eqView)};window.__eq.eqWith=eqWith;window.__eq.gp=k=>eqPrompt(k);window.__eq.gg=gg;
+const P0=eqPrompt;eqPrompt=function(kind){if(kind!=="g")return P0.apply(this,arguments);base();const g=gg(),L=[];
+  Object.keys(g.nw).forEach(t=>L.push(`- NUOVO profilo ${t} (${TEAMS[t].nick}) in GM_GUSTI (finora non c'era): parte da n 40, age 2, req 3, ruoli 0, poi le modifiche qui sotto`));
+  Object.keys(g.t).forEach(t=>Object.keys(g.t[t]).forEach(f=>{const B=GGB[t],d=B?(RFk[f]?(B.role||{})[f]:B[f]):undefined;L.push(`- GM_GUSTI.${t}.${RFk[f]?"role."+f:f}: ${d==null?"—":eqNum(d)} → ${eqNum(g.t[t][f])}`)}));
+  Object.keys(g.pl).forEach(t=>Object.keys(g.pl[t]).forEach(p=>{const B=GGB[t],d=B&&B.pl?B.pl[p]:undefined,v=g.pl[t][p];L.push(`- GM_GUSTI.${t}.pl["${p}"]: ${d==null?"—":eqNum(d)} → ${v==null?"(togli)":eqNum(v)}`)}));
+  Object.keys(g.k).forEach(k=>L.push(`- GM_K.${k}: ${eqNum(GKB[k])} → ${eqNum(g.k[k])}`));Object.keys(g.lg).forEach(k=>L.push(`- GUSTO.${k}: ${eqNum(GUB[k])} → ${eqNum(g.lg[k])}`));
+  return`Ciao Claude, nell'app Dreamers (area riservata Ducks › Gestione equilibrio trade › Gusti GM) ho simulato diversi scambi e ho trovato questi GUSTI DEI GM che rendono le proposte più realistiche.\n\nModifiche (nomi tecnici in index.html):\n${L.join("\n")}\n\nPer favore: 1) scrivi questi numeri in GM_GUSTI / GM_K / GUSTO (lascia il resto com'era), 2) aggiungi la nota in NOTE_SVILUPPO.md, 3) controlla che l'IA Trade funzioni, 4) lascia la modifica in coda e pubblica solo quando ti scrivo "pubblica". Non va scritta nella cronologia pubblica NV_LOG.`};
+const keep=()=>{const y=scrollY;render();scrollTo(0,y)};
+document.addEventListener("click",e=>{if(cur!=="eq")return;const b=e.target.closest("[data-eq]");if(!b)return;const k=b.dataset.eq,v=b.dataset.v,g=gg();
+  if(k==="gt"){EQ.gt=v;keep()}else if(k==="rsg"){EQO.gg={};eqSave();EQ.msg="";keep()}else if(k==="shg")eqShare("g");
+  else if(k==="gnew"){const t=EQ.gt&&TEAMS[EQ.gt]?EQ.gt:Object.keys(TEAMS)[0];g.nw[t]=1;eqSave();keep()}
+  else if(k==="gdel"){delete g.nw[v];delete g.t[v];delete g.pl[v];eqSave();keep()}});
+document.addEventListener("change",e=>{if(cur!=="eq")return;const x=e.target,f=x.dataset.eqg,g=gg();
+  if(x.dataset.eqgadd){const p=x.value.trim();const t=EQ.gt&&TEAMS[EQ.gt]?EQ.gt:Object.keys(GGB)[0];if(p&&Object.keys(ROSTER).some(u=>ROSTER[u].some(q=>q[0]===p))){(g.pl[t]=g.pl[t]||{})[p]=0;eqSave();setTimeout(keep,0)}return}
+  if(!f)return;const raw=String(x.value).trim(),v=parseFloat(raw.replace(",",".")),d=x.dataset.def===""?null:parseFloat(x.dataset.def),k=x.dataset.k;
+  if(f==="k"||f==="lg"){const m=g[f];if(isNaN(v)||(d!=null&&Math.abs(v-d)<1e-9))delete m[k];else m[k]=f==="k"&&k!=="max"?Math.max(1e-3,v):v}
+  else{const i=k.indexOf("|"),t=k.slice(0,i),q=k.slice(i+1),m=f==="t"?(g.t[t]=g.t[t]||{}):(g.pl[t]=g.pl[t]||{});
+   if(raw===""){if(f==="pl"){if(d==null)delete m[q];else m[q]=null}else delete m[q]}
+   else if(isNaN(v))return;else if(d!=null&&Math.abs(v-d)<1e-9)delete m[q];else m[q]=(q==="n"||q==="sc")?Math.max(q==="sc"?1:0,v):v;
+   if(!Object.keys(m).length){if(f==="t")delete g.t[t];else delete g.pl[t]}}
+  eqSave();setTimeout(keep,0)});
+})();
+
 /* ===== (571) IL DREAMERS POST: giornale quotidiano (prova nell'area riservata Ducks) =====
    Un solo numero al giorno, in edicola alle 7:30 (ora italiana). Nessuna IA: l'app compone l'articolo da modelli di frasi (varianti scelte con un seme
    legato alla data, quindi lo stesso giorno esce sempre lo stesso pezzo) e dai dati veri: classifica, scontri del turno con le previsioni, infortuni importanti,
@@ -12065,15 +12159,17 @@ document.addEventListener("click",e=>{if(cur!=="iaallena")return;const b=e.targe
    le piacciano; se anche l'altra squadra ha un profilo, conta anche la probabilità che accetti. Peso del profilo = min(.6, risposte/150):
    pochi dati = si resta vicini all'IA normale. Resta la scelta casuale tra le migliori 12 (iaNext). */
 const GM_GUSTI={"TUR": {"n": 79, "agg": "31/10/2026", "age": 2.25, "req": 7.5, "role": {"G": -2, "F": 2, "C": 2}, "pl": {"Chet Holmgren": -9.2, "Derik Queen": -11.8, "Darryn Peterson": -7.1, "Jalen Duren": 9.3, "Josh Giddey": 9.8, "Matas Buzelis": 8.9, "Kyrie Irving": 5.4, "Tyrese Maxey": -11.5, "Ivica Zubac": -12.2, "Egor Dëmin": -10.2, "Jayson Tatum": -8.8, "Trey Murphy III": -7.7, "Collin Murray-Boyles": -7.2, "Trae Young": -7.2, "LaMelo Ball": -6.9, "Karl-Anthony Towns": -4.6}}, "SPI": {"n": 69, "agg": "31/10/2026", "fonte": "proposte (19) + confronto (39) + valutazione (11)", "age": 1.4, "req": 1.8, "sc": 18, "role": {"G": -2, "F": 0, "C": 4}, "pl": {"Darius Acuff Jr.": 6, "Immanuel Quickley": -5, "Brandon Miller": -4, "Ja Morant": -9, "Jaime Jaquez Jr.": 8, "Franz Wagner": 4, "LeBron James": 4, "Donovan Mitchell": 4, "Ausar Thompson": 10, "Miles Bridges": -4, "Walker Kessler": -2, "Stephen Curry": 12, "Zach Edey": 6, "Austin Reaves": 4, "Donovan Clingan": -10, "AJ Dybantsa": -5, "Sergio De Larrea": -3, "Jeremiah Fears": 6, "Maxime Raynaud": 6, "Stephon Castle": 5, "Dyson Daniels": 4, "Kyrie Irving": 4, "Caleb Wilson": -8, "Collin Murray-Boyles": -6, "Jalen Brunson": -4, "Damian Lillard": -4, "Desmond Bane": -3}}, "DOL": {"n": 75, "agg": "31/10/2026", "fonte": "confronto (326) + valutazione (19)", "age": 1.7, "req": 3, "role": {"G": 0, "F": 0, "C": 0}, "pl": {"AJ Dybantsa": 4, "Ace Bailey": -9, "Aday Mara": 9, "Anthony Edwards": 5, "Austin Reaves": 4, "Brayden Burries": -7, "Cade Cunningham": 6, "Caleb Wilson": -10, "Cameron Boozer": 12, "Collin Murray-Boyles": 9, "Cooper Flagg": 11, "Darius Acuff Jr.": -4, "De'Aaron Fox": -5, "Dejounte Murray": -8, "Derik Queen": -6, "Desmond Bane": -10, "Domantas Sabonis": 8, "Dyson Daniels": -12, "Giannis Antetokounmpo": 9, "Immanuel Quickley": -5, "Ja Morant": -12, "Jabari Smith Jr.": -7, "Jaime Jaquez Jr.": -9, "Jalen Brunson": 4, "Jalen Johnson": -5, "James Harden": -12, "Jarrett Allen": -12, "Jayson Tatum": 4, "Jeremiah Fears": -6, "Josh Giddey": 5, "Kevin Durant": -9, "Kingston Flemings": -6, "Kon Knueppel": -8, "LaMelo Ball": -6, "Luka Dončić": 8, "Michael Porter Jr.": -7, "Mikel Brown Jr.": -5, "Miles Bridges": -7, "Nikola Jokić": 12, "RJ Barrett": -6, "Shai Gilgeous-Alexander": 9, "Stephon Castle": 5, "Tyler Herro": -10, "Victor Wembanyama": 9, "Walker Kessler": -5, "Joel Embiid": -12, "Tyrese Haliburton": -7, "Paolo Banchero": -6, "Julius Randle": -8}}};
+/* (763) costanti del peso dei profili, regolabili nella Gestione equilibrio trade (tab Gusti GM) */
+const GM_K={max:.6,n:150,sc:12.5};
 function gmProb(t,give,get,cin,cout){cin=cin||0;cout=cout||0;const G=GM_GUSTI[t];if(!G||!give.length||!get.length)return null;
  const v=n=>{let x=valOf(n)||0;const b=G.pl[n];return x};const CR=(typeof VAL_CR!=="undefined"?VAL_CR:0),vg=give.reduce((a,n)=>a+v(n),0)+cout*CR,vr=get.reduce((a,n)=>a+v(n),0)+cin*CR;if(!vg&&!vr)return null;
  const ag=L=>{const sv=L.reduce((a,n)=>a+(valOf(n)||0),0)||1;return L.reduce((a,n)=>a+(valOf(n)||0)*(iaAge(n)??26),0)/sv};
  const d=(vr-vg)/Math.max(vg,vr,1)*100;let g=d-G.age*(ag(get)-ag(give))-G.req;
  get.forEach(n=>{g+=(G.role[ruoloDi(n)]||0)/get.length+(G.pl[n]||0)});give.forEach(n=>{g-=(G.pl[n]||0)});
- return 1/(1+Math.exp(-g/(G.sc||12.5)))}
+ return 1/(1+Math.exp(-g/(G.sc||GM_K.sc)))}
 function gmSides(x){const R=iaRec(x),o={};for(const t in R){const get=R[t].pl.map(p=>p.n),give=[];let cin=R[t].cr.reduce((a,c)=>a+(+c.v||0),0),cout=0;for(const u in R){R[u].pl.forEach(p=>{if(p.from===t)give.push(p.n)});R[u].cr.forEach(c=>{if(c.from===t)cout+=(+c.v||0)})}o[t]={give,get,cin,cout}}return o}
 function gmWeigh(pool){const A=iaTeam();if(!pool||!pool.length)return pool;let any=false;
- pool.forEach(x=>{try{const S=gmSides(x);let w=1;x.gm=null;for(const t in S){const G=GM_GUSTI[t];if(!G)continue;const p=gmProb(t,S[t].give,S[t].get,S[t].cin,S[t].cout);if(p==null)continue;const k=Math.min(.6,G.n/150);w*=(1-k)+k*2*p;(x.gm=x.gm||{})[t]=p;any=true}x.sc0=x.sc0??x.sc;x.sc=x.sc0*w}catch(e){}});
+ pool.forEach(x=>{try{const S=gmSides(x);let w=1;x.gm=null;for(const t in S){const G=GM_GUSTI[t];if(!G)continue;const p=gmProb(t,S[t].give,S[t].get,S[t].cin,S[t].cout);if(p==null)continue;const k=Math.min(GM_K.max,G.n/GM_K.n);w*=(1-k)+k*2*p;(x.gm=x.gm||{})[t]=p;any=true}x.sc0=x.sc0??x.sc;x.sc=x.sc0*w}catch(e){}});
  if(any)pool.sort((a,b)=>b.sc-a.sc);return pool}
 {const N0=iaNext;iaNext=function(){const fresh=!IA.pool||IA.key!==iaKey();const r=N0.apply(this,arguments);if(fresh&&IA.pool){gmWeigh(IA.pool);IA.seen={};IA.rd=0;IA.out=[];IA.noMore=false;N0.apply(this,arguments)}return r}}
 {const C0=iaCard;iaCard=function(x,i){let h=C0.apply(this,arguments);try{if(x.gm){const A=iaTeam(),t=Object.keys(x.gm),f=p=>Math.round(p*100)+"%",
@@ -12148,5 +12244,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-hp]");if(!
 }catch(e){}})();
 </script>
 <style>.drroom .drth,.gdroom .drth,[data-gdth],[data-dr="theme"]{display:none!important}</style>
+
+<style>.eqtabs .eqtab{font-size:12.5px;padding-left:4px;padding-right:4px}.eqtm{position:relative}.eqtm .eqno{position:absolute;right:3px;top:1px;font-style:normal;opacity:.6}.eqpl .eggs{display:block;opacity:.65;font-size:11px}.eqpl.eqgpl{display:flex!important;align-items:center;justify-content:space-between;gap:10px}.eqgpl .eqn{display:flex;align-items:center;gap:6px;min-width:0;flex-wrap:wrap}.eqgpl .eqin{flex:none;width:96px}.eqcln{color:#15803d}.eqadd input{width:100%}</style>
 </body>
 </html>
