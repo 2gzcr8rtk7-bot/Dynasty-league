@@ -1911,3 +1911,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 740. Correzione della 739: i tasti grandi appoggiati sulla pagina (es. GIOCATORI e SQUADRE in Statistiche) si erano accorciati e spostati a sinistra, perche' un <button> con width:auto si stringe al contenuto. I tasti sono ora esclusi dalla regola delle sezioni a tutta larghezza e tornano come prima (larghi quanto la pagina).
 
 741. Pagina Campo (Home della squadra: intestazione, bacheca, cassa, campo da basket, panchina, tribuna, live): bordino laterale di 6px su telefono, invece di 0 (prima della 739 erano 16px).
+
+742. Pagina Campo: il bordino di 6px resta su intestazione, bacheca, cassa, campo e panchina/tribuna; la tabella Live stanotte (con Notte/Turno, .clwrap) torna fino al bordo dello schermo.
