@@ -2971,6 +2971,11 @@ main.wrap .view > .snlist{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media (min-width:821px){
 main .view > :is(.tbl-wrap,details,div,article,section):has(table):not(.rart,.drroom,.view){margin-left:0!important;margin-right:0!important;width:auto!important}
 }
+</style><style>
+/* (741) Pagina Campo (squadra, bacheca, cassa, campo da basket, panchina, tribuna): torna un piccolo bordino laterale di 6px (prima 16px, con la 739 era 0) */
+@media (max-width:820px){
+body:is([data-v=campo],[data-v=college]) main.wrap .view > :not(button,h2,h3,h4,p,.note,.gback,.esqback,.capintro,.lbmcap,.lbmh,.chips,.ctabs,.snsw,.fabar,.hbar,.hn6,.drnav,.capchips,.sumrow,.sndate,input,select,.drroom){margin-left:-10px!important;margin-right:-10px!important}
+}
 </style></head>
 
 <body>
