@@ -1895,3 +1895,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 732. Parquet: tabelle tipo box score (Dynasty TV, Live stanotte, ecc.): base crema, intestazione e righe Quintetto/Panchina/Totale arancioni con scritte bianche, nomi e numeri arancioni, tasti condividi arancioni, tasto squadra selezionato arancione.
 
 733. Editor colori ufficializzato (Parquet): banner squadra (testo/bordo bianchi), tasto condividi, intestazione tabelle FA, intestazione e riga cmth, span.t, ghead, gszn. Base e notte: nessuna modifica scelta.
+
+734. Parquet: scritta del nome squadra sul campo (es. Texas Ducks) bianca. Editor colori: ora puo' colorare anche le scritte dentro il campo (SVG) toccandole.

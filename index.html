@@ -2736,6 +2736,7 @@ html.dlt-parquet:not(.notte) div.ghead:not(#dx){border-color:#ffffff!important;}
 html.dlt-parquet:not(.notte) div.cmth:not(#dx){background:#d34d0c!important;background-image:none!important;}
 html.dlt-parquet:not(.notte) span.t:not(#dx){background:#e56316!important;background-image:none!important;}
 html.dlt-parquet:not(.notte) div.gszn:not(#dx){color:#fff9f7!important;-webkit-text-fill-color:#fff9f7!important;}
+html.dlt-parquet:not(.notte) .cname:not(#dx),html.dlt-parquet:not(.notte) .cname text:not(#dx){fill:#fff!important}
 html.dlt-parquet:not(.notte) .dphalf h5,html.dlt-parquet:not(.notte) .dphalf h5 small{color:#fff!important;text-shadow:0 1px 2px rgba(80,30,0,.5)!important}
 html.dlt-parquet:not(.notte) .dphalf.pqw,html.dlt-parquet:not(.notte) .dphalf{background:linear-gradient(180deg,color-mix(in srgb,var(--loss) 16%,transparent),transparent 75%)!important;box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--loss) 55%,transparent)!important}
 html.dlt-parquet .pqw{background:#fff!important;background-image:none!important;border-color:rgba(217,86,11,.35)!important;box-shadow:0 2px 6px rgba(120,60,10,.15)}
@@ -7443,7 +7444,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
      <circle cx="50" cy="112" r="11"/>
     </g>
     </g>
-    ${dlsDecor()}${DLS.tname?`<g font-family="CourtBlock,Impact,Arial Narrow,sans-serif" font-weight="400" font-size="${afs}" letter-spacing=".5" fill="${atxt}" fill-opacity=".94" stroke="${astk}" stroke-width=".45" stroke-linejoin="round" paint-order="stroke"><text x="${lg?(50-TX).toFixed(2):50}" y="${ay}" text-anchor="${lg?"end":"middle"}">${lg?c.city.toUpperCase():c.nick.toUpperCase()}</text>${lg?`<text x="${(50+TX).toFixed(2)}" y="${ay}" text-anchor="start">${c.nick.toUpperCase()}</text>`:""}</g>`:""}<rect width="100" height="16" fill="url(#gloss)"/>
+    ${dlsDecor()}${DLS.tname?`<g class="cname" font-family="CourtBlock,Impact,Arial Narrow,sans-serif" font-weight="400" font-size="${afs}" letter-spacing=".5" fill="${atxt}" fill-opacity=".94" stroke="${astk}" stroke-width=".45" stroke-linejoin="round" paint-order="stroke"><text x="${lg?(50-TX).toFixed(2):50}" y="${ay}" text-anchor="${lg?"end":"middle"}">${lg?c.city.toUpperCase():c.nick.toUpperCase()}</text>${lg?`<text x="${(50+TX).toFixed(2)}" y="${ay}" text-anchor="start">${c.nick.toUpperCase()}</text>`:""}</g>`:""}<rect width="100" height="16" fill="url(#gloss)"/>
     ${lg&&DLS.logo?(()=>{const g=LOGO2[t]?[40.91,1.33,18.18,13.55]:[40.5,.3,19,15.4],w=g[2]*LK,h=g[3]*LK;return`<image href="${lg}" x="${(g[0]+g[2]/2-w/2).toFixed(2)}" y="${(g[1]+g[3]/2-h/2).toFixed(2)}" width="${w.toFixed(2)}" height="${h.toFixed(2)}" preserveAspectRatio="xMidYMid meet"/>`})():""}
     </svg>`;
   const ROWY={C:26.2,F:54.6,G:83.2},/* proporzioni stile Dunkest, uguali in formazione Dreamers e in modalità notte */XS={C:[33,67],G:[33,67],F:[21,79]};const pos={};
@@ -11778,7 +11779,7 @@ const tokVal=(m,k,d)=>{if(DX.tok[m]&&DX.tok[m][k])return DX.tok[m][k];const v=ge
 let st=document.getElementById("dxcolst");if(!st){st=document.createElement("style");st.id="dxcolst";document.head.appendChild(st)}
 function css(){let o="";for(const m of ["parquet","base","notte"]){const p=PFX[m];const T=DX.tok[m]||{};const tk=Object.keys(T).map(k=>`${k}:${T[k]}`).join(";");if(tk)o+=`${p}{${tk}}\n`;
   const r=DX.rules[m]||{};for(const sel in r){const x=r[sel];const S=sel+":not(#dx)";let d="";if(x.bg)d+=`background:${x.bg}!important;background-image:none!important;`;if(x.fg)d+=`color:${x.fg}!important;-webkit-text-fill-color:${x.fg}!important;`;if(x.bd)d+=`border-color:${x.bd}!important;`;
-   if(d)o+=`${p} ${S}{${d}}\n`;if(x.fg&&x.deep)o+=`${p} ${S} *{color:${x.fg}!important;-webkit-text-fill-color:${x.fg}!important}\n`}}
+   if(d)o+=`${p} ${S}{${d}}\n`;if(x.fg)o+=`${p} ${S},${p} ${S} text,${p} ${S} tspan{fill:${x.fg}!important}\n`;if(x.fg&&x.deep)o+=`${p} ${S} *{color:${x.fg}!important;-webkit-text-fill-color:${x.fg}!important}\n`}}
  st.textContent=o}
 css();
 window.__dxSkip=el=>{try{const r=DX.rules[mode()]||{};for(const sel in r){if(r[sel].fg&&(el.matches(sel)||(r[sel].deep&&el.closest(sel))))return true}}catch(e){}return false};
