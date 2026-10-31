@@ -2927,6 +2927,24 @@ html.bxcust.bxcust.bx-vel .bxs span:not(.gb){background:color-mix(in srgb,var(--
 .brand{transform-origin:left center;transition:color .35s ease-out,text-shadow .35s ease-out}.brand:active,.brand.brpop{color:#c9b6ff;text-shadow:0 0 5px #a78bfa,0 0 14px rgba(139,92,246,.75);transition:none}
 .snrow.lvr{box-shadow:inset 3px 0 0 #ef4444}
 @media (prefers-reduced-motion:reduce){.snbtn.live,.snlvd{animation:none}}
+</style><style>
+/* (735) Parquet · Statistiche G League (G-Dreamers): base CREMA al posto del verde */
+html.dlt-parquet body .drroom .gcard.glstat{background:linear-gradient(180deg,#fdf3e1,#f6e4c6)!important;border:2px solid var(--pq-ac,#d9560b)!important;box-shadow:0 6px 18px rgba(80,35,5,.25)!important}
+html.dlt-parquet body .drroom .glsum{background:rgba(217,86,11,.35)!important}
+html.dlt-parquet body .drroom .glsum>div{background:#fbeedb!important}
+html.dlt-parquet body .drroom .glsum :is(small,b,span,i){color:var(--pq-ac,#d9560b)!important}
+html.dlt-parquet body .drroom .glhd{background:var(--pq-ac,#d9560b)!important;border-color:var(--pq-ac,#d9560b)!important}
+html.dlt-parquet body .drroom .glhd span{color:#fff!important}
+html.dlt-parquet body .drroom .glp{border-color:rgba(217,86,11,.25)!important}
+html.dlt-parquet body .drroom .glp>summary :is(b,span:not(.pdkx):not(.grl)){color:var(--pq-ac,#d9560b)!important}
+html.dlt-parquet body .drroom .glp>summary small{color:#9a4a12!important}
+html.dlt-parquet body .drroom .glp[open]>summary{background:rgba(217,86,11,.1)!important}
+html.dlt-parquet body .drroom select{background:#fdf3e1!important;color:var(--pq-ac,#d9560b)!important;border:2px solid var(--pq-ac,#d9560b)!important;border-left-width:6px!important}
+/* (736) Parquet · TUTTE le tabelle dell'app: intestazione tutta ARANCIO con scritte bianche (niente blu);
+   caselle dei nomi giocatori sempre CREMA con nome arancio (prima alcune righe restavano blu e altre crema) */
+html.dlt-parquet:not(.notte) main table thead th,html.dlt-parquet:not(.notte) main table thead th.fasrt{background:var(--pq-ac,#d9560b)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:rgba(255,255,255,.25)!important}
+html.dlt-parquet:not(.notte) main table tbody td.pnm{background:#fbeedb!important;color:var(--pq-ac,#d9560b)!important;-webkit-text-fill-color:var(--pq-ac,#d9560b)!important;border-right:2px solid rgba(217,86,11,.35)!important;border-bottom:1px solid rgba(217,86,11,.18)!important}
+html.dlt-parquet:not(.notte) main table tbody td.pnm :is(small,.plgo){color:#9a4a12!important;-webkit-text-fill-color:#9a4a12!important}
 </style></head>
 
 <body>
@@ -9788,7 +9806,7 @@ function pqFix(){try{
     if(el.tagName==="svg"||el.closest("svg"))return;
     if(el.closest(".htile"))return;
     if(el.closest(".cltg,.cltn,.tvpnl .tvdate,.tvpnl .tvday"))return;
-    if(window.__dxSkip&&window.__dxSkip(el))return;if(el.matches&&el.matches("div.teamhead,div.teamhead *,button.shbtn,div.gszn"))return;
+    if(window.__dxSkip&&window.__dxSkip(el))return;if(el.matches&&el.matches("div.teamhead,div.teamhead *,button.shbtn,div.gszn,table td.pnm,table td.pnm *,table thead th,table thead th *"))return;
     if(el.classList&&el.classList.contains("tstar")){const b=bgSel(el);el.classList.toggle("stl",lum(b)>.4);return}
     let has=false;for(const n of el.childNodes)if(n.nodeType===3&&n.textContent.trim().length>0){has=true;break}
     if(!has)return;const r=el.getBoundingClientRect();if(r.width<2||r.height<2)return;

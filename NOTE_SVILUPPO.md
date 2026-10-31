@@ -1897,3 +1897,7 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 733. Editor colori ufficializzato (Parquet): banner squadra (testo/bordo bianchi), tasto condividi, intestazione tabelle FA, intestazione e riga cmth, span.t, ghead, gszn. Base e notte: nessuna modifica scelta.
 
 734. Parquet: scritta del nome squadra sul campo (es. Texas Ducks) bianca. Editor colori: ora puo' colorare anche le scritte dentro il campo (SVG) toccandole.
+
+735. Parquet: Statistiche G League (G-Dreamers) con base CREMA al posto del verde: card, riquadri dei totali e righe crema con scritte arancio, intestazione colonne arancio con scritte bianche, menu Stagione crema con bordo arancio.
+
+736. Parquet: in TUTTE le tabelle dell'app la barra dei titoli delle colonne e' arancio con scritte bianche (prima la parte di sinistra restava blu, es. Efficienza squadra, Giocatori, Partita per partita). Le caselle con il nome del giocatore (td.pnm) sono sempre crema con nome arancio: prima alcune restavano blu e altre crema perche' la correzione automatica dei colori (pqFix) le ricolorava riga per riga; ora pqFix le salta. Verificato con un controllo automatico su tutte le pagine: nessuna intestazione o prima colonna blu rimasta.
