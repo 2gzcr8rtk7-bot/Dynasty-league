@@ -14,7 +14,8 @@ Richiesta di Francesco (31/10/2026): ogni report dell'Allenamento IA va usato pe
    - campi `n` (≈ risposte equivalenti; 150 = peso pieno), `agg` e `fonte`;
    - nota in `NOTE_SVILUPPO.md`;
    - poi pubblicare.
-4. Le sezioni FOCUS dei report (fragili, OUT, trend, rookie, ritoccati) vanno lette e annotate qui sotto nel registro.
+4. Aggiornare anche `GM_DESCR[squadra]` in index.html (scheda «Scopri i gusti dei GM»: cosa cercano, come chiudono, infortuni, cosa manca) con quello che si è capito; i numeri della scheda vengono da GM_GUSTI da soli.
+5. Le sezioni FOCUS dei report (fragili, OUT, trend, rookie, ritoccati) vanno lette e annotate qui sotto nel registro.
 
 ## 2. Correzioni dei valori (quando c'è consenso)
 - **Quando correggere.** Un valore si corregge solo se almeno **2 profili** concordano sul segno e la media dei loro `pl` è almeno **4 punti**.
