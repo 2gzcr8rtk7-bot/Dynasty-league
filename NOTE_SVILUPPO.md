@@ -1891,3 +1891,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 730. Notte ricostruita sulla base: con la notte accesa il tema sotto viene sempre calcolato come Classico (nessuna classe, variabile o colore di Parquet/Tabellone), ricalcolato ogni volta che si accende o spegne la notte.
 
 731. Parquet: banner squadra nella vista Campo di nuovo del colore della squadra (tolte le vecchie regole crema); tolto per davvero il rettangolo dentro la barra Cerca giocatore della Home (la regola precedente perdeva per specificita').
+
+732. Parquet: tabelle tipo box score (Dynasty TV, Live stanotte, ecc.): base crema, intestazione e righe Quintetto/Panchina/Totale arancioni con scritte bianche, nomi e numeri arancioni, tasti condividi arancioni, tasto squadra selezionato arancione.
