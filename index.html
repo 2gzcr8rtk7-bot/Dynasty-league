@@ -12336,7 +12336,7 @@ function evalDeal(D){const{io,mv}=buildIO(D);
   let P=1;const S={};for(const t of D.T){const r=gsc(t,io[t].give,io[t].get);if(r.d<-45)return null;S[t]=r;P*=r.p}
   return{P,S,io,mv}}
 function search(){const A=myT(),others=Object.keys(ROSTER).filter(t=>t!==A),maxk=Math.max(2,Math.min(6,GU.maxk));PA=profAvg();VX={};AX={};
-  const P={},SP={};Object.keys(ROSTER).forEach(t=>{const L=(ROSTER[t]||[]).filter(p=>p[5]!=="G"&&(valOf(p[0])||0)>0&&!(t===A&&GU.keep.has(p[0]))).map(p=>p[0]);P[t]={G:[],F:[],C:[]};SP[t]=[];L.forEach(n=>{if(iaSp(n))SP[t].push(n);else(P[t][ruoloDi(n)]||(P[t][ruoloDi(n)]=[])).push(n)})});
+  const P={},SP={};Object.keys(ROSTER).forEach(t=>{const L=(ROSTER[t]||[]).filter(p=>p[5]!=="G"&&(valOf(p[0])||0)>0&&!(t===A&&GU.keep.size&&!GU.keep.has(p[0]))/* (810) «Cedo»: se ne scegli qualcuno, la tua squadra cede solo quelli */).map(p=>p[0]);P[t]={G:[],F:[],C:[]};SP[t]=[];L.forEach(n=>{if(iaSp(n))SP[t].push(n);else(P[t][ruoloDi(n)]||(P[t][ruoloDi(n)]=[])).push(n)})});
   let tg=null,need=null;const SELL=GU.mode==="sell"?[...GU.sell].filter(n=>iaOwner(n)===A&&!iaSp(n)):null;if(SELL&&!SELL.length)return[];
   if(GU.mode==="pl"){tg=GU.target;if(!tg||!iaOwner(tg)||iaOwner(tg)===A)return[]}else if(!SELL)need={r:GU.role,v:+GU.minv||0};
   const BUY={};SELL&&SELL.forEach(n=>BUY[n]={});
@@ -12424,7 +12424,7 @@ function vGusti(){if(!GU.page)return vGustiHome();if(GU.page==='scopri')return v
   const tch=T.map(t=>`<button type="button" class="guchip${t===A?" on":""}" data-gu="team" data-v="${t}" aria-pressed="${t===A}">${badge(t)}</button>`).join("");
   const q=(GU.q||"").toLowerCase(),list=GU.mode==="pl"?T.filter(t=>t!==A).flatMap(t=>pool(t).map(n=>({n,t}))).filter(x=>!q||x.n.toLowerCase().includes(q)||TEAMS[x.t].nick.toLowerCase().includes(q)).sort((a,b)=>vx0(b.n)-vx0(a.n)).slice(0,q?40:16):[];
   const tgt=GU.target&&iaOwner(GU.target)&&iaOwner(GU.target)!==A?GU.target:null;
-  const keep=pool(A).sort((a,b)=>vx0(b)-vx0(a)).map(n=>`<button type="button" class="guk${GU.keep.has(n)?" on":""}" data-gu="keep" data-v="${E(n)}">${GU.keep.has(n)?"🔒 ":""}${E(nmAb(n))}</button>`).join("");
+  const keep=pool(A).sort((a,b)=>vx0(b)-vx0(a)).map(n=>`<button type="button" class="guk${GU.keep.has(n)?" on":""}" data-gu="keep" data-v="${E(n)}">${GU.keep.has(n)?"💸 ":""}${E(nmAb(n))}</button>`).join("");
   const res=GU.res;
   return`${H("IA Trade",`<em>con i gusti dei GM</em>`)}
   <section class="gubox"><h4>La tua squadra</h4><div class="gurowc">${tch}</div>
@@ -12434,7 +12434,7 @@ function vGusti(){if(!GU.page)return vGustiHome();if(GU.page==='scopri')return v
   :`<div class="guseg">${["G","F","C"].map(r=>`<button type="button" data-gu="role" data-v="${r}" class="${GU.role===r?"on":""}">${RP[r]}</button>`).join("")}</div><label class="gumin">Valore minimo <select data-gu="minv">${[0,500,700,900,1100,1300,1600].map(v=>`<option value="${v}"${+GU.minv===v?" selected":""}>${v?v+"+":"qualsiasi"}</option>`).join("")}</select></label>`}
   <h4>Fino a quante squadre</h4><div class="guseg">${[2,3,4,5,6].map(k=>`<button type="button" data-gu="k" data-v="${k}" class="${GU.maxk===k?"on":""}">${k}</button>`).join("")}</div>
   <h4>Con che valori</h4><div class="guseg"><button type="button" data-gu="gs" data-v="1" class="${GU.gusti!==false?"on":""}">🎯 Usa i gusti dei GM</button><button type="button" data-gu="gs" data-v="0" class="${GU.gusti===false?"on":""}">📊 Valori ufficiali</button></div>
-    ${GU.mode==="sell"?"":`<h4>Non cedo <small>(tocca per bloccare)</small></h4><div class="gukeep">${keep}</div>`}
+    ${GU.mode==="sell"?"":`<h4>Cedo <small>(tocca chi vorresti cedere; se non scegli nessuno l'IA può usare tutti)</small></h4><div class="gukeep">${keep}</div>`}
   <button type="button" class="gugo" data-gu="go"${GU.busy||(GU.mode==="pl"&&!tgt)||(GU.mode==="sell"&&!GU.sell.size)?" disabled":""}>${GU.busy?"⏳ Cerco tra migliaia di combinazioni…":res?"🔄 Cerca ancora (altre combinazioni)":"🔎 Cerca gli scambi"}</button></section>
   ${res&&GU.mode==="sell"&&GU.buy?buyers():""}
   ${res?`<section class="gures"><h4>${res.length?`Le ${res.length} proposte più gradite`:"Nessuno scambio trovato"}</h4>${res.length?`<p class="setnote">Verde sopra 60%, giallo 40–60%, rosso sotto. Tocca una proposta per aprirla.</p>`:`<p class="setnote">Prova con più squadre, un valore minimo più basso o meno giocatori bloccati.</p>`}${res.map(card).join("")}</section>`:""}`}

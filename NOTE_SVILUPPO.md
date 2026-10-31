@@ -1999,3 +1999,4 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 807. IA Trade › Voglio vendere › Chi li compra: da chiusa ogni squadra mostra solo logo, nome e «lo scambio si chiude al X%»; il «dice si' al» di ogni GM e i giocatori scambiati si vedono solo aprendo (in testa: squadre, giocatori e con chi viene ceduto insieme).
 808. IA Trade: tasti «Cerco ruolo» e «Cerco giocatore» (prima «Per ruolo», «Per giocatore»).
 809. IA Trade: le proposte chiuse mostrano solo il numero (#2), «lo scambio si chiude al X%» e la freccia; tolti loghi, «N squadre · M giocatori» e nomi delle squadre (si vedono gia' aprendo).
+810. IA Trade (Cerco ruolo / Cerco giocatore): «Non cedo» diventa «Cedo»: tocchi i giocatori che vorresti cedere (💸) e la tua squadra cede solo quelli; se non ne scegli nessuno l'IA puo' usare tutta la rosa.
