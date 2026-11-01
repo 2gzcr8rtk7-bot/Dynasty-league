@@ -2155,3 +2155,6 @@ Francesco (19:53): 1ª–4ª playoff titolo, 5ª–8ª l altro tabellone; premi 
 
 ## 921 — Taratura dai fatti + gmProb riparato
 A ogni apertura l IA ricalcola gli scambi veri a due lati dal 25/10 (TRADES): se dava basso uno scambio che un GM ha fatto davvero, il suo vantaggio chiesto scende (metà dello scarto, pieno da 4 scambi, massimo 2 punti per scambio e 8 in tutto). Oggi: Dolphins −3,8, Mooses −4, Turtles −2, Spiders giusto. Scheda: riga «Taratura dai fatti». Trovato e corretto un errore: gmProb (proposte con crediti dell IA, pesatura dei gusti) usava funzioni non visibili dal suo blocco (gmPlOwn dalla nota 887) e falliva in silenzio: ora usa le versioni esposte su window e include situazione, stella, contesto e taratura.
+
+## 922 — 4° posto sicuro contro 4° posto a rischio
+Francesco (20:00): a fine stagione una 1ª–3ª col 4° posto ormai sicuro, se si infortuna qualcuno, non paga per rimpiazzarlo (scendere al 4° rende di più): secureTop = margine sulla 5ª × fase finale; abbassa fino al 70% il peso della copertura, fino al 60% i PDK di oggi e fino al 70% il bisogno di crediti. Chi è 4ª (o vicina alla 5ª) e rischia di uscire paga volentieri anche con crediti e speciali: danger = 1 − margine sulla 5ª (per le 5ª–8ª: voglia di entrare). Simulazione Foxes Reaves→Zubac con i centri scoperti: sicura 44%, a rischio 70%, oggi 52%.
