@@ -12195,7 +12195,14 @@ sheet.addEventListener("click",e=>{const w=e.target.closest("[data-dxsw]");if(w)
 document.addEventListener("click",e=>{
  const b=e.target.closest("#dxbar [data-dx]");if(b){e.preventDefault();e.stopPropagation();const a=b.dataset.dx;if(a==="pick"){PICK=!PICK;if(!PICK){sheet.style.display="none";hlUpd()}barUpd()}else if(a==="panel"){PICK=false;sheet.style.display="none";hlUpd();cur="dxcol";render();scrollTo(0,0);barUpd()}else if(a==="off"){window.__dxOn=false;PICK=false;sheet.style.display="none";hlUpd();barUpd()}return}
  if(!PICK||!window.__dxOn||e.target.closest("#dxsheet,#dxbar,#dxhl"))return;
- e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();let t=e.target;if(t.nodeType!==1)t=t.parentElement;if(t.closest("svg")&&!/^(text|tspan)$/i.test(t.tagName))t=t.closest("svg");openSheet(smart(t))},true);
+ e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();if(Date.now()-DXT<700)return;let t=e.target;if(t.nodeType!==1)t=t.parentElement;if(t.closest("svg")&&!/^(text|tspan)$/i.test(t.tagName))t=t.closest("svg");openSheet(smart(t))},true);
+/* (836) SELEZIONE AL TOCCO: sul telefono il «click» spesso non arrivava (il tocco veniva bloccato per non aprire le pagine). Ora la scelta avviene
+   al sollevamento del dito: se il dito non si è mosso (non era uno scorrimento) si prende l'elemento sotto il dito, saltando gli strati
+   trasparenti (elementsFromPoint), e si blocca la navigazione. */
+let DXT=0,DXP=null;
+document.addEventListener("pointerdown",e=>{if(!PICK||!window.__dxOn||e.target.closest("#dxsheet,#dxbar,#dxhl"))return;DXP={x:e.clientX,y:e.clientY,t:Date.now()}},true);
+document.addEventListener("pointerup",e=>{if(!PICK||!window.__dxOn||!DXP||e.target.closest("#dxsheet,#dxbar,#dxhl")){DXP=null;return}const d=Math.hypot(e.clientX-DXP.x,e.clientY-DXP.y);DXP=null;if(d>12)return;
+ e.preventDefault();e.stopPropagation();const L=document.elementsFromPoint(e.clientX,e.clientY).filter(x=>okEl(x)&&!x.closest("#dxhl,#dxsub")&&x.closest("header,main"));let t=L[0];if(!t)return;if(t.closest("svg")&&!/^(text|tspan)$/i.test(t.tagName))t=t.closest("svg");DXT=Date.now();openSheet(smart(t))},true);
 document.addEventListener("touchend",e=>{if(PICK&&window.__dxOn&&!e.target.closest("#dxsheet,#dxbar,#dxhl"))e.preventDefault()},{capture:true,passive:false});
 function tokRows(m){return TOKS[m].map(([k,l,d])=>`<div class="dxr"><span>${l}</span><input type="color" data-dxt="${k}" value="${tokVal(m,k,d)}"><button data-dxtr="${k}">↺</button></div>`).join("")}
 function listRows(m){const r=DX.rules[m]||{};const ks=Object.keys(r);return ks.length?ks.map(k=>{const x=r[k];return`<div class="dxr"><span style="word-break:break-all;font-size:12px">${esc(k)}</span><i style="width:22px;height:22px;border-radius:6px;border:1px solid #888;background:${x.bg||"transparent"}"></i><i style="width:22px;height:22px;border-radius:6px;border:1px solid #888;background:${x.fg||"transparent"}"></i><i style="width:22px;height:22px;border-radius:6px;border:2px solid ${x.bd||"#888"}"></i><button data-dxdel="${esc(k)}">✕</button></div>`}).join(""):"<p class='setnote'>Nessuna modifica per questa modalità.</p>"}
