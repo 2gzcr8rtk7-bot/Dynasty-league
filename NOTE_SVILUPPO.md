@@ -2191,3 +2191,6 @@ Francesco (21:11): via il tavolo dei segnapunti (pedana nera) con la sua fascia 
 
 ## 937–939 — Modalità Dream: oro Ducks, zoom a due dita, ritorno alla squadra giusta
 Francesco (21:13–21:15). Ducks: colore #f0a500, oro più caldo come logo e banner (la luce 3D schiariva il giallo #facc15). Due dita = zoom come sulle foto (fino a 5×) senza muoversi; da ingranditi il trascinamento è più fine; toccando per camminare lo zoom torna normale; rotella = zoom sul computer. Bug: chiudendo lo stadio ci si ritrovava nella pagina di un altra squadra perché i gesti dentro lo stadio arrivavano all app sotto (lo scorrimento cambia squadra): ora i gesti si fermano allo stadio e alla chiusura si torna sempre alla squadra da cui si è entrati.
+
+## 940–941 — Modalità Dream: atmosfere (LOOK) e parquet senza riflessi
+Francesco (21:17–21:22): preparati 4 look caldi stile NBA (Caldo classico, Prime time, Arena dorata, Luce piena) come parametri LK (window.DREAM_LOOK per le prove), in attesa della scelta. Parquet: da lucido a opaco (niente riflessi speculari che coprivano legno e logo), tolto il riflesso bianco al centro, fari 560 → 330, esposizione 1,15 → 1,0.
