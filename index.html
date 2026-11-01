@@ -9784,7 +9784,7 @@ window.vImpostazioni=function(){
   const bxSt=[["","Standard"],["vel","Opacizzata"],["pien","Piena"],["brd","Solo bordo"]].map(([v,l])=>`<button data-dlsv="bxS|${v}" aria-pressed="${(DLS.bxS||"")===v}">${l}</button>`).join("");
   const bxsl=([k,l,mn,mx])=>`<label class="sset"><span>${l}<b id="bt-${k}">${BT[k]}</b></span><input type="range" min="${mn}" max="${mx}" step="1" value="${BT[k]}" data-bxt="${k}"></label>`;
   const bxbody=`<p class="setnote bxmode">Stai modificando il box score dello stile <b>${typeof bxModeName==="function"?bxModeName():""}</b>: Normale, Parquet e Notte hanno ognuno il suo. Passa all'altro stile per modificarlo.</p><div class="bxsticky"><small>Anteprima dal vivo</small><div class="bxpv bxs">${[["PT",27],["RB",8],["AS",6],["ST",2],["BL",1],["3P",4],["TO",4]].map(([l,v])=>`<span data-l="${l}" data-v="${v}" class="${l==="TO"?(v>=BT.TO?"gr2":v<=BT.TOg?"gv":""):(v>=BT[l]?"gv":"")}"><b>${v}</b><small>${l}</small></span>`).join("")}<span class="gr2"><b>-8</b><small>TIRI SBAGL.</small></span></div></div>
-  <p class="setnote">Stile della casella</p><div class="setchips">${bxSt}</div>${bxCol("bxC","Colore della casella","#e8631a")}
+  <div class="setchips"><button data-bxexp="1">📋 Copia le impostazioni per Claude</button></div><p class="setnote">Stile della casella</p><div class="setchips">${bxSt}</div>${bxCol("bxC","Colore della casella","#e8631a")}
   <p class="setnote">Bordino</p><div class="setchips"><button data-dlst="bxB" aria-pressed="${!!DLS.bxB}">${DLS.bxB?"Bordino: sì":"Bordino: no"}</button></div>${DLS.bxB?bxCol("bxBc","Colore del bordino","#e8631a"):""}
   <p class="setnote">Colore dei numeri</p>${bxCol("bxG","Numeri buoni (verdi)","#22a34a",1)}${bxCol("bxR","Numeri negativi (rossi)","#e02424",1)}${bxCol("bxN","Numeri normali","#ffffff",1)}
   <p class="setnote">Da che valore scatta il colore</p>${[["PT","Punti: buono da",10,50],["RB","Rimbalzi: buono da",3,20],["AS","Assist: buono da",3,20],["ST","Rubate: buono da",1,8],["BL","Stoppate: buono da",1,8],["3P","Triple: buono da",1,10],["TO","Palle perse: negativo da",1,10]].map(bxsl).join("")}
@@ -12872,5 +12872,12 @@ html.dlt-parquet:not(.notte) .drroom .drcup{filter:drop-shadow(0 0 12px rgba(249
 .tvbox.tvsq tbody tr:not(.grp):not(.tot):not(.pct) td:first-child{min-width:150px!important;max-width:150px!important;width:150px!important;padding-right:6px!important;white-space:normal!important}
 .tvbox.tvsq thead th:first-child{min-width:150px!important;max-width:150px!important}
 .tvbox.tvsq .tvpn .plk{white-space:normal!important;overflow:visible!important;line-height:1.15!important;text-overflow:clip!important}</style>
+<script>/* (868) Box score: copia le impostazioni di tutti gli stili (DLS.bxM + quelle attive) come testo, per renderle ufficiali per tutti */
+document.addEventListener("click",e=>{const b=e.target.closest("[data-bxexp]");if(!b)return;e.preventDefault();
+ const K=["bxS","bxC","bxB","bxBc","bxG","bxR","bxN","bxT"],cur={};K.forEach(k=>{if(k in DLS)cur[k]=DLS[k]});
+ const txt="BOXSCORE "+JSON.stringify({mode:document.documentElement.classList.contains("notte")?"notte":document.documentElement.classList.contains("dlt-parquet")?"parquet":"base",cur,bxM:DLS.bxM||{}});
+ const ok=()=>{b.textContent="✅ Copiate: incollale nella chat con Claude"};
+ const fb=()=>{const t=document.createElement("textarea");t.value=txt;t.style.cssText="width:100%;height:120px;font-size:11px";b.after(t);t.select();try{document.execCommand("copy");ok()}catch(_){b.textContent="Seleziona il testo qui sotto e copialo"}};
+ try{navigator.clipboard.writeText(txt).then(ok,fb)}catch(_){fb()}},true);</script>
 </body>
 </html>
