@@ -123,7 +123,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
     const ex=WX*1.06,ez=WZ*1.06,N=mob?36:56;for(let i=0;i<N;i++){const a=i/N*Math.PI*2,x=Math.cos(a)*ex,z=Math.sin(a)*ez;
       const bar=new THREE.Mesh(new THREE.BoxGeometry(.18,26-Y2-2,.18),i%2?V1:V2);bar.position.set(x,(Y2+2+26)/2,z);S.add(bar);
       const pan=new THREE.Mesh(new THREE.PlaneGeometry(2*Math.PI*ex/N*.7,26-Y2-3),V3);pan.position.set(Math.cos(a+Math.PI/N)*ex*.997,(Y2+2+26)/2,Math.sin(a+Math.PI/N)*ez*.997);pan.lookAt(0,pan.position.y,0);S.add(pan)}
-    [[Y2+2.2,"#c084fc",.09],[Y2+7,"#8b5cf6",.07],[20.5,"#e879f9",.07],[24.2,"#a855f7",.1]].forEach(([y,c,t])=>{const r=new THREE.Mesh(new THREE.TorusGeometry(1,t,5,128),new THREE.MeshBasicMaterial({color:c,toneMapped:false}));r.rotation.x=Math.PI/2;r.scale.set(ex*.995,ez*.995,1);r.position.y=y;S.add(r)});
+    [[Y2+2.2,"#c084fc",.09],[Y2+7,"#8b5cf6",.07],[20.5,"#e879f9",.07],[24.2,"#a855f7",.1]].forEach(([y,c,t])=>{/* (960) gli anelli bassi si interrompono sopra il corridoio della sala trofei (prima passavano dentro e sembrava un tetto mancante) */const r=new THREE.Mesh(y<17?new THREE.TorusGeometry(1,t,5,128,Math.PI*2-.1).rotateZ(Math.PI/2+.05):new THREE.TorusGeometry(1,t,5,128),new THREE.MeshBasicMaterial({color:c,toneMapped:false}));r.rotation.x=Math.PI/2;r.scale.set(ex*.995,ez*.995,1);r.position.y=y;S.add(r)});
     /* anello viola sul soffitto attorno al maxischermo */const cr=new THREE.Mesh(new THREE.TorusGeometry(1,.12,5,96),V1);cr.rotation.x=Math.PI/2;cr.scale.set(9,7,1);cr.position.y=26.3;S.add(cr)}
   /* (957) l'anello si interrompe sul corridoio della sala trofei */const glow=new THREE.Mesh(new THREE.TorusGeometry(1,.07,5,96,Math.PI*2-.09).rotateZ(Math.PI/2+.045),new THREE.MeshBasicMaterial({color:ACC,toneMapped:false}));glow.rotation.x=Math.PI/2;glow.scale.set(WX*1.03,WZ*1.03,1);glow.position.y=Y2+1.2;S.add(glow);
   /* (957) SALA TROFEI: in cima alle scale centrali, alle spalle della visuale iniziale, un corridoio incassato nel muro porta alla sala */
@@ -281,7 +281,7 @@ const A=st.A;
      dOut = distanza fuori dal rettangolo arrotondato del campo (come le tribune); l'altezza dei piedi segue il gradone su cui si è. */
   const dOut=(x,z)=>{const ax=Math.max(0,Math.abs(x)-(K.CW/2-3.5)),az=Math.max(0,Math.abs(z)-(K.CH/2-3.5));return Math.hypot(ax,az)-3.5};
   const terr=(x,z)=>{if(st.room)return 0;if(K.TN&&z>K.TN.zA-.05&&Math.abs(x)<K.TN.hw+.1)return K.TN.y;const d=dOut(x,z);let y=0;for(const b of K.BOWLS){const r=Math.floor((d-b.r0)/b.dr);if(r>=0&&r<b.rows)y=b.y0+r*b.dy}if(d>=K.RA+13*.85&&d<K.RA+13*.85+1.8)y=K.Y1;return y};
-  const clampP=()=>{/* (957) nella sala trofei: corridoio largo 2,5 m e sala 15×12 m */if(st.room){if(V.z>-12.3){V.x=cl(V.x,-1.25,1.25);V.z=Math.min(V.z,.4)}else{V.x=cl(V.x,-7.2,7.2);V.z=Math.max(V.z,-23.9)}return}
+  const clampP=()=>{/* (957) nella sala trofei: corridoio largo 2,5 m e sala 15×12 m */if(st.room){if(V.z>-12.3){V.x=cl(V.x,-1.25,1.25);V.z=Math.min(V.z,.4)}else{V.x=cl(V.x,-7.2,7.2);V.z=Math.max(V.z,-23.9);/* (960) intorno ai piedistalli dei titoli */if(RM)RM.PED.forEach(p=>{const dx=V.x-p.x,dz=V.z-p.z,d=Math.hypot(dx,dz);if(d<1.5){const k=1.5/(d||1);V.x=p.x+dx*k;V.z=p.z+(d?dz*k:1.5)}})}return}
     /* (957) nel corridoio in cima alle scale: dritti fino alla porta */if(K.TN&&V.z>K.TN.zA-.6&&Math.abs(V.x)<K.TN.hw+.2){V.x=cl(V.x,-K.TN.hw+.3,K.TN.hw-.3);V.z=Math.min(V.z,K.TN.zW-.4);return}
     let d=dOut(V.x,V.z);if(d>K.DMAX){const k=.98;for(let i=0;i<30&&dOut(V.x,V.z)>K.DMAX;i++){V.x*=k;V.z*=k}}};
   let footY=0;
@@ -320,7 +320,7 @@ const A=st.A;
   async function buildRoom(){const RS=new THREE.Scene();RS.background=new THREE.Color("#07060a");const BG=K.BG,ACC=K.ACC,tex=K.tex,C=c=>new THREE.Color(c),mix=(a,b,k)=>C(a).lerp(C(b),k),lum=h=>{const c=C(h);return .2126*c.r+.7152*c.g+.0722*c.b};
     const add=(geo,mat,x,y,z,ry,rx)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);if(ry)m.rotation.y=ry;if(rx)m.rotation.x=rx;RS.add(m);return m};
     const HC=3.2,HR=6,Z0=-12,Z1=-26,X1=8,taps=[],JF=[];
-    RS.add(new THREE.HemisphereLight("#fff3dd",mix(BG,"#140f08",.7).getHex(),.7));
+    RS.add(new THREE.HemisphereLight("#fff3dd",mix(BG,"#140f08",.6).getHex(),.95));
     const GL=K.GLOW(),glowM=(o,c)=>new THREE.MeshBasicMaterial({map:GL,color:c||"#ffd9a0",transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:o,toneMapped:false});
     const warm=new THREE.MeshBasicMaterial({color:"#fff4dc",toneMapped:false}),led=new THREE.MeshBasicMaterial({color:ACC,toneMapped:false});
     /* corridoio: pavimento scuro lucido con linea del colore squadra, pareti grafite, strisce LED, plafoniere */
@@ -342,9 +342,15 @@ const A=st.A;
     const snT=tex(1024,150,(x,W,H)=>{x.fillStyle="rgba(10,8,14,.92)";x.fillRect(0,0,W,H);x.fillStyle=ACC;x.fillRect(0,H-10,W,10);x.textAlign="center";x.textBaseline="middle";x.font="italic 900 76px Arial Black,Arial";x.fillStyle="#fff";x.fillText("SALA TROFEI "+TM.nick.toUpperCase(),W/2,H*.47)},2);
     add(new THREE.PlaneGeometry(3,3*150/1024),new THREE.MeshBasicMaterial({map:snT,toneMapped:false}),0,HC-.3,-11.7);
     /* sala: pavimento in legno scuro con il logo al centro */
-    const rfT=tex(1024,896,(x,W,H)=>{for(let j=0;j<H;j+=28)for(let i=-((j/28)%4)*60;i<W;i+=240){const t=18+Math.random()*12;x.fillStyle=`rgb(${t+22},${t+10},${t})`;x.fillRect(i,j,238,26)}x.fillStyle="rgba(0,0,0,.4)";for(let j=0;j<H;j+=28)x.fillRect(0,j+26,W,2);
-      const cx=W/2,cy=H/2;x.beginPath();x.arc(cx,cy,230,0,7);x.fillStyle=mix(BG,"#000",.55).getStyle();x.fill();x.lineWidth=12;x.strokeStyle=ACC;x.stroke();if(K.LG){const r=Math.min(380/K.LG.width,380/K.LG.height),w=K.LG.width*r,h=K.LG.height*r;x.drawImage(K.LG,cx-w/2,cy-h/2,w,h)}});
-    add(new THREE.PlaneGeometry(2*X1,14),new THREE.MeshPhongMaterial({map:rfT,shininess:45,specular:"#2a2a2a"}),0,0,(Z0+Z1)/2,0,-Math.PI/2);
+    /* (960) pavimento in legno più chiaro e lucido; logo grande e nitido su un disco luminoso a parte */const rfT=tex(1024,896,(x,W,H)=>{for(let j=0;j<H;j+=28)for(let i=-((j/28)%4)*60;i<W;i+=240){const t=40+Math.random()*22;x.fillStyle=`rgb(${t+38},${t+20},${t+4})`;x.fillRect(i,j,238,26)}x.fillStyle="rgba(0,0,0,.35)";for(let j=0;j<H;j+=28)x.fillRect(0,j+26,W,2)});
+    add(new THREE.PlaneGeometry(2*X1,14),new THREE.MeshPhongMaterial({map:rfT,shininess:90,specular:"#5a4a30"}),0,0,(Z0+Z1)/2,0,-Math.PI/2);
+    {const D=2048,lT=tex(D,D,(x,W,H)=>{const c=W/2;x.clearRect(0,0,W,H);const g=x.createRadialGradient(c,c,W*.05,c,c,W*.5);g.addColorStop(0,mix(BG,"#000",.35).getStyle());g.addColorStop(1,mix(BG,"#000",.7).getStyle());x.beginPath();x.arc(c,c,W*.49,0,7);x.fillStyle=g;x.fill();
+        for(let i=0;i<48;i++){const a=i/48*Math.PI*2;x.strokeStyle=i%2?"rgba(255,255,255,.05)":"rgba(255,220,140,.08)";x.lineWidth=18;x.beginPath();x.moveTo(c+Math.cos(a)*W*.28,c+Math.sin(a)*W*.28);x.lineTo(c+Math.cos(a)*W*.47,c+Math.sin(a)*W*.47);x.stroke()}
+        x.lineWidth=26;x.strokeStyle=ACC;x.beginPath();x.arc(c,c,W*.475,0,7);x.stroke();x.lineWidth=8;x.beginPath();x.arc(c,c,W*.4,0,7);x.stroke();
+        const txt=(" HALL OF FAME · "+TM.nick.toUpperCase()+" · DREAMERS LEAGUE ·").repeat(2);x.fillStyle="#fff";x.font="900 64px Arial Black,Arial";x.textAlign="center";x.textBaseline="middle";const R_=W*.4375,n=txt.length;for(let i=0;i<n;i++){const a=i/n*Math.PI*2-Math.PI/2;x.save();x.translate(c+Math.cos(a)*R_,c+Math.sin(a)*R_);x.rotate(a+Math.PI/2);x.fillText(txt[i],0,0);x.restore()}
+        if(K.LG){const r=Math.min(W*.66/K.LG.width,W*.66/K.LG.height),w=K.LG.width*r,h=K.LG.height*r;x.shadowColor="rgba(0,0,0,.6)";x.shadowBlur=30;x.drawImage(K.LG,c-w/2,c-h/2,w,h);x.shadowBlur=0}});
+      const lg=add(new THREE.CircleGeometry(3.6,96),new THREE.MeshBasicMaterial({map:lT,transparent:true,toneMapped:false,color:"#f4f0ea"}),0,.012,Z0-4.9,0,-Math.PI/2);
+      add(new THREE.RingGeometry(3.6,4.4,96),glowM(.5,ACC),0,.015,Z0-4.9,0,-Math.PI/2)}
     /* pareti nel colore squadra, a pannelli, con zoccolo scuro e cornice LED */
     const rwT=tex(1024,512,(x,W,H)=>{const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,mix(BG,"#fff",.06).getStyle());g.addColorStop(1,mix(BG,"#000",.38).getStyle());x.fillStyle=g;x.fillRect(0,0,W,H);for(let i=0;i<W;i+=170){x.fillStyle="rgba(0,0,0,.16)";x.fillRect(i,0,6,H);x.fillStyle="rgba(255,255,255,.08)";x.fillRect(i+6,0,3,H)}});
     const rwM=new THREE.MeshLambertMaterial({map:rwT,emissive:"#ffffff",emissiveMap:rwT,emissiveIntensity:.18,side:THREE.DoubleSide});
@@ -353,10 +359,14 @@ const A=st.A;
     const dark=new THREE.MeshLambertMaterial({color:"#17120c"});
     add(new THREE.BoxGeometry(2*X1,.3,.06),dark,0,.15,Z1+.03);[-X1,X1].forEach(xx=>add(new THREE.BoxGeometry(.06,.3,14),dark,xx-Math.sign(xx)*.03,.15,(Z0+Z1)/2));
     add(new THREE.BoxGeometry(2*X1,.05,.05),led,0,HR-.35,Z1+.05);[-X1,X1].forEach(xx=>add(new THREE.BoxGeometry(.05,.05,14),led,xx-Math.sign(xx)*.05,HR-.35,(Z0+Z1)/2));
-    add(new THREE.PlaneGeometry(2*X1,14),new THREE.MeshLambertMaterial({color:"#120f15",side:THREE.DoubleSide}),0,HR,(Z0+Z1)/2,0,Math.PI/2);
+    /* (960) soffitto viola Dreamers: pannelli con velo chiaro, LED viola lungo i bordi e anello sopra il logo */const ceT=tex(1024,896,(x,W,H)=>{x.fillStyle="#3b1a72";x.fillRect(0,0,W,H);for(let i=0;i<W;i+=128)for(let j=0;j<H;j+=128){const g=x.createRadialGradient(i+64,j+64,4,i+64,j+64,88);g.addColorStop(0,"rgba(168,85,247,.75)");g.addColorStop(1,"rgba(88,28,135,0)");x.fillStyle=g;x.fillRect(i,j,128,128)}for(let i=0;i<=W;i+=128){x.fillStyle="rgba(10,4,20,.7)";x.fillRect(i-3,0,6,H);x.fillRect(0,i-3,W,6)}});
+    add(new THREE.PlaneGeometry(2*X1,14),new THREE.MeshBasicMaterial({map:ceT,side:THREE.DoubleSide,toneMapped:false,color:"#bfb3d6"}),0,HR,(Z0+Z1)/2,0,Math.PI/2);
+    {const vio=new THREE.MeshBasicMaterial({color:"#a855f7",toneMapped:false}),vio2=new THREE.MeshBasicMaterial({color:"#e9d5ff",toneMapped:false});
+      add(new THREE.BoxGeometry(2*X1,.06,.06),vio,0,HR-.04,Z1+.04);add(new THREE.BoxGeometry(2*X1,.06,.06),vio,0,HR-.04,Z0-.04);[-X1,X1].forEach(xx=>add(new THREE.BoxGeometry(.06,.06,14),vio,xx-Math.sign(xx)*.04,HR-.04,(Z0+Z1)/2));
+      [[4.2,.07,vio],[3.4,.04,vio2]].forEach(([r,t,m])=>add(new THREE.TorusGeometry(r,t,6,96),m,0,HR-.25,Z0-4.9,0,Math.PI/2));add(new THREE.CircleGeometry(4.6,64),glowM(.35,"#a855f7"),0,HR-.02,Z0-4.9,0,Math.PI/2)}
     /* scritta grande sulla parete di fondo */
     const ink=lum(BG)>.5?"#16100a":"#ffffff";const tiT=tex(1400,300,(x,W,H)=>{x.textAlign="center";x.textBaseline="middle";x.font="italic 900 150px Arial Black,Arial";x.fillStyle=ink;x.fillText("HALL OF FAME",W/2,H*.4);x.font="900 64px Arial Black,Arial";x.fillText(TM.nick.toUpperCase(),W/2,H*.85)},2);
-    add(new THREE.PlaneGeometry(9,9*300/1400),new THREE.MeshBasicMaterial({map:tiT,transparent:true,toneMapped:false}),0,4.65,Z1+.02);
+    add(new THREE.PlaneGeometry(7.2,7.2*300/1400),new THREE.MeshBasicMaterial({map:tiT,transparent:true,toneMapped:false}),0,4.75,Z1+.02);
     /* faretti: corpi luminosi sul soffitto, coni di luce leggeri, pochi fari veri */
     const coneT=tex(64,256,(x,W,H)=>{const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"rgba(255,236,200,0)");g.addColorStop(.12,"rgba(255,236,200,.6)");g.addColorStop(1,"rgba(255,236,200,0)");x.fillStyle=g;x.fillRect(0,0,W,H)});
     const coneM=new THREE.MeshBasicMaterial({map:coneT,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,opacity:.16,toneMapped:false});
@@ -379,9 +389,38 @@ const A=st.A;
         if(b.k==="gold"){const bl=new THREE.Mesh(new THREE.SphereGeometry(.1,20,14),MAT.ball);bl.position.y=.26+.86;g.add(bl)}}
       const pT=tex(400,120,(x,W,H)=>{x.fillStyle="#1a1410";x.fillRect(0,0,W,H);x.strokeStyle={gold:"#f0c44c",silver:"#e6edf7",bronze:"#e0a070",star:"#8cc8ff"}[b.k];x.lineWidth=6;x.strokeRect(3,3,W-6,H-6);x.textAlign="center";x.textBaseline="middle";x.fillStyle=x.strokeStyle;x.font="italic 900 46px Arial Black,Arial";x.fillText(b.l1,W/2,H*.38);x.font="800 30px Arial";x.fillStyle="#fff";x.fillText(b.l2,W/2,H*.76)},2);
       const pl=new THREE.Mesh(new THREE.PlaneGeometry(.62,.186),new THREE.MeshBasicMaterial({map:pT,toneMapped:false}));pl.position.set(0,.09,.3);pl.rotation.x=-.35;g.add(pl);g.scale.setScalar(sc);return g};
-    if(B.length){const main=B.filter(b=>b.k==="gold"),rest=B.filter(b=>b.k!=="gold");const row=(L,y,sc)=>L.forEach((b,i)=>{const g=trophy(b,sc);g.position.set((i-(L.length-1)/2)*Math.min(2.2,(cw-1)/L.length),y,cz+.05);RS.add(g)});
-      if(main.length&&rest.length){shelf();row(main,.9,1.12);row(rest,2.37,.82)}else if(B.length>5){shelf();row(B.slice(0,Math.ceil(B.length/2)),.9,1.12);row(B.slice(Math.ceil(B.length/2)),2.37,.82)}else row(B,.9,1.3)}
-    else{const eT=tex(800,200,(x,W,H)=>{x.textAlign="center";x.textBaseline="middle";x.fillStyle=ACC;x.font="italic 900 64px Arial Black,Arial";x.fillText("IL PRIMO TROFEO",W/2,H*.35);x.fillStyle="#fff";x.font="800 46px Arial";x.fillText("È VICINO",W/2,H*.75)},2);add(new THREE.PlaneGeometry(4,1),new THREE.MeshBasicMaterial({map:eT,transparent:true,toneMapped:false}),0,1.5,cz)}
+    /* (960) I TITOLI: ogni campionato su un piedistallo nero con anello dorato, coppa d'oro gigante (alta più di 3 m) che gira piano, faro dedicato, alone e scintille. Gli altri trofei restano in bacheca */
+    const main=B.filter(b=>b.k==="gold"),rest=B.filter(b=>b.k!=="gold"),PED=[],SPIN=[],SPK=[];
+    if(rest.length){const row=(L,y,sc)=>L.forEach((b,i)=>{const g=trophy(b,sc);g.position.set((i-(L.length-1)/2)*Math.min(2.2,(cw-1)/L.length),y,cz+.05);RS.add(g)});if(rest.length>5){shelf();row(rest.slice(0,Math.ceil(rest.length/2)),.9,1.12);row(rest.slice(Math.ceil(rest.length/2)),2.37,.82)}else row(rest,.9,1.3)}
+    if(main.length){const eq=tex(512,256,(x,W,H)=>{const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"#4b2390");g.addColorStop(.42,"#1d1226");g.addColorStop(.5,"#ffd27a");g.addColorStop(.56,"#3a2408");g.addColorStop(1,"#120c06");x.fillStyle=g;x.fillRect(0,0,W,H);[[.08,.18],[.3,.12],[.55,.2],[.78,.14],[.95,.22]].forEach(([u,v])=>{const r=x.createRadialGradient(u*W,v*H,2,u*W,v*H,34);r.addColorStop(0,"#ffffff");r.addColorStop(1,"rgba(255,240,200,0)");x.fillStyle=r;x.fillRect(0,0,W,H)})});
+      eq.mapping=THREE.EquirectangularReflectionMapping;const pm=new THREE.PMREMGenerator(R),ENV=pm.fromEquirectangular(eq).texture;pm.dispose();RS.userData.env=ENV;
+      const GOLD=new THREE.MeshStandardMaterial({color:"#f5c64f",metalness:1,roughness:.18,envMap:ENV,envMapIntensity:1.6}),BLK=new THREE.MeshStandardMaterial({color:"#08080a",metalness:.4,roughness:.15,envMap:ENV,envMapIntensity:.8});
+      const bbT=tex(512,256,(x,W,H)=>{x.fillStyle="#d8641e";x.fillRect(0,0,W,H);for(let i=0;i<3000;i++){x.fillStyle=`rgba(0,0,0,${Math.random()*.12})`;x.fillRect(Math.random()*W,Math.random()*H,2,2)}x.strokeStyle="#1a0c04";x.lineWidth=7;x.beginPath();x.moveTo(0,H/2);x.lineTo(W,H/2);x.stroke();[W/4,W*3/4].forEach(u=>{x.beginPath();x.moveTo(u,0);x.lineTo(u,H);x.stroke()});x.beginPath();for(let u=0;u<=W;u+=4)x.lineTo(u,H/2+Math.sin(u/W*Math.PI*4)*H*.3);x.stroke()});
+      const BALL=new THREE.MeshStandardMaterial({map:bbT,roughness:.65,metalness:0});
+      const bigCup=()=>{const g=new THREE.Group();
+        const P=[[0,0],[.16,0],[.16,.03],[.12,.05],[.07,.1],[.055,.2],[.075,.24],[.05,.28],[.045,.42],[.07,.46],[.05,.5],[.06,.54],[.12,.6],[.2,.68],[.26,.8],[.29,.94],[.3,1.04],[.32,1.07],[.3,1.09],[.27,1.06],[0,1.0]].map(([a,c])=>new THREE.Vector2(a,c));
+        const cup=new THREE.Mesh(new THREE.LatheGeometry(P,64),GOLD);g.add(cup);[[.22,.1,.012],[.47,.065,.012],[.75,.235,.015],[.98,.295,.012]].forEach(([y,r,t])=>{const ring=new THREE.Mesh(new THREE.TorusGeometry(r,t,8,48),GOLD);ring.rotation.x=Math.PI/2;ring.position.y=y;g.add(ring)});
+        [-1,1].forEach(sg=>{const h=new THREE.Mesh(new THREE.TorusGeometry(.14,.022,10,28,Math.PI*1.25),GOLD);h.rotation.z=-sg*Math.PI*.62;h.position.set(sg*.3,.86,0);g.add(h);const k=new THREE.Mesh(new THREE.SphereGeometry(.035,12,8),GOLD);k.position.set(sg*.42,.98,0);g.add(k)});
+        const ball=new THREE.Mesh(new THREE.SphereGeometry(.17,32,20),BALL);ball.position.y=1.2;g.add(ball);
+        const star=new THREE.Shape();for(let i=0;i<10;i++){const r=i%2?.03:.075,a=i*Math.PI/5+Math.PI/2;i?star.lineTo(Math.cos(a)*r,Math.sin(a)*r):star.moveTo(Math.cos(a)*r,Math.sin(a)*r)}const st_=new THREE.Mesh(new THREE.ExtrudeGeometry(star,{depth:.015,bevelEnabled:false}),GOLD);st_.position.set(0,.66,.155);st_.rotation.x=-.5;g.add(st_);return g};
+      const HALO=K.GLOW();const spT=tex(64,64,(x,W,H)=>{const g=x.createRadialGradient(W/2,H/2,0,W/2,H/2,W/2);g.addColorStop(0,"rgba(255,250,220,1)");g.addColorStop(.3,"rgba(255,215,120,.8)");g.addColorStop(1,"rgba(255,200,80,0)");x.fillStyle=g;x.fillRect(0,0,W,H)});
+      const n=main.length,gapX=n>1?Math.min(7,12/(n-1)):0;
+      main.forEach((b,i)=>{const px=(i-(n-1)/2)*gapX,pz=Z1+5.3;PED.push({x:px,z:pz});
+        const pd=add(new THREE.CylinderGeometry(1.0,1.15,1.0,48),BLK,px,.5,pz);pd.userData.ped={x:px,z:pz};taps.push(pd);add(new THREE.CylinderGeometry(1.08,1.08,.08,48),BLK,px,1.04,pz);
+        [[1.005,1.02],[1.09,1.085],[1.155,.04]].forEach(([r,y])=>add(new THREE.TorusGeometry(r,.025,8,64),new THREE.MeshBasicMaterial({color:"#ffcf5a",toneMapped:false}),px,y,pz,0,Math.PI/2));
+        const g=bigCup();g.scale.setScalar(2.35);g.position.set(px,1.08,pz);RS.add(g);SPIN.push(g);g.traverse(o=>{if(o.isMesh){o.userData.ped={x:px,z:pz};taps.push(o)}});
+        const pT=tex(700,230,(x,W,H)=>{x.fillStyle="#0c0a08";x.fillRect(0,0,W,H);x.strokeStyle="#ffcf5a";x.lineWidth=8;x.strokeRect(6,6,W-12,H-12);x.textAlign="center";x.textBaseline="middle";const gr=x.createLinearGradient(0,40,0,130);gr.addColorStop(0,"#fff1b8");gr.addColorStop(1,"#e0a21c");x.fillStyle=gr;x.font="italic 900 92px Arial Black,Arial";x.fillText("CAMPIONI",W/2,H*.4);x.fillStyle="#fff";x.font="800 40px Arial";x.fillText("DREAMERS LEAGUE · "+b.l2,W/2,H*.78)},2);
+        const pl=add(new THREE.PlaneGeometry(1.5,1.5*230/700),new THREE.MeshBasicMaterial({map:pT,toneMapped:false}),px,.55,pz+1.13);pl.rotation.x=-.08;
+        const hs=new THREE.Sprite(new THREE.SpriteMaterial({map:HALO,color:"#ffd27a",transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:.55,toneMapped:false}));hs.scale.set(5,5,1);hs.position.set(px,2.5,pz-.3);RS.add(hs);
+        add(new THREE.RingGeometry(1.25,2.1,64),glowM(.55,"#ffcf5a"),px,.02,pz,0,-Math.PI/2);
+        spot(px,pz+2.2,px,2.2,pz,true,180);spot(px-2.2,pz-1.2,px,2.4,pz,true,70);spot(px+2.2,pz-1.2,px,2.4,pz,false);
+        const N_=70,pos=new Float32Array(N_*3),sp=[];for(let k=0;k<N_;k++){sp.push({a:Math.random()*6.28,r:.6+Math.random()*1.1,y:Math.random()*3.6,v:.15+Math.random()*.35});}
+        const geo=new THREE.BufferGeometry();geo.setAttribute("position",new THREE.BufferAttribute(pos,3));const pts=new THREE.Points(geo,new THREE.PointsMaterial({map:spT,size:.09,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false,color:"#ffe08a"}));RS.add(pts);SPK.push({geo,pos,sp,px,pz})});
+      /* stendardi dei titoli sulla parete d'ingresso */
+      main.forEach((b,i)=>{const bt=tex(512,1100,(x,W,H)=>{const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,mix(BG,"#000",.1).getStyle());g.addColorStop(1,mix(BG,"#000",.5).getStyle());x.fillStyle=g;x.beginPath();x.moveTo(0,0);x.lineTo(W,0);x.lineTo(W,H*.9);x.lineTo(W/2,H);x.lineTo(0,H*.9);x.closePath();x.fill();x.strokeStyle="#ffd36b";x.lineWidth=14;x.beginPath();x.moveTo(24,24);x.lineTo(W-24,24);x.lineTo(W-24,H*.885);x.lineTo(W/2,H-26);x.lineTo(24,H*.885);x.closePath();x.stroke();
+          if(K.LG){const r=Math.min(300/K.LG.width,300/K.LG.height),w=K.LG.width*r,h=K.LG.height*r;x.drawImage(K.LG,W/2-w/2,110,w,h)}x.textAlign="center";x.fillStyle=lum(BG)>.6?"#111":"#fff";x.font="italic 900 72px Arial Black,Arial";x.fillText("CAMPIONI",W/2,560);x.font="900 120px Arial Black,Arial";x.fillText(b.l2.replace("ANNO ",""),W/2,720);x.font="800 40px Arial";x.fillText("ANNO",W/2,780);x.fillStyle="#ffd36b";x.font="800 34px Arial";x.fillText("DREAMERS LEAGUE",W/2,880)},2);
+        const sx=(i%2?1:-1)*(4.6+Math.floor(i/2)*2.6);add(new THREE.PlaneGeometry(2.1,2.1*1100/512),new THREE.MeshBasicMaterial({map:bt,transparent:true,toneMapped:false,side:THREE.DoubleSide}),sx,3.4,Z0-.06,Math.PI);add(new THREE.PlaneGeometry(4,6),glowM(.3),sx,3.4,Z0-.04,Math.PI)})}
+    if(!B.length){const eT=tex(800,200,(x,W,H)=>{x.textAlign="center";x.textBaseline="middle";x.fillStyle=ACC;x.font="italic 900 64px Arial Black,Arial";x.fillText("IL PRIMO TROFEO",W/2,H*.35);x.fillStyle="#fff";x.font="800 46px Arial";x.fillText("È VICINO",W/2,H*.75)},2);add(new THREE.PlaneGeometry(4,1),new THREE.MeshBasicMaterial({map:eT,transparent:true,toneMapped:false}),0,1.5,cz)}
     {const p=new THREE.PointLight("#ffe9c4",9,6,2);p.position.set(0,3.2,cz+.1);RS.add(p)}
     [-3.3,0,3.3].forEach(x=>spot(x,Z1+4.2,x,1.3,cz,true,55));add(new THREE.PlaneGeometry(13,5),glowM(.22),0,2.4,Z1+.05);
     /* MAGLIE DI TUTTI I GIOCATORI appese alle pareti, in cornice, ognuna col suo faretto */
@@ -397,7 +436,8 @@ const A=st.A;
       add(new THREE.PlaneGeometry(fw*2,fh*1.7),glowM(.2),xx-side*.01,y+.15,z,ry);spot(side*(X1-1.6),z,xx,y,z,false)});
     await Promise.all(tasks);
     [-1,1].forEach(sd=>{const s=new THREE.SpotLight("#fff1d6",40,14,.9,.7,1.6);s.position.set(sd*2,HR-.2,(Z0+Z1)/2);s.target.position.set(sd*X1,2.5,(Z0+Z1)/2);RS.add(s,s.target)});
-    return{S:RS,taps}}
+    let lt=performance.now();const tick=now=>{const dt=Math.min(.05,(now-lt)/1000);lt=now;SPIN.forEach(g=>{g.rotation.y+=dt*.35});SPK.forEach(o=>{o.sp.forEach((q,k)=>{q.y+=q.v*dt;q.a+=dt*.3;if(q.y>3.8)q.y=0;o.pos[k*3]=o.px+Math.cos(q.a)*q.r;o.pos[k*3+1]=1.1+q.y;o.pos[k*3+2]=o.pz+Math.sin(q.a)*q.r});o.geo.attributes.position.needsUpdate=true});return SPIN.length>0};
+    return{S:RS,taps,PED,tick}}
   let shut=0;const closed=()=>{const n=performance.now();if(n-shut<2500)return;shut=n;V.z=Math.min(V.z,K.TN.zW-1.5);tw=null;walk=0;const h=ov.querySelector(".drm3hint");if(h){h.textContent="🔒 La sala trofei è chiusa: si apre solo per Ducks e Turtles";h.style.opacity=1;setTimeout(()=>{h.style.opacity=0},3000)}if(st.say)st.say("La porta è chiusa")};
   async function enterRoom(){if(!K.OPEN){closed();return}if(st.busy||st.room)return;st.busy=true;tw=null;walk=0;fade.style.opacity=1;await new Promise(r=>setTimeout(r,380));if(st.stop)return;
     if(!RM){msg.textContent="Entro nella sala trofei…";msg.style.display="";try{RM=await buildRoom();K.RS=RM.S}catch(e){console.error(e);RM=null}msg.style.display="none";
@@ -406,7 +446,7 @@ const A=st.A;
     if(st.say)st.say("Sala trofei dei "+TM.nick)}
   async function exitRoom(){if(st.busy||!st.room)return;st.busy=true;tw=null;fade.style.opacity=1;await new Promise(r=>setTimeout(r,380));if(st.stop)return;
     st.room=false;V.x=0;V.z=K.TN.zA-.9;V.yaw=0;V.pitch=-20;footY=K.TN.y;st.dirty=true;fade.style.opacity=0;st.busy=false}
-  function roomTap(){const h=ray.intersectObjects(RM.taps,false)[0];if(h){const u=h.object.userData;if(u.exit){exitRoom();return}if(u.jf){fly(u.jf.x,u.jf.z,u.jf.yaw);V.pitch=u.jf.x?0:0;return}if(u.caseT){fly(0,-20.4,0);V.pitch=-6;return}}
+  function roomTap(){const h=ray.intersectObjects(RM.taps,false)[0];if(h){const u=h.object.userData;if(u.exit){exitRoom();return}if(u.jf){fly(u.jf.x,u.jf.z,u.jf.yaw);V.pitch=u.jf.x?0:0;return}if(u.ped){fly(u.ped.x,u.ped.z+4.2,0);V.pitch=10;return}if(u.caseT){fly(0,-20.4,0);V.pitch=-6;return}}
     if(ray.ray.intersectPlane(plane,hit))fly(hit.x,hit.z,null)}
   /* ---- ciclo: si disegna solo quando serve; le maglie ondeggiano piano (10 fotogrammi al secondo da ferme) ---- */
   let last=performance.now(),lastDraw=0;
@@ -415,7 +455,7 @@ const A=st.A;
     let mv=walk;if(keys.w||keys.arrowup)mv=1;if(keys.s||keys.arrowdown)mv=-1;if(keys.a||keys.arrowleft){V.yaw+=80*dt;st.dirty=true}if(keys.d||keys.arrowright){V.yaw-=80*dt;st.dirty=true}
     if(mv){const r=V.yaw*Math.PI/180;V.x-=Math.sin(r)*mv*5.5*dt;V.z-=Math.cos(r)*mv*5.5*dt;st.dirty=true}
     clampP();if(!st.busy){if(st.room){if(V.z>.15)exitRoom()}else if(K.TN&&V.z>K.TN.zW-1.1&&Math.abs(V.x)<K.TN.DW/2)enterRoom()}{const ty=terr(V.x,V.z);footY+=(ty-footY)*Math.min(1,dt*9);if(Math.abs(ty-footY)>.01)st.dirty=true;if(!st.room&&!tw&&!mv&&(Math.abs(V.x-hideAt.x)>.5||Math.abs(V.z-hideAt.z)>.5))hideNear()}
-    const animating=st.anim.length>0;if(!st.dirty&&!animating&&now-lastDraw<100)return;
+    if(st.room&&RM&&RM.tick&&RM.tick(now))st.dirty=true;const animating=st.anim.length>0;if(!st.dirty&&!animating&&now-lastDraw<100)return;
     const ey=footY+(footY>.2?2.05:1.7);cam.position.set(V.x,ey,V.z);const yr=V.yaw*Math.PI/180,pr=V.pitch*Math.PI/180;cam.lookAt(V.x-Math.sin(yr)*Math.cos(pr),ey+Math.sin(pr),V.z-Math.cos(yr)*Math.cos(pr));
     for(const n in J){const o=J[n];o.g.rotation.y=Math.atan2(cam.position.x-o.g.position.x,cam.position.z-o.g.position.z);/* (942) da lontano maglia e targhetta si ingrandiscono (fino a 1,8×) così restano leggibili */const dd=Math.hypot(cam.position.x-o.g.position.x,cam.position.y-2,cam.position.z-o.g.position.z)/(cam.zoom||1),sc=Math.max(1,Math.min(1.8,dd/13));/* si ingrandiscono maglia e targhetta, ma restano alla stessa altezza dal parquet (non salgono e non si sovrappongono) *//* (948) targhetta sotto e maglia sopra, sempre staccate (prima la maglia copriva la parte alta della targhetta) */if(!o.tag.userData.s0)o.tag.userData.s0=o.tag.scale.clone();o.tag.scale.copy(o.tag.userData.s0).multiplyScalar(sc);const th=o.tag.scale.y;o.tag.position.y=.35+th/2;o.jm.scale.setScalar(sc);o.jm.position.y=.35+th+.12+.91*sc+Math.sin(now/900+o.ph)*.05}
     if(MK.userData.t0){const k=(now-MK.userData.t0)/1600;if(k>=1){MK.material.opacity=0;MK.userData.t0=0}else{MK.material.opacity=.9*(1-k);MK.scale.setScalar(1+k*.8);st.dirty=true}}
