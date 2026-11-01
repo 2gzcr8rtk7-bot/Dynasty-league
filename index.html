@@ -9755,7 +9755,13 @@ addEventListener("popstate",()=>{if(navBack()){try{history.pushState({dl:1},"")}
     set(on);try{window.lvSync&&lvSync()}catch(e){}}
   chk();setInterval(chk,120000);setInterval(()=>{if(daTV())set(true)},15000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)chk()})})();
 </script>
-<script>if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
+<script>/* (856) AGGIORNAMENTO SICURO: quando esce una versione nuova dell'app, appena il nuovo service worker prende il controllo
+   la pagina si ricarica da sola (subito se l'app è aperta da meno di 20 s, altrimenti alla prossima volta che torni nell'app).
+   Prima il telefono poteva mostrare per un'apertura (o più) la versione vecchia salvata. */
+if("serviceWorker" in navigator){const T0=Date.now();let had=!!navigator.serviceWorker.controller,pend=false,done=false;
+ const go=()=>{if(done)return;done=true;location.reload()};
+ navigator.serviceWorker.addEventListener("controllerchange",()=>{if(!had){had=true;return}if(Date.now()-T0<20000)go();else pend=true});
+ addEventListener("load",()=>navigator.serviceWorker.register("sw.js").then(r=>{document.addEventListener("visibilitychange",()=>{if(document.hidden)return;if(pend)go();else r.update().catch(()=>{})})}).catch(()=>{}))}</script>
 <script>/* ===== VISTA IMPOSTAZIONI (27/10/2026) ===== */
 (function(){
 let FROM="home";
