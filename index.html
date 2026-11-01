@@ -9872,10 +9872,11 @@ try{const r=JSON.parse(sessionStorage.getItem("dl_reload")||"null");sessionStora
 (function(){let t=null;function run(){t=null;const R=document.documentElement;if(!R.classList.contains("dlt-parquet"))return;const m=document.querySelector("main")||document.body;
   const trans=e=>{const c=getComputedStyle(e).backgroundColor,x=c.match(/rgba?\(([^)]+)\)/);if(!x)return 0;const q=x[1].split(",").map(Number);return q.length>3?q[3]:1};
   const onWood=e=>{for(let a=e.parentElement;a&&a!==m&&a!==document.body;a=a.parentElement){if(a.classList.contains("pqw"))return false;const al=trans(a);if(al>=.9)return false}return true};
-  m.querySelectorAll("*").forEach(e=>{if(e.classList.contains("pqw")||e.closest("svg,#tgo,.tgo,.nzmq,header,.bxs"))return;const tg=e.tagName;if(tg==="SVG"||tg==="PATH"||tg==="IMG"||tg==="INPUT"||tg==="OPTION"||tg==="TR"||tg==="TD"||tg==="TH"||tg==="TABLE"||tg==="THEAD"||tg==="TBODY")return;
+  const WQ=[];m.querySelectorAll("*").forEach(e=>{if(e.classList.contains("pqw")||e.closest("svg,#tgo,.tgo,.nzmq,header,.bxs"))return;const tg=e.tagName;if(tg==="SVG"||tg==="PATH"||tg==="IMG"||tg==="INPUT"||tg==="OPTION"||tg==="TR"||tg==="TD"||tg==="TH"||tg==="TABLE"||tg==="THEAD"||tg==="TBODY")return;
     const cs=getComputedStyle(e);if(cs.position==="fixed"||cs.display==="none"||cs.visibility==="hidden")return;
     const al=trans(e);if(al<=.02||al>=.97)return;if(e.getAttribute("aria-pressed")==="true"||e.getAttribute("aria-selected")==="true"||e.classList.contains("on"))return;
-    const r=e.getBoundingClientRect();if(r.width<36||r.height<24)return;if(!onWood(e))return;e.classList.add("pqw");e.querySelectorAll("[data-pq]").forEach(x=>{if(x.matches(".pdkx,.pdkb,.gv,.gr2,.badge,.injtag,[class*=\"lg-\"]"))return;x.style.removeProperty("color");x.style.removeProperty("text-shadow");x.removeAttribute("data-pq")})})}
+    const r=e.getBoundingClientRect();if(r.width<36||r.height<24)return;if(!onWood(e))return;WQ.push(e)});
+  /* (851) scritture dopo tutte le letture */for(const e of WQ){e.classList.add("pqw");e.querySelectorAll("[data-pq]").forEach(x=>{if(x.matches(".pdkx,.pdkb,.gv,.gr2,.badge,.injtag,[class*=\"lg-\"]"))return;x.style.removeProperty("color");x.style.removeProperty("text-shadow");x.removeAttribute("data-pq")})}}
   const go=()=>{if(t)return;t=setTimeout(()=>{try{(window.requestIdleCallback||setTimeout)(()=>{run();try{if(!document.documentElement.classList.contains("notte")&&window.pqFix)window.pqFix()}catch(e){}})}catch(e){}},180)};
   window.__pqw=()=>{t=null;run()};new MutationObserver(go).observe(document.body,{childList:true,subtree:true});document.addEventListener("click",go);window.addEventListener("load",go)})();
 })()</script>
@@ -9916,12 +9917,13 @@ function pqFix(){try{
     cache.set(el,base);return base};
   const bgOfNew=bgOf;const bgSel=el=>NT?bgOfOld(el):bgOfNew(el);
   const W={r:255,g:255,b:255},DK={r:43,g:22,b:8},OR={r:184,g:65,b:10},ORD={r:124,g:45,b:5};
+  const WR=[];/* (851) scritture rimandate a dopo tutte le letture: niente ricalcoli della pagina a ogni elemento */
   document.querySelectorAll(app?"header *,main *,#subnav *,#subnav2 *":'.drroom[data-th="3"] *').forEach(el=>{
     if(el.tagName==="svg"||el.closest("svg"))return;
     if(el.closest(".htile"))return;
     if(el.closest(".cltg,.cltn,.tvpnl .tvdate,.tvpnl .tvday"))return;
     if(window.__dxSkip&&window.__dxSkip(el))return;if(el.matches&&el.matches("div.teamhead,div.teamhead *,button.shbtn,div.gszn,table td.pnm,table td.pnm *,table thead th,table thead th *,.tgc,.tgc *,.tvbox tr.grp td,.tvbox tr.grp td *,.tvbox tr.tot td,.tvbox tr.tot td *,.mnb,.bxs span.gv *,.bxs span.gr2 *"))return;
-    if(el.classList&&el.classList.contains("tstar")){const b=bgSel(el);el.classList.toggle("stl",lum(b)>.4);return}
+    if(el.classList&&el.classList.contains("tstar")){const b=bgSel(el),v=lum(b)>.4;WR.push(()=>el.classList.toggle("stl",v));return}
     let has=false;for(const n of el.childNodes)if(n.nodeType===3&&n.textContent.trim().length>0){has=true;break}
     if(!has)return;const r=el.getBoundingClientRect();if(r.width<2||r.height<2)return;
     const cs=getComputedStyle(el);if(cs.visibility==="hidden"||+cs.opacity===0)return;
@@ -9929,7 +9931,7 @@ function pqFix(){try{
     const f=fg.a<1?mix(bg,fg,fg.a):fg;const dark=lum(f)<.07;/* niente scritte nere: nero/marrone scurissimo diventa arancione (fondo chiaro) o bianco (fondo scuro) */
     if(cr(f,bg)>=3.4&&!dark)return;
     let n;const L=lum(bg);
-    if(el.closest("header")&&!el.closest(".subnav")){el.style.setProperty("color","#fff","important");el.setAttribute("data-pq","1");PQL.push(el);return}
+    if(el.closest("header")&&!el.closest(".subnav")){WR.push(()=>{el.style.setProperty("color","#fff","important");el.setAttribute("data-pq","1")});PQL.push(el);return}
     let shadow=false;
     if(L<.3)n=W;
     else{const sat=Math.max(fg.r,fg.g,fg.b)-Math.min(fg.r,fg.g,fg.b)>90;
@@ -9939,8 +9941,8 @@ function pqFix(){try{
         if(wood){n=W;shadow=true}/* sul legno: bianco con contorno marrone */
         else if(cr(ORD,bg)>=3.4)n=ORD;/* su colori vivaci (verde, giallo, viola…): arancione bruciato */
         else{n=W;shadow=true}}}
-    if(shadow)el.style.setProperty("text-shadow","0 1px 0 #6b3a10,0 -1px 0 #6b3a10,1px 0 0 #6b3a10,-1px 0 0 #6b3a10,0 2px 6px rgba(60,25,0,.6)","important");
-    el.style.setProperty("color",`rgb(${n.r|0},${n.g|0},${n.b|0})`,"important");el.setAttribute("data-pq","1");PQL.push(el)});
+    const nc=`rgb(${n.r|0},${n.g|0},${n.b|0})`,sh=shadow;WR.push(()=>{if(sh)el.style.setProperty("text-shadow","0 1px 0 #6b3a10,0 -1px 0 #6b3a10,1px 0 0 #6b3a10,-1px 0 0 #6b3a10,0 2px 6px rgba(60,25,0,.6)","important");el.style.setProperty("color",nc,"important");el.setAttribute("data-pq","1")});PQL.push(el)});
+  for(const f of WR)f();
 }catch(e){}}
 window.pqFix=pqFix;
 {const R0=render;render=function(){const x=R0.apply(this,arguments);pqFix();return x}}
@@ -12249,11 +12251,16 @@ const H0=render;render=function(){const x=H0.apply(this,arguments);barUpd();retu
 /* (744) Parquet: nelle pagine scelte dall'utente (Home, Giocatori, Roster, Pic-trade, Efficienza Cup, Cap, Calcola il trend)
    ogni casella con fondo BIANCO pieno diventa CREMA (#fdf3e1). Esclusi badge PDK, campo, loghi Home, tasti selezionati. */
 (function(){const C="#fdf3e1",V=new Set(["home","fa","roster","pictrade","effcup","cap","trend"]);
+/* (851) VELOCITÀ: prima leggeva un colore e lo scriveva subito, elemento per elemento: ogni scrittura costringeva il telefono a ricalcolare tutta la pagina
+   alla lettura successiva (fino a 1,9 s per render). Ora prima LEGGE tutto, poi SCRIVE tutto insieme; e gli elementi già controllati non si ricontrollano. */
+let SEEN=new WeakSet();
 function crema(){try{const R=document.documentElement;if(!R.classList.contains("dlt-parquet")||R.classList.contains("notte"))return;
- if(!V.has(document.body.dataset.v))return;const m=document.querySelector("main");if(!m)return;
- for(const e of m.querySelectorAll("*")){if(e.dataset.pqc||e.closest(".pdkx,.pdkb,svg,.court,.htile"))continue;const c=getComputedStyle(e);if(c.backgroundImage!=="none")continue;
-  if(!/^rgba?\(25[0-5], 25[0-5], 25[0-5](, 1)?\)$/.test(c.backgroundColor))continue;if(e.getAttribute("aria-pressed")==="true"||e.getAttribute("aria-selected")==="true")continue;
-  const r=e.getBoundingClientRect();if(r.width<24||r.height<16)continue;e.style.setProperty("background-color",C,"important");e.dataset.pqc="1"}}catch(_){}}
+ if(!V.has(document.body.dataset.v))return;const m=document.querySelector("main");if(!m)return;const W=[];
+ for(const e of m.querySelectorAll("*")){if(SEEN.has(e))continue;SEEN.add(e);const c=getComputedStyle(e),bc=c.backgroundColor;if(bc.length<16||bc.charCodeAt(4)!==50||bc.charCodeAt(5)!==53)continue;/* scarto veloce: solo fondi che iniziano con rgb(25x */if(c.backgroundImage!=="none")continue;
+  if(!/^rgba?\(25[0-5], 25[0-5], 25[0-5](, 1)?\)$/.test(bc))continue;if(e.dataset.pqc||e.closest(".pdkx,.pdkb,svg,.court,.htile"))continue;if(e.getAttribute("aria-pressed")==="true"||e.getAttribute("aria-selected")==="true"){SEEN.delete(e);continue}
+  const r=e.getBoundingClientRect();if(r.width<24||r.height<16){SEEN.delete(e);continue}W.push(e)}
+ for(const e of W){e.style.setProperty("background-color",C,"important");e.dataset.pqc="1"}}catch(_){}}
+window.pqCremaReset=()=>{SEEN=new WeakSet()};
 window.pqCrema=crema;const R0=render;render=function(){const x=R0.apply(this,arguments);crema();setTimeout(crema,80);return x};
 document.addEventListener("click",()=>setTimeout(crema,60),true);setTimeout(crema,300)})();
 </script>
@@ -12756,7 +12763,7 @@ html.dlt-parquet:not(.notte) body .tvbox tbody tr:not(.grp):not(.tot) td:not(#a)
   /* (847) si cambia modalità solo DOPO che il pallino è arrivato (e dopo un fotogramma libero), così il lavoro pesante non lo interrompe */
   setTimeout(()=>requestAnimationFrame(()=>setTimeout(()=>{const run=()=>{go=true;try{h.click()}finally{go=false}h.classList.remove("moving");h.classList.remove("flip");sync()};
    /* (849) dissolvenza incrociata tra i due stili: il telefono tiene ferma l'immagine vecchia mentre l'app ridisegna e poi sfuma nella nuova */
-   try{if(document.startViewTransition&&!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){document.startViewTransition(run);return}}catch(e){}run()},0)),300)},true);
+   try{if(document.startViewTransition&&!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){document.startViewTransition(run);return}}catch(e){}run()},0)),170)},true);
  sync();const R=render;render=function(){const r=R.apply(this,arguments);try{sync()}catch(e){}return r};setInterval(()=>{try{sync()}catch(e){}},2000);
  /* (842) se qualcosa ridisegna l'intestazione e toglie il tasto, lo si rimette subito */
  try{const hd=document.querySelector("header");if(hd)new MutationObserver(()=>{if(!document.querySelector("header #hnt"))try{sync()}catch(e){}}).observe(hd,{childList:true,subtree:true})}catch(e){}
@@ -12785,12 +12792,20 @@ html.dlt-parquet:not(.notte) .tgc .tgcb b:not(#a):not(#b):not(#c):not(#d){color:
 html.notte .tgc:not(#a):not(#b):not(#c):not(#d){background:linear-gradient(135deg,#2a1260,#160a3a 60%,#3b0d4f)!important;border:2px solid #a78bfa!important;box-shadow:0 0 14px rgba(139,92,246,.35)!important}
 html.notte .tgc .tgcb b:not(#a):not(#b):not(#c):not(#d){color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 3px rgba(0,0,0,.6)!important}</style>
 <style>/* (847) tasto notte SUPER FLUIDO: il pallino si muove con transform (lo anima la scheda grafica, non si blocca anche se l'app sta lavorando), sempre left:2px */
-header .hnt.hnthd .hntk:not(#a):not(#b):not(#c):not(#d):not(#e){left:2px!important;transform:translate3d(0,0,0);transition:transform .28s cubic-bezier(.22,.8,.3,1),background-color .28s,color .28s!important;will-change:transform}
+header .hnt.hnthd .hntk:not(#a):not(#b):not(#c):not(#d):not(#e){left:2px!important;transform:translate3d(0,0,0);transition:transform .2s cubic-bezier(.22,.8,.3,1),background-color .2s,color .2s!important;will-change:transform}
 header .hnt.hnthd[aria-checked="true"] .hntk:not(#a):not(#b):not(#c):not(#d):not(#e),header .hnt.hnthd.on .hntk:not(#a):not(#b):not(#c):not(#d):not(#e){left:2px!important;transform:translate3d(22px,0,0)}
 header .hnt.hnthd.moving .hntk:not(#a):not(#b):not(#c):not(#d):not(#e){transform:translate3d(0,0,0)}header .hnt.hnthd.moving.flip .hntk:not(#a):not(#b):not(#c):not(#d):not(#e){transform:translate3d(22px,0,0)}
 header .hnt.hnthd:not(#a):not(#b):not(#c):not(#d):not(#e){transition:background .28s,border-color .28s,box-shadow .28s!important}</style>
 <style>/* (849) dissolvenza tra giorno e notte */
-::view-transition-old(root),::view-transition-new(root){animation-duration:.32s;animation-timing-function:ease}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.22s;animation-timing-function:ease-out}
 header #hnt{view-transition-name:hntbtn}::view-transition-group(hntbtn){animation-duration:0s}</style>
+<script>
+/* (851) VELOCITÀ: i calcoli della Dreamers (notti, settimane, classifica) venivano rifatti molte volte nello stesso disegno della pagina.
+   Ora il risultato si ricorda fino alla fine del disegno in corso (poi si ricalcola: i dati live restano sempre aggiornati). */
+(function(){function memo(name){const f=window[name]||eval(name);if(typeof f!=="function")return;const C=new Map();let armed=false;
+ const g=function(){const k=JSON.stringify([...arguments]);if(C.has(k))return C.get(k);const r=f.apply(this,arguments);C.set(k,r);if(!armed){armed=true;setTimeout(()=>{C.clear();armed=false},0)}return r};
+ try{eval(name+"=g")}catch(e){}}
+ ["drNotti","drWeek","drStand"].forEach(n=>{try{memo(n)}catch(e){}})})();
+</script>
 </body>
 </html>
