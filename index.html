@@ -12885,5 +12885,25 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-bxexp]");i
 <style>/* (870) tabella Live stanotte/turno della squadra: tutte le statistiche, scorre in orizzontale */.tbl-wrap:has(.clall){overflow-x:auto!important;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y}.tvbox.clall{min-width:max-content!important;width:max-content!important}.tvbox.clall td,.tvbox.clall th{white-space:nowrap}.tvbox.clall td:first-child{white-space:normal}</style>
 <style>/* (871) icona Dreamers in alto: niente anello/ombra dopo il tocco (era il contorno di focus del tasto Aggiorna) */.lglogo:focus,.lglogo:focus-visible,.lglogo:active{outline:none!important;box-shadow:none!important}.lglogo{-webkit-tap-highlight-color:transparent!important}</style>
 <style>/* (872) box score NBA: piu' spazio tra le colonne delle statistiche, numeri centrati */html body .tvbox.tvsq td:nth-child(n+4),html body .tvbox.tvsq th:nth-child(n+4){padding-left:9px!important;padding-right:9px!important;text-align:center!important}html body .tvbox.tvsq tr.grp td:nth-child(n+2){padding:0!important}</style>
+<style>/* (874) SALA TROFEI in Parquet giorno: versione crema e arancio (titolo bianco su fascia arancio, tabelle crema con bordo arancio, parquet visibile); la notte resta com'era */
+html.dlt-parquet:not(.notte) body .sala-oro h2 .t:not(#a):not(#b):not(#c){border-color:#fff!important;text-shadow:none!important}
+html.dlt-parquet:not(.notte) body .sala-oro h2 .t:not(#a):not(#b):not(#c)>span,html.dlt-parquet:not(.notte) body .sala-oro h2 .t:not(#a):not(#b):not(#c) *{background:none!important;color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 2px 6px rgba(70,25,0,.45)!important}
+html.dlt-parquet:not(.notte) body .sala-oro .s3go:not(#a):not(#b):not(#c){background:linear-gradient(180deg,#f2701a,#c2410c)!important;border:2px solid #fff!important;color:#fff!important;box-shadow:0 10px 24px rgba(90,40,5,.35)!important}
+html.dlt-parquet:not(.notte) body .sala-oro .s3go:not(#a):not(#b):not(#c) *{color:#fff!important;-webkit-text-fill-color:#fff!important}
+html.dlt-parquet:not(.notte) body .view:has(.sala-oro)::before{opacity:.55}
+html.dlt-parquet:not(.notte) body .sala-oro h2 .t:not(#a):not(#b):not(#c){background:linear-gradient(180deg,#e8631a,#c2410c)!important;border-top:3px solid #fff!important;border-bottom:3px solid #fff!important;box-shadow:0 8px 20px rgba(90,40,5,.3)!important}
+html.dlt-parquet:not(.notte) body .sala-oro .tbl-wrap:not(#a):not(#b):not(#c){background:#fdf4e6!important;border:3px solid #d9560b!important;outline:1px solid rgba(255,255,255,.7)!important;outline-offset:4px;border-radius:12px!important;box-shadow:0 14px 34px rgba(90,40,5,.35)!important}
+html.dlt-parquet:not(.notte) body .sala-oro .gmh thead th:not(#a):not(#b):not(#c),html.dlt-parquet:not(.notte) body .sala-oro .gmh thead th:not(#a):not(#b):not(#c) *{background:linear-gradient(180deg,#e8631a,#c2410c)!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+html.dlt-parquet:not(.notte) body .sala-oro .gmh td:not(#a):not(#b):not(#c),html.dlt-parquet:not(.notte) body .sala-oro .ssn td:not(#a):not(#b):not(#c){background:transparent!important;border-bottom:1px solid rgba(217,86,11,.18)!important}
+html.dlt-parquet:not(.notte) body .sala-oro .gmh td:not(#a):not(#b):not(#c) b,html.dlt-parquet:not(.notte) body .sala-oro .ssn td:not(#a):not(#b):not(#c) b,html.dlt-parquet:not(.notte) body .sala-oro td.yr:not(#a):not(#b):not(#c),html.dlt-parquet:not(.notte) body .sala-oro td.rk:not(#a):not(#b):not(#c){color:#7a3410!important;-webkit-text-fill-color:#7a3410!important}
+html.dlt-parquet:not(.notte) body .sala-oro td small:not(#a):not(#b):not(#c){color:#c2703a!important;-webkit-text-fill-color:#c2703a!important}
+html.dlt-parquet:not(.notte) body .sala-oro .gmh tr.lead td:not(#a):not(#b):not(#c){background:linear-gradient(90deg,rgba(245,180,0,.28),rgba(245,180,0,.08))!important}
+html.dlt-parquet:not(.notte) body .sala-oro .gmh td.pt:not(#a):not(#b):not(#c),html.dlt-parquet:not(.notte) body .sala-oro .ssn td.pt:not(#a):not(#b):not(#c){color:#d9560b!important;-webkit-text-fill-color:#d9560b!important;text-shadow:none!important}
+html.dlt-parquet:not(.notte) body .sala-oro td.tm b:not(#a):not(#b):not(#c){text-shadow:none!important}
+html.dlt-parquet:not(.notte) body .sala-oro .note:not(#a):not(#b):not(#c){color:#fff!important;text-shadow:0 1px 2px rgba(80,30,0,.5)}
+html.dlt-parquet:not(.notte) body .view:has(.sala-oro):not(#a):not(#b):not(#c){background:radial-gradient(ellipse 120% 40% at 50% 0%,rgba(255,236,200,.55),transparent 70%)!important;border-radius:0}
+html.dlt-parquet:not(.notte) body .view:has(.sala-oro)::before{opacity:.35}
+html.dlt-parquet:not(.notte) body .sala-oro .gmseason h2::before,html.dlt-parquet:not(.notte) body .sala-oro h2::before{filter:drop-shadow(0 3px 6px rgba(90,40,5,.45))!important}
+</style>
 </body>
 </html>
