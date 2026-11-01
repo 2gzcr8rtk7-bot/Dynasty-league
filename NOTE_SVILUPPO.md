@@ -2203,3 +2203,6 @@ Francesco (21:35): per i Peacocks il tasto «D» resta al suo posto ma grigio, s
 
 ## 944 — Modalità Dream: maglie con colori pieni
 Francesco (21:39): le maglie erano spente (la resa della luce le smorzava e quelle a partita finita erano grigiate): ora colori pieni, non toccati dalla luce, e a partita finita solo un velo appena più chiaro.
+
+## 945 — Modalità Dream: maglie simmetriche su tutto il campo
+Francesco (21:40): cinque posti simmetrici (il migliore al centro verso il fondo, due a metà campo verso chi guarda, due ai lati verso i canestri) invece che ammassati; da lontano si ingrandiscono maglia e targhetta senza salire di quota, così non si sovrappongono.
