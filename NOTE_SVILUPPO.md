@@ -2064,3 +2064,4 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 862. Targhetta del ruolo nel box NBA: angoli arrotondati uguali sopra e sotto (inline-block, line-height 1, niente ombra; prima il fondo veniva tagliato).
 863. Statistiche notte (righe giocatore): minuti colorati come in Home (classe .mnb, verde >= MINg, rosso <= MINr, soglie bxTh).
 864. Statistiche notte in modalita' BOX: tolto il riassunto pt/rb/as accanto ai minuti (ripeteva le caselle sotto); resta nelle modalita' PDK ed EFF.
+865. Playoff Dreamers: tabelloni piu grandi (semifinali 52%, finali 42%, caselle alte ~50px, loghi 38px, nomi 16px, linee del bracket ricalcolate M52..58), niente aloni/ombre dietro i loghi, testi Vincente/Perdente centrati, coppa arancione solo in Parquet giorno (notte viola).
