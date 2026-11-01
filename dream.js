@@ -169,12 +169,19 @@ function duel(t){try{const P=drPO(drStand()),k=drCurWeek(P),W=drWeek(k),pr=(drPa
 
 /* ---------------- APERTURA ---------------- */
 async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
-  const ov=$(`<div class="drm3"><canvas></canvas><div class="drm3top"><button class="drm3x" aria-label="Esci">✕</button><div class="drm3t">MODALITÀ DREAM<small>${TM.nick.toUpperCase()} ARENA</small></div><span style="width:40px"></span></div>
+  const ov=$(`<div class="drm3"><canvas></canvas><div class="drm3top"><button class="drm3x" aria-label="Esci">✕</button><div class="drm3t">MODALITÀ DREAM<small>${TM.nick.toUpperCase()} ARENA</small></div><button class="drm3a" aria-label="Voce">🔊</button></div>
     <div class="drm3msg">Entro nell'arena…</div><div class="drm3hint">Trascina per guardarti intorno · tocca dove vuoi andare (parquet o tribune) · tocca una maglia per avvicinarti · due dita per ingrandire</div></div>`);
   document.body.appendChild(ov);document.body.classList.add("drm3on");
   /* (939) i gesti dentro lo stadio non arrivano all'app: prima lo scorrimento a dito cambiava squadra nella pagina sotto */
   ["touchstart","touchmove","touchend","touchcancel","pointerdown","pointermove","pointerup","wheel","keydown"].forEach(k=>ov.addEventListener(k,e=>e.stopPropagation(),{passive:true}));const msg=ov.querySelector(".drm3msg");
   ST={t,ov,stop:false,anim:[],prev:{},audioOn:(()=>{try{return localStorage.getItem("dl_drm_audio")!=="0"}catch(e){return true}})()};const st=ST;
+  /* (951) TELECRONISTA: la voce italiana del telefono (sintesi vocale di sistema, funziona anche senza rete) annuncia le azioni live.
+     Tasto 🔊/🔇 in alto a destra (ricordato). Al massimo 3 frasi in coda, così resta puntuale. */
+  const SY=window.speechSynthesis;let VO=null;const pickV=()=>{try{const L=SY.getVoices();VO=L.find(v=>/^it/i.test(v.lang)&&/premium|enhanced|alice|federica|luca/i.test(v.name))||L.find(v=>/^it/i.test(v.lang))||null}catch(e){}};if(SY){pickV();try{SY.onvoiceschanged=pickV}catch(e){}}
+  st.voice=(()=>{try{return localStorage.getItem("dl_drm_voce")!=="0"}catch(e){return true}})();
+  const say=(txt)=>{if(!SY||!st.voice||st.stop)return;try{if(SY.pending&&st.q>=3)return;const u=new SpeechSynthesisUtterance(txt);u.lang="it-IT";if(VO)u.voice=VO;u.rate=1.08;u.pitch=1.05;u.volume=1;st.q=(st.q||0)+1;u.onend=u.onerror=()=>{st.q=Math.max(0,(st.q||1)-1)};SY.speak(u)}catch(e){}};st.say=say;
+  const vb=ov.querySelector(".drm3a");vb.textContent=st.voice?"🔊":"🔇";vb.onclick=()=>{st.voice=!st.voice;try{localStorage.setItem("dl_drm_voce",st.voice?"1":"0")}catch(e){}vb.textContent=st.voice?"🔊":"🔇";if(!st.voice&&SY)SY.cancel();else say("Voce attiva")};
+  if(SY&&st.voice){try{SY.cancel();say("Benvenuti alla "+TM.nick+" Arena")}catch(e){}}
   const A=null;st.A=null;/* (931) audio tolto: un tifo sintetico non sembra vero (Francesco 20:52) */
   ov.querySelector(".drm3x").onclick=close;
   let T3;try{T3=await loadThree()}catch(e){msg.textContent="Non riesco a caricare lo stadio 3D: controlla la connessione e riprova.";return}
@@ -207,7 +214,9 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
     grp.add(g);J[r.n]={g,jm,tag,halo,r,si,ph:Math.random()*6};if(!r.live)jm.material.color.set("#e6e6ea")}
   function updTag(o){const old=o.tag;const lv=PK[pdkLvl(o.r.pdk)]||PK.na;o.tag=sprite(tagLines(o.r),{w:2.7,h:200,edge:lv[0]});o.tag.position.y=1.0;o.g.add(o.tag);o.g.remove(old);old.material.map.dispose();old.material.dispose();o.halo.material.opacity=o.r.live?.45:.18;o.jm.material.color.set(o.r.live?"#ffffff":"#e6e6ea")}
   const EVC={pt3:["+3 PUNTI","#22c55e","pt",1],pt2:["+2 PUNTI","#4ade80","pt",0],ft:["+1 LIBERO","#86efac","ft",0],reb:["RIMBALZO","#60a5fa","reb",0],ast:["ASSIST","#c084fc","ast",0],blk:["STOPPATA","#38bdf8","blk",0],stl:["RECUPERO","#2dd4bf","stl",0],tov:["PALLA PERSA","#fb923c","tov",0],miss:["TIRO SBAGLIATO","#f87171","miss",0],ftm:["LIBERO SBAGLIATO","#fca5a5","miss",0]};
-  function pop(n,kind,delay){const o=J[n];if(!o)return;const E=EVC[kind];setTimeout(()=>{if(st.stop)return;const s=sprite([{t:E[0],f:"italic 900 62px Arial Black,Arial",c:"#fff"}],{w:2.1,h:120,bg:E[1],edge:"#ffffff"});s.position.set(0,3.45,0);o.g.add(s);st.anim.push({s,o,t0:performance.now()});if(st.A&&st.audioOn)st.A.play(E[2],E[3]);st.dirty=true},delay||0)}
+  const SUR=n=>{const p=n.split(" ").filter(w=>!/^(jr\.?|sr\.?|ii|iii|iv)$/i.test(w));return p.length>1?p.slice(1).join(" "):p[0]};
+  const FR={pt3:"%, tripla!",pt2:"%, due punti!",ft:"%, libero",reb:"%, rimbalzo",ast:"%, assist",blk:"%, stoppata!",stl:"%, recupero!",tov:"%, palla persa",miss:"%, tiro sbagliato",ftm:"%, libero sbagliato"};/* (952) prima il nome, poi l'azione, breve */
+  function pop(n,kind,delay){const o=J[n];if(!o)return;const E=EVC[kind];setTimeout(()=>{if(st.stop)return;if(st.say&&FR[kind])st.say(FR[kind].replace("%",SUR(n)));const s=sprite([{t:E[0],f:"italic 900 62px Arial Black,Arial",c:"#fff"}],{w:2.1,h:120,bg:E[1],edge:"#ffffff"});s.position.set(0,3.45,0);o.g.add(s);st.anim.push({s,o,t0:performance.now()});if(st.A&&st.audioOn)st.A.play(E[2],E[3]);st.dirty=true},delay||0)}
   function diff(r){const p=st.prev[r.n];st.prev[r.n]=r;if(!p)return;let d=0;const q=(k,n)=>{for(let i=0;i<Math.min(n,3);i++)pop(r.n,k,(d++)*900)};
     const fg2=(r.fgm-r.tpm)-(p.fgm-p.tpm),fg3=r.tpm-p.tpm,ft=r.ftm-p.ftm,miss=(r.fga-r.fgm)-(p.fga-p.fgm),ftmiss=(r.fta-r.ftm)-(p.fta-p.ftm);
     if(fg3>0)q("pt3",fg3);if(fg2>0)q("pt2",fg2);if(ft>0)q("ft",ft);if(r.rb>p.rb)q("reb",r.rb-p.rb);if(r.as>p.as)q("ast",r.as-p.as);if(r.blk>p.blk)q("blk",r.blk-p.blk);if(r.stl>p.stl)q("stl",r.stl-p.stl);if(r.tov>p.tov)q("tov",r.tov-p.tov);if(miss>0)q("miss",miss);if(ftmiss>0)q("ftm",ftmiss)}
@@ -280,6 +289,7 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
 }
 function disposeAll(K){try{K.S.traverse(o=>{if(o.geometry)o.geometry.dispose();const m=o.material;if(m){(Array.isArray(m)?m:[m]).forEach(x=>{if(x.map)x.map.dispose();x.dispose()})}});K.R.dispose();K.R.forceContextLoss&&K.R.forceContextLoss()}catch(e){}}
 function close(){const st=ST;if(!st)return;st.stop=true;ST=null;cancelAnimationFrame(st.raf);clearInterval(st.iv);clearTimeout(st.ch);if(st.kd){document.removeEventListener("keydown",st.kd);document.removeEventListener("keyup",st.kd)}if(st.rs)removeEventListener("resize",st.rs);
+  try{window.speechSynthesis&&window.speechSynthesis.cancel()}catch(e){}
   if(st.K)disposeAll(st.K);
   /* (939) si torna sempre alla squadra da cui si è entrati */try{if(window.curTeam!==undefined||typeof curTeam!=="undefined"){if(curTeam!==st.t){curTeam=st.t;render()}}}catch(e){}try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock("portrait").catch(()=>{})}catch(e){}try{st.A&&st.A.ac.close()}catch(e){}st.ov.remove();document.body.classList.remove("drm3on")}
 window.dreamOpen=open;window.dreamClose=close;window.dreamDbg=()=>ST;
