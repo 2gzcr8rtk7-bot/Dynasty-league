@@ -2167,3 +2167,6 @@ Francesco (20:08) senza allenamento: GM_DICH.DUC = obiettivo «dinastia» (squad
 
 ## 925 — Giocatori sotto diritti fuori dagli scambi
 Francesco (20:09): Steinbach è tenuto dai Ducks ma i diritti sono dei Mooses (scambio con «Diritti su Steinbach (g64)»): i Ducks non possono scambiarlo, i Mooses possono riprenderselo entro la giornata 64 dando in cambio un loro centro. DIRITTI = {Steinbach}: escluso da ogni ricerca dell IA Trade e da gmProb (probabilità 0); tolto dai giocatori che i Ducks vogliono sostituire; scheda Ducks aggiornata.
+
+## 926 — Ducks: prima l età, poi i PDK; i riempitivi si possono scambiare per veterani
+Francesco (20:14): i PDK contano (peso di stagione dinastia 0,15 → 0,35). I protetti non si invecchiano mai; per i riempitivi (es. Buzelis per LeBron «ci penserei») l età pesa solo il 35% (gmFillerK, meno ancora se a fine stagione lottano): vale per linea d età, gusto età dei report (ea) e età della situazione (ka). Prove: Buzelis→LeBron 4% → 53%, Kyshawn George→Durant 76%; Şengün→Embiid 0%, Jalen Johnson→Giannis 6%, Amen Thompson→Haliburton 18%. Scheda Ducks aggiornata.
