@@ -54,6 +54,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
   const TX=[],own=o=>{TX.push(o);return o};
   const tex=(w,h,f,q)=>{q=q||1;const c=document.createElement("canvas");c.width=w*q;c.height=h*q;const g=c.getContext("2d");g.scale(q,q);f(g,w,h);const x=new THREE.CanvasTexture(c);x.colorSpace=THREE.SRGBColorSpace;x.anisotropy=ANI;x.minFilter=THREE.LinearMipmapLinearFilter;x.generateMipmaps=true;own(x);x.userData.c=c;x.userData.q=q;return x};
   const LG=await img((t==="DUC"&&typeof ducBan==="function"&&(ducBan()||window.DUC_CURL))||LOGO[t]);
+  let GLW=null;const K_GLOW=()=>GLW||(GLW=tex(256,256,(x,W,H)=>{const g=x.createRadialGradient(W/2,H/2,8,W/2,H/2,W/2);g.addColorStop(0,"rgba(196,140,255,.9)");g.addColorStop(.45,"rgba(139,92,246,.45)");g.addColorStop(1,"rgba(139,92,246,0)");x.fillStyle=g;x.fillRect(0,0,W,H)}));
   const CW=28,CH=15,RA=5.6/* (930) bordo campo più largo: ci si allontana dai giocatori */;
   const rrPath=(rx,rz,cr,step)=>{const out=[],segs=[["l",-rx+cr,-rz,rx-cr,-rz],["c",rx-cr,-rz+cr,-Math.PI/2,0],["l",rx,-rz+cr,rx,rz-cr],["c",rx-cr,rz-cr,0,Math.PI/2],["l",rx-cr,rz,-rx+cr,rz],["c",-rx+cr,rz-cr,Math.PI/2,Math.PI],["l",-rx,rz-cr,-rx,-rz+cr],["c",-rx+cr,-rz+cr,Math.PI,Math.PI*1.5]];
     for(const s of segs){const len=s[0]==="l"?Math.hypot(s[3]-s[1],s[4]-s[2]):Math.PI*cr/2,n=Math.max(1,Math.round(len/step));for(let i=0;i<n;i++){const k=i/n;if(s[0]==="l")out.push([s[1]+(s[3]-s[1])*k,s[2]+(s[4]-s[2])*k]);else{const a=s[3]+(s[4]-s[3])*k;out.push([s[1]+Math.cos(a)*cr,s[2]+Math.sin(a)*cr])}}}return out};
@@ -111,6 +112,13 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
   const roof=new THREE.Mesh(new THREE.CircleGeometry(1,48),new THREE.MeshLambertMaterial({map:roofT,side:THREE.DoubleSide,emissive:"#ffffff",emissiveMap:roofT,emissiveIntensity:.35}));roof.scale.set(WX*1.08,WZ*1.08,1);roof.rotation.x=Math.PI/2;roof.position.y=27;S.add(roof);
   const trm=new THREE.MeshLambertMaterial({color:"#8a8996",emissive:"#22212a"});for(let i=-4;i<=4;i++){const b=new THREE.Mesh(new THREE.BoxGeometry(.3,.7,WZ*2),trm);b.position.set(i*6,25.5,0);S.add(b)}for(let i=-3;i<=3;i++){const b=new THREE.Mesh(new THREE.BoxGeometry(WX*2,.5,.3),trm);b.position.set(0,25,i*6);S.add(b)}
   const lampM=new THREE.MeshBasicMaterial({color:LK.lamp,toneMapped:false});for(let i=-4;i<=4;i++)for(let j=-3;j<=3;j++){if(Math.abs(i)<2&&Math.abs(j)<2)continue;const l=new THREE.Mesh(new THREE.BoxGeometry(.6,.12,.6),lampM);l.position.set(i*6,24.6,j*6);S.add(l)}
+  /* (942) LED DREAMERS sulle pareti: montanti verticali viola, anelli luminosi a più altezze, pannelli viola sulle pareti (solo materiali che brillano: nessuna luce in più, leggero) */
+  {const V1=new THREE.MeshBasicMaterial({color:"#a855f7",toneMapped:false}),V2=new THREE.MeshBasicMaterial({color:"#e9d5ff",toneMapped:false}),V3=new THREE.MeshBasicMaterial({color:"#7c3aed",toneMapped:false,transparent:true,opacity:.55});
+    const ex=WX*1.06,ez=WZ*1.06,N=mob?36:56;for(let i=0;i<N;i++){const a=i/N*Math.PI*2,x=Math.cos(a)*ex,z=Math.sin(a)*ez;
+      const bar=new THREE.Mesh(new THREE.BoxGeometry(.18,26-Y2-2,.18),i%2?V1:V2);bar.position.set(x,(Y2+2+26)/2,z);S.add(bar);
+      const pan=new THREE.Mesh(new THREE.PlaneGeometry(2*Math.PI*ex/N*.7,26-Y2-3),V3);pan.position.set(Math.cos(a+Math.PI/N)*ex*.997,(Y2+2+26)/2,Math.sin(a+Math.PI/N)*ez*.997);pan.lookAt(0,pan.position.y,0);S.add(pan)}
+    [[Y2+2.2,"#c084fc",.09],[Y2+7,"#8b5cf6",.07],[20.5,"#e879f9",.07],[24.2,"#a855f7",.1]].forEach(([y,c,t])=>{const r=new THREE.Mesh(new THREE.TorusGeometry(1,t,5,128),new THREE.MeshBasicMaterial({color:c,toneMapped:false}));r.rotation.x=Math.PI/2;r.scale.set(ex*.995,ez*.995,1);r.position.y=y;S.add(r)});
+    /* anello viola sul soffitto attorno al maxischermo */const cr=new THREE.Mesh(new THREE.TorusGeometry(1,.12,5,96),V1);cr.rotation.x=Math.PI/2;cr.scale.set(9,7,1);cr.position.y=26.3;S.add(cr)}
   const glow=new THREE.Mesh(new THREE.TorusGeometry(1,.07,5,96),new THREE.MeshBasicMaterial({color:ACC,toneMapped:false}));glow.rotation.x=Math.PI/2;glow.scale.set(WX*1.03,WZ*1.03,1);glow.position.y=Y2+1.2;S.add(glow);
   /* maxischermo con lo scontro diretto */
   const scr=tex(1024,600,()=>{},2);
@@ -128,7 +136,9 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
       x.fillStyle=b.edge;const cx=W/2,cy=320;x.beginPath();x.moveTo(cx-95,cy-125);x.lineTo(cx+95,cy-125);x.quadraticCurveTo(cx+85,cy+20,cx+22,cy+55);x.lineTo(cx+22,cy+105);x.lineTo(cx+60,cy+135);x.lineTo(cx-60,cy+135);x.lineTo(cx-22,cy+105);x.lineTo(cx-22,cy+55);x.quadraticCurveTo(cx-85,cy+20,cx-95,cy-125);x.fill();
       x.lineWidth=15;x.beginPath();x.arc(cx-98,cy-62,40,Math.PI*.5,Math.PI*1.5);x.stroke();x.beginPath();x.arc(cx+98,cy-62,40,-Math.PI*.5,Math.PI*.5);x.stroke();
       x.textAlign="center";x.fillStyle=b.txt;x.font="italic 900 64px Arial Black,Arial";x.fillText(b.l1,cx,585);x.font="900 112px Arial Black,Arial";x.fillText(b.l2,cx,720);x.font="700 36px Arial";x.fillStyle=b.edge;x.fillText(b.l3,cx,800);x.font="800 30px Arial";x.fillStyle="rgba(255,255,255,.75)";x.fillText(TM.nick.toUpperCase(),cx,880)});
-    const m=new THREE.Mesh(new THREE.PlaneGeometry(bw,bw*1100/512),new THREE.MeshBasicMaterial({map:bt,side:THREE.DoubleSide,color:"#d9d4cc"}));m.position.set(x0+i*(bw+gap),Y2+1.6,bz);S.add(m)});
+    const m=new THREE.Mesh(new THREE.PlaneGeometry(bw,bw*1100/512),new THREE.MeshBasicMaterial({map:bt,side:THREE.DoubleSide,color:"#ffffff",toneMapped:false}));m.position.set(x0+i*(bw+gap),Y2+1.6,bz);
+    /* (942) striscione illuminato: alone viola dietro e cornice LED */const bh=bw*1100/512,halo=new THREE.Mesh(new THREE.PlaneGeometry(bw*1.9,bh*1.35),new THREE.MeshBasicMaterial({map:K_GLOW(),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false}));halo.position.set(m.position.x,m.position.y,bz-.08);S.add(halo);
+    const fr=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(bw+.12,bh+.12)),new THREE.LineBasicMaterial({color:b.edge,toneMapped:false}));fr.position.set(m.position.x,m.position.y,bz+.02);S.add(fr);S.add(m)});
   /* luci: poche e senza ombre */
   S.add(new THREE.HemisphereLight(LK.sky,LK.gnd??mix(BG,"#1a1620",.8).getHex(),LK.hemi));const dl=new THREE.DirectionalLight(LK.dir,LK.dirI);dl.position.set(0,30,0);S.add(dl);
   [[-9,0],[0,-4],[0,4],[9,0]].forEach(([x,z])=>{const sp=new THREE.SpotLight(LK.spot,LK.spotI,48,.62,.6,1.35);sp.position.set(x*1.25,24,z*1.6);sp.target.position.set(x,0,z);S.add(sp,sp.target)});
@@ -201,7 +211,7 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
   const chantNext=()=>{st.ch=setTimeout(()=>{if(st.stop)return;if(st.A&&st.audioOn&&(st.rows||[]).some(r=>r.live)&&!document.hidden)st.A.play("def",4);chantNext()},50000+Math.random()*30000)};chantNext();
   setTimeout(()=>{if(!st.stop&&st.A&&st.audioOn&&(st.rows||[]).some(r=>r.live))st.A.play("def",3)},2500);
   /* ---- movimento ---- */
-  const V={x:5,z:K.CH/2+K.RA+13*.85+1.8+4*.8+.4,yaw:0,pitch:-26};/* (935) si parte dall'anello alto (5ª fila) */V.yaw=Math.atan2(V.x,V.z)*180/Math.PI;/* (930) si parte dall'alto, sopra i gradini */let walk=0,dr=null;const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const V={x:5,z:K.CH/2+K.RA+13*.85+1.8+4*.8+.4,yaw:0,pitch:-26};/* (935) si parte dall'anello alto (5ª fila) */V.yaw=Math.atan2(V.x,V.z)*180/Math.PI;st.V=V;/* (930) si parte dall'alto, sopra i gradini */let walk=0,dr=null;const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
   /* (929) CAMMINARE OVUNQUE (Francesco 20:42): si sale sui gradoni, si guarda dall'alto, si scende e si entra in campo.
      dOut = distanza fuori dal rettangolo arrotondato del campo (come le tribune); l'altezza dei piedi segue il gradone su cui si è. */
   const dOut=(x,z)=>{const ax=Math.max(0,Math.abs(x)-(K.CW/2-3.5)),az=Math.max(0,Math.abs(z)-(K.CH/2-3.5));return Math.hypot(ax,az)-3.5};
@@ -245,7 +255,7 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
     clampP();{const ty=terr(V.x,V.z);footY+=(ty-footY)*Math.min(1,dt*9);if(Math.abs(ty-footY)>.01)st.dirty=true;if(!tw&&!mv&&(Math.abs(V.x-hideAt.x)>.5||Math.abs(V.z-hideAt.z)>.5))hideNear()}
     const animating=st.anim.length>0;if(!st.dirty&&!animating&&now-lastDraw<100)return;
     const ey=footY+(footY>.2?2.05:1.7);cam.position.set(V.x,ey,V.z);const yr=V.yaw*Math.PI/180,pr=V.pitch*Math.PI/180;cam.lookAt(V.x-Math.sin(yr)*Math.cos(pr),ey+Math.sin(pr),V.z-Math.cos(yr)*Math.cos(pr));
-    for(const n in J){const o=J[n];o.g.rotation.y=Math.atan2(cam.position.x-o.g.position.x,cam.position.z-o.g.position.z);o.jm.position.y=2.25+Math.sin(now/900+o.ph)*.07}
+    for(const n in J){const o=J[n];o.g.rotation.y=Math.atan2(cam.position.x-o.g.position.x,cam.position.z-o.g.position.z);/* (942) da lontano maglia e targhetta si ingrandiscono (fino a 1,8×) così restano leggibili */const dd=Math.hypot(cam.position.x-o.g.position.x,cam.position.y-2,cam.position.z-o.g.position.z)/(cam.zoom||1),sc=Math.max(1,Math.min(1.8,dd/13));o.g.scale.setScalar(sc);o.jm.position.y=2.25+Math.sin(now/900+o.ph)*.07}
     st.anim=st.anim.filter(a=>{const k=(now-a.t0)/2800;if(k>=1){a.o.g.remove(a.s);a.s.material.map.dispose();a.s.material.dispose();return false}a.s.position.y=3.45+k*1.1;a.s.material.opacity=k<.75?1:1-(k-.75)/.25;return true});
     const gap=now-lastDraw;R.render(S,cam);st.dirty=false;lastDraw=now;
     /* (932) se il telefono fatica (in movimento sotto i 22 fotogrammi al secondo), la risoluzione scende da sola di un gradino (mai sotto 1×): niente blocchi */

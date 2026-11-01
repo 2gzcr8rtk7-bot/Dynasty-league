@@ -2194,3 +2194,6 @@ Francesco (21:13–21:15). Ducks: colore #f0a500, oro più caldo come logo e ban
 
 ## 940–941 — Modalità Dream: atmosfere (LOOK) e parquet senza riflessi
 Francesco (21:17–21:22): preparati 4 look caldi stile NBA (Caldo classico, Prime time, Arena dorata, Luce piena) come parametri LK (window.DREAM_LOOK per le prove), in attesa della scelta. Parquet: da lucido a opaco (niente riflessi speculari che coprivano legno e logo), tolto il riflesso bianco al centro, fari 560 → 330, esposizione 1,15 → 1,0.
+
+## 942 — Modalità Dream: LED viola Dreamers, striscioni illuminati, maglie leggibili da lontano
+Francesco (21:28): pareti con montanti LED verticali viola/lilla e pannelli viola luminosi tra un montante e l altro, quattro anelli LED a varie altezze (viola, lilla, fucsia), anello viola sul soffitto attorno al maxischermo: tutto con materiali che brillano, nessuna luce in più (leggero). Striscioni dei trofei a piena luce con alone viola dietro e cornice LED nel colore del trofeo. Maglie e targhette si ingrandiscono con la distanza (fino a 1,8×) così restano leggibili dall alto.
