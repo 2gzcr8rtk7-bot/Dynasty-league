@@ -2158,3 +2158,6 @@ A ogni apertura l IA ricalcola gli scambi veri a due lati dal 25/10 (TRADES): se
 
 ## 922 — 4° posto sicuro contro 4° posto a rischio
 Francesco (20:00): a fine stagione una 1ª–3ª col 4° posto ormai sicuro, se si infortuna qualcuno, non paga per rimpiazzarlo (scendere al 4° rende di più): secureTop = margine sulla 5ª × fase finale; abbassa fino al 70% il peso della copertura, fino al 60% i PDK di oggi e fino al 70% il bisogno di crediti. Chi è 4ª (o vicina alla 5ª) e rischia di uscire paga volentieri anche con crediti e speciali: danger = 1 − margine sulla 5ª (per le 5ª–8ª: voglia di entrare). Simulazione Foxes Reaves→Zubac con i centri scoperti: sicura 44%, a rischio 70%, oggi 52%.
+
+## 923 — Dolphins Confronto 100 + Spiders Confronto 80 (risposte della sera)
+Nuove 60 risposte DOL e 25 SPI (le prime 40 e 55 erano già nei profili): pl fusi a metà della differenza. DOL: su Giddey, Cunningham, Brunson, Şengün; giù Jaquez, Garland, Franz Wagner, Herro, Randle, Harden, Towns. SPI: su Jokić, Ausar Thompson; giù Murray-Boyles, Morant; età SPI −1,6/anno (preferiscono i più esperti: giovane scelto 43%, rookie 18%). Diciannovesima correzione: Franz Wagner 1050→1020 (DOL+EAG, Mooses di poco al contrario).
