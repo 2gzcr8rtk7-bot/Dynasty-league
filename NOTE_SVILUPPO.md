@@ -2079,3 +2079,4 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 876. Sala trofei di notte: tabelle viola scuro esplicito (sul telefono il bianco veniva scurito), nomi e numeri bianchi, piazzamenti lilla, punti e titoli oro, riga del 1° posto con sfumatura oro uniforme.
 877. Sala trofei: tolta la corona ♛ accanto al nome della squadra prima in classifica (giorno e notte).
 878. Valori lega: tocco su un giocatore = REGISTRO VALORE (vista valpl, vValPl): modifiche dal 01/11/2026, a mano (VAL_LOG: report GM e correzioni di Francesco, da aggiungere a ogni cambio di VALORI) e automatiche del lunedi' 12:00 (ricavate con valAt/valAuto prima e dopo lo scatto, motivo da valMotivo). Tasto Profilo per la scheda. Il vecchio Registro prezzi (valreg) resta.
+879. Dreamers a schermo intero (html.dreamfs) con stanza Parquet (data-th=3): sfondo di html/body a righe parquet, cosi' il rimbalzo iOS in alto/in basso non mostra il viola #2a1260.
