@@ -2107,3 +2107,6 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 903. Correzione di Francesco: Evan Mobley 1250 -> 1400 (33,6 PDK di media; simili Edwards 1350, Maxey 1455, Banchero 1430). VAL_BASE Mobley spostata al 2026-11-02 (il calcolo automatico riparte da questo valore, primo scatto domenica 8/11, cosi' stasera non lo riporta giu'); VAL_LOG e VAL_CORREZ.
 904. Su richiesta di Francesco la 903 e' annullata: Mobley resta 1250 di partenza e sale a 1375 (+10%) con lo scatto automatico di domenica 01/11 18:00, tramite VAL_FORZA (valore di arrivo fissato a mano per una settimana, motivo «media stagione 33,6 PDK»). Dalle settimane dopo il calcolo prosegue normalmente da 1375.
 905. Report Peacocks Valutazione 18 (quasi solo i loro): AV_FATTI.PEA, GM_OBJ PEA titolo, pl PEA (Giddey tolto: grosso sovrapprezzo; Lillard, Harden, Gobert, Rollins -4 ceduti volentieri), GM_DESCR PEA (nessuno sconto infortuni). Nessuna correzione dei valori.
+
+## 906 — Valori lega: percentuali colorate anche di giorno
+Nello stile Parquet (giorno) la percentuale di variazione sotto il valore restava marrone per la regola generale del testo; ora verde se sale e rossa se scende, come di notte (anche nel registro valori).
