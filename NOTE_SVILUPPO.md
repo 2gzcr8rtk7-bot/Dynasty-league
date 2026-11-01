@@ -2233,3 +2233,6 @@ Francesco ha scelto la versione B: giallo del parquet Ducks #ea9a00 (prima più 
 
 ## 956 — Modalità Dream: tetto viola Dreamers
 Francesco (22:47): i pannelli del tetto erano marroni (colore squadra smorzato). Ora sono viola Dreamers (#3b1a72) per tutte le arene, ognuno con un velo viola più chiaro al centro e la griglia scura tra i pannelli; travi e fari invariati.
+
+## 957 — Modalità Dream: corridoio e Sala Trofei
+Francesco (22:53): nell angolo tra le tribune (lato lontano, a destra) c è un portale scuro con cornice LED e insegna «SALA TROFEI · HALL OF FAME»; le sedute dietro sono tolte. Si entra camminando nella porta o toccandola (dissolvenza). Dentro, in una scena a parte costruita solo al primo ingresso: corridoio di 12 m (pavimento lucido con linea del colore squadra, strisce LED, plafoniere, loghi incorniciati), poi la sala 16×14 m alta 6 m con pareti nel colore squadra (giallo Ducks), pavimento in legno scuro con il logo al centro, scritta HALL OF FAME. Bacheca di vetro con i trofei da STORIA e ALLSTAR (coppe oro/argento/bronzo, stella All-Star, targhette) e faretti. Maglie di tutti i giocatori della rosa appese alle pareti laterali in cornice, con targa e faretto. Tocca una maglia o la bacheca per avvicinarti; in fondo al corridoio la porta «ARENA» riporta davanti al portale. Suggerimento in basso ora va a capo.
