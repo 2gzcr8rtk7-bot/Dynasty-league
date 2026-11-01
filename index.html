@@ -2992,6 +2992,9 @@ if(pq)H.classList.add("dlt-parquet");if(nt)H.classList.add("notte");H.classList.
 html.boot body{visibility:hidden}html.boot{background:#0a1330}html.boot.dlt-parquet{background:#c88a4c}html.boot.notte{background:#1f0d4a}
 @keyframes dlfadein{from{opacity:0}to{opacity:1}}html.booted body{animation:dlfadein .18s ease-out}
 </style>
+<style>/* (848) barra di ricerca della Home nel Parquet: crema NATIVA (prima la metteva un controllo dopo il caricamento, che al primo avvio a volte non arrivava) */
+html.dlt-parquet:not(.notte) .hbar .hsrch:not(#a):not(#b){background:#fdf3e1!important;border:1px solid rgba(217,86,11,.35)!important;box-shadow:inset 0 1px 3px rgba(120,50,0,.12)!important}html.dlt-parquet:not(.notte) .hbar .hsrch input:not(#a){color:#5a2a0e!important;-webkit-text-fill-color:#5a2a0e!important}html.dlt-parquet:not(.notte) .hbar .hsrch input::placeholder{color:#d9560b!important;-webkit-text-fill-color:#d9560b!important;opacity:.75}html.dlt-parquet:not(.notte) .hbar .hsrch svg{color:#5a2a0e!important}
+</style>
 <style>/* (843) tasto notte nell'intestazione: stile nativo (prima nel fondo della pagina) */
 main #hnt,main .hnt{display:none!important}.hnt.hnthd{margin-right:8px;align-self:center;flex:none}.hbar .hsrch{flex:1}
 header .hnt.hnthd{width:49px!important;height:27px!important}header .hnt.hnthd .hntk{width:21px!important;height:21px!important;top:2px!important;left:2px!important;transition:left .24s cubic-bezier(.3,.7,.3,1),background .24s}header .hnt.hnthd[aria-checked="true"] .hntk,header .hnt.hnthd.on .hntk{left:24px!important}header .hnt.hnthd .hntk svg{width:12px!important;height:12px!important}
