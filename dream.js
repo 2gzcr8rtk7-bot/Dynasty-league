@@ -209,22 +209,33 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
   /* (951) TELECRONISTA: la voce italiana del telefono (sintesi vocale di sistema, funziona anche senza rete) annuncia le azioni live.
      Tasto 🔊/🔇 in alto a destra (ricordato). Al massimo 3 frasi in coda, così resta puntuale. */
   const SY=window.speechSynthesis;let VO=null;const pickV=()=>{try{const L=SY.getVoices();VO=L.find(v=>/^it/i.test(v.lang)&&/premium|enhanced|alice|federica|luca/i.test(v.name))||L.find(v=>/^it/i.test(v.lang))||null}catch(e){}};if(SY){pickV();try{SY.onvoiceschanged=pickV}catch(e){}}
-  st.voice=(()=>{try{return localStorage.getItem("dl_drm_voce")!=="0"}catch(e){return true}})();
-  const say=(txt)=>{if(!SY||!st.voice||st.stop)return;try{if(SY.pending&&st.q>=6)return;const u=new SpeechSynthesisUtterance(txt);u.lang="it-IT";if(VO)u.voice=VO;u.rate=.92;u.pitch=1;u.volume=1;st.q=(st.q||0)+1;u.onstart=()=>{try{st.A&&st.A.duck(true)}catch(e){}};u.onend=u.onerror=()=>{st.q=Math.max(0,(st.q||1)-1);try{if(!SY.speaking&&!SY.pending&&st.A)st.A.duck(false)}catch(e){}};SY.speak(u)}catch(e){}};st.say=say;
-  const vb=ov.querySelector(".drm3a");vb.textContent=st.voice?"🔊":"🔇";vb.onclick=()=>{st.voice=!st.voice;try{localStorage.setItem("dl_drm_voce",st.voice?"1":"0")}catch(e){}vb.textContent=st.voice?"🔊":"🔇";if(st.A)st.A.mute(st.voice);if(!st.voice&&SY)SY.cancel();else say("Voce attiva")};
-  if(SY&&st.voice){try{SY.cancel();say("Benvenuti alla "+TM.nick+" Arena")}catch(e){}}
-  /* (01/11) AUDIO VERO (file scelti dall'utente, cartella aud/): sottofondo del palazzetto in loop senza stacchi, «punto segnato» a ogni canestro o libero segnato,
-   «tiro sbagliato» a ogni tiro o libero sbagliato. Web Audio; si scaricano solo qui; il tasto 🔊/🔇 spegne voce e suoni; tutto si ferma all'uscita. */
-st.A=null;try{const AC=window.AudioContext||window.webkitAudioContext;if(AC){try{if(navigator.audioSession)navigator.audioSession.type="playback"}catch(e){}/* iPhone: suona anche con l'interruttore silenzioso */const ac=(window.__drmAC&&window.__drmAC.state!=="closed")?window.__drmAC:new AC();window.__drmAC=null;try{ac.resume();const o=ac.createBufferSource();o.buffer=ac.createBuffer(1,1,22050);o.connect(ac.destination);o.start(0)}catch(e){}/* sblocco iPhone dentro il tocco */const m=ac.createGain();m.gain.value=st.voice?1:0;m.connect(ac.destination);const fxg=ac.createGain();fxg.connect(m);const B={};let bg=null;
-  const ld=n=>fetch("aud/"+n+".mp3").then(r=>r.arrayBuffer()).then(b=>new Promise((ok,ko)=>ac.decodeAudioData(b,ok,ko))).then(x=>{B[n]=x}).catch(()=>{});
-  const startBg=()=>{if(bg||!B["dream-sottofondo"]||st.stop)return;bg=ac.createBufferSource();bg.buffer=B["dream-sottofondo"];bg.loop=true;const g=ac.createGain();g.gain.setValueAtTime(0,ac.currentTime);g.gain.linearRampToValueAtTime(.85,ac.currentTime+1.5);bg.connect(g);g.connect(ac.destination);bg.start()};/* (01/11) pubblico FISSO: sempre acceso, non lo spegne il tasto voce e non si abbassa */
-  const fx=(n,v)=>{const b=B[n];if(!b||st.stop)return;const s=ac.createBufferSource();s.buffer=b;const g=ac.createGain();g.gain.value=v;s.connect(g);g.connect(fxg);s.start()};
-  Promise.all(["dream-sottofondo","dream-segnato","dream-sbagliato"].map(ld)).then(()=>{if(ac.state==="suspended")ac.resume().catch(()=>{});startBg()});
-  st.A={ac,play(k){if(k==="pt"||k==="ft")fx("dream-segnato",.9);else if(k==="miss")fx("dream-sbagliato",.8)},mute(on){m.gain.setTargetAtTime(on?1:0,ac.currentTime,.08)},duck(on){fxg.gain.setTargetAtTime(on?.45:1,ac.currentTime,.12)},
-    close(){try{bg&&bg.stop()}catch(e){}}/* il contesto lo chiude già close() più sotto */};
-  const unl=()=>{if(ac.state==="suspended")ac.resume().catch(()=>{})};ov.addEventListener("pointerdown",unl);ov.addEventListener("touchend",unl);
-  st.vis=()=>{if(st.stop)return;if(document.hidden)ac.suspend().catch(()=>{});else ac.resume().catch(()=>{})};document.addEventListener("visibilitychange",st.vis)}}catch(e){st.A=null}
-const A=st.A;
+  /* (961) AUDIO: un solo interruttore (🔇/🔊 in alto a destra) per TUTTO: voce, pubblico di sottofondo ed effetti.
+     Si entra sempre muti (niente parte da solo, nemmeno col telefono in silenzioso). Toccando 🔇 si accendono insieme voce e pubblico.
+     Ordine: prima la voce annuncia la statistica, poi il pubblico reagisce (esulta dopo quelle positive, delusione dopo quelle negative); il pubblico si abbassa mentre parla la voce. */
+  st.voice=false;st.audioOn=false;
+  const say=(txt,after)=>{let done=false;const fin=()=>{if(done)return;done=true;try{if(!SY||(!SY.speaking&&!SY.pending))st.A&&st.A.duck(false)}catch(e){}if(after&&st.voice&&!st.stop)after()};
+    if(!st.voice||st.stop)return;if(!SY){fin();return}
+    try{if(SY.pending&&st.q>=6)return;const u=new SpeechSynthesisUtterance(txt);u.lang="it-IT";if(VO)u.voice=VO;u.rate=.92;u.pitch=1;u.volume=1;st.q=(st.q||0)+1;
+      u.onstart=()=>{try{st.A&&st.A.duck(true)}catch(e){}};u.onend=u.onerror=()=>{st.q=Math.max(0,(st.q||1)-1);fin()};SY.speak(u);setTimeout(fin,9000)/* se il telefono non avvisa la fine della frase */}catch(e){fin()}};st.say=say;
+  const audioInit=()=>{if(st.A)return st.A;try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
+    const ac=(window.__drmAC&&window.__drmAC.state!=="closed")?window.__drmAC:new AC();window.__drmAC=null;
+    const m=ac.createGain();m.gain.value=1;m.connect(ac.destination);const bgG=ac.createGain();bgG.gain.value=0;bgG.connect(m);const fxg=ac.createGain();fxg.connect(m);const B={};let bg=null;
+    const ld=n=>fetch("aud/"+n+".mp3").then(r=>r.arrayBuffer()).then(b=>new Promise((ok,ko)=>ac.decodeAudioData(b,ok,ko))).then(x=>{B[n]=x}).catch(()=>{});
+    const startBg=()=>{if(!st.voice||st.stop||!B["dream-sottofondo"])return;if(!bg){bg=ac.createBufferSource();bg.buffer=B["dream-sottofondo"];bg.loop=true;bg.connect(bgG);bg.start()}bgG.gain.cancelScheduledValues(ac.currentTime);bgG.gain.setTargetAtTime(SY&&SY.speaking?.3:.85,ac.currentTime,.4)};
+    const fx=(n,v)=>{const b=B[n];if(!b||st.stop||!st.voice)return;const s_=ac.createBufferSource();s_.buffer=b;const g=ac.createGain();g.gain.value=v;s_.connect(g);g.connect(fxg);s_.start()};
+    const ready=Promise.all(["dream-sottofondo","dream-segnato","dream-sbagliato"].map(ld)).then(startBg);
+    const POS={pt3:1,pt2:.9,ft:.75,reb:.55,ast:.55,blk:.7,stl:.7},NEG={tov:.8,miss:.75,ftm:.7};
+    st.A={ac,ready,startBg,react(kind){if(POS[kind])fx("dream-segnato",POS[kind]);else if(NEG[kind])fx("dream-sbagliato",NEG[kind])},play(){},
+      duck(on){if(bg)bgG.gain.setTargetAtTime(st.voice?(on?.3:.85):0,ac.currentTime,.15)},
+      on(){try{if(navigator.audioSession)navigator.audioSession.type="playback"}catch(e){}ac.resume().catch(()=>{});m.gain.setTargetAtTime(1,ac.currentTime,.05);startBg()},
+      off(){bgG.gain.setTargetAtTime(0,ac.currentTime,.08);m.gain.setTargetAtTime(0,ac.currentTime,.08);setTimeout(()=>{if(!st.voice)ac.suspend().catch(()=>{})},400)},
+      close(){try{bg&&bg.stop()}catch(e){}}};
+    st.vis=()=>{if(st.stop)return;if(document.hidden)ac.suspend().catch(()=>{});else if(st.voice)ac.resume().catch(()=>{})};document.addEventListener("visibilitychange",st.vis);return st.A}catch(e){st.A=null;return null}};
+  const vb=ov.querySelector(".drm3a");vb.textContent="🔇";vb.setAttribute("aria-label","Audio spento: tocca per accendere voce e pubblico");
+  vb.onclick=()=>{st.voice=!st.voice;st.audioOn=st.voice;vb.textContent=st.voice?"🔊":"🔇";vb.setAttribute("aria-label",st.voice?"Audio acceso":"Audio spento: tocca per accendere voce e pubblico");
+    if(st.voice){const A_=audioInit();if(A_)A_.on();if(SY){try{SY.cancel()}catch(e){}say("Benvenuti alla "+TM.nick+" Arena")}}else{try{SY&&SY.cancel()}catch(e){}if(st.A)st.A.off()}};
+  /* il contesto audio creato dal tasto D (sblocco iPhone) resta muto finché non si accende l'audio */
+const A=null;
   ov.querySelector(".drm3x").onclick=close;
   let T3;try{T3=await loadThree()}catch(e){msg.textContent="Non riesco a caricare lo stadio 3D: controlla la connessione e riprova.";return}
   if(st.stop)return;
@@ -257,8 +268,8 @@ const A=st.A;
   function updTag(o){const old=o.tag;const lv=PK[pdkLvl(o.r.pdk)]||PK.na;o.tag=sprite(tagLines(o.r),{w:2.7,h:200,edge:lv[0]});o.tag.position.y=1.0;o.g.add(o.tag);o.g.remove(old);old.material.map.dispose();old.material.dispose();o.halo.material.opacity=o.r.live?.45:.18;o.jm.material.color.set(o.r.live?"#ffffff":"#e6e6ea")}
   const EVC={pt3:["+3 PUNTI","#22c55e","pt",1],pt2:["+2 PUNTI","#4ade80","pt",0],ft:["+1 LIBERO","#86efac","ft",0],reb:["RIMBALZO","#60a5fa","reb",0],ast:["ASSIST","#c084fc","ast",0],blk:["STOPPATA","#38bdf8","blk",0],stl:["RECUPERO","#2dd4bf","stl",0],tov:["PALLA PERSA","#fb923c","tov",0],miss:["TIRO SBAGLIATO","#f87171","miss",0],ftm:["LIBERO SBAGLIATO","#fca5a5","miss",0]};
   const SUR=n=>{const p=n.split(" ").filter(w=>!/^(jr\.?|sr\.?|ii|iii|iv)$/i.test(w));return p.length>1?p.slice(1).join(" "):p[0]};
-  const FR={pt3:"Tripla segnata da %!",pt2:"Due punti segnati da %!",ft:"Libero segnato da %",reb:"Rimbalzo di %",ast:"Assist di %",blk:"Stoppata di %!",stl:"Palla recuperata da %!",tov:"Palla persa da %",miss:"Tiro sbagliato da %",ftm:"Libero sbagliato da %"};/* (01/11, utente) ogni azione detta per intero; con suono (punti, tiri sbagliati) la voce parte 1 s dopo il suono *//* (952) prima il nome, poi l'azione, breve */
-  function pop(n,kind,delay){const o=J[n];if(!o)return;const E=EVC[kind];setTimeout(()=>{if(st.stop)return;if(st.say&&FR[kind]){const fr=FR[kind].replace("%",SUR(n)),snd=st.A&&st.audioOn&&/^(pt|ft|miss)$/.test(E[2]);if(snd)setTimeout(()=>{if(!st.stop)st.say(fr)},1000);else st.say(fr)}const s=sprite([{t:E[0],f:"italic 900 62px Arial Black,Arial",c:"#fff"}],{w:2.1,h:120,bg:E[1],edge:"#ffffff"});s.userData.s0=s.scale.clone();s.position.set(0,3.45,0);o.g.add(s);st.anim.push({s,o,t0:performance.now()});if(st.A&&st.audioOn)st.A.play(E[2],E[3]);st.dirty=true},delay||0)}
+  const FR={pt3:"Tripla! Segnata da %!",pt2:"Canestro! Due punti di %!",ft:"Libero segnato da %",reb:"Rimbalzo di %!",ast:"Assist di %!",blk:"Stoppata di %!",stl:"Palla recuperata da %!",tov:"Ahi, palla persa da %",miss:"Peccato, tiro sbagliato da %",ftm:"Peccato, libero sbagliato da %"};/* (961) tono: esclamazioni sulle positive, «peccato/ahi» sulle negative *//* (01/11, utente) ogni azione detta per intero; con suono (punti, tiri sbagliati) la voce parte 1 s dopo il suono *//* (952) prima il nome, poi l'azione, breve */
+  function pop(n,kind,delay){const o=J[n];if(!o)return;const E=EVC[kind];setTimeout(()=>{if(st.stop)return;if(st.voice&&FR[kind])st.say(FR[kind].replace("%",SUR(n)),()=>{st.A&&st.A.react(kind)});/* (961) prima la voce, poi il pubblico */const s=sprite([{t:E[0],f:"italic 900 62px Arial Black,Arial",c:"#fff"}],{w:2.1,h:120,bg:E[1],edge:"#ffffff"});s.userData.s0=s.scale.clone();s.position.set(0,3.45,0);o.g.add(s);st.anim.push({s,o,t0:performance.now()});st.dirty=true},delay||0)}
   function diff(r){const p=st.prev[r.n];st.prev[r.n]=r;if(!p)return;let d=0;const q=(k,n)=>{for(let i=0;i<Math.min(n,3);i++)pop(r.n,k,(d++)*5200)};
     const fg2=(r.fgm-r.tpm)-(p.fgm-p.tpm),fg3=r.tpm-p.tpm,ft=r.ftm-p.ftm,miss=(r.fga-r.fgm)-(p.fga-p.fgm),ftmiss=(r.fta-r.ftm)-(p.fta-p.ftm);
     if(fg3>0)q("pt3",fg3);if(fg2>0)q("pt2",fg2);if(ft>0)q("ft",ft);if(r.rb>p.rb)q("reb",r.rb-p.rb);if(r.as>p.as)q("ast",r.as-p.as);if(r.blk>p.blk)q("blk",r.blk-p.blk);if(r.stl>p.stl)q("stl",r.stl-p.stl);if(r.tov>p.tov)q("tov",r.tov-p.tov);if(miss>0)q("miss",miss);if(ftmiss>0)q("ftm",ftmiss)}
