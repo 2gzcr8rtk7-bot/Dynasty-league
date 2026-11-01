@@ -37,7 +37,7 @@ Richiesta di Francesco (31/10/2026): ogni report dell'Allenamento IA va usato pe
 - **Nel consenso non contano** (dal 31/10, report Ducks): i giocatori della squadra stessa del GM (ogni GM sopravvaluta i suoi), i fragili sotto 2 stelle (li gestiscono le regole infortuni) e i giocatori ritoccati nello stesso giorno se le risposte sono precedenti.
 - **Report Proposte senza Confronto**: i bonus `pl` si ricavano dai residui del modello (vedi gm_residui.py; per i ricevuti col segno diretto, per i ceduti col segno opposto), scalati per min(1, apparizioni/8).
 
-## 3. Formula automatica del lunedì (`valF`): cosa si sta imparando
+## 3. Formula automatica della domenica (dal 01/11/2026: ogni domenica alle 18:00, prima lunedì 12:00) (`valF`): cosa si sta imparando
 F = PDKrif^1,78 × 0,93^(età−25) × `VAL_INJ_B`^max(0; 2,5 − stelle). Conta solo il rapporto F(oggi)/F(partenza): i fattori pesano quando cambiano (forma, stelle infortuni, età).
 
 | Parametro | Valore | Fonte | Prossima verifica |
