@@ -9922,7 +9922,7 @@ function pqFix(){try{
     if(el.tagName==="svg"||el.closest("svg"))return;
     if(el.closest(".htile"))return;
     if(el.closest(".cltg,.cltn,.tvpnl .tvdate,.tvpnl .tvday"))return;
-    if(window.__dxSkip&&window.__dxSkip(el))return;if(el.matches&&el.matches("div.teamhead,div.teamhead *,button.shbtn,div.gszn,table td.pnm,table td.pnm *,table thead th,table thead th *,.tgc,.tgc *,.tvbox tr.grp td,.tvbox tr.grp td *,.tvbox tr.tot td,.tvbox tr.tot td *,.mnb,.bxs span.gv *,.bxs span.gr2 *"))return;
+    if(window.__dxSkip&&window.__dxSkip(el))return;if(el.matches&&el.matches("div.teamhead,div.teamhead *,button.shbtn,div.gszn,table td.pnm,table td.pnm *,table thead th,table thead th *,.pdkx,.pdkx *,.pdkb,.pdkb *,.tgc,.tgc *,.tvbox tr.grp td,.tvbox tr.grp td *,.tvbox tr.tot td,.tvbox tr.tot td *,.mnb,.bxs span.gv *,.bxs span.gr2 *"))return;
     if(el.classList&&el.classList.contains("tstar")){const b=bgSel(el),v=lum(b)>.4;WR.push(()=>el.classList.toggle("stl",v));return}
     let has=false;for(const n of el.childNodes)if(n.nodeType===3&&n.textContent.trim().length>0){has=true;break}
     if(!has)return;const r=el.getBoundingClientRect();if(r.width<2||r.height<2)return;
@@ -12814,5 +12814,7 @@ header #hnt{view-transition-name:hntbtn}::view-transition-group(hntbtn){animatio
  try{eval(name+"=g")}catch(e){}}
  ["drNotti","drWeek","drStand"].forEach(n=>{try{memo(n)}catch(e){}})})();
 </script>
+<style>/* (854) capsule PDK: numero SEMPRE bianco, in ogni sezione e in ogni stile (prima alcune regole del tabellino le coloravano come il resto) */
+html body .pdkx:not(#a):not(#b):not(#c):not(#d):not(#e):not(#f):not(#g),html body .pdkb:not(#a):not(#b):not(#c):not(#d):not(#e):not(#f):not(#g),html body .pdkx *:not(#a):not(#b):not(#c):not(#d):not(#e):not(#f):not(#g),html body .pdkb *:not(#a):not(#b):not(#c):not(#d):not(#e):not(#f):not(#g){color:#fff!important;-webkit-text-fill-color:#fff!important}</style>
 </body>
 </html>
