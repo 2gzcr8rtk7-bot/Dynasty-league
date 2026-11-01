@@ -10484,6 +10484,7 @@ function sala(){if(!COL.d){cur="campo";return vCampo()}
  ${cab()}${palm()}
  <div class="hofsec">Entra in una sezione<span class="hofminis"><button class="hofmini" data-hof="orari" type="button">🕐 Orari</button></span></div>
  <div class="hoft">
+  <button class="hoftile" data-hof="iarev"><span class="hi">🤖</span><span><b>Revisione IA Trade</b><small>Allenamento · giudica le proposte e copia il report</small></span><i>›</i></button>
   <button class="hoftile" data-hof="eq"><span class="hi">⚖️</span><span><b>Gestione equilibrio trade</b><small>Simulatore · parametri · valori · registro</small></span><i>›</i></button>
   <button class="hoftile" data-hof="college"><span class="hi">🔭</span><span><b>Scouting</b><small>Ufficio Scouting · college, NBA, prospetti</small></span><i>›</i></button>
   <button class="hoftile" data-hof="dxcol"><span class="hi">🖌️</span><span><b>Editor colori</b><small>Parquet · Base · Notte · tocca e scegli</small></span><i>›</i></button>
@@ -12534,7 +12535,7 @@ function dealRows(x){const{D,R}=x,A=myT();
 /* (801) proposta chiusa: numero, squadre (loghi), «lo scambio si chiude al»; aperta: tutti i passaggi (chi dà cosa a chi) e poi squadra per squadra */
 function moves(x){const{D}=x;return`<div class="gumv"><small>I passaggi</small>${D.mv.map(m=>`<div class="gumvr"><i class="rc ${ruoloDi(m.n)}"></i><b>${E(m.n)}</b><span>${badge(m.from)}<em>${TEAMS[m.from].nick}</em><i class="guar">→</i>${badge(m.to)}<em>${TEAMS[m.to].nick}</em>${m.free?' <em class="gust">trade speciale</em>':""}</span></div>`).join("")}</div>`}
 function card(x,i){const{D,R}=x,A=myT(),T=D.T.slice().sort((a,b)=>a===A?-1:b===A?1:0);
-  return`<details class="gucard"><summary class="gusm"><span class="gun">#${i+1}</span><span class="gup ${cl(R.P)}" title="probabilità che dicano sì tutti"><small>lo scambio si chiude al</small> ${pc(R.P)}</span><i class="gubx" aria-hidden="true">▾</i></summary>${dealRows(x)}</details>`}
+  return`<details class="gucard"><summary class="gusm"><span class="gun">#${i+1}</span><span class="gup ${cl(R.P)}" title="probabilità che dicano sì tutti"><small>lo scambio si chiude al</small> ${pc(R.P)}</span><i class="gubx" aria-hidden="true">▾</i></summary>${dealRows(x)}</details>${rvBox(x)}`}
 /* (780) GUSTI: pagina d'ingresso con due tasti («Scopri i gusti dei GM» / «IA Gusti») e schede di ogni squadra.
    GM_DESCR = quello che si è capito dai report, in parole (DA AGGIORNARE a ogni report insieme a GM_GUSTI, vedi tools/PROCEDURA_REPORT_GM.md);
    i numeri (affidabilità, vantaggio chiesto, età, ruoli, giocatori) vengono da GM_GUSTI e si aggiornano da soli. */
@@ -12561,7 +12562,7 @@ function gmScheda(t){const G=GM_GUSTI[t],D=GM_DESCR[t],f=v=>(v>0?"+":"")+(Math.r
   <div class="gmros">${ro}</div>
   ${up.length?`<p class="gmpl"><b>Li vogliono più dei nostri valori:</b> ${up.map(([n,v])=>`${nmAb(n)} <em class="su">${f(v)}%</em>`).join(", ")}</p>`:""}
   ${dn.length?`<p class="gmpl"><b>Li vogliono meno:</b> ${dn.map(([n,v])=>`${nmAb(n)} <em class="giu">${f(v)}%</em>`).join(", ")}</p>`:""}</div></section>`}
-function vGustiHome(){const T=teamOrd(),n=Object.keys(GM_GUSTI).length;
+function vGustiHome(){GU.rev=false;const T=teamOrd(),n=Object.keys(GM_GUSTI).length;
   return`${H("IA Trade",`<em>con i gusti dei GM</em>`)}
   <div class="guhome"><button type="button" class="guia" data-gu="page" data-v="ia"><span class="guiai">🤖</span><b>IA Trade</b><i class="guiar">›</i></button>
   <button type="button" class="guinfo" data-gu="page" data-v="scopri"><span class="guinfi">ℹ️</span><span><b>I gusti dei GM</b><small>Nota informativa: cosa cerca ogni squadra · ${n} su ${T.length} squadre</small></span></button></div>`}
@@ -12575,7 +12576,7 @@ function vGusti(){if(!GU.page)return vGustiHome();if(GU.page==='scopri')return v
   const tgt=GU.target&&iaOwner(GU.target)&&iaOwner(GU.target)!==A?GU.target:null;
   const keep=pool(A).sort((a,b)=>vx0(b)-vx0(a)).map(n=>`<button type="button" class="guk${GU.keep.has(n)?" on":""}" data-gu="keep" data-v="${E(n)}">${GU.keep.has(n)?"💸 ":""}${E(nmAb(n))}</button>`).join("");
   const res=GU.res;
-  return`${H("IA Trade",`<em>con i gusti dei GM</em>`)}
+  return`${H(GU.rev?"Revisione IA Trade":"IA Trade",`<em>${GU.rev?"allenamento · stanza Ducks":"con i gusti dei GM"}</em>`)}${GU.rev?rvHead():""}
   <section class="gubox"><h4>La tua squadra</h4><div class="gurowc">${tch}</div>
   <h4>Cosa vuoi fare</h4><div class="guseg"><button type="button" data-gu="mode" data-v="sell" class="${GU.mode==="sell"?"on":""}">Voglio vendere</button><button type="button" data-gu="mode" data-v="role" class="${GU.mode==="role"?"on":""}">Cerco ruolo</button><button type="button" data-gu="mode" data-v="pl" class="${GU.mode==="pl"?"on":""}">Cerco giocatore</button></div>
   ${GU.mode==="sell"?`<p class="setnote">Tocca i giocatori da vendere.</p><div class="gukeep">${pool(A).sort((a,b)=>vx0(b)-vx0(a)).map(n=>`<button type="button" class="guk${GU.sell.has(n)?" on":""}" data-gu="sell" data-v="${E(n)}">${GU.sell.has(n)?"💸 ":""}${E(nmAb(n))} <small>${vx0(n)}</small></button>`).join("")}</div>`
@@ -12587,20 +12588,44 @@ function vGusti(){if(!GU.page)return vGustiHome();if(GU.page==='scopri')return v
   <button type="button" class="gugo" data-gu="go"${GU.busy||(GU.mode==="pl"&&!tgt)||(GU.mode==="sell"&&!GU.sell.size)?" disabled":""}>${GU.busy?"⏳ Cerco tra migliaia di combinazioni…":res?"🔄 Cerca ancora (altre combinazioni)":"🔎 Cerca gli scambi"}</button></section>
   ${res?`<section class="gures"><h4>${res.length?`Le ${res.length} proposte più gradite`:"Nessuno scambio trovato"}</h4>${res.length?`<p class="setnote">Verde sopra 60%, giallo 40–60%, rosso sotto. Tocca una proposta per aprirla.</p>`:`<p class="setnote">Prova con più squadre, un valore minimo più basso o meno giocatori bloccati.</p>`}${res.map(card).join("")}</section>`:""}`}
 const vx0=n=>{try{return valOf(n)||0}catch(e){return 0}};
+/* (888) REVISIONE IA TRADE (stanza segreta Ducks, Francesco 01/11): per ogni proposta dell'IA un giudizio (realistico / forse / irrealistico)
+   e un commento; tutto si salva su questo telefono (localStorage dl_iarev) e si copia come report unico da girare a Claude. */
+const RV=(()=>{try{return JSON.parse(localStorage.getItem("dl_iarev")||"{}")}catch(e){return{}}})();
+const rvSave=()=>{try{localStorage.setItem("dl_iarev",JSON.stringify(RV))}catch(e){}};
+const rvKey=x=>x.D.mv.map(m=>m.n+">"+m.to).sort().join("|");
+function rvSnap(x){const{D,R}=x,o={P:Math.round(R.P*100),mv:D.mv.map(m=>`${m.n} (${valOf(m.n)||0}, ${RN[ruoloDi(m.n)]||ruoloDi(m.n)}, ${Math.floor(iaAge(m.n)??0)}a): ${TEAMS[m.from].nick} → ${TEAMS[m.to].nick}`),sq:{}};
+  D.T.forEach(t=>{try{o.sq[t]={p:Math.round(R.S[t].p*100),why:why(t,R.S[t])}}catch(e){}});return o}
+function rvBox(x){if(!GU.rev)return"";const k=rvKey(x),r=RV[k]||{};
+  const b=(v,l)=>`<button type="button" class="rvb${r.v===v?" on":""}" data-gu="rv" data-v="${E(k)}" data-rv="${v}">${l}</button>`;
+  return`<div class="rvbox" data-rvk="${E(k)}">${b("ok","👍 Realistico")}${b("forse","🤔 Forse")}${b("no","👎 Irrealistico")}<textarea class="rvc" data-rvk="${E(k)}" rows="2" placeholder="Commento: chi non lo farebbe e perché…">${E(r.c||"")}</textarea></div>`}
+function rvHead(){const n=Object.values(RV).filter(r=>r.v||r.c).length;
+  return`<section class="gubox rvhead"><p class="setnote">Chiedi proposte come al solito: sotto ogni proposta dai un giudizio e, se vuoi, scrivi un commento (si salvano da soli). Alla fine copia il report e giralo a Claude.</p>
+  <div class="rvact"><button type="button" class="gugo" data-gu="rvcopy">📋 Copia il report (${n} ${n===1?"proposta":"proposte"})</button><button type="button" class="rvclr" data-gu="rvclr">Svuota</button></div><textarea id="rvout" class="rvout" readonly hidden></textarea></section>`}
+function rvReport(){const L=Object.entries(RV).filter(([k,r])=>r.v||r.c).sort((a,b)=>(a[1].t||0)-(b[1].t||0)),d=new Date(),f=x=>String(x).padStart(2,"0"),V={ok:"REALISTICO",forse:"FORSE",no:"IRREALISTICO"};
+  const cnt=v=>L.filter(([k,r])=>r.v===v).length;
+  let o=`REVISIONE IA TRADE · report del ${f(d.getDate())}/${f(d.getMonth()+1)}/${d.getFullYear()}\nGM: Ducks (Francesco) · proposte giudicate: ${L.length} (realistiche ${cnt("ok")}, forse ${cnt("forse")}, irrealistiche ${cnt("no")})\n\n`;
+  L.forEach(([k,r],i)=>{const S=r.s||{};o+=`${i+1}. [${V[r.v]||"SOLO COMMENTO"}] si chiude al ${S.P??"?"}%\n`;(S.mv||[]).forEach(m=>o+=`   - ${m}\n`);
+    Object.entries(S.sq||{}).forEach(([t,q])=>o+=`   ${TEAMS[t]?TEAMS[t].nick:t}: dice sì al ${q.p}% · ${q.why}\n`);if(r.c)o+=`   COMMENTO: ${r.c}\n`;o+="\n"});
+  return o}
+function rvFind(k){const L=[...(GU.res||[])];try{if(GU.buy)Object.values(GU.buy).forEach(g=>Object.values(g).forEach(o=>L.push(o.x)))}catch(e){}return L.find(x=>rvKey(x)===k)}
 /* (799) acquirenti possibili per ogni giocatore in vendita: per ogni squadra lo scambio migliore trovato in cui lo riceve */
 function buyers(){const B=GU.buy,A=myT();const K=Object.keys(B).sort((a,b)=>a.split(" + ").length-b.split(" + ").length||Math.max(...Object.values(B[b]).map(o=>o.P))-Math.max(...Object.values(B[a]).map(o=>o.P)));
   /* (821) raggruppati per cosa vendi: da solo, in coppia, in tre… e per ogni gruppo gli scambi migliori trovati */
   return`<section class="gures"><h4>Chi li compra</h4><p class="setnote">Per ogni gruppo di giocatori che vendi (da soli o insieme), gli scambi migliori. Tocca per aprire.</p>
-  ${K.length?K.map(k=>{const L=Object.values(B[k]).sort((a,b)=>b.P-a.P).filter((o,i,a)=>a.findIndex(z=>z.x.D.T.slice().sort().join()===o.x.D.T.slice().sort().join())===i).slice(0,4)/* una riga per gruppo di squadre: la migliore */,n=k.split(" + ").length;return`<div class="gubuy"><b class="gubn">${n>1?`${n} insieme: `:""}${E(k.split(" + ").map(nmAb).join(" + "))}</b>${L.map(o=>{const oth=o.x.D.T.filter(t=>t!==A);return`<details class="gubd"><summary class="gubr"><span class="gulg">${oth.map(t=>badge(t)).join("")}</span><span>${oth.map(t=>TEAMS[t].nick).join(", ")}</span><span class="gup ${cl(o.P)}"><small>lo scambio si chiude al</small> ${pc(o.P)}</span><i class="gubx" aria-hidden="true">▾</i></summary><div class="gubdl"><p class="setnote">${o.x.D.T.length} squadre · ${o.x.D.mv.length} giocatori</p>${dealRows(o.x)}</div></details>`}).join("")}</div>`}).join(""):`<p class="setnote">Nessun acquirente trovato: prova con più squadre.</p>`}</section>`}
-VIEWS.gusti=vGusti;
+  ${K.length?K.map(k=>{const L=Object.values(B[k]).sort((a,b)=>b.P-a.P).filter((o,i,a)=>a.findIndex(z=>z.x.D.T.slice().sort().join()===o.x.D.T.slice().sort().join())===i).slice(0,4)/* una riga per gruppo di squadre: la migliore */,n=k.split(" + ").length;return`<div class="gubuy"><b class="gubn">${n>1?`${n} insieme: `:""}${E(k.split(" + ").map(nmAb).join(" + "))}</b>${L.map(o=>{const oth=o.x.D.T.filter(t=>t!==A);return`<details class="gubd"><summary class="gubr"><span class="gulg">${oth.map(t=>badge(t)).join("")}</span><span>${oth.map(t=>TEAMS[t].nick).join(", ")}</span><span class="gup ${cl(o.P)}"><small>lo scambio si chiude al</small> ${pc(o.P)}</span><i class="gubx" aria-hidden="true">▾</i></summary><div class="gubdl"><p class="setnote">${o.x.D.T.length} squadre · ${o.x.D.mv.length} giocatori</p>${dealRows(o.x)}</div></details>${rvBox(o.x)}`}).join("")}</div>`}).join(""):`<p class="setnote">Nessun acquirente trovato: prova con più squadre.</p>`}</section>`}
+VIEWS.gusti=vGusti;VIEWS.iarev=()=>{cur="gusti";GU.page="ia";GU.rev=true;return vGusti()};
 const keepY=()=>{const y=scrollY;render();scrollTo(0,y)};
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="gusti")return;const b=e.target.closest("[data-gu]");if(!b||b.tagName==="SELECT"||b.disabled)return;e.preventDefault();const a=b.dataset.gu,v=b.dataset.v;
-  if(a==="page"){GU.page=v;render();scrollTo(0,0);return}if(a==="team"){GU.team=v;GU.keep=new Set();GU.sell=new Set();GU.res=null;if(GU.target&&iaOwner(GU.target)===v)GU.target=null;keepY()}
+  if(a==="page"){GU.page=v;render();scrollTo(0,0);return}
+  if(a==="rv"){const r=RV[v]||(RV[v]={});const x=rvFind(v);if(x)r.s=rvSnap(x);r.v=r.v===b.dataset.rv?null:b.dataset.rv;r.t=r.t||Date.now();rvSave();b.parentElement.querySelectorAll(".rvb").forEach(z=>z.classList.toggle("on",z.dataset.rv===r.v));const c=document.querySelector('[data-gu="rvcopy"]');if(c)c.textContent=`📋 Copia il report (${Object.values(RV).filter(q=>q.v||q.c).length} proposte)`;return}
+  if(a==="rvcopy"){const t=rvReport(),out=document.getElementById("rvout");const done=()=>{b.textContent="✅ Report copiato: incollalo nella chat con Claude"};try{navigator.clipboard.writeText(t).then(done,()=>{out.hidden=false;out.value=t;out.select()})}catch(_){out.hidden=false;out.value=t;out.select()}if(out){out.hidden=false;out.value=t}return}
+  if(a==="rvclr"){if(b.dataset.ok!=="1"){b.dataset.ok="1";b.textContent="Tocca di nuovo per svuotare";return}Object.keys(RV).forEach(k=>delete RV[k]);rvSave();keepY();return}if(a==="team"){GU.team=v;GU.keep=new Set();GU.sell=new Set();GU.res=null;if(GU.target&&iaOwner(GU.target)===v)GU.target=null;keepY()}
   else if(a==="mode"){GU.mode=v;GU.res=null;keepY()}else if(a==="tg"){GU.target=v;GU.q="";GU.res=null;keepY()}else if(a==="untg"){GU.target=null;GU.res=null;keepY()}
   else if(a==="role"){GU.role=v;GU.res=null;keepY()}else if(a==="k"){GU.maxk=+v;keepY()}
   else if(a==="keep"){GU.keep.has(v)?GU.keep.delete(v):GU.keep.add(v);keepY()}else if(a==="gs"){GU.gusti=v==="1";GU.res=null;GU.buy=null;keepY()}else if(a==="sell"){GU.sell.has(v)?GU.sell.delete(v):GU.sell.add(v);GU.res=null;keepY()}else if(a==="info"){GU.info=!GU.info;keepY()}
   else if(a==="go"){GU.busy=true;keepY();setTimeout(()=>{try{GU.res=search()}catch(err){console.error(err);GU.res=[]}GU.busy=false;const y=scrollY;render();const r=document.querySelector(".gures");if(r)r.scrollIntoView({behavior:"smooth",block:"start"});else scrollTo(0,y)},40)}});
 document.getElementById("main").addEventListener("change",e=>{if(cur!=="gusti")return;const s=e.target;if(s.dataset&&s.dataset.gu==="minv"){GU.minv=+s.value;GU.res=null;keepY()}});
+document.getElementById("main").addEventListener("input",e=>{if(cur!=="gusti"||!e.target.classList.contains("rvc"))return;const k=e.target.dataset.rvk,r=RV[k]||(RV[k]={});r.c=e.target.value;r.t=r.t||Date.now();if(!r.s){const x=rvFind(k);if(x)r.s=rvSnap(x)}rvSave()});
 document.getElementById("main").addEventListener("input",e=>{if(cur!=="gusti"||e.target.id!=="guq")return;GU.q=e.target.value;const pos=e.target.selectionStart;render();const n=document.getElementById("guq");if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(_){}}});
 })();
 </script>
@@ -13009,5 +13034,12 @@ html.dlt-parquet:not(.notte) .vrg-pro{background:#d9560b!important;color:#fff!im
 <style>/* (879) Dreamers a schermo intero con stile Parquet: trascinando oltre il bordo (rimbalzo iOS) si vede il parquet e non lo strato viola */html.dreamfs:has(.drroom[data-th="3"]),html.dreamfs:has(.drroom[data-th="3"]) body{background:repeating-linear-gradient(90deg,#c88a4c 0 26px,#be8043 26px 52px)!important;background-color:#c88a4c!important}</style>
 <style>/* (887) situazione squadra nella scheda dei gusti */.gmsit{margin:8px 0 10px;padding:8px 10px;border-radius:10px;background:rgba(127,127,127,.12)}.gmsit p{margin:4px 0}.gmsit .gmnum{margin:6px 0}.gmsitn{font-size:12.5px;opacity:.85}
 html.dlt-parquet:not(.notte) .gmsit{background:rgba(217,86,11,.08)}</style>
+<style>/* (888) revisione IA Trade */.rvbox{display:flex;flex-wrap:wrap;gap:6px;margin:-4px 0 12px;padding:8px;border-radius:0 0 12px 12px;background:rgba(127,127,127,.12)}
+.rvb{flex:1 1 30%;padding:7px 4px;border-radius:9px;border:1.5px solid rgba(127,127,127,.4);background:transparent;color:inherit;font-weight:700;font-size:13px}
+.rvb.on[data-rv="ok"]{background:#16a34a;border-color:#16a34a;color:#fff}.rvb.on[data-rv="forse"]{background:#d97706;border-color:#d97706;color:#fff}.rvb.on[data-rv="no"]{background:#dc2626;border-color:#dc2626;color:#fff}
+.rvc{flex:1 1 100%;min-height:40px;padding:7px 9px;border-radius:9px;border:1.5px solid rgba(127,127,127,.4);background:rgba(255,255,255,.85);color:#222;font:inherit;font-size:14px}
+.rvact{display:flex;gap:8px;align-items:center}.rvact .gugo{flex:1;margin:0}.rvclr{padding:10px 12px;border-radius:10px;border:1.5px solid rgba(127,127,127,.5);background:transparent;color:inherit;font-weight:700}
+.rvout{width:100%;height:160px;margin-top:8px;font-size:11px;border-radius:8px}
+html.dlt-parquet:not(.notte) .rvbox{background:rgba(217,86,11,.1)}html.dlt-parquet:not(.notte) .rvb{border-color:#d9560b;color:#d9560b}html.dlt-parquet:not(.notte) .rvb.on{color:#fff!important;-webkit-text-fill-color:#fff!important}</style>
 </body>
 </html>

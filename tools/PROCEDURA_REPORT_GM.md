@@ -68,6 +68,9 @@ F = PDKrif^1,78 × 0,93^(età−25) × `VAL_INJ_B`^max(0; 2,5 − stelle). Conta
 - 01/11 16:41 · Correzione di Francesco: i Dolphins Porzingis lo vendono anche in sconto (il residuo negativo era rumore su un riempitivo da 90). GM_DESCR DOL corretta, pl DOL Porzingis -12.
 - 01/11 16:50 · Francesco: i gusti vanno letti con la situazione della squadra (Turtles in ricostruzione non danno Peterson per Daniels ne' Dybantsa per Murphy+Allen) e nessuno da' una stella per 2-3 medi. Aggiunti gmSit/gmSitG/gmStarG/gmPlOwn (nota 887). A ogni report Proposte aggiornare anche GM_ACC[squadra] = [accettati, risposte].
 
+## Report «REVISIONE IA TRADE» (Francesco, stanza Ducks)
+Ogni proposta ha il giudizio di Francesco (REALISTICO / FORSE / IRREALISTICO) e un commento. Le irrealistiche con alta % = l'IA sbaglia: capire quale squadra non lo farebbe (commento) e correggere la regola generale (situazione squadra, stella per medi, intoccabili GM_INTOCC, gusti pl), non il singolo caso. Le realistiche con bassa % = l'IA e' troppo severa. Annotare qui e in NOTE_SVILUPPO, poi pubblicare.
+
 ## Registro valori (dal 01/11/2026) — OBBLIGATORIO
 Ogni volta che cambi un valore in `VALORI` (report dei GM, consenso, correzioni di Francesco) aggiungi una riga in `VAL_LOG` (index.html, accanto a `valReg`):
 `{d:"AAAA-MM-GG",n:"Nome Giocatore",da:valoreVecchio,a:valoreNuovo,why:"motivo breve (es. Report Ducks Valutazione · consenso 3 GM)"}`.
