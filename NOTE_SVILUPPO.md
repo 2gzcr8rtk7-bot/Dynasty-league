@@ -2128,3 +2128,6 @@ pl TUR fusi (su Boozer, Haliburton, Ware, Durant; giù Barrett, Murray-Boyles, M
 
 ## 912 — Report Turtles Proposte 141
 Profilo TUR rifatto sulle 141 proposte (contengono le 81 del 31/10): req 21, age 0,75 (fit 1,25 − 0,5), sc 18, ruoli G −2 / F +4 / C −2, n 161 → 150. GM_ACC TUR = [53,141]. Residui: tengono Harper, Wagler (pl +5), Coward; cedono più volentieri Holmgren, Banchero, Queen; Edey pl −7. Scheda TUR aggiornata. Nessuna correzione dei valori (giocatori propri).
+
+## 913 — Condividi la scheda dei gusti del GM
+Tasto piccolo Condividi accanto al nome di ogni squadra nella pagina «Gusti dei GM»: un unica immagine (1080 px, stile Dreamers) con tutto il testo della scheda: situazione squadra, cosa cercano, come chiudono, infortuni, numeri, ruoli, giocatori più e meno voluti, cosa manca (shGusti, shOpen("gm")).

@@ -716,6 +716,7 @@ nav button[aria-expanded="true"] .car{transform:rotate(180deg)}
 .hrfan{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.08);font-family:var(--display);font-style:italic;font-weight:800;color:var(--gold)}
 .tvtop.tvhid span{color:var(--muted);font-style:italic}
 .tvsp{display:grid;justify-items:center;gap:10px;text-align:center;margin:4px 0 20px;padding:34px 20px 30px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)}.tvsp svg{width:46px;height:46px;color:#fff}.tvsp b{font-family:var(--display);font-style:italic;font-weight:800;font-size:40px;letter-spacing:.02em;text-transform:uppercase;line-height:1}.tvsp p{margin:0;max-width:300px;font-size:14px;line-height:1.45;color:var(--muted)}.tvsp button{margin-top:8px;padding:12px 18px;border:0;border-radius:10px;background:#fff;color:#0b1022;font-weight:800;font-size:15px;cursor:pointer}
+.gmsc h4{display:flex;align-items:center;gap:10px}.gmshb{margin-left:auto;flex:none}
 </style>
 
 
@@ -7398,12 +7399,16 @@ async function shSpecial(i){const S=histSpModel(i);if(!S)return null;
   c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_F(800,40,1);c.fillStyle="#e9d5ff";c.fillText("IL PARERE DI CLAUDE",92,y+62);
   await shCardsDraw(c,its,W,y+96);
   shFoot(c,W,H,"Dreamers · Trade speciali");return cv}
+/* (913) CONDIVIDI LA SCHEDA «GUSTI DEI GM»: un'unica immagine con tutto il testo della scheda (situazione, cosa cercano, come chiudono, infortuni, numeri, ruoli, giocatori). */
+let SHR_GM=null;
+document.addEventListener("click",e=>{const b=e.target.closest("[data-gmsh]");if(!b)return;e.preventDefault();e.stopPropagation();SHR_GM=b.dataset.gmsh;shOpen("gm")},true);
+function shWrapL(c,txt,w){const out=[];String(txt).split("\n").forEach(par=>{let line="";par.split(/\s+/).forEach(wd=>{if(!wd)return;const t=line?line+" "+wd:wd;if(c.measureText(t).width>w&&line){out.push(line);line=wd}else line=t});out.push(line)});return out}
 async function shOpen(k){const old=document.querySelector(".shsheet");if(old)old.remove();
   const sh=document.createElement("div");sh.className="shsheet";sh.innerHTML='<div class="shbox"><p class="shwait">Preparo l\'immagine…</p></div>';document.body.appendChild(sh);
   sh.addEventListener("click",e=>{if(e.target===sh||e.target.closest(".shx"))sh.remove()});
-  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="cl"?await shClassifica():k==="gr"?await shGrafico():k==="gt"?await shGrTeam():k==="cm"?await shCompar():k==="ht"?await shHistTrade(SHR_HT):k==="ta"?await shHistTrade(-1,{T:taTrade(),sub:taSub(),look:window.TA_LOOK}):k==="sp"?await shSpecial(SHR_SP):k==="pl"?await shPlayer():k==="pc"?await shPcard():k==="dm"?await shDM():k==="bt"?await window.shBT():k==="bs"?await window.shBS():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
+  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="cl"?await shClassifica():k==="gr"?await shGrafico():k==="gt"?await shGrTeam():k==="cm"?await shCompar():k==="ht"?await shHistTrade(SHR_HT):k==="ta"?await shHistTrade(-1,{T:taTrade(),sub:taSub(),look:window.TA_LOOK}):k==="sp"?await shSpecial(SHR_SP):k==="gm"?await window.shGusti(SHR_GM):k==="pl"?await shPlayer():k==="pc"?await shPcard():k==="dm"?await shDM():k==="bt"?await window.shBT():k==="bs"?await window.shBS():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
   if(!cv){sh.querySelector(".shbox").innerHTML='<p class="shwait">Niente da condividere adesso.</p><button class="shx">Chiudi</button>';return}
-  const name=(k==="ta"?"pic-trade":k==="sp"?("trade-speciale-"+vnz((SPECIALI[SHR_SP]||{}).entra||"").replace(/ /g,"-")):k==="ht"?("scambio-"+((TRADES[SHR_HT]&&TRADES[SHR_HT].data)||"").replace(/\D+/g,"-")):k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="cl"?"dreamers-classifica":k==="cm"?"confronto-"+((SHR_CM&&SHR_CM.P[0]&&SHR_CM.P[1])?(SHR_CM.P[0].n+"-"+SHR_CM.P[1].n):"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pl"?"scheda-"+((SHR_PL&&SHR_PL.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pc"?"prestazione-"+((SHR_PC&&SHR_PC.x.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="dm"?"scontro-"+((SHR_DM&&SHR_DM.a+"-"+SHR_DM.b)||"").toLowerCase():k==="card"?"grafico":"dreamers")+".png";
+  const name=(k==="gm"?"gusti-"+((TEAMS[SHR_GM]||{}).nick||"gm").toLowerCase():k==="ta"?"pic-trade":k==="sp"?("trade-speciale-"+vnz((SPECIALI[SHR_SP]||{}).entra||"").replace(/ /g,"-")):k==="ht"?("scambio-"+((TRADES[SHR_HT]&&TRADES[SHR_HT].data)||"").replace(/\D+/g,"-")):k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="cl"?"dreamers-classifica":k==="cm"?"confronto-"+((SHR_CM&&SHR_CM.P[0]&&SHR_CM.P[1])?(SHR_CM.P[0].n+"-"+SHR_CM.P[1].n):"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pl"?"scheda-"+((SHR_PL&&SHR_PL.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pc"?"prestazione-"+((SHR_PC&&SHR_PC.x.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="dm"?"scontro-"+((SHR_DM&&SHR_DM.a+"-"+SHR_DM.b)||"").toLowerCase():k==="card"?"grafico":"dreamers")+".png";
   let file=null,url="";const mk=async c=>{const blob=await new Promise(r=>c.toBlob(r,"image/png"));file=new File([blob],name,{type:"image/png"});if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(blob)};await mk(cv);
   /* Campo: cursore "fino a dove condividere" (si parte sempre dall'alto: prime N righe) */
   const NR=k==="campo"&&SHR_CAMPO?SHR_CAMPO.R.length:0,sl=NR>1?`<div class="shcut"><div><b>Condividi dalla 1ª alla <output>${NR}</output>ª riga</b><small>su ${NR} · trascina per fermarti prima</small></div><input type="range" min="1" max="${NR}" value="${NR}" step="1" aria-label="Fino a quale riga condividere"></div>`:"";
@@ -12587,13 +12592,43 @@ function gmScheda(t){const G=GM_GUSTI[t],D=GM_DESCR[t],f=v=>(v>0?"+":"")+(Math.r
   if(!G)return`<section class="gmsc nd">${badge(t)}<div><h4>${TEAMS[t].nick}</h4><p class="gmnd">⏳ <b>Ancora da verificare.</b> I ${TEAMS[t].nick} non hanno ancora mandato i report dell'Allenamento IA Trade: per ora nell'IA Gusti usano il gusto medio della lega (segnati «stima»). Appena arrivano i report, qui compariranno cosa cercano e come trattano.</p></div></section>`;
   const aff=Math.round(Math.min(1,(G.n||0)/150)*100),pl=Object.entries(G.pl||{}),up=pl.filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,6),dn=pl.filter(x=>x[1]<0).sort((a,b)=>a[1]-b[1]).slice(0,6);
   const ro=["G","F","C"].map(r=>{const v=(G.role||{})[r]||0;return`<span class="gmro ${v>0?"su":v<0?"giu":""}">${{G:"Guardie",F:"Ali",C:"Centri"}[r]} ${v?f(v):"="}</span>`}).join("");
-  return`<section class="gmsc">${badge(t)}<div><h4>${TEAMS[t].nick}</h4><small>${D?D.rep:""} · aggiornato ${G.agg||"—"}</small>
+  return`<section class="gmsc">${badge(t)}<div><h4>${TEAMS[t].nick}<button class="shbtn gmshb" data-gmsh="${t}" aria-label="Condividi i gusti dei ${TEAMS[t].nick}" title="Condividi">${SH_ICO}</button></h4><small>${D?D.rep:""} · aggiornato ${G.agg||"—"}</small>
   <div class="gmaff"><span>Affidabilità del profilo</span><b>${aff}%</b><i style="width:${aff}%"></i></div>${gmSitHtml(t)}
   ${D?`<p><b>Cosa cercano.</b> ${D.cerca}</p><p><b>Come chiudono gli scambi.</b></p><ul>${D.chiude.map(x=>`<li>${x}</li>`).join("")}</ul>${D.inf?`<p><b>Infortuni.</b> ${D.inf}</p>`:""}${D.nota?`<p><b>Nota.</b> ${D.nota}</p>`:""}${D.manca?`<p class="gmnd">⏳ ${D.manca}</p>`:""}`:""}
   <div class="gmnum"><div><small>Vantaggio chiesto</small><b>+${Math.round(G.req||0)}%</b></div><div><small>Età (punti per anno)</small><b>${f(G.age||0)}</b></div><div><small>Decisione</small><b>${(G.sc||GM_K.sc)<=9?"netta":(G.sc||GM_K.sc)<=13?"normale":"morbida"}</b></div></div>
   <div class="gmros">${ro}</div>
   ${up.length?`<p class="gmpl"><b>Li vogliono più dei nostri valori:</b> ${up.map(([n,v])=>`${nmAb(n)} <em class="su">${f(v)}%</em>`).join(", ")}</p>`:""}
   ${dn.length?`<p class="gmpl"><b>Li vogliono meno:</b> ${dn.map(([n,v])=>`${nmAb(n)} <em class="giu">${f(v)}%</em>`).join(", ")}</p>`:""}</div></section>`}
+async function shGusti(t){const G=GM_GUSTI[t],D=GM_DESCR[t]||{},tm=TEAMS[t];if(!G||!tm)return null;
+  const f=v=>(v>0?"+":"")+(Math.round(v*10)/10).toString().replace(".",","),pl=Object.entries(G.pl||{});
+  const up=pl.filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,6),dn=pl.filter(x=>x[1]<0).sort((a,b)=>a[1]-b[1]).slice(0,6);
+  let sit="";try{const d=document.createElement("div");d.innerHTML=gmSitHtml(t);const ps=[...d.querySelectorAll("p")].map(x=>x.textContent.replace(/^Situazione squadra\.\s*/,"").trim()),nm=[...d.querySelectorAll(".gmnum>div")].map(x=>x.querySelector("small").textContent+" "+x.querySelector("b").textContent);sit=[ps[0],nm.join(" · "),ps[1]].filter(Boolean).join("\n")}catch(e){}
+  const aff=Math.round(Math.min(1,(G.n||0)/150)*100),dec=(G.sc||GM_K.sc)<=9?"netta":(G.sc||GM_K.sc)<=13?"normale":"morbida";
+  const B=[];if(sit)B.push({h:"Situazione squadra",p:sit});if(D.cerca)B.push({h:"Cosa cercano",p:D.cerca});if(D.chiude&&D.chiude.length)B.push({h:"Come chiudono gli scambi",l:D.chiude});
+  if(D.inf)B.push({h:"Infortuni",p:D.inf});if(D.nota)B.push({h:"Nota",p:D.nota});
+  B.push({h:"I numeri",p:`Vantaggio chiesto +${Math.round(G.req||0)}% · Età ${f(G.age||0)} punti per anno · Decisione ${dec} · Guardie ${(G.role||{}).G?f(G.role.G):"="} · Ali ${(G.role||{}).F?f(G.role.F):"="} · Centri ${(G.role||{}).C?f(G.role.C):"="}`});
+  if(up.length)B.push({h:"Li vogliono più dei nostri valori",p:up.map(([n,v])=>`${nmAb(n)} ${f(v)}%`).join(", ")});
+  if(dn.length)B.push({h:"Li vogliono meno",p:dn.map(([n,v])=>`${nmAb(n)} ${f(v)}%`).join(", ")});
+  if(D.manca)B.push({h:"Cosa manca",p:D.manca});
+  const W=1080,IN=W-112,TW=IN-88,mc=document.createElement("canvas").getContext("2d"),LH=44;mc.font=SH_B(500,31);
+  B.forEach(b=>{b.L=b.p!=null?shWrapL(mc,b.p,TW):null;b.LL=b.l?b.l.map(x=>shWrapL(mc,x,TW-34)):null;b.H=58+(b.L?b.L.length*LH:b.LL.reduce((q,a)=>q+a.length*LH+12,0))+18});
+  const topH=200,H=190+topH+30+B.reduce((q,b)=>q+b.H+22,0)+130;
+  const{cv,c}=await shBase(H,W,0,1);
+  c.font=SH_F(700,28,1);c.textAlign="right";c.textBaseline="alphabetic";c.fillStyle="rgba(233,213,255,.75)";c.fillText("GUSTI DEI GM · AGG. "+(G.agg||""),W-56,100);
+  let y=190;const x0=56;
+  c.save();shRR(c,x0,y,IN,topH,28);c.clip();c.fillStyle="rgba(10,6,24,.62)";c.fillRect(x0,y,IN,topH);const gg=c.createLinearGradient(x0,y,x0+IN,y);gg.addColorStop(0,tm.bg);gg.addColorStop(1,"rgba(10,6,24,.2)");c.fillStyle=gg;c.fillRect(x0,y,IN,150);c.fillStyle=tm.trim||"#fff";c.fillRect(x0,y+150,IN,8);c.restore();
+  shRR(c,x0,y,IN,topH,28);c.strokeStyle="rgba(196,181,253,.28)";c.lineWidth=2;c.stroke();
+  await shLogoAt(c,t,x0+24,y+16,118);c.textAlign="left";c.fillStyle=tm.txt||tm.fg||"#fff";c.font=SH_F(800,64,1);c.fillText(tm.nick.toUpperCase(),x0+166,y+80);c.font=SH_F(700,26,1);c.globalAlpha=.85;c.fillText("I GUSTI DEL GM",x0+168,y+120);c.globalAlpha=1;
+  c.font=SH_B(500,24);c.fillStyle="rgba(233,213,255,.85)";c.fillText(shFit(c,(D.rep||"")+" · affidabilità "+aff+"%",IN-60),x0+28,y+188);
+  y+=topH+30;
+  for(const b of B){shRR(c,x0,y,IN,b.H,24);c.fillStyle="rgba(10,6,24,.66)";c.fill();c.strokeStyle="rgba(196,181,253,.22)";c.lineWidth=2;c.stroke();
+    c.textAlign="left";c.textBaseline="alphabetic";c.font=SH_F(800,34,1);c.fillStyle="#e9d5ff";c.fillText(b.h.toUpperCase(),x0+44,y+50);
+    let ty=y+58+LH-10;c.font=SH_B(500,31);c.fillStyle="#f1f5f9";
+    if(b.L)b.L.forEach(l=>{c.fillText(l,x0+44,ty);ty+=LH});
+    else b.LL.forEach(a=>{c.fillStyle="#c084fc";c.beginPath();c.arc(x0+54,ty-10,6,0,7);c.fill();c.fillStyle="#f1f5f9";a.forEach(l=>{c.fillText(l,x0+78,ty);ty+=LH});ty+=12});
+    y+=b.H+22}
+  shFoot(c,W,H,"Dreamers · Gusti dei GM");return cv}
+window.shGusti=shGusti;
 function vGustiHome(){GU.rev=false;const T=teamOrd(),n=Object.keys(GM_GUSTI).length;
   return`${H("IA Trade",`<em>con i gusti dei GM</em>`)}
   <div class="guhome"><button type="button" class="guia" data-gu="page" data-v="ia"><span class="guiai">🤖</span><b>IA Trade</b><i class="guiar">›</i></button>
