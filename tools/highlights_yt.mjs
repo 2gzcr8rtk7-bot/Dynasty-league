@@ -51,7 +51,7 @@ for(const v of vids.sort((x,y)=>x.pub.localeCompare(y.pub))){const T=teamsIn(v.t
   if(out[g.key]){if(out[g.key]!==v.id)dubbi.push(`${g.key}: già ${out[g.key]}, ignorato ${v.id} "${v.t}"`);continue}
   out[g.key]=v.id;nuovi.push(`${g.key} ← ${v.id} "${v.t}"`)}
 console.log(`Video letti: ${vids.length} · abbinati nuovi: ${nuovi.length}`);nuovi.forEach(x=>console.log("  "+x));dubbi.forEach(x=>console.log("  (doppio) "+x));
-const senza=vids.filter(v=>!Object.values(out).includes(v.id)).slice(-15);if(senza.length)console.log("Non abbinati (ultimi):\n"+senza.map(v=>`  ${v.pub.slice(0,10)} ${v.t}`).join("\n"));
+const senza=vids.filter(v=>!Object.values(out).includes(v.id)).sort((x,y)=>y.pub.localeCompare(x.pub)).slice(0,15);/* (01/11) i più RECENTI non abbinati */if(senza.length)console.log("Non abbinati (ultimi):\n"+senza.map(v=>`  ${v.pub.slice(0,10)} ${v.t}`).join("\n"));
 if(PROVA||!nuovi.length)process.exit(0);
 const ord=Object.fromEntries(Object.entries(out).sort());
 fs.writeFileSync("hl-data.js","/* DYNASTY TV – video highlights YouTube per partita, generato da tools/highlights_yt.mjs (GitHub), non modificare a mano */\nconst TVHL="+JSON.stringify(ord)+";\n");
