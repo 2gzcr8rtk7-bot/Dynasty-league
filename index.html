@@ -12719,5 +12719,13 @@ html.dlt-parquet:not(.notte) body .tvbox .pdkb:not(#a):not(#b):not(#c):not(#d){c
 html.dlt-parquet:not(.notte) body .tvbox tbody tr:not(.grp):not(.tot) td:not(#a):not(#b):not(#c):not(#d){border-bottom-color:rgba(217,86,11,.16)!important}html.dlt-parquet:not(.notte) body .tvbox tbody tr:not(.grp):not(.tot) td:first-child:not(#a):not(#b):not(#c):not(#d){border-right-color:rgba(217,86,11,.16)!important}</style>
 <style>/* (837) tabellino Parquet: base delle righe crema leggero #fdf4e6 (versione 3) */
 html.dlt-parquet:not(.notte) body .tvbox tbody tr:not(.grp):not(.tot) td:not(#a):not(#b):not(#c):not(#d):not(#e),html.dlt-parquet:not(.notte) body .tvbox tbody tr.pct td:not(#a):not(#b):not(#c):not(#d):not(#e){background:#fdf4e6!important}</style>
+<script>
+/* (838) Home: il tasto notte va in alto accanto alle impostazioni; nella barra restano la ricerca (allargata) e i seguiti. Il tasto creato a ogni render nella Home (con il suo onclick) viene spostato nell'intestazione e il vecchio tolto. */
+(function(){function mv(){const sb=document.getElementById("setbtn");if(!sb)return;const H=[...document.querySelectorAll("#hnt")];if(!H.length)return;
+ const nw=H.find(x=>x.closest("main"))||H[0];H.forEach(x=>{if(x!==nw)x.remove()});
+ if(nw.nextElementSibling!==sb){nw.classList.add("hnthd");sb.parentElement.insertBefore(nw,sb)}}
+ const st=document.createElement("style");st.textContent=".hnt.hnthd{margin-right:8px;align-self:center}.hbar .hsrch{flex:1}";document.head.appendChild(st);
+ mv();const R=render;render=function(){const r=R.apply(this,arguments);try{mv()}catch(e){}return r}})();
+</script>
 </body>
 </html>
