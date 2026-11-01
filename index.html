@@ -12131,8 +12131,8 @@ const TOKS={parquet:[["--pq-tx","Scritte arancio","#d9560b"],["--pq-b1","Tasto a
 const tokVal=(m,k,d)=>{if(DX.tok[m]&&DX.tok[m][k])return DX.tok[m][k];const v=getComputedStyle(R).getPropertyValue(k).trim();return/^#[0-9a-f]{6}$/i.test(v)?v:(/^#[0-9a-f]{3}$/i.test(v)?"#"+v.slice(1).split("").map(x=>x+x).join(""):d)};
 let st=document.getElementById("dxcolst");if(!st){st=document.createElement("style");st.id="dxcolst";document.head.appendChild(st)}
 function css(){let o="";for(const m of ["parquet","base","notte"]){const p=PFX[m];const T=DX.tok[m]||{};const tk=Object.keys(T).map(k=>`${k}:${T[k]}`).join(";");if(tk)o+=`${p}{${tk}}\n`;
-  const r=DX.rules[m]||{};for(const sel in r){const x=r[sel];const S=sel+":not(#dx)";let d="";if(x.bg)d+=`background:${x.bg}!important;background-image:none!important;`;if(x.fg)d+=`color:${x.fg}!important;-webkit-text-fill-color:${x.fg}!important;`;if(x.bd)d+=`border-color:${x.bd}!important;`;
-   if(d)o+=`${p} ${S}{${d}}\n`;if(x.fg)o+=`${p} ${S},${p} ${S} text,${p} ${S} tspan{fill:${x.fg}!important}\n`;if(x.fg&&x.deep)o+=`${p} ${S} *{color:${x.fg}!important;-webkit-text-fill-color:${x.fg}!important}\n`}}
+  const r=DX.rules[m]||{};for(const sel in r){const x=r[sel];const S=sel+":not(#dx):not(.pdkx):not(.pdkb)"/* (857) le capsule PDK non si colorano mai con l'Editor: colore per fascia di punteggio e numero bianco */;let d="";if(x.bg)d+=`background:${x.bg}!important;background-image:none!important;`;if(x.fg)d+=`color:${x.fg}!important;-webkit-text-fill-color:${x.fg}!important;`;if(x.bd)d+=`border-color:${x.bd}!important;`;
+   if(d)o+=`${p} ${S}{${d}}\n`;if(x.fg)o+=`${p} ${S},${p} ${S} text,${p} ${S} tspan{fill:${x.fg}!important}\n`;if(x.fg&&x.deep)o+=`${p} ${S} *:not(.pdkx):not(.pdkb):not(.pdkx *):not(.pdkb *){color:${x.fg}!important;-webkit-text-fill-color:${x.fg}!important}\n`}}
  st.textContent=o}
 css();
 window.__dxSkip=el=>{try{const r=DX.rules[mode()]||{};for(const sel in r){if(r[sel].fg&&(el.matches(sel)||(r[sel].deep&&el.closest(sel))))return true}}catch(e){}return false};
