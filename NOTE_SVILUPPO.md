@@ -2254,3 +2254,6 @@ Francesco (23:35). Un solo interruttore 🔇/🔊 in alto a destra comanda tutto
 
 ## 962 — Sala Trofei: titoli di nuovo in bacheca, senza pallone
 Francesco (23:40): via le coppe giganti sui piedistalli (e scintille, anelli a terra, fari dedicati). Le coppe d oro dei titoli tornano nella bacheca di vetro, ai lati della stella All-Star: senza pallone, un po più grandi degli altri trofei, in metallo riflettente su base nera con anello dorato, girano piano dietro il vetro con alone dorato e targa «CAMPIONI · DREAMERS LEAGUE · ANNO n». Tre fari puntati sulla bacheca. Gli stendardi dei titoli sulla parete d ingresso restano.
+
+## 963 — Modalità Dream: scritta e voce in sincrono, scritta più lunga
+Francesco (23:52): la voce arrivava in ritardo rispetto alla scritta. Ora, con l audio acceso, la scritta dell azione compare nell istante in cui la voce comincia a dire la statistica (se il telefono non avvisa entro 3 s compare comunque); finita la frase reagisce il pubblico. Con l audio spento compare subito. Animazione: entra con un rimbalzo, resta sopra la maglia 5,5 s ondeggiando appena, poi sale e svanisce in 1 s (6,9 s in tutto). Più azioni dello stesso giocatore a 7,2 s l una dall altra.
