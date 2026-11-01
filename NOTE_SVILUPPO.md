@@ -2061,3 +2061,4 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 859. Box sfide Dreamers in Dynasty TV: tolte le colonne Molt. e Punti (resta PDK + statistiche); il punteggio squadra va sotto la colonna PDK.
 860. Dreamers, carte della sfida (Turno): tocco sulla maglia = profilo del giocatore (data-plopen su .duj). Le capsule PDK dei singoli giorni (.duw.dug) hanno il numero bianco come tutte le capsule PDK.
 861. Box score NBA in Dynasty TV: il ruolo (.tvps) e' una targhetta arancio #c2410c con lettera bianca, opaca e sopra il logo della squadra (versione 2 scelta da Francesco).
+862. Targhetta del ruolo nel box NBA: angoli arrotondati uguali sopra e sotto (inline-block, line-height 1, niente ombra; prima il fondo veniva tagliato).
