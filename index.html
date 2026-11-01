@@ -9788,7 +9788,7 @@ if("serviceWorker" in navigator){const T0=Date.now();let had=!!navigator.service
  let touched=false;["pointerdown","keydown","scroll"].forEach(ev=>addEventListener(ev,()=>{touched=true},{passive:true,once:true}));
  let hidAt=0;document.addEventListener("visibilitychange",()=>{if(document.hidden)hidAt=Date.now()});
  navigator.serviceWorker.addEventListener("controllerchange",()=>{if(!had){had=true;return}/* (892) mai ricaricare mentre stai usando l'app: subito solo se appena aperta e non ancora toccata, altrimenti al prossimo rientro dopo almeno 1 minuto fuori (e si torna alla stessa schermata) */if(!touched&&Date.now()-T0<6000)go();else pend=true});
- addEventListener("load",()=>navigator.serviceWorker.register("sw.js").then(r=>{document.addEventListener("visibilitychange",()=>{if(document.hidden)return;if(pend&&hidAt&&Date.now()-hidAt>60000)go();else r.update().catch(()=>{})})}).catch(()=>{}))}</script>
+ addEventListener("load",()=>navigator.serviceWorker.register("sw.js").then(r=>{document.addEventListener("visibilitychange",()=>{if(document.hidden)return;if(pend&&hidAt&&Date.now()-hidAt>4*3600000)go();else r.update().catch(()=>{})/* (897) al rientro si ricarica solo dopo 4 ore fuori: la versione nuova arriva alla prossima apertura «a freddo» */})}).catch(()=>{}))}</script>
 <script>/* ===== VISTA IMPOSTAZIONI (27/10/2026) ===== */
 (function(){
 let FROM="home";
@@ -9901,7 +9901,7 @@ document.addEventListener("visibilitychange",()=>{if(document.hidden)save()});ad
 const go=()=>{save();l.classList.add("spin");setTimeout(()=>location.reload(),350)};
 l.addEventListener("click",go);l.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}});
 try{let r=JSON.parse(sessionStorage.getItem("dl_reload")||"null");sessionStorage.removeItem("dl_reload");
-  if(!r||Date.now()-r.t>=30000){const q=JSON.parse(localStorage.getItem("dl_nav")||"null");if(q&&Date.now()-q.t<20*60000)r={...q,t:Date.now()}}/* (892) app riaperta entro 20 minuti: torna alla schermata dove eri */
+  if(!r||Date.now()-r.t>=30000){const q=JSON.parse(localStorage.getItem("dl_nav")||"null");if(q&&Date.now()-q.t<90*60000)r={...q,t:Date.now()}}/* (892) app riaperta entro 20 minuti: torna alla schermata dove eri */
   if(r&&Date.now()-r.t<30000){Object.entries(r.o).forEach(([n,j])=>{try{const c=get(n);if(c&&typeof c==="object")Object.assign(c,JSON.parse(j));else(0,eval)(n+"="+j)}catch(e){}});render();setTimeout(()=>window.scrollTo(0,r.y||0),60)}}catch(e){}
 
 /* (711) Parquet: ogni casella semitrasparente che sta direttamente sul parquet diventa bianca con scritte arancio */
