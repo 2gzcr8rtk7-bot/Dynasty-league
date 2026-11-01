@@ -8283,7 +8283,8 @@ const DR_PROV=new Set();
    NUOVO FANTA: chiamare fantaLiveAvvia() nella sua vista e registrarlo in FANTA_LIVE {attivo:()=>bool, da:()=>"AAAA-MM-GG"
    (giorno dopo la sua ultima notte ufficiale)}; poi per le notti fantaLiveNotti(da) leggere fantaLiveNotte(d)[tvNm(nome)] → {p,min,opp}. */
 const FL={fin:{},run:false,t:null};
-const flUsaOggi=()=>new Date().toLocaleDateString("en-CA",{timeZone:"America/New_York"});
+const __flF=new Intl.DateTimeFormat("en-CA",{timeZone:"America/New_York",year:"numeric",month:"2-digit",day:"2-digit"});/* (01/11) prestazioni: un solo formattatore */
+const flUsaOggi=()=>__flF.format(new Date());
 function fantaLiveNotti(da){const out=[],oggi=flUsaOggi();if(!da)return out;for(let d=da,i=0;d<=oggi&&i<10;d=drAdd(d,1),i++)out.push(d);return out}
 function fantaLiveNotte(d){const o={};if(typeof TV==="undefined")return o;
   for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
@@ -9066,7 +9067,8 @@ function vTV0(){setTimeout(tvWeekPos,0);const T=TVD(),ks=Object.keys(T.days).sor
   ${tvDreamers(d)}
   <p class="note">${TVL.err?"Dati live NBA non raggiungibili in questo momento: restano i dati del report. ":TVL.last?`Live: dati ${TVL.src==="ESPN"?"ESPN":"NBA.com"} aggiornati ogni 30 secondi (ultimo ${TVL.last}); il PDK delle partite in corso è calcolato con la formula Dunkest ed è provvisorio. `:""}${T.src||""} Orari d'inizio in ora italiana. Tocca una partita in corso o finita per il tabellino completo. Aggiornato ${T.upd||""}.</p>`}
 /* loghi Dynasty dei proprietari nel box score */
-const tvNm=n=>String(n||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[.'’]/g,"").replace(/\s+(jr|sr|ii|iii|iv)$/,"").replace(/[^a-z0-9]+/g," ").trim();
+const __tvNmC=new Map();/* (01/11) prestazioni: risultato in memoria */
+const tvNm=n=>{const k=String(n||"");let v=__tvNmC.get(k);if(v===undefined){v=k.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[.'’]/g,"").replace(/\s+(jr|sr|ii|iii|iv)$/,"").replace(/[^a-z0-9]+/g," ").trim();if(__tvNmC.size>20000)__tvNmC.clear();__tvNmC.set(k,v)}return v};
 let TVOWN=null,TVGL={};
 /* (873) nei box score: iniziale puntata + cognome (es. "N. Alexander-Walker"); suffissi Jr./III restano col cognome */
 function tvShort(n){const p=String(n||"").trim().split(/\s+/);if(p.length<2)return n;return p[0].charAt(0)+". "+p.slice(1).join(" ")}
@@ -9974,6 +9976,8 @@ function pqFix(){try{
   for(const f of WR)f();
 }catch(e){}}
 window.pqFix=pqFix;
+/* (01/11) prestazioni: tutte le chiamate a pqFix nello stesso fotogramma diventano una sola, eseguita prima del disegno */
+const pqFixNow=pqFix;{let q=0;pqFix=function(){if(q)return;q=requestAnimationFrame(()=>{q=0;pqFixNow()})}}window.pqFix=pqFix;window.pqFixNow=pqFixNow;
 {const R0=render;render=function(){const x=R0.apply(this,arguments);pqFix();return x}}
 {const S0=syncMenu;syncMenu=function(){const x=S0.apply(this,arguments);pqFix();return x}}
 {const D0=dlsApply;let was=false,wn=false,lt,dep=0;dlsApply=function(){const _t=DLS.th,_n=typeof CNT!=="undefined"&&CNT;if(_n&&_t!=="viola")DLS.th="classico";let x;dep++;try{x=D0.apply(this,arguments)}finally{DLS.th=_t;dep--}if(dep>0)return x;/* (759) una chiamata annidata non deve aggiornare lt, se no la notte si spegne da sola */{const pq=DLS.th==="parquet"||!!(DLT[DLS.th]&&DLT[DLS.th].pq);if(lt!==undefined&&lt!==DLS.th&&pq&&typeof CNT!=="undefined"&&CNT){CNT=false;try{cntSave()}catch(e){}try{D0.apply(this,arguments)}catch(e){}document.documentElement.classList.toggle("dlt-parquet",true);document.documentElement.classList.remove("notte");document.body.classList.remove("notte")}lt=DLS.th}{const H=document.documentElement,pq=DLS.th==="parquet"||!!(DLT[DLS.th]&&DLT[DLS.th].pq);if(typeof CNT!=="undefined")H.classList.toggle("dlt-parquet",pq&&!CNT)}const on=document.documentElement.classList.contains("dlt-parquet"),nn=document.documentElement.classList.contains("notte");if(on!==was||nn!==wn){was=on;wn=nn;pqClean();pqFix()}return x}}
