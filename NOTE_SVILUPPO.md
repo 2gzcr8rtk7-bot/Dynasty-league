@@ -2215,3 +2215,6 @@ Francesco (21:51): la maglia copriva la parte alta della targhetta (anche con l 
 
 ## 949 — Riga del tabellone: frecce staccate dai tasti maglia e Dream
 Francesco (21:55): con i numeri lunghi del turno (es. 19/36 15/28) il tabellone si allargava e le frecce ‹ › toccavano il tasto maglia e il tasto Dream. Ora la riga ha 8 px di spazio tra gli elementi e se il tabellone non ci sta si rimpicciolisce in proporzione (lbmFit dopo ogni disegno e alla rotazione).
+
+## 950 — Modalità Dream: fascia LED interrotta sulle scale, partenza dalle scale centrali
+Francesco (22:00): la fascia LED tra i due anelli attraversava le scale centrali: ora si interrompe sopra le scale. Partenza sulle scale centrali dell anello alto (6ª fila) guardando il centrocampo, l altezza della foto di Francesco.

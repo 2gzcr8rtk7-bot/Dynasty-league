@@ -102,7 +102,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
       seatP.push([px,y+.22,pz,a]);seatC.push(sec?mix(BG,"#000",.12).getStyle():mix(BG,"#3a3944",.75).getStyle());if(Math.random()<occ){fanP.push([px,y+.62,pz,a]);fanC.push(Math.random()<.18?BG:shirts[(Math.random()*shirts.length)|0]);headC.push(skins[(Math.random()*skins.length)|0])}})}};
   const stp=mob?.78:.62;bowl(RA,13,.45,.42,.85,.82,stp);const R1=CW/2+RA+13*.85,Y1=.45+13*.42;
   {const pts=rrPath(R1+.2,R1-CW/2+CH/2+.2,3.5+13*.85+.2,.6);pts.push(pts[0]);const g=new THREE.BufferGeometry(),P=[],U=[],I=[];let acc=0;
-    pts.forEach((p,i)=>{if(i)acc+=Math.hypot(p[0]-pts[i-1][0],p[1]-pts[i-1][1]);P.push(p[0],Y1+1.3,p[1],p[0],Y1+.35,p[1]);U.push(acc/14,1,acc/14,0);if(i){const k=i*2;I.push(k-2,k,k-1,k-1,k,k+1)}});
+    pts.forEach((p,i)=>{if(i)acc+=Math.hypot(p[0]-pts[i-1][0],p[1]-pts[i-1][1]);P.push(p[0],Y1+1.3,p[1],p[0],Y1+.35,p[1]);U.push(acc/14,1,acc/14,0);const gap=q=>q[1]>0&&Math.abs(q[0])<1.5;/* (950) la fascia si interrompe sulle scale centrali */if(i&&!gap(p)&&!gap(pts[i-1])){const k=i*2;I.push(k-2,k,k-1,k-1,k,k+1)}});
     g.setAttribute("position",new THREE.Float32BufferAttribute(P,3));g.setAttribute("uv",new THREE.Float32BufferAttribute(U,2));g.setIndex(I);S.add(new THREE.Mesh(g,new THREE.MeshBasicMaterial({map:ribbon(),toneMapped:false})));
     /* (935) retro della fascia (visto dall'anello alto): stesso nastro con il testo nel verso giusto */const g2=g.clone(),U2=U.map((u,i)=>i%2===0?-u:u);g.setAttribute("uv",new THREE.Float32BufferAttribute(U2,2));/* faccia esterna: testo raddrizzato */S.add(new THREE.Mesh(g2,new THREE.MeshBasicMaterial({map:ribbon(),toneMapped:false,side:THREE.BackSide})))}
   /* corridoio tra anello basso e alto: si può camminare */band(R1,R1-CW/2+CH/2,3.5+13*.85,Y1,Y1,1.8);bowl(RA+13*.85+1.8,11,Y1+1.6,.55,.8,.7,stp);const R2=CW/2+RA+13*.85+1.8+11*.8,Y2=Y1+1.6+11*.55;
@@ -225,7 +225,7 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
   const chantNext=()=>{st.ch=setTimeout(()=>{if(st.stop)return;if(st.A&&st.audioOn&&(st.rows||[]).some(r=>r.live)&&!document.hidden)st.A.play("def",4);chantNext()},50000+Math.random()*30000)};chantNext();
   setTimeout(()=>{if(!st.stop&&st.A&&st.audioOn&&(st.rows||[]).some(r=>r.live))st.A.play("def",3)},2500);
   /* ---- movimento ---- */
-  const V={x:5,z:K.CH/2+K.RA+13*.85+1.8+4*.8+.4,yaw:0,pitch:-26};/* (935) si parte dall'anello alto (5ª fila) */V.yaw=Math.atan2(V.x,V.z)*180/Math.PI;st.V=V;/* (930) si parte dall'alto, sopra i gradini */let walk=0,dr=null;const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const V={x:0,z:K.CH/2+K.RA+13*.85+1.8+5*.8+.4,yaw:0,pitch:-24};/* (950) partenza sulle scale centrali dell'anello alto, all'altezza indicata da Francesco *//* (935) si parte dall'anello alto (5ª fila) */V.yaw=Math.atan2(V.x,V.z)*180/Math.PI;st.V=V;/* (930) si parte dall'alto, sopra i gradini */let walk=0,dr=null;const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
   /* (929) CAMMINARE OVUNQUE (Francesco 20:42): si sale sui gradoni, si guarda dall'alto, si scende e si entra in campo.
      dOut = distanza fuori dal rettangolo arrotondato del campo (come le tribune); l'altezza dei piedi segue il gradone su cui si è. */
   const dOut=(x,z)=>{const ax=Math.max(0,Math.abs(x)-(K.CW/2-3.5)),az=Math.max(0,Math.abs(z)-(K.CH/2-3.5));return Math.hypot(ax,az)-3.5};
