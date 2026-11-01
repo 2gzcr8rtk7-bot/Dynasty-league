@@ -2075,3 +2075,4 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 873. Box score NBA di Dynasty TV: nomi con iniziale puntata + cognome (tvShort), es. N. Alexander-Walker, CJ -> C. McCollum.
    (873) vale anche per il box Dreamers (drbox) e per la tabella Live della squadra (clall).
 874. Sala trofei (vStoria, .sala-oro) in Parquet giorno: versione B crema e arancio (Classifica competenza in bianco su fascia arancio, tasto Sala trofei arancio, tabelle crema #fdf4e6 con bordo #d9560b, testi marroni, parquet visibile). Notte invariata.
+875. Sala trofei di notte: versione B viola/bianco/oro (sfondo viola notte, tasto viola con bordo bianco e oro, Classifica competenza bianca su fascia viola tra righe oro, tabelle bianche #f7f3ff con intestazione viola e cornice oro, nomi viola scuro, punti oro).
