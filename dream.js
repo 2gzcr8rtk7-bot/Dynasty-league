@@ -215,7 +215,7 @@ st.A=null;try{const AC=window.AudioContext||window.webkitAudioContext;if(AC&&st.
   const fx=(n,v)=>{const b=B[n];if(!b||st.stop)return;const s=ac.createBufferSource();s.buffer=b;const g=ac.createGain();g.gain.value=v;s.connect(g);g.connect(m);s.start()};
   Promise.all(["dream-sottofondo","dream-segnato","dream-sbagliato"].map(ld)).then(()=>{if(ac.state==="suspended")ac.resume().catch(()=>{});startBg()});
   st.A={ac,play(k){if(k==="pt"||k==="ft")fx("dream-segnato",.9);else if(k==="miss")fx("dream-sbagliato",.8)},mute(on){m.gain.setTargetAtTime(on?1:0,ac.currentTime,.08)},
-    close(){try{bg&&bg.stop()}catch(e){}try{if(ac.state!=="closed")ac.close().catch(()=>{})}catch(e){}}};
+    close(){try{bg&&bg.stop()}catch(e){}}/* il contesto lo chiude già close() più sotto */};
   const unl=()=>{if(ac.state==="suspended")ac.resume().catch(()=>{})};ov.addEventListener("pointerdown",unl);ov.addEventListener("touchend",unl);
   st.vis=()=>{if(st.stop)return;if(document.hidden)ac.suspend().catch(()=>{});else ac.resume().catch(()=>{})};document.addEventListener("visibilitychange",st.vis)}}catch(e){st.A=null}
 const A=st.A;
