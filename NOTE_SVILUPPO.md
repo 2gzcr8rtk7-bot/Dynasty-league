@@ -2131,3 +2131,6 @@ Profilo TUR rifatto sulle 141 proposte (contengono le 81 del 31/10): req 21, age
 
 ## 913 — Condividi la scheda dei gusti del GM
 Tasto piccolo Condividi accanto al nome di ogni squadra nella pagina «Gusti dei GM»: un unica immagine (1080 px, stile Dreamers) con tutto il testo della scheda: situazione squadra, cosa cercano, come chiudono, infortuni, numeri, ruoli, giocatori più e meno voluti, cosa manca (shGusti, shOpen("gm")).
+
+## 914 — Report Dolphins Valutazione 44 + Spiders Valutazione 28
+DOL: 15 risposte nuove del 01/11 (tutte sui propri giocatori + Kawhi, Maluach, Porter, Giddey): nessun bonus nuovo sopra 900 fuori dal profilo (Clingan −4, proprio); GM_INTOCC DOL = Jokić; AV_FATTI.DOL 44; sconti infortuni 53% a 7–8 e 97% a 9–10 (VAL_INJ_B 0,75 confermato). SPI: 14 risposte nuove sui propri: pl Embiid +8, Mitchell +8, LeBron +12, Franz Wagner +4, Adebayo +4; GM_INTOCC SPI = Boozer, LeBron (Castle ora solo con grosso sovrapprezzo). Schede DOL e SPI aggiornate. Nessuna correzione dei valori (solo giocatori propri o già corretti).
