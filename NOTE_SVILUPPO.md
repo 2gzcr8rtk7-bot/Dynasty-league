@@ -2119,3 +2119,6 @@ Profilo EAG: pl fusi col confronto (giù Zubac, Harper, F. Wagner, Sabonis; su J
 
 ## 909 — Etichetta R nei roster per tutti i rookie
 Il roster (e l immagine della scheda) guardava solo la lista ROOKIE (5 nomi); ora usa isRookie, che conta anche i rookie segnati in VALORI: compaiono Burries, De Larrea, Steinbach, Mara, Wagler, Mikel Brown, Dybantsa, Flemings, Caleb Wilson, Graves, Morez Johnson.
+
+## 910 — Report Turtles Valutazione 15
+AV_FATTI.TUR (15), GM_INTOCC TUR = Dylan Harper; pl nuovi Haliburton +4, Dybantsa −4 (gli altri sotto 900 o già nel profilo); scheda GM_DESCR TUR rifatta (Dybantsa e Peterson solo con grosso sovrapprezzo, potenziale 80%). Nessuna correzione dei valori (tutti giocatori propri).
