@@ -127,7 +127,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
     /* anello viola sul soffitto attorno al maxischermo */const cr=new THREE.Mesh(new THREE.TorusGeometry(1,.12,5,96),V1);cr.rotation.x=Math.PI/2;cr.scale.set(9,7,1);cr.position.y=26.3;S.add(cr)}
   /* (957) l'anello si interrompe sul corridoio della sala trofei */const glow=new THREE.Mesh(new THREE.TorusGeometry(1,.07,5,96,Math.PI*2-.09).rotateZ(Math.PI/2+.045),new THREE.MeshBasicMaterial({color:ACC,toneMapped:false}));glow.rotation.x=Math.PI/2;glow.scale.set(WX*1.03,WZ*1.03,1);glow.position.y=Y2+1.2;S.add(glow);
   /* (957) SALA TROFEI: in cima alle scale centrali, alle spalle della visuale iniziale, un corridoio incassato nel muro porta alla sala */
-  /* (959) la sala ce l'hanno tutti, ma la porta si apre solo per Ducks e Turtles (Francesco) */const SALA=["DUC","TUR"].includes(t);const TN={zA:CH/2+RA+13*.85+1.8+11*.8,zW:WZ*1.06-.45,y:Y1+1.6+10*.55,hw:1.2,H:3.2,DW:2.2,DH:2.6};const DOOR=[];
+  /* (959) la sala ce l'hanno tutti, ma la porta si apre solo per Ducks e Turtles (Francesco) */const SALA=true;/* (01/11, utente) porte della sala trofei aperte per tutte le squadre */const TN={zA:CH/2+RA+13*.85+1.8+11*.8,zW:WZ*1.06-.45,y:Y1+1.6+10*.55,hw:1.2,H:3.2,DW:2.2,DH:2.6};const DOOR=[];
   {const g=new THREE.Group();g.position.set(0,TN.y,0);S.add(g);const L=TN.zW-TN.zA,zc=(TN.zA+TN.zW)/2,W=TN.hw*2;
     const shT=tex(512,256,(x,W_,H_)=>{const gr=x.createLinearGradient(0,0,0,H_);gr.addColorStop(0,"#26232d");gr.addColorStop(1,"#141218");x.fillStyle=gr;x.fillRect(0,0,W_,H_);for(let i=0;i<W_;i+=64){x.fillStyle="rgba(255,255,255,.05)";x.fillRect(i,0,3,H_)}});
     const shM=new THREE.MeshLambertMaterial({map:shT,emissive:"#ffffff",emissiveMap:shT,emissiveIntensity:.35,side:THREE.DoubleSide}),led=new THREE.MeshBasicMaterial({color:ACC,toneMapped:false});
@@ -449,7 +449,7 @@ const A=null;
     [-1,1].forEach(sd=>{const s=new THREE.SpotLight("#fff1d6",40,14,.9,.7,1.6);s.position.set(sd*2,HR-.2,(Z0+Z1)/2);s.target.position.set(sd*X1,2.5,(Z0+Z1)/2);RS.add(s,s.target)});
     let lt=performance.now();const tick=now=>{const dt=Math.min(.05,(now-lt)/1000);lt=now;SPIN.forEach(g=>{g.rotation.y+=dt*.35});SPK.forEach(o=>{o.sp.forEach((q,k)=>{q.y+=q.v*dt;q.a+=dt*.3;if(q.y>3.8)q.y=0;o.pos[k*3]=o.px+Math.cos(q.a)*q.r;o.pos[k*3+1]=1.1+q.y;o.pos[k*3+2]=o.pz+Math.sin(q.a)*q.r});o.geo.attributes.position.needsUpdate=true});return SPIN.length>0};
     return{S:RS,taps,PED,tick}}
-  let shut=0;const closed=()=>{const n=performance.now();if(n-shut<2500)return;shut=n;V.z=Math.min(V.z,K.TN.zW-1.5);tw=null;walk=0;const h=ov.querySelector(".drm3hint");if(h){h.textContent="🔒 La sala trofei è chiusa: si apre solo per Ducks e Turtles";h.style.opacity=1;setTimeout(()=>{h.style.opacity=0},3000)}if(st.say)st.say("La porta è chiusa")};
+  let shut=0;const closed=()=>{const n=performance.now();if(n-shut<2500)return;shut=n;V.z=Math.min(V.z,K.TN.zW-1.5);tw=null;walk=0;const h=ov.querySelector(".drm3hint");if(h){h.textContent="🔒 La sala trofei è chiusa";h.style.opacity=1;setTimeout(()=>{h.style.opacity=0},3000)}if(st.say)st.say("La porta è chiusa")};
   async function enterRoom(){if(!K.OPEN){closed();return}if(st.busy||st.room)return;st.busy=true;tw=null;walk=0;fade.style.opacity=1;await new Promise(r=>setTimeout(r,380));if(st.stop)return;
     if(!RM){msg.textContent="Entro nella sala trofei…";msg.style.display="";try{RM=await buildRoom();K.RS=RM.S}catch(e){console.error(e);RM=null}msg.style.display="none";
       if(!RM){V.x=0;V.z=K.TN.zA-.8;fade.style.opacity=0;st.busy=false;return}}
