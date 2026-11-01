@@ -26,7 +26,8 @@ pesa il recente ma conta la carriera) · Curry 2–3 · Dončić 2½–3.
 - Chi salta ~20 partite ogni anno → 1–1½; ~30 ogni anno → ½. Un infortunio ogni tanto capita a tutti → da 3 in su.
 - Proposta di regola: media partite saltate per stagione sulle ultime 5 stagioni (82 a stagione):
   ≤11 →5 · 13 →4½ · 16 →4 · 19 →3½ · 22 →3 · 26 →2½ · 30 →2 · 35 →1½ · 45 →1 · oltre →½.
-  Infortunio attuale serio (Achille, crociato, frattura, rientro >3 settimane) −1; fuori breve −½.
+  Infortunio attuale serio (Achille, crociato, frattura, rientro >3 settimane) −1. Fuori breve per un episodio casuale (caviglia storta, contusione, malattia): nessuno sconto (Francesco 01/11: capita a tutti).
+- (916, 01/11) Infortuni RICORRENTI nella stagione: INJ_EPI + lista INFORTUNI → injRic: 2 episodi −½ solo se uno è serio o stessa zona; 3 episodi −½ (−1 se due seri o stessa zona); 4+ −1 (−1½ stessa zona). I GM si stufano di chi si rompe spesso.
 - **Peso su valore e prezzo NON lineare**: tra 2½ e 3½ stelle conta poco (gli infortuni sono un po' casuali).
   Conta davvero agli estremi: 4–5 stelle = premio (Jokić vs Dončić: entrambi ~50 PDK, ma Jokić le gioca tutte e
   lo si sente tantissimo nel prezzo); 1–2 stelle = sconto forte (Ingram in vendita a ~10–20 crediti).

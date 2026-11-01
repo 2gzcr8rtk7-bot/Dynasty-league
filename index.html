@@ -4683,6 +4683,21 @@ function iaInjDays(n){const i=INJ[n];if(!i||i.stato!=="out")return 0;const m=(i.
 const INJ_PT=[[21,.90],[90,.50],[150,.30]];
 const injCurve=d=>{if(d<=21)return 1;if(d>=150)return .30;for(let i=1;i<INJ_PT.length;i++){const a=INJ_PT[i-1],b=INJ_PT[i];if(d<=b[0])return a[1]+(b[1]-a[1])*(d-a[0])/(b[0]-a[0])}return .30};
 /* (486) STRASCICO DOPO IL RIENTRO (Francesco, 29/10/2026): chi ha saltato tanto non torna subito al valore di prima. Quando torna (non è più OUT) il valore resta ridotto in base a quanto è stato fuori: oltre 3 settimane −10%, oltre 3 mesi (90 gg) −20%, oltre 5 mesi (150 gg) −30%. La data di inizio infortunio sta in INJ_STORIA[nome]="gg/mm" (da scrivere ogni volta che un giocatore delle nostre squadre si infortuna e resta fuori); il rientro è la prima partita con minuti DOPO quella data (come fa injSync). Senza data in INJ_STORIA non c'è strascico. Lo strascico si riduce con le prestazioni DOPO il rientro sopra i 32 PDK: alla prima si dimezza, alla seconda finisce. Per toglierlo a mano: cancellare il giocatore da INJ_STORIA. */
+/* (916) INFORTUNI RICORRENTI (Francesco, 01/11 sera): un infortunio ogni tanto (caviglia storta, contusione, malattia, riposo) capita a tutti
+   e NON abbassa il valore; chi si rompe spesso stufa i GM e il valore scende. Registro degli episodi della stagione in corso:
+   INJ_EPI[nome] = [[data "GG/MM", "tipo", giorni stimati fuori]]; in più ogni OUT della lista INFORTUNI conta da solo come episodio.
+   Episodio «serio» = 21+ giorni o Achille/crociato/frattura/menisco/stiramento muscolare; «stessa zona» = due episodi sulla stessa parte del corpo.
+   Calo delle stelle infortuni nel calcolo della domenica (oltre alla storia delle 5 stagioni già in INF_STELLE):
+   1 episodio → 0 · 2 episodi → −0,5 se almeno uno serio o stessa zona, altrimenti 0 · 3 episodi → −0,5 (−1 se due seri o stessa zona) ·
+   4 o più → −1 (−1,5 se ricorrenti sulla stessa zona). Le stelle pesano sul valore solo sotto 2,5 (VAL_INJ_B): chi è sano di storia non lo sente. */
+const INJ_EPI={};
+const injZona=t=>{t=String(t||"").toLowerCase();for(const z of["caviglia","ginocchio","piede","fascite","achille","polpaccio","coscia","bicipite femorale","adduttore","inguine","anca","schiena","spalla","polso","mano","dito","gomito","collo","costol"])if(t.includes(z))return z==="fascite"?"piede":z;return null};
+const injSerio=(t,g)=>(g||0)>=21||/achille|crociat|frattur|menisco|stiramento|strappo|lesione|operaz/i.test(t||"");
+function injEpisodi(n){const L=(INJ_EPI[n]||[]).map(x=>({d:x[0],t:x[1],g:x[2]||0}));try{(INFORTUNI.lista||[]).forEach(x=>{if(x.p!==n||x.stato!=="out")return;if(/riposo|gestione|scelta/i.test(x.tipo||""))return;
+    const z=injZona(x.tipo);if(L.some(e=>injZona(e.t)===z&&z))return;let g=0;try{g=iaInjDays(n)||0}catch(e){}L.push({d:"",t:x.tipo,g})})}catch(e){}return L.filter(e=>!/riposo|gestione|scelta|malattia|influenza|personal/i.test(e.t))}
+function injRic(n){const E=injEpisodi(n),k=E.length;if(k<=1)return 0;const ser=E.filter(e=>injSerio(e.t,e.g)).length,zs=E.map(e=>injZona(e.t)).filter(Boolean),rip=zs.length!==new Set(zs).size;
+  if(k===2)return ser||rip?.5:0;if(k===3)return ser>=2||rip?1:.5;return rip?1.5:1}
+try{window.injRic=injRic;window.injEpisodi=injEpisodi}catch(e){}
 const INJ_STORIA={"Jalen Williams":"25/10","Chet Holmgren":"30/10"};
 const injDt=dm=>{const[d,m]=dm.split("/").map(Number);return Date.UTC(m>=8?2026:2027,m-1,d)};
 function injScar(n){const dal=INJ_STORIA[n];if(!dal)return 1;const k0=injKey(dal),all=((typeof PARTITE!=="undefined"&&PARTITE[n])||[]).filter(r=>r&&typeof r[0]==="string"&&/^\d{2}\/\d{2}$/.test(r[0])&&+r[2]>0),post=all.filter(r=>injKey(r[0])>k0).sort((a,b)=>injKey(a[0])-injKey(b[0]));if(!post.length)return 1;
@@ -4745,7 +4760,7 @@ function valAuto(n,now){const V0=VAL_MAN[n];if(V0==null)return null;const B=VAL_
   /* (775) stesso infortunio, niente doppio sconto: finché il giocatore è ancora fuori per l'infortunio scritto in INJ_STORIA
      (nessuna partita con minuti dopo quella data) il calo delle stelle aspetta; vale solo la curva OUT negli scambi. Al rientro scatta (max −15% a settimana) insieme allo strascico. */
   try{const dal=(typeof INJ_STORIA!=="undefined")&&INJ_STORIA[n];if(dal&&injNow<B[1]){const kk=dm=>{const[d,m]=String(dm).split("/").map(Number);return(m>=8?m:m+12)*100+d},k0=kk(dal);
-    const back=((typeof PARTITE!=="undefined"&&PARTITE[n])||[]).some(r=>r&&typeof r[0]==="string"&&/^\d{2}\/\d{2}$/.test(r[0])&&+r[2]>0&&kk(r[0])>k0);if(!back)injNow=B[1]}}catch(e){}let F0=null,v=V0;
+    const back=((typeof PARTITE!=="undefined"&&PARTITE[n])||[]).some(r=>r&&typeof r[0]==="string"&&/^\d{2}\/\d{2}$/.test(r[0])&&+r[2]>0&&kk(r[0])>k0);if(!back)injNow=B[1]}}catch(e){}try{injNow=Math.max(0,injNow-injRic(n))/* (916) infortuni ricorrenti in stagione */}catch(e){}let F0=null,v=V0;
   let VB=V0;for(let i=0;i<=k;i++){const cut=valCut(d0,i),r=valPdkRif(n,cut);if(!r)continue;
     if(F0==null){if((rk||r.nuovo)&&r.g<20){out.attesa=true;continue}out.attesa=false;F0=valF(r.p,valEta(n,cut),i===0?B[1]:injNow);continue}
     const t=VB*valF(r.p,valEta(n,cut),injNow)/F0;v=Math.min(v*1.15,Math.max(v*.85,t));if(VAL_FORZA[n]&&VAL_FORZA[n][i]!=null){v=VAL_FORZA[n][i];VB=v;F0=valF(r.p,valEta(n,cut),injNow)/* da qui il calcolo riparte da questo valore */}}
@@ -12353,7 +12368,7 @@ function gmProb(t,give,get,cin,cout){cin=cin||0;cout=cout||0;const G=GM_GUSTI[t]
  const ag=L=>{const sv=L.reduce((a,n)=>a+(valOf(n)||0),0)||1;return L.reduce((a,n)=>a+(valOf(n)||0)*(iaAge(n)??26),0)/sv};
  const d=(vr-vg)/Math.max(vg,vr,1)*100;let g=d-G.age*(ag(get)-ag(give))-G.req;
  get.forEach(n=>{g+=(G.role[ruoloDi(n)]||0)/get.length+(G.pl[n]||0)});give.forEach(n=>{g-=gmPlOwn(t,n,G.pl[n]||0)});
- try{g+=gmSitG(t,give,get,n=>valOf(n)||0,n=>iaAge(n)??26,G.age)+gmStarG(give,get,n=>valOf(n)||0)}catch(e){}
+ try{g+=gmSitG(t,give,get,n=>valOf(n)||0,n=>iaAge(n)??26,G.age)+gmStarG(give,get,n=>valOf(n)||0)+gmCtxG(t,give,get,n=>valOf(n)||0).v}catch(e){}
  return 1/(1+Math.exp(-g/(G.sc||GM_K.sc)))}
 function gmSides(x){const R=iaRec(x),o={};for(const t in R){const get=R[t].pl.map(p=>p.n),give=[];let cin=R[t].cr.reduce((a,c)=>a+(+c.v||0),0),cout=0;for(const u in R){R[u].pl.forEach(p=>{if(p.from===t)give.push(p.n)});R[u].cr.forEach(c=>{if(c.from===t)cout+=(+c.v||0)})}o[t]={give,get,cin,cout}}return o}
 function gmWeigh(pool){const A=iaTeam();if(!pool||!pool.length)return pool;let any=false;
@@ -12479,8 +12494,43 @@ function gmSitG(t,give,get,vf,af,ga){try{const S=gmSit(t),ka=S.ka<0?Math.max(S.k
   const yg=n=>{const a=af(n);return a<=22?1:a<=24?.5:0};const sg=sh(give),sr=sh(get);
   const pot=get.reduce((a,n)=>a+yg(n)*sr(n),0)*S.kp*.5-give.reduce((a,n)=>a+yg(n)*sg(n),0)*S.kp;
   /* (893) chi gioca per vincere ora guarda la produzione di questa stagione: somma dei PDK medi dei giocatori da rotazione (PDK ≥ 15) ricevuti contro ceduti */
-  const pk=L=>L.reduce((a,n)=>{const v=(typeof pdkMed==="function"?pdkMed(n):null)??0;return a+(v>=15?v:0)},0),pg=pk(get),pd=pk(give),wn=S.kw&&(pg||pd)?Math.max(-15,Math.min(15,S.kw*100*(pg-pd)/Math.max(pg,pd))):0;
+  let rc=1;try{rc=.4+.6*gmCtx(t).race/* (915) chi è fuori dalla corsa guarda meno i PDK di oggi */}catch(e){}const pk=L=>L.reduce((a,n)=>{const v=gmForm(n).f??0;return a+(v>=15?v:0)},0),pg=pk(get),pd=pk(give),wn=S.kw&&(pg||pd)?Math.max(-15,Math.min(15,S.kw*rc*100*(pg-pd)/Math.max(pg,pd))):0;
   return Math.max(-25,Math.min(20,-ka*(ag(get)-ag(give))+pot+wn))}catch(e){return 0}}
+/* (915) CONTESTO DI SQUADRA DINAMICO (Francesco, 01/11 sera): i consigli di scambio seguono 5 cose che cambiano di settimana in settimana.
+   1) corsa al titolo: classifica Dreamers (posizione, pesata su quanti turni sono giocati) + forza attuale (PDK in forma dei migliori 10);
+   2) età media: in una squadra giovane i 1-2 veterani fuori età (≥ età media + 6 e ≥ 29 anni) si cedono volentieri;
+   3) copertura dei ruoli: un ruolo è coperto con 2 giocatori da 30 PDK (2,5 = comodo); chi fa 28 vale «mezzo»: contributo = (PDK in forma − 24)/6, tra 0 e 1,25;
+   4) infortuni: chi è OUT adesso non copre il ruolo (la squadra si sente scoperta e cerca quel ruolo);
+   5) trend: PDK in forma = metà media stagione + metà ultime 5; chi è in calo si cede più facilmente e si riceve meno volentieri.
+   Si ricalcola a ogni apertura con i dati del giorno. */
+const GM_CTXC={};
+function gmForm(n){const g=(typeof PARTITE!=="undefined"&&PARTITE[n])||[];let b=null;try{b=valBaseStorica(n)}catch(e){}
+  if(!g.length)return{f:b??0,s:b,l:null,tr:0};const s=g.reduce((a,x)=>a+(+x[3]||0),0)/g.length,L=g.slice(-5),l=L.reduce((a,x)=>a+(+x[3]||0),0)/L.length;
+  let f=g.length>=5?(s+l)/2:s;if(g.length<5&&b!=null){const w=g.length/(g.length+5);f=w*f+(1-w)*b}
+  const tr=g.length>=6&&s>0?(l-s)/s:0;return{f,s,l,tr}}
+const gmCov1=p=>Math.max(0,Math.min(1.25,(p-24)/6));
+function gmCov(names){const c={G:0,F:0,C:0};names.forEach(n=>{let out=false;try{out=iaOut(n)}catch(e){}if(out)return;const r=ruoloDi(n);if(c[r]==null)return;c[r]+=gmCov1(gmForm(n).f)});return c}
+function gmCtx(t){if(GM_CTXC[t])return GM_CTXC[t];const S=gmSit(t),R=(ROSTER[t]||[]).filter(p=>p[5]!=="G").map(p=>p[0]);
+  const cov=gmCov(R),outs=R.filter(n=>{try{return iaOut(n)}catch(e){return false}}).filter(n=>gmForm(n).f>=24);
+  const str=Object.keys(ROSTER).map(u=>({u,v:(ROSTER[u]||[]).filter(p=>p[5]!=="G").map(p=>gmForm(p[0]).f).sort((a,b)=>b-a).slice(0,10).reduce((a,x)=>a+x,0)})).sort((x,y)=>y.v-x.v),rs=str.findIndex(x=>x.u===t)+1,N=str.length||8;
+  let played=0;try{played=(drStand().find(x=>x.t===t)||{}).n||0}catch(e){}
+  const wp=Math.min(.8,played/Math.max(1,DR_REG*.6)),ps=S.pos?(N-S.pos)/(N-1):.5,ss=(N-rs)/(N-1),race=wp*ps+(1-wp)*ss;
+  const corsa=race>=.6?"in corsa per il titolo":race>=.35?"può giocarsela":"fuori dalla corsa al titolo";
+  const ages=R.map(n=>iaAge(n)??26),vets=S.eta<=24.5?R.filter(n=>{const a=iaAge(n)??26;return a>=29&&a>=S.eta+6}):[];
+  const calo=R.filter(n=>{const F=gmForm(n);return F.tr<=-.15&&F.s>=20});
+  return GM_CTXC[t]={cov,outs,race,corsa,rs,vets,calo,played}}
+function gmCovW(c){return c<2?1:c<2.5?.5:.2}
+/* termine di contesto: copertura ruoli prima/dopo + veterani fuori età + giocatori in calo (in punti, come gli altri gusti) */
+function gmCtxG(t,give,get,vf){const why=[];try{const C=gmCtx(t),S=gmSit(t),R=(ROSTER[t]||[]).filter(p=>p[5]!=="G").map(p=>p[0]),after=gmCov(R.filter(n=>!give.includes(n)).concat(get));
+  let ro=0;for(const r of["G","F","C"]){const b=C.cov[r],a=after[r];if(Math.abs(a-b)<.05)continue;let v=gmCovW(Math.min(a,b))*(a-b)*10;if(b>=2&&a<2)v-=6;ro+=v;
+    const nm={G:"guardie",F:"ali",C:"centri"}[r];if(v<=-4)why.push(a<2?`resta scoperto nelle ${nm}`:`perde copertura nelle ${nm}`);else if(v>=4)why.push(b<2?`copre il buco nelle ${nm}`:`rinforza le ${nm}`)}
+  ro=Math.max(-12,Math.min(12,ro));
+  const sh=L=>{const s=L.reduce((a,n)=>a+vf(n),0)||1;return n=>vf(n)/s},sg=sh(give),sr=sh(get);
+  let ve=0;if(C.race<.6)give.forEach(n=>{if(C.vets.includes(n)){ve+=8*sg(n);why.push(`squadra giovane: cede volentieri il veterano ${nmAb(n)}`)}});ve=Math.min(8,ve);
+  let tr=0;give.forEach(n=>{const F=gmForm(n);if(F.tr<=-.15&&F.s>=15){tr+=4*sg(n)}});get.forEach(n=>{const F=gmForm(n);if(F.tr<=-.15&&F.s>=15){tr-=4*sr(n)}});tr=Math.max(-4,Math.min(4,tr));
+  if(tr>=2)why.push("cede un giocatore in calo");else if(tr<=-2)why.push("riceve un giocatore in calo");
+  return{v:Math.max(-16,Math.min(14,ro+ve+tr)),why}}catch(e){return{v:0,why}}}
+try{window.gmCtx=gmCtx;window.gmCtxG=gmCtxG;window.gmForm=gmForm}catch(e){}
 /* (887) UNA STELLA PER 2-3 GIOCATORI MEDI (Francesco): praticamente nessun GM la cede. Se la squadra dà il giocatore più forte dello scambio
    e riceve 2 o più giocatori tutti sotto l'85% del suo valore, il sì crolla (−12 per ogni giocatore in più ricevuto). */
 function gmStarG(give,get,vf){try{const top=Math.max(0,...give.map(vf)),all=Math.max(0,...give.concat(get).map(vf));if(!top||top<all||get.length<2||top<700)return 0;if(get.some(n=>vf(n)>=.85*top))return 0;return-12*(get.length-1)}catch(e){return 0}}
@@ -12494,7 +12544,7 @@ function gsc(t,give,get){const G=prof(t),vt=Math.max(0,...give.concat(get).map(n
   const ag=L=>{const s=L.reduce((a,n)=>a+vx(n),0)||1;return L.reduce((a,n)=>a+vx(n)*ax(n),0)/s};
   const d=(vr-vg)/Math.max(vg,vr,1)*100,ea=-(G.age||0)*(ag(get)-ag(give));let ro=0,pp=[];
   get.forEach(n=>{ro+=((G.role||{})[ruoloDi(n)]||0)/get.length;const b=(G.pl||{})[n];if(b)pp.push([n,b,1])});give.forEach(n=>{let b=gmPlOwn(t,n,(G.pl||{})[n]||0);if(b<0&&d<-5)b*=Math.max(0,1+(d+5)/15)/* (893) «contento di lasciarlo» vale solo se non ci rimette: perdendo valore il bonus sparisce */;if(Math.abs(b)>=1)pp.push([n,-b,0])});
-  const ps=pp.reduce((a,x)=>a+x[1],0),si0=GU.gusti===false?0:gmSitG(t,give,get,vx,ax,G.age),st=GU.gusti===false?0:gmStarG(give,get,vx),si=si0+st/* (887) situazione della squadra + stella per giocatori medi */,g=d+ea-(G.req||0)+ro+si+Math.max(-20,Math.min(20,ps))/* tetto: tanti gusti insieme non possono ribaltare tutto */;return{p:1/(1+Math.exp(-g/(G.sc||GM_K.sc))),d,ea,ro,pp,si,si0,st}}
+  const ps=pp.reduce((a,x)=>a+x[1],0),si0=GU.gusti===false?0:gmSitG(t,give,get,vx,ax,G.age),st=GU.gusti===false?0:gmStarG(give,get,vx),cx=GU.gusti===false?{v:0,why:[]}:gmCtxG(t,give,get,vx),si=si0+st+cx.v/* (887) situazione della squadra + stella per giocatori medi */,g=d+ea-(G.req||0)+ro+si+Math.max(-20,Math.min(20,ps))/* tetto: tanti gusti insieme non possono ribaltare tutto */;return{p:1/(1+Math.exp(-g/(G.sc||GM_K.sc))),d,ea,ro,pp,si,si0,st,cx}}
 try{window.gsc=gsc}catch(e){}
 /* ricerca */
 const rnd=a=>a[Math.random()*a.length|0];
@@ -12561,6 +12611,7 @@ function why(t,r){const G=prof(t),f=v=>(v>0?"+":"")+Math.round(v);const L=[];
   if(Math.abs(r.ro)>=2)L.push(r.ro>0?"riceve il ruolo che preferisce":"riceve un ruolo che non ama");
   r.pp.sort((a,b)=>Math.abs(b[1])-Math.abs(a[1])).slice(0,2).forEach(([n,b,inn])=>L.push(inn?(b>0?`gli piace ${nmAb(n)}`:`non ama ${nmAb(n)}`):(b>0?`è contento di lasciare ${nmAb(n)}`:`gli dispiace cedere ${nmAb(n)}`)));
   if(r.st)L.push("non dà il giocatore più forte per due o tre giocatori medi");
+  if(r.cx&&r.cx.why)r.cx.why.slice(0,2).forEach(w=>L.push(w));
   if(Math.abs(r.si0||0)>=6){const S=gmSit(t);L.push(r.si0<0?(S.tipo==="giovane"?"squadra in ricostruzione: non vuole cedere i suoi giovani":"gioca per il titolo: perde PDK di questa stagione"):(S.tipo==="giovane"?"squadra in ricostruzione: le servono giovani":"gioca per il titolo: guadagna PDK di questa stagione"))}
   return L.join(" · ")}
 const pc=p=>Math.round(p*100)+"%",cl=p=>p>=.6?"hi":p>=.4?"md":"lo";
@@ -12587,7 +12638,8 @@ const GM_DESCR={EAG:{rep:"Proposte (32), Confronto (37), Valutazione (14)",cerca
 function gmSitHtml(t){const S=gmSit(t),f1=x=>(Math.round(x*10)/10).toString().replace(".",","),A=S.acc;
   const tip={titolo:"Gioca per il titolo: contano i PDK di questa stagione, l'età conta poco. Per cedere un giocatore produttivo vuole produzione in cambio, non solo valore",giovane:"Squadra giovane che costruisce: i giovani di potenziale li cede solo con un vantaggio netto e per un giocatore pronto ma più vecchio chiede di più",esperta:"Squadra esperta che vuole vincere subito: l'età pesa meno, conta la produzione di oggi",mista:"Rosa a metà strada: l'età pesa come nei report"}[S.tipo];
   return`<div class="gmsit"><p><b>Situazione squadra.</b> ${tip}.</p><div class="gmnum"><div><small>Età media rosa</small><b>${f1(S.eta)}</b></div><div><small>Valore under 23</small><b>${Math.round(S.giov*100)}%</b></div><div><small>Accetta (report)</small><b>${A?Math.round(A[0]/A[1]*100)+"%":"—"}</b></div></div>
-  <p class="gmsitn">${A?`Nei report accetta ${A[0]} proposte su ${A[1]}. `:""}${S.pot.length?`Giovani di potenziale: ${S.pot.join(", ")}. `:""}Rosa ${S.rv}ª per valore${S.pos?` · ${S.pos}ª in classifica Dreamers`:""}. L'IA Trade aggiunge questa situazione ai gusti dei report: ${S.ka>=0?`l'età pesa ${f1(S.ka)} punti per anno in più`:`l'età pesa fino a ${f1(-S.ka)} punti per anno in meno (mai sotto zero)`}${S.kp?`; cedere un giovane fino a 22 anni costa ${f1(S.kp)} punti`:""}. In più nessuna squadra dà il suo giocatore più forte per due o tre giocatori medi.</p></div>`}
+  <p class="gmsitn">${A?`Nei report accetta ${A[0]} proposte su ${A[1]}. `:""}${S.pot.length?`Giovani di potenziale: ${S.pot.join(", ")}. `:""}Rosa ${S.rv}ª per valore${S.pos?` · ${S.pos}ª in classifica Dreamers`:""}. L'IA Trade aggiunge questa situazione ai gusti dei report: ${S.ka>=0?`l'età pesa ${f1(S.ka)} punti per anno in più`:`l'età pesa fino a ${f1(-S.ka)} punti per anno in meno (mai sotto zero)`}${S.kp?`; cedere un giovane fino a 22 anni costa ${f1(S.kp)} punti`:""}. In più nessuna squadra dà il suo giocatore più forte per due o tre giocatori medi.</p>${(()=>{try{const C=gmCtx(t),f2=x=>(Math.round(x*10)/10).toString().replace(".",","),lab=c=>c<2?"scoperto":c<2.5?"coperto":"abbondante";
+    return`<p class="gmsitn"><b>Contesto di questa settimana.</b> ${C.corsa[0].toUpperCase()+C.corsa.slice(1)} (${C.rs}ª per PDK in forma${S.pos?`, ${S.pos}ª in classifica`:""}). Copertura dei ruoli (2 giocatori da 30 PDK = coperto): guardie ${f2(C.cov.G)} ${lab(C.cov.G)}, ali ${f2(C.cov.F)} ${lab(C.cov.F)}, centri ${f2(C.cov.C)} ${lab(C.cov.C)}.${C.outs.length?` Fuori per infortunio: ${C.outs.map(nmAb).join(", ")}.`:""}${C.vets.length?` Veterani fuori età per questa rosa (li cede più volentieri): ${C.vets.map(nmAb).join(", ")}.`:""}${C.calo.length?` In calo nelle ultime 5: ${C.calo.map(nmAb).join(", ")}.`:""}</p>`}catch(e){return""}})()}</div>`}
 function gmScheda(t){const G=GM_GUSTI[t],D=GM_DESCR[t],f=v=>(v>0?"+":"")+(Math.round(v*10)/10).toString().replace(".",",");
   if(!G)return`<section class="gmsc nd">${badge(t)}<div><h4>${TEAMS[t].nick}</h4><p class="gmnd">⏳ <b>Ancora da verificare.</b> I ${TEAMS[t].nick} non hanno ancora mandato i report dell'Allenamento IA Trade: per ora nell'IA Gusti usano il gusto medio della lega (segnati «stima»). Appena arrivano i report, qui compariranno cosa cercano e come trattano.</p></div></section>`;
   const aff=Math.round(Math.min(1,(G.n||0)/150)*100),pl=Object.entries(G.pl||{}),up=pl.filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,6),dn=pl.filter(x=>x[1]<0).sort((a,b)=>a[1]-b[1]).slice(0,6);
