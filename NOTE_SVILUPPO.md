@@ -2212,3 +2212,6 @@ Francesco (21:46–21:47). Parquet: listelli con sfumatura propria, venature, no
 
 ## 948 — Modalità Dream: targhetta mai coperta dalla maglia
 Francesco (21:51): la maglia copriva la parte alta della targhetta (anche con l ingrandimento da lontano). Ora la targhetta sta in basso e la maglia sempre sopra con 12 cm di stacco, a qualsiasi distanza. Parquet da vicino meno bruciato (fari 330 → 250, pozze di luce più tenui).
+
+## 949 — Riga del tabellone: frecce staccate dai tasti maglia e Dream
+Francesco (21:55): con i numeri lunghi del turno (es. 19/36 15/28) il tabellone si allargava e le frecce ‹ › toccavano il tasto maglia e il tasto Dream. Ora la riga ha 8 px di spazio tra gli elementi e se il tabellone non ci sta si rimpicciolisce in proporzione (lbmFit dopo ogni disegno e alla rotazione).

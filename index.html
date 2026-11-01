@@ -7487,6 +7487,10 @@ setInterval(()=>{try{const on=lvNotte();document.querySelectorAll(".lbm[data-lv]
 /* (927) MODALITÀ DREAM: al posto del vecchio tasto notte accanto al campo (la notte ora è in alto, vicino alle impostazioni) il tasto viola «D»
    apre lo stadio 3D della squadra (dream.js, caricato solo al primo tocco; il motore 3D in vendor/three.min.js). */
 const DRM_BTN=`<button class="drmbtn" id="drmbtn" aria-label="Modalità Dream" title="Modalità Dream"><svg viewBox="0 0 24 24" aria-hidden="true"><text x="11" y="18.2" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="17" font-weight="900" font-style="italic" fill="#fff">D</text><path d="M19.2 2.6l.75 1.6 1.65.2-1.2 1.15.3 1.7-1.5-.85-1.5.85.3-1.7-1.2-1.15 1.65-.2z" fill="#fde68a"/></svg></button>`;
+/* (949) RIGA DEL TABELLONE (maglia · ‹ tabellone › · D): il tabellone si allargava con i numeri lunghi (es. 19/36 15/28) e le frecce
+   finivano attaccate ai tasti maglia e Dream. Ora se non ci sta si rimpicciolisce (scala) e resta sempre uno spazio di 8 px per lato. */
+function lbmFit(){document.querySelectorAll("h2.lbmh").forEach(h=>{const w=h.querySelector(".lbmw");if(!w)return;w.style.transform="";const kids=[...h.children].filter(c=>c!==w),side=kids.reduce((a,c)=>a+c.getBoundingClientRect().width,0),cs=getComputedStyle(h),room=h.clientWidth-parseFloat(cs.paddingLeft||0)-parseFloat(cs.paddingRight||0)-side-16-8*kids.length,need=w.scrollWidth;if(need>room&&room>60){w.style.transform=`scale(${(room/need).toFixed(3)})`;w.style.transformOrigin="center"}})}
+setTimeout(()=>{if(typeof render!=="function")return;const R9=render;render=function(){const x=R9.apply(this,arguments);try{lbmFit()}catch(e){}return x};try{lbmFit()}catch(e){}},0);addEventListener("resize",()=>{try{lbmFit()}catch(e){}});
 /* (943) squadre senza Modalità Dream (Francesco 21:35: i Peacocks no): il tasto c'è ma è spento e non fa nulla */
 const DRM_NO=["PEA"],drmBtn=t=>DRM_NO.includes(t)?DRM_BTN.replace('id="drmbtn"','id="drmoff" disabled aria-disabled="true"').replace('class="drmbtn"','class="drmbtn off"'):DRM_BTN;
 document.addEventListener("click",e=>{const b=e.target.closest("#drmbtn");if(!b)return;e.preventDefault();e.stopPropagation();if(DRM_NO.includes(curTeam))return;const go=()=>{try{window.dreamOpen(curTeam)}catch(er){console.error(er)}};
@@ -12356,7 +12360,7 @@ document.addEventListener("click",e=>{if(cur!=="iaallena")return;const b=e.targe
  L.pop();try{k==="undo-t"?atSave():k==="undo-v"?avSave():cfSave()}catch(_){}b.textContent="Annullata ✓";setTimeout(()=>{const y=scrollY;render();scrollTo(0,y)},500)},true);
 </script>
 <style>.atrst{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 10px}.atrst .atb{padding:9px 8px;font-size:13px}/* (31/10) Campo, barra del tabellone: su telefono stava larga e il tasto notte usciva dal bordo a destra. Colonne auto | centro | auto e tabellone più compatto */
-.lbmh{grid-template-columns:auto minmax(0,1fr) auto!important;gap:4px!important}.lbmh>.lbmw{min-width:0;gap:3px!important}
+.lbmh{grid-template-columns:auto minmax(0,1fr) auto!important;gap:8px!important}.lbmh>.lbmw{min-width:0;gap:3px!important}
 @media (max-width:430px){.lbmh .lbma{width:24px!important}.lbmh .lbm{gap:3px!important;padding:0 5px!important}.lbmh .lbmn{font-size:17px!important}.lbmh .lbml{width:19px!important;height:19px!important}.lbmh .lbml svg,.lbmh .lbml img{max-width:19px;max-height:19px}.lbmh .lbmg{font-size:9.5px}}
 </style>
 <style>.atrst{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 10px}.atrst .atb{padding:9px 8px;font-size:13px}</style>
