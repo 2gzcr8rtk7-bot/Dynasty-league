@@ -43,7 +43,7 @@ function audioInit(){const A=window.AudioContext||window.webkitAudioContext;if(!
 /* ---------------- SCENA ---------------- */
 async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
   const C=s=>new THREE.Color(s),mix=(a,b,k)=>C(a).lerp(C(b),k),lum=h=>{const c=C(h);return .2126*c.r+.7152*c.g+.0722*c.b};
-  const BG=TM.bg,ACC=lum(BG)<.18?(TM.fg===TM.bg?"#ffffff":TM.fg):BG,INK=lum(BG)>.55?(lum(TM.trim)<.4?TM.trim:"#111"):"#ffffff";
+  /* (937) giallo Ducks più caldo (quello dorato del logo e del banner): la luce 3D schiarisce i gialli, quindi si parte da un oro più carico */const BG=({DUC:"#f0a500"})[t]||TM.bg,ACC=lum(BG)<.18?(TM.fg===TM.bg?"#ffffff":TM.fg):BG,INK=lum(BG)>.55?(lum(TM.trim)<.4?TM.trim:"#111"):"#ffffff";
   const mob=Math.min(screen.width,screen.height)<700;
   /* (932) qualità alta: antialias sempre, risoluzione fino a 2× (si abbassa da sola se il telefono fatica, vedi il ciclo) */
   const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,powerPreference:"high-performance"});R.setPixelRatio(Math.min(2,devicePixelRatio||1));const ANI=R.capabilities.getMaxAnisotropy();R.setSize(innerWidth,innerHeight,false);
@@ -145,8 +145,10 @@ function duel(t){try{const P=drPO(drStand()),k=drCurWeek(P),W=drWeek(k),pr=(drPa
 /* ---------------- APERTURA ---------------- */
 async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
   const ov=$(`<div class="drm3"><canvas></canvas><div class="drm3top"><button class="drm3x" aria-label="Esci">✕</button><div class="drm3t">MODALITÀ DREAM<small>${TM.nick.toUpperCase()} ARENA</small></div><span style="width:40px"></span></div>
-    <div class="drm3msg">Entro nell'arena…</div><div class="drm3hint">Trascina per guardarti intorno · tocca dove vuoi andare (parquet o tribune) · tocca una maglia per avvicinarti · due dita per avanzare</div></div>`);
-  document.body.appendChild(ov);document.body.classList.add("drm3on");const msg=ov.querySelector(".drm3msg");
+    <div class="drm3msg">Entro nell'arena…</div><div class="drm3hint">Trascina per guardarti intorno · tocca dove vuoi andare (parquet o tribune) · tocca una maglia per avvicinarti · due dita per ingrandire</div></div>`);
+  document.body.appendChild(ov);document.body.classList.add("drm3on");
+  /* (939) i gesti dentro lo stadio non arrivano all'app: prima lo scorrimento a dito cambiava squadra nella pagina sotto */
+  ["touchstart","touchmove","touchend","touchcancel","pointerdown","pointermove","pointerup","wheel","keydown"].forEach(k=>ov.addEventListener(k,e=>e.stopPropagation(),{passive:true}));const msg=ov.querySelector(".drm3msg");
   ST={t,ov,stop:false,anim:[],prev:{},audioOn:(()=>{try{return localStorage.getItem("dl_drm_audio")!=="0"}catch(e){return true}})()};const st=ST;
   const A=null;st.A=null;/* (931) audio tolto: un tifo sintetico non sembra vero (Francesco 20:52) */
   ov.querySelector(".drm3x").onclick=close;
@@ -212,13 +214,14 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
   const cv=ov.querySelector("canvas");
   /* (928) TUTTO A TOCCO, come la sala trofei: trascina = guarda; tocco sul parquet = cammina fin lì; tocco su una maglia = ti porta davanti;
      tocco sul maxischermo = coro DE-FENSE; due dita (pizzico) = avanti/indietro; rotella o WASD sul computer. */
+  let ZM=1;const applyZ=()=>{cam.zoom=ZM;cam.updateProjectionMatrix();st.dirty=true};
   const P=new Map();let pinch=null,tap=null,tw=null;const ray=new THREE.Raycaster(),ndc=new THREE.Vector2(),plane=new THREE.Plane(new THREE.Vector3(0,1,0),0),hit=new THREE.Vector3();
-  const fly=(x,z,yaw)=>{const d=yaw==null?0:((yaw-V.yaw+540)%360)-180;tw={t0:performance.now(),dur:Math.min(1600,450+Math.hypot(x-V.x,z-V.z)*90),x0:V.x,z0:V.z,x1:x,z1:z,y0:V.yaw,dy:d}};
+  const fly=(x,z,yaw)=>{if(ZM>1){ZM=1;applyZ()}const d=yaw==null?0:((yaw-V.yaw+540)%360)-180;tw={t0:performance.now(),dur:Math.min(1600,450+Math.hypot(x-V.x,z-V.z)*90),x0:V.x,z0:V.z,x1:x,z1:z,y0:V.yaw,dy:d}};
   cv.addEventListener("pointerdown",e=>{P.set(e.pointerId,{x:e.clientX,y:e.clientY});try{cv.setPointerCapture(e.pointerId)}catch(_){}tw=null;if(A)A.ac.resume();ov.querySelector(".drm3hint").style.opacity=0;
     if(P.size===1){dr={x:e.clientX,y:e.clientY};tap={x:e.clientX,y:e.clientY,t:performance.now(),m:0}}else{dr=null;tap=null;const[a,b]=[...P.values()];pinch=Math.hypot(a.x-b.x,a.y-b.y)}});
   cv.addEventListener("pointermove",e=>{if(!P.has(e.pointerId))return;P.set(e.pointerId,{x:e.clientX,y:e.clientY});
-    if(P.size>=2&&pinch!=null){const[a,b]=[...P.values()],d=Math.hypot(a.x-b.x,a.y-b.y),k=(d-pinch)*.035;pinch=d;const r=V.yaw*Math.PI/180;V.x-=Math.sin(r)*k;V.z-=Math.cos(r)*k;st.dirty=true;return}
-    if(!dr)return;const dx=e.clientX-dr.x,dy=e.clientY-dr.y;dr.x=e.clientX;dr.y=e.clientY;if(tap)tap.m+=Math.abs(dx)+Math.abs(dy);if(!tap||tap.m>8){V.yaw+=dx*.25;V.pitch=cl(V.pitch+dy*.2,-45,60);st.dirty=true}});
+    if(P.size>=2&&pinch!=null){const[a,b]=[...P.values()],d=Math.hypot(a.x-b.x,a.y-b.y);ZM=cl(ZM*d/Math.max(1,pinch),1,5);pinch=d;applyZ();return}/* (938) due dita = zoom come sulle foto (fino a 5×), senza muoversi */
+    if(!dr)return;const dx=e.clientX-dr.x,dy=e.clientY-dr.y;dr.x=e.clientX;dr.y=e.clientY;if(tap)tap.m+=Math.abs(dx)+Math.abs(dy);if(!tap||tap.m>8){V.yaw+=dx*.25/ZM;V.pitch=cl(V.pitch+dy*.2/ZM,-60,60);st.dirty=true}});
   const up=e=>{P.delete(e.pointerId);if(P.size<2)pinch=null;if(P.size===0)dr=null;const q=tap;tap=null;if(!q||q.m>10||performance.now()-q.t>450||e.type==="pointercancel")return;
     const rc=cv.getBoundingClientRect();ndc.set((e.clientX-rc.left)/rc.width*2-1,-(e.clientY-rc.top)/rc.height*2+1);ray.setFromCamera(ndc,cam);
     const hits=ray.intersectObjects([...Object.values(J).map(o=>o.jm),...K.scrM],false);
@@ -227,7 +230,7 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
     const sh=ray.intersectObjects(K.WALK,false);if(sh.length&&(!ray.ray.intersectPlane(plane,hit)||sh[0].distance<hit.distanceTo(cam.position))){fly(sh[0].point.x,sh[0].point.z,null);return}
     if(ray.ray.intersectPlane(plane,hit)){fly(hit.x,hit.z,null)}};
   cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);
-  cv.addEventListener("wheel",e=>{e.preventDefault();const r=V.yaw*Math.PI/180;V.x-=Math.sin(r)*-e.deltaY*.01;V.z-=Math.cos(r)*-e.deltaY*.01;st.dirty=true},{passive:false});
+  cv.addEventListener("wheel",e=>{e.preventDefault();ZM=cl(ZM*Math.exp(-e.deltaY*.0015),1,5);applyZ()},{passive:false});
   const keys={},kd=e=>{keys[e.key.toLowerCase()]=e.type==="keydown";if(e.key==="Escape")close()};document.addEventListener("keydown",kd);document.addEventListener("keyup",kd);st.kd=kd;
   /* (934) anche in orizzontale: campo visivo adattato (più stretto in verticale, così l'orizzontale non deforma) */const rs=()=>{const land=innerWidth>innerHeight;cam.aspect=innerWidth/innerHeight;cam.fov=land?46:62;cam.updateProjectionMatrix();R.setSize(innerWidth,innerHeight,false);st.dirty=true};rs();try{screen.orientation&&screen.orientation.unlock&&screen.orientation.unlock()}catch(e){};addEventListener("resize",rs);addEventListener("orientationchange",()=>setTimeout(rs,250));st.rs=rs;
   if(A)A.ac.resume();
@@ -250,6 +253,7 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
 }
 function disposeAll(K){try{K.S.traverse(o=>{if(o.geometry)o.geometry.dispose();const m=o.material;if(m){(Array.isArray(m)?m:[m]).forEach(x=>{if(x.map)x.map.dispose();x.dispose()})}});K.R.dispose();K.R.forceContextLoss&&K.R.forceContextLoss()}catch(e){}}
 function close(){const st=ST;if(!st)return;st.stop=true;ST=null;cancelAnimationFrame(st.raf);clearInterval(st.iv);clearTimeout(st.ch);if(st.kd){document.removeEventListener("keydown",st.kd);document.removeEventListener("keyup",st.kd)}if(st.rs)removeEventListener("resize",st.rs);
-  if(st.K)disposeAll(st.K);try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock("portrait").catch(()=>{})}catch(e){}try{st.A&&st.A.ac.close()}catch(e){}st.ov.remove();document.body.classList.remove("drm3on")}
+  if(st.K)disposeAll(st.K);
+  /* (939) si torna sempre alla squadra da cui si è entrati */try{if(window.curTeam!==undefined||typeof curTeam!=="undefined"){if(curTeam!==st.t){curTeam=st.t;render()}}}catch(e){}try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock("portrait").catch(()=>{})}catch(e){}try{st.A&&st.A.ac.close()}catch(e){}st.ov.remove();document.body.classList.remove("drm3on")}
 window.dreamOpen=open;window.dreamClose=close;window.dreamDbg=()=>ST;
 })();

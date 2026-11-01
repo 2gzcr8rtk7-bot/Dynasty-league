@@ -2188,3 +2188,6 @@ Francesco (21:09): si parte più in alto, dalla 5ª fila dell anello alto, con l
 
 ## 936 — Modalità Dream: tolto il tavolo nero a bordo campo
 Francesco (21:11): via il tavolo dei segnapunti (pedana nera) con la sua fascia LED.
+
+## 937–939 — Modalità Dream: oro Ducks, zoom a due dita, ritorno alla squadra giusta
+Francesco (21:13–21:15). Ducks: colore #f0a500, oro più caldo come logo e banner (la luce 3D schiariva il giallo #facc15). Due dita = zoom come sulle foto (fino a 5×) senza muoversi; da ingranditi il trascinamento è più fine; toccando per camminare lo zoom torna normale; rotella = zoom sul computer. Bug: chiudendo lo stadio ci si ritrovava nella pagina di un altra squadra perché i gesti dentro lo stadio arrivavano all app sotto (lo scorrimento cambia squadra): ora i gesti si fermano allo stadio e alla chiusura si torna sempre alla squadra da cui si è entrati.
