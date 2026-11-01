@@ -2113,3 +2113,6 @@ Nello stile Parquet (giorno) la percentuale di variazione sotto il valore restav
 
 ## 907 — Valore dei free agent in background
 A ogni apertura l app calcola senza mostrarlo il valore di tutti i free agent (506 con dati), con la stessa formula della domenica (PDK di riferimento stagione in corso + due passate, età, stelle neutre) e la scala tarata sui giocatori della lega (mediana valore/formula, non rookie con almeno 24 anni). Se un free agent entra in un roster e non è ancora in VALORI, valOf usa questo valore (FA_VAL / valNuovoRos). Poi va aggiunto in VALORI come gli altri.
+
+## 908 — Report Eagles Confronto 37 + Valutazione 14
+Profilo EAG: pl fusi col confronto (giù Zubac, Harper, F. Wagner, Sabonis; su Jokić, Avdija), bonus valutazione (Brunson +8, Towns +4, Duren −4, Davis −4), age 0,5 (giovane scelto 59%), n 45. GM_INTOCC EAG = Avdija; AV_FATTI.EAG con i 14 valutati; scheda GM_DESCR EAG aggiornata. Diciassettesima correzione: Dylan Harper 1260→1210 (EAG+MOO), Nikola Jokić 3265→3400 (EAG+FOX); tolta dai profili, VAL_LOG/VAL_CORREZ/AT_RIT. Sabonis escluso (SPI ed EAG giù ma DOL +10: disaccordo).
