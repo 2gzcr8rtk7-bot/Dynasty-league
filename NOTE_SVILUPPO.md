@@ -2069,3 +2069,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 867. Box score NBA in Dynasty TV: nuova colonna SQ (prima del PDK) con il logo della nostra squadra (.sqc, tabella .tvsq); ruolo tornato lettera opaca senza pillola (rimosse 861/862/866); colonna nomi 150px con nomi lunghi su due righe.
 868. Impostazioni › Box score: tasto «Copia le impostazioni per Claude» (copia DLS.bxM e le impostazioni attive in JSON con prefisso BOXSCORE), per poterle rendere predefinite per tutti.
 869. Colonna SQ del box NBA: loghi centrati in altezza nella riga e opacita' 0,6.
+870. Campo squadra, tabella Live stanotte/Turno (campoLive, .clall): tutte le colonne del box score (STL, BLK, TOV, tiri, da 3, liberi, Off, Dif, falli, +/-) e scorrimento orizzontale; lo swipe che cambia squadra non parte piu' se il dito e' sulla tabella (.tbl-wrap/.clwrap).
+871. Icona Dreamers in alto (.lglogo, tasto Aggiorna con tabindex): tolto l'anello viola/rosa che restava dopo il tocco (contorno di focus).
