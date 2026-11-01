@@ -2224,3 +2224,6 @@ Francesco (22:04–22:05): la voce italiana del telefono (sintesi vocale di sist
 
 ## 953 — Modalità Dream: cartellini più nitidi, partenza 5 gradini più in alto
 Francesco (22:08): cartellini delle statistiche disegnati a 3× (prima 2×), testo delle righe secondarie più marcato e chiaro, cartellini e maglie non più velati dalla foschia dello stadio. Partenza dalle scale centrali 5 file più in alto (11ª fila dell anello alto).
+
+## 954 — Modalità Dream: azioni live più lunghe, voce più chiara
+Francesco: l animazione sopra il giocatore spariva troppo presto. Ora il cartello dell azione compare con un piccolo zoom, resta fermo sopra la maglia 4,5 s, poi sale e svanisce in 1,5 s (6 s in tutto, prima 2,8 s). Più azioni dello stesso giocatore si susseguono a 5,2 s l una dall altra (prima 0,9 s, si sovrapponevano). Telecronista più lento e chiaro (velocità 0,92, tono naturale 1), fino a 4 frasi in coda.
