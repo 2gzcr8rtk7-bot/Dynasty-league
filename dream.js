@@ -127,7 +127,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
     /* anello viola sul soffitto attorno al maxischermo */const cr=new THREE.Mesh(new THREE.TorusGeometry(1,.12,5,96),V1);cr.rotation.x=Math.PI/2;cr.scale.set(9,7,1);cr.position.y=26.3;S.add(cr)}
   /* (957) l'anello si interrompe sul corridoio della sala trofei */const glow=new THREE.Mesh(new THREE.TorusGeometry(1,.07,5,96,Math.PI*2-.09).rotateZ(Math.PI/2+.045),new THREE.MeshBasicMaterial({color:ACC,toneMapped:false}));glow.rotation.x=Math.PI/2;glow.scale.set(WX*1.03,WZ*1.03,1);glow.position.y=Y2+1.2;S.add(glow);
   /* (957) SALA TROFEI: in cima alle scale centrali, alle spalle della visuale iniziale, un corridoio incassato nel muro porta alla sala */
-  const TN={zA:CH/2+RA+13*.85+1.8+11*.8,zW:WZ*1.06-.45,y:Y1+1.6+10*.55,hw:1.2,H:3.2,DW:2.2,DH:2.6};const DOOR=[];
+  /* (959) la sala ce l'hanno tutti, ma la porta si apre solo per Ducks e Turtles (Francesco) */const SALA=["DUC","TUR"].includes(t);const TN={zA:CH/2+RA+13*.85+1.8+11*.8,zW:WZ*1.06-.45,y:Y1+1.6+10*.55,hw:1.2,H:3.2,DW:2.2,DH:2.6};const DOOR=[];
   {const g=new THREE.Group();g.position.set(0,TN.y,0);S.add(g);const L=TN.zW-TN.zA,zc=(TN.zA+TN.zW)/2,W=TN.hw*2;
     const shT=tex(512,256,(x,W_,H_)=>{const gr=x.createLinearGradient(0,0,0,H_);gr.addColorStop(0,"#26232d");gr.addColorStop(1,"#141218");x.fillStyle=gr;x.fillRect(0,0,W_,H_);for(let i=0;i<W_;i+=64){x.fillStyle="rgba(255,255,255,.05)";x.fillRect(i,0,3,H_)}});
     const shM=new THREE.MeshLambertMaterial({map:shT,emissive:"#ffffff",emissiveMap:shT,emissiveIntensity:.35,side:THREE.DoubleSide}),led=new THREE.MeshBasicMaterial({color:ACC,toneMapped:false});
@@ -148,9 +148,14 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
       const end=x.createRadialGradient(vx,vy,4,vx,vy,ew*1.4);end.addColorStop(0,"#fff4cf");end.addColorStop(.35,ACC);end.addColorStop(1,"rgba(0,0,0,0)");x.fillStyle=end;x.fillRect(vx-ew*1.5,vy-eh,ew*3,eh*2);
       x.fillStyle=ACC;x.globalAlpha=.8;x.beginPath();x.moveTo(W_/2-10,H_);x.lineTo(W_/2+10,H_);x.lineTo(vx+2,vy+eh/2);x.lineTo(vx-2,vy+eh/2);x.fill();x.globalAlpha=1});
     const bw=new THREE.Mesh(new THREE.PlaneGeometry(W,TN.H),shM);bw.rotation.y=Math.PI;bw.position.set(0,TN.H/2,TN.zW+.02);g.add(bw);
-    const door=new THREE.Mesh(new THREE.PlaneGeometry(TN.DW,TN.DH),new THREE.MeshBasicMaterial({map:dT,toneMapped:false}));door.rotation.y=Math.PI;door.position.set(0,TN.DH/2,TN.zW-.01);g.add(door);DOOR.push(door);
+    /* porta chiusa per le altre squadre: due ante di metallo con lucchetto */const cT=SALA?null:tex(440,520,(x,W_,H_)=>{const gr=x.createLinearGradient(0,0,W_,0);gr.addColorStop(0,"#2b2830");gr.addColorStop(.5,"#3b3742");gr.addColorStop(1,"#2b2830");x.fillStyle=gr;x.fillRect(0,0,W_,H_);x.fillStyle="#141218";x.fillRect(W_/2-3,0,6,H_);
+      for(let k=0;k<2;k++){x.strokeStyle="rgba(255,255,255,.12)";x.lineWidth=4;x.strokeRect(24+k*W_/2,26,W_/2-48,H_*.42);x.strokeRect(24+k*W_/2,H_*.5,W_/2-48,H_*.44)}
+      x.fillStyle="#c9ced6";x.fillRect(W_/2-34,H_*.47,18,60);x.fillRect(W_/2+16,H_*.47,18,60);
+      x.fillStyle=ACC;x.beginPath();x.arc(W_/2,H_*.3,30,Math.PI,0);x.lineWidth=12;x.strokeStyle=ACC;x.stroke();x.fillRect(W_/2-42,H_*.3,84,64);x.fillStyle="#141218";x.beginPath();x.arc(W_/2,H_*.3+26,9,0,7);x.fill();x.fillRect(W_/2-4,H_*.3+30,8,20);
+      x.textAlign="center";x.fillStyle="#fff";x.font="italic 900 40px Arial Black,Arial";x.fillText("CHIUSA",W_/2,H_*.92)});
+    const door=new THREE.Mesh(new THREE.PlaneGeometry(TN.DW,TN.DH),(SALA?new THREE.MeshBasicMaterial({map:dT,toneMapped:false}):new THREE.MeshLambertMaterial({map:cT,emissive:"#ffffff",emissiveMap:cT,emissiveIntensity:.45})));door.rotation.y=Math.PI;door.position.set(0,TN.DH/2,TN.zW-.01);g.add(door);DOOR.push(door);
     [[0,TN.DH+.05,TN.DW+.2,.07],[-TN.DW/2-.05,TN.DH/2,.07,TN.DH],[TN.DW/2+.05,TN.DH/2,.07,TN.DH]].forEach(([x,y,w,h])=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,.05),led);b.position.set(x,y,TN.zW-.03);g.add(b)});
-    const pool=new THREE.Mesh(new THREE.PlaneGeometry(3,2.4),new THREE.MeshBasicMaterial({map:K_GLOW(),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:.4,toneMapped:false}));pool.rotation.x=-Math.PI/2;pool.position.set(0,.02,TN.zW-1);g.add(pool);
+    const pool=new THREE.Mesh(new THREE.PlaneGeometry(3,2.4),new THREE.MeshBasicMaterial({map:K_GLOW(),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:.4,toneMapped:false}));pool.rotation.x=-Math.PI/2;pool.position.set(0,.02,TN.zW-1);if(SALA)g.add(pool);
     const pl=new THREE.PointLight("#ffe2b0",6,6,2);pl.position.set(0,TN.H-.4,zc);g.add(pl)}
   /* maxischermo con lo scontro diretto */
   const scr=tex(1024,600,()=>{},2);
@@ -182,7 +187,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
    const pm=new THREE.MeshBasicMaterial({map:pt,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:.09,toneMapped:false});
    [[-6.2,-2.9],[-6.2,2.9],[6.2,-2.9],[6.2,2.9],[0,-3.2],[0,3.2],[-3,0],[3,0]].forEach(([x,z])=>{const p=new THREE.Mesh(new THREE.PlaneGeometry(9,9),pm);p.rotation.x=-Math.PI/2;p.position.set(x,.03,z);S.add(p)})}
   [[-9,0],[0,-4],[0,4],[9,0]].forEach(([x,z])=>{const sp=new THREE.SpotLight(LK.spot,LK.spotI,48,.62,.6,1.35);sp.position.set(x*1.25,24,z*1.6);sp.target.position.set(x,0,z);S.add(sp,sp.target)});
-  return{TN,DOOR,GLOW:K_GLOW,THREE,R,S,cam,FANS,CW,CH,RA,ACC,BG,TM,scr,scrM,tex,LG,mob,WALK,BOWLS,Y1,DMAX:RA+13*.85+1.8+11*.8-.3}}
+  return{TN,OPEN:SALA,DOOR,GLOW:K_GLOW,THREE,R,S,cam,FANS,CW,CH,RA,ACC,BG,TM,scr,scrM,tex,LG,mob,WALK,BOWLS,Y1,DMAX:RA+13*.85+1.8+11*.8-.3}}
 
 /* ---------------- DATI LIVE ---------------- */
 function liveRows(t){let NM={};try{NM=campoNotteMap(t)||{}}catch(e){}const out=[];
@@ -264,9 +269,9 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
   /* (929) CAMMINARE OVUNQUE (Francesco 20:42): si sale sui gradoni, si guarda dall'alto, si scende e si entra in campo.
      dOut = distanza fuori dal rettangolo arrotondato del campo (come le tribune); l'altezza dei piedi segue il gradone su cui si è. */
   const dOut=(x,z)=>{const ax=Math.max(0,Math.abs(x)-(K.CW/2-3.5)),az=Math.max(0,Math.abs(z)-(K.CH/2-3.5));return Math.hypot(ax,az)-3.5};
-  const terr=(x,z)=>{if(st.room)return 0;if(z>K.TN.zA-.05&&Math.abs(x)<K.TN.hw+.1)return K.TN.y;const d=dOut(x,z);let y=0;for(const b of K.BOWLS){const r=Math.floor((d-b.r0)/b.dr);if(r>=0&&r<b.rows)y=b.y0+r*b.dy}if(d>=K.RA+13*.85&&d<K.RA+13*.85+1.8)y=K.Y1;return y};
+  const terr=(x,z)=>{if(st.room)return 0;if(K.TN&&z>K.TN.zA-.05&&Math.abs(x)<K.TN.hw+.1)return K.TN.y;const d=dOut(x,z);let y=0;for(const b of K.BOWLS){const r=Math.floor((d-b.r0)/b.dr);if(r>=0&&r<b.rows)y=b.y0+r*b.dy}if(d>=K.RA+13*.85&&d<K.RA+13*.85+1.8)y=K.Y1;return y};
   const clampP=()=>{/* (957) nella sala trofei: corridoio largo 2,5 m e sala 15×12 m */if(st.room){if(V.z>-12.3){V.x=cl(V.x,-1.25,1.25);V.z=Math.min(V.z,.4)}else{V.x=cl(V.x,-7.2,7.2);V.z=Math.max(V.z,-23.9)}return}
-    /* (957) nel corridoio in cima alle scale: dritti fino alla porta */if(V.z>K.TN.zA-.6&&Math.abs(V.x)<K.TN.hw+.2){V.x=cl(V.x,-K.TN.hw+.3,K.TN.hw-.3);V.z=Math.min(V.z,K.TN.zW-.4);return}
+    /* (957) nel corridoio in cima alle scale: dritti fino alla porta */if(K.TN&&V.z>K.TN.zA-.6&&Math.abs(V.x)<K.TN.hw+.2){V.x=cl(V.x,-K.TN.hw+.3,K.TN.hw-.3);V.z=Math.min(V.z,K.TN.zW-.4);return}
     let d=dOut(V.x,V.z);if(d>K.DMAX){const k=.98;for(let i=0;i<30&&dOut(V.x,V.z)>K.DMAX;i++){V.x*=k;V.z*=k}}};
   let footY=0;
   /* tifosi troppo vicini a chi guarda: si nascondono (solo quando ti fermi, per non pesare) */
@@ -382,7 +387,8 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
     await Promise.all(tasks);
     [-1,1].forEach(sd=>{const s=new THREE.SpotLight("#fff1d6",40,14,.9,.7,1.6);s.position.set(sd*2,HR-.2,(Z0+Z1)/2);s.target.position.set(sd*X1,2.5,(Z0+Z1)/2);RS.add(s,s.target)});
     return{S:RS,taps}}
-  async function enterRoom(){if(st.busy||st.room)return;st.busy=true;tw=null;walk=0;fade.style.opacity=1;await new Promise(r=>setTimeout(r,380));if(st.stop)return;
+  let shut=0;const closed=()=>{const n=performance.now();if(n-shut<2500)return;shut=n;V.z=Math.min(V.z,K.TN.zW-1.5);tw=null;walk=0;const h=ov.querySelector(".drm3hint");if(h){h.textContent="🔒 La sala trofei è chiusa: si apre solo per Ducks e Turtles";h.style.opacity=1;setTimeout(()=>{h.style.opacity=0},3000)}if(st.say)st.say("La porta è chiusa")};
+  async function enterRoom(){if(!K.OPEN){closed();return}if(st.busy||st.room)return;st.busy=true;tw=null;walk=0;fade.style.opacity=1;await new Promise(r=>setTimeout(r,380));if(st.stop)return;
     if(!RM){msg.textContent="Entro nella sala trofei…";msg.style.display="";try{RM=await buildRoom();K.RS=RM.S}catch(e){console.error(e);RM=null}msg.style.display="none";
       if(!RM){V.x=0;V.z=K.TN.zA-.8;fade.style.opacity=0;st.busy=false;return}}
     st.room=true;V.x=0;V.z=-.4;V.yaw=0;V.pitch=-3;footY=0;if(ZM>1){ZM=1;applyZ()}st.dirty=true;fade.style.opacity=0;st.busy=false;const h=ov.querySelector(".drm3hint");if(h){h.textContent="Sala trofei · tocca una maglia o la bacheca per avvicinarti · torna in fondo al corridoio per l'arena";h.style.opacity=1;setTimeout(()=>{h.style.opacity=0},5000)}
@@ -397,7 +403,7 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
     if(tw){const k=Math.min(1,(now-tw.t0)/tw.dur),q=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;V.x=tw.x0+(tw.x1-tw.x0)*q;V.z=tw.z0+(tw.z1-tw.z0)*q;V.yaw=tw.y0+tw.dy*q;st.dirty=true;if(k>=1)tw=null}
     let mv=walk;if(keys.w||keys.arrowup)mv=1;if(keys.s||keys.arrowdown)mv=-1;if(keys.a||keys.arrowleft){V.yaw+=80*dt;st.dirty=true}if(keys.d||keys.arrowright){V.yaw-=80*dt;st.dirty=true}
     if(mv){const r=V.yaw*Math.PI/180;V.x-=Math.sin(r)*mv*5.5*dt;V.z-=Math.cos(r)*mv*5.5*dt;st.dirty=true}
-    clampP();if(!st.busy){if(st.room){if(V.z>.15)exitRoom()}else if(V.z>K.TN.zW-1.1&&Math.abs(V.x)<K.TN.DW/2)enterRoom()}{const ty=terr(V.x,V.z);footY+=(ty-footY)*Math.min(1,dt*9);if(Math.abs(ty-footY)>.01)st.dirty=true;if(!st.room&&!tw&&!mv&&(Math.abs(V.x-hideAt.x)>.5||Math.abs(V.z-hideAt.z)>.5))hideNear()}
+    clampP();if(!st.busy){if(st.room){if(V.z>.15)exitRoom()}else if(K.TN&&V.z>K.TN.zW-1.1&&Math.abs(V.x)<K.TN.DW/2)enterRoom()}{const ty=terr(V.x,V.z);footY+=(ty-footY)*Math.min(1,dt*9);if(Math.abs(ty-footY)>.01)st.dirty=true;if(!st.room&&!tw&&!mv&&(Math.abs(V.x-hideAt.x)>.5||Math.abs(V.z-hideAt.z)>.5))hideNear()}
     const animating=st.anim.length>0;if(!st.dirty&&!animating&&now-lastDraw<100)return;
     const ey=footY+(footY>.2?2.05:1.7);cam.position.set(V.x,ey,V.z);const yr=V.yaw*Math.PI/180,pr=V.pitch*Math.PI/180;cam.lookAt(V.x-Math.sin(yr)*Math.cos(pr),ey+Math.sin(pr),V.z-Math.cos(yr)*Math.cos(pr));
     for(const n in J){const o=J[n];o.g.rotation.y=Math.atan2(cam.position.x-o.g.position.x,cam.position.z-o.g.position.z);/* (942) da lontano maglia e targhetta si ingrandiscono (fino a 1,8×) così restano leggibili */const dd=Math.hypot(cam.position.x-o.g.position.x,cam.position.y-2,cam.position.z-o.g.position.z)/(cam.zoom||1),sc=Math.max(1,Math.min(1.8,dd/13));/* si ingrandiscono maglia e targhetta, ma restano alla stessa altezza dal parquet (non salgono e non si sovrappongono) *//* (948) targhetta sotto e maglia sopra, sempre staccate (prima la maglia copriva la parte alta della targhetta) */if(!o.tag.userData.s0)o.tag.userData.s0=o.tag.scale.clone();o.tag.scale.copy(o.tag.userData.s0).multiplyScalar(sc);const th=o.tag.scale.y;o.tag.position.y=.35+th/2;o.jm.scale.setScalar(sc);o.jm.position.y=.35+th+.12+.91*sc+Math.sin(now/900+o.ph)*.05}
