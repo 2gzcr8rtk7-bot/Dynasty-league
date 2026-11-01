@@ -2122,3 +2122,6 @@ Il roster (e l immagine della scheda) guardava solo la lista ROOKIE (5 nomi); or
 
 ## 910 — Report Turtles Valutazione 15
 AV_FATTI.TUR (15), GM_INTOCC TUR = Dylan Harper; pl nuovi Haliburton +4, Dybantsa −4 (gli altri sotto 900 o già nel profilo); scheda GM_DESCR TUR rifatta (Dybantsa e Peterson solo con grosso sovrapprezzo, potenziale 80%). Nessuna correzione dei valori (tutti giocatori propri).
+
+## 911 — Report Turtles Confronto 62
+pl TUR fusi (su Boozer, Haliburton, Ware, Durant; giù Barrett, Murray-Boyles, Mobley, Fears, Mikel Brown, Trae Young, Adebayo), n +16, scheda TUR. Diciottesima correzione: Barrett 650→620 (TUR+DOL+PEA+MOO), Fears 720→675 (TUR+DOL), Durant 900→930 (TUR+MOO). Esclusi: Boozer e Murray-Boyles (già corretti oggi, risposte nuove di un solo GM), Adebayo e Siakam (Dolphins di parere opposto).
