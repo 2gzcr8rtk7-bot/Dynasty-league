@@ -2221,3 +2221,6 @@ Francesco (22:00): la fascia LED tra i due anelli attraversava le scale centrali
 
 ## 951–952 — Modalità Dream: telecronista in italiano
 Francesco (22:04–22:05): la voce italiana del telefono (sintesi vocale di sistema, anche senza rete; preferita una voce italiana «premium/enhanced» se c è) annuncia ogni azione live in breve, prima il nome e poi l azione: «Wembanyama, due punti!», «Cunningham, tripla!», «Flagg, rimbalzo», «Şengün, assist», «Barnes, palla persa», «…, tiro sbagliato», ecc. All ingresso «Benvenuti alla … Arena». Al massimo 3 frasi in coda per restare puntuale; tasto 🔊/🔇 in alto a destra (ricordato); la voce si ferma all uscita. Esultanza e delusione del pubblico: serviranno registrazioni vere (mp3) da Francesco.
+
+## 953 — Modalità Dream: cartellini più nitidi, partenza 5 gradini più in alto
+Francesco (22:08): cartellini delle statistiche disegnati a 3× (prima 2×), testo delle righe secondarie più marcato e chiaro, cartellini e maglie non più velati dalla foschia dello stadio. Partenza dalle scale centrali 5 file più in alto (11ª fila dell anello alto).

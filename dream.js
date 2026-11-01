@@ -202,13 +202,13 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
   /* ---- maglie ---- */
   /* (945) cinque posti simmetrici su tutto il campo: il migliore al centro in fondo, due a metà campo vicino, due ai lati verso i canestri */const slots=[[0,-4.8],[-6,3.9],[6,3.9],[-10.6,-3],[10.6,-3],[0,5],[-11.8,4.4],[11.8,4.4]];
   const J={},grp=new THREE.Group();S.add(grp);
-  const sprite=(lines,o)=>{const h=o.h||160,x=K.tex(512,h,(c,W,H)=>{rr(c,6,6,W-12,H-12,26);c.fillStyle=o.bg||"rgba(8,6,16,.84)";c.fill();c.lineWidth=6;c.strokeStyle=o.edge||K.ACC;c.stroke();c.textAlign="center";c.textBaseline="middle";lines.forEach((l,i)=>{c.fillStyle=l.c||"#fff";c.font=l.f||"800 44px Arial";c.fillText(l.t,W/2,H/(lines.length+1)*(i+1))})},2);
-    const s=new THREE.Sprite(new THREE.SpriteMaterial({map:x,transparent:true,depthWrite:false,toneMapped:false}));s.scale.set(o.w||2.4,(o.w||2.4)*h/512,1);return s};
-  const tagLines=r=>[{t:(r.n.split(" ")[0][0]+". "+r.n.split(" ").slice(1).join(" ")).toUpperCase(),f:"italic 900 48px Arial Black,Arial"},{t:`${fmt(r.pdk)} PDK · ${r.pt} PT · ${r.rb} RIM · ${r.as} AST`,f:"700 32px Arial",c:"#e5e7eb"},{t:r.live?(r.oc?"● IN CAMPO · ":"PANCHINA · ")+(r.st||"LIVE"):"FINALE · vs "+(r.opp||""),f:"800 28px Arial",c:r.live?"#fca5a5":"#9ca3af"}];
+  const sprite=(lines,o)=>{const h=o.h||160,x=K.tex(512,h,(c,W,H)=>{rr(c,6,6,W-12,H-12,26);c.fillStyle=o.bg||"rgba(8,6,16,.84)";c.fill();c.lineWidth=6;c.strokeStyle=o.edge||K.ACC;c.stroke();c.textAlign="center";c.textBaseline="middle";lines.forEach((l,i)=>{c.fillStyle=l.c||"#fff";c.font=l.f||"800 44px Arial";c.fillText(l.t,W/2,H/(lines.length+1)*(i+1))})},o.q||3);/* (953) cartellini a 3× (prima 2×): testo nitido */
+    const s=new THREE.Sprite(new THREE.SpriteMaterial({map:x,transparent:true,depthWrite:false,toneMapped:false,fog:false}));s.scale.set(o.w||2.4,(o.w||2.4)*h/512,1);return s};
+  const tagLines=r=>[{t:(r.n.split(" ")[0][0]+". "+r.n.split(" ").slice(1).join(" ")).toUpperCase(),f:"italic 900 48px Arial Black,Arial"},{t:`${fmt(r.pdk)} PDK · ${r.pt} PT · ${r.rb} RIM · ${r.as} AST`,f:"800 33px Arial",c:"#ffffff"},{t:r.live?(r.oc?"● IN CAMPO · ":"PANCHINA · ")+(r.st||"LIVE"):"FINALE · vs "+(r.opp||""),f:"800 28px Arial",c:r.live?"#fecaca":"#d1d5db"}];
   async function addJersey(r){const used=new Set(Object.values(J).map(o=>o.si));let si=0;while(used.has(si))si++;const g=new THREE.Group(),[x,z]=slots[si%slots.length];g.position.set(x,0,z);
     let svg="";try{svg=jersey(t,r.num,"")}catch(e){}svg=svg.replace("<svg ",'<svg xmlns="http://www.w3.org/2000/svg" width="600" height="730" ');
     const im=await img("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg)),jt=K.tex(600,730,c=>{if(im)c.drawImage(im,0,0,600,730)});
-    const jm=new THREE.Mesh(new THREE.PlaneGeometry(1.5,1.82),new THREE.MeshBasicMaterial({map:jt,transparent:true,side:THREE.DoubleSide,alphaTest:.05,toneMapped:false})/* (944) colori pieni, non smorzati dalla luce */);jm.position.y=2.25;g.add(jm);
+    const jm=new THREE.Mesh(new THREE.PlaneGeometry(1.5,1.82),new THREE.MeshBasicMaterial({map:jt,transparent:true,side:THREE.DoubleSide,alphaTest:.05,toneMapped:false,fog:false})/* (944) colori pieni, non smorzati dalla luce */);jm.position.y=2.25;g.add(jm);
     const halo=new THREE.Mesh(new THREE.CircleGeometry(.8,24),new THREE.MeshBasicMaterial({color:K.ACC,transparent:true,opacity:r.live?.45:.18,toneMapped:false}));halo.rotation.x=-Math.PI/2;halo.position.y=.02;g.add(halo);
     const lv=PK[pdkLvl(r.pdk)]||PK.na,tag=sprite(tagLines(r),{w:2.7,h:200,edge:lv[0]});tag.position.y=1.0;g.add(tag);
     grp.add(g);J[r.n]={g,jm,tag,halo,r,si,ph:Math.random()*6};if(!r.live)jm.material.color.set("#e6e6ea")}
@@ -234,7 +234,7 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
   const chantNext=()=>{st.ch=setTimeout(()=>{if(st.stop)return;if(st.A&&st.audioOn&&(st.rows||[]).some(r=>r.live)&&!document.hidden)st.A.play("def",4);chantNext()},50000+Math.random()*30000)};chantNext();
   setTimeout(()=>{if(!st.stop&&st.A&&st.audioOn&&(st.rows||[]).some(r=>r.live))st.A.play("def",3)},2500);
   /* ---- movimento ---- */
-  const V={x:0,z:K.CH/2+K.RA+13*.85+1.8+5*.8+.4,yaw:0,pitch:-24};/* (950) partenza sulle scale centrali dell'anello alto, all'altezza indicata da Francesco *//* (935) si parte dall'anello alto (5ª fila) */V.yaw=Math.atan2(V.x,V.z)*180/Math.PI;st.V=V;/* (930) si parte dall'alto, sopra i gradini */let walk=0,dr=null;const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const V={x:0,z:K.CH/2+K.RA+13*.85+1.8+10*.8+.4,yaw:0,pitch:-27};/* (953) 5 gradini più in alto (11ª fila dell'anello alto) *//* (950) partenza sulle scale centrali dell'anello alto, all'altezza indicata da Francesco *//* (935) si parte dall'anello alto (5ª fila) */V.yaw=Math.atan2(V.x,V.z)*180/Math.PI;st.V=V;/* (930) si parte dall'alto, sopra i gradini */let walk=0,dr=null;const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
   /* (929) CAMMINARE OVUNQUE (Francesco 20:42): si sale sui gradoni, si guarda dall'alto, si scende e si entra in campo.
      dOut = distanza fuori dal rettangolo arrotondato del campo (come le tribune); l'altezza dei piedi segue il gradone su cui si è. */
   const dOut=(x,z)=>{const ax=Math.max(0,Math.abs(x)-(K.CW/2-3.5)),az=Math.max(0,Math.abs(z)-(K.CH/2-3.5));return Math.hypot(ax,az)-3.5};
