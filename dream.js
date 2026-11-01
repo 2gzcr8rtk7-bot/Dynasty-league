@@ -43,7 +43,7 @@ function audioInit(){const A=window.AudioContext||window.webkitAudioContext;if(!
 /* ---------------- SCENA ---------------- */
 async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
   const C=s=>new THREE.Color(s),mix=(a,b,k)=>C(a).lerp(C(b),k),lum=h=>{const c=C(h);return .2126*c.r+.7152*c.g+.0722*c.b};
-  /* (937) giallo Ducks più caldo (quello dorato del logo e del banner): la luce 3D schiarisce i gialli, quindi si parte da un oro più carico */const BG=(window.DREAM_BG&&window.DREAM_BG[t])||TM.bg,ACC=lum(BG)<.18?(TM.fg===TM.bg?"#ffffff":TM.fg):BG,INK=lum(BG)>.55?(lum(TM.trim)<.4?TM.trim:"#111"):"#ffffff";
+  /* (937) giallo Ducks più caldo (quello dorato del logo e del banner): la luce 3D schiarisce i gialli, quindi si parte da un oro più carico *//* (955) giallo parquet Ducks più caldo, scelto da Francesco (versione B) */const BG=({DUC:"#ea9a00"})[t]||TM.bg,ACC=lum(BG)<.18?(TM.fg===TM.bg?"#ffffff":TM.fg):BG,INK=lum(BG)>.55?(lum(TM.trim)<.4?TM.trim:"#111"):"#ffffff";
   const mob=Math.min(screen.width,screen.height)<700;
   /* (932) qualità alta: antialias sempre, risoluzione fino a 2× (si abbassa da sola se il telefono fatica, vedi il ciclo) */
   const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,powerPreference:"high-performance"});R.setPixelRatio(Math.min(2,devicePixelRatio||1));const ANI=R.capabilities.getMaxAnisotropy();R.setSize(innerWidth,innerHeight,false);
@@ -72,7 +72,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
       x.beginPath();x.moveTo(s?W:0,cy-L(6.6));x.lineTo(bx+dir*L(1.4),cy-L(6.6));x.arc(bx,cy,L(6.75),s?Math.PI+1.35:-1.35,s?Math.PI-1.35:1.35,!!s);x.lineTo(s?W:0,cy+L(6.6));x.stroke()});
     x.fillStyle=INK;x.font=`italic 900 ${L(.9)}px Arial Black,Arial`;x.textAlign="center";x.textBaseline="middle";[0,1].forEach(s=>{x.save();x.translate(s?W-L(.9):L(.9),cy);x.rotate(s?-Math.PI/2:Math.PI/2);x.fillText(TM.nick.toUpperCase(),0,0);x.restore()});
     x.fillStyle=lum(BG)>.55?INK:"#fff";x.font=`800 ${L(.3)}px Arial`;x.fillText("DREAMERS LEAGUE",cx,L(.27));x.fillText(TM.name.toUpperCase(),cx,H-L(.27));
-    const lg=L(3.5*(window.DREAM_LOGO||1));if(LG){x.save();x.shadowColor="rgba(0,0,0,.55)";x.shadowBlur=L(.18);x.shadowOffsetY=L(.05);x.drawImage(LG,cx-lg/2,cy-lg/2,lg,lg);x.restore()}
+    /* (955) logo a centrocampo +16% */const lg=L(3.5*1.16);if(LG){x.save();x.shadowColor="rgba(0,0,0,.55)";x.shadowBlur=L(.18);x.shadowOffsetY=L(.05);x.drawImage(LG,cx-lg/2,cy-lg/2,lg,lg);x.restore()}
     /* vernice: riflesso morbido lungo il campo e bordi più scuri */const g=x.createRadialGradient(cx,cy,10,cx,cy,W*.62);g.addColorStop(0,"rgba(255,248,232,.06)");g.addColorStop(1,"rgba(0,0,0,.2)");x.fillStyle=g;x.fillRect(0,0,W,H);
     const g2=x.createLinearGradient(0,0,0,H);g2.addColorStop(0,"rgba(255,255,255,.05)");g2.addColorStop(.5,"rgba(255,255,255,0)");g2.addColorStop(1,"rgba(255,255,255,.04)");x.fillStyle=g2;x.fillRect(0,0,W,H)});
   const floor=new THREE.Mesh(new THREE.PlaneGeometry(CW+2*RA+8,CH+2*RA+8),new THREE.MeshStandardMaterial({color:mix(BG,"#000",.18),roughness:.45}));/* (930) bordo campo nel colore della squadra */floor.rotation.x=-Math.PI/2;S.add(floor);

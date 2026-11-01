@@ -2227,3 +2227,6 @@ Francesco (22:08): cartellini delle statistiche disegnati a 3× (prima 2×), tes
 
 ## 954 — Modalità Dream: azioni live più lunghe, voce più chiara
 Francesco: l animazione sopra il giocatore spariva troppo presto. Ora il cartello dell azione compare con un piccolo zoom, resta fermo sopra la maglia 4,5 s, poi sale e svanisce in 1,5 s (6 s in tutto, prima 2,8 s). Più azioni dello stesso giocatore si susseguono a 5,2 s l una dall altra (prima 0,9 s, si sovrapponevano). Telecronista più lento e chiaro (velocità 0,92, tono naturale 1), fino a 4 frasi in coda.
+
+## 955 — Modalità Dream: giallo Ducks più caldo, logo più grande
+Francesco ha scelto la versione B: giallo del parquet Ducks #ea9a00 (prima più freddo). Logo a centrocampo più grande del 16% per tutte le squadre. Tolti i ganci di prova DREAM_BG / DREAM_LOGO.
