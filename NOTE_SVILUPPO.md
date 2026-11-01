@@ -2161,3 +2161,6 @@ Francesco (20:00): a fine stagione una 1ª–3ª col 4° posto ormai sicuro, se 
 
 ## 923 — Dolphins Confronto 100 + Spiders Confronto 80 (risposte della sera)
 Nuove 60 risposte DOL e 25 SPI (le prime 40 e 55 erano già nei profili): pl fusi a metà della differenza. DOL: su Giddey, Cunningham, Brunson, Şengün; giù Jaquez, Garland, Franz Wagner, Herro, Randle, Harden, Towns. SPI: su Jokić, Ausar Thompson; giù Murray-Boyles, Morant; età SPI −1,6/anno (preferiscono i più esperti: giovane scelto 43%, rookie 18%). Diciannovesima correzione: Franz Wagner 1050→1020 (DOL+EAG, Mooses di poco al contrario).
+
+## 924 — Dichiarazione diretta del GM dei Ducks
+Francesco (20:08) senza allenamento: GM_DICH.DUC = obiettivo «dinastia» (squadra forte e giovane nel tempo, non spende per vincere subito: tipo giovane, peso PDK di stagione 0,15, danger e bisogno di crediti × 0,3), linea d età fino a 24 (stretta 1: 25 va, 26 solo con tanto guadagno), intoccabile Wembanyama, protetti Şengün, Jalen Johnson, Flagg, Barnes, Amen Thompson, Cunningham, Edwards (−15 sulla quota ceduta), da sostituire Buzelis, Kyshawn George, Daniels, De Larrea, Steinbach (+5), vende quando il giocatore è in forma (+3). GM_OBJ DUC: titolo → dinastia. Prove: Şengün per Embiid 0%, Jalen Johnson per Giannis 5%, Amen Thompson per Haliburton 14%. Scheda Ducks aggiornata.
