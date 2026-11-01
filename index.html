@@ -13056,5 +13056,28 @@ html.dlt-parquet:not(.notte) .gmsit{background:rgba(217,86,11,.08)}</style>
 html.dlt-parquet:not(.notte) .rvbox{background:rgba(217,86,11,.1)}html.dlt-parquet:not(.notte) .rvb{border-color:#d9560b;color:#d9560b}html.dlt-parquet:not(.notte) .rvb.on{color:#fff!important;-webkit-text-fill-color:#fff!important}</style>
 <style>/* (889) notte: niente alone rosa intorno al logo nel banner della squadra (resta solo l'ombra scura) */html body.notte .teamhead .hlogo:not(#a):not(#b){filter:drop-shadow(0 3px 6px rgba(0,0,0,.5))!important}</style>
 <style id="brandfix2">/* (891) scritta DREAMERS nell'intestazione sempre bianca, anche durante il caricamento (prima per un attimo diventava scura) */html body header .brand:not(#a):not(#b):not(#c),html body .top .brand:not(#a):not(#b):not(#c){color:#fff!important;-webkit-text-fill-color:#fff!important}</style>
+<style>/* (902) striscia valori */
+.tkbar{display:flex;align-items:stretch;margin:2px 16px 12px;border-radius:12px;overflow:hidden;background:#fff8ec;border:2px solid #d9560b;box-shadow:0 4px 12px rgba(90,40,5,.2);height:40px}
+.tklab{flex:none;display:grid;place-content:center;padding:0 10px;background:linear-gradient(180deg,#f2701a,#c2410c);color:#fff;font-family:var(--display);font-style:italic;font-weight:900;font-size:14px;letter-spacing:.06em;line-height:1;text-align:center}
+.tklab small{display:block;font-size:9px;font-style:normal;font-weight:700;opacity:.85;margin-top:2px;letter-spacing:.04em}
+.tkvw{flex:1;overflow:hidden;position:relative;-webkit-mask-image:linear-gradient(90deg,transparent,#000 16px,#000 calc(100% - 16px),transparent)}
+.tktr{display:inline-flex;align-items:center;height:100%;white-space:nowrap;animation:tkmv 60s linear infinite}
+.tki{display:inline-flex;align-items:baseline;gap:5px;padding:0 14px;border-right:1px solid rgba(217,86,11,.25);font-size:14px;color:#7a3410}
+.tki b{font-weight:800}.tki em{font-style:normal;font-size:12px;opacity:.75}.tki i{font-style:normal;font-weight:900}
+.tki.su i{color:#16a34a}.tki.giu i{color:#dc2626}
+@keyframes tkmv{to{transform:translateX(-50%)}}
+html.notte .tkbar{background:#1b1035;border-color:#8b5cf6}html.notte .tklab{background:linear-gradient(180deg,#8b5cf6,#5b21b6)}html.notte .tki{color:#fff;border-right-color:rgba(139,92,246,.3)}html.notte .tki.su i{color:#4ade80}html.notte .tki.giu i{color:#f87171}
+html body .tki.su i:not(#a):not(#b){color:#16a34a!important;-webkit-text-fill-color:#16a34a!important}html body .tki.giu i:not(#a):not(#b){color:#dc2626!important;-webkit-text-fill-color:#dc2626!important}html.notte body .tki.su i:not(#a):not(#b){color:#4ade80!important;-webkit-text-fill-color:#4ade80!important}html.notte body .tki.giu i:not(#a):not(#b){color:#f87171!important;-webkit-text-fill-color:#f87171!important}html body .tklab:not(#a),html body .tklab *:not(#a){color:#fff!important;-webkit-text-fill-color:#fff!important}html.dlt-parquet:not(.notte) body .tki b:not(#a),html.dlt-parquet:not(.notte) body .tki em:not(#a){color:#7a3410!important;-webkit-text-fill-color:#7a3410!important}html.notte body .tki b:not(#a),html.notte body .tki em:not(#a){color:#fff!important;-webkit-text-fill-color:#fff!important}</style>
+<script>/* (902) STRISCIA DEI VALORI in Home: per 24 ore dopo lo scatto automatico della domenica alle 18:00 scorrono i giocatori cambiati
+   (nome puntato e cognome, valore prima → dopo, %), prima chi sale di più. Ogni settimana. */
+(function(){let C={k:-1,h:""};
+function tkHtml(){try{const now=Date.now(),d0=Date.parse(VAL_ORIGINE+"T00:00:00Z"),k=valK(d0,now);if(k<1)return"";const t=valScatto(d0,k);if(now-t>24*36e5)return"";
+  if(C.k!==k){const H=valStorico(now),w=H.weeks.find(x=>x.k===k);const L=w?w.ch.slice().sort((a,b)=>b.p-a.p):[];
+    const it=x=>`<span class="tki ${x.b>x.a?"su":"giu"}"><b>${tvShort(x.n)}</b><em>${x.a}→${x.b}</em><i>${x.b>x.a?"▲ +":"▼ "}${x.p}%</i></span>`,row=L.map(it).join("");
+    C={k,h:L.length?`<div class="tkbar" role="marquee" aria-label="Valori aggiornati"><span class="tklab">VALORI<small>dom 18:00</small></span><div class="tkvw"><div class="tktr" style="animation-duration:${Math.max(25,L.length*3)}s">${row}${row}</div></div></div>`:""}}
+  return C.h}catch(e){return""}}
+function put(){try{if(typeof cur==="undefined"||cur!=="home")return;const m=document.getElementById("main");if(!m||m.querySelector(".tkbar"))return;const hb=m.querySelector(".hbar");if(!hb)return;const h=tkHtml();if(h)hb.insertAdjacentHTML("afterend",h)}catch(e){}}
+const R0=window.render;if(typeof R0==="function"){window.render=render=function(){const r=R0.apply(this,arguments);put();return r}}
+setTimeout(put,800);setInterval(put,60000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)put()});})();</script>
 </body>
 </html>
