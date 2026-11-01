@@ -2185,3 +2185,6 @@ Francesco (20:57–21:03). Qualità: antialias sempre, risoluzione fino a 2×, f
 
 ## 935 — Modalità Dream: partenza dall anello alto, fascia LED leggibile da dietro
 Francesco (21:09): si parte più in alto, dalla 5ª fila dell anello alto, con lo sguardo sul campo. In campo restano i 5 migliori della notte (Francesco ha confermato 5). La fascia LED tra i due anelli ora ha anche il retro con il testo nel verso giusto (dall anello alto prima si leggeva al contrario).
+
+## 936 — Modalità Dream: tolto il tavolo nero a bordo campo
+Francesco (21:11): via il tavolo dei segnapunti (pedana nera) con la sua fascia LED.

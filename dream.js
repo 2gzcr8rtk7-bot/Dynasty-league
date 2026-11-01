@@ -80,8 +80,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
     g.position.set(s*(CW/2+.35),0,0);S.add(g)});
   /* fascia LED (anche sul tavolo) */
   const ribbon=()=>{const x=tex(2048,64,(c,W,H)=>{c.fillStyle="#030305";c.fillRect(0,0,W,H);c.font="italic 900 40px Arial Black,Arial";c.textBaseline="middle";let xx=14,k=0;while(xx<W){const s=k%3===2?"★":k%3?"DREAMERS LEAGUE":TM.name.toUpperCase();c.fillStyle=k%3===1?"#ffffff":ACC;c.fillText(s,xx,H/2+2);xx+=c.measureText(s).width+50;k++}});x.wrapS=THREE.RepeatWrapping;return x};
-  const tbl=new THREE.Mesh(new THREE.BoxGeometry(9,.85,.8),new THREE.MeshLambertMaterial({color:"#0b0b10"}));tbl.position.set(0,.43,CH/2+2.4);S.add(tbl);
-  const rt=ribbon();rt.repeat.set(2.2,1);const led=new THREE.Mesh(new THREE.PlaneGeometry(9,.62),new THREE.MeshBasicMaterial({map:rt,toneMapped:false}));led.position.set(0,.45,CH/2+1.99);S.add(led);
+  /* (936) tavolo nero a bordo campo tolto (Francesco) */
   /* tribune */
   /* (931) gradoni definiti: pedata chiara che richiama il colore squadra (alternata riga per riga), alzata scura con riflesso del colore */
   const tread=[new THREE.MeshLambertMaterial({color:mix(BG,"#4a4852",.78)}),new THREE.MeshLambertMaterial({color:mix(BG,"#3c3a44",.8)})],riser=new THREE.MeshLambertMaterial({color:mix(BG,"#16151b",.72),emissive:mix(BG,"#000",.55),emissiveIntensity:.25});let bandK=0;
