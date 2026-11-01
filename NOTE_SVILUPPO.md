@@ -2071,3 +2071,4 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 869. Colonna SQ del box NBA: loghi centrati in altezza nella riga e opacita' 0,6.
 870. Campo squadra, tabella Live stanotte/Turno (campoLive, .clall): tutte le colonne del box score (STL, BLK, TOV, tiri, da 3, liberi, Off, Dif, falli, +/-) e scorrimento orizzontale; lo swipe che cambia squadra non parte piu' se il dito e' sulla tabella (.tbl-wrap/.clwrap).
 871. Icona Dreamers in alto (.lglogo, tasto Aggiorna con tabindex): tolto l'anello viola/rosa che restava dopo il tocco (contorno di focus).
+872. Box score NBA (.tvsq): colonne delle statistiche piu' larghe (padding 9px per lato) e numeri centrati.
