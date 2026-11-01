@@ -76,3 +76,6 @@ Ogni proposta ha il giudizio di Francesco (REALISTICO / FORSE / IRREALISTICO) e 
 Ogni volta che cambi un valore in `VALORI` (report dei GM, consenso, correzioni di Francesco) aggiungi una riga in `VAL_LOG` (index.html, accanto a `valReg`):
 `{d:"AAAA-MM-GG",n:"Nome Giocatore",da:valoreVecchio,a:valoreNuovo,why:"motivo breve (es. Report Ducks Valutazione · consenso 3 GM)"}`.
 Gli aggiornamenti automatici del lunedì non vanno scritti: il registro li ricava da solo. Il registro si apre toccando un giocatore in Scambi › Valori lega.
+
+## Free agent che entrano in squadra (907)
+L app ha già il loro valore calcolato (FA_VAL, funzione valNuovo). Quando un free agent entra in un roster: aggiungerlo in VALORI con il valore di valNuovo(nome) (arrotondato), VAL_BASE con data e stelle, e una riga in VAL_LOG con why "Ingaggio dai free agent: valore calcolato dalla formula".

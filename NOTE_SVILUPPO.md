@@ -2110,3 +2110,6 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 
 ## 906 — Valori lega: percentuali colorate anche di giorno
 Nello stile Parquet (giorno) la percentuale di variazione sotto il valore restava marrone per la regola generale del testo; ora verde se sale e rossa se scende, come di notte (anche nel registro valori).
+
+## 907 — Valore dei free agent in background
+A ogni apertura l app calcola senza mostrarlo il valore di tutti i free agent (506 con dati), con la stessa formula della domenica (PDK di riferimento stagione in corso + due passate, età, stelle neutre) e la scala tarata sui giocatori della lega (mediana valore/formula, non rookie con almeno 24 anni). Se un free agent entra in un roster e non è ancora in VALORI, valOf usa questo valore (FA_VAL / valNuovoRos). Poi va aggiunto in VALORI come gli altri.
