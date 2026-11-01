@@ -12486,7 +12486,10 @@ function evalDeal(D){const{io,mv}=buildIO(D);
   if(mv.length>Math.max(4,2*D.T.length+1))return null;/* scambi leggibili: al massimo 3 giocatori dati per squadra e circa 2 per squadra in tutto */for(const t of D.T){const x=io[t];if(!x.give.length||!x.get.length||x.give.length>3)return null;if((ROSTER[t]||[]).length+x.free>IA_MAXR)return null}
   if(new Set(mv.map(m=>m.n)).size!==mv.length)return null;
   if(GU.mode==="sell"){const A=myT();if(io[A]&&io[A].give.some(n=>!GU.sell.has(n)))return null}
-  let P=1;const S={};for(const t of D.T){const r=gsc(t,io[t].give,io[t].get);if(r.d<-45)return null;S[t]=r;P*=r.p}
+  let P=1;const S={};for(const t of D.T){const r=gsc(t,io[t].give,io[t].get);if(r.d<-45)return null;
+    /* (895) niente «regali» per far quadrare il giro (Francesco: Holmgren ai Peacocks per Brazile non c'entra niente): in uno scambio a 3+ una squadra esterna non può guadagnare oltre il 45% e oltre 300 punti di valore */
+    if(D.T.length>2&&t!==myT()&&r.d>45){const sv=L=>L.reduce((a,n)=>a+vx(n),0);if(sv(io[t].get)-sv(io[t].give)>300)return null}
+    S[t]=r;P*=r.p}
   return{P,S,io,mv}}
 function search(){const A=myT(),others=Object.keys(ROSTER).filter(t=>t!==A),maxk=Math.max(2,Math.min(6,GU.maxk));PA=profAvg();VX={};AX={};
   const P={},SP={};Object.keys(ROSTER).forEach(t=>{const L=(ROSTER[t]||[]).filter(p=>p[5]!=="G"&&(valOf(p[0])||0)>0&&!(t===A&&GU.keep.size&&!GU.keep.has(p[0]))&&!(t!==A&&(GM_INTOCC[t]||[]).includes(p[0]))/* (810) «Cedo»: se ne scegli qualcuno, la tua squadra cede solo quelli */).map(p=>p[0]);P[t]={G:[],F:[],C:[]};SP[t]=[];L.forEach(n=>{if(iaSp(n))SP[t].push(n);else(P[t][ruoloDi(n)]||(P[t][ruoloDi(n)]=[])).push(n)})});
