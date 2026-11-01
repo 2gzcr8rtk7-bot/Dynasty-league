@@ -2987,7 +2987,11 @@ html.dlt-parquet:not(.notte) main .bxs.bxs span.gr2.gr2 :is(b,small){color:#e024
 <script>/* (843) TEMA NATIVO: classi dello stile (Parquet / notte) messe sull'html PRIMA del primo disegno, leggendo le impostazioni salvate: niente più grafica blu di base che compare per un attimo all'apertura */
 (function(){try{var d={};try{d=JSON.parse(localStorage.getItem("dl_set")||"{}")||{}}catch(e){}var th=d.th||"parquet",n=localStorage.getItem("dl_cnt")==="1",nt=n||th==="viola",pq=!n&&["classico","tabellone","viola"].indexOf(th)<0,H=document.documentElement;
 var sh=null;try{sh=JSON.parse(localStorage.getItem("dl_shell")||"null")}catch(e){}if(sh&&sh.k===(nt?"n":"")+(pq?"p":"")+th){if(sh.st)H.setAttribute("style",sh.st);if(sh.cl)sh.cl.split(" ").forEach(function(c){if(c)H.classList.add(c)})}
-if(pq)H.classList.add("dlt-parquet");if(nt)H.classList.add("notte");window.__early={nt:nt,pq:pq};var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",nt?"#1f0d4a":pq?"#d9560b":"#0a1330")}catch(e){}})();</script>
+if(pq)H.classList.add("dlt-parquet");if(nt)H.classList.add("notte");H.classList.add("boot");setTimeout(function(){H.classList.remove("boot")},2500);window.__early={nt:nt,pq:pq};var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",nt?"#1f0d4a":pq?"#d9560b":"#0a1330")}catch(e){}})();</script>
+<style>/* (844) APERTURA PULITA: finché l'app non ha finito il primo disegno la pagina resta nascosta sul colore dello stile (parquet, viola o blu), poi compare con una dissolvenza breve: niente più intestazione che salta o pezzi che si sistemano */
+html.boot body{visibility:hidden}html.boot{background:#0a1330}html.boot.dlt-parquet{background:#c88a4c}html.boot.notte{background:#1f0d4a}
+@keyframes dlfadein{from{opacity:0}to{opacity:1}}html.booted body{animation:dlfadein .18s ease-out}
+</style>
 <style>/* (843) tasto notte nell'intestazione: stile nativo (prima nel fondo della pagina) */
 main #hnt,main .hnt{display:none!important}.hnt.hnthd{margin-right:8px;align-self:center;flex:none}.hbar .hsrch{flex:1}
 header .hnt.hnthd{width:49px!important;height:27px!important}header .hnt.hnthd .hntk{width:21px!important;height:21px!important;top:2px!important;left:2px!important;transition:left .24s cubic-bezier(.3,.7,.3,1),background .24s}header .hnt.hnthd[aria-checked="true"] .hntk,header .hnt.hnthd.on .hntk{left:24px!important}header .hnt.hnthd .hntk svg{width:12px!important;height:12px!important}
@@ -12761,6 +12765,11 @@ html body header .hnt.hnthd .hntk:not(#a):not(#b):not(#c){left:2px!important}htm
 (function(){function save(){try{const H=document.documentElement,th=DLS.th||"parquet",nt=H.classList.contains("notte"),pq=H.classList.contains("dlt-parquet");
  localStorage.setItem("dl_shell",JSON.stringify({k:(nt?"n":"")+(pq?"p":"")+th,st:H.getAttribute("style")||"",cl:[...H.classList].filter(c=>!/^(notte|dlt-parquet)$/.test(c)).join(" ")}))}catch(e){}}
  const A=dlsApply;dlsApply=function(){const r=A.apply(this,arguments);setTimeout(save,0);return r};setTimeout(save,1500)})();
+</script>
+<script>
+/* (844) fine dell'apertura: dopo il primo disegno completo dell'app (due fotogrammi dopo il caricamento) si mostra la pagina */
+(function(){const H=document.documentElement;function show(){if(!H.classList.contains("boot"))return;H.classList.remove("boot");H.classList.add("booted");setTimeout(()=>H.classList.remove("booted"),400)}
+ const go=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(show,60)));if(document.readyState==="complete")go();else addEventListener("load",go);setTimeout(show,1800)})();
 </script>
 </body>
 </html>
