@@ -12721,19 +12721,23 @@ html.dlt-parquet:not(.notte) body .tvbox tbody tr:not(.grp):not(.tot) td:not(#a)
 html.dlt-parquet:not(.notte) body .tvbox tbody tr:not(.grp):not(.tot) td:not(#a):not(#b):not(#c):not(#d):not(#e),html.dlt-parquet:not(.notte) body .tvbox tbody tr.pct td:not(#a):not(#b):not(#c):not(#d):not(#e){background:#fdf4e6!important}</style>
 <script>
 /* (838) Home: il tasto notte va in alto accanto alle impostazioni; nella barra restano la ricerca (allargata) e i seguiti. Il tasto creato a ogni render nella Home (con il suo onclick) viene spostato nell'intestazione e il vecchio tolto. */
-(function(){function mv(){const sb=document.getElementById("setbtn");if(!sb)return;const H=[...document.querySelectorAll("#hnt")];if(!H.length)return;
- /* (840) si tiene SEMPRE lo stesso tasto nell'intestazione: a ogni render si copia solo lo stato dal tasto nuovo della Home e quello nuovo si toglie, così il pallino scivola con l'animazione */
- let hd=H.find(x=>x.closest("header"));const nw=H.find(x=>x!==hd);
- if(!hd){hd=nw;hd.classList.add("hnthd");sb.parentElement.insertBefore(hd,sb);return}
- if(nw){const on=nw.classList.contains("on")||nw.getAttribute("aria-checked")==="true";hd.classList.toggle("on",on);hd.setAttribute("aria-checked",on?"true":"false");if(nw.title)hd.title=nw.title;nw.remove()}
- else{const on=typeof CNT!=="undefined"&&!!CNT;if(!hd.dataset.moon){hd.classList.toggle("on",on);hd.setAttribute("aria-checked",on?"true":"false")}}
- if(hd.nextElementSibling!==sb)sb.parentElement.insertBefore(hd,sb)}
- if(!document.getElementById("hntst")){const st=document.createElement("style");st.id="hntst";st.textContent=".hnt.hnthd{margin-right:8px;align-self:center}.hbar .hsrch{flex:1}html body header .hnt.hnthd .hntk:not(#a):not(#b):not(#c):not(#d){transition:left .22s ease,background .22s!important}";document.head.appendChild(st)}
- /* (840) il cambio di modalità ridisegna tutta l'app (fino a ~0,8 s di lavoro): prima si fa scivolare il pallino, poi si cambia modalità */
+(function(){
+ /* (841) tasto notte FISSO nell'intestazione: creato una volta sola all'avvio, sempre presente in tutte le sezioni; quello che la Home disegna
+    nella sua barra è nascosto dal CSS (niente più comparsa per un attimo nella vecchia posizione) e non viene più spostato. */
+ if(!document.getElementById("hntst")){const st=document.createElement("style");st.id="hntst";st.textContent="main #hnt,main .hnt{display:none!important}.hnt.hnthd{margin-right:8px;align-self:center;flex:none}.hbar .hsrch{flex:1}";document.head.appendChild(st)}
+ const moonAct=()=>{try{return DLS.hpreMoon!=null&&!!(DLS.hpre||[])[DLS.hpreMoon]}catch(e){return false}};
+ const isOn=()=>{try{if(moonAct()&&typeof moonOn==="function")return!!moonOn()}catch(e){}return typeof CNT!=="undefined"&&!!CNT};
+ function mk(){const sb=document.getElementById("setbtn");if(!sb)return null;let h=document.querySelector("header #hnt");
+  if(!h){h=document.createElement("button");h.id="hnt";h.className="hnt hnthd";h.type="button";h.setAttribute("role","switch");h.setAttribute("aria-label","Modalità notte");
+   h.innerHTML='<span class="hntk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"></path></svg></span>';
+   h.onclick=()=>{if(moonAct())return;CNT=!CNT;try{cntSave()}catch(e){}try{SN.hist=false}catch(e){}const y=scrollY;render();scrollTo(0,y)};
+   sb.parentElement.insertBefore(h,sb)}else if(h.nextElementSibling!==sb)sb.parentElement.insertBefore(h,sb);return h}
+ function sync(){const h=mk();if(!h)return;const on=isOn();h.classList.toggle("on",on);h.setAttribute("aria-checked",on?"true":"false")}
+ /* il cambio di modalità ridisegna tutta l'app: prima si fa scivolare il pallino, poi si cambia */
  let go=false;document.addEventListener("click",e=>{const h=e.target.closest&&e.target.closest("header #hnt");if(!h||go)return;e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();
   const k=h.querySelector(".hntk"),on=h.getAttribute("aria-checked")==="true";if(k){k.style.setProperty("transition","left .24s cubic-bezier(.3,.7,.3,1),background .24s","important");k.style.setProperty("left",on?"2px":"24px","important")}
-  setTimeout(()=>{go=true;try{h.click()}finally{go=false}if(k){k.style.removeProperty("left");k.style.removeProperty("transition")}},260)},true);
- mv();const R=render;render=function(){const r=R.apply(this,arguments);try{mv()}catch(e){}return r}})();
+  setTimeout(()=>{go=true;try{h.click()}finally{go=false}if(k){k.style.removeProperty("left");k.style.removeProperty("transition")}sync()},260)},true);
+ sync();const R=render;render=function(){const r=R.apply(this,arguments);try{sync()}catch(e){}return r};setInterval(()=>{try{sync()}catch(e){}},2000)})();
 </script>
 <style>/* (839) tasto notte nell'intestazione: piu' piccolo del 10% (49x27) e, di giorno nel Parquet, «vetro crema» (versione 4): fondo crema semitrasparente, bordo crema, pallino crema con luna arancio */
 html body header .hnt.hnthd:not(#a):not(#b){width:49px!important;height:27px!important}html body header .hnt.hnthd .hntk:not(#a):not(#b){width:21px!important;height:21px!important;top:2px!important}html body header .hnt.hnthd.on .hntk:not(#a):not(#b){left:24px!important}html body header .hnt.hnthd .hntk svg{width:12px!important;height:12px!important}html.dlt-parquet:not(.notte) body header .hnt.hnthd:not(.on):not(#a):not(#b){background:rgba(253,243,225,.28)!important;border:1.5px solid rgba(253,243,225,.9)!important;box-shadow:none!important}html.dlt-parquet:not(.notte) body header .hnt.hnthd:not(.on):not(#a):not(#b) .hntk:not(#a){background:#fdf3e1!important;color:#d9560b!important}html body header .hnt.hnthd:not(.on) .hntk svg:not(#a),html body header .hnt.hnthd:not(.on) .hntk svg path:not(#a){color:#d9560b!important;fill:#d9560b!important}</style>
