@@ -9005,22 +9005,25 @@ function tvDrGame(key){try{const[ks,a,b]=key.split("|"),k=+ks,st=drStand(),P=drP
   const side=TVS.drs==="b"?"b":"a",T=side==="a"?A:B,sur=n=>n;
   const nba=n=>{const p=Object.values(ROSTER).flat().find(x=>x[0]===n);return p?p[3]:""};
   const f1=v=>v==null?"—":pdkF(v);
+  /* (858) statistiche della MIGLIOR partita del turno (quella che dà il PDK), dal tabellino di Dynasty TV; si scorre a destra come nel box NBA */
+  const NS=10,bxRow=n=>{try{const t=nba(n),nm=tvNm(n);let best=null;for(let i=0;i<(W.len||7);i++){const d=drAdd(W.start,i);for(const g of TV.days[d]||[]){if(g[0]!==t&&g[1]!==t)continue;const B=g[7]&&TV.box[g[7]];if(!B)continue;for(const r of[...(B.a||[]),...(B.h||[])])if(tvNm(r[0])===nm&&r[19]!=null&&(!best||+r[19]>+best[19]))best=r}}return best}catch(e){return null}};
+  const stc=(x,show)=>{const r=show?bxRow(x.n):null;if(!r)return"<td>—</td>".repeat(NS);return`<td>${r[2]}</td><td class="pts">${r[3]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}</td><td>${r[9]}</td><td>${r[10]}</td><td>${r[12]}-${r[13]}</td><td>${r[14]}-${r[15]}</td><td>${r[16]}-${r[17]}</td>`};
   const pr=(x,grp)=>{const m=grp==="trib"||grp==="wait"?0:x.m,lab=x.cap?'<i class="drmo c">×1,5</i>':grp==="half"?'<i class="drmo h">×½</i>':grp==="full"?'<i class="drmo f">×1</i>':'<i class="drmo">—</i>';
-    return`<tr><td>${RTR(x.n)}${x.n}${x.cap?'<i class="drcap">C</i>':""}<small>${nba(x.n)}${x.cal?" · calendario: media stagione":""}${x.a?` · ${x.a.g} ${x.a.g===1?"partita":"partite"}`:""}</small></td><td class="pdkl">${x.e==null?'<span class="dash">—</span>':pdkB(x.e,f1(x.e))}</td><td>${lab}</td><td class="dfp">${grp==="trib"||grp==="wait"||x.f==null?"—":f1(x.f)}</td></tr>`};
-  const grp=(lab,arr,g)=>arr.length?`<tr class="grp"><td>${lab}</td><td colspan="3"></td></tr>${arr.map(x=>pr(x,g)).join("")}`:"";
+    return`<tr><td>${RTR(x.n)}${x.n}${x.cap?'<i class="drcap">C</i>':""}<small>${nba(x.n)}${x.cal?" · calendario: media stagione":""}${x.a?` · ${x.a.g} ${x.a.g===1?"partita":"partite"}`:""}</small></td><td class="pdkl">${x.e==null?'<span class="dash">—</span>':pdkB(x.e,f1(x.e))}</td><td>${lab}</td><td class="dfp">${grp==="trib"||grp==="wait"||x.f==null?"—":f1(x.f)}</td>${stc(x,x.e!=null&&!x.cal)}</tr>`};
+  const grp=(lab,arr,g)=>arr.length?`<tr class="grp"><td>${lab}</td><td colspan="${3+NS}"></td></tr>${arr.map(x=>pr(x,g)).join("")}`:"";
   const inCampo=T.top.filter(x=>!x.half),panca=T.top.filter(x=>x.half);
-  const zeri=T.zeros?`<tr class="grp"><td>Posti vuoti</td><td colspan="3"></td></tr>${Array.from({length:T.zeros},()=>`<tr><td>Nessun giocatore<small>vale 0</small></td><td class="pdkl">—</td><td><i class="drmo">—</i></td><td class="dfp">0,0</td></tr>`).join("")}`:"";
+  const zeri=T.zeros?`<tr class="grp"><td>Posti vuoti</td><td colspan="${3+NS}"></td></tr>${Array.from({length:T.zeros},()=>`<tr><td>Nessun giocatore<small>vale 0</small></td><td class="pdkl">—</td><td><i class="drmo">—</i></td><td class="dfp">0,0</td>${"<td></td>".repeat(NS)}</tr>`).join("")}`:"";
   const somma=T.top.reduce((s,x)=>s+(x.f||0),0);
   return`<button class="gback tvback" data-tvback="1">‹ Partite del ${(()=>{const dd=tvDt(TVS.d);return dd.getUTCDate()+" "+TV_MM[dd.getUTCMonth()]})()}</button>
   <div class="tvsb" style="--ca:${ca};--ch:${cb}"><div class="tside"><span class="drsbl">${badge(a)}</span><b>${TEAMS[a].nick}</b><small>${A.played}/10 titolari</small></div>
    <div class="tmid"><div><span class="${fin&&A.score<B.score?"lo":""}">${A.score==null?"—":drScore(A.score)}</span><i>–</i><span class="${fin&&B.score<A.score?"lo":""}">${B.score==null?"—":drScore(B.score)}</span></div><small>${fin?"Finale":prov?"Live":W.started?"In corso":"Da giocare"}</small><em class="drsbn">Dreamers${prov?" · PDK provvisori":""}</em></div>
    <div class="tside"><span class="drsbl">${badge(b)}</span><b>${TEAMS[b].nick}</b><small>${B.played}/10 titolari</small></div></div>
   <div class="tvtabs"><button class="tvtab" data-drside="a" aria-pressed="${side==="a"}"><span class="drtvl">${badge(a)}</span>${TEAMS[a].nick}</button><button class="tvtab" data-drside="b" aria-pressed="${side==="b"}"><span class="drtvl">${badge(b)}</span>${TEAMS[b].nick}</button></div>
-  <div class="tbl-wrap"><table class="ptbl tvbox drbox"><thead><tr><th>Giocatore</th><th class="pdkl">PDK</th><th>Molt.</th><th>Punti</th></tr></thead>
+  <div class="tbl-wrap"><table class="ptbl tvbox drbox drbxs"><thead><tr><th>Giocatore</th><th class="pdkl">PDK</th><th>Molt.</th><th>Punti</th><th>Min</th><th>Pt</th><th>RIM</th><th>AST</th><th>STL</th><th>BLK</th><th>TOV</th><th>Tiri</th><th>Da 3</th><th>Liberi</th></tr></thead>
   <tbody>${grp("In campo",inCampo,"full")}${grp("Panchina · vale ½",panca,"half")}${zeri}${grp("Tribuna",T.trib,"trib")}${grp(W.closed?"Non ha giocato":"In attesa",T.wait,"wait")}
-  <tr class="tot"><td>Punteggio squadra</td><td></td><td></td><td class="dfp">${T.score==null?"—":drScore(T.score)}</td></tr></tbody></table></div>
+  <tr class="tot"><td>Punteggio squadra</td><td></td><td></td><td class="dfp">${T.score==null?"—":drScore(T.score)}</td>${"<td></td>".repeat(NS)}</tr></tbody></table></div>
   <button class="advbtn" data-drgo="${key}">Apri in Dreamers ›</button>
-  <p class="note">${DR_PH(k,P)} · ${drNn(W)}. PDK = miglior punteggio Dunkest tra le partite del turno. I 10 con il PDK più alto sono titolari: il migliore è capitano (C, ×1,5), poi 5 a punteggio pieno (in campo) e gli ultimi 4 in panchina a metà; gli altri vanno in tribuna. Punteggio squadra = somma dei punti dei titolari (${pdkF(somma)}).${prov?" Ci sono notti con PDK provvisori (live): si sostituiscono con i dati Dunkest al report.":""}</p>`}catch(e){return""}}
+  <p class="note">${DR_PH(k,P)} · ${drNn(W)}. PDK = miglior punteggio Dunkest tra le partite del turno. I 10 con il PDK più alto sono titolari: il migliore è capitano (C, ×1,5), poi 5 a punteggio pieno (in campo) e gli ultimi 4 in panchina a metà; gli altri vanno in tribuna. Punteggio squadra = somma dei punti dei titolari (${pdkF(somma)}). Scorri a destra per le statistiche della miglior partita del turno (Min, Pt, RIM rimbalzi, AST assist, STL, BLK, TOV palle perse, tiri).${prov?" Ci sono notti con PDK provvisori (live): si sostituiscono con i dati Dunkest al report.":""}</p>`}catch(e){return""}}
 function vTV0(){setTimeout(tvWeekPos,0);const T=TVD(),ks=Object.keys(T.days).sort();if(!ks.length)return`${H("Dynasty TV")}<div class="tvempty">Calendario non ancora disponibile.</div>`;
   if(TVS.out){TVS.out=0;if(!TVS.g&&!TVS.dr)TVS.d=null}/* (304) a ogni nuova apertura di Dynasty TV si riparte dal giorno giusto */
   if(!TVS.d||!T.days[TVS.d])TVS.d=tvDefDay();
@@ -12822,5 +12825,6 @@ header #hnt{view-transition-name:hntbtn}::view-transition-group(hntbtn){animatio
 </script>
 <style>/* (854) capsule PDK: numero SEMPRE bianco, in ogni sezione e in ogni stile (prima alcune regole del tabellino le coloravano come il resto) */
 html body .pdkx:not(#a):not(#b):not(#c):not(#d):not(#e):not(#f):not(#g),html body .pdkb:not(#a):not(#b):not(#c):not(#d):not(#e):not(#f):not(#g),html body .pdkx *:not(#a):not(#b):not(#c):not(#d):not(#e):not(#f):not(#g),html body .pdkb *:not(#a):not(#b):not(#c):not(#d):not(#e):not(#f):not(#g){color:#fff!important;-webkit-text-fill-color:#fff!important}</style>
+<style>/* (858) box Dreamers con statistiche: la tabella si allarga e scorre */.tbl-wrap:has(.drbxs){overflow-x:auto!important;-webkit-overflow-scrolling:touch}.tvbox.drbxs{min-width:max-content!important;width:max-content!important}.tvbox.drbxs td,.tvbox.drbxs th{white-space:nowrap}</style>
 </body>
 </html>
