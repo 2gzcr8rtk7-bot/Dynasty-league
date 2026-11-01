@@ -9917,7 +9917,7 @@ function pqFix(){try{
     if(el.tagName==="svg"||el.closest("svg"))return;
     if(el.closest(".htile"))return;
     if(el.closest(".cltg,.cltn,.tvpnl .tvdate,.tvpnl .tvday"))return;
-    if(window.__dxSkip&&window.__dxSkip(el))return;if(el.matches&&el.matches("div.teamhead,div.teamhead *,button.shbtn,div.gszn,table td.pnm,table td.pnm *,table thead th,table thead th *,.tvbox tr.grp td,.tvbox tr.grp td *,.tvbox tr.tot td,.tvbox tr.tot td *,.mnb,.bxs span.gv *,.bxs span.gr2 *"))return;
+    if(window.__dxSkip&&window.__dxSkip(el))return;if(el.matches&&el.matches("div.teamhead,div.teamhead *,button.shbtn,div.gszn,table td.pnm,table td.pnm *,table thead th,table thead th *,.tgc,.tgc *,.tvbox tr.grp td,.tvbox tr.grp td *,.tvbox tr.tot td,.tvbox tr.tot td *,.mnb,.bxs span.gv *,.bxs span.gr2 *"))return;
     if(el.classList&&el.classList.contains("tstar")){const b=bgSel(el);el.classList.toggle("stl",lum(b)>.4);return}
     let has=false;for(const n of el.childNodes)if(n.nodeType===3&&n.textContent.trim().length>0){has=true;break}
     if(!has)return;const r=el.getBoundingClientRect();if(r.width<2||r.height<2)return;
@@ -12771,5 +12771,11 @@ html body header .hnt.hnthd .hntk:not(#a):not(#b):not(#c){left:2px!important}htm
 (function(){const H=document.documentElement;function show(){if(!H.classList.contains("boot"))return;H.classList.remove("boot");H.classList.add("booted");setTimeout(()=>H.classList.remove("booted"),400)}
  const go=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(show,60)));if(document.readyState==="complete")go();else addEventListener("load",go);setTimeout(show,1800)})();
 </script>
+<style>/* (845) TG Dreamers in Home sempre leggibile, con i colori della modalità: di giorno (Parquet) scheda crema con bordo arancio e titolo marrone; di notte scheda viola scura con titolo bianco; nello stile base blu notte con titolo bianco */
+.tgc:not(#a):not(#b):not(#c):not(#d){background:linear-gradient(135deg,#1b0b3a,#0b1b4a 55%,#3a0b1f)!important;border-color:#facc15!important}.tgc .tgcb b:not(#a):not(#b):not(#c):not(#d){color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.5)!important}
+html.dlt-parquet:not(.notte) .tgc:not(#a):not(#b):not(#c):not(#d){background:linear-gradient(135deg,#fffaf2,#fdf0dc)!important;border:2px solid #e8631a!important;box-shadow:0 6px 14px rgba(90,40,5,.22)!important}
+html.dlt-parquet:not(.notte) .tgc .tgcb b:not(#a):not(#b):not(#c):not(#d){color:#5a2a0e!important;-webkit-text-fill-color:#5a2a0e!important;text-shadow:none!important}
+html.notte .tgc:not(#a):not(#b):not(#c):not(#d){background:linear-gradient(135deg,#2a1260,#160a3a 60%,#3b0d4f)!important;border:2px solid #a78bfa!important;box-shadow:0 0 14px rgba(139,92,246,.35)!important}
+html.notte .tgc .tgcb b:not(#a):not(#b):not(#c):not(#d){color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 3px rgba(0,0,0,.6)!important}</style>
 </body>
 </html>
