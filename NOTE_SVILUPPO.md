@@ -2062,3 +2062,5 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 860. Dreamers, carte della sfida (Turno): tocco sulla maglia = profilo del giocatore (data-plopen su .duj). Le capsule PDK dei singoli giorni (.duw.dug) hanno il numero bianco come tutte le capsule PDK.
 861. Box score NBA in Dynasty TV: il ruolo (.tvps) e' una targhetta arancio #c2410c con lettera bianca, opaca e sopra il logo della squadra (versione 2 scelta da Francesco).
 862. Targhetta del ruolo nel box NBA: angoli arrotondati uguali sopra e sotto (inline-block, line-height 1, niente ombra; prima il fondo veniva tagliato).
+863. Statistiche notte (righe giocatore): minuti colorati come in Home (classe .mnb, verde >= MINg, rosso <= MINr, soglie bxTh).
+864. Statistiche notte in modalita' BOX: tolto il riassunto pt/rb/as accanto ai minuti (ripeteva le caselle sotto); resta nelle modalita' PDK ed EFF.
