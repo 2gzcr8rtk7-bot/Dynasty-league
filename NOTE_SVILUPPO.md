@@ -2200,3 +2200,6 @@ Francesco (21:28): pareti con montanti LED verticali viola/lilla e pannelli viol
 
 ## 943 — Modalità Dream spenta per i Peacocks
 Francesco (21:35): per i Peacocks il tasto «D» resta al suo posto ma grigio, spento e senza effetto (DRM_NO = [PEA]; per aggiungere o togliere squadre basta cambiare la lista).
+
+## 944 — Modalità Dream: maglie con colori pieni
+Francesco (21:39): le maglie erano spente (la resa della luce le smorzava e quelle a partita finita erano grigiate): ora colori pieni, non toccati dalla luce, e a partita finita solo un velo appena più chiaro.
