@@ -2987,10 +2987,10 @@ html.dlt-parquet:not(.notte) main .bxs.bxs span.gr2.gr2 :is(b,small){color:#e024
 <script>/* (843) TEMA NATIVO: classi dello stile (Parquet / notte) messe sull'html PRIMA del primo disegno, leggendo le impostazioni salvate: niente più grafica blu di base che compare per un attimo all'apertura */
 (function(){try{var d={};try{d=JSON.parse(localStorage.getItem("dl_set")||"{}")||{}}catch(e){}var th=d.th||"parquet",n=localStorage.getItem("dl_cnt")==="1",nt=n||th==="viola",pq=!n&&["classico","tabellone","viola"].indexOf(th)<0,H=document.documentElement;
 var sh=null;try{sh=JSON.parse(localStorage.getItem("dl_shell")||"null")}catch(e){}if(sh&&sh.k===(nt?"n":"")+(pq?"p":"")+th){if(sh.st)H.setAttribute("style",sh.st);if(sh.cl)sh.cl.split(" ").forEach(function(c){if(c)H.classList.add(c)})}
-if(pq)H.classList.add("dlt-parquet");if(nt)H.classList.add("notte");H.classList.add("boot");setTimeout(function(){H.classList.remove("boot")},2500);window.__early={nt:nt,pq:pq};var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",nt?"#1f0d4a":pq?"#d9560b":"#0a1330")}catch(e){}})();</script>
+if(pq)H.classList.add("dlt-parquet");if(nt)H.classList.add("notte");H.classList.add("boot");setTimeout(function(){H.classList.remove("boot")},1200);window.__early={nt:nt,pq:pq};var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",nt?"#1f0d4a":pq?"#d9560b":"#0a1330")}catch(e){}})();</script>
 <style>/* (844) APERTURA PULITA: finché l'app non ha finito il primo disegno la pagina resta nascosta sul colore dello stile (parquet, viola o blu), poi compare con una dissolvenza breve: niente più intestazione che salta o pezzi che si sistemano */
-html.boot body{visibility:hidden}html.boot{background:#0a1330}html.boot.dlt-parquet{background:#c88a4c}html.boot.notte{background:#1f0d4a}
-@keyframes dlfadein{from{opacity:0}to{opacity:1}}html.booted body{animation:dlfadein .18s ease-out}
+html.boot main,html.boot footer{visibility:hidden}html.boot{background:#0a1330}html.boot.dlt-parquet{background:#c88a4c}html.boot.notte{background:#1f0d4a}
+@keyframes dlfadein{from{opacity:0}to{opacity:1}}html.booted main{animation:dlfadein .18s ease-out}
 </style>
 <style>/* (848) barra di ricerca della Home nel Parquet: crema NATIVA (prima la metteva un controllo dopo il caricamento, che al primo avvio a volte non arrivava) */
 html.dlt-parquet:not(.notte) .hbar .hsrch:not(#a):not(#b){background:#fdf3e1!important;border:1px solid rgba(217,86,11,.35)!important;box-shadow:inset 0 1px 3px rgba(120,50,0,.12)!important}html.dlt-parquet:not(.notte) .hbar .hsrch input:not(#a){color:#5a2a0e!important;-webkit-text-fill-color:#5a2a0e!important}html.dlt-parquet:not(.notte) .hbar .hsrch input::placeholder{color:#d9560b!important;-webkit-text-fill-color:#d9560b!important;opacity:.75}html.dlt-parquet:not(.notte) .hbar .hsrch svg{color:#5a2a0e!important}
@@ -12648,9 +12648,9 @@ const T0=x=>teamOrd().find(t=>t!==x);
  const clean=()=>{document.querySelectorAll("[data-pq]").forEach(x=>{x.style.removeProperty("color");x.style.removeProperty("text-shadow");x.style.removeProperty("-webkit-text-fill-color");x.removeAttribute("data-pq")});
   document.querySelectorAll("[data-pqc]").forEach(x=>{x.style.removeProperty("background-color");x.removeAttribute("data-pqc")});document.querySelectorAll(".pqw").forEach(x=>x.classList.remove("pqw"));window.__pqKey=undefined};
  const now=()=>((typeof CNT!=="undefined"&&CNT)?"N":"D")+"|"+(typeof DLS!=="undefined"?DLS.th:"")+"|"+((typeof DLS!=="undefined"&&DLS.th&&typeof DLT!=="undefined"&&DLT[DLS.th])?"c":"");
- function chk(force){try{const s=now();if(!force&&s===sig)return false;const first=sig===null;sig=s;clean();dlsApply();try{window.pqFix&&window.pqFix()}catch(e){}try{window.pqCrema&&window.pqCrema()}catch(e){}return !first}catch(e){return false}}
+ function chk(force,lite){try{const s=now();if(!force&&s===sig)return false;const first=sig===null;sig=s;clean();dlsApply();if(!lite){try{window.pqFix&&window.pqFix()}catch(e){}try{window.pqCrema&&window.pqCrema()}catch(e){}}return !first}catch(e){return false}}
  window.styleSync=chk;chk(true);
- const R0=render;render=function(){chk();return R0.apply(this,arguments)};
+ const R0=render;render=function(){chk(false,true)/* (849) dentro un render pqFix e crema li rifà già il render: niente doppio lavoro */;return R0.apply(this,arguments)};
  document.addEventListener("visibilitychange",()=>{if(!document.hidden)setTimeout(()=>{if(chk())try{const y=scrollY;render();scrollTo(0,y)}catch(e){}},30)});
  window.addEventListener("pageshow",()=>chk(true));
  /* controllo di sicurezza: se qualcuno cambia notte o stile senza passare dal render, entro 1,5 s si riallinea */
@@ -12754,7 +12754,9 @@ html.dlt-parquet:not(.notte) body .tvbox tbody tr:not(.grp):not(.tot) td:not(#a)
  let go=false;document.addEventListener("click",e=>{const h=e.target.closest&&e.target.closest("header #hnt");if(!h||go)return;e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();
   const k=h.querySelector(".hntk"),on=h.getAttribute("aria-checked")==="true";h.classList.toggle("flip",!on);h.classList.add("moving");
   /* (847) si cambia modalità solo DOPO che il pallino è arrivato (e dopo un fotogramma libero), così il lavoro pesante non lo interrompe */
-  setTimeout(()=>requestAnimationFrame(()=>setTimeout(()=>{go=true;try{h.click()}finally{go=false}h.classList.remove("moving");h.classList.remove("flip");sync()},0)),300)},true);
+  setTimeout(()=>requestAnimationFrame(()=>setTimeout(()=>{const run=()=>{go=true;try{h.click()}finally{go=false}h.classList.remove("moving");h.classList.remove("flip");sync()};
+   /* (849) dissolvenza incrociata tra i due stili: il telefono tiene ferma l'immagine vecchia mentre l'app ridisegna e poi sfuma nella nuova */
+   try{if(document.startViewTransition&&!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){document.startViewTransition(run);return}}catch(e){}run()},0)),300)},true);
  sync();const R=render;render=function(){const r=R.apply(this,arguments);try{sync()}catch(e){}return r};setInterval(()=>{try{sync()}catch(e){}},2000);
  /* (842) se qualcosa ridisegna l'intestazione e toglie il tasto, lo si rimette subito */
  try{const hd=document.querySelector("header");if(hd)new MutationObserver(()=>{if(!document.querySelector("header #hnt"))try{sync()}catch(e){}}).observe(hd,{childList:true,subtree:true})}catch(e){}
@@ -12773,7 +12775,8 @@ html body header .hnt.hnthd .hntk:not(#a):not(#b):not(#c){left:2px!important}htm
 <script>
 /* (844) fine dell'apertura: dopo il primo disegno completo dell'app (due fotogrammi dopo il caricamento) si mostra la pagina */
 (function(){const H=document.documentElement;function show(){if(!H.classList.contains("boot"))return;H.classList.remove("boot");H.classList.add("booted");setTimeout(()=>H.classList.remove("booted"),400)}
- const go=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(show,60)));if(document.readyState==="complete")go();else addEventListener("load",go);setTimeout(show,1800)})();
+ /* (850) non si aspetta più il caricamento di tutte le immagini e dei caratteri (evento load: rallentava l'apertura): si mostra appena l'app ha fatto il suo primo disegno, cioè subito dopo questi script */
+ requestAnimationFrame(()=>requestAnimationFrame(show));setTimeout(show,700)})();
 </script>
 <style>/* (845) TG Dreamers in Home sempre leggibile, con i colori della modalità: di giorno (Parquet) scheda crema con bordo arancio e titolo marrone; di notte scheda viola scura con titolo bianco; nello stile base blu notte con titolo bianco */
 .tgc:not(#a):not(#b):not(#c):not(#d){background:linear-gradient(135deg,#1b0b3a,#0b1b4a 55%,#3a0b1f)!important;border-color:#facc15!important}.tgc .tgcb b:not(#a):not(#b):not(#c):not(#d){color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.5)!important}
@@ -12786,5 +12789,8 @@ header .hnt.hnthd .hntk:not(#a):not(#b):not(#c):not(#d):not(#e){left:2px!importa
 header .hnt.hnthd[aria-checked="true"] .hntk:not(#a):not(#b):not(#c):not(#d):not(#e),header .hnt.hnthd.on .hntk:not(#a):not(#b):not(#c):not(#d):not(#e){left:2px!important;transform:translate3d(22px,0,0)}
 header .hnt.hnthd.moving .hntk:not(#a):not(#b):not(#c):not(#d):not(#e){transform:translate3d(0,0,0)}header .hnt.hnthd.moving.flip .hntk:not(#a):not(#b):not(#c):not(#d):not(#e){transform:translate3d(22px,0,0)}
 header .hnt.hnthd:not(#a):not(#b):not(#c):not(#d):not(#e){transition:background .28s,border-color .28s,box-shadow .28s!important}</style>
+<style>/* (849) dissolvenza tra giorno e notte */
+::view-transition-old(root),::view-transition-new(root){animation-duration:.32s;animation-timing-function:ease}
+header #hnt{view-transition-name:hntbtn}::view-transition-group(hntbtn){animation-duration:0s}</style>
 </body>
 </html>
