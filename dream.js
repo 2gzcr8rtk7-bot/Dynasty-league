@@ -205,9 +205,20 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
   const SY=window.speechSynthesis;let VO=null;const pickV=()=>{try{const L=SY.getVoices();VO=L.find(v=>/^it/i.test(v.lang)&&/premium|enhanced|alice|federica|luca/i.test(v.name))||L.find(v=>/^it/i.test(v.lang))||null}catch(e){}};if(SY){pickV();try{SY.onvoiceschanged=pickV}catch(e){}}
   st.voice=(()=>{try{return localStorage.getItem("dl_drm_voce")!=="0"}catch(e){return true}})();
   const say=(txt)=>{if(!SY||!st.voice||st.stop)return;try{if(SY.pending&&st.q>=4)return;const u=new SpeechSynthesisUtterance(txt);u.lang="it-IT";if(VO)u.voice=VO;u.rate=.92;u.pitch=1;u.volume=1;st.q=(st.q||0)+1;u.onend=u.onerror=()=>{st.q=Math.max(0,(st.q||1)-1)};SY.speak(u)}catch(e){}};st.say=say;
-  const vb=ov.querySelector(".drm3a");vb.textContent=st.voice?"🔊":"🔇";vb.onclick=()=>{st.voice=!st.voice;try{localStorage.setItem("dl_drm_voce",st.voice?"1":"0")}catch(e){}vb.textContent=st.voice?"🔊":"🔇";if(!st.voice&&SY)SY.cancel();else say("Voce attiva")};
+  const vb=ov.querySelector(".drm3a");vb.textContent=st.voice?"🔊":"🔇";vb.onclick=()=>{st.voice=!st.voice;try{localStorage.setItem("dl_drm_voce",st.voice?"1":"0")}catch(e){}vb.textContent=st.voice?"🔊":"🔇";if(st.A)st.A.mute(st.voice);if(!st.voice&&SY)SY.cancel();else say("Voce attiva")};
   if(SY&&st.voice){try{SY.cancel();say("Benvenuti alla "+TM.nick+" Arena")}catch(e){}}
-  const A=null;st.A=null;/* (931) audio tolto: un tifo sintetico non sembra vero (Francesco 20:52) */
+  /* (01/11) AUDIO VERO (file scelti dall'utente, cartella aud/): sottofondo del palazzetto in loop senza stacchi, «punto segnato» a ogni canestro o libero segnato,
+   «tiro sbagliato» a ogni tiro o libero sbagliato. Web Audio; si scaricano solo qui; il tasto 🔊/🔇 spegne voce e suoni; tutto si ferma all'uscita. */
+st.A=null;try{const AC=window.AudioContext||window.webkitAudioContext;if(AC&&st.audioOn){const ac=new AC(),m=ac.createGain();m.gain.value=st.voice?1:0;m.connect(ac.destination);const B={};let bg=null;
+  const ld=n=>fetch("aud/"+n+".mp3").then(r=>r.arrayBuffer()).then(b=>new Promise((ok,ko)=>ac.decodeAudioData(b,ok,ko))).then(x=>{B[n]=x}).catch(()=>{});
+  const startBg=()=>{if(bg||!B["dream-sottofondo"]||st.stop)return;bg=ac.createBufferSource();bg.buffer=B["dream-sottofondo"];bg.loop=true;const g=ac.createGain();g.gain.setValueAtTime(0,ac.currentTime);g.gain.linearRampToValueAtTime(.38,ac.currentTime+1.5);bg.connect(g);g.connect(m);bg.start()};
+  const fx=(n,v)=>{const b=B[n];if(!b||st.stop)return;const s=ac.createBufferSource();s.buffer=b;const g=ac.createGain();g.gain.value=v;s.connect(g);g.connect(m);s.start()};
+  Promise.all(["dream-sottofondo","dream-segnato","dream-sbagliato"].map(ld)).then(()=>{if(ac.state==="suspended")ac.resume().catch(()=>{});startBg()});
+  st.A={ac,play(k){if(k==="pt"||k==="ft")fx("dream-segnato",.9);else if(k==="miss")fx("dream-sbagliato",.8)},mute(on){m.gain.setTargetAtTime(on?1:0,ac.currentTime,.08)},
+    close(){try{bg&&bg.stop()}catch(e){}try{if(ac.state!=="closed")ac.close().catch(()=>{})}catch(e){}}};
+  const unl=()=>{if(ac.state==="suspended")ac.resume().catch(()=>{})};ov.addEventListener("pointerdown",unl);ov.addEventListener("touchend",unl);
+  st.vis=()=>{if(st.stop)return;if(document.hidden)ac.suspend().catch(()=>{});else ac.resume().catch(()=>{})};document.addEventListener("visibilitychange",st.vis)}}catch(e){st.A=null}
+const A=st.A;
   ov.querySelector(".drm3x").onclick=close;
   let T3;try{T3=await loadThree()}catch(e){msg.textContent="Non riesco a caricare lo stadio 3D: controlla la connessione e riprova.";return}
   if(st.stop)return;
@@ -410,6 +421,7 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
 function disposeAll(K){try{[K.S,K.RS].forEach(SC=>SC&&SC.traverse(o=>{if(o.geometry)o.geometry.dispose();const m=o.material;if(m){(Array.isArray(m)?m:[m]).forEach(x=>{if(x.map)x.map.dispose();x.dispose()})}}));K.R.dispose();K.R.forceContextLoss&&K.R.forceContextLoss()}catch(e){}}
 function close(){const st=ST;if(!st)return;st.stop=true;ST=null;cancelAnimationFrame(st.raf);clearInterval(st.iv);clearTimeout(st.ch);if(st.kd){document.removeEventListener("keydown",st.kd);document.removeEventListener("keyup",st.kd)}if(st.rs)removeEventListener("resize",st.rs);
   try{window.speechSynthesis&&window.speechSynthesis.cancel()}catch(e){}
+  try{if(st.A)st.A.close();if(st.vis)document.removeEventListener("visibilitychange",st.vis)}catch(e){}
   if(st.K)disposeAll(st.K);
   /* (939) si torna sempre alla squadra da cui si è entrati */try{if(window.curTeam!==undefined||typeof curTeam!=="undefined"){if(curTeam!==st.t){curTeam=st.t;render()}}}catch(e){}try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock("portrait").catch(()=>{})}catch(e){}try{st.A&&st.A.ac.close()}catch(e){}st.ov.remove();document.body.classList.remove("drm3on")}
 window.dreamOpen=open;window.dreamClose=close;window.dreamDbg=()=>ST;
