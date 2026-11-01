@@ -2066,3 +2066,4 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
 864. Statistiche notte in modalita' BOX: tolto il riassunto pt/rb/as accanto ai minuti (ripeteva le caselle sotto); resta nelle modalita' PDK ed EFF.
 865. Playoff Dreamers: tabelloni piu grandi (semifinali 52%, finali 42%, caselle alte ~50px, loghi 38px, nomi 16px, linee del bracket ricalcolate M52..58), niente aloni/ombre dietro i loghi, testi Vincente/Perdente centrati, coppa arancione solo in Parquet giorno (notte viola).
 866. Targhetta del ruolo nel box NBA: in modalita' notte viola #7c3aed con lettera bianca (di giorno resta arancio).
+867. Box score NBA in Dynasty TV: nuova colonna SQ (prima del PDK) con il logo della nostra squadra (.sqc, tabella .tvsq); ruolo tornato lettera opaca senza pillola (rimosse 861/862/866); colonna nomi 150px con nomi lunghi su due righe.
