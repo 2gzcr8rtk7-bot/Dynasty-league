@@ -2197,3 +2197,6 @@ Francesco (21:17–21:22): preparati 4 look caldi stile NBA (Caldo classico, Pri
 
 ## 942 — Modalità Dream: LED viola Dreamers, striscioni illuminati, maglie leggibili da lontano
 Francesco (21:28): pareti con montanti LED verticali viola/lilla e pannelli viola luminosi tra un montante e l altro, quattro anelli LED a varie altezze (viola, lilla, fucsia), anello viola sul soffitto attorno al maxischermo: tutto con materiali che brillano, nessuna luce in più (leggero). Striscioni dei trofei a piena luce con alone viola dietro e cornice LED nel colore del trofeo. Maglie e targhette si ingrandiscono con la distanza (fino a 1,8×) così restano leggibili dall alto.
+
+## 943 — Modalità Dream spenta per i Peacocks
+Francesco (21:35): per i Peacocks il tasto «D» resta al suo posto ma grigio, spento e senza effetto (DRM_NO = [PEA]; per aggiungere o togliere squadre basta cambiare la lista).

@@ -7487,9 +7487,11 @@ setInterval(()=>{try{const on=lvNotte();document.querySelectorAll(".lbm[data-lv]
 /* (927) MODALITÀ DREAM: al posto del vecchio tasto notte accanto al campo (la notte ora è in alto, vicino alle impostazioni) il tasto viola «D»
    apre lo stadio 3D della squadra (dream.js, caricato solo al primo tocco; il motore 3D in vendor/three.min.js). */
 const DRM_BTN=`<button class="drmbtn" id="drmbtn" aria-label="Modalità Dream" title="Modalità Dream"><svg viewBox="0 0 24 24" aria-hidden="true"><text x="11" y="18.2" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="17" font-weight="900" font-style="italic" fill="#fff">D</text><path d="M19.2 2.6l.75 1.6 1.65.2-1.2 1.15.3 1.7-1.5-.85-1.5.85.3-1.7-1.2-1.15 1.65-.2z" fill="#fde68a"/></svg></button>`;
-document.addEventListener("click",e=>{const b=e.target.closest("#drmbtn");if(!b)return;e.preventDefault();e.stopPropagation();const go=()=>{try{window.dreamOpen(curTeam)}catch(er){console.error(er)}};
+/* (943) squadre senza Modalità Dream (Francesco 21:35: i Peacocks no): il tasto c'è ma è spento e non fa nulla */
+const DRM_NO=["PEA"],drmBtn=t=>DRM_NO.includes(t)?DRM_BTN.replace('id="drmbtn"','id="drmoff" disabled aria-disabled="true"').replace('class="drmbtn"','class="drmbtn off"'):DRM_BTN;
+document.addEventListener("click",e=>{const b=e.target.closest("#drmbtn");if(!b)return;e.preventDefault();e.stopPropagation();if(DRM_NO.includes(curTeam))return;const go=()=>{try{window.dreamOpen(curTeam)}catch(er){console.error(er)}};
   if(window.dreamOpen)return go();const s=document.createElement("script");s.src="dream.js";s.onload=go;s.onerror=()=>alert("Modalità Dream non disponibile: controlla la connessione.");document.head.appendChild(s)},true);
-function drTabellone(t,T,k,P,on){const W=T.W,btn=DRM_BTN;
+function drTabellone(t,T,k,P,on){const W=T.W,btn=drmBtn(t);
   /* piccolo tabellone elettronico al posto della scritta "Quintetto": la mia squadra contro l'avversaria del turno Dreamers,
      punteggi live di entrambe (drTeam). Stessa riga del titolo, stesso tasto notte. Tocco = apre la sfida in Dreamers. */
   const num=v=>{const txt=v==null?"---,-":pdkF(v),[ip,dp]=txt.split(",");return[...ip.padStart(3," ")].map(segD).join("")+`<span class="sgdot"></span>`+segD(dp||"-")};
@@ -7612,7 +7614,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
    ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${(t==="DUC"&&(ducBan()||DUC_CURL))||LOGO[t]}" alt=""${dlHeadLogo(t)}>`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
   ${bacheca(t)}
   ${cassa(t)}
-  ${CNT&&DT2?drTabellone(t,DT2,DK2,DP2,true):CNT?H(CNT?"Modalità notte":"Quintetto",`<em>${CNT?(()=>{const d=campoNotte();if(!d)return"nessuna partita";const dd=tvDt(d);return`${dd.getUTCDate()}/${dd.getUTCMonth()+1}`})():`Dreamers · ${DR_PH(DK,DP)}`}</em>${kitBtn(t)}${DRM_BTN}`):drTabellone(t,DT,DK,DP)}
+  ${CNT&&DT2?drTabellone(t,DT2,DK2,DP2,true):CNT?H(CNT?"Modalità notte":"Quintetto",`<em>${CNT?(()=>{const d=campoNotte();if(!d)return"nessuna partita";const dd=tvDt(d);return`${dd.getUTCDate()}/${dd.getUTCMonth()+1}`})():`Dreamers · ${DR_PH(DK,DP)}`}</em>${kitBtn(t)}${drmBtn(t)}`):drTabellone(t,DT,DK,DP)}
   <div class="court${CNT?" cdark":""}${CNT&&(()=>{try{const d=campoNotte();return d&&(TV.days[d]||[]).some(g=>g[5]==="L")}catch(e){return false}})()?" clive":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg};border-color:${shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}${CNT&&!q.length?`<div class="cnone">Nessuno in campo stanotte</div>`:""}</div>
   ${CNT?`${H("Panchina",`<em>notte · per punteggio</em>`)}
   <div class="bench${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg}">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${RTR(p[0])}${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}${injTag(p[0])}</small></span><span class="bev">${CNT?`<span class="cnrow" data-nwk="${p[0]}" role="button" tabindex="0">${NM[p[0]]&&NM[p[0]].lv?'<i class="cnlv" title="In campo ora"></i>':""}${pillN(p[0])}</span><small>${NM[p[0]]?`vs ${NM[p[0]].opp} · ${NM[p[0]].st}`:"non ha giocato"}</small>`:`${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}`}</span></button>`).join("")}</div>`:drPanca(t,DT)}
@@ -13270,6 +13272,7 @@ setTimeout(put,800);setInterval(put,60000);document.addEventListener("visibility
 <style>/* (927) Modalità Dream: tasto viola «D» (stessa misura del vecchio tasto notte) e stadio 3D a schermo intero */
 html body .drmbtn:not(#a):not(#b){margin-left:auto;flex:none;display:inline-grid;place-items:center;width:38px;height:28px;padding:0;border-radius:9px;border:1px solid #c4b5fd!important;background:linear-gradient(180deg,#8b5cf6,#5b21b6)!important;box-shadow:0 0 12px rgba(139,92,246,.65),inset 0 1px 0 rgba(255,255,255,.35);cursor:pointer;animation:drmglow 2.6s ease-in-out infinite}
 html body .drmbtn svg{width:20px;height:20px;display:block}
+html body .drmbtn.off:not(#a):not(#b){filter:grayscale(1);opacity:.4;animation:none;box-shadow:none;cursor:default}
 @keyframes drmglow{50%{box-shadow:0 0 18px rgba(167,139,250,.9),inset 0 1px 0 rgba(255,255,255,.35)}}
 h2 .kitbtn+.drmbtn{margin-left:6px!important}
 h2.lbmh>.drmbtn{justify-self:end;margin-left:0!important}
