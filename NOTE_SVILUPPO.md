@@ -2051,3 +2051,4 @@ Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 
  - controllo stili 787 dentro il render non rifa' pqFix e crema (li rifa' gia' il render).
  - drNotti, drWeek, drStand: risultato ricordato fino alla fine del disegno in corso (erano ricalcolati molte volte per ogni render).
  - tasto notte: pallino 0,2 s, cambio di modalita' dopo 170 ms, dissolvenza 0,22 s.
+852. Tasto notte e cambio di stile insieme (Francesco: il tasto era ancora piu' veloce del cambio). Al tocco si cambiano SUBITO solo classi e variabili dello stile (styleSync lite: pulizia residui + dlsApply, pochi ms) dentro la dissolvenza, nello stesso istante in cui parte il pallino; il ridisegno completo della pagina avviene dopo, a dissolvenza finita (ricorda lo scorrimento). Con il preset luna resta il percorso precedente.
