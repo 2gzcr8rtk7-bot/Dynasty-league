@@ -2125,3 +2125,6 @@ AV_FATTI.TUR (15), GM_INTOCC TUR = Dylan Harper; pl nuovi Haliburton +4, Dybants
 
 ## 911 — Report Turtles Confronto 62
 pl TUR fusi (su Boozer, Haliburton, Ware, Durant; giù Barrett, Murray-Boyles, Mobley, Fears, Mikel Brown, Trae Young, Adebayo), n +16, scheda TUR. Diciottesima correzione: Barrett 650→620 (TUR+DOL+PEA+MOO), Fears 720→675 (TUR+DOL), Durant 900→930 (TUR+MOO). Esclusi: Boozer e Murray-Boyles (già corretti oggi, risposte nuove di un solo GM), Adebayo e Siakam (Dolphins di parere opposto).
+
+## 912 — Report Turtles Proposte 141
+Profilo TUR rifatto sulle 141 proposte (contengono le 81 del 31/10): req 21, age 0,75 (fit 1,25 − 0,5), sc 18, ruoli G −2 / F +4 / C −2, n 161 → 150. GM_ACC TUR = [53,141]. Residui: tengono Harper, Wagler (pl +5), Coward; cedono più volentieri Holmgren, Banchero, Queen; Edey pl −7. Scheda TUR aggiornata. Nessuna correzione dei valori (giocatori propri).
