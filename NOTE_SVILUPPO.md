@@ -2206,3 +2206,6 @@ Francesco (21:39): le maglie erano spente (la resa della luce le smorzava e quel
 
 ## 945 — Modalità Dream: maglie simmetriche su tutto il campo
 Francesco (21:40): cinque posti simmetrici (il migliore al centro verso il fondo, due a metà campo verso chi guarda, due ai lati verso i canestri) invece che ammassati; da lontano si ingrandiscono maglia e targhetta senza salire di quota, così non si sovrappongono.
+
+## 946–947 — Modalità Dream spettacolare: parquet, fasci di luce, gradoni illuminati, campo vuoto senza scritte
+Francesco (21:46–21:47). Parquet: listelli con sfumatura propria, venature, nodi, fughe sottili, vernice con riflesso morbido e bordi scuri; logo a centrocampo più grande con ombra. Faretti: 8 fasci di luce visibili dal tetto (coni trasparenti additivi) con i corpi luce, pozze di luce calda sul parquet. Dove camminare: filo di luce calda sul bordo di ogni gradone e anello lilla che segna il punto toccato. Luminosità generale un po più alta (luce d ambiente 1,0). Campo vuoto: tolte la scritta «Nessuno in campo stanotte» in mezzo al campo e quella sul maxischermo.

@@ -47,7 +47,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
   const mob=Math.min(screen.width,screen.height)<700;
   /* (932) qualità alta: antialias sempre, risoluzione fino a 2× (si abbassa da sola se il telefono fatica, vedi il ciclo) */
   const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,powerPreference:"high-performance"});R.setPixelRatio(Math.min(2,devicePixelRatio||1));const ANI=R.capabilities.getMaxAnisotropy();R.setSize(innerWidth,innerHeight,false);
-  R.toneMapping=THREE.ACESFilmicToneMapping;/* (940) LOOK = luce e atmosfera (prove di colori caldi stile NBA) */const LK=Object.assign({exp:1.0,bg:"#060509",fog:0x08070c,hue:30,sat:50,lig:48,sky:0xfff1df,gnd:null,hemi:.85,dir:0xffe6c4,dirI:.5,spot:0xfff2dc,spotI:330,lamp:"#fff4dc",roof:"#3b3a44",roofK:.86,warm:0},window.DREAM_LOOK||{});
+  R.toneMapping=THREE.ACESFilmicToneMapping;/* (940) LOOK = luce e atmosfera (prove di colori caldi stile NBA) */const LK=Object.assign({exp:1.02,bg:"#060509",fog:0x08070c,hue:30,sat:50,lig:48,sky:0xfff1df,gnd:null,hemi:1.0,dir:0xffe6c4,dirI:.5,spot:0xfff2dc,spotI:330,lamp:"#fff4dc",roof:"#3b3a44",roofK:.86,warm:0},window.DREAM_LOOK||{});
   R.toneMappingExposure=LK.exp;R.outputColorSpace=THREE.SRGBColorSpace;
   const S=new THREE.Scene();S.background=C(LK.bg);S.fog=new THREE.FogExp2(LK.fog,.010);
   const cam=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,220);
@@ -60,7 +60,11 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
     for(const s of segs){const len=s[0]==="l"?Math.hypot(s[3]-s[1],s[4]-s[2]):Math.PI*cr/2,n=Math.max(1,Math.round(len/step));for(let i=0;i<n;i++){const k=i/n;if(s[0]==="l")out.push([s[1]+(s[3]-s[1])*k,s[2]+(s[4]-s[2])*k]);else{const a=s[3]+(s[4]-s[3])*k;out.push([s[1]+Math.cos(a)*cr,s[2]+Math.sin(a)*cr])}}}return out};
   /* parquet */
   const court=tex(3072,1646,(x,W,H)=>{const ph=Math.round(H/75);
-    for(let y=0;y<H;y+=ph){const off=((y/ph)%5)*W*.062;for(let xx=-off;xx<W;xx+=W*.25){x.fillStyle=`hsl(${LK.hue+Math.random()*7},${LK.sat+Math.random()*12}%,${LK.lig+Math.random()*9}%)`;x.fillRect(xx,y,W*.25,ph);x.fillStyle="rgba(60,30,10,.22)";x.fillRect(xx,y,2,ph)}x.fillStyle="rgba(70,35,10,.16)";x.fillRect(0,y,W,1.2)}
+    /* (946) parquet di qualità: listelli con tono proprio, venature, nodi, fughe sottili e vernice */
+    for(let y=0;y<H;y+=ph){const off=((y/ph)%5)*W*.062;for(let xx=-off;xx<W;xx+=W*.25){const hh=LK.hue+Math.random()*7,ss=LK.sat+Math.random()*12,ll=LK.lig+Math.random()*9;const gr=x.createLinearGradient(0,y,0,y+ph);gr.addColorStop(0,`hsl(${hh},${ss}%,${ll+3}%)`);gr.addColorStop(1,`hsl(${hh},${ss}%,${ll-3}%)`);x.fillStyle=gr;x.fillRect(xx,y,W*.25,ph);
+        for(let k=0;k<5;k++){x.strokeStyle=`hsla(${hh-4},${ss+8}%,${ll-14}%,${.08+Math.random()*.1})`;x.lineWidth=.8+Math.random();x.beginPath();const yy=y+Math.random()*ph;x.moveTo(xx,yy);for(let q=1;q<=6;q++)x.lineTo(xx+q*W*.25/6,yy+(Math.random()-.5)*ph*.25);x.stroke()}
+        if(Math.random()<.18){x.fillStyle=`hsla(${hh-6},${ss}%,${ll-18}%,.35)`;x.beginPath();x.ellipse(xx+Math.random()*W*.25,y+ph/2,ph*.35,ph*.2,0,0,7);x.fill()}
+        x.fillStyle="rgba(50,25,8,.35)";x.fillRect(xx,y,1.6,ph)}x.fillStyle="rgba(55,28,8,.28)";x.fillRect(0,y,W,1)}
     const sc=W/28,L=m=>m*sc,cx=W/2,cy=H/2;
     x.fillStyle=BG;x.globalAlpha=.95;[0,1].forEach(s=>x.fillRect(s?W-L(5.8):0,cy-L(2.45),L(5.8),L(4.9)));x.beginPath();x.arc(cx,cy,L(1.8),0,7);x.fill();x.globalAlpha=1;x.fillRect(0,0,W,L(.5));x.fillRect(0,H-L(.5),W,L(.5));
     x.strokeStyle="#fff";x.lineWidth=L(.055);x.strokeRect(L(.05),L(.55),W-L(.1),H-L(1.1));x.beginPath();x.moveTo(cx,L(.55));x.lineTo(cx,H-L(.55));x.stroke();x.beginPath();x.arc(cx,cy,L(1.8),0,7);x.stroke();
@@ -68,7 +72,9 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
       x.beginPath();x.moveTo(s?W:0,cy-L(6.6));x.lineTo(bx+dir*L(1.4),cy-L(6.6));x.arc(bx,cy,L(6.75),s?Math.PI+1.35:-1.35,s?Math.PI-1.35:1.35,!!s);x.lineTo(s?W:0,cy+L(6.6));x.stroke()});
     x.fillStyle=INK;x.font=`italic 900 ${L(.9)}px Arial Black,Arial`;x.textAlign="center";x.textBaseline="middle";[0,1].forEach(s=>{x.save();x.translate(s?W-L(.9):L(.9),cy);x.rotate(s?-Math.PI/2:Math.PI/2);x.fillText(TM.nick.toUpperCase(),0,0);x.restore()});
     x.fillStyle=lum(BG)>.55?INK:"#fff";x.font=`800 ${L(.3)}px Arial`;x.fillText("DREAMERS LEAGUE",cx,L(.27));x.fillText(TM.name.toUpperCase(),cx,H-L(.27));
-    const lg=L(3.3);if(LG)x.drawImage(LG,cx-lg/2,cy-lg/2,lg,lg);const g=x.createRadialGradient(cx,cy,10,cx,cy,W*.62);g.addColorStop(0,"rgba(255,245,225,0)");g.addColorStop(1,"rgba(0,0,0,.16)");x.fillStyle=g;x.fillRect(0,0,W,H)});
+    const lg=L(3.5);if(LG){x.save();x.shadowColor="rgba(0,0,0,.55)";x.shadowBlur=L(.18);x.shadowOffsetY=L(.05);x.drawImage(LG,cx-lg/2,cy-lg/2,lg,lg);x.restore()}
+    /* vernice: riflesso morbido lungo il campo e bordi più scuri */const g=x.createRadialGradient(cx,cy,10,cx,cy,W*.62);g.addColorStop(0,"rgba(255,248,232,.06)");g.addColorStop(1,"rgba(0,0,0,.2)");x.fillStyle=g;x.fillRect(0,0,W,H);
+    const g2=x.createLinearGradient(0,0,0,H);g2.addColorStop(0,"rgba(255,255,255,.05)");g2.addColorStop(.5,"rgba(255,255,255,0)");g2.addColorStop(1,"rgba(255,255,255,.04)");x.fillStyle=g2;x.fillRect(0,0,W,H)});
   const floor=new THREE.Mesh(new THREE.PlaneGeometry(CW+2*RA+8,CH+2*RA+8),new THREE.MeshStandardMaterial({color:mix(BG,"#000",.18),roughness:.45}));/* (930) bordo campo nel colore della squadra */floor.rotation.x=-Math.PI/2;S.add(floor);
   const ct=new THREE.Mesh(new THREE.PlaneGeometry(CW,CH),new THREE.MeshLambertMaterial({map:court})/* (941) parquet opaco: niente riflessi che coprono legno e logo */);ct.rotation.x=-Math.PI/2;ct.position.y=.01;S.add(ct);
   /* canestri */
@@ -85,13 +91,13 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
   /* (936) tavolo nero a bordo campo tolto (Francesco) */
   /* tribune */
   /* (931) gradoni definiti: pedata chiara che richiama il colore squadra (alternata riga per riga), alzata scura con riflesso del colore */
-  const tread=[new THREE.MeshLambertMaterial({color:mix(BG,LK.tr1||"#4a4852",.78)}),new THREE.MeshLambertMaterial({color:mix(BG,LK.tr2||"#3c3a44",.8)})],riser=new THREE.MeshLambertMaterial({color:mix(BG,"#16151b",.72),emissive:mix(BG,"#000",.55),emissiveIntensity:.25});let bandK=0;
+  const STEPLED=new THREE.LineBasicMaterial({color:"#ffd9a0",toneMapped:false,transparent:true,opacity:.75});/* (946) filo di luce sul bordo di ogni gradone */const tread=[new THREE.MeshLambertMaterial({color:mix(BG,LK.tr1||"#4a4852",.78)}),new THREE.MeshLambertMaterial({color:mix(BG,LK.tr2||"#3c3a44",.8)})],riser=new THREE.MeshLambertMaterial({color:mix(BG,"#16151b",.72),emissive:mix(BG,"#000",.55),emissiveIntensity:.25});let bandK=0;
   const WALK=[],BOWLS=[];const seatP=[],seatC=[],fanP=[],fanC=[],headC=[];
   const shirts=["#20202a","#2e2e38","#e9e4da","#d6d3cc","#44444e",ACC,"#3a2a22","#5b1d1d","#1d2f5b","#6b6b75"],skins=["#f1c7a4","#d9a57f","#a8714f","#6e4630","#3f2a1e"];
   const band=(rx,rz,cr,y,h,o)=>{const sh=new THREE.Shape(),X=rx+o,Z=rz+o,c1=cr+o;sh.moveTo(-X+c1,-Z);sh.lineTo(X-c1,-Z);sh.quadraticCurveTo(X,-Z,X,-Z+c1);sh.lineTo(X,Z-c1);sh.quadraticCurveTo(X,Z,X-c1,Z);sh.lineTo(-X+c1,Z);sh.quadraticCurveTo(-X,Z,-X,Z-c1);sh.lineTo(-X,-Z+c1);sh.quadraticCurveTo(-X,-Z,-X+c1,-Z);
     const ho=new THREE.Path();ho.moveTo(-rx+cr,-rz);ho.lineTo(rx-cr,-rz);ho.quadraticCurveTo(rx,-rz,rx,-rz+cr);ho.lineTo(rx,rz-cr);ho.quadraticCurveTo(rx,rz,rx-cr,rz);ho.lineTo(-rx+cr,rz);ho.quadraticCurveTo(-rx,rz,-rx,rz-cr);ho.lineTo(-rx,-rz+cr);ho.quadraticCurveTo(-rx,-rz,-rx+cr,-rz);sh.holes.push(ho);
     const m=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:h,bevelEnabled:false,curveSegments:mob?6:10}),[tread[(bandK++)%2],riser]);m.rotation.x=-Math.PI/2;m.position.y=y-h;S.add(m);WALK.push(m)};
-  const bowl=(r0,rows,y0,dy,dr,occ,step)=>{BOWLS.push({r0,rows,y0,dy,dr});for(let r=0;r<rows;r++){const rx=CW/2+r0+r*dr,rz=CH/2+r0+r*dr,cr=3.5+r*dr,y=y0+r*dy;band(rx,rz,cr,y,y,dr);
+  const bowl=(r0,rows,y0,dy,dr,occ,step)=>{BOWLS.push({r0,rows,y0,dy,dr});for(let r=0;r<rows;r++){const rx=CW/2+r0+r*dr,rz=CH/2+r0+r*dr,cr=3.5+r*dr,y=y0+r*dy;band(rx,rz,cr,y,y,dr);{const pts=rrPath(rx,rz,cr,.8).map(([px,pz])=>new THREE.Vector3(px,y+.015,pz));pts.push(pts[0].clone());S.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),STEPLED))}
     rrPath(rx+dr*.55,rz+dr*.55,cr+dr*.55,step).forEach(([px,pz])=>{if(pz>CH/2&&Math.abs(px)<1.2)return;const a=Math.atan2(-px,-pz),sec=Math.floor((Math.atan2(pz,px)+Math.PI)/(Math.PI/6))%3===0;
       seatP.push([px,y+.22,pz,a]);seatC.push(sec?mix(BG,"#000",.12).getStyle():mix(BG,"#3a3944",.75).getStyle());if(Math.random()<occ){fanP.push([px,y+.62,pz,a]);fanC.push(Math.random()<.18?BG:shirts[(Math.random()*shirts.length)|0]);headC.push(skins[(Math.random()*skins.length)|0])}})}};
   const stp=mob?.78:.62;bowl(RA,13,.45,.42,.85,.82,stp);const R1=CW/2+RA+13*.85,Y1=.45+13*.42;
@@ -141,6 +147,14 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
     const fr=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(bw+.12,bh+.12)),new THREE.LineBasicMaterial({color:b.edge,toneMapped:false}));fr.position.set(m.position.x,m.position.y,bz+.02);S.add(fr);S.add(m)});
   /* luci: poche e senza ombre */
   S.add(new THREE.HemisphereLight(LK.sky,LK.gnd??mix(BG,"#1a1620",.8).getHex(),LK.hemi));const dl=new THREE.DirectionalLight(LK.dir,LK.dirI);dl.position.set(0,30,0);S.add(dl);
+  /* (946) fasci di luce visibili dai fari del tetto (coni trasparenti, leggerissimi) e pozze di luce calda sul parquet */
+  {const bt=tex(64,256,(x,W,H)=>{const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"rgba(255,236,200,.0)");g.addColorStop(.15,"rgba(255,236,200,.55)");g.addColorStop(1,"rgba(255,236,200,0)");x.fillStyle=g;x.fillRect(0,0,W,H)});
+   const bm=new THREE.MeshBasicMaterial({map:bt,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,opacity:.22,toneMapped:false});
+   [[-11.2,-6.4],[-11.2,6.4],[11.2,-6.4],[11.2,6.4],[0,-7],[0,7],[-5.6,0],[5.6,0]].forEach(([x,z])=>{const c=new THREE.Mesh(new THREE.CylinderGeometry(.35,3.6,23,20,1,true),bm);const tx=x*.55,tz=z*.45;c.position.set((x+tx)/2,12.3,(z+tz)/2);c.lookAt(tx,0,tz);c.rotateX(-Math.PI/2);S.add(c);
+     const f=new THREE.Mesh(new THREE.CylinderGeometry(.55,.45,.35,16),new THREE.MeshBasicMaterial({color:"#fff4e0",toneMapped:false}));f.position.set(x,24.2,z);S.add(f)});
+   const pt=tex(256,256,(x,W,H)=>{const g=x.createRadialGradient(W/2,H/2,4,W/2,H/2,W/2);g.addColorStop(0,"rgba(255,240,210,.55)");g.addColorStop(1,"rgba(255,240,210,0)");x.fillStyle=g;x.fillRect(0,0,W,H)});
+   const pm=new THREE.MeshBasicMaterial({map:pt,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:.16,toneMapped:false});
+   [[-6.2,-2.9],[-6.2,2.9],[6.2,-2.9],[6.2,2.9],[0,-3.2],[0,3.2],[-3,0],[3,0]].forEach(([x,z])=>{const p=new THREE.Mesh(new THREE.PlaneGeometry(9,9),pm);p.rotation.x=-Math.PI/2;p.position.set(x,.03,z);S.add(p)})}
   [[-9,0],[0,-4],[0,4],[9,0]].forEach(([x,z])=>{const sp=new THREE.SpotLight(LK.spot,LK.spotI,48,.62,.6,1.35);sp.position.set(x*1.25,24,z*1.6);sp.target.position.set(x,0,z);S.add(sp,sp.target)});
   return{THREE,R,S,cam,FANS,CW,CH,RA,ACC,BG,TM,scr,scrM,tex,LG,mob,WALK,BOWLS,Y1,DMAX:RA+13*.85+1.8+11*.8-.3}}
 
@@ -176,7 +190,7 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
       x.font="900 108px Arial Black,Arial";x.fillStyle=(D.me??0)>=(D.os??0)?"#facc15":"#fff";x.fillText(fmt(D.me),W/2,140);x.fillStyle=(D.os??0)>(D.me??0)?"#facc15":"#fff";x.fillText(fmt(D.os),W/2,265);
       x.font="700 30px Arial";x.fillStyle="#cbd5e1";x.fillText("TURNO "+(D.k+(window.DR_OFF||0))+" · SCONTRO DIRETTO",W/2,365)}
     else{if(K.LG)x.drawImage(K.LG,W/2-160,30,320,320);x.fillStyle="#fff";x.font="italic 900 80px Arial Black,Arial";x.fillText(TM.nick.toUpperCase(),W/2,420)}
-    const L=st.rows||[],lv=L.some(r=>r.live);x.font="800 34px Arial";x.fillStyle=lv?"#f87171":"#cbd5e1";x.fillText(lv?"● LIVE · "+L.filter(r=>r.live).length+" IN CAMPO STANOTTE":L.length?"PARTITE DI STANOTTE FINITE":"NESSUNO IN CAMPO STANOTTE",W/2,H-60);K.scr.needsUpdate=true};
+    const L=st.rows||[],lv=L.some(r=>r.live);x.font="800 34px Arial";x.fillStyle=lv?"#f87171":"#cbd5e1";if(L.length)x.fillText(lv?"● LIVE · "+L.filter(r=>r.live).length+" IN CAMPO STANOTTE":"PARTITE DI STANOTTE FINITE",W/2,H-60)/* (947) campo vuoto: nessuna scritta */;K.scr.needsUpdate=true};
   try{const D=duel(t);if(D&&D.o)st.oLG=await img(LOGO[D.o])}catch(e){}
   /* ---- maglie ---- */
   /* (945) cinque posti simmetrici su tutto il campo: il migliore al centro in fondo, due a metà campo vicino, due ai lati verso i canestri */const slots=[[0,-4.8],[-6,3.9],[6,3.9],[-10.6,-3],[10.6,-3],[0,5],[-11.8,4.4],[11.8,4.4]];
@@ -201,7 +215,7 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
   async function refresh(first){st.rows=liveRows(t);const have=new Set(st.rows.map(r=>r.n));
     for(const n in J)if(!have.has(n)){grp.remove(J[n].g);delete J[n]}
     let i=0;for(const r of st.rows){if(!J[r.n])await addJersey(r);else{J[r.n].r=r;updTag(J[r.n])}if(!first)diff(r);else st.prev[r.n]=r;i++}
-    if(!st.rows.length){if(!emptyS.parent)S.add(emptyS)}else if(emptyS.parent)S.remove(emptyS);
+    /* (947) se non gioca nessuno il campo resta vuoto, senza scritte */
     drawScreen();st.dirty=true}
   await refresh(true);
   /* aggiornamento live: ogni 20 secondi (ESPN), solo se c'è qualcuno live o una partita in corso */
@@ -227,7 +241,8 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
      tocco sul maxischermo = coro DE-FENSE; due dita (pizzico) = avanti/indietro; rotella o WASD sul computer. */
   let ZM=1;const applyZ=()=>{cam.zoom=ZM;cam.updateProjectionMatrix();st.dirty=true};
   const P=new Map();let pinch=null,tap=null,tw=null;const ray=new THREE.Raycaster(),ndc=new THREE.Vector2(),plane=new THREE.Plane(new THREE.Vector3(0,1,0),0),hit=new THREE.Vector3();
-  const fly=(x,z,yaw)=>{if(ZM>1){ZM=1;applyZ()}const d=yaw==null?0:((yaw-V.yaw+540)%360)-180;tw={t0:performance.now(),dur:Math.min(1600,450+Math.hypot(x-V.x,z-V.z)*90),x0:V.x,z0:V.z,x1:x,z1:z,y0:V.yaw,dy:d}};
+  const MK=new THREE.Mesh(new THREE.RingGeometry(.35,.5,40),new THREE.MeshBasicMaterial({color:"#c4b5fd",transparent:true,opacity:0,depthWrite:false,toneMapped:false}));MK.rotation.x=-Math.PI/2;S.add(MK);
+  const fly=(x,z,yaw)=>{if(ZM>1){ZM=1;applyZ()}MK.position.set(x,(typeof terr==="function"?terr(x,z):0)+.04,z);MK.userData.t0=performance.now();const d=yaw==null?0:((yaw-V.yaw+540)%360)-180;tw={t0:performance.now(),dur:Math.min(1600,450+Math.hypot(x-V.x,z-V.z)*90),x0:V.x,z0:V.z,x1:x,z1:z,y0:V.yaw,dy:d}};
   cv.addEventListener("pointerdown",e=>{P.set(e.pointerId,{x:e.clientX,y:e.clientY});try{cv.setPointerCapture(e.pointerId)}catch(_){}tw=null;if(A)A.ac.resume();ov.querySelector(".drm3hint").style.opacity=0;
     if(P.size===1){dr={x:e.clientX,y:e.clientY};tap={x:e.clientX,y:e.clientY,t:performance.now(),m:0}}else{dr=null;tap=null;const[a,b]=[...P.values()];pinch=Math.hypot(a.x-b.x,a.y-b.y)}});
   cv.addEventListener("pointermove",e=>{if(!P.has(e.pointerId))return;P.set(e.pointerId,{x:e.clientX,y:e.clientY});
@@ -256,6 +271,7 @@ async function open(t){if(ST)return;const TM=TEAMS[t];if(!TM)return;
     const animating=st.anim.length>0;if(!st.dirty&&!animating&&now-lastDraw<100)return;
     const ey=footY+(footY>.2?2.05:1.7);cam.position.set(V.x,ey,V.z);const yr=V.yaw*Math.PI/180,pr=V.pitch*Math.PI/180;cam.lookAt(V.x-Math.sin(yr)*Math.cos(pr),ey+Math.sin(pr),V.z-Math.cos(yr)*Math.cos(pr));
     for(const n in J){const o=J[n];o.g.rotation.y=Math.atan2(cam.position.x-o.g.position.x,cam.position.z-o.g.position.z);/* (942) da lontano maglia e targhetta si ingrandiscono (fino a 1,8×) così restano leggibili */const dd=Math.hypot(cam.position.x-o.g.position.x,cam.position.y-2,cam.position.z-o.g.position.z)/(cam.zoom||1),sc=Math.max(1,Math.min(1.8,dd/13));/* si ingrandiscono maglia e targhetta, ma restano alla stessa altezza dal parquet (non salgono e non si sovrappongono) */o.jm.scale.setScalar(sc);o.jm.position.y=1.15+.91*sc+Math.sin(now/900+o.ph)*.07;if(!o.tag.userData.s0)o.tag.userData.s0=o.tag.scale.clone();o.tag.scale.copy(o.tag.userData.s0).multiplyScalar(sc);o.tag.position.y=1.0-(sc-1)*.25}
+    if(MK.userData.t0){const k=(now-MK.userData.t0)/1600;if(k>=1){MK.material.opacity=0;MK.userData.t0=0}else{MK.material.opacity=.9*(1-k);MK.scale.setScalar(1+k*.8);st.dirty=true}}
     st.anim=st.anim.filter(a=>{const k=(now-a.t0)/2800;if(k>=1){a.o.g.remove(a.s);a.s.material.map.dispose();a.s.material.dispose();return false}a.s.position.y=3.45+k*1.1;a.s.material.opacity=k<.75?1:1-(k-.75)/.25;return true});
     const gap=now-lastDraw;R.render(S,cam);st.dirty=false;lastDraw=now;
     /* (932) se il telefono fatica (in movimento sotto i 22 fotogrammi al secondo), la risoluzione scende da sola di un gradino (mai sotto 1×): niente blocchi */
