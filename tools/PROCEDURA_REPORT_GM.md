@@ -59,3 +59,9 @@ F = PDKrif^1,78 × 0,93^(età−25) × `VAL_INJ_B`^max(0; 2,5 − stelle). Conta
 - 31/10 20:20 · Ducks Proposte 201 (risposte del 30/10, prima delle correzioni): profilo DUC (age 2,75: il GM piu' sensibile all'eta'; req 6; ali si', guardie no). Decima correzione: Boozer, J. Brown su; Hart, K. George, Knueppel, James giu'. Ora 6 profili su 8 (mancano Eagles e Mooses).
 - 31/10 20:30 · Ducks Valutazione 22: VAL_INJ_B 0,80 -> 0,75 (4 GM oltre il 40% sotto 2 stelle). Ducks apprezzano piu' di noi Quickley, Leonard, Fox, Mara (veterani in calo per noi): da riguardare se altri GM lo confermano.
 - 31/10 20:40 · Ducks Confronto 130: undicesima correzione (Flemings, Murphy III, Herro giu'; Bailey giu' e Giddey su con risposte successive alle correzioni). Giddey: ormai +15% sul valore del 31/10 mattina, da non ritoccare ancora senza almeno 2 GM nuovi d'accordo.
+
+
+## Registro valori (dal 01/11/2026) — OBBLIGATORIO
+Ogni volta che cambi un valore in `VALORI` (report dei GM, consenso, correzioni di Francesco) aggiungi una riga in `VAL_LOG` (index.html, accanto a `valReg`):
+`{d:"AAAA-MM-GG",n:"Nome Giocatore",da:valoreVecchio,a:valoreNuovo,why:"motivo breve (es. Report Ducks Valutazione · consenso 3 GM)"}`.
+Gli aggiornamenti automatici del lunedì non vanno scritti: il registro li ricava da solo. Il registro si apre toccando un giocatore in Scambi › Valori lega.

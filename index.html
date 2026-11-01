@@ -4747,6 +4747,23 @@ function valAuto(n,now){const V0=VAL_MAN[n];if(V0==null)return null;const B=VAL_
     const t=V0*valF(r.p,valEta(n,cut),injNow)/F0;v=Math.min(v*1.15,Math.max(v*.85,t))}
   out.v=v;return out}
 const VAL_INFO={};
+/* (878) REGISTRO DEI VALORI (dal 01/11/2026): ogni modifica al valore di un giocatore.
+   - VAL_LOG: modifiche A MANO (report dei GM applicati da Claude, correzioni di Francesco). Ogni volta che si cambia un valore in VALORI
+     aggiungere QUI una riga {d:"AAAA-MM-GG",n:"Nome",da:vecchio,a:nuovo,why:"motivo"} (vedi tools/PROCEDURA_REPORT_GM.md).
+   - Gli aggiornamenti AUTOMATICI del lunedì 12:00 si ricavano dal calcolo (valore subito prima e subito dopo lo scatto). Prima del 01/11/2026 non si mostra niente. */
+const VAL_LOG_DAL=Date.UTC(2026,9,31,23,0,0);
+const VAL_LOG=[];
+function valAt(n,t){const r=valAuto(n,t);if(!r)return VAL_MAN[n]??null;return r.k<1||r.attesa||r.v===VAL_MAN[n]?VAL_MAN[n]:valRound(r.v)}
+function valReg(n){const out=[];try{VAL_LOG.forEach(e=>{if(vnz(e.n)===vnz(n))out.push({t:Date.parse(e.d+"T12:00:00Z"),da:e.da,a:e.a,why:e.why||"Correzione a mano",man:1})});
+  if(VAL_MAN[n]!=null){const B=VAL_BASE[n]||[VAL_ORIGINE,INF_STELLE[n]??3],d0=Date.parse(B[0]+"T00:00:00Z"),kn=valK(d0,Date.now());
+   for(let k=1;k<=kn;k++){const t=valScatto(d0,k);if(t<VAL_LOG_DAL)continue;const a=valAt(n,t-1e3),b=valAt(n,t+1e3);if(a!=null&&b!=null&&a!==b)out.push({t,da:a,a:b,why:(()=>{try{return"Aggiornamento automatico del lunedì: "+valMotivo(n,k,d0,a,b)}catch(_){return"Aggiornamento automatico del lunedì (PDK, età, infortuni)"}})(),auto:1})}}}catch(e){}
+  return out.sort((x,y)=>y.t-x.t)}
+function vValPl(){const n=curPlayer,t=curTeam,v=valOf(n),R=valReg(n),f=d=>{const x=new Date(d);return String(x.getUTCDate()).padStart(2,"0")+"/"+String(x.getUTCMonth()+1).padStart(2,"0")+"/"+x.getUTCFullYear()};
+  const rows=R.map(e=>{const q=e.da?(e.a/e.da-1)*100:0,p=Math.abs(q)<1?(Math.round(q*10)/10).toString().replace(".",","):Math.round(q);return`<div class="vrg-row ${e.a>e.da?"su":"giu"}"><div class="vrg-d"><b>${f(e.t)}</b><small>${e.auto?"automatico":"a mano"}</small></div><div class="vrg-v"><span>${e.da}</span><i>→</i><b>${e.a}</b><em>${q>0?"+":""}${p}%</em></div><p>${e.why}</p></div>`}).join("");
+  return`<button class="gback" data-vrgback="1">‹ Valori lega</button>${H("Registro valore",`<em>${TEAMS[t]?TEAMS[t].nick:""}</em>`)}
+  <div class="vrg-head">${t?wedge(t):""}<div><b>${n}</b><small>Valore attuale <strong>${v??"n.d."}</strong>${v!=null?` · prezzo ${prezzo(v,n)} cr`:""}</small></div><button class="vrg-pro" data-vrgpro="1">Profilo ›</button></div>
+  ${rows?`<div class="vrg-list">${rows}</div>`:`<p class="note vrg-empty">Nessuna modifica al valore dal 01/11/2026. Qui compariranno le correzioni dai report dei GM, quelle fatte a mano e gli aggiornamenti automatici del lunedì.</p>`}
+  <p class="note">Registro dal 01/11/2026: modifiche a mano (report dei GM e correzioni della lega) e aggiornamenti automatici del lunedì alle 12.</p>`}
 function valApply(now){now=now||Date.now();let kmax=0;for(const n in VAL_MAN){const r=valAuto(n,now);if(!r||!VALORI[n])continue;VAL_INFO[n]=r;kmax=Math.max(kmax,r.k);
     VALORI[n][1]=r.k<1||r.attesa||r.v===VAL_MAN[n]?VAL_MAN[n]:valRound(r.v);
     if(PREZZO_MAN[n]!=null){const p=PREZZO_MAN[n]*VALORI[n][1]/VAL_MAN[n];PREZZO_FISSO[n]=r.k<1?PREZZO_MAN[n]:p<50?Math.max(5,Math.round(p)):Math.round(p/5)*5}}
@@ -4896,7 +4913,7 @@ function vValTrade(){
     return `${H("Calcolatore scambi",`<em>${VALORI_AGG.slice(0,5)}</em>`)}${tabs}
     <input id="vtq" class="vtq" type="search" placeholder="🔍 Cerca giocatore o squadra" autocomplete="off" aria-label="Cerca giocatore">
     <div class="tbl-wrap vtlist">${all.map((x,i)=>`<div class="vtrow" role="button" tabindex="0" data-pln="${x.n.replace(/"/g,"&quot;")}" data-plt="${x.t}">${wedge(x.t)}<span class="vtrk">${x.v?i+1:"–"}</span><span class="vtnm"><span class="vtnn">${x.n}${x.rk?`<i class="vtrook">R</i>`:""}</span><small>${TEAMS[x.t].nick}${starH(x.n)}</small></span><span class="vtvp"><b>${x.v??"n.d."}</b><small>valore${valDelta(x.n)}</small></span><span class="vtvp pr"><b>${x.v!=null?prezzo(x.v,x.n):"—"}</b><small>prezzo cr</small></span></div>`).join("")}</div>
-    <p class="note">Valori Dreamers al ${VALORI_AGG}, fissati dalla lega con le pagelle a stelline (PDK, giovinezza, infortuni, minutaggio, efficienza, spazio in squadra, rookie e draft). Tocca un giocatore per vedere la sua pagella. "n.d." = giocatore non in lista: vale ${VAL_FALLBACK}. R = rookie. Prezzo in crediti: quello fissato dalla lega oppure calcolato dal valore (più caro per giovani e ali, poi centri, guardie più economiche).</p>`}
+    <p class="note">Valori Dreamers al ${VALORI_AGG}, fissati dalla lega con le pagelle a stelline (PDK, giovinezza, infortuni, minutaggio, efficienza, spazio in squadra, rookie e draft). Tocca un giocatore per vedere il registro delle modifiche al suo valore. "n.d." = giocatore non in lista: vale ${VAL_FALLBACK}. R = rookie. Prezzo in crediti: quello fissato dalla lega oppure calcolato dal valore (più caro per giovani e ali, poi centri, guardie più economiche).</p>`}
   if(VT.tab==="calc3")return `${H("Calcolatore scambi",`<em>${VALORI_AGG.slice(0,5)}</em>`)}${tabs}
   <div id="vtRes">${v3Res()}</div>
   <div class="vtgrid">${v3Card(0)}${v3Card(1)}${v3Card(2)}</div>
@@ -9630,7 +9647,8 @@ function render(){
   const gse=m.querySelector("#gseason");if(gse)gse.onchange=()=>{if(!gse.value)return;gSeason=gse.value;if(gse.dataset.szchip)esqMese="tutta";const y=window.scrollY;render();if(gse.dataset.szchip)window.scrollTo(0,y)};
   const gb=m.querySelector("#gback");if(gb)gb.onclick=()=>{cur=gFrom||"roster";gFrom="roster";render();window.scrollTo(0,0)};
   m.querySelectorAll(".ichip").forEach(b=>b.onclick=()=>{injTeam=b.dataset.it;render()});
-  m.querySelectorAll("[data-pln]").forEach(b=>{const from=cur;b.onclick=()=>{curTeam=b.dataset.plt;curPlayer=b.dataset.pln;gFrom=from;cur="giocatore";render();window.scrollTo(0,0)}});
+  m.querySelectorAll("[data-pln]").forEach(b=>{const from=cur;b.onclick=()=>{curTeam=b.dataset.plt;curPlayer=b.dataset.pln;gFrom=from;cur=(from==="valtrade"&&b.classList.contains("vtrow"))?"valpl":"giocatore";render();window.scrollTo(0,0)}});
+  {const vb=m.querySelector("[data-vrgback]");if(vb)vb.onclick=()=>{cur="valtrade";VT.tab="list";render();window.scrollTo(0,0)};const vp=m.querySelector("[data-vrgpro]");if(vp)vp.onclick=()=>{gFrom="valtrade";cur="giocatore";render();window.scrollTo(0,0)}}
   {const hn6=m.querySelector(".hn6");if(hn6)bindHomeNotte(hn6)}
   m.querySelectorAll(".htile").forEach(b=>b.onclick=()=>{curTeam=b.dataset.team;try{localStorage.setItem("team",curTeam)}catch(e){}cur="campo";render();window.scrollTo(0,0)});
   m.querySelectorAll(".echip").forEach(b=>b.onclick=()=>{effTeam=b.dataset.t;render()});
@@ -10133,7 +10151,7 @@ function vValReg(){const e=x=>String(x).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&
   <p class="note">Ogni <b>lunedì alle 12:00</b> (ora italiana) l'app aggiorna da sola valore e prezzo di ogni giocatore, con un massimo di ±15% a settimana, in base a PDK, età e infortuni. Qui trovi, settimana per settimana, chi è cambiato, prezzo di prima e di dopo, differenza e motivo.${H&&H.K?"":" <b>Il primo aggiornamento non è ancora arrivato</b>: qui compariranno tutte le modifiche."} Prossimo aggiornamento: <b>lunedì ${H?H.next:"—"} alle 12:00</b>.</p>
   ${H&&H.K?`<input id="vrq" class="vtq" type="search" placeholder="🔍 Cerca un giocatore" autocomplete="off" aria-label="Cerca un giocatore">${wk}`:`<p class="note">Valori e prezzi di partenza del 26/10/2026: fissati da Francesco per tutta la lega.</p>`}
   ${VAL_CORREZ.map(c=>`<article class="nvi"><b>${e(c[0])} · ${e(c[1])}</b><span>${e(c[2])}</span></article>`).join("")}`}
-VIEWS.valreg=vValReg;
+VIEWS.valreg=vValReg;VIEWS.valpl=vValPl;
 document.addEventListener("input",e=>{if(e.target.id!=="vrq")return;const q=e.target.value.trim().toLowerCase();document.querySelectorAll(".vrr").forEach(r=>{r.style.display=!q||r.dataset.vrn.includes(q)?"":"none"});if(q)document.querySelectorAll(".vrw").forEach(d=>d.open=true)});
 document.addEventListener("click",e=>{if(e.target.closest("#vrback")){cur=window.EQ_FROM?"eq":"novita";window.EQ_FROM=0;render();window.scrollTo(0,0)}});
 window.vNovita=function(){const by={};NV_LOG.forEach(x=>(by[x[0]]=by[x[0]]||[]).push(x));
@@ -12933,5 +12951,23 @@ html.notte body .sala-oro .gmh tr.lead:not(#a):not(#b):not(#c):not(#d):not(#e){b
 html.notte body .sala-oro .gmh tr.lead td:not(#a):not(#b):not(#c):not(#d):not(#e){background:transparent!important}
 </style>
 <style>/* (877) Sala trofei: niente corona accanto al nome della prima squadra */html body .sala-oro .gmh tr.lead td.tm b::before{content:none!important;display:none!important}</style>
+<style>/* (878) Registro valore */
+.vrg-head{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:var(--panel);margin:0 0 14px}
+.vrg-head .wedge{width:56px;min-height:56px;border-radius:10px;overflow:hidden;flex:none}
+.vrg-head>div{flex:1;min-width:0}.vrg-head b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:20px;text-transform:uppercase}
+.vrg-head small{display:block;margin-top:3px;font-size:13px;opacity:.85}.vrg-head strong{font-size:16px}
+.vrg-pro{flex:none;padding:8px 12px;border-radius:10px;border:0;font-weight:800;background:var(--red,#e8631a);color:#fff;font-family:var(--display);font-style:italic;text-transform:uppercase}
+.vrg-list{display:grid;gap:8px}
+.vrg-row{padding:10px 12px;border-radius:12px;background:var(--panel);border-left:5px solid #22c55e}
+.vrg-row.giu{border-left-color:#ef4444}
+.vrg-row .vrg-d{display:flex;align-items:baseline;gap:8px}.vrg-row .vrg-d b{font-weight:800}.vrg-row .vrg-d small{font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.7}
+.vrg-row .vrg-v{display:flex;align-items:baseline;gap:8px;margin-top:4px;font-family:var(--display);font-style:italic;font-weight:800;font-size:20px}
+.vrg-row .vrg-v span{opacity:.6}.vrg-row .vrg-v i{font-style:normal;opacity:.6}.vrg-row .vrg-v em{font-size:14px;color:#16a34a}.vrg-row.giu .vrg-v em{color:#dc2626}
+.vrg-row p{margin:4px 0 0;font-size:13px;opacity:.85}
+html.dlt-parquet:not(.notte) .vrg-head,html.dlt-parquet:not(.notte) .vrg-row{background:#fdf4e6!important;color:#7a3410!important;box-shadow:0 4px 12px rgba(90,40,5,.2)}
+html.dlt-parquet:not(.notte) .vrg-head *:not(.vrg-pro):not(.wedge *),html.dlt-parquet:not(.notte) .vrg-row *{color:#7a3410!important;-webkit-text-fill-color:#7a3410!important}
+html.dlt-parquet:not(.notte) .vrg-row .vrg-v em{color:#16a34a!important;-webkit-text-fill-color:#16a34a!important}html.dlt-parquet:not(.notte) .vrg-row.giu .vrg-v em{color:#dc2626!important;-webkit-text-fill-color:#dc2626!important}
+html.dlt-parquet:not(.notte) .vrg-pro{background:#d9560b!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+</style>
 </body>
 </html>
