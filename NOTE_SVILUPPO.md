@@ -2230,3 +2230,6 @@ Francesco: l animazione sopra il giocatore spariva troppo presto. Ora il cartell
 
 ## 955 — Modalità Dream: giallo Ducks più caldo, logo più grande
 Francesco ha scelto la versione B: giallo del parquet Ducks #ea9a00 (prima più freddo). Logo a centrocampo più grande del 16% per tutte le squadre. Tolti i ganci di prova DREAM_BG / DREAM_LOGO.
+
+## 956 — Modalità Dream: tetto viola Dreamers
+Francesco (22:47): i pannelli del tetto erano marroni (colore squadra smorzato). Ora sono viola Dreamers (#3b1a72) per tutte le arene, ognuno con un velo viola più chiaro al centro e la griglia scura tra i pannelli; travi e fari invariati.
