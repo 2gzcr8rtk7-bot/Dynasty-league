@@ -2146,3 +2146,6 @@ Francesco (01/11 19:37–19:39): non la media ma i picchi. gmAgeProf: giocatori 
 
 ## 918 — PDK di riferimento per i ruoli dalle ultime due stagioni
 Francesco (19:41–19:42): gmForm = base delle due stagioni passate (valBaseStorica) + stagione in corso (60% media, 40% ultime 5) pesata g/(g+15) come il valore della domenica: 10 partite 40%, 82 partite 85% (l anno passato resta sempre ~15%). Nella copertura dei ruoli ogni giocatore conta anche per la sua affidabilità (stelle infortuni dalla storia: 3★ 1, 2★ 0,8, 1★ 0,6).
+
+## 919 — Momento della stagione: fretta di chi è in corsa, premi di fondo per chi è fuori
+Francesco (19:43): negli ultimi 12 turni di regular season (urg 0→1 tra 12 e 2 turni dalla fine) chi è in corsa pesa fino a 2,5 volte la copertura dei ruoli (rimpiazzo di un infortunato: paga un sovrapprezzo) e di più i PDK di oggi; chi è 5ª–8ª e fuori dalla corsa (tank = urg × (1 − corsa) × 1,2) può puntare ai premi di fondo (DR_PREMI 250/350/450): i PDK di oggi gli pesano al contrario (cede produzione). Oggi siamo all inizio: nessun effetto. Simulazione a fine stagione: Foxes Reaves→Zubac con i centri scoperti 52% → 68%.
