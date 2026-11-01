@@ -7484,7 +7484,12 @@ function lvAnim(){try{const cut=lvCut();
     for(const g of days[d]){if(g[5]!=="L")continue;const t=lvTip(d,g[6]);if(t==null||t>=cut)return true}}
   return false}catch(e){return false}}
 setInterval(()=>{try{const on=lvNotte();document.querySelectorAll(".lbm[data-lv]").forEach(e=>{e.classList.toggle("live",on);e.classList.toggle("run",!on)})}catch(e){}},20000);
-function drTabellone(t,T,k,P,on){const W=T.W,btn=`<button class="cntbtn${on?" on":""}" id="cntbtn" aria-pressed="${!!on}" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`;
+/* (927) MODALITÀ DREAM: al posto del vecchio tasto notte accanto al campo (la notte ora è in alto, vicino alle impostazioni) il tasto viola «D»
+   apre lo stadio 3D della squadra (dream.js, caricato solo al primo tocco; il motore 3D in vendor/three.min.js). */
+const DRM_BTN=`<button class="drmbtn" id="drmbtn" aria-label="Modalità Dream" title="Modalità Dream"><svg viewBox="0 0 24 24" aria-hidden="true"><text x="11" y="18.2" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="17" font-weight="900" font-style="italic" fill="#fff">D</text><path d="M19.2 2.6l.75 1.6 1.65.2-1.2 1.15.3 1.7-1.5-.85-1.5.85.3-1.7-1.2-1.15 1.65-.2z" fill="#fde68a"/></svg></button>`;
+document.addEventListener("click",e=>{const b=e.target.closest("#drmbtn");if(!b)return;e.preventDefault();e.stopPropagation();const go=()=>{try{window.dreamOpen(curTeam)}catch(er){console.error(er)}};
+  if(window.dreamOpen)return go();const s=document.createElement("script");s.src="dream.js";s.onload=go;s.onerror=()=>alert("Modalità Dream non disponibile: controlla la connessione.");document.head.appendChild(s)},true);
+function drTabellone(t,T,k,P,on){const W=T.W,btn=DRM_BTN;
   /* piccolo tabellone elettronico al posto della scritta "Quintetto": la mia squadra contro l'avversaria del turno Dreamers,
      punteggi live di entrambe (drTeam). Stessa riga del titolo, stesso tasto notte. Tocco = apre la sfida in Dreamers. */
   const num=v=>{const txt=v==null?"---,-":pdkF(v),[ip,dp]=txt.split(",");return[...ip.padStart(3," ")].map(segD).join("")+`<span class="sgdot"></span>`+segD(dp||"-")};
@@ -7607,7 +7612,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
    ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${(t==="DUC"&&(ducBan()||DUC_CURL))||LOGO[t]}" alt=""${dlHeadLogo(t)}>`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
   ${bacheca(t)}
   ${cassa(t)}
-  ${CNT&&DT2?drTabellone(t,DT2,DK2,DP2,true):CNT?H(CNT?"Modalità notte":"Quintetto",`<em>${CNT?(()=>{const d=campoNotte();if(!d)return"nessuna partita";const dd=tvDt(d);return`${dd.getUTCDate()}/${dd.getUTCMonth()+1}`})():`Dreamers · ${DR_PH(DK,DP)}`}</em>${kitBtn(t)}<button class="cntbtn${CNT?" on":""}" id="cntbtn" aria-pressed="${CNT}" aria-label="Modalità notte"><i></i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z" fill="currentColor"/></svg></button>`):drTabellone(t,DT,DK,DP)}
+  ${CNT&&DT2?drTabellone(t,DT2,DK2,DP2,true):CNT?H(CNT?"Modalità notte":"Quintetto",`<em>${CNT?(()=>{const d=campoNotte();if(!d)return"nessuna partita";const dd=tvDt(d);return`${dd.getUTCDate()}/${dd.getUTCMonth()+1}`})():`Dreamers · ${DR_PH(DK,DP)}`}</em>${kitBtn(t)}${DRM_BTN}`):drTabellone(t,DT,DK,DP)}
   <div class="court${CNT?" cdark":""}${CNT&&(()=>{try{const d=campoNotte();return d&&(TV.days[d]||[]).some(g=>g[5]==="L")}catch(e){return false}})()?" clive":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg};border-color:${shade(c.bg,.45)};border-left:0;border-right:0">${court}${onCourt}${CNT&&!q.length?`<div class="cnone">Nessuno in campo stanotte</div>`:""}</div>
   ${CNT?`${H("Panchina",`<em>notte · per punteggio</em>`)}
   <div class="bench${CNT?" cdark":""}" style="--tc:${CNT?NOTTE_ACC(t):c.bg}">${bench.map(p=>`<button class="bpl" data-pl="${p[0]}">${jersey(t,p[1],p[0])}<span class="bnm">${RTR(p[0])}${p[0]}<small>${{G:"Guardia",F:"Ala",C:"Centro"}[p[2]]} · ${p[3]}${injTag(p[0])}</small></span><span class="bev">${CNT?`<span class="cnrow" data-nwk="${p[0]}" role="button" tabindex="0">${NM[p[0]]&&NM[p[0]].lv?'<i class="cnlv" title="In campo ora"></i>':""}${pillN(p[0])}</span><small>${NM[p[0]]?`vs ${NM[p[0]].opp} · ${NM[p[0]].st}`:"non ha giocato"}</small>`:`${pillP(pdkMed(p[0]))}${pdkLast(p[0])!=null?`<small>ultima ${pdkF(pdkLast(p[0]))}</small>`:""}`}</span></button>`).join("")}</div>`:drPanca(t,DT)}
@@ -12046,7 +12051,7 @@ body.s3on>*:not(#s3):not(script):not(style){display:none!important}
 (function(){
 const E=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 /* Trofei oltre al titolo: aggiungere qui una riga per ogni nuova edizione dell'All-Star Game */
-const ALLSTAR=window.ALLSTAR_WIN||[{anno:1,vinc:["DUC","TUR"]}];
+const ALLSTAR=window.ALLSTAR_WIN||[{anno:1,vinc:["DUC","TUR"]}];try{window.ALLSTAR=ALLSTAR}catch(e){}
 const EYE=170,DA=20,BW=400,BD=330,BH=330,SPZ=470,Z0=-60,AIS=210,XL=600,ZN=620,AX=190;
 function asgSvg(id){return`<svg viewBox="0 0 26 30" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" x2="1"><stop offset="0" stop-color="#1f3a7a"/><stop offset=".35" stop-color="#d8efff"/><stop offset=".6" stop-color="#5aa0ff"/><stop offset="1" stop-color="#1f3a7a"/></linearGradient></defs><path d="M13 1.2l3.3 6.7 7.3 1.1-5.3 5.1 1.2 7.3L13 17.9l-6.5 3.5 1.2-7.3L2.4 9l7.3-1.1z" fill="url(#${id})" stroke="#e8f4ff" stroke-width=".4"/><rect x="11.6" y="21" width="2.8" height="3" fill="url(#${id})"/><rect x="7.5" y="24" width="11" height="2.6" rx=".6" fill="url(#${id})"/><rect x="6" y="26.4" width="14" height="3.2" rx=".8" fill="#13224a" stroke="url(#${id})" stroke-width=".8"/></svg>`}
 function teams(){const L=Object.keys(TEAMS).map(t=>{const T=[];STORIA.forEach(s=>{if(s.ordine[0]===t)T.push({k:"t",anno:s.anno});else if(s.ordine[1]===t)T.push({k:"s",anno:s.anno});else if(s.ordine[2]===t)T.push({k:"b",anno:s.anno})});ALLSTAR.forEach(a=>{if((a.vinc||[]).includes(t))T.push({k:"a",anno:a.anno})});
@@ -13262,5 +13267,24 @@ function tkHtml(){try{const now=Date.now(),d0=Date.parse(VAL_ORIGINE+"T00:00:00Z
 function put(){try{if(typeof cur==="undefined"||cur!=="home")return;const m=document.getElementById("main");if(!m||m.querySelector(".tkbar"))return;const hb=m.querySelector(".hbar");if(!hb)return;const h=tkHtml();if(h)hb.insertAdjacentHTML("afterend",h)}catch(e){}}
 const R0=window.render;if(typeof R0==="function"){window.render=render=function(){const r=R0.apply(this,arguments);put();return r}}
 setTimeout(put,800);setInterval(put,60000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)put()});})();</script>
+<style>/* (927) Modalità Dream: tasto viola «D» (stessa misura del vecchio tasto notte) e stadio 3D a schermo intero */
+html body .drmbtn:not(#a):not(#b){margin-left:auto;flex:none;display:inline-grid;place-items:center;width:38px;height:28px;padding:0;border-radius:9px;border:1px solid #c4b5fd!important;background:linear-gradient(180deg,#8b5cf6,#5b21b6)!important;box-shadow:0 0 12px rgba(139,92,246,.65),inset 0 1px 0 rgba(255,255,255,.35);cursor:pointer;animation:drmglow 2.6s ease-in-out infinite}
+html body .drmbtn svg{width:20px;height:20px;display:block}
+@keyframes drmglow{50%{box-shadow:0 0 18px rgba(167,139,250,.9),inset 0 1px 0 rgba(255,255,255,.35)}}
+h2 .kitbtn+.drmbtn{margin-left:6px!important}
+h2.lbmh>.drmbtn{justify-self:end;margin-left:0!important}
+body.drm3on{overflow:hidden}
+.drm3{position:fixed;inset:0;z-index:99999;background:#060509;color:#fff;touch-action:none;-webkit-user-select:none;user-select:none;font-family:var(--display),system-ui,sans-serif}
+.drm3 canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.drm3top{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:calc(env(safe-area-inset-top) + 10px) 12px 10px;background:linear-gradient(180deg,rgba(6,5,9,.85),transparent);pointer-events:none}
+.drm3top button{pointer-events:auto;width:40px;height:40px;border-radius:12px;border:1px solid rgba(196,181,253,.6);background:rgba(20,12,40,.75);color:#fff;font-size:18px;cursor:pointer}
+.drm3t{text-align:center;font:italic 800 17px/1 var(--display),Arial;letter-spacing:.14em;text-shadow:0 0 14px #8b5cf6}.drm3t small{display:block;margin-top:4px;font:700 10.5px/1 system-ui,sans-serif;letter-spacing:.12em;color:#c4b5fd}
+.drm3msg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:12px 18px;border-radius:12px;background:rgba(20,12,40,.85);border:1px solid #8b5cf6;font:700 14px/1.3 system-ui,sans-serif;text-align:center;max-width:80%}
+.drm3pad{position:absolute;right:14px;bottom:calc(env(safe-area-inset-bottom) + 18px);display:grid;gap:10px}
+.drm3pad button{width:58px;height:58px;border-radius:50%;border:1.5px solid rgba(196,181,253,.8);background:rgba(30,16,60,.7);color:#fff;font-size:20px;cursor:pointer;touch-action:none}
+.drm3pad button:active{background:#7c3aed}
+.drm3def{position:absolute;left:14px;bottom:calc(env(safe-area-inset-bottom) + 22px);padding:10px 14px;border-radius:12px;border:1.5px solid #fde68a;background:rgba(30,16,60,.75);color:#fde68a;font:italic 900 14px/1 Arial Black,Arial;letter-spacing:.06em;cursor:pointer}
+.drm3hint{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom) + 96px);transform:translateX(-50%);padding:8px 12px;border-radius:10px;background:rgba(10,6,20,.7);font:600 12px/1.3 system-ui,sans-serif;color:#ddd6fe;transition:opacity .6s;white-space:nowrap}
+</style>
 </body>
 </html>
