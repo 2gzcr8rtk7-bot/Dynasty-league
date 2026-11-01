@@ -2164,3 +2164,6 @@ Nuove 60 risposte DOL e 25 SPI (le prime 40 e 55 erano già nei profili): pl fus
 
 ## 924 — Dichiarazione diretta del GM dei Ducks
 Francesco (20:08) senza allenamento: GM_DICH.DUC = obiettivo «dinastia» (squadra forte e giovane nel tempo, non spende per vincere subito: tipo giovane, peso PDK di stagione 0,15, danger e bisogno di crediti × 0,3), linea d età fino a 24 (stretta 1: 25 va, 26 solo con tanto guadagno), intoccabile Wembanyama, protetti Şengün, Jalen Johnson, Flagg, Barnes, Amen Thompson, Cunningham, Edwards (−15 sulla quota ceduta), da sostituire Buzelis, Kyshawn George, Daniels, De Larrea, Steinbach (+5), vende quando il giocatore è in forma (+3). GM_OBJ DUC: titolo → dinastia. Prove: Şengün per Embiid 0%, Jalen Johnson per Giannis 5%, Amen Thompson per Haliburton 14%. Scheda Ducks aggiornata.
+
+## 925 — Giocatori sotto diritti fuori dagli scambi
+Francesco (20:09): Steinbach è tenuto dai Ducks ma i diritti sono dei Mooses (scambio con «Diritti su Steinbach (g64)»): i Ducks non possono scambiarlo, i Mooses possono riprenderselo entro la giornata 64 dando in cambio un loro centro. DIRITTI = {Steinbach}: escluso da ogni ricerca dell IA Trade e da gmProb (probabilità 0); tolto dai giocatori che i Ducks vogliono sostituire; scheda Ducks aggiornata.
