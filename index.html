@@ -12749,8 +12749,9 @@ html.dlt-parquet:not(.notte) body .tvbox tbody tr:not(.grp):not(.tot) td:not(#a)
  function sync(){const h=mk();if(!h)return;const on=isOn();h.classList.toggle("on",on);h.setAttribute("aria-checked",on?"true":"false")}
  /* il cambio di modalità ridisegna tutta l'app: prima si fa scivolare il pallino, poi si cambia */
  let go=false;document.addEventListener("click",e=>{const h=e.target.closest&&e.target.closest("header #hnt");if(!h||go)return;e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();
-  const k=h.querySelector(".hntk"),on=h.getAttribute("aria-checked")==="true";if(k){k.style.setProperty("transition","left .24s cubic-bezier(.3,.7,.3,1),background .24s","important");k.style.setProperty("left",on?"2px":"24px","important")}
-  setTimeout(()=>{go=true;try{h.click()}finally{go=false}if(k){k.style.removeProperty("left");k.style.removeProperty("transition")}sync()},260)},true);
+  const k=h.querySelector(".hntk"),on=h.getAttribute("aria-checked")==="true";h.classList.toggle("flip",!on);h.classList.add("moving");
+  /* (847) si cambia modalità solo DOPO che il pallino è arrivato (e dopo un fotogramma libero), così il lavoro pesante non lo interrompe */
+  setTimeout(()=>requestAnimationFrame(()=>setTimeout(()=>{go=true;try{h.click()}finally{go=false}h.classList.remove("moving");h.classList.remove("flip");sync()},0)),300)},true);
  sync();const R=render;render=function(){const r=R.apply(this,arguments);try{sync()}catch(e){}return r};setInterval(()=>{try{sync()}catch(e){}},2000);
  /* (842) se qualcosa ridisegna l'intestazione e toglie il tasto, lo si rimette subito */
  try{const hd=document.querySelector("header");if(hd)new MutationObserver(()=>{if(!document.querySelector("header #hnt"))try{sync()}catch(e){}}).observe(hd,{childList:true,subtree:true})}catch(e){}
@@ -12777,5 +12778,10 @@ html.dlt-parquet:not(.notte) .tgc:not(#a):not(#b):not(#c):not(#d){background:lin
 html.dlt-parquet:not(.notte) .tgc .tgcb b:not(#a):not(#b):not(#c):not(#d){color:#5a2a0e!important;-webkit-text-fill-color:#5a2a0e!important;text-shadow:none!important}
 html.notte .tgc:not(#a):not(#b):not(#c):not(#d){background:linear-gradient(135deg,#2a1260,#160a3a 60%,#3b0d4f)!important;border:2px solid #a78bfa!important;box-shadow:0 0 14px rgba(139,92,246,.35)!important}
 html.notte .tgc .tgcb b:not(#a):not(#b):not(#c):not(#d){color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 3px rgba(0,0,0,.6)!important}</style>
+<style>/* (847) tasto notte SUPER FLUIDO: il pallino si muove con transform (lo anima la scheda grafica, non si blocca anche se l'app sta lavorando), sempre left:2px */
+header .hnt.hnthd .hntk:not(#a):not(#b):not(#c):not(#d):not(#e){left:2px!important;transform:translate3d(0,0,0);transition:transform .28s cubic-bezier(.22,.8,.3,1),background-color .28s,color .28s!important;will-change:transform}
+header .hnt.hnthd[aria-checked="true"] .hntk:not(#a):not(#b):not(#c):not(#d):not(#e),header .hnt.hnthd.on .hntk:not(#a):not(#b):not(#c):not(#d):not(#e){left:2px!important;transform:translate3d(22px,0,0)}
+header .hnt.hnthd.moving .hntk:not(#a):not(#b):not(#c):not(#d):not(#e){transform:translate3d(0,0,0)}header .hnt.hnthd.moving.flip .hntk:not(#a):not(#b):not(#c):not(#d):not(#e){transform:translate3d(22px,0,0)}
+header .hnt.hnthd:not(#a):not(#b):not(#c):not(#d):not(#e){transition:background .28s,border-color .28s,box-shadow .28s!important}</style>
 </body>
 </html>
