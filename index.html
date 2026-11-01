@@ -12364,12 +12364,12 @@ const GM_GUSTI={"TUR": {"role": {"G": -2, "F": 4, "C": -2}, "age": 0.75, "req": 
 /* (763) costanti del peso dei profili, regolabili nella Gestione equilibrio trade (tab Gusti GM) */
 const GM_K={max:.6,n:150,sc:12.5};
 function gmProb(t,give,get,cin,cout){cin=cin||0;cout=cout||0;const G=GM_GUSTI[t];if(!G||!give.length||!get.length)return null;
- const v=n=>{let x=valOf(n)||0;const b=G.pl[n];return x};const CR=(typeof VAL_CR!=="undefined"?VAL_CR:0),vg=give.reduce((a,n)=>a+v(n),0)+cout*CR,vr=get.reduce((a,n)=>a+v(n),0)+cin*CR;if(!vg&&!vr)return null;
+ const v=n=>{let x=valOf(n)||0;const b=G.pl[n];return x};const CR=(typeof VAL_CR!=="undefined"?VAL_CR:0),cn=(()=>{try{return window.GM_NOCTX?0:window.gmCtx(t).crNeed||0}catch(e){return 0}})()/* (920) chi ha bisogno di crediti per le speciali li pesa di più */,vg=give.reduce((a,n)=>a+v(n),0)+cout*CR*(1+1.5*cn),vr=get.reduce((a,n)=>a+v(n),0)+cin*CR*(1+cn);if(!vg&&!vr)return null;
  const ag=L=>{const sv=L.reduce((a,n)=>a+(valOf(n)||0),0)||1;return L.reduce((a,n)=>a+(valOf(n)||0)*(iaAge(n)??26),0)/sv};
  const d=(vr-vg)/Math.max(vg,vr,1)*100;let g=d-G.age*(ag(get)-ag(give))-G.req;
- get.forEach(n=>{g+=(G.role[ruoloDi(n)]||0)/get.length+(G.pl[n]||0)});give.forEach(n=>{g-=gmPlOwn(t,n,G.pl[n]||0)});
- try{g+=gmSitG(t,give,get,n=>valOf(n)||0,n=>iaAge(n)??26,G.age)+gmStarRif(t,get,n=>valOf(n)||0,gmStarG(give,get,n=>valOf(n)||0))+gmCtxG(t,give,get,n=>valOf(n)||0).v}catch(e){}
- return 1/(1+Math.exp(-g/(G.sc||GM_K.sc)))}
+ get.forEach(n=>{g+=(G.role[ruoloDi(n)]||0)/get.length+(G.pl[n]||0)});give.forEach(n=>{g-=(window.gmPlOwn?window.gmPlOwn(t,n,G.pl[n]||0):(G.pl[n]||0))});
+ try{const W=window,vf=n=>valOf(n)||0;g+=W.gmSitG(t,give,get,vf,n=>iaAge(n)??26,G.age)+W.gmStarRif(t,get,vf,W.gmStarG(give,get,vf))+W.gmCtxG(t,give,get,vf).v}catch(e){}
+ if(!window.GM_NOCTX&&window.gmTar)g+=window.gmTar(t);return 1/(1+Math.exp(-g/(G.sc||GM_K.sc)))}
 function gmSides(x){const R=iaRec(x),o={};for(const t in R){const get=R[t].pl.map(p=>p.n),give=[];let cin=R[t].cr.reduce((a,c)=>a+(+c.v||0),0),cout=0;for(const u in R){R[u].pl.forEach(p=>{if(p.from===t)give.push(p.n)});R[u].cr.forEach(c=>{if(c.from===t)cout+=(+c.v||0)})}o[t]={give,get,cin,cout}}return o}
 function gmWeigh(pool){const A=iaTeam();if(!pool||!pool.length)return pool;let any=false;
  pool.forEach(x=>{try{const S=gmSides(x);let w=1;x.gm=null;for(const t in S){const G=GM_GUSTI[t];if(!G)continue;const p=gmProb(t,S[t].give,S[t].get,S[t].cin,S[t].cout);if(p==null)continue;const k=Math.min(GM_K.max,G.n/GM_K.n);w*=(1-k)+k*2*p;(x.gm=x.gm||{})[t]=p;any=true}x.sc0=x.sc0??x.sc;x.sc=x.sc0*w}catch(e){}});
@@ -12494,7 +12494,7 @@ function gmSitG(t,give,get,vf,af,ga){try{const S=gmSit(t),tg=(()=>{try{return gm
   const yg=n=>{const a=af(n);return a<=22?1:a<=24?.5:0};const sg=sh(give),sr=sh(get);
   const pot=get.reduce((a,n)=>a+yg(n)*sr(n),0)*S.kp*.5-give.reduce((a,n)=>a+yg(n)*sg(n),0)*S.kp;
   /* (893) chi gioca per vincere ora guarda la produzione di questa stagione: somma dei PDK medi dei giocatori da rotazione (PDK ≥ 15) ricevuti contro ceduti */
-  let rc=1;try{const C=gmCtx(t);rc=(.4+.6*C.race)*(1+(C.urg||0)*C.race)-1.4*(C.tank||0)/* (915) chi è fuori dalla corsa guarda meno i PDK di oggi; (919) a fine stagione chi è in corsa li vuole di più, chi punta ai premi di fondo li cede */}catch(e){}const pk=L=>L.reduce((a,n)=>{const v=gmForm(n).f??0;return a+(v>=15?v:0)},0),pg=pk(get),pd=pk(give),kw2=Math.max(S.kw,(()=>{try{return .3*(gmCtx(t).tank||0)}catch(e){return 0}})()),wn=kw2&&(pg||pd)?Math.max(-15,Math.min(15,kw2*rc*100*(pg-pd)/Math.max(pg,pd))):0;
+  let rc=1;try{const C=gmCtx(t);rc=(.4+.6*Math.max(C.race,C.push||0))*(1+(C.urg||0)*Math.max(C.race,C.push||0))-1.4*(C.tank||0)/* (915) chi è fuori dalla corsa guarda meno i PDK di oggi; (919) a fine stagione chi è in corsa li vuole di più, chi punta ai premi di fondo li cede */}catch(e){}const pk=L=>L.reduce((a,n)=>{const v=gmForm(n).f??0;return a+(v>=15?v:0)},0),pg=pk(get),pd=pk(give),kw2=Math.max(S.kw,(()=>{try{return .3*(gmCtx(t).tank||0)}catch(e){return 0}})()),wn=kw2&&(pg||pd)?Math.max(-15,Math.min(15,kw2*rc*100*(pg-pd)/Math.max(pg,pd))):0;
   return Math.max(-25,Math.min(20,-ka*(ag(get)-ag(give))+pot+wn))}catch(e){return 0}}
 /* (915) CONTESTO DI SQUADRA DINAMICO (Francesco, 01/11 sera): i consigli di scambio seguono 5 cose che cambiano di settimana in settimana.
    1) corsa al titolo: classifica Dreamers (posizione, pesata su quanti turni sono giocati) + forza attuale (PDK in forma dei migliori 10);
@@ -12542,26 +12542,50 @@ function gmCtx(t){if(GM_CTXC[t])return GM_CTXC[t];const S=gmSit(t),R=(ROSTER[t]|
   const calo=R.filter(n=>{const F=gmForm(n);return F.tr<=-.15&&F.s>=20});
   /* (919) MOMENTO DELLA STAGIONE (Francesco, 19:43): negli ultimi 12 turni di regular season chi è in corsa ha fretta di coprire i buchi (infortuni) e paga un sovrapprezzo;
      chi è fuori dai playoff (5ª–8ª) può puntare ai premi di fondo classifica (DR_PREMI: 250/350/450 crediti agli ultimi tre) e cede la produzione di oggi. */
-  const urg=Math.max(0,Math.min(1,(played-(DR_REG-12))/10)),tank=S.pos&&S.pos>=5?Math.min(1,urg*(1-race)*1.2):0;
-  return GM_CTXC[t]={cov,outs,race,corsa,rs,vets,calo,played,AP,rif,urg,tank}}
+  const urg=Math.max(0,Math.min(1,(played-(DR_REG-12))/10));
+  /* (920) REGOLAMENTO E SOLDI (Francesco, 19:53): 1ª–4ª playoff per il titolo, 5ª–8ª l'altro tabellone; i premi di regular season crescono
+     scendendo (30/40/50/150 | 150/250/350/450). Una 5ª–8ª vicina al 4° posto (vittorie di distacco contro turni rimasti) spinge per entrare (push);
+     se è lontana le conviene scendere (tank). Una 1ª–3ª già sicura dei playoff non strapaga: il 4° posto rende anche di più. */
+  let pPO=1,sec=0;try{const st=drStand(),me=st.find(x=>x.t===t)||{w:0,n:0},Rm=Math.max(0,DR_REG-(me.n||0)),w4=(st[3]||{}).w||0,w5=(st[4]||{}).w||0,k=.3*Rm+.5;
+    if(S.pos>=5)pPO=Math.max(0,Math.min(1,1-(w4-me.w)/k));else sec=Math.max(0,Math.min(1,(me.w-w5)/k))}catch(e){}
+  const push=S.pos>=5?pPO*Math.max(urg,.3):0,tank=S.pos>=5?Math.min(1,(1-pPO)*Math.min(1,played/8)):0;
+  /* (920) CASSA: una speciale costa 30/40/50 crediti; chi lotta (titolo o playoff) e ha meno di 30 crediti cerca crediti (li valuta di più, li cede malvolentieri) */
+  const cash=(typeof CREDITI!=="undefined"&&CREDITI[t])||0,fight=Math.max(race,push),crNeed=cash<30?Math.min(1,((30-cash)/30+.3)*(.5+.5*fight)*(1+urg)):0;
+  return GM_CTXC[t]={cov,outs,race,corsa,rs,vets,calo,played,AP,rif,urg,tank,push,pPO,sec,cash,crNeed}}
 function gmCovW(c){return c<2?1:c<2.5?.5:.2}
 /* termine di contesto: copertura ruoli prima/dopo + veterani fuori età + giocatori in calo (in punti, come gli altri gusti) */
-function gmCtxG(t,give,get,vf){const why=[],af0=n=>iaAge(n)??26;try{const C=gmCtx(t),S=gmSit(t),R=(ROSTER[t]||[]).filter(p=>p[5]!=="G").map(p=>p[0]),after=gmCov(R.filter(n=>!give.includes(n)).concat(get));
+function gmCtxG(t,give,get,vf){const why=[],af0=n=>iaAge(n)??26;try{if(window.GM_NOCTX)return{v:0,why};const C=gmCtx(t),S=gmSit(t),R=(ROSTER[t]||[]).filter(p=>p[5]!=="G").map(p=>p[0]),after=gmCov(R.filter(n=>!give.includes(n)).concat(get));
   let ro=0;for(const r of["G","F","C"]){const b=C.cov[r],a=after[r];if(Math.abs(a-b)<.05)continue;let v=gmCovW(Math.min(a,b))*(a-b)*10;if(b>=2&&a<2)v-=6;ro+=v;
     const nm={G:"nelle guardie",F:"nelle ali",C:"nei centri"}[r],nm2={G:"le guardie",F:"le ali",C:"i centri"}[r];if(v<=-4)why.push(a<2?`resta scoperto ${nm}`:`perde copertura ${nm}`);else if(v>=4)why.push(b<2?`copre il buco ${nm}`:`rinforza ${nm2}`)}
-  const fr=1+1.5*(C.urg||0)*C.race;ro*=fr;const cap=12*fr;ro=Math.max(-cap,Math.min(cap,ro));if(Math.abs(ro)<3)why.length=0;/* effetti che si compensano: niente motivo */
+  const fr=(1+1.5*(C.urg||0)*Math.max(C.race,(C.push||0)*1.2))*(1-.3*(C.sec||0)*(C.urg||0));ro*=fr;const cap=12*fr;ro=Math.max(-cap,Math.min(cap,ro));if(Math.abs(ro)<3)why.length=0;/* effetti che si compensano: niente motivo */
   if(fr>=1.4&&ro>=4)why.push("a pochi turni dai playoff deve coprire il ruolo: paga di più");
   const sh=L=>{const s=L.reduce((a,n)=>a+vf(n),0)||1;return n=>vf(n)/s},sg=sh(give),sr=sh(get);
   let ve=0;const AP=C.AP;if(AP){/* (917) linea d'età: chi è più vecchio della linea vale meno; i fuori linea si cedono volentieri */
     let pen=0;get.forEach(n=>{const a=af0(n),d=Math.max(0,a-AP.hi);if(d>0)pen+=AP.tight*(8*d+d*d)*sr(n)/* (917) cresce più che in proporzione: 1 anno oltre la linea ≈ −9, 2 anni ≈ −20, 3+ anni = tetto: serve un guadagno enorme (Jokić) */});pen=Math.min(30,pen);if(pen>=3)why.push(`fuori dalla sua linea d'età (${Math.round(AP.lo)}–${Math.round(AP.hi)} anni)`);ve-=pen;
     let fo=0;give.forEach(n=>{if(AP.fuori.includes(n)){fo+=(4+6*AP.tight)*sg(n);why.push(`cede volentieri ${nmAb(n)}, fuori dalla sua linea d'età`)}});ve+=Math.min(9,fo)}
-  if((C.tank||0)>=.3)why.push("fuori dai playoff: può puntare ai premi di fondo classifica");
+  if((C.tank||0)>=.3)why.push("lontana dal 4° posto: le conviene scendere per i premi di fondo classifica");else if((C.push||0)>=.5&&C.urg>0)why.push("vicina al 4° posto: spinge per entrare nei playoff del titolo");
   if(C.rif>0&&gmSit(t).tipo!=="giovane"){/* (917) rifondazione possibile: vende i 29+ e cerca giovani */let rv=0;give.forEach(n=>{if(af0(n)>=29)rv+=8*C.rif*sg(n)});get.forEach(n=>{const a=af0(n);if(a>=29)rv-=6*C.rif*sr(n);else if(a<=23&&vf(n)>=700)rv+=4*C.rif*sr(n)});
     if(rv>=3)why.push(`fuori dalla corsa: pensa a rifondare (${Math.round(C.rif*100)}%)`);ve+=Math.max(-8,Math.min(8,rv))}
   let tr=0;give.forEach(n=>{const F=gmForm(n);if(F.tr<=-.15&&F.s>=15){tr+=4*sg(n)}});get.forEach(n=>{const F=gmForm(n);if(F.tr<=-.15&&F.s>=15){tr-=4*sr(n)}});tr=Math.max(-4,Math.min(4,tr));
   if(tr>=2)why.push("cede un giocatore in calo");else if(tr<=-2)why.push("riceve un giocatore in calo");
   return{v:Math.max(-40,Math.min(18,ro+ve+tr)),why}}catch(e){return{v:0,why}}}
 try{window.gmCtx=gmCtx;window.gmCtxG=gmCtxG;window.gmForm=gmForm}catch(e){}
+/* (921) TARATURA DAI FATTI: a ogni apertura l'IA rifà i conti sugli scambi VERI fatti in lega (TRADES a due lati, dal 25/10/2026):
+   per ogni squadra guarda con che probabilità li avrebbe previsti. Se dava basso uno scambio che il GM ha poi fatto davvero, quel GM
+   chiude più facilmente di quanto pensavamo: il suo «vantaggio chiesto» scende (fino a 8 punti); con più scambi pesa di più (pieno da 4).
+   È un primo passo: man mano che arrivano scambi veri e report, i numeri si spostano da soli. Il contesto squadra non entra nel ricalcolo
+   (la rosa di oggi è già quella dopo lo scambio). */
+let GM_TAR=null;window.GM_NOCTX=false;
+function gmTaratura(){if(GM_TAR)return GM_TAR;GM_TAR={};const D={};window.GM_NOCTX=true;
+  try{(TRADES||[]).forEach(x=>{if(!/^scambio$/i.test(x.titolo||"")||!x.lati||x.lati.length!==2)return;const m=String(x.data||"").match(/(\d+)\/(\d+)\/(\d+)/);if(!m||Date.UTC(+m[3],+m[2]-1,+m[1])<Date.UTC(2026,9,25))return;
+    const pl=l=>(l[1]||[]).filter(n=>typeof n==="string"&&(valOf(n)||0)>0);for(let i=0;i<2;i++){const t=x.lati[i][0],get=pl(x.lati[i]),give=pl(x.lati[1-i]);if(!get.length||!give.length||!GM_GUSTI[t])continue;
+      const p=window.gmProb?window.gmProb(t,give,get,0,0):null;if(p==null)continue;(D[t]=D[t]||[]).push(p)}})}catch(e){}
+  window.GM_NOCTX=false;
+  for(const t in D){const G=GM_GUSTI[t],sc=G.sc||GM_K.sc,L=D[t],z=L.map(p=>Math.log(Math.max(.01,p)/Math.max(.01,1-p))*sc),miss=z.reduce((a,v)=>a+Math.min(0,v),0)/L.length;
+    GM_TAR[t]={k:L.length,p:L.reduce((a,v)=>a+v,0)/L.length,adj:Math.min(8,2*L.length,-miss*.5*Math.min(1,L.length/4))/* massimo 2 punti per ogni scambio vero */}}
+  return GM_TAR}
+const gmTar=t=>{try{return(gmTaratura()[t]||{}).adj||0}catch(e){return 0}};
+try{window.gmTaratura=gmTaratura;window.gmTar=gmTar;window.gmPlOwn=gmPlOwn;window.gmStarG=gmStarG;window.gmStarRif=gmStarRif}catch(e){}
 /* (887) UNA STELLA PER 2-3 GIOCATORI MEDI (Francesco): praticamente nessun GM la cede. Se la squadra dà il giocatore più forte dello scambio
    e riceve 2 o più giocatori tutti sotto l'85% del suo valore, il sì crolla (−12 per ogni giocatore in più ricevuto). */
 /* (917) chi rifonda (≥50%) fa anche lo scambio grosso: la stella per più giocatori va bene se riceve almeno un giovane (≤23) da 900+ */
@@ -12577,7 +12601,7 @@ function gsc(t,give,get){const G=prof(t),vt=Math.max(0,...give.concat(get).map(n
   const ag=L=>{const s=L.reduce((a,n)=>a+vx(n),0)||1;return L.reduce((a,n)=>a+vx(n)*ax(n),0)/s};
   const d=(vr-vg)/Math.max(vg,vr,1)*100,ea=-(G.age||0)*(ag(get)-ag(give));let ro=0,pp=[];
   get.forEach(n=>{ro+=((G.role||{})[ruoloDi(n)]||0)/get.length;const b=(G.pl||{})[n];if(b)pp.push([n,b,1])});give.forEach(n=>{let b=gmPlOwn(t,n,(G.pl||{})[n]||0);if(b<0&&d<-5)b*=Math.max(0,1+(d+5)/15)/* (893) «contento di lasciarlo» vale solo se non ci rimette: perdendo valore il bonus sparisce */;if(Math.abs(b)>=1)pp.push([n,-b,0])});
-  const ps=pp.reduce((a,x)=>a+x[1],0),si0=GU.gusti===false?0:gmSitG(t,give,get,vx,ax,G.age),st=GU.gusti===false?0:gmStarRif(t,get,vx,gmStarG(give,get,vx)),cx=GU.gusti===false?{v:0,why:[]}:gmCtxG(t,give,get,vx),si=si0+st+cx.v/* (887) situazione della squadra + stella per giocatori medi */,g=d+ea-(G.req||0)+ro+si+Math.max(-20,Math.min(20,ps))/* tetto: tanti gusti insieme non possono ribaltare tutto */;return{p:1/(1+Math.exp(-g/(G.sc||GM_K.sc))),d,ea,ro,pp,si,si0,st,cx}}
+  const ps=pp.reduce((a,x)=>a+x[1],0),si0=GU.gusti===false?0:gmSitG(t,give,get,vx,ax,G.age),st=GU.gusti===false?0:gmStarRif(t,get,vx,gmStarG(give,get,vx)),cx=GU.gusti===false?{v:0,why:[]}:gmCtxG(t,give,get,vx),si=si0+st+cx.v/* (887) situazione della squadra + stella per giocatori medi */,g=d+ea-(G.req||0)+gmTar(t)/* (921) taratura dai fatti */+ro+si+Math.max(-20,Math.min(20,ps))/* tetto: tanti gusti insieme non possono ribaltare tutto */;return{p:1/(1+Math.exp(-g/(G.sc||GM_K.sc))),d,ea,ro,pp,si,si0,st,cx}}
 try{window.gsc=gsc}catch(e){}
 /* ricerca */
 const rnd=a=>a[Math.random()*a.length|0];
@@ -12672,7 +12696,7 @@ function gmSitHtml(t){const S=gmSit(t),f1=x=>(Math.round(x*10)/10).toString().re
   const tip={titolo:"Gioca per il titolo: contano i PDK di questa stagione, l'età conta poco. Per cedere un giocatore produttivo vuole produzione in cambio, non solo valore",giovane:"Squadra giovane che costruisce: i giovani di potenziale li cede solo con un vantaggio netto e per un giocatore pronto ma più vecchio chiede di più",esperta:"Squadra esperta che vuole vincere subito: l'età pesa meno, conta la produzione di oggi",mista:"Rosa a metà strada: l'età pesa come nei report"}[S.tipo];
   return`<div class="gmsit"><p><b>Situazione squadra.</b> ${tip}.</p><div class="gmnum"><div><small>Età media rosa</small><b>${f1(S.eta)}</b></div><div><small>Valore under 23</small><b>${Math.round(S.giov*100)}%</b></div><div><small>Accetta (report)</small><b>${A?Math.round(A[0]/A[1]*100)+"%":"—"}</b></div></div>
   <p class="gmsitn">${A?`Nei report accetta ${A[0]} proposte su ${A[1]}. `:""}${S.pot.length?`Giovani di potenziale: ${S.pot.join(", ")}. `:""}Rosa ${S.rv}ª per valore${S.pos?` · ${S.pos}ª in classifica Dreamers`:""}. L'IA Trade aggiunge questa situazione ai gusti dei report: ${S.ka>=0?`l'età pesa ${f1(S.ka)} punti per anno in più`:`l'età pesa fino a ${f1(-S.ka)} punti per anno in meno (mai sotto zero)`}${S.kp?`; cedere un giovane fino a 22 anni costa ${f1(S.kp)} punti`:""}. In più nessuna squadra dà il suo giocatore più forte per due o tre giocatori medi.</p>${(()=>{try{const C=gmCtx(t),f2=x=>(Math.round(x*10)/10).toString().replace(".",","),lab=c=>c<2?"scoperto":c<2.5?"coperto":"abbondante";
-    return`<p class="gmsitn"><b>Contesto di questa settimana.</b> ${C.corsa[0].toUpperCase()+C.corsa.slice(1)} (${C.rs}ª per PDK in forma${S.pos?`, ${S.pos}ª in classifica`:""}). Copertura dei ruoli (2 giocatori da 30 PDK = coperto): guardie ${f2(C.cov.G)} ${lab(C.cov.G)}, ali ${f2(C.cov.F)} ${lab(C.cov.F)}, centri ${f2(C.cov.C)} ${lab(C.cov.C)}.${C.outs.length?` Fuori per infortunio: ${C.outs.map(nmAb).join(", ")}.`:""}${(()=>{const A=C.AP;if(!A)return"";const r=Math.round,lab=A.tight>=.6?"stretta: cerca giocatori dentro questa fascia":A.tight>=.3?"abbastanza stretta":"larga: prende giocatori di qualsiasi età";return` Linea d'età ${r(A.lo)}–${r(A.hi)} anni (${lab})${A.ntr?`; negli ultimi scambi ${A.dir>.15?"ha ringiovanito":A.dir<-.15?"ha preso giocatori più esperti":"è rimasta in linea"}`:""}.${A.fuori.length?` Fuori linea (li cede più volentieri): ${A.fuori.map(nmAb).join(", ")}.`:""}`})()}${C.rif>0&&S.tipo!=="giovane"&&C.rif>=.15?` Probabilità di rifondare: ${Math.round(C.rif*100)}%.`:""}${C.urg>0?` Fase finale della regular season: ${C.race>=.5?"ha fretta di coprire i buchi":C.tank>=.3?"può puntare ai premi di fondo classifica":"conta poco"}.`:""}${C.calo.length?` In calo nelle ultime 5: ${C.calo.map(nmAb).join(", ")}.`:""}</p>`}catch(e){return""}})()}</div>`}
+    return`<p class="gmsitn"><b>Contesto di questa settimana.</b> ${C.corsa[0].toUpperCase()+C.corsa.slice(1)} (${C.rs}ª per PDK in forma${S.pos?`, ${S.pos}ª in classifica`:""}). Copertura dei ruoli (2 giocatori da 30 PDK = coperto): guardie ${f2(C.cov.G)} ${lab(C.cov.G)}, ali ${f2(C.cov.F)} ${lab(C.cov.F)}, centri ${f2(C.cov.C)} ${lab(C.cov.C)}.${C.outs.length?` Fuori per infortunio: ${C.outs.map(nmAb).join(", ")}.`:""}${(()=>{const A=C.AP;if(!A)return"";const r=Math.round,lab=A.tight>=.6?"stretta: cerca giocatori dentro questa fascia":A.tight>=.3?"abbastanza stretta":"larga: prende giocatori di qualsiasi età";return` Linea d'età ${r(A.lo)}–${r(A.hi)} anni (${lab})${A.ntr?`; negli ultimi scambi ${A.dir>.15?"ha ringiovanito":A.dir<-.15?"ha preso giocatori più esperti":"è rimasta in linea"}`:""}.${A.fuori.length?` Fuori linea (li cede più volentieri): ${A.fuori.map(nmAb).join(", ")}.`:""}`})()}${C.rif>0&&S.tipo!=="giovane"&&C.rif>=.15?` Probabilità di rifondare: ${Math.round(C.rif*100)}%.`:""}${C.urg>0?` Fase finale della regular season: ${C.race>=.5||C.push>=.5?"ha fretta di coprire i buchi":C.tank>=.3?"può puntare ai premi di fondo classifica":"conta poco"}.`:""}${S.pos>=5&&C.played>=4?(C.pPO>=.5?` Ancora vicina al 4° posto: spinge per i playoff del titolo.`:` Lontana dal 4° posto: le conviene scendere (premi di fondo classifica).`):""} ${(()=>{const T=gmTaratura()[t];return T?` Taratura dai fatti: ${T.k} ${T.k===1?"scambio vero":"scambi veri"}, l'IA li dava in media al ${Math.round(T.p*100)}%${T.adj>=.5?`, quindi chiede ${String(Math.round(T.adj*10)/10).replace(".",",")} punti di vantaggio in meno`:": previsione giusta"}.`:""})()} Cassa ${C.cash} crediti${C.crNeed>0?`: sotto i 30 di una trade speciale, cerca crediti (li paga di più)`:""}.${C.calo.length?` In calo nelle ultime 5: ${C.calo.map(nmAb).join(", ")}.`:""}</p>`}catch(e){return""}})()}</div>`}
 function gmScheda(t){const G=GM_GUSTI[t],D=GM_DESCR[t],f=v=>(v>0?"+":"")+(Math.round(v*10)/10).toString().replace(".",",");
   if(!G)return`<section class="gmsc nd">${badge(t)}<div><h4>${TEAMS[t].nick}</h4><p class="gmnd">⏳ <b>Ancora da verificare.</b> I ${TEAMS[t].nick} non hanno ancora mandato i report dell'Allenamento IA Trade: per ora nell'IA Gusti usano il gusto medio della lega (segnati «stima»). Appena arrivano i report, qui compariranno cosa cercano e come trattano.</p></div></section>`;
   const aff=Math.round(Math.min(1,(G.n||0)/150)*100),pl=Object.entries(G.pl||{}),up=pl.filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,6),dn=pl.filter(x=>x[1]<0).sort((a,b)=>a[1]-b[1]).slice(0,6);
