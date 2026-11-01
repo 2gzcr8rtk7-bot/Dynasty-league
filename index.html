@@ -9904,7 +9904,7 @@ function pqFix(){try{
     if(el.tagName==="svg"||el.closest("svg"))return;
     if(el.closest(".htile"))return;
     if(el.closest(".cltg,.cltn,.tvpnl .tvdate,.tvpnl .tvday"))return;
-    if(window.__dxSkip&&window.__dxSkip(el))return;if(el.matches&&el.matches("div.teamhead,div.teamhead *,button.shbtn,div.gszn,table td.pnm,table td.pnm *,table thead th,table thead th *,.mnb,.bxs span.gv *,.bxs span.gr2 *"))return;
+    if(window.__dxSkip&&window.__dxSkip(el))return;if(el.matches&&el.matches("div.teamhead,div.teamhead *,button.shbtn,div.gszn,table td.pnm,table td.pnm *,table thead th,table thead th *,.tvbox tr.grp td,.tvbox tr.grp td *,.tvbox tr.tot td,.tvbox tr.tot td *,.mnb,.bxs span.gv *,.bxs span.gr2 *"))return;
     if(el.classList&&el.classList.contains("tstar")){const b=bgSel(el);el.classList.toggle("stl",lum(b)>.4);return}
     let has=false;for(const n of el.childNodes)if(n.nodeType===3&&n.textContent.trim().length>0){has=true;break}
     if(!has)return;const r=el.getBoundingClientRect();if(r.width<2||r.height<2)return;
@@ -12130,10 +12130,39 @@ function barUpd(){bar.style.display=PICK!==null&&window.__dxOn?"flex":"none";bar
    «⬆ contenitore / ⬇ dentro / ◀ ▶ vicino» per spostarsi di un livello; scelta «Solo questo» o «Tutti uguali»;
    colori rapidi con un tocco; nome leggibile dell'elemento (testo che contiene) invece del solo codice. */
 let SCOPE="all",SEL="";
-const hl=document.createElement("div");hl.id="dxhl";hl.style.cssText="position:fixed;z-index:2147482999;pointer-events:none;display:none;border:3px dashed #ff2bd6;border-radius:6px;box-shadow:0 0 0 9999px rgba(0,0,0,.18),0 0 12px #ff2bd6;transition:all .12s";document.body.appendChild(hl);
-function hlUpd(){if(!TARGET||!document.contains(TARGET)||sheet.style.display==="none"){hl.style.display="none";return}const r=TARGET.getBoundingClientRect();Object.assign(hl.style,{display:"block",left:(r.left-3)+"px",top:(r.top-3)+"px",width:(r.width+6)+"px",height:(r.height+6)+"px"})}
+/* (834) SELEZIONE 3.0 (Francesco): riquadro rosa con 4 maniglie per ALLARGARLO o stringerlo e una maniglia ✥ per SPOSTARLO ovunque;
+   quando lo lasci, l'editor prende da solo gli elementi che stanno dentro (anche separati, es. le due parti della barra delle statistiche)
+   e li colora tutti insieme. Il primo tocco sceglie il riquadro colorato più vicino (tasto, casella, barra) invece della singola scritta. */
+let TARGETS=[],SELS=[],DRAG=null;
+const hl=document.createElement("div");hl.id="dxhl";hl.style.cssText="position:fixed;z-index:2147482999;pointer-events:none;display:none;border:3px dashed #ff2bd6;border-radius:6px;box-shadow:0 0 0 9999px rgba(0,0,0,.18),0 0 12px #ff2bd6";
+hl.innerHTML=["tl","tr","bl","br"].map(k=>`<i data-dxh="${k}" style="position:absolute;width:30px;height:30px;border-radius:50%;background:#ff2bd6;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.45);pointer-events:auto;touch-action:none;${k[0]==="t"?"top:-17px":"bottom:-17px"};${k[1]==="l"?"left:-17px":"right:-17px"}"></i>`).join("")+`<i data-dxh="mv" style="position:absolute;left:50%;top:-40px;transform:translateX(-50%);width:44px;height:30px;border-radius:15px;background:#ff2bd6;border:3px solid #fff;color:#fff;font:900 17px system-ui;display:flex;align-items:center;justify-content:center;pointer-events:auto;touch-action:none;box-shadow:0 2px 8px rgba(0,0,0,.45);font-style:normal">✥</i>`;
+document.body.appendChild(hl);
+const sub=document.createElement("div");sub.id="dxsub";sub.style.cssText="position:fixed;inset:0;pointer-events:none;z-index:2147482998";document.body.appendChild(sub);
+function unionR(L){let l=1e9,t=1e9,r=-1e9,b=-1e9;L.forEach(x=>{const q=x.getBoundingClientRect();l=Math.min(l,q.left);t=Math.min(t,q.top);r=Math.max(r,q.right);b=Math.max(b,q.bottom)});return{l,t,w:r-l,h:b-t}}
+function hlBox(q){Object.assign(hl.style,{display:"block",left:(q.l-3)+"px",top:(q.t-3)+"px",width:(q.w+6)+"px",height:(q.h+6)+"px"})}
+function hlUpd(){TARGETS=TARGETS.filter(x=>document.contains(x));if(!TARGETS.length||sheet.style.display==="none"){hl.style.display="none";sub.innerHTML="";return}
+ if(DRAG)return;hlBox(unionR(TARGETS));sub.innerHTML=TARGETS.length>1?TARGETS.map(x=>{const q=x.getBoundingClientRect();return`<i style="position:fixed;left:${q.left}px;top:${q.top}px;width:${q.width}px;height:${q.height}px;outline:2px solid rgba(255,43,214,.85);outline-offset:-2px"></i>`}).join(""):""}
+/* elementi dentro un rettangolo: quelli quasi tutti dentro (85%) il cui contenitore NON è dentro; preferisce i riquadri con fondo o bordo */
+const visBox=e=>{const c=getComputedStyle(e);const b=c.backgroundColor;return(b&&!/rgba\(0, 0, 0, 0\)|transparent/.test(b))||c.backgroundImage!=="none"||/^(TD|TH|BUTTON|SUMMARY|LI|IMG|svg)$/i.test(e.tagName)};
+function inRect(q){const A=[...document.querySelectorAll("header *,main *")].filter(e=>okEl(e)&&!e.closest("#dxhl,#dxsub"));const ins=new Set();
+ A.forEach(e=>{const r=e.getBoundingClientRect();if(r.width<4||r.height<4)return;const iw=Math.max(0,Math.min(r.right,q.l+q.w)-Math.max(r.left,q.l)),ih=Math.max(0,Math.min(r.bottom,q.t+q.h)-Math.max(r.top,q.t));
+  if(iw*ih>=.85*r.width*r.height)ins.add(e)});
+ let top=[...ins].filter(e=>!ins.has(e.parentElement));
+ /* se un contenitore senza colore proprio è dentro, conta ciò che ha colore lì dentro */
+ top=top.flatMap(e=>visBox(e)||!e.children.length?[e]:[...e.querySelectorAll("*")].filter(x=>ins.has(x)&&visBox(x)&&!(x.parentElement&&ins.has(x.parentElement)&&visBox(x.parentElement)&&x.parentElement!==e)).slice(0,40)).filter(Boolean);
+ return[...new Set(top)].slice(0,60)}
+let D0=null;
+hl.addEventListener("pointerdown",e=>{const h=e.target.closest("[data-dxh]");if(!h)return;e.preventDefault();e.stopPropagation();h.setPointerCapture(e.pointerId);const q=unionR(TARGETS);DRAG={k:h.dataset.dxh,x:e.clientX,y:e.clientY,q}});
+hl.addEventListener("pointermove",e=>{if(!DRAG)return;e.preventDefault();const dx=e.clientX-DRAG.x,dy=e.clientY-DRAG.y,q={...DRAG.q},k=DRAG.k;
+ if(k==="mv"){q.l+=dx;q.t+=dy}else{if(k[1]==="l"){q.l+=dx;q.w-=dx}else q.w+=dx;if(k[0]==="t"){q.t+=dy;q.h-=dy}else q.h+=dy}
+ if(q.w<12){q.w=12}if(q.h<12){q.h=12}DRAG.cur=q;hlBox(q)});
+const dragEnd=e=>{if(!DRAG)return;const q=DRAG.cur;DRAG=null;if(!q){hlUpd();return}let L=inRect(q);
+ if(!L.length){const c=document.elementFromPoint(q.l+q.w/2,q.t+q.h/2);if(c&&okEl(c))L=[c]}if(L.length)openMulti(L);else hlUpd()};
+hl.addEventListener("pointerup",dragEnd);hl.addEventListener("pointercancel",dragEnd);
+/* primo tocco: il riquadro colorato più vicino (fino a 3 livelli sopra) */
+function smart(t){let x=t;for(let i=0;i<4&&x&&okEl(x);i++){if(visBox(x))return x;x=x.parentElement}return t}
 addEventListener("scroll",hlUpd,{passive:true});addEventListener("resize",hlUpd);
-const okEl=e=>e&&e.nodeType===1&&e!==document.body&&e!==document.documentElement&&!e.closest("#dxsheet,#dxbar,#dxhl");
+const okEl=e=>e&&e.nodeType===1&&e!==document.body&&e!==document.documentElement&&!e.closest("#dxsheet,#dxbar,#dxhl,#dxsub");
 function pathSel(a){const P=[];let x=a;while(x&&x.nodeType===1&&x.tagName!=="MAIN"&&x.tagName!=="HEADER"&&x!==document.body){const p=x.parentElement;if(!p)break;const i=[...p.children].indexOf(x)+1;P.unshift(x.tagName.toLowerCase()+(x.classList.length?"."+CSS.escape([...x.classList].filter(c=>!SKIPC.test(c))[0]||x.classList[0]):"")+`:nth-child(${i})`);x=p}
  const root=x&&x.tagName?x.tagName.toLowerCase():"main";const v=document.body.dataset.v;return(v&&root==="main"?`body[data-v="${v}"] `:"")+root+" > "+P.join(" > ")}
 function allSel(a){const cl=[...a.classList].filter(c=>!SKIPC.test(c));if(cl.length)return selFor(a);const p=a.parentElement;
@@ -12141,32 +12170,33 @@ function allSel(a){const cl=[...a.classList].filter(c=>!SKIPC.test(c));if(cl.len
 const curSel=a=>SCOPE==="one"?pathSel(a):allSel(a);
 function nome(a){const t=(a.innerText||a.textContent||"").trim().replace(/\s+/g," ");const tg={button:"Tasto",a:"Link",td:"Casella",th:"Titolo colonna",tr:"Riga",table:"Tabella",img:"Immagine",h2:"Titolo",h3:"Titolo",h4:"Titolo",b:"Scritta",small:"Scritta piccola",span:"Pezzo",div:"Riquadro",section:"Sezione",article:"Scheda",header:"Intestazione",nav:"Menu",summary:"Riga apribile",details:"Gruppo",svg:"Disegno",text:"Scritta",input:"Campo",label:"Etichetta",i:"Pezzo",em:"Scritta",p:"Paragrafo"}[a.tagName.toLowerCase()]||a.tagName.toLowerCase();return tg+(t?` «${t.length>38?t.slice(0,38)+"…":t}»`:"")}
 const SW=[["","↺"],["#ffffff","Bianco"],["#fdf3e1","Crema"],["#fbeedb","Crema 2"],["#d9560b","Arancio"],["#e8631a","Arancio chiaro"],["#9a3a08","Arancio scuro"],["#2b1608","Marrone"],["#111111","Nero"],["#7c3aed","Viola"],["#0a1330","Blu notte"],["transparent","Trasparente"]];
-function openSheet(a){if(!okEl(a))return;TARGET=a;const m=mode();const sel=curSel(a);SEL=sel;const cs=getComputedStyle(a);const cur=(DX.rules[m]||{})[sel]||{};
- const bgc=hex(cs.backgroundColor),fgc=hex(cs.color),bdc=hex(cs.borderTopColor);const same=(()=>{try{return document.querySelectorAll(allSel(a)).length}catch(e){return 1}})();
+function openSheet(a){if(!okEl(a))return;openMulti([a])}
+function openMulti(L){L=L.filter(okEl);if(!L.length)return;TARGETS=L;const a=L[0];TARGET=a;const m=mode();SELS=[...new Set(L.map(curSel))];const sel=SELS[0];SEL=sel;const cs=getComputedStyle(a);const cur=(DX.rules[m]||{})[sel]||{};const multi=L.length>1;
+ const bgc=hex(cs.backgroundColor),fgc=hex(cs.color),bdc=hex(cs.borderTopColor);const same=(()=>{try{return SCOPE==="all"?new Set(SELS.flatMap(x=>{try{return[...document.querySelectorAll(x)]}catch(e){return[]}})).size:L.length}catch(e){return 1}})();
  const btn="padding:8px 10px;border:1px solid #bbb;border-radius:10px;background:#f4f4f4;font:700 13px system-ui;color:#222";
  const sw=k=>`<div style="display:flex;gap:5px;flex-wrap:wrap;margin:4px 0 2px 0">${SW.map(([c,l])=>`<button data-dxsw="${k}" data-c="${c}" title="${l}" style="width:26px;height:26px;border-radius:7px;border:2px solid ${cur[k]===c&&c?"#ff2bd6":"#bbb"};background:${c?(c==="transparent"?"repeating-conic-gradient(#ccc 0 25%,#fff 0 50%) 0 0/10px 10px":c):"#f4f4f4"};font-size:13px">${c?"":"↺"}</button>`).join("")}</div>`;
  const row=(k,l,v)=>`<div style="display:flex;align-items:center;gap:8px;margin:8px 0 0"><b style="width:62px">${l}</b><input type="color" data-k="${k}" value="${cur[k]&&cur[k]!=="transparent"?cur[k]:(v||"#ffffff")}" style="width:54px;height:36px;border:1px solid #bbb;border-radius:8px;padding:0"><small style="color:#777">${cur[k]||"originale"}</small></div>${sw(k)}`;
- const nav=[["up","⬆ Contenitore",a.parentElement&&okEl(a.parentElement)&&a.parentElement.tagName!=="MAIN"],["down","⬇ Dentro",!!a.firstElementChild],["prev","◀ Prima",!!a.previousElementSibling],["next","Dopo ▶",!!a.nextElementSibling]];
- sheet.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b style="font-size:15px">${esc(nome(a))}</b><button data-dxs="close" style="${btn};background:#222;color:#fff">Fine</button></div>
+ const nav=multi?[["one","↩ Solo il primo",true]]:[["up","⬆ Contenitore",a.parentElement&&okEl(a.parentElement)&&a.parentElement.tagName!=="MAIN"],["down","⬇ Dentro",!!a.firstElementChild],["prev","◀ Prima",!!a.previousElementSibling],["next","Dopo ▶",!!a.nextElementSibling]];
+ sheet.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b style="font-size:15px">${multi?`${L.length} elementi insieme`:esc(nome(a))}</b><button data-dxs="close" style="${btn};background:#222;color:#fff">Fine</button></div>
  <div style="display:flex;gap:6px;margin:8px 0;flex-wrap:wrap">${nav.map(([k,l,ok])=>`<button data-dxn="${k}" ${ok?"":"disabled"} style="${btn};flex:1;${ok?"":"opacity:.35"}">${l}</button>`).join("")}</div>
  <div style="display:flex;gap:6px;margin:6px 0"><button data-dxsc="all" style="${btn};flex:1;${SCOPE==="all"?"background:#d9560b;color:#fff;border-color:#d9560b":""}">Tutti uguali (${same})</button><button data-dxsc="one" style="${btn};flex:1;${SCOPE==="one"?"background:#d9560b;color:#fff;border-color:#d9560b":""}">Solo questo</button></div>
- <div style="font-size:11px;color:#666">Modalità: <b>${NM[m]}</b> · <code style="word-break:break-all">${esc(sel)}</code></div>
+ <div style="font-size:12px;color:#444;background:#fff4fb;border:1px dashed #ff2bd6;border-radius:8px;padding:6px 8px;margin:4px 0">✥ sposta il riquadro rosa · tira i pallini per allargarlo: prende da solo gli elementi dentro${multi?" ("+L.slice(0,4).map(x=>esc(nome(x).split(" «")[0])).join(", ")+(L.length>4?"…":"")+")":""}</div><div style="font-size:11px;color:#666">Modalità: <b>${NM[m]}</b> · <code style="word-break:break-all">${esc(SELS.slice(0,3).join(" , ")+(SELS.length>3?" …":""))}</code></div>
  ${row("bg","Sfondo",bgc)}${row("fg","Testo",fgc)}${row("bd","Bordo",bdc)}
  <label style="display:flex;gap:8px;align-items:center;margin:10px 0"><input type="checkbox" data-dxd ${cur.deep!==false&&(cur.deep||!cur.fg)?"checked":""}> Testo anche delle scritte dentro</label>
  <button data-dxs="reset" style="${btn};border-color:#c33;background:#fff;color:#c33;width:100%">Azzera questo elemento</button>`;
  sheet.style.display="block";{const r=a.getBoundingClientRect(),top=innerHeight-sheet.offsetHeight-12;if(r.top<70||r.bottom>top)scrollBy(0,r.top-Math.max(70,(top-Math.min(r.height,top-70))/2));}requestAnimationFrame(hlUpd)}
-function setRule(k,v){const m=mode();if(!TARGET)return;const sel=SEL||curSel(TARGET);const r=DX.rules[m]=DX.rules[m]||{};const x=r[sel]=r[sel]||{};if(v)x[k]=v;else delete x[k];
- if(k==="fg"&&v&&x.deep==null){const d=sheet.querySelector("[data-dxd]");x.deep=d?d.checked:true}if(!x.bg&&!x.fg&&!x.bd)delete r[sel];save();css();try{window.pqFix&&window.pqFix()}catch(e){}}
-sheet.addEventListener("input",e=>{const i=e.target.closest("[data-k]");if(i){setRule(i.dataset.k,i.value);i.nextElementSibling.textContent=i.value;hlUpd()}const d=e.target.closest("[data-dxd]");if(d&&TARGET){const m=mode(),r=DX.rules[m]=DX.rules[m]||{};const x=r[SEL]=r[SEL]||{};x.deep=d.checked;if(!x.bg&&!x.fg&&!x.bd)delete r[SEL];save();css()}});
-sheet.addEventListener("click",e=>{const w=e.target.closest("[data-dxsw]");if(w){setRule(w.dataset.dxsw,w.dataset.c||null);openSheet(TARGET);return}
- const n=e.target.closest("[data-dxn]");if(n&&TARGET){const k=n.dataset.dxn,t=k==="up"?TARGET.parentElement:k==="down"?TARGET.firstElementChild:k==="prev"?TARGET.previousElementSibling:TARGET.nextElementSibling;if(okEl(t))openSheet(t);return}
- const sc=e.target.closest("[data-dxsc]");if(sc){SCOPE=sc.dataset.dxsc;openSheet(TARGET);return}
- const s=e.target.closest("[data-dxs]");if(!s)return;const a=s.dataset.dxs;if(a==="close"){sheet.style.display="none";TARGET=null;hlUpd()}else if(a==="reset"&&TARGET){const m=mode();delete (DX.rules[m]||{})[SEL];save();css();try{window.pqFix&&window.pqFix()}catch(_){}openSheet(TARGET)}});
+function setRule(k,v){const m=mode();if(!TARGET)return;const r=DX.rules[m]=DX.rules[m]||{};(SELS.length?SELS:[SEL||curSel(TARGET)]).forEach(sel=>{const x=r[sel]=r[sel]||{};if(v)x[k]=v;else delete x[k];
+ if(k==="fg"&&v&&x.deep==null){const d=sheet.querySelector("[data-dxd]");x.deep=d?d.checked:true}if(!x.bg&&!x.fg&&!x.bd)delete r[sel]});save();css();try{window.pqFix&&window.pqFix()}catch(e){}}
+sheet.addEventListener("input",e=>{const i=e.target.closest("[data-k]");if(i){setRule(i.dataset.k,i.value);i.nextElementSibling.textContent=i.value;hlUpd()}const d=e.target.closest("[data-dxd]");if(d&&TARGET){const m=mode(),r=DX.rules[m]=DX.rules[m]||{};SELS.forEach(S=>{const x=r[S]=r[S]||{};x.deep=d.checked;if(!x.bg&&!x.fg&&!x.bd)delete r[S]});save();css()}});
+sheet.addEventListener("click",e=>{const w=e.target.closest("[data-dxsw]");if(w){setRule(w.dataset.dxsw,w.dataset.c||null);openMulti(TARGETS);return}
+ const n=e.target.closest("[data-dxn]");if(n&&TARGET){const k=n.dataset.dxn;if(k==="one"){openSheet(TARGET);return}const t=k==="up"?TARGET.parentElement:k==="down"?TARGET.firstElementChild:k==="prev"?TARGET.previousElementSibling:TARGET.nextElementSibling;if(okEl(t))openSheet(t);return}
+ const sc=e.target.closest("[data-dxsc]");if(sc){SCOPE=sc.dataset.dxsc;openMulti(TARGETS);return}
+ const s=e.target.closest("[data-dxs]");if(!s)return;const a=s.dataset.dxs;if(a==="close"){sheet.style.display="none";TARGET=null;TARGETS=[];hlUpd()}else if(a==="reset"&&TARGET){const m=mode();SELS.forEach(S=>delete (DX.rules[m]||{})[S]);save();css();try{window.pqFix&&window.pqFix()}catch(_){}openMulti(TARGETS)}});
 document.addEventListener("click",e=>{
  const b=e.target.closest("#dxbar [data-dx]");if(b){e.preventDefault();e.stopPropagation();const a=b.dataset.dx;if(a==="pick"){PICK=!PICK;if(!PICK){sheet.style.display="none";hlUpd()}barUpd()}else if(a==="panel"){PICK=false;sheet.style.display="none";hlUpd();cur="dxcol";render();scrollTo(0,0);barUpd()}else if(a==="off"){window.__dxOn=false;PICK=false;sheet.style.display="none";hlUpd();barUpd()}return}
- if(!PICK||!window.__dxOn||e.target.closest("#dxsheet,#dxbar"))return;
- e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();let t=e.target;if(t.nodeType!==1)t=t.parentElement;if(t.closest("svg")&&!/^(text|tspan)$/i.test(t.tagName))t=t.closest("svg");openSheet(t)},true);
-document.addEventListener("touchend",e=>{if(PICK&&window.__dxOn&&!e.target.closest("#dxsheet,#dxbar"))e.preventDefault()},{capture:true,passive:false});
+ if(!PICK||!window.__dxOn||e.target.closest("#dxsheet,#dxbar,#dxhl"))return;
+ e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();let t=e.target;if(t.nodeType!==1)t=t.parentElement;if(t.closest("svg")&&!/^(text|tspan)$/i.test(t.tagName))t=t.closest("svg");openSheet(smart(t))},true);
+document.addEventListener("touchend",e=>{if(PICK&&window.__dxOn&&!e.target.closest("#dxsheet,#dxbar,#dxhl"))e.preventDefault()},{capture:true,passive:false});
 function tokRows(m){return TOKS[m].map(([k,l,d])=>`<div class="dxr"><span>${l}</span><input type="color" data-dxt="${k}" value="${tokVal(m,k,d)}"><button data-dxtr="${k}">↺</button></div>`).join("")}
 function listRows(m){const r=DX.rules[m]||{};const ks=Object.keys(r);return ks.length?ks.map(k=>{const x=r[k];return`<div class="dxr"><span style="word-break:break-all;font-size:12px">${esc(k)}</span><i style="width:22px;height:22px;border-radius:6px;border:1px solid #888;background:${x.bg||"transparent"}"></i><i style="width:22px;height:22px;border-radius:6px;border:1px solid #888;background:${x.fg||"transparent"}"></i><i style="width:22px;height:22px;border-radius:6px;border:2px solid ${x.bd||"#888"}"></i><button data-dxdel="${esc(k)}">✕</button></div>`}).join(""):"<p class='setnote'>Nessuna modifica per questa modalità.</p>"}
 function exportTxt(){const o={app:"Dreamers",nota:"Colori scelti dall'editor. Per ogni modalità: 'rules' = selettore CSS → sfondo (bg), testo (fg), bordo (bd), deep = testo anche negli elementi interni; 'tok' = variabili di base. Ufficializzali nel tema corrispondente.",rules:DX.rules,tok:DX.tok};return "EDITOR COLORI · ufficializza questi colori nel tema indicato (parquet / base / notte):\n"+JSON.stringify(o)}
@@ -12175,7 +12205,7 @@ window.vDxcol=function(){const m=mode();
  <div class="hofhd"><div><small>Texas Ducks · area riservata del GM</small><b>Editor colori</b><em>Tocca un elemento e scegli i colori</em></div></div>
  <section class="hofcard"><h4>1 · Modalità da modificare</h4><p class="setnote">Le modifiche valgono solo per la modalità attiva. Ora: <b>${NM[m]}</b>.</p>
  <div class="dxm">${["parquet","base","notte"].map(x=>`<button data-dxm="${x}" aria-pressed="${m===x}">${NM[x]}</button>`).join("")}</div></section>
- <section class="hofcard"><h4>2 · Seleziona gli elementi</h4><p class="setnote">Si apre l'app: tocca qualsiasi cosa (tasto, riquadro, scritta, casella…). L'elemento scelto si vede con un riquadro rosa tratteggiato. Con ⬆ ⬇ ◀ ▶ passi al contenitore, a ciò che sta dentro o agli elementi vicini. «Tutti uguali» colora tutti gli elementi dello stesso tipo, «Solo questo» solo quello toccato. I quadratini colorano con un tocco. Con «Naviga» cambi schermata, con «Seleziona» torni a scegliere.</p><button class="cfgo dxgo" data-dxstart="1">🎯 Inizia a selezionare</button></section>
+ <section class="hofcard"><h4>2 · Seleziona gli elementi</h4><p class="setnote">Si apre l'app: tocca qualsiasi cosa (tasto, riquadro, scritta, casella…). L'elemento scelto si vede con un riquadro rosa tratteggiato: tira i pallini rosa per allargarlo (prende da solo tutti gli elementi dentro, anche separati, e li colora insieme) e usa ✥ per spostarlo ovunque. Con ⬆ ⬇ ◀ ▶ passi al contenitore, a ciò che sta dentro o agli elementi vicini. «Tutti uguali» colora tutti gli elementi dello stesso tipo, «Solo questo» solo quello toccato. I quadratini colorano con un tocco. Con «Naviga» cambi schermata, con «Seleziona» torni a scegliere.</p><button class="cfgo dxgo" data-dxstart="1">🎯 Inizia a selezionare</button></section>
  <section class="hofcard"><h4>3 · Colori di base · ${NM[m]}</h4><p class="setnote">Partono dai colori attuali. ↺ ripristina.</p>${tokRows(m)}</section>
  <section class="hofcard"><h4>4 · Modifiche salvate · ${NM[m]}</h4>${listRows(m)}</section>
  <section class="hofcard"><h4>5 · Esporta per Claude</h4><p class="setnote">Copia il testo e mandalo a Claude per ufficializzare.</p><textarea id="dxout" readonly style="width:100%;height:90px;font-size:11px">${esc(exportTxt())}</textarea><button class="cfgo dxgo" data-dxcopy="1">📋 Copia</button> <button class="cfgo dxgo" data-dxclr="1" style="background:#fff;color:#c33">Azzera tutto (${NM[m]})</button></section></div>`}
@@ -12672,5 +12702,13 @@ html.dlt-parquet:not(.notte) body .tvbox tbody tr:not(.grp):not(.tot) td:not(#z)
 .tvbox td:first-child .plk:not(#z):not(#y):not(#x):not(#w){font-size:14.5px!important;font-weight:700!important}
 html.dlt-parquet:not(.notte) body .tvbox .plk:not(#z):not(#y):not(#x):not(#w):not(#v){font-weight:700!important}
 .tvbox .plk small:not(#z):not(#y):not(#x):not(#w):not(#v){font-size:11.5px!important}</style>
+<style>/* (835) tabellino Parquet (Francesco): barre arancio più chiare (#ec7e41→#d77239, versione 2) e nomi + statistiche ARANCIO #d9560b invece che marrone; ruolo arancio sbiadito */
+html.dlt-parquet:not(.notte) body .tvbox thead th:not(#a):not(#b):not(#c):not(#d),html.dlt-parquet:not(.notte) body .tvbox tr.grp td:not(#a):not(#b):not(#c):not(#d),html.dlt-parquet:not(.notte) body .tvbox tr.tot td:not(#a):not(#b):not(#c):not(#d){background:linear-gradient(180deg,#ec7e41,#d77239)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:none!important}
+html.dlt-parquet:not(.notte) body .tvbox tr.grp td *:not(#a):not(#b):not(#c):not(#d),html.dlt-parquet:not(.notte) body .tvbox tr.tot td *:not(#a):not(#b):not(#c):not(#d){background:transparent!important;color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:none!important}
+html.dlt-parquet:not(.notte) body .tvbox tbody tr:not(.grp):not(.tot) td:not(#a):not(#b):not(#c):not(#d),html.dlt-parquet:not(.notte) body .tvbox tbody tr:not(.grp):not(.tot) td *:not(.pdkb):not(.badge):not(img):not(#a):not(#b):not(#c):not(#d),html.dlt-parquet:not(.notte) body .tvbox .plk:not(#a):not(#b):not(#c):not(#d){color:#d9560b!important;-webkit-text-fill-color:#d9560b!important}
+html.dlt-parquet:not(.notte) body .tvbox .plk small:not(#a):not(#b):not(#c):not(#d){color:#d9560b!important;-webkit-text-fill-color:#d9560b!important;opacity:.5}
+html.dlt-parquet:not(.notte) body .tvbox tbody td.pos:not(#a):not(#b):not(#c):not(#d){color:#15803d!important;-webkit-text-fill-color:#15803d!important}html.dlt-parquet:not(.notte) body .tvbox tbody td.neg:not(#a):not(#b):not(#c):not(#d){color:#b91c1c!important;-webkit-text-fill-color:#b91c1c!important}
+html.dlt-parquet:not(.notte) body .tvbox .pdkb:not(#a):not(#b):not(#c):not(#d){color:#fff!important;-webkit-text-fill-color:#fff!important}
+html.dlt-parquet:not(.notte) body .tvbox tbody tr:not(.grp):not(.tot) td:not(#a):not(#b):not(#c):not(#d){border-bottom-color:rgba(217,86,11,.16)!important}html.dlt-parquet:not(.notte) body .tvbox tbody tr:not(.grp):not(.tot) td:first-child:not(#a):not(#b):not(#c):not(#d){border-right-color:rgba(217,86,11,.16)!important}</style>
 </body>
 </html>
