@@ -2263,3 +2263,6 @@ Francesco (23:52). Spogliatoi: negli angoli del lato lontano (sinistra = casa, d
 
 ## 965 — Modalità Dream: mascotte che ballano
 Francesco (23:58). Mascotte originali (non quelle NBA) costruite con forme semplici, alte circa 2,3 m, con la maglia della squadra: papera (Ducks), volpe (Foxes), tartaruga (Turtles), delfino (Dolphins), ragno (Spiders), aquila (Eagles), alce (Mooses), pavone (Peacocks). In campo quella di casa e quella dell avversario del turno: girano lungo il campo camminando (gambe e braccia che si muovono) e ogni 7 s si fermano 5 s a ballare (saltelli, braccia in alto, ondeggio, giravolta). Animazione a 30 fotogrammi al secondo, solo nell arena.
+
+## 966 — Modalità Dream: qualità massima del campo, via le mascotte
+Francesco (00:27): il campo si vedeva peggio. Causa: le mascotte facevano ridisegnare di continuo a 30 fotogrammi al secondo, quindi il controllo «telefono che fatica» abbassava la risoluzione e non la rialzava più. Mascotte tolte. Qualità: risoluzione piena del telefono fino a 3× (prima massimo 2×); in movimento può scendere per restare fluida, ma appena ti fermi (0,35 s) torna sempre al massimo. La risoluzione scende solo se fatica mentre ti muovi. Spogliatoi e strada restano: sono scene a parte costruite solo quando ci entri, nell arena pesano solo i varchi (poca geometria).

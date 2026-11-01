@@ -46,7 +46,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
   /* (937) giallo Ducks più caldo (quello dorato del logo e del banner): la luce 3D schiarisce i gialli, quindi si parte da un oro più carico *//* (955) giallo parquet Ducks più caldo, scelto da Francesco (versione B) */const BG=({DUC:"#ea9a00"})[t]||TM.bg,ACC=lum(BG)<.18?(TM.fg===TM.bg?"#ffffff":TM.fg):BG,INK=lum(BG)>.55?(lum(TM.trim)<.4?TM.trim:"#111"):"#ffffff";
   const mob=Math.min(screen.width,screen.height)<700;
   /* (932) qualità alta: antialias sempre, risoluzione fino a 2× (si abbassa da sola se il telefono fatica, vedi il ciclo) */
-  const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,powerPreference:"high-performance"});R.setPixelRatio(Math.min(2,devicePixelRatio||1));const ANI=R.capabilities.getMaxAnisotropy();R.setSize(innerWidth,innerHeight,false);
+  const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,powerPreference:"high-performance"});const PRMAX=Math.min(3,devicePixelRatio||1);R.setPixelRatio(PRMAX);/* (966) qualità massima: risoluzione piena del telefono (fino a 3×) */const ANI=R.capabilities.getMaxAnisotropy();R.setSize(innerWidth,innerHeight,false);
   R.toneMapping=THREE.ACESFilmicToneMapping;/* (940) LOOK = luce e atmosfera (prove di colori caldi stile NBA) */const LK=Object.assign({exp:1.02,bg:"#060509",fog:0x08070c,hue:30,sat:50,lig:48,sky:0xfff1df,gnd:null,hemi:1.0,dir:0xffe6c4,dirI:.5,spot:0xfff2dc,spotI:250,lamp:"#fff4dc",roof:"#3b3a44",roofK:.86,warm:0},window.DREAM_LOOK||{});
   R.toneMappingExposure=LK.exp;R.outputColorSpace=THREE.SRGBColorSpace;
   const S=new THREE.Scene();S.background=C(LK.bg);S.fog=new THREE.FogExp2(LK.fog,.010);
@@ -213,7 +213,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
    const pm=new THREE.MeshBasicMaterial({map:pt,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:.09,toneMapped:false});
    [[-6.2,-2.9],[-6.2,2.9],[6.2,-2.9],[6.2,2.9],[0,-3.2],[0,3.2],[-3,0],[3,0]].forEach(([x,z])=>{const p=new THREE.Mesh(new THREE.PlaneGeometry(9,9),pm);p.rotation.x=-Math.PI/2;p.position.set(x,.03,z);S.add(p)})}
   [[-9,0],[0,-4],[0,4],[9,0]].forEach(([x,z])=>{const sp=new THREE.SpotLight(LK.spot,LK.spotI,48,.62,.6,1.35);sp.position.set(x*1.25,24,z*1.6);sp.target.position.set(x,0,z);S.add(sp,sp.target)});
-  return{TN,OPEN:SALA0,DOOR,CUTS,cLoc,CUT_HW,CUT_D,GLOW:K_GLOW,THREE,R,S,cam,FANS,CW,CH,RA,ACC,BG,TM,scr,scrM,tex,LG,mob,WALK,BOWLS,Y1,DMAX:RA+13*.85+1.8+11*.8-.3}}
+  return{PRMAX,TN,OPEN:SALA0,DOOR,CUTS,cLoc,CUT_HW,CUT_D,GLOW:K_GLOW,THREE,R,S,cam,FANS,CW,CH,RA,ACC,BG,TM,scr,scrM,tex,LG,mob,WALK,BOWLS,Y1,DMAX:RA+13*.85+1.8+11*.8-.3}}
 
 /* ---------------- DATI LIVE ---------------- */
 function allRows(t){let NM={};try{NM=campoNotteMap(t)||{}}catch(e){}const out=[];
@@ -318,38 +318,7 @@ const A=null;
   /* coro DE-FENSE: all'ingresso se c'è qualcuno live, poi ogni 50–80 secondi mentre i tuoi giocano */
   const chantNext=()=>{st.ch=setTimeout(()=>{if(st.stop)return;if(st.A&&st.audioOn&&(st.rows||[]).some(r=>r.live)&&!document.hidden)st.A.play("def",4);chantNext()},50000+Math.random()*30000)};chantNext();
   setTimeout(()=>{if(!st.stop&&st.A&&st.audioOn&&(st.rows||[]).some(r=>r.live))st.A.play("def",3)},2500);
-  /* ---- (965) MASCOTTE: personaggi originali (non quelli NBA), uno per la squadra di casa e uno per l'avversaria del turno: girano per il campo e ogni tanto si fermano a ballare ---- */
-  const MASC=[];{const lam=c=>new THREE.MeshLambertMaterial({color:c}),pho=(c,s)=>new THREE.MeshPhongMaterial({color:c,shininess:s||30});
-    const SPEC={DUC:{fur:"#facc15",skin:"#facc15",kind:"duck"},FOX:{fur:"#ea580c",kind:"fox"},TUR:{fur:"#4d9e3a",kind:"turtle"},DOL:{fur:"#5b8fd6",kind:"dolphin"},SPI:{fur:"#1e293b",kind:"spider"},EAG:{fur:"#5b3a1e",kind:"eagle"},MOO:{fur:"#7a4b2a",kind:"moose"},PEA:{fur:"#1d4ed8",kind:"peacock"}};
-    const mk=(k,ph)=>{const T2=TEAMS[k],sp=SPEC[k]||{fur:T2.bg,kind:"duck"},fur=pho(sp.fur,20),g=new THREE.Group(),P={};
-      const M=(geo,mat,x,y,z,par)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);(par||g).add(m);return m};
-      /* maglia della squadra sul busto */
-      const jT=K.tex(256,256,(x,W,H)=>{x.fillStyle=T2.bg;x.fillRect(0,0,W,H);x.fillStyle=T2.trim||T2.fg;x.fillRect(0,0,W,14);x.fillRect(0,H-14,W,14);x.textAlign="center";x.textBaseline="middle";x.fillStyle=T2.fg===T2.bg?"#fff":T2.fg;x.font="italic 900 46px Arial Black,Arial";x.fillText(T2.nick.toUpperCase(),W/2,H*.32);x.font="900 96px Arial Black,Arial";x.fillText("00",W/2,H*.68)});
-      const body=new THREE.Group();body.position.y=1.0;g.add(body);P.body=body;
-      M(new THREE.CylinderGeometry(.42,.38,.75,24,1,false),new THREE.MeshPhongMaterial({map:jT,shininess:20}),0,.25,0,body);M(new THREE.SphereGeometry(.4,20,14),fur,0,-.15,0,body).scale.set(1,.7,.9);
-      /* gambe e piedi */
-      P.legs=[-1,1].map(sd=>{const lg=new THREE.Group();lg.position.set(sd*.18,1.0,0);g.add(lg);M(new THREE.CylinderGeometry(.11,.1,.75,12),fur,0,-.4,0,lg);const ft=M(new THREE.SphereGeometry(.17,14,10),sp.kind==="duck"||sp.kind==="eagle"||sp.kind==="peacock"?pho("#f97316"):pho("#1f1f24"),0,-.78,.1,lg);ft.scale.set(1,.45,1.6);return lg});
-      /* braccia (o ali) */
-      P.arms=[-1,1].map(sd=>{const ar=new THREE.Group();ar.position.set(sd*.48,.55,0);body.add(ar);const wing=sp.kind==="eagle"||sp.kind==="duck";if(wing){const w=M(new THREE.BoxGeometry(.12,.7,.38),fur,0,-.3,0,ar);w.rotation.z=sd*.1}else{M(new THREE.CylinderGeometry(.08,.08,.6,10),fur,0,-.28,0,ar);M(new THREE.SphereGeometry(.12,12,10),pho("#ffffff"),0,-.62,0,ar)}ar.userData.sd=sd;return ar});
-      /* testa */
-      const hd=new THREE.Group();hd.position.y=.95;body.add(hd);P.head=hd;const headM=sp.kind==="eagle"?pho("#f8fafc"):fur;M(new THREE.SphereGeometry(.42,24,18),headM,0,0,0,hd);
-      const eyeW=pho("#ffffff",60),eyeB=pho("#0b0b0d",90);[-1,1].forEach(sd=>{M(new THREE.SphereGeometry(.11,14,10),eyeW,sd*.15,.08,.36,hd).scale.set(1,1.2,.6);M(new THREE.SphereGeometry(.05,10,8),eyeB,sd*.15,.08,.42,hd)});
-      const orange=pho("#f97316",50),white=pho("#f8fafc"),dark=pho("#1f2937");
-      if(sp.kind==="duck"){const b=M(new THREE.SphereGeometry(.2,16,10),orange,0,-.1,.4,hd);b.scale.set(1.3,.4,1.2);M(new THREE.ConeGeometry(.06,.18,8),fur,0,.47,0,hd)}
-      if(sp.kind==="fox"){[-1,1].forEach(sd=>{const e=M(new THREE.ConeGeometry(.13,.3,4),fur,sd*.24,.42,0,hd);e.rotation.z=-sd*.25});const m=M(new THREE.ConeGeometry(.16,.32,16),white,0,-.12,.42,hd);m.rotation.x=Math.PI/2;M(new THREE.SphereGeometry(.05,8,6),dark,0,-.12,.58,hd);const tl=M(new THREE.ConeGeometry(.18,.8,12),fur,0,-.25,-.45,body);tl.rotation.x=-1.9;M(new THREE.SphereGeometry(.12,10,8),white,0,-.55,-.8,body)}
-      if(sp.kind==="turtle"){const sh=M(new THREE.SphereGeometry(.55,20,12,0,Math.PI*2,0,Math.PI/2),pho("#1f5f2a",40),0,.15,-.28,body);sh.rotation.x=-Math.PI/2;sh.scale.set(1,.9,.6);const m=M(new THREE.SphereGeometry(.2,14,10),pho("#9bd27c"),0,-.12,.33,hd);m.scale.set(1.3,.7,.8)}
-      if(sp.kind==="dolphin"){const s_=M(new THREE.CylinderGeometry(.08,.14,.32,12),fur,0,-.08,.45,hd);s_.rotation.x=Math.PI/2;const f=M(new THREE.ConeGeometry(.12,.35,4),fur,0,.45,-.1,hd);f.rotation.x=-.4;M(new THREE.SphereGeometry(.25,14,10),white,0,-.2,.25,hd).scale.set(1,.5,.6)}
-      if(sp.kind==="spider"){for(let i=0;i<4;i++)[-1,1].forEach(sd=>{const l=M(new THREE.CylinderGeometry(.035,.03,.8,6),fur,sd*.5,-.05-i*.1,.15-i*.12,body);l.rotation.z=sd*1.1;l.rotation.y=sd*(i-1.5)*.35});[-1,1].forEach(sd=>M(new THREE.SphereGeometry(.05,8,6),pho("#ef4444",80),sd*.07,.25,.38,hd));const hb=M(new THREE.SphereGeometry(.12,10,8),pho("#ef4444"),0,.1,-.4,body)}
-      if(sp.kind==="eagle"){const b=M(new THREE.ConeGeometry(.1,.3,10),pho("#facc15",60),0,-.08,.45,hd);b.rotation.x=Math.PI/2+.4}
-      if(sp.kind==="moose"){const n=M(new THREE.SphereGeometry(.22,14,10),pho("#5b3417"),0,-.15,.38,hd);n.scale.set(1.2,.8,1.1);const am=pho("#e7d3a8");[-1,1].forEach(sd=>{const a=M(new THREE.CylinderGeometry(.04,.05,.45,8),am,sd*.32,.45,0,hd);a.rotation.z=-sd*.8;const p_=M(new THREE.BoxGeometry(.42,.06,.26),am,sd*.55,.62,0,hd);p_.rotation.z=-sd*.35})}
-      if(sp.kind==="peacock"){const b=M(new THREE.ConeGeometry(.07,.2,8),pho("#facc15"),0,-.05,.44,hd);b.rotation.x=Math.PI/2;const C_=["#16a34a","#0ea5e9","#22c55e","#2563eb","#14b8a6"];for(let i=0;i<11;i++){const a=-1.2+i*.24,fe=M(new THREE.SphereGeometry(.18,10,8),pho(C_[i%5],60),Math.sin(a)*.75,.45+Math.cos(a)*.75,-.45,body);fe.scale.set(.55,1.4,.15);fe.rotation.z=-a;M(new THREE.SphereGeometry(.06,8,6),pho("#7c3aed"),Math.sin(a)*1.05,.45+Math.cos(a)*1.05,-.42,body)}}
-      g.scale.setScalar(1.15);S.add(g);return{g,P,ph,k,mode:0,t0:performance.now()+ph*900,ang:ph*Math.PI}};
-    const D=duel(t);MASC.push(mk(t,0));if(D&&D.o&&TEAMS[D.o])MASC.push(mk(D.o,1))}
-  /* passeggiata attorno al campo (ellisse lungo le linee), ogni 7 s si fermano 5 s a ballare: saltelli, braccia in alto, giravolta */
-  const mascTick=now=>{MASC.forEach(m=>{const T=((now-m.t0)/1000)%12,P=m.P,g=m.g;if(T<7){const sp=.11;m.ang+=sp*(1/30);const rx=12.2,rz=6.4,x=Math.cos(m.ang)*rx,z=Math.sin(m.ang)*rz;const dx=-Math.sin(m.ang)*rx,dz=Math.cos(m.ang)*rz;g.position.set(x,0,z);g.rotation.y=Math.atan2(dx,dz);
-      const w=Math.sin(now/170);P.legs[0].rotation.x=w*.6;P.legs[1].rotation.x=-w*.6;P.arms[0].rotation.x=-w*.5;P.arms[1].rotation.x=w*.5;P.arms.forEach(a=>{a.rotation.z=0});P.body.position.y=1+Math.abs(Math.sin(now/170))*.06;P.body.rotation.z=0;P.head.rotation.z=0}
-    else{const d=(T-7),b=Math.abs(Math.sin(d*Math.PI*2.2));P.body.position.y=1+b*.28;P.legs.forEach((l,i)=>{l.rotation.x=0;l.rotation.z=(i?1:-1)*b*.25});P.arms.forEach(a=>{a.rotation.x=0;a.rotation.z=a.userData.sd*(2.3+Math.sin(d*12+a.userData.sd)*.5)});P.body.rotation.z=Math.sin(d*6)*.18;P.head.rotation.z=Math.sin(d*6+1)*.25;
-      g.rotation.y+=(d>2.2&&d<3.2?Math.PI*2/30:0);const cx=g.position.x,cz=g.position.z;g.lookAt(cx-cx*.1,0,cz-cz*.1);if(d>2.2&&d<3.2)g.rotation.y+=(d-2.2)*Math.PI*2}})};
+  /* (966) mascotte tolte (Francesco): costringevano a ridisegnare di continuo e la risoluzione scendeva */
   /* ---- movimento ---- */
   const V={x:0,z:K.CH/2+K.RA+13*.85+1.8+10*.8+.4,yaw:0,pitch:-27};/* (953) 5 gradini più in alto (11ª fila dell'anello alto) *//* (950) partenza sulle scale centrali dell'anello alto, all'altezza indicata da Francesco *//* (935) si parte dall'anello alto (5ª fila) */V.yaw=Math.atan2(V.x,V.z)*180/Math.PI;st.V=V;/* (930) si parte dall'alto, sopra i gradini */let walk=0,dr=null;const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
   /* (929) CAMMINARE OVUNQUE (Francesco 20:42): si sale sui gradoni, si guarda dall'alto, si scende e si entra in campo.
@@ -656,7 +625,7 @@ const A=null;
     let mv=walk;if(keys.w||keys.arrowup)mv=1;if(keys.s||keys.arrowdown)mv=-1;if(keys.a||keys.arrowleft){V.yaw+=80*dt;st.dirty=true}if(keys.d||keys.arrowright){V.yaw-=80*dt;st.dirty=true}
     if(mv){const r=V.yaw*Math.PI/180;V.x-=Math.sin(r)*mv*5.5*dt;V.z-=Math.cos(r)*mv*5.5*dt;st.dirty=true}
     clampP();if(!st.busy){if(st.room){if(RM&&RM.exitIf(V))exitRoom()}else{const pid=portalAt();if(pid)enterRoom(pid)}}{const ty=terr(V.x,V.z);footY+=(ty-footY)*Math.min(1,dt*9);if(Math.abs(ty-footY)>.01)st.dirty=true;if(!st.room&&!tw&&!mv&&(Math.abs(V.x-hideAt.x)>.5||Math.abs(V.z-hideAt.z)>.5))hideNear()}
-    if(st.room&&RM&&RM.tick&&RM.tick(now))st.dirty=true;if(!st.room&&MASC.length&&now-(st.mt||0)>33){st.mt=now;mascTick(now);st.dirty=true}/* (965) mascotte a 30 fotogrammi al secondo */const animating=st.anim.length>0;if(!st.dirty&&!animating&&now-lastDraw<100)return;
+    if(st.room&&RM&&RM.tick&&RM.tick(now))st.dirty=true;const animating=st.anim.length>0;if(!st.dirty&&!animating&&now-lastDraw<100)return;
     const ey=footY+(footY>.2?2.05:1.7);cam.position.set(V.x,ey,V.z);const yr=V.yaw*Math.PI/180,pr=V.pitch*Math.PI/180;cam.lookAt(V.x-Math.sin(yr)*Math.cos(pr),ey+Math.sin(pr),V.z-Math.cos(yr)*Math.cos(pr));
     for(const n in J){const o=J[n];o.g.rotation.y=Math.atan2(cam.position.x-o.g.position.x,cam.position.z-o.g.position.z);/* (942) da lontano maglia e targhetta si ingrandiscono (fino a 1,8×) così restano leggibili */const dd=Math.hypot(cam.position.x-o.g.position.x,cam.position.y-2,cam.position.z-o.g.position.z)/(cam.zoom||1),sc=Math.max(1,Math.min(1.8,dd/13));/* si ingrandiscono maglia e targhetta, ma restano alla stessa altezza dal parquet (non salgono e non si sovrappongono) *//* (948) targhetta sotto e maglia sopra, sempre staccate (prima la maglia copriva la parte alta della targhetta) */if(!o.tag.userData.s0)o.tag.userData.s0=o.tag.scale.clone();o.tag.scale.copy(o.tag.userData.s0).multiplyScalar(sc);const th=o.tag.scale.y;o.tag.position.y=.35+th/2;o.jm.scale.setScalar(sc);o.jm.position.y=.35+th+.12+.91*sc+Math.sin(now/900+o.ph)*.05}
     if(MK.userData.t0){const k=(now-MK.userData.t0)/1600;if(k>=1){MK.material.opacity=0;MK.userData.t0=0}else{MK.material.opacity=.9*(1-k);MK.scale.setScalar(1+k*.8);st.dirty=true}}
@@ -664,9 +633,10 @@ const A=null;
       if(T<400){const k=T/400,sc=k<.6?.3+k/.6*.85:1.15-(k-.6)/.4*.15;a.s.position.y=base;a.s.scale.copy(a.s.userData.s0).multiplyScalar(sc);a.s.material.opacity=Math.min(1,k*2.5)}
       else if(T<5900){a.s.position.y=base+Math.sin((T-400)/420)*.05;a.s.scale.copy(a.s.userData.s0).multiplyScalar(1+Math.sin((T-400)/260)*.02);a.s.material.opacity=1}
       else{const k=(T-5900)/1000;a.s.position.y=base+k*1.1;a.s.material.opacity=1-k}return true});
+    /* (966) appena ti fermi (0,35 s) torna sempre alla risoluzione piena: in movimento può scendere per restare fluido, da fermi il campo è sempre alla qualità massima */{const key=[V.x,V.z,V.yaw,V.pitch,footY,ZM].map(v=>v.toFixed(2)).join();if(key!==st.pk){st.pk=key;st.lm=now}if(now-(st.lm||0)>350&&R.getPixelRatio()<K.PRMAX-.01){R.setPixelRatio(K.PRMAX);R.setSize(innerWidth,innerHeight,false);st.fr=[]}}
     const gap=now-lastDraw;R.render(st.room&&RM?RM.S:S,cam);st.dirty=false;lastDraw=now;
     /* (932) se il telefono fatica (in movimento sotto i 22 fotogrammi al secondo), la risoluzione scende da sola di un gradino (mai sotto 1×): niente blocchi */
-    st.fr=(st.fr||[]);if(gap<95)st.fr.push(gap);/* solo fotogrammi di fila (in movimento) */if(st.fr.length>=30){const avg=st.fr.reduce((a,b)=>a+b,0)/st.fr.length;st.fr=[];const pr=R.getPixelRatio();if(avg>45&&pr>1.01){R.setPixelRatio(Math.max(1,pr-.5));R.setSize(innerWidth,innerHeight,false);st.dirty=true}}};
+    st.fr=(st.fr||[]);if(gap<95)st.fr.push(gap);/* solo fotogrammi di fila (in movimento) */if(st.fr.length>=30){const avg=st.fr.reduce((a,b)=>a+b,0)/st.fr.length;st.fr=[];const pr=R.getPixelRatio();if(avg>45&&pr>1.01&&now-(st.lm||0)<350){R.setPixelRatio(Math.max(1,pr-.5));R.setSize(innerWidth,innerHeight,false);st.dirty=true}}};
   st.raf=requestAnimationFrame(loop);setTimeout(()=>{const h=ov.querySelector(".drm3hint");if(h)h.style.opacity=0},6000);
 }
 function disposeAll(K){try{[K.S,...(K.RSS||[])].forEach(SC=>SC&&SC.traverse(o=>{if(o.geometry)o.geometry.dispose();const m=o.material;if(m){(Array.isArray(m)?m:[m]).forEach(x=>{if(x.map)x.map.dispose();x.dispose()})}}));K.R.dispose();K.R.forceContextLoss&&K.R.forceContextLoss()}catch(e){}}
