@@ -2116,3 +2116,6 @@ A ogni apertura l app calcola senza mostrarlo il valore di tutti i free agent (5
 
 ## 908 — Report Eagles Confronto 37 + Valutazione 14
 Profilo EAG: pl fusi col confronto (giù Zubac, Harper, F. Wagner, Sabonis; su Jokić, Avdija), bonus valutazione (Brunson +8, Towns +4, Duren −4, Davis −4), age 0,5 (giovane scelto 59%), n 45. GM_INTOCC EAG = Avdija; AV_FATTI.EAG con i 14 valutati; scheda GM_DESCR EAG aggiornata. Diciassettesima correzione: Dylan Harper 1260→1210 (EAG+MOO), Nikola Jokić 3265→3400 (EAG+FOX); tolta dai profili, VAL_LOG/VAL_CORREZ/AT_RIT. Sabonis escluso (SPI ed EAG giù ma DOL +10: disaccordo).
+
+## 909 — Etichetta R nei roster per tutti i rookie
+Il roster (e l immagine della scheda) guardava solo la lista ROOKIE (5 nomi); ora usa isRookie, che conta anche i rookie segnati in VALORI: compaiono Burries, De Larrea, Steinbach, Mara, Wagler, Mikel Brown, Dybantsa, Flemings, Caleb Wilson, Graves, Morez Johnson.
