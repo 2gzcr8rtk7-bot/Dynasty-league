@@ -2314,3 +2314,6 @@ Francesco (09:57–09:58). Ufficio: luce generale più che doppia e faretti più
 
 ## 982 — Finestre dell app in orizzontale dentro l ufficio
 Francesco (10:06): la richiesta della password (e ogni altra finestra o scheda che l app apre sopra) mentre si è seduti al computer del GM ora segue la rotazione dello stadio: con lo schermo ruotato compare in orizzontale come il resto.
+
+## 983 — Computer del GM: scontro diretto come nella sezione Dreamers
+Francesco (10:09): la linguetta «⚔️ Scontro diretto» del maxischermo ora apre la schermata dello scontro della sezione Dreamers (stessa della Home/risultati: turno corrente, la mia squadra a sinistra e l avversaria a destra, punteggio e proiezione, probabilità di vittoria, giocatori in campo/tribuna con punti già fatti e partite che mancano), già scorsa sul mio scontro. È anche la pagina che si apre sedendosi. Alzandosi, la sezione Dreamers dell app torna com era.
