@@ -2537,3 +2537,8 @@ Francesco (22:45): tra corridoio e stanze c era un muro invisibile (il varco del
 
 ## 1058 — Scendendo dalla nave si resta sul pianeta, sotto la nave
 Francesco (22:50): «🚪 SCENDI», il portellone e anche «✕ ESCI» quando sei a bordo ti lasciano sul pianeta accanto alla passerella, sotto la nave (prima ✕ riportava sulla Terra). Sul pianeta «✕ ESCI» e 🌍 TERRA restano per tornare a casa.
+
+## 1059 — Cabina di comando della nave, suoni del viaggio e megafono sempre presente
+Francesco (23:00): in viaggio la vista parte dalla CABINA DI COMANDO: plancia con bordo luminoso nei colori della squadra, tre schermi vivi (radar con rocce e nemici, stato nave, rotta), spie che lampeggiano, montanti del parabrezza, tettuccio, pannelli laterali, cloche e manetta che si muovono coi comandi; i colpi fanno tremare la cabina. 🎥 cambia vista: CABINA → TORRE → ESTERNA.
+Suoni nuovi: rombo dei motori che sale con la SPINTA, partenza e arrivo a curvatura, laser alternati sinistra/destra, scintille sui colpi a segno, lancio del missile (tonfo + sibilo), colpi alieni (suono diverso, da che lato arrivano), colpi sullo scafo (clangore metallico), meteoriti: urto (botta + frantumi), roccia distrutta (sbriciolamento), passaggio ravvicinato (fruscio che passa da un lato all altro).
+Audio (23:00): sullo shuttle, sul pianeta, sulla nave e all aeroporto c è sempre il megafono 🔇/🔊 accanto a ✕ ESCI. Prima, se entravi nello spazio con l audio spento, i suoni di quei luoghi non esistevano proprio e non si potevano più accendere: ora passano tutti da un unico volume che il megafono accende e spegne in ogni momento (anche la radio).
