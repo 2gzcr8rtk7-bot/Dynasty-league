@@ -2412,3 +2412,6 @@ Francesco (15:16). Tasto CORRI in basso a destra, trasparente come il joystick: 
 
 ## 1014 — Modalità Dream: rumore dei passi
 Francesco (15:21). Con l audio acceso, camminando col joystick si sentono i passi (suono breve sintetizzato, un po diverso a ogni passo); correndo col tasto CORRI i passi sono più fitti e forti. In macchina niente passi.
+
+## 1015 — Modalità Dream: tasto corri da videogioco, radio in macchina
+Francesco (15:28). CORRI come nei giochi touch: lo tieni premuto per correre e, senza staccare il dito, lo trascini per girare la visuale. RADIO in macchina (con l audio acceso, solo voce, niente tifosi): segue la squadra dei colori dell auto che guidi (Ducks, Dolphins…) e la sua avversaria del turno. Salendo: «Radio Dreamers: in diretta con i … contro i …, in campo N dei nostri» (oppure che non ci sono partite in corso). Poi ogni azione live dei giocatori in campo viene annunciata appena arriva (canestri da 2 e da 3, liberi, rimbalzi, assist, stoppate, recuperi, palle perse; per l avversaria «Per i …:»); ogni 3 minuti l aggiornamento con i punteggi delle due squadre e i PDK dei tre migliori dei tuoi. Cambiando colori all auto la radio passa a quella squadra. Mentre guidi la voce dello stadio non si sovrappone alla radio.
