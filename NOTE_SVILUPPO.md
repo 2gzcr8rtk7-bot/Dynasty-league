@@ -2433,3 +2433,4 @@ Francesco (15:51): l app nel monitor era tagliata. Ora sedendoti al computer lo 
 
 ## 1021 — Modalità Dream: Dream TV fluida
 Francesco (16:07): la TV andava a scatti. Causa principale: con la TV accesa lo stadio si ridisegnava solo 10 volte al secondo; ora a ogni fotogramma. In più la camera insegue l inquadratura con un movimento smorzato sul tempo vero (liscio anche se un fotogramma tarda; agli stacchi salta di netto come in TV), mosso a mano più leggero e lento, e in TV la risoluzione si adatta da sola per restare fluida (come in macchina).
+- (02/11 16:20) Dream, girarsi con la mano destra: .drm3hint pointer-events:none (invisibile bloccava i tocchi in basso); tasto CORRI = tocco breve accende/spegne, trascinare da lì gira la visuale; risoluzione piena dopo 1,2 s da fermi (prima 0,35 s) per meno scatti. Patch /home/claude/patch_dreamlook.py.
