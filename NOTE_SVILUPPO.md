@@ -2384,3 +2384,4 @@ Francesco (14:21–14:24). I sedili (poggiatesta) uscivano dal tetto: ora sono p
 
 ## 1005 — Modalità Dream: curve fino a 72 km/h libere, LED sempre visibili
 Francesco (14:26–14:27). Aderenza in base alla velocità: fino a circa 72 km/h si curva liberamente (anche gli angoli a 90° degli incroci, accelerando o no); sopra i 75 l aderenza cala e la macchina allarga (sottosterzo): bisogna frenare e portarla sui 70 prima della curva. Insegne sul tetto di Museo, Centro Medico e Sala Draft non sfarfallano più (cornice staccata dall insegna). LED dei tetti accesi sempre (anche di giorno), più spessi e staccati dal cornicione.
+- (02/11 14:50) MAGLIE DOLPHINS nuove (richiesta utente): kitC DOL con flm (fulmini tono su tono) e DECO.DOL con fianchi neri, punta argento a zig-zag e stelline. Casa = BIANCA, Notte = SABBIA (al posto della nera), Alternativa = BLU. Patch /home/claude/patch_dolkit.py.
