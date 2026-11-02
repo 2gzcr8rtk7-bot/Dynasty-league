@@ -371,7 +371,7 @@ const A=null;
     if(P.size===1){dr={x:LX(e),y:LY(e)};tap={x:LX(e),y:LY(e),t:performance.now(),m:0}}else{dr=null;tap=null;const[a,b]=[...P.values()];pinch=Math.hypot(a.x-b.x,a.y-b.y)}});
   cv.addEventListener("pointermove",e=>{if(!P.has(e.pointerId))return;P.set(e.pointerId,{x:LX(e),y:LY(e)});
     if(P.size>=2&&pinch!=null){const[a,b]=[...P.values()],d=Math.hypot(a.x-b.x,a.y-b.y);ZM=cl(ZM*d/Math.max(1,pinch),1,5);pinch=d;applyZ();return}/* (938) due dita = zoom come sulle foto (fino a 5×), senza muoversi */
-    if(!dr)return;const dx=LX(e)-dr.x,dy=LY(e)-dr.y;dr.x=LX(e);dr.y=LY(e);if(tap)tap.m+=Math.abs(dx)+Math.abs(dy);if(!tap||tap.m>8){const sg_=1;/* (977) col pallone come senza: Francesco preferisce il movimento di prima */V.yaw+=sg_*dx*.25/ZM;V.pitch=cl(V.pitch+sg_*dy*.2/ZM,-60,60);st.dirty=true}});
+    if(!dr)return;const dx=LX(e)-dr.x,dy=LY(e)-dr.y;dr.x=LX(e);dr.y=LY(e);if(tap)tap.m+=Math.abs(dx)+Math.abs(dy);if(!tap||tap.m>8){const sg_=-1;/* (979) comando da videogioco (GTA, Call of Duty): dito a destra = guardi a destra, dito in su = guardi in alto */V.yaw+=sg_*dx*.25/ZM;V.pitch=cl(V.pitch+sg_*dy*.2/ZM,-60,60);st.dirty=true}});
   const up=e=>{P.delete(e.pointerId);if(P.size<2)pinch=null;if(P.size===0)dr=null;const q=tap;tap=null;if(!q||q.m>10||performance.now()-q.t>450||e.type==="pointercancel")return;
     ndc.set(LX(e)/DVW()*2-1,-LY(e)/DVH()*2+1);ray.setFromCamera(ndc,cam);
     if(st.room){roomTap();return}
