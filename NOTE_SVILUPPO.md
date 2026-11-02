@@ -2287,3 +2287,6 @@ Francesco (01:30). La modalità Dream si vede sempre in orizzontale. iPhone non 
 
 ## 973 — Modalità Dream: tasto ✕ sotto il megafono
 Francesco (08:37): con lo stadio ruotato la ✕ in alto a sinistra finiva sotto la tacca/barra di stato del telefono. Ora ✕ e 🔊 stanno insieme sul lato destro, la ✕ sotto il megafono; titolo sempre al centro.
+
+## 974 — Modalità Dream: joystick
+Francesco (08:44): joystick semitrasparente in basso a sinistra (rispetto allo stadio orizzontale): cerchio viola chiaro con pomello; su/giù = avanti/indietro, sinistra/destra = passo laterale, velocità proporzionale a quanto lo spingi (fino a 6 m/s); rilasciato torna al centro. Trascinare il resto dello schermo continua a girare lo sguardo, il tocco su un punto continua a portarti lì. Funziona anche nello schermo ruotato e dentro sala trofei, spogliatoi e piazza (con i loro limiti).
