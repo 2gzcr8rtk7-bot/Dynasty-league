@@ -2531,3 +2531,6 @@ Francesco (22:01). Su ogni pianeta, a nord della città, il PORTO DELLA FLOTTA (
 
 ## 1056 — Tasto 🪐 PIANETA dalla Terra e tasti rapidi quadrati a destra
 Francesco (22:33): in città i tasti rapidi sono quadrati (icona + nome) in fila in alto a destra, accanto alla colonna ✕/audio, sia a piedi sia in macchina: 🏠 VILLA, 🚀 SHUTTLE e il nuovo 🪐 PIANETA che porta subito sul pianeta della squadra scelta per lo shuttle (senza viaggio; la città viene scaricata). Anche «🏙️ CITTÀ» del circuito è quadrato nella stessa fila. Sul pianeta i tasti rapidi sono quadrati a destra in due file da tre.
+
+## 1057 — Nave da guerra: si entra in tutte le stanze, partenza sempre a portata
+Francesco (22:45): tra corridoio e stanze c era un muro invisibile (il varco della porta non era camminabile): ora tutte le porte si attraversano (plancia, sala comune, armeria, bagni, sala macchine, alloggi, infermeria, hangar, portellone). Tasti rapidi quadrati a destra a bordo: 🚀 PARTI (porta in plancia e apre subito la rotta interplanetaria verso i pianeti delle altre squadre), 🧭 PLANCIA, 🛋️ COMUNE, 🔫 ARMERIA, 🚻 BAGNI, 🛏️ ALLOGGI, ⚛️ MACCHINE, 🚪 SCENDI. In viaggio i tasti spariscono e tornano quando sei di nuovo a bordo.
