@@ -1275,12 +1275,17 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
       const HID_=[...ov.children].filter(c=>c!==host&&c.tagName!=="CANVAS"&&c.style.visibility!=="hidden");HID_.forEach(c=>c.style.visibility="hidden");
       const oldT=st.carTeam;st.carTeam=k;st.spaceRadio=true;try{st.radio.team=null;st.radioStart&&st.radioStart()}catch(e){}
       const PX_=PDX,PZ_=PDZ;try{RM&&RM.onLeave&&RM.onLeave()}catch(e){}try{freeRoom()}catch(e){}st.room=false;
-      const addX=()=>{const x_=document.createElement("button");x_.textContent="✕ ESCI";x_.style.cssText="position:absolute;right:calc(var(--msr,0px) + 12px);top:8px;z-index:50;padding:8px 14px;border-radius:12px;border:2px solid #fff;background:#b91c1c;color:#fff;font:900 15px system-ui";host.appendChild(x_);x_.addEventListener("pointerdown",e=>{e.stopPropagation();toEarth()})};
-      const toEarth=async()=>{if(done)return;done=true;try{stop&&stop()}catch(e){}stop=null;host.remove();HID_.forEach(c=>c.style.visibility="");st.spaceRadio=false;st.carTeam=oldT;st.gamePause=false;try{await enterRoom("strada",{x:PX_-2,z:PZ_+18,yaw:0,pitch:10})}catch(e){console.error(e)}st.dirty=true};
-      const opts=()=>({THREE,R:K.R,W:DVW(),H:DVH(),pt:e=>({x:LX(e),y:LY(e)}),team:{k,name:T2.name||k,nick:T2.nick||k,bg:lv.bg,tr:lv.tr,logo:LGS[k]},ac:st.A&&st.A.ac,mute:!st.voice,onExit:toEarth,onPlanet:toPlanet});
-      const toPlanet=async()=>{try{stop&&stop()}catch(e){}stop=null;host.innerHTML="";addX();let P;try{P=await loadMod("planet.js","DreamPlanet")}catch(e){toast("Pianeta non disponibile","#b91c1c");toEarth();return}try{stop=P.open(host,opts())}catch(e){console.error(e);toEarth()}};
+      const addX=()=>{const x_=document.createElement("button");x_.textContent="✕ ESCI";x_.style.cssText="position:absolute;right:calc(var(--msr,0px) + 12px);top:8px;z-index:50;padding:8px 14px;border-radius:12px;border:2px solid #fff;background:#b91c1c;color:#fff;font:900 15px system-ui";host.appendChild(x_);x_.addEventListener("pointerdown",e=>{e.stopPropagation();finalEarth()})};
+      const finalEarth=async sp_=>{if(done)return;done=true;try{stop&&stop()}catch(e){}stop=null;host.remove();HID_.forEach(c=>c.style.visibility="");st.spaceRadio=false;st.carTeam=oldT;st.gamePause=false;try{await enterRoom("strada",sp_||{x:PX_-2,z:PZ_+18,yaw:0,pitch:10})}catch(e){console.error(e)}st.dirty=true};
+      /* (1055) il ritorno sulla Terra passa dal DREAM AIRPORT: atterraggio e pullman fino alla porta ovest della città */const toEarth=async()=>{if(done)return;await swap("airport.js","DreamAirport",curK)};
+      const tObj=k_=>{const lv_=LIV(k_),T_=TEAMS[k_]||{};return{k:k_,name:T_.name||k_,nick:T_.nick||k_,bg:lv_.bg,tr:lv_.tr,logo:LGS[k_]}};
+      const opts=(k_)=>({THREE,R:K.R,W:DVW(),H:DVH(),pt:e=>({x:LX(e),y:LY(e)}),team:tObj(k_||k),teams:Object.keys(TEAMS).map(tObj),ac:st.A&&st.A.ac,mute:!st.voice,onExit:toEarth,onPlanet:k2=>toPlanet(k2),onWarship:()=>toWarship(),onArrive:()=>finalEarth({x:-255,z:-16.5,yaw:-90,pitch:0}),ws:window.DreamWarship});
+      let curK=k;/* (1054) pianeta ↔ nave da guerra: si carica solo il luogo dove sei */
+      const swap=async(file,glob,k_)=>{try{stop&&stop()}catch(e){}stop=null;host.innerHTML="";addX();let M_;try{M_=await loadMod(file,glob)}catch(e){toast("Non disponibile","#b91c1c");finalEarth();return}try{stop=M_.open(host,opts(k_))}catch(e){console.error(e);finalEarth()}};
+      const toPlanet=async k2=>{curK=k2||curK;try{await loadMod("warship.js","DreamWarship")}catch(e){}await swap("planet.js","DreamPlanet",curK)};
+      const toWarship=async()=>{await swap("warship.js","DreamWarship",curK)};
       ["touchstart","touchend"].forEach(ev=>host.addEventListener(ev,e=>{if(e.cancelable)e.preventDefault()},{passive:false}));addX();
-      try{stop=M.open(host,opts())}catch(e){console.error(e);toEarth()}};
+      try{stop=M.open(host,opts())}catch(e){console.error(e);finalEarth()}};
     st.spaceOpen=spaceOpen;
     /* (1047) VIAGGIO RAPIDO: due tasti in città per andare subito al box della villa o allo shuttle (a piedi o con la macchina) */
     const QT=document.createElement("div");QT.style.cssText="display:none;position:absolute;left:calc(env(safe-area-inset-left) + 14px);top:132px;z-index:6;flex-direction:column;gap:6px";QT.classList.add("drmSt");ov.appendChild(QT);
