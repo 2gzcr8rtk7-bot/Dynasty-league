@@ -5,7 +5,7 @@
    con il suo suono. Audio dei tifosi sintetizzato (niente file da scaricare).
    LEGGEREZZA (lezione della sala trofei): motore Three.js caricato solo qui (vendor/three.min.js), risoluzione limitata, niente ombre,
    poche luci, pubblico e sedili in un'unica istanza, disegno solo quando serve (movimento, animazioni, dati nuovi), tutto liberato all'uscita. */
-(function(){
+(function(){/* (972) SEMPRE ORIZZONTALE: se il telefono è tenuto in verticale (o ha il blocco rotazione) lo stadio viene ruotato di 90°; se il telefono gira davvero, si raddrizza da solo: il contenuto resta fermo rispetto al telefono */const DROT=()=>window.innerHeight>window.innerWidth,DVW=()=>DROT()?window.innerHeight:window.innerWidth,DVH=()=>DROT()?window.innerWidth:window.innerHeight,LX=e=>DROT()?e.clientY:e.clientX,LY=e=>DROT()?window.innerWidth-e.clientX:e.clientY,rotOv=ov=>{if(!ov)return;const S_=ov.style;if(DROT()){S_.inset="auto";S_.left="0";S_.top="0";S_.width=window.innerHeight+"px";S_.height=window.innerWidth+"px";S_.transformOrigin="0 0";S_.transform="translateX("+window.innerWidth+"px) rotate(90deg)"}else{S_.inset="0";S_.left=S_.top=S_.width=S_.height="";S_.transform="";S_.transformOrigin=""}};
 "use strict";
 let ST=null;/* stato della sessione aperta */
 const $=(h)=>{const d=document.createElement("div");d.innerHTML=h;return d.firstElementChild};
@@ -46,11 +46,11 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
   /* (937) giallo Ducks più caldo (quello dorato del logo e del banner): la luce 3D schiarisce i gialli, quindi si parte da un oro più carico *//* (955) giallo parquet Ducks più caldo, scelto da Francesco (versione B) */const BG=({DUC:"#ea9a00"})[t]||TM.bg,ACC=lum(BG)<.18?(TM.fg===TM.bg?"#ffffff":TM.fg):BG,INK=lum(BG)>.55?(lum(TM.trim)<.4?TM.trim:"#111"):"#ffffff";
   const mob=Math.min(screen.width,screen.height)<700;
   /* (932) qualità alta: antialias sempre, risoluzione fino a 2× (si abbassa da sola se il telefono fatica, vedi il ciclo) */
-  const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,powerPreference:"high-performance"});const PRMAX=Math.min(3,devicePixelRatio||1);R.setPixelRatio(PRMAX);/* (966) qualità massima: risoluzione piena del telefono (fino a 3×) */const ANI=R.capabilities.getMaxAnisotropy();R.setSize(innerWidth,innerHeight,false);
+  const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,powerPreference:"high-performance"});const PRMAX=Math.min(3,devicePixelRatio||1);R.setPixelRatio(PRMAX);/* (966) qualità massima: risoluzione piena del telefono (fino a 3×) */const ANI=R.capabilities.getMaxAnisotropy();R.setSize(DVW(),DVH(),false);
   R.toneMapping=THREE.ACESFilmicToneMapping;/* (940) LOOK = luce e atmosfera (prove di colori caldi stile NBA) */const LK=Object.assign({exp:1.02,bg:"#060509",fog:0x08070c,hue:30,sat:50,lig:48,sky:0xfff1df,gnd:null,hemi:1.0,dir:0xffe6c4,dirI:.5,spot:0xfff2dc,spotI:250,lamp:"#fff4dc",roof:"#3b3a44",roofK:.86,warm:0},window.DREAM_LOOK||{});
   R.toneMappingExposure=LK.exp;R.outputColorSpace=THREE.SRGBColorSpace;
   const S=new THREE.Scene();S.background=C(LK.bg);S.fog=new THREE.FogExp2(LK.fog,.010);
-  const cam=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,220);
+  const cam=new THREE.PerspectiveCamera(60,DVW()/DVH(),.1,220);
   const TX=[],own=o=>{TX.push(o);return o};
   const tex=(w,h,f,q)=>{q=q||1;const c=document.createElement("canvas");c.width=w*q;c.height=h*q;const g=c.getContext("2d");g.scale(q,q);f(g,w,h);const x=new THREE.CanvasTexture(c);x.colorSpace=THREE.SRGBColorSpace;x.anisotropy=ANI;x.minFilter=THREE.LinearMipmapLinearFilter;x.generateMipmaps=true;own(x);x.userData.c=c;x.userData.q=q;return x};
   const LG=await img((t==="DUC"&&typeof ducBan==="function"&&(ducBan()||window.DUC_CURL))||LOGO[t]);
@@ -219,7 +219,7 @@ function duel(t){try{const P=drPO(drStand()),k=drCurWeek(P),W=drWeek(k),pr=(drPa
 async function open(t,OP){OP=OP||{};if(ST)return;if(OP.cov)setTimeout(()=>{try{OP.cov&&OP.cov.remove()}catch(e){}},20000);const TM=TEAMS[t];if(!TM){if(OP.cov)OP.cov.remove();return}
   const ov=$(`<div class="drm3"><canvas></canvas><div class="drm3top"><button class="drm3x" aria-label="Esci">✕</button><div class="drm3t">MODALITÀ DREAM<small>${TM.nick.toUpperCase()} ARENA</small></div><button class="drm3a" aria-label="Voce">🔊</button></div>
     <div class="drm3msg">Entro nell'arena…</div><div class="drm3fade" style="position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;transition:opacity .35s"></div><div class="drm3hint">Trascina per guardarti intorno · tocca dove vuoi andare (parquet o tribune) · tocca una maglia per avvicinarti · due dita per ingrandire · alle tue spalle, in cima alle scale, c'è la sala trofei</div></div>`);
-  document.body.appendChild(ov);document.body.classList.add("drm3on");
+  document.body.appendChild(ov);document.body.classList.add("drm3on");rotOv(ov);try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock("landscape").catch(()=>{})}catch(e){}
   /* (939) i gesti dentro lo stadio non arrivano all'app: prima lo scorrimento a dito cambiava squadra nella pagina sotto */
   ["touchstart","touchmove","touchend","touchcancel","pointerdown","pointermove","pointerup","wheel","keydown"].forEach(k=>ov.addEventListener(k,e=>e.stopPropagation(),{passive:true}));const msg=ov.querySelector(".drm3msg");
   ST={t,home:OP.home||t,ov,stop:false,anim:[],prev:{},audioOn:(()=>{try{return localStorage.getItem("dl_drm_audio")!=="0"}catch(e){return true}})()};const st=ST;
@@ -344,13 +344,13 @@ const A=null;
   const P=new Map();let pinch=null,tap=null,tw=null;const ray=new THREE.Raycaster(),ndc=new THREE.Vector2(),plane=new THREE.Plane(new THREE.Vector3(0,1,0),0),hit=new THREE.Vector3();
   const MK=new THREE.Mesh(new THREE.RingGeometry(.35,.5,40),new THREE.MeshBasicMaterial({color:"#c4b5fd",transparent:true,opacity:0,depthWrite:false,toneMapped:false}));MK.rotation.x=-Math.PI/2;S.add(MK);
   const fly=(x,z,yaw)=>{if(ZM>1){ZM=1;applyZ()}MK.position.set(x,(typeof terr==="function"?terr(x,z):0)+.04,z);MK.userData.t0=performance.now();const d=yaw==null?0:((yaw-V.yaw+540)%360)-180;tw={t0:performance.now(),dur:Math.min(1600,450+Math.hypot(x-V.x,z-V.z)*90),x0:V.x,z0:V.z,x1:x,z1:z,y0:V.yaw,dy:d}};
-  cv.addEventListener("pointerdown",e=>{P.set(e.pointerId,{x:e.clientX,y:e.clientY});try{cv.setPointerCapture(e.pointerId)}catch(_){}tw=null;if(A)A.ac.resume();ov.querySelector(".drm3hint").style.opacity=0;
-    if(P.size===1){dr={x:e.clientX,y:e.clientY};tap={x:e.clientX,y:e.clientY,t:performance.now(),m:0}}else{dr=null;tap=null;const[a,b]=[...P.values()];pinch=Math.hypot(a.x-b.x,a.y-b.y)}});
-  cv.addEventListener("pointermove",e=>{if(!P.has(e.pointerId))return;P.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  cv.addEventListener("pointerdown",e=>{P.set(e.pointerId,{x:LX(e),y:LY(e)});try{cv.setPointerCapture(e.pointerId)}catch(_){}tw=null;if(A)A.ac.resume();ov.querySelector(".drm3hint").style.opacity=0;
+    if(P.size===1){dr={x:LX(e),y:LY(e)};tap={x:LX(e),y:LY(e),t:performance.now(),m:0}}else{dr=null;tap=null;const[a,b]=[...P.values()];pinch=Math.hypot(a.x-b.x,a.y-b.y)}});
+  cv.addEventListener("pointermove",e=>{if(!P.has(e.pointerId))return;P.set(e.pointerId,{x:LX(e),y:LY(e)});
     if(P.size>=2&&pinch!=null){const[a,b]=[...P.values()],d=Math.hypot(a.x-b.x,a.y-b.y);ZM=cl(ZM*d/Math.max(1,pinch),1,5);pinch=d;applyZ();return}/* (938) due dita = zoom come sulle foto (fino a 5×), senza muoversi */
-    if(!dr)return;const dx=e.clientX-dr.x,dy=e.clientY-dr.y;dr.x=e.clientX;dr.y=e.clientY;if(tap)tap.m+=Math.abs(dx)+Math.abs(dy);if(!tap||tap.m>8){V.yaw+=dx*.25/ZM;V.pitch=cl(V.pitch+dy*.2/ZM,-60,60);st.dirty=true}});
+    if(!dr)return;const dx=LX(e)-dr.x,dy=LY(e)-dr.y;dr.x=LX(e);dr.y=LY(e);if(tap)tap.m+=Math.abs(dx)+Math.abs(dy);if(!tap||tap.m>8){V.yaw+=dx*.25/ZM;V.pitch=cl(V.pitch+dy*.2/ZM,-60,60);st.dirty=true}});
   const up=e=>{P.delete(e.pointerId);if(P.size<2)pinch=null;if(P.size===0)dr=null;const q=tap;tap=null;if(!q||q.m>10||performance.now()-q.t>450||e.type==="pointercancel")return;
-    const rc=cv.getBoundingClientRect();ndc.set((e.clientX-rc.left)/rc.width*2-1,-(e.clientY-rc.top)/rc.height*2+1);ray.setFromCamera(ndc,cam);
+    ndc.set(LX(e)/DVW()*2-1,-LY(e)/DVH()*2+1);ray.setFromCamera(ndc,cam);
     if(st.room){roomTap();return}
     const hits=ray.intersectObjects([...Object.values(J).map(o=>o.jm),...K.scrM,...K.DOOR],false);if(hits.length&&K.DOOR.includes(hits[0].object)){enterRoom(hits[0].object.userData.room||"trofei");return}
     if(hits.length){const h=hits[0].object;if(K.scrM.includes(h)){nextPage();return}
@@ -360,7 +360,7 @@ const A=null;
   cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);
   cv.addEventListener("wheel",e=>{e.preventDefault();ZM=cl(ZM*Math.exp(-e.deltaY*.0015),1,5);applyZ()},{passive:false});
   const keys={},kd=e=>{keys[e.key.toLowerCase()]=e.type==="keydown";if(e.key==="Escape")close()};document.addEventListener("keydown",kd);document.addEventListener("keyup",kd);st.kd=kd;
-  /* (934) anche in orizzontale: campo visivo adattato (più stretto in verticale, così l'orizzontale non deforma) */const rs=()=>{const land=innerWidth>innerHeight;cam.aspect=innerWidth/innerHeight;cam.fov=land?46:62;cam.updateProjectionMatrix();R.setSize(innerWidth,innerHeight,false);st.dirty=true};rs();try{screen.orientation&&screen.orientation.unlock&&screen.orientation.unlock()}catch(e){};addEventListener("resize",rs);addEventListener("orientationchange",()=>setTimeout(rs,250));st.rs=rs;
+  /* (934) anche in orizzontale: campo visivo adattato (più stretto in verticale, così l'orizzontale non deforma) */const rs=()=>{rotOv(ov);const land=DVW()>DVH();cam.aspect=DVW()/DVH();cam.fov=land?46:62;cam.updateProjectionMatrix();R.setSize(DVW(),DVH(),false);st.dirty=true};rs();addEventListener("resize",rs);addEventListener("orientationchange",()=>setTimeout(rs,250));st.rs=rs;
   if(A)A.ac.resume();
   msg.style.display="none";st.dirty=true;if(OP.cov){OP.cov.remove();OP.cov=null}if(OP.voice){try{vb.onclick()}catch(e){}}
   /* ---- (957) SALA TROFEI: corridoio (12 m) e sala (16×14 m, alta 6 m) in una scena a parte, costruita solo al primo ingresso ---- */
@@ -630,7 +630,7 @@ const me=SLOT[t]||{x:0,n:true},sp=me.n?{x:me.x,z:-1.4,yaw:0,pitch:2}:{x:me.x,z:-
   /* (967) entrare nello stadio di un'altra squadra: si libera questa arena e si costruisce quella (una sola arena in memoria alla volta) */
   const goArena=k=>{if(st.busy||st.stop)return;let NO=["PEA"];try{NO=DRM_NO}catch(e){}if(NO.includes(k))return;st.busy=true;
     if(st.voice){try{const AC=window.AudioContext||window.webkitAudioContext;if(AC&&!(window.__drmAC&&window.__drmAC.state!=="closed")){window.__drmAC=new AC()}window.__drmAC&&window.__drmAC.resume()}catch(e){}}
-    const cov=document.createElement("div");cov.style.cssText="position:fixed;inset:0;background:#000;z-index:2147483000;display:flex;align-items:center;justify-content:center;color:#ddd6fe;font:800 15px system-ui,sans-serif";cov.textContent="Entro nella "+TEAMS[k].nick+" Arena…";document.body.appendChild(cov);
+    const cov=document.createElement("div");cov.style.cssText="position:fixed;inset:0;background:#000;z-index:2147483000;display:flex;align-items:center;justify-content:center;color:#ddd6fe;font:800 15px system-ui,sans-serif";cov.textContent="Entro nella "+TEAMS[k].nick+" Arena…";document.body.appendChild(cov);rotOv(cov);
     const o={home:st.home||t,voice:st.voice,from:"strada",cov};setTimeout(()=>{close();open(k,o)},60)};
   let RID=null;
   async function enterRoom(id){id=id||"trofei";if(id==="trofei"&&!K.OPEN){closed();return}if(st.busy||st.room)return;st.busy=true;tw=null;walk=0;fade.style.opacity=1;await new Promise(r=>setTimeout(r,380));if(st.stop)return;
@@ -660,10 +660,10 @@ const me=SLOT[t]||{x:0,n:true},sp=me.n?{x:me.x,z:-1.4,yaw:0,pitch:2}:{x:me.x,z:-
       else if(T<5900){a.s.position.y=base+Math.sin((T-400)/420)*.05;a.s.scale.copy(a.s.userData.s0).multiplyScalar(1+Math.sin((T-400)/260)*.02);a.s.material.opacity=1}
       else{const k=(T-5900)/1000;a.s.position.y=base+k*1.1;a.s.material.opacity=1-k}return true});
     /* (966) appena ti fermi (0,35 s) torna sempre alla risoluzione piena: in movimento può scendere per restare fluido, da fermi il campo è sempre alla qualità massima */{const key=[V.x,V.z,V.yaw,V.pitch,footY,ZM].map(v=>v.toFixed(2)).join();if(key!==st.pk){st.pk=key;st.lm=now}const PT=st.room?Math.min(2,K.PRMAX):K.PRMAX,PM=Math.min(PT,Math.max(1.5,PT*.67)),moving=now-(st.lm||0)<350,pr0=R.getPixelRatio();/* (971) fluido in movimento (risoluzione 2/3), nitido da fermi (piena) */
-      if(!moving&&Math.abs(pr0-PT)>.01){R.setPixelRatio(PT);R.setSize(innerWidth,innerHeight,false);st.fr=[]}else if(moving&&pr0>PM+.01){R.setPixelRatio(PM);R.setSize(innerWidth,innerHeight,false)}}
+      if(!moving&&Math.abs(pr0-PT)>.01){R.setPixelRatio(PT);R.setSize(DVW(),DVH(),false);st.fr=[]}else if(moving&&pr0>PM+.01){R.setPixelRatio(PM);R.setSize(DVW(),DVH(),false)}}
     const gap=now-lastDraw;R.render(st.room&&RM?RM.S:S,cam);st.dirty=false;lastDraw=now;
     /* (932) se il telefono fatica (in movimento sotto i 22 fotogrammi al secondo), la risoluzione scende da sola di un gradino (mai sotto 1×): niente blocchi */
-    st.fr=(st.fr||[]);if(gap<95)st.fr.push(gap);/* solo fotogrammi di fila (in movimento) */if(st.fr.length>=30){const avg=st.fr.reduce((a,b)=>a+b,0)/st.fr.length;st.fr=[];const pr=R.getPixelRatio();if(avg>45&&pr>1.01&&now-(st.lm||0)<350){R.setPixelRatio(Math.max(1,pr-.5));R.setSize(innerWidth,innerHeight,false);st.dirty=true}}};
+    st.fr=(st.fr||[]);if(gap<95)st.fr.push(gap);/* solo fotogrammi di fila (in movimento) */if(st.fr.length>=30){const avg=st.fr.reduce((a,b)=>a+b,0)/st.fr.length;st.fr=[];const pr=R.getPixelRatio();if(avg>45&&pr>1.01&&now-(st.lm||0)<350){R.setPixelRatio(Math.max(1,pr-.5));R.setSize(DVW(),DVH(),false);st.dirty=true}}};
   st.raf=requestAnimationFrame(loop);setTimeout(()=>{const h=ov.querySelector(".drm3hint");if(h)h.style.opacity=0},6000);
 }
 function disposeAll(K){try{[K.S,...(K.RSS||[])].forEach(SC=>SC&&SC.traverse(o=>{if(o.geometry)o.geometry.dispose();const m=o.material;if(m){(Array.isArray(m)?m:[m]).forEach(x=>{if(x.map)x.map.dispose();x.dispose()})}}));K.R.dispose();K.R.forceContextLoss&&K.R.forceContextLoss()}catch(e){}}
