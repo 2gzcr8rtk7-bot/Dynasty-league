@@ -2443,3 +2443,6 @@ Francesco (16:16–16:19). Guida: sotto i ~40 km/h la macchina resta stabile anc
 
 ## 1024 — Modalità Dream: l app al computer del GM sempre in orizzontale
 Francesco (16:34): sedendosi al computer l app si apriva in verticale. Ora, se il telefono è tenuto dritto (o col blocco rotazione), tutta la pagina dell app viene girata in orizzontale come lo stadio, con le regole della vista orizzontale dell app (grafici e liste come col telefono girato); tasti, scorrimento e finestre seguono la rotazione. Alzandosi («Torna in ufficio») la pagina torna normale.
+
+## 1025 — Modalità Dream: niente muro invisibile attorno alle auto parcheggiate
+Francesco (16:37): passando di fianco a un auto parcheggiata ci si fermava contro un muro invisibile. L urto tra auto usava un cerchio di 4,2 m attorno al centro (più largo dell auto); ora ogni auto ha la sua forma vera (due cerchi, davanti e dietro, larghi quanto l auto): si passa di fianco senza problemi. Se la tocchi la spingi via (si sposta e gira un po, tu rallenti un po; botto se vai forte); si blocca solo se dall altra parte c è un palazzo.
