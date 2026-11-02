@@ -46,7 +46,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
   /* (937) giallo Ducks più caldo (quello dorato del logo e del banner): la luce 3D schiarisce i gialli, quindi si parte da un oro più carico *//* (955) giallo parquet Ducks più caldo, scelto da Francesco (versione B) */const BG=({DUC:"#ea9a00"})[t]||TM.bg,ACC=lum(BG)<.18?(TM.fg===TM.bg?"#ffffff":TM.fg):BG,INK=lum(BG)>.55?(lum(TM.trim)<.4?TM.trim:"#111"):"#ffffff";
   const mob=Math.min(screen.width,screen.height)<700;
   /* (932) qualità alta: antialias sempre, risoluzione fino a 2× (si abbassa da sola se il telefono fatica, vedi il ciclo) */
-  const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,powerPreference:"high-performance"});const PRMAX=Math.min(2.5,devicePixelRatio||1);/* (984) massimo 2,5×: a 3× la memoria video su iPhone poteva far chiudere la pagina */R.setPixelRatio(PRMAX);/* (966) qualità massima: risoluzione piena del telefono (fino a 3×) */const ANI=R.capabilities.getMaxAnisotropy();R.setSize(DVW(),DVH(),false);
+  /* (987) passando da un arena all altra si riusa la stessa grafica 3D del telefono invece di crearne una nuova */const R=(KEEP&&KEEP.cv===cv)?KEEP.R:new THREE.WebGLRenderer({canvas:cv,antialias:true,powerPreference:"high-performance"});if(KEEP){clearTimeout(KEEP.to);KEEP=null}const PRMAX=Math.min(2.5,devicePixelRatio||1);/* (984) massimo 2,5×: a 3× la memoria video su iPhone poteva far chiudere la pagina */R.setPixelRatio(PRMAX);/* (966) qualità massima: risoluzione piena del telefono (fino a 3×) */const ANI=R.capabilities.getMaxAnisotropy();R.setSize(DVW(),DVH(),false);
   R.toneMapping=THREE.ACESFilmicToneMapping;/* (940) LOOK = luce e atmosfera (prove di colori caldi stile NBA) */const LK=Object.assign({exp:1.02,bg:"#060509",fog:0x08070c,hue:30,sat:50,lig:48,sky:0xfff1df,gnd:null,hemi:1.0,dir:0xffe6c4,dirI:.5,spot:0xfff2dc,spotI:250,lamp:"#fff4dc",roof:"#3b3a44",roofK:.86,warm:0},window.DREAM_LOOK||{});
   R.toneMappingExposure=LK.exp;R.outputColorSpace=THREE.SRGBColorSpace;
   const S=new THREE.Scene();S.background=C(LK.bg);S.fog=new THREE.FogExp2(LK.fog,.010);
@@ -273,7 +273,7 @@ const A=null;
   ov.querySelector(".drm3x").onclick=close;
   let T3;try{T3=await loadThree()}catch(e){msg.textContent="Non riesco a caricare lo stadio 3D: controlla la connessione e riprova.";return}
   if(st.stop)return;
-  let K;try{K=await build(t,ov.querySelector("canvas"),T3)}catch(e){console.error(e);msg.textContent="Lo stadio non si è caricato su questo telefono.";return}
+  if(KEEP){try{ov.querySelector("canvas").replaceWith(KEEP.cv)}catch(e){}}let K;try{K=await build(t,ov.querySelector("canvas"),T3)}catch(e){console.error(e);msg.textContent="Lo stadio non si è caricato su questo telefono.";return}
   if(st.stop){disposeAll(K);return}st.K=K;const{THREE,R,S,cam}=K;
   /* ---- maxischermo ---- */
   /* (970) MAXISCHERMO A PAGINE: tocco sul tabellone = pagina successiva. Pagina 0 = scontro diretto (come prima), poi una pagina per ogni partita NBA di stanotte (in corso prima, poi finite, poi da giocare) */
@@ -354,7 +354,7 @@ const A=null;
   const hideAt={x:1e9,z:1e9};let hidden=[];const Mx=new THREE.Matrix4(),Z0=new THREE.Matrix4().makeScale(0,0,0);
   const hideNear=()=>{hideAt.x=V.x;hideAt.z=V.z;const F=K.FANS;if(!F)return;hidden.forEach(i=>{F.forEach(f=>f.m.setMatrixAt(i,f.orig[i]))});hidden=[];
     F[0].pos.forEach((p,i)=>{if(Math.hypot(p[0]-V.x,p[2]-V.z)<1.3){hidden.push(i);F.forEach(f=>f.m.setMatrixAt(i,Z0))}});F.forEach(f=>f.m.instanceMatrix.needsUpdate=true);st.dirty=true};
-  const cv=ov.querySelector("canvas");cv.addEventListener("webglcontextlost",e=>{e.preventDefault();setTimeout(()=>{try{close()}catch(_){}},50)});/* (984) se il telefono toglie la grafica 3D si esce puliti verso il campo */
+  const cv=ov.querySelector("canvas");const AB=new AbortController();st.AB=AB;const ael=(a,b,c)=>cv.addEventListener(a,b,Object.assign(typeof c==="object"&&c?c:{},{signal:AB.signal}));ael("webglcontextlost",e=>{e.preventDefault();setTimeout(()=>{try{close()}catch(_){}},50)});/* (984) se il telefono toglie la grafica 3D si esce puliti verso il campo */
   /* (974) JOYSTICK semitrasparente in basso a sinistra: su/giù = avanti/indietro, sinistra/destra = di lato; trascinare altrove continua a girare lo sguardo */
   {const jb=ov.querySelector(".drm3joy"),kn=ov.querySelector(".drm3knob");let jid=null,c0=null;const R_=46;
     const pos=e=>{const r=58;return{x:LX(e)-c0.x,y:LY(e)-c0.y}};
@@ -368,9 +368,9 @@ const A=null;
   const P=new Map();let pinch=null,tap=null,tw=null;const ray=new THREE.Raycaster(),ndc=new THREE.Vector2(),plane=new THREE.Plane(new THREE.Vector3(0,1,0),0),hit=new THREE.Vector3();
   const MK=new THREE.Mesh(new THREE.RingGeometry(.35,.5,40),new THREE.MeshBasicMaterial({color:"#c4b5fd",transparent:true,opacity:0,depthWrite:false,toneMapped:false}));MK.rotation.x=-Math.PI/2;S.add(MK);
   const fly=(x,z,yaw)=>{if(ZM>1){ZM=1;applyZ()}MK.position.set(x,(typeof terr==="function"?terr(x,z):0)+.04,z);MK.userData.t0=performance.now();const d=yaw==null?0:((yaw-V.yaw+540)%360)-180;tw={t0:performance.now(),dur:Math.min(1600,450+Math.hypot(x-V.x,z-V.z)*90),x0:V.x,z0:V.z,x1:x,z1:z,y0:V.yaw,dy:d}};
-  cv.addEventListener("pointerdown",e=>{P.set(e.pointerId,{x:LX(e),y:LY(e)});try{cv.setPointerCapture(e.pointerId)}catch(_){}tw=null;if(A)A.ac.resume();ov.querySelector(".drm3hint").style.opacity=0;
+  ael("pointerdown",e=>{P.set(e.pointerId,{x:LX(e),y:LY(e)});try{cv.setPointerCapture(e.pointerId)}catch(_){}tw=null;if(A)A.ac.resume();ov.querySelector(".drm3hint").style.opacity=0;
     if(P.size===1){dr={x:LX(e),y:LY(e)};tap={x:LX(e),y:LY(e),t:performance.now(),m:0}}else{dr=null;tap=null;const[a,b]=[...P.values()];pinch=Math.hypot(a.x-b.x,a.y-b.y)}});
-  cv.addEventListener("pointermove",e=>{if(!P.has(e.pointerId))return;P.set(e.pointerId,{x:LX(e),y:LY(e)});
+  ael("pointermove",e=>{if(!P.has(e.pointerId))return;P.set(e.pointerId,{x:LX(e),y:LY(e)});
     if(P.size>=2&&pinch!=null){const[a,b]=[...P.values()],d=Math.hypot(a.x-b.x,a.y-b.y);ZM=cl(ZM*d/Math.max(1,pinch),1,5);pinch=d;applyZ();return}/* (938) due dita = zoom come sulle foto (fino a 5×), senza muoversi */
     if(!dr)return;const dx=LX(e)-dr.x,dy=LY(e)-dr.y;dr.x=LX(e);dr.y=LY(e);if(tap)tap.m+=Math.abs(dx)+Math.abs(dy);if(!tap||tap.m>8){const sg_=-1;/* (979) comando da videogioco (GTA, Call of Duty): dito a destra = guardi a destra, dito in su = guardi in alto */V.yaw+=sg_*dx*.25/ZM;V.pitch=cl(V.pitch+sg_*dy*.2/ZM,-60,60);st.dirty=true}});
   const up=e=>{P.delete(e.pointerId);if(P.size<2)pinch=null;if(P.size===0)dr=null;const q=tap;tap=null;if(!q||q.m>10||performance.now()-q.t>450||e.type==="pointercancel")return;
@@ -380,8 +380,8 @@ const A=null;
     if(hits.length){const h=hits[0].object;if(K.scrM.includes(h)){nextPage();return}
       const o=Object.values(J).find(o=>o.jm===h);if(o){const gx=o.g.position.x,gz=o.g.position.z,dx=V.x-gx,dz=V.z-gz,L=Math.hypot(dx,dz)||1,tx=gx+dx/L*3.2,tz=gz+dz/L*3.2;fly(tx,tz,Math.atan2(tx-gx,tz-gz)*180/Math.PI);V.pitch=0;return}}
     /* (978) il tocco sul campo/tribune non sposta più: ci si muove col joystick (o frecce/WASD e mouse sul computer) */};
-  cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);
-  cv.addEventListener("wheel",e=>{e.preventDefault();ZM=cl(ZM*Math.exp(-e.deltaY*.0015),1,5);applyZ()},{passive:false});
+  ael("pointerup",up);ael("pointercancel",up);
+  ael("wheel",e=>{e.preventDefault();ZM=cl(ZM*Math.exp(-e.deltaY*.0015),1,5);applyZ()},{passive:false});
   const keys={},kd=e=>{keys[e.key.toLowerCase()]=e.type==="keydown";if(e.key==="Escape")close()};document.addEventListener("keydown",kd);document.addEventListener("keyup",kd);st.kd=kd;
   /* (934) anche in orizzontale: campo visivo adattato (più stretto in verticale, così l'orizzontale non deforma) */const rs=()=>{rotOv(ov);const land=DVW()>DVH();cam.aspect=DVW()/DVH();cam.fov=land?46:62;cam.updateProjectionMatrix();R.setSize(DVW(),DVH(),false);st.dirty=true};rs();addEventListener("resize",rs);addEventListener("orientationchange",()=>setTimeout(rs,250));st.rs=rs;
   if(A)A.ac.resume();
@@ -673,7 +673,7 @@ const A=null;
   const goArena=k=>{if(st.busy||st.stop)return;let NO=["PEA"];try{NO=DRM_NO}catch(e){}if(NO.includes(k))return;st.busy=true;
     if(st.voice){try{const AC=window.AudioContext||window.webkitAudioContext;if(AC&&!(window.__drmAC&&window.__drmAC.state!=="closed")){window.__drmAC=new AC()}window.__drmAC&&window.__drmAC.resume()}catch(e){}}
     const cov=document.createElement("div");cov.style.cssText="position:fixed;inset:0;background:#000;z-index:2147483000;display:flex;align-items:center;justify-content:center;color:#ddd6fe;font:800 15px system-ui,sans-serif";cov.textContent="Entro nella "+TEAMS[k].nick+" Arena…";document.body.appendChild(cov);rotOv(cov);
-    const o={home:st.home||t,voice:st.voice,from:"strada",cov};setTimeout(()=>{close();open(k,o)},60)};
+    const o={home:st.home||t,voice:st.voice,from:"strada",cov};/* (987) prima si svuota tutto, si lascia respirare il telefono, poi si costruisce la nuova arena sulla stessa grafica 3D */setTimeout(()=>{st.keepR=true;close();setTimeout(()=>open(k,o),350)},60)};
   let RID=null;
   async function enterRoom(id,spO){id=id||"trofei";if(id==="trofei"&&!K.OPEN){closed();return}if(st.busy||st.room)return;st.busy=true;tw=null;walk=0;fade.style.opacity=1;await new Promise(r=>setTimeout(r,380));if(st.stop)return;
     if(!ROOMS[id]){msg.textContent=id==="trofei"?"Entro nella sala trofei…":id==="strada"?"Esco in piazza…":id==="ufficio"?"Entro nell'ufficio del GM…":id==="museo"?"Entro nel Museo della Lega…":id==="draft"?"Entro nella Sala Draft…":id==="medico"?"Entro nel Centro Medico…":"Entro nello spogliatoio…";msg.style.display="";try{ROOMS[id]=await RDEF[id].b();(K.RSS=K.RSS||[]).push(ROOMS[id].S)}catch(e){console.error(e);ROOMS[id]=null}msg.style.display="none";
@@ -781,16 +781,24 @@ const A=null;
     return Object.assign({S:RS,taps:H.taps,clamp:H.clamp,spawn:{x:0,z:-.6,yaw:0,pitch:4},hint:"Sala Draft · ordine delle scelte dalla classifica attuale · torna alla porta per la piazza",voice:"Sala draft"},BACKST({x:56.5,z:-16.5,yaw:90,pitch:0}))}
   /* CENTRO MEDICO: un lettino per ogni giocatore fermo o in dubbio (tutte le squadre), coperta nel colore squadra, maglia sopra il letto, stato e rientro */
   async function buildMedical(){const H=hallBase({w:14,d:18,h:4,w1:"#e8eef5",w2:"#c7d3e0",fl:"#dfe6ee",title:"CENTRO MEDICO",led:"#22d3ee",gnd:"#8090a0",hemi:1.4});const {RS,add,tex,W2,Z1}=H;
-    let L=[];try{L=INFORTUNI.lista.filter(x=>x.stato!=="ok"&&!(typeof INJ_RIENTRI!=="undefined"&&INJ_RIENTRI.some(r=>r.p===x.p))).slice(0,12)}catch(e){}
+    const PAIN=[];let L=[];try{L=INFORTUNI.lista.filter(x=>x.stato!=="ok"&&!(typeof INJ_RIENTRI!=="undefined"&&INJ_RIENTRI.some(r=>r.p===x.p))).slice(0,12)}catch(e){}
     const SC={out:"#ef4444",dubbio:"#f97316",quest:"#f59e0b",prob:"#84cc16",dtd:"#eab308"};
     await Promise.all(L.map(async(p,i)=>{const side=i%2?1:-1,j=Math.floor(i/2),x=side*(W2-1.3),z=-2-j*2.6,T2=TEAMS[p.t]||{bg:"#666",nick:p.t};
       add(new THREE.BoxGeometry(1.1,.5,2.1),new THREE.MeshLambertMaterial({color:"#f8fafc"}),x,.25,z);add(new THREE.BoxGeometry(1.12,.08,1.4),new THREE.MeshLambertMaterial({color:T2.bg}),x,.54,z+.3);add(new THREE.BoxGeometry(.8,.12,.4),new THREE.MeshLambertMaterial({color:"#fff"}),x,.56,z-.75);
-      let svg="";try{const num=((ROSTER[p.t]||[]).find(r=>r[0]===p.p)||[])[1];svg=jersey(p.t,num,"")}catch(e){}svg=svg.replace("<svg ",'<svg xmlns="http://www.w3.org/2000/svg" width="600" height="730" ');const im=await img("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg));const jt=tex(600,730,c=>{if(im)c.drawImage(im,0,0,600,730)},.5);
-      add(new THREE.PlaneGeometry(.9,1.1),new THREE.MeshBasicMaterial({map:jt,transparent:true,alphaTest:.05,toneMapped:false}),side*(W2-.05),2.1,z,-side*Math.PI/2);
+      /* (986) manichino semitrasparente sdraiato (niente faccia), maglia nel colore della squadra, punto rosso che pulsa dove fa male (stessa lettura della descrizione del Centro Medico dell'app) */
+      const mq=new THREE.MeshPhongMaterial({color:"#e8eef6",transparent:true,opacity:.55,shininess:60,depthWrite:false}),jm=new THREE.MeshPhongMaterial({color:T2.bg,transparent:true,opacity:.85,shininess:30});const by=.66,cap=(r,l,x,y,z,m,rx)=>{const o=add(new THREE.CapsuleGeometry(r,l,6,12),m||mq,x,y,z);o.rotation.x=rx==null?Math.PI/2:rx;return o};
+      add(new THREE.SphereGeometry(.12,18,14),mq,x,by+.06,z-.8);cap(.05,.06,x,by+.02,z-.66);cap(.17,.32,x,by+.04,z-.36,jm);cap(.15,.12,x,by+.02,z-.02);
+      [-1,1].forEach(sd=>{cap(.055,.42,x+sd*.27,by,z-.3);cap(.075,.62,x+sd*.1,by,z+.42);add(new THREE.SphereGeometry(.06,10,8),mq,x+sd*.1,by+.08,z+.86)});
+      const tx_=String(p.tipo||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");const ZP={head:[0,.06,-.8],neck:[0,.03,-.64],shoulder:[.2,.06,-.5],elbow:[.27,.03,-.28],wrist:[.27,.02,-.06],hand:[.27,.02,.04],chest:[0,.12,-.42],abs:[0,.1,-.2],back:[0,-.04,-.32],hip:[.14,.06,-.02],thigh:[.1,.06,.22],knee:[.1,.06,.44],shin:[.1,.05,.62],ankle:[.1,.04,.78],foot:[.1,.08,.9]};
+      const ZR=[["head",/(testa|commozione|concussion|naso|nasal|viso|occhi|mascell|faccia)/],["neck",/(collo|neck)/],["shoulder",/(spall|shoulder|rotator|cuffia|clavicol)/],["elbow",/(gomit|elbow)/],["wrist",/(polso|wrist)/],["hand",/(mano|dito|dita|finger|thumb|pollic|hand)/],["chest",/(petto|costol|\brib|pettoral|chest|sterno)/],["abs",/(obliq|addom|abdom|core)/],["back",/(schiena|\bback|lomb|sciatic|spina|vertebr)/],["hip",/(anca|\bhip|bacino|ingui|groin|addutt|glute)/],["thigh",/(coscia|quadric|\bquad|hamstring|bicipite femorale|flessor|femor)/],["knee",/(ginocch|knee|menisc|rotul|patell|\bacl|crociat|\bmcl|\blca)/],["shin",/(polpacc|calf|tibia|shin|perone|stinco)/],["ankle",/(caviglia|ankle|achill)/],["foot",/(piede|foot|tallon|heel|plantar|alluce|\btoe|lisfranc|metatars)/]];
+      const hit=ZR.filter(([k,r])=>r.test(tx_)).map(z=>z[0]),Rr=/destr|right/.test(tx_),Lr=/sinistr|left/.test(tx_),sides=Rr&&!Lr?[-1]:Lr&&!Rr?[1]:[-1,1];
+      if(!hit.length&&/(malatti|illness|pots|influenz|\bflu\b|virus|virale|febbre|fever|malore|gastro|covid|sindrom|disidrat)/.test(tx_))mq.color.set("#fca5a5");
+      const redM=new THREE.MeshBasicMaterial({color:SC[p.stato]||"#ef4444",transparent:true,opacity:.95,toneMapped:false});hit.forEach(k=>{const q=ZP[k];(q[0]?sides:[1]).forEach(sd=>{const dot=add(new THREE.SphereGeometry(.07,14,10),redM,x+q[0]*sd,by+q[1],z+q[2]);PAIN.push(dot);add(new THREE.PlaneGeometry(.5,.5),new THREE.MeshBasicMaterial({map:K.GLOW(),color:SC[p.stato]||"#ef4444",transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:.7,toneMapped:false}),x+q[0]*sd,by+q[1]+.12,z+q[2],0,-Math.PI/2)})});
       const pT=tex(512,220,(x,W,Hh)=>{x.fillStyle="#0f172a";x.fillRect(0,0,W,Hh);x.fillStyle=SC[p.stato]||"#64748b";x.fillRect(0,0,W,14);x.textAlign="center";x.fillStyle="#fff";x.font="italic 900 40px Arial Black,Arial";x.fillText(p.p.split(" ").slice(1).join(" ").toUpperCase()||p.p,W/2,66);x.font="800 28px Arial";x.fillStyle=SC[p.stato]||"#cbd5e1";x.fillText(((STATI[p.stato]||[])[1]||p.stato).toUpperCase()+" · "+T2.nick,W/2,112);x.fillStyle="#cbd5e1";x.font="700 24px Arial";const r=String(p.rientro||"").slice(0,42);x.fillText(r,W/2,160);x.fillText(String(p.tipo||"").slice(0,42),W/2,196)},.6);
       add(new THREE.PlaneGeometry(1.3,.56),new THREE.MeshBasicMaterial({map:pT,toneMapped:false}),side*(W2-.05),1.05,z,-side*Math.PI/2)}));
     if(!L.length){const e=tex(900,160,(x,W,Hh)=>{x.textAlign="center";x.fillStyle="#0f172a";x.font="italic 900 60px Arial Black,Arial";x.fillText("NESSUN INFORTUNATO",W/2,95)},.6);add(new THREE.PlaneGeometry(5,.9),new THREE.MeshBasicMaterial({map:e,transparent:true,toneMapped:false}),0,2.2,Z1+.03)}
-    return Object.assign({S:RS,taps:H.taps,clamp:H.clamp,spawn:{x:0,z:-.6,yaw:0,pitch:0},hint:"Centro Medico · un lettino per ogni giocatore fermo o in dubbio · torna alla porta per la piazza",voice:"Centro medico"},BACKST({x:-56.5,z:-23,yaw:-90,pitch:0}))}
+    let lt_=0;const tick=now=>{if(now-lt_<50)return false;lt_=now;const k=1+Math.sin(now/260)*.25;PAIN.forEach(d=>d.scale.setScalar(k));return PAIN.length>0};/* il punto del dolore pulsa (20 fotogrammi al secondo, solo qui dentro) */
+    return Object.assign({S:RS,taps:H.taps,tick,clamp:H.clamp,spawn:{x:0,z:-.6,yaw:0,pitch:0},hint:"Centro Medico · un lettino per ogni giocatore fermo o in dubbio · torna alla porta per la piazza",voice:"Centro medico"},BACKST({x:-56.5,z:-23,yaw:-90,pitch:0}))}
   /* ---- (975) MODALITÀ TIRO: tasto 🏀 a destra → compare la fionda in basso a destra. Tiri indietro la palla (verso il basso), la direzione decide dove va (di lato = a destra/sinistra), la lunghezza decide la forza; lasci e la palla parte con fisica vera:
      gravità, ferro, tabellone, pavimento. Nessun aiuto: se sbagli, sbagli. La forza è proporzionata alla distanza dal canestro che hai davanti (come il braccio di un giocatore), la mira no. ---- */
   const SH=st.SH={on:false,ball:null,v:null,flying:false,t0:0,made:false,tiri:0,dentro:0,prevY:0,touched:false};
@@ -872,11 +880,17 @@ const A=null;
     st.fr=(st.fr||[]);if(gap<95)st.fr.push(gap);/* solo fotogrammi di fila (in movimento) */if(st.fr.length>=30){const avg=st.fr.reduce((a,b)=>a+b,0)/st.fr.length;st.fr=[];const pr=R.getPixelRatio();if(avg>45&&pr>1.01&&now-(st.lm||0)<350){R.setPixelRatio(Math.max(1,pr-.5));R.setSize(DVW(),DVH(),false);st.dirty=true}}}catch(e){if(!st.err){st.err=1;console.error(e)}}};
   st.raf=requestAnimationFrame(loop);setTimeout(()=>{const h=ov.querySelector(".drm3hint");if(h)h.style.opacity=0},6000);
 }
-function disposeAll(K){try{[K.S,...(K.RSS||[])].forEach(SC=>SC&&SC.traverse(o=>{if(o.geometry)o.geometry.dispose();const m=o.material;if(m){(Array.isArray(m)?m:[m]).forEach(x=>{if(x.map)x.map.dispose();x.dispose()})}}));K.R.dispose();K.R.forceContextLoss&&K.R.forceContextLoss()}catch(e){}}
+let KEEP=null;
+/* (987) svuota davvero la memoria: geometrie, tutte le texture dei materiali (anche luci/rilievi), sfondi e riflessi; con keep la grafica 3D resta pronta per l arena successiva */
+function disposeAll(K,keep){try{const TX=new Set();const tx=v=>{if(v&&v.isTexture)TX.add(v)};[K.S,...(K.RSS||[])].forEach(SC=>{if(!SC)return;tx(SC.background);tx(SC.environment);tx(SC.userData&&SC.userData.env);SC.traverse(o=>{if(o.geometry)o.geometry.dispose();const m=o.material;if(m){(Array.isArray(m)?m:[m]).forEach(x=>{for(const k in x)tx(x[k]);if(x.uniforms)for(const k in x.uniforms)tx(x.uniforms[k]&&x.uniforms[k].value);x.dispose()})}if(o.dispose&&!o.isScene&&o.isLight)o.dispose()});SC.clear&&SC.clear()});TX.forEach(t=>{try{t.dispose()}catch(e){}});K.RSS=[]}catch(e){}
+  const R=K.R;try{R.setAnimationLoop&&R.setAnimationLoop(null);R.renderLists&&R.renderLists.dispose()}catch(e){}
+  let lost=true;try{lost=R.getContext().isContextLost()}catch(e){}
+  if(keep&&!lost){if(KEEP&&KEEP.R!==R){try{KEEP.R.dispose();KEEP.R.forceContextLoss()}catch(e){}}try{R.setRenderTarget(null);R.clear()}catch(e){}KEEP={R,cv:R.domElement,to:setTimeout(()=>{if(KEEP&&KEEP.R===R){KEEP=null;try{R.dispose();R.forceContextLoss()}catch(e){}}},15000)};return}
+  try{R.dispose();R.forceContextLoss&&R.forceContextLoss()}catch(e){}}
 function close(){const st=ST;if(!st)return;try{st.standUp&&st.standUp()}catch(e){}try{clearInterval(st.nsI);document.removeEventListener("visibilitychange",st.nsH);removeEventListener("pagehide",st.navSafe)}catch(e){}/* (981) se esci seduto all'ufficio, la pagina dell'app torna al suo posto */st.stop=true;ST=null;cancelAnimationFrame(st.raf);clearInterval(st.iv);clearTimeout(st.ch);if(st.kd){document.removeEventListener("keydown",st.kd);document.removeEventListener("keyup",st.kd)}if(st.rs)removeEventListener("resize",st.rs);
   try{window.speechSynthesis&&window.speechSynthesis.cancel()}catch(e){}
   try{if(st.A)st.A.close();if(st.vis)document.removeEventListener("visibilitychange",st.vis)}catch(e){}
-  if(st.K)disposeAll(st.K);
+  try{st.AB&&st.AB.abort()}catch(e){}if(st.K)disposeAll(st.K,!!st.keepR);
   /* (939) si torna sempre alla squadra da cui si è entrati *//* (984) e sempre al campo o alla home */try{let ch=false;if(curTeam!==(st.home||st.t)){curTeam=st.home||st.t;ch=true}if(cur!=="campo"&&cur!=="home"){cur="campo";ch=true}try{if(GAME==="dream"&&cur!=="giochi")GAME="menu"}catch(e){}if(ch)render()}catch(e){}try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock("portrait").catch(()=>{})}catch(e){}try{st.A&&st.A.ac.close()}catch(e){}st.ov.remove();document.body.classList.remove("drm3on")}
 window.dreamOpen=open;window.dreamClose=close;window.dreamDbg=()=>ST;
 })();
