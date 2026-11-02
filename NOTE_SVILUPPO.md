@@ -2498,3 +2498,6 @@ Francesco (19:54–20:05). PISTE VERE nel menu 🏁, ognuna fuori città: SPA-FR
 
 ## 1044 — Piste: niente portali, tempo sul traguardo
 Francesco (20:24): sulle piste (Dream Circuit, Spa, Monaco, Silverstone) niente più portali né freccia. Dopo il «VIA!» il cronometro parte quando passi la linea del traguardo e a ogni passaggio segna il giro (giri infiniti, ultimo giro e record). Il giro vale solo se hai fatto quasi tutta la pista nel verso giusto: con una scorciatoia o un taglio il tempo riparte da zero senza contare. Le corse in città restano coi portali. Per fluidità si disegna solo la pista su cui sei (in città sono spente).
+
+## 1045 — Piste separate e senza sfarfallio
+Francesco (20:34): ogni pista ora è separata: si costruisce solo quando ci arrivi e viene scaricata dalla memoria quando torni in città (in città restano in memoria solo i dati leggeri del tracciato). Sfarfallio: asfalto senza puntini fitti (grana morbida a chiazze, filtro anisotropo massimo), linee, cordoli, traguardo e pozze di luce con spinta di profondità (non litigano più con l asfalto da lontano), piano vicino della telecamera più lontano sulle piste (più precisione di profondità), cielo Dream con poche stelle morbide al posto dei puntini da 1 pixel. Le cose nuove (centro spaziale, pianeti…) saranno separate allo stesso modo.
