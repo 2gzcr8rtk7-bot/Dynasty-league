@@ -2510,3 +2510,6 @@ Francesco (20:54): in città due tasti (a sinistra sotto i soldi a piedi, a dest
 
 ## 1048 — Shuttle coi colori della squadra scelti come per le auto, rumore dei motori nello spazio
 Francesco (21:07): vicino alla rampa compare una fila con gli 8 loghi: tocchi una squadra e lo shuttle cambia subito colori (fasce, ali, deriva), loghi (sul muso, sulle ali e sulla deriva) e nome della squadra sul fianco, anche senza salirci; la scelta resta salvata. «🚀 SALI SULLO SHUTTLE» parte con la squadra scelta (niente più finestra di scelta). Audio: rombo profondo dei motori + ronzio della turbina per tutto il viaggio; sale al conto alla rovescia ed esplode al decollo, cresce col BOOST e all ingresso in atmosfera; in atterraggio segue il gas, cala nel rullaggio; si spegne quando torni in città (rispetta il tasto audio).
+
+## 1049 — Shuttle: rumore del colpo di meteora
+Francesco (21:13): quando una meteora colpisce lo shuttle, botto sordo (colpo basso che scende), crepitio di rocce che si spegne e lamiera che vibra; più forte con le meteore grandi e con l ultimo scudo.
