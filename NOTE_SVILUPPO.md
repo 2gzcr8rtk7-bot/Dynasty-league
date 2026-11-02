@@ -2284,3 +2284,6 @@ Francesco (01:16–01:19). Stendardi dei trofei sopra le tribune tolti (c è la 
 
 ## 972 — Modalità Dream sempre in orizzontale
 Francesco (01:30). La modalità Dream si vede sempre in orizzontale. iPhone non permette alle pagine web di bloccare la rotazione, quindi: se la finestra è verticale (telefono tenuto dritto o col blocco rotazione) tutto lo stadio, con tasti e scritte, viene ruotato di 90° (si gira il telefono verso sinistra per guardarlo); se il telefono ruota davvero la finestra (blocco rotazione spento), lo stadio si raddrizza da solo: rispetto al telefono il contenuto resta fermo e non «impazzisce». Tocchi, trascinamenti, pizzico e mira (maglie, porte, tabellone) convertiti nel sistema ruotato; campo visivo orizzontale (46°). Su Android si prova anche a bloccare l orientamento in orizzontale. Ruotata allo stesso modo anche la schermata nera «Entro nella … Arena…». All uscita dalla modalità l app resta verticale come sempre.
+
+## 973 — Modalità Dream: tasto ✕ sotto il megafono
+Francesco (08:37): con lo stadio ruotato la ✕ in alto a sinistra finiva sotto la tacca/barra di stato del telefono. Ora ✕ e 🔊 stanno insieme sul lato destro, la ✕ sotto il megafono; titolo sempre al centro.
