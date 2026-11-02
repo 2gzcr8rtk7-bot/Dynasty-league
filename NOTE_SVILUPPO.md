@@ -2409,3 +2409,6 @@ Francesco (15:10): toccando la porta del concessionario lo schermo diventava ner
 
 ## 1013 — Modalità Dream: tasto corri, soldi per provare le auto, box da 8, sale più belle
 Francesco (15:16). Tasto CORRI in basso a destra, trasparente come il joystick: tenendolo premuto si cammina più del doppio veloce (sparisce in modalità tiro e in macchina). Regalo di prova: il salvadanaio passa a 80.000 💰 (una volta sola), abbastanza per comprare tutte le auto. Box della villa da 8 posti: ci stanno tutte le auto insieme (5 modelli + quelle di serie). Sala Giochi: moquette arcade fluorescente, neon ciano/rosa/viola su pareti e soffitto, insegna ARCADE luminosa, poster dei giochi nelle cornici, divanetti viola, banco premi. Sala Scommesse: moquette rossa con rombi dorati, colonne dorate, pannelli di velluto con cornici d oro, lampadari di cristallo, insegna JACKPOT, sedie attorno ai tavoli, cordone di velluto davanti al banco scommesse; maxischermo abbassato sotto il titolo.
+
+## 1014 — Modalità Dream: rumore dei passi
+Francesco (15:21). Con l audio acceso, camminando col joystick si sentono i passi (suono breve sintetizzato, un po diverso a ogni passo); correndo col tasto CORRI i passi sono più fitti e forti. In macchina niente passi.
