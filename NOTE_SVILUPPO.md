@@ -2534,3 +2534,6 @@ Francesco (22:33): in città i tasti rapidi sono quadrati (icona + nome) in fila
 
 ## 1057 — Nave da guerra: si entra in tutte le stanze, partenza sempre a portata
 Francesco (22:45): tra corridoio e stanze c era un muro invisibile (il varco della porta non era camminabile): ora tutte le porte si attraversano (plancia, sala comune, armeria, bagni, sala macchine, alloggi, infermeria, hangar, portellone). Tasti rapidi quadrati a destra a bordo: 🚀 PARTI (porta in plancia e apre subito la rotta interplanetaria verso i pianeti delle altre squadre), 🧭 PLANCIA, 🛋️ COMUNE, 🔫 ARMERIA, 🚻 BAGNI, 🛏️ ALLOGGI, ⚛️ MACCHINE, 🚪 SCENDI. In viaggio i tasti spariscono e tornano quando sei di nuovo a bordo.
+
+## 1058 — Scendendo dalla nave si resta sul pianeta, sotto la nave
+Francesco (22:50): «🚪 SCENDI», il portellone e anche «✕ ESCI» quando sei a bordo ti lasciano sul pianeta accanto alla passerella, sotto la nave (prima ✕ riportava sulla Terra). Sul pianeta «✕ ESCI» e 🌍 TERRA restano per tornare a casa.
