@@ -222,7 +222,7 @@ function allRows(t){let NM={};try{NM=campoNotteMap(t)||{}}catch(e){}const out=[]
     out.push({n,num:p?p[1]:"",live:x.lv,oc,st:x.st,opp:x.opp,k:x.k,pdk:+r[19]||0,min:r[2],pt:+r[3]||0,rb:+r[6]||0,as:+r[7]||0,stl:+r[8]||0,blk:+r[9]||0,tov:+r[10]||0,fgm:+r[12]||0,fga:+r[13]||0,tpm:+r[14]||0,ftm:+r[16]||0,fta:+r[17]||0})}
   return out.sort((a,b)=>b.pdk-a.pdk)}
 /* (933) come il campo della modalità notte: i 5 migliori della notte per PDK (stessa scelta di campoNotteMap + slice(0,5)) */
-function liveRows(t){return allRows(t).slice(0,5)}
+/* (969) nella modalità Dream in campo SOLO chi ha la partita in corso: chi ha finito stanotte esce (nella modalità notte 2D restano anche i finiti) */function liveRows(t){return allRows(t).filter(r=>r.live).slice(0,5)}
 /* (964) chi è in panchina adesso (partita in corso, non in campo) */
 function benchRows(t){try{return allRows(t).filter(r=>r.live&&!r.oc)}catch(e){return[]}}
 function duel(t){try{const P=drPO(drStand()),k=drCurWeek(P),W=drWeek(k),pr=(drPairs(k,null,P)||[]).find(x=>x.includes(t)),o=pr?(pr[0]===t?pr[1]:pr[0]):null;return{k,me:drTeam(k,t,W).score,o,os:o?drTeam(k,o,W).score:null}}catch(e){return null}}

@@ -2272,3 +2272,6 @@ Francesco (00:34). La strada fuori dall arena diventa la strada della lega: 4 st
 
 ## 968 — Modalità Dream: in campo anche l avversario del turno
 Francesco (00:41–00:49). In ogni stadio, oltre ai miei giocatori live (fino a 5, i migliori per PDK) ci sono quelli live dell avversario del turno: i miei nella metà sinistra, i suoi nella destra (nel suo stadio il contrario, la casa sempre a sinistra). Posizioni secondo quanti sono (1–5), il migliore più vicino al centro, su due file sfalsate (davanti e dietro) così cartellini e maglie non si coprono; tutto entro ±10,5 m così nello schermo verticale si vedono tutti. Più sono, più maglie e cartellini si rimpiccioliscono: 5 → 64%, 4 → 72%, 3 → 84%, 2 → 94%, 1 → misura piena. Se l avversario non ha nessuno live resta la disposizione di prima (miei su tutto il campo). Voce e scritte anche per le azioni avversarie; il pubblico di casa reagisce al contrario (delusione sui loro canestri, esultanza sui loro errori e palle perse).
+
+## 969 — Modalità Dream: in campo solo chi sta giocando
+Francesco (01:02): nella modalità Dream restano in campo solo i giocatori con la partita in corso (miei e dell avversario, massimo 5 per squadra); chi ha finito la partita stanotte esce dal campo. Nella modalità notte 2D non cambia nulla (restano anche i finiti). Se non gioca nessuno il campo resta vuoto, senza scritte.
