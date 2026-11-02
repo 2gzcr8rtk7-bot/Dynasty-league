@@ -2421,3 +2421,12 @@ Francesco (15:33): le auto sembravano tutte uguali. Ora ogni modello ha una carr
 
 ## 1017 — Modalità Dream: CORRI a interruttore
 Francesco (15:36). Il tasto CORRI ora si accende e si spegne con un tocco: acceso diventa viola con il bordo giallo e la scritta «CORSA», e col joystick si corre senza tenerlo premuto (dita libere per joystick e visuale); ritoccandolo si torna a camminare.
+
+## 1018 — Modalità Dream: Dream TV spettacolare
+Francesco (15:41). Regia automatica con 8 camere che si alternano a stacchi ogni 6-8 secondi: gru che gira attorno allo stadio scendendo, carrello a bordocampo, vista dall alto che ruota, giro attorno al maxischermo, camera dietro il canestro, drone in picchiata, panoramica dalla tribuna, giro basso «eroico»; ogni camera ha la sua lente, leggero mosso a mano. Quando un giocatore fa un azione la regia stacca sul primo piano che gli gira attorno. Bande nere da cinema, bollino «● LIVE · DREAM TV», nome della camera in basso; joystick e corri nascosti in TV.
+
+## 1019 — Modalità Dream: ruote sistemate, auto più sportive e più diverse in guida
+Francesco (15:44). Ruote e cerchi di nuovo ben visibili (sulle auto più larghe finivano dentro la carrozzeria); cerchi più lucidi; ruote più grandi sulle sportive. Muscle V8 ora fastback in stile muscle car americana con fanali a tre barre; Hyper V12 più bassa e a cuneo stile supercar, prese d aria laterali e splitter. Prestazioni a scala: più l auto costa, più è veloce e tiene in curva (e la derapata si controlla meglio): Rally X 173 km/h, Muscle V8 202, GT Sprint 205 (tenuta 1,22), Volt E 216, Hyper V12 252 km/h con tenuta 1,42; quella di serie resta come prima.
+
+## 1020 — Modalità Dream: il computer del GM è l app vera
+Francesco (15:51): l app nel monitor era tagliata. Ora sedendoti al computer lo stadio si mette da parte (resta in memoria, la voce dei tuoi live continua; pubblico spento) e sei nell app normale, identica, che si apre sullo scontro diretto della squadra e si usa come sempre, anche girando il telefono in orizzontale. In alto a destra «🏟️ TORNA IN UFFICIO» ti riporta seduto nell ufficio; in basso a sinistra «🔊 voce dei tuoi live attiva» se l audio è acceso. Le sezioni riservate restano escluse.
