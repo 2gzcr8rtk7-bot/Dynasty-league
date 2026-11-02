@@ -2452,3 +2452,15 @@ Francesco (16:45): l app girata non caricava le parti sotto lo schermo e non par
 
 ## 1027 — Report Allenamento IA Trade Spiders (40) e Mooses (50) del 02/11
 Profili aggiornati fondendo i nuovi dati con i precedenti (peso = risposte): regressione su Δ valore, età e giocatori (ridge). SPIDERS (40 nuove, 20 sì): vantaggio chiesto 7 → 5,8%; età 0 → 0,75 (hanno accettato di ringiovanire: 25,9 contro 28,2 anni); pl: Morant −4,8 (lo cedono alla pari 6 su 7), Mitchell 8 → 3,5 e Franz Wagner 7,2 → 2,8 (ora li cedono più spesso), Boozer 12 → 8,2 e Castle 12 → 8,2 (non li cedono, ma meno estremi), Adebayo 4,3 (1 su 8 alla pari), LaMelo +1,6; n 132; GM_ACC 40/98. MOOSES (44 nuove senza le 6 «da cambiare», 21 sì): vantaggio chiesto 14 → 12,2%; età 2,5 → 2,8; pl: Herro −12 → −8,6 (cede 8 su 12), Ausar Thompson 7,8, Graves, Dëmin, Fears, Jaquez in negativo leggero; piacciono Ighodaro, Kuminga; richieste «più crediti» (Ware per Queen); n 194; GM_ACC 41/112. GM_DESCR di entrambi aggiornate. Nessuna correzione dei valori del Calcolatore (nessun nuovo consenso tra più GM).
+
+## 1028 — Modalità Dream: Officina Dream (tuning, colori, cerchi)
+Nuova officina nel parco a nord-est (mappa: 🔧). Entri con la macchina sul tappeto giallo e appare «🔧 OFFICINA»: cursori per potenza, velocità massima, grip in curva veloce e lenta, scivolata in derapata; colori carrozzeria, dettagli e cerchi. Le modifiche valgono subito nella guida e, se la macchina è in garage, restano salvate nel suo box.
+
+## 1029 — Modalità Dream: villa di lusso con TV a canali
+TV grande sulla parete sinistra del soggiorno con canali: DREAMERS (partite della lega), NBA LIVE (risultati), e un BOX SCORE per ogni partita. Tasto «📺 CANALE» quando sei vicino o tocca la TV; si aggiorna ogni 20 secondi. Arredo di lusso: parquet a spina di pesce, soffitto bianco con faretti, lampadario dorato, tende, libreria, quadri, poltrona.
+
+## 1030 — Modalità Dream: villa con aspetto da casa
+Pareti dipinte calde con boiserie e battiscopa, niente soffitto viola, LED o titolo da sala; l'uscita dice ESCI. TV e salotto spostati: il passaggio tra cucina e camera è libero.
+
+## 1031 — Modalità Dream: computer del GM semplice in orizzontale
+Francesco (17:05): il computer crashava. Ora al computer si apre una schermata nuova in orizzontale con solo due schede: 🧮 Calcolatore trade e 🤖 IA Trade (con i gusti dei GM), più «🏟️ TORNA IN UFFICIO». Niente più app intera dentro una finestra: lo stadio dietro viene messo in pausa per non pesare sul telefono.
