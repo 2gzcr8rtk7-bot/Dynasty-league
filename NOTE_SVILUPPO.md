@@ -2299,3 +2299,6 @@ Francesco (09:27–09:37). UFFICIO DEL GM: porta sulla parete sinistra del corri
 
 ## 977 — Tiro più rapido, mirino come prima
 Francesco (09:38): il trascinamento col pallone torna come senza pallone (come andava prima, era giusto). Palla subito di nuovo in mano: 0,35 s dopo che tocca terra (prima aspettava che si fermasse), 0,6 s dopo il canestro, al massimo 3,5 s.
+
+## 978 — Piazza: cielo secondo l ora; niente spostamento col tocco
+Francesco (09:42–09:44). Piazza dei Dreamers con il cielo dell ora del telefono: giorno 8–17 (cielo azzurro con nuvole e sole, luce piena, lampioni/lucine spenti, finestre dei grattacieli quasi spente), sera 17–20 e alba 6–8 (arancio-viola con il sole basso, lampioni accesi più tenui), notte 20–6 (come prima, con le stelle). Tocco su parquet/tribune/pavimento: non sposta più (dentro e fuori dall arena): ci si muove col joystick, o con frecce/WASD e mouse sul computer. Restano i tocchi su maglie, porte, tabellone, armadietti, bacheca e schermo dell ufficio. Suggerimento iniziale aggiornato.
