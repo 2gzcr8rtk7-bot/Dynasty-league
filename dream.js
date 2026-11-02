@@ -807,10 +807,11 @@ const A=null;
       RS.add(trM);RS.add(crM)}
     /* lampioni: palo, braccio e lampada; di notte la luce a terra */
     {const n=LAMPS.length,dm=new THREE.Object3D(),poM=new THREE.InstancedMesh(new THREE.CylinderGeometry(.08,.12,6.2,6),new THREE.MeshLambertMaterial({color:"#2b2a31"}),n),hdM=new THREE.InstancedMesh(new THREE.BoxGeometry(.42,.14,1.3),new THREE.MeshBasicMaterial({color:NIGHT?"#fff1d0":"#cfcac0",toneMapped:false}),n);
-      const glM=NIGHT?new THREE.InstancedMesh(new THREE.PlaneGeometry(9,9),new THREE.MeshBasicMaterial({map:K.GLOW(),color:"#ffd9a0",transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:PH==="sera"?.35:.5,toneMapped:false}),n):null;
+      const glM=NIGHT?new THREE.InstancedMesh(new THREE.PlaneGeometry(9,9),new THREE.MeshBasicMaterial({map:K.GLOW(),color:"#ffd9a0",transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:PH==="sera"?.45:.7,toneMapped:false}),n):null;
       LAMPS.forEach((p,i)=>{dm.position.set(p[0],3.1,p[1]);dm.rotation.set(0,p[2],0);dm.scale.set(1,1,1);dm.updateMatrix();poM.setMatrixAt(i,dm.matrix);const dx=-Math.sin(p[2])*.9,dz=-Math.cos(p[2])*.9;
         dm.position.set(p[0]+dx,6.15,p[1]+dz);dm.updateMatrix();hdM.setMatrixAt(i,dm.matrix);if(glM){dm.position.set(p[0]+dx*2,.17,p[1]+dz*2);dm.rotation.set(-Math.PI/2,0,0);dm.updateMatrix();glM.setMatrixAt(i,dm.matrix)}});
-      RS.add(poM);RS.add(hdM);if(glM)RS.add(glM)}
+      RS.add(poM);RS.add(hdM);if(glM)RS.add(glM);
+      /* (999) di notte i lampioni sono accesi: alone luminoso attorno alla lampada (un solo disegno per tutti) e luce a terra più calda */if(NIGHT){const HP=[];LAMPS.forEach(p=>{HP.push(p[0]-Math.sin(p[2])*.9,6.05,p[1]-Math.cos(p[2])*.9)});const hg=new THREE.BufferGeometry();hg.setAttribute("position",new THREE.Float32BufferAttribute(HP,3));const dotT=tex(64,64,(x,W,H)=>{const g=x.createRadialGradient(W/2,H/2,0,W/2,H/2,W/2);g.addColorStop(0,"rgba(255,248,225,1)");g.addColorStop(.25,"rgba(255,220,150,.7)");g.addColorStop(1,"rgba(255,200,120,0)");x.fillStyle=g;x.fillRect(0,0,W,H)});RS.add(new THREE.Points(hg,new THREE.PointsMaterial({map:dotT,size:3.2,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false,color:"#ffe2a8"})))}}
     /* (989) MACCHINE: parcheggiate sulla via principale; avvicinandoti scegli i colori della franchigia e premi ENTRA. Guida: vista da dentro, volante, GAS e FRENO */
     const LIV=k=>{const T2=TEAMS[k];const bg=k==="DUC"?"#ea9a00":T2.bg;let tr=T2.fg&&T2.fg!==bg?T2.fg:(T2.trim||"#ffffff");return{bg,tr}};
     const lgTex={};const logoT=k=>{if(lgTex[k])return lgTex[k];const L=LGS[k];lgTex[k]=tex(256,256,(x,W,H)=>{x.clearRect(0,0,W,H);if(L){const r=Math.min(230/L.width,230/L.height);x.drawImage(L,(W-L.width*r)/2,(H-L.height*r)/2,L.width*r,L.height*r)}});return lgTex[k]};
@@ -834,7 +835,7 @@ const A=null;
       const wsG=new THREE.BufferGeometry();wsG.setAttribute("position",new THREE.Float32BufferAttribute([-.76,.97,-.99, .76,.97,-.99, .72,1.36,-.2, -.72,1.36,-.2],3));wsG.setAttribute("uv",new THREE.Float32BufferAttribute([0,0,1,0,1,1,0,1],2));wsG.setIndex([0,1,2,0,2,3]);wsG.computeVertexNormals();
       const wsM=new THREE.MeshBasicMaterial({map:wsT,transparent:true,depthWrite:false,side:THREE.DoubleSide});const ws=new THREE.Mesh(wsG,wsM);inner.add(ws);
       const sgM=new THREE.MeshBasicMaterial({color:"#a9c6e2",transparent:true,opacity:.07,depthWrite:false,side:THREE.DoubleSide});[-.8,.8].forEach(sx=>{const q=IP(new THREE.PlaneGeometry(2.7,.4),sgM,sx,1.19,.43);q.rotation.y=Math.PI/2});
-      IP(new THREE.BoxGeometry(1.74,.56,.06),M_IN,0,.58,-.85);IP(new THREE.BoxGeometry(.26,.08,.03),M_PL,0,1.3,-.27);IP(new THREE.BoxGeometry(.22,.06,.005),new THREE.MeshBasicMaterial({color:"#9fb3c8"}),0,1.3,-.25);IP(new THREE.BoxGeometry(.03,.07,.03),M_PL,0,1.36,-.24);
+      IP(new THREE.BoxGeometry(1.74,.62,.08),M_IN,0,.6,-.72);IP(new THREE.BoxGeometry(.26,.08,.03),M_PL,0,1.3,-.27);IP(new THREE.BoxGeometry(.22,.06,.005),new THREE.MeshBasicMaterial({color:"#9fb3c8"}),0,1.3,-.25);IP(new THREE.BoxGeometry(.03,.07,.03),M_PL,0,1.36,-.24);
       [-.55,.55].forEach(sx=>{const q=IP(new THREE.BoxGeometry(.44,.02,.3),M_HD,sx,1.37,-.05);q.rotation.x=.25});
       /* tetto e montanti nel colore della carrozzeria */EXT.push(P(new THREE.BoxGeometry(1.62,.06,1.18),bM,0,1.44,.42));
       const pil=(x0,y0,z0,x1,y1,z1)=>{const L=Math.hypot(y1-y0,z1-z0),q=P(new THREE.BoxGeometry(.07,L,.07),bM,(x0+x1)/2,(y0+y1)/2,(z0+z1)/2);q.rotation.x=Math.atan2(z1-z0,y1-y0);EXT.push(q)};
@@ -844,9 +845,9 @@ const A=null;
       const W=[];[[-.86,-1.45],[.86,-1.45],[-.86,1.42],[.86,1.42]].forEach(([wx,wz],i)=>{const w=new THREE.Group();w.position.set(wx,.36,wz);g.add(w);const s_=new THREE.Group();w.add(s_);s_.add(new THREE.Mesh(G_WHL,M_TYR));s_.add(new THREE.Mesh(G_RIM,M_RIM));W.push({w,s:s_,front:i<2})});
       [-.6,.6].forEach(sx=>{P(new THREE.PlaneGeometry(.38,.13),M_HL,sx,.68,-2.395,0,Math.PI);P(new THREE.PlaneGeometry(.36,.12),M_TL,sx,.8,2.345)});P(new THREE.PlaneGeometry(.7,.16),M_IN,0,.5,-2.39,0,Math.PI);
       /* ombra */const sh=P(new THREE.PlaneGeometry(2.6,5.2),new THREE.MeshBasicMaterial({map:K.GLOW(),color:"#000000",transparent:true,opacity:.55,depthWrite:false}),0,.03,0,-Math.PI/2);
-      /* interno: cruscotto, quadro, volante, sedili, cielo */P(new THREE.BoxGeometry(1.72,.16,.55),M_IN,0,.9,-.95);
+      /* interno: cruscotto, quadro, volante, sedili, cielo *//* (999) cruscotto più alto e profondo: copre il retro del cofano (prima il colore della carrozzeria si mischiava sotto il volante) */P(new THREE.BoxGeometry(1.74,.24,.62),M_IN,0,.95,-.97);
       const clT=tex(256,128,(x,W_,H)=>{x.fillStyle="#0b0b0f";x.fillRect(0,0,W_,H);[[70,"#38bdf8"],[186,"#f97316"]].forEach(([cx,c])=>{x.strokeStyle=c;x.lineWidth=6;x.beginPath();x.arc(cx,72,46,Math.PI*.8,Math.PI*2.2);x.stroke();x.strokeStyle="#ddd";x.lineWidth=3;for(let a=0;a<9;a++){const t_=Math.PI*.8+a*Math.PI*1.4/8;x.beginPath();x.moveTo(cx+Math.cos(t_)*36,72+Math.sin(t_)*36);x.lineTo(cx+Math.cos(t_)*44,72+Math.sin(t_)*44);x.stroke()}})});
-      P(new THREE.PlaneGeometry(.5,.2),new THREE.MeshBasicMaterial({map:clT,toneMapped:false}),-.38,.94,-.672,-.35);
+      P(new THREE.PlaneGeometry(.5,.2),new THREE.MeshBasicMaterial({map:clT,toneMapped:false}),-.38,.95,-.655,-.35);
       const sw=new THREE.Group();sw.position.set(-.38,.86,-.56);sw.rotation.x=-.5;sw.scale.setScalar(.85);g.add(sw);const swi=new THREE.Group();sw.add(swi);
       swi.add(new THREE.Mesh(new THREE.TorusGeometry(.19,.024,8,28),M_IN));[0,2.2,-2.2].forEach(a=>{const sp=new THREE.Mesh(new THREE.BoxGeometry(.03,.17,.02),M_IN);sp.position.set(Math.sin(a)*.09,-Math.cos(a)*.09,0);sp.rotation.z=a;swi.add(sp)});
       const hub=new THREE.Mesh(new THREE.CircleGeometry(.065,20),lM);hub.position.z=.016;swi.add(hub);const hb2=new THREE.Mesh(new THREE.CylinderGeometry(.066,.066,.03,20),M_IN);hb2.rotation.x=Math.PI/2;swi.add(hb2);
