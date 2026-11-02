@@ -1,0 +1,126 @@
+/* (1046) DREAM SPACE — modulo separato (caricato solo quando sali sullo shuttle, scaricato quando torni sulla Terra).
+   1) Decollo e viaggio nello spazio in prima persona dalla cabina dello shuttle: schiva le meteore (3 scudi), BOOST per accelerare.
+   2) Arrivo sul pianeta della squadra proprietaria dello shuttle: lo piloti tu fino alla pista d'atterraggio (luci, PAPI, torre).
+   Usa lo stesso renderer della Modalità Dream (nessun secondo contesto WebGL); la città resta ferma in pausa. */
+(function(){
+const DreamSpace={open(host,o){
+  const T=o.THREE,R=o.R,W=o.W,H=o.H,tm=o.team||{k:"DRM",name:"Dreamers",nick:"Dreamers",bg:"#7c3aed",tr:"#facc15"};
+  const C=c=>new T.Color(c),mix=(a,b,k)=>C(a).lerp(C(b),k),hex=c=>"#"+C(c).getHexString();
+  const A=tm.bg,B=tm.tr&&hex(tm.tr)!==hex(tm.bg)?tm.tr:"#ffffff";
+  const SV={exp:R.toneMappingExposure,cc:R.getClearColor(new T.Color()),ca:R.getClearAlpha()};
+  let alive=true,raf=0,scene=null,mode="launch",last=performance.now();
+  host.style.background="transparent";
+  const own=[];const tex=(w,h,f,rep)=>{const c=document.createElement("canvas");c.width=w;c.height=h;f(c.getContext("2d"),w,h);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.anisotropy=8;if(rep){t.wrapS=t.wrapT=T.RepeatWrapping}own.push(t);return t};
+  const dispose=s=>{if(!s)return;if(cam.parent===s)s.remove(cam);s.traverse(x=>{if(x.geometry)x.geometry.dispose();const ms=x.material?(Array.isArray(x.material)?x.material:[x.material]):[];ms.forEach(m=>{["map","emissiveMap"].forEach(k=>{if(m[k])m[k].dispose()});m.dispose()})});if(s.background&&s.background.dispose)s.background.dispose()};
+  const cam=new T.PerspectiveCamera(72,W/H,.1,9000);cam.rotation.order="YXZ";
+  /* ---------- HUD e comandi ---------- */
+  const el=(css,html,par)=>{const d=document.createElement("div");d.style.cssText=css;if(html!=null)d.innerHTML=html;(par||host).appendChild(d);return d};
+  const F="font-family:'Arial Black',Arial,sans-serif;font-style:italic;font-weight:900;";
+  const top=el(`position:absolute;left:50%;top:8px;transform:translateX(-50%);z-index:5;text-align:center;color:#fff;${F}font-size:15px;text-shadow:0 2px 6px #000;pointer-events:none;white-space:nowrap`);
+  const big=el(`position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);z-index:6;color:#fff;${F}font-size:56px;text-shadow:0 4px 16px #000,0 0 30px ${A};pointer-events:none;white-space:nowrap;display:none`);
+  const flash=el("position:absolute;inset:0;z-index:4;pointer-events:none;background:#fff;opacity:0;transition:opacity .25s");
+  const hud=el(`position:absolute;left:12px;top:44px;z-index:5;color:#e9d5ff;${F}font-size:13px;line-height:1.5;text-shadow:0 2px 5px #000;pointer-events:none`);
+  const showBig=(t,ms,c)=>{big.textContent=t;big.style.color=c||"#fff";big.style.display="block";clearTimeout(big.tt);if(ms)big.tt=setTimeout(()=>big.style.display="none",ms)};
+  const fl=(c,o_,ms)=>{flash.style.background=c;flash.style.opacity=o_;setTimeout(()=>flash.style.opacity=0,ms||120)};
+  /* cloche: trascina il pomello (su = muso in su) */
+  const stB=el("position:absolute;left:28px;bottom:28px;width:150px;height:150px;border-radius:50%;z-index:5;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.35);touch-action:none");
+  const stK=el(`position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px 0 0 -31px;border-radius:50%;background:${A};border:3px solid #fff;box-shadow:0 0 18px ${A};pointer-events:none`,null,stB);
+  const IN={x:0,y:0,id:null,boost:false,thr:0};const SC={x:28+75,y:H-28-75};
+  stB.addEventListener("pointerdown",e=>{e.preventDefault();e.stopPropagation();IN.id=e.pointerId;try{stB.setPointerCapture(e.pointerId)}catch(_){}mvS(e)});
+  const mvS=e=>{if(e.pointerId!==IN.id)return;const p=o.pt(e);let dx=(p.x-SC.x)/60,dy=(p.y-SC.y)/60;const l=Math.hypot(dx,dy);if(l>1){dx/=l;dy/=l}IN.x=dx;IN.y=dy;stK.style.transform=`translate(${dx*44}px,${dy*44}px)`};
+  stB.addEventListener("pointermove",mvS);const upS=e=>{if(e.pointerId!==IN.id)return;IN.id=null;IN.x=IN.y=0;stK.style.transform=""};stB.addEventListener("pointerup",upS);stB.addEventListener("pointercancel",upS);
+  const btn=(txt,css,on,off)=>{const b=document.createElement("button");b.textContent=txt;b.style.cssText=`position:absolute;z-index:5;border-radius:16px;border:2px solid #fff;color:#fff;${F}font-size:15px;touch-action:none;`+css;host.appendChild(b);b.addEventListener("pointerdown",e=>{e.preventDefault();e.stopPropagation();on&&on();b.style.filter="brightness(1.5)"});const o_=()=>{b.style.filter="";off&&off()};b.addEventListener("pointerup",o_);b.addEventListener("pointercancel",o_);b.addEventListener("pointerleave",o_);return b};
+  const bBoost=btn("🔥 BOOST",`right:24px;bottom:30px;width:120px;height:78px;background:linear-gradient(${A},#111)`,()=>IN.boost=true,()=>IN.boost=false);
+  const bUp=btn("▲ GAS",`right:24px;bottom:120px;width:110px;height:64px;background:#14532d;display:none`,()=>IN.thr=1,()=>IN.thr=0);
+  const bDn=btn("▼ GAS",`right:24px;bottom:30px;width:110px;height:64px;background:#7f1d1d;display:none`,()=>IN.thr=-1,()=>IN.thr=0);
+  const panel=el(`position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:8;display:none;padding:16px 18px;border-radius:18px;background:rgba(10,8,20,.94);border:2px solid ${A};color:#fff;font:700 15px system-ui;text-align:center;min-width:300px;box-shadow:0 10px 40px #000`);
+  const ask=(title,sub,opts)=>{panel.innerHTML=`<div style="${F}font-size:22px;color:${hex(mix(A,"#fff",.35))}">${title}</div><div style="margin:8px 0 12px;color:#cbd5e1">${sub}</div>`;opts.forEach(([t,f])=>{const b=document.createElement("button");b.textContent=t;b.style.cssText=`display:block;width:100%;margin:7px 0;padding:11px;border-radius:12px;border:2px solid ${A};background:#1c1630;color:#fff;font:900 15px system-ui`;b.addEventListener("pointerdown",e=>{e.stopPropagation();e.preventDefault();panel.style.display="none";f()});panel.appendChild(b)});panel.style.display="block"};
+  /* ---------- cabina dello shuttle (attaccata alla telecamera) ---------- */
+  const cock=new T.Group();cam.add(cock);
+  {const dk=new T.MeshLambertMaterial({color:"#17161d",emissive:"#0d0c12"}),fr=new T.MeshLambertMaterial({color:mix(A,"#222",.35),emissive:mix(A,"#000",.75)}),led=new T.MeshBasicMaterial({color:A,toneMapped:false}),led2=new T.MeshBasicMaterial({color:B,toneMapped:false});
+    const P=(g,m,x,y,z,rx,ry,rz)=>{const q=new T.Mesh(g,m);q.position.set(x,y,z);q.rotation.set(rx||0,ry||0,rz||0);cock.add(q);return q};
+    P(new T.BoxGeometry(2.6,.5,.8),dk,0,-.86,-1.05,-.3);P(new T.BoxGeometry(2.6,.035,.035),led,0,-.6,-.73);P(new T.BoxGeometry(2.9,.14,.16),fr,0,.86,-1.2);
+    [-1,1].forEach(s=>{const p=P(new T.BoxGeometry(.13,1.9,.16),fr,s*1.35,.1,-1.18);p.rotation.z=s*.32;P(new T.BoxGeometry(.03,1.6,.03),led2,s*1.27,.05,-1.08).rotation.z=s*.32;P(new T.CylinderGeometry(.035,.045,.32,10),dk,s*.26,-.68,-.72,.4)});
+    const scrT=(f)=>tex(256,160,f);const s1=scrT((x,w,h)=>{x.fillStyle="#020611";x.fillRect(0,0,w,h);x.strokeStyle=A;x.lineWidth=3;for(let r=20;r<80;r+=20){x.beginPath();x.arc(w/2,h/2,r,0,7);x.stroke()}x.fillStyle=B;x.fillRect(w/2-3,h/2-3,6,6)});
+    const s2=scrT((x,w,h)=>{x.fillStyle="#04030a";x.fillRect(0,0,w,h);if(tm.logo){const r=Math.min(130/tm.logo.width,130/tm.logo.height);x.drawImage(tm.logo,w/2-tm.logo.width*r/2,h/2-tm.logo.height*r/2,tm.logo.width*r,tm.logo.height*r)}});
+    const s3=scrT((x,w,h)=>{x.fillStyle="#020611";x.fillRect(0,0,w,h);x.fillStyle="#22c55e";x.font="bold 26px monospace";["SYS OK","FUEL 98%","NAV ▶"].forEach((t,i)=>x.fillText(t,16,46+i*40))});
+    [[s1,-.62],[s2,0],[s3,.62]].forEach(([t,x])=>{const q=P(new T.PlaneGeometry(.42,.26),new T.MeshBasicMaterial({map:t,toneMapped:false}),x,-.7,-.88,-.3)});
+  }
+  cock.visible=true;
+  /* ---------- 1) SPAZIO ---------- */
+  let SF=null,SP_=null;const ship={x:0,y:0,vx:0,vy:0,sh:3,prog:0,dist:0,shake:0,boostE:1};const D=3300;let MET=[],DUST=null,PLN=null;
+  const buildSpace=()=>{SF=new T.Scene();
+    const bg=tex(2048,1024,(x,w,h)=>{x.fillStyle="#04030a";x.fillRect(0,0,w,h);const blob=(cx,cy,r,c,a)=>{const g=x.createRadialGradient(cx,cy,2,cx,cy,r);const cc=C(c);g.addColorStop(0,`rgba(${cc.r*255|0},${cc.g*255|0},${cc.b*255|0},${a})`);g.addColorStop(1,"rgba(0,0,0,0)");x.fillStyle=g;x.fillRect(cx-r,cy-r,r*2,r*2)};
+      for(let i=0;i<9;i++)blob(Math.random()*w,h*(.2+Math.random()*.6),180+Math.random()*320,i%3===0?A:i%3===1?"#7c3aed":"#1d4ed8",.18+Math.random()*.12);
+      for(let i=0;i<420;i++){const sx=Math.random()*w,sy=Math.random()*h,r=1.4+Math.random()*2.4,g=x.createRadialGradient(sx,sy,0,sx,sy,r*2);g.addColorStop(0,`rgba(255,255,255,${.5+Math.random()*.5})`);g.addColorStop(1,"rgba(200,210,255,0)");x.fillStyle=g;x.fillRect(sx-r*2,sy-r*2,r*4,r*4)}});
+    bg.mapping=T.EquirectangularReflectionMapping;SF.background=bg;
+    SF.add(new T.HemisphereLight("#c7d2fe","#1a1426",1.3));const sun=new T.DirectionalLight("#fff4e0",2.6);sun.position.set(2,1.5,1);SF.add(sun);
+    /* polvere che scorre: senso di velocità */const N=700,pp=new Float32Array(N*3);for(let i=0;i<N;i++){pp[i*3]=(Math.random()-.5)*160;pp[i*3+1]=(Math.random()-.5)*110;pp[i*3+2]=-Math.random()*600}const dg=new T.BufferGeometry();dg.setAttribute("position",new T.BufferAttribute(pp,3));
+    const dot=tex(64,64,(x,w,h)=>{const g=x.createRadialGradient(w/2,h/2,0,w/2,h/2,w/2);g.addColorStop(0,"rgba(255,255,255,1)");g.addColorStop(1,"rgba(255,255,255,0)");x.fillStyle=g;x.fillRect(0,0,w,h)});
+    DUST=new T.Points(dg,new T.PointsMaterial({map:dot,size:.9,transparent:true,depthWrite:false,blending:T.AdditiveBlending,color:"#dbe4ff"}));SF.add(DUST);
+    /* meteore: rocce irregolari, alcune con crepe di lava */const geos=[0,1,2].map(k=>{const g=new T.IcosahedronGeometry(1,1),p=g.attributes.position;for(let i=0;i<p.count;i++){const f=.72+Math.random()*.5;p.setXYZ(i,p.getX(i)*f,p.getY(i)*f*(.8+k*.1),p.getZ(i)*f)}g.computeVertexNormals();return g});
+    const rock=new T.MeshStandardMaterial({color:"#6b5c52",roughness:.95,flatShading:true}),lava=new T.MeshStandardMaterial({color:"#4a3a33",roughness:.9,flatShading:true,emissive:"#ff5a1f",emissiveIntensity:.35});
+    MET=[];for(let i=0;i<42;i++){const m=new T.Mesh(geos[i%3],i%5===0?lava:rock);SF.add(m);const q={m,r:1,rx:Math.random()*2-1,ry:Math.random()*2-1};spawn(q,true);MET.push(q)}
+    /* il pianeta della squadra: cresce mentre ti avvicini */const pT=tex(1024,512,(x,w,h)=>{const g=x.createLinearGradient(0,0,0,h);g.addColorStop(0,hex(mix(A,"#000",.3)));g.addColorStop(.5,hex(mix(A,"#fff",.25)));g.addColorStop(1,hex(mix(A,"#000",.4)));x.fillStyle=g;x.fillRect(0,0,w,h);for(let i=0;i<14;i++){x.fillStyle=`rgba(${i%2?255:0},${i%2?255:0},${i%2?255:0},.07)`;x.fillRect(0,Math.random()*h,w,8+Math.random()*30)}for(let i=0;i<40;i++){const cc=C(B);x.fillStyle=`rgba(${cc.r*255|0},${cc.g*255|0},${cc.b*255|0},.12)`;x.beginPath();x.ellipse(Math.random()*w,Math.random()*h,20+Math.random()*90,8+Math.random()*30,0,0,7);x.fill()}});
+    PLN=new T.Group();PLN.position.set(0,0,-3200);SF.add(PLN);const ps=new T.Mesh(new T.SphereGeometry(1,48,32),new T.MeshStandardMaterial({map:pT,roughness:.8}));PLN.add(ps);PLN.userData.s=ps;
+    const ring=new T.Mesh(new T.RingGeometry(1.35,2.1,64),new T.MeshBasicMaterial({color:B,transparent:true,opacity:.45,side:T.DoubleSide}));ring.rotation.x=1.25;PLN.add(ring);
+    const gl=new T.Sprite(new T.SpriteMaterial({map:dot,color:mix(A,"#fff",.4),transparent:true,opacity:.55,depthWrite:false,blending:T.AdditiveBlending}));gl.scale.set(2.9,2.9,1);PLN.add(gl);
+    SF.add(cam);cam.position.set(0,0,0);cam.rotation.set(0,0,0);scene=SF};
+  function spawn(q,init){const r=1.2+Math.random()*Math.random()*7;q.r=r;q.m.scale.setScalar(r);const aim=!init&&Math.random()<.07;q.m.position.set(ship.x+(aim?(Math.random()-.5)*8:(Math.random()-.5)*110),ship.y+(aim?(Math.random()-.5)*6:(Math.random()-.5)*75),init?-180-Math.random()*440:-560-Math.random()*120);q.m.visible=true}
+  const tickSpace=dt=>{const v=(IN.boost&&ship.boostE>0?92:55);ship.boostE=Math.max(0,Math.min(1,ship.boostE+(IN.boost?-dt*.35:dt*.12)));
+    ship.vx+=(IN.x*34-ship.vx)*Math.min(1,dt*4);ship.vy+=(-IN.y*26-ship.vy)*Math.min(1,dt*4);ship.x=Math.max(-55,Math.min(55,ship.x+ship.vx*dt));ship.y=Math.max(-38,Math.min(38,ship.y+ship.vy*dt));
+    const sk=ship.shake>0?(ship.shake-=dt,ship.shake*.6):0;cam.position.set(ship.x+(Math.random()-.5)*sk,ship.y+(Math.random()-.5)*sk,0);cam.rotation.set(ship.vy*.006,0,-ship.vx*.012);
+    const dz=v*dt;ship.dist+=dz;ship.prog=Math.min(1,ship.dist/D);
+    const pa=DUST.geometry.attributes.position;for(let i=0;i<pa.count;i++){let z=pa.getZ(i)+dz;if(z>8){z-=600;pa.setX(i,ship.x+(Math.random()-.5)*160);pa.setY(i,ship.y+(Math.random()-.5)*110)}pa.setZ(i,z)}pa.needsUpdate=true;
+    for(const q of MET){const m=q.m;m.position.z+=dz;m.rotation.x+=q.rx*dt;m.rotation.y+=q.ry*dt;if(m.position.z>10){if(ship.prog<.93)spawn(q);else m.visible=false;continue}
+      if(m.visible&&Math.abs(m.position.z)<q.r+1.4&&Math.hypot(m.position.x-ship.x,m.position.y-ship.y)<q.r*.85+1.1){m.visible=false;m.position.z=99;ship.sh--;ship.shake=.5;fl("#ef4444",.55,140);try{navigator.vibrate&&navigator.vibrate(120)}catch(e){}if(ship.sh<=0){mode="dead";showBig("SHUTTLE COLPITO!",0,"#f87171");setTimeout(()=>{big.style.display="none";ask("Missione fallita","Le meteore hanno distrutto gli scudi.",[["🔁 Riparti dalla Terra",restartSpace],["🌍 Torna in città",()=>o.onExit&&o.onExit()]])},900)}}}
+    const s=60+1500*Math.pow(ship.prog,2.4);PLN.scale.setScalar(s);PLN.position.set(-ship.x*.2,-ship.y*.2-s*.15,-3200);PLN.userData.s.rotation.y+=dt*.04;
+    top.innerHTML=`🚀 VERSO IL PIANETA ${tm.nick.toUpperCase()}<div style="margin:4px auto 0;width:260px;height:8px;border-radius:5px;background:rgba(255,255,255,.18);overflow:hidden"><div style="height:100%;width:${(ship.prog*100).toFixed(1)}%;background:${A}"></div></div>`;
+    hud.innerHTML=`SCUDI ${"🛡️".repeat(Math.max(0,ship.sh))}<br>VELOCITÀ ${Math.round(v*3.6*90)} km/h<br>BOOST <span style="display:inline-block;width:80px;height:8px;border-radius:4px;background:rgba(255,255,255,.2);vertical-align:middle"><span style="display:block;height:100%;width:${ship.boostE*100}%;background:#f97316;border-radius:4px"></span></span>`;
+    if(ship.prog>=1&&mode==="fly"){mode="entry";fl("#ffffff",1,900);showBig("INGRESSO NELL'ATMOSFERA",1600);setTimeout(()=>{if(!alive)return;dispose(SF);SF=null;MET=[];buildPlanet();mode="land"},700)}};
+  const restartSpace=()=>{dispose(SF);SF=null;Object.assign(ship,{x:0,y:0,vx:0,vy:0,sh:3,prog:0,dist:0,shake:0,boostE:1});startLaunch()};
+  /* ---------- 2) PIANETA E ATTERRAGGIO ---------- */
+  const pl={x:0,y:420,z:4300,yaw:0,pitch:-.07,roll:0,v:95,tv:95,vy:0,ground:false};let PAPI=[],LIGHTS=null;
+  const buildPlanet=()=>{SP_=new T.Scene();const hz=hex(mix(A,"#ffffff",.55)),sk=hex(mix(A,"#05030c",.55));
+    const skyT=tex(1024,512,(x,w,h)=>{const g=x.createLinearGradient(0,0,0,h);g.addColorStop(0,hex(mix(A,"#000",.75)));g.addColorStop(.45,sk);g.addColorStop(.5,hz);g.addColorStop(1,hex(mix(A,"#000",.5)));x.fillStyle=g;x.fillRect(0,0,w,h);
+      const moon=(cx,cy,r,c)=>{const gg=x.createRadialGradient(cx-r*.3,cy-r*.3,r*.1,cx,cy,r);gg.addColorStop(0,hex(mix(c,"#fff",.6)));gg.addColorStop(1,hex(mix(c,"#000",.3)));x.fillStyle=gg;x.beginPath();x.arc(cx,cy,r,0,7);x.fill()};moon(w*.18,h*.22,46,B);moon(w*.62,h*.3,18,"#cbd5e1");
+      for(let i=0;i<160;i++){x.fillStyle=`rgba(255,255,255,${Math.random()*.7})`;const r=1+Math.random()*1.6;x.beginPath();x.arc(Math.random()*w,Math.random()*h*.35,r,0,7);x.fill()}});skyT.mapping=T.EquirectangularReflectionMapping;SP_.background=skyT;SP_.fog=new T.Fog(hz,900,6200);
+    SP_.add(new T.HemisphereLight(hex(mix(A,"#fff",.6)),hex(mix(A,"#222",.5)),1.7));const sun=new T.DirectionalLight("#fff3e0",2.2);sun.position.set(-1,1.4,.6);SP_.add(sun);
+    /* suolo alieno nei colori della squadra */const gT=tex(512,512,(x,w,h)=>{x.fillStyle=hex(mix(A,"#3a3a3a",.55));x.fillRect(0,0,w,h);for(let i=0;i<220;i++){const c=i%3?mix(A,"#000",.4+Math.random()*.3):mix(B,"#555",.5);x.fillStyle=`rgba(${c.r*255|0},${c.g*255|0},${c.b*255|0},.22)`;x.beginPath();x.ellipse(Math.random()*w,Math.random()*h,10+Math.random()*60,6+Math.random()*30,Math.random()*3,0,7);x.fill()}},true);gT.repeat.set(70,70);
+    const gr=new T.Mesh(new T.PlaneGeometry(14000,14000),new T.MeshLambertMaterial({map:gT}));gr.rotation.x=-Math.PI/2;SP_.add(gr);
+    const mM=new T.MeshLambertMaterial({color:mix(A,"#1e1b24",.55),flatShading:true}),mM2=new T.MeshLambertMaterial({color:mix(B,"#2a2833",.6),flatShading:true});for(let i=0;i<90;i++){const a=Math.random()*Math.PI*2,d=1700+Math.random()*4200,x=Math.cos(a)*d,z=Math.sin(a)*d-800;if(Math.abs(x)<500&&z>-2600&&z<5200)continue;const r=90+Math.random()*320,hh=140+Math.random()*700;const m=new T.Mesh(new T.ConeGeometry(r,hh,6+((Math.random()*3)|0)),i%4?mM:mM2);m.position.set(x,hh/2-5,z);m.rotation.y=Math.random()*3;SP_.add(m)}
+    /* pista d atterraggio: 1600 m × 70 m, numeri, strisce di soglia, logo della squadra */const rT=tex(256,2048,(x,w,h)=>{x.fillStyle="#2a2a30";x.fillRect(0,0,w,h);for(let i=0;i<1400;i++){x.fillStyle=`rgba(255,255,255,${Math.random()*.04})`;x.fillRect(Math.random()*w,Math.random()*h,3,3)}x.fillStyle="#f1f5f9";for(let y=150;y<h-150;y+=70)x.fillRect(w/2-3,y,6,38);
+      [[0,1],[h,-1]].forEach(([y0,s])=>{for(let i=0;i<8;i++)x.fillRect(20+i*28,y0+s*14-(s<0?50:0),14,50);x.save();x.translate(w/2,y0+s*110);if(s<0)x.rotate(Math.PI);x.font="900 54px Arial";x.textAlign="center";x.fillText(s>0?"36":"18",0,0);x.restore()});x.fillRect(4,0,4,h);x.fillRect(w-8,0,4,h)});
+    const rw=new T.Mesh(new T.PlaneGeometry(70,1600),new T.MeshLambertMaterial({map:rT,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-4}));rw.rotation.x=-Math.PI/2;rw.position.set(0,.05,-800);SP_.add(rw);
+    if(tm.logo){const lT=tex(512,512,(x,w,h)=>{const r=Math.min(480/tm.logo.width,480/tm.logo.height);x.globalAlpha=.85;x.drawImage(tm.logo,w/2-tm.logo.width*r/2,h/2-tm.logo.height*r/2,tm.logo.width*r,tm.logo.height*r)});const lg=new T.Mesh(new T.PlaneGeometry(52,52),new T.MeshBasicMaterial({map:lT,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-8}));lg.rotation.x=-Math.PI/2;lg.position.set(0,.08,-260);SP_.add(lg)}
+    /* luci di pista, soglia verde, fine rossa, luci di avvicinamento */const LP=[],LC=[];const addL=(x,z,c)=>{LP.push(x,1.2,z);const cc=C(c);LC.push(cc.r,cc.g,cc.b)};for(let z=0;z>=-1600;z-=40){addL(-37,z,"#ffffff");addL(37,z,"#ffffff")}for(let x=-35;x<=35;x+=7){addL(x,2,"#22c55e");addL(x,-1602,"#ef4444")}for(let z=60;z<=520;z+=40)for(let x=-6;x<=6;x+=6)addL(x,z,"#fff7cc");
+    const dot=tex(64,64,(x,w,h)=>{const g=x.createRadialGradient(w/2,h/2,0,w/2,h/2,w/2);g.addColorStop(0,"rgba(255,255,255,1)");g.addColorStop(.3,"rgba(255,255,255,.6)");g.addColorStop(1,"rgba(255,255,255,0)");x.fillStyle=g;x.fillRect(0,0,w,h)});
+    const lg_=new T.BufferGeometry();lg_.setAttribute("position",new T.Float32BufferAttribute(LP,3));lg_.setAttribute("color",new T.Float32BufferAttribute(LC,3));LIGHTS=new T.Points(lg_,new T.PointsMaterial({map:dot,size:9,vertexColors:true,transparent:true,depthWrite:false,blending:T.AdditiveBlending,toneMapped:false}));SP_.add(LIGHTS);
+    /* PAPI: 4 luci a sinistra della pista: 2 bianche e 2 rosse = sei sul sentiero giusto */PAPI=[0,1,2,3].map(i=>{const m=new T.Mesh(new T.BoxGeometry(3,1.6,1.2),new T.MeshBasicMaterial({color:"#fff",toneMapped:false}));m.position.set(-52-i*5,1,-300);SP_.add(m);return m});
+    /* torre di controllo e hangar nei colori della squadra */const tw=new T.Group();tw.position.set(110,0,-700);SP_.add(tw);const tA=new T.MeshLambertMaterial({color:A}),tB=new T.MeshLambertMaterial({color:mix(B,"#fff",.1)}),gl=new T.MeshLambertMaterial({color:"#0b1d2e",emissive:mix(A,"#fff",.3),emissiveIntensity:.5});
+    const tc=new T.Mesh(new T.CylinderGeometry(4,5,36,12),tB);tc.position.y=18;tw.add(tc);const tg=new T.Mesh(new T.CylinderGeometry(9,7,7,12),gl);tg.position.y=39;tw.add(tg);const tr=new T.Mesh(new T.CylinderGeometry(10,10,1.2,12),tA);tr.position.y=43;tw.add(tr);
+    const hg=new T.Mesh(new T.BoxGeometry(60,24,46),tA);hg.position.set(130,12,-900);SP_.add(hg);const sT=tex(1024,192,(x,w,h)=>{x.fillStyle=hex(mix(A,"#000",.6));x.fillRect(0,0,w,h);x.fillStyle="#fff";x.font="italic 900 92px Arial Black,Arial";x.textAlign="center";x.textBaseline="middle";x.fillText("PIANETA "+tm.nick.toUpperCase(),w/2,h/2+4)});const sg=new T.Mesh(new T.PlaneGeometry(56,10.5),new T.MeshBasicMaterial({map:sT,toneMapped:false}));sg.position.set(130-30.1,16,-900);sg.rotation.y=-Math.PI/2;SP_.add(sg);
+    Object.assign(pl,{x:(Math.random()-.5)*160,y:420,z:4300,yaw:(Math.random()-.5)*.12,pitch:-.07,roll:0,v:95,tv:95,vy:0,ground:false,stop:false});
+    SP_.add(cam);scene=SP_;bBoost.style.display="none";bUp.style.display=bDn.style.display="block";showBig("ATTERRA SULLA PISTA",2200,hex(mix(A,"#fff",.4)))};
+  const tickLand=dt=>{if(IN.thr)pl.tv=Math.max(45,Math.min(150,pl.tv+IN.thr*35*dt));
+    if(!pl.ground){pl.roll+=((IN.x*.85)-pl.roll)*Math.min(1,dt*2.5);pl.yaw-=pl.roll*.5*dt;pl.pitch=Math.max(-.55,Math.min(.45,pl.pitch-IN.y*.55*dt));pl.v+=(pl.tv-pl.v)*Math.min(1,dt*.6);
+      const cp=Math.cos(pl.pitch),sink=Math.max(0,75-pl.v)*.16;pl.vy=pl.v*Math.sin(pl.pitch)-sink;pl.x+=-Math.sin(pl.yaw)*cp*pl.v*dt;pl.z+=-Math.cos(pl.yaw)*cp*pl.v*dt;pl.y+=pl.vy*dt;
+      if(pl.y<=2.6){const onRw=Math.abs(pl.x)<34&&pl.z<10&&pl.z>-1590,ok=onRw&&pl.vy>-9&&pl.v<125&&Math.abs(pl.roll)<.4&&pl.pitch>-.3;pl.y=2.6;
+        if(ok){pl.ground=true;pl.pitch=0;pl.roll=0;fl("#ffffff",.3,120);const q=Math.max(0,100-Math.round(Math.abs(pl.x)*1.4+Math.abs(pl.vy)*6));showBig("TOUCHDOWN!",1500,"#86efac");pl.score=q}
+        else{mode="crash";fl("#f97316",.9,500);showBig("SCHIANTO!",0,"#f87171");setTimeout(()=>{big.style.display="none";ask("Atterraggio fallito",onRw?"Troppo veloce o troppo ripido: scendi piano, ali dritte, sotto i 450 km/h.":"Sei finito fuori dalla pista: segui le luci e i PAPI (2 bianche + 2 rosse).",[["🔁 Riprova l'atterraggio",()=>{dispose(SP_);SP_=null;buildPlanet();mode="land"}],["🌍 Torna in città",()=>o.onExit&&o.onExit()]])},900)}}}
+    else{pl.v=Math.max(0,pl.v-(IN.thr<0?28:16)*dt);pl.yaw-=IN.x*.25*dt*Math.min(1,pl.v/20);pl.x+=-Math.sin(pl.yaw)*pl.v*dt;pl.z+=-Math.cos(pl.yaw)*pl.v*dt;if(pl.v<=0&&!pl.stop){pl.stop=true;mode="landed";setTimeout(()=>ask(`Benvenuto sul pianeta ${tm.nick}!`,`Atterraggio perfetto al ${pl.score||70}%. Qui costruiremo stadio, pista e villa con piscine.`,[["🔁 Rifai l'atterraggio",()=>{dispose(SP_);SP_=null;buildPlanet();mode="land"}],["🚀 Torna sulla Terra",()=>o.onExit&&o.onExit()]]),500)}}
+    cam.position.set(pl.x,pl.y,pl.z);cam.rotation.set(pl.pitch,pl.yaw,pl.roll);
+    /* PAPI: angolo di discesa verso il punto di contatto */const ang=Math.atan2(pl.y,Math.max(1,pl.z+300))*57.3;[3,4.5,6,7.5].forEach((t,i)=>PAPI[3-i].material.color.set(ang>t?"#ffffff":"#ef4444"));
+    const dist=Math.hypot(pl.x,pl.z),brg=Math.round(((Math.atan2(pl.x,pl.z+800)-pl.yaw)*57.3+540)%360-180);
+    top.innerHTML=`🪐 PIANETA ${tm.nick.toUpperCase()} · ${pl.ground?"RULLAGGIO":"AVVICINAMENTO"}`;
+    hud.innerHTML=`VELOCITÀ ${Math.round(pl.v*3.6)} km/h · GAS ${Math.round(pl.tv*3.6)}<br>ALTEZZA ${Math.max(0,Math.round(pl.y-2.6))} m · ${pl.vy>=0?"▲":"▼"} ${Math.abs(pl.vy).toFixed(1)} m/s<br>PISTA ${dist>1000?(dist/1000).toFixed(1)+" km":Math.round(dist)+" m"} ${Math.abs(brg)<4?"⬆":brg>0?"⬅ "+brg+"°":"➡ "+(-brg)+"°"}`};
+  /* ---------- decollo ---------- */
+  const startLaunch=()=>{buildSpace();mode="launch";bBoost.style.display="block";bUp.style.display=bDn.style.display="none";let n=3;showBig("3",0,"#f87171");const iv=setInterval(()=>{if(!alive){clearInterval(iv);return}n--;if(n>0){showBig(String(n),0,n===2?"#fb923c":"#facc15");ship.shake=.3}else{clearInterval(iv);showBig("DECOLLO!",1100,"#86efac");ship.shake=1.2;mode="fly"}},900)};
+  const loop=now=>{if(!alive)return;raf=requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;try{
+      if(mode==="fly"||mode==="launch"){if(mode==="launch"){const sk=ship.shake>0?(ship.shake-=dt,ship.shake*.5):0;cam.position.set((Math.random()-.5)*sk,(Math.random()-.5)*sk,0)}else tickSpace(dt)}
+      else if((mode==="land"||mode==="landed")&&SP_)tickLand(dt);
+      if(scene){R.setRenderTarget(null);R.toneMappingExposure=1;cam.aspect=W/H;cam.updateProjectionMatrix();R.render(scene,cam)}}catch(e){console.error(e)}};
+  startLaunch();raf=requestAnimationFrame(loop);window.__DSdbg={ship,pl,IN,get mode(){return mode},skip:()=>{ship.dist=D-1},tick:(dt)=>{if(mode==="fly")tickSpace(dt);else if(SP_)tickLand(dt)}};
+  return()=>{alive=false;cancelAnimationFrame(raf);dispose(SF);dispose(SP_);dispose(cock);own.forEach(t=>t.dispose());R.toneMappingExposure=SV.exp;R.setClearColor(SV.cc,SV.ca)}}};
+window.DreamSpace=DreamSpace;
+})();
