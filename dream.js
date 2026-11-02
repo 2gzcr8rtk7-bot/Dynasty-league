@@ -1014,7 +1014,7 @@ const A=null;
   const nearRim=()=>{let b=RIMS[0],bd=1e9;RIMS.forEach(R_=>{const d=Math.hypot(R_.x-V.x,R_.z-V.z);if(d<bd){bd=d;b=R_}});return b};
   const TGT=.82,win=()=>{const R_=SH.rim||nearRim(),d=Math.hypot(R_.x-V.x,R_.z-V.z);return Math.max(.035,Math.min(.085,.095-d*.0055))};
   const setZone=()=>{const w=win();GZ.style.bottom=((TGT-w)*100)+"%";GZ.style.height=(w*200)+"%"};
-  const handPos=now=>{const f=new THREE.Vector3();cam.getWorldDirection(f);f.y=0;f.normalize();const r=new THREE.Vector3(-f.z,0,f.x);const p=cam.position.clone().addScaledVector(f,.8).addScaledVector(r,.34);p.y=cam.position.y-.55;
+  const handPos=now=>{const f=new THREE.Vector3();cam.getWorldDirection(f);f.y=0;f.normalize();const r=new THREE.Vector3(-f.z,0,f.x);const p=cam.position.clone().addScaledVector(f,1.05).addScaledVector(r,.48);p.y=cam.position.y-.72;
     /* palleggio mentre ti muovi */if(SH.moving&&!SH.hold){const ph=(now/1000*2.4)%1,s=Math.abs(Math.sin(ph*Math.PI)),fy=terr(p.x,p.z)+.12;p.y=p.y+(fy-p.y)*s;p.addScaledVector(f,.25*s);SH.ball.rotation.x=ph*6}return p};
   const ready=()=>{const v=SH.on&&!st.room;SH.hand.m.visible=v;if(v)SH.hand.m.position.copy(handPos(performance.now()));st.dirty=true};
   const showSH=on=>{shUI.style.display=on?"flex":"none";shPW.style.display=shS.style.display=on?"block":"none";shRet.style.display="none";if(on)setZone()};
