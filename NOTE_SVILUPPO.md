@@ -2430,3 +2430,6 @@ Francesco (15:44). Ruote e cerchi di nuovo ben visibili (sulle auto più larghe 
 
 ## 1020 — Modalità Dream: il computer del GM è l app vera
 Francesco (15:51): l app nel monitor era tagliata. Ora sedendoti al computer lo stadio si mette da parte (resta in memoria, la voce dei tuoi live continua; pubblico spento) e sei nell app normale, identica, che si apre sullo scontro diretto della squadra e si usa come sempre, anche girando il telefono in orizzontale. In alto a destra «🏟️ TORNA IN UFFICIO» ti riporta seduto nell ufficio; in basso a sinistra «🔊 voce dei tuoi live attiva» se l audio è acceso. Le sezioni riservate restano escluse.
+
+## 1021 — Modalità Dream: Dream TV fluida
+Francesco (16:07): la TV andava a scatti. Causa principale: con la TV accesa lo stadio si ridisegnava solo 10 volte al secondo; ora a ogni fotogramma. In più la camera insegue l inquadratura con un movimento smorzato sul tempo vero (liscio anche se un fotogramma tarda; agli stacchi salta di netto come in TV), mosso a mano più leggero e lento, e in TV la risoluzione si adatta da sola per restare fluida (come in macchina).
