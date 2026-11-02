@@ -371,7 +371,7 @@ const A=null;
     if(P.size===1){dr={x:LX(e),y:LY(e)};tap={x:LX(e),y:LY(e),t:performance.now(),m:0}}else{dr=null;tap=null;const[a,b]=[...P.values()];pinch=Math.hypot(a.x-b.x,a.y-b.y)}});
   cv.addEventListener("pointermove",e=>{if(!P.has(e.pointerId))return;P.set(e.pointerId,{x:LX(e),y:LY(e)});
     if(P.size>=2&&pinch!=null){const[a,b]=[...P.values()],d=Math.hypot(a.x-b.x,a.y-b.y);ZM=cl(ZM*d/Math.max(1,pinch),1,5);pinch=d;applyZ();return}/* (938) due dita = zoom come sulle foto (fino a 5×), senza muoversi */
-    if(!dr)return;const dx=LX(e)-dr.x,dy=LY(e)-dr.y;dr.x=LX(e);dr.y=LY(e);if(tap)tap.m+=Math.abs(dx)+Math.abs(dy);if(!tap||tap.m>8){const sg_=SH.on?-.7:1;/* (976) col pallone in mano il mirino segue il dito (destra = mira a destra, su = mira in alto), più preciso */V.yaw+=sg_*dx*.25/ZM;V.pitch=cl(V.pitch+sg_*dy*.2/ZM,-60,60);st.dirty=true}});
+    if(!dr)return;const dx=LX(e)-dr.x,dy=LY(e)-dr.y;dr.x=LX(e);dr.y=LY(e);if(tap)tap.m+=Math.abs(dx)+Math.abs(dy);if(!tap||tap.m>8){const sg_=1;/* (977) col pallone come senza: Francesco preferisce il movimento di prima */V.yaw+=sg_*dx*.25/ZM;V.pitch=cl(V.pitch+sg_*dy*.2/ZM,-60,60);st.dirty=true}});
   const up=e=>{P.delete(e.pointerId);if(P.size<2)pinch=null;if(P.size===0)dr=null;const q=tap;tap=null;if(!q||q.m>10||performance.now()-q.t>450||e.type==="pointercancel")return;
     ndc.set(LX(e)/DVW()*2-1,-LY(e)/DVH()*2+1);ray.setFromCamera(ndc,cam);
     if(st.room){roomTap();return}
@@ -732,7 +732,7 @@ const me=SLOT[t]||{x:0,n:true},sp=me.n?{x:me.x,z:-1.4,yaw:0,pitch:2}:{x:me.x,z:-
     const shoot=st.shoot=f_=>{const f=new THREE.Vector3();cam.getWorldDirection(f);f.y=0;f.normalize();const P0=cam.position.clone().addScaledVector(f,.5);P0.y=cam.position.y+.25;/* rilascio sulla linea dello sguardo (il mirino) */
       let best=RIMS[0],bd=-9;RIMS.forEach(R_=>{const dx=R_.x-P0.x,dz=R_.z-P0.z,dl=Math.hypot(dx,dz)||1,d=(dx*f.x+dz*f.z)/dl;if(d>bd){bd=d;best=R_}});
       const D=Math.max(1,Math.hypot(best.x-P0.x,best.z-P0.z)),h=best.y-P0.y,th=(D>9?48:52)*Math.PI/180,den=2*Math.cos(th)**2*(D*Math.tan(th)-h),vReq=den>0?Math.sqrt(9.81*D*D/den):9;
-      const v=vReq*(.82+.36*f_);SH.v=new THREE.Vector3(f.x*v*Math.cos(th),v*Math.sin(th),f.z*v*Math.cos(th));SH.ball.position.copy(P0);SH.ball.visible=true;SH.flying=true;SH.st=0;SH.made=false;SH.touched=false;SH.prevY=P0.y;SH.tiri++;score();st.dirty=true};
+      const v=vReq*(.82+.36*f_);SH.v=new THREE.Vector3(f.x*v*Math.cos(th),v*Math.sin(th),f.z*v*Math.cos(th));SH.ball.position.copy(P0);SH.ball.visible=true;SH.flying=true;SH.st=0;SH.ground=0;SH.made=false;SH.touched=false;SH.prevY=P0.y;SH.tiri++;score();st.dirty=true};
 }
   /* fisica: sottopassi da 4 ms; ferro come anello (raggio 23 cm), tabellone come lastra, pavimento */
   const shTick=()=>{const nw=performance.now(),dt=Math.max(0,Math.min(.1,(nw-(SH.lt||nw))/1000));SH.lt=nw;return shStep(dt)};const shStep=st.shStep=dt=>{if(!SH.flying){if(SH.on&&SH.ball.visible&&!st.room){SH.ball.position.copy(handPos())}return false}SH.st+=dt;
@@ -741,11 +741,11 @@ const me=SLOT[t]||{x:0,n:true},sp=me.n?{x:me.x,z:-1.4,yaw:0,pitch:2}:{x:me.x,z:-
       RIMS.forEach(R_=>{/* tabellone */const fx=R_.bx-R_.sg*.03;if(Math.abs(P.z)<.9&&P.y>2.9&&P.y<3.95&&R_.sg*(P.x-(fx-R_.sg*rb))>0&&R_.sg*Vv.x>0&&Math.abs(P.x-fx)<.4){P.x=fx-R_.sg*rb;Vv.x*=-.62;Vv.y*=.9;Vv.z*=.9;SH.touched=true}
         /* ferro */const hx=P.x-R_.x,hz=P.z-R_.z,hl=Math.hypot(hx,hz)||1e-6,qx=R_.x+hx/hl*.23,qz=R_.z+hz/hl*.23,dx=P.x-qx,dy=P.y-R_.y,dz=P.z-qz,dl=Math.hypot(dx,dy,dz);
         if(dl<rb+.018){const nx=dx/dl,ny=dy/dl,nz=dz/dl,vn=Vv.x*nx+Vv.y*ny+Vv.z*nz;const pen=rb+.018-dl;P.x+=nx*pen;P.y+=ny*pen;P.z+=nz*pen;if(vn<0){const e=.52;Vv.x-=(1+e)*vn*nx;Vv.y-=(1+e)*vn*ny;Vv.z-=(1+e)*vn*nz;Vv.multiplyScalar(.92)}SH.touched=true}
-        /* dentro: attraversa il piano del ferro scendendo, all'interno dell'anello */if(!SH.made&&SH.prevY>R_.y&&P.y<=R_.y&&Vv.y<0&&Math.hypot(P.x-R_.x,P.z-R_.z)<.23-rb*.35){SH.made=true;Vv.multiplyScalar(.35);SH.swish={n:K.NETS.find(n=>n.userData.s===R_.sg)||K.NETS[0],t:0};toast(SH.touched?"DENTRO! (dopo il ferro)":"CIAF! CANESTRO","#16a34a");SH.dentro++;score();try{if(st.voice&&st.A)st.A.react("pt2")}catch(e){}}});
-      /* pavimento o gradoni (si può tirare anche dalle tribune: la palla rimbalza sulle file) */const fy=terr(P.x,P.z)+rb;if(P.y<fy){P.y=fy;if(Vv.y<0)Vv.y*=-.6;Vv.x*=.86;Vv.z*=.86}SH.prevY=P.y}
+        /* dentro: attraversa il piano del ferro scendendo, all'interno dell'anello */if(!SH.made&&SH.prevY>R_.y&&P.y<=R_.y&&Vv.y<0&&Math.hypot(P.x-R_.x,P.z-R_.z)<.23-rb*.35){SH.made=true;SH.madeT=SH.st;Vv.multiplyScalar(.35);SH.swish={n:K.NETS.find(n=>n.userData.s===R_.sg)||K.NETS[0],t:0};toast(SH.touched?"DENTRO! (dopo il ferro)":"CIAF! CANESTRO","#16a34a");SH.dentro++;score();try{if(st.voice&&st.A)st.A.react("pt2")}catch(e){}}});
+      /* pavimento o gradoni (si può tirare anche dalle tribune: la palla rimbalza sulle file) */const fy=terr(P.x,P.z)+rb;if(P.y<fy){P.y=fy;if(Vv.y<0)Vv.y*=-.6;Vv.x*=.86;Vv.z*=.86;if(!SH.ground)SH.ground=SH.st}SH.prevY=P.y}
     SH.ball.rotation.x+=dt*8;{const fy=terr(P.x,P.z);SH.sh.visible=true;SH.sh.position.set(P.x,fy+.01,P.z);const hgt=Math.max(0,P.y-fy);SH.sh.scale.setScalar(1+hgt*.25);SH.sh.material.opacity=Math.max(.06,.38-hgt*.05)}
     if(SH.swish){SH.swish.t+=dt;const k=SH.swish.t,n=SH.swish.n;if(n){n.scale.set(1-Math.sin(k*18)*.12*Math.exp(-k*3),1+Math.sin(k*14)*.18*Math.exp(-k*3),1-Math.sin(k*18)*.12*Math.exp(-k*3))}if(k>1.5){if(n)n.scale.set(1,1,1);SH.swish=null}}
-    const T=SH.st*1000;if(T>6500||(P.y<=terr(P.x,P.z)+rb+.01&&Vv.length()<.6&&T>900)){if(!SH.made){toast(SH.touched?"FERRO… FUORI":"AIR BALL","#b91c1c");try{if(st.voice&&st.A)st.A.react("miss")}catch(e){}}ready()}
+    const T=SH.st*1000;/* (977) palla subito di nuovo in mano: 0,35 s dopo che tocca terra, o 0,6 s dopo il canestro, al massimo 3,5 s */if(T>3500||(SH.ground&&SH.st-SH.ground>.35)||(SH.made&&SH.st-SH.madeT>.6)){if(!SH.made){toast(SH.touched?"FERRO… FUORI":"AIR BALL","#b91c1c");try{if(st.voice&&st.A)st.A.react("miss")}catch(e){}}ready()}
     return true};
   /* ---- ciclo: si disegna solo quando serve; le maglie ondeggiano piano (10 fotogrammi al secondo da ferme) ---- */
   let last=performance.now(),lastDraw=0;
