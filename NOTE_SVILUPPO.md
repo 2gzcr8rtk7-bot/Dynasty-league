@@ -2464,3 +2464,4 @@ Pareti dipinte calde con boiserie e battiscopa, niente soffitto viola, LED o tit
 
 ## 1031 — Modalità Dream: computer del GM semplice in orizzontale
 Francesco (17:05): il computer crashava. Ora al computer si apre una schermata nuova in orizzontale con solo due schede: 🧮 Calcolatore trade e 🤖 IA Trade (con i gusti dei GM), più «🏟️ TORNA IN UFFICIO». Niente più app intera dentro una finestra: lo stadio dietro viene messo in pausa per non pesare sul telefono.
+- (02/11 18:20) EDGE-TO-EDGE: calotta #e2ecap (+ #e2ecapb sotto con lo sfondo pagina) alta env(safe-area-inset-top), z 900, che copia lo sfondo di ciò che sta in cima: intestazione (sfumato + righe ::after, allineati; se scorre via ne tiene la parte bassa) oppure, senza intestazione (dreamfs), la stanza in cima con clip-path. Tolte le vecchie strisce body::before. Il contenuto non passa più sotto la Dynamic Island (niente sfocatura iOS). Patch /home/claude/patch_e2e.py.
