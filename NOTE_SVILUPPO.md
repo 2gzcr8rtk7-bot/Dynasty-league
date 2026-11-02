@@ -2464,3 +2464,9 @@ Pareti dipinte calde con boiserie e battiscopa, niente soffitto viola, LED o tit
 
 ## 1031 — Modalità Dream: computer del GM semplice in orizzontale
 Francesco (17:05): il computer crashava. Ora al computer si apre una schermata nuova in orizzontale con solo due schede: 🧮 Calcolatore trade e 🤖 IA Trade (con i gusti dei GM), più «🏟️ TORNA IN UFFICIO». Niente più app intera dentro una finestra: lo stadio dietro viene messo in pausa per non pesare sul telefono.
+
+## 1032 — Modalità Dream: sterzo meno nervoso, abitacolo e strade di notte
+Francesco (18:14): sterzo troppo sensibile, abitacolo e strade buie di notte. Volante con curva progressiva (piccoli movimenti = poca sterzata), sterzata filtrata e ridotta di più con la velocità, rotazione della macchina più morbida. Di notte sedili, cruscotto, volante e pannelli hanno una luce soffusa; luce ambiente e luna più forti; pozze di luce dei lampioni più grandi e più calde.
+
+## 1033 — Modalità Dream: stadi nuovi per tutte le squadre (come le arene NBA)
+Francesco (18:01/18:18): tribune meno ripide e più larghe come nelle foto di Miami/Orlando. Anello basso 20 file (alzata 30 cm), anello delle suite con vetrate illuminate e fascia LED, anello alto 16 file (alzata 46 cm) con fascia LED in cima, tetto più alto, maxischermo quasi doppio con fasce LED e anelli luminosi. Sedili col disegno della squadra: fondo scuro, onde nel colore squadra negli angoli, prima fila colorata e il nome della squadra sui lati lunghi (nickname in basso, nome intero in alto); gradoni grigio scuro. Pubblico più rado (45% sotto, 35% sopra) così il disegno si vede. Vale per tutte le 8 squadre.
