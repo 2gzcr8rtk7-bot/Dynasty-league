@@ -2433,3 +2433,9 @@ Francesco (15:51): l app nel monitor era tagliata. Ora sedendoti al computer lo 
 
 ## 1021 — Modalità Dream: Dream TV fluida
 Francesco (16:07): la TV andava a scatti. Causa principale: con la TV accesa lo stadio si ridisegnava solo 10 volte al secondo; ora a ogni fotogramma. In più la camera insegue l inquadratura con un movimento smorzato sul tempo vero (liscio anche se un fotogramma tarda; agli stacchi salta di netto come in TV), mosso a mano più leggero e lento, e in TV la risoluzione si adatta da sola per restare fluida (come in macchina).
+
+## 1022 — Modalità Dream: foto delle auto nel concessionario
+Francesco (16:15). Nel catalogo ogni modello ha la sua foto: l auto viene fotografata una volta sola dal gioco stesso (vista di 3/4 anteriore, nei colori della tua squadra, su sfondo viola).
+
+## 1023 — Modalità Dream: guida stabile piano, villa con interni, muscle pulita
+Francesco (16:16–16:19). Guida: sotto i ~40 km/h la macchina resta stabile anche sterzando di colpo (il retro non parte più senza freno a mano); il testacoda di potenza solo sopra i ~47 km/h; ad alta velocità tutto come prima. Muscle V8: tolti lo spoiler che sembrava volare sul tetto e la presa d aria sul cofano; ora rigonfiamento del cofano a filo e coda «ducktail» integrata. Villa: casa attaccata al box (un solo edificio), tolto il pezzo di vialetto che finiva sulla strada, vetrate e piscina dietro la casa, 8 palme attorno alla piscina (fitte sul lato strada per la privacy). Si entra dalla porta sul lato est: grande soggiorno con divano a L, tavolino, tappeto, TV gigante col logo della squadra, camino acceso, piante, lampada e vetrata sulla piscina; cucina con mobili, frigo, isola e sgabelli; camera con letto nei colori della squadra, comodini con lampade, armadio e quadro col logo. Uscendo si torna davanti alla porta.
