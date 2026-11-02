@@ -2489,3 +2489,6 @@ Francesco (19:35). FORMULA DREAM (70.000 💰): monoposto vera costruita apposta
 
 ## 1040 — Modalità Dream: Formula Dream e Proto LM già nel box della villa
 Francesco (19:51): al primo ingresso dopo l aggiornamento le due auto nuove compaiono nel box della villa (nei colori della tua squadra), gratis, una volta sola; se una c è già non viene doppiata; se il box (8 posti) è pieno non vengono aggiunte.
+
+## 1041 — Formula Dream: visuale abitacolo libera
+Francesco (19:56): tolto l halo (copriva la visuale); occhi del pilota un po più alti e indietro, volante più basso, più piccolo e più inclinato: da dentro si vedono la strada, il muso e le due ruote anteriori.
