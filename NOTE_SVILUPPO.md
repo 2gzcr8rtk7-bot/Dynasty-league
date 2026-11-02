@@ -2418,3 +2418,6 @@ Francesco (15:28). CORRI come nei giochi touch: lo tieni premuto per correre e, 
 
 ## 1016 — Modalità Dream: ogni modello di auto ha la sua sagoma
 Francesco (15:33): le auto sembravano tutte uguali. Ora ogni modello ha una carrozzeria diversa (calcolata una volta sola, non pesa): Rally X compatta a due volumi col portellone, tetto alto, portapacchi e fari sul tetto; GT Sprint lunga e bassa, fastback e alettone; Muscle V8 squadrata con muso verticale, cofano lungo con presa d aria e coda tronca con spoiler; Volt E affusolata a goccia con tetto tutto in vetro e LED azzurro; Hyper V12 a cuneo bassissima, abitacolo avanzato, più larga, alettone e feritoie sul cofano motore. Fari, fanali, targhe, loghi e minigonne seguono la forma di ogni auto. Quella di serie resta com era.
+
+## 1017 — Modalità Dream: CORRI a interruttore
+Francesco (15:36). Il tasto CORRI ora si accende e si spegne con un tocco: acceso diventa viola con il bordo giallo e la scritta «CORSA», e col joystick si corre senza tenerlo premuto (dita libere per joystick e visuale); ritoccandolo si torna a camminare.
