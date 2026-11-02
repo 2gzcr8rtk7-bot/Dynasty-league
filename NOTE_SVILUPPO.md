@@ -2305,3 +2305,6 @@ Francesco (09:42–09:44). Piazza dei Dreamers con il cielo dell ora del telefon
 
 ## 979 — Modalità Dream: visuale come nei videogiochi
 Francesco (09:48): il trascinamento ora muove lo sguardo come in GTA / Call of Duty mobile: dito a destra = guardi a destra, dito in su = guardi in alto (prima era «stile Google Street View», si trascinava il mondo). Vale con e senza pallone; mouse sul computer uguale.
+
+## 980 — Sale trofei aperte a tutti, stadio Peacocks aperto
+Francesco (09:54): sala trofei aperta per tutte le squadre (chi non ha trofei trova la bacheca con «IL PRIMO TROFEO È VICINO»). Stadio Peacocks aperto: tasto D della modalità Dream attivo anche per i Peacocks (DRM_NO vuoto) e porta del loro stadio aperta nella piazza. L ufficio del GM resta solo nello stadio Ducks.
