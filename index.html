@@ -3392,7 +3392,7 @@ function kitSalva(){try{if(KITG==null)localStorage.removeItem("dl_kitg");else lo
 function kitDi(t){const nt=typeof CNT!=="undefined"&&CNT&&cur==="campo";if(KITG!=null)return KITG;return nt?1:0}/* la scelta della maglia vale in TUTTE le sezioni (giocatore, scontri, trade...) */
 function kitC(t,k){const T=t==="PEA"?{...TEAMS[t],bg:"#2f6bff"}/* 30/10: sfondo Peacocks rosa, maglie invariate */:TEAMS[t];
   if(t==="DOL"){/* (02/11) DOL_FLM: nuove maglie Dolphins a fulmini. 0 Casa = bianca, 1 Notte = sabbia, 2 Alternativa = blu */
-    if(k===1)return{...T,bg:"#d9c49c",fg:"#1537c8",trim:"#0b0b0b",jstroke:"#0b0b0b",outer:undefined,tline2:"#e2e5ea",flm:["#c9b184","#bfa676","#e6d4b0","#ccb58a","#e0cda6"]};
+    if(k===1)return{...T,bg:"#d9c49c",fg:"#0b0b0b",trim:"#0b0b0b",jstroke:"#f3ead8",outer:undefined,tline2:"#e2e5ea",flm:["#c9b184","#bfa676","#e6d4b0","#ccb58a","#e0cda6"]};
     if(k===2)return{...T,bg:"#1537c8",fg:"#ffffff",trim:"#0b0b0b",jstroke:"#0b0b0b",outer:undefined,tline2:"#e2e5ea",flm:["#0b229a","#081c86","#2a50ea","#0a1f90","#3157f0"]};
     return{...T,bg:"#f6f7f9",fg:"#1537c8",trim:"#0b0b0b",jstroke:"#0b0b0b",outer:undefined,tline2:"#e2e5ea",flm:["#e3e7ee","#d7dce6","#ffffff","#dde2ea","#eceff4"]}}
   if(t==="PEA"){/* 30/10/2026 Peacocks: 1 blu con dettagli verdi, 2 rosa (colore sfondo) con dettagli verdi, 3 "piuma di pavone" */
