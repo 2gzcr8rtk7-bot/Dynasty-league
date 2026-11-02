@@ -2350,3 +2350,4 @@ Francesco (12:23–12:24). Motore: in macchina, con l audio acceso, rumore del m
 
 ## 994 — Modalità Dream: niente menu «Copia / Traduci / Cerca» dell iPhone sui comandi
 Francesco (12:57): toccando più volte GAS/FRENO l iPhone apriva il menu del testo (Copia, Traduci, Cerca sul web), come se fosse una scritta. Ora in tutta la modalità Dream il testo dei tasti non si può selezionare, niente menu del tocco lungo né evidenziazione al tocco; su GAS, FRENO, volante, ESCI, TIRA e joystick i tocchi ripetuti non arrivano più al sistema (niente selezione, niente zoom col doppio tocco). Nei campi da scrivere (es. password dal computer dell ufficio) si può scrivere come prima.
+In più (12:58) i pedali non hanno più scritte: FRENO è il tasto rosso con un quadrato, GAS il tasto verde con una freccia in su (disegni, non testo: niente da selezionare).
