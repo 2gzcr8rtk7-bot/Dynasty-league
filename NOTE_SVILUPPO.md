@@ -2446,3 +2446,6 @@ Francesco (16:34): sedendosi al computer l app si apriva in verticale. Ora, se i
 
 ## 1025 — Modalità Dream: niente muro invisibile attorno alle auto parcheggiate
 Francesco (16:37): passando di fianco a un auto parcheggiata ci si fermava contro un muro invisibile. L urto tra auto usava un cerchio di 4,2 m attorno al centro (più largo dell auto); ora ogni auto ha la sua forma vera (due cerchi, davanti e dietro, larghi quanto l auto): si passa di fianco senza problemi. Se la tocchi la spingi via (si sposta e gira un po, tu rallenti un po; botto se vai forte); si blocca solo se dall altra parte c è un palazzo.
+
+## 1026 — Modalità Dream: computer del GM = l app vera in orizzontale
+Francesco (16:45): l app girata non caricava le parti sotto lo schermo e non partiva dalla home. Ora sedendoti al computer si apre l app vera dentro una finestra a tutto schermo girata come lo stadio: dentro la finestra il telefono «è» in orizzontale, quindi l app usa la sua vista orizzontale e scorre e carica tutto esattamente come quando giri il telefono. Parte sempre dalla HOME della tua squadra; il tasto D della modalità Dream lì dentro è nascosto; le sezioni riservate restano escluse. «🏟️ TORNA IN UFFICIO» in alto a destra; la voce dei tuoi live continua (pubblico spento).
