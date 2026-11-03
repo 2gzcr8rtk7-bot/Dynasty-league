@@ -2815,3 +2815,11 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - DISTRIBUTORI nei centri cura: Borraccia, Bevanda energetica, Caffè, a volte ne esce uno in più.
 - STRUMENTI NASCOSTI: 2 per zona, invisibili; il RADAR (Metropoli) avvisa quando sei vicino, premendo A davanti al punto li raccogli.
 - PC: DEPOSITO STRUMENTI (deposita/ritira), bici: salta i bordi verso il basso, PASS DEL PARCO in vendita ad Arenapoli.
+
+## 1092 — Poke Dream: lotte in DOPPIO, stadi di carriera, gioco ruotato in verticale, cognomi nella barra
+- VERTICALE: via la schermata «ruota il telefono»: col telefono in verticale il gioco parte subito disegnato in orizzontale (ruotato di 90°), comandi compresi; chi guarda gira il telefono da solo. La tacca del telefono resta fuori dai comandi.
+- Barra squadra (destra): accanto a ogni tondino il COGNOME (o il soprannome) del giocatore.
+- LOTTE IN DOPPIO (2 contro 2): motore rinnovato con stadi di statistica per ogni giocatore in campo, scelta dell azione per entrambi (freccia sopra chi sceglie, riquadro «Cosa fa X?»), scelta del bersaglio «A CHI?», ordine per priorità e velocità di tutti e quattro, bersaglio che passa all altro se il primo è KO, sostituzioni per posto, cattura solo quando resta un selvatico, IA che sceglie mossa e bersaglio. Mosse di coppia: Pressing a tutto campo, Contropiede di squadra, Giro palla, Tripla dall angolo (colpiscono entrambi, −25% danno), Urlo di squadra, Zona 2-3 (caricano la coppia).
+  - Dove: selvatici doppi in Percorso 7/8/9, Valico, Bosco, Mare (se hai 2 giocatori in forma); l ultimo allenatore delle zone dal livello 18 è una COPPIA (si vedono in due); COACH DEL DOPPIO ad Arenapoli (2ª medaglia): serie di 3 sfide 2v2 al giorno, premio 1500₵ + uno SCHEMA di coppia.
+- STADI DI CARRIERA (le evoluzioni): ROOKIE → TITOLARE → ALL-STAR. Livelli di passaggio per rarità (14/30 comuni … 32/55 leggende). Animazione a lampeggio dopo la partita (B interrompe), +10% a tutte le statistiche per stadio, aspetto: fascia in testa e polsini (TITOLARE), manicotto, stella e bordo d oro (ALL-STAR). PIETRA DEL VETERANO (9000₵, centro commerciale) fa passare subito di stadio; CARTELLINO GIOVANE da tenere lo blocca. I selvatici e gli avversari arrivano già allo stadio giusto per il livello.
+- Carattere «Instancabile» corretto (+lettura −velocità).
