@@ -2564,3 +2564,9 @@ Francesco (07:12-07:16): la valle deve essere un unico mondo con Dream City dent
 - Valle più grande (16 km, montagne a ~7 km dal centro) e RETE FITTA DI STRADE: oltre a superstrade e statali, ~110 incroci di campagna sparsi in tutta la valle collegati ai vicini (in tutto ~490 strade, 450 km), tutti uniti in un solo grafo; accanto a ogni incrocio una FATTORIA col suo vialetto (fienile, silo, casa, mucche, trattore o pickup). Il 97% della valle è a meno di 400 m da una strada; tutti i luoghi sono raggiungibili in macchina.
 - Niente più teletrasporto: la MAPPA (in città dal tasto 🗺️ MAPPA, nella valle da minimappa/🗺️) fa scegliere una META; il navigatore calcola la strada (grafo delle strade, ogni 8 m + incroci), sceglie la porta migliore per uscire dalla città, disegna il percorso sulla mappa, sulla minimappa e come STRISCIA AZZURRA per terra; in alto la distanza che manca; arrivato: «🏁 SEI ARRIVATO».
 - Tolto il tasto 🌄 VALLE (si esce dalle porte).
+
+## 1062 — Uscendo dalla città resta TUA la macchina, i comandi e la visuale
+Francesco (08:11): uscendo dalla città la macchina «si schiacciava» (diventava un modello diverso della valle) e spariva la guida classica (volante + pedali) e la visuale scelta.
+- Ora passando una porta la macchina della città viene staccata dalla città prima che venga liberata e portata nella valle tale e quale: stesso modello, livrea, colori dell officina, assetto (motore/velocità dell officina). Rientrando torna in città con le stesse modifiche.
+- Nella valle le auto (la tua e quelle trovate per strada) si guidano con gli STESSI comandi della città: volante da girare col dito (torna al centro da solo), pedale gas, freno/retro, freno a mano Ⓟ, 🚪 ESCI, tachimetro in alto; 🎥 VISTA cambia tra DENTRO / DIETRO / PARAURTI ed è la stessa scelta salvata della città (vale in tutte e due le zone).
+- Barche, aerei ed elicottero restano col loro joystick e le loro leve.
