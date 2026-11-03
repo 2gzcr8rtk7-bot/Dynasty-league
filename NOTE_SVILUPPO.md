@@ -2837,3 +2837,13 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - MONTE SUPREMO (a ovest di Cima del Mondo): con 16 medaglie, in cima IL LEGGENDARIO: i 6 giocatori più forti in assoluto a livello 90-95, 50000₵, rivincite illimitate.
 - LEGA DI SECONDO GIRO: con 16 medaglie Elite e Campione hanno +20 livelli. Tessera: medaglie su 16.
 - MAPPA: due pagine (EST / OVEST) a seconda di dove sei, teletrasporto anche nell OVEST.
+
+## 1095 — Poke Dream: scritte degli edifici leggibili, sala giochi, Torre Lotta, Arena Atletica, sciami, fratelli del giorno, orti, habitat
+- Le insegne degli edifici (CURA, SHOP, PALESTRA…) si disegnano nitide sul livello dei testi, con bordo scuro: prima erano a pixel grossi e illeggibili. Nella barra squadra i cognomi con «Jr.» mostrano «Jackson Jr.».
+- SCIAMI: ogni giorno una specie rara invade un percorso (anche nell OVEST da Campione); lo annuncia la RADIO (canale Borgo FM); 40% degli incontri lì è quella specie.
+- FRATELLI DEL GIORNO: 7 personaggi, uno per giorno della settimana, su percorsi diversi: un regalo a settimana ciascuno (Elisir, Caramella, Pallone Timer, Integratore PP, Fascia lucky, Pietra del veterano, Menta).
+- ORTI: terreno fertile (nuova casella) sui percorsi 2-4-6-7-8 e 11-13-16: pianta un frutto dallo zaino, il giorno dopo l albero dà 2 frutti e torna terreno.
+- SALA GIOCHI nel centro commerciale: gettoni (50 per 1000₵), slot a 3 rulli con animazione (tris fino a 600 gettoni), premi: Pietra del veterano, Menta, schemi rari, Pallone MVP…
+- TORRE LOTTA a Capitale del Gioco (da Campione): serie di 7 sfide al livello della tua squadra, cure tra una e l altra, niente strumenti; serie completa = 3 PUNTI LOTTA da spendere in premi; record e serie sempre più dure.
+- ARENA ATLETICA a Isola Playground: tre minigiochi veri (GARA DI TIRO a tempo con A, SLALOM e RIMBALZI con ◀ ▶ per 20 secondi; la velocità del tuo primo giocatore conta), medaglie bronzo/argento/oro e premi.
+- SCHEDARIO: ogni scheda dice DOVE si trova la specie (percorsi/pesca); a schedario completo il Prof. dà il DIPLOMA e la tessera mostra ★ SCHEDARIO COMPLETO.
