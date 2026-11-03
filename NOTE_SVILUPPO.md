@@ -2657,3 +2657,20 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
   - pallino grigio: mossa base.
 - Il riquadro a destra mostra il tipo della mossa scelta e la scritta "★ del suo ruolo" oppure "mossa base".
 - La stella compare anche sulle mosse nella scheda del giocatore.
+
+## 1077 · Poke Dream: cattura con i PALLONI, lotte verticali più grandi, livelli più bassi
+- Parole: non si "firma" più, si cattura. I contratti diventano PALLONI (anche nei vecchi salvataggi).
+- Probabilità di cattura con la formula classica del genere:
+  - conta la salute: in zona gialla o rossa è molto più facile;
+  - conta lo stato: addormentato ×2,5, altri stati ×1,5;
+  - conta la rarità, dalla nostra valutazione: comuni 255–150, non comuni 150–90, rari 90–45, rarissimi 45–25, leggende 3.
+- 18 tipi di pallone (nomi nostri, stesse regole del genere): Pallone ×1, Super ×1,5, Iper ×2, MVP (sempre), Rete (centri/difensori), Tuffo (in acqua), Esca (pesca), Vivaio (livelli bassi), Bis (già catturati), Timer (turni), Rapido (primo turno), Notte (grotte), Cura, Livello, Peso, Veloce, Leggenda (×5 sui leggendari), Premier (omaggio ogni 10 Palloni).
+- Ogni pallone ha il suo colore in lotta e oscilla a ogni scossone. Dopo la Lega si ricevono 1 Pallone MVP e 3 Palloni Leggenda. Gli shop vendono palloni diversi città per città.
+- Lotta in verticale: si usa tutta l'altezza. Avversario e tuo giocatore più grandi, il parquet parte più in alto, i riquadri restano accanto a ciascun giocatore.
+- Soldi persi solo contro gli allenatori, non contro i selvatici o nella sfida col rivale al laboratorio.
+- Livelli dei selvatici più bassi:
+  - Percorso 1: 1–3;
+  - Percorso 2: 4–7;
+  - Bosco: 7–10;
+  - poi qualche livello sotto la palestra successiva, fino a 46–50 nella Via della Vittoria;
+  - gli allenatori sui percorsi sono 1 livello sopra i selvatici.
