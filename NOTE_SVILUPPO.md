@@ -2850,3 +2850,9 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 
 ## 1096 — Poke Dream: strumenti RAPIDI dallo zaino con un tocco
 - Nello zaino il primo tocco su uno strumento lo seleziona (si legge la descrizione), il secondo lo usa. Sotto la descrizione due tasti: USA e ★ RAPIDI (o ✕ RAPIDI per toglierlo): lo strumento va nella barra a sinistra, anche gli oggetti chiave (Bici, canne, Radio, Torcia…). Resta valido anche il tasto MENU sullo strumento.
+
+## 1097 — Poke Dream: audio (gruppo G7)
+- Ogni città e ogni grotta ha una musica propria (generata dal nome, sempre uguale), percorsi dell OVEST con tema nuovo, centro commerciale con tema da sala giochi.
+- Temi di lotta dedicati: capi palestra, Procuratori Ombra, Elite, Campione, Fondatore/Leggendario, rivale.
+- Jingle: fanfara per la medaglia, motivetto per i premi dello schedario.
+- «Versi» dei giocatori per ruolo (guardia acuto, ala medio, centro grave) quando entrano in campo e aprendo la scheda nello schedario.
