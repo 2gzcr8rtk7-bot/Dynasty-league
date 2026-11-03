@@ -2770,3 +2770,11 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - TV di casa: notizie vere dalla lega (infortuni). RADIO regalata dalla mamma: cambia canale/musica in viaggio.
 - Cartelli a ogni varco dei percorsi ("di qua: …") e in ogni città un NPC con le voci sui giocatori rari delle zone vicine.
 - Corretto un difetto dei menu: un tasto premuto mentre scorreva un testo poteva spostare la selezione del menu successivo (per esempio sulla risposta NO).
+
+## 1086 · Poke Dream: solo orizzontale, stagioni, stile GBA, barre rapide, aspetto dell'allenatore
+- Il gioco si usa solo in ORIZZONTALE: in verticale compare l'avviso di ruotare il telefono (il layout verticale è stato tolto).
+- Stagioni dal mese vero: primavera (verde chiaro e fiori rosa), estate (verde menta), autunno (alberi arancio e prati dorati), inverno (neve e abeti verde-azzurro).
+- Stile ispirato ai giochi GBA: erba menta con ciuffi, sabbia gialla, acqua chiara, abeti a strati alternati agli alberi tondi, steccati di legno tra i lotti, sampietrini nelle città, tetti a tegole con colmo, tende a strisce sopra le porte, finestre con cornice e davanzale.
+- Persone in scala 1:1 con l'ambiente (come nei giochi del genere).
+- Barra RAPIDI a sinistra (6 slot): dallo zaino, su uno strumento, premi MENU per metterlo/toglierlo; tocca lo slot per usarlo subito. Barra SQUADRA a destra: tocca un giocatore per la scheda.
+- ASPETTO nel menu: capelli (corti, lunghi, ricci, rasati), colore, cappello (cappello, berretto, nessuno), giacca, pantaloni, zaino; anteprima nelle 4 direzioni.
