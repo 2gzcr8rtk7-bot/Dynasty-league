@@ -2758,3 +2758,15 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - Scheda del giocatore a 3 pagine (◀ ▶): statistiche con barre, mosse con dettagli, dati (allenatore, oggetto, pallone, dove è stato catturato, affetto).
 - Tessera con statistiche: vittorie, catture, passi, crediti vinti.
 - Tutorial breve del professore dopo la sfida col rivale (si può saltare).
+
+## 1085 · Poke Dream: mondo più grande (scorciatoie, mare, faro, parco, traghetto, meteo, buio, TV, radio)
+- PERCORSO 9: scorciatoia Canestropoli ⇄ Arenapoli con un masso (si apre con la 3ª medaglia, FORZA); VALICO DEL CANESTRO: grotta Pineta Alta ⇄ Montecima (3ª medaglia). La regione ora ha due anelli e strade alternative.
+- MARE DELLE ISOLETTE a est di Isola Playground: si gira solo a NUOTO, 4 isolette con erba, alberi da frutto, scogli, oggetti e giocatori che non si trovano altrove.
+- FARO di Portocampo: 5 piani con un allenatore per piano, oggetti e in cima un guardiano che regala un Pallone Leggenda (lì si nasconderà un rarissimo).
+- PARCO GIOCHI ad Arenapoli (zona safari): 500₵, 30 Palloni Parco e 600 passi; niente lotte, solo PALLONE, ESCA (calma) e PIETRA (indebolisce ma fa scappare); i giocatori scappano facilmente. Giocatori di fascia alta e un rarissimo.
+- TRAGHETTO Portocampo ⇄ Isola Playground con il Biglietto traghetto (shop di Portocampo).
+- Meteo per zona: pioggia (costa, isola, mare), vento (Percorso 7, Valle), neve (Percorso 8, Montecima), nebbia (Bosco). Si vede in giro e conta in lotta: pioggia -20% ai tiri e +20% ai difensori, neve +20% atleti, vento +15% ali e -10% precisione dei tiri, nebbia -15% precisione.
+- Buio nel Tunnel e nel Valico: senza la TORCIA (shop di Pineta Alta) si vede solo intorno a te.
+- TV di casa: notizie vere dalla lega (infortuni). RADIO regalata dalla mamma: cambia canale/musica in viaggio.
+- Cartelli a ogni varco dei percorsi ("di qua: …") e in ogni città un NPC con le voci sui giocatori rari delle zone vicine.
+- Corretto un difetto dei menu: un tasto premuto mentre scorreva un testo poteva spostare la selezione del menu successivo (per esempio sulla risposta NO).
