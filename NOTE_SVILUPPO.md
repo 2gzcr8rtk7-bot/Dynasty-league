@@ -2862,3 +2862,11 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - ABILITÀ (una per esemplare, nella scheda DATI): Grinta, Intimidazione (entrando abbassa l attacco avversario), Scatto, Muro, Vista, Guaritore, Sangue freddo, Instancabile, Serenità, Tenacia (resiste a un KO a piena energia), Ispirazione, Furbizia.
 - MOSSE DI STRUTTURA (schemi al centro commerciale): Riflesso e Schermoluce (5 turni, danni dimezzati), Sostituto, Contrattacco (agisce per ultimo, restituisce il doppio), Inseguimento (doppio danno su chi sta per uscire), Chiodi (fino a 3 strati, danno a chi entra).
 - STRUMENTI: Fascia/Occhiali/Sciarpa scelta (+50% ma una sola mossa fino al cambio), Avanzi (1/16 a fine turno).
+
+## 1099 — Poke Dream: leggende erranti a tappe, santuario, Fan Club con foto, bici da corsa, voci dello schedario, registro sfide
+- LEGGENDE ERRANTI: oltre a Dončić (dopo la Lega) altre tre rarissime si liberano dopo la Torre Radio e girano per i percorsi; la radio (Borgo FM) dice dove sono state viste; tengono l energia tra un incontro e l altro.
+- FAN CLUB a Portocampo: il presidente commenta l affetto del tuo primo giocatore, FOTO DI SQUADRA (album con le ultime 12, anche dalla TESSERA); con 8 medaglie e 100 catturati regala la CAMPANELLA D ARGENTO.
+- SANTUARIO nel Bosco dei Rimbalzi: suonando la campanella appare un giocatore ESCLUSIVO (non esiste altrove) a livello 50, una volta sola.
+- BICI DA CORSA: dalla stessa casa della bici a Portocampo, con 8 medaglie: tre volte la velocità a piedi.
+- SCHEDARIO: ogni giocatore ha una voce descrittiva (ruolo, dote migliore, squadra, età, rarità).
+- TESSERA: REGISTRO SFIDE (ultime 60 vittorie con zona e data) e ALBUM FOTO. L Academy è a Pineta Alta (a Valle c era già la Torre Radio).
