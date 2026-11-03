@@ -2613,3 +2613,14 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - Ostacoli: cespugli (TAGLIO), massi (FORZA), acqua (NUOTO); viaggio rapido con VOLO; bici in regalo a Portocampo.
 - Rarità dalla nostra valutazione: fino a 800 comuni, 800–1300 non comuni, 1300–2000 rari, oltre 2000 rarissimi. Wembanyama, Jokić e Dončić (oltre 2400) compaiono solo come eventi unici dopo la Lega.
 - Mappe generate con seme fisso (sempre uguali tra un salvataggio e l'altro), con collegamenti verificati automaticamente.
+
+## 1072 · Poke Dream: forza dei giocatori tarata sulla nostra valutazione
+- La somma delle 6 stat base segue la valutazione, a gradini come nel genere:
+  - comuni (fino a 800): 330–430;
+  - non comuni (800–1300): 430–485;
+  - rari (1300–2000): 485–545;
+  - rarissimi (2000–2400): 545–590;
+  - leggende (oltre 2400): 600–660.
+- Il PDK sposta il totale di poco (±3%).
+- Esempi: Wembanyama 673, Jokić 666, Dončić 625, Giannis 578, Flagg 549, Maxey 506, Durant 434, Buzelis 409, Steinbach 365.
+- Come sono distribuite le stat: il 72% dipende dal ruolo e dalle statistiche (punti, rimbalzi, assist, minuti, età), il resto è uguale per tutti, così nessuno ha valori assurdi.
