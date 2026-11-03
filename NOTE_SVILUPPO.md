@@ -2829,3 +2829,11 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - MOSSE DI CAMPO: Taglio netto, Spinta di forza, Nuotata, Luce in sala, Spaccarocce (+ Volo). Si imparano con gli SCHEMI dell ISTRUTTORE MN (centro cura di Canestropoli, uno per medaglia) e in partita sono mosse vere. Fuori: se un giocatore della squadra le conosce, cespugli, massi e acqua si superano in automatico col suo nome, Luce in sala illumina le grotte come la torcia. I poteri del coach con le medaglie restano validi.
 - SPACCAROCCE: rocce piccole nelle grotte (nuova casella), spaccandole a volte esce uno strumento o salta fuori un selvatico.
 - REGISTRO TELEFONICO: un allenatore su tre chiede il tuo numero dopo la sconfitta. Ogni giorno 1-2 contatti chiamano all arrivo in una zona: REGALO (vai a prenderlo) o RIVINCITA (squadra +4 livelli a ogni rivincita, premio ×1,5…). Voce TELEFONO nel menu con l elenco dei contatti e dove trovarli.
+
+## 1094 — Poke Dream: TRENO e REGIONE OVEST (8 palestre nuove, Monte Supremo, Lega di secondo giro)
+- STAZIONE a Montecima (edificio nuovo) e ad Approdo Ovest: da Campione della Lega il treno (animazione del viaggio) porta nella REGIONE OVEST, generata con un seme suo (l EST resta identico).
+- OVEST: 8 città (Approdo Ovest, Cascata Alta, Deserto Rosso, Neve Bianca, Vulcano Nero, Laguna Azzurra, Capitale del Gioco, Cima del Mondo), percorsi 11-16, Miniera Rossa, clima fisso per zona (neve, vento, pioggia, nebbia), selvatici di fascia alta (livelli 55-84), coppie in doppio, allenatori col telefono.
+- 8 palestre nuove = MEDAGLIE 9-16 (Ancora, Cascata, Sabbia, Ghiaccio, Lava, Onda, Corona, Mondo), capi con squadre da 4-6 giocatori con oggetti, livelli 60→88, schemi in premio.
+- MONTE SUPREMO (a ovest di Cima del Mondo): con 16 medaglie, in cima IL LEGGENDARIO: i 6 giocatori più forti in assoluto a livello 90-95, 50000₵, rivincite illimitate.
+- LEGA DI SECONDO GIRO: con 16 medaglie Elite e Campione hanno +20 livelli. Tessera: medaglie su 16.
+- MAPPA: due pagine (EST / OVEST) a seconda di dove sei, teletrasporto anche nell OVEST.
