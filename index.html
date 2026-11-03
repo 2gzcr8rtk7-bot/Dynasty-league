@@ -12941,7 +12941,7 @@ function seg(k,opts,cur){return`<div class="hpseg">${opts.map(([v,l])=>`<button 
 function loadPoke(cb){if(window.PDREAM&&window.PDREAM.open)return cb();const s=document.createElement("script");s.src="poke.js?v="+(window.HOOP_V||Date.now());s.onload=cb;s.onerror=()=>alert("Gioco non caricato: controlla la connessione");document.head.appendChild(s)}
 function pokeData(){const num={},team={},nba={};Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>{num[p[0]]=p[1];team[p[0]]=t;nba[p[0]]=p[3]}));
   const avg=(n,i)=>{const a=(PARTITE[n]||[]).filter(x=>x[i]!=null);return a.length?a.reduce((q,x)=>q+(+x[i]||0),0)/a.length:null};
-  const players=Object.entries(VALORI).map(([n,v])=>{const t=team[n],T=t?TEAMS[t]:null;let age=null;try{age=etaEsatta(n)}catch(e){}return{name:n,role:v[0],val:v[1],team:t||null,num:num[n],nba:nba[n]||null,col:T?[t==="DUC"?"#facc15":T.bg,T.fg===T.bg?"#ffffff":T.fg]:null,min:avg(n,2),pdk:avg(n,3),eff:avg(n,4),pts:avg(n,5),reb:avg(n,6),ast:avg(n,7),age}});
+  const players=Object.entries(VALORI).map(([n,v])=>{const t=team[n],T=t?TEAMS[t]:null;let age=null;try{age=etaEsatta(n)}catch(e){}return{name:n,role:v[0],val:v[1],team:t||null,num:num[n],nba:nba[n]||null,col:null,min:avg(n,2),pdk:avg(n,3),eff:avg(n,4),pts:avg(n,5),reb:avg(n,6),ast:avg(n,7),age}});
   const teams={};Object.entries(TEAMS).forEach(([k,T])=>{teams[k]={nick:T.nick,bg:k==="DUC"?"#facc15":k==="PEA"?"#d946ef":T.bg,fg:T.fg===T.bg?"#ffffff":T.fg}});return{players,teams}}
 window.loadPoke=loadPoke;window.pokeData=pokeData;
 function vHoop(){if(!COL.d){cur="campo";return vCampo()}

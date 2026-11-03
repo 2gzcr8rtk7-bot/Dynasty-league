@@ -2601,3 +2601,15 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - Mini giocatori in pixel: maglia della squadra (lega o NBA), numero, corporatura, capelli, barba, fascia; di fronte quando li incontri, di spalle (con nome e numero) quando lottano per te.
 - Musiche chiptune generate (titolo, casa, città, laboratorio, percorso, centro, lotta, allenatore, rivale, vittoria) ed effetti.
 - Hoop Dreamers rimosso (hoop.js tolto; resta nello storico).
+
+## 1070 · Poke Dream: stile MINI, maglie NBA moderne, schermo adattivo
+- Giocatori in stile MINI con la maglia NBA moderna della loro squadra reale (solo colori, niente loghi né scritte); prevista anche la variante anni 90, non attiva.
+- Schermo a tutta pagina: in orizzontale i comandi sono sovrapposti e semitrasparenti e la visuale si allarga ai lati; in verticale i comandi stanno sotto e la visuale si allunga in alto e in basso. Lotte, titolo e menu restano centrati.
+- Iniziali scelti per squadra (guardia, ala, centro con valutazione fino a ~800): Ducks Burries, Buzelis, Steinbach; Dolphins Fox, Bridges, Diabaté; Foxes Acuff, J. Smith, Mara; Peacocks Quickley, Brazile, Gobert; Spiders Green, Jaquez, Hartenstein; Turtles Wagler, Bailey, Edey; Eagles D. Murray, Lendeborg, Okongwu; Mooses Fears, Ausar Thompson, Maluach.
+
+## 1071 · Poke Dream: regione completa
+- 8 città con palestra: Canestropoli (Guardie), Pineta Alta (Ali, TAGLIO), Portocampo (Tiratori, FORZA), Arenapoli (Centri, NUOTO), Isola Playground (Atleti, VOLO), Valle dei Veterani (Difensori), Metropoli del Draft (Registi), Montecima (Base).
+- Percorsi 2–8, Bosco dei Rimbalzi, Tunnel degli Spogliatoi, Via della Vittoria e Lega dei Sogni (4 sale + campione VITO), Hall of Fame. Dopo la Lega si apre la Grotta delle Leggende.
+- Ostacoli: cespugli (TAGLIO), massi (FORZA), acqua (NUOTO); viaggio rapido con VOLO; bici in regalo a Portocampo.
+- Rarità dalla nostra valutazione: fino a 800 comuni, 800–1300 non comuni, 1300–2000 rari, oltre 2000 rarissimi. Wembanyama, Jokić e Dončić (oltre 2400) compaiono solo come eventi unici dopo la Lega.
+- Mappe generate con seme fisso (sempre uguali tra un salvataggio e l'altro), con collegamenti verificati automaticamente.
