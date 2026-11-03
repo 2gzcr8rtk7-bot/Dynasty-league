@@ -2749,3 +2749,12 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - Lega: Elite con 5 giocatori Lv 59-62 e oggetti da tenere; campione VITO con 6 giocatori Lv 66-68 e oggetti. IA più sveglia (cura quando è bassa, usa gli stati, cerca le mosse superefficaci).
 - Boss segreto: IL FONDATORE in fondo alla Grotta delle Leggende, solo da campione, 6 giocatori Lv 78-83 con oggetti; si può risfidare.
 - Allenatore con la testa nuova (scelta di Francesco): rotonda di fronte, con il collo di lato.
+
+## 1084 · Poke Dream: mappa interattiva col TELETRASPORTO, medaglie con effetti, 3 salvataggi, schedario con filtri
+- MAPPA nel menu: si scorre tra le città sbloccate (le altre sono grigie con "???"), si vede dove sei; dalla 5ª medaglia il coach ha il TELETRASPORTO e dalla mappa va subito in una città già visitata. Sostituisce il VOLO.
+- Medaglie con effetti: ognuna delle prime 5 alza una statistica del 10% (attacco, difesa, tiro, lettura, velocità). I giocatori ricevuti da altri allenatori ascoltano solo entro il livello permesso dalle medaglie (10, 20, 30… 100).
+- 3 slot di salvataggio dal titolo (con nome, squadra, medaglie e tempo) e SALVA manuale nel menu.
+- Schedario con FILTRO (tutti, catturati, visti, guardie, ali, centri, rari+, lega, free agent) e ORDINE (numero, valore, nome, potenziale); ogni scheda mostra squadra, NBA, numero, età, rarità e le zone dove si trova.
+- Scheda del giocatore a 3 pagine (◀ ▶): statistiche con barre, mosse con dettagli, dati (allenatore, oggetto, pallone, dove è stato catturato, affetto).
+- Tessera con statistiche: vittorie, catture, passi, crediti vinti.
+- Tutorial breve del professore dopo la sfida col rivale (si può saltare).
