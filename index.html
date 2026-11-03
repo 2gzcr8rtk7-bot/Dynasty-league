@@ -9779,6 +9779,16 @@ function navTarget(btnOnly){const sh=[...document.querySelectorAll(".colsheet")]
   if(!btnOnly&&navSub())return{el:{click:()=>{navSub().back();window.scrollTo(0,0)}}};if(!btnOnly&&NAVH.length)return{view:NAVH[NAVH.length-1]};return null}
 function navBack(btnOnly){const n=Date.now();if(n-navT<450)return true;const t=navTarget(btnOnly);if(!t)return false;navT=n;
   if(t.el)t.el.click();else{cur=t.view;render();window.scrollTo(0,0)}return true}
+/* (1068) TORNANDO INDIETRO SI RITORNA ALLA STESSA ALTEZZA DELLA LISTA: quando tocchi un elemento (giocatore, partita, riga di statistiche…) che apre un'altra pagina,
+   si ricorda la pagina, l'altezza e l'elemento toccato; tornando indietro (tasto ‹, gesto o tasto di Android) la lista riappare con quell'elemento al centro, evidenziato un attimo. */
+const NAVS=[];let navPend=null;
+const navSig=()=>{const m=document.getElementById("main");let h="";try{const t=m&&m.querySelector(".view h1,.view h2,.view h3,.view .ttl,.view .hdr");h=t?t.textContent.trim().slice(0,48):""}catch(e){}let sb="";try{const x=navSub();sb=x?String(x.lab||"sub"):""}catch(e){}return cur+"|"+sb+"|"+h};
+const navSel=el=>{let e=el;while(e&&e.id!=="main"){if(e.attributes){const d=[...e.attributes].filter(a=>a.name.startsWith("data-")&&a.value!=="").slice(0,3);if(d.length)return e.tagName.toLowerCase()+d.map(a=>`[${a.name}="${(window.CSS&&CSS.escape)?CSS.escape(a.value):a.value.replace(/"/g,'\\"')}"]`).join("")}e=e.parentElement}return null};
+window.addEventListener("click",e=>{const m=document.getElementById("main");if(!m||!m.contains(e.target))return;if(e.target.closest(BK_IDS+",.gback,.grback"))return;const sel=navSel(e.target);if(!sel)return;navPend={sig:navSig(),y:scrollY,sel};const p=navPend;setTimeout(()=>{if(navPend!==p)return;navPend=null;if(navSig()!==p.sig){NAVS.push(p);if(NAVS.length>40)NAVS.shift()}},60)},true);
+const navRestore=()=>{const go=(late)=>{const sg=navSig();let i=NAVS.length-1;while(i>=0&&NAVS[i].sig!==sg)i--;if(i<0)return;const p=NAVS[i];let el=null;try{el=document.querySelector("#main "+p.sel)}catch(e){}if(el){el.scrollIntoView({block:"center"});if(!late){el.classList.add("navhl");setTimeout(()=>el.classList.remove("navhl"),1300)}}else window.scrollTo(0,p.y);if(late)NAVS.length=i};setTimeout(()=>go(false),40);setTimeout(()=>go(true),320)};
+window.addEventListener("click",e=>{const m=document.getElementById("main");if(m&&m.contains(e.target)&&e.target.closest(BK_IDS+",.gback,.grback"))navRestore()},true);
+{const nb0=navBack;navBack=function(b){const r=nb0(b);if(r)navRestore();return r}}
+{const st_=document.createElement("style");st_.textContent=".navhl{outline:3px solid #facc15!important;outline-offset:2px;border-radius:10px;transition:outline-color .4s}";document.head.appendChild(st_)}
 /* Android: una voce finta nella cronologia, il gesto/tasto indietro torna indietro nell'app */
 try{history.pushState({dl:1},"")}catch(e){}
 addEventListener("popstate",()=>{if(navBack()){try{history.pushState({dl:1},"")}catch(e){}}});

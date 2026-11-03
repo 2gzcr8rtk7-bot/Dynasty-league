@@ -2585,3 +2585,7 @@ Francesco (08:54): visuali interne pessime, il bus da dentro non si vedeva, le a
 
 ## 1067 — Turno 4 di 4 notti, 3/11 giorno di pausa
 Francesco (08:57): la notte del 3/11 non ci sono partite NBA: il turno 4 (30/10-3/11) diventa di 4 notti (30/10-2/11) e si chiude la mattina del 3/11; il 3/11 è pausa e il turno 5 parte il 4/11 come previsto.
+
+## 1068 — Tornando indietro si torna allo stesso punto della lista
+Francesco (08:59): sfogliando una lista (giocatori, Dynasty TV, statistiche…) e aprendo un profilo o una partita, il tasto indietro deve riportare alla pagina di prima all altezza dell elemento toccato.
+- Toccando un elemento che apre un altra pagina, l app ricorda pagina, altezza ed elemento; tornando indietro (tasto ‹, gesto dal bordo o tasto indietro di Android) la lista riappare con quell elemento al centro dello schermo, evidenziato in giallo per un attimo. Vale per tutte le liste (funziona con qualsiasi elemento che ha un identificativo: giocatore, partita, squadra, riga).
