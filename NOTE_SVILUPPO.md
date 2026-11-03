@@ -2801,3 +2801,9 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - Affetto: cresce con vittorie, livelli e cure; a 100+ il giocatore fa più critici e a volte resiste a un KO "per non deluderti". Si vede nella pagina DATI della scheda.
 - Sfide in COPPIA (due allenatori di fila senza pausa) sul Percorso 9.
 - SFORZO: quando finiscono i PP si usa un colpo disperato con rinculo (anche l'avversario).
+
+## 1090 — Poke Dream non partiva più dal tasto «Gioca» (sw.js)
+- Causa: il service worker chiede `poke.js?v=…` alla rete ma dopo 1,2 s ripiega sulla cache; la copia con quel `?v=` non c'è mai (è sempre nuova) e come ultimo ripiego rispondeva con **index.html al posto di poke.js**. Il file è cresciuto (270 KB) e sul telefono spesso non arriva in 1,2 s → errore di sintassi silenzioso, `PDREAM` assente, tasto muto.
+- Fix sw.js: chiave di cache senza query (`poke.js`, non `poke.js?v=…`), così la copia salvata si ritrova; per i file non-pagina senza copia si aspetta la rete; index.html si serve solo alle navigazioni.
+- index.html: «Gioca» mostra «⏳ Caricamento…», e se il file arriva ma non è il gioco (o l'apertura lancia un errore) compare un avviso invece del nulla.
+- Verificato in Chromium con rete rallentata: con il vecchio sw.js `Unexpected token '<'`, col nuovo il gioco parte.
