@@ -2630,3 +2630,8 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - Nel menu la voce col nome dell'allenatore ora si chiama TESSERA (la tessera allenatore).
 - I giocatori leggendari in giro per la mappa sono più bassi e piccoli dell'allenatore.
 - Gli iniziali partono dal livello 5.
+
+## 1074 · Poke Dream: lotte nel PALAZZETTO
+- Sfondo delle lotte scelto da Francesco: palazzetto con spalti pieni di tifosi, luci dall'alto e parquet chiaro a doghe, esteso a tutto lo schermo sia in orizzontale sia in verticale. Sotto i giocatori ci sono le basi colorate.
+- Il tuo giocatore è più grande, di spalle e più vicino allo schermo, con i piedi dietro il riquadro del testo come nel genere.
+- Gli altri 5 sfondi provati (playground, prato, tramonto, neon, grotta) restano nel codice ma non sono usati.
