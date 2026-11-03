@@ -2624,3 +2624,9 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - Il PDK sposta il totale di poco (±3%).
 - Esempi: Wembanyama 673, Jokić 666, Dončić 625, Giannis 578, Flagg 549, Maxey 506, Durant 434, Buzelis 409, Steinbach 365.
 - Come sono distribuite le stat: il 72% dipende dal ruolo e dalle statistiche (punti, rimbalzi, assist, minuti, età), il resto è uguale per tutti, così nessuno ha valori assurdi.
+
+## 1073 · Poke Dream: verticale a tutto schermo, voce TESSERA, leggende più piccole
+- In verticale il gioco occupa tutto lo schermo. I comandi sono semitrasparenti sopra l'immagine e i testi restano sopra i comandi.
+- Nel menu la voce col nome dell'allenatore ora si chiama TESSERA (la tessera allenatore).
+- I giocatori leggendari in giro per la mappa sono più bassi e piccoli dell'allenatore.
+- Gli iniziali partono dal livello 5.
