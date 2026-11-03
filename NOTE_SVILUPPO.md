@@ -2635,3 +2635,17 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - Sfondo delle lotte scelto da Francesco: palazzetto con spalti pieni di tifosi, luci dall'alto e parquet chiaro a doghe, esteso a tutto lo schermo sia in orizzontale sia in verticale. Sotto i giocatori ci sono le basi colorate.
 - Il tuo giocatore è più grande, di spalle e più vicino allo schermo, con i piedi dietro il riquadro del testo come nel genere.
 - Gli altri 5 sfondi provati (playground, prato, tramonto, neon, grotta) restano nel codice ma non sono usati.
+
+## 1075 · Poke Dream: riquadri e scritte della lotta, font più spesso, suoni dei colpi
+- Riquadri come nel genere:
+  - avversario in alto a sinistra, con una codina che punta verso di lui e una striscia rossa;
+  - il tuo giocatore in basso a destra, con la codina verso di lui e una striscia blu;
+  - i nomi lunghi si rimpiccioliscono per entrare nel riquadro.
+- Mosse: le 4 mosse a sinistra; a destra un riquadro con i PP e il tipo della mossa selezionata. Nessuna scritta si sovrappone o esce dai riquadri, né in orizzontale né in verticale.
+- Font più spesso (800) in tutto il gioco.
+- Verticale: la lotta sta in basso, sopra i comandi; gli spalti del palazzetto riempiono la parte alta.
+- Suoni in lotta:
+  - fruscio del gesto + impatto quando la mossa colpisce, diversi per tipo (tiro, schiacciata, stoppata, passaggio, palleggio);
+  - doppio impatto se superefficace, colpo attutito se poco efficace;
+  - suono del tiro a vuoto;
+  - arpeggio quando una statistica sale o scende.
