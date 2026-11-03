@@ -2792,3 +2792,12 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - Missioni con DIARIO nel menu: il pacco del Professore (da portare a Pineta Alta), un centro per la nonna di Arenapoli, Re della Costa (bagnino di Arenapoli), Dieci catture, Il pescatore (vecchio del Percorso 1), più Ombra e Rivale.
 - VITO ricompare: Percorso 3 (1ª medaglia), Portocampo (3ª), Percorso 6 (5ª), Via della Vittoria (8ª) e nel laboratorio dopo la Lega (Lv 70). La sua squadra cresce ogni volta.
 - Il Professore premia lo schedario: 10, 50, 100, 150, 200 e 251 catturati.
+
+## 1089 · Poke Dream: classi di allenatori, rivincite dei capi, torneo settimanale, passive dei tipi, affetto, sfide in coppia, Sforzo
+- Allenatori con 12 classi (tifoso, cheerleader, arbitro, giornalista, statistico, rookie, veterano, mascotte, preparatore, talent scout, ragazzino…), ognuna con frasi e premio diverso.
+- Da campione i capi palestra offrono una RIVINCITA al giorno con squadre +20 livelli e oggetti; premio doppio.
+- TORNEO SETTIMANALE dall'ARBITRO ad Arenapoli, una volta al giorno: domenica tutto permesso, lunedì solo guardie, martedì solo ali, mercoledì solo centri, giovedì under 30, venerdì solo free agent, sabato senza oggetti; 3 partite di fila senza cure, premio 3000₵ e uno strumento raro.
+- Passive dei tipi: GUARDIA più critici, ALA +10% precisione, CENTRO subisce meno critici e meno colpi fisici, TIRATORE più preciso nei tiri, DIFENSORE -10% danni, REGISTA a volte evita i cali, ATLETA parte in scatto (velocità su al 1º turno).
+- Affetto: cresce con vittorie, livelli e cure; a 100+ il giocatore fa più critici e a volte resiste a un KO "per non deluderti". Si vede nella pagina DATI della scheda.
+- Sfide in COPPIA (due allenatori di fila senza pausa) sul Percorso 9.
+- SFORZO: quando finiscono i PP si usa un colpo disperato con rinculo (anche l'avversario).
