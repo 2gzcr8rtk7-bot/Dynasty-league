@@ -2674,3 +2674,15 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
   - Bosco: 7–10;
   - poi qualche livello sotto la palestra successiva, fino a 46–50 nella Via della Vittoria;
   - gli allenatori sui percorsi sono 1 livello sopra i selvatici.
+
+## 1078 · Poke Dream: grafica pixel art più curata, ingressi scuri, allenatore nuovo, MENU più in basso
+- Erba a due toni con ciuffi, alberi in pixel art (chioma a pixel con contorno e 4 toni), sentieri col bordo scuro dove toccano l'erba, acqua animata con la riva chiara, ombre degli edifici.
+- Ingressi: dove una zona porta a un'altra (bosco, percorso, città) il varco sfuma nel nero e il cambio di zona ha una breve dissolvenza.
+- Allenatore ridisegnato (16x24 disegnato al 130%):
+  - più alto e circa il 30% più grande rispetto all'ambiente;
+  - cappello grande nel colore della squadra, con visiera e stemma;
+  - viso leggibile con occhi, guance e bocca;
+  - giacca con zip colorata, zaino, gambe e scarpe da basket col colore della squadra;
+  - contorno scuro e ombra a terra.
+  - Stesso stile per il rivale.
+- Il pulsante MENU è più in basso, lontano dalla barra del telefono, e il menu si apre sotto il pulsante.
