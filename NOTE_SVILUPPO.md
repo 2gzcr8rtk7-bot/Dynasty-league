@@ -2696,3 +2696,8 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
   - Con ◀ ▶ ai bordi si cambia tasca, oppure basta toccarla; ogni pallone ha il suo colore.
 - Persone: l'allenatore è il 10% più piccolo di prima (117% della taglia base) e ora tutte le persone hanno lo stesso formato e la stessa grandezza (16x24 al 117%), con contorno scuro. Varianti: senza cappello (capelli), capelli lunghi, camice bianco, capelli bianchi.
 - Porte delle case più grandi (alte ~19px), in scala con le persone, con ombra sul gradino.
+
+## 1080 · Poke Dream: lampeggio d'incontro pulito, strisce del ruolo, interni a schermo pieno
+- Incontro con un selvatico: il lampeggio bianco/nero avviene sopra la mappa, senza mostrare nomi o riquadri. La lotta compare solo dopo, con i giocatori che entrano scivolando.
+- La striscia colorata nei riquadri della lotta segue il ruolo del giocatore: rossa per le guardie, blu per le ali, gialla per i centri.
+- Interni (case, laboratorio, centri, shop, palestre): la stanza viene ingrandita per riempire lo schermo, sia in orizzontale sia in verticale, ed è centrata con una cornice di legno; in verticale resta sopra i comandi.
