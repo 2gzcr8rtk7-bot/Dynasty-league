@@ -2715,3 +2715,23 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
   3. oscilla fino a 3 volte, con un toc-toc a ogni oscillazione;
   4. alla 3ª oscillazione riuscita parte una fanfara felice con le stelline; se il giocatore scappa, c'è un lampo e un suono di rottura.
 - Il passaggio nord di Canestropoli ora è bloccato davvero senza la MEDAGLIA RETINA (prima si passava accanto alla guardia). Anche la porta della Lega si apre solo con tutte le 8 medaglie.
+
+## 1082 · Poke Dream: revisione completa (menu, strumenti, negozi, mappa, suoni, opzioni)
+- Menu: il tasto B chiude qualsiasi menu (zaino compreso) e torna indietro; il tasto MENU chiude anche il menu principale.
+- Opzioni: volume MUSICA ed EFFETTI separati a 5 livelli, velocità del testo, pulsanti NORMALI o GRANDI.
+- Pulsanti: croce direzionale 3x3 più grande, A e B più grandi e ordinati, semitrasparenti in orizzontale, rispettano le zone sicure del telefono.
+- Strumenti (tutti nello stile del genere, con nomi nostri):
+  - cure: Bevanda max, Elisir, Elisir max, Rientro completo, Kit medico, Integratore PP;
+  - solo in partita: Spinta forza/difesa/tiro/corsa/mira, Fascia protezione;
+  - da tenere: Barretta energetica, Fascia della grinta, Biglietto fortunato, Portafortuna, Fischietto dell'arbitro, Palla rovente, Borraccia magica, Fascia della guardia/dell'ala/del centro (oltre a Polsino, Ginocchiera, Fascia lucky, Scarpe nuove e ai frutti, che ora funzionano davvero);
+  - chiave: Canna buona, Super canna (pescano giocatori più forti), Cuffie da allenamento (esperienza a tutta la squadra), Radar strumenti, Agenda sfide (rivincite dopo la Lega), Mappa della regione (si riceve con lo schedario).
+- Dai/togli oggetto dal menu SQUADRA e dallo zaino; gli effetti valgono in lotta (danni, critici, velocità, recupero a fine turno, frutti automatici, esperienza, crediti doppi).
+- Negozi: lista con icona, prezzo, simbolo del tipo e chip colorati G/A/C che dicono a quali ruoli serve lo schema; vendita con icone.
+- Centro commerciale a Metropoli del Draft con 4 reparti (palloni, cure, allenamento, oggetti da tenere + tutti gli schemi).
+- Regali nelle case delle città (cuffie, biglietto, canne, radar, portafortuna, fascia della grinta, agenda, integratore PP, palla rovente, caramelle).
+- Allenatore delle mosse a Valle dei Veterani: fa ripassare gratis le mosse dimenticate.
+- Mappa della regione disegnata: città, percorsi, medaglie prese e la tua posizione.
+- Simboli dei tipi in pixel art (palla, ala, canestro, bersaglio, scudo, lavagna, fulmine) nelle mosse e nei negozi.
+- Suoni nuovi: passi diversi per erba/sentiero/legno, bici e campanello, nuoto, salto, lancio e abboccata della pesca; musica ed effetti su canali separati.
+- Mappa più grande: percorsi e grotte +40%, più erba, più allenatori e oggetti; verde un po' più scuro e sentieri marroncino chiaro.
+- Pesca: con la canna base a volte non abbocca nessuno; le canne migliori pescano giocatori più forti e di livello più alto.
