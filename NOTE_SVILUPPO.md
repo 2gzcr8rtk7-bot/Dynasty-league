@@ -2778,3 +2778,10 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - Persone in scala 1:1 con l'ambiente (come nei giochi del genere).
 - Barra RAPIDI a sinistra (6 slot): dallo zaino, su uno strumento, premi MENU per metterlo/toglierlo; tocca lo slot per usarlo subito. Barra SQUADRA a destra: tocca un giocatore per la scheda.
 - ASPETTO nel menu: capelli (corti, lunghi, ricci, rasati), colore, cappello (cappello, berretto, nessuno), giacca, pantaloni, zaino; anteprima nelle 4 direzioni.
+
+## 1087 · Poke Dream: rarissimi in punti fissi, ultra rari all'1%, shiny evidenti, prestito, pergamene del draft
+- I 4 giocatori più forti sotto le leggende non si trovano più nell'erba: uno in cima al FARO, uno su un'isoletta del MARE, uno in fondo al TUNNEL, uno nel PARCO. Si incontrano una volta sola, a livello alto, senza aspettare la Lega.
+- In ogni zona c'è un "ultra raro" (fascia rari) all'1% circa, di livello un po' più alto; le voci di paese lo nominano.
+- Shiny: 1 su 300, annuncio "È uno SHINY!" con jingle e stelline che girano intorno in lotta; contati nelle statistiche.
+- PRESTITO: l'AGENTE nel centro cura di Valle dei Veterani presta un giocatore forte (al livello del tuo più alto) fino alla medaglia della Valle; riportandoglielo si ricevono 5 Iper Palloni e 3000₵.
+- PERGAMENE DEL DRAFT: l'aiutante del laboratorio ne dà una a 2 medaglie e una a 6; dopo 2500 passi si "schiude" in un giovane del vivaio (età ≤ 21) al livello 5.
