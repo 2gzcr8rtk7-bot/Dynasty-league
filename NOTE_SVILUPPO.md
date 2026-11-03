@@ -2649,3 +2649,11 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
   - doppio impatto se superefficace, colpo attutito se poco efficace;
   - suono del tiro a vuoto;
   - arpeggio quando una statistica sale o scende.
+
+## 1076 · Poke Dream: colori dei ruoli come nell'app, simbolo sulle mosse
+- Colori dei tipi allineati all'app: guardia rossa, ala blu (non azzurra), centro giallo con testo scuro, base grigia. Gli altri tipi sono stati spostati per non confondersi: tiratore arancione, atleta verde acqua, regista viola, difensore ardesia.
+- Accanto a ogni mossa c'è un quadratino col colore del tipo:
+  - stella ★: mossa del ruolo di quel giocatore (fa più danno);
+  - pallino grigio: mossa base.
+- Il riquadro a destra mostra il tipo della mossa scelta e la scritta "★ del suo ruolo" oppure "mossa base".
+- La stella compare anche sulle mosse nella scheda del giocatore.
