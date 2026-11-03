@@ -2807,3 +2807,11 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - Fix sw.js: chiave di cache senza query (`poke.js`, non `poke.js?v=…`), così la copia salvata si ritrova; per i file non-pagina senza copia si aspetta la rete; index.html si serve solo alle navigazioni.
 - index.html: «Gioca» mostra «⏳ Caricamento…», e se il file arriva ma non è il gioco (o l'apertura lancia un errore) compare un avviso invece del nulla.
 - Verificato in Chromium con rete rallentata: con il vecchio sw.js `Unexpected token '<'`, col nuovo il gioco parte.
+
+## 1091 — Poke Dream: servizi (gruppo G6)
+- SCAMBI: a Portocampo (casa di MARCO) scambi un tuo giocatore con un Free Agent esclusivo (non si trova in natura); arriva con OT diverso → obbedisce solo con le medaglie giuste e cresce più in fretta.
+- VALUTATORE a Metropoli: legge il potenziale nascosto (IV) e la statistica migliore.
+- CAMBIANOME a Canestropoli: nuovo soprannome, solo ai giocatori presi da te.
+- DISTRIBUTORI nei centri cura: Borraccia, Bevanda energetica, Caffè, a volte ne esce uno in più.
+- STRUMENTI NASCOSTI: 2 per zona, invisibili; il RADAR (Metropoli) avvisa quando sei vicino, premendo A davanti al punto li raccogli.
+- PC: DEPOSITO STRUMENTI (deposita/ritira), bici: salta i bordi verso il basso, PASS DEL PARCO in vendita ad Arenapoli.
