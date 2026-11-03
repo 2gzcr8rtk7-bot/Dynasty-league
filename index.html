@@ -10560,7 +10560,7 @@ function sala(){if(!COL.d){cur="campo";return vCampo()}
   <button class="hoftile" data-hof="college"><span class="hi">🔭</span><span><b>Scouting</b><small>Ufficio Scouting · college, NBA, prospetti</small></span><i>›</i></button>
   <button class="hoftile" data-hof="dxcol"><span class="hi">🖌️</span><span><b>Editor colori</b><small>Parquet · Base · Notte · tocca e scegli</small></span><i>›</i></button>
   <button class="hoftile" data-hof="pers"><span class="hi">🎨</span><span><b>Personalizzazioni</b><small>Loghi e look della tua app</small></span><i>›</i></button>
-  <button class="hoftile" data-hof="hoop"><span class="hi">🏀</span><span><b>Hoop Dreamers</b><small>Basket 5 contro 5 · le nostre squadre · palazzetto e sonoro</small></span><i>›</i></button>
+  <button class="hoftile" data-hof="hoop"><span class="hi">🎮</span><span><b>Poke Dream</b><small>Avventura a quadretti · cattura e allena i nostri giocatori</small></span><i>›</i></button>
   <button class="hoftile" data-hof="bet"><span class="hi">🎰</span><span><b>Centro scommesse</b><small>Gettoni · sfide · sopra/sotto · duelli</small></span><i>›</i></button>
   <button class="hoftile" data-hof="soft"><span class="hi">⚙️</span><span><b>Software</b><small>Cap · Multe</small></span><i>›</i></button>
  </div><p class="hoftt">🦆 Texas Ducks · uso interno</p></div>`}
@@ -12935,27 +12935,26 @@ html.dlt-parquet body .drroom .drcla .drcr:not(#q1):not(#q2).lead{border-color:#
 (function(){
 const HK="dl_hoop",D={arena:"home",auto:false,home:"DUC",away:"DOL",qlen:3,diff:1,speed:1,sound:true,crowd:.5,left:false,subs:true,names:true,fouls:true};
 const P=()=>{try{return{...D,...JSON.parse(localStorage.getItem(HK)||"{}")}}catch(e){return{...D}}},SV=o=>{try{localStorage.setItem(HK,JSON.stringify(o))}catch(e){}};
-function loadHoop(cb){if(window.HOOP)return cb();const s=document.createElement("script");s.src="hoop.js?v="+(window.HOOP_V||Date.now());s.onload=cb;s.onerror=()=>alert("Gioco non caricato: controlla la connessione");document.head.appendChild(s)}
+function loadHoop(cb){/* (1069) Hoop Dreamers rimosso: al suo posto Poke Dream */return;const s=document.createElement("script");s.src="hoop.js?v="+(window.HOOP_V||Date.now());s.onload=cb;s.onerror=()=>alert("Gioco non caricato: controlla la connessione");document.head.appendChild(s)}
 function seg(k,opts,cur){return`<div class="hpseg">${opts.map(([v,l])=>`<button type="button" data-hp2="${k}" data-v="${v}" class="${String(cur)===String(v)?"on":""}">${l}</button>`).join("")}</div>`}
-function vHoop(){if(!COL.d){cur="campo";return vCampo()}const o=P(),T=teamOrd();
-  const pick=k=>`<div class="hpteams">${T.map(t=>`<button type="button" data-hp2="${k}" data-v="${t}" class="${o[k]===t?"on":""}" aria-label="${TEAMS[t].nick}">${badge(t)}</button>`).join("")}</div>`;
+/* (1069) POKE DREAM al posto di Hoop Dreamers: il gioco è in poke.js (caricato solo quando si preme «Gioca») */
+function loadPoke(cb){if(window.PDREAM&&window.PDREAM.open)return cb();const s=document.createElement("script");s.src="poke.js?v="+(window.HOOP_V||Date.now());s.onload=cb;s.onerror=()=>alert("Gioco non caricato: controlla la connessione");document.head.appendChild(s)}
+function pokeData(){const num={},team={},nba={};Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>{num[p[0]]=p[1];team[p[0]]=t;nba[p[0]]=p[3]}));
+  const avg=(n,i)=>{const a=(PARTITE[n]||[]).filter(x=>x[i]!=null);return a.length?a.reduce((q,x)=>q+(+x[i]||0),0)/a.length:null};
+  const players=Object.entries(VALORI).map(([n,v])=>{const t=team[n],T=t?TEAMS[t]:null;let age=null;try{age=etaEsatta(n)}catch(e){}return{name:n,role:v[0],val:v[1],team:t||null,num:num[n],nba:nba[n]||null,col:T?[t==="DUC"?"#facc15":T.bg,T.fg===T.bg?"#ffffff":T.fg]:null,min:avg(n,2),pdk:avg(n,3),eff:avg(n,4),pts:avg(n,5),reb:avg(n,6),ast:avg(n,7),age}});
+  const teams={};Object.entries(TEAMS).forEach(([k,T])=>{teams[k]={nick:T.nick,bg:k==="DUC"?"#facc15":k==="PEA"?"#d946ef":T.bg,fg:T.fg===T.bg?"#ffffff":T.fg}});return{players,teams}}
+window.loadPoke=loadPoke;window.pokeData=pokeData;
+function vHoop(){if(!COL.d){cur="campo";return vCampo()}
   return`<div class="hof"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
-  <div class="hofhd"><div style="grid-column:1/3"><small>Texas Ducks · area riservata del GM</small><b>Hoop Dreamers</b><em>Basket 5 contro 5 con le nostre squadre</em></div></div>
-  <section class="hofcard hpcard"><h4>La tua squadra</h4>${pick("home")}<h4>Avversaria</h4>${pick("away")}
-  <h4>Palazzetto</h4>${seg("arena",[["home","Il tuo ("+TEAMS[o.home].nick+")"],["away","Il loro ("+TEAMS[o.away].nick+")"]],o.arena)}
-  <h4>Modalità</h4>${seg("auto",[[false,"Gioca tu"],[true,"Guarda CPU contro CPU"]],o.auto)}
-  <h4>Durata di un quarto (minuti veri)</h4>${seg("qlen",[[2,"2"],[3,"3"],[4,"4"],[6,"6"],[8,"8"],[12,"12"]],o.qlen)}
-  <h4>Difficoltà</h4>${seg("diff",[[0,"Facile"],[1,"Normale"],[2,"Difficile"]],o.diff)}
-  <h4>Velocità di gioco</h4>${seg("speed",[[.8,"Lenta"],[1,"Normale"],[1.25,"Veloce"]],o.speed)}
-  <h4>Sonoro</h4>${seg("sound",[[true,"Sì"],[false,"No"]],o.sound)}<h4>Pubblico</h4>${seg("crowd",[[.2,"Tranquillo"],[.5,"Normale"],[.9,"Bolgia"]],o.crowd)}
-  <h4>Comandi</h4>${seg("left",[[false,"Levetta a sinistra"],[true,"Levetta a destra"]],o.left)}
-  <h4>Regole</h4>${seg("fouls",[[true,"Falli e liberi"],[false,"Senza falli"]],o.fouls)}${seg("subs",[[true,"Cambi automatici"],[false,"Sempre i titolari"]],o.subs)}${seg("names",[[true,"Nomi sopra i giocatori"],[false,"Senza nomi"]],o.names)}
+  <div class="hofhd"><div style="grid-column:1/3"><small>Texas Ducks · area riservata del GM</small><b>Poke Dream</b><em>Avventura a quadretti con i giocatori della lega</em></div></div>
+  <section class="hofcard hpcard"><h4>Come funziona</h4><p class="setnote">Scegli la tua squadra: il professore ti propone tre giovani dei tuoi (una guardia, un ala, un centro). Esplora, trova giocatori nell erba alta e nei laghi, indeboliscili e offri un <b>contratto</b>. Lotte a turni con 4 mosse, tipi (le guardie battono le ali, le ali i centri, i centri le guardie) e stili, livelli fino a 100, zaino, schedario, centri cura, negozi con gli schemi. Salvataggio automatico.</p>
+  <p class="setnote"><b>Comandi:</b> croce per muoverti (tieni premuto <b>B</b> per correre), <b>A</b> per parlare e confermare, <b>B</b> per tornare indietro, <b>MENU</b> per squadra, zaino e schedario. Sulle voci dei menu puoi anche toccare direttamente.</p>
+  <p class="setnote"><b>Prima tappa:</b> Borgo Parquet, laboratorio, Percorso 1, Canestropoli. Le altre città, le palestre e la Lega arrivano a tappe.</p>
   <button type="button" class="hpplay" data-hp2="play">▶ Gioca</button></section>
-  <section class="hofcard"><h4>Come si gioca</h4><p class="setnote"><b>Attacco:</b> levetta per muoverti · <b>TIRO</b> tieni premuto per saltare e lascia in cima al salto (barra verde = tiro perfetto; vicino al ferro schiacci) · <b>PASSA</b> verso dove punti la levetta (o al compagno più libero) · <b>PALLEGGIO</b> crossover veloce: se il difensore è vicino puoi rompergli le caviglie.<br><b>Difesa:</b> <b>SALTO</b> per stoppare, contestare e prendere rimbalzi · <b>RUBA</b> vicino a chi palleggia (attento ai falli) · <b>CAMBIA</b> passi al difensore più vicino alla palla.<br>Tiri da tre, 24 secondi, falli di squadra (dal 5° ci sono i liberi), stoppate, rimbalzi, intercetti, quarti e supplementari. I giocatori sono quelli veri delle rose, con forza ricavata da valore e ruolo; si stancano e vengono cambiati. Tastiera: frecce, J K L, P pausa.</p></section>
   <p class="hoftt">🦆 Texas Ducks · uso interno</p></div>`}
 VIEWS.hoop=vHoop;
 document.addEventListener("click",e=>{if(cur!=="hoop")return;const b=e.target.closest("[data-hp2]");if(!b)return;e.preventDefault();const k=b.dataset.hp2,o=P();
-  if(k==="play"){loadHoop(()=>{window.HOOP.onclose=()=>{try{render()}catch(_){}};window.HOOP.open(P())});return}
+  if(k==="play"){loadPoke(()=>{const d=pokeData();window.PDREAM.open({...d,onclose:()=>{try{render()}catch(_){}}})});return}
   let v=b.dataset.v;if(v==="true")v=true;else if(v==="false")v=false;else if(!isNaN(+v)&&k!=="home"&&k!=="away")v=+v;o[k]=v;if(k==="home"&&o.away===v)o.away=T0(v);if(k==="away"&&o.home===v)o.home=T0(v);SV(o);const y=scrollY;render();scrollTo(0,y)});
 const T0=x=>teamOrd().find(t=>t!==x);
 })();
