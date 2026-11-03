@@ -2687,3 +2687,12 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
   - Stesso stile per il rivale.
 - Il pulsante MENU è più in basso, lontano dalla barra del telefono, e il menu si apre sotto il pulsante.
 - Il Percorso 1 non propone più come selvatici i 3 iniziali delle squadre.
+
+## 1079 · Poke Dream: zaino grafico, persone e porte nella stessa scala
+- Zaino nuovo, uguale in esplorazione e in lotta:
+  - 6 tasche in alto con icona (Cure, Palloni, Frutti, Oggetti, Schemi, Chiave);
+  - una griglia di caselle con il disegno in pixel art di ogni strumento e la quantità;
+  - sotto, il riquadro con nome, icona e descrizione.
+  - Con ◀ ▶ ai bordi si cambia tasca, oppure basta toccarla; ogni pallone ha il suo colore.
+- Persone: l'allenatore è il 10% più piccolo di prima (117% della taglia base) e ora tutte le persone hanno lo stesso formato e la stessa grandezza (16x24 al 117%), con contorno scuro. Varianti: senza cappello (capelli), capelli lunghi, camice bianco, capelli bianchi.
+- Porte delle case più grandi (alte ~19px), in scala con le persone, con ombra sul gradino.
