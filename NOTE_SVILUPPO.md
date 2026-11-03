@@ -2686,3 +2686,4 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
   - contorno scuro e ombra a terra.
   - Stesso stile per il rivale.
 - Il pulsante MENU è più in basso, lontano dalla barra del telefono, e il menu si apre sotto il pulsante.
+- Il Percorso 1 non propone più come selvatici i 3 iniziali delle squadre.
