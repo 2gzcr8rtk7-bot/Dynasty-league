@@ -2847,3 +2847,6 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - TORRE LOTTA a Capitale del Gioco (da Campione): serie di 7 sfide al livello della tua squadra, cure tra una e l altra, niente strumenti; serie completa = 3 PUNTI LOTTA da spendere in premi; record e serie sempre più dure.
 - ARENA ATLETICA a Isola Playground: tre minigiochi veri (GARA DI TIRO a tempo con A, SLALOM e RIMBALZI con ◀ ▶ per 20 secondi; la velocità del tuo primo giocatore conta), medaglie bronzo/argento/oro e premi.
 - SCHEDARIO: ogni scheda dice DOVE si trova la specie (percorsi/pesca); a schedario completo il Prof. dà il DIPLOMA e la tessera mostra ★ SCHEDARIO COMPLETO.
+
+## 1096 — Poke Dream: strumenti RAPIDI dallo zaino con un tocco
+- Nello zaino il primo tocco su uno strumento lo seleziona (si legge la descrizione), il secondo lo usa. Sotto la descrizione due tasti: USA e ★ RAPIDI (o ✕ RAPIDI per toglierlo): lo strumento va nella barra a sinistra, anche gli oggetti chiave (Bici, canne, Radio, Torcia…). Resta valido anche il tasto MENU sullo strumento.
