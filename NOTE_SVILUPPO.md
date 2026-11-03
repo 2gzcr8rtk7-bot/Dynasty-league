@@ -2870,3 +2870,4 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - BICI DA CORSA: dalla stessa casa della bici a Portocampo, con 8 medaglie: tre volte la velocità a piedi.
 - SCHEDARIO: ogni giocatore ha una voce descrittiva (ruolo, dote migliore, squadra, età, rarità).
 - TESSERA: REGISTRO SFIDE (ultime 60 vittorie con zona e data) e ALBUM FOTO. L Academy è a Pineta Alta (a Valle c era già la Torre Radio).
+- (03/11 22:00) Dream su Android di fascia media (Redmi Note 12 bloccato su «Entro nell arena…»): DRM_LITE (Android con deviceMemory ≤6 o ≤8 core) = niente antialias e risoluzione max 1,5× (prima fino a 2,75×); avviso dopo 20 s se sta ancora caricando. Patch /home/claude/patch_dreamlite.py.
