@@ -2785,3 +2785,10 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - Shiny: 1 su 300, annuncio "È uno SHINY!" con jingle e stelline che girano intorno in lotta; contati nelle statistiche.
 - PRESTITO: l'AGENTE nel centro cura di Valle dei Veterani presta un giocatore forte (al livello del tuo più alto) fino alla medaglia della Valle; riportandoglielo si ricevono 5 Iper Palloni e 3000₵.
 - PERGAMENE DEL DRAFT: l'aiutante del laboratorio ne dà una a 2 medaglie e una a 6; dopo 2500 passi si "schiude" in un giovane del vivaio (età ≤ 21) al livello 5.
+
+## 1088 · Poke Dream: interni stile GBA, Procuratori Ombra, missioni col diario, rivale ricorrente, premi dello schedario
+- Interni: stanze più grandi (5 colonne per lato e 2 righe in più), viste alla stessa scala dell'esterno con la telecamera che segue; pavimenti a rombi e parquet nuovi, muri con battiscopa, scaffali, panchine e piante nelle parti nuove.
+- PROCURATORI OMBRA (la squadra cattiva): due scagnozzi chiudono il Tunnel degli Spogliatoi (si passa solo dopo averli battuti), un ladro nel centro commerciale (4ª medaglia), la TORRE RADIO di Valle dei Veterani (3 piani, dalla 5ª medaglia) con il CAPO OMBRA DORIAN in cima, e la resa dei conti con DORIAN nella Via della Vittoria. Premi: Palloni Veloce, Biglietto fortunato, Pallone MVP.
+- Missioni con DIARIO nel menu: il pacco del Professore (da portare a Pineta Alta), un centro per la nonna di Arenapoli, Re della Costa (bagnino di Arenapoli), Dieci catture, Il pescatore (vecchio del Percorso 1), più Ombra e Rivale.
+- VITO ricompare: Percorso 3 (1ª medaglia), Portocampo (3ª), Percorso 6 (5ª), Via della Vittoria (8ª) e nel laboratorio dopo la Lega (Lv 70). La sua squadra cresce ogni volta.
+- Il Professore premia lo schedario: 10, 50, 100, 150, 200 e 251 catturati.
