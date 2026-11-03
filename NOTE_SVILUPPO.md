@@ -2856,3 +2856,9 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - Temi di lotta dedicati: capi palestra, Procuratori Ombra, Elite, Campione, Fondatore/Leggendario, rivale.
 - Jingle: fanfara per la medaglia, motivetto per i premi dello schedario.
 - «Versi» dei giocatori per ruolo (guardia acuto, ala medio, centro grave) quando entrano in campo e aprendo la scheda nello schedario.
+
+## 1098 — Poke Dream: ACADEMY e UOVA, abilità per esemplare, mosse di struttura, strumenti «scelta»
+- ACADEMY a Valle dei Veterani: lasci 1-2 giocatori, crescono camminando (1 esperienza a passo, ritiro a 100₵ + 100 per livello). In due, ogni 300 passi può comparire un UOVO: specie di uno dei due, 3 potenziali ereditati, carattere e abilità spesso dal genitore, mosse base + mosse dei genitori che la specie può imparare, shiny 1/100 se i genitori hanno allenatori diversi. L uovo sta in squadra (non gioca), si schiude dopo 800-1400 passi: nasce a livello 5, con soprannome a scelta.
+- ABILITÀ (una per esemplare, nella scheda DATI): Grinta, Intimidazione (entrando abbassa l attacco avversario), Scatto, Muro, Vista, Guaritore, Sangue freddo, Instancabile, Serenità, Tenacia (resiste a un KO a piena energia), Ispirazione, Furbizia.
+- MOSSE DI STRUTTURA (schemi al centro commerciale): Riflesso e Schermoluce (5 turni, danni dimezzati), Sostituto, Contrattacco (agisce per ultimo, restituisce il doppio), Inseguimento (doppio danno su chi sta per uscire), Chiodi (fino a 3 strati, danno a chi entra).
+- STRUMENTI: Fascia/Occhiali/Sciarpa scelta (+50% ma una sola mossa fino al cambio), Avanzi (1/16 a fine turno).
