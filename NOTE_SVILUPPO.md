@@ -2701,3 +2701,17 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - Incontro con un selvatico: il lampeggio bianco/nero avviene sopra la mappa, senza mostrare nomi o riquadri. La lotta compare solo dopo, con i giocatori che entrano scivolando.
 - La striscia colorata nei riquadri della lotta segue il ruolo del giocatore: rossa per le guardie, blu per le ali, gialla per i centri.
 - Interni (case, laboratorio, centri, shop, palestre): la stanza viene ingrandita per riempire lo schermo, sia in orizzontale sia in verticale, ed è centrata con una cornice di legno; in verticale resta sopra i comandi.
+
+## 1081 · Poke Dream: suoni delle mosse di stato, cattura con 3 oscillazioni, varchi chiusi davvero
+- Suoni diversi per le mosse di stato:
+  - stanchezza/sonno: ninna nanna discendente;
+  - tilt/confusione: suono ondeggiante;
+  - blocco/paralisi: scossa elettrica;
+  - muraglia/protezione: accordo;
+  - "non ha effetto": due note basse.
+- Cattura come negli originali:
+  1. il pallone vola con un arco, con suono di lancio;
+  2. risucchia il giocatore, con suono e lampo;
+  3. oscilla fino a 3 volte, con un toc-toc a ogni oscillazione;
+  4. alla 3ª oscillazione riuscita parte una fanfara felice con le stelline; se il giocatore scappa, c'è un lampo e un suono di rottura.
+- Il passaggio nord di Canestropoli ora è bloccato davvero senza la MEDAGLIA RETINA (prima si passava accanto alla guardia). Anche la porta della Lega si apre solo con tutte le 8 medaglie.
