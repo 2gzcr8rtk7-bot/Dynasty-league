@@ -6,52 +6,44 @@
    Il terreno è diviso in settori da 600 m: si costruiscono solo quelli vicini (un pezzo per fotogramma) e si buttano quelli lontani;
    le montagne lontane sono una sola maglia leggera. Città e paesi si costruiscono quando ti avvicini e si liberano quando ti allontani. */
 (function(){
-const DreamValley={open(host,o){
-  const T=o.THREE,R=o.R,W=o.W,H=o.H,tm=o.team||{k:"DUC",bg:"#7c3aed",tr:"#ffffff",nick:"Dreamers"};
-  const C=c=>new T.Color(c),mix=(a,b,k)=>C(a).lerp(C(b),k),hex=c=>"#"+C(c).getHexString();const A=tm.bg;
-  const SV={exp:R.toneMappingExposure};let alive=true,raf=0,last=performance.now();
-  const own=[];const tex=(w,h,f,rep)=>{const c=document.createElement("canvas");c.width=w;c.height=h;f(c.getContext("2d"),w,h);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.anisotropy=8;if(rep)t.wrapS=t.wrapT=T.RepeatWrapping;own.push(t);return t};
-  const S=new T.Scene();const cam=new T.PerspectiveCamera(64,W/H,.25,17000);cam.rotation.order="YXZ";S.add(cam);
-  /* ---------- rumore deterministico: il mondo è sempre lo stesso ---------- */
+/* (1061) IL MONDO (senza grafica): forma della valle, luoghi, strade, colori, mappa e navigatore.
+   Serve sia alla valle sia alla mappa di Dream City (che la legge senza aprire la valle). */
+let WCACHE=null;
+const WORLD=T=>{if(WCACHE)return WCACHE;const C=c=>new T.Color(c);
   const sR=s=>{let q=(Math.abs(s|0)%2147483646)+1;return()=>{q=(q*16807)%2147483647;return(q-1)/2147483646}};
   const hs=(i,j)=>{let h=(Math.imul(i,374761393)+Math.imul(j,668265263))|0;h=Math.imul(h^(h>>>13),1274126177);return((h^(h>>>16))>>>0)/4294967296};
   const vn=(x,z)=>{const i=Math.floor(x),j=Math.floor(z),fx=x-i,fz=z-j,u=fx*fx*(3-2*fx),v=fz*fz*(3-2*fz),a=hs(i,j),b=hs(i+1,j),c=hs(i,j+1),d=hs(i+1,j+1);return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v};
   const fbm=(x,z,n)=>{let s=0,a=.5,f=1;for(let k=0;k<n;k++){s+=a*vn(x*f+k*17.3,z*f-k*9.1);f*=2.03;a*=.5}return s/(1-Math.pow(.5,n))};
   const sm=(a,b,x)=>{const t=Math.max(0,Math.min(1,(x-a)/(b-a)));return t*t*(3-2*t)},lerp=(a,b,k)=>a+(b-a)*k,cl=(v,a,b)=>Math.max(a,Math.min(b,v));
-  const M4=(x,y,z,ry,sx,sy,sz,rx,rz)=>new T.Matrix4().compose(new T.Vector3(x,y,z),new T.Quaternion().setFromEuler(new T.Euler(rx||0,ry||0,rz||0,"YXZ")),new T.Vector3(sx==null?1:sx,sy==null?(sx==null?1:sx):sy,sz==null?(sx==null?1:sx):sz));
-  /* unione di tante forme in una sola maglia (pochi oggetti da disegnare = telefono leggero) */
-  const MB=()=>{const P=[],N=[],U=[],K=[];return{add(g,m,col,keep){const gg=g.index?g.toNonIndexed():g.clone();if(m)gg.applyMatrix4(m);const p=gg.attributes.position,n=gg.attributes.normal,u=gg.attributes.uv,c=col&&col.isColor?col:C(col||"#ffffff");for(let i=0;i<p.count;i++){P.push(p.getX(i),p.getY(i),p.getZ(i));N.push(n.getX(i),n.getY(i),n.getZ(i));U.push(u?u.getX(i):0,u?u.getY(i):0);K.push(c.r,c.g,c.b)}gg.dispose();if(!keep)g.dispose()},
-    get n(){return P.length},geo(){const g=new T.BufferGeometry();g.setAttribute("position",new T.Float32BufferAttribute(P,3));g.setAttribute("normal",new T.Float32BufferAttribute(N,3));g.setAttribute("uv",new T.Float32BufferAttribute(U,2));g.setAttribute("color",new T.Float32BufferAttribute(K,3));g.computeBoundingSphere();return g},mesh(mat){if(!P.length)return null;const m=new T.Mesh(this.geo(),mat);return m}}};
-  /* box con le UV a "campate e piani": la texture della facciata si ripete per ogni finestra e ogni piano */
-  const wallBox=(w,h,d,bay,fl)=>{const g=new T.BoxGeometry(w,h,d),uv=g.attributes.uv;for(let f=0;f<6;f++){const wid=f<2?d:w;for(let k=0;k<4;k++){const i=f*4+k;if(f===2||f===3)uv.setXY(i,.02,.02);else uv.setXY(i,uv.getX(i)*Math.max(1,Math.round(wid/bay)),uv.getY(i)*Math.max(1,Math.round(h/fl)))}}return g};
   /* ---------- LA VALLE: forma, lago, montagne ---------- */
-  const WX=5300,WZ=5000,LIM=6000;
+  const WX=6900,WZ=6500,LIM=8000;
   const ringD=(x,z)=>Math.pow(Math.pow(Math.abs(x)/WX,4)+Math.pow(Math.abs(z)/WZ,4),.25);
-  const LK={x:500,z:250,rx:1750,rz:1100,a:.18},LKc=Math.cos(LK.a),LKs=Math.sin(LK.a);
+  const LK={x:650,z:420,rx:2275,rz:1430,a:.18},LKc=Math.cos(LK.a),LKs=Math.sin(LK.a);
   const lakeF=(x,z)=>{const dx=x-LK.x,dz=z-LK.z,u=(dx*LKc+dz*LKs)/LK.rx,v=(-dx*LKs+dz*LKc)/LK.rz;return Math.hypot(u,v)+(fbm(x/700,z/700,3)-.5)*.2};
-  const ISL={x:1250,z:420,r:200};
+  const ISL={x:1625,z:546,r:240};
   const H0=(x,z)=>{const d=ringD(x,z)+(fbm(x/1500+3,z/1500,3)-.5)*.09;
     let h=14+30*fbm(x/1700,z/1700,3)+20*(fbm(x/560+9,z/560+4,3)-.5);
-    h+=55*sm(-1400,-3800,x)*fbm(x/900+2,z/900,2);/* colline più alte a ovest, verso Montecielo */
+    h+=55*sm(-1800,-4900,x)*fbm(x/900+2,z/900,2);/* colline più alte a ovest, verso Montecielo */
     const m=sm(.76,1.0,d);if(m>0){const rg=1-Math.abs(2*fbm(x/650+5,z/650+2,4)-1);h+=m*(360+640*rg)+m*m*300}
     const f=lakeF(x,z);if(f<1.32){if(f>=1)h=lerp(1.6,h,sm(1,1.32,f));else h=1.6-3.6*sm(1,.975,f)-14*sm(.975,.55,f)}
     {const di=Math.hypot(x-ISL.x,z-ISL.z)/ISL.r;if(di<1.25)h=Math.max(h,lerp(13,-2,sm(.25,1.2,di)))}
     return h};
   /* luoghi: città, paesi, aeroporto, belvedere… il terreno lì viene spianato */
   const PL=[
-    {id:"portoluce",n:"PORTOLUCE",k:"city",x:450,z:-1500,r:560,band:260,h:4,ang:.18,ic:"🏖️"},
-    {id:"montecielo",n:"MONTECIELO",k:"city",x:-3200,z:-1250,r:470,band:300,ang:-.12,ic:"⛪"},
-    {id:"valferro",n:"VALFERRO",k:"city",x:3050,z:2650,r:520,band:300,ang:.35,ic:"🏭"},
-    {id:"campolungo",n:"CAMPOLUNGO",k:"vil",x:-2300,z:1750,r:150,band:180,ang:.6,ic:"🌾"},
-    {id:"pratofiorito",n:"PRATOFIORITO",k:"vil",x:-700,z:3250,r:150,band:180,ang:-.3,ic:"🌻"},
-    {id:"roccalta",n:"ROCCALTA",k:"vil",x:3450,z:-2300,r:140,band:200,ang:.9,ic:"⛰️"},
-    {id:"pinetina",n:"PINETINA",k:"vil",x:-3950,z:350,r:140,band:200,ang:1.2,ic:"🌲"},
-    {id:"lidosole",n:"LIDO SOLE",k:"vil",x:850,z:1820,r:150,band:180,h:3.4,ang:.1,ic:"⛱️"},
-    {id:"aeroporto",n:"AEROPORTO",k:"air",x:-1450,z:-3550,rect:[-2850,-150,-3760,-3180],band:320,ic:"✈️"},
-    {id:"belvedere",n:"BELVEDERE",k:"view",x:3780,z:-3700,r:55,band:90,ic:"🏔️"},
-    {id:"campeggio",n:"CAMPEGGIO",k:"camp",x:-1450,z:-260,r:90,band:120,ic:"⛺"},
-    {id:"castello",n:"CASTELLO",k:"castle",x:-2550,z:-2350,r:70,band:160,ic:"🏰"},
-    {id:"cava",n:"CAVA",k:"quarry",x:4350,z:1350,r:120,band:160,ic:"⛏️"}];
+    {id:"portoluce",n:"PORTOLUCE",k:"city",x:585,z:-1950,r:644,band:260,h:4,ang:.18,ic:"🏖️"},
+    {id:"montecielo",n:"MONTECIELO",k:"city",x:-4160,z:-1625,r:540,band:300,ang:-.12,ic:"⛪"},
+    {id:"valferro",n:"VALFERRO",k:"city",x:3965,z:3445,r:598,band:300,ang:.35,ic:"🏭"},
+    {id:"campolungo",n:"CAMPOLUNGO",k:"vil",x:-2990,z:2275,r:150,band:180,ang:.6,ic:"🌾"},
+    {id:"pratofiorito",n:"PRATOFIORITO",k:"vil",x:-910,z:4225,r:150,band:180,ang:-.3,ic:"🌻"},
+    {id:"roccalta",n:"ROCCALTA",k:"vil",x:4485,z:-2990,r:140,band:200,ang:.9,ic:"⛰️"},
+    {id:"pinetina",n:"PINETINA",k:"vil",x:-5135,z:455,r:140,band:200,ang:1.2,ic:"🌲"},
+    {id:"lidosole",n:"LIDO SOLE",k:"vil",x:1105,z:2366,r:150,band:180,h:3.4,ang:.1,ic:"⛱️"},
+    {id:"aeroporto",n:"AEROPORTO",k:"air",x:-1885,z:-4615,rect:[-3705,-195,-4888,-4134],band:320,ic:"✈️"},
+    {id:"belvedere",n:"BELVEDERE",k:"view",x:4914,z:-4810,r:55,band:90,ic:"🏔️"},
+    {id:"campeggio",n:"CAMPEGGIO",k:"camp",x:-1885,z:-338,r:90,band:120,ic:"⛺"},
+    {id:"castello",n:"CASTELLO",k:"castle",x:-3315,z:-3055,r:70,band:160,ic:"🏰"},
+    {id:"cava",n:"CAVA",k:"quarry",x:5655,z:1755,r:120,band:160,ic:"⛏️"},
+    {id:"dreamcity",n:"DREAM CITY",k:"dc",x:-900,z:-2700,rect:[-1290,-510,-3060,-2370],band:340,ic:"🌆"}];
   const PLX={};PL.forEach(p=>{PLX[p.id]=p;if(p.h==null)p.h=H0(p.x,p.z)+(p.k==="view"?2:0)});PLX.aeroporto.h=Math.max(22,PLX.aeroporto.h);
   const plD=(p,x,z)=>{if(p.rect){const[a,b,c,d]=p.rect,dx=Math.max(a-x,0,x-b),dz=Math.max(c-z,0,z-d);return Math.hypot(dx,dz)}return Math.hypot(x-p.x,z-p.z)-p.r};
   const Hs=(x,z)=>{let h=H0(x,z);let hit=false;for(const p of PL){const d=plD(p,x,z);if(d<p.band){h=lerp(h,p.h,1-sm(0,p.band,d));hit=true}}if(hit){/* il lago resta lago anche vicino alle città: spiaggia e fondale */const f=lakeF(x,z);if(f<1.12)h=Math.min(h,f>=1?1.6+(f-1)*30:1.6-3.6*sm(1,.975,f)-14*sm(.975,.55,f))}return h};
@@ -64,18 +56,41 @@ const DreamValley={open(host,o){
   const addRoad=(pts,t,closed)=>{const cv=new T.CatmullRomCurve3(pts.map(p=>new T.Vector3(p[0],0,p[1])),!!closed,"centripetal");const L=cv.getLength(),n=Math.max(2,Math.round(L/8));const P=cv.getSpacedPoints(n).map(v=>({x:v.x,z:v.z,y:0,br:0}));if(closed)P.pop();RD.push({t,hw:t==="hw"?7:t==="st"?6:4.6,P,closed:!!closed});return RD[RD.length-1]};
   {/* superstrada attorno al lago: resta sempre fuori dall acqua */const ring=[];for(let k=0;k<36;k++){const t=k/36*Math.PI*2;let s=1.12;let p=ell(s,t);while(lakeF(p[0],p[1])<1.2&&s<1.6){s+=.02;p=ell(s,t)}ring.push(p)}addRoad(ring,"hw",true)}
   const P_=id=>[PLX[id].x,PLX[id].z];
-  addRoad([P_("portoluce"),[250,-2250],[-500,-2950],[-1250,-3120]],"hw");
-  addRoad([P_("portoluce"),[-600,-1350],[-1700,-1600],[-2500,-1300],P_("montecielo")],"hw");
-  addRoad([P_("montecielo"),[-3650,-500],P_("pinetina"),[-3300,1150],P_("campolungo")],"cr");
-  addRoad([P_("campolungo"),[-1500,2550],P_("pratofiorito"),[100,2750],P_("lidosole")],"cr");
-  addRoad([P_("campolungo"),[-1750,950],[-1450,380]],"cr");
-  addRoad([P_("lidosole"),[1900,2250],P_("valferro")],"hw");
-  addRoad([P_("valferro"),[3550,1600],[3750,300],[3550,-1100],P_("roccalta"),[2400,-2050],[1250,-1800],P_("portoluce")],"cr");
-  addRoad([[-2300,-3200],[-2750,-2500],[-2800,-1900],P_("montecielo")],"cr");
-  addRoad([P_("roccalta"),[3900,-2750],[3550,-3100],[3950,-3350],[3600,-3520],P_("belvedere")],"cr");
-  addRoad([[-1500,-650],P_("campeggio"),[-1700,250]],"cr");
-  addRoad([P_("valferro"),[3700,1900],P_("cava")],"cr");
-  addRoad([[-2800,-1900],[-2600,-2250],P_("castello")],"cr");
+  addRoad([P_("portoluce"),[325,-2925],[-650,-3835],[-1625,-4056]],"hw");
+  addRoad([P_("portoluce"),[-780,-1755],[-2210,-2080],[-3250,-1690],P_("montecielo")],"hw");
+  addRoad([P_("montecielo"),[-4745,-650],P_("pinetina"),[-4290,1495],P_("campolungo")],"cr");
+  addRoad([P_("campolungo"),[-1950,3315],P_("pratofiorito"),[130,3575],P_("lidosole")],"cr");
+  addRoad([P_("campolungo"),[-2275,1235],[-1885,494]],"cr");
+  addRoad([P_("lidosole"),[2470,2925],P_("valferro")],"hw");
+  addRoad([P_("valferro"),[4615,2080],[4875,390],[4615,-1430],P_("roccalta"),[3120,-2665],[1625,-2340],P_("portoluce")],"cr");
+  addRoad([[-2990,-4160],[-3575,-3250],[-3640,-2470],P_("montecielo")],"cr");
+  addRoad([P_("roccalta"),[5070,-3575],[4615,-4030],[5135,-4355],[4680,-4576],P_("belvedere")],"cr");
+  addRoad([[-1950,-845],P_("campeggio"),[-2210,325]],"cr");
+  addRoad([P_("valferro"),[4810,2470],P_("cava")],"cr");
+  addRoad([[-3640,-2470],[-3380,-2925],P_("castello")],"cr");
+  /* (1061) DREAM CITY dentro la valle: 4 porte nel muro di grattacieli, ognuna con la sua strada */
+  const DC={x:-900,z:-2700,k:1.2};const dcL=(lx,lz)=>[DC.x+lx*DC.k,DC.z+lz*DC.k];
+  const DCG={W:{lx:-300,lz:-16.5,out:[-1,0]},E:{lx:300,lz:-16.5,out:[1,0]},N:{lx:68,lz:-273,out:[0,-1]},S:{lx:-140,lz:240,out:[0,1]}};
+  Object.values(DCG).forEach(g=>{[g.x,g.z]=dcL(g.lx,g.lz)});
+  addRoad([[DCG.W.x-2,DCG.W.z],[DCG.W.x-260,DCG.W.z],[-2000,-2350],[-2210,-2080]],"hw");
+  addRoad([[DCG.E.x+2,DCG.E.z],[DCG.E.x+260,DCG.E.z+10],[100,-2300],P_("portoluce")],"hw");
+  addRoad([[DCG.N.x,DCG.N.z-2],[DCG.N.x,DCG.N.z-260],[-1000,-3700],[-1625,-4056]],"hw");
+  addRoad([[DCG.S.x,DCG.S.z+2],[DCG.S.x,DCG.S.z+200],[-950,-2000],[-780,-1755]],"hw");
+  /* (1061) RETE FITTA DI STRADE DI CAMPAGNA: punti sparsi in tutta la valle (con una fattoria), ognuno collegato ai vicini, poi tutto unito: si arriva ovunque in macchina */
+  {const r_=sR(4242),N=[];const nearPL=(x,z,d)=>PL.some(p=>plD(p,x,z)<d);
+    PL.forEach(p=>{if(p.k==="dc")return;if(p.rect)N.push({x:(p.rect[0]+p.rect[1])/2,z:p.rect[3]+30,pl:p});else N.push({x:p.x,z:p.z,pl:p})});
+    Object.values(DCG).forEach(g=>N.push({x:g.x+g.out[0]*260,z:g.z+g.out[1]*260,pl:PLX.dreamcity}));
+    for(let t=0;t<6000&&N.length<190;t++){const x=(r_()*2-1)*6600,z=(r_()*2-1)*6200;if(ringD(x,z)>.8||lakeF(x,z)<1.16||nearPL(x,z,140))continue;if(N.some(n=>Math.hypot(n.x-x,n.z-z)<720))continue;N.push({x,z})}
+    const fixedPts=[];RD.forEach(rd=>{for(let i=0;i<rd.P.length;i+=4)fixedPts.push(rd.P[i])});const nearFixed=(x,z)=>fixedPts.some(p=>Math.abs(p.x-x)<90&&Math.abs(p.z-z)<90);
+    const okSeg=(a,b)=>{for(let t=.04;t<.97;t+=.04){const x=lerp(a.x,b.x,t),z=lerp(a.z,b.z,t);if(lakeF(x,z)<1.1||ringD(x,z)>.85)return false;if(PL.some(p=>(p.k==="dc"||p.k==="air"||p.k==="city")&&plD(p,x,z)<-10&&p!==a.pl&&p!==b.pl))return false}if(nearFixed(lerp(a.x,b.x,.3),lerp(a.z,b.z,.3))&&nearFixed(lerp(a.x,b.x,.5),lerp(a.z,b.z,.5))&&nearFixed(lerp(a.x,b.x,.7),lerp(a.z,b.z,.7)))return false;return true};
+    const E=[],has=(i,j)=>E.some(e=>(e[0]===i&&e[1]===j)||(e[0]===j&&e[1]===i));N.forEach((a,i)=>{const nb=N.map((b,j)=>[Math.hypot(b.x-a.x,b.z-a.z),j]).filter(q=>q[1]!==i).sort((p,q)=>p[0]-q[0]).slice(0,5);let c=0;for(const[d,j]of nb){if(c>=3||d>1900)break;if(has(i,j))continue;if(!okSeg(a,N[j]))continue;E.push([i,j]);c++}});
+    const P=N.map((_,i)=>i),F=i=>P[i]===i?i:(P[i]=F(P[i]));N.forEach((n,i)=>{if(n.pl)P[F(i)]=F(0)});E.forEach(([a,b])=>{P[F(a)]=F(b)});
+    for(let pass=0;pass<60;pass++){const root=F(0);let best=null,bd=1e9;N.forEach((a,i)=>{if(F(i)===root)return;N.forEach((b,j)=>{if(F(j)!==root)return;const d=Math.hypot(b.x-a.x,b.z-a.z);if(d<bd&&d<4000){const ok=okSeg(a,b);if(ok){bd=d;best=[i,j]}}})});if(!best)break;E.push(best);P[F(best[0])]=F(best[1])}
+    E.forEach(([i,j])=>{const a=N[i],b=N[j],L=Math.hypot(b.x-a.x,b.z-a.z),px=-(b.z-a.z)/L,pz=(b.x-a.x)/L;const o1=(r_()-.5)*.22*L,o2=(r_()-.5)*.22*L;addRoad([[a.x,a.z],[lerp(a.x,b.x,.33)+px*o1,lerp(a.z,b.z,.33)+pz*o1],[lerp(a.x,b.x,.67)+px*o2,lerp(a.z,b.z,.67)+pz*o2],[b.x,b.z]],"cr")});
+    /* una fattoria accanto a ogni incrocio di campagna, dalla parte libera, con il suo vialetto */
+    N.forEach((n,i)=>{if(n.pl)return;const dirs=E.filter(e=>e[0]===i||e[1]===i).map(e=>{const o_=N[e[0]===i?e[1]:e[0]];return Math.atan2(o_.z-n.z,o_.x-n.x)}).sort((a,b)=>a-b);let ga=r_()*6.28;if(dirs.length){let bg=-1;for(let k=0;k<dirs.length;k++){const a=dirs[k],b=k+1<dirs.length?dirs[k+1]:dirs[0]+Math.PI*2;if(b-a>bg){bg=b-a;ga=(a+b)/2}}}
+      const fx=n.x+Math.cos(ga)*85,fz=n.z+Math.sin(ga)*85;if(lakeF(fx,fz)<1.15||ringD(fx,fz)>.82)return;const id="farm"+i;const nm=["CASCINA","PODERE","MASSERIA","FATTORIA","TENUTA","MULINO"][i%6]+" "+["DEL SOLE","DEI PINI","ROSSA","DEL LAGO","VECCHIA","DEI GIRASOLI","DEL GUFO","BELLA","DELLE API","DEI CILIEGI"][(i*7)%10];
+      const p={id,n:nm,k:"farm",x:fx,z:fz,r:40,band:90,ic:"🐄",ang:ga};PL.push(p);PLX[id]=p;p.h=H0(fx,fz);addRoad([[n.x,n.z],[lerp(n.x,fx,.6),lerp(n.z,fz,.6)],[fx,fz]],"cr")})}
   /* strade di città e di paese: griglia ruotata, solo dentro il cerchio */
   PL.forEach(p=>{if(p.k!=="city"&&p.k!=="vil")return;const sp=p.k==="city"?100:120,c=Math.cos(p.ang),s=Math.sin(p.ang),R_=p.r*.92;const AS=[];if(p.k==="vil")AS.push(0);else for(let a=-Math.floor(R_/sp)*sp;a<=R_;a+=sp)AS.push(a);for(const a of AS){const L_=Math.sqrt(Math.max(0,R_*R_-a*a));if(L_<40)continue;[[1,0],[0,1]].forEach(([ux,uz])=>{const ax=ux?a:-L_,az=ux?-L_:a,bx=ux?a:L_,bz=ux?L_:a;const r=(X,Z)=>[p.x+X*c-Z*s,p.z+X*s+Z*c];addRoad([r(ax,az),r((ax+bx)/2,(az+bz)/2),r(bx,bz)],"st")})}});
   /* quota delle strade: terreno levigato lungo il percorso, pendenza dolce; dove passa sull acqua diventa ponte */
@@ -90,6 +105,50 @@ const DreamValley={open(host,o){
   const roadQ=(x,z)=>{RQ.d=1e9;RQ.ri=-1;const l=RG.get(rk(Math.floor(x/RC),Math.floor(z/RC)));if(!l)return RQ;for(let q=0;q<l.length;q+=2){const rd=RD[l[q]],P=rd.P,a=P[l[q+1]],b=P[(l[q+1]+1)%P.length];const dx=b.x-a.x,dz=b.z-a.z,L2=dx*dx+dz*dz||1;let t=((x-a.x)*dx+(z-a.z)*dz)/L2;t=t<0?0:t>1?1:t;const px=a.x+dx*t,pz=a.z+dz*t,d=Math.hypot(x-px,z-pz)-rd.hw;if(d<RQ.d){RQ.d=d;RQ.y=a.y+(b.y-a.y)*t;RQ.hw=rd.hw;RQ.t=rd.t;RQ.br=a.br||b.br;const L=Math.sqrt(L2);RQ.tx=dx/L;RQ.tz=dz/L;RQ.ri=l[q];RQ.i=l[q+1]}}return RQ};
   /* quota finale del terreno: luoghi spianati + strade incassate */
   const GH=(x,z)=>{let h=Hs(x,z);const q=roadQ(x,z);if(q.ri>=0&&!q.br&&q.d<24){h=lerp(h,q.y-.08,1-sm(1,24,q.d))}return h};
+
+  /* ---------- colore del terreno ---------- */
+  const CROPS=["#c9a94b","#86ad44","#8a6a45","#9d86c9","#d9b93b","#a7bb52","#6f9a3c","#b58d5a"].map(C);
+  const cG1=C("#6f9a3c"),cG2=C("#93ad4f"),cG3=C("#55833a"),cFor=C("#3d6129"),cSand=C("#d9c79c"),cWet=C("#8c7b5c"),cRock=C("#8a857c"),cSnow=C("#f4f6f8"),cGrav=C("#a39a86"),cTmp=new T.Color(),cT2=new T.Color();
+  const terrCol=(x,z,h,sl,out)=>{const n=fbm(x/260,z/260,2);out.copy(cG1).lerp(cG2,sm(.35,.75,n)).lerp(cG3,sm(.5,.8,fbm(x/90+3,z/90,2))*.5);
+    const fm=farmM(x,z);if(fm>.3){const a=.5,c=Math.cos(a),s=Math.sin(a),u=x*c-z*s,v=x*s+z*c,iu=Math.floor(u/95),iv=Math.floor(v/150),fu=u/95-iu,fv=v/150-iv;cT2.copy(CROPS[Math.floor(hs(iu,iv)*CROPS.length)]);if(hs(iu,iv)>.5){const st=(Math.floor(fu*24)%2)?1:.86;cT2.multiplyScalar(st)}const edge=Math.min(fu,1-fu,fv*1.6,(1-fv)*1.6);out.lerp(cT2,sm(.3,.6,fm)*sm(.015,.05,edge))}
+    const fo=forM(x,z);if(fo>.2)out.lerp(cFor,fo*.8);
+    if(h<3.6&&lakeF(x,z)<1.16)out.lerp(cSand,sm(3.6,2.2,h));if(h<.2)out.lerp(cWet,sm(.2,-2,h));
+    const rk=Math.max(sm(.5,.9,sl),sm(380,560,h+fbm(x/200,z/200,2)*80));if(rk>0)out.lerp(cRock,rk);
+    const sn=sm(720,860,h+fbm(x/150,z/150,2)*120)*(1-sm(.9,1.3,sl));if(sn>0)out.lerp(cSnow,sn);
+    const q=roadQ(x,z);if(q.ri>=0&&q.d<3.5&&q.d>-1&&!q.br)out.lerp(q.t==="st"?cT2.set("#bdb6a8"):cGrav,(1-sm(1.5,3.5,q.d))*.85);
+    out.multiplyScalar(.92+sl*-.25+fbm(x/40,z/40,1)*.16);return out};
+  let MBG=null;const mapBG=()=>{if(MBG)return MBG;const MS=600,mmBG=document.createElement("canvas");mmBG.width=mmBG.height=MS;{const x=mmBG.getContext("2d"),img=x.createImageData(MS,MS),k=LIM*2/MS;for(let b=0;b<MS;b++)for(let a=0;a<MS;a++){const wx=-LIM+(a+.5)*k,wz=-LIM+(b+.5)*k;const h=Hs(wx,wz);let r,g,bb;if(h<0){const d=Math.min(1,-h/14);r=70-d*30;g=140-d*40;bb=190-d*30}else{const hx=Hs(wx+k,wz)-h;terrCol(wx,wz,h,0,cTmp);const sh=cl(1-hx*.06,.7,1.25);r=Math.pow(cTmp.r,1/2.2)*255*sh;g=Math.pow(cTmp.g,1/2.2)*255*sh;bb=Math.pow(cTmp.b,1/2.2)*255*sh}const i=(b*MS+a)*4;img.data[i]=r;img.data[i+1]=g;img.data[i+2]=bb;img.data[i+3]=255}x.putImageData(img,0,0);
+    const m=v=>(v+LIM)/k;x.lineCap="round";RD.forEach(rd=>{x.strokeStyle=rd.t==="hw"?"#fde68a":rd.t==="st"?"#e7e5e4":"#f5f5f4";x.lineWidth=rd.t==="hw"?3:rd.t==="st"?1.4:2;x.beginPath();rd.P.forEach((p,i)=>i?x.lineTo(m(p.x),m(p.z)):x.moveTo(m(p.x),m(p.z)));if(rd.closed)x.closePath();x.stroke()});
+    PL.forEach(p=>{if(p.k==="city"){x.fillStyle="rgba(120,113,108,.55)";x.beginPath();x.arc(m(p.x),m(p.z),p.r/k,0,7);x.fill()}if(p.rect){x.fillStyle="rgba(82,82,91,.6)";x.fillRect(m(p.rect[0]),m(p.rect[2]),(p.rect[1]-p.rect[0])/k,(p.rect[3]-p.rect[2])/k)}})}MBG=mmBG;return mmBG};
+  /* (1061) NAVIGATORE: grafo dei punti delle strade (ogni 8 m) + incroci; dalla destinazione si calcola la distanza su strada di ogni punto, poi basta scendere */
+  let GR=null;const navBuild=()=>{if(GR)return GR;const off=[];let n=0;RD.forEach(rd=>{off.push(n);n+=rd.P.length});const X=new Float32Array(n),Z=new Float32Array(n),adj=Array.from({length:n},()=>[]);
+    RD.forEach((rd,ri)=>{const o_=off[ri],L=rd.P.length;rd.P.forEach((p,i)=>{X[o_+i]=p.x;Z[o_+i]=p.z;if(i>0)adj[o_+i].push(o_+i-1),adj[o_+i-1].push(o_+i)});if(rd.closed){adj[o_].push(o_+L-1);adj[o_+L-1].push(o_)}});
+    /* incroci: punti di strade diverse a meno di 10 m */const G=new Map(),cs=20,key=(x,z)=>Math.floor(x/cs)*100003+Math.floor(z/cs);for(let i=0;i<n;i++){const k=key(X[i],Z[i]);let l=G.get(k);if(!l)G.set(k,l=[]);l.push(i)}
+    const roadOf=new Int32Array(n);RD.forEach((rd,ri)=>{for(let i=0;i<rd.P.length;i++)roadOf[off[ri]+i]=ri});
+    for(let i=0;i<n;i++){const cx=Math.floor(X[i]/cs),cz=Math.floor(Z[i]/cs);let best=-1,bd=1e9,seen=new Set();for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){const l=G.get((cx+a)*100003+cz+b);if(!l)continue;for(const j of l){if(roadOf[j]===roadOf[i])continue;const d=Math.hypot(X[j]-X[i],Z[j]-Z[i]);if(d<10&&!seen.has(roadOf[j])){seen.add(roadOf[j]);adj[i].push(j);adj[j].push(i)}}}}
+    GR={n,X,Z,adj,G,cs,key};return GR};
+  const navNear=(x,z,maxR)=>{const g=navBuild();let best=-1,bd=1e9;const R_=Math.ceil((maxR||200)/g.cs);const cx=Math.floor(x/g.cs),cz=Math.floor(z/g.cs);for(let r=0;r<=R_;r++){for(let a=-r;a<=r;a++)for(let b=-r;b<=r;b++){if(Math.max(Math.abs(a),Math.abs(b))!==r)continue;const l=g.G.get((cx+a)*100003+cz+b);if(!l)continue;for(const j of l){const d=Math.hypot(g.X[j]-x,g.Z[j]-z);if(d<bd){bd=d;best=j}}}if(best>=0&&r>=1&&bd<r*g.cs)break}return best};
+  const navField=(x,z)=>{const g=navBuild(),s0=navNear(x,z,3000);const D=new Float32Array(g.n).fill(1e12);if(s0<0)return null;D[s0]=Math.hypot(g.X[s0]-x,g.Z[s0]-z);const H=[s0];const up=i=>{while(i>0){const p=(i-1)>>1;if(D[H[p]]<=D[H[i]])break;[H[p],H[i]]=[H[i],H[p]];i=p}},dn=i=>{for(;;){let l=2*i+1,r=l+1,m=i;if(l<H.length&&D[H[l]]<D[H[m]])m=l;if(r<H.length&&D[H[r]]<D[H[m]])m=r;if(m===i)break;[H[m],H[i]]=[H[i],H[m]];i=m}};const done=new Uint8Array(g.n);
+    while(H.length){const u=H[0];const last=H.pop();if(H.length){H[0]=last;dn(0)}if(done[u])continue;done[u]=1;for(const v of g.adj[u]){const nd=D[u]+Math.hypot(g.X[v]-g.X[u],g.Z[v]-g.Z[u]);if(nd<D[v]){D[v]=nd;H.push(v);up(H.length-1)}}}return{D,tx:x,tz:z}};
+  const navPath=(F,x,z,maxPts)=>{const g=navBuild();let i=navNear(x,z,400);if(i<0||!F)return null;const pts=[[x,z],[g.X[i],g.Z[i]]];let guard=0;while(guard++<(maxPts||6000)){let best=-1,bd=F.D[i];for(const v of g.adj[i])if(F.D[v]<bd){bd=F.D[v];best=v}if(best<0)break;i=best;pts.push([g.X[i],g.Z[i]])}pts.push([F.tx,F.tz]);return{pts,dist:F.D[navNear(x,z,400)]||0}};
+  const NAV={build:navBuild,near:navNear,field:navField,path:navPath};
+  WCACHE={sR,hs,vn,fbm,sm,lerp,cl,WX,WZ,LIM,ringD,LK,LKc,LKs,lakeF,ISL,H0,PL,PLX,plD,Hs,farmM,forM,RD,roadQ,GH,RQ,DC,DCG,dcL,terrCol,cTmp,cT2,mapBG,NAV};return WCACHE};
+
+const DreamValley={world:T=>WORLD(T),open(host,o){
+  const T=o.THREE,R=o.R,W=o.W,H=o.H,tm=o.team||{k:"DUC",bg:"#7c3aed",tr:"#ffffff",nick:"Dreamers"};
+  const C=c=>new T.Color(c),mix=(a,b,k)=>C(a).lerp(C(b),k),hex=c=>"#"+C(c).getHexString();const A=tm.bg;
+  const SV={exp:R.toneMappingExposure};let alive=true,raf=0,last=performance.now();
+  const own=[];const tex=(w,h,f,rep)=>{const c=document.createElement("canvas");c.width=w;c.height=h;f(c.getContext("2d"),w,h);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.anisotropy=8;if(rep)t.wrapS=t.wrapT=T.RepeatWrapping;own.push(t);return t};
+  const WD=WORLD(T);const{sR,hs,vn,fbm,sm,lerp,cl,WX,WZ,LIM,ringD,LK,LKc,LKs,lakeF,ISL,H0,PL,PLX,plD,Hs,farmM,forM,RD,roadQ,GH,RQ,DC,DCG,dcL,terrCol,cTmp,cT2,mapBG,NAV}=WD;
+  const S=new T.Scene();const cam=new T.PerspectiveCamera(64,W/H,.25,17000);cam.rotation.order="YXZ";S.add(cam);
+  /* ---------- rumore deterministico: il mondo è sempre lo stesso ---------- */
+  const M4=(x,y,z,ry,sx,sy,sz,rx,rz)=>new T.Matrix4().compose(new T.Vector3(x,y,z),new T.Quaternion().setFromEuler(new T.Euler(rx||0,ry||0,rz||0,"YXZ")),new T.Vector3(sx==null?1:sx,sy==null?(sx==null?1:sx):sy,sz==null?(sx==null?1:sx):sz));
+  /* unione di tante forme in una sola maglia (pochi oggetti da disegnare = telefono leggero) */
+  const MB=()=>{const P=[],N=[],U=[],K=[];return{add(g,m,col,keep){const gg=g.index?g.toNonIndexed():g.clone();if(m)gg.applyMatrix4(m);const p=gg.attributes.position,n=gg.attributes.normal,u=gg.attributes.uv,c=col&&col.isColor?col:C(col||"#ffffff");for(let i=0;i<p.count;i++){P.push(p.getX(i),p.getY(i),p.getZ(i));N.push(n.getX(i),n.getY(i),n.getZ(i));U.push(u?u.getX(i):0,u?u.getY(i):0);K.push(c.r,c.g,c.b)}gg.dispose();if(!keep)g.dispose()},
+    get n(){return P.length},geo(){const g=new T.BufferGeometry();g.setAttribute("position",new T.Float32BufferAttribute(P,3));g.setAttribute("normal",new T.Float32BufferAttribute(N,3));g.setAttribute("uv",new T.Float32BufferAttribute(U,2));g.setAttribute("color",new T.Float32BufferAttribute(K,3));g.computeBoundingSphere();return g},mesh(mat){if(!P.length)return null;const m=new T.Mesh(this.geo(),mat);return m}}};
+  /* box con le UV a "campate e piani": la texture della facciata si ripete per ogni finestra e ogni piano */
+  const wallBox=(w,h,d,bay,fl)=>{const g=new T.BoxGeometry(w,h,d),uv=g.attributes.uv;for(let f=0;f<6;f++){const wid=f<2?d:w;for(let k=0;k<4;k++){const i=f*4+k;if(f===2||f===3)uv.setXY(i,.02,.02);else uv.setXY(i,uv.getX(i)*Math.max(1,Math.round(wid/bay)),uv.getY(i)*Math.max(1,Math.round(h/fl)))}}return g};
+
   /* ---------- cielo di fine pomeriggio, luce calda, foschia ---------- */
   const SKY=tex(2048,1024,(x,w,h)=>{const g=x.createLinearGradient(0,0,0,h);g.addColorStop(0,"#2f6fb8");g.addColorStop(.28,"#5f9ad6");g.addColorStop(.44,"#a9cbe6");g.addColorStop(.5,"#f3dcc0");g.addColorStop(.53,"#d9c8b4");g.addColorStop(1,"#6a7a6a");x.fillStyle=g;x.fillRect(0,0,w,h);
     const sx=w*.66,sy=h*.4,sg=x.createRadialGradient(sx,sy,4,sx,sy,260);sg.addColorStop(0,"rgba(255,250,230,1)");sg.addColorStop(.06,"rgba(255,240,200,.9)");sg.addColorStop(.3,"rgba(255,210,150,.25)");sg.addColorStop(1,"rgba(255,200,140,0)");x.fillStyle=sg;x.fillRect(0,0,w,h);
@@ -107,24 +166,13 @@ const DreamValley={open(host,o){
   const ripT=tex(512,512,(x,w,h)=>{x.fillStyle="rgb(128,128,255)";x.fillRect(0,0,w,h);const r_=sR(9);for(let i=0;i<900;i++){const px=r_()*w,py=r_()*h,l=6+r_()*26;x.strokeStyle=`rgba(${r_()<.5?100:156},128,255,.55)`;x.lineWidth=1+r_()*2;x.beginPath();x.moveTo(px,py);x.quadraticCurveTo(px+l/2,py-2-r_()*3,px+l,py);x.stroke()}},true);ripT.colorSpace=T.NoColorSpace;ripT.repeat.set(70,50);
   const waterM=new T.MeshPhongMaterial({color:"#2a6f86",specular:"#fff4e0",shininess:90,envMap:SKY,reflectivity:.42,normalMap:ripT,normalScale:new T.Vector2(.35,.35),transparent:true,opacity:.93});
   {const wg=new T.PlaneGeometry(LK.rx*2.9,LK.rz*2.9);const wm=new T.Mesh(wg,waterM);wm.rotation.set(-Math.PI/2,0,-LK.a);wm.position.set(LK.x,0,LK.z);S.add(wm)}
-  /* ---------- colore del terreno ---------- */
-  const CROPS=["#c9a94b","#86ad44","#8a6a45","#9d86c9","#d9b93b","#a7bb52","#6f9a3c","#b58d5a"].map(C);
-  const cG1=C("#6f9a3c"),cG2=C("#93ad4f"),cG3=C("#55833a"),cFor=C("#3d6129"),cSand=C("#d9c79c"),cWet=C("#8c7b5c"),cRock=C("#8a857c"),cSnow=C("#f4f6f8"),cGrav=C("#a39a86"),cTmp=new T.Color(),cT2=new T.Color();
-  const terrCol=(x,z,h,sl,out)=>{const n=fbm(x/260,z/260,2);out.copy(cG1).lerp(cG2,sm(.35,.75,n)).lerp(cG3,sm(.5,.8,fbm(x/90+3,z/90,2))*.5);
-    const fm=farmM(x,z);if(fm>.3){const a=.5,c=Math.cos(a),s=Math.sin(a),u=x*c-z*s,v=x*s+z*c,iu=Math.floor(u/95),iv=Math.floor(v/150),fu=u/95-iu,fv=v/150-iv;cT2.copy(CROPS[Math.floor(hs(iu,iv)*CROPS.length)]);if(hs(iu,iv)>.5){const st=(Math.floor(fu*24)%2)?1:.86;cT2.multiplyScalar(st)}const edge=Math.min(fu,1-fu,fv*1.6,(1-fv)*1.6);out.lerp(cT2,sm(.3,.6,fm)*sm(.015,.05,edge))}
-    const fo=forM(x,z);if(fo>.2)out.lerp(cFor,fo*.8);
-    if(h<3.6&&lakeF(x,z)<1.16)out.lerp(cSand,sm(3.6,2.2,h));if(h<.2)out.lerp(cWet,sm(.2,-2,h));
-    const rk=Math.max(sm(.5,.9,sl),sm(380,560,h+fbm(x/200,z/200,2)*80));if(rk>0)out.lerp(cRock,rk);
-    const sn=sm(720,860,h+fbm(x/150,z/150,2)*120)*(1-sm(.9,1.3,sl));if(sn>0)out.lerp(cSnow,sn);
-    const q=roadQ(x,z);if(q.ri>=0&&q.d<3.5&&q.d>-1&&!q.br)out.lerp(q.t==="st"?cT2.set("#bdb6a8"):cGrav,(1-sm(1.5,3.5,q.d))*.85);
-    out.multiplyScalar(.92+sl*-.25+fbm(x/40,z/40,1)*.16);return out};
   /* ---------- montagne lontane: una sola maglia leggera, si apre un buco dove ci sono i settori dettagliati ---------- */
-  const FN=120,FS=LIM*2/FN;let farMesh;{const g=new T.PlaneGeometry(LIM*2,LIM*2,FN,FN);g.rotateX(-Math.PI/2);const pa=g.attributes.position,col=[];for(let v=0;v<pa.count;v++){const x=pa.getX(v),z=pa.getZ(v),h=Hs(x,z);pa.setY(v,h-2.5);const hx=Hs(x+FS,z)-h,hz=Hs(x,z+FS)-h;terrCol(x,z,h,Math.min(1.5,Math.hypot(hx,hz)/FS),cTmp);col.push(cTmp.r,cTmp.g,cTmp.b)}g.setAttribute("color",new T.Float32BufferAttribute(col,3));g.computeVertexNormals();farMesh=new T.Mesh(g,new T.MeshLambertMaterial({vertexColors:true}));S.add(farMesh);farMesh.userData.idx=g.index.array.slice()}
+  const FN=128,FS=LIM*2/FN;let farMesh;{const g=new T.PlaneGeometry(LIM*2,LIM*2,FN,FN);g.rotateX(-Math.PI/2);const pa=g.attributes.position,col=[];for(let v=0;v<pa.count;v++){const x=pa.getX(v),z=pa.getZ(v),h=Hs(x,z);pa.setY(v,h-2.5);const hx=Hs(x+FS,z)-h,hz=Hs(x,z+FS)-h;terrCol(x,z,h,Math.min(1.5,Math.hypot(hx,hz)/FS),cTmp);col.push(cTmp.r,cTmp.g,cTmp.b)}g.setAttribute("color",new T.Float32BufferAttribute(col,3));g.computeVertexNormals();farMesh=new T.Mesh(g,new T.MeshLambertMaterial({vertexColors:true}));S.add(farMesh);farMesh.userData.idx=g.index.array.slice()}
   /* fuori dalla valle: altre cime più lontane, così l orizzonte è tutto montagne */
   {const g=new T.CylinderGeometry(16000,16000,1,96,1,true);const pa=g.attributes.position;const mt=tex(2048,256,(x,w,h)=>{x.clearRect(0,0,w,h);const r_=sR(3);const prof=[];for(let i=0;i<=w;i++)prof.push(.35+.25*Math.sin(i/90)+.15*Math.sin(i/31+1)+.06*Math.sin(i/11));x.beginPath();x.moveTo(0,h);for(let i=0;i<=w;i++)x.lineTo(i,h-prof[i]*h);x.lineTo(w,h);x.closePath();const g2=x.createLinearGradient(0,0,0,h);g2.addColorStop(0,"#eef2f6");g2.addColorStop(.3,"#9fb0c0");g2.addColorStop(1,"#8195a6");x.fillStyle=g2;x.fill()});mt.wrapS=T.RepeatWrapping;mt.repeat.x=3;
     const ring=new T.Mesh(new T.CylinderGeometry(15000,15000,2600,64,1,true),new T.MeshBasicMaterial({map:mt,transparent:true,side:T.BackSide,fog:false,depthWrite:false}));ring.position.y=900;S.add(ring);g.dispose()}
   /* ---------- SETTORI da 600 m ---------- */
-  const TS=600,TN=60,TV=TN+1,TG=TS/TN,TILES=new Map();const tkey=(i,j)=>i*1000+j;
+  const TS=640,TN=64,TV=TN+1,TG=TS/TN,TILES=new Map();const tkey=(i,j)=>i*1000+j;
   const tileData=(i,j)=>{const k=tkey(i,j);let t=TILES.get(k);if(!t){t={i,j,h:null,built:false,g:null,trees:null,col:[]};TILES.set(k,t)}if(!t.h){const h=new Float32Array(TV*TV),x0=i*TS-LIM,z0=j*TS-LIM;for(let b=0;b<TV;b++)for(let a=0;a<TV;a++)h[b*TV+a]=GH(x0+a*TG,z0+b*TG);t.h=h}return t};
   const hAt=(x,z)=>{x=cl(x,-LIM+1,LIM-1);z=cl(z,-LIM+1,LIM-1);const i=Math.floor((x+LIM)/TS),j=Math.floor((z+LIM)/TS),t=tileData(i,j),fx=(x+LIM-i*TS)/TG,fz=(z+LIM-j*TS)/TG,a=Math.min(TN-1,Math.floor(fx)),b=Math.min(TN-1,Math.floor(fz)),u=fx-a,v=fz-b,H_=t.h;
     const h00=H_[b*TV+a],h10=H_[b*TV+a+1],h01=H_[(b+1)*TV+a],h11=H_[(b+1)*TV+a+1];return u+v<1?h00+(h10-h00)*u+(h01-h00)*v:h11+(h01-h11)*(1-u)+(h10-h11)*(1-v)};
@@ -173,6 +221,7 @@ const DreamValley={open(host,o){
     if(!job){let best=null,bd=1e9;for(let dj=-2;dj<=2;dj++)for(let di=-2;di<=2;di++){const i=ci+di,j=cj+dj;if(i<0||j<0||i>=LIM*2/TS||j>=LIM*2/TS)continue;const t=TILES.get(tkey(i,j));if(t&&t.built)continue;const d=di*di+dj*dj;if(d<bd){bd=d;best=tileData(i,j)}}if(best){jobT=best;job=buildTile(best)}}
     while(job&&performance.now()-t0<budget){if(job.next().done){job=null;jobT=null}}
     TILES.forEach(t=>{if(t.built&&t!==jobT&&(Math.abs(t.i-ci)>3||Math.abs(t.j-cj)>3))dropTile(t);if(!t.built&&t.h&&(Math.abs(t.i-ci)>4||Math.abs(t.j-cj)>4))t.h=null})};
+
   /* ---------- FACCIATE (una campata x un piano, si ripete) ---------- */
   const fac=(k)=>tex(128,128,(x,w,h)=>{const r_=sR(k.length*31+7);const noise=(a,b)=>{for(let i=0;i<700;i++){const v=a+r_()*b|0;x.fillStyle=`rgba(${v},${v},${v},.18)`;x.fillRect(r_()*w,r_()*h,1+r_()*3,1+r_()*3)}};
     if(k==="res"){x.fillStyle="#f2efe9";x.fillRect(0,0,w,h);noise(150,100);x.fillStyle="#e2ddd2";x.fillRect(0,0,w,8);x.fillStyle="#d8d2c4";x.fillRect(34,22,60,78);x.fillStyle="#26323f";x.fillRect(40,28,48,66);x.fillStyle="#40566b";x.fillRect(40,28,22,66);x.fillStyle="#efe9dc";x.fillRect(62,28,4,66);x.fillRect(40,58,48,3);x.fillStyle="#cfc8b8";x.fillRect(30,100,68,6);x.fillStyle="#7a8f6a";x.fillRect(22,26,11,70);x.fillRect(95,26,11,70);x.fillStyle="rgba(0,0,0,.18)";for(let i=0;i<7;i++){x.fillRect(22,30+i*10,11,2);x.fillRect(95,30+i*10,11,2)}}
@@ -298,13 +347,27 @@ const DreamValley={open(host,o){
   SITE_DEF.camp=function*(p,K){const cols=["#f97316","#16a34a","#2563eb","#eab308","#dc2626"];for(let k=0;k<9;k++){const a=k/9*6.28,d=30+(k%3)*14;tent(K,p.x+Math.cos(a)*d,p.z+Math.sin(a)*d,cols[k%5])}const y=hAt(p.x,p.z);for(let k=0;k<5;k++){const a=k/5*6.28;K.v.add(new T.CylinderGeometry(.12,.12,1.4,5),M4(p.x+Math.cos(a)*.6,y+.2,p.z+Math.sin(a)*.6,a,1,1,1,1.3),"#5b3a1f")}K.v.add(new T.CylinderGeometry(1.2,1.2,.2,10),M4(p.x,y+.1,p.z),"#57534e");for(let k=0;k<3;k++){const x=p.x+50+k*8,z=p.z-40;K.v.add(new T.BoxGeometry(2,.1,.8),M4(x,hAt(x,z)+.8,z),"#8b5a2b")}SPAWNV.push(["van",p.x-40,p.z+30,1,K.site]);LBL.push({x:p.x,z:p.z,t:"CAMPEGGIO"});yield};
   SITE_DEF.castle=function*(p,K){const y=p.h,R2=34;for(let k=0;k<14;k++){if(k===3||k===9)continue;const a=k/14*6.28,a2=(k+1)/14*6.28,mx=p.x+Math.cos((a+a2)/2)*R2,mz=p.z+Math.sin((a+a2)/2)*R2,hh=6+((k*7)%5);K.f.stone.add(wallBox(R2*.46,hh,2.4,2.5,3.2),M4(mx,y+hh/2,mz,-(a+a2)/2+Math.PI/2),C("#d6ccb6"));cAdd({cx:mx,cz:mz,hw:R2*.23,hd:1.2,rot:-(a+a2)/2+Math.PI/2,top:y+hh},K.site)}K.f.stone.add(wallBox(10,24,10,2.5,3.2),M4(p.x+8,y+12,p.z-6,.3),C("#e2d8c3"));for(let k=0;k<8;k++)K.flat.add(new T.BoxGeometry(1.6,1.6,1.6),M4(p.x+8+Math.cos(k/8*6.28)*4.6,y+24.8,p.z-6+Math.sin(k/8*6.28)*4.6),"#d6ccb6");cAdd({x:p.x+8,z:p.z-6,r:7.5,top:y+26},K.site);LBL.push({x:p.x,z:p.z,t:"CASTELLO"});yield};
   SITE_DEF.quarry=function*(p,K){const y=p.h;for(let k=0;k<4;k++)K.v.add(new T.CylinderGeometry(p.r-k*18,p.r-k*18+6,6,28,1,true),M4(p.x+40,y+3+k*6,p.z+50,0,1,1,1),"#9c9488");for(let k=0;k<6;k++)K.v.add(new T.ConeGeometry(5+k,6+k,8),M4(p.x-40+k*14,y+3,p.z-50),k%2?"#a8a29e":"#d6d3d1");SPAWNV.push(["truck",p.x-30,p.z-20,1,K.site]);SPAWNV.push(["tractor",p.x+10,p.z-30,2,K.site]);LBL.push({x:p.x,z:p.z,t:"CAVA"});yield};
+  /* (1061) DREAM CITY vista da fuori: il muro di grattacieli con le 4 porte (dentro si entra guidando, e si è nella città vera) */
+  SITE_DEF.dc=function*(p,K){const r_=sR(77),y=p.h,L=(lx,lz)=>dcL(lx,lz),k=DC.k;const gateIn=(lx,lz)=>Object.values(DCG).some(g=>Math.abs(lx-g.lx)<14*(g.out[0]?2.6:1)&&Math.abs(lz-g.lz)<14*(g.out[1]?2.6:1));
+    const strip=(x0,x1,z0,z1,alongX)=>{let t=alongX?x0:z0;const end=alongX?x1:z1;while(t<end-4){const w_=16+r_()*14,e=Math.min(end,t+w_);const lx0=alongX?t:x0,lx1=alongX?e:x1,lz0=alongX?z0:t,lz1=alongX?z1:e;const cx=(lx0+lx1)/2,cz=(lz0+lz1)/2;if(!gateIn(cx,cz)&&!gateIn(lx0,lz0)&&!gateIn(lx1,lz1)){const[wx,wz]=L(cx,cz);const hh=44+r_()*22;bld(K,{x:wx,z:wz,y,rot:0,w:(lx1-lx0)*k-1.5,d:(lz1-lz0)*k-1.5,fl:Math.round(hh/3.2),sty:["glass","brick","res","glass"][Math.floor(r_()*4)],tint:C(["#ffffff","#e6e1f5","#dfe9f3","#f3e9df"][Math.floor(r_()*4)]),roof:"flat"})}t=e}};
+    strip(-300,300,-273,-242,true);strip(-300,300,209,240,true);strip(-300,-269,-242,209,false);strip(269,300,-242,209,false);yield;
+    /* grattacieli più alti dentro, che spuntano sopra il muro */for(let i=0;i<26;i++){const lx=(r_()*2-1)*230,lz=-200+r_()*380;const[wx,wz]=L(lx,lz);const hh=50+r_()*60;bld(K,{x:wx,z:wz,y,rot:0,w:18+r_()*10,d:18+r_()*10,fl:Math.round(hh/3.2),sty:r_()<.6?"glass":"brick",tint:C("#ffffff"),roof:"flat"})}
+    /* pavimento della città (si vede tra le porte) */{const[cx,cz]=L(0,-16);K.v.add(new T.BoxGeometry(600*k,.2,500*k),M4(cx,y+.1,cz),"#3a3a42")}
+    /* archi d ingresso con la scritta */Object.entries(DCG).forEach(([id,g])=>{const ox=g.out[0],oz=g.out[1],cx=g.x+ox*10,cz=g.z+oz*10,rot=Math.atan2(ox,oz),px=Math.cos(rot),pz=-Math.sin(rot);[-1,1].forEach(e=>K.flat.add(new T.BoxGeometry(1.6,12,1.6),M4(cx+px*e*11,y+6,cz+pz*e*11),"#2e1065"));K.flat.add(new T.BoxGeometry(24,2.4,1.8),M4(cx,y+12.6,cz,rot),"#4c1d95");const sg=new T.Mesh(new T.PlaneGeometry(20,2),new T.MeshBasicMaterial({map:signT("🌆 DREAM CITY","#2e1065","#e9d5ff",768,80),toneMapped:false,side:T.DoubleSide}));sg.position.set(cx+ox*.95,y+12.6,cz+oz*.95);sg.rotation.y=rot;K.extra.push(sg);
+      /* parcheggio fuori dalla porta: qualche auto per chi esce a piedi */const sx=-oz,sz=ox;[["sedan",16],["suv",-16],["scooter",22]].forEach(([kd,o2],q)=>SPAWNV.push([kd,g.x+ox*(70+q*9)+sx*o2,g.z+oz*(70+q*9)+sz*o2,rot,K.site]))});
+    /* muro (ostacolo) tranne le porte */const wallC=(lx0,lx1,lz0,lz1)=>{const[a,b]=L(lx0,lz0),[c2,d]=L(lx1,lz1);cAdd({x0:Math.min(a,c2),x1:Math.max(a,c2),z0:Math.min(b,d),z1:Math.max(b,d),top:y+40},K.site)};
+    const cut=(x0,x1,z0,z1,alongX)=>{const gs=Object.values(DCG).filter(g=>alongX?(g.lz>=z0-1&&g.lz<=z1+1):(g.lx>=x0-1&&g.lx<=x1+1)).map(g=>alongX?g.lx:g.lz).sort((a,b)=>a-b);let a=alongX?x0:z0;const end=alongX?x1:z1;gs.forEach(gv=>{if(gv-12>a)alongX?wallC(a,gv-12,z0,z1):wallC(x0,x1,a,gv-12);a=gv+12});if(end>a)alongX?wallC(a,end,z0,z1):wallC(x0,x1,a,end)};
+    cut(-300,300,-273,-242,true);cut(-300,300,209,240,true);cut(-300,-269,-242,209,false);cut(269,300,-242,209,false)};
+  /* (1061) fattorie lungo le strade di campagna */
+  SITE_DEF.farm=function*(p,K){const r_=sR(Math.round(p.x*7+p.z*3));const P=farm(K,p.x,p.z,r_);const[tx,tz]=P(-14,10);SPAWNV.push([r_()<.5?"tractor":"pickup",tx,tz,r_()*6.28,K.site]);if(r_()<.4){const[ax,az]=P(14,14);SPAWNV.push([["compact","van","suv"][Math.floor(r_()*3)],ax,az,r_()*6.28,K.site])}yield};
   /* faro sull isola: sempre presente, si vede da tutto il lago */{const K={v:MB(),site:{}};const y=hAt(ISL.x,ISL.z);for(let k=0;k<6;k++)K.v.add(new T.CylinderGeometry(2.6-k*.25,2.85-k*.25,4,16),M4(ISL.x,y+2+k*4,ISL.z),k%2?"#dc2626":"#f8fafc");K.v.add(new T.CylinderGeometry(1.6,1.6,2.4,12),M4(ISL.x,y+25.2,ISL.z),"#fde68a");K.v.add(new T.ConeGeometry(2,2.4,12),M4(ISL.x,y+27.6,ISL.z),"#7f1d1d");K.v.add(new T.BoxGeometry(8,4,6),M4(ISL.x+7,y+2,ISL.z+2),"#f8fafc");S.add(K.v.mesh(treeM));PIERS.push({x0:ISL.x,z0:ISL.z+150,x1:ISL.x,z1:ISL.z+150,w:1});cAdd({x:ISL.x,z:ISL.z,r:3,top:y+30},{})}
   /* gestione dei luoghi: si costruiscono vicino, si liberano lontano */
   let sJob=null,sJobP=null;const siteTick=(px,pz,budget)=>{const t0=performance.now();
-    if(!sJob){let best=null,bd=1e9;for(const p of PL){if(p.built)continue;const d=plD(p,px,pz);if(d<1300&&d<bd){bd=d;best=p}}if(best){sJobP=best;const K=kitNew(best);best.K=K;best.col=[];K.site=best;sJob=(function*(){yield*SITE_DEF[best.k](best,K);const g=kitEnd(K);S.add(g);best.g=g;best.built=true;spawnSiteVeh(best)})()}}
+    if(!sJob){let best=null,bd=1e9;for(const p of PL){if(p.built)continue;const d=plD(p,px,pz);if(d<(p.k=="farm"?700:1300)&&d<bd){bd=d;best=p}}if(best){sJobP=best;const K=kitNew(best);best.K=K;best.col=[];K.site=best;sJob=(function*(){yield*SITE_DEF[best.k](best,K);const g=kitEnd(K);S.add(g);best.g=g;best.built=true;spawnSiteVeh(best)})()}}
     while(sJob&&performance.now()-t0<budget){if(sJob.next().done){sJob=null;sJobP=null}}
-    for(const p of PL){if(p.built&&p!==sJobP&&plD(p,px,pz)>1900)dropSite(p)}};
+    for(const p of PL){if(p.built&&p!==sJobP&&plD(p,px,pz)>(p.k==="farm"?1100:1900))dropSite(p)}};
   const SHARED=new Set([...Object.values(FAC),roofM,flatM,treeM]);const dropSite=p=>{if(p.g){S.remove(p.g);p.g.traverse(x=>{if(x.geometry)x.geometry.dispose();if(x.material&&!SHARED.has(x.material)){if(x.material.map){x.material.map.dispose();const ix=own.indexOf(x.material.map);if(ix>=0)own.splice(ix,1)}x.material.dispose()}});p.g=null}cDel(p);for(let i=PNEAR.length-1;i>=0;i--)if(PNEAR[i].own===p)PNEAR.splice(i,1);for(let i=RIMS.length-1;i>=0;i--)if(RIMS[i].own===p)RIMS.splice(i,1);for(let i=GARAGES.length-1;i>=0;i--)if(GARAGES[i].own===p)GARAGES.splice(i,1);for(let i=LBL.length-1;i>=0;i--)if(LBL[i].own===p)LBL.splice(i,1);dropSiteVeh(p);p.built=false;p.K=null};
+
   /* ---------- VEICOLI ---------- */
   const SP={
     compact:{n:"UTILITARIA",cat:"car",L:3.9,Wd:1.75,max:42,acc:6.5,turn:1.95,vt:22,whr:.31,cd:7,ch:2.5,eye:[-.36,1.12,.05],snd:"car",col:"#d97706",prof:[[-1.95,.35],[1.95,.35],[1.97,.82],[1.55,.94],[.9,1],[.42,1.44],[-1.3,1.47],[-1.86,1.06],[-1.95,.96]],belt:.98},
@@ -364,7 +427,8 @@ const DreamValley={open(host,o){
   const spawnSiteVeh=p=>{for(let i=SPAWNV.length-1;i>=0;i--){const e=SPAWNV[i];if(e[4]!==p)continue;SPAWNV.splice(i,1);const[k,x,z,yaw]=e;const s=SP[k];if(!s)continue;if(s.cat==="car"&&(hAt(x,z)<0||hitAt(x,z,1.2)))continue;if(s.cat==="boat"&&hAt(x,z)>-.6)continue;if(VEH.some(o_=>Math.hypot(o_.g.position.x-x,o_.g.position.z-z)<o_.r+2))continue;mkVeh(k,x,z,yaw,p)}};
   const dropSiteVeh=p=>{for(let i=VEH.length-1;i>=0;i--){const v=VEH[i];if(v.owner===p&&!v.moved&&v!==cur)killVeh(v)}};
   /* auto parcheggiate lungo le strade di campagna (una ogni tanto) */
-  const tileVeh=t=>{const r_=sR(t.i*31+t.j*57+3);if(r_()>.45)return;const x0=t.i*TS-LIM,z0=t.j*TS-LIM;for(let tries=0;tries<12;tries++){const x=x0+r_()*TS,z=z0+r_()*TS;const q=roadQ(x,z);if(q.ri<0||q.t==="st"||q.br||q.d>18)continue;const rd=RD[q.ri],P=rd.P[q.i];const nx=-q.tz,nz=q.tx,side=r_()<.5?1:-1;const px=P.x+nx*side*(q.hw+3),pz=P.z+nz*side*(q.hw+3);if(inPlace(px,pz,60)||hAt(px,pz)<1.5)continue;const kinds=["compact","sedan","suv","pickup","van","scooter","sport","sedan","compact"];const k=kinds[Math.floor(r_()*kinds.length)];mkVeh(k,px,pz,Math.atan2(-q.tx,-q.tz)+(r_()<.5?Math.PI:0),t);return}};
+  const tileVeh=t=>{const r_=sR(t.i*31+t.j*57+3);if(r_()>.75)return;const x0=t.i*TS-LIM,z0=t.j*TS-LIM;for(let tries=0;tries<12;tries++){const x=x0+r_()*TS,z=z0+r_()*TS;const q=roadQ(x,z);if(q.ri<0||q.t==="st"||q.br||q.d>18)continue;const rd=RD[q.ri],P=rd.P[q.i];const nx=-q.tz,nz=q.tx,side=r_()<.5?1:-1;const px=P.x+nx*side*(q.hw+3),pz=P.z+nz*side*(q.hw+3);if(inPlace(px,pz,60)||hAt(px,pz)<1.5)continue;const kinds=["compact","sedan","suv","pickup","van","scooter","sport","sedan","compact"];const k=kinds[Math.floor(r_()*kinds.length)];mkVeh(k,px,pz,Math.atan2(-q.tx,-q.tz)+(r_()<.5?Math.PI:0),t);return}};
+
   /* ---------- COMANDI E SCHERMO ---------- */
   const F="font-family:'Arial Black',Arial,sans-serif;font-style:italic;font-weight:900;";
   const el=(css,html,par)=>{const d=document.createElement("div");d.style.cssText=css;if(html!=null)d.innerHTML=html;(par||host).appendChild(d);return d};
@@ -386,25 +450,30 @@ const DreamValley={open(host,o){
   let VIEW=0;qb("🗺️ MAPPA",()=>mapOpen());const bView=qb("🎥 VISTA",()=>{VIEW=(VIEW+1)%3;showBig(["VISTA DA DIETRO","VISTA LONTANA","VISTA DAL POSTO DI GUIDA"][VIEW],900)});
   const panel=el(`position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:20;display:none;padding:14px 16px;border-radius:16px;background:rgba(8,10,18,.95);border:2px solid ${A};color:#e2e8f0;font:700 14px system-ui;text-align:center;min-width:320px;max-width:94%;max-height:90%;overflow:auto;box-shadow:0 10px 40px #000`);
   /* ---------- MINIMAPPA + MAPPA GRANDE (apribile, con i punti di interesse) ---------- */
-  const MS=600,mmBG=document.createElement("canvas");mmBG.width=mmBG.height=MS;{const x=mmBG.getContext("2d"),img=x.createImageData(MS,MS),k=LIM*2/MS;for(let b=0;b<MS;b++)for(let a=0;a<MS;a++){const wx=-LIM+(a+.5)*k,wz=-LIM+(b+.5)*k;const h=Hs(wx,wz);let r,g,bb;if(h<0){const d=Math.min(1,-h/14);r=70-d*30;g=140-d*40;bb=190-d*30}else{const hx=Hs(wx+k,wz)-h;terrCol(wx,wz,h,0,cTmp);const sh=cl(1-hx*.06,.7,1.25);r=Math.pow(cTmp.r,1/2.2)*255*sh;g=Math.pow(cTmp.g,1/2.2)*255*sh;bb=Math.pow(cTmp.b,1/2.2)*255*sh}const i=(b*MS+a)*4;img.data[i]=r;img.data[i+1]=g;img.data[i+2]=bb;img.data[i+3]=255}x.putImageData(img,0,0);
-    const m=v=>(v+LIM)/k;x.lineCap="round";RD.forEach(rd=>{x.strokeStyle=rd.t==="hw"?"#fde68a":rd.t==="st"?"#e7e5e4":"#f5f5f4";x.lineWidth=rd.t==="hw"?3:rd.t==="st"?1.4:2;x.beginPath();rd.P.forEach((p,i)=>i?x.lineTo(m(p.x),m(p.z)):x.moveTo(m(p.x),m(p.z)));if(rd.closed)x.closePath();x.stroke()});
-    PL.forEach(p=>{if(p.k==="city"){x.fillStyle="rgba(120,113,108,.55)";x.beginPath();x.arc(m(p.x),m(p.z),p.r/k,0,7);x.fill()}if(p.rect){x.fillStyle="rgba(82,82,91,.6)";x.fillRect(m(p.rect[0]),m(p.rect[2]),(p.rect[1]-p.rect[0])/k,(p.rect[3]-p.rect[2])/k)}})}
+  const MS=600,mmBG=WD.mapBG();
   const mm=document.createElement("canvas");mm.width=mm.height=260;mm.style.cssText="position:absolute;left:12px;top:12px;width:118px;height:118px;border-radius:50%;border:3px solid "+A+";z-index:5;background:#0b0a12;box-shadow:0 3px 12px rgba(0,0,0,.5)";host.appendChild(mm);const mx=mm.getContext("2d");mm.addEventListener("pointerdown",e=>{e.stopPropagation();mapOpen()});
-  const POI=[...PL.map(p=>({x:p.rect?(p.rect[0]+p.rect[1])/2:p.x,z:p.rect?(p.rect[2]+p.rect[3])/2:p.z,n:p.n,ic:p.ic,id:p.id})),{x:ISL.x,z:ISL.z,n:"FARO",ic:"🗼",id:"faro"}];
+  const POI=[...PL.filter(p=>p.k!=="farm").map(p=>({x:p.rect?(p.rect[0]+p.rect[1])/2:p.x,z:p.rect?(p.k==="air"?p.rect[3]+30:(p.rect[2]+p.rect[3])/2):p.z,n:p.n,ic:p.ic,id:p.id})),{x:ISL.x,z:ISL.z,n:"FARO",ic:"🗼",id:"faro"}];
   const POI2=[];/* officine, arene, sale slot, porti: calcolati dalla pianta delle città */PL.forEach((p,pi)=>{if(p.k!=="city")return;const c=Math.cos(p.ang),s=Math.sin(p.ang),R_=p.r*.92,sp=100,bl=[];const n=Math.floor(R_/sp);for(let bi=-n-1;bi<=n;bi++)for(let bj=-n-1;bj<=n;bj++){const u=(bi+.5)*sp,v=(bj+.5)*sp;if(Math.hypot(u,v)>R_-45)continue;bl.push({u,v})}bl.sort((a,b)=>Math.hypot(a.u,a.v)-Math.hypot(b.u,b.v));const G=(b)=>({x:p.x+b.u*c-b.v*s,z:p.z+b.u*s+b.v*c});const ar=bl[3],ca=bl[p.id==="montecielo"?2:1],ga=bl[5];if(ar)POI2.push({...G(ar),ic:"🏀",n:"ARENA · "+p.n});if(ca)POI2.push({...G(ca),ic:"🎰",n:"SLOT · "+p.n});if(ga)POI2.push({...G(ga),ic:"🔧",n:"OFFICINA · "+p.n})});
   const drawMM=()=>{const S_=260,sc=S_/2/650,k=MS/(LIM*2);mx.save();mx.clearRect(0,0,S_,S_);mx.beginPath();mx.arc(S_/2,S_/2,S_/2,0,7);mx.clip();mx.fillStyle="#1d3b4a";mx.fillRect(0,0,S_,S_);mx.translate(S_/2,S_/2);const yaw=cur?cur.g.rotation.y+(VIEW!==2?LOOK:0):V.yaw;mx.rotate(yaw);const px=cur?cur.g.position.x:V.x,pz=cur?cur.g.position.z:V.z;mx.drawImage(mmBG,-(px+LIM)*k*sc/k,-(pz+LIM)*k*sc/k,MS*sc/k,MS*sc/k);
-    mx.font="18px system-ui";mx.textAlign="center";mx.textBaseline="middle";[...POI,...POI2].forEach(q=>{const dx=(q.x-px)*sc,dz=(q.z-pz)*sc;if(Math.hypot(dx,dz)>S_/2-8)return;mx.save();mx.translate(dx,dz);mx.rotate(-yaw);mx.fillText(q.ic,0,0);mx.restore()});mx.restore();mx.fillStyle="#fff";mx.strokeStyle="#000";mx.lineWidth=2;mx.beginPath();mx.moveTo(130,116);mx.lineTo(141,142);mx.lineTo(130,135);mx.lineTo(119,142);mx.closePath();mx.fill();mx.stroke();mx.fillStyle="#fff";mx.font="bold 15px system-ui";mx.fillText("N",130+Math.sin(-yaw)*-112,130-Math.cos(-yaw)*112)};
+    drawRoute(mx,{w:5,m:(x_,z_)=>[(x_-px)*sc,(z_-pz)*sc]});mx.font="18px system-ui";mx.textAlign="center";mx.textBaseline="middle";[...POI,...POI2].forEach(q=>{const dx=(q.x-px)*sc,dz=(q.z-pz)*sc;if(Math.hypot(dx,dz)>S_/2-8)return;mx.save();mx.translate(dx,dz);mx.rotate(-yaw);mx.fillText(q.ic,0,0);mx.restore()});mx.restore();mx.fillStyle="#fff";mx.strokeStyle="#000";mx.lineWidth=2;mx.beginPath();mx.moveTo(130,116);mx.lineTo(141,142);mx.lineTo(130,135);mx.lineTo(119,142);mx.closePath();mx.fill();mx.stroke();mx.fillStyle="#fff";mx.font="bold 15px system-ui";mx.fillText("N",130+Math.sin(-yaw)*-112,130-Math.cos(-yaw)*112)};
   const mapOv=el("position:absolute;inset:0;z-index:25;display:none;background:rgba(5,8,14,.92);touch-action:none");const mapC=document.createElement("canvas");mapC.style.cssText="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:14px;border:2px solid "+A+";box-shadow:0 8px 40px #000";mapOv.appendChild(mapC);
   const mapSide=el(`position:absolute;right:10px;top:58px;bottom:10px;width:178px;overflow:auto;display:flex;flex-direction:column;gap:5px`,null,mapOv);const mapX=btn("✕ CHIUDI MAPPA","left:12px;top:12px;background:#b91c1c;z-index:26",()=>{mapOv.style.display="none"});mapOv.appendChild(mapX);
-  const mapTip=el(`position:absolute;left:12px;bottom:12px;color:#cbd5e1;font:700 12px system-ui;max-width:40%`,"Tocca un luogo (sulla mappa o nell elenco) per andarci a piedi. Se stai guidando, ci vai col veicolo.",mapOv);
-  const tpTo=(q)=>{mapOv.style.display="none";let x=q.x,z=q.z;for(let r=0;r<60;r+=6){let ok=false;for(let a=0;a<12;a++){const tx=q.x+Math.cos(a/12*6.28)*r,tz=q.z+Math.sin(a/12*6.28)*r;if(hAt(tx,tz)>.5&&!hitAt(tx,tz,2.5)){x=tx;z=tz;ok=true;break}}if(ok)break}
-    if(cur&&cur.s.cat==="car"){cur.g.position.set(x,gnd(x,z),z);cur.v=0;cur.moved=true}else{if(cur)leaveVeh();V.x=x;V.z=z}tileData(Math.floor((x+LIM)/TS),Math.floor((z+LIM)/TS));showBig(q.ic+" "+q.n,1600)};
+  const mapTip=el(`position:absolute;left:12px;bottom:12px;color:#cbd5e1;font:700 12px system-ui;max-width:40%`,"Tocca un luogo (sulla mappa o nell elenco): diventa la tua meta e il navigatore ti mostra la strada.",mapOv);
+  /* (1061) NAVIGATORE: niente teletrasporto, tocchi un luogo e diventa la meta; il percorso su strada si vede sulla mappa, sulla minimappa e per terra */
+  let DEST=null,FLD=null,ROUTE=null,routeMesh=null;const routeM=new T.MeshBasicMaterial({color:"#22d3ee",transparent:true,opacity:.6,depthWrite:false,toneMapped:false,polygonOffset:true,polygonOffsetFactor:-4,polygonOffsetUnits:-10});
+  const navChip=el(`position:absolute;left:50%;top:32px;transform:translateX(-50%);z-index:5;padding:5px 12px;border-radius:12px;background:rgba(8,47,73,.88);border:2px solid #22d3ee;color:#e0f2fe;${F}font-size:12px;white-space:nowrap;display:none;pointer-events:none`);
+  const setDest=(q)=>{mapOv.style.display="none";if(!q){DEST=FLD=ROUTE=null;navChip.style.display="none";if(routeMesh){S.remove(routeMesh);routeMesh.geometry.dispose();routeMesh=null}return}DEST=q;FLD=NAV.field(q.x,q.z);ROUTE=null;routeT=0;showBig("🧭 "+q.ic+" "+q.n,1600,"#67e8f9");try{localStorage.setItem("dl_valley_dest",JSON.stringify(q))}catch(e){}};
+  let routeT=0;const routeTick=(now,px,pz)=>{if(!DEST||now<routeT)return;routeT=now+900;const d0=Math.hypot(DEST.x-px,DEST.z-pz);if(d0<45){showBig("🏁 SEI ARRIVATO: "+DEST.n,2200,"#86efac");try{localStorage.removeItem("dl_valley_dest")}catch(e){}setDest(null);return}
+    ROUTE=NAV.path(FLD,px,pz,5000);navChip.style.display="block";const dk=ROUTE?ROUTE.dist:d0;navChip.textContent=`🧭 ${DEST.ic} ${DEST.n} · ${dk>950?(dk/1000).toFixed(1)+" km":Math.round(dk/10)*10+" m"}`;
+    if(routeMesh){S.remove(routeMesh);routeMesh.geometry.dispose();routeMesh=null}if(!ROUTE)return;const P=[],UVs=[],I=[];let acc=0;const pts=ROUTE.pts;for(let k=1;k<pts.length&&acc<1100;k++){const a=pts[k-1],b=pts[k];const L=Math.hypot(b[0]-a[0],b[1]-a[1]);if(L<.5)continue;acc+=L;const nx=-(b[1]-a[1])/L*1.3,nz=(b[0]-a[0])/L*1.3;const ya=gnd(a[0],a[1])+.3,yb=gnd(b[0],b[1])+.3;const base=P.length/3;P.push(a[0]+nx,ya,a[1]+nz,a[0]-nx,ya,a[1]-nz,b[0]+nx,yb,b[1]+nz,b[0]-nx,yb,b[1]-nz);I.push(base,base+2,base+1,base+1,base+2,base+3)}
+    if(P.length){const g=new T.BufferGeometry();g.setAttribute("position",new T.Float32BufferAttribute(P,3));g.setIndex(I);routeMesh=new T.Mesh(g,routeM);routeMesh.frustumCulled=false;S.add(routeMesh)}};
+  const drawRoute=(ctx,f)=>{if(!ROUTE)return;ctx.strokeStyle="#22d3ee";ctx.lineWidth=f.w;ctx.lineJoin="round";ctx.beginPath();ROUTE.pts.forEach((p,i)=>{const[a,b]=f.m(p[0],p[1]);i?ctx.lineTo(a,b):ctx.moveTo(a,b)});ctx.stroke();if(DEST){const[a,b]=f.m(DEST.x,DEST.z);ctx.fillStyle="#22d3ee";ctx.beginPath();ctx.arc(a,b,f.w*1.6,0,7);ctx.fill()}};
   const mapOpen=()=>{const MW=Math.min(W-210,H-24),k=MW/(LIM*2);mapC.width=MW*2;mapC.height=MW*2;mapC.style.width=MW+"px";mapC.style.height=MW+"px";mapC.style.left=(W-200)/2+"px";const x=mapC.getContext("2d");x.scale(2,2);x.drawImage(mmBG,0,0,MW,MW);const m=v=>(v+LIM)*k;
-    x.textAlign="center";x.textBaseline="middle";x.font="bold 11px system-ui";[...POI2].forEach(q=>{x.font="14px system-ui";x.fillText(q.ic,m(q.x),m(q.z))});POI.forEach(q=>{x.font="20px system-ui";x.fillText(q.ic,m(q.x),m(q.z)-8);x.font="italic 900 10px Arial Black,Arial";x.lineWidth=3;x.strokeStyle="rgba(0,0,0,.8)";x.strokeText(q.n,m(q.x),m(q.z)+10);x.fillStyle="#fff";x.fillText(q.n,m(q.x),m(q.z)+10)});
+    drawRoute(x,{w:3,m:(a,b)=>[m(a),m(b)]});PL.forEach(p=>{if(p.k==="farm"){x.font="9px system-ui";x.textAlign="center";x.fillText("🐄",m(p.x),m(p.z))}});x.textAlign="center";x.textBaseline="middle";x.font="bold 11px system-ui";[...POI2].forEach(q=>{x.font="14px system-ui";x.fillText(q.ic,m(q.x),m(q.z))});POI.forEach(q=>{x.font="20px system-ui";x.fillText(q.ic,m(q.x),m(q.z)-8);x.font="italic 900 10px Arial Black,Arial";x.lineWidth=3;x.strokeStyle="rgba(0,0,0,.8)";x.strokeText(q.n,m(q.x),m(q.z)+10);x.fillStyle="#fff";x.fillText(q.n,m(q.x),m(q.z)+10)});
     x.font="italic 900 13px Arial Black,Arial";x.fillStyle="rgba(255,255,255,.75)";x.fillText("LAGO DEI SOGNI",m(LK.x-300),m(LK.z-150));
     const px=cur?cur.g.position.x:V.x,pz=cur?cur.g.position.z:V.z,yaw=cur?cur.g.rotation.y:V.yaw;x.save();x.translate(m(px),m(pz));x.rotate(-yaw);x.fillStyle=A;x.strokeStyle="#fff";x.lineWidth=2;x.beginPath();x.moveTo(0,-11);x.lineTo(8,8);x.lineTo(0,4);x.lineTo(-8,8);x.closePath();x.fill();x.stroke();x.restore();
-    mapSide.innerHTML="";[...POI,...POI2].forEach(q=>{const b=document.createElement("button");b.textContent=q.ic+" "+q.n;b.style.cssText=`text-align:left;padding:7px 9px;border-radius:10px;border:1px solid #475569;background:#0f172a;color:#fff;${F}font-size:11px`;b.addEventListener("pointerdown",e=>{e.stopPropagation();tpTo(q)});mapSide.appendChild(b)});
-    mapC.onpointerdown=e=>{e.stopPropagation();const r=mapC.getBoundingClientRect(),p=o.pt(e),q0=o.pt({clientX:r.left,clientY:r.top}),q1=o.pt({clientX:r.right,clientY:r.bottom});const fx=(p.x-Math.min(q0.x,q1.x))/Math.abs(q1.x-q0.x),fz=(p.y-Math.min(q0.y,q1.y))/Math.abs(q1.y-q0.y);const wx=-LIM+fx*LIM*2,wz=-LIM+fz*LIM*2;let best=null,bd=1e9;[...POI,...POI2].forEach(q=>{const d=Math.hypot(q.x-wx,q.z-wz);if(d<bd){bd=d;best=q}});if(best&&bd<350)tpTo(best);else if(ringD(wx,wz)<.9&&hAt(wx,wz)>.5)tpTo({x:wx,z:wz,ic:"📍",n:"QUI"})};
+    mapSide.innerHTML="";[...POI,...POI2].forEach(q=>{const b=document.createElement("button");b.textContent=q.ic+" "+q.n;b.style.cssText=`text-align:left;padding:7px 9px;border-radius:10px;border:1px solid #475569;background:#0f172a;color:#fff;${F}font-size:11px`;b.addEventListener("pointerdown",e=>{e.stopPropagation();setDest(q)});mapSide.appendChild(b)});if(DEST){const b=document.createElement("button");b.textContent="✖ ANNULLA PERCORSO";b.style.cssText=`text-align:left;padding:7px 9px;border-radius:10px;border:1px solid #f87171;background:#7f1d1d;color:#fff;${F}font-size:11px`;b.addEventListener("pointerdown",e=>{e.stopPropagation();setDest(null)});mapSide.prepend(b)}
+    mapC.onpointerdown=e=>{e.stopPropagation();const r=mapC.getBoundingClientRect(),p=o.pt(e),q0=o.pt({clientX:r.left,clientY:r.top}),q1=o.pt({clientX:r.right,clientY:r.bottom});const fx=(p.x-Math.min(q0.x,q1.x))/Math.abs(q1.x-q0.x),fz=(p.y-Math.min(q0.y,q1.y))/Math.abs(q1.y-q0.y);const wx=-LIM+fx*LIM*2,wz=-LIM+fz*LIM*2;let best=null,bd=1e9;[...POI,...POI2].forEach(q=>{const d=Math.hypot(q.x-wx,q.z-wz);if(d<bd){bd=d;best=q}});if(best&&bd<350)setDest(best);else if(ringD(wx,wz)<.9&&hAt(wx,wz)>-.5)setDest({x:wx,z:wz,ic:"📍",n:"PUNTO SCELTO"})};
     mapOv.style.display="block"};
   /* ---------- OFFICINA ---------- */
   const PAL=["#dc2626","#ea580c","#facc15","#16a34a","#0e7490","#1d4ed8","#7c3aed","#db2777","#f8fafc","#9ca3af","#27272a","#78350f",...(o.teams||[]).slice(0,10).map(t=>t.bg)];
@@ -432,6 +501,7 @@ const DreamValley={open(host,o){
         swish(ok){one(t=>{const o_=ac.createOscillator();o_.type="triangle";o_.frequency.setValueAtTime(ok?660:200,t);o_.frequency.exponentialRampToValueAtTime(ok?1320:120,t+.25);const g=ac.createGain();g.gain.setValueAtTime(.2,t);g.gain.exponentialRampToValueAtTime(.001,t+.35);o_.connect(g);g.connect(DST);o_.start(t);o_.stop(t+.4)})},
         stop(){try{eg.gain.setTargetAtTime(0,ac.currentTime,.05);wg.gain.setTargetAtTime(0,ac.currentTime,.05);lkg.gain.cancelScheduledValues(0);lkg.gain.setTargetAtTime(0,ac.currentTime,.05);setTimeout(()=>{try{[o1,o2,ns,wh,wn,lk,lfo,llfo].forEach(x=>x.stop())}catch(e){}},300)}catch(e){}}}}catch(e){return null}})();
   const au=(k,...a)=>{try{AU&&AU[k]&&AU[k](...a)}catch(e){}};
+
   /* ---------- SALIRE / SCENDERE ---------- */
   let cur=null;const vehUI=()=>{const c=cur&&cur.s.cat;const air=c==="plane"||c==="heli";bRun.style.display=cur?"none":"block";bUp.style.display=air?"block":"none";bDn.style.display=air?"block":"none";bUp.textContent=c==="heli"?"▲ SU":"▲";bDn.textContent=c==="heli"?"▼ GIÙ":"▼";bUp.style.fontSize=bDn.style.fontSize=c==="heli"?"15px":"22px";bHorn.style.display=c==="car"||c==="boat"?"block":"none";hud.style.display=cur?"block":"none";bHorn.style.right=air?"164px":"20px";bHorn.style.bottom=air?"24px":"24px"};
   const enterVeh=v=>{cur=v;v.moved=true;IN.run=false;LOOK=0;au("door");if(v.s.cat==="plane"){v.f.thr=0;v.f.spd=0;v.f.ground=true;v.f.pitch=0;v.f.roll=0}if(v.s.cat==="heli"){v.f.ground=true;v.f.vy=0;v.f.spd=0;v.f.ry=0}showBig(v.s.n,1100);vehUI()};
@@ -484,10 +554,11 @@ const DreamValley={open(host,o){
     const far=VIEW===1?1.8:1;const air=s.cat==="plane"||s.cat==="heli";const h=g.rotation.y+LOOK;const d=s.cd*far,hh=s.ch*far;const pit=air&&s.cat==="plane"?g.rotation.x*.6:0;const cx=g.position.x+Math.sin(h)*d*Math.cos(pit),cz=g.position.z+Math.cos(h)*d*Math.cos(pit);let cy=g.position.y+hh-Math.sin(pit)*d;cy=Math.max(cy,(s.cat==="boat"?.8:gnd(cx,cz)+1.2));
     tv.set(cx,cy,cz);cam.position.lerp(tv,Math.min(1,dt*(air?5:6)));if(cam.position.distanceTo(tv)>d*3)cam.position.copy(tv);const la=new T.Vector3(g.position.x-Math.sin(h)*d*.5,g.position.y+hh*.35-Math.sin(pit)*d*.3,g.position.z-Math.cos(h)*d*.5);cam.lookAt(la);if(air&&s.cat==="plane")cam.rotateZ(-g.rotation.z*.35)};
   /* ---------- ciclo ---------- */
-  let birdT=0,saveT=0,stepT=0,lastPlace=null,placeT=0;const GLOW=[];
+  let cityGo=false,birdT=0,saveT=0,stepT=0,lastPlace=null,placeT=0;const GLOW=[];
   const loop=now=>{if(!alive)return;raf=requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000);last=now;try{
       const px=cur?cur.g.position.x:V.x,pz=cur?cur.g.position.z:V.z;
-      tileTick(px,pz,cur&&cur.v>60?9:6);siteTick(px,pz,5);
+      tileTick(px,pz,cur&&cur.v>60?9:6);siteTick(px,pz,5);try{routeTick(now,px,pz)}catch(e){console.error(e)}
+      /* (1061) entrare in Dream City guidando: si passa da una delle 4 porte */if(!cityGo&&(!cur||cur.s.cat==="car")){const lx=(px-DC.x)/DC.k,lz=(pz-DC.z)/DC.k;if(lx>-296&&lx<296&&lz>-269&&lz<236){cityGo=true;let g="W",bd=1e9;Object.entries(DCG).forEach(([id,q])=>{const d=Math.hypot(q.lx-lx,q.lz-lz);if(d<bd){bd=d;g=id}});const car=cur?{kind:cur.kind,dream:cur.dream||null,v:Math.abs(cur.v)}:null;showBig("🌆 DREAM CITY",1500,"#e9d5ff");setTimeout(()=>{try{o.onCity&&o.onCity({gate:g,car,dest:DEST})}catch(e){console.error(e)}},200)}}
       if(panel.style.display!=="block"&&mapOv.style.display!=="block"){
       if(cur){const c=cur.s.cat;if(c==="plane")flyPlane(cur,dt);else if(c==="heli")flyHeli(cur,dt);else driveLand(cur,dt);if(Math.abs(cur.v)>2)LOOK*=Math.exp(-dt*1.4);camVeh(cur,dt);
         const kmh=Math.round(Math.abs(cur.v)*3.6);hud.innerHTML=`${kmh}<small style="font-size:13px"> km/h</small>`+(c==="plane"||c==="heli"?`<div style="font-size:13px">ALT ${Math.round(cur.g.position.y-gnd(cur.g.position.x,cur.g.position.z))} m${c==="plane"?" · MOTORE "+Math.round(cur.f.thr*100)+"%":""}</div>`:"");
@@ -503,15 +574,16 @@ const DreamValley={open(host,o){
       /* luoghi: nome in alto quando entri */const here=PL.find(p=>plD(p,px,pz)<(p.k==="city"?60:30));if(here!==lastPlace){lastPlace=here;if(here)showBig(here.ic+" "+here.n,1800,"#fde68a")}top.innerHTML=here?here.ic+" "+here.n:"🌄 DREAM VALLEY";
       /* suoni d ambiente */{const alt=cur?cur.g.position.y-gnd(px,pz):0,spd=cur?Math.abs(cur.v):0;const lakeN=Math.max(0,1-Math.abs(lakeF(px,pz)-1)*6);au("amb",Math.min(.12,.025+spd/900+alt/9000),cur&&cur.s.cat!=="boat"?lakeN*.02:lakeN*.06);
         if(!cur&&now>birdT){birdT=now+1500+Math.random()*5000;if(!PL.some(p=>p.k==="city"&&plD(p,px,pz)<0)&&lakeF(px,pz)>1.1&&ringD(px,pz)<.85)au("bird")}}
-      if(now>saveT){saveT=now+8000;try{localStorage.setItem("dl_valley_pos",JSON.stringify({x:px,z:pz,yaw:cur?cur.g.rotation.y:V.yaw}))}catch(e){}
+      if(now>saveT){saveT=now+2000;
         /* i veicoli lontani non si disegnano (ma restano dove li hai lasciati) */VEH.forEach(v=>{v.g.visible=v===cur||Math.hypot(v.g.position.x-px,v.g.position.z-pz)<(v.s.cat==="plane"||v.s.cat==="ferry"?2500:900)})}
       if(now>placeT){placeT=now+200;drawMM()}
       R.setRenderTarget(null);R.toneMappingExposure=1.05;cam.aspect=W/H;cam.updateProjectionMatrix();R.render(S,cam)}catch(e){console.error(e)}};
-  /* ---------- partenza ---------- */
-  {let sp=null;try{sp=JSON.parse(localStorage.getItem("dl_valley_pos")||"null")}catch(e){}const P0=PLX.portoluce;if(o.spawn)sp=o.spawn;if(!sp||!(Math.abs(sp.x)<LIM)||ringD(sp.x,sp.z)>.95||hAt(sp.x,sp.z)<0)sp={x:P0.x,z:P0.z,yaw:Math.PI};V.x=sp.x;V.z=sp.z;V.yaw=sp.yaw||0;
-    /* prepara subito il settore e il luogo dove si parte, così non si vede il vuoto */const ci=Math.floor((V.x+LIM)/TS),cj=Math.floor((V.z+LIM)/TS);for(let k=0;k<200&&!(TILES.get(tkey(ci,cj))||{}).built;k++)tileTick(V.x,V.z,1000);for(let k=0;k<3;k++)siteTick(V.x,V.z,2000);
-    if(hitAt(V.x,V.z,.5)){for(let r=2;r<80;r+=2){const a=r*.7;const x=V.x+Math.cos(a)*r,z=V.z+Math.sin(a)*r;if(!hitAt(x,z,.6)&&hAt(x,z)>.3){V.x=x;V.z=z;break}}}}
-  vehUI();showBig("🌄 DREAM VALLEY",2400,"#fde68a");raf=requestAnimationFrame(loop);
-  window.__DVdbg={V,IN,VEH,PL,PLX,RD,TILES,get cur(){return cur},enter:v=>enterVeh(v),leave:()=>leaveVeh(),tp:(x,z,yaw)=>{if(cur)leaveVeh();V.x=x;V.z=z;if(yaw!=null)V.yaw=yaw},hAt,gnd,mapOpen,get VIEW(){return VIEW},set VIEW(v){VIEW=v},garOpen,roadQ};
-  return()=>{alive=false;cancelAnimationFrame(raf);try{localStorage.setItem("dl_valley_pos",JSON.stringify({x:cur?cur.g.position.x:V.x,z:cur?cur.g.position.z:V.z,yaw:V.yaw}))}catch(e){}au("stop");S.traverse(x=>{if(x.geometry)x.geometry.dispose();if(x.isInstancedMesh)x.dispose();const ms=x.material?(Array.isArray(x.material)?x.material:[x.material]):[];ms.forEach(m=>m.dispose())});treeGeo.forEach(g=>g.dispose());own.forEach(t=>t.dispose());R.toneMappingExposure=SV.exp;try{delete window.__DVdbg}catch(e){}}}};
+  /* ---------- partenza: dalla porta di Dream City, con la macchina con cui sei uscito ---------- */
+  {const vs=o.vspawn||{gate:"E"},g=DCG[vs.gate]||DCG.E;const sx=g.x+g.out[0]*48,sz=g.z+g.out[1]*48,yaw=Math.atan2(-g.out[0],-g.out[1]);V.x=sx;V.z=sz;V.yaw=yaw;
+    const ci=Math.floor((V.x+LIM)/TS),cj=Math.floor((V.z+LIM)/TS);for(let k=0;k<300&&!(TILES.get(tkey(ci,cj))||{}).built;k++)tileTick(V.x,V.z,1000);for(let k=0;k<4;k++)siteTick(V.x,V.z,3000);
+    if(vs.car){const MAPK={base:"sedan",rally:"suv",gt:"sport",muscle:"sport",ev:"compact",hyper:"sport",lmh:"sport",f1:"sport"};const kd=MAPK[vs.car.m]||"sedan";const v=mkVeh(kd,sx,sz,yaw,null);if(v){if(vs.car.col&&v.pm)v.pm.color.set(vs.car.col);v.dream={m:vs.car.m,k:vs.car.k};v.moved=true;enterVeh(v);v.v=Math.min(vs.car.v||0,v.s.max*.8)}}
+    if(o.nav&&o.nav.x!=null)setTimeout(()=>{try{setDest(o.nav)}catch(e){}},300)}
+  vehUI();raf=requestAnimationFrame(loop);
+  window.__DVdbg={V,IN,VEH,PL,PLX,RD,TILES,get cur(){return cur},enter:v=>enterVeh(v),leave:()=>leaveVeh(),tp:(x,z,yaw)=>{if(cur)leaveVeh();V.x=x;V.z=z;if(yaw!=null)V.yaw=yaw},hAt,gnd,mapOpen,setDest,get DEST(){return DEST},get ROUTE(){return ROUTE},DC,DCG,get VIEW(){return VIEW},set VIEW(v){VIEW=v},garOpen,roadQ};
+  return()=>{alive=false;cancelAnimationFrame(raf);au("stop");S.traverse(x=>{if(x.geometry)x.geometry.dispose();if(x.isInstancedMesh)x.dispose();const ms=x.material?(Array.isArray(x.material)?x.material:[x.material]):[];ms.forEach(m=>m.dispose())});treeGeo.forEach(g=>g.dispose());own.forEach(t=>t.dispose());R.toneMappingExposure=SV.exp;try{delete window.__DVdbg}catch(e){}}}};
 window.DreamValley=DreamValley})();
