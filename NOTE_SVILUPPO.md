@@ -2735,3 +2735,17 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - Suoni nuovi: passi diversi per erba/sentiero/legno, bici e campanello, nuoto, salto, lancio e abboccata della pesca; musica ed effetti su canali separati.
 - Mappa più grande: percorsi e grotte +40%, più erba, più allenatori e oggetti; verde un po' più scuro e sentieri marroncino chiaro.
 - Pesca: con la canna base a volte non abbocca nessuno; le canne migliori pescano giocatori più forti e di livello più alto.
+
+## 1083 · Poke Dream: 251 giocatori, soprannomi, deposito, giorno/notte, leggenda errante, Lega più dura
+- Schedario a 251 giocatori (come il numero di un gioco del genere): ai 115 della lega si aggiungono i 136 migliori Free Agent per valutazione stimata, con maglia NBA, numero e statistiche; aspetto generato dal nome per chi non ha una scheda.
+- Le fasce dei percorsi sono state riscalate sul nuovo elenco.
+- Soprannomi: dopo ogni cattura si può dare un soprannome, che compare ovunque (scheda, lotta, squadra). Scrittura con la tastiera del telefono.
+- PC del deposito completo: deposita, ritira, guarda il deposito con scheda e rilascio, e "Schedario del Prof." collegato (visti/catturati su 251).
+- Menu MOSSE: sposta in alto e dimentica (l'allenatore delle mosse le fa ripassare).
+- Ciclo giorno/notte dall'orologio vero: mattina, giorno, sera e notte tingono l'esterno; di notte le finestre si accendono e i giocatori rari si incontrano più spesso. La fase compare nella tessera.
+- Leggenda errante: dopo la Lega, Dončić gira per i percorsi e cambia zona a ogni cambio di mappa; se lo incontri scappa dopo un turno, ma i danni restano. Jokić e Wembanyama restano eventi fissi.
+- Alberi da frutto (2 per percorso): un frutto al giorno. I selvatici a volte tengono un frutto, che resta a te se li catturi.
+- Lotteria giornaliera al centro commerciale: premio se esce il numero di maglia di un tuo giocatore.
+- Lega: Elite con 5 giocatori Lv 59-62 e oggetti da tenere; campione VITO con 6 giocatori Lv 66-68 e oggetti. IA più sveglia (cura quando è bassa, usa gli stati, cerca le mosse superefficaci).
+- Boss segreto: IL FONDATORE in fondo alla Grotta delle Leggende, solo da campione, 6 giocatori Lv 78-83 con oggetti; si può risfidare.
+- Allenatore con la testa nuova (scelta di Francesco): rotonda di fronte, con il collo di lato.
