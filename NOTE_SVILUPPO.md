@@ -2576,3 +2576,12 @@ Francesco (08:35-08:43):
 - 1063: con un veicolo ci sono sempre 🎥 (visuale) e 🏁 (corse), come in città. Nella valle 🏁 apre le CORSE DELLA VALLE: GIRO DEL LAGO (superstrada ad anello), SALITA AL BELVEDERE, DREAM CITY→PORTOLUCE, VALFERRO→MONTECIELO (il navigatore porta alla partenza, poi 3-2-1 e cronometro) e SPRINT da dove sei verso qualsiasi luogo; record salvati.
 - 1064: nella valle (Terra) gli stessi tasti della Piazza dei Dreamers: joystick della città, tasto CORRI tondo, colonna ✕ / 🔊 / 🏀 / 📺 a destra, tasti quadrati VILLA · SHUTTLE · PIANETA · MAPPA, chip dei soldi. VILLA e SHUTTLE accendono il navigatore verso Dream City; PIANETA parte per il pianeta. Barche e mezzi di terra si guidano col volante e i pedali; solo aerei ed elicottero col joystick.
 - 1065: visuale "dentro" dei veicoli della valle (bus ecc.) non più nera (si vede la strada pulita); visuale di guida come in città (stesso campo visivo, sguardo un po' in basso, trascinando si guarda anche su/giù); aerei: niente più muri invisibili in aria (gli ostacoli contano solo fino alla loro altezza); dopo uno schianto il velivolo torna da solo al parcheggio e si può scendere (prima restava bloccato); strade: asfalto e 6 m di bordo alla stessa quota e incroci con le due strade alla stessa quota (punti dove il terreno copriva l asfalto da 0,8% a 0,2%), e la macchina non va mai sotto il terreno.
+
+## 1066 — Visuali interne dei veicoli della valle, atterraggio facile
+Francesco (08:54): visuali interne pessime, il bus da dentro non si vedeva, le auto devono essere identiche a Dream City; aerei: atterrare molto più facilmente ovunque.
+- La tua macchina della città nella valle: telecamera calcolata esattamente come in città (stessa posizione al posto di guida, ruota solo con la direzione della macchina, stesso campo visivo e sguardo).
+- I veicoli della valle (bus, camion, furgone, auto, pickup, trattore, motorino) da dentro ora hanno un abitacolo: cruscotto con schermo, volante, montanti del parabrezza, tetto; nel bus anche i sedili e il corridoio. La carrozzeria si nasconde solo da dentro, quindi niente più nero.
+- Aerei: atterri quasi ovunque (terreno anche un po in pendenza, discesa più forte, ali più inclinate); in acqua resta lo splash.
+
+## 1067 — Turno 4 di 4 notti, 3/11 giorno di pausa
+Francesco (08:57): la notte del 3/11 non ci sono partite NBA: il turno 4 (30/10-3/11) diventa di 4 notti (30/10-2/11) e si chiude la mattina del 3/11; il 3/11 è pausa e il turno 5 parte il 4/11 come previsto.
