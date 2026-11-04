@@ -2983,3 +2983,9 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1125 · 1 contro 1: tiro da tre marcato più difficile (04/11/2026)
 - Da oltre 7,1 m con il difensore davanti (non superato con crossover, non in step back) la fascia verde è -25% fisso (7,5 m: 0,054 -> 0,040). Libero o in step back resta piena. Resta anche la stoppata (22%) se ti è addosso.
+
+## 1126 · Tiro, gara da 3 e 1 contro 1 più fluidi (04/11/2026)
+- Causa degli scatti: durante il tiro la visuale segue sempre il canestro, quindi la risoluzione saliva (2,5x su iPhone, da fermi) e scendeva (1,67x, in movimento) di continuo; ogni cambio (setSize) ricrea le immagini del motore e blocca un attimo il telefono.
+- Ora con 🏀 acceso, nella gara da 3 e nell 1 contro 1 la risoluzione è FISSA a 1,6x; se il telefono fatica (media sopra 19 ms a fotogramma) scende di 0,15 e non risale finché non esci (st.shPR). Fuori da queste modalità tutto come prima.
+- handPos riusa sempre gli stessi vettori (prima 3 oggetti nuovi a ogni fotogramma = pulizie della memoria).
+- Provato: tiri nel verde ancora tutti dentro, nessun errore. La fluidità vera si giudica solo sul telefono.
