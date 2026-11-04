@@ -1714,7 +1714,7 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
   const g3Go=i=>{const p=g3Pos(i);V.x=p.x;V.z=p.z;footY=0;G3.b=0;SH.hand.m.material=BM_;st.dirty=true};
   const g3UI=()=>{if(!G3.on){return}const now=performance.now(),left=G3.go?Math.max(0,G3.end-now):G3T;G3I.style.display="block";
     G3I.textContent=G3.go?`🎯 GARA DA 3 · ⏱ ${(left/1000).toFixed(1).replace(".",",")} · PUNTI ${G3.pts} · postazione ${Math.min(5,G3.st+1)}/5 · record ${g3Rec()}`:`🎯 GARA DA 3 · si parte tra ${Math.max(1,Math.ceil((G3.t0-now)/1000))}…`};
-  const g3End=(why)=>{if(!G3.on)return;clearInterval(G3.iv);G3.on=false;G3.go=false;SH.hand.m.material=BM_;const rec=g3Rec(),best=why!=="stop"&&G3.pts>rec;if(best){try{localStorage.setItem("dl_drm_g3rec",G3.pts)}catch(e){}}
+  const g3Joy=on=>{try{const j=ov.querySelector(".drm3joy");if(j)j.style.visibility=on?"":"hidden"}catch(e){}};const g3End=(why)=>{if(!G3.on)return;clearInterval(G3.iv);g3Joy(true);G3.on=false;G3.go=false;SH.hand.m.material=BM_;const rec=g3Rec(),best=why!=="stop"&&G3.pts>rec;if(best){try{localStorage.setItem("dl_drm_g3rec",G3.pts)}catch(e){}}
     G3I.style.display="block";G3I.textContent=why==="stop"?"🎯 Gara interrotta":`🎯 FINE · ${G3.pts} PUNTI (${G3.dentro}/25)`+(best?" · NUOVO RECORD!":` · record ${rec}`);toast(why==="stop"?"GARA INTERROTTA":best?`🏆 RECORD! ${G3.pts}`:`FINE · ${G3.pts} PUNTI`,best?"#7c3aed":"#ea580c");
     try{g3b.style.background=""}catch(e){}setTimeout(()=>{if(!G3.on){G3I.style.display="none";g3Clear()}},5000)};
   const g3Shot=B_=>{if(!G3.go||G3.b>=5)return;const m=G3.b===4;B_.g3={m};B_.b.m.material=m?MB_:BM_;const r=G3.racks[G3.st];if(r&&r.balls[G3.b])r.balls[G3.b].visible=false;G3.b++;SH.hand.m.material=G3.b===4?MB_:BM_;g3UI();
@@ -1722,7 +1722,7 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
   const g3b=document.createElement("button");g3b.className="drm3g3";g3b.setAttribute("aria-label","Gara da 3");g3b.textContent="🎯";bb.parentElement.insertBefore(g3b,bb.nextSibling);
   g3b.onclick=e=>{e.stopPropagation();if(G3.on){g3End("stop");return}if(st.room){toast("🎯 la gara da 3 è nell'arena","#7c3aed");return}if(st.driving)return;
     g3Clear();G3.racks=[];Object.assign(G3,{on:true,go:false,st:0,b:0,pts:0,dentro:0});g3Racks();g3Go(0);if(TVC.on)tvb.onclick({stopPropagation(){}});if(!SH.on)bb.onclick({stopPropagation(){}});g3b.style.background="rgba(124,58,237,.85)";
-    G3.t0=performance.now()+3000;toast("🎯 GARA DA 3 · 60 secondi","#7c3aed");g3UI();clearInterval(G3.iv);G3.iv=setInterval(()=>{if(!G3.on){clearInterval(G3.iv);return}const now=performance.now();
+    g3Joy(false);G3.t0=performance.now()+3000;toast("🎯 GARA DA 3 · 60 secondi","#7c3aed");g3UI();clearInterval(G3.iv);G3.iv=setInterval(()=>{if(!G3.on){clearInterval(G3.iv);return}const now=performance.now();
       if(!SH.on){g3End("stop");return}const p=g3Pos(Math.min(4,G3.st));if(Math.hypot(V.x-p.x,V.z-p.z)>.05){V.x=p.x;V.z=p.z;st.dirty=true}
       if(!G3.go&&now>=G3.t0){G3.go=true;G3.end=now+G3T;toast("VIA!","#16a34a")}if(G3.go&&now>=G3.end){g3End("tempo");return}g3UI()},100)};
   /* ---- (985) INQUADRATURA TV: la telecamera gira da sola attorno al campo; quando un giocatore fa un'azione la telecamera va su di lui ---- */
@@ -1751,7 +1751,7 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
   st.tvTick=tvTick;
   /* fisica: sottopassi da 4 ms; ferro come anello (raggio 23 cm), tabellone come lastra, pavimento; più palloni in volo insieme */
   const shTick=()=>{const nw=performance.now(),dt=Math.max(0,Math.min(.1,(nw-(SH.lt||nw))/1000));SH.lt=nw;return shStep(dt)};const shStep=st.shStep=dt=>{const nw=performance.now();let act=false;
-    shMove();if(SH.on&&!(SH.hold?SH.rim:nearRim())){SH.on=false;SH.hold=null;bb.style.background="";showSH(false);SH.hand.m.visible=false}
+    shMove();if(G3.on){const p_=g3Pos(Math.min(4,G3.st));V.x=p_.x;V.z=p_.z;st.joy=null}/* (1112) in gara si resta fermi sulla postazione */if(SH.on&&!(SH.hold?SH.rim:nearRim())){SH.on=false;SH.hold=null;bb.style.background="";showSH(false);SH.hand.m.visible=false}
     if(SH.on){/* (992) la visuale segue sempre il canestro */const R_=SH.rim=(SH.hold?SH.rim:nearRim());const ty=Math.atan2(-(R_.x-V.x),-(R_.z-V.z))*180/Math.PI,dd=Math.hypot(R_.x-V.x,R_.z-V.z),eye=(footY>.2?2.05:1.7)+footY,tp=Math.atan2(R_.y-eye,dd)*180/Math.PI-4;
       let dy=ty-V.yaw;while(dy>180)dy-=360;while(dy<-180)dy+=360;const kf=Math.min(1,dt*7);if(Math.abs(dy)>.05||Math.abs(tp-V.pitch)>.05){V.yaw+=dy*kf;V.pitch+=(tp-V.pitch)*kf;act=true}
       SH.moving=!!(st.joy||walk);if(SH.hold){const m=Math.min(1.2,(nw-SH.hold.t0)/650);shP.style.height=Math.min(100,m*100)+"%";if(m>=1.2){SH.hold=null;shoot(1.2-TGT)}act=true}

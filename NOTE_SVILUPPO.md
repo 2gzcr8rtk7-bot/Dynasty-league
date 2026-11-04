@@ -2939,3 +2939,4 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 - Record sul telefono: localStorage dl_drm_g3rec. Ritoccando 🎯 o spegnendo 🏀 la gara si interrompe (record non salvato).
 - Codice in dream.js (ex stub G3/g3End): g3Racks, g3Go, g3Shot, g3End; il tiro marca il pallone (B.g3) e il canestro conta 1 o 2 punti nella gara invece di 2/3.
 - Provato nel browser simulato: tiri perfetti dentro da tutte le postazioni, fine a tempo e record salvato. Non provato sul telefono.
+- Posizione bloccata a ogni fotogramma durante la gara (shStep) e joystick nascosto fino alla fine. Pavimento nero negli screenshot: solo nel browser di prova (succede anche con la versione pubblicata), sul telefono il parquet si vede.
