@@ -2959,3 +2959,10 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1117 · Tiro: tolta la riga dei punti; valori della gara da 3 in verticale in alto a sinistra (04/11/2026)
 - La riga «PUNTI · TIRI · % · di fila» non compare più (shS sempre nascosto). Durante la gara da 3 il riquadro viola sta in alto a sinistra, una voce per riga (gara, tempo, punti, postazione, record); fuori dalla gara non c è.
+
+## 1118 · Modalità Dream: UNO CONTRO UNO (tasto «1v1») (04/11/2026)
+- Solo nell arena, solo premendo il tasto 1v1 (ripremendolo si esce). Partita a 11 contro un manichino bianco leggero (7 pezzi, un solo materiale, niente maglia) sul canestro di destra; fuori dall arco 2 punti, dentro 1. HUD in alto a sinistra (punteggio, chi attacca, vinte/perse salvate in dl_drm_v1).
+- Attacco: joystick, PALLEGGIO (crossover: se riesce il difensore resta indietro 0,95 s), TIRA con la livella (difensore addosso = fascia verde più stretta, v1Cont in win()); sotto canestro terzo tempo (fascia larga) o schiacciata se arrivi correndo. Il difensore sta a 1,9 m tra te e il canestro; se resti addosso a lui può rubarti palla.
+- Difesa: la CPU va a canestro girandoti attorno, tira da fuori se è libera, terzo tempo/schiacciata sotto; RUBA (da vicino, 33%) e SALTA (stoppata 55% se salti quando tira); se le stai addosso sbaglia di più. Telecamera che la segue.
+- Qualità: st.v1on entra nella risoluzione adattiva come guida e TV, solo durante la partita. Salto: st.jy sull altezza della telecamera.
+- Provato nel browser simulato: partita automatica completa fino a 11 senza errori. Fluidità e difficoltà da verificare sul telefono.
