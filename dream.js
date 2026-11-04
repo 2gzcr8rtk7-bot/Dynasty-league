@@ -1731,7 +1731,7 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
        Sotto canestro TIRA fa il terzo tempo (più facile) e se arrivi muovendoti la schiacciata. Da fuori dall'arco 2 punti, dentro 1.
      DIFESA: lui palleggia, va a canestro o tira; RUBA (da vicino) e SALTA (per stoppare quando tira). Se gli stai addosso sbaglia di più.
      La grafica scende di qualità SOLO mentre la partita è accesa (come in macchina e in TV: si adatta da sola per restare fluida). Vittorie e sconfitte salvate sul telefono (dl_drm_v1). ---- */
-  const V1={on:false,poss:"me",me:0,op:0,ph:"wait",pt:0,o:{x:0,z:0,jy:0},beat:0,cx:0,rb:0,sj:0,ac:null,acT:0,blk:0,hold:0},V1W=11;
+  const V1=st.V1={on:false,poss:"me",me:0,op:0,ph:"wait",pt:0,o:{x:0,z:0,jy:0},beat:0,cx:0,rb:0,sj:0,ac:null,acT:0,blk:0,hold:0},V1W=11;
   const v1R=()=>ARIMS[1],v1Rec=()=>{try{return JSON.parse(localStorage.getItem("dl_drm_v1")||"{}")||{}}catch(e){return{}}};
   let V1G=null;const v1Mk=()=>{if(V1G)return V1G;const T=THREE,g=new T.Group();
     /* (1120) SAGOMA DI CARTONE senza braccia (come quelle da allenamento): un solo piano ritagliato, colore piatto, nessuna luce */
