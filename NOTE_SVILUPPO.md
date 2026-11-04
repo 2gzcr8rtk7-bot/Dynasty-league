@@ -2989,3 +2989,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 - Ora con 🏀 acceso, nella gara da 3 e nell 1 contro 1 la risoluzione è FISSA a 1,6x; se il telefono fatica (media sopra 19 ms a fotogramma) scende di 0,15 e non risale finché non esci (st.shPR). Fuori da queste modalità tutto come prima.
 - handPos riusa sempre gli stessi vettori (prima 3 oggetti nuovi a ogni fotogramma = pulizie della memoria).
 - Provato: tiri nel verde ancora tutti dentro, nessun errore. La fluidità vera si giudica solo sul telefono.
+
+## 1127 · Maglia Ducks notte: denti + gessato (04/11/2026)
+- Alla notte con i denti (DECO.DUC0, flag duc0) si aggiunge sotto il gessato giallo (righe ogni 6, opacità .3), come le altre divise. Resto invariato.
