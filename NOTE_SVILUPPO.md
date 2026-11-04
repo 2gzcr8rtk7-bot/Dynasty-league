@@ -3007,3 +3007,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1132 · Maglia Ducks gialla (casa): solo gessato, senza piume (04/11/2026)
 - Flag np sulla casa Ducks: niente piume a squame, resta il gessato. Bianca invariata (gessato + piume), notte invariata (denti + gessato).
+
+## 1133 · Maglia Ducks gialla nello stile della notte (04/11/2026)
+- Casa Ducks con duc0: denti neri (DECO.DUC0) + gessato nero, come la notte. Bianca invariata (scie + gessato + piume).
