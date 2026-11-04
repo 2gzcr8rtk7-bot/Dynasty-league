@@ -3033,3 +3033,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1141 · Pallini semplici di default (04/11/2026)
 - DLS.gdc parte spento: verde giocata, opaco da giocare, live rosso. Il colore del PDK si accende da Impostazioni › Campo.
+
+## 1142 · Impostazioni › Giocatori › Icona di singoli giocatori: tasti squadra dentro la sezione (05/11/2026)
+- Francesco: c erano solo i Dolphins, non si poteva scegliere la squadra (i tasti erano solo sotto l anteprima, nascosti con «Nascondi»). Ora le 8 squadre sono anche in cima alla sezione (stessi data-dlsv="pvTeam|T").
