@@ -1691,14 +1691,40 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
     let dx=R_.x-P0.x,dz=R_.z-P0.z;const D=Math.max(1,Math.hypot(dx,dz)),h=R_.y-P0.y,th=(D>9?48:D<3?60:52)*Math.PI/180,den=2*Math.cos(th)**2*(D*Math.tan(th)-h),vReq=den>0?Math.sqrt(9.81*D*D/den):9;
     const w=win(),ae=Math.abs(err);let k=1,lat=0;if(ae<=w){k=1+(Math.random()-.5)*.006*(ae/w)}else{const ex=ae-w;k=1+Math.sign(err)*Math.min(.13,.014+ex*.3);lat=(Math.random()-.5)*Math.min(.12,ex*.5)}
     const a=Math.atan2(dz,dx)+lat,v=vReq*k;const b=POOL.shift();POOL.push(b);const o=SH.balls.find(q=>q.b===b);if(o)SH.balls.splice(SH.balls.indexOf(o),1);
-    b.m.position.copy(P0);b.m.visible=true;SH.balls.push({b,v:new THREE.Vector3(Math.cos(a)*v*Math.cos(th),v*Math.sin(th),Math.sin(a)*v*Math.cos(th)),st:0,ground:0,made:false,touched:false,prevY:P0.y,three:D>7.1});
+    b.m.position.copy(P0);b.m.visible=true;SH.balls.push({b,v:new THREE.Vector3(Math.cos(a)*v*Math.cos(th),v*Math.sin(th),Math.sin(a)*v*Math.cos(th)),st:0,ground:0,made:false,touched:false,prevY:P0.y,three:D>7.1});{const B_=SH.balls[SH.balls.length-1];B_.b.m.material=BM_;try{if(G3.on)g3Shot(B_)}catch(e){}}
     SH.tiri++;score();SH.hand.m.visible=false;SH.back=performance.now()+180;/* la palla ti torna in mano quasi subito */st.dirty=true;
     const q=ae<=w*.35?["PERFETTO!","#16a34a"]:ae<=w?["BUONO","#22c55e"]:err<0?["PRESTO","#b45309"]:["TARDI","#b91c1c"];toast(q[0],q[1])};
   {let pid=null;shUI.textContent="TIRA";
-    shUI.addEventListener("pointerdown",e=>{e.stopPropagation();if(!SH.on||!nearRim())return;pid=e.pointerId;try{shUI.setPointerCapture(pid)}catch(_){}SH.hold={t0:performance.now()};setZone();shUI.style.transform="scale(.92)";st.dirty=true});
+    shUI.addEventListener("pointerdown",e=>{e.stopPropagation();if(!SH.on||!nearRim())return;if(G3.on&&(!G3.go||G3.b>=5))return;pid=e.pointerId;try{shUI.setPointerCapture(pid)}catch(_){}SH.hold={t0:performance.now()};setZone();shUI.style.transform="scale(.92)";st.dirty=true});
     const rel=e=>{if(e.pointerId!==pid)return;e.stopPropagation();pid=null;shUI.style.transform="";if(!SH.hold)return;const m=(performance.now()-SH.hold.t0)/650;SH.hold=null;shoot(Math.min(m,1.2)-TGT);setTimeout(()=>{if(!SH.hold)shP.style.height="0%"},500)};
     shUI.addEventListener("pointerup",rel);shUI.addEventListener("pointercancel",rel)}
-  const G3={on:false},g3End=()=>{};
+  /* (1112) GARA DA 3 (tasto 🎯, solo nell'arena): 5 postazioni (angolo, 45°, centro, 45°, angolo) con un carrello di 5 palloni ciascuna; i primi 4 valgono 1 punto,
+     l'ultimo (money ball bianco, rosso e blu) 2 punti. 60 secondi, massimo 30 punti. Finiti i 5 palloni passi da solo alla postazione dopo. Record salvato sul telefono (dl_drm_g3rec). */
+  const G3={on:false,go:false,st:0,b:0,pts:0,dentro:0,racks:[]},G3I=ov.querySelector(".drm3g3i"),G3T=60000;
+  const mbT=K.tex(256,128,(x,W,H)=>{const C=["#c8102e","#ffffff","#1d4ed8"];for(let i=0;i<12;i++){x.fillStyle=C[i%3];x.fillRect(i*W/12,0,W/12+1,H)}x.strokeStyle="#1d0c04";x.lineWidth=4;x.beginPath();x.moveTo(0,H/2);x.lineTo(W,H/2);x.stroke();[W/4,W*3/4].forEach(u=>{x.beginPath();x.moveTo(u,0);x.lineTo(u,H);x.stroke()})});
+  const MB_=new THREE.MeshLambertMaterial({map:mbT});
+  const g3Rec=()=>{try{return+localStorage.getItem("dl_drm_g3rec")||0}catch(e){return 0}};
+  const g3Pos=i=>{const R_=ARIMS[1],a=[-88,-45,0,45,88][i]*Math.PI/180,d=i===0||i===4?6.75:7.5;return{x:R_.x-R_.sg*Math.cos(a)*d,z:Math.sin(a)*d}};
+  const g3Racks=()=>{const sc=S,R_=ARIMS[1],mat=new THREE.MeshPhongMaterial({color:"#9ca3af",shininess:60}),dark=new THREE.MeshPhongMaterial({color:"#374151"});
+    for(let i=0;i<5;i++){const p=g3Pos(i),fx=R_.x-p.x,fz=R_.z-p.z,fl=Math.hypot(fx,fz),f={x:fx/fl,z:fz/fl},r={x:-f.z,z:f.x},cx=p.x+r.x*1.05-f.x*.15,cz=p.z+r.z*1.05-f.z*.15,g=new THREE.Group();
+      const top=new THREE.Mesh(new THREE.BoxGeometry(1.25,.06,.34),mat);top.position.y=.72;g.add(top);[-.55,.55].forEach(u=>{const l=new THREE.Mesh(new THREE.BoxGeometry(.05,.72,.3),dark);l.position.set(u,.36,0);g.add(l)});
+      const balls=[];for(let j=0;j<5;j++){const b=new THREE.Mesh(BG_,j===4?MB_:BM_);b.position.set(-.48+j*.24,.87,0);g.add(b);balls.push(b)}
+      g.position.set(cx,flr(cx,cz),cz);g.rotation.y=Math.atan2(-f.z,f.x)+Math.PI/2;sc.add(g);G3.racks.push({g,balls})}st.dirty=true};
+  const g3Clear=()=>{G3.racks.forEach(r=>{try{S.remove(r.g)}catch(e){}});G3.racks=[];st.dirty=true};
+  const g3Go=i=>{const p=g3Pos(i);V.x=p.x;V.z=p.z;footY=0;G3.b=0;SH.hand.m.material=BM_;st.dirty=true};
+  const g3UI=()=>{if(!G3.on){return}const now=performance.now(),left=G3.go?Math.max(0,G3.end-now):G3T;G3I.style.display="block";
+    G3I.textContent=G3.go?`🎯 GARA DA 3 · ⏱ ${(left/1000).toFixed(1).replace(".",",")} · PUNTI ${G3.pts} · postazione ${Math.min(5,G3.st+1)}/5 · record ${g3Rec()}`:`🎯 GARA DA 3 · si parte tra ${Math.max(1,Math.ceil((G3.t0-now)/1000))}…`};
+  const g3End=(why)=>{if(!G3.on)return;clearInterval(G3.iv);G3.on=false;G3.go=false;SH.hand.m.material=BM_;const rec=g3Rec(),best=why!=="stop"&&G3.pts>rec;if(best){try{localStorage.setItem("dl_drm_g3rec",G3.pts)}catch(e){}}
+    G3I.style.display="block";G3I.textContent=why==="stop"?"🎯 Gara interrotta":`🎯 FINE · ${G3.pts} PUNTI (${G3.dentro}/25)`+(best?" · NUOVO RECORD!":` · record ${rec}`);toast(why==="stop"?"GARA INTERROTTA":best?`🏆 RECORD! ${G3.pts}`:`FINE · ${G3.pts} PUNTI`,best?"#7c3aed":"#ea580c");
+    try{g3b.style.background=""}catch(e){}setTimeout(()=>{if(!G3.on){G3I.style.display="none";g3Clear()}},5000)};
+  const g3Shot=B_=>{if(!G3.go||G3.b>=5)return;const m=G3.b===4;B_.g3={m};B_.b.m.material=m?MB_:BM_;const r=G3.racks[G3.st];if(r&&r.balls[G3.b])r.balls[G3.b].visible=false;G3.b++;SH.hand.m.material=G3.b===4?MB_:BM_;g3UI();
+    if(G3.b>=5){const s_=G3.st;setTimeout(()=>{if(!G3.on||G3.st!==s_)return;G3.st++;if(G3.st>=5){setTimeout(()=>g3End("fine"),1600)}else g3Go(G3.st)},650)}};
+  const g3b=document.createElement("button");g3b.className="drm3g3";g3b.setAttribute("aria-label","Gara da 3");g3b.textContent="🎯";bb.parentElement.insertBefore(g3b,bb.nextSibling);
+  g3b.onclick=e=>{e.stopPropagation();if(G3.on){g3End("stop");return}if(st.room){toast("🎯 la gara da 3 è nell'arena","#7c3aed");return}if(st.driving)return;
+    g3Clear();G3.racks=[];Object.assign(G3,{on:true,go:false,st:0,b:0,pts:0,dentro:0});g3Racks();g3Go(0);if(TVC.on)tvb.onclick({stopPropagation(){}});if(!SH.on)bb.onclick({stopPropagation(){}});g3b.style.background="rgba(124,58,237,.85)";
+    G3.t0=performance.now()+3000;toast("🎯 GARA DA 3 · 60 secondi","#7c3aed");g3UI();clearInterval(G3.iv);G3.iv=setInterval(()=>{if(!G3.on){clearInterval(G3.iv);return}const now=performance.now();
+      if(!SH.on){g3End("stop");return}const p=g3Pos(Math.min(4,G3.st));if(Math.hypot(V.x-p.x,V.z-p.z)>.05){V.x=p.x;V.z=p.z;st.dirty=true}
+      if(!G3.go&&now>=G3.t0){G3.go=true;G3.end=now+G3T;toast("VIA!","#16a34a")}if(G3.go&&now>=G3.end){g3End("tempo");return}g3UI()},100)};
   /* ---- (985) INQUADRATURA TV: la telecamera gira da sola attorno al campo; quando un giocatore fa un'azione la telecamera va su di lui ---- */
   const TVC={on:false,a:0,foc:null,ft:0};const tvb=ov.querySelector(".drm3tv");
   tvb.onclick=e=>{e.stopPropagation();if(st.room)return;TVC.on=!TVC.on;if(TVC.on&&SH.on)bb.onclick({stopPropagation(){}});tvb.style.background=TVC.on?"rgba(37,99,235,.85)":"";if(TVC.on){TVC.a=Math.atan2(V.x,V.z);toast("📺 INQUADRATURA TV","#1d4ed8")}st.dirty=true};
@@ -1736,7 +1762,7 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
         shRims().forEach(R_=>{/* tabellone */const fx=R_.bx-R_.sg*.03;if(Math.abs(P.z-R_.z)<.9&&P.y>2.9&&P.y<3.95&&R_.sg*(P.x-(fx-R_.sg*rb))>0&&R_.sg*Vv.x>0&&Math.abs(P.x-fx)<.4){P.x=fx-R_.sg*rb;Vv.x*=-.62;Vv.y*=.9;Vv.z*=.9;B.touched=true}
           /* ferro */const hx=P.x-R_.x,hz=P.z-R_.z,hl=Math.hypot(hx,hz)||1e-6,qx=R_.x+hx/hl*.23,qz=R_.z+hz/hl*.23,dx=P.x-qx,dy=P.y-R_.y,dz=P.z-qz,dl=Math.hypot(dx,dy,dz);
           if(dl<rb+.018){const nx=dx/dl,ny=dy/dl,nz=dz/dl,vn=Vv.x*nx+Vv.y*ny+Vv.z*nz;const pen=rb+.018-dl;P.x+=nx*pen;P.y+=ny*pen;P.z+=nz*pen;if(vn<0){const e=.52;Vv.x-=(1+e)*vn*nx;Vv.y-=(1+e)*vn*ny;Vv.z-=(1+e)*vn*nz;Vv.multiplyScalar(.92)}B.touched=true}
-          /* dentro */if(!B.made&&B.prevY>R_.y&&P.y<=R_.y&&Vv.y<0&&Math.hypot(P.x-R_.x,P.z-R_.z)<.23-rb*.35){B.made=true;Vv.multiplyScalar(.35);B.swish={n:R_.net||K.NETS.find(q=>q.userData.s===R_.sg)||K.NETS[0],t:0};const p_=B.three?3:2;SH.pts+=p_;SH.dentro++;onMade();score();toast(B.touched?`DENTRO! +${p_}`:`CIAF! +${p_}`,"#16a34a");try{if(st.voice&&st.A)st.A.react(B.three?"pt3":"pt2")}catch(e){}}});
+          /* dentro */if(!B.made&&B.prevY>R_.y&&P.y<=R_.y&&Vv.y<0&&Math.hypot(P.x-R_.x,P.z-R_.z)<.23-rb*.35){B.made=true;Vv.multiplyScalar(.35);B.swish={n:R_.net||K.NETS.find(q=>q.userData.s===R_.sg)||K.NETS[0],t:0};if(B.g3){const p_=B.g3.m?2:1;G3.pts+=p_;G3.dentro++;g3UI();toast((B.g3.m?"💰 MONEY BALL! ":"DENTRO! ")+"+"+p_,B.g3.m?"#7c3aed":"#16a34a")}else{const p_=B.three?3:2;SH.pts+=p_;SH.dentro++;onMade();score();toast(B.touched?`DENTRO! +${p_}`:`CIAF! +${p_}`,"#16a34a")}try{if(st.voice&&st.A)st.A.react(B.three?"pt3":"pt2")}catch(e){}}});
         const fy=flr(P.x,P.z)+rb;if(P.y<fy){P.y=fy;if(Vv.y<0)Vv.y*=-.6;Vv.x*=.86;Vv.z*=.86;if(!B.ground)B.ground=B.st}B.prevY=P.y}
       B.b.m.rotation.x+=dt*8;{const fy=flr(P.x,P.z),s_=B.b.sh;s_.visible=true;s_.position.set(P.x,fy+.01,P.z);const hgt=Math.max(0,P.y-fy);s_.scale.setScalar(1+hgt*.25);s_.material.opacity=Math.max(.06,.38-hgt*.05)}
       if(B.swish){B.swish.t+=dt;const k=B.swish.t,nn=B.swish.n;if(nn)nn.scale.set(1-Math.sin(k*18)*.12*Math.exp(-k*3),1+Math.sin(k*14)*.18*Math.exp(-k*3),1-Math.sin(k*18)*.12*Math.exp(-k*3));if(k>1.5){if(nn)nn.scale.set(1,1,1);B.swish=null}}

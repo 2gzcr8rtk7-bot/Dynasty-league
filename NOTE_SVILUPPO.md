@@ -2933,3 +2933,9 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1111 · Maglia Ducks notte: torna il disegno con i denti (04/11/2026)
 - Francesco: la notte torna quella di prima (nera, denti gialli sui fianchi e sotto il collo, DECO.DUC0) tramite il flag duc0 in kitC k=1. Casa e bianca restano «scie + gessato + piume». Provato, nessun errore.
+
+## 1112 · Modalità Dream: gara da 3 (tasto 🎯) (04/11/2026)
+- Tasto 🎯 sotto il 🏀 (solo nell'arena, non nelle stanze): 5 postazioni attorno al canestro di destra (angolo, 45°, centro, 45°, angolo; 6,75 m negli angoli, 7,5 m altrove), carrello con 5 palloni per postazione; i primi 4 valgono 1 punto, l'ultimo (money ball bianco, rosso e blu) 2. 60 secondi dopo un conto alla rovescia di 3; massimo 30 punti. Dopo il 5° pallone si passa da soli alla postazione successiva; durante la gara si resta fermi sulla postazione. Si tira con TIRA come sempre.
+- Record sul telefono: localStorage dl_drm_g3rec. Ritoccando 🎯 o spegnendo 🏀 la gara si interrompe (record non salvato).
+- Codice in dream.js (ex stub G3/g3End): g3Racks, g3Go, g3Shot, g3End; il tiro marca il pallone (B.g3) e il canestro conta 1 o 2 punti nella gara invece di 2/3.
+- Provato nel browser simulato: tiri perfetti dentro da tutte le postazioni, fine a tempo e record salvato. Non provato sul telefono.
