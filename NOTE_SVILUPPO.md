@@ -2949,3 +2949,7 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 - Francesco: a volte con la barra sul verde la palla usciva. Cause: 1) il rilascio contava il tempo vero, che è avanti di uno o più fotogrammi rispetto alla barra disegnata; 2) piccola casualità anche dentro il verde; 3) la fascia veniva ricalcolata al rilascio.
 - Ora: si usa la posizione della barra che vedi (SH.shownM), la fascia è quella mostrata alla pressione (SH.zw), dentro il verde k=1 esatto. Fuori dal verde l errore minimo sale (0,014 -> 0,032).
 - Provato: 25 tiri dentro il verde (anche sui bordi) dalle 5 postazioni = 25 dentro; appena fuori = tutti fuori.
+
+## 1115 · Tiri di fila affidabili + livella accanto al canestro (04/11/2026)
+- Con tanti tiri di fila un pallone ancora in volo veniva riusato (pool di 6) e un canestro giusto spariva: ora si prende solo un pallone libero o già arrivato, altrimenti se ne crea uno nuovo.
+- Livella: segue il ferro sullo schermo (barPos, proiezione del ferro con la telecamera), 70 px a destra del canestro con la fascia verde all altezza del ferro; più trasparente (sfondo .28, opacità .8, riempimento arancio trasparente con riga bianca in cima).
