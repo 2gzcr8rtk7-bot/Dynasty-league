@@ -1692,7 +1692,7 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
     let dx=R_.x-P0.x,dz=R_.z-P0.z;const D=Math.max(1,Math.hypot(dx,dz)),h=R_.y-P0.y,th=(D>9?48:D<3?60:52)*Math.PI/180,den=2*Math.cos(th)**2*(D*Math.tan(th)-h),vReq=den>0?Math.sqrt(9.81*D*D/den):9;
     const w=wz||win(),ae=Math.abs(err);let k=1,lat=0;if(ae<=w+1e-9){k=1/* (1114) nella fascia verde entra sempre: nessuna casualità */}else{const ex=ae-w;k=1+Math.sign(err)*Math.min(.13,.032+ex*.3);lat=(Math.random()-.5)*Math.min(.12,ex*.5)}
     const a=Math.atan2(dz,dx)+lat,v=vReq*k;/* (1115) mai riusare un pallone ancora in volo (con tanti tiri di fila un canestro giusto spariva e contava come errore): si prende un pallone libero o già arrivato, altrimenti se ne crea uno nuovo */let b=POOL.find(p_=>{const q=SH.balls.find(x=>x.b===p_);return!q||q.made||q.ground});if(!b){b=mkBall();const sc_=SH.sc||S;if(sc_!==S){sc_.add(b.m);sc_.add(b.sh)}POOL.push(b)}else{POOL.splice(POOL.indexOf(b),1);POOL.push(b)}const o=SH.balls.find(q=>q.b===b);if(o){if(!o.made&&!o.missT){o.missT=1;onMiss()}o.b.sh.visible=false;SH.balls.splice(SH.balls.indexOf(o),1)}
-    b.m.position.copy(P0);b.m.visible=true;SH.balls.push({b,v:new THREE.Vector3(Math.cos(a)*v*Math.cos(th),v*Math.sin(th),Math.sin(a)*v*Math.cos(th)),st:0,ground:0,made:false,touched:false,prevY:P0.y,three:D>7.1});{const B_=SH.balls[SH.balls.length-1];B_.b.m.material=BM_;try{if(G3.on)g3Shot(B_)}catch(e){}if(V1.on){B_.v1=1}}
+    b.m.position.copy(P0);b.m.visible=true;SH.balls.push({b,v:new THREE.Vector3(Math.cos(a)*v*Math.cos(th),v*Math.sin(th),Math.sin(a)*v*Math.cos(th)),st:0,ground:0,made:false,touched:false,prevY:P0.y,three:D>7.1});{const B_=SH.balls[SH.balls.length-1];B_.b.m.material=BM_;try{if(G3.on)g3Shot(B_)}catch(e){}if(V1.on){B_.v1=1;setTimeout(()=>{if(V1.on&&V1.ph==="shot")v1Again()},350)/* (1121) la palla ti torna subito in mano: non si aspetta che il tiro finisca */}}
     SH.tiri++;score();SH.hand.m.visible=false;SH.back=performance.now()+180;/* la palla ti torna in mano quasi subito */st.dirty=true;
     const q=ae<=w*.35?["PERFETTO!","#16a34a"]:ae<=w?["BUONO","#22c55e"]:err<0?["PRESTO","#b45309"]:["TARDI","#b91c1c"];toast(q[0],q[1])};
   {let pid=null;shUI.textContent="TIRA";
@@ -1757,9 +1757,10 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
     const a=Math.atan2(dz,dx)+lat,v=vR*k,b=v1Ball();b.m.position.set(P0.x,P0.y,P0.z);const B={b,v:new THREE.Vector3(Math.cos(a)*v*Math.cos(th),v*Math.sin(th),Math.sin(a)*v*Math.cos(th)),st:0,ground:0,made:false,touched:false,prevY:P0.y,three:D>7.1};Object.assign(B,tag);SH.balls.push(B);st.dirty=true;return B};
   const v1Dunk=tag=>{const R_=v1R(),b=v1Ball();b.m.position.set(R_.x,R_.y+.45,R_.z);const B={b,v:new THREE.Vector3(0,-3.2,0),st:0,ground:0,made:false,touched:false,prevY:R_.y+.45,three:false};Object.assign(B,tag);SH.balls.push(B);st.dirty=true;return B};
   const v1Jump=()=>{V1.sj=performance.now()};
-  const v1Set=poss=>{const R_=v1R();V1.poss=poss;V1.ph="wait";V1.dk=null;V1.xo=null;V1.bite=null;st.busy=false;st.jy=0;SH.side=1;V1.pt=performance.now()+1100;V1.beat=0;V1.ac=null;V1.blk=0;V1.hold=0;
+  const v1Set=poss=>{const R_=v1R();V1.poss=poss;V1.ph="wait";V1.dk=null;V1.xo=null;V1.bite=null;st.busy=false;st.jy=0;SH.side=1;V1.pt=performance.now()+250;SH.back=0;V1.beat=0;V1.ac=null;V1.blk=0;V1.hold=0;
     const atk={x:R_.x-8.3,z:(Math.random()-.5)*2},def={x:R_.x-6.7,z:atk.z*.6};if(poss==="me"){V.x=atk.x;V.z=atk.z;V1.o.x=def.x;V1.o.z=def.z}else{V1.o.x=atk.x;V1.o.z=atk.z;V.x=def.x;V.z=def.z}footY=0;
-    toast("🏀 PALLA TUA","#7c3aed");v1UI()};
+    v1UI()};
+  /* (1121) palla di nuovo in mano SUBITO, dove sei; il difensore si rimette tra te e il canestro */const v1Again=()=>{if(!V1.on)return;const R_=v1R();V1.ph="play";V1.dk=null;V1.xo=null;V1.bite=null;V1.hold=0;st.busy=false;st.jy=0;SH.side=1;SH.back=0;const ux=R_.x-V.x,uz=R_.z-V.z,ul=Math.hypot(ux,uz)||1;V1.o.x=V.x+ux/ul*1.9;V1.o.z=V.z+uz/ul*1.9;st.dirty=true};
   const v1End=why=>{if(!V1.on)return;V1.on=false;st.v1on=false;const r=v1Rec();if(why==="fine"){if(V1.me>V1.op)r.w=(r.w||0)+1;else r.l=(r.l||0)+1;try{localStorage.setItem("dl_drm_v1",JSON.stringify(r))}catch(e){}}
     [bPal,bRuba,bSalta].forEach(b=>b.style.display="none");v1b.style.background="";st.jy=0;
     if(SH.on){SH.on=false;bb.style.background="";showSH(false);SH.hand.m.visible=false}
@@ -1767,16 +1768,16 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
     if(why==="fine")toast(V1.me>V1.op?`🏆 HAI VINTO ${V1.me}–${V1.op}`:`HAI PERSO ${V1.me}–${V1.op}`,V1.me>V1.op?"#16a34a":"#b91c1c");
     setTimeout(()=>{if(!V1.on){v1Hud.style.display="none";if(V1G&&V1G.g.parent)V1G.g.parent.remove(V1G.g);st.dirty=true}},4000)};
   const v1Score=(me,p)=>{if(me)V1.me+=p;else V1.op+=p;v1UI();if(V1.me>=V1W||V1.op>=V1W){setTimeout(()=>v1End("fine"),900);V1.ph="end";return true}return false};
-  const v1Made=B=>{if(!V1.on)return;if(B.v1){toast(B.dunk?"💥 SCHIACCIATA!":B.lay?"TERZO TEMPO!":B.three?"DA TRE! 🔥":"DENTRO!","#16a34a");setTimeout(()=>{if(V1.on)v1Set("me")},1200)}
+  const v1Made=B=>{if(!V1.on)return;if(B.v1){toast(B.dunk?"💥 SCHIACCIATA!":B.lay?"TERZO TEMPO!":B.three?"DA TRE! 🔥":"DENTRO!","#16a34a")}
     else{toast(`CPU segna +${p}`,"#b91c1c");if(!v1Score(false,p))setTimeout(()=>{if(V1.on)v1Set("me")},1200)}};
-  const v1Miss=B=>{if(!V1.on||V1.ph==="end")return;if(B.v1){setTimeout(()=>{if(V1.on)v1Set("me")},700)}
+  const v1Miss=B=>{if(!V1.on||V1.ph==="end")return;if(B.v1){}
     else{const mine=Math.random()<.62;toast(mine?"RIMBALZO TUO!":"RIMBALZO CPU",mine?"#16a34a":"#b45309");setTimeout(()=>{if(V1.on)v1Set(mine?"me":"op")},700)}};
   /* il difensore ti stringe la fascia verde quando ti è addosso */
   const v1Cont=()=>{if(!V1.on||V1.poss!=="me")return 1;const R_=v1R(),d=d2(V,V1.o),front=((R_.x-V.x)*(V1.o.x-V.x)+(R_.z-V.z)*(V1.o.z-V.z))>0;if(!front||d>2.4||performance.now()<V1.beat)return 1;return Math.max(.45,Math.min(1,.45+.55*(d-1.05)/1.35))};
   /* il tuo tiro: sotto canestro terzo tempo o schiacciata */
-  const v1MyShot=(err,wz)=>{const R_=v1R(),d=d2(V,R_);V1.ph="shot";V1.oj=performance.now();if(d>=2.4&&v1Cont()<.7&&Math.random()<.22){toast("STOPPATO! 🖐️","#b91c1c");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Set("me")},1000);return true}
+  const v1MyShot=(err,wz)=>{const R_=v1R(),d=d2(V,R_);V1.ph="shot";V1.oj=performance.now();if(d>=2.4&&v1Cont()<.7&&Math.random()<.22){toast("STOPPATO! 🖐️","#b91c1c");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Again()},300);return true}
     if(d<3.2){/* (1120) vicino al canestro: TERZO TEMPO e SCHIACCIATA (passi verso il ferro, salto, schiacciata) */const w=Math.max(.15,(wz||.06)*2.5),ok=Math.abs(err)<=w;
-      const cl=d2(V,V1.o)<1.35&&performance.now()>V1.beat;if(cl&&Math.random()<.28){V1.oj=performance.now();v1Jump();toast("STOPPATO! 🖐️","#b91c1c");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Set("me")},1000);return true}
+      const cl=d2(V,V1.o)<1.35&&performance.now()>V1.beat;if(cl&&Math.random()<.28){V1.oj=performance.now();v1Jump();toast("STOPPATO! 🖐️","#b91c1c");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Again()},300);return true}
       const ux=(R_.x-V.x)/d,uz=(R_.z-V.z)/d,stop=.7;V1.dk={t0:performance.now(),x0:V.x,z0:V.z,x1:R_.x-ux*stop,z1:R_.z-uz*stop,ok,done:0};st.busy=true;SH.tiri++;return true}
     return false};
   const v1b=document.createElement("button");v1b.className="drm3v1";v1b.setAttribute("aria-label","1 contro 1");v1b.innerHTML='<b style="font:italic 900 13px Arial Black,Arial;letter-spacing:-.5px">1v1</b>';g3b.parentElement.insertBefore(v1b,g3b.nextSibling);
@@ -1786,7 +1787,7 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
   /* PALLEGGIO: crossover */
   bPal.addEventListener("pointerdown",e=>{e.stopPropagation();const n=performance.now();if(!V1.on||V1.poss!=="me"||V1.ph!=="play"||n<V1.cx)return;V1.cx=n+1500;const d=d2(V,V1.o);
     const f=new THREE.Vector3();cam.getWorldDirection(f);f.y=0;f.normalize();const side=(st.joy&&Math.abs(st.joy.x)>.2)?Math.sign(st.joy.x):-(SH.side==null?1:SH.side);SH.side=side;/* la palla passa dall altra mano */const dx=-f.z*side,dz=f.x*side;st.dirty=true;
-    if(d>2.8){V1.xo={t0:n,dx,dz,len:.6};toast("PALLEGGIO","#1d4ed8");return}const ok=Math.random()<(d>1.3?.7:.55);V1.xo={t0:n,dx,dz,len:ok?1.15:.45};if(ok){V1.beat=n+1100;V1.bite={t0:n,dx:-dx,dz:-dz,len:.75};/* il difensore abbocca dall altra parte */toast("CROSSOVER! 🔥","#1d4ed8")}else if(d<1.3&&Math.random()<.28){toast("TI HA RUBATO PALLA","#b91c1c");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Set("me")},1000)}else toast("NON CI È CASCATO","#64748b")});
+    if(d>2.8){V1.xo={t0:n,dx,dz,len:.6};toast("PALLEGGIO","#1d4ed8");return}const ok=Math.random()<(d>1.3?.7:.55);V1.xo={t0:n,dx,dz,len:ok?1.15:.45};if(ok){V1.beat=n+1100;V1.bite={t0:n,dx:-dx,dz:-dz,len:.75};/* il difensore abbocca dall altra parte */toast("CROSSOVER! 🔥","#1d4ed8")}else if(d<1.3&&Math.random()<.28){toast("TI HA RUBATO PALLA","#b91c1c");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Again()},300)}else toast("NON CI È CASCATO","#64748b")});
   bRuba.addEventListener("pointerdown",e=>{e.stopPropagation();const n=performance.now();if(!V1.on||V1.poss!=="op"||V1.ph!=="play"||n<V1.rb)return;V1.rb=n+1200;const d=d2(V,V1.o);
     if(d<1.4&&!V1.ac&&Math.random()<.33){toast("PALLA RUBATA! 🔥","#16a34a");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Set("me")},800)}else{toast("MANCATA","#64748b");if(d<1.4)V1.beat=n+800/* ti ha saltato */}});
   bSalta.addEventListener("pointerdown",e=>{e.stopPropagation();const n=performance.now();if(!V1.on||n-V1.sj<700)return;v1Jump()});
@@ -1799,14 +1800,14 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
     /* terzo tempo + schiacciata: due passi verso il ferro, salto, schiacciata, si torna giù */if(V1.dk){const D_=V1.dk,k=(now-D_.t0)/760,m_=Math.min(1,k/.78),e=m_<.5?2*m_*m_:1-Math.pow(-2*m_+2,2)/2;V.x=D_.x0+(D_.x1-D_.x0)*e;V.z=D_.z0+(D_.z1-D_.z0)*e;
       st.jy=k<.78?Math.sin(Math.min(1,k/.78)*Math.PI/2)*1.05:Math.max(0,1.05*(1-(k-.78)/.5));
       if(k>=.74&&!D_.done){D_.done=1;SH.hand.m.visible=false;SH.back=now+1100;if(D_.ok)v1Dunk({v1:1,dunk:1});else{const f=new THREE.Vector3();cam.getWorldDirection(f);f.y=0;f.normalize();const P0=cam.position.clone().addScaledVector(f,.3);P0.y=cam.position.y+.2;v1Throw(P0,1.14,(Math.random()-.5)*.12,{v1:1,lay:1});toast("TERZO TEMPO SBAGLIATO","#b45309")}}
-      if(k>=1.3){V1.dk=null;st.busy=false;st.jy=0}}
+      if(k>=1.3){V1.dk=null;st.busy=false;st.jy=0;v1Again()}}
     /* campo: metà campo destra */V.x=Math.max(-.5,Math.min(R_.x+1.2,V.x));V.z=Math.max(-7.2,Math.min(7.2,V.z));
     if(V1.ph==="wait"&&now>=V1.pt)V1.ph="play";
     const dM=d2(V,O);
     if(V1.poss==="me"){/* DIFESA DELLA CPU: tra te e il canestro, a 1,15 m */
       const ux=R_.x-V.x,uz=R_.z-V.z,ul=Math.hypot(ux,uz)||1,tx=V.x+ux/ul*1.9,tz=V.z+uz/ul*1.9,sp=now<V1.beat?1.1:5.1,ddx=tx-O.x,ddz=tz-O.z,dd=Math.hypot(ddx,ddz);
       if(dd>.02&&V1.ph!=="end"){const s=Math.min(dd,sp*dt);O.x+=ddx/dd*s;O.z+=ddz/dd*s}
-      if(V1.ph==="play"&&dM<1.15&&st.joy&&now>V1.beat){V1.hold+=dt;if(V1.hold>.6&&Math.random()<dt*.35){V1.hold=0;V1.oj=now;toast("TI HA RUBATO PALLA","#b91c1c");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Set("me")},1000)}}else V1.hold=Math.max(0,V1.hold-dt);
+      if(V1.ph==="play"&&dM<1.15&&st.joy&&now>V1.beat){V1.hold+=dt;if(V1.hold>.6&&Math.random()<dt*.35){V1.hold=0;V1.oj=now;toast("TI HA RUBATO PALLA","#b91c1c");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Again()},300)}}else V1.hold=Math.max(0,V1.hold-dt);
       const oj=(now-(V1.oj||0))/600;O.jy=oj>=0&&oj<1&&dM<2.2?Math.sin(oj*Math.PI)*.5:0;/* salta per contestare il tuo tiro */
       if(m){m.aD.visible=true;m.aO.visible=false;m.bl.visible=false}}
     else{/* ATTACCO DELLA CPU */
@@ -1825,7 +1826,7 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
       /* la telecamera guarda l'avversario */{const ty=Math.atan2(-(O.x-V.x),-(O.z-V.z))*180/Math.PI;let dy=ty-V.yaw;while(dy>180)dy-=360;while(dy<-180)dy+=360;V.yaw+=dy*Math.min(1,dt*14);V.pitch+=(-10-V.pitch)*Math.min(1,dt*6)}}
     /* niente compenetrazione: resta sempre a 0,9 m (così non riempie lo schermo) */if(dM<1.05){const ex=(V.x-O.x)/(dM||1),ez=(V.z-O.z)/(dM||1);if(V1.poss==="me"){V.x=O.x+ex*1.05;V.z=O.z+ez*1.05}else{O.x=V.x-ex*1.05;O.z=V.z-ez*1.05}}
     if(m){m.g.position.set(O.x,flr(O.x,O.z)+(O.jy||0),O.z);m.g.rotation.y=Math.atan2(V.x-O.x,V.z-O.z);const st_=Math.sin(now/120)*(V1.ph==="play"?.18:0);m.lL.rotation.x=st_;m.lR.rotation.x=-st_}
-    /* sicurezza: un tiro mai risolto non blocca la partita */if(V1.ph==="shot"){V1.shT=V1.shT||now;if(now-V1.shT>7000){V1.shT=0;v1Set("me")}}else V1.shT=0;
+    /* sicurezza: un tiro mai risolto non blocca la partita */if(V1.ph==="shot"){V1.shT=V1.shT||now;if(now-V1.shT>3000){V1.shT=0;v1Again()}}else V1.shT=0;
     return true};
 
   /* ---- (985) INQUADRATURA TV: la telecamera gira da sola attorno al campo; quando un giocatore fa un'azione la telecamera va su di lui ---- */
