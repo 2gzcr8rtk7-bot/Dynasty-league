@@ -2921,3 +2921,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 - Sotto Media/Record a turno: valore squadra (somma di valAt dei giocatori di ROSTER), «Settimana» (variazione dell ultimo scatto della domenica), «Stima dom.» (valAt al prossimo scatto calcolato adesso, con le partite giocate finora). Tocca: lista giocatori con valore, settimana e stima.
 - Verde/rosso forzati (anche in Parquet) su Settimana, Stima, lista e sul «Trend squadra».
 - Provato sulle 8 squadre: scheda presente, colori giusti, nessun errore.
+
+## 1108 · Valore squadra: colori del tema (giorno/notte) (04/11/2026)
+- La scheda aveva colori fissi (crema/marrone) e in modalità notte stonava. Ora il riquadro usa le classi .esqk/.esqk3 (stessi sfondi e testi delle altre schede, in Parquet e in notte); la lista sta in un .esqk .vsqlw. Restano forzati solo verde e rosso. Provato in giorno e notte.
