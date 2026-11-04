@@ -2900,3 +2900,7 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 ## 1103 · Campo: gli infortunati vanno in tribuna (04/11/2026)
 - Nella formazione Dreamers (campo, 6° uomo, panchina) a turno aperto chi è «out» nel Centro Medico e non ha ancora punti nel turno passa dietro a tutti i sani: i sani entrano in ordine di PDK come prima, gli infortunati solo se i sani del ruolo non bastano, e in quel caso dal fondo (panchina), poi via via più su. I «dubbi» stanno in mezzo (dopo i sani, prima degli out).
 - Chi ha già punti nel turno resta al suo posto di PDK anche se si fa male dopo. Turni chiusi invariati.
+
+## 1104 · Dream City / Valley: motore e suoni che restavano muti (04/11/2026)
+- Francesco: in città e nella valle la macchina non faceva più rumore, si sentiva solo la radio. Su iPhone la voce sintetica (radio, TG) mette in pausa il contesto audio ("interrupted") e nessuno lo riaccendeva: il tasto "tocco = resume" puntava a una variabile vuota.
+- Ora un «risveglio» (st.A.kick) riaccende il contesto audio a ogni tocco, a ogni fine frase della voce, a ogni aggiornamento del motore e con un controllo al secondo; nella valle lo stesso a ogni tocco e ogni volta che il motore è acceso. Pubblico, sottofondo, motore, clacson, urti e ambiente tornano con i tempi di prima (nessun altro suono è stato cambiato).
