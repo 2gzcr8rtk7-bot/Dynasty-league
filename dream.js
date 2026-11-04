@@ -1769,11 +1769,11 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
   const v1Miss=B=>{if(!V1.on||V1.ph==="end")return;if(B.v1){const mine=Math.random()<.42;toast(mine?"RIMBALZO TUO!":"RIMBALZO CPU",mine?"#16a34a":"#b45309");setTimeout(()=>{if(V1.on)v1Set(mine?"me":"op")},700)}
     else{const mine=Math.random()<.62;toast(mine?"RIMBALZO TUO!":"RIMBALZO CPU",mine?"#16a34a":"#b45309");setTimeout(()=>{if(V1.on)v1Set(mine?"me":"op")},700)}};
   /* il difensore ti stringe la fascia verde quando ti è addosso */
-  const v1Cont=()=>{if(!V1.on||V1.poss!=="me")return 1;const R_=v1R(),d=d2(V,V1.o),front=((R_.x-V.x)*(V1.o.x-V.x)+(R_.z-V.z)*(V1.o.z-V.z))>0;if(!front||d>1.7||performance.now()<V1.beat)return 1;return Math.max(.45,Math.min(1,.45+.55*(d-.6)/1.1))};
+  const v1Cont=()=>{if(!V1.on||V1.poss!=="me")return 1;const R_=v1R(),d=d2(V,V1.o),front=((R_.x-V.x)*(V1.o.x-V.x)+(R_.z-V.z)*(V1.o.z-V.z))>0;if(!front||d>2.4||performance.now()<V1.beat)return 1;return Math.max(.45,Math.min(1,.45+.55*(d-1.05)/1.35))};
   /* il tuo tiro: sotto canestro terzo tempo o schiacciata */
   const v1MyShot=(err,wz)=>{const R_=v1R(),d=d2(V,R_);V1.ph="shot";V1.oj=performance.now();
     if(d<2.4){const w=Math.max(.13,(wz||.06)*2.2),ok=Math.abs(err)<=w,run=!!(st.joy&&Math.hypot(st.joy.x,st.joy.y)>.5);
-      if(run&&d<1.7&&ok){v1Jump();if(d2(V,V1.o)<.75&&Math.random()<.3){toast("STOPPATO!","#b91c1c");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Set("op")},900);return true}v1Dunk({v1:1,dunk:1});SH.tiri++;return true}
+      if(run&&d<1.7&&ok){v1Jump();if(d2(V,V1.o)<1.15&&Math.random()<.3){toast("STOPPATO!","#b91c1c");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Set("op")},900);return true}v1Dunk({v1:1,dunk:1});SH.tiri++;return true}
       const f=new THREE.Vector3();cam.getWorldDirection(f);f.y=0;f.normalize();const P0=cam.position.clone().addScaledVector(f,.4);P0.y=cam.position.y+.35;v1Throw(P0,ok?1:1+Math.sign(err||1)*.12,ok?0:(Math.random()-.5)*.1,{v1:1,lay:1});SH.tiri++;return true}
     return false};
   const v1b=document.createElement("button");v1b.className="drm3v1";v1b.setAttribute("aria-label","1 contro 1");v1b.innerHTML='<b style="font:italic 900 13px Arial Black,Arial;letter-spacing:-.5px">1v1</b>';g3b.parentElement.insertBefore(v1b,g3b.nextSibling);
@@ -1783,9 +1783,9 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
   /* PALLEGGIO: crossover */
   bPal.addEventListener("pointerdown",e=>{e.stopPropagation();const n=performance.now();if(!V1.on||V1.poss!=="me"||V1.ph!=="play"||n<V1.cx)return;V1.cx=n+1500;const d=d2(V,V1.o);
     const f=new THREE.Vector3();cam.getWorldDirection(f);f.y=0;f.normalize();const side=(st.joy&&Math.abs(st.joy.x)>.2)?Math.sign(st.joy.x):(Math.random()<.5?-1:1);V.x+=-f.z*side*.55;V.z+=f.x*side*.55;st.dirty=true;
-    if(d>2.4){toast("PALLEGGIO","#1d4ed8");return}const ok=Math.random()<(d>1?.68:.5);if(ok){V1.beat=n+950;toast("CROSSOVER! 🔥","#1d4ed8")}else if(d<1&&Math.random()<.28){toast("TI HA RUBATO PALLA","#b91c1c");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Set("op")},800)}else toast("NON CI È CASCATO","#64748b")});
+    if(d>2.8){toast("PALLEGGIO","#1d4ed8");return}const ok=Math.random()<(d>1.3?.68:.5);if(ok){V1.beat=n+950;toast("CROSSOVER! 🔥","#1d4ed8")}else if(d<1.3&&Math.random()<.28){toast("TI HA RUBATO PALLA","#b91c1c");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Set("op")},800)}else toast("NON CI È CASCATO","#64748b")});
   bRuba.addEventListener("pointerdown",e=>{e.stopPropagation();const n=performance.now();if(!V1.on||V1.poss!=="op"||V1.ph!=="play"||n<V1.rb)return;V1.rb=n+1200;const d=d2(V,V1.o);
-    if(d<1.15&&!V1.ac&&Math.random()<.33){toast("PALLA RUBATA! 🔥","#16a34a");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Set("me")},800)}else{toast("MANCATA","#64748b");if(d<1.15)V1.beat=n+800/* ti ha saltato */}});
+    if(d<1.4&&!V1.ac&&Math.random()<.33){toast("PALLA RUBATA! 🔥","#16a34a");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Set("me")},800)}else{toast("MANCATA","#64748b");if(d<1.4)V1.beat=n+800/* ti ha saltato */}});
   bSalta.addEventListener("pointerdown",e=>{e.stopPropagation();const n=performance.now();if(!V1.on||n-V1.sj<700)return;v1Jump()});
   /* ogni fotogramma: movimenti, avversario, regole */
   const v1Tick=(dt,now)=>{if(!V1.on)return false;if(st.room){v1End("stop");return false}st.lm=now;/* qualità da movimento (adattiva) solo qui */
@@ -1795,26 +1795,26 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
     if(V1.ph==="wait"&&now>=V1.pt)V1.ph="play";
     const dM=d2(V,O);
     if(V1.poss==="me"){/* DIFESA DELLA CPU: tra te e il canestro, a 1,15 m */
-      const ux=R_.x-V.x,uz=R_.z-V.z,ul=Math.hypot(ux,uz)||1,tx=V.x+ux/ul*1.25,tz=V.z+uz/ul*1.25,sp=now<V1.beat?1.1:5.1,ddx=tx-O.x,ddz=tz-O.z,dd=Math.hypot(ddx,ddz);
+      const ux=R_.x-V.x,uz=R_.z-V.z,ul=Math.hypot(ux,uz)||1,tx=V.x+ux/ul*1.9,tz=V.z+uz/ul*1.9,sp=now<V1.beat?1.1:5.1,ddx=tx-O.x,ddz=tz-O.z,dd=Math.hypot(ddx,ddz);
       if(dd>.02&&V1.ph!=="end"){const s=Math.min(dd,sp*dt);O.x+=ddx/dd*s;O.z+=ddz/dd*s}
-      if(V1.ph==="play"&&dM<.95&&st.joy&&now>V1.beat){V1.hold+=dt;if(V1.hold>.6&&Math.random()<dt*.35){V1.hold=0;toast("TI HA RUBATO PALLA","#b91c1c");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Set("op")},800)}}else V1.hold=Math.max(0,V1.hold-dt);
+      if(V1.ph==="play"&&dM<1.15&&st.joy&&now>V1.beat){V1.hold+=dt;if(V1.hold>.6&&Math.random()<dt*.35){V1.hold=0;toast("TI HA RUBATO PALLA","#b91c1c");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Set("op")},800)}}else V1.hold=Math.max(0,V1.hold-dt);
       const oj=(now-(V1.oj||0))/600;O.jy=oj>=0&&oj<1&&dM<2.2?Math.sin(oj*Math.PI)*.5:0;/* salta per contestare il tuo tiro */
       if(m){m.aD.visible=true;m.aO.visible=false;m.bl.visible=false}}
     else{/* ATTACCO DELLA CPU */
       if(V1.ph==="play"){const dR=d2(O,R_);
         if(!V1.ac){/* decide cosa fare */const open=dM>1.9,r=Math.random();
-          if(dR<1.9)V1.ac={t:"lay",t0:now};else if(dR>7.1&&open&&r<.55)V1.ac={t:"tiro",t0:now};else if(dR>2.2&&dR<=7.1&&open&&r<.3)V1.ac={t:"tiro",t0:now};else if(now-V1.acT>2600&&dM<1.1&&r<.4)V1.ac={t:"tiro",t0:now};/* bloccato a lungo: tira contestato */}
+          if(dR<1.9)V1.ac={t:"lay",t0:now};else if(dR>7.1&&open&&r<.55)V1.ac={t:"tiro",t0:now};else if(dR>2.2&&dR<=7.1&&open&&r<.3)V1.ac={t:"tiro",t0:now};else if(now-V1.acT>2600&&dM<1.35&&r<.4)V1.ac={t:"tiro",t0:now};/* bloccato a lungo: tira contestato */}
         if(!V1.ac){/* va verso il canestro girando attorno a te */let tx=R_.x-.9,tz=R_.z;const lx=V.x-O.x,lz=V.z-O.z,ahead=(lx*(R_.x-O.x)+lz*(R_.z-O.z))>0;if(ahead&&dM<2.2){const px=-(R_.z-O.z),pz=R_.x-O.x,pl=Math.hypot(px,pz)||1,sd=(lx*px+lz*pz)>0?-1:1;tx=O.x+(R_.x-O.x)*.4+px/pl*sd*1.4;tz=O.z+(R_.z-O.z)*.4+pz/pl*sd*1.4}
-          const sp=now<V1.beat?6.4:4.5,ddx=tx-O.x,ddz=tz-O.z,dd=Math.hypot(ddx,ddz);if(dd>.02){const s=Math.min(dd,sp*dt);O.x+=ddx/dd*s;O.z+=ddz/dd*s}if(dM<.95)V1.acT=V1.acT||now;else V1.acT=now}
+          const sp=now<V1.beat?6.4:4.5,ddx=tx-O.x,ddz=tz-O.z,dd=Math.hypot(ddx,ddz);if(dd>.02){const s=Math.min(dd,sp*dt);O.x+=ddx/dd*s;O.z+=ddz/dd*s}if(dM<1.25)V1.acT=V1.acT||now;else V1.acT=now}
         else{/* tiro: carica 450 ms, salta e tira */const k=(now-V1.ac.t0)/450;O.jy=Math.max(0,Math.sin(Math.min(1,k)*Math.PI))*.45;
           if(k>=1&&!V1.ac.done){V1.ac.done=1;V1.ph="shot";const myJ=now-V1.sj<450,dR2=d2(O,R_);
-            if(myJ&&dM<1.4&&Math.random()<.55){toast("STOPPATA! 🖐️","#16a34a");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Set("me")},900)}
-            else{let p=dR2<2?.72:dR2>7.1?.4:.5;if(dM<1.2)p*=.6;if(dM<.8)p*=.75;const ok=Math.random()<p;
+            if(myJ&&dM<1.6&&Math.random()<.55){toast("STOPPATA! 🖐️","#16a34a");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Set("me")},900)}
+            else{let p=dR2<2?.72:dR2>7.1?.4:.5;if(dM<1.5)p*=.6;if(dM<1.15)p*=.75;const ok=Math.random()<p;
               if(V1.ac.t==="lay"&&ok&&Math.random()<.45)v1Dunk({v1o:1});else v1Throw({x:O.x,y:2.25,z:O.z},ok?1:1+(Math.random()<.5?-1:1)*(.06+Math.random()*.05),ok?0:(Math.random()-.5)*.08,{v1o:1})}
             V1.ac=null}}}
       if(m){m.aD.visible=false;m.aO.visible=true;const holding=V1.ph!=="shot"||!!V1.ac;m.bl.visible=V1.ph==="play"&&!V1.ac||(V1.ac&&!V1.ac.done);const bx=.28,by=V1.ac?1.95:.15+Math.abs(Math.sin(now/170))*.55;m.bl.position.set(V1.ac?0:bx,by,V1.ac?.15:.18)}
-      /* la telecamera guarda l'avversario */{const ty=Math.atan2(-(O.x-V.x),-(O.z-V.z))*180/Math.PI;let dy=ty-V.yaw;while(dy>180)dy-=360;while(dy<-180)dy+=360;V.yaw+=dy*Math.min(1,dt*6);V.pitch+=(-14-V.pitch)*Math.min(1,dt*4)}}
-    /* niente compenetrazione: resta sempre a 0,9 m (così non riempie lo schermo) */if(dM<.9){const ex=(V.x-O.x)/(dM||1),ez=(V.z-O.z)/(dM||1);if(V1.poss==="me"){V.x=O.x+ex*.9;V.z=O.z+ez*.9}else{O.x=V.x-ex*.9;O.z=V.z-ez*.9}}
+      /* la telecamera guarda l'avversario */{const ty=Math.atan2(-(O.x-V.x),-(O.z-V.z))*180/Math.PI;let dy=ty-V.yaw;while(dy>180)dy-=360;while(dy<-180)dy+=360;V.yaw+=dy*Math.min(1,dt*14);V.pitch+=(-10-V.pitch)*Math.min(1,dt*6)}}
+    /* niente compenetrazione: resta sempre a 0,9 m (così non riempie lo schermo) */if(dM<1.05){const ex=(V.x-O.x)/(dM||1),ez=(V.z-O.z)/(dM||1);if(V1.poss==="me"){V.x=O.x+ex*1.05;V.z=O.z+ez*1.05}else{O.x=V.x-ex*1.05;O.z=V.z-ez*1.05}}
     if(m){m.g.position.set(O.x,flr(O.x,O.z)+(O.jy||0),O.z);m.g.rotation.y=Math.atan2(V.x-O.x,V.z-O.z);const st_=Math.sin(now/120)*(V1.ph==="play"?.18:0);m.lL.rotation.x=st_;m.lR.rotation.x=-st_}
     /* sicurezza: un tiro mai risolto non blocca la partita */if(V1.ph==="shot"){V1.shT=V1.shT||now;if(now-V1.shT>7000){V1.shT=0;v1Set(V1.poss==="me"?"op":"me")}}else V1.shT=0;
     return true};
