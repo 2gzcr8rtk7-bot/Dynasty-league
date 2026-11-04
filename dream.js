@@ -1681,22 +1681,22 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
   const nearRim=()=>{const L=shRims();let b=null,bd=1e9;L.forEach(R_=>{const d=Math.hypot(R_.x-V.x,R_.z-V.z);if(d<bd){bd=d;b=R_}});return b&&bd<(st.room?(RM&&RM.rimMax)||40:40)?b:null};
   const shMove=()=>{const sc=shScn();if(!sc||SH.sc===sc)return;SH.sc=sc;[SH.hand,...POOL].forEach(b=>{sc.add(b.m);sc.add(b.sh);b.m.visible=false;b.sh.visible=false});SH.balls.length=0;SH.streak=0};
   const TGT=.82,win=()=>{const R_=SH.rim||nearRim();if(!R_)return .06;const d=Math.hypot(R_.x-V.x,R_.z-V.z);return Math.max(.035,Math.min(.085,.095-d*.0055))};
-  const setZone=()=>{const w=win();GZ.style.bottom=((TGT-w)*100)+"%";GZ.style.height=(w*200)+"%"};
+  const setZone=()=>{const w=win();SH.zw=w;GZ.style.bottom=((TGT-w)*100)+"%";GZ.style.height=(w*200)+"%"};
   const handPos=now=>{const f=new THREE.Vector3();cam.getWorldDirection(f);f.y=0;f.normalize();const r=new THREE.Vector3(-f.z,0,f.x);const p=cam.position.clone().addScaledVector(f,1.05).addScaledVector(r,.48);p.y=cam.position.y-.72;
     /* palleggio mentre ti muovi */if(SH.moving&&!SH.hold){const ph=(now/1000*2.4)%1,s=Math.abs(Math.sin(ph*Math.PI)),fy=flr(p.x,p.z)+.12;p.y=p.y+(fy-p.y)*s;p.addScaledVector(f,.25*s);SH.ball.rotation.x=ph*6}return p};
   const ready=()=>{shMove();const v=SH.on&&!!nearRim();SH.hand.m.visible=v;if(v)SH.hand.m.position.copy(handPos(performance.now()));st.dirty=true};
   const showSH=on=>{try{st.runB.style.display=on?"none":"flex"}catch(e){}shUI.style.display=on?"flex":"none";shPW.style.display=shS.style.display=on?"block":"none";shRet.style.display="none";if(on)setZone()};
   bb.onclick=e=>{e.stopPropagation();if(!SH.on&&!nearRim()){toast(st.room?"🏀 qui non c'è un canestro":"🏀","#ea580c");if(st.room&&RM&&RM.rims)toast("🏀 avvicinati al canestro","#ea580c");return}SH.on=!SH.on;shMove();if(SH.on&&TVC.on)tvb.onclick({stopPropagation(){}});bb.style.background=SH.on?"rgba(234,88,12,.85)":"";showSH(SH.on);score();SH.rim=SH.on?nearRim():null;ready();if(SH.on)toast("🏀 TIENI E LASCIA NEL VERDE","#ea580c")};
-  const shoot=st.shoot=err=>{const R_=SH.rim||nearRim();if(!R_)return;const f=new THREE.Vector3();cam.getWorldDirection(f);f.y=0;f.normalize();const P0=cam.position.clone().addScaledVector(f,.5);P0.y=cam.position.y+.25;
+  const shoot=st.shoot=(err,wz)=>{const R_=SH.rim||nearRim();if(!R_)return;const f=new THREE.Vector3();cam.getWorldDirection(f);f.y=0;f.normalize();const P0=cam.position.clone().addScaledVector(f,.5);P0.y=cam.position.y+.25;
     let dx=R_.x-P0.x,dz=R_.z-P0.z;const D=Math.max(1,Math.hypot(dx,dz)),h=R_.y-P0.y,th=(D>9?48:D<3?60:52)*Math.PI/180,den=2*Math.cos(th)**2*(D*Math.tan(th)-h),vReq=den>0?Math.sqrt(9.81*D*D/den):9;
-    const w=win(),ae=Math.abs(err);let k=1,lat=0;if(ae<=w){k=1+(Math.random()-.5)*.006*(ae/w)}else{const ex=ae-w;k=1+Math.sign(err)*Math.min(.13,.014+ex*.3);lat=(Math.random()-.5)*Math.min(.12,ex*.5)}
+    const w=wz||win(),ae=Math.abs(err);let k=1,lat=0;if(ae<=w+1e-9){k=1/* (1114) nella fascia verde entra sempre: nessuna casualità */}else{const ex=ae-w;k=1+Math.sign(err)*Math.min(.13,.032+ex*.3);lat=(Math.random()-.5)*Math.min(.12,ex*.5)}
     const a=Math.atan2(dz,dx)+lat,v=vReq*k;const b=POOL.shift();POOL.push(b);const o=SH.balls.find(q=>q.b===b);if(o)SH.balls.splice(SH.balls.indexOf(o),1);
     b.m.position.copy(P0);b.m.visible=true;SH.balls.push({b,v:new THREE.Vector3(Math.cos(a)*v*Math.cos(th),v*Math.sin(th),Math.sin(a)*v*Math.cos(th)),st:0,ground:0,made:false,touched:false,prevY:P0.y,three:D>7.1});{const B_=SH.balls[SH.balls.length-1];B_.b.m.material=BM_;try{if(G3.on)g3Shot(B_)}catch(e){}}
     SH.tiri++;score();SH.hand.m.visible=false;SH.back=performance.now()+180;/* la palla ti torna in mano quasi subito */st.dirty=true;
     const q=ae<=w*.35?["PERFETTO!","#16a34a"]:ae<=w?["BUONO","#22c55e"]:err<0?["PRESTO","#b45309"]:["TARDI","#b91c1c"];toast(q[0],q[1])};
   {let pid=null;shUI.textContent="TIRA";
-    shUI.addEventListener("pointerdown",e=>{e.stopPropagation();if(!SH.on||!nearRim())return;if(G3.on&&(!G3.go||G3.b>=5))return;pid=e.pointerId;try{shUI.setPointerCapture(pid)}catch(_){}SH.hold={t0:performance.now()};setZone();shUI.style.transform="scale(.92)";st.dirty=true});
-    const rel=e=>{if(e.pointerId!==pid)return;e.stopPropagation();pid=null;shUI.style.transform="";if(!SH.hold)return;const m=(performance.now()-SH.hold.t0)/650;SH.hold=null;shoot(Math.min(m,1.2)-TGT);setTimeout(()=>{if(!SH.hold)shP.style.height="0%"},500)};
+    shUI.addEventListener("pointerdown",e=>{e.stopPropagation();if(!SH.on||!nearRim())return;if(G3.on&&(!G3.go||G3.b>=5))return;pid=e.pointerId;try{shUI.setPointerCapture(pid)}catch(_){}SH.hold={t0:performance.now()};SH.shownM=0;setZone();shUI.style.transform="scale(.92)";st.dirty=true});
+    const rel=e=>{if(e.pointerId!==pid)return;e.stopPropagation();pid=null;shUI.style.transform="";if(!SH.hold)return;const mt=(performance.now()-SH.hold.t0)/650,m=SH.shownM>0?SH.shownM:mt;/* (1114) conta la posizione della barra che stai vedendo, non il tempo (che va avanti di un fotogramma o più) */SH.hold=null;shoot(Math.min(m,1.2)-TGT,SH.zw);setTimeout(()=>{if(!SH.hold)shP.style.height="0%"},500)};
     shUI.addEventListener("pointerup",rel);shUI.addEventListener("pointercancel",rel)}
   /* (1112) GARA DA 3 (tasto 🎯, solo nell'arena): 5 postazioni (angolo, 45°, centro, 45°, angolo) con un carrello di 5 palloni ciascuna; i primi 4 valgono 1 punto,
      l'ultimo (money ball bianco, rosso e blu) 2 punti. 60 secondi, massimo 30 punti. Finiti i 5 palloni passi da solo alla postazione dopo. Record salvato sul telefono (dl_drm_g3rec). */
@@ -1754,7 +1754,7 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
     shMove();if(G3.on){const p_=g3Pos(Math.min(4,G3.st));V.x=p_.x;V.z=p_.z;st.joy=null}/* (1112) in gara si resta fermi sulla postazione */if(SH.on&&!(SH.hold?SH.rim:nearRim())){SH.on=false;SH.hold=null;bb.style.background="";showSH(false);SH.hand.m.visible=false}
     if(SH.on){/* (992) la visuale segue sempre il canestro */const R_=SH.rim=(SH.hold?SH.rim:nearRim());const ty=Math.atan2(-(R_.x-V.x),-(R_.z-V.z))*180/Math.PI,dd=Math.hypot(R_.x-V.x,R_.z-V.z),eye=(footY>.2?2.05:1.7)+footY,tp=Math.atan2(R_.y-eye,dd)*180/Math.PI-4;
       let dy=ty-V.yaw;while(dy>180)dy-=360;while(dy<-180)dy+=360;const kf=Math.min(1,dt*7);if(Math.abs(dy)>.05||Math.abs(tp-V.pitch)>.05){V.yaw+=dy*kf;V.pitch+=(tp-V.pitch)*kf;act=true}
-      SH.moving=!!(st.joy||walk);if(SH.hold){const m=Math.min(1.2,(nw-SH.hold.t0)/650);shP.style.height=Math.min(100,m*100)+"%";if(m>=1.2){SH.hold=null;shoot(1.2-TGT)}act=true}
+      SH.moving=!!(st.joy||walk);if(SH.hold){const m=Math.min(1.2,(nw-SH.hold.t0)/650);shP.style.height=Math.min(100,m*100)+"%";SH.shownM=m;if(m>=1.2){SH.hold=null;shoot(1.2-TGT,SH.zw)}act=true}
       if(!SH.hand.m.visible&&nw>(SH.back||0)){SH.hand.m.visible=true}if(SH.hand.m.visible){SH.hand.m.position.copy(handPos(nw));if(SH.moving)act=true}}
     for(let bi=SH.balls.length-1;bi>=0;bi--){const B=SH.balls[bi],P=B.b.m.position,Vv=B.v,rb=.12;B.st+=dt;act=true;
       const n=Math.max(1,Math.ceil(dt/.004)),h=dt/n;

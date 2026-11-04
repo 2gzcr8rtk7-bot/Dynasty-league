@@ -2944,3 +2944,8 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 ## 1113 · Bug: dopo aver cambiato squadra nelle Statistiche squadra non si tornava più alla Home (04/11/2026)
 - Causa: il gestore generico dei .chip (render, riga «m.querySelectorAll(".chip:not(...)")») prendeva anche i tasti squadra di effsquadra (data-esqt, senza data-t) e faceva curTeam=undefined (salvandolo anche in localStorage "team"). La Home (homeNotte, TEAMS[myT].bg) andava in errore e restava la pagina vecchia, sia col tasto ‹ sia col menu.
 - Fix: esclusi [data-esqt] e guardia: se il chip non ha una squadra valida non si cambia curTeam. Provato: Statistiche › Squadre › Ducks › Foxes/Dolphins/Eagles › indietro › indietro = Home, nessun errore.
+
+## 1114 · Tiro affidabile: nel verde entra sempre, fuori dal verde si sbaglia (04/11/2026)
+- Francesco: a volte con la barra sul verde la palla usciva. Cause: 1) il rilascio contava il tempo vero, che è avanti di uno o più fotogrammi rispetto alla barra disegnata; 2) piccola casualità anche dentro il verde; 3) la fascia veniva ricalcolata al rilascio.
+- Ora: si usa la posizione della barra che vedi (SH.shownM), la fascia è quella mostrata alla pressione (SH.zw), dentro il verde k=1 esatto. Fuori dal verde l errore minimo sale (0,014 -> 0,032).
+- Provato: 25 tiri dentro il verde (anche sui bordi) dalle 5 postazioni = 25 dentro; appena fuori = tutti fuori.
