@@ -3001,3 +3001,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1130 · Pallino live: solo il bordino colorato che lampeggia (04/11/2026)
 - Live: interno vuoto, bordino (2,5 px) del colore del PDK parziale (bianco se non c è ancora) che lampeggia ogni secondo. Tolto l anello a radar.
+
+## 1131 · Pallino live come simbolo del live (04/11/2026)
+- Anello fisso (2 px) e dentro un pallino piccolo (4 px) che lampeggia, tutti e due col colore del PDK parziale (rosso se non c è ancora).
