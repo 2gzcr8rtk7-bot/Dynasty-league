@@ -3018,3 +3018,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 - In hnAvvisi, prima delle trade: card spessa e lunga (stile .tmc) «🏥 INFERMERIA · ultimi 2 giorni» con due colonne: ❌ OUT e ⚠️ IN DUBBIO (quest, dubbio, dtd, prob). Giocatori delle nostre squadre con logo e nome abbreviato su due righe (fino a 8 per colonna, poi +N). Tocca: Centro Medico.
 - Ultimi 2 giorni = data ESPN dell aggiornamento o prima volta che il telefono l ha visto (x.seen, x.dt): la prima volta tutti gli infortuni attuali risultano «nuovi» per 2 giorni.
 - Provato con infortuni simulati: banner corretto, nessun errore.
+
+## 1137 · Banner Infermeria: solo chi è ENTRATO negli ultimi 2 giorni (04/11/2026)
+- localStorage dl_inj_in = {giocatore: momento di entrata}. Primo avvio: tutti quelli già presenti valgono 0 (vecchi). Chi esce dalla lista viene dimenticato, se rientra è di nuovo nuovo. Il cambio di stato (dubbio -> out) non lo fa ricomparire. Il banner usa x.inT.
