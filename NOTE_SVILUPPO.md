@@ -3004,3 +3004,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1131 · Pallino live come simbolo del live (04/11/2026)
 - Anello fisso (2 px) e dentro un pallino piccolo (4 px) che lampeggia, tutti e due col colore del PDK parziale (rosso se non c è ancora).
+
+## 1132 · Maglia Ducks gialla (casa): solo gessato, senza piume (04/11/2026)
+- Flag np sulla casa Ducks: niente piume a squame, resta il gessato. Bianca invariata (gessato + piume), notte invariata (denti + gessato).
