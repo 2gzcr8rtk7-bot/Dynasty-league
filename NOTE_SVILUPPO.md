@@ -2916,3 +2916,8 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 - Come la striscia dei valori della domenica (902), ma con le 8 squadre: logo, nome e variazione % del valore della rosa (somma di valAt dei giocatori di ROSTER subito prima e subito dopo lo scatto della domenica alle 18), verde se sale, rosso se scende, prima chi sale di più.
 - Finestra: da scatto+24h+1min a scatto+72h. Non si sovrappone alla striscia dei giocatori (24 ore dopo lo scatto). Classe .tksq.
 - Provato: con l ora attuale compare (8 squadre), dopo mercoledì 18:00 e la domenica no; nessun errore.
+
+## 1107 · Statistiche squadra: scheda «Valore squadra» + verde/rosso su aumenti e cali (04/11/2026)
+- Sotto Media/Record a turno: valore squadra (somma di valAt dei giocatori di ROSTER), «Settimana» (variazione dell ultimo scatto della domenica), «Stima dom.» (valAt al prossimo scatto calcolato adesso, con le partite giocate finora). Tocca: lista giocatori con valore, settimana e stima.
+- Verde/rosso forzati (anche in Parquet) su Settimana, Stima, lista e sul «Trend squadra».
+- Provato sulle 8 squadre: scheda presente, colori giusti, nessun errore.
