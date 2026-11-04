@@ -2970,3 +2970,9 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 ## 1119 · 1 contro 1 arcade: attacchi sempre tu (04/11/2026)
 - Francesco: niente più difesa né punteggio a 11. Si attacca sempre: dopo canestro, errore, palla rubata o stoppata si riparte da capo con la palla in mano. Riquadro punti nascosto, vinte/perse non più salvate.
 - Il difensore ruba (se gli resti addosso o col crossover sbagliato da vicino) e salta: stoppata 22% sul tiro da fuori se ti è addosso (fascia stretta), 28% sotto canestro se non l hai superato. Se sei smarcato (crossover riuscito o lontano) terzo tempo e schiacciata non si stoppano; schiacciata se arrivi correndo, altrimenti terzo tempo normale.
+
+## 1120-1123 · 1 contro 1: sagoma di cartone, crossover, terzo tempo con schiacciata, palla subito in mano, step back (04/11/2026)
+- 1120: avversario = sagoma di cartone bianca senza braccia (un piano ritagliato da canvas, MeshBasicMaterial, alphaTest; + basetta). Crossover animato (spostamento morbido 280 ms, la palla passa all altra mano: SH.side/sideC in handPos; se riesce il difensore abbocca dall altra parte). Entro 3,2 m dal ferro TIRA = terzo tempo: due passi verso il ferro, salto (st.jy fino a 1,05), schiacciata se nel verde largo, altrimenti appoggio sbagliato.
+- 1121: palla di nuovo in mano subito (v1Again, 300-350 ms) dopo tiro, rubata o stoppata, dove sei; il difensore si rimette davanti. Niente più «PALLA TUA».
+- 1122: STEP BACK: PALLEGGIO col joystick indietro = passo indietro di 1,25 m e difensore fermo 0,9 s; TIRA col joystick indietro = salto all indietro; per 1,5 s il tiro non è contestato né stoppabile.
+- 1123: nella schiacciata ci si ferma a 1,25 m dal ferro e la visuale non si alza oltre 18° (prima finiva sotto il ferro guardando in alto).
