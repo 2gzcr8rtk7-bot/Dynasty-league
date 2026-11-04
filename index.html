@@ -13431,6 +13431,18 @@ function tkHtml(){try{const now=Date.now(),d0=Date.parse(VAL_ORIGINE+"T00:00:00Z
 function put(){try{if(typeof cur==="undefined"||cur!=="home")return;const m=document.getElementById("main");if(!m||m.querySelector(".tkbar"))return;const hb=m.querySelector(".hbar");if(!hb)return;const h=tkHtml();if(h)hb.insertAdjacentHTML("afterend",h)}catch(e){}}
 const R0=window.render;if(typeof R0==="function"){window.render=render=function(){const r=R0.apply(this,arguments);put();return r}}
 setTimeout(put,800);setInterval(put,60000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)put()});})();</script>
+<script>/* (1106) STRISCIA DELLE SQUADRE in Home: da lunedì 18:01 a mercoledì 18:00 (dopo lo scatto della domenica) scorrono le 8 squadre
+   con la variazione % del valore della rosa (somma dei valori dei giocatori prima e dopo lo scatto), prima chi sale di più. */
+(function(){let C={k:-1,h:""};
+function sqHtml(){try{const now=Date.now(),d0=Date.parse(VAL_ORIGINE+"T00:00:00Z"),k=valK(d0,now);if(k<1)return"";const t=valScatto(d0,k);if(now<t+24*36e5+6e4||now>=t+72*36e5)return"";
+  if(C.k!==k){const L=[];for(const tm of Object.keys(TEAMS)){const R=ROSTER[tm];if(!R||!R.length)continue;let a=0,b=0;for(const r of R){const x=valAt(r[0],t-1e3),y=valAt(r[0],t+1e3);if(x!=null&&y!=null){a+=x;b+=y}}if(a>0)L.push({tm,p:(b-a)/a*100})}
+    L.sort((x,y)=>y.p-x.p);
+    const it=x=>`<span class="tki ${x.p>=0?"su":"giu"}">${LOGO[x.tm]?`<img src="${LOGO[x.tm]}" alt="" style="height:24px;width:auto;margin-right:6px;align-self:center;display:inline-block;transform:translateY(1px)">`:""}<b>${TEAMS[x.tm].nick.toUpperCase()}</b><i>${x.p>=0?"▲ +":"▼ "}${Math.abs(x.p).toFixed(1).replace(".",",")}%</i></span>`,row=L.map(it).join("");
+    C={k,h:L.length?`<div class="tkbar tksq" role="marquee" aria-label="Valore delle squadre"><span class="tklab">SQUADRE<small>lun–mer</small></span><div class="tkvw"><div class="tktr" style="animation-duration:30s">${row}${row}</div></div></div>`:""}}
+  return C.h}catch(e){return""}}
+function put(){try{if(typeof cur==="undefined"||cur!=="home")return;const m=document.getElementById("main");if(!m||m.querySelector(".tkbar"))return;const hb=m.querySelector(".hbar");if(!hb)return;const h=sqHtml();if(h)hb.insertAdjacentHTML("afterend",h)}catch(e){}}
+const R0=window.render;if(typeof R0==="function"){window.render=render=function(){const r=R0.apply(this,arguments);put();return r}}
+setTimeout(put,900);setInterval(put,60000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)put()});})();</script>
 <style>/* (927) Modalità Dream: tasto viola «D» (stessa misura del vecchio tasto notte) e stadio 3D a schermo intero */
 html body .drmbtn:not(#a):not(#b){margin-left:auto;flex:none;display:inline-grid;place-items:center;width:38px;height:28px;padding:0;border-radius:9px;border:1px solid #c4b5fd!important;background:linear-gradient(180deg,#8b5cf6,#5b21b6)!important;box-shadow:0 0 12px rgba(139,92,246,.65),inset 0 1px 0 rgba(255,255,255,.35);cursor:pointer;animation:drmglow 2.6s ease-in-out infinite}
 html body .drmbtn svg{width:20px;height:20px;display:block}

@@ -2911,3 +2911,8 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 - Bianca (kitC DUC k=2): collo, spalline e fasce neri, impronte e gessato gialli, scritta e numero NERI bordati di giallo (fg #111111, jstroke #facc15, jsw 2.4, pin/fp #facc15).
 - PER TORNARE INDIETRO: il disegno vecchio (denti) è in DECO.DUC0 → rinominarlo DUC; la bianca vecchia era {bg:"#f7f7f5",fg:"#f5c000",trim:"#facc15",jstroke:"#111111",jsw:1.1} (scritta nel commento della riga). Togliere anche la voce del 04/11 in NV_LOG.
 - Provato sul campo vero (pagina Ducks) con le tre divise: nessun errore. Non provato sul telefono.
+
+## 1106 · Striscia delle squadre in Home, da lunedì 18:01 a mercoledì 18:00 (04/11/2026)
+- Come la striscia dei valori della domenica (902), ma con le 8 squadre: logo, nome e variazione % del valore della rosa (somma di valAt dei giocatori di ROSTER subito prima e subito dopo lo scatto della domenica alle 18), verde se sale, rosso se scende, prima chi sale di più.
+- Finestra: da scatto+24h+1min a scatto+72h. Non si sovrappone alla striscia dei giocatori (24 ore dopo lo scatto). Classe .tksq.
+- Provato: con l ora attuale compare (8 squadre), dopo mercoledì 18:00 e la domenica no; nessun errore.
