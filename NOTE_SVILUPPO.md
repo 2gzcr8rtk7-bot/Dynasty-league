@@ -3010,3 +3010,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1133 · Maglia Ducks gialla nello stile della notte (04/11/2026)
 - Casa Ducks con duc0: denti neri (DECO.DUC0) + gessato nero, come la notte. Bianca invariata (scie + gessato + piume).
+
+## 1134 · 1 contro 1: sempre lo stesso canestro (04/11/2026)
+- nearRim() durante l 1 contro 1 restituisce sempre il canestro di destra (ARIMS[1]): superando la metà campo il canestro non cambia più.
