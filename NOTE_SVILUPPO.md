@@ -2927,3 +2927,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1109 · Maglie Ducks: gessato + piume (versione 29) (04/11/2026)
 - Francesco: alle maglie Ducks pubblicate (1105) si aggiungono le piume a squame sopra il gessato, come nel rendering 29 «gessato e piume insieme». Gessato a opacità .3, piume nel colore del gessato (c.pin o c.trim) a .22. Fasce curve, impronte, colori e scritte invariati. Provato sul campo con le tre divise, nessun errore.
+
+## 1110 · Maglie Ducks: fascia laterale più spessa fino alla spalla (04/11/2026)
+- La fascia laterale sale lungo la spallina con spessore ~7 (bordo interno M0 0 H29.5 L29 14 C28.8 30 26 44 18.6 60 L16 140) fino in cima alla spalla. Versione A scelta da Francesco. Provato sul campo con le tre divise.
