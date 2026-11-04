@@ -2976,3 +2976,7 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 - 1121: palla di nuovo in mano subito (v1Again, 300-350 ms) dopo tiro, rubata o stoppata, dove sei; il difensore si rimette davanti. Niente più «PALLA TUA».
 - 1122: STEP BACK: PALLEGGIO col joystick indietro = passo indietro di 1,25 m e difensore fermo 0,9 s; TIRA col joystick indietro = salto all indietro; per 1,5 s il tiro non è contestato né stoppabile.
 - 1123: nella schiacciata ci si ferma a 1,25 m dal ferro e la visuale non si alza oltre 18° (prima finiva sotto il ferro guardando in alto).
+
+## 1124 · Palla mai più ferma sul ferro + verde largo da soli sotto canestro (04/11/2026)
+- Bug: una palla in equilibrio sopra l anello rimbalzava sul posto per sempre (provato: senza fix resta lì, velocità 0,01). Ora se una palla vicino al ferro va piano per 0,3 s cade: dentro se il centro è dentro l anello, fuori altrimenti (provato: liberata in 0,8 s). Anche il terzo tempo da vicino partiva con una distanza minima di 1 m (traiettoria sbagliata): ora 0,35 m.
+- 1 contro 1: entro 3,2 m dal ferro e senza difensore addosso la fascia verde è quella del mid range (5 m) +60% (0,108 contro 0,0675); il terzo tempo conta la fascia che vedi.

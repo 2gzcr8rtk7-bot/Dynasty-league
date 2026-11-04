@@ -1681,7 +1681,7 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
   const onMade=()=>{SH.streak++;const r=hRec();if(SH.streak>r){try{localStorage.setItem("dl_drm_hoop_"+hKey(),SH.streak)}catch(e){}}},onMiss=()=>{SH.streak=0;score()};
   const nearRim=()=>{const L=shRims();let b=null,bd=1e9;L.forEach(R_=>{const d=Math.hypot(R_.x-V.x,R_.z-V.z);if(d<bd){bd=d;b=R_}});return b&&bd<(st.room?(RM&&RM.rimMax)||40:40)?b:null};
   const shMove=()=>{const sc=shScn();if(!sc||SH.sc===sc)return;SH.sc=sc;[SH.hand,...POOL].forEach(b=>{sc.add(b.m);sc.add(b.sh);b.m.visible=false;b.sh.visible=false});SH.balls.length=0;SH.streak=0};
-  const TGT=.82,win=()=>{const R_=SH.rim||nearRim();if(!R_)return .06;const d=Math.hypot(R_.x-V.x,R_.z-V.z);let w=Math.max(.035,Math.min(.085,.095-d*.0055));try{w*=v1Cont()}catch(e){}return Math.max(.02,w)};
+  const TGT=.82,win=()=>{const R_=SH.rim||nearRim();if(!R_)return .06;const d=Math.hypot(R_.x-V.x,R_.z-V.z);let w=Math.max(.035,Math.min(.085,.095-d*.0055));try{if(V1.on&&d<3.2&&v1Cont()>=1)return (.095-5*.0055)*1.6/* (1124) libero sotto canestro: verde del mid range +60% */;w*=v1Cont()}catch(e){}return Math.max(.02,w)};
   const BMX=2*TGT;/* (1116) livella ORIZZONTALE: va da sinistra a destra, il verde è al centro */const setZone=()=>{const w=win();SH.zw=w;GZ.style.top="0";GZ.style.bottom="0";GZ.style.right="auto";GZ.style.left=((TGT-w)/BMX*100)+"%";GZ.style.width=(2*w/BMX*100)+"%"};
   const handPos=now=>{const f=new THREE.Vector3();cam.getWorldDirection(f);f.y=0;f.normalize();const r=new THREE.Vector3(-f.z,0,f.x);SH.sideC=(SH.sideC==null?1:SH.sideC)+((SH.side==null?1:SH.side)-(SH.sideC==null?1:SH.sideC))*.28;const p=cam.position.clone().addScaledVector(f,1.05).addScaledVector(r,.48*SH.sideC);p.y=cam.position.y-.72;
     /* palleggio mentre ti muovi */if(SH.moving&&!SH.hold){const ph=(now/1000*2.4)%1,s=Math.abs(Math.sin(ph*Math.PI)),fy=flr(p.x,p.z)+.12;p.y=p.y+(fy-p.y)*s;p.addScaledVector(f,.25*s);SH.ball.rotation.x=ph*6}return p};
@@ -1753,7 +1753,7 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
   const d2=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
   /* palla dal pool (mai una ancora in volo), tiro con la stessa fisica del tuo */
   const v1Ball=()=>{let b=POOL.find(p_=>{const q=SH.balls.find(x=>x.b===p_);return!q||q.made||q.ground});if(!b){b=mkBall();POOL.push(b)}const o=SH.balls.find(q=>q.b===b);if(o)SH.balls.splice(SH.balls.indexOf(o),1);b.m.material=BM_;b.m.visible=true;return b};
-  const v1Throw=(P0,k,lat,tag)=>{const R_=v1R();let dx=R_.x-P0.x,dz=R_.z-P0.z;const D=Math.max(1,Math.hypot(dx,dz)),h=R_.y-P0.y,th=(D>9?48:D<3?60:52)*Math.PI/180,den=2*Math.cos(th)**2*(D*Math.tan(th)-h),vR=den>0?Math.sqrt(9.81*D*D/den):9;
+  const v1Throw=(P0,k,lat,tag)=>{const R_=v1R();let dx=R_.x-P0.x,dz=R_.z-P0.z;const D=Math.max(.35,Math.hypot(dx,dz)),h=R_.y-P0.y,th=(D>9?48:D<3?60:52)*Math.PI/180,den=2*Math.cos(th)**2*(D*Math.tan(th)-h),vR=den>0?Math.sqrt(9.81*D*D/den):9;
     const a=Math.atan2(dz,dx)+lat,v=vR*k,b=v1Ball();b.m.position.set(P0.x,P0.y,P0.z);const B={b,v:new THREE.Vector3(Math.cos(a)*v*Math.cos(th),v*Math.sin(th),Math.sin(a)*v*Math.cos(th)),st:0,ground:0,made:false,touched:false,prevY:P0.y,three:D>7.1};Object.assign(B,tag);SH.balls.push(B);st.dirty=true;return B};
   const v1Dunk=tag=>{const R_=v1R(),b=v1Ball();b.m.position.set(R_.x,R_.y+.45,R_.z);const B={b,v:new THREE.Vector3(0,-3.2,0),st:0,ground:0,made:false,touched:false,prevY:R_.y+.45,three:false};Object.assign(B,tag);SH.balls.push(B);st.dirty=true;return B};
   const v1Jump=()=>{V1.sj=performance.now()};
@@ -1776,7 +1776,7 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
   const v1Cont=()=>{if(!V1.on||V1.poss!=="me")return 1;if((st.joy&&st.joy.y<-.4)||performance.now()-(V1.sb||0)<1500)return 1;/* (1122) step back: tiro libero dal difensore */const R_=v1R(),d=d2(V,V1.o),front=((R_.x-V.x)*(V1.o.x-V.x)+(R_.z-V.z)*(V1.o.z-V.z))>0;if(!front||d>2.4||performance.now()<V1.beat)return 1;return Math.max(.45,Math.min(1,.45+.55*(d-1.05)/1.35))};
   /* il tuo tiro: sotto canestro terzo tempo o schiacciata */
   const v1MyShot=(err,wz)=>{const R_=v1R(),d=d2(V,R_);V1.ph="shot";V1.oj=performance.now();if(d>=2.4&&st.joy&&st.joy.y<-.4){const ux=(R_.x-V.x)/d,uz=(R_.z-V.z)/d;V1.xo={t0:performance.now(),dx:-ux,dz:-uz,len:.85};V1.sb=performance.now();V1.beat=performance.now()+900;return false}/* (1122) STEP BACK: salto indietro e tiro */if(d>=2.4&&v1Cont()<.7&&Math.random()<.22){toast("STOPPATO! 🖐️","#b91c1c");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Again()},300);return true}
-    if(d<3.2){/* (1120) vicino al canestro: TERZO TEMPO e SCHIACCIATA (passi verso il ferro, salto, schiacciata) */const w=Math.max(.15,(wz||.06)*2.5),ok=Math.abs(err)<=w;
+    if(d<3.2){/* (1120) vicino al canestro: TERZO TEMPO e SCHIACCIATA (passi verso il ferro, salto, schiacciata) */const w=wz||win(),ok=Math.abs(err)<=w+1e-9;
       const cl=d2(V,V1.o)<1.35&&performance.now()>V1.beat;if(cl&&Math.random()<.28){V1.oj=performance.now();v1Jump();toast("STOPPATO! 🖐️","#b91c1c");V1.ph="wait";setTimeout(()=>{if(V1.on)v1Again()},300);return true}
       const ux=(R_.x-V.x)/d,uz=(R_.z-V.z)/d,stop=1.25;V1.dk={t0:performance.now(),x0:V.x,z0:V.z,x1:R_.x-ux*stop,z1:R_.z-uz*stop,ok,done:0};st.busy=true;SH.tiri++;return true}
     return false};
@@ -1871,6 +1871,7 @@ LF=on=>{PLS.forEach(m=>m.visible=on);HPt.visible=on;fhM.color.set(on?"#fffbe8":"
         const fy=flr(P.x,P.z)+rb;if(P.y<fy){P.y=fy;if(Vv.y<0)Vv.y*=-.6;Vv.x*=.86;Vv.z*=.86;if(!B.ground)B.ground=B.st}B.prevY=P.y}
       B.b.m.rotation.x+=dt*8;{const fy=flr(P.x,P.z),s_=B.b.sh;s_.visible=true;s_.position.set(P.x,fy+.01,P.z);const hgt=Math.max(0,P.y-fy);s_.scale.setScalar(1+hgt*.25);s_.material.opacity=Math.max(.06,.38-hgt*.05)}
       if(B.swish){B.swish.t+=dt;const k=B.swish.t,nn=B.swish.n;if(nn)nn.scale.set(1-Math.sin(k*18)*.12*Math.exp(-k*3),1+Math.sin(k*14)*.18*Math.exp(-k*3),1-Math.sin(k*18)*.12*Math.exp(-k*3));if(k>1.5){if(nn)nn.scale.set(1,1,1);B.swish=null}}
+      if(!B.made&&!B.ground){let Rn=null,bd=9;shRims().forEach(R_=>{const q=Math.hypot(P.x-R_.x,P.z-R_.z);if(q<bd){bd=q;Rn=R_}});if(Rn&&bd<.45&&P.y>Rn.y-.15&&P.y<Rn.y+.4&&Vv.length()<1.6){B.slow=(B.slow||0)+dt;if(B.slow>.3){B.slow=0;const hx=(P.x-Rn.x)/(bd||1),hz=(P.z-Rn.z)/(bd||1);if(bd<.2){Vv.set(-hx*.4,-1.2,-hz*.4)}else{Vv.set(hx*1.8,.6,hz*1.8)}}}else B.slow=0}/* (1124) mai più palla ferma a girare sul ferro */
       if(B.st>4||(B.ground&&B.st-B.ground>1.2)){if(!B.made&&!B.missT){B.missT=1;onMiss();if(B.v1||B.v1o){try{v1Miss(B)}catch(e){}}}B.b.m.visible=false;B.b.sh.visible=false;if(B.swish&&B.swish.n)B.swish.n.scale.set(1,1,1);SH.balls.splice(bi,1)}
       else if(!B.made&&!B.missT&&B.ground&&B.st-B.ground>.25){B.missT=1;onMiss();toast(B.touched?"FERRO… FUORI":"AIR BALL","#b91c1c");try{if(st.voice&&st.A)st.A.react("miss")}catch(e){}}}
     return act};
