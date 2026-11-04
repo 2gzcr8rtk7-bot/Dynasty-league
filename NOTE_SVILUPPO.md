@@ -2930,3 +2930,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1110 · Maglie Ducks: fascia laterale più spessa fino alla spalla (04/11/2026)
 - La fascia laterale sale lungo la spallina con spessore ~7 (bordo interno M0 0 H29.5 L29 14 C28.8 30 26 44 18.6 60 L16 140) fino in cima alla spalla. Versione A scelta da Francesco. Provato sul campo con le tre divise.
+
+## 1111 · Maglia Ducks notte: torna il disegno con i denti (04/11/2026)
+- Francesco: la notte torna quella di prima (nera, denti gialli sui fianchi e sotto il collo, DECO.DUC0) tramite il flag duc0 in kitC k=1. Casa e bianca restano «scie + gessato + piume». Provato, nessun errore.
