@@ -2953,3 +2953,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 ## 1115 · Tiri di fila affidabili + livella accanto al canestro (04/11/2026)
 - Con tanti tiri di fila un pallone ancora in volo veniva riusato (pool di 6) e un canestro giusto spariva: ora si prende solo un pallone libero o già arrivato, altrimenti se ne crea uno nuovo.
 - Livella: segue il ferro sullo schermo (barPos, proiezione del ferro con la telecamera), 70 px a destra del canestro con la fascia verde all altezza del ferro; più trasparente (sfondo .28, opacità .8, riempimento arancio trasparente con riga bianca in cima).
+
+## 1116 · Livella del tiro orizzontale in alto al centro (04/11/2026)
+- Al posto della riga dei punti (che scende a 84 px, il banner della gara a 116 px): barra orizzontale trasparente larga min(300px,46vw), si riempie da sinistra a destra, il verde è al centro (scala 0..2*TGT, BMX). Stessi tempi di prima per arrivare al verde (TGT 0,82 = 533 ms); a fine barra il tiro parte da solo (tardi). Ripetuto il test: 15 tiri nel verde, anche sui bordi = 15 dentro.
