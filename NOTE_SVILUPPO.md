@@ -3024,3 +3024,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1138 · Infermeria in due banner separati (04/11/2026)
 - Un banner «🚑 OUT» (bordo sinistro e titolo rossi) e uno «⚠️ IN DUBBIO» (arancio), ognuno con «ultimi 2 giorni» e i suoi giocatori su due righe. Ognuno compare solo se ha giocatori.
+
+## 1139 · Infermeria: al primo avvio conta la data ESPN (04/11/2026)
+- Scelta di Francesco (opzione 2): la prima volta (chiave nuova dl_inj_in2, così vale anche per chi aveva già la 1137) chi ha un aggiornamento ESPN degli ultimi 2 giorni entra nel banner con quella data; gli altri sono vecchi. Dopo, come prima: entra solo chi compare per la prima volta. Nei primi 2 giorni può esserci anche qualcuno già fuori da prima (ESPN aggiorna anche le schede vecchie).
