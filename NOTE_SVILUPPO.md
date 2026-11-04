@@ -3021,3 +3021,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1137 · Banner Infermeria: solo chi è ENTRATO negli ultimi 2 giorni (04/11/2026)
 - localStorage dl_inj_in = {giocatore: momento di entrata}. Primo avvio: tutti quelli già presenti valgono 0 (vecchi). Chi esce dalla lista viene dimenticato, se rientra è di nuovo nuovo. Il cambio di stato (dubbio -> out) non lo fa ricomparire. Il banner usa x.inT.
+
+## 1138 · Infermeria in due banner separati (04/11/2026)
+- Un banner «🚑 OUT» (bordo sinistro e titolo rossi) e uno «⚠️ IN DUBBIO» (arancio), ognuno con «ultimi 2 giorni» e i suoi giocatori su due righe. Ognuno compare solo se ha giocatori.
