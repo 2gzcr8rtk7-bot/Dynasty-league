@@ -3027,3 +3027,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1139 · Infermeria: al primo avvio conta la data ESPN (04/11/2026)
 - Scelta di Francesco (opzione 2): la prima volta (chiave nuova dl_inj_in2, così vale anche per chi aveva già la 1137) chi ha un aggiornamento ESPN degli ultimi 2 giorni entra nel banner con quella data; gli altri sono vecchi. Dopo, come prima: entra solo chi compare per la prima volta. Nei primi 2 giorni può esserci anche qualcuno già fuori da prima (ESPN aggiorna anche le schede vecchie).
+
+## 1140 · Impostazioni: pallini delle partite colorati o semplici (04/11/2026)
+- Nuovo interruttore DLS.gdc (acceso di default, nel gruppo Campo dei «Ripristina»): acceso = pallini col colore del PDK della partita; spento = verde se giocata, opaco se da giocare. In tutti e due i casi il live è il simbolo rosso lampeggiante (anello + pallino).
