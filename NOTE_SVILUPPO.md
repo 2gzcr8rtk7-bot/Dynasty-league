@@ -3030,3 +3030,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1140 · Impostazioni: pallini delle partite colorati o semplici (04/11/2026)
 - Nuovo interruttore DLS.gdc (acceso di default, nel gruppo Campo dei «Ripristina»): acceso = pallini col colore del PDK della partita; spento = verde se giocata, opaco se da giocare. In tutti e due i casi il live è il simbolo rosso lampeggiante (anello + pallino).
+
+## 1141 · Pallini semplici di default (04/11/2026)
+- DLS.gdc parte spento: verde giocata, opaco da giocare, live rosso. Il colore del PDK si accende da Impostazioni › Campo.
