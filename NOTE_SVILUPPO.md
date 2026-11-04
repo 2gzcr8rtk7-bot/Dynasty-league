@@ -2980,3 +2980,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 ## 1124 · Palla mai più ferma sul ferro + verde largo da soli sotto canestro (04/11/2026)
 - Bug: una palla in equilibrio sopra l anello rimbalzava sul posto per sempre (provato: senza fix resta lì, velocità 0,01). Ora se una palla vicino al ferro va piano per 0,3 s cade: dentro se il centro è dentro l anello, fuori altrimenti (provato: liberata in 0,8 s). Anche il terzo tempo da vicino partiva con una distanza minima di 1 m (traiettoria sbagliata): ora 0,35 m.
 - 1 contro 1: entro 3,2 m dal ferro e senza difensore addosso la fascia verde è quella del mid range (5 m) +60% (0,108 contro 0,0675); il terzo tempo conta la fascia che vedi.
+
+## 1125 · 1 contro 1: tiro da tre marcato più difficile (04/11/2026)
+- Da oltre 7,1 m con il difensore davanti (non superato con crossover, non in step back) la fascia verde è -25% fisso (7,5 m: 0,054 -> 0,040). Libero o in step back resta piena. Resta anche la stoppata (22%) se ti è addosso.
