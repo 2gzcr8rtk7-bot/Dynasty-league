@@ -2995,3 +2995,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1128 · Campo: pallini delle partite del turno sotto il cartoncino PDK (04/11/2026)
 - drPcd ora avvolge il cartoncino (vecchio codice in drPcd0) e sotto mette un pallino per ogni partita del turno (drSettimana con CAMPO_DR.W): vuoto = da giocare, verde = giocata, rosso lampeggiante = in corso. Il cartoncino PDK resta identico. Vale per campo, 6° uomo e panchina; la tribuna e la modalità notte del campo non cambiano. Provato: 10 cartoncini, 17 pallini, nessun errore.
+
+## 1129 · Pallini delle partite: colore del PDK e live a radar (04/11/2026)
+- Partita finita: il pallino prende il colore del PDK di quella partita (pdkLvl sul valore della notte: viola da 40, verde 30-40, giallo 20-30, rosso sotto; colori delle Impostazioni DLS.pV/pG/pY/pR). Live: pallino bordato di rosso con un anello rosso che si allarga e svanisce (radar), riempito col colore del PDK parziale se c è.
