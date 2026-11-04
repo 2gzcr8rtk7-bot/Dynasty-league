@@ -2870,3 +2870,7 @@ Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco
 - BICI DA CORSA: dalla stessa casa della bici a Portocampo, con 8 medaglie: tre volte la velocità a piedi.
 - SCHEDARIO: ogni giocatore ha una voce descrittiva (ruolo, dote migliore, squadra, età, rarità).
 - TESSERA: REGISTRO SFIDE (ultime 60 vittorie con zona e data) e ALBUM FOTO. L Academy è a Pineta Alta (a Valle c era già la Torre Radio).
+
+## 1100 — TG Dreamers: solo le notizie mediche nuove · Poke Dream: croce direzionale +15%
+- TG Dreamers: il BOLLETTINO MEDICO non pesca più a caso tra tutti gli infortunati del Centro Medico. Prende solo gli infortuni ARRIVATI tra le 7:30 del giorno prima e le 7:30 del giorno dell edizione (data dell aggiornamento ESPN). Un infortunio già noto su questo telefono prima di quella finestra non torna come notizia anche se ESPN lo ritocca (memoria locale dl_inj_seen). Se nella finestra non c è nulla, il TG non fa il servizio sugli infortuni.
+- Poke Dream: croce direzionale più grande del 15% (184 px, 218 con i comandi grandi).

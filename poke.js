@@ -1458,7 +1458,7 @@ PD.open=o=>{if(alive)return;PD_NEWS=o.news||null;buildSpecies(o);buildTiles();TE
   const lay=()=>{ROT=innerHeight>innerWidth?1:0;const W=ROT?innerHeight:innerWidth,H=ROT?innerWidth:innerHeight,land=true,big=!!(G&&G.opts&&G.opts.big);wrap.style.width=W+"px";wrap.style.height=H+"px";wrap.style.transform=ROT?`rotate(90deg) translate(0,-${H}px)`:"none";let cw,ch,l,t;
     let sat=Math.max(0,parseFloat(getComputedStyle(host).getPropertyValue("--sat"))||0),sab=Math.max(0,parseFloat(getComputedStyle(host).getPropertyValue("--sab"))||0);/* ruotato: la tacca del telefono finisce sul lato sinistro del gioco */const lin=ROT?sat:0;if(ROT){sat=0;sab=0}
     {VH=160;VW=Math.max(240,Math.min(440,Math.round(160*W/H)));SC=H/VH;cw=VW*SC;ch=H;l=(W-cw)/2;t=0}
-    const PADS=big?190:160,AS=big?84:72,BS=big?68:58;CTRLU=land?0:Math.ceil((PADS+40+sab)/SC);MENUY=Math.ceil((land?54:104)/SC);
+    const PADS=big?218:184,AS=big?84:72,BS=big?68:58;CTRLU=land?0:Math.ceil((PADS+40+sab)/SC);MENUY=Math.ceil((land?54:104)/SC);
     if(cv.width!==VW||cv.height!==VH){cv.width=VW;cv.height=VH;cx.imageSmoothingEnabled=false}
     [cv,ui].forEach(c=>{c.style.left=l+"px";c.style.top=t+"px";c.style.width=cw+"px";c.style.height=ch+"px"});const dpr=Math.min(2,devicePixelRatio||1);ui.width=Math.round(cw*dpr);ui.height=Math.round(ch*dpr);SC=SC*dpr;
     /* pad: 3x3 con i tasti più grandi */pad.style.width=pad.style.height=PADS+"px";const k=PADS/3;[...pc.children].forEach(b=>{const q=b.dataset.k;b.style.width=b.style.height=k+"px";b.style.left=(q==="l"?0:q==="r"?2*k:k)+"px";b.style.top=(q==="u"?0:q==="d"?2*k:k)+"px";b.style.fontSize=Math.round(k*.38)+"px"});
