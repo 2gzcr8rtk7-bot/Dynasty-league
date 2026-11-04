@@ -2956,3 +2956,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1116 · Livella del tiro orizzontale in alto al centro (04/11/2026)
 - Al posto della riga dei punti (che scende a 84 px, il banner della gara a 116 px): barra orizzontale trasparente larga min(300px,46vw), si riempie da sinistra a destra, il verde è al centro (scala 0..2*TGT, BMX). Stessi tempi di prima per arrivare al verde (TGT 0,82 = 533 ms); a fine barra il tiro parte da solo (tardi). Ripetuto il test: 15 tiri nel verde, anche sui bordi = 15 dentro.
+
+## 1117 · Tiro: tolta la riga dei punti; valori della gara da 3 in verticale in alto a sinistra (04/11/2026)
+- La riga «PUNTI · TIRI · % · di fila» non compare più (shS sempre nascosto). Durante la gara da 3 il riquadro viola sta in alto a sinistra, una voce per riga (gara, tempo, punti, postazione, record); fuori dalla gara non c è.
