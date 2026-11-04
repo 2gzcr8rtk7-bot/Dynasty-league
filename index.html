@@ -546,6 +546,7 @@ h2 .kitbtn+.cntbtn{margin-left:6px}
 .pnm{position:relative;z-index:1;margin-top:-7px;width:86px;box-sizing:border-box;background:#0b0d12;color:#fff;border-radius:6px;padding:3px 3px 2px;font-family:var(--display);font-style:italic;font-weight:800;font-size:11.5px;line-height:1.25;text-transform:uppercase;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pnm i{font-style:normal;color:#8b93a7;margin-right:3px}.pnm{text-overflow:clip!important}.pnm .pn{display:inline-block;font:inherit}
 /* cartellino PDK staccato dalla maglia, come un bottone */
+.gw{display:flex;flex-direction:column;align-items:center}.gd{display:flex;gap:4px;justify-content:center;margin-top:4px}.gd i{width:9px;height:9px;border-radius:50%;box-sizing:border-box;border:1.5px solid rgba(255,255,255,.9);background:transparent;box-shadow:0 1px 2px rgba(0,0,0,.4)}.gd i.ok{background:#22c55e;border-color:#fff}.gd i.lv{background:#ef4444;border-color:#fff;animation:gdlv 1s infinite}@keyframes gdlv{50%{opacity:.4}}
 .pcd{display:grid;justify-items:center;align-content:center;width:70px;min-height:31px;margin-top:5px;box-sizing:border-box;padding:2px 4px 3px;border-radius:9px;border:1px solid rgba(255,255,255,.28);color:#0b0b0b;cursor:pointer;box-shadow:inset 0 -2px 0 rgba(0,0,0,.2),0 3px 8px rgba(0,0,0,.35);transition:transform .12s}
 .pcd:active{transform:scale(.95)}
 .pcd.lk{display:flex;align-items:center;justify-content:center;gap:3px}.pcd.lk .lkx{flex:0 0 auto;display:block;box-sizing:content-box;width:9px;height:9px;padding:3px;border-radius:50%;background:rgba(11,13,18,.82);color:#facc15}html[data-lk="testo"] .pcd.lk .lkx{width:11px;height:11px;padding:0;border-radius:0;background:none;color:inherit;opacity:.9}
@@ -7477,7 +7478,10 @@ function campoNotteMap(t,dd){const d=dd||campoNotte(),o={};if(!d)return o;const 
    Maglie tutte della stessa misura; cartellino colorato come i PDK (pdkLvl), largo quanto la targhetta. Tocca il cartellino = partite del turno. */
 let CAMPO_DR=null,CAMPO_K=null;/* (595) turno mostrato in Campo: null = turno in corso, altrimenti un turno passato (frecce ‹ › accanto al tabellone) */
 const drSur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
-function drPcd(x,cl,fin){if(!x)return`<span class="pcd na"><b>Posto vuoto</b></span>`;
+/* (1128) sotto il cartoncino PDK un pallino per ogni partita del turno: vuoto = da giocare, verde = giocata, rosso lampeggiante = in corso */
+function drPcd(x,cl,fin){const h=drPcd0(x,cl,fin);if(!x)return h;let G=[];try{const W=typeof CAMPO_DR!=="undefined"&&CAMPO_DR&&CAMPO_DR.W;G=W?drSettimana(x.n,W).filter(Boolean):[]}catch(e){}if(!G.length)return h;
+  return`<span class="gw">${h}<span class="gd" aria-label="${G.filter(g=>g.fin&&!g.lv).length} partite giocate su ${G.length}">${G.map(g=>`<i class="${g.lv?"lv":g.fin?"ok":""}"></i>`).join("")}</span></span>`}
+function drPcd0(x,cl,fin){if(!x)return`<span class="pcd na"><b>Posto vuoto</b></span>`;
   if(x.e==null)return`<span class="pcd na" data-drwk="${x.n}" role="button" tabindex="0"><b>In attesa</b></span>`;
   const big=cl==="cap"||cl==="half"?x.f:x.e,sub=cl==="cap"?`${pdkF(x.e)} ×1,5`:cl==="half"?`${pdkF(x.e)} ×½`:"PDK";
   return`<span class="pcd ${pdkLvl(x.e)}${cl==="cap"?" cap":""}${fin?" lk":""}" data-drwk="${x.n}" role="button" tabindex="0">${fin?DR_LKX:""}<b>${pdkF(big)}</b></span>`}

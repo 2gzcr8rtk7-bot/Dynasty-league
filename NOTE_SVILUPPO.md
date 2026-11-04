@@ -2992,3 +2992,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1127 · Maglia Ducks notte: denti + gessato (04/11/2026)
 - Alla notte con i denti (DECO.DUC0, flag duc0) si aggiunge sotto il gessato giallo (righe ogni 6, opacità .3), come le altre divise. Resto invariato.
+
+## 1128 · Campo: pallini delle partite del turno sotto il cartoncino PDK (04/11/2026)
+- drPcd ora avvolge il cartoncino (vecchio codice in drPcd0) e sotto mette un pallino per ogni partita del turno (drSettimana con CAMPO_DR.W): vuoto = da giocare, verde = giocata, rosso lampeggiante = in corso. Il cartoncino PDK resta identico. Vale per campo, 6° uomo e panchina; la tribuna e la modalità notte del campo non cambiano. Provato: 10 cartoncini, 17 pallini, nessun errore.
