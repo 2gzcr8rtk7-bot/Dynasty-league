@@ -2904,3 +2904,10 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 ## 1104 · Dream City / Valley: motore e suoni che restavano muti (04/11/2026)
 - Francesco: in città e nella valle la macchina non faceva più rumore, si sentiva solo la radio. Su iPhone la voce sintetica (radio, TG) mette in pausa il contesto audio ("interrupted") e nessuno lo riaccendeva: il tasto "tocco = resume" puntava a una variabile vuota.
 - Ora un «risveglio» (st.A.kick) riaccende il contesto audio a ogni tocco, a ogni fine frase della voce, a ogni aggiornamento del motore e con un controllo al secondo; nella valle lo stesso a ogni tocco e ogni volta che il motore è acceso. Pubblico, sottofondo, motore, clacson, urti e ambiente tornano con i tempi di prima (nessun altro suono è stato cambiato).
+
+## 1105 · Nuove maglie Texas Ducks: "Scie + gessato" (04/11/2026)
+- Francesco ha scelto il disegno 26 tra i rendering: gessato sottile + fasce laterali che salgono curve e si uniscono alla spallina (bordo interno sotto la spallina, poi giù dritto), con una scia di 6 impronte palmate per lato (zampa a 3 dita con palmatura incavata, tallone e unghie; dita incise nel colore della fascia).
+- Codice: DECO.DUC nuovo (fascia = c.trim, impronte = c.fp o colore maglia, gessato = c.pin o c.trim). Casa: gialla, fasce nere, impronte gialle, gessato nero. Notte: nera, fasce gialle, impronte nere, gessato giallo.
+- Bianca (kitC DUC k=2): collo, spalline e fasce neri, impronte e gessato gialli, scritta e numero NERI bordati di giallo (fg #111111, jstroke #facc15, jsw 2.4, pin/fp #facc15).
+- PER TORNARE INDIETRO: il disegno vecchio (denti) è in DECO.DUC0 → rinominarlo DUC; la bianca vecchia era {bg:"#f7f7f5",fg:"#f5c000",trim:"#facc15",jstroke:"#111111",jsw:1.1} (scritta nel commento della riga). Togliere anche la voce del 04/11 in NV_LOG.
+- Provato sul campo vero (pagina Ducks) con le tre divise: nessun errore. Non provato sul telefono.
