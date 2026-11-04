@@ -2924,3 +2924,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1108 · Valore squadra: colori del tema (giorno/notte) (04/11/2026)
 - La scheda aveva colori fissi (crema/marrone) e in modalità notte stonava. Ora il riquadro usa le classi .esqk/.esqk3 (stessi sfondi e testi delle altre schede, in Parquet e in notte); la lista sta in un .esqk .vsqlw. Restano forzati solo verde e rosso. Provato in giorno e notte.
+
+## 1109 · Maglie Ducks: gessato + piume (versione 29) (04/11/2026)
+- Francesco: alle maglie Ducks pubblicate (1105) si aggiungono le piume a squame sopra il gessato, come nel rendering 29 «gessato e piume insieme». Gessato a opacità .3, piume nel colore del gessato (c.pin o c.trim) a .22. Fasce curve, impronte, colori e scritte invariati. Provato sul campo con le tre divise, nessun errore.
