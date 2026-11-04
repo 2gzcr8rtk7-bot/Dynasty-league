@@ -9739,7 +9739,7 @@ function render(){
   m.querySelectorAll("[data-effsq]").forEach(b=>{const go=()=>{effSq=b.dataset.effsq;effSqPick=false;cur="effsquadra";render();window.scrollTo(0,0)};b.onclick=go;b.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}}});
   const eb=m.querySelector("#effback");if(eb)eb.onclick=()=>{cur="efficienza";render();window.scrollTo(0,0)};
   if(cur==="giochi")bindGiochi(m);
-  m.querySelectorAll(".chip:not(.echip):not(.ichip):not([data-trt]):not([data-cstag]):not([data-esqm]):not([data-nt]):not([data-vt])").forEach(b=>b.onclick=()=>{curTeam=b.dataset.t;try{localStorage.setItem("team",curTeam)}catch(e){}render()});
+  m.querySelectorAll(".chip:not(.echip):not(.ichip):not([data-trt]):not([data-cstag]):not([data-esqm]):not([data-esqt]):not([data-nt]):not([data-vt])").forEach(b=>b.onclick=()=>{if(!b.dataset.t||!TEAMS[b.dataset.t])return;/* (1113) senza squadra non si cambia curTeam (i tasti squadra delle Statistiche la svuotavano e la Home andava in errore) */curTeam=b.dataset.t;try{localStorage.setItem("team",curTeam)}catch(e){}render()});
 }
 /* Menu a tendina: il bottone con data-menu apre il pannello sotto di sé, senza ricaricare la pagina */
 let dkOpen=false;

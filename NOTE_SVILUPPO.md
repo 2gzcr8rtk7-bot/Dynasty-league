@@ -2940,3 +2940,7 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 - Codice in dream.js (ex stub G3/g3End): g3Racks, g3Go, g3Shot, g3End; il tiro marca il pallone (B.g3) e il canestro conta 1 o 2 punti nella gara invece di 2/3.
 - Provato nel browser simulato: tiri perfetti dentro da tutte le postazioni, fine a tempo e record salvato. Non provato sul telefono.
 - Posizione bloccata a ogni fotogramma durante la gara (shStep) e joystick nascosto fino alla fine. Pavimento nero negli screenshot: solo nel browser di prova (succede anche con la versione pubblicata), sul telefono il parquet si vede.
+
+## 1113 · Bug: dopo aver cambiato squadra nelle Statistiche squadra non si tornava più alla Home (04/11/2026)
+- Causa: il gestore generico dei .chip (render, riga «m.querySelectorAll(".chip:not(...)")») prendeva anche i tasti squadra di effsquadra (data-esqt, senza data-t) e faceva curTeam=undefined (salvandolo anche in localStorage "team"). La Home (homeNotte, TEAMS[myT].bg) andava in errore e restava la pagina vecchia, sia col tasto ‹ sia col menu.
+- Fix: esclusi [data-esqt] e guardia: se il chip non ha una squadra valida non si cambia curTeam. Provato: Statistiche › Squadre › Ducks › Foxes/Dolphins/Eagles › indietro › indietro = Home, nessun errore.
