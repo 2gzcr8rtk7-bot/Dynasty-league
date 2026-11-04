@@ -10422,7 +10422,9 @@ async function injFetch(force){if(injB||(!force&&Date.now()-injT<300000))return;
         tipo=[[parte,lato].filter(Boolean).join(" "),trI(d.type||"")].filter(Boolean).join(" · ")||"Non specificato",ret=d.returnDate?d.returnDate.slice(0,10):"";
       let rientro="";if(ret){const m=ret.match(/(\d{4})-(\d{2})-(\d{2})/);rientro=m?`Rientro stimato ${m[3]}/${m[2]}`:""}
       const nota=i.shortComment||"";
-      out.push({p:o.p[0],t:o.t,nba:o.p[3],stato:mapSt(i.status,fs+" "+(i.shortComment||"")+" "+(i.longComment||"")),tipo:tipo.charAt(0).toUpperCase()+tipo.slice(1),...(rientro?{rientro}:{}),...(nota?{nota}:{}),fonti:["ESPN"]})}));
+      /* (1100) quando è arrivata la notizia: data dell aggiornamento ESPN (serve al TG per prendere solo le notizie nuove) */let dt=null;try{const z=String(i.date||"").replace(/T(\d\d:\d\d)Z$/,"T$1:00Z"),v=Date.parse(z);if(!isNaN(v))dt=v}catch(e){}
+      out.push({p:o.p[0],t:o.t,nba:o.p[3],stato:mapSt(i.status,fs+" "+(i.shortComment||"")+" "+(i.longComment||"")),tipo:tipo.charAt(0).toUpperCase()+tipo.slice(1),...(rientro?{rientro}:{}),...(nota?{nota}:{}),...(dt?{dt}:{}),fonti:["ESPN"]})}));
+    /* (1100) prima volta che questo telefono ha visto ogni infortunio (giocatore+stato+tipo): così un infortunio lungo già noto non torna «nuovo» quando ESPN lo ritocca */try{const K="dl_inj_seen",S=JSON.parse(localStorage.getItem(K)||"{}"),now=Date.now(),keep={};out.forEach(x=>{const k=x.p+"|"+x.stato+"|"+x.tipo;keep[k]=S[k]||Math.min(now,x.dt||now);x.seen=keep[k]});localStorage.setItem(K,JSON.stringify(keep))}catch(e){}
     const q=new Intl.DateTimeFormat("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date()).replace(",", " ·").replace(/\s+/g," ");
     const prev=JSON.stringify(INFORTUNI.lista);INFORTUNI.lista.splice(0,INFORTUNI.lista.length,...out);const chg=prev!==JSON.stringify(out)||!INFORTUNI.auto;INFORTUNI.agg=q;INFORTUNI.fonti=["ESPN – NBA Injuries (aggiornamento automatico)"];INFORTUNI.auto=true;
     try{injSync()}catch(e){}if(chg&&["novita","infortuni","campo","giochi"].includes(cur))render()}
@@ -11016,7 +11018,12 @@ function gzFatti(){const o=gzOra(),F={oggi:o.d,st:[],pos:{}};
   try{const P=drPO(F.st),k=drCurWeek(P),pr=(drPairs(k,F.st,P)||[]).map(([a,b])=>({a,b,pa:F.pos[a],pb:F.pos[b]})).sort((x,y)=>(x.pa+x.pb)-(y.pa+y.pb));
     F.k=k;F.match=pr;if(pr[0]){pr[0].ra=drPrevisione(pr[0].a);pr[0].rb=drPrevisione(pr[0].b)}if(pr[1]){pr[1].ra=drPrevisione(pr[1].a);pr[1].rb=drPrevisione(pr[1].b)}}catch(e){F.match=[]}
   /* infortuni importanti */
-  F.inj=[];try{INFORTUNI.lista.forEach(x=>{if(x.stato!=="out"||!INJ[x.p])return;const pm=pdkMed(x.p);if(pm!=null&&pm>=28)F.inj.push({n:x.p,t:gzTeamOf(x.p)||x.t,tipo:x.tipo,rientro:x.rientro,pdk:pm})});F.inj.sort((a,b)=>b.pdk-a.pdk)}catch(e){}
+  /* (1100) il TG prende solo gli infortuni ARRIVATI dalle 7:30 del giorno prima alle 7:30 dell edizione, non tutto il Centro Medico */
+  const rome=ms=>{try{return new Date(ms).toLocaleString("sv-SE",{timeZone:"Europe/Rome"}).slice(0,16)}catch(e){return new Date(ms).toISOString().slice(0,16).replace("T"," ")}};
+  const prevD=(()=>{const t=new Date(Date.UTC(+F.oggi.slice(0,4),+F.oggi.slice(5,7)-1,+F.oggi.slice(8,10)-1));return t.toISOString().slice(0,10)})(),W0=prevD+" 07:30",W1=F.oggi+" 07:30";
+  const injNew=x=>{const t=x.dt||null;if(!t)return false;const r=rome(t);if(r<W0||r>=W1)return false;/* già visto su questo telefono prima della finestra: non è una notizia nuova */if(x.seen&&rome(x.seen)<W0)return false;return true};
+  F.injWin=[W0,W1];
+  F.inj=[];try{INFORTUNI.lista.forEach(x=>{if(x.stato!=="out"||!INJ[x.p]||!injNew(x))return;const pm=pdkMed(x.p);if(pm!=null&&pm>=28)F.inj.push({n:x.p,t:gzTeamOf(x.p)||x.t,tipo:x.tipo,rientro:x.rientro,pdk:pm})});F.inj.sort((a,b)=>b.pdk-a.pdk)}catch(e){}
   /* (675) prossime partite NBA (stanotte, o la prima notte con partite da giocare) */
   try{const ds=Object.keys(TV.days).filter(d=>d>=F.oggi&&(TV.days[d]||[]).some(g=>g[5]==="S")).sort();if(ds[0])F.tn={d:ds[0],g:TV.days[ds[0]].filter(g=>g[5]==="S").map(g=>[g[0],g[1]])}}catch(e){}
   return F}
