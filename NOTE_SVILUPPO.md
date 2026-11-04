@@ -2966,3 +2966,7 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 - Difesa: la CPU va a canestro girandoti attorno, tira da fuori se è libera, terzo tempo/schiacciata sotto; RUBA (da vicino, 33%) e SALTA (stoppata 55% se salti quando tira); se le stai addosso sbaglia di più. Telecamera che la segue.
 - Qualità: st.v1on entra nella risoluzione adattiva come guida e TV, solo durante la partita. Salto: st.jy sull altezza della telecamera.
 - Provato nel browser simulato: partita automatica completa fino a 11 senza errori. Fluidità e difficoltà da verificare sul telefono.
+
+## 1119 · 1 contro 1 arcade: attacchi sempre tu (04/11/2026)
+- Francesco: niente più difesa né punteggio a 11. Si attacca sempre: dopo canestro, errore, palla rubata o stoppata si riparte da capo con la palla in mano. Riquadro punti nascosto, vinte/perse non più salvate.
+- Il difensore ruba (se gli resti addosso o col crossover sbagliato da vicino) e salta: stoppata 22% sul tiro da fuori se ti è addosso (fascia stretta), 28% sotto canestro se non l hai superato. Se sei smarcato (crossover riuscito o lontano) terzo tempo e schiacciata non si stoppano; schiacciata se arrivi correndo, altrimenti terzo tempo normale.
