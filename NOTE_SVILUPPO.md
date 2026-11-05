@@ -3299,3 +3299,7 @@ html.in-dr (cur giochi + GAME dream): .lg-DUC e img scritta scale 1.1. v650.
 
 ## 1237 · Tempo partita sul cartellino live
 Swipe sul live: riquadrino nero con bordo rosso e tempo (Q3 6:32, Intervallo, Fine Q2, OT) a sinistra del PDK, da TVL.st[key] (lvClock). Partita finita: formato classico. v651.
+
+
+## 1238 · Banner Ducks con logo del campo
+ducHead() ora restituisce la scritta (LOGO_DUC0.b); nel banner 96x76, 12px sopra e 16 sotto dentro il banner. Il papero resta solo nella colonna squadre della Home. v652.
