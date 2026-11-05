@@ -3341,3 +3341,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v673: seconda ripubblicazione (deploy Pages fallito lato GitHub).
 
 - v674 (1260-1261): maglie ufficiali Ducks 115-117 = logo Ducks al posto della scritta TEXAS, gessato marcato; gialla col logo originale, nera e bianca col bianco del logo in giallo; trama chiara sulle maglie scure. Include il Laboratorio maglie (v673 mai andata online per deploy Pages bloccato).
+
+- v675 (1262): 3 maglie Ducks in piu col logo grande (+25%) e gessato marcato, codici 300-302 (DUC_ROCK), nel tasto maglia subito dopo le 115-117; tolto il reset automatico delle 300+.
