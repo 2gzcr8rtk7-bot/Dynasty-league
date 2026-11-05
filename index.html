@@ -7531,7 +7531,9 @@ function drFinito(x){try{const W=typeof CAMPO_DR!=="undefined"&&CAMPO_DR&&CAMPO_
 /* nomi tutti alla stessa altezza (13px): se un cognome è lungo si stringe in larghezza (scaleX), mai più piccolo */
 try{document.fonts&&document.fonts.ready.then(()=>pnmFit())}catch(e){}
 const pnmTxt=sn=>`<b class="pn">${sn}</b>`;
-function pnmFit(){try{document.querySelectorAll(".pnm .pn").forEach(b=>{b.style.transform="";b.style.marginRight="";const pn=b.parentElement,i=pn.querySelector("i"),av=pn.clientWidth-(parseFloat(getComputedStyle(pn).paddingLeft)||0)-(parseFloat(getComputedStyle(pn).paddingRight)||0)-(i?i.offsetWidth+(parseFloat(getComputedStyle(i).marginRight)||0):0),w=b.offsetWidth;
+/* (1179) cartellino previsione: "In attesa" e avversario si stringono in larghezza se non entrano, mai fuori dal riquadro */
+function pfFit(){try{document.querySelectorAll(".pcd.pf:not([hidden]) .pfl").forEach(l=>{l.querySelectorAll("b,small").forEach(e=>{e.style.transform="";e.style.display="inline-block";e.style.transformOrigin="left center";const av=l.clientWidth,w=e.scrollWidth;if(w>av&&av>0)e.style.transform=`scaleX(${(av/w).toFixed(3)})`})})}catch(e){}}
+function pnmFit(){try{pfFit();document.querySelectorAll(".pnm .pn").forEach(b=>{b.style.transform="";b.style.marginRight="";const pn=b.parentElement,i=pn.querySelector("i"),av=pn.clientWidth-(parseFloat(getComputedStyle(pn).paddingLeft)||0)-(parseFloat(getComputedStyle(pn).paddingRight)||0)-(i?i.offsetWidth+(parseFloat(getComputedStyle(i).marginRight)||0):0),w=b.offsetWidth;
   if(w>av&&av>0){const k=av/w;b.style.transformOrigin="left center";b.style.transform=`scaleX(${k.toFixed(3)})`;b.style.marginRight=`-${(w-av).toFixed(1)}px`}})}catch(e){}}
 function drGioc(t,x,cl){if(!x)return`<span class="pj"></span><span class="pnm">—</span>${drPcd(null)}`;
   const p=(ROSTER[t]||[]).find(y=>y[0]===x.n)||[x.n,"",ruoloDi(x.n),""],r=p[2],sn=drSur(x.n);
@@ -9891,7 +9893,7 @@ addEventListener("popstate",()=>{if(navBack()){try{history.pushState({dl:1},"")}
   addEventListener("touchmove",e=>{if(!P)return;const mx=e.touches[0].clientX-sx,my=e.touches[0].clientY-sy;if(!lock){if(Math.abs(my)>10&&Math.abs(my)>Math.abs(mx)){P=null;return}if(Math.abs(mx)<10)return;lock=true}if(e.cancelable)e.preventDefault()},{passive:false});
   addEventListener("touchend",e=>{if(!P||!lock){P=null;return}const dx=e.changedTouches[0].clientX-sx,c=P;P=null;lock=false;if(Math.abs(dx)<28)return;skip=Date.now();
     const L=[...c.children],i=L.findIndex(x=>!x.hidden),j=Math.max(0,Math.min(L.length-1,i+(dx<0?1:-1)));if(j===i)return;
-    L[i].hidden=true;L[j].hidden=false;L[j].classList.remove("inl","inr");void L[j].offsetWidth;L[j].classList.add(dx<0?"inl":"inr");DRPI[c.dataset.pn]=j;c.dataset.ci=j;
+    L[i].hidden=true;L[j].hidden=false;L[j].classList.remove("inl","inr");void L[j].offsetWidth;L[j].classList.add(dx<0?"inl":"inr");DRPI[c.dataset.pn]=j;c.dataset.ci=j;pfFit();
     const gi=+L[j].dataset.gi,d=c.parentElement.querySelector(".gd");if(d)[...d.children].forEach((x,k)=>x.classList.toggle("cur",k===gi))});
   addEventListener("click",e=>{if(Date.now()-skip<400&&e.target.closest(".pcs,[data-pl],.dpc")){e.stopPropagation();e.preventDefault()}},true)})();
 /* Campo di una squadra: swipe orizzontale sul contenuto = franchigia precedente/successiva, nell'ordine della Home (Object.keys(TEAMS)). La pagina segue il dito; al rilascio esce di lato ed entra la nuova squadra dal lato opposto. Il bordo schermo (40px) resta al gesto "indietro". */
