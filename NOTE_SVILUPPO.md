@@ -3233,3 +3233,7 @@ Le 18 City Edition Ducks del catalogo (kit 100-117) anche nel tasto maglia dopo 
 
 ## 1213-1216 · Maglie razzo Rampa
 Rampa bianca/nera/gialla: senza torre, fumo a contrasto (scuro su bianca e gialla), montagne e fumo +13%, montagne a contrasto (grigio scuro sulla bianca, grigio chiaro sulla nera, terracotta sulla gialla). Tolta la giallo-nera (kit 303 -> 300). v632.
+
+
+## 1217-1218 · Sole a raggi
+Catalogo Ducks: S/T/U Sole a raggi gialla, bianca e nera (la nera senza raggi, fondo nero pieno, cactus gialli). Non nel tasto maglia ufficiale. v633.
