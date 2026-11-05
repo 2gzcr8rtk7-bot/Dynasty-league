@@ -3311,3 +3311,7 @@ ducHead() ora restituisce la scritta (LOGO_DUC0.b); nel banner 96x76, 12px sopra
 
 ## 1245 · Logo Ducks a misura in ogni sezione
 Tolte le scale fisse per sezione e il 84%. ducFit2(): per ogni .lg-DUC (scritta) misura un logo di altra squadra nella stessa casella e porta la scritta al 95% della sua altezza (o x1.19 senza riferimento), poi la limita a 3px dai bordi e dalle scritte vicine; righe con icona piccola (.hmo,.lvh) min 1.35, lista Giocatori min 1.2. Si ricalcola a ogni render. v659.
+
+
+## 1247 · Logo Ducks: verifica su tutte le viste
+Controllate tutte le VIEWS: la scritta Ducks e alta quanto gli altri loghi (rapporto ~1) ovunque c e spazio; nelle colonne colorate strette (classifica, valtrade, effcup, infortuni, speciali, trade) arriva fino al bordo della colonna (margine orizzontale 0, verticale 3px). v661.
