@@ -1107,8 +1107,8 @@ body:not(.notte) .tmc .tmar{color:var(--gold)}
 .htile[data-team="DUC"] .hlg .badge{transform:translateY(-3px) scale(1.12)}
 /* (1191) papero Ducks senza ombre dietro */html body .lg-DUC:not(#z),html body .htile[data-team="DUC"] .hlg .badge:not(#z),html body .teamhead .hlogo[data-t="DUC"]:not(#z):not(#a):not(#b),html body img[src*="2402cd92d5d7"]:not(#z){filter:none!important;box-shadow:none!important;-webkit-filter:none!important}
 
-.tlogo .lg-DUC{width:31px!important;height:31px!important}
-.chip .logo.lg-DUC{width:34px!important;height:34px!important;margin:-4px -2px}
+.tlogo .lg-DUC.pap{width:31px!important;height:31px!important}
+.chip .logo.lg-DUC.pap{width:34px!important;height:34px!important;margin:-4px -2px}
 .teamhead .hlogo[data-t="DUC"]{width:74px;height:74px;margin:-10px -4px -10px -6px;object-fit:contain}
 @media (max-width:420px){.teamhead .hlogo[data-t="DUC"]{width:72px;height:72px;margin:-10px -4px -10px -6px}}
 @media (max-width:420px){.teamhead:has(.rec+.rec) .hlogo[data-t="DUC"]{width:66px;height:66px;margin:-8px -10px -8px -8px}}
@@ -1336,7 +1336,7 @@ body:not(.notte) .tmc .tmar{color:var(--gold)}
 .ghd>*{position:relative}
 .glg{position:relative;flex:none;width:58px;height:58px}
 .glg .badge{width:100%;height:100%;border-radius:0}
-.glg .lg-DUC{transform:scale(1.16)}
+.glg .lg-DUC.pap{transform:scale(1.16)}
 .glg img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
 .glg i{position:absolute;right:-4px;bottom:-2px;font-style:italic;font-family:var(--display);font-weight:800;font-size:13px;line-height:1;color:#0a0f1f;background:linear-gradient(180deg,#ffd24a,var(--gold));padding:2px 5px;transform:skewX(-10deg);box-shadow:0 2px 6px rgba(0,0,0,.4)}
 .gnm{display:grid;line-height:1;color:#fff}
@@ -1522,7 +1522,7 @@ body:not(.notte) .tmc .tmar{color:var(--gold)}
 .simsel span{font-family:var(--display);font-style:italic;font-weight:800;color:var(--gold)}
 .simbd{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:10px;box-shadow:0 10px 24px rgba(0,0,0,.4)}
 .simtm{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;align-items:center;column-gap:8px;padding:20px 10px 10px;background:linear-gradient(160deg,var(--tc),color-mix(in srgb,var(--tc) 40%,#000))}
-.simtm .wedge{grid-row:1/3;width:48px;height:48px;background:none}.simtm .wedge .logo{width:46px;height:46px}.simtm .wedge .logo.lg-DUC{width:53px;height:53px}
+.simtm .wedge{grid-row:1/3;width:48px;height:48px;background:none}.simtm .wedge .logo{width:46px;height:46px}.simtm .wedge .logo.lg-DUC.pap{width:53px;height:53px}
 .simtm b{font-family:var(--display);font-style:italic;font-weight:800;font-size:17px;text-transform:uppercase;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.6)}
 .simtm em{font-family:var(--display);font-style:italic;font-weight:800;font-size:38px;line-height:1;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.6)}
 .simq{position:absolute;left:50%;top:-1px;transform:translateX(-50%);background:var(--red);color:var(--onred);font-family:var(--display);font-style:italic;font-weight:800;font-size:13px;letter-spacing:.08em;padding:2px 10px}
@@ -1736,7 +1736,7 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .bkcup .drcup{width:58px!important;height:58px!important;margin:0!important}
 .bkchamp{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#e9d5ff;text-align:center}.bkchamp b{display:block;font-family:var(--display);font-style:italic;font-size:15px;color:var(--gold);letter-spacing:.04em}
 .drplh span{float:right;margin-top:4px;font-size:10px;letter-spacing:.12em;color:#a5b4fc;font-style:normal;font-weight:600}
-.rgl .lg-DUC,.clf .lg-DUC{transform:scale(1.14)}
+.rgl .lg-DUC.pap,.clf .lg-DUC.pap{transform:scale(1.14)}
 .tstar{position:relative;display:inline-block;font-style:normal;font-size:10px;letter-spacing:1px;line-height:1;width:max-content;flex:none}
 .ttab .trc span{display:block;padding:3px 0}.ttab .trc .tstar{display:block;margin-top:3px;font-size:9.5px}.ttab .trc span::after{content:none!important}.ttab .trc span+span{border-top:1px solid rgba(255,255,255,.06)}.tstar b{color:rgba(255,255,255,.18);font-weight:400}.tstar b+b{position:absolute;left:0;top:0;overflow:hidden;white-space:nowrap;color:var(--gold)}
 /* DREAMERS: nomi completi delle squadre, vanno a capo invece di essere tagliati */
@@ -1756,7 +1756,7 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .drroom .drlg,.drroom .bklg{background:none!important;box-shadow:none!important;border:0!important;border-radius:0!important;overflow:visible!important}
 .drroom .drlg::before,.drroom .drlg::after{display:none!important}
 .drroom .drlg .badge,.drroom .bklg .badge{width:100%!important;height:100%!important;background-color:transparent!important;box-shadow:none!important;border-radius:0!important;filter:drop-shadow(0 3px 5px rgba(0,0,0,.5))}
-.drroom .lg-DUC{transform:scale(1.14)}
+.drroom .lg-DUC.pap{transform:scale(1.14)}
 .drms .drr .drlg{width:52px!important;height:52px!important;flex:0 0 52px!important;margin:7px 4px 7px 14px!important}
 .drroom .drcm .drlg.s{width:34px!important;height:34px!important;flex:0 0 34px!important;margin:3px 0}
 .drroom .drcr .drlg{width:52px!important;height:52px!important;flex:0 0 52px!important;margin:4px 2px}
@@ -3109,8 +3109,8 @@ const LOGO_DUC0={a:LOGO.DUC,b:LOGO2.DUC};
 const DUC_LOGHI=[["0","Originale",LOGO_DUC0.b||LOGO_DUC0.a],["p","Papero",LOGO_DUC0.a],["1","Bandana Texas","loghi/duc-1.webp?v=3"],["2","Fulmine blu","loghi/duc-2.webp?v=3"],["3","Cowboy oro","loghi/duc-3.webp?v=3"],["4","Cowboy bianco","loghi/duc-4.webp?v=3"],["5","Sceriffo","loghi/duc-5.webp?v=3"],["6","Pazzo","loghi/duc-6.webp?v=3"],["7","Pazzo lingua","loghi/duc-7.webp?v=3"],["8","Pazzo furioso","loghi/duc-8.webp?v=3"]];
 let DUC_L="",DUC_C="",DUC_CURL=null,DUC_BAN="";try{DUC_BAN=localStorage.getItem("dl_ducb")||"";DUC_L=localStorage.getItem("dl_ducl")||"";DUC_C=localStorage.getItem("dl_ducc")||""}catch(e){}
 const ducBan=()=>DUC_BAN==="p"?LOGO_DUC0.a:null;
-function ducLogoApply(){const f=DUC_LOGHI.find(x=>x[0]===DUC_L),u=f?f[2]:null,g=DUC_LOGHI.find(x=>x[0]===DUC_C),v=g?g[2]:null;/* (890) il Papero si può usare ovunque: profili (liste, chip, classifiche) e campo */DUC_CURL=v;LOGO.DUC=u||LOGO_DUC0.b;LOGO2.DUC=v||LOGO_DUC0.b;/* (1203) logo ufficiale = scritta ovunque; il papero solo nella casella della Home (.hlg) e nel banner della squadra */let st=document.getElementById("ducl");if(!st){st=document.createElement("style");st.id="ducl";document.head.appendChild(st)}st.textContent=u?`.lg-DUC,.hlg .lg-DUC{background-image:url(${u})}`:`.lg-DUC{background-image:url(${LOGO_DUC0.b})}.hlg .lg-DUC,.hrl .lg-DUC,.htile .lg-DUC{background-image:url(${LOGO_DUC0.a})}`}
-const ducHead=()=>{const f=DUC_LOGHI.find(x=>x[0]===DUC_L);return f&&DUC_L!=="0"?f[2]:LOGO_DUC0.a};
+function ducLogoApply(){const f=DUC_LOGHI.find(x=>x[0]===DUC_L&&x[0]!=="p"&&x[0]!=="0"),u=f?f[2]:null,g=DUC_LOGHI.find(x=>x[0]===DUC_C),v=g?g[2]:null;/* (890) il Papero si può usare ovunque: profili (liste, chip, classifiche) e campo */DUC_CURL=v;LOGO.DUC=u||LOGO_DUC0.b;LOGO2.DUC=v||LOGO_DUC0.b;/* (1203) logo ufficiale = scritta ovunque; il papero solo nella casella della Home (.hlg) e nel banner della squadra */let st=document.getElementById("ducl");if(!st){st=document.createElement("style");st.id="ducl";document.head.appendChild(st)}st.textContent=`.lg-DUC{background-image:url(${u||LOGO_DUC0.b})}.hlg .lg-DUC,.hrl .lg-DUC,.htile .lg-DUC{background-image:url(${LOGO_DUC0.a})!important}`}/* (1203b) nella colonna squadre della Home sempre il papero, qualunque logo sia scelto in Personalizzazioni */
+const ducHead=()=>{const f=DUC_LOGHI.find(x=>x[0]===DUC_L);return f&&DUC_L!=="0"&&DUC_L!=="p"?f[2]:LOGO_DUC0.a};
 function ducLogoSet(k,w){if(k==="p"){DUC_BAN="p";try{localStorage.setItem("dl_ducb","p")}catch(e){}}else if(DUC_BAN){DUC_BAN="";try{localStorage.removeItem("dl_ducb")}catch(e){}}if(!k&&!DUC_BAN){}if(w==="c"){DUC_C=k||"";try{k?localStorage.setItem("dl_ducc",k):localStorage.removeItem("dl_ducc")}catch(e){}}else{DUC_L=k||"";try{k?localStorage.setItem("dl_ducl",k):localStorage.removeItem("dl_ducl")}catch(e){}}ducLogoApply()}
 ducLogoApply();
 /* Crediti disponibili di ogni franchigia */
@@ -10392,7 +10392,7 @@ const pqFixNow=pqFix;{let q=0;pqFix=function(){if(q)return;q=requestAnimationFra
 /* (1190) papero Ducks dentro le caselle: il più grande possibile senza toccare i bordi della casella (margine 3px). La figura occupa tutta l'altezza e l'87% della larghezza dell'immagine. */
 function ducFit(){try{document.querySelectorAll(".badge.lg-DUC,.htile[data-team=DUC] .hlg .badge").forEach(e=>{e.style.scale="";const r=e.getBoundingClientRect();if(r.width<26||r.height<26)return;
   let c=e.parentElement,k=0;while(c&&k<4){const cs=getComputedStyle(c),q=c.getBoundingClientRect();const box=(cs.backgroundColor!=="rgba(0, 0, 0, 0)"&&cs.backgroundColor!=="transparent")||cs.backgroundImage!=="none"||parseFloat(cs.borderTopWidth)>0||cs.overflow!=="visible";if(box&&q.width>=r.width&&q.height>=r.height)break;c=c.parentElement;k++}if(!c)return;
-  const sc=/f39bda081f60/.test(getComputedStyle(e).backgroundImage),q=c.getBoundingClientRect(),m=3,cx=r.x+r.width/2,cy=r.y+r.height/2,hw=r.width*(sc?1:.87)/2,hh=r.height*(sc?.8:1)/2;
+  const sc=/f39bda081f60/.test(getComputedStyle(e).backgroundImage);if(sc)return;/* (1203b) la scritta resta grande come i loghi delle altre squadre */const q=c.getBoundingClientRect(),m=3,cx=r.x+r.width/2,cy=r.y+r.height/2,hw=r.width*(sc?1:.87)/2,hh=r.height*(sc?.8:1)/2;
   let f=Math.min((cx-q.left-m)/hw,(q.right-m-cx)/hw,(cy-q.top-m)/hh,(q.bottom-m-cy)/hh,sc?1.12:1.3);/* non va addosso a scritte e loghi vicini */c.querySelectorAll("*").forEach(o=>{if(o===e||o.contains(e)||e.contains(o))return;if(!o.childElementCount&&!(o.textContent||"").trim()&&!/badge|logo|lg-|IMG|svg/i.test(o.className+" "+o.tagName))return;const z=o.getBoundingClientRect();if(z.width<2||z.height<2)return;
    const ox=z.right>cx-hw&&z.left<cx+hw,oy=z.bottom>cy-hh&&z.top<cy+hh;if(ox&&!oy){if(z.top>=cy)f=Math.min(f,(z.top-2-cy)/hh);else f=Math.min(f,(cy-z.bottom-2)/hh)}else if(oy&&!ox){if(z.left>=cx)f=Math.min(f,(z.left-2-cx)/hw);else f=Math.min(f,(cx-z.right-2)/hw)}});if(!(f>1.02))return;e.style.scale=f.toFixed(3)})}catch(e){}}
 {const R1=render;render=function(){const x=R1.apply(this,arguments);try{requestAnimationFrame(ducFit)}catch(e){}return x}}
