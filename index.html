@@ -3753,10 +3753,34 @@ const S={
   ["Grandi pianure",(P)=>clouds(P.light,.5,50)+hills(118,6,P.mid)+`<rect x="0" y="124" width="120" height="22" fill="${P.near}"/>`+[10,30,50,70,90,110].map(x=>`<path d="M${x} 124 V116" stroke="${P.near}" stroke-width=".8"/>`).join("")],
   ["Piuma sul tramonto",(P)=>sun(60,104,20,P.light,P.far)+eyes(P.mid,P.near,"#0b3b8f")+hills(128,6,P.near)]]},
 };
+
+const buttes=(base,c)=>`<path d="M-2 146 V${base} H14 L16 ${base-30} H24 L26 ${base} H52 L55 ${base-22} H60 V${base-38} H70 V${base-22} H74 L77 ${base} H98 L100 ${base-26} H108 L110 ${base} H122 V146 Z" fill="${c}"/>`;
+const windmill=(x,base,c)=>{let s=`<path d="M${x-6} ${base} L${x} ${base-40} L${x+6} ${base} M${x-4} ${base-12} H${x+4} M${x-2.6} ${base-24} H${x+2.6}" stroke="${c}" stroke-width="1.3" fill="none"/>`;for(let i=0;i<12;i++){const a=i*Math.PI/6;s+=`<path d="M${x} ${base-40} L${f(x+11*Math.cos(a))} ${f(base-40+11*Math.sin(a))}" stroke="${c}" stroke-width="1.4"/>`}return s+`<circle cx="${x}" cy="${base-40}" r="2" fill="${c}"/><path d="M${x+2} ${base-40} H${x+14} L${x+16} ${base-44} V${base-36} Z" fill="${c}"/>`};
+const fence=(base,c)=>{let s=`<path d="M-2 ${base-6} H122 M-2 ${base-11} H122" stroke="${c}" stroke-width=".9"/>`;for(let x=2;x<120;x+=12)s+=`<rect x="${x}" y="${base-14}" width="1.6" height="14" fill="${c}"/>`;return s};
+const cactusField=(base,c)=>[[10,1.1],[30,.7],[48,1.3],[70,.8],[88,1.2],[108,.75]].map(([x,k])=>cactus(x,base,k,c)).join("")+`<rect x="0" y="${base}" width="120" height="${146-base}" fill="${c}"/>`;
+const TX={
+ sole:{sky:["#fff3b0","#facc15","#eab308"],far:"#ca8a04",mid:"#3f2d05",near:"#111111",light:"#ffffff",ink:"#111111",snow:"#fff7d6",dark:0},
+ nerooro:{sky:["#050505","#1c1c1c"],far:"#3a3207",mid:"#a1860f",near:"#facc15",light:"#facc15",ink:"#050505",snow:"#fde68a",dark:1},
+ bianca:{sky:["#ffffff","#f3f4f6"],far:"#fde68a",mid:"#facc15",near:"#111111",light:"#facc15",ink:"#111111",snow:"#ffffff",dark:0},
+ crepuscolo:{sky:["#fde047","#eab308","#3a2a05","#0b0b0b"],far:"#2a2205",mid:"#111111",near:"#000000",light:"#fff7d6",ink:"#000000",snow:"#fde68a",dark:1},
+ sabbia:{sky:["#fefce8","#fde68a"],far:"#eab308",mid:"#854d0e",near:"#111111",light:"#ffffff",ink:"#111111",snow:"#ffffff",dark:0},
+ notte:{sky:["#000000","#161205"],far:"#2a2205",mid:"#5c4a08",near:"#facc15",light:"#facc15",ink:"#000000",snow:"#fde68a",dark:1}};
+const TXS=[
+ ["Mesa e sole",P=>sun(60,92,20,P.light,P.far)+mesa(106,P.mid)+cactus(20,132,1,P.near)+cactus(100,134,.8,P.near)+`<rect x="0" y="130" width="120" height="16" fill="${P.near}"/>`,["sole","crepuscolo"]],
+ ["Big Bend",P=>ridge(98,26,9,P.far)+ridge(112,14,11,P.mid)+cactus(18,136,.9,P.near)+cactus(96,138,1.1,P.near)+`<rect x="0" y="134" width="120" height="12" fill="${P.near}"/>`,["bianca","nerooro"]],
+ ["Canyon",P=>mesa(100,P.far)+mesa(114,P.mid)+`<path d="M38 146 C46 128 74 126 82 146 Z" fill="${P.light}" opacity=".55"/>`+cactus(12,140,.8,P.near),["sabbia","notte"]],
+ ["Campo di cactus",P=>sun(86,70,12,P.light)+hills(112,8,P.mid)+cactusField(132,P.near),["sole","bianca"]],
+ ["Sole a raggi",P=>rays(60,104,P.light,.16)+sun(60,104,18,P.light,P.mid)+hills(118,6,P.mid)+cactus(28,138,1,P.near)+cactus(94,140,.8,P.near)+`<rect x="0" y="136" width="120" height="10" fill="${P.near}"/>`,["crepuscolo","sabbia"]],
+ ["Buttes",P=>sun(84,84,10,P.light)+buttes(112,P.mid)+`<rect x="0" y="128" width="120" height="18" fill="${P.near}"/>`,["sole","nerooro"]],
+ ["Mulino e ranch",P=>sun(30,80,12,P.light)+hills(116,6,P.mid)+windmill(84,126,P.near)+fence(134,P.near)+`<rect x="0" y="132" width="120" height="14" fill="${P.near}"/>`,["bianca","crepuscolo"]],
+ ["Longhorn",P=>sun(60,98,24,P.far)+longhorn(60,102,P.near,.95)+mesa(124,P.mid)+`<rect x="0" y="130" width="120" height="16" fill="${P.near}"/>`,["sabbia","nerooro"]],
+ ["Stelle del deserto",P=>stars(40,P.light,4,96)+star(94,30,7,P.light,.95)+moon(24,26,6,P.light)+hills(114,8,P.mid)+cactus(30,134,1.2,P.near)+cactus(84,136,.8,P.near)+`<rect x="0" y="132" width="120" height="14" fill="${P.near}"/>`,["notte","bianca"]],
+ ["Pozzi e mesa",P=>mesa(110,P.far)+derrick(22,128,P.near)+derrick(48,126,P.near)+derrick(78,127,P.near)+derrick(102,128,P.near)+`<rect x="0" y="128" width="120" height="18" fill="${P.near}"/>`,["sole","notte"]]];
 // abbinamenti scena/palette: 20 per squadra, ogni scena 2-3 palette diverse
 const PLIST=t=>{const c=S[t].col;return[["Alba",PAL.alba],["Giorno",PAL.giorno],["Tramonto",PAL.tramonto],["Notte",PAL.notte],["Aurora",PAL.aurora],["Neve",PAL.neve],["Deserto",PAL.deserto],["Colori squadra",TPAL(c)],["Bianca",BPAL(c)],["Nera",NPAL(c)]]};
 const PREF={DOL:[1,5,3,8,0,7,2,9,4],DUC:[6,2,3,7,0,9,8,1,4],FOX:[3,2,9,7,1,8,0,5,6],MOO:[4,3,5,1,7,8,0,9,2],TUR:[2,0,1,7,3,8,9,6,5],SPI:[3,7,2,1,8,9,0,5,6],EAG:[2,3,7,1,8,0,9,5,6],PEA:[2,6,7,0,3,8,9,1,5]};
-function lista(t){const T=S[t],P=PLIST(t),pr=PREF[t],out=[];let k=0;while(out.length<20){const si=out.length%T.sc.length,pi=pr[(k+Math.floor(out.length/T.sc.length)*2)%pr.length];k++;const [sn,fn]=T.sc[si],[pn,pal]=P[pi];
+function lista(t){if(t==="DUC"){const out=[];TXS.forEach(([sn,fn,pp],si)=>pp.forEach(pk=>{const pal=TX[pk];seed(out.length+977);const dark=pal.dark;out.push({si,pi:pk,name:`${String.fromCharCode(65+out.length)} · ${sn}`,sub:{sole:"Giallo sole",nerooro:"Nero e oro",bianca:"Bianca",crepuscolo:"Crepuscolo",sabbia:"Sabbia",notte:"Notte"}[pk],o:{grad:pal.sky,trim:pk==="bianca"||pk==="sabbia"?"#111111":"#facc15",trim2:pk==="nerooro"||pk==="notte"?"#111111":"#ffffff",fg:dark?"#ffffff":"#111111",st:dark?"#111111":"#ffffff",word:"TEXAS",layer:fn(pal),num:1,glow:0}})}));
+  out.sort((a,b)=>0);return out.slice(0,20).map((x,i)=>({...x,name:`${String.fromCharCode(65+i)} · ${x.name.slice(4)}`}))}const T=S[t],P=PLIST(t),pr=PREF[t],out=[];let k=0;while(out.length<20){const si=out.length%T.sc.length,pi=pr[(k+Math.floor(out.length/T.sc.length)*2)%pr.length];k++;const [sn,fn]=T.sc[si],[pn,pal]=P[pi];
  if(out.some(o=>o.si===si&&o.pi===pi))continue;seed(out.length+t.charCodeAt(0)*31+t.charCodeAt(1));
  const dark=pal.dark,light=!dark;const fg=light?pal.ink:"#ffffff",st=light?"#ffffff":pal.ink;
  out.push({si,pi,name:`${String.fromCharCode(65+out.length)} · ${sn}`,sub:pn,o:{grad:pal.sky,trim:T.col===pal.near?T.acc:T.col,trim2:T.acc,fg,st,word:T.word,layer:fn(pal),num:T.num,glow:dark?1:0}})}return out}
