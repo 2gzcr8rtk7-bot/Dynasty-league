@@ -3193,3 +3193,7 @@ Di notte le linee del campo prendono il colore del bordo (apron), opache; se il 
 
 ## 1195-1197 · Sezione Giochi, tasto D solo arena, Sala scommesse fissa
 Nuova voce Giochi nella barra (dopo Sala Trofei, view sgiochi): Poke Dream e Sala scommesse (tolti dall area segreta, aperti a tutti), Dream City con scelta dell arena (drmLaunch t,{}). Tasto D del campo: dreamOpen(t,{solo:true}) -> solo arena, spogliatoi, sala trofei e ufficio GM; verso la citta closedCity(). Sezione Giochi con grafica Parquet di giorno e viola di notte. Sala scommesse (.bt) esclusa dal Parquet (pqFix, pqw, 2 regole CSS): uguale giorno e notte. Schedina condivisa sempre viola (__shNoTheme). v622.
+
+
+## 1198-1199 · Maglie Ducks ridotte a 5, parquet 3D Ducks
+Tolte le maglie Ducks 5 Nera bordi bianchi e 6 Bianca zampe bianche (kitTot 5, migrazione dl_kit_m1198 -> gialla). Arena 3D Ducks: niente cerchio colorato ne cerchio bianco a centrocampo, logo +20% senza ombra e centrato sul baricentro del papero, scritte del parquet nere. v623.
