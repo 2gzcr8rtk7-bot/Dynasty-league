@@ -3077,6 +3077,8 @@ const TEAMS={
   EAG:{name:"San Diego Eagles",city:"San Diego",nick:"Eagles",bg:"#0f1b4d",fg:"#facc15",trim:"#facc15"},
   MOO:{name:"Alaska Mooses",city:"Alaska",nick:"Mooses",bg:"#7cc4f0",fg:"#ffffff",trim:"#ffffff",stroke:"#0b3a5c"}
 };
+/* (1186) Ducks silver (area riservata › Personalizzazioni): tutte le parti gialle dei Ducks (banner, campo, tile, sezioni) diventano grigio silver; le maglie restano come sono */
+const DUC_Y=TEAMS.DUC.bg,DUC_SILV="#c3c8cf";let DUC_SIL=false;try{DUC_SIL=localStorage.getItem("dl_ducsil")==="1"}catch(e){}if(DUC_SIL)TEAMS.DUC.bg=DUC_SILV;
 const LOGO={"TUR": "img/e5e4d392816e.png","DUC": "img/2402cd92d5d7.png","SPI": "img/f85596a38af8.png", "FOX": "img/cc9ccfb8f0bc.png", "EAG": "img/756630104519.png", "MOO": "img/c75de376d2cb.png", "DOL": "img/80465239f661.png", "PEA": "img/447ab01f859c.png"};
 /* Logo alternativo (solo scritta) usato nel campo e negli infortuni */
 const LOGO2={"DUC":"img/f39bda081f60.png"};
@@ -3423,7 +3425,7 @@ try{if(KITG!=null&&!localStorage.getItem("dl_kit_m1144")){const t0=localStorage.
 let KITO=null;/* scelta temporanea (anteprime): se non è null vale per tutte */
 function kitSalva(){try{localStorage.setItem("dl_kit",JSON.stringify(KIT))}catch(e){}}
 function kitDi(t){const nt=typeof CNT!=="undefined"&&CNT&&cur==="campo";if(KITO!=null)return KITO;try{if(!localStorage.getItem("dl_kit_m1159")){if(KIT.DUC!=null){if(KIT.DUC>=8&&KIT.DUC<=10)KIT.DUC-=8;else if(KIT.DUC>=5&&KIT.DUC<=7)KIT.DUC-=5;kitSalva()}localStorage.setItem("dl_kit_m1159","1")}}catch(e){}/* (1159) */try{if(!localStorage.getItem("dl_kit_m1161")){if(KIT.DUC!=null&&KIT.DUC>=5&&KIT.DUC<=7){KIT.DUC-=5;kitSalva()}localStorage.setItem("dl_kit_m1161","1")}}catch(e){}try{if(!localStorage.getItem("dl_kit_m1165")){if(KIT.DUC!=null){const m={5:0,6:1,7:2,8:0,9:1,10:2,11:5,12:6};if(m[KIT.DUC]!=null)KIT.DUC=m[KIT.DUC];kitSalva()}localStorage.setItem("dl_kit_m1165","1")}}catch(e){}try{if(!localStorage.getItem("dl_kit_m1168")){if(KIT.DUC===6)KIT.DUC=0;else if(KIT.DUC===7)KIT.DUC=6;kitSalva();localStorage.setItem("dl_kit_m1168","1")}}catch(e){}if(t==="DUC"&&KIT.DUC!=null&&KIT.DUC>6){KIT.DUC=({7:2,8:0,9:1,10:2,11:0,12:1})[KIT.DUC]??2;kitSalva()}/* (1150) vecchie maglie tolte */if(KIT[t]!=null)return KIT[t];if(t==="DUC")return 0/* (1153) Ducks: di default la gialla, per tutti */;return nt?1:0}/* la scelta della maglia vale in TUTTE le sezioni (giocatore, scontri, trade...) */
-function kitC(t,k){const T=t==="PEA"?{...TEAMS[t],bg:"#2f6bff"}/* 30/10: sfondo Peacocks rosa, maglie invariate */:TEAMS[t];
+function kitC(t,k){const T=t==="PEA"?{...TEAMS[t],bg:"#2f6bff"}/* 30/10: sfondo Peacocks rosa, maglie invariate */:t==="DUC"?{...TEAMS[t],bg:DUC_Y}:TEAMS[t];
   if(t==="DOL"){/* (02/11) DOL_FLM: nuove maglie Dolphins a fulmini. 0 Casa = bianca, 1 Notte = sabbia, 2 Alternativa = blu */
     if(k===1)return{...T,bg:"#d9c49c",fg:"#0b0b0b",trim:"#0b0b0b",jstroke:"#f3ead8",outer:undefined,tline2:"#e2e5ea",flm:["#c9b184","#bfa676","#e6d4b0","#ccb58a","#e0cda6"]};
     if(k===2)return{...T,bg:"#1537c8",fg:"#ffffff",trim:"#0b0b0b",jstroke:"#0b0b0b",outer:undefined,tline2:"#e2e5ea",flm:["#0b229a","#081c86","#2a50ea","#0a1f90","#3157f0"]};
@@ -10662,6 +10664,8 @@ function pers(){if(!COL.d){cur="campo";return vCampo()}
  ${card("c","Logo del campo","Il logo nel banner e al centro del campo, nelle immagini condivise e nella bacheca. Scelta indipendente da quella dei profili.")}
  <section class="hofcard"><h4>Home · colore di giorno</h4><p class="setnote">La Home è una sola, quella ufficiale con tutte le squadre. Scegli se di giorno è blu o nera (cambia anche lo stile dell'app). Di notte resta viola. Vale su questo telefono.</p>
  <div class="hlgrid" style="grid-template-columns:1fr 1fr"><button class="hlo${DLS.th==="classico"?" on":""}" data-hld="classico"><small>Blu (Classico)</small></button><button class="hlo${DLS.th==="tabellone"?" on":""}" data-hld="tabellone"><small>Nero (Tabellone)</small></button></div></section>
+ <section class="hofcard"><h4>Ducks · colore della squadra</h4><p class="setnote">Le parti gialle dei Ducks in tutta l'app (banner, campo, Home, sezioni) diventano grigio silver. Le maglie e i loghi non cambiano. Vale su questo telefono.</p>
+ <div class="hlgrid" style="grid-template-columns:1fr 1fr"><button class="hlo${DUC_SIL?"":" on"}" data-hls="0"><small>Giallo (ufficiale)</small></button><button class="hlo${DUC_SIL?" on":""}" data-hls="1"><small>Grigio silver</small></button></div></section>
  <p class="hoftt">🦆 Texas Ducks · uso interno</p></div>`}
 function soft(){if(!COL.d){cur="campo";return vCampo()}
  return`<div class="hof"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
@@ -11801,7 +11805,7 @@ document.addEventListener("click",e=>{
  if(e.target.closest("#hofback")){cur=cur==="sala"?"campo":"sala";render();scrollTo(0,0);return}
  const h=e.target.closest("[data-hof]");if(h){cur=h.dataset.hof;render();scrollTo(0,0);return}
  const hn=e.target.closest("[data-hnl]");if(hn){const y=scrollY;hnSet(hn.dataset.hnl);render();scrollTo(0,y);return}
- const hd=e.target.closest("[data-hld]");if(hd&&!hd.disabled){const y=scrollY,v=hd.dataset.hld;DLS.th=v;dlSyncDr(v);dlsSave();dlsApply();hnScopeSet("all");render();scrollTo(0,y);return}
+ const hs=e.target.closest("[data-hls]");if(hs){const y=scrollY;DUC_SIL=hs.dataset.hls==="1";TEAMS.DUC.bg=DUC_SIL?DUC_SILV:DUC_Y;try{localStorage.setItem("dl_ducsil",DUC_SIL?"1":"0")}catch(_){}try{dlsApply()}catch(_){}render();scrollTo(0,y);return}const hd=e.target.closest("[data-hld]");if(hd&&!hd.disabled){const y=scrollY,v=hd.dataset.hld;DLS.th=v;dlSyncDr(v);dlsSave();dlsApply();hnScopeSet("all");render();scrollTo(0,y);return}
  const l=e.target.closest("[data-hlo]");if(l&&!l.disabled){const y=scrollY;ducLogoSet(l.dataset.hlo,l.dataset.hw);render();scrollTo(0,y)}
 });
 })();
