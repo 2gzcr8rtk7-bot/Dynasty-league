@@ -3823,7 +3823,7 @@ function campo(t,x,y,w,h,k){const C=CAMPI[t];if(!C)return"";seed(t.charCodeAt(0)
 let ID2=0;const uid=s=>{const k="pz"+(ID2++)+"_";return s.replace(/id="pm/g,'id="'+k).replace(/#pm/g,'#'+k)};
 const CACHE={};const city=t=>CACHE[t]||(CACHE[t]=B.lista(t));
 window.PREMI={PREZZO:4000,
- items(t){if(t==="DREAM")return A.DREAM.map(([n,o],i)=>({id:"D"+i,code:200+i,name:n.replace("Dream City · ",""),sub:"Dream City · tutte le squadre",o}));return city(t).map((x,i)=>({id:t+":"+String.fromCharCode(65+i),code:100+i,name:x.name.replace(/^[A-T] · /,""),letter:String.fromCharCode(65+i),sub:x.sub,o:x.o}))},
+ items(t){if(t==="DREAM")return A.DREAM.map(([n,o],i)=>({id:"D"+i,code:200+i,name:n.replace("Dream City · ",""),sub:"Dream City · tutte le squadre",o}));return city(t).map((x,i)=>({id:t+":"+String.fromCharCode(65+i),code:100+i,name:x.name.replace(/^[A-Z]+ · /,""),letter:String.fromCharCode(65+i),sub:x.sub,o:x.o}))},
  svg(t,code,num){let it=null;if(code>=200)it=A.DREAM[code-200]&&{o:A.DREAM[code-200][1]};else it=city(t)[code-100];if(!it)return null;const o={...it.o,num:num==null?"?":String(num)};if(code>=200)o.word="DREAM CITY";return uid(A.maglia(o))},
  name(t,code){if(code>=200)return"Dream City · "+(A.DREAM[code-200]||["?"])[0].replace("Dream City · ","");const x=city(t)[code-100];return x?"City Edition · "+x.name:"City Edition"},
  campo(t,x,y,w,h){return B.campo(this.campoKey(t)||t,x,y,w,h,"pc"+(ID2++)+"_")},campoK(k,x,y,w,h){return B.campo(k,x,y,w,h,"pc"+(ID2++)+"_")},campoKeys(){const o=[];Object.keys(TEAMS).forEach(t=>Object.keys(B.CAMPI).filter(k=>k.slice(0,3)===t).sort().forEach(k=>o.push(k)));return o},
