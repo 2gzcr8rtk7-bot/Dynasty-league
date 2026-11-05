@@ -3257,3 +3257,7 @@ Via Lattea bianca/nera/gialla sostituite da B9, N2, G9 (vl40.js): fasce di sfuma
 
 ## 1226 · Rampa B35 N40 G6
 Rampa bianca/nera/gialla = B35, N40, G6 con montagne di G24 (rampa40.js), nel tasto maglia (300-302) e nel catalogo (V,W,X, codici 121-123, esclusi dal tasto maglia per non doppiarle). v640.
+
+
+## 1228 · Rampa gialla montagne bianche
+Rampa gialla (kit 302 e catalogo X, 123): montagne bianche. v642.
