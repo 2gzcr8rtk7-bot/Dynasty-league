@@ -3379,3 +3379,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v692 (1278): Editor loghi: per i loghi Ducks sezione Cambia logo (tutti i DUC_LOGHI + DUCKS arco e DUCKS punte, nuovi loghi/duc-arco.svg e loghi/duc-punte.svg); scelta salvata per vista/casella e scritta nel prompt.
 
 - v693 (1279): ufficiali le 31 regole dell Editor loghi (grandezze e logo Papero al posto della scritta nelle caselle indicate); efficienza wedge 130->125.5% e infortuni wedge 115->110% per non uscire dalla casella. Editor azzerato (dl_dxlogo_m1279).
+
+- v694 (1280): banner squadra Ducks (ducHead: Campo, Cassa, pagina squadra) con il logo Papero; il banner del campo resta con la scritta.
