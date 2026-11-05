@@ -3036,3 +3036,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1142 · Impostazioni › Giocatori › Icona di singoli giocatori: tasti squadra dentro la sezione (05/11/2026)
 - Francesco: c erano solo i Dolphins, non si poteva scegliere la squadra (i tasti erano solo sotto l anteprima, nascosti con «Nascondi»). Ora le 8 squadre sono anche in cima alla sezione (stessi data-dlsv="pvTeam|T").
+
+## 1143 · Modalità Dream: maglie e cartellini PDK più nitidi (05/11/2026)
+- Le texture erano già ad alta risoluzione (maglie 900x1095, cartellini 3x): lo sbiadito veniva dai mipmap (da lontano il motore usa una copia rimpicciolita e sfocata). SHARP(): sulle maglie dei giocatori e su tutti gli sprite (cartellini) map_fragment campiona con lod bias -1.0 (una copia più grande). Nessun costo di memoria. Provato con una maglia di prova affiancata: molto più nitida, nessun errore di shader. Non provato con giocatori live (stanotte nessuno in campo).
