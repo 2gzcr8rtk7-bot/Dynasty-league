@@ -3205,3 +3205,7 @@ Tasto Premi al posto di Incassa (vInc resta nel codice ma non e raggiungibile). 
 
 ## 1202-1203 · Campi a tema in Premi + logo Ducks scritta
 Premi > Campi: 8 campi versione B (paesaggio dipinto nel parquet, bordo colore squadra, linee bianche), 4000 gettoni, dl_campo per montarli. Logo Ducks: scritta (LOGO_DUC0.b) ovunque, papero solo nella colonna squadre della Home (.hrl/.hlg/.htile) e nei banner squadra (ducHead). Le scelte Originale/Papero dei profili in Personalizzazioni ora danno la scritta. Scritta a misura naturale (niente ingrandimento ducFit), come gli altri loghi. Stadio 3D: logo senza deformazione. v625.
+
+
+## 1204 · Scritta Ducks piu grande nelle righe giocatori
+.hmo/.lvh .badge.lg-DUC scale 1.4. v626.
