@@ -3349,3 +3349,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v677 (1264): condivisione: le maglie nuove (logo Ducks) sparivano dall immagine per doppio attributo xmlns; jerseyShare lo toglie prima di aggiungerlo.
 
 - v678 (1265): 3 maglie Ducks in piu (305-307) con la scritta DUCKS ad arco ricostruita in vettoriale dal disegno di Francesco; triplo bordino (gialla: bianco esterno + nero, senza filo bianco interno = stile doppiosp in labcore). REGOLA da ora: tutte le nuove maglie Ducks col triplo bordino, la gialla senza il filo bianco interno.
+
+- v679 (1266): DUCKS arco gialla: bordino bianco esterno + nero interno (ordine invertito); numero alzato leggermente su tutte e tre (305-307). Regola gialla = bianco esterno, nero interno.
