@@ -3335,3 +3335,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v672 (1258): ufficiali le 12 grandezze del logo Ducks scelte con l Editor loghi (transform scale per vista e casella); editor azzerato una volta (dl_dxlogo_m1258).
 
 - v673 (1259): area riservata Ducks > Laboratorio maglie (labcore.js motore + lab.js interfaccia, caricati solo all apertura): 20 basi modificabili + maglie esistenti come base, colori/temi, 12 bordi, 23 fantasie, 36 elementi (Texas, cowboy, deserto, natura, citta, Ducks, forme, scritta libera) trascinabili, due dita = grandezza e rotazione, scritte e numero, annulla/rifai, prova sul campo, salvataggio (dl_lab) e prompt unico per Claude.
+
+- v673: ripubblicazione (build Pages fallita).
