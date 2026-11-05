@@ -3153,3 +3153,7 @@ Scritta campo Ducks: tolto il bordino nero (ingrossava le lettere, sembrava dopp
 
 ## 1180 · Scritta campo Ducks senza contorno
 Il contorno color parquet attorno al nero dava l effetto doppio: per DUC stroke none. v612.
+
+
+## 1177-1182 · Cartellino previsione definitivo
+Pagina futura del cartellino: PREV @ SAC su una riga (si stringe se non entra, pfFit) + riquadrino blu basso con solo il PDK previsto e linea del livello. v613.
