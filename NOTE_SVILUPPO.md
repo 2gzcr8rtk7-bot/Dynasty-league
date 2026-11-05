@@ -3325,3 +3325,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v667 (1253): logo Ducks ridotto ~9%, ora pari o appena sotto gli altri loghi (misura 0.95); minimo 0.9, mai fuori dai bordi.
 
 - v668 (1254): logo Ducks a grandezza naturale della casella (scala 1, come gli altri loghi), niente ingrandimenti; si riduce solo se non entra.
+
+- v669 (1255): classifica Home, logo Ducks a scala 0.85 (larghezza pari agli stemmi).
