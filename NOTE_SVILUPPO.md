@@ -3331,3 +3331,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v670 (1256): area riservata Ducks > Editor loghi: tocchi un logo, livella 50-200% (solo quella squadra o tutte nella casella), salvato sul telefono (dl_dxlogo), prompt unico da copiare per Claude.
 
 - v671 (1257): Editor loghi: tasto Navighi / Tocca un logo per girare tutte le pagine con lo strumento acceso; contatore modifiche; prompt unico con il nome della sezione.
+
+- v672 (1258): ufficiali le 12 grandezze del logo Ducks scelte con l Editor loghi (transform scale per vista e casella); editor azzerato una volta (dl_dxlogo_m1258).
