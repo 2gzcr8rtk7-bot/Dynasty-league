@@ -78,6 +78,7 @@ const TR={
  classico:{n:"Classico",s:{}},sottile:{n:"Sottile",s:{nw:4,aw:4}},spesso:{n:"Spesso",s:{nw:9,aw:9}},
  doppio:{n:"Doppio filetto",s:{lines:[["b",1.6,"c"]]}},interno:{n:"Filetto interno",s:{lines:[["b",1.4,"in"]]}},
  triplo:{n:"Triplo spesso (Stella)",s:{nw:12,aw:12,lines:[["b",7,"c"],["a",3,"c"]]}},
+ doppiosp:{n:"Doppio spesso (senza filo interno)",s:{nw:12,aw:12,lines:[["b",7,"c"]]}},
  vintage:{n:"Vintage",s:{nw:7,aw:7,lines:[["b",3.4,"c"],["a",1.2,"c"]],hem:[[119,2,"a"],[123,2,"a"]]}},
  spalla:{n:"Spalla piena",s:{fill:12,lines:[["b",1.6,"c"]]}},
  fianchi:{n:"Fianchi",s:{side:[5,"a","b"]}},
