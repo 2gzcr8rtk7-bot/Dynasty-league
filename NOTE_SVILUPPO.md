@@ -3073,3 +3073,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1154 · Condivisione: maglie nitide (05/11/2026)
 - Persisteva l alone su nome e numero: la maglia SVG senza width/height veniva rasterizzata a 120x146 e poi ingrandita sul canvas (sfocata). jerseyShare ora mette width 720 height 876.
+
+## 1155 · Ducks: impronte simmetriche (05/11/2026)
+- Maglie gialla, nera e bianca (mix 1): 4 impronte per lato in colonna (x 10, da y 127 ogni 20), tutte inclinate di 10° verso il centro, il lato destro a specchio del sinistro. Prima erano 6, sfalsate a destra e sinistra con inclinazioni alternate.
