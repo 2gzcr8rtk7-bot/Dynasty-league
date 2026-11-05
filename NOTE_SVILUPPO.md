@@ -3289,3 +3289,7 @@ Window.DUC_SH: le 3 Stella dello sceriffo (kit/catalogo 115-117) con bordo collo
 
 ## 1235 · Catalogo Ducks ripulito
 Nascoste dal catalogo G,H,I,J (106-109) e le Stella dello sceriffo (115-117, ora ufficiali). Tasto maglia Ducks: Stella gialla, nera, bianca, poi NBA 2026 e Anni 90. Migrazione dl_kit_m1235: tutti ripartono dalla Stella gialla. v649.
+
+
+## 1236 · Logo Ducks +10% nei Dreamers
+html.in-dr (cur giochi + GAME dream): .lg-DUC e img scritta scale 1.1. v650.
