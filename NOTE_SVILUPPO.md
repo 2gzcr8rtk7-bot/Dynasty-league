@@ -3078,3 +3078,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 - Maglie gialla, nera e bianca (mix 1): 4 impronte per lato in colonna (x 10, da y 127 ogni 20), tutte inclinate di 10° verso il centro, il lato destro a specchio del sinistro. Prima erano 6, sfalsate a destra e sinistra con inclinazioni alternate.
 - Correzione: la quarta impronta in basso (y 127) finiva sotto il bordo della maglia. Ora y 117, 99, 81, 63, scala .66: tutte e 4 visibili.
 - Rifinitura: impronte inclinate di 22 gradi verso il centro, scala .58, x 9.5 (y 116, 98, 80, 62): tutte dentro la fascia, simmetriche.
+
+## 1156 · Ducks: impronte simmetriche come maglie in più (05/11/2026)
+- Francesco vuole scegliere: 0-2 tornano con le impronte di prima (6, sfalsate), 5-7 = gialla, nera, bianca con 4 impronte simmetriche inclinate 22 gradi (flag sym). Tastino Ducks a 8 maglie.
