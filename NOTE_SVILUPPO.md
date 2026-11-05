@@ -3121,3 +3121,7 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1169 · Ducks: testo banner squadra e scritta sul campo neri
 Banner in alto (DUCKS, TEXAS, record, RECORD) e TEXAS DUCKS sul campo ora neri invece che bianchi (CSS :has(.hlogo[data-t=DUC]) + atxt per DUC).
+
+
+## 1170 · Ducks: logo ufficiale = papero ovunque tranne il campo
+LOGO2.DUC (scritta) resta solo nel campo (vCampo e immagine campo condivisa). Chip, liste, banner, immagini condivise, scommesse, storia/titoli usano LOGO.DUC (papero).

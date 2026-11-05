@@ -3078,7 +3078,7 @@ const TEAMS={
 const LOGO={"TUR": "img/e5e4d392816e.png","DUC": "img/2402cd92d5d7.png","SPI": "img/f85596a38af8.png", "FOX": "img/cc9ccfb8f0bc.png", "EAG": "img/756630104519.png", "MOO": "img/c75de376d2cb.png", "DOL": "img/80465239f661.png", "PEA": "img/447ab01f859c.png"};
 /* Logo alternativo (solo scritta) usato nel campo e negli infortuni */
 const LOGO2={"DUC":"img/f39bda081f60.png"};
-(()=>{const st=document.createElement("style");st.textContent=Object.entries(LOGO).map(([t,u])=>`.lg-${t}{background-image:url(${u})}`).join("")+Object.entries(LOGO2).map(([t,u])=>`.lg-${t}{background-image:url(${u})}.hlg .lg-${t}{background-image:url(${LOGO[t]})}`).join("");document.head.appendChild(st)})();
+(()=>{const st=document.createElement("style");st.textContent=Object.entries(LOGO).map(([t,u])=>`.lg-${t}{background-image:url(${u})}`).join("");document.head.appendChild(st)})();
 /* LOGO DUCKS PERSONALIZZATO (area riservata › Personalizzazioni): scelta salvata su questo telefono; vale ovunque (Home, campo, banner, immagini condivise) tranne la G League, che ha il suo logo in GLEAGUE */
 const LOGO_DUC0={a:LOGO.DUC,b:LOGO2.DUC};
 const DUC_LOGHI=[["0","Originale",LOGO_DUC0.b||LOGO_DUC0.a],["p","Papero",LOGO_DUC0.a],["1","Bandana Texas","loghi/duc-1.webp?v=3"],["2","Fulmine blu","loghi/duc-2.webp?v=3"],["3","Cowboy oro","loghi/duc-3.webp?v=3"],["4","Cowboy bianco","loghi/duc-4.webp?v=3"],["5","Sceriffo","loghi/duc-5.webp?v=3"],["6","Pazzo","loghi/duc-6.webp?v=3"],["7","Pazzo lingua","loghi/duc-7.webp?v=3"],["8","Pazzo furioso","loghi/duc-8.webp?v=3"]];
@@ -4964,7 +4964,7 @@ async function shareTrade(btn,M0,NI0){
   for(let k=0;k<n;k++){const x=M.S[k],c=TEAMS[x.t],cx=60+k*(cw+gap);
     X.fillStyle="rgba(255,255,255,.04)";X.fillRect(cx,y,cw,colH);X.save();X.globalAlpha=.16;X.fillStyle=c.bg;X.fillRect(cx,y,cw,colH);X.globalAlpha=.34;X.fillRect(cx,y,cw,HD);X.restore();
     X.strokeStyle=c.bg;X.globalAlpha=.55;X.lineWidth=3;X.strokeRect(cx+1.5,y+1.5,cw-3,colH-3);X.globalAlpha=1;
-    const im=await ldImg(LOGO2[x.t]||LOGO[x.t]);if(im){const z=120,r=Math.min(z/im.width,z/im.height);X.drawImage(im,cx+cw/2-im.width*r/2,y+20+z/2-im.height*r/2,im.width*r,im.height*r)}
+    const im=await ldImg(LOGO[x.t]);if(im){const z=120,r=Math.min(z/im.width,z/im.height);X.drawImage(im,cx+cw/2-im.width*r/2,y+20+z/2-im.height*r/2,im.width*r,im.height*r)}
     X.textAlign="center";X.fillStyle="#fff";X.font=F(800,n>=4?34:n===3?44:54);X.fillText(c.nick.toUpperCase(),cx+cw/2,y+182);
     X.fillStyle="#b6c0dc";X.font=F(700,26);X.fillText("RICEVE",cx+cw/2,y+212);
     const pc=x.pc,pcol=pc>=3?"#4ade80":pc<=-3?"#f87171":"#facc15";
@@ -5052,7 +5052,7 @@ async function shareCup(btn){
     if(i<3){X.fillStyle=MC[i];X.beginPath();X.arc(115,y+53,32,0,7);X.fill();X.fillStyle="#1a1203"}else X.fillStyle="#ffb3bf";
     X.textAlign="center";X.font=F(800,40);X.fillText(i+1,115,y+67);
     X.fillStyle=c.bg;X.fillRect(165,y,106,RH-12);
-    const im=await ldImg(LOGO2[x.t]||LOGO[x.t]);if(im){const s=96,r=Math.min(s/im.width,s/im.height);X.drawImage(im,218-im.width*r/2,y+53-im.height*r/2,im.width*r,im.height*r)}
+    const im=await ldImg(LOGO[x.t]);if(im){const s=96,r=Math.min(s/im.width,s/im.height);X.drawImage(im,218-im.width*r/2,y+53-im.height*r/2,im.width*r,im.height*r)}
     X.textAlign="left";X.fillStyle="#fff";const nm=x.n.toUpperCase();fit(nm,800,50,W-295-260);X.fillText(nm,295,y+56);
     X.fillStyle="#ffb3bf";X.font=F(700,30);X.fillText(c.nick.toUpperCase()+" · "+x.g+(x.g===1?" PARTITA":" PARTITE"),295,y+94);
     X.textAlign="right";X.fillStyle=x.e>1.1?"#4ade80":x.e>=.8?"#ffd84d":"#ff8a8a";X.font=F(800,66);X.fillText(f2(x.e),W-90,y+76)}
@@ -6363,7 +6363,7 @@ function colAsk(){if(COL.d){cur="sala";render();window.scrollTo(0,0);return}
   o.querySelector("form").onsubmit=async e=>{e.preventDefault();err.textContent="Verifica…";
     try{COL.d=await colOpen(inp.value);try{localStorage.setItem("dl_dax","1")}catch(_){}o.remove();cur="sala";render();window.scrollTo(0,0)}
     catch(x){if(!(window.crypto&&crypto.subtle)){err.textContent="Questo browser non supporta l'apertura";return}
-      const lg=LOGO2.DUC||LOGO.DUC,n=(typeof STORIA!=="undefined"?STORIA.filter(t=>t.ordine[0]==="DUC").length:2)||2;
+      const lg=LOGO.DUC,n=(typeof STORIA!=="undefined"?STORIA.filter(t=>t.ordine[0]==="DUC").length:2)||2;
       o.className="colmod colno";o.innerHTML=`<div class="cnbox">${lg?`<img src="${lg}" alt="Texas Ducks">`:""}<div class="cntr">${"🏆".repeat(n)}</div><small>${n} ${n===1?"titolo":"titoli"} · Texas Ducks</small><b>Questa è l’area riservata Ducks, vai via</b><button type="button">Vai via</button></div>`;
       o.onclick=null;o.querySelector("button").onclick=()=>o.remove()}}}
 /* Laboratorio rookie: righe decifrate = [nome college, POT, PDK/min, P36/USG, USG%, ruolo da confermare, nome nell'app|null, classe 2026 (1/0)].
@@ -6703,7 +6703,7 @@ async function colShare(btn){const x=colRows(COL.r).find(y=>y.n===COL.sel);if(!x
   const fit=(t,w,s,max,it=true)=>{let z=s;X.font=F(w,z,it);while(X.measureText(t).width>max&&z>14){z-=2;X.font=F(w,z,it)}};
   const g=X.createRadialGradient(W/2,-200,100,W/2,200,1300);g.addColorStop(0,"#fff3b0");g.addColorStop(.35,"#facc15");g.addColorStop(1,"#c99400");X.fillStyle=g;X.fillRect(0,0,W,H);
   X.save();X.globalAlpha=.07;X.fillStyle="#fff";for(let i=-H;i<W;i+=26){X.beginPath();X.moveTo(i,0);X.lineTo(i+6,0);X.lineTo(i+6+H*.47,H);X.lineTo(i+H*.47,H);X.fill()}X.restore();
-  const lg=await ldImg(LOGO2.DUC||LOGO.DUC);if(lg){const s=150,r=Math.min(s/lg.width,s/lg.height);X.drawImage(lg,60,40,lg.width*r,lg.height*r)}
+  const lg=await ldImg(LOGO.DUC);if(lg){const s=150,r=Math.min(s/lg.width,s/lg.height);X.drawImage(lg,60,40,lg.width*r,lg.height*r)}
   X.fillStyle="#111";X.textAlign="left";X.font=F(800,30);X.fillText("TEXAS DUCKS · UFFICIO SCOUTING",230,82);
   const nm=(x.app||x.n).toUpperCase();fit(nm,800,92,W-290);X.fillText(nm,230,170);
   X.font=F(700,34);X.fillStyle="#3a2c00";X.fillText(({guardia:"GUARDIA",ala:"ALA",centro:"CENTRO"})[x.r]+" · "+(x.r26?"CLASSE DRAFT 2026":x.deb?"IN NBA DAL "+x.deb:"ARCHIVIO COLLEGE"),230,214);
@@ -6769,7 +6769,7 @@ function vCollege(){if(!COL.d){cur="campo";return vCampo()}COL.sec=COL.sec||"col
    :`<input id="colq" class="colq" type="search" placeholder="Cerca giocatore" value="${COL.q.replace(/"/g,"&quot;")}" aria-label="Cerca giocatore">
   <div class="coltbl"><table><thead><tr><th>#</th><th class="nm">Giocatore</th><th>POT</th><th>PDK/min</th><th>USG</th><th>NBA</th></tr></thead><tbody id="collist">${colList()}</tbody></table></div>
   <p class="note">POT = PDK/min riportato al 27% di usage. NBA = PDK nella migliore stagione NBA. Tocca un giocatore per la scheda. * = ruolo da confermare.</p>`;
-  const lg=LOGO2.DUC||LOGO.DUC,isC=COL.sec==="college";
+  const lg=LOGO.DUC,isC=COL.sec==="college";
   return`<div class="colroom"><button class="gback" id="colback">‹ Hall of Fame Ducks</button>
   <div class="colhd">${lg?`<img src="${lg}" alt="Texas Ducks">`:""}<div><small>Texas Ducks · area riservata del GM</small><b>Ufficio Scouting</b><em>${isC?"College · archivio al "+COL_ENC.agg:"NBA · trend delle ultime settimane"}</em></div></div>
   <button class="colgbtn" data-colleg="1">📖 Legenda</button>
@@ -6925,7 +6925,7 @@ async function shPcCourt(S){const x=S.x,t=S.t,c=TEAMS[t],OT=dlTm(t),SC=1.375,W=5
   return cv}
 /* pagina "prestazione": sfondo viola Dreamers (come le altre immagini), logo e nome squadra, campetto compatto con il giocatore, dettagli partita */
 async function shPcard(){const S=SHR_PC;if(!S)return null;const x=S.x,t=S.t,tm=TEAMS[t],court=await shPcCourt(S),W=1080,H=1380;const{cv,c}=await shBase(H);
-  {const im=await ldImg(LOGO2[t]||LOGO[t]);if(im){const bw=420,bh=320,r=Math.min(bw/im.width,bh/im.height),w=im.width*r,h=im.height*r;c.shadowColor="rgba(192,132,252,.55)";c.shadowBlur=40;c.drawImage(im,W/2-w/2,150+(bh-h)/2,w,h);c.shadowBlur=0}}/* logo originale, proporzioni intatte */
+  {const im=await ldImg(LOGO[t]);if(im){const bw=420,bh=320,r=Math.min(bw/im.width,bh/im.height),w=im.width*r,h=im.height*r;c.shadowColor="rgba(192,132,252,.55)";c.shadowBlur=40;c.drawImage(im,W/2-w/2,150+(bh-h)/2,w,h);c.shadowBlur=0}}/* logo originale, proporzioni intatte */
   const cy=520;c.shadowColor="rgba(0,0,0,.55)";c.shadowBlur=40;c.shadowOffsetY=16;c.drawImage(court,(W-court.width)/2,cy);c.shadowBlur=0;c.shadowOffsetY=0;
   const by=cy+court.height;c.textAlign="center";c.textBaseline="alphabetic";  c.font=SH_F(700,34,1);c.fillStyle="rgba(196,181,253,.9)";c.letterSpacing="3px";c.fillText(`${x.r[3]} PT · ${x.r[6]} RIM · ${x.r[7]} ASS · ${x.r[2]} MIN`,W/2,by+78);c.letterSpacing="0px";return cv}
 async function shDreamers(){const S=SHR_DR;if(!S)return null;const ch=356,H=420+S.cards.length*(ch+32)+150-150;const{cv,c,W}=await shBase(H,0,1);c.translate(0,-150);
@@ -7676,7 +7676,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>CNT?(nv(b[0])??-1e9)-(nv(a[0])??-1e9):(pdkMed(b[0])??-99)-(pdkMed(a[0])??-99));  /* panchina in ordine di efficienza media stagionale (stesso valore mostrato), si riordina a ogni aggiornamento */
   return `<button class="gback" id="cback">‹ Home</button>
   <div class="teamhead" style="${dlHeadSty(curTeam)}">
-   ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${(t==="DUC"&&(ducBan()||DUC_CURL))||LOGO[t]}" alt=""${dlHeadLogo(t)}>`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
+   ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${(t==="DUC"&&ducBan())||LOGO[t]}" alt=""${dlHeadLogo(t)}>`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
   ${bacheca(t)}
   ${cassa(t)}
   ${CNT&&DT2?drTabellone(t,DT2,DK2,DP2,true):CNT?H(CNT?"Modalità notte":"Quintetto",`<em>${CNT?(()=>{const d=campoNotte();if(!d)return"nessuna partita";const dd=tvDt(d);return`${dd.getUTCDate()}/${dd.getUTCMonth()+1}`})():`Dreamers · ${DR_PH(DK,DP)}`}</em>${kitBtn(t)}${drmBtn(t)}`):drTabellone(t,DT,DK,DP)}
@@ -10586,7 +10586,7 @@ function tro(cx,s,k,d){
  ${sp(-52,-130,d,1.2)}${sp(54,-100,d+.7,1)}${sp(-30,-60,d+1.3,.8)}${sp(34,-165,d+.4,1.1)}${sp(0,-198,d+1.1,.9)}
 </g>`}
 function cab(){
- const T=titoli(),n=T.length,lg=LOGO2.DUC||LOGO.DUC;
+ const T=titoli(),n=T.length,lg=LOGO.DUC;
  const X=n<=1?[180]:n===2?[84,276]:n===3?[62,180,298]:[48,139,230,321],S=n<=2?1:n===3?.86:.7;
  return`<svg class="hofsvg" viewBox="0 0 360 270" role="img" aria-label="Bacheca dei trofei Texas Ducks: ${n} titoli"><defs>
  <linearGradient id="hofGh" x1="0" x2="1"><stop offset="0" stop-color="#b8860b"/><stop offset=".22" stop-color="#ffe27a"/><stop offset=".5" stop-color="#f5c400"/><stop offset=".78" stop-color="#ffe9a0"/><stop offset="1" stop-color="#a87400"/></linearGradient>
@@ -10610,7 +10610,7 @@ function cab(){
 function palm(){const T=titoli(),nx=STORIA.length+1;
  return`<div class="hofpal">${T.map(t=>`<div class="hofrow"><i>🏆</i><b>Stagione ${t.k}</b><span>${sz(t.k)}</span><em>Campioni Dreamers</em></div>`).join("")}<div class="hofrow nx"><i>✦</i><b>Stagione ${nx}</b><span>${sz(nx)}</span><em>In corso · si va per il prossimo</em></div></div>`}
 function sala(){if(!COL.d){cur="campo";return vCampo()}
- const lg=LOGO2.DUC||LOGO.DUC;
+ const lg=LOGO.DUC;
  return`<div class="hof"><button class="gback" id="hofback">‹ Campo Ducks</button>
  <div class="hofhd">${lg?`<img src="${lg}" alt="Texas Ducks">`:""}<div><small>Texas Ducks · area riservata del GM</small><b>Hall of Fame Ducks</b><em>Archivio dei successi</em></div></div>
  ${cab()}${palm()}
@@ -11944,7 +11944,7 @@ function h32(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);
 function bkOut(){const j=JSON.stringify(BW);return"DRBET1."+btoa(unescape(encodeURIComponent(j)))+"."+h32("dr|"+j)}
 function bkIn(t){const m=String(t||"").trim().match(/^DRBET1\.([A-Za-z0-9+/=]+)\.([a-z0-9]+)$/);if(!m)return"Codice non valido.";try{const j=decodeURIComponent(escape(atob(m[1])));if(h32("dr|"+j)!==m[2])return"Codice modificato o incompleto.";const o=JSON.parse(j);if(!o||o.v!==1||!Array.isArray(o.bets))return"Codice non valido.";BW=o;bSave();return""}catch(e){return"Codice non valido."}}
 /* --- grafica --- */
-const logo=t=>{const u=(typeof LOGO2!=="undefined"&&LOGO2[t])||(typeof LOGO!=="undefined"&&LOGO[t])||"";return u?`<img class="btlg" src="${u}" alt="${E((TEAMS[t]||{}).nick||t)}">`:""};
+const logo=t=>{const u=(typeof LOGO!=="undefined"&&LOGO[t])||"";return u?`<img class="btlg" src="${u}" alt="${E((TEAMS[t]||{}).nick||t)}">`:""};
 const lockTag=(open,ko)=>open?`<span class="btlock">🔓 chiude tra ${hms(ko-Date.now())||"poco"}</span>`:`<span class="btlock off">🔒 chiusa</span>`;
 const odd=(id,sel,label,q,open)=>{SELMAP[id]=sel;const pb=BS.mx?null:BW.bets.find(b=>b.key===sel.key&&b.m!=="mx");const mine=pb&&pb.sel===sel.side;
  return`<button class="btq${(BS.mx?BS.legs.some(l=>l.id===id):BS.sel&&BS.sel.id===id)?" on":""}${pb?" pd":""}${mine?" pm":""}" data-bq="${E(id)}"${open&&!pb?"":" disabled"}><small>${E(label)}</small><b>${nf(q,2)}</b>${mine?"<em>✔ giocata</em>":""}</button>`};
@@ -11971,7 +11971,7 @@ function tabMy(){const B=BW.bets,stl={a:"In corso",v:"Vinta",p:"Persa",x:"Rimbor
  <div class="btsec" style="margin-top:14px">Salvataggio<small>i dati stanno su questo telefono</small></div>
  <div class="btbk"><button data-bbk="copy">📋 Copia backup</button><textarea id="btbk" placeholder="Incolla qui un backup per ripristinare">${E(BS.bk)}</textarea><button data-bbk="rest">♻️ Ripristina da backup</button></div>`}
 function vBet(){if(!COL.d){cur="campo";return vCampo()}
- settle();if(BS.view==="inc")return vInc();const lg=LOGO2.DUC||LOGO.DUC;let C=[],D=[];try{C=cand();D=duels(C)}catch(e){}
+ settle();if(BS.view==="inc")return vInc();const lg=LOGO.DUC;let C=[],D=[];try{C=cand();D=duels(C)}catch(e){}
  const open=BW.bets.filter(b=>b.s==="a").reduce((a,b)=>a+b.st,0),done=BW.bets.filter(b=>b.s!=="a"),net=done.reduce((a,b)=>a+(b.s==="v"?b.pay-b.st:b.s==="p"?-b.st:0),0);
  const T=[["sf","Sfide"],["ou","Giocatori"],["du","Duelli"],["my","Giocate"]];
  const body=BS.tab==="sf"?tabSf():BS.tab==="ou"?tabOu(C):BS.tab==="du"?tabDu(D):tabMy();
