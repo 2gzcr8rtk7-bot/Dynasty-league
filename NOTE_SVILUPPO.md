@@ -3389,3 +3389,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v697 (1283): Editor loghi: deformatore (Allarga/stringi e Allunga/schiaccia 50-200%, tasto Togli deformazione), scritto nel prompt; anteprima dell editor ora vince sulle regole ufficiali (prefisso html).
 
 - v698 (1284): ufficiali le 8 regole della seconda passata Editor loghi (scale x/y assolute, blocco 1284 con prefisso html); editor azzerato (dl_dxlogo_m1284).
+
+- v699 (1285): lista squadre di Statistiche (effsquadra, .sqpkw): logo Ducks Papero al 110%.
