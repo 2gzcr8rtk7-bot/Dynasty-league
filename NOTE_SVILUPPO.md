@@ -3387,3 +3387,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v696 (1282): logo Ducks 9 sostituito con la versione senza sfondo fornita da Francesco (duc-9.webp v=2).
 
 - v697 (1283): Editor loghi: deformatore (Allarga/stringi e Allunga/schiaccia 50-200%, tasto Togli deformazione), scritto nel prompt; anteprima dell editor ora vince sulle regole ufficiali (prefisso html).
+
+- v698 (1284): ufficiali le 8 regole della seconda passata Editor loghi (scale x/y assolute, blocco 1284 con prefisso html); editor azzerato (dl_dxlogo_m1284).
