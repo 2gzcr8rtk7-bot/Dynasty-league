@@ -3425,8 +3425,8 @@ function kitC(t,k){const T=t==="PEA"?{...TEAMS[t],bg:"#2f6bff"}/* 30/10: sfondo 
     if(k===1)return{...T,bg:"#d9c49c",fg:"#0b0b0b",trim:"#0b0b0b",jstroke:"#f3ead8",outer:undefined,tline2:"#e2e5ea",flm:["#c9b184","#bfa676","#e6d4b0","#ccb58a","#e0cda6"]};
     if(k===2)return{...T,bg:"#1537c8",fg:"#ffffff",trim:"#0b0b0b",jstroke:"#0b0b0b",outer:undefined,tline2:"#e2e5ea",flm:["#0b229a","#081c86","#2a50ea","#0a1f90","#3157f0"]};
     return{...T,bg:"#f6f7f9",fg:"#0b0b0b",trim:"#0b0b0b",jstroke:"#ffffff",outer:undefined,tline2:"#e2e5ea",flm:["#e3e7ee","#d7dce6","#ffffff","#dde2ea","#eceff4"]}}
-  if(t==="DUC"&&k===5)return{...kitC(t,1),trim:"#ffffff",fp:"#141414",pin:"#ffffff"};
-  if(t==="DUC"&&k===6)return{...kitC(t,0),fp:"#ffffff"};
+  if(t==="DUC"&&k===5)return{...kitC(t,1),trim:"#ffffff",fp:"#141414",pin:"#ffffff",fg:"#ffffff",jstroke:"#111111",jsw:3.2};/* (1166) scritta e numero bianchi */
+  if(t==="DUC"&&k===6)return{...kitC(t,0),fp:"#ffffff",fg:"#ffffff",jstroke:"#111111",jsw:3.2};/* (1166) scritta e numero bianchi bordati di nero */
   if(t==="DUC"&&k<=2){const B=[{bg:"#facc15",fg:"#111111",trim:"#111111"},{bg:"#141414",fg:"#facc15",trim:"#facc15"},{bg:"#f7f7f5",fg:"#111111",trim:"#111111",jstroke:"#facc15",jsw:2.4,pin:"#facc15",fp:"#facc15"}][k];return{...T,...B,np:1,mix:1,fpL:DUC_F3,pz:DUC_ZL,...(k===2?{pin:"#111111"}:{})}}/* (1152) spalla spessa liscia + bordo a zig zag; (1150) Ducks: 0 gialla, 1 nera, 2 bianca, tutte zig zag originale + impronte + gessato */
   if(t==="PEA"){/* 30/10/2026 Peacocks: 1 blu con dettagli verdi, 2 rosa (colore sfondo) con dettagli verdi, 3 "piuma di pavone" */
     if(k===1)return{...T,bg:"#f70990",fg:"#ffffff",trim:"#012dd5",jstroke:"#012dd5",outer:"#012dd5",feather:1,fline:"#16b35a"};

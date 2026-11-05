@@ -3108,3 +3108,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1165 · Ducks: catalogo definitivo zig zag L (05/11/2026)
 - Tolte tutte le altre maglie Ducks. Restano 7: 0 gialla, 1 nera, 2 bianca con gessato nero (BB), 3 NBA 2026, 4 Anni 90, 5 nera con colletto, spalline e fascia bianchi, zampe nere e gessato bianco (CC), 6 gialla con zampe bianche. Tutte con lo zig zag L (DUC_ZL) e 3 impronte tagliate dal bordo. Default gialla. Migrazione una volta (dl_kit_m1165): 5-10 -> stesso colore 0-2, 11 -> 5, 12 -> 6.
+
+## 1166 · Ducks: scritte bianche su nera bordi bianchi e gialla zampe bianche (05/11/2026)
+- 5 (nera bordi bianchi) e 6 (gialla zampe bianche): scritta e numero bianchi con bordo nero (versioni EE e DD).
