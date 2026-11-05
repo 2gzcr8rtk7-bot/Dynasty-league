@@ -3319,3 +3319,5 @@ Controllate tutte le VIEWS: la scritta Ducks e alta quanto gli altri loghi (rapp
 
 ## 1249 · Logo Ducks mai fuori dai bordi
 ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra i minimi per sezione; se non entra si rimpicciolisce (fino a 0.6). Controllo automatico su tutte le viste, giorno e notte: nessun logo fuori. v663.
+
+- v666 (1252): logo Ducks con regola unica, circa +5% rispetto agli altri loghi dove c'è spazio; tolte le percentuali manuali per sezione; mai fuori dai bordi.
