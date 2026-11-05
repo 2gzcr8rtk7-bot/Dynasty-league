@@ -3145,3 +3145,7 @@ Tolto lo swipe orizzontale che cambiava squadra nel Campo. Sul cartellino di ogn
 
 ## 1175 · Previsione nel cartellino in stile previsione
 Pagina futura: cartellino grigio In attesa con avversario + riquadrino blu PREVISIONE (stile .hmv.pv della Home) con barretta del livello.
+
+
+## 1177-1178 · Scritta campo Ducks forma originale nera + notte campo insieme ai colori
+Scritta campo Ducks: tolto il bordino nero (ingrossava le lettere, sembrava doppia), resta nero pieno senza velo. Tasto notte: se c e il campo si ridisegna dentro lo stesso cambio (view transition), cosi parquet e colori dell app cambiano insieme. v611 (cartellino previsione 1177 non ancora pubblicato).
