@@ -3385,3 +3385,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v695 (1281): nuovo logo Ducks tra le opzioni (DUC_LOGHI 9 "Texas Ducks arrabbiato", loghi/duc-9.webp, sfondo grigio tolto): Personalizzazioni ed Editor loghi.
 
 - v696 (1282): logo Ducks 9 sostituito con la versione senza sfondo fornita da Francesco (duc-9.webp v=2).
+
+- v697 (1283): Editor loghi: deformatore (Allarga/stringi e Allunga/schiaccia 50-200%, tasto Togli deformazione), scritto nel prompt; anteprima dell editor ora vince sulle regole ufficiali (prefisso html).
