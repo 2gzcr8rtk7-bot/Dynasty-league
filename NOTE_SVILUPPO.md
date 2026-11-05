@@ -3173,3 +3173,7 @@ Personalizzazioni > Ducks colore della squadra: tavolozza (giallo ufficiale, 5 g
 
 ## 1189 · Swipe su tutto il giocatore
 touch-action:pan-y su tutto il giocatore (.cpl/.dpc con .pcs), non solo sul cartellino: su iPhone lo swipe sulla maglia ora gira il cartellino. Maglia con mezzo giro (pjsw) al cambio pagina. v617.
+
+
+## 1190 · Papero Ducks adattato alle caselle
+ducFit() dopo ogni render: scala (proprieta CSS scale) il papero fino a 3px dal bordo della casella che lo contiene, senza toccare scritte/loghi vicini, max 1,3. Esclusi badge sotto 26px. v618.
