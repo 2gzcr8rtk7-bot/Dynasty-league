@@ -3361,3 +3361,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v683 (1270): Ducks: nel tasto maglia solo le 3 DUCKS bordino (305-307), default 305; ogni altra maglia Ducks salvata passa a 305. Le altre squadre non cambiano.
 
 - v684 (1271): aggiunte DUCKS punte 308-310 (logo con punte sopra e sotto ridisegnato a poligoni, bordino intorno -30%); Ducks ora ha 6 maglie 305-310.
+
+- v685: Dolphins: nel tasto maglia solo 3 maglie premi: Nera Neve e pini (113, default), Bianca Salt Flats (109), City Edition Salt Flats Alba (116). Ogni altra maglia DOL salvata passa a 113. kitDi/kitLista/DOL_KN.
