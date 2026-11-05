@@ -13511,10 +13511,10 @@ function drmLaunch(t,op){try{const AC=window.AudioContext||window.webkitAudioCon
  const go=()=>{try{window.dreamOpen(t,op||{})}catch(er){console.error(er)}};if(window.dreamOpen)return go();const s=document.createElement("script");s.src="dream.js";s.onload=go;s.onerror=()=>alert("Modalità Dream non disponibile: controlla la connessione.");document.head.appendChild(s)}
 function vSGiochi(){const T=Object.keys(TEAMS).filter(k=>!DRM_NO.includes(k));
  return`<div class="hof sgz"><div class="hofhd"><div style="grid-column:1/3"><small>Dreamers</small><b>Giochi</b><em>Gioca con i giocatori della lega</em></div></div>
+ <button class="hoftile" data-hof="bet"><span class="hi">🎰</span><span><b>Sala scommesse</b><small>Gettoni · sfide · sopra/sotto · duelli</small></span><i>›</i></button>
  <button class="hoftile" data-hof="hoop"><span class="hi">🎮</span><span><b>Poke Dream</b><small>Avventura a quadretti · cattura e allena i nostri giocatori</small></span><i>›</i></button>
  <section class="hofcard sgcity"><h4>🏙️ Dream City</h4><p class="setnote">Scegli in quale arena vuoi partire: poi puoi uscire in città, guidare, entrare nelle altre arene e nei palazzi.</p>
- <div class="sgar">${T.map(k=>`<button class="sgt" data-sgcity="${k}" style="--tc:${TEAMS[k].bg}"><span class="badge logo lg-${k}"></span><small>${TEAMS[k].nick}</small></button>`).join("")}</div></section>
- <button class="hoftile" data-hof="bet"><span class="hi">🎰</span><span><b>Sala scommesse</b><small>Gettoni · sfide · sopra/sotto · duelli</small></span><i>›</i></button></div>`}
+ <div class="sgar">${T.map(k=>`<button class="sgt" data-sgcity="${k}" style="--tc:${TEAMS[k].bg}"><span class="badge logo lg-${k}"></span><small>${TEAMS[k].nick}</small></button>`).join("")}</div></section></div>`}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-sgcity]");if(b){e.preventDefault();drmLaunch(b.dataset.sgcity,{});return}if(cur==="sgiochi"){const h=e.target.closest("[data-hof]");if(h){cur=h.dataset.hof;render();scrollTo(0,0)}}});
 function vHoop(){
   return`<div class="hof"><button class="gback" id="hofback">‹ Giochi</button>
