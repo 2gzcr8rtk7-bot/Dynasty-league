@@ -3375,3 +3375,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v690 (1276): DUCKS bordino Nera (306): collo e spalline come la gialla (doppiosp: giallo esterno, nero interno) al posto del triplo.
 
 - v691 (1277): rimesse NBA 2026 (3) e Anni 90 (4) nel tasto maglia di Ducks e Dolphins, in fondo alle loro maglie.
+
+- v692 (1278): Editor loghi: per i loghi Ducks sezione Cambia logo (tutti i DUC_LOGHI + DUCKS arco e DUCKS punte, nuovi loghi/duc-arco.svg e loghi/duc-punte.svg); scelta salvata per vista/casella e scritta nel prompt.
