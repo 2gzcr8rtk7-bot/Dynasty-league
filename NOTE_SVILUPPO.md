@@ -3213,3 +3213,7 @@ Premi > Campi: 8 campi versione B (paesaggio dipinto nel parquet, bordo colore s
 
 ## 1205 · Ombra sulla scritta Ducks
 La scritta Ducks ha di nuovo il drop-shadow standard dei loghi; il papero (colonna Home, banner) resta senza. v627.
+
+
+## 1206-1207 · Catalogo Ducks + Prova
+Catalogo Ducks: tolte Mulino Crepuscolo e i due Longhorn; in fondo (R,S,T) 3 maglie Deserto e ranch (bianca/gialla/nera, mesa terracotta, mulino, saguaro e fichi d India verdi). Tasto Prova su maglie e campi: window.PROVA={k,t,c} fa vedere la maglia/il campo sul campo della squadra con barra Torna ai premi; si azzera uscendo dal campo. v628.
