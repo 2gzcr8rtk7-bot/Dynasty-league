@@ -3371,3 +3371,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v688 (1274): correzione: rimessa DUCKS bordino gialla 305 (default), tolta DUCKS punte gialla 308. Ducks: 305, 306, 307, 310.
 
 - v689 (1275): DUCKS punte Bianca (310) tolta dal tasto maglia Ducks e messa nel catalogo Premi (id DUC:R10, 4000 gettoni, Prova); se ritirata torna nel tasto maglia. Ducks: 305 (default), 306, 307.
+
+- v690 (1276): DUCKS bordino Nera (306): collo e spalline come la gialla (doppiosp: giallo esterno, nero interno) al posto del triplo.
