@@ -3181,3 +3181,7 @@ ducFit() dopo ogni render: scala (proprieta CSS scale) il papero fino a 3px dal 
 
 ## 1191 · Papero Ducks senza ombre
 Tolte drop-shadow/box-shadow dietro al papero ovunque (badge, tile Home, banner squadra anche di notte). v619.
+
+
+## 1192 · Condivisione: ombre sotto scritte su iPhone
+Su iPhone l ombra del canvas applicata al drawImage di un SVG viene disegnata sotto ogni elemento (scritte, numero). Ora la maglia SVG viene prima rasterizzata in un canvas a 2x e poi disegnata con l ombra: ombra solo intorno alla sagoma. Maglia 3D invariata. Altre immagini con maglie: ombre del canvas azzerate prima del disegno. Papero grande nella condivisione senza alone. v620.
