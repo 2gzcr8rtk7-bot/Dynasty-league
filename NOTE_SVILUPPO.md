@@ -3229,3 +3229,7 @@ Catalogo Ducks: aggiunte Stella dello sceriffo (gialla/nera/bianca); tolte Deser
 
 ## 1212 · City Edition Ducks nel tasto maglia (prova)
 Le 18 City Edition Ducks del catalogo (kit 100-117) anche nel tasto maglia dopo le maglie razzo, gratis, per provarle. v631.
+
+
+## 1213-1216 · Maglie razzo Rampa
+Rampa bianca/nera/gialla: senza torre, fumo a contrasto (scuro su bianca e gialla), montagne e fumo +13%, montagne a contrasto (grigio scuro sulla bianca, grigio chiaro sulla nera, terracotta sulla gialla). Tolta la giallo-nera (kit 303 -> 300). v632.
