@@ -3048,3 +3048,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1146 · Ducks: nel catalogo anche gialla e nera «scie + gessato + piume» (05/11/2026)
 - Il tastino maglietta dei Ducks ha 7 maglie (kitTot): Casa (denti), Notte (denti), Bianca (scie), NBA 2026, Anni 90, 5 = Gialla (scie: fasce nere, impronte gialle) e 6 = Nera (scie: fasce gialle, impronte nere), stesso disegno della bianca. Le altre squadre restano a 5. jersey()/kitIco: NBA solo per 3 e 4.
+
+## 1147 · Ducks gialla e nera (scie): gialla solo gessato, nera senza effetti (05/11/2026)
+- k=5 gialla: np (niente piume, resta il gessato). k=6 nera: np + npin (niente piume né gessato): solo fasce curve e impronte.
