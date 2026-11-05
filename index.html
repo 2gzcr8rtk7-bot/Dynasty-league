@@ -3109,7 +3109,8 @@ const LOGO_DUC0={a:LOGO.DUC,b:LOGO2.DUC};
 const DUC_LOGHI=[["0","Originale",LOGO_DUC0.b||LOGO_DUC0.a],["p","Papero",LOGO_DUC0.a],["1","Bandana Texas","loghi/duc-1.webp?v=3"],["2","Fulmine blu","loghi/duc-2.webp?v=3"],["3","Cowboy oro","loghi/duc-3.webp?v=3"],["4","Cowboy bianco","loghi/duc-4.webp?v=3"],["5","Sceriffo","loghi/duc-5.webp?v=3"],["6","Pazzo","loghi/duc-6.webp?v=3"],["7","Pazzo lingua","loghi/duc-7.webp?v=3"],["8","Pazzo furioso","loghi/duc-8.webp?v=3"]];
 let DUC_L="",DUC_C="",DUC_CURL=null,DUC_BAN="";try{DUC_BAN=localStorage.getItem("dl_ducb")||"";DUC_L=localStorage.getItem("dl_ducl")||"";DUC_C=localStorage.getItem("dl_ducc")||""}catch(e){}
 const ducBan=()=>DUC_BAN==="p"?LOGO_DUC0.a:null;
-function ducLogoApply(){const f=DUC_LOGHI.find(x=>x[0]===DUC_L),u=f?f[2]:null,g=DUC_LOGHI.find(x=>x[0]===DUC_C),v=g?g[2]:null;/* (890) il Papero si può usare ovunque: profili (liste, chip, classifiche) e campo */DUC_CURL=v;LOGO.DUC=u||LOGO_DUC0.a;LOGO2.DUC=v||LOGO_DUC0.b;let st=document.getElementById("ducl");if(!st){st=document.createElement("style");st.id="ducl";document.head.appendChild(st)}st.textContent=u?`.lg-DUC,.hlg .lg-DUC{background-image:url(${u})}`:""}
+function ducLogoApply(){const f=DUC_LOGHI.find(x=>x[0]===DUC_L),u=f?f[2]:null,g=DUC_LOGHI.find(x=>x[0]===DUC_C),v=g?g[2]:null;/* (890) il Papero si può usare ovunque: profili (liste, chip, classifiche) e campo */DUC_CURL=v;LOGO.DUC=u||LOGO_DUC0.b;LOGO2.DUC=v||LOGO_DUC0.b;/* (1203) logo ufficiale = scritta ovunque; il papero solo nella casella della Home (.hlg) e nel banner della squadra */let st=document.getElementById("ducl");if(!st){st=document.createElement("style");st.id="ducl";document.head.appendChild(st)}st.textContent=u?`.lg-DUC,.hlg .lg-DUC{background-image:url(${u})}`:`.lg-DUC{background-image:url(${LOGO_DUC0.b})}.hlg .lg-DUC,.hrl .lg-DUC,.htile .lg-DUC{background-image:url(${LOGO_DUC0.a})}`}
+const ducHead=()=>{const f=DUC_LOGHI.find(x=>x[0]===DUC_L);return f&&DUC_L!=="0"?f[2]:LOGO_DUC0.a};
 function ducLogoSet(k,w){if(k==="p"){DUC_BAN="p";try{localStorage.setItem("dl_ducb","p")}catch(e){}}else if(DUC_BAN){DUC_BAN="";try{localStorage.removeItem("dl_ducb")}catch(e){}}if(!k&&!DUC_BAN){}if(w==="c"){DUC_C=k||"";try{k?localStorage.setItem("dl_ducc",k):localStorage.removeItem("dl_ducc")}catch(e){}}else{DUC_L=k||"";try{k?localStorage.setItem("dl_ducl",k):localStorage.removeItem("dl_ducl")}catch(e){}}ducLogoApply()}
 ducLogoApply();
 /* Crediti disponibili di ogni franchigia */
@@ -4035,7 +4036,7 @@ function vRoster(){
   const chips=Object.keys(TEAMS).map(t=>`<button class="chip" data-t="${t}" aria-pressed="${t===curTeam}">${badge(t)}${TEAMS[t].nick}</button>`).join("");
   return `<div class="chips">${chips}</div>
   <div class="teamhead" style="${dlHeadSty(curTeam)}">
-   ${LOGO[curTeam]?`<img class="hlogo" data-t="${curTeam}" src="${(curTeam==="DUC"&&ducBan())||LOGO[curTeam]}" alt=""${dlHeadLogo(curTeam)}>`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div><div class="rec">${CREDITI[curTeam]??"–"}<small>CREDITI</small></div></div><button class="bshare hsh" data-rshare="${curTeam}" aria-label="Condividi roster"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+   ${LOGO[curTeam]?`<img class="hlogo" data-t="${curTeam}" src="${(curTeam==="DUC"&&ducHead())||LOGO[curTeam]}" alt=""${dlHeadLogo(curTeam)}>`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div><div class="rec">${CREDITI[curTeam]??"–"}<small>CREDITI</small></div></div><button class="bshare hsh" data-rshare="${curTeam}" aria-label="Condividi roster"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
   <div class="sumrow"><span>${r.length} giocatori</span></div>
   ${(()=>{const R={G:"Guardia",F:"Ala",C:"Centro"},L={G:"G",F:"A",C:"C"};
     const RN={G:"Guardie",F:"Ali",C:"Centri"};
@@ -7948,7 +7949,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
   const bench=(ROSTER[t]||[]).filter(p=>!qs.has(p[0])).sort((a,b)=>NTL?(nv(b[0])??-1e9)-(nv(a[0])??-1e9):(pdkMed(b[0])??-99)-(pdkMed(a[0])??-99));  /* panchina in ordine di efficienza media stagionale (stesso valore mostrato), si riordina a ogni aggiornamento */
   return `<button class="gback" id="cback">‹ Home</button>
   <div class="teamhead" style="${dlHeadSty(curTeam)}">
-   ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${(t==="DUC"&&ducBan())||LOGO[t]}" alt=""${dlHeadLogo(t)}>`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
+   ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${(t==="DUC"&&ducHead())||LOGO[t]}" alt=""${dlHeadLogo(t)}>`:""}<div><h3>${c.nick}</h3><p>${c.city}</p></div><div class="hstats"><div class="rec">${st.w}-${st.l}<small>RECORD</small></div></div></div>
   ${bacheca(t)}
   ${cassa(t)}
   ${NTL&&DT2?drTabellone(t,DT2,DK2,DP2,true):NTL?H(NTL?"Modalità notte":"Quintetto",`<em>${NTL?(()=>{const d=campoNotte();if(!d)return"nessuna partita";const dd=tvDt(d);return`${dd.getUTCDate()}/${dd.getUTCMonth()+1}`})():`Dreamers · ${DR_PH(DK,DP)}`}</em>${kitBtn(t)}${drmBtn(t)}`):drTabellone(t,DT,DK,DP)}
@@ -8175,7 +8176,7 @@ function vCassa(){
   }
   return `<button class="gback" id="cassaback">‹ ${c.nick}</button>
   <div class="teamhead" style="${dlHeadSty(t)}">
-   ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${LOGO[t]}" alt=""${dlHeadLogo(t)}>`:""}<div><h3>Cassa</h3><p>${c.name}</p></div><div class="hstats"><div class="rec">${cr}<small>CREDITI</small></div></div><button class="bshare hsh" data-cshare="${t}" aria-label="Condividi cassa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+   ${LOGO[t]?`<img class="hlogo" data-t="${t}" src="${(t==="DUC"&&ducHead())||LOGO[t]}" alt=""${dlHeadLogo(t)}>`:""}<div><h3>Cassa</h3><p>${c.name}</p></div><div class="hstats"><div class="rec">${cr}<small>CREDITI</small></div></div><button class="bshare hsh" data-cshare="${t}" aria-label="Condividi cassa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
   ${cassa(t).replace('class="cassa clink"','class="cassa"').replace(/<div class="cgo">.*?<\/div>/,"")}
   <div class="ctabs">${tabs.map(([k,l])=>`<button data-ctab="${k}" aria-pressed="${cassaTab===k}">${l}</button>`).join("")}</div>
   ${body}`;
@@ -10391,8 +10392,8 @@ const pqFixNow=pqFix;{let q=0;pqFix=function(){if(q)return;q=requestAnimationFra
 /* (1190) papero Ducks dentro le caselle: il più grande possibile senza toccare i bordi della casella (margine 3px). La figura occupa tutta l'altezza e l'87% della larghezza dell'immagine. */
 function ducFit(){try{document.querySelectorAll(".badge.lg-DUC,.htile[data-team=DUC] .hlg .badge").forEach(e=>{e.style.scale="";const r=e.getBoundingClientRect();if(r.width<26||r.height<26)return;
   let c=e.parentElement,k=0;while(c&&k<4){const cs=getComputedStyle(c),q=c.getBoundingClientRect();const box=(cs.backgroundColor!=="rgba(0, 0, 0, 0)"&&cs.backgroundColor!=="transparent")||cs.backgroundImage!=="none"||parseFloat(cs.borderTopWidth)>0||cs.overflow!=="visible";if(box&&q.width>=r.width&&q.height>=r.height)break;c=c.parentElement;k++}if(!c)return;
-  const q=c.getBoundingClientRect(),m=3,cx=r.x+r.width/2,cy=r.y+r.height/2,hw=r.width*.87/2,hh=r.height/2;
-  let f=Math.min((cx-q.left-m)/hw,(q.right-m-cx)/hw,(cy-q.top-m)/hh,(q.bottom-m-cy)/hh,1.3);/* non va addosso a scritte e loghi vicini */c.querySelectorAll("*").forEach(o=>{if(o===e||o.contains(e)||e.contains(o))return;if(!o.childElementCount&&!(o.textContent||"").trim()&&!/badge|logo|lg-|IMG|svg/i.test(o.className+" "+o.tagName))return;const z=o.getBoundingClientRect();if(z.width<2||z.height<2)return;
+  const sc=/f39bda081f60/.test(getComputedStyle(e).backgroundImage),q=c.getBoundingClientRect(),m=3,cx=r.x+r.width/2,cy=r.y+r.height/2,hw=r.width*(sc?1:.87)/2,hh=r.height*(sc?.8:1)/2;
+  let f=Math.min((cx-q.left-m)/hw,(q.right-m-cx)/hw,(cy-q.top-m)/hh,(q.bottom-m-cy)/hh,sc?1.12:1.3);/* non va addosso a scritte e loghi vicini */c.querySelectorAll("*").forEach(o=>{if(o===e||o.contains(e)||e.contains(o))return;if(!o.childElementCount&&!(o.textContent||"").trim()&&!/badge|logo|lg-|IMG|svg/i.test(o.className+" "+o.tagName))return;const z=o.getBoundingClientRect();if(z.width<2||z.height<2)return;
    const ox=z.right>cx-hw&&z.left<cx+hw,oy=z.bottom>cy-hh&&z.top<cy+hh;if(ox&&!oy){if(z.top>=cy)f=Math.min(f,(z.top-2-cy)/hh);else f=Math.min(f,(cy-z.bottom-2)/hh)}else if(oy&&!ox){if(z.left>=cx)f=Math.min(f,(z.left-2-cx)/hw);else f=Math.min(f,(cx-z.right-2)/hw)}});if(!(f>1.02))return;e.style.scale=f.toFixed(3)})}catch(e){}}
 {const R1=render;render=function(){const x=R1.apply(this,arguments);try{requestAnimationFrame(ducFit)}catch(e){}return x}}
 window.ducFit=ducFit;setTimeout(ducFit,800);
@@ -10913,7 +10914,7 @@ function sala(){if(!COL.d){cur="campo";return vCampo()}
   <button class="hoftile" data-hof="soft"><span class="hi">⚙️</span><span><b>Software</b><small>Cap · Multe</small></span><i>›</i></button>
  </div><p class="hoftt">🦆 Texas Ducks · uso interno</p></div>`}
 function pers(){if(!COL.d){cur="campo";return vCampo()}
- const card=(w,tit,nota)=>{const orig=w==="c"?(LOGO_DUC0.b||LOGO_DUC0.a):LOGO_DUC0.a;const c0=(w==="c"?DUC_C:DUC_L)||"",sel=DUC_LOGHI.find(x=>x[0]===c0);
+ const card=(w,tit,nota)=>{const orig=LOGO_DUC0.b;const c0=(w==="c"?DUC_C:DUC_L)||"",sel=DUC_LOGHI.find(x=>x[0]===c0);
   const opt=(k,nm,u)=>`<button class="hlo${(c0||"")===k?" on":""}" data-hlo="${k}" data-hw="${w}" aria-pressed="${(c0||"")===k}"><span style="background-image:url(${u})"></span><small>${E(nm)}</small></button>`;
   return`<section class="hofcard"><h4>${tit}</h4><p class="setnote">${nota}</p>
  <div class="hlprev"><span style="background-image:url(${sel?sel[2]:orig})"></span><div><b>${sel?E(sel[1]):"Logo ufficiale"}</b><small>In uso adesso</small></div></div>
