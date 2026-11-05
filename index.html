@@ -10361,7 +10361,7 @@ try{let r=JSON.parse(sessionStorage.getItem("dl_reload")||"null");sessionStorage
 (function(){let t=null;function run(){t=null;const R=document.documentElement;if(!R.classList.contains("dlt-parquet"))return;const m=document.querySelector("main")||document.body;
   const trans=e=>{const c=getComputedStyle(e).backgroundColor,x=c.match(/rgba?\(([^)]+)\)/);if(!x)return 0;const q=x[1].split(",").map(Number);return q.length>3?q[3]:1};
   const onWood=e=>{for(let a=e.parentElement;a&&a!==m&&a!==document.body;a=a.parentElement){if(a.classList.contains("pqw"))return false;const al=trans(a);if(al>=.9)return false}return true};
-  const WQ=[];m.querySelectorAll("*").forEach(e=>{if(e.classList.contains("pqw")||e.closest("svg,#tgo,.tgo,.nzmq,header,.bxs,main .bt"))return;/* (1197) la Sala scommesse ha i suoi colori: il Parquet non la tocca */const tg=e.tagName;if(tg==="SVG"||tg==="PATH"||tg==="IMG"||tg==="INPUT"||tg==="OPTION"||tg==="TR"||tg==="TD"||tg==="TH"||tg==="TABLE"||tg==="THEAD"||tg==="TBODY")return;
+  const WQ=[];m.querySelectorAll("*").forEach(e=>{if(e.classList.contains("pqw")||e.closest("svg,#tgo,.tgo,.nzmq,header,.bxs,main .bt,main .lab .lbstage,main .lab .lbtabs,main #lbpan"))return;/* (1197) la Sala scommesse ha i suoi colori: il Parquet non la tocca */const tg=e.tagName;if(tg==="SVG"||tg==="PATH"||tg==="IMG"||tg==="INPUT"||tg==="OPTION"||tg==="TR"||tg==="TD"||tg==="TH"||tg==="TABLE"||tg==="THEAD"||tg==="TBODY")return;
     const cs=getComputedStyle(e);if(cs.position==="fixed"||cs.display==="none"||cs.visibility==="hidden")return;
     const al=trans(e);if(al<=.02||al>=.97)return;if(e.getAttribute("aria-pressed")==="true"||e.getAttribute("aria-selected")==="true"||e.classList.contains("on"))return;
     const r=e.getBoundingClientRect();if(r.width<36||r.height<24)return;if(!onWood(e))return;WQ.push(e)});
@@ -10409,7 +10409,7 @@ function pqFix(){try{
   const WR=[];/* (851) scritture rimandate a dopo tutte le letture: niente ricalcoli della pagina a ogni elemento */
   document.querySelectorAll(app?"header *,main *,#subnav *,#subnav2 *":'.drroom[data-th="3"] *').forEach(el=>{
     if(el.tagName==="svg"||el.closest("svg"))return;
-    if(el.closest(".htile"))return;if(el.closest("main .bt"))return;if(el.closest(".pcd"))return;
+    if(el.closest(".htile"))return;if(el.closest("main .bt"))return;if(el.closest(".pcd"))return;if(el.closest("main .lab .lbstage,main .lab .lbtabs,main #lbpan"))return;/* (1259) il Laboratorio maglie ha i suoi colori */
     if(el.closest(".cltg,.cltn,.tvpnl .tvdate,.tvpnl .tvday"))return;
     if(window.__dxSkip&&window.__dxSkip(el))return;if(el.matches&&el.matches("div.teamhead,div.teamhead *,button.shbtn,div.gszn,table td.pnm,table td.pnm *,table thead th,table thead th *,.pdkx,.pdkx *,.pdkb,.pdkb *,.tgc,.tgc *,.tvbox tr.grp td,.tvbox tr.grp td *,.tvbox tr.tot td,.tvbox tr.tot td *,.mnb,.bxs span.gv *,.bxs span.gr2 *"))return;
     if(el.classList&&el.classList.contains("tstar")){const b=bgSel(el),v=lum(b)>.4;WR.push(()=>el.classList.toggle("stl",v));return}
@@ -10972,6 +10972,7 @@ function sala(){if(!COL.d){cur="campo";return vCampo()}
   <button class="hoftile" data-hof="eq"><span class="hi">⚖️</span><span><b>Gestione equilibrio trade</b><small>Simulatore · parametri · valori · registro</small></span><i>›</i></button>
   <button class="hoftile" data-hof="college"><span class="hi">🔭</span><span><b>Scouting</b><small>Ufficio Scouting · college, NBA, prospetti</small></span><i>›</i></button>
   <button class="hoftile" data-hof="dxcol"><span class="hi">🖌️</span><span><b>Editor colori</b><small>Parquet · Base · Notte · tocca e scegli</small></span><i>›</i></button>
+  <button class="hoftile" data-hof="lab"><span class="hi">👕</span><span><b>Laboratorio maglie</b><small>Basi · colori · elementi Texas · prova e prompt per Claude</small></span><i>›</i></button>
   <button class="hoftile" data-hof="dxlogo"><span class="hi">🔍</span><span><b>Editor loghi</b><small>Tocca un logo · livella di grandezza · prompt per Claude</small></span><i>›</i></button>
   <button class="hoftile" data-hof="pers"><span class="hi">🎨</span><span><b>Personalizzazioni</b><small>Loghi e look della tua app</small></span><i>›</i></button>
   <button class="hoftile" data-hof="soft"><span class="hi">⚙️</span><span><b>Software</b><small>Cap · Multe</small></span><i>›</i></button>
@@ -12126,7 +12127,7 @@ window.gzEdizione=gzEdizione;window.gzFatti=gzFatti;window.GZ=GZ;window.gzPulisc
 /* il codice del giornale si carica dopo il primo disegno della Home: ridisegno la Home una volta, così la scheda TG compare subito (senza dover passare da altre sezioni) */
 try{if(cur==="home")render()}catch(e){}
 document.addEventListener("click",e=>{
- if(!["sala","pers","soft","orari","eq","bet","giornale","notizie","hoop","dxlogo"].includes(cur))return;
+ if(!["sala","pers","soft","orari","eq","bet","giornale","notizie","hoop","dxlogo","lab"].includes(cur))return;
  if(e.target.closest("#hofback")){cur=cur==="sala"?"campo":(cur==="hoop"||cur==="bet")?"sgiochi":"sala";render();scrollTo(0,0);return}
  const h=e.target.closest("[data-hof]");if(h){cur=h.dataset.hof;render();scrollTo(0,0);return}
  const hn=e.target.closest("[data-hnl]");if(hn){const y=scrollY;hnSet(hn.dataset.hnl);render();scrollTo(0,y);return}
@@ -12937,6 +12938,12 @@ const sty=document.createElement("style");sty.textContent=".dxp .dxm{display:fle
 const H0=render;render=function(){const x=H0.apply(this,arguments);barUpd();return x};
 })();
 </script>
+<script>
+/* (1259) LABORATORIO MAGLIE: il codice (labcore.js + lab.js) si carica solo la prima volta che si apre la sezione */
+(function(){let ld=false;VIEWS.lab=function(){if(!ld){ld=true;const v="1259",go=(src,cb)=>{const s=document.createElement("script");s.src=src+"?v="+v;s.onload=cb;s.onerror=()=>{ld=false;alert("Laboratorio maglie non disponibile: controlla la connessione.")};document.head.appendChild(s)};
+ go("labcore.js",()=>go("lab.js",()=>{if(cur==="lab")render()}))}
+ return`<div class="hof"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button><p style="text-align:center;margin:60px 0;font:800 15px system-ui;color:#c4b5fd">Apro il laboratorio…</p></div>`}})();
+</script>
 <style>/* (1258) grandezze loghi Ducks scelte da Francesco con l'Editor loghi (05/11), ufficiali */body[data-v="efficienza"] .wedge > .lg-DUC{transform:scale(1.03);transform-origin:center}body[data-v="effsquadra"] .sqpkw > .lg-DUC{transform:scale(1.03);transform-origin:center}body[data-v="effsquadra"] .esqhead > .lg-DUC{transform:scale(1.07);transform-origin:center}body[data-v="fa"] .fagl > .lg-DUC{transform:scale(1.07);transform-origin:center}body[data-v="giochi"] .bklg > .lg-DUC{transform:scale(0.99);transform-origin:center}body[data-v="giochi"] .drlg.l > .lg-DUC{transform:scale(0.98);transform-origin:center}body[data-v="home"] .hrl > .lg-DUC{transform:scale(1.04);transform-origin:center}body[data-v="home"] .hmrl > .lg-DUC{transform:scale(1.15);transform-origin:center}body[data-v="home"] .hmdl > .lg-DUC{transform:scale(0.99);transform-origin:center}body[data-v="roster"] .chip > .lg-DUC{transform:scale(1.04);transform-origin:center}body[data-v="sgiochi"] .sgt > .lg-DUC{transform:scale(1.20);transform-origin:center}body[data-v="tv"] .drsbl > .lg-DUC{transform:scale(1.12);transform-origin:center}</style>
 <script>
 /* (1256) EDITOR LOGHI (area riservata Ducks › Editor loghi, Francesco 05/11): tocchi un logo in qualsiasi sezione e con la livella
@@ -13021,7 +13028,7 @@ let SEEN=new WeakSet();
 function crema(){try{const R=document.documentElement;if(!R.classList.contains("dlt-parquet")||R.classList.contains("notte"))return;
  if(!V.has(document.body.dataset.v))return;const m=document.querySelector("main");if(!m)return;const W=[];
  for(const e of m.querySelectorAll("*")){if(SEEN.has(e))continue;SEEN.add(e);const c=getComputedStyle(e),bc=c.backgroundColor;if(bc.length<16||bc.charCodeAt(4)!==50||bc.charCodeAt(5)!==53)continue;/* scarto veloce: solo fondi che iniziano con rgb(25x */if(c.backgroundImage!=="none")continue;
-  if(!/^rgba?\(25[0-5], 25[0-5], 25[0-5](, 1)?\)$/.test(bc))continue;if(e.dataset.pqc||e.closest(".pdkx,.pdkb,svg,.court,.htile"))continue;if(e.getAttribute("aria-pressed")==="true"||e.getAttribute("aria-selected")==="true"){SEEN.delete(e);continue}
+  if(!/^rgba?\(25[0-5], 25[0-5], 25[0-5](, 1)?\)$/.test(bc))continue;if(e.dataset.pqc||e.closest(".pdkx,.pdkb,svg,.court,.htile,.lbstage,.lbtabs,#lbpan"))continue;if(e.getAttribute("aria-pressed")==="true"||e.getAttribute("aria-selected")==="true"){SEEN.delete(e);continue}
   const r=e.getBoundingClientRect();if(r.width<24||r.height<16){SEEN.delete(e);continue}W.push(e)}
  for(const e of W){e.style.setProperty("background-color",C,"important");e.dataset.pqc="1"}}catch(_){}}
 window.pqCremaReset=()=>{SEEN=new WeakSet()};
