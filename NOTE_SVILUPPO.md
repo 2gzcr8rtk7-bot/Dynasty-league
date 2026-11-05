@@ -3381,3 +3381,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v693 (1279): ufficiali le 31 regole dell Editor loghi (grandezze e logo Papero al posto della scritta nelle caselle indicate); efficienza wedge 130->125.5% e infortuni wedge 115->110% per non uscire dalla casella. Editor azzerato (dl_dxlogo_m1279).
 
 - v694 (1280): banner squadra Ducks (ducHead: Campo, Cassa, pagina squadra) con il logo Papero; il banner del campo resta con la scritta.
+
+- v695 (1281): nuovo logo Ducks tra le opzioni (DUC_LOGHI 9 "Texas Ducks arrabbiato", loghi/duc-9.webp, sfondo grigio tolto): Personalizzazioni ed Editor loghi.
