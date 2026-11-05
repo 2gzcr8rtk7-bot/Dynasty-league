@@ -3361,3 +3361,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v683 (1270): Ducks: nel tasto maglia solo le 3 DUCKS bordino (305-307), default 305; ogni altra maglia Ducks salvata passa a 305. Le altre squadre non cambiano.
 
 - v684 (1271): aggiunte DUCKS punte 308-310 (logo con punte sopra e sotto ridisegnato a poligoni, bordino intorno -30%); Ducks ora ha 6 maglie 305-310.
+
+- v685 (1272): aggiunte Prima maglia 311-313 (primissima maglia Ducks dei primi giorni, commit 69a2ca7: denti sui fianchi uniti alla fascia liscia delle spalline, collo liscio, senza zigzag su collo/spalle; scritta = logo DUCKS arco vettoriale col bordino; gialla/nera/bianca). Ducks: 9 maglie 305-313.
