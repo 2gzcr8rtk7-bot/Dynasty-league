@@ -3261,3 +3261,7 @@ Rampa bianca/nera/gialla = B35, N40, G6 con montagne di G24 (rampa40.js), nel ta
 
 ## 1228 · Rampa gialla montagne bianche
 Rampa gialla (kit 302 e catalogo X, 123): montagne bianche. v642.
+
+
+## 1229 · Margine logo Ducks scritta
+.lg-DUC (scritta) background-size 84% fuori dalla colonna squadre Home: non tocca piu i bordi della casella. v643.
