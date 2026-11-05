@@ -3045,3 +3045,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1145 · Ducks: maglia bianca di default per tutti (05/11/2026)
 - Senza una scelta salvata per i Ducks, kitDi("DUC") = 2 (bianca), anche in modalità notte. Le altre maglie si scelgono col tastino nella pagina dei Ducks (vale solo su quel telefono).
+
+## 1146 · Ducks: nel catalogo anche gialla e nera «scie + gessato + piume» (05/11/2026)
+- Il tastino maglietta dei Ducks ha 7 maglie (kitTot): Casa (denti), Notte (denti), Bianca (scie), NBA 2026, Anni 90, 5 = Gialla (scie: fasce nere, impronte gialle) e 6 = Nera (scie: fasce gialle, impronte nere), stesso disegno della bianca. Le altre squadre restano a 5. jersey()/kitIco: NBA solo per 3 e 4.

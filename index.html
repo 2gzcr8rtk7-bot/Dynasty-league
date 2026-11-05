@@ -3404,7 +3404,8 @@ const NOTTE_ACC=t=>TEAMS[t].bg;
 /* DIVISE (27/10/2026): 3 maglie per squadra, stesso disegno, colori diversi. 0 = casa (quella di sempre), 1 = notte (base scura),
    2 = alternativa (base bianca con dettagli nel colore della squadra; se la casa è già bianca, base nel colore della squadra).
    Si sceglie dal tastino con la maglietta nella pagina squadra (solo per quella pagina, ricordata sul telefono). Senza scelta: casa di giorno, notte in modalità notte. */
-const KIT_N=["Casa","Notte","Alternativa","NBA 2026","Anni 90"];
+const KIT_N=["Casa","Notte","Alternativa","NBA 2026","Anni 90","Gialla (scie)","Nera (scie)"];/* (1146) 5 e 6 solo per i Ducks */
+const kitTot=t=>t==="DUC"?7:5;
 let KIT={};try{KIT=JSON.parse(localStorage.getItem("dl_kit")||"{}")||{}}catch(e){KIT={}}
 /* scelta GLOBALE della divisa (stessa per tutte le squadre e tutte le sezioni): null = automatica */
 let KITG=null;try{const v=localStorage.getItem("dl_kitg");if(v!==null&&v!=="")KITG=+v}catch(e){}
@@ -3418,6 +3419,8 @@ function kitC(t,k){const T=t==="PEA"?{...TEAMS[t],bg:"#2f6bff"}/* 30/10: sfondo 
     if(k===1)return{...T,bg:"#d9c49c",fg:"#0b0b0b",trim:"#0b0b0b",jstroke:"#f3ead8",outer:undefined,tline2:"#e2e5ea",flm:["#c9b184","#bfa676","#e6d4b0","#ccb58a","#e0cda6"]};
     if(k===2)return{...T,bg:"#1537c8",fg:"#ffffff",trim:"#0b0b0b",jstroke:"#0b0b0b",outer:undefined,tline2:"#e2e5ea",flm:["#0b229a","#081c86","#2a50ea","#0a1f90","#3157f0"]};
     return{...T,bg:"#f6f7f9",fg:"#0b0b0b",trim:"#0b0b0b",jstroke:"#ffffff",outer:undefined,tline2:"#e2e5ea",flm:["#e3e7ee","#d7dce6","#ffffff","#dde2ea","#eceff4"]}}
+  if(t==="DUC"&&k===5)return{...T,bg:"#facc15",fg:"#111111",trim:"#111111"};/* (1146) gialla «scie + gessato + piume», come la bianca */
+  if(t==="DUC"&&k===6)return{...T,bg:"#141414",fg:"#facc15",trim:"#facc15"};/* (1146) nera «scie + gessato + piume» */
   if(t==="PEA"){/* 30/10/2026 Peacocks: 1 blu con dettagli verdi, 2 rosa (colore sfondo) con dettagli verdi, 3 "piuma di pavone" */
     if(k===1)return{...T,bg:"#f70990",fg:"#ffffff",trim:"#012dd5",jstroke:"#012dd5",outer:"#012dd5",feather:1,fline:"#16b35a"};
     if(k===2)return{...T,bg:"#0b4b57",fg:"#f70990",trim:"#f70990",jstroke:"#ffffff",outer:"#0a1f3d",feather:1,ftint:1,fline:"#2f6bff"};
@@ -3535,7 +3538,7 @@ function nbaDeco(c){const sd=`<path d="M0 44 L14 48 L17 146 L0 146Z M120 44 L106
    case"por":return`<path d="M0 66 L80 146 L62 146 L0 84Z" fill="#e03a3e"/><path d="M0 88 L58 146 L48 146 L0 98Z" fill="#ffffff"/><path d="M0 104 L42 146 L30 146 L0 116Z" fill="#e03a3e"/>`;
    default:return sd}}
 /* icona del tastino: piccola maglietta con i colori della divisa scelta */
-function kitIco(t){const c=kitC(t,kitDi(t)),n3=kitDi(t)>=3,n9=kitDi(t)===4;return`<svg viewBox="0 0 24 24" aria-hidden="true">${n9?`<defs><pattern id="kit90" width="2.4" height="24" patternUnits="userSpaceOnUse"><rect width="2.4" height="24" fill="#141414"/><rect width=".6" height="24" fill="#ce1126"/></pattern></defs>`:n3?`<defs><linearGradient id="kitnba" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c8102e"/><stop offset=".33" stop-color="#c8102e"/><stop offset=".33" stop-color="#fdb927"/><stop offset=".66" stop-color="#fdb927"/><stop offset=".66" stop-color="#1d428a"/><stop offset="1" stop-color="#1d428a"/></linearGradient></defs>`:""}<path d="M6.6 2.2h3.2c.2 2.6 4.2 2.6 4.4 0h3.2c-.1 3.4 1 5.4 3 6.4v12.6c-5.6 1.1-11.2 1.1-16.8 0V8.6c2-1 3.1-3 3-6.4z" fill="${n9?"url(#kit90)":n3?"url(#kitnba)":c.bg}" stroke="${c.trim||c.fg}" stroke-width="1.6" stroke-linejoin="round"/><text x="12" y="16.6" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-style="italic" font-size="8.5" fill="${n3?"#ffffff":c.fg}"${n3?' stroke="#111" stroke-width="1.4" paint-order="stroke"':""}>${n9?"90":"23"}</text></svg>`}
+function kitIco(t){const c=kitC(t,kitDi(t)),n3=kitDi(t)===3||kitDi(t)===4,n9=kitDi(t)===4;return`<svg viewBox="0 0 24 24" aria-hidden="true">${n9?`<defs><pattern id="kit90" width="2.4" height="24" patternUnits="userSpaceOnUse"><rect width="2.4" height="24" fill="#141414"/><rect width=".6" height="24" fill="#ce1126"/></pattern></defs>`:n3?`<defs><linearGradient id="kitnba" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c8102e"/><stop offset=".33" stop-color="#c8102e"/><stop offset=".33" stop-color="#fdb927"/><stop offset=".66" stop-color="#fdb927"/><stop offset=".66" stop-color="#1d428a"/><stop offset="1" stop-color="#1d428a"/></linearGradient></defs>`:""}<path d="M6.6 2.2h3.2c.2 2.6 4.2 2.6 4.4 0h3.2c-.1 3.4 1 5.4 3 6.4v12.6c-5.6 1.1-11.2 1.1-16.8 0V8.6c2-1 3.1-3 3-6.4z" fill="${n9?"url(#kit90)":n3?"url(#kitnba)":c.bg}" stroke="${c.trim||c.fg}" stroke-width="1.6" stroke-linejoin="round"/><text x="12" y="16.6" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-style="italic" font-size="8.5" fill="${n3?"#ffffff":c.fg}"${n3?' stroke="#111" stroke-width="1.4" paint-order="stroke"':""}>${n9?"90":"23"}</text></svg>`}
 const NBA_NOME={ATL:"HAWKS",BOS:"CELTICS",BKN:"NETS",CHA:"HORNETS",CHI:"BULLS",CLE:"CAVALIERS",DAL:"MAVERICKS",DEN:"NUGGETS",DET:"PISTONS",GSW:"WARRIORS",HOU:"ROCKETS",IND:"PACERS",LAC:"CLIPPERS",LAL:"LAKERS",MEM:"GRIZZLIES",MIA:"HEAT",MIL:"BUCKS",MIN:"WOLVES",NOP:"PELICANS",NYK:"KNICKS",OKC:"THUNDER",ORL:"MAGIC",PHI:"76ERS",PHX:"SUNS",POR:"BLAZERS",SAC:"KINGS",SAS:"SPURS",TOR:"RAPTORS",UTA:"JAZZ",WAS:"WIZARDS"};
 /* ===== AVATAR GIOCATORI (27/10/2026): personaggi in stile cartone al posto delle maglie (impostazione DLS.pj = "avatar").
    NON sono ritratti: tratti scelti a mano per ogni giocatore (pelle 1-6, capelli, barba, fascia) e facilmente correggibili in AVD.
@@ -3606,8 +3609,8 @@ function iconeSvg(kind,n,k){
 <g fill="#fff" stroke="#3b200b" stroke-width="1.6"><ellipse cx="48" cy="66" rx="7" ry="8"/><ellipse cx="72" cy="66" rx="7" ry="8"/></g><g fill="#1b1b1b"><circle cx="49" cy="67" r="3.4"/><circle cx="71" cy="67" r="3.4"/></g><path d="M50 80 Q60 88 70 80" stroke="#3b200b" stroke-width="3" fill="none" stroke-linecap="round"/>
 <text x="60" y="124" text-anchor="middle" font-family="CourtBlock,Impact,Arial Narrow,sans-serif" font-size="${fs-4}" fill="#fff" stroke="#3b200b" stroke-width="2.4" paint-order="stroke">${n}</text></svg>`}
 function jersey(t,num,name=""){
-  const kd=kitDi(t),rw=kd>=3?(ROSTER[t]||[]).find(x=>x[0]===name):null,nk=rw?(kd===4?(NBA_KIT_90[rw[3]]||NBA_BIANCA):NBA_KIT[rw[3]]):null;
-  const c=nk?{...TEAMS[t],stroke:undefined,outer:undefined,jsw:undefined,...nk}:kitC(t,kd>=3?0:kd),n=num==null?"?":String(num),k="j"+(JID++);
+  const kd=kitDi(t),rw=(kd===3||kd===4)?(ROSTER[t]||[]).find(x=>x[0]===name):null,nk=rw?(kd===4?(NBA_KIT_90[rw[3]]||NBA_BIANCA):NBA_KIT[rw[3]]):null;
+  const c=nk?{...TEAMS[t],stroke:undefined,outer:undefined,jsw:undefined,...nk}:kitC(t,(kd===3||kd===4)?0:kd),n=num==null?"?":String(num),k="j"+(JID++);
   const PM=(DLS.pjp&&DLS.pjp[name])||DLS.pj;/* eccezione per singolo giocatore (DLS.pjp) oppure scelta generale */
   if(PM==="avatar"&&name)return avatarSvg(c,n,name,k);
   if(name&&(PM==="bin"||PM==="wc"||PM==="poop"))return iconeSvg(PM,n,k);
@@ -9391,7 +9394,7 @@ async function tvBoxes(d){if(typeof TV==="undefined"||!d||!TV.days[d])return fal
       TV.box[key]={a:tvLiveSide(B.awayTeam,aw),h:tvLiveSide(B.homeTeam,!aw),live:1,fin:1};G[7]=key;ch=true}catch(e){}}
   return ch}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&cur==="tv")tvLiveTick()});
-document.getElementById("main").addEventListener("click",e=>{if(cur!=="campo")return;const kb=e.target.closest("#kitbtn");if(kb){e.preventDefault();const t=kb.dataset.kitt;KIT[t]=(kitDi(t)+1)%5;kitSalva();const y=scrollY;render();scrollTo(0,y);return}});
+document.getElementById("main").addEventListener("click",e=>{if(cur!=="campo")return;const kb=e.target.closest("#kitbtn");if(kb){e.preventDefault();const t=kb.dataset.kitt;KIT[t]=(kitDi(t)+1)%kitTot(t);kitSalva();const y=scrollY;render();scrollTo(0,y);return}});
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="campo")return;const go=e.target.closest(".lbm[data-drgo]");if(!go)return;const[k,x,y]=go.dataset.drgo.split("|");DR.k=+k;DR.tab="turno";DR.open=[x,y];DR.rules=false;GAME="dream";cur="giochi";render();window.scrollTo(0,0)});
 document.getElementById("main").addEventListener("click",e=>{if(cur==="campo"&&e.target.closest("#cntbtn")){e.preventDefault();CNT=!CNT;cntSave();SN.hist=false;const y=scrollY;render();scrollTo(0,y)}});
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="tv")return;const T=TVD(),ks=Object.keys(T.days).sort();
