@@ -3303,3 +3303,7 @@ Swipe sul live: riquadrino nero con bordo rosso e tempo (Q3 6:32, Intervallo, Fi
 
 ## 1238 · Banner Ducks con logo del campo
 ducHead() ora restituisce la scritta (LOGO_DUC0.b); nel banner 96x76, 12px sopra e 16 sotto dentro il banner. Il papero resta solo nella colonna squadre della Home. v652.
+
+
+## 1239 · Logo Ducks +13%
+.hmdl (banner partite Home), .tvt/.drtvl (Dynasty TV): .lg-DUC scale 1.13. v653.
