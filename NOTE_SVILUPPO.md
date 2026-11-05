@@ -3133,3 +3133,7 @@ La regola Parquet .cname{fill:#fff!important} vinceva sul nero: aggiunta classe 
 
 ## 1172 · Ducks: scritta campo nero pieno
 Per DUC: niente velo gloss sopra il banner del campo, fill-opacity 1, fill e bordo #000.
+
+
+## 1173 · Modalita notte solo colori
+La luna cambia solo i colori (campo compreso). Il campo mostra sempre la formazione ufficiale Dreamers (NTL=false in vCampo al posto della vecchia formazione notte). Linee rosse lampeggianti (clive) quando c e una partita live, sia di giorno sia di notte. Notte automatica tolta: autoNotte disattivata e voce rimossa dalle Impostazioni.
