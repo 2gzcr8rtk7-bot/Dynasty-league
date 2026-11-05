@@ -3141,3 +3141,7 @@ La luna cambia solo i colori (campo compreso). Il campo mostra sempre la formazi
 
 ## 1174 · Swipe sul giocatore, via lo swipe tra squadre
 Tolto lo swipe orizzontale che cambiava squadra nel Campo. Sul cartellino di ogni giocatore (campo, 6o uomo, panchina) swipe sx/dx: pagine = partite giocate (PDK puro) · cartellino del turno preimpostato (miglior PDK con moltiplicatori) · live (PDK puro) · prossime partite con previsione (drPrevG, stessa formula di vPrevisione, senza moltiplicatori). Il pallino della partita mostrata ha un anello bianco (cur). Pagina scelta ricordata in DRPI durante la sessione.
+
+
+## 1175 · Previsione nel cartellino in stile previsione
+Pagina futura: cartellino grigio In attesa con avversario + riquadrino blu PREVISIONE (stile .hmv.pv della Home) con barretta del livello.
