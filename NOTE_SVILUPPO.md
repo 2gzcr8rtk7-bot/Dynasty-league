@@ -3201,3 +3201,7 @@ Tolte le maglie Ducks 5 Nera bordi bianchi e 6 Bianca zampe bianche (kitTot 5, m
 
 ## 1200-1201 · Premi nella Sala scommesse
 Tasto Premi al posto di Incassa (vInc resta nel codice ma non e raggiungibile). Catalogo maglie: 20 City Edition per squadra (paesaggi del territorio, Texas in giallo/nero/bianco con deserto) + 3 Dream City, 4000 gettoni l una. Ritirate in localStorage dl_premi; codici kit 100+lettera (City Edition) e 200+i (Dream City, tutte le squadre); compaiono nel tasto maglia dopo le 5 normali (kitLista). window.PREMI genera gli SVG. Campi a tema: solo rendering, da scegliere. v624.
+
+
+## 1202-1203 · Campi a tema in Premi + logo Ducks scritta
+Premi > Campi: 8 campi versione B (paesaggio dipinto nel parquet, bordo colore squadra, linee bianche), 4000 gettoni, dl_campo per montarli. Logo Ducks: scritta (LOGO_DUC0.b) ovunque, papero solo nella colonna squadre della Home (.hrl/.hlg/.htile) e nei banner squadra (ducHead). Le scelte Originale/Papero dei profili in Personalizzazioni ora danno la scritta. Scritta a misura naturale (niente ingrandimento ducFit), come gli altri loghi. Stadio 3D: logo senza deformazione. v625.
