@@ -3197,3 +3197,7 @@ Nuova voce Giochi nella barra (dopo Sala Trofei, view sgiochi): Poke Dream e Sal
 
 ## 1198-1199 · Maglie Ducks ridotte a 5, parquet 3D Ducks
 Tolte le maglie Ducks 5 Nera bordi bianchi e 6 Bianca zampe bianche (kitTot 5, migrazione dl_kit_m1198 -> gialla). Arena 3D Ducks: niente cerchio colorato ne cerchio bianco a centrocampo, logo +20% senza ombra e centrato sul baricentro del papero, scritte del parquet nere. v623.
+
+
+## 1200-1201 · Premi nella Sala scommesse
+Tasto Premi al posto di Incassa (vInc resta nel codice ma non e raggiungibile). Catalogo maglie: 20 City Edition per squadra (paesaggi del territorio, Texas in giallo/nero/bianco con deserto) + 3 Dream City, 4000 gettoni l una. Ritirate in localStorage dl_premi; codici kit 100+lettera (City Edition) e 200+i (Dream City, tutte le squadre); compaiono nel tasto maglia dopo le 5 normali (kitLista). window.PREMI genera gli SVG. Campi a tema: solo rendering, da scegliere. v624.
