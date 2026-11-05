@@ -3285,3 +3285,7 @@ Rampa tolte dal tasto maglia (DUC_ROCK tutto null; restano nel catalogo V,W,X). 
 
 ## 1234 · Stella dello sceriffo stile 29
 Window.DUC_SH: le 3 Stella dello sceriffo (kit/catalogo 115-117) con bordo collo/spalline spesso a tre righe (sh40.js stile 29). PREMI.svg le usa per i codici 115-117. v648.
+
+
+## 1235 · Catalogo Ducks ripulito
+Nascoste dal catalogo G,H,I,J (106-109) e le Stella dello sceriffo (115-117, ora ufficiali). Tasto maglia Ducks: Stella gialla, nera, bianca, poi NBA 2026 e Anni 90. Migrazione dl_kit_m1235: tutti ripartono dalla Stella gialla. v649.
