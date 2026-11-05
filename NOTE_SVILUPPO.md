@@ -3070,3 +3070,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1153 · Ducks: maglia gialla di default (05/11/2026)
 - Senza scelta salvata kitDi("DUC") = 0 (gialla, spalla spessa + zig zag + impronte + gessato), anche in modalità notte.
+
+## 1154 · Condivisione: maglie nitide (05/11/2026)
+- Persisteva l alone su nome e numero: la maglia SVG senza width/height veniva rasterizzata a 120x146 e poi ingrandita sul canvas (sfocata). jerseyShare ora mette width 720 height 876.
