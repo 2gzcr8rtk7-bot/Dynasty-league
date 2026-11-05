@@ -3245,3 +3245,7 @@ Tolte dal tasto maglia le City Edition A, C, H, M, N, O (codici 100,102,107,112,
 
 ## 1221 · Tasto maglia Ducks ripulito
 Tolte dal tasto maglia Casa/Notte/Alternativa e le City Edition A,B,C,D,E,G,H,I,J,K,L,M,N,O. Casa/Notte/Alternativa zigzag nel catalogo (id DUC:K0-2, kit 400-402). Default Ducks: Rampa gialla (302); chi aveva 0-2 passa a 302. v636.
+
+
+## 1223-1224 · Rampa nuove
+Rampa bianca/nera/gialla sostituite da B13, N20, G23 (rampa40.js): stesso disegno, contrasto nuovo, fiamma corta disegnata sopra il fumo. v638.
