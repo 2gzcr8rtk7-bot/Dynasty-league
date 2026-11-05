@@ -13290,8 +13290,9 @@ html.dlt-parquet:not(.notte) body .tvbox tbody tr:not(.grp):not(.tot) td:not(#a)
   /* (852) CAMBIO ISTANTANEO: i colori dello stile cambiano subito, nello stesso momento in cui parte il pallino (si cambiano solo le classi e le variabili: pochi ms);
      il ridisegno completo della pagina avviene dopo, a dissolvenza finita. Con il preset «luna» resta il vecchio percorso. */
   if(!moonAct()&&typeof window.styleSync==="function"){const on=h.getAttribute("aria-checked")==="true";h.classList.toggle("flip",!on);h.classList.add("moving");
-   const flip=()=>{CNT=!CNT;try{cntSave()}catch(_){}try{window.styleSync(true,true)}catch(_){}h.classList.remove("moving");h.classList.remove("flip");sync()};
-   const full=()=>setTimeout(()=>{try{SN.hist=false}catch(_){}const y=scrollY;render();scrollTo(0,y)},30);
+   /* (1178) se in pagina c'è il campo, si ridisegna subito dentro lo stesso cambio: campo e colori dell'app cambiano insieme */let done=false;
+   const flip=()=>{CNT=!CNT;try{cntSave()}catch(_){}try{window.styleSync(true,true)}catch(_){}if(document.querySelector("main .court")){try{SN.hist=false}catch(_){}const y=scrollY;render();scrollTo(0,y);done=true}h.classList.remove("moving");h.classList.remove("flip");sync()};
+   const full=()=>{if(done)return;setTimeout(()=>{try{SN.hist=false}catch(_){}const y=scrollY;render();scrollTo(0,y)},30)};
    try{if(document.startViewTransition&&!(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)){const vt=document.startViewTransition(flip);vt.finished.then(full,full);return}}catch(_){}
    flip();full();return}
   const k=h.querySelector(".hntk"),on=h.getAttribute("aria-checked")==="true";h.classList.toggle("flip",!on);h.classList.add("moving");
