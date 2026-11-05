@@ -3060,3 +3060,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1150 · Ducks: restano 5 maglie (05/11/2026)
 - Scelta di Francesco: 0 = gialla, 1 = nera, 2 = bianca (default), tutte «zig zag originale su fianchi e spalle + impronte + gessato» (mix 2, senza denti al collo né piume); 3 = NBA 2026, 4 = Anni 90. Tolte casa/notte con i denti, scie, spalla spessa zig zag. Chi aveva salvato una maglia tolta passa alla stessa del nuovo catalogo (10->2, 11->0, 12->1) o alla bianca.
+
+## 1151 · Immagini condivise: maglie senza ombre su nome e numero (05/11/2026)
+- jerseyShare(): per le immagini da condividere (canvas) toglie l ombra sfocata del numero e la sfumatura sopra, e divide ogni scritta in due livelli (prima contorno, poi colore) perché su iPhone paint-order nelle immagini SVG non vale e il contorno copriva il colore. Usata in tutte le condivisioni (encodeURIComponent(jersey( -> jerseyShare().
