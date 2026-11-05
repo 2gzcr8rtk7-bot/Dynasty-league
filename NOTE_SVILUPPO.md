@@ -3057,3 +3057,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1149 · Ducks: 6 maglie in più a stile misto, in prova (05/11/2026)
 - Francesco le vuole tutte nel catalogo, poi deciderà quali tenere. Tastino Ducks a 13 maglie (kitTot). 7-9 (bianca, gialla, nera) = mix 1: fascia con spalla spessa fino in cima e bordo interno a zig zag; 10-12 = mix 2: zig zag originale su fianchi e spalle (DECO.DUC0 senza i denti al collo). Tutte con impronte, gessato, niente piume. Colori presi da 2, 5 e 6.
+
+## 1150 · Ducks: restano 5 maglie (05/11/2026)
+- Scelta di Francesco: 0 = gialla, 1 = nera, 2 = bianca (default), tutte «zig zag originale su fianchi e spalle + impronte + gessato» (mix 2, senza denti al collo né piume); 3 = NBA 2026, 4 = Anni 90. Tolte casa/notte con i denti, scie, spalla spessa zig zag. Chi aveva salvato una maglia tolta passa alla stessa del nuovo catalogo (10->2, 11->0, 12->1) o alla bianca.

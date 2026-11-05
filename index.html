@@ -3409,8 +3409,8 @@ const NOTTE_ACC=t=>TEAMS[t].bg;
 /* DIVISE (27/10/2026): 3 maglie per squadra, stesso disegno, colori diversi. 0 = casa (quella di sempre), 1 = notte (base scura),
    2 = alternativa (base bianca con dettagli nel colore della squadra; se la casa è già bianca, base nel colore della squadra).
    Si sceglie dal tastino con la maglietta nella pagina squadra (solo per quella pagina, ricordata sul telefono). Senza scelta: casa di giorno, notte in modalità notte. */
-const KIT_N=["Casa","Notte","Alternativa","NBA 2026","Anni 90","Gialla (scie)","Nera (scie)","Bianca · spalla spessa zig zag","Gialla · spalla spessa zig zag","Nera · spalla spessa zig zag","Bianca · zig zag + impronte","Gialla · zig zag + impronte","Nera · zig zag + impronte"];/* (1146) dal 5 in poi solo per i Ducks; (1149) 7-12 stili misti */
-const kitTot=t=>t==="DUC"?13:5;
+const KIT_N=["Casa","Notte","Alternativa","NBA 2026","Anni 90"];
+const kitTot=t=>5;/* (1150) Ducks: tenute solo 5 maglie (gialla, nera, bianca zig zag + impronte, NBA 2026, Anni 90) */
 let KIT={};try{KIT=JSON.parse(localStorage.getItem("dl_kit")||"{}")||{}}catch(e){KIT={}}
 /* scelta GLOBALE della divisa (stessa per tutte le squadre e tutte le sezioni): null = automatica */
 let KITG=null;try{const v=localStorage.getItem("dl_kitg");if(v!==null&&v!=="")KITG=+v}catch(e){}
@@ -3418,15 +3418,13 @@ let KITG=null;try{const v=localStorage.getItem("dl_kitg");if(v!==null&&v!=="")KI
 try{if(KITG!=null&&!localStorage.getItem("dl_kit_m1144")){const t0=localStorage.getItem("team")||"";if(t0)KIT[t0]=KITG;localStorage.setItem("dl_kit",JSON.stringify(KIT));localStorage.removeItem("dl_kitg");localStorage.setItem("dl_kit_m1144","1")}}catch(e){}KITG=null;
 let KITO=null;/* scelta temporanea (anteprime): se non è null vale per tutte */
 function kitSalva(){try{localStorage.setItem("dl_kit",JSON.stringify(KIT))}catch(e){}}
-function kitDi(t){const nt=typeof CNT!=="undefined"&&CNT&&cur==="campo";if(KITO!=null)return KITO;if(KIT[t]!=null)return KIT[t];if(t==="DUC")return 2/* (1145) Ducks: di default la maglia bianca, per tutti */;return nt?1:0}/* la scelta della maglia vale in TUTTE le sezioni (giocatore, scontri, trade...) */
+function kitDi(t){const nt=typeof CNT!=="undefined"&&CNT&&cur==="campo";if(KITO!=null)return KITO;if(t==="DUC"&&KIT.DUC!=null&&KIT.DUC>4){KIT.DUC=({10:2,11:0,12:1})[KIT.DUC]??2;kitSalva()}/* (1150) vecchie maglie tolte */if(KIT[t]!=null)return KIT[t];if(t==="DUC")return 2/* (1145) Ducks: di default la maglia bianca, per tutti */;return nt?1:0}/* la scelta della maglia vale in TUTTE le sezioni (giocatore, scontri, trade...) */
 function kitC(t,k){const T=t==="PEA"?{...TEAMS[t],bg:"#2f6bff"}/* 30/10: sfondo Peacocks rosa, maglie invariate */:TEAMS[t];
   if(t==="DOL"){/* (02/11) DOL_FLM: nuove maglie Dolphins a fulmini. 0 Casa = bianca, 1 Notte = sabbia, 2 Alternativa = blu */
     if(k===1)return{...T,bg:"#d9c49c",fg:"#0b0b0b",trim:"#0b0b0b",jstroke:"#f3ead8",outer:undefined,tline2:"#e2e5ea",flm:["#c9b184","#bfa676","#e6d4b0","#ccb58a","#e0cda6"]};
     if(k===2)return{...T,bg:"#1537c8",fg:"#ffffff",trim:"#0b0b0b",jstroke:"#0b0b0b",outer:undefined,tline2:"#e2e5ea",flm:["#0b229a","#081c86","#2a50ea","#0a1f90","#3157f0"]};
     return{...T,bg:"#f6f7f9",fg:"#0b0b0b",trim:"#0b0b0b",jstroke:"#ffffff",outer:undefined,tline2:"#e2e5ea",flm:["#e3e7ee","#d7dce6","#ffffff","#dde2ea","#eceff4"]}}
-  if(t==="DUC"&&k>=7&&k<=12){const b=kitC(t,[2,5,6][(k-7)%3]);return{...b,mix:k<10?1:2}}/* (1149) stili misti: 7-9 spalla spessa con bordo a zig zag, 10-12 zig zag originale (fianchi e spalle); tutti con impronte e gessato, senza denti al collo né piume */
-  if(t==="DUC"&&k===5)return{...T,bg:"#facc15",fg:"#111111",trim:"#111111",np:1};/* (1147) solo gessato *//* (1146) gialla «scie + gessato + piume», come la bianca */
-  if(t==="DUC"&&k===6)return{...T,bg:"#141414",fg:"#facc15",trim:"#facc15",np:1};/* (1148) nera: gessato, niente piume *//* (1146) nera «scie + gessato + piume» */
+  if(t==="DUC"&&k<=2){const B=[{bg:"#facc15",fg:"#111111",trim:"#111111"},{bg:"#141414",fg:"#facc15",trim:"#facc15"},{bg:"#f7f7f5",fg:"#111111",trim:"#111111",jstroke:"#facc15",jsw:2.4,pin:"#facc15",fp:"#facc15"}][k];return{...T,...B,np:1,mix:2}}/* (1150) Ducks: 0 gialla, 1 nera, 2 bianca, tutte zig zag originale + impronte + gessato */
   if(t==="PEA"){/* 30/10/2026 Peacocks: 1 blu con dettagli verdi, 2 rosa (colore sfondo) con dettagli verdi, 3 "piuma di pavone" */
     if(k===1)return{...T,bg:"#f70990",fg:"#ffffff",trim:"#012dd5",jstroke:"#012dd5",outer:"#012dd5",feather:1,fline:"#16b35a"};
     if(k===2)return{...T,bg:"#0b4b57",fg:"#f70990",trim:"#f70990",jstroke:"#ffffff",outer:"#0a1f3d",feather:1,ftint:1,fline:"#2f6bff"};
