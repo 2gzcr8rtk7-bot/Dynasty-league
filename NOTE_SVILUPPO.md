@@ -3084,3 +3084,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1157 · Ducks impronte simmetriche: 5 per lato (05/11/2026)
 - Maglie 5-7 (sym): 5 impronte per lato (y 118, 103, 88, 73, 58; x 9.3; scala .5), stessa inclinazione 22 gradi, dentro la fascia, staccate tra loro.
+
+## 1158 · Ducks: maglie con 4 impronte grandi tagliate dal bordo (05/11/2026)
+- In aggiunta: 8-10 = gialla, nera, bianca con 4 impronte grandi (scala .95) dritte, sul bordo esterno, tagliate dalla maglia (fpL = lista di posizioni). Tastino Ducks a 11 maglie. La versione 5 impronte simmetriche resta com era.
