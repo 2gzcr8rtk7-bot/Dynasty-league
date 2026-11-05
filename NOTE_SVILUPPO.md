@@ -3367,3 +3367,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v686 (1272): aggiunte Prima maglia 311-313 (primissima maglia Ducks, commit 69a2ca7: denti sui fianchi uniti alla fascia liscia delle spalline, collo liscio; scritta = logo DUCKS arco vettoriale col bordino; gialla/nera/bianca). Ducks: 9 maglie 305-313.
 
 - v687 (1273): Ducks: tolte Prima maglia 311-313, DUCKS bordino gialla 305, DUCKS punte nera 309. Restano 308 (default), 306, 307, 310.
+
+- v688 (1274): correzione: rimessa DUCKS bordino gialla 305 (default), tolta DUCKS punte gialla 308. Ducks: 305, 306, 307, 310.
