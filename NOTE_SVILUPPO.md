@@ -3177,3 +3177,7 @@ touch-action:pan-y su tutto il giocatore (.cpl/.dpc con .pcs), non solo sul cart
 
 ## 1190 · Papero Ducks adattato alle caselle
 ducFit() dopo ogni render: scala (proprieta CSS scale) il papero fino a 3px dal bordo della casella che lo contiene, senza toccare scritte/loghi vicini, max 1,3. Esclusi badge sotto 26px. v618.
+
+
+## 1191 · Papero Ducks senza ombre
+Tolte drop-shadow/box-shadow dietro al papero ovunque (badge, tile Home, banner squadra anche di notte). v619.
