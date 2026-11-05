@@ -3102,3 +3102,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1163 · Ducks: fascia a zampe in aggiunta, non al posto (05/11/2026)
 - Francesco voleva la 1162 in aggiunta. 0-2 tornano con lo zig zag dritto (default gialla), 3-4 NBA, 5-7 = gialla, nera, bianca con la fascia che segue le zampe (c.pz = DUC_PZ). Tastino Ducks a 8.
+
+## 1164 · Ducks: 5 maglie zig zag L in aggiunta (05/11/2026)
+- Scelte da Francesco tra i rendering: 8 gialla, 9 nera, 10 bianca con lo zig zag L (una punta per zampa, margine largo: DUC_ZL = M0 0 H29.5 L29 14 C28.8 28 27.5 38 20.8 47.0 L12.9 69.2 L21.9 73.6 L13.6 96.9 L22.6 101.6 L14.6 126.3 L20 140 L0 140 Z); 11 nera con colletto, spalline e fascia bianchi e zampe nere; 12 gialla con zampe bianche. Tutte in aggiunta. Tastino Ducks a 13. Colori del gessato ancora da decidere (rendering BB e CC).
