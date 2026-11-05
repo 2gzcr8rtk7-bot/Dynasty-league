@@ -3295,3 +3295,7 @@ Nascoste dal catalogo G,H,I,J (106-109) e le Stella dello sceriffo (115-117, ora
 html.in-dr (cur giochi + GAME dream): .lg-DUC e img scritta scale 1.1. v650.
 
 (v650: la prima build di GitHub Pages era fallita per un errore temporaneo di GitHub; ripubblicata.)
+
+
+## 1237 · Tempo partita sul cartellino live
+Swipe sul live: riquadrino nero con bordo rosso e tempo (Q3 6:32, Intervallo, Fine Q2, OT) a sinistra del PDK, da TVL.st[key] (lvClock). Partita finita: formato classico. v651.
