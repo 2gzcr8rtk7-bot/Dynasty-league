@@ -3307,3 +3307,7 @@ ducHead() ora restituisce la scritta (LOGO_DUC0.b); nel banner 96x76, 12px sopra
 
 ## 1239 · Logo Ducks +13%
 .hmdl (banner partite Home), .tvt/.drtvl (Dynasty TV): .lg-DUC scale 1.13. v653.
+
+
+## 1245 · Logo Ducks a misura in ogni sezione
+Tolte le scale fisse per sezione e il 84%. ducFit2(): per ogni .lg-DUC (scritta) misura un logo di altra squadra nella stessa casella e porta la scritta al 95% della sua altezza (o x1.19 senza riferimento), poi la limita a 3px dai bordi e dalle scritte vicine; righe con icona piccola (.hmo,.lvh) min 1.35, lista Giocatori min 1.2. Si ricalcola a ogni render. v659.
