@@ -3063,3 +3063,4 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1151 · Immagini condivise: maglie senza ombre su nome e numero (05/11/2026)
 - jerseyShare(): per le immagini da condividere (canvas) toglie l ombra sfocata del numero e la sfumatura sopra, e divide ogni scritta in due livelli (prima contorno, poi colore) perché su iPhone paint-order nelle immagini SVG non vale e il contorno copriva il colore. Usata in tutte le condivisioni (encodeURIComponent(jersey( -> jerseyShare().
+- Anche nella Modalita Dream (dream.js, 4 punti: maglie in campo, spogliatoio, negozio, ufficio) le maglie diventano immagini: usano jerseyShare anche li.
