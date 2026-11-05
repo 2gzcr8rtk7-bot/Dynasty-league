@@ -3105,3 +3105,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1164 · Ducks: 5 maglie zig zag L in aggiunta (05/11/2026)
 - Scelte da Francesco tra i rendering: 8 gialla, 9 nera, 10 bianca con lo zig zag L (una punta per zampa, margine largo: DUC_ZL = M0 0 H29.5 L29 14 C28.8 28 27.5 38 20.8 47.0 L12.9 69.2 L21.9 73.6 L13.6 96.9 L22.6 101.6 L14.6 126.3 L20 140 L0 140 Z); 11 nera con colletto, spalline e fascia bianchi e zampe nere; 12 gialla con zampe bianche. Tutte in aggiunta. Tastino Ducks a 13. Colori del gessato ancora da decidere (rendering BB e CC).
+
+## 1165 · Ducks: catalogo definitivo zig zag L (05/11/2026)
+- Tolte tutte le altre maglie Ducks. Restano 7: 0 gialla, 1 nera, 2 bianca con gessato nero (BB), 3 NBA 2026, 4 Anni 90, 5 nera con colletto, spalline e fascia bianchi, zampe nere e gessato bianco (CC), 6 gialla con zampe bianche. Tutte con lo zig zag L (DUC_ZL) e 3 impronte tagliate dal bordo. Default gialla. Migrazione una volta (dl_kit_m1165): 5-10 -> stesso colore 0-2, 11 -> 5, 12 -> 6.
