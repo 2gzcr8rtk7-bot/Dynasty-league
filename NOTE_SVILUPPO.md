@@ -3189,3 +3189,7 @@ Su iPhone l ombra del canvas applicata al drawImage di un SVG viene disegnata so
 
 ## 1193-1194 · Campo notte con linee del colore squadra
 Di notte le linee del campo prendono il colore del bordo (apron), opache; se il bordo e troppo scuro (lum<.15) si usa trim/fg. Lucidatura notte: fascia verticale chiara al centro (shineN) al posto della macchia radiale. In live le linee restano rosse pulsanti (clive solo se lvNotte). v621.
+
+
+## 1195-1197 · Sezione Giochi, tasto D solo arena, Sala scommesse fissa
+Nuova voce Giochi nella barra (dopo Sala Trofei, view sgiochi): Poke Dream e Sala scommesse (tolti dall area segreta, aperti a tutti), Dream City con scelta dell arena (drmLaunch t,{}). Tasto D del campo: dreamOpen(t,{solo:true}) -> solo arena, spogliatoi, sala trofei e ufficio GM; verso la citta closedCity(). Sezione Giochi con grafica Parquet di giorno e viola di notte. Sala scommesse (.bt) esclusa dal Parquet (pqFix, pqw, 2 regole CSS): uguale giorno e notte. Schedina condivisa sempre viola (__shNoTheme). v622.
