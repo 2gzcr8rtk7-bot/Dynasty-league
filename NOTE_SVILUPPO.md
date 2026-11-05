@@ -3265,3 +3265,7 @@ Rampa gialla (kit 302 e catalogo X, 123): montagne bianche. v642.
 
 ## 1229 · Margine logo Ducks scritta
 .lg-DUC (scritta) background-size 84% fuori dalla colonna squadre Home: non tocca piu i bordi della casella. v643.
+
+
+## 1230 · Via Lattea solo nel catalogo
+Via Lattea tolte dal tasto maglia (DUC_ROCK 304-306 null) e aggiunte al catalogo (Y, Z, AA; codici 124-126). Lettere oltre la Z: AA, AB... v644.
