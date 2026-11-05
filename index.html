@@ -3412,7 +3412,7 @@ let KITG=null;try{const v=localStorage.getItem("dl_kitg");if(v!==null&&v!=="")KI
 try{if(KITG!=null&&!localStorage.getItem("dl_kit_m1144")){const t0=localStorage.getItem("team")||"";if(t0)KIT[t0]=KITG;localStorage.setItem("dl_kit",JSON.stringify(KIT));localStorage.removeItem("dl_kitg");localStorage.setItem("dl_kit_m1144","1")}}catch(e){}KITG=null;
 let KITO=null;/* scelta temporanea (anteprime): se non è null vale per tutte */
 function kitSalva(){try{localStorage.setItem("dl_kit",JSON.stringify(KIT))}catch(e){}}
-function kitDi(t){const nt=typeof CNT!=="undefined"&&CNT&&cur==="campo";if(KITO!=null)return KITO;if(KIT[t]!=null)return KIT[t];return nt?1:0}/* la scelta della maglia vale in TUTTE le sezioni (giocatore, scontri, trade...) */
+function kitDi(t){const nt=typeof CNT!=="undefined"&&CNT&&cur==="campo";if(KITO!=null)return KITO;if(KIT[t]!=null)return KIT[t];if(t==="DUC")return 2/* (1145) Ducks: di default la maglia bianca, per tutti */;return nt?1:0}/* la scelta della maglia vale in TUTTE le sezioni (giocatore, scontri, trade...) */
 function kitC(t,k){const T=t==="PEA"?{...TEAMS[t],bg:"#2f6bff"}/* 30/10: sfondo Peacocks rosa, maglie invariate */:TEAMS[t];
   if(t==="DOL"){/* (02/11) DOL_FLM: nuove maglie Dolphins a fulmini. 0 Casa = bianca, 1 Notte = sabbia, 2 Alternativa = blu */
     if(k===1)return{...T,bg:"#d9c49c",fg:"#0b0b0b",trim:"#0b0b0b",jstroke:"#f3ead8",outer:undefined,tline2:"#e2e5ea",flm:["#c9b184","#bfa676","#e6d4b0","#ccb58a","#e0cda6"]};

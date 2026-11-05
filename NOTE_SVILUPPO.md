@@ -3042,3 +3042,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1144 · Maglie: la scelta vale solo per la squadra (05/11/2026)
 - Torna la scelta per squadra (KIT[t] in dl_kit, come prima della 187): il tastino maglietta nella pagina di una squadra cambia solo le sue maglie, ovunque (campo, giocatore, scontri…). Le altre squadre restano come le hai lasciate. Migrazione: la vecchia scelta globale (dl_kitg) passa una volta alla squadra salvata come «team», poi sparisce. KITO = scelta temporanea per le anteprime (prima usavano KITG).
+
+## 1145 · Ducks: maglia bianca di default per tutti (05/11/2026)
+- Senza una scelta salvata per i Ducks, kitDi("DUC") = 2 (bianca), anche in modalità notte. Le altre maglie si scelgono col tastino nella pagina dei Ducks (vale solo su quel telefono).
