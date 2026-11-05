@@ -3169,3 +3169,7 @@ Numero 9px -> 12px (line-height .88, padding sopra 0): stessa altezza del riquad
 
 ## 1186-1188 · Colore Ducks personalizzabile (area riservata)
 Personalizzazioni > Ducks colore della squadra: tavolozza (giallo ufficiale, 5 grigi, oro, arancio, rosso, verde, blu, viola, nero, bianco) + Scegli tu (input color). localStorage dl_duccol. Cambia TEAMS.DUC.bg (maglie restano gialle: kitC usa DUC_Y) e window.DUC_COL3D in dream.js. Scritte banner/campo: bianche se lo sfondo e scuro (campo: luminosita del bordo), nere se chiaro. v616.
+
+
+## 1189 · Swipe su tutto il giocatore
+touch-action:pan-y su tutto il giocatore (.cpl/.dpc con .pcs), non solo sul cartellino: su iPhone lo swipe sulla maglia ora gira il cartellino. Maglia con mezzo giro (pjsw) al cambio pagina. v617.
