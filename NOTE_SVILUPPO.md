@@ -3225,3 +3225,7 @@ CAMPI.DUC2 Rio Grande (alba, mesa terracotta, fiume). Piu campi per squadra: chi
 
 ## 1209-1211 · Stella dello sceriffo, maglie razzo ufficiali, pulizia catalogo
 Catalogo Ducks: aggiunte Stella dello sceriffo (gialla/nera/bianca); tolte Deserto e ranch x3, Mesa e sole e Sole a raggi Crepuscolo (18 maglie). Maglie ufficiali Ducks col razzo di Houston (DUC_ROCK, kit 300-306) nel tasto maglia dopo le 5 normali. v630.
+
+
+## 1212 · City Edition Ducks nel tasto maglia (prova)
+Le 18 City Edition Ducks del catalogo (kit 100-117) anche nel tasto maglia dopo le maglie razzo, gratis, per provarle. v631.
