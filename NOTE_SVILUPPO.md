@@ -3353,3 +3353,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v679 (1266): DUCKS arco gialla: bordino bianco esterno + nero interno (ordine invertito); numero alzato leggermente su tutte e tre (305-307). Regola gialla = bianco esterno, nero interno.
 
 - v680 (1267): DUCKS arco (305-307): numero dritto in grassetto Helvetica/Arial, piu grande (44, 40 se due cifre via __FS__ in ducRock), subito sotto il logo, come il render di Francesco.
+
+- v681 (1268): le maglie 115-117 (logo piccolo) sostituite dalle DUCKS arco; tolte le 305-307 doppie (chi le aveva passa a 115-117). Restano le Logo grande 300-304.
