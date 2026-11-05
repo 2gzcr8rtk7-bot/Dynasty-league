@@ -73,13 +73,13 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
         if(Math.random()<.18){x.fillStyle=`hsla(${hh-6},${ss}%,${ll-18}%,.35)`;x.beginPath();x.ellipse(xx+Math.random()*W*.25,y+ph/2,ph*.35,ph*.2,0,0,7);x.fill()}
         x.fillStyle="rgba(50,25,8,.35)";x.fillRect(xx,y,1.6,ph)}x.fillStyle="rgba(55,28,8,.28)";x.fillRect(0,y,W,1)}
     const sc=W/28,L=m=>m*sc,cx=W/2,cy=H/2;
-    x.fillStyle=BG;x.globalAlpha=.95;[0,1].forEach(s=>x.fillRect(s?W-L(5.8):0,cy-L(2.45),L(5.8),L(4.9)));x.beginPath();x.arc(cx,cy,L(1.8),0,7);x.fill();x.globalAlpha=1;x.fillRect(0,0,W,L(.5));x.fillRect(0,H-L(.5),W,L(.5));
+    x.fillStyle=BG;x.globalAlpha=.95;[0,1].forEach(s=>x.fillRect(s?W-L(5.8):0,cy-L(2.45),L(5.8),L(4.9)));/* (1199) Ducks: niente cerchio colorato sotto il logo */if(t!=="DUC"){x.beginPath();x.arc(cx,cy,L(1.8),0,7);x.fill()}x.globalAlpha=1;x.fillRect(0,0,W,L(.5));x.fillRect(0,H-L(.5),W,L(.5));
     x.strokeStyle="#fff";x.lineWidth=L(.055);x.strokeRect(L(.05),L(.55),W-L(.1),H-L(1.1));x.beginPath();x.moveTo(cx,L(.55));x.lineTo(cx,H-L(.55));x.stroke();x.beginPath();x.arc(cx,cy,L(1.8),0,7);x.stroke();
     [0,1].forEach(s=>{const bx=s?W-L(1.575):L(1.575),dir=s?-1:1;x.strokeRect(s?W-L(5.8):L(.05),cy-L(2.45),L(5.75),L(4.9));x.beginPath();x.arc(s?W-L(5.8):L(5.8),cy,L(1.8),0,7);x.stroke();
       x.beginPath();x.moveTo(s?W:0,cy-L(6.6));x.lineTo(bx+dir*L(1.4),cy-L(6.6));x.arc(bx,cy,L(6.75),s?Math.PI+1.35:-1.35,s?Math.PI-1.35:1.35,!!s);x.lineTo(s?W:0,cy+L(6.6));x.stroke()});
-    x.fillStyle=INK;x.font=`italic 900 ${L(.9)}px Arial Black,Arial`;x.textAlign="center";x.textBaseline="middle";[0,1].forEach(s=>{x.save();x.translate(s?W-L(.9):L(.9),cy);x.rotate(s?-Math.PI/2:Math.PI/2);x.fillText(TM.nick.toUpperCase(),0,0);x.restore()});
-    x.fillStyle=lum(BG)>.55?INK:"#fff";x.font=`800 ${L(.3)}px Arial`;x.fillText("DREAMERS LEAGUE",cx,L(.27));x.fillText(TM.name.toUpperCase(),cx,H-L(.27));
-    /* (955) logo a centrocampo +16% */const lg=L(3.5*1.16);if(LG){x.save();x.shadowColor="rgba(0,0,0,.55)";x.shadowBlur=L(.18);x.shadowOffsetY=L(.05);x.drawImage(LG,cx-lg/2,cy-lg/2,lg,lg);x.restore()}
+    x.fillStyle=t==="DUC"?"#000":INK;x.font=`italic 900 ${L(.9)}px Arial Black,Arial`;x.textAlign="center";x.textBaseline="middle";[0,1].forEach(s=>{x.save();x.translate(s?W-L(.9):L(.9),cy);x.rotate(s?-Math.PI/2:Math.PI/2);x.fillText(TM.nick.toUpperCase(),0,0);x.restore()});
+    x.fillStyle=t==="DUC"?"#000":lum(BG)>.55?INK:"#fff";x.font=`800 ${L(.3)}px Arial`;x.fillText("DREAMERS LEAGUE",cx,L(.27));x.fillText(TM.name.toUpperCase(),cx,H-L(.27));
+    /* (955) logo a centrocampo +16% */const lg=L(3.5*1.16*(t==="DUC"?1.2:1));/* (1199) Ducks +20% */if(LG){x.save();x.shadowColor=t==="DUC"?"transparent":"rgba(0,0,0,.55)";x.shadowBlur=L(.18);x.shadowOffsetY=L(.05);x.drawImage(LG,cx-lg/2,cy-lg/2,lg,lg);x.restore()}
     /* vernice: riflesso morbido lungo il campo e bordi più scuri */const g=x.createRadialGradient(cx,cy,10,cx,cy,W*.62);g.addColorStop(0,"rgba(255,248,232,.06)");g.addColorStop(1,"rgba(0,0,0,.2)");x.fillStyle=g;x.fillRect(0,0,W,H);
     const g2=x.createLinearGradient(0,0,0,H);g2.addColorStop(0,"rgba(255,255,255,.05)");g2.addColorStop(.5,"rgba(255,255,255,0)");g2.addColorStop(1,"rgba(255,255,255,.04)");x.fillStyle=g2;x.fillRect(0,0,W,H)});
   const floor=new THREE.Mesh(new THREE.PlaneGeometry(CW+2*RA+8,CH+2*RA+8),new THREE.MeshStandardMaterial({color:mix(BG,"#000",.18),roughness:.45}));/* (930) bordo campo nel colore della squadra */floor.rotation.x=-Math.PI/2;S.add(floor);
