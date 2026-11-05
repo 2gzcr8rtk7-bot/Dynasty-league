@@ -3345,3 +3345,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v675 (1262): 3 maglie Ducks in piu col logo grande (+25%) e gessato marcato, codici 300-302 (DUC_ROCK), nel tasto maglia subito dopo le 115-117; tolto il reset automatico delle 300+.
 
 - v676 (1263): in aggiunta 2 maglie Ducks logo grande con bordino triplo: gialla bianco-nero-bianco (303), bianca giallo-nero-giallo (304). La nera era gia cosi (301).
+
+- v677 (1264): condivisione: le maglie nuove (logo Ducks) sparivano dall immagine per doppio attributo xmlns; jerseyShare lo toglie prima di aggiungerlo.
