@@ -3209,3 +3209,7 @@ Premi > Campi: 8 campi versione B (paesaggio dipinto nel parquet, bordo colore s
 
 ## 1204 · Scritta Ducks piu grande nelle righe giocatori
 .hmo/.lvh .badge.lg-DUC scale 1.4. v626.
+
+
+## 1205 · Ombra sulla scritta Ducks
+La scritta Ducks ha di nuovo il drop-shadow standard dei loghi; il papero (colonna Home, banner) resta senza. v627.
