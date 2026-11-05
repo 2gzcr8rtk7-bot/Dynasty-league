@@ -3253,3 +3253,7 @@ Rampa bianca/nera/gialla sostituite da B13, N20, G23 (rampa40.js): stesso disegn
 
 ## 1225 · Via Lattea nuove
 Via Lattea bianca/nera/gialla sostituite da B9, N2, G9 (vl40.js): fasce di sfumatura nel cielo anche su gialla e bianca. v639.
+
+
+## 1226 · Rampa B35 N40 G6
+Rampa bianca/nera/gialla = B35, N40, G6 con montagne di G24 (rampa40.js), nel tasto maglia (300-302) e nel catalogo (V,W,X, codici 121-123, esclusi dal tasto maglia per non doppiarle). v640.
