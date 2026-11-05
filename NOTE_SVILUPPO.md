@@ -3117,3 +3117,7 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1168 · Ducks: tolta la gialla con zampe bianche (05/11/2026)
 - Restano 7 (5 Ducks + 2 NBA): 0 gialla, 1 nera, 2 bianca, 3-4 NBA, 5 nera bordi bianchi, 6 bianca zampe bianche (era la 7). Migrazione dl_kit_m1168: 6 -> 0 (gialla), 7 -> 6.
+
+
+## 1169 · Ducks: testo banner squadra e scritta sul campo neri
+Banner in alto (DUCKS, TEXAS, record, RECORD) e TEXAS DUCKS sul campo ora neri invece che bianchi (CSS :has(.hlogo[data-t=DUC]) + atxt per DUC).
