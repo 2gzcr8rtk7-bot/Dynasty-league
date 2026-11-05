@@ -3125,3 +3125,7 @@ Banner in alto (DUCKS, TEXAS, record, RECORD) e TEXAS DUCKS sul campo ora neri i
 
 ## 1170 · Ducks: logo ufficiale = papero ovunque tranne il campo
 LOGO2.DUC (scritta) resta solo nel campo (vCampo e immagine campo condivisa). Chip, liste, banner, immagini condivise, scommesse, storia/titoli usano LOGO.DUC (papero).
+
+
+## 1171 · Ducks: scritta del campo nera anche col tema Parquet
+La regola Parquet .cname{fill:#fff!important} vinceva sul nero: aggiunta classe cn-duc con override a specificita maggiore.
