@@ -5874,7 +5874,7 @@ async function trShare(n,btn){const C=TRN._ctx;if(!C)return;const p=trPl(n);if(!
   const F=(w,s2)=>`italic ${w} ${s2}px "Barlow Condensed","Arial Narrow",Arial,sans-serif`,B=(w,s2)=>`${w} ${s2}px system-ui,-apple-system,Segoe UI,Arial,sans-serif`;
   const bg=X.createLinearGradient(0,0,0,H);bg.addColorStop(0,"#1c2338");bg.addColorStop(1,"#070a12");X.fillStyle=bg;X.fillRect(0,0,W,H);
   const hd=X.createLinearGradient(0,0,W,0);const dk=(h,k)=>{const v=parseInt(h.slice(1),16),q=x=>Math.round(x*(1-k)).toString(16).padStart(2,"0");return"#"+q(v>>16)+q((v>>8)&255)+q(v&255)};hd.addColorStop(0,c.bg);hd.addColorStop(1,dk(c.bg,.28));X.fillStyle=hd;X.fillRect(0,0,W,250);X.fillStyle="#facc15";X.fillRect(0,250,W,6);
-  const js=p.fa?null:await ldImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jerseyShare(p.t,p.num,n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')));if(js){const s2=190,r=Math.min(s2/js.width,s2/js.height);X.drawImage(js,50,30,js.width*r,js.height*r)}
+  const js=p.fa?null:await ldImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jerseyShare(p.t,p.num,n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')));if(js){X.shadowColor="transparent";X.shadowBlur=0;X.shadowOffsetX=0;X.shadowOffsetY=0;const s2=190,r=Math.min(s2/js.width,s2/js.height);X.drawImage(js,50,30,js.width*r,js.height*r)}
   const lum=(h=>{const v=parseInt(h.slice(1),16);return(0.299*(v>>16)+0.587*((v>>8)&255)+0.114*(v&255))/255})(c.bg),tc=lum>.6?"#111":"#fff";
   X.fillStyle=tc;X.font=F(800,26);X.textAlign="left";X.fillText("CALCOLA IL TREND · DREAMERS",270,72);
   let z=86;X.font=F(800,z);const nm=n.toUpperCase();while(X.measureText(nm).width>W-310&&z>40){z-=4;X.font=F(800,z)}X.fillText(nm,270,158);
@@ -6921,7 +6921,7 @@ async function shPcCourt(S){const x=S.x,t=S.t,c=TEAMS[t],OT=dlTm(t),SC=1.375,W=5
   const num=((ROSTER[t]||[]).find(p=>p[0]===x.n)||[0,""])[1];
   const js=await ldImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jerseyShare(t,num,x.n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')));
   const top=wy+M;
-  if(js){const r=Math.min(jw/js.width,jh/js.height),w=js.width*r,h=js.height*r;X.shadowColor="rgba(0,0,0,.45)";X.shadowBlur=18;X.shadowOffsetY=8;X.drawImage(js,W/2-w/2,top+(jh-h),w,h);X.shadowBlur=0;X.shadowOffsetY=0}
+  if(js){const r=Math.min(jw/js.width,jh/js.height),w=js.width*r,h=js.height*r;X.shadowColor="transparent";X.shadowBlur=0;X.shadowOffsetY=0;X.drawImage(js,W/2-w/2,top+(jh-h),w,h)}
   const v=+x.r[19],lv=pdkLvl(v),[pbg]=SH_PK[lv],tx=W/2-tw2/2,ty=top+jh-W*.02,rad=W*.022;
   const RR=(x0,y0,w,h,r0)=>{X.beginPath();X.moveTo(x0+r0,y0);X.arcTo(x0+w,y0,x0+w,y0+h,r0);X.arcTo(x0+w,y0+h,x0,y0+h,r0);X.arcTo(x0,y0+h,x0,y0,r0);X.arcTo(x0,y0,x0+w,y0,r0);X.closePath()};
   X.save();X.shadowColor="rgba(0,0,0,.45)";X.shadowBlur=16;X.shadowOffsetY=7;RR(tx,ty,tw2,thh,rad);X.fillStyle="#0b0b10";X.fill();X.restore();
@@ -6938,7 +6938,7 @@ async function shPcCourt(S){const x=S.x,t=S.t,c=TEAMS[t],OT=dlTm(t),SC=1.375,W=5
   return cv}
 /* pagina "prestazione": sfondo viola Dreamers (come le altre immagini), logo e nome squadra, campetto compatto con il giocatore, dettagli partita */
 async function shPcard(){const S=SHR_PC;if(!S)return null;const x=S.x,t=S.t,tm=TEAMS[t],court=await shPcCourt(S),W=1080,H=1380;const{cv,c}=await shBase(H);
-  {const im=await ldImg(LOGO[t]);if(im){const bw=420,bh=320,r=Math.min(bw/im.width,bh/im.height),w=im.width*r,h=im.height*r;c.shadowColor="rgba(192,132,252,.55)";c.shadowBlur=40;c.drawImage(im,W/2-w/2,150+(bh-h)/2,w,h);c.shadowBlur=0}}/* logo originale, proporzioni intatte */
+  {const im=await ldImg(LOGO[t]);if(im){const bw=420,bh=320,r=Math.min(bw/im.width,bh/im.height),w=im.width*r,h=im.height*r;c.shadowColor=t==="DUC"?"transparent":"rgba(192,132,252,.55)";c.shadowBlur=t==="DUC"?0:40;c.drawImage(im,W/2-w/2,150+(bh-h)/2,w,h);c.shadowBlur=0}}/* logo originale, proporzioni intatte */
   const cy=520;c.shadowColor="rgba(0,0,0,.55)";c.shadowBlur=40;c.shadowOffsetY=16;c.drawImage(court,(W-court.width)/2,cy);c.shadowBlur=0;c.shadowOffsetY=0;
   const by=cy+court.height;c.textAlign="center";c.textBaseline="alphabetic";  c.font=SH_F(700,34,1);c.fillStyle="rgba(196,181,253,.9)";c.letterSpacing="3px";c.fillText(`${x.r[3]} PT · ${x.r[6]} RIM · ${x.r[7]} ASS · ${x.r[2]} MIN`,W/2,by+78);c.letterSpacing="0px";return cv}
 async function shDreamers(){const S=SHR_DR;if(!S)return null;const ch=356,H=420+S.cards.length*(ch+32)+150-150;const{cv,c,W}=await shBase(H,0,1);c.translate(0,-150);
@@ -7143,7 +7143,7 @@ async function shPlayer(){const S=SHR_PL;if(!S)return null;
   let ic=null;
   try{if(S.k==="T"){ic=await shImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jerseyShare(S.t,S.num,S.n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')))}
     else if(S.t&&TEAMS[S.t]){const g=typeof GLEAGUE!=="undefined"?GLEAGUE.find(x=>x.t===S.t):null;ic=await(g&&g.logo?shImg(g.logo):shLogo(S.t))}}catch(e){}
-  if(ic){const bx=230,r=Math.min(bx/ic.width,bx/ic.height),w=ic.width*r,h=ic.height*r;c.drawImage(ic,56+20+(bx-w)/2,y0+(hh-h)/2,w,h)}
+  if(ic){c.shadowColor="transparent";c.shadowBlur=0;c.shadowOffsetX=0;c.shadowOffsetY=0;const bx=230,r=Math.min(bx/ic.width,bx/ic.height),w=ic.width*r,h=ic.height*r;c.drawImage(ic,56+20+(bx-w)/2,y0+(hh-h)/2,w,h)}
   else{c.font=SH_F(800,120,1);c.fillStyle="#c4b5fd";c.textAlign="center";c.fillText(S.num?"#"+S.num:S.r[0],56+20+115,y0+hh/2+40)}
   const tx=56+20+250+16,tw=W-56-24-tx;c.textAlign="left";c.fillStyle=TC?TC.tx:"#fff";
   const nm=S.n.toUpperCase();let fs=92;c.font=SH_F(800,fs,1);while(fs>44&&c.measureText(nm).width>tw){fs-=2;c.font=SH_F(800,fs,1)}c.fillText(nm,tx,y0+112);
@@ -7194,7 +7194,7 @@ async function shCompar(){const S=SHR_CM;if(!S||!S.P[0]||!S.P[1])return null;
     c.save();shRR(c,x0,y0,pw,hh,28);c.clip();const gg=c.createLinearGradient(x0,y0,x0+pw,y0+hh);gg.addColorStop(0,bg);gg.addColorStop(1,dk(bg,.4));c.fillStyle=gg;c.fillRect(x0,y0,pw,hh);
     c.strokeStyle="rgba(255,255,255,.07)";c.lineWidth=16;c.beginPath();for(let x=-hh;x<pw;x+=40){c.moveTo(x+x0,y0+hh);c.lineTo(x+x0+hh,y0)}c.stroke();c.fillStyle=COL[i];c.fillRect(x0,y0+hh-14,pw,14);c.restore();
     let ic=null;try{if(!p.gl)ic=await shImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jerseyShare(p.t,p.num,p.n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')));else{ic=await(gx&&gx.logo?shImg(gx.logo):shLogo(p.t))}}catch(e){}
-    if(ic){const bx=190,r=Math.min(bx/ic.width,bx/ic.height),w=ic.width*r,h=ic.height*r;c.drawImage(ic,x0+(pw-w)/2,y0+16+(170-h)/2,w,h)}
+    if(ic){c.shadowColor="transparent";c.shadowBlur=0;c.shadowOffsetX=0;c.shadowOffsetY=0;const bx=190,r=Math.min(bx/ic.width,bx/ic.height),w=ic.width*r,h=ic.height*r;c.drawImage(ic,x0+(pw-w)/2,y0+16+(170-h)/2,w,h)}
     c.textAlign="center";c.fillStyle=tx;const nm=p.n.toUpperCase();let fs=58;c.font=SH_F(800,fs,1);while(fs>30&&c.measureText(nm).width>pw-40){fs-=2;c.font=SH_F(800,fs,1)}c.textBaseline="alphabetic";c.fillText(nm,x0+pw/2,y0+250);
     c.font=SH_F(700,28,1);c.globalAlpha=.85;c.fillText(shFit(c,[({G:"GUARDIA",F:"ALA",C:"CENTRO"})[p.r]||"",(p.gl?"G LEAGUE ":"")+tm.nick.toUpperCase()].filter(Boolean).join(" · "),pw-40),x0+pw/2,y0+292);c.globalAlpha=1;
     /* indicatore della linea nel grafico */
@@ -7340,7 +7340,7 @@ function histTradeModel(i,T0){const T=T0||TRADES[i];if(!histTradeOk(T))return nu
 /* (459) Helpers comuni delle immagini "scambio" e "speciale" */
 const shWrapT=(c,t,w)=>{const L=[];let cu="";String(t).split(" ").forEach(x=>{const q=cu?cu+" "+x:x;if(c.measureText(q).width>w&&cu){L.push(cu);cu=x}else cu=q});if(cu)L.push(cu);return L};
 /* (1151) maglia per le immagini condivise: su iPhone, disegnata come immagine, il contorno delle scritte (paint-order) finiva SOPRA il colore e l ombra sfocata del numero sporcava. Qui: niente ombra e per ogni scritta prima il contorno poi il colore, in due livelli. */
-function jerseyShare(t,num,n){let s=jersey(t,num,n);s=s.replace(/<text[^>]*fill="#000" fill-opacity="\.45"[^>]*>[^<]*<\/text>/g,"");s=s.replace(/<text[^>]*fill="url\(#[^)]*\)"[^>]*>[^<]*<\/text>/g,"");
+function jerseyShare(t,num,n){let s=jersey(t,num,n);/* (1192) nelle condivisioni la maglia non ha ombre: via ombra a terra, pieghe sfumate e scuriture laterali */s=s.replace(/<ellipse[^>]*filter="url\(#[^)]*\)"[^>]*\/>/g,"").replace(/<path[^>]*filter="url\(#[^)]*\)"[^>]*\/>/g,"").replace(/<rect width="120" height="146" fill="url\(#[^)]*[sv]\)"\/>/g,"");s=s.replace(/<text[^>]*fill="#000" fill-opacity="\.45"[^>]*>[^<]*<\/text>/g,"");s=s.replace(/<text[^>]*fill="url\(#[^)]*\)"[^>]*>[^<]*<\/text>/g,"");
   s=s.replace(/<text([^>]*?) paint-order="stroke"([^>]*)>([^<]*)<\/text>/g,(m,a,b,tx)=>{const at=a+b;return`<text${at.replace(/ fill="[^"]*"/," fill=\"none\"")}>${tx}</text><text${at.replace(/ stroke="[^"]*"/," stroke=\"none\"")}>${tx}</text>`});/* (1154) misura grande: senza width/height l immagine nasceva 120x146 e ingrandita sul canvas diventava sfocata (alone grigio su nome e numero) */if(!/<svg[^>]*\swidth=/.test(s))s=s.replace("<svg ",'<svg width="720" height="876" ');return s}
 async function shJersey(t,n){try{return await shImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jerseyShare(t,NUM[n],n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')))}catch(e){return null}}
 async function shLogoAt(c,t,x,y,z){const lg=await shLogo(t);if(lg){const r=Math.min(z/lg.width,z/lg.height);c.drawImage(lg,x+(z-lg.width*r)/2,y+(z-lg.height*r)/2,lg.width*r,lg.height*r)}}
@@ -7399,7 +7399,7 @@ async function shHistTrade(i,O){O=O||{};const PRE=!!O.T,M=histTradeModel(i,O.T);
       let yy=y+230;
       for(const n of sd.pl){c.save();c.translate(x0*(1-SC),yy*(1-SC));c.scale(SC,SC);const role=ruoloDi(n),rc=role==="G"?"#ef4444":role==="F"?"#60a5fa":"#fbbf24";
         const ic=await shJersey(sd.t,n);
-        if(ic){const bx=150,r=Math.min(bx/ic.width,bx/ic.height);c.drawImage(ic,x0+16+(bx-ic.width*r)/2,yy+(rowH-12-ic.height*r)/2,ic.width*r,ic.height*r)}
+        if(ic){c.shadowColor="transparent";c.shadowBlur=0;c.shadowOffsetX=0;c.shadowOffsetY=0;const bx=150,r=Math.min(bx/ic.width,bx/ic.height);c.drawImage(ic,x0+16+(bx-ic.width*r)/2,yy+(rowH-12-ic.height*r)/2,ic.width*r,ic.height*r)}
         c.textAlign="left";c.textBaseline="alphabetic";const tx=x0+170,mw=pw/SC-170-12;c.fillStyle="#fff";let f2=40;c.font=SH_F(800,f2,1);const nn=n.toUpperCase();while(f2>26&&c.measureText(nn).width>mw){f2-=2;c.font=SH_F(800,f2,1)}c.fillText(nn,tx,yy+44);
         c.beginPath();c.arc(tx+8,yy+68,8,0,7);c.fillStyle=rc;c.fill();c.fillStyle="rgba(233,213,255,.85)";c.font=SH_F(700,21,1);c.fillText(`${({G:"GUARDIA",F:"ALA",C:"CENTRO"})[role]||""} · ${Math.round(eta(n))} ANNI`,tx+24,yy+75);
         const pd=pdkMix(n),d0=draftOf(n);
@@ -7417,7 +7417,7 @@ async function shHistTrade(i,O){O=O||{};const PRE=!!O.T,M=histTradeModel(i,O.T);
       const pc=sd.pc,col=pcCol(pc),ptxt=(pc>0?"+":"")+pc+"%";c.font=SH_F(800,42,1);const pwd=c.measureText(ptxt).width+36;shRR(c,x0+IN-24-pwd,y+30,pwd,64,16);c.fillStyle="rgba(10,6,24,.7)";c.fill();c.fillStyle=col;c.textAlign="center";c.textBaseline="middle";c.fillText(ptxt,x0+IN-24-pwd/2,y+63);c.textAlign="right";c.textBaseline="alphabetic";c.font=SH_F(700,20,1);c.fillText(trPcWord(pc).toUpperCase(),x0+IN-24-pwd-14,y+70);c.textAlign="left";
       let idx=0;for(const n of sd.pl){const cx=x0+22+(idx%3)*(cw+0),cy=y+150+Math.floor(idx/3)*cellH;idx++;
         const role=ruoloDi(n),rc=role==="G"?"#ef4444":role==="F"?"#60a5fa":"#fbbf24",ic=await shJersey(sd.t,n);
-        if(ic){const bx=104,r=Math.min(bx/ic.width,bx/ic.height);c.drawImage(ic,cx+(bx-ic.width*r)/2,cy+(cellH-12-ic.height*r)/2,ic.width*r,ic.height*r)}
+        if(ic){c.shadowColor="transparent";c.shadowBlur=0;c.shadowOffsetX=0;c.shadowOffsetY=0;const bx=104,r=Math.min(bx/ic.width,bx/ic.height);c.drawImage(ic,cx+(bx-ic.width*r)/2,cy+(cellH-12-ic.height*r)/2,ic.width*r,ic.height*r)}
         const tx=cx+112,mw=cw-112-6;c.textAlign="left";c.textBaseline="alphabetic";c.fillStyle="#fff";let f2=30;c.font=SH_F(800,f2,1);const sn=iaSur(n).toUpperCase();while(f2>20&&c.measureText(sn).width>mw){f2-=2;c.font=SH_F(800,f2,1)}c.fillText(sn,tx,cy+36);
         c.beginPath();c.arc(tx+6,cy+56,6,0,7);c.fillStyle=rc;c.fill();c.fillStyle="rgba(233,213,255,.85)";c.font=SH_F(700,18,1);c.fillText(`${({G:"GUARDIA",F:"ALA",C:"CENTRO"})[role]||""} · ${Math.round(eta(n))} ANNI`,tx+20,cy+62);
         c.font=SH_F(700,18,1);c.fillStyle="rgba(226,232,240,.65)";c.fillText("PDK",tx,cy+104);c.font=SH_F(800,42,1);c.fillStyle="#fde047";c.fillText(SHF(pdkMix(n)),tx+48,cy+106)}
@@ -7472,7 +7472,7 @@ async function shSpecial(i){const S=histSpModel(i);if(!S)return null;
   for(let k=0;k<2;k++){const n=k?S.ns:S.ne,cx=x0+22+k*(cw+16),role=ruoloDi(n),rc=role==="G"?"#ef4444":role==="F"?"#60a5fa":"#fbbf24",d0=draftOf(n),ic=await shJersey(S.t,n);
     shRR(c,cx,cy,cw,236,20);c.fillStyle="rgba(255,255,255,.05)";c.fill();c.strokeStyle=k?"rgba(251,146,60,.5)":"rgba(74,222,128,.5)";c.lineWidth=2;c.stroke();
     c.font=SH_F(800,22,1);c.textAlign="left";c.fillStyle=k?"#fb923c":"#4ade80";c.fillText(k?"ESCE · RESTA TUO":"ENTRA IN SQUADRA",cx+20,cy+34);
-    if(ic){const bx=140,r=Math.min(bx/ic.width,bx/ic.height);c.drawImage(ic,cx+12+(bx-ic.width*r)/2,cy+50+(170-ic.height*r)/2,ic.width*r,ic.height*r)}
+    if(ic){c.shadowColor="transparent";c.shadowBlur=0;c.shadowOffsetX=0;c.shadowOffsetY=0;const bx=140,r=Math.min(bx/ic.width,bx/ic.height);c.drawImage(ic,cx+12+(bx-ic.width*r)/2,cy+50+(170-ic.height*r)/2,ic.width*r,ic.height*r)}
     const tx=cx+162,mw=cw-162-12;c.fillStyle="#fff";let f2=34;c.font=SH_F(800,f2,1);const nn=n.toUpperCase();while(f2>22&&c.measureText(nn).width>mw){f2-=2;c.font=SH_F(800,f2,1)}c.fillText(nn,tx,cy+86);
     c.beginPath();c.arc(tx+7,cy+110,7,0,7);c.fillStyle=rc;c.fill();c.fillStyle="rgba(233,213,255,.85)";c.font=SH_F(700,20,1);c.fillText(`${({G:"GUARDIA",F:"ALA",C:"CENTRO"})[role]||""} · ${Math.round(eta(n))} ANNI`,tx+22,cy+116);
     c.font=SH_F(700,20,1);c.fillStyle="rgba(226,232,240,.65)";c.fillText("PDK",tx,cy+170);c.font=SH_F(800,56,1);c.fillStyle="#fde047";c.fillText(SHF(pdkMix(n)),tx+54,cy+174);
