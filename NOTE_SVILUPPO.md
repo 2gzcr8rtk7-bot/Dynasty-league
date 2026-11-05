@@ -3054,3 +3054,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1148 · Ducks nera (scie): con il gessato (05/11/2026)
 - k=6 torna col gessato giallo (tolto npin), sempre senza piume.
+
+## 1149 · Ducks: 6 maglie in più a stile misto, in prova (05/11/2026)
+- Francesco le vuole tutte nel catalogo, poi deciderà quali tenere. Tastino Ducks a 13 maglie (kitTot). 7-9 (bianca, gialla, nera) = mix 1: fascia con spalla spessa fino in cima e bordo interno a zig zag; 10-12 = mix 2: zig zag originale su fianchi e spalle (DECO.DUC0 senza i denti al collo). Tutte con impronte, gessato, niente piume. Colori presi da 2, 5 e 6.
