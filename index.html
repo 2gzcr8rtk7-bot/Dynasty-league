@@ -3445,7 +3445,7 @@ let KITG=null;try{const v=localStorage.getItem("dl_kitg");if(v!==null&&v!=="")KI
 try{if(KITG!=null&&!localStorage.getItem("dl_kit_m1144")){const t0=localStorage.getItem("team")||"";if(t0)KIT[t0]=KITG;localStorage.setItem("dl_kit",JSON.stringify(KIT));localStorage.removeItem("dl_kitg");localStorage.setItem("dl_kit_m1144","1")}}catch(e){}KITG=null;
 let KITO=null;/* scelta temporanea (anteprime): se non è null vale per tutte */
 function kitSalva(){try{localStorage.setItem("dl_kit",JSON.stringify(KIT))}catch(e){}}
-function kitDi(t){const nt=typeof CNT!=="undefined"&&CNT&&cur==="campo";if(KITO!=null)return KITO;try{if(!localStorage.getItem("dl_kit_m1159")){if(KIT.DUC!=null){if(KIT.DUC>=8&&KIT.DUC<=10)KIT.DUC-=8;else if(KIT.DUC>=5&&KIT.DUC<=7)KIT.DUC-=5;kitSalva()}localStorage.setItem("dl_kit_m1159","1")}}catch(e){}/* (1159) */try{if(!localStorage.getItem("dl_kit_m1161")){if(KIT.DUC!=null&&KIT.DUC>=5&&KIT.DUC<=7){KIT.DUC-=5;kitSalva()}localStorage.setItem("dl_kit_m1161","1")}}catch(e){}try{if(!localStorage.getItem("dl_kit_m1165")){if(KIT.DUC!=null){const m={5:0,6:1,7:2,8:0,9:1,10:2,11:5,12:6};if(m[KIT.DUC]!=null)KIT.DUC=m[KIT.DUC];kitSalva()}localStorage.setItem("dl_kit_m1165","1")}}catch(e){}try{if(!localStorage.getItem("dl_kit_m1168")){if(KIT.DUC===6)KIT.DUC=0;else if(KIT.DUC===7)KIT.DUC=6;kitSalva();localStorage.setItem("dl_kit_m1168","1")}}catch(e){}try{if(!localStorage.getItem("dl_kit_m1198")){if(KIT.DUC===5||KIT.DUC===6){KIT.DUC=0;kitSalva()}localStorage.setItem("dl_kit_m1198","1")}}catch(e){}if(t==="DUC"&&KIT.DUC!=null&&KIT.DUC>4){KIT.DUC=0;kitSalva()}if(t==="DUC"&&KIT.DUC!=null&&KIT.DUC>6){KIT.DUC=({7:2,8:0,9:1,10:2,11:0,12:1})[KIT.DUC]??2;kitSalva()}/* (1150) vecchie maglie tolte */if(KIT[t]!=null)return KIT[t];if(t==="DUC")return 0/* (1153) Ducks: di default la gialla, per tutti */;return nt?1:0}/* la scelta della maglia vale in TUTTE le sezioni (giocatore, scontri, trade...) */
+function kitDi(t){const nt=typeof CNT!=="undefined"&&CNT&&cur==="campo";if(KITO!=null)return KITO;try{if(!localStorage.getItem("dl_kit_m1159")){if(KIT.DUC!=null){if(KIT.DUC>=8&&KIT.DUC<=10)KIT.DUC-=8;else if(KIT.DUC>=5&&KIT.DUC<=7)KIT.DUC-=5;kitSalva()}localStorage.setItem("dl_kit_m1159","1")}}catch(e){}/* (1159) */try{if(!localStorage.getItem("dl_kit_m1161")){if(KIT.DUC!=null&&KIT.DUC>=5&&KIT.DUC<=7){KIT.DUC-=5;kitSalva()}localStorage.setItem("dl_kit_m1161","1")}}catch(e){}try{if(!localStorage.getItem("dl_kit_m1165")){if(KIT.DUC!=null){const m={5:0,6:1,7:2,8:0,9:1,10:2,11:5,12:6};if(m[KIT.DUC]!=null)KIT.DUC=m[KIT.DUC];kitSalva()}localStorage.setItem("dl_kit_m1165","1")}}catch(e){}try{if(!localStorage.getItem("dl_kit_m1168")){if(KIT.DUC===6)KIT.DUC=0;else if(KIT.DUC===7)KIT.DUC=6;kitSalva();localStorage.setItem("dl_kit_m1168","1")}}catch(e){}try{if(!localStorage.getItem("dl_kit_m1198")){if(KIT.DUC===5||KIT.DUC===6){KIT.DUC=0;kitSalva()}localStorage.setItem("dl_kit_m1198","1")}}catch(e){}if(t==="DUC"&&KIT.DUC!=null&&KIT.DUC>4&&KIT.DUC<100){KIT.DUC=0;kitSalva()}if(KIT[t]!=null&&KIT[t]>=100){try{if(!PREMI.codes(t).includes(KIT[t])){KIT[t]=0;kitSalva()}}catch(e){}}if(t==="DUC"&&KIT.DUC!=null&&KIT.DUC>6&&KIT.DUC<100){KIT.DUC=({7:2,8:0,9:1,10:2,11:0,12:1})[KIT.DUC]??2;kitSalva()}/* (1150) vecchie maglie tolte */if(KIT[t]!=null)return KIT[t];if(t==="DUC")return 0/* (1153) Ducks: di default la gialla, per tutti */;return nt?1:0}/* la scelta della maglia vale in TUTTE le sezioni (giocatore, scontri, trade...) */
 function kitC(t,k){const T=t==="PEA"?{...TEAMS[t],bg:"#2f6bff"}/* 30/10: sfondo Peacocks rosa, maglie invariate */:t==="DUC"?{...TEAMS[t],bg:DUC_Y}:TEAMS[t];
   if(t==="DOL"){/* (02/11) DOL_FLM: nuove maglie Dolphins a fulmini. 0 Casa = bianca, 1 Notte = sabbia, 2 Alternativa = blu */
     if(k===1)return{...T,bg:"#d9c49c",fg:"#0b0b0b",trim:"#0b0b0b",jstroke:"#f3ead8",outer:undefined,tline2:"#e2e5ea",flm:["#c9b184","#bfa676","#e6d4b0","#ccb58a","#e0cda6"]};
@@ -3569,7 +3569,212 @@ function nbaDeco(c){const sd=`<path d="M0 44 L14 48 L17 146 L0 146Z M120 44 L106
    case"por":return`<path d="M0 66 L80 146 L62 146 L0 84Z" fill="#e03a3e"/><path d="M0 88 L58 146 L48 146 L0 98Z" fill="#ffffff"/><path d="M0 104 L42 146 L30 146 L0 116Z" fill="#e03a3e"/>`;
    default:return sd}}
 /* icona del tastino: piccola maglietta con i colori della divisa scelta */
-function kitIco(t){const c=kitC(t,kitDi(t)),n3=kitDi(t)===3||kitDi(t)===4,n9=kitDi(t)===4;return`<svg viewBox="0 0 24 24" aria-hidden="true">${n9?`<defs><pattern id="kit90" width="2.4" height="24" patternUnits="userSpaceOnUse"><rect width="2.4" height="24" fill="#141414"/><rect width=".6" height="24" fill="#ce1126"/></pattern></defs>`:n3?`<defs><linearGradient id="kitnba" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c8102e"/><stop offset=".33" stop-color="#c8102e"/><stop offset=".33" stop-color="#fdb927"/><stop offset=".66" stop-color="#fdb927"/><stop offset=".66" stop-color="#1d428a"/><stop offset="1" stop-color="#1d428a"/></linearGradient></defs>`:""}<path d="M6.6 2.2h3.2c.2 2.6 4.2 2.6 4.4 0h3.2c-.1 3.4 1 5.4 3 6.4v12.6c-5.6 1.1-11.2 1.1-16.8 0V8.6c2-1 3.1-3 3-6.4z" fill="${n9?"url(#kit90)":n3?"url(#kitnba)":c.bg}" stroke="${c.trim||c.fg}" stroke-width="1.6" stroke-linejoin="round"/><text x="12" y="16.6" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-style="italic" font-size="8.5" fill="${n3?"#ffffff":c.fg}"${n3?' stroke="#111" stroke-width="1.4" paint-order="stroke"':""}>${n9?"90":"23"}</text></svg>`}
+/* (1200) PREMI della Sala scommesse: maglie City Edition (20 per squadra, paesaggi del territorio) e Dream City. Si ritirano con 4000 gettoni e finiscono nel tasto maglia della squadra. */
+(function(){const A=(function(){// Rendering dei premi: maglie Dream City e City Edition (solo anteprima, non nell'app)
+
+const BODY="M38 6 C42 27 78 27 82 6 L98 12 C97 34 104 46 114 50 L112 126 Q60 137 8 126 L6 50 C16 46 23 34 22 12 Z";
+let ID=0;
+function maglia(o){const k="p"+(ID++);const g=o.grad||[o.bg,o.bg];
+ const stops=g.map((c,i)=>`<stop offset="${i/(g.length-1)}" stop-color="${c}"/>`).join("");
+ const word=o.word||"",ws=o.ws||(word.length>9?11:word.length>6?14:17);
+ return `<svg viewBox="0 0 120 146" aria-hidden="true"><defs>
+ <linearGradient id="${k}b" x1="0" y1="0" x2="${o.gx||0}" y2="${o.gy==null?1:o.gy}">${stops}</linearGradient>
+ <linearGradient id="${k}s" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".5"/><stop offset=".22" stop-color="#000" stop-opacity=".08"/><stop offset=".5" stop-color="#fff" stop-opacity=".18"/><stop offset=".78" stop-color="#000" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></linearGradient>
+ <linearGradient id="${k}v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".2"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient>
+ <pattern id="${k}m" width="3" height="3" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r=".55" fill="#000" fill-opacity=".14"/></pattern>
+ <clipPath id="${k}c"><path d="${BODY}"/></clipPath>
+ <filter id="${k}g" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <filter id="${k}d"><feGaussianBlur stdDeviation="3"/></filter></defs>
+ <ellipse cx="60" cy="136" rx="46" ry="5" fill="#000" opacity=".5" filter="url(#${k}d)"/>
+ <path d="${BODY}" fill="url(#${k}b)"/>
+ <g clip-path="url(#${k}c)">${o.layer||""}<rect width="120" height="146" fill="url(#${k}m)"/><rect width="120" height="146" fill="url(#${k}s)"/><rect width="120" height="146" fill="url(#${k}v)"/></g>
+ <path d="M38 6 C42 27 78 27 82 6" fill="none" stroke="${o.trim}" stroke-width="6" stroke-linecap="round"/>
+ <path d="M22 12 C23 34 16 46 6 50 M98 12 C97 34 104 46 114 50" fill="none" stroke="${o.trim}" stroke-width="6" stroke-linecap="round"/>
+ ${o.trim2?`<path d="M38 6 C42 27 78 27 82 6" fill="none" stroke="${o.trim2}" stroke-width="1.6"/><path d="M22 12 C23 34 16 46 6 50 M98 12 C97 34 104 46 114 50" fill="none" stroke="${o.trim2}" stroke-width="1.6"/>`:""}
+ <g font-family="Barlow Condensed,Arial Narrow,Arial,sans-serif" font-weight="800" font-style="italic" text-anchor="middle" ${o.glow?`filter="url(#${k}g)"`:""}>
+  <text x="60" y="${o.wy||58}" font-size="${ws}" letter-spacing=".6" fill="${o.fg}" stroke="${o.st||"#0a0a0f"}" stroke-width="${o.sw||2.6}" paint-order="stroke" textLength="${Math.min(66,word.length*ws*.52)}" lengthAdjust="spacingAndGlyphs">${word}</text>
+  <text x="60" y="${o.ny||102}" font-size="44" fill="${o.fg}" stroke="${o.st||"#0a0a0f"}" stroke-width="${o.nsw||3.4}" paint-order="stroke">${o.num}</text></g></svg>`}
+// elementi grafici
+const skyline=(col,win)=>{let s=`<path d="M0 146 V112 H8 V100 H14 V106 H20 V92 H27 V104 H33 V86 H40 V98 H46 V108 H52 V90 H56 V80 H62 V90 H66 V102 H72 V94 H79 V84 H86 V100 H92 V108 H98 V96 H105 V104 H112 V98 H120 V146 Z" fill="${col}"/>`;
+ if(win)for(let i=0;i<34;i++){const x=4+((i*37)%110),y=100+((i*23)%26);s+=`<rect x="${x}" y="${y}" width="1.6" height="2" fill="${win}" opacity="${.5+((i*7)%5)/10}"/>`}return s};
+const stelle=(col,n,y0,y1)=>{let s="";for(let i=0;i<n;i++){const x=(i*53)%118+1,y=y0+((i*31)%(y1-y0)),r=.35+((i*13)%4)*.18;s+=`<circle cx="${x}" cy="${y}" r="${r}" fill="${col}" opacity="${.45+((i*11)%5)/10}"/>`}return s};
+const gessato=(col,op,step)=>{let s="";for(let x=step/2;x<120;x+=step)s+=`<path d="M${x} 0 V146" stroke="${col}" stroke-opacity="${op}" stroke-width=".7"/>`;return s};
+const stella=(cx,cy,r,col)=>{let p="";for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.42:r;p+=(i?"L":"M")+(cx+rr*Math.cos(a)).toFixed(1)+" "+(cy+rr*Math.sin(a)).toFixed(1)}return `<path d="${p}Z" fill="${col}"/>`};
+const montagne=(c1,c2)=>`<path d="M0 146 V118 L14 104 L24 112 L40 92 L52 106 L62 98 L76 84 L90 102 L100 96 L120 110 V146 Z" fill="${c1}"/><path d="M40 92 L46 99 L42 99 L38 96 Z M76 84 L83 93 L78 92 L72 89 Z" fill="${c2}"/>`;
+const palme=col=>[[16,1],[100,-1]].map(([x,d])=>`<path d="M${x} 146 C${x+d*2} 130 ${x+d*1} 118 ${x+d*4} 104" stroke="${col}" stroke-width="2.4" fill="none"/><path d="M${x+d*4} 104 c${d*8} -4 ${d*13} 0 ${d*15} 5 M${x+d*4} 104 c${d*6} -8 ${d*11} -9 ${d*14} -7 M${x+d*4} 104 c${-d*7} -6 ${-d*11} -5 ${-d*13} 1 M${x+d*4} 104 c${-d*3} -9 ${-d*1} -13 ${d*3} -15" stroke="${col}" stroke-width="2" fill="none" stroke-linecap="round"/>`).join("");
+const onde=(c,op)=>{let s="";for(let r=0;r<4;r++){let d=`M-4 ${118+r*7}`;for(let x=-4;x<124;x+=12)d+=` q3 -4 6 0 t6 0`;s+=`<path d="${d}" stroke="${c}" stroke-opacity="${op}" stroke-width="1.6" fill="none"/>`}return s};
+const strati=cols=>cols.map((c,i)=>`<path d="M0 ${96+i*9} C30 ${92+i*9} 50 ${100+i*9} 120 ${94+i*9} V146 H0 Z" fill="${c}"/>`).join("");
+const aurora=`<path d="M-10 30 C20 10 50 44 80 20 S120 30 130 14 V60 C100 70 80 50 50 64 S0 56 -10 70 Z" fill="#34d399" opacity=".45"/><path d="M-10 46 C25 30 55 62 90 38 S125 46 130 34 V70 C100 84 70 62 40 80 S0 70 -10 84 Z" fill="#a855f7" opacity=".38"/>`;
+const fianchi=(c,w)=>`<path d="M0 40 C10 48 ${8+w} 70 ${4+w} 146 H0 Z M120 40 C110 48 ${112-w} 70 ${116-w} 146 H120 Z" fill="${c}"/>`;
+const fascia=(c)=>`<path d="M-10 36 L130 104 V122 L-10 54 Z" fill="${c}"/>`;
+// catalogo
+const TEAMS={DOL:"Dolphins",DUC:"Ducks",FOX:"Foxes",MOO:"Mooses",TUR:"Turtles",SPI:"Spiders",EAG:"Eagles",PEA:"Peacocks"};
+const DREAM=[
+ ["Dream City · Notte",{grad:["#2a0f5c","#5b1fa8","#c026d3"],trim:"#22d3ee",trim2:"#f0abfc",fg:"#ffffff",st:"#7e22ce",word:"DREAM CITY",layer:stelle("#fff",26,8,90)+skyline("#120726","#fde68a"),glow:1,num:23}],
+ ["Dream City · Neon",{grad:["#05050c","#0b1030"],trim:"#f472b6",trim2:"#22d3ee",fg:"#22d3ee",st:"#05050c",word:"DREAM CITY",layer:gessato("#f472b6",.28,6)+skyline("#1e1b4b","#f472b6"),glow:1,num:7}],
+ ["Dream City · Alba",{grad:["#fde68a","#fb923c","#db2777"],trim:"#4c1d95",fg:"#ffffff",st:"#4c1d95",word:"DREAM CITY",layer:skyline("#4c1d95","#fde68a"),num:11}],
+];
+const CITY=[
+ ["DOL","SALT LAKE",{grad:["#f1f5f9","#cbd5e1"],trim:"#0e7490",trim2:"#f1f5f9",fg:"#0e7490",st:"#ffffff",layer:fascia("#0e749022")+montagne("#0e7490","#ffffff"),num:11}],
+ ["DUC","TEXAS",{grad:["#bf5700","#8a3d00"],trim:"#111111",trim2:"#ffffff",fg:"#ffffff",st:"#111111",layer:stella(98,70,30,"#ffffff22")+gessato("#ffffff",.16,7),num:1}],
+ ["FOX","MOTOR CITY",{grad:["#0b0b0f","#1f2937"],trim:"#f97316",trim2:"#d1d5db",fg:"#e5e7eb",st:"#0b0b0f",layer:fianchi("#9ca3af",14)+fianchi("#f97316",6),num:77}],
+ ["MOO","ALASKA",{grad:["#020617","#0f172a"],trim:"#34d399",trim2:"#a855f7",fg:"#ecfeff",st:"#020617",layer:aurora+stelle("#fff",20,6,70)+montagne("#1e293b","#e2e8f0"),glow:1,num:9}],
+ ["TUR","CALIFORNIA",{grad:["#f59e0b","#f43f5e","#7c3aed"],trim:"#14532d",trim2:"#fde68a",fg:"#ffffff",st:"#14532d",layer:palme("#14532d"),num:19}],
+ ["SPI","SACRAMENTO",{grad:["#111111","#1c1917"],trim:"#eab308",trim2:"#fef08a",fg:"#eab308",st:"#111111",layer:fianchi("#eab308",9)+gessato("#eab308",.18,8),num:34}],
+ ["EAG","SAN DIEGO",{grad:["#0c4a6e","#0f172a"],trim:"#fbbf24",trim2:"#e0f2fe",fg:"#fde68a",st:"#0f172a",layer:onde("#7dd3fc",.55),num:3}],
+ ["PEA","DAKOTA",{grad:["#fde4cf","#f6b38a"],trim:"#7c2d12",trim2:"#fde4cf",fg:"#7c2d12",st:"#fff7ed",layer:strati(["#ea580c","#c2410c","#9a3412","#7c2d12"]),num:0}],
+];
+;return{maglia:(o)=>{const s=maglia(o);return s.replace(/id="p(\d+)/g,(m,n)=>'id="pm'+n).replace(/#p(\d+)/g,(m,n)=>'#pm'+n)},DREAM}})();
+const B=(function(){// 20 City Edition per squadra: paesaggi del territorio (stile Alaska) in palette diverse
+
+let SEED=1;const rnd=()=>(SEED=(SEED*16807)%2147483647)/2147483647;const seed=s=>{SEED=s*7919+13};
+const f=n=>n.toFixed(1);
+// ---------- primitive ----------
+const stars=(n,c,y0,y1)=>{let s="";for(let i=0;i<n;i++){const x=rnd()*120,y=y0+rnd()*(y1-y0),r=.3+rnd()*.6;s+=`<circle cx="${f(x)}" cy="${f(y)}" r="${f(r)}" fill="${c}" opacity="${f(.4+rnd()*.6)}"/>`}return s};
+const moon=(cx,cy,r,c)=>`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${c}"/><circle cx="${cx+r*.45}" cy="${cy-r*.2}" r="${r*.85}" fill="#000" opacity=".0"/>`;
+const sun=(cx,cy,r,c,band)=>{let s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${c}"/>`;if(band)for(let i=0;i<5;i++)s+=`<rect x="${cx-r}" y="${f(cy+r*.15+i*r*.17)}" width="${r*2}" height="${f(r*.06+i*.25)}" fill="${band}"/>`;return s};
+const rays=(cx,cy,c,op)=>{let s="";for(let i=0;i<16;i++){const a=i*Math.PI/8,b=a+Math.PI/16;s+=`<path d="M${cx} ${cy} L${f(cx+200*Math.cos(a))} ${f(cy+200*Math.sin(a))} L${f(cx+200*Math.cos(b))} ${f(cy+200*Math.sin(b))} Z" fill="${c}" opacity="${op}"/>`}return s};
+const aurora=(c1,c2,op=.45)=>`<path d="M-10 28 C20 8 50 42 80 18 S120 28 130 12 V58 C100 68 80 48 50 62 S0 54 -10 68 Z" fill="${c1}" opacity="${op}"/><path d="M-10 44 C25 28 55 60 90 36 S125 44 130 32 V68 C100 82 70 60 40 78 S0 68 -10 82 Z" fill="${c2}" opacity="${op*.85}"/>`;
+const clouds=(c,op,y)=>{let s="";for(let i=0;i<4;i++){const x=rnd()*110,yy=y+rnd()*16,w=14+rnd()*16;s+=`<ellipse cx="${f(x)}" cy="${f(yy)}" rx="${f(w)}" ry="${f(w*.28)}" fill="${c}" opacity="${op}"/>`}return s};
+const ridge=(base,amp,n,c,snow)=>{let p=`M-2 146 V${base}`,pk=[];for(let i=0;i<=n;i++){const x=-2+i*124/n,y=base-(i%2?amp*(.55+rnd()*.45):amp*rnd()*.35);p+=` L${f(x)} ${f(y)}`;if(i%2)pk.push([x,y])}p+=" V146 Z";let s=`<path d="${p}" fill="${c}"/>`;if(snow)pk.forEach(([x,y])=>{const w=4+rnd()*3;s+=`<path d="M${f(x)} ${f(y)} L${f(x+w)} ${f(y+w*1.1)} L${f(x+w*.4)} ${f(y+w*.8)} L${f(x)} ${f(y+w*1.2)} L${f(x-w*.5)} ${f(y+w*.7)} L${f(x-w)} ${f(y+w*1.1)} Z" fill="${snow}"/>`});return s};
+const hills=(base,amp,c)=>`<path d="M-2 146 V${base} C20 ${base-amp} 40 ${base+amp*.4} 62 ${base-amp*.6} S100 ${base+amp*.5} 122 ${base-amp*.8} V146 Z" fill="${c}"/>`;
+const pines=(base,h,n,c)=>{let s="";for(let i=0;i<n;i++){const x=-2+i*124/(n-1)+(rnd()-.5)*4,hh=h*(.6+rnd()*.5);s+=`<path d="M${f(x)} ${f(base-hh)} L${f(x+hh*.32)} ${f(base)} L${f(x-hh*.32)} ${f(base)} Z" fill="${c}"/>`}return s+`<rect x="0" y="${base}" width="120" height="${146-base}" fill="${c}"/>`};
+const sky_line=(base,c,win,tall)=>{let s="",x=-2;while(x<122){const w=5+rnd()*7,h=8+rnd()*(tall||22);s+=`<rect x="${f(x)}" y="${f(base-h)}" width="${f(w)}" height="${f(h+146-base)}" fill="${c}"/>`;if(win)for(let k=0;k<h/4;k++)if(rnd()<.55)s+=`<rect x="${f(x+1+rnd()*(w-2.5))}" y="${f(base-h+2+k*4)}" width="1.3" height="1.6" fill="${win}" opacity="${f(.5+rnd()*.5)}"/>`;x+=w+.6}return s};
+const tower=(x,base,h,c)=>`<rect x="${x-2}" y="${base-h}" width="4" height="${h}" fill="${c}"/><path d="M${x} ${base-h-8} V${base-h}" stroke="${c}" stroke-width="1"/>`;
+const rencen=(x,base,c,win)=>{let s="";[[0,40,6],[-8,30,5],[8,30,5]].forEach(([dx,h,w])=>{s+=`<rect x="${x+dx-w/2}" y="${base-h}" width="${w}" height="${h}" rx="${w/2}" fill="${c}"/>`;if(win)for(let k=0;k<h/3;k++)s+=`<rect x="${x+dx-w/2+.6}" y="${base-h+2+k*3}" width="${w-1.2}" height=".5" fill="${win}" opacity=".55"/>`});return s};
+const susp=(base,c,t1=20,t2=100,top=78)=>{let s=`<path d="M-4 ${base} H124" stroke="${c}" stroke-width="2.4"/>`;[t1,t2].forEach(x=>s+=`<rect x="${x-1.6}" y="${top}" width="3.2" height="${base-top+8}" fill="${c}"/>`);s+=`<path d="M${t1} ${top} Q${(t1+t2)/2} ${base+6} ${t2} ${top} M-4 ${base-10} Q${t1/2-2} ${base-6} ${t1} ${top} M${t2} ${top} Q${(t2+124)/2} ${base-6} 124 ${base-10}" stroke="${c}" stroke-width="1.1" fill="none"/>`;for(let x=t1+8;x<t2;x+=8){const yy=top+(base+6-top)*(1-Math.pow((x-(t1+t2)/2)/((t2-t1)/2),2))*.5+ (base-top)*.0;s+=`<path d="M${x} ${base} V${f(Math.min(base,top+(base-top)*(1-Math.pow((x-(t1+t2)/2)/((t2-t1)/2),2))*.9+2))}" stroke="${c}" stroke-width=".5"/>`}return s};
+const tbridge=(base,c)=>{let s=`<rect x="-4" y="${base-4}" width="128" height="3" fill="${c}"/>`;[30,90].forEach(x=>{s+=`<rect x="${x-4}" y="${base-34}" width="8" height="34" fill="${c}"/><path d="M${x-5} ${base-34} L${x} ${base-40} L${x+5} ${base-34} Z" fill="${c}"/>`});s+=`<path d="M34 ${base-28} H86 M34 ${base-24} H86" stroke="${c}" stroke-width="1.2"/>`;for(let x=38;x<84;x+=6)s+=`<path d="M${x} ${base-28} L${x+3} ${base-4} M${x+3} ${base-28} L${x} ${base-4}" stroke="${c}" stroke-width=".5"/>`;return s};
+const coronado=(base,c)=>{let s=`<path d="M-4 ${base-4} C30 ${base-22} 90 ${base-22} 124 ${base-4}" stroke="${c}" stroke-width="2.4" fill="none"/>`;for(let x=4;x<120;x+=9){const y=base-4-18*Math.sin(Math.PI*(x+4)/128);s+=`<rect x="${x-1}" y="${f(y)}" width="2" height="${f(base-y+6)}" fill="${c}"/>`}return s};
+const water=(y,c,op,rows=4)=>{let s=`<rect x="0" y="${y}" width="120" height="${146-y}" fill="${c}" opacity="${op}"/>`;for(let r=0;r<rows;r++){let d=`M-4 ${y+3+r*6}`;for(let x=-4;x<124;x+=10)d+=` q2.5 -2.5 5 0 t5 0`;s+=`<path d="${d}" stroke="#fff" stroke-opacity=".28" stroke-width=".8" fill="none"/>`}return s};
+const reflect=(y,c)=>{let s="";for(let i=0;i<9;i++)s+=`<rect x="${f(20+rnd()*80)}" y="${y+2+i*3.5}" width="${f(6+rnd()*14)}" height=".9" fill="${c}" opacity="${f(.35+rnd()*.4)}"/>`;return s};
+const palm=(x,base,s,c,d=1)=>`<path d="M${x} ${base} C${x+d*2*s} ${base-16*s} ${x+d*1*s} ${base-28*s} ${x+d*4*s} ${base-42*s}" stroke="${c}" stroke-width="${2.2*s}" fill="none"/>`+[[8,-4,13,5],[6,-8,14,-7],[-7,-6,-13,1],[-3,-9,3,-15],[9,0,15,8]].map(([a,b,cx,cy])=>`<path d="M${f(x+d*4*s)} ${f(base-42*s)} q${f(d*a*s)} ${f(b*s)} ${f(d*cx*s)} ${f(cy*s)}" stroke="${c}" stroke-width="${f(1.8*s)}" fill="none" stroke-linecap="round"/>`).join("");
+const cactus=(x,base,s,c)=>`<path d="M${x-2*s} ${base} V${base-26*s} a${2*s} ${2*s} 0 0 1 ${4*s} 0 V${base} Z M${x-2*s} ${base-12*s} H${x-7*s} V${base-20*s} a${1.6*s} ${1.6*s} 0 0 1 ${3.2*s} 0 V${base-15*s} H${x-2*s} Z M${x+2*s} ${base-16*s} H${x+7*s} V${base-23*s} a${1.6*s} ${1.6*s} 0 0 0 ${-3.2*s} 0 V${base-19*s} H${x+2*s} Z" fill="${c}"/>`;
+const mesa=(base,c)=>`<path d="M-2 146 V${base} H8 L14 ${base-14} H40 L46 ${base} H66 L70 ${base-9} H98 L104 ${base} H122 V146 Z" fill="${c}"/>`;
+const derrick=(x,base,c)=>`<path d="M${x-5} ${base} L${x} ${base-26} L${x+5} ${base} M${x-3.5} ${base-8} H${x+3.5} M${x-2} ${base-16} H${x+2} M${x-4.5} ${base-3} L${x+2.5} ${base-14} M${x+4.5} ${base-3} L${x-2.5} ${base-14}" stroke="${c}" stroke-width="1" fill="none"/>`;
+const dome=(cx,base,c)=>`<rect x="${cx-22}" y="${base-12}" width="44" height="12" fill="${c}"/><rect x="${cx-8}" y="${base-20}" width="16" height="8" fill="${c}"/><path d="M${cx-8} ${base-20} A8 9 0 0 1 ${cx+8} ${base-20} Z" fill="${c}"/><rect x="${cx-.8}" y="${base-34}" width="1.6" height="6" fill="${c}"/>`;
+const web=(cx,cy,c,op)=>{let s="";for(let i=0;i<10;i++){const a=i*Math.PI/5;s+=`<path d="M${cx} ${cy} L${f(cx+90*Math.cos(a))} ${f(cy+90*Math.sin(a))}" stroke="${c}" stroke-opacity="${op}" stroke-width=".7"/>`}for(let r=10;r<90;r+=10){let p="";for(let i=0;i<=10;i++){const a=i*Math.PI/5;p+=(i?"Q":"M")+(i?`${f(cx+(r-3)*Math.cos(a-Math.PI/10))} ${f(cy+(r-3)*Math.sin(a-Math.PI/10))} `:"")+`${f(cx+r*Math.cos(a))} ${f(cy+r*Math.sin(a))}`}s+=`<path d="${p}" stroke="${c}" stroke-opacity="${op}" stroke-width=".7" fill="none"/>`}return s};
+const eyes=(c1,c2,c3)=>{let s="";[[14],[106]].forEach(([x])=>{for(let i=0;i<5;i++){const y=48+i*18;s+=`<ellipse cx="${x}" cy="${y}" rx="8" ry="11" fill="${c1}"/><ellipse cx="${x}" cy="${y+1}" rx="4.6" ry="6.5" fill="${c2}"/><circle cx="${x}" cy="${y+2}" r="2.2" fill="${c3}"/>`}});return s};
+const rushmore=(base,c,c2)=>`<path d="M-2 146 V${base} L10 ${base-10} L20 ${base-24} L32 ${base-26} L40 ${base-18} L48 ${base-30} L58 ${base-32} L66 ${base-24} L74 ${base-34} L84 ${base-34} L92 ${base-22} L102 ${base-26} L112 ${base-14} L122 ${base-10} V146 Z" fill="${c}"/>`+[[28,22],[54,28],[79,30],[100,22]].map(([x,h])=>`<ellipse cx="${x}" cy="${base-h+6}" rx="4" ry="5.5" fill="${c2}" opacity=".5"/>`).join("");
+const bison=(x,base,s,c)=>`<path d="M${x} ${base} v${-5*s} c${-2*s} ${-1*s} ${-3*s} ${-5*s} ${0} ${-8*s} c${3*s} ${-4*s} ${10*s} ${-5*s} ${14*s} ${-3*s} c${4*s} ${1*s} ${8*s} ${3*s} ${8*s} ${7*s} v${4*s} h${-2*s} v${3*s} h${-2*s} v${-4*s} h${-9*s} v${4*s} h${-2*s} v${-3*s} h${-2*s} v${3*s} Z" fill="${c}"/>`;
+const arch=(cx,base,c)=>`<path d="M${cx-14} ${base} C${cx-16} ${base-18} ${cx-10} ${base-30} ${cx} ${base-30} C${cx+10} ${base-30} ${cx+16} ${base-18} ${cx+14} ${base} H${cx+9} C${cx+10} ${base-14} ${cx+6} ${base-24} ${cx} ${base-24} C${cx-6} ${base-24} ${cx-10} ${base-14} ${cx-9} ${base} Z" fill="${c}"/>`;
+const saltflat=(y,c)=>{let s=`<rect x="0" y="${y}" width="120" height="${146-y}" fill="${c}"/>`;for(let i=0;i<14;i++){const x=rnd()*120,yy=y+3+rnd()*(146-y-4);s+=`<path d="M${f(x)} ${f(yy)} l4 -1 l3 2 l-1 3 l-4 1 l-3 -2 Z" fill="none" stroke="#00000022" stroke-width=".6"/>`}return s};
+const gear=(cx,cy,r,c,op)=>{let p="";for(let i=0;i<24;i++){const a=i*Math.PI/12,rr=i%2?r:r*.82;p+=(i?"L":"M")+f(cx+rr*Math.cos(a))+" "+f(cy+rr*Math.sin(a))}return`<path d="${p}Z M${cx+r*.4} ${cy} A${r*.4} ${r*.4} 0 1 0 ${cx-r*.4} ${cy} A${r*.4} ${r*.4} 0 1 0 ${cx+r*.4} ${cy}" fill="${c}" fill-rule="evenodd" opacity="${op}"/>`};
+const star=(cx,cy,r,c,op=1)=>{let p="";for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.42:r;p+=(i?"L":"M")+f(cx+rr*Math.cos(a))+" "+f(cy+rr*Math.sin(a))}return`<path d="${p}Z" fill="${c}" opacity="${op}"/>`};
+const redwoods=(base,c)=>{let s="";for(let i=0;i<7;i++){const x=6+i*18+(rnd()-.5)*6,h=40+rnd()*20;s+=`<rect x="${f(x-1.6)}" y="${f(base-h)}" width="3.2" height="${f(h)}" fill="${c}"/><path d="M${f(x)} ${f(base-h-14)} L${f(x+8)} ${f(base-h+20)} L${f(x-8)} ${f(base-h+20)} Z" fill="${c}"/>`}return s+`<rect x="0" y="${base}" width="120" height="${146-base}" fill="${c}"/>`};
+const hollywood=(base,c)=>hills(base,10,c)+`<g fill="${c}" font-family="Arial Black,Arial" font-size="5.5" font-weight="900"><text x="30" y="${base-6}" fill="#ffffff" opacity=".9" letter-spacing="1">DREAM</text></g>`;
+const cliffs=(base,c)=>`<path d="M-2 146 V${base-20} L10 ${base-22} L18 ${base-14} L26 ${base-16} L30 ${base} H-2 Z M122 146 V${base-26} L108 ${base-24} L100 ${base-16} L94 ${base-18} L88 ${base} H122 Z" fill="${c}"/>`;
+const glacier=(base,c,c2)=>`<path d="M-2 146 V${base} L18 ${base-10} L30 ${base-4} L48 ${base-16} L62 ${base-6} L80 ${base-14} L96 ${base-4} L122 ${base-12} V146 Z" fill="${c}"/><path d="M18 ${base-10} L24 ${base+6} M48 ${base-16} L52 ${base+4} M80 ${base-14} L76 ${base+6}" stroke="${c2}" stroke-width="1.2"/>`;
+const longhorn=(cx,cy,c,op)=>`<path d="M${cx} ${cy+8} C${cx-6} ${cy+8} ${cx-7} ${cy} ${cx-5} ${cy-3} C${cx-16} ${cy-4} ${cx-26} ${cy-8} ${cx-34} ${cy-18} C${cx-22} ${cy-12} ${cx-12} ${cy-10} ${cx-4} ${cy-8} H${cx+4} C${cx+12} ${cy-10} ${cx+22} ${cy-12} ${cx+34} ${cy-18} C${cx+26} ${cy-8} ${cx+16} ${cy-4} ${cx+5} ${cy-3} C${cx+7} ${cy} ${cx+6} ${cy+8} ${cx} ${cy+8} Z" fill="${c}" opacity="${op}"/>`;
+const fox=(cx,cy,c,op)=>`<path d="M${cx-16} ${cy-14} L${cx-8} ${cy-4} H${cx+8} L${cx+16} ${cy-14} L${cx+14} ${cy+2} L${cx} ${cy+16} L${cx-14} ${cy+2} Z" fill="${c}" opacity="${op}"/>`;
+const wing=(c,op)=>`<path d="M0 56 C20 50 40 60 56 74 C40 70 22 70 0 78 Z M0 72 C18 68 34 74 50 86 C34 84 18 86 0 92 Z M120 56 C100 50 80 60 64 74 C80 70 98 70 120 78 Z M120 72 C102 68 86 74 70 86 C86 84 102 86 120 92 Z" fill="${c}" opacity="${op}"/>`;
+const antlers=(cx,cy,c,op)=>`<path d="M${cx-4} ${cy} C${cx-14} ${cy-4} ${cx-22} ${cy-14} ${cx-24} ${cy-26} L${cx-20} ${cy-22} L${cx-20} ${cy-30} L${cx-16} ${cy-22} L${cx-14} ${cy-30} L${cx-11} ${cy-18} C${cx-8} ${cy-12} ${cx-6} ${cy-8} ${cx-3} ${cy-6} Z M${cx+4} ${cy} C${cx+14} ${cy-4} ${cx+22} ${cy-14} ${cx+24} ${cy-26} L${cx+20} ${cy-22} L${cx+20} ${cy-30} L${cx+16} ${cy-22} L${cx+14} ${cy-30} L${cx+11} ${cy-18} C${cx+8} ${cy-12} ${cx+6} ${cy-8} ${cx+3} ${cy-6} Z" fill="${c}" opacity="${op}"/>`;
+const turtleShell=(c,op)=>{let s="";for(let r=0;r<6;r++)for(let i=0;i<7;i++){const x=i*20+(r%2?10:0),y=r*24;s+=`<path d="M${x} ${y-10} l9 5 v10 l-9 5 l-9 -5 v-10 Z" fill="none" stroke="${c}" stroke-opacity="${op}" stroke-width="1"/>`}return s};
+const dolphinWave=(c,op)=>`<path d="M-4 104 C20 92 36 116 60 104 S100 92 124 104 V146 H-4 Z" fill="${c}" opacity="${op}"/><path d="M40 98 C46 86 58 84 66 90 C60 90 56 92 54 96 L58 100 C52 100 46 100 40 98 Z" fill="${c}" opacity="${Math.min(1,op+.2)}"/>`;
+// ---------- palette (cielo, piani lontano/medio/vicino, luce) ----------
+const PAL={
+ alba:{sky:["#fde68a","#fdba74","#f472b6"],far:"#f9a8d4",mid:"#c084fc",near:"#4c1d95",light:"#fff7d6",ink:"#4c1d95",snow:"#fff7ed",dark:0},
+ giorno:{sky:["#7dd3fc","#bae6fd","#f0f9ff"],far:"#94a3b8",mid:"#475569",near:"#1e293b",light:"#ffffff",ink:"#0f172a",snow:"#ffffff",dark:0},
+ tramonto:{sky:["#fde047","#fb923c","#db2777","#581c87"],far:"#9d174d",mid:"#581c87",near:"#1e1b4b",light:"#fde68a",ink:"#1e1b4b",snow:"#fbcfe8",dark:1},
+ notte:{sky:["#020617","#111a3a","#1e1b4b"],far:"#1e293b",mid:"#0f172a",near:"#020617",light:"#fde68a",ink:"#020617",snow:"#e2e8f0",dark:1},
+ aurora:{sky:["#020617","#0b2a3a","#0f172a"],far:"#134e4a",mid:"#0f2f2f",near:"#04111a",light:"#a7f3d0",ink:"#020617",snow:"#d1fae5",dark:1,aur:1},
+ neve:{sky:["#ffffff","#e2e8f0"],far:"#cbd5e1",mid:"#94a3b8",near:"#475569",light:"#ffffff",ink:"#1e293b",snow:"#ffffff",dark:0},
+ deserto:{sky:["#fef3c7","#fcd34d","#f59e0b"],far:"#fb923c",mid:"#c2410c",near:"#7c2d12",light:"#fff7ed",ink:"#7c2d12",snow:"#ffedd5",dark:0},
+};
+const TP=(bg,fg,tr)=>({sky:[bg,`color-mix(in srgb,${bg} 60%,#000)`],far:`color-mix(in srgb,${bg} 70%,#000)`,mid:`color-mix(in srgb,${bg} 45%,#000)`,near:`color-mix(in srgb,${bg} 22%,#000)`,light:fg,ink:"#0a0a0f",snow:"#ffffff",dark:1});
+// sfumature in svg: color-mix non va negli stop SVG, quindi le precalcolo
+const mixc=(a,b,k)=>{const p=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));const A=p(a),B=p(b);return"#"+A.map((v,i)=>Math.round(v*(1-k)+B[i]*k).toString(16).padStart(2,"0")).join("")};
+const TPAL=(bg)=>({sky:[mixc(bg,"#ffffff",.25),bg,mixc(bg,"#000000",.45)],far:mixc(bg,"#000000",.3),mid:mixc(bg,"#000000",.55),near:mixc(bg,"#000000",.78),light:"#ffffff",ink:"#0a0a0f",snow:"#ffffff",dark:1});
+const BPAL=(bg)=>({sky:["#ffffff","#eef2f7"],far:mixc(bg,"#ffffff",.6),mid:mixc(bg,"#ffffff",.25),near:bg,light:bg,ink:mixc(bg,"#000000",.4),snow:"#ffffff",dark:0});
+const NPAL=(bg)=>({sky:["#0b0b0f","#16161d"],far:mixc(bg,"#000000",.65),mid:mixc(bg,"#000000",.4),near:bg,light:bg,ink:"#0b0b0f",snow:"#ffffff",dark:1});
+// ---------- scene per squadra ----------
+const S={
+ DOL:{word:"SALT LAKE",col:"#1747c9",acc:"#0b0b0b",num:11,sc:[
+  ["Wasatch",(P)=>ridge(92,28,9,P.far,P.snow)+ridge(108,18,11,P.mid,P.snow)+pines(124,12,16,P.near)],
+  ["Grande Lago Salato",(P)=>ridge(96,22,8,P.far,P.snow)+water(104,P.mid,.9)+reflect(104,P.light)],
+  ["Salt Flats",(P)=>ridge(100,16,10,P.far,P.snow)+saltflat(106,P.snow)],
+  ["Delicate Arch",(P)=>sun(84,92,9,P.light)+mesa(118,P.mid)+arch(60,122,P.near)+`<rect x="0" y="122" width="120" height="24" fill="${P.near}"/>`],
+  ["Onda del delfino",(P)=>ridge(90,24,8,P.far,P.snow)+dolphinWave(P.near,.95)],
+  ["Skyline al lago",(P)=>ridge(88,22,8,P.far,P.snow)+sky_line(110,P.mid,P.light,16)+water(110,P.near,.95)+reflect(110,P.light)],
+  ["Neve e pini",(P)=>stars(30,P.light,6,80)+ridge(98,26,7,P.mid,P.snow)+pines(118,22,12,P.near)]]},
+ DUC:{word:"TEXAS",col:"#facc15",acc:"#111111",num:1,sc:[
+  ["Mesa al tramonto",(P)=>sun(60,96,16,P.light,P.far)+mesa(108,P.mid)+cactus(20,130,1,P.near)+cactus(100,132,.8,P.near)+`<rect x="0" y="130" width="120" height="16" fill="${P.near}"/>`],
+  ["Pozzi di petrolio",(P)=>hills(116,6,P.mid)+derrick(22,118,P.near)+derrick(46,116,P.near)+derrick(80,117,P.near)+derrick(102,118,P.near)+`<rect x="0" y="118" width="120" height="28" fill="${P.near}"/>`],
+  ["Lone Star",(P)=>rays(60,82,P.light,.12)+star(60,82,26,P.light,.25)+hills(120,8,P.near)],
+  ["Longhorn",(P)=>sun(60,100,22,P.far)+longhorn(60,104,P.near,.95)+`<rect x="0" y="126" width="120" height="20" fill="${P.near}"/>`],
+  ["Austin skyline",(P)=>sky_line(118,P.mid,P.light,26)+dome(60,118,P.near)+water(120,P.near,.9)+reflect(120,P.light)],
+  ["Canyon",(P)=>ridge(100,20,6,P.far)+mesa(116,P.mid)+`<path d="M40 146 C48 128 72 128 80 146 Z" fill="${P.light}" opacity=".5"/>`+cactus(14,134,.9,P.near)],
+  ["Prateria e stelle",(P)=>stars(40,P.light,4,96)+star(94,30,6,P.light,.9)+hills(112,10,P.mid)+cactus(28,128,1.1,P.near)+`<rect x="0" y="126" width="120" height="20" fill="${P.near}"/>`]]},
+ FOX:{word:"MOTOR CITY",col:"#f97316",acc:"#111111",num:77,sc:[
+  ["Renaissance Center",(P)=>sky_line(112,P.mid,P.light,20)+rencen(60,112,P.near,P.light)+water(112,P.near,.95)+reflect(112,P.light)],
+  ["Ambassador Bridge",(P)=>sky_line(100,P.far,P.light,18)+susp(116,P.near,16,104,80)+water(118,P.mid,.9)],
+  ["Catena di montaggio",(P)=>gear(30,76,24,P.far,.6)+gear(86,96,30,P.mid,.6)+sky_line(124,P.near,P.light,14)],
+  ["Fiume Detroit",(P)=>sky_line(104,P.mid,P.light,24)+water(106,P.near,.95)+reflect(106,P.light)],
+  ["Volpe sulla città",(P)=>fox(60,70,P.far,.5)+sky_line(116,P.near,P.light,20)],
+  ["Fumo e fabbriche",(P)=>clouds(P.far,.6,60)+[18,40,84].map(x=>`<rect x="${x}" y="80" width="5" height="40" fill="${P.mid}"/>`).join("")+sky_line(124,P.near,P.light,12)],
+  ["Luci della notte",(P)=>stars(26,P.light,4,60)+sky_line(110,P.mid,P.light,30)+sky_line(124,P.near,P.light,12)]]},
+ MOO:{word:"ALASKA",col:"#7cc4f0",acc:"#0b3a5c",num:9,sc:[
+  ["Denali",(P)=>(P.aur?aurora("#34d399","#a855f7"):"")+stars(20,P.light,4,70)+ridge(90,34,7,P.far,P.snow)+ridge(108,16,10,P.mid,P.snow)+pines(126,14,16,P.near)],
+  ["Aurora boreale",(P)=>aurora("#34d399","#a855f7",.55)+stars(30,"#ffffff",4,80)+ridge(104,18,9,P.mid,P.snow)+pines(124,14,18,P.near)],
+  ["Ghiacciaio",(P)=>ridge(92,22,8,P.far,P.snow)+glacier(112,P.snow,P.far)+water(124,P.mid,.9)],
+  ["Foresta di abeti",(P)=>moon(88,30,8,P.light)+pines(104,26,10,P.mid)+pines(124,22,13,P.near)],
+  ["Alce al lago",(P)=>ridge(96,24,8,P.far,P.snow)+water(108,P.mid,.9)+reflect(108,P.light)+antlers(60,112,P.near,.95)],
+  ["Fiordo",(P)=>ridge(86,30,5,P.mid,P.snow)+water(110,P.near,.95)+reflect(110,P.light)],
+  ["Luna sulla neve",(P)=>moon(30,30,10,P.light)+stars(30,P.light,4,80)+ridge(110,22,8,P.snow)+pines(128,12,16,P.near)]]},
+ TUR:{word:"CALIFORNIA",col:"#16a34a",acc:"#7dd3fc",num:19,sc:[
+  ["Palme al tramonto",(P)=>sun(60,104,18,P.light,P.far)+water(112,P.mid,.9)+palm(16,146,1,P.near,1)+palm(104,146,1,P.near,-1)],
+  ["Golden Gate",(P)=>clouds(P.light,.5,70)+ridge(104,12,8,P.far)+susp(118,"#dc2626",18,102,76)+water(120,P.mid,.9)],
+  ["Sequoie",(P)=>redwoods(124,P.near)],
+  ["Onda del surf",(P)=>`<path d="M-4 146 V110 C20 90 50 84 70 96 C84 104 80 118 66 116 C74 108 64 100 52 104 C40 108 30 124 -4 146 Z" fill="${P.mid}"/>`+water(124,P.near,.9)],
+  ["Hollywood hills",(P)=>stars(20,P.light,4,60)+hollywood(118,P.mid)+sky_line(130,P.near,P.light,10)],
+  ["Guscio",(P)=>turtleShell(P.light,.35)+hills(122,8,P.near)],
+  ["Big Sur",(P)=>ridge(98,22,7,P.far)+cliffs(124,P.near)+water(120,P.mid,.9)]]},
+ SPI:{word:"SACRAMENTO",col:"#8cc9f5",acc:"#1e3a8a",num:34,sc:[
+  ["Tower Bridge",(P)=>sky_line(106,P.far,P.light,16)+tbridge(122,"#d4a017")+water(122,P.mid,.95)+reflect(122,P.light)],
+  ["Capitol",(P)=>pines(126,10,18,P.mid)+dome(60,124,P.near)],
+  ["Ragnatela al chiaro di luna",(P)=>moon(60,34,12,P.light)+web(60,34,P.light,.35)+sky_line(124,P.near,P.light,16)],
+  ["Corsa all'oro",(P)=>ridge(100,18,8,P.far)+water(120,P.mid,.9)+[20,40,62,84,100].map(x=>`<circle cx="${x}" cy="${128+rnd()*6}" r="2.2" fill="#facc15"/>`).join("")],
+  ["Due fiumi",(P)=>hills(104,8,P.far)+`<path d="M-4 120 C30 110 50 130 124 116 V128 C60 138 30 122 -4 132 Z" fill="${P.light}" opacity=".6"/>`+pines(146,12,14,P.near)],
+  ["Ragnatela in città",(P)=>web(0,0,P.light,.3)+web(120,0,P.light,.3)+sky_line(120,P.near,P.light,22)],
+  ["Valle centrale",(P)=>sun(90,90,10,P.light)+hills(108,10,P.mid)+hills(122,8,P.near)]]},
+ EAG:{word:"SAN DIEGO",col:"#0f1b4d",acc:"#facc15",num:3,sc:[
+  ["Coronado Bridge",(P)=>sky_line(106,P.far,P.light,16)+coronado(124,P.near)+water(124,P.mid,.95)],
+  ["Ali d'aquila",(P)=>wing(P.light,.35)+hills(124,8,P.near)],
+  ["Tramonto sull'oceano",(P)=>sun(60,110,22,P.light,P.far)+water(112,P.mid,.95)+reflect(112,P.light)],
+  ["Torrey Pines",(P)=>water(116,P.mid,.9)+cliffs(126,P.near)+palm(16,118,.7,P.near,1)],
+  ["Porto e skyline",(P)=>sky_line(114,P.mid,P.light,26)+water(114,P.near,.95)+reflect(114,P.light)],
+  ["Palme e spiaggia",(P)=>water(110,P.mid,.9)+`<rect x="0" y="126" width="120" height="20" fill="${P.snow}" opacity=".7"/>`+palm(14,146,.9,P.near,1)+palm(100,146,1,P.near,-1)+palm(84,146,.7,P.near,-1)],
+  ["Stelle sulla baia",(P)=>stars(36,P.light,4,96)+star(60,40,8,P.light,.8)+coronado(126,P.near)+water(126,P.mid,.95)]]},
+ PEA:{word:"DAKOTA",col:"#f70990",acc:"#ff7a1a",num:0,sc:[
+  ["Mount Rushmore",(P)=>clouds(P.light,.4,40)+rushmore(118,P.mid,P.light)+pines(134,10,16,P.near)],
+  ["Badlands",(P)=>[0,1,2,3].map(i=>`<path d="M-2 ${100+i*10} C30 ${94+i*10} 50 ${106+i*10} 122 ${98+i*10} V146 H-2 Z" fill="${[P.far,P.mid,P.near,"#000"][i]}" opacity="${i<3?1:.25}"/>`).join("")],
+  ["Prateria e bisonti",(P)=>sun(90,88,10,P.light)+hills(112,8,P.mid)+bison(22,130,1.1,P.near)+bison(70,132,.9,P.near)+`<rect x="0" y="130" width="120" height="16" fill="${P.near}"/>`],
+  ["Ruota del pavone",(P)=>rays(60,140,P.light,.14)+eyes(P.far,P.mid,"#0b3b8f")+hills(130,6,P.near)],
+  ["Black Hills",(P)=>stars(24,P.light,4,70)+pines(110,30,12,P.mid)+pines(128,22,14,P.near)],
+  ["Grandi pianure",(P)=>clouds(P.light,.5,50)+hills(118,6,P.mid)+`<rect x="0" y="124" width="120" height="22" fill="${P.near}"/>`+[10,30,50,70,90,110].map(x=>`<path d="M${x} 124 V116" stroke="${P.near}" stroke-width=".8"/>`).join("")],
+  ["Piuma sul tramonto",(P)=>sun(60,104,20,P.light,P.far)+eyes(P.mid,P.near,"#0b3b8f")+hills(128,6,P.near)]]},
+};
+// abbinamenti scena/palette: 20 per squadra, ogni scena 2-3 palette diverse
+const PLIST=t=>{const c=S[t].col;return[["Alba",PAL.alba],["Giorno",PAL.giorno],["Tramonto",PAL.tramonto],["Notte",PAL.notte],["Aurora",PAL.aurora],["Neve",PAL.neve],["Deserto",PAL.deserto],["Colori squadra",TPAL(c)],["Bianca",BPAL(c)],["Nera",NPAL(c)]]};
+const PREF={DOL:[1,5,3,8,0,7,2,9,4],DUC:[6,2,3,7,0,9,8,1,4],FOX:[3,2,9,7,1,8,0,5,6],MOO:[4,3,5,1,7,8,0,9,2],TUR:[2,0,1,7,3,8,9,6,5],SPI:[3,7,2,1,8,9,0,5,6],EAG:[2,3,7,1,8,0,9,5,6],PEA:[2,6,7,0,3,8,9,1,5]};
+function lista(t){const T=S[t],P=PLIST(t),pr=PREF[t],out=[];let k=0;while(out.length<20){const si=out.length%T.sc.length,pi=pr[(k+Math.floor(out.length/T.sc.length)*2)%pr.length];k++;const [sn,fn]=T.sc[si],[pn,pal]=P[pi];
+ if(out.some(o=>o.si===si&&o.pi===pi))continue;seed(out.length+t.charCodeAt(0)*31+t.charCodeAt(1));
+ const dark=pal.dark,light=!dark;const fg=light?pal.ink:"#ffffff",st=light?"#ffffff":pal.ink;
+ out.push({si,pi,name:`${String.fromCharCode(65+out.length)} · ${sn}`,sub:pn,o:{grad:pal.sky,trim:T.col===pal.near?T.acc:T.col,trim2:T.acc,fg,st,word:T.word,layer:fn(pal),num:T.num,glow:dark?1:0}})}return out}
+;return{lista,S}})();
+let ID2=0;const uid=s=>{const k="pz"+(ID2++)+"_";return s.replace(/id="pm/g,'id="'+k).replace(/#pm/g,'#'+k)};
+const CACHE={};const city=t=>CACHE[t]||(CACHE[t]=B.lista(t));
+window.PREMI={PREZZO:4000,
+ items(t){if(t==="DREAM")return A.DREAM.map(([n,o],i)=>({id:"D"+i,code:200+i,name:n.replace("Dream City · ",""),sub:"Dream City · tutte le squadre",o}));return city(t).map((x,i)=>({id:t+":"+String.fromCharCode(65+i),code:100+i,name:x.name.replace(/^[A-T] · /,""),letter:String.fromCharCode(65+i),sub:x.sub,o:x.o}))},
+ svg(t,code,num){let it=null;if(code>=200)it=A.DREAM[code-200]&&{o:A.DREAM[code-200][1]};else it=city(t)[code-100];if(!it)return null;const o={...it.o,num:num==null?"?":String(num)};if(code>=200)o.word="DREAM CITY";return uid(A.maglia(o))},
+ name(t,code){if(code>=200)return"Dream City · "+(A.DREAM[code-200]||["?"])[0].replace("Dream City · ","");const x=city(t)[code-100];return x?"City Edition · "+x.name:"City Edition"},
+ owned(){try{return JSON.parse(localStorage.getItem("dl_premi")||"[]")}catch(e){return[]}},
+ save(L){try{localStorage.setItem("dl_premi",JSON.stringify(L))}catch(e){}},
+ has(id){return this.owned().includes(id)},
+ codes(t){const L=this.owned(),o=[];L.forEach(id=>{if(id.startsWith(t+":"))o.push(100+id.charCodeAt(t.length+1)-65);else if(/^D\d$/.test(id))o.push(200+ +id.slice(1))});return o.sort((a,b)=>a-b)}};
+})();
+const kitNome=(t,k)=>k>=100&&window.PREMI?PREMI.name(t,k):KIT_N[k];
+const kitLista=t=>{const L=[];for(let i=0;i<kitTot(t);i++)L.push(i);try{PREMI.codes(t).forEach(c=>L.push(c))}catch(e){}return L};
+function kitIco(t){const kd0=kitDi(t),c=kitC(t,kd0>=100?0:kd0),n3=kd0===3||kd0===4,n9=kd0===4;return`<svg viewBox="0 0 24 24" aria-hidden="true">${n9?`<defs><pattern id="kit90" width="2.4" height="24" patternUnits="userSpaceOnUse"><rect width="2.4" height="24" fill="#141414"/><rect width=".6" height="24" fill="#ce1126"/></pattern></defs>`:n3?`<defs><linearGradient id="kitnba" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c8102e"/><stop offset=".33" stop-color="#c8102e"/><stop offset=".33" stop-color="#fdb927"/><stop offset=".66" stop-color="#fdb927"/><stop offset=".66" stop-color="#1d428a"/><stop offset="1" stop-color="#1d428a"/></linearGradient></defs>`:""}<path d="M6.6 2.2h3.2c.2 2.6 4.2 2.6 4.4 0h3.2c-.1 3.4 1 5.4 3 6.4v12.6c-5.6 1.1-11.2 1.1-16.8 0V8.6c2-1 3.1-3 3-6.4z" fill="${n9?"url(#kit90)":n3?"url(#kitnba)":c.bg}" stroke="${c.trim||c.fg}" stroke-width="1.6" stroke-linejoin="round"/><text x="12" y="16.6" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-style="italic" font-size="8.5" fill="${n3?"#ffffff":c.fg}"${n3?' stroke="#111" stroke-width="1.4" paint-order="stroke"':""}>${n9?"90":"23"}</text></svg>`}
 const NBA_NOME={ATL:"HAWKS",BOS:"CELTICS",BKN:"NETS",CHA:"HORNETS",CHI:"BULLS",CLE:"CAVALIERS",DAL:"MAVERICKS",DEN:"NUGGETS",DET:"PISTONS",GSW:"WARRIORS",HOU:"ROCKETS",IND:"PACERS",LAC:"CLIPPERS",LAL:"LAKERS",MEM:"GRIZZLIES",MIA:"HEAT",MIL:"BUCKS",MIN:"WOLVES",NOP:"PELICANS",NYK:"KNICKS",OKC:"THUNDER",ORL:"MAGIC",PHI:"76ERS",PHX:"SUNS",POR:"BLAZERS",SAC:"KINGS",SAS:"SPURS",TOR:"RAPTORS",UTA:"JAZZ",WAS:"WIZARDS"};
 /* ===== AVATAR GIOCATORI (27/10/2026): personaggi in stile cartone al posto delle maglie (impostazione DLS.pj = "avatar").
    NON sono ritratti: tratti scelti a mano per ogni giocatore (pelle 1-6, capelli, barba, fascia) e facilmente correggibili in AVD.
@@ -3645,6 +3850,7 @@ function jersey(t,num,name=""){
   const PM=(DLS.pjp&&DLS.pjp[name])||DLS.pj;/* eccezione per singolo giocatore (DLS.pjp) oppure scelta generale */
   if(PM==="avatar"&&name)return avatarSvg(c,n,name,k);
   if(name&&(PM==="bin"||PM==="wc"||PM==="poop"))return iconeSvg(PM,n,k);
+  if(kd>=100&&window.PREMI){const ps=PREMI.svg(t,kd,n);if(ps)return ps}
   const fs=n.length>1?38:44;
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
   const ol=c.jstroke||(lum(c.fg)<0.45?"#ffffff":"#0a0f1f");
@@ -7564,7 +7770,7 @@ function drGioc(t,x,cl){if(!x)return`<span class="pj"></span><span class="pnm">�
 const SEG={0:"abcdef",1:"bc",2:"abged",3:"abgcd",4:"fgbc",5:"afgcd",6:"afgedc",7:"abc",8:"abcdefg",9:"abcdfg","-":"g"," ":""};
 const SEGP={a:"M2.4 1H9.6L8.4 2.6H3.6Z",b:"M10.6 1.8L9 3.4V8.8L10.6 9.6Z",c:"M10.6 10.4L9 11.2V16.6L10.6 18.2Z",d:"M2.4 19H9.6L8.4 17.4H3.6Z",e:"M1.4 10.4L3 11.2V16.6L1.4 18.2Z",f:"M1.4 1.8L3 3.4V8.8L1.4 9.6Z",g:"M2.4 10L3.5 9.2H8.5L9.6 10L8.5 10.8H3.5Z"};
 const segD=ch=>`<svg class="sg" viewBox="0 0 12 20" aria-hidden="true">${Object.entries(SEGP).map(([k,d])=>`<path d="${d}"${(SEG[ch]||"").includes(k)?' class="on"':""}/>`).join("")}</svg>`;
-const kitBtn=t=>`<button class="kitbtn" id="kitbtn" data-kitt="${t}" aria-label="Cambia maglia: ${KIT_N[kitDi(t)]}" title="Maglia: ${KIT_N[kitDi(t)]}">${kitIco(t)}</button>`;
+const kitBtn=t=>`<button class="kitbtn" id="kitbtn" data-kitt="${t}" aria-label="Cambia maglia: ${kitNome(t,kitDi(t))}" title="Maglia: ${kitNome(t,kitDi(t))}">${kitIco(t)}</button>`;
 /* (233) il bordino rosso lampeggiante del tabellone vale solo di notte: si spegne alle 07:30 (ora italiana, modificato in (259): da quel momento i dati ESPN sono "fissi") e torna alle 18:00 (la sera iniziano le partite NBA) */
 function lvNotte(){return lvAnim()}
 /* (259) Animazioni live: partono quando una partita è davvero iniziata (stato "in corso" nei dati ESPN/Dynasty TV, anche a mezzogiorno) e finiscono alle 07:30 italiane a prescindere. Conta solo una partita iniziata dopo l'ultimo 07:30. */
@@ -9441,7 +9647,7 @@ async function tvBoxes(d){if(typeof TV==="undefined"||!d||!TV.days[d])return fal
       TV.box[key]={a:tvLiveSide(B.awayTeam,aw),h:tvLiveSide(B.homeTeam,!aw),live:1,fin:1};G[7]=key;ch=true}catch(e){}}
   return ch}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&cur==="tv")tvLiveTick()});
-document.getElementById("main").addEventListener("click",e=>{if(cur!=="campo")return;const kb=e.target.closest("#kitbtn");if(kb){e.preventDefault();const t=kb.dataset.kitt;KIT[t]=(kitDi(t)+1)%kitTot(t);kitSalva();const y=scrollY;render();scrollTo(0,y);return}});
+document.getElementById("main").addEventListener("click",e=>{if(cur!=="campo")return;const kb=e.target.closest("#kitbtn");if(kb){e.preventDefault();const t=kb.dataset.kitt;{const L=kitLista(t),i=L.indexOf(kitDi(t));KIT[t]=L[(i+1)%L.length]}kitSalva();const y=scrollY;render();scrollTo(0,y);return}});
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="campo")return;const go=e.target.closest(".lbm[data-drgo]");if(!go)return;const[k,x,y]=go.dataset.drgo.split("|");DR.k=+k;DR.tab="turno";DR.open=[x,y];DR.rules=false;GAME="dream";cur="giochi";render();window.scrollTo(0,0)});
 document.getElementById("main").addEventListener("click",e=>{if(cur==="campo"&&e.target.closest("#cntbtn")){e.preventDefault();CNT=!CNT;cntSave();SN.hist=false;const y=scrollY;render();scrollTo(0,y)}});
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="tv")return;const T=TVD(),ks=Object.keys(T.days).sort();
@@ -11871,7 +12077,8 @@ document.addEventListener("click",e=>{
 .btlg{width:34px;height:34px;object-fit:contain;flex:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))}
 .btmid{font-family:var(--display);font-style:italic;font-weight:800;color:#ffe27a;font-size:13px;letter-spacing:.1em}
 .btsub{margin:8px 0 0;font-size:11.5px;color:#f3b8c1;line-height:1.35}
-.btmode{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 10px}.btmode button{padding:9px;border-radius:12px;border:1.5px solid rgba(255,226,122,.35);background:rgba(0,0,0,.3);color:#ffd0d6;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px}.btmode button[aria-pressed=true]{background:linear-gradient(180deg,#ffe27a,#f5b400);color:#2a0610;border-color:#ffe27a}.btmxi{font-size:12px;color:#ffd0d6;margin:0 0 10px;line-height:1.35}.btlegs{max-height:100px;overflow:auto;margin:0 0 8px}.btleg{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,226,122,.18)}.btleg b{font-size:13px;display:block}.btleg small{font-size:11px;color:#ffd0d6}.btmq{display:flex;justify-content:space-between;align-items:center;margin:0 0 8px;font-size:12px;color:#ffd0d6}.btmq i{font-style:normal;color:#8cf0a8}.btmq b{font-family:var(--display);font-style:italic;font-size:22px;color:#ffe27a}.btgo:disabled{opacity:.45}.btcard:has(.btq.pd){opacity:.65}.btq.pd:disabled{opacity:.85;height:auto!important;min-height:58px}.btq.pd small,.btq.pd b{opacity:1;color:#ffd0d6}.btq.pd{filter:saturate(.5)}.btq.pm{box-shadow:0 0 0 2px #ffe27a inset}.btq{position:relative}.btq em{position:absolute;top:5px;right:8px;font-style:normal;font-size:10px;font-weight:800;color:#ffe27a}.btwn{display:block;margin-top:6px;font-size:13px;font-weight:800;color:#ffe27a;letter-spacing:.02em}.btwn b{font-family:var(--display);font-style:italic;font-size:22px;margin:0 5px;color:#ffd24a;text-shadow:0 0 12px rgba(255,210,74,.55)}.btinc{position:absolute;top:12px;right:14px;padding:8px 14px;border-radius:12px;border:1.5px solid #ff8a9a;background:linear-gradient(180deg,#ef4444,#b91c1c);color:#fff;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;box-shadow:0 0 14px rgba(239,68,68,.55)}.btfz{margin:8px 0 0;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.4);border:1px solid rgba(255,226,122,.4);font-size:12px;color:#ffe27a}.btsqs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 12px}.btsq{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 2px;border-radius:12px;border:1.5px solid rgba(255,226,122,.3);background:rgba(0,0,0,.3);color:#ffd0d6;font-size:11px;font-weight:700}.btsq .btlg{width:40px;height:40px;object-fit:contain}.btsq.on{border-color:#ffe27a;background:rgba(245,180,0,.22);color:#fff;box-shadow:0 0 12px rgba(255,214,90,.4)}.btst .btsm{margin-top:6px}.btsm{padding:6px 12px;border-radius:10px;border:1.5px solid #ffe27a;background:rgba(0,0,0,.3);color:#ffe27a;font-weight:800;font-size:12px}
+.btmode{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 10px}.btmode button{padding:9px;border-radius:12px;border:1.5px solid rgba(255,226,122,.35);background:rgba(0,0,0,.3);color:#ffd0d6;font-family:var(--display);font-style:italic;font-weight:800;font-size:14px}.btmode button[aria-pressed=true]{background:linear-gradient(180deg,#ffe27a,#f5b400);color:#2a0610;border-color:#ffe27a}.btmxi{font-size:12px;color:#ffd0d6;margin:0 0 10px;line-height:1.35}.btlegs{max-height:100px;overflow:auto;margin:0 0 8px}.btleg{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,226,122,.18)}.btleg b{font-size:13px;display:block}.btleg small{font-size:11px;color:#ffd0d6}.btmq{display:flex;justify-content:space-between;align-items:center;margin:0 0 8px;font-size:12px;color:#ffd0d6}.btmq i{font-style:normal;color:#8cf0a8}.btmq b{font-family:var(--display);font-style:italic;font-size:22px;color:#ffe27a}.btgo:disabled{opacity:.45}.btcard:has(.btq.pd){opacity:.65}.btq.pd:disabled{opacity:.85;height:auto!important;min-height:58px}.btq.pd small,.btq.pd b{opacity:1;color:#ffd0d6}.btq.pd{filter:saturate(.5)}.btq.pm{box-shadow:0 0 0 2px #ffe27a inset}.btq{position:relative}.btq em{position:absolute;top:5px;right:8px;font-style:normal;font-size:10px;font-weight:800;color:#ffe27a}.btwn{display:block;margin-top:6px;font-size:13px;font-weight:800;color:#ffe27a;letter-spacing:.02em}.btwn b{font-family:var(--display);font-style:italic;font-size:22px;margin:0 5px;color:#ffd24a;text-shadow:0 0 12px rgba(255,210,74,.55)}/* (1200) premi */.przseg{display:flex;gap:6px;margin:0 0 10px}.przseg span{flex:1;text-align:center;padding:9px;border-radius:12px;border:1.5px solid rgba(255,226,122,.4);font-family:var(--display);font-style:italic;font-weight:800;color:#ffe27a;background:rgba(0,0,0,.3)}.przseg span.on{background:linear-gradient(180deg,#ffe27a,#f5b400);color:#3a0a14}.btdc{width:40px;height:40px;display:grid;place-items:center;font-size:24px;color:#e9d5ff;background:linear-gradient(135deg,#7c3aed,#c026d3);border-radius:50%}.przh{font-family:var(--display);font-style:italic;font-weight:800;color:#ffe27a;font-size:16px;margin:6px 0 8px;letter-spacing:.03em}.przg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.przc{background:linear-gradient(180deg,#3a0d18,#24070e);border:1px solid rgba(255,226,122,.3);border-radius:14px;padding:8px 6px;text-align:center;color:#fff}.przc.own{border-color:#4ade80}.przj svg{width:100%;height:auto;display:block}.przc b{display:block;font-family:var(--display);font-style:italic;font-weight:800;font-size:11.5px;line-height:1.1;margin-top:2px}.przc small{display:block;font-size:10px;color:#ffd0d6;margin:1px 0 6px}.przb{width:100%;border:1px solid rgba(255,226,122,.25);border-radius:10px;padding:5px 2px;font-family:var(--display);font-style:italic;font-weight:800;font-size:12.5px;display:grid;background:rgba(0,0,0,.35);color:#ffd0d6}.przb i{font-size:10px;font-style:normal;opacity:.85}.przb.ok{background:linear-gradient(180deg,#ffe27a,#f5b400);color:#3a0a14;border-color:transparent}.przb.own{background:#14532d;color:#bbf7d0;border-color:#22c55e}.btprz{background:linear-gradient(180deg,#ffe27a,#f5b400)!important;color:#3a0a14!important;border-color:#fff3b0!important;box-shadow:0 0 14px rgba(255,214,90,.55)!important}
+.btinc{position:absolute;top:12px;right:14px;padding:8px 14px;border-radius:12px;border:1.5px solid #ff8a9a;background:linear-gradient(180deg,#ef4444,#b91c1c);color:#fff;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px;box-shadow:0 0 14px rgba(239,68,68,.55)}.btfz{margin:8px 0 0;padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.4);border:1px solid rgba(255,226,122,.4);font-size:12px;color:#ffe27a}.btsqs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 12px}.btsq{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 2px;border-radius:12px;border:1.5px solid rgba(255,226,122,.3);background:rgba(0,0,0,.3);color:#ffd0d6;font-size:11px;font-weight:700}.btsq .btlg{width:40px;height:40px;object-fit:contain}.btsq.on{border-color:#ffe27a;background:rgba(245,180,0,.22);color:#fff;box-shadow:0 0 12px rgba(255,214,90,.4)}.btst .btsm{margin-top:6px}.btsm{padding:6px 12px;border-radius:10px;border:1.5px solid #ffe27a;background:rgba(0,0,0,.3);color:#ffe27a;font-weight:800;font-size:12px}
 .btslip{position:sticky;bottom:10px;z-index:6;margin:12px 0 0;padding:12px;border-radius:16px;background:linear-gradient(160deg,#2a0610,#12030a);border:1.5px solid #ffe27a;box-shadow:0 8px 28px rgba(0,0,0,.65),0 0 18px rgba(255,214,90,.3)}
 .btsl1{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.btsl1 b{font-size:13.5px;line-height:1.2}.btsl1 span{display:block;font-size:12px;color:#ffe27a;font-weight:800;margin-top:2px}
 .btx{flex:none;width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,226,122,.5);background:transparent;color:#ffe27a;cursor:pointer}
@@ -12024,7 +12231,7 @@ function tabMy(){const B=BW.bets,stl={a:"In corso",v:"Vinta",p:"Persa",x:"Rimbor
  <div class="btsec" style="margin-top:14px">Salvataggio<small>i dati stanno su questo telefono</small></div>
  <div class="btbk"><button data-bbk="copy">📋 Copia backup</button><textarea id="btbk" placeholder="Incolla qui un backup per ripristinare">${E(BS.bk)}</textarea><button data-bbk="rest">♻️ Ripristina da backup</button></div>`}
 function vBet(){
- settle();if(BS.view==="inc")return vInc();const lg=LOGO.DUC;let C=[],D=[];try{C=cand();D=duels(C)}catch(e){}
+ settle();if(BS.view==="inc")return vInc();if(BS.view==="premi")return vPremi();const lg=LOGO.DUC;let C=[],D=[];try{C=cand();D=duels(C)}catch(e){}
  const open=BW.bets.filter(b=>b.s==="a").reduce((a,b)=>a+b.st,0),done=BW.bets.filter(b=>b.s!=="a"),net=done.reduce((a,b)=>a+(b.s==="v"?b.pay-b.st:b.s==="p"?-b.st:0),0);
  const T=[["sf","Sfide"],["ou","Giocatori"],["du","Duelli"],["my","Giocate"]];
  const body=BS.tab==="sf"?tabSf():BS.tab==="ou"?tabOu(C):BS.tab==="du"?tabDu(D):tabMy();
@@ -12039,7 +12246,7 @@ function vBet(){
   <div class="btsl3"><span>Vincita possibile<b><i id="btwin">${ni(win)}</i> gett.</b></span><button class="btgo" data-bgo>Punta</button></div>${BS.msg?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:""}</div>`:(BS.msg&&BS.tab!=="my"?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:"");
  return`<div class="bt"><button class="gback" id="hofback">‹ Giochi</button>
  <div class="bthd"><span class="bti">🎰</span><div><small>Dreamers · Giochi</small><b>Centro scommesse</b><em>Quote automatiche · gettoni</em></div></div>
- <div class="btbank"><button class="btinc" data-binc="open">💰 Incassa</button><small>Il tuo saldo</small><div class="btbal"><b>${ni(BW.saldo)}</b><span>gettoni · ${nf(BW.saldo/CR,2)} cr</span></div>
+ <div class="btbank"><button class="btinc btprz" data-bpr="open">🏆 Premi</button><small>Il tuo saldo</small><div class="btbal"><b>${ni(BW.saldo)}</b><span>gettoni · ${nf(BW.saldo/CR,2)} cr</span></div>
  <div class="btstats"><div><small>In gioco</small><b>${ni(open)}</b></div><div><small>Bilancio</small><b class="${net>0?"pos":net<0?"neg":""}">${net>0?"+":""}${ni(net)}</b></div><div><small>Giocate</small><b>${BW.bets.length}</b></div></div>
  ${frozen()?`<p class="btfz">🔒 Cassa bloccata: hai incassato il massimo dell'anno. Le scommesse sono solo per gioco, il saldo non cambia.</p>`:""}<p class="btrule">${ni(CR)} gettoni = 1 credito · puntata ${ni(MINS)}–${ni(MAXS)} · le puntate si chiudono al fischio d'inizio · se un giocatore non gioca la giocata è annullata e i gettoni tornano · le quote includono un margine del banco del ${Math.round(MARG*100)}%.</p></div>
  <div class="bttabs" role="tablist">${T.map(t=>`<button data-bt="${t[0]}" aria-pressed="${BS.tab===t[0]}">${t[1]}</button>`).join("")}</div>
@@ -12091,6 +12298,28 @@ async function shBS0(){const b=BW.bets.find(x=>x.id===window.SHR_BS);if(!b)retur
  const rows=[["Quota totale",nf(b.q,2)],["Puntati",ni(b.st)+" gettoni"],[b.s==="v"?"Vincita":b.s==="p"?"Persa":"Vincita possibile",b.s==="p"?"—":ni(win)+" gettoni"]];
  for(const[a,v]of rows){c.textAlign="left";c.font=SH_B(600,32);c.fillStyle="rgba(233,213,255,.85)";c.fillText(a,90,y+40);c.textAlign="right";c.font=SH_F(800,44,1);c.fillStyle="#fff";c.fillText(v,W-90,y+44);y+=70}
  shFoot(c,W,H,"Centro scommesse Dreamers · gettoni, solo per gioco"+(b.fz?" · cassa chiusa":""));return cv};
+/* (1200) PREMI: catalogo maglie (City Edition per squadra e Dream City), 4000 gettoni l'una; ritirate finiscono nel tasto maglia della squadra */
+function vPremi(){const P=window.PREMI;if(!P)return"";const T=BS.pt||(TEAMS[curTeam]?curTeam:"DUC"),own=P.owned(),pr=P.PREZZO;
+ const chips=[...Object.keys(TEAMS).map(t=>`<button class="btsq${T===t?" on":""}" data-bpr="t|${t}" aria-pressed="${T===t}">${logo(t)}<span>${E(TEAMS[t].nick)}</span></button>`),`<button class="btsq${T==="DREAM"?" on":""}" data-bpr="t|DREAM"><span class="btdc">✦</span><span>Dream City</span></button>`].join("");
+ const it=P.items(T),tm=T==="DREAM"?(TEAMS[curTeam]?curTeam:"DUC"):T;
+ const card=x=>{const has=own.includes(x.id),ok=BW.saldo>=pr,cd=x.code,usa=T!=="DREAM"&&KIT[T]===cd;
+  return`<div class="przc${has?" own":""}"><div class="przj">${P.svg(tm,cd,x.o.num)}</div><b>${x.letter?x.letter+" · ":""}${E(x.name)}</b><small>${E(x.sub)}</small>${has?`<button class="przb own" data-bpr="use|${T}|${cd}">${usa?"✓ In uso":"✓ Tua · Indossa"}</button>`:`<button class="przb${ok?" ok":""}" data-bpr="buy|${x.id}"${ok?"":" disabled"}>${ok?"Ritira":"🔒"} <i>${ni(pr)} gettoni</i></button>`}</div>`};
+ return`<div class="bt"><button class="gback" data-bpr="back">‹ Centro scommesse</button>
+ <div class="bthd"><span class="bti">🏆</span><div><small>Dreamers · Giochi</small><b>Premi</b><em>Maglie da ritirare con i gettoni</em></div></div>
+ <div class="btbank"><small>Il tuo saldo</small><div class="btbal"><b>${ni(BW.saldo)}</b><span>gettoni</span></div><p class="btsub">Ogni maglia costa ${ni(pr)} gettoni. Quella che ritiri resta tua su questo telefono e la trovi nel tasto maglia della squadra, vicino al campo.${T==="DREAM"?" Le Dream City si possono indossare con tutte le squadre.":""}</p></div>
+ <div class="przseg"><span class="on">👕 Maglie</span></div>
+ <div class="btsqs">${chips}</div>
+ ${BS.msg?`<p class="btmsg${BS.ok?" ok":""}">${E(BS.msg)}</p>`:""}
+ <h3 class="przh">${T==="DREAM"?"Maglie Dream City":"City Edition · "+E(TEAMS[T].name)}</h3>
+ <div class="przg">${it.map(card).join("")}</div></div>`}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-bpr]");if(!b||cur!=="bet")return;e.preventDefault();const a=b.dataset.bpr.split("|"),P=window.PREMI,y=scrollY;
+ if(a[0]==="open"){BS.view="premi";BS.msg="";render();scrollTo(0,0);return}
+ if(a[0]==="back"){BS.view="";BS.msg="";render();scrollTo(0,0);return}
+ if(a[0]==="t"){BS.pt=a[1];BS.msg="";render();scrollTo(0,y);return}
+ if(a[0]==="buy"){const id=a[1];if(P.has(id))return;if(BW.saldo<P.PREZZO){BS.msg="Ti servono "+ni(P.PREZZO)+" gettoni.";BS.ok=false;render();scrollTo(0,y);return}
+  const T=BS.pt||curTeam,x=P.items(T).find(z=>z.id===id);if(!confirm("Ritirare la maglia «"+(x?x.name:id)+"» per "+ni(P.PREZZO)+" gettoni?"))return;
+  BW.saldo-=P.PREZZO;(BW.premi=BW.premi||[]).push({id,ts:Date.now(),g:P.PREZZO});bSave();const L=P.owned();L.push(id);P.save(L);BS.msg="Maglia ritirata! La trovi nel tasto maglia della squadra.";BS.ok=true;render();scrollTo(0,y);return}
+ if(a[0]==="use"){let t=a[1],cd=+a[2];if(t==="DREAM")t=TEAMS[curTeam]?curTeam:"DUC";KIT[t]=cd;kitSalva();BS.msg="Maglia indossata dai "+TEAMS[t].nick+".";BS.ok=true;render();scrollTo(0,y)}});
 function vInc(){const I=incInfo(),sq=BW.sq,fz=frozen();
  const T=Object.keys(TEAMS).map(t=>`<button class="btsq${sq===t?" on":""}" data-binc="sq|${t}" aria-pressed="${sq===t}">${logo(t)}<span>${E(TEAMS[t].nick)}</span></button>`).join("");
  const INC=(BW.inc||[]).map(x=>`<div class="btbet x"><div><b>${x.cr} ${x.cr===1?"credito":"crediti"} · ${E((TEAMS[x.sq]||{}).nick||x.sq)}</b><small>${itDT(x.ts)} · ID ${E(x.id.toUpperCase())}</small></div><div class="btst"><button class="btsm" data-binc="show|${E(x.id)}">Rivedi</button></div></div>`).join("");
