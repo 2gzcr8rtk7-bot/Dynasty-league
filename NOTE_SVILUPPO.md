@@ -3329,3 +3329,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v669 (1255): classifica Home, logo Ducks a scala 0.85 (larghezza pari agli stemmi).
 
 - v670 (1256): area riservata Ducks > Editor loghi: tocchi un logo, livella 50-200% (solo quella squadra o tutte nella casella), salvato sul telefono (dl_dxlogo), prompt unico da copiare per Claude.
+
+- v671 (1257): Editor loghi: tasto Navighi / Tocca un logo per girare tutte le pagine con lo strumento acceso; contatore modifiche; prompt unico con il nome della sezione.

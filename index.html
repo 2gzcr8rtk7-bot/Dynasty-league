@@ -12954,55 +12954,56 @@ const NOMET=t=>{try{return (typeof TEAMS!=="undefined"&&TEAMS[t]&&(TEAMS[t].nick
 const SKIP=/^(on|sel|act|active|open|show|logo|badge)$/;
 const teamOf=e=>{const c=[...e.classList].find(c=>/^lg-[A-Z0-9]{2,4}$/.test(c));return c?c.slice(3):null};
 const logoAt=t=>{let x=t;for(let i=0;i<4&&x&&x.nodeType===1;i++){if(teamOf(x))return x;x=x.parentElement}return null};
-let ON=false,T=null,ALL=false;
+let ON=false,PK=true,T=null,ALL=false;/* (1257) ON = strumento acceso; PK = modalità «tocca un logo» (spenta = navighi tra le pagine) */
 const bs="padding:11px 12px;border-radius:12px;border:2px solid #fff;background:#111;color:#fff;font:800 13px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.5)";
 const bar=document.createElement("div");bar.id="lgbar";bar.style.cssText="position:fixed;left:8px;right:8px;bottom:8px;z-index:2147483000;display:none;gap:6px";
-bar.innerHTML=`<span style="${bs};flex:1;text-align:center">🔍 Tocca un logo</span><button data-lgb="panel" style="${bs}">📋 Prompt</button><button data-lgb="off" style="${bs}">✕</button>`;document.body.appendChild(bar);
+bar.innerHTML=`<button data-lgb="mode" style="${bs};flex:1"></button><button data-lgb="panel" style="${bs}">📋 Prompt</button><button data-lgb="off" style="${bs}">✕</button>`;document.body.appendChild(bar);
+const barUpd=()=>{bar.style.display=ON?"flex":"none";const m=bar.querySelector('[data-lgb="mode"]');m.textContent=PK?"🎯 Tocca un logo · (qui per navigare)":"👆 Navighi · (qui per toccare un logo)";m.style.background=PK?"#7c3aed":"#111";bar.querySelector('[data-lgb="panel"]').textContent="📋 Prompt ("+Object.keys(LG).length+")"};
 const sh=document.createElement("div");sh.id="lgsheet";sh.style.cssText="position:fixed;left:0;right:0;bottom:0;z-index:2147483001;display:none;background:#fff;color:#222;border-radius:18px 18px 0 0;padding:14px 16px 20px;box-shadow:0 -8px 28px rgba(0,0,0,.45);font:14px system-ui";document.body.appendChild(sh);
 const hl=document.createElement("div");hl.style.cssText="position:fixed;z-index:2147482999;pointer-events:none;display:none;border:3px dashed #ff2bd6;border-radius:8px;box-shadow:0 0 12px #ff2bd6";document.body.appendChild(hl);
 function hlUpd(){if(!T||!document.contains(T.el)||sh.style.display==="none"){hl.style.display="none";return}const q=T.el.getBoundingClientRect();Object.assign(hl.style,{display:"block",left:q.left-4+"px",top:q.top-4+"px",width:q.width+8+"px",height:q.height+8+"px"})}
 addEventListener("scroll",hlUpd,{passive:true});
 const keyOf=(v,pc,team)=>v+"|"+pc+"|"+(team||"*");
-function cfg(){const team=ALL?null:T.team;return{v:T.v,pc:T.pc,team,key:keyOf(T.v,T.pc,team)}}
+function cfg(){const team=ALL?null:T.team;return{v:T.v,pc:T.pc,team,nm:T.nm,key:keyOf(T.v,T.pc,team)}}
 function curK(){const c=cfg();return LG[c.key]?LG[c.key].k:100}
-function setK(k){const c=cfg();k=Math.max(50,Math.min(200,Math.round(k)));if(k===100)delete LG[c.key];else LG[c.key]={v:c.v,pc:c.pc,team:c.team,k};save();css();draw();setTimeout(hlUpd,30)}
+function setK(k){const c=cfg();k=Math.max(50,Math.min(200,Math.round(k)));if(k===100)delete LG[c.key];else LG[c.key]={v:c.v,pc:c.pc,team:c.team,nm:c.nm,k};save();css();draw();barUpd();setTimeout(hlUpd,30)}
 function draw(){const k=curK(),b="padding:9px 12px;border:1px solid #bbb;border-radius:10px;background:#f4f4f4;font:800 15px system-ui;color:#222";
- sh.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b style="font-size:15px">Logo ${esc(NOMET(T.team))} · ${esc(NOMEV(T.v))}</b><button data-lgs="close" style="${b};background:#222;color:#fff">Fine</button></div>
+ sh.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b style="font-size:15px">Logo ${esc(NOMET(T.team))} · ${esc(T.nm||NOMEV(T.v))}</b><button data-lgs="close" style="${b};background:#222;color:#fff">Fine</button></div>
  <div style="display:flex;gap:6px;margin:10px 0"><button data-lgs="one" style="${b};flex:1;font-size:13px;${!ALL?"background:#7c3aed;color:#fff;border-color:#7c3aed":""}">Solo ${esc(NOMET(T.team))}</button><button data-lgs="all" style="${b};flex:1;font-size:13px;${ALL?"background:#7c3aed;color:#fff;border-color:#7c3aed":""}">Tutte le squadre qui</button></div>
  <div style="text-align:center;font:900 30px system-ui;margin:4px 0">${k}%</div>
  <div style="display:flex;align-items:center;gap:8px"><button data-lgs="-5" style="${b}">−5</button><button data-lgs="-1" style="${b}">−1</button><input type="range" data-lgr min="50" max="200" step="1" value="${k}" style="flex:1;accent-color:#7c3aed;height:34px"><button data-lgs="+1" style="${b}">+1</button><button data-lgs="+5" style="${b}">+5</button></div>
  <button data-lgs="reset" style="${b};width:100%;margin-top:12px;font-size:13px;background:#fff;color:#c33;border-color:#c33"${k===100?" disabled":""}>↺ Grandezza originale (100%)</button>`;
  sh.style.display="block";hlUpd()}
-function pick(el){const p=el.parentElement;const pc=[...(p?p.classList:[])].filter(c=>!SKIP.test(c)).slice(0,2).join(".");T={el,team:teamOf(el),v:document.body.dataset.v||cur,pc};ALL=false;
+function pick(el){const p=el.parentElement;const pc=[...(p?p.classList:[])].filter(c=>!SKIP.test(c)).slice(0,2).join(".");const tb=document.querySelector('nav [role=tab][aria-selected="true"] span');T={el,team:teamOf(el),v:document.body.dataset.v||cur,pc,nm:tb?tb.textContent.trim():""};ALL=false;
  draw();const r=el.getBoundingClientRect(),top=innerHeight-sh.offsetHeight-16;if(r.bottom>top||r.top<60)scrollBy(0,r.top-Math.max(70,top/2))}
-sh.addEventListener("input",e=>{if(e.target.matches("[data-lgr]")){const c=cfg(),k=+e.target.value;if(k===100)delete LG[c.key];else LG[c.key]={v:c.v,pc:c.pc,team:c.team,k};save();css();sh.querySelector("div[style*='30px']").textContent=k+"%";hlUpd()}});
-sh.addEventListener("change",e=>{if(e.target.matches("[data-lgr]"))draw()});
+sh.addEventListener("input",e=>{if(e.target.matches("[data-lgr]")){const c=cfg(),k=+e.target.value;if(k===100)delete LG[c.key];else LG[c.key]={v:c.v,pc:c.pc,team:c.team,nm:c.nm,k};save();css();sh.querySelector("div[style*='30px']").textContent=k+"%";hlUpd()}});
+sh.addEventListener("change",e=>{if(e.target.matches("[data-lgr]")){draw();barUpd()}});
 sh.addEventListener("click",e=>{const b=e.target.closest("[data-lgs]");if(!b)return;const a=b.dataset.lgs;
  if(a==="close"){sh.style.display="none";T=null;hlUpd()}else if(a==="one"){ALL=false;draw()}else if(a==="all"){ALL=true;draw()}else if(a==="reset")setK(100);else setK(curK()+ +a)});
-const mine=t=>t.closest&&t.closest("#lgbar,#lgsheet");
+const mine=t=>t.closest&&t.closest("#lgbar,#lgsheet");const act=()=>ON&&PK;
 let P0=null,LT=0;
-document.addEventListener("pointerdown",e=>{if(!ON||mine(e.target))return;P0={x:e.clientX,y:e.clientY}},true);
-document.addEventListener("pointerup",e=>{if(!ON||!P0||mine(e.target)){P0=null;return}const d=Math.hypot(e.clientX-P0.x,e.clientY-P0.y);P0=null;if(d>12)return;
+document.addEventListener("pointerdown",e=>{if(!act()||mine(e.target))return;P0={x:e.clientX,y:e.clientY}},true);
+document.addEventListener("pointerup",e=>{if(!act()||!P0||mine(e.target)){P0=null;return}const d=Math.hypot(e.clientX-P0.x,e.clientY-P0.y);P0=null;if(d>12)return;
  const L=document.elementsFromPoint(e.clientX,e.clientY).filter(x=>!mine(x)&&x!==hl);let el=null;for(const x of L){el=logoAt(x);if(el)break}
  e.preventDefault();e.stopPropagation();LT=Date.now();if(el)pick(el)},true);
-document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("#lgbar [data-lgb]");if(b){e.preventDefault();e.stopPropagation();ON=false;sh.style.display="none";T=null;hlUpd();bar.style.display="none";if(b.dataset.lgb==="panel"){cur="dxlogo";render();scrollTo(0,0)}return}
- if(!ON||mine(e.target))return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()},true);
-document.addEventListener("touchend",e=>{if(ON&&!mine(e.target))e.preventDefault()},{capture:true,passive:false});
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("#lgbar [data-lgb]");if(b){e.preventDefault();e.stopPropagation();sh.style.display="none";T=null;hlUpd();if(b.dataset.lgb==="mode"){PK=!PK;barUpd();return}ON=false;barUpd();if(b.dataset.lgb==="panel"){cur="dxlogo";render();scrollTo(0,0)}return}
+ if(!act()||mine(e.target))return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()},true);
+document.addEventListener("touchend",e=>{if(act()&&!mine(e.target))e.preventDefault()},{capture:true,passive:false});
 function prompt(){const L=Object.values(LG);if(!L.length)return"";
  return"Ciao Claude, nell'app Dreamers (area riservata Ducks › Editor loghi) ho regolato la grandezza di questi loghi. Rendile ufficiali così come sono (100% = grandezza attuale), senza farli uscire dalle caselle:\n\n"+
- L.sort((a,b)=>a.v.localeCompare(b.v)).map(x=>`- ${NOMEV(x.v)} (vista "${x.v}"), casella .${x.pc||"?"}: ${x.team?"logo "+NOMET(x.team)+" ("+x.team+")":"tutti i loghi"} → ${x.k}%`).join("\n")+
+ L.sort((a,b)=>a.v.localeCompare(b.v)).map(x=>`- ${x.nm||NOMEV(x.v)} (vista "${x.v}"), casella .${x.pc||"?"}: ${x.team?"logo "+NOMET(x.team)+" ("+x.team+")":"tutti i loghi"} → ${x.k}%`).join("\n")+
  "\n\nDettagli tecnici (selettore CSS → scala):\n"+L.map(x=>`${selK(x)} → ${(x.k/100).toFixed(2)}`).join("\n")}
 window.vDxlogo=function(){const L=Object.values(LG),p=prompt();
  return`<div class="hof"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
  <div class="hofhd"><div style="grid-column:1/3"><small>Texas Ducks · area riservata del GM</small><b>Editor loghi</b><em>Tocca un logo e regola la grandezza</em></div></div>
- <section class="hofcard"><h4>1 · Regola i loghi</h4><p class="setnote">Si apre l'app: vai nella sezione che vuoi e tocca un logo. Sotto compare la livella: trascinala o usa −/+ per ingrandire o rimpicciolire. Puoi cambiare solo quella squadra o tutte le squadre in quella casella. Tocca «Fine», poi un altro logo. Quando hai finito tocca «📋 Prompt».</p>
+ <section class="hofcard"><h4>1 · Regola i loghi</h4><p class="setnote">Si apre l'app: vai nella sezione che vuoi e tocca un logo. Sotto compare la livella: trascinala o usa −/+ per ingrandire o rimpicciolire. Puoi cambiare solo quella squadra o tutte le squadre in quella casella. Tocca «Fine», poi un altro logo. Con il tasto viola in basso passi da «👆 Navighi» (cambi pagina, scorri, apri le partite) a «🎯 Tocca un logo» e viceversa: così fai tutte le pagine di fila. Quando hai finito tocca «📋 Prompt»: trovi un unico prompt con tutte le pagine.</p>
  <button class="cfgo" data-lgstart="1">🔍 Inizia</button></section>
- <section class="hofcard"><h4>2 · Modifiche salvate (${L.length})</h4>${L.length?L.map(x=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin:6px 0"><span style="font-size:13px">${esc(NOMEV(x.v))} · ${x.team?esc(NOMET(x.team)):"tutti"} · <small>.${esc(x.pc)}</small></span><b>${x.k}%</b><button data-lgdel="${esc(keyOf(x.v,x.pc,x.team))}" style="border:0;background:none;font-size:16px">✕</button></div>`).join(""):`<p class="setnote">Nessuna modifica.</p>`}</section>
+ <section class="hofcard"><h4>2 · Modifiche salvate (${L.length})</h4>${L.length?L.map(x=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin:6px 0"><span style="font-size:13px">${esc(x.nm||NOMEV(x.v))} · ${x.team?esc(NOMET(x.team)):"tutti"} · <small>.${esc(x.pc)}</small></span><b>${x.k}%</b><button data-lgdel="${esc(keyOf(x.v,x.pc,x.team))}" style="border:0;background:none;font-size:16px">✕</button></div>`).join(""):`<p class="setnote">Nessuna modifica.</p>`}</section>
  <section class="hofcard"><h4>3 · Prompt per Claude</h4><p class="setnote">Copia e incolla in chat: un unico messaggio con tutte le grandezze.</p><textarea id="lgout" readonly style="width:100%;height:120px;font-size:11px">${esc(p)}</textarea>
  <button class="cfgo" data-lgcopy="1"${p?"":" disabled"}>📋 Copia prompt</button> <button class="cfgo" data-lgclr="1" style="background:#fff;color:#c33"${p?"":" disabled"}>Azzera tutto</button></section></div>`};
 VIEWS.dxlogo=window.vDxlogo;
 document.addEventListener("click",e=>{if(cur!=="dxlogo")return;const t=e.target;
- if(t.closest("[data-lgstart]")){ON=true;bar.style.display="flex";cur="home";render();scrollTo(0,0);return}
+ if(t.closest("[data-lgstart]")){ON=true;PK=false;barUpd();cur="home";render();scrollTo(0,0);return}
  const d=t.closest("[data-lgdel]");if(d){delete LG[d.dataset.lgdel];save();css();render();return}
  if(t.closest("[data-lgcopy]")){const x=document.getElementById("lgout");x.select();try{navigator.clipboard.writeText(x.value)}catch(_){try{document.execCommand("copy")}catch(__){}}t.textContent="✔ Copiato";return}
  if(t.closest("[data-lgclr]")){if(t.dataset.ok){LG={};save();css();render()}else{t.dataset.ok=1;t.textContent="Tocca ancora per azzerare"}}});
