@@ -3269,3 +3269,7 @@ Rampa gialla (kit 302 e catalogo X, 123): montagne bianche. v642.
 
 ## 1230 · Via Lattea solo nel catalogo
 Via Lattea tolte dal tasto maglia (DUC_ROCK 304-306 null) e aggiunte al catalogo (Y, Z, AA; codici 124-126). Lettere oltre la Z: AA, AB... v644.
+
+
+## 1231 · Rampa nera F1
+Rampa nera (kit 301 e catalogo W, 122): montagne gialle e fumo bianco. v645.
