@@ -3315,3 +3315,7 @@ Tolte le scale fisse per sezione e il 84%. ducFit2(): per ogni .lg-DUC (scritta)
 
 ## 1247 · Logo Ducks: verifica su tutte le viste
 Controllate tutte le VIEWS: la scritta Ducks e alta quanto gli altri loghi (rapporto ~1) ovunque c e spazio; nelle colonne colorate strette (classifica, valtrade, effcup, infortuni, speciali, trade) arriva fino al bordo della colonna (margine orizzontale 0, verticale 3px). v661.
+
+
+## 1249 · Logo Ducks mai fuori dai bordi
+ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra i minimi per sezione; se non entra si rimpicciolisce (fino a 0.6). Controllo automatico su tutte le viste, giorno e notte: nessun logo fuori. v663.
