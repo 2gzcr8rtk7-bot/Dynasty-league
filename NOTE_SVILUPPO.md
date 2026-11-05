@@ -3129,3 +3129,7 @@ LOGO2.DUC (scritta) resta solo nel campo (vCampo e immagine campo condivisa). Ch
 
 ## 1171 · Ducks: scritta del campo nera anche col tema Parquet
 La regola Parquet .cname{fill:#fff!important} vinceva sul nero: aggiunta classe cn-duc con override a specificita maggiore.
+
+
+## 1172 · Ducks: scritta campo nero pieno
+Per DUC: niente velo gloss sopra il banner del campo, fill-opacity 1, fill e bordo #000.
