@@ -3221,3 +3221,7 @@ Catalogo Ducks: tolte Mulino Crepuscolo e i due Longhorn; in fondo (R,S,T) 3 mag
 
 ## 1208 · Campo Rio Grande Ducks
 CAMPI.DUC2 Rio Grande (alba, mesa terracotta, fiume). Piu campi per squadra: chiave C:DUC2, dl_campo[team]=1 (campo base) o la chiave; campoKey(t). v629.
+
+
+## 1209-1211 · Stella dello sceriffo, maglie razzo ufficiali, pulizia catalogo
+Catalogo Ducks: aggiunte Stella dello sceriffo (gialla/nera/bianca); tolte Deserto e ranch x3, Mesa e sole e Sole a raggi Crepuscolo (18 maglie). Maglie ufficiali Ducks col razzo di Houston (DUC_ROCK, kit 300-306) nel tasto maglia dopo le 5 normali. v630.
