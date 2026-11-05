@@ -3039,3 +3039,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1143 · Modalità Dream: maglie e cartellini PDK più nitidi (05/11/2026)
 - Le texture erano già ad alta risoluzione (maglie 900x1095, cartellini 3x): lo sbiadito veniva dai mipmap (da lontano il motore usa una copia rimpicciolita e sfocata). SHARP(): sulle maglie dei giocatori e su tutti gli sprite (cartellini) map_fragment campiona con lod bias -1.0 (una copia più grande). Nessun costo di memoria. Provato con una maglia di prova affiancata: molto più nitida, nessun errore di shader. Non provato con giocatori live (stanotte nessuno in campo).
+
+## 1144 · Maglie: la scelta vale solo per la squadra (05/11/2026)
+- Torna la scelta per squadra (KIT[t] in dl_kit, come prima della 187): il tastino maglietta nella pagina di una squadra cambia solo le sue maglie, ovunque (campo, giocatore, scontri…). Le altre squadre restano come le hai lasciate. Migrazione: la vecchia scelta globale (dl_kitg) passa una volta alla squadra salvata come «team», poi sparisce. KITO = scelta temporanea per le anteprime (prima usavano KITG).

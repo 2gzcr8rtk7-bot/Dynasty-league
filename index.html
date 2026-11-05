@@ -3408,8 +3408,11 @@ const KIT_N=["Casa","Notte","Alternativa","NBA 2026","Anni 90"];
 let KIT={};try{KIT=JSON.parse(localStorage.getItem("dl_kit")||"{}")||{}}catch(e){KIT={}}
 /* scelta GLOBALE della divisa (stessa per tutte le squadre e tutte le sezioni): null = automatica */
 let KITG=null;try{const v=localStorage.getItem("dl_kitg");if(v!==null&&v!=="")KITG=+v}catch(e){}
-function kitSalva(){try{if(KITG==null)localStorage.removeItem("dl_kitg");else localStorage.setItem("dl_kitg",String(KITG))}catch(e){}}
-function kitDi(t){const nt=typeof CNT!=="undefined"&&CNT&&cur==="campo";if(KITG!=null)return KITG;return nt?1:0}/* la scelta della maglia vale in TUTTE le sezioni (giocatore, scontri, trade...) */
+/* (1144) la maglia scelta vale SOLO per la squadra su cui la scegli (KIT[t], salvato in dl_kit); le altre restano com erano. La vecchia scelta globale (dl_kitg) diventa la scelta dell ultima squadra aperta, una volta sola. */
+try{if(KITG!=null&&!localStorage.getItem("dl_kit_m1144")){const t0=localStorage.getItem("team")||"";if(t0)KIT[t0]=KITG;localStorage.setItem("dl_kit",JSON.stringify(KIT));localStorage.removeItem("dl_kitg");localStorage.setItem("dl_kit_m1144","1")}}catch(e){}KITG=null;
+let KITO=null;/* scelta temporanea (anteprime): se non è null vale per tutte */
+function kitSalva(){try{localStorage.setItem("dl_kit",JSON.stringify(KIT))}catch(e){}}
+function kitDi(t){const nt=typeof CNT!=="undefined"&&CNT&&cur==="campo";if(KITO!=null)return KITO;if(KIT[t]!=null)return KIT[t];return nt?1:0}/* la scelta della maglia vale in TUTTE le sezioni (giocatore, scontri, trade...) */
 function kitC(t,k){const T=t==="PEA"?{...TEAMS[t],bg:"#2f6bff"}/* 30/10: sfondo Peacocks rosa, maglie invariate */:TEAMS[t];
   if(t==="DOL"){/* (02/11) DOL_FLM: nuove maglie Dolphins a fulmini. 0 Casa = bianca, 1 Notte = sabbia, 2 Alternativa = blu */
     if(k===1)return{...T,bg:"#d9c49c",fg:"#0b0b0b",trim:"#0b0b0b",jstroke:"#f3ead8",outer:undefined,tline2:"#e2e5ea",flm:["#c9b184","#bfa676","#e6d4b0","#ccb58a","#e0cda6"]};
@@ -9388,7 +9391,7 @@ async function tvBoxes(d){if(typeof TV==="undefined"||!d||!TV.days[d])return fal
       TV.box[key]={a:tvLiveSide(B.awayTeam,aw),h:tvLiveSide(B.homeTeam,!aw),live:1,fin:1};G[7]=key;ch=true}catch(e){}}
   return ch}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&cur==="tv")tvLiveTick()});
-document.getElementById("main").addEventListener("click",e=>{if(cur!=="campo")return;const kb=e.target.closest("#kitbtn");if(kb){e.preventDefault();const t=kb.dataset.kitt;KITG=(kitDi(t)+1)%5;kitSalva();const y=scrollY;render();scrollTo(0,y);return}});
+document.getElementById("main").addEventListener("click",e=>{if(cur!=="campo")return;const kb=e.target.closest("#kitbtn");if(kb){e.preventDefault();const t=kb.dataset.kitt;KIT[t]=(kitDi(t)+1)%5;kitSalva();const y=scrollY;render();scrollTo(0,y);return}});
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="campo")return;const go=e.target.closest(".lbm[data-drgo]");if(!go)return;const[k,x,y]=go.dataset.drgo.split("|");DR.k=+k;DR.tab="turno";DR.open=[x,y];DR.rules=false;GAME="dream";cur="giochi";render();window.scrollTo(0,0)});
 document.getElementById("main").addEventListener("click",e=>{if(cur==="campo"&&e.target.closest("#cntbtn")){e.preventDefault();CNT=!CNT;cntSave();SN.hist=false;const y=scrollY;render();scrollTo(0,y)}});
 document.getElementById("main").addEventListener("click",e=>{if(cur!=="tv")return;const T=TVD(),ks=Object.keys(T.days).sort();
@@ -9998,7 +10001,7 @@ const r=e.target.closest("[data-dls]");if(!r||cur!=="impostazioni")return;const 
 <script>/* logo in alto: tocco = aggiorna la pagina RESTANDO dove sei (27/10/2026): prima di ricaricare salvo la schermata (sessionStorage),
    al riavvio la ripristino. Si salva solo lo stato di navigazione, non i dati (che devono arrivare freschi). */(function(){
 const l=document.getElementById("lgreload");if(!l)return;
-const V=["cur","curTeam","effTeam","effSq","esqMese","esqAdv","esqMet","effMet","cupYear","cupRole","cupHist","faSz","faRole","faP","faFrom","curPlayer","gFrom","gSeason","injTeam","COL","NB","CNT","cassaTab","cassaStag","GAME","DR","GD","GR","TRN","CAP","TVS","KITG","__STAB","__FROM","SETOPEN","effSub","IA","IA_TR_FROM","TA","cupCmp","faSrt","faQ","FBX","faPS","GLP","CMR","AT","AV","CF","dkOpen","NV_FROM","EQO","GD_LASTOFF","PLV","CAMPO_DR","FROM","STAB"];
+const V=["cur","curTeam","effTeam","effSq","esqMese","esqAdv","esqMet","effMet","cupYear","cupRole","cupHist","faSz","faRole","faP","faFrom","curPlayer","gFrom","gSeason","injTeam","COL","NB","CNT","cassaTab","cassaStag","GAME","DR","GD","GR","TRN","CAP","TVS","KITO","__STAB","__FROM","SETOPEN","effSub","IA","IA_TR_FROM","TA","cupCmp","faSrt","faQ","FBX","faPS","GLP","CMR","AT","AV","CF","dkOpen","NV_FROM","EQO","GD_LASTOFF","PLV","CAMPO_DR","FROM","STAB"];
 const get=n=>{try{return(0,eval)(n)}catch(e){return undefined}};
 const save=()=>{try{const o={};V.forEach(n=>{const v=get(n);if(v===undefined)return;try{const j=JSON.stringify(v);if(j&&j.length<20000)o[n]=j}catch(e){}});
   const x=JSON.stringify({t:Date.now(),y:window.scrollY,o});sessionStorage.setItem("dl_reload",x);try{localStorage.setItem("dl_nav",x)}catch(_){}}catch(e){}};
@@ -12288,7 +12291,7 @@ function open(){
   h+=`<div class="s3o" style="transform:translate3d(0,${jy}px,${jz}px)">`+[["translateZ(130px)",0],["rotateY(180deg) translateZ(130px)",0],["rotateY(90deg) translateZ(130px)",0],["rotateY(-90deg) translateZ(130px)",0]].map(f=>`<div class="s3f s3jb" style="left:-130px;top:-90px;width:260px;height:180px;transform:${f[0]}">DREAMERS<small>SALA TROFEI</small></div>`).join("")+`<div class="s3f" style="left:-3px;top:-420px;width:6px;height:330px;background:#bcb0d8;transform:none"></div></div>`;
   /* cerchio di centrocampo sul parquet */
   h+=`<div class="s3f" style="left:-110px;top:-110px;width:220px;height:220px;border-radius:50%;border:6px solid #fff;background:radial-gradient(circle,#7a3fd0,#4a1f9c);box-shadow:0 0 30px rgba(255,255,255,.4);transform:translate3d(0,${EYE-2}px,${Z0-SPZ*1.5}px) rotateX(90deg)"></div>`}
- const jer=(t,k,num)=>{const sv=KITG;KITG=k;let r="";try{r=jersey(t,num,"")}catch(e){}KITG=sv;return r};
+ const jer=(t,k,num)=>{const sv=KITO;KITO=k;let r="";try{r=jersey(t,num,"")}catch(e){}KITO=sv;return r};
  const JX=[-118,0,118],pool=(x,z,r,col,a)=>`<div class="s3f" style="left:${-r}px;top:${-r}px;width:${r*2}px;height:${r*2}px;background:radial-gradient(circle,${col},transparent 68%);opacity:${a};transform:translate3d(${x}px,${-DA-1}px,${z}px) rotateX(90deg)"></div>`;
  const lamp=(x,z)=>`<div class="s3f" style="left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle,#fff,#ffe9b0 55%,#8a7a50);box-shadow:0 0 16px 6px rgba(255,235,180,.85);transform:translate3d(${x}px,${-BH+6}px,${z}px) rotateX(90deg)"></div>`;
  B.forEach(b=>{const T2=TEAMS[b.t],bg=T2.bg,ac=accOf(b.t),n=b.items.length;
