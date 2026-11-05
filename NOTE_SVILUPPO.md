@@ -3273,3 +3273,7 @@ Via Lattea tolte dal tasto maglia (DUC_ROCK 304-306 null) e aggiunte al catalogo
 
 ## 1231 · Rampa nera F1
 Rampa nera (kit 301 e catalogo W, 122): montagne gialle e fumo bianco. v645.
+
+
+## 1232 · Colori PDK
+Numeri dei cartellini PDK: bianchi su viola, verde e rosso, neri sul giallo, di giorno e di notte (il Parquet li rendeva marroni): .pcd escluso da pqFix + regola CSS. v646.
