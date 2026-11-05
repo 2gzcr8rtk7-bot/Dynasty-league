@@ -3096,3 +3096,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1161 · Ducks: versione unica a 3 impronte (05/11/2026)
 - Tolte le 4 impronte: 0-2 gialla, nera, bianca con DUC_F3 (3 impronte tagliate a metà sul bordo), 3-4 NBA 2026 e Anni 90. Tastino a 5. Default gialla. Chi aveva 5-7 passa a 0-2 (dl_kit_m1161).
+
+## 1162 · Ducks: fascia che segue le zampe (05/11/2026)
+- Il bordo interno della fascia (mix 1) non e piu uno zig zag dritto: segue la sagoma di ognuna delle 3 zampe (dito centrale, membrana, dito laterale, fianco, tallone) con 4,5 di margine, a spigoli (versione A). La spalla scende larga fino al dito laterale della prima zampa, senza stacco. Path: M0 0 H29.5 L29 14 C28.8 30 27.5 40 20.3 47.2 L15.2 56.9 L16.3 70.0 L7.4 66.0 L12.7 77.0 L21.4 73.8 L16.1 83.8 L17.3 97.5 L8.1 94.0 L13.4 105.0 L22.1 101.8 L16.9 111.8 L18.0 125.5 L20 140 L0 140 Z
