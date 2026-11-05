@@ -3067,3 +3067,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1152 · Ducks: le 3 maglie sono quelle con la spalla spessa liscia (05/11/2026)
 - Rettifica di Francesco: gialla, nera e bianca usano mix 1 (fascia con spalla spessa liscia fino in cima, bordo interno a zig zag, impronte, gessato), non il zig zag originale sulle spalle.
+
+## 1153 · Ducks: maglia gialla di default (05/11/2026)
+- Senza scelta salvata kitDi("DUC") = 0 (gialla, spalla spessa + zig zag + impronte + gessato), anche in modalità notte.
