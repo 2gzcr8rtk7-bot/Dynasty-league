@@ -3277,3 +3277,7 @@ Rampa nera (kit 301 e catalogo W, 122): montagne gialle e fumo bianco. v645.
 
 ## 1232 · Colori PDK
 Numeri dei cartellini PDK: bianchi su viola, verde e rosso, neri sul giallo, di giorno e di notte (il Parquet li rendeva marroni): .pcd escluso da pqFix + regola CSS. v646.
+
+
+## 1233 · Ducks ufficiali
+Rampa tolte dal tasto maglia (DUC_ROCK tutto null; restano nel catalogo V,W,X). Ufficiali Ducks: NBA 2026, Anni 90 e le 3 Stella dello sceriffo (115-117). Default e fallback: Stella dello sceriffo gialla (115). v647.
