@@ -2672,8 +2672,8 @@ html.dlt-parquet body{background:repeating-linear-gradient(90deg,var(--pq-a,#c88
 html.dlt-parquet header,html.dlt-parquet header *{color:#fff}
 html.dlt-parquet header nav button[aria-selected="false"] span{color:#fff!important;text-shadow:0 1px 2px rgba(90,30,0,.55)}
 html.dlt-parquet header .brand span{color:#ffe9c4}
-html.dlt-parquet main :is(b,span,td,th,p,li,button,em,small,h2,h3,h4,i,label,summary,sup):not(.htile *,.teamhead *,.rgh *,.htile,.teamhead,.rgh,.pdkx,.pdkb,.pdkx *,.pdkb *,.grl,.rl,.vtrh *,.vtrh,.medal,.avviso,.avviso *,.tvgo,.tvgo *,.hseg.on,.hdrm,.hnt *,.drnav button,.t,.t *,.tbl-wrap thead *,.badge,.ev,.ev *,.rok,.chip[aria-pressed="true"],.chip[aria-pressed="true"] *,.cntbtn *,.shbtn *,.bshare *){color:var(--pq-ink,#2b1608)}
-html.dlt-parquet main :is(small,.note,.setnote):not(.htile *,.teamhead *,.rgh *){color:var(--pq-mu2,#4a2f14)}
+html.dlt-parquet main :is(b,span,td,th,p,li,button,em,small,h2,h3,h4,i,label,summary,sup):not(.bt *,.htile *,.teamhead *,.rgh *,.htile,.teamhead,.rgh,.pdkx,.pdkb,.pdkx *,.pdkb *,.grl,.rl,.vtrh *,.vtrh,.medal,.avviso,.avviso *,.tvgo,.tvgo *,.hseg.on,.hdrm,.hnt *,.drnav button,.t,.t *,.tbl-wrap thead *,.badge,.ev,.ev *,.rok,.chip[aria-pressed="true"],.chip[aria-pressed="true"] *,.cntbtn *,.shbtn *,.bshare *){color:var(--pq-ink,#2b1608)}
+html.dlt-parquet main :is(small,.note,.setnote):not(.bt *,.htile *,.teamhead *,.rgh *){color:var(--pq-mu2,#4a2f14)}
 html.dlt-parquet main .htile small,html.dlt-parquet main .htile .hnm small{color:rgba(255,255,255,.85)}
 html.dlt-parquet .rgnav button{background:var(--pq-cream,#fff6e4);color:var(--pq-ink,#2b1608);border-color:var(--pq-bd,#d9b27a)}
 html.dlt-parquet main .upd,html.dlt-parquet main [class*="agg"],html.dlt-parquet .bxs span{background:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.9);box-shadow:0 1px 0 rgba(120,60,10,.12)}
@@ -6854,7 +6854,7 @@ function shDrTxt(c,t,X,Y,L){const w=c.measureText(t).width,off=(L+24)/2;const sb
 const SH_THEMES={1:{bg:["#0a0f1f","#141c38"],deep:[6,9,20],pan:[19,27,54],pan2:[40,52,100],acc:[255,77,94],lt:[255,212,94],stripe:"rgba(255,255,255,.035)",ang:115},
   3:{bg:["#b9763a","#9b5f2c"],deep:[30,15,5],pan:[48,25,10],pan2:[104,56,22],acc:[242,112,26],lt:[255,184,108],stripe:"rgba(0,0,0,.07)",ang:90},
   5:{bg:["#0b0d10","#161a20"],deep:[8,9,11],pan:[27,32,39],pan2:[52,60,72],acc:[255,176,0],lt:[255,225,77],stripe:"rgba(255,176,0,.06)",ang:45}};
-function shTheme(){try{const b=DR_BASE_TH[DR.th];return SH_THEMES[b]||null}catch(e){return null}}
+function shTheme(){if(window.__shNoTheme)return null;try{const b=DR_BASE_TH[DR.th];return SH_THEMES[b]||null}catch(e){return null}}
 function shThemeBg(c,W,H,T){const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,T.bg[0]);g.addColorStop(1,T.bg[1]);c.fillStyle=g;c.fillRect(0,0,W,H);
   c.save();c.strokeStyle=T.stripe;c.lineWidth=T.ang===90?26:18;c.beginPath();const D=Math.max(W,H)*2;
   if(T.ang===90){for(let x=0;x<W;x+=60){c.moveTo(x,0);c.lineTo(x,H)}}else{for(let x=-H;x<W+H;x+=T.ang===45?46:40){c.moveTo(x,0);c.lineTo(x+(T.ang===45?H:-H*.47),H)}}c.stroke();c.restore()}
@@ -10078,7 +10078,7 @@ try{let r=JSON.parse(sessionStorage.getItem("dl_reload")||"null");sessionStorage
 (function(){let t=null;function run(){t=null;const R=document.documentElement;if(!R.classList.contains("dlt-parquet"))return;const m=document.querySelector("main")||document.body;
   const trans=e=>{const c=getComputedStyle(e).backgroundColor,x=c.match(/rgba?\(([^)]+)\)/);if(!x)return 0;const q=x[1].split(",").map(Number);return q.length>3?q[3]:1};
   const onWood=e=>{for(let a=e.parentElement;a&&a!==m&&a!==document.body;a=a.parentElement){if(a.classList.contains("pqw"))return false;const al=trans(a);if(al>=.9)return false}return true};
-  const WQ=[];m.querySelectorAll("*").forEach(e=>{if(e.classList.contains("pqw")||e.closest("svg,#tgo,.tgo,.nzmq,header,.bxs"))return;const tg=e.tagName;if(tg==="SVG"||tg==="PATH"||tg==="IMG"||tg==="INPUT"||tg==="OPTION"||tg==="TR"||tg==="TD"||tg==="TH"||tg==="TABLE"||tg==="THEAD"||tg==="TBODY")return;
+  const WQ=[];m.querySelectorAll("*").forEach(e=>{if(e.classList.contains("pqw")||e.closest("svg,#tgo,.tgo,.nzmq,header,.bxs,main .bt"))return;/* (1197) la Sala scommesse ha i suoi colori: il Parquet non la tocca */const tg=e.tagName;if(tg==="SVG"||tg==="PATH"||tg==="IMG"||tg==="INPUT"||tg==="OPTION"||tg==="TR"||tg==="TD"||tg==="TH"||tg==="TABLE"||tg==="THEAD"||tg==="TBODY")return;
     const cs=getComputedStyle(e);if(cs.position==="fixed"||cs.display==="none"||cs.visibility==="hidden")return;
     const al=trans(e);if(al<=.02||al>=.97)return;if(e.getAttribute("aria-pressed")==="true"||e.getAttribute("aria-selected")==="true"||e.classList.contains("on"))return;
     const r=e.getBoundingClientRect();if(r.width<36||r.height<24)return;if(!onWood(e))return;WQ.push(e)});
@@ -10126,7 +10126,7 @@ function pqFix(){try{
   const WR=[];/* (851) scritture rimandate a dopo tutte le letture: niente ricalcoli della pagina a ogni elemento */
   document.querySelectorAll(app?"header *,main *,#subnav *,#subnav2 *":'.drroom[data-th="3"] *').forEach(el=>{
     if(el.tagName==="svg"||el.closest("svg"))return;
-    if(el.closest(".htile"))return;
+    if(el.closest(".htile"))return;if(el.closest("main .bt"))return;
     if(el.closest(".cltg,.cltn,.tvpnl .tvdate,.tvpnl .tvday"))return;
     if(window.__dxSkip&&window.__dxSkip(el))return;if(el.matches&&el.matches("div.teamhead,div.teamhead *,button.shbtn,div.gszn,table td.pnm,table td.pnm *,table thead th,table thead th *,.pdkx,.pdkx *,.pdkb,.pdkb *,.tgc,.tgc *,.tvbox tr.grp td,.tvbox tr.grp td *,.tvbox tr.tot td,.tvbox tr.tot td *,.mnb,.bxs span.gv *,.bxs span.gr2 *"))return;
     if(el.classList&&el.classList.contains("tstar")){const b=bgSel(el),v=lum(b)>.4;WR.push(()=>el.classList.toggle("stl",v));return}
@@ -12045,7 +12045,7 @@ function vBet(){
  <div class="btstats"><div><small>In gioco</small><b>${ni(open)}</b></div><div><small>Bilancio</small><b class="${net>0?"pos":net<0?"neg":""}">${net>0?"+":""}${ni(net)}</b></div><div><small>Giocate</small><b>${BW.bets.length}</b></div></div>
  ${frozen()?`<p class="btfz">🔒 Cassa bloccata: hai incassato il massimo dell'anno. Le scommesse sono solo per gioco, il saldo non cambia.</p>`:""}<p class="btrule">${ni(CR)} gettoni = 1 credito · puntata ${ni(MINS)}–${ni(MAXS)} · le puntate si chiudono al fischio d'inizio · se un giocatore non gioca la giocata è annullata e i gettoni tornano · le quote includono un margine del banco del ${Math.round(MARG*100)}%.</p></div>
  <div class="bttabs" role="tablist">${T.map(t=>`<button data-bt="${t[0]}" aria-pressed="${BS.tab===t[0]}">${t[1]}</button>`).join("")}</div>
- ${BS.tab!=="my"?`<div class="btmode"><button data-bm="s" aria-pressed="${!BS.mx}">Singola</button><button data-bm="m" aria-pressed="${BS.mx}">Multipla · bonus</button></div>${BS.mx?`<p class="btmxi">Metti insieme da ${MXMIN} a ${MXMAX} scelte (anche di schede diverse): le quote si <b>moltiplicano</b>, ma vinci solo se le indovini <b>tutte</b>. Dalla 3ª scelta c'è un bonus del ${Math.round(MXB*100)}% per ognuna (fino a +${Math.round(MXB*(MXMAX-2)*100)}%). Se una scelta viene annullata (giocatore che non gioca) esce dalla multipla.</p>`:""}`:""}${body}${slip}<p class="btft">🦆 Texas Ducks · uso interno · scommesse a gettoni, solo per gioco</p></div>`}
+ ${BS.tab!=="my"?`<div class="btmode"><button data-bm="s" aria-pressed="${!BS.mx}">Singola</button><button data-bm="m" aria-pressed="${BS.mx}">Multipla · bonus</button></div>${BS.mx?`<p class="btmxi">Metti insieme da ${MXMIN} a ${MXMAX} scelte (anche di schede diverse): le quote si <b>moltiplicano</b>, ma vinci solo se le indovini <b>tutte</b>. Dalla 3ª scelta c'è un bonus del ${Math.round(MXB*100)}% per ognuna (fino a +${Math.round(MXB*(MXMAX-2)*100)}%). Se una scelta viene annullata (giocatore che non gioca) esce dalla multipla.</p>`:""}`:""}${body}${slip}<p class="btft">🦆 Dreamers · scommesse a gettoni, solo per gioco</p></div>`}
 /* ===== INCASSO: gettoni → crediti (max 5 crediti all'anno), scontrino firmato leggibile da Claude ===== */
 const INCY=5,INCSEC="dr|duc|incasso|v1|"+"Qx7!";
 const annoNow=()=>meseNow().slice(0,4);
@@ -12079,7 +12079,8 @@ window.shBT=async function(){const rec=(BW.inc||[]).find(x=>x.id===window.SHR_BT
  c.font="21px ui-monospace,Menlo,Consolas,monospace";c.fillStyle="rgba(233,213,255,.9)";const code=rec.code,per=64;let yy=y+66;for(let i=0;i<code.length&&yy<H-120;i+=per){c.fillText(code.slice(i,i+per),W/2,yy);yy+=28}
  shFoot(c,W,H,"Da consegnare a Claude · firmato, non modificare");return cv};
 /* immagine di una scommessa da condividere (come la schedina vera) */
-window.shBS=async function(){const b=BW.bets.find(x=>x.id===window.SHR_BS);if(!b)return null;
+window.shBS=async function(){window.__shNoTheme=true;try{return await shBS0()}finally{window.__shNoTheme=false}};/* (1197) la schedina si condivide sempre con la grafica viola (come di notte), anche di giorno */
+async function shBS0(){const b=BW.bets.find(x=>x.id===window.SHR_BS);if(!b)return null;
  const legs=b.legs||[{desc:b.desc,pick:b.pick,q:b.q,r:b.s==="v"?"v":b.s==="p"?"p":b.s==="x"?"x":null}],n=legs.length,H=Math.max(800,350+n*118+330),{cv,c,W}=await shBase(H);c.textBaseline="alphabetic";c.textAlign="center";
  const lab={a:"IN CORSO",v:"VINTA",p:"PERSA",x:"RIMBORSATA"}[b.s],col={a:"#fcd34d",v:"#4ade80",p:"#ff8a9a",x:"#c4b5fd"}[b.s];
  c.font=SH_F(800,46,1);c.fillStyle="#fcd34d";c.letterSpacing="6px";c.fillText(b.legs?"MULTIPLA":"SCOMMESSA",W/2,206);c.letterSpacing="0px";
