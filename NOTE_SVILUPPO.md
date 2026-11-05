@@ -3185,3 +3185,7 @@ Tolte drop-shadow/box-shadow dietro al papero ovunque (badge, tile Home, banner 
 
 ## 1192 · Condivisione: ombre sotto scritte su iPhone
 Su iPhone l ombra del canvas applicata al drawImage di un SVG viene disegnata sotto ogni elemento (scritte, numero). Ora la maglia SVG viene prima rasterizzata in un canvas a 2x e poi disegnata con l ombra: ombra solo intorno alla sagoma. Maglia 3D invariata. Altre immagini con maglie: ombre del canvas azzerate prima del disegno. Papero grande nella condivisione senza alone. v620.
+
+
+## 1193-1194 · Campo notte con linee del colore squadra
+Di notte le linee del campo prendono il colore del bordo (apron), opache; se il bordo e troppo scuro (lum<.15) si usa trim/fg. Lucidatura notte: fascia verticale chiara al centro (shineN) al posto della macchia radiale. In live le linee restano rosse pulsanti (clive solo se lvNotte). v621.
