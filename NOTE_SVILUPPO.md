@@ -3217,3 +3217,7 @@ La scritta Ducks ha di nuovo il drop-shadow standard dei loghi; il papero (colon
 
 ## 1206-1207 · Catalogo Ducks + Prova
 Catalogo Ducks: tolte Mulino Crepuscolo e i due Longhorn; in fondo (R,S,T) 3 maglie Deserto e ranch (bianca/gialla/nera, mesa terracotta, mulino, saguaro e fichi d India verdi). Tasto Prova su maglie e campi: window.PROVA={k,t,c} fa vedere la maglia/il campo sul campo della squadra con barra Torna ai premi; si azzera uscendo dal campo. v628.
+
+
+## 1208 · Campo Rio Grande Ducks
+CAMPI.DUC2 Rio Grande (alba, mesa terracotta, fiume). Piu campi per squadra: chiave C:DUC2, dl_campo[team]=1 (campo base) o la chiave; campoKey(t). v629.
