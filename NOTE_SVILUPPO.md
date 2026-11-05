@@ -3281,3 +3281,7 @@ Numeri dei cartellini PDK: bianchi su viola, verde e rosso, neri sul giallo, di 
 
 ## 1233 · Ducks ufficiali
 Rampa tolte dal tasto maglia (DUC_ROCK tutto null; restano nel catalogo V,W,X). Ufficiali Ducks: NBA 2026, Anni 90 e le 3 Stella dello sceriffo (115-117). Default e fallback: Stella dello sceriffo gialla (115). v647.
+
+
+## 1234 · Stella dello sceriffo stile 29
+Window.DUC_SH: le 3 Stella dello sceriffo (kit/catalogo 115-117) con bordo collo/spalline spesso a tre righe (sh40.js stile 29). PREMI.svg le usa per i codici 115-117. v648.
