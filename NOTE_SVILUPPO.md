@@ -3165,3 +3165,7 @@ Live e partite giocate: stesso cartellino dei PDK normali, senza avversario (avv
 
 ## 1185 · Riquadro previsione numero piu grande
 Numero 9px -> 12px (line-height .88, padding sopra 0): stessa altezza del riquadro. v615.
+
+
+## 1186-1188 · Colore Ducks personalizzabile (area riservata)
+Personalizzazioni > Ducks colore della squadra: tavolozza (giallo ufficiale, 5 grigi, oro, arancio, rosso, verde, blu, viola, nero, bianco) + Scegli tu (input color). localStorage dl_duccol. Cambia TEAMS.DUC.bg (maglie restano gialle: kitC usa DUC_Y) e window.DUC_COL3D in dream.js. Scritte banner/campo: bianche se lo sfondo e scuro (campo: luminosita del bordo), nere se chiaro. v616.
