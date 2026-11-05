@@ -3161,3 +3161,7 @@ Pagina futura del cartellino: PREV @ SAC su una riga (si stringe se non entra, p
 
 ## 1183-1184 · Cartellino live e partite giocate come i PDK normali
 Live e partite giocate: stesso cartellino dei PDK normali, senza avversario (avversario solo nella previsione). Pagine nascoste del cartellino con classe off (clip-path) invece di hidden, cosi il correttore colori del Parquet le sistema. v614.
+
+
+## 1185 · Riquadro previsione numero piu grande
+Numero 9px -> 12px (line-height .88, padding sopra 0): stessa altezza del riquadro. v615.
