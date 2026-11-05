@@ -3237,3 +3237,7 @@ Rampa bianca/nera/gialla: senza torre, fumo a contrasto (scuro su bianca e giall
 
 ## 1217-1218 · Sole a raggi
 Catalogo Ducks: S/T/U Sole a raggi gialla, bianca e nera (la nera senza raggi, fondo nero pieno, cactus gialli). Non nel tasto maglia ufficiale. v633.
+
+
+## 1220 · Tasto maglia Ducks
+Tolte dal tasto maglia le City Edition A, C, H, M, N, O (codici 100,102,107,112,113,114): restano nel catalogo. v635.
