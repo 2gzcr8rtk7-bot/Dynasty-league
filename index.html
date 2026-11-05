@@ -3411,7 +3411,7 @@ const NOTTE_ACC=t=>TEAMS[t].bg;
    Si sceglie dal tastino con la maglietta nella pagina squadra (solo per quella pagina, ricordata sul telefono). Senza scelta: casa di giorno, notte in modalità notte. */
 const KIT_N=["Casa","Notte","Alternativa","NBA 2026","Anni 90","Gialla · 3 impronte","Nera · 3 impronte","Bianca · 3 impronte"];
 const kitTot=t=>t==="DUC"?8:5;/* (1159) Ducks: 0-2 = 4 impronte grandi tagliate dal bordo, 5-7 = 3 impronte una per dente; 3-4 NBA */
-const DUC_F4=[[6.4,124,.95,0],[6.6,102,.95,0],[6.2,80,.95,0],[5.8,58,.95,0]],DUC_F3=[[8,113,1.05,0],[8,85,1.05,0],[7.8,58,1,0]];/* (1158) 8-10 = 4 impronte grandi dritte tagliate dal bordo *//* (1156) Ducks: 5-7 = stesse maglie con 4 impronte simmetriche, in prova *//* (1150) Ducks: tenute solo 5 maglie (gialla, nera, bianca zig zag + impronte, NBA 2026, Anni 90) */
+const DUC_F4=[[6.4,124,.95,0],[6.6,102,.95,0],[6.2,80,.95,0],[5.8,58,.95,0]],DUC_F3=[[6.6,113,1.15,0],[5.9,85,1.15,0],[5.2,58,1.1,0]];/* (1160) tagliate a metà sul bordo come le 4, +20% *//* (1158) 8-10 = 4 impronte grandi dritte tagliate dal bordo *//* (1156) Ducks: 5-7 = stesse maglie con 4 impronte simmetriche, in prova *//* (1150) Ducks: tenute solo 5 maglie (gialla, nera, bianca zig zag + impronte, NBA 2026, Anni 90) */
 let KIT={};try{KIT=JSON.parse(localStorage.getItem("dl_kit")||"{}")||{}}catch(e){KIT={}}
 /* scelta GLOBALE della divisa (stessa per tutte le squadre e tutte le sezioni): null = automatica */
 let KITG=null;try{const v=localStorage.getItem("dl_kitg");if(v!==null&&v!=="")KITG=+v}catch(e){}
