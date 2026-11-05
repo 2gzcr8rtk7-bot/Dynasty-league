@@ -3393,3 +3393,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v699 (1285): lista squadre di Statistiche (effsquadra, .sqpkw): logo Ducks Papero al 110%.
 
 - v700 (1286): Suggerimenti del TG (consigli, .cnsw): logo Ducks Papero al 110%.
+
+- v701 (1287): Editor loghi prende anche i loghi del campo: immagine del banner squadra (img.hlogo[data-t]) e logo del banner del campo (<image> in .cbg, cambio logo via href). Selettore salvato in tg.

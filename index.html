@@ -12959,19 +12959,25 @@ const save=()=>{try{localStorage.setItem(K,JSON.stringify(LG))}catch(e){}};
 try{if(!localStorage.getItem("dl_dxlogo_m1284")){LG={};localStorage.setItem(K,"{}");localStorage.setItem("dl_dxlogo_m1284","1");localStorage.setItem("dl_dxlogo_m1279","1");localStorage.setItem("dl_dxlogo_m1258","1")}}catch(e){}try{if(!localStorage.getItem("dl_dxlogo_m1279")){LG={};localStorage.setItem(K,"{}");localStorage.setItem("dl_dxlogo_m1279","1");localStorage.setItem("dl_dxlogo_m1258","1")}}catch(e){}try{if(!localStorage.getItem("dl_dxlogo_m1258")){LG={};localStorage.setItem(K,"{}");localStorage.setItem("dl_dxlogo_m1258","1")}}catch(e){}/* (1258) le prime scelte sono diventate ufficiali: si riparte da 100% */
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const st=document.createElement("style");st.id="dxlgst";document.head.appendChild(st);
-const selK=x=>`body[data-v="${x.v}"] ${x.pc?"."+x.pc.split(".").map(c=>CSS.escape(c)).join("."):""} > ${x.team?".lg-"+x.team:"[class*='lg-']"}`;
-function css(){st.textContent=Object.values(LG).map(x=>`html ${selK(x)}{${(x.k!==100||(x.sx||100)!==100||(x.sy||100)!==100)?`transform:scale(${(x.k*(x.sx||100)/1e4).toFixed(3)},${(x.k*(x.sy||100)/1e4).toFixed(3)})!important;transform-origin:center!important;`:""}${x.img?`background-image:url("${x.img}")!important;background-size:contain!important;background-repeat:no-repeat!important;background-position:center!important;content:url("${x.img}")!important;`:""}}`).join("\n")}
+const selK=x=>`body[data-v="${x.v}"] ${x.pc?"."+x.pc.split(".").map(c=>CSS.escape(c)).join("."):""} > ${x.tg?x.tg:x.team?".lg-"+x.team:"[class*='lg-']"}`;
+function css(){st.textContent=Object.values(LG).map(x=>`html ${selK(x)}{${(x.k!==100||(x.sx||100)!==100||(x.sy||100)!==100)?`transform:scale(${(x.k*(x.sx||100)/1e4).toFixed(3)},${(x.k*(x.sy||100)/1e4).toFixed(3)})!important;transform-origin:center!important;transform-box:fill-box!important;`:""}${x.img?`background-image:url("${x.img}")!important;background-size:contain!important;background-repeat:no-repeat!important;background-position:center!important;content:url("${x.img}")!important;`:""}}`).join("\n")}
+function svgSwap(){try{document.querySelectorAll("image[data-lgo]").forEach(e=>{e.setAttribute("href",e.dataset.lgo);e.removeAttribute("data-lgo")});Object.values(LG).forEach(x=>{if(x.tg==="image"&&x.img)document.querySelectorAll(selK(x)).forEach(e=>{if(!e.dataset.lgo)e.dataset.lgo=e.getAttribute("href")||"";e.setAttribute("href",x.img)})})}catch(e){}}
+{const C0=css;css=function(){C0();svgSwap()}}
+{const R0=render;render=function(){const r=R0.apply(this,arguments);setTimeout(svgSwap,0);return r}}
 /* (1278) CAMBIA LOGO: per i Ducks si sceglie anche quale logo mostrare in quella casella */
 const OPZ=()=>{let L=[];try{L=DUC_LOGHI.map(x=>[x[1],x[2]])}catch(e){}return L.concat([["DUCKS arco","loghi/duc-arco.svg"],["DUCKS punte","loghi/duc-punte.svg"]])};
 function curI(){const c=cfg();return LG[c.key]&&LG[c.key].img||""}
-function put(k,img,sx,sy){const c=cfg(),o=LG[c.key]||{};k=k==null?(o.k||100):k;img=img===undefined?(o.img||""):img;sx=sx==null?(o.sx||100):sx;sy=sy==null?(o.sy||100):sy;if(k===100&&!img&&sx===100&&sy===100)delete LG[c.key];else LG[c.key]={v:c.v,pc:c.pc,team:c.team,nm:c.nm,k,img,sx,sy};save();css()}
+function put(k,img,sx,sy){const c=cfg(),o=LG[c.key]||{};k=k==null?(o.k||100):k;img=img===undefined?(o.img||""):img;sx=sx==null?(o.sx||100):sx;sy=sy==null?(o.sy||100):sy;if(k===100&&!img&&sx===100&&sy===100)delete LG[c.key];else LG[c.key]={v:c.v,pc:c.pc,team:c.team,tg:c.tg,nm:c.nm,k,img,sx,sy};save();css()}
 /* (1283) DEFORMATORE: larghezza e altezza separate (50-200%) sopra la grandezza */
 function curS(a){const c=cfg();return LG[c.key]&&LG[c.key][a]||100}
 css();
 const NOMEV=v=>{const t=document.querySelector(`nav [data-v="${v}"] span`);return t?t.textContent.trim():v};
 const NOMET=t=>{try{return (typeof TEAMS!=="undefined"&&TEAMS[t]&&(TEAMS[t].nick||TEAMS[t].name))||t}catch(e){return t}};
 const SKIP=/^(on|sel|act|active|open|show|logo|badge)$/;
-const teamOf=e=>{const c=[...e.classList].find(c=>/^lg-[A-Z0-9]{2,4}$/.test(c));return c?c.slice(3):null};
+/* (1287) anche i loghi del campo: immagine del banner squadra (.hlogo[data-t]) e logo del banner del campo (<image> nello SVG) */
+const DUCIMG=/f39bda081f60|2402cd92d5d7|loghi\/duc-/;
+const teamOf=e=>{if(!e.classList)return null;const c=[...e.classList].find(c=>/^lg-[A-Z0-9]{2,4}$/.test(c));if(c)return c.slice(3);if(e.tagName==="IMG"&&e.dataset&&e.dataset.t)return e.dataset.t;if(e.tagName==="image"){const h=e.getAttribute("href")||e.getAttribute("xlink:href")||"";if(DUCIMG.test(h))return"DUC";for(const t in (window.LOGO||{}))if(LOGO[t]&&h.endsWith(LOGO[t]))return t}return null};
+const tagOf=e=>e.tagName==="IMG"&&e.dataset.t&&!e.className.match(/lg-/)?`img.${[...e.classList][0]||"x"}[data-t="${e.dataset.t}"]`:e.tagName==="image"?"image":"";
 const logoAt=t=>{let x=t;for(let i=0;i<4&&x&&x.nodeType===1;i++){if(teamOf(x))return x;x=x.parentElement}return null};
 let ON=false,PK=true,T=null,ALL=false;/* (1257) ON = strumento acceso; PK = modalità «tocca un logo» (spenta = navighi tra le pagine) */
 const bs="padding:11px 12px;border-radius:12px;border:2px solid #fff;background:#111;color:#fff;font:800 13px system-ui;box-shadow:0 4px 14px rgba(0,0,0,.5)";
@@ -12983,7 +12989,7 @@ const hl=document.createElement("div");hl.style.cssText="position:fixed;z-index:
 function hlUpd(){if(!T||!document.contains(T.el)||sh.style.display==="none"){hl.style.display="none";return}const q=T.el.getBoundingClientRect();Object.assign(hl.style,{display:"block",left:q.left-4+"px",top:q.top-4+"px",width:q.width+8+"px",height:q.height+8+"px"})}
 addEventListener("scroll",hlUpd,{passive:true});
 const keyOf=(v,pc,team)=>v+"|"+pc+"|"+(team||"*");
-function cfg(){const team=ALL?null:T.team;return{v:T.v,pc:T.pc,team,nm:T.nm,key:keyOf(T.v,T.pc,team)}}
+function cfg(){const team=ALL&&!T.tg?null:T.team;return{v:T.v,pc:T.pc,team,tg:T.tg,nm:T.nm,key:keyOf(T.v,T.pc,team)+(T.tg?"|"+T.tg:"")}}
 function curK(){const c=cfg();return LG[c.key]?LG[c.key].k:100}
 function setK(k){k=Math.max(50,Math.min(200,Math.round(k)));put(k);draw();barUpd();setTimeout(hlUpd,30)}
 function draw(){const k=curK(),b="padding:9px 12px;border:1px solid #bbb;border-radius:10px;background:#f4f4f4;font:800 15px system-ui;color:#222";
@@ -12996,7 +13002,7 @@ function draw(){const k=curK(),b="padding:9px 12px;border:1px solid #bbb;border-
  <button data-lgs="noform" style="${b};width:100%;margin-top:10px;font-size:13px"${curS("sx")===100&&curS("sy")===100?" disabled":""}>↺ Togli deformazione</button>
  <button data-lgs="reset" style="${b};width:100%;margin-top:12px;font-size:13px;background:#fff;color:#c33;border-color:#c33"${k===100?" disabled":""}>↺ Grandezza originale (100%)</button>${T.team==="DUC"?`<div style="font:800 13px system-ui;margin:14px 0 6px">🔄 Cambia logo</div><div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px">${[["Attuale",""]].concat(OPZ()).map(([n,u])=>`<button data-lgi="${esc(u)}" style="flex:0 0 74px;padding:5px 3px;border-radius:10px;border:2px solid ${curI()===u?"#7c3aed":"#ddd"};background:#2a2142;color:#fff;font:700 10px system-ui">${u?`<span style="display:block;height:46px;background:url('${esc(u)}') center/contain no-repeat"></span>`:`<span style="display:flex;height:46px;align-items:center;justify-content:center;font-size:20px">↺</span>`}${esc(n)}</button>`).join("")}</div>`:""}`;
  sh.style.display="block";hlUpd()}
-function pick(el){const p=el.parentElement;const pc=[...(p?p.classList:[])].filter(c=>!SKIP.test(c)).slice(0,2).join(".");const tb=document.querySelector('nav [role=tab][aria-selected="true"] span');T={el,team:teamOf(el),v:document.body.dataset.v||cur,pc,nm:tb?tb.textContent.trim():""};ALL=false;
+function pick(el){const p=el.parentElement;const pc=[...(p&&p.classList?p.classList:[])].filter(c=>!SKIP.test(c)).slice(0,2).join(".");const tb=document.querySelector('nav [role=tab][aria-selected="true"] span');T={el,team:teamOf(el),tg:tagOf(el),v:document.body.dataset.v||cur,pc,nm:tb?tb.textContent.trim():""};ALL=false;
  draw();const r=el.getBoundingClientRect(),top=innerHeight-sh.offsetHeight-16;if(r.bottom>top||r.top<60)scrollBy(0,r.top-Math.max(70,top/2))}
 sh.addEventListener("input",e=>{const w=e.target.closest("[data-lgw]");if(w){const a=w.dataset.lgw,v=+w.value;a==="sx"?put(null,undefined,v,null):put(null,undefined,null,v);const t=sh.querySelector(`[data-lgv="${a}"]`);if(t)t.textContent=v+"%";hlUpd();return}if(e.target.matches("[data-lgr]")){const k=+e.target.value;put(k);sh.querySelector("div[style*='30px']").textContent=k+"%";hlUpd()}});
 sh.addEventListener("change",e=>{if(e.target.matches("[data-lgr]")){draw();barUpd()}});
