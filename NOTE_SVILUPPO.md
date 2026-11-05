@@ -3111,3 +3111,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1166 · Ducks: scritte bianche su nera bordi bianchi e gialla zampe bianche (05/11/2026)
 - 5 (nera bordi bianchi) e 6 (gialla zampe bianche): scritta e numero bianchi con bordo nero (versioni EE e DD).
+
+## 1167 · Ducks: torna lo zig zag dritto + bianca zampe bianche (05/11/2026)
+- Francesco preferisce lo zig zag dritto originale: tolto pz:DUC_ZL dalle maglie 0-2 (5 e 6 lo ereditano). Aggiunta 7 = bianca con bordi neri, zampe bianche, scritta e numero bianchi bordati di nero, gessato nero (KK). Tastino Ducks a 8 (6 Ducks + 2 NBA).
