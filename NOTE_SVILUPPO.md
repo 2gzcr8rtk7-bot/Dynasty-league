@@ -3249,3 +3249,7 @@ Tolte dal tasto maglia Casa/Notte/Alternativa e le City Edition A,B,C,D,E,G,H,I,
 
 ## 1223-1224 · Rampa nuove
 Rampa bianca/nera/gialla sostituite da B13, N20, G23 (rampa40.js): stesso disegno, contrasto nuovo, fiamma corta disegnata sopra il fumo. v638.
+
+
+## 1225 · Via Lattea nuove
+Via Lattea bianca/nera/gialla sostituite da B9, N2, G9 (vl40.js): fasce di sfumatura nel cielo anche su gialla e bianca. v639.
