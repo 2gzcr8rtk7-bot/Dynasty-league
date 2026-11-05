@@ -3090,3 +3090,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1159 · Ducks: restano 8 maglie, solo il concept impronte grandi tagliate dal bordo (05/11/2026)
 - 0-2 gialla, nera, bianca con 4 impronte grandi dritte tagliate dal bordo (DUC_F4); 5-7 le stesse con 3 impronte, una per dente (DUC_F3, la versione D: +10% rispetto alle 4); 3-4 NBA 2026 e Anni 90. Tolte le 6 impronte sfalsate e le 5 simmetriche. Default gialla con 4. Migrazione una volta (dl_kit_m1159): chi aveva 5-7 o 8-10 passa allo stesso colore con 4 impronte.
+
+## 1160 · Ducks 3 impronte: tagliate a metà sul bordo (05/11/2026)
+- DUC_F3 spostate sul bordo esterno come DUC_F4 (x 6.6, 5.9, 5.2) e +20% (scala 1.15/1.1): si vede solo mezza zampa. Versione E scelta da Francesco.
