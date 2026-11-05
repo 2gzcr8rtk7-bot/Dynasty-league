@@ -3093,3 +3093,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1160 · Ducks 3 impronte: tagliate a metà sul bordo (05/11/2026)
 - DUC_F3 spostate sul bordo esterno come DUC_F4 (x 6.6, 5.9, 5.2) e +20% (scala 1.15/1.1): si vede solo mezza zampa. Versione E scelta da Francesco.
+
+## 1161 · Ducks: versione unica a 3 impronte (05/11/2026)
+- Tolte le 4 impronte: 0-2 gialla, nera, bianca con DUC_F3 (3 impronte tagliate a metà sul bordo), 3-4 NBA 2026 e Anni 90. Tastino a 5. Default gialla. Chi aveva 5-7 passa a 0-2 (dl_kit_m1161).
