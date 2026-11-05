@@ -3051,3 +3051,6 @@ Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo st
 
 ## 1147 · Ducks gialla e nera (scie): gialla solo gessato, nera senza effetti (05/11/2026)
 - k=5 gialla: np (niente piume, resta il gessato). k=6 nera: np + npin (niente piume né gessato): solo fasce curve e impronte.
+
+## 1148 · Ducks nera (scie): con il gessato (05/11/2026)
+- k=6 torna col gessato giallo (tolto npin), sempre senza piume.
