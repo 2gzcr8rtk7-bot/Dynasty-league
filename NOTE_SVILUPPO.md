@@ -3395,3 +3395,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v700 (1286): Suggerimenti del TG (consigli, .cnsw): logo Ducks Papero al 110%.
 
 - v701 (1287): Editor loghi prende anche i loghi del campo: immagine del banner squadra (img.hlogo[data-t]) e logo del banner del campo (<image> in .cbg, cambio logo via href). Selettore salvato in tg.
+
+- v702 (1288): campo Ducks: logo del banner del campo (.cbg image) 96%x99%, logo banner squadra (img.hlogo DUC) 105%; editor azzerato (dl_dxlogo_m1288).
