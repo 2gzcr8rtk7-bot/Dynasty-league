@@ -10454,7 +10454,7 @@ function ducFit2(){try{const ALL=[...document.querySelectorAll("main .lg-DUC")];
   if(ref){const q=ref.getBoundingClientRect();f=(Math.min(q.width,q.height)*.95)/vh}else f=1.19;
   let c=e.parentElement,k=0;while(c&&k<5){const cs=getComputedStyle(c),q=c.getBoundingClientRect();const box=(cs.backgroundColor!=="rgba(0, 0, 0, 0)"&&cs.backgroundColor!=="transparent")||cs.backgroundImage!=="none"||parseFloat(cs.borderTopWidth)>0||cs.overflow!=="visible";if(box&&q.width>=r.width&&q.height>=r.height)break;c=c.parentElement;k++}
   const cx=r.x+r.width/2,cy=r.y+r.height/2;
-  if(c){const q=c.getBoundingClientRect(),m=3;f=Math.min(f,(cx-q.left-m)/(vw/2),(q.right-m-cx)/(vw/2),(cy-q.top-m)/(vh/2),(q.bottom-m-cy)/(vh/2));
+  if(c){const q=c.getBoundingClientRect(),m=3,mx=0;f=Math.min(f,(cx-q.left-mx)/(vw/2),(q.right-mx-cx)/(vw/2),(cy-q.top-m)/(vh/2),(q.bottom-m-cy)/(vh/2));
    c.querySelectorAll("*").forEach(o=>{if(o===e||o.contains(e)||e.contains(o))return;if(!o.childElementCount&&!(o.textContent||"").trim()&&!/badge|logo|lg-|IMG/i.test(o.className+" "+o.tagName))return;const z=o.getBoundingClientRect();if(z.width<2||z.height<2)return;const hw=vw/2,hh=vh/2;const ox=z.right>cx-hw&&z.left<cx+hw,oy=z.bottom>cy-hh&&z.top<cy+hh;if(ox&&!oy){if(z.top>=cy)f=Math.min(f,(z.top-2-cy)/hh);else f=Math.min(f,(cy-z.bottom-2)/hh)}else if(oy&&!ox){if(z.left>=cx)f=Math.min(f,(z.left-2-cx)/hw);else f=Math.min(f,(cx-z.right-2)/hw)}})}
   if(e.closest(".hmo,.lvh"))f=Math.max(f,1.35);if(e.closest(".fagl"))f=Math.max(f,1.2);if(e.closest(".tc .wedge"))f=Math.max(f,1.11);/* righe con icona piccola accanto al nome: c'è spazio, la scritta altrimenti si legge male */
   f=Math.max(1,Math.min(f,1.6));if(f>1.01)e.style.scale=f.toFixed(3)})}catch(e){}}
