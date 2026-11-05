@@ -3157,3 +3157,7 @@ Il contorno color parquet attorno al nero dava l effetto doppio: per DUC stroke 
 
 ## 1177-1182 · Cartellino previsione definitivo
 Pagina futura del cartellino: PREV @ SAC su una riga (si stringe se non entra, pfFit) + riquadrino blu basso con solo il PDK previsto e linea del livello. v613.
+
+
+## 1183-1184 · Cartellino live e partite giocate come i PDK normali
+Live e partite giocate: stesso cartellino dei PDK normali, senza avversario (avversario solo nella previsione). Pagine nascoste del cartellino con classe off (clip-path) invece di hidden, cosi il correttore colori del Parquet le sistema. v614.
