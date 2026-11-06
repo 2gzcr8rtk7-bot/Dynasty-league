@@ -3609,3 +3609,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v810: Area Ducks bloccata: le personalizzazioni pubbliche (Impostazioni) non cambiano campo/bordocampo Ducks; interruttore in Area segreta > Personalizzazioni per riattivarle sul proprio telefono (dl_dxpers). Logo scelto nell area segreta non piu sovrascritto. Logo bordocampo abbassato al segno di Francesco.
 
 - v811: Ducks, nuova maglia 320 DUCKS Ghiaccio viola (dalla serie di 40, n.17) in aggiunta.
+
+- v812: Ducks, nuova maglia 321 DUCKS Nera triplo lime-viola in aggiunta.
