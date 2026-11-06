@@ -3589,3 +3589,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v800: Ducks, viola #5b21b6 ufficiale per tutti (banner, logo, campo; migrazione dl_duccol_m1372) e linee del campo verdi #a3e635 giorno e notte.
 
 - v801: campo Ducks di giorno: linea sopra il campo bianca 4px, bacheca e cassa bianche con scritte viola, bordocampo viola #5b21b6, parquet bianco ghiaccio, logo bordocampo +10%.
+
+- v802: fix: la cassa/bacheca bianca dei Ducks vale solo di giorno; di notte tornano come prima.
