@@ -3615,3 +3615,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v813: Ducks, logo del banner squadra +25% e +2% in altezza.
 
 - v814: Ducks, logo del banner squadra rimesso a +10% e +2% in altezza (scelta 4).
+
+- v815: banner Ducks: scritta DUCKS/TEXAS 18px a destra, logo 2 mm (12px) a destra.
