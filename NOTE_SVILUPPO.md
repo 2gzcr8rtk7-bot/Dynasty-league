@@ -3579,3 +3579,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v795: logo Ducks 11 Viola verde sostituito con la versione nuova (becco bianco, colori piu accesi).
 
 - v796: Editor loghi (06/11): logo Ducks Viola verde (duc-11) ufficiale nelle 22 caselle indicate con le grandezze scelte; bordo campo con logo Viola verde; editor azzerato (dl_dxlogo_m1370).
+
+- v797: Ducks, 3 maglie nuove stile Gotham in aggiunta: 316 Bianca verde, 317 Viola bianca, 318 Viola verde (gessato, scritta DUCKS).
