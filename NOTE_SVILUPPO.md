@@ -3477,3 +3477,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v741 (1327): Gotham: tolta Sfumata Bianca (512, bianca sfumata viola con verde).
 
 - v742 (1328): Gotham: tolte Sfumata Viola verde bordi e scritte bianchi (517) e Bianca citta nera viola (514).
+
+- v743 (1329): Gotham: tolta Viola A (500); maglia Gotham di partenza ora Viola B (501).
