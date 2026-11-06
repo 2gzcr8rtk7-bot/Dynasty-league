@@ -3535,3 +3535,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v770: Ducks, il logo riapre il campo Gotham come prima (banner GOTHAM CITY DUCKS, notte con fari, arena 3D Gotham) ma con i 5 giocatori G League e solo maglie Viola B e Bianca; nel resto dell app niente piu cambio logo/nome. Uscita toccando CITY.
 
 - v771: campo stellato di notte (interno viola con stelle che brillano) per tutte le squadre, predefinito; in Personalizzazioni tasto "Campo stellato di notte" per toglierlo/rimetterlo (DLS.nost).
+
+- v772: G League sul campo, tolta la tinta colorata: parquet normale di giorno, stellato di notte (Gotham invariato).
