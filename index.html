@@ -12968,11 +12968,11 @@ function sky(){const S=GS[gst()],r=mk(7),r2=mk(13);let o="",x=3;
  if(S.beam)o+=`<path d="M18 112 L9 58 L16 58 Z" fill="${S.beam}" opacity=".12"/><path d="M82 112 L84 58 L91 58 Z" fill="${S.beam}" opacity=".12"/>`;
  while(x<97){const w=2+r()*3.6,h=4+r()*12;o+=`<rect x="${x.toFixed(2)}" y="${(112-h).toFixed(2)}" width="${w.toFixed(2)}" height="${h.toFixed(2)}" fill="${S.sk}" opacity=".85"/>`;if(r()<.3)o+=`<path d="M${(x+w/2-.4).toFixed(2)} ${(112-h).toFixed(2)} L${(x+w/2).toFixed(2)} ${(112-h-2-r()*2.5).toFixed(2)} L${(x+w/2+.4).toFixed(2)} ${(112-h).toFixed(2)}Z" fill="${S.sk}" opacity=".85"/>`;for(let wy=112-h+1.2;wy<111;wy+=1.4)for(let wx=x+.5;wx<x+w-.6;wx+=1.1)if(r()<.35)o+=`<rect x="${wx.toFixed(2)}" y="${wy.toFixed(2)}" width=".45" height=".6" fill="${S.win}" opacity="${(.4+r()*.6).toFixed(2)}"/>`;x+=w+.2}
  if(S.rain)for(let k=0;k<55;k++){const rx=3+r2()*94,ry=6+r2()*106;o+=`<path d="M${rx.toFixed(1)} ${ry.toFixed(1)} l-.6 2.2" stroke="${S.rain}" stroke-width=".18" opacity=".4"/>`}
- return `<g class="gsky">${o}</g><image class="gctr" href="loghi/gotham-campo.webp?v=1" x="25" y="45.6" width="50" height="25.6" preserveAspectRatio="xMidYMid meet"/>`}
+ return `<g class="gsky">${o}</g><image class="gctr" href="${GL}" x="35" y="40" width="30" height="30" opacity=".18" preserveAspectRatio="xMidYMid meet"/>`}
 function sync(){const R=document.documentElement,on=gotOn();R.classList.toggle("gotham",on);for(let k=0;k<4;k++)R.classList.toggle("gst"+k,on&&gst()===k)}
 const V0=vCampo;vCampo=function(){sync();if(curTeam!=="DUC"||!gotOn())return V0.apply(this,arguments);
  const T0=TEAMS.DUC,L2=LOGO2.DUC,LA=LOGO_DUC0.a,DL=DLS.tm;const S=GS[gst()];DLS.tm={...(DL||{}),DUC:{fc:S.fc,lc:S.lc,ac:GS[0].ac}};/* (1297) lo swipe cambia solo il campo interno: bordo e banner restano quelli dello stile 1 */
- TEAMS.DUC={...T0,city:"Gotham",nick:"Ducks",name:"Gotham City Ducks",bg:"#7c3aed",fg:"#a3e635",trim:"#111111"};LOGO2.DUC=GL;LOGO_DUC0.a=GL;/* (1297) banner del campo: logo col papero; la scritta Gotham City Ducks va sul campo */
+ TEAMS.DUC={...T0,city:"Gotham",nick:"Ducks",name:"Gotham City Ducks",bg:"#7c3aed",fg:"#a3e635",trim:"#111111"};LOGO2.DUC="loghi/gotham-campo.webp?v=1";LOGO_DUC0.a=GL;/* (1297) banner del campo (bordo campo): scritta Gotham City Ducks al 100% */
  let h;try{h=V0.apply(this,arguments)}finally{TEAMS.DUC=T0;LOGO2.DUC=L2;LOGO_DUC0.a=LA;DLS.tm=DL}
  return h.replace('<g class="cln"',sky()+'<g class="cln"')};
 VIEWS.campo=vCampo;
