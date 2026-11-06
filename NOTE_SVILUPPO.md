@@ -3585,3 +3585,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v798: Ducks, maglia 319 DUCKS gessato Bianca viola (bordo e scritta viola) in aggiunta.
 
 - v799: logo Ducks ufficiale ovunque = nuovo Viola verde (loghi/duc-11.webp v3): sostituiti anche Papero (img/2402cd92d5d7.png) e scritta (img/f39bda081f60.png) in LOGO/LOGO2 e in tutte le regole CSS; grandezze dell Editor invariate.
+
+- v800: Ducks, viola #5b21b6 ufficiale per tutti (banner, logo, campo; migrazione dl_duccol_m1372) e linee del campo verdi #a3e635 giorno e notte.
