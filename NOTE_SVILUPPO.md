@@ -3483,3 +3483,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v744 (1330): Gotham: tolta Sfumata Verde (509).
 
 - v745 (1331): Gotham: tolta la pioggia dal campo 2D e dall arena Dream.
+
+- v746 (1332): Gotham: tolta Sfumata Nera (511).
