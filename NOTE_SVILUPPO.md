@@ -3541,3 +3541,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v773: bordocampo notte Dreamers IN PROVA, uno stile per squadra: DOL 1 Viola, DUC 2 Viola stelle, FOX 3 Viola-fucsia, MOO 4 Notte profonda, TUR 5 Nebulosa, SPI 6 Stelle dorate, EAG 7 Aurora, PEA 8 Glitter. Scritte bianche, linee del campo colore squadra.
 
 - v774: campo G League (tutte le squadre e Gotham) senza panchina e tribuna; sotto il campo tabella Risultati G League della notte con frecce per notti precedenti/successive (giocatore, avversario, minuti, PDK, totale).
+
+- v775: Ducks notte, tolta la retroilluminazione del logo a bordocampo (resta il fascio di luce).
