@@ -3619,3 +3619,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v815: banner Ducks: scritta DUCKS/TEXAS 18px a destra, logo 2 mm (12px) a destra.
 
 - v816: Ducks di giorno: stelline lilla che brillano su parquet e bordocampo (blocco 1383, da togliere se non piace).
+
+- v817: Ducks: scritta TEXAS DUCKS del bordocampo +24% (giorno e notte); logo del banner con l angolo sinistro a circa mezzo millimetro dal bordo.
