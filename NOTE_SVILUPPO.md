@@ -3605,3 +3605,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v808: Editor loghi seconda passata (17 caselle Ducks) resa ufficiale, moltiplicata sulla grandezza attuale (1379); editor azzerato (dl_dxlogo_m1379).
 
 - v809: fix Ducks: fascio di luce di nuovo sul bordocampo di notte; di giorno solo sul banner.
+
+- v810: Area Ducks bloccata: le personalizzazioni pubbliche (Impostazioni) non cambiano campo/bordocampo Ducks; interruttore in Area segreta > Personalizzazioni per riattivarle sul proprio telefono (dl_dxpers). Logo scelto nell area segreta non piu sovrascritto. Logo bordocampo abbassato al segno di Francesco.
