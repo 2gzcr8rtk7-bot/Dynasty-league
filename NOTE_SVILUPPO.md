@@ -3561,3 +3561,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v781: nuovo logo Ducks "Cowboy viola" (loghi/duc-10.webp, scontornato) nella lista loghi Ducks: zona segreta, editor loghi e personalizzazioni.
 
 - v785: PROVA forme maglia: sul campo Ducks tocca TEXAS per passare fra 20 forme (dl_shp); vale per tutte le maglie di tutte le squadre. Tasto provvisorio.
+
+- v786: prova forme maglia: aggiunte 21 Anni 90 NBA (dal modello di Francesco: spalline sottili, giromanica profondo, piu lunga e stretta) e 22 Anni 90 NBA meno lunga.
