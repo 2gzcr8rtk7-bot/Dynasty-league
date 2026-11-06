@@ -3451,3 +3451,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v728 (1314): Gotham: campo Notte su Gotham (linee verdi, fari, palazzi) solo con la modalita notte (CNT); senza notte il campo interno e quello di default, bordo e banner restano viola.
 
 - v729 (1315): Gotham con modalita notte: durante le partite live le linee del campo lampeggiano verdi invece che rosse.
+
+- v730 (1316): Gotham Sfumata Viola (507): palazzi viola scuro con finestre gialle al posto dei palazzi neri.
