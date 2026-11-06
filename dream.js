@@ -66,7 +66,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
   const rrPath=(rx,rz,cr,step)=>{const out=[],segs=[["l",-rx+cr,-rz,rx-cr,-rz],["c",rx-cr,-rz+cr,-Math.PI/2,0],["l",rx,-rz+cr,rx,rz-cr],["c",rx-cr,rz-cr,0,Math.PI/2],["l",rx-cr,rz,-rx+cr,rz],["c",-rx+cr,rz-cr,Math.PI/2,Math.PI],["l",-rx,rz-cr,-rx,-rz+cr],["c",-rx+cr,-rz+cr,Math.PI,Math.PI*1.5]];
     for(const s of segs){const len=s[0]==="l"?Math.hypot(s[3]-s[1],s[4]-s[2]):Math.PI*cr/2,n=Math.max(1,Math.round(len/step));for(let i=0;i<n;i++){const k=i/n;if(s[0]==="l")out.push([s[1]+(s[3]-s[1])*k,s[2]+(s[4]-s[2])*k]);else{const a=s[3]+(s[4]-s[3])*k;out.push([s[1]+Math.cos(a)*cr,s[2]+Math.sin(a)*cr])}}}return out};
   /* (1296) MODALITÀ GOTHAM nel Dream: campo Ducks a tema Gotham City (4 stili, swipe sul logo a centrocampo) */
-  const GOT=t==="DUC"&&typeof window.gotOn==="function"&&window.gotOn();const GLG=GOT?await img("loghi/gotham-b.webp?v=1"):null;
+  const GOT=t==="DUC"&&typeof window.gotOn==="function"&&window.gotOn();const GLG=GOT?await img("loghi/gotham.webp?v=2"):null;
   const GOK=[0,3];const gdst=()=>{let v=0;try{v=+(localStorage.getItem("dl_gotham_dst")||0)}catch(e){}v=(v%4+4)%4;return GOK.includes(v)?v:0};
   const GSTY=[{f1:"#2a1150",f2:"#140826",ln:"#a3e635",glow:1,sk:"#1a0b33",win:"#a3e635",rain:"rgba(196,181,253,.35)",key:"rgba(124,58,237,.35)"},
    {f1:"#6d28d9",f2:"#4c1d95",ln:"#ecfccb",wood:1,sk:"#2e0a5e",win:"#a3e635",key:"rgba(132,204,22,.28)"},
@@ -1939,7 +1939,7 @@ function close(){try{gUndo()}catch(e){}const st=ST;if(!st)return;try{st.standUp&
   /* (939) si torna sempre alla squadra da cui si è entrati *//* (984) e sempre al campo o alla home */try{let ch=false;if(curTeam!==(st.home||st.t)){curTeam=st.home||st.t;ch=true}if(cur!=="campo"&&cur!=="home"){cur="campo";ch=true}try{if(GAME==="dream"&&cur!=="giochi")GAME="menu"}catch(e){}if(ch)render()}catch(e){}try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock("portrait").catch(()=>{})}catch(e){}try{st.A&&st.A.ac.close()}catch(e){}st.ov.remove();document.body.classList.remove("drm3on")}
 /* (1298) Gotham attivo: tutta l'arena Ducks (spalti, tabellone, maxischermo, bandiere, facciate) prende i colori e il logo Gotham */
 let GSAVE=null;const gUndo=()=>{if(!GSAVE)return;window.DUC_COL3D=GSAVE.col;TEAMS.DUC=GSAVE.T;LOGO_DUC0.a=GSAVE.la;LOGO.DUC=GSAVE.lg;window.DUC_CURL=GSAVE.curl;GSAVE=null};
-const gApply=()=>{gUndo();if(!(typeof window.gotOn==="function"&&window.gotOn()))return;const GL="loghi/gotham-b.webp?v=1";GSAVE={col:window.DUC_COL3D,T:TEAMS.DUC,la:LOGO_DUC0.a,lg:LOGO.DUC,curl:window.DUC_CURL};
+const gApply=()=>{gUndo();if(!(typeof window.gotOn==="function"&&window.gotOn()))return;const GL="loghi/gotham.webp?v=2";GSAVE={col:window.DUC_COL3D,T:TEAMS.DUC,la:LOGO_DUC0.a,lg:LOGO.DUC,curl:window.DUC_CURL};
  window.DUC_COL3D="#6d28d9";TEAMS.DUC={...GSAVE.T,bg:"#7c3aed",fg:"#a3e635",trim:"#a3e635",city:"Gotham",name:"Gotham City Ducks"};LOGO_DUC0.a=GL;LOGO.DUC=GL;window.DUC_CURL=GL};
 window.dreamOpen=(t,op)=>{gApply();return open(t,op)};window.dreamClose=close;window.dreamDbg=()=>ST;
 })();
