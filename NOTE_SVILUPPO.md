@@ -3407,3 +3407,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v706 (1292): Ducks: DUCKS bordino Bianca (307) maglia di default e prima nel tasto; tutti passano una volta alla bianca (dl_kit_m1292), poi possono cambiare.
 
 - v707 (1293): MODALITA GOTHAM CITY DUCKS segreta: tocco sul logo del banner del campo Ducks (dl_gotham). In Gotham: banner squadra viola/verde col logo Gotham (loghi/gotham.webp), campo viola con linee verdi e skyline, banner campo GOTHAM [logo] DUCKS, tasto maglia solo 7 maglie Gotham (500-506: Viola A/B, Verde A/B, Nera A/C, Bianca A), niente NBA/Texas. Ritocco = torna Texas con la maglia di prima (KIT._ducN/_ducG).
+
+- v708 (1294): Gotham: swipe orizzontale sul logo del banner del campo cambia tra 4 stili (Notte su Gotham, Parquet viola, Verde acido, Pioggia e fari; dl_gotham_st), con avviso del nome; tocco = esci/entra.
