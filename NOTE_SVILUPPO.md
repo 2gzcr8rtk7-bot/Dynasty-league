@@ -3570,3 +3570,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v788: Dolphins: 3 maglie nuove (330 Blu gessato, 331 Bianca, 332 Nera montagne) sulla sagoma app: sfondo dalle immagini utente (img/dol-s1..3.jpg, senza scritta e numero), finiture vettoriali, SALT LAKE ricalcata vettoriale, numero giocatore DOL_DG con contorni. DOL_JV.
 
 - v790: pubblicate su ordine le 3 maglie Dolphins in coda (330 Blu gessato, 331 Bianca, 332 Nera montagne) al posto delle precedenti.
+
+- v792: tolte tutte le forme maglia in prova e il tocco su TEXAS: resta la forma originale.
