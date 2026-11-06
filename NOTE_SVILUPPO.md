@@ -3563,3 +3563,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v785: PROVA forme maglia: sul campo Ducks tocca TEXAS per passare fra 20 forme (dl_shp); vale per tutte le maglie di tutte le squadre. Tasto provvisorio.
 
 - v786: prova forme maglia: aggiunte 21 Anni 90 NBA (dal modello di Francesco: spalline sottili, giromanica profondo, piu lunga e stretta) e 22 Anni 90 NBA meno lunga.
+
+- v787: prova forme maglia: aggiunte 23 Moderna collo a V (dal modello Salt Lake: spalline strette e calanti), 24 spalle calanti collo tondo, 25 collo a V spalline larghe.
