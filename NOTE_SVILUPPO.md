@@ -3525,3 +3525,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v765: Ducks, nuove maglie ufficiali 314 DUCKS gessato Viola verde (bordino verde, gessato verde) e 315 DUCKS gessato Viola gialla (bordino giallo).
 
 - v766: maglia 314 Ducks Viola verde ora con scritta G-DUCKS (vettoriale dal logo inviato), interno verde.
+
+- v767: maglia 315 Ducks Viola gialla ora con scritta TEXAS (vettoriale dal logo inviato), interno giallo.
