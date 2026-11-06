@@ -3611,3 +3611,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v811: Ducks, nuova maglia 320 DUCKS Ghiaccio viola (dalla serie di 40, n.17) in aggiunta.
 
 - v812: Ducks, nuova maglia 321 DUCKS Nera triplo lime-viola in aggiunta.
+
+- v813: Ducks, logo del banner squadra +25% e +2% in altezza.
