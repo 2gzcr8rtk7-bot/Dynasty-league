@@ -3513,3 +3513,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v759: home in notte, i loghi della colonna squadre tengono lo sfondo colore squadra come di giorno.
 
 - v760: Ducks notte, tolta la retroilluminazione dalla scritta TEXAS DUCKS a bordocampo (restano logo illuminato e fascio di luce).
+
+- v761: home notte di nuovo con loghi scuri; in Personalizzazioni nuovo tasto "Loghi in Home di notte" per avere lo sfondo colore squadra anche di notte (DLS.hnlg).
