@@ -68,7 +68,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
   /* (1296) MODALITÀ GOTHAM nel Dream: campo Ducks a tema Gotham City (4 stili, swipe sul logo a centrocampo) */
   const GOT=t==="DUC"&&typeof window.gotOn==="function"&&window.gotOn();const GLG=GOT?await img("loghi/gotham.webp?v=2"):null;
   const GOK=[0];const gdst=()=>{let v=0;try{v=+(localStorage.getItem("dl_gotham_dst")||0)}catch(e){}v=(v%4+4)%4;return GOK.includes(v)?v:0};
-  const GSTY=[{f1:"#2a1150",f2:"#140826",ln:"#a3e635",glow:1,sk:"#1a0b33",win:"#a3e635",rain:"rgba(196,181,253,.35)",key:"rgba(124,58,237,.35)",beam:"rgba(163,230,53,.10)"},
+  const GSTY=[{f1:"#2a1150",f2:"#140826",ln:"#a3e635",glow:1,sk:"#1a0b33",win:"#a3e635",key:"rgba(124,58,237,.35)",beam:"rgba(163,230,53,.10)"},
    {f1:"#6d28d9",f2:"#4c1d95",ln:"#ecfccb",wood:1,sk:"#2e0a5e",win:"#a3e635",key:"rgba(132,204,22,.28)"},
    {f1:"#1f3a0c",f2:"#0a1205",ln:"#a855f7",glow:1,sk:"#0f2206",win:"#d9f99d",beam:"rgba(163,230,53,.10)",key:"rgba(168,85,247,.22)"},
    {f1:"#2a1648",f2:"#100820",ln:"#ffffff",sk:"#140a24",win:"#fde68a",rain:"rgba(217,249,157,.35)",beam:"rgba(163,230,53,.10)",key:"rgba(255,255,255,.08)"}];

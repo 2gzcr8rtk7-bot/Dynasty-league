@@ -3481,3 +3481,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v743 (1329): Gotham: tolta Viola A (500); maglia Gotham di partenza ora Viola B (501).
 
 - v744 (1330): Gotham: tolta Sfumata Verde (509).
+
+- v745 (1331): Gotham: tolta la pioggia dal campo 2D e dall arena Dream.
