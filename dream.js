@@ -66,7 +66,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
   const rrPath=(rx,rz,cr,step)=>{const out=[],segs=[["l",-rx+cr,-rz,rx-cr,-rz],["c",rx-cr,-rz+cr,-Math.PI/2,0],["l",rx,-rz+cr,rx,rz-cr],["c",rx-cr,rz-cr,0,Math.PI/2],["l",rx-cr,rz,-rx+cr,rz],["c",-rx+cr,rz-cr,Math.PI/2,Math.PI],["l",-rx,rz-cr,-rx,-rz+cr],["c",-rx+cr,-rz+cr,Math.PI,Math.PI*1.5]];
     for(const s of segs){const len=s[0]==="l"?Math.hypot(s[3]-s[1],s[4]-s[2]):Math.PI*cr/2,n=Math.max(1,Math.round(len/step));for(let i=0;i<n;i++){const k=i/n;if(s[0]==="l")out.push([s[1]+(s[3]-s[1])*k,s[2]+(s[4]-s[2])*k]);else{const a=s[3]+(s[4]-s[3])*k;out.push([s[1]+Math.cos(a)*cr,s[2]+Math.sin(a)*cr])}}}return out};
   /* (1296) MODALITÀ GOTHAM nel Dream: campo Ducks a tema Gotham City (4 stili, swipe sul logo a centrocampo) */
-  const GOT=t==="DUC"&&typeof window.gotOn==="function"&&window.gotOn();const GLG=GOT?await img("loghi/gotham-campo.webp?v=1"):null;
+  const GOT=t==="DUC"&&typeof window.gotOn==="function"&&window.gotOn();const GLG=GOT?await img("loghi/gotham.webp?v=2"):null;
   const GOK=[0,3];const gdst=()=>{let v=0;try{v=+(localStorage.getItem("dl_gotham_dst")||0)}catch(e){}v=(v%4+4)%4;return GOK.includes(v)?v:0};
   const GSTY=[{f1:"#2a1150",f2:"#140826",ln:"#a3e635",glow:1,sk:"#1a0b33",win:"#a3e635",rain:"rgba(196,181,253,.35)",key:"rgba(124,58,237,.35)"},
    {f1:"#6d28d9",f2:"#4c1d95",ln:"#ecfccb",wood:1,sk:"#2e0a5e",win:"#a3e635",key:"rgba(132,204,22,.28)"},
@@ -81,7 +81,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
       x.fillStyle=S.win;for(let wy=L(.15);wy<h-L(.1);wy+=L(.2))for(let wx=px+L(.1);wx<px+w-L(.12);wx+=L(.16))if(R()<.35){x.globalAlpha=.4+R()*.6;x.fillRect(wx,wy,L(.07),L(.09))}x.restore();px+=w+L(.03)}});
     if(S.rain){x.strokeStyle=S.rain;x.lineWidth=2;for(let k=0;k<260;k++){const rx=R()*W,ry=R()*H;x.beginPath();x.moveTo(rx,ry);x.lineTo(rx-L(.08),ry+L(.3));x.stroke()}}
     x.fillStyle=S.key;[0,1].forEach(s=>x.fillRect(s?W-L(5.8):0,cy-L(2.45),L(5.8),L(4.9)));
-    if(GLG){const lw=L(7.2),lh=lw*GLG.height/GLG.width;x.save();x.globalAlpha=.95;x.drawImage(GLG,cx-lw/2,cy-lh/2,lw,lh);x.restore()}
+    if(GLG){const lh=L(5.6),lw=lh*GLG.width/GLG.height;x.save();x.globalAlpha=.95;x.drawImage(GLG,cx-lw/2,cy-lh/2,lw,lh);x.restore()}
     x.save();if(S.glow){x.shadowColor=S.ln;x.shadowBlur=L(.25)}x.strokeStyle=S.ln;x.lineWidth=L(.06);
     x.strokeRect(L(.05),L(.55),W-L(.1),H-L(1.1));x.beginPath();x.moveTo(cx,L(.55));x.lineTo(cx,cy-L(1.9));x.moveTo(cx,cy+L(1.9));x.lineTo(cx,H-L(.55));x.stroke();
     [0,1].forEach(s=>{const bx=s?W-L(1.575):L(1.575),dir=s?-1:1;x.strokeRect(s?W-L(5.8):L(.05),cy-L(2.45),L(5.75),L(4.9));x.beginPath();x.arc(s?W-L(5.8):L(5.8),cy,L(1.8),0,7);x.stroke();

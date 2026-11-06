@@ -3429,3 +3429,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v717 (1303): Gotham: la maglia Bianca (506) ora e col verde (triplo bordino, GOTHAM e contorno numero verdi) al posto del viola.
 
 - v718 (1304): Gotham: nuovo logo (loghi/gotham.webp v2, sfondo nero tolto) su banner squadra, centro campo, arena Dream e bordo campo (banner del campo, 100%, al posto della scritta).
+
+- v719 (1305): Dream Gotham: a centrocampo il nuovo logo Gotham (gotham.webp v2) al posto della scritta.
