@@ -3469,3 +3469,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v737 (1323): Gotham: tolta Bianca citta viola, viola (516, palazzi viola chiaro); resta Bianca citta nera, viola (514).
 
 - v738 (1324): Gotham Sfumata Nera (511): palazzi verde notte.
+
+- v739 (1325): Gotham: tolta Sfumata Viola verde (508, bordi e scritte verdi); resta la versione con bordi e scritte bianchi (517).
