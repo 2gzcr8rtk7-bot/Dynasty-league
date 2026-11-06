@@ -3515,3 +3515,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v760: Ducks notte, tolta la retroilluminazione dalla scritta TEXAS DUCKS a bordocampo (restano logo illuminato e fascio di luce).
 
 - v761: home notte di nuovo con loghi scuri; in Personalizzazioni nuovo tasto "Loghi in Home di notte" per avere lo sfondo colore squadra anche di notte (DLS.hnlg).
+
+- v762: Ducks notte, razzo o meteora che fa un 8 tra i giocatori; tocca TEXAS a bordocampo per passare da uno all altro (dl_dxrk), tasto provvisorio.
