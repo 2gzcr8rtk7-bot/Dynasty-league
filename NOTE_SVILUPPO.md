@@ -3529,3 +3529,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v767: maglia 315 Ducks Viola gialla ora con scritta TEXAS (vettoriale dal logo inviato), interno giallo.
 
 - v768: maglia 315 Viola gialla, nuova scritta TEXAS (versione col bordo dritto sopra). La precedente resta in scratch texas_vec.json.
+
+- v769: G League sul campo per tutte le squadre: tocca il logo del banner del campo, compaiono i 5 giocatori G League con maglia nuova G-NOME e ultimo punteggio (avversario e data). Ducks: il logo ora apre la G League al posto di Gotham; tolta tutta la ricolorazione Gotham (app, campo, arena 3D); maglie G League Ducks solo Gotham Viola B (501) e Bianca (506).
