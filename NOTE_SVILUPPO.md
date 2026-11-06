@@ -3425,3 +3425,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v715 (1301): Gotham: tolta anche Verde B (503, verde con bordo viola).
 
 - v716 (1302): Gotham: tolti gli stili di campo Parquet viola e Verde acido (anche nella Dream); lo swipe alterna Notte su Gotham e Pioggia e fari.
+
+- v717 (1303): Gotham: la maglia Bianca (506) ora e col verde (triplo bordino, GOTHAM e contorno numero verdi) al posto del viola.
