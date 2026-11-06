@@ -3443,3 +3443,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v724 (1310): Gotham: il logo Gotham non eredita piu le grandezze/deformazioni del logo Texas (transform/scale none) ne il formato immagine (content:normal), resta dentro le caselle come gli altri loghi.
 
 - v725 (1311): Gotham: aggiunte 4 bianche stile 18 (render 1,2,6,10 = 513-516). Include anche la correzione logo 1310 se non era ancora online.
+
+- v726 (1312): Gotham: aggiunta Sfumata Viola verde con bordi esterni bianchi, GOTHAM e numero bianchi (517).
