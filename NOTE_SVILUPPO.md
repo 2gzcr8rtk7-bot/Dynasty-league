@@ -3507,3 +3507,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v756: campo Texas Ducks notte, tolta la stella grande opaca a centrocampo (restano i puntini che brillano).
 
 - v757: Ducks, tocca la scritta TEXAS a bordocampo per scorrere 10 stili luce (LED, neon, luce da dietro, logo al neon, fascio). Sempre attivi, giorno e notte. Scelta salvata in dl_dxled.
+
+- v758: Ducks notte, scritte e logo bordocampo illuminati da dietro + fascio di luce che passa su banner e bordocampo. Tolti il tocco su TEXAS e i 10 stili. Di giorno resta tutto com era.
