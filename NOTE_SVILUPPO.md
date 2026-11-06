@@ -3465,3 +3465,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v735 (1321): Gotham: si torna Texas toccando solo la parola CITY (verde) sul bordo campo.
 
 - v736 (1322): Gotham: tolta la maglia Bianca citta viola notte, viola (515).
+
+- v737 (1323): Gotham: tolta Bianca citta viola, viola (516, palazzi viola chiaro); resta Bianca citta nera, viola (514).
