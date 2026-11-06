@@ -3401,3 +3401,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v703 (1289): tabellone campo (.lbml): Papero Ducks 132%, Eagles 110%; editor azzerato (dl_dxlogo_m1289).
 
 - v704 (1290): tabellone campo Papero Ducks 123% (132x93); Editor loghi ora usa la proprieta CSS scale (si moltiplica con le regole ufficiali: prima sulle regole con prefisso html l anteprima non si vedeva); editor azzerato (m1290).
+
+- v705 (1291): Dynasty TV .drsbl Papero Ducks 113% x 104% = 117.5%; editor azzerato (m1291).
