@@ -3597,3 +3597,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v804: Ducks di giorno, bordocampo bianco predefinito (ac #ffffff, bordo bianco).
 
 - v805: Ducks di giorno, scritte TEXAS DUCKS del bordocampo viola scuro #3b0f7a (notte invariata, bianche).
+
+- v806: Ducks, maglia Bianca viola (319) rifatta: bordini viola/nero, scritta DUCKS e numero verdi e neri. Fascio di luce su banner e bordocampo anche di giorno per i Ducks (riflesso lilla).
