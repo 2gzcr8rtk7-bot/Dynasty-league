@@ -3613,3 +3613,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v812: Ducks, nuova maglia 321 DUCKS Nera triplo lime-viola in aggiunta.
 
 - v813: Ducks, logo del banner squadra +25% e +2% in altezza.
+
+- v814: Ducks, logo del banner squadra rimesso a +10% e +2% in altezza (scelta 4).
