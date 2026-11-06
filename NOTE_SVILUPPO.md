@@ -3583,3 +3583,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v797: Ducks, 3 maglie nuove stile Gotham in aggiunta: 316 Bianca verde, 317 Viola bianca, 318 Viola verde (gessato, scritta DUCKS).
 
 - v798: Ducks, maglia 319 DUCKS gessato Bianca viola (bordo e scritta viola) in aggiunta.
+
+- v799: logo Ducks ufficiale ovunque = nuovo Viola verde (loghi/duc-11.webp v3): sostituiti anche Papero (img/2402cd92d5d7.png) e scritta (img/f39bda081f60.png) in LOGO/LOGO2 e in tutte le regole CSS; grandezze dell Editor invariate.
