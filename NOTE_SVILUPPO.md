@@ -3527,3 +3527,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v766: maglia 314 Ducks Viola verde ora con scritta G-DUCKS (vettoriale dal logo inviato), interno verde.
 
 - v767: maglia 315 Ducks Viola gialla ora con scritta TEXAS (vettoriale dal logo inviato), interno giallo.
+
+- v768: maglia 315 Viola gialla, nuova scritta TEXAS (versione col bordo dritto sopra). La precedente resta in scratch texas_vec.json.
