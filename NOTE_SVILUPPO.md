@@ -3419,3 +3419,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v712 (1298): Dream 3D con Gotham attivo: tutta l arena Ducks in viola/verde (DUC_COL3D, TEAMS.DUC e loghi temporanei durante la Dream, ripristinati alla chiusura).
 
 - v713 (1299): Gotham: tolte le maglie Nera A (504, nera pura con verde) e Bianca A (506); restano Viola A/B, Verde A/B, Nera C (notte).
+
+- v714 (1300): Gotham: rimessa Bianca A (506); tolta solo Nera A (504).
