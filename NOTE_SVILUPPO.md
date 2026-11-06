@@ -3543,3 +3543,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v774: campo G League (tutte le squadre e Gotham) senza panchina e tribuna; sotto il campo tabella Risultati G League della notte con frecce per notti precedenti/successive (giocatore, avversario, minuti, PDK, totale).
 
 - v775: Ducks notte, tolta la retroilluminazione del logo a bordocampo (resta il fascio di luce).
+
+- v776: campo stellato di notte (tutte le squadre) un po piu chiaro: #2e1065 -> #1e0a3c.
