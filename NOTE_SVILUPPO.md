@@ -3521,3 +3521,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v763: razzo/meteora Ducks anche di giorno (test), tocca TEXAS per cambiare.
 
 - v764: tolti razzo e meteora dal campo Ducks.
+
+- v765: Ducks, nuove maglie ufficiali 314 DUCKS gessato Viola verde (bordino verde, gessato verde) e 315 DUCKS gessato Viola gialla (bordino giallo).
