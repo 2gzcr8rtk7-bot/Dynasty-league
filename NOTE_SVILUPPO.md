@@ -3499,3 +3499,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v752 (1340): accesa la notte Texas Ducks: banner e bordo campo viola notte, scritte gialle (bordo lampeggiante, stesso giallo del banner), campo Lone Star viola notte con stella molto opaca. Senza notte e in Gotham invariato.
 
 - v753 (1341): notte Texas: circa meta delle stelle del campo brilla da sola, ognuna con durata e ritardo casuali.
+
+- v754 (1342): notte Texas: banner e bordo campo gialli originali con scritte bianche; campo Lone Star con stelle che brillano da sole.
