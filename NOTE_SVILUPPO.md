@@ -3427,3 +3427,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v716 (1302): Gotham: tolti gli stili di campo Parquet viola e Verde acido (anche nella Dream); lo swipe alterna Notte su Gotham e Pioggia e fari.
 
 - v717 (1303): Gotham: la maglia Bianca (506) ora e col verde (triplo bordino, GOTHAM e contorno numero verdi) al posto del viola.
+
+- v718 (1304): Gotham: nuovo logo (loghi/gotham.webp v2, sfondo nero tolto) su banner squadra, centro campo, arena Dream e bordo campo (banner del campo, 100%, al posto della scritta).

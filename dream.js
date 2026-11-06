@@ -1939,7 +1939,7 @@ function close(){try{gUndo()}catch(e){}const st=ST;if(!st)return;try{st.standUp&
   /* (939) si torna sempre alla squadra da cui si è entrati *//* (984) e sempre al campo o alla home */try{let ch=false;if(curTeam!==(st.home||st.t)){curTeam=st.home||st.t;ch=true}if(cur!=="campo"&&cur!=="home"){cur="campo";ch=true}try{if(GAME==="dream"&&cur!=="giochi")GAME="menu"}catch(e){}if(ch)render()}catch(e){}try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock("portrait").catch(()=>{})}catch(e){}try{st.A&&st.A.ac.close()}catch(e){}st.ov.remove();document.body.classList.remove("drm3on")}
 /* (1298) Gotham attivo: tutta l'arena Ducks (spalti, tabellone, maxischermo, bandiere, facciate) prende i colori e il logo Gotham */
 let GSAVE=null;const gUndo=()=>{if(!GSAVE)return;window.DUC_COL3D=GSAVE.col;TEAMS.DUC=GSAVE.T;LOGO_DUC0.a=GSAVE.la;LOGO.DUC=GSAVE.lg;window.DUC_CURL=GSAVE.curl;GSAVE=null};
-const gApply=()=>{gUndo();if(!(typeof window.gotOn==="function"&&window.gotOn()))return;const GL="loghi/gotham.webp?v=1";GSAVE={col:window.DUC_COL3D,T:TEAMS.DUC,la:LOGO_DUC0.a,lg:LOGO.DUC,curl:window.DUC_CURL};
+const gApply=()=>{gUndo();if(!(typeof window.gotOn==="function"&&window.gotOn()))return;const GL="loghi/gotham.webp?v=2";GSAVE={col:window.DUC_COL3D,T:TEAMS.DUC,la:LOGO_DUC0.a,lg:LOGO.DUC,curl:window.DUC_CURL};
  window.DUC_COL3D="#6d28d9";TEAMS.DUC={...GSAVE.T,bg:"#7c3aed",fg:"#a3e635",trim:"#a3e635",city:"Gotham",name:"Gotham City Ducks"};LOGO_DUC0.a=GL;LOGO.DUC=GL;window.DUC_CURL=GL};
 window.dreamOpen=(t,op)=>{gApply();return open(t,op)};window.dreamClose=close;window.dreamDbg=()=>ST;
 })();
