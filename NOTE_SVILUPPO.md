@@ -3495,3 +3495,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v750 (1336): Gotham: tolte Verde viola (518) e Bianca viola (519); la Bianca citta nera verde (513) era gia stata tolta in v748.
 
 - v751 (1338): BUG campo notte: se si era scelto un parquet nelle impostazioni la modalita notte non scuriva il campo (ordine dei controlli); ora con la notte il campo e sempre scuro per tutte le squadre. Notte Texas Ducks (banner/bordo viola notte, campo Lone Star) caricata ma spenta (window.TEXN_ON) in attesa di approvazione.
+
+- v752 (1340): accesa la notte Texas Ducks: banner e bordo campo viola notte, scritte gialle (bordo lampeggiante, stesso giallo del banner), campo Lone Star viola notte con stella molto opaca. Senza notte e in Gotham invariato.

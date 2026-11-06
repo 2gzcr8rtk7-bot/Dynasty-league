@@ -12976,7 +12976,7 @@ function sky(){const S=GS[gst()],r=mk(7),r2=mk(13);let o="",x=3;
  return `<g class="gsky">${o}</g>`}
 const L0={L:LOGO.DUC,L2:LOGO2.DUC,a:LOGO_DUC0.a,b:LOGO_DUC0.b};
 function sync(){const R=document.documentElement,on=gotOn();R.classList.toggle("gotham",on);R.classList.toggle("texn",!!window.TEXN_ON);try{ducColApply()}catch(e){}if(on){LOGO.DUC=GL;LOGO2.DUC=GL;LOGO_DUC0.a=GL;LOGO_DUC0.b=GL}else{LOGO.DUC=L0.L;LOGO2.DUC=L0.L2;LOGO_DUC0.a=L0.a;LOGO_DUC0.b=L0.b}for(let k=0;k<4;k++)R.classList.toggle("gst"+k,on&&gst()===k)}
-/* (1337) MODALITÀ NOTTE TEXAS DUCKS: bordo e banner nero sfumato viola con scritte gialle lampeggianti; campo Lone Star (viola notte, stella con contorno luminoso) */
+window.TEXN_ON=true;/* (1340) notte Texas approvata *//* (1337) MODALITÀ NOTTE TEXAS DUCKS: bordo e banner nero sfumato viola con scritte gialle lampeggianti; campo Lone Star (viola notte, stella con contorno luminoso) */
 function texNight(){const DL=DLS.tm;DLS.tm={...(DL||{}),DUC:{fc:"#1e0a3c",lc:"#facc15",ac:"#2e1065"}};let h;try{h=V0.apply(this,arguments)}finally{DLS.tm=DL}
  const st=(cx,cy,R,r)=>{let p=[];for(let i=0;i<10;i++){const q=i%2?r:R,a=(-90+i*36)*Math.PI/180;p.push((cx+Math.cos(a)*q).toFixed(2)+" "+(cy+Math.sin(a)*q).toFixed(2))}return"M"+p.join(" L")+"Z"};
  const rr=mk(9);let dots="";for(let i=0;i<34;i++)dots+=`<circle cx="${(3+rr()*94).toFixed(1)}" cy="${(6+rr()*50).toFixed(1)}" r="${(.12+rr()*.28).toFixed(2)}" fill="#fff" opacity="${(.3+rr()*.7).toFixed(2)}"/>`;
