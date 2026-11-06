@@ -3573,4 +3573,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 - v792: tolte tutte le forme maglia in prova e il tocco su TEXAS: resta la forma originale.
 
-- v793: due nuovi loghi Ducks nelle personalizzazioni: 11 Viola verde (becco bianco) e 12 Viola verde becco arancio.
+- v794: due nuovi loghi Ducks nelle personalizzazioni: 11 Viola verde (becco bianco) e 12 Viola verde becco arancio.
+- v793: condivisione: le maglie Dolphins 330-332 (che usano img/dol-s*.jpg) sparivano dall'immagine condivisa; jerseyShare ora sostituisce href img/ con la versione data: precaricata (SHIMG/shImgPre). IN CODA.
