@@ -67,7 +67,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
     for(const s of segs){const len=s[0]==="l"?Math.hypot(s[3]-s[1],s[4]-s[2]):Math.PI*cr/2,n=Math.max(1,Math.round(len/step));for(let i=0;i<n;i++){const k=i/n;if(s[0]==="l")out.push([s[1]+(s[3]-s[1])*k,s[2]+(s[4]-s[2])*k]);else{const a=s[3]+(s[4]-s[3])*k;out.push([s[1]+Math.cos(a)*cr,s[2]+Math.sin(a)*cr])}}}return out};
   /* (1296) MODALITÀ GOTHAM nel Dream: campo Ducks a tema Gotham City (4 stili, swipe sul logo a centrocampo) */
   const GOT=t==="DUC"&&typeof window.gotOn==="function"&&window.gotOn();const GLG=GOT?await img("loghi/gotham-campo.webp?v=1"):null;
-  const gdst=()=>{let v=0;try{v=+(localStorage.getItem("dl_gotham_dst")||0)}catch(e){}return(v%4+4)%4};
+  const GOK=[0,3];const gdst=()=>{let v=0;try{v=+(localStorage.getItem("dl_gotham_dst")||0)}catch(e){}v=(v%4+4)%4;return GOK.includes(v)?v:0};
   const GSTY=[{f1:"#2a1150",f2:"#140826",ln:"#a3e635",glow:1,sk:"#1a0b33",win:"#a3e635",rain:"rgba(196,181,253,.35)",key:"rgba(124,58,237,.35)"},
    {f1:"#6d28d9",f2:"#4c1d95",ln:"#ecfccb",wood:1,sk:"#2e0a5e",win:"#a3e635",key:"rgba(132,204,22,.28)"},
    {f1:"#1f3a0c",f2:"#0a1205",ln:"#a855f7",glow:1,sk:"#0f2206",win:"#d9f99d",beam:"rgba(163,230,53,.10)",key:"rgba(168,85,247,.22)"},
@@ -105,7 +105,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
     /* vernice: riflesso morbido lungo il campo e bordi più scuri */const g=x.createRadialGradient(cx,cy,10,cx,cy,W*.62);g.addColorStop(0,"rgba(255,248,232,.06)");g.addColorStop(1,"rgba(0,0,0,.2)");x.fillStyle=g;x.fillRect(0,0,W,H);
     const g2=x.createLinearGradient(0,0,0,H);g2.addColorStop(0,"rgba(255,255,255,.05)");g2.addColorStop(.5,"rgba(255,255,255,0)");g2.addColorStop(1,"rgba(255,255,255,.04)");x.fillStyle=g2;x.fillRect(0,0,W,H)});
   const floor=new THREE.Mesh(new THREE.PlaneGeometry(CW+2*RA+8,CH+2*RA+8),new THREE.MeshStandardMaterial({color:GOT?C("#160a2a"):mix(BG,"#000",.18),roughness:.45}));/* (930) bordo campo nel colore della squadra */floor.rotation.x=-Math.PI/2;S.add(floor);
-  const ct=new THREE.Mesh(new THREE.PlaneGeometry(CW,CH),new THREE.MeshLambertMaterial({map:court})/* (941) parquet opaco: niente riflessi che coprono legno e logo */);ct.rotation.x=-Math.PI/2;ct.position.y=.01;S.add(ct);window.__gotDream=GOT?{redraw:()=>{const c=court.image,x=c.getContext("2d");x.setTransform(1,0,0,1,0,0);drawG(x,c.width,c.height);court.needsUpdate=true},set:d=>{try{localStorage.setItem("dl_gotham_dst",String((gdst()+d+4)%4))}catch(e){}}}:null;
+  const ct=new THREE.Mesh(new THREE.PlaneGeometry(CW,CH),new THREE.MeshLambertMaterial({map:court})/* (941) parquet opaco: niente riflessi che coprono legno e logo */);ct.rotation.x=-Math.PI/2;ct.position.y=.01;S.add(ct);window.__gotDream=GOT?{redraw:()=>{const c=court.image,x=c.getContext("2d");x.setTransform(1,0,0,1,0,0);drawG(x,c.width,c.height);court.needsUpdate=true},set:d=>{try{localStorage.setItem("dl_gotham_dst",String(GOK[(GOK.indexOf(gdst())+d+GOK.length)%GOK.length]))}catch(e){}}}:null;
   /* canestri */
   const NETS=[];/* (975) canestro più realistico: base imbottita nel colore squadra con pannello LED, colonna inclinata imbottita, doppio braccio a traliccio, tabellone in vetro con bordo e quadrato bianchi, imbottitura sotto, cronometro dei 24" sopra, ferro con staffa, retina a maglie (texture) */
   const steel=new THREE.MeshPhongMaterial({color:"#1c1c22",shininess:60}),padM=new THREE.MeshPhongMaterial({color:mix(BG,"#111",.35),shininess:20}),whiteM=new THREE.MeshBasicMaterial({color:"#ffffff"});

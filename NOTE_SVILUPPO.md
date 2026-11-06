@@ -3423,3 +3423,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v714 (1300): Gotham: rimessa Bianca A (506); tolta solo Nera A (504).
 
 - v715 (1301): Gotham: tolta anche Verde B (503, verde con bordo viola).
+
+- v716 (1302): Gotham: tolti gli stili di campo Parquet viola e Verde acido (anche nella Dream); lo swipe alterna Notte su Gotham e Pioggia e fari.
