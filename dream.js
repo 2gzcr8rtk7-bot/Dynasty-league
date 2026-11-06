@@ -77,7 +77,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
     if(S.wood){const ph=Math.round(H/40);for(let y=0;y<H;y+=ph){x.fillStyle=(y/ph)%2?"rgba(0,0,0,.08)":"rgba(255,255,255,.05)";x.fillRect(0,y,W,ph);x.fillStyle="rgba(0,0,0,.18)";x.fillRect(0,y,W,1.5)}}
     if(S.beam)[[.18,.0],[.82,1]].forEach(([fx,s])=>{x.fillStyle=S.beam;x.beginPath();x.moveTo(W*fx,s?H:0);x.lineTo(W*fx-L(1.6),cy);x.lineTo(W*fx+L(1.6),cy);x.closePath();x.fill()});
     /* skyline lungo i due lati lunghi, con le finestre accese */
-    [0,1].forEach(side=>{let px=0;while(px<W){const w=L(.5+R()*.9),h=L(.6+R()*1.6);x.save();if(side){x.translate(0,H);x.scale(1,-1)}x.fillStyle=S.sk;x.globalAlpha=.9;x.fillRect(px,0,w,h);if(R()<.3){x.beginPath();x.moveTo(px+w/2-L(.06),h);x.lineTo(px+w/2,h+L(.3+R()*.4));x.lineTo(px+w/2+L(.06),h);x.fill()}
+    if(0)/* (1306) niente palazzi sul campo Dream */[0,1].forEach(side=>{let px=0;while(px<W){const w=L(.5+R()*.9),h=L(.6+R()*1.6);x.save();if(side){x.translate(0,H);x.scale(1,-1)}x.fillStyle=S.sk;x.globalAlpha=.9;x.fillRect(px,0,w,h);if(R()<.3){x.beginPath();x.moveTo(px+w/2-L(.06),h);x.lineTo(px+w/2,h+L(.3+R()*.4));x.lineTo(px+w/2+L(.06),h);x.fill()}
       x.fillStyle=S.win;for(let wy=L(.15);wy<h-L(.1);wy+=L(.2))for(let wx=px+L(.1);wx<px+w-L(.12);wx+=L(.16))if(R()<.35){x.globalAlpha=.4+R()*.6;x.fillRect(wx,wy,L(.07),L(.09))}x.restore();px+=w+L(.03)}});
     if(S.rain){x.strokeStyle=S.rain;x.lineWidth=2;for(let k=0;k<260;k++){const rx=R()*W,ry=R()*H;x.beginPath();x.moveTo(rx,ry);x.lineTo(rx-L(.08),ry+L(.3));x.stroke()}}
     x.fillStyle=S.key;[0,1].forEach(s=>x.fillRect(s?W-L(5.8):0,cy-L(2.45),L(5.8),L(4.9)));
