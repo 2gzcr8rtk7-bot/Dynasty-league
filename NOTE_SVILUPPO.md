@@ -3405,3 +3405,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v705 (1291): Dynasty TV .drsbl Papero Ducks 113% x 104% = 117.5%; editor azzerato (m1291).
 
 - v706 (1292): Ducks: DUCKS bordino Bianca (307) maglia di default e prima nel tasto; tutti passano una volta alla bianca (dl_kit_m1292), poi possono cambiare.
+
+- v707 (1293): MODALITA GOTHAM CITY DUCKS segreta: tocco sul logo del banner del campo Ducks (dl_gotham). In Gotham: banner squadra viola/verde col logo Gotham (loghi/gotham.webp), campo viola con linee verdi e skyline, banner campo GOTHAM [logo] DUCKS, tasto maglia solo 7 maglie Gotham (500-506: Viola A/B, Verde A/B, Nera A/C, Bianca A), niente NBA/Texas. Ritocco = torna Texas con la maglia di prima (KIT._ducN/_ducG).
