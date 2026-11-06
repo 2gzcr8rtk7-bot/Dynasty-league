@@ -1932,10 +1932,14 @@ function disposeAll(K,keep){try{const TX=new Set();const tx=v=>{if(v&&v.isTextur
   let lost=true;try{lost=R.getContext().isContextLost()}catch(e){}
   if(keep&&!lost){if(KEEP&&KEEP.R!==R){try{KEEP.R.dispose();KEEP.R.forceContextLoss()}catch(e){}}try{R.setRenderTarget(null);R.clear()}catch(e){}KEEP={R,cv:R.domElement,to:setTimeout(()=>{if(KEEP&&KEEP.R===R){KEEP=null;try{R.dispose();R.forceContextLoss()}catch(e){}}},15000)};return}
   try{R.dispose();R.forceContextLoss&&R.forceContextLoss()}catch(e){}}
-function close(){const st=ST;if(!st)return;try{st.standUp&&st.standUp()}catch(e){}try{clearInterval(st.nsI);document.removeEventListener("visibilitychange",st.nsH);removeEventListener("pagehide",st.navSafe)}catch(e){}/* (981) se esci seduto all'ufficio, la pagina dell'app torna al suo posto */st.stop=true;ST=null;cancelAnimationFrame(st.raf);clearInterval(st.iv);clearTimeout(st.ch);if(st.kd){document.removeEventListener("keydown",st.kd);document.removeEventListener("keyup",st.kd)}if(st.rs)removeEventListener("resize",st.rs);
+function close(){try{gUndo()}catch(e){}const st=ST;if(!st)return;try{st.standUp&&st.standUp()}catch(e){}try{clearInterval(st.nsI);document.removeEventListener("visibilitychange",st.nsH);removeEventListener("pagehide",st.navSafe)}catch(e){}/* (981) se esci seduto all'ufficio, la pagina dell'app torna al suo posto */st.stop=true;ST=null;cancelAnimationFrame(st.raf);clearInterval(st.iv);clearTimeout(st.ch);if(st.kd){document.removeEventListener("keydown",st.kd);document.removeEventListener("keyup",st.kd)}if(st.rs)removeEventListener("resize",st.rs);
   try{window.speechSynthesis&&window.speechSynthesis.cancel()}catch(e){}
   try{if(st.kickT)clearInterval(st.kickT);if(st.A)st.A.close();if(st.vis)document.removeEventListener("visibilitychange",st.vis)}catch(e){}
   try{st.AB&&st.AB.abort()}catch(e){}if(st.K)disposeAll(st.K,!!st.keepR);
   /* (939) si torna sempre alla squadra da cui si è entrati *//* (984) e sempre al campo o alla home */try{let ch=false;if(curTeam!==(st.home||st.t)){curTeam=st.home||st.t;ch=true}if(cur!=="campo"&&cur!=="home"){cur="campo";ch=true}try{if(GAME==="dream"&&cur!=="giochi")GAME="menu"}catch(e){}if(ch)render()}catch(e){}try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock("portrait").catch(()=>{})}catch(e){}try{st.A&&st.A.ac.close()}catch(e){}st.ov.remove();document.body.classList.remove("drm3on")}
-window.dreamOpen=open;window.dreamClose=close;window.dreamDbg=()=>ST;
+/* (1298) Gotham attivo: tutta l'arena Ducks (spalti, tabellone, maxischermo, bandiere, facciate) prende i colori e il logo Gotham */
+let GSAVE=null;const gUndo=()=>{if(!GSAVE)return;window.DUC_COL3D=GSAVE.col;TEAMS.DUC=GSAVE.T;LOGO_DUC0.a=GSAVE.la;LOGO.DUC=GSAVE.lg;window.DUC_CURL=GSAVE.curl;GSAVE=null};
+const gApply=()=>{gUndo();if(!(typeof window.gotOn==="function"&&window.gotOn()))return;const GL="loghi/gotham.webp?v=1";GSAVE={col:window.DUC_COL3D,T:TEAMS.DUC,la:LOGO_DUC0.a,lg:LOGO.DUC,curl:window.DUC_CURL};
+ window.DUC_COL3D="#6d28d9";TEAMS.DUC={...GSAVE.T,bg:"#7c3aed",fg:"#a3e635",trim:"#a3e635",city:"Gotham",name:"Gotham City Ducks"};LOGO_DUC0.a=GL;LOGO.DUC=GL;window.DUC_CURL=GL};
+window.dreamOpen=(t,op)=>{gApply();return open(t,op)};window.dreamClose=close;window.dreamDbg=()=>ST;
 })();

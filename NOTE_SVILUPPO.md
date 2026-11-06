@@ -3415,3 +3415,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v710 (1296): Dream 3D: con Gotham attivo il parquet Ducks diventa campo Gotham (stile 1 Notte su Gotham di default, logo Gotham City Ducks al centro, bordo scuro); swipe orizzontale sul logo a centrocampo = stili 2-4 (dl_gotham_dst). dream.js caricato con ?v=1296.
 
 - v711 (1297): Gotham: scritta Gotham City Ducks sul banner del campo al 100% (non 110); lo swipe cambia solo il campo interno, bordo e banner restano quelli dello stile 1.
+
+- v712 (1298): Dream 3D con Gotham attivo: tutta l arena Ducks in viola/verde (DUC_COL3D, TEAMS.DUC e loghi temporanei durante la Dream, ripristinati alla chiusura).
