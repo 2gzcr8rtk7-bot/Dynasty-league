@@ -3503,3 +3503,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v754 (1342): notte Texas: banner e bordo campo gialli originali con scritte bianche; campo Lone Star con stelle che brillano da sole.
 
 - v755 (1343): notte Texas: 70 stelline su tutto il campo (piu di meta brilla da sola) + 8 stelline a quattro punte che brillano.
+
+- v756: campo Texas Ducks notte, tolta la stella grande opaca a centrocampo (restano i puntini che brillano).
