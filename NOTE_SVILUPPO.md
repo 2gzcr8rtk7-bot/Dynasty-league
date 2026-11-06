@@ -3463,3 +3463,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v734 (1320): Gotham: bordo campo senza logo, scritta unica GOTHAM CITY DUCKS con CITY verde; in Gotham il tasto per tornare Texas e la scritta del bordo campo.
 
 - v735 (1321): Gotham: si torna Texas toccando solo la parola CITY (verde) sul bordo campo.
+
+- v736 (1322): Gotham: tolta la maglia Bianca citta viola notte, viola (515).
