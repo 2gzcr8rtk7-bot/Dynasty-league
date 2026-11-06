@@ -3554,3 +3554,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v778: condivisione prestazione giocatore: con la notte accesa il campetto e in versione notte (bordo viola con stelle, campo stellato, scritte bianche, linee colore squadra); di giorno invariato.
 
 - v781: Dolphins: solo 3 maglie dalle immagini utente (330 Blu montagne, 331 Navy gessato, 332 Bianca montagne; img/dol-j1..3.png senza il 23) + NBA 2026 e Anni 90. Numero del giocatore ridisegnato (DOL_DG/dolNumD, block athletic) con colori presi dalle immagini. Tolte 113/109/116 e 322-324 per i Dolphins; default 330.
+
+- v782: premi Dolphins: tolte dal catalogo 113 Neve e pini Nera, 109 Salt Flats Bianca, 116 Salt Flats Alba (PREMI.items filtro DOLX).
