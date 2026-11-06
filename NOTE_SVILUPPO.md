@@ -3447,3 +3447,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v726 (1312): Gotham: aggiunta Sfumata Viola verde con bordi esterni bianchi, GOTHAM e numero bianchi (517).
 
 - v727 (1313): Gotham: un solo campo (Notte su Gotham con linee verdi + fari), tolto il logo dentro il campo; anche nella Dream un solo campo con i fari.
+
+- v728 (1314): Gotham: campo Notte su Gotham (linee verdi, fari, palazzi) solo con la modalita notte (CNT); senza notte il campo interno e quello di default, bordo e banner restano viola.
