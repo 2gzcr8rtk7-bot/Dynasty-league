@@ -65,8 +65,30 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
   const CW=28,CH=15,RA=5.6/* (930) bordo campo più largo: ci si allontana dai giocatori */;
   const rrPath=(rx,rz,cr,step)=>{const out=[],segs=[["l",-rx+cr,-rz,rx-cr,-rz],["c",rx-cr,-rz+cr,-Math.PI/2,0],["l",rx,-rz+cr,rx,rz-cr],["c",rx-cr,rz-cr,0,Math.PI/2],["l",rx-cr,rz,-rx+cr,rz],["c",-rx+cr,rz-cr,Math.PI/2,Math.PI],["l",-rx,rz-cr,-rx,-rz+cr],["c",-rx+cr,-rz+cr,Math.PI,Math.PI*1.5]];
     for(const s of segs){const len=s[0]==="l"?Math.hypot(s[3]-s[1],s[4]-s[2]):Math.PI*cr/2,n=Math.max(1,Math.round(len/step));for(let i=0;i<n;i++){const k=i/n;if(s[0]==="l")out.push([s[1]+(s[3]-s[1])*k,s[2]+(s[4]-s[2])*k]);else{const a=s[3]+(s[4]-s[3])*k;out.push([s[1]+Math.cos(a)*cr,s[2]+Math.sin(a)*cr])}}}return out};
+  /* (1296) MODALITÀ GOTHAM nel Dream: campo Ducks a tema Gotham City (4 stili, swipe sul logo a centrocampo) */
+  const GOT=t==="DUC"&&typeof window.gotOn==="function"&&window.gotOn();const GLG=GOT?await img("loghi/gotham-campo.webp?v=1"):null;
+  const gdst=()=>{let v=0;try{v=+(localStorage.getItem("dl_gotham_dst")||0)}catch(e){}return(v%4+4)%4};
+  const GSTY=[{f1:"#2a1150",f2:"#140826",ln:"#a3e635",glow:1,sk:"#1a0b33",win:"#a3e635",rain:"rgba(196,181,253,.35)",key:"rgba(124,58,237,.35)"},
+   {f1:"#6d28d9",f2:"#4c1d95",ln:"#ecfccb",wood:1,sk:"#2e0a5e",win:"#a3e635",key:"rgba(132,204,22,.28)"},
+   {f1:"#1f3a0c",f2:"#0a1205",ln:"#a855f7",glow:1,sk:"#0f2206",win:"#d9f99d",beam:"rgba(163,230,53,.10)",key:"rgba(168,85,247,.22)"},
+   {f1:"#2a1648",f2:"#100820",ln:"#ffffff",sk:"#140a24",win:"#fde68a",rain:"rgba(217,249,157,.35)",beam:"rgba(163,230,53,.10)",key:"rgba(255,255,255,.08)"}];
+  const drawG=(x,W,H)=>{const S=GSTY[gdst()],sc=W/28,L=m=>m*sc,cx=W/2,cy=H/2;let sd=11;const R=()=>(sd=(sd*16807)%2147483647)/2147483647;
+    const bg=x.createRadialGradient(cx,cy,10,cx,cy,W*.6);bg.addColorStop(0,S.f1);bg.addColorStop(1,S.f2);x.fillStyle=bg;x.fillRect(0,0,W,H);
+    if(S.wood){const ph=Math.round(H/40);for(let y=0;y<H;y+=ph){x.fillStyle=(y/ph)%2?"rgba(0,0,0,.08)":"rgba(255,255,255,.05)";x.fillRect(0,y,W,ph);x.fillStyle="rgba(0,0,0,.18)";x.fillRect(0,y,W,1.5)}}
+    if(S.beam)[[.18,.0],[.82,1]].forEach(([fx,s])=>{x.fillStyle=S.beam;x.beginPath();x.moveTo(W*fx,s?H:0);x.lineTo(W*fx-L(1.6),cy);x.lineTo(W*fx+L(1.6),cy);x.closePath();x.fill()});
+    /* skyline lungo i due lati lunghi, con le finestre accese */
+    [0,1].forEach(side=>{let px=0;while(px<W){const w=L(.5+R()*.9),h=L(.6+R()*1.6);x.save();if(side){x.translate(0,H);x.scale(1,-1)}x.fillStyle=S.sk;x.globalAlpha=.9;x.fillRect(px,0,w,h);if(R()<.3){x.beginPath();x.moveTo(px+w/2-L(.06),h);x.lineTo(px+w/2,h+L(.3+R()*.4));x.lineTo(px+w/2+L(.06),h);x.fill()}
+      x.fillStyle=S.win;for(let wy=L(.15);wy<h-L(.1);wy+=L(.2))for(let wx=px+L(.1);wx<px+w-L(.12);wx+=L(.16))if(R()<.35){x.globalAlpha=.4+R()*.6;x.fillRect(wx,wy,L(.07),L(.09))}x.restore();px+=w+L(.03)}});
+    if(S.rain){x.strokeStyle=S.rain;x.lineWidth=2;for(let k=0;k<260;k++){const rx=R()*W,ry=R()*H;x.beginPath();x.moveTo(rx,ry);x.lineTo(rx-L(.08),ry+L(.3));x.stroke()}}
+    x.fillStyle=S.key;[0,1].forEach(s=>x.fillRect(s?W-L(5.8):0,cy-L(2.45),L(5.8),L(4.9)));
+    if(GLG){const lw=L(7.2),lh=lw*GLG.height/GLG.width;x.save();x.globalAlpha=.95;x.drawImage(GLG,cx-lw/2,cy-lh/2,lw,lh);x.restore()}
+    x.save();if(S.glow){x.shadowColor=S.ln;x.shadowBlur=L(.25)}x.strokeStyle=S.ln;x.lineWidth=L(.06);
+    x.strokeRect(L(.05),L(.55),W-L(.1),H-L(1.1));x.beginPath();x.moveTo(cx,L(.55));x.lineTo(cx,cy-L(1.9));x.moveTo(cx,cy+L(1.9));x.lineTo(cx,H-L(.55));x.stroke();
+    [0,1].forEach(s=>{const bx=s?W-L(1.575):L(1.575),dir=s?-1:1;x.strokeRect(s?W-L(5.8):L(.05),cy-L(2.45),L(5.75),L(4.9));x.beginPath();x.arc(s?W-L(5.8):L(5.8),cy,L(1.8),0,7);x.stroke();
+      x.beginPath();x.moveTo(s?W:0,cy-L(6.6));x.lineTo(bx+dir*L(1.4),cy-L(6.6));x.arc(bx,cy,L(6.75),s?Math.PI+1.35:-1.35,s?Math.PI-1.35:1.35,!!s);x.lineTo(s?W:0,cy+L(6.6));x.stroke()});x.restore();
+    const g=x.createRadialGradient(cx,cy,10,cx,cy,W*.62);g.addColorStop(0,"rgba(255,255,255,.04)");g.addColorStop(1,"rgba(0,0,0,.22)");x.fillStyle=g;x.fillRect(0,0,W,H)};
   /* parquet */
-  const court=tex(3072,1646,(x,W,H)=>{const ph=Math.round(H/75);
+  const court=tex(3072,1646,(x,W,H)=>{if(GOT){drawG(x,W,H);return}const ph=Math.round(H/75);
     /* (946) parquet di qualità: listelli con tono proprio, venature, nodi, fughe sottili e vernice */
     for(let y=0;y<H;y+=ph){const off=((y/ph)%5)*W*.062;for(let xx=-off;xx<W;xx+=W*.25){const hh=LK.hue+Math.random()*7,ss=LK.sat+Math.random()*12,ll=LK.lig+Math.random()*9;const gr=x.createLinearGradient(0,y,0,y+ph);gr.addColorStop(0,`hsl(${hh},${ss}%,${ll+3}%)`);gr.addColorStop(1,`hsl(${hh},${ss}%,${ll-3}%)`);x.fillStyle=gr;x.fillRect(xx,y,W*.25,ph);
         for(let k=0;k<5;k++){x.strokeStyle=`hsla(${hh-4},${ss+8}%,${ll-14}%,${.08+Math.random()*.1})`;x.lineWidth=.8+Math.random();x.beginPath();const yy=y+Math.random()*ph;x.moveTo(xx,yy);for(let q=1;q<=6;q++)x.lineTo(xx+q*W*.25/6,yy+(Math.random()-.5)*ph*.25);x.stroke()}
@@ -82,8 +104,8 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
     /* (955) logo a centrocampo +16% */const lg=L(3.5*1.16*(t==="DUC"?1.2:1));/* (1199) Ducks +20% */if(LG){x.save();x.shadowColor=t==="DUC"?"transparent":"rgba(0,0,0,.55)";x.shadowBlur=L(.18);x.shadowOffsetY=L(.05);{const PAP=/2402cd92d5d7/.test(LG.src||""),ar=LG.width&&LG.height?LG.height/LG.width:1,lw=ar<1?lg:lg/ar,lh=ar<1?lg*ar:lg;x.drawImage(LG,cx-lw/2+(PAP?lw*.027:0),cy-lh/2-(PAP?lh*.059:0),lw,lh)}/* (1199b) papero centrato sul suo baricentro */;x.restore()}
     /* vernice: riflesso morbido lungo il campo e bordi più scuri */const g=x.createRadialGradient(cx,cy,10,cx,cy,W*.62);g.addColorStop(0,"rgba(255,248,232,.06)");g.addColorStop(1,"rgba(0,0,0,.2)");x.fillStyle=g;x.fillRect(0,0,W,H);
     const g2=x.createLinearGradient(0,0,0,H);g2.addColorStop(0,"rgba(255,255,255,.05)");g2.addColorStop(.5,"rgba(255,255,255,0)");g2.addColorStop(1,"rgba(255,255,255,.04)");x.fillStyle=g2;x.fillRect(0,0,W,H)});
-  const floor=new THREE.Mesh(new THREE.PlaneGeometry(CW+2*RA+8,CH+2*RA+8),new THREE.MeshStandardMaterial({color:mix(BG,"#000",.18),roughness:.45}));/* (930) bordo campo nel colore della squadra */floor.rotation.x=-Math.PI/2;S.add(floor);
-  const ct=new THREE.Mesh(new THREE.PlaneGeometry(CW,CH),new THREE.MeshLambertMaterial({map:court})/* (941) parquet opaco: niente riflessi che coprono legno e logo */);ct.rotation.x=-Math.PI/2;ct.position.y=.01;S.add(ct);
+  const floor=new THREE.Mesh(new THREE.PlaneGeometry(CW+2*RA+8,CH+2*RA+8),new THREE.MeshStandardMaterial({color:GOT?C("#160a2a"):mix(BG,"#000",.18),roughness:.45}));/* (930) bordo campo nel colore della squadra */floor.rotation.x=-Math.PI/2;S.add(floor);
+  const ct=new THREE.Mesh(new THREE.PlaneGeometry(CW,CH),new THREE.MeshLambertMaterial({map:court})/* (941) parquet opaco: niente riflessi che coprono legno e logo */);ct.rotation.x=-Math.PI/2;ct.position.y=.01;S.add(ct);window.__gotDream=GOT?{redraw:()=>{const c=court.image,x=c.getContext("2d");x.setTransform(1,0,0,1,0,0);drawG(x,c.width,c.height);court.needsUpdate=true},set:d=>{try{localStorage.setItem("dl_gotham_dst",String((gdst()+d+4)%4))}catch(e){}}}:null;
   /* canestri */
   const NETS=[];/* (975) canestro più realistico: base imbottita nel colore squadra con pannello LED, colonna inclinata imbottita, doppio braccio a traliccio, tabellone in vetro con bordo e quadrato bianchi, imbottitura sotto, cronometro dei 24" sopra, ferro con staffa, retina a maglie (texture) */
   const steel=new THREE.MeshPhongMaterial({color:"#1c1c22",shininess:60}),padM=new THREE.MeshPhongMaterial({color:mix(BG,"#111",.35),shininess:20}),whiteM=new THREE.MeshBasicMaterial({color:"#ffffff"});
@@ -412,15 +434,16 @@ const A=null;
   /* (928) TUTTO A TOCCO, come la sala trofei: trascina = guarda; tocco sul parquet = cammina fin lì; tocco su una maglia = ti porta davanti;
      tocco sul maxischermo = coro DE-FENSE; due dita (pizzico) = avanti/indietro; rotella o WASD sul computer. */
   let ZM=1;const applyZ=()=>{cam.zoom=ZM;cam.updateProjectionMatrix();st.dirty=true};
-  const P=new Map();let pinch=null,tap=null,tw=null;const ray=new THREE.Raycaster(),ndc=new THREE.Vector2(),plane=new THREE.Plane(new THREE.Vector3(0,1,0),0),hit=new THREE.Vector3();/* (1035) città scalata in pianta: la camera (in coordinate di gioco) viene portata nella scala della città solo per disegnare e per i tocchi */const withKs=f=>{const k=(st.room&&RM&&RM.S&&RM.S.userData.ks)||1;if(k===1)return f();const p=cam.position,x=p.x,z=p.z;p.x*=k;p.z*=k;cam.updateMatrixWorld();try{return f()}finally{p.x=x;p.z=z;cam.updateMatrixWorld()}};
+  const P=new Map();let pinch=null,tap=null,tw=null,gsw=null;const ray=new THREE.Raycaster(),ndc=new THREE.Vector2(),plane=new THREE.Plane(new THREE.Vector3(0,1,0),0),hit=new THREE.Vector3();/* (1035) città scalata in pianta: la camera (in coordinate di gioco) viene portata nella scala della città solo per disegnare e per i tocchi */const withKs=f=>{const k=(st.room&&RM&&RM.S&&RM.S.userData.ks)||1;if(k===1)return f();const p=cam.position,x=p.x,z=p.z;p.x*=k;p.z*=k;cam.updateMatrixWorld();try{return f()}finally{p.x=x;p.z=z;cam.updateMatrixWorld()}};
   const MK=new THREE.Mesh(new THREE.RingGeometry(.35,.5,40),new THREE.MeshBasicMaterial({color:"#c4b5fd",transparent:true,opacity:0,depthWrite:false,toneMapped:false}));MK.rotation.x=-Math.PI/2;S.add(MK);
   const fly=(x,z,yaw)=>{if(ZM>1){ZM=1;applyZ()}MK.position.set(x,(typeof terr==="function"?terr(x,z):0)+.04,z);MK.userData.t0=performance.now();const d=yaw==null?0:((yaw-V.yaw+540)%360)-180;tw={t0:performance.now(),dur:Math.min(1600,450+Math.hypot(x-V.x,z-V.z)*90),x0:V.x,z0:V.z,x1:x,z1:z,y0:V.yaw,dy:d}};
   ael("pointerdown",e=>{P.set(e.pointerId,{x:LX(e),y:LY(e)});try{cv.setPointerCapture(e.pointerId)}catch(_){}tw=null;try{st.A&&st.A.kick()}catch(e){}ov.querySelector(".drm3hint").style.opacity=0;
-    if(P.size===1){dr={x:LX(e),y:LY(e)};tap={x:LX(e),y:LY(e),t:performance.now(),m:0}}else{dr=null;tap=null;const[a,b]=[...P.values()];pinch=Math.hypot(a.x-b.x,a.y-b.y)}});
+    if(P.size===1){dr={x:LX(e),y:LY(e)};tap={x:LX(e),y:LY(e),t:performance.now(),m:0};gsw=null;if(window.__gotDream&&!st.room){ndc.set(LX(e)/DVW()*2-1,-LY(e)/DVH()*2+1);withKs(()=>ray.setFromCamera(ndc,cam));if(ray.ray.intersectPlane(plane,hit)&&Math.abs(hit.x)<3.8&&Math.abs(hit.z)<2.4)gsw={x:LX(e),y:LY(e)}}}else{dr=null;tap=null;const[a,b]=[...P.values()];pinch=Math.hypot(a.x-b.x,a.y-b.y)}});
   ael("pointermove",e=>{if(!P.has(e.pointerId))return;P.set(e.pointerId,{x:LX(e),y:LY(e)});
     if(P.size>=2&&pinch!=null){const[a,b]=[...P.values()],d=Math.hypot(a.x-b.x,a.y-b.y);ZM=cl(ZM*d/Math.max(1,pinch),1,5);pinch=d;applyZ();return}/* (938) due dita = zoom come sulle foto (fino a 5×), senza muoversi */
+    if(gsw)return;/* (1296) swipe sul logo Gotham: la visuale resta ferma */
     if(!dr)return;const dx=LX(e)-dr.x,dy=LY(e)-dr.y;dr.x=LX(e);dr.y=LY(e);if(tap)tap.m+=Math.abs(dx)+Math.abs(dy);if((!tap||tap.m>8)&&!(st.SH&&st.SH.on&&!st.room)){/* (992) in modalità tiro la visuale segue il canestro */const sg_=-1;/* (979) comando da videogioco (GTA, Call of Duty): dito a destra = guardi a destra, dito in su = guardi in alto */V.yaw+=sg_*dx*.25/ZM;V.pitch=cl(V.pitch+sg_*dy*.2/ZM,-60,60);st.dirty=true}});
-  const up=e=>{P.delete(e.pointerId);if(P.size<2)pinch=null;if(P.size===0)dr=null;const q=tap;tap=null;if(!q||q.m>10||performance.now()-q.t>450||e.type==="pointercancel")return;
+  const up=e=>{if(gsw&&e.type==="pointerup"){const ddx=LX(e)-gsw.x,ddy=LY(e)-gsw.y;gsw=null;if(Math.abs(ddx)>40&&Math.abs(ddx)>Math.abs(ddy)*1.3&&window.__gotDream){window.__gotDream.set(ddx<0?1:-1);window.__gotDream.redraw();st.dirty=true;P.delete(e.pointerId);if(P.size===0)dr=null;tap=null;return}}gsw=null;P.delete(e.pointerId);if(P.size<2)pinch=null;if(P.size===0)dr=null;const q=tap;tap=null;if(!q||q.m>10||performance.now()-q.t>450||e.type==="pointercancel")return;
     ndc.set(LX(e)/DVW()*2-1,-LY(e)/DVH()*2+1);withKs(()=>ray.setFromCamera(ndc,cam));
     if(st.room){roomTap();return}
     const hits=ray.intersectObjects([...Object.values(J).map(o=>o.jm),...K.scrM,...K.DOOR],false);if(hits.length&&K.DOOR.includes(hits[0].object)){enterRoom(hits[0].object.userData.room||"trofei");return}

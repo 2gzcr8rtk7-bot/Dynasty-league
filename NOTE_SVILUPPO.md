@@ -3411,3 +3411,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v708 (1294): Gotham: swipe orizzontale sul logo del banner del campo cambia tra 4 stili (Notte su Gotham, Parquet viola, Verde acido, Pioggia e fari; dl_gotham_st), con avviso del nome; tocco = esci/entra.
 
 - v709 (1295): Gotham: logo del banner del campo = scritta Gotham City Ducks (loghi/gotham-campo.webp, sfondo tolto) al 110%.
+
+- v710 (1296): Dream 3D: con Gotham attivo il parquet Ducks diventa campo Gotham (stile 1 Notte su Gotham di default, logo Gotham City Ducks al centro, bordo scuro); swipe orizzontale sul logo a centrocampo = stili 2-4 (dl_gotham_dst). dream.js caricato con ?v=1296.
