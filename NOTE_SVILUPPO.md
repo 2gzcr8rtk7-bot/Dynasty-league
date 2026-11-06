@@ -3505,3 +3505,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v755 (1343): notte Texas: 70 stelline su tutto il campo (piu di meta brilla da sola) + 8 stelline a quattro punte che brillano.
 
 - v756: campo Texas Ducks notte, tolta la stella grande opaca a centrocampo (restano i puntini che brillano).
+
+- v757: Ducks, tocca la scritta TEXAS a bordocampo per scorrere 10 stili luce (LED, neon, luce da dietro, logo al neon, fascio). Sempre attivi, giorno e notte. Scelta salvata in dl_dxled.
