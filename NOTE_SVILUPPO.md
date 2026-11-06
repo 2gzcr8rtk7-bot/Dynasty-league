@@ -3417,3 +3417,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v711 (1297): Gotham: scritta Gotham City Ducks sul banner del campo al 100% (non 110); lo swipe cambia solo il campo interno, bordo e banner restano quelli dello stile 1.
 
 - v712 (1298): Dream 3D con Gotham attivo: tutta l arena Ducks in viola/verde (DUC_COL3D, TEAMS.DUC e loghi temporanei durante la Dream, ripristinati alla chiusura).
+
+- v713 (1299): Gotham: tolte le maglie Nera A (504, nera pura con verde) e Bianca A (506); restano Viola A/B, Verde A/B, Nera C (notte).
