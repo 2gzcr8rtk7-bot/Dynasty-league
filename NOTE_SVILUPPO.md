@@ -3433,3 +3433,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v719 (1305): Dream Gotham: a centrocampo il nuovo logo Gotham (gotham.webp v2) al posto della scritta.
 
 - v720 (1306): Dream Gotham: tolti i palazzi disegnati sul campo.
+
+- v721 (1307): Gotham: aggiunte le 6 maglie Sfumata (507-512: Viola, Viola verde, Verde, Notte, Nera, Bianca) con skyline e fari.
