@@ -3552,3 +3552,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 - v779: Dolphins: tolte 320-321; aggiunte 322 Gessato blu, 323 Bianca montagne, 324 Blu e giallo (immagini utente img/dol-k6.png, dol-k10.png, dol-kY.png, numero 23 fisso). Chi aveva 320-321 torna alla 113.
 - v778: condivisione prestazione giocatore: con la notte accesa il campetto e in versione notte (bordo viola con stelle, campo stellato, scritte bianche, linee colore squadra); di giorno invariato.
+
+- v781: nuovo logo Ducks "Cowboy viola" (loghi/duc-10.webp, scontornato) nella lista loghi Ducks: zona segreta, editor loghi e personalizzazioni.
