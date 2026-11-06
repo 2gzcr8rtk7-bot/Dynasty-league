@@ -3595,3 +3595,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v803: Ducks, tolte dal selettore e spostate nel catalogo Premi: DUCKS bordino Bianca/Gialla/Nera (307/305/306), TEXAS gessato Viola gialla (315), G-DUCKS gessato Viola verde (314). Predefinita per tutti: DUCKS gessato Bianca verde (316).
 
 - v804: Ducks di giorno, bordocampo bianco predefinito (ac #ffffff, bordo bianco).
+
+- v805: Ducks di giorno, scritte TEXAS DUCKS del bordocampo viola scuro #3b0f7a (notte invariata, bianche).
