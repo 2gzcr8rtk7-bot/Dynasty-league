@@ -3547,3 +3547,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v776: campo stellato di notte (tutte le squadre) un po piu chiaro: #2e1065 -> #1e0a3c.
 
 - v777: bordocampo notte dei Ducks (viola con stelle, scritte bianche) per tutte le squadre + fascio di luce su banner e bordocampo per tutti. Gotham invariato.
+
+- v778: condivisione prestazione giocatore: con la notte accesa il campetto e in versione notte (bordo viola con stelle, campo stellato, scritte bianche, linee colore squadra); di giorno invariato.
