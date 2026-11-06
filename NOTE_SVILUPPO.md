@@ -3439,3 +3439,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v722 (1308): Gotham: scritte del banner squadra bianche (anche quelle a bordo campo restano bianche). Logo invariato (gotham.webp v2; gotham-b.webp caricato ma non in uso).
 
 - v723 (1309): Gotham attivo = in tutta l app i Ducks diventano Gotham City Ducks: TEAMS.DUC city/name/bg (#4c1d95 viola notte), tutti i loghi Ducks (LOGO, LOGO2, LOGO_DUC0, .lg-DUC e img) col logo Gotham; banner squadra viola notte. Spegnendo torna tutto Texas.
+
+- v724 (1310): Gotham: il logo Gotham non eredita piu le grandezze/deformazioni del logo Texas (transform/scale none) ne il formato immagine (content:normal), resta dentro le caselle come gli altri loghi.
