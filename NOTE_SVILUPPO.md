@@ -3537,3 +3537,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v771: campo stellato di notte (interno viola con stelle che brillano) per tutte le squadre, predefinito; in Personalizzazioni tasto "Campo stellato di notte" per toglierlo/rimetterlo (DLS.nost).
 
 - v772: G League sul campo, tolta la tinta colorata: parquet normale di giorno, stellato di notte (Gotham invariato).
+
+- v773: bordocampo notte Dreamers IN PROVA, uno stile per squadra: DOL 1 Viola, DUC 2 Viola stelle, FOX 3 Viola-fucsia, MOO 4 Notte profonda, TUR 5 Nebulosa, SPI 6 Stelle dorate, EAG 7 Aurora, PEA 8 Glitter. Scritte bianche, linee del campo colore squadra.

@@ -14132,5 +14132,27 @@ const st=document.createElement("style");st.textContent='.court.glcourt .glw{dis
 function toast(m){let d=document.getElementById("gltoast");if(!d){d=document.createElement("div");d.id="gltoast";d.style.cssText="position:fixed;left:50%;top:40%;transform:translateX(-50%);z-index:99999;padding:10px 16px;border-radius:14px;background:#111;color:#fff;border:2px solid #fff;font:900 italic 16px system-ui;pointer-events:none;transition:opacity .4s;white-space:nowrap";document.body.appendChild(d)}d.textContent=m;d.style.opacity="1";clearTimeout(d._t);d._t=setTimeout(()=>d.style.opacity="0",1400)}
 document.addEventListener("click",e=>{if(typeof cur==="undefined"||cur!=="campo"||curTeam==="DUC")return;const im=e.target.closest&&e.target.closest(".court .cbg image");if(!im||+(im.getAttribute("y")||99)>20)return;e.preventDefault();e.stopPropagation();window.GLV=window.GLV===curTeam?null:curTeam;const y=scrollY;render();scrollTo(0,y);toast(window.GLV?"G-"+TEAMS[curTeam].nick:TEAMS[curTeam].name)},true);
 })();</script>
+<script>/* (1362) BORDOCAMPO NOTTE DREAMERS in prova: uno stile per squadra (1-8), scritte bianche, linee del campo nel colore squadra */
+(function(){const V=[
+ ["Viola Dreamers",{g:["#5b21b6","#2e1065"],bd:"#7c3aed"}],
+ ["Viola con stelle",{g:["#5b21b6","#2e1065"],bd:"#7c3aed",st:"#fff"}],
+ ["Viola-fucsia",{g:["#7c3aed","#c026d3"],h:1,bd:"#c026d3",st:"#fff"}],
+ ["Notte profonda",{g:["#1e0a3c","#0a0610"],bd:"#a78bfa",st:"#fff",edge:"#a78bfa"}],
+ ["Nebulosa",{g:["#3b0764","#1e0a3c"],bd:"#8b5cf6",st:"#fff",neb:1}],
+ ["Viola stelle dorate",{g:["#4c1d95","#2e1065"],bd:"#facc15",st:"#fde68a"}],
+ ["Aurora",{g:["#6d28d9","#0e7490"],h:1,bd:"#22d3ee",st:"#fff"}],
+ ["Viola glitter",{g:["#5b21b6","#2e1065"],bd:"#c4b5fd",st:"#fff",many:1}]];
+const ORD=["DOL","DUC","FOX","MOO","TUR","SPI","EAG","PEA"];window.DRAP_V=V;window.DRAP_ORD=ORD;
+function ap(h){const t=curTeam,i=ORD.indexOf(t);if(i<0)return h;const o=V[i][1];const d=document.createElement("div");d.innerHTML=h;const c=d.querySelector(".court");if(!c)return h;const s=c.querySelector("svg.cbg");if(!s)return h;const r0=s.querySelector(":scope>rect");if(!r0)return h;
+ const mk=a=>()=>(a=(a*16807)%2147483647)/2147483647,r=mk(5+i);let defs=s.querySelector("defs");
+ defs.insertAdjacentHTML("beforeend",`<linearGradient id="dap${t}" x1="0" y1="0" x2="${o.h?1:0}" y2="${o.h?0:1}"><stop offset="0" stop-color="${o.g[0]}"/><stop offset="1" stop-color="${o.g[1]}"/></linearGradient><radialGradient id="dnb1${t}"><stop offset="0" stop-color="#ec4899" stop-opacity=".55"/><stop offset="1" stop-color="#ec4899" stop-opacity="0"/></radialGradient><radialGradient id="dnb2${t}"><stop offset="0" stop-color="#38bdf8" stop-opacity=".45"/><stop offset="1" stop-color="#38bdf8" stop-opacity="0"/></radialGradient>`);
+ r0.setAttribute("fill",`url(#dap${t})`);let x="";
+ if(o.neb)x+=`<ellipse cx="18" cy="8" rx="26" ry="12" fill="url(#dnb1${t})"/><ellipse cx="84" cy="9" rx="24" ry="11" fill="url(#dnb2${t})"/>`;
+ if(o.st){const N=o.many?90:30;for(let k=0;k<N;k++){const y=r()<.6?r()*16:r()*128.8,xx=r()*100;if(y>17&&xx>3&&xx<97&&y<118)continue;const tw=r()<.6;x+=`<circle class="${tw?"txtw":""}" cx="${xx.toFixed(1)}" cy="${y.toFixed(1)}" r="${(.12+r()*.3).toFixed(2)}" fill="${o.st}" opacity="${(.4+r()*.6).toFixed(2)}"${tw?` style="animation-duration:${(2.2+r()*4).toFixed(1)}s;animation-delay:-${(r()*6).toFixed(1)}s"`:""}/>`}}
+ if(o.edge)x+=`<rect x="0" y="15.6" width="100" height=".5" fill="${o.edge}" opacity=".8"/>`;
+ r0.insertAdjacentHTML("afterend",x);
+ const g=s.querySelector(".cname");if(g){g.style.setProperty("fill","#fff","important");g.style.setProperty("stroke","none","important");g.querySelectorAll("text").forEach(e=>e.style.setProperty("fill","#fff","important"))}
+ c.style.setProperty("border-color",o.bd,"important");return d.innerHTML}
+const V2=vCampo;vCampo=function(){const h=V2.apply(this,arguments);try{if(typeof CNT!=="undefined"&&CNT&&!(curTeam==="DUC"&&gotOn()))return ap(h)}catch(e){}return h};VIEWS.campo=vCampo})();</script>
 </body>
 </html>
