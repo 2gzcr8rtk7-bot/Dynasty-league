@@ -3487,3 +3487,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v746 (1332): Gotham: tolta Sfumata Nera (511).
 
 - v747 (1333): Gotham: aggiunte Verde viola (Verde A col viola al posto del bianco) e Bianca viola (Bianca col viola al posto del verde).
+
+- v748 (1334): Gotham: tolta Bianca citta nera, verde (513).
