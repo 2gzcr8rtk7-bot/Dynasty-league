@@ -14195,5 +14195,6 @@ let q=0;new MutationObserver(()=>{if(q||R.every(([s])=>B[s]))return;q=setTimeout
 window.dxPersOn=()=>{try{return localStorage.getItem("dl_dxpers")==="1"}catch(e){return false}};
 (function(){const KS=["floor","line","lw","planks","gloss","apron","paint","decor","logo","tname","nost","th"];const V1=vCampo;
 vCampo=function(){if(curTeam!=="DUC"||dxPersOn())return V1.apply(this,arguments);const sv={};KS.forEach(k=>{sv[k]=DLS[k];DLS[k]=JSON.parse(JSON.stringify(DLS_DEF[k]===undefined?null:DLS_DEF[k]))});if(DLS_DEF.nost===undefined)DLS.nost=false;const tm=DLS.tm;DLS.tm={...(tm||{})};delete DLS.tm.DUC;try{return V1.apply(this,arguments)}finally{KS.forEach(k=>{DLS[k]=sv[k]});DLS.tm=tm}};VIEWS.campo=vCampo})();</script>
+<style>/* (1382) banner Ducks: scritta DUCKS/TEXAS piu a destra, logo 2 mm a destra */html body .teamhead:has(.hlogo[data-t="DUC"]) > .hlogo + *{translate:18px 0}html body[data-v="campo"] .teamhead > img.hlogo[data-t="DUC"]{translate:12px 0}</style>
 </body>
 </html>
