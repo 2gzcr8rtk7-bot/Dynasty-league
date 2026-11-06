@@ -3567,3 +3567,6 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v787: prova forme maglia: aggiunte 23 Moderna collo a V (dal modello Salt Lake: spalline strette e calanti), 24 spalle calanti collo tondo, 25 collo a V spalline larghe.
 
 - v788: prova forme maglia: aggiunte 20 nuove (26-45), ridisegnate in vettoriale con spalline, collo tondo o a V, giromanica, fianchi e fondo diversi. Tocca TEXAS sul campo Ducks.
+- v788: Dolphins: 3 maglie nuove (330 Blu gessato, 331 Bianca, 332 Nera montagne) sulla sagoma app: sfondo dalle immagini utente (img/dol-s1..3.jpg, senza scritta e numero), finiture vettoriali, SALT LAKE ricalcata vettoriale, numero giocatore DOL_DG con contorni. DOL_JV.
+
+- v790: pubblicate su ordine le 3 maglie Dolphins in coda (330 Blu gessato, 331 Bianca, 332 Nera montagne) al posto delle precedenti.
