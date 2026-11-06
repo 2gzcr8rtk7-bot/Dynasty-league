@@ -3599,3 +3599,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v805: Ducks di giorno, scritte TEXAS DUCKS del bordocampo viola scuro #3b0f7a (notte invariata, bianche).
 
 - v806: Ducks, maglia Bianca viola (319) rifatta: bordini viola/nero, scritta DUCKS e numero verdi e neri. Fascio di luce su banner e bordocampo anche di giorno per i Ducks (riflesso lilla).
+
+- v807: Ducks: logo del bordocampo alzato (centrato nel bordo bianco), fascio di luce solo sul banner (non piu sul bordocampo). Fix Editor loghi: le regole ufficiali (1370) vincevano sull editor e lo script del logo campo annullava il cambio logo; ora l editor vince e moltiplica sulla grandezza ufficiale (100% = attuale).
