@@ -3551,3 +3551,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v778: Dolphins: 2 maglie in piu dall'immagine dell'utente, identiche (img/dol-k5.png bianca, img/dol-k9.png blu, numero 23 fisso), codici 320-321 (DOLIMG in jersey, DOL_KN, kitLista/kitDi).
 
 - v779: Dolphins: tolte 320-321; aggiunte 322 Gessato blu, 323 Bianca montagne, 324 Blu e giallo (immagini utente img/dol-k6.png, dol-k10.png, dol-kY.png, numero 23 fisso). Chi aveva 320-321 torna alla 113.
+- v778: condivisione prestazione giocatore: con la notte accesa il campetto e in versione notte (bordo viola con stelle, campo stellato, scritte bianche, linee colore squadra); di giorno invariato.
