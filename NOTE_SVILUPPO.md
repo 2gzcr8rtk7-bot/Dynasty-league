@@ -3511,3 +3511,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v758: Ducks notte, scritte e logo bordocampo illuminati da dietro + fascio di luce che passa su banner e bordocampo. Tolti il tocco su TEXAS e i 10 stili. Di giorno resta tutto com era.
 
 - v759: home in notte, i loghi della colonna squadre tengono lo sfondo colore squadra come di giorno.
+
+- v760: Ducks notte, tolta la retroilluminazione dalla scritta TEXAS DUCKS a bordocampo (restano logo illuminato e fascio di luce).

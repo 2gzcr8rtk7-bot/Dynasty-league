@@ -14107,7 +14107,7 @@ const st=document.createElement("style");st.textContent='@keyframes dxpu{0%,100%
 function apply(){if(typeof cur==="undefined"||cur!=="campo"||curTeam!=="DUC"||(window.gotOn&&gotOn())||typeof CNT==="undefined"||!CNT)return;const c=document.querySelector("main .court .cname.cn-duc");if(!c||c.dataset.lx)return;c.dataset.lx="1";
  const svg=c.ownerSVGElement;if(!svg)return;let defs=svg.querySelector("defs");if(!defs){defs=document.createElementNS("http://www.w3.org/2000/svg","defs");svg.prepend(defs)}if(!svg.querySelector("#dxneon"))defs.insertAdjacentHTML("beforeend",DEF);
  const T=[...c.querySelectorAll("text")],im=[...svg.querySelectorAll("image")].find(x=>+(x.getAttribute("y")||99)<20);
- T.forEach(t=>t.style.setProperty("filter","url(#dxback)","important"));
+ /* (1353) scritte senza retroilluminazione */
  if(im){const x=+im.getAttribute("x"),y=+im.getAttribute("y"),w=+im.getAttribute("width"),h=+im.getAttribute("height");im.insertAdjacentHTML("beforebegin",`<ellipse cx="${x+w/2}" cy="${y+h/2}" rx="${w*.75}" ry="${h*.62}" fill="url(#dxrg)" style="pointer-events:none;animation:dxpu 3s ease-in-out infinite"/>`)}
  const r=c.getBBox(),w=r.width*.22;c.insertAdjacentHTML("afterend",`<rect style="pointer-events:none" x="${r.x-w}" y="${r.y-2}" width="${w}" height="${r.height+4}" fill="url(#dxsw)" transform="skewX(-20)"><animate attributeName="x" values="${r.x-w};${r.x+r.width+w*2};${r.x+r.width+w*2}" keyTimes="0;.6;1" dur="3.5s" repeatCount="indefinite"/></rect>`)}
 let q=0;const run=()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;try{apply()}catch(e){}})};const m=document.getElementById("main");if(m)new MutationObserver(run).observe(m,{childList:true,subtree:true});setTimeout(run,800)})();
