@@ -3445,3 +3445,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v725 (1311): Gotham: aggiunte 4 bianche stile 18 (render 1,2,6,10 = 513-516). Include anche la correzione logo 1310 se non era ancora online.
 
 - v726 (1312): Gotham: aggiunta Sfumata Viola verde con bordi esterni bianchi, GOTHAM e numero bianchi (517).
+
+- v727 (1313): Gotham: un solo campo (Notte su Gotham con linee verdi + fari), tolto il logo dentro il campo; anche nella Dream un solo campo con i fari.
