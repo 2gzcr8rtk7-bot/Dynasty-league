@@ -3455,3 +3455,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v730 (1316): Gotham Sfumata Viola (507): palazzi viola scuro con finestre gialle al posto dei palazzi neri.
 
 - v731 (1317): Gotham Bianca citta nera viola (514): GOTHAM bianca e numero bianco con contorno nero + viola come la scritta.
+
+- v732 (1318): Gotham Bianca citta viola viola (516): GOTHAM bianca e numero bianco con contorno nero + viola.
