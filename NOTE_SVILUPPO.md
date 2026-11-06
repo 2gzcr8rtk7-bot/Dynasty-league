@@ -3403,3 +3403,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v704 (1290): tabellone campo Papero Ducks 123% (132x93); Editor loghi ora usa la proprieta CSS scale (si moltiplica con le regole ufficiali: prima sulle regole con prefisso html l anteprima non si vedeva); editor azzerato (m1290).
 
 - v705 (1291): Dynasty TV .drsbl Papero Ducks 113% x 104% = 117.5%; editor azzerato (m1291).
+
+- v706 (1292): Ducks: DUCKS bordino Bianca (307) maglia di default e prima nel tasto; tutti passano una volta alla bianca (dl_kit_m1292), poi possono cambiare.
