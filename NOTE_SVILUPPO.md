@@ -3591,3 +3591,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v801: campo Ducks di giorno: linea sopra il campo bianca 4px, bacheca e cassa bianche con scritte viola, bordocampo viola #5b21b6, parquet bianco ghiaccio, logo bordocampo +10%.
 
 - v802: fix: la cassa/bacheca bianca dei Ducks vale solo di giorno; di notte tornano come prima.
+
+- v803: Ducks, tolte dal selettore e spostate nel catalogo Premi: DUCKS bordino Bianca/Gialla/Nera (307/305/306), TEXAS gessato Viola gialla (315), G-DUCKS gessato Viola verde (314). Predefinita per tutti: DUCKS gessato Bianca verde (316).
