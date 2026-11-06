@@ -3558,3 +3558,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v782: premi Dolphins: tolte dal catalogo 113 Neve e pini Nera, 109 Salt Flats Bianca, 116 Salt Flats Alba (PREMI.items filtro DOLX).
 
 - v783: maglie Dolphins 330-332 accorciate: stessa altezza delle altre maglie (y 6-130), larghezza +15%.
+- v781: nuovo logo Ducks "Cowboy viola" (loghi/duc-10.webp, scontornato) nella lista loghi Ducks: zona segreta, editor loghi e personalizzazioni.
