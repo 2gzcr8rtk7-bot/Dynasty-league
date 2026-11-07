@@ -3813,7 +3813,3 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - La palla rossa live (logo che diventa canestro, statistiche come azioni, etichette rosse) parte su ogni squadra quando uno dei suoi giocatori inizia a giocare; fuori dal live le altre squadre non hanno palla.
 - Pulsante "palla live" tra la maglia e la freccia del tabellone, su tutti i campi Ducks compresi (dl_pallalive, default acceso). Indipendente da TEXAS.
 - Scia nel colore della squadra (Ducks verde). Senza live nessuna animazione: solo un controllo ogni 2,5 s.
-
-## (1485) Barra delle notti sincronizzata col cartellino
-- Nella barra il PDK (live e finale) usa lo stesso moltiplicatore del cartellino: capitano ×1,5, mezzo ×½. Prima la barra mostrava il PDK grezzo (es. Jokić capitano 4 contro 6,0).
-- Sempre un decimale come il cartellino (6,0, non 6). La tribuna resta senza moltiplicatore.
