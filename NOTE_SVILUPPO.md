@@ -3627,3 +3627,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v819: PROVA palla animata sul campo Ducks (blocco 1385): tocca TEXAS a bordocampo per accendere e passare fra 6 animazioni (viola/scia verde, verde/scia viola, rimbalzo, palleggio a 8 e lob, passaggi a stella, due palle) e spegnere. Spenta di default (dl_dxball).
 
 - v820: prova palla Ducks: aggiunti 3 effetti spettacolari (7 campo che crolla e sotto campo viola con linee lime, 8 scansione neon, 9 onda d urto con stelle), blocco 1386.
+
+- v821: Ducks, maglia predefinita per tutti: DUCKS gessato Bianca viola (319), prima nel selettore (migrazione dl_kit_m1387).
