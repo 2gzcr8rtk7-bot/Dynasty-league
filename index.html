@@ -14213,7 +14213,7 @@ let q=0;const m=document.getElementById("main")||document.body;new MutationObser
 let q=0;const m=document.getElementById("main")||document.body;new MutationObserver(()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;try{go()}catch(e){}})}).observe(m,{childList:true,subtree:true});setTimeout(go,800)})();</script>
 <script>/* (1388) PALLA ANIMATA DUCKS: palla viola con scia verde, palleggio a 8 (passa dietro e davanti alla maglia), passaggi tra campo, sesto uomo e panchina, canestro in alto: a ogni giro tirano tutti una volta in ordine casuale. Tocca TEXAS per spegnere/accendere (dl_dxpalla) */
 (function(){
-const BC="#7c3aed",TC="#a3e635",K="dl_dxpalla";
+const BC="#a3e635",TC="#7c3aed",K="dl_dxpalla";
 const isOn=()=>{try{return localStorage.getItem(K)!=="0"}catch(e){return true}};
 const here=()=>typeof cur!=="undefined"&&cur==="campo"&&curTeam==="DUC"&&!(window.gotOn&&gotOn());
 let raf=0,t0=0,TR=[],PLAN=null,PLANKEY="";
