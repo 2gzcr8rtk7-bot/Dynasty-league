@@ -3826,3 +3826,8 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 ## (1489) PDK sincronizzati con le azioni della palla live
 - Quando arrivano statistiche che animiamo (punti, assist, rimbalzi, tiri sbagliati), il PDK del giocatore nel cartellino e nella barra resta fermo e cambia a ogni etichetta dell'azione (+2 PT, +1 AST…), un pezzo per azione; all'ultima mostra il valore vero.
 - Le variazioni dovute a statistiche non animate (rubate, stoppate, perse) si vedono subito. Sicurezza: dopo 60 s il valore vero compare comunque.
+
+## (1490) Notte del turno e messaggi live per tutte le statistiche PDK
+- "Notte X/Y" sotto il tabellone conta solo le notti ufficiali (report Dunkest ~10:30): mentre si gioca la prima resta 1/3 e diventa 2/3 quando arriva il report.
+- Palla live: messaggio senza animazione per rubate (+1 RUB), stoppate (+1 STOP), palle perse (PALLA PERSA / 2 PERSE), tiri liberi sbagliati (TL ✕), bonus triple (BONUS 3 TRIPLE) e doppie/triple doppie.
+- PDK sincronizzati anche con questi messaggi: ogni azione sposta il PDK del suo peso Dunkest (su o giù), all'ultima il valore vero.
