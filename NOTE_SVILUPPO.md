@@ -3731,3 +3731,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1434) Condivisioni: logo Ducks +40% e -4% in altezza (Live stanotte cresce verso l alto); rosa e cassa restano come prima.
 
 - (1435) Velocità: loghi Ducks ufficiali ridotti a 340px (20n 65→38KB, 11n 68→40, 18 75→45, 22 80→44; nuove ?v=), condivisioni con copia alta qualità loghi/duc-22-hd.webp. Animazione palla del campo Ducks: misure di giocatori/canestro/tele solo ogni 0,6 s (in mezzo si segue lo scorrimento, niente ricalcolo pagina a ogni fotogramma), stile delle tele scritto solo se cambia, tele a risoluzione massima 2x, niente disegno se il campo è fuori schermo o sotto Dream/giochi a tutto schermo. Test con CPU rallentata 4x: campo 26→48 fps, blocchi lenti 25→3. Scambio giorno/notte non più a ogni cambio di classe in tutta la pagina.
+
+- (1436) Banner squadra sul campo (.view > .teamhead): logo Ducks 95% della grandezza attuale, scritto fisso nel CSS (scale 1.196 1.075), nessun calcolo al caricamento. Scelte editor azzerate (dl_dxlogo_m1436).
