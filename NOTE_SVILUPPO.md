@@ -3837,3 +3837,6 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 ## (1492) Palla live obbligatoria, tolto il pulsante
 - Tolto il pulsante "palla live": l'animazione live è sempre attiva per tutti. Tabellone dello scontro diretto di nuovo simmetrico (maglia a sinistra, D a destra, centro esatto).
+
+## (1493) Palla live in Personalizzazioni › Campo
+- Interruttore "Palla live" (DLS.plv, acceso di default) nelle impostazioni del campo, per tutti; vale anche sui Ducks (chiave in KEEP). Niente pulsante sul tabellone.
