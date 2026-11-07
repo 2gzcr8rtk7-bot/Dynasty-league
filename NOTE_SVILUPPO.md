@@ -3822,3 +3822,7 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 ## (1488) Canestro stabile
 - Quando il campo si ridisegna (aggiornamenti live) il logo ricompariva per ~0,35 s e la palla ripartiva da capo. Ora con la stessa squadra l'animazione continua senza fermarsi e il logo resta nascosto via CSS (html.dxhoop) finché c'è il canestro.
+
+## (1489) PDK sincronizzati con le azioni della palla live
+- Quando arrivano statistiche che animiamo (punti, assist, rimbalzi, tiri sbagliati), il PDK del giocatore nel cartellino e nella barra resta fermo e cambia a ogni etichetta dell'azione (+2 PT, +1 AST…), un pezzo per azione; all'ultima mostra il valore vero.
+- Le variazioni dovute a statistiche non animate (rubate, stoppate, perse) si vedono subito. Sicurezza: dopo 60 s il valore vero compare comunque.
