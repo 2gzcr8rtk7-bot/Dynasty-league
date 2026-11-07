@@ -3675,3 +3675,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v843: Ducks: di notte il logo con becco bianco (loghi/duc-11n.webp), di giorno quello con becco arancio; stesse grandezze, scambio automatico al cambio giorno/notte (1405).
 
 - v844: condivisioni: sempre il logo Ducks attuale (becco arancio), anche di notte.
+
+- v845: fix animazione palla Ducks: la scia ora e legata alla pagina (scorrendo non si allunga piu in una striscia viola), si azzera dopo pause/salti; protezione da errori di calcolo e piano del giro non piu ricalcolato a ogni fotogramma.

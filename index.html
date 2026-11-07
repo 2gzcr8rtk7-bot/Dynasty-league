@@ -14243,7 +14243,7 @@ const rnd=(s=>()=>(s=(s*16807)%2147483647)/2147483647);
 function plan(n,seed){const r=rnd(seed);const ord=[...Array(n).keys()].sort(()=>r()-.5);const S=[];let at=ord[0];
  ord.forEach(sh=>{const np=1+Math.floor(r()*2);for(let k=0;k<np;k++){let to=k===np-1?sh:Math.floor(r()*n);if(to===at)to=(at+1)%n;if(k===np-1&&at===sh){S.push({t:"dr",p:at,d:1.3});continue}S.push({t:"dr",p:at,d:1.3});S.push({t:"pa",a:at,b:to,d:1});at=to}S.push({t:"dr",p:sh,d:1.3});S.push({t:"sh",p:sh,d:1.6});S.push({t:"in",d:.9});at=sh});
  let T=0;S.forEach(x=>{x.s=T;T+=x.d});return{S,T}}
-function at(P,H,T){const n=P.length;const key=n+"";if(!PLAN||PLANKEY!==key){PLAN=plan(n,7+n);PLANKEY=key}let t=T%PLAN.T;const cyc=Math.floor(T/PLAN.T);if(PLAN.cyc!==cyc){PLAN=Object.assign(plan(n,7+n+cyc*13),{cyc});t=T%PLAN.T}
+function at(P,H,T){const n=P.length;const key=n+"";if(!PLAN||PLANKEY!==key){PLAN=Object.assign(plan(n,7+n),{cyc:0});PLANKEY=key}let t=T%PLAN.T;const cyc=Math.floor(T/PLAN.T);if(PLAN.cyc!==cyc){PLAN=Object.assign(plan(n,7+n+cyc*13),{cyc});t=T%PLAN.T}
  const x=PLAN.S.find(s=>t>=s.s&&t<s.s+s.d)||PLAN.S[0],p=(t-x.s)/x.d;
  if(x.t==="dr"){const a=P[x.p],R=a.w*.75,th=p*Math.PI*2;return{x:a.x+R*.95*Math.sin(th),y:a.y+R*.3*Math.sin(2*th)+R*.35,z:a.court&&Math.cos(th)<0?0:1,s:1}}
  if(x.t==="pa"){const a=P[x.a],b=P[x.b],q=ease(p),R=a.w*.75;return{x:a.x+(b.x-a.x)*q,y:a.y+R*.35+(b.y-a.y)*q-Math.sin(Math.PI*q)*R*1.8,z:1,s:1+.45*Math.sin(Math.PI*q)}}
@@ -14257,10 +14257,13 @@ function drawHoop(c,H,w,front,sw){const rr=w*.22;c.save();if(!front){c.fillStyle
  if(sw!=null&&sw<.85){c.globalAlpha=1-sw/.85;c.fillStyle=TC;c.font=`900 italic ${Math.round(w*.32)}px system-ui`;c.textAlign="center";c.fillText("+3",H.x+w*.66,H.y-rr*.8-sw*14);c.strokeStyle=TC;c.lineWidth=2;c.beginPath();c.arc(H.x,H.y,rr*(1.3+sw*2.2),0,7);c.stroke()}c.restore()}
 function frame(ts){raf=requestAnimationFrame(frame);if(!isOn()||!here()){unmount();return}const E=els();if(!E)return;const m=mount(E),{u,o,d}=m;const P=players(E);if(!P.length)return;
  const cu=u.getContext("2d"),co=o.getContext("2d");cu.setTransform(d,0,0,d,-m.ux*d,-m.uy*d);co.setTransform(d,0,0,d,-m.ox*d,-m.oy*d);cu.clearRect(m.ux,m.uy,u.width/d,u.height/d);co.clearRect(m.ox,m.oy,o.width/d,o.height/d);
- if(!t0)t0=ts;const T=(ts-t0)/1000,H=hoop(E),W=P[0].w;drawHoop(cu,H,W,0);const q=at(P,H,T);
- if(q.gone)TR.length=0;else{TR.push(q);if(TR.length>22)TR.shift()}
+ if(!t0)t0=ts;const T=(ts-t0)/1000,H=hoop(E),W=P[0].w;drawHoop(cu,H,W,0);let q;try{q=at(P,H,T)}catch(e){PLAN=null;TR.length=0;return}if(!q||!isFinite(q.x)||!isFinite(q.y)){TR.length=0;return}
+ /* (1407) scia salvata rispetto alla pagina (non allo schermo): scorrendo non si allunga più; dopo una pausa o un salto la scia riparte da zero */
+ const VR=E.view.getBoundingClientRect(),vx=q.x-VR.left,vy=q.y-VR.top,LT=TR.lt||0;TR.lt=ts;const lastP=TR[TR.length-1];
+ if(ts-LT>200||(lastP&&Math.hypot(vx-lastP.vx,vy-lastP.vy)>W*1.2))TR.length=0;
+ if(q.gone)TR.length=0;else{TR.push({vx,vy,z:q.z});if(TR.length>22)TR.shift()}
  const r=W*.1936*q.s;/* (1391) palla grande quanto il ferro */
- for(let j=1;j<TR.length;j++){const A=TR[j-1],B=TR[j],c=B.z?co:cu,al=j/TR.length;c.beginPath();c.moveTo(A.x,A.y);c.lineTo(B.x,B.y);c.strokeStyle=TC;c.lineCap="round";c.globalAlpha=al*.85;c.lineWidth=r*1.3*al;c.stroke();c.globalAlpha=al*.3;c.lineWidth=r*2.3*al;c.stroke();c.globalAlpha=1}
+ for(let j=1;j<TR.length;j++){const A=TR[j-1],B=TR[j],c=B.z?co:cu,al=j/TR.length;c.beginPath();c.moveTo(A.vx+VR.left,A.vy+VR.top);c.lineTo(B.vx+VR.left,B.vy+VR.top);c.strokeStyle=TC;c.lineCap="round";c.globalAlpha=al*.85;c.lineWidth=r*1.3*al;c.stroke();c.globalAlpha=al*.3;c.lineWidth=r*2.3*al;c.stroke();c.globalAlpha=1}
  if(!q.gone)ball(q.z?co:cu,q.x,q.y,r);drawHoop(co,H,W,1,q.sw)}
 function toast(m){let d=document.getElementById("dxbt");if(!d){d=document.createElement("div");d.id="dxbt";d.style.cssText="position:fixed;left:50%;top:40%;transform:translateX(-50%);z-index:99999;padding:10px 16px;border-radius:14px;background:#2e1065;color:#a3e635;border:2px solid #a3e635;font:900 italic 15px system-ui;pointer-events:none;transition:opacity .4s";document.body.appendChild(d)}d.textContent=m;d.style.opacity="1";clearTimeout(d._t);d._t=setTimeout(()=>d.style.opacity="0",1600)}
 
