@@ -3752,3 +3752,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1445) Notti del turno: ufficiale «N 1-2-3» nel cartellino al posto di «In attesa» (notti in cui gioca la squadra NBA, dal calendario Dynasty TV; «Nessuna partita» se non gioca). In Personalizzazioni › Pallini delle partite la scelta «Numeri nei pallini» (DLS.ntp): cartellino «In attesa» e numero della notte dentro i pallini delle partite da giocare (giocate/live senza numero). Campo Ducks sempre ufficiale (blocco).
 
 - (1446) Scelta «Numeri nei pallini» (DLS.ntp) libera anche sul campo Ducks (aggiunta a KEEP del blocco 1381/1396).
+
+- (1447) Campo: centri e ali più in basso (ROWY C 27.6, F 55.8) e maglie in campo/panchina -4%. Pallini numerati (opzione) più piccoli del 10% e trasparenti: di notte numero bianco su fondo quasi trasparente, di giorno numero viola scuro.
