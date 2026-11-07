@@ -14219,7 +14219,7 @@ function upd(){let ch=false;for(const [s] of R){if(B[s])continue;const el=docume
 let q=0;new MutationObserver(()=>{if(q||R.every(([s])=>B[s]))return;q=setTimeout(()=>{q=0;try{upd()}catch(e){st.disabled=false}},80)}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["data-v"]});setTimeout(upd,500)})();</script>
 <script>/* (1381/1396) Area Ducks bloccata: QUALSIASI personalizzazione pubblica (Impostazioni) viene ignorata sul campo Ducks; si riattivano solo dall area segreta (dl_dxpers) */
 window.dxPersOn=()=>{try{return localStorage.getItem("dl_dxpers")==="1"}catch(e){return false}};
-(function(){const KEEP=new Set(["th","hand","ord","ns","nsb","autont","hnlg","hpre","hpreOn","hpreMoon","hpreBak","pvTeam","pvNight","pvHide","pvSz","bxM"]);
+(function(){const KEEP=new Set(["th","hand","ord","ns","nsb","autont","hnlg","hpre","hpreOn","hpreMoon","hpreBak","pvTeam","pvNight","pvHide","pvSz","bxM","ntp"]);/* (1446) notti nei pallini: scelta libera anche sui Ducks */
 const cp=v=>v==null?v:JSON.parse(JSON.stringify(v));
 function swap(){const sv={};for(const k of Object.keys(DLS)){if(KEEP.has(k))continue;sv[k]=DLS[k];if(k in DLS_DEF)DLS[k]=cp(DLS_DEF[k]);else delete DLS[k]}for(const k of Object.keys(DLS_DEF)){if(KEEP.has(k)||k in sv)continue;sv[k]=undefined;DLS[k]=cp(DLS_DEF[k])}if(DLS.nost===undefined)DLS.nost=false;return sv}
 function back(sv){for(const k in sv){if(sv[k]===undefined)delete DLS[k];else DLS[k]=sv[k]}}
