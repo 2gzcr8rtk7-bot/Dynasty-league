@@ -14268,9 +14268,9 @@ const kick=()=>{if(isOn()&&here()&&!raf)raf=requestAnimationFrame(frame)};new Mu
 </script>
 <script>/* (1397) EFFETTI CAMPO DUCKS: tocca TEXAS per cambiare. palla · faro · 5 crolli del pavimento (visti dall'alto: giorno -> notte -> giorno) · spento (dl_dxfx) */
 (function(){
-const MODES=[["palla","🏀 Palla e canestro"],["faro","🔦 Faro che cerca i giocatori"],["c1","💥 Crollo 1 · mattonelle grandi"],["c2","💥 Crollo 2 · dal centro"],["c3","💥 Crollo 3 · dall'angolo"],["c4","💥 Crollo 4 · assi di legno"],["c5","💥 Crollo 5 · a onda"],["off","Effetti spenti"]];
+const MODES=[["palla","🏀 Palla e canestro"],["c1","💥 Crollo 1 · mattonelle grandi"],["c2","💥 Crollo 2 · dal centro"],["c3","💥 Crollo 3 · dall'angolo"],["c4","💥 Crollo 4 · assi di legno"],["c5","💥 Crollo 5 · a onda"],["off","Effetti spenti"]];
 const K="dl_dxfx";
-window.dxFx=()=>{let v=null;try{v=localStorage.getItem(K)}catch(e){}if(!v){try{if(localStorage.getItem("dl_dxpalla")==="0")return"off"}catch(e){}return"palla"}return MODES.some(m=>m[0]===v)?v:"palla"};
+window.dxFx=()=>{let v=null;try{v=localStorage.getItem(K)}catch(e){}if(!v){try{if(localStorage.getItem("dl_dxpalla")==="0")return"off"}catch(e){}return"palla"}return MODES.some(m=>m[0]===v)?v:"palla"};/* (1398) tolto il faro */
 const here=()=>typeof cur!=="undefined"&&cur==="campo"&&curTeam==="DUC"&&!(window.gotOn&&gotOn());
 const NS="http://www.w3.org/2000/svg";
 const st=document.createElement("style");st.textContent=`html body .court>canvas.dxfaro{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:7}`;document.head.appendChild(st);
@@ -14309,26 +14309,28 @@ function grid(kind){const r=rnd(kind==="c1"?11:kind==="c2"?23:kind==="c3"?37:kin
   t.key=kind==="c2"?Math.hypot(tx-cx,ty-cy)+t.r*8:kind==="c3"?(tx-X0)+(ty-Y0)*.9+t.r*10:kind==="c4"?(t.k%2?t.k*3:t.k*2)+t.r*12:kind==="c5"?ty+Math.sin(tx/9)*10+t.r*6:t.r});
  T.sort((a,b)=>a.key-b.key);
  /* ritmo realistico: 1, poi 2, poi 3-4, poi valanga */
- let t=0;T.forEach((x,i)=>{if(i===0)t=0;else if(i<3)t=.55+(i-1)*.12;else if(i<7)t=1.05+(i-3)*.11;else t=1.55+(i-7)*(.9/Math.max(1,T.length-7))+r()*.12;x.dl=t});return T}
+ let t=0;T.forEach((x,i)=>{if(i===0)t=0;else if(i<3)t=.55+(i-1)*.12;else if(i<7)t=1.05+(i-3)*.11;else t=1.55+(i-7)*(.9/Math.max(1,T.length-7))+r()*.12;x.dl=t*1.75;x.sh=i===0?2:i<3?1.4:i<7?1.1:.8});return T}
 function buildCollapse(kind){clearCollapse();const s=document.querySelector("main .court svg.cbg");if(!s)return;const c=s.querySelector(".cln");if(!c)return;const f=c.parentElement;const O=otherFloor();if(!O)return;
  let defs=s.querySelector("defs");const added=[];O.svg.querySelectorAll("defs > [id]").forEach(e=>{if(!s.querySelector("#"+CSS.escape(e.id))){const n=e.cloneNode(true);defs.appendChild(n);added.push(n)}});
  const day=[...f.children].filter(e=>!e.classList.contains("dxtl")),night=[...O.floor.children];
  const T=grid(kind),mk=(src,cls,pre)=>{const L=document.createElementNS(NS,"g");L.setAttribute("class","dxtl "+cls);let dd="";T.forEach((t,k)=>dd+=`<clipPath id="${pre}${k}"><rect x="${t.x.toFixed(3)}" y="${t.y.toFixed(3)}" width="${(t.w+.06).toFixed(3)}" height="${(t.h+.06).toFixed(3)}"/></clipPath>`);L.innerHTML=`<defs>${dd}</defs>`;
-  T.forEach((t,k)=>{const g=document.createElementNS(NS,"g");g.setAttribute("clip-path",`url(#${pre}${k})`);src.forEach(e=>g.appendChild(e.cloneNode(true)));const sh=document.createElementNS(NS,"rect");["x","y"].forEach(a=>sh.setAttribute(a,t[a]));sh.setAttribute("width",t.w+.06);sh.setAttribute("height",t.h+.06);sh.setAttribute("fill","#000");sh.setAttribute("opacity","0");g.appendChild(sh);t[cls]=g;t[cls+"s"]=sh;L.appendChild(g)});return L};
+  const solid=document.createElementNS(NS,"g");src.forEach(e=>solid.appendChild(e.cloneNode(true)));let md=`<mask id="${pre}m" maskUnits="userSpaceOnUse" x="-50" y="-50" width="200" height="250"><rect x="-50" y="-50" width="200" height="250" fill="#fff"/>`;T.forEach((t,k)=>md+=`<rect id="${pre}h${k}" x="${(t.x-.03).toFixed(3)}" y="${(t.y-.03).toFixed(3)}" width="${(t.w+.12).toFixed(3)}" height="${(t.h+.12).toFixed(3)}" fill="#000" style="display:none"/>`);md+=`</mask>`;L.querySelector("defs").insertAdjacentHTML("beforeend",md);solid.setAttribute("mask",`url(#${pre}m)`);L.appendChild(solid);
+  T.forEach((t,k)=>{const g=document.createElementNS(NS,"g");g.setAttribute("clip-path",`url(#${pre}${k})`);g.style.display="none";t[cls+"h"]=L.querySelector(`#${pre}h${k}`);src.forEach(e=>g.appendChild(e.cloneNode(true)));const sh=document.createElementNS(NS,"rect");["x","y"].forEach(a=>sh.setAttribute(a,t[a]));sh.setAttribute("width",t.w+.06);sh.setAttribute("height",t.h+.06);sh.setAttribute("fill","#000");sh.setAttribute("opacity","0");g.appendChild(sh);t[cls]=g;t[cls+"s"]=sh;L.appendChild(g)});return L};
  const LN=mk(night,"n","dxn"),LD=mk(day,"d","dxd");f.appendChild(LN);f.appendChild(LD);
  /* buio sotto le mattonelle che cadono (il "vuoto") */
  CL={kind,T,layers:[LN,LD],defs:added,svg:s}}
 function tileAt(g,sh,t,p,shake,R){/* p: 0 ferma, 0..1 caduta. vista dall'alto: rimpicciolisce verso il basso, si scurisce, ruota appena */
  const cx=t.x+t.w/2,cy=t.y+t.h/2;
- if(p<=0){const jx=shake?(Math.sin(R*97)*.35):0,jy=shake?(Math.cos(R*83)*.35):0,rot=shake?Math.sin(R*61)*1.2:0;g.setAttribute("transform",shake?`translate(${cx+jx} ${cy+jy}) rotate(${rot}) translate(${-cx} ${-cy})`:"");g.setAttribute("opacity","1");sh.setAttribute("opacity",shake?".08":"0");return}
+ if(p<=0){const jx=shake?(Math.sin(R*97)*.45*shake):0,jy=shake?(Math.cos(R*83)*.45*shake):0,rot=shake?Math.sin(R*61)*1.6*shake:0;g.setAttribute("transform",shake?`translate(${cx+jx} ${cy+jy}) rotate(${rot}) translate(${-cx} ${-cy})`:"");g.setAttribute("opacity","1");sh.setAttribute("opacity",shake?".08":"0");return}
  if(p>=1){g.setAttribute("opacity","0");return}
  const q=p*p,sc=1-q*.82,rot=(t.r-.5)*50*q,dx=(t.r-.5)*3*q,dy=(t.r*.7-.2)*3*q;
  g.setAttribute("transform",`translate(${cx+dx} ${cy+dy}) rotate(${rot}) scale(${sc}) translate(${-cx} ${-cy})`);sh.setAttribute("opacity",(.15+q*.7).toFixed(2));g.setAttribute("opacity",p>.85?((1-p)/.15).toFixed(2):"1")}
 function collapseFrame(ts){if(!CL||!CL.svg.isConnected||CL.kind!==M){buildCollapse(M);if(!CL)return}
- const T=(ts-t0)/1000,CYC=15,t=T%CYC,FALL=.75,SH=.6;
+ const T=(ts-t0)/1000,CYC=24,t=T%CYC,FALL=1.35;
  /* 0-2.2 fermo · 2.2 crolla il primo pavimento · 8.4 crolla il secondo · 14+ di nuovo fermo */
- const ph=(base,lay)=>{CL.T.forEach(x=>{const st=base+x.dl,R=ts/1000+x.r*10;if(t<st-SH){tileAt(x[lay],x[lay+"s"],x,0,0,R)}else if(t<st){tileAt(x[lay],x[lay+"s"],x,0,1,R)}else tileAt(x[lay],x[lay+"s"],x,Math.min(1,(t-st)/FALL),0,R)})};
- CL.layers[1].style.display=t<1.5?"none":"";CL.layers[0].style.display=(t<1.5||t>13.6)?"none":"";/* a riposo niente fughe tra le mattonelle */ph(2.2,"d");if(t>=8.4)ph(8.4,"n");else CL.T.forEach(x=>tileAt(x.n,x.ns,x,0,0,0))}
+ const act=(x,lay,on)=>{const g=x[lay],h=x[lay+"h"];if(on){if(g.style.display)g.style.display="";if(h.style.display)h.style.display=""}else{if(!g.style.display)g.style.display="none";if(!h.style.display)h.style.display="none"}};
+ const ph=(base,lay)=>{CL.T.forEach(x=>{const st=base+x.dl,R=ts/1000+x.r*10;if(t<st-x.sh){act(x,lay,0)}else if(t<st){act(x,lay,1);tileAt(x[lay],x[lay+"s"],x,0,.25+.75*(t-st+x.sh)/x.sh,R)}else{act(x,lay,1);tileAt(x[lay],x[lay+"s"],x,Math.min(1,(t-st)/FALL),0,R)}})};
+ CL.layers[1].style.display=t<.5?"none":"";CL.layers[0].style.display=(t<.5||t>21)?"none":"";/* a riposo niente fughe tra le mattonelle */ph(2.5,"d");if(t>=11.5)ph(13.5,"n");else CL.T.forEach(x=>act(x,"n",0))}
 
 /* ---------------- motore ---------------- */
 function frame(ts){raf=requestAnimationFrame(frame);if(!here()||!M||M==="palla"||M==="off"){stopAll();return}if(!t0)t0=ts;

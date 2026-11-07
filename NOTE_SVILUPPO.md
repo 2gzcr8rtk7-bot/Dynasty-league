@@ -3653,3 +3653,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v832: Dream 3D, Ducks Arena nello stile di Gotham (campo viola scuro con linee lime luminose, stessi colori arena) con nome e logo Texas Ducks; tutti i posti pieni con tifosi verdi.
 
 - v833: effetti campo Ducks (1397), tocca TEXAS per cambiare: palla e canestro, faro che cerca i giocatori, 5 crolli del pavimento visti dall alto (mattonelle tremano, ne cade una, poi due, poi 3-4, poi valanga; sotto il pavimento notte identico, che crolla a sua volta e torna il giorno), spento (dl_dxfx).
+
+- v834: effetti Ducks: tolto il faro; crolli piu lenti (~75% in piu, ciclo 24 s), tremore piu lungo e crescente, nessuna fuga visibile tra le mattonelle prima che si rompano (pavimento intero mascherato, la mattonella appare solo quando trema).
