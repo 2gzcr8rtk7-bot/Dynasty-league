@@ -3677,3 +3677,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v844: condivisioni: sempre il logo Ducks attuale (becco arancio), anche di notte.
 
 - v845: fix animazione palla Ducks: la scia ora e legata alla pagina (scorrendo non si allunga piu in una striscia viola), si azzera dopo pause/salti; protezione da errori di calcolo e piano del giro non piu ricalcolato a ogni fotogramma.
+
+- v846: fix iPhone: chiusa la modalita Dream si chiude anche il contesto audio e la sessione torna auto (spariva l icona del suono bloccata nell isola dinamica).
