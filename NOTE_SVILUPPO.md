@@ -3681,3 +3681,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v846: fix iPhone: chiusa la modalita Dream si chiude anche il contesto audio e la sessione torna auto (spariva l icona del suono bloccata nell isola dinamica).
 
 - v847: animazione palla Ducks: il canestro sta al posto del logo del bordocampo (il logo si nasconde mentre la palla gira e torna quando l animazione e spenta o c e il crollo). Vecchia posizione: window.DXHOOP="".
+
+- v848: animazione palla Ducks: parte solo sulla pagina del campo Ducks e si ferma uscendo; a ogni rientro riparte da zero (tele vecchie tolte, scia e giro azzerati, attesa di fine transizione); si ferma anche con app in background.
