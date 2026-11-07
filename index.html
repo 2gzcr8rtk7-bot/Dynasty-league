@@ -8157,7 +8157,7 @@ async function shareCassa(t,btn){
   // testata squadra
   X.fillStyle=c.bg;X.fillRect(0,0,W,380);const hg=X.createLinearGradient(0,0,W,0);hg.addColorStop(0,"rgba(255,255,255,.10)");hg.addColorStop(1,"rgba(0,0,0,.22)");X.fillStyle=hg;X.fillRect(0,0,W,380);
   X.fillStyle=c.trim||"#000";X.fillRect(0,380,W,10);
-  const im=await ldImg(LOGO[t]);if(im){const s=300,r=Math.min(s/im.width,s/im.height);X.drawImage(im,60+150-im.width*r/2,40+150-im.height*r/2,im.width*r,im.height*r)}
+  const im=await ldImg(LOGO[t]);if(im){im.__duc=0;/* (1434) cassa: logo come prima */const s=300,r=Math.min(s/im.width,s/im.height);X.drawImage(im,60+150-im.width*r/2,40+150-im.height*r/2,im.width*r,im.height*r)}
   X.textAlign="left";X.fillStyle=c.fg||"#fff";X.font=F(700,40);X.fillText(c.city.toUpperCase(),400,130);
   X.font=F(800,104);X.fillText(c.nick.toUpperCase(),400,230);
   X.font=F(800,44);X.fillText("CASSA · STAGIONE "+STAGIONE_CORRENTE,400,300);
