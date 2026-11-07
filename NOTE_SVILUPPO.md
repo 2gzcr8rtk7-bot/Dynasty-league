@@ -3669,3 +3669,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v840: nuovo logo Ducks "Occhi rossi becco arancio" (loghi/duc-13.webp) nella lista loghi: Editor loghi e personalizzazioni. Verificato che l Editor cambia il logo del banner squadra e del bordocampo.
 
 - v841: logo Ducks ufficiale ovunque = occhi rossi becco arancio (duc-11.webp v5), stesse grandezze; anche condivisioni e Dream.
+
+- v842: tabellino sfida Dreamers: pallino rosso lampeggiante accanto ai giocatori in campo in quel momento nelle partite NBA live (come nel box NBA).
