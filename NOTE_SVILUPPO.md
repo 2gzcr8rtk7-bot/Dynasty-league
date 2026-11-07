@@ -3663,3 +3663,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v837: effetti Ducks: 1 palla (predefinita per tutti), 2 crollo del pavimento, poi spento; tolta palla+crollo.
 
 - v838: logo Ducks ufficiale sostituito con la versione occhi rossi (stesso file loghi/duc-11.webp, v4): stesse posizioni e grandezze in tutte le sezioni, anche Dream.
+
+- v839: Home, solo il tasto Ducks della colonna squadre in viola acceso #7c3aed (il resto dei Ducks resta #5b21b6).
