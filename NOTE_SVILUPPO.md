@@ -3748,3 +3748,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1443) IA Trade › La tua squadra (.gurowc > .guchip): logo Ducks 93%, larghezza 102% (scale 0.949 0.93, fisso). Scelte editor azzerate (dl_dxlogo_m1443).
 
 - (1444) Dreamers pagina squadra: testata (.dthead) e scontri diretti (.dtl) col logo «UT · Becco bianco», grandezza invariata. La voce IA Trade era già ufficiale dalla 1443 (non riapplicata). Scelte editor azzerate (dl_dxlogo_m1444).
+
+- (1445) Notti del turno: ufficiale «N 1-2-3» nel cartellino al posto di «In attesa» (notti in cui gioca la squadra NBA, dal calendario Dynasty TV; «Nessuna partita» se non gioca). In Personalizzazioni › Pallini delle partite la scelta «Numeri nei pallini» (DLS.ntp): cartellino «In attesa» e numero della notte dentro i pallini delle partite da giocare (giocate/live senza numero). Campo Ducks sempre ufficiale (blocco).
