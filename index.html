@@ -4572,7 +4572,7 @@ function iaInt(S,t,recv,gave,adv0,cr){const P0=iaProf(t),mR=iaSum(recv,x=>x.v),m
 const iaIntHTML=a=>a&&a.length?`<div class="iaint">${a.map(i=>`<div class="iaint1 ${i.l}"><span><b>Interesse ${i.l}</b></span><small>${i.txt}</small></div>`).join("")}</div>`:"";
 /* interesse nel calcolatore (stato attuale di VT / V3) */
 function iaCalcInts(){iaPC={};const S=iaStats(),mk=n=>iaPl(n),out=[];
-  if(VT.tab==="calc3"){const T=V3.t;T.forEach((t,k)=>{const rc=V3.it.filter(x=>x.to===k),gv=V3.it.filter(x=>x.k===k),R=rc.reduce((a,x)=>a+v3Pts(x),0),G=gv.reduce((a,x)=>a+v3Pts(x),0);
+  if((VT.tab==="calc3"||VT.tab==="calc4")){const T=V3.t;T.forEach((t,k)=>{const rc=V3.it.filter(x=>x.to===k),gv=V3.it.filter(x=>x.k===k),R=rc.reduce((a,x)=>a+v3Pts(x),0),G=gv.reduce((a,x)=>a+v3Pts(x),0);
       if(!rc.length&&!gv.length)return;out.push(iaInt(S,t,rc.filter(x=>x.ty==="pl").map(x=>mk(x.n)),gv.filter(x=>x.ty==="pl").map(x=>mk(x.n)),(R-G)/Math.max(R,G,1),{in:rc.filter(x=>x.ty==="cr").reduce((a,x)=>a+(+x.v||0),0),out:gv.filter(x=>x.ty==="cr").reduce((a,x)=>a+(+x.v||0),0)}))})}
   else{const[ta,tb]=VT.t,A=vtSide(0),B=vtSide(1);if(!A&&!B)return[];
     out.push(iaInt(S,ta,VT.pl[1].map(mk),VT.pl[0].map(mk),(B-A)/Math.max(A,B,1),{in:+VT.cr[1]||0,out:+VT.cr[0]||0}),iaInt(S,tb,VT.pl[0].map(mk),VT.pl[1].map(mk),(A-B)/Math.max(A,B,1),{in:+VT.cr[0]||0,out:+VT.cr[1]||0}))}
@@ -4800,9 +4800,9 @@ function iaCard(x,i){const A=iaTeam(),cl=(d)=>d<.10?"ok":d<.30?"mid":"bad",pc=Ma
   const body=`${trCols(R,T,A)}${crs?`<div class="iacrn"><small>Crediti che dai, da dove arrivano</small>${crs}</div>`:""}`;
   return `<div class="iacard"><div class="iahd"><span class="ian1">${i+1}</span>${lab}<span class="iabal ${IA.lv==="eq"?"ok":cl(x.d)}">${bt}</span></div>${body}
    <div class="iawhy">${x.why.map(w=>`<span>${w}</span>`).join("")}</div>${iaIntHTML(x.int)}
-   ${window.EQ_NA?"":`<div class="iaact">${x.ty===6&&x.T.length>3?"":`<button class="iaopen" data-ia="open" data-i="${i}">Apri nel calcolatore</button>`}<button class="bshare iash" data-ia="share" data-i="${i}" aria-label="Condividi scambio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>`}</div>`}
+   ${window.EQ_NA?"":`<div class="iaact">${x.ty===6&&x.T.length>4?"":`<button class="iaopen" data-ia="open" data-i="${i}">Apri nel calcolatore</button>`}<button class="bshare iash" data-ia="share" data-i="${i}" aria-label="Condividi scambio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>`}</div>`}
 function iaApply(x){const A=iaTeam();
-  if(x.ty===6){if(x.T.length>3)return;V3.t=x.T.slice();const ix=t=>x.T.indexOf(t);V3.it=[...x.mv.map(m=>({k:ix(m.from),to:ix(m.to),ty:"pl",n:m.n})),...x.cx.map(c=>({k:ix(c.from),to:ix(c.to),ty:"cr",v:c.v}))];VT.tab="calc3"}
+  if(x.ty===6){if(x.T.length>4)return;V3.t=x.T.slice();const ix=t=>x.T.indexOf(t);V3.it=[...x.mv.map(m=>({k:ix(m.from),to:ix(m.to),ty:"pl",n:m.n})),...x.cx.map(c=>({k:ix(c.from),to:ix(c.to),ty:"cr",v:c.v}))];VT.tab=x.T.length>3?"calc4":"calc3"}
   else if(x.ty===2){VT.t=[A,x.B];VT.pl=[[...x.give],[...x.take]];VT.cr=[x.need,x.back||0];VT.pk=[[],[]];VT.tab="calc"}
   else if(x.ty===5){V3.t=[A,x.g,x.r];const cr=(k,to,v)=>v?[{k,to,ty:"cr",v}]:[];V3.it=[...x.ag.map(n=>({k:0,to:1,ty:"pl",n})),...cr(0,1,x.ng),...x.ar.map(n=>({k:0,to:2,ty:"pl",n})),...cr(0,2,x.nr),{k:1,to:2,ty:"pl",n:x.M},
     ...x.Tg.map(n=>({k:1,to:0,ty:"pl",n})),...cr(1,0,x.bg),...x.Tr.map(n=>({k:2,to:0,ty:"pl",n})),...cr(2,0,x.br)];VT.tab="calc3"}
@@ -5212,7 +5212,8 @@ function vtCard(k){
   </div>`}
 /* ===== Scambio a 3 squadre =====
    Ogni pezzo (giocatore, pick, crediti) ha chi lo dà (k) e chi lo riceve (to). Saldo squadra = riceve − dà (punti trade). */
-const V3={t:["DUC","PEA","DOL"],it:[]};
+const V3={t:["DUC","PEA","DOL"],it:[]};/* (1448) scambio a 4: la quarta squadra si aggiunge/toglie cambiando scheda */
+function v3Size(){const n=VT.tab==="calc4"?4:VT.tab==="calc3"?3:0;if(!n)return;while(V3.t.length<n){const f=Object.keys(TEAMS).find(t=>!V3.t.includes(t));V3.t.push(f)}if(V3.t.length>n){V3.t=V3.t.slice(0,n);V3.it=V3.it.filter(x=>x.k<n&&x.to<n)}}
 const v3Pts=x=>x.ty==="pl"?vtPts(valOf(x.n)??VAL_FALLBACK)*iaOutF(x.n):x.ty==="pk"?PICK_CR[x.p]*VAL_CR:(+x.v||0)*VAL_CR;
 const v3Lab=x=>x.ty==="pl"?x.n:x.ty==="pk"?`Pick ${x.p} · ${PICK_CR[x.p]} cr`:`${x.v} crediti`;
 function v3Res(){
@@ -5240,7 +5241,7 @@ function v3Card(k){
     <div class="vtpk"><span>Pick</span>${[1,2,3,4,5].map(p=>`<button data-v3="pk" data-k="${k}" data-p="${p}">${p}<small>${PICK_CR[p]}cr</small></button>`).join("")}</div>
     <div class="vtros">${ros.map((p,i)=>`${i===0||ros[i-1].r!==p.r?`<div class="vtrh ${p.r}">${{G:"Guardie",F:"Ali",C:"Centri"}[p.r]}</div>`:""}<button class="vtp ${sel.has(p.n)?"on":""}" data-v3="pl" data-k="${k}" data-n="${p.n.replace(/"/g,"&quot;")}"><i class="rc ${p.r}"></i><span>${p.n}</span><b>${p.v??"—"}</b></button>`).join("")}</div>
   </div>`}
-function v3Act(b){const d=b.dataset,k=+d.k,nx=(k+1)%3;
+function v3Act(b){const d=b.dataset,k=+d.k,nx=(k+1)%V3.t.length;
   if(d.v3==="pl"){const i=V3.it.findIndex(x=>x.ty==="pl"&&x.n===d.n&&x.k===k);if(i>=0)V3.it.splice(i,1);else V3.it.push({k,to:nx,ty:"pl",n:d.n})}
   else if(d.v3==="pk")V3.it.push({k,to:nx,ty:"pk",p:+d.p});
   else if(d.v3==="cr"){const e=V3.it.find(x=>x.ty==="cr"&&x.k===k&&x.to===nx);if(e)e.v+=+d.v;else V3.it.push({k,to:nx,ty:"cr",v:+d.v})}
@@ -5254,7 +5255,7 @@ document.getElementById("main").addEventListener("change",e=>{if(cur!=="valtrade
   else return;const y=window.scrollY;render();window.scrollTo(0,y)});
 /* Condividi lo scambio (2 o 3 squadre) come immagine: squadre, cosa riceve ognuna con i valori, saldo, barra e giudizio */
 function tradeModel(){
-  if(VT.tab==="calc3"){const T=V3.t;const S=T.map((t,k)=>{const rec=V3.it.filter(x=>x.to===k);const R=rec.reduce((a,x)=>a+v3Pts(x),0),G=V3.it.filter(x=>x.k===k).reduce((a,x)=>a+v3Pts(x),0);
+  if((VT.tab==="calc3"||VT.tab==="calc4")){const T=V3.t;const S=T.map((t,k)=>{const rec=V3.it.filter(x=>x.to===k);const R=rec.reduce((a,x)=>a+v3Pts(x),0),G=V3.it.filter(x=>x.k===k).reduce((a,x)=>a+v3Pts(x),0);
       return{t,R,G,s:R-G,items:rec.map(x=>({l:v3Lab(x),v:x.ty==="pl"?(valOf(x.n)??VAL_FALLBACK):null,from:T[x.k]}))}});
     const base=Math.max(1,...S.map(x=>Math.max(x.R,x.G))),d=Math.max(...S.map(x=>Math.abs(x.s)))/base,w=S.slice().sort((a,b)=>b.s-a.s)[0],l=S.slice().sort((a,b)=>a.s-b.s)[0];
     const cr=Math.round(Math.min(w.s,-l.s)/VAL_CR/5)*5;
@@ -5311,25 +5312,25 @@ async function shareTrade(btn,M0,NI0){
   shSend(out,"scambio.png",`🔁 Calcolatore scambi: ${tradeVerdict(M.d,M.fav,trLose(M))[0]} (${Math.round(M.d*100)}%)`,btn)}
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-tshare]");if(!b||cur!=="valtrade")return;e.preventDefault();e.stopPropagation();shareTrade(b)});
 function vValTrade(){
-  const tabs=`<div class="ctabs vttabs"><button data-vt="tab" data-k="calc" aria-pressed="${VT.tab==="calc"}">2 squadre</button><button data-vt="tab" data-k="calc3" aria-pressed="${VT.tab==="calc3"}">3 squadre</button><button data-vt="tab" data-k="list" aria-pressed="${VT.tab==="list"}">Valori lega</button></div>`;
+  const tabs=`<div class="ctabs vttabs"><button data-vt="tab" data-k="calc" aria-pressed="${VT.tab==="calc"}">2 squadre</button><button data-vt="tab" data-k="calc3" aria-pressed="${VT.tab==="calc3"}">3 squadre</button><button data-vt="tab" data-k="calc4" aria-pressed="${VT.tab==="calc4"}">4 squadre</button><button data-vt="tab" data-k="list" aria-pressed="${VT.tab==="list"}">Valori lega</button></div>`;
   if(VT.tab==="list"){
     const all=Object.entries(ROSTER).flatMap(([t,a])=>a.map(p=>({t,n:p[0],v:valOf(p[0]),rk:!!(VALMAP[vnz(p[0])]||[])[2]}))).sort((a,b)=>(b.v??0)-(a.v??0));
     return `${H("Calcolatore scambi",`<em>${VALORI_AGG.slice(0,5)}</em>`)}${tabs}
     <input id="vtq" class="vtq" type="search" placeholder="🔍 Cerca giocatore o squadra" autocomplete="off" aria-label="Cerca giocatore">
     <div class="tbl-wrap vtlist">${all.map((x,i)=>`<div class="vtrow" role="button" tabindex="0" data-pln="${x.n.replace(/"/g,"&quot;")}" data-plt="${x.t}">${wedge(x.t)}<span class="vtrk">${x.v?i+1:"–"}</span><span class="vtnm"><span class="vtnn">${x.n}${x.rk?`<i class="vtrook">R</i>`:""}</span><small>${TEAMS[x.t].nick}${starH(x.n)}</small></span><span class="vtvp"><b>${x.v??"n.d."}</b><small>valore${valDelta(x.n)}</small></span><span class="vtvp pr"><b>${x.v!=null?prezzo(x.v,x.n):"—"}</b><small>prezzo cr</small></span></div>`).join("")}</div>
     <p class="note">Valori Dreamers al ${VALORI_AGG}, fissati dalla lega con le pagelle a stelline (PDK, giovinezza, infortuni, minutaggio, efficienza, spazio in squadra, rookie e draft). Tocca un giocatore per vedere il registro delle modifiche al suo valore. "n.d." = giocatore non in lista: vale ${VAL_FALLBACK}. R = rookie. Prezzo in crediti: quello fissato dalla lega oppure calcolato dal valore (più caro per giovani e ali, poi centri, guardie più economiche).</p>`}
-  if(VT.tab==="calc3")return `${H("Calcolatore scambi",`<em>${VALORI_AGG.slice(0,5)}</em>`)}${tabs}
+  if((VT.tab==="calc3"||VT.tab==="calc4"))return `${H("Calcolatore scambi",`<em>${VALORI_AGG.slice(0,5)}</em>`)}${tabs}
   <div id="vtRes">${v3Res()}</div>
-  <div class="vtgrid">${v3Card(0)}${v3Card(1)}${v3Card(2)}</div>
+  <div class="vtgrid">${V3.t.map((_,k)=>v3Card(k)).join("")}</div>
   <button class="sh vtreset" data-v3="reset"><span>Azzera</span></button>
-  <p class="note">Scambio a 3: per ogni giocatore, pick o credito scegli con "→" quale squadra lo riceve (di default la successiva). Saldo = punti trade ricevuti − punti trade dati; la barra parte dal centro: verso destra in verde chi ci guadagna, verso sinistra in rosso chi ci perde. Squilibrio = saldo più grande ÷ volume più grande scambiato da una squadra: sotto 10% trade equilibrata, fino al 40% c'è un vincitore, oltre il 40% è una grande truffa. Stessi valori del calcolatore a 2.</p>`;
+  <p class="note">Scambio a ${V3.t.length}: per ogni giocatore, pick o credito scegli con "→" quale squadra lo riceve (di default la successiva). Saldo = punti trade ricevuti − punti trade dati; la barra parte dal centro: verso destra in verde chi ci guadagna, verso sinistra in rosso chi ci perde. Squilibrio = saldo più grande ÷ volume più grande scambiato da una squadra: sotto 10% trade equilibrata, fino al 40% c'è un vincitore, oltre il 40% è una grande truffa. Stessi valori del calcolatore a 2.</p>`;
   return `${H("Calcolatore scambi",`<em>${VALORI_AGG.slice(0,5)}</em>`)}${tabs}
   <div id="vtRes">${vtResHTML()}</div>
   <div class="vtgrid">${vtCard(0)}${vtCard(1)}</div>
   <button class="sh vtreset" data-vt="reset"><span>Azzera</span></button>
   <p class="note">Ogni giocatore vale (valore/1000)<sup>${VAL_EXP}</sup> × 1000 punti trade: le stelle pesano più della somma di giocatori medi. Crediti tarati su 300 crediti ≈ un giocatore da 1000-1300 (pick 1 = 300 cr, 2 = 250, 3 = 200, 4 = 150, 5 = 100). Sotto il 10% di differenza la trade è equilibrata, fino al 40% c'è un vincitore, oltre il 40% è una grande truffa. Valori Dreamers al ${VALORI_AGG}.</p>`}
 function vtAct(b){const d=b.dataset,k=+d.k;
-  if(d.vt==="tab"){VT.tab=d.k;render();return}
+  if(d.vt==="tab"){VT.tab=d.k;v3Size();render();return}
   if(d.vt==="pl"){const i=VT.pl[k].indexOf(d.n);if(i>=0)VT.pl[k].splice(i,1);else VT.pl[k].push(d.n)}
   else if(d.vt==="rm")VT.pl[k].splice(+d.i,1);
   else if(d.vt==="rmpk")VT.pk[k].splice(+d.i,1);
