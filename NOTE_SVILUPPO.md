@@ -3691,3 +3691,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1413) Editor loghi: di notte le scelte fatte nell editor (es. Bordo bianco) non vengono più sostituite dal logo notturno (style #dxlgst e <image data-lgo> esclusi dallo scambio giorno/notte). Verificato su campo (banner, bordocampo, logo del campo) e rosa, giorno e notte, anche dopo riapertura. Condivisioni: logo bordo bianco anche di notte.
 
 - (1414) Campo Ducks uguale su tutti i telefoni: maglie, tabellini e panchina si ridimensionano in proporzione al campo (riferimento: iPhone di Francesco, campo 408px). Prima avevano grandezza fissa e sui telefoni più stretti sembravano più grosse. Il blocco personalizzazioni funzionava già.
+
+- (1415) Ducks notte: nuovo logo ufficiale (loghi/duc-19n.webp, palla e becco bianchi). Editor loghi: solo 4 loghi Ducks col triangolo (Bordo bianco, Bordo lime, Notte vecchio duc-11n, Notte nuovo duc-19n) + le scritte DUCKS arco/punte; tolti Originale e Papero. Condivisioni sempre col logo di giorno.

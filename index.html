@@ -3114,7 +3114,7 @@ const LOGO2={"DUC":"loghi/duc-17.webp?v=1"};
 (()=>{const st=document.createElement("style");st.textContent=Object.entries(LOGO).map(([t,u])=>`.lg-${t}{background-image:url(${u})}`).join("");document.head.appendChild(st)})();
 /* LOGO DUCKS PERSONALIZZATO (area riservata › Personalizzazioni): scelta salvata su questo telefono; vale ovunque (Home, campo, banner, immagini condivise) tranne la G League, che ha il suo logo in GLEAGUE */
 const LOGO_DUC0={a:LOGO.DUC,b:LOGO2.DUC};
-const DUC_LOGHI=[["0","Originale",LOGO_DUC0.b||LOGO_DUC0.a],["p","Papero",LOGO_DUC0.a],["17","Bordo bianco","loghi/duc-17.webp?v=1"],["18","Bordo lime","loghi/duc-18.webp?v=1"]];/* (1412) editor: solo i due nuovi loghi *//* (1402) *//* (1369) *//* (1367) */
+const DUC_LOGHI=[["0","Originale",LOGO_DUC0.b||LOGO_DUC0.a],["p","Papero",LOGO_DUC0.a],["17","Bordo bianco","loghi/duc-17.webp?v=1"],["18","Bordo lime","loghi/duc-18.webp?v=1"],["11n","Notte vecchio","loghi/duc-11n.webp?v=1"],["19n","Notte nuovo","loghi/duc-19n.webp?v=1"]]/* (1415) */;/* (1412) editor: solo i due nuovi loghi *//* (1402) *//* (1369) *//* (1367) */
 let DUC_L="",DUC_C="",DUC_CURL=null,DUC_BAN="";try{DUC_BAN=localStorage.getItem("dl_ducb")||"";DUC_L=localStorage.getItem("dl_ducl")||"";DUC_C=localStorage.getItem("dl_ducc")||""}catch(e){}
 const ducBan=()=>DUC_BAN==="p"?LOGO_DUC0.a:null;
 function ducLogoApply(){try{document.documentElement.classList.toggle("dxlp",!!DUC_L)}catch(e){}const f=DUC_LOGHI.find(x=>x[0]===DUC_L&&x[0]!=="p"&&x[0]!=="0"),u=f?f[2]:null,g=DUC_LOGHI.find(x=>x[0]===DUC_C),v=g?g[2]:null;/* (890) il Papero si può usare ovunque: profili (liste, chip, classifiche) e campo */DUC_CURL=v;LOGO.DUC=u||LOGO_DUC0.b;LOGO2.DUC=v||LOGO_DUC0.b;/* (1203) logo ufficiale = scritta ovunque; il papero solo nella casella della Home (.hlg) e nel banner della squadra */let st=document.getElementById("ducl");if(!st){st=document.createElement("style");st.id="ducl";document.head.appendChild(st)}st.textContent=`.lg-DUC{background-image:url(${u||LOGO_DUC0.b})}${u?"":`.lg-DUC:not(.hrl *):not(.hlg *):not(.htile *){background-size:contain!important;background-position:center!important}img[src*="f39bda081f60"]:not(.hlogo){object-fit:contain;padding:7%;box-sizing:border-box}`}.hlg .lg-DUC,.hrl .lg-DUC,.htile .lg-DUC{background-image:url(${LOGO_DUC0.a})!important}`}/* (1203b) nella colonna squadre della Home sempre il papero, qualunque logo sia scelto in Personalizzazioni */
@@ -3366,7 +3366,7 @@ let rgN=0;
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-rgnav]");if(!b||cur!=="risultati")return;rgN=Math.min(drPO(drStand()).end+DR_OFF,Math.max(1,(rgN||1)+ +b.dataset.rgnav));const y=scrollY;render();scrollTo(0,y)});
 document.getElementById("main").addEventListener("click",e=>{const r=e.target.closest("[data-rgo]");if(!r||cur!=="risultati")return;const[k,x,y]=r.dataset.rgo.split("|");DR.k=+k;DR.tab="turno";DR.open=[x,y];DR.rules=false;GAME="dream";cur="giochi";render();window.scrollTo(0,0)});
 /* Condividi risultato di una partita: immagine 1080x1350 generata su canvas (shareGame) */
-function ldImg(src){if(typeof src==="string"&&src.indexOf("duc-11n.webp")>=0)src="loghi/duc-17.webp?v=1";/* (1406) nelle condivisioni sempre il logo di giorno */return new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src})}
+function ldImg(src){if(typeof src==="string"&&/duc-1\dn\.webp/.test(src))src="loghi/duc-17.webp?v=1";/* (1406) nelle condivisioni sempre il logo di giorno */return new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src})}
 async function shareGame(gi,ix,btn){
   const g=GIORNATE.find(x=>x.n===gi);if(!g)return;const[a,pa,b,pb]=g.gare[ix];
   try{await document.fonts.load('800 italic 40px "Barlow Condensed"');await document.fonts.load('40px "CourtBlock"')}catch(e){}
@@ -7133,7 +7133,7 @@ function campoLive(t){const turno=CLM==="turno",d=campoNotte();
 let SHR_CAMPO=null,SHR_DR=null,SHR_DUEL=null,SHR_PO=null,SHR_CL=null;
 const SH_ICO='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
 const shBtn=k=>`<button class="shbtn" data-share="${k}" aria-label="Condividi" title="Condividi">${SH_ICO}</button>`;
-function shImg(src){if(typeof src==="string"&&src.indexOf("duc-11n.webp")>=0)src="loghi/duc-17.webp?v=1";/* (1406) nelle condivisioni sempre il logo di giorno */return new Promise(r=>{if(!src)return r(null);const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src})}
+function shImg(src){if(typeof src==="string"&&/duc-1\dn\.webp/.test(src))src="loghi/duc-17.webp?v=1";/* (1406) nelle condivisioni sempre il logo di giorno */return new Promise(r=>{if(!src)return r(null);const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src})}
 function shLogo(t){const s=document.createElement("span");s.className="badge logo lg-"+t;s.style.cssText="position:absolute;left:-9999px;top:0";document.body.appendChild(s);const u=getComputedStyle(s).backgroundImage;s.remove();const m=u&&u.match(/url\("?([^")]+)"?\)/);return shImg(m&&m[1])}
 function shRR(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
 function shFit(c,t,w){if(c.measureText(t).width<=w)return t;while(t.length>1&&c.measureText(t+"…").width>w)t=t.slice(0,-1);return t+"…"}
@@ -11001,7 +11001,7 @@ function pers(){if(!COL.d){cur="campo";return vCampo()}
   const opt=(k,nm,u)=>`<button class="hlo${(c0||"")===k?" on":""}" data-hlo="${k}" data-hw="${w}" aria-pressed="${(c0||"")===k}"><span style="background-image:url(${u})"></span><small>${E(nm)}</small></button>`;
   return`<section class="hofcard"><h4>${tit}</h4><p class="setnote">${nota}</p>
  <div class="hlprev"><span style="background-image:url(${sel?sel[2]:orig})"></span><div><b>${sel?E(sel[1]):"Logo ufficiale"}</b><small>In uso adesso</small></div></div>
- <div class="hlgrid">${DUC_LOGHI.map(x=>opt(x[0],x[1],x[2])).join("")}</div>
+ <div class="hlgrid">${DUC_LOGHI.filter(x=>x[0]!=="p").map(x=>opt(x[0],x[1],x[0]==="0"?LOGO.DUC:x[2])).join("")}</div>
  <button class="hlreset" data-hlo="" data-hw="${w}"${c0?"":" disabled"}>↺ Ripristina situazione ufficiale</button></section>`};
  return`<div class="hof"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
  <div class="hofhd"><div style="grid-column:1/3"><small>Texas Ducks · area riservata del GM</small><b>Personalizzazioni</b><em>Il look della tua app</em></div></div>
@@ -13037,7 +13037,7 @@ function svgSwap(){try{document.querySelectorAll("image[data-lgo]").forEach(e=>{
 {const C0=css;css=function(){C0();svgSwap()}}
 {const R0=render;render=function(){const r=R0.apply(this,arguments);setTimeout(svgSwap,0);return r}}
 /* (1278) CAMBIA LOGO: per i Ducks si sceglie anche quale logo mostrare in quella casella */
-const OPZ=()=>{let L=[];try{L=DUC_LOGHI.map(x=>[x[1],x[2]])}catch(e){}return L.concat([["DUCKS arco","loghi/duc-arco.svg"],["DUCKS punte","loghi/duc-punte.svg"]])};
+const OPZ=()=>{let L=[];try{L=DUC_LOGHI.filter(x=>x[0]!=="0"&&x[0]!=="p").map(x=>[x[1],x[2]])/* (1415) solo i 4 loghi */}catch(e){}return L.concat([["DUCKS arco","loghi/duc-arco.svg"],["DUCKS punte","loghi/duc-punte.svg"]])};
 function curI(){const c=cfg();return LG[c.key]&&LG[c.key].img||""}
 function put(k,img,sx,sy){const c=cfg(),o=LG[c.key]||{};k=k==null?(o.k||100):k;img=img===undefined?(o.img||""):img;sx=sx==null?(o.sx||100):sx;sy=sy==null?(o.sy||100):sy;if(k===100&&!img&&sx===100&&sy===100)delete LG[c.key];else LG[c.key]={v:c.v,pc:c.pc,team:c.team,tg:c.tg,nm:c.nm,k,img,sx,sy};save();css()}
 /* (1283) DEFORMATORE: larghezza e altezza separate (50-200%) sopra la grandezza */
@@ -14353,7 +14353,7 @@ window.__dxFxSet=m=>{try{localStorage.setItem(K,m)}catch(e){}set(m)};
 </script>
 <style>/* (1401) Home: solo il tasto Ducks della colonna squadre in viola acceso */html body .hrl:has(> .lg-DUC){--tc:#7c3aed!important}</style>
 <script>/* (1405) Ducks: di notte il logo con il becco bianco, di giorno quello con il becco arancio (stesse grandezze) */
-(function(){const D="loghi/duc-17.webp?v=1",N="loghi/duc-11n.webp?v=1";let last=null;
+(function(){const D="loghi/duc-17.webp?v=1",N="loghi/duc-19n.webp?v=1"/* (1415) nuovo logo notte */;let last=null;
 function swap(night){const from=night?D:N,to=night?N:D;
  document.querySelectorAll("style").forEach(s=>{if(s.id!=="dxlgst"&&s.textContent.includes(from))/* (1413) le scelte dell Editor loghi non si toccano */s.textContent=s.textContent.split(from).join(to)});
  try{[["LOGO","DUC"],["LOGO2","DUC"],["LOGO_DUC0","a"],["LOGO_DUC0","b"]].forEach(([o,k])=>{const O=window[o]||eval(o);if(O&&O[k]===from)O[k]=to})}catch(e){}
