@@ -3742,3 +3742,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1440) Ducks Arena (Dream), render 7 scelto: tifosi tutti viola #7c3aed, sedili verdi (#65a30d/#4d7c0f, onde e scritte #84cc16), pavimento fuori dal campo bianco #f4f1fa con il viola che finisce sulla linea lime, linee lime x2.2, canestri verdi (struttura #84cc16/#65a30d, bordo tabellone #a3e635). dream.js?v=1440.
 
 - (1441) Maglia Ducks ufficiale di notte: 318 (viola a righe, DUCKS e numero verdi); di giorno resta quella scelta/predefinita (319 bianca verde e viola).
+
+- (1442) Statistiche › Giocatori (.fagl): logo Ducks -10% (scale 0.991 0.796, fisso).
