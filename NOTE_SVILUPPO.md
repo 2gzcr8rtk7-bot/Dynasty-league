@@ -3706,3 +3706,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 - (1421) Editor loghi scollegati: la chiave e il selettore includono anche il contenitore del logo (es. .hmtm > .hmrl), così caselle con lo stesso nome in posti diversi (Home lista/raggruppata, Sala Trofei classifica/tabella) non cambiano insieme; le scelte «Solo squadra» vincono su «Tutte le squadre qui».
 - (1422) Prova loghi al contrario: di giorno palla viola (duc-20n?v=2), di notte bordo bianco (duc-17?v=2). Lo script giorno/notte ora lavora sempre (anche di giorno) partendo dal logo scritto nel codice (duc-17?v=1). Condivisioni sempre col logo di giorno (window.DUC_DAY). Il campo di giorno resta col bordo lime e le 25 caselle lime restano lime.
+
+- (1423) Ducks: logo palla viola (duc-20n) sia di giorno sia di notte, ovunque (anche campo e bordocampo; tolte le immagini lime/bianco dalle 25 caselle 1416, restano le grandezze). Ducks Arena Dream: logo palla viola in alta definizione (loghi/duc-20n-hd.webp 1500px) più grande del 20%, disegnato con smussatura alta; linea di metà campo interrotta sul logo. dream.js?v=1423.
