@@ -3659,3 +3659,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v835: effetti Ducks: restano solo palla e canestro e il crollo del pavimento (mattonelle grandi, dalla versione attuale all altra e ritorno). Tolti i crolli 2-5.
 
 - v836: effetti Ducks: terza animazione (tocca TEXAS) palla + crollo del pavimento insieme.
+
+- v837: effetti Ducks: 1 palla (predefinita per tutti), 2 crollo del pavimento, poi spento; tolta palla+crollo.

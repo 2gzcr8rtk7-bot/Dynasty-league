@@ -14268,9 +14268,9 @@ const kick=()=>{if(isOn()&&here()&&!raf)raf=requestAnimationFrame(frame)};new Mu
 </script>
 <script>/* (1397) EFFETTI CAMPO DUCKS: tocca TEXAS per cambiare. palla · faro · 5 crolli del pavimento (visti dall'alto: giorno -> notte -> giorno) · spento (dl_dxfx) */
 (function(){
-const MODES=[["palla","🏀 Palla e canestro"],["c1","💥 Crollo del pavimento"],["mix","🏀💥 Palla + crollo del pavimento"],["off","Effetti spenti"]];
+const MODES=[["palla","🏀 Palla e canestro"],["c1","💥 Crollo del pavimento"],["off","Effetti spenti"]];
 const K="dl_dxfx";
-window.dxFx=()=>{let v=null;try{v=localStorage.getItem(K)}catch(e){}if(!v){try{if(localStorage.getItem("dl_dxpalla")==="0")return"off"}catch(e){}return"palla"}return MODES.some(m=>m[0]===v)?v:"palla"};/* (1398) tolto il faro */
+window.dxFx=()=>{let v=null;try{if(!localStorage.getItem("dl_dxfx_m1399")){localStorage.setItem(K,"palla");localStorage.setItem("dl_dxfx_m1399","1")}v=localStorage.getItem(K)}catch(e){}if(!v){try{if(localStorage.getItem("dl_dxpalla")==="0")return"off"}catch(e){}return"palla"}return MODES.some(m=>m[0]===v)?v:"palla"};/* (1399) tolta palla+crollo; default palla *//* (1398) tolto il faro */
 const here=()=>typeof cur!=="undefined"&&cur==="campo"&&curTeam==="DUC"&&!(window.gotOn&&gotOn());
 const NS="http://www.w3.org/2000/svg";
 const st=document.createElement("style");st.textContent=`html body .court>canvas.dxfaro{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:7}`;document.head.appendChild(st);
