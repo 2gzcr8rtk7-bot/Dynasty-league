@@ -66,7 +66,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
   const rrPath=(rx,rz,cr,step)=>{const out=[],segs=[["l",-rx+cr,-rz,rx-cr,-rz],["c",rx-cr,-rz+cr,-Math.PI/2,0],["l",rx,-rz+cr,rx,rz-cr],["c",rx-cr,rz-cr,0,Math.PI/2],["l",rx-cr,rz,-rx+cr,rz],["c",-rx+cr,rz-cr,Math.PI/2,Math.PI],["l",-rx,rz-cr,-rx,-rz+cr],["c",-rx+cr,-rz+cr,Math.PI,Math.PI*1.5]];
     for(const s of segs){const len=s[0]==="l"?Math.hypot(s[3]-s[1],s[4]-s[2]):Math.PI*cr/2,n=Math.max(1,Math.round(len/step));for(let i=0;i<n;i++){const k=i/n;if(s[0]==="l")out.push([s[1]+(s[3]-s[1])*k,s[2]+(s[4]-s[2])*k]);else{const a=s[3]+(s[4]-s[3])*k;out.push([s[1]+Math.cos(a)*cr,s[2]+Math.sin(a)*cr])}}}return out};
   /* (1296) MODALITÀ GOTHAM nel Dream: campo Ducks a tema Gotham City (4 stili, swipe sul logo a centrocampo) */
-  const GOT=t==="DUC"&&typeof window.gotOn==="function"&&window.gotOn();const GLG=GOT?await img("loghi/gotham.webp?v=2"):null;
+  const GOTH=t==="DUC"&&typeof window.gotOn==="function"&&window.gotOn(),GOT=t==="DUC"&&(GOTH||window.DUCK_GST!==false)/* (1394) Ducks Arena in stile Gotham */;const GLG=GOT?await img(GOTH?"loghi/gotham.webp?v=2":(LOGO.DUC||"loghi/duc-11.webp?v=3")):null;const DXW=window.DXW||{};const DFULL=GOT&&!GOTH,DPAL=["#a3e635","#84cc16","#bef264","#a3e635","#65a30d","#a3e635"]/* (1395) Ducks Arena: tutti i posti pieni e colorati */;
   const GOK=[0];const gdst=()=>{let v=0;try{v=+(localStorage.getItem("dl_gotham_dst")||0)}catch(e){}v=(v%4+4)%4;return GOK.includes(v)?v:0};
   const GSTY=[{f1:"#2a1150",f2:"#140826",ln:"#a3e635",glow:1,sk:"#1a0b33",win:"#a3e635",key:"rgba(124,58,237,.35)",beam:"rgba(163,230,53,.10)"},
    {f1:"#6d28d9",f2:"#4c1d95",ln:"#ecfccb",wood:1,sk:"#2e0a5e",win:"#a3e635",key:"rgba(132,204,22,.28)"},
@@ -82,11 +82,11 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
     if(S.rain){x.strokeStyle=S.rain;x.lineWidth=2;for(let k=0;k<260;k++){const rx=R()*W,ry=R()*H;x.beginPath();x.moveTo(rx,ry);x.lineTo(rx-L(.08),ry+L(.3));x.stroke()}}
     x.fillStyle=S.key;[0,1].forEach(s=>x.fillRect(s?W-L(5.8):0,cy-L(2.45),L(5.8),L(4.9)));
     if(GLG){const lh=L(5.6),lw=lh*GLG.width/GLG.height;x.save();x.globalAlpha=.95;x.drawImage(GLG,cx-lw/2,cy-lh/2,lw,lh);x.restore()}
-    x.save();if(S.glow){x.shadowColor=S.ln;x.shadowBlur=L(.25)}x.strokeStyle=S.ln;x.lineWidth=L(.06);
+    x.save();const LNC=DXW.ln||S.ln;if(S.glow){x.shadowColor=LNC;x.shadowBlur=L(.25)}x.strokeStyle=LNC;x.lineWidth=L(.06);
     x.strokeRect(L(.05),L(.55),W-L(.1),H-L(1.1));x.beginPath();x.moveTo(cx,L(.55));x.lineTo(cx,cy-L(1.9));x.moveTo(cx,cy+L(1.9));x.lineTo(cx,H-L(.55));x.stroke();
     [0,1].forEach(s=>{const bx=s?W-L(1.575):L(1.575),dir=s?-1:1;x.strokeRect(s?W-L(5.8):L(.05),cy-L(2.45),L(5.75),L(4.9));x.beginPath();x.arc(s?W-L(5.8):L(5.8),cy,L(1.8),0,7);x.stroke();
       x.beginPath();x.moveTo(s?W:0,cy-L(6.6));x.lineTo(bx+dir*L(1.4),cy-L(6.6));x.arc(bx,cy,L(6.75),s?Math.PI+1.35:-1.35,s?Math.PI-1.35:1.35,!!s);x.lineTo(s?W:0,cy+L(6.6));x.stroke()});x.restore();
-    const g=x.createRadialGradient(cx,cy,10,cx,cy,W*.62);g.addColorStop(0,"rgba(255,255,255,.04)");g.addColorStop(1,"rgba(0,0,0,.22)");x.fillStyle=g;x.fillRect(0,0,W,H)};
+    if(DXW.edge){x.save();x.strokeStyle="#fff";x.lineWidth=L(.22);x.strokeRect(L(.11),L(.11),W-L(.22),H-L(.22));x.restore()}if(DXW.key){x.fillStyle="rgba(255,255,255,.14)";[0,1].forEach(s=>x.fillRect(s?W-L(5.8):0,cy-L(2.45),L(5.8),L(4.9)))}const g=x.createRadialGradient(cx,cy,10,cx,cy,W*.62);g.addColorStop(0,"rgba(255,255,255,.04)");g.addColorStop(1,"rgba(0,0,0,.22)");x.fillStyle=g;x.fillRect(0,0,W,H)};
   /* parquet */
   const court=tex(3072,1646,(x,W,H)=>{if(GOT){drawG(x,W,H);return}const ph=Math.round(H/75);if(t==="DUC")Object.assign(LK,{hue:214,sat:24,lig:87})/* (1392) Ducks: parquet ghiaccio con il viola */;
     /* (946) parquet di qualità: listelli con tono proprio, venature, nodi, fughe sottili e vernice */
@@ -153,7 +153,7 @@ async function build(t,cv,T3){const THREE=T3,TM=TEAMS[t];
     const px=Math.min(P.W-1,Math.floor(u*P.W)),py=P.H-1-r,i=(py*P.W+px)*4;return "rgb("+P.d[i]+","+P.d[i+1]+","+P.d[i+2]+")"};
   const bowl=(r0,rows,y0,dy,dr,occ,step)=>{BOWLS.push({r0,rows,y0,dy,dr});for(let r=0;r<rows;r++){const rx=CW/2+r0+r*dr,rz=CH/2+r0+r*dr,cr=3.5+r*dr,y=y0+r*dy;const cut=r0===RA&&r<CUT_N;band(rx,rz,cr,y,y,dr,cut);if(cut)runs(rrPath(rx,rz,cr,.4)).forEach(rn=>S.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(rn.map(([px,pz])=>new THREE.Vector3(px,y+.015,pz))),STEPLED)));else{const pts=rrPath(rx,rz,cr,.8).map(([px,pz])=>new THREE.Vector3(px,y+.015,pz));pts.push(pts[0].clone());S.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),STEPLED))}
     const SP_=rrPath(rx+dr*.55,rz+dr*.55,cr+dr*.55,step),SPN=SP_.length;SP_.forEach(([px,pz],si)=>{if(Math.abs(pz)>CH/2&&Math.abs(px)<1.2)return;/* (964) scale centrali anche sul lato lontano (uscita del pubblico) */if(inCut(px,pz,.35))return;const a=Math.atan2(-px,-pz),sec=Math.floor((Math.atan2(pz,px)+Math.PI)/(Math.PI/6))%3===0;
-      seatP.push([px,y+.22,pz,a]);seatC.push(seatPat(r0,rows,r,si/SPN));if(Math.random()<occ){fanP.push([px,y+.62,pz,a]);fanC.push(Math.random()<.18?BG:shirts[(Math.random()*shirts.length)|0]);headC.push(skins[(Math.random()*skins.length)|0])}})}};
+      seatP.push([px,y+.22,pz,a]);seatC.push(seatPat(r0,rows,r,si/SPN));if(Math.random()<(DFULL?1:occ)){fanP.push([px,y+.62,pz,a]);fanC.push(DFULL?DPAL[(Math.random()*DPAL.length)|0]:Math.random()<.18?BG:shirts[(Math.random()*shirts.length)|0]);headC.push(skins[(Math.random()*skins.length)|0])}})}};
   const stp=mob?.7:.56;bowl(RA,NL,.45,LR,.85,.45,stp);const R1=CW/2+RA+NL*.85,Y1=.45+NL*LR;
   {const pts=rrPath(R1+.2,R1-CW/2+CH/2+.2,3.5+NL*.85+.2,.6);pts.push(pts[0]);const g=new THREE.BufferGeometry(),P=[],U=[],I=[];let acc=0;
     pts.forEach((p,i)=>{if(i)acc+=Math.hypot(p[0]-pts[i-1][0],p[1]-pts[i-1][1]);P.push(p[0],Y1+1.3,p[1],p[0],Y1+.35,p[1]);U.push(acc/14,1,acc/14,0);const gap=q=>Math.abs(q[0])<1.5&&Math.abs(q[1])>1;/* (950) la fascia si interrompe sulle scale centrali */if(i&&!gap(p)&&!gap(pts[i-1])){const k=i*2;I.push(k-2,k,k-1,k-1,k,k+1)}});
@@ -1939,7 +1939,7 @@ function close(){try{gUndo()}catch(e){}const st=ST;if(!st)return;try{st.standUp&
   /* (939) si torna sempre alla squadra da cui si è entrati *//* (984) e sempre al campo o alla home */try{let ch=false;if(curTeam!==(st.home||st.t)){curTeam=st.home||st.t;ch=true}if(cur!=="campo"&&cur!=="home"){cur="campo";ch=true}try{if(GAME==="dream"&&cur!=="giochi")GAME="menu"}catch(e){}if(ch)render()}catch(e){}try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock("portrait").catch(()=>{})}catch(e){}try{st.A&&st.A.ac.close()}catch(e){}st.ov.remove();document.body.classList.remove("drm3on")}
 /* (1298) Gotham attivo: tutta l'arena Ducks (spalti, tabellone, maxischermo, bandiere, facciate) prende i colori e il logo Gotham */
 let GSAVE=null;const gUndo=()=>{if(!GSAVE)return;window.DUC_COL3D=GSAVE.col;TEAMS.DUC=GSAVE.T;LOGO_DUC0.a=GSAVE.la;LOGO.DUC=GSAVE.lg;window.DUC_CURL=GSAVE.curl;GSAVE=null};
-const gApply=()=>{gUndo();if(!(typeof window.gotOn==="function"&&window.gotOn()))return;const GL="loghi/gotham.webp?v=2";GSAVE={col:window.DUC_COL3D,T:TEAMS.DUC,la:LOGO_DUC0.a,lg:LOGO.DUC,curl:window.DUC_CURL};
+const gApply=()=>{gUndo();if(!(typeof window.gotOn==="function"&&window.gotOn())){if(window.DUCK_GST!==false){GSAVE={col:window.DUC_COL3D,T:TEAMS.DUC,la:LOGO_DUC0.a,lg:LOGO.DUC,curl:window.DUC_CURL};window.DUC_COL3D="#6d28d9";TEAMS.DUC={...GSAVE.T,bg:"#7c3aed",fg:"#a3e635",trim:"#a3e635"}}/* (1394) Ducks Arena stile Gotham con nome e logo Ducks */return}const GL="loghi/gotham.webp?v=2";GSAVE={col:window.DUC_COL3D,T:TEAMS.DUC,la:LOGO_DUC0.a,lg:LOGO.DUC,curl:window.DUC_CURL};
  window.DUC_COL3D="#6d28d9";TEAMS.DUC={...GSAVE.T,bg:"#7c3aed",fg:"#a3e635",trim:"#a3e635",city:"Gotham",name:"Gotham City Ducks"};LOGO_DUC0.a=GL;LOGO.DUC=GL;window.DUC_CURL=GL};
 window.dreamOpen=(t,op)=>{gApply();return open(t,op)};window.dreamClose=close;window.dreamDbg=()=>ST;
 })();

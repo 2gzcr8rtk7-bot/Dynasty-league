@@ -3649,3 +3649,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v830: Ducks, tolta dal selettore la maglia 320 DUCKS Ghiaccio viola (chi la usava torna alla predefinita Bianca viola).
 
 - v831: fix blocco area Ducks: ora QUALSIASI personalizzazione pubblica (look, parquet, legno, linee, bordo, giocatori, colori PDK, dimensioni ecc.) e ignorata sul campo Ducks, sia nel disegno del campo sia negli stili dell app mentre si guarda il campo Ducks. Solo l interruttore dell area segreta le riattiva. (Bozza Ducks Arena 3D salvata a parte, non pubblicata.)
+
+- v832: Dream 3D, Ducks Arena nello stile di Gotham (campo viola scuro con linee lime luminose, stessi colori arena) con nome e logo Texas Ducks; tutti i posti pieni con tifosi verdi.
