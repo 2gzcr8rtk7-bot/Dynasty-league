@@ -3724,3 +3724,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1430) Condivisioni Ducks: sempre il logo «UT · Becco bianco» (duc-22), di giorno e di notte (ldImg/shImg mappano qualsiasi loghi/duc-*.webp).
 
 - (1431) Grandezze ufficiali dei loghi: ordine di calcolo fisso (1416 → 1424 → 1428: ogni livello prima aggiorna i precedenti e misura con i successivi spenti), così sul telefono non escono più grandi del dovuto. Dreamers (turno .drr, calendario .h/.a, classifica .drcr, playoff .bkt): grandezze finali scritte fisse nel codice, uguali agli altri loghi.
+
+- (1432) Home colonna squadre (.hmrail > .hrl): logo Ducks 95% e altezza 102% sulla grandezza attuale, scritto fisso (scale 0.905 0.86). Scelte editor azzerate (dl_dxlogo_m1432).
