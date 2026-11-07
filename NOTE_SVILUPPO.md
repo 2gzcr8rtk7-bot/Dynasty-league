@@ -3806,3 +3806,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1480) Barra delle notti come negli scontri diretti: N1 se deve giocare, PDK live colorato che lampeggia, PDK finale nel suo colore, NG se non ha giocato.
 - (1481) Barra delle notti: il lampeggio live non si vedeva (l opacità era bloccata con !important): ora lampeggia con la luminosità.
 - (1482) Palla live: tiro sbagliato (notifica «TIRO ✕», tira e sbaglia, palla a un compagno); rimbalzo solo come notifica; notifiche visibili 5,6 s e impilate se dello stesso giocatore; la palla rossa parte quando almeno un giocatore Ducks inizia la partita (non più col lampeggio del campo).
+
+- (1483) Palla live più leggera: controllo statistiche ogni 2,5 s con uscita immediata se nessuna partita è in corso (niente ricerche sui giocatori), larghezza delle notifiche calcolata una volta sola, le tele cancellano solo la zona disegnata nel fotogramma prima invece di tutta la superficie.
