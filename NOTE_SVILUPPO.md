@@ -3655,3 +3655,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v833: effetti campo Ducks (1397), tocca TEXAS per cambiare: palla e canestro, faro che cerca i giocatori, 5 crolli del pavimento visti dall alto (mattonelle tremano, ne cade una, poi due, poi 3-4, poi valanga; sotto il pavimento notte identico, che crolla a sua volta e torna il giorno), spento (dl_dxfx).
 
 - v834: effetti Ducks: tolto il faro; crolli piu lenti (~75% in piu, ciclo 24 s), tremore piu lungo e crescente, nessuna fuga visibile tra le mattonelle prima che si rompano (pavimento intero mascherato, la mattonella appare solo quando trema).
+
+- v835: effetti Ducks: restano solo palla e canestro e il crollo del pavimento (mattonelle grandi, dalla versione attuale all altra e ritorno). Tolti i crolli 2-5.

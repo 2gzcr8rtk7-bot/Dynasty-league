@@ -14268,7 +14268,7 @@ const kick=()=>{if(isOn()&&here()&&!raf)raf=requestAnimationFrame(frame)};new Mu
 </script>
 <script>/* (1397) EFFETTI CAMPO DUCKS: tocca TEXAS per cambiare. palla · faro · 5 crolli del pavimento (visti dall'alto: giorno -> notte -> giorno) · spento (dl_dxfx) */
 (function(){
-const MODES=[["palla","🏀 Palla e canestro"],["c1","💥 Crollo 1 · mattonelle grandi"],["c2","💥 Crollo 2 · dal centro"],["c3","💥 Crollo 3 · dall'angolo"],["c4","💥 Crollo 4 · assi di legno"],["c5","💥 Crollo 5 · a onda"],["off","Effetti spenti"]];
+const MODES=[["palla","🏀 Palla e canestro"],["c1","💥 Crollo del pavimento"],["off","Effetti spenti"]];
 const K="dl_dxfx";
 window.dxFx=()=>{let v=null;try{v=localStorage.getItem(K)}catch(e){}if(!v){try{if(localStorage.getItem("dl_dxpalla")==="0")return"off"}catch(e){}return"palla"}return MODES.some(m=>m[0]===v)?v:"palla"};/* (1398) tolto il faro */
 const here=()=>typeof cur!=="undefined"&&cur==="campo"&&curTeam==="DUC"&&!(window.gotOn&&gotOn());
