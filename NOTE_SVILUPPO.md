@@ -3687,3 +3687,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v849: notti del turno N1 N2 N3 al posto di giorno/data nello scontro diretto e nella scheda punteggio del giocatore.
 
 - (1412) Ducks: logo ufficiale di giorno = bordo bianco (loghi/duc-17.webp), di notte invariato (duc-11n). Editor loghi / Personalizzazioni: al posto dei vecchi loghi ora ci sono solo "Bordo bianco" (duc-17) e "Bordo lime" (duc-18), oltre a Originale e Papero.
+
+- (1413) Editor loghi: di notte le scelte fatte nell editor (es. Bordo bianco) non vengono più sostituite dal logo notturno (style #dxlgst e <image data-lgo> esclusi dallo scambio giorno/notte). Verificato su campo (banner, bordocampo, logo del campo) e rosa, giorno e notte, anche dopo riapertura. Condivisioni: logo bordo bianco anche di notte.

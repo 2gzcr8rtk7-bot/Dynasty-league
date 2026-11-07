@@ -14355,11 +14355,11 @@ window.__dxFxSet=m=>{try{localStorage.setItem(K,m)}catch(e){}set(m)};
 <script>/* (1405) Ducks: di notte il logo con il becco bianco, di giorno quello con il becco arancio (stesse grandezze) */
 (function(){const D="loghi/duc-17.webp?v=1",N="loghi/duc-11n.webp?v=1";let last=null;
 function swap(night){const from=night?D:N,to=night?N:D;
- document.querySelectorAll("style").forEach(s=>{if(s.textContent.includes(from))s.textContent=s.textContent.split(from).join(to)});
+ document.querySelectorAll("style").forEach(s=>{if(s.id!=="dxlgst"&&s.textContent.includes(from))/* (1413) le scelte dell Editor loghi non si toccano */s.textContent=s.textContent.split(from).join(to)});
  try{[["LOGO","DUC"],["LOGO2","DUC"],["LOGO_DUC0","a"],["LOGO_DUC0","b"]].forEach(([o,k])=>{const O=window[o]||eval(o);if(O&&O[k]===from)O[k]=to})}catch(e){}
  try{if(window.DUC_CURL===from)window.DUC_CURL=to}catch(e){}
  document.querySelectorAll('img[src*="loghi/duc-1"]').forEach(i=>{if(i.getAttribute("src")===from)i.setAttribute("src",to)});
- document.querySelectorAll("image").forEach(i=>{if(i.getAttribute("href")===from)i.setAttribute("href",to)})}
+ document.querySelectorAll("image").forEach(i=>{if(!i.dataset.lgo&&i.getAttribute("href")===from)i.setAttribute("href",to)})}
 const chk=()=>{const n=document.body.classList.contains("notte")||document.documentElement.classList.contains("notte");if(n!==last){last=n;swap(n)}else if(n)swap(true)};
 let q=0;const run=()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;try{chk()}catch(e){}})};
 new MutationObserver(run).observe(document.body,{attributes:true,attributeFilter:["class"],childList:true,subtree:true});new MutationObserver(run).observe(document.documentElement,{attributes:true,attributeFilter:["class"]});setTimeout(run,300)})();</script>
