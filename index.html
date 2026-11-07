@@ -14220,10 +14220,10 @@ let q=0;const m=document.getElementById("main")||document.body;new MutationObser
 <script>/* (1388) PALLA ANIMATA DUCKS: palla viola con scia verde, palleggio a 8 (passa dietro e davanti alla maglia), passaggi tra campo, sesto uomo e panchina, canestro in alto: a ogni giro tirano tutti una volta in ordine casuale. Tocca TEXAS per spegnere/accendere (dl_dxpalla) */
 (function(){
 const BC="#a3e635",TC="#7c3aed",K="dl_dxpalla";
-const isOn=()=>{try{return localStorage.getItem(K)!=="0"}catch(e){return true}};
+const isOn=()=>(window.dxFx?window.dxFx():"palla")==="palla";
 const here=()=>typeof cur!=="undefined"&&cur==="campo"&&curTeam==="DUC"&&!(window.gotOn&&gotOn());
 let raf=0,t0=0,TR=[],PLAN=null,PLANKEY="";
-const st=document.createElement("style");st.textContent=`html body .court>canvas.dxpu{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}html body .view>canvas.dxpo{position:absolute;left:0;pointer-events:none;z-index:2}html body .view:has(>canvas.dxpo){position:relative}html body .court:has(.cname.cn-duc) .cln path[d^="M46 12.5A4"]{visibility:hidden}html:not(.gotc) body[data-v="campo"] .court .cname.cn-duc text{cursor:pointer;pointer-events:auto}`;document.head.appendChild(st);
+const st=document.createElement("style");st.textContent=`html body .court>canvas.dxpu{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}html body .view>canvas.dxpo{position:absolute;left:0;pointer-events:none;z-index:2}html body .view:has(>canvas.dxpo){position:relative}html:not(.dxnoball) body .court:has(.cname.cn-duc) .cln path[d^="M46 12.5A4"]{visibility:hidden}html:not(.gotc) body[data-v="campo"] .court .cname.cn-duc text{cursor:pointer;pointer-events:auto}`;document.head.appendChild(st);
 function els(){const court=document.querySelector("main .court");if(!court)return null;const view=court.closest(".view")||court.parentElement;return{court,view}}
 function mount(E){const{court,view}=E;let u=court.querySelector(":scope>canvas.dxpu"),o=view.querySelector(":scope>canvas.dxpo");
  if(!u){u=document.createElement("canvas");u.className="dxpu";const s=court.querySelector(":scope>svg.cbg");s?s.after(u):court.prepend(u)}
@@ -14262,8 +14262,82 @@ function frame(ts){raf=requestAnimationFrame(frame);if(!isOn()||!here()){unmount
  for(let j=1;j<TR.length;j++){const A=TR[j-1],B=TR[j],c=B.z?co:cu,al=j/TR.length;c.beginPath();c.moveTo(A.x,A.y);c.lineTo(B.x,B.y);c.strokeStyle=TC;c.lineCap="round";c.globalAlpha=al*.85;c.lineWidth=r*1.3*al;c.stroke();c.globalAlpha=al*.3;c.lineWidth=r*2.3*al;c.stroke();c.globalAlpha=1}
  if(!q.gone)ball(q.z?co:cu,q.x,q.y,r);drawHoop(co,H,W,1,q.sw)}
 function toast(m){let d=document.getElementById("dxbt");if(!d){d=document.createElement("div");d.id="dxbt";d.style.cssText="position:fixed;left:50%;top:40%;transform:translateX(-50%);z-index:99999;padding:10px 16px;border-radius:14px;background:#2e1065;color:#a3e635;border:2px solid #a3e635;font:900 italic 15px system-ui;pointer-events:none;transition:opacity .4s";document.body.appendChild(d)}d.textContent=m;d.style.opacity="1";clearTimeout(d._t);d._t=setTimeout(()=>d.style.opacity="0",1600)}
-document.addEventListener("click",e=>{if(!here())return;const t=e.target.closest&&e.target.closest("main .court .cname.cn-duc text");if(!t)return;e.preventDefault();e.stopPropagation();const v=!isOn();try{localStorage.setItem(K,v?"1":"0")}catch(_){}t0=0;TR=[];toast(v?"🏀 Palla accesa":"Palla spenta");if(v&&!raf)raf=requestAnimationFrame(frame)},true);
-const kick=()=>{if(isOn()&&here()&&!raf)raf=requestAnimationFrame(frame)};new MutationObserver(kick).observe(document.getElementById("main")||document.body,{childList:true});setTimeout(kick,800);
+
+const kick=()=>{if(isOn()&&here()&&!raf)raf=requestAnimationFrame(frame)};new MutationObserver(kick).observe(document.getElementById("main")||document.body,{childList:true});setTimeout(kick,800);window.__dxBallKick=()=>{t0=0;TR=[];kick()};
+})();
+</script>
+<script>/* (1397) EFFETTI CAMPO DUCKS: tocca TEXAS per cambiare. palla · faro · 5 crolli del pavimento (visti dall'alto: giorno -> notte -> giorno) · spento (dl_dxfx) */
+(function(){
+const MODES=[["palla","🏀 Palla e canestro"],["faro","🔦 Faro che cerca i giocatori"],["c1","💥 Crollo 1 · mattonelle grandi"],["c2","💥 Crollo 2 · dal centro"],["c3","💥 Crollo 3 · dall'angolo"],["c4","💥 Crollo 4 · assi di legno"],["c5","💥 Crollo 5 · a onda"],["off","Effetti spenti"]];
+const K="dl_dxfx";
+window.dxFx=()=>{let v=null;try{v=localStorage.getItem(K)}catch(e){}if(!v){try{if(localStorage.getItem("dl_dxpalla")==="0")return"off"}catch(e){}return"palla"}return MODES.some(m=>m[0]===v)?v:"palla"};
+const here=()=>typeof cur!=="undefined"&&cur==="campo"&&curTeam==="DUC"&&!(window.gotOn&&gotOn());
+const NS="http://www.w3.org/2000/svg";
+const st=document.createElement("style");st.textContent=`html body .court>canvas.dxfaro{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:7}`;document.head.appendChild(st);
+const rnd=s=>()=>(s=(s*16807)%2147483647)/2147483647;
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+let raf=0,t0=0,M="";
+function stopAll(){cancelAnimationFrame(raf);raf=0;document.querySelectorAll("main .court canvas.dxfaro").forEach(c=>c.remove());clearCollapse()}
+
+/* ---------------- FARO ---------------- */
+function faroFrame(ts){const court=document.querySelector("main .court");if(!court)return;let c=court.querySelector(":scope>canvas.dxfaro");if(!c){c=document.createElement("canvas");c.className="dxfaro";court.appendChild(c)}
+ const cr=court.getBoundingClientRect(),d=window.devicePixelRatio||1,W=Math.round(cr.width*d),H=Math.round(cr.height*d);if(c.width!==W||c.height!==H){c.width=W;c.height=H}
+ const P=[...court.querySelectorAll(".cpl .pj")].map(p=>{const r=p.getBoundingClientRect();return{x:r.left-cr.left+r.width/2,y:r.top-cr.top+r.height*.75,w:r.width}});if(!P.length)return;
+ const ord=P.map((p,i)=>i).sort((a,b)=>P[a].y-P[b].y||P[a].x-P[b].x);const seq=[ord[0],ord[1],ord[3]??ord[0],ord[4]??ord[1],ord[2]??ord[0]].filter(i=>i!=null);
+ const T=(ts-t0)/1000,MOVE=1.15,HOLD=1.25,STEP=MOVE+HOLD,i=Math.floor(T/STEP)%seq.length,f=T%STEP,A=P[seq[i]],B=P[seq[(i+1)%seq.length]];
+ let x,y;if(f<HOLD){x=A.x+Math.sin(T*7)*2.5;y=A.y+Math.cos(T*5)*2}else{const q=ease((f-HOLD)/MOVE);x=A.x+(B.x-A.x)*q+Math.sin(q*Math.PI)*40*Math.sin(i*2.1);y=A.y+(B.y-A.y)*q-Math.sin(q*Math.PI)*25}
+ const R=P[0].w*.95;
+ /* secondo faro: spazza lentamente */const x2=cr.width*(.5+.42*Math.sin(T*.55)),y2=cr.height*(.55+.3*Math.sin(T*.37+1));
+ const g=c.getContext("2d");g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,cr.width,cr.height);
+ g.fillStyle="rgba(6,3,18,.64)";g.fillRect(0,0,cr.width,cr.height);
+ g.globalCompositeOperation="destination-out";[[x,y,R,1],[x2,y2,R*.7,.55]].forEach(([sx,sy,rr,a])=>{const gr=g.createRadialGradient(sx,sy,rr*.25,sx,sy,rr);gr.addColorStop(0,`rgba(0,0,0,${a})`);gr.addColorStop(.75,`rgba(0,0,0,${a*.85})`);gr.addColorStop(1,"rgba(0,0,0,0)");g.fillStyle=gr;g.beginPath();g.ellipse(sx,sy,rr,rr*.82,0,0,7);g.fill()});
+ g.globalCompositeOperation="lighter";
+ const beam=(ox,oy,sx,sy,rr,a)=>{const ang=Math.atan2(sy-oy,sx-ox),px=Math.cos(ang+Math.PI/2)*rr,py=Math.sin(ang+Math.PI/2)*rr*.82;const gr=g.createLinearGradient(ox,oy,sx,sy);gr.addColorStop(0,`rgba(255,250,220,${.02*a})`);gr.addColorStop(1,`rgba(255,250,210,${.16*a})`);g.fillStyle=gr;g.beginPath();g.moveTo(ox-2,oy);g.lineTo(sx+px,sy+py);g.lineTo(sx-px,sy-py);g.closePath();g.fill();
+  const sp=g.createRadialGradient(sx,sy,0,sx,sy,rr);sp.addColorStop(0,`rgba(255,252,225,${.28*a})`);sp.addColorStop(1,"rgba(255,252,225,0)");g.fillStyle=sp;g.beginPath();g.ellipse(sx,sy,rr,rr*.82,0,0,7);g.fill()};
+ beam(-30,-60,x,y,R,1);beam(cr.width+30,-60,x2,y2,R*.7,.6);
+ g.globalCompositeOperation="source-over";g.strokeStyle="rgba(255,250,210,.35)";g.lineWidth=1.5;g.beginPath();g.ellipse(x,y,R*.98,R*.8,0,0,7);g.stroke()}
+
+/* ---------------- CROLLO ---------------- */
+let CL=null;
+function clearCollapse(){if(!CL)return;try{CL.layers.forEach(l=>l.remove());CL.defs.forEach(e=>e.remove())}catch(e){}CL=null}
+function otherFloor(){/* il campo nell'altra modalità (notte se è giorno, giorno se è notte), identico a quello vero */
+ const n0=CNT;let h="";try{CNT=!n0;h=vCampo()}catch(e){}finally{CNT=n0}const d=document.createElement("div");d.innerHTML=h;const s=d.querySelector(".court svg.cbg");if(!s)return null;const c=s.querySelector(".cln");return c?{svg:s,floor:c.parentElement}:null}
+function grid(kind){const r=rnd(kind==="c1"?11:kind==="c2"?23:kind==="c3"?37:kind==="c4"?41:53),T=[];const X0=3,Y0=6,WW=94,HH=106;
+ if(kind==="c4"){const n=12;for(let i=0;i<n;i++)T.push({x:X0+i*WW/n,y:Y0,w:WW/n,h:HH,k:i});}
+ else{const [C,R]=kind==="c1"?[4,5]:kind==="c2"?[7,8]:kind==="c3"?[5,6]:[8,9];for(let i=0;i<C;i++)for(let j=0;j<R;j++)T.push({x:X0+i*WW/C,y:Y0+j*HH/R,w:WW/C,h:HH/R,i,j,C,R})}
+ const cx=X0+WW/2,cy=Y0+HH/2;T.forEach(t=>{const tx=t.x+t.w/2,ty=t.y+t.h/2;t.r=r();
+  t.key=kind==="c2"?Math.hypot(tx-cx,ty-cy)+t.r*8:kind==="c3"?(tx-X0)+(ty-Y0)*.9+t.r*10:kind==="c4"?(t.k%2?t.k*3:t.k*2)+t.r*12:kind==="c5"?ty+Math.sin(tx/9)*10+t.r*6:t.r});
+ T.sort((a,b)=>a.key-b.key);
+ /* ritmo realistico: 1, poi 2, poi 3-4, poi valanga */
+ let t=0;T.forEach((x,i)=>{if(i===0)t=0;else if(i<3)t=.55+(i-1)*.12;else if(i<7)t=1.05+(i-3)*.11;else t=1.55+(i-7)*(.9/Math.max(1,T.length-7))+r()*.12;x.dl=t});return T}
+function buildCollapse(kind){clearCollapse();const s=document.querySelector("main .court svg.cbg");if(!s)return;const c=s.querySelector(".cln");if(!c)return;const f=c.parentElement;const O=otherFloor();if(!O)return;
+ let defs=s.querySelector("defs");const added=[];O.svg.querySelectorAll("defs > [id]").forEach(e=>{if(!s.querySelector("#"+CSS.escape(e.id))){const n=e.cloneNode(true);defs.appendChild(n);added.push(n)}});
+ const day=[...f.children].filter(e=>!e.classList.contains("dxtl")),night=[...O.floor.children];
+ const T=grid(kind),mk=(src,cls,pre)=>{const L=document.createElementNS(NS,"g");L.setAttribute("class","dxtl "+cls);let dd="";T.forEach((t,k)=>dd+=`<clipPath id="${pre}${k}"><rect x="${t.x.toFixed(3)}" y="${t.y.toFixed(3)}" width="${(t.w+.06).toFixed(3)}" height="${(t.h+.06).toFixed(3)}"/></clipPath>`);L.innerHTML=`<defs>${dd}</defs>`;
+  T.forEach((t,k)=>{const g=document.createElementNS(NS,"g");g.setAttribute("clip-path",`url(#${pre}${k})`);src.forEach(e=>g.appendChild(e.cloneNode(true)));const sh=document.createElementNS(NS,"rect");["x","y"].forEach(a=>sh.setAttribute(a,t[a]));sh.setAttribute("width",t.w+.06);sh.setAttribute("height",t.h+.06);sh.setAttribute("fill","#000");sh.setAttribute("opacity","0");g.appendChild(sh);t[cls]=g;t[cls+"s"]=sh;L.appendChild(g)});return L};
+ const LN=mk(night,"n","dxn"),LD=mk(day,"d","dxd");f.appendChild(LN);f.appendChild(LD);
+ /* buio sotto le mattonelle che cadono (il "vuoto") */
+ CL={kind,T,layers:[LN,LD],defs:added,svg:s}}
+function tileAt(g,sh,t,p,shake,R){/* p: 0 ferma, 0..1 caduta. vista dall'alto: rimpicciolisce verso il basso, si scurisce, ruota appena */
+ const cx=t.x+t.w/2,cy=t.y+t.h/2;
+ if(p<=0){const jx=shake?(Math.sin(R*97)*.35):0,jy=shake?(Math.cos(R*83)*.35):0,rot=shake?Math.sin(R*61)*1.2:0;g.setAttribute("transform",shake?`translate(${cx+jx} ${cy+jy}) rotate(${rot}) translate(${-cx} ${-cy})`:"");g.setAttribute("opacity","1");sh.setAttribute("opacity",shake?".08":"0");return}
+ if(p>=1){g.setAttribute("opacity","0");return}
+ const q=p*p,sc=1-q*.82,rot=(t.r-.5)*50*q,dx=(t.r-.5)*3*q,dy=(t.r*.7-.2)*3*q;
+ g.setAttribute("transform",`translate(${cx+dx} ${cy+dy}) rotate(${rot}) scale(${sc}) translate(${-cx} ${-cy})`);sh.setAttribute("opacity",(.15+q*.7).toFixed(2));g.setAttribute("opacity",p>.85?((1-p)/.15).toFixed(2):"1")}
+function collapseFrame(ts){if(!CL||!CL.svg.isConnected||CL.kind!==M){buildCollapse(M);if(!CL)return}
+ const T=(ts-t0)/1000,CYC=15,t=T%CYC,FALL=.75,SH=.6;
+ /* 0-2.2 fermo · 2.2 crolla il primo pavimento · 8.4 crolla il secondo · 14+ di nuovo fermo */
+ const ph=(base,lay)=>{CL.T.forEach(x=>{const st=base+x.dl,R=ts/1000+x.r*10;if(t<st-SH){tileAt(x[lay],x[lay+"s"],x,0,0,R)}else if(t<st){tileAt(x[lay],x[lay+"s"],x,0,1,R)}else tileAt(x[lay],x[lay+"s"],x,Math.min(1,(t-st)/FALL),0,R)})};
+ CL.layers[1].style.display=t<1.5?"none":"";CL.layers[0].style.display=(t<1.5||t>13.6)?"none":"";/* a riposo niente fughe tra le mattonelle */ph(2.2,"d");if(t>=8.4)ph(8.4,"n");else CL.T.forEach(x=>tileAt(x.n,x.ns,x,0,0,0))}
+
+/* ---------------- motore ---------------- */
+function frame(ts){raf=requestAnimationFrame(frame);if(!here()||!M||M==="palla"||M==="off"){stopAll();return}if(!t0)t0=ts;
+ if(M==="faro"){clearCollapse();faroFrame(ts)}else{document.querySelectorAll("main .court canvas.dxfaro").forEach(c=>c.remove());collapseFrame(ts)}}
+function set(m){M=m;document.documentElement.classList.toggle("dxnoball",m!=="palla");t0=0;stopAll();if(window.__dxBallKick)window.__dxBallKick();if(m!=="palla"&&m!=="off")raf=requestAnimationFrame(frame)}
+function toast(m){let d=document.getElementById("dxbt");if(!d){d=document.createElement("div");d.id="dxbt";d.style.cssText="position:fixed;left:50%;top:40%;transform:translateX(-50%);z-index:99999;padding:10px 16px;border-radius:14px;background:#2e1065;color:#a3e635;border:2px solid #a3e635;font:900 italic 15px system-ui;pointer-events:none;transition:opacity .4s;white-space:nowrap";document.body.appendChild(d)}d.textContent=m;d.style.opacity="1";clearTimeout(d._t);d._t=setTimeout(()=>d.style.opacity="0",1700)}
+document.addEventListener("click",e=>{if(!here())return;const t=e.target.closest&&e.target.closest("main .court .cname.cn-duc text");if(!t)return;e.preventDefault();e.stopPropagation();const i=MODES.findIndex(m=>m[0]===dxFx()),n=MODES[(i+1)%MODES.length];try{localStorage.setItem(K,n[0])}catch(_){}toast(n[1]);set(n[0])},true);
+const kick=()=>{const m=dxFx();if(m!==M)set(m);else if(here()&&m!=="palla"&&m!=="off"&&!raf)raf=requestAnimationFrame(frame)};new MutationObserver(kick).observe(document.getElementById("main")||document.body,{childList:true});setTimeout(kick,900);
+window.__dxFxSet=m=>{try{localStorage.setItem(K,m)}catch(e){}set(m)};
 })();
 </script>
 </body>
