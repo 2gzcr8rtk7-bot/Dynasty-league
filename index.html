@@ -7846,8 +7846,10 @@ const DRPI={};
 function lvClock(key){try{const t=String((typeof TVL!=="undefined"&&TVL.st&&TVL.st[key])||"").trim();if(!t||/final/i.test(t))return"";if(/half/i.test(t))return"Intervallo";if(/end of (\w+)/i.test(t)){const m=t.match(/end of (\d)/i);return m?"Fine Q"+m[1]:"Fine"}
  const m=t.match(/(\d{1,2}:\d{2}|\d{1,2}\.\d)\s*(?:-\s*)?(1st|2nd|3rd|4th|OT\d?|\d(?:st|nd|rd|th)?\s*OT)/i);if(m){const q=/ot/i.test(m[2])?"OT":"Q"+m[2][0];return q+" "+m[1]}const q=t.match(/(1st|2nd|3rd|4th)/i);return q?"Q"+q[1][0]:""}catch(e){return""}}
 function drPrevG(n,opp){try{const role=ruoloDi(n),dd=capDati(n,opp),def=role?hnDef(opp,role):null,w=def&&def.n?Math.min(1,def.n/6):0,fac=def&&def.n?1+def.pct/100*w*.6:1;return dd.idx==null?null:dd.idx*fac}catch(e){return null}}
+/* (1445) notti del turno in cui gioca la squadra NBA del giocatore: "N 1-2-3" al posto di "In attesa" */
+function drNotti3(n,W){try{W=W||(typeof CAMPO_DR!=="undefined"&&CAMPO_DR&&CAMPO_DR.W);if(!W||!W.start)return null;const p=Object.values(ROSTER).flat().find(x=>x[0]===n),nba=p&&p[3];if(!nba)return null;const L=[];for(let i=0;i<(W.len||7);i++){const d=drAdd(W.start,i);if((TV.days[d]||[]).some(x=>x[0]===nba||x[1]===nba))L.push(i+1)}return L.length?"N "+L.join("-"):"Nessuna partita"}catch(e){return null}}
 function drPcd0(x,cl,fin){if(!x)return`<span class="pcd na"><b>Posto vuoto</b></span>`;
-  if(x.e==null)return`<span class="pcd na" data-drwk="${x.n}" role="button" tabindex="0"><b>In attesa</b></span>`;
+  if(x.e==null)return`<span class="pcd na" data-drwk="${x.n}" role="button" tabindex="0"><b>${drNotti3(x.n)||"In attesa"}</b></span>`;
   const big=cl==="cap"||cl==="half"?x.f:x.e,sub=cl==="cap"?`${pdkF(x.e)} ×1,5`:cl==="half"?`${pdkF(x.e)} ×½`:"PDK";
   return`<span class="pcd ${pdkLvl(x.e)}${cl==="cap"?" cap":""}${fin?" lk":""}" data-drwk="${x.n}" role="button" tabindex="0">${fin?DR_LKX:""}<b>${pdkF(big)}</b></span>`}
 /* (316) lucchetto "giocatore finito" anche sul campo: tutte le sue partite del turno sono concluse (come nelle carte della sfida); look scelto in Personalizzazioni (html[data-lk]) */
