@@ -3760,3 +3760,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 - (1450) Şengün: aggiornamento di domenica 08/11 forzato a +15% (1680 → 1930, VAL_FORZA k=2) su richiesta di Francesco, dichiarato nel registro come «ritocco del commissario: media di 40 PDK in settimana (il calcolo automatico dava circa +6%)» (VAL_FORZA_WHY).
 - (1451) Şengün: motivo nel registro «aggiustamento automatico commissario per prestazioni di 7 PDK sopra media» (testo scelto da Francesco).
+
+- (1452) Personalizzazioni › Pallini: terza modalità «Barra delle notti» (DLS.ntp="bar"): barretta sotto il cartellino con una casella per notte (scura con N1/N3 da giocare, colore PDK senza scritta se giocata, rossa lampeggiante se live), stretta e infilata sotto il cartellino; con la barra nome e PDK -6%. Cartellino PDK senza bordino 3D in fondo per tutti.
