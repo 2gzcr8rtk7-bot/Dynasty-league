@@ -14469,6 +14469,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-tmexp]");i
 </style>
 <style>/* (1452) cartellino PDK senza bordino 3D in fondo (spazio sprecato) */html body .court .cpl.dr .pcd:not(#zz),html body .dpan .pcd:not(#zz){box-shadow:0 3px 8px rgba(0,0,0,.35)!important}</style>
 <style>/* (1455) tribuna: notti */.bev .gd.trgd{margin:4px 0 0 auto!important;justify-content:flex-end}.bev small.trnt{font:800 italic 12px var(--display),system-ui;letter-spacing:.04em}.bev .gd.trgd.gbar{width:84px;margin:3px 0 0 auto!important;padding:1.5px 2px!important;border-radius:6px;z-index:0}</style>
+<style>/* (1459) bollino capitano C -25% */html body .pjc:not(#zz){scale:.75;transform-origin:center}</style>
 <script>/* (1408) iPhone: quando la modalità Dream è chiusa si spegne l audio (niente icona del suono nella barra in alto) */
 (function(){const off=()=>{try{const a=window.__drmAC;if(a&&a.state!=="closed")a.close()}catch(e){}window.__drmAC=null;try{if(navigator.audioSession)navigator.audioSession.type="auto"}catch(e){}try{if(!window.GZV||!GZV.cur)speechSynthesis.cancel()}catch(e){}};
 const hook=()=>{if(window.dreamClose&&!window.dreamClose.__ofx){const C=window.dreamClose;window.dreamClose=function(){const r=C.apply(this,arguments);setTimeout(off,300);return r};window.dreamClose.__ofx=1}};

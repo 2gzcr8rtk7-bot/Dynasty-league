@@ -3773,3 +3773,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 - (1457) Campo Ducks: toccando DUCKS si alterna «N 1-2-3 nel cartellino» ↔ «Numeri nei pallini»; TEXAS resta per gli effetti.
 - (1458) Campo Ducks: la «Barra delle notti» scelta nelle Personalizzazioni non vale (si vede N 1-2-3, o i pallini toccando DUCKS); resta solo con le personalizzazioni dell area segreta.
+
+- (1459) Bollino del capitano (C) più piccolo del 25%.
