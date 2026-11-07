@@ -14211,108 +14211,54 @@ let q=0;const m=document.getElementById("main")||document.body;new MutationObser
 <script>/* (1384) Ducks: scritta TEXAS DUCKS del bordocampo +24% (cresce verso l esterno) */
 (function(){const K=1.12;function go(){if(typeof cur==="undefined"||cur!=="campo"||curTeam!=="DUC"||(window.gotOn&&gotOn()))return;document.querySelectorAll("main .court .cname.cn-duc text").forEach(t=>{if(t.dataset.k24)return;const b=t.getBBox();if(!b.width)return;const a=t.getAttribute("text-anchor"),cx=a==="end"?b.x+b.width:a==="start"?b.x:b.x+b.width/2,cy=b.y+b.height/2;t.setAttribute("transform",`translate(${cx} ${cy}) scale(${K}) translate(${-cx} ${-cy})`);t.dataset.k24="1"})}
 let q=0;const m=document.getElementById("main")||document.body;new MutationObserver(()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;try{go()}catch(e){}})}).observe(m,{childList:true,subtree:true});setTimeout(go,800)})();</script>
-<script>/* (1385) PROVA PALLA ANIMATA sul campo Ducks: tocca TEXAS a bordocampo per accendere e cambiare (6 animazioni + spenta) */
+<script>/* (1388) PALLA ANIMATA DUCKS: palla viola con scia verde, palleggio a 8 (passa dietro e davanti alla maglia), passaggi tra campo, sesto uomo e panchina, canestro in alto: a ogni giro tirano tutti una volta in ordine casuale. Tocca TEXAS per spegnere/accendere (dl_dxpalla) */
 (function(){
-const PV="#7c3aed",PD="#4c1d95",LM="#a3e635",LD="#4d7c0f";
-const M=[
- {n:"Palla viola, scia verde · giro intorno e passaggi",ball:PV,tr:LM,seq:"orbit"},
- {n:"Palla verde, scia viola · giro intorno e passaggi",ball:LM,tr:PV,seq:"orbit"},
- {n:"Palla viola, scia verde · passaggi a rimbalzo",ball:PV,tr:LM,seq:"bounce"},
- {n:"Palla verde, scia viola · palleggio a 8 e passaggio alto",ball:LM,tr:PV,seq:"eight"},
- {n:"Palla viola, scia verde · passaggi veloci a stella",ball:PV,tr:LM,seq:"star"},
- {n:"Due palle · viola e verde che si incrociano",ball:PV,tr:LM,seq:"two"},
- {n:"Palla viola GRANDE, scia verde · giro e passaggi",ball:PV,tr:LM,seq:"orbit",sz:2},
- {n:"Palla verde GRANDE, scia viola · giro e passaggi",ball:LM,tr:PV,seq:"orbit",sz:2},
- {n:"Canestro · passaggi e tiro da lontano (palla viola)",ball:PV,tr:LM,seq:"hoop",sz:1.4},
- {n:"Canestro · passaggi e tiro da lontano (palla verde)",ball:LM,tr:PV,seq:"hoop",sz:1.4}];
-const K="dl_dxball";const g=()=>{let n=-1;try{const v=localStorage.getItem(K);n=v==null?-1:+v}catch(e){}return n>=-1&&n<M.length?n:-1};
-let cv=null,raf=0,t0=0,trails=[[],[]];
-const on=()=>typeof cur!=="undefined"&&cur==="campo"&&curTeam==="DUC"&&!(window.gotOn&&gotOn());
-function players(court){const cr=court.getBoundingClientRect();return[...court.querySelectorAll(".cpl .pj")].map(p=>{const r=p.getBoundingClientRect();return{x:r.left-cr.left+r.width/2,y:r.top-cr.top+r.height*.52,w:r.width}})}
-function mount(){const court=document.querySelector("main .court");if(!court)return null;let u=court.querySelector(":scope>canvas.dxbu"),o=court.querySelector(":scope>canvas.dxbo");
- if(!u){u=document.createElement("canvas");u.className="dxbu";const s=court.querySelector(":scope>svg.cbg");s?s.after(u):court.prepend(u)}
- if(!o){o=document.createElement("canvas");o.className="dxbo";court.appendChild(o)}
- const r=court.getBoundingClientRect(),d=window.devicePixelRatio||1;[u,o].forEach(c=>{const W=Math.round(r.width*d),H=Math.round(r.height*d);if(c.width!==W||c.height!==H){c.width=W;c.height=H}});return{court,u,o,d}}
-function unmount(){document.querySelectorAll("main .court>canvas.dxbu,main .court>canvas.dxbo").forEach(c=>c.remove());cancelAnimationFrame(raf);raf=0;trails=[[],[]]}
+const BC="#7c3aed",TC="#a3e635",K="dl_dxpalla";
+const isOn=()=>{try{return localStorage.getItem(K)!=="0"}catch(e){return true}};
+const here=()=>typeof cur!=="undefined"&&cur==="campo"&&curTeam==="DUC"&&!(window.gotOn&&gotOn());
+let raf=0,t0=0,TR=[],PLAN=null,PLANKEY="";
+const st=document.createElement("style");st.textContent=`html body .court>canvas.dxpu{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}html body .view>canvas.dxpo{position:absolute;left:0;pointer-events:none;z-index:2}html body .view:has(>canvas.dxpo){position:relative}html body .court:has(.cname.cn-duc) .cln path[d^="M46 12.5A4"]{visibility:hidden}html:not(.gotc) body[data-v="campo"] .court .cname.cn-duc text{cursor:pointer;pointer-events:auto}`;document.head.appendChild(st);
+function els(){const court=document.querySelector("main .court");if(!court)return null;const view=court.closest(".view")||court.parentElement;return{court,view}}
+function mount(E){const{court,view}=E;let u=court.querySelector(":scope>canvas.dxpu"),o=view.querySelector(":scope>canvas.dxpo");
+ if(!u){u=document.createElement("canvas");u.className="dxpu";const s=court.querySelector(":scope>svg.cbg");s?s.after(u):court.prepend(u)}
+ if(!o){o=document.createElement("canvas");o.className="dxpo";view.appendChild(o)}
+ const vr=view.getBoundingClientRect(),cr=court.getBoundingClientRect(),pan=view.querySelector(".dpan"),pr=pan?pan.getBoundingClientRect():cr;
+ const top=cr.top-vr.top-40,h=Math.max(cr.bottom,pr.bottom)-cr.top+60;o.style.top=top+"px";o.style.width=vr.width+"px";o.style.height=h+"px";
+ const d=window.devicePixelRatio||1;const fit=(c,w,hh)=>{const W=Math.round(w*d),H=Math.round(hh*d);if(c.width!==W||c.height!==H){c.width=W;c.height=H}};fit(u,cr.width,cr.height);fit(o,vr.width,h);
+ return{u,o,d,ox:vr.left,oy:vr.top+top,ux:cr.left,uy:cr.top,court,view}}
+function unmount(){document.querySelectorAll("main canvas.dxpu,main canvas.dxpo").forEach(c=>c.remove());cancelAnimationFrame(raf);raf=0;TR=[]}
+function players(E){const L=[];E.court.querySelectorAll(".cpl .pj").forEach(p=>L.push({el:p,court:1}));E.view.querySelectorAll(".dpan .pj").forEach(p=>L.push({el:p,court:0}));
+ return L.map(o=>{const r=o.el.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height*.52,w:r.width,court:o.court}}).filter(p=>p.w>0)}
+function hoop(E){const pa=[...E.court.querySelectorAll(".cln path")].find(e=>/^M46 12\.5A4/.test(e.getAttribute("d")||""));const cr=E.court.getBoundingClientRect();if(!pa)return{x:cr.left+cr.width/2,y:cr.top+cr.height*.18};const r=pa.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+2}}
 const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
-/* posizione della palla al tempo T per la sequenza scelta: {x,y,z(1=davanti,0=dietro),s(scala)} */
-function pos(seq,P,T,k){const n=P.length;if(!n)return null;
- const order=seq==="star"?[0,2,4,1,3]:[0,1,2,3,4];const ord=order.filter(i=>i<n);
- const ORB=seq==="orbit"?2.4:seq==="eight"?2.2:seq==="star"||seq==="two"?0:0.9,PASS=seq==="star"?.55:seq==="eight"?1.15:.9,STEP=ORB+PASS;
- const tt=(T+(k?STEP*ord.length/2:0))%(STEP*ord.length),i=Math.floor(tt/STEP),f=tt-i*STEP,a=P[ord[i]],b=P[ord[(i+1)%ord.length]],R=a.w*.8;
- const dir=k?-1:1;
- if(f<ORB){const p=f/ORB;
-  if(seq==="eight"){const th=p*Math.PI*4;return{x:a.x+R*.9*Math.sin(th),y:a.y+R*.28*Math.sin(2*th)+R*.35,z:Math.cos(th)>0?1:0,s:1}}
-  const th=dir*p*Math.PI*2*(seq==="orbit"?1.5:1)+Math.PI/2;return{x:a.x+R*Math.cos(th),y:a.y+R*.32*Math.sin(th),z:Math.sin(th)>0?1:0,s:.9+.15*Math.sin(th)}}
- const p=ease((f-ORB)/PASS);let sx=a.x,sy=a.y+(seq==="eight"?R*.35:R*.32),ex=b.x,ey=b.y+R*.32;
- if(seq==="orbit"||seq==="eight"){}
- let x=sx+(ex-sx)*p,y=sy+(ey-sy)*p,s=1;
- if(seq==="bounce"){const fy=Math.max(sy,ey)+R*1.1,m=.55;y=p<m?sy+(fy-sy)*Math.pow(p/m,2):fy-(fy-ey)*(1-Math.pow(1-(p-m)/(1-m),2))}
- else if(seq==="eight"){y-=Math.sin(Math.PI*p)*R*2.2;s=1+.55*Math.sin(Math.PI*p)}
- else if(seq==="star"){y-=Math.sin(Math.PI*p)*R*.25}
- else{y-=Math.sin(Math.PI*p)*R*(seq==="two"?.9:1.2);s=1+.2*Math.sin(Math.PI*p)}
- return{x,y,z:1,s}}
-function hoopAt(court){const cr=court.getBoundingClientRect();const pa=[...court.querySelectorAll(".cln path")].find(e=>/^M46 12\.5A4/.test(e.getAttribute("d")||""));if(!pa)return{x:cr.width/2,y:cr.height*.18};const r=pa.getBoundingClientRect();return{x:r.left-cr.left+r.width/2,y:r.top-cr.top+2}}
-function hoopPos(P,T,H,w){const n=P.length;if(!n)return null;let sh=0;P.forEach((p,i)=>{if(p.y>P[sh].y)sh=i});const chain=[...P.keys()].filter(i=>i!==sh);const seq=[chain[0],chain[1]??chain[0],chain[2]??chain[0],sh];
- const PASS=.85,SHOT=1.5,PAUSE=1.1,TOT=PASS*(seq.length-1)+SHOT+PAUSE,t=T%TOT,R=w*.8;
- if(t<PASS*(seq.length-1)){const i=Math.floor(t/PASS),p=ease((t-i*PASS)/PASS),a=P[seq[i]],b=P[seq[i+1]];return{x:a.x+(b.x-a.x)*p,y:a.y+(b.y-a.y)*p-Math.sin(Math.PI*p)*R*.9,z:1,s:1+.2*Math.sin(Math.PI*p)}}
- const t2=t-PASS*(seq.length-1);if(t2<SHOT){const p=t2/SHOT,a=P[sh],q=Math.min(1,p/.88);const x=a.x+(H.x-a.x)*ease(q),y=a.y+(H.y-a.y)*q-Math.sin(Math.PI*q)*R*3.2;if(p<.88)return{x,y,z:1,s:1+.9*Math.sin(Math.PI*q)};const d=(p-.88)/.12;return{x:H.x,y:H.y+d*3,z:0,s:.95-.45*d,inn:1}}
- const d=(t2-SHOT)/PAUSE;return{x:H.x,y:H.y+3,z:0,s:.5,inn:1,gone:1,swish:d}}
-function drawHoop(c,H,w,front,sw){const rr=w*.2;c.save();if(!front){c.fillStyle="rgba(0,0,0,.18)";c.beginPath();c.ellipse(H.x,H.y+rr*.3,rr*1.15,rr*.9,0,0,7);c.fill()}
- if(front){/* tabellone */c.fillStyle="#fff";c.strokeStyle="#5b21b6";c.lineWidth=1.6;c.beginPath();c.rect(H.x-w*.42,H.y-rr*2.1,w*.84,rr*.55);c.fill();c.stroke();c.fillStyle="#5b21b6";c.fillRect(H.x-1.2,H.y-rr*1.55,2.4,rr*.6);
-  /* retina */c.strokeStyle="rgba(255,255,255,.95)";c.lineWidth=1;const k=sw!=null&&sw<.5?1+.25*Math.sin(sw*Math.PI*6):1;for(let i=0;i<12;i++){const an=i/12*Math.PI*2;c.beginPath();c.moveTo(H.x+Math.cos(an)*rr,H.y+Math.sin(an)*rr);c.lineTo(H.x+Math.cos(an+.5)*rr*.45*k,H.y+Math.sin(an+.5)*rr*.45*k+rr*.25);c.stroke()}
-  c.beginPath();c.ellipse(H.x,H.y+rr*.25,rr*.45*k,rr*.45*k,0,0,7);c.stroke();c.beginPath();c.ellipse(H.x,H.y+rr*.12,rr*.72,rr*.72,0,0,7);c.stroke();
-  /* ferro */c.strokeStyle="#f97316";c.lineWidth=2.4;c.beginPath();c.arc(H.x,H.y,rr,0,7);c.stroke();
-  if(sw!=null&&sw<.8){c.globalAlpha=1-sw/.8;c.fillStyle="#a3e635";c.font=`900 italic ${Math.round(w*.32)}px system-ui`;c.textAlign="center";c.fillText("+3",H.x+w*.62,H.y-rr*.8-sw*14);c.strokeStyle="#a3e635";c.lineWidth=2;c.beginPath();c.arc(H.x,H.y,rr*(1.3+sw*2.2),0,7);c.stroke();c.globalAlpha=1}}
- c.restore()}
-function ball(c,x,y,r,col){c.save();c.translate(x,y);c.beginPath();c.arc(0,0,r,0,7);c.fillStyle=col;c.fill();c.lineWidth=r*.13;c.strokeStyle="#111";c.stroke();
- c.beginPath();c.moveTo(-r,0);c.lineTo(r,0);c.moveTo(0,-r);c.lineTo(0,r);c.moveTo(-r*.7,-r*.7);c.quadraticCurveTo(0,0,-r*.7,r*.7);c.moveTo(r*.7,-r*.7);c.quadraticCurveTo(0,0,r*.7,r*.7);c.lineWidth=r*.1;c.stroke();
- const gr=c.createRadialGradient(-r*.35,-r*.4,r*.1,0,0,r);gr.addColorStop(0,"rgba(255,255,255,.55)");gr.addColorStop(1,"rgba(255,255,255,0)");c.beginPath();c.arc(0,0,r,0,7);c.fillStyle=gr;c.fill();c.restore()}
-function frame(ts){raf=requestAnimationFrame(frame);const n=g();if(n<0||!on()){unmount();return}const m=mount();if(!m)return;const{u,o,d,court}=m;const P=players(court);
- const cu=u.getContext("2d"),co=o.getContext("2d");[cu,co].forEach(c=>{c.setTransform(d,0,0,d,0,0);c.clearRect(0,0,c.canvas.width,c.canvas.height)});
- if(!t0)t0=ts;const T=(ts-t0)/1000,md=M[n],H=md.seq==="hoop"?hoopAt(court):null,PW=P[0]?P[0].w:60,balls=md.seq==="two"?[[PV,LM,0],[LM,PV,1]]:[[md.ball,md.tr,0]];
- if(H)drawHoop(cu,H,PW,0);let SW=null;balls.forEach(([bc,tc,k])=>{const q=H?hoopPos(P,T,H,PW):pos(md.seq==="two"?"two":md.seq,P,T,k);if(q&&q.swish!=null)SW=q.swish;if(!q)return;const TR=trails[k];TR.push(q);if(TR.length>22)TR.shift();
-  const r=Math.max(6,PW*.17)*q.s*(md.sz||1);if(q.gone){TR.length=0;return}
-  for(let j=1;j<TR.length;j++){const A=TR[j-1],B=TR[j],c=B.z?co:cu,al=j/TR.length;c.beginPath();c.moveTo(A.x,A.y);c.lineTo(B.x,B.y);c.strokeStyle=tc;c.globalAlpha=al*.85;c.lineWidth=r*1.4*al;c.lineCap="round";c.stroke();c.globalAlpha=al*.35;c.lineWidth=r*2.4*al;c.stroke();c.globalAlpha=1}
-  ball(q.z?co:cu,q.x,q.y,r,bc)});if(H)drawHoop(co,H,PW,1,SW)}
-const st=document.createElement("style");st.textContent=`html body .court>canvas.dxbu,html body .court>canvas.dxbo{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}html body .court>canvas.dxbu{z-index:0}html body .court>canvas.dxbo{z-index:5}html:not(.gotc) body[data-v="campo"] .court .cname.cn-duc text{cursor:pointer;pointer-events:auto}`;document.head.appendChild(st);
-function toast(m){let d=document.getElementById("dxbt");if(!d){d=document.createElement("div");d.id="dxbt";d.style.cssText="position:fixed;left:50%;top:40%;transform:translateX(-50%);z-index:99999;padding:10px 16px;border-radius:14px;background:#2e1065;color:#a3e635;border:2px solid #a3e635;font:900 italic 15px system-ui;pointer-events:none;transition:opacity .4s;max-width:90vw;text-align:center";document.body.appendChild(d)}d.textContent=m;d.style.opacity="1";clearTimeout(d._t);d._t=setTimeout(()=>d.style.opacity="0",1800)}
-document.addEventListener("click",e=>{if(!on())return;const t=e.target.closest&&e.target.closest("main .court .cname.cn-duc text");if(!t)return;e.preventDefault();e.stopPropagation();let n=g()+1;if(n>=M.length)n=-1;try{localStorage.setItem(K,String(n))}catch(_){}t0=0;trails=[[],[]];toast(n<0?"Palla spenta":`${n+1}/${M.length} · ${M[n].n}`);if(n>=0&&!raf)raf=requestAnimationFrame(frame)},true);
-const kick=()=>{if(g()>=0&&on()&&!raf)raf=requestAnimationFrame(frame)};new MutationObserver(kick).observe(document.getElementById("main")||document.body,{childList:true});setTimeout(kick,800);
-window.__dxBall={M,set:n=>{try{localStorage.setItem(K,String(n))}catch(e){}t0=0;trails=[[],[]];kick()}};
+const rnd=(s=>()=>(s=(s*16807)%2147483647)/2147483647);
+/* piano di un giro: tutti tirano una volta, in ordine casuale, con 1-2 passaggi prima di ogni tiro */
+function plan(n,seed){const r=rnd(seed);const ord=[...Array(n).keys()].sort(()=>r()-.5);const S=[];let at=ord[0];
+ ord.forEach(sh=>{const np=1+Math.floor(r()*2);for(let k=0;k<np;k++){let to=k===np-1?sh:Math.floor(r()*n);if(to===at)to=(at+1)%n;if(k===np-1&&at===sh){S.push({t:"dr",p:at,d:1.3});continue}S.push({t:"dr",p:at,d:1.3});S.push({t:"pa",a:at,b:to,d:1});at=to}S.push({t:"dr",p:sh,d:1.3});S.push({t:"sh",p:sh,d:1.6});S.push({t:"in",d:.9});at=sh});
+ let T=0;S.forEach(x=>{x.s=T;T+=x.d});return{S,T}}
+function at(P,H,T){const n=P.length;const key=n+"";if(!PLAN||PLANKEY!==key){PLAN=plan(n,7+n);PLANKEY=key}let t=T%PLAN.T;const cyc=Math.floor(T/PLAN.T);if(PLAN.cyc!==cyc){PLAN=Object.assign(plan(n,7+n+cyc*13),{cyc});t=T%PLAN.T}
+ const x=PLAN.S.find(s=>t>=s.s&&t<s.s+s.d)||PLAN.S[0],p=(t-x.s)/x.d;
+ if(x.t==="dr"){const a=P[x.p],R=a.w*.75,th=p*Math.PI*2;return{x:a.x+R*.95*Math.sin(th),y:a.y+R*.3*Math.sin(2*th)+R*.35,z:a.court&&Math.cos(th)<0?0:1,s:1}}
+ if(x.t==="pa"){const a=P[x.a],b=P[x.b],q=ease(p),R=a.w*.75;return{x:a.x+(b.x-a.x)*q,y:a.y+R*.35+(b.y-a.y)*q-Math.sin(Math.PI*q)*R*1.8,z:1,s:1+.45*Math.sin(Math.PI*q)}}
+ if(x.t==="sh"){const a=P[x.p],R=a.w*.75,q=Math.min(1,p/.86);if(p<.86)return{x:a.x+(H.x-a.x)*ease(q),y:a.y+R*.35+(H.y-a.y-R*.35)*q-Math.sin(Math.PI*q)*R*3.4,z:1,s:1+.9*Math.sin(Math.PI*q)};const d=(p-.86)/.14;return{x:H.x,y:H.y+d*3,z:0,s:.95-.45*d,inn:1}}
+ return{x:H.x,y:H.y+3,z:0,s:.5,gone:1,sw:p}}
+function ball(c,x,y,r){c.save();c.translate(x,y);c.beginPath();c.arc(0,0,r,0,7);c.fillStyle=BC;c.fill();c.lineWidth=r*.12;c.strokeStyle="#111";c.stroke();c.beginPath();c.moveTo(-r,0);c.lineTo(r,0);c.moveTo(0,-r);c.lineTo(0,r);c.moveTo(-r*.7,-r*.7);c.quadraticCurveTo(0,0,-r*.7,r*.7);c.moveTo(r*.7,-r*.7);c.quadraticCurveTo(0,0,r*.7,r*.7);c.lineWidth=r*.09;c.stroke();const g=c.createRadialGradient(-r*.35,-r*.4,r*.1,0,0,r);g.addColorStop(0,"rgba(255,255,255,.55)");g.addColorStop(1,"rgba(255,255,255,0)");c.beginPath();c.arc(0,0,r,0,7);c.fillStyle=g;c.fill();c.restore()}
+function drawHoop(c,H,w,front,sw){const rr=w*.22;c.save();if(!front){c.fillStyle="rgba(0,0,0,.16)";c.beginPath();c.ellipse(H.x,H.y+rr*.3,rr*1.2,rr*.9,0,0,7);c.fill();c.restore();return}
+ c.fillStyle="#fff";c.strokeStyle="#5b21b6";c.lineWidth=1.8;c.beginPath();c.rect(H.x-w*.46,H.y-rr*2.1,w*.92,rr*.55);c.fill();c.stroke();c.fillStyle="#5b21b6";c.fillRect(H.x-1.3,H.y-rr*1.55,2.6,rr*.6);
+ const k=sw!=null&&sw<.5?1+.25*Math.sin(sw*Math.PI*6):1;c.strokeStyle="rgba(255,255,255,.95)";c.lineWidth=1;for(let i=0;i<12;i++){const an=i/12*Math.PI*2;c.beginPath();c.moveTo(H.x+Math.cos(an)*rr,H.y+Math.sin(an)*rr);c.lineTo(H.x+Math.cos(an+.5)*rr*.45*k,H.y+Math.sin(an+.5)*rr*.45*k+rr*.25);c.stroke()}
+ c.beginPath();c.arc(H.x,H.y+rr*.25,rr*.45*k,0,7);c.stroke();c.beginPath();c.arc(H.x,H.y+rr*.12,rr*.72,0,7);c.stroke();c.strokeStyle="#f97316";c.lineWidth=2.6;c.beginPath();c.arc(H.x,H.y,rr,0,7);c.stroke();
+ if(sw!=null&&sw<.85){c.globalAlpha=1-sw/.85;c.fillStyle=TC;c.font=`900 italic ${Math.round(w*.32)}px system-ui`;c.textAlign="center";c.fillText("+3",H.x+w*.66,H.y-rr*.8-sw*14);c.strokeStyle=TC;c.lineWidth=2;c.beginPath();c.arc(H.x,H.y,rr*(1.3+sw*2.2),0,7);c.stroke()}c.restore()}
+function frame(ts){raf=requestAnimationFrame(frame);if(!isOn()||!here()){unmount();return}const E=els();if(!E)return;const m=mount(E),{u,o,d}=m;const P=players(E);if(!P.length)return;
+ const cu=u.getContext("2d"),co=o.getContext("2d");cu.setTransform(d,0,0,d,-m.ux*d,-m.uy*d);co.setTransform(d,0,0,d,-m.ox*d,-m.oy*d);cu.clearRect(m.ux,m.uy,u.width/d,u.height/d);co.clearRect(m.ox,m.oy,o.width/d,o.height/d);
+ if(!t0)t0=ts;const T=(ts-t0)/1000,H=hoop(E),W=P[0].w;drawHoop(cu,H,W,0);const q=at(P,H,T);
+ if(q.gone)TR.length=0;else{TR.push(q);if(TR.length>22)TR.shift()}
+ const r=Math.max(7,W*.17)*q.s*1.4;
+ for(let j=1;j<TR.length;j++){const A=TR[j-1],B=TR[j],c=B.z?co:cu,al=j/TR.length;c.beginPath();c.moveTo(A.x,A.y);c.lineTo(B.x,B.y);c.strokeStyle=TC;c.lineCap="round";c.globalAlpha=al*.85;c.lineWidth=r*1.3*al;c.stroke();c.globalAlpha=al*.3;c.lineWidth=r*2.3*al;c.stroke();c.globalAlpha=1}
+ if(!q.gone)ball(q.z?co:cu,q.x,q.y,r);drawHoop(co,H,W,1,q.sw)}
+function toast(m){let d=document.getElementById("dxbt");if(!d){d=document.createElement("div");d.id="dxbt";d.style.cssText="position:fixed;left:50%;top:40%;transform:translateX(-50%);z-index:99999;padding:10px 16px;border-radius:14px;background:#2e1065;color:#a3e635;border:2px solid #a3e635;font:900 italic 15px system-ui;pointer-events:none;transition:opacity .4s";document.body.appendChild(d)}d.textContent=m;d.style.opacity="1";clearTimeout(d._t);d._t=setTimeout(()=>d.style.opacity="0",1600)}
+document.addEventListener("click",e=>{if(!here())return;const t=e.target.closest&&e.target.closest("main .court .cname.cn-duc text");if(!t)return;e.preventDefault();e.stopPropagation();const v=!isOn();try{localStorage.setItem(K,v?"1":"0")}catch(_){}t0=0;TR=[];toast(v?"🏀 Palla accesa":"Palla spenta");if(v&&!raf)raf=requestAnimationFrame(frame)},true);
+const kick=()=>{if(isOn()&&here()&&!raf)raf=requestAnimationFrame(frame)};new MutationObserver(kick).observe(document.getElementById("main")||document.body,{childList:true});setTimeout(kick,800);
 })();
-</script>
-<script>/* (1386) PROVA effetti spettacolari sul campo Ducks (modi 7-9 della palla) */
-(function(){const B=window.__dxBall;if(!B)return;const PV="#7c3aed",LM="#a3e635";
-B.M.push({n:"Il campo crolla · sotto il campo viola con le linee lime",ball:PV,tr:LM,seq:"orbit",fx:"crollo"},{n:"Scansione neon · il campo diventa viola dall'alto",ball:LM,tr:PV,seq:"star",fx:"neon"},{n:"Onda d'urto · esplosione di stelle dal centro",ball:PV,tr:LM,seq:"bounce",fx:"onda"},{n:"Doppio crollo · cade il bianco, poi cade il viola e torna il bianco",ball:PV,tr:LM,seq:"orbit",fx:"crollo2",sz:1.5});
-const st=document.createElement("style");st.textContent=`@keyframes dxfall{0%,20%{transform:none;opacity:1}21.5%{transform:translate(.6px,-.4px) rotate(1.5deg)}23%{transform:translate(-.6px,.4px) rotate(-1.5deg)}24.5%{transform:none}38%{transform:translate(var(--dx),150px) rotate(var(--r)) scale(.8);opacity:0}78%{transform:translate(0,-150px) rotate(0) scale(1);opacity:0}90%,100%{transform:none;opacity:1}}
-@keyframes dxfallW{0%,10%{transform:none;opacity:1}11%{transform:translate(.6px,-.4px) rotate(1.5deg)}12.5%{transform:translate(-.6px,.4px) rotate(-1.5deg)}14%{transform:none}30%{transform:translate(var(--dx),150px) rotate(var(--r)) scale(.8);opacity:0}99.9%{transform:translate(var(--dx),150px);opacity:0}100%{transform:none;opacity:0}}@keyframes dxfallV{0%,55%{transform:none;opacity:1}56%{transform:translate(.6px,-.4px) rotate(-1.5deg)}57.5%{transform:translate(-.6px,.4px) rotate(1.5deg)}59%{transform:none}75%{transform:translate(var(--dx),150px) rotate(var(--r)) scale(.8);opacity:0}100%{transform:translate(var(--dx),150px);opacity:0}}html body .court .dxtW{transform-box:fill-box;transform-origin:center;animation:dxfallW 16s cubic-bezier(.5,0,.75,0) infinite}html body .court .dxtV{transform-box:fill-box;transform-origin:center;animation:dxfallV 16s cubic-bezier(.5,0,.75,0) infinite}html body .court .dxtile{transform-box:fill-box;transform-origin:center;animation:dxfall 14s cubic-bezier(.5,0,.75,0) infinite}
-@keyframes dxglow{0%,30%{opacity:0}40%,74%{opacity:1}82%,100%{opacity:0}}html body .court .dxneo .dxl{animation:dxglow 14s linear infinite}
-@keyframes dxpulse{0%,100%{stroke-width:.9}50%{stroke-width:1.5}}html body .court .dxneo .dxl{animation:dxglow 14s linear infinite,dxpulse 1.2s ease-in-out infinite}`;document.head.appendChild(st);
-const NS="http://www.w3.org/2000/svg";
-function floor(){const s=document.querySelector("main .court svg.cbg");if(!s)return null;const c=s.querySelector(".cln");return c?{s,f:c.parentElement,c}:null}
-function neo(f,c){const n=document.createElementNS(NS,"g");n.setAttribute("class","dxneo");const L=c.cloneNode(true);L.removeAttribute("class");L.setAttribute("class","dxl");L.setAttribute("stroke",LM);L.style.setProperty("stroke",LM,"important");L.setAttribute("filter","url(#dxng)");
- n.innerHTML=`<defs><linearGradient id="dxnb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b21b6"/><stop offset="1" stop-color="#2e1065"/></linearGradient><filter id="dxng" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation=".8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><pattern id="dxns" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="2" cy="3" r=".3" fill="#fff" opacity=".6"/><circle cx="7" cy="7" r=".2" fill="#c4b5fd"/></pattern></defs><rect x="3" y="6" width="94" height="106" fill="url(#dxnb)"/><rect x="3" y="6" width="94" height="106" fill="url(#dxns)"/>`;n.appendChild(L);f.insertBefore(n,f.firstChild);return n}
-function clear(){document.querySelectorAll("main .court .dxneo,main .court .dxtiles,main .court .dxfx").forEach(e=>e.remove());const F=floor();if(F)[...F.f.children].forEach(e=>{if(e.dataset.dxh){e.style.display="";delete e.dataset.dxh}});document.querySelectorAll("main .court svg.cbg").forEach(s=>delete s.dataset.fx)}
-function apply(){const n=(()=>{try{return +localStorage.getItem("dl_dxball")}catch(e){return -1}})(),m=B.M[n];const F=floor();if(!F)return;const want=m&&m.fx&&typeof cur!=="undefined"&&cur==="campo"&&curTeam==="DUC"&&!(window.gotOn&&gotOn())?m.fx:"";
- if((F.s.dataset.fx||"")===want)return;clear();if(!want)return;F.s.dataset.fx=want;const{f,c}=F;
- if(want==="crollo"){neo(f,c);const kids=[...f.children].filter(e=>!e.classList.contains("dxneo"));const T=document.createElementNS(NS,"g");T.setAttribute("class","dxtiles");let defs="",h="";const C=6,R=7,w=94/C,hh=106/R;const rr=(a=>()=>(a=(a*16807)%2147483647)/2147483647)(11);
-  for(let i=0;i<C;i++)for(let j=0;j<R;j++){const id=`dxt${i}_${j}`;defs+=`<clipPath id="${id}"><rect x="${(3+i*w).toFixed(2)}" y="${(6+j*hh).toFixed(2)}" width="${(w+.05).toFixed(2)}" height="${(hh+.05).toFixed(2)}"/></clipPath>`}
-  T.innerHTML=`<defs>${defs}</defs>`;
-  for(let i=0;i<C;i++)for(let j=0;j<R;j++){const g=document.createElementNS(NS,"g");g.setAttribute("class","dxtile");g.setAttribute("clip-path",`url(#dxt${i}_${j})`);g.style.setProperty("--dx",((rr()-.5)*30).toFixed(1)+"px");g.style.setProperty("--r",((rr()-.5)*70).toFixed(0)+"deg");g.style.animationDelay=(((R-j)*.07+rr()*.25)).toFixed(2)+"s";kids.forEach(k=>g.appendChild(k.cloneNode(true)));T.appendChild(g)}
-  kids.forEach(k=>{k.dataset.dxh="1";k.style.display="none"});f.appendChild(T)}
- if(want==="crollo2"){const kids=[...f.children];const N=neo(f,c);N.querySelector(".dxl").style.animation="dxpulse 1.2s ease-in-out infinite";N.remove();const T=document.createElementNS(NS,"g");T.setAttribute("class","dxtiles");let defs="";const C=6,R=7,w=94/C,hh=106/R;const rr=(a=>()=>(a=(a*16807)%2147483647)/2147483647)(17);
-  for(let i=0;i<C;i++)for(let j=0;j<R;j++)defs+=`<clipPath id="dxu${i}_${j}"><rect x="${(3+i*w).toFixed(2)}" y="${(6+j*hh).toFixed(2)}" width="${(w+.05).toFixed(2)}" height="${(hh+.05).toFixed(2)}"/></clipPath>`;T.innerHTML=`<defs>${defs}</defs>`;
-  const mk=(cls,src,del)=>{for(let i=0;i<C;i++)for(let j=0;j<R;j++){const g=document.createElementNS(NS,"g");g.setAttribute("class",cls);g.setAttribute("clip-path",`url(#dxu${i}_${j})`);g.style.setProperty("--dx",((rr()-.5)*30).toFixed(1)+"px");g.style.setProperty("--r",((rr()-.5)*70).toFixed(0)+"deg");g.style.animationDelay=(del(i,j)+rr()*.25).toFixed(2)+"s";src.forEach(k=>g.appendChild(k.cloneNode(true)));T.appendChild(g)}};
-  mk("dxtV",[N],(i,j)=>j*.07);mk("dxtW",kids,(i,j)=>(R-j)*.07);f.appendChild(T)}
- if(want==="neon"){const N=neo(f,c);N.querySelector(".dxl").style.animation="dxpulse 1.2s ease-in-out infinite";N.insertAdjacentHTML("afterbegin",`<defs><clipPath id="dxsc"><rect x="3" y="6" width="94" height="0"><animate attributeName="height" values="0;0;106;106;0;0" keyTimes="0;.15;.4;.75;.92;1" dur="10s" repeatCount="indefinite"/></rect></clipPath></defs>`);N.setAttribute("clip-path","url(#dxsc)");f.appendChild(N);
-  f.insertAdjacentHTML("beforeend",`<rect class="dxfx" x="3" width="94" height="1.6" fill="${LM}" filter="url(#dxng)" opacity=".95"><animate attributeName="y" values="6;6;112;112;6;6" keyTimes="0;.15;.4;.75;.92;1" dur="10s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0;0;0" keyTimes="0;.15;.4;.41;.99;1" dur="10s" repeatCount="indefinite"/></rect>`)}
- if(want==="onda"){const N=neo(f,c);N.style.opacity="0";N.innerHTML+=``;N.insertAdjacentHTML("beforeend",`<animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;.3;.34;.62;.72;1" dur="9s" repeatCount="indefinite"/>`);N.style.opacity="";N.setAttribute("opacity","0");
-  let fx="";for(let k=0;k<3;k++)fx+=`<circle class="dxfx" cx="50" cy="59" r="1" fill="none" stroke="${k===1?PV:LM}" stroke-width="2" opacity="0"><animate attributeName="r" values="1;1;95;95" keyTimes="0;${(.3+k*.04).toFixed(2)};${(.55+k*.04).toFixed(2)};1" dur="9s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;1;0;0" keyTimes="0;${(.3+k*.04).toFixed(2)};${(.31+k*.04).toFixed(2)};${(.55+k*.04).toFixed(2)};1" dur="9s" repeatCount="indefinite"/></circle>`;
-  const rr=(a=>()=>(a=(a*16807)%2147483647)/2147483647)(5);for(let k=0;k<26;k++){const an=rr()*6.283,d=25+rr()*45,x=(50+Math.cos(an)*d).toFixed(1),y=(59+Math.sin(an)*d*1.1).toFixed(1),z=1+rr()*1.3;fx+=`<path class="dxfx" d="M0 ${-z} L${z*.25} ${-z*.25} L${z} 0 L${z*.25} ${z*.25} L0 ${z} L${-z*.25} ${z*.25} L${-z} 0 L${-z*.25} ${-z*.25}Z" fill="${k%3?LM:"#fff"}" opacity="0"><animateTransform attributeName="transform" type="translate" values="50 59;50 59;${x} ${y};${x} ${y}" keyTimes="0;.3;.5;1" dur="9s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;.3;.33;.6;.7;1" dur="9s" repeatCount="indefinite"/></path>`}
-  f.insertAdjacentHTML("beforeend",fx)}}
-let q=0;new MutationObserver(()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;try{apply()}catch(e){}})}).observe(document.getElementById("main")||document.body,{childList:true,subtree:true});
-document.addEventListener("click",()=>setTimeout(()=>{try{apply()}catch(e){}},30));setTimeout(apply,900)})();
 </script>
 </body>
 </html>
