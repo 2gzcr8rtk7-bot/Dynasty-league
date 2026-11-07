@@ -3813,3 +3813,6 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - La palla rossa live (logo che diventa canestro, statistiche come azioni, etichette rosse) parte su ogni squadra quando uno dei suoi giocatori inizia a giocare; fuori dal live le altre squadre non hanno palla.
 - Pulsante "palla live" tra la maglia e la freccia del tabellone, su tutti i campi Ducks compresi (dl_pallalive, default acceso). Indipendente da TEXAS.
 - Scia nel colore della squadra (Ducks verde). Senza live nessuna animazione: solo un controllo ogni 2,5 s.
+
+## (1486) Scia della palla live nel colore di ogni squadra
+- Prima, con un colore squadra scuro (Dolphins blu, Eagles), la scia tornava verde come i Ducks. Ora il colore scuro si schiarisce: Dolphins blu, Eagles giallo. Ducks restano verdi.
