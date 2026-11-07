@@ -3849,3 +3849,6 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 ## (1496) Banner stats live ufficiale
 - Acceso di default (si spegne in Personalizzazioni › Campo). Durante la live il banner è attaccato al bordo alto del campo (stessa larghezza, angoli in alto arrotondati) e "Notte 1/3" passa sopra il tabellone; finita la partita del giocatore il banner sparisce e tutto torna come prima.
+
+## (1497) Banner: ogni statistica nuova passa una volta
+- Le statistiche nuove fanno un solo giro completo (da destra a sinistra), poi il banner torna alle righe complete; quelle arrivate durante il giro passano subito dopo. Prima restavano per sempre (bug: per rivedere le righe complete bisognava chiudere l'app). Il giro continua senza saltare anche se la pagina si ridisegna.

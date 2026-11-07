@@ -14387,7 +14387,7 @@ document.addEventListener("click",e=>{const b=e.target.closest(".plbtn");if(!b)r
 (function(){
 const st=document.createElement("style");st.textContent=`.lvtick{position:relative;overflow:hidden;margin:0;/* (1496) attaccato al bordo alto del campo */height:30px;border-radius:10px 10px 0 0;background:#fff;box-shadow:none;display:flex;align-items:center;--tk:#5b21b6}
 html.notte .lvtick{background:#5b21b6;--tk:#fff}.lbmcap.lbmnt.tkmv{margin:0 0 6px!important}
-.lvtick .lvtk-tr{display:flex;white-space:nowrap;will-change:transform;animation:lvtk linear infinite}
+.lvtick .lvtk-tr{display:flex;white-space:nowrap;will-change:transform;animation:lvtk linear infinite}.lvtick .lvtk-tr.lvtk-1{animation:none}
 .lvtick .lvtk-tr>span{display:inline-flex;padding-right:28px;font:800 italic 14px/1 var(--display),system-ui;letter-spacing:.04em;text-transform:uppercase;color:var(--tk)!important;-webkit-text-fill-color:var(--tk)!important;text-shadow:none!important}
 .lvtick b{font-weight:900}.lvtick i{font-style:normal;opacity:.55;margin:0 12px}
 .lvtick .lvtk-lv{flex:none;align-self:stretch;display:flex;align-items:center;padding:0 9px;border-radius:10px 0 0 0;background:#dc2626;color:#fff;font:900 italic 12px var(--display),system-ui;letter-spacing:.06em;position:relative;z-index:1}
@@ -14404,22 +14404,29 @@ html:not(.notte) body[data-ct="EAG"] .lvtick{--tk:#0f1b4d}html.notte body[data-c
 html:not(.notte) body[data-ct="MOO"] .lvtick{--tk:#0b3a5c}html.notte body[data-ct="MOO"] .lvtick{--tk:#7cc4f0}
 @media (prefers-reduced-motion:reduce){.lvtick .lvtk-tr{animation-duration:0s!important}}`;document.head.appendChild(st);
 const on=()=>{try{return DLS.tick!==false}catch(e){return true}};/* (1496) acceso di default */
-let TM="",BASE={},LOG=[],LIVE={},T0=performance.now(),KEY="";
+let TM="",BASE={},Q=[],LIVE={},T0=performance.now(),KEY="",PASS=null,PT=0;
+/* (1497) ogni statistica nuova passa UNA volta (un giro completo), poi si torna alle righe complete; se ne arrivano altre intanto, passano subito dopo */
 const TXT={pt:v=>v+" PT",reb:v=>v>1?v+" rimbalzi":"rimbalzo",ast:v=>v>1?v+" assist":"assist",stl:v=>v>1?v+" palle rubate":"palla rubata",blk:v=>v>1?v+" stoppate":"stoppata",to:v=>v>1?v+" palle perse":"palla persa",mis:v=>v>1?v+" tiri sbagliati":"tiro sbagliato",ftx:v=>v>1?v+" TL sbagliati":"TL sbagliato"};
 const sur=n=>{try{return drSur(n)}catch(e){return n}};
 function sample(){if(!on()||document.hidden||typeof cur==="undefined"||cur!=="campo"||!window.__dxLiveNow)return;let L={};try{L=window.__dxLiveNow()||{}}catch(e){}
-  if(TM!==curTeam){TM=curTeam;BASE={};LOG=[]}LIVE=L;
-  for(const n in L){const a=L[n],b=BASE[n];if(b)for(const k of ["pt","ast","reb","stl","blk","to","mis","ftx"]){const d=(a[k]||0)-(b[k]||0);if(d>0)LOG.push({n,k,v:d})}BASE[n]=a}
-  for(const n in BASE)if(!L[n])delete BASE[n];if(LOG.length>14)LOG=LOG.slice(-14);paint()}
-function items(){if(LOG.length)return LOG.slice().reverse().map(e=>`<b>${sur(e.n)}</b>&nbsp;${TXT[e.k](e.v)}`);
-  /* nessuna azione ancora: la riga di ognuno in live */return Object.keys(LIVE).map(n=>{const a=LIVE[n];return`<b>${sur(n)}</b>&nbsp;${a.pt||0} PT · ${a.reb||0} RIM · ${a.ast||0} AST${a.stl?` · ${a.stl} RUB`:""}${a.blk?` · ${a.blk} STOP`:""}${a.to?` · ${a.to} PP`:""}`})}
+  if(TM!==curTeam){TM=curTeam;BASE={};Q=[];PASS=null}LIVE=L;
+  for(const n in L){const a=L[n],b=BASE[n];if(b)for(const k of ["pt","ast","reb","stl","blk","to","mis","ftx"]){const d=(a[k]||0)-(b[k]||0);if(d>0)Q.push({n,k,v:d})}BASE[n]=a}
+  for(const n in BASE)if(!L[n])delete BASE[n];if(Q.length>20)Q=Q.slice(-20);paint()}
+const full=()=>Object.keys(LIVE).map(n=>{const a=LIVE[n];return`<b>${sur(n)}</b>&nbsp;${a.pt||0} PT · ${a.reb||0} RIM · ${a.ast||0} AST${a.stl?` · ${a.stl} RUB`:""}${a.blk?` · ${a.blk} STOP`:""}${a.to?` · ${a.to} PP`:""}`}).join("<i>•</i>")+"<i>•</i>";
 function paint(){const h=document.querySelector("main h2.lbmh"),c=document.querySelector("main .court");let el=document.querySelector("main .lvtick");const nt=document.querySelector("main .lbmnt");
-  if(!on()||cur!=="campo"||!h||!c||!Object.keys(LIVE).length){if(el)el.remove();/* finita la live tutto torna come prima */if(nt&&nt.classList.contains("tkmv")){nt.classList.remove("tkmv");h&&h.after(nt)}return}
+  if(!on()||cur!=="campo"||!h||!c||!Object.keys(LIVE).length){if(el)el.remove();PASS=null;Q=[];/* finita la live tutto torna come prima */if(nt&&nt.classList.contains("tkmv")){nt.classList.remove("tkmv");h&&h.after(nt)}return}
   /* (1496) durante la live: «Notte 1/3» sopra il tabellone, banner attaccato al bordo alto del campo */if(nt&&h&&nt.previousElementSibling===h){nt.classList.add("tkmv");h.before(nt)}
-  const it=items(),html=it.join("<i>•</i>")+"<i>•</i>";if(!el||el.nextElementSibling!==c){if(el)el.remove();el=document.createElement("div");el.className="lvtick";el.setAttribute("aria-label","Statistiche live");c.before(el);el.dataset.k=""}
+  if(!el||el.nextElementSibling!==c){if(el)el.remove();el=document.createElement("div");el.className="lvtick";el.setAttribute("aria-label","Statistiche live");c.before(el);el.dataset.k=""}
   {const cr=c.getBoundingClientRect(),pr=el.parentElement.getBoundingClientRect(),w=cr.width+"px",ml=(cr.left-pr.left)+"px";if(el.style.width!==w)el.style.width=w;if(el.style.marginLeft!==ml)el.style.marginLeft=ml}
-  if(el.dataset.k!==html){if(KEY!==html){KEY=html;T0=performance.now()}el.dataset.k=html;el.innerHTML=`<span class="lvtk-lv">LIVE</span><div class="lvtk-w"><div class="lvtk-tr"><span>${html}</span><span aria-hidden="true">${html}</span></div></div>`;
-    const tr=el.querySelector(".lvtk-tr"),w=tr.scrollWidth/2,dur=Math.max(8,w/45);tr.style.animationDuration=dur+"s";tr.style.animationDelay=-(((performance.now()-T0)/1000)%dur)+"s"}}
+  const now=performance.now();if(PASS&&now>=PASS.t0+PASS.dur)PASS=null;/* giro finito */
+  if(!PASS&&Q.length)PASS={html:Q.splice(0).reverse().map(e=>`<b>${sur(e.n)}</b>&nbsp;${TXT[e.k](e.v)}`).join("<i>•</i>"),t0:now,dur:0};
+  const lv=`<span class="lvtk-lv">LIVE</span>`;
+  if(PASS){const key="P"+PASS.t0;if(el.dataset.k!==key){el.dataset.k=key;el.innerHTML=lv+`<div class="lvtk-w"><div class="lvtk-tr lvtk-1"><span>${PASS.html}</span></div></div>`;
+      const wb=el.querySelector(".lvtk-w"),tr=el.querySelector(".lvtk-tr"),W=wb.clientWidth,w=tr.scrollWidth;if(!PASS.dur)PASS.dur=Math.max(4000,(W+w)/55*1000);
+      try{const an=tr.animate([{transform:`translateX(${W}px)`},{transform:`translateX(${-w}px)`}],{duration:PASS.dur,iterations:1,fill:"forwards"});an.currentTime=Math.min(PASS.dur,now-PASS.t0)}catch(e){}
+      clearTimeout(PT);PT=setTimeout(paint,Math.max(50,PASS.t0+PASS.dur-now+30))}return}
+  const html=full(),key="F"+html;if(el.dataset.k!==key){if(KEY!==html){KEY=html;T0=now}el.dataset.k=key;el.innerHTML=lv+`<div class="lvtk-w"><div class="lvtk-tr"><span>${html}</span><span aria-hidden="true">${html}</span></div></div>`;
+    const tr=el.querySelector(".lvtk-tr"),w=tr.scrollWidth/2,dur=Math.max(8,w/45);tr.style.animationDuration=dur+"s";tr.style.animationDelay=-(((now-T0)/1000)%dur)+"s"}}
 setInterval(sample,2500);setTimeout(sample,900);
 setTimeout(()=>{if(typeof render!=="function")return;const R=render;render=function(){const x=R.apply(this,arguments);try{if(on()&&cur==="campo"){if(TM!==curTeam)sample();else paint()}}catch(e){}return x}},0);
 })();
