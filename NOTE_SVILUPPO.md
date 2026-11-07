@@ -3831,3 +3831,6 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - "Notte X/Y" sotto il tabellone conta solo le notti ufficiali (report Dunkest ~10:30): mentre si gioca la prima resta 1/3 e diventa 2/3 quando arriva il report.
 - Palla live: messaggio senza animazione per rubate (+1 RUB), stoppate (+1 STOP), palle perse (PALLA PERSA / 2 PERSE), tiri liberi sbagliati (TL ✕), bonus triple (BONUS 3 TRIPLE) e doppie/triple doppie.
 - PDK sincronizzati anche con questi messaggi: ogni azione sposta il PDK del suo peso Dunkest (su o giù), all'ultima il valore vero.
+
+## (1491) PDK intermedi esatti
+- I valori mostrati durante le azioni live non sono più stime: PDK vero del tabellino (tvPdk/Dynasty TV) meno il contributo, con gli stessi coefficienti della formula Dunkest, delle azioni non ancora mostrate (punti, rimbalzi off/dif, assist, rubate, stoppate, perse, tiri sbagliati, TL sbagliati, bonus triple, bonus doppie doppie). Cartellino con moltiplicatore e miglior notte del turno rispettati. All'ultima azione il valore vero.
