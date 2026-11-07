@@ -3852,3 +3852,6 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 ## (1497) Banner: ogni statistica nuova passa una volta
 - Le statistiche nuove fanno un solo giro completo (da destra a sinistra), poi il banner torna alle righe complete; quelle arrivate durante il giro passano subito dopo. Prima restavano per sempre (bug: per rivedere le righe complete bisognava chiudere l'app). Il giro continua senza saltare anche se la pagina si ridisegna.
+
+## (1498) Sigle nel banner e nelle notifiche della palla
+- PT, RIM, AST, STL (al posto di RUB / palla rubata), TOV (al posto di PP / palla persa).

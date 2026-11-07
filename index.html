@@ -14328,7 +14328,7 @@ setInterval(()=>{for(const n in FRZ)if(Date.now()-FRZ[n].t>60000)frzEnd(n)},5000
 function idxOf(P,n){const i=P.findIndex(p=>p.n===n);return i>=0?i:0}
 function pickNot(P,ex,r){const C=P.map((p,i)=>i).filter(i=>P[i].court&&!LSet.has(P[i].n)&&!ex.includes(i));const D=C.length?C:P.map((p,i)=>i).filter(i=>P[i].court&&!ex.includes(i));return D.length?D[Math.floor(r()*D.length)]:0}
 const PDKC={pts:1,dreb:1,oreb:1.25,ast:1.5,stl:1.5,blk:1.5,to:-1.5,mis:-1,ftx:-1,tb:1,ddb:1};/* (1491) stessi coefficienti di tvPdk (formula Dunkest) */const EVW=e=>{let w=0;const d=e.d||{};for(const k in d)w+=(PDKC[k]||0)*d[k];return w};
-const MSG={stl:v=>"+"+v+" RUB",blk:v=>"+"+v+" STOP",to:v=>v>1?v+" PERSE":"PALLA PERSA",ftx:v=>(v>1?v+" ":"")+"TL ✕",tpb:v=>"BONUS "+v+" TRIPLE",dd:v=>v>=4?"QUADRUPLA DOPPIA":v===3?"TRIPLA DOPPIA":"DOPPIA DOPPIA"};
+const MSG={stl:v=>"+"+v+" STL",blk:v=>"+"+v+" STOP",to:v=>v+" TOV",ftx:v=>(v>1?v+" ":"")+"TL ✕",tpb:v=>"BONUS "+v+" TRIPLE",dd:v=>v>=4?"QUADRUPLA DOPPIA":v===3?"TRIPLA DOPPIA":"DOPPIA DOPPIA"};
 function buildLive(P,T){const r=rnd(7+Math.floor(T*97));const S=[];const court=P.map((p,i)=>i).filter(i=>P[i].court);const go=to=>{if(to!==HOLD){S.push({t:"dr",p:HOLD,d:1.4});S.push({t:"pa",a:HOLD,b:to,d:1.2});HOLD=to}};/* (1475) ritmo calmo */
  const ev=EVQ.shift();
  if(ev&&ev.t==="pt"){const k=idxOf(P,ev.n);go(k);S.push({t:"dr",p:k,d:1.5,lb:{n:ev.n,i:k,tx:"+"+ev.v+" PT"}});S.push({t:"sh",p:k,d:1.9});S.push({t:"in",d:1.1})}
@@ -14406,13 +14406,13 @@ html:not(.notte) body[data-ct="MOO"] .lvtick{--tk:#0b3a5c}html.notte body[data-c
 const on=()=>{try{return DLS.tick!==false}catch(e){return true}};/* (1496) acceso di default */
 let TM="",BASE={},Q=[],LIVE={},T0=performance.now(),KEY="",PASS=null,PT=0;
 /* (1497) ogni statistica nuova passa UNA volta (un giro completo), poi si torna alle righe complete; se ne arrivano altre intanto, passano subito dopo */
-const TXT={pt:v=>v+" PT",reb:v=>v>1?v+" rimbalzi":"rimbalzo",ast:v=>v>1?v+" assist":"assist",stl:v=>v>1?v+" palle rubate":"palla rubata",blk:v=>v>1?v+" stoppate":"stoppata",to:v=>v>1?v+" palle perse":"palla persa",mis:v=>v>1?v+" tiri sbagliati":"tiro sbagliato",ftx:v=>v>1?v+" TL sbagliati":"TL sbagliato"};
+const TXT={pt:v=>v+" PT",reb:v=>v+" RIM",ast:v=>v+" AST",stl:v=>v+" STL",blk:v=>v>1?v+" stoppate":"stoppata",to:v=>v+" TOV",mis:v=>v>1?v+" tiri sbagliati":"tiro sbagliato",ftx:v=>v>1?v+" TL sbagliati":"TL sbagliato"};
 const sur=n=>{try{return drSur(n)}catch(e){return n}};
 function sample(){if(!on()||document.hidden||typeof cur==="undefined"||cur!=="campo"||!window.__dxLiveNow)return;let L={};try{L=window.__dxLiveNow()||{}}catch(e){}
   if(TM!==curTeam){TM=curTeam;BASE={};Q=[];PASS=null}LIVE=L;
   for(const n in L){const a=L[n],b=BASE[n];if(b)for(const k of ["pt","ast","reb","stl","blk","to","mis","ftx"]){const d=(a[k]||0)-(b[k]||0);if(d>0)Q.push({n,k,v:d})}BASE[n]=a}
   for(const n in BASE)if(!L[n])delete BASE[n];if(Q.length>20)Q=Q.slice(-20);paint()}
-const full=()=>Object.keys(LIVE).map(n=>{const a=LIVE[n];return`<b>${sur(n)}</b>&nbsp;${a.pt||0} PT · ${a.reb||0} RIM · ${a.ast||0} AST${a.stl?` · ${a.stl} RUB`:""}${a.blk?` · ${a.blk} STOP`:""}${a.to?` · ${a.to} PP`:""}`}).join("<i>•</i>")+"<i>•</i>";
+const full=()=>Object.keys(LIVE).map(n=>{const a=LIVE[n];return`<b>${sur(n)}</b>&nbsp;${a.pt||0} PT · ${a.reb||0} RIM · ${a.ast||0} AST${a.stl?` · ${a.stl} STL`:""}${a.blk?` · ${a.blk} STOP`:""}${a.to?` · ${a.to} TOV`:""}`}).join("<i>•</i>")+"<i>•</i>";
 function paint(){const h=document.querySelector("main h2.lbmh"),c=document.querySelector("main .court");let el=document.querySelector("main .lvtick");const nt=document.querySelector("main .lbmnt");
   if(!on()||cur!=="campo"||!h||!c||!Object.keys(LIVE).length){if(el)el.remove();PASS=null;Q=[];/* finita la live tutto torna come prima */if(nt&&nt.classList.contains("tkmv")){nt.classList.remove("tkmv");h&&h.after(nt)}return}
   /* (1496) durante la live: «Notte 1/3» sopra il tabellone, banner attaccato al bordo alto del campo */if(nt&&h&&nt.previousElementSibling===h){nt.classList.add("tkmv");h.before(nt)}
