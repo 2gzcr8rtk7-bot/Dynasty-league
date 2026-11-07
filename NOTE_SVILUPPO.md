@@ -3846,3 +3846,6 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - Colori come la barra delle notti: giorno bianco / notte viola, scritta nel colore della squadra (Ducks viola di giorno, lime di notte).
 - Nasce spento: Personalizzazioni › Campo › Banner stats live (DLS.tick, in KEEP: vale anche sui Ducks).
 - (1495) Banner: stessa distanza sopra (cassa) e sotto (tabellone), 12 px; scritta sempre nel colore squadra anche col tema parquet.
+
+## (1496) Banner stats live ufficiale
+- Acceso di default (si spegne in Personalizzazioni › Campo). Durante la live il banner è attaccato al bordo alto del campo (stessa larghezza, angoli in alto arrotondati) e "Notte 1/3" passa sopra il tabellone; finita la partita del giocatore il banner sparisce e tutto torna come prima.
