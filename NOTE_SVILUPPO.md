@@ -3703,3 +3703,6 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1419) Ducks Arena (Dream): tifosi tutti in bianco, campo viola chiaro (#8b5cf6 → #6d28d9) con linee lime luminose e area viola scuro, bordo #4c1d95, seggiolini viola, logo bordo lime al centro (render 3 scelto da Francesco). dream.js?v=1419.
 
 - (1420) Ducks notte: logo ufficiale con palla viola (loghi/duc-20n.webp). Editor loghi: aggiunto «Notte palla viola»; «Notte nuovo» rinominato «Notte palla bianca» (duc-19n). Condivisioni e scambio giorno/notte riconoscono qualsiasi logo notte duc-NNn.
+
+- (1421) Editor loghi scollegati: la chiave e il selettore includono anche il contenitore del logo (es. .hmtm > .hmrl), così caselle con lo stesso nome in posti diversi (Home lista/raggruppata, Sala Trofei classifica/tabella) non cambiano insieme; le scelte «Solo squadra» vincono su «Tutte le squadre qui».
+- (1422) Prova loghi al contrario: di giorno palla viola (duc-20n?v=2), di notte bordo bianco (duc-17?v=2). Lo script giorno/notte ora lavora sempre (anche di giorno) partendo dal logo scritto nel codice (duc-17?v=1). Condivisioni sempre col logo di giorno (window.DUC_DAY). Il campo di giorno resta col bordo lime e le 25 caselle lime restano lime.
