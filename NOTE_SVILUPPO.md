@@ -3635,3 +3635,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v823: Ducks, una sola animazione palla (1388): palla viola scia verde, palleggio a 8 dietro/davanti la maglia, passaggi anche con sesto uomo e panchina, canestro dall alto al posto dell arco verde sotto il canestro; a ogni giro tirano tutti una volta in ordine casuale. Tolte le altre animazioni e gli effetti. Accesa di default, tocca TEXAS per spegnere (dl_dxpalla).
 
 - v824: animazione palla Ducks: palla verde con scia viola.
+
+- v825: fix: con lo sfondo Ducks scuro (viola) le scritte su sfondo squadra (profilo giocatore, intestazioni, immagini condivise) diventano bianche (TEAMS.DUC.txt).

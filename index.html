@@ -3107,7 +3107,7 @@ document.addEventListener("change",e=>{if(e.target&&e.target.id==="dccol")ducCol
 const ducDark=()=>{const h=TEAMS.DUC.bg,n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255<.5};
 const DUC_T0={city:TEAMS.DUC.city,name:TEAMS.DUC.name,fg:TEAMS.DUC.fg};
 /* (1309) modalità Gotham attiva: in tutta l'app i Ducks diventano Gotham City Ducks, sfondo viola notte */
-function ducColApply(){let g=false;TEAMS.DUC.bg=g?"#4c1d95":(DUC_COL||DUC_Y);TEAMS.DUC.city=g?"Gotham":DUC_T0.city;TEAMS.DUC.name=g?"Gotham City Ducks":DUC_T0.name;TEAMS.DUC.fg=g?"#ffffff":DUC_T0.fg;window.DUC_COL3D=g?"#6d28d9":(DUC_COL||null);document.documentElement.toggleAttribute("data-ducdk",ducDark())}ducColApply();
+function ducColApply(){let g=false;TEAMS.DUC.bg=g?"#4c1d95":(DUC_COL||DUC_Y);TEAMS.DUC.city=g?"Gotham":DUC_T0.city;TEAMS.DUC.name=g?"Gotham City Ducks":DUC_T0.name;TEAMS.DUC.fg=g?"#ffffff":DUC_T0.fg;window.DUC_COL3D=g?"#6d28d9":(DUC_COL||null);document.documentElement.toggleAttribute("data-ducdk",ducDark());if(ducDark())TEAMS.DUC.txt="#ffffff";else delete TEAMS.DUC.txt/* (1389) scritte bianche sul viola */}ducColApply();
 const LOGO={"TUR": "img/e5e4d392816e.png","DUC": "loghi/duc-11.webp?v=3","SPI": "img/f85596a38af8.png", "FOX": "img/cc9ccfb8f0bc.png", "EAG": "img/756630104519.png", "MOO": "img/c75de376d2cb.png", "DOL": "img/80465239f661.png", "PEA": "img/447ab01f859c.png"};
 /* Logo alternativo (solo scritta) usato nel campo e negli infortuni */
 const LOGO2={"DUC":"loghi/duc-11.webp?v=3"};
