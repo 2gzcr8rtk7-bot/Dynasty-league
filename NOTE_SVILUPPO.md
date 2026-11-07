@@ -3710,3 +3710,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1423) Ducks: logo palla viola (duc-20n) sia di giorno sia di notte, ovunque (anche campo e bordocampo; tolte le immagini lime/bianco dalle 25 caselle 1416, restano le grandezze). Ducks Arena Dream: logo palla viola in alta definizione (loghi/duc-20n-hd.webp 1500px) più grande del 20%, disegnato con smussatura alta; linea di metà campo interrotta sul logo. dream.js?v=1423.
 
 - (1424) Editor loghi terza passata (Francesco 07/11): 27 caselle ufficiali (style #ofl1424, 3 id di forza: sopra le ufficiali, sotto l editor) con logo scelto (Notte vecchio duc-11n / Bordo lime duc-18), grandezze moltiplicate sulla grandezza ufficiale e spostamenti (Home .hrl -1px, rosa chip -2px); uguali giorno e notte. Logo del campo (SVG) cambiato via JS con marcatore data-ofl rispettato da 1370 e dallo scambio giorno/notte. Scelte dell editor azzerate (dl_dxlogo_m1424).
+
+- (1425) Editor loghi: aggiunto «Becco arancio palla viola» (loghi/duc-21.webp).
