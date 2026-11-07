@@ -3757,3 +3757,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 - (1448) Calcolatore scambi: nuova scheda «4 squadre» (stesso motore del 3; saldo, giudizio e condivisione «Scambio a 4»; proposte IA a 4 squadre apribili).
 - (1449) Pallini numerati di giorno con base bianca e numero viola scuro. Logo Ducks banner squadra 98%, altezza 102% (scale 1.172 1.075). Fix: di giorno i Ducks non restano con la maglia viola della notte (KIT.DUC 318 salvato per errore torna 319).
+
+- (1450) Şengün: aggiornamento di domenica 08/11 forzato a +15% (1680 → 1930, VAL_FORZA k=2) su richiesta di Francesco, dichiarato nel registro come «ritocco del commissario: media di 40 PDK in settimana (il calcolo automatico dava circa +6%)» (VAL_FORZA_WHY).
