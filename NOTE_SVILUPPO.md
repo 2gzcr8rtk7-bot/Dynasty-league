@@ -3804,3 +3804,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1478) Fascio di luce del banner Ducks: arriva fino in fondo ed esce dal banner (dxsb fino a 860%).
 - (1479) Barra delle notti: nella casella live il PDK live (1 decimale) nel colore del punteggio, che lampeggia; in tribuna idem.
 - (1480) Barra delle notti come negli scontri diretti: N1 se deve giocare, PDK live colorato che lampeggia, PDK finale nel suo colore, NG se non ha giocato.
+- (1481) Barra delle notti: il lampeggio live non si vedeva (l opacità era bloccata con !important): ora lampeggia con la luminosità.
