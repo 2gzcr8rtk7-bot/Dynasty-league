@@ -8868,14 +8868,15 @@ function drTeam(k,t,W){W=W||drWeek(k);const F0=drForm(k)[t]||{t:[],r:[]},F={t:F0
   /* (1103) INFORTUNATI IN TRIBUNA: a turno aperto, chi è «out» nel Centro Medico e non ha ancora punti nel turno passa dietro a tutti i sani
      (nei ruoli, in campo, in panchina): entra nei 10 solo se i sani del suo ruolo non bastano, e in quel caso finisce in fondo (panchina). L'ordine di PDK resta per tutto il resto. */
   const pool=[...F.t,...F.r].map((n,i)=>{let e=drEff(W.acc[n]),cal=false;if(e==null&&drCalZero(n,k)){const m=pdkMed(n);if(m!=null){e=m;cal=true}}let inj=0;try{if(!W.closed&&e==null){const s=INJ[n]&&INJ[n].stato;inj=s==="out"?2:s==="dubbio"?1:0}}catch(_){}return{n,i,r:ruoloDi(n),e,a:W.acc[n],cal,inj,ts:e==null&&!W.closed?drNextTs(n,W):0}});
-  const lo=x=>x.inj||0,key=x=>x.e==null?-1e9:x.e,med=x=>x.e==null?(pdkMed(x.n)??-99):0,ord=(p,q)=>lo(p)-lo(q)||key(q)-key(p)||med(q)-med(p)||p.i-q.i; /* senza punteggio nel turno: in ordine di PDK medio */
+  const PRE=!W.started&&!W.closed,n1=x=>{if(!PRE)return 0;try{const p=Object.values(ROSTER).flat().find(y=>y[0]===x.n),nba=p&&p[3];return nba&&(TV.days[W.start]||[]).some(g=>g[0]===nba||g[1]===nba)?1:0}catch(e){return 0}};pool.forEach(x=>x.n1=n1(x));/* (1462) turno non ancora iniziato: prima chi gioca la N1, poi per PDK medio */
+  const lo=x=>x.inj||0,key=x=>x.e==null?-1e9:x.e,med=x=>x.e==null?(pdkMed(x.n)??-99):0,ord=(p,q)=>lo(p)-lo(q)||key(q)-key(p)||(q.n1||0)-(p.n1||0)||med(q)-med(p)||p.i-q.i; /* senza punteggio nel turno: in ordine di PDK medio */
   let sel=[],zeros=0;for(const r of["G","F","C"]){const l=pool.filter(x=>x.r===r).sort(ord),q=DR_QUOTE[r];sel.push(...l.slice(0,q));zeros+=Math.max(0,q-l.length)}
   sel.sort(ord);let A=sel.slice(0,5),B=sel.slice(5);/* i 5 IN CAMPO devono avere almeno 1 C, 1 A, 1 G; il 6° uomo è libero (punteggio pieno) */
   for(const r of["C","F","G"]){if(A.some(x=>x.r===r))continue;const up=B.find(x=>x.r===r);if(!up)continue;
     const cnt=x=>A.filter(y=>y.r===x.r).length,down=[...A].reverse().find(x=>cnt(x)>1);if(!down)continue;
     A=A.filter(x=>x!==down).concat(up).sort(ord);B=B.filter(x=>x!==up).concat(down).sort(ord)}
   /* chi non ha ancora punteggio si ordina per orario di inizio della prima partita (poi PDK medio); la scelta dei 10 e dei 5 in campo resta quella di prima */
-  const ord2=(p,q)=>lo(p)-lo(q)||key(q)-key(p)||(p.e==null&&q.e==null?p.ts-q.ts:0)||med(q)-med(p)||p.i-q.i;
+  const ord2=PRE?ord:(p,q)=>lo(p)-lo(q)||key(q)-key(p)||(p.e==null&&q.e==null?p.ts-q.ts:0)||med(q)-med(p)||p.i-q.i;/* (1462) prima dell inizio: N1 prima, poi PDK medio (capitano = miglior media tra chi gioca la N1) */
   A.sort(ord2);B.sort(ord2);
   const top=[...A,...B],inT=new Set(top);
   const rest=pool.filter(x=>!inT.has(x)),trib=rest.filter(x=>x.e!=null).sort(ord),wait=rest.filter(x=>x.e==null).sort(ord2);
