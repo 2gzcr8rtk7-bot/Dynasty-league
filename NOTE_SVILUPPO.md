@@ -3840,3 +3840,8 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 ## (1493) Palla live in Personalizzazioni › Campo
 - Interruttore "Palla live" (DLS.plv, acceso di default) nelle impostazioni del campo, per tutti; vale anche sui Ducks (chiave in KEEP). Niente pulsante sul tabellone.
+
+## (1494) Banner stats live
+- Sopra il tabellone del campo scorre un banner con le statistiche dei giocatori in live (es. "Jokić 2 PT", "Jokić palla persa", "Jokić palla rubata", "Jokić assist"); senza azioni ancora, la riga di ognuno (PT · RIM · AST…). Visibile solo se qualcuno della squadra è in live.
+- Colori come la barra delle notti: giorno bianco / notte viola, scritta nel colore della squadra (Ducks viola di giorno, lime di notte).
+- Nasce spento: Personalizzazioni › Campo › Banner stats live (DLS.tick, in KEEP: vale anche sui Ducks).
