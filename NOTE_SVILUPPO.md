@@ -3766,3 +3766,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1453) Fix barra delle notti in panchina: era nascosta dietro lo sfondo della panchina (z-index -1); ora il cartellino sta sopra (z 1) e la barra sotto (z 0). Spessore barra parametrico (--gbk) per le prove.
 
 - (1454) Barra delle notti +17% di spessore (e scritta), in campo e in panchina.
+
+- (1455) Tribuna: sempre la barra delle notti sotto la casella (In attesa → PDK del turno quando c è).
