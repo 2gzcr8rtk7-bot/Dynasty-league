@@ -3756,3 +3756,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1447) Campo: centri e ali più in basso (ROWY C 27.6, F 55.8) e maglie in campo/panchina -4%. Pallini numerati (opzione) più piccoli del 10% e trasparenti: di notte numero bianco su fondo quasi trasparente, di giorno numero viola scuro.
 
 - (1448) Calcolatore scambi: nuova scheda «4 squadre» (stesso motore del 3; saldo, giudizio e condivisione «Scambio a 4»; proposte IA a 4 squadre apribili).
+- (1449) Pallini numerati di giorno con base bianca e numero viola scuro. Logo Ducks banner squadra 98%, altezza 102% (scale 1.172 1.075). Fix: di giorno i Ducks non restano con la maglia viola della notte (KIT.DUC 318 salvato per errore torna 319).
