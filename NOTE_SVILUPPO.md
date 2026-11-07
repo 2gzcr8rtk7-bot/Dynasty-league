@@ -3819,3 +3819,6 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 ## (1487) Palla live viola Dreamers
 - In live la palla è viola Dreamers e lampeggia (colore e alone pulsano tra #7c3aed e lilla), per tutte le squadre. Pulsante "palla live" viola.
+
+## (1488) Canestro stabile
+- Quando il campo si ridisegna (aggiornamenti live) il logo ricompariva per ~0,35 s e la palla ripartiva da capo. Ora con la stessa squadra l'animazione continua senza fermarsi e il logo resta nascosto via CSS (html.dxhoop) finché c'è il canestro.
