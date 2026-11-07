@@ -3735,3 +3735,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1436) Banner squadra sul campo (.view > .teamhead): logo Ducks 95% della grandezza attuale, scritto fisso nel CSS (scale 1.196 1.075), nessun calcolo al caricamento. Scelte editor azzerate (dl_dxlogo_m1436).
 
 - (1437) BUG: il logo Ducks (Notte vecchio) compariva al centro del campo di tutte le squadre. Causa: le voci ufficiali 1424/1428 per il logo dentro il disegno del campo (.cbg > image) non erano limitate ai Ducks. Ora usano .court:has(.cname.cn-duc). Anche l editor: le voci «image» valgono solo per la squadra aperta (body[data-ct]).
+
+- (1438) Impostazioni › Solo per la squadra scelta: pulsante «📋 Rendi ufficiale il campo X: copia per Claude» che copia DLS.tm[X], maglia (KIT[X], KITG), stile attivo e tutte le impostazioni del campo.
