@@ -3645,3 +3645,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v828: fix Dream 3D: le maglie in campo (e negli spogliatoi/premi) non si caricavano perche jerseyShare ora mette gia width/height (attributo doppio = SVG invalido); dream.js toglie width/height prima di rimetterli. Ducks: parquet della Dream arena color ghiaccio con il viola.
 
 - v829: animazione palla Ducks: palla 12% piu piccola.
+
+- v830: Ducks, tolta dal selettore la maglia 320 DUCKS Ghiaccio viola (chi la usava torna alla predefinita Bianca viola).
