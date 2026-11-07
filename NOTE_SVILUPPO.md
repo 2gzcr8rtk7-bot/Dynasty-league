@@ -3781,3 +3781,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1461) Live del campo: tasti N1 N2 N3 del turno in corso (con data, pallino rosso sulla notte in corso) per scegliere anche una notte futura; per la notte scelta tutti i giocatori della squadra che giocano (chi non ha ancora il box: avversario e ora, PDK «—»).
 
 - (1462) Formazioni Dreamers (campo e scontri diretti) prima dell inizio del turno: dentro ogni ruolo prima chi gioca la N1, poi per PDK medio; capitano = miglior media tra chi gioca la N1. Regole di ruolo e posizioni invariate. A turno iniziato ordine di sempre.
+
+- (1463) Barra delle notti: bianca di giorno, nera di notte; +25%; di nuovo disponibile sul campo Ducks; scritta della casella live leggibile (tolto il pallino live sovrapposto).
