@@ -14226,7 +14226,7 @@ let q=0;new MutationObserver(()=>{if(q||R.every(([s])=>B[s]))return;q=setTimeout
 window.dxPersOn=()=>{try{return localStorage.getItem("dl_dxpers")==="1"}catch(e){return false}};
 (function(){const KEEP=new Set(["th","hand","ord","ns","nsb","autont","hnlg","hpre","hpreOn","hpreMoon","hpreBak","pvTeam","pvNight","pvHide","pvSz","bxM","ntp"]);/* (1446) notti nei pallini: scelta libera anche sui Ducks */
 const cp=v=>v==null?v:JSON.parse(JSON.stringify(v));
-function swap(){const sv={};for(const k of Object.keys(DLS)){if(KEEP.has(k))continue;sv[k]=DLS[k];if(k in DLS_DEF)DLS[k]=cp(DLS_DEF[k]);else delete DLS[k]}for(const k of Object.keys(DLS_DEF)){if(KEEP.has(k)||k in sv)continue;sv[k]=undefined;DLS[k]=cp(DLS_DEF[k])}if(DLS.nost===undefined)DLS.nost=false;return sv}
+function swap(){const sv={};for(const k of Object.keys(DLS)){if(KEEP.has(k))continue;sv[k]=DLS[k];if(k in DLS_DEF)DLS[k]=cp(DLS_DEF[k]);else delete DLS[k]}for(const k of Object.keys(DLS_DEF)){if(KEEP.has(k)||k in sv)continue;sv[k]=undefined;DLS[k]=cp(DLS_DEF[k])}if(DLS.nost===undefined)DLS.nost=false;if(DLS.ntp==="bar"){sv.ntp="bar";DLS.ntp=false}/* (1458) sul campo Ducks niente barra delle notti: solo N 1-2-3 o pallini (tocca DUCKS) */return sv}
 function back(sv){for(const k in sv){if(sv[k]===undefined)delete DLS[k];else DLS[k]=sv[k]}}
 const lock=()=>typeof cur!=="undefined"&&cur==="campo"&&curTeam==="DUC"&&!dxPersOn()&&!(window.gotOn&&gotOn());
 const V1=vCampo;vCampo=function(){if(curTeam!=="DUC"||dxPersOn())return V1.apply(this,arguments);const sv=swap();try{return V1.apply(this,arguments)}finally{back(sv)}};VIEWS.campo=vCampo;
