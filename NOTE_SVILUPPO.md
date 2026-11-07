@@ -3744,3 +3744,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1441) Maglia Ducks ufficiale di notte: 318 (viola a righe, DUCKS e numero verdi); di giorno resta quella scelta/predefinita (319 bianca verde e viola).
 
 - (1442) Statistiche › Giocatori (.fagl): logo Ducks -10% (scale 0.991 0.796, fisso).
+
+- (1443) IA Trade › La tua squadra (.gurowc > .guchip): logo Ducks 93%, larghezza 102% (scale 0.949 0.93, fisso). Scelte editor azzerate (dl_dxlogo_m1443).
