@@ -3661,3 +3661,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v836: effetti Ducks: terza animazione (tocca TEXAS) palla + crollo del pavimento insieme.
 
 - v837: effetti Ducks: 1 palla (predefinita per tutti), 2 crollo del pavimento, poi spento; tolta palla+crollo.
+
+- v838: logo Ducks ufficiale sostituito con la versione occhi rossi (stesso file loghi/duc-11.webp, v4): stesse posizioni e grandezze in tutte le sezioni, anche Dream.
