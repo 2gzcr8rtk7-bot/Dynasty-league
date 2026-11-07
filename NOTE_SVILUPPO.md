@@ -3729,3 +3729,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 - (1433) Parquet: condivisione «Live stanotte» con titolo, tabella e riga in fondo su caselle bianche e testo arancione (shPQ); riga in fondo bianca in tutte le condivisioni parquet (shFoot). Lista del Trend su casella bianca con testo arancione.
 - (1434) Condivisioni: logo Ducks +40% e -4% in altezza (Live stanotte cresce verso l alto); rosa e cassa restano come prima.
+
+- (1435) Velocità: loghi Ducks ufficiali ridotti a 340px (20n 65→38KB, 11n 68→40, 18 75→45, 22 80→44; nuove ?v=), condivisioni con copia alta qualità loghi/duc-22-hd.webp. Animazione palla del campo Ducks: misure di giocatori/canestro/tele solo ogni 0,6 s (in mezzo si segue lo scorrimento, niente ricalcolo pagina a ogni fotogramma), stile delle tele scritto solo se cambia, tele a risoluzione massima 2x, niente disegno se il campo è fuori schermo o sotto Dream/giochi a tutto schermo. Test con CPU rallentata 4x: campo 26→48 fps, blocchi lenti 25→3. Scambio giorno/notte non più a ogni cambio di classe in tutta la pagina.
