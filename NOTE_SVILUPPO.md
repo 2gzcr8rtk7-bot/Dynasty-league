@@ -3834,3 +3834,6 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 ## (1491) PDK intermedi esatti
 - I valori mostrati durante le azioni live non sono più stime: PDK vero del tabellino (tvPdk/Dynasty TV) meno il contributo, con gli stessi coefficienti della formula Dunkest, delle azioni non ancora mostrate (punti, rimbalzi off/dif, assist, rubate, stoppate, perse, tiri sbagliati, TL sbagliati, bonus triple, bonus doppie doppie). Cartellino con moltiplicatore e miglior notte del turno rispettati. All'ultima azione il valore vero.
+
+## (1492) Palla live obbligatoria, tolto il pulsante
+- Tolto il pulsante "palla live": l'animazione live è sempre attiva per tutti. Tabellone dello scontro diretto di nuovo simmetrico (maglia a sinistra, D a destra, centro esatto).
