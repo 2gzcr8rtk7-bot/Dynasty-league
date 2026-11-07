@@ -3685,3 +3685,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v848: animazione palla Ducks: parte solo sulla pagina del campo Ducks e si ferma uscendo; a ogni rientro riparte da zero (tele vecchie tolte, scia e giro azzerati, attesa di fine transizione); si ferma anche con app in background.
 
 - v849: notti del turno N1 N2 N3 al posto di giorno/data nello scontro diretto e nella scheda punteggio del giocatore.
+
+- (1412) Ducks: logo ufficiale di giorno = bordo bianco (loghi/duc-17.webp), di notte invariato (duc-11n). Editor loghi / Personalizzazioni: al posto dei vecchi loghi ora ci sono solo "Bordo bianco" (duc-17) e "Bordo lime" (duc-18), oltre a Originale e Papero.
