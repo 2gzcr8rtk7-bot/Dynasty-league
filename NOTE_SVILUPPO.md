@@ -3738,3 +3738,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 - (1438) Impostazioni › Solo per la squadra scelta: pulsante «📋 Rendi ufficiale il campo X: copia per Claude» che copia DLS.tm[X], maglia (KIT[X], KITG), stile attivo e tutte le impostazioni del campo.
 - (1439) Campo ufficiale Dolphins dalle foto del GM: parquet arancione #e8763a, fascia/bordo #1c0f44, banner #3b1858→#24163f (DL_OFF, valgono se chi guarda non ha sue personalizzazioni Dolphins). Maglia automatica: giorno 330 (blu righe), notte 331 (bianca).
+
+- (1440) Ducks Arena (Dream), render 7 scelto: tifosi tutti viola #7c3aed, sedili verdi (#65a30d/#4d7c0f, onde e scritte #84cc16), pavimento fuori dal campo bianco #f4f1fa con il viola che finisce sulla linea lime, linee lime x2.2, canestri verdi (struttura #84cc16/#65a30d, bordo tabellone #a3e635). dream.js?v=1440.
