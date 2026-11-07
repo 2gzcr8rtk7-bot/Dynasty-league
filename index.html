@@ -4022,7 +4022,7 @@ function woodPat(k,id){const L=(o,w)=>`stroke="#000" stroke-opacity="${o}" strok
 const DLS_LN={white:["#ffffff","Bianco"],gold:["#facc15","Oro"],black:["#111111","Nero"],cyan:["#22d3ee","Ciano"],red:["#f87171","Rosso"],orange:["#fb923c","Arancione"]};
 const DLS_AP={dark:"#0b0d12",light:"#e5e7eb",red:"#991b1b",orange:"#c2410c",green:"#14532d"};
 /* PERSONALIZZAZIONE PER SQUADRA (27/10/2026): DLS.tm[T]={b1,b2,bt,bb,bl (banner: colori, testo, bordo, logo ×), fc,lc,ac,cl (campo: parquet, linee, bordo, logo ×)} */
-const DL_OFF={DOL:{fc:"#e8763a",ac:"#1c0f44",b1:"#3b1858",b2:"#24163f"}}/* (1439) campo ufficiale Dolphins (dalle foto del GM) */;const dlTm=t=>{const o=((DLS.tm||{})[t])||{};return t==="DUC"?{...o,lc:o.lc||"#a3e635",ac:o.ac||"#ffffff"}:DL_OFF[t]?{...DL_OFF[t],...o}:o}/* (1372) Ducks: linee del campo verdi */;
+const DL_OFF={DOL:{fc:"#e8763a",ac:"#1c0f44",b1:"#3b1858",b2:"#24163f"}}/* (1439) campo ufficiale Dolphins (dalle foto del GM) */;const dlTm=t=>{const o=((DLS.tm||{})[t])||{};return t==="DUC"?{...o,lc:o.lc||"#a3e635",ac:o.ac||"#ffffff"}:DL_OFF[t]?{...DL_OFF[t],...(t==="DOL"&&typeof CNT!=="undefined"&&CNT?{bt:"#f4e800"}:{}),...o}:o}/* (1439) Dolphins di notte: scritte del banner gialle *//* (1372) Ducks: linee del campo verdi */;
 const dlShade=(h,k)=>{const n=parseInt(h.slice(1),16);const f=v=>Math.round(v*(1-k)).toString(16).padStart(2,"0");return "#"+f(n>>16)+f(n>>8&255)+f(n&255)};
 function dlHeadSty(t){const c=TEAMS[t],o=dlTm(t),b1=o.b1||c.bg,b2=o.b2||`color-mix(in srgb,${c.bg} 70%,#000)`;return `background:linear-gradient(115deg,${b1} 0%,${b2} 100%);color:${o.bt||c.txt||c.fg};border-bottom:4px solid ${o.bb||c.trim}`}
 function dlHeadLogo(t){const k=dlTm(t).bl;return k&&k!==1?` style="zoom:${k}"`:""}
