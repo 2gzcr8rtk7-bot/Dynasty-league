@@ -3667,3 +3667,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v839: Home, solo il tasto Ducks della colonna squadre in viola acceso #7c3aed (il resto dei Ducks resta #5b21b6).
 
 - v840: nuovo logo Ducks "Occhi rossi becco arancio" (loghi/duc-13.webp) nella lista loghi: Editor loghi e personalizzazioni. Verificato che l Editor cambia il logo del banner squadra e del bordocampo.
+
+- v841: logo Ducks ufficiale ovunque = occhi rossi becco arancio (duc-11.webp v5), stesse grandezze; anche condivisioni e Dream.
