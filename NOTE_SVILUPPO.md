@@ -3768,3 +3768,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1454) Barra delle notti +17% di spessore (e scritta), in campo e in panchina.
 
 - (1455) Tribuna: sempre la barra delle notti sotto la casella (In attesa → PDK del turno quando c è).
+
+- (1456) Tribuna: le notti seguono la scelta delle Personalizzazioni (N 1-2-3 sotto la casella, pallini numerati o barra), la casella resta per il PDK. Barra delle notti +22%.
