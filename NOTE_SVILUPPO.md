@@ -3816,3 +3816,6 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 ## (1486) Scia della palla live nel colore di ogni squadra
 - Prima, con un colore squadra scuro (Dolphins blu, Eagles), la scia tornava verde come i Ducks. Ora il colore scuro si schiarisce: Dolphins blu, Eagles giallo. Ducks restano verdi.
+
+## (1487) Palla live viola Dreamers
+- In live la palla è viola Dreamers e lampeggia (colore e alone pulsano tra #7c3aed e lilla), per tutte le squadre. Pulsante "palla live" viola.
