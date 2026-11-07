@@ -8036,10 +8036,10 @@ function cupSvg(pos,id){
   <path d="M9 5.2c.2 3.6 1.2 6 3 7.4" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1" stroke-linecap="round"/></svg>`;
 }
 /* Testata comune delle immagini squadra (cassa, roster) */
-async function shHead(X,W,t,sub){const c=TEAMS[t];
+async function shHead(X,W,t,sub,noBig){const c=TEAMS[t];
   X.fillStyle=c.bg;X.fillRect(0,0,W,380);const hg=X.createLinearGradient(0,0,W,0);hg.addColorStop(0,"rgba(255,255,255,.10)");hg.addColorStop(1,"rgba(0,0,0,.22)");X.fillStyle=hg;X.fillRect(0,0,W,380);
   X.fillStyle=c.trim||"#000";X.fillRect(0,380,W,10);
-  const im=await ldImg(LOGO[t]),DK=!!(im&&im.__duc),TX=DK?455:400/* (1434) Ducks: logo più grande, scritte più a destra */;if(im){const s=300,r=Math.min(s/im.width,s/im.height),cx=DK?222:210,cy=DK?198:190;X.drawImage(im,cx-im.width*r/2,cy-im.height*r/2,im.width*r,im.height*r)}
+  const im=await ldImg(LOGO[t]);if(im&&noBig)im.__duc=0;const DK=!!(im&&im.__duc),TX=DK?475:400/* (1434) Ducks: logo più grande, scritte più a destra */;if(im){const s=300,r=Math.min(s/im.width,s/im.height),cx=DK?222:210,cy=DK?198:190;X.drawImage(im,cx-im.width*r/2,cy-im.height*r/2,im.width*r,im.height*r)}
   const F=(w,s)=>`italic ${w} ${s}px "Barlow Condensed","Arial Narrow",Arial,sans-serif`;
   X.textAlign="left";X.fillStyle=c.fg||"#fff";X.font=F(700,40);X.fillText(c.city.toUpperCase(),TX,130);X.font=F(800,104);X.fillText(c.nick.toUpperCase(),TX,230);X.font=F(800,44);X.fillText(sub,TX,300)}
 function shSend(cv,fn,txt,btn){cv.toBlob(bl=>{const file=new File([bl],fn,{type:"image/png"});
@@ -8053,7 +8053,7 @@ async function shareRoster(t,btn){
   const W=1080,CH=118,top=520,n=Math.max(...col.map(x=>x.length),1),Hh=top+n*CH+130;
   const cv=document.createElement("canvas");cv.width=W;cv.height=Hh;const X=cv.getContext("2d");
   const bg=X.createLinearGradient(0,0,0,Hh);bg.addColorStop(0,"#16275a");bg.addColorStop(1,"#050915");X.fillStyle=bg;X.fillRect(0,0,W,Hh);
-  await shHead(X,W,t,"ROSTER · "+r.length+" GIOCATORI");
+  await shHead(X,W,t,"ROSTER · "+r.length+" GIOCATORI",1)/* (1434) rosa: logo come prima */;
   const F=(w,s)=>`italic ${w} ${s}px "Barlow Condensed","Arial Narrow",Arial,sans-serif`;
   const fit=(txt,w,s,max)=>{let z=s;X.font=F(w,z);while(X.measureText(txt).width>max&&z>16){z-=2;X.font=F(w,z)}};
   const cw=(W-80-2*16)/3;
