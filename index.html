@@ -14254,7 +14254,7 @@ let q=0;const m=document.getElementById("main")||document.body;new MutationObser
 let q=0;const m=document.getElementById("main")||document.body;new MutationObserver(()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;try{go()}catch(e){}})}).observe(m,{childList:true,subtree:true});setTimeout(go,800)})();</script>
 <script>/* (1388) PALLA ANIMATA DUCKS: palla viola con scia verde, palleggio a 8 (passa dietro e davanti alla maglia), passaggi tra campo, sesto uomo e panchina, canestro in alto: a ogni giro tirano tutti una volta in ordine casuale. Tocca TEXAS per spegnere/accendere (dl_dxpalla) */
 (function(){
-const BC="#a3e635",TC="#7c3aed",K="dl_dxpalla";
+let BC="#a3e635",TC="#7c3aed";const BC0=BC,TC0=TC,K="dl_dxpalla";
 const isOn=()=>{const m=window.dxFx?window.dxFx():"palla";return m==="palla"||m==="mix"};
 const here=()=>typeof cur!=="undefined"&&cur==="campo"&&curTeam==="DUC"&&!(window.gotOn&&gotOn());
 let raf=0,t0=0,TR=[],PLAN=null,PLANKEY="";
@@ -14269,7 +14269,7 @@ function mount(E){const{court,view}=E;let u=court.querySelector(":scope>canvas.d
  return{u,o,d,ox:vr.left,oy:vr.top+top,ux:cr.left,uy:cr.top,court,view}}
 let LASTC=null,CT0=0,GC=null;function unmount(){LASTC=null;GC=null;document.querySelectorAll("canvas.dxpu,canvas.dxpo").forEach(c=>c.remove());document.querySelectorAll("main .court .cbg image").forEach(e=>{if(e.style.opacity==="0")e.style.opacity=""});cancelAnimationFrame(raf);raf=0;TR=[]}
 function players(E){const L=[];E.court.querySelectorAll(".cpl .pj").forEach(p=>L.push({el:p,court:1}));E.view.querySelectorAll(".dpan .pj").forEach(p=>L.push({el:p,court:0}));
- return L.map(o=>{const r=o.el.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height*.52,w:r.width,court:o.court}}).filter(p=>p.w>0)}
+ return L.map(o=>{const r=o.el.getBoundingClientRect(),h=o.el.closest("[data-pl]");return{x:r.left+r.width/2,y:r.top+r.height*.52,w:r.width,court:o.court,n:h?h.dataset.pl:""}}).filter(p=>p.w>0)}
 function hoop(E){const HM=window.DXHOOP===undefined?"logo":window.DXHOOP;/* (1409) canestro al posto del logo */if(HM){const im=[...E.court.querySelectorAll(".cbg image")].find(e=>+(e.getAttribute("y")||99)<20);if(im){const r=im.getBoundingClientRect();im.style.opacity="0";return{x:r.left+r.width/2,y:HM==="logo"?r.top+r.height*.62:r.top+r.height*.98,M:HM,L:r,src:im.getAttribute("href")}}}const pa=[...E.court.querySelectorAll(".cln path")].find(e=>/^M46 12\.5A4/.test(e.getAttribute("d")||""));const cr=E.court.getBoundingClientRect();if(!pa)return{x:cr.left+cr.width/2,y:cr.top+cr.height*.18};const r=pa.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+2}}
 const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
 const rnd=(s=>()=>(s=(s*16807)%2147483647)/2147483647);
@@ -14283,6 +14283,35 @@ function at(P,H,T){const n=P.length;const key=n+"";if(!PLAN||PLANKEY!==key){PLAN
  if(x.t==="pa"){const a=P[x.a],b=P[x.b],q=ease(p),R=a.w*.75;return{x:a.x+(b.x-a.x)*q,y:a.y+R*.35+(b.y-a.y)*q-Math.sin(Math.PI*q)*R*1.8,z:1,s:1+.45*Math.sin(Math.PI*q)}}
  if(x.t==="sh"){const a=P[x.p],R=a.w*.75,q=Math.min(1,p/.86);if(p<.86)return{x:a.x+(H.x-a.x)*ease(q),y:a.y+R*.35+(H.y-a.y-R*.35)*q-Math.sin(Math.PI*q)*R*3.4,z:1,s:1+.9*Math.sin(Math.PI*q)};const d=(p-.86)/.14;return{x:H.x,y:H.y+d*3,z:0,s:.95-.45*d,inn:1}}
  return{x:H.x,y:H.y+3,z:0,s:.5,gone:1,sw:p}}
+
+/* (1474) PALLA LIVE: con giocatori Ducks in live la palla cambia colore, i giocatori si passano la palla senza tirare
+   e le statistiche live (punti, assist, rimbalzi) diventano azioni: punti = tira e segna, assist = passa e segna un compagno non in live,
+   rimbalzo = tira un compagno non in live, la palla esce dal ferro e va a chi ha preso il rimbalzo. Accanto al giocatore la statistica in rosso. */
+let LS={},LSet=new Set(),EVQ=[],LP=null,HOLD=0,LBL=[],LCK=0;
+function liveNow(){if(window.__dxLiveSim)return window.__dxLiveSim();const out={};try{const W=typeof CAMPO_DR!=="undefined"&&CAMPO_DR&&CAMPO_DR.W;if(!W)return out;(ROSTER.DUC||[]).forEach(p=>{const n=p[0];const g=drSettimana(n,W).find(x=>x&&x.lv);if(!g)return;const B=TV.box[g.key];if(!B)return;let r=null;["a","h"].forEach(sd=>(B[sd]||[]).forEach(x=>{if(tvNm(x[0])===tvNm(n))r=x}));out[n]=r?{pt:+r[3]||0,reb:+r[6]||0,ast:+r[7]||0}:{pt:0,reb:0,ast:0}})}catch(e){}return out}
+function liveCheck(ts){if(ts-LCK<1500)return;LCK=ts;const L=liveNow();LSet=new Set(Object.keys(L));
+ for(const n in L){const a=L[n],b=LS[n];if(b){const dp=a.pt-b.pt,da=a.ast-b.ast,dr=a.reb-b.reb;if(dp>0)EVQ.push({t:"pt",n,v:dp});if(da>0)EVQ.push({t:"ast",n,v:da});if(dr>0)EVQ.push({t:"reb",n,v:dr})}LS[n]=a}
+ for(const n in LS)if(!L[n])delete LS[n]}
+const isLive=()=>LSet.size>0;
+function idxOf(P,n){const i=P.findIndex(p=>p.n===n);return i>=0?i:0}
+function pickNot(P,ex,r){const C=P.map((p,i)=>i).filter(i=>P[i].court&&!LSet.has(P[i].n)&&!ex.includes(i));const D=C.length?C:P.map((p,i)=>i).filter(i=>P[i].court&&!ex.includes(i));return D.length?D[Math.floor(r()*D.length)]:0}
+function buildLive(P,T){const r=rnd(7+Math.floor(T*97));const S=[];const court=P.map((p,i)=>i).filter(i=>P[i].court);const go=to=>{if(to!==HOLD){S.push({t:"dr",p:HOLD,d:1});S.push({t:"pa",a:HOLD,b:to,d:.9});HOLD=to}};
+ const ev=EVQ.shift();
+ if(ev&&ev.t==="pt"){const k=idxOf(P,ev.n);go(k);S.push({t:"dr",p:k,d:1.1,lb:{i:k,tx:"+"+ev.v+" PT"}});S.push({t:"sh",p:k,d:1.6});S.push({t:"in",d:.9})}
+ else if(ev&&ev.t==="ast"){const k=idxOf(P,ev.n),m=pickNot(P,[k],r);go(k);S.push({t:"dr",p:k,d:1,lb:{i:k,tx:"+"+ev.v+" AST"}});S.push({t:"pa",a:k,b:m,d:.9});HOLD=m;S.push({t:"dr",p:m,d:.9});S.push({t:"sh",p:m,d:1.6});S.push({t:"in",d:.9})}
+ else if(ev&&ev.t==="reb"){const k=idxOf(P,ev.n),m=pickNot(P,[k],r);go(m);S.push({t:"dr",p:m,d:1});S.push({t:"mi",p:m,d:1.5});S.push({t:"rb",p:k,d:1,lb:{i:k,tx:"+"+ev.v+" RIM"}});HOLD=k;S.push({t:"dr",p:k,d:1})}
+ else{for(let j=0;j<2;j++){let to=court[Math.floor(r()*court.length)];if(to===HOLD)to=court[(court.indexOf(to)+1)%court.length];go(to)}S.push({t:"dr",p:HOLD,d:1})}
+ let t=0;S.forEach(x=>{x.s=t;t+=x.d});return{S,T:t,start:T}}
+function atLive(P,H,T){if(HOLD>=P.length)HOLD=0;if(!LP||T-LP.start>=LP.T||LP.n!==P.length){LP=buildLive(P,T);LP.n=P.length;LP.S.forEach(x=>{if(x.lb)LBL.push({...x.lb,t:T+x.s})})}
+ const t=T-LP.start,x=LP.S.find(s=>t>=s.s&&t<s.s+s.d)||LP.S[LP.S.length-1],p=Math.min(1,(t-x.s)/x.d);
+ if(x.t==="mi"){const a=P[x.p],R=a.w*.75;if(p<.75){const q=p/.75;return{x:a.x+(H.x-a.x)*ease(q),y:a.y+R*.35+(H.y-R*.6-a.y-R*.35)*q-Math.sin(Math.PI*q)*R*3.4,z:1,s:1+.9*Math.sin(Math.PI*q)}}const d=(p-.75)/.25;return{x:H.x+R*.9*d,y:H.y-R*.6-Math.sin(Math.PI*d)*R*1.4+R*.4*d,z:1,s:1}}
+ if(x.t==="rb"){const b=P[x.p],R=b.w*.75,sx=H.x+R*.9,sy=H.y-R*.2,q=ease(p);return{x:sx+(b.x-sx)*q,y:sy+(b.y+R*.35-sy)*q-Math.sin(Math.PI*q)*R*1.6,z:1,s:1+.4*Math.sin(Math.PI*q)}}
+ return atStep(x,p,P,H)}
+function atStep(x,p,P,H){if(x.t==="dr"){const a=P[x.p],R=a.w*.75,th=p*Math.PI*2;return{x:a.x+R*.95*Math.sin(th),y:a.y+R*.3*Math.sin(2*th)+R*.35,z:a.court&&Math.cos(th)<0?0:1,s:1}}
+ if(x.t==="pa"){const a=P[x.a],b=P[x.b],q=ease(p),R=a.w*.75;return{x:a.x+(b.x-a.x)*q,y:a.y+R*.35+(b.y-a.y)*q-Math.sin(Math.PI*q)*R*1.8,z:1,s:1+.45*Math.sin(Math.PI*q)}}
+ if(x.t==="sh"){const a=P[x.p],R=a.w*.75,q=Math.min(1,p/.86);if(p<.86)return{x:a.x+(H.x-a.x)*ease(q),y:a.y+R*.35+(H.y-a.y-R*.35)*q-Math.sin(Math.PI*q)*R*3.4,z:1,s:1+.9*Math.sin(Math.PI*q)};const d=(p-.86)/.14;return{x:H.x,y:H.y+d*3,z:0,s:.95-.45*d,inn:1}}
+ return{x:H.x,y:H.y+3,z:0,s:.5,gone:1,sw:p}}
+function drawLbl(c,P,T){LBL=LBL.filter(l=>T-l.t<3.2);LBL.forEach(l=>{if(T<l.t)return;const a=P[l.i];if(!a)return;const age=T-l.t,al=age<.25?age/.25:age>2.6?Math.max(0,(3.2-age)/.6):1;const fs=Math.max(10,a.w*.2);c.save();c.globalAlpha=al;c.font=`900 italic ${fs}px system-ui,sans-serif`;const tw=c.measureText(l.tx).width,px=a.x+a.w*.42,py=a.y-a.w*.55-age*4;c.fillStyle="#dc2626";c.beginPath();c.roundRect?c.roundRect(px-4,py-fs*.85,tw+8,fs*1.15,fs*.3):c.rect(px-4,py-fs*.85,tw+8,fs*1.15);c.fill();c.fillStyle="#fff";c.fillText(l.tx,px,py);c.restore()})}
 function ball(c,x,y,r){c.save();c.translate(x,y);c.beginPath();c.arc(0,0,r,0,7);c.fillStyle=BC;c.fill();c.lineWidth=r*.12;c.strokeStyle="#111";c.stroke();c.beginPath();c.moveTo(-r,0);c.lineTo(r,0);c.moveTo(0,-r);c.lineTo(0,r);c.moveTo(-r*.7,-r*.7);c.quadraticCurveTo(0,0,-r*.7,r*.7);c.moveTo(r*.7,-r*.7);c.quadraticCurveTo(0,0,r*.7,r*.7);c.lineWidth=r*.09;c.stroke();const g=c.createRadialGradient(-r*.35,-r*.4,r*.1,0,0,r);g.addColorStop(0,"rgba(255,255,255,.55)");g.addColorStop(1,"rgba(255,255,255,0)");c.beginPath();c.arc(0,0,r,0,7);c.fillStyle=g;c.fill();c.restore()}
 let LGI=null;const lgImg=src=>{const u=src||"";if(!LGI||LGI.u!==u){LGI=new Image();LGI.u=u;LGI.src=u}return LGI.complete&&LGI.naturalWidth?LGI:null};
 function drawHoop(c,H,w,front,sw){const rr=w*.22;if(front&&(H.M==="board"||H.M==="tilt")){const bw=H.L.width*.98,bh=H.L.height*.66,bx=H.x-bw/2,by=H.L.top+H.L.height*.02;c.save();if(H.M==="tilt"){c.translate(H.x,by+bh);c.transform(1,0,-.28,1,0,0);c.scale(1,.78);c.translate(-H.x,-(by+bh))}c.fillStyle="rgba(255,255,255,.96)";c.strokeStyle="#5b21b6";c.lineWidth=2.4;c.beginPath();c.roundRect?c.roundRect(bx,by,bw,bh,5):c.rect(bx,by,bw,bh);c.fill();c.stroke();c.strokeStyle="#5b21b6";c.lineWidth=1.6;c.strokeRect(H.x-bw*.2,by+bh*.45,bw*.4,bh*.42);const L=lgImg(H.src);if(L){const lh=bh*.86,lw=lh*L.naturalWidth/L.naturalHeight;c.globalAlpha=.95;c.drawImage(L,H.x-lw/2,by+bh*.07,lw,lh);c.globalAlpha=1}c.restore();c.fillStyle="#5b21b6";c.fillRect(H.x-1.4,by+bh*(H.M==="tilt"?.95:1),2.8,Math.max(2,H.y-rr-(by+bh)))}
@@ -14296,14 +14325,14 @@ function frame(ts){raf=requestAnimationFrame(frame);if(!isOn()||!here()||documen
  if(E.court!==LASTC){document.querySelectorAll("canvas.dxpu,canvas.dxpo").forEach(c=>{if(!E.court.contains(c)&&c.parentElement!==E.view)c.remove()});E.view.querySelectorAll(":scope>canvas.dxpo").forEach(c=>c.remove());E.court.querySelectorAll(":scope>canvas.dxpu").forEach(c=>c.remove());LASTC=E.court;CT0=ts;TR=[];t0=0;PLAN=null}
  if(ts-CT0<350)return;if(document.querySelector(".drm3,.s3,.tgo"))return;/* (1435) sotto il Dream o un gioco a tutto schermo non si disegna */if(!GC||GC.court!==E.court||ts-GC.t>600){const R0=E.view.getBoundingClientRect();GC={court:E.court,t:ts,m:mount(E),P:players(E),H:hoop(E),vl:R0.left,vt:R0.top,sy:scrollY,sx:scrollX}}const VR0={left:GC.vl-(scrollX-GC.sx),top:GC.vt-(scrollY-GC.sy)};/* (1435) tra una misura e l altra si usa lo scorrimento: nessun ricalcolo della pagina a ogni fotogramma *//* (1435) misure ripetute solo ogni 0,6 s: tra una misura e l altra si segue solo lo scorrimento */const dx=VR0.left-GC.vl,dy=VR0.top-GC.vt,m=Object.assign({},GC.m,{ox:GC.m.ox+dx,oy:GC.m.oy+dy,ux:GC.m.ux+dx,uy:GC.m.uy+dy}),{u,o,d}=m;const P=GC.P.map(p=>Object.assign({},p,{x:p.x+dx,y:p.y+dy}));if(!P.length)return;if(m.oy+o.height/d<0||m.oy>innerHeight)return;/* fuori schermo: niente disegno */
  const cu=u.getContext("2d"),co=o.getContext("2d");cu.setTransform(d,0,0,d,-m.ux*d,-m.uy*d);co.setTransform(d,0,0,d,-m.ox*d,-m.oy*d);cu.clearRect(m.ux,m.uy,u.width/d,u.height/d);co.clearRect(m.ox,m.oy,o.width/d,o.height/d);
- if(!t0)t0=ts;const T=(ts-t0)/1000,H=GC.H&&Object.assign({},GC.H,{x:GC.H.x+dx,y:GC.H.y+dy},GC.H.L?{L:{top:GC.H.L.top+dy,left:GC.H.L.left+dx,width:GC.H.L.width,height:GC.H.L.height}}:{}),W=P[0].w;drawHoop(cu,H,W,0);let q;try{q=at(P,H,T)}catch(e){PLAN=null;TR.length=0;return}if(!q||!isFinite(q.x)||!isFinite(q.y)){TR.length=0;return}
+ if(!t0)t0=ts;const T=(ts-t0)/1000,H=GC.H&&Object.assign({},GC.H,{x:GC.H.x+dx,y:GC.H.y+dy},GC.H.L?{L:{top:GC.H.L.top+dy,left:GC.H.L.left+dx,width:GC.H.L.width,height:GC.H.L.height}}:{}),W=P[0].w;drawHoop(cu,H,W,0);liveCheck(ts);const LV=isLive();if(LV){const md=window.DXLIVEBALL||"viola";TC="#a3e635";BC=md==="rossa"?(Math.sin(ts/140)>0?"#ef4444":"#fca5a5"):"#7c3aed"}else{BC=BC0;TC=TC0}let q;try{q=LV?atLive(P,H,T):at(P,H,T)}catch(e){PLAN=null;LP=null;TR.length=0;return}if(!q||!isFinite(q.x)||!isFinite(q.y)){TR.length=0;return}
  /* (1407) scia salvata rispetto alla pagina (non allo schermo): scorrendo non si allunga più; dopo una pausa o un salto la scia riparte da zero */
  const VR=VR0,vx=q.x-VR.left,vy=q.y-VR.top,LT=TR.lt||0;TR.lt=ts;const lastP=TR[TR.length-1];
  if(ts-LT>200||(lastP&&Math.hypot(vx-lastP.vx,vy-lastP.vy)>W*1.2))TR.length=0;
  if(q.gone)TR.length=0;else{TR.push({vx,vy,z:q.z});if(TR.length>22)TR.shift()}
  const r=W*.1936*q.s;/* (1391) palla grande quanto il ferro */
  for(let j=1;j<TR.length;j++){const A=TR[j-1],B=TR[j],c=B.z?co:cu,al=j/TR.length;c.beginPath();c.moveTo(A.vx+VR.left,A.vy+VR.top);c.lineTo(B.vx+VR.left,B.vy+VR.top);c.strokeStyle=TC;c.lineCap="round";c.globalAlpha=al*.85;c.lineWidth=r*1.3*al;c.stroke();c.globalAlpha=al*.3;c.lineWidth=r*2.3*al;c.stroke();c.globalAlpha=1}
- if(!q.gone)ball(q.z?co:cu,q.x,q.y,r);drawHoop(co,H,W,1,q.sw)}
+ if(!q.gone)ball(q.z?co:cu,q.x,q.y,r);drawHoop(co,H,W,1,q.sw);if(LV)drawLbl(co,P,T)}
 function toast(m){let d=document.getElementById("dxbt");if(!d){d=document.createElement("div");d.id="dxbt";d.style.cssText="position:fixed;left:50%;top:40%;transform:translateX(-50%);z-index:99999;padding:10px 16px;border-radius:14px;background:#2e1065;color:#a3e635;border:2px solid #a3e635;font:900 italic 15px system-ui;pointer-events:none;transition:opacity .4s";document.body.appendChild(d)}d.textContent=m;d.style.opacity="1";clearTimeout(d._t);d._t=setTimeout(()=>d.style.opacity="0",1600)}
 
 const kick=()=>{if(!here()||!isOn()){if(raf||document.querySelector("canvas.dxpo,canvas.dxpu"))unmount();return}if(!raf)raf=requestAnimationFrame(frame)};document.addEventListener("visibilitychange",()=>{if(document.hidden)unmount();else{t0=0;TR=[];kick()}});window.addEventListener("pageshow",()=>{unmount();kick()});new MutationObserver(kick).observe(document.getElementById("main")||document.body,{childList:true});setTimeout(kick,800);window.__dxBallKick=()=>{t0=0;TR=[];kick()};
