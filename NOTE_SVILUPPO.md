@@ -3629,3 +3629,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v820: prova palla Ducks: aggiunti 3 effetti spettacolari (7 campo che crolla e sotto campo viola con linee lime, 8 scansione neon, 9 onda d urto con stelle), blocco 1386.
 
 - v821: Ducks, maglia predefinita per tutti: DUCKS gessato Bianca viola (319), prima nel selettore (migrazione dl_kit_m1387).
+
+- v822: prova palla Ducks: aggiunte palla grande x2 (viola e verde), canestro visto dall alto con tiro da lontano (viola e verde), doppio crollo (cade il bianco, poi il viola e torna il bianco). Totale 14 animazioni col tocco su TEXAS.
