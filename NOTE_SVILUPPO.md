@@ -3799,3 +3799,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1473) Barra delle notti: scritte N1/N3 più grandi nella stessa barra. Tolti gli avvisi quando si tocca TEXAS (effetti) o DUCKS (modalità notti).
 
 - (1474-1476) Palla Ducks in LIVE: con giocatori Ducks in live la palla diventa rossa con aura pulsante e scia verde; passaggi senza tiri; statistiche live (Dynasty TV, controllate ogni 1,5 s) messe in coda e giocate una alla volta con ritmo calmo: punti = tira e segna, assist = passa e segna un compagno non in live, rimbalzo = tira un compagno, ferro, palla a chi prende il rimbalzo; riquadro rosso «+N PT/AST/RIM» accanto al giocatore. Entrata in live solo durante un palleggio, uscita solo a coda vuota e azione finita (nessuno scatto).
+
+- (1477) La palla live rossa parte insieme al lampeggio rosso delle linee del campo (.court.clive, non con html.lvoff) e si spegne con esso.
