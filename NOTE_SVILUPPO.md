@@ -3759,3 +3759,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1449) Pallini numerati di giorno con base bianca e numero viola scuro. Logo Ducks banner squadra 98%, altezza 102% (scale 1.172 1.075). Fix: di giorno i Ducks non restano con la maglia viola della notte (KIT.DUC 318 salvato per errore torna 319).
 
 - (1450) Şengün: aggiornamento di domenica 08/11 forzato a +15% (1680 → 1930, VAL_FORZA k=2) su richiesta di Francesco, dichiarato nel registro come «ritocco del commissario: media di 40 PDK in settimana (il calcolo automatico dava circa +6%)» (VAL_FORZA_WHY).
+- (1451) Şengün: motivo nel registro «aggiustamento automatico commissario per prestazioni di 7 PDK sopra media» (testo scelto da Francesco).

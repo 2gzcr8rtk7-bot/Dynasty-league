@@ -5123,7 +5123,7 @@ const VAL_INJ_B=.75;
 const valF=(p,eta,inj)=>Math.pow(Math.max(p,4),1.78)*Math.pow(.93,eta-25)*Math.pow(VAL_INJ_B,Math.max(0,2.5-inj));
 const valRound=v=>v>=1000?Math.round(v/10)*10:Math.max(5,Math.round(v/5)*5);
 /* (904) valore di arrivo fissato a mano per uno scatto automatico (nome -> {settimana: valore}); il resto del calcolo prosegue da lì */
-const VAL_FORZA={"Evan Mobley":{1:1375},"Alperen Şengün":{2:1930}};const VAL_FORZA_WHY={"Alperen Şengün":{2:"ritocco del commissario: media di 40 PDK in settimana, +15% (il calcolo automatico dava circa +6%)"}}/* (1450) */;
+const VAL_FORZA={"Evan Mobley":{1:1375},"Alperen Şengün":{2:1930}};const VAL_FORZA_WHY={"Alperen Şengün":{2:"aggiustamento automatico commissario per prestazioni di 7 PDK sopra media"}}/* (1450) */;
 function valAuto(n,now){const V0=VAL_MAN[n];if(V0==null)return null;const B=VAL_BASE[n]||[VAL_ORIGINE,INF_STELLE[n]??3],d0=Date.parse(B[0]+"T00:00:00Z"),k=valK(d0,now);
   const out={v0:V0,v:V0,k:Math.max(0,k),attesa:false};if(k<1)return out;const rk=isRookie(n);let injNow=INF_STELLE[n]??B[1];
   /* (775) stesso infortunio, niente doppio sconto: finché il giocatore è ancora fuori per l'infortunio scritto in INJ_STORIA
