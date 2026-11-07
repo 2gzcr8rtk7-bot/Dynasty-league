@@ -3671,3 +3671,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v841: logo Ducks ufficiale ovunque = occhi rossi becco arancio (duc-11.webp v5), stesse grandezze; anche condivisioni e Dream.
 
 - v842: tabellino sfida Dreamers: pallino rosso lampeggiante accanto ai giocatori in campo in quel momento nelle partite NBA live (come nel box NBA).
+
+- v843: Ducks: di notte il logo con becco bianco (loghi/duc-11n.webp), di giorno quello con becco arancio; stesse grandezze, scambio automatico al cambio giorno/notte (1405).
