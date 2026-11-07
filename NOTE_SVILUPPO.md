@@ -3787,3 +3787,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1464) Barra delle notti bianca di giorno solo sul campo Ducks; le altre squadre restano nere.
 
 - (1465) Barra delle notti: scritte N1/N3 più leggibili (dritte, più spesse, appoggiate al bordo sotto con spazio dal cartellino), viola sui Ducks di giorno, lilla di notte, bianche sulla casella live.
+
+- (1466) Barra delle notti sui Ducks di notte: scritte lime #a3e635.
