@@ -3701,3 +3701,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1418) Editor loghi: nuova scheda «✥ Sposta» (frecce 1px + cursori -60..60px, proprietà CSS translate sommata a quella ufficiale; per i loghi dentro SVG i px schermo sono convertiti in unità del disegno). Pannello a schede (Grandezza, Forma, Sposta, Logo), riducibile a una riga (▾) e posizionato dalla parte opposta al logo (in alto se il logo è in basso), con scorrimento automatico per lasciare il logo visibile. Prompt e lista includono lo spostamento; la ✕ della lista ora cancella anche le voci di banner/campo.
 
 - (1419) Ducks Arena (Dream): tifosi tutti in bianco, campo viola chiaro (#8b5cf6 → #6d28d9) con linee lime luminose e area viola scuro, bordo #4c1d95, seggiolini viola, logo bordo lime al centro (render 3 scelto da Francesco). dream.js?v=1419.
+
+- (1420) Ducks notte: logo ufficiale con palla viola (loghi/duc-20n.webp). Editor loghi: aggiunto «Notte palla viola»; «Notte nuovo» rinominato «Notte palla bianca» (duc-19n). Condivisioni e scambio giorno/notte riconoscono qualsiasi logo notte duc-NNn.
