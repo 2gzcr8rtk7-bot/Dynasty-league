@@ -3641,3 +3641,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v826: animazione palla Ducks: palla grande quanto il ferro del canestro (un po piu piccola). Predisposto DXSQ per schiacciare il logo nella condivisione (non attivo).
 
 - v827: condivisione prestazione: logo grande Ducks (fuori dal campo) schiacciato del 6% in altezza.
+
+- v828: fix Dream 3D: le maglie in campo (e negli spogliatoi/premi) non si caricavano perche jerseyShare ora mette gia width/height (attributo doppio = SVG invalido); dream.js toglie width/height prima di rimetterli. Ducks: parquet della Dream arena color ghiaccio con il viola.
