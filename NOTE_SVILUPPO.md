@@ -3720,3 +3720,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1428) Editor loghi quarta passata (Francesco 07/11): 24 caselle ufficiali (style #ofl1428 + #ofl1428i, stessa forza della 1424 ma dopo, quindi vince), soprattutto «UT · Becco bianco» (duc-22) e Notte vecchio; grandezze moltiplicate su quelle attuali (comprese le 1424), spostamenti sommati. duc-22 precaricato e salvato nel service worker. Scelte editor azzerate (dl_dxlogo_m1428).
 
 - (1429) Editor loghi: Statistiche lista squadre (.sqpk > .sqpkw) «UT · Becco bianco» e testata squadra (.view > .esqhead) «Notte vecchio», aggiunte alla 1428. Scelte editor azzerate (dl_dxlogo_m1429).
+
+- (1430) Condivisioni Ducks: sempre il logo «UT · Becco bianco» (duc-22), di giorno e di notte (ldImg/shImg mappano qualsiasi loghi/duc-*.webp).
