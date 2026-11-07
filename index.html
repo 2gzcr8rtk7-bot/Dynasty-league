@@ -14385,10 +14385,10 @@ document.addEventListener("click",e=>{const b=e.target.closest(".plbtn");if(!b)r
    Colori come la barra delle notti: di giorno banner bianco, di notte viola; scritta nel colore della squadra (Ducks viola / lime).
    Nasce spento: Personalizzazioni › Campo › Banner stats live (DLS.tick). */
 (function(){
-const st=document.createElement("style");st.textContent=`.lvtick{position:relative;overflow:hidden;margin:2px 0 8px;height:30px;border-radius:9px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);display:flex;align-items:center;--tk:#5b21b6}
+const st=document.createElement("style");st.textContent=`.lvtick{position:relative;overflow:hidden;margin:-6px 0 12px;/* (1495) stessa distanza sopra e sotto */height:30px;border-radius:9px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.25);display:flex;align-items:center;--tk:#5b21b6}
 html.notte .lvtick{background:#5b21b6;box-shadow:0 2px 8px rgba(20,0,50,.5);--tk:#fff}
 .lvtick .lvtk-tr{display:flex;white-space:nowrap;will-change:transform;animation:lvtk linear infinite}
-.lvtick .lvtk-tr>span{display:inline-flex;padding-right:28px;font:800 italic 14px/1 var(--display),system-ui;letter-spacing:.04em;text-transform:uppercase;color:var(--tk)}
+.lvtick .lvtk-tr>span{display:inline-flex;padding-right:28px;font:800 italic 14px/1 var(--display),system-ui;letter-spacing:.04em;text-transform:uppercase;color:var(--tk)!important;-webkit-text-fill-color:var(--tk)!important;text-shadow:none!important}
 .lvtick b{font-weight:900}.lvtick i{font-style:normal;opacity:.55;margin:0 12px}
 .lvtick .lvtk-lv{flex:none;align-self:stretch;display:flex;align-items:center;padding:0 9px;background:#dc2626;color:#fff;font:900 italic 12px var(--display),system-ui;letter-spacing:.06em;position:relative;z-index:1}
 .lvtick .lvtk-lv::before{content:"";width:7px;height:7px;border-radius:50%;background:#fff;margin-right:5px;animation:lvtkb 1s ease-in-out infinite}

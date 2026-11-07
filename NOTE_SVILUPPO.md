@@ -3845,3 +3845,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - Sopra il tabellone del campo scorre un banner con le statistiche dei giocatori in live (es. "Jokić 2 PT", "Jokić palla persa", "Jokić palla rubata", "Jokić assist"); senza azioni ancora, la riga di ognuno (PT · RIM · AST…). Visibile solo se qualcuno della squadra è in live.
 - Colori come la barra delle notti: giorno bianco / notte viola, scritta nel colore della squadra (Ducks viola di giorno, lime di notte).
 - Nasce spento: Personalizzazioni › Campo › Banner stats live (DLS.tick, in KEEP: vale anche sui Ducks).
+- (1495) Banner: stessa distanza sopra (cassa) e sotto (tabellone), 12 px; scritta sempre nel colore squadra anche col tema parquet.
