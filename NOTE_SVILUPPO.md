@@ -3855,3 +3855,6 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 ## (1498) Sigle nel banner e nelle notifiche della palla
 - PT, RIM, AST, STL (al posto di RUB / palla rubata), TOV (al posto di PP / palla persa).
+
+## (1499) Barra delle notti unica
+- Tolte le scelte delle notti (N1 N3 nel cartellino, numeri nei pallini, colore dei pallini) da Personalizzazioni e dal tocco su DUCKS: per tutti solo la barra delle notti con i PDK che lampeggiano (DLS.ntp forzato a "bar", anche per chi aveva scelto altro).
