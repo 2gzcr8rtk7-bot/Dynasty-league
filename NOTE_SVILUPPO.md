@@ -3714,3 +3714,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1425) Editor loghi: aggiunto «Becco arancio palla viola» (loghi/duc-21.webp).
 
 - (1426) Editor loghi: aggiunto «UT · Becco bianco» (loghi/duc-22.webp); il 21 rinominato «UT · Becco arancio».
+
+- (1427) Loghi Ducks veloci: (1) sw.js serve tutti i file in loghi/ dalla copia salvata (prima solo loghi/nba e img: i loghi Ducks aspettavano la rete a ogni apertura) e precarica duc-20n?v=2, duc-11n, duc-18; (2) il logo ufficiale palla viola è scritto direttamente nel codice (96 riferimenti duc-17?v=1 → duc-20n?v=2), niente più logo sbagliato poi scambiato; (3) preload in <head>; (4) i loghi scelti in 1416/1424 sono applicati subito (style #ofl1416i/#ofl1424i), senza aspettare il calcolo delle grandezze. Regola: quando si sostituisce un file logo cambiare sempre il ?v=.
