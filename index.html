@@ -3366,7 +3366,7 @@ let rgN=0;
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-rgnav]");if(!b||cur!=="risultati")return;rgN=Math.min(drPO(drStand()).end+DR_OFF,Math.max(1,(rgN||1)+ +b.dataset.rgnav));const y=scrollY;render();scrollTo(0,y)});
 document.getElementById("main").addEventListener("click",e=>{const r=e.target.closest("[data-rgo]");if(!r||cur!=="risultati")return;const[k,x,y]=r.dataset.rgo.split("|");DR.k=+k;DR.tab="turno";DR.open=[x,y];DR.rules=false;GAME="dream";cur="giochi";render();window.scrollTo(0,0)});
 /* Condividi risultato di una partita: immagine 1080x1350 generata su canvas (shareGame) */
-function ldImg(src){return new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src})}
+function ldImg(src){if(typeof src==="string"&&src.indexOf("duc-11n.webp")>=0)src="loghi/duc-11.webp?v=5";/* (1406) nelle condivisioni sempre il logo di giorno */return new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src})}
 async function shareGame(gi,ix,btn){
   const g=GIORNATE.find(x=>x.n===gi);if(!g)return;const[a,pa,b,pb]=g.gare[ix];
   try{await document.fonts.load('800 italic 40px "Barlow Condensed"');await document.fonts.load('40px "CourtBlock"')}catch(e){}
@@ -7133,7 +7133,7 @@ function campoLive(t){const turno=CLM==="turno",d=campoNotte();
 let SHR_CAMPO=null,SHR_DR=null,SHR_DUEL=null,SHR_PO=null,SHR_CL=null;
 const SH_ICO='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M7 8l5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
 const shBtn=k=>`<button class="shbtn" data-share="${k}" aria-label="Condividi" title="Condividi">${SH_ICO}</button>`;
-function shImg(src){return new Promise(r=>{if(!src)return r(null);const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src})}
+function shImg(src){if(typeof src==="string"&&src.indexOf("duc-11n.webp")>=0)src="loghi/duc-11.webp?v=5";/* (1406) nelle condivisioni sempre il logo di giorno */return new Promise(r=>{if(!src)return r(null);const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src})}
 function shLogo(t){const s=document.createElement("span");s.className="badge logo lg-"+t;s.style.cssText="position:absolute;left:-9999px;top:0";document.body.appendChild(s);const u=getComputedStyle(s).backgroundImage;s.remove();const m=u&&u.match(/url\("?([^")]+)"?\)/);return shImg(m&&m[1])}
 function shRR(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
 function shFit(c,t,w){if(c.measureText(t).width<=w)return t;while(t.length>1&&c.measureText(t+"…").width>w)t=t.slice(0,-1);return t+"…"}

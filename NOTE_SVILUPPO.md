@@ -3673,3 +3673,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v842: tabellino sfida Dreamers: pallino rosso lampeggiante accanto ai giocatori in campo in quel momento nelle partite NBA live (come nel box NBA).
 
 - v843: Ducks: di notte il logo con becco bianco (loghi/duc-11n.webp), di giorno quello con becco arancio; stesse grandezze, scambio automatico al cambio giorno/notte (1405).
+
+- v844: condivisioni: sempre il logo Ducks attuale (becco arancio), anche di notte.
