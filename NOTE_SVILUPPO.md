@@ -3625,3 +3625,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v818: Ducks: logo del banner centrato tra bordo sinistro e scritta (translate 9px); scritta TEXAS DUCKS del bordocampo a +12%.
 
 - v819: PROVA palla animata sul campo Ducks (blocco 1385): tocca TEXAS a bordocampo per accendere e passare fra 6 animazioni (viola/scia verde, verde/scia viola, rimbalzo, palleggio a 8 e lob, passaggi a stella, due palle) e spegnere. Spenta di default (dl_dxball).
+
+- v820: prova palla Ducks: aggiunti 3 effetti spettacolari (7 campo che crolla e sotto campo viola con linee lime, 8 scansione neon, 9 onda d urto con stelle), blocco 1386.
