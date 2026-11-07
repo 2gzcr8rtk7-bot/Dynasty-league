@@ -3657,3 +3657,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v834: effetti Ducks: tolto il faro; crolli piu lenti (~75% in piu, ciclo 24 s), tremore piu lungo e crescente, nessuna fuga visibile tra le mattonelle prima che si rompano (pavimento intero mascherato, la mattonella appare solo quando trema).
 
 - v835: effetti Ducks: restano solo palla e canestro e il crollo del pavimento (mattonelle grandi, dalla versione attuale all altra e ritorno). Tolti i crolli 2-5.
+
+- v836: effetti Ducks: terza animazione (tocca TEXAS) palla + crollo del pavimento insieme.

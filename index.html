@@ -14220,7 +14220,7 @@ let q=0;const m=document.getElementById("main")||document.body;new MutationObser
 <script>/* (1388) PALLA ANIMATA DUCKS: palla viola con scia verde, palleggio a 8 (passa dietro e davanti alla maglia), passaggi tra campo, sesto uomo e panchina, canestro in alto: a ogni giro tirano tutti una volta in ordine casuale. Tocca TEXAS per spegnere/accendere (dl_dxpalla) */
 (function(){
 const BC="#a3e635",TC="#7c3aed",K="dl_dxpalla";
-const isOn=()=>(window.dxFx?window.dxFx():"palla")==="palla";
+const isOn=()=>{const m=window.dxFx?window.dxFx():"palla";return m==="palla"||m==="mix"};
 const here=()=>typeof cur!=="undefined"&&cur==="campo"&&curTeam==="DUC"&&!(window.gotOn&&gotOn());
 let raf=0,t0=0,TR=[],PLAN=null,PLANKEY="";
 const st=document.createElement("style");st.textContent=`html body .court>canvas.dxpu{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}html body .view>canvas.dxpo{position:absolute;left:0;pointer-events:none;z-index:2}html body .view:has(>canvas.dxpo){position:relative}html:not(.dxnoball) body .court:has(.cname.cn-duc) .cln path[d^="M46 12.5A4"]{visibility:hidden}html:not(.gotc) body[data-v="campo"] .court .cname.cn-duc text{cursor:pointer;pointer-events:auto}`;document.head.appendChild(st);
@@ -14268,7 +14268,7 @@ const kick=()=>{if(isOn()&&here()&&!raf)raf=requestAnimationFrame(frame)};new Mu
 </script>
 <script>/* (1397) EFFETTI CAMPO DUCKS: tocca TEXAS per cambiare. palla · faro · 5 crolli del pavimento (visti dall'alto: giorno -> notte -> giorno) · spento (dl_dxfx) */
 (function(){
-const MODES=[["palla","🏀 Palla e canestro"],["c1","💥 Crollo del pavimento"],["off","Effetti spenti"]];
+const MODES=[["palla","🏀 Palla e canestro"],["c1","💥 Crollo del pavimento"],["mix","🏀💥 Palla + crollo del pavimento"],["off","Effetti spenti"]];
 const K="dl_dxfx";
 window.dxFx=()=>{let v=null;try{v=localStorage.getItem(K)}catch(e){}if(!v){try{if(localStorage.getItem("dl_dxpalla")==="0")return"off"}catch(e){}return"palla"}return MODES.some(m=>m[0]===v)?v:"palla"};/* (1398) tolto il faro */
 const here=()=>typeof cur!=="undefined"&&cur==="campo"&&curTeam==="DUC"&&!(window.gotOn&&gotOn());
@@ -14334,8 +14334,8 @@ function collapseFrame(ts){if(!CL||!CL.svg.isConnected||CL.kind!==M){buildCollap
 
 /* ---------------- motore ---------------- */
 function frame(ts){raf=requestAnimationFrame(frame);if(!here()||!M||M==="palla"||M==="off"){stopAll();return}if(!t0)t0=ts;
- if(M==="faro"){clearCollapse();faroFrame(ts)}else{document.querySelectorAll("main .court canvas.dxfaro").forEach(c=>c.remove());collapseFrame(ts)}}
-function set(m){M=m;document.documentElement.classList.toggle("dxnoball",m!=="palla");t0=0;stopAll();if(window.__dxBallKick)window.__dxBallKick();if(m!=="palla"&&m!=="off")raf=requestAnimationFrame(frame)}
+ if(M==="faro"){clearCollapse();faroFrame(ts)}else{const M0=M;if(M==="mix")M="c1";document.querySelectorAll("main .court canvas.dxfaro").forEach(c=>c.remove());collapseFrame(ts);M=M0}}
+function set(m){M=m;document.documentElement.classList.toggle("dxnoball",m!=="palla"&&m!=="mix");t0=0;stopAll();if(window.__dxBallKick)window.__dxBallKick();if(m!=="palla"&&m!=="off")raf=requestAnimationFrame(frame)}
 function toast(m){let d=document.getElementById("dxbt");if(!d){d=document.createElement("div");d.id="dxbt";d.style.cssText="position:fixed;left:50%;top:40%;transform:translateX(-50%);z-index:99999;padding:10px 16px;border-radius:14px;background:#2e1065;color:#a3e635;border:2px solid #a3e635;font:900 italic 15px system-ui;pointer-events:none;transition:opacity .4s;white-space:nowrap";document.body.appendChild(d)}d.textContent=m;d.style.opacity="1";clearTimeout(d._t);d._t=setTimeout(()=>d.style.opacity="0",1700)}
 document.addEventListener("click",e=>{if(!here())return;const t=e.target.closest&&e.target.closest("main .court .cname.cn-duc text");if(!t)return;e.preventDefault();e.stopPropagation();const i=MODES.findIndex(m=>m[0]===dxFx()),n=MODES[(i+1)%MODES.length];try{localStorage.setItem(K,n[0])}catch(_){}toast(n[1]);set(n[0])},true);
 const kick=()=>{const m=dxFx();if(m!==M)set(m);else if(here()&&m!=="palla"&&m!=="off"&&!raf)raf=requestAnimationFrame(frame)};new MutationObserver(kick).observe(document.getElementById("main")||document.body,{childList:true});setTimeout(kick,900);
