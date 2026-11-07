@@ -3639,3 +3639,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v825: fix: con lo sfondo Ducks scuro (viola) le scritte su sfondo squadra (profilo giocatore, intestazioni, immagini condivise) diventano bianche (TEAMS.DUC.txt).
 
 - v826: animazione palla Ducks: palla grande quanto il ferro del canestro (un po piu piccola). Predisposto DXSQ per schiacciare il logo nella condivisione (non attivo).
+
+- v827: condivisione prestazione: logo grande Ducks (fuori dal campo) schiacciato del 6% in altezza.
