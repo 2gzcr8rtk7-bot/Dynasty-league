@@ -3770,3 +3770,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1455) Tribuna: sempre la barra delle notti sotto la casella (In attesa → PDK del turno quando c è).
 
 - (1456) Tribuna: le notti seguono la scelta delle Personalizzazioni (N 1-2-3 sotto la casella, pallini numerati o barra), la casella resta per il PDK. Barra delle notti +22%.
+
+- (1457) Campo Ducks: toccando DUCKS si alterna «N 1-2-3 nel cartellino» ↔ «Numeri nei pallini»; TEXAS resta per gli effetti.
