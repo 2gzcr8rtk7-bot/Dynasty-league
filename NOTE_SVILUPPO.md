@@ -3775,3 +3775,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1458) Campo Ducks: la «Barra delle notti» scelta nelle Personalizzazioni non vale (si vede N 1-2-3, o i pallini toccando DUCKS); resta solo con le personalizzazioni dell area segreta.
 
 - (1459) Bollino del capitano (C) più piccolo del 25%.
+
+- (1460) Notti del turno scritte «N1  N3» (ogni notte per intero) al posto di «N 1-3».
