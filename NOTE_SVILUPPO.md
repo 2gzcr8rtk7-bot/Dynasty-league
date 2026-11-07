@@ -3783,3 +3783,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1462) Formazioni Dreamers (campo e scontri diretti) prima dell inizio del turno: dentro ogni ruolo prima chi gioca la N1, poi per PDK medio; capitano = miglior media tra chi gioca la N1. Regole di ruolo e posizioni invariate. A turno iniziato ordine di sempre.
 
 - (1463) Barra delle notti: bianca di giorno, nera di notte; +25%; di nuovo disponibile sul campo Ducks; scritta della casella live leggibile (tolto il pallino live sovrapposto).
+
+- (1464) Barra delle notti bianca di giorno solo sul campo Ducks; le altre squadre restano nere.
