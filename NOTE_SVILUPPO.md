@@ -3790,3 +3790,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 - (1466) Barra delle notti sui Ducks di notte: scritte lime #a3e635.
 - (1467) Dreamers classifica (.drcr > .drlg.l): logo Ducks 102%, altezza 104% (scale 1.026 0.85). Condivisione classifica: logo Ducks solo +3% (c.__ducK), non esce più dalla casella. Scelte editor azzerate (dl_dxlogo_m1467).
+- (1468) Barra delle notti +27%.
