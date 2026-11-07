@@ -3793,3 +3793,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1468) Barra delle notti +27%.
 
 - (1469-1471) Barra delle notti per tutte le squadre: bianca di giorno, viola Dreamers di notte; scritte nei colori della franchigia a contrasto (Ducks invariati: viola/lime). Spessore +29%.
+
+- (1472) Barra delle notti = modalità ufficiale predefinita per tutti (DLS_DEF ntp:"bar", migrazione dl_ntp_m1472 una volta sola). Toccando DUCKS: barra → pallini numerati → N1 N3 → barra.
