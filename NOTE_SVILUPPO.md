@@ -3906,3 +3906,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1528) Maglia nera Ducks: tolta la «Nera triplo lime-viola»; in prova tre nere: 321 «Nera fluo-viola-fluo», 323 «Nera viola-fluo numero bianco», 324 «Nera triplo viola-fluo-viola» (id gradienti distinti).
 - (1529) Maglia 324: bordini collo e spalle +60% e gessato fluo leggero («Nera triplo viola-fluo-viola gessata»).
 - (1530) Maglie nere: resta solo la 324 «Nera triplo viola-fluo-viola gessata»; tolte 321 e 323.
+
+- v954: Peacocks: 3 maglie DPK (340 Blu, 341 Nera, 342 Rosa) al posto delle 3 precedenti, + NBA 2026 e Anni 90. Sfondo img/pea-s1..3.jpg, scritta DPK vettoriale, numero giocatore. PEA_JV/PEA_KN, kitDi/kitLista. IN CODA.
