@@ -3861,3 +3861,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1500) Scritta DUCKS sul campo liberata: il tocco non fa più nulla di speciale (resta TEXAS per gli effetti).
 
 ## (1501) Card prestazione: logo Ducks −35% (stesso centro); le altre squadre invariate.
+
+## (1502) Editor loghi: aggiunto logo Ducks «Testa verde · becco arancio» (loghi/duc-23.webp).
