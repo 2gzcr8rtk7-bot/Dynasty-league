@@ -3922,3 +3922,9 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1536) Ducks di notte: sempre la viola ufficiale 318; la maglia scelta col pulsante di notte vale solo finché resti in notte e non si salva (prima restava salvata la lime).
 - (1537) Maglia lime 322: bordino bianco -30% (9,1→6,4).
 - (1538) Maglie ufficiali Ducks: giorno 317 Viola bianca, notte 319 Bianca viola. Il pulsante maglia vale solo finché resti in quella modalità; passando giorno↔notte o riaprendo l'app torna l'ufficiale (niente più scelta salvata che si trascinava).
+
+## (1539) Gioco del tiro sul campo Ducks
+- Tocca DUCKS: parte il gioco e le animazioni si spengono; tocca DUCKS o TEXAS: si esce e tornano le animazioni. Uscendo dalla pagina il gioco si chiude.
+- Fionda: tocca un giocatore (campo o panchina) e trascina indietro; direzione = angolo, potenza = lunghezza (barra verde/gialla/rossa, max ~230 px). Si vedono solo 3 puntini di direzione, non la traiettoria.
+- Gittata = campo × (0,06 + 1,26 × potenza). Esito dalla distanza dal ferro (raggio 0,31 × maglia): swish < 0,4, dentro < 1,05, ferro e fuori < 1,6, air ball oltre. 2 punti, 3 dai lontani (> 55% del campo).
+- Punti, tiri, serie; record (punti e serie) in dl_dxgame. Vibrazione sul canestro. Il tocco sul giocatore non apre la scheda mentre giochi.

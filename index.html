@@ -14278,7 +14278,7 @@ let q=0;const m=document.getElementById("main")||document.body;new MutationObser
 (function(){
 let BC="#a3e635",TC="#7c3aed";const BC0=BC,TC0=TC,K="dl_dxpalla";
 const isOn=()=>{const m=window.dxFx?window.dxFx():"palla";return m==="palla"||m==="mix"};
-const here=()=>typeof cur!=="undefined"&&cur==="campo"&&!(window.gotOn&&gotOn());/* (1484) tutti i campi: le altre squadre hanno solo la palla live */
+const here=()=>typeof cur!=="undefined"&&cur==="campo"&&!(window.gotOn&&gotOn())&&!window.dxGameOn;/* (1539) col gioco attivo niente animazione *//* (1484) tutti i campi: le altre squadre hanno solo la palla live */
 const LBON=()=>{try{return DLS.plv!==false}catch(e){return true}};/* (1493) palla live: si accende/spegne in Personalizzazioni › Campo (acceso di default) */const normal=()=>curTeam==="DUC"&&isOn();
 const tcol=()=>{if(curTeam==="DUC")return"#a3e635";try{const C=TEAMS[curTeam],lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255};const lt=(h,k)=>{const n=parseInt(h.slice(1),16),f=v=>Math.round(v+(255-v)*k).toString(16).padStart(2,"0");return"#"+f(n>>16)+f(n>>8&255)+f(n&255)};/* (1486) scia sempre nel colore della squadra: se è scuro si schiarisce (Dolphins blu, non più verde) */return lum(C.bg)>=.33?C.bg:lum(C.bg)>=.15?lt(C.bg,.25):(lum(C.fg)>=.33&&lum(C.fg)<.95?C.fg:lt(C.bg,.45))}catch(e){return"#a3e635"}};
 let raf=0,t0=0,TR=[],PLAN=null,PLANKEY="";
@@ -14451,12 +14451,86 @@ setInterval(sample,2500);setTimeout(sample,900);
 setTimeout(()=>{if(typeof render!=="function")return;const R=render;render=function(){const x=R.apply(this,arguments);try{if(on()&&cur==="campo"){if(TM!==curTeam)sample();else paint()}}catch(e){}return x}},0);
 })();
 </script>
+<script>/* (1539) GIOCO DEL TIRO (campo Ducks): tocca DUCKS per giocare, tocca di nuovo DUCKS o TEXAS per tornare alle animazioni.
+   Fionda: tocca un giocatore e trascina il dito all'indietro; direzione = angolo, potenza = quanto tiri (barra). Rilascia e la palla vola con una parabola.
+   Esito: swish, ferro e dentro, ferro e fuori, air ball. 2 punti, 3 dai giocatori lontani. Record (serie e punti) salvati sul telefono (dl_dxgame). */
+(function(){
+const KB="dl_dxgame";let BEST={pts:0,ser:0};try{BEST=Object.assign(BEST,JSON.parse(localStorage.getItem(KB)||"{}"))}catch(e){}
+const S={pts:0,tiri:0,fatti:0,ser:0,ult:""};window.__dxGameS=S;let cv=null,cx=null,raf=0,drag=null,shots=[],fx=[],dpr=1;
+const st=document.createElement("style");st.textContent=`html.dxgame body[data-v="campo"] main .court>svg.cbg image{opacity:0!important}
+html.dxgame body[data-v="campo"] main .court .cpl .pj,html.dxgame body[data-v="campo"] main .dpan .pj{touch-action:none;cursor:grab}
+html.dxgame body[data-v="campo"] main .court .cname.cn-duc text:last-of-type{fill:#a3e635!important}
+#dxgcv{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:60}`;document.head.appendChild(st);
+const ok=()=>typeof cur!=="undefined"&&cur==="campo"&&curTeam==="DUC"&&!(window.gotOn&&gotOn());
+function court(){return document.querySelector("main .court")}
+function hoopR(){const c=court();if(!c)return null;const im=[...c.querySelectorAll(".cbg image")].find(e=>+(e.getAttribute("y")||99)<20);const pj=c.querySelector(".cpl .pj");const jw=pj?pj.getBoundingClientRect().width:50;
+ if(im){const r=im.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height*.62,L:r,rr:jw*.31,jw}}const r=c.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height*.1,L:null,rr:jw*.31,jw}}
+function mount(){if(cv)return;cv=document.createElement("canvas");cv.id="dxgcv";document.body.appendChild(cv);cx=cv.getContext("2d")}
+function size(){dpr=Math.min(2,window.devicePixelRatio||1);const W=Math.round(innerWidth*dpr),H=Math.round(innerHeight*dpr);if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H}cx.setTransform(dpr,0,0,dpr,0,0)}
+function save(){try{localStorage.setItem(KB,JSON.stringify(BEST))}catch(e){}}
+window.dxGameOn=false;
+window.dxGame=function(on){on=!!on&&ok();if(on===window.dxGameOn)return;window.dxGameOn=on;document.documentElement.classList.toggle("dxgame",on);
+ if(on){mount();S.pts=0;S.tiri=0;S.fatti=0;S.ser=0;shots=[];fx=[];if(!raf)raf=requestAnimationFrame(loop);txt("TOCCA UN GIOCATORE E TIRA LA FIONDA",2.2)}
+ else{cancelAnimationFrame(raf);raf=0;drag=null;shots=[];fx=[];if(cv){cv.remove();cv=null}}
+ try{window.__dxBallKick&&__dxBallKick()}catch(e){}try{const y=scrollY;render();scrollTo(0,y)}catch(e){}};
+function txt(t,d,x,y,c){fx.push({t,x,y,c:c||"#a3e635",t0:performance.now(),d:(d||1.2)*1000})}
+/* --- fionda --- */
+const MAXD=()=>Math.min(230,innerWidth*.55);
+function pjAt(t){const pj=t.closest&&t.closest(".pj");if(!pj)return null;if(!(pj.closest("main .court .cpl")||pj.closest("main .dpan")))return null;return pj}
+addEventListener("pointerdown",e=>{if(!window.dxGameOn)return;if(!ok()){dxGame(false);return}const pj=pjAt(e.target);if(!pj)return;e.preventDefault();e.stopPropagation();const r=pj.getBoundingClientRect();drag={id:e.pointerId,pj,sx:r.left+r.width/2,sy:r.top+r.height*.5,fx:e.clientX,fy:e.clientY,w:r.width};try{pj.setPointerCapture&&pj.setPointerCapture(e.pointerId)}catch(_){}},true);
+addEventListener("pointermove",e=>{if(!drag||e.pointerId!==drag.id)return;e.preventDefault();drag.fx=e.clientX;drag.fy=e.clientY},{capture:true,passive:false});
+addEventListener("pointerup",e=>{if(!drag||e.pointerId!==drag.id)return;e.preventDefault();e.stopPropagation();const d=drag;drag=null;const r=d.pj.getBoundingClientRect();d.sx=r.left+r.width/2;d.sy=r.top+r.height*.5;
+ const vx=d.sx-(d.fx-(d.fx0||0)),vy=0;fire(d)},true);
+addEventListener("pointercancel",()=>{drag=null},true);
+addEventListener("click",e=>{if(window.dxGameOn&&pjAt(e.target)){e.preventDefault();e.stopPropagation()}},true);
+addEventListener("touchmove",e=>{if(drag)e.preventDefault()},{passive:false,capture:true});
+function vec(d){const dx=d.sx-d.fx,dy=d.sy-d.fy,len=Math.hypot(dx,dy);return{ux:len?dx/len:0,uy:len?dy/len:-1,len,pw:Math.min(1,len/MAXD())}}
+function fire(d){const v=vec(d);if(v.len<14)return;const H=hoopR();if(!H)return;const c=court().getBoundingClientRect();
+ const range=c.height*(.06+1.26*v.pw)/* gittata: potenza piena = 1,32 volte il campo */,Lx=d.sx+v.ux*range,Ly=d.sy+v.uy*range;
+ const dist=Math.hypot(H.x-d.sx,H.y-d.sy),tre=dist>c.height*.55,e=Math.hypot(Lx-H.x,(Ly-H.y)*1.15)/H.rr;
+ const res=e<.4?"swish":e<1.05?"in":e<1.6?"out":"air";
+ S.tiri++;const dur=.62+.5*v.pw,hh=60+170*v.pw;
+ shots.push({sx:d.sx,sy:d.sy,Lx,Ly,res,tre,dur,hh,t0:performance.now(),ox:scrollX,oy:scrollY,w:d.w,trail:[]})}
+function score(sh){S.ult=sh.res;const H=hoopR();if(sh.res==="swish"||sh.res==="in"){const p=sh.tre?3:2;S.pts+=p;S.fatti++;S.ser++;txt((sh.res==="swish"?"SWISH! ":"")+"+"+p,1.3,H&&H.x,H&&H.y+H.rr*5,"#a3e635");try{navigator.vibrate&&navigator.vibrate(sh.res==="swish"?[25,40,25]:30)}catch(e){}
+  if(S.ser>BEST.ser){BEST.ser=S.ser;save()}if(S.pts>BEST.pts){BEST.pts=S.pts;save()}}
+ else{S.ser=0;txt(sh.res==="out"?"FERRO…":"AIR BALL",1.1,H&&H.x,H&&H.y+H.rr*5,sh.res==="out"?"#f59e0b":"#ef4444")}}
+/* --- disegno --- */
+function ball(x,y,r,a){cx.save();cx.globalAlpha=a==null?1:a;cx.translate(x,y);cx.beginPath();cx.arc(0,0,r,0,7);cx.fillStyle="#a3e635";cx.fill();cx.lineWidth=r*.12;cx.strokeStyle="#111";cx.stroke();cx.beginPath();cx.moveTo(-r,0);cx.lineTo(r,0);cx.moveTo(0,-r);cx.lineTo(0,r);cx.moveTo(-r*.7,-r*.7);cx.quadraticCurveTo(0,0,-r*.7,r*.7);cx.moveTo(r*.7,-r*.7);cx.quadraticCurveTo(0,0,r*.7,r*.7);cx.lineWidth=r*.09;cx.stroke();const g=cx.createRadialGradient(-r*.35,-r*.4,r*.1,0,0,r);g.addColorStop(0,"rgba(255,255,255,.55)");g.addColorStop(1,"rgba(255,255,255,0)");cx.beginPath();cx.arc(0,0,r,0,7);cx.fillStyle=g;cx.fill();cx.restore()}
+function hoop(H,front,sw){const rr=H.rr;cx.save();if(!front){if(H.L){const bw=H.L.width*.92,bh=H.L.height*.5,bx=H.x-bw/2,by=H.L.top+H.L.height*.04;cx.fillStyle="rgba(255,255,255,.96)";cx.strokeStyle="#5b21b6";cx.lineWidth=2.4;cx.beginPath();cx.roundRect?cx.roundRect(bx,by,bw,bh,4):cx.rect(bx,by,bw,bh);cx.fill();cx.stroke();cx.strokeStyle="#5b21b6";cx.lineWidth=1.6;cx.strokeRect(H.x-bw*.18,by+bh*.38,bw*.36,bh*.5);cx.fillStyle="#5b21b6";cx.fillRect(H.x-1.3,by+bh,2.6,H.y-(by+bh)-rr*.4)}
+  cx.fillStyle="rgba(0,0,0,.14)";cx.beginPath();cx.ellipse(H.x,H.y+rr*.9,rr*1.1,rr*.5,0,0,7);cx.fill();cx.restore();return}
+ const k=sw!=null&&sw<1?1+.25*Math.sin(sw*Math.PI*6):1;cx.strokeStyle="rgba(255,255,255,.95)";cx.lineWidth=1;for(let i=0;i<12;i++){const an=i/12*Math.PI*2;cx.beginPath();cx.moveTo(H.x+Math.cos(an)*rr,H.y+Math.sin(an)*rr*.42);cx.lineTo(H.x+Math.cos(an+.4)*rr*.5*k,H.y+rr*1.15);cx.stroke()}
+ cx.beginPath();cx.ellipse(H.x,H.y+rr*1.15,rr*.5*k,rr*.16,0,0,7);cx.stroke();cx.strokeStyle="#f97316";cx.lineWidth=2.8;cx.beginPath();cx.ellipse(H.x,H.y,rr,rr*.42,0,0,7);cx.stroke();cx.restore()}
+function hud(){const c=court();if(!c)return;const r=c.getBoundingClientRect();const x=r.left+10,y=r.top+r.height*.135;cx.save();cx.font="900 italic 13px 'Barlow Condensed',system-ui,sans-serif";const t1=`PUNTI ${S.pts}   ${S.fatti}/${S.tiri}   SERIE ${S.ser}`,t2=`RECORD ${BEST.pts} PT · SERIE ${BEST.ser}`;const w=Math.max(cx.measureText(t1).width,cx.measureText(t2).width)+16;
+ cx.fillStyle="rgba(46,16,101,.88)";cx.beginPath();cx.roundRect?cx.roundRect(x,y,w,38,9):cx.rect(x,y,w,38);cx.fill();cx.fillStyle="#a3e635";cx.fillText(t1,x+8,y+16);cx.fillStyle="#e9d5ff";cx.font="800 italic 11px 'Barlow Condensed',system-ui,sans-serif";cx.fillText(t2,x+8,y+31);cx.restore()}
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+function loop(now){raf=requestAnimationFrame(loop);if(!window.dxGameOn||!cv)return;if(!ok()){dxGame(false);return}size();cx.clearRect(0,0,innerWidth,innerHeight);const H=hoopR();if(!H)return;
+ hoop(H,false);let swAny=null;const front=[];
+ shots=shots.filter(sh=>{const dx=sh.ox-scrollX,dy=sh.oy-scrollY,t=(now-sh.t0)/1000;const sx=sh.sx+dx,sy=sh.sy+dy,Lx=sh.Lx+dx,Ly=sh.Ly+dy;let x,y,r=sh.w*.2,a=1,behind=false;
+  if(t<sh.dur){const q=t/sh.dur;x=sx+(Lx-sx)*q;y=sy+(Ly-sy)*q-4*sh.hh*q*(1-q);r*=1+.75*(4*q*(1-q));behind=q>.82&&(sh.res==="in"||sh.res==="swish")}
+  else{const u=t-sh.dur;if(!sh.done){sh.done=1;score(sh)}
+   if(sh.res==="swish"){if(u>.55)return false;x=H.x;y=H.y+u*H.rr*3.2;behind=true;swAny=u/.55;a=1-Math.max(0,(u-.35)/.2)}
+   else if(sh.res==="in"){if(u>.9)return false;if(u<.35){const w=Math.sin(u*28)*H.rr*.35*(1-u/.35);x=H.x+w;y=H.y-H.rr*.25-Math.abs(Math.sin(u*14))*H.rr*.5}else{const v=(u-.35)/.55;x=H.x;y=H.y+v*H.rr*3;behind=true;swAny=v;a=1-Math.max(0,(v-.6)/.4)}}
+   else if(sh.res==="out"){if(u>.8)return false;const ang=Math.atan2(Ly-H.y,Lx-H.x)||(-Math.PI/2),dd=H.rr*(1.2+u*4.5);x=H.x+Math.cos(ang)*dd;y=H.y+Math.sin(ang)*dd*.6-Math.sin(Math.min(1,u/.6)*Math.PI)*H.rr*2.2;a=1-Math.max(0,(u-.5)/.3)}
+   else{if(u>.7)return false;x=Lx;y=Ly-Math.abs(Math.sin(u*9))*H.rr*1.2*(1-u/.7);a=1-u/.7}}
+  sh.trail.push([x,y]);if(sh.trail.length>14)sh.trail.shift();
+  const draw=()=>{for(let i=1;i<sh.trail.length;i++){const A=sh.trail[i-1],B=sh.trail[i],al=i/sh.trail.length;cx.strokeStyle=`rgba(124,58,237,${al*.7*a})`;cx.lineCap="round";cx.lineWidth=r*1.4*al;cx.beginPath();cx.moveTo(A[0],A[1]);cx.lineTo(B[0],B[1]);cx.stroke()}ball(x,y,r,a)};
+  if(behind)draw();else front.push(draw);return true});
+ hoop(H,true,swAny);front.forEach(f=>f());
+ if(drag){const r0=drag.pj.getBoundingClientRect();drag.sx=r0.left+r0.width/2;drag.sy=r0.top+r0.height*.5;const v=vec(drag);
+  cx.save();cx.strokeStyle="rgba(46,16,101,.8)";cx.lineWidth=3;cx.setLineDash([5,5]);cx.beginPath();cx.moveTo(drag.sx,drag.sy);cx.lineTo(drag.fx,drag.fy);cx.stroke();cx.setLineDash([]);
+  for(let i=1;i<=3;i++){cx.fillStyle=`rgba(163,230,53,${1-i*.25})`;cx.beginPath();cx.arc(drag.sx+v.ux*i*16,drag.sy+v.uy*i*16,3.2,0,7);cx.fill()}
+  const bw=drag.w*1.3,bx=drag.sx-bw/2,by=drag.sy-drag.w*.95;cx.fillStyle="rgba(0,0,0,.55)";cx.fillRect(bx,by,bw,7);const col=v.pw<.5?"#a3e635":v.pw<.8?"#facc15":"#ef4444";cx.fillStyle=col;cx.fillRect(bx,by,bw*v.pw,7);cx.strokeStyle="#fff";cx.lineWidth=1;cx.strokeRect(bx,by,bw,7);
+  ball(drag.fx,drag.fy,drag.w*.2,.9);cx.restore()}
+ fx=fx.filter(f=>{const q=(now-f.t0)/f.d;if(q>=1)return false;const c=court();const r=c?c.getBoundingClientRect():{left:0,width:innerWidth,top:100,height:300};const x=f.x==null?r.left+r.width/2:f.x,y=(f.y==null?r.top+r.height*.5:f.y)-q*18;cx.save();cx.globalAlpha=q<.15?q/.15:1-Math.max(0,(q-.7)/.3);cx.font="900 italic 22px 'Barlow Condensed',system-ui,sans-serif";cx.textAlign="center";cx.lineWidth=4;cx.strokeStyle="#2e1065";cx.strokeText(f.t,x,y);cx.fillStyle=f.c;cx.fillText(f.t,x,y);cx.restore();return true});
+ hud()}
+})();
+</script>
 <script>/* (1397) EFFETTI CAMPO DUCKS: tocca TEXAS per cambiare. palla · faro · 5 crolli del pavimento (visti dall'alto: giorno -> notte -> giorno) · spento (dl_dxfx) */
 (function(){
 const MODES=[["palla","🏀 Palla e canestro"],["c1","💥 Crollo del pavimento"],["off","Effetti spenti"]];
 const K="dl_dxfx";
 window.dxFx=()=>{let v=null;try{if(!localStorage.getItem("dl_dxfx_m1399")){localStorage.setItem(K,"palla");localStorage.setItem("dl_dxfx_m1399","1")}v=localStorage.getItem(K)}catch(e){}if(!v){try{if(localStorage.getItem("dl_dxpalla")==="0")return"off"}catch(e){}return"palla"}return MODES.some(m=>m[0]===v)?v:"palla"};/* (1399) tolta palla+crollo; default palla *//* (1398) tolto il faro */
-const here=()=>typeof cur!=="undefined"&&cur==="campo"&&curTeam==="DUC"&&!(window.gotOn&&gotOn());
+const here=()=>typeof cur!=="undefined"&&cur==="campo"&&curTeam==="DUC"&&!(window.gotOn&&gotOn())&&!window.dxGameOn;
 const NS="http://www.w3.org/2000/svg";
 const st=document.createElement("style");st.textContent=`html body .court>canvas.dxfaro{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:7}`;document.head.appendChild(st);
 const rnd=s=>()=>(s=(s*16807)%2147483647)/2147483647;
@@ -14522,7 +14596,7 @@ function frame(ts){raf=requestAnimationFrame(frame);if(!here()||!M||M==="palla"|
  if(M==="faro"){clearCollapse();faroFrame(ts)}else{const M0=M;if(M==="mix")M="c1";document.querySelectorAll("main .court canvas.dxfaro").forEach(c=>c.remove());collapseFrame(ts);M=M0}}
 function set(m){M=m;document.documentElement.classList.toggle("dxnoball",m!=="palla"&&m!=="mix");t0=0;stopAll();if(window.__dxBallKick)window.__dxBallKick();if(m!=="palla"&&m!=="off")raf=requestAnimationFrame(frame)}
 function toast(m){let d=document.getElementById("dxbt");if(!d){d=document.createElement("div");d.id="dxbt";d.style.cssText="position:fixed;left:50%;top:40%;transform:translateX(-50%);z-index:99999;padding:10px 16px;border-radius:14px;background:#2e1065;color:#a3e635;border:2px solid #a3e635;font:900 italic 15px system-ui;pointer-events:none;transition:opacity .4s;white-space:nowrap";document.body.appendChild(d)}d.textContent=m;d.style.opacity="1";clearTimeout(d._t);d._t=setTimeout(()=>d.style.opacity="0",1700)}
-document.addEventListener("click",e=>{if(!here())return;const t=e.target.closest&&e.target.closest("main .court .cname.cn-duc text");if(!t)return;if(/DUCKS/i.test(t.textContent||"")&&!/TEXAS/i.test(t.textContent||""))return;/* (1500) DUCKS libero: il tocco non è più intercettato */e.preventDefault();e.stopPropagation();const i=MODES.findIndex(m=>m[0]===dxFx()),n=MODES[(i+1)%MODES.length];try{localStorage.setItem(K,n[0])}catch(_){}set(n[0])/* (1473) senza avviso */},true);
+document.addEventListener("click",e=>{if(!(typeof cur!=="undefined"&&cur==="campo"&&curTeam==="DUC"&&!(window.gotOn&&gotOn())))return;const t=e.target.closest&&e.target.closest("main .court .cname.cn-duc text");if(!t)return;e.preventDefault();e.stopPropagation();if(/DUCKS/i.test(t.textContent||"")&&!/TEXAS/i.test(t.textContent||"")){/* (1539) DUCKS: accende/spegne il gioco del tiro */if(window.dxGame)dxGame(!window.dxGameOn);return}if(window.dxGameOn){/* TEXAS col gioco attivo: si esce dal gioco e tornano le animazioni */if(window.dxGame)dxGame(false);return}const i=MODES.findIndex(m=>m[0]===dxFx()),n=MODES[(i+1)%MODES.length];try{localStorage.setItem(K,n[0])}catch(_){}set(n[0])/* (1473) senza avviso */},true);
 const kick=()=>{const m=dxFx();if(m!==M)set(m);else if(here()&&m!=="palla"&&m!=="off"&&!raf)raf=requestAnimationFrame(frame)};new MutationObserver(kick).observe(document.getElementById("main")||document.body,{childList:true});setTimeout(kick,900);
 window.__dxFxSet=m=>{try{localStorage.setItem(K,m)}catch(e){}set(m)};
 })();
