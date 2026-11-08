@@ -3912,3 +3912,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v954: Peacocks: 3 maglie DPK (340 Blu, 341 Nera, 342 Rosa) al posto delle 3 precedenti, + NBA 2026 e Anni 90. Sfondo img/pea-s1..3.jpg, scritta DPK vettoriale, numero giocatore. PEA_JV/PEA_KN, kitDi/kitLista. IN CODA.
 - (1533) Maglia lime 322: bordino invertito, bianco fuori e viola dentro.
 - (1534) Tolta la maglia 316 «Bianca verde»; chi l'aveva torna alla Bianca viola.
+- (1535) Maglia 319 Bianca viola: bordini tornati come prima del +30% (12 e 7).
