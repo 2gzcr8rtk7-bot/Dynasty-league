@@ -3951,3 +3951,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1552) Tiro delle guardie (fuori dall arco) tornato come prima (gittata = campo × (0,06 + 1,26 × potenza)); la taratura sulla distanza resta solo per centri e ali. Audio su iPhone: categoria «playback» (navigator.audioSession) + audio silenzioso in loop, così i suoni e la voce si sentono anche col tasto silenzioso; sblocco anche al primo tocco nel gioco.
 
 (1553) Gioco del tiro più leggero (stessa qualità, dpr 2): misure di campo/giocatori/canestro in cache (rilette ogni 0,4 s o quando cambia #main), palla e animaletto disegnati da sprite pronti, tabellone ridisegnato solo quando cambia un numero, canvas grande solo quanto campo+panchina (in alto fino al bordo schermo per l arco dei tiri), tasto audio che non riscrive più il DOM a ogni fotogramma (svegliava gli osservatori dei loghi 1405/1424). Test iPhone 13 con CPU x4: da ~34 a ~45 fps. Le stelline che brillano sul campo costano ancora ~10 fps (non toccate).
+
+(1554) Correzione 1553: la palla disegnata dallo sprite usciva a metà grandezza; ora identica a prima.
