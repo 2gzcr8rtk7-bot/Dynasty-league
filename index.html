@@ -14477,8 +14477,10 @@ setTimeout(()=>{if(window.dxGameOn){mount();if(!raf)raf=requestAnimationFrame(lo
 function txt(t,d,x,y,c){fx.push({t,x,y,c:c||"#a3e635",t0:performance.now(),d:(d||1.2)*1000})}
 /* --- fionda --- */
 const MAXD=()=>Math.min(230,innerWidth*.55);
-function pjAt(t){const pj=t.closest&&t.closest(".pj");if(!pj)return null;if(!(pj.closest("main .court .cpl")||pj.closest("main .dpan")))return null;return pj}
-addEventListener("pointerdown",e=>{if(!window.dxGameOn||!ok())return;if(blockT(e.target)&&!pjAt(e.target)){e.stopPropagation();return}const pj=pjAt(e.target);if(!pj)return;e.preventDefault();e.stopPropagation();const r=pj.getBoundingClientRect();drag={id:e.pointerId,pj,sx:r.left+r.width/2,sy:r.top+r.height*.5,fx:e.clientX,fy:e.clientY,w:r.width};try{pj.setPointerCapture&&pj.setPointerCapture(e.pointerId)}catch(_){}},true);
+function pjAt(t,x,y){const pj=t&&t.closest&&t.closest(".pj");if(pj&&(pj.closest("main .court .cpl")||pj.closest("main .dpan")))return pj;if(x==null)return null;return pjNear(x,y)}
+/* (1541) area di tocco allargata: tutto il blocco del giocatore (maglia, nome, cartellino) più un margine invisibile */
+function pjNear(x,y){let best=null,bd=1e9;document.querySelectorAll("main .court .cpl .pj, main .dpan .pj").forEach(pj=>{const r=pj.getBoundingClientRect();if(!r.width)return;const box=pj.closest(".cpl,[data-pl]")||pj;const q=box.getBoundingClientRect();const m=r.width*.28,L=Math.min(r.left,q.left)-m,R2=Math.max(r.right,q.right)+m,T=Math.min(r.top,q.top)-m,B=Math.max(r.bottom,q.bottom)+m*.5;if(x<L||x>R2||y<T||y>B)return;const d=Math.hypot(x-(r.left+r.width/2),y-(r.top+r.height/2));if(d<bd){bd=d;best=pj}});return best}
+addEventListener("pointerdown",e=>{if(!window.dxGameOn||!ok())return;const pj=pjAt(e.target,e.clientX,e.clientY);if(!pj){if(blockT(e.target))e.stopPropagation();return}e.preventDefault();e.stopPropagation();const r=pj.getBoundingClientRect();drag={id:e.pointerId,pj,sx:r.left+r.width/2,sy:r.top+r.height*.5,fx:e.clientX,fy:e.clientY,w:r.width};try{pj.setPointerCapture&&pj.setPointerCapture(e.pointerId)}catch(_){}},true);
 addEventListener("pointermove",e=>{if(!drag||e.pointerId!==drag.id)return;e.preventDefault();drag.fx=e.clientX;drag.fy=e.clientY},{capture:true,passive:false});
 addEventListener("pointerup",e=>{if(!drag||e.pointerId!==drag.id)return;e.preventDefault();e.stopPropagation();const d=drag;drag=null;const r=d.pj.getBoundingClientRect();d.sx=r.left+r.width/2;d.sy=r.top+r.height*.5;
  const vx=d.sx-(d.fx-(d.fx0||0)),vy=0;fire(d)},true);
@@ -14488,6 +14490,7 @@ const blockT=t=>t&&t.closest&&(t.closest("main .court")||t.closest("main .dpan")
 addEventListener("click",e=>{if(window.dxGameOn&&ok()&&blockT(e.target)){e.preventDefault();e.stopPropagation()}},true);
 ["touchstart","touchend","mousedown","mouseup","dblclick","contextmenu"].forEach(ev=>addEventListener(ev,e=>{if(window.dxGameOn&&ok()&&blockT(e.target)&&!drag)e.stopPropagation()},{capture:true,passive:true}));
 addEventListener("touchmove",e=>{if(drag)e.preventDefault()},{passive:false,capture:true});
+addEventListener("touchstart",e=>{if(!window.dxGameOn||!ok()||e.touches.length!==1)return;const t=e.touches[0];if(pjAt(e.target,t.clientX,t.clientY))e.preventDefault()/* niente scorrimento se il dito parte da un giocatore */},{passive:false,capture:true});
 function vec(d){const dx=d.sx-d.fx,dy=d.sy-d.fy,len=Math.hypot(dx,dy);return{ux:len?dx/len:0,uy:len?dy/len:-1,len,pw:Math.min(1,len/MAXD())}}
 function fire(d){const v=vec(d);if(v.len<14)return;const H=hoopR();if(!H)return;const c=court().getBoundingClientRect();
  const range=c.height*(.06+1.26*v.pw)/* gittata: potenza piena = 1,32 volte il campo */,Lx=d.sx+v.ux*range,Ly=d.sy+v.uy*range;
