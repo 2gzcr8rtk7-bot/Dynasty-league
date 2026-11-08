@@ -3895,3 +3895,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1520) Maglie lime: resta una sola, 322 «DUCKS gessato · Lime» (bordino viola scuro/chiaro, numero viola bordo bianco, scritta stile 16); tolte 323 e 324 (chi le aveva torna alla predefinita).
 - (1521) Maglia viola con scritta e bordino lime (318, ufficiale di notte) di nuovo sceglibile anche di giorno col pulsante maglia.
 - (1522) Maglie lime: al posto della 322 ora 322 «Lime numero viola» (bordino bianco sotto il viola) e 323 «Lime numero bianco» (numero bianco bordato viola), resto uguale.
+- (1523) Ducks: passando a giorno torna la bianca (la viola 318 di giorno solo se scelta di giorno col pulsante); di notte la viola.
