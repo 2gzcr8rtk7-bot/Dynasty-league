@@ -3896,3 +3896,7 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1521) Maglia viola con scritta e bordino lime (318, ufficiale di notte) di nuovo sceglibile anche di giorno col pulsante maglia.
 - (1522) Maglie lime: al posto della 322 ora 322 «Lime numero viola» (bordino bianco sotto il viola) e 323 «Lime numero bianco» (numero bianco bordato viola), resto uguale.
 - (1523) Ducks: passando a giorno torna la bianca (la viola 318 di giorno solo se scelta di giorno col pulsante); di notte la viola.
+
+## (1524) Ottimizzazione
+- Loghi squadre img/*.png → .webp senza perdita (pixel identici, verificato), 1965 KB → 1339 KB.
+- Controllo Dunkest↔ESPN e partite free agent (fa-games.js 1,5 MB) spostati a 18 s dopo l'apertura: avvio più leggero. Il live (Dynasty TV, ogni 45 s) parte subito come prima.
