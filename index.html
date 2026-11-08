@@ -14503,7 +14503,15 @@ function noise(dur,vol,ft,fq,f2){const a=SND&&ac();if(!a||!NZ)return;const t=a.c
 const SFX={step:()=>noise(.05,.05,"bandpass",2600+Math.random()*900),dribble:()=>{tone(95,.12,"sine",.35,55);noise(.04,.08,"lowpass",900)},shot:()=>noise(.28,.12,"bandpass",500,1800),
  swish:()=>noise(.35,.16,"highpass",3500,6000),rim:()=>{tone(620,.5,"triangle",.18);tone(930,.35,"triangle",.1);tone(1460,.2,"sine",.05)},block:()=>{tone(140,.18,"sine",.45,60);noise(.12,.25,"lowpass",700)},
  steal:()=>{tone(1900,.08,"sine",.18,2700);setTimeout(()=>tone(2400,.07,"sine",.14,3000),70)},buzzer:()=>{tone(220,.7,"square",.12);tone(223,.7,"sawtooth",.06)},
- crowd:()=>noise(.9,.14,"bandpass",900,1400),ooh:()=>noise(.6,.08,"lowpass",600,300)};
+ crowd:()=>noise(.9,.14,"bandpass",900,1400),ooh:()=>noise(.6,.08,"lowpass",600,300),
+ /* (1555) canestro mio: suono n.2 scelto da Francesco = retina (tanti piccoli fff dei fili + colpo sordo) e campanelle che salgono do-mi-sol-do, con un luccichio finale */
+ make:()=>{const a=SND&&ac();if(!a||!NZ)return;const t0=a.currentTime,out=a.createDynamicsCompressor();out.connect(a.destination);
+  const env=(g,t,pk,d)=>{g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(pk,t+.006);g.gain.exponentialRampToValueAtTime(.0001,t+d)};
+  const nz=(t,ft,f1,f2,q,pk,d)=>{const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();s.buffer=NZ;f.type=ft;f.Q.value=q;f.frequency.setValueAtTime(f1,t);if(f2)f.frequency.exponentialRampToValueAtTime(f2,t+d);env(g,t,pk,d);s.connect(f).connect(g).connect(out);s.start(t,Math.random()*.5);s.stop(t+d+.05)};
+  const tn=(t,f,type,pk,d,f2)=>{const o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);env(g,t,pk,d);o.connect(g).connect(out);o.start(t);o.stop(t+d+.05)};
+  for(let i=0;i<7;i++)nz(t0+i*.022+Math.random()*.01,"bandpass",5200-i*350,2600,1.4,.45*(1-i*.09),.16);nz(t0+.02,"highpass",3000,7000,.7,.22,.38);tn(t0+.05,120,"sine",.4,.22,70);
+  [523.25,659.25,783.99,1046.5].forEach((f,i)=>{const t=t0+.1+i*.075;tn(t,f,"sine",.22,.9);tn(t,f*2.01,"sine",.077,.54);tn(t,f*3.02,"sine",.033,.32)});
+  nz(t0+.35,"highpass",7000,0,.7,.06,.5)}};
 function sfx(k){if(SND)try{SFX[k]()}catch(e){}}
 const ST_IT={pt:v=>v+(v===1?" punto":" punti"),reb:v=>v===1?"rimbalzo":v+" rimbalzi",ast:v=>v===1?"assist":v+" assist",stl:v=>v===1?"palla rubata":v+" palle rubate",blk:v=>v===1?"stoppata":v+" stoppate",to:v=>v===1?"palla persa":v+" palle perse",mis:v=>v===1?"tiro sbagliato":v+" tiri sbagliati",ftx:v=>v===1?"tiro libero sbagliato":v+" tiri liberi sbagliati"};
 function say(t){if(!SND||!window.speechSynthesis)return;try{const u=new SpeechSynthesisUtterance(t);u.lang="it-IT";u.rate=1.05;u.pitch=.9;const vs=speechSynthesis.getVoices().filter(v=>/^it/i.test(v.lang));if(vs.length)u.voice=vs[0];speechSynthesis.speak(u)}catch(e){}}
@@ -14567,7 +14575,7 @@ function cpuShot(){const H=hoopR(),r=crect();if(!H||!r){giveMe("","");return}con
  const pk=M.skill,u=Math.random(),res=u<pk*.35?"swish":u<pk?"in":u<pk+(1-pk)*.6?"out":"air",e={swish:.2,in:.75,out:1.3,air:2.3}[res]*(.85+Math.random()*.3),an=Math.random()*Math.PI*2;
  const Lx=H.x+Math.cos(an)*e*H.rr,Ly=H.y+Math.sin(an)*e*H.rr/1.15,pw=Math.min(1,Math.hypot(Lx-sx,Ly-sy)/(r.height*1.3));
  M.poss="cpushot";sfx("shot");shots.push({sx,sy,Lx,Ly,res,tre,dur:.75+.55*pw,hh:60+170*pw,t0:performance.now(),ox:scrollX,oy:scrollY,w:H.jw,trail:[],cpu:true})}
-function score(sh){if(sh.res==="swish")sfx("swish");else if(sh.res==="in"){sfx("rim");setTimeout(()=>sfx("swish"),300)}else if(sh.res==="out")sfx("rim");if((sh.res==="swish"||sh.res==="in")&&!sh.cpu)setTimeout(()=>sfx("crowd"),200);const H=hoopR(),nk=((TEAMS[M.opp]||{}).nick||M.opp||"").toUpperCase(),made=sh.res==="swish"||sh.res==="in",p=sh.tre?3:2,ty=H&&H.y+H.rr*5;
+function score(sh){const mk=sh.cpu?"swish":"make";/* (1555) i miei canestri col suono n.2 (al posto di retina+pubblico); quelli dell animaletto restano con la sola retina */if(sh.res==="swish")sfx(mk);else if(sh.res==="in"){sfx("rim");setTimeout(()=>sfx(mk),300)}else if(sh.res==="out")sfx("rim");const H=hoopR(),nk=((TEAMS[M.opp]||{}).nick||M.opp||"").toUpperCase(),made=sh.res==="swish"||sh.res==="in",p=sh.tre?3:2,ty=H&&H.y+H.rr*5;
  if(sh.cpu){if(made){M.cpu+=p;txt(nk+" +"+p,1.3,H&&H.x,ty,"#f97316")}else txt(nk+(sh.res==="out"?" FERRO":" SBAGLIA"),1.1,H&&H.x,ty,"#e9d5ff");setTimeout(()=>{if(M.end)return;giveMe("","");mascotHome()},500);return}
  S.ult=sh.res;if(made){if(!FREE())M.me+=p;S.pts+=p;S.fatti++;S.ser++;txt((sh.res==="swish"?"SWISH! ":"")+"+"+p,1.3,H&&H.x,ty,"#a3e635");try{navigator.vibrate&&navigator.vibrate(sh.res==="swish"?[25,40,25]:30)}catch(e){}if(S.ser>BEST.ser){BEST.ser=S.ser;save()}if(S.pts>BEST.pts){BEST.pts=S.pts;save()}}
  else{S.ser=0;txt(sh.res==="out"?"FERRO…":"AIR BALL",1.1,H&&H.x,ty,sh.res==="out"?"#f59e0b":"#ef4444")}

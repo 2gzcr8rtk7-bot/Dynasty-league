@@ -3953,3 +3953,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 (1553) Gioco del tiro più leggero (stessa qualità, dpr 2): misure di campo/giocatori/canestro in cache (rilette ogni 0,4 s o quando cambia #main), palla e animaletto disegnati da sprite pronti, tabellone ridisegnato solo quando cambia un numero, canvas grande solo quanto campo+panchina (in alto fino al bordo schermo per l arco dei tiri), tasto audio che non riscrive più il DOM a ogni fotogramma (svegliava gli osservatori dei loghi 1405/1424). Test iPhone 13 con CPU x4: da ~34 a ~45 fps. Le stelline che brillano sul campo costano ancora ~10 fps (non toccate).
 
 (1554) Correzione 1553: la palla disegnata dallo sprite usciva a metà grandezza; ora identica a prima.
+
+(1555) Gioco: nuovo suono per i miei canestri (prova n.2 scelta da Francesco: retina + campanelle do-mi-sol-do + luccichio), al posto di retina+pubblico. Canestri dell animaletto: solo retina come prima.
