@@ -3892,3 +3892,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 ## (1517) Maglia Ducks 322 «DUCKS gessato · Lime viola»: base lime gessata, bordini viola, scritta DUCKS viola su fondo bianco, numero bianco bordato viola. Nel pulsante maglia del campo.
 - (1518) Maglie Ducks 323 «Lime viola-bianco» (n.2) e 324 «Lime triplo» (n.10), entrambe con la scritta DUCKS dello stile 16 (viola su bianco, bordo bianco).
 - (1519) Pulsante maglia: le maglie lime 322-324 non venivano accettate (si tornava alla 319); di notte i Ducks erano bloccati sulla 318 e i Dolphins sempre sulla ufficiale. Ora il pulsante scorre tutte le maglie, di giorno e di notte, per tutte le squadre.
+- (1520) Maglie lime: resta una sola, 322 «DUCKS gessato · Lime» (bordino viola scuro/chiaro, numero viola bordo bianco, scritta stile 16); tolte 323 e 324 (chi le aveva torna alla predefinita).
