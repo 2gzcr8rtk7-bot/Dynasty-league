@@ -3890,3 +3890,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1516) Tema lime: anche di notte scritte viola nel banner e nel campo (TEXAS DUCKS).
 
 ## (1517) Maglia Ducks 322 «DUCKS gessato · Lime viola»: base lime gessata, bordini viola, scritta DUCKS viola su fondo bianco, numero bianco bordato viola. Nel pulsante maglia del campo.
+- (1518) Maglie Ducks 323 «Lime viola-bianco» (n.2) e 324 «Lime triplo» (n.10), entrambe con la scritta DUCKS dello stile 16 (viola su bianco, bordo bianco).
