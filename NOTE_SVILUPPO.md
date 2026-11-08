@@ -3961,3 +3961,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 (1557) Partita: fischio d inizio (tutto fermo per 2 s, poi fischio + VIA!; tocchi sul campo ignorati prima), tasto pausa (#dxgpau, accanto/sotto l audio, solo in partita: congela tempo, animaletto, tiri; scritta PAUSA), bip negli ultimi 5 secondi di ogni quarto (sfx tick) prima della sirena.
 
 (1558) Partita: tabellone più grosso, 4 righe (DUCKS, avversario, quarto e minuti, TIRO 24s/DIFESA), occupa il bordocampo dal bordo alto fino alla linea di fondo (slot L più alto, place() può ingrandire fino a 1,6x).
+
+(1559) Tiro: centro più difficile (serve caricare circa metà barra, ~118 px invece di ~80; finestra di canestro da ~34 a ~19 px), ali più facili (stessa carica, finestra da ~16 a ~22 px). Guardie invariate.
