@@ -3901,3 +3901,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - Loghi squadre img/*.png → .webp senza perdita (pixel identici, verificato), 1965 KB → 1339 KB.
 - Controllo Dunkest↔ESPN e partite free agent (fa-games.js 1,5 MB) spostati a 18 s dopo l'apertura: avvio più leggero. Il live (Dynasty TV, ogni 45 s) parte subito come prima.
 - (1525) Home, banner OUT / IN DUBBIO: non più «ultimi 2 giorni» ma la prossima notte (oggi se non finita, altrimenti la prima con partite); solo chi ha la partita quella notte. Etichetta «notte G/M».
+- (1526) Banner OUT/IN DUBBIO: dalle 7 (ora italiana) indica la notte che arriva; fino alle 7 resta sulla notte in corso.

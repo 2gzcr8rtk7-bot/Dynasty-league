@@ -5877,7 +5877,7 @@ function hnAvvisi(){
     return`<div class="tmc"${/cassa/i.test(x.titolo)?"":` data-tmgo="${/speciale/i.test(x.titolo)?"sp":"tutte"}" role="link" tabindex="0" aria-label="Apri ${esc(x.titolo)} nella sezione trade"`}><div class="tmrow">${sides.map(side).join('<span class="tmar">⇄</span>')}</div></div>`}).join("");
   /* (1136→1525) banner INFERMERIA nella striscia della Home: out e in dubbio delle nostre squadre per la prossima notte */
   let ih="";try{/* (1525) out e in dubbio della PROSSIMA NOTTE: la notte di oggi se non è finita, altrimenti la prima notte con partite; solo chi ha la partita quella notte */
-    let ND=null,NG=[];{let d=flUsaOggi();for(let i=0;i<8;i++){const G=(TV.days[d]||[]);if(G.length&&G.some(g=>g[5]!=="F")){ND=d;NG=G.filter(g=>g[5]!=="F");break}d=drAdd(d,1)}}
+    let ND=null,NG=[];{/* (1526) dalle 7 (ora italiana) la notte che arriva; fino alle 7 resta la notte in corso / appena giocata */const it=new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hour12:false}).formatToParts(new Date()).reduce((o,x)=>(o[x.type]=x.value,o),{});let d=`${it.year}-${it.month}-${it.day}`;if(+it.hour%24<7)d=drAdd(d,-1);for(let i=0;i<8;i++){const G=(TV.days[d]||[]);if(G.length){ND=d;NG=G;break}d=drAdd(d,1)}}
     const plays=new Set();NG.forEach(g=>{plays.add(g[0]);plays.add(g[1])});const ndl=ND?(()=>{const x=tvDt(ND);return x.getUTCDate()+"/"+(x.getUTCMonth()+1)})():"";
     const R=ND?(INFORTUNI.lista||[]).filter(x=>x.t&&TEAMS[x.t]&&x.stato!=="ok"&&x.nba&&plays.has(x.nba)).sort((a,b)=>String(a.p).localeCompare(String(b.p))):[];
     const O=R.filter(x=>x.stato==="out"),Q=R.filter(x=>x.stato!=="out");
