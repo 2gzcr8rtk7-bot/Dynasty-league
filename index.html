@@ -14607,24 +14607,28 @@ function mascot(now,H){const x=M.mx-scrollX,y=M.my-scrollY,rr=H.jw*.36,im=oppImg
 /* (1551) tabellone nello spazio a sinistra di TEXAS, tasto audio a destra di DUCKS (fascia alta del campo) */
 function slots(c){const[G,dx,dy]=gd();if(!G)return slots0(c);const m=b=>({x0:b.x0+dx,x1:b.x1+dx,y0:b.y0+dy,y1:b.y1+dy});return{L:m(G.SL.L),R:m(G.SL.R)}}
 function slots0(c){const r=c.getBoundingClientRect(),T=[...c.querySelectorAll(".cname text")].map(e=>e.getBoundingClientRect()).filter(b=>b.width);if(!T.length)return{L:{x0:r.left+6,x1:r.left+120,y0:r.top+4,y1:r.top+60},R:{x0:r.right-40,x1:r.right-6,y0:r.top+4,y1:r.top+60}};
- const a=T.reduce((m,b)=>b.left<m.left?b:m),z=T.reduce((m,b)=>b.right>m.right?b:m),y0=Math.max(r.top+3,Math.min(a.top,z.top)-8),y1=Math.max(a.bottom,z.bottom)+8;return{L:{x0:r.left+5,x1:a.left-5,y0,y1},R:{x0:z.right+5,x1:r.right-5,y0,y1}}}
-function place(box,w,h){const k=Math.min(1,(box.x1-box.x0)/w,(box.y1-box.y0)/h);cx.translate(box.x0,box.y0+((box.y1-box.y0)-h*k)/2);cx.scale(k,k);return k}
+ const a=T.reduce((m,b)=>b.left<m.left?b:m),z=T.reduce((m,b)=>b.right>m.right?b:m),y0=Math.max(r.top+3,Math.min(a.top,z.top)-8),y1=Math.max(a.bottom,z.bottom)+8;const ln=c.querySelector(".cln"),lt=ln&&ln.getBoundingClientRect().top,Ly1=lt&&lt>a.bottom?lt-3:y1;/* (1558) tabellone: tutta l altezza del bordocampo, fino alla linea di fondo */return{L:{x0:r.left+3,x1:a.left-3,y0:r.top+3,y1:Ly1},R:{x0:z.right+5,x1:r.right-5,y0,y1}}}
+function place(box,w,h){const k=Math.min(1.6,(box.x1-box.x0)/w,(box.y1-box.y0)/h);/* (1558) può anche ingrandire */cx.translate(box.x0,box.y0+((box.y1-box.y0)-h*k)/2);cx.scale(k,k);return k}
 function sndAt(box){const sz=30,w=box.x1-box.x0,y=box.y0+((box.y1-box.y0)-sz)/2;if(FREE()||M.end){pbHide();sndBtn(box.x0+(w-sz)/2,y);return}/* (1557) in partita: pausa a sinistra e audio a destra; se lo spazio non basta la pausa va sotto */if(w>=2*sz+6){const x=box.x0+(w-2*sz-6)/2;pauBtn(x,y);sndBtn(x+sz+6,y)}else{const x=box.x0+(w-sz)/2;sndBtn(x,y);pauBtn(x,y+sz+5)}}
 function hudBody(){if(FREE()){const x=4,y=4;cx.save();cx.font="900 italic 13px 'Barlow Condensed',system-ui,sans-serif";const t1=`TIRO LIBERO · PUNTI ${S.pts}   ${S.fatti}/${S.tiri}   SERIE ${S.ser}`,t2=`RECORD ${BEST.pts} PT · SERIE ${BEST.ser} · DUCKS = PARTITA`;const w=Math.max(cx.measureText(t1).width,cx.measureText(t2).width)+16;HUDC.w=w+8;HUDC.h=46;cx.fillStyle="rgba(46,16,101,.88)";cx.beginPath();cx.roundRect?cx.roundRect(x,y,w,38,9):cx.rect(x,y,w,38);cx.fill();cx.fillStyle="#a3e635";cx.fillText(t1,x+8,y+16);cx.fillStyle="#e9d5ff";cx.font="800 italic 11px 'Barlow Condensed',system-ui,sans-serif";cx.fillText(t2,x+8,y+31);cx.restore();return}
  const x=4,y=4,T=TEAMS[M.opp]||{},nk=(T.nick||M.opp||"").toUpperCase(),oc=T.bg||"#f70990";
  const mm=Math.max(0,Math.ceil(M.clock)),cl=(M.q>4?"OT":"Q"+M.q)+" · "+Math.floor(mm/60)+":"+String(mm%60).padStart(2,"0")+(M.poss==="me"?" · "+Math.ceil(M.shot)+"s":""),cpuP=M.poss==="cpu"||M.poss==="cpushot";
  /* (1547) tabellone piccolo e bianco: DUCKS sopra (viola), avversario sotto (suo colore), tempo in rosso */
- cx.save();const F=(w,z)=>`${w} italic ${z}px 'Barlow Condensed',system-ui,sans-serif`;cx.font=F(900,13);const wn=Math.max(cx.measureText("DUCKS").width,cx.measureText(nk).width);cx.font=F(900,14);const ws=Math.max(cx.measureText(String(M.me)).width,cx.measureText(String(M.cpu)).width);cx.font=F(800,10);const msg=M.end?(M.me>M.cpu?"HAI VINTO · TOCCA PER RIGIOCARE":"HAI PERSO · TOCCA PER RIGIOCARE"):cl,wc=cx.measureText(msg).width;
- const w=Math.max(wn+ws+30,wc+14),h=50;HUDC.w=w+8;HUDC.h=h+8;cx.shadowColor="rgba(0,0,0,.25)";cx.shadowBlur=6;cx.fillStyle="#fff";cx.beginPath();cx.roundRect?cx.roundRect(x,y,w,h,8):cx.rect(x,y,w,h);cx.fill();cx.shadowBlur=0;
- const row=(nm,sc,col,yy,pos)=>{if(pos){cx.fillStyle=col;cx.beginPath();cx.arc(x+7,yy-4,2.6,0,7);cx.fill()}cx.font=F(900,13);cx.fillStyle=col;cx.fillText(nm,x+13,yy);cx.font=F(900,14);cx.textAlign="right";cx.fillText(String(sc),x+w-7,yy);cx.textAlign="left"};
- row("DUCKS",M.me,"#5b21b6",y+15,!cpuP&&!M.end);row(nk,M.cpu,oc,y+30,cpuP&&!M.end);
- cx.font=F(800,10);cx.fillStyle="#dc2626";cx.fillText(msg,x+7,y+44);cx.restore()}
+ /* (1558) tabellone più grosso: 4 righe (DUCKS, avversario, quarto e minuti, 24 secondi) e margini stretti, così riempie il bordocampo in alto e in basso */
+ cx.save();const F=(w,z)=>`${w} italic ${z}px 'Barlow Condensed',system-ui,sans-serif`;
+ const r3=M.end?(M.me>M.cpu?"HAI VINTO":"HAI PERSO"):(M.q>4?"OT":"Q"+M.q)+" · "+Math.floor(mm/60)+":"+String(mm%60).padStart(2,"0"),r4=M.end?"TOCCA PER RIGIOCARE":(M.poss==="me"?"TIRO "+Math.ceil(M.shot)+"s":"DIFESA");
+ cx.font=F(900,14);const wn=Math.max(cx.measureText("DUCKS").width,cx.measureText(nk).width);cx.font=F(900,15);const ws=Math.max(cx.measureText(String(M.me)).width,cx.measureText(String(M.cpu)).width);cx.font=F(800,13);const w3=cx.measureText(r3).width;cx.font=F(800,M.end?10:12);const w4=cx.measureText(r4).width;
+ const w=Math.ceil(Math.max(wn+ws+22,w3+12,w4+12)),h=72;HUDC.w=w+8;HUDC.h=h+8;cx.shadowColor="rgba(0,0,0,.25)";cx.shadowBlur=5;cx.fillStyle="#fff";cx.beginPath();cx.roundRect?cx.roundRect(x,y,w,h,8):cx.rect(x,y,w,h);cx.fill();cx.shadowBlur=0;
+ const row=(nm,sc,col,yy,pos)=>{if(pos){cx.fillStyle=col;cx.beginPath();cx.arc(x+5.5,yy-5,2.4,0,7);cx.fill()}cx.font=F(900,14);cx.fillStyle=col;cx.fillText(nm,x+10,yy);cx.font=F(900,15);cx.textAlign="right";cx.fillText(String(sc),x+w-6,yy);cx.textAlign="left"};
+ row("DUCKS",M.me,"#5b21b6",y+17,!cpuP&&!M.end);row(nk,M.cpu,oc,y+34,cpuP&&!M.end);
+ cx.fillStyle="#e5e7eb";cx.fillRect(x+6,y+40,w-12,1);
+ cx.fillStyle="#dc2626";cx.font=F(800,13);cx.fillText(r3,x+6,y+54);cx.font=F(800,M.end?10:12);cx.fillStyle=M.end?"#dc2626":"#7f1d1d";cx.fillText(r4,x+6,y+67);cx.restore()}
 /* (1553) il tabellone si ridisegna solo quando cambia qualcosa (punti, tempo al secondo); a ogni fotogramma si copia l immagine già pronta */
 const HUDC={key:"",c:null,w:0,h:0};
 function hud(now){const c=court();if(!c)return;const SL=slots(c);const mm=Math.max(0,Math.ceil(M.clock));
  const key=FREE()?`F|${S.pts}|${S.fatti}|${S.tiri}|${S.ser}|${BEST.pts}|${BEST.ser}`:`M|${M.me}|${M.cpu}|${M.opp}|${M.q}|${mm}|${M.poss==="me"?Math.ceil(M.shot):"-"}|${M.poss}|${M.end}`;
  const d=Math.min(2,devicePixelRatio||1);
- if(HUDC.key!==key){const main=cx;if(!HUDC.c)HUDC.c=document.createElement("canvas");HUDC.c.width=320*d;HUDC.c.height=70*d;cx=HUDC.c.getContext("2d");cx.setTransform(d,0,0,d,0,0);cx.clearRect(0,0,320,70);try{hudBody()}catch(e){}cx=main;HUDC.key=key}
+ if(HUDC.key!==key){const main=cx;if(!HUDC.c)HUDC.c=document.createElement("canvas");HUDC.c.width=320*d;HUDC.c.height=110*d;cx=HUDC.c.getContext("2d");cx.setTransform(d,0,0,d,0,0);cx.clearRect(0,0,320,110);try{hudBody()}catch(e){}cx=main;HUDC.key=key}
  cx.save();place(SL.L,HUDC.w,HUDC.h);cx.drawImage(HUDC.c,0,0,HUDC.w*d,HUDC.h*d,0,0,HUDC.w,HUDC.h);cx.restore();sndAt(SL.R)}
 function loop(now){raf=requestAnimationFrame(loop);if(!window.dxGameOn||!cv)return;size();let dt=Math.min(.05,last?(now-last)/1000:0);last=now;if(!ok()){clr();drag=null;tapP=null;sndHide();return}clr();const H=hoopR();if(!H)return;
  if(!M.opp)newMatch();
