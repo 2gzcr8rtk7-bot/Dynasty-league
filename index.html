@@ -5875,11 +5875,14 @@ function hnAvvisi(){
     const sides=x.lati.length>2&&!two?[x.lati[0]]:x.lati;
     w+=26+(sides.length>1?24:0);
     return`<div class="tmc"${/cassa/i.test(x.titolo)?"":` data-tmgo="${/speciale/i.test(x.titolo)?"sp":"tutte"}" role="link" tabindex="0" aria-label="Apri ${esc(x.titolo)} nella sezione trade"`}><div class="tmrow">${sides.map(side).join('<span class="tmar">⇄</span>')}</div></div>`}).join("");
-  /* (1136) banner INFERMERIA nella striscia della Home: out e in dubbio delle nostre squadre arrivati negli ultimi 2 giorni (data ESPN / prima volta visti) */
-  let ih="";try{const H48=48*3600*1000,nw=(x=>x.inT||0)/* (1137) solo chi è ENTRATO in infermeria negli ultimi 2 giorni */,R=(INFORTUNI.lista||[]).filter(x=>x.t&&TEAMS[x.t]&&x.stato!=="ok"&&nw(x)&&now-nw(x)<H48).sort((a,b)=>nw(b)-nw(a));
+  /* (1136→1525) banner INFERMERIA nella striscia della Home: out e in dubbio delle nostre squadre per la prossima notte */
+  let ih="";try{/* (1525) out e in dubbio della PROSSIMA NOTTE: la notte di oggi se non è finita, altrimenti la prima notte con partite; solo chi ha la partita quella notte */
+    let ND=null,NG=[];{let d=flUsaOggi();for(let i=0;i<8;i++){const G=(TV.days[d]||[]);if(G.length&&G.some(g=>g[5]!=="F")){ND=d;NG=G.filter(g=>g[5]!=="F");break}d=drAdd(d,1)}}
+    const plays=new Set();NG.forEach(g=>{plays.add(g[0]);plays.add(g[1])});const ndl=ND?(()=>{const x=tvDt(ND);return x.getUTCDate()+"/"+(x.getUTCMonth()+1)})():"";
+    const R=ND?(INFORTUNI.lista||[]).filter(x=>x.t&&TEAMS[x.t]&&x.stato!=="ok"&&x.nba&&plays.has(x.nba)).sort((a,b)=>String(a.p).localeCompare(String(b.p))):[];
     const O=R.filter(x=>x.stato==="out"),Q=R.filter(x=>x.stato!=="out");
     if(O.length||Q.length){const col=(lab,bg,A)=>A.length?`<div class="tmcol injcol"><div class="tmhd" style="background:${bg}">${lab}</div><div class="injl">${A.slice(0,8).map(x=>`<span class="tmp"><span class="tmlg">${badge(x.t)}</span>${esc(nmAb(x.p))}</span>`).join("")}${A.length>8?`<span class="tmcr">+${A.length-8}</span>`:""}</div></div>`:"";
-      /* (1138) due banner separati: uno per gli OUT, uno per gli IN DUBBIO */const card=(ic,ti,cl,bg,A)=>A.length?`<div class="tmc injc ${cl}" data-injgo="1" role="link" tabindex="0" aria-label="Apri il Centro Medico"><div class="tmrow"><div class="injt">${ic}<b>${ti}</b><small>ultimi 2 giorni</small></div>${col(ti,bg,A)}</div></div>`:"";
+      /* (1138) due banner separati: uno per gli OUT, uno per gli IN DUBBIO */const card=(ic,ti,cl,bg,A)=>A.length?`<div class="tmc injc ${cl}" data-injgo="1" role="link" tabindex="0" aria-label="Apri il Centro Medico"><div class="tmrow"><div class="injt">${ic}<b>${ti}</b><small>notte ${ndl}</small></div>${col(ti,bg,A)}</div></div>`:"";
       ih=card("🚑","OUT","injo","linear-gradient(90deg,#b91c1c,rgba(0,0,0,.25))",O)+card("⚠️","IN DUBBIO","injq","linear-gradient(90deg,#b45309,rgba(0,0,0,.25))",Q);
       const cw=A=>A.length?Math.ceil(Math.min(8,A.length)/2)*(Math.max(...A.slice(0,8).map(x=>nmAb(x.p).length))*7.2+34)+16+110:0;w+=cw(O)+cw(Q)}}catch(e){}
   return{html:ih+html,w,n:L.length+(ih?(ih.match(/class="tmc injc/g)||[]).length:0)}}
