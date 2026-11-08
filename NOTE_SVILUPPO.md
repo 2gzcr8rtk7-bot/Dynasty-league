@@ -3917,3 +3917,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v960: Peacocks DPK: sfondi pea-s1..3 ripuliti (niente bianco del colletto/giromanica originali sotto i bordini vettoriali).
 
 - v961: immagini maglie Peacocks con ?v=2: sw.js serve le /img/ dalla cache (cache-first), con lo stesso nome il telefono teneva la versione vecchia. REGOLA: quando si cambia un'immagine in img/ cambiare nome o ?v=.
+
+- v962: Peacocks DPK: arancione -> verde #16b35a (immagini nuove img/peag-s1..3.jpg, tolte pea-s*).
