@@ -3904,3 +3904,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1526) Banner OUT/IN DUBBIO: dalle 7 (ora italiana) indica la notte che arriva; fino alle 7 resta sulla notte in corso.
 - (1527) Tolta la maglia 323 «Lime numero bianco»: resta solo la lime con numero viola (322). Chi l'aveva torna alla predefinita.
 - (1528) Maglia nera Ducks: tolta la «Nera triplo lime-viola»; in prova tre nere: 321 «Nera fluo-viola-fluo», 323 «Nera viola-fluo numero bianco», 324 «Nera triplo viola-fluo-viola» (id gradienti distinti).
+- (1529) Maglia 324: bordini collo e spalle +60% e gessato fluo leggero («Nera triplo viola-fluo-viola gessata»).
