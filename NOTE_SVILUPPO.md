@@ -3936,3 +3936,8 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - Avversario = squadra della sfida Dreamers della settimana (logo che compare nel punto di tiro, scia arancione). Tiri a turno, 4 quarti da 5 tiri a testa, supplementare se pari; vittorie/sconfitte salvate (dl_dxgame).
 - Mira del computer: percentuale tra 36% e 64% in base al rapporto dei punteggi veri della sfida (−10% da 3 punti). Tabellone in alto a sinistra: punteggio, quarto, di chi è il turno.
 - A fine partita tocca un giocatore per rigiocare. Il live (banner e PDK) continua.
+
+## (1544) Gioco del tiro: partita contro l animaletto
+- L avversario della sfida della settimana è il suo logo in un cerchio che si muove nel campo e insegue chi ha la palla; se lo tocca la ruba. Palla a te: tocca un compagno per passare, dal portatore tiri con la fionda; 24 secondi.
+- Palla a lui: va in un punto e tira dopo ~1,7 s; tocca la palla in volo (cerchio bianco) per la stoppata. Dopo un tuo canestro palla a lui, dopo un errore rimbalzo 50/50, dopo un suo tiro palla a te.
+- 4 quarti da 2 minuti, supplementare 1 minuto. Velocità e mira dai PDK veri della sfida (36-64%). Sostituisce la partita a turni (1543).
