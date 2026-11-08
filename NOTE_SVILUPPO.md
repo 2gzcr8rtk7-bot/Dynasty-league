@@ -3903,3 +3903,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1525) Home, banner OUT / IN DUBBIO: non più «ultimi 2 giorni» ma la prossima notte (oggi se non finita, altrimenti la prima con partite); solo chi ha la partita quella notte. Etichetta «notte G/M».
 - (1526) Banner OUT/IN DUBBIO: dalle 7 (ora italiana) indica la notte che arriva; fino alle 7 resta sulla notte in corso.
 - (1527) Tolta la maglia 323 «Lime numero bianco»: resta solo la lime con numero viola (322). Chi l'aveva torna alla predefinita.
+- (1528) Maglia nera Ducks: tolta la «Nera triplo lime-viola»; in prova tre nere: 321 «Nera fluo-viola-fluo», 323 «Nera viola-fluo numero bianco», 324 «Nera triplo viola-fluo-viola» (id gradienti distinti).
