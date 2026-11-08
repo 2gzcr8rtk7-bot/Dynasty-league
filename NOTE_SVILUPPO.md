@@ -3875,3 +3875,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 ## (1509) Editor loghi → ufficiali (Dreamers): .bkt›.bklg 99% (1.092 0.932), .drcr›.drlg.l 104% larghezza 96% (1.024 0.884), .drr›.drlg 101% larghezza 98% (0.824 0.741). Il logo disegnato resta dentro le caselle.
 
 ## (1510) Condivisioni: logo Ducks −15% in Dreamers turno, Sfida, Scontro, Playoff, Gusti (SHK_MAP per singola condivisione, moltiplica il +40% generale K0).
+
+## (1511) Condivisioni: tolto l'ingrandimento speciale del logo Ducks (+40% e schiacciamento 0,96, pensati per il logo vecchio) e tutte le correzioni a percentuale (classifica +3%, prestazione −35%, −15% di 1510): il logo Ducks è disegnato come gli altri loghi, nella stessa casella.

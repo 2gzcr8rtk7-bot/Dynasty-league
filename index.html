@@ -7254,7 +7254,7 @@ async function shPcCourt(S){const x=S.x,t=S.t,c=TEAMS[t],OT=dlTm(t),SC=1.375,W=5
   return cv}
 /* pagina "prestazione": sfondo viola Dreamers (come le altre immagini), logo e nome squadra, campetto compatto con il giocatore, dettagli partita */
 async function shPcard(){const S=SHR_PC;if(!S)return null;const x=S.x,t=S.t,tm=TEAMS[t],court=await shPcCourt(S),W=1080,H=1380;const{cv,c}=await shBase(H);
-  {const im=await ldImg(LOGO[t]);if(im){const LK=window.DXPCLG!=null?window.DXPCLG:(t==="DUC"?.65:1),bw=420*LK,bh=320*LK,r=Math.min(bw/im.width,bh/im.height),w=im.width*r,h=im.height*r*(t==="DUC"?(window.DXSQ||.94):1);/* (1501) logo Ducks -35%, stesso centro (le altre squadre come prima) *//* (1390) logo Ducks schiacciato */c.shadowColor=t==="DUC"?"transparent":"rgba(192,132,252,.55)";c.shadowBlur=t==="DUC"?0:40;c.drawImage(im,W/2-w/2,150+(320-h)/2,w,h);c.shadowBlur=0}}/* logo originale, proporzioni intatte */
+  {const im=await ldImg(LOGO[t]);if(im){const LK=window.DXPCLG!=null?window.DXPCLG:1,bw=420*LK,bh=320*LK,r=Math.min(bw/im.width,bh/im.height),w=im.width*r,h=im.height*r;/* (1501) logo Ducks -35%, stesso centro (le altre squadre come prima) *//* (1390) logo Ducks schiacciato */c.shadowColor=t==="DUC"?"transparent":"rgba(192,132,252,.55)";c.shadowBlur=t==="DUC"?0:40;c.drawImage(im,W/2-w/2,150+(320-h)/2,w,h);c.shadowBlur=0}}/* logo originale, proporzioni intatte */
   const cy=520;c.shadowColor="rgba(0,0,0,.55)";c.shadowBlur=40;c.shadowOffsetY=16;c.drawImage(court,(W-court.width)/2,cy);c.shadowBlur=0;c.shadowOffsetY=0;
   const by=cy+court.height;c.textAlign="center";c.textBaseline="alphabetic";  c.font=SH_F(700,34,1);c.fillStyle="rgba(196,181,253,.9)";c.letterSpacing="3px";c.fillText(`${x.r[3]} PT · ${x.r[6]} RIM · ${x.r[7]} ASS · ${x.r[2]} MIN`,W/2,by+78);c.letterSpacing="0px";return cv}
 async function shDreamers(){const S=SHR_DR;if(!S)return null;const ch=356,H=420+S.cards.length*(ch+32)+150-150;const{cv,c,W}=await shBase(H,0,1);c.translate(0,-150);
@@ -7280,7 +7280,7 @@ async function shDreamers(){const S=SHR_DR;if(!S)return null;const ch=356,H=420+
     y+=ch+32}
   c.setTransform(1,0,0,1,0,0);shFoot(c,W,H,S.prov?"Live: PDK provvisori (ESPN, formula Dunkest)":"Punteggi Dreamers · dati ufficiali Dunkest");return cv}
 /* (544) condivisione della Classifica Dreamers: immagine con le 8 squadre, forma, V–P e media punteggio */
-async function shClassifica(){const S=SHR_CL;if(!S||!S.rows.length)return null;const rh=150,H=420+S.rows.length*rh+40;const{cv,c,W}=await shBase(H,0,1);c.__ducK=1.03;c.__ducKY=1;/* (1467) classifica: logo Ducks solo +3% */c.translate(0,-150);
+async function shClassifica(){const S=SHR_CL;if(!S||!S.rows.length)return null;const rh=150,H=420+S.rows.length*rh+40;const{cv,c,W}=await shBase(H,0,1);/* (1511) classifica: logo Ducks come gli altri */c.translate(0,-150);
   c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,108,1);c.letterSpacing="14px";
   const tg=c.createLinearGradient(240,0,840,0);tg.addColorStop(0,"#e9d5ff");tg.addColorStop(.5,"#c084fc");tg.addColorStop(1,"#a5b4fc");c.fillStyle=tg;c.shadowColor="rgba(168,85,247,.8)";c.shadowBlur=30;shDrTxt(c,"DREAMERS",W/2+7,315,96);c.shadowBlur=0;c.letterSpacing="0px";
   c.font=SH_F(700,32,1);c.fillStyle="rgba(233,213,255,.8)";c.fillText(`CLASSIFICA · ${S.sub}`,W/2,365);
@@ -14572,10 +14572,7 @@ html.dlt-parquet:not(.notte) .trroom .trsw:empty{background:rgba(217,86,11,.18)!
 html.dlt-parquet:not(.notte) .trroom > .trcount,html.dlt-parquet:not(.notte) .trroom > p.note{background:#fdf3e1;border-radius:12px;padding:9px 12px;color:#b8410a!important;box-shadow:0 2px 8px rgba(60,25,5,.14)}
 </style>
 <script>/* (1434) condivisioni: logo Ducks più grande del 40% e schiacciato del 4% in altezza, centrato nella sua casella */
-(function(){const K0=1.4,KY0=.96,D=CanvasRenderingContext2D.prototype.drawImage;CanvasRenderingContext2D.prototype.drawImage=function(img,...a){if(img&&img.__duc&&(a.length===4||a.length===8)){const K=(this.__ducK||K0)*(window.__SHK||1),KY=this.__ducKY||KY0,n=a.length===4?0:4,x=a[n],y=a[n+1],w=a[n+2],h=a[n+3],nw=w*K,nh=h*K*KY;a[n]=x-(nw-w)/2;a[n+1]=this.__ducB?y+h-nh:y-(nh-h)/2;/* __ducB: cresce verso l alto */a[n+2]=nw;a[n+3]=nh}return D.call(this,img,...a)}})();
-/* (1510) logo Ducks nelle condivisioni: grandezza per singola condivisione (1 = come prima) */
-const SHK={shDreamers:.85,shDuel:.85,shDM:.85,shPlayoff:.85,shGusti:.85};window.SHK_MAP=SHK;
-setTimeout(()=>{for(const n in SHK){const f=window[n];if(typeof f!=="function"||f.__shk)continue;const g=async function(){const o=window.__SHK;window.__SHK=SHK[n];try{return await f.apply(this,arguments)}finally{window.__SHK=o}};g.__shk=1;window[n]=g;try{if(n==="shDreamers")shDreamers=g;else if(n==="shDuel")shDuel=g;else if(n==="shDM")shDM=g;else if(n==="shPlayoff")shPlayoff=g}catch(e){}}},0);
+(function(){const K0=1,KY0=1/* (1511) niente più ingrandimento speciale: il logo Ducks nelle condivisioni ha la stessa misura degli altri loghi (prima 1.4 e 0.96, pensati per il logo vecchio) */,D=CanvasRenderingContext2D.prototype.drawImage;CanvasRenderingContext2D.prototype.drawImage=function(img,...a){if(img&&img.__duc&&(a.length===4||a.length===8)){const K=this.__ducK||K0,KY=this.__ducKY||KY0,n=a.length===4?0:4,x=a[n],y=a[n+1],w=a[n+2],h=a[n+3],nw=w*K,nh=h*K*KY;a[n]=x-(nw-w)/2;a[n+1]=this.__ducB?y+h-nh:y-(nh-h)/2;/* __ducB: cresce verso l alto */a[n+2]=nw;a[n+3]=nh}return D.call(this,img,...a)}})();
 </script>
 <script>/* (1438) esporta le personalizzazioni di una squadra (banner, campo, maglia e stile del campo) per renderle ufficiali */
 document.addEventListener("click",e=>{const b=e.target.closest("[data-tmexp]");if(!b)return;e.preventDefault();const T=b.dataset.tmexp;
