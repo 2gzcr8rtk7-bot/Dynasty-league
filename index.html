@@ -14572,7 +14572,11 @@ html.dlt-parquet:not(.notte) .trroom .trsw:empty{background:rgba(217,86,11,.18)!
 html.dlt-parquet:not(.notte) .trroom > .trcount,html.dlt-parquet:not(.notte) .trroom > p.note{background:#fdf3e1;border-radius:12px;padding:9px 12px;color:#b8410a!important;box-shadow:0 2px 8px rgba(60,25,5,.14)}
 </style>
 <script>/* (1434) condivisioni: logo Ducks più grande del 40% e schiacciato del 4% in altezza, centrato nella sua casella */
-(function(){const K0=1.4,KY0=.96,D=CanvasRenderingContext2D.prototype.drawImage;CanvasRenderingContext2D.prototype.drawImage=function(img,...a){if(img&&img.__duc&&(a.length===4||a.length===8)){const K=this.__ducK||K0,KY=this.__ducKY||KY0,n=a.length===4?0:4,x=a[n],y=a[n+1],w=a[n+2],h=a[n+3],nw=w*K,nh=h*K*KY;a[n]=x-(nw-w)/2;a[n+1]=this.__ducB?y+h-nh:y-(nh-h)/2;/* __ducB: cresce verso l alto */a[n+2]=nw;a[n+3]=nh}return D.call(this,img,...a)}})();</script>
+(function(){const K0=1.4,KY0=.96,D=CanvasRenderingContext2D.prototype.drawImage;CanvasRenderingContext2D.prototype.drawImage=function(img,...a){if(img&&img.__duc&&(a.length===4||a.length===8)){const K=(this.__ducK||K0)*(window.__SHK||1),KY=this.__ducKY||KY0,n=a.length===4?0:4,x=a[n],y=a[n+1],w=a[n+2],h=a[n+3],nw=w*K,nh=h*K*KY;a[n]=x-(nw-w)/2;a[n+1]=this.__ducB?y+h-nh:y-(nh-h)/2;/* __ducB: cresce verso l alto */a[n+2]=nw;a[n+3]=nh}return D.call(this,img,...a)}})();
+/* (1510) logo Ducks nelle condivisioni: grandezza per singola condivisione (1 = come prima) */
+const SHK={shDreamers:.85,shDuel:.85,shDM:.85,shPlayoff:.85,shGusti:.85};window.SHK_MAP=SHK;
+setTimeout(()=>{for(const n in SHK){const f=window[n];if(typeof f!=="function"||f.__shk)continue;const g=async function(){const o=window.__SHK;window.__SHK=SHK[n];try{return await f.apply(this,arguments)}finally{window.__SHK=o}};g.__shk=1;window[n]=g;try{if(n==="shDreamers")shDreamers=g;else if(n==="shDuel")shDuel=g;else if(n==="shDM")shDM=g;else if(n==="shPlayoff")shPlayoff=g}catch(e){}}},0);
+</script>
 <script>/* (1438) esporta le personalizzazioni di una squadra (banner, campo, maglia e stile del campo) per renderle ufficiali */
 document.addEventListener("click",e=>{const b=e.target.closest("[data-tmexp]");if(!b)return;e.preventDefault();const T=b.dataset.tmexp;
  const H=document.documentElement,mode=H.classList.contains("notte")?"notte":H.classList.contains("dlt-parquet")?"parquet":"base";

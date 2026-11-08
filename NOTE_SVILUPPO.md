@@ -3873,3 +3873,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - loghi/duc-25.webp (+ duc-25-hd.webp per condivisioni e arena Dream) al posto di tutti i loghi ufficiali Ducks (duc-20n, duc-22, duc-11n, duc-18, duc-22-hd, duc-20n-hd), giorno e notte, in tutte le sezioni; anche LOGO.DUC/LOGO2.DUC. Le grandezze ufficiali delle caselle restano. I vecchi loghi restano sceglibili nell'editor.
 
 ## (1509) Editor loghi → ufficiali (Dreamers): .bkt›.bklg 99% (1.092 0.932), .drcr›.drlg.l 104% larghezza 96% (1.024 0.884), .drr›.drlg 101% larghezza 98% (0.824 0.741). Il logo disegnato resta dentro le caselle.
+
+## (1510) Condivisioni: logo Ducks −15% in Dreamers turno, Sfida, Scontro, Playoff, Gusti (SHK_MAP per singola condivisione, moltiplica il +40% generale K0).
