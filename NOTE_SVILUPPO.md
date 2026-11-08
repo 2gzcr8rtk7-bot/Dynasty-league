@@ -3883,3 +3883,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 ## (1513) Colore franchigia Ducks: aggiunto «Lime Ducks» #87cd13 e già selezionato (migrazione dl_duccol_m1513). Corretto lo spettro «Scegli tu»: mentre scegli la pagina non si ridisegna più (prima su iPhone lo spettro si chiudeva); il colore si applica dal vivo e si salva.
 
 ## (1514) Annullata la preselezione di (1513): torna per tutti il colore ufficiale viola #5b21b6 (chi aveva scelto un altro colore lo tiene). «Lime Ducks» resta tra i colori e lo spettro «Scegli tu» parte già sul lime.
+- (1514b) Tolto anche il riquadro «Lime Ducks»: resta solo lo spettro «Scegli tu» che parte dal lime #87cd13.
