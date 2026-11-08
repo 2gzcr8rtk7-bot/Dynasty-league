@@ -3906,3 +3906,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1528) Maglia nera Ducks: tolta la «Nera triplo lime-viola»; in prova tre nere: 321 «Nera fluo-viola-fluo», 323 «Nera viola-fluo numero bianco», 324 «Nera triplo viola-fluo-viola» (id gradienti distinti).
 - (1529) Maglia 324: bordini collo e spalle +60% e gessato fluo leggero («Nera triplo viola-fluo-viola gessata»).
 - (1530) Maglie nere: resta solo la 324 «Nera triplo viola-fluo-viola gessata»; tolte 321 e 323.
+- (1531) Bordini maglie Ducks +30%: bianche (316, 319) solo il bordino colorato (7→9,1; il nero resta uguale, 12→14,1); colorate (317, 318, 322) tutti i bordini (12→15,6, 7→9,1). La nera 324 resta com'era.
