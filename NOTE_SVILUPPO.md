@@ -3930,3 +3930,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - Punti, tiri, serie; record (punti e serie) in dl_dxgame. Vibrazione sul canestro. Il tocco sul giocatore non apre la scheda mentre giochi.
 - (1540) Gioco del tiro: resta acceso finché non tocchi DUCKS (anche cambiando pagina o riaprendo l app, dl_dxgame_on); TEXAS non lo spegne. Col gioco attivo campo e panchina non aprono schede e i cartellini PDK non si girano: solo tiro o scorrimento.
 - (1541) Gioco del tiro: area di tocco del giocatore allargata (maglia + nome + cartellino + margine invisibile ~28% della maglia); se il dito parte da lì la pagina non scorre e parte il tiro.
+- (1542) Gioco del tiro insieme al live: banner stats e PDK continuano ad aggiornarsi mentre giochi (senza animazione della palla). Se il campo si ridisegna durante un tiro, il giocatore si ritrova dal nome e il tiro non si perde.
