@@ -3920,3 +3920,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 - v962: Peacocks DPK: arancione -> verde #16b35a (immagini nuove img/peag-s1..3.jpg, tolte pea-s*).
 - (1536) Ducks di notte: sempre la viola ufficiale 318; la maglia scelta col pulsante di notte vale solo finché resti in notte e non si salva (prima restava salvata la lime).
+- (1537) Maglia lime 322: bordino bianco -30% (9,1→6,4).
