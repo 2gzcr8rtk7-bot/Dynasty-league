@@ -3941,3 +3941,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - L avversario della sfida della settimana è il suo logo in un cerchio che si muove nel campo e insegue chi ha la palla; se lo tocca la ruba. Palla a te: tocca un compagno per passare, dal portatore tiri con la fionda; 24 secondi.
 - Palla a lui: va in un punto e tira dopo ~1,7 s; tocca la palla in volo (cerchio bianco) per la stoppata. Dopo un tuo canestro palla a lui, dopo un errore rimbalzo 50/50, dopo un suo tiro palla a te.
 - 4 quarti da 2 minuti, supplementare 1 minuto. Velocità e mira dai PDK veri della sfida (36-64%). Sostituisce la partita a turni (1543).
+- (1545) DUCKS a cicli: 1° tocco tiro libero (si tira da qualsiasi giocatore, punti e serie), 2° tocco partita contro l animaletto, 3° tocco torna l animazione. Modalità salvata (dl_dxgame_mode).
