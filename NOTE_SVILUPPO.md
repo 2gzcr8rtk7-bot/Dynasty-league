@@ -3913,3 +3913,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1533) Maglia lime 322: bordino invertito, bianco fuori e viola dentro.
 - (1534) Tolta la maglia 316 «Bianca verde»; chi l'aveva torna alla Bianca viola.
 - (1535) Maglia 319 Bianca viola: bordini tornati come prima del +30% (12 e 7).
+
+- v960: Peacocks DPK: sfondi pea-s1..3 ripuliti (niente bianco del colletto/giromanica originali sotto i bordini vettoriali).
