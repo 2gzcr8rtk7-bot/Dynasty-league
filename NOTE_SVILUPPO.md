@@ -3867,3 +3867,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1504) Editor loghi: «Testa verde · scritta bianca» sostituito da «Testa viola · becco arancio» (loghi/duc-25.webp).
 - (1505) Home: il tasto Ducks nella colonna squadre segue il colore franchigia scelto in Personalizzazioni segrete (viola ufficiale = viola acceso come prima).
 - (1506) Editor loghi: la scelta del logo vince sempre sulle regole ufficiali (selettore più forte).
+- (1507) Editor loghi e Personalizzazioni: tolti Bordo bianco, Bordo lime, Notte palla bianca, Notte palla viola (i file restano: duc-20n e duc-18 sono usati dai loghi ufficiali).
