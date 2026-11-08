@@ -3859,3 +3859,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 ## (1499) Barra delle notti unica
 - Tolte le scelte delle notti (N1 N3 nel cartellino, numeri nei pallini, colore dei pallini) da Personalizzazioni e dal tocco su DUCKS: per tutti solo la barra delle notti con i PDK che lampeggiano (DLS.ntp forzato a "bar", anche per chi aveva scelto altro).
 - (1500) Scritta DUCKS sul campo liberata: il tocco non fa più nulla di speciale (resta TEXAS per gli effetti).
+
+## (1501) Card prestazione: logo Ducks −35% (stesso centro); le altre squadre invariate.
