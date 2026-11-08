@@ -3868,3 +3868,6 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - (1505) Home: il tasto Ducks nella colonna squadre segue il colore franchigia scelto in Personalizzazioni segrete (viola ufficiale = viola acceso come prima).
 - (1506) Editor loghi: la scelta del logo vince sempre sulle regole ufficiali (selettore più forte).
 - (1507) Editor loghi e Personalizzazioni: tolti Bordo bianco, Bordo lime, Notte palla bianca, Notte palla viola (i file restano: duc-20n e duc-18 sono usati dai loghi ufficiali).
+
+## (1508) Nuovo logo ufficiale Ducks «Testa viola · becco arancio»
+- loghi/duc-25.webp (+ duc-25-hd.webp per condivisioni e arena Dream) al posto di tutti i loghi ufficiali Ducks (duc-20n, duc-22, duc-11n, duc-18, duc-22-hd, duc-20n-hd), giorno e notte, in tutte le sezioni; anche LOGO.DUC/LOGO2.DUC. Le grandezze ufficiali delle caselle restano. I vecchi loghi restano sceglibili nell'editor.
