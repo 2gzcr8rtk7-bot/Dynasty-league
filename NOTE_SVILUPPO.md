@@ -3942,3 +3942,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - Palla a lui: va in un punto e tira dopo ~1,7 s; tocca la palla in volo (cerchio bianco) per la stoppata. Dopo un tuo canestro palla a lui, dopo un errore rimbalzo 50/50, dopo un suo tiro palla a te.
 - 4 quarti da 2 minuti, supplementare 1 minuto. Velocità e mira dai PDK veri della sfida (36-64%). Sostituisce la partita a turni (1543).
 - (1545) DUCKS a cicli: 1° tocco tiro libero (si tira da qualsiasi giocatore, punti e serie), 2° tocco partita contro l animaletto, 3° tocco torna l animazione. Modalità salvata (dl_dxgame_mode).
+- (1546) Partita più dura: stoppata solo nei primi ~1,5 cm (56 px a terra) dal punto di tiro dell animaletto (il cerchio bianco c è solo in quel tratto); animaletto più veloce (+~35%); ruba appena tocca la maglia (raggio 0,62 maglia, attesa 0,25 s solo al cambio palla, nessuna attesa dopo i passaggi).
