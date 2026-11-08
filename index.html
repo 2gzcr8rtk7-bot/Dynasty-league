@@ -14462,7 +14462,7 @@ const KB="dl_dxgame";let BEST={pts:0,ser:0};try{BEST=Object.assign(BEST,JSON.par
 const S={pts:0,tiri:0,fatti:0,ser:0,ult:""};window.__dxGameS=S;
 const M={q:1,clock:120,shot:24,me:0,cpu:0,poss:"me",holder:"",mx:0,my:0,tx:0,ty:0,cool:0,cpuT:0,pause:0,end:false,opp:null,skill:.5,pass:null};window.__dxMatch=M;
 function oppTeam(){try{const P=drPO(drStand()),k=drCurWeek(P),pr=(drPairs(k,null,P)||[]).find(x=>x.includes("DUC"));if(pr)return pr[0]==="DUC"?pr[1]:pr[0]}catch(e){}const L=Object.keys(TEAMS).filter(t=>t!=="DUC");return L[Math.floor(Math.random()*L.length)]}
-function cpuSkill(){try{const P=drPO(drStand()),k=drCurWeek(P),W=drWeek(k),a=drTeam(k,"DUC",W).score||0,b=drTeam(k,M.opp,W).score||0;if(a+b>0)return Math.max(.36,Math.min(.64,.5+.3*(b-a)/Math.max(a,b)))}catch(e){}return .5}
+function cpuSkill(){try{const P=drPO(drStand()),k=drCurWeek(P),W=drWeek(k),a=drTeam(k,"DUC",W).score||0,b=drTeam(k,M.opp,W).score||0;if(a+b>0)return Math.max(.45,Math.min(.54,.495+.15*(b-a)/Math.max(a,b)))/* (1550) mira tra 45% e 54% */}catch(e){}return .495}
 let LGI=null;function oppImg(){const u=(typeof LOGO!=="undefined"&&LOGO[M.opp])||"";if(!LGI||LGI.u!==u){LGI=new Image();LGI.u=u;LGI.src=u}return LGI.complete&&LGI.naturalWidth?LGI:null}
 let cv=null,cx=null,raf=0,drag=null,tapP=null,shots=[],fx=[],dpr=1,last=0;
 const st=document.createElement("style");st.textContent=`html.dxgame body[data-v="campo"][data-ct="DUC"] main .court>svg.cbg image{opacity:0!important}
@@ -14546,7 +14546,7 @@ function fire(d){const v=vec(d);if(v.len<14||(!FREE()&&M.poss!=="me"))return;con
  const res=e<.4?"swish":e<1.05?"in":e<1.6?"out":"air";
  S.tiri++;sfx("shot");if(!FREE()){M.poss="shot";M.holder=""}shots.push({sx:d.sx,sy:d.sy,Lx,Ly,res,tre,dur:.62+.5*v.pw,hh:60+170*v.pw,t0:performance.now(),ox:scrollX,oy:scrollY,w:d.w,trail:[]})}
 function cpuShot(){const H=hoopR(),c=court();if(!H||!c){giveMe("","");return}const r=c.getBoundingClientRect(),sx=M.mx-scrollX,sy=M.my-scrollY,tre=Math.hypot(H.x-sx,H.y-sy)>r.height*.55;
- const pk=M.skill-(tre?.1:0),u=Math.random(),res=u<pk*.35?"swish":u<pk?"in":u<pk+(1-pk)*.6?"out":"air",e={swish:.2,in:.75,out:1.3,air:2.3}[res]*(.85+Math.random()*.3),an=Math.random()*Math.PI*2;
+ const pk=M.skill,u=Math.random(),res=u<pk*.35?"swish":u<pk?"in":u<pk+(1-pk)*.6?"out":"air",e={swish:.2,in:.75,out:1.3,air:2.3}[res]*(.85+Math.random()*.3),an=Math.random()*Math.PI*2;
  const Lx=H.x+Math.cos(an)*e*H.rr,Ly=H.y+Math.sin(an)*e*H.rr/1.15,pw=Math.min(1,Math.hypot(Lx-sx,Ly-sy)/(r.height*1.3));
  M.poss="cpushot";sfx("shot");shots.push({sx,sy,Lx,Ly,res,tre,dur:.75+.55*pw,hh:60+170*pw,t0:performance.now(),ox:scrollX,oy:scrollY,w:H.jw,trail:[],cpu:true})}
 function score(sh){if(sh.res==="swish")sfx("swish");else if(sh.res==="in"){sfx("rim");setTimeout(()=>sfx("swish"),300)}else if(sh.res==="out")sfx("rim");if((sh.res==="swish"||sh.res==="in")&&!sh.cpu)setTimeout(()=>sfx("crowd"),200);const H=hoopR(),nk=((TEAMS[M.opp]||{}).nick||M.opp||"").toUpperCase(),made=sh.res==="swish"||sh.res==="in",p=sh.tre?3:2,ty=H&&H.y+H.rr*5;
@@ -14564,7 +14564,7 @@ function hoop(H,front,sw){const rr=H.rr;cx.save();if(!front){if(H.L){const bw=H.
  cx.beginPath();cx.ellipse(H.x,H.y+rr*1.15,rr*.5*k,rr*.16,0,0,7);cx.stroke();cx.strokeStyle="#f97316";cx.lineWidth=2.8;cx.beginPath();cx.ellipse(H.x,H.y,rr,rr*.42,0,0,7);cx.stroke();cx.restore()}
 function mascot(now,H){const x=M.mx-scrollX,y=M.my-scrollY,rr=H.jw*.36,im=oppImg(),bob=Math.sin(now/120)*1.5;cx.save();cx.shadowColor="rgba(249,115,22,.7)";cx.shadowBlur=M.poss==="cpu"?16:8;cx.beginPath();cx.arc(x,y+bob,rr,0,7);cx.fillStyle="#fff";cx.fill();cx.shadowBlur=0;cx.lineWidth=3;cx.strokeStyle="#f97316";cx.stroke();if(im){const s2=rr*1.7;cx.drawImage(im,x-s2/2,y+bob-s2/2,s2,s2)}cx.restore();
  if(M.poss==="cpu"){const r=H.jw*.2;ball(x+rr*.95,y+rr*.55+Math.abs(Math.sin(now/140))*rr*.35,r)}}
-function hud(now){const c=court();if(!c)return;if(FREE()){const r=c.getBoundingClientRect(),x=r.left+10,y=r.top+r.height*.135;cx.save();cx.font="900 italic 13px 'Barlow Condensed',system-ui,sans-serif";const t1=`TIRO LIBERO · PUNTI ${S.pts}   ${S.fatti}/${S.tiri}   SERIE ${S.ser}`,t2=`RECORD ${BEST.pts} PT · SERIE ${BEST.ser} · DUCKS = PARTITA`;const w=Math.max(cx.measureText(t1).width,cx.measureText(t2).width)+16;cx.fillStyle="rgba(46,16,101,.88)";cx.beginPath();cx.roundRect?cx.roundRect(x,y,w,38,9):cx.rect(x,y,w,38);cx.fill();cx.fillStyle="#a3e635";cx.fillText(t1,x+8,y+16);cx.fillStyle="#e9d5ff";cx.font="800 italic 11px 'Barlow Condensed',system-ui,sans-serif";cx.fillText(t2,x+8,y+31);cx.restore();sndBtn(x+w+6,y);return}
+function hud(now){const c=court();if(!c)return;if(FREE()){const r=c.getBoundingClientRect(),x=r.left+10,y=r.top+r.height*.135;cx.save();cx.font="900 italic 13px 'Barlow Condensed',system-ui,sans-serif";const t1=`TIRO LIBERO · PUNTI ${S.pts}   ${S.fatti}/${S.tiri}   SERIE ${S.ser}`,t2=`RECORD ${BEST.pts} PT · SERIE ${BEST.ser} · DUCKS = PARTITA`;const w=Math.max(cx.measureText(t1).width,cx.measureText(t2).width)+16;cx.fillStyle="rgba(46,16,101,.88)";cx.beginPath();cx.roundRect?cx.roundRect(x,y,w,38,9):cx.rect(x,y,w,38);cx.fill();cx.fillStyle="#a3e635";cx.fillText(t1,x+8,y+16);cx.fillStyle="#e9d5ff";cx.font="800 italic 11px 'Barlow Condensed',system-ui,sans-serif";cx.fillText(t2,x+8,y+31);cx.restore();sndBtn(x,y+44);return}
  const r=c.getBoundingClientRect(),x=r.left+8,y=r.top+r.height*.13,T=TEAMS[M.opp]||{},nk=(T.nick||M.opp||"").toUpperCase(),oc=T.bg||"#f70990";
  const mm=Math.max(0,Math.ceil(M.clock)),cl=(M.q>4?"OT":"Q"+M.q)+" · "+Math.floor(mm/60)+":"+String(mm%60).padStart(2,"0")+(M.poss==="me"?" · "+Math.ceil(M.shot)+"s":""),cpuP=M.poss==="cpu"||M.poss==="cpushot";
  /* (1547) tabellone piccolo e bianco: DUCKS sopra (viola), avversario sotto (suo colore), tempo in rosso */
@@ -14572,7 +14572,7 @@ function hud(now){const c=court();if(!c)return;if(FREE()){const r=c.getBoundingC
  const w=Math.max(wn+ws+30,wc+14),h=50;cx.shadowColor="rgba(0,0,0,.25)";cx.shadowBlur=6;cx.fillStyle="#fff";cx.beginPath();cx.roundRect?cx.roundRect(x,y,w,h,8):cx.rect(x,y,w,h);cx.fill();cx.shadowBlur=0;
  const row=(nm,sc,col,yy,pos)=>{if(pos){cx.fillStyle=col;cx.beginPath();cx.arc(x+7,yy-4,2.6,0,7);cx.fill()}cx.font=F(900,13);cx.fillStyle=col;cx.fillText(nm,x+13,yy);cx.font=F(900,14);cx.textAlign="right";cx.fillText(String(sc),x+w-7,yy);cx.textAlign="left"};
  row("DUCKS",M.me,"#5b21b6",y+15,!cpuP&&!M.end);row(nk,M.cpu,oc,y+30,cpuP&&!M.end);
- cx.font=F(800,10);cx.fillStyle="#dc2626";cx.fillText(msg,x+7,y+44);cx.restore();sndBtn(x+w+6,y)}
+ cx.font=F(800,10);cx.fillStyle="#dc2626";cx.fillText(msg,x+7,y+44);cx.restore();sndBtn(x,y+h+6)/* (1550) sotto il tabellone, a sinistra */}
 function loop(now){raf=requestAnimationFrame(loop);if(!window.dxGameOn||!cv)return;size();const dt=Math.min(.05,last?(now-last)/1000:0);last=now;if(!ok()){cx.clearRect(0,0,innerWidth,innerHeight);drag=null;tapP=null;sndHide();return}cx.clearRect(0,0,innerWidth,innerHeight);const H=hoopR();if(!H)return;
  if(!M.opp)newMatch();
  const c=court().getBoundingClientRect(),speed=c.width*(.24+.32*M.skill)/* (1546) più veloce */,flying=shots.some(s=>!s.done);
