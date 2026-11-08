@@ -3888,3 +3888,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 ## (1515) Tema Ducks viola / lime (area segreta › Personalizzazioni)
 - Viola: tutto com'è. Lime: colore squadra #87cd13 in tutta l'app e, nella pagina squadra Ducks, banner verde fluo sfumato con DUCKS/TEXAS viola, bordocampo #a3ff12, cassa lime chiaro #ecffd0 con bordo #7fd400 e scritte viola. Per telefono (dl_ductema); tornando a viola si ripristina il colore di prima.
 - (1516) Tema lime: anche di notte scritte viola nel banner e nel campo (TEXAS DUCKS).
+
+## (1517) Maglia Ducks 322 «DUCKS gessato · Lime viola»: base lime gessata, bordini viola, scritta DUCKS viola su fondo bianco, numero bianco bordato viola. Nel pulsante maglia del campo.
