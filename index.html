@@ -14468,13 +14468,28 @@ let cv=null,cx=null,raf=0,drag=null,tapP=null,shots=[],fx=[],dpr=1,last=0;
 const st=document.createElement("style");st.textContent=`html.dxgame body[data-v="campo"][data-ct="DUC"] main .court>svg.cbg image{opacity:0!important}
 html.dxgame body[data-v="campo"][data-ct="DUC"] main .court .cpl .pj,html.dxgame body[data-v="campo"][data-ct="DUC"] main .dpan .pj{touch-action:none;cursor:grab}
 html.dxgame body[data-v="campo"][data-ct="DUC"] main .court .cname.cn-duc text:last-of-type{fill:#a3e635!important}
-#dxgcv{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:60}`;document.head.appendChild(st);
+#dxgcv{position:fixed;left:0;top:0;pointer-events:none;z-index:60}`;document.head.appendChild(st);
 const ok=()=>typeof cur!=="undefined"&&cur==="campo"&&curTeam==="DUC"&&!(window.gotOn&&gotOn())&&!!document.querySelector("main .court .cname.cn-duc");
 function court(){return document.querySelector("main .court")}
-function hoopR(){const c=court();if(!c)return null;const im=[...c.querySelectorAll(".cbg image")].find(e=>+(e.getAttribute("y")||99)<20);const pj=c.querySelector(".cpl .pj");const jw=pj?pj.getBoundingClientRect().width:50;
+/* (1553) PRESTAZIONI: le misure del campo (canestro, giocatori, rettangolo, spazi del tabellone) si leggono dalla pagina al massimo ogni 0,4 s o quando il campo si ridisegna; tra una lettura e l altra si segue solo lo scorrimento */
+let GEO=null;try{new MutationObserver(()=>{if(GEO)GEO.dirty=1}).observe(document.getElementById("main")||document.body,{childList:true})}catch(e){}
+function geo(){const c=court();if(!c)return null;const now=performance.now();if(GEO&&GEO.el===c&&!GEO.dirty&&now-GEO.t<400)return GEO;
+ const r=c.getBoundingClientRect();const dp=document.querySelector("main .dpan"),dr=dp?dp.getBoundingClientRect():null;GEO={el:c,t:now,sx:scrollX,sy:scrollY,R:{left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height},D:dr?{bottom:dr.bottom}:null,H:hoopR0(),P:plist0(),SL:slots0(c)};return GEO}
+const sh2=(o,dx,dy)=>Object.assign({},o,{x:o.x+dx,y:o.y+dy});
+function gd(){const G=geo();return G?[G,G.sx-scrollX,G.sy-scrollY]:[null,0,0]}
+function crect(){const[G,dx,dy]=gd();if(!G)return null;const r=G.R;return{left:r.left+dx,top:r.top+dy,right:r.right+dx,bottom:r.bottom+dy,width:r.width,height:r.height}}
+function hoopR(){const[G,dx,dy]=gd();if(!G||!G.H)return null;const H=G.H,o=sh2(H,dx,dy);if(H.L)o.L={left:H.L.left+dx,top:H.L.top+dy,width:H.L.width,height:H.L.height};return o}
+function hoopR0(){const c=court();if(!c)return null;const im=[...c.querySelectorAll(".cbg image")].find(e=>+(e.getAttribute("y")||99)<20);const pj=c.querySelector(".cpl .pj");const jw=pj?pj.getBoundingClientRect().width:50;
  if(im){const r=im.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height*.62,L:r,rr:jw*.31,jw}}const r=c.getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height*.1,L:null,rr:jw*.31,jw}}
 function mount(){if(cv)return;cv=document.createElement("canvas");cv.id="dxgcv";document.body.appendChild(cv);cx=cv.getContext("2d")}
-function size(){dpr=Math.min(2,window.devicePixelRatio||1);const W=Math.round(innerWidth*dpr),H=Math.round(innerHeight*dpr);if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H}cx.setTransform(dpr,0,0,dpr,0,0)}
+/* (1553) la tela copre solo campo + panchina visibili (non tutto lo schermo): meno pixel da aggiornare a ogni fotogramma, stessa nitidezza */
+let CVR={l:0,t:0,w:0,h:0};
+function size(){dpr=Math.min(2,window.devicePixelRatio||1);let l=0,t=0,r=innerWidth,b=innerHeight;const[G,dx,dy]=typeof gd==="function"?gd():[null,0,0];
+ if(G){const R0=G.R,D=G.D;l=Math.max(0,Math.floor(R0.left-8));r=Math.min(innerWidth,Math.ceil(R0.right+8));t=0/* (1553) in alto fino al bordo dello schermo: l arco dei tiri lunghi sale sopra il campo */;b=Math.min(innerHeight,Math.ceil((D?Math.max(D.bottom,R0.bottom):R0.bottom)+dy+60))}
+ t=Math.floor(t/16)*16;b=Math.min(innerHeight,Math.ceil(b/16)*16);const w=Math.max(1,r-l),h=Math.max(1,b-t);
+ if(CVR.l!==l||CVR.t!==t||CVR.w!==w||CVR.h!==h){CVR={l,t,w,h};cv.style.left=l+"px";cv.style.top=t+"px";cv.style.width=w+"px";cv.style.height=h+"px"}
+ const W=Math.round(w*dpr),H=Math.round(h*dpr);if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H}cx.setTransform(dpr,0,0,dpr,-l*dpr,-t*dpr)}
+function clr(){cx.clearRect(CVR.l,CVR.t,CVR.w,CVR.h)}
 function save(){try{localStorage.setItem(KB,JSON.stringify(BEST))}catch(e){}}
 function txt(t,d,x,y,c){fx.push({t,x,y,c:c||"#a3e635",t0:performance.now(),d:(d||1.2)*1000})}
 /* (1549) SUONI DEL CAMPO e VOCE: tasto volume accanto al tabellone (dl_dxgame_snd). Suoni sintetizzati (nessun file): passi sul parquet, palleggio, tiro, ferro, retina, stoppata, rubata, sirena di fine quarto, pubblico.
@@ -14495,11 +14510,12 @@ function say(t){if(!SND||!window.speechSynthesis)return;try{const u=new SpeechSy
 addEventListener("dxlivestat",e=>{if(!window.dxGameOn||!SND||!ok())return;const d=e.detail||{},nm=(()=>{try{return drSur(d.n)}catch(_){return d.n}})();if(ST_IT[d.k])say(nm+", "+ST_IT[d.k](d.v))});
 let SB=null;function sndBtn(x,y){if(!SB){SB=document.createElement("button");SB.id="dxgsnd";SB.type="button";SB.setAttribute("aria-label","Suoni del campo");SB.style.cssText="position:fixed;z-index:61;width:30px;height:30px;border-radius:8px;border:0;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.25);font-size:16px;line-height:30px;padding:0;cursor:pointer";
   SB.addEventListener("click",ev=>{ev.preventDefault();ev.stopPropagation();SND=!SND;try{localStorage.setItem("dl_dxgame_snd",SND?"1":"0")}catch(_){}if(SND){silent(true);ac();sfx("dribble");try{speechSynthesis&&speechSynthesis.speak(new SpeechSynthesisUtterance(""))}catch(_){}}else{silent(false);try{speechSynthesis&&speechSynthesis.cancel()}catch(_){}}SB.textContent=SND?"🔊":"🔇"});document.body.appendChild(SB)}
- SB.textContent=SND?"🔊":"🔇";const l=Math.round(x)+"px",t=Math.round(y)+"px";if(SB.style.left!==l)SB.style.left=l;if(SB.style.top!==t)SB.style.top=t;SB.style.display=""}
-function sndHide(){if(SB)SB.style.display="none"}
+ {const tx=SND?"🔊":"🔇";if(SB.textContent!==tx)SB.textContent=tx}/* (1553) niente scritture nel DOM a ogni fotogramma: svegliavano gli osservatori dei loghi */const l=Math.round(x)+"px",t=Math.round(y)+"px";if(SB.style.left!==l)SB.style.left=l;if(SB.style.top!==t)SB.style.top=t;if(SB.style.display)SB.style.display=""}
+function sndHide(){if(SB&&SB.style.display!=="none")SB.style.display="none"}
 /* giocatori (campo e panchina) */
 function pjKey(pj){const h=pj.closest("[data-pl]");return h?h.dataset.pl:""}
-function plist(){return[...document.querySelectorAll("main .court .cpl .pj, main .dpan .pj")].map(pj=>{const r=pj.getBoundingClientRect();return{pj,key:pjKey(pj),x:r.left+r.width/2,y:r.top+r.height*.5,w:r.width,court:!!pj.closest("main .court")}}).filter(p=>p.w)}
+function plist(){const[G,dx,dy]=gd();return G?G.P.map(p=>sh2(p,dx,dy)):[]}
+function plist0(){return[...document.querySelectorAll("main .court .cpl .pj, main .dpan .pj")].map(pj=>{const r=pj.getBoundingClientRect();return{pj,key:pjKey(pj),x:r.left+r.width/2,y:r.top+r.height*.5,w:r.width,court:!!pj.closest("main .court")}}).filter(p=>p.w)}
 function pOf(key){return plist().find(p=>p.key===key)||null}
 function courtPl(){return plist().filter(p=>p.court)}
 function pjNear(x,y){let best=null,bd=1e9;document.querySelectorAll("main .court .cpl .pj, main .dpan .pj").forEach(pj=>{const r=pj.getBoundingClientRect();if(!r.width)return;const box=pj.closest(".cpl,[data-pl]")||pj;const q=box.getBoundingClientRect();const m=r.width*.28,L=Math.min(r.left,q.left)-m,R2=Math.max(r.right,q.right)+m,T=Math.min(r.top,q.top)-m,B=Math.max(r.bottom,q.bottom)+m*.5;if(x<L||x>R2||y<T||y>B)return;const d=Math.hypot(x-(r.left+r.width/2),y-(r.top+r.height/2));if(d<bd){bd=d;best=pj}});return best}
@@ -14542,12 +14558,12 @@ addEventListener("click",e=>{if(window.dxGameOn&&ok()&&blockT(e.target)){e.preve
 addEventListener("touchmove",e=>{if(drag)e.preventDefault()},{passive:false,capture:true});
 addEventListener("touchstart",e=>{if(!window.dxGameOn||!ok()||e.touches.length!==1)return;const t=e.touches[0];if(pjAt(e.target,t.clientX,t.clientY)||cpuBall())e.preventDefault()},{passive:false,capture:true});
 function vec(d){const dx=d.sx-d.fx,dy=d.sy-d.fy,len=Math.hypot(dx,dy);return{ux:len?dx/len:0,uy:len?dy/len:-1,len,pw:Math.min(1,len/MAXD())}}
-function fire(d){const v=vec(d);if(v.len<14||(!FREE()&&M.poss!=="me"))return;const H=hoopR();if(!H)return;const c=court().getBoundingClientRect();
+function fire(d){const v=vec(d);if(v.len<14||(!FREE()&&M.poss!=="me"))return;const H=hoopR();if(!H)return;const c=crect();if(!c)return;
  /* (1547) potenza tarata sulla posizione: la gittata è proporzionale alla distanza dal canestro; vicino basta poca carica, lontano serve di più */const dist=Math.hypot(H.x-d.sx,H.y-d.sy),need=.3+.5*Math.min(1,dist/c.height),range=dist>c.height*.55?c.height*(.06+1.26*v.pw)/* (1552) guardie: come prima */:dist*v.pw/need/* centri e ali: tarata sulla distanza */,Lx=d.sx+v.ux*range,Ly=d.sy+v.uy*range;
  const tre=dist>c.height*.55,e=Math.hypot(Lx-H.x,(Ly-H.y)*1.15)/H.rr;
  const res=e<.4?"swish":e<1.05?"in":e<1.6?"out":"air";
  S.tiri++;sfx("shot");if(!FREE()){M.poss="shot";M.holder=""}shots.push({sx:d.sx,sy:d.sy,Lx,Ly,res,tre,dur:.62+.5*v.pw,hh:60+170*v.pw,t0:performance.now(),ox:scrollX,oy:scrollY,w:d.w,trail:[]})}
-function cpuShot(){const H=hoopR(),c=court();if(!H||!c){giveMe("","");return}const r=c.getBoundingClientRect(),sx=M.mx-scrollX,sy=M.my-scrollY,tre=Math.hypot(H.x-sx,H.y-sy)>r.height*.55;
+function cpuShot(){const H=hoopR(),r=crect();if(!H||!r){giveMe("","");return}const sx=M.mx-scrollX,sy=M.my-scrollY,tre=Math.hypot(H.x-sx,H.y-sy)>r.height*.55;
  const pk=M.skill,u=Math.random(),res=u<pk*.35?"swish":u<pk?"in":u<pk+(1-pk)*.6?"out":"air",e={swish:.2,in:.75,out:1.3,air:2.3}[res]*(.85+Math.random()*.3),an=Math.random()*Math.PI*2;
  const Lx=H.x+Math.cos(an)*e*H.rr,Ly=H.y+Math.sin(an)*e*H.rr/1.15,pw=Math.min(1,Math.hypot(Lx-sx,Ly-sy)/(r.height*1.3));
  M.poss="cpushot";sfx("shot");shots.push({sx,sy,Lx,Ly,res,tre,dur:.75+.55*pw,hh:60+170*pw,t0:performance.now(),ox:scrollX,oy:scrollY,w:H.jw,trail:[],cpu:true})}
@@ -14559,30 +14575,43 @@ function score(sh){if(sh.res==="swish")sfx("swish");else if(sh.res==="in"){sfx("
 function quarterEnd(){if(M.q>=4&&M.me!==M.cpu){sfx("buzzer");M.end=true;const w=M.me>M.cpu;BEST.w=(BEST.w||0)+(w?1:0);BEST.l=(BEST.l||0)+(w?0:1);save();drag=null;tapP=null;txt(w?"VITTORIA DUCKS!":"SCONFITTA",3,null,null,w?"#a3e635":"#ef4444");try{w&&navigator.vibrate&&navigator.vibrate([40,60,40,60,80])}catch(e){}return}
  sfx("buzzer");M.q++;M.clock=M.q>4?60:120;M.pause=performance.now()+1500;txt(M.q>4?"SUPPLEMENTARE":"FINE "+(M.q-1)+"° QUARTO",1.5)}
 /* --- disegno --- */
-function ball(x,y,r,a){cx.save();cx.globalAlpha=a==null?1:a;cx.translate(x,y);cx.beginPath();cx.arc(0,0,r,0,7);cx.fillStyle="#a3e635";cx.fill();cx.lineWidth=r*.12;cx.strokeStyle="#111";cx.stroke();cx.beginPath();cx.moveTo(-r,0);cx.lineTo(r,0);cx.moveTo(0,-r);cx.lineTo(0,r);cx.moveTo(-r*.7,-r*.7);cx.quadraticCurveTo(0,0,-r*.7,r*.7);cx.moveTo(r*.7,-r*.7);cx.quadraticCurveTo(0,0,r*.7,r*.7);cx.lineWidth=r*.09;cx.stroke();const g=cx.createRadialGradient(-r*.35,-r*.4,r*.1,0,0,r);g.addColorStop(0,"rgba(255,255,255,.55)");g.addColorStop(1,"rgba(255,255,255,0)");cx.beginPath();cx.arc(0,0,r,0,7);cx.fillStyle=g;cx.fill();cx.restore()}
+const BSP={};function ballSprite(){if(BSP.c)return BSP.c;const R=48,c=document.createElement("canvas");c.width=c.height=R*2+4;const k=c.getContext("2d");k.translate(R+2,R+2);ball0(k,0,0,R);BSP.c=c;return c}
+function ball(x,y,r,a){const sp=ballSprite(),s=r*(sp.width/96);cx.globalAlpha=a==null?1:a;cx.drawImage(sp,x-s/2,y-s/2,s,s);cx.globalAlpha=1}
+function ball0(cx,x,y,r,a){cx.save();cx.globalAlpha=a==null?1:a;cx.translate(x,y);cx.beginPath();cx.arc(0,0,r,0,7);cx.fillStyle="#a3e635";cx.fill();cx.lineWidth=r*.12;cx.strokeStyle="#111";cx.stroke();cx.beginPath();cx.moveTo(-r,0);cx.lineTo(r,0);cx.moveTo(0,-r);cx.lineTo(0,r);cx.moveTo(-r*.7,-r*.7);cx.quadraticCurveTo(0,0,-r*.7,r*.7);cx.moveTo(r*.7,-r*.7);cx.quadraticCurveTo(0,0,r*.7,r*.7);cx.lineWidth=r*.09;cx.stroke();const g=cx.createRadialGradient(-r*.35,-r*.4,r*.1,0,0,r);g.addColorStop(0,"rgba(255,255,255,.55)");g.addColorStop(1,"rgba(255,255,255,0)");cx.beginPath();cx.arc(0,0,r,0,7);cx.fillStyle=g;cx.fill();cx.restore()}
 function hoop(H,front,sw){const rr=H.rr;cx.save();if(!front){if(H.L){const bw=H.L.width*.92,bh=H.L.height*.5,bx=H.x-bw/2,by=H.L.top+H.L.height*.04;cx.fillStyle="rgba(255,255,255,.96)";cx.strokeStyle="#5b21b6";cx.lineWidth=2.4;cx.beginPath();cx.roundRect?cx.roundRect(bx,by,bw,bh,4):cx.rect(bx,by,bw,bh);cx.fill();cx.stroke();cx.strokeStyle="#5b21b6";cx.lineWidth=1.6;cx.strokeRect(H.x-bw*.18,by+bh*.38,bw*.36,bh*.5);cx.fillStyle="#5b21b6";cx.fillRect(H.x-1.3,by+bh,2.6,H.y-(by+bh)-rr*.4)}
   cx.fillStyle="rgba(0,0,0,.14)";cx.beginPath();cx.ellipse(H.x,H.y+rr*.9,rr*1.1,rr*.5,0,0,7);cx.fill();cx.restore();return}
  const k=sw!=null&&sw<1?1+.25*Math.sin(sw*Math.PI*6):1;cx.strokeStyle="rgba(255,255,255,.95)";cx.lineWidth=1;for(let i=0;i<12;i++){const an=i/12*Math.PI*2;cx.beginPath();cx.moveTo(H.x+Math.cos(an)*rr,H.y+Math.sin(an)*rr*.42);cx.lineTo(H.x+Math.cos(an+.4)*rr*.5*k,H.y+rr*1.15);cx.stroke()}
  cx.beginPath();cx.ellipse(H.x,H.y+rr*1.15,rr*.5*k,rr*.16,0,0,7);cx.stroke();cx.strokeStyle="#f97316";cx.lineWidth=2.8;cx.beginPath();cx.ellipse(H.x,H.y,rr,rr*.42,0,0,7);cx.stroke();cx.restore()}
-function mascot(now,H){const x=M.mx-scrollX,y=M.my-scrollY,rr=H.jw*.36,im=oppImg(),bob=Math.sin(now/120)*1.5;cx.save();cx.shadowColor="rgba(249,115,22,.7)";cx.shadowBlur=M.poss==="cpu"?16:8;cx.beginPath();cx.arc(x,y+bob,rr,0,7);cx.fillStyle="#fff";cx.fill();cx.shadowBlur=0;cx.lineWidth=3;cx.strokeStyle="#f97316";cx.stroke();if(im){const s2=rr*1.7;cx.drawImage(im,x-s2/2,y+bob-s2/2,s2,s2)}cx.restore();
+const MSP={};function mascotSprite(rr,im){const key=Math.round(rr)+"|"+(im?im.src:"");if(MSP.k===key)return MSP.c;const d=Math.min(2,devicePixelRatio||1),R=Math.round(rr*d),pad=Math.round(14*d),c=document.createElement("canvas");c.width=c.height=(R+pad)*2;const k=c.getContext("2d"),o=R+pad;
+ k.shadowColor="rgba(249,115,22,.75)";k.shadowBlur=12*d;k.beginPath();k.arc(o,o,R,0,7);k.fillStyle="#fff";k.fill();k.shadowBlur=0;k.lineWidth=3*d;k.strokeStyle="#f97316";k.stroke();if(im){const s2=R*1.7;k.drawImage(im,o-s2/2,o-s2/2,s2,s2)}
+ MSP.k=key;MSP.c=c;MSP.s=(R+pad)*2/d;return c}
+function mascot(now,H){const x=M.mx-scrollX,y=M.my-scrollY,rr=H.jw*.36,im=oppImg(),bob=Math.sin(now/120)*1.5,sp=mascotSprite(rr,im&&im.complete?im:null);cx.drawImage(sp,x-MSP.s/2,y+bob-MSP.s/2,MSP.s,MSP.s);
  if(M.poss==="cpu"){const r=H.jw*.2;ball(x+rr*.95,y+rr*.55+Math.abs(Math.sin(now/140))*rr*.35,r)}}
 /* (1551) tabellone nello spazio a sinistra di TEXAS, tasto audio a destra di DUCKS (fascia alta del campo) */
-function slots(c){const r=c.getBoundingClientRect(),T=[...c.querySelectorAll(".cname text")].map(e=>e.getBoundingClientRect()).filter(b=>b.width);if(!T.length)return{L:{x0:r.left+6,x1:r.left+120,y0:r.top+4,y1:r.top+60},R:{x0:r.right-40,x1:r.right-6,y0:r.top+4,y1:r.top+60}};
+function slots(c){const[G,dx,dy]=gd();if(!G)return slots0(c);const m=b=>({x0:b.x0+dx,x1:b.x1+dx,y0:b.y0+dy,y1:b.y1+dy});return{L:m(G.SL.L),R:m(G.SL.R)}}
+function slots0(c){const r=c.getBoundingClientRect(),T=[...c.querySelectorAll(".cname text")].map(e=>e.getBoundingClientRect()).filter(b=>b.width);if(!T.length)return{L:{x0:r.left+6,x1:r.left+120,y0:r.top+4,y1:r.top+60},R:{x0:r.right-40,x1:r.right-6,y0:r.top+4,y1:r.top+60}};
  const a=T.reduce((m,b)=>b.left<m.left?b:m),z=T.reduce((m,b)=>b.right>m.right?b:m),y0=Math.max(r.top+3,Math.min(a.top,z.top)-8),y1=Math.max(a.bottom,z.bottom)+8;return{L:{x0:r.left+5,x1:a.left-5,y0,y1},R:{x0:z.right+5,x1:r.right-5,y0,y1}}}
 function place(box,w,h){const k=Math.min(1,(box.x1-box.x0)/w,(box.y1-box.y0)/h);cx.translate(box.x0,box.y0+((box.y1-box.y0)-h*k)/2);cx.scale(k,k);return k}
 function sndAt(box){const sz=30,x=box.x0+((box.x1-box.x0)-sz)/2,y=box.y0+((box.y1-box.y0)-sz)/2;sndBtn(x,y)}
-function hud(now){const c=court();if(!c)return;const SL=slots(c);if(FREE()){const x=0,y=0;cx.save();cx.font="900 italic 13px 'Barlow Condensed',system-ui,sans-serif";const t1=`TIRO LIBERO · PUNTI ${S.pts}   ${S.fatti}/${S.tiri}   SERIE ${S.ser}`,t2=`RECORD ${BEST.pts} PT · SERIE ${BEST.ser} · DUCKS = PARTITA`;const w=Math.max(cx.measureText(t1).width,cx.measureText(t2).width)+16;place(SL.L,w,38);cx.fillStyle="rgba(46,16,101,.88)";cx.beginPath();cx.roundRect?cx.roundRect(x,y,w,38,9):cx.rect(x,y,w,38);cx.fill();cx.fillStyle="#a3e635";cx.fillText(t1,x+8,y+16);cx.fillStyle="#e9d5ff";cx.font="800 italic 11px 'Barlow Condensed',system-ui,sans-serif";cx.fillText(t2,x+8,y+31);cx.restore();sndAt(SL.R);return}
- const x=0,y=0,T=TEAMS[M.opp]||{},nk=(T.nick||M.opp||"").toUpperCase(),oc=T.bg||"#f70990";
+function hudBody(){if(FREE()){const x=4,y=4;cx.save();cx.font="900 italic 13px 'Barlow Condensed',system-ui,sans-serif";const t1=`TIRO LIBERO · PUNTI ${S.pts}   ${S.fatti}/${S.tiri}   SERIE ${S.ser}`,t2=`RECORD ${BEST.pts} PT · SERIE ${BEST.ser} · DUCKS = PARTITA`;const w=Math.max(cx.measureText(t1).width,cx.measureText(t2).width)+16;HUDC.w=w+8;HUDC.h=46;cx.fillStyle="rgba(46,16,101,.88)";cx.beginPath();cx.roundRect?cx.roundRect(x,y,w,38,9):cx.rect(x,y,w,38);cx.fill();cx.fillStyle="#a3e635";cx.fillText(t1,x+8,y+16);cx.fillStyle="#e9d5ff";cx.font="800 italic 11px 'Barlow Condensed',system-ui,sans-serif";cx.fillText(t2,x+8,y+31);cx.restore();return}
+ const x=4,y=4,T=TEAMS[M.opp]||{},nk=(T.nick||M.opp||"").toUpperCase(),oc=T.bg||"#f70990";
  const mm=Math.max(0,Math.ceil(M.clock)),cl=(M.q>4?"OT":"Q"+M.q)+" · "+Math.floor(mm/60)+":"+String(mm%60).padStart(2,"0")+(M.poss==="me"?" · "+Math.ceil(M.shot)+"s":""),cpuP=M.poss==="cpu"||M.poss==="cpushot";
  /* (1547) tabellone piccolo e bianco: DUCKS sopra (viola), avversario sotto (suo colore), tempo in rosso */
  cx.save();const F=(w,z)=>`${w} italic ${z}px 'Barlow Condensed',system-ui,sans-serif`;cx.font=F(900,13);const wn=Math.max(cx.measureText("DUCKS").width,cx.measureText(nk).width);cx.font=F(900,14);const ws=Math.max(cx.measureText(String(M.me)).width,cx.measureText(String(M.cpu)).width);cx.font=F(800,10);const msg=M.end?(M.me>M.cpu?"HAI VINTO · TOCCA PER RIGIOCARE":"HAI PERSO · TOCCA PER RIGIOCARE"):cl,wc=cx.measureText(msg).width;
- const w=Math.max(wn+ws+30,wc+14),h=50;place(SL.L,w,h);cx.shadowColor="rgba(0,0,0,.25)";cx.shadowBlur=6;cx.fillStyle="#fff";cx.beginPath();cx.roundRect?cx.roundRect(x,y,w,h,8):cx.rect(x,y,w,h);cx.fill();cx.shadowBlur=0;
+ const w=Math.max(wn+ws+30,wc+14),h=50;HUDC.w=w+8;HUDC.h=h+8;cx.shadowColor="rgba(0,0,0,.25)";cx.shadowBlur=6;cx.fillStyle="#fff";cx.beginPath();cx.roundRect?cx.roundRect(x,y,w,h,8):cx.rect(x,y,w,h);cx.fill();cx.shadowBlur=0;
  const row=(nm,sc,col,yy,pos)=>{if(pos){cx.fillStyle=col;cx.beginPath();cx.arc(x+7,yy-4,2.6,0,7);cx.fill()}cx.font=F(900,13);cx.fillStyle=col;cx.fillText(nm,x+13,yy);cx.font=F(900,14);cx.textAlign="right";cx.fillText(String(sc),x+w-7,yy);cx.textAlign="left"};
  row("DUCKS",M.me,"#5b21b6",y+15,!cpuP&&!M.end);row(nk,M.cpu,oc,y+30,cpuP&&!M.end);
- cx.font=F(800,10);cx.fillStyle="#dc2626";cx.fillText(msg,x+7,y+44);cx.restore();sndAt(SL.R)}
-function loop(now){raf=requestAnimationFrame(loop);if(!window.dxGameOn||!cv)return;size();const dt=Math.min(.05,last?(now-last)/1000:0);last=now;if(!ok()){cx.clearRect(0,0,innerWidth,innerHeight);drag=null;tapP=null;sndHide();return}cx.clearRect(0,0,innerWidth,innerHeight);const H=hoopR();if(!H)return;
+ cx.font=F(800,10);cx.fillStyle="#dc2626";cx.fillText(msg,x+7,y+44);cx.restore()}
+/* (1553) il tabellone si ridisegna solo quando cambia qualcosa (punti, tempo al secondo); a ogni fotogramma si copia l immagine già pronta */
+const HUDC={key:"",c:null,w:0,h:0};
+function hud(now){const c=court();if(!c)return;const SL=slots(c);const mm=Math.max(0,Math.ceil(M.clock));
+ const key=FREE()?`F|${S.pts}|${S.fatti}|${S.tiri}|${S.ser}|${BEST.pts}|${BEST.ser}`:`M|${M.me}|${M.cpu}|${M.opp}|${M.q}|${mm}|${M.poss==="me"?Math.ceil(M.shot):"-"}|${M.poss}|${M.end}`;
+ const d=Math.min(2,devicePixelRatio||1);
+ if(HUDC.key!==key){const main=cx;if(!HUDC.c)HUDC.c=document.createElement("canvas");HUDC.c.width=320*d;HUDC.c.height=70*d;cx=HUDC.c.getContext("2d");cx.setTransform(d,0,0,d,0,0);cx.clearRect(0,0,320,70);try{hudBody()}catch(e){}cx=main;HUDC.key=key}
+ cx.save();place(SL.L,HUDC.w,HUDC.h);cx.drawImage(HUDC.c,0,0,HUDC.w*d,HUDC.h*d,0,0,HUDC.w,HUDC.h);cx.restore();sndAt(SL.R)}
+function loop(now){raf=requestAnimationFrame(loop);if(!window.dxGameOn||!cv)return;size();const dt=Math.min(.05,last?(now-last)/1000:0);last=now;if(!ok()){clr();drag=null;tapP=null;sndHide();return}clr();const H=hoopR();if(!H)return;
  if(!M.opp)newMatch();
- const c=court().getBoundingClientRect(),speed=c.width*(.24+.32*M.skill)/* (1546) più veloce */,flying=shots.some(s=>!s.done);
+ const c=crect();if(!c)return;const speed=c.width*(.24+.32*M.skill)/* (1546) più veloce */,flying=shots.some(s=>!s.done);
  /* tempo */if(!FREE()&&!M.end&&now>M.pause){if(!flying&&!M.pass)M.clock-=dt;if(M.poss==="me"&&!M.pass)M.shot-=dt;M.cool-=dt;
   if(M.clock<=0&&!flying){quarterEnd()}
   else if(M.poss==="me"&&M.shot<=0){drag=null;giveCpu("24 SECONDI!")}}
