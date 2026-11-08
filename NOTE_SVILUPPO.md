@@ -3957,3 +3957,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 (1555) Gioco: nuovo suono per i miei canestri (prova n.2 scelta da Francesco: retina + campanelle do-mi-sol-do + luccichio), al posto di retina+pubblico. Canestri dell animaletto: solo retina come prima.
 
 (1556) Partita: stoppata con un tocco ogni 0,5 s (prima un solo tocco per azione). Zona invariata: solo a inizio tiro, vicino alla palla.
+
+(1557) Partita: fischio d inizio (tutto fermo per 2 s, poi fischio + VIA!; tocchi sul campo ignorati prima), tasto pausa (#dxgpau, accanto/sotto l audio, solo in partita: congela tempo, animaletto, tiri; scritta PAUSA), bip negli ultimi 5 secondi di ogni quarto (sfx tick) prima della sirena.

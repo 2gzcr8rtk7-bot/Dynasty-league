@@ -14503,6 +14503,9 @@ function noise(dur,vol,ft,fq,f2){const a=SND&&ac();if(!a||!NZ)return;const t=a.c
 const SFX={step:()=>noise(.05,.05,"bandpass",2600+Math.random()*900),dribble:()=>{tone(95,.12,"sine",.35,55);noise(.04,.08,"lowpass",900)},shot:()=>noise(.28,.12,"bandpass",500,1800),
  swish:()=>noise(.35,.16,"highpass",3500,6000),rim:()=>{tone(620,.5,"triangle",.18);tone(930,.35,"triangle",.1);tone(1460,.2,"sine",.05)},block:()=>{tone(140,.18,"sine",.45,60);noise(.12,.25,"lowpass",700)},
  steal:()=>{tone(1900,.08,"sine",.18,2700);setTimeout(()=>tone(2400,.07,"sine",.14,3000),70)},buzzer:()=>{tone(220,.7,"square",.12);tone(223,.7,"sawtooth",.06)},
+ /* (1557) fischio d inizio (arbitro: nota acuta con trillo) e bip degli ultimi 5 secondi del quarto */
+ whistle:()=>{const a=SND&&ac();if(!a)return;const t=a.currentTime,o=a.createOscillator(),l=a.createOscillator(),lg=a.createGain(),g=a.createGain();o.type="sine";o.frequency.value=2950;l.frequency.value=32;lg.gain.value=170;l.connect(lg).connect(o.frequency);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.22,t+.02);g.gain.setValueAtTime(.22,t+.62);g.gain.exponentialRampToValueAtTime(.0001,t+.75);o.connect(g).connect(a.destination);o.start(t);l.start(t);o.stop(t+.8);l.stop(t+.8);noise(.7,.05,"bandpass",3000)},
+ tick:()=>tone(1050,.13,"square",.09),
  crowd:()=>noise(.9,.14,"bandpass",900,1400),ooh:()=>noise(.6,.08,"lowpass",600,300),
  /* (1555) canestro mio: suono n.2 scelto da Francesco = retina (tanti piccoli fff dei fili + colpo sordo) e campanelle che salgono do-mi-sol-do, con un luccichio finale */
  make:()=>{const a=SND&&ac();if(!a||!NZ)return;const t0=a.currentTime,out=a.createDynamicsCompressor();out.connect(a.destination);
@@ -14519,7 +14522,12 @@ addEventListener("dxlivestat",e=>{if(!window.dxGameOn||!SND||!ok())return;const 
 let SB=null;function sndBtn(x,y){if(!SB){SB=document.createElement("button");SB.id="dxgsnd";SB.type="button";SB.setAttribute("aria-label","Suoni del campo");SB.style.cssText="position:fixed;z-index:61;width:30px;height:30px;border-radius:8px;border:0;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.25);font-size:16px;line-height:30px;padding:0;cursor:pointer";
   SB.addEventListener("click",ev=>{ev.preventDefault();ev.stopPropagation();SND=!SND;try{localStorage.setItem("dl_dxgame_snd",SND?"1":"0")}catch(_){}if(SND){silent(true);ac();sfx("dribble");try{speechSynthesis&&speechSynthesis.speak(new SpeechSynthesisUtterance(""))}catch(_){}}else{silent(false);try{speechSynthesis&&speechSynthesis.cancel()}catch(_){}}SB.textContent=SND?"🔊":"🔇"});document.body.appendChild(SB)}
  {const tx=SND?"🔊":"🔇";if(SB.textContent!==tx)SB.textContent=tx}/* (1553) niente scritture nel DOM a ogni fotogramma: svegliavano gli osservatori dei loghi */const l=Math.round(x)+"px",t=Math.round(y)+"px";if(SB.style.left!==l)SB.style.left=l;if(SB.style.top!==t)SB.style.top=t;if(SB.style.display)SB.style.display=""}
-function sndHide(){if(SB&&SB.style.display!=="none")SB.style.display="none"}
+function sndHide(){if(SB&&SB.style.display!=="none")SB.style.display="none";pbHide()}
+/* (1557) tasto pausa: stessa forma del tasto audio, solo in partita */
+let PB=null;function pauBtn(x,y){if(!PB){PB=document.createElement("button");PB.id="dxgpau";PB.type="button";PB.setAttribute("aria-label","Pausa partita");PB.style.cssText="position:fixed;z-index:61;width:30px;height:30px;border-radius:8px;border:0;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.25);font-size:13px;line-height:30px;padding:0;cursor:pointer;color:#5b21b6;font-weight:900;letter-spacing:-1px";
+  PB.addEventListener("click",ev=>{ev.preventDefault();ev.stopPropagation();pz(!M.paused)});document.body.appendChild(PB)}
+ {const tx=M.paused?"\u25b6":"\u275a\u275a";if(PB.textContent!==tx)PB.textContent=tx}const l=Math.round(x)+"px",t=Math.round(y)+"px";if(PB.style.left!==l)PB.style.left=l;if(PB.style.top!==t)PB.style.top=t;if(PB.style.display)PB.style.display=""}
+function pbHide(){if(PB&&PB.style.display!=="none")PB.style.display="none"}
 /* giocatori (campo e panchina) */
 function pjKey(pj){const h=pj.closest("[data-pl]");return h?h.dataset.pl:""}
 function plist(){const[G,dx,dy]=gd();return G?G.P.map(p=>sh2(p,dx,dy)):[]}
@@ -14532,7 +14540,7 @@ function pjAt(t,x,y){const pj=t&&t.closest&&t.closest(".pj");if(pj&&(pj.closest(
 function mascotHome(){/* riparte dal punto del campo più lontano da chi ha la palla */const c=court();if(!c)return;const r=c.getBoundingClientRect(),hp=pOf(M.holder);const C=[[.2,.25],[.8,.25],[.5,.5],[.15,.75],[.85,.75],[.5,.9]].map(([a,b])=>({x:r.left+r.width*a,y:r.top+r.height*b}));let best=C[2],bd=-1;C.forEach(q=>{const d=hp?Math.hypot(q.x-hp.x,q.y-hp.y):Math.random();if(d>bd){bd=d;best=q}});M.mx=best.x+scrollX;M.my=best.y+scrollY}
 function giveMe(key,why){const C=courtPl();const k=key||(C.length?C[Math.floor(Math.random()*C.length)].key:"");M.poss="me";M.holder=k;M.shot=24;M.cool=.25;M.pass=null;if(why)txt(why,1.2)}
 function giveCpu(why){M.tried=false;M.poss="cpu";M.holder="";drag=null;tapP=null;M.pass=null;M.cpuT=performance.now()+1700;const c=court();if(c){const r=c.getBoundingClientRect();M.tx=r.left+r.width*(.2+Math.random()*.6)+scrollX;M.ty=r.top+r.height*(.45+Math.random()*.35)+scrollY}if(why)txt(why,1.2,null,null,"#f97316")}
-function newMatch(){Object.assign(M,{q:1,clock:120,shot:24,me:0,cpu:0,end:false,pause:0,pass:null});M.opp=oppTeam();M.skill=cpuSkill();setTimeout(oppImg,0);shots=[];drag=null;tapP=null;giveMe("","");mascotHome()}
+function newMatch(){Object.assign(M,{q:1,clock:120,shot:24,me:0,cpu:0,end:false,pause:0,pass:null,paused:false,whT:0});if(!FREE()){M.whT=performance.now()+2000;M.pause=M.whT}/* (1557) partita: si parte al fischio, dopo 2 s */M.opp=oppTeam();M.skill=cpuSkill();setTimeout(oppImg,0);shots=[];drag=null;tapP=null;giveMe("","");mascotHome()}
 let MODE="free";try{MODE=localStorage.getItem("dl_dxgame_mode")==="match"?"match":"free"}catch(e){}const FREE=()=>MODE==="free";window.__dxMode=()=>MODE;
 window.dxGameOn=false;try{window.dxGameOn=localStorage.getItem("dl_dxgame_on")==="1";document.documentElement.classList.toggle("dxgame",window.dxGameOn)}catch(e){}/* (1540) resta acceso finché non tocchi DUCKS */
 window.dxGame=function(on){on=!!on;if(on&&!ok())return;if(on===window.dxGameOn)return;window.dxGameOn=on;try{localStorage.setItem("dl_dxgame_on",on?"1":"0")}catch(e){}document.documentElement.classList.toggle("dxgame",on);
@@ -14548,7 +14556,8 @@ const MAXD=()=>Math.min(230,innerWidth*.55);
 const blockT=t=>t&&t.closest&&(t.closest("main .court")||t.closest("main .dpan"))&&!t.closest(".cname");
 function cpuBall(){return shots.find(s=>s.cpu&&!s.done&&s.cx!=null)}
 /* (1546) stoppata solo appena parte il tiro: palla entro ~1,5 cm (56 px) dall animaletto */const BLK=56;window.__dxCpuBall=()=>{const b=cpuBall();return b?{x:b.cx,y:b.cy,ok:canBlock(b)}:null};function canBlock(sh){const dx=sh.ox-scrollX,dy=sh.oy-scrollY;return sh.cx!=null&&sh.q!=null&&Math.hypot(sh.Lx-sh.sx,sh.Ly-sh.sy)*sh.q<BLK/* distanza percorsa a terra dal punto di tiro */}
-addEventListener("pointerdown",e=>{if(!window.dxGameOn||!ok())return;if(SND&&(!AC||AC.state!=="running")){silent(true);ac()}if(e.target&&e.target.id==="dxgsnd")return;
+addEventListener("pointerdown",e=>{if(!window.dxGameOn||!ok())return;if(SND&&(!AC||AC.state!=="running")){silent(true);ac()}if(e.target&&(e.target.id==="dxgsnd"||e.target.id==="dxgpau"))return;
+ /* (1557) in pausa o prima del fischio: tocchi sul campo ignorati */if(!FREE()&&!M.end&&(M.paused||M.whT)){if(pjAt(e.target,e.clientX,e.clientY)||blockT(e.target)){e.preventDefault();e.stopPropagation()}return}
  /* (1548) stoppata: UN SOLO TOCCO per ogni possesso dell animaletto; se è fuori tempo non si può più stoppare */if(!FREE()&&(M.poss==="cpu"||M.poss==="cpushot")&&(()=>{const c0=court();if(!c0)return false;const r0=c0.getBoundingClientRect(),b0=cpuBall();return(e.clientX>=r0.left&&e.clientX<=r0.right&&e.clientY>=r0.top&&e.clientY<=r0.bottom)||(b0&&Math.hypot(e.clientX-b0.cx,e.clientY-b0.cy)<90)})()){e.preventDefault();e.stopPropagation();{const tn=performance.now();if(tn-(M.tryT||0)<500)return;M.tryT=tn}/* (1556) stoppata: un tocco ogni 0,5 s (prima uno solo per azione), sempre solo a inizio tiro vicino alla palla */const cb=cpuBall();if(!(cb&&canBlock(cb)&&Math.hypot(e.clientX-cb.cx,e.clientY-cb.cy)<cb.r*3.4)){txt("TROPPO PRESTO/TARDI",.9,e.clientX,e.clientY-20,"#fca5a5");return}e.preventDefault();e.stopPropagation();shots=shots.filter(s=>s!==cb);S.stop=(S.stop||0)+1;sfx("block");sfx("ooh");txt("STOPPATA!",1.4,cb.cx,cb.cy-20,"#fff");try{navigator.vibrate&&navigator.vibrate([30,30,30])}catch(_){}giveMe("","");mascotHome();return}
  const pj=pjAt(e.target,e.clientX,e.clientY);if(!pj){if(blockT(e.target))e.stopPropagation();return}e.preventDefault();e.stopPropagation();
  if(FREE()){if(shots.some(s=>!s.done))return;const r0=pj.getBoundingClientRect();drag={id:e.pointerId,pj,key:pjKey(pj),sx:r0.left+r0.width/2,sy:r0.top+r0.height*.5,fx:e.clientX,fy:e.clientY,w:r0.width};return}
@@ -14600,7 +14609,7 @@ function slots(c){const[G,dx,dy]=gd();if(!G)return slots0(c);const m=b=>({x0:b.x
 function slots0(c){const r=c.getBoundingClientRect(),T=[...c.querySelectorAll(".cname text")].map(e=>e.getBoundingClientRect()).filter(b=>b.width);if(!T.length)return{L:{x0:r.left+6,x1:r.left+120,y0:r.top+4,y1:r.top+60},R:{x0:r.right-40,x1:r.right-6,y0:r.top+4,y1:r.top+60}};
  const a=T.reduce((m,b)=>b.left<m.left?b:m),z=T.reduce((m,b)=>b.right>m.right?b:m),y0=Math.max(r.top+3,Math.min(a.top,z.top)-8),y1=Math.max(a.bottom,z.bottom)+8;return{L:{x0:r.left+5,x1:a.left-5,y0,y1},R:{x0:z.right+5,x1:r.right-5,y0,y1}}}
 function place(box,w,h){const k=Math.min(1,(box.x1-box.x0)/w,(box.y1-box.y0)/h);cx.translate(box.x0,box.y0+((box.y1-box.y0)-h*k)/2);cx.scale(k,k);return k}
-function sndAt(box){const sz=30,x=box.x0+((box.x1-box.x0)-sz)/2,y=box.y0+((box.y1-box.y0)-sz)/2;sndBtn(x,y)}
+function sndAt(box){const sz=30,w=box.x1-box.x0,y=box.y0+((box.y1-box.y0)-sz)/2;if(FREE()||M.end){pbHide();sndBtn(box.x0+(w-sz)/2,y);return}/* (1557) in partita: pausa a sinistra e audio a destra; se lo spazio non basta la pausa va sotto */if(w>=2*sz+6){const x=box.x0+(w-2*sz-6)/2;pauBtn(x,y);sndBtn(x+sz+6,y)}else{const x=box.x0+(w-sz)/2;sndBtn(x,y);pauBtn(x,y+sz+5)}}
 function hudBody(){if(FREE()){const x=4,y=4;cx.save();cx.font="900 italic 13px 'Barlow Condensed',system-ui,sans-serif";const t1=`TIRO LIBERO · PUNTI ${S.pts}   ${S.fatti}/${S.tiri}   SERIE ${S.ser}`,t2=`RECORD ${BEST.pts} PT · SERIE ${BEST.ser} · DUCKS = PARTITA`;const w=Math.max(cx.measureText(t1).width,cx.measureText(t2).width)+16;HUDC.w=w+8;HUDC.h=46;cx.fillStyle="rgba(46,16,101,.88)";cx.beginPath();cx.roundRect?cx.roundRect(x,y,w,38,9):cx.rect(x,y,w,38);cx.fill();cx.fillStyle="#a3e635";cx.fillText(t1,x+8,y+16);cx.fillStyle="#e9d5ff";cx.font="800 italic 11px 'Barlow Condensed',system-ui,sans-serif";cx.fillText(t2,x+8,y+31);cx.restore();return}
  const x=4,y=4,T=TEAMS[M.opp]||{},nk=(T.nick||M.opp||"").toUpperCase(),oc=T.bg||"#f70990";
  const mm=Math.max(0,Math.ceil(M.clock)),cl=(M.q>4?"OT":"Q"+M.q)+" · "+Math.floor(mm/60)+":"+String(mm%60).padStart(2,"0")+(M.poss==="me"?" · "+Math.ceil(M.shot)+"s":""),cpuP=M.poss==="cpu"||M.poss==="cpushot";
@@ -14617,10 +14626,12 @@ function hud(now){const c=court();if(!c)return;const SL=slots(c);const mm=Math.m
  const d=Math.min(2,devicePixelRatio||1);
  if(HUDC.key!==key){const main=cx;if(!HUDC.c)HUDC.c=document.createElement("canvas");HUDC.c.width=320*d;HUDC.c.height=70*d;cx=HUDC.c.getContext("2d");cx.setTransform(d,0,0,d,0,0);cx.clearRect(0,0,320,70);try{hudBody()}catch(e){}cx=main;HUDC.key=key}
  cx.save();place(SL.L,HUDC.w,HUDC.h);cx.drawImage(HUDC.c,0,0,HUDC.w*d,HUDC.h*d,0,0,HUDC.w,HUDC.h);cx.restore();sndAt(SL.R)}
-function loop(now){raf=requestAnimationFrame(loop);if(!window.dxGameOn||!cv)return;size();const dt=Math.min(.05,last?(now-last)/1000:0);last=now;if(!ok()){clr();drag=null;tapP=null;sndHide();return}clr();const H=hoopR();if(!H)return;
+function loop(now){raf=requestAnimationFrame(loop);if(!window.dxGameOn||!cv)return;size();let dt=Math.min(.05,last?(now-last)/1000:0);last=now;if(!ok()){clr();drag=null;tapP=null;sndHide();return}clr();const H=hoopR();if(!H)return;
  if(!M.opp)newMatch();
+ /* (1557) pausa: si congela il tempo del gioco (si ridisegna tutto fermo); alla ripresa si spostano in avanti tutti gli orari */if(M.paused&&!FREE()){now=M.pzAt;dt=0}
+ if(!FREE()&&M.whT&&!M.paused&&now>=M.whT){M.whT=0;sfx("whistle");txt("VIA!",1.1)}
  const c=crect();if(!c)return;const speed=c.width*(.24+.32*M.skill)/* (1546) più veloce */,flying=shots.some(s=>!s.done);
- /* tempo */if(!FREE()&&!M.end&&now>M.pause){if(!flying&&!M.pass)M.clock-=dt;if(M.poss==="me"&&!M.pass)M.shot-=dt;M.cool-=dt;
+ /* tempo */if(!FREE()&&!M.end&&now>M.pause){if(!flying&&!M.pass){const c0=Math.ceil(M.clock);M.clock-=dt;const c1=Math.ceil(M.clock);if(c1!==c0&&c1>=1&&c1<=5)sfx("tick")/* (1557) conto alla rovescia: bip negli ultimi 5 secondi di ogni quarto */}if(M.poss==="me"&&!M.pass)M.shot-=dt;M.cool-=dt;
   if(M.clock<=0&&!flying){quarterEnd()}
   else if(M.poss==="me"&&M.shot<=0){drag=null;giveCpu("24 SECONDI!")}}
  /* animaletto */if(!FREE()&&!M.end){let tx=null,ty=null;if(M.poss==="me"&&!M.pass){const p=pOf(M.holder);if(p){tx=p.x+scrollX;ty=p.y+scrollY}}else if(M.poss==="cpu"){tx=M.tx;ty=M.ty}
@@ -14652,7 +14663,11 @@ function loop(now){raf=requestAnimationFrame(loop);if(!window.dxGameOn||!cv)retu
   const bw=drag.w*1.3,bx=drag.sx-bw/2,by=drag.sy-drag.w*.95;cx.fillStyle="rgba(0,0,0,.55)";cx.fillRect(bx,by,bw,7);const col=v.pw<.5?"#a3e635":v.pw<.8?"#facc15":"#ef4444";cx.fillStyle=col;cx.fillRect(bx,by,bw*v.pw,7);cx.strokeStyle="#fff";cx.lineWidth=1;cx.strokeRect(bx,by,bw,7);
   ball(drag.fx,drag.fy,drag.w*.2,.9);cx.restore()}
  fx=fx.filter(f=>{const q=(now-f.t0)/f.d;if(q>=1)return false;const r=c;const x=f.x==null?r.left+r.width/2:f.x,y=(f.y==null?r.top+r.height*.5:f.y)-q*18;cx.save();cx.globalAlpha=q<.15?q/.15:1-Math.max(0,(q-.7)/.3);cx.font="900 italic 22px 'Barlow Condensed',system-ui,sans-serif";cx.textAlign="center";cx.lineWidth=4;cx.strokeStyle="#2e1065";cx.strokeText(f.t,x,y);cx.fillStyle=f.c;cx.fillText(f.t,x,y);cx.restore();return true});
- hud(now)}
+ hud(now);
+ if(M.paused&&!FREE()){const r=c;cx.save();cx.fillStyle="rgba(30,10,60,.45)";cx.fillRect(r.left,r.top,r.width,r.height);cx.textAlign="center";cx.font="900 italic 44px 'Barlow Condensed',system-ui,sans-serif";cx.lineWidth=6;cx.strokeStyle="#2e1065";cx.strokeText("PAUSA",r.left+r.width/2,r.top+r.height*.45);cx.fillStyle="#fff";cx.fillText("PAUSA",r.left+r.width/2,r.top+r.height*.45);cx.font="800 15px 'Barlow Condensed',system-ui,sans-serif";cx.fillText("TOCCA ▶ PER RIPRENDERE",r.left+r.width/2,r.top+r.height*.45+28);cx.restore()}}
+/* (1557) pausa della partita: tasto accanto all audio */
+function pz(on){if(FREE()||M.end||on===!!M.paused)return;if(on){M.paused=true;M.pzAt=performance.now();drag=null;tapP=null}else{const d=performance.now()-M.pzAt;["cpuT","pause","tryT","whT"].forEach(k=>{if(M[k])M[k]+=d});if(M.pass)M.pass.t0+=d;shots.forEach(s=>s.t0+=d);fx.forEach(f=>f.t0+=d);M.paused=false}}
+window.__dxPause=pz;
 })();
 </script>
 <script>/* (1397) EFFETTI CAMPO DUCKS: tocca TEXAS per cambiare. palla · faro · 5 crolli del pavimento (visti dall'alto: giorno -> notte -> giorno) · spento (dl_dxfx) */
