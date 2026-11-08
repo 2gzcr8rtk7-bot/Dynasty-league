@@ -3109,7 +3109,7 @@ document.addEventListener("change",e=>{if(e.target&&e.target.id==="dccol")ducCol
 const ducDark=()=>{const h=TEAMS.DUC.bg,n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255<.5};
 const DUC_T0={city:TEAMS.DUC.city,name:TEAMS.DUC.name,fg:TEAMS.DUC.fg};
 /* (1309) modalità Gotham attiva: in tutta l'app i Ducks diventano Gotham City Ducks, sfondo viola notte */
-function ducColApply(){let g=false;TEAMS.DUC.bg=g?"#4c1d95":(DUC_COL||DUC_Y);TEAMS.DUC.city=g?"Gotham":DUC_T0.city;TEAMS.DUC.name=g?"Gotham City Ducks":DUC_T0.name;TEAMS.DUC.fg=g?"#ffffff":DUC_T0.fg;window.DUC_COL3D=g?"#6d28d9":(DUC_COL||null);document.documentElement.toggleAttribute("data-ducdk",ducDark());if(ducDark())TEAMS.DUC.txt="#ffffff";else delete TEAMS.DUC.txt/* (1389) scritte bianche sul viola */}ducColApply();
+function ducColApply(){let g=false;TEAMS.DUC.bg=g?"#4c1d95":(DUC_COL||DUC_Y);TEAMS.DUC.city=g?"Gotham":DUC_T0.city;TEAMS.DUC.name=g?"Gotham City Ducks":DUC_T0.name;TEAMS.DUC.fg=g?"#ffffff":DUC_T0.fg;window.DUC_COL3D=g?"#6d28d9":(DUC_COL||null);document.documentElement.toggleAttribute("data-ducdk",ducDark());if(ducDark())TEAMS.DUC.txt="#ffffff";else delete TEAMS.DUC.txt/* (1389) scritte bianche sul viola */;try{const c=DUC_COL&&DUC_COL!=="#5b21b6"?DUC_COL:"#7c3aed";document.documentElement.style.setProperty("--duchrl",c)}catch(e){}/* (1505) tasto Ducks in Home col colore franchigia (viola ufficiale = viola acceso) */}ducColApply();
 const LOGO={"TUR": "img/e5e4d392816e.png","DUC": "loghi/duc-20n.webp?v=3","SPI": "img/f85596a38af8.png", "FOX": "img/cc9ccfb8f0bc.png", "EAG": "img/756630104519.png", "MOO": "img/c75de376d2cb.png", "DOL": "img/80465239f661.png", "PEA": "img/447ab01f859c.png"};
 /* Logo alternativo (solo scritta) usato nel campo e negli infortuni */
 const LOGO2={"DUC":"loghi/duc-20n.webp?v=3"};
@@ -14507,7 +14507,7 @@ const kick=()=>{const m=dxFx();if(m!==M)set(m);else if(here()&&m!=="palla"&&m!==
 window.__dxFxSet=m=>{try{localStorage.setItem(K,m)}catch(e){}set(m)};
 })();
 </script>
-<style>/* (1401) Home: solo il tasto Ducks della colonna squadre in viola acceso */html body .hrl:has(> .lg-DUC){--tc:#7c3aed!important}</style>
+<style>/* (1401) Home: solo il tasto Ducks della colonna squadre in viola acceso */html body .hrl:has(> .lg-DUC){--tc:var(--duchrl,#7c3aed)!important}/* (1505) segue il colore franchigia scelto */</style>
 <script>/* (1405) Ducks: di notte il logo con il becco bianco, di giorno quello con il becco arancio (stesse grandezze) */
 (function(){/* (1422) loghi al contrario (prova di Francesco): di giorno la palla viola, di notte il bordo bianco. B = logo scritto nel codice */
 const B="loghi/duc-17.webp?v=1",D="loghi/duc-20n.webp?v=3",N=D/* (1423) palla viola sia di giorno sia di notte */;window.DUC_DAY=D;window.DUC_NIGHT=N;
