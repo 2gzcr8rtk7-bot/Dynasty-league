@@ -3864,3 +3864,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 ## (1502) Editor loghi: aggiunto logo Ducks «Testa verde · becco arancio» (loghi/duc-23.webp).
 - (1503) Editor loghi: aggiunto logo Ducks «Testa verde · scritta bianca» (loghi/duc-24.webp, sfondo nero tolto).
+- (1504) Editor loghi: «Testa verde · scritta bianca» sostituito da «Testa viola · becco arancio» (loghi/duc-25.webp).
