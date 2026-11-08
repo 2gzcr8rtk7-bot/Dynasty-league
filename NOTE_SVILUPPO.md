@@ -3879,3 +3879,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 ## (1511) Condivisioni: tolto l'ingrandimento speciale del logo Ducks (+40% e schiacciamento 0,96, pensati per il logo vecchio) e tutte le correzioni a percentuale (classifica +3%, prestazione −35%, −15% di 1510): il logo Ducks è disegnato come gli altri loghi, nella stessa casella.
 
 ## (1512) Dreamers: logo Ducks nel Turno (.drr›.drlg) +5% (0.865 0.778); in Classifica (.drcr›.drlg.l) +3% e meno schiacciato (1.055 0.929). Le regolazioni dell'editor della vista giochi, ormai ufficiali, si cancellano da sole dal telefono (migrazione dl_dxlogo_m1512): prima restavano sopra e nascondevano le modifiche ufficiali.
+
+## (1513) Colore franchigia Ducks: aggiunto «Lime Ducks» #87cd13 e già selezionato (migrazione dl_duccol_m1513). Corretto lo spettro «Scegli tu»: mentre scegli la pagina non si ridisegna più (prima su iPhone lo spettro si chiudeva); il colore si applica dal vivo e si salva.
