@@ -3963,3 +3963,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 (1558) Partita: tabellone più grosso, 4 righe (DUCKS, avversario, quarto e minuti, TIRO 24s/DIFESA), occupa il bordocampo dal bordo alto fino alla linea di fondo (slot L più alto, place() può ingrandire fino a 1,6x).
 
 (1559) Tiro: centro più difficile (serve caricare circa metà barra, ~118 px invece di ~80; finestra di canestro da ~34 a ~19 px), ali più facili (stessa carica, finestra da ~16 a ~22 px). Guardie invariate.
+
+(1560) Ritiro Kristaps Porziņģis (DOL), 09/11/2026, art. 10 rimborso da scambio: tolto da ROSTER.DOL, infortuni, statistiche rosa (gioc), VALORI, PREZZO_FISSO, VAL_BASE, INF_STELLE, ruoli TV; cassa Dolphins 0 -> 50 cr con movimento "Rimborso ritiro" in MOVIMENTI.DOL. Lasciati solo i dati storici (scambio del 29/10, partite giocate, formazioni passate) e quelli di aspetto/pronuncia che non mostrano nulla.
