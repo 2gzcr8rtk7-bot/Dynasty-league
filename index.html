@@ -3147,7 +3147,7 @@ ducLogoApply();
 const STAGIONE_CORRENTE="26/27";
 /* Movimenti extra inseriti a mano (premi, quote, ecc.). Scambi, aste e trade speciali NON vanno qui:
    si calcolano da soli da TRADES e SPECIALI (funzione movimenti). */
-const MOVIMENTI={SPI:[],PEA:[],DUC:[],DOL:[{s:"26/27",d:"09/11/2026",c:"Rimborso ritiro: Kristaps Porziņģis (acquisito con scambio, art. 10)",v:50}],TUR:[],EAG:[],MOO:[],FOX:[]};
+const MOVIMENTI={SPI:[],PEA:[],DUC:[],DOL:[{s:"26/27",d:"09/11/2026",c:"Rimborso ritiro: Kristaps Porziņģis (acquisito con scambio, art. 10)",v:50},{s:"26/27",d:"09/11/2026",c:"Debito saldato ai Mooses",v:-5}],TUR:[],EAG:[],MOO:[{s:"26/27",d:"09/11/2026",c:"Debito saldato dai Dolphins",v:5}],FOX:[]};
 const SP_EXTRA_CR={30:2,40:1,50:0};
 function movimenti(t){
   const cr=x=>{const m=/^(\d+)\s*crediti/i.exec(x);return m?+m[1]:0};
@@ -3173,8 +3173,8 @@ function movimenti(t){
   });
   return out.concat(MOVIMENTI[t]||[]);
 }
-const DEBITI=[{da:"DOL",a:"MOO",v:5,tipo:"portafoglio",s:"26/27",saldato:false},{da:"DOL",a:"MOO",v:30,tipo:"post",s:"26/27",saldato:false}];
-const CREDITI={"SPI": 50, "PEA": 38, "DUC": 0, "DOL": 50, "TUR": 149, "EAG": 108, "MOO": 443, "FOX": 21};
+const DEBITI=[{da:"DOL",a:"MOO",v:5,tipo:"portafoglio",s:"26/27",saldato:true/* (1561) pagato il 09/11/2026 col rimborso Porziņģis */},{da:"DOL",a:"MOO",v:30,tipo:"post",s:"26/27",saldato:false}];
+const CREDITI={"SPI": 50, "PEA": 38, "DUC": 0, "DOL": 45, "TUR": 149, "EAG": 108, "MOO": 448, "FOX": 21};
 /* Avvisi sui giocatori (scritta gialla nel roster) */
 const AVVISI={"Moussa Diabaté":"Slot extra · 10 giornate (da Mooses)","Ryan Rollins":"Trade Speciale in corso · 30 cr","Brandon Ingram":"Trade Speciale in corso · 30 cr","Brayden Burries":"Trade Speciale in corso · 40 cr"};
 /* Giocatori in slot rookie (etichetta nel roster) */
