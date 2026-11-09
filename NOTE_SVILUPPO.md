@@ -3970,4 +3970,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 (1562) Maglia ufficiale Ducks di GIORNO: 318 Viola verde (prima 317 Viola bianca). Notte resta 319 Bianca viola; il pulsante maglia funziona come prima.
 
-- v990: SCAMBIO 09/11 17:48 DOL<->PEA: Sabonis, Gobert, Harden, Lillard, Randle ai Dolphins; Clingan, Diabaté (centro, senza slot ala), Young, Garland, Bridges ai Peacocks. ROSTER aggiornato; turno 4 resta con le formazioni vecchie (drUndoTrades), conta dal turno 5 (10/11). Lookup numero/ruolo con fallback su tutti i ROSTER (TRN), così chi è appena scambiato ha il numero anche nel turno in corso. IN CODA.
+- v990: SCAMBIO 09/11 17:48 DOL<->PEA: Sabonis, Gobert, Harden, Lillard, Randle ai Dolphins; Clingan, Diabaté (centro, senza slot ala), Young, Garland, Bridges ai Peacocks. ROSTER aggiornato; turno 4 resta con le formazioni vecchie (drUndoTrades), conta dal turno 5 (10/11). Lookup numero/ruolo con fallback su tutti i ROSTER (TRN). PUBBLICATO.
