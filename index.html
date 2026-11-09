@@ -3271,6 +3271,7 @@ function vSpeciali(){
    Anche gli scambi/aste/speciali in TRADES con il campo ora:"HH:MM" compaiono da soli. */
 const AVV_HOME=[];window.__avvisi=AVV_HOME;
 const TRADES=[
+ {data:"09/11/2026",ora:"17:48",titolo:"Scambio",lati:[["DOL",["Domantas Sabonis","Rudy Gobert","James Harden","Damian Lillard","Julius Randle"],"in Dreamers contano dal turno 5 (10/11)"],["PEA",["Donovan Clingan","Moussa Diabaté","Trae Young","Darius Garland","Miles Bridges"],"in Dreamers contano dal turno 5 (10/11) · Diabaté centro dei Peacocks, senza slot ala"]]},
  {data:"29/10/2026",ora:"19:45",titolo:"Scambio",lati:[["DOL",["Lauri Markkanen","Kristaps Porziņģis"],"in Dreamers contano dal turno 2 (30/10)"],["SPI",["Isaiah Hartenstein","Jaime Jaquez Jr."],"in Dreamers contano dal turno 2 (30/10)"]]},
  {data:"29/10/2026",ora:"12:30",titolo:"Scambio",lati:[["TUR",["Cedric Coward"],"in Dreamers conta dal turno 2 (30/10)"],["MOO",["Jeremiah Fears"],"in Dreamers conta dal turno 2 (30/10)"]]},
  {data:"26/10/2026",titolo:"Scambio",lati:[["DOL",["Jaime Jaquez Jr."]],["MOO",["Jalen Williams","30 cr a credito post-Draft (debito Dolphins)"]]]},
@@ -3309,10 +3310,10 @@ const EFF={agg:"09/11/2026",
 
 /* Roster: [nome, numero NBA (null = da confermare), ruolo, squadra NBA, crediti] */
 const ROSTER={
- DOL:[["Lauri Markkanen",23,"F","UTA",12.5],["Moussa Diabaté",14,"C","CHA",10],["Nikola Jokić",15,"C","DEN",30],["Tyrese Maxey",0,"G","PHI",17],["Kevin Durant",7,"F","HOU",16],["Trae Young",3,"G","WAS",15.5],["Devin Booker",15,"G","PHX",14],["Darius Garland",10,"G","LAC",13],["Donovan Clingan",23,"C","POR",13],["Paul George",13,"F","BOS",11.5],["De'Aaron Fox",4,"G","SAS",11],["Miles Bridges",22,"F","PHX",11],["Collin Murray-Boyles",30,"F","TOR",8.5]],
+ DOL:[["Nikola Jokić",15,"C","DEN",30],["Domantas Sabonis",11,"C","SAC",18],["Tyrese Maxey",0,"G","PHI",17],["Kevin Durant",7,"F","HOU",16],["Julius Randle",30,"F","BKN",14.5],["Devin Booker",15,"G","PHX",14],["James Harden",1,"G","CLE",14],["Damian Lillard",0,"G","POR",13],["Lauri Markkanen",23,"F","UTA",12.5],["Paul George",13,"F","BOS",11.5],["Rudy Gobert",27,"C","MIN",11.5],["De'Aaron Fox",4,"G","SAS",11],["Collin Murray-Boyles",30,"F","TOR",8.5]],
  DUC:[["Victor Wembanyama",1,"C","SAS",28],["Cade Cunningham",2,"G","DET",21],["Jalen Johnson",1,"F","ATL",19],["Alperen Şengün",28,"C","HOU",17.5],["Scottie Barnes",4,"F","TOR",17],["Anthony Edwards",5,"G","MIN",16.5],["Cooper Flagg",32,"F","DAL",16.5],["Amen Thompson",1,"G","HOU",15],["Dyson Daniels",5,"G","ATL",12],["Matas Buzelis",14,"F","CHI",11],["Brandon Ingram",2,"F","LAC",10],["Kyshawn George",18,"F","WAS",8],["Brayden Burries",0,"G","MIL",7],["Hannes Steinbach",22,"C","CHA",7],["Sergio De Larrea",55,"G","DAL",5.5]],
  FOX:[["Luka Dončić",77,"G","LAL",27],["Shai Gilgeous-Alexander",2,"G","OKC",22],["Jayson Tatum",0,"F","BOS",18],["Kawhi Leonard",2,"F","TOR",15],["Austin Reaves",15,"G","LAL",14.5],["Ivica Zubac",40,"C","IND",12.5],["Kyrie Irving",11,"G","DAL",12],["Josh Hart",3,"F","NYK",12],["Desmond Bane",3,"G","ORL",11.5],["Walker Kessler",24,"C","LAL",10.5],["Jabari Smith Jr.",10,"F","HOU",10.5],["Naz Reid",11,"F","CHA",10],["Darius Acuff Jr.",5,"G","SAC",9],["Aday Mara",15,"C","OKC",7]],
- PEA:[["Domantas Sabonis",11,"C","SAC",18],["Josh Giddey",3,"G","CHI",15.5],["Julius Randle",30,"F","BKN",14.5],["LaMelo Ball",1,"G","MIN",14.5],["Evan Mobley",4,"F","CLE",14],["James Harden",1,"G","CLE",14],["Michael Porter Jr.",17,"F","BKN",13],["Zion Williamson",1,"F","NOP",12.5],["Jarrett Allen",31,"C","CLE",12.5],["Rudy Gobert",27,"C","MIN",11.5],["Trey Murphy III",25,"F","NOP",11.5],["Damian Lillard",0,"G","POR",13],["Ryan Rollins",13,"G","MIL",11.5],["Immanuel Quickley",5,"G","TOR",10],["Trevon Brazile",7,"F","DEN",7]],
+ PEA:[["Josh Giddey",3,"G","CHI",15.5],["Trae Young",3,"G","WAS",15.5],["LaMelo Ball",1,"G","MIN",14.5],["Evan Mobley",4,"F","CLE",14],["Michael Porter Jr.",17,"F","BKN",13],["Darius Garland",10,"G","LAC",13],["Donovan Clingan",23,"C","POR",13],["Zion Williamson",1,"F","NOP",12.5],["Jarrett Allen",31,"C","CLE",12.5],["Trey Murphy III",25,"F","NOP",11.5],["Ryan Rollins",13,"G","MIL",11.5],["Miles Bridges",22,"F","PHX",11],["Immanuel Quickley",5,"G","TOR",10],["Moussa Diabaté",14,"C","CHA",10],["Trevon Brazile",7,"F","DEN",7]],
  SPI:[["Giannis Antetokounmpo",34,"F","MIA",25],["Joel Embiid",21,"C","PHI",18],["LeBron James",23,"F","PHI",16],["Bam Adebayo",13,"C","MIA",15],["Donovan Mitchell",45,"G","CLE",14],["Ja Morant",12,"G","POR",13],["Stephon Castle",5,"G","SAS",13],["Jaime Jaquez Jr.",11,"F","MIL",9],["Cameron Boozer",27,"F","MEM",12.5],["Franz Wagner",22,"F","ORL",12],["VJ Edgecombe",77,"G","PHI",12],["Jalen Green",4,"G","PHX",9.5],["Isaiah Hartenstein",55,"C","OKC",10.5],["Jonathan Kuminga",1,"F","MIN",7]],
  TUR:[["Tyrese Haliburton",0,"G","IND",14.5],["Paolo Banchero",5,"F","ORL",14],["AJ Dybantsa",4,"F","WAS",14],["Chet Holmgren",7,"F","OKC",13.5],["Darryn Peterson",22,"G","UTA",12.5],["Brandon Miller",24,"F","CHA",11],["Dylan Harper",2,"G","SAS",10],["Derik Queen",22,"C","NOP",9],["Zach Edey",14,"C","MEM",9],["Ace Bailey",19,"F","UTA",8.5],["Alex Sarr",20,"C","WAS",8.5],["Mikel Brown Jr.",0,"G","BKN",8.5],["Cedric Coward",23,"G","MEM",8],["Keaton Wagler",1,"G","LAC",8],["Oso Ighodaro",11,"C","PHX",7.5]],
  EAG:[["Karl-Anthony Towns",32,"C","NYK",16.5],["Anthony Davis",3,"F","WAS",16],["Jalen Brunson",11,"G","NYK",16],["Stephen Curry",30,"G","GSW",15],["Deni Avdija",8,"F","POR",14.5],["Jalen Duren",0,"C","DET",14.5],["Jamal Murray",27,"G","DEN",14.5],["Jaylen Brown",7,"F","PHI",14],["Pascal Siakam",43,"F","IND",12.5],["Dejounte Murray",5,"G","NOP",12],["Onyeka Okongwu",17,"C","ATL",12],["Keyonte George",3,"G","UTA",11.5],["RJ Barrett",9,"F","TOR",10],["Yaxel Lendeborg",1,"F","GSW",9]],
@@ -5890,7 +5891,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-injgo]");i
 /* (608) PAGINA «COME SI CALCOLA LA PREVISIONE» (Home, tasto PREVISIONE di un giocatore): tutti i dati usati per la previsione PDK di quel giocatore in quella partita. Stessa formula della Home: indice = 40% storico vs avversario (corretto verso la media se poche gare) + 35% forma recente + 25% stagione; previsione = indice × (1 + difesa% × peso × 0,6). */
 let PRV={n:"",opp:""};
 const esc0=n=>String(n).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])),nm0=n=>esc0(String(n).split(" ").slice(-1)[0]);
-function vPrevisione(){const n=PRV.n,opp=PRV.opp,I0=segInfo(n)||{},own=I0.kind==="T"?I0.t:null,role=own?((ROSTER[own]||[]).find(p=>p[0]===n)||[])[2]:null,RL={G:"guardie",F:"ali",C:"centri"},RS={G:"Guardia",F:"Ala",C:"Centro"};
+function vPrevisione(){const n=PRV.n,opp=PRV.opp,I0=segInfo(n)||{},own=I0.kind==="T"?I0.t:null,role=own?((ROSTER[own]||[]).find(p=>p[0]===n)||Object.values(ROSTER).flat().find(p=>p[0]===n)||[])[2]:null,RL={G:"guardie",F:"ali",C:"centri"},RS={G:"Guardia",F:"Ala",C:"Centro"};
   const d=(typeof homeFase==="function"&&homeFase())||(typeof campoNotte==="function"&&campoNotte())||flUsaOggi(),nba=I0.nba,g=nba?((TV.days[d]||[]).find(x=>x[0]===nba||x[1]===nba)):null,ora=g?String(g[6]||"").replace("+1",""):"";
   const dd=capDati(n,opp),def=role?hnDef(opp,role):null,w=def&&def.n?Math.min(1,def.n/6):0,fac=def&&def.n?1+def.pct/100*w*.6:1,pred=dd.idx==null?null:dd.idx*fac;
   const f=v=>v==null||isNaN(v)?"—":pdkF(+v),f2=v=>v==null||isNaN(v)?"—":(Math.round(v*100)/100).toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2}),sg=v=>(v>0?"+":"")+f(v);
@@ -5955,7 +5956,7 @@ function homeNotte(st){
   const preL=(names,mineF)=>{const out=[];names.forEach(n=>{try{const nba=(segInfo(n)||{}).nba;if(!nba)return;/* (769) niente previsioni per chi è fuori (OUT nel Centro Medico) */try{const rt=injRit(n);if(rt&&(!rt.da||d<rt.da))return}catch(_){}const g=GG.find(x=>x[0]===nba||x[1]===nba);if(!g)return;const opp=g[0]===nba?g[1]:g[0],sd=g[0]===nba?"a":"h",best=(WKB.acc[n]||{}).b??null;
       const all=[...(PARTITE[n]||[]),...((STAGIONI["2025/26"]||{})[n]||[]),...((STAGIONI["2024/25"]||{})[n]||[])].filter(x=>x[1]===opp&&x[3]!=null&&!isNaN(+x[3])),avg=all.length?all.reduce((a,x)=>a+ +x[3],0)/all.length:null;
       let pred=null,def=null,tr=null;
-      const I0=segInfo(n)||{},role=I0.kind==='T'?((ROSTER[I0.t]||[]).find(p=>p[0]===n)||[])[2]:null;
+      const I0=segInfo(n)||{},role=I0.kind==='T'?((ROSTER[I0.t]||[]).find(p=>p[0]===n)||Object.values(ROSTER).flat().find(p=>p[0]===n)||[])[2]:null;
       if(mineF&&role){const dd=capDati(n,opp);def=role?hnDef(opp,role):null;const w=def&&def.n?Math.min(1,def.n/6):0;pred=dd.idx==null?null:dd.idx*(1+(def&&def.n?def.pct:0)/100*w*.6)}
       else{const dk=d2=>{const[a,b]=String(d2).split("/").map(Number);return(b>=8?0:12)*100+b*100+a},ser=(PARTITE[n]||[]).slice().sort((a,b)=>dk(a[0])-dk(b[0])).map(x=>+x[3]).filter(v=>!isNaN(v));tr=ser.length>=3?grTrend(ser):null}
       out.push({n,g,opp,sd,best,avg,c:all.length,t:String(g[6]||""),pred,def,tr,role,own:I0.kind==="T"?I0.t:null})}catch(e){}});out.sort((a,b)=>((b.pred??-1)-(a.pred??-1))||a.t.localeCompare(b.t)||a.n.localeCompare(b.n));return out};
@@ -7250,7 +7251,7 @@ async function shPcCourt(S){const x=S.x,t=S.t,c=TEAMS[t],OT=dlTm(t),SC=1.375,W=5
   if(lg){const im=await ldImg(lg);if(im){const g=LOGO2[t]?[40.91,1.33,18.18,13.55]:[40.5,.3,19,15.4],w=g[2]*LK,h=g[3]*LK,bx=g[0]+g[2]/2-w/2,by=g[1]+g[3]/2-h/2,r=Math.min(w*k/im.width,h*k/im.height),iw=im.width*r,ih=im.height*r;X.drawImage(im,bx*k+w*k/2-iw/2,by*k+h*k/2-ih/2,iw,ih)}}
   X.fillStyle=NT?"#7c3aed":shade(c.bg,.45);X.fillRect(0,0,W,5);X.fillRect(0,H-5,W,5);
   /* giocatore al centro del campo */
-  const num=((ROSTER[t]||[]).find(p=>p[0]===x.n)||[0,""])[1];
+  const num=((ROSTER[t]||[]).find(p=>p[0]===x.n)||Object.values(ROSTER).flat().find(p=>p[0]===x.n)||[0,""])[1];
   const js=await ldImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(jerseyShare(t,num,x.n).replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"')));
   const top=wy+M;
   if(js){const r=Math.min(jw/js.width,jh/js.height),w=js.width*r,h=js.height*r;/* (1192) su iPhone l ombra del canvas applicata a un SVG finiva sotto ogni scritta e numero: prima si trasforma la maglia in immagine piatta, poi si mette l ombra solo intorno */const oc=document.createElement("canvas");oc.width=Math.ceil(w*2);oc.height=Math.ceil(h*2);oc.getContext("2d").drawImage(js,0,0,oc.width,oc.height);X.shadowColor="rgba(0,0,0,.45)";X.shadowBlur=18;X.shadowOffsetY=8;X.drawImage(oc,W/2-w/2,top+(jh-h),w,h);X.shadowColor="transparent";X.shadowBlur=0;X.shadowOffsetY=0}
@@ -7331,7 +7332,7 @@ async function shDuel(){const S=SHR_DUEL;if(!S)return null;const rh=112,secH=64,
   const card=(x,t,X,yy,cl)=>{shRR(c,X,yy,CW,rh-12,18);c.fillStyle=cl==="cap"?"rgba(60,40,10,.55)":"rgba(17,10,48,.72)";c.fill();c.strokeStyle=cl==="cap"?"rgba(251,191,36,.85)":cl==="half"?"rgba(219,39,119,.55)":"rgba(196,181,253,.22)";c.lineWidth=cl==="cap"?3:2;c.stroke();
     if(!x){c.font=SH_B(500,26);c.fillStyle="rgba(203,213,225,.55)";c.textAlign="center";c.textBaseline="middle";c.fillText("Posto vuoto",X+CW/2,yy+(rh-12)/2);return}
     {const rr=ruoloDi(x.n);shRR(c,X+5,yy+18,7,rh-48,3.5);c.fillStyle={G:"#ef4444",F:"#60a5fa",C:"#fbbf24"}[rr]||"#94a3b8";c.fill()}
-    const r=(ROSTER[t]||[]).find(z=>z[0]===x.n)||[x.n,"","",""],G=drSettimana(x.n,S.W).filter(Boolean),fat=G.filter(z=>z.fin).length;
+    const r=(ROSTER[t]||[]).find(z=>z[0]===x.n)||Object.values(ROSTER).flat().find(z=>z[0]===x.n)||[x.n,"","",""],G=drSettimana(x.n,S.W).filter(Boolean),fat=G.filter(z=>z.fin).length;
     c.textAlign="left";c.textBaseline="alphabetic";{let fs=34;c.font=SH_F(800,fs,1);while(fs>26&&c.measureText(x.n).width>CW-170){fs-=1;c.font=SH_F(800,fs,1)}}c.fillStyle="#fff";c.fillText(shFit(c,x.n,CW-170),X+18,yy+44);
     c.font=SH_B(500,22);c.fillStyle="rgba(203,213,225,.75)";c.fillText(`${({G:"G",F:"A",C:"C"})[r[2]]||""} · ${r[3]} · ${fat}/${G.length} part.`,X+18,yy+80);
     if(cl==="cap"&&x.f!=null){const gx=X+CW-136,gy=yy+14;shRR(c,gx,gy,118,46,13);const gg=c.createLinearGradient(0,gy,0,gy+46);gg.addColorStop(0,"#f7d774");gg.addColorStop(1,"#d4a017");c.fillStyle=gg;c.shadowColor="rgba(245,180,0,.55)";c.shadowBlur=14;c.fill();c.shadowBlur=0;c.fillStyle="#2a1c00";c.font=SH_F(800,30,1);c.textAlign="center";c.textBaseline="middle";c.fillText(pdkF(x.f),gx+59,gy+24)}else{const hv=cl==="half"&&x.f!=null?x.f:x.e;shPill(c,hv,X+CW-136,yy+14,118,46,30,hv==null?"—":pdkF(hv))};
@@ -7889,7 +7890,7 @@ function pfFit(){try{document.querySelectorAll(".pcd.pf:not(.off) .pfl").forEach
 function pnmFit(){try{pfFit();document.querySelectorAll(".pnm .pn").forEach(b=>{b.style.transform="";b.style.marginRight="";const pn=b.parentElement,i=pn.querySelector("i"),av=pn.clientWidth-(parseFloat(getComputedStyle(pn).paddingLeft)||0)-(parseFloat(getComputedStyle(pn).paddingRight)||0)-(i?i.offsetWidth+(parseFloat(getComputedStyle(i).marginRight)||0):0),w=b.offsetWidth;
   if(w>av&&av>0){const k=av/w;b.style.transformOrigin="left center";b.style.transform=`scaleX(${k.toFixed(3)})`;b.style.marginRight=`-${(w-av).toFixed(1)}px`}})}catch(e){}}
 function drGioc(t,x,cl){if(!x)return`<span class="pj"></span><span class="pnm">—</span>${drPcd(null)}`;
-  const p=(ROSTER[t]||[]).find(y=>y[0]===x.n)||[x.n,"",ruoloDi(x.n),""],r=p[2],sn=drSur(x.n);
+  const p=(ROSTER[t]||[]).find(y=>y[0]===x.n)||Object.values(ROSTER).flat().find(y=>y[0]===x.n)||[x.n,"",ruoloDi(x.n),""],r=p[2],sn=drSur(x.n);
   return`<span class="pj">${jersey(t,p[1],x.n)}${injX(x.n)}${cl==="cap"?'<i class="pjc" title="Capitano ×1,5">C</i>':""}</span><span class="pnm ${r}"><i>${({G:"G",F:"A",C:"C"})[r]||""}</i>${pnmTxt(sn)}</span>${drPcd(x,cl,drFinito(x))}`}
 /* Tabellone elettronico della pagina squadra (fuori dalla modalità notte): punteggio Dreamers della squadra nel turno in corso,
    somma dei 10 titolari con capitano ×1,5, pieni ×1, panchina ×½ (DT.score), cifre a 7 segmenti; si aggiorna col live di Dynasty TV. */
@@ -7949,7 +7950,7 @@ function drTabellone(t,T,k,P,on){const W=T.W,btn=drmBtn(t);
 function drGiocN(t,p,m){const r=p[2],sn=drSur(p[0]),v=m?m.p:null;
   const card=v==null?`<span class="pcd na" data-nwk="${p[0]}" role="button" tabindex="0"><b>${m?"—":"Non gioca"}</b></span>`:`<span class="pcd ${pdkLvl(v)}" data-nwk="${p[0]}" role="button" tabindex="0">${m.lv?'<i class="pcdlv" title="In campo ora"></i>':""}<b>${pdkF(v)}</b></span>`;
   return`<span class="pj">${jersey(t,p[1],p[0])}${injX(p[0])}</span><span class="pnm ${r}"><i>${({G:"G",F:"A",C:"C"})[r]||""}</i>${pnmTxt(sn)}</span>${card}`}
-function drPanca(t,T){const rp=n=>(ROSTER[t]||[]).find(p=>p[0]===n)||[n,"",ruoloDi(n),""];
+function drPanca(t,T){const rp=n=>(ROSTER[t]||[]).find(p=>p[0]===n)||Object.values(ROSTER).flat().find(p=>p[0]===n)/* (TRN) giocatore appena scambiato: nel turno in corso gioca ancora per la vecchia squadra, numero e ruolo dal roster nuovo */||[n,"",ruoloDi(n),""];
   const card=(x,cl)=>x?`<button class="dpc ${cl}" data-ist="${injSt(x.n)}" data-pl="${x.n}">${drGioc(t,x,cl)}</button>`:`<div class="dpc ${cl}">${drGioc(t,null,cl)}</div>`;
   const tr=[...T.trib,...T.wait];
   return`<div class="dpan">
@@ -7959,7 +7960,7 @@ function drPanca(t,T){const rp=n=>(ROSTER[t]||[]).find(p=>p[0]===n)||[n,"",ruolo
 /* foglio con le partite del turno del giocatore (come le caselle della sfida Dreamers) */
 function drWkOpen(n){const C=CAMPO_DR;if(!C||!n)return;const T=C.T,x=[...T.top,...T.trib,...T.wait].find(y=>y.n===n);if(!x)return;
   const i=T.top.indexOf(x),pos=i===0?"Capitano · ×1,5":i>0&&i<5?"In campo · punteggio pieno":i===5?"6° uomo · punteggio pieno":i>=6?"Panchina · ×½":"Tribuna · non conta nel turno";
-  const S=drSettimana(n,C.W),GG=["Dom","Lun","Mar","Mer","Gio","Ven","Sab"],p=(ROSTER[C.t]||[]).find(y=>y[0]===n)||[n,"",ruoloDi(n),""];
+  const S=drSettimana(n,C.W),GG=["Dom","Lun","Mar","Mer","Gio","Ven","Sab"],p=(ROSTER[C.t]||[]).find(y=>y[0]===n)||Object.values(ROSTER).flat().find(y=>y[0]===n)||[n,"",ruoloDi(n),""];
   const rows=S.map((y,k)=>{if(!y)return"";const o=y.opp.startsWith("@")?`@ ${y.opp.slice(1)}`:`vs ${y.opp}`,best=y.v!=null&&x.e!=null&&y.v===x.e;
     return`<div class="dwr${best?" best":""}${y.lv?" lv":""}"><span class="dwd">${window.DXNOTTI!==false&&dxNotte(y.d,C.W)?`<b>${dxNotte(y.d,C.W)}</b><small>notte</small>`:`<b>${GG[new Date(y.d+"T00:00:00Z").getUTCDay()]}</b><small>${y.d.slice(8)}/${y.d.slice(5,7)}</small>`}</span><span class="dwo">${o}${best?'<small>miglior PDK · conta questo</small>':""}</span><span class="dwv">${y.v!=null?pdkB(y.v,pdkF(y.v)):y.lv?'<em class="lv">Live</em>':y.fin?"<em>Non ha giocato</em>":"<em>Da giocare</em>"}</span></div>`}).join("");
   const el=document.createElement("div");el.className="dwsh";
@@ -7970,7 +7971,7 @@ function drWkOpen(n){const C=CAMPO_DR;if(!C||!n)return;const T=C.T,x=[...T.top,.
    <p class="note">Dreamers: conta il miglior PDK del turno. PDK live da Dynasty TV, poi ufficiali dal report Dunkest.</p></div>`;
   const chiudi=()=>el.remove();el.onclick=e=>{if(e.target===el||e.target.closest(".dwx"))chiudi()};document.body.appendChild(el)}
 /* (638) Modalità notte del Campo: toccando il PDK di un giocatore si apre il foglio con la partita di stanotte (punteggio live o finale) e le partite che gli restano nel turno */
-function nWkOpen(n){try{const t=curTeam,p=(ROSTER[t]||[]).find(y=>y[0]===n)||[n,"",ruoloDi(n),""],nba=p[3],NM=campoNotteMap(t),N=NM[n],d=campoNotte()||flUsaOggi();
+function nWkOpen(n){try{const t=curTeam,p=(ROSTER[t]||[]).find(y=>y[0]===n)||Object.values(ROSTER).flat().find(y=>y[0]===n)||[n,"",ruoloDi(n),""],nba=p[3],NM=campoNotteMap(t),N=NM[n],d=campoNotte()||flUsaOggi();
   let g=null;if(N&&N.k)g=(TV.days[N.dy]||[]).find(x=>x[7]===N.k);if(!g)g=(TV.days[d]||[]).find(x=>x[0]===nba||x[1]===nba)||(TV.days[flUsaOggi()]||[]).find(x=>x[0]===nba||x[1]===nba);
   const P=drPO(drStand()),K=drCurWeek(P),W=drWeek(K),S=drSettimana(n,W),GGn=["Dom","Lun","Mar","Mer","Gio","Ven","Sab"];
   const live=g&&g[5]==="L",fin=g&&g[5]==="F",gd=g?(N&&N.dy)||d:null;
@@ -7999,7 +8000,7 @@ function vCampo(){if(typeof fantaLiveAvvia==="function")fantaLiveAvvia();
      6° uomo = 6° titolare (punteggio pieno), panchina = 7°–10° (×½), il resto in tribuna. Senza PDK nel turno: ordine per PDK medio, "In attesa". */
   let DT=null,DK=null;
   let DP=null;if(!NTL){DP=drPO(drStand());DK=drCurWeek(DP);const DKC=DK;if(CAMPO_K!=null)DK=Math.max(1,Math.min(DKC,CAMPO_K));if(DK===DKC)CAMPO_K=null;const DW=drWeek(DK);DT=drTeam(DK,t,DW);DT.W=DW;
-    const rp=n=>(ROSTER[t]||[]).find(p=>p[0]===n)||[n,"",ruoloDi(n),""];q=DT.top.slice(0,5).map(x=>rp(x.n));qs=new Set(q.map(p=>p[0]))}
+    const rp=n=>(ROSTER[t]||[]).find(p=>p[0]===n)||Object.values(ROSTER).flat().find(p=>p[0]===n)/* (TRN) giocatore appena scambiato: nel turno in corso gioca ancora per la vecchia squadra, numero e ruolo dal roster nuovo */||[n,"",ruoloDi(n),""];q=DT.top.slice(0,5).map(x=>rp(x.n));qs=new Set(q.map(p=>p[0]))}
   /* modalità notte: al posto della scritta "Modalità notte" c'è lo stesso tabellone live della sfida Dreamers (la formazione in campo resta quella della notte) */
   let DT2=null,DK2=null,DP2=null;if(NTL){try{DP2=drPO(drStand());DK2=drCurWeek(DP2);const W2=drWeek(DK2);DT2=drTeam(DK2,t,W2);DT2.W=W2}catch(e){DT2=null}}
   const DX=n=>DT&&DT.top.find(x=>x.n===n);
@@ -8944,7 +8945,7 @@ function drDuel(k,a,b,W,P){const A=drTeam(k,a,W),B=drTeam(k,b,W),f1=v=>v==null?"
   const pa=W.closed?null:drProiez(k,a,W),pb=W.closed?null:drProiez(k,b,W);
   let pw=50;if(W.closed){pw=A.score>B.score?100:A.score<B.score?0:50}else if(pa!=null&&pb!=null){const left=Math.max(.15,1-W.nights/(W.len||7));pw=Math.round(100/(1+Math.exp(-(pa-pb)/(40*left+8))))}
   const card=(x,t,slot)=>{if(!x)return`<div class="du du-vuoto"><span>Posto vuoto</span><b>${W.closed&&slot!=="trib"&&slot!=="wait"?"0,0":""}</b></div>`;
-    const r=(ROSTER[t]||[]).find(y=>y[0]===x.n)||[x.n,"","",""],S=drSettimana(x.n,W),gi=S.filter(Boolean),fatte=gi.filter(y=>y.fin).length;
+    const r=(ROSTER[t]||[]).find(y=>y[0]===x.n)||Object.values(ROSTER).flat().find(y=>y[0]===x.n)||[x.n,"","",""],S=drSettimana(x.n,W),gi=S.filter(Boolean),fatte=gi.filter(y=>y.fin).length;
     const ml=x.cal&&slot!=="cap"?"media stagione":slot==="cap"?"×1,5":slot==="half"?"×½":slot==="full"?"×1":slot==="trib"?"tribuna":W.closed?"non ha giocato":"attesa";
     const pt=x.f!=null&&(slot==="cap"||slot==="half")?` = ${f1(x.f)}`:"";
     const GG=["DOM","LUN","MAR","MER","GIO","VEN","SAB"],wk=S.map((y,i)=>{if(!y)return"";const gg=(window.DXNOTTI!==false&&dxNotte(y.d,W))||GG[new Date(y.d+"T00:00:00Z").getUTCDay()];
@@ -9130,7 +9131,7 @@ function drTeamPage(t){const D=drTeamData(t),c=TEAMS[t],S=D.S,f1=v=>v==null?"—
     chart=`<svg class="dtchart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Andamento PDK fatti e subiti">${gl}${ln("pa","#f87171",1)}${ln("pf","#a78bfa",0)}${dots("pa","#f87171")}${dots("pf","#a78bfa")}${xl}</svg>
     <div class="dtleg"><span><i class="f"></i>PDK fatti · media ${f1(mf)}</span><span><i class="s"></i>PDK subiti · media ${f1(ma)}</span></div>`}
   const trend=`<div class="dtsec"><h4>Trend PDK squadra<small>scegli il periodo della stagione</small></h4><div class="dtrng"><label>Dal<select data-drsel="tf">${opts(a)}</select></label><label>Al<select data-drsel="tt">${opts(b)}</select></label></div>${chart}<p class="note">Pallino vuoto = dato non definitivo: giornate 1–2 (Dunkest) mostrate come media delle due giornate perché il punteggio di ognuna non è disponibile, oppure turno ancora in corso.</p></div>`;
-  const rg=D.recG,cap=D.cap,num=cap&&((ROSTER[t]||[]).find(p=>p[0]===cap.n)||[])[1];
+  const rg=D.recG,cap=D.cap,num=cap&&((ROSTER[t]||[]).find(p=>p[0]===cap.n)||Object.values(ROSTER).flat().find(p=>p[0]===cap.n)||[])[1];
   const card=(l,v,sub,cls)=>`<div class="dtc ${cls||""}"><small>${l}</small><b>${v}</b>${sub?`<em>${sub}</em>`:""}</div>`;
   return`<button class="gback" data-dr="tclose">‹ ${DR.fh?"Home":"Classifica"}</button>
   <div class="dthead tint" style="--tc:${c.bg}">${drLg(t,"l")}<div><h3>${c.name}</h3><p>${D.pos}º in classifica · ${S.n} turni giocati</p></div></div>
