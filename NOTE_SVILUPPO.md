@@ -3970,4 +3970,6 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 (1562) Maglia ufficiale Ducks di GIORNO: 318 Viola verde (prima 317 Viola bianca). Notte resta 319 Bianca viola; il pulsante maglia funziona come prima.
 
+- v990: SCAMBIO 09/11 17:48 DOL<->PEA: Sabonis, Gobert, Harden, Lillard, Randle ai Dolphins; Clingan, Diabaté (centro, senza slot ala), Young, Garland, Bridges ai Peacocks. ROSTER aggiornato; turno 4 resta con le formazioni vecchie (drUndoTrades), conta dal turno 5 (10/11). Lookup numero/ruolo con fallback su tutti i ROSTER (TRN). PUBBLICATO.
+
 (1563) COLLEGE in Statistiche (tasto verde sotto Squadre): i primi 60 del big board di Tankathon per il Draft 2027 (porting della sezione Rookie 2027 di ESPN 16) con PDK al posto di AVG. Lista con cerca/ruolo/ordina, profilo (cur="colpl") con grafico Partite/Settimane per PDK/Minuti/Efficienza e game log, comparatore (cur="colcmp"); lista cur="colstat". Dati in college-data.js (COLDRAFT, caricato solo alla prima apertura) da tools/tankathon.mjs, ogni domenica 17:00 UTC con .github/workflows/college.yml (storico settimanale per il trend). PDK = formula tvPdk con rimbalzi x 1,075 (30% offensivi), titolare = almeno 20 minuti, stoppate subite 0; bonus triple/doppie doppie/vittoria partita per partita dal game log. Ufficio scouting Ducks (cur="college") non toccato.
