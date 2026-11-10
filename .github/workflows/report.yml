@@ -7,16 +7,17 @@
 # Orari in UTC. Italia d'inverno = UTC+1, con l'ora legale (fine marzo - fine ottobre) = UTC+2: tutto scatta un'ora più tardi in ora italiana.
 #   */30 0-5 → di notte ogni 30 minuti (01:00-06:30 italiane d'inverno): carica la notte appena TUTTE le partite sono finite; se una è ancora
 #              in corso esce senza scrivere niente e riprova (nessun errore). Così i dati sono nell'app prima delle 07:00.
-#   7 6      → 07:07 italiane d'inverno (08:07 con l'ora legale): corsa di chiusura (--ultima). Partite non finite o dati non validi = errore → riserva Dunkest.
-#   37 7,9   → 08:37 e 10:37 italiane d'inverno: altri due tentativi solo se la notte manca ancora (es. ESPN giù e Dunkest non ancora pronto); altrimenti non fanno niente.
+#   7,37 6-21 → (1567) TENTATIVI CONTINUI dalle 07:07 alle 22:37 italiane d'inverno, ogni 30 minuti (07:07, 07:37, 08:07, ...): se la notte è già
+#              nell'app non fanno niente (pochi secondi). Ogni corsa prova ESPN fino a 3 volte (a 3 minuti di distanza).
+#              Prima delle 08:00 italiane solo ESPN (se non va si aspetta la corsa dopo); dalle 08:00 se ESPN non va si usa la riserva Dunkest.
+#              Se alle 09:00 la notte manca ancora il job fallisce (mail di GitHub) ma i tentativi continuano lo stesso fino a sera, senza arrendersi.
 # Lancio a mano (scheda Actions › report-dati › Run workflow): corsa normale come quella delle 07:07; con "prova" spuntato prova ESPN e Dunkest
 # senza scrivere né pubblicare niente (serve a vedere se da GitHub Dunkest risponde).
 name: report-dati
 on:
   schedule:
     - cron: "*/30 0-5 * * *"
-    - cron: "7 6 * * *"
-    - cron: "37 7,9 * * *"
+    - cron: "7,37 6-21 * * *"
   workflow_dispatch:
     inputs:
       prova:
@@ -64,6 +65,12 @@ jobs:
           git config user.email "report-bot@users.noreply.github.com"
           # di notte una partita ancora in corso non è un errore; dalle 07:07 (e a mano) sì
           ULT="--ultima"; if [ "$SCHED" = "*/30 0-5 * * *" ]; then ULT=""; fi
+          # (1567) ora italiana: prima delle 08:00 niente riserva Dunkest (si riprova ESPN alla corsa dopo); la mail solo dalle 09:00
+          HM=$(TZ=Europe/Rome date +%H%M); HM=$((10#$HM)); RISERVA=1; MAIL=1
+          if [ -z "$ULT" ] || [ $HM -lt 800 ]; then RISERVA=0; fi
+          if [ -z "$ULT" ] || [ $HM -lt 900 ]; then MAIL=0; fi
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then RISERVA=1; MAIL=1; fi
+          espn(){ for t in 1 2 3; do if node tools/report_espn.mjs $ULT 2>&1 | tee /tmp/espn.log; then return 0; fi; git checkout -- $FILES; [ $t -lt 3 ] && { echo "ESPN: tentativo $t non riuscito, riprovo fra 3 minuti"; sleep 180; }; done; return 1; }
           DATA=$(TZ=Europe/Rome date +%d/%m)
           FILES="index.html fa-games.js tv-data.js"
           riassunto(){ {
@@ -76,16 +83,17 @@ jobs:
           for i in 1 2 3; do
             git fetch origin main && git reset --hard origin/main
             ESPN_ERR=""; FONTE=ESPN; LOG=/tmp/espn.log
-            if ! node tools/report_espn.mjs $ULT 2>&1 | tee /tmp/espn.log; then
+            if ! espn; then
               ESPN_ERR="$(grep -v '^\s*$' /tmp/espn.log | tail -n 4 | tr '\n' ' ' | cut -c1-500)"; export ESPN_ERR
               echo "::warning title=ESPN non disponibile::$ESPN_ERR"
               git checkout -- $FILES
+              if [ $RISERVA = 0 ]; then riassunto "nessuna per ora" "ESPN non disponibile: riprovo alla prossima corsa (la riserva Dunkest parte dalle 08:00)" /tmp/espn.log; exit 0; fi
               FONTE=Dunkest; LOG=/tmp/dunkest.log
               if ! timeout 20m node tools/report_dunkest.mjs 2>&1 | tee /tmp/dunkest.log; then
                 git checkout -- $FILES
                 riassunto "nessuna (ESPN e Dunkest non disponibili)" "Dati NON aggiornati: restano quelli di prima" /tmp/dunkest.log
-                if [ -z "$ULT" ]; then echo "::warning::ESPN e Dunkest non disponibili: riprova la prossima corsa"; exit 0; fi
-                echo "::error title=Dati non aggiornati::né ESPN né Dunkest hanno dato dati validi (vedi sopra)"; exit 1
+                if [ $MAIL = 0 ]; then echo "::warning::ESPN e Dunkest non disponibili: riprova la prossima corsa"; exit 0; fi
+                echo "::error title=Dati non aggiornati::né ESPN né Dunkest hanno dato dati validi: riprovo da solo ogni 30 minuti fino a sera"; exit 1
               fi
             fi
             if git diff --quiet -- $FILES; then riassunto "$FONTE" "Nessuna novità: niente da salvare" "$LOG"; exit 0; fi
