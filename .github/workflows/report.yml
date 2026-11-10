@@ -1,0 +1,102 @@
+# REPORT DEI DATI UFFICIALI (1566): ogni notte GitHub carica nell'app i dati ufficiali della notte NBA dai tabellini ESPN
+# (tools/report_espn.mjs: PARTITE, EFF, ULTIMA, GL_STATS, FA, FA_AGG, footer, REPORT_INFO in index.html + fa-games.js + tv-data.js).
+# Se ESPN non funziona (non risponde, notte incompleta, controlli non superati) usa la RISERVA tools/report_dunkest.mjs.
+# Poi rigenera dreamers-data.js (tools/dreamers.mjs): un push fatto con il GITHUB_TOKEN NON fa partire gli altri workflow,
+# quindi dreamers.yml non scatterebbe da solo; per questo l'archivio Dreamers si rifà qui, nello stesso giro (e non ci sono cicli).
+# Nessuno deve lanciare niente a mano. Se nemmeno la riserva funziona alla corsa delle 07:07 (o dopo) il job FALLISCE e GitHub manda la mail.
+# Orari in UTC. Italia d'inverno = UTC+1, con l'ora legale (fine marzo - fine ottobre) = UTC+2: tutto scatta un'ora più tardi in ora italiana.
+#   */30 0-5 → di notte ogni 30 minuti (01:00-06:30 italiane d'inverno): carica la notte appena TUTTE le partite sono finite; se una è ancora
+#              in corso esce senza scrivere niente e riprova (nessun errore). Così i dati sono nell'app prima delle 07:00.
+#   7 6      → 07:07 italiane d'inverno (08:07 con l'ora legale): corsa di chiusura (--ultima). Partite non finite o dati non validi = errore → riserva Dunkest.
+#   37 7,9   → 08:37 e 10:37 italiane d'inverno: altri due tentativi solo se la notte manca ancora (es. ESPN giù e Dunkest non ancora pronto); altrimenti non fanno niente.
+# Lancio a mano (scheda Actions › report-dati › Run workflow): corsa normale come quella delle 07:07; con "prova" spuntato prova ESPN e Dunkest
+# senza scrivere né pubblicare niente (serve a vedere se da GitHub Dunkest risponde).
+name: report-dati
+on:
+  schedule:
+    - cron: "*/30 0-5 * * *"
+    - cron: "7 6 * * *"
+    - cron: "37 7,9 * * *"
+  workflow_dispatch:
+    inputs:
+      prova:
+        description: "Solo prova: legge ESPN e Dunkest ma non scrive e non pubblica niente"
+        type: boolean
+        default: false
+permissions:
+  contents: write
+concurrency:
+  group: report
+  cancel-in-progress: false
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Prova di raggiungibilità (solo lancio a mano con "prova")
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.prova }}
+        shell: bash
+        run: |
+          esito(){ if [ "$1" = 0 ]; then echo "riuscito"; else echo "NON riuscito (codice $1)"; fi; }
+          set +e
+          node tools/report_espn.mjs --prova --ultima 2>&1 | tee /tmp/espn.log; E=${PIPESTATUS[0]}
+          timeout 20m node tools/report_dunkest.mjs --prova 2>&1 | tee /tmp/dunkest.log; D=${PIPESTATUS[0]}
+          node tools/infortuni.mjs --prova 2>&1 | tee /tmp/inf.log; I=${PIPESTATUS[0]}
+          {
+            echo "## Prova (nessun file scritto)"
+            echo "- ESPN (report): $(esito $E) — $(grep -v '^\s*$' /tmp/espn.log | tail -n 1)"
+            echo "- Dunkest (riserva): $(esito $D) — $(grep -v '^\s*$' /tmp/dunkest.log | tail -n 1)"
+            echo "- ESPN (infortuni): $(esito $I) — $(tail -n 1 /tmp/inf.log)"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Report (ESPN, riserva Dunkest), archivio Dreamers e pubblicazione
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.prova) }}
+        shell: bash
+        env:
+          SCHED: ${{ github.event.schedule }}
+        run: |
+          git config user.name "report-bot"
+          git config user.email "report-bot@users.noreply.github.com"
+          # di notte una partita ancora in corso non è un errore; dalle 07:07 (e a mano) sì
+          ULT="--ultima"; if [ "$SCHED" = "*/30 0-5 * * *" ]; then ULT=""; fi
+          DATA=$(TZ=Europe/Rome date +%d/%m)
+          FILES="index.html fa-games.js tv-data.js"
+          riassunto(){ {
+              echo "## Report dei dati · $(TZ=Europe/Rome date '+%d/%m/%Y %H:%M') ora italiana"
+              echo "- Fonte usata: **$1**"
+              echo "- $2"
+              [ -n "$ESPN_ERR" ] && echo "- ESPN non disponibile: $ESPN_ERR"
+              echo; echo '```'; tail -n 40 "$3" 2>/dev/null; echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"; }
+          for i in 1 2 3; do
+            git fetch origin main && git reset --hard origin/main
+            ESPN_ERR=""; FONTE=ESPN; LOG=/tmp/espn.log
+            if ! node tools/report_espn.mjs $ULT 2>&1 | tee /tmp/espn.log; then
+              ESPN_ERR="$(grep -v '^\s*$' /tmp/espn.log | tail -n 4 | tr '\n' ' ' | cut -c1-500)"; export ESPN_ERR
+              echo "::warning title=ESPN non disponibile::$ESPN_ERR"
+              git checkout -- $FILES
+              FONTE=Dunkest; LOG=/tmp/dunkest.log
+              if ! timeout 20m node tools/report_dunkest.mjs 2>&1 | tee /tmp/dunkest.log; then
+                git checkout -- $FILES
+                riassunto "nessuna (ESPN e Dunkest non disponibili)" "Dati NON aggiornati: restano quelli di prima" /tmp/dunkest.log
+                if [ -z "$ULT" ]; then echo "::warning::ESPN e Dunkest non disponibili: riprova la prossima corsa"; exit 0; fi
+                echo "::error title=Dati non aggiornati::né ESPN né Dunkest hanno dato dati validi (vedi sopra)"; exit 1
+              fi
+            fi
+            if git diff --quiet -- $FILES; then riassunto "$FONTE" "Nessuna novità: niente da salvare" "$LOG"; exit 0; fi
+            node tools/verifica.mjs
+            git add $FILES
+            if [ "$FONTE" = ESPN ]; then MSG="Dati ESPN al $DATA [automatico]"; else MSG="Dati Dunkest al $DATA [automatico, ESPN non disponibile]"; fi
+            git commit -m "$MSG"
+            node tools/dreamers.mjs
+            if ! git diff --quiet -- dreamers-data.js; then git add dreamers-data.js; git commit -m "DREAMERS: archivio notti aggiornato [automatico]"; fi
+            if git push origin HEAD:main; then riassunto "$FONTE" "Pubblicato: $MSG" "$LOG"; exit 0; fi
+            # qualcuno ha pubblicato nel frattempo (es. calendario di Dynasty TV, che tocca anche tv-data.js): si rifà tutto da capo sui file nuovi
+            sleep 10
+          done
+          echo "::error::pubblicazione non riuscita dopo 3 tentativi"; exit 1
