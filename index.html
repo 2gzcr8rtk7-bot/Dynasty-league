@@ -4277,6 +4277,7 @@ function vEfficienza(){
   const rows=E.gioc[t0].slice().sort((a,b)=>(rv(b)??-99)-(rv(a)??-99)).map(p=>`<tr><td class="pnm">${p[0]}</td><td>${shw(rv(p))}</td><td>${p[2]}</td><td>${p[3]==null?"—":p[3].toLocaleString("it-IT",{minimumFractionDigits:1})}</td></tr>`).join("");
   return `${effSub==="sq"?"":`<button class="effbig pl" data-effsub="pl"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Giocatori</span><i>›</i></button>
   <button class="effbig sq" data-effsub="sq"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v5.5c0 4.6-3.2 8-8 9.5-4.8-1.5-8-4.9-8-9.5V6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Squadre</span><i>›</i></button>
+  <button class="effbig col" data-colgo="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9.5L12 5l9.5 4.5L12 14z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M6.5 11.5v4.2c0 1.4 2.5 2.8 5.5 2.8s5.5-1.4 5.5-2.8v-4.2M21.5 9.5v5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>College</span><i>›</i></button>
   <div class="effpair2"><button class="cupbtn" data-cupgo="1"><svg class="cupt" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v4a5 5 0 0 1-10 0V4zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M12 13v4M8.5 20h7M10 17h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Efficienza Cup</span><i>›</i></button><button class="trbtn" data-trgo="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8M15 7h6v6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Calcola il trend</span><i>›</i></button></div>
   <div class="snemb">${vStatNotte().replace('<button class="gback" data-snback="1">‹ Statistiche</button>',"")}</div>`}
   ${effSub==="sq"?`<button class="gback" data-effsub="">‹ Statistiche</button>
@@ -10084,7 +10085,7 @@ function render(){
   if(cur!=="tv")TVS.out=1;liveSync();if(["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur))fantaLiveAvvia();
   document.body.dataset.v=cur;{const nt=(typeof CNT!=="undefined"&&CNT)||DLS.th==="viola";document.body.classList.toggle("notte",nt);document.documentElement.classList.toggle("notte",nt);{const H=document.documentElement,pq=DLS.th==="parquet"||!!(DLT[DLS.th]&&DLT[DLS.th].pq);if(typeof CNT!=="undefined")H.classList.toggle("dlt-parquet",pq&&!CNT)}if(window.__nl!==nt){const f=window.__nl!==undefined;window.__nl=nt;if(f)try{dlsApply()}catch(e){}}const tc=document.querySelector('meta[name="theme-color"]');if(tc&&!document.body.classList.contains("dreamfs"))tc.content=nt?"#2a1260":TH_BAR}
   {document.documentElement.classList.toggle("setpg",cur==="impostazioni");/* (245) */const fs=cur==="giochi"&&(GAME==="dream"||GAME==="gdream");document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=(fs||(typeof CNT!=="undefined"&&CNT))?"#2a1260":TH_BAR}
-  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"efficienza":(cur==="faplayer"||cur==="fabox")?(faFrom==="home"?"home":"efficienza"):cur==="giocatore"?(gFrom==="fa"?"efficienza":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="fa"||cur==="effsquadra"||cur==="consigli"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="osserv"||cur==="iatrade"||cur==="gusti"||cur==="compar"||cur==="pictrade"||cur==="iaallena"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(eff==="hoop"||eff==="bet")?"sgiochi":(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
+  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"efficienza":(cur==="faplayer"||cur==="fabox")?(faFrom==="home"?"home":"efficienza"):cur==="giocatore"?(gFrom==="fa"?"efficienza":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="fa"||cur==="effsquadra"||cur==="consigli"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"||cur==="colstat"||cur==="colpl"||cur==="colcmp"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="osserv"||cur==="iatrade"||cur==="gusti"||cur==="compar"||cur==="pictrade"||cur==="iaallena"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(eff==="hoop"||eff==="bet")?"sgiochi":(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));try{const nv=document.querySelector("nav"),sb=nv&&nv.querySelector('[aria-selected="true"]');if(sb)nv.scrollTo({left:Math.max(0,sb.offsetLeft-24)})}catch(e){}
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -10149,7 +10150,7 @@ function syncMenu(){
   document.querySelectorAll("nav button[data-menu]").forEach(b=>{
     const p=document.getElementById(b.dataset.menu);if(!p)return;
     const op=dkOpen===b.dataset.menu;b.setAttribute("aria-expanded",op);p.hidden=!op;
-    const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"efficienza":(cur==="faplayer"||cur==="fabox")?(faFrom==="home"?"home":"efficienza"):cur==="giocatore"?(gFrom==="fa"?"efficienza":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="fa"||cur==="effsquadra"||cur==="consigli"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
+    const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"efficienza":(cur==="faplayer"||cur==="fabox")?(faFrom==="home"?"home":"efficienza"):cur==="giocatore"?(gFrom==="fa"?"efficienza":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="fa"||cur==="effsquadra"||cur==="consigli"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"||cur==="colstat"||cur==="colpl"||cur==="colcmp"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
     b.setAttribute("aria-selected",op||inside);
     if(op){const w=b.closest(".wrap").getBoundingClientRect(),r=b.getBoundingClientRect();
       const width=Math.max(r.width,180);let left=r.left-w.left+r.width/2-width/2;left=Math.max(0,Math.min(left,w.width-width));
@@ -10188,11 +10189,11 @@ const NAVH=[];let navLast=cur,navT=0;
 /* (609) toccando la scritta DREAMERS in alto (accanto al logo) si torna alla Home, come il tasto Home del menu; il logo continua ad aggiornare la pagina */
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest(".brand");if(!b)return;const h=document.getElementById("t-ho");if(h){e.preventDefault();b.classList.remove("brpop");void b.offsetWidth;b.classList.add("brpop");setTimeout(()=>b.classList.remove("brpop"),320);h.click();scrollTo(0,0)}});
 document.addEventListener("DOMContentLoaded",()=>{const b=document.querySelector(".brand");if(b){b.setAttribute("role","link");b.setAttribute("tabindex","0");b.setAttribute("aria-label","Vai alla Home");b.style.cursor="pointer"}});
-const BK_IDS="#gback,#faback,#glpback,#effback,#cback,[data-cupback],[data-snback],#capback,#mulback,#colback,#cassaback,#osback,#tvback,#hofback,#vrback,#cfback,#setback,#nvback,#navbk";
+const BK_IDS="#gback,#faback,#glpback,#effback,#cback,[data-cupback],[data-snback],#capback,#mulback,#colback,#cassaback,#osback,#tvback,#hofback,#vrback,#cfback,#setback,#nvback,#navbk,#colsbk";
 /* SOTTO-SCHERMATE: se dentro una sezione c'è un livello interno (es. IA Trade → Per ruolo / Per giocatore), il tasto ‹ e il gesto indietro tornano prima a quel livello e solo dopo alla schermata precedente. Aggiungere qui ogni nuova sotto-schermata. */
 const NAV_SUB=[{ok:()=>cur==="iaallena"&&(AT.mode||AT.rep||AV.rep||CF.rep||(AT.edit&&AT_PR&&AT_PR.t)),lab:"Allenamenti",back:()=>{AT.mode=null;AT.edit=false;AT.rep=false;AV.rep=false;CF.rep=false;AT.chg=false;AT.rem=new Set();AT.note="";AT.c=null;AV.c=null;AV.a={};CF.c=null;CF.sel=null;render()}},{ok:()=>cur==="efficienza"&&effSub==="sq",lab:"Statistiche",back:()=>{effSub="";render()}},{ok:()=>cur==="iatrade"&&(IA.mode==="role"||IA.mode==="pl"),lab:"IA Trade",back:()=>{IA.mode="";render()}},{ok:()=>cur==="gusti"&&window.GU&&GU.page,lab:"IA Trade",back:()=>{GU.page=null;render();scrollTo(0,0)}},{ok:()=>cur==="eq"&&EQ.vl,lab:"Valori e crediti",back:()=>{EQ.vl=false;EQ.msg="";render()}}];
 const navSub=()=>NAV_SUB.find(x=>{try{return x.ok()}catch(e){return false}});
-function backLabel(v){const n=(TEAMS[curTeam]||{}).nick||"";const M={home:"Home",campo:"Campo "+n,roster:"Roster "+n,fa:"Giocatori",valtrade:"Calcolatore trade",osserv:"Osservatorio",iatrade:"IA Trade",iaallena:"Allenamento IA Trade",pictrade:"Pic-Trade",compar:"Comparatore",efficienza:"Statistiche",effsquadra:"Efficienza "+n,effcup:"Efficienza",tv:"Dynasty TV",risultati:"Risultati",classifica:"Classifica",trade:"Storico trade",speciali:"Trade speciali",gleague:"G-Dreamers",college:"Ufficio Scouting",cassa:"Cassa "+n,cap:"Cap",multe:"Multe",trend:"Trend",statnotte:"Statistiche notte",grafico:"Grafico",dunkest:"Centro gestione",storia:"Sala Trofei",regolamento:"Regolamento",infortuni:"Centro Medico",gdreamers:"G-Dreamers",faplayer:"Giocatori",glplayer:"G-Dreamers"};
+function backLabel(v){const n=(TEAMS[curTeam]||{}).nick||"";const M={home:"Home",campo:"Campo "+n,roster:"Roster "+n,fa:"Giocatori",valtrade:"Calcolatore trade",osserv:"Osservatorio",iatrade:"IA Trade",iaallena:"Allenamento IA Trade",pictrade:"Pic-Trade",compar:"Comparatore",efficienza:"Statistiche",effsquadra:"Efficienza "+n,effcup:"Efficienza",tv:"Dynasty TV",risultati:"Risultati",classifica:"Classifica",trade:"Storico trade",speciali:"Trade speciali",gleague:"G-Dreamers",college:"Ufficio Scouting",colstat:"College",colpl:"College",colcmp:"College",cassa:"Cassa "+n,cap:"Cap",multe:"Multe",trend:"Trend",statnotte:"Statistiche notte",grafico:"Grafico",dunkest:"Centro gestione",storia:"Sala Trofei",regolamento:"Regolamento",infortuni:"Centro Medico",gdreamers:"G-Dreamers",faplayer:"Giocatori",glplayer:"G-Dreamers"};
   return v==="giochi"?(GAME==="dream"?"Dreamers":GAME==="gdream"?"G-Dreamers":"Giochi"):(M[v]||"Indietro")}
 /* nomi troppo lunghi per la card: nome di battesimo ridotto all'iniziale ("S. GILGEOUS-ALEXANDER") */
 function duFit(){document.querySelectorAll(".du .duh").forEach(h=>h.style.minHeight="");document.querySelectorAll(".du .dun b").forEach(b=>{if(b.scrollWidth<=b.clientWidth+1)return;b.innerHTML=b.innerHTML.replace(/&nbsp;|\u00a0/g," ");if(b.scrollWidth>b.clientWidth+1)b.style.letterSpacing="-.02em";/* (31/10) se non entra ancora (cognomi lunghi come Antetokounmpo) rimpicciolisce quanto basta */let fs=parseFloat(getComputedStyle(b).fontSize);while(fs>12&&b.scrollWidth>b.clientWidth+1){fs-=.5;b.style.fontSize=fs+"px"}});document.querySelectorAll(".durow").forEach(r=>{const hs=[...r.querySelectorAll(".du .duh")];if(hs.length<2)return;const m=Math.max(...hs.map(h=>h.offsetHeight));/* (1002) offsetHeight: giusto anche nel monitor ruotato della modalità Dream */hs.forEach(h=>h.style.minHeight=m+"px")})}/* (312) nomi già in formato "N. Cognome" e a capo se servono: mai rimpiccioliti né tagliati */
@@ -10271,6 +10272,213 @@ addEventListener("popstate",()=>{if(navBack()){try{history.pushState({dl:1},"")}
       setTimeout(()=>{clean(n);busy=false},270)},160)};
   addEventListener("touchend",end);addEventListener("touchcancel",end)})();
 </script>
+<script>/* ===== (1563) COLLEGE: Statistiche › College (stessa sezione «Rookie 2027» della Sala Draft di ESPN 16, ma con i PDK) =====
+   I primi 60 del big board di Tankathon per il Draft 2027 (college-data.js, COLDRAFT, aggiornato ogni domenica alle 17:00 UTC da tools/tankathon.mjs
+   con .github/workflows/college.yml). Il file si carica solo la prima volta che si apre la sezione (l app è già grande).
+   Tre pagine: cur="colstat" lista (cerca, ruolo, ordina), cur="colpl" profilo del prospetto, cur="colcmp" comparatore tra due prospetti.
+   Nomi nuovi: NON tocca l Ufficio scouting dei Ducks (cur="college", COL). Indietro: NAV_SUB (profilo/comparatore › College › Statistiche).
+   PDK = formula Dunkest di tvPdk adattata ai dati di Tankathon, che non hanno rimbalzi offensivi/difensivi, titolare né stoppate subite:
+   rimbalzi × 1,075 (30% offensivi × 1,25 + 70% difensivi), titolare = partita da almeno 20 minuti, stoppate subite = 0.
+   Partita per partita (game log) ci sono anche i bonus triple, doppie/triple doppie e vittoria (+5%); PDK della stagione = media del game log,
+   e solo se manca (giocatori nelle leghe estere) PDK dalle medie a partita, senza bonus. Stessa formula in tools/tankathon.mjs (storico settimanale). */
+const CST={sort:"rk",dir:"d",q:"",pos:"",pl:"",pa:"",pb:"",met:"f",per:"g"};
+(function(){
+try{Object.assign(CST,JSON.parse(localStorage.getItem("dl_college")||"{}"),{q:""})}catch(_){}
+const save=()=>{try{localStorage.setItem("dl_college",JSON.stringify({sort:CST.sort,dir:CST.dir,pos:CST.pos,met:CST.met,per:CST.per}))}catch(_){}};
+const e=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const f1=v=>(Math.round(v*10)/10).toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1});
+const f2c=v=>v.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
+const IN=()=>cur==="colstat"||cur==="colpl"||cur==="colcmp";
+/* ---------- caricamento pigro di college-data.js ---------- */
+let LD=0;/* 0 da caricare, 1 in corso, 2 pronto, -1 errore */
+function load(){if(typeof COLDRAFT!=="undefined"){LD=2;return true}if(LD===1||LD===-1)return false;LD=1;const s=document.createElement("script");s.src="college-data.js";
+ s.onload=()=>{LD=typeof COLDRAFT!=="undefined"?2:-1;RC=null;if(IN()){const y=scrollY;render();scrollTo(0,y)}};
+ s.onerror=()=>{LD=-1;s.remove();if(IN())render()};document.head.appendChild(s);return false}
+/* ---------- PDK ---------- */
+/* riga del game log [data, avv, V/S, MIN, FGM, FGA, 3PM, 3PA, FTM, FTA, REB, AST, BLK, STL, TO, PF, PTS] */
+const pdkG=g=>{let v=g[16]+1.075*g[10]+1.5*(g[11]+g[13]+g[12])-1.5*g[14]-(g[5]-g[4])-(g[9]-g[8])+(g[3]>=20?1:0);
+ const t=g[6];v+=t>=5?5:t>=3?t:0;const c=[g[16],g[10],g[11],g[13],g[12]].filter(x=>x>=10).length;v+=c>=4?50:c===3?10:c===2?5:0;
+ if(g[2]==="W")v+=.05*Math.abs(v);return v};
+/* medie a partita s = [G, MP, FGM, FGA, 3PM, 3PA, FTM, FTA, REB, AST, BLK, STL, TO, PF, PTS], senza bonus di partita */
+const pdkS=s=>s[14]+1.075*s[8]+1.5*(s[9]+s[11]+s[10])-1.5*s[12]-(s[3]-s[2])-(s[7]-s[6])+(s[1]>=20?1:0);
+const RH=()=>(typeof COLDRAFT!=="undefined"&&COLDRAFT.h)||{};
+const sur=n=>n.split(" ").filter(w=>!/^(Jr\.?|Sr\.?|II|III|IV)$/.test(w)).slice(-1)[0];
+const ini=n=>n.split(" ").filter(w=>/^[A-ZÀ-Ý]/.test(w)).map(w=>w[0]).slice(0,2).join("");
+/* colore della scheda dal nome del college (niente loghi esterni) */
+const scCol=sc=>{let h=0;for(const c of String(sc))h=(h*31+c.charCodeAt(0))%360;return`hsl(${h} 52% 34%)`};
+const DT=d=>new Date(d+"T12:00:00Z");
+function trendP(P){const n=P.length;if(n<3)return null;const mx=(n-1)/2,my=P.reduce((a,b)=>a+b,0)/n;let num=0,den=0;P.forEach((v,i)=>{num+=(i-mx)*(v-my);den+=(i-mx)**2});return my?num/den*(n-1)/Math.abs(my)*100:0}
+let RC=null;const ROOK=()=>{const src=typeof COLDRAFT!=="undefined"?COLDRAFT.p:[];if(RC&&RC.src===src)return RC.L;const H=RH();
+ const L=src.map(r=>{const s=r[10],slug=r[11]||r[0],gl=(r[12]||[]).map(g=>({d:g[0],o:g[1],wl:g[2],m:g[3],f:pdkG(g),r:g})),h=H[slug]||[];
+  /* PDK, minuti e partite: dal game log se c è (con i bonus di partita), altrimenti dalle medie */
+  const gp=gl.length||s[0],mp=gl.length?gl.reduce((a,g)=>a+g.m,0)/gl.length:s[1],a=gl.length?gl.reduce((t,g)=>t+g.f,0)/gl.length:s[0]?pdkS(s):null;
+  /* trend della settimana: due snapshot dello storico, altrimenti il game log (media di oggi − media fino a 7 giorni prima) */
+  let wk=null;if(h.length>=2)wk=h[h.length-1].a-h[h.length-2].a;else if(gl.length>=2){const ref=DT(h.length?h[h.length-1].d:new Date().toISOString().slice(0,10))-7*864e5,old=gl.filter(g=>DT(g.d)<=ref);
+   if(old.length&&old.length<gl.length)wk=a-old.reduce((t,g)=>t+g.f,0)/old.length}
+  const sz=trendP(gl.length>=3?gl.map(g=>g.f):h.map(z=>z.a));
+  return{n:r[0],pos:r[1],sc:r[2],yr:r[3],age:r[4],h:r[5],w:r[6],rk:r[7],md:r[9]?`${r[8]}° giro · ${r[9]}ª`:"",s,gp,mp,pdk:a,eff:a!=null&&mp?a/mp:null,p36:a!=null&&mp?a/mp*36:null,slug,gl,stag:r[13]||"",hist:h,wk,sz}});
+ RC={src,L};return L};
+const tsP=s=>{const d=2*(s[3]+.44*s[7]);return d?s[14]/d*100:null};
+function tags(x){if(!x.gp)return["nessuna partita ancora"];const s=x.s,T=[],m=s[1]||x.mp,p36=v=>m?v/m*36:0;
+ if(p36(s[14])>=20)T.push("realizzatore");if(p36(s[8])>=10)T.push("rimbalzista");if(p36(s[9])>=5)T.push("regista");if(p36(s[10]+s[11])>=3)T.push("difensore");
+ const ts=tsP(s);if(ts!=null&&ts>=60)T.push("molto efficiente al tiro");else if(ts!=null&&ts<48)T.push("tiro da migliorare");if(p36(s[12])>=4)T.push("perde molti palloni");
+ if(x.eff!=null&&x.eff>1.1)T.push("PDK alti per minuto");if(x.gp<5)T.push("poche partite: dati provvisori");return T.length?T:["profilo equilibrato"]}
+/* colori PDK ed efficienza come nel resto dell app: pdkB (viola da 40, verde 30–40, giallo 20–30, rosso sotto 20) ed eff (verde oltre 1,10, giallo 0,80–1,10) */
+const trB=(v,lab="")=>v==null||Math.abs(v)<.05?(v==null?"":`<em class="dstr eq">= ${lab}</em>`):`<em class="dstr ${v>0?"up":"dn"}">${v>0?"▲ +":"▼ −"}${f1(Math.abs(v))}${lab?" "+lab:""}</em>`;
+const trS=v=>v==null?"":`<em class="dstr ${v>=0?"up":"dn"}">${v>=0?"▲ +":"▼ −"}${Math.round(Math.abs(v))}%</em>`;
+const back=l=>`<button class="gback" id="colsbk">‹ ${l}</button>`;
+const hero=()=>`<div class="dshero"><span class="dsspot l"></span><span class="dsspot r"></span><small>Dreamers · Statistiche</small><b>College</b><em>Prospetti del Draft 2027 · PDK</em></div>`;
+function wait(lab){if(load())return"";return`<div class="dsroom">${back(lab)}${hero()}<div class="dsbox">${LD===-1?`<p class="note">Dati del college non disponibili (sei offline?).</p><button class="advbtn ggrbtn ggy" data-dsretry="1">Riprova</button>`:`<p class="note dsload">Caricamento dei prospetti…</p>`}</div></div>`}
+/* ---------- lista ---------- */
+function rkList(){let L=ROOK().slice();const q=String(CST.q||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+ if(q)L=L.filter(x=>(x.n+" "+x.sc).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").includes(q));if(CST.pos)L=L.filter(x=>x.pos.includes(CST.pos));
+ const K={rk:x=>-x.rk,pdk:x=>x.pdk??-99,p36:x=>x.p36??-99,eff:x=>x.eff??-99,age:x=>-x.age,min:x=>x.gp?x.mp:-99,wk:x=>x.wk??-99}[CST.sort]||(x=>-x.rk),sg=CST.dir==="a"?-1:1;L.sort((a,b)=>sg*(K(b)-K(a)));
+ const card=x=>`<div class="dsrk" data-drk="${e(x.slug)}" role="button" tabindex="0" aria-label="Profilo di ${e(x.n)}"><div class="dsrkh"><i class="dsrkn">${x.rk}</i><span class="dsini" style="--sc:${scCol(x.sc)}">${e(ini(x.n))}</span><span class="dsrki"><b>${e(x.n)}</b><small>${e(x.pos)} · ${e(x.sc)} · ${f1(x.age)} anni${x.h?" · "+e(x.h):""}</small></span><span class="dsrkv">${pdkB(x.pdk)}<small>PDK</small>${trB(x.wk)}</span></div>
+  <div class="dsrks"><span><b>${x.gp?f1(x.mp):"–"}</b><small>min</small></span><span><b>${x.eff!=null?f2c(x.eff):"–"}</b><small>PDK/min</small></span><span><b>${x.p36!=null?f1(x.p36):"–"}</b><small>PDK/36′</small></span><span><b>${x.gp}</b><small>partite</small></span>${x.md?`<span><b>${x.md}</b><small>mock</small></span>`:""}</div>
+  <div class="dstags">${tags(x).slice(0,3).map(t=>`<em>${t}</em>`).join("")}<i class="dsgo2">Profilo ›</i></div></div>`;
+ return L.map(card).join("")||`<p class="note">Nessun prospetto.</p>`}
+function vList(){const w=wait("Statistiche");if(w)return w;
+ const head=[["rk","Big board"],["pdk","PDK"],["wk","Trend"],["p36","PDK/36′"],["eff","PDK/min"],["min","Minuti"],["age","Età"]];
+ return `<div class="dsroom">${back("Statistiche")}${hero()}<div class="dsbox"><h4 class="dsh">Prospetti del Draft 2027 <small>primi ${ROOK().length} del big board · Tankathon ${e(COLDRAFT.upd||"")}</small></h4>
+ <input id="dsq" class="vtq" type="search" placeholder="🔍 Cerca un prospetto o un college" autocomplete="off" value="${e(CST.q||"")}">
+ <div class="chips">${["","PG","SG","SF","PF","C"].map(p=>`<button class="chip" data-dpos="${p}" aria-pressed="${CST.pos===p}">${p||"Tutti"}</button>`).join("")}</div>
+ <div class="chips dssort">${head.map(([k,l])=>`<button class="chip" data-dsrt="${k}" aria-pressed="${CST.sort===k}">${l}${CST.sort===k?(CST.dir==="a"?" ▲":" ▼"):""}</button>`).join("")}</div>
+ <button class="advbtn ggrbtn ggy" data-dcmp="">⚖ Confronta due prospetti</button>
+ <div class="dsrkl" id="dsrkl">${rkList()}</div>
+ <p class="note">Dati di Tankathon (medie e partite della stagione in corso al college o nella sua lega), aggiornati ogni domenica alle 18 con uno storico settimana per settimana. PDK = formula Dunkest della lega (punti, rimbalzi, 1,5 × assist, recuperi e stoppate, −1,5 palle perse, −1 per ogni tiro e libero sbagliato, +1 titolare, bonus triple, doppie doppie e vittoria). Tankathon non divide i rimbalzi e non dice chi parte titolare né le stoppate subite: ogni rimbalzo vale 1,075 (30% offensivi a 1,25), titolare = almeno 20 minuti in campo, stoppate subite non contate. PDK della stagione = media partita per partita del game log (con i bonus); senza game log (leghe estere) dalle medie, senza bonus. ▲/▼ = PDK rispetto alla settimana prima. Tocca un prospetto per il profilo completo.</p></div></div>`}
+/* ---------- grafico (stesso disegno del Grafico delle Statistiche: griglia, etichette, punti con valore) ---------- */
+const MET={f:["PDK",x=>x.f,"pdk"],m:["Minuti",x=>x.m,"min"],e:["Efficienza",x=>x.m?x.f/x.m:0,"eff"]};
+const fmV=(v,m)=>m==="e"?f2c(v):f1(v);
+/* punti di un prospetto: partita per partita (game log) o settimana per settimana (storico) */
+function pts(x,per){if(per==="w")return x.hist.map(z=>({k:z.d,lab:z.d.slice(8)+"/"+z.d.slice(5,7),sub:z.G+" part.",f:z.a,m:z.MP}));
+ return x.gl.map((g,i)=>({k:i,lab:g.d.slice(8)+"/"+g.d.slice(5,7),sub:String(g.o).split(" ")[0].slice(0,9),f:g.f,m:g.m}))}
+function chart(series,met){
+ const W=340,H=246,l=32,r=14,t=28,b=32;const P0=series.map(s=>s.G.map(g=>g?MET[met][1](g):null));const all=P0.flat().filter(v=>v!=null);if(!all.length)return`<div class="grfoot">Nessun dato ancora.</div>`;
+ const mx0=Math.max(...all),mn=Math.min(0,Math.min(...all));const step=met==="e"?(mx0>2?1:.5):mx0>30?20:10;const mx=Math.ceil(mx0*1.05/step)*step||step;
+ const N=Math.max(...series.map(s=>s.G.length)),X=i=>l+12+(N<2?(W-l-r-24)/2:i*(W-l-r-24)/(N-1)),Y=v=>t+(H-t-b)*(1-(v-mn)/(mx-mn));
+ let o="";for(let v=Math.ceil(mn/step)*step;v<=mx+1e-9;v+=step)o+=`<line x1="${l}" x2="${W-r}" y1="${Y(v)}" y2="${Y(v)}" class="grg"></line><text x="${l-5}" y="${Y(v)+3}" class="gry l">${met==="e"?String(v).replace(".",","):v}</text>`;
+ const ev=Math.ceil(N/4),G0=series[0].G;for(let i=0;i<N;i+=ev){const g=G0[i]||(series[1]&&series[1].G[i]);if(!g)continue;o+=`<line x1="${X(i)}" x2="${X(i)}" y1="${t}" y2="${H-b}" class="grv"></line><text x="${X(i)}" y="${H-b+15}" class="grx big">${e(g.lab)}</text><text x="${X(i)}" y="${H-b+26}" class="grx">${e(g.sub)}</text>`}
+ o+=`<text x="4" y="10" class="gry ax" text-anchor="start">${MET[met][0].toUpperCase()}</text>`;
+ series.forEach((s,k)=>{const P=P0[k].map((v,i)=>[v,i]).filter(z=>z[0]!=null);if(!P.length)return;o+=`<polyline points="${P.map(([v,i])=>X(i).toFixed(1)+","+Y(v).toFixed(1)).join(" ")}" fill="none" stroke="${s.col}" stroke-width="2.6" stroke-linejoin="miter" stroke-linecap="round"></polyline>`;
+  const big=P.length<=40;P.forEach(([v,i])=>{o+=`<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="${big?4:2.2}" fill="${s.col}" stroke="#0b1022" stroke-width="${big?2:1}"></circle>`});
+  if(P.length<=14)P.forEach(([v,i])=>{const tx=fmV(v,met),w=tx.length*5.4+8;o+=`<g class="grtag"><rect x="${(X(i)-w/2).toFixed(1)}" y="${(Y(v)-20).toFixed(1)}" width="${w.toFixed(1)}" height="12" rx="6" fill="${s.col}"></rect><text x="${X(i).toFixed(1)}" y="${(Y(v)-10.5).toFixed(1)}">${tx}</text></g>`})});
+ return `<svg class="grsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Andamento">${o}</svg>`}
+const avgPts=(G,met)=>{const L=G.filter(Boolean);if(!L.length)return null;if(met==="e"){const m=L.reduce((a,g)=>a+g.m,0);return m?L.reduce((a,g)=>a+g.f,0)/m:null}return L.reduce((a,g)=>a+MET[met][1](g),0)/L.length};
+const ctl=()=>`<div class="pergr"><span>Andamento per</span><div>${[["g","Partite"],["w","Settimane"]].map(([k,l])=>`<button data-dper="${k}" aria-pressed="${CST.per===k}">${l}</button>`).join("")}</div></div>
+ <div class="grtgs">${Object.keys(MET).map(k=>`<button class="grtg ${MET[k][2]}" data-dmet="${k}" aria-pressed="${CST.met===k}"><i></i>${MET[k][0]}</button>`).join("")}</div>`;
+const perTxt=()=>CST.per==="w"?"settimana per settimana (storico della domenica)":"partita per partita (game log)";
+/* ---------- profilo del prospetto (come la scheda giocatore) ---------- */
+function vPl(){const w=wait("College");if(w)return w;const L=ROOK(),x=L.find(z=>z.slug===CST.pl)||L[0];if(!x)return`<div class="dsroom">${back("College")}<p class="note">Nessun prospetto.</p></div>`;CST.pl=x.slug;
+ const s=x.s,bg=scCol(x.sc),p36=v=>s[1]?v/s[1]*36:null,pct=(a,b)=>b?f1(a/b*100)+"%":"–",ts=tsP(s);
+ const stat=(lab,val,sub="")=>`<div class="gst"><small>${lab}</small><b>${val}</b>${sub?`<em>${sub}</em>`:""}</div>`;
+ const G=pts(x,CST.per),sz=trendP(G.map(g=>MET[CST.met][1](g)));
+ const rows=[["Punti",14],["Rimbalzi",8],["Assist",9],["Recuperi",11],["Stoppate",10],["Palle perse",12],["Falli",13]];
+ const sP=s[0]?pdkS(s):null;
+ return `<div class="dsroom dspg">${back("College")}
+ <div class="ghead dsph" style="background:linear-gradient(115deg,${bg} 0%,color-mix(in srgb,${bg} 55%,#000) 100%);color:#ffffff;border-bottom:4px solid #0b0b0b">
+  <div class="gjer"><span class="dsini xl">${e(ini(x.n))}</span></div>
+  <div class="gtit"><small>${e(x.sc)}${x.stag?" · "+e(x.stag):""}</small><h3>${e(x.n)}</h3><p>${[x.pos,x.yr,f1(x.age)+" anni al draft",x.h,x.w?x.w+" lb":""].filter(Boolean).map(e).join(" · ")}<span style="display:block">Big board n° ${x.rk}${x.md?" · mock "+e(x.md):""}</span></p></div>
+ </div>
+ <button class="advbtn ggrbtn ggy" data-dcmp="${e(x.slug)}">⚖ Confronta con un altro prospetto</button>
+ ${!x.gp?`<p class="note">Nessuna partita giocata finora: i dati compariranno dopo la prima gara.</p>`:`
+ <div class="gbig g2"><div><b class="gpdk">${pdkB(x.pdk,f2c(x.pdk))}</b><small>PDK medi a partita ${trB(x.wk,"in 7 gg")}</small></div><div>${eff(x.eff)}<small>Efficienza (PDK al minuto)</small></div></div>
+ <div class="gstats">${stat("Partite",x.gp)}${stat("Minuti medi",f1(x.mp))}${stat("Proiezione 36′",x.p36!=null?f1(x.p36):"–","PDK")}${stat("Settimana",x.wk!=null?(x.wk>=0?"+":"−")+f1(Math.abs(x.wk)):"–","PDK vs 7 giorni fa")}${stat("Stagione",x.sz!=null?(x.sz>=0?"+":"−")+Math.round(Math.abs(x.sz))+"%":"–","trend dei PDK")}${stat("Ultima partita",x.gl.length?f1(x.gl[x.gl.length-1].f):"–",x.gl.length?"PDK vs "+e(x.gl[x.gl.length-1].o):"")}</div>
+ ${H("Statistiche")}
+ ${s[0]?`<div class="tbl-wrap"><table class="dstab dsst"><thead><tr><th></th><th>A partita</th><th>Su 36′</th></tr></thead><tbody>
+ <tr class="dsav"><td>PDK <small>dalle medie</small></td><td><b>${f1(sP)}</b></td><td><b>${s[1]?f1(sP/s[1]*36):"–"}</b></td></tr>
+ ${rows.map(([l,k])=>`<tr><td>${l}</td><td>${f1(s[k])}</td><td>${s[1]?f1(p36(s[k])):"–"}</td></tr>`).join("")}</tbody></table></div>
+ <div class="tbl-wrap"><table class="dstab dsst"><thead><tr><th>Tiro</th><th>Segnati-tentati</th><th>%</th><th>Su 36′</th></tr></thead><tbody>
+ <tr><td>Dal campo</td><td>${f1(s[2])}-${f1(s[3])}</td><td>${pct(s[2],s[3])}</td><td>${s[1]?f1(p36(s[2]))+"-"+f1(p36(s[3])):"–"}</td></tr>
+ <tr><td>Da 3</td><td>${f1(s[4])}-${f1(s[5])}</td><td>${pct(s[4],s[5])}</td><td>${s[1]?f1(p36(s[4]))+"-"+f1(p36(s[5])):"–"}</td></tr>
+ <tr><td>Liberi</td><td>${f1(s[6])}-${f1(s[7])}</td><td>${pct(s[6],s[7])}</td><td>${s[1]?f1(p36(s[6]))+"-"+f1(p36(s[7])):"–"}</td></tr>
+ <tr><td>True shooting</td><td colspan="3">${ts!=null?f1(ts)+"%":"–"}</td></tr></tbody></table></div>`:`<p class="note">Medie della stagione non ancora pubblicate da Tankathon.</p>`}`}
+ ${H("Grafico")}
+ <div class="grroom dsgr">${ctl()}
+ <div class="grcard grshc"><div class="grtrs"><div class="grtr ${MET[CST.met][2]}"><i></i><b>${G.length?fmV(avgPts(G,CST.met),CST.met):"–"}</b>${trS(sz)}</div></div>${chart([{col:"#22c55e",G}],CST.met)}<div class="grfoot">${G.length} ${CST.per==="w"?"settimane":"partite"} · ${perTxt()}</div></div></div>
+ ${x.gl.length?H("Partita per partita",`<em>${x.gl.length} ${x.gl.length===1?"gara":"gare"}</em>`)+`
+ <div class="tbl-wrap"><table class="dstab dslog"><thead><tr><th>Data</th><th>Vs</th><th>Min</th><th>PDK</th><th>PT</th><th>RB</th><th>AS</th><th>ST</th><th>BL</th><th>TO</th><th>Tiri</th></tr></thead><tbody>
+ ${x.gl.slice().reverse().map(g=>{const r=g.r;return`<tr><td>${g.d.slice(8)}/${g.d.slice(5,7)}</td><td>${e(g.o)} <i class="dswl ${g.wl==="W"?"w":"l"}">${g.wl==="W"?"V":"S"}</i></td><td>${g.m}</td><td>${pdkB(g.f)}</td><td>${r[16]}</td><td>${r[10]}</td><td>${r[11]}</td><td>${r[13]}</td><td>${r[12]}</td><td>${r[14]}</td><td>${r[4]}/${r[5]}</td></tr>`}).join("")}</tbody></table></div>`:""}
+ <p class="dsan"><b>Analisi:</b> ${tags(x).join(" · ")}.</p>
+ <p class="note">Dati Tankathon${x.stag?" della stagione "+e(x.stag):""}. PDK con la formula Dunkest della lega adattata ai dati del college: rimbalzi × 1,075 (Tankathon non divide offensivi e difensivi: 30% offensivi a 1,25), +1 titolare se in campo almeno 20 minuti, stoppate subite non contate; partita per partita con i bonus triple, doppie doppie e vittoria. PDK medi = media del game log${x.gl.length?"":" (qui manca: dalle medie, senza bonus)"}; «PDK dalle medie» nella tabella = stessa formula sulle medie a partita, senza bonus. Efficienza = PDK al minuto: verde oltre 1,10 · giallo 0,80–1,10 · rosso sotto 0,80. Settimana = PDK di oggi meno quelli di 7 giorni fa; Stagione = trend dei PDK nel grafico.</p></div>`}
+/* ---------- comparatore tra due prospetti ---------- */
+function vCmp(){const w=wait("College");if(w)return w;const L=ROOK(),byRk=L.slice().sort((a,b)=>a.rk-b.rk),A=L.find(z=>z.slug===CST.pa),B=L.find(z=>z.slug===CST.pb),CA="#22c55e",CB="#f472b6";
+ const sel=(k,v,c)=>`<label class="grsel"><span><i style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${c};margin-right:5px"></i>Prospetto ${k==="pa"?"A":"B"}</span><select data-dsel="${k}"><option value="">🔍 Scegli il prospetto ${k==="pa"?"A":"B"}</option>${byRk.map(x=>`<option value="${e(x.slug)}"${x.slug===v?" selected":""}>${x.rk}. ${e(x.n)} (${e(x.sc)})</option>`).join("")}</select></label>`;
+ let body=`<div class="grcard"><div class="grfoot" style="text-align:center;padding:30px 0">Scegli i due prospetti da confrontare.</div></div>`;
+ if(A&&B){let ga=pts(A,CST.per),gb=pts(B,CST.per);
+  if(CST.per==="w"){const ks=[...new Set([...ga,...gb].map(g=>g.k))].sort();ga=ks.map(k=>ga.find(g=>g.k===k)||null);gb=ks.map(k=>gb.find(g=>g.k===k)||null)}
+  else{const lab=(g,i)=>g&&{...g,lab:i+1+"ª",sub:""};ga=ga.map(lab);gb=gb.map(lab)}
+  const va=avgPts(ga,CST.met),vb=avgPts(gb,CST.met);
+  const T=(l,fa,fb,hi=1,fmt=f1)=>{const a=fa(A),b=fb?fb(B):fa(B),ok=a!=null&&b!=null&&!isNaN(a)&&!isNaN(b);return`<tr><td class="${ok&&hi&&(hi>0?a>b:a<b)?"dsw":""}">${a==null||isNaN(a)?"–":fmt(a)}</td><th>${l}</th><td class="${ok&&hi&&(hi>0?b>a:b<a)?"dsw":""}">${b==null||isNaN(b)?"–":fmt(b)}</td></tr>`};
+  const pS=k=>x=>x.s[0]?x.s[k]:null,pc2=(a,b)=>x=>x.s[0]&&x.s[b]?x.s[a]/x.s[b]*100:null,pcf=v=>f1(v)+"%";
+  body=`<div class="grcard grshc"><div class="grtrs"><div class="grtr pdk"><i style="background:${CA}"></i><b>${va!=null?fmV(va,CST.met):"–"}</b><em>${e(sur(A.n))}</em></div><div class="grtr min"><i style="background:${CB}"></i><b>${vb!=null?fmV(vb,CST.met):"–"}</b><em>${e(sur(B.n))}</em></div></div>${chart([{col:CA,G:ga},{col:CB,G:gb}],CST.met)}<div class="grfoot">${A.gl.length} e ${B.gl.length} partite · ${perTxt()}</div></div>
+  <div class="tbl-wrap"><table class="dstab dscmp"><thead><tr><th style="color:${CA}">${e(A.n)}</th><th></th><th style="color:${CB}">${e(B.n)}</th></tr></thead><tbody>
+  ${T("PDK",x=>x.pdk)}${T("Trend 7 gg",x=>x.wk,null,1,v=>(v>=0?"+":"−")+f1(Math.abs(v)))}${T("Minuti",x=>x.gp?x.mp:null)}${T("PDK/min",x=>x.eff,null,1,f2c)}${T("PDK/36′",x=>x.p36)}
+  ${T("Punti",pS(14))}${T("Rimbalzi",pS(8))}${T("Assist",pS(9))}${T("Recuperi",pS(11))}${T("Stoppate",pS(10))}${T("Palle perse",pS(12),null,-1)}
+  ${T("Dal campo",pc2(2,3),null,1,pcf)}${T("Da 3",pc2(4,5),null,1,pcf)}${T("Liberi",pc2(6,7),null,1,pcf)}${T("True shooting",x=>x.s[0]?tsP(x.s):null,null,1,pcf)}
+  ${T("Partite",x=>x.gp,null,0,v=>String(v))}${T("Età al draft",x=>x.age,null,-1)}<tr><td>${e(A.h||"–")}</td><th>Altezza</th><td>${e(B.h||"–")}</td></tr>${T("Big board",x=>x.rk,null,-1,v=>"n° "+v)}<tr><td>${e(A.pos)} · ${e(A.sc)}</td><th>Ruolo</th><td>${e(B.pos)} · ${e(B.sc)}</td></tr></tbody></table></div>
+  <p class="note">In verde il migliore dei due in ogni voce (per palle perse, età e posto nel big board vince il valore più basso). Con «Partite» le gare sono allineate per numero (1ª, 2ª…), con «Settimane» per data dello storico. PDK come nella lista College (formula Dunkest adattata ai dati di Tankathon).</p>`}
+ return `<div class="dsroom dspg">${back("College")}<div class="grroom dsgr"><div class="grhd"><span class="grlg"></span><div><small>Confronto · due prospetti sullo stesso grafico</small><b>Comparatore college</b></div></div>
+ <div class="grctl">${sel("pa",CST.pa,CA)}${sel("pb",CST.pb,CB)}</div>${ctl()}${body}</div></div>`}
+VIEWS.colstat=vList;VIEWS.colpl=vPl;VIEWS.colcmp=vCmp;
+/* indietro (tasto ‹, swipe, tasto di Android): profilo e comparatore › College › Statistiche */
+NAV_SUB.push({ok:()=>cur==="colpl"||cur==="colcmp",lab:"College",back:()=>{cur="colstat";render()}},{ok:()=>cur==="colstat",lab:"Statistiche",back:()=>{effSub="";cur="efficienza";render()}});
+const apri=v=>{cur=v;render();scrollTo(0,0)};
+const keep=()=>{const y=scrollY;render();scrollTo(0,y)};
+document.addEventListener("click",ev=>{if(cur==="efficienza"&&ev.target.closest("[data-colgo]")){ev.preventDefault();CST.q="";load();apri("colstat");return}
+ if(!IN())return;const b=ev.target.closest("[data-dsrt],[data-dpos],[data-drk],[data-dcmp],[data-dmet],[data-dper],[data-dsretry]");if(!b||!b.closest("#main"))return;const d=b.dataset;
+ if(d.dsretry){LD=0;load();render();return}
+ if(d.dmet){CST.met=d.dmet;save();keep();return}
+ if(d.dper){CST.per=d.dper;save();keep();return}
+ if(d.dcmp!=null){if(d.dcmp){CST.pa=d.dcmp;if(CST.pb===d.dcmp)CST.pb=""}apri("colcmp");return}
+ if(d.dpos!=null){CST.pos=d.dpos;save();keep();return}
+ if(d.dsrt){CST.dir=CST.sort===d.dsrt&&CST.dir!=="a"?"a":"d";CST.sort=d.dsrt;save();keep();return}
+ if(d.drk){CST.pl=d.drk;apri("colpl")}});
+document.addEventListener("keydown",ev=>{if(!IN()||(ev.key!=="Enter"&&ev.key!==" "))return;const b=ev.target.closest&&ev.target.closest("[data-drk]");if(b){ev.preventDefault();CST.pl=b.dataset.drk;apri("colpl")}});
+document.addEventListener("change",ev=>{if(cur!=="colcmp")return;const s=ev.target.closest("[data-dsel]");if(!s)return;CST[s.dataset.dsel]=s.value;keep()});
+/* ricerca: si ridisegna solo la lista, la casella non perde il fuoco */
+document.addEventListener("input",ev=>{if(cur!=="colstat"||ev.target.id!=="dsq")return;CST.q=ev.target.value;const L=document.getElementById("dsrkl");if(L)L.innerHTML=rkList()});
+})();
+</script>
+<style>/* (1563) COLLEGE (Statistiche › College): tasto sotto Squadre e pagine dei prospetti; giorno parquet/oro, notte viola, tema classico blu */
+html body main .effbig.col{background:linear-gradient(135deg,#064e3b,#10b981)!important}
+html.dlt-parquet:not(.notte) body main .effbig.col{background:linear-gradient(135deg,#065f46,#22c55e)!important}
+html.notte body main .effbig.col{background:linear-gradient(135deg,#134e4a,#0d9488)!important}
+.dsroom{--dsa:#b45309;--dsb:#fff8ec;--dsl:rgba(120,72,20,.18);--dst:#2b1a07;--dsm:#7a5a33;--dsc:#fffdf8}
+html:not(.dlt-parquet):not(.notte) .dsroom{--dsa:#60a5fa;--dsb:#16213f;--dsl:rgba(148,163,184,.25);--dst:#e5edff;--dsm:#9fb2d8;--dsc:#0f1a33}
+html.notte .dsroom{--dsa:#c084fc;--dsb:#1b1033;--dsl:rgba(192,132,252,.25);--dst:#f3e8ff;--dsm:#c4b5fd;--dsc:#241542}
+.dsroom,.dsroom *{box-sizing:border-box}.dsroom{max-width:100%;overflow:hidden}
+.dshero{position:relative;overflow:hidden;margin:6px 0 10px;padding:20px 14px 16px;border-radius:16px;text-align:center;color:#fff;background:radial-gradient(120% 90% at 50% 0%,#14532d 0%,#0b1f14 70%),#0b1f14;box-shadow:inset 0 -4px 0 #0b0b0b}
+html.dlt-parquet:not(.notte) .dshero{background:repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 2px,transparent 2px 46px),linear-gradient(180deg,#c98a4b,#8a5524)}
+html.notte .dshero{background:radial-gradient(120% 90% at 50% 0%,#5b21b6 0%,#1e0b3d 75%)}
+.dshero small{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.85}.dshero b{display:block;font-family:var(--display);font-style:italic;font-size:32px;line-height:1.1;margin:4px 0;font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-shadow:0 2px 0 rgba(0,0,0,.35)}.dshero em{font-style:normal;font-size:13px;opacity:.92}
+.dsspot{position:absolute;top:-40px;width:120px;height:220px;background:radial-gradient(closest-side,rgba(255,240,200,.45),transparent);filter:blur(4px);pointer-events:none}.dsspot.l{left:-10px;transform:rotate(-18deg)}.dsspot.r{right:-10px;transform:rotate(18deg)}
+html.notte .dsspot{background:radial-gradient(closest-side,rgba(232,121,249,.4),transparent)}
+.dsbox{background:var(--dsc);border:1px solid var(--dsl);border-radius:14px;padding:12px;margin:0 0 12px;color:var(--dst)}
+.dsh{margin:2px 0 10px;font-size:16px;font-weight:900;color:var(--dst)}.dsh small{display:block;font-size:11.5px;font-weight:600;color:var(--dsm)}
+.dsbox .vtq{width:100%;margin:0 0 8px}
+.dstab{width:100%;border-collapse:collapse;font-size:12.5px;color:var(--dst)}.dstab th,.dstab td{padding:6px 4px;border-bottom:1px solid var(--dsl);text-align:center;white-space:nowrap}.dstab th{font-size:11px;color:var(--dsm);font-weight:800}
+.dspg .tbl-wrap{background:var(--dsc);border:1px solid var(--dsl);border-radius:12px;margin:0 0 10px;overflow-x:auto}
+.dsrkl{display:grid;gap:8px;margin-top:8px}.dsrk{border:1px solid var(--dsl);border-radius:12px;padding:10px;background:var(--dsb);cursor:pointer;min-width:0;color:var(--dst)}.dsrk:active{transform:scale(.99)}
+.dsrkh{display:flex;align-items:center;gap:8px;min-width:0}.dsrkn{font-style:normal;font-weight:900;font-size:13px;color:var(--dsa);width:22px;text-align:center;flex:0 0 22px}
+.dsini{flex:0 0 38px;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--sc,#334);color:#fff;font-weight:900;font-size:14px;letter-spacing:.02em;border:2px solid rgba(255,255,255,.8);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.dsini.xl{width:84px;height:84px;font-size:32px;margin:auto;background:rgba(255,255,255,.14);border-width:3px}
+.dsrki{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.15}.dsrki b{font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dsrki small{font-size:11px;color:var(--dsm);white-space:normal}
+.dsrkv{display:flex;flex-direction:column;align-items:center;flex:0 0 auto;gap:1px}.dsrkv small{font-size:9.5px;color:var(--dsm);font-weight:800}
+.dstr{font-style:normal;font-size:10.5px;font-weight:900;white-space:nowrap}.dstr.up{color:#16a34a}.dstr.dn{color:#dc2626}.dstr.eq{color:var(--dsm)}html.notte .dstr.up,html:not(.dlt-parquet) .dsrk .dstr.up{color:#4ade80}html.notte .dstr.dn,html:not(.dlt-parquet) .dsrk .dstr.dn{color:#f87171}
+.dsrks{display:flex;flex-wrap:wrap;gap:4px 12px;margin:8px 0 0 30px}.dsrks span{display:flex;flex-direction:column;line-height:1.1}.dsrks b{font-size:13px}.dsrks small{font-size:10px;color:var(--dsm)}
+.dstags{display:flex;flex-wrap:wrap;gap:4px;margin:7px 0 0 30px;align-items:center}.dstags em{font-style:normal;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:999px;background:color-mix(in srgb,var(--dsa) 14%,transparent);color:var(--dst)}.dsgo2{margin-left:auto;font-style:normal;font-size:11.5px;font-weight:900;color:var(--dsa)}
+.dssort{margin-top:4px}.dsroom .chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 6px}
+.dsph .gjer{display:grid;place-items:center}
+.dsst td:first-child{text-align:left;font-weight:700}.dsst td:first-child small{font-weight:600;color:var(--dsm);font-size:10px}.dsav td{font-size:14px}.dsst{margin-bottom:0}
+.dswl{font-style:normal;font-size:10px;font-weight:900;padding:0 4px;border-radius:4px;color:#fff}.dswl.w{background:#16a34a}.dswl.l{background:#dc2626}
+.dslog td:nth-child(2){max-width:118px;overflow:hidden;text-overflow:ellipsis}
+.dscmp th,.dscmp td{white-space:normal}.dscmp tbody th{font-size:11px;color:var(--dsm);width:34%}.dscmp td{width:33%;font-weight:700}.dscmp td.dsw{color:#16a34a;font-weight:900}html.notte .dscmp td.dsw,html:not(.dlt-parquet) .dscmp td.dsw{color:#4ade80}
+.dsan{font-size:13px;margin:10px 2px}.dsgr{margin-bottom:8px}.dsgr .grsel select{max-width:100%}
+html body .dsroom table.dstab:not(#z){min-width:0!important;width:100%!important;table-layout:auto}html body .dsroom table.dstab:not(#z) td,html body .dsroom table.dstab:not(#z) th{padding:6px 4px!important;font-size:12.5px;height:auto;line-height:1.25}
+html body .dsroom table.dslog:not(#z) td,html body .dsroom table.dslog:not(#z) th{padding:5px 3px!important;font-size:12px}
+html body .dsroom .grroom.dsgr:not(#z){min-height:0!important;padding-bottom:10px}
+html body .dsroom .dsrkv .pdkx,html body .dsroom .dslog .pdkx{min-width:0}
+</style>
 <script>
 /* Pallino LIVE sul tasto Entertainment: ogni 2 minuti (app aperta e visibile) un controllo leggero sul tabellone ESPN
    (solo risultati, niente tabellini); acceso se c'è almeno una partita NBA in corso. Usa anche lo stato di Dynasty TV. */
@@ -10395,7 +10603,7 @@ const r=e.target.closest("[data-dls]");if(!r||cur!=="impostazioni")return;const 
 <script>/* logo in alto: tocco = aggiorna la pagina RESTANDO dove sei (27/10/2026): prima di ricaricare salvo la schermata (sessionStorage),
    al riavvio la ripristino. Si salva solo lo stato di navigazione, non i dati (che devono arrivare freschi). */(function(){
 const l=document.getElementById("lgreload");if(!l)return;
-const V=["cur","curTeam","effTeam","effSq","esqMese","esqAdv","esqMet","effMet","cupYear","cupRole","cupHist","faSz","faRole","faP","faFrom","curPlayer","gFrom","gSeason","injTeam","COL","NB","CNT","cassaTab","cassaStag","GAME","DR","GD","GR","TRN","CAP","TVS","KITO","__STAB","__FROM","SETOPEN","effSub","IA","IA_TR_FROM","TA","cupCmp","faSrt","faQ","FBX","faPS","GLP","CMR","AT","AV","CF","dkOpen","NV_FROM","EQO","GD_LASTOFF","PLV","CAMPO_DR","FROM","STAB"];
+const V=["cur","curTeam","effTeam","effSq","esqMese","esqAdv","esqMet","effMet","cupYear","cupRole","cupHist","faSz","faRole","faP","faFrom","curPlayer","gFrom","gSeason","injTeam","COL","NB","CNT","cassaTab","cassaStag","GAME","DR","GD","GR","TRN","CAP","TVS","KITO","__STAB","__FROM","SETOPEN","effSub","IA","IA_TR_FROM","TA","cupCmp","faSrt","faQ","FBX","faPS","GLP","CMR","AT","AV","CF","dkOpen","NV_FROM","EQO","GD_LASTOFF","PLV","CAMPO_DR","FROM","STAB","CST"];
 const get=n=>{try{return(0,eval)(n)}catch(e){return undefined}};
 const save=()=>{try{const o={};V.forEach(n=>{const v=get(n);if(v===undefined)return;try{const j=JSON.stringify(v);if(j&&j.length<20000)o[n]=j}catch(e){}});
   const x=JSON.stringify({t:Date.now(),y:window.scrollY,o});sessionStorage.setItem("dl_reload",x);try{localStorage.setItem("dl_nav",x)}catch(_){}}catch(e){}};

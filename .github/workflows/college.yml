@@ -1,0 +1,31 @@
+# COLLEGE (1563): ogni domenica alle 17:00 UTC (circa le 18 in Italia) aggiorna i prospetti del Draft 2027 da Tankathon
+# (Statistiche › College) e lo storico settimanale per il trend ▲/▼. Lo esegue GitHub: nessuno deve lanciare niente a mano.
+name: college-tankathon
+on:
+  schedule:
+    - cron: "0 17 * * 0"   # domenica 17:00 UTC ≈ 18:00 ora italiana (inverno)
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: college
+  cancel-in-progress: false
+jobs:
+  college:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Rigenera college-data.js
+        run: node tools/tankathon.mjs
+      - name: Salva se ci sono novità
+        run: |
+          git config user.name "college-bot"
+          git config user.email "college-bot@users.noreply.github.com"
+          if git diff --quiet -- college-data.js; then echo "Nessuna novità"; exit 0; fi
+          git add college-data.js
+          git commit -m "COLLEGE: prospetti Draft 2027 aggiornati da Tankathon [automatico]"
+          for i in 1 2 3; do git pull --rebase -X theirs origin main && git push origin HEAD:main && exit 0; sleep 5; done
+          exit 1
