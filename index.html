@@ -10308,7 +10308,7 @@ const save=()=>{try{localStorage.setItem("dl_college",JSON.stringify({sort:CST.s
 const e=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const f1=v=>(Math.round(v*10)/10).toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1});
 /* (1564) età al draft in evidenza: pastiglia colorata (fino a 19,5 verde, fino a 21 oro, oltre arancio/rosso) */
-const ageB=a=>a?`<b class="dsage ${a<=19.5?"g":a<=21?"y":"o"}" title="Età al draft">${f1(a)} anni</b>`:"";
+const ageB=a=>a?`<b class="dsage ${a<=19.5?"g":a<=21?"y":"o"}" title="Età al draft (giugno 2027)">Età draft ${f1(a)}</b>`:"";
 const f2c=v=>v.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
 const IN=()=>cur==="colstat"||cur==="colpl"||cur==="colcmp";
 /* ---------- caricamento pigro di college-data.js ---------- */
