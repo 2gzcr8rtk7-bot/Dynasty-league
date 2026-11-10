@@ -3989,3 +3989,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - Da sapere: se in una corsa si caricano più notti insieme (es. GitHub fermo un giorno), DREAMERS archivia per EFF solo l'ultima, come prima con Dunkest.
 
 (1567) report-dati: tentativi continui ogni 30 minuti dalle 07:07 alle 22:37 italiane (cron 7,37 6-21 UTC); ogni corsa prova ESPN fino a 3 volte; riserva Dunkest solo dalle 08:00; mail se alle 09:00 la notte manca ancora, ma si continua a riprovare.
+
+(1568) College con codice di accesso: la sezione resta dov era (tasto COLLEGE in Statistiche); lista, profilo e comparatore chiedono il codice (stesso dell area riservata), sbloccata finché l app resta aperta (sessionStorage dl_colok). Nel codice c è solo un impronta del codice, non il codice.
