@@ -5709,7 +5709,7 @@ document.getElementById("main").addEventListener("input",e=>{if(e.target.id!=="f
 
 /* ===== OSSERVATORIO (28/10/2026): giocatori che "segui" (tasto segnalibro), salvati SOLO su questo dispositivo (localStorage "dl_seg").
    Vista dal pulsante giallo in Home: classifica Live (chi gioca ora) · Notte (tutta la notte) · Generale (stagione), ordinabile per PDK o efficienza. ===== */
-let SEGUI=[];try{const a=JSON.parse(localStorage.getItem("dl_seg")||"[]");if(Array.isArray(a))SEGUI=a.filter(x=>typeof x==="string"&&!x.startsWith("col:"))/* (1569) via i prospetti del College seguiti prima */;if(a.length!==SEGUI.length)localStorage.setItem("dl_seg",JSON.stringify(SEGUI))}catch(e){}
+let SEGUI=[];try{const a=JSON.parse(localStorage.getItem("dl_seg")||"[]");if(Array.isArray(a))SEGUI=a.filter(x=>typeof x==="string")/* (1573) i prospetti del College seguiti ("col:slug", segnalibro nel loro profilo) restano: non si tolgono più come nella (1569) */}catch(e){}
 const segHas=n=>SEGUI.includes(n),segSave=()=>{try{localStorage.setItem("dl_seg",JSON.stringify(SEGUI))}catch(e){}};
 function segTog(n){const i=SEGUI.indexOf(n);if(i<0){SEGUI.push(n);try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}}else SEGUI.splice(i,1);segSave();return i<0}
 const SEG_SVG=on=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4.5L5 21V4a1 1 0 0 1 1-1z" fill="${on?"currentColor":"none"}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`;
@@ -5750,7 +5750,7 @@ function vOsserv(){fantaLiveAvvia();
   const hd=per==="gen"?`<th>Giocatore</th><th class="pdkl">${mt==="eff"?"Eff.":"PDK med"}</th><th>Min</th><th>Ultima</th><th>Trend</th>`:`<th>Giocatore</th><th class="pdkl">${mt==="eff"?"Eff.":"PDK"}</th><th>Min</th><th>Pt</th><th>Rb</th><th>As</th>`;
   const tr=r=>per==="gen"?`<tr><td>${who(r)}</td><td class="pdkl">${pill(r)}</td><td>${r.x.mn!=null?r.x.mn.toFixed(1).replace(".",","):"—"}</td><td>${r.x.last!=null?pdkB(r.x.last,pdkF(r.x.last)):"—"}</td><td>${r.x.tp==null?"—":`<span class="trd ${Math.abs(r.x.tp)<3?"s":r.x.tp>0?"u":"d"}">${Math.abs(r.x.tp)<3?"=":r.x.tp>0?"▲ +":"▼ −"}${Math.abs(r.x.tp)<3?"":Math.abs(r.x.tp).toFixed(0)+"%"}</span>`}</td></tr>`:`<tr class="${r.N&&r.N.lv?"lvr":""}"><td>${who(r)}</td><td class="pdkl">${pill(r)}</td><td>${r.x.mt}</td><td class="pts">${r.x.pt}</td><td>${r.x.rb}</td><td>${r.x.as}</td></tr>`;
   const cols=per==="gen"?5:6,nd=campoNotte();
-  const body=!SEGUI.length?`<p class="note">Non segui ancora nessun giocatore. Cercalo qui sopra o dalla Home e tocca il segnalibro accanto al nome, oppure apri la sua scheda e tocca «Segui». Ci sono anche i prospetti del College.</p>`
+  const body=!SEGUI.length?`<p class="note">Non segui ancora nessun giocatore. Cercalo qui sopra o dalla Home e tocca il segnalibro accanto al nome, oppure apri la sua scheda e tocca «Segui». I prospetti del College si seguono dal loro profilo, nella sezione College.</p>`
    :!SEGN.length?"":`${vis.length?`<div class="tbl-wrap"><table class="ptbl tvbox drbox clbox osbox${per==="gen"?" osgen":""}"><thead><tr>${hd}</tr></thead><tbody>${vis.map(tr).join("")}</tbody></table></div>`:`<p class="note">${per==="live"?"Nessuno dei tuoi giocatori seguiti sta giocando adesso.":nd?"Nessuno dei tuoi giocatori seguiti è sceso in campo stanotte.":"Nessuna partita NBA stanotte."}</p>`}
     ${per!=="gen"&&no.length?`<p class="osno">Non in campo: ${no.map(r=>`<span>${r.n}</span>`).join(", ")}</p>`:""}`;
   const oq=OSV.q||"",ores=oq?homeSearchHtml(oq):"";
@@ -5759,7 +5759,7 @@ function vOsserv(){fantaLiveAvvia();
   <div class="cltgw">${tg("per",[["live","Live"],["notte","Notte"],["gen","Generale"]])}</div>
   <div class="cltgw">${tg("m",[["pdk","PDK"],["eff","Efficienza"]])}</div>
   ${body}
-  <div id="oscol"></div>
+  <div id="oscol">${nCol&&window.COLAPI?COLAPI.osBody():""}</div><!-- (1573) di nuovo la sezione College dei prospetti seguiti -->
   <p class="note">${per==="gen"?"Stagione 2026/27: PDK medio e efficienza (PDK per minuto) di tutte le partite giocate. Trend = andamento della stagione (da almeno 3 partite) sulla misura scelta; = vuol dire stabile.":per==="live"?"Solo chi sta giocando adesso (dati Dynasty TV, PDK provvisorio con la formula Dunkest).":"La notte NBA in corso o appena finita (data USA): chi gioca ora è segnato Live."} La lista dei seguiti è salvata solo su questo dispositivo.</p>
   <details class="osbk"><summary>Salva o ripristina la lista</summary><p class="note">Copia il testo per tenerlo da parte o per passarlo a un altro telefono; incollalo sotto per importarlo (si aggiunge ai seguiti che hai già).</p><textarea id="osta" readonly rows="3">${JSON.stringify(SEGUI).replace(/&/g,"&amp;").replace(/</g,"&lt;")}</textarea><div class="setrow"><button data-osc="copy">Copia</button></div><textarea id="osin" rows="3" placeholder="Incolla qui la lista"></textarea><div class="setrow"><button data-osc="imp">Importa</button><button data-osc="clr">Smetti di seguire tutti</button></div></details>`}
 document.addEventListener("click",e=>{
@@ -10310,7 +10310,7 @@ const f1=v=>(Math.round(v*10)/10).toLocaleString("it-IT",{minimumFractionDigits:
 /* (1564) età al draft in evidenza: pastiglia colorata (fino a 19,5 verde, fino a 21 oro, oltre arancio/rosso) */
 const ageB=a=>a?`<b class="dsage ${a<=19.5?"g":a<=21?"y":"o"}" title="Età al draft (giugno 2027)">Età draft ${f1(a)}</b>`:"";
 const f2c=v=>v.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
-const IN=()=>cur==="colstat"||cur==="colpl"||cur==="colcmp";
+const IN=()=>cur==="colstat"||cur==="colpl"||cur==="colcmp"||cur==="colnt";/* (1573) colnt = Live notte per notte */
 /* ---------- caricamento pigro di college-data.js ---------- */
 let LD=0;/* 0 da caricare, 1 in corso, 2 pronto, -1 errore */
 function load(){if(typeof COLDRAFT!=="undefined"){LD=2;return true}if(LD===1||LD===-1)return false;LD=1;const s=document.createElement("script");s.src="college-data.js";
@@ -10363,7 +10363,7 @@ function wait(lab){if(load())return"";return`<div class="dsroom">${back(lab)}${h
    A partita finita la riga resta («Finale», provvisoria) finché il giro del mattino (college.yml) non la mette nel game log. */
 const ESC="https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball";
 const LV={on:{},G:[],sbT:0,hot:false,busy:false,last:0,err:false};
-const lvWho=()=>{if(LD!==2)return[];const L=ROOK().filter(x=>x.ea&&x.et);return IN()?L:[]};
+const lvWho=()=>{if(LD!==2)return[];const L=ROOK().filter(x=>x.ea&&x.et);return IN()?L:cur==="osserv"?L.filter(x=>segHas("col:"+x.slug)):[]};/* (1573) di nuovo il live dei prospetti seguiti nell Osservatorio */
 const etDay=()=>new Intl.DateTimeFormat("sv-SE",{timeZone:"America/New_York"}).format(new Date()).replace(/-/g,"");
 const lvSt=t=>String(t||"").replace("Halftime","Intervallo").replace(/1st Half/,"1° tempo").replace(/2nd Half/,"2° tempo").replace(/(\d)?OT/,(m,n)=>(n?n+"° ":"")+"suppl.").replace(/^Final/,"Finale").replace(" - "," · ");
 /* riga del prospetto dal tabellino ESPN: [data, avv, V/S, MIN, FGM, FGA, 3PM, 3PA, FTM, FTA, REB, AST, BLK, STL, TO, PF, PTS, OREB, DREB, titolare, id partita] */
@@ -10396,12 +10396,12 @@ async function lvTick(force){if(LV.busy||document.hidden)return;const W=lvWho();
  LV.busy=false;LV.last=Date.now();if(JSON.stringify(LV.on)!==prima)lvPaint()}
 /* riga live del prospetto (null se non gioca o se la partita è già nel game log) */
 const lvOf=x=>{const o=LV.on[x.slug];return o&&(o.sim||!x.gl.some(z=>z.r[20]===o.ev))?o:null};
-function lvPaint(){if(cur==="colstat"){const L=document.getElementById("dsrkl");if(L)L.innerHTML=rkList()}else if(cur==="colpl")keep();else if(cur==="osserv"){const o=document.getElementById("oscol");if(o)o.innerHTML=osBody()}}
+function lvPaint(){if(cur==="colnt"){const L=document.getElementById("colntb");if(L)L.innerHTML=nightsBody()}else if(cur==="colstat"){const L=document.getElementById("dsrkl");if(L)L.innerHTML=rkList()}else if(cur==="colpl")keep();else if(cur==="osserv"){const o=document.getElementById("oscol");if(o)o.innerHTML=osBody()}}
 function lvKick(){if(Date.now()-LV.last>40e3&&lvWho().length)setTimeout(()=>lvTick(),60)}
 setInterval(()=>lvTick(),45e3);document.addEventListener("visibilitychange",()=>{if(!document.hidden)lvKick()});
 const lvLine=x=>{const o=lvOf(x);if(!o)return"";return`<div class="dslv"><b class="clv"><i></i>${o.fin?"FINALE":"LIVE"}</b><span>vs ${e(o.g[1])} · ${e(o.st)} · ${o.g[3]}′ · ${o.g[16]} pt · ${o.g[10]} rb · ${o.g[11]} as</span><em>PDK provv. ${pdkB(o.f,f1(o.f))}</em></div>`};
 /* ---------- (1564) seguire un prospetto (Osservatorio): nella lista dei seguiti (dl_seg) come "col:slug", così non si confonde con i giocatori NBA ---------- */
-const colSeg=(x,lab)=>"";/* (1569) i prospetti del College non si seguono più nell Osservatorio */const colSeg0=(x,lab)=>{const k="col:"+x.slug,on=segHas(k);return`<span class="segi${on?" on":""}" data-seg="${e(k)}" role="button" tabindex="0" aria-pressed="${on}" aria-label="${on?"Smetti di seguire":"Segui"} ${e(x.n)}">${SEG_SVG(on)}${lab?`<em>${on?"Seguito":"Segui"}</em>`:""}</span>`};
+const colSeg=(x,lab)=>"";/* (1569) niente segnalibro su schede della lista e ricerca; (1573) nel profilo e nell Osservatorio sì: colSeg0 */const colSeg0=(x,lab)=>{const k="col:"+x.slug,on=segHas(k);return`<span class="segi${on?" on":""}" data-seg="${e(k)}" role="button" tabindex="0" aria-pressed="${on}" aria-label="${on?"Smetti di seguire":"Segui"} ${e(x.n)}">${SEG_SVG(on)}${lab?`<em>${on?"Seguito":"Segui"}</em>`:""}</span>`};
 /* sezione College dell Osservatorio: ultima partita (o quella in corso), PDK, minuti, punti e media della stagione; tocco = profilo del prospetto */
 function osBody(){const F=SEGUI.filter(n=>n.startsWith("col:"));if(!F.length)return"";
  const hd=H("College",`<em>${F.length} prospett${F.length===1?"o":"i"}</em>`);
@@ -10410,7 +10410,7 @@ function osBody(){const F=SEGUI.filter(n=>n.startsWith("col:"));if(!F.length)ret
  const R=F.map(k=>L.find(x=>"col:"+x.slug===k)).filter(Boolean).map(x=>{const o=lvOf(x),last=x.gl[x.gl.length-1]||null;return{x,o,last,v:o?o.f:last?last.f:null}});
  const vis=R.filter(r=>per!=="live"||r.o).sort((a,b)=>(b.o?1:0)-(a.o?1:0)||(b.x.pdk??-99)-(a.x.pdk??-99)),fuori=R.filter(r=>!vis.includes(r));
  const persi=F.filter(k=>!L.some(x=>"col:"+x.slug===k));
- const who=r=>{const x=r.x,o=r.o,l=r.last;return`<div class="osn" data-colk="${e(x.slug)}" role="button" tabindex="0"><span class="osb"><span class="dsini" style="--sc:${scCol(x.sc)}">${e(ini(x.n))}</span></span><span><b>${e(x.n)}</b><small>College · ${e(x.sc)} · ${e(x.pos)}${o?` · vs ${e(o.g[1])} · <b class="clv"><i></i>${e(o.st)}</b>`:l?` · ${l.d.slice(8)}/${l.d.slice(5,7)} vs ${e(l.o)}`:" · nessuna partita"}</small></span>${colSeg(x)}</div>`};
+ const who=r=>{const x=r.x,o=r.o,l=r.last;return`<div class="osn" data-colk="${e(x.slug)}" role="button" tabindex="0"><span class="osb"><span class="dsini" style="--sc:${scCol(x.sc)}">${e(ini(x.n))}</span></span><span><b>${e(x.n)}</b><small>College · ${e(x.sc)} · ${e(x.pos)}${o?` · vs ${e(o.g[1])} · <b class="clv"><i></i>${e(o.st)}</b>`:l?` · ${l.d.slice(8)}/${l.d.slice(5,7)} vs ${e(l.o)}`:" · nessuna partita"}</small></span>${colSeg0(x)}</div>`};
  const tr=r=>{const g=r.o?r.o.g:r.last?r.last.r:null;return`<tr class="${r.o&&!r.o.fin?"lvr":""}"><td>${who(r)}</td><td class="pdkl">${r.v!=null?pdkB(r.v,f1(r.v)):"—"}</td><td>${g?g[3]:"—"}</td><td class="pts">${g?g[16]:"—"}</td><td>${r.x.pdk!=null?pdkB(r.x.pdk,f1(r.x.pdk)):"—"}</td></tr>`};
  return hd+(vis.length?`<div class="tbl-wrap"><table class="ptbl tvbox drbox clbox osbox oscol"><thead><tr><th>Prospetto</th><th class="pdkl">PDK</th><th>Min</th><th>Pt</th><th>Media</th></tr></thead><tbody>${vis.map(tr).join("")}</tbody></table></div>`:`<p class="note">Nessuno dei prospetti seguiti sta giocando adesso.</p>`)
   +(fuori.length?`<p class="osno">Non in campo: ${fuori.map(r=>`<span>${e(r.x.n)}</span>`).join(", ")}</p>`:"")
@@ -10420,8 +10420,29 @@ function osBody(){const F=SEGUI.filter(n=>n.startsWith("col:"));if(!F.length)ret
 function colSearch(qa){if(LD!==2){if(LD!==-1)load();return LD===-1?"":`<p class="hrsec">College<span>…</span></p>`}
  const nz=v=>String(v).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/\./g,""),L=ROOK().filter(x=>nz(x.n+" "+x.sc).includes(qa));if(!L.length)return"";
  return`<p class="hrsec">College<span>${L.length}</span></p>`+L.slice(0,6).map(x=>`<button class="hrr hrcol" data-colk="${e(x.slug)}" style="--tc:${scCol(x.sc)}"><span class="hrj"><span class="dsini" style="--sc:${scCol(x.sc)}">${e(ini(x.n))}</span></span><span class="hrn"><b>${e(x.n)}</b><small>College · ${e(x.sc)} · ${e(x.pos)} · n° ${x.rk}</small></span>${colSeg(x)}<i>›</i></button>`).join("")}
-function openPl(slug){CST.pl=slug;CST.from=cur==="osserv"||cur==="home"?cur:"";load();cur="colpl";render();scrollTo(0,0)}
+function openPl(slug){CST.pl=slug;CST.from=cur==="osserv"||cur==="home"||cur==="colnt"?cur:"";load();cur="colpl";render();scrollTo(0,0)}
 window.COLAPI={load,osBody,colSearch,openPl,lvTick,sim:async id=>{await lvGame(id,true);lvPaint();return LV.on},LV};
+/* ---------- (1573) LIVE NOTTE PER NOTTE (tasto in cima alla lista College, cur="colnt", dietro al codice) ----------
+   Notti = date (data USA) del game log di tutti i prospetti, più la riga live (LV/lvOf) della notte in corso. Una tabella per notte, dalla più recente;
+   in cima le chip: «Ultime 7» (di serie), «Tutte» o una notte sola (CST.ntd). Con la pagina aperta gira il live (IN() comprende "colnt": ogni 45 s, fermo con l app in background). Tocco = profilo. */
+function nights(){const N={};
+ for(const x of ROOK()){for(const g of x.gl)(N[g.d]=N[g.d]||[]).push({x,r:g.r,f:g.f,o:null});
+  const o=lvOf(x);if(o){const d=String(o.g[0]||"");if(d)(N[d]=N[d]||[]).push({x,r:o.g,f:o.f,o})}}
+ return Object.keys(N).sort().reverse().map(d=>({d,R:N[d].sort((a,b)=>(b.o&&!b.o.fin?1:0)-(a.o&&!a.o.fin?1:0)||b.f-a.f)}))}
+const dIt=d=>DT(d).toLocaleDateString("it-IT",{weekday:"short",day:"numeric",month:"short",timeZone:"UTC"});
+function nightsBody(){const A=nights();if(!A.length)return`<p class="note">Nessuna partita ancora.</p>`;
+ const sel=CST.ntd==="all"||A.some(n=>n.d===CST.ntd)?CST.ntd:"",lvN=n=>n.R.some(r=>r.o&&!r.o.fin);
+ const chips=`<div class="chips cntch">${[["","Ultime 7"],["all","Tutte"]].concat(A.map(n=>[n.d,dIt(n.d)+(lvN(n)?" ●":"")])).map(([k,l])=>`<button class="chip" data-cntd="${k}" aria-pressed="${sel===k}">${e(l)}</button>`).join("")}</div>`;
+ const row=z=>{const x=z.x,r=z.r,o=z.o,res=o?`<b class="clv"><i></i>${o.fin?"FINALE":"LIVE"}</b>`:`<i class="dswl ${r[2]==="W"?"w":"l"}">${r[2]==="W"?"V":"S"}</i>`;
+  return`<tr class="${o&&!o.fin?"dslvr":""}" data-colk="${e(x.slug)}" role="button" tabindex="0"><td class="cntn"><b>${e(x.n)}</b><small>vs ${e(r[1])} ${res}${o?` <em>${e(o.st)}</em>`:""}</small></td><td>${r[3]}</td><td>${pdkB(z.f,f1(z.f))}</td><td>${r[16]}</td><td>${r[10]}</td><td>${r[11]}</td></tr>`};
+ const blk=n=>`<div class="cntnt"><h4 class="dsh">${e(dIt(n.d))} <small>${n.R.length} prospett${n.R.length===1?"o":"i"} in campo${lvN(n)?" · live in corso":""}</small></h4>
+  <div class="tbl-wrap"><table class="dstab cntT"><thead><tr><th>Prospetto · avversario</th><th>Min</th><th>PDK</th><th>PT</th><th>RB</th><th>AS</th></tr></thead><tbody>${n.R.map(row).join("")}</tbody></table></div></div>`;
+ return chips+(sel==="all"?A:sel?A.filter(n=>n.d===sel):A.slice(0,7)).map(blk).join("")}
+function vNotti(){const w=wait("College");if(w)return w;lvKick();
+ return`<div class="dsroom dspg">${back("College")}<div class="dshero"><span class="dsspot l"></span><span class="dsspot r"></span><small>Dreamers · College</small><b>Live notte per notte</b><em>Tutti i prospetti in campo · PDK</em></div>
+ <div class="dsbox"><h4 class="dsh">Notti del college <small>dalla più recente · PDK come nella lista College${LV.err?" · ESPN non risponde, riprovo":""}</small></h4>
+ <div id="colntb">${nightsBody()}</div>
+ <p class="note">Date USA. LIVE = partita in corso (PDK provvisorio, dati ESPN ogni 45 secondi mentre questa pagina è aperta); FINALE = appena finita, entra nel game log al giro del mattino. V/S = vittoria/sconfitta. Tocca un prospetto per il profilo.</p></div></div>`}
 /* ---------- lista ---------- */
 function rkList(){let L=ROOK().slice();const q=String(CST.q||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
  if(q)L=L.filter(x=>(x.n+" "+x.sc).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").includes(q));if(CST.pos)L=L.filter(x=>x.pos.includes(CST.pos));if(CST.yr)L=L.filter(x=>x.yr===CST.yr);
@@ -10432,14 +10453,14 @@ function rkList(){let L=ROOK().slice();const q=String(CST.q||"").toLowerCase().n
  return L.map(card).join("")||`<p class="note">Nessun prospetto.</p>`}
 function vList(){const w=wait("Statistiche");if(w)return w;lvKick();
  const head=[["rk","Big board"],["pdk","PDK"],["wk","Trend"],["p36","PDK/36′"],["eff","PDK/min"],["min","Minuti"],["age","Età"]];
- return `<div class="dsroom">${back("Statistiche")}${hero()}<div class="dsbox"><h4 class="dsh">Prospetti del Draft 2027 <small>primi ${ROOK().length} del big board · Tankathon ${e(COLDRAFT.upd||"")}${COLDRAFT.espn?" · partite ESPN "+e(COLDRAFT.espn):""}</small></h4>
+ return `<div class="dsroom">${back("Statistiche")}<button class="cntgo" data-cntgo="1"><span class="cnti">🌙</span><span><b>Live notte per notte</b><small>Tutte le partite dei prospetti, notte per notte · LIVE</small></span><i>›</i></button><!-- (1573) -->${hero()}<div class="dsbox"><h4 class="dsh">Prospetti del Draft 2027 <small>primi ${ROOK().length} del big board · Tankathon ${e(COLDRAFT.upd||"")}${COLDRAFT.espn?" · partite ESPN "+e(COLDRAFT.espn):""}</small></h4>
  <input id="dsq" class="vtq" type="search" placeholder="🔍 Cerca un prospetto o un college" autocomplete="off" value="${e(CST.q||"")}">
  <div class="chips">${["","PG","SG","SF","PF","C"].map(p=>`<button class="chip" data-dpos="${p}" aria-pressed="${CST.pos===p}">${p||"Tutti"}</button>`).join("")}</div>
  <div class="chips">${[["","Tutti gli anni"],["Freshman","1° anno"],["Sophomore","2° anno"],["Junior","3° anno"],["Senior","4° anno"],["International","Estero"]].map(([k,l])=>`<button class="chip" data-dyr="${k}" aria-pressed="${CST.yr===k}"${k?` title="${k}"`:""}>${l}</button>`).join("")}</div><!-- (1572) filtro per anni di college (Freshman, Sophomore, Junior, Senior; Estero = campionati fuori dagli USA) -->
  <div class="chips dssort">${head.map(([k,l])=>`<button class="chip" data-dsrt="${k}" aria-pressed="${CST.sort===k}">${l}${CST.sort===k?(CST.dir==="a"?" ▲":" ▼"):""}</button>`).join("")}</div>
  <button class="advbtn ggrbtn ggy" data-dcmp="">⚖ Confronta due prospetti</button>
  <div class="dsrkl" id="dsrkl">${rkList()}</div>
- <p class="note">Big board e mock di Tankathon; partite del college TUTTE da ESPN, aggiornate ogni mattina alle 9 (storico per il trend ogni domenica). PDK = formula Dunkest della lega, esatta come nella Dynasty TV: punti, rimbalzi difensivi, 1,25 × offensivi, 1,5 × assist, recuperi e stoppate, −1,5 palle perse, −1 per ogni tiro e libero sbagliato, +1 se titolare, bonus triple, doppie doppie e vittoria; stoppate subite non contate (ESPN non le dà). PDK della stagione = media partita per partita. I giocatori delle leghe estere non sono su ESPN: per loro restano i dati di Tankathon (rimbalzi × 1,075, titolare = almeno 20 minuti; senza game log dalle medie, senza bonus). Durante le partite: LIVE con il PDK provvisorio. ▲/▼ = PDK rispetto alla settimana prima. Il segnalibro mette il prospetto nell Osservatorio.</p></div></div>`}
+ <p class="note">Big board e mock di Tankathon; partite del college TUTTE da ESPN, aggiornate ogni mattina alle 9 (storico per il trend ogni domenica). PDK = formula Dunkest della lega, esatta come nella Dynasty TV: punti, rimbalzi difensivi, 1,25 × offensivi, 1,5 × assist, recuperi e stoppate, −1,5 palle perse, −1 per ogni tiro e libero sbagliato, +1 se titolare, bonus triple, doppie doppie e vittoria; stoppate subite non contate (ESPN non le dà). PDK della stagione = media partita per partita. I giocatori delle leghe estere non sono su ESPN: per loro restano i dati di Tankathon (rimbalzi × 1,075, titolare = almeno 20 minuti; senza game log dalle medie, senza bonus). Durante le partite: LIVE con il PDK provvisorio. ▲/▼ = PDK rispetto alla settimana prima. Il segnalibro nel profilo del prospetto lo mette nell Osservatorio.</p></div></div>`}
 /* ---------- grafico (stesso disegno del Grafico delle Statistiche: griglia, etichette, punti con valore) ---------- */
 const MET={f:["PDK",x=>x.f,"pdk"],m:["Minuti",x=>x.m,"min"],e:["Efficienza",x=>x.m?x.f/x.m:0,"eff"]};
 const fmV=(v,m)=>m==="e"?f2c(v):f1(v);
@@ -10462,7 +10483,7 @@ const ctl=()=>`<div class="pergr"><span>Andamento per</span><div>${[["g","Partit
  <div class="grtgs">${Object.keys(MET).map(k=>`<button class="grtg ${MET[k][2]}" data-dmet="${k}" aria-pressed="${CST.met===k}"><i></i>${MET[k][0]}</button>`).join("")}</div>`;
 const perTxt=()=>CST.per==="w"?"settimana per settimana (storico della domenica)":"partita per partita (game log)";
 /* ---------- profilo del prospetto (come la scheda giocatore) ---------- */
-function vPl(){const BL=CST.from==="home"?"Home":CST.from==="osserv"?"Osservatorio":"College",w=wait(BL);if(w)return w;const L=ROOK(),x=L.find(z=>z.slug===CST.pl)||L[0];if(!x)return`<div class="dsroom">${back(BL)}<p class="note">Nessun prospetto.</p></div>`;CST.pl=x.slug;lvKick();const lv=lvOf(x);
+function vPl(){const BL=CST.from==="home"?"Home":CST.from==="osserv"?"Osservatorio":CST.from==="colnt"?"Live notte per notte":"College",w=wait(BL);if(w)return w;const L=ROOK(),x=L.find(z=>z.slug===CST.pl)||L[0];if(!x)return`<div class="dsroom">${back(BL)}<p class="note">Nessun prospetto.</p></div>`;CST.pl=x.slug;lvKick();const lv=lvOf(x);
  const s=x.s,bg=scCol(x.sc),p36=v=>s[1]?v/s[1]*36:null,pct=(a,b)=>b?f1(a/b*100)+"%":"–",ts=tsP(s);
  const stat=(lab,val,sub="")=>`<div class="gst"><small>${lab}</small><b>${val}</b>${sub?`<em>${sub}</em>`:""}</div>`;
  const G=pts(x,CST.per),sz=trendP(G.map(g=>MET[CST.met][1](g)));
@@ -10475,7 +10496,7 @@ function vPl(){const BL=CST.from==="home"?"Home":CST.from==="osserv"?"Osservator
   <div class="gjer"><span class="dsini xl">${e(ini(x.n))}</span></div>
   <div class="gtit"><small>${e(x.sc)}${x.stag?" · "+e(x.stag):""}</small><h3>${e(x.n)}</h3><p>${ageB(x.age)}${[x.pos,x.yr,x.h,x.w?x.w+" lb":""].filter(Boolean).map(e).join(" · ")}<span style="display:block">Big board n° ${x.rk}${x.md?" · mock "+e(x.md):""}</span></p></div>
  </div>
- <div class="dsplb"><button class="advbtn ggrbtn ggy" data-dcmp="${e(x.slug)}">⚖ Confronta</button>${colSeg(x,1)}</div>
+ <div class="dsplb"><button class="advbtn ggrbtn ggy" data-dcmp="${e(x.slug)}">⚖ Confronta</button>${colSeg0(x,1)}</div><!-- (1573) «Segui» solo qui nel profilo -->
  ${lvLine(x)}
  ${!x.gp?`<p class="note">Nessuna partita giocata finora: i dati compariranno dopo la prima gara.</p>`:`
  <div class="gbig g2"><div><b class="gpdk">${pdkB(x.pdk,f2c(x.pdk))}</b><small>PDK medi a partita ${trB(x.wk,"in 7 gg")}</small></div><div>${eff(x.eff)}<small>Efficienza (PDK al minuto)</small></div></div>
@@ -10521,17 +10542,20 @@ function vCmp(){const w=wait("College");if(w)return w;const L=ROOK(),byRk=L.slic
    Codice giusto = sbloccata finché l app resta aperta (sessionStorage dl_colok). Vale per lista, profilo e comparatore (anche aperti da ricerca e Osservatorio). */
 const COLH="549826",colOk=()=>{try{return sessionStorage.getItem("dl_colok")==="1"}catch(e){return false}};
 const colH=v=>{let h=5381;for(const c of String(v))h=(h*33^c.charCodeAt(0))>>>0;return(h%16777216).toString(16).padStart(6,"0")};
-const colGate=f=>()=>colOk()?f():`<button class="gback" data-colpinx="1">‹ Statistiche</button><div class="colpin"><b>🎓 College</b><p>Sezione riservata: inserisci il codice di accesso.</p><input id="colpinq" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="Codice"><button class="effbig col" data-colpin="1">Entra</button><p class="colpinm" id="colpinm"></p></div>`;
-VIEWS.colstat=colGate(vList);VIEWS.colpl=colGate(vPl);VIEWS.colcmp=colGate(vCmp);
+/* (1573) profilo aperto dall Osservatorio (CST.from "osserv"): niente codice, il prospetto è stato seguito da dentro la sezione col codice */
+const colGate=(f,pl)=>()=>colOk()||(pl&&CST.from==="osserv")?f():`<button class="gback" data-colpinx="1">‹ Statistiche</button><div class="colpin"><b>🎓 College</b><p>Sezione riservata: inserisci il codice di accesso.</p><input id="colpinq" type="password" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="Codice"><button class="effbig col" data-colpin="1">Entra</button><p class="colpinm" id="colpinm"></p></div>`;
+VIEWS.colstat=colGate(vList);VIEWS.colpl=colGate(vPl,1);VIEWS.colcmp=colGate(vCmp);VIEWS.colnt=colGate(vNotti);
 const colTry=()=>{const q=document.getElementById("colpinq");if(!q)return;if(colH(q.value.trim())===COLH){try{sessionStorage.setItem("dl_colok","1")}catch(_){}render();window.scrollTo(0,0)}else{const m=document.getElementById("colpinm");if(m)m.textContent="Area riservata";q.value="";q.focus()}};
 document.addEventListener("click",e=>{if(e.target.closest("[data-colpin]")){e.preventDefault();colTry()}else if(e.target.closest("[data-colpinx]")){e.preventDefault();cur="efficienza";render();window.scrollTo(0,0)}});
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target&&e.target.id==="colpinq"){e.preventDefault();colTry()}});
 /* indietro (tasto ‹, swipe, tasto di Android): profilo e comparatore › College › Statistiche */
 /* (1564) profilo aperto dall Osservatorio o dalla ricerca della Home: ‹ torna lì */
-NAV_SUB.push({ok:()=>cur==="colpl"&&!!CST.from,get lab(){return CST.from==="home"?"Home":"Osservatorio"},back:()=>{const f=CST.from;CST.from="";cur=f;render()}},{ok:()=>cur==="colpl"||cur==="colcmp",lab:"College",back:()=>{cur="colstat";render()}},{ok:()=>cur==="colstat",lab:"Statistiche",back:()=>{effSub="";cur="efficienza";render()}});
+NAV_SUB.push({ok:()=>cur==="colnt",lab:"College",back:()=>{cur="colstat";render()}},{ok:()=>cur==="colpl"&&!!CST.from,get lab(){return CST.from==="home"?"Home":CST.from==="colnt"?"Live notte per notte":"Osservatorio"},back:()=>{const f=CST.from;CST.from="";cur=f;render()}},{ok:()=>cur==="colpl"||cur==="colcmp",lab:"College",back:()=>{cur="colstat";render()}},{ok:()=>cur==="colstat",lab:"Statistiche",back:()=>{effSub="";cur="efficienza";render()}});
 const apri=v=>{cur=v;render();scrollTo(0,0)};
 const keep=()=>{const y=scrollY;render();scrollTo(0,y)};
 document.addEventListener("click",ev=>{if(cur==="efficienza"&&ev.target.closest("[data-colgo]")){ev.preventDefault();CST.q="";load();apri("colstat");return}
+ /* (1573) Live notte per notte: entrata dalla lista e scelta della notte */
+ {const c=ev.target.closest("[data-cntgo],[data-cntd]");if(c&&c.closest("#main")&&IN()){ev.preventDefault();if(c.dataset.cntgo){apri("colnt");return}CST.ntd=c.dataset.cntd;keep();return}}
  {const c=ev.target.closest("[data-colk]");if(c&&c.closest("#main")){ev.preventDefault();openPl(c.dataset.colk);return}}
  if(!IN())return;const b=ev.target.closest("[data-dsrt],[data-dpos],[data-dyr],[data-drk],[data-dcmp],[data-dmet],[data-dper],[data-dsretry]");if(!b||!b.closest("#main"))return;const d=b.dataset;
  if(d.dsretry){LD=0;load();render();return}
@@ -10601,6 +10625,13 @@ input.osq{width:100%;margin:0 0 8px}#osres{margin-top:0}
 .dsage{display:inline-block;margin:0 5px 0 0;padding:1px 7px;border-radius:999px;font-size:11px;font-weight:900;font-style:normal;line-height:1.45;letter-spacing:.01em;white-space:nowrap;vertical-align:1px;border:1px solid rgba(0,0,0,.18);box-shadow:0 1px 2px rgba(0,0,0,.2)}.dsage.g{background:#16a34a;color:#fff}.dsage.y{background:#facc15;color:#3b2a00}.dsage.o{background:#ea580c;color:#fff}html.notte .dsage.g{background:#22c55e;color:#052e16}html.notte .dsage.o{background:#f97316;color:#1c0a00}html body .dsrki small .dsage{font-size:10.5px}.gtit p .dsage{font-size:12.5px;padding:2px 9px;margin-right:7px;border-color:rgba(255,255,255,.55)}.dscmp td .dsage{margin:0}html body .dsage.g:not(#z),html body .dsage.o:not(#z){color:#fff!important;-webkit-text-fill-color:#fff!important}html body .dsage.y:not(#z){color:#3b2a00!important;-webkit-text-fill-color:#3b2a00!important}html.notte body .dsage.g:not(#z){color:#052e16!important;-webkit-text-fill-color:#052e16!important}html.notte body .dsage.o:not(#z){color:#1c0a00!important;-webkit-text-fill-color:#1c0a00!important}
 /* la tabella College dell Osservatorio sta dentro #oscol: niente margini negativi del tema parquet (uscirebbe di 14 px a destra) */
 html body main #oscol .tbl-wrap:not(#z){margin-left:0!important;margin-right:0!important;max-width:100%!important;overflow-x:auto}
+/* (1573) LIVE NOTTE PER NOTTE: tasto in cima alla lista College e tabelle per notte (parquet, classico, notte con le variabili --ds*) */
+html body main .dsroom .cntgo:not(#z){display:flex;align-items:center;gap:10px;width:100%;margin:2px 0 10px;padding:11px 12px;border-radius:14px;border:1px solid var(--dsl);border-left:4px solid var(--dsa);background:var(--dsc);color:var(--dst);text-align:left;cursor:pointer;font:inherit;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.cntgo .cnti{flex:0 0 36px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:19px;background:color-mix(in srgb,var(--dsa) 18%,transparent)}
+.cntgo>span:nth-child(2){flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2}.cntgo b{font-size:15px;font-weight:900;color:var(--dst)}.cntgo small{font-size:11.5px;color:var(--dsm);font-weight:600}.cntgo>i{font-style:normal;font-size:22px;font-weight:900;color:var(--dsa)}
+html body .dsroom .chips.cntch:not(#z){flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px;max-width:100%}.cntch::-webkit-scrollbar{display:none}.cntch .chip{text-transform:none;flex:none}.cntnt{margin:10px 0 0}.cntnt .dsh{margin:4px 0 6px}
+html body .dsroom table.cntT:not(#z) td.cntn{text-align:left;white-space:normal;max-width:150px;line-height:1.2}.cntn b{display:block;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cntn small{display:block;font-size:10.5px;color:var(--dsm);white-space:normal}.cntn small em{font-style:normal;font-weight:700}.cntn .clv{font-size:10px}
+html body .dsroom table.cntT:not(#z) th:first-child{text-align:left}.cntT tbody tr{cursor:pointer}html body .dsroom table.cntT:not(#z) td,html body .dsroom table.cntT:not(#z) th{padding:5px 3px!important;font-size:12px}html body .dsroom .cntT .pdkx{min-width:0}
 </style>
 <script>
 /* Pallino LIVE sul tasto Entertainment: ogni 2 minuti (app aperta e visibile) un controllo leggero sul tabellone ESPN
