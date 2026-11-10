@@ -3994,3 +3994,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 (1569) College solo nella sua sezione: prospetti non più seguibili nell Osservatorio (e tolti dai seguiti già salvati), non più nelle ricerche (Home e Osservatorio), live del college solo dentro la sezione. Codice sbagliato: «Codice sbagliato. La prossima volta sii più partecipe, ora studia da solo».
 (1570) Codice College sbagliato: messaggio «Area riservata».
 (1571) College: l età si legge «Età draft 21,4» (età al draft di giugno 2027, da Tankathon).
+(1572) College: filtro per anni di college (1° anno Freshman, 2° Sophomore, 3° Junior, 4° Senior, Estero = campionati fuori dagli USA), insieme al filtro per ruolo.

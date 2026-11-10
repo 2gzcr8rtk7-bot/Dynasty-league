@@ -10301,10 +10301,10 @@ addEventListener("popstate",()=>{if(navBack()){try{history.pushState({dl:1},"")}
 /* (1564) partite COMPLETE da ESPN (tools/college-espn.mjs, ogni mattina): nelle righe ESPN ci sono rimbalzi offensivi/difensivi e titolare → PDK esatto
    come tvPdk (stoppate subite = 0, come il percorso ESPN della Dynasty TV). LIVE dal browser durante le partite (lvTick). I prospetti si possono seguire
    nell Osservatorio (dl_seg con "col:slug") e si trovano nella ricerca della Home e dell Osservatorio (COLAPI). */
-const CST={sort:"rk",dir:"d",q:"",pos:"",pl:"",pa:"",pb:"",met:"f",per:"g",from:""};
+const CST={sort:"rk",dir:"d",q:"",pos:"",yr:"",pl:"",pa:"",pb:"",met:"f",per:"g",from:""};
 (function(){
 try{Object.assign(CST,JSON.parse(localStorage.getItem("dl_college")||"{}"),{q:""})}catch(_){}
-const save=()=>{try{localStorage.setItem("dl_college",JSON.stringify({sort:CST.sort,dir:CST.dir,pos:CST.pos,met:CST.met,per:CST.per}))}catch(_){}};
+const save=()=>{try{localStorage.setItem("dl_college",JSON.stringify({sort:CST.sort,dir:CST.dir,pos:CST.pos,yr:CST.yr,met:CST.met,per:CST.per}))}catch(_){}};
 const e=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const f1=v=>(Math.round(v*10)/10).toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1});
 /* (1564) età al draft in evidenza: pastiglia colorata (fino a 19,5 verde, fino a 21 oro, oltre arancio/rosso) */
@@ -10424,7 +10424,7 @@ function openPl(slug){CST.pl=slug;CST.from=cur==="osserv"||cur==="home"?cur:"";l
 window.COLAPI={load,osBody,colSearch,openPl,lvTick,sim:async id=>{await lvGame(id,true);lvPaint();return LV.on},LV};
 /* ---------- lista ---------- */
 function rkList(){let L=ROOK().slice();const q=String(CST.q||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
- if(q)L=L.filter(x=>(x.n+" "+x.sc).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").includes(q));if(CST.pos)L=L.filter(x=>x.pos.includes(CST.pos));
+ if(q)L=L.filter(x=>(x.n+" "+x.sc).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").includes(q));if(CST.pos)L=L.filter(x=>x.pos.includes(CST.pos));if(CST.yr)L=L.filter(x=>x.yr===CST.yr);
  const K={rk:x=>-x.rk,pdk:x=>x.pdk??-99,p36:x=>x.p36??-99,eff:x=>x.eff??-99,age:x=>-x.age,min:x=>x.gp?x.mp:-99,wk:x=>x.wk??-99}[CST.sort]||(x=>-x.rk),sg=CST.dir==="a"?-1:1;L.sort((a,b)=>sg*(K(b)-K(a)));
  const card=x=>`<div class="dsrk" data-drk="${e(x.slug)}" role="button" tabindex="0" aria-label="Profilo di ${e(x.n)}"><div class="dsrkh"><i class="dsrkn">${x.rk}</i><span class="dsini" style="--sc:${scCol(x.sc)}">${e(ini(x.n))}</span><span class="dsrki"><b>${e(x.n)}</b><small>${ageB(x.age)}${e(x.pos)} · ${e(x.sc)}${x.h?" · "+e(x.h):""}</small></span><span class="dsrkv">${pdkB(x.pdk)}<small>PDK</small>${trB(x.wk)}</span></div>${lvLine(x)}
   <div class="dsrks"><span><b>${x.gp?f1(x.mp):"–"}</b><small>min</small></span><span><b>${x.eff!=null?f2c(x.eff):"–"}</b><small>PDK/min</small></span><span><b>${x.p36!=null?f1(x.p36):"–"}</b><small>PDK/36′</small></span><span><b>${x.gp}</b><small>partite</small></span>${x.md?`<span><b>${x.md}</b><small>mock</small></span>`:""}</div>
@@ -10435,6 +10435,7 @@ function vList(){const w=wait("Statistiche");if(w)return w;lvKick();
  return `<div class="dsroom">${back("Statistiche")}${hero()}<div class="dsbox"><h4 class="dsh">Prospetti del Draft 2027 <small>primi ${ROOK().length} del big board · Tankathon ${e(COLDRAFT.upd||"")}${COLDRAFT.espn?" · partite ESPN "+e(COLDRAFT.espn):""}</small></h4>
  <input id="dsq" class="vtq" type="search" placeholder="🔍 Cerca un prospetto o un college" autocomplete="off" value="${e(CST.q||"")}">
  <div class="chips">${["","PG","SG","SF","PF","C"].map(p=>`<button class="chip" data-dpos="${p}" aria-pressed="${CST.pos===p}">${p||"Tutti"}</button>`).join("")}</div>
+ <div class="chips">${[["","Tutti gli anni"],["Freshman","1° anno"],["Sophomore","2° anno"],["Junior","3° anno"],["Senior","4° anno"],["International","Estero"]].map(([k,l])=>`<button class="chip" data-dyr="${k}" aria-pressed="${CST.yr===k}"${k?` title="${k}"`:""}>${l}</button>`).join("")}</div><!-- (1572) filtro per anni di college (Freshman, Sophomore, Junior, Senior; Estero = campionati fuori dagli USA) -->
  <div class="chips dssort">${head.map(([k,l])=>`<button class="chip" data-dsrt="${k}" aria-pressed="${CST.sort===k}">${l}${CST.sort===k?(CST.dir==="a"?" ▲":" ▼"):""}</button>`).join("")}</div>
  <button class="advbtn ggrbtn ggy" data-dcmp="">⚖ Confronta due prospetti</button>
  <div class="dsrkl" id="dsrkl">${rkList()}</div>
@@ -10532,12 +10533,13 @@ const apri=v=>{cur=v;render();scrollTo(0,0)};
 const keep=()=>{const y=scrollY;render();scrollTo(0,y)};
 document.addEventListener("click",ev=>{if(cur==="efficienza"&&ev.target.closest("[data-colgo]")){ev.preventDefault();CST.q="";load();apri("colstat");return}
  {const c=ev.target.closest("[data-colk]");if(c&&c.closest("#main")){ev.preventDefault();openPl(c.dataset.colk);return}}
- if(!IN())return;const b=ev.target.closest("[data-dsrt],[data-dpos],[data-drk],[data-dcmp],[data-dmet],[data-dper],[data-dsretry]");if(!b||!b.closest("#main"))return;const d=b.dataset;
+ if(!IN())return;const b=ev.target.closest("[data-dsrt],[data-dpos],[data-dyr],[data-drk],[data-dcmp],[data-dmet],[data-dper],[data-dsretry]");if(!b||!b.closest("#main"))return;const d=b.dataset;
  if(d.dsretry){LD=0;load();render();return}
  if(d.dmet){CST.met=d.dmet;save();keep();return}
  if(d.dper){CST.per=d.dper;save();keep();return}
  if(d.dcmp!=null){CST.from="";if(d.dcmp){CST.pa=d.dcmp;if(CST.pb===d.dcmp)CST.pb=""}apri("colcmp");return}
  if(d.dpos!=null){CST.pos=d.dpos;save();keep();return}
+ if(d.dyr!=null){CST.yr=d.dyr;save();keep();return}
  if(d.dsrt){CST.dir=CST.sort===d.dsrt&&CST.dir!=="a"?"a":"d";CST.sort=d.dsrt;save();keep();return}
  if(d.drk){CST.pl=d.drk;CST.from="";apri("colpl")}});
 document.addEventListener("keydown",ev=>{if(ev.key!=="Enter"&&ev.key!==" ")return;const k=ev.target.closest&&ev.target.closest("[data-colk]");if(k&&!ev.target.closest("[data-seg]")){ev.preventDefault();openPl(k.dataset.colk);return}
