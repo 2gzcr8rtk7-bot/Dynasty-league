@@ -1,9 +1,12 @@
 # COLLEGE (1563): ogni domenica alle 17:00 UTC (circa le 18 in Italia) aggiorna i prospetti del Draft 2027 da Tankathon
 # (Statistiche › College) e lo storico settimanale per il trend ▲/▼. Lo esegue GitHub: nessuno deve lanciare niente a mano.
+# (1564) gira anche OGNI MATTINA alle 08:00 UTC (09 in Italia d inverno): dopo Tankathon, tools/college-espn.mjs prende da ESPN tutte
+# le partite dei prospetti con rimbalzi offensivi/difensivi e titolare (PDK esatto). La foto settimanale resta solo della domenica.
 name: college-tankathon
 on:
   schedule:
     - cron: "0 17 * * 0"   # domenica 17:00 UTC ≈ 18:00 ora italiana (inverno)
+    - cron: "0 8 * * *"    # (1564) ogni mattina 08:00 UTC ≈ 09:00 ora italiana (inverno): partite della notte da ESPN
   workflow_dispatch:
 permissions:
   contents: write
@@ -20,12 +23,17 @@ jobs:
           node-version: 20
       - name: Rigenera college-data.js
         run: node tools/tankathon.mjs
+        continue-on-error: true
+      # (1564) partite complete da ESPN (anche se Tankathon non ha risposto: si lavora sul college-data.js di ieri)
+      - name: Partite complete da ESPN
+        run: node tools/college-espn.mjs
+        continue-on-error: true
       - name: Salva se ci sono novità
         run: |
           git config user.name "college-bot"
           git config user.email "college-bot@users.noreply.github.com"
-          if git diff --quiet -- college-data.js; then echo "Nessuna novità"; exit 0; fi
-          git add college-data.js
-          git commit -m "COLLEGE: prospetti Draft 2027 aggiornati da Tankathon [automatico]"
+          if git diff --quiet -- college-data.js tools/college-espn-cache.json; then echo "Nessuna novità"; exit 0; fi
+          git add college-data.js tools/college-espn-cache.json
+          git commit -m "COLLEGE: prospetti Draft 2027 aggiornati da Tankathon + ESPN [automatico]"
           for i in 1 2 3; do git pull --rebase -X theirs origin main && git push origin HEAD:main && exit 0; sleep 5; done
           exit 1

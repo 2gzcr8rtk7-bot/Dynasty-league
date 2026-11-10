@@ -1,5 +1,6 @@
 // DREAMERS – (1563) COLLEGE: i primi 60 del big board di Tankathon per il Draft 2027 (Statistiche › College).
-// Scrive college-data.js (COLDRAFT). Lo lancia GitHub ogni domenica alle 17:00 UTC (college.yml). Prova a mano: node tools/tankathon.mjs
+// Scrive college-data.js (COLDRAFT). Lo lancia GitHub ogni mattina alle 08:00 UTC e la domenica alle 17:00 UTC (college.yml), seguito da
+// tools/college-espn.mjs (1564) che sostituisce il game log con le partite complete di ESPN. Prova a mano: node tools/tankathon.mjs && node tools/college-espn.mjs
 // Dalla pagina del giocatore si prendono le medie a partita (G, MP, FGM-FGA, 3PM-3PA, FTM-FTA, REB, AST, BLK, STL, TO, PF, PTS),
 // il game log della stagione e si aggiorna uno storico settimanale (h) per il trend ▲/▼.
 // I PDK (Dunkest) si calcolano nell app con la stessa formula di questo file (pdkG / pdkS): qui servono solo per lo storico.
@@ -72,9 +73,13 @@ for (const x of top) {
     [num(v("G")), num(v("MP")), fgm, fga, tpm, tpa, ftm, fta, num(v("REB")), num(v("AST")), num(v("BLK")), num(v("STL")), num(v("TO")), num(v("PF")), num(v("PTS"))], x.slug, gl, stag]);
 }
 const oggi = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Rome" }).format(new Date()), H = OLD.h || {};
-/* snapshot della settimana: {d, G, MP, a (PDK a partita), s (medie)}; stessa data = si sovrascrive, massimo 40 settimane */
+/* snapshot della settimana: {d, G, MP, a (PDK a partita), s (medie)}; stessa data = si sovrascrive, massimo 40 settimane.
+   (1564) il workflow ora gira anche ogni mattina: la foto si scrive solo la DOMENICA (ora italiana), o la prima volta per un prospetto nuovo,
+   così il trend ▲/▼ resta settimana su settimana. SNAP=1 la forza (prova a mano). La ricalcola poi tools/college-espn.mjs con le partite ESPN. */
+const domenica = new Intl.DateTimeFormat("en-US", { timeZone: "Europe/Rome", weekday: "short" }).format(new Date()) === "Sun" || process.env.SNAP === "1";
 for (const r of out) {
   const s = r[10]; if (!(s[0] > 0)) continue;
+  if (!domenica && (H[r[11]] || []).length) continue;
   const L = (H[r[11]] || []).filter(z => z.d !== oggi); L.push({ d: oggi, G: s[0], MP: s[1], a: pdkSea(s, r[12]), s });
   H[r[11]] = L.slice(-40);
 }

@@ -5713,7 +5713,9 @@ const hmAdd=n=>`<span class="hmadd${segHas(n)?" on":""}" data-seg="${String(n).r
 const hmAddT=(names,nick)=>{const all=names.length&&names.every(segHas);return`<span class="hmadd hmaddT${all?" on":""}" data-segteam="${encodeURIComponent(JSON.stringify(names))}" data-nick="${String(nick).replace(/"/g,"&quot;")}" role="button" tabindex="0" aria-pressed="${!!all}" aria-label="${all?"Smetti di seguire":"Segui"} tutti i giocatori di ${String(nick).replace(/"/g,"&quot;")} di stanotte" title="${all?"Smetti di seguire":"Segui"} tutta la squadra di stanotte">${all?"✓":"+"}</span>`};
 function segToast(t){try{let el=document.getElementById("segtoast");if(!el){el=document.createElement("div");el.id="segtoast";document.body.appendChild(el)}el.textContent=t;el.classList.add("on");clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove("on"),1800)}catch(e){}}
 const segBtn=(n,lab)=>`<span class="segi${segHas(n)?" on":""}" data-seg="${String(n).replace(/"/g,"&quot;")}" role="button" tabindex="0" aria-pressed="${segHas(n)}" aria-label="Segui ${String(n).replace(/"/g,"&quot;")}">${SEG_SVG(segHas(n))}${lab?`<em>${segHas(n)?"Seguito":"Segui"}</em>`:""}</span>`;
-let OSV={per:"notte",m:"pdk"};
+let OSV={per:"notte",m:"pdk",q:""};
+/* (1564) ricerca dentro l Osservatorio (stessi risultati della Home, College compreso): si ridisegnano solo i risultati, la casella non perde il fuoco */
+document.addEventListener("input",e=>{if(cur!=="osserv"||e.target.id!=="osq")return;OSV.q=e.target.value;const b=document.getElementById("osres");if(b){const h=homeSearchHtml(OSV.q);b.hidden=!h;b.innerHTML=h}});
 function segInfo(n){
   for(const t in ROSTER){const p=(ROSTER[t]||[]).find(x=>x[0]===n);if(p)return{t,own:TEAMS[t].nick,nba:p[3],kind:"T"}}
   try{const S=typeof GL_STATS!=="undefined"?GL_STATS:{};for(const x of GLEAGUE)for(const p of x.g){const st=S[x.t+"|"+p[0]]||{};if((st.n||p[0])===n)return{t:x.t,own:"G-"+TEAMS[x.t].nick,nba:st.nba||"",kind:"G",k:x.t+"|"+p[0]}}}catch(e){}
@@ -5730,7 +5732,9 @@ function segBadge(){try{homeNotteRefresh()}catch(e){}const b=document.getElement
 setInterval(()=>{if(cur==="home")segBadge()},60000);
 function vOsserv(){fantaLiveAvvia();
   const per=OSV.per,mt=OSV.m,NI=osNight(),tg=(k,opts)=>`<span class="cltg" role="group">${opts.map(([v,l])=>`<button data-osv="${k}|${v}" aria-pressed="${OSV[k]===v}">${l}</button>`).join("")}</span>`;
-  const rows=SEGUI.map(n=>{const I=segInfo(n),N=NI[tvNm(n)]||null,G=PARTITE[n]||[];let v=null,x={};
+  /* (1564) i prospetti del College seguiti ("col:slug") hanno la loro sezione sotto (COLAPI.osBody): qui solo i giocatori NBA/G League/FA */
+  const SEGN=SEGUI.filter(n=>!n.startsWith("col:")),nCol=SEGUI.length-SEGN.length;
+  const rows=SEGN.map(n=>{const I=segInfo(n),N=NI[tvNm(n)]||null,G=PARTITE[n]||[];let v=null,x={};
     if(per==="gen"){const mn=G.reduce((a,y)=>a+y[2],0),dk=G.reduce((a,y)=>a+y[3],0);const dkey=d=>{const[g,m]=d.split("/").map(Number);return(m>=8?0:12)*100+m*100+g},ser=G.slice().sort((a,b)=>dkey(a[0])-dkey(b[0])).map(y=>mt==="eff"?y[4]:y[3]),tt=ser.filter(q=>q!=null).length>=3?grTrend(ser):null;x={g:G.length,mn:G.length?mn/G.length:null,md:G.length?dk/G.length:null,ef:mn?dk/mn:null,last:pdkLast(n),tp:tt?tt.pct:null};v=mt==="eff"?x.ef:x.md}
     else if(N&&(per==="notte"||N.lv)){x=N;v=mt==="eff"?(N.min>0?N.p/N.min:null):N.p}
     return{n,I,N,x,v,show:per==="gen"||(N&&(per==="notte"||N.lv))}});
@@ -5740,13 +5744,16 @@ function vOsserv(){fantaLiveAvvia();
   const hd=per==="gen"?`<th>Giocatore</th><th class="pdkl">${mt==="eff"?"Eff.":"PDK med"}</th><th>Min</th><th>Ultima</th><th>Trend</th>`:`<th>Giocatore</th><th class="pdkl">${mt==="eff"?"Eff.":"PDK"}</th><th>Min</th><th>Pt</th><th>Rb</th><th>As</th>`;
   const tr=r=>per==="gen"?`<tr><td>${who(r)}</td><td class="pdkl">${pill(r)}</td><td>${r.x.mn!=null?r.x.mn.toFixed(1).replace(".",","):"—"}</td><td>${r.x.last!=null?pdkB(r.x.last,pdkF(r.x.last)):"—"}</td><td>${r.x.tp==null?"—":`<span class="trd ${Math.abs(r.x.tp)<3?"s":r.x.tp>0?"u":"d"}">${Math.abs(r.x.tp)<3?"=":r.x.tp>0?"▲ +":"▼ −"}${Math.abs(r.x.tp)<3?"":Math.abs(r.x.tp).toFixed(0)+"%"}</span>`}</td></tr>`:`<tr class="${r.N&&r.N.lv?"lvr":""}"><td>${who(r)}</td><td class="pdkl">${pill(r)}</td><td>${r.x.mt}</td><td class="pts">${r.x.pt}</td><td>${r.x.rb}</td><td>${r.x.as}</td></tr>`;
   const cols=per==="gen"?5:6,nd=campoNotte();
-  const body=!SEGUI.length?`<p class="note">Non segui ancora nessun giocatore. Cercalo dalla Home e tocca il segnalibro accanto al nome, oppure apri la sua scheda e tocca «Segui».</p>`
-   :`${vis.length?`<div class="tbl-wrap"><table class="ptbl tvbox drbox clbox osbox${per==="gen"?" osgen":""}"><thead><tr>${hd}</tr></thead><tbody>${vis.map(tr).join("")}</tbody></table></div>`:`<p class="note">${per==="live"?"Nessuno dei tuoi giocatori seguiti sta giocando adesso.":nd?"Nessuno dei tuoi giocatori seguiti è sceso in campo stanotte.":"Nessuna partita NBA stanotte."}</p>`}
+  const body=!SEGUI.length?`<p class="note">Non segui ancora nessun giocatore. Cercalo qui sopra o dalla Home e tocca il segnalibro accanto al nome, oppure apri la sua scheda e tocca «Segui». Ci sono anche i prospetti del College.</p>`
+   :!SEGN.length?"":`${vis.length?`<div class="tbl-wrap"><table class="ptbl tvbox drbox clbox osbox${per==="gen"?" osgen":""}"><thead><tr>${hd}</tr></thead><tbody>${vis.map(tr).join("")}</tbody></table></div>`:`<p class="note">${per==="live"?"Nessuno dei tuoi giocatori seguiti sta giocando adesso.":nd?"Nessuno dei tuoi giocatori seguiti è sceso in campo stanotte.":"Nessuna partita NBA stanotte."}</p>`}
     ${per!=="gen"&&no.length?`<p class="osno">Non in campo: ${no.map(r=>`<span>${r.n}</span>`).join(", ")}</p>`:""}`;
+  const oq=OSV.q||"",ores=oq?homeSearchHtml(oq):"";
   return`<button class="gback" id="osback">‹ Home</button>${H("Osservatorio",`<em>${SEGUI.length} seguit${SEGUI.length===1?"o":"i"}</em>`)}
+  <input id="osq" class="vtq osq" type="search" placeholder="🔍 Cerca un giocatore o un prospetto del college" autocomplete="off" aria-label="Cerca un giocatore da seguire" value="${oq.replace(/&/g,"&amp;").replace(/"/g,"&quot;")}"><div class="hres" id="osres"${ores?"":" hidden"}>${ores}</div>
   <div class="cltgw">${tg("per",[["live","Live"],["notte","Notte"],["gen","Generale"]])}</div>
   <div class="cltgw">${tg("m",[["pdk","PDK"],["eff","Efficienza"]])}</div>
   ${body}
+  <div id="oscol">${nCol&&window.COLAPI?COLAPI.osBody():""}</div>
   <p class="note">${per==="gen"?"Stagione 2026/27: PDK medio e efficienza (PDK per minuto) di tutte le partite giocate. Trend = andamento della stagione (da almeno 3 partite) sulla misura scelta; = vuol dire stabile.":per==="live"?"Solo chi sta giocando adesso (dati Dynasty TV, PDK provvisorio con la formula Dunkest).":"La notte NBA in corso o appena finita (data USA): chi gioca ora è segnato Live."} La lista dei seguiti è salvata solo su questo dispositivo.</p>
   <details class="osbk"><summary>Salva o ripristina la lista</summary><p class="note">Copia il testo per tenerlo da parte o per passarlo a un altro telefono; incollalo sotto per importarlo (si aggiunge ai seguiti che hai già).</p><textarea id="osta" readonly rows="3">${JSON.stringify(SEGUI).replace(/&/g,"&amp;").replace(/</g,"&lt;")}</textarea><div class="setrow"><button data-osc="copy">Copia</button></div><textarea id="osin" rows="3" placeholder="Incolla qui la lista"></textarea><div class="setrow"><button data-osc="imp">Importa</button><button data-osc="clr">Smetti di seguire tutti</button></div></details>`}
 document.addEventListener("click",e=>{
@@ -8110,18 +8117,21 @@ document.getElementById("main").addEventListener("click",e=>{if(cur!=="college")
 /* Ricerca giocatori dalla Home: risultati sotto la barra, tocco = scheda giocatore */
 /* Ricerca dalla Home (27/10/2026): cerca in tutte le sezioni e porta alla sezione giusta.
    Squadre (ROSTER) → scheda giocatore · G League (GLEAGUE/GL_STATS) → sezione G League con il giocatore aperto · Free agent (FA, senza quelli già in G League) → scheda free agent */
-function homeSearch(q){const box=document.getElementById("hres");if(!box)return;const nz=v=>String(v).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");q=nz(q.trim());
-  if(q.length<2){box.hidden=true;box.innerHTML="";return}
+/* (1564) i risultati si costruiscono in homeSearchHtml: li usa anche la ricerca dell Osservatorio; in fondo i prospetti del College (COLAPI, dati caricati alla prima ricerca) */
+function homeSearch(q){const box=document.getElementById("hres");if(!box)return;const h=homeSearchHtml(q);box.hidden=!h;box.innerHTML=h}
+function homeSearchHtml(q){const nz=v=>String(v).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");q=nz(String(q||"").trim());
+  if(q.length<2)return"";
   const qa=nz(q).replace(/\./g,""),hit=n=>nz(n).replace(/\./g,"").includes(qa);
   const L=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>{if(hit(p[0]))L.push({t,p})}));
   const S=typeof GL_STATS!=="undefined"?GL_STATS:{},G=[],glN=new Set();
   GLEAGUE.forEach(x=>x.g.forEach(p=>{const st=S[x.t+"|"+p[0]]||{},full=st.n||p[0];glN.add(nz(full));if(hit(full)||hit(p[0]))G.push({t:x.t,k:x.t+"|"+p[0],n:full,r:p[1],nba:st.nba||""})}));
   const F=FA.filter(x=>hit(x[0])&&!glN.has(nz(x[0])));
-  box.hidden=false;const sec=(lab,n)=>`<p class="hrsec">${lab}<span>${n}</span></p>`,R={G:"Guardia",F:"Ala",C:"Centro"};
+  const sec=(lab,n)=>`<p class="hrsec">${lab}<span>${n}</span></p>`,R={G:"Guardia",F:"Ala",C:"Centro"};
   const hT=L.slice(0,8).map(({t,p})=>`<button class="hrr" data-pln="${p[0].replace(/"/g,"&quot;")}" data-plt="${t}" style="--tc:${TEAMS[t].bg}"><span class="hrj">${jersey(t,p[1],p[0])}</span><span class="hrn"><b>${RTR(p[0])}${p[0]}</b><small>${TEAMS[t].nick} · ${R[p[2]]} · ${p[3]}</small></span>${segBtn(p[0])}<i>›</i></button>`).join("");
   const hG=G.slice(0,6).map(g=>`<button class="hrr hrgl" data-glk="${g.k.replace(/"/g,"&quot;")}" style="--tc:${TEAMS[g.t].bg}"><span class="hrj hrglb">${glBadge(g.t,"hrglbg")}</span><span class="hrn"><b>${RTR(g.n)}${g.n}</b><small>G-${TEAMS[g.t].nick} · ${R[g.r]}${g.nba?" · "+g.nba:""}</small></span>${segBtn(g.n)}<i>›</i></button>`).join("");
   const hF=F.slice(0,6).map(x=>`<button class="hrr hrfa" data-fan="${x[0].replace(/"/g,"&quot;")}"><span class="hrj hrfan">${x[3]?"#"+x[3]:x[2]}</span><span class="hrn"><b>${RTR(x[0])}${x[0]}</b><small>Free Agent · ${FA_R[x[2]]} · ${x[1]}</small></span>${segBtn(x[0])}<i>›</i></button>`).join("");
-  box.innerHTML=hT||hG||hF?(hT?sec("Squadre",L.length)+hT:"")+(hG?sec("G League",G.length)+hG:"")+(hF?sec("Free agent",F.length)+hF:""):`<p class="hnone">Nessun giocatore trovato</p>`}
+  let hC="";try{hC=window.COLAPI?COLAPI.colSearch(qa):""}catch(e){}
+  return hT||hG||hF||hC?(hT?sec("Squadre",L.length)+hT:"")+(hG?sec("G League",G.length)+hG:"")+(hF?sec("Free agent",F.length)+hF:"")+hC:`<p class="hnone">Nessun giocatore trovato</p>`}
 /* apre la sezione G League con il giocatore già aperto e in vista */
 document.getElementById("main").addEventListener("input",e=>{if(e.target.id==="hq")homeSearch(e.target.value)});
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest(".hrr");if(!b)return;e.preventDefault();
@@ -10282,22 +10292,32 @@ addEventListener("popstate",()=>{if(navBack()){try{history.pushState({dl:1},"")}
    rimbalzi × 1,075 (30% offensivi × 1,25 + 70% difensivi), titolare = partita da almeno 20 minuti, stoppate subite = 0.
    Partita per partita (game log) ci sono anche i bonus triple, doppie/triple doppie e vittoria (+5%); PDK della stagione = media del game log,
    e solo se manca (giocatori nelle leghe estere) PDK dalle medie a partita, senza bonus. Stessa formula in tools/tankathon.mjs (storico settimanale). */
-const CST={sort:"rk",dir:"d",q:"",pos:"",pl:"",pa:"",pb:"",met:"f",per:"g"};
+/* (1564) partite COMPLETE da ESPN (tools/college-espn.mjs, ogni mattina): nelle righe ESPN ci sono rimbalzi offensivi/difensivi e titolare → PDK esatto
+   come tvPdk (stoppate subite = 0, come il percorso ESPN della Dynasty TV). LIVE dal browser durante le partite (lvTick). I prospetti si possono seguire
+   nell Osservatorio (dl_seg con "col:slug") e si trovano nella ricerca della Home e dell Osservatorio (COLAPI). */
+const CST={sort:"rk",dir:"d",q:"",pos:"",pl:"",pa:"",pb:"",met:"f",per:"g",from:""};
 (function(){
 try{Object.assign(CST,JSON.parse(localStorage.getItem("dl_college")||"{}"),{q:""})}catch(_){}
 const save=()=>{try{localStorage.setItem("dl_college",JSON.stringify({sort:CST.sort,dir:CST.dir,pos:CST.pos,met:CST.met,per:CST.per}))}catch(_){}};
 const e=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const f1=v=>(Math.round(v*10)/10).toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1});
+/* (1564) età al draft in evidenza: pastiglia colorata (fino a 19,5 verde, fino a 21 oro, oltre arancio/rosso) */
+const ageB=a=>a?`<b class="dsage ${a<=19.5?"g":a<=21?"y":"o"}" title="Età al draft">${f1(a)} anni</b>`:"";
 const f2c=v=>v.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
 const IN=()=>cur==="colstat"||cur==="colpl"||cur==="colcmp";
 /* ---------- caricamento pigro di college-data.js ---------- */
 let LD=0;/* 0 da caricare, 1 in corso, 2 pronto, -1 errore */
 function load(){if(typeof COLDRAFT!=="undefined"){LD=2;return true}if(LD===1||LD===-1)return false;LD=1;const s=document.createElement("script");s.src="college-data.js";
- s.onload=()=>{LD=typeof COLDRAFT!=="undefined"?2:-1;RC=null;if(IN()){const y=scrollY;render();scrollTo(0,y)}};
+ s.onload=()=>{LD=typeof COLDRAFT!=="undefined"?2:-1;RC=null;const ae=document.activeElement;
+  if(cur==="osserv"&&ae&&ae.id==="osq"){const b=document.getElementById("osres");if(b){const h=homeSearchHtml(OSV.q);b.hidden=!h;b.innerHTML=h}const o=document.getElementById("oscol");if(o)o.innerHTML=osBody()}/* (1564) si sta scrivendo nella ricerca: niente ridisegno completo */
+  else if(IN()||cur==="osserv"){const y=scrollY;render();scrollTo(0,y)}else if(cur==="home"){const q=document.getElementById("hq");if(q&&q.value)try{homeSearch(q.value)}catch(_){}}lvKick()};
  s.onerror=()=>{LD=-1;s.remove();if(IN())render()};document.head.appendChild(s);return false}
 /* ---------- PDK ---------- */
-/* riga del game log [data, avv, V/S, MIN, FGM, FGA, 3PM, 3PA, FTM, FTA, REB, AST, BLK, STL, TO, PF, PTS] */
-const pdkG=g=>{let v=g[16]+1.075*g[10]+1.5*(g[11]+g[13]+g[12])-1.5*g[14]-(g[5]-g[4])-(g[9]-g[8])+(g[3]>=20?1:0);
+/* riga del game log [data, avv, V/S, MIN, FGM, FGA, 3PM, 3PA, FTM, FTA, REB, AST, BLK, STL, TO, PF, PTS]
+   (1564) le righe ESPN hanno in più [.., OREB, DREB, titolare 1/0, id partita]: lì il PDK è ESATTO come tvPdk (rimbalzi offensivi × 1,25,
+   difensivi × 1, +1 solo se titolare davvero); stoppate subite = 0 come nel percorso ESPN della Dynasty TV. Senza (Tankathon) resta l approssimazione. */
+const exG=g=>g.length>=20;
+const pdkG=g=>{const ex=exG(g);let v=g[16]+(ex?g[18]+1.25*g[17]:1.075*g[10])+1.5*(g[11]+g[13]+g[12])-1.5*g[14]-(g[5]-g[4])-(g[9]-g[8])+(ex?(g[19]?1:0):(g[3]>=20?1:0));
  const t=g[6];v+=t>=5?5:t>=3?t:0;const c=[g[16],g[10],g[11],g[13],g[12]].filter(x=>x>=10).length;v+=c>=4?50:c===3?10:c===2?5:0;
  if(g[2]==="W")v+=.05*Math.abs(v);return v};
 /* medie a partita s = [G, MP, FGM, FGA, 3PM, 3PA, FTM, FTA, REB, AST, BLK, STL, TO, PF, PTS], senza bonus di partita */
@@ -10317,7 +10337,7 @@ let RC=null;const ROOK=()=>{const src=typeof COLDRAFT!=="undefined"?COLDRAFT.p:[
   let wk=null;if(h.length>=2)wk=h[h.length-1].a-h[h.length-2].a;else if(gl.length>=2){const ref=DT(h.length?h[h.length-1].d:new Date().toISOString().slice(0,10))-7*864e5,old=gl.filter(g=>DT(g.d)<=ref);
    if(old.length&&old.length<gl.length)wk=a-old.reduce((t,g)=>t+g.f,0)/old.length}
   const sz=trendP(gl.length>=3?gl.map(g=>g.f):h.map(z=>z.a));
-  return{n:r[0],pos:r[1],sc:r[2],yr:r[3],age:r[4],h:r[5],w:r[6],rk:r[7],md:r[9]?`${r[8]}° giro · ${r[9]}ª`:"",s,gp,mp,pdk:a,eff:a!=null&&mp?a/mp:null,p36:a!=null&&mp?a/mp*36:null,slug,gl,stag:r[13]||"",hist:h,wk,sz}});
+  return{n:r[0],pos:r[1],sc:r[2],yr:r[3],age:r[4],h:r[5],w:r[6],rk:r[7],md:r[9]?`${r[8]}° giro · ${r[9]}ª`:"",s,gp,mp,pdk:a,eff:a!=null&&mp?a/mp:null,p36:a!=null&&mp?a/mp*36:null,slug,gl,stag:r[13]||"",hist:h,wk,sz,ea:r[14]||"",et:r[15]||"",ex:gl.some(g=>exG(g.r))}});
  RC={src,L};return L};
 const tsP=s=>{const d=2*(s[3]+.44*s[7]);return d?s[14]/d*100:null};
 function tags(x){if(!x.gp)return["nessuna partita ancora"];const s=x.s,T=[],m=s[1]||x.mp,p36=v=>m?v/m*36:0;
@@ -10330,23 +10350,89 @@ const trS=v=>v==null?"":`<em class="dstr ${v>=0?"up":"dn"}">${v>=0?"▲ +":"▼ 
 const back=l=>`<button class="gback" id="colsbk">‹ ${l}</button>`;
 const hero=()=>`<div class="dshero"><span class="dsspot l"></span><span class="dsspot r"></span><small>Dreamers · Statistiche</small><b>College</b><em>Prospetti del Draft 2027 · PDK</em></div>`;
 function wait(lab){if(load())return"";return`<div class="dsroom">${back(lab)}${hero()}<div class="dsbox">${LD===-1?`<p class="note">Dati del college non disponibili (sei offline?).</p><button class="advbtn ggrbtn ggy" data-dsretry="1">Riprova</button>`:`<p class="note dsload">Caricamento dei prospetti…</p>`}</div></div>`}
+/* ---------- (1564) LIVE: partite del college in corso, lette dal browser come fa la Dynasty TV per l NBA (ESPN risponde con CORS aperto) ----------
+   Gira SOLO con le pagine College aperte (tutti i prospetti della lista) o con l Osservatorio aperto (solo i prospetti seguiti) e l app in primo piano.
+   Ogni 45 s: tabellone del giorno (data USA, tutta la Division I) → partite in corso delle squadre dei prospetti → tabellino (summary) → riga provvisoria
+   nello stesso formato del game log ESPN, quindi stesso PDK esatto. Se non c è niente in corso né in partenza entro 20 minuti, il tabellone si riguarda ogni 5 minuti.
+   A partita finita la riga resta («Finale», provvisoria) finché il giro del mattino (college.yml) non la mette nel game log. */
+const ESC="https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball";
+const LV={on:{},G:[],sbT:0,hot:false,busy:false,last:0,err:false};
+const lvWho=()=>{if(LD!==2)return[];const L=ROOK().filter(x=>x.ea&&x.et);return IN()?L:cur==="osserv"?L.filter(x=>segHas("col:"+x.slug)):[]};
+const etDay=()=>new Intl.DateTimeFormat("sv-SE",{timeZone:"America/New_York"}).format(new Date()).replace(/-/g,"");
+const lvSt=t=>String(t||"").replace("Halftime","Intervallo").replace(/1st Half/,"1° tempo").replace(/2nd Half/,"2° tempo").replace(/(\d)?OT/,(m,n)=>(n?n+"° ":"")+"suppl.").replace(/^Final/,"Finale").replace(" - "," · ");
+/* riga del prospetto dal tabellino ESPN: [data, avv, V/S, MIN, FGM, FGA, 3PM, 3PA, FTM, FTA, REB, AST, BLK, STL, TO, PF, PTS, OREB, DREB, titolare, id partita] */
+function lvRow(S,aid,fin){const comp=S.header&&S.header.competitions&&S.header.competitions[0];if(!comp)return null;
+ const num=v=>{const x=parseFloat(String(v==null?"":v).replace("+",""));return isNaN(x)?0:x},pair=v=>{const m=String(v||"").split("-");return[num(m[0]),num(m[1])]};
+ for(const side of(S.boxscore&&S.boxscore.players)||[]){const st=(side.statistics||[])[0]||{},lab=(st.labels||st.names||[]).map(z=>String(z).toUpperCase()),ix=k=>lab.indexOf(k);
+  const p=(st.athletes||[]).find(z=>z.athlete&&String(z.athlete.id)===String(aid));if(!p)continue;if(p.didNotPlay||!p.stats||!p.stats.length)return null;
+  const g=k=>ix(k)>=0?p.stats[ix(k)]:0,[fgm,fga]=pair(g("FG")),[tpm,tpa]=pair(g("3PT")),[ftm,fta]=pair(g("FT"));
+  const me=comp.competitors.find(c=>String(c.team.id)===String(side.team.id)),op=comp.competitors.find(c=>c!==me)||{};
+  const d=new Intl.DateTimeFormat("sv-SE",{timeZone:"America/New_York"}).format(new Date(comp.date));
+  return[d,(op.team||{}).location||(op.team||{}).displayName||"",fin?(me&&me.winner?"W":"L"):"",Math.round(num(g("MIN"))),fgm,fga,tpm,tpa,ftm,fta,num(g("REB")),num(g("AST")),num(g("BLK")),num(g("STL")),num(g("TO")),num(g("PF")),num(g("PTS")),num(g("OREB")),num(g("DREB")),p.starter?1:0,String(comp.id)]}
+ return null}
+/* un tabellino: righe provvisorie di tutti i prospetti delle due squadre. sim = prova con una partita già giocata (stesso percorso, segnata «Simulazione») */
+async function lvGame(id,sim){const r=await fetch(`${ESC}/summary?event=${encodeURIComponent(id)}`,{cache:"no-store"});if(!r.ok)throw new Error("ESPN "+r.status);const S=await r.json();
+ const comp=S.header.competitions[0],ty=comp.status.type,fin=!sim&&!!ty.completed,st=(sim?"Simulazione · ":"")+lvSt(ty.shortDetail||ty.detail);
+ const sc=comp.competitors.map(c=>(c.team.abbreviation||"")+" "+(c.score||0)).join(" – ");let n=0;
+ for(const x of ROOK().filter(z=>z.ea)){const g=lvRow(S,x.ea,fin);if(!g)continue;if(!sim&&x.gl.some(z=>z.r[20]===String(id)))continue;/* già nel game log del giorno */
+  LV.on[x.slug]={g,f:pdkG(g),ev:String(id),st,sc,fin,sim:!!sim};n++}
+ return n}
+async function lvTick(force){if(LV.busy||document.hidden)return;const W=lvWho();if(!W.length)return;LV.busy=true;const prima=JSON.stringify(LV.on);
+ try{const now=Date.now(),T=new Set(W.map(x=>String(x.et)));
+  if(force||now-LV.sbT>(LV.hot?40e3:300e3)){const r=await fetch(`${ESC}/scoreboard?dates=${etDay()}&groups=50&limit=500`,{cache:"no-store"});if(!r.ok)throw 0;const J=await r.json();LV.sbT=now;
+   LV.G=(J.events||[]).filter(ev=>(((ev.competitions||[])[0]||{}).competitors||[]).some(c=>T.has(String(c.team&&c.team.id)))).map(ev=>({id:String(ev.id),s:ev.status.type.state,t:Date.parse(ev.date)}));
+   LV.hot=LV.G.some(g=>g.s==="in"||(g.s==="pre"&&g.t-now<20*60e3))}
+  /* in corso, più quelle appena finite di cui abbiamo una riga live: un ultimo giro per il finale */
+  const ids=LV.G.filter(g=>g.s==="in"||(g.s==="post"&&Object.values(LV.on).some(o=>o.ev===g.id&&!o.fin&&!o.sim))).map(g=>g.id);
+  for(const k in LV.on){const o=LV.on[k];if(!o.sim&&!o.fin&&!ids.includes(o.ev))delete LV.on[k]}
+  for(const id of ids)try{await lvGame(id)}catch(e){}
+  LV.err=false}catch(e){LV.err=true}
+ LV.busy=false;LV.last=Date.now();if(JSON.stringify(LV.on)!==prima)lvPaint()}
+/* riga live del prospetto (null se non gioca o se la partita è già nel game log) */
+const lvOf=x=>{const o=LV.on[x.slug];return o&&(o.sim||!x.gl.some(z=>z.r[20]===o.ev))?o:null};
+function lvPaint(){if(cur==="colstat"){const L=document.getElementById("dsrkl");if(L)L.innerHTML=rkList()}else if(cur==="colpl")keep();else if(cur==="osserv"){const o=document.getElementById("oscol");if(o)o.innerHTML=osBody()}}
+function lvKick(){if(Date.now()-LV.last>40e3&&lvWho().length)setTimeout(()=>lvTick(),60)}
+setInterval(()=>lvTick(),45e3);document.addEventListener("visibilitychange",()=>{if(!document.hidden)lvKick()});
+const lvLine=x=>{const o=lvOf(x);if(!o)return"";return`<div class="dslv"><b class="clv"><i></i>${o.fin?"FINALE":"LIVE"}</b><span>vs ${e(o.g[1])} · ${e(o.st)} · ${o.g[3]}′ · ${o.g[16]} pt · ${o.g[10]} rb · ${o.g[11]} as</span><em>PDK provv. ${pdkB(o.f,f1(o.f))}</em></div>`};
+/* ---------- (1564) seguire un prospetto (Osservatorio): nella lista dei seguiti (dl_seg) come "col:slug", così non si confonde con i giocatori NBA ---------- */
+const colSeg=(x,lab)=>{const k="col:"+x.slug,on=segHas(k);return`<span class="segi${on?" on":""}" data-seg="${e(k)}" role="button" tabindex="0" aria-pressed="${on}" aria-label="${on?"Smetti di seguire":"Segui"} ${e(x.n)}">${SEG_SVG(on)}${lab?`<em>${on?"Seguito":"Segui"}</em>`:""}</span>`};
+/* sezione College dell Osservatorio: ultima partita (o quella in corso), PDK, minuti, punti e media della stagione; tocco = profilo del prospetto */
+function osBody(){const F=SEGUI.filter(n=>n.startsWith("col:"));if(!F.length)return"";
+ const hd=H("College",`<em>${F.length} prospett${F.length===1?"o":"i"}</em>`);
+ if(LD!==2){load();return hd+`<p class="note">${LD===-1?"Dati del college non disponibili (sei offline?).":"Caricamento dei prospetti…"}</p>`}
+ lvKick();const L=ROOK(),per=typeof OSV!=="undefined"?OSV.per:"";
+ const R=F.map(k=>L.find(x=>"col:"+x.slug===k)).filter(Boolean).map(x=>{const o=lvOf(x),last=x.gl[x.gl.length-1]||null;return{x,o,last,v:o?o.f:last?last.f:null}});
+ const vis=R.filter(r=>per!=="live"||r.o).sort((a,b)=>(b.o?1:0)-(a.o?1:0)||(b.x.pdk??-99)-(a.x.pdk??-99)),fuori=R.filter(r=>!vis.includes(r));
+ const persi=F.filter(k=>!L.some(x=>"col:"+x.slug===k));
+ const who=r=>{const x=r.x,o=r.o,l=r.last;return`<div class="osn" data-colk="${e(x.slug)}" role="button" tabindex="0"><span class="osb"><span class="dsini" style="--sc:${scCol(x.sc)}">${e(ini(x.n))}</span></span><span><b>${e(x.n)}</b><small>College · ${e(x.sc)} · ${e(x.pos)}${o?` · vs ${e(o.g[1])} · <b class="clv"><i></i>${e(o.st)}</b>`:l?` · ${l.d.slice(8)}/${l.d.slice(5,7)} vs ${e(l.o)}`:" · nessuna partita"}</small></span>${colSeg(x)}</div>`};
+ const tr=r=>{const g=r.o?r.o.g:r.last?r.last.r:null;return`<tr class="${r.o&&!r.o.fin?"lvr":""}"><td>${who(r)}</td><td class="pdkl">${r.v!=null?pdkB(r.v,f1(r.v)):"—"}</td><td>${g?g[3]:"—"}</td><td class="pts">${g?g[16]:"—"}</td><td>${r.x.pdk!=null?pdkB(r.x.pdk,f1(r.x.pdk)):"—"}</td></tr>`};
+ return hd+(vis.length?`<div class="tbl-wrap"><table class="ptbl tvbox drbox clbox osbox oscol"><thead><tr><th>Prospetto</th><th class="pdkl">PDK</th><th>Min</th><th>Pt</th><th>Media</th></tr></thead><tbody>${vis.map(tr).join("")}</tbody></table></div>`:`<p class="note">Nessuno dei prospetti seguiti sta giocando adesso.</p>`)
+  +(fuori.length?`<p class="osno">Non in campo: ${fuori.map(r=>`<span>${e(r.x.n)}</span>`).join(", ")}</p>`:"")
+  +(persi.length?`<p class="osno">Non più tra i primi ${L.length} del big board: ${persi.map(k=>`<span class="segi on" data-seg="${e(k)}" role="button" tabindex="0">${e(k.slice(4))} ✕</span>`).join(" ")}</p>`:"")
+  +`<p class="note">PDK = partita in corso (provvisorio, LIVE) o ultima partita giocata; Media = PDK medio della stagione. Dati live ESPN ogni 45 secondi mentre l Osservatorio è aperto${LV.err?" (ESPN non risponde, riprovo)":""}. Tocca un prospetto per il profilo.</p>`}
+/* ricerca (Home e Osservatorio): risultati «College» con il segnalibro per seguirli */
+function colSearch(qa){if(LD!==2){if(LD!==-1)load();return LD===-1?"":`<p class="hrsec">College<span>…</span></p>`}
+ const nz=v=>String(v).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/\./g,""),L=ROOK().filter(x=>nz(x.n+" "+x.sc).includes(qa));if(!L.length)return"";
+ return`<p class="hrsec">College<span>${L.length}</span></p>`+L.slice(0,6).map(x=>`<button class="hrr hrcol" data-colk="${e(x.slug)}" style="--tc:${scCol(x.sc)}"><span class="hrj"><span class="dsini" style="--sc:${scCol(x.sc)}">${e(ini(x.n))}</span></span><span class="hrn"><b>${e(x.n)}</b><small>College · ${e(x.sc)} · ${e(x.pos)} · n° ${x.rk}</small></span>${colSeg(x)}<i>›</i></button>`).join("")}
+function openPl(slug){CST.pl=slug;CST.from=cur==="osserv"||cur==="home"?cur:"";load();cur="colpl";render();scrollTo(0,0)}
+window.COLAPI={load,osBody,colSearch,openPl,lvTick,sim:async id=>{await lvGame(id,true);lvPaint();return LV.on},LV};
 /* ---------- lista ---------- */
 function rkList(){let L=ROOK().slice();const q=String(CST.q||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
  if(q)L=L.filter(x=>(x.n+" "+x.sc).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").includes(q));if(CST.pos)L=L.filter(x=>x.pos.includes(CST.pos));
  const K={rk:x=>-x.rk,pdk:x=>x.pdk??-99,p36:x=>x.p36??-99,eff:x=>x.eff??-99,age:x=>-x.age,min:x=>x.gp?x.mp:-99,wk:x=>x.wk??-99}[CST.sort]||(x=>-x.rk),sg=CST.dir==="a"?-1:1;L.sort((a,b)=>sg*(K(b)-K(a)));
- const card=x=>`<div class="dsrk" data-drk="${e(x.slug)}" role="button" tabindex="0" aria-label="Profilo di ${e(x.n)}"><div class="dsrkh"><i class="dsrkn">${x.rk}</i><span class="dsini" style="--sc:${scCol(x.sc)}">${e(ini(x.n))}</span><span class="dsrki"><b>${e(x.n)}</b><small>${e(x.pos)} · ${e(x.sc)} · ${f1(x.age)} anni${x.h?" · "+e(x.h):""}</small></span><span class="dsrkv">${pdkB(x.pdk)}<small>PDK</small>${trB(x.wk)}</span></div>
+ const card=x=>`<div class="dsrk" data-drk="${e(x.slug)}" role="button" tabindex="0" aria-label="Profilo di ${e(x.n)}"><div class="dsrkh"><i class="dsrkn">${x.rk}</i><span class="dsini" style="--sc:${scCol(x.sc)}">${e(ini(x.n))}</span><span class="dsrki"><b>${e(x.n)}</b><small>${ageB(x.age)}${e(x.pos)} · ${e(x.sc)}${x.h?" · "+e(x.h):""}</small></span><span class="dsrkv">${pdkB(x.pdk)}<small>PDK</small>${trB(x.wk)}</span></div>${lvLine(x)}
   <div class="dsrks"><span><b>${x.gp?f1(x.mp):"–"}</b><small>min</small></span><span><b>${x.eff!=null?f2c(x.eff):"–"}</b><small>PDK/min</small></span><span><b>${x.p36!=null?f1(x.p36):"–"}</b><small>PDK/36′</small></span><span><b>${x.gp}</b><small>partite</small></span>${x.md?`<span><b>${x.md}</b><small>mock</small></span>`:""}</div>
-  <div class="dstags">${tags(x).slice(0,3).map(t=>`<em>${t}</em>`).join("")}<i class="dsgo2">Profilo ›</i></div></div>`;
+  <div class="dstags">${tags(x).slice(0,3).map(t=>`<em>${t}</em>`).join("")}<i class="dsgo2">Profilo ›</i>${colSeg(x)}</div></div>`;
  return L.map(card).join("")||`<p class="note">Nessun prospetto.</p>`}
-function vList(){const w=wait("Statistiche");if(w)return w;
+function vList(){const w=wait("Statistiche");if(w)return w;lvKick();
  const head=[["rk","Big board"],["pdk","PDK"],["wk","Trend"],["p36","PDK/36′"],["eff","PDK/min"],["min","Minuti"],["age","Età"]];
- return `<div class="dsroom">${back("Statistiche")}${hero()}<div class="dsbox"><h4 class="dsh">Prospetti del Draft 2027 <small>primi ${ROOK().length} del big board · Tankathon ${e(COLDRAFT.upd||"")}</small></h4>
+ return `<div class="dsroom">${back("Statistiche")}${hero()}<div class="dsbox"><h4 class="dsh">Prospetti del Draft 2027 <small>primi ${ROOK().length} del big board · Tankathon ${e(COLDRAFT.upd||"")}${COLDRAFT.espn?" · partite ESPN "+e(COLDRAFT.espn):""}</small></h4>
  <input id="dsq" class="vtq" type="search" placeholder="🔍 Cerca un prospetto o un college" autocomplete="off" value="${e(CST.q||"")}">
  <div class="chips">${["","PG","SG","SF","PF","C"].map(p=>`<button class="chip" data-dpos="${p}" aria-pressed="${CST.pos===p}">${p||"Tutti"}</button>`).join("")}</div>
  <div class="chips dssort">${head.map(([k,l])=>`<button class="chip" data-dsrt="${k}" aria-pressed="${CST.sort===k}">${l}${CST.sort===k?(CST.dir==="a"?" ▲":" ▼"):""}</button>`).join("")}</div>
  <button class="advbtn ggrbtn ggy" data-dcmp="">⚖ Confronta due prospetti</button>
  <div class="dsrkl" id="dsrkl">${rkList()}</div>
- <p class="note">Dati di Tankathon (medie e partite della stagione in corso al college o nella sua lega), aggiornati ogni domenica alle 18 con uno storico settimana per settimana. PDK = formula Dunkest della lega (punti, rimbalzi, 1,5 × assist, recuperi e stoppate, −1,5 palle perse, −1 per ogni tiro e libero sbagliato, +1 titolare, bonus triple, doppie doppie e vittoria). Tankathon non divide i rimbalzi e non dice chi parte titolare né le stoppate subite: ogni rimbalzo vale 1,075 (30% offensivi a 1,25), titolare = almeno 20 minuti in campo, stoppate subite non contate. PDK della stagione = media partita per partita del game log (con i bonus); senza game log (leghe estere) dalle medie, senza bonus. ▲/▼ = PDK rispetto alla settimana prima. Tocca un prospetto per il profilo completo.</p></div></div>`}
+ <p class="note">Big board e mock di Tankathon; partite del college TUTTE da ESPN, aggiornate ogni mattina alle 9 (storico per il trend ogni domenica). PDK = formula Dunkest della lega, esatta come nella Dynasty TV: punti, rimbalzi difensivi, 1,25 × offensivi, 1,5 × assist, recuperi e stoppate, −1,5 palle perse, −1 per ogni tiro e libero sbagliato, +1 se titolare, bonus triple, doppie doppie e vittoria; stoppate subite non contate (ESPN non le dà). PDK della stagione = media partita per partita. I giocatori delle leghe estere non sono su ESPN: per loro restano i dati di Tankathon (rimbalzi × 1,075, titolare = almeno 20 minuti; senza game log dalle medie, senza bonus). Durante le partite: LIVE con il PDK provvisorio. ▲/▼ = PDK rispetto alla settimana prima. Il segnalibro mette il prospetto nell Osservatorio.</p></div></div>`}
 /* ---------- grafico (stesso disegno del Grafico delle Statistiche: griglia, etichette, punti con valore) ---------- */
 const MET={f:["PDK",x=>x.f,"pdk"],m:["Minuti",x=>x.m,"min"],e:["Efficienza",x=>x.m?x.f/x.m:0,"eff"]};
 const fmV=(v,m)=>m==="e"?f2c(v):f1(v);
@@ -10369,18 +10455,21 @@ const ctl=()=>`<div class="pergr"><span>Andamento per</span><div>${[["g","Partit
  <div class="grtgs">${Object.keys(MET).map(k=>`<button class="grtg ${MET[k][2]}" data-dmet="${k}" aria-pressed="${CST.met===k}"><i></i>${MET[k][0]}</button>`).join("")}</div>`;
 const perTxt=()=>CST.per==="w"?"settimana per settimana (storico della domenica)":"partita per partita (game log)";
 /* ---------- profilo del prospetto (come la scheda giocatore) ---------- */
-function vPl(){const w=wait("College");if(w)return w;const L=ROOK(),x=L.find(z=>z.slug===CST.pl)||L[0];if(!x)return`<div class="dsroom">${back("College")}<p class="note">Nessun prospetto.</p></div>`;CST.pl=x.slug;
+function vPl(){const BL=CST.from==="home"?"Home":CST.from==="osserv"?"Osservatorio":"College",w=wait(BL);if(w)return w;const L=ROOK(),x=L.find(z=>z.slug===CST.pl)||L[0];if(!x)return`<div class="dsroom">${back(BL)}<p class="note">Nessun prospetto.</p></div>`;CST.pl=x.slug;lvKick();const lv=lvOf(x);
  const s=x.s,bg=scCol(x.sc),p36=v=>s[1]?v/s[1]*36:null,pct=(a,b)=>b?f1(a/b*100)+"%":"–",ts=tsP(s);
  const stat=(lab,val,sub="")=>`<div class="gst"><small>${lab}</small><b>${val}</b>${sub?`<em>${sub}</em>`:""}</div>`;
  const G=pts(x,CST.per),sz=trendP(G.map(g=>MET[CST.met][1](g)));
+ /* (1564) partita in corso: ultimo punto provvisorio del grafico (solo «Partite»), fuori da media e trend */
+ const Gc=CST.per==="g"&&lv?[...G,{k:"lv",lab:lv.fin?"FIN":"LIVE",sub:String(lv.g[1]).split(" ")[0].slice(0,9),f:lv.f,m:lv.g[3]}]:G;
  const rows=[["Punti",14],["Rimbalzi",8],["Assist",9],["Recuperi",11],["Stoppate",10],["Palle perse",12],["Falli",13]];
  const sP=s[0]?pdkS(s):null;
- return `<div class="dsroom dspg">${back("College")}
+ return `<div class="dsroom dspg">${back(BL)}
  <div class="ghead dsph" style="background:linear-gradient(115deg,${bg} 0%,color-mix(in srgb,${bg} 55%,#000) 100%);color:#ffffff;border-bottom:4px solid #0b0b0b">
   <div class="gjer"><span class="dsini xl">${e(ini(x.n))}</span></div>
-  <div class="gtit"><small>${e(x.sc)}${x.stag?" · "+e(x.stag):""}</small><h3>${e(x.n)}</h3><p>${[x.pos,x.yr,f1(x.age)+" anni al draft",x.h,x.w?x.w+" lb":""].filter(Boolean).map(e).join(" · ")}<span style="display:block">Big board n° ${x.rk}${x.md?" · mock "+e(x.md):""}</span></p></div>
+  <div class="gtit"><small>${e(x.sc)}${x.stag?" · "+e(x.stag):""}</small><h3>${e(x.n)}</h3><p>${ageB(x.age)}${[x.pos,x.yr,x.h,x.w?x.w+" lb":""].filter(Boolean).map(e).join(" · ")}<span style="display:block">Big board n° ${x.rk}${x.md?" · mock "+e(x.md):""}</span></p></div>
  </div>
- <button class="advbtn ggrbtn ggy" data-dcmp="${e(x.slug)}">⚖ Confronta con un altro prospetto</button>
+ <div class="dsplb"><button class="advbtn ggrbtn ggy" data-dcmp="${e(x.slug)}">⚖ Confronta</button>${colSeg(x,1)}</div>
+ ${lvLine(x)}
  ${!x.gp?`<p class="note">Nessuna partita giocata finora: i dati compariranno dopo la prima gara.</p>`:`
  <div class="gbig g2"><div><b class="gpdk">${pdkB(x.pdk,f2c(x.pdk))}</b><small>PDK medi a partita ${trB(x.wk,"in 7 gg")}</small></div><div>${eff(x.eff)}<small>Efficienza (PDK al minuto)</small></div></div>
  <div class="gstats">${stat("Partite",x.gp)}${stat("Minuti medi",f1(x.mp))}${stat("Proiezione 36′",x.p36!=null?f1(x.p36):"–","PDK")}${stat("Settimana",x.wk!=null?(x.wk>=0?"+":"−")+f1(Math.abs(x.wk)):"–","PDK vs 7 giorni fa")}${stat("Stagione",x.sz!=null?(x.sz>=0?"+":"−")+Math.round(Math.abs(x.sz))+"%":"–","trend dei PDK")}${stat("Ultima partita",x.gl.length?f1(x.gl[x.gl.length-1].f):"–",x.gl.length?"PDK vs "+e(x.gl[x.gl.length-1].o):"")}</div>
@@ -10395,12 +10484,13 @@ function vPl(){const w=wait("College");if(w)return w;const L=ROOK(),x=L.find(z=>
  <tr><td>True shooting</td><td colspan="3">${ts!=null?f1(ts)+"%":"–"}</td></tr></tbody></table></div>`:`<p class="note">Medie della stagione non ancora pubblicate da Tankathon.</p>`}`}
  ${H("Grafico")}
  <div class="grroom dsgr">${ctl()}
- <div class="grcard grshc"><div class="grtrs"><div class="grtr ${MET[CST.met][2]}"><i></i><b>${G.length?fmV(avgPts(G,CST.met),CST.met):"–"}</b>${trS(sz)}</div></div>${chart([{col:"#22c55e",G}],CST.met)}<div class="grfoot">${G.length} ${CST.per==="w"?"settimane":"partite"} · ${perTxt()}</div></div></div>
- ${x.gl.length?H("Partita per partita",`<em>${x.gl.length} ${x.gl.length===1?"gara":"gare"}</em>`)+`
+ <div class="grcard grshc"><div class="grtrs"><div class="grtr ${MET[CST.met][2]}"><i></i><b>${G.length?fmV(avgPts(G,CST.met),CST.met):"–"}</b>${trS(sz)}</div></div>${chart([{col:"#22c55e",G:Gc}],CST.met)}<div class="grfoot">${G.length} ${CST.per==="w"?"settimane":"partite"} · ${perTxt()}${Gc!==G?" · ultimo punto: partita in corso (provvisorio)":""}</div></div></div>
+ ${x.gl.length||lv?H("Partita per partita",`<em>${x.gl.length} ${x.gl.length===1?"gara":"gare"}${lv?" + 1 live":""}</em>`)+`
  <div class="tbl-wrap"><table class="dstab dslog"><thead><tr><th>Data</th><th>Vs</th><th>Min</th><th>PDK</th><th>PT</th><th>RB</th><th>AS</th><th>ST</th><th>BL</th><th>TO</th><th>Tiri</th></tr></thead><tbody>
- ${x.gl.slice().reverse().map(g=>{const r=g.r;return`<tr><td>${g.d.slice(8)}/${g.d.slice(5,7)}</td><td>${e(g.o)} <i class="dswl ${g.wl==="W"?"w":"l"}">${g.wl==="W"?"V":"S"}</i></td><td>${g.m}</td><td>${pdkB(g.f)}</td><td>${r[16]}</td><td>${r[10]}</td><td>${r[11]}</td><td>${r[13]}</td><td>${r[12]}</td><td>${r[14]}</td><td>${r[4]}/${r[5]}</td></tr>`}).join("")}</tbody></table></div>`:""}
+ ${lv?(r=>`<tr class="dslvr"><td><b class="clv"><i></i>${lv.fin?"FIN":"LIVE"}</b></td><td>${e(r[1])}</td><td>${r[3]}</td><td>${pdkB(lv.f,f1(lv.f))}</td><td>${r[16]}</td><td>${r[10]}</td><td>${r[11]}</td><td>${r[13]}</td><td>${r[12]}</td><td>${r[14]}</td><td>${r[4]}/${r[5]}</td></tr>`)(lv.g):""}
+ ${x.gl.slice().reverse().map(g=>{const r=g.r;return`<tr><td>${g.d.slice(8)}/${g.d.slice(5,7)}</td><td>${e(g.o)} <i class="dswl ${g.wl==="W"?"w":"l"}">${g.wl==="W"?"V":"S"}</i>${exG(r)&&r[19]?' <i class="dstit" title="titolare">T</i>':""}</td><td>${g.m}</td><td>${pdkB(g.f)}</td><td>${r[16]}</td><td>${exG(r)?`${r[10]}<small class="dsor">${r[17]}+${r[18]}</small>`:r[10]}</td><td>${r[11]}</td><td>${r[13]}</td><td>${r[12]}</td><td>${r[14]}</td><td>${r[4]}/${r[5]}</td></tr>`}).join("")}</tbody></table></div>`:""}
  <p class="dsan"><b>Analisi:</b> ${tags(x).join(" · ")}.</p>
- <p class="note">Dati Tankathon${x.stag?" della stagione "+e(x.stag):""}. PDK con la formula Dunkest della lega adattata ai dati del college: rimbalzi × 1,075 (Tankathon non divide offensivi e difensivi: 30% offensivi a 1,25), +1 titolare se in campo almeno 20 minuti, stoppate subite non contate; partita per partita con i bonus triple, doppie doppie e vittoria. PDK medi = media del game log${x.gl.length?"":" (qui manca: dalle medie, senza bonus)"}; «PDK dalle medie» nella tabella = stessa formula sulle medie a partita, senza bonus. Efficienza = PDK al minuto: verde oltre 1,10 · giallo 0,80–1,10 · rosso sotto 0,80. Settimana = PDK di oggi meno quelli di 7 giorni fa; Stagione = trend dei PDK nel grafico.</p></div>`}
+ <p class="note">${x.ex?`Partite ESPN${x.stag?" della stagione "+e(x.stag):""}, tutte (aggiornate ogni mattina; LIVE durante le partite). PDK esatto con la formula Dunkest della lega: rimbalzi difensivi × 1 e offensivi × 1,25 (in tabella RB = totale e offensivi+difensivi), +1 solo se titolare (T), stoppate subite non contate (ESPN non le dà); partita per partita con i bonus triple, doppie doppie e vittoria. PDK medi = media delle partite;`:`Dati Tankathon${x.stag?" della stagione "+e(x.stag):""} (questo prospetto non è su ESPN college). PDK con la formula Dunkest della lega adattata: rimbalzi × 1,075 (Tankathon non divide offensivi e difensivi: 30% offensivi a 1,25), +1 titolare se in campo almeno 20 minuti, stoppate subite non contate; partita per partita con i bonus triple, doppie doppie e vittoria. PDK medi = media del game log${x.gl.length?"":" (qui manca: dalle medie, senza bonus)"};`} «PDK dalle medie» nella tabella = stessa formula sulle medie a partita, senza bonus. Efficienza = PDK al minuto: verde oltre 1,10 · giallo 0,80–1,10 · rosso sotto 0,80. Settimana = PDK di oggi meno quelli di 7 giorni fa; Stagione = trend dei PDK nel grafico.</p></div>`}
 /* ---------- comparatore tra due prospetti ---------- */
 function vCmp(){const w=wait("College");if(w)return w;const L=ROOK(),byRk=L.slice().sort((a,b)=>a.rk-b.rk),A=L.find(z=>z.slug===CST.pa),B=L.find(z=>z.slug===CST.pb),CA="#22c55e",CB="#f472b6";
  const sel=(k,v,c)=>`<label class="grsel"><span><i style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${c};margin-right:5px"></i>Prospetto ${k==="pa"?"A":"B"}</span><select data-dsel="${k}"><option value="">🔍 Scegli il prospetto ${k==="pa"?"A":"B"}</option>${byRk.map(x=>`<option value="${e(x.slug)}"${x.slug===v?" selected":""}>${x.rk}. ${e(x.n)} (${e(x.sc)})</option>`).join("")}</select></label>`;
@@ -10416,25 +10506,28 @@ function vCmp(){const w=wait("College");if(w)return w;const L=ROOK(),byRk=L.slic
   ${T("PDK",x=>x.pdk)}${T("Trend 7 gg",x=>x.wk,null,1,v=>(v>=0?"+":"−")+f1(Math.abs(v)))}${T("Minuti",x=>x.gp?x.mp:null)}${T("PDK/min",x=>x.eff,null,1,f2c)}${T("PDK/36′",x=>x.p36)}
   ${T("Punti",pS(14))}${T("Rimbalzi",pS(8))}${T("Assist",pS(9))}${T("Recuperi",pS(11))}${T("Stoppate",pS(10))}${T("Palle perse",pS(12),null,-1)}
   ${T("Dal campo",pc2(2,3),null,1,pcf)}${T("Da 3",pc2(4,5),null,1,pcf)}${T("Liberi",pc2(6,7),null,1,pcf)}${T("True shooting",x=>x.s[0]?tsP(x.s):null,null,1,pcf)}
-  ${T("Partite",x=>x.gp,null,0,v=>String(v))}${T("Età al draft",x=>x.age,null,-1)}<tr><td>${e(A.h||"–")}</td><th>Altezza</th><td>${e(B.h||"–")}</td></tr>${T("Big board",x=>x.rk,null,-1,v=>"n° "+v)}<tr><td>${e(A.pos)} · ${e(A.sc)}</td><th>Ruolo</th><td>${e(B.pos)} · ${e(B.sc)}</td></tr></tbody></table></div>
+  ${T("Partite",x=>x.gp,null,0,v=>String(v))}${T("Età al draft",x=>x.age,null,-1,ageB)}<tr><td>${e(A.h||"–")}</td><th>Altezza</th><td>${e(B.h||"–")}</td></tr>${T("Big board",x=>x.rk,null,-1,v=>"n° "+v)}<tr><td>${e(A.pos)} · ${e(A.sc)}</td><th>Ruolo</th><td>${e(B.pos)} · ${e(B.sc)}</td></tr></tbody></table></div>
   <p class="note">In verde il migliore dei due in ogni voce (per palle perse, età e posto nel big board vince il valore più basso). Con «Partite» le gare sono allineate per numero (1ª, 2ª…), con «Settimane» per data dello storico. PDK come nella lista College (formula Dunkest adattata ai dati di Tankathon).</p>`}
  return `<div class="dsroom dspg">${back("College")}<div class="grroom dsgr"><div class="grhd"><span class="grlg"></span><div><small>Confronto · due prospetti sullo stesso grafico</small><b>Comparatore college</b></div></div>
  <div class="grctl">${sel("pa",CST.pa,CA)}${sel("pb",CST.pb,CB)}</div>${ctl()}${body}</div></div>`}
 VIEWS.colstat=vList;VIEWS.colpl=vPl;VIEWS.colcmp=vCmp;
 /* indietro (tasto ‹, swipe, tasto di Android): profilo e comparatore › College › Statistiche */
-NAV_SUB.push({ok:()=>cur==="colpl"||cur==="colcmp",lab:"College",back:()=>{cur="colstat";render()}},{ok:()=>cur==="colstat",lab:"Statistiche",back:()=>{effSub="";cur="efficienza";render()}});
+/* (1564) profilo aperto dall Osservatorio o dalla ricerca della Home: ‹ torna lì */
+NAV_SUB.push({ok:()=>cur==="colpl"&&!!CST.from,get lab(){return CST.from==="home"?"Home":"Osservatorio"},back:()=>{const f=CST.from;CST.from="";cur=f;render()}},{ok:()=>cur==="colpl"||cur==="colcmp",lab:"College",back:()=>{cur="colstat";render()}},{ok:()=>cur==="colstat",lab:"Statistiche",back:()=>{effSub="";cur="efficienza";render()}});
 const apri=v=>{cur=v;render();scrollTo(0,0)};
 const keep=()=>{const y=scrollY;render();scrollTo(0,y)};
 document.addEventListener("click",ev=>{if(cur==="efficienza"&&ev.target.closest("[data-colgo]")){ev.preventDefault();CST.q="";load();apri("colstat");return}
+ {const c=ev.target.closest("[data-colk]");if(c&&c.closest("#main")){ev.preventDefault();openPl(c.dataset.colk);return}}
  if(!IN())return;const b=ev.target.closest("[data-dsrt],[data-dpos],[data-drk],[data-dcmp],[data-dmet],[data-dper],[data-dsretry]");if(!b||!b.closest("#main"))return;const d=b.dataset;
  if(d.dsretry){LD=0;load();render();return}
  if(d.dmet){CST.met=d.dmet;save();keep();return}
  if(d.dper){CST.per=d.dper;save();keep();return}
- if(d.dcmp!=null){if(d.dcmp){CST.pa=d.dcmp;if(CST.pb===d.dcmp)CST.pb=""}apri("colcmp");return}
+ if(d.dcmp!=null){CST.from="";if(d.dcmp){CST.pa=d.dcmp;if(CST.pb===d.dcmp)CST.pb=""}apri("colcmp");return}
  if(d.dpos!=null){CST.pos=d.dpos;save();keep();return}
  if(d.dsrt){CST.dir=CST.sort===d.dsrt&&CST.dir!=="a"?"a":"d";CST.sort=d.dsrt;save();keep();return}
- if(d.drk){CST.pl=d.drk;apri("colpl")}});
-document.addEventListener("keydown",ev=>{if(!IN()||(ev.key!=="Enter"&&ev.key!==" "))return;const b=ev.target.closest&&ev.target.closest("[data-drk]");if(b){ev.preventDefault();CST.pl=b.dataset.drk;apri("colpl")}});
+ if(d.drk){CST.pl=d.drk;CST.from="";apri("colpl")}});
+document.addEventListener("keydown",ev=>{if(ev.key!=="Enter"&&ev.key!==" ")return;const k=ev.target.closest&&ev.target.closest("[data-colk]");if(k&&!ev.target.closest("[data-seg]")){ev.preventDefault();openPl(k.dataset.colk);return}
+ if(!IN())return;const b=ev.target.closest&&ev.target.closest("[data-drk]");if(b&&!ev.target.closest("[data-seg]")){ev.preventDefault();CST.pl=b.dataset.drk;CST.from="";apri("colpl")}});
 document.addEventListener("change",ev=>{if(cur!=="colcmp")return;const s=ev.target.closest("[data-dsel]");if(!s)return;CST[s.dataset.dsel]=s.value;keep()});
 /* ricerca: si ridisegna solo la lista, la casella non perde il fuoco */
 document.addEventListener("input",ev=>{if(cur!=="colstat"||ev.target.id!=="dsq")return;CST.q=ev.target.value;const L=document.getElementById("dsrkl");if(L)L.innerHTML=rkList()});
@@ -10479,6 +10572,19 @@ html body .dsroom table.dstab:not(#z){min-width:0!important;width:100%!important
 html body .dsroom table.dslog:not(#z) td,html body .dsroom table.dslog:not(#z) th{padding:5px 3px!important;font-size:12px}
 html body .dsroom .grroom.dsgr:not(#z){min-height:0!important;padding-bottom:10px}
 html body .dsroom .dsrkv .pdkx,html body .dsroom .dslog .pdkx{min-width:0}
+/* (1564) LIVE, segnalibro e Osservatorio */
+.dslv{display:flex;flex-wrap:wrap;align-items:center;gap:3px 8px;margin:8px 0 0 30px;padding:6px 8px;border-radius:10px;background:rgba(255,77,94,.12);border:1px solid rgba(255,77,94,.35);font-size:11.5px;line-height:1.3;color:var(--dst,#fff);min-width:0}
+.dspg>.dslv{margin:0 0 10px}.dslv span{flex:1 1 150px;min-width:0}.dslv em{font-style:normal;font-weight:800;white-space:nowrap}.dslv .clv{font-size:11px}
+.dsrk .segi,.dsplb .segi{flex:none;color:var(--dsa);cursor:pointer}.dsrk .dstags .segi{margin-left:6px;display:inline-flex}.dsrk .segi svg{width:20px;height:20px}
+.dsplb{display:flex;gap:8px;align-items:stretch;margin:0 0 10px}.dsplb .advbtn{flex:1;margin:0}.dsplb .segi{display:inline-flex;align-items:center;gap:5px;padding:0 12px;border-radius:12px;border:1px solid var(--dsl);background:var(--dsc);font-weight:800;font-size:13px}.dsplb .segi svg{width:18px;height:18px}.dsplb .segi em{font-style:normal}
+.dslvr td{background:rgba(255,77,94,.1)}.dslvr .clv{font-size:10.5px}.dstit{font-style:normal;font-size:9.5px;font-weight:900;padding:0 3px;border-radius:4px;background:color-mix(in srgb,var(--dsa) 30%,transparent);color:var(--dst)}
+.dsor{display:block;font-size:9.5px;color:var(--dsm);line-height:1}
+.osb .dsini,.hrj .dsini{width:28px;height:28px;flex:0 0 28px;font-size:11px;border-width:1.5px}.hrcol .hrj{display:grid;place-items:center}
+input.osq{width:100%;margin:0 0 8px}#osres{margin-top:0}
+/* (1564) età al draft: pastiglia colorata (verde ≤19,5 · oro ≤21 · arancio oltre), leggibile su parquet, classico e notte */
+.dsage{display:inline-block;margin:0 5px 0 0;padding:1px 7px;border-radius:999px;font-size:11px;font-weight:900;font-style:normal;line-height:1.45;letter-spacing:.01em;white-space:nowrap;vertical-align:1px;border:1px solid rgba(0,0,0,.18);box-shadow:0 1px 2px rgba(0,0,0,.2)}.dsage.g{background:#16a34a;color:#fff}.dsage.y{background:#facc15;color:#3b2a00}.dsage.o{background:#ea580c;color:#fff}html.notte .dsage.g{background:#22c55e;color:#052e16}html.notte .dsage.o{background:#f97316;color:#1c0a00}html body .dsrki small .dsage{font-size:10.5px}.gtit p .dsage{font-size:12.5px;padding:2px 9px;margin-right:7px;border-color:rgba(255,255,255,.55)}.dscmp td .dsage{margin:0}html body .dsage.g:not(#z),html body .dsage.o:not(#z){color:#fff!important;-webkit-text-fill-color:#fff!important}html body .dsage.y:not(#z){color:#3b2a00!important;-webkit-text-fill-color:#3b2a00!important}html.notte body .dsage.g:not(#z){color:#052e16!important;-webkit-text-fill-color:#052e16!important}html.notte body .dsage.o:not(#z){color:#1c0a00!important;-webkit-text-fill-color:#1c0a00!important}
+/* la tabella College dell Osservatorio sta dentro #oscol: niente margini negativi del tema parquet (uscirebbe di 14 px a destra) */
+html body main #oscol .tbl-wrap:not(#z){margin-left:0!important;margin-right:0!important;max-width:100%!important;overflow-x:auto}
 </style>
 <script>
 /* Pallino LIVE sul tasto Entertainment: ogni 2 minuti (app aperta e visibile) un controllo leggero sul tabellone ESPN
