@@ -7834,9 +7834,9 @@ function shWrapL(c,txt,w){const out=[];String(txt).split("\n").forEach(par=>{let
 async function shOpen(k){const old=document.querySelector(".shsheet");if(old)old.remove();
   const sh=document.createElement("div");sh.className="shsheet";sh.innerHTML='<div class="shbox"><p class="shwait">Preparo l\'immagine…</p></div>';document.body.appendChild(sh);
   sh.addEventListener("click",e=>{if(e.target===sh||e.target.closest(".shx"))sh.remove()});
-  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="cl"?await shClassifica():k==="gr"?await shGrafico():k==="gt"?await shGrTeam():k==="cm"?await shCompar():k==="ht"?await shHistTrade(SHR_HT):k==="ta"?await shHistTrade(-1,{T:taTrade(),sub:taSub(),look:window.TA_LOOK}):k==="sp"?await shSpecial(SHR_SP):k==="gm"?await window.shGusti(SHR_GM):k==="pl"?await shPlayer():k==="pc"?await shPcard():k==="dm"?await shDM():k==="bt"?await window.shBT():k==="bs"?await window.shBS():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
+  let cv=null;try{cv=k==="campo"?await shCampo():k==="duel"?await shDuel():k==="po"?await shPlayoff():k==="cl"?await shClassifica():k==="gr"?await shGrafico():k==="gt"?await shGrTeam():k==="cm"?await shCompar():k==="ht"?await shHistTrade(SHR_HT):k==="ta"?await shHistTrade(-1,{T:taTrade(),sub:taSub(),look:window.TA_LOOK}):k==="sp"?await shSpecial(SHR_SP):k==="gm"?await window.shGusti(SHR_GM):k==="pl"?await shPlayer():k==="pc"?await shPcard():k==="dm"?await shDM():k==="bt"?await window.shBT():k==="bs"?await window.shBS():k==="sc"?await window.shSC():k==="card"?await shCardImg(SH_CARD):await shDreamers()}catch(e){console.error(e)}
   if(!cv){sh.querySelector(".shbox").innerHTML='<p class="shwait">Niente da condividere adesso.</p><button class="shx">Chiudi</button>';return}
-  const name=(k==="gm"?"gusti-"+((TEAMS[SHR_GM]||{}).nick||"gm").toLowerCase():k==="ta"?"pic-trade":k==="sp"?("trade-speciale-"+vnz((SPECIALI[SHR_SP]||{}).entra||"").replace(/ /g,"-")):k==="ht"?("scambio-"+((TRADES[SHR_HT]&&TRADES[SHR_HT].data)||"").replace(/\D+/g,"-")):k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="cl"?"dreamers-classifica":k==="cm"?"confronto-"+((SHR_CM&&SHR_CM.P[0]&&SHR_CM.P[1])?(SHR_CM.P[0].n+"-"+SHR_CM.P[1].n):"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pl"?"scheda-"+((SHR_PL&&SHR_PL.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pc"?"prestazione-"+((SHR_PC&&SHR_PC.x.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="dm"?"scontro-"+((SHR_DM&&SHR_DM.a+"-"+SHR_DM.b)||"").toLowerCase():k==="card"?"grafico":"dreamers")+".png";
+  const name=(k==="gm"?"gusti-"+((TEAMS[SHR_GM]||{}).nick||"gm").toLowerCase():k==="ta"?"pic-trade":k==="sp"?("trade-speciale-"+vnz((SPECIALI[SHR_SP]||{}).entra||"").replace(/ /g,"-")):k==="ht"?("scambio-"+((TRADES[SHR_HT]&&TRADES[SHR_HT].data)||"").replace(/\D+/g,"-")):k==="campo"?(SHR_CAMPO&&SHR_CAMPO.turno?"migliori-del-turno":"live-stanotte"):k==="duel"?"dreamers-sfida":k==="po"?"dreamers-playoff":k==="cl"?"dreamers-classifica":k==="cm"?"confronto-"+((SHR_CM&&SHR_CM.P[0]&&SHR_CM.P[1])?(SHR_CM.P[0].n+"-"+SHR_CM.P[1].n):"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="gr"?"grafico-"+((SHR_GR&&SHR_GR.p)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pl"?"scheda-"+((SHR_PL&&SHR_PL.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="pc"?"prestazione-"+((SHR_PC&&SHR_PC.x.n)||"").toLowerCase().replace(/[^a-z0-9]+/g,"-"):k==="dm"?"scontro-"+((SHR_DM&&SHR_DM.a+"-"+SHR_DM.b)||"").toLowerCase():k==="card"?"grafico":k==="sc"?"scontrino-scommesse":"dreamers")+".png";
   let file=null,url="";const mk=async c=>{const blob=await new Promise(r=>c.toBlob(r,"image/png"));file=new File([blob],name,{type:"image/png"});if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(blob)};await mk(cv);
   /* Campo: cursore "fino a dove condividere" (si parte sempre dall'alto: prime N righe) */
   const NR=k==="campo"&&SHR_CAMPO?SHR_CAMPO.R.length:0,sl=NR>1?`<div class="shcut"><div><b>Condividi dalla 1ª alla <output>${NR}</output>ª riga</b><small>su ${NR} · trascina per fermarti prima</small></div><input type="range" min="1" max="${NR}" value="${NR}" step="1" aria-label="Fino a quale riga condividere"></div>`:"";
@@ -12556,7 +12556,7 @@ document.addEventListener("click",e=>{
 .btbet b{font-size:13.5px;line-height:1.2}.btbet small{display:block;font-size:11.5px;color:#ffd0d6;margin-top:2px}
 .btst{justify-self:end;text-align:right;font-family:var(--display);font-style:italic;font-weight:800;font-size:15px}.btst small{font-family:system-ui,sans-serif;font-style:normal;font-weight:600}
 .btbet.v{border-color:#4ade80}.btbet.v .btst{color:#8cf0a8}.btbet.p{border-color:rgba(255,138,154,.6)}.btbet>div:first-child>b{color:#8cf0a8}.btbet.p>div:first-child>b{color:#ff8a9a}.btbet.x>div:first-child>b{color:#e9d5ff}.btbet.p .btst{color:#ff8a9a}.btbet.x .btst{color:#ffd0d6}.btbet.a .btst{color:#ffe27a}
-.btbk{display:grid;gap:8px}.btbk button,.btbk textarea{width:100%;box-sizing:border-box;border-radius:12px}.btbk button{padding:11px;border:1px solid #ffe27a;background:rgba(255,226,122,.12);color:#ffe27a;font:800 14px var(--display);font-style:italic;cursor:pointer}
+.btbk{display:grid;gap:8px}/* (1565) scontrino */.btscb{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:10px 0 0;padding:10px;border-radius:12px;border:1.5px solid #ffe27a;background:rgba(0,0,0,.35);color:#ffe27a;font:800 15px var(--display);font-style:italic;letter-spacing:.04em;cursor:pointer}.btscl{margin:6px 2px 0;font-size:11px;color:#f3b8c1}.btscr{border:0;background:none;color:#ffe27a;text-decoration:underline;font-size:11px;padding:0;cursor:pointer}.btbk button,.btbk textarea{width:100%;box-sizing:border-box;border-radius:12px}.btbk button{padding:11px;border:1px solid #ffe27a;background:rgba(255,226,122,.12);color:#ffe27a;font:800 14px var(--display);font-style:italic;cursor:pointer}
 .btbk textarea{min-height:64px;padding:8px;border:1px solid rgba(255,226,122,.45);background:#12030a;color:#fff;font-size:11px}
 .btft{text-align:center;font-size:11px;color:#c98a96;margin:18px 0 0}
 </style>
@@ -12621,7 +12621,7 @@ function sfide(){try{const stt=drStand(),P=drPO(stt);let k=drCurWeek(P),W=null;
   return{k,lab,len:W.len||3,start:W.start,end:W.end,ko,open:now<ko,list:pr.map(([a,b])=>{const sa=S8(a),sb=S8(b),p=clamp(.5+.8*(Phi((sa-sb)*sc/sg)-.5),.15,.85);return{a,b,sa,sb,p,qa:qt(p),qb:qt(1-p)}})}}catch(e){return null}}
 /* --- liquidazione automatica con dati ufficiali --- */
 const rowFor=(n,d)=>(PARTITE[n]||[]).find(r=>r[0]===d.slice(8)+"/"+d.slice(5,7));
-function pay(b,st){b.s=st;const mv=b.fz?0:1;if(st==="v"){b.pay=Math.round(b.st*b.q);BW.saldo+=b.pay*mv}else if(st==="x"){b.pay=b.st;BW.saldo+=b.pay*mv}else b.pay=0}
+function pay(b,st){b.s=st;const mv=b.fz?0:1;if(st==="v"){b.pay=Math.round(b.st*b.q);BW.saldo+=b.pay*mv}else if(st==="x"){b.pay=b.st;BW.saldo+=b.pay*mv}else b.pay=0;reg("S",b.rn!=null?String(b.rn):"x"+b.id,0,b.pay*mv,st+"|"+(b.fz?"(per gioco) ":"")+b.desc+" → "+b.pick)}/* (1565) ogni esito entra nel registro degli scontrini e richiama la giocata col suo numero (rn = contatore della giocata; "x…" = giocata di prima del registro) */
 /* esito di una singola scelta: "v" vinta, "p" persa, "x" annullata/pari, null ancora aperta (usata da singole e multiple) */
 function lres(b){const now=Date.now(),T72=72*3600*1000;
  if(b.m==="ou"){const r=rowFor(b.n,b.d);if(r&&!isNaN(+r[3]))return(b.sel==="o")===(+r[3]>b.L)?"v":"p";if((b.ko&&now>b.ko+T72)||(!r&&drDkHas(b.d)))return"x";return null}
@@ -12641,7 +12641,7 @@ function settle(){let ch=false;
  }catch(e){}});
  if(ch)bSave()}
 function mxCon(L,s){const pl=x=>x.m==="ou"?[x.n]:x.m==="du"?[x.a,x.b]:[];const P=pl(s);return L.find(l=>l.key!==s.key&&pl(l).some(p=>P.includes(p)))}
-function placeMx(){const L=BS.legs;BS.ok=false;
+function placeMx(){const L=BS.legs;BS.ok=false;if(!scIniOk()){BS.msg="Prima stampa lo scontrino iniziale (qui sopra).";return}
  if(L.length<MXMIN){BS.msg="Scegli almeno "+MXMIN+" quote per la multipla.";return}
  if(L.some(l=>!l.open||(l.ko&&Date.now()>=l.ko))){BS.msg="Una scelta è già chiusa: toglila dalla multipla.";return}
  const st=Math.floor(+BS.stake||0);
@@ -12653,9 +12653,9 @@ function placeMx(){const L=BS.legs;BS.ok=false;
  const M=mxQ(L);if(!fz)BW.saldo-=st;
  BW.bets.unshift({fz,id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),ts:Date.now(),m:"mx",key,q:M.q,st,ko:Math.min(...L.map(l=>l.ko||9e15)),desc:"Multipla · "+L.length+" scelte",pick:"quota "+nf(M.raw,2)+(M.bo>1?" +bonus "+Math.round((M.bo-1)*100)+"%":""),s:"a",pay:0,
   legs:L.map(l=>({m:l.m,key:l.key,d:l.d,k:l.k,n:l.n,a:l.a,b:l.b,sel:l.side,L:l.L,q:l.q,ko:l.ko,desc:l.desc,pick:l.pick,r:null}))});
- bSave();BS.legs=[];BS.ok=true;BS.msg="Multipla registrata: "+st+" gettoni a quota "+nf(M.q,2)+"."}
+ bSave();{const b0=BW.bets[0];b0.rn=reg("M","",fz?0:st,0,(fz?"(per gioco) ":"")+L.length+" scelte @"+nf(M.q,2)+" · "+L.map(l=>l.pick).join(", "));bSave()}BS.legs=[];BS.ok=true;BS.msg="Multipla registrata: "+st+" gettoni a quota "+nf(M.q,2)+"."}
 /* --- scommessa --- */
-function place(){const S=BS.sel;BS.ok=false;if(!S){return}
+function place(){const S=BS.sel;BS.ok=false;if(!S){return}if(!scIniOk()){BS.msg="Prima stampa lo scontrino iniziale (qui sopra).";return}
  const st=Math.floor(+BS.stake||0);
  if(!S.open||(S.ko&&Date.now()>=S.ko)){BS.msg="Mercato chiuso: la partita è iniziata.";return}
  if(st<MINS){BS.msg="Puntata minima "+ni(MINS)+" gettoni.";return}
@@ -12663,11 +12663,108 @@ function place(){const S=BS.sel;BS.ok=false;if(!S){return}
  const fz=frozen();if(!fz&&st>BW.saldo){BS.msg="Saldo insufficiente.";return}
  if(BW.bets.some(b=>b.key===S.key)){BS.msg="Hai già giocato questo mercato.";return}
  if(!fz)BW.saldo-=st;BW.bets.unshift({fz,id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),ts:Date.now(),m:S.m,key:S.key,d:S.d,k:S.k,n:S.n,a:S.a,b:S.b,sel:S.side,L:S.L,q:S.q,st,ko:S.ko,desc:S.desc,pick:S.pick,s:"a",pay:0});
- bSave();BS.sel=null;BS.ok=true;BS.msg="Giocata registrata: "+st+" gettoni a quota "+nf(S.q,2)+"."}
+ bSave();{const b0=BW.bets[0];b0.rn=reg("P","",fz?0:st,0,(fz?"(per gioco) ":"")+S.desc+" → "+S.pick+" @"+nf(S.q,2));bSave()}BS.sel=null;BS.ok=true;BS.msg="Giocata registrata: "+st+" gettoni a quota "+nf(S.q,2)+"."}
 /* --- backup --- */
 function h32(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}
 function bkOut(){const j=JSON.stringify(BW);return"DRBET1."+btoa(unescape(encodeURIComponent(j)))+"."+h32("dr|"+j)}
-function bkIn(t){const m=String(t||"").trim().match(/^DRBET1\.([A-Za-z0-9+/=]+)\.([a-z0-9]+)$/);if(!m)return"Codice non valido.";try{const j=decodeURIComponent(escape(atob(m[1])));if(h32("dr|"+j)!==m[2])return"Codice modificato o incompleto.";const o=JSON.parse(j);if(!o||o.v!==1||!Array.isArray(o.bets))return"Codice non valido.";BW=o;bSave();return""}catch(e){return"Codice non valido."}}
+function bkIn(t){const m=String(t||"").trim().match(/^DRBET1\.([A-Za-z0-9+/=]+)\.([a-z0-9]+)$/);if(!m)return"Codice non valido.";try{const j=decodeURIComponent(escape(atob(m[1])));if(h32("dr|"+j)!==m[2])return"Codice modificato o incompleto.";const o=JSON.parse(j);if(!o||o.v!==1||!Array.isArray(o.bets))return"Codice non valido.";BW=o;bSave();rgSync("ripristino da backup");return""}catch(e){return"Codice non valido."}}
+/* (1565) REGISTRO E SCONTRINI DEL CENTRO SCOMMESSE (contro i furbetti).
+   Ogni movimento di gettoni (giocata singola o multipla, esito/pagamento, incasso, premio) entra in un registro su questo telefono (localStorage dl_bet_log):
+   contatore cronologico che parte da un numero CASUALE scelto al primo uso (diverso per ogni telefono) + catena di firme (ogni riga firma anche quella prima).
+   Due scontrini soltanto:
+   · SCONTRINO INIZIALE (DRSI1): uno per squadra/telefono, da mandare subito nel gruppo; senza non si gioca. Fissa il punto di partenza: telefono,
+     contatore, firma, saldo e giocate già aperte (per chi giocava già, parte dallo stato di adesso).
+   · SCONTRINO FINALE (DRSF1): quando si vuole, quante volte si vuole; è SEMPRE cumulativo, dall'iniziale a adesso (giocate, esiti, aperte, saldo, ultima firma):
+     ristamparlo non "consuma" niente, quindi non ci possono essere buchi. Il codice è compresso (deflate) e firmato.
+   Contro le modifiche dopo la copia: lo scontrino si vede solo come immagine e si copia tutto intero con un tasto; il codice contiene la firma del
+   riassunto (sh) e il numero dei movimenti (ne); l'impronta di 6 caratteri è sull'immagine e nel testo, per abbinare foto e testo incollato.
+   Verifica: `python3 tools/scontrini.py <iniziale> <finale…>` (o un file .txt con i testi incollati).
+   ONESTÀ: tutto gira sul telefono e il segreto sta nel codice: un programmatore deciso che legge questo file può costruirsi una catena finta.
+   Lo scopo è rendere VISIBILI i trucchi alla portata di tutti: cancellare i dati per ripartire da 1.000, giocare da due telefoni, ritoccare il saldo
+   nel localStorage, ripristinare un backup vecchio dopo una perdita, ritoccare o tagliare uno scontrino incollato. */
+const RGK="dl_bet_log",SCSEC="dr|duc|scontrini|v1|"+"Zp4#",SCK2="#k9|sc|"+"m2";
+const h64=s=>h32(SCSEC+s)+h32(s+SCK2);
+/* riga del registro: [n, t (secondi), tipo, id, puntati, pagati, saldo dopo, info, firma]
+   tipi: 0 apertura · P singola · M multipla (l'id di una giocata è il suo contatore n) · S esito (id = n della giocata; "x…" = giocata di prima del registro)
+   · I incasso · R premio · A saldo cambiato FUORI dalle scommesse o registro manomesso (sospetto) */
+const rgSig=(ph,dev,x)=>h64([ph,dev,x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7]].join("|"));
+let RG=null;
+const rgSave=()=>{try{localStorage.setItem(RGK,JSON.stringify(RG))}catch(e){}};
+function rgRnd(n){const a=new Uint32Array(n);try{crypto.getRandomValues(a)}catch(e){for(let i=0;i<n;i++)a[i]=Math.floor(Math.random()*4294967296)}return a}
+/* ricontrolla tutta la catena (le righe fino a bk erano già state segnalate come manomesse) */
+function rgOk(L){let ph="0",n=L.c0-1,b=null;for(const x of L.e){if(x[0]!==n+1)return false;if(x[0]>L.bk){if(rgSig(ph,L.dev,x)!==x[8])return false;if(x[2]!=="0"&&b!=null&&x[6]!==b+x[5]-x[4])return false}ph=x[8];n=x[0];b=x[6]}return n===L.n&&ph===L.h}
+function rgAdd(ty,id,st,py,inf,bal){const x=[RG.n+1,Math.floor(Date.now()/1000),ty,String(id||""),Math.round(st||0),Math.round(py||0),Math.round(bal),String(inf||"").slice(0,90)];
+ x.push(rgSig(RG.h,RG.dev,x));RG.e.push(x);RG.n=x[0];RG.h=x[8];RG.b=x[6]}
+function rgInit(){if(RG)return RG;let L=null;try{L=JSON.parse(localStorage.getItem(RGK)||"null")}catch(e){L=null}
+ if(L&&L.v===2&&Array.isArray(L.e)&&L.dev){RG=L;if(!rgOk(L)){/* registro ritoccato a mano: lo segno, lo scontrino finale lo dirà */RG.bk=RG.n;rgAdd("A","",0,0,"registro manomesso",RG.b==null?BW.saldo:RG.b);rgSave()}return RG}
+ const r=rgRnd(2),dev=r[0].toString(36).slice(0,6).padStart(6,"0"),c0=100000+r[1]%900000;
+ RG={v:2,dev,c0,n:c0-1,h:"0",b:null,bk:0,e:[],ini:null,fin:null};
+ rgAdd("0","",0,0,"g"+BW.bets.length+(L?" registro illeggibile":""),BW.saldo);rgSave();return RG}
+/* il saldo vero deve essere quello dell'ultima riga: se no qualcuno l'ha cambiato fuori dalle scommesse */
+function rgSync(why){rgInit();const s=Math.round(BW.saldo);if(s===RG.b)return;const d=s-RG.b;rgAdd("A","",d<0?-d:0,d>0?d:0,why||"saldo cambiato fuori dal registro",s);rgSave()}
+function reg(ty,id,st,py,inf){rgInit();const before=Math.round(BW.saldo)-Math.round(py||0)+Math.round(st||0);if(before!==RG.b){const d=before-RG.b;rgAdd("A","",d<0?-d:0,d>0?d:0,"saldo cambiato fuori dal registro",before)}rgAdd(ty,id,st,py,inf,BW.saldo);rgSave();return RG.n}
+const scIniOk=()=>{rgInit();return!!RG.ini};
+const scAperte=()=>BW.bets.filter(b=>b.s==="a").map(b=>[b.rn!=null?b.rn:"x"+b.id,b.fz?0:b.st]);
+/* codice: JSON → (deflate se il telefono lo sa fare) → XOR con una sequenza pseudo-casuale (il contatore non si legge a occhio) → base64, più la firma */
+function scXor(u8){let x=parseInt(h32(SCSEC),36)&0x7fffffff;const o=new Uint8Array(u8.length);for(let i=0;i<u8.length;i++){x=(Math.imul(x,1103515245)+12345)&0x7fffffff;o[i]=u8[i]^((x>>16)&255)}return o}
+async function scEnc(pf,p){const j=JSON.stringify(p);let u=new TextEncoder().encode(j),z="j";
+ try{if(window.CompressionStream){const r=new Response(new Blob([u]).stream().pipeThrough(new CompressionStream("deflate-raw")));u=new Uint8Array(await r.arrayBuffer());z="z"}}catch(e){u=new TextEncoder().encode(j);z="j"}
+ const b=scXor(u);let s="";for(let i=0;i<b.length;i+=8192)s+=String.fromCharCode.apply(null,b.subarray(i,i+8192));return pf+"."+z+btoa(s).replace(/=+$/,"")+"."+h64(j)}
+/* il riassunto si firma "normalizzato" (spazi e righe vuote non contano: WhatsApp li può cambiare) */
+const scNorm=t=>String(t).split("\n").map(l=>l.replace(/\s+/g," ").trim()).filter(Boolean).join("\n");
+const scDD=t=>new Intl.DateTimeFormat("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"2-digit"}).format(new Date(t*1000));
+const scSq=sq=>{const tm=TEAMS[sq]||{};return tm.city?tm.city+" "+tm.nick:sq};
+/* riassunto compatto del finale: per giorno giocate ed esiti, poi i totali */
+function scRiass(E_,ap){const G={},ord=[],tot={g:0,st:0,v:0,vp:0,p:0,x:0,xp:0,R:0,I:0,A:0};
+ E_.forEach(x=>{const[t,ty,,st,py,,inf]=x,d=scDD(t);if(!G[d]){G[d]={g:0,st:0,v:0,vp:0,p:0,x:0,xp:0,R:0,I:0,A:0};ord.push(d)}const o=G[d];
+  const add=(k,v)=>{o[k]+=v;tot[k]+=v};
+  if(ty==="P"||ty==="M"){add("g",1);add("st",st)}else if(ty==="S"){const r=inf.slice(0,1);if(r==="v"){add("v",1);add("vp",py)}else if(r==="x"){add("x",1);add("xp",py)}else add("p",1)}
+  else if(ty==="R")add("R",1);else if(ty==="I")add("I",1);else if(ty==="A")add("A",1)});
+ const f=o=>[o.g?o.g+(o.g===1?" giocata":" giocate")+" ("+ni(o.st)+")":"",o.v?o.v+(o.v===1?" vinta":" vinte")+" +"+ni(o.vp):"",o.p?o.p+(o.p===1?" persa":" perse"):"",o.x?o.x+" rimborsate +"+ni(o.xp):"",o.R?o.R+" premio":"",o.I?o.I+" incasso":"",o.A?"⚠ "+o.A+" saldo cambiato":""].filter(Boolean).join(" · ");
+ const L=ord.map(d=>d+" · "+(f(G[d])||"—"));const inGioco=ap.reduce((a,x)=>a+x[1],0);
+ return{L,tot:"Totale: "+tot.g+" giocate, puntati "+ni(tot.st)+" · "+tot.v+" vinte (+"+ni(tot.vp)+"), "+tot.p+" perse, "+tot.x+" rimborsate · aperte "+ap.length+(ap.length?" ("+ni(inGioco)+" in gioco)":"")}}
+/* costruisce lo scontrino (riassunto + impronta + codice): k "I" iniziale, "F" finale */
+async function scBuild(k){rgInit();rgSync();const now=Math.floor(Date.now()/1000),sq=k==="I"?BW.sq:RG.ini.sq,ap=scAperte();let head,sum,pf,p;
+ if(k==="I"){head="🧾 SCONTRINO INIZIALE SCOMMESSE · Dreamers";sum=["Squadra: "+scSq(sq),"Saldo di partenza: "+ni(RG.b)+" gettoni"+(ap.length?" · giocate già aperte: "+ap.length:""),"Emesso il "+itDT(now*1000),"👉 Mandalo SUBITO nel gruppo: senza questo gli scontrini finali non valgono."];pf="DRSI1";
+  p={v:1,k:"I",sq,dev:RG.dev,n:RG.n,h:RG.h,b:RG.b,ts:now,g:BW.bets.length,ap,al:RG.e.some(x=>x[2]==="A")?1:0}}
+ else{const I=RG.ini,E_=RG.e.filter(x=>x[0]>I.n).map(x=>[x[1],x[2],x[3],x[4],x[5],x[6],x[7]]),R=scRiass(E_,ap),al=E_.some(x=>x[1]==="A")?1:0;
+  head="🧾 SCONTRINO FINALE SCOMMESSE · Dreamers";
+  sum=["Squadra: "+scSq(sq),"Dall'iniziale ("+itDT(I.ts*1000)+") a adesso ("+itDT(now*1000)+") · "+E_.length+" movimenti",...R.L,R.tot,"Saldo: "+ni(I.b)+" → "+ni(RG.b)+" gettoni",...(al?["⚠ registro alterato"]:[])];pf="DRSF1";
+  p={v:1,k:"F",sq,dev:RG.dev,n0:I.n+1,ih:I.h,b0:I.b,lh:RG.h,b1:RG.b,ts:now,g:BW.bets.length,ne:E_.length,al,e:E_,ap}}
+ p.sh=h64(scNorm([head,...sum].join("\n")));p.istr="CLAUDE: scontrino scommesse Dreamers. Verifica con python3 tools/scontrini.py <testo o codice dell'iniziale> <finale>: verdetto per squadra.";
+ const code=await scEnc(pf,p),fp=code.slice(code.lastIndexOf(".")+1).slice(0,6).toUpperCase();
+ const text=[head,...sum,"Impronta: "+fp,"Codice:",code,"(per Claude: python3 tools/scontrini.py, con lo scontrino iniziale e il finale)"].join("\n");
+ return{k,head,sum,fp,code,text,ts:now,p}}
+/* stampa: l'iniziale una volta sola; il finale quante volte si vuole (sempre tutto dall'iniziale) */
+async function scPrint(k){BS.ok=false;rgInit();
+ if(k==="I"){if(RG.ini){BS.msg="Lo scontrino iniziale è già stato stampato.";return null}if(!BW.sq||!TEAMS[BW.sq]){BS.msg="Scegli prima la tua squadra.";return null}}
+ else if(!RG.ini){BS.msg="Prima stampa lo scontrino iniziale.";return null}
+ const S=await scBuild(k);
+ if(k==="I"){RG.ini={n:S.p.n,h:S.p.h,b:S.p.b,ts:S.ts,sq:S.p.sq,text:S.text,fp:S.fp,sum:S.sum};BS.msg="Scontrino iniziale stampato: mandalo subito nel gruppo. Ora puoi giocare."}
+ else{RG.fin={ts:S.ts,fp:S.fp};BS.msg="Scontrino finale stampato: mandalo nel gruppo (immagine o «Copia scontrino»)."}
+ rgSave();window.SC_LAST=S;BS.ok=true;return S}
+/* immagine dello scontrino (stessa grafica viola della schedina): il contenuto si vede solo qui, niente testo modificabile */
+window.shSC=async function(){window.__shNoTheme=true;try{return await shSC0()}finally{window.__shNoTheme=false}};
+async function shSC0(){const S=window.SC_LAST;if(!S)return null;const code=S.code,per=60,cl=Math.ceil(code.length/per);
+ /* le righe lunghe vanno a capo (niente tagli: l'immagine deve dire tutto quello che dice il testo) */
+ const mc=document.createElement("canvas").getContext("2d"),RW=[];
+ for(const t of S.sum.slice(1)){const warn=/⚠|👉/.test(t),tl=/^(Totale|Saldo)/.test(t),f=tl?SH_F(800,30,1):SH_B(600,25);mc.font=f;let cur_="";
+  for(const w of t.split(" ")){const p=cur_?cur_+" "+w:w;if(mc.measureText(p).width>928&&cur_){RW.push({t:cur_,f,warn,tl});cur_=w}else cur_=p}RW.push({t:cur_,f,warn,tl})}
+ const H=Math.min(12000,330+RW.length*44+120+60+cl*26+170),{cv,c,W}=await shBase(H);c.textBaseline="alphabetic";c.textAlign="center";
+ c.font=SH_F(800,44,1);c.fillStyle="#fcd34d";c.letterSpacing="5px";c.fillText(S.k==="I"?"SCONTRINO INIZIALE":"SCONTRINO FINALE",W/2,206);c.letterSpacing="0px";
+ c.font=SH_F(700,30,1);c.fillStyle="rgba(233,213,255,.9)";c.fillText("Centro scommesse · "+S.sum[0].replace("Squadra: ",""),W/2,252);
+ let y=320;for(const r of RW){c.textAlign="left";c.font=r.f;c.fillStyle=r.warn?"#ff8a9a":r.tl?"#fcd34d":"#fff";c.fillText(r.t,76,y);y+=44}
+ y+=20;c.textAlign="center";c.font=SH_F(800,40,1);c.fillStyle="#fcd34d";c.letterSpacing="4px";c.fillText("IMPRONTA "+S.fp,W/2,y);c.letterSpacing="0px";y+=60;
+ c.font="19px ui-monospace,Menlo,Consolas,monospace";c.fillStyle="rgba(233,213,255,.85)";for(let i=0;i<code.length&&y<H-120;i+=per){c.fillText(code.slice(i,i+per),W/2,y);y+=26}
+ shFoot(c,W,H,"Per Claude: iniziale + finale · non modificare");return cv}
+const scCopy=()=>{const S=window.SC_LAST;if(!S)return false;try{navigator.clipboard.writeText(S.text).catch(()=>{});return true}catch(e){return false}};
+/* riquadro nel Centro: prima dell'iniziale spiega e blocca; dopo, tasto del finale e data dell'ultimo */
+function scBox(){rgInit();rgSync();const sq=BW.sq,S=window.SC_LAST,cp=S?`<button class="btscb" data-bsc="cp">📋 Copia scontrino ${S.k==="I"?"iniziale":"finale"} · ${S.fp}</button>`:"";
+ if(!RG.ini){const T=Object.keys(TEAMS).map(t=>`<button class="btsq${sq===t?" on":""}" data-bsc="sq|${t}" aria-pressed="${sq===t}">${logo(t)}<span>${E(TEAMS[t].nick)}</span></button>`).join("");
+  return`<div class="btcard"><div class="btsec">🧾 Prima di giocare<small>scontrino iniziale</small></div><p class="btsub">Per giocare serve lo <b>scontrino iniziale</b>: fissa il tuo punto di partenza (saldo e contatore di questo telefono). Stampalo una volta sola e mandalo subito nel gruppo. Poi, quando vuoi, stampi lo <b>scontrino finale</b> con tutte le giocate.</p>
+  <div class="btsec" style="margin-top:10px">Chi sei?<small>${sq&&TEAMS[sq]?E(TEAMS[sq].nick):"scegli la tua squadra"}</small></div><div class="btsqs">${T}</div>
+  <button class="btgo" data-bsc="ini" style="width:100%;margin-top:8px"${sq&&TEAMS[sq]?"":" disabled"}>🧾 Stampa scontrino iniziale</button>${cp}</div>`}
+ return`<button class="btscb" data-bsc="fin">🧾 Stampa scontrino finale</button>${cp}<p class="btscl">Ultimo scontrino finale: ${RG.fin?itDT(RG.fin.ts*1000)+" · "+RG.fin.fp:"nessuno"} · iniziale ${itDT(RG.ini.ts*1000)} · ${E((TEAMS[RG.ini.sq]||{}).nick||RG.ini.sq)} <button class="btscr" data-bsc="rini">rivedi</button></p>`}
 /* --- grafica --- */
 const logo=t=>{const u=(typeof LOGO!=="undefined"&&LOGO[t])||"";return u?`<img class="btlg" src="${u}" alt="${E((TEAMS[t]||{}).nick||t)}">`:""};
 const lockTag=(open,ko)=>open?`<span class="btlock">🔓 chiude tra ${hms(ko-Date.now())||"poco"}</span>`:`<span class="btlock off">🔒 chiusa</span>`;
@@ -12696,7 +12793,7 @@ function tabMy(){const B=BW.bets,stl={a:"In corso",v:"Vinta",p:"Persa",x:"Rimbor
  <div class="btsec" style="margin-top:14px">Salvataggio<small>i dati stanno su questo telefono</small></div>
  <div class="btbk"><button data-bbk="copy">📋 Copia backup</button><textarea id="btbk" placeholder="Incolla qui un backup per ripristinare">${E(BS.bk)}</textarea><button data-bbk="rest">♻️ Ripristina da backup</button></div>`}
 function vBet(){
- settle();if(BS.view==="inc")return vInc();if(BS.view==="premi")return vPremi();const lg=LOGO.DUC;let C=[],D=[];try{C=cand();D=duels(C)}catch(e){}
+ rgSync();settle();if(BS.view==="inc")return vInc();if(BS.view==="premi")return vPremi();const lg=LOGO.DUC;let C=[],D=[];try{C=cand();D=duels(C)}catch(e){}
  const open=BW.bets.filter(b=>b.s==="a").reduce((a,b)=>a+b.st,0),done=BW.bets.filter(b=>b.s!=="a"),net=done.reduce((a,b)=>a+(b.s==="v"?b.pay-b.st:b.s==="p"?-b.st:0),0);
  const T=[["sf","Sfide"],["ou","Giocatori"],["du","Duelli"],["my","Giocate"]];
  const body=BS.tab==="sf"?tabSf():BS.tab==="ou"?tabOu(C):BS.tab==="du"?tabDu(D):tabMy();
@@ -12712,7 +12809,7 @@ function vBet(){
  return`<div class="bt"><button class="gback" id="hofback">‹ Giochi</button>
  <div class="bthd"><span class="bti">🎰</span><div><small>Dreamers · Giochi</small><b>Centro scommesse</b><em>Quote automatiche · gettoni</em></div></div>
  <div class="btbank"><button class="btinc btprz" data-bpr="open">🏆 Premi</button><small>Il tuo saldo</small><div class="btbal"><b>${ni(BW.saldo)}</b><span>gettoni · ${nf(BW.saldo/CR,2)} cr</span></div>
- <div class="btstats"><div><small>In gioco</small><b>${ni(open)}</b></div><div><small>Bilancio</small><b class="${net>0?"pos":net<0?"neg":""}">${net>0?"+":""}${ni(net)}</b></div><div><small>Giocate</small><b>${BW.bets.length}</b></div></div>
+ <div class="btstats"><div><small>In gioco</small><b>${ni(open)}</b></div><div><small>Bilancio</small><b class="${net>0?"pos":net<0?"neg":""}">${net>0?"+":""}${ni(net)}</b></div><div><small>Giocate</small><b>${BW.bets.length}</b></div></div>${scBox()}
  ${frozen()?`<p class="btfz">🔒 Cassa bloccata: hai incassato il massimo dell'anno. Le scommesse sono solo per gioco, il saldo non cambia.</p>`:""}<p class="btrule">${ni(CR)} gettoni = 1 credito · puntata ${ni(MINS)}–${ni(MAXS)} · le puntate si chiudono al fischio d'inizio · se un giocatore non gioca la giocata è annullata e i gettoni tornano · le quote includono un margine del banco del ${Math.round(MARG*100)}%.</p></div>
  <div class="bttabs" role="tablist">${T.map(t=>`<button data-bt="${t[0]}" aria-pressed="${BS.tab===t[0]}">${t[1]}</button>`).join("")}</div>
  ${BS.tab!=="my"?`<div class="btmode"><button data-bm="s" aria-pressed="${!BS.mx}">Singola</button><button data-bm="m" aria-pressed="${BS.mx}">Multipla · bonus</button></div>${BS.mx?`<p class="btmxi">Metti insieme da ${MXMIN} a ${MXMAX} scelte (anche di schede diverse): le quote si <b>moltiplicano</b>, ma vinci solo se le indovini <b>tutte</b>. Dalla 3ª scelta c'è un bonus del ${Math.round(MXB*100)}% per ognuna (fino a +${Math.round(MXB*(MXMAX-2)*100)}%). Se una scelta viene annullata (giocatore che non gioca) esce dalla multipla.</p>`:""}`:""}${body}${slip}<p class="btft">🦆 Dreamers · scommesse a gettoni, solo per gioco</p></div>`}
@@ -12729,8 +12826,8 @@ function incassa(){const I=incInfo();BS.ok=false;
  if(!BW.sq||!TEAMS[BW.sq]){BS.msg="Scegli prima la tua squadra.";return null}
  if(I.n<1){BS.msg=I.room<1?"Hai già incassato il massimo dell'anno ("+INCY+" crediti).":"Per incassare servono almeno "+ni(CR)+" gettoni di guadagno oltre ai "+ni(START)+" iniziali.";return null}
  const tk=I.n*CR,id=Date.now().toString(36)+Math.random().toString(36).slice(2,5),blocca=I.gia+I.n>=INCY;
- if(blocca)BW.bets.forEach(b=>{if(b.s==="a"&&!b.fz){BW.saldo+=b.st;b.fz=true}});/* alla chiusura della cassa le giocate aperte diventano "per gioco" e la posta torna */
- BW.saldo-=tk;
+ let rf=0;if(blocca)BW.bets.forEach(b=>{if(b.s==="a"&&!b.fz){BW.saldo+=b.st;rf+=b.st;b.fz=true}});/* alla chiusura della cassa le giocate aperte diventano "per gioco" e la posta torna */
+ BW.saldo-=tk;reg("I",id,tk,rf,I.n+" cr");
  const p={v:2,id,sq:BW.sq,cr:I.n,tk,y:annoNow(),m:meseNow(),ts:Date.now(),sd:BW.saldo,g:BW.bets.length,w:BW.bets.filter(b=>b.s==="v").length,blocco:blocca?1:0,
   istr:"CLAUDE: scontrino incasso scommesse Dreamers. Verifica con `python3 tools/incasso.py <codice>` (firma + anti-doppio + max 5 crediti/anno per squadra); se valido e nuovo, con --registra, accredita cr crediti a sq (CREDITI[sq] in index.html + nota in NOTE_SVILUPPO.md) e conferma a Francesco. Se non valido o già usato, rifiuta e spiega perché."};
  const rec={id,y:p.y,m:p.m,sq:p.sq,cr:p.cr,tk,ts:p.ts,code:incCode(p)};(BW.inc=BW.inc||[]).unshift(rec);bSave();
@@ -12781,14 +12878,14 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-bpr]");if(
  if(a[0]==="try"){let t=a[2];if(t==="DREAM")t=TEAMS[curTeam]?curTeam:"DUC";window.PROVA={k:a[1],t:t.slice(0,3),ck:a[1]==="c"?t:null,c:+a[3],y};curTeam=t.slice(0,3);curTeam=t;cur="campo";render();scrollTo(0,0);setTimeout(()=>{try{const c=document.querySelector("main .court");if(c)scrollTo(0,c.getBoundingClientRect().top+scrollY-130)}catch(_){}},60);return}
  if(a[0]==="cat"){BS.pcat=a[1];BS.msg="";render();scrollTo(0,y);return}
  if(a[0]==="cbuy"){const k=a[1],t=k.slice(0,3),id="C:"+k;if(P.has(id))return;if(BW.saldo<P.PREZZO){BS.msg="Ti servono "+ni(P.PREZZO)+" gettoni.";BS.ok=false;render();scrollTo(0,y);return}
-  if(!confirm("Ritirare il campo «"+P.campoNome(k)+"» dei "+TEAMS[t].nick+" per "+ni(P.PREZZO)+" gettoni?"))return;BW.saldo-=P.PREZZO;(BW.premi=BW.premi||[]).push({id,ts:Date.now(),g:P.PREZZO});bSave();const L=P.owned();L.push(id);P.save(L);P.campoSet(k,true);BS.msg="Campo ritirato e già montato nella pagina dei "+TEAMS[t].nick+".";BS.ok=true;render();scrollTo(0,y);return}
+  if(!confirm("Ritirare il campo «"+P.campoNome(k)+"» dei "+TEAMS[t].nick+" per "+ni(P.PREZZO)+" gettoni?"))return;BW.saldo-=P.PREZZO;(BW.premi=BW.premi||[]).push({id,ts:Date.now(),g:P.PREZZO});bSave();reg("R",id,P.PREZZO,0,id);const L=P.owned();L.push(id);P.save(L);P.campoSet(k,true);BS.msg="Campo ritirato e già montato nella pagina dei "+TEAMS[t].nick+".";BS.ok=true;render();scrollTo(0,y);return}
  if(a[0]==="cuse"){const k=a[1],t=k.slice(0,3),on=P.campoKey(t)!==k;P.campoSet(k,on);BS.msg=on?"Campo montato per i "+TEAMS[t].nick+".":"Tornato il parquet normale per i "+TEAMS[t].nick+".";BS.ok=true;render();scrollTo(0,y);return}
  if(a[0]==="open"){BS.view="premi";BS.msg="";render();scrollTo(0,0);return}
  if(a[0]==="back"){BS.view="";BS.msg="";render();scrollTo(0,0);return}
  if(a[0]==="t"){BS.pt=a[1];BS.msg="";render();scrollTo(0,y);return}
  if(a[0]==="buy"){const id=a[1];if(P.has(id))return;if(BW.saldo<P.PREZZO){BS.msg="Ti servono "+ni(P.PREZZO)+" gettoni.";BS.ok=false;render();scrollTo(0,y);return}
   const T=BS.pt||curTeam,x=P.items(T).find(z=>z.id===id);if(!confirm("Ritirare la maglia «"+(x?x.name:id)+"» per "+ni(P.PREZZO)+" gettoni?"))return;
-  BW.saldo-=P.PREZZO;(BW.premi=BW.premi||[]).push({id,ts:Date.now(),g:P.PREZZO});bSave();const L=P.owned();L.push(id);P.save(L);BS.msg="Maglia ritirata! La trovi nel tasto maglia della squadra.";BS.ok=true;render();scrollTo(0,y);return}
+  BW.saldo-=P.PREZZO;(BW.premi=BW.premi||[]).push({id,ts:Date.now(),g:P.PREZZO});bSave();reg("R",id,P.PREZZO,0,id);const L=P.owned();L.push(id);P.save(L);BS.msg="Maglia ritirata! La trovi nel tasto maglia della squadra.";BS.ok=true;render();scrollTo(0,y);return}
  if(a[0]==="use"){let t=a[1],cd=+a[2];if(t==="DREAM")t=TEAMS[curTeam]?curTeam:"DUC";KIT[t]=cd;kitSalva();BS.msg="Maglia indossata dai "+TEAMS[t].nick+".";BS.ok=true;render();scrollTo(0,y)}});
 function vPremiCampi(){const P=window.PREMI,pr=P.PREZZO;
  const card=k=>{const t=k.slice(0,3),has=P.has("C:"+k),on=P.campoKey(t)===k,ok=BW.saldo>=pr,ap=dlShade(TEAMS[t].bg,.18);
@@ -12819,6 +12916,12 @@ function vInc(){const I=incInfo(),sq=BW.sq,fz=frozen();
  ${INC?`<div class="btsec">Scontrini emessi<small>${(BW.inc||[]).length}</small></div>${INC}`:""}</div>`}
 VIEWS.bet=vBet;
 document.addEventListener("click",e=>{if(cur!=="bet")return;
+ const sc=e.target.closest("[data-bsc]");if(sc&&!sc.disabled){const a=sc.dataset.bsc,y=scrollY;/* (1565) scontrini iniziale e finale */
+  if(a.startsWith("sq|")){BW.sq=a.slice(3);bSave();BS.msg="";render();scrollTo(0,y);return}
+  if(a==="ini"||a==="fin"){sc.disabled=true;scPrint(a==="ini"?"I":"F").then(S=>{render();scrollTo(0,y);if(S)shOpen("sc")}).catch(er=>{console.error(er);BS.msg="Scontrino non riuscito, riprova.";render()});return}
+  if(a==="rini"){rgInit();if(RG.ini&&RG.ini.text){const t=RG.ini.text;window.SC_LAST={k:"I",sum:RG.ini.sum,fp:RG.ini.fp,code:(t.match(/DRSI1\.[^\s]+/)||[""])[0],text:t};shOpen("sc")}return}
+  if(a==="cp"){const ok=scCopy();BS.ok=ok;BS.msg=ok?"Scontrino copiato: incollalo nel gruppo così com'è.":"Copia non riuscita: salva l'immagine.";render();scrollTo(0,y);return}
+  return}
  const t=e.target.closest("[data-bt]");if(t){BS.tab=t.dataset.bt;BS.sel=null;BS.msg="";render();scrollTo(0,0);return}
  const bi=e.target.closest("[data-binc]");if(bi){const a=bi.dataset.binc;
   if(a==="open"){BS.view="inc";BS.msg="";render();scrollTo(0,0);return}
