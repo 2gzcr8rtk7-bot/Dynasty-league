@@ -1,0 +1,32 @@
+# INFORTUNI (1566): ogni 5 minuti GitHub legge gli infortuni NBA da ESPN e li salva nell app (infortuni-data.js) solo se sono cambiati
+# (l ora da sola non conta). Come in ESPN 16. GitHub non garantisce i 5 minuti esatti: a volte il giro parte con qualche minuto di ritardo.
+# I telefoni rileggono ESPN ogni 30 secondi con l app aperta; questo file è il ripiego quando ESPN non risponde. Nessuno deve lanciare niente a mano.
+name: infortuni-espn
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: infortuni
+  cancel-in-progress: true
+jobs:
+  infortuni:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Infortuni ESPN
+        run: node tools/infortuni.mjs
+      - name: Salva se sono cambiati
+        run: |
+          git config user.name "infortuni-bot"
+          git config user.email "infortuni-bot@users.noreply.github.com"
+          if git diff --quiet -- infortuni-data.js && git ls-files --error-unmatch infortuni-data.js >/dev/null 2>&1; then echo "Nessuna novità"; exit 0; fi
+          git add infortuni-data.js
+          git commit -m "Infortuni ESPN aggiornati [automatico]"
+          for i in 1 2 3; do git pull --rebase -X theirs origin main && git push origin HEAD:main && exit 0; sleep 5; done
+          exit 1

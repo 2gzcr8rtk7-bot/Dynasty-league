@@ -3073,10 +3073,12 @@ html.dlt-parquet:not(.notte) header .hnt.hnthd:not(.on){background:rgba(253,243,
   </div>
 </header>
 <main class="wrap" id="main"></main>
-<footer class="wrap upd" id="updbtn" role="button" tabindex="0" aria-label="Apri la cronologia delle modifiche">Ultimo aggiornamento: 10/11/2026 · 10:30<span class="updar">›</span></footer>
+<footer class="wrap upd" id="updbtn" role="button" tabindex="0" aria-label="Apri il report dei dati" data-agg="10/11/2026 · 10:30">Dati ufficiali Dunkest · salvati il 10/11 alle 10:30<span class="updar">›</span></footer>
 
 <script src="dreamers-data.js"></script>
 <script src="tv-data.js"></script>
+<!-- (1566) infortuni ESPN salvati da GitHub col report del mattino (ripiego se il telefono non raggiunge ESPN); se il file manca l app va avanti lo stesso -->
+<script src="infortuni-data.js"></script>
 <script src="hl-data.js"></script>
 <script>
 /* (592) anello di caricamento dati: conta le richieste verso ESPN / NBA e riempie l'anello attorno al logo */
@@ -3198,6 +3200,9 @@ const CHIUSE=GIORNATE.filter(g=>!g.live);
 const CALENDARIO=[[1,[["TUR","EAG"],["DOL","DUC"],["FOX","PEA"],["MOO","SPI"]]],[2,[["DUC","TUR"],["PEA","EAG"],["SPI","DOL"],["MOO","FOX"]]],[3,[["TUR","PEA"],["DUC","SPI"],["EAG","MOO"],["DOL","FOX"]]],[4,[["SPI","TUR"],["MOO","PEA"],["FOX","DUC"],["DOL","EAG"]]],[5,[["TUR","MOO"],["SPI","FOX"],["PEA","DOL"],["DUC","EAG"]]],[6,[["FOX","TUR"],["DOL","MOO"],["EAG","SPI"],["DUC","PEA"]]],[7,[["TUR","DOL"],["FOX","EAG"],["MOO","DUC"],["SPI","PEA"]]],[8,[["TUR","EAG"],["DOL","DUC"],["FOX","PEA"],["MOO","SPI"]]],[9,[["DUC","TUR"],["PEA","EAG"],["SPI","DOL"],["MOO","FOX"]]],[10,[["TUR","PEA"],["DUC","SPI"],["EAG","MOO"],["DOL","FOX"]]],[11,[["SPI","TUR"],["MOO","PEA"],["FOX","DUC"],["DOL","EAG"]]],[12,[["TUR","MOO"],["SPI","FOX"],["PEA","DOL"],["DUC","EAG"]]],[13,[["FOX","TUR"],["DOL","MOO"],["EAG","SPI"],["DUC","PEA"]]],[14,[["TUR","DOL"],["FOX","EAG"],["MOO","DUC"],["SPI","PEA"]]],[15,[["TUR","EAG"],["DOL","DUC"],["FOX","PEA"],["MOO","SPI"]]],[16,[["DUC","TUR"],["PEA","EAG"],["SPI","DOL"],["MOO","FOX"]]],[17,[["TUR","PEA"],["DUC","SPI"],["EAG","MOO"],["DOL","FOX"]]],[18,[["SPI","TUR"],["MOO","PEA"],["FOX","DUC"],["DOL","EAG"]]],[19,[["TUR","MOO"],["SPI","FOX"],["PEA","DOL"],["DUC","EAG"]]],[20,[["FOX","TUR"],["DOL","MOO"],["EAG","SPI"],["DUC","PEA"]]],[21,[["TUR","DOL"],["FOX","EAG"],["MOO","DUC"],["SPI","PEA"]]],[22,[["TUR","EAG"],["DOL","DUC"],["FOX","PEA"],["MOO","SPI"]]],[23,[["DUC","TUR"],["PEA","EAG"],["SPI","DOL"],["MOO","FOX"]]],[24,[["TUR","PEA"],["DUC","SPI"],["EAG","MOO"],["DOL","FOX"]]],[25,[["SPI","TUR"],["MOO","PEA"],["FOX","DUC"],["DOL","EAG"]]],[26,[["TUR","MOO"],["SPI","FOX"],["PEA","DOL"],["DUC","EAG"]]],[27,[["FOX","TUR"],["DOL","MOO"],["EAG","SPI"],["DUC","PEA"]]],[28,[["TUR","DOL"],["FOX","EAG"],["MOO","DUC"],["SPI","PEA"]]],[29,[["TUR","EAG"],["DOL","DUC"],["FOX","PEA"],["MOO","SPI"]]],[30,[["DUC","TUR"],["PEA","EAG"],["SPI","DOL"],["MOO","FOX"]]],[31,[["TUR","PEA"],["DUC","SPI"],["EAG","MOO"],["DOL","FOX"]]],[32,[["SPI","TUR"],["MOO","PEA"],["FOX","DUC"],["DOL","EAG"]]],[33,[["TUR","MOO"],["SPI","FOX"],["PEA","DOL"],["DUC","EAG"]]],[34,[["FOX","TUR"],["DOL","MOO"],["EAG","SPI"],["DUC","PEA"]]],[35,[["TUR","DOL"],["FOX","EAG"],["MOO","DUC"],["SPI","PEA"]]],[36,[["TUR","EAG"],["DOL","DUC"],["FOX","PEA"],["MOO","SPI"]]],[37,[["DUC","TUR"],["PEA","EAG"],["SPI","DOL"],["MOO","FOX"]]],[38,[["TUR","PEA"],["DUC","SPI"],["EAG","MOO"],["DOL","FOX"]]],[39,[["SPI","TUR"],["MOO","PEA"],["FOX","DUC"],["DOL","EAG"]]],[40,[["TUR","MOO"],["SPI","FOX"],["PEA","DOL"],["DUC","EAG"]]],[41,[["FOX","TUR"],["DOL","MOO"],["EAG","SPI"],["DUC","PEA"]]],[42,[["TUR","DOL"],["FOX","EAG"],["MOO","DUC"],["SPI","PEA"]]],[43,[["TUR","EAG"],["DOL","DUC"],["FOX","PEA"],["MOO","SPI"]]],[44,[["DUC","TUR"],["PEA","EAG"],["SPI","DOL"],["MOO","FOX"]]],[45,[["TUR","PEA"],["DUC","SPI"],["EAG","MOO"],["DOL","FOX"]]],[46,[["SPI","TUR"],["MOO","PEA"],["FOX","DUC"],["DOL","EAG"]]],[47,[["TUR","MOO"],["SPI","FOX"],["PEA","DOL"],["DUC","EAG"]]],[48,[["FOX","TUR"],["DOL","MOO"],["EAG","SPI"],["DUC","PEA"]]],[49,[["TUR","DOL"],["FOX","EAG"],["MOO","DUC"],["SPI","PEA"]]],[50,[["TUR","EAG"],["DOL","DUC"],["FOX","PEA"],["MOO","SPI"]]],[51,[["DUC","TUR"],["PEA","EAG"],["SPI","DOL"],["MOO","FOX"]]],[52,[["TUR","PEA"],["DUC","SPI"],["EAG","MOO"],["DOL","FOX"]]],[53,[["SPI","TUR"],["MOO","PEA"],["FOX","DUC"],["DOL","EAG"]]],[54,[["TUR","MOO"],["SPI","FOX"],["PEA","DOL"],["DUC","EAG"]]],[55,[["FOX","TUR"],["DOL","MOO"],["EAG","SPI"],["DUC","PEA"]]],[56,[["TUR","DOL"],["FOX","EAG"],["MOO","DUC"],["SPI","PEA"]]],[57,[["TUR","EAG"],["DOL","DUC"],["FOX","PEA"],["MOO","SPI"]]],[58,[["DUC","TUR"],["PEA","EAG"],["SPI","DOL"],["MOO","FOX"]]],[59,[["TUR","PEA"],["DUC","SPI"],["EAG","MOO"],["DOL","FOX"]]],[60,[["SPI","TUR"],["MOO","PEA"],["FOX","DUC"],["DOL","EAG"]]],[61,[["TUR","MOO"],["SPI","FOX"],["PEA","DOL"],["DUC","EAG"]]],[62,[["FOX","TUR"],["DOL","MOO"],["EAG","SPI"],["DUC","PEA"]]],[63,[["TUR","DOL"],["FOX","EAG"],["MOO","DUC"],["SPI","PEA"]]],[64,[["TUR","EAG"],["DOL","DUC"],["FOX","PEA"],["MOO","SPI"]]]];
 /* Efficienza dell'ultima partita giocata (solo per chi ha più di una gara: con una sola gara coincide con la media) */
 const ULTIMA={agg:"10/11/2026",gioc:{"Nikola Jokić":1.31,"Domantas Sabonis":1.02,"Tyrese Maxey":1.08,"Kevin Durant":1.05,"Julius Randle":0.42,"Devin Booker":1.33,"James Harden":0.48,"Damian Lillard":0.66,"Lauri Markkanen":0.69,"Paul George":1.15,"Rudy Gobert":0.96,"De'Aaron Fox":1.08,"Collin Murray-Boyles":0.84,"Victor Wembanyama":2.8,"Cade Cunningham":0.95,"Jalen Johnson":0.43,"Alperen Şengün":1.17,"Scottie Barnes":0.64,"Anthony Edwards":1.1,"Cooper Flagg":1.65,"Amen Thompson":0.5,"Dyson Daniels":1.08,"Matas Buzelis":0.92,"Kyshawn George":0.22,"Brayden Burries":0.8,"Hannes Steinbach":0.14,"Sergio De Larrea":0,"Luka Dončić":1.45,"Shai Gilgeous-Alexander":1.39,"Jayson Tatum":1.01,"Kawhi Leonard":0.52,"Austin Reaves":1.27,"Ivica Zubac":0.51,"Kyrie Irving":0.97,"Josh Hart":0.89,"Desmond Bane":0.42,"Walker Kessler":1.21,"Jabari Smith Jr.":0.57,"Naz Reid":1.14,"Darius Acuff Jr.":1.12,"Aday Mara":1.24,"Josh Giddey":1.27,"Trae Young":0.5,"LaMelo Ball":0.89,"Evan Mobley":0.48,"Michael Porter Jr.":0.63,"Darius Garland":1.28,"Donovan Clingan":0.42,"Zion Williamson":0.9,"Jarrett Allen":1.05,"Trey Murphy III":1.05,"Ryan Rollins":0.81,"Miles Bridges":0.39,"Immanuel Quickley":0.62,"Moussa Diabaté":0.38,"Trevon Brazile":0.39,"Giannis Antetokounmpo":1.12,"Joel Embiid":1.11,"LeBron James":0.73,"Bam Adebayo":0.89,"Donovan Mitchell":0.63,"Ja Morant":0.51,"Stephon Castle":0.39,"Jaime Jaquez Jr.":0.42,"Cameron Boozer":0.85,"Franz Wagner":1.1,"VJ Edgecombe":0.79,"Jalen Green":0.29,"Isaiah Hartenstein":1.44,"Jonathan Kuminga":-0.09,"Tyrese Haliburton":1.09,"Paolo Banchero":0.76,"AJ Dybantsa":0.4,"Chet Holmgren":0.33,"Darryn Peterson":0.86,"Brandon Miller":0.51,"Dylan Harper":0.97,"Derik Queen":0.78,"Zach Edey":0.74,"Ace Bailey":0.37,"Alex Sarr":0.46,"Mikel Brown Jr.":0.58,"Cedric Coward":0.57,"Keaton Wagler":1.35,"Oso Ighodaro":0.49,"Karl-Anthony Towns":1.41,"Anthony Davis":1.65,"Jalen Brunson":1.19,"Stephen Curry":1.64,"Deni Avdija":0.36,"Jalen Duren":1.53,"Jamal Murray":1.1,"Jaylen Brown":0.86,"Pascal Siakam":1.41,"Dejounte Murray":0.63,"Onyeka Okongwu":0.79,"Keyonte George":0.93,"RJ Barrett":0.17,"Yaxel Lendeborg":1.39,"Caleb Wilson":0.36,"Tyler Herro":0.34,"Kon Knueppel":0,"Ausar Thompson":0.47,"Kel'el Ware":-0.11,"Jeremiah Fears":0.36,"Morez Johnson Jr.":0.47,"Kingston Flemings":0.45,"Egor Dëmin":0.49,"Danny Wolf":0.29,"Allen Graves":0.39,"Khaman Maluach":0.95,"Jalen Williams":0.45}};
+/* (1566) REPORT DEI DATI: una riga per ogni corsa del report automatico di GitHub (tools/report_espn.mjs, riserva tools/report_dunkest.mjs),
+   scritta da tools/report_info.mjs: {quando, fonte, gh, notti, fino, esito, anomalie, info, espn?}. Si vede toccando la riga in fondo all'app. Non modificare a mano. */
+const REPORT_INFO={runs:[]};
 /* Quintetti titolari, in ordine: playmaker, guardia, ala piccola, ala grande, centro. Vuoto = scelto in automatico */
 const TITOLARI={DOL:["Tyrese Maxey","Trae Young","Kevin Durant","Paul George","Nikola Jokić"],SPI:["Stephon Castle","Donovan Mitchell","Giannis Antetokounmpo","LeBron James","Joel Embiid"],PEA:["Josh Giddey","LaMelo Ball","Julius Randle","Evan Mobley","Domantas Sabonis"],DUC:["Cade Cunningham","Amen Thompson","Jalen Johnson","Cooper Flagg","Victor Wembanyama"],MOO:["Kon Knueppel","Tyler Herro","Caleb Wilson","Ausar Thompson","Kel'el Ware"],TUR:["Dylan Harper","Tyrese Haliburton","AJ Dybantsa","Chet Holmgren","Zach Edey"],EAG:["Stephen Curry","Jalen Brunson","Anthony Davis","Deni Avdija","Karl-Anthony Towns"],FOX:["Shai Gilgeous-Alexander","Luka Dončić","Jayson Tatum","Kawhi Leonard","Ivica Zubac"]};
 
@@ -5602,7 +5607,7 @@ function faLoadG(){if(typeof FAG!=="undefined"||faGLoad===true)return;faGLoad=tr
 function faGames(x){
   if(typeof FAG==="undefined"){faLoadG();return `${H("Partita per partita")}<p class="note">${faGLoad==="err"?"Partite non disponibili in questo momento (serve la connessione).":"Caricamento delle partite…"}</p>`}
   const G=FAG[x[0]]||{},SZ=["2026/27","2025/26","2024/25"],have=SZ.filter(z=>G[z]&&G[z].length);
-  if(!have.length)return `${H("Partita per partita")}<p class="note">Nessuna partita NBA su Dunkest in queste tre stagioni.</p>`;
+  if(!have.length)return `${H("Partita per partita")}<p class="note">Nessuna partita NBA in queste tre stagioni.</p>`;
   const z=have.includes(faPS)?faPS:have[0],GL=G[z];
   const SZL={"2024/25":"Stagione 1","2025/26":"Stagione 2","2026/27":"Stagione 3"};
   const chips=`<div class="gszn fapsz"><label for="fapsz">Stagione</label><select id="fapsz">${SZ.map(s=>`<option value="${s}"${s===z?" selected":""}${G[s]&&G[s].length?"":" disabled"}>${SZL[s]} · ${s}${G[s]&&G[s].length?"":" (nessuna partita)"}</option>`).join("")}</select></div>`;
@@ -5648,7 +5653,7 @@ function vFAP(){
   ${extProfilo({sz,sel,a:s?{g:s[0],min:s[1],pdk:s[2],eff:s[3],pt:s[4],rb:s[5],as:s[6]}:null,GL,cm:x[0],gr:`data-grafico="FA" data-grp="${x[0].replace(/"/g,"&quot;")}" data-grsz="${sz}"`,vuoto:"Nessuna partita NBA in questa stagione: non era in NBA o non ha giocato."})}
   ${H("Stagioni",`<em>media per partita</em>`)}
   <div class="tbl-wrap"><table class="fatbl faptbl"><thead><tr><th>Stag.</th><th>PG</th><th>Min</th><th>PDK</th><th>Eff.</th><th>Proj 36'</th><th>Pt</th><th>Rb</th><th>As</th></tr></thead><tbody>${rows}</tbody></table></div>
-  <p class="note">${o?`Diritti G League: ${c.name}. `:""}PDK = punti Dunkest medi a partita, Eff. = PDK per minuto, Proj 36' = PDK su 36 minuti. Fonte: dati ufficiali Dunkest (dunkest.com), regular season.</p>`;
+  <p class="note">${o?`Diritti G League: ${c.name}. `:""}PDK = punti Dunkest medi a partita, Eff. = PDK per minuto, Proj 36' = PDK su 36 minuti. Fonte: dati ufficiali (stagione in corso: tabellini ESPN con la formula Dunkest; stagioni passate: Dunkest), regular season.</p>`;
 }
 /* PROFILO G LEAGUE: stessa logica del profilo dei giocatori di squadra */
 let GLP=null;
@@ -5679,7 +5684,7 @@ function vGLP(){
     <div class="gtit"><small>G League · ${c.name}</small><h3>${pn}</h3><div class="segrow">${segBtn(pn,1)}${plShBtn()}</div><p>${R[rl]||"—"}${b.nba?" · "+b.nba:""}${etaTxt(pn)?`<span style="display:block">${etaTxt(pn)}</span>`:""}</p></div>
   </div>
   ${extProfilo({sz,sel,a,GL,cm:pn,gr:`data-grafico="${t}" data-grp="${pn.replace(/"/g,"&quot;")}"`,vuoto:past?"Nessuna partita NBA in questa stagione: non era in NBA o non ha giocato.":"Non è ancora sceso in campo in questa stagione."})}
-  <p class="note">PDK = punti Dunkest medi a partita, Eff. = PDK per minuto, Proj 36' = PDK su 36 minuti. Statistiche ufficiali Dunkest, regular season.</p>`}
+  <p class="note">PDK = punti Dunkest medi a partita, Eff. = PDK per minuto, Proj 36' = PDK su 36 minuti. Statistiche ufficiali (stagione in corso da ESPN, stagioni passate da Dunkest), regular season.</p>`}
 document.addEventListener("click",e=>{const sm=e.target.closest("details.glp>summary");if(sm){const d=sm.parentElement;if(d.dataset.glk){e.preventDefault();e.stopPropagation();glVai(d.dataset.glk)}return}
   if(e.target.closest("#glpback")&&cur==="glplayer"&&!NAVH.length){cur="giochi";GAME="gdream";GD.tab="stat";GD.open=null;render();scrollTo(0,0)}},true);
 document.getElementById("main").addEventListener("click",e=>{
@@ -7303,7 +7308,7 @@ async function shDreamers(){const S=SHR_DR;if(!S)return null;const ch=356,H=420+
       c.font=SH_B(700,27);c.fillStyle="#fff";c.fillText(n,cx,cy+22);cx+=c.measureText(n).width+8;c.font=SH_B(500,25);c.fillStyle="rgba(203,213,225,.75)";c.fillText(`(${t})`,cx,cy+22);cx+=c.measureText(`(${t})`).width+10;
       shPill(c,e,cx,cy+3,86,38,26);cx+=100});
     y+=ch+32}
-  c.setTransform(1,0,0,1,0,0);shFoot(c,W,H,S.prov?"Live: PDK provvisori (ESPN, formula Dunkest)":"Punteggi Dreamers · dati ufficiali Dunkest");return cv}
+  c.setTransform(1,0,0,1,0,0);shFoot(c,W,H,S.prov?"Live: PDK provvisori (ESPN, formula Dunkest)":"Punteggi Dreamers · dati ufficiali ESPN");return cv}
 /* (544) condivisione della Classifica Dreamers: immagine con le 8 squadre, forma, V–P e media punteggio */
 async function shClassifica(){const S=SHR_CL;if(!S||!S.rows.length)return null;const rh=150,H=420+S.rows.length*rh+40;const{cv,c,W}=await shBase(H,0,1);/* (1511) classifica: logo Ducks come gli altri */c.translate(0,-150);
   c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,108,1);c.letterSpacing="14px";
@@ -7321,7 +7326,7 @@ async function shClassifica(){const S=SHR_CL;if(!S||!S.rows.length)return null;c
     c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,54,1);c.fillStyle="#fff";c.fillText(`${x.w}–${x.l}`,W-335,y+68);c.font=SH_F(700,21,1);c.fillStyle="rgba(196,181,253,.85)";c.fillText(x.beh?`−${x.beh} V`:"V–P",W-335,y+104);
     c.textAlign="right";c.font=SH_F(800,54,1);c.fillStyle="#e9d5ff";c.fillText(x.avg==null?"—":pdkF(x.avg),W-92,y+68);c.font=SH_F(700,22,1);c.fillStyle="rgba(196,181,253,.85)";c.fillText("MEDIA",W-92,y+104);
     y+=rh});
-  c.setTransform(1,0,0,1,0,0);shFoot(c,W,H,"Vittoria = punteggio di turno più alto · dati ufficiali Dunkest");return cv}
+  c.setTransform(1,0,0,1,0,0);shFoot(c,W,H,"Vittoria = punteggio di turno più alto · dati ufficiali ESPN");return cv}
 async function shDuel(){const S=SHR_DUEL;if(!S)return null;const rh=112,secH=64,H=200+130+330+3*secH+10*rh+40+150-120;const{cv,c,W}=await shBase(H,0,1);c.translate(0,-120);
   const{a,b,A,B}=S;let y=205;c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,64,1);c.letterSpacing="10px";
   const tg=c.createLinearGradient(300,0,780,0);tg.addColorStop(0,"#e9d5ff");tg.addColorStop(.5,"#c084fc");tg.addColorStop(1,"#a5b4fc");c.fillStyle=tg;c.shadowColor="rgba(168,85,247,.8)";c.shadowBlur=24;shDrTxt(c,"DREAMERS",W/2+5,y+56,62);c.shadowBlur=0;c.letterSpacing="0px";
@@ -7350,7 +7355,7 @@ async function shDuel(){const S=SHR_DUEL;if(!S)return null;const rh=112,secH=64,
     for(let i=i0;i<i1;i++){card(A.top[i],a,XL,y,cl);card(B.top[i],b,XR,y,cl);
       const cx=W/2,cy=y+(rh-12)/2;c.beginPath();c.arc(cx,cy,22,0,7);c.fillStyle=cl==="cap"?"#f5b400":"rgba(76,29,149,.9)";c.fill();c.fillStyle=cl==="cap"?"#111":"#fff";c.font=SH_F(800,26,1);c.textAlign="center";c.textBaseline="middle";c.fillText(cl==="cap"?"C":cl==="half"?"½":String(i+1),cx,cy+1);
       y+=rh}}
-  c.setTransform(1,0,0,1,0,0);shFoot(c,W,H,S.closed?"Turno chiuso · dati ufficiali Dunkest":S.prov?"In corso · PDK live provvisori (formula Dunkest)":"Turno in corso · punteggi provvisori");return cv}
+  c.setTransform(1,0,0,1,0,0);shFoot(c,W,H,S.closed?"Turno chiuso · dati ufficiali ESPN":S.prov?"In corso · PDK live provvisori (formula Dunkest)":"Turno in corso · punteggi provvisori");return cv}
 /* GRAFICO CONDIVISO (27/10/2026): immagine orizzontale larga quanto serve (circa 44px per punto, minimo 1600px), con ogni valore,
    data e avversario leggibili. Misure accese nel grafico (PDK / Minuti / Efficienza) come nell'app. Dati da SHR_GR, riempito da vGrafico. */
 let SHR_GR=null;
@@ -7493,7 +7498,7 @@ async function shPlayer(){const S=SHR_PL;if(!S)return null;
   c.font=SH_F(800,38,1);c.fillStyle=TC?TC.tx:"#fcd34d";if(eta)c.fillText(eta[1]+" ANNI",tx,y0+222);
   c.font=SH_F(700,30,1);c.fillStyle=TC?TC.tx:"rgba(226,232,240,.8)";c.globalAlpha=TC?.8:1;const tl=S.k==="T"?TEAMS[S.t].name.toUpperCase():S.k==="G"?"G LEAGUE · "+TEAMS[S.t].name.toUpperCase():S.t?"FREE AGENT · G LEAGUE "+TEAMS[S.t].nick.toUpperCase():"FREE AGENT";
   c.fillText(shFit(c,tl,tw-(eta?190:0)),tx+(eta?190:0),y0+222);c.globalAlpha=1;
-  if(!a){c.textAlign="center";c.font=SH_F(800,46,1);c.fillStyle="#e9d5ff";c.fillText("NESSUNA PARTITA NBA",W/2,y0+hh+190);c.fillText("IN QUESTA STAGIONE",W/2,y0+hh+250);shFoot(c,W,H,"Dati Dunkest");return cv}
+  if(!a){c.textAlign="center";c.font=SH_F(800,46,1);c.fillStyle="#e9d5ff";c.fillText("NESSUNA PARTITA NBA",W/2,y0+hh+190);c.fillText("IN QUESTA STAGIONE",W/2,y0+hh+250);shFoot(c,W,H,"Dati ufficiali");return cv}
   /* PDK ed efficienza medi */
   const yb=y0+hh+28,bh=216,bw=(W-112-30)/2;
   [[0,"PDK MEDI A PARTITA"],[1,"EFFICIENZA MEDIA"]].forEach(([i,lab])=>{const x=56+i*(bw+30);shRR(c,x,yb,bw,bh,28);c.fillStyle="rgba(15,8,40,.55)";c.fill();c.strokeStyle="rgba(196,181,253,.3)";c.lineWidth=2;c.stroke();
@@ -7520,7 +7525,7 @@ async function shPlayer(){const S=SHR_PL;if(!S)return null;
     [...new Set([bi,LI])].forEach(i=>{const x=Math.min(Math.max(px(i),gx+30),gx+gw-30);c.lineWidth=9;c.strokeStyle="#140c33";c.lineJoin="round";c.strokeText(fmt(v[i]),x,py(v[i])-24);c.fillText(fmt(v[i]),x,py(v[i])-24)});
     c.font=SH_F(700,26,1);c.fillStyle="rgba(196,181,253,.85)";c.textAlign="left";c.fillText(GL[0][0],gx,gy+gh+46);c.textAlign="right";c.fillText(GL[GL.length-1][0],gx+gw,gy+gh+46);c.textAlign="center";c.fillText(`${v.length} PARTITE`,gx+gw/2,gy+gh+46)}
   else{c.textAlign="center";c.font=SH_F(700,40,1);c.fillStyle="rgba(196,181,253,.8)";c.fillText(GL.length?"Il trend compare dopo la seconda partita":"Partite non ancora disponibili",W/2,yt+th/2+20)}
-  if(S.rk)shFoot(c,W,H,`Lega · PDK ${S.rk[0]}° su ${S.rk[1]} · dati Dunkest al ${EFF.agg}`);else shFoot(c,W,H,`Dati Dunkest al ${EFF.agg}`);
+  if(S.rk)shFoot(c,W,H,`Lega · PDK ${S.rk[0]}° su ${S.rk[1]} · dati al ${EFF.agg}`);else shFoot(c,W,H,`Dati ufficiali al ${EFF.agg}`);
   return cv}
 let SHR_CM=null;
 /* IMMAGINE CONDIVISA DEL COMPARATORE: in alto le due maglie (G League: logo) affiancate, sotto i dati a confronto, in fondo il grafico con le due linee */
@@ -7976,7 +7981,7 @@ function drWkOpen(n){const C=CAMPO_DR;if(!C||!n)return;const T=C.T,x=[...T.top,.
    <div class="dwhd">${jersey(C.t,p[1],n)}<div><b>${RTR(n)}${n}</b><small>${({G:"Guardia",F:"Ala",C:"Centro"})[p[2]]||""} · ${p[3]} · ${pos}</small></div></div>
    <div class="dwsum"><span>${DR_PH(C.k,C.P)} · ${drNn(C.W)}</span><span>Punteggio: ${x.e==null?"<b>in attesa</b>":`<b>${pdkF(x.e)}</b>${x.m&&x.m!==1&&i>=0?` ${x.m===1.5?"×1,5":"×½"} = <b>${pdkF(x.f)}</b>`:""}`}</span></div>
    <div class="dwl">${rows||'<p class="note">Nessuna partita NBA in questo turno.</p>'}</div>
-   <p class="note">Dreamers: conta il miglior PDK del turno. PDK live da Dynasty TV, poi ufficiali dal report Dunkest.</p></div>`;
+   <p class="note">Dreamers: conta il miglior PDK del turno. PDK live da Dynasty TV, poi ufficiali dal report del mattino (ESPN).</p></div>`;
   const chiudi=()=>el.remove();el.onclick=e=>{if(e.target===el||e.target.closest(".dwx"))chiudi()};document.body.appendChild(el)}
 /* (638) Modalità notte del Campo: toccando il PDK di un giocatore si apre il foglio con la partita di stanotte (punteggio live o finale) e le partite che gli restano nel turno */
 function nWkOpen(n){try{const t=curTeam,p=(ROSTER[t]||[]).find(y=>y[0]===n)||Object.values(ROSTER).flat().find(y=>y[0]===n)||[n,"",ruoloDi(n),""],nba=p[3],NM=campoNotteMap(t),N=NM[n],d=campoNotte()||flUsaOggi();
@@ -8560,7 +8565,7 @@ function vGLeague(){
   ${szSelect(sz)}
   ${H("Squadre satellite",`<em>tocca un giocatore</em>`)}
   <div class="ggrid">${cards}</div>
-  <p class="note">Statistiche ufficiali Dunkest (stagione in corso, oppure le due stagioni passate con il menu Stagione: solo regular season), come per la prima squadra: PG = partite, Min e PDK = medie a partita, Eff. = PDK ÷ minuti. Tocca un giocatore per forma delle ultime 5 (▲▼ se si scosta almeno del 5% dalla media), ultima partita e partita per partita. Eff. squadra = PDK totali ÷ minuti totali dei 5 giocatori. Regole nella voce Regolamento → G-League.</p>`;
+  <p class="note">Statistiche ufficiali (stagione in corso: ESPN con la formula Dunkest; le due stagioni passate, con il menu Stagione: Dunkest; solo regular season), come per la prima squadra: PG = partite, Min e PDK = medie a partita, Eff. = PDK ÷ minuti. Tocca un giocatore per forma delle ultime 5 (▲▼ se si scosta almeno del 5% dalla media), ultima partita e partita per partita. Eff. squadra = PDK totali ÷ minuti totali dei 5 giocatori. Regole nella voce Regolamento → G-League.</p>`;
 }
 /* Gioco "Più o Meno": indovina se il secondo giocatore ha efficienza stagionale più alta o più bassa */
 const HL={a:null,b:null,streak:0,state:"play",best:0,last:null};
@@ -8990,8 +8995,8 @@ function drDuel(k,a,b,W,P){const A=drTeam(k,a,W),B=drTeam(k,b,W),f1=v=>v==null?"
   <p class="note">${W.closed?"Turno chiuso.":"Turno in corso: la formazione si aggiorna a ogni partita (sempre la migliore rispettando i ruoli: 4 guardie, 4 ali e 2 centri, con almeno un centro, un'ala e una guardia tra i 5 in campo)."} Trattino accanto al nome = ruolo: <i class="rtr G"></i>guardia, <i class="rtr F"></i>ala, <i class="rtr C"></i>centro. Le caselle sono le partite del turno del giocatore: colorata = partita giocata con il suo PDK, tratteggiata = partita da giocare (avversario, @ = in trasferta), NG = non ha giocato. Proiezione = punteggio se chi deve ancora giocare facesse la sua media; la percentuale di vittoria viene da lì.</p>`}
 function drRules(){const S=(t,l)=>`<div class="drrs"><h4>${t}</h4><ol>${l.map(x=>`<li>${x}</li>`).join("")}</ol></div>`;
   return `<div class="drrules">
-  ${S("Cos'è DREAMERS",["È il fanta della lega basato sui <b>PDK ufficiali Dunkest</b>: ogni turno le 8 franchigie si sfidano a due a due.","Partecipano le 8 squadre con la <b>rosa completa</b> della lega (tutti i giocatori della prima squadra).","Non si schiera niente: la formazione si fa da sola in base ai punteggi (meritocrazia)."])}
-  ${S("Il turno",["Dal turno 2 i turni sono <b>corti: 2-4 giorni</b>, scelti sul calendario NBA in modo che ogni squadra giochi <b>1 o 2 partite</b> (date USA delle partite). Si salta la pausa NBA Cup (4-11 dicembre).","Il turno 1 è la settimana già iniziata lunedì 26 ottobre 2026 (fino a domenica 1 novembre); il turno 2 parte il 2 novembre.","Le date esatte di ogni turno sono nella scheda <b>Calendario</b>.","I punteggi si aggiornano ogni mattina con il report Dunkest; durante la notte possono comparire PDK provvisori live (ESPN, formula Dunkest), sostituiti dai dati ufficiali Dunkest al report.","Finché il turno è in corso i punteggi sono <b>provvisori</b>; diventano definitivi quando il turno è chiuso."])}
+  ${S("Cos'è DREAMERS",["È il fanta della lega basato sui <b>PDK ufficiali</b> (formula Dunkest, tabellini ESPN): ogni turno le 8 franchigie si sfidano a due a due.","Partecipano le 8 squadre con la <b>rosa completa</b> della lega (tutti i giocatori della prima squadra).","Non si schiera niente: la formazione si fa da sola in base ai punteggi (meritocrazia)."])}
+  ${S("Il turno",["Dal turno 2 i turni sono <b>corti: 2-4 giorni</b>, scelti sul calendario NBA in modo che ogni squadra giochi <b>1 o 2 partite</b> (date USA delle partite). Si salta la pausa NBA Cup (4-11 dicembre).","Il turno 1 è la settimana già iniziata lunedì 26 ottobre 2026 (fino a domenica 1 novembre); il turno 2 parte il 2 novembre.","Le date esatte di ogni turno sono nella scheda <b>Calendario</b>.","I punteggi ufficiali li salva GitHub ogni notte, appena finite le partite (al più tardi verso le 07:07), dai tabellini ESPN (riserva: Dunkest); durante la notte possono comparire PDK provvisori live (ESPN, formula Dunkest), sostituiti dai dati ufficiali del report.","Finché il turno è in corso i punteggi sono <b>provvisori</b>; diventano definitivi quando il turno è chiuso."])}
   ${S("Il punteggio del giocatore",["Ogni giocatore porta la sua <b>miglior prestazione del turno</b>: il PDK più alto tra tutte le partite che ha giocato nel turno.","Esempio: 3 partite con 22, 41 e 18 PDK → il giocatore vale <b>41</b>.","Chi nel turno non gioca nessuna partita (infortunio, scelta dell'allenatore NBA…) pur avendo la squadra in campo non porta punti: vale <b>0</b>.","<b>Eccezione calendario</b>: se la sua squadra NBA non ha <b>nessuna partita</b> nel turno per via del calendario, il giocatore prende la sua <b>media stagionale PDK</b> (indicata come «media»). Quel punteggio vale come un normale PDK: se risulta il migliore della squadra può essere <b>capitano (×1,5)</b>."])}
   ${S("Titolari, capitano e panchina",["I <b>10 titolari</b> sono i giocatori con il punteggio più alto, <b>rispettando i ruoli</b> (vedi sotto); gli altri vanno in tribuna e non contano.","Il 1° (il migliore) è il <b>capitano</b> e vale <b>×1,5</b>.","Dal 2° al 6° valgono <b>punteggio pieno</b> (×1).","Dal 7° al 10° sono in panchina e valgono <b>metà</b> (×0,5).","Un titolare che a turno chiuso non ha giocato vale 0."])}
   ${S("Ruoli: regola invalicabile",["I 10 titolari sono <b>sempre 4 guardie, 4 ali e 2 centri</b>.","Tra i <b>5 in campo</b> (capitano + 4 a punteggio pieno) ci sono <b>almeno 1 centro, 1 ala e 1 guardia</b>; il 6° uomo è libero.","Questa regola viene <b>prima della meritocrazia</b>: dentro ogni ruolo entrano i migliori punteggi, ma i posti del ruolo vanno riempiti comunque.","Se tra i 5 in campo manca un ruolo, sale il migliore di quel ruolo e scende (6° uomo o panchina) il peggiore dei 5.","Esempio: una squadra ha 3 centri e tutti fanno 0. Due di loro entrano comunque tra i 10 e uno dei due va a punteggio pieno, anche se in rosa ci sono altri giocatori con punteggi più alti.","Il ruolo di ogni giocatore è quello del roster della lega (G = guardia, A = ala, C = centro)."])}
@@ -9060,7 +9065,7 @@ function vDream(){fantaLiveAvvia();
     <h4 class="drplh">Classifica finale</h4>
     <div class="drfinal">${Array.from({length:8},(_,i)=>{const t=P.fin[i];return `<div class="drfr ${t?"tint":""} ${i===0&&t?"gold":""}" style="${t?"--tc:"+TEAMS[t].bg:""}"><span class="drpos">${i+1}</span>${t?`<span class="bklg" style="--tc:${TEAMS[t].bg}">${badge(t)}</span><b>${TEAMS[t].name}</b>`:`<em>da decidere</em>`}</div>`}).join("")}</div>`}
   const DTH=typeof CNT!=="undefined"&&CNT?0:DR.th;return `<div class="drroom"${DTH?` data-th="${DR_BASE_TH[DTH]}"`:""}${DTH>5?` data-col="1"`:""}><button class="drexit" data-game="menu">‹ Torna all'app</button><div class="drhd"><span class="drlogo">DREAMERS</span><small>Fanta PDK · stagione ${STAGIONE_CORRENTE}</small>${DR.rules?`<br><button class="drrul" data-dr="rules" aria-pressed="true">‹ Torna al gioco</button>`:""}</div>${drSw("dream")}
-  <div class="drtabs">${tabs}</div>${(()=>{const pv=[...DR_PROV].filter(d=>d>=W.start&&d<=W.end).sort();return pv.length?`<div class="drlive"><i></i><span><b>Live</b> · ${pv.length===1?"notte":"notti"} ${pv.map(drFmt).join(", ")}: PDK provvisori (ESPN, formula Dunkest). Si sostituiscono da soli con i dati ufficiali Dunkest quando arriva il report.</span></div>`:""})()}${body}<div class="drfoot"><button class="drrul drrulb" data-dr="rules" aria-pressed="${!!DR.rules}">${DR.rules?"‹ Torna al gioco":"📜 Regolamento"}</button><button class="drrul drrulb drth" data-dr="theme" aria-label="Cambia stile grafico">🎨 Stile<small>${DR_TH[DR.th]}</small></button></div></div>
+  <div class="drtabs">${tabs}</div>${(()=>{const pv=[...DR_PROV].filter(d=>d>=W.start&&d<=W.end).sort();return pv.length?`<div class="drlive"><i></i><span><b>Live</b> · ${pv.length===1?"notte":"notti"} ${pv.map(drFmt).join(", ")}: PDK provvisori (ESPN, formula Dunkest). Si sostituiscono da soli con i dati ufficiali quando arriva il report ESPN del mattino.</span></div>`:""})()}${body}<div class="drfoot"><button class="drrul drrulb" data-dr="rules" aria-pressed="${!!DR.rules}">${DR.rules?"‹ Torna al gioco":"📜 Regolamento"}</button><button class="drrul drrulb drth" data-dr="theme" aria-label="Cambia stile grafico">🎨 Stile<small>${DR_TH[DR.th]}</small></button></div></div>
   <p class="note">Meritocrazia: ogni settimana i 10 giocatori della rosa con la miglior prestazione (PDK più alto in una singola partita) diventano titolari rispettando i ruoli (4 guardie, 4 ali, 2 centri; almeno uno per ruolo tra capitano e pieni), gli altri vanno in tribuna. Punteggio squadra = somma dei punti dei 10 titolari (ognuno porta la sua MIGLIOR partita del turno: il PDK più alto tra le sue gare); il migliore è capitano ×1,5, dal 2° al 6° punteggio pieno e dal 7° al 10° valgono la metà (provvisori durante la settimana, definitivi a turno chiuso). Dati aggiornati al ${EFF.agg}.</p>`}
 
 /* ===== STATISTICHE SQUADRA DREAMERS (dalla Classifica) =====
@@ -9206,7 +9211,7 @@ function vGDream(emb){fantaLiveAvvia();if(GD.tab==="rose")GD.tab="cla";const TH=
   else if(GD.tab==="stat")body=vGLeague();
   else{body=`<div class="gdrose">${D.cla.map(x=>`<button class="gdrc tint" style="--tc:${gdBg(x.t)}" data-gd="open" data-t="${x.t}">${gdLg(x.t)}<b>${gdNm(x.t)}</b><span>${x.pl.map(p=>`<i>${p.n.split(" ").slice(-1)[0]} <small>${gdF(p.tot)}</small></i>`).join("")}</span></button>`).join("")}</div>`}
   return`<div class="drroom gdroom${emb?" gdemb":""}"${TH?` data-th="${DR_BASE_TH[TH]}"`:""}${TH>5?` data-col="1"`:""}>${emb?"":`<button class="drexit" data-game="menu">‹ Torna all'app</button>`}<div class="drhd"><span class="drlogo">G-DREAMERS</span><small>Fanta G League · stagione ${STAGIONE_CORRENTE}</small></div>${emb?"":drSw("gdream")}
-  <div class="drtabs">${tabs}</div>${D.prov.length?`<div class="drlive"><i></i><span><b>Live</b> · ${D.prov.length===1?"notte":"notti"} ${D.prov.map(gdDay).join(", ")}: PDK provvisori (tabellini di Dynasty TV, formula Dunkest). Si sostituiscono da soli con i dati ufficiali Dunkest quando arriva il report.</span></div>`:""}${body}${GD.open?"":`<div class="drfoot"><button class="drrul drrulb drth" data-gdth="1" aria-label="Cambia stile grafico">🎨 Stile<small>${DR_TH[TH]}</small></button></div>`}</div>`}
+  <div class="drtabs">${tabs}</div>${D.prov.length?`<div class="drlive"><i></i><span><b>Live</b> · ${D.prov.length===1?"notte":"notti"} ${D.prov.map(gdDay).join(", ")}: PDK provvisori (tabellini di Dynasty TV, formula Dunkest). Si sostituiscono da soli con i dati ufficiali quando arriva il report ESPN del mattino.</span></div>`:""}${body}${GD.open?"":`<div class="drfoot"><button class="drrul drrulb drth" data-gdth="1" aria-label="Cambia stile grafico">🎨 Stile<small>${DR_TH[TH]}</small></button></div>`}</div>`}
 /* (539) interruttore di campionato nelle stanze fanta: Dreamers | G-Dreamers (G-Dreamers non è più nel Centro gestione) */
 const drSw=a=>`<div class="drsw" role="tablist">${[["dream","Dreamers"],["gdream","G-Dreamers"]].map(([k,l])=>`<button data-game="${k}" role="tab" aria-selected="${a===k}">${l}</button>`).join("")}</div>`;
 function gdAct(b){const d=b.dataset;if(d.gd==="tab"){GD.tab=d.k;GD.open=null}else if(d.gd==="open"){GD.open=d.t}else if(d.gd==="close"){GD.open=null}render();window.scrollTo(0,0)}
@@ -9537,7 +9542,7 @@ function tvDrGame(key){try{const[ks,a,b]=key.split("|"),k=+ks,st=drStand(),P=drP
   <tbody>${grp("In campo",inCampo,"full")}${grp("Panchina · vale ½",panca,"half")}${zeri}${grp("Tribuna",T.trib,"trib")}${grp(W.closed?"Non ha giocato":"In attesa",T.wait,"wait")}
   <tr class="tot"><td>Punteggio squadra</td><td class="pdkl dfp">${T.score==null?"—":drScore(T.score)}</td>${"<td></td>".repeat(NS)}</tr></tbody></table></div>
   <button class="advbtn" data-drgo="${key}">Apri in Dreamers ›</button>
-  <p class="note">${DR_PH(k,P)} · ${drNn(W)}. PDK = miglior punteggio Dunkest tra le partite del turno. I 10 con il PDK più alto sono titolari: il migliore è capitano (C, ×1,5), poi 5 a punteggio pieno (in campo) e gli ultimi 4 in panchina a metà; gli altri vanno in tribuna. Punteggio squadra = somma dei punti dei titolari (${pdkF(somma)}). Scorri a destra per le statistiche della miglior partita del turno (Min, Pt, RIM rimbalzi, AST assist, STL, BLK, TOV palle perse, tiri).${prov?" Ci sono notti con PDK provvisori (live): si sostituiscono con i dati Dunkest al report.":""}</p>`}catch(e){return""}}
+  <p class="note">${DR_PH(k,P)} · ${drNn(W)}. PDK = miglior punteggio Dunkest tra le partite del turno. I 10 con il PDK più alto sono titolari: il migliore è capitano (C, ×1,5), poi 5 a punteggio pieno (in campo) e gli ultimi 4 in panchina a metà; gli altri vanno in tribuna. Punteggio squadra = somma dei punti dei titolari (${pdkF(somma)}). Scorri a destra per le statistiche della miglior partita del turno (Min, Pt, RIM rimbalzi, AST assist, STL, BLK, TOV palle perse, tiri).${prov?" Ci sono notti con PDK provvisori (live): si sostituiscono con i dati ufficiali al report ESPN del mattino.":""}</p>`}catch(e){return""}}
 function vTV0(){setTimeout(tvWeekPos,0);const T=TVD(),ks=Object.keys(T.days).sort();if(!ks.length)return`${H("Dynasty TV")}<div class="tvempty">Calendario non ancora disponibile.</div>`;
   if(TVS.out){TVS.out=0;if(!TVS.g&&!TVS.dr)TVS.d=null}/* (304) a ogni nuova apertura di Dynasty TV si riparte dal giorno giusto */
   if(!TVS.d||!T.days[TVS.d])TVS.d=tvDefDay();
@@ -9598,7 +9603,7 @@ function tvGame(key){const T=TVD(),[d,g]=key.split("_"),G=(T.days[d]||[]).find(x
   ${NSH?`<div class="tvsp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 12S5.5 4.5 12 4.5 22.5 12 22.5 12 18.5 19.5 12 19.5 1.5 12 1.5 12Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.2" fill="currentColor"/><path d="M3 21 21 3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><b>Allerta spoiler</b><p>Il tabellino è nascosto per evitare spoiler, perché in Impostazioni › Home hai attivato «No spoiler».</p><button data-tvrev="${key}">Mostra i risultati per questa partita</button></div>`:`<div class="tvtabs"><button class="tvtab" data-tvside="a" aria-pressed="${side==="a"}">${tvLogo(a)}${tvNick(a)}</button><button class="tvtab" data-tvside="h" aria-pressed="${side==="h"}">${tvLogo(h)}${tvNick(h)}</button></div>
   <div class="tbl-wrap tvw"><table class="ptbl tvbox tvsq"><thead><tr><th>Giocatore</th><th class="sqh">SQ</th><th class="pdkl">${LV?"PDK live":"PDK"}</th><th>Min</th><th>Pt</th><th>RIM</th><th>AST</th><th>STL</th><th>BLK</th><th>TOV</th><th>Tiri</th><th>Da 3</th><th>Liberi</th><th>Off</th><th>Dif</th><th>Falli</th><th>+/−</th></tr></thead>
   <tbody><tr class="grp"><td>Quintetto</td><td colspan="16"></td></tr>${st.map(pr).join("")}<tr class="grp"><td>Panchina</td><td colspan="16"></td></tr>${bn.map(pr).join("")}${tot}</tbody></table></div>
-  <p class="note">${b.live?`Tabellino dati ${b.src==="ESPN"?"ESPN":"NBA.com"} live${G[5]==="L"?", si aggiorna ogni 30 secondi; PDK provvisorio (formula Dunkest, il +5% vittoria si aggiunge a fine partita)":"; PDK calcolato con la formula Dunkest, quello ufficiale arriva con il report del mattino"}.`:"Tabellino ufficiale (dati Dunkest)."} Pt punti, RIM rimbalzi, AST assist, STL palle rubate, BLK stoppate, TOV palle perse, Off/Dif rimbalzi offensivi/difensivi, +/− punti di scarto con il giocatore in campo, PDK punteggio Dunkest. Scorri a destra per tutte le colonne.</p>`}`}
+  <p class="note">${b.live?`Tabellino dati ${b.src==="ESPN"?"ESPN":"NBA.com"} live${G[5]==="L"?", si aggiorna ogni 30 secondi; PDK provvisorio (formula Dunkest, il +5% vittoria si aggiunge a fine partita)":"; PDK calcolato con la formula Dunkest, quello ufficiale arriva con il report del mattino"}.`:`Tabellino ufficiale (dati ${b.src==="ESPN"?"ESPN, PDK con la formula Dunkest":"Dunkest"}).`} Pt punti, RIM rimbalzi, AST assist, STL palle rubate, BLK stoppate, TOV palle perse, Off/Dif rimbalzi offensivi/difensivi, +/− punti di scarto con il giocatore in campo, PDK punteggio Dunkest. Scorri a destra per tutte le colonne.</p>`}`}
 /* ===== DYNASTY TV HIGHLIGHTS: video del canale YouTube "The Game Time Highlights" associati alle partite (hl-data.js, lo aggiorna GitHub: tools/highlights_yt.mjs) =====
    Logo YouTube sotto "Finale" solo se la partita ha il suo video. Si guarda dentro l'app: sigla DYNASTY TV in stile NBA (circa 4 s, musica originale sintetizzata, tvSigla) e poi il video parte da solo (player ufficiale YouTube). */
 const TVYT_SVG='<svg viewBox="0 0 28 20" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#ff0000"/><path d="M11 5.6v8.8l7.6-4.4z" fill="#fff"/></svg>';
@@ -10831,6 +10836,20 @@ pqFix();
 </script>
 
 <script>
+/* (1566) ora del salvataggio dei dati ufficiali "GG/MM/AAAA · HH:MM": dall'attributo data-agg del footer (lo scrive tools/report_info.mjs);
+   prima il footer diceva "Ultimo aggiornamento: …" e l'ora si leggeva dal testo (resta come ripiego) */
+window.updStamp=function(){const f=document.getElementById("updbtn");if(!f)return"";return((f.dataset&&f.dataset.agg)||((f.textContent.match(/\d{2}\/\d{2}\/\d{4}\s*·\s*\d{2}:\d{2}/)||[""])[0])).replace(/\s+/g," ")};
+/* (1566) REPORT DEI DATI nella Cronologia (si apre toccando la riga in fondo all'app): per ogni corsa del report automatico di GitHub
+   (REPORT_INFO.runs, la più recente aperta, le altre richiudibili) quando sono stati salvati i dati, notti caricate, fonte (ESPN o riserva Dunkest),
+   anomalie (nomi non abbinati, minuti strani, partite rinviate, errore ESPN) e controlli superati; in fondo l'ora degli infortuni salvati. */
+window.reportBlock=function(e){try{const R=(typeof REPORT_INFO!=="undefined"&&REPORT_INFO.runs)||[],lab=d=>d.slice(8)+"/"+d.slice(5,7);
+  const one=(r,i)=>{const ok=r.esito==="ok",nn=r.notti||[],an=r.anomalie||[];
+    const t=`${ok?"✅":"⚠️"} ${nn.length?(nn.length===1?"Notte ":"Notti ")+nn.map(lab).join(", "):"Nessuna notte nuova"} · ${r.fonte==="Dunkest"?"Dunkest (riserva: ESPN non disponibile)":r.fonte}`;
+    const sm=`Salvati ${r.gh?"da GitHub ":""}il ${String(r.quando||"").replace(" · "," alle ")} · ${ok?"controlli superati, nessuna anomalia":an.length+(an.length===1?" anomalia":" anomalie")+", dati salvati lo stesso"}`;
+    const li=[...(r.espn?[`<li class="w">⚠️ ESPN non disponibile, usato Dunkest: ${e(r.espn)}</li>`]:[]),...an.map(x=>`<li class="w">⚠️ ${e(x)}</li>`),...(r.info||[]).map(x=>`<li class="y">✓ ${e(x)}</li>`)].join("");
+    return i===0?`<div class="nvck ${ok?"ok":"ko"}"><b>${t}</b><small>${sm}</small><ul>${li}</ul></div>`:`<details class="nvw"><summary><b>${t}</b><span>${sm}</span></summary><div class="nvck ${ok?"ok":"ko"}" style="margin:0;border-radius:0"><ul>${li}</ul></div></details>`};
+  const fi=typeof INFLIVE!=="undefined"&&INFLIVE&&INFLIVE.upd,inj=(fi?`Lista ESPN salvata da GitHub il ${INFLIVE.upd.replace(" · "," alle ")} (${INFLIVE.n} giocatori NBA)`:"Nessuna lista salvata da GitHub")+(window.INJ_LIVE_AT?` · riletta da questo telefono alle ${String(INJ_LIVE_AT).split(" · ").pop()} (ogni 30 secondi con l'app aperta)`:" · ESPN non raggiunto da questo telefono");
+  return`<div class="nvdt">Report dei dati ufficiali</div>${R.length?R.slice(0,10).map(one).join(""):`<div class="nvck ok"><b>Nessuna corsa automatica registrata</b><small>Il primo report di GitHub comparirà qui · dati attuali salvati il ${e(updStamp()||"—")}</small></div>`}<article class="nvi nv-r"><b>Infortuni</b><span>${e(inj)}</span></article>`}catch(x){return""}};
 /* (258) REGISTRO AGGIORNAMENTI dati (Ufficio Scouting → 🔄 Aggiornamenti). Salvato su questo telefono (localStorage "dl_updlog"):
    scrive una riga quando l'app rileva (1) le statistiche ESPN caricate per una notte (dalle 07:30), (2) un nuovo file ufficiale Dunkest (cambio di EFF.agg o dell'orario "Ultimo aggiornamento"), (3) la sostituzione ESPN → Dunkest di quella notte. */
 (function(){
@@ -10838,22 +10857,22 @@ const ULK="dl_updlog",ULS="dl_updseen";
 const ulGet=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||"null")||d}catch(e){return d}};
 const ulSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 function ulPush(key,txt,d){const L=ulGet(ULK,[]);if(L.some(x=>x.k===key))return;L.push({k:key,t:Date.now(),x:txt,d:d||""});ulSet(ULK,L.slice(-80))}
-const stampOf=()=>{const f=(document.querySelector("footer.upd")||{}).textContent||"";return((f.match(/(\d{2}\/\d{2}\/\d{4}\s*·\s*\d{2}:\d{2})/)||[])[1]||"").replace(/\s+/g," ")};
+const stampOf=()=>updStamp();
 function ulCheck(){try{
   if(typeof EFF==="undefined"||!EFF.agg)return;
   const st=stampOf(),seen=ulGet(ULS,null);
-  if(!seen)ulPush("base:"+EFF.agg+"|"+st,`Dati ufficiali Dunkest in uso: dati al ${EFF.agg} (file aggiornato ${st})`);
-  else if(seen.agg!==EFF.agg||seen.stamp!==st)ulPush("dk:"+EFF.agg+"|"+st,`Dati ufficiali Dunkest caricati · file delle ${(st.match(/\d{2}:\d{2}$/)||[""])[0]} (${st.split(" ")[0]}) · dati al ${EFF.agg}`);
+  if(!seen)ulPush("base:"+EFF.agg+"|"+st,`Dati ufficiali in uso: dati al ${EFF.agg} (file aggiornato ${st})`);
+  else if(seen.agg!==EFF.agg||seen.stamp!==st)ulPush("dk:"+EFF.agg+"|"+st,`Dati ufficiali caricati da GitHub · file delle ${(st.match(/\d{2}:\d{2}$/)||[""])[0]} (${st.split(" ")[0]}) · dati al ${EFF.agg}`);
   ulSet(ULS,{agg:EFF.agg,stamp:st});
   const nights={};(typeof PLV!=="undefined"?PLV:[]).forEach(([n,e])=>{(nights[e[0]]=nights[e[0]]||[]).push(n)});
   const lastOff=drNightOfAgg(EFF.agg);
   for(const lab in nights){const [dd,mm]=lab.split("/");const yy=lastOff.slice(0,4);let d=`${yy}-${mm}-${dd}`;if(d<lastOff.slice(0,4)+"-01-01")d=`${+yy+1}-${mm}-${dd}`;
-    ulPush("espn:"+lab,`Statistiche ESPN ufficiali nell'app dalle 07:30 · notte ${lab} · ${nights[lab].length} ${nights[lab].length===1?"giocatore":"giocatori"} (valide fino ai dati Dunkest)`,d)}
+    ulPush("espn:"+lab,`Statistiche ESPN ufficiali nell'app dalle 07:30 · notte ${lab} · ${nights[lab].length} ${nights[lab].length===1?"giocatore":"giocatori"} (valide fino al report ufficiale)`,d)}
   try{const cut=lvCut(),days=TVD().days;let any=false;
     for(const d of Object.keys(days)){if(d<drAdd(flUsaOggi(),-2)||d>drAdd(flUsaOggi(),1))continue;
       for(const g of days[d]){if(g[5]!=="L")continue;const t=lvTip(d,g[6]);if(t!=null&&t<cut)continue;any=true;ulPush("live:"+d+":"+g[0]+g[1],`Modalità live iniziata · ${g[0]}–${g[1]} · inizio partita ${(g[6]||"").replace(/\+\d$/,"")}`)}}
     if(!any&&window.LVS&&window.LVS>=cut)ulPush("live:espn:"+window.LVS,`Modalità live iniziata · inizio partita ${new Intl.DateTimeFormat("it-IT",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date(window.LVS))}`)}catch(e){}
-  ulGet(ULK,[]).filter(x=>x.k.startsWith("espn:")&&x.d&&x.d<=lastOff).forEach(x=>ulPush("sost:"+x.k.slice(5),`🔁 Sostituzione completata: la notte ${x.k.slice(5)} usa ora i dati ufficiali Dunkest (dati al ${EFF.agg}, file aggiornato ${st}); le statistiche ESPN sono state tolte`))
+  ulGet(ULK,[]).filter(x=>x.k.startsWith("espn:")&&x.d&&x.d<=lastOff).forEach(x=>ulPush("sost:"+x.k.slice(5),`🔁 Sostituzione completata: la notte ${x.k.slice(5)} usa ora i dati ufficiali del report (dati al ${EFF.agg}, file aggiornato ${st}); le statistiche ESPN sono state tolte`))
 }catch(e){}}
 const fmt=t=>{try{return new Intl.DateTimeFormat("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(new Date(t)).replace(",","")}catch(e){return new Date(t).toLocaleString()}};
 const evc=k=>/^(dk|base):/.test(k)?"r":k.startsWith("espn:")?"g":k.startsWith("live:")?"v":"y";
@@ -10871,13 +10890,14 @@ window.dataCheck=function(){const it=[],add=(ok,t,w)=>it.push({ok,t,w:!!w});
   add(!extra.length,extra.length?`Giocatori nei dati ma non in rosa: ${extra.slice(0,4).join(", ")}`:"Nessun giocatore estraneo alle rose");
   add(!noUlt.length&&!diff.length,noUlt.length||diff.length?`Ultima partita incoerente: ${[...noUlt,...diff].slice(0,4).join(", ")}`:`Ultima partita coerente con le medie (${nG} giocatori con partite)`);
   add(!mism.length,mism.length?`Partite diverse tra riepilogo e dettaglio: ${mism.slice(0,3).join(", ")}`:"Partite del riepilogo = partite del dettaglio per ogni giocatore");
-  add(!dup.length,dup.length?`Righe ESPN ancora presenti dopo i dati ufficiali: ${dup.slice(0,3).join(", ")}`:"Nessun doppione ESPN/Dunkest");
-  const st=(document.getElementById("updbtn")||{textContent:""}).textContent.match(/(\d{2})\/(\d{2})\/(\d{4})\s*·\s*(\d{2}):(\d{2})/);
+  add(!dup.length,dup.length?`Righe ESPN ancora presenti dopo i dati ufficiali: ${dup.slice(0,3).join(", ")}`:"Nessun doppione tra statistiche live e dati ufficiali");
+  const st=updStamp().match(/(\d{2})\/(\d{2})\/(\d{4})\s*·\s*(\d{2}):(\d{2})/);
   if(st){const now=new Date(),rp=Object.fromEntries(new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(now).map(x=>[x.type,+x.value]));
     const today=Date.UTC(rp.year,rp.month-1,rp.day),fd=Date.UTC(+st[3],+st[2]-1,+st[1]),days=Math.round((today-fd)/864e5),mm=(rp.hour%24)*60+rp.minute;
-    if(days>=2)add(false,`Il file dati Dunkest è fermo al ${st[1]}/${st[2]} (${days} giorni fa)`,true);
-    else if(days===1&&mm>=11*60+30)add(false,`I dati Dunkest di oggi non sono ancora arrivati (file del ${st[1]}/${st[2]} ${st[4]}:${st[5]})`,true);
-    else add(true,days===1&&mm<11*60+30?`In attesa dei dati Dunkest di oggi (di solito ~10:30); file attuale del ${st[1]}/${st[2]} ${st[4]}:${st[5]}`:`File Dunkest aggiornato (${st[1]}/${st[2]} ${st[4]}:${st[5]})`)}
+    /* (1566) i dati ufficiali li salva GitHub (ESPN, riserva Dunkest) di notte o al più tardi verso le 07:07: dalle 09:00 sono in ritardo */
+    if(days>=2)add(false,`I dati ufficiali sono fermi al ${st[1]}/${st[2]} (${days} giorni fa)`,true);
+    else if(days===1&&mm>=9*60)add(false,`I dati ufficiali di oggi non sono ancora arrivati (file del ${st[1]}/${st[2]} ${st[4]}:${st[5]})`,true);
+    else add(true,days===1&&mm<9*60?`In attesa dei dati ufficiali di oggi (GitHub li salva entro le 07:07 circa); file attuale del ${st[1]}/${st[2]} ${st[4]}:${st[5]}`:`Dati ufficiali aggiornati (${st[1]}/${st[2]} ${st[4]}:${st[5]})`)}
   }catch(e){add(false,"Controllo non riuscito: "+e.message)}
   return{ok:it.every(x=>x.ok),n:it.length,bad:it.filter(x=>!x.ok).length,it}};
 window.ulEvents=function(){ulCheck();return ulGet(ULK,[]).filter(x=>/^(dk|espn|live):/.test(x.k)).slice().reverse().map(x=>({t:fmt(x.t),x:x.x,c:evc(x.k)}))};
@@ -10896,6 +10916,7 @@ ulCheck();
 /* (260) CRONOLOGIA MODIFICHE: il footer "Ultimo aggiornamento" è cliccabile e apre questa pagina (vista "novita").
    OGNI nuova modifica pubblicata va aggiunta in CIMA a NV_LOG (data, titolo, mini spiegazione). */
 const NV_LOG=[
+ ["10/11/2026","Dati ufficiali da ESPN, salvati da GitHub","Statistiche, efficienza, squadre, Dreamers, Dynasty TV, free agent e G League ora usano i tabellini ESPN della notte (PDK con la formula Dunkest), salvati da GitHub da soli appena finite le partite e al più tardi verso le 07:07. Dunkest resta come riserva se ESPN non funziona. La riga in fondo all'app dice fonte e ora del salvataggio; toccandola si apre il report con notti caricate, anomalie e controlli. Gli infortuni ESPN si rileggono ogni 30 secondi con l'app aperta e GitHub li salva nell'app ogni 5 minuti quando cambiano."],
  ["04/11/2026","Nuove maglie Ducks","Le tre divise dei Texas Ducks cambiano disegno: gessato sottile e fasce laterali che salgono fino alla spallina, con una scia di impronte palmate. La bianca ha collo, spalline e fianchi neri, con scritta e numero neri bordati di giallo."],
  ["30/10/2026","TG Dreamers in Home (novità non ufficiale)","Da attivare in Impostazioni › Home › TG Dreamers. Ogni mattina alle 7:30 esce il nuovo TG Dreamers: una scheda nella striscia della Home. Toccala e la striscia si ferma, il TG legge le notizie del giorno (scambi, scontri, infortuni, notte, classifica) con voce italiana, con i tasti per pausa, avanti e indietro. Alla fine la striscia riparte. Resta lì fino al TG successivo."],
  ["30/10/2026","Squadre: previsione del prossimo turno","Nelle statistiche di ogni squadra trovi la previsione del punteggio Dreamers del prossimo turno, calcolata giocatore per giocatore sulle sue partite NBA (di ognuno conta la migliore), con capitano, titolari, panchina e tribuna. In più media e record a turno, con numeri più grandi."],
@@ -11007,12 +11028,12 @@ document.addEventListener("click",e=>{if(e.target.closest("#vrback")){cur=window
 window.vNovita=function(){const by={};NV_LOG.forEach(x=>(by[x[0]]=by[x[0]]||[]).push(x));
   const e=x=>String(x).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
   return`<button class="gback" id="nvback">‹ Indietro</button><h2><span class="t">Cronologia modifiche</span></h2>
-  <p class="note">Tutto ciò che è cambiato nell'app, dal più recente. Ultimo aggiornamento dati: ${e((document.getElementById("updbtn")||{textContent:""}).textContent.replace(/Ultimo aggiornamento:\s*/,"").replace("›","").trim())}.</p>
+  <p class="note">Tutto ciò che è cambiato nell'app, dal più recente. Ultimo salvataggio dei dati ufficiali: ${e(updStamp()||"—")}.</p>
   <button class="cfgo nvvgo" data-nvgo="1">💰 Prezzi e valori giocatori · registro della domenica ›</button>
-  ${(()=>{const ev=(window.sharedEvents?sharedEvents():[]),st=((document.getElementById("updbtn")||{textContent:""}).textContent.match(/\d{2}\/\d{2}\/\d{4}\s*·\s*\d{2}:\d{2}/)||[""])[0].replace(/\s+/g," ");
+  ${(()=>{const ev=(window.sharedEvents?sharedEvents():[]),st=updStamp();
    const ck=window.dataCheck?dataCheck():null;
-   return`<section class="nvd">${ck?`<div class="nvdt">Controllo di coerenza</div><div class="nvck ${ck.ok?"ok":"ko"}"><b>${ck.ok?"✅ Aggiornamenti ok":"⚠️ Problema tecnico"} · controllo di questo telefono alle ${new Date().toLocaleTimeString("it-IT",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit"})}</b><small>${ck.ok?ck.n+" controlli automatici sui dati caricati: tutto regolare":ck.bad+(ck.bad===1?" anomalia trovata":" anomalie trovate")+" su "+ck.n+" controlli, vedi sotto cosa non torna"}</small><ul>${ck.it.map(x=>`<li class="${x.ok?"y":x.w?"w":"n"}">${x.ok?"✓":"⚠️"} ${e(x.t)}</li>`).join("")}</ul></div>`:""}${window.cfBlock?cfBlock():""}<div class="nvdt">Eventi dati</div><div class="nvleg"><span class="r">Dunkest</span><span class="g">ESPN</span><span class="v">Live</span></div>
-   <article class="nvi nv-r"><b>Ultimo caricamento dati Dunkest</b><span>${e(st||"—")}</span></article>
+   return`<section class="nvd">${window.reportBlock?reportBlock(e):""}${ck?`<div class="nvdt">Controllo di coerenza</div><div class="nvck ${ck.ok?"ok":"ko"}"><b>${ck.ok?"✅ Aggiornamenti ok":"⚠️ Problema tecnico"} · controllo di questo telefono alle ${new Date().toLocaleTimeString("it-IT",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit"})}</b><small>${ck.ok?ck.n+" controlli automatici sui dati caricati: tutto regolare":ck.bad+(ck.bad===1?" anomalia trovata":" anomalie trovate")+" su "+ck.n+" controlli, vedi sotto cosa non torna"}</small><ul>${ck.it.map(x=>`<li class="${x.ok?"y":x.w?"w":"n"}">${x.ok?"✓":"⚠️"} ${e(x.t)}</li>`).join("")}</ul></div>`:""}${window.cfBlock?cfBlock():""}<div class="nvdt">Eventi dati</div><div class="nvleg"><span class="r">Dati ufficiali</span><span class="g">ESPN</span><span class="v">Live</span></div>
+   <article class="nvi nv-r"><b>Ultimo salvataggio dei dati ufficiali</b><span>${e(st||"—")}</span></article>
    ${ev.length?ev.map(x=>`<article class="nvi nv-${x.c}"><b>${e(x.t)}</b><span>${e(x.x)}</span></article>`).join(""):`<p class="note">Nessun evento recente.</p>`}</section>`})()}
   ${valSezHTML(e,window.NV_VAL_NOW)}
   ${Object.keys(by).map(d=>`<section class="nvd"><div class="nvdt">${d}</div>${by[d].map(x=>`<article class="nvi"><b>${e(x[1])}</b><span>${e(x[2])}</span></article>`).join("")}</section>`).join("")}`};
@@ -11029,7 +11050,7 @@ let NV_FROM="home";
 
 <script>
 /* (264) EVENTI DATI CONDIVISI: uguali per tutti i telefoni, calcolati dai dati condivisi (non dal momento in cui l'app viene aperta).
-   🔴 Dunkest = commit del bot "[automatico]" su GitHub (orario reale del caricamento; se la rete non risponde resta la riga fissa col file).
+   🔴 Dati ufficiali = commit del bot "[automatico]" su GitHub (report ESPN, riserva Dunkest) (orario reale del caricamento; se la rete non risponde resta la riga fissa col file).
    🟢 ESPN = ogni notte NBA finita, dalle 07:30 italiane del giorno dopo. 🟣 Live = prima partita della notte, all'orario d'inizio (Dynasty TV). */
 (function(){
 const rome=ts=>{try{return new Intl.DateTimeFormat("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date(ts)).replace(",","")}catch(e){return""}};
@@ -11049,7 +11070,7 @@ async function tipFetch(d){try{if(TIPT[d]&&Date.now()-TIPT[d]<600000)return;TIPT
   const J=await r.json(),ts=(J.events||[]).map(e=>Date.parse(e.date)).filter(x=>x>0);if(!ts.length)return;const m=Math.min(...ts);
   if(TIP[d]!==m){TIP[d]=m;try{localStorage.setItem(TPK,JSON.stringify({m:TIP}))}catch(e){}if(cur==="novita")render()}}catch(e){}}
 window.sharedEvents=function(){dkFetch();try{const t=flUsaOggi();for(let i=0;i<=5;i++){const d=drAdd(t,-i);if(!TIP[d]||i===0)tipFetch(d)}}catch(e){}const out=[],now=Date.now();
-  DK.forEach(ts=>out.push({ts,t:rome(ts),x:"Dati ufficiali Dunkest caricati",c:"r"}));
+  DK.forEach(ts=>out.push({ts,t:rome(ts),x:"Dati ufficiali salvati da GitHub",c:"r"}));
   try{const days=TVD().days,ks=Object.keys(days).filter(d=>d<=flUsaOggi()&&d>=drAdd(flUsaOggi(),-6)).sort();
    for(const d of ks){const G=days[d]||[];if(!G.length)continue;
     const fin=G.some(g=>g[5]==="F")&&!G.some(g=>g[5]==="L"),lab=`${d.slice(8)}/${d.slice(5,7)}`;
@@ -11141,20 +11162,20 @@ const topNight=()=>{const L=drNightOfAgg(EFF.agg),Z=espnNight();return Z>L?Z:L};
 const cleanDay=d=>{const o={};for(const k in d||{})if(k!=="_err")o[k]=d[k];return o};
 const dayData=N=>{const d=CF.d[N];if(!d)return null;if(d._err)return{err:d._err};return d};
 /* BLOCCO SEMPLICE nella cronologia: solo giocatori mancanti (ESPN ↔ Dunkest) dell'ultima notte */
-window.cfBlock=function(){cfStart();let h=`<div class="nvdt">Dunkest ↔ ESPN · giocatori</div>`;
+window.cfBlock=function(){cfStart();let h=`<div class="nvdt">Report ↔ ESPN live · giocatori</div>`;
   const L=drNightOfAgg(EFF.agg),Z=topNight(),N=CF.d[L]&&!CF.d[L]._err?L:null;
   if(!N){h+=CF.err?`<div class="cfsec"><small>Confronto non riuscito: ${E(CF.err)} · riprovo tra poco</small></div>`:`<div class="cfsec"><small>Confronto in corso…</small></div>`}
   else{if(typeof FAG==="undefined"){try{faLoadG()}catch(e){}setTimeout(()=>{if(cur==="novita")render()},1500)}
-    if(Z>L)h+=`<div class="cfsec"><div class="cfh"><b>Notte ${lab(Z)}</b><span>ℹ️ Dunkest non ancora caricato</span></div><small>ESPN è il dato ufficiale provvisorio finché non arriva il report Dunkest.</small></div>`;
+    if(Z>L)h+=`<div class="cfsec"><div class="cfh"><b>Notte ${lab(Z)}</b><span>ℹ️ Report non ancora caricato</span></div><small>ESPN live è il dato ufficiale provvisorio finché non arriva il report del mattino.</small></div>`;
     const ln=["sq","fa","gl"].map(g=>{if(g==="fa"&&typeof FAG==="undefined")return"";const c=cmp(N,g);if(!c)return"";
-      if(!c.miss.length&&!c.extra.length)return`<li class="y">✓ ${GN[g]}: stessi giocatori su Dunkest ed ESPN (${c.n.e})</li>`;
-      return(c.miss.length?`<li class="n">⚠️ ${GN[g]} · mancano su Dunkest (${c.miss.length}): ${E(c.miss.join(", "))} → <b>usato ESPN come dato ufficiale</b> finché Dunkest non lo corregge</li>`:"")+(c.extra.length?`<li class="w">⚠️ ${GN[g]} · solo su Dunkest (${c.extra.length}): ${E(c.extra.join(", "))} → <b>tenuto il dato Dunkest</b>, nessuna sostituzione</li>`:"")}).join("");
-    h+=`<div class="nvck ${/class="n"/.test(ln)?"ko":"ok"}"><b>Notte ${lab(N)}${CF.at?" · controllo di questo telefono alle "+CF.at:""}</b><small>Dunkest sostituisce sempre ESPN quando arriva</small><ul>${ln}</ul></div>`}
-  return h+`<button class="cfgo" data-cfgo="1">Errori Dunkest ↔ ESPN per data ›</button>`};
+      if(!c.miss.length&&!c.extra.length)return`<li class="y">✓ ${GN[g]}: stessi giocatori nel report e su ESPN live (${c.n.e})</li>`;
+      return(c.miss.length?`<li class="n">⚠️ ${GN[g]} · mancano nel report (${c.miss.length}): ${E(c.miss.join(", "))} → <b>usato ESPN live come dato ufficiale</b> finché il report non lo corregge</li>`:"")+(c.extra.length?`<li class="w">⚠️ ${GN[g]} · solo nel report (${c.extra.length}): ${E(c.extra.join(", "))} → <b>tenuto il dato del report</b>, nessuna sostituzione</li>`:"")}).join("");
+    h+=`<div class="nvck ${/class="n"/.test(ln)?"ko":"ok"}"><b>Notte ${lab(N)}${CF.at?" · controllo di questo telefono alle "+CF.at:""}</b><small>Il report ufficiale sostituisce sempre ESPN live quando arriva</small><ul>${ln}</ul></div>`}
+  return h+`<button class="cfgo" data-cfgo="1">Differenze report ↔ ESPN live per data ›</button>`};
 /* SEZIONE A PARTE: errori specifici giorno per giorno */
 window.vCfErr=function(){cfStart();const L=drNightOfAgg(EFF.agg),top=topNight(),MIN="2026-10-20";let N=CF.sel2||top;if(N>top)N=top;if(N<MIN)N=MIN;CF.sel2=N;const g=CF.grp2||"sq";
-  let h=`<button class="gback" id="cfback">‹ Cronologia modifiche</button><h2><span class="t">Errori Dunkest ↔ ESPN</span></h2>
-  <p class="note">Scegli una notte (data della partita NBA) e vedi, giocatore per giocatore, minuti, PDK e statistiche (punti, rimbalzi, assist) che non coincidono tra Dunkest ed ESPN. Dove i due dati sono diversi, nell'app vale Dunkest: ha sostituito il dato ESPN, che non viene più usato. ESPN vale solo quando Dunkest manca di un giocatore.</p>
+  let h=`<button class="gback" id="cfback">‹ Cronologia modifiche</button><h2><span class="t">Differenze report ↔ ESPN live</span></h2>
+  <p class="note">Scegli una notte (data della partita NBA) e vedi, giocatore per giocatore, minuti, PDK e statistiche (punti, rimbalzi, assist) che non coincidono tra il report ufficiale e i dati ESPN letti dal telefono. Dove i due dati sono diversi, nell'app vale il report: ha sostituito il dato live, che non viene più usato. Il dato live vale solo quando il report manca di un giocatore.</p>
   <div class="cfnav"><button data-cfd="-1" aria-label="Giorno prima">‹</button><input type="date" id="cfdate" value="${N}" min="${MIN}" max="${top}"><button data-cfd="1" aria-label="Giorno dopo"${N>=top?" disabled":""}>›</button></div>`;
   cfLoadDay(N);const D=dayData(N);
   if(!D)return h+`<div class="cfsec"><small>Caricamento della notte ${lab(N)}…</small></div>`;
@@ -11163,17 +11184,17 @@ window.vCfErr=function(){cfStart();const L=drNightOfAgg(EFF.agg),top=topNight(),
   h+=`<div class="cfch cfg">${["sq","fa","gl"].map(k=>{const n=nIss(cmp(N,k));return`<button class="cfc${k===g?" on":""}" data-cfg="${k}">${GN[k]} ${n==null?"":n?`<b class="ko">${n}</b>`:"✅"}</button>`}).join("")}</div>`;
   if(g==="fa"&&typeof FAG==="undefined")return h+`<div class="cfsec"><small>Caricamento dei dati free agent…</small></div>`;
   const c=cmp(N,g);
-  if(N>L)return h+`<div class="cfsec"><div class="cfh"><b>Dunkest non ha ancora questa notte</b><span>ℹ️ ESPN ${c.n.e} giocatori</span></div><small>Per ora l'app usa ESPN; quando arriva il report Dunkest lo sostituisce e qui comparirà il confronto.</small></div>`;
+  if(N>L)return h+`<div class="cfsec"><div class="cfh"><b>Il report non ha ancora questa notte</b><span>ℹ️ ESPN ${c.n.e} giocatori</span></div><small>Per ora l'app usa ESPN live; quando arriva il report del mattino lo sostituisce e qui comparirà il confronto.</small></div>`;
   if(!c.n.d&&!c.n.e)return h+`<div class="cfsec"><small>Nessun dato per ${GN[g].toLowerCase()} in questa notte (da entrambe le fonti).</small></div>`;
   const used=N>=L;
   if(!c.miss.length&&!c.extra.length&&!c.opp.length&&!c.pdk.length&&!c.min.length&&!c.st.length)h+=`<div class="cfsec ok"><div class="cfh"><b>Tutto coincide</b><span>✅ ${c.both} giocatori</span></div></div>`;
-  if(c.miss.length)h+=sec("Mancano su Dunkest (solo ESPN)",false,`${c.miss.length}`,`<p class="cfp">${E(c.miss.join(", "))}</p><p class="cfp"><b>${used?"ESPN usato come dato ufficiale finché Dunkest non lo corregge.":"Non usato: la notte è già stata chiusa da Dunkest senza questi giocatori."}</b></p>`);
-  if(c.extra.length)h+=sec("Solo su Dunkest (non su ESPN)",false,`${c.extra.length}`,`<p class="cfp">${E(c.extra.join(", "))}</p><p class="cfp"><b>Tenuto il dato Dunkest, nessuna sostituzione.</b></p>`);
+  if(c.miss.length)h+=sec("Mancano nel report (solo ESPN live)",false,`${c.miss.length}`,`<p class="cfp">${E(c.miss.join(", "))}</p><p class="cfp"><b>${used?"ESPN live usato come dato ufficiale finché il report non lo corregge.":"Non usato: la notte è già stata chiusa dal report senza questi giocatori."}</b></p>`);
+  if(c.extra.length)h+=sec("Solo nel report (non su ESPN live)",false,`${c.extra.length}`,`<p class="cfp">${E(c.extra.join(", "))}</p><p class="cfp"><b>Tenuto il dato del report, nessuna sostituzione.</b></p>`);
   const P={},add=(k,d,x,y)=>{(P[k]=P[k]||[]).push([d,x,y])};
   c.opp.forEach(([k,x,y])=>add(k,"Avversario",x,y));c.min.forEach(([k,x,y])=>add(k,"Minuti",x,y));c.pdk.forEach(([k,x,y])=>add(k,"PDK",x,y));
   c.st.forEach(([k,x,y])=>{const a=x.split("/"),b=y.split("/");["Punti","Rimbalzi","Assist"].forEach((n,i)=>{if(a[i]!==b[i])add(k,n,a[i],b[i])})});
   const ks=Object.keys(P).sort((p,q)=>p.localeCompare(q));
-  if(ks.length)h+=`<section class="cfsec ko"><div class="cfh"><b>Dati diversi · ${E(lab(N))}</b><span>⚠️ ${ks.length} giocator${ks.length===1?"e":"i"}</span></div><table class="cft"><tr><th>Giocatore</th><th>Dato</th><th>Dunkest</th><th>ESPN</th></tr>${ks.map(k=>P[k].map((r,i)=>`<tr>${i?"<td></td>":`<td rowspan="${P[k].length}"><b>${E(k)}</b></td>`}<td>${r[0]}</td><td>${E(r[1])}</td><td>${E(r[2])}</td></tr>`).join("")).join("")}</table><p class="cfp"><b>Dunkest ha sostituito il dato ESPN</b>: nell'app vale il dato Dunkest.</p></section>`;
+  if(ks.length)h+=`<section class="cfsec ko"><div class="cfh"><b>Dati diversi · ${E(lab(N))}</b><span>⚠️ ${ks.length} giocator${ks.length===1?"e":"i"}</span></div><table class="cft"><tr><th>Giocatore</th><th>Dato</th><th>Report</th><th>ESPN live</th></tr>${ks.map(k=>P[k].map((r,i)=>`<tr>${i?"<td></td>":`<td rowspan="${P[k].length}"><b>${E(k)}</b></td>`}<td>${r[0]}</td><td>${E(r[1])}</td><td>${E(r[2])}</td></tr>`).join("")).join("")}</table><p class="cfp"><b>Il report ha sostituito il dato ESPN live</b>: nell'app vale il dato del report.</p></section>`;
   return h};
 VIEWS.cferr=window.vCfErr;
 document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest("[data-cfg],[data-cfd],[data-cfgo],#cfback");if(!t)return;
@@ -11189,8 +11210,9 @@ const TRI={ankle:"caviglia",knee:"ginocchio",foot:"piede",toe:"alluce",hand:"man
 const trI=t=>String(t||"").replace(/[A-Za-z']+/g,w=>TRI[w.toLowerCase()]||w);
 const mapSt=(st,fs)=>{const a=String(st).toLowerCase(),c=String(fs).toLowerCase();return/\bout\b|suspen/.test(a)?"out":/doubt/.test(a+" "+c)?"dubbio":/question/.test(a+" "+c)?"quest":/probab/.test(a+" "+c)?"prob":"dtd"};
 let injT=0,injB=false;
-async function injFetch(force){if(injB||(!force&&Date.now()-injT<300000))return;injB=true;injT=Date.now();
-  try{const r=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/injuries?t="+Date.now(),{cache:"no-store"});if(!r.ok)throw 0;const Q=await r.json();if(!Array.isArray(Q.injuries))throw 0;
+/* (1566) ogni 30 secondi mentre l'app è aperta e visibile il telefono rilegge ESPN; se ESPN non risponde usa la lista salvata da GitHub
+   (infortuni-data.js, INFLIVE, salvato ogni 5 minuti da .github/workflows/infortuni.yml solo se cambia; stessa forma della risposta ESPN). injApply = lettura comune ai due casi. */
+function injApply(Q,q,fonte){if(!Q||!Array.isArray(Q.injuries))throw 0;
     const own={};for(const t in ROSTER)ROSTER[t].forEach(p=>own[tvNm(p[0])]={t,p});const out=[];
     Q.injuries.forEach(tm=>(tm.injuries||[]).forEach(i=>{const a=i.athlete||{},o=own[tvNm(a.displayName)];if(!o)return;const d=i.details||{},fs=(d.fantasyStatus&&(d.fantasyStatus.description||d.fantasyStatus.abbreviation))||"";
       const parte=trI(d.detail||d.location||""),fem=/a$/.test(parte.split(" ").pop()),lato=/left/i.test(d.side||"")?(fem?"sinistra":"sinistro"):/right/i.test(d.side||"")?(fem?"destra":"destro"):"",
@@ -11200,12 +11222,16 @@ async function injFetch(force){if(injB||(!force&&Date.now()-injT<300000))return;
       /* (1100) quando è arrivata la notizia: data dell aggiornamento ESPN (serve al TG per prendere solo le notizie nuove) */let dt=null;try{const z=String(i.date||"").replace(/T(\d\d:\d\d)Z$/,"T$1:00Z"),v=Date.parse(z);if(!isNaN(v))dt=v}catch(e){}
       out.push({p:o.p[0],t:o.t,nba:o.p[3],stato:mapSt(i.status,fs+" "+(i.shortComment||"")+" "+(i.longComment||"")),tipo:tipo.charAt(0).toUpperCase()+tipo.slice(1),...(rientro?{rientro}:{}),...(nota?{nota}:{}),...(dt?{dt}:{}),fonti:["ESPN"]})}));
     /* (1100) prima volta che questo telefono ha visto ogni infortunio (giocatore+stato+tipo): così un infortunio lungo già noto non torna «nuovo» quando ESPN lo ritocca */try{const K="dl_inj_seen",S=JSON.parse(localStorage.getItem(K)||"{}"),now=Date.now(),keep={};out.forEach(x=>{const k=x.p+"|"+x.stato+"|"+x.tipo;keep[k]=S[k]||Math.min(now,x.dt||now);x.seen=keep[k]});localStorage.setItem(K,JSON.stringify(keep))}catch(e){}
-    const q=new Intl.DateTimeFormat("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date()).replace(",", " ·").replace(/\s+/g," ");
     /* (1137) ENTRATA in infermeria: quando un giocatore compare per la prima volta nella lista (prima non c era). Al primo avvio chi c è già conta come vecchio; chi esce e rientra torna nuovo. */try{const K="dl_inj_in2",raw=localStorage.getItem(K),S=raw?JSON.parse(raw):null,now=Date.now(),keep={};out.forEach(x=>{if(x.stato==="ok")return;const v=S?(S[x.p]!=null?S[x.p]:now):(x.dt&&now-x.dt<48*3600*1000?x.dt:0)/* (1139) primo avvio: vale la data ESPN se è degli ultimi 2 giorni */;keep[x.p]=v;x.inT=v});localStorage.setItem(K,JSON.stringify(keep))}catch(e){}
-    const prev=JSON.stringify(INFORTUNI.lista);INFORTUNI.lista.splice(0,INFORTUNI.lista.length,...out);const chg=prev!==JSON.stringify(out)||!INFORTUNI.auto;INFORTUNI.agg=q;INFORTUNI.fonti=["ESPN – NBA Injuries (aggiornamento automatico)"];INFORTUNI.auto=true;
+    const prev=JSON.stringify(INFORTUNI.lista);INFORTUNI.lista.splice(0,INFORTUNI.lista.length,...out);const chg=prev!==JSON.stringify(out)||!INFORTUNI.auto;INFORTUNI.agg=q;INFORTUNI.fonti=[fonte];INFORTUNI.auto=true;INFORTUNI.src=fonte;
     try{injSync()}catch(e){}if(chg&&["novita","infortuni","campo","giochi"].includes(cur))render()}
-  catch(e){}injB=false}
-window.injFetch=injFetch;injFetch();setInterval(injFetch,60000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)injFetch()});
+const injFile=()=>{try{if(typeof INFLIVE!=="undefined"&&INFLIVE&&INFLIVE.upd){injApply(INFLIVE,INFLIVE.upd,`ESPN – NBA Injuries (lista salvata da GitHub il ${INFLIVE.upd})`);return true}}catch(e){}return false};
+async function injFetch(force){if(injB||(!force&&Date.now()-injT<28000))return;injB=true;injT=Date.now();
+  try{const r=await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/injuries?t="+Date.now(),{cache:"no-store"});if(!r.ok)throw 0;const Q=await r.json();
+    const q=new Intl.DateTimeFormat("it-IT",{timeZone:"Europe/Rome",day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date()).replace(",", " ·").replace(/\s+/g," ");
+    injApply(Q,q,"ESPN – NBA Injuries (letti da questo telefono, ogni 30 secondi)");window.INJ_LIVE_AT=q}
+  catch(e){if(!INFORTUNI.auto)injFile()}injB=false}
+window.injFetch=injFetch;injFile();injFetch();setInterval(()=>{if(!document.hidden)injFetch()},10000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)injFetch()});
 setTimeout(()=>{try{cfStart()}catch(e){}},18000);/* (1524) controllo Dunkest↔ESPN e partite free agent: in sottofondo 18 s dopo l apertura, così l avvio è più veloce e le sezioni sono già pronte */
 })();
 </script>
@@ -11377,13 +11403,13 @@ function orari(){if(!COL.d){cur="campo";return vCampo()}
   R("06:00","Cambia la data USA","È la mezzanotte di New York: da qui la «notte» corrente è quella nuova. Fino alle 14:00 la Home continua a mostrare i risultati della notte appena finita."),
   R("06:47","Calendario NBA (ripasso del mattino)","Automatico da ESPN (GitHub): aggiorna gli orari delle partite dei prossimi giorni in Dynasty TV. L'orario reale può slittare di qualche minuto."),
   R("07:30","ESPN diventa ufficiale nelle statistiche","I PDK della notte entrano nelle statistiche dei giocatori, nell'efficienza stagionale, in «Notte · in campo» e in FA e G-League. Alle 07:30 si spengono anche le animazioni live (puntini LIVE, bordo lampeggiante)."),
-  R("12:30","Chiusura e apertura dei turni Dreamers","Un turno si chiude, e si apre il successivo, solo dalle 12:30 del giorno dopo la sua ultima notte USA, così i dati Dunkest sono già caricati. A quell'ora si aggiornano classifica ufficiale, playoff e banner Dreamers della Home. Prima di quell'ora il turno resta «in corso»."),
+  R("12:30","Chiusura e apertura dei turni Dreamers","Un turno si chiude, e si apre il successivo, solo dalle 12:30 del giorno dopo la sua ultima notte USA, così i dati ufficiali sono già caricati. A quell'ora si aggiornano classifica ufficiale, playoff e banner Dreamers della Home. Prima di quell'ora il turno resta «in corso»."),
   R("13:17","Calendario NBA (pomeriggio)","Secondo giro automatico da ESPN. Il server lo lancia alle 12:17 UTC: con l'ora solare è 13:17, con l'ora legale 14:17."),
   R("14:00","La Home passa alle partite della prossima notte","Dalle 14:00 fino alla prima partita la Home non mostra più i risultati: mostra i prossimi scontri (avversario, orario, PDK da superare, previsione e trend) e nel banner le partite in arrivo. Appena ESPN segna la prima partita in corso torna live da sola."),])}
  ${card("Ogni settimana","",[
   R("Dom 18:00","Valori e prezzi dei giocatori","Ogni domenica alle 18:00 scattano i nuovi valori (e i prezzi in crediti). Prima di quell'ora restano quelli della settimana precedente. Il registro del lunedì è in Cronologia modifiche.")])}
  ${card("Senza orario fisso","",[
-  R("Dunkest","Report ufficiale","Non ha un orario: i dati ufficiali Dunkest valgono da quando vengono caricati (la riga «Ultimo aggiornamento» in fondo alla Home mostra l'ora del file). In «Eventi dati» della Cronologia il rosso segna il caricamento."),
+  R("Notte–07:07","Report ufficiale (GitHub)","I dati ufficiali della notte (tabellini ESPN, PDK con la formula Dunkest) li salva GitHub da solo: di notte appena tutte le partite sono finite, al più tardi verso le 07:07 (08:07 con l'ora legale). Se ESPN non funziona usa Dunkest come riserva. La riga in fondo alla Home dice fonte e ora del salvataggio; toccandola si apre il report con le anomalie."),
   R("Ogni 45 s","Dati live ESPN","Mentre c'è una partita in corso l'app riscarica punteggi e tabellini ogni 45 secondi circa. In attesa dei dati la Home controlla ogni 4 secondi."),
   R("Ogni 60 s","Home","Aggiorna da sola banner e tabelle mentre è aperta."),
   R("Release","Archivio Dreamers","Quando si pubblica una nuova versione dell'app l'archivio delle notti Dreamers si rigenera da solo.")])}

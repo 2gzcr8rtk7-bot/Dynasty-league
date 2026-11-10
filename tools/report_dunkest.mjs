@@ -1,4 +1,7 @@
 // REPORT DUNKEST – aggiorna i dati dell'app con i dati UFFICIALI Dunkest (niente ESPN).
+// (1566) NON è più la fonte principale: dal 11/11/2026 i dati ufficiali li carica tools/report_espn.mjs (GitHub, .github/workflows/report.yml).
+// Resta come RISERVA: il workflow lo lancia da solo solo se report_espn.mjs fallisce (ESPN non raggiungibile, notte incompleta,
+// controlli non superati). Scrive anche il registro della corsa (REPORT_INFO, fonte "Dunkest") e la riga in fondo all'app.
 // Uso (da dentro la cartella del repository):
 //   NODE_USE_ENV_PROXY=1 node tools/report_dunkest.mjs                 aggiorna fino a ieri (data USA)
 //   NODE_USE_ENV_PROXY=1 node tools/report_dunkest.mjs --fino=2026-10-26   ultima notte da caricare (data USA)
@@ -14,6 +17,7 @@
 // Arrotondamenti come Python round() (es. 41:09 → 41,1).
 // Scritto il 28/10/2026 da Claude (account del secondo utente).
 import { readFileSync, writeFileSync } from "node:fs";
+import { registraCorsa } from "./report_info.mjs";
 
 const ARG = Object.fromEntries(process.argv.slice(2).map(a => { const [k, v] = a.replace(/^--/, "").split("="); return [k, v ?? true]; }));
 const SEASON = 29, SEASON_START = "2026-10-20", SEASON_LAB = "2026/27", FA_LAB = "26/27";
@@ -91,7 +95,7 @@ const table = (a, b) => getJSON(`${API}/stats/table?season_id=${SEASON}&mode=nba
 const norm = s => String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/ø/g, "o").replace(/ł/g, "l")
   .replace(/\b(jr|sr|ii|iii|iv)\b\.?/g, "").replace(/[^a-z]/g, "");
 const lastOf = n => { const w = String(n).replace(/\s+(Jr\.?|Sr\.?|II|III|IV)$/i, "").trim().split(/\s+/); return norm(w[w.length - 1]); };
-const APP = new Map(), BYLAST = new Map();
+const APP = new Map(), BYLAST = new Map(), ABB = [];
 const addName = (n, team) => { if (!n) return; const k = norm(n); if (!APP.has(k)) APP.set(k, n);
   if (team) { const l = lastOf(n) + "|" + team; (BYLAST.get(l) || BYLAST.set(l, new Set()).get(l)).add(n); } };
 Object.values(ROSTER).flat().forEach(r => addName(r[0], r[3])); Object.values(GL_STATS).forEach(g => addName(g.n, g.nba));
@@ -99,7 +103,7 @@ FA.forEach(f => addName(f[0], f[1])); Object.keys(PARTITE).forEach(n => addName(
 Object.keys(FAG).forEach(n => addName(n)); Object.values(TV.box).forEach(b => [...b.a, ...b.h].forEach(r => addName(r[0])));
 const appName = p => { const dk = (p.first_name + " " + p.last_name).trim(), k = norm(dk);
   if (APP.has(k)) return APP.get(k);
-  const c = BYLAST.get(lastOf(dk) + "|" + p.team_code); if (c && c.size === 1) { const n = [...c][0]; console.log(`  nome: "${dk}" (Dunkest) = "${n}" (app)`); return n; }
+  const c = BYLAST.get(lastOf(dk) + "|" + p.team_code); if (c && c.size === 1) { const n = [...c][0]; console.log(`  nome: "${dk}" (Dunkest) = "${n}" (app)`); ABB.push(`Nome abbinato per cognome e squadra: ${dk} (Dunkest) = ${n}`); return n; }
   return dk; };
 
 /* ---------- 1) tutti i giocatori scesi in campo nella stagione + loro partite ---------- */
@@ -205,7 +209,8 @@ html = setConst(html, "ULTIMA", `{agg:${J(AGG)},gioc:${J(ult)}}`);
 html = setConst(html, "GL_STATS", J(GL_STATS));
 html = setConst(html, "FA", J(FA2));
 html = html.replace(/const FA_AGG="[^"]*"/, `const FA_AGG=${J(AGG)}`);
-html = html.replace(/Ultimo aggiornamento: [^<]*</, `Ultimo aggiornamento: ${AGG} · ${ORA}<`);
+html = registraCorsa(html, { fonte: "Dunkest", agg: AGG, ora: ORA, notti: NOTTI, fino: FINO, anomalie: [],
+  info: [`Notti: ${NOTTI.map(ddmm).join(", ")} (dati Dunkest: ESPN non disponibile)`, ...ABB, ...(senza.length ? [`Giocatori dei roster senza partite: ${senza.join(", ")}`] : [])] }, getConst, setConst);
 writeFileSync("index.html", html);
 writeFileSync("fa-games.js", setConst(faSrc, "FAG", J(FAG)));
 writeFileSync("tv-data.js", setConst(tvSrc, "TV", J(TV)));
