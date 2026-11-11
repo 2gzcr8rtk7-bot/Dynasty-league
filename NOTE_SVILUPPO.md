@@ -4008,3 +4008,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - v1007: crediti dello scambio a 4 subito in cassa (CREDITI: DOL 45->0, DUC 0->40, SPI 50->35, PEA 38->58). I giocatori in Dreamers restano dal turno 6.
 
 - v1008: Anthony Black (ORL) con 26 anni per scelta della lega: NASCITA 2004-01-20 -> 2000-01-20 (vale per età, valori, IA trade e pagella).
+- v1009: (1580) Anthony Black: 26 anni SOLO nelle scritte (NASCITA_SHOW + etaVis/etaTxt: profili, comparatore, immagini da condividere); NASCITA torna vera (2004-01-20), quindi valori, prezzi, IA trade e pagella usano i 22 anni veri.
