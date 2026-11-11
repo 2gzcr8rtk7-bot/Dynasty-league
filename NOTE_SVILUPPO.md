@@ -4004,3 +4004,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 (1579) Home: fino alle 19:00 la casella sta sul live/ultima notte; dalle 19:00 si mette da sola sulla Previsione della notte successiva, che alla prima palla a due diventa il live (controllo ogni minuto con l app aperta). Prima la Previsione partiva alle 14:00.
 
 - v1006: SCAMBIO A 4 11/11 19:28: Daniels (DUC) ai Dolphins; Green (SPI) e Diabaté (PEA) + 40 cr dai Dolphins ai Ducks; Lillard (DOL) agli Spiders; Steinbach (DUC, diritti restano ai Mooses) + 20 cr (15 SPI + 5 DOL) ai Peacocks. ROSTER aggiornato, TRADES con da:{} per drUndoTrades (conta dal turno 6, 13/11), crediti in MOVIMENTI (le voce 'N cr' non sono lette da movimenti()). Tolto AVVISO slot Diabaté. Scheda scambi: piu di 2 squadre su 2 righe (.tr4).
+
+- v1007: crediti dello scambio a 4 subito in cassa (CREDITI: DOL 45->0, DUC 0->40, SPI 50->35, PEA 38->58). I giocatori in Dreamers restano dal turno 6.
