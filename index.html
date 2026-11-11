@@ -9838,7 +9838,7 @@ function cmSlot(i){const n=CMR[i?"pb":"pa"],p=n?trPl(n):null,col=CM_COL[i],sl=i?
 function cmList(){const q=vnz(CMR.q||""),other=CMR[CMR.slot==="a"?"pb":"pa"];
   const R=cmAll().filter(p=>p.n!==other&&(!q||vnz(p.n+" "+(TEAMS[p.t]||FAT).nick+" "+(TEAMS[p.t]||FAT).name).includes(q)));
   const e=s=>String(s).replace(/"/g,"&quot;");
-  return R.slice(0,40).map(p=>`<button class="cmrow" data-cm="pick|${e(p.n)}">${p.gl?glBadge(p.t,"cmlg"):badge(p.t,"cmlg")}<span class="cmnm"><b>${p.n}</b><small>${p.gl?"G-":""}${TEAMS[p.t].nick} · ${{G:"Guardia",F:"Ala",C:"Centro"}[p.r]||""}</small></span></button>`).join("")+(R.length>40?`<p class="note">Altri ${R.length-40} giocatori: scrivi per restringere la ricerca.</p>`:"")||`<p class="note">Nessun giocatore trovato.</p>`}
+  return R.slice(0,40).map(p=>`<button class="cmrow" data-cm="pick|${e(p.n)}">${p.fa||!TEAMS[p.t]?`<span class="cmlg" style="display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:11px">FA</span>`:p.gl?glBadge(p.t,"cmlg"):badge(p.t,"cmlg")}<span class="cmnm"><b>${p.n}</b><small>${p.gl?"G-":""}${(TEAMS[p.t]||FAT).nick} · ${{G:"Guardia",F:"Ala",C:"Centro"}[p.r]||""}</small></span></button>`).join("")+(R.length>40?`<p class="note">Altri ${R.length-40} giocatori: scrivi per restringere la ricerca.</p>`:"")||`<p class="note">Nessun giocatore trovato.</p>`}
 function vCompar(){if(typeof FAG==="undefined")faLoadG();
   perNorm(CMR);const SZR=perSzr(CMR.da,CMR.a),inP=perIn(CMR.da,CMR.a),met=CMR.met,isE=met==="eff";
   const gA=cmGames(CMR.pa,SZR,inP),gB=cmGames(CMR.pb,SZR,inP),both=[...gA,...gB];
