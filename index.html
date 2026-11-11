@@ -5828,8 +5828,13 @@ function hnTeam(t){if(!TEAMS[t])return;HN_T=t;try{localStorage.setItem("dl_hnt",
 /* (393) Casellina della Home a 3 pagine: Giocatori (come prima) · Risultati Dreamers · Classifica Dreamers. Si cambia con lo swipe orizzontale (verso destra = pagina successiva, verso sinistra = precedente) o toccando i puntini. */
 let HN_PG=0,HN_RK=null,HN_NO=0;
 /* (769) la Home ricorda dove eri (pagina della casella, notte scelta col navigatore, turno nei risultati) anche chiudendo e riaprendo l'app */
-let HN_RST=null;try{HN_RST=JSON.parse(localStorage.getItem("dl_hnav")||"null");if(HN_RST){HN_PG=+HN_RST.pg||0;if(HN_RST.rk!=null)HN_RK=+HN_RST.rk}}catch(e){}
-function hnSav(){try{localStorage.setItem("dl_hnav",JSON.stringify({pg:HN_PG,d:window.__hnD||null,rk:HN_RK}))}catch(e){}}
+/* (1578) la casella della Home torna SEMPRE sul live (notte in corso / ultima notte, prima pagina): non si ricorda più dove l avevi spostata.
+   Si rimette sul live ogni volta che si torna alla Home da un altra sezione e quando si riapre l app. */
+let HN_RST=null;try{localStorage.removeItem("dl_hnav")}catch(e){}
+const hnLive=()=>{HN_PG=0;HN_NO=0;HN_RK=null};
+{let hnPrev=null;const R0=render;render=function(){try{if(cur==="home"&&hnPrev!=="home")hnLive()}catch(_){}hnPrev=cur;return R0.apply(this,arguments)}}
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&typeof cur!=="undefined"&&cur==="home"&&(HN_PG||HN_NO)){hnLive();const y=scrollY;render();scrollTo(0,y)}});
+function hnSav(){}/* (1578) posizione della casella non più salvata */
 /* (626) dalle 14:00 (fase pre) il giro ha una 4a pagina: Previsione > Risultati > Classifica > Notte appena avvenuta > Previsione. Prima delle 14 la notte appena avvenuta è la pagina predefinita e la Previsione non esiste. */
 const HN_PGN4=["Previsione","Risultati","Classifica","Notte"],HN_PGN3=["Giocatori","Risultati","Classifica"];let HN_PGN=HN_PGN3;
 const HN_CTL="one"; /* "wheel" = rotella · "arr" = freccette */

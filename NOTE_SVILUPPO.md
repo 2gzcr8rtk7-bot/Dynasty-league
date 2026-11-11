@@ -4000,3 +4000,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 (1575) Primo tentativo SEMPRE alle 07:30 italiane anche con l ora legale: cron ogni 30 minuti dalle 05:00 UTC e le corse prima delle 07:30 di Roma escono subito.
 (1576) Home › riquadro Seguiti: anche i prospetti del College seguiti che giocano la notte mostrata o sono live (iniziali, avversario, stato, minuti, punti, PDK); tocca = profilo senza codice; live ESPN dei seguiti anche in Home.
 (1577) College: segnalibro piccolo accanto al nome in ogni scheda della lista (seguito = acceso; tocco = segui/smetti, senza aprire il profilo); nome un po più staccato dalla capsula Età draft.
+(1578) Home: la casella (notte/live, risultati, classifica, previsione) torna sempre sul live quando si torna alla Home o si riapre l app; non si ricorda più la posizione (dl_hnav tolto).
