@@ -3,21 +3,21 @@
 # Se ESPN non funziona (non risponde, notte incompleta, controlli non superati) usa la RISERVA tools/report_dunkest.mjs.
 # Poi rigenera dreamers-data.js (tools/dreamers.mjs): un push fatto con il GITHUB_TOKEN NON fa partire gli altri workflow,
 # quindi dreamers.yml non scatterebbe da solo; per questo l'archivio Dreamers si rifà qui, nello stesso giro (e non ci sono cicli).
-# Nessuno deve lanciare niente a mano. Se nemmeno la riserva funziona alla corsa delle 07:07 (o dopo) il job FALLISCE e GitHub manda la mail.
+# Nessuno deve lanciare niente a mano. Se nemmeno la riserva funziona alla corsa delle 07:30 (o dopo) il job FALLISCE e GitHub manda la mail.
 # Orari in UTC. Italia d'inverno = UTC+1, con l'ora legale (fine marzo - fine ottobre) = UTC+2: tutto scatta un'ora più tardi in ora italiana.
-#   */30 0-5 → di notte ogni 30 minuti (01:00-06:30 italiane d'inverno): carica la notte appena TUTTE le partite sono finite; se una è ancora
-#              in corso esce senza scrivere niente e riprova (nessun errore). Così i dati sono nell'app prima delle 07:00.
-#   7,37 6-21 → (1567) TENTATIVI CONTINUI dalle 07:07 alle 22:37 italiane d'inverno, ogni 30 minuti (07:07, 07:37, 08:07, ...): se la notte è già
+#   (non ci sono più corse notturne: la notte vale il live sul telefono, i dati diventano ufficiali dalle 07:30)
+#   (1574) PRIMO TENTATIVO ALLE 07:30 italiane d'inverno (cron 30 6 UTC; 08:30 con l'ora legale), niente più caricamenti di notte.
+#   0,30 7-21 → TENTATIVI CONTINUI ogni 30 minuti fino alle 22:30 italiane d'inverno (08:00, 08:30, ...): se la notte è già
 #              nell'app non fanno niente (pochi secondi). Ogni corsa prova ESPN fino a 3 volte (a 3 minuti di distanza).
 #              Prima delle 08:00 italiane solo ESPN (se non va si aspetta la corsa dopo); dalle 08:00 se ESPN non va si usa la riserva Dunkest.
 #              Se alle 09:00 la notte manca ancora il job fallisce (mail di GitHub) ma i tentativi continuano lo stesso fino a sera, senza arrendersi.
-# Lancio a mano (scheda Actions › report-dati › Run workflow): corsa normale come quella delle 07:07; con "prova" spuntato prova ESPN e Dunkest
+# Lancio a mano (scheda Actions › report-dati › Run workflow): corsa normale come quella delle 07:30; con "prova" spuntato prova ESPN e Dunkest
 # senza scrivere né pubblicare niente (serve a vedere se da GitHub Dunkest risponde).
 name: report-dati
 on:
   schedule:
-    - cron: "*/30 0-5 * * *"
-    - cron: "7,37 6-21 * * *"
+    - cron: "30 6 * * *"
+    - cron: "0,30 7-21 * * *"
   workflow_dispatch:
     inputs:
       prova:
@@ -63,7 +63,7 @@ jobs:
         run: |
           git config user.name "report-bot"
           git config user.email "report-bot@users.noreply.github.com"
-          # di notte una partita ancora in corso non è un errore; dalle 07:07 (e a mano) sì
+          # di notte una partita ancora in corso non è un errore; dalle 07:30 (e a mano) sì
           ULT="--ultima"; if [ "$SCHED" = "*/30 0-5 * * *" ]; then ULT=""; fi
           # (1567) ora italiana: prima delle 08:00 niente riserva Dunkest (si riprova ESPN alla corsa dopo); la mail solo dalle 09:00
           HM=$(TZ=Europe/Rome date +%H%M); HM=$((10#$HM)); RISERVA=1; MAIL=1
