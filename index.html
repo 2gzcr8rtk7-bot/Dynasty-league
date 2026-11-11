@@ -5800,7 +5800,7 @@ function hnNowMn(){const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rom
 function homeFase(mnTest){try{const o=flUsaOggi(),G=(TV.days[o]||[]);let mn=mnTest;if(typeof mn!=="number"){const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date());mn=+f.find(x=>x.type==="hour").value*60+ +f.find(x=>x.type==="minute").value}
   const hasS=G.some(g=>g[5]==="S"),started=G.some(g=>g[5]==="L"||g[5]==="F");/* (635) all'una di notte ET la data USA passa al giorno dopo (circa le 05:00-06:00 italiane): senza questo controllo la Previsione riappariva mentre la notte appena giocata non era ancora archiviata. La Previsione vale solo dalle 14:00 italiane fino alla prima partita. */
   let eh=12;try{eh=+new Intl.DateTimeFormat("en-GB",{timeZone:"America/New_York",hour:"2-digit",hourCycle:"h23"}).format(new Date())}catch(e){}
-  return hasS&&!started&&!(mn>=360&&mn<840)&&!(typeof mnTest!=="number"&&eh<9)?o:null}catch(e){return null}}
+  /* (1579) la Previsione parte dalle 19:00 italiane (prima dalle 14:00): fino alle 19 resta il live/ultima notte */return hasS&&!started&&!(mn>=360&&mn<1140)&&!(typeof mnTest!=="number"&&eh<9)?o:null}catch(e){return null}}
 const HN_DEFC={};function hnDef(opp,role){const k=opp+"|"+role,n=Date.now(),c=HN_DEFC[k];if(c&&n-c.t<600000)return c.v;let v=null;try{v=capDef(opp,role)}catch(e){}HN_DEFC[k]={t:n,v};return v}
 let HN_NOCLK=0;document.addEventListener("click",e=>{if(performance.now()<HN_NOCLK){e.stopPropagation();e.preventDefault()}},true);
 let HN_H={};try{HN_H=JSON.parse(localStorage.getItem("dl_hh")||"{}")||{}}catch(e){HN_H={}}
@@ -5831,9 +5831,11 @@ let HN_PG=0,HN_RK=null,HN_NO=0;
 /* (1578) la casella della Home torna SEMPRE sul live (notte in corso / ultima notte, prima pagina): non si ricorda più dove l avevi spostata.
    Si rimette sul live ogni volta che si torna alla Home da un altra sezione e quando si riapre l app. */
 let HN_RST=null;try{localStorage.removeItem("dl_hnav")}catch(e){}
-const hnLive=()=>{HN_PG=0;HN_NO=0;HN_RK=null};
+const hnLive=()=>{HN_PG=0;HN_NO=0;HN_RK=null;/* (1579) dalle 19:00 fino alla prima partita: la notte successiva (Previsione) */try{if(homeFase())HN_NO=-1}catch(_){}};
 {let hnPrev=null;const R0=render;render=function(){try{if(cur==="home"&&hnPrev!=="home")hnLive()}catch(_){}hnPrev=cur;return R0.apply(this,arguments)}}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&typeof cur!=="undefined"&&cur==="home"&&(HN_PG||HN_NO)){hnLive();const y=scrollY;render();scrollTo(0,y)}});
+/* (1579) alle 19:00 (inizio Previsione) e alla prima palla a due (Previsione → live) la casella si rimette da sola sulla pagina giusta, anche con l app aperta */
+{let fz=null;setInterval(()=>{try{if(typeof cur==="undefined"||cur!=="home"||document.hidden)return;const f=String(homeFase()||"");if(fz!==null&&f!==fz){hnLive();const y=scrollY;render();scrollTo(0,y)}fz=f}catch(_){}},60e3)}
 function hnSav(){}/* (1578) posizione della casella non più salvata */
 /* (626) dalle 14:00 (fase pre) il giro ha una 4a pagina: Previsione > Risultati > Classifica > Notte appena avvenuta > Previsione. Prima delle 14 la notte appena avvenuta è la pagina predefinita e la Previsione non esiste. */
 const HN_PGN4=["Previsione","Risultati","Classifica","Notte"],HN_PGN3=["Giocatori","Risultati","Classifica"];let HN_PGN=HN_PGN3;
@@ -11458,12 +11460,12 @@ function orari(){if(!COL.d){cur="campo";return vCampo()}
  return`<div class="hof"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
  <div class="hofhd"><div style="grid-column:1/3"><small>Texas Ducks · area riservata del GM</small><b>Orari</b><em>Quando si aggiorna cosa · ora italiana</em></div></div>
  ${card("Ogni giorno","Gli orari sono in ora italiana. «Notte» = la notte NBA (data USA).",[
-  R("06:00","Cambia la data USA","È la mezzanotte di New York: da qui la «notte» corrente è quella nuova. Fino alle 14:00 la Home continua a mostrare i risultati della notte appena finita."),
+  R("06:00","Cambia la data USA","È la mezzanotte di New York: da qui la «notte» corrente è quella nuova. Fino alle 19:00 la Home continua a mostrare i risultati della notte appena finita."),
   R("06:47","Calendario NBA (ripasso del mattino)","Automatico da ESPN (GitHub): aggiorna gli orari delle partite dei prossimi giorni in Dynasty TV. L'orario reale può slittare di qualche minuto."),
   R("07:30","ESPN diventa ufficiale nelle statistiche","I PDK della notte entrano nelle statistiche dei giocatori, nell'efficienza stagionale, in «Notte · in campo» e in FA e G-League. Alle 07:30 si spengono anche le animazioni live (puntini LIVE, bordo lampeggiante)."),
   R("12:30","Chiusura e apertura dei turni Dreamers","Un turno si chiude, e si apre il successivo, solo dalle 12:30 del giorno dopo la sua ultima notte USA, così i dati ufficiali sono già caricati. A quell'ora si aggiornano classifica ufficiale, playoff e banner Dreamers della Home. Prima di quell'ora il turno resta «in corso»."),
   R("13:17","Calendario NBA (pomeriggio)","Secondo giro automatico da ESPN. Il server lo lancia alle 12:17 UTC: con l'ora solare è 13:17, con l'ora legale 14:17."),
-  R("14:00","La Home passa alle partite della prossima notte","Dalle 14:00 fino alla prima partita la Home non mostra più i risultati: mostra i prossimi scontri (avversario, orario, PDK da superare, previsione e trend) e nel banner le partite in arrivo. Appena ESPN segna la prima partita in corso torna live da sola."),])}
+  R("19:00","La Home passa alle partite della prossima notte","Dalle 19:00 fino alla prima partita la Home non mostra più i risultati: mostra i prossimi scontri (avversario, orario, PDK da superare, previsione e trend) e nel banner le partite in arrivo. Appena ESPN segna la prima partita in corso torna live da sola."),])}
  ${card("Ogni settimana","",[
   R("Dom 18:00","Valori e prezzi dei giocatori","Ogni domenica alle 18:00 scattano i nuovi valori (e i prezzi in crediti). Prima di quell'ora restano quelli della settimana precedente. Il registro del lunedì è in Cronologia modifiche.")])}
  ${card("Senza orario fisso","",[
