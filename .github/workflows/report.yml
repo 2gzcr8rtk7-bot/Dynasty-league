@@ -6,8 +6,9 @@
 # Nessuno deve lanciare niente a mano. Se nemmeno la riserva funziona alla corsa delle 07:30 (o dopo) il job FALLISCE e GitHub manda la mail.
 # Orari in UTC. Italia d'inverno = UTC+1, con l'ora legale (fine marzo - fine ottobre) = UTC+2: tutto scatta un'ora più tardi in ora italiana.
 #   (non ci sono più corse notturne: la notte vale il live sul telefono, i dati diventano ufficiali dalle 07:30)
-#   (1574) PRIMO TENTATIVO ALLE 07:30 italiane d'inverno (cron 30 6 UTC; 08:30 con l'ora legale), niente più caricamenti di notte.
-#   0,30 7-21 → TENTATIVI CONTINUI ogni 30 minuti fino alle 22:30 italiane d'inverno (08:00, 08:30, ...): se la notte è già
+#   (1575) PRIMO TENTATIVO SEMPRE ALLE 07:30 ITALIANE, d'inverno e con l'ora legale: il cron gira ogni 30 minuti dalle 05:00 UTC e ogni corsa
+#              prima delle 07:30 di Roma esce subito senza fare niente (così l'ora legale non sposta più l'orario).
+#   0,30 5-21 → TENTATIVI CONTINUI ogni 30 minuti dalle 07:30 italiane fino a sera (07:30, 08:00, 08:30, ...): se la notte è già
 #              nell'app non fanno niente (pochi secondi). Ogni corsa prova ESPN fino a 3 volte (a 3 minuti di distanza).
 #              Prima delle 08:00 italiane solo ESPN (se non va si aspetta la corsa dopo); dalle 08:00 se ESPN non va si usa la riserva Dunkest.
 #              Se alle 09:00 la notte manca ancora il job fallisce (mail di GitHub) ma i tentativi continuano lo stesso fino a sera, senza arrendersi.
@@ -16,8 +17,7 @@
 name: report-dati
 on:
   schedule:
-    - cron: "30 6 * * *"
-    - cron: "0,30 7-21 * * *"
+    - cron: "0,30 5-21 * * *"
   workflow_dispatch:
     inputs:
       prova:
@@ -63,6 +63,8 @@ jobs:
         run: |
           git config user.name "report-bot"
           git config user.email "report-bot@users.noreply.github.com"
+          # (1575) le corse programmate prima delle 07:30 italiane non fanno niente (vale con e senza ora legale)
+          if [ -n "$SCHED" ] && [ $((10#$(TZ=Europe/Rome date +%H%M))) -lt 730 ]; then echo "Prima delle 07:30 italiane: niente da fare"; exit 0; fi
           # di notte una partita ancora in corso non è un errore; dalle 07:30 (e a mano) sì
           ULT="--ultima"; if [ "$SCHED" = "*/30 0-5 * * *" ]; then ULT=""; fi
           # (1567) ora italiana: prima delle 08:00 niente riserva Dunkest (si riprova ESPN alla corsa dopo); la mail solo dalle 09:00
