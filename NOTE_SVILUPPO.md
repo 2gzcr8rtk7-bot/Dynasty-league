@@ -4009,3 +4009,4 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 
 - v1008: Anthony Black (ORL) con 26 anni per scelta della lega: NASCITA 2004-01-20 -> 2000-01-20 (vale per età, valori, IA trade e pagella).
 - v1009: (1580) Anthony Black: 26 anni SOLO nelle scritte (NASCITA_SHOW + etaVis/etaTxt: profili, comparatore, immagini da condividere); NASCITA torna vera (2004-01-20), quindi valori, prezzi, IA trade e pagella usano i 22 anni veri.
+- v1010: maschera età completa: etaM(n,età vera) restituisce l età da mostrare (NASCITA_SHOW) anche nelle frasi dell IA trade (histTech t.age, giocatore più in difficoltà), nelle schede e nei testi dell Allenamento IA trade; i calcoli restano sull età vera.
