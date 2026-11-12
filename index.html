@@ -3965,6 +3965,42 @@ const DOL_DG=(()=>{const c=1.5;return{0:[[[c,0],[10-c,0],[10,c],[10,14-c],[10-c,
    che restano nel turno, es. Daniels e Steinbach coi Ducks fino al turno 6), poi negli svincolati; prima chi non era più in rosa prendeva la maglia della squadra Dreamers. */
 function kitRw(t,name){if(!name)return null;const r=(ROSTER[t]||[]).find(x=>x[0]===name)||Object.values(ROSTER).flat().find(x=>x[0]===name);if(r&&r[3])return r;
  let nba=null;try{nba=(segInfo(name)||{}).nba}catch(e){}if(!nba)try{const f=FA.find(x=>x[0]===name);nba=f&&f[1]}catch(e){}return nba?[name,null,null,nba]:null}
+/* (NBAHQ) maglie NBA 2026 e Anni 90 in alta qualità, stesso formato di Ducks/Dolphins:
+   bordini a 3 strati tagliati dentro la sagoma, scritta squadra CourtBlock ad arco con doppio contorno, numero block vettoriale (DOL_DG) a strati, tessuto e luci uguali */
+function nbaHQ(c,n,word,k){
+ const body="M38 6 C42 27 78 27 82 6 L98 12 C97 34 104 46 114 50 L112 126 Q60 137 8 126 L6 50 C16 46 23 34 22 12 Z",neck="M38 6 C42 27 78 27 82 6",arms="M22 12 C23 34 16 46 6 50 M98 12 C97 34 104 46 114 50";
+ const lum=h=>{const x=parseInt((h||"#000").slice(1),16);return(0.299*(x>>16)+0.587*((x>>8)&255)+0.114*(x&255))/255};
+ const dk=h=>{const x=parseInt(h.slice(1),16),f=v=>Math.round(v*.55).toString(16).padStart(2,"0");return"#"+f(x>>16)+f((x>>8)&255)+f(x&255)};
+ const edge=lum(c.bg)<.25?(lum(c.trim)<.25?"#3a3f4a":dk(c.trim)):dk(c.bg);
+ const ol=c.ns||c.jstroke||(lum(c.fg)<.45?"#ffffff":"#0a0f1f");
+ const inner=c.tline||c.p2||c.fg;
+ /* bordini: bordo scuro, colore, filo interno (come Dolphins/Ducks) + eventuali strisce tstr della maglia */
+ let tr=`<path d="${neck}" stroke="${edge}" stroke-width="15"/><path d="${neck}" stroke="${c.trim}" stroke-width="12"/><path d="${neck}" stroke="${inner}" stroke-width="${c.tline?Math.max(2.4,(c.tlw||1.8)*1.6):3}"/>`
+   +`<path d="${arms}" stroke="${edge}" stroke-width="15"/><path d="${arms}" stroke="${c.trim}" stroke-width="12"/><path d="${arms}" stroke="${inner}" stroke-width="${c.tline?Math.max(2.4,(c.tlw||1.8)*1.6):3}"/>`;
+ if(c.arm)tr+=`<path d="M22 12 C23 34 16 46 6 50" stroke="${c.arm[0]}" stroke-width="12"/><path d="M98 12 C97 34 104 46 114 50" stroke="${c.arm[1]}" stroke-width="12"/>`;
+ if(c.tstr)tr+=c.tstr.map(([col,w])=>`<path d="${neck} ${arms}" stroke="${col}" stroke-width="${w*1.4}"/>`).join("");
+ tr+=`<path d="${neck}" stroke="#fff" stroke-opacity=".28" stroke-width="1.4" transform="translate(0,-2.2)"/>`;
+ const L=word.length,fsz=L<=5?17:L<=7?15.5:L<=9?14:L<=11?12.5:11,tl=Math.min(70,Math.round(L*fsz*.55+4));
+ const wf=c.nf&&!c.fg?c.nf:c.fg,wo=c.ns||ol;
+ const W=(t,attr)=>`<text font-family="CourtBlock,Impact,Arial Narrow,sans-serif" font-size="${fsz}" ${attr}><textPath href="#${k}a" startOffset="50%" text-anchor="middle" textLength="${tl}" lengthAdjust="spacingAndGlyphs">${t}</textPath></text>`;
+ const words=(c.outer?W(word,`fill="none" stroke="${c.outer}" stroke-width="6" stroke-linejoin="round"`):"")+W(word,`fill="${wf}" stroke="${wo}" stroke-width="${c.jsw?c.jsw*1.15:3}" paint-order="stroke" stroke-linejoin="round"`)+W(word,`fill="url(#${k}n)"`);
+ const nd=dolNumD(n,60,90,31),nf=c.nf||c.fg,ns=c.ns||ol;
+ const num=`<path d="${nd}" fill="#000" fill-opacity=".38" transform="translate(1.4,2)" filter="url(#${k}b)"/>`+(c.outer?`<path d="${nd}" fill="none" stroke="${c.outer}" stroke-width="7" stroke-linejoin="round"/>`:"")
+   +`<path d="${nd}" fill="none" stroke="${ns}" stroke-width="${c.jsw?c.jsw*1.25:3.6}" stroke-linejoin="round"/><path d="${nd}" fill="${nf}" fill-rule="evenodd"/><path d="${nd}" fill="url(#${k}n)" fill-rule="evenodd"/>`;
+ return `<svg viewBox="0 0 120 146" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+ <linearGradient id="${k}s" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".45"/><stop offset=".22" stop-color="#000" stop-opacity=".06"/><stop offset=".5" stop-color="#fff" stop-opacity=".14"/><stop offset=".78" stop-color="#000" stop-opacity=".06"/><stop offset="1" stop-color="#000" stop-opacity=".5"/></linearGradient>
+ <linearGradient id="${k}v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient>
+ <linearGradient id="${k}n" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".18"/></linearGradient>
+ <pattern id="${k}m" width="3" height="3" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r=".55" fill="#000" fill-opacity=".12"/></pattern>
+ <clipPath id="${k}c"><path d="${body}"/></clipPath><path id="${k}a" d="M24 60 Q60 45 96 60"/>
+ <filter id="${k}b" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.4"/></filter><filter id="${k}d"><feGaussianBlur stdDeviation="3"/></filter></defs>
+ <ellipse cx="60" cy="136" rx="46" ry="5" fill="#000" opacity=".5" filter="url(#${k}d)"/>
+ <path d="${body}" fill="${c.bg}"/>
+ <g clip-path="url(#${k}c)">${nbaDeco(c)}<rect width="120" height="146" fill="url(#${k}m)"/><rect width="120" height="146" fill="url(#${k}s)"/><rect width="120" height="146" fill="url(#${k}v)"/></g>
+ <g clip-path="url(#${k}c)" fill="none" stroke-linecap="round">${tr}</g>
+ <path d="${body}" fill="none" stroke="#000" stroke-opacity=".45" stroke-width=".9"/>
+ ${words}${num}</svg>`}
+
 function jersey(t,num,name=""){
   let kd=kitDi(t);if(t==="PEA"&&kd>=340&&kd<=342){const k="pk"+(JID++),J=PEA_JV[kd-340];return J[0].replace(/__K__/g,k).replace(/__NUM__/g,dolNumD(num,J[1],J[2],J[3]))}/* (PEAD) */if(t==="DOL"&&kd>=330&&kd<=332){const k="dk"+(JID++),J=DOL_JV[kd-330];return J[0].replace(/__K__/g,k).replace(/__NUM__/g,dolNumD(num,J[1],J[2],J[3]))}/* (DOLJ2) 06/11 maglie Dolphins ricostruite sulla sagoma dell app (proporzioni come le altre squadre): scritta vettoriale ricalcata, montagne dalle immagini dell utente (img/dol-j1m, dol-j3m), numero del giocatore DOL_DG */if(t==="DUC"&&kd>=400&&kd<403)kd-=400;const rw=(kd===3||kd===4)?kitRw(t,name):null,nk=rw?(kd===4?(NBA_KIT_90[rw[3]]||NBA_BIANCA):NBA_KIT[rw[3]]):null;
   const c=nk?{...TEAMS[t],stroke:undefined,outer:undefined,jsw:undefined,...nk}:kitC(t,(kd===3||kd===4)?0:kd),n=num==null?"?":String(num),k="j"+(JID++);
@@ -3972,6 +4008,7 @@ function jersey(t,num,name=""){
   if(PM==="avatar"&&name)return avatarSvg(c,n,name,k);
   if(name&&(PM==="bin"||PM==="wc"||PM==="poop"))return iconeSvg(PM,n,k);
   if(t==="DUC"&&kd>=500){const gs=gotSvg(kd,n);if(gs)return gs}/* (1293) */if(t==="DUC"&&kd>=300){const rs=ducRock(kd,n);if(rs)return rs;KIT.DUC=115;kitSalva()}if(kd>=100&&kd<300&&window.PREMI){const ps=PREMI.svg(t,kd,n);if(ps)return ps}
+  if(nk){let w=NBA_NOME[rw[3]]||(TEAMS[t]&&TEAMS[t].nick||"").toUpperCase();return nbaHQ(c,n,w,k)}/* (NBAHQ) */
   const fs=n.length>1?38:44;
   const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
   const ol=c.jstroke||(lum(c.fg)<0.45?"#ffffff":"#0a0f1f");
