@@ -3970,6 +3970,7 @@ function kitRw(t,name){if(!name)return null;const r=(ROSTER[t]||[]).find(x=>x[0]
 function nbaHQ(c,n,word,k){
  const body="M38 6 C42 27 78 27 82 6 L98 12 C97 34 104 46 114 50 L112 126 Q60 137 8 126 L6 50 C16 46 23 34 22 12 Z",neck="M38 6 C42 27 78 27 82 6",arms="M22 12 C23 34 16 46 6 50 M98 12 C97 34 104 46 114 50";
  const lum=h=>{const x=parseInt((h||"#000").slice(1),16);return(0.299*(x>>16)+0.587*((x>>8)&255)+0.114*(x&255))/255};
+ const mx=(h,t,k)=>{const a=parseInt(h.slice(1),16),b=parseInt(t.slice(1),16),f=(x,y)=>Math.round(x+(y-x)*k).toString(16).padStart(2,"0");return"#"+f(a>>16,b>>16)+f((a>>8)&255,(b>>8)&255)+f(a&255,b&255)};
  const dk=h=>{const x=parseInt(h.slice(1),16),f=v=>Math.round(v*.55).toString(16).padStart(2,"0");return"#"+f(x>>16)+f((x>>8)&255)+f(x&255)};
  const edge=lum(c.bg)<.25?(lum(c.trim)<.25?"#3a3f4a":dk(c.trim)):dk(c.bg);
  const ol=c.ns||c.jstroke||(lum(c.fg)<.45?"#ffffff":"#0a0f1f");
@@ -3979,24 +3980,29 @@ function nbaHQ(c,n,word,k){
    +`<path d="${arms}" stroke="${edge}" stroke-width="15"/><path d="${arms}" stroke="${c.trim}" stroke-width="12"/><path d="${arms}" stroke="${inner}" stroke-width="${c.tline?Math.max(2.4,(c.tlw||1.8)*1.6):3}"/>`;
  if(c.arm)tr+=`<path d="M22 12 C23 34 16 46 6 50" stroke="${c.arm[0]}" stroke-width="12"/><path d="M98 12 C97 34 104 46 114 50" stroke="${c.arm[1]}" stroke-width="12"/>`;
  if(c.tstr)tr+=c.tstr.map(([col,w])=>`<path d="${neck} ${arms}" stroke="${col}" stroke-width="${w*1.4}"/>`).join("");
- tr+=`<path d="${neck}" stroke="#fff" stroke-opacity=".28" stroke-width="1.4" transform="translate(0,-2.2)"/>`;
+ tr+=`<path d="${neck} ${arms}" stroke="#000" stroke-opacity=".18" stroke-width="12" stroke-dasharray=".5 .9"/><path d="${neck} ${arms}" stroke="url(#${k}t)" stroke-width="12"/><path d="${neck}" stroke="#fff" stroke-opacity=".3" stroke-width="1.2" transform="translate(0,-2.4)"/><path d="${neck}" stroke="#000" stroke-opacity=".25" stroke-width=".7" stroke-dasharray="1.2 .9" transform="translate(0,5.6)"/>`;
  const L=word.length,fsz=L<=5?17:L<=7?15.5:L<=9?14:L<=11?12.5:11,tl=Math.min(70,Math.round(L*fsz*.55+4));
  const wf=c.nf&&!c.fg?c.nf:c.fg,wo=c.ns||ol;
  const W=(t,attr)=>`<text font-family="CourtBlock,Impact,Arial Narrow,sans-serif" font-size="${fsz}" ${attr}><textPath href="#${k}a" startOffset="50%" text-anchor="middle" textLength="${tl}" lengthAdjust="spacingAndGlyphs">${t}</textPath></text>`;
- const words=(c.outer?W(word,`fill="none" stroke="${c.outer}" stroke-width="6" stroke-linejoin="round"`):"")+W(word,`fill="${wf}" stroke="${wo}" stroke-width="${c.jsw?c.jsw*1.15:3}" paint-order="stroke" stroke-linejoin="round"`)+W(word,`fill="url(#${k}n)"`);
+ const words=(c.outer?W(word,`fill="none" stroke="${c.outer}" stroke-width="6" stroke-linejoin="round"`):"")+W(word,`fill="${wf}" stroke="${wo}" stroke-width="${c.jsw?c.jsw*1.15:3}" paint-order="stroke" stroke-linejoin="round"`)+W(word,`fill="url(#${k}w)"`)+W(word,`fill="url(#${k}n)"`);
  const nd=dolNumD(n,60,90,31),nf=c.nf||c.fg,ns=c.ns||ol;
  const num=`<path d="${nd}" fill="#000" fill-opacity=".38" transform="translate(1.4,2)" filter="url(#${k}b)"/>`+(c.outer?`<path d="${nd}" fill="none" stroke="${c.outer}" stroke-width="7" stroke-linejoin="round"/>`:"")
-   +`<path d="${nd}" fill="none" stroke="${ns}" stroke-width="${c.jsw?c.jsw*1.25:3.6}" stroke-linejoin="round"/><path d="${nd}" fill="${nf}" fill-rule="evenodd"/><path d="${nd}" fill="url(#${k}n)" fill-rule="evenodd"/>`;
+   +`<path d="${nd}" fill="none" stroke="${ns}" stroke-width="${c.jsw?c.jsw*1.25:3.6}" stroke-linejoin="round"/><path d="${nd}" fill="url(#${k}u)" fill-rule="evenodd"/><path d="${nd}" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width=".5" transform="translate(-.3,-.4)"/><path d="${nd}" fill="url(#${k}n)" fill-rule="evenodd"/>`;
  return `<svg viewBox="0 0 120 146" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
  <linearGradient id="${k}s" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".45"/><stop offset=".22" stop-color="#000" stop-opacity=".06"/><stop offset=".5" stop-color="#fff" stop-opacity=".14"/><stop offset=".78" stop-color="#000" stop-opacity=".06"/><stop offset="1" stop-color="#000" stop-opacity=".5"/></linearGradient>
  <linearGradient id="${k}v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient>
  <linearGradient id="${k}n" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".3"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".18"/></linearGradient>
- <pattern id="${k}m" width="3" height="3" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r=".55" fill="#000" fill-opacity=".12"/></pattern>
+ <pattern id="${k}m" width="2.4" height="2.4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="2.4" height="2.4" fill="#fff" fill-opacity=".035"/><circle cx="1.2" cy="1.2" r=".62" fill="#000" fill-opacity=".16"/></pattern>
+ <linearGradient id="${k}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${mx(c.bg,"#ffffff",.06)}"/><stop offset=".55" stop-color="${c.bg}"/><stop offset="1" stop-color="${mx(c.bg,"#000000",.22)}"/></linearGradient>
+ <radialGradient id="${k}r" cx=".5" cy=".38" r=".6"><stop offset="0" stop-color="#fff" stop-opacity=".09"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+ <linearGradient id="${k}t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient>
+ <linearGradient id="${k}w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${mx(wf,"#ffffff",.35)}"/><stop offset=".5" stop-color="${wf}"/><stop offset="1" stop-color="${mx(wf,"#000000",.18)}"/></linearGradient>
+ <linearGradient id="${k}u" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${mx(nf,"#ffffff",.35)}"/><stop offset=".5" stop-color="${nf}"/><stop offset="1" stop-color="${mx(nf,"#000000",.2)}"/></linearGradient>
  <clipPath id="${k}c"><path d="${body}"/></clipPath><path id="${k}a" d="M24 60 Q60 45 96 60"/>
  <filter id="${k}b" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.4"/></filter><filter id="${k}d"><feGaussianBlur stdDeviation="3"/></filter></defs>
  <ellipse cx="60" cy="136" rx="46" ry="5" fill="#000" opacity=".5" filter="url(#${k}d)"/>
- <path d="${body}" fill="${c.bg}"/>
- <g clip-path="url(#${k}c)">${nbaDeco(c)}<rect width="120" height="146" fill="url(#${k}m)"/><rect width="120" height="146" fill="url(#${k}s)"/><rect width="120" height="146" fill="url(#${k}v)"/></g>
+ <path d="${body}" fill="url(#${k}g)"/>
+ <g clip-path="url(#${k}c)">${nbaDeco(c)}<rect width="120" height="146" fill="url(#${k}m)"/><rect width="120" height="146" fill="url(#${k}r)"/><rect width="120" height="146" fill="url(#${k}s)"/><rect width="120" height="146" fill="url(#${k}v)"/><path d="M8 121.5 Q60 132.5 112 121.5" fill="none" stroke="#000" stroke-opacity=".3" stroke-width=".5" stroke-dasharray="1.4 1"/><path d="M8 122.6 Q60 133.6 112 122.6" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width=".4" stroke-dasharray="1.4 1"/><g transform="translate(14,112)"><rect width="13" height="7" rx="1" fill="${mx(c.bg,"#000000",.45)}"/><rect x=".7" y=".7" width="11.6" height="5.6" rx=".7" fill="none" stroke="${c.trim}" stroke-width=".6"/><path d="M2.5 3.5h8" stroke="${c.trim}" stroke-width=".9" stroke-linecap="round"/></g></g>
  <g clip-path="url(#${k}c)" fill="none" stroke-linecap="round">${tr}</g>
  <path d="${body}" fill="none" stroke="#000" stroke-opacity=".45" stroke-width=".9"/>
  ${words}${num}</svg>`}
