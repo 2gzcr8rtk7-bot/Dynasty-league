@@ -5667,7 +5667,7 @@ function extProfilo(o){
   ${o.sel}
   ${!a?`<p class="note">${o.vuoto}</p>`:`
   <div class="gbig g2"><div><b class="gpdk">${o.a.pdk==null?"—":`<span style="color:#fff!important;-webkit-text-fill-color:#fff!important" class="pdkx big ${pdkLvl(o.a.pdk)}">${f2(o.a.pdk)}</span>`}</b><small>PDK medi a partita</small></div><div>${eff(a.eff)}<small>Efficienza media</small></div></div>
-  <div class="gstats">${stat("Partite",a.g)}${stat("Minuti medi",a.min==null?"—":a.min.toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1}))}${stat("Proiezione 36'",f2(a.eff*36).replace(/,\d+$/,m=>m.slice(0,2)),"Dunkest")}${stat("Ultima partita",last==null?"—":f2(last),"Dunkest/min")}${stat("Punti medi",a.pt==null?"—":n1(a.pt))}${stat("Rb · As",a.rb==null?"—":`<span style="font-size:.78em;white-space:nowrap">${n1(a.rb)} · ${n1(a.as)}</span>`)}</div>`}
+  <div class="gstats">${stat("Partite",a.g)}${stat("Minuti medi",a.min==null?"—":a.min.toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1}))}${stat("Proiezione 36'",f2(a.eff*36).replace(/,\d+$/,m=>m.slice(0,2)),"Dunkest")}</div>`}
   ${games}`}
 function vFAP(){
   const x=FA.find(y=>y[0]===faP);if(!x)return `<p class="note">Giocatore non trovato.</p>`;
@@ -6508,7 +6508,7 @@ function vGiocatore(){
     ${stat("Partite",e[2])}
     ${stat("Minuti medi",e[3]==null?"—":e[3].toLocaleString("it-IT",{minimumFractionDigits:1}))}
     ${stat("Proiezione 36'",f2(e[1]*36).replace(/,\d+$/,m=>m.slice(0,2)),"Dunkest")}
-    ${stat("Ultima partita",LAST==null?"—":f2(LAST),"Dunkest/min")}
+    
     ${(()=>{const src=nm=>past?((STAGIONI[sz]||{})[nm]||[]):(PARTITE[nm]||[]),av=nm=>{const g=src(nm);return g.length?g.reduce((s,x)=>s+(+x[3]||0),0)/g.length:null};
       const AL=all.map(x=>[x[1],av(x[1])]).filter(x=>x[1]!=null).sort((a,b)=>b[1]-a[1]),pL=AL.findIndex(x=>x[0]===p[0])+1;
       if(SHR_PL&&pL)SHR_PL.rk=[pL,AL.length];return `${stat("Lega · PDK",pL?pL+"°":"—","su "+AL.length)}${stat("Lega · efficienza",rL?rL+"°":"—","su "+all.length)}`})()}
@@ -15399,5 +15399,6 @@ html body table.gtab.gbx tr.gmrow td:first-child{text-align:left}
 html body table.gtab.gbx tr.gmrow td b{display:block;font:800 15px var(--display,Arial);font-style:italic;text-transform:uppercase;letter-spacing:.04em}
 html body table.gtab.gbx tr.gmrow td small{display:flex;align-items:center;gap:4px;font-size:10px;opacity:.85;white-space:nowrap}
 html body .gszw .tbl-wrap{max-height:none}</style>
+<style>/* (1584) riquadri del profilo senza Ultima partita / Punti medi / Rb·As: l ultima riga si allarga per non lasciare buchi */html body .gstats .gst:last-child:nth-child(3n+2){grid-column:span 2}html body .gstats .gst:last-child:nth-child(3n+1){grid-column:1/-1}</style>
 </body>
 </html>
