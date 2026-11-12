@@ -5548,6 +5548,15 @@ function faFaAvg(x){if(typeof FAG!=="undefined")return faPerAvg(z=>(FAG[x[0]]||{
   const l=perSzr(FPR.da,FPR.a).map(z=>x[4][z.slice(2)]).filter(Boolean);if(!l.length)return null;const G=l.reduce((q,v)=>q+v[0],0),w=i=>l.reduce((q,v)=>q+v[0]*v[i],0)/G;const mn=w(1),dk=w(2);return[G,mn,dk,mn?dk/mn:null]}
 /* (606) modalità BOX nella sezione Giocatori: linguetta Box/PDK attaccata al titolo. In Box ogni riga mostra le medie a partita delle statistiche (dai box score di Dynasty TV, nel periodo scelto) e toccando il giocatore si apre la pagina con tutti i suoi box score partita per partita. */
 let FBX=false,faBoxP="",FBXC=null;
+/* (1583) PARTITA PER PARTITA a stagioni: una finestra per stagione (quella scelta aperta, le altre chiuse), dentro un unica tabella che scorre
+   con tutte le partite in ordine di data (dalla più recente) e i mesi segnalati da una riga-titolo; niente più finestra per ogni mese. */
+const GM_SZ=["2026/27","2025/26","2024/25"],GM_LAB={"2024/25":"Stagione 1","2025/26":"Stagione 2","2026/27":"Stagione 3"},GM_MESI=["","Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
+function gmSrc(n){const o={};if(!n)return o;const F=typeof FAG!=="undefined"&&FAG[n]?FAG[n]:{};
+ for(const sz of GM_SZ){let L=sz==="2026/27"?(typeof PARTITE!=="undefined"&&PARTITE[n]):((typeof STAGIONI!=="undefined"&&STAGIONI[sz]||{})[n]);if(!L||!L.length)L=F[sz];if(L&&L.length)o[sz]=L}return o}
+const gmKey=g=>{const[d,m]=String(g[0]).split("/").map(Number);return(m>=8?m:m+12)*100+d};
+function gmSeasons(M,sel,name,fx){const L=GM_SZ.filter(sz=>M[sz]&&M[sz].length);if(!L.length)return"";
+ return L.map(sz=>{const GL=M[sz].slice().sort((a,b)=>gmKey(a)-gmKey(b)),dk=GL.reduce((a,g)=>a+(+g[3]||0),0),mn=GL.reduce((a,g)=>a+(+g[2]||0),0),av=mn?dk/mn:null;
+  return`<details class="gmese gszw"${sz===sel?" open":""}><summary><span class="gmn">${GM_LAB[sz]||sz} · ${sz}</span><span class="gmesi">${GL.length} ${GL.length===1?"gara":"gare"} · media</span>${eff(av)}</summary><div class="tbl-wrap">${gmTab(GL,sz==="2026/27",name,fx,1)}</div></details>`}).join("")}
 /* (1582) PARTITA PER PARTITA: box score completo per ogni mese (tabella che scorre a destra, colonna Data fissa).
    Righe = partite del giocatore (PARTITE / STAGIONI / FAG: [gg/mm, avv, min, Dunkest, eff, pt, rb, as]); per la stagione in corso le altre statistiche
    vengono dai box score di Dynasty TV (TV.box: [nome, tit, min, PT, RO, RD, RB, AS, ST, BL, TO, PF, FGM, FGA, 3PM, 3PA, TLM, TLA, +/-, PDK]).
@@ -5557,10 +5566,12 @@ function gmIdx(){const nb=typeof TV!=="undefined"&&TV.box?Object.keys(TV.box).le
  try{for(const d of Object.keys(TV.days))for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B)continue;const dm=d.slice(8)+"/"+d.slice(5,7);
   for(const sd of["a","h"])(B[sd]||[]).forEach(r=>{m[tvNm(r[0])+"|"+dm]={r,home:sd==="h"}})}}catch(e){}
  GMIX={n:nb,m};return m}
-function gmTab(l,cur,name,fx){const IX=cur&&name?gmIdx():{},nk=name?tvNm(name):"",n1=v=>v==null||v===""||isNaN(v)?"—":(+v).toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1}),d=v=>v==null||v===""?"—":v,pct=(a,b)=>b?`${a}/${b}`:(b===0?"0/0":"—");
+function gmTab(l,cur,name,fx,months){const IX=cur&&name?gmIdx():{},nk=name?tvNm(name):"",n1=v=>v==null||v===""||isNaN(v)?"—":(+v).toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1}),d=v=>v==null||v===""?"—":v,pct=(a,b)=>b?`${a}/${b}`:(b===0?"0/0":"—");
  const H=["Data","Min","PDK","Eff.","Proj 36'","PT","RB","AS","ST","BL","TO","Tiri","3P","TL","RO","RD","Falli","+/-"];
- const rows=l.slice().reverse().map(g=>{const X=IX[nk+"|"+g[0]],r=X&&X.r,pt=r?r[3]:g[5],rb=r?r[6]:g[6],as=r?r[7]:g[7],pm=r?+r[18]:null;
-  return`<tr><td class="gd"><b>${g[0]} <i>${X&&!X.home?"@":"vs"} ${g[1]}</i></b>${r&&r[1]?'<small>titolare</small>':""}</td><td>${n1(g[2])}</td><td class="gdk">${pdkB(g[3],fx(g[3]))}</td><td>${eff(g[4])}</td><td class="gpj">${n1(g[4]*36)}</td>`
+ let lastM=null;const mrow=g=>{if(!months)return"";const m=+String(g[0]).slice(3);if(m===lastM)return"";lastM=m;const L=l.filter(x=>+String(x[0]).slice(3)===m),dk=L.reduce((a,x)=>a+(+x[3]||0),0),mn=L.reduce((a,x)=>a+(+x[2]||0),0);
+  return`<tr class="gmrow"><td><b>${GM_MESI[m]}</b><small>${L.length} ${L.length===1?"gara":"gare"} · media ${mn?eff(dk/mn):"—"}</small></td><td colspan="${H.length-1}"></td></tr>`};
+ const rows=l.slice().reverse().map(g=>{const MR=mrow(g),X=IX[nk+"|"+g[0]],r=X&&X.r,pt=r?r[3]:g[5],rb=r?r[6]:g[6],as=r?r[7]:g[7],pm=r?+r[18]:null;
+  return MR+`<tr><td class="gd"><b>${g[0]} <i>${X&&!X.home?"@":"vs"} ${g[1]}</i></b>${r&&r[1]?'<small>titolare</small>':""}</td><td>${n1(g[2])}</td><td class="gdk">${pdkB(g[3],fx(g[3]))}</td><td>${eff(g[4])}</td><td class="gpj">${n1(g[4]*36)}</td>`
   +`<td class="gbn">${d(pt)}</td><td class="gbn">${d(rb)}</td><td class="gbn">${d(as)}</td><td>${r?r[8]:"—"}</td><td>${r?r[9]:"—"}</td><td>${r?r[10]:"—"}</td><td>${r?pct(r[12],r[13]):"—"}</td><td>${r?pct(r[14],r[15]):"—"}</td><td>${r?pct(r[16],r[17]):"—"}</td><td>${r?r[4]:"—"}</td><td>${r?r[5]:"—"}</td><td>${r?r[11]:"—"}</td><td class="${pm>0?"gpp":pm<0?"gpm":""}">${r?(pm>0?"+":"")+pm:"—"}</td></tr>`}).join("");
  return`<table class="gtab gbx"><thead><tr>${H.map(h=>`<th>${h}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table>`}
 function fbxAgg(){perNorm(FPR);const key=Object.keys(TV.box).length+"|"+FPR.da+"|"+FPR.a;if(FBXC&&FBXC.k===key)return FBXC.m;const m={};
@@ -5640,9 +5651,7 @@ function faGames(x){
   return `${H("Partita per partita",`<em>${GL.length} ${GL.length===1?"gara":"gare"} · ${z}</em>`)}
   ${chips}
   <button class="advbtn ggrbtn" data-grafico="FA" data-grp="${x[0].replace(/"/g,"&quot;")}" data-grsz="${z}">📈 Grafico</button>
-  ${ms.map((m,i)=>{const l=by[m],dk=l.reduce((a,g)=>a+g[3],0),mn=l.reduce((a,g)=>a+g[2],0),av=mn?dk/mn:null;
-    return `<details class="gmese"${i===0?" open":""}><summary><span class="gmn">${MESI[m]}</span><span class="gmesi">${l.length} ${l.length===1?"gara":"gare"} · media</span>${eff(av)}</summary>
-    <div class="tbl-wrap">${gmTab(l,z==="2026/27",x[0],fx)}</div></details>`}).join("")}`;
+  ${gmSeasons({...gmSrc(x[0]),...G},z,x[0],fx)}`;
 }
 /* PROFILO "ESTERNO" (FA e G League): stessa struttura del profilo dei giocatori di squadra: PDK ed efficienza stagionali per primi, grafico in alto, filtro stagione, poi partita per partita.
    o={sz,sel,a:{g,min,pdk,eff}|null,GL:[[data,avv,min,dk,eff,pt,rb,as]]|null,gr:"attributi del tasto grafico",vuoto:"testo se nessuna partita"} */
@@ -5653,9 +5662,7 @@ function extProfilo(o){
   let games="";
   if(GL===null)games=`${H("Partita per partita")}<p class="note">Caricamento delle partite…</p>`;
   else if(GL.length){const by={};GL.forEach(g=>{const m=+g[0].slice(3);(by[m]=by[m]||[]).push(g)});const ms=Object.keys(by).map(Number).sort((x,y)=>ord(y)-ord(x));
-    games=`${H("Partita per partita",`<em>${GL.length} ${GL.length===1?"gara":"gare"}</em>`)}`+ms.map((m,i)=>{const l=by[m],dk=l.reduce((q,g)=>q+g[3],0),mn=l.reduce((q,g)=>q+g[2],0),av=mn?dk/mn:null;
-      return `<details class="gmese"${i===0?" open":""}><summary><span class="gmn">${MESI[m]}</span><span class="gmesi">${l.length} ${l.length===1?"gara":"gare"} · media</span>${eff(av)}</summary>
-      <div class="tbl-wrap">${gmTab(l,o.sz==="2026/27",o.cm,f2)}</div></details>`}).join("")}
+    games=`${H("Partita per partita",`<em>${GL.length} ${GL.length===1?"gara":"gare"}</em>`)}`+gmSeasons({...gmSrc(o.cm),[o.sz]:GL},o.sz,o.cm,f2)}
   return `<button class="advbtn ggrbtn ggy" ${o.gr}>📈 Grafico</button>${o.cm?`<button class="advbtn ggrbtn ggy" data-cmpa="${o.cm.replace(/"/g,"&quot;")}">⚖ Confronta con un altro giocatore</button>`:""}
   ${o.sel}
   ${!a?`<p class="note">${o.vuoto}</p>`:`
@@ -6510,9 +6517,7 @@ function vGiocatore(){
   ${(()=>{const MESI=["","Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"],ord=m=>m>=8?m:m+12;
     const by={};GL.forEach(g=>{const m=+g[0].slice(3);(by[m]=by[m]||[]).push(g)});
     const ms=Object.keys(by).map(Number).sort((x,y)=>ord(y)-ord(x));
-    return ms.map((m,i)=>{const l=by[m],dk=l.reduce((a,g)=>a+g[3],0),mn=l.reduce((a,g)=>a+g[2],0),av=mn?dk/mn:null;
-      return `<details class="gmese"${i===0?" open":""}><summary><span class="gmn">${MESI[m]}</span><span class="gmesi">${l.length} ${l.length===1?"gara":"gare"} · media</span>${eff(av)}</summary>
-      <div class="tbl-wrap">${gmTab(l,!past,p[0],f2)}</div></details>`}).join("")})()}`:""}
+    return gmSeasons({...gmSrc(p[0]),[sz]:GL},sz,p[0],f2)})()}`:""}
   ${H("Pagella")}
   ${pagellaHTML(p[0])}
   <p class="note">Lega · PDK e Lega · efficienza: posizione tra tutti i giocatori della lega con almeno una partita nella stagione scelta, per <b>PDK</b> (punti Dunkest medi a partita) e per <b>efficienza</b> (PDK fatti per ogni minuto giocato). Punteggi e minuti ufficiali Dunkest (senza capitano). Stagioni passate: solo regular season. Pallino: verde sopra 1,10 · giallo 0,80–1,10 · rosso sotto 0,80.</p>`;
@@ -15387,5 +15392,12 @@ html:not(.notte) body table.gtab.gbx th:first-child,html:not(.notte) body table.
 html body table.gtab.gbx td.gbn{font-weight:800}
 html body table.gtab.gbx td.gpp{color:#22c55e}html body table.gtab.gbx td.gpm{color:#ef4444}
 html body table.gtab.gbx td.gd small{display:block;font-size:10px;opacity:.7}</style>
+<style>/* (1583) partita per partita: finestre per stagione, righe-titolo dei mesi dentro la tabella unica */
+html body table.gtab.gbx tr.gmrow td{background:color-mix(in srgb,var(--gbxbg,#13193a) 70%,#7c3aed 30%);padding-top:8px;padding-bottom:8px;border-top:2px solid rgba(167,139,250,.55)}
+html:not(.notte) body table.gtab.gbx tr.gmrow td{background:#f3dcc0;border-top-color:#d9560b}
+html body table.gtab.gbx tr.gmrow td:first-child{text-align:left}
+html body table.gtab.gbx tr.gmrow td b{display:block;font:800 15px var(--display,Arial);font-style:italic;text-transform:uppercase;letter-spacing:.04em}
+html body table.gtab.gbx tr.gmrow td small{display:flex;align-items:center;gap:4px;font-size:10px;opacity:.85;white-space:nowrap}
+html body .gszw .tbl-wrap{max-height:none}</style>
 </body>
 </html>
