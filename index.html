@@ -6119,10 +6119,11 @@ function perNorm(o){const mx=perOggi();if(!o.da||!o.a){const r=perSzRange(PER_OR
 /* livello dei punti in base alle partite davvero nel periodo: più stagioni con partite → stagioni; oltre 45 giorni → mesi; altrimenti settimane */
 function perBy(g){if(!g.length)return"w";if(new Set(g.map(x=>x.sz)).size>1)return"s";const t=g.map(x=>+x.dt);return(Math.max(...t)-Math.min(...t))/864e5>45?"m":"w"}
 /* quali livelli hanno senso nel periodo: Stagioni se le partite toccano più stagioni, Mesi se toccano più mesi, Giorni se ci sono almeno 2 partite */
-function perOk(g){return{s:new Set(g.map(x=>x.sz)).size>1,m:new Set(g.map(x=>grMk(x.dt))).size>1,g:g.length>=2}}
-function perGranBtns(key,ok,by){const L=[["s","Stagioni"],["m","Mesi"],["g","Giorni"]];
+/* (1587) Stagioni sempre attivo (il tocco allarga il periodo a tutte le stagioni registrate); Settimane se le partite toccano più settimane */
+function perOk(g){return{s:true,m:new Set(g.map(x=>grMk(x.dt))).size>1,w:new Set(g.map(x=>trKey(x,"w"))).size>1,g:g.length>=2}}
+function perGranBtns(key,ok,by){const L=[["s","Stagioni"],["m","Mesi"],["w","Settimane"],["g","Giorni"]];
   return`<div class="pergr"><span>Media per</span><div>${L.map(([k,l])=>`<button data-pgran="${key}|${k}" aria-pressed="${by===k}" ${ok[k]?"":"disabled"} title="${ok[k]?"":"Non disponibile per questo periodo"}">${l}</button>`).join("")}</div></div>`}
-document.addEventListener("click",e=>{const b=e.target.closest("[data-pgran]");if(!b||b.disabled)return;e.preventDefault();const[k,v]=b.dataset.pgran.split("|"),o=k==="gr"?GR:k==="cm"?CMR:TRN;o.gran=v;if(k==="tr")TRN.on=null;const y=scrollY;render();scrollTo(0,y)});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-pgran]");if(!b||b.disabled)return;e.preventDefault();const[k,v]=b.dataset.pgran.split("|"),o=k==="gr"?GR:k==="cm"?CMR:TRN;o.gran=v;/* (1587) Stagioni: in automatico tutto il periodo registrato, dalla prima stagione a oggi */if(v==="s"){o.da=PER_MIN;o.a=perOggi()}if(k==="tr")TRN.on=null;const y=scrollY;render();scrollTo(0,y)});
 const perGg=(da,a)=>Math.round((Date.parse(a)-Date.parse(da))/864e5)+1;
 const perFmt=iso=>{if(!iso)return"—";const[y,m,d]=iso.split("-");return`${d}/${m}/${y.slice(2)}`};
 const perIn=(da,a)=>d=>{const x=d.toISOString().slice(0,10);return x>=da&&x<=a};
