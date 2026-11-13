@@ -5648,7 +5648,7 @@ function vFA(){
   <div class="fapl">Ruoli</div><div class="fapr">${[["G","Guardie"],["F","Ali"],["C","Centri"]].map(([v,l])=>ch("data-farole",v,l,faRole.includes(v))).join("")}</div>
   <div class="fapl">Squadra</div><div class="fapr two"><label class="grsel"><span>Squadra NBA</span><select data-fasel="nba"><option value="">Tutte</option>${faNbaL.map(t=>`<option value="${t}"${t===faNba?" selected":""}>${t}</option>`).join("")}</select></label><label class="grsel"><span>Squadra Dreamers</span><select data-fasel="dt"><option value="">Tutte</option>${Object.keys(TEAMS).map(t=>`<option value="${t}"${t===faDt?" selected":""}>${TEAMS[t].nick}</option>`).join("")}</select></label></div>
   <button class="fareset" data-fareset="1">Azzera i filtri</button></div>`:""}
-  <div class="fbxrow"><span class="fbxt"><button data-fbx="1" aria-pressed="${FBX}">Box</button><button data-fbx="0" aria-pressed="${!FBX}">PDK</button></span>${FBX?'<span class="fbxm">Stats medie a partita</span>':""}</div><div class="tbl-wrap"><table class="fatbl${FBX?" fabxt":""}"><thead><tr><th>#</th><th>Giocatore</th>${[[0,"PG"],[1,"Min"],[2,"PDK"],[3,"Eff."]].concat(FBX?[]:[[4,"Cresc."]]).map(([k,l])=>`<th class="fasrt${faSrt.k===k?" on":""}" data-fasrt="${k}" role="button" tabindex="0" aria-label="Ordina per ${l}${faSrt.k===k?(faSrt.d<0?", ora decrescente":", ora crescente"):""}">${l}${faSrt.k===k?(faSrt.d<0?" ▼":" ▲"):""}</th>`).join("")}</tr></thead><tbody>${rows}${oth}</tbody></table></div>
+  <div class="fbxrow"><span class="fbxt"><button data-fbx="1" aria-pressed="${FBX}">Box</button><button data-fbx="0" aria-pressed="${!FBX}">PDK</button></span>${FBX?'<span class="fbxm">Stats medie a partita</span>':""}<button class="fafil cspill" data-csopen="1">Con / Senza</button></div><div class="tbl-wrap"><table class="fatbl${FBX?" fabxt":""}"><thead><tr><th>#</th><th>Giocatore</th>${[[0,"PG"],[1,"Min"],[2,"PDK"],[3,"Eff."]].concat(FBX?[]:[[4,"Cresc."]]).map(([k,l])=>`<th class="fasrt${faSrt.k===k?" on":""}" data-fasrt="${k}" role="button" tabindex="0" aria-label="Ordina per ${l}${faSrt.k===k?(faSrt.d<0?", ora decrescente":", ora crescente"):""}">${l}${faSrt.k===k?(faSrt.d<0?" ▼":" ▲"):""}</th>`).join("")}</tr></thead><tbody>${rows}${oth}</tbody></table></div>
   <p class="note">«Tutti» mostra free agent, giocatori delle squadre ufficiali e delle G League (con il logo della squadra proprietaria) in un'unica classifica; «Free agent» tiene solo i free agent. Media per partita della stagione scelta (solo regular season). <b>Cresc.</b> = PDK medio del periodo scelto rispetto al PDK medio di tutta la stagione 2025/26 (servono almeno 3 partite nel periodo e 5 nella 2025/26; «—» per rookie e chi non ha giocato abbastanza). <span class="fagl">${badge("DOL","faglb")}<i>G</i></span> = giocatore nella G League di quella franchigia. PDK ufficiali Dunkest (dunkest.com). Dati al ${FA_AGG}. Tocca un giocatore per la scheda.</p>`;
 }
 let faPS=null,faGLoad=false;
@@ -10161,7 +10161,7 @@ function render(){
   if(cur!=="tv")TVS.out=1;liveSync();if(["effsquadra","efficienza","giocatore","grafico","trend","effcup"].includes(cur))fantaLiveAvvia();
   document.body.dataset.v=cur;{const nt=(typeof CNT!=="undefined"&&CNT)||DLS.th==="viola";document.body.classList.toggle("notte",nt);document.documentElement.classList.toggle("notte",nt);{const H=document.documentElement,pq=DLS.th==="parquet"||!!(DLT[DLS.th]&&DLT[DLS.th].pq);if(typeof CNT!=="undefined")H.classList.toggle("dlt-parquet",pq&&!CNT)}if(window.__nl!==nt){const f=window.__nl!==undefined;window.__nl=nt;if(f)try{dlsApply()}catch(e){}}const tc=document.querySelector('meta[name="theme-color"]');if(tc&&!document.body.classList.contains("dreamfs"))tc.content=nt?"#2a1260":TH_BAR}
   {document.documentElement.classList.toggle("setpg",cur==="impostazioni");/* (245) */const fs=cur==="giochi"&&(GAME==="dream"||GAME==="gdream");document.body.classList.toggle("dreamfs",fs);document.documentElement.classList.toggle("dreamfs",fs);const tc=document.querySelector('meta[name="theme-color"]');if(tc)tc.content=(fs||(typeof CNT!=="undefined"&&CNT))?"#2a1260":TH_BAR}
-  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"efficienza":(cur==="faplayer"||cur==="fabox")?(faFrom==="home"?"home":"efficienza"):cur==="giocatore"?(gFrom==="fa"?"efficienza":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="fa"||cur==="effsquadra"||cur==="consigli"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"||cur==="colstat"||cur==="colpl"||cur==="colcmp"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="osserv"||cur==="iatrade"||cur==="gusti"||cur==="compar"||cur==="pictrade"||cur==="iaallena"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(eff==="hoop"||eff==="bet")?"sgiochi":(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
+  const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"efficienza":(cur==="faplayer"||cur==="fabox"||cur==="consenza")?(faFrom==="home"?"home":"efficienza"):cur==="giocatore"?(gFrom==="fa"?"efficienza":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="fa"||cur==="effsquadra"||cur==="consigli"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"||cur==="colstat"||cur==="colpl"||cur==="colcmp"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="osserv"||cur==="iatrade"||cur==="gusti"||cur==="compar"||cur==="pictrade"||cur==="iaallena"?"valtrade":cur;const DK=["risultati","classifica","roster","fa","trade","speciali","gleague","regolamento"];const grp=(eff==="hoop"||eff==="bet")?"sgiochi":(typeof dkOpen!=="undefined"&&dkOpen==="subnav")||DK.includes(eff)?"dunkest":eff==="giochi"?(GAME==="dream"?"dreamers":GAME==="gdream"?"gdreamers":"giochi"):eff;
   document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===grp));try{const nv=document.querySelector("nav"),sb=nv&&nv.querySelector('[aria-selected="true"]');if(sb)nv.scrollTo({left:Math.max(0,sb.offsetLeft-24)})}catch(e){}
   const sn=document.getElementById("subnav");if(sn)sn.querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===eff));
   if(typeof syncMenu==="function")syncMenu();
@@ -10226,7 +10226,7 @@ function syncMenu(){
   document.querySelectorAll("nav button[data-menu]").forEach(b=>{
     const p=document.getElementById(b.dataset.menu);if(!p)return;
     const op=dkOpen===b.dataset.menu;b.setAttribute("aria-expanded",op);p.hidden=!op;
-    const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"efficienza":(cur==="faplayer"||cur==="fabox")?(faFrom==="home"?"home":"efficienza"):cur==="giocatore"?(gFrom==="fa"?"efficienza":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="fa"||cur==="effsquadra"||cur==="consigli"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"||cur==="colstat"||cur==="colpl"||cur==="colcmp"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
+    const eff=cur==="glplayer"?"gleague":cur==="grafico"&&GR.fa?"efficienza":(cur==="faplayer"||cur==="fabox"||cur==="consenza")?(faFrom==="home"?"home":"efficienza"):cur==="giocatore"?(gFrom==="fa"?"efficienza":gFrom==="valtrade"?"valtrade":gFrom==="effsquadra"||gFrom==="efficienza"?"efficienza":"roster"):cur==="fa"||cur==="effsquadra"||cur==="consigli"||cur==="effcup"||cur==="grafico"||cur==="trend"||cur==="statnotte"||cur==="colstat"||cur==="colpl"||cur==="colcmp"?"efficienza":cur==="campo"||cur==="cassa"||cur==="cap"||cur==="multe"||cur==="college"||cur==="sala"||cur==="pers"||cur==="soft"||cur==="orari"||cur==="bet"?"home":cur==="tv"?"giochi":cur,inside=[...p.querySelectorAll("button")].some(x=>x.dataset.v===eff);
     b.setAttribute("aria-selected",op||inside);
     if(op){const w=b.closest(".wrap").getBoundingClientRect(),r=b.getBoundingClientRect();
       const width=Math.max(r.width,180);let left=r.left-w.left+r.width/2-width/2;left=Math.max(0,Math.min(left,w.width-width));
@@ -15444,5 +15444,78 @@ html body table.gtab.gbx tr.gmrow td small{display:flex;align-items:center;gap:4
 html body .gszw .tbl-wrap{max-height:none}</style>
 <style>/* (1584) riquadri del profilo senza Ultima partita / Punti medi / Rb·As: l ultima riga si allarga per non lasciare buchi */html body .gstats .gst:last-child:nth-child(3n+2){grid-column:span 2}html body .gstats .gst:last-child:nth-child(3n+1){grid-column:1/-1}</style>
 <style>/* (1585) colonna Crescita nella lista Giocatori */html body table.fatbl td.fagr{font:800 13px var(--display,Arial);font-style:italic;white-space:nowrap}html body table.fatbl td.fagr.up{color:#22c55e}html body table.fatbl td.fagr.dn{color:#ef4444}html:not(.notte) body table.fatbl td.fagr.up{color:#15803d}html:not(.notte) body table.fatbl td.fagr.dn{color:#b91c1c}</style>
+<script>/* (1592) CON / SENZA (Statistiche › Giocatori): come rende un giocatore con o senza uno o più compagni della sua squadra NBA di oggi.
+   Partite del giocatore: PARTITE / STAGIONI / FAG (gmSrc, stagioni 2024/25, 2025/26, 2026/27). Presenza del compagno nella stessa partita:
+   stagione in corso dai box score di Dynasty TV (tutti i giocatori di ogni partita); stagioni passate dalle sue partite (stessa data e stesso avversario = stessa partita).
+   «Senza X» = X non ha giocato quella partita; «Con X» = X ha giocato. Se X quel giorno giocava per un'altra squadra la partita non conta.
+   Stagioni passate: valgono solo se i due hanno giocato insieme almeno una volta quella stagione (altrimenti non erano compagni). Non è «in campo insieme» minuto per minuto. */
+let CS=(()=>{try{return JSON.parse(localStorage.getItem("dl_cs")||"null")||{}}catch(e){return{}}})();CS={p:CS.p||"",sz:CS.sz||"all",f:CS.f||{}};
+const csSave=()=>{try{localStorage.setItem("dl_cs",JSON.stringify(CS))}catch(e){}};
+const CS_SZ=["2024/25","2025/26","2026/27"],CS_LAB={"2024/25":"24/25","2025/26":"25/26","2026/27":"26/27"};
+let CSIX=null;
+function csIdx(){const nb=typeof TV!=="undefined"&&TV.box?Object.keys(TV.box).length:0;if(CSIX&&CSIX.n===nb)return CSIX;const by={},team={},last={};
+ try{for(const d of Object.keys(TV.days).sort())for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B)continue;const dm=d.slice(8)+"/"+d.slice(5,7);
+  for(const sd of["a","h"]){const tm=sd==="a"?g[0]:g[1],op=sd==="a"?g[1]:g[0];(B[sd]||[]).forEach(r=>{const k=tvNm(r[0]);(by[k]=by[k]||{})[dm]={tm,op,nm:r[0]};team[k]=tm;(last[tm]=last[tm]||{})[k]={nm:r[0],d,min:(last[tm][k]?last[tm][k].min:0)+(+String(r[2]).split(":")[0]||0)}})}}}catch(e){}
+ return CSIX={n:nb,by,team,last}}
+/* nomi dell'app (PARTITE, STAGIONI, FAG, rose) per nome normalizzato */
+let CSNM=null;function csNames(){if(CSNM&&CSNM.f===(typeof FAG!=="undefined"))return CSNM.m;const m={};const add=n=>{const k=tvNm(n);if(!m[k])m[k]=n};
+ Object.values(ROSTER).flat().forEach(r=>add(r[0]));try{FA.forEach(x=>add(x[0]))}catch(e){}Object.keys(PARTITE).forEach(add);for(const sz in STAGIONI)Object.keys(STAGIONI[sz]).forEach(add);if(typeof FAG!=="undefined")Object.keys(FAG).forEach(add);
+ CSNM={f:typeof FAG!=="undefined",m};return m}
+function csTeam(n){const X=csIdx();const t=X.team[tvNm(n)];if(t)return t;for(const k in ROSTER){const r=ROSTER[k].find(x=>x[0]===n);if(r)return r[3]}try{const f=FA.find(x=>x[0]===n);if(f)return f[1]}catch(e){}return""}
+function csMates(n){const t=csTeam(n),X=csIdx(),L=X.last[t]||{},me=tvNm(n);return Object.entries(L).filter(([k])=>k!==me).sort((a,b)=>b[1].min-a[1].min).map(([k,v])=>({k,nm:v.nm}))}
+/* partite del giocatore A con la presenza dei compagni scelti */
+function csGames(n){const S=gmSrc(n),X=csIdx(),NM=csNames(),F=Object.entries(CS.f).filter(([,v])=>v),out=[],skip={};
+ for(const sz of CS_SZ){if(CS.sz!=="all"&&CS.sz!==sz)continue;const L=S[sz]||[];if(!L.length)continue;
+  const pres={};/* per ogni compagno: data → avversario (o null) nella stagione */
+  let ok=true;for(const[k]of F){const P={};if(sz==="2026/27"){const b=X.by[k]||{};for(const dm in b)P[dm]=b[dm].op}else{const an=NM[k];const G=an?(gmSrc(an)[sz]||[]):[];G.forEach(g=>P[g[0]]=g[1])}
+   pres[k]=P;if(sz!=="2026/27"&&!L.some(g=>P[g[0]]===g[1])){ok=false;skip[sz]=(skip[sz]||[]).concat(k)}}
+  if(!ok)continue;
+  for(const g of L){let other=false,match=true;for(const[k,v]of F){const o=pres[k][g[0]];if(o!=null&&o!==g[1]){other=true;break}const with_=o!=null&&o===g[1];if(v==="s"&&with_)match=false;if(v==="c"&&!with_)match=false}
+   if(other)continue;out.push({sz,g,match})}}
+ return{out,skip}}
+function csAgg(L){const n=L.length;if(!n)return null;const s=i=>L.reduce((a,x)=>a+(+x.g[i]||0),0);const mn=s(2),dk=s(3);return{n,pdk:dk/n,min:mn/n,eff:mn?dk/mn:null,pt:s(5)/n,rb:s(6)/n,as:s(7)/n}}
+function vConSenza(){if(typeof FAG==="undefined"){faLoadG();setTimeout(()=>{if(cur==="consenza"&&typeof FAG!=="undefined"){const y=scrollY;render();scrollTo(0,y)}},1500)}
+ const NM=csNames(),all=Object.values(NM).filter(n=>{const s=gmSrc(n);return CS_SZ.some(z=>s[z]&&s[z].length)}).sort((a,b)=>a.localeCompare(b));
+ if(!CS.p||!all.includes(CS.p))CS.p=all.includes("Anthony Black")?"Anthony Black":all[0]||"";
+ const n=CS.p,t=csTeam(n),M=csMates(n),f1=v=>v==null?"—":v.toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1}),f2=v=>v==null?"—":v.toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2});
+ Object.keys(CS.f).forEach(k=>{if(!M.some(m=>m.k===k))delete CS.f[k]});
+ const sel=`<label class="grsel cssel"><span>Giocatore</span><select id="cspl">${all.map(x=>`<option${x===n?" selected":""}>${x}</option>`).join("")}</select></label>`;
+ const szc=`<div class="cschips">${[["all","Tutte"],...CS_SZ.map(z=>[z,CS_LAB[z]])].map(([v,l])=>`<button class="fach" data-cssz="${v}" aria-pressed="${CS.sz===v}">${l}</button>`).join("")}</div>`;
+ const mates=M.length?`<div class="csmates">${M.map(m=>{const v=CS.f[m.k];return`<button class="csm ${v==="s"?"s":v==="c"?"c":""}" data-csm="${m.k}">${v==="s"?"senza ":v==="c"?"con ":""}<b>${m.nm}</b></button>`}).join("")}</div>`:`<p class="note">Nessun compagno trovato nei box score della stagione in corso.</p>`;
+ const F=Object.entries(CS.f).filter(([,v])=>v),{out,skip}=csGames(n),A=out.filter(x=>x.match),B=out.filter(x=>!x.match),a=csAgg(A),b=csAgg(B);
+ const lab=F.length?F.map(([k,v])=>`${v==="s"?"senza":"con"} ${(M.find(m=>m.k===k)||{}).nm||k}`).join(" e "):"tutte le partite";
+ const row=(l,va,vb,fmt,inv)=>{const d=va!=null&&vb!=null?va-vb:null,cl=d==null||Math.abs(d)<1e-9?"":((d>0)!==!!inv?"up":"dn");return`<div class="csr"><span>${l}</span><b>${va==null?"—":fmt(va)}</b><b class="o">${vb==null?"—":fmt(vb)}</b><em class="${cl}">${d==null?"":(d>0?"+":"")+fmt(d)}</em></div>`};
+ const cmp=F.length?`<div class="csbox"><div class="csr csh"><span></span><b>${lab}</b><b class="o">le altre</b><em>diff.</em></div>
+  <div class="csr"><span>Partite</span><b>${a?a.n:0}</b><b class="o">${b?b.n:0}</b><em></em></div>${row("PDK",a&&a.pdk,b&&b.pdk,f1)}${row("Minuti",a&&a.min,b&&b.min,f1)}${row("Efficienza",a&&a.eff,b&&b.eff,f2)}${row("Punti",a&&a.pt,b&&b.pt,f1)}${row("Rimbalzi",a&&a.rb,b&&b.rb,f1)}${row("Assist",a&&a.as,b&&b.as,f1)}</div>`
+  :`<p class="note">Tocca i compagni qui sopra: un tocco = <b>senza</b>, due tocchi = <b>con</b>, tre = nessun filtro. Puoi sceglierne più di uno (es. senza Banchero e senza Suggs).</p>`;
+ const sk=Object.entries(skip).map(([z,ks])=>`${CS_LAB[z]}: ${ks.map(k=>(M.find(m=>m.k===k)||{}).nm||k).join(", ")} non era suo compagno`).join(" · ");
+ const list=A.slice().sort((x,y)=>CS_SZ.indexOf(y.sz)-CS_SZ.indexOf(x.sz)||gmKey(y.g)-gmKey(x.g)).slice(0,60).map(x=>`<tr><td class="gd"><b>${x.g[0]} <i>${x.g[1]}</i></b><small>${CS_LAB[x.sz]}</small></td><td>${f1(+x.g[2])}</td><td class="gdk">${pdkB(+x.g[3],f1(+x.g[3]))}</td><td>${x.g[5]??"—"}</td><td>${x.g[6]??"—"}</td><td>${x.g[7]??"—"}</td></tr>`).join("");
+ return`<div class="cspg"><button class="gback" id="csback">‹ Giocatori</button>${H("Con / Senza",`<em>${t||"—"} · compagni di oggi</em>`)}
+ ${sel}<div class="fapl">Stagioni</div>${szc}<div class="fapl">Compagni di squadra (${t||"—"})</div>${mates}${cmp}
+ ${sk?`<p class="note">${sk}: quella stagione non conta per il filtro.</p>`:""}
+ ${F.length?`${H("Partite",`<em>${A.length} · ${lab}</em>`)}${A.length?`<div class="tbl-wrap"><table class="gtab"><thead><tr><th>Data</th><th>Min</th><th>PDK</th><th>PT</th><th>RB</th><th>AS</th></tr></thead><tbody>${list}</tbody></table></div>`:`<p class="note">Nessuna partita con questi filtri nelle stagioni scelte.</p>`}`:""}
+ <p class="note">«Senza» = il compagno non ha giocato quella partita (infortunio, riposo, non ancora in squadra); «con» = ha giocato. Non dice se erano in campo insieme minuto per minuto. Stagione in corso dai box score di Dynasty TV, stagioni passate dalle partite dei due giocatori (stessa data e stesso avversario). Una stagione passata conta solo se quell anno erano compagni.</p></div>`}
+VIEWS.consenza=vConSenza;
+document.addEventListener("click",e=>{if(e.target.closest("[data-csopen]")){e.preventDefault();cur="consenza";render();scrollTo(0,0);return}
+ if(cur!=="consenza")return;const b=e.target.closest("[data-cssz],[data-csm],#csback");if(!b)return;e.preventDefault();
+ if(b.id==="csback"){cur="fa";render();scrollTo(0,0);return}
+ if(b.dataset.cssz){CS.sz=b.dataset.cssz}else if(b.dataset.csm){const k=b.dataset.csm,v=CS.f[k];CS.f[k]=!v?"s":v==="s"?"c":"";if(!CS.f[k])delete CS.f[k]}
+ csSave();const y=scrollY;render();scrollTo(0,y)});
+document.addEventListener("change",e=>{if(e.target.id!=="cspl")return;CS.p=e.target.value;CS.f={};csSave();const y=scrollY;render();scrollTo(0,y)});
+</script>
+<style>/* (1592) Con / Senza */
+.cssel{display:block;margin:6px 0 10px}.cssel select{width:100%}
+.cschips{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 10px}
+.csmates{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 12px}
+.csm{padding:7px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);color:inherit;font:600 13px var(--body,Arial);cursor:pointer}
+.csm b{font-weight:800}.csm.s{background:#7f1d1d;border-color:#ef4444;color:#fff}.csm.c{background:#14532d;border-color:#22c55e;color:#fff}
+html:not(.notte) .csm{background:var(--pq-box,#fff6e4);border-color:var(--pq-line,#d9c3a3);color:var(--pq-tx,#2b1608)}html:not(.notte) .csm.s{background:#dc2626;color:#fff;border-color:#b91c1c}html:not(.notte) .csm.c{background:#16a34a;color:#fff;border-color:#15803d}
+.csbox{border-radius:14px;padding:6px 10px;margin:4px 0 12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14)}
+html:not(.notte) .csbox{background:var(--pq-box,#fff6e4);border-color:var(--pq-line,#d9c3a3)}
+.csr{display:grid;grid-template-columns:1fr 1fr 1fr 56px;align-items:center;gap:6px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.08)}.csr:last-child{border-bottom:0}
+.csr span{font-size:12px;text-transform:uppercase;letter-spacing:.05em;opacity:.8}.csr b{font:800 17px var(--display,Arial);font-style:italic;text-align:right}.csr b.o{opacity:.7}
+.csr.csh b{font-size:11px;font-style:normal;text-transform:uppercase;letter-spacing:.04em;line-height:1.15}.csr em{font-style:normal;font-weight:800;font-size:13px;text-align:right}.csr em.up{color:#22c55e}.csr em.dn{color:#ef4444}
+.cspill{margin-left:auto}
+.cspg{padding:0 14px}.cspg .fapl{margin-top:6px}html body .cspg .csr em.up{color:#16a34a!important;-webkit-text-fill-color:#16a34a!important}html body .cspg .csr em.dn{color:#dc2626!important;-webkit-text-fill-color:#dc2626!important}.cssel select{padding:10px 12px;border-radius:10px;font:800 15px var(--display,Arial)}</style>
 </body>
 </html>
