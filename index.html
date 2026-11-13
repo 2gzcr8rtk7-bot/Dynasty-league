@@ -3181,7 +3181,7 @@ function movimenti(t){
 const DEBITI=[{da:"DOL",a:"MOO",v:5,tipo:"portafoglio",s:"26/27",saldato:true/* (1561) pagato il 09/11/2026 col rimborso Porziņģis */},{da:"DOL",a:"MOO",v:30,tipo:"post",s:"26/27",saldato:false}];
 const CREDITI={"SPI": 35, "PEA": 63, "DUC": 40, "DOL": 0,/* (SC4) 11/11 scambio a 4: DOL −45, DUC +40, SPI −15, PEA +20 */ "TUR": 99, "EAG": 108, "MOO": 493, "FOX": 21};/* (SC5) 13/11 scambio a 4: PEA +5 (dai Mooses), MOO +50 −5, TUR −50 */
 /* Avvisi sui giocatori (scritta gialla nel roster) */
-const AVVISI={"Ryan Rollins":"Trade Speciale in corso · 30 cr","Brandon Ingram":"Trade Speciale in corso · 30 cr","Brayden Burries":"Trade Speciale in corso · 40 cr"};
+const AVVISI={"Sergio De Larrea":"Trade Speciale in corso · 30 cr","Ryan Rollins":"Trade Speciale in corso · 30 cr","Brandon Ingram":"Trade Speciale in corso · 30 cr","Brayden Burries":"Trade Speciale in corso · 40 cr"};
 /* Giocatori in slot rookie (etichetta nel roster) */
 const ROOKIE=["Cameron Boozer","Trevon Brazile","Darryn Peterson","Yaxel Lendeborg","Darius Acuff Jr."];
 const ini=t=>TEAMS[t].nick.slice(0,3).toUpperCase();
@@ -3241,13 +3241,16 @@ const INFORTUNI={agg:"26/10/2026 · 18:30",
 const SPECIALI=[
   {t:"PEA",entra:"Damian Lillard",esce:"Ryan Rollins",tipo:30,inizio:1,scad:15,fine:"15 dicembre"},
   {t:"DUC",entra:"Sergio De Larrea",esce:"Brayden Burries",tipo:40,inizio:1,scad:33,fine:"6 febbraio"},
-  {t:"DUC",entra:"Kyshawn George",esce:"Brandon Ingram",tipo:30,inizio:1,scad:15,fine:"15 dicembre"}
+  {t:"DUC",entra:"Kyshawn George",esce:"Brandon Ingram",tipo:30,inizio:1,scad:15,fine:"15 dicembre"},
+  /* (1589) 13/11/2026 speciale 30 Ducks: fuori De Larrea, dentro Anthony Black. Durata stimata come le altre due da 30 (iniziate col turno 1, finiscono al turno 13 = 13 turni): dal turno 6 (giornata 8) al turno 18 (29-31/12) = giornata 20. Si controlla su Dunkest. */
+  {t:"DUC",entra:"Anthony Black",esce:"Sergio De Larrea",tipo:30,inizio:8,scad:20,fine:"31 dicembre"}
 ];
 const SP_DUR={30:20,40:40},SP_FINE=64;
 /* chi è "sotto speciale" (esce da una trade speciale ancora attiva) è FUORI ROSA: non entra nei 10 titolari né in tribuna delle sfide Dreamers; resta visibile in roster, statistiche e modalità notte */
 const spFuori=n=>SPECIALI.some(x=>x.esce===n&&spInfo(x).left>0);
 function spInfo(x){
-  const cur=GIORNATE.length?GIORNATE[GIORNATE.length-1].n:1;
+  /* (1589) giornata di adesso = turno Dreamers in corso + 2 (GIORNATE si era fermato alla 3 e il countdown non scendeva) */
+  const cur=Math.max(GIORNATE.length?GIORNATE[GIORNATE.length-1].n:1,(()=>{try{const d=new Intl.DateTimeFormat("en-CA",{timeZone:"America/New_York"}).format(new Date());return DR_TURNI.filter(T=>T[0]<=d).length+DR_OFF}catch(e){return 1}})());
   const scad=x.scad||(x.tipo===50?SP_FINE:x.inizio-1+(SP_DUR[x.tipo]||20)+(x.extra||0));
   const dur=scad-x.inizio+1,left=Math.max(0,scad-cur+1),fr=dur>0?left/dur:0;
   return{cur,scad,dur,left,fr};
@@ -3260,7 +3263,7 @@ function spColor(fr){
 }
 function vSpeciali(){
   const by={};SPECIALI.forEach(x=>(by[x.t]=by[x.t]||[]).push(x));
-  const cur=GIORNATE.length?GIORNATE[GIORNATE.length-1].n:1;
+  const cur=spInfo({inizio:1,scad:1}).cur;
   const card=x=>{const I=spInfo(x),col=spColor(I.fr),pct=Math.round(I.fr*100),exp=I.left===0;
     return `<div class="spc ${exp?"exp":""}" style="--sc:${col}">
       <div class="sptop"><span class="sptype">Speciale ${x.tipo}</span><button class="bshare spsh" data-share="sp" data-spi="${SPECIALI.indexOf(x)}" aria-label="Condividi trade speciale"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span class="spleft"><b>${exp?"Scaduta":I.left}</b>${exp?"":`<small>giornat${I.left===1?"a":"e"}</small>`}</span></div>
@@ -3321,7 +3324,7 @@ const EFF={agg:"13/11/2026",
 /* Roster: [nome, numero NBA (null = da confermare), ruolo, squadra NBA, crediti] */
 const ROSTER={
  DOL:[["Nikola Jokić",15,"C","DEN",30],["Domantas Sabonis",11,"C","SAC",18],["Tyrese Maxey",0,"G","PHI",17],["Kevin Durant",7,"F","HOU",16],["Julius Randle",30,"F","BKN",14.5],["Devin Booker",15,"G","PHX",14],["James Harden",1,"G","CLE",14],["Michael Porter Jr.",17,"F","BKN",13],["Paul George",13,"F","BOS",11.5],["Rudy Gobert",27,"C","MIN",11.5],["De'Aaron Fox",4,"G","SAS",11],["Immanuel Quickley",5,"G","TOR",10],["Collin Murray-Boyles",30,"F","TOR",8.5]],
- DUC:[["Victor Wembanyama",1,"C","SAS",28],["Cade Cunningham",2,"G","DET",21],["Jalen Johnson",1,"F","ATL",19],["Alperen Şengün",28,"C","HOU",17.5],["Scottie Barnes",4,"F","TOR",17],["Anthony Edwards",5,"G","MIN",16.5],["Cooper Flagg",32,"F","DAL",16.5],["Amen Thompson",1,"G","HOU",15],["Matas Buzelis",14,"F","CHI",11],["Brandon Ingram",2,"F","LAC",10],["Moussa Diabaté",14,"C","CHA",10],["Jalen Green",4,"G","PHX",9.5],["Kyshawn George",18,"F","WAS",8],["Brayden Burries",0,"G","MIL",7],["Sergio De Larrea",55,"G","DAL",5.5]],
+ DUC:[["Victor Wembanyama",1,"C","SAS",28],["Cade Cunningham",2,"G","DET",21],["Jalen Johnson",1,"F","ATL",19],["Alperen Şengün",28,"C","HOU",17.5],["Scottie Barnes",4,"F","TOR",17],["Anthony Edwards",5,"G","MIN",16.5],["Cooper Flagg",32,"F","DAL",16.5],["Amen Thompson",1,"G","HOU",15],["Matas Buzelis",14,"F","CHI",11],["Brandon Ingram",2,"F","LAC",10],["Moussa Diabaté",14,"C","CHA",10],["Jalen Green",4,"G","PHX",9.5],["Kyshawn George",18,"F","WAS",8],["Brayden Burries",0,"G","MIL",7],["Sergio De Larrea",55,"G","DAL",5.5],["Anthony Black",0,"G","ORL",0]],
  FOX:[["Luka Dončić",77,"G","LAL",27],["Shai Gilgeous-Alexander",2,"G","OKC",22],["Jayson Tatum",0,"F","BOS",18],["Kawhi Leonard",2,"F","TOR",15],["Austin Reaves",15,"G","LAL",14.5],["Ivica Zubac",40,"C","IND",12.5],["Kyrie Irving",11,"G","DAL",12],["Josh Hart",3,"F","NYK",12],["Desmond Bane",3,"G","ORL",11.5],["Walker Kessler",24,"C","LAL",10.5],["Jabari Smith Jr.",10,"F","HOU",10.5],["Naz Reid",11,"F","CHA",10],["Darius Acuff Jr.",5,"G","SAC",9],["Aday Mara",15,"C","OKC",7]],
  PEA:[["Josh Giddey",3,"G","CHI",15.5],["Trae Young",3,"G","WAS",15.5],["LaMelo Ball",1,"G","MIN",14.5],["Evan Mobley",4,"F","CLE",14],["Darius Garland",10,"G","LAC",13],["Donovan Clingan",23,"C","POR",13],["Zion Williamson",1,"F","NOP",12.5],["Jarrett Allen",31,"C","CLE",12.5],["Lauri Markkanen",23,"F","UTA",12.5],["Dyson Daniels",5,"G","ATL",12],["Trey Murphy III",25,"F","NOP",11.5],["Ryan Rollins",13,"G","MIL",11.5],["Miles Bridges",22,"F","PHX",11],["Maxime Raynaud",42,"C","SAC",10],["Trevon Brazile",7,"F","DEN",7]],
  SPI:[["Giannis Antetokounmpo",34,"F","MIA",25],["Joel Embiid",21,"C","PHI",18],["LeBron James",23,"F","PHI",16],["Bam Adebayo",13,"C","MIA",15],["Donovan Mitchell",45,"G","CLE",14],["Ja Morant",12,"G","POR",13],["Stephon Castle",5,"G","SAS",13],["Damian Lillard",0,"G","POR",13],["Cameron Boozer",27,"F","MEM",12.5],["Franz Wagner",22,"F","ORL",12],["VJ Edgecombe",77,"G","PHI",12],["Isaiah Hartenstein",55,"C","OKC",10.5],["Jaime Jaquez Jr.",11,"F","MIL",9],["Jonathan Kuminga",1,"F","MIN",7]],
@@ -4350,7 +4353,7 @@ const PG_COL={pdk:"#facc15",gio:"#22c55e",inj:"#ef4444",min:"#f97316",effg:"#a85
 function pgInterp(x,P){if(x<=P[0][0])return P[0][1];for(let i=1;i<P.length;i++)if(x<=P[i][0]){const[a,b]=P[i-1],[c,d]=P[i];return b+(d-b)*(x-a)/(c-a)}return P[P.length-1][1]}
 /* Età con i mesi, calcolata ogni volta dalla data di nascita (NASCITA) e dalla data di oggi: si aggiorna da sola */
 /* (1580) età SOLO DA MOSTRARE diversa da quella vera (scherzo della lega): NASCITA resta vera e la usano valori, prezzi e IA trade; NASCITA_SHOW vale solo per le scritte (etaTxt, «· N ANNI» delle immagini da condividere) */
-const NASCITA_SHOW={"Anthony Black":"2000-01-20"};function etaVis(n){const d=NASCITA_SHOW[n]||NASCITA[n];if(!d)return eta(n);const b=new Date(d+"T00:00:00Z"),t=new Date();let x=t.getUTCFullYear()-b.getUTCFullYear();if(t.getUTCMonth()<b.getUTCMonth()||(t.getUTCMonth()===b.getUTCMonth()&&t.getUTCDate()<b.getUTCDate()))x--;return x}
+const NASCITA_SHOW={};/* (1589) Anthony Black torna alla sua età vera (22 anni) */function etaVis(n){const d=NASCITA_SHOW[n]||NASCITA[n];if(!d)return eta(n);const b=new Date(d+"T00:00:00Z"),t=new Date();let x=t.getUTCFullYear()-b.getUTCFullYear();if(t.getUTCMonth()<b.getUTCMonth()||(t.getUTCMonth()===b.getUTCMonth()&&t.getUTCDate()<b.getUTCDate()))x--;return x}
 const etaM=(n,real)=>NASCITA_SHOW[n]?etaVis(n):real;/* età da scrivere: la maschera se c è, altrimenti quella vera */
 function etaTxt(n){const d=NASCITA_SHOW[n]||NASCITA[n];if(!d)return"";const b=new Date(d+"T00:00:00Z"),t=new Date();let m=(t.getUTCFullYear()-b.getUTCFullYear())*12+t.getUTCMonth()-b.getUTCMonth();if(t.getUTCDate()<b.getUTCDate())m--;if(m<0)return"";const a=Math.floor(m/12),mm=m%12;return`${a} anni${mm?` ${mm} ${mm===1?"mese":"mesi"}`:""}`}
 function etaEsatta(n){const d=NASCITA[n];if(!d)return null;return(Date.now()-new Date(d+"T00:00:00Z"))/(365.25*864e5)}
