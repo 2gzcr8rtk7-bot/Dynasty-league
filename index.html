@@ -15523,8 +15523,8 @@ document.addEventListener("click",e=>{if(e.target.closest("[data-csopen]")){e.pr
 document.addEventListener("input",e=>{if(e.target.id!=="csq")return;CS.q=e.target.value;const L=document.getElementById("cslist");if(L)L.innerHTML=csList()});
 </script>
 <style>/* (1593) Con / Senza: grafica arancione (giorno parquet / notte viola) */
-.faqrow{display:flex;gap:8px;align-items:stretch;margin:12px 0 10px}.faqrow .vtq{flex:1 1 50%;width:50%!important;min-width:0;margin:0!important}
-html body .csgo{flex:1 1 50%;display:flex;align-items:center;justify-content:center;gap:7px;border:0;border-radius:12px;background:linear-gradient(180deg,#ef4444,#b91c1c);color:#fff!important;-webkit-text-fill-color:#fff!important;font:800 15px var(--display,Arial);font-style:italic;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 3px 0 #7f1d1d,0 6px 14px rgba(185,28,28,.35);cursor:pointer}
+.faqrow{display:flex;gap:8px;align-items:stretch;margin:12px 14px 10px}.faqrow .vtq{flex:1 1 50%;width:50%!important;min-width:0;margin:0!important}
+html body .csgo{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:7px;border:0;border-radius:12px;background:linear-gradient(180deg,#ef4444,#b91c1c);color:#fff!important;-webkit-text-fill-color:#fff!important;font:800 15px var(--display,Arial);font-style:italic;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 3px 0 #7f1d1d,0 6px 14px rgba(185,28,28,.35);cursor:pointer}
 html body .csgo svg{width:18px;height:18px;flex:none}html body .csgo:active{transform:translateY(2px);box-shadow:0 1px 0 #7f1d1d}
 .cspg{padding:0 14px;--o1:#f97316;--o2:#ea580c;--o3:#fb923c;--ok:#22c55e;--bx:rgba(255,255,255,.06);--ln:rgba(255,255,255,.14);--mu:rgba(255,255,255,.62)}
 html:not(.notte) .cspg{--bx:#fff8ee;--ln:rgba(217,86,11,.25);--mu:#8a5a33}
@@ -15567,5 +15567,6 @@ html body .csdl{display:inline-block;font-style:normal;font-weight:900;font-size
 html body .csdl.up{background:#16a34a;color:#fff!important;-webkit-text-fill-color:#fff!important}html body .csdl.dn{background:#dc2626;color:#fff!important;-webkit-text-fill-color:#fff!important}html body .csdl.eq{background:var(--ln)}
 html body .csbt .csdl{font-size:11px;padding:1px 6px;margin:0 0 0 2px}.cst .csdl{justify-self:center;min-width:64px;font-size:16px;padding:3px 12px}.cssum b.dn{color:#dc2626!important;-webkit-text-fill-color:#dc2626!important}.cssum b.up{color:#16a34a!important;-webkit-text-fill-color:#16a34a!important}
 .csw{margin:8px 0;padding:8px 10px;border-radius:10px;background:rgba(249,115,22,.14);border:1px solid rgba(249,115,22,.4);font-size:12px}</style>
+<style>/* (1596) tasto Con o senza più piccolo, alto come la ricerca e dentro i margini */html body .faqrow:not(#a){margin:12px 0 10px!important;width:auto!important}html body .faqrow .csgo:not(#a){padding:0 12px;font-size:13px;letter-spacing:.04em;gap:5px;border-radius:12px;box-shadow:0 2px 0 #7f1d1d;white-space:nowrap}html body .faqrow .csgo svg{width:14px;height:14px}html body .faqrow .vtq:not(#a){flex:1 1 auto;width:auto!important}</style>
 </body>
 </html>
