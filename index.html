@@ -15497,14 +15497,15 @@ function vConSenza(){if(typeof FAG==="undefined"){faLoadG();setTimeout(()=>{if(c
  else{const d=a&&b?a.pdk-b.pdk:null,cl=d==null?"":d>=0.05?"up":d<=-0.05?"dn":"eq";
   /* (1595) differenza speculare sotto ognuno dei due lati: chi è meglio in verde con +, l altro in rosso con − */
   const dl=(v,f,dec)=>v==null?"":`<em class="csdl ${Math.abs(v)<(dec?0.005:0.05)?"eq":v>0?"up":"dn"}">${Math.abs(v)<(dec?0.005:0.05)?"=":(v>0?"+":"−")+f(Math.abs(v))}</em>`;
+  /* (1597) le altre voci in colonna sotto ogni lato: valore e differenza speculare (niente più barre) */
+  const col=(x,y)=>`<div class="cscol">${[["Minuti","min",f1],["Efficienza","eff",f2,1],["Punti","pt",f1],["Rimbalzi","rb",f1],["Assist","as",f1]].map(([l,k,f,dec])=>{const v=x?x[k]:null,w=y?y[k]:null;return`<div class="cscr"><span>${l}</span><b>${f(v)}</b>${dl(v!=null&&w!=null?v-w:null,f,dec)}</div>`}).join("")}</div>`;
   const bar=(l,va,vb,f,dec)=>{const mx=Math.max(va||0,vb||0)||1,dd=va!=null&&vb!=null?va-vb:null,c=dd==null||Math.abs(dd)<(dec?0.005:0.05)?"eq":dd>0?"up":"dn";
    return`<div class="csbar"><div class="csbl"><span>${l}</span></div><div class="csbt"><i class="a" style="width:${Math.round((va||0)/mx*90)}%"></i><b>${f(va)}</b>${dl(dd,f,dec)}</div><div class="csbt o"><i style="width:${Math.round((vb||0)/mx*90)}%"></i><b>${f(vb)}</b>${dl(dd==null?null:-dd,f,dec)}</div></div>`};
   res=`<div class="csstep"><span class="csn">3</span><b>Risultato</b><small>${CS.sz.length?CS.sz.map(z=>CS_LAB[z]).join(" + "):"tutte le stagioni"}</small></div>
-  <div class="csres"><div class="cst a">${lb(lab,"a")}<b>${a?f1(a.pdk):"—"}</b><span>PDK medi · ${a?a.n:0} ${a&&a.n===1?"gara":"gare"}</span>${dl(d,f1)}</div>
-   <div class="cst o">${lb(labB,"o")}<b>${b?f1(b.pdk):"—"}</b><span>PDK medi · ${b?b.n:0} ${b&&b.n===1?"gara":"gare"}</span>${dl(d==null?null:-d,f1)}</div></div>
+  <div class="csres"><div class="cst a">${lb(lab,"a")}<b>${a?f1(a.pdk):"—"}</b><span>PDK medi · ${a?a.n:0} ${a&&a.n===1?"gara":"gare"}</span>${dl(d,f1)}${col(a,b)}</div>
+   <div class="cst o">${lb(labB,"o")}<b>${b?f1(b.pdk):"—"}</b><span>PDK medi · ${b?b.n:0} ${b&&b.n===1?"gara":"gare"}</span>${dl(d==null?null:-d,f1)}${col(b,a)}</div></div>
   <p class="cssum">${a&&b?`${sur(n)} <b>${lab}</b> fa <b class="${cl}">${d>=0.05?f1(d)+" PDK in più":d<=-0.05?f1(-d)+" PDK in meno":"gli stessi PDK"}</b> che ${labB}.`:a?`Nessuna partita ${labB}: non c'è un confronto.`:`Nessuna partita ${lab}.`}</p>
-  <div class="csleg"><span><i class="a"></i>${lab}</span><span><i></i>${labB}</span></div>
-  <div class="csbars">${bar("Minuti",a&&a.min,b&&b.min,f1)}${bar("Efficienza",a&&a.eff,b&&b.eff,f2,1)}${bar("Punti",a&&a.pt,b&&b.pt,f1)}${bar("Rimbalzi",a&&a.rb,b&&b.rb,f1)}${bar("Assist",a&&a.as,b&&b.as,f1)}</div>
+
   ${a&&a.n<5?`<p class="csw">⚠ Solo ${a.n} ${a.n===1?"partita":"partite"}: il confronto è indicativo.</p>`:""}`}
  const sk=Object.entries(skip).map(([z,ks])=>`${CS_LAB[z]}: ${ks.map(k=>sur(nmOf(k))).join(", ")} non era suo compagno`).join(" · ");
  const list=A.slice().sort((x,y)=>CS_SZ.indexOf(y.sz)-CS_SZ.indexOf(x.sz)||gmKey(y.g)-gmKey(x.g)).slice(0,80).map(x=>`<tr><td class="gd"><b>${x.g[0]} <i>${x.g[1]}</i></b><small>${CS_LAB[x.sz]}</small></td><td>${f1(+x.g[2])}</td><td class="gdk">${pdkB(+x.g[3],f1(+x.g[3]))}</td><td>${x.g[5]??"—"}</td><td>${x.g[6]??"—"}</td><td>${x.g[7]??"—"}</td></tr>`).join("");
@@ -15566,6 +15567,14 @@ html body .csbl em.up{color:#16a34a!important;-webkit-text-fill-color:#16a34a!im
 html body .csdl{display:inline-block;font-style:normal;font-weight:900;font-size:14px;padding:2px 8px;border-radius:999px;margin-top:4px}
 html body .csdl.up{background:#16a34a;color:#fff!important;-webkit-text-fill-color:#fff!important}html body .csdl.dn{background:#dc2626;color:#fff!important;-webkit-text-fill-color:#fff!important}html body .csdl.eq{background:var(--ln)}
 html body .csbt .csdl{font-size:11px;padding:1px 6px;margin:0 0 0 2px}.cst .csdl{justify-self:center;min-width:64px;font-size:16px;padding:3px 12px}.cssum b.dn{color:#dc2626!important;-webkit-text-fill-color:#dc2626!important}.cssum b.up{color:#16a34a!important;-webkit-text-fill-color:#16a34a!important}
+html:not(.notte) body .cssum:not(#a){color:#3b1d06;-webkit-text-fill-color:#3b1d06}
+.cscol{display:grid;gap:0;margin-top:10px;padding-top:6px;border-top:1px solid rgba(255,255,255,.25);text-align:left}
+.cst.o .cscol{border-top-color:var(--ln)}
+.cscr{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:6px;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.18)}.cscr:last-child{border-bottom:0}
+.cst.o .cscr{border-bottom-color:var(--ln)}
+.cscr span{font:800 10.5px var(--display,Arial);letter-spacing:.06em;text-transform:uppercase;opacity:.85;min-height:0}
+html body .cst .cscr b{font:900 17px var(--display,Arial);font-style:italic;line-height:1}
+html body .cst .cscr .csdl{margin:0;font-size:11px;padding:1px 6px;min-width:0;justify-self:end}
 .csw{margin:8px 0;padding:8px 10px;border-radius:10px;background:rgba(249,115,22,.14);border:1px solid rgba(249,115,22,.4);font-size:12px}</style>
 <style>/* (1596) tasto Con o senza più piccolo, alto come la ricerca e dentro i margini */html body .faqrow:not(#a){margin:12px 0 10px!important;width:auto!important}html body .faqrow .csgo:not(#a){padding:0 12px;font-size:13px;letter-spacing:.04em;gap:5px;border-radius:12px;box-shadow:0 2px 0 #7f1d1d;white-space:nowrap}html body .faqrow .csgo svg{width:14px;height:14px}html body .faqrow .vtq:not(#a){flex:1 1 auto;width:auto!important}</style>
 </body>
