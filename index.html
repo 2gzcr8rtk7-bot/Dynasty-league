@@ -15468,8 +15468,8 @@ function csGames(n){const S=gmSrc(n),X=csIdx(),NM=csNames(),F=Object.entries(CS.
   for(const[k]of F){const P={};if(sz==="2026/27"){const b=X.by[k]||{};for(const dm in b)P[dm]=b[dm].op}else{const an=NM[k];const G=an?(gmSrc(an)[sz]||[]):[];G.forEach(g=>P[g[0]]=g[1])}
    pres[k]=P;if(sz!=="2026/27"&&!L.some(g=>P[g[0]]===g[1])){ok=false;skip[sz]=(skip[sz]||[]).concat(k)}}
   if(!ok)continue;
-  for(const g of L){let other=false,match=true;for(const[k,v]of F){const o=pres[k][g[0]];if(o!=null&&o!==g[1]){other=true;break}const w=o!=null&&o===g[1];if(v==="s"&&w)match=false;if(v==="c"&&!w)match=false}
-   if(other)continue;out.push({sz,g,match})}}
+  for(const g of L){let other=false,match=true,opp=true;for(const[k,v]of F){const o=pres[k][g[0]];if(o!=null&&o!==g[1]){other=true;break}const w=o!=null&&o===g[1];if(v==="s"&&w)match=false;if(v==="c"&&!w)match=false;/* lato opposto: ogni filtro rovesciato (senza ↔ con) */if(v==="s"&&!w)opp=false;if(v==="c"&&w)opp=false}
+   if(other)continue;out.push({sz,g,match,opp})}}
  return{out,skip}}
 function csAgg(L){const n=L.length;if(!n)return null;const s=i=>L.reduce((a,x)=>a+(+x.g[i]||0),0);const mn=s(2),dk=s(3);return{n,pdk:dk/n,min:mn/n,eff:mn?dk/mn:null,pt:s(5)/n,rb:s(6)/n,as:s(7)/n}}
 function vConSenza(){if(typeof FAG==="undefined"){faLoadG();setTimeout(()=>{if(cur==="consenza"&&typeof FAG!=="undefined"){const y=scrollY;render();scrollTo(0,y)}},1500)}
@@ -15480,8 +15480,10 @@ function vConSenza(){if(typeof FAG==="undefined"){faLoadG();setTimeout(()=>{if(c
  Object.keys(CS.f).forEach(k=>{if(!M.some(m=>m.k===k))delete CS.f[k]});
  const own=(()=>{for(const k in ROSTER)if(ROSTER[k].some(r=>r[0]===n))return k;return null})(),num=own?(ROSTER[own].find(r=>r[0]===n)||[])[1]:null;
  const nmOf=k=>(M.find(m=>m.k===k)||{}).nm||k,sur=x=>String(x).replace(/\s+(Jr\.?|Sr\.?|II|III|IV)$/,"").split(" ").slice(-1)[0];
- const F=Object.entries(CS.f).filter(([,v])=>v),{out,skip}=csGames(n),A=out.filter(x=>x.match),B=out.filter(x=>!x.match),a=csAgg(A),b=csAgg(B);
- const lab=F.length?F.map(([k,v])=>`${v==="s"?"senza":"con"} ${sur(nmOf(k))}`).join(" · "):"";
+ const F=Object.entries(CS.f).filter(([,v])=>v),{out,skip}=csGames(n),A=out.filter(x=>x.match),B=out.filter(x=>x.opp),a=csAgg(A),b=csAgg(B);
+ /* (1594) a sinistra il filtro scelto, a destra il suo contrario esatto (senza Banchero ↔ con Banchero) */
+ const lab=F.length?F.map(([k,v])=>`${v==="s"?"senza":"con"} ${sur(nmOf(k))}`).join(" e "):"",labB=F.length?F.map(([k,v])=>`${v==="s"?"con":"senza"} ${sur(nmOf(k))}`).join(" e "):"";
+ const lb=(t,c)=>`<span class="cslb ${c}">${t.split(" e ").map(x=>{const[w,...r]=x.split(" ");return`<span class="cslr"><i>${w}</i> ${r.join(" ")}</span>`}).join("")}</span>`;
  const hero=`<div class="cshero"><div class="cshl">${own&&typeof jersey==="function"?`<span class="csj">${jersey(own,num,n)}</span>`:`<span class="csj csj0">${t||"?"}</span>`}</div><div class="cshr"><small>Con o senza · ${t||"—"}</small><label class="cspick"><select id="cspl" aria-label="Giocatore">${all.map(x=>`<option${x===n?" selected":""}>${x}</option>`).join("")}</select><b>${n}</b><i>▾</i></label><em>${nG} partite in 3 stagioni${own?" · "+TEAMS[own].nick:""}</em></div></div>`;
  const szc=`<div class="csstep"><span class="csn">1</span><b>Stagioni</b><small>anche più di una</small></div><div class="cssz">${CS_SZ.map(z=>{const on=CS.sz.includes(z),g=(SRC[z]||[]).length;return`<button data-cssz="${z}" aria-pressed="${on}" ${g?"":"disabled"}><b>${CS_LAB[z]}</b><small>${g} gare</small></button>`}).join("")}<button data-cssz="all" aria-pressed="${!CS.sz.length}" class="all"><b>Tutte</b><small>${nG} gare</small></button></div>`;
  const mates=`<div class="csstep"><span class="csn">2</span><b>Compagni</b><small>tocca: senza → con → niente</small></div>${M.length?`<div class="csmates">${M.map(m=>{const v=CS.f[m.k];return`<button class="csm ${v||""}" data-csm="${m.k}"><i>${v==="s"?"✕":v==="c"?"✓":"+"}</i>${v==="s"?"<em>senza</em> ":v==="c"?"<em>con</em> ":""}${m.nm}</button>`}).join("")}</div>`:`<p class="note">Nessun compagno trovato nei box score della stagione in corso.</p>`}`;
@@ -15491,17 +15493,18 @@ function vConSenza(){if(typeof FAG==="undefined"){faLoadG();setTimeout(()=>{if(c
   const bar=(l,va,vb,f,dec)=>{const mx=Math.max(va||0,vb||0)||1,dd=va!=null&&vb!=null?va-vb:null,c=dd==null||Math.abs(dd)<(dec?0.005:0.05)?"eq":dd>0?"up":"dn";
    return`<div class="csbar"><div class="csbl"><span>${l}</span><em class="${c}">${dd==null?"":sg(dd,f)}</em></div><div class="csbt"><i class="a" style="width:${Math.round((va||0)/mx*100)}%"></i><b>${f(va)}</b></div><div class="csbt o"><i style="width:${Math.round((vb||0)/mx*100)}%"></i><b>${f(vb)}</b></div></div>`};
   res=`<div class="csstep"><span class="csn">3</span><b>Risultato</b><small>${CS.sz.length?CS.sz.map(z=>CS_LAB[z]).join(" + "):"tutte le stagioni"}</small></div>
-  <div class="csres"><div class="cst a"><small>${lab}</small><b>${a?f1(a.pdk):"—"}</b><span>PDK · ${a?a.n:0} ${a&&a.n===1?"gara":"gare"}</span></div>
+  <div class="csres"><div class="cst a">${lb(lab,"a")}<b>${a?f1(a.pdk):"—"}</b><span>PDK medi · ${a?a.n:0} ${a&&a.n===1?"gara":"gare"}</span></div>
    <div class="csd ${cl}"><b>${d==null?"—":sg(d,f1)}</b><small>PDK</small></div>
-   <div class="cst o"><small>le altre partite</small><b>${b?f1(b.pdk):"—"}</b><span>PDK · ${b?b.n:0} ${b&&b.n===1?"gara":"gare"}</span></div></div>
-  <div class="csleg"><span><i class="a"></i>${lab}</span><span><i></i>le altre</span></div>
+   <div class="cst o">${lb(labB,"o")}<b>${b?f1(b.pdk):"—"}</b><span>PDK medi · ${b?b.n:0} ${b&&b.n===1?"gara":"gare"}</span></div></div>
+  <p class="cssum">${a&&b?`${sur(n)} <b>${lab}</b> fa <b class="${cl}">${d>=0.05?f1(d)+" PDK in più":d<=-0.05?f1(-d)+" PDK in meno":"gli stessi PDK"}</b> che ${labB}.`:a?`Nessuna partita ${labB}: non c'è un confronto.`:`Nessuna partita ${lab}.`}</p>
+  <div class="csleg"><span><i class="a"></i>${lab}</span><span><i></i>${labB}</span></div>
   <div class="csbars">${bar("Minuti",a&&a.min,b&&b.min,f1)}${bar("Efficienza",a&&a.eff,b&&b.eff,f2,1)}${bar("Punti",a&&a.pt,b&&b.pt,f1)}${bar("Rimbalzi",a&&a.rb,b&&b.rb,f1)}${bar("Assist",a&&a.as,b&&b.as,f1)}</div>
   ${a&&a.n<5?`<p class="csw">⚠ Solo ${a.n} ${a.n===1?"partita":"partite"}: il confronto è indicativo.</p>`:""}`}
  const sk=Object.entries(skip).map(([z,ks])=>`${CS_LAB[z]}: ${ks.map(k=>sur(nmOf(k))).join(", ")} non era suo compagno`).join(" · ");
  const list=A.slice().sort((x,y)=>CS_SZ.indexOf(y.sz)-CS_SZ.indexOf(x.sz)||gmKey(y.g)-gmKey(x.g)).slice(0,80).map(x=>`<tr><td class="gd"><b>${x.g[0]} <i>${x.g[1]}</i></b><small>${CS_LAB[x.sz]}</small></td><td>${f1(+x.g[2])}</td><td class="gdk">${pdkB(+x.g[3],f1(+x.g[3]))}</td><td>${x.g[5]??"—"}</td><td>${x.g[6]??"—"}</td><td>${x.g[7]??"—"}</td></tr>`).join("");
  return`<div class="cspg"><button class="gback" id="csback">‹ Giocatori</button>${hero}${szc}${mates}${res}
  ${sk?`<p class="csw">${sk}: quella stagione non conta.</p>`:""}
- ${F.length&&A.length?`<div class="csstep"><span class="csn">4</span><b>Le partite</b><small>${A.length} · ${lab}</small></div><div class="tbl-wrap"><table class="gtab"><thead><tr><th>Data</th><th>Min</th><th>PDK</th><th>PT</th><th>RB</th><th>AS</th></tr></thead><tbody>${list}</tbody></table></div>`:""}
+ ${F.length&&A.length?`<div class="csstep"><span class="csn">4</span><b>Le partite ${lab}</b><small>${A.length}</small></div><div class="tbl-wrap"><table class="gtab"><thead><tr><th>Data</th><th>Min</th><th>PDK</th><th>PT</th><th>RB</th><th>AS</th></tr></thead><tbody>${list}</tbody></table></div>`:""}
  <p class="note">«Senza» = il compagno non ha giocato quella partita (infortunio, riposo, non ancora in squadra); «con» = ha giocato. Non dice se erano in campo insieme minuto per minuto. Stagione in corso dai box score di Dynasty TV, stagioni passate dalle partite dei due giocatori (stessa data e stesso avversario). Una stagione passata conta solo se quell anno erano compagni.</p></div>`}
 VIEWS.consenza=vConSenza;
 document.addEventListener("click",e=>{if(e.target.closest("[data-csopen]")){e.preventDefault();cur="consenza";render();scrollTo(0,0);return}
@@ -15546,6 +15549,9 @@ html body .csd.up{border-color:var(--ok)}html body .csd.up b{color:var(--ok)!imp
 .csbl{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px}.csbl span{font:800 12px var(--display,Arial);letter-spacing:.06em;text-transform:uppercase}.csbl em{font-style:normal;font-weight:900;font-size:13px}
 html body .csbl em.up{color:#16a34a!important;-webkit-text-fill-color:#16a34a!important}html body .csbl em.dn{color:var(--o2)!important;-webkit-text-fill-color:var(--o2)!important}.csbl em.eq{color:var(--mu)}
 .csbt{display:flex;align-items:center;gap:8px;height:16px;margin:2px 0}.csbt i{display:block;height:10px;border-radius:5px;background:var(--o1);min-width:4px}.csbt.o i{background:var(--ln)}.csbt b{font:800 13px var(--display,Arial);font-style:italic;white-space:nowrap}
+.cslb{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;min-height:34px;font:800 13px var(--display,Arial);text-transform:uppercase;line-height:1.1}.cslb i{font-style:normal;font-size:10px;padding:1px 5px;border-radius:5px;background:rgba(0,0,0,.18)}.cst.o .cslb i{background:#16a34a;color:#fff!important;-webkit-text-fill-color:#fff!important}.cslb u{display:none}.cslb>i+*{margin:0}
+.cslr{display:flex;align-items:center;gap:5px;white-space:nowrap}.cst.o b{color:inherit}
+.cssum{text-align:center;margin:10px 4px 2px;font-size:14px;line-height:1.35}.cssum b.up{color:#16a34a}.cssum b.dn{color:var(--o2)}
 .csw{margin:8px 0;padding:8px 10px;border-radius:10px;background:rgba(249,115,22,.14);border:1px solid rgba(249,115,22,.4);font-size:12px}</style>
 </body>
 </html>
