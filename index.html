@@ -5646,6 +5646,7 @@ function vFA(){
   faOthers().forEach(o=>{const s=o.s,has=!!s,fs=faNz(o.n+" "+(o.nba||"")+" "+TEAMS[o.t].name+" "+TEAMS[o.t].nick),nn=o.n.replace(/"/g,"&quot;");
     const logo=o.kind==="T"?`<span class="fagl" title="${TEAMS[o.t].nick}">${badge(o.t,"faglb")}</span>`:`<span class="fagl" title="G League ${TEAMS[o.t].nick}">${glBadge(o.t,"faglb")}</span>`;
     items.push({s,n:o.n,has,bx:o.kind==="T"?o.n:"",fs,sm:(o.kind==="T"?TEAMS[o.t].nick:"G-"+TEAMS[o.t].nick)+" · "+FA_R[o.r]+(o.nba?" · "+o.nba:""),q:q&&!fs.includes(q),f:k=>`<tr class="farow faoth${has?"":" fanone"}" ${o.kind==="T"?`data-fat="${o.t}" data-fap="${nn}"`:`data-fag="${o.k.replace(/"/g,"&quot;")}"`} data-fs="${fs}"${(q?!fs.includes(q):!has)?" hidden":""}><td class="fark">${has?k:"–"}</td><td class="fanm"><b>${RTR(o.n)}${faShort(o.n)}</b><small>${logo}${o.kind==="T"?TEAMS[o.t].nick:"G-"+TEAMS[o.t].nick} · ${FA_R[o.r]}${o.nba?" · "+o.nba:""}</small></td><td>${has?s[0]:"—"}</td><td>${has?faNum(s[1]):"—"}</td><td class="fapdk">${has?pdkB(s[2],faNum(s[2])):"—"}</td><td>${has?eff(s[3]):"—"}</td>${faGrTd(o.n,s)}</tr>`})});
+  for(let i=items.length-1;i>=0;i--)if(NASC(items[i].n))items.splice(i,1);/* (1602) */
   items.forEach(o=>{if(o.s){o.s=[...o.s];o.s[4]=faGrowC(o.n,o.s)}});
   if(faCr){for(let i=items.length-1;i>=0;i--){const v=items[i].s&&items[i].s[4];if(!(v>0))items.splice(i,1)}}
   items.sort((a,b)=>faCmp(a.s,b.s,a.n,b.n));
@@ -6361,6 +6362,7 @@ function trColN(nba,t){const k=nba&&NBA_KIT[nba];if(!k)return TEAMS[t]?trCol(t):
   for(const h of[k.bg,k.p2,k.trim,k.jstroke,k.fg])if(h&&/^#[0-9a-f]{6}$/i.test(h)&&l(h)>.28)return h;return"#93c5fd"}
 function vTrend(){const PL=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>PL.push({n:p[0],t,r:p[2]})));glPlayers().forEach(p=>PL.push({n:p.n,t:p.t,r:p.r,gl:1}));
   if(typeof FAG==="undefined")faLoadG();{const have=new Set(PL.map(x=>x.n));FA.forEach(f=>{if(!have.has(f[0]))PL.push({n:f[0],t:"FA",r:f[2],fa:1})})}
+  for(let i=PL.length-1;i>=0;i--)if(NASC(PL[i].n))PL.splice(i,1);/* (1602) */
   /* periodo a calendario: TRN.da → TRN.a (stesse regole del Grafico) */
   const ORD=PER_ORD;perNorm(TRN);const SZR=perSzr(TRN.da,TRN.a),multi=SZR.length>1,sz=multi?"all":(SZR[0]||ORD[2]),met=TRN.met,inP=perIn(TRN.da,TRN.a);
   const G=new Map(PL.map(p=>[p.n,SZR.length?grGames(p.n,sz).filter(x=>SZR.includes(x.sz)):[]]));
@@ -8191,12 +8193,14 @@ document.getElementById("main").addEventListener("click",e=>{if(cur!=="college")
    Squadre (ROSTER) → scheda giocatore · G League (GLEAGUE/GL_STATS) → sezione G League con il giocatore aperto · Free agent (FA, senza quelli già in G League) → scheda free agent */
 /* (1564) i risultati si costruiscono in homeSearchHtml: li usa anche la ricerca dell Osservatorio; in fondo i prospetti del College (COLAPI, dati caricati alla prima ricerca) */
 function homeSearch(q){const box=document.getElementById("hres");if(!box)return;const h=homeSearchHtml(q);box.hidden=!h;box.innerHTML=h}
+/* (1602) giocatori NASCOSTI dalle liste (scherzo della lega): non compaiono in Giocatori, Solo rookie, Trend, ricerca della Home, Comparatore, Con o senza; restano solo nella loro G League */
+const NASCOSTI=new Set(["Meleek Thomas"]),NASC=n=>NASCOSTI.has(n);
 function homeSearchHtml(q){const nz=v=>String(v).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");q=nz(String(q||"").trim());
   if(q.length<2)return"";
-  const qa=nz(q).replace(/\./g,""),hit=n=>nz(n).replace(/\./g,"").includes(qa);
+  const qa=nz(q).replace(/\./g,""),hit=n=>!NASC(n)&&nz(n).replace(/\./g,"").includes(qa);
   const L=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>{if(hit(p[0]))L.push({t,p})}));
   const S=typeof GL_STATS!=="undefined"?GL_STATS:{},G=[],glN=new Set();
-  GLEAGUE.forEach(x=>x.g.forEach(p=>{const st=S[x.t+"|"+p[0]]||{},full=st.n||p[0];glN.add(nz(full));if(hit(full)||hit(p[0]))G.push({t:x.t,k:x.t+"|"+p[0],n:full,r:p[1],nba:st.nba||""})}));
+  GLEAGUE.forEach(x=>x.g.forEach(p=>{const st=S[x.t+"|"+p[0]]||{},full=st.n||p[0];glN.add(nz(full));if(!NASC(full)&&(hit(full)||hit(p[0])))G.push({t:x.t,k:x.t+"|"+p[0],n:full,r:p[1],nba:st.nba||""})}));
   const F=FA.filter(x=>hit(x[0])&&!glN.has(nz(x[0])));
   const sec=(lab,n)=>`<p class="hrsec">${lab}<span>${n}</span></p>`,R={G:"Guardia",F:"Ala",C:"Centro"};
   const hT=L.slice(0,8).map(({t,p})=>`<button class="hrr" data-pln="${p[0].replace(/"/g,"&quot;")}" data-plt="${t}" style="--tc:${TEAMS[t].bg}"><span class="hrj">${jersey(t,p[1],p[0])}</span><span class="hrn"><b>${RTR(p[0])}${p[0]}</b><small>${TEAMS[t].nick} · ${R[p[2]]} · ${p[3]}</small></span>${segBtn(p[0])}<i>›</i></button>`).join("");
@@ -9888,7 +9892,7 @@ let CMR={pa:null,pb:null,met:"pdk",q:"",slot:null,from:null};
 const CM_COL=["#38bdf8","#f472b6"];
 PER_CB.cm=(da,a)=>{CMR.da=da;CMR.a=a};
 const FAT={nick:"Free agent",name:"Free Agent"};
-function cmAll(){const L=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>L.push({n:p[0],t,r:p[2]})));try{glPlayers().forEach(p=>L.push({n:p.n,t:p.t,r:p.r,gl:1}))}catch(e){}try{const have=new Set(L.map(x=>x.n));FA.forEach(f=>{if(!have.has(f[0]))L.push({n:f[0],t:"FA",r:f[2],fa:1})})}catch(e){}return L}
+function cmAll(){const L=[];Object.entries(ROSTER).forEach(([t,a])=>a.forEach(p=>L.push({n:p[0],t,r:p[2]})));try{glPlayers().forEach(p=>L.push({n:p.n,t:p.t,r:p.r,gl:1}))}catch(e){}try{const have=new Set(L.map(x=>x.n));FA.forEach(f=>{if(!have.has(f[0]))L.push({n:f[0],t:"FA",r:f[2],fa:1})})}catch(e){}return L.filter(x=>!NASC(x.n))}
 function cmGames(n,SZR,inP){return n&&SZR.length?grGames(n,SZR.length>1?"all":SZR[0]).filter(x=>SZR.includes(x.sz)&&inP(x.dt)):[]}
 function cmSlot(i){const n=CMR[i?"pb":"pa"],p=n?trPl(n):null,col=CM_COL[i],sl=i?"b":"a",on=CMR.slot===sl;
   const e=s=>String(s).replace(/"/g,"&quot;");
@@ -15472,7 +15476,7 @@ function csIdx(){const nb=typeof TV!=="undefined"&&TV.box?Object.keys(TV.box).le
  try{for(const d of Object.keys(TV.days).sort())for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B)continue;const dm=d.slice(8)+"/"+d.slice(5,7);
   for(const sd of["a","h"]){const tm=sd==="a"?g[0]:g[1],op=sd==="a"?g[1]:g[0];(B[sd]||[]).forEach(r=>{const k=tvNm(r[0]);(by[k]=by[k]||{})[dm]={tm,op,nm:r[0]};team[k]=tm;(last[tm]=last[tm]||{})[k]={nm:r[0],d,min:(last[tm][k]?last[tm][k].min:0)+(+String(r[2]).split(":")[0]||0)}})}}}catch(e){}
  return CSIX={n:nb,by,team,last}}
-let CSNM=null;function csNames(){if(CSNM&&CSNM.f===(typeof FAG!=="undefined"))return CSNM.m;const m={};const add=n=>{const k=tvNm(n);if(!m[k])m[k]=n};
+let CSNM=null;function csNames(){if(CSNM&&CSNM.f===(typeof FAG!=="undefined"))return CSNM.m;const m={};const add=n=>{if(NASC(n))return;const k=tvNm(n);if(!m[k])m[k]=n};
  Object.values(ROSTER).flat().forEach(r=>add(r[0]));try{FA.forEach(x=>add(x[0]))}catch(e){}Object.keys(PARTITE).forEach(add);for(const sz in STAGIONI)Object.keys(STAGIONI[sz]).forEach(add);if(typeof FAG!=="undefined")Object.keys(FAG).forEach(add);
  CSNM={f:typeof FAG!=="undefined",m};return m}
 function csTeam(n){const X=csIdx();const t=X.team[tvNm(n)];if(t)return t;for(const k in ROSTER){const r=ROSTER[k].find(x=>x[0]===n);if(r)return r[3]}try{const f=FA.find(x=>x[0]===n);if(f)return f[1]}catch(e){}return""}
