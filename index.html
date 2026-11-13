@@ -5533,7 +5533,7 @@ const FA=[["Kevin Porter Jr.","MIL","G","",{"24/25":[75,19.6,13.8,0.7,10.3,3.7,3
 /* Proprietario G League dei free agent (logo nella lista) */
 const FA_OWN={"Koa Peat":"FOX","Joan Beringer":"FOX","Jared McCain":"FOX","Jock Landale":"FOX","Jayden Quaintance":"FOX","Christian Anderson":"DUC","Leonard Miller":"DUC","Ousmane Dieng":"DUC","Tarris Reed Jr.":"DUC","Reed Sheppard":"DUC","Brandin Podziemski":"PEA","Nate Ament":"PEA","Zuby Ejiofor":"PEA","Asa Newell":"PEA","Jalen Smith":"PEA","Jaden McDaniels":"EAG","Bennedict Mathurin":"EAG","Davion Mitchell":"EAG","Yves Missi":"EAG","Collin Gillespie":"EAG","Isaiah Collier":"DOL","Karim Lopez":"DOL","Keegan Murray":"DOL","Jalen Suggs":"DOL","Ryan Kalkbrenner":"DOL","Chris Cenac Jr.":"SPI","Cameron Carr":"SPI","Dylan Cardwell":"SPI","Yang Hansen":"SPI","Day'Ron Sharpe":"MOO","Gui Santos":"MOO","Hugo Gonzalez":"MOO","Ajay Mitchell":"MOO","Meleek Thomas":"MOO","Peyton Watson":"TUR","Dereck Lively II":"TUR","Rui Hachimura":"TUR","Kyle Filipowski":"TUR","Scoot Henderson":"TUR"};
 
-let faSz="26/27",faRole="GFC",faGL=false,faFA=false,faSq=false,faRk=false,faNba="",faDt="",faOpen=false,faP=null,faFrom="fa";
+let FA_RK26=null,faSz="26/27",faRole="GFC",faGL=false,faFA=false,faSq=false,faRk=false,faNba="",faDt="",faOpen=false,faP=null,faFrom="fa";
 const FPR={da:null,a:null,sz:"2026/27"};/* periodo della lista Giocatori (default: stagione in corso) */
 /* (510) ordinamento della lista Giocatori: di default PDK medio decrescente; toccando PG / MIN / PDK / EFF si ordina per quella statistica (primo tocco decrescente, secondo crescente). k = indice in s: 0 PG, 1 Min, 2 PDK, 3 Eff. */
 let faSrt={k:2,d:-1};
@@ -5557,7 +5557,9 @@ function faAvg(g){if(!g||!g.length)return null;const mn=g.reduce((a,x)=>a+x[2],0
 const faRowsIn=(rows,z,da,a)=>{const y0=+z.slice(0,4);return(rows||[]).filter(x=>{const[d,m]=String(x[0]).split("/").map(Number);if(!d||!m)return false;const y=m>=8?y0:y0+1;const iso=`${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`;return iso>=da&&iso<=a})};
 function faPerAvg(rowsOf){perNorm(FPR);let all=[];perSzr(FPR.da,FPR.a).forEach(z=>{all=all.concat(faRowsIn(rowsOf(z),z,FPR.da,FPR.a))});return faAvg(all)}
 /* (529) nome abbreviato: iniziale col punto + cognome (N.Jokić); «P.J. Washington» resta con le sue iniziali */
-const faIsRk=n=>typeof isRookie==="function"&&isRookie(n);
+const faIsRk=n=>{/* (1601) filtro «Solo rookie»: TUTTI i rookie della stagione, non solo quelli delle nostre squadre: rookie della lega, scelti al draft 2026 (DRAFT_RAW), oppure free agent alla prima stagione NBA (nessuna partita nel 24/25 e nel 25/26) */
+  try{if(typeof isRookie==="function"&&isRookie(n))return true;if(!FA_RK26){FA_RK26=new Set(String(DRAFT_RAW[2026]||"").split("|").map(x=>vnz(x)))}if(FA_RK26.has(vnz(n)))return true;
+   const x=FA.find(r=>r[0]===n);if(x){const S=x[4]||{},ha=z=>S[z]&&S[z][0]>0;if(!ha("24/25")&&!ha("25/26")){const e=typeof etaEsatta==="function"?etaEsatta(n):null;return e==null||e<=24}}}catch(e){}return false};
 const faShort=n=>{const p=String(n).trim().split(/\s+/);if(p.length<2)return n;const f=p[0];return(/^([A-Za-z]\.)+$/.test(f)?f:f[0]+".")+p.slice(1).join(" ")};
 function faOthers(){
   const GS=typeof GL_STATS!=="undefined"?GL_STATS:{},GP=z=>(typeof GL_PAST!=="undefined"&&GL_PAST[z])||{};
