@@ -3247,7 +3247,8 @@ const SPECIALI=[
 ];
 const SP_DUR={30:20,40:40},SP_FINE=64;
 /* chi è "sotto speciale" (esce da una trade speciale ancora attiva) è FUORI ROSA: non entra nei 10 titolari né in tribuna delle sfide Dreamers; resta visibile in roster, statistiche e modalità notte */
-const spFuori=n=>SPECIALI.some(x=>x.esce===n&&spInfo(x).left>0);
+/* (1605) con il turno k: fuori solo nei turni in cui la speciale era attiva (giornata k+2 tra inizio e scadenza); i turni passati restano come erano */
+const spFuori=(n,k)=>SPECIALI.some(x=>{if(x.esce!==n)return false;const I=spInfo(x);if(k==null)return I.left>0;const g=k+DR_OFF;return g>=x.inizio&&g<=I.scad});
 function spInfo(x){
   /* (1589) giornata di adesso = turno Dreamers in corso + 2 (GIORNATE si era fermato alla 3 e il countdown non scendeva) */
   const cur=Math.max(GIORNATE.length?GIORNATE[GIORNATE.length-1].n:1,(()=>{try{const d=new Intl.DateTimeFormat("en-CA",{timeZone:"America/New_York"}).format(new Date());return DR_TURNI.filter(T=>T[0]<=d).length+DR_OFF}catch(e){return 1}})());
@@ -8972,7 +8973,7 @@ const DR_ZERO={"5":["ATL"],"8":["MIA"],"29":["LAC"],"34":["LAL"],"38":["CLE"],"3
 function drCalZero(n,k){const p=Object.values(ROSTER).flat().find(x=>x[0]===n);return !!(p&&DR_ZERO[k]&&DR_ZERO[k].includes(p[3]))}
 /* (639) orario di inizio (in minuti assoluti) della prima partita non finita del giocatore nel turno: serve a ordinare chi è ancora "in attesa" per chi gioca per primo */
 function drNextTs(n,W){try{const p=Object.values(ROSTER).flat().find(x=>x[0]===n),nba=p&&p[3];if(!nba)return 1e15;let best=1e15;for(let i=0;i<(W.len||7);i++){const d=drAdd(W.start,i),g=(TV.days[d]||[]).find(x=>x[0]===nba||x[1]===nba);if(!g||g[5]==="F")continue;const m=/^(\d{1,2}):(\d{2})(\+1)?/.exec(String(g[6]||""));const ts=Date.parse(d+"T00:00:00Z")/60000+(m?(+m[1]*60+ +m[2]+(m[3]?1440:0)):1439);if(ts<best)best=ts}return best}catch(e){return 1e15}}
-function drTeam(k,t,W){W=W||drWeek(k);const F0=drForm(k)[t]||{t:[],r:[]},F={t:F0.t.filter(n=>!spFuori(n)),r:F0.r.filter(n=>!spFuori(n))};
+function drTeam(k,t,W){W=W||drWeek(k);const F0=drForm(k)[t]||{t:[],r:[]},F={t:F0.t.filter(n=>!spFuori(n,k)),r:F0.r.filter(n=>!spFuori(n,k))};
   /* MERITOCRAZIA dentro i ruoli: per ogni ruolo entrano i migliori PDK della settimana (4 G, 4 A, 2 C).
      Ordinati per punteggio: il migliore è capitano ×1,5, dal 2° al 6° pieno, dal 7° al 10° metà; se tra i 5 in campo manca un ruolo,
      sale il migliore di quel ruolo e scende (6° uomo o panchina) il peggiore dei 5 (di un ruolo che ne ha almeno 2). Il resto va in tribuna.
@@ -9172,7 +9173,7 @@ function drPrevisione(t,kk){try{
   /* (769) PREVISIONE IN DIVENIRE: a turno iniziato non si passa più al turno dopo. Per ogni giocatore contano i PDK già fatti (miglior partita del turno)
      e solo le partite che restano (le finite escono; gli infortunati OUT perdono quelle prima del rientro): valore atteso = E[max(già fatto, partite che restano)]. */
   const LIVE=W.started&&!W.closed,ACC=LIVE?(W.acc||{}):{};
-  const F0=drForm(k)[t]||{t:[],r:[]},names=[...F0.t,...F0.r].filter(n=>!spFuori(n));
+  const F0=drForm(k)[t]||{t:[],r:[]},names=[...F0.t,...F0.r].filter(n=>!spFuori(n,k));
   const dates=[];for(let d=W.start;d<=W.end;d=drAdd(d,1))dates.push(d);
   const dk=d2=>{const[a,b]=String(d2).split("/").map(Number);return(b>=8?0:12)*100+b*100+a};
   const rows=names.map((n,i)=>{const role=ruoloDi(n),nba=(segInfo(n)||{}).nba||"";const opps=[];
