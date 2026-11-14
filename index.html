@@ -8870,7 +8870,7 @@ function liveEff(nights){if(!EFF0)EFF0={g:JSON.stringify(EFF.gioc),u:JSON.string
       e[1]=r2((m1*g+ef)/(g+1));e[6]=e[1];e[3]=Math.round(((e[3]||0)*g+x.min)/(g+1)*10)/10;e[7]=e[3];e[2]=g+1;
       e[4]=Math.round(x.min);e[5]=r2(ef);e[8]=r2(x.p);ULTIMA.gioc[n]=e[5];break}}})}
 /* (1591) liveEff riparte ogni volta dalla copia del mattino (EFF0): dopo, si rimettono i dati dei giocatori appena entrati in squadra */
-{const LE0=liveEff;liveEff=function(){const r=LE0.apply(this,arguments);try{if(typeof faTeamMerge==="function")faTeamMerge()}catch(e){}return r}}
+{const LE0=liveEff;liveEff=function(){try{fixNotte()}catch(e){}const r=LE0.apply(this,arguments);try{if(typeof faTeamMerge==="function")faTeamMerge()}catch(e){}return r}}
 
 function liveSync(){try{PLV.forEach(([n,e])=>{const a=PARTITE[n];if(!a)return;const i=a.indexOf(e);if(i>=0)a.splice(i,1)});PLV=[];const LN=[];
   if(typeof TV==="undefined"||typeof EFF==="undefined"||!EFF.agg)return;
@@ -10173,6 +10173,7 @@ const hv=location.hash.slice(1);if(VIEWS[hv])cur=hv;
 if(window.__taOpen)cur="pictrade"
 function render(){
   try{if(typeof faTeamMerge==="function")faTeamMerge()}catch(e){}/* (1591) dati da free agent per chi è appena entrato in una squadra */
+  try{fixNotte()}catch(e){}
   if(cur!=="iaallena"&&typeof AT!=="undefined"&&AT.mode){/* (647) uscendo dall'allenamento IA la sezione si chiude: al ritorno si riparte dal menu a due bottoni */AT.mode=null;AT.rep=false;AT.chg=false;AT.rem=new Set();AT.note="";AT.c=null;AV.rep=false;AV.c=null;AV.a={};CF.rep=false;CF.c=null;CF.w=null}
   if(cur!=="effsquadra")effSqPick=false;
   if(cur!=="campo")CAMPO_K=null;
@@ -10262,6 +10263,12 @@ try{tvCacheLoad()}catch(e){}
    Finché il report del mattino non lo ricalcola come giocatore di squadra (tools/report_espn.mjs ricostruisce PARTITE per intero dai tabellini),
    le sue partite della stagione in corso vengono dai dati free agent (FAG, stesso formato di PARTITE) e la riga dell efficienza da quelle partite. */
 function faTeamMiss(){const L=[];for(const t in ROSTER)for(const r of ROSTER[t]){const n=r[0];if(!(PARTITE[n]&&PARTITE[n].length)||!(EFF.gioc[t]||[]).some(e=>e[0]===n))L.push([t,n])}return L}
+/* (1603) correzione manuale dei dati di una notte (Francesco): PDK fissato e assist in più, applicata a dati ufficiali, live e box score */
+const FIX_NOTTE={"Brayden Burries|2026-11-13":{pdk:12.75,as:1}};const FIX_DONE=new WeakSet();
+function fixNotte(){try{for(const k in FIX_NOTTE){const[n,d]=k.split("|"),F=FIX_NOTTE[k],dm=d.slice(8)+"/"+d.slice(5,7);
+  for(const g of(PARTITE[n]||[]))if(g[0]===dm&&!FIX_DONE.has(g)){g[3]=F.pdk;g[4]=g[2]?Math.round(F.pdk/g[2]*100)/100:g[4];if(g[7]!=null)g[7]=+g[7]+F.as;FIX_DONE.add(g)}
+  if(typeof TV!=="undefined")for(const x of TV.days[d]||[]){const B=x[7]&&TV.box[x[7]];if(!B)continue;for(const sd of["a","h"])for(const r of B[sd]||[])if(r[0]===n&&!FIX_DONE.has(r)){r[19]=F.pdk;r[7]=+r[7]+F.as;FIX_DONE.add(r)}}
+  if(typeof DRD!=="undefined"&&DRD.notti&&DRD.notti[d]&&DRD.notti[d][n]!=null)DRD.notti[d][n]=F.pdk}}catch(e){}}
 function faTeamMerge(){let ch=false;
  for(const[t,n]of faTeamMiss()){
   /* partite: se mancano, quelle da free agent (FAG, stagione in corso) */
