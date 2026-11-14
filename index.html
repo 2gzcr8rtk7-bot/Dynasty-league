@@ -10264,7 +10264,7 @@ try{tvCacheLoad()}catch(e){}
    le sue partite della stagione in corso vengono dai dati free agent (FAG, stesso formato di PARTITE) e la riga dell efficienza da quelle partite. */
 function faTeamMiss(){const L=[];for(const t in ROSTER)for(const r of ROSTER[t]){const n=r[0];if(!(PARTITE[n]&&PARTITE[n].length)||!(EFF.gioc[t]||[]).some(e=>e[0]===n))L.push([t,n])}return L}
 /* (1603) correzione manuale dei dati di una notte (Francesco): PDK fissato e assist in più, applicata a dati ufficiali, live e box score */
-const FIX_NOTTE={"Brayden Burries|2026-11-13":{pdk:12.75,ast:4,fg:[2,4]}};const FIX_DONE=new WeakSet();
+const FIX_NOTTE={"Brayden Burries|2026-11-13":{pdk:12.75,ast:4}};const FIX_DONE=new WeakSet();
 function fixNotte(){try{for(const k in FIX_NOTTE){const[n,d]=k.split("|"),F=FIX_NOTTE[k],dm=d.slice(8)+"/"+d.slice(5,7);
   for(const g of(PARTITE[n]||[]))if(g[0]===dm&&!FIX_DONE.has(g)){g[3]=F.pdk;g[4]=g[2]?Math.round(F.pdk/g[2]*100)/100:g[4];if(F.ast!=null)g[7]=F.ast;FIX_DONE.add(g)}
   if(typeof TV!=="undefined")for(const x of TV.days[d]||[]){const B=x[7]&&TV.box[x[7]];if(!B)continue;for(const sd of["a","h"])for(const r of B[sd]||[])if(r[0]===n&&!FIX_DONE.has(r)){r[19]=F.pdk;if(F.ast!=null)r[7]=F.ast;if(F.fg){r[12]=F.fg[0];r[13]=F.fg[1]}FIX_DONE.add(r)}}
