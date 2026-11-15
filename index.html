@@ -9636,7 +9636,8 @@ function tvDrGame(key){try{const[ks,a,b]=key.split("|"),k=+ks,st=drStand(),P=drP
   <p class="note">${DR_PH(k,P)} · ${drNn(W)}. PDK = miglior punteggio Dunkest tra le partite del turno. I 10 con il PDK più alto sono titolari: il migliore è capitano (C, ×1,5), poi 5 a punteggio pieno (in campo) e gli ultimi 4 in panchina a metà; gli altri vanno in tribuna. Punteggio squadra = somma dei punti dei titolari (${pdkF(somma)}). Scorri a destra per le statistiche della miglior partita del turno (Min, Pt, RIM rimbalzi, AST assist, STL, BLK, TOV palle perse, tiri).${prov?" Ci sono notti con PDK provvisori (live): si sostituiscono con i dati ufficiali al report ESPN del mattino.":""}</p>`}catch(e){return""}}
 /* (1613) COMPUTER / TABLET (schermo largo, ≥1000px): nei box score con le due schede (partita NBA e sfida Dreamers) si vedono le DUE squadre affiancate,
    ognuna col suo nome sopra; sul telefono resta tutto com era (una scheda alla volta). Si rifà la pagina dell altra squadra e se ne prende la tabella. */
-const wideOK=()=>{try{return matchMedia("(min-width:1000px)").matches}catch(e){return false}};
+const WIDE_MQ="(min-width:1000px), (min-width:640px) and (orientation:landscape)";/* (1614) anche telefono in orizzontale */
+const wideOK=()=>{try{return matchMedia(WIDE_MQ).matches}catch(e){return false}};
 function tvDual(html,make,cur,other,labA,labB){try{if(!wideOK()||!html)return html;const h2=make(other);const pick=h=>{const i=h.indexOf('<div class="tbl-wrap');if(i<0)return null;const j=h.indexOf('</table></div>',i);return j<0?null:[i,j+14]};
   const p1=pick(html),p2=pick(h2||"");if(!p1||!p2)return html;const t1=html.slice(p1[0],p1[1]),t2=h2.slice(p2[0],p2[1]);
   const L=cur==="a"||cur===undefined?[[labA,t1],[labB,t2]]:[[labA,t2],[labB,t1]];
@@ -15637,8 +15638,9 @@ html:not(.notte) body .dsbx th:first-child,html:not(.notte) body .dsbx td:first-
 html body .dsbx td.dsbd small{display:block;font-size:10.5px;opacity:.8;margin-top:1px}html body .dsbx td.pts{font-weight:800}
 html body .dsroom .dsbx{max-width:none}html body .tbl-wrap:has(.dsbx){overflow-x:auto;-webkit-overflow-scrolling:touch}</style>
 <style>/* (1612) filtro età */html body .faetasel{flex:1;display:grid;min-width:0}html body .faetasel select{width:100%}</style>
-<style>/* (1613) computer/tablet: box score con le due squadre affiancate; le schede in alto non servono più */
-@media (min-width:1000px){
+<style>/* (1613)(1614) computer/tablet e telefono in orizzontale: box score con le due squadre affiancate; le schede in alto non servono più */
+@media (min-width:1000px), (min-width:640px) and (orientation:landscape){
+main .tvbox{width:100%}
 main .tvdual{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
 main .tvdual .tvdcol{min-width:0}
 main .tvdual .tvdh{display:flex;align-items:center;gap:8px;padding:8px 10px;margin:0 0 6px;border-radius:10px;font:800 16px var(--display,Arial);font-style:italic;text-transform:uppercase;background:rgba(255,255,255,.07)}
