@@ -4958,7 +4958,7 @@ document.getElementById("main").addEventListener("keydown",e=>{if(e.key!=="Enter
 document.getElementById("main").addEventListener("click",e=>{const b=e.target.closest("[data-trs]");if(!b||cur!=="trade")return;TRS=b.dataset.trs;render();window.scrollTo(0,0)});
 
 /* (478) PIC-TRADE: il GM compone lo scambio (giocatori, crediti, crediti a credito post-Draft, slot, note), poi «Fai la foto» (stessa immagine degli scambi con maglie, PDK, età, draft e «Scambio ufficiale») oppure «Copia per Claude» (prompt + link) per far registrare e pubblicare il banner di 24 ore.
-   Si scambia SOLO tra un turno e l'altro: dall'apertura del turno (12:30 italiane del giorno dopo l'ultima notte del precedente) fino alla prima partita del suo primo turno (≈01:00 italiane). Durante un turno il modulo si compila ma foto e prompt restano bloccati. */
+   Si scambia SOLO tra un turno e l'altro: dall'apertura del turno (10:30 italiane del giorno dopo l'ultima notte del precedente) fino alla prima partita del suo primo turno (≈01:00 italiane). Durante un turno il modulo si compila ma foto e prompt restano bloccati. */
 let TA={t:["",""],pl:[[],[]],cr:[0,0],cp:[0,0],sr:["",""],sg:[10,10],ex:["",""]};
 const taNow=()=>{const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(window.DR_NOW||new Date()),g=t=>f.find(x=>x.type===t).value;return{d:`${g("year")}-${g("month")}-${g("day")}`,h:`${g("hour")}:${g("minute")}`}};
 const taFd=s=>s.slice(8,10)+"/"+s.slice(5,7);
@@ -8927,20 +8927,20 @@ document.addEventListener("visibilitychange",()=>{if(!document.hidden){try{FL.bg
 
 
 const drLast=()=>{const k=Object.keys(drNotti()).sort();return k[k.length-1]||null};
-/* (371) CHIUSURA/APERTURA TURNI ALLE 12:30 (ora italiana): un turno si chiude, e il successivo si apre, solo dalle 12:30 del giorno italiano dopo l'ultima notte USA del turno (cosi i dati Dunkest sono gia caricati). Prima di quell'ora resta "in corso" anche se la sua ultima notte e finita. */
-const DR_GATE_MIN=12*60+30;
+/* (371)(1616) CHIUSURA/APERTURA TURNI ALLE 10:30 (ora italiana, prima 12:30): un turno si chiude, e il successivo si apre, solo dalle 10:30 del giorno italiano dopo l'ultima notte USA del turno (cosi i dati Dunkest sono gia caricati). Prima di quell'ora resta "in corso" anche se la sua ultima notte e finita. */
+const DR_GATE_MIN=10*60+30;/* (1616) dal 16/11/2026 alle 10:30 (prima 12:30) */
 function drGate(e){try{const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(window.DR_NOW||new Date()),g=t=>f.find(x=>x.type===t).value,rd=`${g("year")}-${g("month")}-${g("day")}`,mn=+g("hour")*60+ +g("minute"),n=drAdd(e,1);return rd>n||(rd===n&&mn>=DR_GATE_MIN)}catch(x){return true}}
-/* (497) turno CHIUSO = dati Dunkest dell'ultima notte caricati (a prescindere dall'ora) OPPURE dalle 12:30 del giorno dopo (chiusura forzata anche senza Dunkest) */
+/* (497) turno CHIUSO = dati Dunkest dell'ultima notte caricati (a prescindere dall'ora) OPPURE dalle 10:30 del giorno dopo (chiusura forzata anche senza Dunkest) */
 function drDkHas(d){try{return !!DRD.notti[d]||drNightOfAgg(EFF.agg)>=d}catch(x){return false}}
 const drShut=e=>drDkHas(e)||drGate(e);
 function drCurWeek(P){const l=drLast();let k=DR_TURNI.findIndex(x=>!drShut(x[1]))+1;if(!k)k=DR_TOT;if(l){const k2=DR_TURNI.findIndex(x=>l<=x[1])+1;if(k2>k)k=k2}return Math.max(1,Math.min(P?P.end:DR_TOT,k))}
 /* REGOLA SCAMBI (utente, 29/10/2026): un giocatore scambiato non gioca MAI il turno già iniziato per la nuova squadra:
    conta per la squadra di prima fino alla fine del turno e per la nuova dal turno successivo.
-   Turno iniziato = aperto (12:30 ora italiana del giorno dopo l'ultima notte del turno precedente; turno 1 dal DR_START).
+   Turno iniziato = aperto (10:30 ora italiana del giorno dopo l'ultima notte del turno precedente; turno 1 dal DR_START).
    drForm(k) parte dalla formazione archiviata (o dai ROSTER attuali) e rimette alla squadra di prima i giocatori degli
    "Scambio" a 2 squadre in TRADES con data+ora >= apertura del turno k (senza ora = 00:00). Per scambi a 3+ squadre serve il campo da:{giocatore:squadra}. */
 const DR_REGOLA_SCAMBI="2026-10-29 00:00"; /* la regola vale per gli scambi da questa data (decisione utente: il turno 1 resta com'era per Diabaté 25/10 e Jaquez/J. Williams 26/10) */
-function drOpen(k){const T=DR_TURNI;if(k<=1||!T[k-2])return DR_START+" 00:00";return drAdd(T[k-2][1],1)+" 12:30"}
+function drOpen(k){const T=DR_TURNI;if(k<=1||!T[k-2])return DR_START+" 00:00";return drAdd(T[k-2][1],1)+" 10:30"}
 function drTrTime(x){const m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(x.data||"");return m?`${m[3]}-${m[2]}-${m[1]} ${x.ora||"00:00"}`:""}
 /* (1588) REGOLA SCAMBI (decisione utente 13/11/2026): uno scambio vale SUBITO anche a turno aperto se nessuna partita NBA del turno è ancora iniziata;
    a partite iniziate si aspetta il turno dopo. Soglia = palla a due della prima partita del turno (ora italiana, dal calendario di Dynasty TV); senza calendario si usa l apertura del turno. */
@@ -11583,7 +11583,7 @@ function orari(){if(!COL.d){cur="campo";return vCampo()}
   R("06:00","Cambia la data USA","È la mezzanotte di New York: da qui la «notte» corrente è quella nuova. Fino alle 19:00 la Home continua a mostrare i risultati della notte appena finita."),
   R("06:47","Calendario NBA (ripasso del mattino)","Automatico da ESPN (GitHub): aggiorna gli orari delle partite dei prossimi giorni in Dynasty TV. L'orario reale può slittare di qualche minuto."),
   R("07:30","ESPN diventa ufficiale nelle statistiche","I PDK della notte entrano nelle statistiche dei giocatori, nell'efficienza stagionale, in «Notte · in campo» e in FA e G-League. Alle 07:30 si spengono anche le animazioni live (puntini LIVE, bordo lampeggiante)."),
-  R("12:30","Chiusura e apertura dei turni Dreamers","Un turno si chiude, e si apre il successivo, solo dalle 12:30 del giorno dopo la sua ultima notte USA, così i dati ufficiali sono già caricati. A quell'ora si aggiornano classifica ufficiale, playoff e banner Dreamers della Home. Prima di quell'ora il turno resta «in corso»."),
+  R("10:30","Chiusura e apertura dei turni Dreamers","Un turno si chiude, e si apre il successivo, solo dalle 10:30 del giorno dopo la sua ultima notte USA, così i dati ufficiali sono già caricati. A quell'ora si aggiornano classifica ufficiale, playoff e banner Dreamers della Home. Prima di quell'ora il turno resta «in corso»."),
   R("13:17","Calendario NBA (pomeriggio)","Secondo giro automatico da ESPN. Il server lo lancia alle 12:17 UTC: con l'ora solare è 13:17, con l'ora legale 14:17."),
   R("19:00","La Home passa alle partite della prossima notte","Dalle 19:00 fino alla prima partita la Home non mostra più i risultati: mostra i prossimi scontri (avversario, orario, PDK da superare, previsione e trend) e nel banner le partite in arrivo. Appena ESPN segna la prima partita in corso torna live da sola."),])}
  ${card("Ogni settimana","",[
