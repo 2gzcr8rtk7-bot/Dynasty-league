@@ -8894,6 +8894,7 @@ function liveSync(){try{PLV.forEach(([n,e])=>{const a=PARTITE[n];if(!a)return;co
   for(const d of fantaLiveNotti(drAdd(lastOff,1))){if(rk<drAdd(d,1)+" 07:30")continue;const L=fantaLiveNotte(d),lab=`${d.slice(8)}/${d.slice(5,7)}`;LN.push([L,nm]);
     for(const k in L){const n=nm[k];if(!n)continue;const x=L[k];if(!(x.min>0))continue;
       const A=PARTITE[n]||(PARTITE[n]=[]);if(A.some(g=>g[0]===lab&&g[8]==null))continue;
+      for(let q=A.length-1;q>=0;q--)if(A[q][0]===lab&&A[q][8]!=null)A.splice(q,1);/* (1617) mai due righe live per la stessa notte */
       const e=[lab,x.opp,Math.round(x.min*10)/10,Math.round(x.p*100)/100,x.min?Math.round(x.p/x.min*100)/100:0,x.pts,x.reb,x.ast,x.prov?"L":"P"];A.push(e);PLV.push([n,e])}}try{if(window.CF&&CF.fill&&CF.n===lastOff&&CF.fill.length){const lab=`${CF.n.slice(8)}/${CF.n.slice(5,7)}`,Lf={};
       CF.fill.forEach(x=>{const A=PARTITE[x.n]||(PARTITE[x.n]=[]);if(A.some(g=>g[0]===lab))return;const e=[lab,x.opp,Math.round(x.min*10)/10,Math.round(x.p*100)/100,x.min?Math.round(x.p/x.min*100)/100:0,x.pts,x.reb,x.ast,"E"];A.push(e);PLV.push([x.n,e]);Lf[tvNm(x.n)]={p:x.p,min:x.min}});LN.push([Lf,nm])}}catch(e){}
   liveEff(LN);try{window.cfApplyOther&&cfApplyOther()}catch(e){}}catch(e){}}
@@ -10895,7 +10896,7 @@ const r=e.target.closest("[data-dls]");if(!r||cur!=="impostazioni")return;const 
 <script>/* logo in alto: tocco = aggiorna la pagina RESTANDO dove sei (27/10/2026): prima di ricaricare salvo la schermata (sessionStorage),
    al riavvio la ripristino. Si salva solo lo stato di navigazione, non i dati (che devono arrivare freschi). */(function(){
 const l=document.getElementById("lgreload");if(!l)return;
-const V=["cur","curTeam","effTeam","effSq","esqMese","esqAdv","esqMet","effMet","cupYear","cupRole","cupHist","faSz","faRole","faP","faFrom","curPlayer","gFrom","gSeason","injTeam","COL","NB","CNT","cassaTab","cassaStag","GAME","DR","GD","GR","TRN","CAP","TVS","KITO","__STAB","__FROM","SETOPEN","effSub","IA","IA_TR_FROM","TA","cupCmp","faSrt","faQ","FBX","faPS","GLP","CMR","AT","AV","CF","dkOpen","NV_FROM","EQO","GD_LASTOFF","PLV","CAMPO_DR","FROM","STAB","CST"];
+const V=["cur","curTeam","effTeam","effSq","esqMese","esqAdv","esqMet","effMet","cupYear","cupRole","cupHist","faSz","faRole","faP","faFrom","curPlayer","gFrom","gSeason","injTeam","COL","NB","CNT","cassaTab","cassaStag","GAME","DR","GD","GR","TRN","CAP","TVS","KITO","__STAB","__FROM","SETOPEN","effSub","IA","IA_TR_FROM","TA","cupCmp","faSrt","faQ","FBX","faPS","GLP","CMR","AT","AV","CF","dkOpen","NV_FROM","EQO","GD_LASTOFF","CAMPO_DR","FROM","STAB","CST"];/* (1617) tolto PLV: ripristinato dopo «aggiorna» faceva restare le righe live vecchie in PARTITE → partita doppia */
 const get=n=>{try{return(0,eval)(n)}catch(e){return undefined}};
 const save=()=>{try{const o={};V.forEach(n=>{const v=get(n);if(v===undefined)return;try{const j=JSON.stringify(v);if(j&&j.length<20000)o[n]=j}catch(e){}});
   const x=JSON.stringify({t:Date.now(),y:window.scrollY,o});sessionStorage.setItem("dl_reload",x);try{localStorage.setItem("dl_nav",x)}catch(_){}}catch(e){}};
