@@ -9121,7 +9121,7 @@ function vDream(){fantaLiveAvvia();
     const form=t=>{const o=[];for(let k=1;k<=DR_REG;k++){const w=drWeek(k);if(!w.closed)continue;const pr=DR_SCHED[k-1].find(p=>p.includes(t));if(!pr)continue;const o2=pr[0]===t?pr[1]:pr[0];o.push(drTeam(k,t,w).score>=drTeam(k,o2,w).score?"V":"P")}return[...(DR_BASE[t]?DR_BASE[t].f.split(""):[]),...o].slice(-5)};
     const ld=st[0]?st[0].w:0;
     SHR_CL={sub:`STAGIONE ${STAGIONE_CORRENTE}`,rows:st.map(x=>({t:x.t,w:x.w,l:x.l,n:x.n,avg:x.avg,f:form(x.t),beh:ld>x.w?ld-x.w:0}))};
-    body=`<h4 class="drplh drplsh" style="margin-top:0">Classifica<span></span>${shBtn("cl")}</h4><div class="drcla">${st.map((x,i)=>{const f=form(x.t);return `<div class="drcr tint ${i<1?"lead":""}" data-dr="cteam" data-t="${x.t}" role="button" tabindex="0" aria-label="Statistiche ${TEAMS[x.t].name}" style="--tc:${TEAMS[x.t].bg};--tf:${drTf(x.t)}"><span class="drpos">${i+1}</span>${drLg(x.t,"l")}<div class="drci"><b>${TEAMS[x.t].name}</b><small>${window.drPoff?drPoff(x.t):`<span class="pof" data-pof="${x.t}">Playoff · calcolo…</span>`}</small><span class="drfm">${f.length?f.map(r=>`<i class="${r}">${r}</i>`).join(""):'<em>forma —</em>'}</span></div><div class="drcwl"><b>${x.w}<small>V</small></b><b class="l">${x.l}<small>P</small></b><b class="avg">${x.avg==null?"—":pdkF(x.avg)}<small>MEDIA</small></b></div></div>`}).join("")}</div><p class="note pofn">Playoff = probabilità di chiudere tra le prime 4 (tabellone del titolo) dopo il turno ${DR_REG}: 2000 stagioni simulate con i giocatori di ogni formazione (media e trend recente), il calendario NBA vero, gli infortuni con la data di rientro e gli scontri diretti che restano.</p>
+    body=`<h4 class="drplh drplsh" style="margin-top:0">Classifica<span></span>${shBtn("cl")}</h4><div class="drcla">${st.map((x,i)=>{const f=form(x.t);return `<div class="drcr tint ${i<1?"lead":""}" data-dr="cteam" data-t="${x.t}" role="button" tabindex="0" aria-label="Statistiche ${TEAMS[x.t].name}" style="--tc:${TEAMS[x.t].bg};--tf:${drTf(x.t)}"><span class="drpos">${i+1}</span>${drLg(x.t,"l")}<div class="drci"><b>${TEAMS[x.t].name}</b><small>${x.n?`${x.n} turni giocati`:"nessun turno giocato"}</small><span class="drfm">${f.length?f.map(r=>`<i class="${r}">${r}</i>`).join(""):'<em>forma —</em>'}</span></div><div class="drcwl"><b>${x.w}<small>V</small></b><b class="l">${x.l}<small>P</small></b><b class="avg">${x.avg==null?"—":pdkF(x.avg)}<small>MEDIA</small></b>${i>0&&ld>x.w?`<em>−${ld-x.w} V</em>`:""}</div></div>`}).join("")}</div>
     <p class="note">Vittoria = punteggio di turno più alto. A parità di vittorie è davanti chi ha la media punteggio più alta (punti fatti per turno). Tutte e 8 le squadre vanno ai playoff, in due tabelloni contemporanei: 1ª–4ª si giocano il titolo (1ª–4ª e 2ª–3ª), 5ª–8ª hanno il loro tabellone (5ª–8ª e 6ª–7ª). Serie al meglio delle 5, una gara per turno; ci sono anche le finali per il 3°, 5° e 7° posto, così la classifica finale va da 1 a 8.</p>`}
   else{const sd=P.seed,R=P.R,R0=R[0]||[],R1=R[1]||[];
     const lg=t=>`<span class="bklg" style="--tc:${TEAMS[t].bg}">${badge(t)}</span>`;
@@ -9246,7 +9246,7 @@ function drTeamPage(t){const D=drTeamData(t),c=TEAMS[t],S=D.S,f1=v=>v==null?"—
   <div class="dtsec"><h4>PDK fatti<small>somma dei punteggi dei turni</small></h4><div class="dtg">${card("Totale",f1(S.pf))}${card("Media a turno",f1(avgF))}${card("Record in un turno",rg?f1(rg.pf):"—",rg?`turno ${rg.g} · vs ${TEAMS[rg.opp].nick}`:"nessun turno Dreamers chiuso")}</div>
     <div class="dtcap">${cap?`<span class="dtj">${jersey(t,num||"",cap.n)}</span><div><small>Record del capitano nella stagione${cap.live?" (turno in corso)":""}</small><b>${cap.n}</b><em>${f1(cap.f)} (×1,5 su ${f1(cap.e)}) · turno ${cap.g}</em></div>`:`<div><small>Record del capitano nella stagione</small><b>—</b><em>nessun turno Dreamers ancora giocato</em></div>`}</div></div>
   <div class="dtsec"><h4>PDK subiti<small>punti fatti dagli avversari contro di te</small></h4><div class="dtg dtg2">${card("Totale",f1(S.pa))}${card("Media a turno",f1(avgA))}</div></div>
-  ${h2h}${trend}
+  ${window.drPoffTeam?drPoffTeam(t):""}${h2h}${trend}
   <p class="note">Il totale e le medie comprendono le giornate 1–2 giocate su Dunkest. Record e dettaglio per avversario in punti usano solo i turni Dreamers chiusi.</p>`}
 document.getElementById("main").addEventListener("change",e=>{const k=e.target.dataset&&e.target.dataset.drsel;if(!k||!DR.team)return;DR[k]=+e.target.value;const y=scrollY;render();scrollTo(0,y)});
 function drAct(b){const d=b.dataset;if(["tab","wk","go","cteam","open"].includes(d.dr))DR.fh=false;
@@ -15670,7 +15670,7 @@ main .view:has(.tvdual) .tvtabs{display:none}
    2000 stagioni simulate a pezzi (non blocca l'app), con seme fisso: lo stesso stato dà sempre gli stessi numeri. Risultato salvato sul telefono
    (dl_poff) finché non cambiano turni chiusi, dati ufficiali, infortuni o formazioni. */
 (function(){
-const NSIM=2000,TOPN=4,LSK="dl_poff";
+const NSIM=2000,TOPN=4,LSK="dl_poff2";
 let RES=null,RUN=null;
 const rngOf=s=>()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
 const gss=r=>{let u=0;while(u===0)u=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*r())};
@@ -15734,17 +15734,17 @@ function avvia(){if(RUN)return;const key=chiave();if(RES&&RES.key===key)return;
   const st=drStand();if(!st.length)return;
   if(drWeek(DR_REG).closed){const p={};st.forEach((x,i)=>p[x.t]=i<TOPN?1:0);RES={key,p,fine:1};mostra();return}
   let P;try{P=prepara()}catch(e){console.error("playoff",e);return}
-  const cal=taratura(P),base={};st.forEach(x=>base[x.t]={w:x.w,pf:x.pf,n:x.n});const r=rngOf(hashStr(key)),hit={},first={},ew={};P.T.forEach(t=>{hit[t]=0;first[t]=0;ew[t]=0});
+  const cal=taratura(P),base={};st.forEach(x=>base[x.t]={w:x.w,pf:x.pf,n:x.n});const r=rngOf(hashStr(key)),hit={},first={},ew={},sm={};let nsc=0;P.T.forEach(t=>{hit[t]=0;first[t]=0;ew[t]=0;sm[t]=0});
   let i=0;RUN=true;
   const passo=()=>{const end=Math.min(NSIM,i+100);for(;i<end;i++){const S={},F={};P.T.forEach(t=>{S[t]={t,w:base[t].w,pf:base[t].pf,n:base[t].n};F[t]=1+.04*gss(r)});
-      for(const tu of P.turns){const sc={};for(const t of P.T)sc[t]=Math.max(0,(score(tu.TT[t],r,0)*cal.fac+cal.extra*gss(r))*F[t]);
+      for(const tu of P.turns){const sc={};for(const t of P.T){sc[t]=Math.max(0,(score(tu.TT[t],r,0)*cal.fac+cal.extra*gss(r))*F[t]);sm[t]+=sc[t]}nsc++;
         for(const[a,b]of tu.pairs){const A=sc[a],B=sc[b];S[a].pf+=A;S[b].pf+=B;S[a].n++;S[b].n++;if(A>=B)S[a].w++;else S[b].w++}}
       const o=Object.values(S).sort((x,y)=>y.w-x.w||(y.pf/y.n)-(x.pf/x.n));o.forEach((x,j)=>{if(j<TOPN)hit[x.t]++;if(!j)first[x.t]++;ew[x.t]+=x.w})}
     if(i<NSIM){setTimeout(passo,0);return}
     const p={},p1={},w={};P.T.forEach(t=>{p[t]=hit[t]/NSIM;p1[t]=first[t]/NSIM;w[t]=ew[t]/NSIM});
     /* 0% e 100% solo se è matematico: fuori = anche vincendo tutto non arriva alle vittorie della 4ª di adesso; dentro = al massimo 3 altre possono arrivare alle sue vittorie */
     const rem=P.turns.length,W0=P.T.map(t=>base[t].w).sort((a,b)=>b-a);P.T.forEach(t=>{if(base[t].w+rem<W0[TOPN-1])p[t]=0;else if(p[t]===0)p[t]=.001;
-      if(P.T.filter(o=>o!==t&&base[o].w+rem>=base[t].w).length<TOPN)p[t]=1;else if(p[t]===1)p[t]=.999});RES={key,p,p1,w,cal:{emp:Math.round(cal.emp),sim:Math.round(cal.sim||0),extra:Math.round(cal.extra),fac:Math.round(cal.fac*1000)/1000},n:NSIM,ts:Date.now()};RUN=null;
+      if(P.T.filter(o=>o!==t&&base[o].w+rem>=base[t].w).length<TOPN)p[t]=1;else if(p[t]===1)p[t]=.999});const m={};P.T.forEach(t=>m[t]=nsc?sm[t]/nsc:null);RES={key,p,p1,w,m,rem:P.turns.length,cal:{emp:Math.round(cal.emp),sim:Math.round(cal.sim||0),extra:Math.round(cal.extra),fac:Math.round(cal.fac*1000)/1000},n:NSIM,ts:Date.now()};RUN=null;
     try{localStorage.setItem(LSK,JSON.stringify(RES))}catch(e){}mostra()};
   setTimeout(passo,30)}
 const fmt=v=>{const x=v*100;return x>=99.5&&v<1?">99%":x<.5&&v>0?"<1%":Math.round(x)+"%"};
@@ -15753,9 +15753,16 @@ const cls=v=>v>=.75?"hi":v>=.4?"md":v>=.15?"lo":"vl";
 window.drPoff=function(t){avvia();if(!RES||RES.p[t]==null)return`<span class="pof" data-pof="${t}">Playoff · calcolo…</span>`;const v=RES.p[t];
   return`<span class="pof ${cls(v)}" data-pof="${t}">${RES.fine?(v?"Playoff ✓":"Fuori dai playoff"):`Playoff <b>${fmt(v)}</b>`}</span>`};
 window.drPoffRes=()=>RES;
+/* (1055) scheda della squadra (Classifica › squadra): sezione Playoff con prime 4, primo posto, vittorie previste e media prevista a turno */
+window.drPoffTeam=function(t){avvia();const c=(l,v,sub)=>`<div class="dtc"><small>${l}</small><b>${v}</b>${sub?`<em>${sub}</em>`:""}</div>`;
+  if(!RES||RES.p[t]==null)return`<div class="dtsec dtpof"><h4>Playoff<small>calcolo in corso…</small></h4></div>`;
+  if(RES.fine)return`<div class="dtsec dtpof"><h4>Playoff<small>stagione regolare finita</small></h4><div class="dtg dtg2">${c("Tabellone",RES.p[t]?"Titolo (1ª–4ª)":"5ª–8ª")}</div></div>`;
+  const st=drStand(),me=st.find(x=>x.t===t);
+  return`<div class="dtsec dtpof"><h4>Playoff<small>simulazione dei ${RES.rem} turni che restano</small></h4><div class="dtg">${c("Prime 4",fmt(RES.p[t]),"tabellone del titolo")}${c("Primo posto",fmt(RES.p1[t]))}${c("Vittorie a fine stagione",pdkF(RES.w[t]),me?`oggi ${me.w}`:"")}</div>
+  <p class="note">Media prevista a turno nei turni che restano: <b>${RES.m&&RES.m[t]!=null?pdkF(RES.m[t]):"—"}</b> PDK. ${RES.n} stagioni simulate con i giocatori della formazione (media e trend recente, partita migliore del turno), il calendario NBA, gli infortuni con la data di rientro e gli scontri diretti che restano; tarata sui punteggi veri dei turni chiusi.</p></div>`};
 /* parte da sola dopo il caricamento (la classifica della Home può essere disegnata prima di questo script) */
 setTimeout(()=>{try{avvia()}catch(e){}},1200);
-function mostra(){document.querySelectorAll("[data-pof]").forEach(el=>{const h=drPoff(el.dataset.pof);const tmp=document.createElement("span");tmp.innerHTML=h;el.replaceWith(tmp.firstChild)})}
+function mostra(){if(document.querySelector('.dtpof')){const y=scrollY;try{render()}catch(e){}scrollTo(0,y)}document.querySelectorAll("[data-pof]").forEach(el=>{const h=drPoff(el.dataset.pof);const tmp=document.createElement("span");tmp.innerHTML=h;el.replaceWith(tmp.firstChild)})}
 })();
 </script>
 <style>/* (1053) percentuale playoff in classifica */.pof{font-weight:700;white-space:nowrap}.pof b{font-weight:900}.pof.hi b{color:#22c55e}.pof.md b{color:#eab308}.pof.lo b{color:#f97316}.pof.vl b{color:#ef4444}html:not(.notte) .pof.hi b{color:#15803d}html:not(.notte) .pof.md b{color:#a16207}</style>

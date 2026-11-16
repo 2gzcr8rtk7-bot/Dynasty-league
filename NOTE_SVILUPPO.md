@@ -4075,3 +4075,5 @@ ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra
 - Taratura: media = rapporto punteggi veri / modello sui turni chiusi (oggi 0,985); variabilità = scarto tipo vero dentro le squadre (39) contro quello del modello (30), la differenza si aggiunge come rumore di squadra; ±4% di forza di squadra per stagione simulata.
 - Classifica come drStand (vittorie, poi media; parità = vince la prima). 0% / 100% solo se matematico, altrimenti «<1%» / «>99%».
 - Se cambiano le regole del punteggio (drTeam/drEff) o dei playoff (drPO, prime 4) va aggiornato anche questo script.
+
+(v1055, Francesco 16/11/2026) **Playoff: tolto dalla classifica di Dreamers** (troppo grande): lì tornano «N turni giocati» e «−X V». La probabilità sta nella scheda della squadra (Classifica › tocca la squadra): sezione «Playoff» (`drPoffTeam`) con Prime 4, Primo posto, Vittorie a fine stagione e media prevista a turno. Nella Home resta la scritta piccola «Playoff NN%». Cache passata a `dl_poff2` (RES ha anche m = media simulata a turno e rem = turni che restano).
