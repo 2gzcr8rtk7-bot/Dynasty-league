@@ -11075,10 +11075,10 @@ window.dataCheck=function(){const it=[],add=(ok,t,w)=>it.push({ok,t,w:!!w});
   const st=updStamp().match(/(\d{2})\/(\d{2})\/(\d{4})\s*·\s*(\d{2}):(\d{2})/);
   if(st){const now=new Date(),rp=Object.fromEntries(new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(now).map(x=>[x.type,+x.value]));
     const today=Date.UTC(rp.year,rp.month-1,rp.day),fd=Date.UTC(+st[3],+st[2]-1,+st[1]),days=Math.round((today-fd)/864e5),mm=(rp.hour%24)*60+rp.minute;
-    /* (1566) i dati ufficiali li salva GitHub (ESPN, riserva Dunkest) di notte o al più tardi verso le 07:07: dalle 09:00 sono in ritardo */
+    /* (1566) i dati ufficiali li salva GitHub (ESPN, riserva Dunkest) ESPN dalle 07:30 ogni 15 minuti, la riserva Dunkest solo dalle 10:30: dalle 11:00 sono in ritardo */
     if(days>=2)add(false,`I dati ufficiali sono fermi al ${st[1]}/${st[2]} (${days} giorni fa)`,true);
-    else if(days===1&&mm>=9*60)add(false,`I dati ufficiali di oggi non sono ancora arrivati (file del ${st[1]}/${st[2]} ${st[4]}:${st[5]})`,true);
-    else add(true,days===1&&mm<9*60?`In attesa dei dati ufficiali di oggi (GitHub li salva entro le 07:07 circa); file attuale del ${st[1]}/${st[2]} ${st[4]}:${st[5]}`:`Dati ufficiali aggiornati (${st[1]}/${st[2]} ${st[4]}:${st[5]})`)}
+    else if(days===1&&mm>=11*60)add(false,`I dati ufficiali di oggi non sono ancora arrivati (file del ${st[1]}/${st[2]} ${st[4]}:${st[5]})`,true);
+    else add(true,days===1&&mm<11*60?`In attesa dei dati ufficiali di oggi (GitHub prova ESPN dalle 07:30 ogni 15 minuti, Dunkest solo dalle 10:30); file attuale del ${st[1]}/${st[2]} ${st[4]}:${st[5]}`:`Dati ufficiali aggiornati (${st[1]}/${st[2]} ${st[4]}:${st[5]})`)}
   }catch(e){add(false,"Controllo non riuscito: "+e.message)}
   return{ok:it.every(x=>x.ok),n:it.length,bad:it.filter(x=>!x.ok).length,it}};
 window.ulEvents=function(){ulCheck();return ulGet(ULK,[]).filter(x=>/^(dk|espn|live):/.test(x.k)).slice().reverse().map(x=>({t:fmt(x.t),x:x.x,c:evc(x.k)}))};
@@ -11590,7 +11590,7 @@ function orari(){if(!COL.d){cur="campo";return vCampo()}
  ${card("Ogni settimana","",[
   R("Dom 18:00","Valori e prezzi dei giocatori","Ogni domenica alle 18:00 scattano i nuovi valori (e i prezzi in crediti). Prima di quell'ora restano quelli della settimana precedente. Il registro del lunedì è in Cronologia modifiche.")])}
  ${card("Senza orario fisso","",[
-  R("Notte–07:07","Report ufficiale (GitHub)","I dati ufficiali della notte (tabellini ESPN, PDK con la formula Dunkest) li salva GitHub da solo: di notte appena tutte le partite sono finite, al più tardi verso le 07:07 (08:07 con l'ora legale). Se ESPN non funziona usa Dunkest come riserva. La riga in fondo alla Home dice fonte e ora del salvataggio; toccandola si apre il report con le anomalie."),
+  R("07:30–10:30","Report ufficiale (GitHub)","I dati ufficiali della notte (tabellini ESPN, PDK con la formula Dunkest) li salva GitHub da solo: dalle 07:30 prova ESPN ogni 15 minuti finché non riesce (di solito alla prima corsa, verso le 07:32). Solo se alle 10:30 ESPN ancora non va usa Dunkest come riserva; poi riprova ogni 30 minuti fino a sera. La riga in fondo alla Home dice fonte e ora del salvataggio; toccandola si apre il report con le anomalie."),
   R("Ogni 45 s","Dati live ESPN","Mentre c'è una partita in corso l'app riscarica punteggi e tabellini ogni 45 secondi circa. In attesa dei dati la Home controlla ogni 4 secondi."),
   R("Ogni 60 s","Home","Aggiorna da sola banner e tabelle mentre è aperta."),
   R("Release","Archivio Dreamers","Quando si pubblica una nuova versione dell'app l'archivio delle notti Dreamers si rigenera da solo.")])}

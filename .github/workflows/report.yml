@@ -3,26 +3,23 @@
 # Se ESPN non funziona (non risponde, notte incompleta, controlli non superati) usa la RISERVA tools/report_dunkest.mjs.
 # Poi rigenera dreamers-data.js (tools/dreamers.mjs): un push fatto con il GITHUB_TOKEN NON fa partire gli altri workflow,
 # quindi dreamers.yml non scatterebbe da solo; per questo l'archivio Dreamers si rifà qui, nello stesso giro (e non ci sono cicli).
-# Nessuno deve lanciare niente a mano. Se nemmeno la riserva funziona alla corsa delle 07:30 (o dopo) il job FALLISCE e GitHub manda la mail.
+# Nessuno deve lanciare niente a mano. Se nemmeno la riserva funziona (dalle 10:30 in poi) il job FALLISCE e GitHub manda la mail.
 # Orari in UTC. Italia d'inverno = UTC+1, con l'ora legale (fine marzo - fine ottobre) = UTC+2: tutto scatta un'ora più tardi in ora italiana.
 #   (non ci sono più corse notturne: la notte vale il live sul telefono, i dati diventano ufficiali dalle 07:30)
-#   (1575) PRIMO TENTATIVO SEMPRE ALLE 07:30 ITALIANE, d'inverno e con l'ora legale: il cron gira ogni 30 minuti dalle 05:00 UTC e ogni corsa
-#              prima delle 07:30 di Roma esce subito senza fare niente (così l'ora legale non sposta più l'orario).
-#   (16/11/2026) GitHub a volte SALTA le corse programmate ai minuti :00 e :30 (ore di punta dei server): il 16/11 non è partita
-#              nessuna corsa fra le 07:30 e le 08:50. Per questo ora si usano minuti "storti" e più tentativi la mattina:
-#              4,19,34,49 dalle 05 alle 09 UTC (ogni 15 minuti: primo tentativo utile 07:34 italiane) e 4,34 dalle 10 alle 21 UTC.
-#              Se una corsa salta, la successiva arriva dopo 15 minuti invece di 30.
-#   (vecchio: 0,30 5-21) → TENTATIVI CONTINUI ogni 30 minuti dalle 07:30 italiane fino a sera (07:30, 08:00, 08:30, ...): se la notte è già
-#              nell'app non fanno niente (pochi secondi). Ogni corsa prova ESPN fino a 3 volte (a 3 minuti di distanza).
-#              Prima delle 08:00 italiane solo ESPN (se non va si aspetta la corsa dopo); dalle 08:00 se ESPN non va si usa la riserva Dunkest.
-#              Se alle 09:00 la notte manca ancora il job fallisce (mail di GitHub) ma i tentativi continuano lo stesso fino a sera, senza arrendersi.
+#   (16/11/2026, regola Francesco) L'OBIETTIVO È SEMPRE ESPN. Dalle 07:30 alle 10:30 italiane si prova SOLO ESPN, ogni 15 minuti
+#              (07:32, 07:47, 08:02, ... 10:17, 10:32): alle 07:00 a volte le partite non sono ancora finite, quindi niente prima delle 07:30.
+#              Minuti "storti" (2,17,32,47) perché GitHub a volte salta le corse ai minuti :00/:30 (il 16/11 nessuna corsa fra 07:30 e 08:50).
+#              La RISERVA DUNKEST parte solo dalle 10:30 (se ESPN ancora non va); la mail di GitHub (job fallito) anche lei solo dalle 10:30.
+#              Dopo le 10:30 si continua ogni 30 minuti fino a sera (ESPN, poi Dunkest), senza arrendersi. Se la notte è già nell'app
+#              una corsa non fa niente (pochi secondi). Ogni corsa prova ESPN fino a 3 volte (a 3 minuti di distanza).
+#              Le corse programmate prima delle 07:30 di Roma escono subito (così l'ora legale non sposta l'orario: il cron copre 05-09 UTC).
 # Lancio a mano (scheda Actions › report-dati › Run workflow): corsa normale come quella delle 07:30; con "prova" spuntato prova ESPN e Dunkest
 # senza scrivere né pubblicare niente (serve a vedere se da GitHub Dunkest risponde).
 name: report-dati
 on:
   schedule:
-    - cron: "4,19,34,49 5-9 * * *"
-    - cron: "4,34 10-21 * * *"
+    - cron: "2,17,32,47 5-9 * * *"
+    - cron: "2,32 10-21 * * *"
   workflow_dispatch:
     inputs:
       prova:
@@ -72,10 +69,10 @@ jobs:
           if [ -n "$SCHED" ] && [ $((10#$(TZ=Europe/Rome date +%H%M))) -lt 730 ]; then echo "Prima delle 07:30 italiane: niente da fare"; exit 0; fi
           # di notte una partita ancora in corso non è un errore; dalle 07:30 (e a mano) sì
           ULT="--ultima"; if [ "$SCHED" = "*/30 0-5 * * *" ]; then ULT=""; fi
-          # (1567) ora italiana: prima delle 08:00 niente riserva Dunkest (si riprova ESPN alla corsa dopo); la mail solo dalle 09:00
+          # (16/11) ora italiana: prima delle 10:30 niente riserva Dunkest (si riprova ESPN alla corsa dopo, ogni 15 minuti); la mail solo dalle 10:30
           HM=$(TZ=Europe/Rome date +%H%M); HM=$((10#$HM)); RISERVA=1; MAIL=1
-          if [ -z "$ULT" ] || [ $HM -lt 800 ]; then RISERVA=0; fi
-          if [ -z "$ULT" ] || [ $HM -lt 900 ]; then MAIL=0; fi
+          if [ -z "$ULT" ] || [ $HM -lt 1030 ]; then RISERVA=0; fi
+          if [ -z "$ULT" ] || [ $HM -lt 1030 ]; then MAIL=0; fi
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then RISERVA=1; MAIL=1; fi
           espn(){ for t in 1 2 3; do if node tools/report_espn.mjs $ULT 2>&1 | tee /tmp/espn.log; then return 0; fi; git checkout -- $FILES; [ $t -lt 3 ] && { echo "ESPN: tentativo $t non riuscito, riprovo fra 3 minuti"; sleep 180; }; done; return 1; }
           DATA=$(TZ=Europe/Rome date +%d/%m)
@@ -94,7 +91,7 @@ jobs:
               ESPN_ERR="$(grep -v '^\s*$' /tmp/espn.log | tail -n 4 | tr '\n' ' ' | cut -c1-500)"; export ESPN_ERR
               echo "::warning title=ESPN non disponibile::$ESPN_ERR"
               git checkout -- $FILES
-              if [ $RISERVA = 0 ]; then riassunto "nessuna per ora" "ESPN non disponibile: riprovo alla prossima corsa (la riserva Dunkest parte dalle 08:00)" /tmp/espn.log; exit 0; fi
+              if [ $RISERVA = 0 ]; then riassunto "nessuna per ora" "ESPN non disponibile: riprovo alla prossima corsa (la riserva Dunkest parte dalle 10:30)" /tmp/espn.log; exit 0; fi
               FONTE=Dunkest; LOG=/tmp/dunkest.log
               if ! timeout 20m node tools/report_dunkest.mjs 2>&1 | tee /tmp/dunkest.log; then
                 git checkout -- $FILES
