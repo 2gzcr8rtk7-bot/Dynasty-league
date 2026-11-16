@@ -15794,21 +15794,27 @@ function anaHtml(t){const A=RES.ana&&RES.ana[t];if(!A)return"";const RLN={G:"Gua
   const st=drStand(),pos=st.findIndex(x=>x.t===t)+1,riv=Object.keys(RES.p).filter(o=>o!==t&&RES.p[o]>.05&&RES.p[o]<.92).sort((a,b)=>RES.p[b]-RES.p[a]);
   const pv=RES.p[t],perche=pv>=.95?`Le prime 4 sono quasi sicure: ${pos}ª oggi e una media prevista tra le più alte.`:pv<=.05?`Per le prime 4 servirebbe una rimonta: la media prevista è lontana da quella delle squadre davanti.`:
     `Per le ultime posizioni delle prime 4 se la gioca con ${riv.map(o=>`${TEAMS[o].nick} (${fmt(RES.p[o])}, media prevista ${Math.round(RES.m[o])})`).join(", ")||"le squadre vicine"}.`;
-  return`<div class="dtana"><h5>Analisi</h5><p>Media prevista <b>${A.mt}</b> PDK a turno contro <b>${A.mL}</b> della media della lega. ${calT}</p><p>${perche}</p>
+  /* (1058) parte iniziale sempre visibile (il punto forte e il punto debole principali + con chi se la gioca), il resto si apre toccando */
+  const f0=forti[1]||forti[0],d0=deboli[0];
+  return`<details class="dtana" data-ana="${t}"${ANA_OPEN[t]?" open":""}><summary><h5>Analisi</h5><p>${perche}</p>
+  <p class="dtanq">${f0?`<span class="g">▲</span> ${f0}`:""}${d0?`<br><span class="r">▼</span> ${d0}`:""}</p><span class="dtanm"><i>Leggi tutta l'analisi</i><i>Chiudi</i></span></summary>
+  <p>Media prevista <b>${A.mt}</b> PDK a turno contro <b>${A.mL}</b> della media della lega. ${calT}</p>
   <div class="dtana2"><div><h6>Punti forti</h6>${li(forti)}</div><div><h6>Punti deboli</h6>${li(deboli)}</div></div>
-  <p class="dtanw">Come pesa il calcolo per questa squadra: stagione in corso <b>${A.wc}%</b>, stagioni passate <b>${100-A.wc}%</b> (sale con le partite giocate, come per il valore dei giocatori).</p></div>`}
+  <p class="dtanw">Come pesa il calcolo per questa squadra: stagione in corso <b>${A.wc}%</b>, stagioni passate <b>${100-A.wc}%</b> (sale con le partite giocate, come per il valore dei giocatori). ${RES.n} stagioni simulate con i giocatori della formazione (stagione in corso con il trend recente e stagioni passate, partita migliore del turno), il calendario NBA, gli infortuni con la data di rientro e gli scontri diretti che restano; tarata sui punteggi veri dei turni chiusi.</p></details>`}
+const ANA_OPEN={};document.addEventListener("toggle",e=>{const d=e.target;if(d&&d.dataset&&d.dataset.ana)ANA_OPEN[d.dataset.ana]=d.open},true);
 window.drPoffTeam=function(t){avvia();const c=(l,v,sub)=>`<div class="dtc"><small>${l}</small><b>${v}</b>${sub?`<em>${sub}</em>`:""}</div>`;
   if(!RES||RES.p[t]==null)return`<div class="dtsec dtpof"><h4>Playoff<small>calcolo in corso…</small></h4></div>`;
   if(RES.fine)return`<div class="dtsec dtpof"><h4>Playoff<small>stagione regolare finita</small></h4><div class="dtg dtg2">${c("Tabellone",RES.p[t]?"Titolo (1ª–4ª)":"5ª–8ª")}</div></div>`;
   const st=drStand(),me=st.find(x=>x.t===t);
   return`<div class="dtsec dtpof"><h4>Playoff<small>simulazione dei ${RES.rem} turni che restano</small></h4><div class="dtg">${c("Prime 4",fmt(RES.p[t]),"tabellone del titolo")}${c("Primo posto",fmt(RES.p1[t]))}${c("Vittorie a fine stagione",pdkF(RES.w[t]),me?`oggi ${me.w}`:"")}</div>
   ${anaHtml(t)}
-  <p class="note">Media prevista a turno nei turni che restano: <b>${RES.m&&RES.m[t]!=null?pdkF(RES.m[t]):"—"}</b> PDK. ${RES.n} stagioni simulate con i giocatori della formazione (stagione in corso con il trend recente e stagioni passate, partita migliore del turno), il calendario NBA, gli infortuni con la data di rientro e gli scontri diretti che restano; tarata sui punteggi veri dei turni chiusi.</p></div>`};
+</div>`};
 /* parte da sola dopo il caricamento (la classifica della Home può essere disegnata prima di questo script) */
 setTimeout(()=>{try{avvia()}catch(e){}},1200);
 function mostra(){if(document.querySelector('.dtpof')){const y=scrollY;try{render()}catch(e){}scrollTo(0,y)}document.querySelectorAll("[data-pof]").forEach(el=>{const h=drPoff(el.dataset.pof);const tmp=document.createElement("span");tmp.innerHTML=h;el.replaceWith(tmp.firstChild)})}
 })();
 </script>
+<style>/* (1058) analisi richiudibile */.dtana summary{list-style:none;cursor:pointer}.dtana summary::-webkit-details-marker{display:none}.dtanq{font-size:13px!important}.dtanq .g{color:#22c55e}.dtanq .r{color:#f87171}.dtanm{display:inline-block;margin-top:6px;padding:4px 12px;border-radius:999px;font:800 12px var(--display),system-ui;letter-spacing:.05em;text-transform:uppercase;background:rgba(167,139,250,.2)}.dtanm i{font-style:normal}.dtana:not([open]) .dtanm i+i,.dtana[open] .dtanm i:first-child{display:none}.dtana[open] summary{margin-bottom:8px}</style>
 <style>/* (1057) analisi playoff nella scheda squadra */.dtana{margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)}.dtana h5{margin:0 0 6px;font:800 italic 15px var(--display),system-ui;text-transform:uppercase;letter-spacing:.04em}.dtana p{margin:4px 0;font-size:13.5px;line-height:1.45}.dtana2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 0}@media(max-width:520px){.dtana2{grid-template-columns:1fr}}.dtana h6{margin:0 0 4px;font:800 12px var(--display),system-ui;text-transform:uppercase;letter-spacing:.06em;opacity:.8}.dtana2>div:first-child h6{color:#22c55e}.dtana2>div:last-child h6{color:#f87171}.dtana ul{margin:0;padding-left:18px;font-size:13px;line-height:1.45}.dtana li{margin:2px 0}.dtanw{opacity:.75;font-size:12.5px!important}html:not(.notte) .dtana{background:rgba(0,0,0,.05)}</style>
 <style>/* (1053) percentuale playoff in classifica */.pof{font-weight:700;white-space:nowrap}.pof b{font-weight:900}.pof.hi b{color:#22c55e}.pof.md b{color:#eab308}.pof.lo b{color:#f97316}.pof.vl b{color:#ef4444}html:not(.notte) .pof.hi b{color:#15803d}html:not(.notte) .pof.md b{color:#a16207}</style>
 </body>
