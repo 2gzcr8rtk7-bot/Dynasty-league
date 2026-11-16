@@ -9243,10 +9243,11 @@ function drTeamPage(t){const D=drTeamData(t),c=TEAMS[t],S=D.S,f1=v=>v==null?"—
   return`<button class="gback" data-dr="tclose">‹ ${DR.fh?"Home":"Classifica"}</button>
   <div class="dthead tint" style="--tc:${c.bg}">${drLg(t,"l")}<div><h3>${c.name}</h3><p>${D.pos}º in classifica · ${S.n} turni giocati</p></div></div>
   <div class="dtsec"><h4>Bilancio<small>vittorie e sconfitte</small></h4><div class="dtg dtg2">${card("Vittorie",S.w,"","g")}${card("Sconfitte",S.l,"","r")}</div></div>
+  ${window.drPoffTeam?drPoffTeam(t):""}
   <div class="dtsec"><h4>PDK fatti<small>somma dei punteggi dei turni</small></h4><div class="dtg">${card("Totale",f1(S.pf))}${card("Media a turno",f1(avgF))}${card("Record in un turno",rg?f1(rg.pf):"—",rg?`turno ${rg.g} · vs ${TEAMS[rg.opp].nick}`:"nessun turno Dreamers chiuso")}</div>
     <div class="dtcap">${cap?`<span class="dtj">${jersey(t,num||"",cap.n)}</span><div><small>Record del capitano nella stagione${cap.live?" (turno in corso)":""}</small><b>${cap.n}</b><em>${f1(cap.f)} (×1,5 su ${f1(cap.e)}) · turno ${cap.g}</em></div>`:`<div><small>Record del capitano nella stagione</small><b>—</b><em>nessun turno Dreamers ancora giocato</em></div>`}</div></div>
   <div class="dtsec"><h4>PDK subiti<small>punti fatti dagli avversari contro di te</small></h4><div class="dtg dtg2">${card("Totale",f1(S.pa))}${card("Media a turno",f1(avgA))}</div></div>
-  ${window.drPoffTeam?drPoffTeam(t):""}${h2h}${trend}
+  ${h2h}${trend}
   <p class="note">Il totale e le medie comprendono le giornate 1–2 giocate su Dunkest. Record e dettaglio per avversario in punti usano solo i turni Dreamers chiusi.</p>`}
 document.getElementById("main").addEventListener("change",e=>{const k=e.target.dataset&&e.target.dataset.drsel;if(!k||!DR.team)return;DR[k]=+e.target.value;const y=scrollY;render();scrollTo(0,y)});
 function drAct(b){const d=b.dataset;if(["tab","wk","go","cteam","open"].includes(d.dr))DR.fh=false;
@@ -15672,7 +15673,7 @@ main .view:has(.tvdual) .tvtabs{display:none}
    2000 stagioni simulate a pezzi (non blocca l'app), con seme fisso: lo stesso stato dà sempre gli stessi numeri. Risultato salvato sul telefono
    (dl_poff) finché non cambiano turni chiusi, dati ufficiali, infortuni o formazioni. */
 (function(){
-const NSIM=2000,TOPN=4,LSK="dl_poff3";
+const NSIM=2000,TOPN=4,LSK="dl_poff4";
 let RES=null,RUN=null;
 const rngOf=s=>()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
 const gss=r=>{let u=0;while(u===0)u=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*r())};
@@ -15689,7 +15690,7 @@ function plModel(n){const G=(PARTITE[n]||[]).filter(r=>r&&typeof r[3]==="number"
     muC=N>=4?.45*s+.55*rec:s;sdC=N>1?Math.sqrt(G.reduce((a,x)=>a+(x-s)*(x-s),0)/(N-1)):null}
   let mu,sd;if(H){const wc=N/(N+15);mu=N?wc*muC+(1-wc)*H.m:H.m;sd=sdC!=null?wc*sdC+(1-wc)*H.sd:H.sd}
   else{mu=(N*muC+3*Math.min(muC,18))/(N+3);sd=sdC||0;if(N<4)sd=Math.max(sd,.35*Math.abs(mu),9)}/* rookie / senza storia NBA: solo l'anno in corso, con prudenza */
-  sd=Math.max(sd||0,6,.22*Math.abs(mu));return{mu,sd}}
+  sd=Math.max(sd||0,6,.22*Math.abs(mu));return{mu,sd,muC,hm:H?H.m:null,N,wc:H?N/(N+15):1}}
 /* data di rientro dal Centro Medico */
 function rientro(n){try{const I=INJ[n];if(!I||I.stato!=="out")return null;const m=/(\d{1,2})\/(\d{1,2})/.exec(I.rientro||"");const t=today();
   if(!m)return add(t,10);let y=+t.slice(0,4);const mo=+m[2];if(mo<+t.slice(5,7)-2)y++;return`${y}-${String(mo).padStart(2,"0")}-${String(+m[1]).padStart(2,"0")}`}catch(e){return null}}
@@ -15710,7 +15711,7 @@ function prepara(){const T=Object.keys(TEAMS),days=Object.keys(TV.days).sort(),t
           if(G.some(Boolean))G.forEach((g,i)=>{if(!g)return;if(g.fin){if(g.v!=null){kS=kN?Math.max(kS,g.v):g.v;kN++}}else fut.push(pa(g.d||add(W.start,i)))});
           else for(let i=0;i<W.len;i++){const d=add(W.start,i);if((TV.days[d]||[]).some(x=>x[0]===nba||x[1]===nba))fut.push(pa(d))}}
         else{est=W.len;fut.push(...Array.from({length:W.len},(_,i)=>pa(add(W.start,i))))}
-        return{n,r:ruoloDi(n),mu:md.mu,sd:md.sd,kS,kN,fut,est,p:est?pN(nba):1}})}
+        return{n,r:ruoloDi(n),mu:md.mu,sd:md.sd,md,ret,db,kS,kN,fut,est,p:est?pN(nba):1}})}
     return{k,TT,pairs:DR_SCHED[k-1]}};
   for(let k=k0;k<=DR_REG;k++)turns.push(mk(k,false));
   /* turni chiusi rifatti col modello (tutte le partite simulate) per tarare media e variabilità sui punteggi veri */
@@ -15732,7 +15733,25 @@ function taratura(P){/* 1) MEDIA: punteggi veri dei turni chiusi / punteggi del 
   const emp=df?Math.sqrt(ss/df):40;const tu=P.turns.find(x=>x.k>P.k0)||P.turns[0];if(!tu)return{extra:0,emp,fac};const r=rngOf(7);let s2=0,d2=0;
   for(const t of P.T){const v=[];for(let i=0;i<150;i++)v.push(score(tu.TT[t],r,0)*fac);const m=v.reduce((a,x)=>a+x,0)/v.length;s2+=v.reduce((a,x)=>a+(x-m)*(x-m),0);d2+=v.length-1}
   const sim=Math.sqrt(s2/d2);return{extra:Math.sqrt(Math.max(0,emp*emp-sim*sim)),emp,sim,fac}}
-let CK=null,CKT=0;function chiave(){if(CK&&Date.now()-CKT<20000)return CK;CKT=Date.now();return CK=chiave0()}
+let CK=null,CKT=0;/* (1057) ANALISI di ogni squadra per la scheda: reparti (somma dei PDK attesi dei migliori per ruolo, come entrano in formazione) contro la media
+   della lega, stelle, chi va meglio o peggio dell'anno scorso, infortuni, calendario (forza prevista degli avversari che restano), regolarità
+   (scarto tipo dei punteggi veri nei turni chiusi) e peso dell'anno scorso nella stima. Solo numeri: i testi li compone drPoffTeam. */
+function analisi(P,m,cal){const tu=P.turns[0],A={},RL={G:"guardie",F:"ali",C:"centri"};if(!tu)return A;
+  const rep={};for(const t of P.T){const L=tu.TT[t];rep[t]={};for(const ro of["G","F","C"]){const l=L.filter(x=>x.r===ro).map(x=>x.mu).sort((a,b)=>b-a).slice(0,DR_QUOTE[ro]);rep[t][ro]=l.reduce((a,x)=>a+x,0)}}
+  const lg={};for(const ro of["G","F","C"])lg[ro]=P.T.reduce((a,t)=>a+rep[t][ro],0)/P.T.length;
+  const mL=P.T.reduce((a,t)=>a+(m[t]||0),0)/P.T.length;
+  for(const t of P.T){const L=tu.TT[t];
+    const stars=L.slice().sort((a,b)=>b.mu-a.mu).slice(0,3).map(x=>[x.n,Math.round(x.mu*10)/10]);
+    const tr=L.filter(x=>x.md&&x.md.hm!=null&&x.md.N>=5).map(x=>[x.n,Math.round((x.md.muC-x.md.hm)*10)/10]).sort((a,b)=>b[1]-a[1]);
+    const inj=L.filter(x=>x.ret||x.db).map(x=>[x.n,x.ret||"dubbio"]);
+    const opp=[];for(const tt of P.turns){const pr=tt.pairs.find(p=>p.includes(t));if(pr)opp.push(pr[0]===t?pr[1]:pr[0])}
+    const om=opp.length?opp.reduce((a,o)=>a+(m[o]||0),0)/opp.length:null;
+    const v=[];for(let k=1;k<=DR_REG;k++){const W=drWeek(k);if(!W.closed)break;v.push(drTeam(k,t,W).score)}const vm=v.length?v.reduce((a,x)=>a+x,0)/v.length:null,vs=v.length>1?Math.sqrt(v.reduce((a,x)=>a+(x-vm)*(x-vm),0)/(v.length-1)):null;
+    const wc=L.length?L.reduce((a,x)=>a+(x.md?x.md.wc:1),0)/L.length:1;
+    A[t]={rep:Object.fromEntries(["G","F","C"].map(ro=>[ro,[Math.round(rep[t][ro]),Math.round(rep[t][ro]-lg[ro])]])),stars,up:tr.filter(x=>x[1]>=3).slice(0,2),down:tr.filter(x=>x[1]<=-3).slice(-2).reverse(),inj,
+      cal:om!=null?Math.round(om-(mL*P.T.length-(m[t]||0))/(P.T.length-1)):null,reg:vs!=null?Math.round(vs):null,regL:Math.round(cal.emp),wc:Math.round(wc*100),mt:Math.round(m[t]||0),mL:Math.round(mL)}}
+  return A}
+function chiave(){if(CK&&Date.now()-CKT<20000)return CK;CKT=Date.now();return CK=chiave0()}
 function chiave0(){try{let c=0;for(let k=1;k<=DR_REG;k++)if(drWeek(k).closed)c++;const inj=Object.entries(INJ||{}).map(([n,x])=>n+x.stato+(x.rientro||"")).join("|");
   return String(hashStr([c,EFF&&EFF.agg,(typeof ULTIMA!=="undefined"&&ULTIMA.data)||"",inj,JSON.stringify(drForm(Math.min(DR_REG,c+1))),Object.keys(TV.days).length,today()].join("§")))}catch(e){return"x"}}
 function avvia(){if(RUN)return;const key=chiave();if(RES&&RES.key===key)return;
@@ -15750,7 +15769,7 @@ function avvia(){if(RUN)return;const key=chiave();if(RES&&RES.key===key)return;
     const p={},p1={},w={};P.T.forEach(t=>{p[t]=hit[t]/NSIM;p1[t]=first[t]/NSIM;w[t]=ew[t]/NSIM});
     /* 0% e 100% solo se è matematico: fuori = anche vincendo tutto non arriva alle vittorie della 4ª di adesso; dentro = al massimo 3 altre possono arrivare alle sue vittorie */
     const rem=P.turns.length,W0=P.T.map(t=>base[t].w).sort((a,b)=>b-a);P.T.forEach(t=>{if(base[t].w+rem<W0[TOPN-1])p[t]=0;else if(p[t]===0)p[t]=.001;
-      if(P.T.filter(o=>o!==t&&base[o].w+rem>=base[t].w).length<TOPN)p[t]=1;else if(p[t]===1)p[t]=.999});const m={};P.T.forEach(t=>m[t]=nsc?sm[t]/nsc:null);RES={key,p,p1,w,m,rem:P.turns.length,cal:{emp:Math.round(cal.emp),sim:Math.round(cal.sim||0),extra:Math.round(cal.extra),fac:Math.round(cal.fac*1000)/1000},n:NSIM,ts:Date.now()};RUN=null;
+      if(P.T.filter(o=>o!==t&&base[o].w+rem>=base[t].w).length<TOPN)p[t]=1;else if(p[t]===1)p[t]=.999});const m={};P.T.forEach(t=>m[t]=nsc?sm[t]/nsc:null);const ana=analisi(P,m,cal);RES={key,p,p1,w,m,ana,rem:P.turns.length,cal:{emp:Math.round(cal.emp),sim:Math.round(cal.sim||0),extra:Math.round(cal.extra),fac:Math.round(cal.fac*1000)/1000},n:NSIM,ts:Date.now()};RUN=null;
     try{localStorage.setItem(LSK,JSON.stringify(RES))}catch(e){}mostra()};
   setTimeout(passo,30)}
 const fmt=v=>{const x=v*100;return x>=99.5&&v<1?">99%":x<.5&&v>0?"<1%":Math.round(x)+"%"};
@@ -15760,17 +15779,37 @@ window.drPoff=function(t){avvia();if(!RES||RES.p[t]==null)return`<span class="po
   return`<span class="pof ${cls(v)}" data-pof="${t}">${RES.fine?(v?"Playoff ✓":"Fuori dai playoff"):`Playoff <b>${fmt(v)}</b>`}</span>`};
 window.drPoffRes=()=>RES;
 /* (1055) scheda della squadra (Classifica › squadra): sezione Playoff con prime 4, primo posto, vittorie previste e media prevista a turno */
+const sur=n=>{const p=n.replace(/\s+(Jr\.?|II|III|IV)$/i,"").split(" ");return p.length>1?p.slice(1).join(" "):p[0]};
+const dIt=d=>/^\d{4}-/.test(d)?d.slice(8)+"/"+d.slice(5,7):d;
+function anaHtml(t){const A=RES.ana&&RES.ana[t];if(!A)return"";const RLN={G:"Guardie",F:"Ali",C:"Centri"},sg=v=>(v>0?"+":"")+v;
+  const forti=[],deboli=[];
+  for(const ro of["G","F","C"]){const[v,d]=A.rep[ro];(d>=8?forti:d<=-8?deboli:[]).push(`<b>${RLN[ro]}</b> ${v} PDK attesi (${sg(d)} sulla media della lega)`)}
+  if(A.stars.length)forti.unshift(`<b>Stelle</b>: ${A.stars.map(([n,v])=>`${sur(n)} ${pdkF(v)}`).join(", ")} a partita`);
+  A.up.forEach(([n,d])=>forti.push(`<b>${sur(n)}</b> va meglio dell'anno scorso (+${pdkF(d)} a partita)`));
+  A.down.forEach(([n,d])=>deboli.push(`<b>${sur(n)}</b> sotto l'anno scorso (−${pdkF(-d)} a partita): il calcolo si aspetta che risalga in parte`));
+  A.inj.forEach(([n,r])=>deboli.push(`<b>${sur(n)}</b> ${r==="dubbio"?"in dubbio":"fuori fino al "+dIt(r)}`));
+  if(A.reg!=null){const d=A.reg-A.regL;(d<=-8?forti:d>=8?deboli:[]).push(d<=-8?`<b>Regolare</b>: scarto tipo ${A.reg} PDK tra un turno e l'altro (lega ${A.regL})`:`<b>Altalenante</b>: scarto tipo ${A.reg} PDK tra un turno e l'altro (lega ${A.regL})`)}
+  const calT=A.cal==null?"":Math.abs(A.cal)<4?"Calendario nella media: gli avversari che restano valgono come la media della lega.":A.cal>0?`Calendario <b>più duro</b>: gli avversari che restano fanno in media ${A.cal} PDK a turno in più degli altri.`:`Calendario <b>più facile</b>: gli avversari che restano fanno in media ${-A.cal} PDK a turno in meno degli altri.`;
+  const li=a=>a.length?`<ul>${a.map(x=>`<li>${x}</li>`).join("")}</ul>`:`<p>—</p>`;
+  const st=drStand(),pos=st.findIndex(x=>x.t===t)+1,riv=Object.keys(RES.p).filter(o=>o!==t&&RES.p[o]>.05&&RES.p[o]<.92).sort((a,b)=>RES.p[b]-RES.p[a]);
+  const pv=RES.p[t],perche=pv>=.95?`Le prime 4 sono quasi sicure: ${pos}ª oggi e una media prevista tra le più alte.`:pv<=.05?`Per le prime 4 servirebbe una rimonta: la media prevista è lontana da quella delle squadre davanti.`:
+    `Per le ultime posizioni delle prime 4 se la gioca con ${riv.map(o=>`${TEAMS[o].nick} (${fmt(RES.p[o])}, media prevista ${Math.round(RES.m[o])})`).join(", ")||"le squadre vicine"}.`;
+  return`<div class="dtana"><h5>Analisi</h5><p>Media prevista <b>${A.mt}</b> PDK a turno contro <b>${A.mL}</b> della media della lega. ${calT}</p><p>${perche}</p>
+  <div class="dtana2"><div><h6>Punti forti</h6>${li(forti)}</div><div><h6>Punti deboli</h6>${li(deboli)}</div></div>
+  <p class="dtanw">Come pesa il calcolo per questa squadra: stagione in corso <b>${A.wc}%</b>, stagioni passate <b>${100-A.wc}%</b> (sale con le partite giocate, come per il valore dei giocatori).</p></div>`}
 window.drPoffTeam=function(t){avvia();const c=(l,v,sub)=>`<div class="dtc"><small>${l}</small><b>${v}</b>${sub?`<em>${sub}</em>`:""}</div>`;
   if(!RES||RES.p[t]==null)return`<div class="dtsec dtpof"><h4>Playoff<small>calcolo in corso…</small></h4></div>`;
   if(RES.fine)return`<div class="dtsec dtpof"><h4>Playoff<small>stagione regolare finita</small></h4><div class="dtg dtg2">${c("Tabellone",RES.p[t]?"Titolo (1ª–4ª)":"5ª–8ª")}</div></div>`;
   const st=drStand(),me=st.find(x=>x.t===t);
   return`<div class="dtsec dtpof"><h4>Playoff<small>simulazione dei ${RES.rem} turni che restano</small></h4><div class="dtg">${c("Prime 4",fmt(RES.p[t]),"tabellone del titolo")}${c("Primo posto",fmt(RES.p1[t]))}${c("Vittorie a fine stagione",pdkF(RES.w[t]),me?`oggi ${me.w}`:"")}</div>
-  <p class="note">Media prevista a turno nei turni che restano: <b>${RES.m&&RES.m[t]!=null?pdkF(RES.m[t]):"—"}</b> PDK. ${RES.n} stagioni simulate con i giocatori della formazione (media e trend recente, partita migliore del turno), il calendario NBA, gli infortuni con la data di rientro e gli scontri diretti che restano; tarata sui punteggi veri dei turni chiusi.</p></div>`};
+  ${anaHtml(t)}
+  <p class="note">Media prevista a turno nei turni che restano: <b>${RES.m&&RES.m[t]!=null?pdkF(RES.m[t]):"—"}</b> PDK. ${RES.n} stagioni simulate con i giocatori della formazione (stagione in corso con il trend recente e stagioni passate, partita migliore del turno), il calendario NBA, gli infortuni con la data di rientro e gli scontri diretti che restano; tarata sui punteggi veri dei turni chiusi.</p></div>`};
 /* parte da sola dopo il caricamento (la classifica della Home può essere disegnata prima di questo script) */
 setTimeout(()=>{try{avvia()}catch(e){}},1200);
 function mostra(){if(document.querySelector('.dtpof')){const y=scrollY;try{render()}catch(e){}scrollTo(0,y)}document.querySelectorAll("[data-pof]").forEach(el=>{const h=drPoff(el.dataset.pof);const tmp=document.createElement("span");tmp.innerHTML=h;el.replaceWith(tmp.firstChild)})}
 })();
 </script>
+<style>/* (1057) analisi playoff nella scheda squadra */.dtana{margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)}.dtana h5{margin:0 0 6px;font:800 italic 15px var(--display),system-ui;text-transform:uppercase;letter-spacing:.04em}.dtana p{margin:4px 0;font-size:13.5px;line-height:1.45}.dtana2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 0}@media(max-width:520px){.dtana2{grid-template-columns:1fr}}.dtana h6{margin:0 0 4px;font:800 12px var(--display),system-ui;text-transform:uppercase;letter-spacing:.06em;opacity:.8}.dtana2>div:first-child h6{color:#22c55e}.dtana2>div:last-child h6{color:#f87171}.dtana ul{margin:0;padding-left:18px;font-size:13px;line-height:1.45}.dtana li{margin:2px 0}.dtanw{opacity:.75;font-size:12.5px!important}html:not(.notte) .dtana{background:rgba(0,0,0,.05)}</style>
 <style>/* (1053) percentuale playoff in classifica */.pof{font-weight:700;white-space:nowrap}.pof b{font-weight:900}.pof.hi b{color:#22c55e}.pof.md b{color:#eab308}.pof.lo b{color:#f97316}.pof.vl b{color:#ef4444}html:not(.notte) .pof.hi b{color:#15803d}html:not(.notte) .pof.md b{color:#a16207}</style>
 </body>
 </html>
