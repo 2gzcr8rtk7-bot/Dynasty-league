@@ -8,7 +8,11 @@
 #   (non ci sono più corse notturne: la notte vale il live sul telefono, i dati diventano ufficiali dalle 07:30)
 #   (1575) PRIMO TENTATIVO SEMPRE ALLE 07:30 ITALIANE, d'inverno e con l'ora legale: il cron gira ogni 30 minuti dalle 05:00 UTC e ogni corsa
 #              prima delle 07:30 di Roma esce subito senza fare niente (così l'ora legale non sposta più l'orario).
-#   0,30 5-21 → TENTATIVI CONTINUI ogni 30 minuti dalle 07:30 italiane fino a sera (07:30, 08:00, 08:30, ...): se la notte è già
+#   (16/11/2026) GitHub a volte SALTA le corse programmate ai minuti :00 e :30 (ore di punta dei server): il 16/11 non è partita
+#              nessuna corsa fra le 07:30 e le 08:50. Per questo ora si usano minuti "storti" e più tentativi la mattina:
+#              4,19,34,49 dalle 05 alle 09 UTC (ogni 15 minuti: primo tentativo utile 07:34 italiane) e 4,34 dalle 10 alle 21 UTC.
+#              Se una corsa salta, la successiva arriva dopo 15 minuti invece di 30.
+#   (vecchio: 0,30 5-21) → TENTATIVI CONTINUI ogni 30 minuti dalle 07:30 italiane fino a sera (07:30, 08:00, 08:30, ...): se la notte è già
 #              nell'app non fanno niente (pochi secondi). Ogni corsa prova ESPN fino a 3 volte (a 3 minuti di distanza).
 #              Prima delle 08:00 italiane solo ESPN (se non va si aspetta la corsa dopo); dalle 08:00 se ESPN non va si usa la riserva Dunkest.
 #              Se alle 09:00 la notte manca ancora il job fallisce (mail di GitHub) ma i tentativi continuano lo stesso fino a sera, senza arrendersi.
@@ -17,7 +21,8 @@
 name: report-dati
 on:
   schedule:
-    - cron: "0,30 5-21 * * *"
+    - cron: "4,19,34,49 5-9 * * *"
+    - cron: "4,34 10-21 * * *"
   workflow_dispatch:
     inputs:
       prova:
