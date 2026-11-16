@@ -15653,6 +15653,8 @@ main .view:has(.tvdual) .tvtabs{display:none}
 </style>
 <script>/* (1053) PROBABILITÀ PLAYOFF (tabellone titolo = 1ª–4ª dopo il turno 37) — simulazione Monte Carlo della stagione regolare che resta.
    Regola Francesco: al posto di «N turni giocati · −X V» in classifica (Home e Dreamers) la percentuale di entrare tra le prime 4, calcolata davvero:
+   - (1056) ANNO SCORSO: come per il valore dei giocatori, la stagione in corso pesa g/(g+15) e il resto le stagioni passate (25/26 peso 1, 24/25 ½);
+     all'inizio conta di più l'anno scorso, poi sempre meno. La parte «stagione in corso» è fatta così:
    - GIOCATORI: per ogni giocatore della formazione (drForm del turno, senza chi è fuori per trade speciale) un PDK atteso per partita che pesa
      la media stagionale (45%) e il TREND recente (55%, media pesata con le ultime partite che contano di più, mezza vita 6 partite), con
      variabilità propria (deviazione standard delle sue partite; nel turno conta la sua MIGLIORE partita, come drEff/acc.b: ogni partita si simula a parte e si prende la più alta) e prudenza per chi ha poche partite (avvicinato a un valore base).
@@ -15670,7 +15672,7 @@ main .view:has(.tvdual) .tvtabs{display:none}
    2000 stagioni simulate a pezzi (non blocca l'app), con seme fisso: lo stesso stato dà sempre gli stessi numeri. Risultato salvato sul telefono
    (dl_poff) finché non cambiano turni chiusi, dati ufficiali, infortuni o formazioni. */
 (function(){
-const NSIM=2000,TOPN=4,LSK="dl_poff2";
+const NSIM=2000,TOPN=4,LSK="dl_poff3";
 let RES=null,RUN=null;
 const rngOf=s=>()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
 const gss=r=>{let u=0;while(u===0)u=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*r())};
@@ -15678,12 +15680,16 @@ const add=(d,k)=>{const x=new Date(d+"T12:00:00Z");x.setUTCDate(x.getUTCDate()+k
 const today=()=>new Intl.DateTimeFormat("en-CA",{timeZone:"America/New_York"}).format(new Date());
 function hashStr(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
 /* PDK atteso e variabilità di un giocatore */
-function plModel(n){const G=(PARTITE[n]||[]).filter(r=>r&&typeof r[3]==="number"&&r[8]!=="L").map(r=>r[3]);const N=G.length;
-  if(!N)return{mu:12,sd:9};
-  const s=G.reduce((a,x)=>a+x,0)/N;let sw=0,sx=0;G.forEach((x,i)=>{const w=Math.pow(.5,(N-1-i)/6);sw+=w;sx+=w*x});const rec=sx/sw;
-  let mu=N>=4?.45*s+.55*rec:s;mu=(N*mu+3*Math.min(mu,18))/(N+3);/* poche partite: prudenza */
-  const v=N>1?G.reduce((a,x)=>a+(x-s)*(x-s),0)/(N-1):0;let sd=Math.sqrt(v);sd=Math.max(sd,6,.22*Math.abs(mu));if(N<4)sd=Math.max(sd,.35*Math.abs(mu),9);
-  return{mu,sd}}
+/* (1056) come per il valore dei giocatori: la stagione in corso pesa g/(g+15) (g = partite giocate), il resto lo fanno le stagioni passate
+   (2025/26 peso 1, 2024/25 peso ½, ridotte se meno di 20 partite: valBaseStorica). A inizio anno conta di più l'anno scorso, poi sempre meno. */
+function storia(n){let num=0,den=0,vv=0;for(const[sz,wk]of[["2025/26",1],["2024/25",.5]]){const a=((typeof STAGIONI!=="undefined"&&STAGIONI[sz])||{})[n]||[];const P=a.map(x=>+x[3]).filter(x=>Number.isFinite(x));if(!P.length)continue;const w=wk*Math.min(1,P.length/20),m=P.reduce((s,x)=>s+x,0)/P.length;num+=w*m;den+=w;vv+=w*(P.length>1?P.reduce((s,x)=>s+(x-m)*(x-m),0)/(P.length-1):0)}return den?{m:num/den,sd:Math.sqrt(vv/den),w:den}:null}
+function plModel(n){const G=(PARTITE[n]||[]).filter(r=>r&&typeof r[3]==="number"&&r[8]!=="L").map(r=>r[3]);const N=G.length,H=storia(n);
+  if(!N&&!H)return{mu:12,sd:9};
+  let muC=null,sdC=null;if(N){const s=G.reduce((a,x)=>a+x,0)/N;let sw=0,sx=0;G.forEach((x,i)=>{const w=Math.pow(.5,(N-1-i)/6);sw+=w;sx+=w*x});const rec=sx/sw;
+    muC=N>=4?.45*s+.55*rec:s;sdC=N>1?Math.sqrt(G.reduce((a,x)=>a+(x-s)*(x-s),0)/(N-1)):null}
+  let mu,sd;if(H){const wc=N/(N+15);mu=N?wc*muC+(1-wc)*H.m:H.m;sd=sdC!=null?wc*sdC+(1-wc)*H.sd:H.sd}
+  else{mu=(N*muC+3*Math.min(muC,18))/(N+3);sd=sdC||0;if(N<4)sd=Math.max(sd,.35*Math.abs(mu),9)}/* rookie / senza storia NBA: solo l'anno in corso, con prudenza */
+  sd=Math.max(sd||0,6,.22*Math.abs(mu));return{mu,sd}}
 /* data di rientro dal Centro Medico */
 function rientro(n){try{const I=INJ[n];if(!I||I.stato!=="out")return null;const m=/(\d{1,2})\/(\d{1,2})/.exec(I.rientro||"");const t=today();
   if(!m)return add(t,10);let y=+t.slice(0,4);const mo=+m[2];if(mo<+t.slice(5,7)-2)y++;return`${y}-${String(mo).padStart(2,"0")}-${String(+m[1]).padStart(2,"0")}`}catch(e){return null}}
