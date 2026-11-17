@@ -4139,3 +4139,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 
 - v1082: Ducks versione lime, di giorno: campo antracite (#2a2d33, venature chiare leggere) al posto del ghiaccio, cornice lime #87cd13 (scelta dell utente: cornice della variante A, campo della variante C). Viola e notte invariati.
 - v1083: con lo stile Carbone e oro (th "oro") i Ducks passano da soli alla versione lime (flag dl_ductema_auto, classe html.ducoro) con campo antracite e cornice lime, anche di notte (ricolora #txfl). Lasciando lo stile tornano viola se il lime era stato messo in automatico. Campo Gotham escluso.
+- v1084: Ducks lime SOLO con stile Carbone e oro e di giorno, per tutti. Di notte Ducks esattamente come prima (viola), con ogni altro stile Ducks normali anche se sul telefono era stato scelto lime a mano. Tolte le modifiche notturne della v1083.
