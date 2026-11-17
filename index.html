@@ -3510,8 +3510,8 @@ function kitC(t,k){if(t==="TUR"&&k<=2){/* (1075) Turtles con i dettagli ORO: col
   if(t==="DUC"&&k<=2){const B=[{bg:"#facc15",fg:"#111111",trim:"#111111"},{bg:"#141414",fg:"#facc15",trim:"#facc15"},{bg:"#f7f7f5",fg:"#111111",trim:"#111111",jstroke:"#facc15",jsw:2.4,pin:"#facc15",fp:"#facc15"}][k];return{...T,...B,np:1,mix:1,fpL:DUC_F3,...(k===2?{pin:"#111111"}:{})}}/* (1167) torna lo zig zag dritto *//* (1152) spalla spessa liscia + bordo a zig zag; (1150) Ducks: 0 gialla, 1 nera, 2 bianca, tutte zig zag originale + impronte + gessato */
   if(t==="PEA"){/* 30/10/2026 Peacocks: 1 blu con dettagli verdi, 2 rosa (colore sfondo) con dettagli verdi, 3 "piuma di pavone" */
     if(k===1)return{...T,bg:"#f70990",fg:"#ffffff",trim:"#012dd5",jstroke:"#012dd5",outer:"#012dd5",feather:1,fline:"#16b35a"};
-    if(k===2)return{...T,bg:"#0b4b57",fg:"#f70990",trim:"#f70990",jstroke:"#ffffff",outer:"#0a1f3d",feather:1,ftint:1,fline:"#2f6bff"};
-    if(k===0)return{...T,bg:"#012dd5",fg:"#ffffff",trim:"#16b35a",jstroke:"#0b5e30",outer:"#16b35a",feather:1,fline:"#16b35a"};}
+    if(k===2)return{...T,bg:"#0f8a8f",fg:"#f70990",trim:"#ff1a9c",jstroke:"#ffffff",outer:"#0a1f3d",feather:1,ftint:1,fline:"#4d8bff"};/* (1077) più acceso (prima bg #0b4b57) */
+    if(k===0)return{...T,bg:"#1d4dff",fg:"#ffffff",trim:"#1fd36b",jstroke:"#0b5e30",outer:"#1fd36b",feather:1,fline:"#1fd36b"};}/* (1077) più acceso (prima bg #012dd5, verde #16b35a) */
   const casa=t==="DUC"?{...T,bg:"#facc15",np:1,duc0:1}/* (1133) gialla nello stile della notte: denti + gessato */:t==="SPI"?{...T,bg:"#ffffff",fg:"#111111"}:t==="DOL"?{...T,bg:"#f4f6f8",fg:"#1747c9",trim:"#1747c9",jstroke:"#ffffff",outer:"#1747c9"}:T;
   if(k===1)return t==="DUC"?{...T,bg:"#141414",fg:"#facc15",trim:"#facc15",duc0:1}:t==="PEA"?{...T,bg:"#0f6b3f",fg:"#ffffff",trim:"#2f6bff",jstroke:"#062e1b",outer:"#2f6bff"}/* Peacocks: maglia "notte" verde pavone invece che nera */:{...T,bg:"#151515",fg:"#ffffff",trim:NOTTE_ACC(t),jstroke:"#000000",outer:NOTTE_ACC(t)};
   if(k===2){const lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
@@ -16038,5 +16038,13 @@ window.crDisp=function(t,v){try{if(!t||!TEAMS[t])return"";const c=iaCassa(t),pf=
   return`<small class="vtcrd ${over?"ko":""}">${over?`⚠ Troppi: al massimo ${tot} cr · `:`Può dare fino a <b>${tot} cr</b> · `}cassa ${c} · portafoglio ${pf} · post-Draft ${pm.max} (posto più alto ancora possibile ${pm.best}°, premio sicuro ${pm.lim}${pm.owed?` − ${pm.owed} già promessi`:""})</small>`}catch(e){return""}};
 </script>
 <style>.vtcrd{display:block;margin:0 0 10px;font:500 11.5px/1.35 Barlow,system-ui;opacity:.85;text-align:center}.vtcrd b{font-weight:800}.vtcrd.ko{color:#dc2626;opacity:1;font-weight:700}</style>
+<script>/* (1077) Peacocks: scritta «DPK» a blocchi con le grazie e arco (quella del primo render, presa dal tracciato di PEA_JV) al posto del testo
+   sulle maglie 0 blu (bianca bordo verde), 1 rosa (bianca bordo blu), 2 piuma (rosa bordo scuro). */
+(function(){try{const G=PEA_JV[0][0].match(/<g transform="translate\(18\.[0-9]+,6\.50\) scale\(0\.09\d+\)"[^>]*>(<path[^>]*\/>)(<path[^>]*\/>)<\/g>/);if(!G)return;
+ const D=G[1].match(/ d="([^"]*)"/)[1],tr=G[0].match(/transform="([^"]*)"/)[1],C=[["#ffffff","#1fd36b"],["#ffffff","#012dd5"],["#f70990","#0a1f3d"]];
+ const J0=jersey;jersey=function(t,num,name){let s=J0.apply(this,arguments);if(t!=="PEA")return s;let k;try{k=kitDi(t)}catch(e){return s}if(!(k>=0&&k<=2))return s;
+  if(!/>DPK<\/text>/.test(s))return s;const c=C[k];
+  return s.replace(/<text x="60" y="60"[^>]*>DPK<\/text>\s*/g,"").replace('<text x="61.5" y="106.5"',`<g transform="${tr}" stroke-linejoin="round"><path d="${D}" fill="none" stroke="${c[1]}" stroke-width="35.5"/><path d="${D}" fill="${c[0]}"/></g><text x="61.5" y="106.5"`)};window.jersey=jersey}catch(e){console.error(e)}})();
+</script>
 </body>
 </html>
