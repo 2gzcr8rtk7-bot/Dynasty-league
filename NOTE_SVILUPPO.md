@@ -4159,3 +4159,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1101: bacheca Ducks negli stili scuri di giorno nel colore dello stile (effetto metallico spazzolato con --red/--red2, scritte --onred): Classico rosso, Cyber azzurro, Carbone e oro oro. Parquet invariato.
 - v1102: tolta l animazione Scintille dal campo neon dei Ducks (non piaciuta). Resta la Griglia neon statica.
 - v1103: bacheca Ducks negli stili scuri di giorno neutra come le altre squadre (fondo scuro, linea a sinistra e scritta BACHECA nel colore --gold dello stile); tolta la striscia metallica (1094/1101). Parquet invariato.
+- v1104: Ducks negli stili scuri di giorno: scritte TEXAS DUCKS sopra il campo e DUCKS del banner squadra (.dxnick) verde fluo #a3e635, striscia sopra il campo viola #5b21b6 (variante 3). Parquet e notte invariati.
