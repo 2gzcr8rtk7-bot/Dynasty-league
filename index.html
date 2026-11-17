@@ -16056,5 +16056,13 @@ window.TUR_WM={"o":"M1925 280L1916 274L1898 274L1882 280L1780 296L1686 315L1621 
   const g="tg"+(K++);s=s.replace("<defs>",`<defs><linearGradient id="${g}p" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc21a"/><stop offset=".5" stop-color="#ff8c00"/><stop offset="1" stop-color="#ff5a00"/></linearGradient><linearGradient id="${g}h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd23f"/><stop offset=".5" stop-color="#ffb000"/><stop offset="1" stop-color="#ff7a00"/></linearGradient>`).replace(/stroke="#f5b400"/g,`stroke="url(#${g}h)"`).replace(/fill="#c98a00"/g,`fill="url(#${g}p)"`).replace(/stroke="#ffe27a"/g,'stroke="#fff3b0"');
   return s.replace(/<text x="60" y="60"[^>]*>TURTLES<\/text>\s*/g,"").replace('<text x="61.5" y="106.5"',wm(k)+'<text x="61.5" y="106.5"')};window.jersey=jersey})();
 </script>
+<style>/* (1080) banner SQUADRE / notizie (tkbar) nei colori dello stile scelto (stili con --panel, tranne Parquet che ha il suo; di notte resta viola). Testo bianco, o --fg per gli stili chiari */
+html[style*="--panel:"]:not(.dlt-parquet):not(.notte) .tkbar:not(#z){background:var(--panel)!important;border-color:var(--red)!important;box-shadow:0 4px 12px rgba(0,0,0,.35)!important}
+html[style*="--panel:"]:not(.dlt-parquet):not(.notte) .tklab:not(#z){background:linear-gradient(180deg,var(--red2),var(--red))!important}
+html[style*="--panel:"]:not(.dlt-parquet):not(.notte) body .tklab:not(#z),html[style*="--panel:"]:not(.dlt-parquet):not(.notte) body .tklab *:not(#z){color:var(--onred)!important;-webkit-text-fill-color:var(--onred)!important}
+html[style*="--panel:"]:not(.dlt-parquet):not(.notte) .tki:not(#z){color:#fff!important;border-right-color:var(--line)!important}
+html[style*="--panel:"]:not(.dlt-parquet):not(.notte) body .tki b:not(#z),html[style*="--panel:"]:not(.dlt-parquet):not(.notte) body .tki em:not(#z){color:#fff!important;-webkit-text-fill-color:#fff!important}
+html[style*="--fg: #"]:not(.dlt-parquet):not(.notte) .tki:not(#z),html[style*="--fg: #"]:not(.dlt-parquet):not(.notte) body .tki b:not(#z),html[style*="--fg: #"]:not(.dlt-parquet):not(.notte) body .tki em:not(#z){color:var(--fg)!important;-webkit-text-fill-color:var(--fg)!important}</style>
+
 </body>
 </html>
