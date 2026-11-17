@@ -4150,3 +4150,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1092: calendario Dreamers, sotto «N notti» le date di inizio e fine turno (prima e ultima notte, date USA), piccole e grigie (.drcd).
 - v1093: pagina Ducks (campo antracite con cornice viola, cassa viola) anche con Cyber e Classico di giorno, come Carbone e oro (classe ducoro). Parquet e notte invariati.
 - v1094: pagina Ducks negli stili scuri di giorno (ducoro): bacheca in oro metallico spazzolato (variante D scelta), scritte scure. Parquet e notte invariati.
+- v1095: campo ufficiale Dolphins di giorno (DL_OFF.DOL) uguale in tutti gli stili: parquet blu #0059e6, linee e cornice bianche, banner bianco con scritta scura (#1d1d1f, anche col Parquet che forzava il bianco). Notte invariata.
