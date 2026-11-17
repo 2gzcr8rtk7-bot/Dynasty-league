@@ -13229,7 +13229,7 @@ function dmOpen(k,a,b){try{const st=drStand(),P=drPO(st),W=drWeek(k),A=drTeam(k,
   SHR_DM={k,a,b,A,B,ph:DR_PH(k,P),range:`${drNn(W)}`,lv:!W.closed&&W.started,closed:W.closed};shOpen("dm")}catch(e){console.error(e)}}
 document.addEventListener("click",e=>{const x=e.target.closest("[data-drsh]");if(!x)return;e.preventDefault();e.stopPropagation();const[k,a,b]=x.dataset.drsh.split("|");dmOpen(+k,a,b)},true);
 async function dmJer(t,p){let e=(ROSTER[t]||[]).find(q=>q[0]===p.n);if(!e)for(const k in ROSTER){e=(ROSTER[k]||[]).find(q=>q[0]===p.n);if(e)break}
-const num=e?e[1]:"";let sv=jersey(t,num,p.n).replace(/<text[^>]*filter="[^"]*"[^>]*>[^<]*<\/text>/g,"").replace(/stroke-width="3\.6"/g,'stroke-width="1.8"').replace(/stroke-width="3\.2"/g,'stroke-width="1.6"').replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"');
+const num=e?e[1]:"";let sv=jerseyShare(t,num,p.n)/* (1064) come le altre condivisioni: tessuti Dolphins/Peacocks in data: e niente doppio xmlns (prima qui le loro maglie erano invisibili) */.replace(/<text[^>]*filter="[^"]*"[^>]*>[^<]*<\/text>/g,"").replace(/stroke-width="3\.6"/g,'stroke-width="1.8"').replace(/stroke-width="3\.2"/g,'stroke-width="1.6"').replace("<svg",'<svg xmlns="http://www.w3.org/2000/svg"');
 return ldImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(sv))}
 /* giocatore: maglia + targhetta nome (ruolo + cognome) + cartellino PDK; cx = centro, y = alto della maglia */
 async function dmPlayer(c,t,p,cx,y,jw,fsN,pw,ph,cap,mul){mul=mul||1;const im=await dmJer(t,p),jh=jw*77/64;
