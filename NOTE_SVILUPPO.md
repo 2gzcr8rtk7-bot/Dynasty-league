@@ -4164,3 +4164,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1106: Live stanotte, vista Notte (N1/N2/N3): mostra solo i giocatori che giocano quella notte (tolte le righe «nessuna partita stanotte», REST). Nella vista Turno restano tutti.
 - v1107: Ducks negli stili scuri di giorno: anche il record (7-1) del banner verde fluo.
 - v1108: valore Cedric Coward portato a 900 (era 530 di partenza, 615 con gli aggiornamenti automatici); VAL_BASE nuova partenza 2026-11-16. Prezzo fisso invariato (40).
+- v1109: partita per partita (scheda giocatore) e tabella dsbx: le regole crema html:not(.notte) ora valgono solo col Parquet (html.dlt-parquet); negli stili scuri colonna Data su --panel e righe dei mesi nel colore dello stile. Anche .cspg crema limitato al Parquet.
