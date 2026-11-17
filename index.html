@@ -3089,6 +3089,7 @@ window.TEXI={"img/peag-s1.jpg": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQAB
 <!-- (1566) infortuni ESPN salvati da GitHub col report del mattino (ripiego se il telefono non raggiunge ESPN); se il file manca l app va avanti lo stesso -->
 <script src="infortuni-data.js"></script>
 <script src="hl-data.js"></script>
+<script src="calendario-proposte.js" onerror="window.CAL_PROPOSTE=null"></script><!-- (1071) proposte di calendario della stagione nuova (GitHub) -->
 <script>
 /* (592) anello di caricamento dati: conta le richieste verso ESPN / NBA e riempie l'anello attorno al logo */
 (function(){const F=window.fetch;if(!F)return;let n=0,d=0,t=null,el=null;
@@ -5873,7 +5874,8 @@ document.addEventListener("click",e=>{
     else if(a==="imp"){try{const arr=JSON.parse(document.getElementById("osin").value.trim());if(!Array.isArray(arr))throw 0;arr.filter(x=>typeof x==="string"&&x.length<80).forEach(x=>{if(!SEGUI.includes(x))SEGUI.push(x)});segSave();const y=scrollY;render();scrollTo(0,y)}catch(er){oc.textContent="Testo non valido";setTimeout(()=>oc.textContent="Importa",1800)}}
     else if(a==="clr"){if(SEGUI.length&&confirm("Smettere di seguire tutti i giocatori?")){SEGUI=[];segSave();render()}}}
 },true);
-function vHome(){
+function vHome(){const __cb=window.calBanner?calBanner():"";return __cb+vHome0()}
+function vHome0(){
   const st=standings();
   return `<div class="hbar"><label class="hsrch"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><input id="hq" type="search" placeholder="Cerca giocatore" autocomplete="off" aria-label="Cerca giocatore"></label><button class="hseg" id="hseg" aria-label="Apri Osservatorio (giocatori seguiti)">${SEG_SVG(false).replace('fill="none"','fill="currentColor"')}${segBadgeHtml()}</button><button class="tvgo" id="tvgo" aria-label="Apri Dynasty TV"><i class="tvdot"></i><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="13" height="12" rx="2.5" fill="currentColor"/><path d="M16.5 10.2l5-3v9.6l-5-3z" fill="currentColor"/></svg></button><button class="hdrm" id="hdrm" aria-label="Apri Dreamers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.4C12.53 7.93 15.14 11.71 22 12C15.14 12.29 12.53 16.07 12 22.6C11.47 16.07 8.86 12.29 2 12C8.86 11.71 11.47 7.93 12 1.4Z" fill="currentColor"/></svg></button></div><div class="hres" id="hres" hidden></div>${HN_L!=="0"?homeNotte(st):`<div class="hgrid">${teamOrd().map(t=>{const c=TEAMS[t],x=st.find(y=>y.t===t);return `<button class="htile" data-team="${t}" style="--tc:${c.bg};--tt:${c.trim}" aria-label="Roster ${c.name}"><span class="hlg">${badge(t)}</span><span class="hnm"><small>${c.city}</small><b>${c.nick}</b></span><span class="hrec">${x.w}-${x.l}</span></button>`}).join("")}</div>`}`;
 }
@@ -15991,5 +15993,35 @@ window.premiBox=function(t){const D=drPremi(t);if(!D)return"";
 .cassa .cprzl li b{white-space:nowrap;font-weight:800}.cassa .cprzl li.p b{color:#4ade80}.cassa .cprzl li.n b{color:#f87171}.cassa .cprzl li.w{opacity:.8}
 .cassa .cprzn{margin:0;padding:6px 12px 10px;font:500 11.5px/1.4 Barlow,system-ui;opacity:.75}
 html:not(.notte) .cassa .cprz small{color:#b7790b}html:not(.notte) .cassa .cprz summary>b{color:#b7790b}html:not(.notte) .cassa .cprz.prev summary>b{color:rgba(183,121,11,.6)}html:not(.notte) .cassa .cprzl li.p b{color:#15803d}html:not(.notte) .cassa .cprzl li.n b{color:#b91c1c}</style>
+<script>/* (1071) PROPOSTE DI CALENDARIO DELLA STAGIONE NUOVA: quando GitHub (tools/proposte_calendario.mjs) trova su ESPN il calendario NBA della
+   stagione dopo, scrive calendario-proposte.js (CAL_PROPOSTE) e qui compare a TUTTI un banner in Home che apre le opzioni (cur="calprop").
+   Nessuna opzione si attiva da sola: Francesco sceglie, poi si copia in DR_TURNI / DR_REG / DR_TOT e si mette CAL_SCELTA = id per togliere il banner. */
+(function(){
+const CAL_SCELTA=null;
+const dIt=d=>d.slice(8)+"/"+d.slice(5,7);
+window.calBanner=function(){const C=window.CAL_PROPOSTE;if(!C||!C.opzioni||!C.opzioni.length||CAL_SCELTA)return"";
+  return`<button class="calbn" data-calgo="1"><span class="ci">📅</span><span><b>Calendario Dreamers ${C.stagione}: proposte pronte</b><small>${C.opzioni.length} modi di dividere i turni · tocca per vederli e scegliere</small></span><i>›</i></button>`};
+let CS=0;
+function vCalProp(){const C=window.CAL_PROPOSTE;if(!C)return`<p class="note">Nessuna proposta di calendario per ora: arriverà quando ESPN pubblica il calendario NBA della stagione nuova.</p>`;
+  const O=C.opzioni,o=O[Math.min(CS,O.length-1)],best=Math.min(...O.map(x=>x.stat.zeri));
+  const L=Object.entries(o.stat.lens).map(([n,c])=>`${c} da ${n}`).join(" · ");
+  return`${H("Calendario "+C.stagione,`<em>proposte</em>`)}<p class="note" style="margin-top:0">Calendario NBA da ESPN: ${C.partite} partite, ${C.notti} notti dal ${dIt(C.prima)} al ${dIt(C.ultima)} (i turni finiscono 10 giorni prima della fine della regular season NBA, ${dIt(C.fineNBA)}). Ultimi ${C.playoff} turni = playoff. «A 0 partite» = squadra NBA senza partite nel turno: i suoi giocatori prendono la media.</p>
+  <div class="calops">${O.map((x,i)=>`<button class="calop ${i===CS?"on":""}" data-calop="${i}"><b>${x.id} · ${x.titolo}</b><small>${x.sub}</small><span><i class="${x.stat.zeri===best?"g":""}">${x.stat.zeri}</i> a 0 partite · ${x.tot} turni</span></button>`).join("")}</div>
+  <div class="calsum"><div><b>${o.tot}</b><small>turni</small></div><div><b>${o.reg}</b><small>regular season<br>fino al ${dIt(o.stat.fineReg)}</small></div><div><b>${o.stat.zeri}</b><small>squadre a 0 partite</small></div><div><b>${o.stat.tre}</b><small>squadre con 3+ partite</small></div><div><b>${o.stat.ok}%</b><small>squadre-turno con 1–2 partite</small></div></div>
+  <p class="note">Turni: ${L} notti.</p>
+  <div class="caltl">${o.turni.map((t,i)=>`<div class="calt ${i>=o.reg?"po":""} ${t[3].length?"z":""}"><span class="n">${i+1}</span><span class="d">${dIt(t[0])} – ${dIt(t[1])}<small>${t[2]} notti${i>=o.reg?" · playoff":""}</small></span><span class="zz">${t[3].length?`0 partite: ${t[3].join(", ")}`:""}</span></div>`).join("")}</div>
+  <p class="note">Generato da GitHub il ${C.creato}. Nessuna proposta si attiva da sola: la sceglie l'organizzazione.</p>`}
+VIEWS.calprop=vCalProp;
+document.addEventListener("click",e=>{const g=e.target.closest("[data-calgo]");if(g){cur="calprop";render();scrollTo(0,0);return}
+  const b=e.target.closest("[data-calop]");if(b){CS=+b.dataset.calop;const y=scrollY;render();scrollTo(0,y)}});
+try{if(window.CAL_PROPOSTE&&cur==="home")render()}catch(e){}/* la Home è già disegnata prima di questo script */
+})();
+</script>
+<style>/* (1071) banner e pagina proposte calendario */.calbn{all:unset;box-sizing:border-box;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;width:100%;margin:0 0 12px;padding:12px 14px;border-radius:14px;cursor:pointer;background:linear-gradient(135deg,#7c3aed,#4c1d95);color:#fff;box-shadow:0 6px 18px rgba(76,29,149,.35)}
+.calbn .ci{font-size:26px}.calbn b{display:block;font:800 italic 17px var(--display),system-ui;letter-spacing:.02em}.calbn small{display:block;font:500 12.5px Barlow,system-ui;opacity:.85}.calbn i{font-style:normal;font-size:26px;opacity:.8}
+.calops{display:grid;gap:8px;margin:10px 0}.calop{all:unset;box-sizing:border-box;cursor:pointer;padding:10px 12px;border-radius:12px;border:1px solid rgba(127,127,127,.35);display:grid;gap:2px}.calop.on{border-color:#7c3aed;background:rgba(124,58,237,.14)}.calop b{font:800 italic 15px var(--display),system-ui}.calop small{font:500 12px Barlow,system-ui;opacity:.75}.calop span{font:600 12.5px Barlow,system-ui}.calop span i{font-style:normal;font-weight:900}.calop span i.g{color:#16a34a}
+.calsum{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:6px 0}.calsum div{text-align:center;padding:8px 4px;border-radius:10px;background:rgba(127,127,127,.12)}.calsum b{display:block;font:900 italic 22px var(--display),system-ui}.calsum small{font:500 10.5px/1.25 Barlow,system-ui;opacity:.8}
+@media(max-width:480px){.calsum{grid-template-columns:repeat(3,1fr)}}
+.caltl{display:grid;gap:4px;margin:8px 0}.calt{display:grid;grid-template-columns:30px 120px 1fr;gap:8px;align-items:center;padding:6px 8px;border-radius:8px;background:rgba(127,127,127,.08);font:500 13px Barlow,system-ui}.calt .n{font:800 15px var(--display),system-ui;text-align:center}.calt .d small{display:block;opacity:.7;font-size:11px}.calt .zz{color:#dc2626;font-weight:700;font-size:12px}.calt.po{background:rgba(124,58,237,.12)}</style>
 </body>
 </html>
