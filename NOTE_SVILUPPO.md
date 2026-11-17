@@ -4138,3 +4138,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 (v1081) Logo Dreamers in alto (.lglogo) nei colori dello stile: con stili a variabili (non Parquet, non notte) l'immagine viene sostituita (CSS content) da una stella SVG su quadrato sfumato --red2→--red; stella bianca, scura se --onred non è bianco (Sole, Tabellone, Carbone e oro...). Parquet tiene il suo filtro, la notte il logo viola.
 
 - v1082: Ducks versione lime, di giorno: campo antracite (#2a2d33, venature chiare leggere) al posto del ghiaccio, cornice lime #87cd13 (scelta dell utente: cornice della variante A, campo della variante C). Viola e notte invariati.
+- v1083: con lo stile Carbone e oro (th "oro") i Ducks passano da soli alla versione lime (flag dl_ductema_auto, classe html.ducoro) con campo antracite e cornice lime, anche di notte (ricolora #txfl). Lasciando lo stile tornano viola se il lime era stato messo in automatico. Campo Gotham escluso.
