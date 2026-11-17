@@ -1863,7 +1863,7 @@ body.dreamfs .drroom{padding-top:calc(env(safe-area-inset-top,0px) + 52px)!impor
 .tstar .tsb{position:relative;display:inline-block}
 .tstar .trk{position:static;display:inline;margin-left:4px;font-style:normal;font-size:inherit;color:#38bdf8;text-shadow:0 0 6px rgba(56,189,248,.7)}
 .drplh{margin:26px 0 4px;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:.06em;color:#e9d5ff;border-left:4px solid #a855f7;padding-left:10px}
-.drfinal{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,auto);grid-auto-flow:column;gap:6px;margin-top:10px}.drfinal .drfr{padding:6px 8px;gap:7px;min-width:0}.drfinal .drfr b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.drfinal .drfr .drpos{font-size:15px;width:16px}.drfinal .drfr em{font-size:11px}.drfinal .bklg{width:22px;height:22px}
+.pobp h6 .pz4{display:block;color:#d9a520;font-weight:800;letter-spacing:.04em}.drfinal{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(4,auto);grid-auto-flow:column;gap:6px;margin-top:10px}.drfinal .drfr{padding:6px 8px;gap:7px;min-width:0}.drfinal .drfr b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.drfinal .drfr .drpos{font-size:15px;width:16px}.drfinal .drfr em{font-size:11px}.drfinal .bklg{width:22px;height:22px}
 .drfr{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:rgba(12,8,32,.75);border:1px solid rgba(196,181,253,.22)}
 .drfr .drpos{width:22px;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;color:#c4b5fd;text-align:center}
 .drfr b{font-family:var(--display);font-style:italic;font-weight:800;font-size:16px;text-transform:uppercase;color:#fff}
@@ -4422,10 +4422,10 @@ let IA={np:3,noMore:false,lv:"eq",mode:"",any:false,want:[],keep:[],tf:"",q:"",s
 const IA_LV={eq:[0,.10,0],win:[.10,.30,.20],scam:[.30,.80,.50]},IA_R={G:"Guardia",F:"Ala",C:"Centro"},IA_RP={G:"guardie",F:"ali",C:"centri"},IA_W=[1,.6,.35],IA_LIM={p:10,d:30},IA_MAXR=15;
 let iaCache={};
 const iaTeam=()=>IA.team&&TEAMS[IA.team]?IA.team:(TEAMS[curTeam]?curTeam:"DUC");
-/* Crediti post-Draft = debiti da pagare: si può promettere solo ciò che è GARANTITO dalla regular season. Premi per posizione finale: 30/40/50/150/150/250/350/450 (cresce col piazzamento peggiore),
+/* Crediti post-Draft = debiti da pagare: si può promettere solo ciò che è GARANTITO dalla regular season. Premi per posizione finale: 30/40/50/100/150/250/350/450 (cresce col piazzamento peggiore),
    quindi il minimo garantito è il premio della MIGLIORE posizione ancora raggiungibile. Una squadra può ancora arrivare al posto 1+(squadre che hanno già più vittorie di quante lei ne potrà mai fare).
    All'inizio vale 30 per tutti; più la classifica si consolida, più il tetto sale. Si sottraggono i debiti post-Draft già aperti. I premi dei playoff non contano. */
-const DR_PREMI=[30,40,50,150,150,250,350,450];
+const DR_PREMI=[30,40,50,100,150,250,350,450];/* (1069) 17/11/2026: il 4° posto della regular season prende 100 cr (non più 150) e niente slot Rookie; i 50 cr li prende chi chiude 4° ai playoff */
 function iaPostMax(t){try{const st=drStand(),rem={};Object.keys(TEAMS).forEach(x=>rem[x]=0);
   for(let k=1;k<=DR_REG;k++){if(drWeek(k).closed)continue;(DR_SCHED[k-1]||[]).forEach(([a,b])=>{rem[a]++;rem[b]++})}
   const me=st.find(x=>x.t===t),best=1+st.filter(x=>x.t!==t&&x.w>me.w+rem[t]).length,lim=DR_PREMI[Math.min(7,best-1)],
@@ -7570,7 +7570,7 @@ async function shPlayoff(){const S=SHR_PO;if(!S)return null;const P=S.P,R=P.R,R0
     c.textAlign="center";c.fillStyle="#5b3d10";c.font=SH_F(800,28,1);c.letterSpacing="0px";c.fillText("C",cx,cy+10);
     x+=2*R+16;c.textAlign="left";c.fillStyle="#d9c58a";c.font=SH_F(800,56,1);c.fillText("80",x,bl);x+=w1+12;c.font=SH_F(800,22,1);c.letterSpacing="3px";c.fillStyle="#b59b55";c.fillText("CREDITI",x,bl);c.letterSpacing="0px";c.restore()}
   c.textAlign="center";c.font=SH_F(800,22,1);c.letterSpacing="4px";c.fillStyle="rgba(196,181,253,.8)";c.fillText("PIAZZAMENTI",W/2,yPl-34);c.letterSpacing="0px";
-  box(R1[1],xL+(BW+130+BW)/2-BW/2,yPl,"Finale 3°–4° posto",["Perdente 1ª vs 4ª","Perdente 2ª vs 3ª"]);box(R1[3],xR+BW/2-(BW+130+BW)/2,yPl,"Finale 7°–8° posto",["Perdente 5ª vs 8ª","Perdente 6ª vs 7ª"],0,1);
+  box(R1[1],xL+(BW+130+BW)/2-BW/2,yPl,"Finale 3°–4° posto",["Perdente 1ª vs 4ª","Perdente 2ª vs 3ª"]);{c.save();c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,22,1);c.letterSpacing="3px";c.fillStyle="#d9c58a";c.fillText("AL 4° POSTO 50 CREDITI",xL+(BW+130+BW)/2,yPl+BH+36);c.letterSpacing="0px";c.restore()}/* (1069) */box(R1[3],xR+BW/2-(BW+130+BW)/2,yPl,"Finale 7°–8° posto",["Perdente 5ª vs 8ª","Perdente 6ª vs 7ª"],0,1);
   if(P.champ){c.textAlign="center";c.textBaseline="alphabetic";c.font=SH_F(800,22,1);c.fillStyle="#fcd34d";c.fillText("CAMPIONI",W/2,yPl+BH/2-8);c.font=SH_F(800,40,1);c.fillStyle="#fff";c.fillText(TEAMS[P.champ].name.toUpperCase(),W/2,yPl+BH/2+38)}
   shFoot(c,W,H,"Serie al meglio delle 5 · il numero è le vittorie nella serie");return cv}
 /* ===== CONDIVIDI SCHEDA GIOCATORE (28/10/2026): immagine 1080x1350 con età, PDK e efficienza medi, minuti, partite, trend dei PDK (grafico partita per partita) =====
@@ -8482,18 +8482,19 @@ const REGOLAMENTO=`<details class="rart" id="reg-1"><summary><span class="rn">01
 </div></details>
 
 <details class="rart" id="reg-5"><summary><span class="rn">05</span><span class="rt">Competizione, premi e slot Rookie<small>Articolo 5</small></span></summary><div class="rbody">
-<p>La competizione si svolge a scontri diretti. I premi in crediti sono assegnati in due momenti: al termine della <b>regular season</b>, in base alla classifica finale, e al termine dei <b>playoff</b>, ma solo alle squadre classificate dal 5° all'8° posto, che nei playoff si giocano dei crediti. Le prime 4 giocano i playoff solo per il titolo.</p>
+<p>La competizione si svolge a scontri diretti. I premi in crediti sono assegnati in due momenti: al termine della <b>regular season</b>, in base alla classifica finale, e al termine dei <b>playoff</b>, alle squadre che chiudono dal 4° all'8° posto finale. Il tabellone delle prime 4 si gioca il titolo; chi lo chiude al 4° posto prende 50 crediti.</p>
 <h5>Regular season (classifica finale della regular season)</h5>
 <div class="rtab"><table><thead><tr><th>Posizione</th><th>Crediti</th><th>Slot Rookie</th></tr></thead><tbody>
-<tr><td>1°</td><td><b>30 cr</b></td><td>–</td></tr><tr><td>2°</td><td><b>40 cr</b></td><td>–</td></tr><tr><td>3°</td><td><b>50 cr</b></td><td>–</td></tr><tr><td>4°</td><td><b>150 cr</b></td><td>sì</td></tr><tr><td>5°</td><td><b>150 cr</b></td><td>sì</td></tr><tr><td>6°</td><td><b>250 cr</b></td><td>sì</td></tr><tr><td>7°</td><td><b>350 cr</b></td><td>sì</td></tr><tr><td>8°</td><td><b>450 cr</b></td><td>sì</td></tr></tbody></table></div>
+<tr><td>1°</td><td><b>30 cr</b></td><td>–</td></tr><tr><td>2°</td><td><b>40 cr</b></td><td>–</td></tr><tr><td>3°</td><td><b>50 cr</b></td><td>–</td></tr><tr><td>4°</td><td><b>100 cr</b></td><td>–</td></tr><tr><td>5°</td><td><b>150 cr</b></td><td>sì</td></tr><tr><td>6°</td><td><b>250 cr</b></td><td>sì</td></tr><tr><td>7°</td><td><b>350 cr</b></td><td>sì</td></tr><tr><td>8°</td><td><b>450 cr</b></td><td>sì</td></tr></tbody></table></div>
 <h5>Playoff</h5>
-<p>I playoff sono due tabelloni giocati in contemporanea. Le prime 4 della regular season (1ª–4ª) si giocano <b>solo il titolo</b>. Le squadre dal 5° all'8° posto si giocano nel loro tabellone dei crediti aggiuntivi, in base alla posizione finale nel tabellone:</p>
+<p>I playoff sono due tabelloni giocati in contemporanea. Le prime 4 della regular season (1ª–4ª) si giocano <b>il titolo</b>: chi chiude il tabellone al <b>4° posto</b> (perdente della finale 3°–4°) prende <b>50 cr</b>. Le squadre dal 5° all'8° posto si giocano nel loro tabellone dei crediti aggiuntivi, in base alla posizione finale nel tabellone:</p><div class="rtab"><table><thead><tr><th>Tabellone titolo (1ª–4ª)</th><th>Crediti in più</th></tr></thead><tbody><tr><td>1°, 2°, 3° posto finale</td><td>–</td></tr><tr><td>4° posto finale</td><td><b>50 cr</b></td></tr></tbody></table></div>
 <div class="rtab"><table><thead><tr><th>Posizione nel tabellone 5ª–8ª</th><th>Crediti in più</th></tr></thead><tbody>
 <tr><td>1ª (5° posto finale)</td><td><b>80 cr</b></td></tr><tr><td>2ª (6° posto finale)</td><td><b>50 cr</b></td></tr><tr><td>3ª (7° posto finale)</td><td><b>40 cr</b></td></tr><tr><td>4ª (8° posto finale)</td><td><b>30 cr</b></td></tr></tbody></table></div>
 <div class="rnov"><b>Novità · Nuovi premi</b><p>I premi della regular season sono ora assegnati in base alla classifica finale della regular season. I playoff assegnano crediti soltanto alle squadre dal 5° all'8° posto (80 / 50 / 40 / 30 cr); le prime 4 si giocano solo il titolo.</p></div>
+<div class="rnov"><b>Novità · 4° posto (dal 17/11/2026)</b><p>Il 4° posto della regular season prende <b>100 cr</b> (non più 150) e <b>non ha più lo slot Rookie</b>. I 50 cr che mancano vanno a chi chiude <b>4° ai playoff</b> (perdente della finale 3°–4° del tabellone titolo).</p></div>
 <p>Gli eventuali premi in denaro sono stabiliti dalla commissione.</p>
-<div class="rbox"><b>Slot Rookie</b><p>Le franchigie classificate dal 4° all'8° posto ottengono uno slot Rookie aggiuntivo. Gli slot sono assegnati in base all'<b>arrivo della regular season</b> (la classifica finale della regular season, non la posizione finale dei playoff). Lo slot è valido soltanto per l'anno corrente e collocato al di fuori dei 13 giocatori della rosa.</p><p>Esempio: la Squadra Y chiude al 4° posto, partecipa alla Lottery e acquista un Rookie. Può occupare lo slot extra con quel giocatore, mantenendone la proprietà.</p><p>Lo slot è valido solo se il giocatore che lo occupa è un Rookie e solo se viene acquistato durante la prima asta della Lottery.</p></div>
-<div class="rnov"><b>Novità · Slot Rookie in base alla regular season</b><p>Gli slot Rookie dalla 4ª all'8ª posizione sono assegnati secondo l'arrivo della regular season.</p></div>
+<div class="rbox"><b>Slot Rookie</b><p>Le franchigie classificate dal 5° all'8° posto ottengono uno slot Rookie aggiuntivo. Gli slot sono assegnati in base all'<b>arrivo della regular season</b> (la classifica finale della regular season, non la posizione finale dei playoff). Lo slot è valido soltanto per l'anno corrente e collocato al di fuori dei 13 giocatori della rosa.</p><p>Esempio: la Squadra Y chiude al 5° posto, partecipa alla Lottery e acquista un Rookie. Può occupare lo slot extra con quel giocatore, mantenendone la proprietà.</p><p>Lo slot è valido solo se il giocatore che lo occupa è un Rookie e solo se viene acquistato durante la prima asta della Lottery.</p></div>
+<div class="rnov"><b>Novità · Slot Rookie in base alla regular season</b><p>Gli slot Rookie dalla 5ª all'8ª posizione (dal 17/11/2026: la 4ª non ha più lo slot) sono assegnati secondo l'arrivo della regular season.</p></div>
 <div class="rnov"><b>Novità · Scadenza dello slot Rookie</b><p>Lo slot Rookie dura fino a poco prima dell'asta Lottery successiva.</p><p>Prima dell'inizio della nuova Lottery, le franchigie devono comunicare i rispettivi svincoli.</p></div>
 </div></details>
 
@@ -9169,7 +9170,7 @@ function vDream(){fantaLiveAvvia();
         ${cls==="b"?`<div class="pkcup prz"><i>C</i><b>80</b><span>crediti</span></div>`:""}
         <div class="pk f1">${mb(fn[0],["Vincente "+ph[0],"Vincente "+ph[1]],ph[2],"fin")}</div>
       </div>
-      <div class="pobp"><h6>Piazzamento<small>${rd(1)}</small></h6><div class="pobpm">${mb(fn[1],["Perdente "+ph[0],"Perdente "+ph[1]],ph[3])}</div></div>
+      <div class="pobp"><h6>Piazzamento<small>${rd(1)}</small>${cls==="a"?`<small class="pz4">al 4° posto 50 crediti</small>`:""}</h6><div class="pobpm">${mb(fn[1],["Perdente "+ph[0],"Perdente "+ph[1]],ph[3])}</div></div>
       ${cls==="a"&&champ?`<div class="pobch">Campioni<b>${TEAMS[champ].name}</b></div>`:""}</section>`;
     SHR_PO={P,def:drWeek(DR_REG).closed};
     body=`<p class="note" style="margin-top:0">${drWeek(DR_REG).closed?"Tabelloni definitivi.":"Tabelloni provvisori in base alla classifica attuale."} Due playoff in contemporanea, serie al meglio delle 5: il numero accanto alla squadra sono le vittorie nella serie.</p>
@@ -11121,6 +11122,7 @@ ulCheck();
 /* (260) CRONOLOGIA MODIFICHE: il footer "Ultimo aggiornamento" è cliccabile e apre questa pagina (vista "novita").
    OGNI nuova modifica pubblicata va aggiunta in CIMA a NV_LOG (data, titolo, mini spiegazione). */
 const NV_LOG=[
+ ["17/11/2026","Regolamento: premio del 4° posto","Il 4° posto della regular season prende 100 crediti (non più 150) e non ha più lo slot Rookie, che ora va dal 5° all'8° posto. I 50 crediti che mancano li prende chi chiude 4° ai playoff (perdente della finale 3°–4° del tabellone titolo). Aggiornati regolamento (Art. 5) e tabellone playoff."],
  ["10/11/2026","Dati ufficiali da ESPN, salvati da GitHub","Statistiche, efficienza, squadre, Dreamers, Dynasty TV, free agent e G League ora usano i tabellini ESPN della notte (PDK con la formula Dunkest), salvati da GitHub da soli appena finite le partite e al più tardi verso le 07:07. Dunkest resta come riserva se ESPN non funziona. La riga in fondo all'app dice fonte e ora del salvataggio; toccandola si apre il report con notti caricate, anomalie e controlli. Gli infortuni ESPN si rileggono ogni 30 secondi con l'app aperta e GitHub li salva nell'app ogni 5 minuti quando cambiano."],
  ["04/11/2026","Nuove maglie Ducks","Le tre divise dei Texas Ducks cambiano disegno: gessato sottile e fasce laterali che salgono fino alla spallina, con una scia di impronte palmate. La bianca ha collo, spalline e fianchi neri, con scritta e numero neri bordati di giallo."],
  ["30/10/2026","TG Dreamers in Home (novità non ufficiale)","Da attivare in Impostazioni › Home › TG Dreamers. Ogni mattina alle 7:30 esce il nuovo TG Dreamers: una scheda nella striscia della Home. Toccala e la striscia si ferma, il TG legge le notizie del giorno (scambi, scontri, infortuni, notte, classifica) con voce italiana, con i tasti per pausa, avanti e indietro. Alla fine la striscia riparte. Resta lì fino al TG successivo."],
