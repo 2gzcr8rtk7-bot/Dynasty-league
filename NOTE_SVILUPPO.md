@@ -4156,3 +4156,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1098: tolto il DUB sulle maglie in campo/panchina (bastano le strisce): DUB arancione solo accanto al nome in tribuna (injTag).
 - v1099 (in prova): campo Ducks negli stili scuri di giorno = «Griglia neon» (variante 3): fondo viola scuro verticale #1c0840→#07021a, griglia verde 18%, sfumatura viola in alto e verde in basso, 40 stelle, linee bianche con bagliore verde (#84ff2e). Prima era antracite (v1082). Parquet e notte invariati.
 - v1100: campo neon dei Ducks (stili scuri di giorno) con animazione «Scintille»: 26 quadratini della griglia (.dxsc) che si accendono piano in verde a turno (3,2 s, opacita max 0,5).
+- v1101: bacheca Ducks negli stili scuri di giorno nel colore dello stile (effetto metallico spazzolato con --red/--red2, scritte --onred): Classico rosso, Cyber azzurro, Carbone e oro oro. Parquet invariato.
