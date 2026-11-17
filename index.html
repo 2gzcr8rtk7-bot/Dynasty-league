@@ -8365,7 +8365,7 @@ function cassa(t){
   <div class="ctab"><span></span><span>Portafoglio</span><span>Post Draft</span>
    <span class="rl p">Crediti</span>${cell(c.futuri,"portafoglio","p","+")}${cell(c.futuri,"post","p","+")}
    <span class="rl n">Debiti</span>${cell(c.debiti,"portafoglio","n","−")}${cell(c.debiti,"post","n","−")}</div>
-  <div class="cgo">Registro e bilancio ›</div></div>`;
+  ${window.premiBox?premiBox(t):""}<div class="cgo">Registro e bilancio ›</div></div>`;
 }
 let cassaTab="bil",cassaStag="tutte";
 function vCassa(){
@@ -8401,26 +8401,28 @@ function vCassa(){
 }
 function bacheca(t){
   const won=STORIA.map(s=>({anno:s.anno,pos:s.ordine.indexOf(t)+1})).filter(x=>x.pos>=1&&x.pos<=3).sort((a,b)=>a.pos-b.pos||a.anno-b.anno);
-  if(!won.length)return "";
+  const rsw=(window.RS_WIN||[]).filter(x=>x.t===t);/* (1070) coppa regular season */
+  if(!won.length&&!rsw.length)return "";
   const lab={1:"1°",2:"2°",3:"3°"};
-  return `<div class="trophies" aria-label="Bacheca trofei"><small>Bacheca</small><div class="shelf">${won.map((x,i)=>`<div class="cup" title="${lab[x.pos]} posto · Anno ${x.anno}">${cupSvg(x.pos,"cp"+t+i)}<span>${lab[x.pos]} posto<small>Anno ${x.anno}</small></span></div>`).join("")}</div></div>`;
+  return `<div class="trophies" aria-label="Bacheca trofei"><small>Bacheca</small><div class="shelf">${won.map((x,i)=>`<div class="cup" title="${lab[x.pos]} posto · Anno ${x.anno}">${cupSvg(x.pos,"cp"+t+i)}<span>${lab[x.pos]} posto<small>Anno ${x.anno}</small></span></div>`).join("")}${rsw.map((x,i)=>`<div class="cup" title="Regular season · Anno ${x.anno}">${rsCupSvg("rs"+t+i)}<span>Regular season<small>Anno ${x.anno}</small></span></div>`).join("")}</div></div>`;
 }
 function vStoria(){
   const N=Object.keys(TEAMS).length,pts=pos=>N-pos+1;
   const med=pos=>pos<=3?`<span class="medal m${pos}">${pos}</span>`:pos;
   const tot=Object.keys(TEAMS).map(t=>{const p=STORIA.map(s=>s.ordine.indexOf(t)+1);
-    return{t,p,pt:p.reduce((a,x)=>a+(x?pts(x):0),0),tit:p.filter(x=>x===1).length}});
+    return{t,p,pt:p.reduce((a,x)=>a+(x?pts(x):0),0),tit:p.filter(x=>x===1).length,rs:(window.RS_WIN||[]).filter(x=>x.t===t).length}});
   const cmp=(a,b)=>{if(b.pt!==a.pt)return b.pt-a.pt;for(let k=1;k<=N;k++){const d=b.p.filter(x=>x===k).length-a.p.filter(x=>x===k).length;if(d)return d}
     for(let i=STORIA.length-1;i>=0;i--){if(a.p[i]!==b.p[i])return a.p[i]-b.p[i]}return 0};
   tot.sort(cmp);
   const yrs=STORIA.map(s=>`<th class="c" title="Anno ${s.anno}">A${s.anno}</th>`).join("");
   const rows=tot.map((x,i)=>`<tr class="${i===0?"lead":""}"><td class="rk">${med(i+1)}</td><td class="tm"><div class="tmcell">${wedge(x.t)}<div><b>${TEAMS[x.t].nick}</b><small>${TEAMS[x.t].city}</small></div></div></td>
-   ${x.p.map(q=>`<td class="yr">${q?pts(q):"–"}<small>${q?q+"°":""}</small></td>`).join("")}<td class="ttl">${x.tit?`<b style="color:var(--gold)">${x.tit}</b>`:"–"}</td><td class="pt">${x.pt}</td></tr>`).join("");
-  const seasons=STORIA.slice().reverse().map(s=>`<section class="gmseason">${H("Anno "+s.anno,`<em>Campione: ${TEAMS[s.ordine[0]].nick}</em>`)}
+   ${x.p.map(q=>`<td class="yr">${q?pts(q):"–"}<small>${q?q+"°":""}</small></td>`).join("")}<td class="ttl">${x.tit?`<b style="color:var(--gold)">${x.tit}</b>`:"–"}</td><td class="ttl">${x.rs?`<b style="color:var(--gold)">${x.rs}</b>`:"–"}</td><td class="pt">${x.pt}</td></tr>`).join("");
+  const rsOf=a=>(window.RS_WIN||[]).find(x=>x.anno===a);
+  const seasons=STORIA.slice().reverse().map(s=>`<section class="gmseason">${H("Anno "+s.anno,`<em>Campione: ${TEAMS[s.ordine[0]].nick}${rsOf(s.anno)?` · Regular season: ${TEAMS[rsOf(s.anno).t].nick}`:""}</em>`)}
    <div class="tbl-wrap"><table class="ssn" style="min-width:0"><tbody>${s.ordine.map((t,i)=>`<tr><td class="rk">${med(i+1)}</td><td class="tm"><div class="tmcell">${wedge(t)}<div><b>${TEAMS[t].nick}</b><small>${TEAMS[t].city}</small></div></div></td><td class="pt">+${pts(i+1)} pt</td></tr>`).join("")}</tbody></table></div></section>`).join("");
   return `<div class="sala-oro"><button class="s3go" data-s3="1">✦ Sala trofei Dreamers ✦<small>Entra e scorri tra i trofei vinti dalle squadre</small></button>${H("Classifica competenza")}
-  <div class="tbl-wrap"><table class="gmh"><thead><tr><th>#</th><th>Squadra</th>${yrs}<th class="c" title="Titoli">🏆</th><th>Pt</th></tr></thead><tbody>${rows}</tbody></table></div>
-  <p class="note">A1, A2… = punti in ogni anno (sotto il piazzamento). 🏆 = titoli vinti. Ogni stagione: ${N} punti al 1°, ${N-1} al 2° e così via fino a 1 punto all'ultimo. A parità di punti conta chi ha più titoli, poi più secondi posti e così via; poi il piazzamento nella stagione più recente.</p>
+  <div class="tbl-wrap"><table class="gmh"><thead><tr><th>#</th><th>Squadra</th>${yrs}<th class="c" title="Titoli">🏆</th><th class="c" title="Coppe regular season">RS</th><th>Pt</th></tr></thead><tbody>${rows}</tbody></table></div>
+  <p class="note">A1, A2… = punti in ogni anno (sotto il piazzamento). 🏆 = titoli vinti (playoff). RS = coppe della regular season (dalla stagione 26/27, non danno punti). Ogni stagione: ${N} punti al 1°, ${N-1} al 2° e così via fino a 1 punto all'ultimo. A parità di punti conta chi ha più titoli, poi più secondi posti e così via; poi il piazzamento nella stagione più recente.</p>
   ${seasons}</div>`;
 }
 /* Regolamento ufficiale (testo dal PDF regolamento.pdf) */
@@ -13367,8 +13369,8 @@ const E=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"
 const ALLSTAR=window.ALLSTAR_WIN||[{anno:1,vinc:["DUC","TUR"]}];try{window.ALLSTAR=ALLSTAR}catch(e){}
 const EYE=170,DA=20,BW=400,BD=330,BH=330,SPZ=470,Z0=-60,AIS=210,XL=600,ZN=620,AX=190;
 function asgSvg(id){return`<svg viewBox="0 0 26 30" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" x2="1"><stop offset="0" stop-color="#1f3a7a"/><stop offset=".35" stop-color="#d8efff"/><stop offset=".6" stop-color="#5aa0ff"/><stop offset="1" stop-color="#1f3a7a"/></linearGradient></defs><path d="M13 1.2l3.3 6.7 7.3 1.1-5.3 5.1 1.2 7.3L13 17.9l-6.5 3.5 1.2-7.3L2.4 9l7.3-1.1z" fill="url(#${id})" stroke="#e8f4ff" stroke-width=".4"/><rect x="11.6" y="21" width="2.8" height="3" fill="url(#${id})"/><rect x="7.5" y="24" width="11" height="2.6" rx=".6" fill="url(#${id})"/><rect x="6" y="26.4" width="14" height="3.2" rx=".8" fill="#13224a" stroke="url(#${id})" stroke-width=".8"/></svg>`}
-function teams(){const L=Object.keys(TEAMS).map(t=>{const T=[];STORIA.forEach(s=>{if(s.ordine[0]===t)T.push({k:"t",anno:s.anno});else if(s.ordine[1]===t)T.push({k:"s",anno:s.anno});else if(s.ordine[2]===t)T.push({k:"b",anno:s.anno})});ALLSTAR.forEach(a=>{if((a.vinc||[]).includes(t))T.push({k:"a",anno:a.anno})});
-  const OK={t:0,s:1,b:2,a:3};T.sort((x,y)=>OK[x.k]-OK[y.k]||x.anno-y.anno);
+function teams(){const L=Object.keys(TEAMS).map(t=>{const T=[];STORIA.forEach(s=>{if(s.ordine[0]===t)T.push({k:"t",anno:s.anno});else if(s.ordine[1]===t)T.push({k:"s",anno:s.anno});else if(s.ordine[2]===t)T.push({k:"b",anno:s.anno})});ALLSTAR.forEach(a=>{if((a.vinc||[]).includes(t))T.push({k:"a",anno:a.anno})});(window.RS_WIN||[]).forEach(x=>{if(x.t===t)T.push({k:"r",anno:x.anno})});/* (1070) coppa regular season */
+  const OK={t:0,r:1,s:2,b:3,a:4};T.sort((x,y)=>OK[x.k]-OK[y.k]||x.anno-y.anno);
   return{t,items:T,nt:T.filter(x=>x.k==="t").length,na:T.filter(x=>x.k==="a").length,ns:T.filter(x=>x.k==="s").length,nb:T.filter(x=>x.k==="b").length}});
   L.sort((a,b)=>b.nt-a.nt||b.ns-a.ns||b.nb-a.nb||b.na-a.na||TEAMS[a.t].nick.localeCompare(TEAMS[b.t].nick));
   L.forEach((b,i)=>{const left=i%2===0,k=Math.floor(i/2);b.i=i;b.left=left;b.cx=(left?-1:1)*(AIS+BD/2);b.cz=Z0-k*SPZ;b.rot=left?90:-90;b.sx=(left?1:-1)*AX;b.yaw=left?-90:90});return L}
@@ -13431,11 +13433,11 @@ function open(){
    /* pozze di luce sul piano sotto ogni faretto */
    JX.forEach(x=>{h+=pool(x,-BD/2+60,70,"rgba(255,236,190,.55)",.9)});TX.forEach(x=>{h+=pool(x,-34,78,"rgba(255,240,200,.75)",1)});
    /* trofei */
-   b.items.forEach((it,k)=>{const lx=TX[k],lz=-34,kd=it.k,t=kd==="t",pd=kd==="s"||kd==="b",pw=t?80:pd?54:62,ph=t?36:pd?24:30,cw=t?128:pd?78:90,chh=t?146:pd?88:104,bc=t?"#ffd36b":kd==="s"?"#dfe6f2":kd==="b"?"#e0a070":"#8cc8ff",id="s3c"+b.i+"_"+k;
+   b.items.forEach((it,k)=>{const lx=TX[k],lz=-34,kd=it.k,t=kd==="t",pd=kd==="s"||kd==="b",pw=t?80:pd?54:62,ph=t?36:pd?24:30,cw=t?128:pd?78:90,chh=t?146:pd?88:104,bc=t?"#ffd36b":kd==="r"?"#f0a500":kd==="s"?"#dfe6f2":kd==="b"?"#e0a070":"#8cc8ff",id="s3c"+b.i+"_"+k;
      h+=`<div class="s3o" data-tr="${b.i}:${k}" style="transform:translate3d(${lx}px,${-DA}px,${lz}px)">`;
-     [["translateZ("+pw/2+"px)"],["rotateY(180deg) translateZ("+pw/2+"px)"],["rotateY(90deg) translateZ("+pw/2+"px)"],["rotateY(-90deg) translateZ("+pw/2+"px)"]].forEach(f=>{h+=`<div class="s3f" style="left:${-pw/2}px;top:${-ph}px;width:${pw}px;height:${ph}px;transform:${f[0]};background:linear-gradient(90deg,#120728,#3a1c80 50%,#120728);border-top:2px solid ${bc};display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff2c4;font:700 8px/1.2 system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;text-align:center"><b style="font:italic 800 ${t?12:10}px/1 var(--display),Georgia,serif;letter-spacing:.08em">${t?"Titolo":kd==="s"?"2° posto":kd==="b"?"3° posto":"All-Star"}</b>Anno ${it.anno}</div>`});
+     [["translateZ("+pw/2+"px)"],["rotateY(180deg) translateZ("+pw/2+"px)"],["rotateY(90deg) translateZ("+pw/2+"px)"],["rotateY(-90deg) translateZ("+pw/2+"px)"]].forEach(f=>{h+=`<div class="s3f" style="left:${-pw/2}px;top:${-ph}px;width:${pw}px;height:${ph}px;transform:${f[0]};background:linear-gradient(90deg,#120728,#3a1c80 50%,#120728);border-top:2px solid ${bc};display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff2c4;font:700 8px/1.2 system-ui,sans-serif;letter-spacing:.1em;text-transform:uppercase;text-align:center"><b style="font:italic 800 ${t?12:10}px/1 var(--display),Georgia,serif;letter-spacing:.08em">${t?"Titolo":kd==="r"?"Regular season":kd==="s"?"2° posto":kd==="b"?"3° posto":"All-Star"}</b>Anno ${it.anno}</div>`});
      h+=`<div class="s3f s3top" style="left:${-pw/2}px;top:${-ph-pw/2}px;width:${pw}px;height:${pw}px;transform:rotateX(90deg);background:radial-gradient(circle,#3a2a66,#150a33 75%);border:2px solid ${bc}"></div>`;
-     h+=`<div class="s3o s3spin" style="transform:translateY(${-ph-2}px)">`+[0,45,90,135].map(a=>`<div class="s3pl" style="left:${-cw/2}px;top:${-chh}px;width:${cw}px;height:${chh}px;transform:rotateY(${a}deg);filter:${a%90?"brightness(.85)":"none"}">${t?cupSvg(1,id+"_"+a):pd?cupSvg(kd==="s"?2:3,id+"_"+a):asgSvg(id+"_"+a)}</div>`).join("")+`</div></div>`});
+     h+=`<div class="s3o s3spin" style="transform:translateY(${-ph-2}px)">`+[0,45,90,135].map(a=>`<div class="s3pl" style="left:${-cw/2}px;top:${-chh}px;width:${cw}px;height:${chh}px;transform:rotateY(${a}deg);filter:${a%90?"brightness(.85)":"none"}">${t?cupSvg(1,id+"_"+a):pd?cupSvg(kd==="s"?2:3,id+"_"+a):kd==="r"?rsCupSvg(id+"_"+a):asgSvg(id+"_"+a)}</div>`).join("")+`</div></div>`});
    if(!n)h+=`<div class="s3o" style="transform:translate3d(0,${-DA}px,-30px)">`+[["translateZ(36px)"],["rotateY(180deg) translateZ(36px)"],["rotateY(90deg) translateZ(36px)"],["rotateY(-90deg) translateZ(36px)"]].map(f=>`<div class="s3f" style="left:-36px;top:-46px;width:72px;height:46px;transform:${f[0]};background:linear-gradient(90deg,#0d0420,#2a1260 50%,#0d0420);border-top:2px solid #6a4aa8;opacity:.9"></div>`).join("")+`</div>`;
    h+=`</div>`;
    /* fasci dei faretti (verso chi guarda) e insegna sospesa */
@@ -13469,7 +13471,7 @@ let dirty=true,tw=null,walk=0,cur=-1,keys={};
  function fly(x,z,yaw,after){const d=((yaw-V.yaw+540)%360)-180;tw={t0:performance.now(),dur:1250,x0:V.x,z0:V.z,y0:V.yaw,x1:x,z1:z,dy:d,after,p0:V.pitch}}
  const lab={t:"Titolo",a:"Trofeo All-Star Game"};
  function goB(i,k){const n=B.length,b=B[(i+n)%n];cur=b.i;info.classList.remove("on");nl.textContent=TEAMS[b.t].nick;hint.style.opacity=0;
-   fly(b.sx,b.cz+(b.left?0:0),b.yaw,()=>{const L=b.items.map(it=>({t:"Titolo",s:"2° posto",b:"3° posto",a:"All-Star Game"})[it.k]+" · Anno "+it.anno);
+   fly(b.sx,b.cz+(b.left?0:0),b.yaw,()=>{const L=b.items.map(it=>({t:"Titolo",r:"Coppa regular season",s:"2° posto",b:"3° posto",a:"All-Star Game"})[it.k]+" · Anno "+it.anno);
      info.innerHTML=`<b>${E(TEAMS[b.t].name)}</b><span>${k!=null&&b.items[k]?E(L[k]):L.length?E(L.join(" · ")):"Bacheca ancora vuota"}</span>`;info.classList.add("on")})}
  function floorPt(sx,sy){const a=V.pitch*Math.PI/180,bb=V.yaw*Math.PI/180;let y1=sy*Math.cos(-a)+P*Math.sin(-a),z1=sy*Math.sin(-a)-P*Math.cos(-a);let x2=sx*Math.cos(-bb)+z1*Math.sin(-bb),z2=-sx*Math.sin(-bb)+z1*Math.cos(-bb);if(y1<=2)return null;const t=EYE/y1;return{x:V.x+x2*t,z:V.z+z2*t}}
  let dr=null;
@@ -15932,5 +15934,62 @@ window.shPG=async function(){const S=window.SHR_PG;if(!S)return null;const{k,a,b
 })();
 </script>
 <style>/* (1059) fascia a destra dello scontro = tasto Condividi (solo icona) */.drst.drsh{cursor:pointer}.drst.drsh svg{width:14px;height:14px;transform:rotate(180deg);display:block}</style>
+<script>/* (1070) FINE STAGIONE AUTOMATICA (richiesta Francesco 17/11/2026)
+   - Coppa REGULAR SEASON (nuova da questa stagione): alla chiusura dell'ultimo turno di regular season (drWeek(DR_REG).closed) la 1ª della
+     classifica (drStand) vince la coppa: compare da sola nella bacheca della squadra, nella Sala Trofei (colonna RS e riga in ogni stagione) e
+     nella sala trofei 3D (trofeo «Regular season», k:"r"). RS_WIN = albo (anni passati: nessuna coppa RS).
+   - CLASSIFICA COMPETENZA: resta quella dei playoff. Quando i playoff finiscono (drPO(...).done) la classifica finale 1–8 entra da sola in
+     STORIA come nuovo anno (con anche l'ordine della regular season in rs): Sala Trofei, bacheche e sala 3D si aggiornano senza scrivere niente.
+   - PREMI IN CASSA (casella «Premi · solo per il Draft» in cassa(t)): regular season DR_PREMI per posizione (alla chiusura della regular season),
+     playoff PO_PREMI per posizione finale (4° 50, 5° 80, 6° 50, 7° 40, 8° 30), meno i debiti post-Draft (pagati subito dai premi) e più i crediti
+     post-Draft ricevuti. Durante la stagione mostra «se finisse oggi». Si usano solo al Draft: non entrano in CREDITI né nell'IA Trade.
+     Dopo il Draft (lo comunica Francesco) il netto rimasto si sposta a mano in CREDITI + MOVIMENTI e si scrive l'anno in PREMI_PASSATI. */
+(function(){
+const DR_ANNO=STORIA.length+1;window.DR_ANNO=DR_ANNO;            /* stagione in corso = anno 3 (26/27) */
+const RS_WIN=[];                          /* albo coppa regular season: {anno,t}; dall'anno 3 si riempie da solo */
+const PO_PREMI={4:50,5:80,6:50,7:40,8:30};
+const PREMI_PASSATI=[];                   /* anni in cui i premi sono già passati in cassa dopo il Draft (es. 3) */
+function fineStato(){try{const st=drStand(),reg=drWeek(DR_REG).closed,P=drPO(st);return{st,reg,P,po:!!(P&&P.done&&P.fin&&P.fin.filter(Boolean).length===8)}}catch(e){return{st:[],reg:false,P:null,po:false}}}
+function storiaSync(){const F=fineStato();
+  if(F.reg&&F.st.length&&!RS_WIN.some(x=>x.anno===DR_ANNO))RS_WIN.push({anno:DR_ANNO,t:F.st[0].t,auto:1});
+  if(F.po&&!STORIA.some(s=>s.anno===DR_ANNO))STORIA.push({anno:DR_ANNO,ordine:F.P.fin.slice(0,8),rs:F.st.map(x=>x.t),auto:1})}
+window.storiaSync=storiaSync;window.RS_WIN=RS_WIN;
+{const R0=render;render=function(){try{storiaSync()}catch(e){}return R0.apply(this,arguments)}}
+/* coppa della regular season: un pallone d'oro sul piedistallo */
+function rsCupSvg(id){return`<svg viewBox="0 0 26 30" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" x2="1"><stop offset="0" stop-color="#7a4a00"/><stop offset=".35" stop-color="#ffe9a8"/><stop offset=".6" stop-color="#f0a500"/><stop offset="1" stop-color="#7a4a00"/></linearGradient></defs>
+ <circle cx="13" cy="9.5" r="7.6" fill="url(#${id})"/><path d="M5.4 9.5h15.2M13 1.9v15.2M7.6 4.2c2.6 2.4 2.6 8.2 0 10.6M18.4 4.2c-2.6 2.4-2.6 8.2 0 10.6" fill="none" stroke="#6b3f00" stroke-width=".9"/>
+ <path d="M10 17h6l1 5H9z" fill="url(#${id})"/><rect x="7.5" y="22" width="11" height="3" rx=".6" fill="url(#${id})"/><rect x="6" y="25" width="14" height="3.4" rx=".8" fill="#1b2233" stroke="url(#${id})" stroke-width=".8"/></svg>`}
+window.rsCupSvg=rsCupSvg;
+/* ===== casella PREMI nella cassa ===== */
+const nk=t=>TEAMS[t].nick,ord=n=>n+"°";
+function drPremi(t){const F=fineStato(),pos=F.st.findIndex(x=>x.t===t)+1,R=[];let tot=0;
+  if(PREMI_PASSATI.includes(DR_ANNO))return null;
+  const reg=pos?DR_PREMI[pos-1]:0;
+  if(F.reg){tot+=reg;R.push(["+",`Regular season chiusa al <b>${ord(pos)} posto</b>`,reg])}
+  else R.push(["~",`Regular season: <b>${ord(pos)}</b> oggi. Se finisse adesso prenderebbe <b>${reg} cr</b>`,null]);
+  if(F.po){const fp=F.P.fin.indexOf(t)+1,v=PO_PREMI[fp]||0;tot+=v;R.push([v?"+":"=",`Playoff chiusi al <b>${ord(fp)} posto finale</b>${v?"":" (1°–3°: si gioca il titolo, niente crediti)"}`,v])}
+  else{const top=pos&&pos<=4;R.push(["~",F.reg?`Playoff in corso: ${top?"tabellone titolo, 50 cr solo a chi chiude 4°":"tabellone 5ª–8ª, da 30 a 80 cr"}`:`Playoff: ${top?"nel tabellone titolo solo il 4° posto prende 50 cr":"nel tabellone 5ª–8ª da 30 a 80 cr"}`,null])}
+  const open=DEBITI.filter(x=>!x.saldato&&x.tipo==="post");
+  open.filter(x=>x.da===t).forEach(x=>{if(F.reg)tot-=x.v;R.push([F.reg?"−":"~",`Debito post-Draft verso i ${nk(x.a)}${F.reg?": pagato con i premi":": si paga con i premi a fine regular season"}`,F.reg?x.v:null])});
+  open.filter(x=>x.a===t).forEach(x=>{if(F.reg)tot+=x.v;R.push([F.reg?"+":"~",`Credito post-Draft dai ${nk(x.da)}${F.reg?"":": arriva a fine regular season"}`,F.reg?x.v:null])});
+  const prev=reg-open.filter(x=>x.da===t).reduce((a,x)=>a+x.v,0)+open.filter(x=>x.a===t).reduce((a,x)=>a+x.v,0);
+  return{tot,R,reg:F.reg,po:F.po,prev}}
+window.drPremi=drPremi;
+window.premiBox=function(t){const D=drPremi(t);if(!D)return"";
+  const rw=D.R.map(([s,txt,v])=>`<li class="${s==="−"?"n":s==="~"?"w":"p"}"><span>${txt}</span><b>${v==null?"":(s==="−"?"−":s==="="?"":"+")+v+" cr"}</b></li>`).join("");
+  return`<details class="cprz ${D.reg?"":"prev"}" onclick="event.stopPropagation()"><summary><span class="ic">🏆</span><span class="cprzt"><small>Premi · si usano solo al Draft</small><em>${D.reg?(D.po?"Regular season e playoff chiusi":"Regular season chiusa · playoff in corso"):`Arrivano da soli a fine stagione · oggi previsto ${D.prev} cr`}</em></span><b>${D.tot}<i>cr</i></b></summary>
+   <ul class="cprzl">${rw}</ul><p class="cprzn">I premi non si possono usare negli scambi né per le operazioni: valgono solo al Draft. I debiti post-Draft si pagano subito da qui. Dopo il Draft quello che resta passa nella cassa normale.</p></details>`};
+})();
+</script>
+<style>/* (1070) casella Premi nella cassa */.cassa .cprz{grid-column:1/-1;margin-top:10px;border-radius:12px;background:linear-gradient(135deg,rgba(245,180,0,.18),rgba(245,180,0,.06));border:1px solid rgba(245,180,0,.55);padding:0}
+.cassa .cprz summary{list-style:none;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:10px 12px;cursor:pointer}.cassa .cprz summary::-webkit-details-marker{display:none}
+.cassa .cprz .ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#ffe58a,#c9a33f 60%,#7a5a1c);font-size:16px}
+.cassa .cprz small{display:block;font:800 11px var(--display),system-ui;letter-spacing:.12em;text-transform:uppercase;color:#f5b400}
+.cassa .cprz em{display:block;font:500 12px Barlow,system-ui;opacity:.85;font-style:normal;margin-top:1px}
+.cassa .cprz summary>b{font:900 italic 28px var(--display),system-ui;color:#ffd75e;white-space:nowrap}.cassa .cprz summary>b i{font-size:15px;font-style:normal;margin-left:2px;opacity:.8}.cassa .cprz.prev summary>b{color:rgba(255,215,94,.55)}
+.cassa .cprzl{list-style:none;margin:0;padding:0 12px 4px;display:grid;gap:4px}.cassa .cprzl li{display:flex;justify-content:space-between;gap:10px;font:500 13px/1.35 Barlow,system-ui;padding:5px 0;border-top:1px solid rgba(245,180,0,.2)}
+.cassa .cprzl li b{white-space:nowrap;font-weight:800}.cassa .cprzl li.p b{color:#4ade80}.cassa .cprzl li.n b{color:#f87171}.cassa .cprzl li.w{opacity:.8}
+.cassa .cprzn{margin:0;padding:6px 12px 10px;font:500 11.5px/1.4 Barlow,system-ui;opacity:.75}
+html:not(.notte) .cassa .cprz small{color:#b7790b}html:not(.notte) .cassa .cprz summary>b{color:#b7790b}html:not(.notte) .cassa .cprz.prev summary>b{color:rgba(183,121,11,.6)}html:not(.notte) .cassa .cprzl li.p b{color:#15803d}html:not(.notte) .cassa .cprzl li.n b{color:#b91c1c}</style>
 </body>
 </html>
