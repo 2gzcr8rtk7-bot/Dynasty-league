@@ -15979,7 +15979,8 @@ function drPremi(t){const F=fineStato(),pos=F.st.findIndex(x=>x.t===t)+1,R=[];le
 window.drPremi=drPremi;
 window.premiBox=function(t){const D=drPremi(t);if(!D)return"";
   const rw=D.R.map(([s,txt,v])=>`<li class="${s==="−"?"n":s==="~"?"w":"p"}"><span>${txt}</span><b>${v==null?"":(s==="−"?"−":s==="="?"":"+")+v+" cr"}</b></li>`).join("");
-  return`<details class="cprz ${D.reg?"":"prev"}" onclick="event.stopPropagation()"><summary><span class="ic">🏆</span><span class="cprzt"><small>Premi · si usano solo al Draft</small><em>${D.reg?(D.po?"Regular season e playoff chiusi":"Regular season chiusa · playoff in corso"):`Arrivano da soli a fine stagione · oggi previsto ${D.prev} cr`}</em></span><b>${D.tot}<i>cr</i></b></summary>
+  return`<details class="cprz ${D.reg?"":"prev"}" onclick="event.stopPropagation()"><summary><span class="cprzt">🏆 Premi di fine anno</span><b>${D.tot}<i>cr</i></b><span class="cprza">›</span></summary>
+   <p class="cprzs"><b>Si usano solo al Draft.</b> ${D.reg?(D.po?"Regular season e playoff chiusi.":"Regular season chiusa, playoff in corso."):`Arrivano da soli a fine stagione: oggi previsti ${D.prev} cr.`}</p>
    <ul class="cprzl">${rw}</ul><p class="cprzn">I premi non si possono usare negli scambi né per le operazioni: valgono solo al Draft. I debiti post-Draft si pagano subito da qui. Dopo il Draft quello che resta passa nella cassa normale.</p></details>`};
 })();
 </script>
@@ -16023,5 +16024,6 @@ try{if(window.CAL_PROPOSTE&&cur==="home")render()}catch(e){}/* la Home è già d
 .calsum{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:6px 0}.calsum div{text-align:center;padding:8px 4px;border-radius:10px;background:rgba(127,127,127,.12)}.calsum b{display:block;font:900 italic 22px var(--display),system-ui}.calsum small{font:500 10.5px/1.25 Barlow,system-ui;opacity:.8}
 @media(max-width:480px){.calsum{grid-template-columns:repeat(3,1fr)}}
 .caltl{display:grid;gap:4px;margin:8px 0}.calt{display:grid;grid-template-columns:30px 120px 1fr;gap:8px;align-items:center;padding:6px 8px;border-radius:8px;background:rgba(127,127,127,.08);font:500 13px Barlow,system-ui}.calt .n{font:800 15px var(--display),system-ui;text-align:center}.calt .d small{display:block;opacity:.7;font-size:11px}.calt .zz{color:#dc2626;font-weight:700;font-size:12px}.calt.po{background:rgba(124,58,237,.12)}</style>
+<style>/* (1072) casella Premi chiusa = una riga sola */.cassa .cprz summary{grid-template-columns:1fr auto auto!important;padding:7px 12px!important;gap:8px!important}.cassa .cprz .cprzt{font:800 12.5px var(--display),system-ui;letter-spacing:.1em;text-transform:uppercase;color:#f5b400}.cassa .cprz summary>b{font-size:18px!important}.cassa .cprz summary>b i{font-size:12px!important}.cassa .cprz .cprza{font-size:18px;opacity:.7;transition:transform .2s}.cassa .cprz[open] .cprza{transform:rotate(90deg)}.cassa .cprz .cprzs{margin:0;padding:2px 12px 6px;font:500 12.5px/1.4 Barlow,system-ui;opacity:.85}html:not(.notte) .cassa .cprz .cprzt{color:#b7790b}.cassa .cprz{margin-top:8px!important}</style>
 </body>
 </html>
