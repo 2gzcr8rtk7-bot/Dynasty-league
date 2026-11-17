@@ -6635,7 +6635,7 @@ window.injRit=injRit;
 
 const injTag=n=>{const i=INJ[n];if(i&&!["ok","out","prob"].includes(i.stato))return`<em class="injo dub" title="In dubbio: potrebbe giocare${i.tipo?" · "+String(i.tipo).replace(/"/g,"&quot;"):""}">DUB</em>`;/* (1097) segnalino DUB arancione come per gli OUT */if(!i||i.stato!=="out")return"";const m=(i.rientro||"").match(/(\d{2}\/\d{2})/);return`<em class="injo" title="Infortunato · vale 0${i.tipo?" · "+String(i.tipo).replace(/"/g,"&quot;"):""}">OUT</em>`};
 const injSt=n=>{const i=INJ[n];return!i||i.stato==="ok"?"ok":i.stato==="out"?"out":i.stato==="prob"?"prob":"dub"};
-const injX=n=>{const i=INJ[n];if(i&&!["ok","out","prob"].includes(i.stato))return`<i class="injx dub" title="In dubbio: potrebbe giocare (${(i.tipo||"").replace(/"/g,"&quot;")})">DUB</i>`;return i&&i.stato==="out"?`<i class="injx" title="Infortunato · vale 0 (${(i.tipo||"").replace(/"/g,"&quot;")})">✕</i>`:""};
+const injX=n=>{const i=INJ[n];return i&&i.stato==="out"?`<i class="injx" title="Infortunato · vale 0 (${(i.tipo||"").replace(/"/g,"&quot;")})">✕</i>`:""};
 /* Manichino infortuni: evidenzia la zona del corpo letta dalla descrizione (destra = lato sinistro del disegno, vista frontale) */
 function bodyMap(tipo,stato){
   const t=(tipo||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");

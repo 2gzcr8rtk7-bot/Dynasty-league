@@ -4153,3 +4153,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1095: campo ufficiale Dolphins di giorno (DL_OFF.DOL) uguale in tutti gli stili: parquet blu #0059e6, linee e cornice bianche, banner bianco con scritta scura (#1d1d1f, anche col Parquet che forzava il bianco). Notte invariata.
 - v1096: capitano nel campo segnalato con la targhetta del nome dorata e © dopo il nome (variante 2 scelta); tolto il bollino giallo C (.pjc nascosto). Tutti gli stili, giorno e notte.
 - v1097: giocatori in dubbio (stato INJ diverso da ok/out/prob: quest, dtd...): segnalino DUB arancione accanto al nome in tribuna e panchina (injTag) e etichetta DUB arancione sulla maglia nel campo/panchina (injX), come gli OUT.
+- v1098: tolto il DUB sulle maglie in campo/panchina (bastano le strisce): DUB arancione solo accanto al nome in tribuna (injTag).
