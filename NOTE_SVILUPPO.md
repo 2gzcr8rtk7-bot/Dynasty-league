@@ -4180,3 +4180,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1122: capitano, nome a meta strada verso il centro della maglia (variante 3: spazio di 0,67em a destra del nome).
 - v1123: anche i non capitani con il nome a meta strada verso il centro della maglia (spazio di 0,36em a destra del nome; da 4,7 a 2,3 px di scarto).
 - v1124: in campo Giannis Antetokounmpo si chiama GIANNIS (drSur).
+- v1125 (in prova): barra in alto degli stili scuri di giorno senza strisce, variante «vetro con riflesso» (riflesso bianco 7% in alto, gradiente --hd1/--hd2, filo nel colore dello stile). Parquet e notte invariati.
