@@ -6196,7 +6196,7 @@ function perDisegna(){let el=document.querySelector(".persh");if(!PK){if(el)el.r
   for(let d=1;d<=nd;d++){const iso=`${y}-${f(m+1)}-${f(d)}`,dis=iso<PER_MIN||iso>mx,st=iso===A,en=B&&iso===B,inr=B&&iso>A&&iso<B,ogg=iso===mx;
     cells+=`<button class="pd${st?" st":""}${en?" en":""}${inr?" in":""}${st&&en?" one":""}${ogg?" oggi":""}" ${dis?"disabled":""} data-pd="${iso}">${d}</button>`}
   const yMin=+PER_MIN.slice(0,4),yMax=+mx.slice(0,4),prevOk=y*12+m>yMin*12+9,nextOk=y*12+m<+mx.slice(0,4)*12+(+mx.slice(5,7)-1);
-  const chips=PER_ORD.map(sz=>`<button data-pq="${sz}">${PER_LBL[sz]}</button>`).join("")+`<button data-pq="all">Tutto</button>`;
+  const chips=PER_ORD.map(sz=>`<button data-perq="${sz}">${PER_LBL[sz]}</button>`).join("")+`<button data-perq="all">Tutto</button>`;/* (1129) data-perq: data-pq veniva cancellato dalla pulizia dei colori Parquet */
   el.innerHTML=`<div class="perbox" role="dialog" aria-label="Scegli il periodo"><button class="perx" data-pclose="1" aria-label="Chiudi">✕</button>
    <h4>Periodo</h4><p class="perhint">${PK.s0?`Inizio: <b>${perFmt(PK.s0)}</b> · ora tocca il giorno di <b>fine</b>`:"Tocca il giorno di <b>inizio</b>, poi quello di <b>fine</b>"}</p>
    <div class="pernav"><div class="perny"><button data-py="-1" ${y<=yMin?"disabled":""} aria-label="Anno precedente">‹</button><b>${y}</b><button data-py="1" ${y>=yMax?"disabled":""} aria-label="Anno successivo">›</button></div>
@@ -6211,7 +6211,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-per]");if(
   if(e.target===el||e.target.closest("[data-pclose]")){PK=null;perDisegna();return}
   const py=e.target.closest("[data-py]");if(py){const mx=perOggi();PK.y+=+py.dataset.py;const lim=PK.y*12+PK.m,hi=+mx.slice(0,4)*12+(+mx.slice(5,7)-1),lo=+PER_MIN.slice(0,4)*12+9;if(lim>hi){PK.m=+mx.slice(5,7)-1}if(lim<lo)PK.m=9;perDisegna();return}
   const pm=e.target.closest("[data-pm]");if(pm){let t=PK.y*12+PK.m+ +pm.dataset.pm;PK.y=Math.floor(t/12);PK.m=t%12;perDisegna();return}
-  const pq=e.target.closest("[data-pq]");if(pq){const q=pq.dataset.pq;if(q==="all")perFine(PER_MIN,perOggi());else{const r=perSzRange(q);perFine(r[0],r[1])}return}
+  const pq=e.target.closest("[data-perq]");if(pq){const q=pq.dataset.perq;if(q==="all")perFine(PER_MIN,perOggi());else{const r=perSzRange(q);perFine(r[0],r[1])}return}
   const pd=e.target.closest("[data-pd]");if(pd&&!pd.disabled){const iso=pd.dataset.pd;if(!PK.s0){PK.s0=iso;perDisegna();return}
     let a0=PK.s0,b0=iso;if(b0<a0){const t=a0;a0=b0;b0=t}PK.s0=null;PK.da=a0;PK.a=b0;perDisegna();setTimeout(()=>perFine(a0,b0),260)}});
 PER_CB.gr=(da,a)=>{GR.da=da;GR.a=a};

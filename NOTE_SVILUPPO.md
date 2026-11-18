@@ -4184,3 +4184,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1126: campo neon dei Ducks senza la griglia di quadratini (tolto il rettangolo url(#dxgr)); restano sfumatura, stelle e linee luminose.
 - v1127: IA Trade (gusti dei GM): il controllo della rosa piena (IA_MAXR 15) scartava ogni scambio delle squadre gia oltre il limite (Ducks a 16) anche 1 contro 1 → «Nessuno scambio trovato» sempre. Ora blocca solo gli scambi che aumentano la rosa (x.free>0) e non conta la G-League. Con Black in vendita: 3 proposte.
 - v1128: REGOLA FRANCESCO: nessun limite di giocatori nelle rose; tolto del tutto il controllo IA_MAXR dall IA Trade (contano solo contropartita, speciali, diritti).
+- v1129: foglio Periodo, i tasti Stagione 1/2/3 e Tutto non funzionavano negli stili non Parquet: usavano data-pq, che la pulizia dei colori Parquet cancella da tutta la pagina. Ora data-perq.
