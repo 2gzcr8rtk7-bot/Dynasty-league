@@ -4167,3 +4167,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1109: partita per partita (scheda giocatore) e tabella dsbx: le regole crema html:not(.notte) ora valgono solo col Parquet (html.dlt-parquet); negli stili scuri colonna Data su --panel e righe dei mesi nel colore dello stile. Anche .cspg crema limitato al Parquet.
 - v1110: controllo completo degli stili scuri (Classico, Cyber, Carbone e oro) su tutte le 62 sezioni + schede giocatore aperte, campo di 3 squadre, Efficienza squadra, tab Dreamers, Impostazioni (scanner /tmp/claude-0/aud/aud.js): nessun fondo crema/arancione rimasto; fogli Condividi (shsheet/shchb/shco/shci) nei colori dello stile invece del viola.
 - v1111: capitano nel campo: capsula nome nera come gli altri (tolti oro e ©), lettera del ruolo dentro un pallino oro (variante B, diametro -5% = 1,19em).
+- v1112: pallino oro del capitano un altro 5% piu piccolo (1,13em), lettera invariata.
