@@ -4172,3 +4172,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1114: lettera del ruolo centrata nel pallino oro del capitano (line-height = altezza del pallino, niente spaziature).
 - v1115: pallino oro del capitano -4% (1,085em), alzato di 0,12em per stare in asse con il nome, lettera ricentrata (misurato a pixel su DUC, DOL, PEA, TUR).
 - v1116: capitano: nome centrato sotto la maglia (spazio vuoto a destra largo come pallino + distanza, 1,385em), pallino alla sua sinistra.
+- v1117: pallino capitano altro -4% (1,042em), spazio di bilanciamento 1,342em; allineamento e centratura rimisurati.
