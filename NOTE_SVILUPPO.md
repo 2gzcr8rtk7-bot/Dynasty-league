@@ -4178,3 +4178,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1120: (prova 1119) lettera del ruolo del capitano identica agli altri (grigia #8b93a7, sulla linea del nome, niente spostamento del pallino).
 - v1121: tolta la prova 1119/1120 (PDK oro): torna il capitano con la lettera del ruolo nel pallino oro (1,042em, allineato), come v1118.
 - v1122: capitano, nome a meta strada verso il centro della maglia (variante 3: spazio di 0,67em a destra del nome).
+- v1123: anche i non capitani con il nome a meta strada verso il centro della maglia (spazio di 0,36em a destra del nome; da 4,7 a 2,3 px di scarto).
