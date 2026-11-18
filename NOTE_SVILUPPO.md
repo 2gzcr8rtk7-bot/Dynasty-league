@@ -4174,3 +4174,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1116: capitano: nome centrato sotto la maglia (spazio vuoto a destra largo come pallino + distanza, 1,385em), pallino alla sua sinistra.
 - v1117: pallino capitano altro -4% (1,042em), spazio di bilanciamento 1,342em; allineamento e centratura rimisurati.
 - v1118: tolto lo spazio di bilanciamento della v1116: pallino e nome del capitano di nuovo centrati insieme come blocco (come prima).
+- v1119 (IN PROVA): capitano con lettera del ruolo normale e punteggio PDK oro (blocco 1119 in fondo, si toglie per tornare al pallino oro della v1118).
