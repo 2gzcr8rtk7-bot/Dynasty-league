@@ -4170,3 +4170,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1112: pallino oro del capitano un altro 5% piu piccolo (1,13em), lettera invariata.
 - v1113: in campo Victor Wembanyama si chiama WEMBY (drSur).
 - v1114: lettera del ruolo centrata nel pallino oro del capitano (line-height = altezza del pallino, niente spaziature).
+- v1115: pallino oro del capitano -4% (1,085em), alzato di 0,12em per stare in asse con il nome, lettera ricentrata (misurato a pixel su DUC, DOL, PEA, TUR).
