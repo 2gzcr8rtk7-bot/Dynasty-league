@@ -4176,3 +4176,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1118: tolto lo spazio di bilanciamento della v1116: pallino e nome del capitano di nuovo centrati insieme come blocco (come prima).
 - v1119 (IN PROVA): capitano con lettera del ruolo normale e punteggio PDK oro (blocco 1119 in fondo, si toglie per tornare al pallino oro della v1118).
 - v1120: (prova 1119) lettera del ruolo del capitano identica agli altri (grigia #8b93a7, sulla linea del nome, niente spostamento del pallino).
+- v1121: tolta la prova 1119/1120 (PDK oro): torna il capitano con la lettera del ruolo nel pallino oro (1,042em, allineato), come v1118.
