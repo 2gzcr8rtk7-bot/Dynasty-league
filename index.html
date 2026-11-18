@@ -14152,7 +14152,7 @@ function buildIO(D){const io={};D.T.forEach(t=>io[t]={give:[],get:[],free:0});co
   D.cy.forEach(c=>c.seq.forEach((t,i)=>{const to=c.seq[(i+1)%c.seq.length],n=c.pl[i];mv.push({n,from:t,to,fix:c.fix&&i===0});io[t].give.push(n);io[to].get.push(n)}));
   (D.fr||[]).forEach(f=>{mv.push({n:f.n,from:f.from,to:f.to,free:1});io[f.from].give.push(f.n);io[f.to].get.push(f.n);io[f.from].free--;io[f.to].free++});return{io,mv}}
 function evalDeal(D){const{io,mv}=buildIO(D);
-  if(mv.length>Math.max(4,2*D.T.length+1))return null;/* scambi leggibili: al massimo 3 giocatori dati per squadra e circa 2 per squadra in tutto */for(const t of D.T){const x=io[t];if(!x.give.length||!x.get.length||x.give.length>3)return null;if((ROSTER[t]||[]).length+x.free>IA_MAXR)return null}
+  if(mv.length>Math.max(4,2*D.T.length+1))return null;/* scambi leggibili: al massimo 3 giocatori dati per squadra e circa 2 per squadra in tutto */for(const t of D.T){const x=io[t];if(!x.give.length||!x.get.length||x.give.length>3)return null;if(x.free>0&&(ROSTER[t]||[]).filter(p=>p[5]!=="G").length+x.free>IA_MAXR)return null}/* (1127) blocca solo gli scambi che FANNO crescere la rosa oltre il limite: prima una rosa già a 16 (Ducks) bloccava ogni scambio, anche 1 contro 1 */
   if(new Set(mv.map(m=>m.n)).size!==mv.length)return null;
   if(GU.mode==="sell"){const A=myT();if(io[A]&&io[A].give.some(n=>!GU.sell.has(n)))return null}
   let P=1;const S={};for(const t of D.T){const r=gsc(t,io[t].give,io[t].get);if(r.d<-45)return null;
