@@ -4168,3 +4168,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1110: controllo completo degli stili scuri (Classico, Cyber, Carbone e oro) su tutte le 62 sezioni + schede giocatore aperte, campo di 3 squadre, Efficienza squadra, tab Dreamers, Impostazioni (scanner /tmp/claude-0/aud/aud.js): nessun fondo crema/arancione rimasto; fogli Condividi (shsheet/shchb/shco/shci) nei colori dello stile invece del viola.
 - v1111: capitano nel campo: capsula nome nera come gli altri (tolti oro e ©), lettera del ruolo dentro un pallino oro (variante B, diametro -5% = 1,19em).
 - v1112: pallino oro del capitano un altro 5% piu piccolo (1,13em), lettera invariata.
+- v1113: in campo Victor Wembanyama si chiama WEMBY (drSur).
