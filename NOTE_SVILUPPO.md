@@ -4219,3 +4219,9 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 
 ## v1147 · Area segreta Ducks: tolti i riquadri (19/11/2026)
 - Rimossi dalla lista della Hall of Fame Ducks: Revisione IA Trade (iarev), Gestione equilibrio trade (eq), Scouting (college), Laboratorio maglie (lab), Software (soft). Il codice delle viste resta.
+
+## v1148 · Assistente GM: «🚀 Radar breakout» (prima scheda) (19/11/2026)
+- `radarAt(TV,cut,W,ctx)` usa solo le partite prima di `cut`; `radarEsito` misura le 2 settimane dopo (esploso = +6' e +6 PDK a partita, almeno 3 gare). Solo chi gioca ≤26' (ultime 10 della squadra, per gara giocata).
+- Segnali: PDK ogni 36' «prudente» (tirato verso la mediana del reparto con 250 minuti fittizi: il dato grezzo peggiorava la prova per il garbage time), rubate+stoppate e tiri ogni 36', spazio per crescere, minuti in salita (ultime 5 contro le 5 prima), strada libera (chi gioca davanti nello stesso reparto: età ≥31/≥34, in scadenza, infortunato da INFLIVE: fuori a lungo 1, breve 0,4 — solo nel radar di oggi), età/2°-3° anno, allenatore (coachStats: giovani, reparto favorito), squadra che perde.
+- Pesi `RW` tarati con prova sui dati (5 date 31/10–12/11, esito 10 giorni): top 20 esplosi 18% contro 8-9% di media; lasciando fuori la data di prova 13%. Script della prova: era in /tmp (non nel repo); per ritararla rifare la ricerca casuale dei pesi su più date quando la stagione è più lunga.
+- In fondo «Quanto ci prende» (ogni lunedì ricalcolato con i dati di allora) e «Previsioni salvate» (top 20 salvata il lunedì in localStorage `gm_radar_hist`, valutata dopo).
