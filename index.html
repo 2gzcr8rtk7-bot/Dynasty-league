@@ -15094,9 +15094,12 @@ function frame(ts){raf=requestAnimationFrame(frame);if(!here()||document.hidden|
  else if(MODE_L==="live"&&!want&&!EVQ.length&&(!LP||T-LP.start>=LP.T)){/* esce solo a fine azione, ripartendo da chi ha la palla */MODE_L="off";PSTART=HOLD;PLAN=null;t0=ts;T=0;LBL=[]}
  const LV=MODE_L==="live";if(LV){const md=window.DXLIVEBALL||"rossa";TC=tcol();AURA=.5+.5*Math.sin(ts/220);{const k=AURA;BC=`rgb(${Math.round(124+43*k)},${Math.round(58+81*k)},${Math.round(237+13*k)})`}}/* (1487) palla live viola Dreamers che lampeggia, per tutti */else{BC=BC0;TC=TC0;AURA=0}let q;try{q=LV?atLive(P,H,T):at(P,H,T)}catch(e){PLAN=null;LP=null;TR.length=0;return}if(!q||!isFinite(q.x)||!isFinite(q.y)){TR.length=0;return}
  /* (1407) scia salvata rispetto alla pagina (non allo schermo): scorrendo non si allunga più; dopo una pausa o un salto la scia riparte da zero */
- const VR=VR0,vx=q.x-VR.left,vy=q.y-VR.top,LT=TR.lt||0;TR.lt=ts;const lastP=TR[TR.length-1];
- if(ts-LT>200||(lastP&&Math.hypot(vx-lastP.vx,vy-lastP.vy)>W*1.2))TR.length=0;
- if(q.gone)TR.length=0;else{TR.push({vx,vy,z:q.z,t:ts});/* (1140) scia a tempo (ultimi 130 ms) invece che a numero di fotogrammi: corta e uguale su ogni telefono */while(TR.length>2&&ts-TR[0].t>130)TR.shift();if(TR.length>16)TR.shift()}
+ const VR=VR0;
+ /* (1141) scia calcolata dalla traiettoria (posizioni della palla negli ultimi 120 ms ricalcolate con la stessa funzione), non dai fotogrammi passati:
+    resta corta e morbida anche quando il telefono disegna pochi fotogrammi (di giorno il campo ha più effetti e il telefono rallenta) */
+ TR.length=0;if(!q.gone){const fn=LV?atLive:at,N=10;for(let i=N;i>=1;i--){const tt=T-i*.012;if(tt<0)continue;if(LV){if(!LP||tt<LP.start)continue}else if(!PLAN||Math.floor(tt/PLAN.T)!==PLAN.cyc)continue;
+   let qq;try{qq=fn(P,H,tt)}catch(e){qq=null}if(!qq||qq.gone||!isFinite(qq.x)||!isFinite(qq.y))continue;const pt={vx:qq.x-VR.left,vy:qq.y-VR.top,z:qq.z},lp=TR[TR.length-1];if(lp&&Math.hypot(pt.vx-lp.vx,pt.vy-lp.vy)>W*.6)TR.length=0;TR.push(pt)}
+  const pt={vx:q.x-VR.left,vy:q.y-VR.top,z:q.z},lp=TR[TR.length-1];if(lp&&Math.hypot(pt.vx-lp.vx,pt.vy-lp.vy)>W*.6)TR.length=0;TR.push(pt)}
  const r=W*.1936*q.s;/* (1391) palla grande quanto il ferro */
  /* (1140) scia morbida: curva che passa per i punti medi (niente segmenti spezzati), si assottiglia e sfuma verso la coda */
  if(TR.length>2){const L=TR.length,X=k=>TR[k].vx+VR.left,Y=k=>TR[k].vy+VR.top,mx=k=>(X(k)+X(k+1))/2,my=k=>(Y(k)+Y(k+1))/2;
