@@ -4210,3 +4210,6 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - `coachStats()` in gmas.js, dai tabellini Dynasty TV per squadra (stagione e ultime 10): minuti medi dei 5 con più minuti totali (media sulle gare giocate), minuti a testa dei titolari, rotazione (giocatori sopra i 10' a partita), quota minuti e PDK per reparto G/F/C contro la media lega, quota minuti ai ≤23 anni (età ESPN), quintetti diversi. Etichette: spreme i titolari / divide i minuti (±1,5' dalla media), rotazione lunga/corta (±0,6), favorisce un reparto (+3 punti), dà spazio ai giovani (+8 punti), cambia spesso quintetto.
 - Classifica ordinabile; in «Squadra» un riquadro apribile con il dettaglio dell'allenatore.
 - Nome dell'allenatore: `GMNBA.coach` da tools/gm_nba.mjs (API core ESPN, stagione 2027 poi 2026).
+
+## v1145 · Assistente GM: filtro età (19/11/2026)
+- `S.eta` ("u27" di default): In crescita, Investimenti e Rischio scambio mostrano solo under 27 (età ESPN < 27; senza età restano visibili). Pulsante «💰 Over 27 da vendere» (rosso) mostra solo i 27+. La scheda Squadra non è filtrata. Età mostrata nelle righe.
