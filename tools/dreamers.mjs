@@ -63,6 +63,10 @@ for (const n of Object.keys(byNight).sort()) {
     }
   }
 }
+/* (1138) TAGLIATI DA UN TURNO IN POI (anche a turno iniziato): fuori dalle formazioni di quel turno e dei successivi; i turni prima restano com erano */
+const FUORI_DAL_TURNO = { "Oso Ighodaro": 7, "Danny Wolf": 7 };
+for (const w of Object.keys(form)) for (const t of Object.keys(form[w])) for (const k of ["t", "r"])
+  form[w][t][k] = form[w][t][k].filter(n => !(FUORI_DAL_TURNO[n] && +w >= FUORI_DAL_TURNO[n]));
 const out = `/* DREAMERS – file generato da tools/dreamers.mjs, non modificare a mano. Notti = data NBA (USA). {giocatore: PDK della partita} */
 const DREAM_DATA=${JSON.stringify({ notti, form })};
 `;
