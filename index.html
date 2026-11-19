@@ -15095,9 +15095,9 @@ function frame(ts){raf=requestAnimationFrame(frame);if(!here()||document.hidden|
  const LV=MODE_L==="live";if(LV){const md=window.DXLIVEBALL||"rossa";TC=tcol();AURA=.5+.5*Math.sin(ts/220);{const k=AURA;BC=`rgb(${Math.round(124+43*k)},${Math.round(58+81*k)},${Math.round(237+13*k)})`}}/* (1487) palla live viola Dreamers che lampeggia, per tutti */else{BC=BC0;TC=TC0;AURA=0}let q;try{q=LV?atLive(P,H,T):at(P,H,T)}catch(e){PLAN=null;LP=null;TR.length=0;return}if(!q||!isFinite(q.x)||!isFinite(q.y)){TR.length=0;return}
  /* (1407) scia salvata rispetto alla pagina (non allo schermo): scorrendo non si allunga più; dopo una pausa o un salto la scia riparte da zero */
  const VR=VR0;
- /* (1141) scia calcolata dalla traiettoria (posizioni della palla negli ultimi 120 ms ricalcolate con la stessa funzione), non dai fotogrammi passati:
+ /* (1141) scia calcolata dalla traiettoria (posizioni della palla negli ultimi 230 ms ricalcolate con la stessa funzione), non dai fotogrammi passati:
     resta corta e morbida anche quando il telefono disegna pochi fotogrammi (di giorno il campo ha più effetti e il telefono rallenta) */
- TR.length=0;if(!q.gone){const fn=LV?atLive:at,N=10;for(let i=N;i>=1;i--){const tt=T-i*.012;if(tt<0)continue;if(LV){if(!LP||tt<LP.start)continue}else if(!PLAN||Math.floor(tt/PLAN.T)!==PLAN.cyc)continue;
+ TR.length=0;if(!q.gone){const fn=LV?atLive:at,N=12;for(let i=N;i>=1;i--){const tt=T-i*.019;if(tt<0)continue;if(LV){if(!LP||tt<LP.start)continue}else if(!PLAN||Math.floor(tt/PLAN.T)!==PLAN.cyc)continue;
    let qq;try{qq=fn(P,H,tt)}catch(e){qq=null}if(!qq||qq.gone||!isFinite(qq.x)||!isFinite(qq.y))continue;const pt={vx:qq.x-VR.left,vy:qq.y-VR.top,z:qq.z},lp=TR[TR.length-1];if(lp&&Math.hypot(pt.vx-lp.vx,pt.vy-lp.vy)>W*.6)TR.length=0;TR.push(pt)}
   const pt={vx:q.x-VR.left,vy:q.y-VR.top,z:q.z},lp=TR[TR.length-1];if(lp&&Math.hypot(pt.vx-lp.vx,pt.vy-lp.vy)>W*.6)TR.length=0;TR.push(pt)}
  const r=W*.1936*q.s;/* (1391) palla grande quanto il ferro */
