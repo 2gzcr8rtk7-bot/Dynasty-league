@@ -4189,3 +4189,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1131: FIX_NOTTE accetta anche {tov:-N} (palle perse in meno: tabellino TO−N, PDK +1,5 per ognuna su box, PARTITE e DRD.notti, una sola volta). Voce: Burries 18/11.
 - v1132: fixNotte applicata anche nei dati live (fantaLiveNotte), cosi le correzioni valgono durante la partita.
 - v1133: FIX_NOTTE tov: quando arriva la riga ufficiale si allineano anche efficienza media (EFF.gioc) e ultima partita (ULTIMA, e[5]); Controllo dati verde (provato con dati ufficiali simulati).
+- v1134: FIX_NOTTE tov applicata due volte (la riga corretta finiva nella memoria del telefono dl_tvc1 e al ricarico veniva ricorretta: 3 palle perse tolte invece di 2). Ora la riga tiene l originale in r[21] {fx,t,p} e la correzione si calcola sempre da lì; memoria live nuova dl_tvc2 (la vecchia si cancella).
