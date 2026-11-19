@@ -15096,9 +15096,13 @@ function frame(ts){raf=requestAnimationFrame(frame);if(!here()||document.hidden|
  /* (1407) scia salvata rispetto alla pagina (non allo schermo): scorrendo non si allunga più; dopo una pausa o un salto la scia riparte da zero */
  const VR=VR0,vx=q.x-VR.left,vy=q.y-VR.top,LT=TR.lt||0;TR.lt=ts;const lastP=TR[TR.length-1];
  if(ts-LT>200||(lastP&&Math.hypot(vx-lastP.vx,vy-lastP.vy)>W*1.2))TR.length=0;
- if(q.gone)TR.length=0;else{TR.push({vx,vy,z:q.z});if(TR.length>22)TR.shift()}
+ if(q.gone)TR.length=0;else{TR.push({vx,vy,z:q.z,t:ts});/* (1140) scia a tempo (ultimi 130 ms) invece che a numero di fotogrammi: corta e uguale su ogni telefono */while(TR.length>2&&ts-TR[0].t>130)TR.shift();if(TR.length>16)TR.shift()}
  const r=W*.1936*q.s;/* (1391) palla grande quanto il ferro */
- for(let j=1;j<TR.length;j++){const A=TR[j-1],B=TR[j],c=B.z?co:cu,al=j/TR.length;c.beginPath();c.moveTo(A.vx+VR.left,A.vy+VR.top);c.lineTo(B.vx+VR.left,B.vy+VR.top);c.strokeStyle=TC;c.lineCap="round";c.globalAlpha=al*.85;c.lineWidth=r*1.3*al;c.stroke();c.globalAlpha=al*.3;c.lineWidth=r*2.3*al;c.stroke();c.globalAlpha=1}
+ /* (1140) scia morbida: curva che passa per i punti medi (niente segmenti spezzati), si assottiglia e sfuma verso la coda */
+ if(TR.length>2){const L=TR.length,X=k=>TR[k].vx+VR.left,Y=k=>TR[k].vy+VR.top,mx=k=>(X(k)+X(k+1))/2,my=k=>(Y(k)+Y(k+1))/2;
+  for(const [wf,af] of [[2.1,.22],[1.15,.75]])for(let j=1;j<L-1;j++){const al=j/(L-1),c=TR[j].z?co:cu;c.beginPath();c.moveTo(mx(j-1),my(j-1));c.quadraticCurveTo(X(j),Y(j),mx(j),my(j));c.strokeStyle=TC;c.lineCap="round";c.lineJoin="round";c.globalAlpha=al*al*af;c.lineWidth=Math.max(.5,r*wf*al);c.stroke()}
+  {const c=TR[L-1].z?co:cu,al=1;c.beginPath();c.moveTo(mx(L-2),my(L-2));c.lineTo(X(L-1),Y(L-1));c.strokeStyle=TC;c.lineCap="round";c.globalAlpha=.75;c.lineWidth=r*1.15;c.stroke()}
+  cu.globalAlpha=1;co.globalAlpha=1}
  if(!q.gone)ball(q.z?co:cu,q.x,q.y,r);drawHoop(co,H,W,1,q.sw);if(LV)drawLbl(co,P,T);
  {const pd=r*2.8+4,B={x0:1e9,y0:1e9,x1:-1e9,y1:-1e9,u};const ad=(x,y,p)=>{B.x0=Math.min(B.x0,x-p);B.y0=Math.min(B.y0,y-p);B.x1=Math.max(B.x1,x+p);B.y1=Math.max(B.y1,y+p)};
   TR.forEach(t=>ad(t.vx,t.vy,pd));ad(q.x-VR.left,q.y-VR.top,pd);const hl=H.L;if(hl){ad(hl.left-VR.left,hl.top-VR.top,6);ad(hl.left+hl.width-VR.left,hl.top+hl.height-VR.top,6)}ad(H.x-VR.left,H.y-VR.top,W*1.3);
