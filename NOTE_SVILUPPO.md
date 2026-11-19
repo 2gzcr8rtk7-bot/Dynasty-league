@@ -4245,3 +4245,7 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - Scheda giocatore: il confronto con l'anno scorso è in cima. Radar: interruttore «🚀 Prima del salto» / «🆙 Salto sull'anno scorso» (`S.rm`, lista `vSalto`, ΔPDK ≥2,5, filtri età/ruolo/liberi).
 - radar-core: segnale `fYoy` (peso `Yoy`, ctx.yoy). Prova sui dati: non aiuta a prevedere un ALTRO salto nei 10 giorni dopo (0,13 senza, 0,12 con peso 1), quindi parte da 0,5 e lo ritara GitHub (tools/radar_tune.mjs legge gm-storico.js).
 - `cog(n)`: cognome senza Jr./III per le etichette brevi.
+
+## v1152 · RETTIFICA taglio Mooses (19/11/2026)
+- Ai Mooses va tagliato **Jalen Williams**, non Danny Wolf. Wolf torna in ROSTER.MOO, EFF.gioc (riga ricalcolata dalle sue 9 partite) e ULTIMA; Jalen Williams tolto da ROSTER/EFF, messo in FA, infortunio t:"FA".
+- FUORI_DAL_TURNO = {Oso Ighodaro:7, Jalen Williams:7} sia in index.html sia in tools/dreamers.mjs. dreamers-data.js form["7"].MOO: Jalen Williams tolto dai titolari, Wolf di nuovo tra le riserve. Controllo dati verde.
