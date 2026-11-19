@@ -4258,3 +4258,7 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 
 ## v1155 · Calendario: turni playoff chiamati playoff (19/11/2026)
 - DR_RN = «Playoff · Semifinali» / «Playoff · Finali» (nome del turno ovunque: calendario, home, sfide, condivisioni). Nella riga del calendario sotto SF/F: «playoff · gara N».
+
+## v1156 · Playoff: «Playoff · turno N» e turni da 4 notti (19/11/2026)
+- DR_PH: dopo la stagione regolare il nome è «Playoff · turno N» (N = k − DR_REG); calendario: PO + «playoff · turno N». Il dettaglio della serie (semifinale/finale, gara, serie) resta nelle sfide.
+- DR_TURNI 38-47 rifatti sul calendario NBA vero (nba-calendario.json da tools/nba_cal.mjs + workflow nba-cal.yml, a mano): 10 turni da 4 notti 2/3–5/3, 7/3–10/3, 11/3–14/3, 15/3–18/3, 19/3–22/3, 23/3–26/3, 27/3–30/3, 31/3–3/4, 4/4–7/4, 8/4–11/4 (pausa 6/3). Ogni squadra NBA gioca in ogni turno, al massimo 7 su 30 una volta sola (prima nel 1° turno 26 su 30). Tolti i turni 48-49 inutilizzati. Regolamento aggiornato.
