@@ -1,0 +1,29 @@
+name: nba-cal
+# (1156) A mano: scarica il calendario NBA (ESPN) di un periodo in nba-calendario.json, per scegliere le date dei turni.
+on:
+  workflow_dispatch:
+    inputs:
+      da:
+        description: "Dal (AAAA-MM-GG)"
+        default: "2027-02-25"
+      a:
+        description: "Al (AAAA-MM-GG)"
+        default: "2027-04-20"
+permissions:
+  contents: write
+jobs:
+  cal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: |
+          git config user.name "cal-bot"
+          git config user.email "cal-bot@users.noreply.github.com"
+          node tools/nba_cal.mjs "${{ github.event.inputs.da }}" "${{ github.event.inputs.a }}"
+          git add nba-calendario.json
+          git commit -m "Calendario NBA per i turni [automatico]" || exit 0
+          for i in 1 2 3; do git pull --rebase origin main && git push origin HEAD:main && exit 0; sleep 10; done
+          exit 1
