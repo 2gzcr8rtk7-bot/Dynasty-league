@@ -28,14 +28,14 @@ function radarAt(TV,cut,W,ctx){const mins=m=>{const a=String(m||"0").split(":");
   bl.forEach(y=>{const ye=ctx.eta(y.n),yc=ctx.contr(y.n),inj=ctx.inj&&ctx.inj(y.n);let v=0;const t=[];if(ye>=34){v+=.8;t.push(ye+" anni")}else if(ye>=31){v+=.45;t.push(ye+" anni")}
    if(yc&&yc.s.length===1){v+=.3;t.push("in scadenza")}if(inj){v+=inj==="fuori a lungo"?1:.4;t.push(inj)}v=Math.min(1,v);sw+=y.mR;sv+=y.mR*v;if(v>=.45)blw.push(y.n.split(" ").slice(-1)[0]+" ("+t.join(", ")+")")});
   x.fPath=sw?sv/sw:.5;x.blw=blw;
-  x.fAge=e==null?0:e<=21?1:e<=23?.7:e<=25?.3:e>=29?-.6:0;if(ex===1||ex===2)x.fAge+=.3;
+  x.fAge=e==null?0:e<=21?1:e<=23?.7:e<=25?.3:e>=29?-.6:0;if(ex===2||ex===3)x.fAge+=.3;/* ESPN: esperienza = stagione in corso (0 per i rookie) */
   const co=ctx.coach&&ctx.coach(x.tm,x.r);x.fCoach=co?co.v:0;x.fTeam=x.win<.35?1:x.win<.45?.5:0;
   x.score=W.P*x.fP+W.Stk*x.fStk+W.Use*x.fUse+W.Room*x.fRoom+W.Trend*x.fTrend+W.Path*x.fPath+W.Age*x.fAge+W.Coach*x.fCoach+W.Team*x.fTeam;
   /* il perché */
   if(x.fP>.4)why.push(`${x.p36.toFixed(1).replace(".",",")} PDK ogni 36' (mediana ${({G:"guardie",F:"ali",C:"centri"})[x.r]} ${med[x.r].toFixed(1).replace(".",",")})`);
   if(x.fStk>.5)why.push(`${x.stk36.toFixed(1).replace(".",",")} rubate+stoppate ogni 36'`);if(x.fUse>.6)why.push("tira tanto quando è in campo");
   if(x.fTrend>.4)why.push(`minuti in salita (+${x.dMin.toFixed(1).replace(".",",")}')`);if(blw.length)why.push("davanti: "+blw.slice(0,2).join(", "));
-  if(e!=null&&e<=23)why.push(e+" anni");if(ex===1||ex===2)why.push((ex+1)+"° anno NBA");if(co&&co.why)why.push(co.why);if(x.fTeam>=1)why.push("squadra in fondo: spazio ai giovani");
+  if(e!=null&&e<=23)why.push(e+" anni");if(ex===2||ex===3)why.push(ex+"° anno NBA");if(co&&co.why)why.push(co.why);if(x.fTeam>=1)why.push("squadra in fondo: spazio ai giovani");
   x.why=why}
  L.med=med;return L}
 /* esito dopo cut: minuti e PDK per partita giocata dopo la data (almeno 3 gare) contro le ultime 10 prima */
