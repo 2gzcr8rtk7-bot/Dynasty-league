@@ -37,7 +37,7 @@ const ab = t => AB[t] || t;
     const head = [...tb.slice(0, tb.indexOf("</thead>")).matchAll(/data-stat="(y\d)"[^>]*>([^<]*)</g)].map(m => [m[1], m[2].trim()]);
     for (const row of tb.split("<tr").slice(1)) {
       if (!/data-stat="player"/.test(row)) continue;
-      const cell = k => { const m = row.match(new RegExp(`data-stat="${k}"([^>]*)>([\\s\\S]*?)</t[dh]>`)); return m ? { a: m[1], v: strip(m[2]) } : null };
+      const cell = k => { const m = row.match(new RegExp(`<t[dh]([^>]*data-stat="${k}"[^>]*)>([\\s\\S]*?)</t[dh]>`)); return m ? { a: m[1], v: strip(m[2]) } : null };
       const p = cell("player"), t = cell("team_id"); if (!p || !p.v || !t) continue;
       const s = [], opt = [];
       for (let i = 1; i <= 6; i++) { const c = cell("y" + i); s.push(c ? money(c.v) : null); opt.push(c && /salary-pl/.test(c.a) ? "P" : c && /salary-tm/.test(c.a) ? "S" : c && /salary-et/.test(c.a) ? "E" : "") }
@@ -92,6 +92,17 @@ await sleep(2000);
   }
 }
 
+/* ---------- 3b) ripiego se Spotrac blocca: soglie del cap dalla storia del cap di Basketball Reference ---------- */
+if (!out.fonti.cap) {
+  const h = await get("https://www.basketball-reference.com/contracts/salary-cap-history.html");
+  const sy = new Date().getUTCMonth() >= 6 ? new Date().getUTCFullYear() : new Date().getUTCFullYear() - 1, lab = `${sy}-${String(sy + 1).slice(2)}`;
+  const row = h && h.split("<tr").find(r => r.includes(">" + lab + "<"));
+  const v = row ? [...row.matchAll(/\$([\d,]{8,})/g)].map(m => money(m[1])) : [];
+  console.log("Cap history", lab, JSON.stringify(v));
+  // tax e apron: stessi rapporti col cap del contratto collettivo 2025/26 (187,9 / 195,9 / 207,8 su 154,6)
+  if (v[0]) { out.capLega = { cap: v[0], tax: Math.round(v[0] * 1.215 * 10) / 10, apron1: Math.round(v[0] * 1.267 * 10) / 10, apron2: Math.round(v[0] * 1.344 * 10) / 10, stima: "tax e apron stimati dal cap" }; out.fonti.cap = { src: "Basketball Reference (cap) + stima soglie" } }
+}
+
 /* ---------- 4) ESPN: ruoli, età, numero; notizie per squadra ---------- */
 {
   const T = await get("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams", true);
@@ -113,6 +124,18 @@ await sleep(2000);
   console.log("ESPN roster", nr, "notizie", nn);
   if (nr > 300) { out.ruoli = R; out.fonti.ruoli = { src: "ESPN", n: nr } }
   if (nn > 30) { out.news = N; out.fonti.news = { src: "ESPN", n: nn } }
+}
+
+/* ripiego free agent se Spotrac blocca: chi ha l'ultimo anno di contratto (o un'opzione) nella stagione in corso.
+   RFA = 4 anni o meno di esperienza (fine contratto da rookie), altrimenti UFA. */
+if (!out.fonti.fa && Object.keys(out.contratti).length) {
+  const F = {}, y = new Date().getUTCMonth() >= 6 ? new Date().getUTCFullYear() + 1 : new Date().getUTCFullYear(), RI = {};
+  for (const k in out.ruoli) RI[nz(k)] = out.ruoli[k];
+  for (const k in out.contratti) { const c = out.contratti[k], r = RI[nz(k)], o1 = c.o && c.o[1];
+    if (c.s.length === 1) F[k] = { y, ty: r && r.exp != null && r.exp <= 4 ? "RFA" : "UFA", t: c.t, d: 1 };
+    else if (o1 === "P") F[k] = { y, ty: "PO", t: c.t, d: 1 }; else if (o1 === "S") F[k] = { y, ty: "TO", t: c.t, d: 1 } }
+  out.fa = F; out.fonti.fa = { src: "dedotti dai contratti Basketball Reference", anno: y, n: Object.keys(F).length };
+  console.log("FA dedotti", Object.keys(F).length);
 }
 
 /* incroci: nomi normalizzati per trovarsi tra le fonti */
