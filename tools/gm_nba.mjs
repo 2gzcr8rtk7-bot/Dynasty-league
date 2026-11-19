@@ -22,7 +22,7 @@ const money = s => { const x = String(s || "").replace(/[$,\s]/g, ""); return x 
 const nz = n => String(n).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[.'’]/g, "").replace(/\s+(jr|sr|ii|iii|iv)$/, "").replace(/\s+/g, " ").trim();
 
 const OLD = existsSync("gm-nba.js") ? (() => { try { return JSON.parse(readFileSync("gm-nba.js", "utf8").replace(/^[\s\S]*?const GMNBA=/, "").replace(/;\s*$/, "")) } catch { return {} } })() : {};
-const out = { upd: new Date().toISOString(), fonti: {}, contratti: OLD.contratti || {}, fa: OLD.fa || {}, cap: OLD.cap || {}, ruoli: OLD.ruoli || {}, news: OLD.news || {}, coach: OLD.coach || {}, capLega: OLD.capLega || null };
+const out = { idx: {}, upd: new Date().toISOString(), fonti: {}, contratti: OLD.contratti || {}, fa: OLD.fa || {}, cap: OLD.cap || {}, ruoli: OLD.ruoli || {}, news: OLD.news || {}, coach: OLD.coach || {}, capLega: OLD.capLega || null };
 
 /* Abbreviazioni: Basketball Reference / Spotrac → quelle di ESPN usate in Dynasty TV */
 const AB = { BRK: "BKN", CHO: "CHA", PHO: "PHX", GSW: "GSW", NOP: "NOP", NYK: "NYK", SAS: "SAS", UTA: "UTA", WAS: "WAS", BKN: "BKN", PHX: "PHX", CHA: "CHA", NO: "NOP", NY: "NYK", SA: "SAS", GS: "GSW", UTAH: "UTA", WSH: "WAS" };
@@ -150,7 +150,36 @@ if (!out.fonti.fa && Object.keys(out.contratti).length) {
   console.log("FA dedotti", Object.keys(F).length);
 }
 
+/* ---------- 5) Basketball Reference: stagioni passate (medie per squadra) → gm-storico.js ----------
+   Le ultime 3 stagioni concluse: medie a partita per giocatore e squadra (chi è stato scambiato ha una riga per squadra + il totale).
+   Le stagioni concluse non cambiano: si scaricano solo se mancano. */
+{
+  const OS = existsSync("gm-storico.js") ? (() => { try { return JSON.parse(readFileSync("gm-storico.js", "utf8").replace(/^[\s\S]*?const GMSTO=/, "").replace(/;\s*$/, "")) } catch { return null } })() : null;
+  const ST = { upd: new Date().toISOString(), stagioni: (OS && OS.stagioni) || {} };
+  const y0 = new Date().getUTCMonth() >= 6 ? new Date().getUTCFullYear() : new Date().getUTCFullYear() - 1; // anno di inizio della stagione in corso
+  for (let k = 1; k <= 3; k++) {
+    const ys = y0 - k, lab = `${ys}-${String(ys + 1).slice(2)}`;
+    if (ST.stagioni[lab] && Object.keys(ST.stagioni[lab]).length > 300) continue;
+    await sleep(3500);
+    const h = await get(`https://www.basketball-reference.com/leagues/NBA_${ys + 1}_per_game.html`); if (!h) continue;
+    const S = {}; let n = 0;
+    const tb = h.slice(h.indexOf('id="per_game_stats"'));
+    for (const row of tb.split("<tr").slice(1)) {
+      const cell = (...ks) => { for (const k of ks) { const m = row.match(new RegExp(`<t[dh][^>]*data-stat="${k}"[^>]*>([\\s\\S]*?)</t[dh]>`)); if (m) return strip(m[1]) } return "" };
+      const nm = cell("name_display", "player"); if (!nm || nm === "Player" || /League Average/i.test(nm)) continue;
+      const tm = cell("team_name_abbr", "team_id"); if (!tm) continue;
+      const v = k => { const x = parseFloat(cell(...k)); return isNaN(x) ? 0 : x };
+      (S[nm] = S[nm] || []).push([/^(TOT|\dTM)$/.test(tm) ? "TOT" : ab(tm), v(["games", "g"]), v(["games_started", "gs"]), v(["mp_per_g"]), v(["pts_per_g"]), v(["orb_per_g"]), v(["drb_per_g"]), v(["ast_per_g"]), v(["stl_per_g"]), v(["blk_per_g"]), v(["tov_per_g"]), v(["fg_per_g"]), v(["fga_per_g"]), v(["ft_per_g"]), v(["fta_per_g"]), v(["fg3_per_g"]), v(["fg3a_per_g"]), cell("pos"), v(["age"])]);
+      n++;
+    }
+    console.log("Basketball Reference stagione", lab, n, "righe");
+    if (n > 300) ST.stagioni[lab] = S;
+  }
+  writeFileSync("gm-storico.js", `/* ASSISTENTE GM – stagioni passate (Basketball Reference), da tools/gm_nba.mjs. Medie a partita per squadra: [squadra,G,GS,MIN,PT,RO,RD,AS,RU,ST,PP,TR,TT,LR,LT,3R,3T,ruolo,età]. */\nconst GMSTO=${JSON.stringify(ST)};\n`);
+  for (const lab in ST.stagioni) for (const k of Object.keys(ST.stagioni[lab])) out.idx[nz(k)] = out.idx[nz(k)] || k;
+}
+
 /* incroci: nomi normalizzati per trovarsi tra le fonti */
-out.idx = {}; for (const k of new Set([...Object.keys(out.contratti), ...Object.keys(out.ruoli), ...Object.keys(out.fa)])) out.idx[nz(k)] = k;
+out.idx = out.idx || {}; for (const k of new Set([...Object.keys(out.contratti), ...Object.keys(out.ruoli), ...Object.keys(out.fa)])) out.idx[nz(k)] = k;
 writeFileSync("gm-nba.js", `/* ASSISTENTE GM – generato da tools/gm_nba.mjs (GitHub, ogni giorno). Non modificare a mano. Cifre in milioni di dollari. */\nconst GMNBA=${JSON.stringify(out)};\n`);
 console.log("gm-nba.js scritto:", Object.keys(out.contratti).length, "contratti,", Object.keys(out.fa).length, "free agent,", Object.keys(out.cap).length, "squadre cap,", Object.keys(out.ruoli).length, "giocatori ESPN");
