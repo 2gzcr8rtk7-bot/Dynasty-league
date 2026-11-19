@@ -9207,7 +9207,7 @@ function vDream(){fantaLiveAvvia();
         ${cls==="b"?`<div class="pkcup prz"><i>C</i><b>80</b><span>crediti</span></div>`:""}
         <div class="pk f1">${mb(fn[0],["Vincente "+ph[0],"Vincente "+ph[1]],ph[2],"fin")}</div>
       </div>
-      <div class="pobp"><h6>Piazzamento<small>${rd(1)}</small>${cls==="a"?`<small class="pz4">al 4° posto 50 crediti</small>`:""}</h6><div class="pobpm">${mb(fn[1],["Perdente "+ph[0],"Perdente "+ph[1]],ph[3])}</div></div>
+      <div class="pobp"><h6>Piazzamento<small>${rd(1)}</small></h6><div class="pobpr"><div class="pobpm">${mb(fn[1],["Perdente "+ph[0],"Perdente "+ph[1]],ph[3])}</div>${cls==="a"?`<div class="pz50 prz"><i>C</i><b>50</b><span>crediti</span><small>al 4° posto</small></div>`:""}</div></div>
       ${cls==="a"&&champ?`<div class="pobch">Campioni<b>${TEAMS[champ].name}</b></div>`:""}</section>`;
     SHR_PO={P,def:drWeek(DR_REG).closed};
     body=`<p class="note" style="margin-top:0">${drWeek(DR_REG).closed?"Tabelloni definitivi.":"Tabelloni provvisori in base alla classifica attuale."} Due playoff in contemporanea, serie al meglio delle 5: il numero accanto alla squadra sono le vittorie nella serie.</p>
@@ -14699,7 +14699,7 @@ html.dlt-parquet:not(.notte) .drroom .drcup{filter:drop-shadow(0 0 12px rgba(249
 .drroom .pobx .bkt b{overflow:hidden!important;text-overflow:clip!important;line-height:1.15!important}
 .drroom .pobx .bkm.tbd .bkt,.drroom .pobp .bkm .bkt{justify-content:center!important;text-align:center!important}
 .drroom .pobx .bkm.tbd .bkt b,.drroom .pobp .bkm.tbd .bkt b{flex:none!important;text-align:center!important;white-space:nowrap!important}
-.drroom .pobp .pobpm{width:52%!important}
+.drroom .pobp .pobpm{width:52%!important}/* (1160) premio 50 crediti a destra della finale 3°–4°, come gli 80 della 5°–6° */.pobpr{display:flex;align-items:center}.pz50{flex:1;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:8px;white-space:nowrap}.pz50 small{flex-basis:100%;text-align:center;font:800 11px var(--display);text-transform:uppercase;letter-spacing:.12em;color:#b59b55;margin-top:2px}
 </style>
 <style>/* (867) box score NBA di Dynasty TV: colonna SQ con il logo della nostra squadra (prima il logo stava sotto nome e ruolo); ruolo di nuovo lettera opaca senza pillola (tolte le regole 861/862/866); nomi lunghi su due righe */
 .tvbox.tvsq .sqc,.tvbox.tvsq .sqh{text-align:center!important;width:36px;min-width:36px;padding:0 4px!important}

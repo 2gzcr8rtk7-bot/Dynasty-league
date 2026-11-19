@@ -4273,3 +4273,6 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 
 ## v1159 · Playoff: opzione A (19/11/2026)
 - Turni 38-47: 2-5/3, 8-11/3, 13-16/3, 17-20/3, 21-24/3, 25-28/3, 29/3-1/4 (4 notti), 2-4/4 (3), 5-8/4 (4), 9-11/4 (3); pause 6-7/3 e 12/3. Scelti sul calendario NBA: 61 squadre-turno su 300 fuori da 2 partite (più equilibrato della 1158: 64). Con le rose del 19/11 i 10 migliori dei Ducks hanno la media partite più alta (2,02).
+
+## v1160 · Tabellone playoff: 50 crediti del 4° posto come gli 80 (19/11/2026)
+- Piazzamento del tabellone titolo: moneta «C 50 crediti · al 4° posto» a destra della finale 3°–4° (stesso stile .prz degli 80 della finale 5°–6°), tolta la scritta piccola nel titolo.
