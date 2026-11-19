@@ -8919,7 +8919,7 @@ const FL={fin:{},run:false,t:null};
 const __flF=new Intl.DateTimeFormat("en-CA",{timeZone:"America/New_York",year:"numeric",month:"2-digit",day:"2-digit"});/* (01/11) prestazioni: un solo formattatore */
 const flUsaOggi=()=>__flF.format(new Date());
 function fantaLiveNotti(da){const out=[],oggi=flUsaOggi();if(!da)return out;for(let d=da,i=0;d<=oggi&&i<10;d=drAdd(d,1),i++)out.push(d);return out}
-function fantaLiveNotte(d){const o={};if(typeof TV==="undefined")return o;
+function fantaLiveNotte(d){const o={};if(typeof TV==="undefined")return o;try{fixNotte()}catch(_){}
   for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
     [["a",g[1]],["h",g[0]]].forEach(([sd,opp])=>(B[sd]||[]).forEach(r=>{if(r[19]==null)return;const mm=String(r[2]||"0").split(":");o[tvNm(r[0])]={p:+r[19],min:(+mm[0]||0)+(+mm[1]||0)/60,opp,nm:r[0],prov:!!B.live,pts:+r[3]||0,reb:+r[6]||0,ast:+r[7]||0}}))}
   return o}
