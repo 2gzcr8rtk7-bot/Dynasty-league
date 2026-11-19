@@ -4213,3 +4213,6 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 
 ## v1145 · Assistente GM: filtro età (19/11/2026)
 - `S.eta` ("u27" di default): In crescita, Investimenti e Rischio scambio mostrano solo under 27 (età ESPN < 27; senza età restano visibili). Pulsante «💰 Over 27 da vendere» (rosso) mostra solo i 27+. La scheda Squadra non è filtrata. Età mostrata nelle righe.
+
+## v1146 · Assistente GM: livella dell'età (19/11/2026)
+- Al posto dei due pulsanti: interruttore «Fino a» / «Da (da vendere)» + livella 19–38 anni (`S.etaN`, default 26, ricordata in localStorage `gm_eta`). Il numero si aggiorna mentre trascini, la lista al rilascio.
