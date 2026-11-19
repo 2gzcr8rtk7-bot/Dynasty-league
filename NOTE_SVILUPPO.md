@@ -4216,3 +4216,6 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 
 ## v1146 · Assistente GM: livella dell'età (19/11/2026)
 - Al posto dei due pulsanti: interruttore «Fino a» / «Da (da vendere)» + livella 19–38 anni (`S.etaN`, default 26, ricordata in localStorage `gm_eta`). Il numero si aggiorna mentre trascini, la lista al rilascio.
+
+## v1147 · Area segreta Ducks: tolti i riquadri (19/11/2026)
+- Rimossi dalla lista della Hall of Fame Ducks: Revisione IA Trade (iarev), Gestione equilibrio trade (eq), Scouting (college), Laboratorio maglie (lab), Software (soft). Il codice delle viste resta.
