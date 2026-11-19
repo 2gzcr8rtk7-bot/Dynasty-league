@@ -10346,7 +10346,8 @@ function fixNotte(){try{for(const k in FIX_NOTTE){const[n,d]=k.split("|"),F=FIX_
   if(F.tov){/* variazione delle palle perse: PDK +1,5 per ogni palla persa tolta (formula Dunkest) */let k=-F.tov,seen=false;
    if(typeof TV!=="undefined")for(const x of TV.days[d]||[]){const B=x[7]&&TV.box[x[7]];if(!B)continue;for(const sd of["a","h"])for(const r of B[sd]||[])if(r[0]===n){seen=true;if(!FIX_DONE.has(r)){k=Math.min(k,+r[10]||0);r[10]=(+r[10]||0)-k;r[19]=Math.round(((+r[19]||0)+1.5*k)*100)/100;FIX_DONE.add(r)}}}
    F._k=seen?k:(F._k!=null?F._k:k);const add=1.5*F._k;
-   for(const g of(PARTITE[n]||[]))if(g[0]===dm&&!FIX_DONE.has(g)){g[3]=Math.round((+g[3]+add)*100)/100;g[4]=g[2]?Math.round(g[3]/g[2]*100)/100:g[4];FIX_DONE.add(g)}
+   for(const g of(PARTITE[n]||[]))if(g[0]===dm&&!FIX_DONE.has(g)){const e0=+g[4]||0;g[3]=Math.round((+g[3]+add)*100)/100;g[4]=g[2]?Math.round(g[3]/g[2]*100)/100:g[4];FIX_DONE.add(g);
+     /* riga ufficiale: medie e ultima partita allineate, cosi il Controllo dati resta verde */if(g[8]==null&&typeof EFF!=="undefined"){const de=(+g[4]||0)-e0;for(const t in EFF.gioc){const e=(EFF.gioc[t]||[]).find(x=>x[0]===n);if(!e||FIX_DONE.has(e))continue;if(e[2]>0)e[1]=Math.round((e[1]+de/e[2])*100)/100;const L=(PARTITE[n]||[]).filter(x=>x[8]==null),last=L[L.length-1];if(last===g){if(typeof ULTIMA!=="undefined"&&ULTIMA.gioc[n]!=null)ULTIMA.gioc[n]=g[4];if(e[5]!=null)e[5]=g[4]}FIX_DONE.add(e)}}}
    if(typeof DRD!=="undefined"&&DRD.notti&&DRD.notti[d]&&DRD.notti[d][n]!=null){const o=DRD.notti[d];if(!o.__fx)Object.defineProperty(o,"__fx",{value:{},enumerable:false});if(!o.__fx[n]){o[n]=Math.round((+o[n]+add)*100)/100;o.__fx[n]=1}}
    continue}
   for(const g of(PARTITE[n]||[]))if(g[0]===dm&&!FIX_DONE.has(g)){g[3]=F.pdk;g[4]=g[2]?Math.round(F.pdk/g[2]*100)/100:g[4];if(F.ast!=null)g[7]=F.ast;FIX_DONE.add(g)}

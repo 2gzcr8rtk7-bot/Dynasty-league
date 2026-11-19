@@ -4188,3 +4188,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1130: TAGLI 19/11/2026 (andavano fatti prima del turno 7): Oso Ighodaro (TUR) e Danny Wolf (MOO) tolti da ROSTER, EFF.gioc e dalle riserve della formazione salvata del turno 7 (dreamers-data.js form["7"]); aggiunti in FA; infortunio Ighodaro t:"FA". Controllo dati verde.
 - v1131: FIX_NOTTE accetta anche {tov:-N} (palle perse in meno: tabellino TO−N, PDK +1,5 per ognuna su box, PARTITE e DRD.notti, una sola volta). Voce: Burries 18/11.
 - v1132: fixNotte applicata anche nei dati live (fantaLiveNotte), cosi le correzioni valgono durante la partita.
+- v1133: FIX_NOTTE tov: quando arriva la riga ufficiale si allineano anche efficienza media (EFF.gioc) e ultima partita (ULTIMA, e[5]); Controllo dati verde (provato con dati ufficiali simulati).
