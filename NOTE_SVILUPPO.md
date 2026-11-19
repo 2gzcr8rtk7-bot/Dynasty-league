@@ -4267,3 +4267,6 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - `drFase(k,P)`: Fase 1 = semifinali dei due tabelloni, Fase 2 = finali; turno nella fase; `certo` per le prime 3 gare (serie al meglio delle 5). Nomi: «Playoff · Fase 1 · turno 2»; se la fase non è ancora decisa «Playoff · turno N». Calendario: F1/F2/PO + «fase X · turno Y».
 - `drPairs`: le prime 3 gare di ogni fase mostrano già le coppie (stesse della gara 1). Turni 4-5: «si gioca di sicuro: Fase 1 (gara N se serve) o Fase 2»; turno 6: Fase 2 sicuro; 7-10: Fase 2 solo se necessario.
 - Dettaglio sfida: «Fase 1 · tabellone titolo 1 · gara N», «Fase 2 · Finale titolo…»; tabellone: «Fase 1 · semifinali» / «Fase 2 · finale…»; regolamento aggiornato.
+
+## v1158 · Playoff: 3 notti, 4 solo dove serve (19/11/2026)
+- Turni 38-47 scelti per avere più squadre NBA possibile a 2 partite esatte (costo: squadre a 1 o 3+ partite, piccola penalità alle 4 notti, pause libere): 2-5/3, 8-11/3, 12-15/3, 16-18/3, 20-23/3, 25-28/3, 29/3-1/4, 2-4/4, 5-8/4, 9-11/4. Fuori da 2 partite 64 squadre-turno su 300 (con tutti da 4 notti erano 86; con 5 turni da 3 notti 70). Regolamento aggiornato.
