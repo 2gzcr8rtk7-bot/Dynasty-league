@@ -4238,3 +4238,10 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - «Chi gli toglie spazio» / «Con chi rende di più»: con/senza compagno nelle sue partite (minimo 3+3 gare, compagni ≥12' di media), con rischio scambio, contratto, infortunio ed età del compagno. `conc()`: stesso ruolo Dreamers oppure lunghi (ala grande PF da Basketball Reference/ESPN contro centro).
 - «Negli anni»: `gm-storico.js` (GMSTO, da tools/gm_nba.mjs: Basketball Reference per_game delle 3 stagioni concluse, scaricate solo se mancano) → PDK stimati con la formula senza bonus vittoria, anche per quest'anno; arrivi/partenze nel suo reparto rispetto all'ultima stagione; con/senza stagione per stagione (compagni con le stesse stagioni raggruppati).
 - radar-core: «2°-3° anno» corretto (ESPN exp = stagione in corso, 0 per i rookie).
+
+## v1151 · Assistente GM: salto rispetto all'anno scorso (19/11/2026)
+- `salto(B,x)`: stagione in corso (tabellini) contro l'ultima stagione conclusa (GMSTO, ≥10 gare), PDK stimati con la stessa formula. Tipo: Salto vero (+min e +3 PDK/36'), Crescita sua (+3 PDK/36'), Più minuti, Calo. Effetto minuti/rendimento, statistiche ogni 36' migliorate/peggiorate (pesi formula PDK), tabella anno scorso/ora/differenza.
+- «Da dove arriva lo spazio»: partiti dal reparto (stessa squadra, ≥12'), compagni di reparto infortunati ora (INFLIVE) con il con/senza, crescita propria; «Chi gli sta ancora davanti» con contratto e rischio scambio.
+- Scheda giocatore: il confronto con l'anno scorso è in cima. Radar: interruttore «🚀 Prima del salto» / «🆙 Salto sull'anno scorso» (`S.rm`, lista `vSalto`, ΔPDK ≥2,5, filtri età/ruolo/liberi).
+- radar-core: segnale `fYoy` (peso `Yoy`, ctx.yoy). Prova sui dati: non aiuta a prevedere un ALTRO salto nei 10 giorni dopo (0,13 senza, 0,12 con peso 1), quindi parte da 0,5 e lo ritara GitHub (tools/radar_tune.mjs legge gm-storico.js).
+- `cog(n)`: cognome senza Jr./III per le etichette brevi.

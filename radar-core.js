@@ -9,7 +9,7 @@ function radarAt(TV,cut,W,ctx){const mins=m=>{const a=String(m||"0").split(":");
  const P={},T={};
  for(const d of Object.keys(TV.days).sort()){if(d>=cut)break;for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
   const wa=(+g[2]||0)>(+g[3]||0);[["a",g[0],wa],["h",g[1],!wa]].forEach(([sd,tm,w])=>{const t=T[tm]=T[tm]||{g:[],w:0,l:0};t.g.push(d);w?t.w++:t.l++;
-   (B[sd]||[]).forEach(r=>{const k=ctx.nz(r[0]),m=mins(r[2]);if(m<=0)return;const x=P[k]=P[k]||{n:r[0],G:[]};x.tm=tm;x.G.push({d,tm,min:m,pdk:+r[19]||0,stl:+r[8]||0,blk:+r[9]||0,fga:+r[13]||0,fta:+r[17]||0,tit:!!r[1]})})})}}
+   (B[sd]||[]).forEach(r=>{const k=ctx.nz(r[0]),m=mins(r[2]);if(m<=0)return;const x=P[k]=P[k]||{n:r[0],G:[]};x.tm=tm;x.G.push({d,tm,min:m,pdk:+r[19]||0,stl:+r[8]||0,blk:+r[9]||0,fga:+r[13]||0,fta:+r[17]||0,tit:!!r[1],est:(+r[3]||0)+(+r[5]||0)+1.25*(+r[4]||0)+1.5*((+r[7]||0)+(+r[8]||0)+(+r[9]||0))-1.5*(+r[10]||0)-((+r[13]||0)-(+r[12]||0))-((+r[17]||0)-(+r[16]||0))+(r[1]?1:0)})})})}}
  const L=[];
  for(const k in P){const x=P[k],Dt=T[x.tm].g;if(Dt.length<4)continue;const last10=Dt.slice(-10),l5=Dt.slice(-5),p5=Dt.slice(-10,-5);
   const Gt=x.G.filter(g=>g.tm===x.tm),in10=Gt.filter(g=>g.d>=last10[0]);if(in10.length<3)continue;
@@ -18,7 +18,7 @@ function radarAt(TV,cut,W,ctx){const mins=m=>{const a=String(m||"0").split(":");
   const g5=Gt.filter(g=>g.d>=l5[0]),gp5=p5.length?Gt.filter(g=>g.d>=p5[0]&&g.d<l5[0]):[];
   L.push({k,n:x.n,tm:x.tm,r:ctx.ruolo(x.n),gp10:in10.length,mR:av(in10,g=>g.min),pR:av(in10,g=>g.pdk),M,
    p36:S(g=>g.pdk)/M*36,stk36:S(g=>g.stl+g.blk)/M*36,use36:S(g=>g.fga+.44*g.fta)/M*36,
-   dMin:g5.length&&gp5.length?av(g5,g=>g.min)-av(gp5,g=>g.min):0,win:T[x.tm].w/((T[x.tm].w+T[x.tm].l)||1)})}
+   dMin:g5.length&&gp5.length?av(g5,g=>g.min)-av(gp5,g=>g.min):0,est:S(g=>g.est)/x.G.length,gpS:x.G.length,win:T[x.tm].w/((T[x.tm].w+T[x.tm].l)||1)})}
  const med={};for(const r of["G","F","C"]){const v=L.filter(x=>x.r===r&&x.M>=150).map(x=>x.p36).sort((a,b)=>a-b);med[r]=v.length?v[v.length>>1]:20}
  const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
  const byT={};L.forEach(x=>(byT[x.tm]=byT[x.tm]||[]).push(x));
@@ -29,12 +29,16 @@ function radarAt(TV,cut,W,ctx){const mins=m=>{const a=String(m||"0").split(":");
    if(yc&&yc.s.length===1){v+=.3;t.push("in scadenza")}if(inj){v+=inj==="fuori a lungo"?1:.4;t.push(inj)}v=Math.min(1,v);sw+=y.mR;sv+=y.mR*v;if(v>=.45)blw.push(y.n.split(" ").slice(-1)[0]+" ("+t.join(", ")+")")});
   x.fPath=sw?sv/sw:.5;x.blw=blw;
   x.fAge=e==null?0:e<=21?1:e<=23?.7:e<=25?.3:e>=29?-.6:0;if(ex===2||ex===3)x.fAge+=.3;/* ESPN: esperienza = stagione in corso (0 per i rookie) */
+  /* (1151) salto rispetto all'anno scorso (PDK stimati con la stessa formula: a partita e ogni 36') */
+  const yo=ctx.yoy&&ctx.yoy(x.n);x.fYoy=0;x.yoy=null;
+  if(yo&&yo.g>=15&&x.gpS>=5){const e36=x.est/(x.M/x.gpS)*36,dE=x.est-yo.est,d36=e36-yo.e36;x.yoy={dE,d36,dm:x.M/x.gpS-yo.min,lab:yo.lab};x.fYoy=cl(dE/6*.6+d36/6*.4,-1,2)}
   const co=ctx.coach&&ctx.coach(x.tm,x.r);x.fCoach=co?co.v:0;x.fTeam=x.win<.35?1:x.win<.45?.5:0;
-  x.score=W.P*x.fP+W.Stk*x.fStk+W.Use*x.fUse+W.Room*x.fRoom+W.Trend*x.fTrend+W.Path*x.fPath+W.Age*x.fAge+W.Coach*x.fCoach+W.Team*x.fTeam;
+  x.score=(W.Yoy||0)*x.fYoy+W.P*x.fP+W.Stk*x.fStk+W.Use*x.fUse+W.Room*x.fRoom+W.Trend*x.fTrend+W.Path*x.fPath+W.Age*x.fAge+W.Coach*x.fCoach+W.Team*x.fTeam;
   /* il perché */
   if(x.fP>.4)why.push(`${x.p36.toFixed(1).replace(".",",")} PDK ogni 36' (mediana ${({G:"guardie",F:"ali",C:"centri"})[x.r]} ${med[x.r].toFixed(1).replace(".",",")})`);
   if(x.fStk>.5)why.push(`${x.stk36.toFixed(1).replace(".",",")} rubate+stoppate ogni 36'`);if(x.fUse>.6)why.push("tira tanto quando è in campo");
   if(x.fTrend>.4)why.push(`minuti in salita (+${x.dMin.toFixed(1).replace(".",",")}')`);if(blw.length)why.push("davanti: "+blw.slice(0,2).join(", "));
+  if(x.yoy&&x.fYoy>=.4)why.push(`rispetto al ${x.yoy.lab}: ${x.yoy.dE>=0?"+":""}${x.yoy.dE.toFixed(1).replace(".",",")} PDK a partita`);
   if(e!=null&&e<=23)why.push(e+" anni");if(ex===2||ex===3)why.push(ex+"° anno NBA");if(co&&co.why)why.push(co.why);if(x.fTeam>=1)why.push("squadra in fondo: spazio ai giovani");
   x.why=why}
  L.med=med;return L}

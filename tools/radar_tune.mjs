@@ -17,15 +17,20 @@ const G = existsSync("gm-nba.js") ? load("gm-nba.js", "GMNBA") : { ruoli: {}, co
 let INFLIVE = null; try { INFLIVE = load("infortuni-data.js", "INFLIVE") } catch { }
 const OLD = existsSync("radar-pesi.js") ? (() => { try { return load("radar-pesi.js", "RADAR") } catch { return null } })() : null;
 
-const W0 = { P: 1.2, Stk: 1, Use: 1, Room: 2.5, Trend: 2, Path: 1.5, Age: 1.8, Team: .5, Coach: .5 };
-const KEYS = ["P", "Stk", "Use", "Room", "Trend", "Path", "Age", "Team"]; // Coach non si tara qui (servono le statistiche allenatori dell'app)
+const W0 = { Yoy: .5, P: 1.2, Stk: 1, Use: 1, Room: 2.5, Trend: 2, Path: 1.5, Age: 1.8, Team: .5, Coach: .5 };
+const KEYS = ["Yoy", "P", "Stk", "Use", "Room", "Trend", "Path", "Age", "Team"]; // Coach non si tara qui (servono le statistiche allenatori dell'app)
 const Wcur = Object.assign({}, W0, (OLD && OLD.W) || {});
 
 const nz = n => String(n).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[.'’]/g, "").replace(/\s+(jr|sr|ii|iii|iv)$/, "").replace(/\s+/g, " ").trim();
 const lk = (m, n) => m && (m[n] || (G.idx && m[G.idx[nz(n)]])) || null;
 const ruolo = n => { const r = lk(G.ruoli, n); const p = r && r.p || ""; return p === "C" ? "C" : /G/.test(p) ? "G" : "F" };
 const IM = {}; try { (INFLIVE.injuries || []).forEach(t => (t.injuries || []).forEach(i => { if (/out/i.test(i.status || "")) IM[nz(i.athlete.displayName)] = /week|month|surgery|season|indefinitely|re-evaluated/i.test(i.shortComment || "") ? "fuori a lungo" : "infortunato" })) } catch { }
-const ctx = { nz, ruolo, eta: n => { const r = lk(G.ruoli, n); return r && r.e || null }, exp: n => { const r = lk(G.ruoli, n); return r ? r.exp : null }, contr: n => lk(G.contratti, n) };
+/* (1151) stagione scorsa da gm-storico.js: PDK stimati a partita e ogni 36' */
+let STO = null; try { STO = load("gm-storico.js", "GMSTO") } catch { }
+const YL = STO ? Object.keys(STO.stagioni).sort().pop() : null, YI = {}; if (YL) for (const k in STO.stagioni[YL]) YI[nz(k)] = STO.stagioni[YL][k];
+const pe = r => r[4] + r[6] + 1.25 * r[5] + 1.5 * (r[7] + r[8] + r[9]) - 1.5 * r[10] - (r[12] - r[11]) - (r[14] - r[13]) + (r[1] ? r[2] / r[1] : 0);
+const yoy = n => { const rows = YI[nz(n)]; if (!rows) return null; const t = rows.find(r => r[0] === "TOT") || rows[0], e = pe(t); return { lab: YL, g: t[1], est: e, min: t[3], e36: t[3] ? e / t[3] * 36 : 0 } };
+const ctx = { nz, ruolo, eta: n => { const r = lk(G.ruoli, n); return r && r.e || null }, exp: n => { const r = lk(G.ruoli, n); return r ? r.exp : null }, contr: n => lk(G.contratti, n), yoy };
 const ctxLive = Object.assign({}, ctx, { inj: n => IM[nz(n)] || null });
 
 const add = (d, k) => new Date(Date.parse(d + "T12:00:00Z") + k * 864e5).toISOString().slice(0, 10);
