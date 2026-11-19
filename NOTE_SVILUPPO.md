@@ -4249,3 +4249,6 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 ## v1152 · RETTIFICA taglio Mooses (19/11/2026)
 - Ai Mooses va tagliato **Jalen Williams**, non Danny Wolf. Wolf torna in ROSTER.MOO, EFF.gioc (riga ricalcolata dalle sue 9 partite) e ULTIMA; Jalen Williams tolto da ROSTER/EFF, messo in FA, infortunio t:"FA".
 - FUORI_DAL_TURNO = {Oso Ighodaro:7, Jalen Williams:7} sia in index.html sia in tools/dreamers.mjs. dreamers-data.js form["7"].MOO: Jalen Williams tolto dai titolari, Wolf di nuovo tra le riserve. Controllo dati verde.
+
+## v1153 · Campo Ducks negli stili scuri di giorno: linee −30% (19/11/2026)
+- Linee bianche con bagliore verde («Griglia neon»): opacità del gruppo .cln a 0,7 (linee e bagliore insieme). Notte e Parquet invariati.
