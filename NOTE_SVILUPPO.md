@@ -4252,3 +4252,6 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 
 ## v1153 · Campo Ducks negli stili scuri di giorno: linee −30% (19/11/2026)
 - Linee bianche con bagliore verde («Griglia neon»): opacità del gruppo .cln a 0,7 (linee e bagliore insieme). Notte e Parquet invariati.
+
+## v1154 · Campo Ducks negli stili scuri di giorno: linee verde lime senza bagliore (19/11/2026)
+- Linee del campo (.cln) verde lime #a3e635 come in modalità notte, senza filtro dxgl e senza opacità ridotta (annulla il −30% della 1153). Notte e Parquet invariati.
