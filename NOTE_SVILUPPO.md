@@ -4255,3 +4255,6 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 
 ## v1154 · Campo Ducks negli stili scuri di giorno: linee verde lime senza bagliore (19/11/2026)
 - Linee del campo (.cln) verde lime #a3e635 come in modalità notte, senza filtro dxgl e senza opacità ridotta (annulla il −30% della 1153). Notte e Parquet invariati.
+
+## v1155 · Calendario: turni playoff chiamati playoff (19/11/2026)
+- DR_RN = «Playoff · Semifinali» / «Playoff · Finali» (nome del turno ovunque: calendario, home, sfide, condivisioni). Nella riga del calendario sotto SF/F: «playoff · gara N».
