@@ -1,0 +1,26 @@
+name: radar
+# (1149) Radar breakout: ogni giorno ritara i pesi sulle partite nuove e il lunedì salva la previsione vera (radar-pesi.js)
+on:
+  schedule:
+    - cron: "37 12 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  radar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Ritara i pesi e salva la previsione
+        run: |
+          git config user.name "radar-bot"
+          git config user.email "radar-bot@users.noreply.github.com"
+          node tools/radar_tune.mjs
+          if [ -z "$(git status --porcelain -- radar-pesi.js)" ]; then echo "Nessuna novità"; exit 0; fi
+          git add radar-pesi.js
+          git commit -m "Radar: pesi e previsioni [automatico]"
+          for i in 1 2 3; do git pull --rebase origin main && git push origin HEAD:main && exit 0; sleep 10; done
+          exit 1

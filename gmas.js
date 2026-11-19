@@ -30,7 +30,7 @@ const CSS=`.gmas{padding-bottom:30px}.gmhero{margin:8px 0 10px;padding:14px 14px
 .gmbox{background:#0f172a;border-radius:14px;padding:8px;margin:8px 0}.gmch{width:100%;height:auto;display:block}.gmleg{display:flex;flex-wrap:wrap;gap:10px;font-size:.64rem;color:#cbd5e1;padding:4px 4px 0}.gmleg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
 .gmpe{display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:7px 2px;border-bottom:1px solid var(--line,rgba(128,128,128,.18));font-size:.8rem}.gmpe span{color:var(--muted,#64748b);font-size:.72rem}.gmpe.me b{color:#7c3aed}.gmpe.gmde{grid-template-columns:44px 1fr}
 .gmnw{display:block;text-decoration:none;color:inherit;padding:9px 2px;border-bottom:1px solid var(--line,rgba(128,128,128,.18))}.gmnw small{font-size:.62rem;color:var(--muted,#64748b)}.gmnw b{display:block;font-size:.84rem;margin:1px 0}.gmnw span{display:block;font-size:.72rem;color:var(--muted,#64748b)}
-.gmsp{display:block}.gmrs{color:#7c3aed;font-size:1.05rem!important}.gmpe.gmbt{grid-template-columns:46px 1fr auto}.gmpe.gmbt span{color:inherit;font-size:.74rem}.gmeta{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:6px 10px;margin:0 0 10px;padding:9px 10px;border:1px solid var(--line,rgba(128,128,128,.3));border-radius:12px;background:var(--panel,transparent)}.gmes{display:flex;gap:4px}.gmes button{border:1px solid var(--line,rgba(128,128,128,.3));background:none;color:inherit;border-radius:999px;padding:5px 10px;font:inherit;font-size:.74rem;font-weight:800}.gmel{text-align:right;font-size:1rem}.gmeta input{grid-column:1/-1;width:100%;accent-color:#7c3aed}.gmeta.o input{accent-color:#dc2626}.gmeta.o .gmel{color:#dc2626}.gmeta [data-gmeta=o27][aria-pressed=true]{background:#dc2626!important;border-color:#dc2626!important}.gmqb{display:flex;height:14px;border-radius:5px;overflow:hidden;margin:4px 0 3px;max-width:260px}.gmqb i{display:block;font-style:normal;font-size:.56rem;font-weight:800;color:#fff;text-align:center;line-height:14px;overflow:hidden}.qG,.gmleg2 .qG{background:#0ea5e9}.qF,.gmleg2 .qF{background:#8b5cf6}.qC,.gmleg2 .qC{background:#f59e0b}
+.gmsp{display:block}.gmw div{display:grid;grid-template-columns:130px 1fr 74px;gap:8px;align-items:center;font-size:.74rem;padding:3px 2px}.gmw i{display:block;height:8px;border-radius:4px;background:rgba(128,128,128,.2);overflow:hidden}.gmw i b{display:block;height:100%;background:#7c3aed}.gmw em{font-style:normal;text-align:right;font-weight:700}.gmrs{color:#7c3aed;font-size:1.05rem!important}.gmpe.gmbt{grid-template-columns:46px 1fr auto}.gmpe.gmbt span{color:inherit;font-size:.74rem}.gmeta{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:6px 10px;margin:0 0 10px;padding:9px 10px;border:1px solid var(--line,rgba(128,128,128,.3));border-radius:12px;background:var(--panel,transparent)}.gmes{display:flex;gap:4px}.gmes button{border:1px solid var(--line,rgba(128,128,128,.3));background:none;color:inherit;border-radius:999px;padding:5px 10px;font:inherit;font-size:.74rem;font-weight:800}.gmel{text-align:right;font-size:1rem}.gmeta input{grid-column:1/-1;width:100%;accent-color:#7c3aed}.gmeta.o input{accent-color:#dc2626}.gmeta.o .gmel{color:#dc2626}.gmeta [data-gmeta=o27][aria-pressed=true]{background:#dc2626!important;border-color:#dc2626!important}.gmqb{display:flex;height:14px;border-radius:5px;overflow:hidden;margin:4px 0 3px;max-width:260px}.gmqb i{display:block;font-style:normal;font-size:.56rem;font-weight:800;color:#fff;text-align:center;line-height:14px;overflow:hidden}.qG,.gmleg2 .qG{background:#0ea5e9}.qF,.gmleg2 .qF{background:#8b5cf6}.qC,.gmleg2 .qC{background:#f59e0b}
 .gmleg2{display:flex;flex-wrap:wrap;gap:10px;font-size:.66rem;color:var(--muted,#64748b);margin:0 2px 6px}.gmleg2 i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
 .gmrw.gmco{grid-template-columns:22px minmax(0,1fr) auto auto;gap:6px}.gmco .gmqb{max-width:100%}.gmqrow{display:grid;grid-template-columns:86px 1fr;align-items:center;gap:8px;font-size:.72rem}.gmqrow .gmqb{max-width:none;height:16px}.gmqrow .gmqb i{line-height:16px}.gmqrow.lg{opacity:.65}
 .gmcod{margin:8px 0;border:1px solid var(--line,rgba(128,128,128,.25));border-radius:12px;padding:8px 10px;background:var(--panel,transparent)}.gmcod summary{cursor:pointer;font-size:.8rem;font-weight:700}.gmch1 b{display:block;font-size:1.1rem;margin-top:8px}.gmch1 small{color:var(--muted,#64748b);font-size:.72rem}@media(min-width:800px){.gmas{max-width:900px;margin:0 auto}}`;
@@ -168,52 +168,12 @@ function vCoach(){const C=coachStats();if(!C)return"";const ord=S.cord||"top5",L
  <div class="gmfil">${[["top5","Minuti top 5"],["rot","Rotazione"],["G","Guardie"],["F","Ali"],["C","Centri"],["yg","Giovani"]].map(([v,l])=>`<button data-gmco="${v}" aria-pressed="${ord===v}">${l}</button>`).join("")}</div>
  <div class="gmleg2"><span><i class="qG"></i>Guardie</span><span><i class="qF"></i>Ali</span><span><i class="qC"></i>Centri</span><span>lega: G ${Math.round(C.lg.q.G*100)}% · F ${Math.round(C.lg.q.F*100)}% · C ${Math.round(C.lg.q.C*100)}%</span></div>
  ${L.map((o,i)=>`<div role="button" tabindex="0" class="gmrw gmco" data-gmtmgo="${o.tm}"><b class="gmk">${i+1}</b><span class="gxn"><b>${o.tm}${coachNm(o.tm)?" · "+E(coachNm(o.tm)):""}</b>${qBar(o.s.q)}<small>${E(o.tags.join(" · ")||"nella media")}</small></span><span class="gmv"><b>${f1(o.s.top5)}'</b><small>top 5</small></span><span class="gmv"><b>${f1(o.s.rot)}</b><small>rotaz.</small></span></div>`).join("")}`}
-/* ---------- RADAR BREAKOUT (core) ----------
-   radarAt(cut,W,ctx): usa solo le partite PRIMA di cut. ctx: {nz,ruolo,eta,exp,contr,coach,inj}
-   Segnali: fP rendimento ogni 36' sopra la mediana del reparto · fStk rubate+stoppate ogni 36' · fUse tiri ogni 36' · fRoom spazio per crescere
-   (pochi minuti) · fTrend minuti in salita · fPath strada libera (chi gioca davanti nel reparto è vecchio, in scadenza o infortunato a lungo)
-   · fAge età/anni NBA · fCoach allenatore che dà spazio ai giovani o favorisce il reparto · fTeam squadra che perde. */
-function radarAt(TV,cut,W,ctx){const mins=m=>{const a=String(m||"0").split(":");return(+a[0]||0)+(+a[1]||0)/60};
- const P={},T={};
- for(const d of Object.keys(TV.days).sort()){if(d>=cut)break;for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
-  const wa=(+g[2]||0)>(+g[3]||0);[["a",g[0],wa],["h",g[1],!wa]].forEach(([sd,tm,w])=>{const t=T[tm]=T[tm]||{g:[],w:0,l:0};t.g.push(d);w?t.w++:t.l++;
-   (B[sd]||[]).forEach(r=>{const k=ctx.nz(r[0]),m=mins(r[2]);if(m<=0)return;const x=P[k]=P[k]||{n:r[0],G:[]};x.tm=tm;x.G.push({d,tm,min:m,pdk:+r[19]||0,stl:+r[8]||0,blk:+r[9]||0,fga:+r[13]||0,fta:+r[17]||0,tit:!!r[1]})})})}}
- const L=[];
- for(const k in P){const x=P[k],Dt=T[x.tm].g;if(Dt.length<4)continue;const last10=Dt.slice(-10),l5=Dt.slice(-5),p5=Dt.slice(-10,-5);
-  const Gt=x.G.filter(g=>g.tm===x.tm),in10=Gt.filter(g=>g.d>=last10[0]);if(in10.length<3)continue;
-  const M=x.G.reduce((s,g)=>s+g.min,0);if(M<50)continue;const S=f=>x.G.reduce((s,g)=>s+f(g),0);
-  const av=(a,f)=>a.length?a.reduce((s,g)=>s+f(g),0)/a.length:0;
-  const g5=Gt.filter(g=>g.d>=l5[0]),gp5=p5.length?Gt.filter(g=>g.d>=p5[0]&&g.d<l5[0]):[];
-  L.push({k,n:x.n,tm:x.tm,r:ctx.ruolo(x.n),gp10:in10.length,mR:av(in10,g=>g.min),pR:av(in10,g=>g.pdk),M,
-   p36:S(g=>g.pdk)/M*36,stk36:S(g=>g.stl+g.blk)/M*36,use36:S(g=>g.fga+.44*g.fta)/M*36,
-   dMin:g5.length&&gp5.length?av(g5,g=>g.min)-av(gp5,g=>g.min):0,win:T[x.tm].w/((T[x.tm].w+T[x.tm].l)||1)})}
- const med={};for(const r of["G","F","C"]){const v=L.filter(x=>x.r===r&&x.M>=150).map(x=>x.p36).sort((a,b)=>a-b);med[r]=v.length?v[v.length>>1]:20}
- const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
- const byT={};L.forEach(x=>(byT[x.tm]=byT[x.tm]||[]).push(x));
- for(const x of L){const why=[],e=ctx.eta(x.n),ex=ctx.exp(x.n),c=ctx.contr(x.n);
-  /* rendimento ogni 36' «prudente»: tirato verso la mediana del reparto con 250 minuti fittizi (pochi minuti = poco affidabile) */x.p36s=(x.p36*x.M+med[x.r]*250)/(x.M+250);x.fP=cl((x.p36s-med[x.r])/5,-1.5,2.5);x.fStk=cl((x.stk36-2)/1.5,-1,1.5);x.fUse=cl((x.use36-14)/6,-1,1.5);x.fRoom=cl((30-x.mR)/10,0,1.5);x.fTrend=cl(x.dMin/8,-1,1.5);
-  const bl=(byT[x.tm]||[]).filter(y=>y!==x&&y.r===x.r&&y.mR>x.mR);let sw=0,sv=0;const blw=[];
-  bl.forEach(y=>{const ye=ctx.eta(y.n),yc=ctx.contr(y.n),inj=ctx.inj&&ctx.inj(y.n);let v=0;const t=[];if(ye>=34){v+=.8;t.push(ye+" anni")}else if(ye>=31){v+=.45;t.push(ye+" anni")}
-   if(yc&&yc.s.length===1){v+=.3;t.push("in scadenza")}if(inj){v+=inj==="fuori a lungo"?1:.4;t.push(inj)}v=Math.min(1,v);sw+=y.mR;sv+=y.mR*v;if(v>=.45)blw.push(y.n.split(" ").slice(-1)[0]+" ("+t.join(", ")+")")});
-  x.fPath=sw?sv/sw:.5;x.blw=blw;
-  x.fAge=e==null?0:e<=21?1:e<=23?.7:e<=25?.3:e>=29?-.6:0;if(ex===1||ex===2)x.fAge+=.3;
-  const co=ctx.coach&&ctx.coach(x.tm,x.r);x.fCoach=co?co.v:0;x.fTeam=x.win<.35?1:x.win<.45?.5:0;
-  x.score=W.P*x.fP+W.Stk*x.fStk+W.Use*x.fUse+W.Room*x.fRoom+W.Trend*x.fTrend+W.Path*x.fPath+W.Age*x.fAge+W.Coach*x.fCoach+W.Team*x.fTeam;
-  /* il perché */
-  if(x.fP>.4)why.push(`${x.p36.toFixed(1).replace(".",",")} PDK ogni 36' (mediana ${({G:"guardie",F:"ali",C:"centri"})[x.r]} ${med[x.r].toFixed(1).replace(".",",")})`);
-  if(x.fStk>.5)why.push(`${x.stk36.toFixed(1).replace(".",",")} rubate+stoppate ogni 36'`);if(x.fUse>.6)why.push("tira tanto quando è in campo");
-  if(x.fTrend>.4)why.push(`minuti in salita (+${x.dMin.toFixed(1).replace(".",",")}')`);if(blw.length)why.push("davanti: "+blw.slice(0,2).join(", "));
-  if(e!=null&&e<=23)why.push(e+" anni");if(ex===1||ex===2)why.push((ex+1)+"° anno NBA");if(co&&co.why)why.push(co.why);if(x.fTeam>=1)why.push("squadra in fondo: spazio ai giovani");
-  x.why=why}
- L.med=med;return L}
-/* esito dopo cut: minuti e PDK per partita giocata dopo la data (almeno 3 gare) contro le ultime 10 prima */
-function radarEsito(TV,cut,L,ctx,to){const mins=m=>{const a=String(m||"0").split(":");return(+a[0]||0)+(+a[1]||0)/60};const A={};
- for(const d of Object.keys(TV.days).sort()){if(d<cut||(to&&d>=to))continue;for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;for(const sd of["a","h"])(B[sd]||[]).forEach(r=>{const k=ctx.nz(r[0]),m=mins(r[2]);if(m<=0)return;const a=A[k]=A[k]||{n:0,m:0,p:0};a.n++;a.m+=m;a.p+=+r[19]||0})}}
- L.forEach(x=>{const a=A[x.k];x.out=a&&a.n>=3?{n:a.n,dm:a.m/a.n-x.mR,dp:a.p/a.n-x.pR}:null;x.boom=!!(x.out&&x.out.dm>=6&&x.out.dp>=6)});return L}
 
 /* pesi tarati sulla prova dei dati passati (5 date dal 31/10 al 12/11, esito nei 10 giorni dopo): top 20 esplosi 18% contro 8-9% di media;
    con la data di prova lasciata fuori dalla taratura 13%. L'età e lo spazio per crescere contano più di tutto. */
-const RW={P:1.2,Stk:1,Use:1,Room:2.5,Trend:2,Path:1.5,Age:1.8,Team:.5,Coach:.5};
+const RW0={P:1.2,Stk:1,Use:1,Room:2.5,Trend:2,Path:1.5,Age:1.8,Team:.5,Coach:.5};
+/* (1149) pesi ritarati ogni giorno da GitHub (tools/radar_tune.mjs → radar-pesi.js); se il file manca valgono quelli di partenza */
+const RW=Object.assign({},RW0,(typeof RADAR!=="undefined"&&RADAR&&RADAR.W)||{});
 const injMap=()=>{const m={};try{(INFLIVE.injuries||[]).forEach(t=>(t.injuries||[]).forEach(i=>{const st=String(i.status||"");if(/out/i.test(st)){const lg=/week|month|surgery|season|indefinitely|re-evaluated/i.test(i.shortComment||"");m[nz(i.athlete.displayName)]=lg?"fuori a lungo":"infortunato"}}))}catch(e){}return m};
 function rctx(live){const IM=live?injMap():null,C=coachStats();return{nz,ruolo,eta:etaDi,exp:n=>{const r=lookup(G()&&G().ruoli,n);return r?r.exp:null},contr,
  inj:IM?n=>IM[nz(n)]||null:null,
@@ -221,26 +181,31 @@ function rctx(live){const IM=live?injMap():null,C=coachStats();return{nz,ruolo,e
 const oggi=()=>{const d=new Date();return d.toISOString().slice(0,10)};
 let RCACHE=null;
 function radarLive(){const B=build();if(!B)return[];if(RCACHE&&RCACHE.key===B.key)return RCACHE.L;const d=new Date(Date.now()+864e5).toISOString().slice(0,10);
- const L=radarAt(TV,d,RW,rctx(true)).filter(x=>x.mR<=26).sort((a,b)=>b.score-a.score);RCACHE={key:B.key,L};salvaRadar(L);return L}
+ const L=radarAt(TV,d,RW,rctx(true)).filter(x=>x.mR<=26).sort((a,b)=>b.score-a.score);RCACHE={key:B.key,L};return L}
 /* lunedì della settimana (YYYY-MM-DD) */
 const lun=d=>{const t=new Date(d+"T12:00:00Z"),w=(t.getUTCDay()+6)%7;t.setUTCDate(t.getUTCDate()-w);return t.toISOString().slice(0,10)};
-function salvaRadar(L){try{const H=JSON.parse(localStorage.getItem("gm_radar_hist")||"[]"),m=lun(oggi());if(H.some(h=>h.d===m))return;H.push({d:m,L:L.slice(0,20).map(x=>({k:x.k,n:x.n,mR:+x.mR.toFixed(1),pR:+x.pR.toFixed(1)}))});localStorage.setItem("gm_radar_hist",JSON.stringify(H.slice(-30)))}catch(e){}}
 let BTC=null;
 function prova(){const B=build();if(BTC&&BTC.key===B.key)return BTC.R;const R=[],ctx=rctx(false),days=Object.keys(TV.days).filter(d=>TV.days[d].some(g=>g[5]!=="S")).sort(),last=days[days.length-1];
  for(let m=lun(days[0]);;){const t=new Date(m+"T12:00:00Z");t.setUTCDate(t.getUTCDate()+7);m=t.toISOString().slice(0,10);if(m>last)break;
   const to=new Date(Date.parse(m)+14*864e5).toISOString().slice(0,10);let L=radarAt(TV,m,RW,ctx).filter(x=>x.mR<=26);radarEsito(TV,m,L,ctx,to);L=L.filter(x=>x.out);if(L.length<30)continue;
   const top=L.slice().sort((a,b)=>b.score-a.score).slice(0,20);R.push({d:m,hit:top.filter(x=>x.boom),n:top.length,base:L.filter(x=>x.boom).length/L.length,fin:to>last})}
  BTC={key:B.key,R};return R}
-function vRadar(){const L=filtra(radarLive()).slice(0,40),R=prova();let H=[];try{H=JSON.parse(localStorage.getItem("gm_radar_hist")||"[]")}catch(e){}
+function vRadar(){const L=filtra(radarLive()).slice(0,40),R=prova(),RD=typeof RADAR!=="undefined"&&RADAR?RADAR:null;
  const gd=d=>d.slice(8)+"/"+d.slice(5,7);
  const tot=R.reduce((a,r)=>a+r.hit.length,0),nn=R.reduce((a,r)=>a+r.n,0),bs=R.length?R.reduce((a,r)=>a+r.base,0)/R.length:0;
- const salv=H.filter(h=>h.d<lun(oggi())).map(h=>{const LL=h.L.map(x=>Object.assign({},x));radarEsito(TV,h.d,LL,{nz});return{d:h.d,hit:LL.filter(x=>x.boom),n:LL.filter(x=>x.out).length}});
+ /* previsioni vere salvate da GitHub: esito dalla data in cui sono state fatte */
+ const salv=((RD&&RD.prev)||[]).slice().reverse().map(h=>{const LL=h.L.map(x=>Object.assign({},x));radarEsito(TV,h.d,LL,{nz});return{d:h.d,hit:LL.filter(x=>x.boom),n:LL.filter(x=>x.out).length,tot:LL.length}});
+ const ST=(RD&&RD.storia)||[],ul=ST[ST.length-1],cam=ST.filter(x=>x.cambiati).length;
+ const KN={P:"Rendimento ogni 36'",Stk:"Rubate+stoppate",Use:"Tiri",Room:"Spazio per crescere",Trend:"Minuti in salita",Path:"Strada libera",Age:"Età / anni NBA",Team:"Squadra che perde",Coach:"Allenatore"};
+ const auto=`<div class="gmrep">🧠 Si migliora da solo</div><p class="gmnote">Ogni giorno GitHub rifà la prova su tutte le date della stagione, cerca pesi migliori sulle date più vecchie e li adotta solo se fanno meglio su quelle più recenti (mai usate per tararli), a metà strada per non stravolgere il radar.${RD?` Ultimo controllo ${new Date(RD.upd).toLocaleDateString("it-IT")}: <b>${E(RD.note)}</b>${ul&&ul.tot!=null?` Sulle ${ul.date} date di prova la top 20 prende il ${Math.round(ul.tot*100)}% contro il ${Math.round(ul.baseTot*100)}% di media.`:""} Aggiornamenti dei pesi finora: ${cam}.`:" Il primo controllo arriva con il prossimo giro di GitHub."}</p>
+ <div class="gmw">${Object.keys(KN).map(k=>{const v=RW[k],v0=RW0[k];return`<div><span>${KN[k]}</span><i><b style="width:${Math.min(100,v/3*100)}%"></b></i><em class="${v>v0+.05?"up":v<v0-.05?"dn":""}">${f1(v)}${Math.abs(v-v0)>.05?` (${sg(v-v0)})`:""}</em></div>`}).join("")}</div>
+ ${ST.length>1?`<p class="gmnote small">Storico: ${ST.slice(-8).map(x=>`${x.d.slice(8)}/${x.d.slice(5,7)} ${x.cambiati?"🔄":"✔︎"}${x.tot!=null?" "+Math.round(x.tot*100)+"%":""}`).join(" · ")}</p>`:""}`;
  return`<p class="gmnote">Chi può esplodere <b>prima</b> che succeda: produce tanto per minuto ma gioca ancora poco, ha la strada libera (chi gli sta davanti è vecchio, in scadenza o infortunato), è giovane o al 2°-3° anno, ha un allenatore che fa giocare i giovani, la squadra perde. Solo chi gioca 26 minuti o meno.</p>
  ${L.map((x,i)=>`<div role="button" tabindex="0" class="gmrw" data-gmpl="${E(x.n)}"><b class="gmk">${i+1}</b><span class="gxn"><b>${E(x.n)}</b><small>${x.tm} · ${RN[x.r]}${etaDi(x.n)?" · "+etaDi(x.n)+" anni":""} · ${tag(x)}${ctxt(x.n)?" · "+ctxt(x.n):""}</small><em class="gmper">${E(x.why.slice(0,4).join(" · "))}</em></span><span class="gmv"><b class="gmrs">${Math.round(x.score*10)}</b><small>radar</small></span><span class="gmv"><b>${f1(x.mR)}'</b><small>${f1(x.p36s)} /36'</small></span></div>`).join("")}
  <div class="gmrep">🎯 Quanto ci prende</div>
  <p class="gmnote">Il radar rifatto ogni lunedì con i soli dati di allora, e controllato nelle 2 settimane dopo. Esploso = almeno +6 minuti e +6 PDK a partita. Finora <b>${tot} su ${nn}</b> (${nn?Math.round(tot/nn*100):0}%) contro il ${Math.round(bs*100)}% di chi non era segnalato.</p>
  ${R.map(r=>`<div class="gmpe gmbt"><b>${gd(r.d)}</b><span>${r.hit.length?r.hit.map(x=>E(x.n)).join(", "):"nessuno"}${r.fin?" · ancora in corso":""}</span><em>${r.hit.length}/${r.n}</em></div>`).join("")}
- ${salv.length?`<div class="gmrep">📒 Previsioni salvate</div><p class="gmnote">La top 20 salvata davvero quel lunedì, con i pesi di allora.</p>${salv.map(r=>`<div class="gmpe gmbt"><b>${gd(r.d)}</b><span>${r.hit.length?r.hit.map(x=>E(x.n)).join(", "):r.n?"nessuno per ora":"da valutare"}</span><em>${r.hit.length}/${r.n||"—"}</em></div>`).join("")}`:`<p class="gmnote small">Ogni lunedì l'app salva la top 20 del radar: tra qualche settimana qui vedi le previsioni vere e quante ne ha prese.</p>`}`}
+ ${salv.length?`<div class="gmrep">📒 Previsioni vere</div><p class="gmnote">La top 20 salvata da GitHub ogni settimana, con i pesi di quel giorno: nessun ricalcolo dopo.</p>${salv.map(r=>`<div class="gmpe gmbt"><b>${gd(r.d)}</b><span>${r.hit.length?r.hit.map(x=>E(x.n)).join(", "):r.n?"nessuno per ora":"da valutare (servono 3 partite)"}</span><em>${r.hit.length}/${r.tot}</em></div>`).join("")}`:""}${auto}`}
 function vCap(){const g=G(),Lg=g&&g.capLega;const T=Object.keys((build()||{}).byTeam||{}).sort().map(t=>({t,p:payroll(t)})).filter(o=>o.p).sort((a,b)=>b.p.s-a.p.s);
  if(!T.length)return`<p class="gmnote warn">I contratti non sono ancora arrivati da GitHub.</p>`;
  return`<p class="gmnote">Payroll 2026/27 di ogni squadra (somma dei contratti).${Lg?` Cap ${f1(Lg.cap)} M$${Lg.tax?` · tax ${f1(Lg.tax)}`:""}${Lg.apron1?` · primo apron ${f1(Lg.apron1)}`:""}${Lg.apron2?` · secondo apron ${f1(Lg.apron2)}`:""}.${Lg.stima?" Tax e apron sono stimati dal cap (Spotrac non risponde).":""}`:""} Solo i contratti garantiti di Basketball Reference: minimi e two-way possono mancare.</p>${T.map(o=>`<div role="button" tabindex="0" class="gmrw sq" data-gmtmgo="${o.t}"><span class="gxn"><b>${o.t}</b><small>${o.p.n} contratti</small></span><span class="gmv"><b>${f1(o.p.s)} M$</b><small class="${Lg&&Lg.cap&&o.p.s<=Lg.cap?"up":"dn"}">${Lg&&Lg.cap?sg(Lg.cap-o.p.s)+" cap":""}</small></span><span class="gmv"><b class="${Lg&&Lg.tax&&o.p.s>Lg.tax?"dn":"up"}">${Lg&&Lg.tax?(o.p.s>Lg.tax?(Lg.apron2&&o.p.s>Lg.apron2?"2° apron":Lg.apron1&&o.p.s>Lg.apron1?"1° apron":"tax"):"sotto tax"):""}</b></span></div>`).join("")}`}
