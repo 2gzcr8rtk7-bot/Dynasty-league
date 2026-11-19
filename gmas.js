@@ -30,7 +30,10 @@ const CSS=`.gmas{padding-bottom:30px}.gmhero{margin:8px 0 10px;padding:14px 14px
 .gmbox{background:#0f172a;border-radius:14px;padding:8px;margin:8px 0}.gmch{width:100%;height:auto;display:block}.gmleg{display:flex;flex-wrap:wrap;gap:10px;font-size:.64rem;color:#cbd5e1;padding:4px 4px 0}.gmleg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
 .gmpe{display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:7px 2px;border-bottom:1px solid var(--line,rgba(128,128,128,.18));font-size:.8rem}.gmpe span{color:var(--muted,#64748b);font-size:.72rem}.gmpe.me b{color:#7c3aed}.gmpe.gmde{grid-template-columns:44px 1fr}
 .gmnw{display:block;text-decoration:none;color:inherit;padding:9px 2px;border-bottom:1px solid var(--line,rgba(128,128,128,.18))}.gmnw small{font-size:.62rem;color:var(--muted,#64748b)}.gmnw b{display:block;font-size:.84rem;margin:1px 0}.gmnw span{display:block;font-size:.72rem;color:var(--muted,#64748b)}
-.gmsp{display:block}@media(min-width:800px){.gmas{max-width:900px;margin:0 auto}}`;
+.gmsp{display:block}.gmqb{display:flex;height:14px;border-radius:5px;overflow:hidden;margin:4px 0 3px;max-width:260px}.gmqb i{display:block;font-style:normal;font-size:.56rem;font-weight:800;color:#fff;text-align:center;line-height:14px;overflow:hidden}.qG,.gmleg2 .qG{background:#0ea5e9}.qF,.gmleg2 .qF{background:#8b5cf6}.qC,.gmleg2 .qC{background:#f59e0b}
+.gmleg2{display:flex;flex-wrap:wrap;gap:10px;font-size:.66rem;color:var(--muted,#64748b);margin:0 2px 6px}.gmleg2 i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.gmrw.gmco{grid-template-columns:22px minmax(0,1fr) auto auto;gap:6px}.gmco .gmqb{max-width:100%}.gmqrow{display:grid;grid-template-columns:86px 1fr;align-items:center;gap:8px;font-size:.72rem}.gmqrow .gmqb{max-width:none;height:16px}.gmqrow .gmqb i{line-height:16px}.gmqrow.lg{opacity:.65}
+.gmcod{margin:8px 0;border:1px solid var(--line,rgba(128,128,128,.25));border-radius:12px;padding:8px 10px;background:var(--panel,transparent)}.gmcod summary{cursor:pointer;font-size:.8rem;font-weight:700}.gmch1 b{display:block;font-size:1.1rem;margin-top:8px}.gmch1 small{color:var(--muted,#64748b);font-size:.72rem}@media(min-width:800px){.gmas{max-width:900px;margin:0 auto}}`;
 {const st=document.createElement("style");st.id="gmcss";st.textContent=CSS;document.head.appendChild(st)}
 const RECENT=6;
 let CACHE=null;
@@ -42,7 +45,7 @@ const owner=n=>{try{for(const t in ROSTER)if(ROSTER[t].some(p=>nz(p[0])===nz(n))
 function build(){if(typeof TV==="undefined")return null;const key=Object.keys(TV.box).length+"|"+(G()?G().upd:"");if(CACHE&&CACHE.key===key)return CACHE;
  const P={},T={};
  for(const d of Object.keys(TV.days).sort())for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
-  [["a",g[0],g[1]],["h",g[1],g[0]]].forEach(([sd,tm,opp])=>{(T[tm]=T[tm]||{g:[]}).g.push(d);(B[sd]||[]).forEach(r=>{const kk=nz(r[0]);const x=P[kk]||(P[kk]={n:r[0],tm,G:[]});x.tm=tm;x.G.push({d,tm,opp,min:mins(r[2]),pdk:+r[19]||0,tit:!!r[1],pt:+r[3]||0})})})}
+  [["a",g[0],g[1]],["h",g[1],g[0]]].forEach(([sd,tm,opp])=>{(T[tm]=T[tm]||{g:[],gm:[]}).g.push(d);const GR={d,r:[]};T[tm].gm.push(GR);(B[sd]||[]).forEach(r=>{GR.r.push({k:nz(r[0]),n:r[0],min:mins(r[2]),tit:!!r[1],pdk:+r[19]||0});const kk=nz(r[0]);const x=P[kk]||(P[kk]={n:r[0],tm,G:[]});x.tm=tm;x.G.push({d,tm,opp,min:mins(r[2]),pdk:+r[19]||0,tit:!!r[1],pt:+r[3]||0})})})}
  /* squadre: partite in ordine e giocatori */
  const out={key,P,T,byTeam:{}};
  /* finestra per squadra: ultime K partite della SQUADRA (chi non gioca conta 0 minuti), così le quote del reparto sommano ai minuti veri */
@@ -113,7 +116,7 @@ function vSquadra(B){const tms=Object.keys(B.byTeam).sort();if(!S.tm||!B.byTeam[
  const tbl=["G","F","C"].map(r=>{const R=L.filter(x=>x.r===r);return R.length?`<div class="gmrep">${({G:"Guardie",F:"Ali",C:"Centri"})[r]}</div>${R.map(x=>`<div role="button" tabindex="0" class="gmrw sq" data-gmpl="${E(x.n)}"><span class="gxn"><b>${E(x.n)}</b><small>${tag(x)}${ctxt(x.n)?" · "+ctxt(x.n):""}</small></span><span class="gmv"><b>${f1(x.minR)}'</b><small class="${x.dMin>=0?"up":"dn"}">${sg(x.dMin)}'</small></span><span class="gmv"><b>${Math.round(x.qR*100)}%</b><small class="${x.dQ>=0?"up":"dn"}">${sg(x.dQ*100,v=>Math.round(v))}%</small></span><span class="gmv"><b>${f1(x.pdkR)}</b><small class="${x.dPdk>=0?"up":"dn"}">${sg(x.dPdk)}</small></span>${spark(x.G,g=>g.min,"#38bdf8",60,24)}</div>`).join("")}`:""}).join("");
  return`<div class="gmtms">${tms.map(t=>`<button data-gmtm="${t}" aria-pressed="${t===S.tm}">${t}</button>`).join("")}</div>
  <div class="gmcap">${pay?`<div><small>Payroll 2026/27</small><b>${f1(pay.s)} M$</b><em>${pay.n} contratti</em></div>`:""}${Lg&&pay&&Lg.cap?`<div><small>Spazio nel cap</small><b class="${Lg.cap-pay.s>=0?"up":"dn"}">${sg(Lg.cap-pay.s)} M$</b><em>cap ${f1(Lg.cap)}</em></div><div><small>Luxury tax</small><b class="${pay.s>(Lg.tax||1e9)?"dn":"up"}">${pay.s>(Lg.tax||1e9)?"sopra":"sotto"}</b><em>${Lg.tax?"soglia "+f1(Lg.tax):""}</em></div>`:""}${!pay?`<div><small>Contratti</small><b>in arrivo</b><em>da GitHub</em></div>`:""}</div>
- <div class="gmhd"><span>Giocatore</span><span>Minuti ult.</span><span>Quota reparto</span><span>PDK ult.</span><span></span></div>${tbl}
+ ${(()=>{const C=coachStats(),o=C&&C.R[S.tm];return o?`<details class="gmcod"><summary>🧑‍🏫 ${E(coachNm(S.tm)||"Allenatore")} · ${E(o.tags.join(" · ")||"uso dei giocatori nella media")}</summary>${coachBox(o,C.lg)}</details>`:""})()}<div class="gmhd"><span>Giocatore</span><span>Minuti ult.</span><span>Quota reparto</span><span>PDK ult.</span><span></span></div>${tbl}
  ${N.length?`<div class="gmrep">Notizie (ESPN, in inglese)</div>${N.slice(0,8).map(x=>`<a class="gmnw" href="${E(x.u)}" target="_blank" rel="noopener"><small>${E(x.d)}</small><b>${E(x.h)}</b><span>${E(x.x)}</span></a>`).join("")}`:`<p class="gmnote">Le notizie della squadra arrivano con il prossimo aggiornamento di GitHub.</p>`}`}
 function vPlayer(B,n){const x=B.P[nz(n)];if(!x)return`<p class="gmnote">Dati non trovati.</p>`;const c=contr(n),fa=faTipo(n),r=lookup(G()&&G().ruoli,n),ri=rischio(x),D=destinazioni(x),N=((G()&&G().news&&G().news[x.tm])||[]).filter(a=>a.pl.some(p=>nz(p)===nz(n))||nz(a.h).includes(nz(n).split(" ").slice(-1)[0]));
  const peers=(B.byTeam[x.tm]||[]).filter(y=>y.r===x.r).sort((a,b)=>b.minR-a.minR);
@@ -128,19 +131,54 @@ function vPlayer(B,n){const x=B.P[nz(n)];if(!x)return`<p class="gmnote">Dati non
  ${D.length?`<div class="gmrep">Dove potrebbe andare</div>${D.map(d=>`<div class="gmpe gmde"><b>${d.tm}</b><span>${E(d.why.join(" · "))}</span></div>`).join("")}`:""}
  ${N.length?`<div class="gmrep">Notizie (ESPN, in inglese)</div>${N.slice(0,6).map(a=>`<a class="gmnw" href="${E(a.u)}" target="_blank" rel="noopener"><small>${E(a.d)}</small><b>${E(a.h)}</b><span>${E(a.x)}</span></a>`).join("")}`:""}
  <p class="gmnote small">Stime calcolate dai tabellini della stagione (Dynasty TV) e dai dati di GitHub (contratti e cap Basketball Reference, free agent Spotrac o dedotti dai contratti, ruoli Dreamers ed ESPN, notizie ESPN). Servono a guardare prima degli altri, non sono certezze.</p>`}
+/* ---------- ALLENATORI: come usano i giocatori ----------
+   Per ogni squadra, sulle partite giocate (stagione) e sulle ultime 10: minuti medi del quintetto più usato (top 5 per minuti a partita),
+   minuti dei titolari, lunghezza della rotazione (giocatori sopra i 10'), quota dei minuti per reparto G/F/C contro la media lega,
+   quota ai giovani (≤23 anni, età ESPN), quintetti diversi schierati. */
+let COACH=null;
+function coachStats(){const B=build();if(!B)return null;if(COACH&&COACH.key===B.key)return COACH;const age=n=>{const r=lookup(G()&&G().ruoli,n);return r&&r.e||null};
+ const one=gm=>{if(!gm.length)return null;const pm={},nm={},gp={};let tot=0,tit=0,rot=0;const rm={G:0,F:0,C:0},rp={G:0,F:0,C:0},fives=new Set();let yg=0,ygk=0;
+  gm.forEach(g=>{const st=[];g.r.forEach(r=>{pm[r.k]=(pm[r.k]||0)+r.min;if(r.min>0)gp[r.k]=(gp[r.k]||0)+1;nm[r.k]=r.n;tot+=r.min;const ro=ruolo(r.n);rm[ro]+=r.min;rp[ro]+=r.pdk;if(r.tit){tit+=r.min;st.push(r.k)}if(r.min>=10)rot++;const e=age(r.n);if(e){ygk+=r.min;if(e<=23)yg+=r.min}});if(st.length===5)fives.add(st.sort().join("|"))});
+  const N=gm.length,top=Object.entries(pm).map(([k,m])=>({k,n:nm[k],tot:m,gp:gp[k]||1,m:m/(gp[k]||1)})).sort((a,b)=>b.tot-a.tot)/* i 5 con più minuti totali; media sulle partite giocate */,t5=top.slice(0,5),tp=rp.G+rp.F+rp.C||1;
+  return{N,top5:t5.reduce((s,x)=>s+x.m,0)/5,t5,tit:tit/N/5,rot:rot/N,q:{G:rm.G/(tot||1),F:rm.F/(tot||1),C:rm.C/(tot||1)},qp:{G:rp.G/tp,F:rp.F/tp,C:rp.C/tp},yg:ygk?yg/ygk:null,fives:fives.size}};
+ const R={};for(const tm in B.T){const gm=B.T[tm].gm;if(gm.length<4)continue;R[tm]={tm,s:one(gm),u:one(gm.slice(-10))}}
+ const L=Object.values(R),av=f=>L.reduce((a,o)=>a+f(o),0)/(L.length||1);
+ const lg={top5:av(o=>o.s.top5),rot:av(o=>o.s.rot),tit:av(o=>o.s.tit),yg:av(o=>o.s.yg||0),q:{G:av(o=>o.s.q.G),F:av(o=>o.s.q.F),C:av(o=>o.s.q.C)}};
+ /* tendenza: reparto con quota minuti più sopra la media lega (soglia 3 punti) */
+ L.forEach(o=>{const d=["G","F","C"].map(r=>[r,o.s.q[r]-lg.q[r]]).sort((a,b)=>b[1]-a[1]);o.fav=d[0][1]>=.03?d[0][0]:null;o.dfav=d[0][1];
+  const t=[];if(o.s.top5>=lg.top5+1.5)t.push("spreme i titolari");else if(o.s.top5<=lg.top5-1.5)t.push("divide i minuti");
+  if(o.s.rot>=lg.rot+.6)t.push("rotazione lunga");else if(o.s.rot<=lg.rot-.6)t.push("rotazione corta");
+  if(o.fav)t.push("favorisce "+({G:"le guardie",F:"le ali",C:"i centri"})[o.fav]);if(o.s.yg!=null&&o.s.yg>=lg.yg+.08)t.push("dà spazio ai giovani");
+  if(o.s.fives>=Math.max(6,o.s.N*.45))t.push("cambia spesso quintetto");o.tags=t});
+ COACH={key:B.key,R,lg};return COACH}
+const coachNm=tm=>{const c=G()&&G().coach&&G().coach[tm];return c?c.n:null};
+function qBar(q,lg){return`<span class="gmqb">${["G","F","C"].map(r=>`<i class="q${r}" style="width:${(q[r]*100).toFixed(1)}%">${Math.round(q[r]*100)}</i>`).join("")}</span>`}
+function coachBox(o,lg){const u=o.u,s=o.s,dl=(a,b,f=f1)=>`<small class="${a-b>=0?"up":"dn"}">${sg(a-b,f)}</small>`;
+ return`<div class="gmcoach"><div class="gmch1"><b>${E(coachNm(o.tm)||"Allenatore "+o.tm)}</b><small>${o.tm} · ${s.N} partite</small></div>
+ <div class="gmcap"><div><small>Top 5 · minuti medi</small><b>${f1(s.top5)}'</b><em>lega ${f1(lg.top5)}' · ult. 10: ${f1(u.top5)}'</em></div><div><small>Rotazione</small><b>${f1(s.rot)}</b><em>giocatori sopra i 10' · lega ${f1(lg.rot)}</em></div><div><small>Titolari</small><b>${f1(s.tit)}'</b><em>a testa · lega ${f1(lg.tit)}'</em></div><div><small>Giovani ≤23</small><b>${s.yg!=null?Math.round(s.yg*100)+"%":"—"}</b><em>dei minuti · lega ${Math.round(lg.yg*100)}%</em></div><div><small>Quintetti</small><b>${s.fives}</b><em>diversi schierati</em></div></div>
+ <div class="gmrep">Minuti per reparto (G · F · C)</div><div class="gmqrow"><span>Stagione</span>${qBar(s.q)}</div><div class="gmqrow"><span>Ultime 10</span>${qBar(u.q)}</div><div class="gmqrow lg"><span>Media lega</span>${qBar(lg.q)}</div>
+ <div class="gmqrow"><span>PDK prodotti</span>${qBar(s.qp)}</div>
+ ${o.tags.length?`<p class="gmnote"><b>${E(o.tags.join(" · "))}</b></p>`:""}
+ <div class="gmrep">I suoi 5 più usati</div>${s.t5.map(x=>`<div class="gmpe"><b>${E(x.n)}</b><span>${RN[ruolo(x.n)]}</span><em>${f1(x.m)}' · ${x.gp} gare</em></div>`).join("")}</div>`}
+function vCoach(){const C=coachStats();if(!C)return"";const ord=S.cord||"top5",L=Object.values(C.R);
+ const key={top5:o=>-o.s.top5,rot:o=>-o.s.rot,G:o=>-(o.s.q.G-C.lg.q.G),F:o=>-(o.s.q.F-C.lg.q.F),C:o=>-(o.s.q.C-C.lg.q.C),yg:o=>-(o.s.yg||0)}[ord];L.sort((a,b)=>key(a)-key(b));
+ return`<p class="gmnote">Come ogni allenatore usa i giocatori, da tutte le partite della stagione: minuti medi dei suoi 5 più usati, quanti giocatori ruota, a quale reparto dà più minuti rispetto alla media lega. Tocca una squadra per il dettaglio.</p>
+ <div class="gmfil">${[["top5","Minuti top 5"],["rot","Rotazione"],["G","Guardie"],["F","Ali"],["C","Centri"],["yg","Giovani"]].map(([v,l])=>`<button data-gmco="${v}" aria-pressed="${ord===v}">${l}</button>`).join("")}</div>
+ <div class="gmleg2"><span><i class="qG"></i>Guardie</span><span><i class="qF"></i>Ali</span><span><i class="qC"></i>Centri</span><span>lega: G ${Math.round(C.lg.q.G*100)}% · F ${Math.round(C.lg.q.F*100)}% · C ${Math.round(C.lg.q.C*100)}%</span></div>
+ ${L.map((o,i)=>`<div role="button" tabindex="0" class="gmrw gmco" data-gmtmgo="${o.tm}"><b class="gmk">${i+1}</b><span class="gxn"><b>${o.tm}${coachNm(o.tm)?" · "+E(coachNm(o.tm)):""}</b>${qBar(o.s.q)}<small>${E(o.tags.join(" · ")||"nella media")}</small></span><span class="gmv"><b>${f1(o.s.top5)}'</b><small>top 5</small></span><span class="gmv"><b>${f1(o.s.rot)}</b><small>rotaz.</small></span></div>`).join("")}`}
 function vCap(){const g=G(),Lg=g&&g.capLega;const T=Object.keys((build()||{}).byTeam||{}).sort().map(t=>({t,p:payroll(t)})).filter(o=>o.p).sort((a,b)=>b.p.s-a.p.s);
  if(!T.length)return`<p class="gmnote warn">I contratti non sono ancora arrivati da GitHub.</p>`;
  return`<p class="gmnote">Payroll 2026/27 di ogni squadra (somma dei contratti).${Lg?` Cap ${f1(Lg.cap)} M$${Lg.tax?` · tax ${f1(Lg.tax)}`:""}${Lg.apron1?` · primo apron ${f1(Lg.apron1)}`:""}${Lg.apron2?` · secondo apron ${f1(Lg.apron2)}`:""}.${Lg.stima?" Tax e apron sono stimati dal cap (Spotrac non risponde).":""}`:""} Solo i contratti garantiti di Basketball Reference: minimi e two-way possono mancare.</p>${T.map(o=>`<div role="button" tabindex="0" class="gmrw sq" data-gmtmgo="${o.t}"><span class="gxn"><b>${o.t}</b><small>${o.p.n} contratti</small></span><span class="gmv"><b>${f1(o.p.s)} M$</b><small class="${Lg&&Lg.cap&&o.p.s<=Lg.cap?"up":"dn"}">${Lg&&Lg.cap?sg(Lg.cap-o.p.s)+" cap":""}</small></span><span class="gmv"><b class="${Lg&&Lg.tax&&o.p.s>Lg.tax?"dn":"up"}">${Lg&&Lg.tax?(o.p.s>Lg.tax?(Lg.apron2&&o.p.s>Lg.apron2?"2° apron":Lg.apron1&&o.p.s>Lg.apron1?"1° apron":"tax"):"sotto tax"):""}</b></span></div>`).join("")}`}
 window.vGmas=function(){const B=build();if(!B)return`<p class="note">Dati Dynasty TV non disponibili.</p>`;if(S.pl)return`<div class="gmas">${vPlayer(B,S.pl)}</div>`;
  const g=G(),up=g&&g.upd?new Date(g.upd).toLocaleDateString("it-IT"):"mai";
- const tabs=[["cresc","📈 In crescita"],["inv","💎 Investimenti"],["risk","🔁 Rischio scambio"],["sq","🏀 Squadra"],["cap","💰 Cap"]];
+ const tabs=[["cresc","📈 In crescita"],["inv","💎 Investimenti"],["risk","🔁 Rischio scambio"],["sq","🏀 Squadra"],["coach","🧑‍🏫 Allenatori"],["cap","💰 Cap"]];
  return`<div class="gmas"><button class="gback" id="hofback">‹ Hall of Fame Ducks</button>
  <div class="gmhero"><small>Texas Ducks · area riservata</small><b>Assistente GM</b><em>Chi sta emergendo, chi può partire, su chi investire · dati GitHub del ${up}</em></div>
  <div class="gmtabs">${tabs.map(([k,l])=>`<button data-gmtab="${k}" aria-pressed="${S.tab===k}">${l}</button>`).join("")}</div>
- ${S.tab!=="cap"?`<div class="gmfil">${[["","Tutti i ruoli"],["G","Guardie"],["F","Ali"],["C","Centri"]].map(([v,l])=>`<button data-gmr="${v}" aria-pressed="${S.ruolo===v}">${l}</button>`).join("")}<span></span>${[["tutti","Tutti"],["liberi","Solo liberi"],["presi","In Dreamers"]].map(([v,l])=>`<button data-gmso="${v}" aria-pressed="${S.solo===v}">${l}</button>`).join("")}</div>`:""}
- ${S.tab==="cresc"?vClass(B):S.tab==="inv"?vInvest(B):S.tab==="risk"?vRischio(B):S.tab==="sq"?vSquadra(B):vCap()}</div>`};
-document.addEventListener("click",e=>{if(typeof cur==="undefined"||cur!=="gmas")return;const t=e.target,k=t.closest("[data-gmtab],[data-gmr],[data-gmso],[data-gmtm],[data-gmpl],[data-gmback],[data-gmtmgo]");if(!k)return;e.preventDefault();const d=k.dataset;let top=false;
- if(d.gmtab){S.tab=d.gmtab;S.pl=null}else if(d.gmr!=null)S.ruolo=d.gmr;else if(d.gmso)S.solo=d.gmso;else if(d.gmtm)S.tm=d.gmtm;else if(d.gmtmgo){S.tab="sq";S.tm=d.gmtmgo;top=true}else if(d.gmpl){S.pl=d.gmpl;top=true}else if(d.gmback){S.pl=null;top=true}
+ ${S.tab!=="cap"&&S.tab!=="coach"?`<div class="gmfil">${[["","Tutti i ruoli"],["G","Guardie"],["F","Ali"],["C","Centri"]].map(([v,l])=>`<button data-gmr="${v}" aria-pressed="${S.ruolo===v}">${l}</button>`).join("")}<span></span>${[["tutti","Tutti"],["liberi","Solo liberi"],["presi","In Dreamers"]].map(([v,l])=>`<button data-gmso="${v}" aria-pressed="${S.solo===v}">${l}</button>`).join("")}</div>`:""}
+ ${S.tab==="cresc"?vClass(B):S.tab==="inv"?vInvest(B):S.tab==="risk"?vRischio(B):S.tab==="sq"?vSquadra(B):S.tab==="coach"?vCoach():vCap()}</div>`};
+document.addEventListener("click",e=>{if(typeof cur==="undefined"||cur!=="gmas")return;const t=e.target,k=t.closest("[data-gmtab],[data-gmr],[data-gmso],[data-gmtm],[data-gmpl],[data-gmback],[data-gmtmgo],[data-gmco]");if(!k)return;e.preventDefault();const d=k.dataset;let top=false;
+ if(d.gmtab){S.tab=d.gmtab;S.pl=null}else if(d.gmr!=null)S.ruolo=d.gmr;else if(d.gmso)S.solo=d.gmso;else if(d.gmtm)S.tm=d.gmtm;else if(d.gmtmgo){S.tab="sq";S.tm=d.gmtmgo;top=true}else if(d.gmpl){S.pl=d.gmpl;top=true}else if(d.gmback){S.pl=null;top=true}else if(d.gmco){S.cord=d.gmco}
  const y=scrollY;render();scrollTo(0,top?0:y)});
 try{VIEWS.gmas=window.vGmas}catch(e){}
 })();

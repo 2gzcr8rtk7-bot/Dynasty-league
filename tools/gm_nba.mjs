@@ -22,7 +22,7 @@ const money = s => { const x = String(s || "").replace(/[$,\s]/g, ""); return x 
 const nz = n => String(n).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[.'’]/g, "").replace(/\s+(jr|sr|ii|iii|iv)$/, "").replace(/\s+/g, " ").trim();
 
 const OLD = existsSync("gm-nba.js") ? (() => { try { return JSON.parse(readFileSync("gm-nba.js", "utf8").replace(/^[\s\S]*?const GMNBA=/, "").replace(/;\s*$/, "")) } catch { return {} } })() : {};
-const out = { upd: new Date().toISOString(), fonti: {}, contratti: OLD.contratti || {}, fa: OLD.fa || {}, cap: OLD.cap || {}, ruoli: OLD.ruoli || {}, news: OLD.news || {}, capLega: OLD.capLega || null };
+const out = { upd: new Date().toISOString(), fonti: {}, contratti: OLD.contratti || {}, fa: OLD.fa || {}, cap: OLD.cap || {}, ruoli: OLD.ruoli || {}, news: OLD.news || {}, coach: OLD.coach || {}, capLega: OLD.capLega || null };
 
 /* Abbreviazioni: Basketball Reference / Spotrac → quelle di ESPN usate in Dynasty TV */
 const AB = { BRK: "BKN", CHO: "CHA", PHO: "PHX", GSW: "GSW", NOP: "NOP", NYK: "NYK", SAS: "SAS", UTA: "UTA", WAS: "WAS", BKN: "BKN", PHX: "PHX", CHA: "CHA", NO: "NOP", NY: "NYK", SA: "SAS", GS: "GSW", UTAH: "UTA", WSH: "WAS" };
@@ -121,6 +121,18 @@ if (!out.fonti.cap) {
     nn += N[abbr].length;
     await sleep(300);
   }
+  /* allenatori (API core ESPN): stagione 2026/27 = 2027 */
+  const CO = {}, sy = new Date().getUTCMonth() >= 6 ? new Date().getUTCFullYear() + 1 : new Date().getUTCFullYear();
+  for (const tm of teams) {
+    for (const y of [sy, sy - 1]) {
+      const L = await get(`https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/seasons/${y}/teams/${tm.id}/coaches`, true, 2);
+      const ref = L && L.items && L.items[0] && L.items[0].$ref; if (!ref) continue;
+      const c = await get(ref.replace(/^http:/, "https:"), true, 2);
+      if (c && (c.firstName || c.lastName)) { CO[ab(tm.abbreviation)] = { n: `${c.firstName || ""} ${c.lastName || ""}`.trim(), y: c.experience ?? null }; break }
+    }
+  }
+  console.log("Allenatori", Object.keys(CO).length, JSON.stringify(Object.entries(CO).slice(0, 3)));
+  if (Object.keys(CO).length >= 20) { out.coach = CO; out.fonti.coach = { src: "ESPN", n: Object.keys(CO).length } }
   console.log("ESPN roster", nr, "notizie", nn);
   if (nr > 300) { out.ruoli = R; out.fonti.ruoli = { src: "ESPN", n: nr } }
   if (nn > 30) { out.news = N; out.fonti.news = { src: "ESPN", n: nn } }

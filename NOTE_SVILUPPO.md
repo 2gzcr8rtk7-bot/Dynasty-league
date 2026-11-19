@@ -4205,3 +4205,8 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - Calcoli dai tabellini Dynasty TV: finestra = ultime K partite della SQUADRA (K=6, chi non gioca conta 0), contro le precedenti dal suo arrivo. Ruolo: Dreamers (ROSTER/VALMAP) poi ESPN. «Prende spazio a»: pari ruolo con −2' o peggio che hanno giocato almeno metà delle partite (gli infortunati no). Destinazioni: reparto con meno PDK ogni 36' + spazio nel cap.
 - Schede: In crescita, Investimenti, Rischio scambio, Squadra (tabella reparti, payroll, notizie), Cap. Filtri ruolo e liberi/in Dreamers. Scheda giocatore con grafico minuti/PDK.
 - Classe CSS `.gmn` esiste già nell'app (stile nomi): nella pagina si usa `.gxn`.
+
+## v1144 · Assistente GM: scheda «🧑‍🏫 Allenatori» (19/11/2026)
+- `coachStats()` in gmas.js, dai tabellini Dynasty TV per squadra (stagione e ultime 10): minuti medi dei 5 con più minuti totali (media sulle gare giocate), minuti a testa dei titolari, rotazione (giocatori sopra i 10' a partita), quota minuti e PDK per reparto G/F/C contro la media lega, quota minuti ai ≤23 anni (età ESPN), quintetti diversi. Etichette: spreme i titolari / divide i minuti (±1,5' dalla media), rotazione lunga/corta (±0,6), favorisce un reparto (+3 punti), dà spazio ai giovani (+8 punti), cambia spesso quintetto.
+- Classifica ordinabile; in «Squadra» un riquadro apribile con il dettaglio dell'allenatore.
+- Nome dell'allenatore: `GMNBA.coach` da tools/gm_nba.mjs (API core ESPN, stagione 2027 poi 2026).
