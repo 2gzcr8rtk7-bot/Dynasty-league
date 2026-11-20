@@ -133,6 +133,18 @@ if (!out.fonti.cap) {
     if (!CO[a]) delete CO[a]; if (!CP[a]) delete CP[a];
   }
   console.log("Allenatori stagione scorsa", Object.keys(CP).length, JSON.stringify(Object.entries(CP).slice(0, 3)));
+  /* ESPN dà l'allenatore attuale anche per le stagioni passate: per la stagione scorsa si usa Basketball Reference (pagina allenatori della stagione) */
+  {
+    const y0 = new Date().getUTCMonth() >= 6 ? new Date().getUTCFullYear() : new Date().getUTCFullYear() - 1; // stagione scorsa = NBA_{y0}
+    const h = await get(`https://www.basketball-reference.com/leagues/NBA_${y0}_coaches.html`);
+    const BP = {};
+    if (h) for (const row of h.slice(h.indexOf('id="NBA_coaches"')).split("<tr").slice(1)) {
+      const c = (row.match(/data-stat="coach"[^>]*>([\s\S]*?)<\/t[dh]>/) || [])[1], t = (row.match(/data-stat="team(?:_name_abbr|_id)?"[^>]*>([\s\S]*?)<\/t[dh]>/) || [])[1];
+      if (c && t) { const tm = ab(strip(t)); (BP[tm] = BP[tm] || []).push(strip(c)) }
+    }
+    console.log("Allenatori stagione scorsa (Basketball Reference)", Object.keys(BP).length, JSON.stringify(Object.entries(BP).slice(0, 4)));
+    if (Object.keys(BP).length >= 25) for (const t in BP) CP[t] = { n: BP[t][BP[t].length - 1], tutti: BP[t] };
+  }
   if (Object.keys(CP).length >= 20) out.coachPrev = CP; else if (OLD.coachPrev) out.coachPrev = OLD.coachPrev;
   console.log("Allenatori", Object.keys(CO).length, JSON.stringify(Object.entries(CO).slice(0, 3)));
   if (Object.keys(CO).length >= 20) { out.coach = CO; out.fonti.coach = { src: "ESPN", n: Object.keys(CO).length } }
