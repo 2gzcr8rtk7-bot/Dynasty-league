@@ -4279,3 +4279,10 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 
 ## v1161 · Assistente GM: solo giocatori sotto 1200 di valore (20/11/2026)
 - `filtra()`: nelle liste (Radar, Salto, In crescita, Investimenti, Rischio scambio) solo giocatori con valore Dreamers (valOf) < 1200 (VMAX) o senza valore. Non vale per la scheda Squadra né per «Da (da vendere)». Nota sotto i filtri.
+
+## v1162 · Assistente GM: Investimenti rifatti e «Lettura dell'analista» (20/11/2026)
+- `analisi(B,x)` (gmas.js): giocatori con la stagione scorsa (≥15 gare) → punteggio = ΔPDK ogni 36' ×2,2 (coefficiente principale) + ΔPDK a partita + minuti in più ×0,3 + crescita recente ×0,12 + età (≤22 +6, ≤24 +3, ≥27 −4) + strada libera (davanti: ≥31 anni, in scadenza, rischio scambio ≥40%); ×0,65 se il salto dipende da un compagno infortunato (con/senza ≥3 PDK stimati).
+- Testo scritto con le cause: rendimento per minuto, compagni infortunati ora (con/senza contro l'anno scorso; «senza di lui è migliore anche dell'anno scorso»), arrivi/partenze nel reparto, cambio allenatore (`coachPrev` da Basketball Reference NBA_{y}_coaches; ESPN restituiva il coach attuale anche per le stagioni passate) con il dubbio dichiarato quando non si può separare compagno e coach, chi sta davanti.
+- Rookie (ESPN exp 0, età ≤22): efficienza PDK/minuto contro soglia G 0,60 · F 0,62 · C 0,68 (pesata sui minuti, piena da 22'), età d'ingresso, minuti e quota del reparto in salita, chi sta davanti.
+- Investimenti = «📈 Migliorati sull'anno scorso» + «🐣 Rookie da seguire»; etichette «🩹 dipende da un infortunio», «🧑‍🏫 nuovo coach», «🩹 lui infortunato». Scheda giocatore: «🧠 Lettura dell'analista» in cima.
+- Filtro valore: tolti solo i giocatori già in una squadra Dreamers con valore ≥1150 (i free agent restano).
