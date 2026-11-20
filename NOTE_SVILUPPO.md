@@ -4276,3 +4276,6 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 
 ## v1160 · Tabellone playoff: 50 crediti del 4° posto come gli 80 (19/11/2026)
 - Piazzamento del tabellone titolo: moneta «C 50 crediti · al 4° posto» a destra della finale 3°–4° (stesso stile .prz degli 80 della finale 5°–6°), tolta la scritta piccola nel titolo.
+
+## v1161 · Assistente GM: solo giocatori sotto 1200 di valore (20/11/2026)
+- `filtra()`: nelle liste (Radar, Salto, In crescita, Investimenti, Rischio scambio) solo giocatori con valore Dreamers (valOf) < 1200 (VMAX) o senza valore. Non vale per la scheda Squadra né per «Da (da vendere)». Nota sotto i filtri.
