@@ -4343,3 +4343,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1202: profilo: PDK medi in grande colorati per livello come le capsule (viola ≥40, verde ≥30, giallo ≥20, rosso sotto), anche la sfumatura; «Medie stagione» senza le partite escluse dalla media (ESCL_MEDIA), così combacia con «Partite».
 - v1203: profilo: posizione di «Ogni 36′» nella classifica generale (tutti i giocatori della lega), non più in squadra.
 - v1204: FIX_NOTTE "Brayden Burries|2026-11-21": {mod:{add:2}} (+2 PDK sul valore vero, segue il live).
+- v1205: Burries 21/11: +4 PDK in tutto (mod.add:4).
