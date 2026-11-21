@@ -4320,3 +4320,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 
 ## REGOLA (22/11/2026, Francesco)
 - Quando si lavora a ritocchi grafici con render/screenshot di prova: mostrare il render e NON pubblicare finché non arriva l OK esplicito.
+- v1182 (ok di Francesco, opzione 3): striscia OUT spostata SOPRA il tabellone Sfide Dreamers come testata sfumata (rosso → colore dello stile), etichetta «🚑 OUT» leggera con lineetta (rossa piena in Parquet), tabellone senza angoli in alto quando c è la striscia; scorrimento dei giocatori più lento (4,6 s per giocatore, minimo 16 s).
