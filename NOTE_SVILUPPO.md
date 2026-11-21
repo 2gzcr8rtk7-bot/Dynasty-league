@@ -4304,3 +4304,7 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 ## v1170 · Home «Sfide Dreamers»: striscia scorrevole INFERMERIA (21/11/2026)
 - Sotto il tabellone delle sfide (solo con dl_hstr="sfide"): striscia sottile 26px «🚑 INFERMERIA» con logo squadra Dreamers, nome e bollino OUT (rosso) / DUB (giallo); stessi giocatori del banner (prossima notte, solo chi gioca). Scorre (durata 3,2 s per giocatore, minimo 14 s); tocco → Centro Medico (data-injgo). Classi .ifk* (.tk*, .tki esistevano già). Il banner classico non cambia.
 - v1171: striscia: etichetta «🚑 OUT» invece di INFERMERIA; bollino DUB dei dubbi arancione (#f97316).
+
+## v1172 · Impostazioni: tolti «Campo stellato di notte» e «Ordine dei loghi in Home» (22/11/2026)
+- Campo stellato di notte per tutti: tolta la scelta e ignorato DLS.nost (azzerato al caricamento; tolti i controlli in condivisione e vCampo).
+- teamOrd() restituisce sempre l ordine di classifica (drClassArr) se disponibile: loghi in Home per classifica in tutte le modalità (griglia 0, 5, 6) e nello scorrimento tra squadre; DLS.ord ignorato.
