@@ -4300,3 +4300,6 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - Personalizzazioni (area Ducks) → «Home · striscia in alto»: Banner (default) / Sfide Dreamers (localStorage dl_hstr="sfide", per telefono).
 - `window.homeSfide()`: tabellone a 4 colonne con loghi e punteggi del turno corrente (sfida Ducks per prima ed evidenziata), stato FINALE / ● LIVE / IN CORSO / DA GIOCARE, intestazione «Dreamers · turno · notti» con bollino Live; tocco → sfida (data-hdr, come le card della home). Classi .hsx* (.hsh esisteva già: pulsante condividi). L infermeria resta solo nel banner.
 - v1169: FIX_NOTTE notte 2026-11-20: Şengün fissato a 56,45 (al posto di +2,5) · Amen Thompson 22,9.
+
+## v1170 · Home «Sfide Dreamers»: striscia scorrevole INFERMERIA (21/11/2026)
+- Sotto il tabellone delle sfide (solo con dl_hstr="sfide"): striscia sottile 26px «🚑 INFERMERIA» con logo squadra Dreamers, nome e bollino OUT (rosso) / DUB (giallo); stessi giocatori del banner (prossima notte, solo chi gioca). Scorre (durata 3,2 s per giocatore, minimo 14 s); tocco → Centro Medico (data-injgo). Classi .ifk* (.tk*, .tki esistevano già). Il banner classico non cambia.
