@@ -15009,7 +15009,7 @@ let q=0;const m=document.getElementById("main")||document.body;new MutationObser
 <script>/* (1388) PALLA ANIMATA DUCKS: palla viola con scia verde, palleggio a 8 (passa dietro e davanti alla maglia), passaggi tra campo, sesto uomo e panchina, canestro in alto: a ogni giro tirano tutti una volta in ordine casuale. Tocca TEXAS per spegnere/accendere (dl_dxpalla) */
 (function(){
 let BC="#a3e635",TC="#7c3aed";const BC0=BC,TC0=TC,K="dl_dxpalla";
-const isOn=()=>{const m=window.dxFx?window.dxFx():"palla";return m==="palla"||m==="mix"};
+const isOn=()=>{const m=window.dxFx?window.dxFx():"off";return m==="palla"||m==="mix"};
 const here=()=>typeof cur!=="undefined"&&cur==="campo"&&!(window.gotOn&&gotOn())&&!(window.dxGameOn&&curTeam==="DUC");/* (1539) col gioco attivo niente animazione (solo campo Ducks) *//* (1484) tutti i campi: le altre squadre hanno solo la palla live */
 const LBON=()=>{try{return DLS.plv!==false}catch(e){return true}};/* (1493) palla live: si accende/spegne in Personalizzazioni › Campo (acceso di default) */const normal=()=>curTeam==="DUC"&&isOn();
 const tcol=()=>{if(curTeam==="DUC")return"#a3e635";try{const C=TEAMS[curTeam],lum=h=>{const n=parseInt(h.slice(1),16);return(0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255};const lt=(h,k)=>{const n=parseInt(h.slice(1),16),f=v=>Math.round(v+(255-v)*k).toString(16).padStart(2,"0");return"#"+f(n>>16)+f(n>>8&255)+f(n&255)};/* (1486) scia sempre nel colore della squadra: se è scuro si schiarisce (Dolphins blu, non più verde) */return lum(C.bg)>=.33?C.bg:lum(C.bg)>=.15?lt(C.bg,.25):(lum(C.fg)>=.33&&lum(C.fg)<.95?C.fg:lt(C.bg,.45))}catch(e){return"#a3e635"}};
@@ -15415,9 +15415,9 @@ window.__dxPause=pz;
 </script>
 <script>/* (1397) EFFETTI CAMPO DUCKS: tocca TEXAS per cambiare. palla · faro · 5 crolli del pavimento (visti dall'alto: giorno -> notte -> giorno) · spento (dl_dxfx) */
 (function(){
-const MODES=[["palla","🏀 Palla e canestro"],["c1","💥 Crollo del pavimento"],["off","Effetti spenti"]];
+const MODES=[["off","Effetti spenti"],["palla","🏀 Palla e canestro"]];/* (1196) tolto il crollo del pavimento; animazione della palla spenta di default, si accende toccando TEXAS */
 const K="dl_dxfx";
-window.dxFx=()=>{let v=null;try{if(!localStorage.getItem("dl_dxfx_m1399")){localStorage.setItem(K,"palla");localStorage.setItem("dl_dxfx_m1399","1")}v=localStorage.getItem(K)}catch(e){}if(!v){try{if(localStorage.getItem("dl_dxpalla")==="0")return"off"}catch(e){}return"palla"}return MODES.some(m=>m[0]===v)?v:"palla"};/* (1399) tolta palla+crollo; default palla *//* (1398) tolto il faro */
+window.dxFx=()=>{let v=null;try{if(!localStorage.getItem("dl_dxfx_m1196")){localStorage.setItem(K,"off");localStorage.setItem("dl_dxfx_m1196","1")}v=localStorage.getItem(K)}catch(e){}return MODES.some(m=>m[0]===v)?v:"off"};/* (1399) tolta palla+crollo; default palla *//* (1398) tolto il faro */
 const here=()=>typeof cur!=="undefined"&&cur==="campo"&&curTeam==="DUC"&&!(window.gotOn&&gotOn())&&!window.dxGameOn;
 const NS="http://www.w3.org/2000/svg";
 const st=document.createElement("style");st.textContent=`html body .court>canvas.dxfaro{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:7}`;document.head.appendChild(st);
