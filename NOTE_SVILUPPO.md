@@ -4337,3 +4337,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1196: campo Ducks: tolto l effetto «Crollo del pavimento»; animazione della palla (non live) spenta di default per tutti (reset una volta, dl_dxfx_m1196), toccando TEXAS si accende/spegne (MODES off/palla, scelta salvata sul telefono). Palla live invariata (want0/LBON).
 - v1197 (ok di Francesco): colori modalità notte per il tabellone Sfide Dreamers/semplici, la riga infortuni e la striscia OUT (sfumatura viola-blu e bordo rosa come le altre schede notturne, testi lilla); pallino capitano −6% (ramo anteprima-cap unito).
 - v1198: pallino del capitano nel colore della squadra (var --capc = TEAMS[curTeam].bg, lettera scura su Spiders/Mooses). REGOLA aggiornata (Francesco 22/11): i ritocchi semplici si possono pubblicare senza aspettare l ok.
+- v1199: tabellone sfide: stesso sfondo per tutte le sfide (tolta l evidenza della sfida dei Ducks, di giorno e di notte).
