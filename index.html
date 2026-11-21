@@ -16263,6 +16263,8 @@ html.tho:not(.notte) .cspg .cssum,html.tho:not(.notte) .cspg .cssum *{color:var(
 .ifks{font:800 9.5px system-ui,-apple-system,sans-serif;padding:1px 6px;border-radius:5px}.ifks.o{background:#dc2626;color:#fff}.ifks.q{background:#f97316;color:#fff}
 @media (prefers-reduced-motion:reduce){.ifkm{animation-duration:120s}}
 </style>
+<style>/* (1198) pallino del capitano nel colore della squadra (--capc dal TEAMS[curTeam].bg; lettera scura sui colori chiari) */html body .cpl:has(.pjc):not(#q1):not(#q2):not(#q3):not(#q4) .pnm:not(#a):not(#b):not(#c):not(#d) i{background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--capc,#8b5cf6) 55%,#fff),var(--capc,#8b5cf6) 60%,color-mix(in srgb,var(--capc,#8b5cf6) 70%,#000))!important;color:var(--capf,#fff)!important;-webkit-text-fill-color:var(--capf,#fff)!important;box-shadow:0 0 6px color-mix(in srgb,var(--capc,#8b5cf6) 70%,transparent)!important}</style>
+<script>(function(){let last="";const sync=()=>{try{const t=typeof curTeam!=="undefined"&&TEAMS[curTeam]?curTeam:"DUC";if(t===last)return;last=t;const c=TEAMS[t].bg,h=c.replace("#",""),L=(parseInt(h.slice(0,2),16)*299+parseInt(h.slice(2,4),16)*587+parseInt(h.slice(4,6),16)*114)/1000,R=document.documentElement.style;R.setProperty("--capc",c);R.setProperty("--capf",L>160?"#0f172a":"#fff")}catch(e){}};new MutationObserver(sync).observe(document.getElementById("main")||document.body,{childList:true});setTimeout(sync,500)})();</script>
 <style>/* (1197) Home: tabellone sfide e striscia OUT con i colori della modalità notte */
 html.notte .hsxh{color:#c4b5fd}
 html.notte .hsxg,html.notte .ifk.ifkx{background:linear-gradient(160deg,rgba(76,29,149,.85),rgba(17,10,48,.95) 60%,rgba(30,58,138,.8))!important;border-color:rgba(232,121,249,.5)!important}
