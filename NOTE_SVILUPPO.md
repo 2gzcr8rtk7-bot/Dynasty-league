@@ -4344,3 +4344,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1203: profilo: posizione di «Ogni 36′» nella classifica generale (tutti i giocatori della lega), non più in squadra.
 - v1204: FIX_NOTTE "Brayden Burries|2026-11-21": {mod:{add:2}} (+2 PDK sul valore vero, segue il live).
 - v1205: Burries 21/11: +4 PDK in tutto (mod.add:4).
+- v1206: Burries +2 PDK nelle partite 24/10, 26/10, 28/10, 31/10, 2/11, 4/11, 10/11, 11/11, 13/11 (12,75→14,75), 19/11 (FIX_NOTTE mod.add). fixNotte ora ricalcola l efficienza media della riga EFF dalle partite dopo tutte le correzioni (prima solo la prima correzione la aggiornava). Classifica Dreamers invariata.
