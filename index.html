@@ -6588,7 +6588,7 @@ function vGiocatore(){
     const cell=(l,v)=>`<div><b>${v}</b><small>${l}</small></div>`,pcf=v=>v==null?"—":Math.round(v*100)+"%";
     return `<div class="gnb ${pd==null?"":"q"+pdkLvl(pd)}"><div class="gnbt"><div class="gnbn">${pd==null?"—":f2(pd)}</div><div class="gnbx"><small>PDK medi a partita</small>${rk(pL,AL.length)}${pL?`<span class="gnbs">meglio del ${pc(pL,AL.length)}% della lega</span>`:""}</div></div>
     <div class="gnbr"><small>Efficienza</small><b>${e[1]==null?"—":f2(e[1])}</b>${bar(rL,all.length)}${rk(rL,all.length)}</div>
-    <div class="gnbr"><small>Ogni 36'</small><b>${e[1]==null?"—":f1(e[1]*36)}</b>${bar(rT,team.length)}${rT?`<span class="grk ${tier(rT,team.length)}">${rT}° su ${team.length} in squadra</span>`:""}</div></div>
+    <div class="gnbr"><small>Ogni 36'</small><b>${e[1]==null?"—":f1(e[1]*36)}</b>${bar(rL,all.length)}${rk(rL,all.length)}</div></div>
     ${M?`<div class="gms"><div class="gmsh"><span>Medie stagione</span><em>${M.n} ${M.n===1?"partita":"partite"}${M.solo?"":" · si aggiorna ogni mattina"}</em></div><div class="gnbr gmsr"><small>Partite</small><b>${e[2]}</b><span></span><span></span></div><div class="gnbr gmsr"><small>Minuti medi</small><b>${f1(e[3])}</b>${bar(mL,ML.length)}${rk(mL,ML.length)}</div><div class="gmsg">${cell("Punti",f1(M.pt))}${cell("Rimbalzi",f1(M.rb))}${cell("Assist",f1(M.as))}${M.solo?"":cell("Rubate",f1(M.ru))+cell("Stoppate",f1(M.st))+cell("Palle perse",f1(M.pp))+cell("Tiro dal campo",pcf(M.fg))+cell("Tiro da 3",pcf(M.tp))}</div></div>`:""}`})()}
   </div>`}
   ${GL.length?`${H("Partita per partita",`<em>${GL.length} ${GL.length===1?"gara":"gare"}</em>`)}
