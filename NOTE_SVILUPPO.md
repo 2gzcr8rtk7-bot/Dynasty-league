@@ -4314,3 +4314,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1176: «Sfide Dreamers» funziona anche con la Home «Loghi in cima» (TOP): lì il banner stava dentro hmmain con l intestazione partite, ora sostituito dal tabellone. Con «Griglia» non c è striscia in nessuno dei due casi.
 - v1177: tabellone Sfide Dreamers: sotto ogni sfida, al posto di LIVE/IN CORSO, scorrono i 6 migliori giocatori delle due squadre (logo, cognome, PDK) come in Dynasty TV; la scritta resta solo se nessuno ha ancora giocato.
 - v1178: nello scorrimento dei migliori giocatori il PDK è nella capsula colorata (pdkB) come in Dynasty TV.
+- v1179: capsula PDK dello scorrimento Sfide Dreamers propria (.hsxb, alta 11px, colori per fascia come pdkLvl): le regole globali di .pdkx la ingrandivano e sul telefono veniva tagliata.
