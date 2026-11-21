@@ -4295,3 +4295,7 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1165: FIX_NOTTE "Anthony Black|2026-11-20": {mod:{pdk:22.1}}.
 - v1166: FIX_NOTTE notte 2026-11-20: Kyshawn George 18,6 · Jalen Green 19.
 - v1167: FIX_NOTTE "Alperen Şengün|2026-11-20": {mod:{add:2.5}} (nuovo mod.add: +PDK sul valore vero, segue il live: se la riga cambia, la correzione riparte dai dati nuovi grazie a r[21].w).
+
+## v1168 · Home: striscia «Sfide Dreamers» in alternativa al banner (21/11/2026)
+- Personalizzazioni (area Ducks) → «Home · striscia in alto»: Banner (default) / Sfide Dreamers (localStorage dl_hstr="sfide", per telefono).
+- `window.homeSfide()`: tabellone a 4 colonne con loghi e punteggi del turno corrente (sfida Ducks per prima ed evidenziata), stato FINALE / ● LIVE / IN CORSO / DA GIOCARE, intestazione «Dreamers · turno · notti» con bollino Live; tocco → sfida (data-hdr, come le card della home). Classi .hsx* (.hsh esisteva già: pulsante condividi). L infermeria resta solo nel banner.
