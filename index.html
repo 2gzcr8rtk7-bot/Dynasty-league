@@ -6571,23 +6571,30 @@ function vGiocatore(){
   </div>
   <button class="advbtn ggrbtn ggy" data-grafico="${t}" data-grp="${p[0]}">📈 Grafico</button>
   <button class="advbtn ggrbtn ggy" data-cmpa="${p[0].replace(/"/g,"&quot;")}">⚖ Confronta con un altro giocatore</button>
-  ${szSel}
+  ${e[1]==null?szSel:""}
   ${e[1]==null?`<p class="note">${past?"Nessuna partita NBA in questa stagione: non era in NBA o non ha giocato.":"Nessuna partita giocata finora: i dati compariranno dopo la prima gara."}</p>`:`
-  <div class="gbig g2"><div><b class="gpdk">${(()=>{const g=GL;const v=g.length?g.reduce((a,x)=>a+x[3],0)/g.length:(e[1]!=null&&e[3]!=null?e[1]*e[3]:null);return v==null?"—":`<span style="color:#fff!important;-webkit-text-fill-color:#fff!important" class="pdkx big ${pdkLvl(v)}">${f2(v)}</span>`})()}</b><small>PDK medi a partita</small></div><div>${eff(e[1])}<small>Efficienza media</small></div></div>
-  <div class="gbars">
-    <div><span>${p[0].split(" ").slice(-1)[0]}</span><i><b style="width:${pct(e[1])}%;background:${c.bg}"></b></i><em>${f2(e[1])}</em></div>
-    ${ts?`<div><span>Media ${c.nick}</span><i><b style="width:${pct(ts[4])}%;background:#5b6b95"></b></i><em>${f2(ts[4])}</em></div>`:""}
-  </div>
-  <div class="gstats">
-    ${stat("Partite",e[2])}
-    ${stat("Minuti medi",e[3]==null?"—":e[3].toLocaleString("it-IT",{minimumFractionDigits:1}))}
-    ${stat("Proiezione 36'",f2(e[1]*36).replace(/,\d+$/,m=>m.slice(0,2)),"Dunkest")}
-    
-    ${(()=>{const src=nm=>past?((STAGIONI[sz]||{})[nm]||[]):(PARTITE[nm]||[]),av=nm=>{const g=src(nm);return g.length?g.reduce((s,x)=>s+(+x[3]||0),0)/g.length:null};
-      const AL=all.map(x=>[x[1],av(x[1])]).filter(x=>x[1]!=null).sort((a,b)=>b[1]-a[1]),pL=AL.findIndex(x=>x[0]===p[0])+1;
-      if(SHR_PL&&pL)SHR_PL.rk=[pL,AL.length];return `${stat("Lega · PDK",pL?pL+"°":"—","su "+AL.length)}${stat("Lega · efficienza",rL?rL+"°":"—","su "+all.length)}`})()}
+  ${(()=>{/* (1201) riepilogo numeri: PDK in grande con la posizione in lega, righe con barra e posizione (verde primo quarto, giallo metà, rosso fondo), poi le medie stagionali delle statistiche */
+    const src=nm=>past?((STAGIONI[sz]||{})[nm]||[]):(PARTITE[nm]||[]),av=nm=>{const g=src(nm);return g.length?g.reduce((s2,x)=>s2+(+x[3]||0),0)/g.length:null};
+    const AL=all.map(x=>[x[1],av(x[1])]).filter(x=>x[1]!=null).sort((a,b)=>b[1]-a[1]),pL=AL.findIndex(x=>x[0]===p[0])+1;if(SHR_PL&&pL)SHR_PL.rk=[pL,AL.length];
+    const ML=all.filter(x=>x[4]!=null).map(x=>x[4]).sort((a,b)=>b-a),mL=e[3]!=null?ML.findIndex(v=>v<=e[3]+1e-9)+1:0;
+    const pd=(()=>{const g=GL;return g.length?g.reduce((a,x)=>a+x[3],0)/g.length:(e[1]!=null&&e[3]!=null?e[1]*e[3]:null)})();
+    const tier=(r,N)=>!r?"":r/N<=.25?"g":r/N<=.6?"y":"r",COL={g:"#22c55e",y:"#facc15",r:"#ef4444"},pc=(r,N)=>Math.round((1-(r-1)/N)*100);
+    const rk=(r,N)=>r?`<span class="grk ${tier(r,N)}">${r}° su ${N}</span>`:"",bar=(r,N)=>r?`<i class="gpb"><b style="width:${pc(r,N)}%;background:${COL[tier(r,N)]}"></b></i>`:"<span></span>";
+    const f1=v=>v==null||isNaN(v)?"—":v.toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1});
+    /* medie stagionali: stagione in corso dai tabellini di Dynasty TV (tutte le voci), stagioni passate dai dati salvati (punti, rimbalzi, assist) */
+    let M=null;if(!past&&typeof TV!=="undefined"){const k=tvNm(p[0]);const R=[];for(const d in TV.days)for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;for(const sd of["a","h"])for(const r of B[sd]||[])if(tvNm(r[0])===k&&String(r[2]||"0")!=="0:00"&&String(r[2]||"")!=="0")R.push(r)}
+      if(R.length){const S=i=>R.reduce((a,r)=>a+(+r[i]||0),0),n=R.length;M={n,pt:S(3)/n,rb:S(6)/n,as:S(7)/n,ru:S(8)/n,st:S(9)/n,pp:S(10)/n,fg:S(13)?S(12)/S(13):null,tp:S(15)?S(14)/S(15):null,ft:S(17)?S(16)/S(17):null}}}
+    if(!M&&GL.length){const n=GL.length,S=i=>GL.reduce((a,x)=>a+(+x[i]||0),0);M={n,pt:S(5)/n,rb:S(6)/n,as:S(7)/n,solo:1}}
+    const cell=(l,v)=>`<div><b>${v}</b><small>${l}</small></div>`,pcf=v=>v==null?"—":Math.round(v*100)+"%";
+    return `<div class="gnb"><div class="gnbt"><div class="gnbn">${pd==null?"—":f2(pd)}</div><div class="gnbx"><small>PDK medi a partita</small>${rk(pL,AL.length)}${pL?`<span class="gnbs">meglio del ${pc(pL,AL.length)}% della lega</span>`:""}</div></div>
+    <div class="gnbr"><small>Efficienza</small><b>${e[1]==null?"—":f2(e[1])}</b>${bar(rL,all.length)}${rk(rL,all.length)}</div>
+    <div class="gnbr"><small>Minuti medi</small><b>${f1(e[3])}</b>${bar(mL,ML.length)}${rk(mL,ML.length)}</div>
+    <div class="gnbr"><small>Ogni 36'</small><b>${e[1]==null?"—":f1(e[1]*36)}</b><span></span><em>Dunkest</em></div>
+    <div class="gnbr"><small>Partite</small><b>${e[2]}</b><span></span><span></span></div></div>
+    ${M?`<div class="gms"><div class="gmsh"><span>Medie stagione</span><em>${M.n} ${M.n===1?"partita":"partite"}${M.solo?"":" · si aggiorna ogni mattina"}</em></div><div class="gmsg">${cell("Punti",f1(M.pt))}${cell("Rimbalzi",f1(M.rb))}${cell("Assist",f1(M.as))}${M.solo?"":cell("Rubate",f1(M.ru))+cell("Stoppate",f1(M.st))+cell("Palle perse",f1(M.pp))+cell("Tiro dal campo",pcf(M.fg))+cell("Tiro da 3",pcf(M.tp))}</div></div>`:""}`})()}
   </div>`}
   ${GL.length?`${H("Partita per partita",`<em>${GL.length} ${GL.length===1?"gara":"gare"}</em>`)}
+  ${szSel}
   ${(()=>{const MESI=["","Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"],ord=m=>m>=8?m:m+12;
     const by={};GL.forEach(g=>{const m=+g[0].slice(3);(by[m]=by[m]||[]).push(g)});
     const ms=Object.keys(by).map(Number).sort((x,y)=>ord(y)-ord(x));
@@ -16262,6 +16269,19 @@ html.tho:not(.notte) .cspg .cssum,html.tho:not(.notte) .cspg .cssum *{color:var(
 .ifki{display:inline-flex;align-items:center;gap:5px;font:600 12px system-ui,-apple-system,sans-serif;color:var(--fg,#e2e8f0)}.ifkl{width:17px;height:17px;object-fit:contain;flex:none}
 .ifks{font:800 9.5px system-ui,-apple-system,sans-serif;padding:1px 6px;border-radius:5px}.ifks.o{background:#dc2626;color:#fff}.ifks.q{background:#f97316;color:#fff}
 @media (prefers-reduced-motion:reduce){.ifkm{animation-duration:120s}}
+</style>
+<style>/* (1201) profilo giocatore: riepilogo numeri e medie stagione */
+.gnb{margin:10px 0;border:1px solid rgba(148,163,184,.22);border-radius:16px;overflow:hidden;background:rgba(11,16,32,.85)}
+.gnbt{display:flex;align-items:center;gap:14px;padding:14px;background:linear-gradient(90deg,rgba(250,204,21,.16),transparent 70%);border-bottom:1px solid rgba(148,163,184,.15)}
+.gnbn{font:800 italic 58px/1 var(--display);color:#facc15!important;-webkit-text-fill-color:#facc15!important}.gnbx{display:flex;flex-direction:column;align-items:flex-end;gap:5px;margin-left:auto;text-align:right}.gnbx small{font:800 12px var(--display);letter-spacing:.1em;color:#cbd5e1;text-transform:uppercase}.gnbs{font-size:11px;color:#94a3b8}
+.gnbr{display:grid;grid-template-columns:96px 62px 1fr 84px;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(148,163,184,.1)}.gnbr:last-child{border:0}
+.gnbr small{font:800 11px var(--display);letter-spacing:.08em;text-transform:uppercase;color:#94a3b8}.gnbr b{font:800 italic 24px var(--display);color:#fff;text-align:right}.gnbr em{font-style:normal;font-size:11px;color:#94a3b8;text-align:right}
+.gpb{display:block;height:6px;border-radius:3px;background:rgba(148,163,184,.18);overflow:hidden}.gpb b{display:block;height:100%;border-radius:3px}
+.grk{white-space:nowrap;display:inline-flex;align-items:center;justify-self:end;font:800 11px system-ui;padding:2px 8px;border-radius:999px}.grk.g{background:rgba(34,197,94,.18);color:#4ade80}.grk.y{background:rgba(250,204,21,.16);color:#facc15}.grk.r{background:rgba(239,68,68,.16);color:#f87171}
+.gms{margin:0 0 12px;border:1px solid rgba(148,163,184,.22);border-radius:16px;background:rgba(11,16,32,.85);padding:10px 12px 12px}
+.gmsh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}.gmsh span{font:800 13px var(--display);letter-spacing:.1em;text-transform:uppercase;color:#e2e8f0}.gmsh em{font-style:normal;font-size:10.5px;color:#94a3b8}
+.gmsg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.gmsg div{background:rgba(148,163,184,.08);border-radius:10px;padding:8px 4px;text-align:center}.gmsg b{display:block;font:800 italic 22px/1.1 var(--display);color:#fff}.gmsg small{display:block;font:700 9.5px system-ui;color:#94a3b8;margin-top:2px;text-transform:uppercase;letter-spacing:.03em}
+html.dlt-parquet .gnb,html.dlt-parquet .gms{background:rgba(255,255,255,.6)}html.dlt-parquet .gnbr b,html.dlt-parquet .gmsg b,html.dlt-parquet .gmsh span{color:#7c2d12!important;-webkit-text-fill-color:#7c2d12!important}html.dlt-parquet .gnbn{color:#b45309!important;-webkit-text-fill-color:#b45309!important}
 </style>
 <style>/* (1198) pallino del capitano nel colore della squadra (--capc dal TEAMS[curTeam].bg; lettera scura sui colori chiari) */html body .cpl:has(.pjc):not(#q1):not(#q2):not(#q3):not(#q4) .pnm:not(#a):not(#b):not(#c):not(#d) i{background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--capc,#8b5cf6) 55%,#fff),var(--capc,#8b5cf6) 60%,color-mix(in srgb,var(--capc,#8b5cf6) 70%,#000))!important;color:var(--capf,#fff)!important;-webkit-text-fill-color:var(--capf,#fff)!important;box-shadow:0 0 6px color-mix(in srgb,var(--capc,#8b5cf6) 70%,transparent)!important}</style>
 <script>(function(){let last="";const sync=()=>{try{const t=typeof curTeam!=="undefined"&&TEAMS[curTeam]?curTeam:"DUC";if(t===last)return;last=t;const c=TEAMS[t].bg,h=c.replace("#",""),L=(parseInt(h.slice(0,2),16)*299+parseInt(h.slice(2,4),16)*587+parseInt(h.slice(4,6),16)*114)/1000,R=document.documentElement.style;R.setProperty("--capc",c);R.setProperty("--capf",L>160?"#0f172a":"#fff")}catch(e){}};new MutationObserver(sync).observe(document.getElementById("main")||document.body,{childList:true});setTimeout(sync,500)})();</script>
