@@ -4289,3 +4289,6 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 
 ## v1163 · Correzione nascosta (21/11/2026)
 - FIX_NOTTE "Dyson Daniels|2026-11-20": {mod:{pdk:38.2}} (nuovo campo mod.pdk: PDK fissato, statistiche invariate). Vale per live, tabellino, notte del turno e PARTITE; resta anche quando arrivano i dati ufficiali.
+
+## v1164 · Correzioni nascoste (21/11/2026)
+- FIX_NOTTE notte 2026-11-20 (mod.pdk): Jalen Johnson 44,5 · Scottie Barnes 35,9 · Cade Cunningham 26,9.
