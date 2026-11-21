@@ -4332,3 +4332,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1191 (ok di Francesco): livella % vittoria −60% (2,9 px), senza numeri.
 - v1192 (prova di Francesco): Sfide Dreamers di nuovo in orizzontale (logo 24 px a sinistra, punteggio 16 px a destra, casa sopra), con riga infortuni solo numeri e livella sottile. Per tornare al verticale: ripristinare il blocco CSS (1189) dal commit 3e90d9e.
 - v1193 (ok di Francesco, opzione 0): Sfide Dreamers di nuovo in verticale con il font attuale, ambulanze 🚑 −30% (9 px) accanto ai numeri infortunati, barra sottile senza numeri.
+- v1194: Impostazioni › Home › «Striscia in alto in Home» con 3 opzioni: 🎞️ Banner (default, dl_hstr assente), 🏀 Sfide Dreamers (dl_hstr="sfide": verticale, infortunati, livella), 📋 Sfide semplici (dl_hstr="semplice": orizzontale, logo e punteggio, stato LIVE/IN CORSO/FINALE sotto, senza infortunati né livella; classe .hsxs). hStrMode().
