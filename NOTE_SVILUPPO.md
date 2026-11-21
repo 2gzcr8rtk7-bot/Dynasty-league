@@ -4308,3 +4308,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 ## v1172 · Impostazioni: tolti «Campo stellato di notte» e «Ordine dei loghi in Home» (22/11/2026)
 - Campo stellato di notte per tutti: tolta la scelta e ignorato DLS.nost (azzerato al caricamento; tolti i controlli in condivisione e vCampo).
 - teamOrd() restituisce sempre l ordine di classifica (drClassArr) se disponibile: loghi in Home per classifica in tutte le modalità (griglia 0, 5, 6) e nello scorrimento tra squadre; DLS.ord ignorato.
+- v1173: tolta anche «Lato dei loghi in Home»: loghi sempre a sinistra (data-hand="l" fisso, DLS.hand ignorato).
