@@ -11641,12 +11641,12 @@ window.homeSfide=function(){try{const st=drStand(),P=drPO(st),k=drCurWeek(P);if(
       if(!L.length)return`<span class="hsxt${lv?" lv":""}">${fin?"FINALE":lv?"● LIVE":W.started?"IN CORSO":"DA GIOCARE"}</span>`;
       const it=L.map(x=>`<span class="hsxp"><img src="${LOGO[x.t]}" alt="">${sur(x.n)}<i class="hsxb q${pdkLvl(x.e)}">${pdkF(x.e)}</i></span>`).join("");
       return`<span class="hsxtk"><span class="hsxtm" style="animation-duration:${Math.max(16,L.length*4.6)}s">${it}${it}</span></span>`})()}</button>`}).join("");
-  /* (1170) striscia scorrevole INFERMERIA sotto il tabellone: out e in dubbio delle nostre squadre per la prossima notte (stessa regola del banner); tocco → Centro Medico */
-  let tk="";try{let ND=null,NG=[];{const it=new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hour12:false}).formatToParts(new Date()).reduce((o,x)=>(o[x.type]=x.value,o),{});let d=`${it.year}-${it.month}-${it.day}`;if(+it.hour%24<7)d=drAdd(d,-1);for(let i=0;i<8;i++){const G=(TV.days[d]||[]);if(G.length){ND=d;NG=G;break}d=drAdd(d,1)}}
-    const pl=new Set();NG.forEach(g=>{pl.add(g[0]);pl.add(g[1])});
-    const R=ND?(INFORTUNI.lista||[]).filter(x=>x.t&&TEAMS[x.t]&&x.stato!=="ok"&&x.nba&&pl.has(x.nba)).sort((a,b)=>(a.stato==="out"?0:1)-(b.stato==="out"?0:1)||String(a.p).localeCompare(String(b.p))):[];
-    if(R.length){const it=R.map(x=>`<span class="ifki"><img class="ifkl" src="${LOGO[x.t]}" alt="">${nmAb(x.p)}<span class="ifks ${x.stato==="out"?"o":"q"}">${x.stato==="out"?"OUT":"DUB"}</span></span>`).join("");
-      tk=`<div class="ifk" data-injgo="1" role="link" tabindex="0" aria-label="Apri il Centro Medico"><span class="ifkb">🚑 OUT</span><div class="ifkw"><div class="ifkm" style="animation-duration:${Math.max(14,R.length*3.2)}s">${it}${it}</div></div></div>`}}catch(e){}
+  /* (1183) INFERMERIA come riga di caselle sopra le sfide: per ogni sfida le sue due squadre, logo e numero totale di infortunati (out + dubbi; rosso se c'è un out, arancione se solo dubbi); tocco → tendina con i giocatori */
+  let tk="";try{const esc=v=>String(v==null?"":v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));const by={};(INFORTUNI.lista||[]).filter(x=>x.t&&TEAMS[x.t]&&x.stato!=="ok").forEach(x=>(by[x.t]=by[x.t]||[]).push(x));
+    const op=window.HSXO&&by[window.HSXO]?window.HSXO:null;
+    const chip=t=>{const L=by[t]||[],o=L.filter(x=>x.stato==="out").length,n=L.length;return`<button type="button" class="ijb${op===t?" on":""}${n?"":" z"}" data-ijt="${t}" aria-label="Infortunati ${TEAMS[t].nick}: ${n}"><img src="${LOGO[t]}" alt=""><span class="${o?"o":n?"q":"zz"}">${n}</span></button>`};
+    const dd=op?`<div class="ijd"><div class="h"><img src="${LOGO[op]}" alt="">${TEAMS[op].nick.toUpperCase()} · ${by[op].length} ${by[op].length===1?"INFORTUNATO":"INFORTUNATI"}<button type="button" class="ijcm" data-injgo="1">Centro medico ›</button></div>${by[op].slice().sort((a,b)=>(a.stato==="out"?0:1)-(b.stato==="out"?0:1)).map(x=>`<div class="ijp">${esc(x.p)}<span class="s ${x.stato==="out"?"o":"q"}">${x.stato==="out"?"OUT":"DUB"}</span><small>${[x.nba,x.tipo,x.rientro].filter(Boolean).map(esc).join(" · ")}</small></div>`).join("")}</div>`:"";
+    tk=`<div class="ijw"><div class="ijr">${pairs.map(pr=>`<span class="ijpair">${pr.map(chip).join("")}</span>`).join("")}</div>${dd}</div>`}catch(e){}
   return`<div class="hsxh"><span>Dreamers · ${DR_PH(k,P)} · ${W.started?`${W.nights}/${W.len} notti`:`dal ${drFmt(W.start)}`}</span>${lv?`<span class="hsxlv"><i></i>Live</span>`:fin?`<span class="hsxfin">Finale</span>`:""}</div>${tk}<div class="hsxg">${cells}</div>`}catch(e){return""}}
 function pers(){if(!COL.d){cur="campo";return vCampo()}
  const card=(w,tit,nota)=>{const orig=LOGO_DUC0.b;const c0=(w==="c"?DUC_C:DUC_L)||"",sel=DUC_LOGHI.find(x=>x[0]===c0);
@@ -16258,6 +16258,20 @@ html.tho:not(.notte) .cspg .cssum,html.tho:not(.notte) .cspg .cssum *{color:var(
 .ifks{font:800 9.5px system-ui,-apple-system,sans-serif;padding:1px 6px;border-radius:5px}.ifks.o{background:#dc2626;color:#fff}.ifks.q{background:#f97316;color:#fff}
 @media (prefers-reduced-motion:reduce){.ifkm{animation-duration:120s}}
 </style>
+<style>/* (1183) Home «Sfide Dreamers»: caselle infortunati sopra le sfide */
+.ijw{margin:0;border:1px solid rgba(148,163,184,.22);border-bottom:1px solid rgba(239,68,68,.3);border-radius:14px 14px 0 0;background:linear-gradient(180deg,rgba(239,68,68,.10),var(--panel,#0b1020));padding:4px 0}
+.ijw+.hsxg{border-top-left-radius:0!important;border-top-right-radius:0!important;border-top:0!important}
+.ijr{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}.ijpair{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:0 4px;border-right:1px solid rgba(148,163,184,.15)}.ijpair:last-child{border-right:0}
+.ijb{display:flex;align-items:center;justify-content:center;gap:3px;height:22px;padding:0;border-radius:9px;background:rgba(255,255,255,.06);border:1px solid rgba(148,163,184,.25);color:inherit;font:inherit;cursor:pointer;min-width:0}
+.ijb img{width:17px;height:17px;object-fit:contain}.ijb span{font:800 11px var(--display);font-style:italic;line-height:22px}.ijb .o{color:#f87171}.ijb .q{color:#fb923c}.ijb .zz{color:#64748b}.ijb.z{opacity:.45}.ijb.on{border-color:#ef4444;background:rgba(239,68,68,.18)}
+.ijd{margin-top:4px;border-top:1px dashed rgba(239,68,68,.35);padding:6px 10px 2px;display:grid;gap:4px}
+.ijd .h{font:800 11px var(--display);font-style:italic;color:var(--fg,#cbd5e1);letter-spacing:.06em;display:flex;align-items:center;gap:6px}.ijd .h img{width:16px;height:16px;object-fit:contain}
+.ijcm{margin-left:auto;border:0;background:none;color:#f87171;font:700 10.5px system-ui,-apple-system,sans-serif;font-style:normal;letter-spacing:0;cursor:pointer;padding:2px 0}
+.ijp{display:grid;grid-template-columns:1fr auto;gap:1px 8px;align-items:center;font:600 12px system-ui,-apple-system,sans-serif;color:var(--fg,#e2e8f0);padding:3px 0}
+.ijp small{grid-column:1;font:500 10px system-ui,-apple-system,sans-serif;color:var(--muted,#94a3b8)}.ijp .s{grid-row:1/3;grid-column:2;font:800 9.5px system-ui,-apple-system,sans-serif;padding:1px 6px;border-radius:5px;color:#fff}.ijp .s.o{background:#dc2626}.ijp .s.q{background:#f97316}
+html.dlt-parquet .ijb{background:rgba(255,255,255,.55)}
+</style>
+<script>/* (1183) tocco su una casella infortuni: apre/chiude la tendina */document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-ijt]");if(!b)return;e.preventDefault();e.stopPropagation();const t=b.dataset.ijt;window.HSXO=window.HSXO===t?null:t;const y=scrollY;render();scrollTo(0,y)},true);</script>
 <style>/* (1168) Home · striscia «Sfide Dreamers» */
 .hmqrow.hsxf{margin:0 0 4px}.hsxh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 6px;font:800 12px var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#94a3b8)}.hsxh>span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hsxlv{display:inline-flex;align-items:center;gap:5px;flex:none;color:#fff;background:#dc2626;border-radius:6px;padding:2px 8px;font-style:italic}.hsxlv i{width:6px;height:6px;border-radius:50%;background:#fff;animation:hsb 1s infinite}@keyframes hsb{50%{opacity:.3}}.hsxfin{flex:none;color:#fff;background:rgba(148,163,184,.25);border-radius:6px;padding:2px 8px}
