@@ -4317,3 +4317,6 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1179: capsula PDK dello scorrimento Sfide Dreamers propria (.hsxb, alta 11px, colori per fascia come pdkLvl): le regole globali di .pdkx la ingrandivano e sul telefono veniva tagliata.
 - v1180: tabellone Sfide Dreamers più basso: tolto lo spazio vuoto sotto lo scorrimento dei giocatori (padding cella 3px, riga 13px).
 - v1181: capsula PDK dello scorrimento: numero centrato in verticale (inline-flex, line-height 1, alta 12px).
+
+## REGOLA (22/11/2026, Francesco)
+- Quando si lavora a ritocchi grafici con render/screenshot di prova: mostrare il render e NON pubblicare finché non arriva l OK esplicito.
