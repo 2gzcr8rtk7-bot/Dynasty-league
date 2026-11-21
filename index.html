@@ -11642,7 +11642,7 @@ window.homeSfide=function(){try{const st=drStand(),P=drPO(st),k=drCurWeek(P);if(
     const pl=new Set();NG.forEach(g=>{pl.add(g[0]);pl.add(g[1])});
     const R=ND?(INFORTUNI.lista||[]).filter(x=>x.t&&TEAMS[x.t]&&x.stato!=="ok"&&x.nba&&pl.has(x.nba)).sort((a,b)=>(a.stato==="out"?0:1)-(b.stato==="out"?0:1)||String(a.p).localeCompare(String(b.p))):[];
     if(R.length){const it=R.map(x=>`<span class="ifki"><img class="ifkl" src="${LOGO[x.t]}" alt="">${nmAb(x.p)}<span class="ifks ${x.stato==="out"?"o":"q"}">${x.stato==="out"?"OUT":"DUB"}</span></span>`).join("");
-      tk=`<div class="ifk" data-injgo="1" role="link" tabindex="0" aria-label="Apri il Centro Medico"><span class="ifkb">🚑 INFERMERIA</span><div class="ifkw"><div class="ifkm" style="animation-duration:${Math.max(14,R.length*3.2)}s">${it}${it}</div></div></div>`}}catch(e){}
+      tk=`<div class="ifk" data-injgo="1" role="link" tabindex="0" aria-label="Apri il Centro Medico"><span class="ifkb">🚑 OUT</span><div class="ifkw"><div class="ifkm" style="animation-duration:${Math.max(14,R.length*3.2)}s">${it}${it}</div></div></div>`}}catch(e){}
   return`<div class="hsxh"><span>Dreamers · ${DR_PH(k,P)} · ${W.started?`${W.nights}/${W.len} notti`:`dal ${drFmt(W.start)}`}</span>${lv?`<span class="hsxlv"><i></i>Live</span>`:fin?`<span class="hsxfin">Finale</span>`:""}</div><div class="hsxg">${cells}</div>${tk}`}catch(e){return""}}
 function pers(){if(!COL.d){cur="campo";return vCampo()}
  const card=(w,tit,nota)=>{const orig=LOGO_DUC0.b;const c0=(w==="c"?DUC_C:DUC_L)||"",sel=DUC_LOGHI.find(x=>x[0]===c0);
@@ -16254,7 +16254,7 @@ html.tho:not(.notte) .cspg .cssum,html.tho:not(.notte) .cspg .cssum *{color:var(
 .ifkb{flex:none;height:100%;display:flex;align-items:center;padding:0 9px;font:800 10.5px var(--display);font-style:italic;letter-spacing:.08em;color:#fff;background:#dc2626;position:relative;z-index:1}
 .ifkw{flex:1;min-width:0;overflow:hidden;height:100%;display:flex;align-items:center}.ifkm{display:flex;gap:18px;width:max-content;padding-left:10px;white-space:nowrap;animation:ifkmv 40s linear infinite}@keyframes ifkmv{to{transform:translateX(-50%)}}
 .ifki{display:inline-flex;align-items:center;gap:5px;font:600 12px system-ui,-apple-system,sans-serif;color:var(--fg,#e2e8f0)}.ifkl{width:17px;height:17px;object-fit:contain;flex:none}
-.ifks{font:800 9.5px system-ui,-apple-system,sans-serif;padding:1px 6px;border-radius:5px}.ifks.o{background:#dc2626;color:#fff}.ifks.q{background:#f59e0b;color:#111}
+.ifks{font:800 9.5px system-ui,-apple-system,sans-serif;padding:1px 6px;border-radius:5px}.ifks.o{background:#dc2626;color:#fff}.ifks.q{background:#f97316;color:#fff}
 @media (prefers-reduced-motion:reduce){.ifkm{animation-duration:120s}}
 </style>
 <style>/* (1168) Home · striscia «Sfide Dreamers» */

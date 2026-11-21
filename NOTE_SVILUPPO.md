@@ -4303,3 +4303,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 
 ## v1170 · Home «Sfide Dreamers»: striscia scorrevole INFERMERIA (21/11/2026)
 - Sotto il tabellone delle sfide (solo con dl_hstr="sfide"): striscia sottile 26px «🚑 INFERMERIA» con logo squadra Dreamers, nome e bollino OUT (rosso) / DUB (giallo); stessi giocatori del banner (prossima notte, solo chi gioca). Scorre (durata 3,2 s per giocatore, minimo 14 s); tocco → Centro Medico (data-injgo). Classi .ifk* (.tk*, .tki esistevano già). Il banner classico non cambia.
+- v1171: striscia: etichetta «🚑 OUT» invece di INFERMERIA; bollino DUB dei dubbi arancione (#f97316).
