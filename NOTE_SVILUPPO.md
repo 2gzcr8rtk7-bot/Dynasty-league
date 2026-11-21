@@ -4286,3 +4286,6 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - Rookie (ESPN exp 0, età ≤22): efficienza PDK/minuto contro soglia G 0,60 · F 0,62 · C 0,68 (pesata sui minuti, piena da 22'), età d'ingresso, minuti e quota del reparto in salita, chi sta davanti.
 - Investimenti = «📈 Migliorati sull'anno scorso» + «🐣 Rookie da seguire»; etichette «🩹 dipende da un infortunio», «🧑‍🏫 nuovo coach», «🩹 lui infortunato». Scheda giocatore: «🧠 Lettura dell'analista» in cima.
 - Filtro valore: tolti solo i giocatori già in una squadra Dreamers con valore ≥1150 (i free agent restano).
+
+## v1163 · Correzione nascosta (21/11/2026)
+- FIX_NOTTE "Dyson Daniels|2026-11-20": {mod:{pdk:38.2}} (nuovo campo mod.pdk: PDK fissato, statistiche invariate). Vale per live, tabellino, notte del turno e PARTITE; resta anche quando arrivano i dati ufficiali.
