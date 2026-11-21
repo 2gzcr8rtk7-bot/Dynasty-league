@@ -4294,3 +4294,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - FIX_NOTTE notte 2026-11-20 (mod.pdk): Jalen Johnson 44,5 · Scottie Barnes 35,9 · Cade Cunningham 26,9.
 - v1165: FIX_NOTTE "Anthony Black|2026-11-20": {mod:{pdk:22.1}}.
 - v1166: FIX_NOTTE notte 2026-11-20: Kyshawn George 18,6 · Jalen Green 19.
+- v1167: FIX_NOTTE "Alperen Şengün|2026-11-20": {mod:{add:2.5}} (nuovo mod.add: +PDK sul valore vero, segue il live: se la riga cambia, la correzione riparte dai dati nuovi grazie a r[21].w).
