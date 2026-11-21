@@ -4330,3 +4330,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1189 (ok di Francesco): Sfide Dreamers in verticale (casa a sinistra, ospite a destra come la livella; logo 27 px sopra il punteggio; riquadro 6 px più basso); riga infortuni con 🚑 + numero al posto del logo (niente doppio logo).
 - v1190 (ok di Francesco): riga infortuni solo con il numero (tolte le ambulanze); livella % vittoria −20% (7,2 px, numeri 5,2 px) con numeri centrati nel tratto e in altezza (<b> spostato di 1,75 px, misurato).
 - v1191 (ok di Francesco): livella % vittoria −60% (2,9 px), senza numeri.
+- v1192 (prova di Francesco): Sfide Dreamers di nuovo in orizzontale (logo 24 px a sinistra, punteggio 16 px a destra, casa sopra), con riga infortuni solo numeri e livella sottile. Per tornare al verticale: ripristinare il blocco CSS (1189) dal commit 3e90d9e.
