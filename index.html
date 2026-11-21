@@ -11640,7 +11640,7 @@ window.homeSfide=function(){try{const st=drStand(),P=drPO(st),k=drCurWeek(P);if(
       const L=[...A.top.map(x=>({...x,t:a})),...B.top.map(x=>({...x,t:b}))].filter(x=>x.e!=null).sort((p,q)=>q.e-p.e).slice(0,6);
       if(!L.length)return`<span class="hsxt${lv?" lv":""}">${fin?"FINALE":lv?"● LIVE":W.started?"IN CORSO":"DA GIOCARE"}</span>`;
       const it=L.map(x=>`<span class="hsxp"><img src="${LOGO[x.t]}" alt="">${sur(x.n)}<i class="hsxb q${pdkLvl(x.e)}">${pdkF(x.e)}</i></span>`).join("");
-      return`<span class="hsxtk"><span class="hsxtm" style="animation-duration:${Math.max(8,L.length*2.6)}s">${it}${it}</span></span>`})()}</button>`}).join("");
+      return`<span class="hsxtk"><span class="hsxtm" style="animation-duration:${Math.max(16,L.length*4.6)}s">${it}${it}</span></span>`})()}</button>`}).join("");
   /* (1170) striscia scorrevole INFERMERIA sotto il tabellone: out e in dubbio delle nostre squadre per la prossima notte (stessa regola del banner); tocco → Centro Medico */
   let tk="";try{let ND=null,NG=[];{const it=new Intl.DateTimeFormat("en-CA",{timeZone:"Europe/Rome",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hour12:false}).formatToParts(new Date()).reduce((o,x)=>(o[x.type]=x.value,o),{});let d=`${it.year}-${it.month}-${it.day}`;if(+it.hour%24<7)d=drAdd(d,-1);for(let i=0;i<8;i++){const G=(TV.days[d]||[]);if(G.length){ND=d;NG=G;break}d=drAdd(d,1)}}
     const pl=new Set();NG.forEach(g=>{pl.add(g[0]);pl.add(g[1])});
