@@ -160,6 +160,10 @@ function mossaTxt(x,t,full){/* valori in punti della scala della lega; per i gio
  const pn=x.a==null?stat(x.n,SNOW):null,fine=x.a!=null?`ceduto ${x.a===SNOW?"quest'anno":"nel "+YL(x.a)} a ${r0(x.fin)}`:`oggi vale ${r0(x.oggi)}${pn&&pn.g>=3?` (${f1(pn.p)} PDK)`:""}`;
  const pr=x.prod>=100?`, più ${r0(x.prod)} di rendimento con loro`:"";
  const ini=x.da===0?`all'asta a ${x.c!=null?String(x.c).replace(".",","):"?"} cr (col senno di poi ne valeva ${Math.round(valoreVero(x.n))}): all'inizio valeva ${r0(x.costo)} punti`:`preso ${quando(x.da)}${x.c!=null?` a ${String(x.c).replace(".",",")} cr`:""}${pre}: valeva ${r0(x.costo)} punti`;
+ /* (1634) i giocatori dell'asta iniziale si raccontano SOLO con i crediti dell'asta (300 a testa, 13 posti per tutti): prezzo pagato contro prezzo giusto
+    col senno di poi. I punti valore di oggi qui non c'entrano; dove è andato a finire si dice a parole. */
+ if(x.da===0){const vv=valoreVero(x.n),d=x.c!=null?vv-x.c:null;const dopo=x.a!=null?`, ceduto ${x.a===SNOW?"quest'anno":"nel "+YL(x.a)}`:", è ancora in squadra";
+  return`<b>${E(x.n)}</b> pagato ${x.c!=null?String(x.c).replace(".",","):"?"} ${x.c===1?"credito":"crediti"} all'asta: col senno di poi andava pagato ${Math.round(vv)}${dopo}${d!=null?` <b class="${d>=0?"up":"dn"}">${d>=0?"+":"−"}${Math.abs(Math.round(d))} cr</b>`:""}`}
  return`<b>${E(x.n)}</b> ${ini} → ${fine}${pr} <b class="${x.gain>=0?"up":"dn"}">${crs(x.gain)}</b>`}
 function rimpianti(t,D){return(permanenze(D)[t]||[]).filter(x=>x.a!=null).map(x=>{const d=dopoAltrove(x);return{...x,dopo:d,rimp:d-x.fin}}).filter(x=>x.rimp>=175).sort((a,b)=>b.rimp-a.rimp)}
 function rimpTxt(x,t){const w=dove(x.n);return`<b>${E(x.n)}</b>: ceduto ${x.a===SNOW?"quest'anno":"nel "+YL(x.a)} quando valeva ${r0(x.fin)}, poi ${w&&w!==t?ART("con",w)+" ":"altrove "}ha dato ${r0(x.dopo)} <b class="dn">(${crs(-x.rimp)})</b>`}
