@@ -4432,12 +4432,21 @@ const iaTeam=()=>IA.team&&TEAMS[IA.team]?IA.team:(TEAMS[curTeam]?curTeam:"DUC");
 /* Crediti post-Draft = debiti da pagare: si può promettere solo ciò che è GARANTITO dalla regular season. Premi per posizione finale: 30/40/50/100/150/250/350/450 (cresce col piazzamento peggiore),
    quindi il minimo garantito è il premio della MIGLIORE posizione ancora raggiungibile. Una squadra può ancora arrivare al posto 1+(squadre che hanno già più vittorie di quante lei ne potrà mai fare).
    All'inizio vale 30 per tutti; più la classifica si consolida, più il tetto sale. Si sottraggono i debiti post-Draft già aperti. I premi dei playoff non contano. */
+const GD_PREMI=[30,20,10];/* (1209) G League (G-Dreamers): classifica finale 1° 30 · 2° 20 · 3° 10 cr nella cassa della squadra principale (premi di fine anno) */
+/* posizione G League garantita: la classifica finisce con la regular season Dreamers. Chi può ancora superarti = chi, con il massimo che può ancora fare
+   (70 PDK per ogni partita NBA rimasta a ciascuno dei suoi 5 giocatori), arriverebbe oltre il tuo totale di oggi. Peggior posto possibile = 1 + quante possono superarti. */
+function gdCert(t){try{const D=gdData(),cla=D.cla,me=cla.find(x=>x.t===t);if(!me)return{pos:0,worst:8,prize:0,fin:false};
+  const end=drWeekEnd(DR_REG),oggi=new Intl.DateTimeFormat("en-CA",{timeZone:"America/New_York"}).format(new Date()),fin=oggi>end;
+  const rem=tm=>{if(fin)return 0;let g=0;tm.pl.forEach(p=>{if(p.al&&p.al<oggi)return;const nba=p.nba;if(!nba)return;for(const d in TV.days){if(d<=oggi||d>end)continue;if((TV.days[d]||[]).some(x=>x[0]===nba||x[1]===nba))g++}});return g*70};
+  const worst=1+cla.filter(x=>x.t!==t&&x.tot+rem(x)>me.tot).length,pos=cla.indexOf(me)+1;
+  return{pos,worst,fin,prize:worst<=3?GD_PREMI[worst-1]:0,now:pos<=3?GD_PREMI[pos-1]:0}}catch(e){return{pos:0,worst:8,prize:0,fin:false,now:0}}}
+window.gdCert=gdCert;
 const DR_PREMI=[30,40,50,100,150,250,350,450];/* (1069) 17/11/2026: il 4° posto della regular season prende 100 cr (non più 150) e niente slot Rookie; i 50 cr li prende chi chiude 4° ai playoff */
 function iaPostMax(t){try{const st=drStand(),rem={};Object.keys(TEAMS).forEach(x=>rem[x]=0);
   for(let k=1;k<=DR_REG;k++){if(drWeek(k).closed)continue;(DR_SCHED[k-1]||[]).forEach(([a,b])=>{rem[a]++;rem[b]++})}
-  const me=st.find(x=>x.t===t),best=1+st.filter(x=>x.t!==t&&x.w>me.w+rem[t]).length,lim=DR_PREMI[Math.min(7,best-1)],
+  const me=st.find(x=>x.t===t),best=1+st.filter(x=>x.t!==t&&x.w>me.w+rem[t]).length,gl=gdCert(t),lim=DR_PREMI[Math.min(7,best-1)]+gl.prize,
     owed=DEBITI.filter(x=>x.da===t&&x.tipo==="post"&&!x.saldato).reduce((a,x)=>a+x.v,0);
-  return{lim,best,owed,max:Math.max(0,lim-owed)}}catch(e){return{lim:30,best:1,owed:0,max:30}}}
+  return{lim,best,owed,gl,max:Math.max(0,lim-owed)}}catch(e){return{lim:30,best:1,owed:0,max:30}}}
 /* Portafoglio: tetto 10 cr per tutti, a prescindere dalla posizione, meno i debiti di portafoglio già aperti (sono un debito diverso dal post-Draft) */
 function iaPfMax(t){try{const owed=DEBITI.filter(x=>x.da===t&&x.tipo==="portafoglio"&&!x.saldato).reduce((a,x)=>a+x.v,0);return{lim:IA_LIM.p,owed,max:Math.max(0,IA_LIM.p-owed)}}catch(e){return{lim:IA_LIM.p,owed:0,max:IA_LIM.p}}}
 const iaCassa=t=>Math.max(0,+(CREDITI[t]||0));
@@ -8528,6 +8537,11 @@ const REGOLAMENTO=`<details class="rart" id="reg-1"><summary><span class="rn">01
 <tr><td>1ª (5° posto finale)</td><td><b>80 cr</b></td></tr><tr><td>2ª (6° posto finale)</td><td><b>50 cr</b></td></tr><tr><td>3ª (7° posto finale)</td><td><b>40 cr</b></td></tr><tr><td>4ª (8° posto finale)</td><td><b>30 cr</b></td></tr></tbody></table></div>
 <div class="rnov"><b>Novità · Nuovi premi</b><p>I premi della regular season sono ora assegnati in base alla classifica finale della regular season. I playoff assegnano crediti soltanto alle squadre dal 5° all'8° posto (80 / 50 / 40 / 30 cr); le prime 4 si giocano solo il titolo.</p></div>
 <div class="rnov"><b>Novità · 4° posto (dal 17/11/2026)</b><p>Il 4° posto della regular season prende <b>100 cr</b> (non più 150) e <b>non ha più lo slot Rookie</b>. I 50 cr che mancano vanno a chi chiude <b>4° ai playoff</b> (perdente della finale 3°–4° del tabellone titolo).</p></div>
+<h5>G League (G-Dreamers)</h5>
+<p>Anche la classifica finale della <b>G League</b> (G-Dreamers, somma dei PDK delle squadre G League, chiusa insieme alla regular season) dà crediti alla <b>squadra principale</b>, con gli altri premi di fine anno:</p>
+<div class="rtab"><table><thead><tr><th>Posizione G League</th><th>Crediti</th></tr></thead><tbody><tr><td>1°</td><td><b>30 cr</b></td></tr><tr><td>2°</td><td><b>20 cr</b></td></tr><tr><td>3°</td><td><b>10 cr</b></td></tr></tbody></table></div>
+<p>Il premio della G League entra anche nel <b>debito post-Draft massimo</b>: quando una squadra è matematicamente sicura di chiudere tra le prime 3 della G League, il premio di quel posto si aggiunge al debito che può già promettere per l'anno successivo.</p>
+<div class="rnov"><b>Novità · Premi G League (dal 22/11/2026)</b><p>1° 30 cr, 2° 20 cr, 3° 10 cr alla squadra principale; il premio sicuro conta nel debito post-Draft massimo.</p></div>
 <p>Gli eventuali premi in denaro sono stabiliti dalla commissione.</p>
 <div class="rbox"><b>Slot Rookie</b><p>Le franchigie classificate dal 5° all'8° posto ottengono uno slot Rookie aggiuntivo. Gli slot sono assegnati in base all'<b>arrivo della regular season</b> (la classifica finale della regular season, non la posizione finale dei playoff). Lo slot è valido soltanto per l'anno corrente e collocato al di fuori dei 13 giocatori della rosa.</p><p>Esempio: la Squadra Y chiude al 5° posto, partecipa alla Lottery e acquista un Rookie. Può occupare lo slot extra con quel giocatore, mantenendone la proprietà.</p><p>Lo slot è valido solo se il giocatore che lo occupa è un Rookie e solo se viene acquistato durante la prima asta della Lottery.</p></div>
 <div class="rnov"><b>Novità · Slot Rookie in base alla regular season</b><p>Gli slot Rookie dalla 5ª all'8ª posizione (dal 17/11/2026: la 4ª non ha più lo slot) sono assegnati secondo l'arrivo della regular season.</p></div>
@@ -16124,16 +16138,18 @@ function drPremi(t){const F=fineStato(),pos=F.st.findIndex(x=>x.t===t)+1,R=[];le
   else R.push(["~",`Regular season: <b>${ord(pos)}</b> oggi. Se finisse adesso prenderebbe <b>${reg} cr</b>`,null]);
   if(F.po){const fp=F.P.fin.indexOf(t)+1,v=PO_PREMI[fp]||0;tot+=v;R.push([v?"+":"=",`Playoff chiusi al <b>${ord(fp)} posto finale</b>${v?"":" (1°–3°: si gioca il titolo, niente crediti)"}`,v])}
   else{const top=pos&&pos<=4;R.push(["~",F.reg?`Playoff in corso: ${top?"tabellone titolo, 50 cr solo a chi chiude 4°":"tabellone 5ª–8ª, da 30 a 80 cr"}`:`Playoff: ${top?"nel tabellone titolo solo il 4° posto prende 50 cr":"nel tabellone 5ª–8ª da 30 a 80 cr"}`,null])}
+  {const g=gdCert(t);if(F.reg){const v=g.pos&&g.pos<=3?GD_PREMI[g.pos-1]:0;tot+=v;R.push([v?"+":"=",`G League chiusa al <b>${ord(g.pos)} posto</b>${v?"":" (premi solo ai primi 3)"}`,v])}
+   else R.push(["~",`G League: <b>${ord(g.pos)}</b> oggi${g.now?`, se finisse adesso <b>${g.now} cr</b>`:" (premi solo ai primi 3: 30/20/10 cr)"}${g.prize?` · già sicuro almeno il ${ord(g.worst)} posto: <b>${g.prize} cr</b>`:""}`,null])}
   const open=DEBITI.filter(x=>!x.saldato&&x.tipo==="post");
   open.filter(x=>x.da===t).forEach(x=>{if(F.reg)tot-=x.v;R.push([F.reg?"−":"~",`Debito post-Draft verso i ${nk(x.a)}${F.reg?": pagato con i premi":": si paga con i premi a fine regular season"}`,F.reg?x.v:null])});
   open.filter(x=>x.a===t).forEach(x=>{if(F.reg)tot+=x.v;R.push([F.reg?"+":"~",`Credito post-Draft dai ${nk(x.da)}${F.reg?"":": arriva a fine regular season"}`,F.reg?x.v:null])});
-  const prev=reg-open.filter(x=>x.da===t).reduce((a,x)=>a+x.v,0)+open.filter(x=>x.a===t).reduce((a,x)=>a+x.v,0);
+  const prev=reg+(()=>{const g=gdCert(t);return g.now||0})()-open.filter(x=>x.da===t).reduce((a,x)=>a+x.v,0)+open.filter(x=>x.a===t).reduce((a,x)=>a+x.v,0);
   return{tot,R,reg:F.reg,po:F.po,prev}}
 window.drPremi=drPremi;
 window.premiBox=function(t){const D=drPremi(t);if(!D)return"";
   const rw=D.R.map(([s,txt,v])=>`<li class="${s==="−"?"n":s==="~"?"w":"p"}"><span>${txt}</span><b>${v==null?"":(s==="−"?"−":s==="="?"":"+")+v+" cr"}</b></li>`).join("");
   return`<details class="cprz ${D.reg?"":"prev"}" onclick="event.stopPropagation()"><summary><span class="cprzt">🏆 Premi di fine anno</span><b>${D.tot}<i>cr</i></b><span class="cprza">›</span></summary>
-   ${(()=>{if(D.reg)return"";const m=iaPostMax(t),pv=m.lim;return`<div class="cprzd"><small>Già spendibili adesso come debito post-Draft</small><b>${m.max} cr</b><p>Il posto più alto che puoi ancora raggiungere è il <b>${m.best}°</b>${m.best>1?` (${m.best-1===1?"una squadra ha":(m.best-1)+" squadre hanno"} già più vittorie di quante tu ne possa ancora fare)`:""}: il premio di quel posto, <b>${pv} cr</b>, è sicuro e lo puoi già promettere${m.owed?` (meno ${m.owed} cr già promessi)`:""}. Il calcolo si aggiorna dopo ogni turno: per esempio, quando è sicuro che non puoi arrivare sopra il 4° posto, puoi spendere 100 cr invece di 30.</p></div>`})()}
+   ${(()=>{if(D.reg)return"";const m=iaPostMax(t),pv=m.lim;return`<div class="cprzd"><small>Già spendibili adesso come debito post-Draft</small><b>${m.max} cr</b><p>Il posto più alto che puoi ancora raggiungere è il <b>${m.best}°</b>${m.best>1?` (${m.best-1===1?"una squadra ha":(m.best-1)+" squadre hanno"} già più vittorie di quante tu ne possa ancora fare)`:""}: il premio di quel posto${m.gl&&m.gl.prize?`, più <b>${m.gl.prize} cr</b> della G League (sei sicuro almeno del ${m.gl.worst}° posto)`:""}, <b>${pv} cr</b>, è sicuro e lo puoi già promettere${m.owed?` (meno ${m.owed} cr già promessi)`:""}. Il calcolo si aggiorna dopo ogni turno: per esempio, quando è sicuro che non puoi arrivare sopra il 4° posto, puoi spendere 100 cr invece di 30.</p></div>`})()}
    <p class="cprzs"><b>Si usano solo al Draft.</b> ${D.reg?(D.po?"Regular season e playoff chiusi.":"Regular season chiusa, playoff in corso."):`Arrivano da soli a fine stagione: oggi previsti ${D.prev} cr.`}</p>
    <ul class="cprzl">${rw}</ul><p class="cprzn">I premi non si possono usare negli scambi né per le operazioni: valgono solo al Draft. I debiti post-Draft si pagano subito da qui. Dopo il Draft quello che resta passa nella cassa normale.</p></details>`};
 })();
