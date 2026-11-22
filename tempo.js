@@ -342,14 +342,14 @@ function stat(n,y){const V=svData(),x=V.S[y]&&V.S[y][tvNm(n)];if(!x)return null;
  else{const S=STOP()[VSEAS(y)];if(S){const k=Object.keys(S).find(k=>tvNm(k)===tvNm(n));if(k){const r=S[k].find(q=>q[0]==="TOT")||S[k][0];if(r)m=r[3]}}}
  return{p:x.p,g:x.g,m,eff:m?x.p/m:null}}
 const ageD=a=>a<=22?2.5:a<=24?1.5:a<=26?.5:a<=28?0:a<=30?-1:a<=32?-2:-3;
-function proj0(n,y,now){/* PDK attesi per la stagione che inizia al momento y (now = oggi, con la stagione in corso) */
+function proj0(n,y,now,neu){/* PDK attesi per la stagione che inizia al momento y (now = oggi, con la stagione in corso) */
  const age=etaY(n,now?SNOW:y);let L,P,base=null;
  if(now){L=stat(n,SNOW);P=stat(n,SNOW-1);if(L&&L.g>=3){const w=L.g/(L.g+12);base=w*L.p+(1-w)*(P&&P.g>=15?P.p:L.p)}else if(P&&P.g>=15)base=P.p*.92;else if(P&&P.g>=1)base=P.p*.8}
  else{const last=Math.max(0,y-1);L=stat(n,last);P=last>0?stat(n,last-1):null;if(L&&L.g>=15)base=.7*L.p+.3*(P&&P.g>=15?P.p:L.p);else if(P&&P.g>=15)base=P.p*.85;else if(L&&L.g>=1)base=L.p*.8}
  if(base==null)return{p:null,age};
- const Q=L&&L.g>=3?L:P;if(age!=null&&age<25&&Q&&Q.eff&&Q.m){const up=Math.min(base*1.4,Q.eff*Math.min(34,Q.m+4));if(up>base)base=.65*base+.35*up}
+ const Q=L&&L.g>=3?L:P;if(!neu&&age!=null&&age<25&&Q&&Q.eff&&Q.m){const up=Math.min(base*1.4,Q.eff*Math.min(34,Q.m+4));if(up>base)base=.65*base+.35*up}
  return{p:base,age}}
-function valore(n,y,now,rookieC){const o=proj0(n,y,now);let p=o.p,a=o.age;
+function valore(n,y,now,rookieC,neu){const o=proj0(n,y,now,neu);let p=o.p,a=neu?27:o.age;
  if(p==null){/* rookie o giocatore senza stagione vera: vale la sua attesa, più alta se è stato pagato di più */const mx=maxPrezzo(now?SNOW:y)||0;p=rookieC!=null&&mx?11+6*Math.min(1,rookieC/mx):12.5;if(a==null)a=20}
  let v=0;for(let k=0;k<5;k++){if(k)p+=ageD((a||27)+k);v+=Math.max(0,p-15)*Math.pow(.85,k)}return v}
 function resa(n,s){/* PDK sopra il rimpiazzo prodotti nella stagione s. Disponibilità = partite giocate, ma gli infortuni sono sfortuna, non errori del GM:
@@ -366,6 +366,9 @@ const toPV=v=>Math.max(50,pvFit().a*v+pvFit().b);
    valori ufficiali, più alta se è stato pagato di più rispetto al rookie più caro di quell'anno */
 let RKM=null;function pvRookie(c,y){if(RKM==null){const v=[];for(const n in VALORI){let rk=false;try{rk=isRookie(n)}catch(e){}if(rk&&VALORI[n]&&VALORI[n][1]!=null)v.push(+VALORI[n][1])}v.sort((a,b)=>a-b);RKM=v.length?v[v.length>>1]:700}
  const mx=maxPrezzo(y);return RKM*(c!=null&&mx?.7+.6*Math.min(1,c/mx):1)}
+/* (1640) VALORE «NEUTRO» = solo quello che il giocatore produce (PDK), senza il premio per l'età né per l'efficienza da giovane:
+   serve per il MERCATO, che deve premiare chi ha preso giocatori che rendono davvero, non chi accumula giovani che devono ancora esplodere */
+function valN(n,y,now){const o=proj0(n,y,now,true);if(o.p==null)return toPV(0);return toPV(valore(n,y,now,null,true))}
 function valPV(n,y,now,c){const o=proj0(n,y,now);if(o.p==null)return pvRookie(c,y);return toPV(valore(n,y,now,c))}
 function pvOggi(n,v){const u=pvFit().m[tvNm(n)];return u!=null?u:toPV(v==null?valore(n,SNOW,true,null):v)}
 let VK=null;function kCred(){if(VK!=null)return VK;let S=0;for(const t in TT_DRAFT)for(const[n,r,c]of TT_DRAFT[t])S+=valore(n,0,false,c);VK=S?2400/S:10;return VK}
@@ -378,7 +381,8 @@ function permanenze(D){if(PERM&&PERM.k===D.key)return PERM.v;const Y=D.Y,A=pvFit
     let prod=0;const ss=[];for(let s=Math.max(1,y);s<=lastY;s++){let r=resa(n,s);if(y===0&&lastY===0&&s===1)r*=.35;prod+=r;ss.push([s,stat(n,s)])}if(y===0&&lastY===0){prod+=resa(n,1)*.35;ss.push([1,stat(n,1)])}
     const uscita=end!=null?valPV(n,end,false,null):null,oggi=pvOggi(n,valore(n,SNOW,true,c)),fin=end!=null?uscita:oggi;
     const ret=prod*A+fin,ch=y===SNOW?chiDi(SNOW,n):null;
-    L.push({t,n,da:y,a:end,c,rk,eta:etaY(n,y),costo,prod:prod*A,fin,oggi,ret,gain:ret-costo,ss,pre:stat(n,Math.max(0,y-1)),ora:end!=null?dove(n):t,ch})}});
+    const costoN=valN(n,y,false),finN=end!=null?valN(n,end,false):valN(n,SNOW,true),retN=prod*A+finN;
+    L.push({t,n,da:y,a:end,c,rk,eta:etaY(n,y),costo,prod:prod*A,fin,oggi,ret,gain:ret-costo,costoN,finN,retN,gainN:retN-costoN,ss,pre:stat(n,Math.max(0,y-1)),ora:end!=null?dove(n):t,ch})}});
   R[t]=L}
  PERM={k:D.key,v:R};return R}
 /* ---------- (1622) PAGELLA DEI GM · rifatta sul metro della lega (richiesta di Imma, 22/11/2026).
@@ -411,7 +415,11 @@ function mosse(t,D){const Y=D.Y,L=[];Y.forEach((y,i)=>{if(!i)return;const a=Y[i-
 /* fattore «scoperta» del prezzo: pagato poco rispetto al più caro di quell'anno (rookie) o all'asta iniziale = scoperta vera */
 const fPrezzo=x=>{if(x.c==null)return 1;if(x.da===0)return Math.max(.4,Math.min(1.5,1.5-x.c/40));const mx=maxPrezzo(x.da);return mx?Math.max(.3,Math.min(1.5,1.5-x.c/mx)):1};
 /* scoperta = preso quando valeva poco: rookie, affare d'asta (≤10 cr), giovane (≤24 anni) o infortunato preso a un valore basso (≤15). Non lo è chi è stato pagato da stella. */
-const scoperta=x=>x.rk||(x.da===0?x.c!=null&&x.c<=10:(x.eta!=null&&x.eta<=24.5&&x.costo<=900)||(x.costo<=650&&((x.pre&&x.pre.g<15)||x.pre==null)));
+/* scelta alta = tra le prime 5 del draft NBA, presa da una squadra arrivata tra le ultime 3 l'anno prima (i crediti per la scelta alta vengono dal perdere),
+   oppure rookie pagato almeno il 60% del più caro di quell'anno: li avrebbe presi chiunque, non sono scoperte */
+const pickNBA=n=>{try{for(const y in DRAFT_RAW){const L=String(DRAFT_RAW[y]).split("|"),i=L.findIndex(z=>tvNm(z)===tvNm(n));if(i>=0)return i+1}}catch(e){}return null};
+const sceltaAlta=x=>{if(!x.rk)return false;const mx=maxPrezzo(x.da);if(x.c!=null&&mx&&x.c>=.6*mx)return true;const pk=pickNBA(x.n),pp=x.da>=2?posFin(x.t,x.da-1):null;return pk!=null&&pk<=5&&pp!=null&&pp>=6};
+const scoperta=x=>!sceltaAlta(x)&&(x.rk||(x.da===0?x.c!=null&&x.c<=10:(x.eta!=null&&x.eta<=24.5&&x.costo<=900)||(x.costo<=650&&((x.pre&&x.pre.g<15)||x.pre==null))));
 let GMV=null;
 /* (1624) VOTO DEL GM — il metro della lega: l'obiettivo è VINCERE.
    · RISULTATI: conta la posizione di oggi (75%) più le stagioni passate (25%); ogni titolo vale +0,75. Un buon piazzamento passato senza titolo,
@@ -429,15 +437,16 @@ function gmAll(D){if(GMV&&GMV.k===D.key)return GMV.v;const T=D.T,R={},PM=permane
   const ris=Math.min(10,PT[pn-1]*.75+pm*.25+.75*tit);
   let tr;if(pn===1&&tit===past.length&&tit>0)tr=9.5;else{tr=6+.6*(first-pn);if(prev>pn)tr+=.4*(prev-pn);if(pn>best&&!(best===1))tr-=.2*(pn-best);tr=Math.max(4.5,Math.min(9.5,tr))}
   const a0=etaTop(t,D.FY),a1=etaTop(t,SNOW),ric=a0!=null&&a1!=null&&a0-a1>=2;
-  const L=PM[t]||[],mv=L.filter(x=>x.da>0),mvTot=mv.reduce((s,x)=>s+x.gain,0);
-  const ced=L.filter(x=>x.da===0&&x.a!=null).map(x=>({...x,dopo:dopoAltrove(x)})),gd=ced.reduce((s,x)=>s+(x.fin-x.dopo),0);
+  /* le scelte alte prese grazie al tanking non sono mercato: le avrebbe prese chiunque */
+  const L=PM[t]||[],mv=L.filter(x=>x.da>0&&!sceltaAlta(x)),mvTot=mv.reduce((s,x)=>s+x.gainN,0);
+  const ced=L.filter(x=>x.da===0&&x.a!=null).map(x=>{let p=0;for(let s=x.a;s<=SNOW;s++)p+=resa(x.n,s);return{...x,dopo:dopoAltrove(x),dopoN:p*pvFit().a+valN(x.n,SNOW,true)}}),gd=ced.reduce((s,x)=>s+(x.finN-x.dopoN),0);
   const crN=Object.values(window.TT_CR_SCAMBI||{}).flat().reduce((s,z)=>s+(z.a===t?z.cr:z.da===t?-z.cr:0),0);
-  const tl=mv.filter(scoperta),tal=tl.reduce((s,x)=>s+Math.max(0,x.gain)*fPrezzo(x),0);
+  const tl=mv.filter(scoperta),tal=tl.reduce((s,x)=>s+Math.max(0,x.gainN)*fPrezzo(x),0);
   const giov=!ric&&a0!=null&&a1!=null&&a1<=a0-.5&&pn<=first&&pn<=2;
-  R[t]={t,pos,tit,ris,tr,ric,giov,eta:[a0,a1],mer:mvTot+gd+crN*2.5,mvTot,gd,ced,crN,tal,saldo:mvTot,tim:0,
+  R[t]={t,pos,tit,ris,tr,ric,giov,eta:[a0,a1],mvL:mv,mer:mvTot+gd+crN,mvTot,gd,ced,crN,tal,saldo:mvTot,tim:0,
    top:[...mv].sort((a,b)=>b.gain-a.gain).filter(x=>x.gain>=100).slice(0,4),
    flop:[...mv].filter(x=>{if(x.gain<=-100)return true;const q=x.a==null?stat(x.n,SNOW):null;return q&&q.g>=5&&x.pre&&x.pre.g>=15&&x.pre.p>=25&&x.pre.p-q.p>=6}).sort((a,b)=>a.gain-b.gain).slice(0,3),
-   scop:[...tl].filter(x=>x.gain>=100).sort((a,b)=>b.gain*fPrezzo(b)-a.gain*fPrezzo(a)).slice(0,8),
+   scop:[...tl].filter(x=>x.gainN>=100).sort((a,b)=>b.gainN*fPrezzo(b)-a.gainN*fPrezzo(a)).slice(0,8),
    valOggi:L.filter(x=>x.a==null).reduce((s,x)=>s+x.oggi,0)}}
  const MO=nrm45(Object.fromEntries(T.map(t=>[t,R[t].mer]))),TA=nrm45(Object.fromEntries(T.map(t=>[t,R[t].tal]))),VO=nrm45(Object.fromEntries(T.map(t=>[t,R[t].valOggi]))),AS=astaData().T;
  const rk=k=>[...T].sort((a,b)=>R[b][k]-R[a][k]).forEach((t,i)=>R[t]["rk_"+k]=i+1);rk("mer");rk("tal");rk("valOggi");
