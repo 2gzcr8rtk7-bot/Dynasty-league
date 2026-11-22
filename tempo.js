@@ -458,9 +458,19 @@ function delta(x){/* PDK con la squadra (media delle stagioni giocate con loro) 
 function mossaPDK(x,t){const st=storiaPDK(x),d=delta(x),arr=`preso ${quando(x.da)}${x.rk?" da rookie":x.pre&&x.pre.g>=15?`, quando faceva ${pk(x.pre.p)} PDK`:x.pre&&x.pre.g<15?" mentre era infortunato":""}`;
  const fine=x.a!=null?(()=>{const w=dove(x.n);return` · ceduto ${x.a===SNOW?"quest'anno":"nel "+YL(x.a)}${w&&w!==t?` (oggi ${ART("ai",w)})`:""}`})():" · è ancora in squadra";
  return`<b>${E(x.n)}</b> ${arr} → con loro ${st.length?st.join(", "):"poche partite"}${fine}${d!=null?` <b class="${d>=0?"up":"dn"}">${d>=0?"+":"−"}${pk(Math.abs(d))} PDK</b>`:""}`}
-function venditaPDK(x,t){const b=stat(x.n,x.a-1),q=stat(x.n,SNOW),w=dove(x.n);return`<b>${E(x.n)}</b> ceduto ${x.a===SNOW?"quest'anno":"nel "+YL(x.a)} dopo una stagione da ${pk(b.p)} PDK${w&&w!==t?`: ${ART("con",w)} oggi ne fa ${pk(q.p)}`:`: oggi ne fa ${pk(q.p)}`} <b class="up">(${pk(b.p-q.p)} PDK in meno)</b>`}
+function venditaPDK(x,t){const b=stat(x.n,x.a-1),q=stat(x.n,SNOW),w=dove(x.n),c=x.ctx;
+ const cambio=c&&c.tipo==="scambio"?` In cambio${c.data?` (${c.data})`:""}: ${c.pr.map(z=>`<b>${E(z.n)}</b> ${pk(z.p)}`).join(", ")}${c.cred&&c.cred.length?` e ${c.cred.join(", ")}`:""}`:c&&c.ins&&c.ins.length?` Nella stessa finestra sono arrivati ${c.ins.map(z=>`<b>${E(z.n)}</b> (oggi ${pk(pdkOra(z.n))})`).join(", ")}`:"";
+ return`<b>${E(x.n)}</b> ceduto ${x.a===SNOW?"quest'anno":"nel "+YL(x.a)} dopo una stagione da ${pk(b.p)} PDK${w&&w!==t?`: ${ART("con",w)} oggi ne fa ${pk(q.p)}`:`: oggi ne fa ${pk(q.p)}`} <b class="up">(${pk(b.p-q.p)} PDK in meno)</b>${cambio?"."+cambio:""}`}
 function erroreVenditaPDK(x,t){const w=dove(x.n),q=stat(x.n,SNOW),b=x.a-1>=0?stat(x.n,x.a-1):null;return`<b>${E(x.n)}</b> ceduto ${x.a===SNOW?"quest'anno":"nel "+YL(x.a)}${b&&b.g>=10?` quando faceva ${pk(b.p)} PDK`:x.rk||!b?" da giovane":""}${w&&w!==t?`: ${ART("con",w)}`:": oggi"} ne fa ${q?pk(q.p):"—"}`}
 /* (1635) I COLPI DEI GM: asta (crediti), mosse dopo l'asta (scambi, svincolati, rookie: in PDK), vendite al momento giusto; e GLI ERRORI */
+/* (1637) SCAMBI VERI di questa stagione (TRADES): chi ha dato chi, e cosa ha ricevuto in cambio */
+function scambioDi(n,t){try{if(typeof TRADES==="undefined")return null;const k=tvNm(n);
+ for(const tr of TRADES){const L=tr.lati||[];if(L.length<2)continue;const rec=L.filter(l=>(l[1]||[]).some(z=>tvNm(String(z))===k));if(!rec.length)continue;const dest=rec[0][0];
+  const giver=tr.da&&Object.keys(tr.da).find(z=>tvNm(z)===k)?tr.da[Object.keys(tr.da).find(z=>tvNm(z)===k)]:(L.length===2?L.find(l=>l[0]!==dest)[0]:null);if(giver!==t)continue;
+  const mio=L.filter(l=>l[0]===t).flatMap(l=>l[1]||[]),gioc=mio.filter(z=>!/\bcr\b|crediti|slot/i.test(z)),cred=mio.filter(z=>/\bcr\b|crediti/i.test(z));return{data:tr.data,gioc,cred,dest}}}catch(e){}return null}
+/* giudizio della finestra (anni passati, senza lo scambio esatto): valore creato da chi è arrivato meno quello che hanno dato altrove chi è partito */
+function bilFinestra(t,y,D){const PM=permanenze(D)[t]||[],ins=PM.filter(x=>x.da===y),outs=PM.filter(x=>x.a===y);return{bil:ins.reduce((s,x)=>s+x.ret-x.costo,0)-outs.reduce((s,x)=>s+(dopoAltrove(x)-x.fin),0),ins}}
+function pdkOra(n){const q=stat(n,SNOW);return q&&q.g>=3?q.p:null}
 function colpiData(D){if(COLPI&&COLPI.k===D.key)return COLPI.v;const PM=permanenze(D),R={};
  for(const t of D.T){const L=PM[t]||[],C=[],X=[];
   for(const x of L){if(x.da===0){if(x.c!=null){const d=valoreVero(x.n)-x.c;if(d>=15)C.push({...x,tipo:"asta",sc:d*20})}continue}
@@ -469,7 +479,12 @@ function colpiData(D){if(COLPI&&COLPI.k===D.key)return COLPI.v;const PM=permanen
    const q=x.a==null?stat(x.n,SNOW):null,dd=delta(x),presto=(x.a==null&&(!q||q.g<5))||(x.rk&&x.da===SNOW);if(!presto&&((dd!=null&&dd<=-4)||(q&&q.g>=5&&x.pre&&x.pre.g>=15&&x.pre.p>=25&&x.pre.p-q.p>=6)||(x.gain<=-175&&dd!=null&&dd<=-2)))X.push({...x,tipo:"presa",sc:x.gain})}
   /* vendite: ceduto dopo una stagione da almeno 25 PDK e oggi ne fa almeno 5 in meno = venduto al momento giusto; ceduto e poi esploso = errore */
   for(const x of L.filter(x=>x.a!=null)){const b=stat(x.n,x.a-1),q=stat(x.n,SNOW);/* una vendita al momento giusto è una buona mossa, ma pesa meno di un acquisto che cresce: conta quanto era importante il giocatore e fino a 10 PDK di calo */
-   if(b&&q&&b.g>=15&&q.g>=5&&b.p>=25&&b.p-q.p>=5)C.push({...x,tipo:"vendita",sc:Math.min(10,b.p-q.p)*25*(b.p/30)});
+   /* una vendita è un colpo solo se quello che è arrivato in cambio rende: con lo scambio vero (quest'anno) si confrontano i PDK di oggi;
+      per gli anni passati, la finestra di mercato in cui è partito deve essere in attivo (chi è arrivato ha reso più di chi è partito) */
+   if(b&&q&&b.g>=15&&q.g>=5&&b.p>=25&&b.p-q.p>=5){const tr=scambioDi(x.n,t);let ok=false,ctx=null;
+    if(tr&&tr.gioc.length){const pr=tr.gioc.map(z=>({n:z,p:pdkOra(z)})).filter(z=>z.p!=null);const tot=pr.reduce((s,z)=>s+z.p,0);ok=tot>=q.p;ctx={tipo:"scambio",data:tr.data,pr,cred:tr.cred}}
+    else{const F=bilFinestra(t,x.a,D),arr=F.ins.filter(z=>pdkOra(z.n)!=null).sort((a,b)=>pdkOra(b.n)-pdkOra(a.n)),top2=arr.slice(0,2).reduce((s,z)=>s+pdkOra(z.n),0);ok=F.bil>0&&top2>=q.p;ctx={tipo:"finestra",ins:arr.slice(0,3)}}
+    if(ok)C.push({...x,tipo:"vendita",ctx,sc:Math.min(10,b.p-q.p)*25*(b.p/30)})}
    /* errore di cessione: dopo la cessione è cresciuto (oggi almeno 3 PDK in più della stagione prima della cessione; un giovane senza stagione vera: oggi almeno 22) */
    const dp=dopoAltrove(x);if(q&&q.g>=5&&((b&&b.g>=10&&q.p-b.p>=3&&q.p>=18)||((!b||b.g<10)&&q.p>=22)))X.push({...x,tipo:"cessione",sc:-Math.max(1,dp-x.fin)})}
   C.sort((a,b)=>b.sc-a.sc);X.sort((a,b)=>a.sc-b.sc);R[t]=C;R[t].errori=X}
