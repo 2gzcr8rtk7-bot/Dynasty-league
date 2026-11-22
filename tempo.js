@@ -14,6 +14,8 @@ window.TT_DRAFT=window.TT_DRAFT||{};
    Quando c'è il prezzo d'asta di un anno, si usa quello (non lo stipendio della rosa) per pesare le scoperte. */
 window.TT_ASTA=window.TT_ASTA||{};
 TT_ASTA[3]=Object.assign(TT_ASTA[3]||{},{"Mikel Brown Jr.":30,"Keaton Wagler":36,"Caleb Wilson":242,"Aday Mara":50,"Cameron Boozer":242,"Yaxel Lendeborg":64,"AJ Dybantsa":242,"Darryn Peterson":242,"Morez Johnson Jr.":54,"Kingston Flemings":7,"Brayden Burries":7,"Trevon Brazile":14,"Darius Acuff Jr.":100,"Hannes Steinbach":40,"Allen Graves":14,"Sergio De Larrea":15});
+/* draft 2025 (25/26): prezzi d'asta dei rookie principali */
+TT_ASTA[2]=Object.assign(TT_ASTA[2]||{},{"Cooper Flagg":600,"Dylan Harper":250,"Ace Bailey":250,"VJ Edgecombe":200,"Kon Knueppel":30});
 window.TT_ASTA_DOPO=Object.assign(window.TT_ASTA_DOPO||{},{3:["Trevon Brazile","Allen Graves","Sergio De Larrea"]});
 /* chi ha scelto il rookie al draft, se poi è stato scambiato: la scoperta va a chi lo ha scelto */
 window.TT_ASTA_CHI=Object.assign(window.TT_ASTA_CHI||{},{3:{"Allen Graves":"DUC","Hannes Steinbach":"DUC","Morez Johnson Jr.":"DUC"}});
@@ -285,7 +287,7 @@ function categorie(D){if(CATC&&CATC.k===D.key)return CATC.v;for(const k in MAXP)
 const vf=v=>String(v).replace(".",",");
 function catTxt(k,c,t){const d=c.det,D=analisiData(),G=gmAll(D)[t];
  if(k==="asta"&&d.as)return astaGiudizio(d.as).slice(0,3).join(" ");
- if(k==="scambi"&&G){const b=G.top[0],w=G.flop[0],rp=rimpianti(t,D)[0];return`Valore creato con le mosse dopo l'asta: <b>${crs(G.mvTot)}</b> punti; tempismo nel cedere i giocatori presi all'asta (valore alla cessione contro quello che hanno dato dopo): <b>${crs(G.gd)}</b>${G.crN?` (più ${G.crN>0?"+":""}${G.crN} crediti veri passati negli scambi)`:""}.${b?` La mossa migliore: <b>${E(b.n)}</b> (${crs(b.gain)}).`:""}${w?` La peggiore: <b>${E(w.n)}</b> (${crs(w.gain)}).`:""}`}
+ if(k==="scambi"&&G){const b=G.top[0],w=G.flop[0],rp=rimpianti(t,D)[0];return`Valore creato con le mosse dopo l'asta: <b>${crs(G.mvTot)}</b> punti; tempismo nel cedere i giocatori presi all'asta (valore alla cessione contro quello che hanno dato dopo): <b>${crs(G.gd)}</b>${G.crN?` (${G.crN>0?"in più ha incassato":"in più ha speso"} ${Math.abs(G.crN)} crediti negli scambi: non contano nel voto, conta quanto rende chi è arrivato)`:""}.${b?` La mossa migliore: <b>${E(b.n)}</b> (${crs(b.gain)}).`:""}${w?` La peggiore: <b>${E(w.n)}</b> (${crs(w.gain)}).`:""}`}
  if(k==="talenti")return d.scop&&d.scop.length?`Le scoperte (giovani, rookie, presi a poco o da infortunati, che poi sono cresciuti): ${d.scop.slice(0,4).map(x=>mossaTxt(x,t)).join(" · ")}.`:"Nessuna scoperta finora.";
  if(k==="progetto")return`${Math.round(c.x)}% dei PDK dei 10 migliori di oggi arriva da chi è in squadra almeno dal ${d.da}${d.core.length?`: ${d.core.slice(0,4).map(x=>`<b>${E(x.n)}</b>`).join(", ")}`:""}.`;return""}
 function vCatPag(t,D){const C=categorie(D)[t];if(!C)return"";return`<div class="ttcats">${CATS.filter(([k])=>C[k]).map(([k,ic,l])=>`<div class="ttcat"><span class="ttvoto sm v${Math.floor(C[k].v)}">${vf(C[k].v)}</span><span><b>${ic} ${l}</b><small>${C[k].rk}° su 8</small><em>${catTxt(k,C[k],t)}</em></span></div>`).join("")}</div>`}
@@ -443,7 +445,8 @@ function gmAll(D){if(GMV&&GMV.k===D.key)return GMV.v;const T=D.T,R={},PM=permane
   const crN=Object.values(window.TT_CR_SCAMBI||{}).flat().reduce((s,z)=>s+(z.a===t?z.cr:z.da===t?-z.cr:0),0);
   const tl=mv.filter(scoperta),tal=tl.reduce((s,x)=>s+Math.max(0,x.gainN)*fPrezzo(x),0);
   const giov=!ric&&a0!=null&&a1!=null&&a1<=a0-.5&&pn<=first&&pn<=2;
-  R[t]={t,pos,tit,ris,tr,ric,giov,eta:[a0,a1],mvL:mv,mer:mvTot+gd+crN,mvTot,gd,ced,crN,tal,saldo:mvTot,tim:0,
+  /* (1641) i crediti dati o presi negli scambi non entrano più nel mercato: sono solo la moneta; conta quanto rende quello che si è preso (Barnes per 300 crediti: se rende, è un'ottima mossa) */
+  R[t]={t,pos,tit,ris,tr,ric,giov,eta:[a0,a1],mvL:mv,mer:mvTot+gd,mvTot,gd,ced,crN,tal,saldo:mvTot,tim:0,
    top:[...mv].sort((a,b)=>b.gain-a.gain).filter(x=>x.gain>=100).slice(0,4),
    flop:[...mv].filter(x=>{if(x.gain<=-100)return true;const q=x.a==null?stat(x.n,SNOW):null;return q&&q.g>=5&&x.pre&&x.pre.g>=15&&x.pre.p>=25&&x.pre.p-q.p>=6}).sort((a,b)=>a.gain-b.gain).slice(0,3),
    scop:[...tl].filter(x=>x.gainN>=100).sort((a,b)=>b.gainN*fPrezzo(b)-a.gainN*fPrezzo(a)).slice(0,8),
