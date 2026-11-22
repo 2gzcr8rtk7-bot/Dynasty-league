@@ -9395,10 +9395,11 @@ const GAMES=[
   {k:"notte",a:1,t:"Sfida della notte",d:"Crea 2-3 gruppi di giocatori di tutta la lega: vince la media di efficienza più alta nella prossima partita.",i:"🌙",c:"#a855f7"},
   {k:"sim",a:1,t:"Partita simulata",d:"Scegli due franchigie e guarda la partita con quintetti ed efficienze reali.",i:"📺",c:"#3b82f6"},
   {k:"dream",t:"DREAMERS",d:"Il fanta privato della lega: scontri diretti settimanali a colpi di PDK, classifica e playoff a 8.",i:"✦",c:"#8b5cf6"},
+  {k:"tempo",t:"MACCHINA DEL TEMPO",d:"La stagione di oggi giocata con le rose del 1° e del 2° anno: scontri diretti veri o somma punti, con i PDK reali.",i:"⏳",c:"#7c3aed"},
   {k:"gdream",t:"G-DREAMERS",d:"Il fanta delle G League: tutti titolari, ogni notte i PDK si sommano. Vince chi ne accumula di più.",i:"✧",c:"#10b981"}];
 function vGiochiHub(){
   const card=g=>`<button class="gmc" data-game="${g.k}" style="--gc:${g.c}"><span class="gmi">${g.i}</span><span class="gmt"><b>${g.t}</b><small>${g.d}</small></span><span class="rgo">›</span></button>`;
-  const ord=["dream","gdream"];
+  const ord=["dream","gdream","tempo"];
   if(GAME==="arcade")GAME="menu";/* (244) sezione Giochi/Arcade rimossa */
   if(GAME==="menu"){
     return `${H("Entertainment")}
@@ -9414,7 +9415,7 @@ function vGiochiHub(){
     <p class="note">Record salvati su questo telefono. Usa "Condividi risultato" per sfidare gli altri GM nel gruppo.</p>`;
   }
   const arc=(GAMES.find(g=>g.k===GAME)||{}).a;
-  return (GAME==="dream"||GAME==="gdream"||GAME==="notte"&&NT.view!=="list"?"":arc?`<button class="gback" data-game="arcade">‹ Arcade</button>`:`<button class="gback" data-game="menu">‹ Home</button>`)+(GAME==="tiro"?vTiro():GAME==="sim"?vSim():GAME==="notte"?vNotte():GAME==="dream"?vDream():GAME==="gdream"?vGDream():vGiochi());
+  return (GAME==="dream"||GAME==="gdream"||GAME==="tempo"&&window.TT&&TT.view||GAME==="notte"&&NT.view!=="list"?"":arc?`<button class="gback" data-game="arcade">‹ Arcade</button>`:`<button class="gback" data-game="menu">‹ Home</button>`)+(GAME==="tiro"?vTiro():GAME==="sim"?vSim():GAME==="notte"?vNotte():GAME==="dream"?vDream():GAME==="gdream"?vGDream():GAME==="tempo"&&window.vTempo?vTempo():vGiochi());
 }
 document.getElementById("main").addEventListener("click",e=>{
   if(cur==="giochi"&&e.target.closest("[data-gdth]")){e.preventDefault();drThemeNext(1);const y=scrollY;render();scrollTo(0,y);return}
@@ -16274,7 +16275,7 @@ html.tho:not(.notte) .cspg .cssum,html.tho:not(.notte) .cspg .cssum *{color:var(
 <style>/* (1139) filtro minutaggio */.fapr.famin{display:flex;align-items:center;gap:12px}.fapr.famin input{flex:1;accent-color:var(--red,#e4163a)}.fapr.famin b{min-width:120px;text-align:right;font:800 15px var(--display,Arial);font-style:italic;text-transform:uppercase}</style>
 <script>/* (1085) Carbone e oro di giorno: Ducks viola (niente lime), campo antracite con cornice viola e linee lime; notte e altri stili normali */(function(){const H=document.documentElement;const sync=()=>{try{const nt=typeof CNT!=="undefined"&&!!CNT,want=typeof DLS!=="undefined"&&DLS&&["oro","cyber","classico"].includes(DLS.th)&&!nt;/* (1093) versione Ducks scura anche con Cyber e Classico; Parquet e notte normali */H.classList.toggle("ducoro",!!want);{const tx=!nt&&typeof DLS!=="undefined"&&DLS&&["oro","cyber","classico"].includes(DLS.th);H.classList.toggle("tho",tx);if(tx)H.dataset.thx=DLS.th;else delete H.dataset.thx}localStorage.removeItem("dl_ductema_auto");if(DUC_TEMA()==="lime")ducTemaSet("viola")}catch(e){}};try{const A=dlsApply;dlsApply=function(){const r=A.apply(this,arguments);sync();return r}}catch(e){}sync()})();</script>
 <script>/* (1104) segna la scritta DUCKS del banner squadra per colorarla negli stili scuri */(function(){const go=()=>{try{if(typeof curTeam==="undefined"||curTeam!=="DUC")return;const hd=document.querySelector("main .teamhead");if(!hd)return;hd.querySelectorAll("*").forEach(e=>{if(!e.children.length&&/^\s*DUCKS\s*$/i.test(e.textContent))e.classList.add("dxnick");if(!e.children.length&&/^\s*(TEXAS|RECORD)\s*$/i.test(e.textContent))e.classList.add("dxlime")})}catch(e){}};let q=0;new MutationObserver(()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;go()})}).observe(document.getElementById("main")||document.body,{childList:true,subtree:true});setTimeout(go,600)})();</script>
-<script src="gm-nba.js" onerror="window.GMNBA=null"></script><script src="gm-storico.js" onerror="window.GMSTO=null"></script><script src="radar-core.js"></script><script src="radar-pesi.js" onerror="window.RADAR=null"></script><script src="gmas.js"></script><!-- (1143) Assistente GM, area segreta Ducks -->
+<script src="gm-nba.js" onerror="window.GMNBA=null"></script><script src="gm-storico.js" onerror="window.GMSTO=null"></script><script src="radar-core.js"></script><script src="radar-pesi.js" onerror="window.RADAR=null"></script><script src="gmas.js"></script><script src="tempo.js"></script><!-- (1143) Assistente GM, area segreta Ducks -->
 <script>/* (1174) scelta «Striscia in alto in Home» (Impostazioni): ascolto in cattura, così funziona in ogni pagina */document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-hstr]");if(!b)return;e.preventDefault();e.stopPropagation();const y=scrollY;try{b.dataset.hstr==="banner"?localStorage.removeItem("dl_hstr"):localStorage.setItem("dl_hstr",b.dataset.hstr)}catch(_){}render();scrollTo(0,y)},true);</script>
 <style>/* (1170) Home · striscia scorrevole INFERMERIA (solo con «Sfide Dreamers») */
 .hmqrow.hsxf{display:block!important}.ifk{display:flex;align-items:center;height:28px;margin:0;border-radius:14px 14px 0 0;overflow:hidden;background:linear-gradient(90deg,rgba(239,68,68,.16),var(--panel,#0b1020) 35%);border:1px solid rgba(148,163,184,.22);border-bottom:1px solid rgba(239,68,68,.35);cursor:pointer}.ifk+.hsxg{border-top-left-radius:0!important;border-top-right-radius:0!important;border-top:0!important}/* (1182) striscia OUT come testata sfumata sopra le sfide */html.dlt-parquet .ifkb{color:#dc2626}
