@@ -163,7 +163,7 @@ function mossaTxt(x,t,full){/* valori in punti della scala della lega; per i gio
  /* (1634) i giocatori dell'asta iniziale si raccontano SOLO con i crediti dell'asta (300 a testa, 13 posti per tutti): prezzo pagato contro prezzo giusto
     col senno di poi. I punti valore di oggi qui non c'entrano; dove è andato a finire si dice a parole. */
  if(x.da===0){const vv=valoreVero(x.n),d=x.c!=null?vv-x.c:null;const dopo=x.a!=null?`, ceduto ${x.a===SNOW?"quest'anno":"nel "+YL(x.a)}`:", è ancora in squadra";
-  return`<b>${E(x.n)}</b> pagato ${x.c!=null?String(x.c).replace(".",","):"?"} ${x.c===1?"credito":"crediti"} all'asta: col senno di poi andava pagato ${Math.round(vv)}${dopo}${d!=null?` <b class="${d>=0?"up":"dn"}">${d>=0?"+":"−"}${Math.abs(Math.round(d))} cr</b>`:""}`}
+  return`<b>${E(x.n)}</b> pagato ${x.c!=null?String(x.c).replace(".",","):"?"} ${x.c===1?"credito":"crediti"} all'asta: col senno di poi andava pagato ${Math.round(vv)}${x.picco>=25?`, con loro una stagione da ${pk(x.picco)} PDK`:""}${dopo}${d!=null?` <b class="${d>=0?"up":"dn"}">${d>=0?"+":"−"}${Math.abs(Math.round(d))} cr</b>`:""}`}
  return`<b>${E(x.n)}</b> ${ini} → ${fine}${pr} <b class="${x.gain>=0?"up":"dn"}">${crs(x.gain)}</b>`}
 function rimpianti(t,D){return(permanenze(D)[t]||[]).filter(x=>x.a!=null).map(x=>{const d=dopoAltrove(x);return{...x,dopo:d,rimp:d-x.fin}}).filter(x=>x.rimp>=175).sort((a,b)=>b.rimp-a.rimp)}
 function rimpTxt(x,t){const w=dove(x.n);return`<b>${E(x.n)}</b>: ceduto ${x.a===SNOW?"quest'anno":"nel "+YL(x.a)} quando valeva ${r0(x.fin)}, poi ${w&&w!==t?ART("con",w)+" ":"altrove "}ha dato ${r0(x.dopo)} <b class="dn">(${crs(-x.rimp)})</b>`}
@@ -473,7 +473,10 @@ function bilFinestra(t,y,D){const PM=permanenze(D)[t]||[],ins=PM.filter(x=>x.da=
 function pdkOra(n){const q=stat(n,SNOW);return q&&q.g>=3?q.p:null}
 function colpiData(D){if(COLPI&&COLPI.k===D.key)return COLPI.v;const PM=permanenze(D),R={};
  for(const t of D.T){const L=PM[t]||[],C=[],X=[];
-  for(const x of L){if(x.da===0){if(x.c!=null){const d=valoreVero(x.n)-x.c;if(d>=15)C.push({...x,tipo:"asta",sc:d*20})}continue}
+  for(const x of L){if(x.da===0){if(x.c!=null){const d=valoreVero(x.n)-x.c;
+     /* (1638) il colpo d'asta pesa soprattutto per la stagione migliore fatta CON LA SQUADRA rispetto al prezzo: Giddey a pochi crediti e 34,5 PDK per un anno intero è il colpo più grande */
+     let pk0=0;for(let s=1;s<=(x.a!=null?x.a-1:SNOW);s++){const q=stat(x.n,s);if(q&&q.g>=(s===SNOW?10:40))pk0=Math.max(pk0,q.p)}const fp=Math.max(.4,Math.min(1.5,1.5-x.c/40));
+     const cheap=x.c<=10;if(d>=15||(pk0>=25&&cheap))C.push({...x,tipo:"asta",picco:pk0,sc:Math.max(d*20,cheap&&pk0>=20?(pk0-15)*60*fp:0)})}continue}
    const d=delta(x);if(x.gain>=175||(d!=null&&d>=4))C.push({...x,tipo:x.rk?"rookie":x.pre&&x.pre.g<15?"infortunato":"mossa",sc:Math.max(x.gain*fPrezzo(x),d!=null?d*90*Math.min(1.4,(x.pre.p+d)/30):0)});/* il salto in PDK pesa di più se porta a un livello alto (19→32 vale più di 10→25) */
    /* errore di acquisto: preso al massimo e poi calato (PDK), o valore crollato; non si giudica chi ha giocato meno di 5 partite quest'anno né un rookie appena preso */
    const q=x.a==null?stat(x.n,SNOW):null,dd=delta(x),presto=(x.a==null&&(!q||q.g<5))||(x.rk&&x.da===SNOW);if(!presto&&((dd!=null&&dd<=-4)||(q&&q.g>=5&&x.pre&&x.pre.g>=15&&x.pre.p>=25&&x.pre.p-q.p>=6)||(x.gain<=-175&&dd!=null&&dd<=-2)))X.push({...x,tipo:"presa",sc:x.gain})}
