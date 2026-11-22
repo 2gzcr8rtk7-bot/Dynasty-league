@@ -10,6 +10,11 @@
 window.TT_ROSE=window.TT_ROSE||{1:{},2:{}};
 /* (1217) DRAFT INIZIALE (asta, prima di tutto): TT_DRAFT[squadra] = [[nome, ruolo, crediti pagati], ...] */
 window.TT_DRAFT=window.TT_DRAFT||{};
+/* (1218) PREZZI DEI DRAFT ANNUALI (asta di rookie e free agent, crediti d'asta): TT_ASTA[anno][giocatore] = crediti. «dopo» = preso dopo il draft.
+   Quando c'è il prezzo d'asta di un anno, si usa quello (non lo stipendio della rosa) per pesare le scoperte. */
+window.TT_ASTA=window.TT_ASTA||{};
+TT_ASTA[3]=Object.assign(TT_ASTA[3]||{},{"Mikel Brown Jr.":30,"Keaton Wagler":36,"Caleb Wilson":242,"Aday Mara":50,"Cameron Boozer":242,"Yaxel Lendeborg":64,"AJ Dybantsa":242,"Darryn Peterson":242,"Morez Johnson Jr.":54,"Kingston Flemings":7,"Brayden Burries":7,"Trevon Brazile":14});
+window.TT_ASTA_DOPO=Object.assign(window.TT_ASTA_DOPO||{},{3:["Trevon Brazile"]});
 Object.assign(TT_DRAFT,{"DUC":[["Nikola Jokic","C",76],["Jusuf Nurkic","C",3],["Donovan Clingan","C",3],["Victor Wembanyama","F",76],["Jalen Johnson","F",60],["Brandon Miller","F",9],["Jeremy Sochan","F",4],["Michael Porter Jr.","F",2],["Cade Cunningham","G",42],["Jamal Murray","G",5],["Fred VanVleet","G",5],["Jordan Poole","G",3],["Bennedict Mathurin","G",null]],
  "SPI":[["Joel Embiid","C",43],["Nikola Vucevic","C",12],["Mark Williams","C",10],["LeBron James","F",26],["Giannis Antetokounmpo","F",68],["Jonathan Kuminga","F",1],["Jabari Smith Jr.","F",8],["Franz Wagner","F",18],["Donovan Mitchell","G",26],["Ja Morant","G",53],["Kyrie Irving","G",27],["Devin Vassell","G",2],["Dalton Knecht","G",3]],
  "DOL":[["Jarrett Allen","C",34],["Zach Edey","C",12],["Yves Missi","C",1],["Scottie Barnes","F",58],["Pascal Siakam","F",33],["Kevin Durant","F",22],["Tari Eason","F",2],["Santi Aldama","F",1],["Luka Doncic","G",72],["Anthony Edwards","G",54],["Coby White","G",8],["Amen Thompson","G",1],["Bub Carrington","G",1]],
@@ -157,7 +162,9 @@ const CATS=[["asta","🔨","Asta"],["scambi","🔁","Scambi"],["talenti","🔭",
 let CATC=null;
 /* prezzo pagato e rookie, anno per anno: asta iniziale (TT_DRAFT), rose di oggi (ROSTER: 5° campo = crediti), archivio automatico delle stagioni */
 const entryOf=(t,y,n)=>{const k=tvNm(n);return(roseOf(t,y)||[]).find(z=>tvNm(z[0])===k)||null};
-function prezzoDi(t,y,n){y=+y;if(y===0){const z=(TT_DRAFT[t]||[]).find(q=>tvNm(q[0])===tvNm(n));return z?z[2]:null}if(y===SNOW){const z=(ROSTER[t]||[]).find(q=>tvNm(q[0])===tvNm(n));return z&&z[4]!=null?+z[4]:null}const e=entryOf(t,y,n);return e&&e[2]!=null?+e[2]:null}
+const astaY=y=>{const A=window.TT_ASTA&&TT_ASTA[y];if(!A)return null;if(!A.__k){Object.defineProperty(A,"__k",{value:{},enumerable:false});for(const k in A)A.__k[tvNm(k)]=A[k]}return A.__k};
+const dopoDi=(y,n)=>((window.TT_ASTA_DOPO||{})[y]||[]).some(z=>tvNm(z)===tvNm(n));
+function prezzoDi(t,y,n){y=+y;if(y>0){const A=astaY(y);if(A){const v=A[tvNm(n)];if(v!=null)return+v;return null}const e=entryOf(t,y,n);if(y<SNOW&&e&&e[4]!=null)return+e[4]}if(y===0){const z=(TT_DRAFT[t]||[]).find(q=>tvNm(q[0])===tvNm(n));return z?z[2]:null}if(y===SNOW){const z=(ROSTER[t]||[]).find(q=>tvNm(q[0])===tvNm(n));return z&&z[4]!=null?+z[4]:null}const e=entryOf(t,y,n);return e&&e[2]!=null?+e[2]:null}
 function rookieDi(t,y,n){y=+y;if(y===SNOW){try{return!!isRookie(n)}catch(e){return false}}const e=entryOf(t,y,n);if(e&&e[3]!=null)return!!e[3];const a=etaY(n,y);return y>0&&a!=null&&a<=20.5}
 const MAXP={};function maxPrezzo(y){y=+y;if(MAXP[y]!=null)return MAXP[y];let m=0,mr=0;for(const t of Object.keys(TEAMS))for(const[n]of(roseOf(t,y)||[])){const c=prezzoDi(t,y,n);if(c==null)continue;m=Math.max(m,c);if(y>0&&rookieDi(t,y,n))mr=Math.max(mr,c)}return MAXP[y]=mr||m}
 function categorie(D){if(CATC&&CATC.k===D.key)return CATC.v;for(const k in MAXP)delete MAXP[k];const T=D.T,pv=n=>{const p=pmed(n);return p?p.v:0},R={};
@@ -247,10 +254,15 @@ function vAstaTeam(t,full){const A=astaData(),o=A.T[t];if(!o)return"";
  ${full?`<div class="ttasl"><div class="ttash"><span>Giocatore</span><span>Pagato</span><span>Valeva</span><span>±</span></div>${o.L.map(x=>`<div class="ttasr"><span><i>${x.r==="F"?"A":x.r}</i><b>${E(x.n)}</b></span><span>${x.c??"?"}</span><span>${Math.round(x.fair)}</span><span class="${x.gain==null?"":x.gain>=0?"up":"dn"}">${x.gain==null?"—":cr(x.gain)}</span></div>`).join("")}</div>`:""}
  </div>`}
 /* (1218) I ROOKIE DI QUEST'ANNO: chi li ha scoperti meglio, pesando il prezzo pagato (vale anche per i draft futuri: si legge dalle rose di ogni stagione) */
-function vRookie(){const L=[],mx=maxPrezzo(SNOW);for(const t of Object.keys(TEAMS))for(const z of(ROSTER[t]||[])){const n=z[0];let rk=false;try{rk=isRookie(n)}catch(e){}if(!rk)continue;const p=pmed(n),c=z[4]!=null?+z[4]:null,f=c==null||!mx?1:Math.max(.4,Math.min(1.5,1.5-c/mx));L.push({t,n,c,p:p?p.v:0,g:p?p.g:0,sc:((p?p.v:0)-12)*f})}
- if(!L.length)return"";L.sort((a,b)=>b.sc-a.sc);const sq={};L.forEach(x=>{sq[x.t]=(sq[x.t]||0)+Math.max(0,x.sc)});const best=Object.keys(sq).sort((a,b)=>sq[b]-sq[a])[0];
- return`<div class="tth">🍼 La caccia ai rookie · ${SLAB(SNOW)}</div><p class="ttn small">I rookie presi quest'anno, ordinati per «scoperta»: PDK di oggi pesati sul prezzo (più è basso rispetto al rookie più caro, ${mx?String(mx).replace(".",",")+" cr":"—"}, più vale la scoperta). ${best&&sq[best]>0?`Per ora il miglior cacciatore: <b>${TEAMS[best].nick}</b>.`:""}</p>
- <div class="ttasl"><div class="ttash"><span>Rookie</span><span>Costo</span><span>PDK</span><span>Voto</span></div>${L.map(x=>`<div class="ttasr"><span>${lg(x.t)}<b>${E(x.n)}</b></span><span>${x.c!=null?String(x.c).replace(".",","):"?"}</span><span>${x.g?f1(x.p):"—"}</span><span class="${x.sc>=0?"up":"dn"}">${x.sc>=10?"💎":x.sc>=0?"👍":"·"}</span></div>`).join("")}</div>`}
+function vRookie(){const L=[];let mxg=0;const M=med();for(const k in M)mxg=Math.max(mxg,M[k].g);
+ for(const t of Object.keys(TEAMS))for(const z of(ROSTER[t]||[])){const n=z[0];let rk=false;try{rk=isRookie(n)}catch(e){}if(!rk)continue;const p=pmed(n),c=prezzoDi(t,SNOW,n);L.push({t,n,c,dopo:dopoDi(SNOW,n),p:p?p.v:0,g:p?p.g:0,V:p?Math.max(0,p.v-8)*(mxg?p.g/mxg:1):0})}
+ if(!L.length)return"";const K=L.filter(x=>x.c!=null),SP=K.reduce((s,x)=>s+x.c,0),SV=K.reduce((s,x)=>s+x.V,0);
+ /* come per l'asta iniziale: i crediti spesi per i rookie si ridistribuiscono in proporzione a quanto rendono (PDK sopra 8, per le partite giocate) */
+ L.forEach(x=>{x.fair=SV?SP*x.V/SV:null;x.gain=x.c!=null&&x.fair!=null?x.fair-x.c:null});L.sort((a,b)=>(b.gain??-1e9)-(a.gain??-1e9)||b.p-a.p);
+ const sq={};L.forEach(x=>{if(x.gain!=null)sq[x.t]=(sq[x.t]||0)+x.gain});const best=Object.keys(sq).sort((a,b)=>sq[b]-sq[a])[0];
+ return`<div class="tth">🍼 La caccia ai rookie · ${SLAB(SNOW)}</div><p class="ttn small">I rookie di quest'anno con il prezzo pagato all'asta del draft. «Valeva» = i crediti spesi per tutti i rookie ridistribuiti in base a quanto rendono davvero (PDK e partite): chi rende molto ed è costato poco è una vera scoperta, chi è costato il massimo deve rendere da massimo. ${best&&sq[best]>0?`Per ora il miglior cacciatore: <b>${TEAMS[best].nick}</b> (${cr(sq[best])} crediti di valore).`:""}</p>
+ <div class="ttasl"><div class="ttash rk"><span>Rookie</span><span>Costo</span><span>PDK</span><span>Valeva</span><span>±</span></div>${L.map(x=>`<div class="ttasr rk"><span>${lg(x.t)}<b>${E(x.n)}${x.dopo?" <small>dopo il draft</small>":""}</b></span><span>${x.c!=null?String(x.c).replace(".",","):"?"}</span><span>${x.g?f1(x.p):"—"}</span><span>${x.c!=null&&x.fair!=null?Math.round(x.fair):"—"}</span><span class="${x.gain==null?"":x.gain>=0?"up":"dn"}">${x.gain==null?"—":(x.gain>=50?"💎 ":"")+cr(x.gain)}</span></div>`).join("")}</div>
+ ${L.some(x=>x.c==null)?`<p class="ttn small">Senza prezzo d'asta (non entrano nel conto): ${L.filter(x=>x.c==null).map(x=>E(x.n)).join(", ")}.</p>`:""}`}
 function vAstaLega(){const A=astaData(),L=Object.values(A.T).sort((a,b)=>a.pos-b.pos);if(!L.length)return"";
  const all=A.P.filter(x=>x.gain!=null),best=[...all].sort((a,b)=>b.gain-a.gain)[0],worst=[...all].sort((a,b)=>a.gain-b.gain)[0],steal=[...all].filter(x=>x.c<=3).sort((a,b)=>b.fair-a.fair)[0];
  const card=(ic,ti,body)=>`<div class="ttcard"><small>${ic} ${ti}</small>${body}</div>`;
@@ -389,7 +401,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
 /* ---------- (1216) ARCHIVIO: fotografia della stagione in corso per tempo-archivio.js (la usa l'azione GitHub «tempo») ---------- */
 window.ttArchivia=function(force){const sv=TT.camp,sm=TT.mode;TT.camp=0;TT.mode="lega";try{
  const oggi=new Intl.DateTimeFormat("en-CA",{timeZone:"America/New_York"}).format(new Date());
- const rose={};for(const t of Object.keys(TEAMS))rose[t]=(ROSTER[t]||[]).map(x=>{let rk=0;try{rk=isRookie(x[0])?1:0}catch(e){}return[x[0],x[2],x[4]??null,rk]});
+ const rose={};for(const t of Object.keys(TEAMS))rose[t]=(ROSTER[t]||[]).map(x=>{let rk=0;try{rk=isRookie(x[0])?1:0}catch(e){}const A=astaY(SNOW);return[x[0],x[2],x[4]??null,rk,A&&A[tvNm(x[0])]!=null?A[tvNm(x[0])]:null]});
  const regFin=oggi>drWeekEnd(DR_REG),chiusa=oggi>drWeekEnd(DR_TOT);
  const o={idx:SNOW,lab:String(STAGIONE_CORRENTE),upd:oggi,chiusa,rose};
  if(regFin||force){const K=[];for(let k=1;k<=DR_REG;k++)if(drWeek(k).closed)K.push(k);o.turni=K;o.sched=DR_SCHED.slice(0,DR_REG);o.off=DR_OFF;o.base=DR_BASE;o.reale=reale();o.acc={};
@@ -411,7 +423,7 @@ const st=document.createElement("style");st.textContent=`
 .ttasv{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:8px 0}.ttasv>div{display:grid;justify-items:center;gap:3px;padding:6px 2px;border-radius:10px;background:rgba(124,58,237,.08);text-align:center}.ttasv small{font:800 9.5px system-ui;line-height:1.2}.ttasv em{font-style:normal;font-size:9.5px;opacity:.7}
 .ttasy{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin:4px 0 8px}.ttasy span{padding:4px 8px;border-radius:9px;background:rgba(148,163,184,.15);font-size:11px}.ttasy small{opacity:.7;margin-right:4px}.ttasy em{width:100%;font-style:normal;font-size:10px;opacity:.65}
 .ttasl{display:grid;gap:2px}.ttash,.ttasr{display:grid;grid-template-columns:1fr 46px 46px 46px;gap:4px;align-items:center;font-size:11.5px;padding:3px 4px}.ttash{font:800 10px system-ui;opacity:.7;text-transform:uppercase}.ttash span:not(:first-child),.ttasr span:not(:first-child){text-align:right}.ttasr{border-radius:7px;background:rgba(148,163,184,.08)}.ttasr span:first-child{display:flex;gap:5px;align-items:center;min-width:0}.ttasr i{font:800 9px system-ui;font-style:normal;width:16px;height:16px;border-radius:50%;display:grid;place-items:center;background:rgba(139,92,246,.25);flex:none}.ttasr b{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ttasr span:last-child{font-weight:800}
-.ttasd summary{list-style:none;cursor:pointer}.ttasd summary::-webkit-details-marker{display:none}
+.ttash.rk,.ttasr.rk{grid-template-columns:1fr 40px 40px 44px 58px}.ttasr small{font-weight:600;opacity:.6;font-size:9.5px}.ttasd summary{list-style:none;cursor:pointer}.ttasd summary::-webkit-details-marker{display:none}
 .ttteam{margin:14px 0;padding:12px;border-radius:16px;border:1px solid rgba(139,92,246,.45);background:rgba(124,58,237,.07)}.ttteam h4{margin:0 0 8px;font:800 italic 18px var(--display)}.ttteam h4 small{font:700 10px system-ui;opacity:.7;margin-left:6px;font-style:normal}
 .ttsh{display:block;width:100%;margin:10px 0 4px;padding:10px 14px;border-radius:12px;border:1px solid rgba(139,92,246,.55);background:linear-gradient(135deg,rgba(124,58,237,.22),rgba(192,38,211,.18));color:inherit;font:800 13px system-ui;cursor:pointer}.ttsh.done{opacity:.6}
 .ttcamp{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px}.ttcamp small{width:100%;font:800 10px system-ui;letter-spacing:.1em;text-transform:uppercase;opacity:.75}.ttcamp button{padding:7px 10px;border-radius:10px;border:1px solid rgba(139,92,246,.45);background:transparent;color:inherit;font:800 12px system-ui}.ttcamp button[aria-pressed="true"]{background:#7c3aed;color:#fff}
