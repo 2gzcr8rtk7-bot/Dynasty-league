@@ -159,7 +159,7 @@ function categorie(D){if(CATC&&CATC.k===D.key)return CATC.v;const T=D.T,pv=n=>{c
  for(const t of T){const o={t,det:{}};
   /* ASTA: forza della rosa del draft sui PDK di oggi (60%) + affari (giocatori pagati ≤5 cr che oggi fanno ≥25 PDK) (40%) */
   const DR=(TT_DRAFT[t]||[]).map(([n,r,c])=>({n,c,p:pv(n)}));
-  if(DR.length&&D.F[t][0]){const aff=DR.filter(x=>x.c!=null&&x.c<=5&&x.p>=25).sort((a,b)=>b.p-a.p),spe=DR.filter(x=>x.c!=null).reduce((s,x)=>s+x.c,0);
+  const AS=astaData().T[t];if(AS){o.asta={x:AS.voto*100+AS.gain/100,det:{as:AS}}}else if(DR.length&&D.F[t][0]){const aff=DR.filter(x=>x.c!=null&&x.c<=5&&x.p>=25).sort((a,b)=>b.p-a.p),spe=DR.filter(x=>x.c!=null).reduce((s,x)=>s+x.c,0);
    const flop=DR.filter(x=>x.c!=null&&x.c>=20).sort((a,b)=>(a.p/a.c)-(b.p/b.c))[0],top=DR.filter(x=>x.c!=null&&x.p>0).sort((a,b)=>(b.p-(b.c||0)*.25)-(a.p-(a.c||0)*.25))[0];
    o.asta={x:D.F[t][0].f*.6+aff.reduce((s,y)=>s+(y.p-20),0)*1.2,det:{f:D.F[t][0].f,aff,spe,flop,top}}}
   /* SCAMBI: somma dei saldi di tutte le finestre di mercato (chi entra nei 10 migliori meno chi ne esce, PDK di oggi) */
@@ -176,14 +176,15 @@ function categorie(D){if(CATC&&CATC.k===D.key)return CATC.v;const T=D.T,pv=n=>{c
   R[t]=o}
  for(const[k]of CATS){const L=T.filter(t=>R[t][k]);if(!L.length)continue;const xs=L.map(t=>R[t][k].x),mn=Math.min(...xs),mx=Math.max(...xs);
   [...L].sort((a,b)=>R[b][k].x-R[a][k].x).forEach((t,i)=>{const c=R[t][k];c.rk=i+1;c.v=Math.round((4.5+(mx>mn?(c.x-mn)/(mx-mn):.5)*5)*2)/2})}
+ for(const t of T){const c=R[t].asta;if(c&&c.det.as){c.v=c.det.as.voto;c.rk=c.det.as.pos}}
  CATC={k:D.key,v:R};return R}
 const vf=v=>String(v).replace(".",",");
-function catTxt(k,c,t){const d=c.det;if(k==="asta")return`${f1(d.f)} PDK a turno con la rosa del draft (${d.spe} crediti spesi).${d.aff.length?` Affari: ${d.aff.slice(0,3).map(x=>`<b>${E(x.n)}</b> ${x.c} cr → ${f1(x.p)}`).join(", ")}.`:""}${d.flop&&(d.flop.p<20||d.flop.p<d.flop.c*.35)?` Il più pagato a vuoto: <b>${E(d.flop.n)}</b> ${d.flop.c} cr → ${f1(d.flop.p)}.`:""}`;
+function catTxt(k,c,t){const d=c.det;if(k==="asta"&&d.as)return astaGiudizio(d.as).slice(0,3).join(" ");if(k==="asta")return`${f1(d.f)} PDK a turno con la rosa del draft (${d.spe} crediti spesi).${d.aff.length?` Affari: ${d.aff.slice(0,3).map(x=>`<b>${E(x.n)}</b> ${x.c} cr → ${f1(x.p)}`).join(", ")}.`:""}${d.flop&&(d.flop.p<20||d.flop.p<d.flop.c*.35)?` Il più pagato a vuoto: <b>${E(d.flop.n)}</b> ${d.flop.c} cr → ${f1(d.flop.p)}.`:""}`;
  if(k==="scambi")return`Saldo di ${d.n} finestre di mercato: <b>${c.x>=0?"+":""}${f1(c.x)}</b>.${d.bestIn?` Il colpo: <b>${E(d.bestIn.n)}</b>.`:""}${d.worstOut?` Il rimpianto: <b>${E(d.worstOut.n)}</b>${d.worstOut.w?`, oggi ${ART("ai",d.worstOut.w)}`:""}.`:""}`;
  if(k==="talenti")return d.hits.length?`Presi giovani o quasi gratis e oggi da almeno 25 PDK: ${d.hits.slice(0,4).map(h=>`<b>${E(h.n)}</b> (${h.y===0?`draft${h.c!=null?" "+h.c+" cr":""}`:h.y===SNOW?"preso quest'anno":`preso nel ${YL(h.y)}`}${h.e!=null?`, ${Math.floor(h.e)} anni`:""} → ${f1(h.p)}${h.qui?"":", ceduto"})`).join(", ")}.`:"Nessun talento scoperto finora.";
  if(k==="progetto")return`${Math.round(c.x)}% dei PDK dei 10 migliori di oggi arriva da chi è in squadra almeno dal ${d.da}${d.core.length?`: ${d.core.slice(0,4).map(x=>`<b>${E(x.n)}</b>`).join(", ")}`:""}.`;return""}
 function vCatPag(t,D){const C=categorie(D)[t];if(!C)return"";return`<div class="ttcats">${CATS.filter(([k])=>C[k]).map(([k,ic,l])=>`<div class="ttcat"><span class="ttvoto sm v${Math.floor(C[k].v)}">${vf(C[k].v)}</span><span><b>${ic} ${l}</b><small>${C[k].rk}° su 8</small><em>${catTxt(k,C[k],t)}</em></span></div>`).join("")}</div>`}
-function vCatClass(D){const C=categorie(D);return`<div class="tth">Le classifiche per categoria</div><p class="ttn small">Asta = rosa del draft iniziale e affari a pochi crediti · Scambi = saldo di tutte le finestre di mercato · Talenti = presi giovani o quasi gratis e oggi forti · Progetto = quanto della squadra di oggi è cresciuto in casa.</p>
+function vCatClass(D){const C=categorie(D);return`<div class="tth">Le classifiche per categoria</div><p class="ttn small">Asta = prezzo pagato contro valore vero dei giocatori negli anni · Scambi = saldo di tutte le finestre di mercato · Talenti = presi giovani o quasi gratis e oggi forti · Progetto = quanto della squadra di oggi è cresciuto in casa.</p>
  <div class="ttcatg">${CATS.map(([k,ic,l])=>{const L=D.T.filter(t=>C[t][k]).sort((a,b)=>C[a][k].rk-C[b][k].rk);return L.length?`<div class="ttcatb"><h6>${ic} ${l}</h6>${L.map(t=>`<div class="ttcr2">${lg(t)}<span>${TEAMS[t].nick}</span><span class="ttvoto xs v${Math.floor(C[t][k].v)}">${vf(C[t][k].v)}</span></div>`).join("")}</div>`:""}).join("")}</div>${shBtn("cat","Condividi le categorie")}`}
 async function shareCat(btn){const D=analisiData(),C=categorie(D);try{await document.fonts.load('800 italic 40px "Barlow Condensed"')}catch(e){}
  const H=300+2*(8*66+90)+120,{cv,X}=ttCanvas(H);ttTop(X,"I GM per categoria",`Asta, scambi, talenti e progetto dal draft a oggi · PDK veri di questa stagione`);
@@ -192,6 +193,79 @@ async function shareCat(btn){const D=analisiData(),C=categorie(D);try{await docu
   const L=D.T.filter(t=>C[t][k]).sort((a,b)=>C[a][k].rk-C[b][k].rk);for(let j=0;j<L.length;j++){const t=L[j],y=y0+70+j*66,v=C[t][k].v;await shLogoAt(X,t,x0+20,y+4,52);X.fillStyle="#fff";X.textAlign="left";X.font=CF(800,36);X.fillText(TEAMS[t].nick.toUpperCase(),x0+86,y+44);
    X.fillStyle=v>=8?"#8b5cf6":v>=7?"#16a34a":v>=6?"#d97706":"#dc2626";shRR(X,x0+390,y+8,80,48,12);X.fill();X.fillStyle="#fff";X.textAlign="center";X.font=CF(800,36);X.fillText(vf(v),x0+430,y+45)}}
  ttFoot(X,H);shSend(cv,"gm-categorie.png","⏳ I GM per categoria · Dreamers",btn)}
+/* ---------- (1217) PAGELLA DELL'ASTA (draft iniziale: 8 squadre, 300 crediti a testa, base 1 per giocatore).
+   Valore di ogni giocatore negli anni dopo l'asta = PDK sopra il «rimpiazzo» (il 104° giocatore della lega, quanti ne servono a 8 squadre × 13)
+   per la disponibilità (partite giocate), stagione per stagione: 24/25 e 25/26 da Basketball Reference (stessa formula PDK dell'Assistente GM),
+   la stagione in corso dai tabellini (pesata per la parte di stagione già giocata). Prezzo giusto «a posteriori» = 1 credito + la parte del montepremi
+   (2400 crediti meno 1 per ogni giocatore preso) in proporzione al valore. Guadagno = prezzo giusto − prezzo pagato. ---------- */
+const STOP=()=>typeof GMSTO!=="undefined"&&GMSTO&&GMSTO.stagioni?GMSTO.stagioni:{};
+const pdkEstT=r=>r[4]+r[6]+1.25*r[5]+1.5*(r[7]+r[8]+r[9])-1.5*r[10]-(r[12]-r[11])-(r[14]-r[13])+(r[1]?r[2]/r[1]:0);
+let ASTA=null;
+function astaData(){const key=Object.keys(TV.box).length+"|"+(STOP().upd||"")+"|"+JSON.stringify(Object.keys(TT_DRAFT).map(t=>TT_DRAFT[t].length));if(ASTA&&ASTA.key===key)return ASTA;
+ const SS=[];/* stagioni dopo l'asta: {lab,m:{nome→{p,a}},w} */
+ for(let y=1;y<SNOW;y++){const lab=`20${y+23}-${y+24}`,S=STOP()[lab];if(!S)continue;const m={};for(const k in S){const rows=S[k],r=rows.find(x=>x[0]==="TOT")||rows[0];if(!r||!r[1])continue;m[tvNm(k)]={p:pdkEstT(r),a:Math.min(1,r[1]/82),n:k}}SS.push({lab:YL(y),m,w:1})}
+ {const M=med(),m={};let mx=0;for(const k in M)mx=Math.max(mx,M[k].g);for(const k in M)m[k]={p:M[k].s/M[k].g,a:mx?M[k].g/mx:0};SS.push({lab:YL(SNOW)+" (in corso)",m,w:Math.min(1,mx/82)})}
+ const NL=Object.values(TT_DRAFT).reduce((s,L)=>s+L.length,0);
+ SS.forEach(s=>{const v=Object.values(s.m).filter(x=>x.a>=.3).map(x=>x.p).sort((a,b)=>b-a);s.rep=v[Math.min(v.length-1,NL-1)]||0});
+ const val=n=>{const k=tvNm(n);let V=0;const per=SS.map(s=>{const x=s.m[k];const u=x?Math.max(0,x.p-s.rep)*x.a*82:0;V+=u*s.w;return{lab:s.lab,u,p:x?x.p:null}});return{V,per}};
+ const P=[];for(const t in TT_DRAFT)for(const[n,r,c]of TT_DRAFT[t]){const v=val(n);P.push({t,n,r,c,V:v.V,per:v.per})}
+ const SV=P.reduce((s,x)=>s+x.V,0),pool=8*300-P.length;P.forEach(x=>{x.fair=1+(SV?pool*x.V/SV:0);x.gain=x.c!=null?x.fair-x.c:null});
+ /* i dimenticati: mai presi all'asta, ma con il valore di un giocatore da asta */
+ const preso=new Set(P.map(x=>tvNm(x.n))),nomi={};SS.forEach(s=>{for(const k in s.m)if(!preso.has(k))nomi[k]=s.m[k].n||nomi[k]||k});
+ const dim=Object.keys(nomi).map(k=>{const v=val(k);return{n:nomi[k],V:v.V,fair:1+(SV?pool*v.V/SV:0)}}).filter(x=>x.fair>=15).sort((a,b)=>b.fair-a.fair);
+ const nmOf=k=>{for(const t in ROSTER){const p=(ROSTER[t]||[]).find(z=>tvNm(z[0])===k);if(p)return p[0]}return null};dim.forEach(x=>{const r=nmOf(tvNm(x.n));if(r)x.n=r});
+ const T={};for(const t of Object.keys(TEAMS)){const L=P.filter(x=>x.t===t);if(!L.length)continue;const K=L.filter(x=>x.c!=null);
+  const spent=K.reduce((s,x)=>s+x.c,0),got=K.reduce((s,x)=>s+x.fair,0),gain=got-spent;
+  const gems=K.filter(x=>x.c<=5&&x.gain>=10).sort((a,b)=>b.gain-a.gain),stars=K.filter(x=>x.c>=40),flops=K.filter(x=>x.gain<=-10).sort((a,b)=>a.gain-b.gain);
+  const per=SS.map((s,i)=>({lab:s.lab,u:L.reduce((q,x)=>q+x.per[i].u*s.w,0)*(SV?pool/SV:0)}));
+  T[t]={t,L:L.sort((a,b)=>(b.gain??-1e9)-(a.gain??-1e9)),spent,got,gain,gems,stars,flops,per,
+   x:{tot:gain,gems:gems.reduce((s,x)=>s+x.gain,0),stars:stars.reduce((s,x)=>s+x.gain,0),spreco:-flops.reduce((s,x)=>s+x.gain,0)}}}
+ const sc=(k,inv)=>{const L=Object.values(T),xs=L.map(o=>inv?-o.x[k]:o.x[k]),mn=Math.min(...xs),mx=Math.max(...xs);L.forEach((o,i)=>{o.v=o.v||{};o.v[k]=Math.round((4.5+(mx>mn?(xs[i]-mn)/(mx-mn):.5)*5)*2)/2});[...L].sort((a,b)=>(inv?a.x[k]-b.x[k]:b.x[k]-a.x[k])).forEach((o,i)=>{o.rk=o.rk||{};o.rk[k]=i+1})};
+ sc("tot");sc("gems");sc("stars");sc("spreco",true);
+ Object.values(T).forEach(o=>{o.voto=Math.round((o.v.tot*.5+o.v.gems*.2+o.v.stars*.2+o.v.spreco*.1)*2)/2});
+ [...Object.values(T)].sort((a,b)=>b.voto-a.voto||b.gain-a.gain).forEach((o,i)=>o.pos=i+1);
+ return ASTA={key,SS,P,T,dim,pool}}
+const cr=v=>`${v>=0?"+":""}${Math.round(v)}`;
+function astaGiudizio(o){const g=o.gems[0],s=[...o.stars].sort((a,b)=>b.gain-a.gain)[0],f=o.flops[0],P=[];
+ P.push(`Ha speso <b>${o.spent}</b> crediti per giocatori che, visto come sono andati, ne valevano <b>${Math.round(o.got)}</b>: ${o.gain>=0?`<b class="up">${cr(o.gain)}</b> di valore creato`:`<b class="dn">${cr(o.gain)}</b>, ha pagato più di quanto ha avuto`}.`);
+ if(s)P.push(s.gain>=0?`La stella giusta: <b>${E(s.n)}</b>, pagato ${s.c} e valso ${Math.round(s.fair)}${s.gain>=30?" — anche a quella cifra conveniva prenderlo":""}.`:`La stella pagata cara: <b>${E(s.n)}</b>, ${s.c} crediti per un valore di ${Math.round(s.fair)}.`);
+ if(g)P.push(`Il talento nascosto: <b>${E(g.n)}</b> a ${g.c} ${g.c===1?"credito":"crediti"}, valso ${Math.round(g.fair)}.${o.gems.length>1?` Altri affari: ${o.gems.slice(1,4).map(x=>`<b>${E(x.n)}</b> ${x.c}→${Math.round(x.fair)}`).join(", ")}.`:""}`);
+ if(f)P.push(`Lo spreco: <b>${E(f.n)}</b>, ${f.c} crediti per un valore di ${Math.round(f.fair)}.`);
+ return P}
+function vAstaTeam(t,full){const A=astaData(),o=A.T[t];if(!o)return"";
+ return`<div class="ttasta"><div class="ttpagh"><span class="ttvoto v${Math.floor(o.voto)}">${vf(o.voto)}</span><span><small>Pagella dell'asta · draft iniziale</small><b>${o.pos}° su 8 · ${o.gain>=0?"+":""}${Math.round(o.gain)} crediti di valore</b><em>${astaGiudizio(o).join(" ")}</em></span></div>
+ <div class="ttasv">${[["tot","💰","Valore creato"],["gems","💎","Talenti nascosti"],["stars","⭐","Big pagati bene"],["spreco","🗑️","Zero sprechi"]].map(([k,ic,l])=>`<div><small>${ic} ${l}</small><span class="ttvoto xs v${Math.floor(o.v[k])}">${vf(o.v[k])}</span><em>${o.rk[k]}° su 8</em></div>`).join("")}</div>
+ <div class="ttasy">${o.per.map(p=>`<span><small>${p.lab}</small><b>${Math.round(p.u)}</b></span>`).join("")}<em>Valore in crediti prodotto dalla rosa dell'asta, anno per anno</em></div>
+ ${full?`<div class="ttasl"><div class="ttash"><span>Giocatore</span><span>Pagato</span><span>Valeva</span><span>±</span></div>${o.L.map(x=>`<div class="ttasr"><span><i>${x.r==="F"?"A":x.r}</i><b>${E(x.n)}</b></span><span>${x.c??"?"}</span><span>${Math.round(x.fair)}</span><span class="${x.gain==null?"":x.gain>=0?"up":"dn"}">${x.gain==null?"—":cr(x.gain)}</span></div>`).join("")}</div>`:""}
+ </div>`}
+function vAstaLega(){const A=astaData(),L=Object.values(A.T).sort((a,b)=>a.pos-b.pos);if(!L.length)return"";
+ const all=A.P.filter(x=>x.gain!=null),best=[...all].sort((a,b)=>b.gain-a.gain)[0],worst=[...all].sort((a,b)=>a.gain-b.gain)[0],steal=[...all].filter(x=>x.c<=3).sort((a,b)=>b.fair-a.fair)[0];
+ const card=(ic,ti,body)=>`<div class="ttcard"><small>${ic} ${ti}</small>${body}</div>`;
+ return`<div class="tth">🔨 La pagella dell'asta</div><p class="ttn small">L'asta del draft iniziale (8 squadre, 300 crediti, base 1) rivista con il senno di poi: per ogni giocatore il «prezzo giusto» in base a quanto ha reso davvero in ${A.SS.map(s=>s.lab.replace(" (in corso)","")).join(", ")}, contro quanto è stato pagato.</p>
+ <div class="ttcards">${best?card("💰","Il miglior acquisto",`<b>${lg(best.t)} ${E(best.n)}</b><em>${best.c} cr → valeva ${Math.round(best.fair)} (${cr(best.gain)})</em>`):""}${steal?card("💎","Il furto",`<b>${lg(steal.t)} ${E(steal.n)}</b><em>${steal.c} cr → valeva ${Math.round(steal.fair)}</em>`):""}
+ ${worst?card("🗑️","Il più strapagato",`<b>${lg(worst.t)} ${E(worst.n)}</b><em>${worst.c} cr → valeva ${Math.round(worst.fair)} (${cr(worst.gain)})</em>`):""}${A.dim[0]?card("👻","Il dimenticato",`<b>${E(A.dim[0].n)}</b><em>nessuno lo ha preso · valeva ${Math.round(A.dim[0].fair)} cr</em>`):""}</div>
+ <div class="ttpr">${L.map(o=>`<details class="ttasd"><summary class="ttprr gm"><b>${o.pos}</b>${lg(o.t)}<span>${TEAMS[o.t].nick}<small>speso ${o.spent} · valeva ${Math.round(o.got)} · ${cr(o.gain)}</small></span><span class="ttvoto sm v${Math.floor(o.voto)}">${vf(o.voto)}</span></summary>${vAstaTeam(o.t,true)}</details>`).join("")}</div>
+ ${A.dim.length?`<p class="ttn small">👻 <b>I dimenticati dell'asta</b> (nessuno li ha presi): ${A.dim.slice(0,8).map(x=>`${E(x.n)} ${Math.round(x.fair)}`).join(" · ")}.</p>`:""}
+ ${shBtn("asta","Condividi la pagella dell'asta")}`}
+async function shareAsta(btn){const A=astaData(),L=Object.values(A.T).sort((a,b)=>a.pos-b.pos);try{await document.fonts.load('800 italic 40px "Barlow Condensed"')}catch(e){}
+ const RH=118,top=300,H=top+L.length*RH+110,{cv,X}=ttCanvas(H);ttTop(X,"La pagella dell'asta",`Draft iniziale · 300 crediti a testa · quanto valevano davvero i giocatori, visto come sono andati`);
+ for(let i=0;i<L.length;i++){const o=L[i],y=top+i*RH;X.fillStyle=i%2?"rgba(255,255,255,.05)":"rgba(255,255,255,.10)";shRR(X,40,y,1000,RH-12,18);X.fill();
+  X.fillStyle="#fff";X.font=CF(800,50);X.textAlign="center";X.fillText(String(i+1),95,y+66);await shLogoAt(X,o.t,135,y+12,80);
+  X.textAlign="left";X.font=CF(800,46);X.fillText(TEAMS[o.t].nick.toUpperCase(),232,y+54);X.fillStyle="#c7d2fe";X.font=CB(600,25);
+  const g=o.gems[0];X.fillText(`speso ${o.spent} · valeva ${Math.round(o.got)} · ${cr(o.gain)}${g?` · 💎 ${g.n} ${g.c}→${Math.round(g.fair)}`:""}`.slice(0,62),232,y+90);
+  const vc=o.voto>=8?"#8b5cf6":o.voto>=7?"#16a34a":o.voto>=6?"#d97706":"#dc2626";X.fillStyle=vc;shRR(X,900,y+18,110,70,16);X.fill();X.fillStyle="#fff";X.textAlign="center";X.font=CF(800,50);X.fillText(vf(o.voto),955,y+70)}
+ ttFoot(X,H);shSend(cv,"pagella-asta.png","⏳ La pagella dell'asta · Dreamers",btn)}
+/* nella pagina della squadra (Roster): pagella del GM e pagella dell'asta, con il tasto per aprire tutto nella Macchina del tempo */
+window.ttTeamCard=function(t){try{const D=analisiData(),P=pagella(t,D),C=categorie(D)[t]||{};if(!P)return"";
+ return`<section class="ttteam"><h4>🧠 Pagella del GM <small>Macchina del tempo</small></h4>
+ <div class="ttpagh"><span class="ttvoto v${Math.floor(P.v)}">${vf(P.v)}</span><span><b>${P.dir[0]} ${P.dir[1]}</b><em>Il GM ${vo(t)?"degli":"dei"} ${TEAMS[t].nick} ${P.dir[2]}. Tra le 8: ${P.p1}° nel ${YL(P.fy)} → ${P.p3}° oggi.</em></span></div>
+ <div class="ttasv">${CATS.filter(([k])=>C[k]).map(([k,ic,l])=>`<div><small>${ic} ${l==="Scopritore di talenti"?"Talenti":l}</small><span class="ttvoto xs v${Math.floor(C[k].v)}">${vf(C[k].v)}</span><em>${C[k].rk}° su 8</em></div>`).join("")}</div>
+ ${vAstaTeam(t,true)}
+ <button class="ttsh" type="button" data-ttgo="${t}">⏳ Apri l'analisi completa</button></section>`}catch(e){console.error(e);return""}};
+{const sync=()=>{try{if(typeof cur==="undefined"||cur!=="roster"||typeof curTeam==="undefined")return;const v=document.querySelector("main .rostc");if(!v)return;const ex=document.getElementById("ttteamw");if(ex&&ex.dataset.t===curTeam)return;if(ex)ex.remove();
+  const h=window.ttTeamCard(curTeam);if(!h)return;v.insertAdjacentHTML("afterend",`<div id="ttteamw" data-t="${curTeam}">${h}</div>`)}catch(e){}};
+ new MutationObserver(sync).observe(document.getElementById("main")||document.body,{childList:true,subtree:true});
+ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-ttgo]");if(!b)return;e.preventDefault();e.stopPropagation();cur="giochi";GAME="tempo";TT.mode="analisi";TT.view=null;TT.art=b.dataset.ttgo;render();setTimeout(()=>{const d=[...document.querySelectorAll(".ttart")].find(x=>x.open);if(d)d.scrollIntoView({block:"start"});else scrollTo(0,0)},60)},true)}
 function vPagella(t,D){const P=pagella(t,D);if(!P)return"";const nk=TEAMS[t].nick;
  return`<div class="ttpag"><div class="ttpagh"><span class="ttvoto v${Math.floor(P.v)}">${String(P.v).replace(".",",")}</span><span><small>Pagella del GM</small><b>${P.dir[0]} ${P.dir[1]}</b><em>Il GM ${vo(t)?"degli":"dei"} ${nk} ${P.dir[2]}. Tra le 8 franchigie: ${P.p1}° nel ${YL(P.fy)} → ${P.p3}° oggi.</em></span></div>
  ${vCatPag(t,D)}${P.es.map((e,i)=>vEstate(e,t,i)).join("")}${shBtn("pag|"+t,"Condividi la pagella")}</div>`}
@@ -226,6 +300,7 @@ function vAnalisi(){const D=analisiData();if(!D.K.length)return`<p class="ttn">S
  </div>
  ${vClassGM(D)}
  ${vCatClass(D)}
+ ${vAstaLega()}
  <div class="tth">Power ranking di tutte le epoche</div><p class="ttn small">Le ${D.V.length} versioni delle franchigie (8 × ${D.Y.length} anni), ordinate per PDK medi a turno con la formula Dreamers.</p>
  <div class="ttpr">${D.V.map(x=>`<div class="ttprr${x.y===SNOW?" now":""}"><b>${x.rk}</b>${lg(x.t)}<span>${TEAMS[x.t].nick} <i class="tty">${YN[x.y]}</i></span><span class="ttbar"><i style="width:${Math.round(x.f/D.V[0].f*100)}%"></i></span><em>${f1(x.f)}</em></div>`).join("")}</div>
  <div class="tth">Le franchigie, una per una</div><p class="ttn small">Tocca una squadra per l'articolo. Le barrette sono la forza di ogni annata, da ${YL(D.FY)} a oggi.</p>
@@ -296,7 +371,7 @@ async function shareGM(btn){const D=analisiData(),L=D.T.map(t=>pagella(t,D)).fil
   const vc=x.v>=8?"#8b5cf6":x.v>=7?"#16a34a":x.v>=6?"#d97706":"#dc2626";X.fillStyle=vc;shRR(X,900,y+14,110,70,16);X.fill();X.fillStyle="#fff";X.textAlign="center";X.font=CF(800,50);X.fillText(String(x.v).replace(".",","),955,y+66)}
  ttFoot(X,H);shSend(cv,"classifica-gm.png","⏳ La classifica dei GM · Dreamers",btn)}
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-ttsh]");if(!b||typeof cur==="undefined"||cur!=="giochi")return;e.preventDefault();e.stopPropagation();const k=b.dataset.ttsh;
- (k==="cla"?shareCla(b):k==="gm"?shareGM(b):k==="cat"?shareCat(b):sharePag(k.split("|")[1],b)).catch(er=>console.error(er))},true);
+ (k==="cla"?shareCla(b):k==="gm"?shareGM(b):k==="cat"?shareCat(b):k==="asta"?shareAsta(b):sharePag(k.split("|")[1],b)).catch(er=>console.error(er))},true);
 /* ---------- (1216) ARCHIVIO: fotografia della stagione in corso per tempo-archivio.js (la usa l'azione GitHub «tempo») ---------- */
 window.ttArchivia=function(force){const sv=TT.camp,sm=TT.mode;TT.camp=0;TT.mode="lega";try{
  const oggi=new Intl.DateTimeFormat("en-CA",{timeZone:"America/New_York"}).format(new Date());
@@ -318,6 +393,12 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
 const st=document.createElement("style");st.textContent=`
 .ttcats{display:grid;gap:6px;margin:10px 0 2px}.ttcat{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start;padding:7px;border-radius:10px;background:rgba(124,58,237,.08)}.ttcat b{display:inline;font:800 12.5px system-ui}.ttcat small{margin-left:6px;font-size:10.5px;opacity:.7}.ttcat em{display:block;font-style:normal;font-size:11.5px;line-height:1.4;margin-top:2px}
 .ttcatg{display:grid;grid-template-columns:1fr 1fr;gap:6px}.ttcatb{padding:8px;border-radius:12px;background:rgba(124,58,237,.08);border:1px solid rgba(139,92,246,.3)}.ttcatb h6{margin:0 0 5px;font:800 11px system-ui}.ttcr2{display:grid;grid-template-columns:20px 1fr auto;gap:5px;align-items:center;font-size:11.5px;font-weight:700;padding:2px 0}.ttcr2 .ttlg{width:20px;height:20px}.ttvoto.xs{min-width:30px;height:22px;font-size:13px;border-radius:7px}
+.ttpagh em b{display:inline!important;font:inherit!important;font-weight:800!important}.ttasta{margin-top:10px;padding:10px;border-radius:12px;background:rgba(234,179,8,.08);border:1px dashed rgba(234,179,8,.5)}.ttasta em .up,.ttasr .up{color:#16a34a}.ttasta em .dn,.ttasr .dn{color:#dc2626}
+.ttasv{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:8px 0}.ttasv>div{display:grid;justify-items:center;gap:3px;padding:6px 2px;border-radius:10px;background:rgba(124,58,237,.08);text-align:center}.ttasv small{font:800 9.5px system-ui;line-height:1.2}.ttasv em{font-style:normal;font-size:9.5px;opacity:.7}
+.ttasy{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin:4px 0 8px}.ttasy span{padding:4px 8px;border-radius:9px;background:rgba(148,163,184,.15);font-size:11px}.ttasy small{opacity:.7;margin-right:4px}.ttasy em{width:100%;font-style:normal;font-size:10px;opacity:.65}
+.ttasl{display:grid;gap:2px}.ttash,.ttasr{display:grid;grid-template-columns:1fr 46px 46px 46px;gap:4px;align-items:center;font-size:11.5px;padding:3px 4px}.ttash{font:800 10px system-ui;opacity:.7;text-transform:uppercase}.ttash span:not(:first-child),.ttasr span:not(:first-child){text-align:right}.ttasr{border-radius:7px;background:rgba(148,163,184,.08)}.ttasr span:first-child{display:flex;gap:5px;align-items:center;min-width:0}.ttasr i{font:800 9px system-ui;font-style:normal;width:16px;height:16px;border-radius:50%;display:grid;place-items:center;background:rgba(139,92,246,.25);flex:none}.ttasr b{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ttasr span:last-child{font-weight:800}
+.ttasd summary{list-style:none;cursor:pointer}.ttasd summary::-webkit-details-marker{display:none}
+.ttteam{margin:14px 0;padding:12px;border-radius:16px;border:1px solid rgba(139,92,246,.45);background:rgba(124,58,237,.07)}.ttteam h4{margin:0 0 8px;font:800 italic 18px var(--display)}.ttteam h4 small{font:700 10px system-ui;opacity:.7;margin-left:6px;font-style:normal}
 .ttsh{display:block;width:100%;margin:10px 0 4px;padding:10px 14px;border-radius:12px;border:1px solid rgba(139,92,246,.55);background:linear-gradient(135deg,rgba(124,58,237,.22),rgba(192,38,211,.18));color:inherit;font:800 13px system-ui;cursor:pointer}.ttsh.done{opacity:.6}
 .ttcamp{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px}.ttcamp small{width:100%;font:800 10px system-ui;letter-spacing:.1em;text-transform:uppercase;opacity:.75}.ttcamp button{padding:7px 10px;border-radius:10px;border:1px solid rgba(139,92,246,.45);background:transparent;color:inherit;font:800 12px system-ui}.ttcamp button[aria-pressed="true"]{background:#7c3aed;color:#fff}
 .ttmod{grid-template-columns:1fr 1fr!important}
