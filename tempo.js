@@ -212,7 +212,7 @@ function categorie(D){if(CATC&&CATC.k===D.key)return CATC.v;for(const k in MAXP)
  CATC={k:D.key,v:R};return R}
 const vf=v=>String(v).replace(".",",");
 function catTxt(k,c,t){const d=c.det;if(k==="asta"&&d.as)return astaGiudizio(d.as).slice(0,3).join(" ");if(k==="asta")return`${f1(d.f)} PDK a turno con la rosa del draft (${d.spe} crediti spesi).${d.aff.length?` Affari: ${d.aff.slice(0,3).map(x=>`<b>${E(x.n)}</b> ${x.c} cr → ${f1(x.p)}`).join(", ")}.`:""}${d.flop&&(d.flop.p<20||d.flop.p<d.flop.c*.35)?` Il più pagato a vuoto: <b>${E(d.flop.n)}</b> ${d.flop.c} cr → ${f1(d.flop.p)}.`:""}`;
- if(k==="scambi")return`Saldo di ${d.n} finestre di mercato: <b>${c.x>=0?"+":""}${f1(c.x)}</b>${d.crN?` (compresi ${d.crN>0?"+":""}${d.crN} crediti negli scambi)`:""}.${d.bestIn?` Il colpo: <b>${E(d.bestIn.n)}</b>.`:""}${d.worstOut?` Il rimpianto: <b>${E(d.worstOut.n)}</b>${d.worstOut.w?`, oggi ${ART("ai",d.worstOut.w)}`:""}.`:""}`;
+ if(k==="scambi")return`Saldo di ${d.n} finestre di mercato: <b>${c.x>=0?"+":""}${f1(c.x)}</b>${d.crN?` (compresi ${d.crN>0?"+":""}${d.crN} crediti negli scambi)`:""}.${(()=>{try{const D=analisiData(),c=(colpiData(D)[t]||[]).find(x=>x.tipo==="mossa");return c?` Il colpo: <b>${E(c.n)}</b> (${String(Math.round(c.prima*10)/10).replace(".",",")} → ${String(Math.round(c.dopo*10)/10).replace(".",",")}).`:""}catch(e){return""}})()}${d.worstOut?` Il rimpianto: <b>${E(d.worstOut.n)}</b>${d.worstOut.w?`, oggi ${ART("ai",d.worstOut.w)}`:""}.`:""}`;
  if(k==="talenti")return d.hits.length?`Scoperte (giovani, rookie o quasi gratis, che oggi rendono): ${d.hits.slice(0,4).map(h=>`<b>${E(h.n)}</b> (${h.rk?"rookie, ":""}${h.y===0?`asta${h.c!=null?" "+h.c+" cr":""}`:h.y===SNOW?"preso quest'anno":`preso nel ${YL(h.y)}`}${h.c!=null&&h.y!==0?` a ${String(h.c).replace(".",",")} cr`:""}${h.e!=null?`, ${Math.floor(h.e)} anni`:""} → ${f1(h.p)}${h.qui?"":", ceduto"})`).join(", ")}.`:"Nessun talento scoperto finora.";
  if(k==="progetto")return`${Math.round(c.x)}% dei PDK dei 10 migliori di oggi arriva da chi è in squadra almeno dal ${d.da}${d.core.length?`: ${d.core.slice(0,4).map(x=>`<b>${E(x.n)}</b>`).join(", ")}`:""}.`;return""}
 function vCatPag(t,D){const C=categorie(D)[t];if(!C)return"";return`<div class="ttcats">${CATS.filter(([k])=>C[k]).map(([k,ic,l])=>`<div class="ttcat"><span class="ttvoto sm v${Math.floor(C[k].v)}">${vf(C[k].v)}</span><span><b>${ic} ${l}</b><small>${C[k].rk}° su 8</small><em>${catTxt(k,C[k],t)}</em></span></div>`).join("")}</div>`}
@@ -272,7 +272,32 @@ function gmAll(D){if(GMV&&GMV.k===D.key)return GMV.v;const T=D.T,Y=D.Y,R={};
   let v=o.ris*.35+o.tr*.2+o.mo*.3+o.as*.15;o.medio=!o.pos.some(p=>p<=3)&&!o.ric;if(o.medio)v=Math.min(v,7)-.5;o.v=Math.max(4,Math.min(10,Math.round(v*2)/2));
   const sc=z=>z.d==="+"?z.af-z.bf:z.bf-z.af,L=o.mv.filter(z=>z.ok&&Math.max(z.af,z.bf)>=18);o.top=[...L].sort((a,b)=>sc(b)-sc(a)).slice(0,3).filter(z=>sc(z)>=3);o.flop=[...L].sort((a,b)=>sc(a)-sc(b)).slice(0,3).filter(z=>sc(z)<=-3)});
  GMV={k:D.key,v:R};return R}
-window.ttGmAll=()=>gmAll(analisiData());window.ttAsta=()=>astaData();/* per controllare i voti dalla console */
+/* (1619) I COLPI DEI GM (richiesta di Imma): per ogni franchigia gli acquisti che hanno reso PIÙ di quanto valevano quando sono arrivati.
+   Mossa (scambio o svincolato): PDK della stagione prima dell'arrivo contro PDK medi nelle stagioni passate in squadra (almeno +4, e almeno 18 PDK).
+   Rookie: almeno 18 PDK nelle stagioni in squadra (rookie di quest'anno: almeno 15). Asta iniziale: pagato fino a 10 crediti e almeno 20 PDK nel 1° anno.
+   Non è un colpo chi è stato pagato al massimo ed è calato (Jokić 56 → 46). */
+let COLPI=null;
+function colpiData(D){if(COLPI&&COLPI.k===D.key)return COLPI.v;const V=svData(),R={};
+ const sv=(n,y)=>{const x=V.S[y]&&V.S[y][tvNm(n)];if(!x)return null;const a=y===SNOW?Math.min(1,x.g/(.8*Math.max(1,V.mx))):Math.min(1,x.g/60);return{p:x.p,v:x.p*Math.max(a,.6),g:x.g}};
+ const inRose=(t,y,n)=>roseOf(t,y).some(z=>tvNm(z[0])===tvNm(n));
+ for(const t of D.T){const L={},add=o=>{const k=tvNm(o.n);if(!L[k]||L[k].sc<o.sc)L[k]=o};
+  (TT_DRAFT[t]||[]).forEach(([n,r,c])=>{const s1=sv(n,1);if(c!=null&&c<=10&&s1&&s1.p>=20)add({n,y:0,tipo:"asta",c,dopo:s1.p,sc:s1.p-c/2-15,qui:inRose(t,SNOW,n)})});
+  D.Y.forEach((y,i)=>{if(!i)return;const m=D.M[t][D.Y[i-1]+"-"+y];if(!m)return;
+   for(const x of m.in){const pre=sv(x.n,y-1),vals=[];for(let s=y;s<=SNOW;s++){if(!inRose(t,s,x.n))continue;const q=sv(x.n,s);if(q&&(s<SNOW||q.g>=3))vals.push(q.p)}if(!vals.length)continue;
+    const dopo=vals.reduce((a,b)=>a+b,0)/vals.length,c=prezzoDi(t,y,x.n),qui=inRose(t,SNOW,x.n);
+    let old=null;for(let s=y-2;s>=0;s--){const q=sv(x.n,s);if(q&&q.g>=15){old=q;break}}
+    if((!pre||pre.g<15)&&old){/* preso mentre era infortunato (stagione prima quasi saltata): colpo se è tornato forte */if(dopo>=20)add({n:x.n,y,tipo:"infortunato",prima:pre?pre.p:0,dopo,c,sc:dopo-15,qui})}
+    else if(!pre||pre.g<15){if(dopo>=(y===SNOW?15:18))add({n:x.n,y,tipo:"rookie",c,dopo,sc:dopo-12,qui})}
+    else if(dopo-pre.p>=4&&dopo>=18)add({n:x.n,y,tipo:"mossa",prima:pre.p,dopo,c,sc:(dopo-pre.p)*1.5,qui})}});
+  R[t]=Object.values(L).sort((a,b)=>b.sc-a.sc)}
+ COLPI={k:D.key,v:R};return R}
+function colpoTxt(o,t){const yq=y=>y===SNOW?"quest'anno":"nel "+YL(y);const f=x=>String(Math.round(x*10)/10).replace(".",","),c=o.c!=null?` a ${String(o.c).replace(".",",")} cr`:"";
+ const via=o.qui?"":(()=>{const w=dove(o.n);return w&&w!==t?`, oggi ${ART("ai",w)}`:", ceduto"})();
+ return o.tipo==="asta"?`<b>${E(o.n)}</b> all'asta${c} → ${f(o.dopo)} PDK nel 1° anno${via}`:o.tipo==="infortunato"?`<b>${E(o.n)}</b> preso ${yq(o.y)} mentre era infortunato${c} → ${f(o.dopo)} PDK con loro${via}`:o.tipo==="rookie"?`<b>${E(o.n)}</b> rookie ${o.y===SNOW?"di quest'anno":"del "+YL(o.y)}${c} → ${f(o.dopo)} PDK${via}`:`<b>${E(o.n)}</b> preso ${yq(o.y)} quando faceva ${f(o.prima)} → ${f(o.dopo)} PDK con loro${via}`}
+function vColpi(D){const C=colpiData(D),L=D.T.slice().sort((a,b)=>C[b].reduce((s,x)=>s+x.sc,0)-C[a].reduce((s,x)=>s+x.sc,0));
+ return`<div class="tth">💥 I colpi dei GM</div><p class="ttn small">Per ogni franchigia gli acquisti che hanno reso più di quanto valevano quando sono arrivati: scambi e svincolati presi prima che crescessero, rookie che hanno reso subito, affari dell'asta iniziale. Non è un colpo chi è stato pagato al massimo e poi è calato.</p>
+ <div class="ttpr">${L.map(t=>`<details class="ttasd"><summary class="ttprr gm">${lg(t)}<span>${TEAMS[t].nick}<small>${C[t].length?C[t].length+" colp"+(C[t].length===1?"o":"i")+" · il migliore: "+E(C[t][0].n):"nessun colpo finora"}</small></span></summary><div class="ttcolpi">${C[t].length?C[t].slice(0,10).map(o=>`<p class="ttn small">${o.tipo==="asta"?"🔨":o.tipo==="rookie"?"🍼":o.tipo==="infortunato"?"🩹":"💥"} ${colpoTxt(o,t)}.</p>`).join(""):`<p class="ttn small">Nessun colpo finora.</p>`}</div></details>`).join("")}</div>`}
+window.ttGmAll=()=>gmAll(analisiData());window.ttColpi=()=>colpiData(analisiData());window.ttAsta=()=>astaData();/* per controllare i voti dalla console */
 function vGmComp(t,D){const o=gmAll(D)[t];if(!o)return"";const f=x=>Math.round(x),mv=z=>`<b>${E(z.n)}</b> ${z.d==="+"?"preso":"ceduto"} a ${f(z.bf)} → ${f(z.af)}`;
  return`<div class="ttasv">${[["🏆","Risultati",o.ris,o.pos.map(p=>p+"°").join(" → ")],["🧭","Traiettoria",o.tr,""],["⏱️","Tempismo mosse",o.mo,""],["🔨","Asta",o.as,""]].map(([ic,l,v,e])=>`<div><small>${ic} ${l}</small><span class="ttvoto xs v${Math.floor(v)}">${vf(Math.round(v*2)/2)}</span><em>${e}</em></div>`).join("")}</div>
  ${o.top.length?`<p class="ttn small">⏱️ <b>Mosse col tempismo giusto</b> (PDK prima → dopo): ${o.top.map(mv).join(" · ")}.</p>`:""}${o.flop.length?`<p class="ttn small">⌛ <b>Mosse col tempismo sbagliato</b>: ${o.flop.map(mv).join(" · ")}.</p>`:""}
@@ -392,6 +417,7 @@ function vAnalisi(){const D=analisiData();if(!D.K.length)return`<p class="ttn">S
  ${rim[0]?card("💔","Il rimpianto più grande",`<b>${E(rim[0].n)}</b><em>lasciato ${ART("dai",rim[0].t)}${rim[0].w&&rim[0].w!==rim[0].t?`, ora ${ART("ai",rim[0].w)}`:""} · ${f1(rim[0].p.v)} PDK</em>`):""}
  </div>
  ${vClassGM(D)}
+ ${vColpi(D)}
  ${vCatClass(D)}
  ${vAstaLega()}
  ${vRookie()}
