@@ -26,10 +26,14 @@ function acc(k){const W=drWeek(k),key=k+"|"+W.closed+"|"+(W.nights||0);if(ACC[k]
  for(let d=W.start;d<=W.end;d=drAdd(d,1)){const o=N[d]||{},seen=new Set();for(const n in o){const v=typeof o[n]==="number"?o[n]:null;if(v!=null){put(n,v);seen.add(tvNm(n))}}
   for(const g of (TV.days[d]||[])){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;for(const sd of["a","h"])for(const r of B[sd]||[]){const x=tvNm(r[0]);if(seen.has(x))continue;if(String(r[2]||"0")==="0:00")continue;put(r[0],+r[19]||0)}}}
  return ACC[k]={key,A,W}}
-function score(k,R){if(R&&R.real){const W=drWeek(k),T=drTeam(k,R.real,W);return{top:T.top.map(x=>({n:x.n,r:x.r,e:x.e,m:x.m})),score:T.score||0,played:T.played,closed:W.closed,started:W.started}}const{A,W}=acc(k);if(!R)return null;
+/* (1216) LEGA A 8: contano 8 giocatori (3 G, 3 A, 2 C; i primi 6 pieni con il capitano ×1,5, 7° e 8° a metà), tribuna minima 5.
+   Anche le squadre di oggi sono simulate a 8, con la rosa vera di quel turno (titolari + riserve). */
+const F8=()=>TT.mode==="lega8",Q8={G:3,F:3,C:2};
+function score(k,R){if(R&&R.real&&F8()){const F=drForm(k)[R.real]||{t:[],r:[]};R=[...F.t,...F.r].map(n=>[n,ruoloDi(n)||"F"])}
+ if(R&&R.real){const W=drWeek(k),T=drTeam(k,R.real,W);return{top:T.top.map(x=>({n:x.n,r:x.r,e:x.e,m:x.m})),score:T.score||0,played:T.played,closed:W.closed,started:W.started}}const{A,W}=acc(k);if(!R)return null;
  const pool=R.map(([n,r],i)=>({n,r:r==="A"?"F":r,i,e:A[tvNm(n)]??null}));
  const key=x=>x.e==null?-1e9:x.e,ord=(p,q)=>key(q)-key(p)||p.i-q.i;let sel=[];
- for(const r of["G","F","C"])sel.push(...pool.filter(x=>x.r===r).sort(ord).slice(0,DR_QUOTE[r]));
+ for(const r of["G","F","C"])sel.push(...pool.filter(x=>x.r===r).sort(ord).slice(0,(F8()?Q8:DR_QUOTE)[r]));
  sel.sort(ord);let a=sel.slice(0,5),b=sel.slice(5);
  for(const r of["C","F","G"]){if(a.some(x=>x.r===r))continue;const up=b.find(x=>x.r===r);if(!up)continue;const cnt=x=>a.filter(y=>y.r===x.r).length,down=[...a].reverse().find(x=>cnt(x)>1);if(!down)continue;a=a.filter(x=>x!==down).concat(up).sort(ord);b=b.filter(x=>x!==up).concat(down).sort(ord)}
  const top=[...a,...b];top.forEach((x,i)=>{x.m=i===0?1.5:i>=6?.5:1;x.f=(x.e||0)*x.m});
@@ -39,7 +43,7 @@ const turni=()=>{const L=[];for(let k=1;k<=DR_REG;k++){const W=drWeek(k);if(W.cl
 function lega(){const T=Object.keys(TEAMS),y=t=>TT.sel[t]||3,S={};T.forEach(t=>S[t]={t,y:y(t),w:0,l:0,pf:0,pa:0,res:[]});
  for(const k of turni()){const pairs=DR_SCHED[k-1]||[];for(const[a,b]of pairs){const A=score(k,rosa(a,y(a))),B=score(k,rosa(b,y(b)));if(!A||!B)continue;const W=acc(k).W;
   S[a].pf+=A.score;S[a].pa+=B.score;S[b].pf+=B.score;S[b].pa+=A.score;if(W.closed){if(A.score>=B.score){S[a].w++;S[b].l++}else{S[b].w++;S[a].l++}}S[a].res.push({k,o:b,me:A.score,vs:B.score,fin:W.closed});S[b].res.push({k,o:a,me:B.score,vs:A.score,fin:W.closed})}}
- /* parte dalla stessa base di Dreamers (giornate 1-2 Dunkest) */try{for(const t of T){const b=DR_BASE[t];if(b&&S[t].y===3){S[t].w+=b.w;S[t].l+=b.l;S[t].pf+=b.pf;S[t].pa+=b.pa}else if(b){S[t].w+=b.w;S[t].l+=b.l}}}catch(e){}
+ /* parte dalla stessa base di Dreamers (giornate 1-2 Dunkest) */try{for(const t of T){const b=DR_BASE[t];if(b&&S[t].y===3&&!F8()){S[t].w+=b.w;S[t].l+=b.l;S[t].pf+=b.pf;S[t].pa+=b.pa}else if(b){S[t].w+=b.w;S[t].l+=b.l}}}catch(e){}
  return Object.values(S).sort((p,q)=>q.w-p.w||q.pf-p.pf)}
 function somma(){return TT.entries.map(([t,y],i)=>{let tot=0,n=0;const res=[];for(const k of turni()){const s=score(k,rosa(t,y));if(!s)continue;tot+=s.score;n++;res.push({k,v:s.score,fin:s.closed})}return{i,t,y,tot,n,avg:n?tot/n:0,res}}).sort((p,q)=>q.tot-p.tot)}
 const reale=()=>{try{return drStand().map(x=>x.t)}catch(e){return[]}};
@@ -47,7 +51,7 @@ const reale=()=>{try{return drStand().map(x=>x.t)}catch(e){return[]}};
 const lg=t=>`<span class="ttlg">${badge(t)}</span>`;
 function yearChips(t){return`<span class="ttyc">${[1,2,3].map(y=>`<button data-tt="y|${t}|${y}" aria-pressed="${(TT.sel[t]||3)===y}"${has(t,y)?"":" disabled"}>${y===3?"Oggi":y===1?"24/25":"25/26"}</button>`).join("")}</span>`}
 function vLega(){const L=lega(),R=reale();
- return`<p class="ttn">Scegli per ogni franchigia con quale rosa gioca la stagione di oggi. Il calendario e i punteggi sono quelli veri del 3° anno, dal 1° turno.</p>
+ return`${F8()?`<p class="ttn"><b>Lega a 8:</b> come Dreamers ma contano solo <b>8 giocatori</b> (3 guardie, 3 ali, 2 centri): i primi 6 pieni con il capitano ×1,5, il 7° e l’8° a metà. La tribuna diventa di almeno 5: chi oggi non gioca più pesa molto meno, come se la squadra lo avesse sostituito. Anche le squadre di oggi sono simulate a 8.</p>`:""}<p class="ttn">Scegli per ogni franchigia con quale rosa gioca la stagione di oggi. Il calendario e i punteggi sono quelli veri del 3° anno, dal 1° turno.</p>
  <div class="ttsel">${Object.keys(TEAMS).map(t=>`<div class="ttrow">${lg(t)}<b>${TEAMS[t].nick}</b>${yearChips(t)}</div>`).join("")}</div>
  <div class="tth">Classifica «come sarebbe andata»</div>
  <div class="ttcla">${L.map((x,i)=>{const r=R.indexOf(x.t)+1,d=r?r-(i+1):0;return`<button class="ttcr" data-tt="team|${x.t}">${`<b class="ttp">${i+1}</b>`}${lg(x.t)}<span class="ttnm">${tag(x.t,x.y)}<small>${x.w}-${x.l} · ${f1(x.pf)} PDK</small></span><span class="ttd ${d>0?"up":d<0?"dn":""}">${r?`realtà ${r}°`:""}${d?` (${d>0?"+":""}${d})`:""}</span></button>`}).join("")}</div>
@@ -145,15 +149,15 @@ function vDuel(v){const[k,a,ya,b,yb]=v.map((x,i)=>i===1||i===3?x:+x),A=score(k,r
  <p class="ttn small">Miglior PDK del turno di ogni giocatore, regole Dreamers: capitano ×1,5, dal 7° al 10° ×½. Chi in questa stagione non gioca vale 0.</p></div></div>`}
 window.vTempo=function(){if(TT.view)return vDuel(TT.view);
  return`<div class="ttwrap"><div class="tthero"><div class="ttfog"></div><small>Fanta Dreamers</small><b>⏳ Macchina del tempo</b><em>La stagione di oggi, giocata con le rose di ieri</em></div>
- <div class="ttmod">${[["lega","🏆 Lega · scontri diretti"],["somma","➕ Somma punti"],["analisi","📰 Analisi"]].map(([m,l])=>`<button data-tt="mode|${m}" aria-pressed="${TT.mode===m}">${l}</button>`).join("")}</div>
- ${TT.mode==="lega"?vLega():TT.mode==="analisi"?vAnalisi():vSomma()}</div>`};
+ <div class="ttmod">${[["lega","🏆 Lega · scontri diretti"],["lega8","🎯 Lega a 8"],["somma","➕ Somma punti"],["analisi","📰 Analisi"]].map(([m,l])=>`<button data-tt="mode|${m}" aria-pressed="${TT.mode===m}">${l}</button>`).join("")}</div>
+ ${TT.mode==="lega"||TT.mode==="lega8"?vLega():TT.mode==="analisi"?vAnalisi():vSomma()}</div>`};
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-tt]");if(!b||typeof cur==="undefined"||cur!=="giochi")return;e.preventDefault();e.stopPropagation();const p=b.dataset.tt.split("|");let top=false;
  if(p[0]==="mode")TT.mode=p[1];else if(p[0]==="y"){TT.sel[p[1]]=+p[2];}else if(p[0]==="team"){TT.team=TT.team===p[1]?null:p[1];TT.rv={}}else if(p[0]==="rv"){TT.rv=TT.rv||{};TT.rv[p[1]]=+p[2]}
  else if(p[0]==="add"){const i=TT.entries.findIndex(x=>x[0]===p[1]&&x[1]===+p[2]);if(i>=0)TT.entries.splice(i,1);else if(TT.entries.length<8)TT.entries.push([p[1],+p[2]])}
  else if(p[0]==="steam"){}else if(p[0]==="duel"){TT.view=p.slice(1);top=true}else if(p[0]==="back"){TT.view=null;top=true}
  const y=scrollY;render();scrollTo(0,top?0:y)},true);
 const st=document.createElement("style");st.textContent=`
-.ttmod{grid-template-columns:repeat(3,1fr)!important}
+.ttmod{grid-template-columns:1fr 1fr!important}
 .ttrub{display:grid;gap:4px}.ttmast{padding:14px 14px 12px;border-radius:16px;background:linear-gradient(135deg,#1e1b4b,#4c1d95);color:#fff;border:1px solid rgba(196,181,253,.4)}.ttmast small{display:block;font:800 10px var(--display);letter-spacing:.2em;text-transform:uppercase;color:#c4b5fd}.ttmast b{display:block;font:800 italic 24px var(--display);margin:2px 0 4px}.ttmast em{font-style:normal;font-size:12px;color:#e0e7ff;line-height:1.4}
 .ttcards{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}.ttcard{padding:10px;border-radius:14px;background:rgba(124,58,237,.12);border:1px solid rgba(139,92,246,.35)}.ttcard small{display:block;font:800 10px system-ui;letter-spacing:.05em;text-transform:uppercase;opacity:.8;margin-bottom:4px}.ttcard b{display:flex;align-items:center;gap:5px;font-size:14px;line-height:1.15}.ttcard em{display:block;font-style:normal;font-size:11px;opacity:.8;margin-top:3px}.ttcard .ttlg{width:22px;height:22px}
 .ttpr{display:grid;gap:3px}.ttprr{display:grid;grid-template-columns:20px 24px 1fr 70px 40px;gap:6px;align-items:center;font-size:12px;padding:3px 4px;border-radius:8px}.ttprr.now{background:rgba(124,58,237,.12)}.ttprr>b{font:800 12px var(--display);text-align:center}.ttprr .ttlg{width:22px;height:22px}.ttprr span small{display:block;font-size:10px;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ttprr span{min-width:0}.ttprr em{font-style:normal;font-weight:800;text-align:right}.ttbar{height:6px;border-radius:9px;background:rgba(148,163,184,.2);overflow:hidden}.ttbar i{display:block;height:100%;background:linear-gradient(90deg,#7c3aed,#c084fc);border-radius:9px}
