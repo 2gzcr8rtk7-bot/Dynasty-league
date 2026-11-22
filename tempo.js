@@ -446,7 +446,9 @@ function gmAll(D){if(GMV&&GMV.k===D.key)return GMV.v;const T=D.T,R={},PM=permane
   const tl=mv.filter(scoperta),tal=tl.reduce((s,x)=>s+Math.max(0,x.gainN)*fPrezzo(x),0);
   const giov=!ric&&a0!=null&&a1!=null&&a1<=a0-.5&&pn<=first&&pn<=2;
   /* (1641) i crediti dati o presi negli scambi non entrano più nel mercato: sono solo la moneta; conta quanto rende quello che si è preso (Barnes per 300 crediti: se rende, è un'ottima mossa) */
-  R[t]={t,pos,tit,ris,tr,ric,giov,eta:[a0,a1],mvL:mv,mer:mvTot+gd,mvTot,gd,ced,crN,tal,saldo:mvTot,tim:0,
+  /* (1642) le mosse valgono di più se hanno portato la squadra in alto: fattore dalla posizione di oggi (1° ×1,3 … 8° ×0,6) */
+  const fRis=1.3-.1*(pn-1),m0=mvTot+gd;
+  R[t]={t,pos,tit,ris,tr,ric,giov,eta:[a0,a1],mvL:mv,fRis,mer:m0>=0?m0*fRis:m0/fRis,mvTot,gd,ced,crN,tal,saldo:mvTot,tim:0,
    top:[...mv].sort((a,b)=>b.gain-a.gain).filter(x=>x.gain>=100).slice(0,4),
    flop:[...mv].filter(x=>{if(x.gain<=-100)return true;const q=x.a==null?stat(x.n,SNOW):null;return q&&q.g>=5&&x.pre&&x.pre.g>=15&&x.pre.p>=25&&x.pre.p-q.p>=6}).sort((a,b)=>a.gain-b.gain).slice(0,3),
    scop:[...tl].filter(x=>x.gainN>=100).sort((a,b)=>b.gainN*fPrezzo(b)-a.gainN*fPrezzo(a)).slice(0,8),
