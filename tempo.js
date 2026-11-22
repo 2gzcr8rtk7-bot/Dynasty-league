@@ -237,7 +237,7 @@ function categorie(D){if(CATC&&CATC.k===D.key)return CATC.v;for(const k in MAXP)
 const vf=v=>String(v).replace(".",",");
 function catTxt(k,c,t){const d=c.det,D=analisiData(),G=gmAll(D)[t];
  if(k==="asta"&&d.as)return astaGiudizio(d.as).slice(0,3).join(" ");
- if(k==="scambi"&&G){const b=G.top[0],w=G.flop[0],rp=rimpianti(t,D)[0];return`Valore creato con le mosse dopo l'asta: <b>${crs(G.mvTot)}</b> crediti; tenendo, facendo crescere o cedendo al momento giusto i giocatori dell'asta: <b>${crs(G.gd)}</b>${G.crN?` (più ${G.crN>0?"+":""}${G.crN} crediti veri passati negli scambi)`:""}.${b?` La mossa migliore: <b>${E(b.n)}</b> (${crs(b.gain)}).`:""}${w?` La peggiore: <b>${E(w.n)}</b> (${crs(w.gain)}).`:""}`}
+ if(k==="scambi"&&G){const b=G.top[0],w=G.flop[0],rp=rimpianti(t,D)[0];return`Valore creato con le mosse dopo l'asta: <b>${crs(G.mvTot)}</b> crediti; tempismo nel cedere i giocatori presi all'asta (valore alla cessione contro quello che hanno dato dopo): <b>${crs(G.gd)}</b>${G.crN?` (più ${G.crN>0?"+":""}${G.crN} crediti veri passati negli scambi)`:""}.${b?` La mossa migliore: <b>${E(b.n)}</b> (${crs(b.gain)}).`:""}${w?` La peggiore: <b>${E(w.n)}</b> (${crs(w.gain)}).`:""}`}
  if(k==="talenti")return d.scop&&d.scop.length?`Le scoperte (giovani, rookie, presi a poco o da infortunati, che poi sono cresciuti): ${d.scop.slice(0,4).map(x=>mossaTxt(x,t)).join(" · ")}.`:"Nessuna scoperta finora.";
  if(k==="progetto")return`${Math.round(c.x)}% dei PDK dei 10 migliori di oggi arriva da chi è in squadra almeno dal ${d.da}${d.core.length?`: ${d.core.slice(0,4).map(x=>`<b>${E(x.n)}</b>`).join(", ")}`:""}.`;return""}
 function vCatPag(t,D){const C=categorie(D)[t];if(!C)return"";return`<div class="ttcats">${CATS.filter(([k])=>C[k]).map(([k,ic,l])=>`<div class="ttcat"><span class="ttvoto sm v${Math.floor(C[k].v)}">${vf(C[k].v)}</span><span><b>${ic} ${l}</b><small>${C[k].rk}° su 8</small><em>${catTxt(k,C[k],t)}</em></span></div>`).join("")}</div>`}
@@ -282,8 +282,8 @@ function posFin(t,y){try{const h=(typeof STORIA!=="undefined"?STORIA:[]).find(x=
    Per ogni giocatore e per ogni momento (draft, ogni finestra di mercato, oggi) si calcola quanto VALEVA in quel momento, con quello che si sapeva allora:
    · PDK delle ultime stagioni (la più recente pesa 70%, quella prima 30%; una stagione con meno di 15 partite non fa testo: si usa quella prima, scontata);
    · EFFICIENZA (PDK al minuto) per i giovani: un under 25 efficiente con pochi minuti vale per quello che farà con più spazio;
-   · ETÀ: proiezione dei 3 anni successivi (fino a 22 anni +2,5 PDK l'anno, 23-24 +1,5, 25-26 +0,5, 27-28 fermo, 29-30 −1, 31-32 −2, poi −3);
-   · VALORE = PDK sopra il rimpiazzo (15) nei 3 anni successivi, scontati (×0,8 l'anno). Un rookie vale la sua attesa (più alta se pagato di più).
+   · ETÀ: proiezione dei 5 anni successivi (fino a 22 anni +2,5 PDK l'anno, 23-24 +1,5, 25-26 +0,5, 27-28 fermo, 29-30 −1, 31-32 −2, poi −3);
+   · VALORE = PDK sopra il rimpiazzo (15) nei 5 anni successivi, scontati (×0,85 l'anno): in una dynasty un fuoriclasse giovane vale per tutta la carriera. Un rookie vale la sua attesa (più alta se pagato di più).
    Poi per ogni giocatore passato da una squadra («permanenza»): COSTO = valore all'arrivo; RESA = PDK sopra il rimpiazzo prodotti con la squadra
    stagione per stagione (gli anni di mezzo contano tutti) + valore all'uscita (quello che la squadra ha «incassato» cedendolo) o di oggi se è ancora lì.
    VALORE CREATO = resa − costo. Tutto è espresso in CREDITI D'ASTA: 1 credito = 1/2400 del valore di tutti i giocatori presi all'asta iniziale.
@@ -303,7 +303,7 @@ function proj0(n,y,now){/* PDK attesi per la stagione che inizia al momento y (n
  return{p:base,age}}
 function valore(n,y,now,rookieC){const o=proj0(n,y,now);let p=o.p,a=o.age;
  if(p==null){/* rookie o giocatore senza stagione vera: vale la sua attesa, più alta se è stato pagato di più */const mx=maxPrezzo(now?SNOW:y)||0;p=rookieC!=null&&mx?11+6*Math.min(1,rookieC/mx):12.5;if(a==null)a=20}
- let v=0;for(let k=0;k<3;k++){if(k)p+=ageD((a||27)+k);v+=Math.max(0,p-15)*Math.pow(.8,k)}return v}
+ let v=0;for(let k=0;k<5;k++){if(k)p+=ageD((a||27)+k);v+=Math.max(0,p-15)*Math.pow(.85,k)}return v}
 function resa(n,s){/* PDK sopra il rimpiazzo prodotti nella stagione s. Disponibilità = partite giocate, ma gli infortuni sono sfortuna, non errori del GM:
    una stagione giocata almeno a metà conta piena, una con almeno 10 partite conta almeno al 60%, una saltata quasi tutta al 30% */const x=stat(n,s);if(!x)return 0;if(s===SNOW)return Math.max(0,x.p-15)*x.g/82;const av=x.g>=41?1:x.g>=10?Math.max(.6,x.g/70):.3;return Math.max(0,x.p-15)*av}
 let VK=null;function kCred(){if(VK!=null)return VK;let S=0;for(const t in TT_DRAFT)for(const[n,r,c]of TT_DRAFT[t])S+=valore(n,0,false,c);VK=S?2400/S:10;return VK}
@@ -351,26 +351,37 @@ const fPrezzo=x=>{if(x.c==null)return 1;if(x.da===0)return Math.max(.4,Math.min(
 /* scoperta = preso quando valeva poco: rookie, affare d'asta (≤10 cr), giovane (≤24 anni) o infortunato preso a un valore basso (≤15). Non lo è chi è stato pagato da stella. */
 const scoperta=x=>x.rk||(x.da===0?x.c!=null&&x.c<=10:x.costo<=15&&((x.eta!=null&&x.eta<=24.5)||(x.pre&&x.pre.g<15)||x.pre==null));
 let GMV=null;
+/* (1624) VOTO DEL GM — il metro della lega: l'obiettivo è VINCERE.
+   · RISULTATI: conta la posizione di oggi (75%) più le stagioni passate (25%); ogni titolo vale +0,75. Un buon piazzamento passato senza titolo,
+     se poi sei tornato indietro, vale poco: «è come se non avessi fatto niente».
+   · TRAIETTORIA: posizioni guadagnate dal primo anno a oggi (non i picchi): chi sale stabilmente (Eagles 4→2, Spiders 7→4) è premiato;
+     chi risale dopo un anno storto recupera; chi torna indietro dal suo punto più alto senza aver vinto perde. Chi vince sempre = 9,5.
+   · MERCATO: valore creato con le mosse dopo l'asta (valore all'arrivo → quanto hanno dato) + tempismo nel cedere i giocatori dell'asta
+     (valore alla cessione contro quello che hanno dato dopo, altrove: Jokić ceduto al massimo +, Amen ceduto troppo presto −).
+   · TALENTI: scoperte fatte DOPO l'asta (rookie, svincolati, giovani o infortunati presi quando valevano poco), pesate sul prezzo.
+   · ASTA: solo la pagella dell'asta. · ROSA DI OGGI: quanto vale la squadra adesso.
+   · Chi vince e intanto ringiovanisce la squadra: +0,5. Mai nei primi 3, senza crescere né ricostruire: massimo 6,5. Chi ricostruisce si giudica a parte. */
 function gmAll(D){if(GMV&&GMV.k===D.key)return GMV.v;const T=D.T,R={},PM=permanenze(D);
- for(const t of T){const pos=posAnni(t),n=pos.length,pn=pos[n-1],prev=n>1?pos[n-2]:pn,first=pos[0];
-  const wr=n===1?[1]:n===2?[.35,.65]:pos.map((_,i)=>i===n-1?.5:i===n-2?.3:.2/(n-2));
-  const ris=pos.reduce((s,p,i)=>s+GM2_PT[p-1]*wr[i],0),best=Math.min(...pos);
-  let tr=pn===1&&pos.every(p=>p===1)?9.5:6.5+.5*(prev-pn)+.3*(first-pn);if(pn>prev&&pn>best)tr-=.4*(pn-best);tr=Math.max(4.5,Math.min(9.5,tr));
+ for(const t of T){const pos=posAnni(t),n=pos.length,pn=pos[n-1],prev=n>1?pos[n-2]:pn,first=pos[0],past=pos.slice(0,-1),tit=past.filter(p=>p===1).length,best=Math.min(...pos);
+  const PT=[10,8.5,7.5,6.5,6,5.5,5,4.5],pm=past.length?past.reduce((s,p)=>s+PT[p-1],0)/past.length:PT[pn-1];
+  const ris=Math.min(10,PT[pn-1]*.75+pm*.25+.75*tit);
+  let tr;if(pn===1&&tit===past.length&&tit>0)tr=9.5;else{tr=6+.6*(first-pn);if(prev>pn)tr+=.4*(prev-pn);if(pn>best&&!(best===1))tr-=.2*(pn-best);tr=Math.max(4.5,Math.min(9.5,tr))}
   const a0=etaTop(t,D.FY),a1=etaTop(t,SNOW),ric=a0!=null&&a1!=null&&a0-a1>=2;
-  /* MERCATO E GESTIONE = 60% valore creato con le mosse fatte dopo l'asta (scambi, svincolati, rookie) + 40% valore creato tenendo, facendo crescere
-     o cedendo al momento giusto i giocatori presi all'asta (Jokić tenuto due anni a 56 PDK e ceduto al massimo) */
-  const L=PM[t]||[],mv=L.filter(x=>x.da>0),gd=L.filter(x=>x.da===0).reduce((s,x)=>s+x.gain,0),mer=mv.reduce((s,x)=>s+x.gain,0)*.6+gd*.4,tl=L.filter(scoperta),tal=tl.reduce((s,x)=>s+Math.max(0,x.gain)*fPrezzo(x),0);
-  /* i crediti veri passati di mano negli scambi (es. 300 ai Mooses per Barnes) contano un decimo: sono la moneta del salary cap di oggi, non quella del valore dei giocatori */
+  const L=PM[t]||[],mv=L.filter(x=>x.da>0),mvTot=mv.reduce((s,x)=>s+x.gain,0);
+  const ced=L.filter(x=>x.da===0&&x.a!=null).map(x=>({...x,dopo:dopoAltrove(x)})),gd=ced.reduce((s,x)=>s+(x.fin-x.dopo),0);
   const crN=Object.values(window.TT_CR_SCAMBI||{}).flat().reduce((s,z)=>s+(z.a===t?z.cr:z.da===t?-z.cr:0),0);
-  R[t]={t,pos,ris,tr,ric,eta:[a0,a1],mer:mer+crN/10,crN,tal,saldo:mer,tim:0,mvTot:mv.reduce((s,x)=>s+x.gain,0),gd,
-   top:[...mv].sort((a,b)=>b.gain-a.gain).filter(x=>x.gain>=5).slice(0,4),flop:[...mv].filter(x=>{if(x.gain<=-5)return true;const q=x.a==null?stat(x.n,SNOW):null;return q&&q.g>=5&&x.pre&&x.pre.g>=15&&x.pre.p>=25&&x.pre.p-q.p>=6}).sort((a,b)=>a.gain-b.gain).slice(0,3),
+  const tl=mv.filter(scoperta),tal=tl.reduce((s,x)=>s+Math.max(0,x.gain)*fPrezzo(x),0);
+  const giov=!ric&&a0!=null&&a1!=null&&a1<=a0-.5&&pn<=first&&pn<=2;
+  R[t]={t,pos,tit,ris,tr,ric,giov,eta:[a0,a1],mer:mvTot+gd+crN/10,mvTot,gd,ced,crN,tal,saldo:mvTot,tim:0,
+   top:[...mv].sort((a,b)=>b.gain-a.gain).filter(x=>x.gain>=5).slice(0,4),
+   flop:[...mv].filter(x=>{if(x.gain<=-5)return true;const q=x.a==null?stat(x.n,SNOW):null;return q&&q.g>=5&&x.pre&&x.pre.g>=15&&x.pre.p>=25&&x.pre.p-q.p>=6}).sort((a,b)=>a.gain-b.gain).slice(0,3),
    scop:[...tl].filter(x=>x.gain>=5).sort((a,b)=>b.gain*fPrezzo(b)-a.gain*fPrezzo(a)).slice(0,8),
    valOggi:L.filter(x=>x.a==null).reduce((s,x)=>s+x.oggi,0)}}
  const MO=nrm45(Object.fromEntries(T.map(t=>[t,R[t].mer]))),TA=nrm45(Object.fromEntries(T.map(t=>[t,R[t].tal]))),VO=nrm45(Object.fromEntries(T.map(t=>[t,R[t].valOggi]))),AS=astaData().T;
  const rk=k=>[...T].sort((a,b)=>R[b][k]-R[a][k]).forEach((t,i)=>R[t]["rk_"+k]=i+1);rk("mer");rk("tal");rk("valOggi");
  for(const t of T){const o=R[t];o.mo=MO[t];o.ta=TA[t];o.vo=VO[t];o.as=AS[t]?AS[t].vx:6;
-  let v=o.ric?o.ris*.1+o.tr*.1+o.mo*.35+o.ta*.2+o.as*.1+o.vo*.15:o.ris*.3+o.tr*.2+o.mo*.25+o.ta*.1+o.as*.05+o.vo*.1;
-  o.medio=!o.ric&&!o.pos.some(p=>p<=3)&&o.tr<7;if(o.medio)v=Math.min(v,7)-.5;o.v=Math.max(4,Math.min(10,Math.round(v*2)/2))}
+  let v=o.ric?o.ris*.2+o.tr*.15+o.mo*.3+o.ta*.15+o.as*.05+o.vo*.15:o.ris*.3+o.tr*.2+o.mo*.25+o.ta*.1+o.as*.05+o.vo*.1;if(o.giov)v+=.5;
+  o.medio=!o.ric&&!o.pos.some(p=>p<=3)&&o.tr<7;if(o.medio)v=Math.min(v,6.5);o.v=Math.max(4,Math.min(10,Math.round(v*2)/2))}
  GMV={k:D.key,v:R};return R}
 /* (1619) I COLPI DEI GM (richiesta di Imma): per ogni franchigia gli acquisti che hanno reso PIÙ di quanto valevano quando sono arrivati.
    Mossa (scambio o svincolato): PDK della stagione prima dell'arrivo contro PDK medi nelle stagioni passate in squadra (almeno +4, e almeno 18 PDK).
@@ -389,19 +400,20 @@ window.ttGmAll=()=>gmAll(analisiData());window.ttColpi=()=>colpiData(analisiData
 function vGmComp(t,D){const o=gmAll(D)[t];if(!o)return"";const rp=rimpianti(t,D).slice(0,2);
  return`<div class="ttasv">${[["🏆","Risultati",o.ris,o.pos.map(p=>p+"°").join(" → ")],["🧭","Traiettoria",o.tr,""],["🔁","Mercato",o.mo,o.rk_mer+"° su 8"],["🔭","Talenti",o.ta,o.rk_tal+"° su 8"],["🔨","Asta",o.as,""],["💼","Rosa oggi",o.vo,r0(o.valOggi)+" cr"]].map(([ic,l,v,e])=>`<div><small>${ic} ${l}</small><span class="ttvoto xs v${Math.floor(v)}">${vf(Math.round(v*2)/2)}</span><em>${e}</em></div>`).join("")}</div>
  ${o.top.length?`<p class="ttn small">✅ <b>Le mosse migliori</b>: ${o.top.slice(0,3).map(x=>mossaTxt(x,t)).join(" · ")}.</p>`:""}${o.flop.length?`<p class="ttn small">❌ <b>Le peggiori</b>: ${o.flop.map(x=>mossaTxt(x,t)).join(" · ")}.</p>`:""}${rp.length?`<p class="ttn small">💔 <b>Ceduti troppo presto</b>: ${rp.map(x=>rimpTxt(x,t)).join(" · ")}.</p>`:""}
- ${o.medio?`<p class="ttn small">➖ Mai nei primi 3, senza crescere e senza ricostruire: voto frenato.</p>`:""}`}
+ ${o.medio?`<p class="ttn small">➖ Mai nei primi 3, senza crescere e senza ricostruire: voto frenato.</p>`:""}${o.giov?`<p class="ttn small">🌱 Vince e intanto ringiovanisce: età media dei 10 migliori da ${f1(o.eta[0])} a ${f1(o.eta[1])} anni (+0,5).</p>`:""}${o.tit?`<p class="ttn small">🏆 ${o.tit} ${o.tit===1?"titolo":"titoli"} vinti.</p>`:""}`}
 let ASTA=null;
+/* valore «col senno di poi» di un giocatore dal draft a oggi: PDK sopra il rimpiazzo prodotti in ogni stagione (con chiunque) + quanto vale oggi */
+function valoreVero(n){let v=0;for(let y=1;y<=SNOW;y++)v+=resa(n,y);return(v+valore(n,SNOW,true,null))*kCred()}
 function astaData(){const D=analisiData(),key=D.key+"|"+JSON.stringify(Object.keys(TT_DRAFT).map(t=>TT_DRAFT[t].length));if(ASTA&&ASTA.key===key)return ASTA;
- /* (1623) PAGELLA DELL'ASTA sul valore vero: per ogni giocatore preso all'asta, «VALEVA» = quanto ha dato alla squadra che lo ha comprato,
-    in crediti: PDK sopra il rimpiazzo prodotti finché è rimasto (stagione per stagione) + il suo valore quando è stato ceduto (o quello di oggi se c'è ancora).
-    Chi lo ha ceduto subito incassa solo il valore di allora (Amen Thompson: 1 credito ai Dolphins, ceduto prima di esplodere; il merito della crescita è dei Ducks).
-    Voto: 40% forza della rosa del draft con i PDK veri del 24/25 (la squadra costruita all'asta), 40% valore ricavato contro crediti spesi, 20% piazzamento del 1° anno. */
- const PM=permanenze(D),K=kCred(),SS=[];for(let y=1;y<=SNOW;y++)SS.push({lab:YL(y)+(y===SNOW?" (in corso)":""),y});
- const P=[];for(const t in TT_DRAFT)for(const[n,r,c]of TT_DRAFT[t]){const st=(PM[t]||[]).find(x=>x.da===0&&tvNm(x.n)===tvNm(n));
-  const per=SS.map(s=>({lab:s.lab,u:st&&s.y>=1&&(st.a==null||s.y<st.a||(st.a===1&&s.y===1))?resa(n,s.y)*K*(st.a===1&&s.y===1?.35:1):0}));
-  P.push({t,n,r,c,fair:st?st.ret:0,gain:c!=null&&st?st.ret-c:null,st,per,via:st&&st.a!=null?st.a:null})}
+ /* (1624) PAGELLA DELL'ASTA = solo il lavoro fatto all'asta. Per ogni giocatore preso: «VALEVA» = il suo valore vero col senno di poi
+    (PDK sopra il rimpiazzo prodotti in ogni stagione dal 24/25 a oggi, con chiunque abbia giocato, + quanto vale oggi), in crediti.
+    Non conta se la squadra lo ha ancora: cederlo bene o male è MERCATO, non asta (Amen Thompson a 1 credito è un affare d'asta dei Dolphins;
+    averlo ceduto subito per poco è un errore di mercato dei Dolphins). Voto: 80% valore ricavato contro crediti spesi, 20% forza della rosa costruita (PDK veri del 24/25). */
+ const K=kCred(),SS=[];for(let y=1;y<=SNOW;y++)SS.push({lab:YL(y)+(y===SNOW?" (in corso)":""),y});
+ const PM=permanenze(D),P=[];for(const t in TT_DRAFT)for(const[n,r,c]of TT_DRAFT[t]){const st=(PM[t]||[]).find(x=>x.da===0&&tvNm(x.n)===tvNm(n)),fair=valoreVero(n);
+  P.push({t,n,r,c,fair,gain:c!=null?fair-c:null,st,per:SS.map(s=>({lab:s.lab,u:resa(n,s.y)*K})),via:st&&st.a!=null?st.a:null})}
  const preso=new Set(P.map(x=>tvNm(x.n))),V=svData(),nomi={};for(let y=1;y<=SNOW;y++){const S=V.S[y]||{};for(const k in S)if(!preso.has(k))nomi[k]=S[k].n||nomi[k]||k}
- const dim=Object.keys(nomi).map(k=>{let v=0;for(let y=1;y<=SNOW;y++)v+=resa(nomi[k],y);return{n:nomi[k],fair:(v+valore(nomi[k],SNOW,true,null))*K}}).filter(x=>x.fair>=30).sort((a,b)=>b.fair-a.fair);
+ const dim=Object.keys(nomi).map(k=>({n:nomi[k],fair:valoreVero(nomi[k])})).filter(x=>x.fair>=30).sort((a,b)=>b.fair-a.fair);
  const nmOf=k=>{for(const t in ROSTER){const p=(ROSTER[t]||[]).find(z=>tvNm(z[0])===k);if(p)return p[0]}return null};dim.forEach(x=>{const r=nmOf(tvNm(x.n));if(r)x.n=r});
  const T={};for(const t of Object.keys(TEAMS)){const L=P.filter(x=>x.t===t);if(!L.length)continue;const KK=L.filter(x=>x.c!=null);
   const spent=KK.reduce((s,x)=>s+x.c,0),got=KK.reduce((s,x)=>s+x.fair,0),gain=got-spent;
@@ -412,12 +424,12 @@ function astaData(){const D=analisiData(),key=D.key+"|"+JSON.stringify(Object.ke
  const sc=(k,inv)=>{const L=Object.values(T),xs=L.map(o=>inv?-o.x[k]:o.x[k]),mn=Math.min(...xs),mx=Math.max(...xs);L.forEach((o,i)=>{o.v=o.v||{};o.v[k]=Math.round((4.5+(mx>mn?(xs[i]-mn)/(mx-mn):.5)*5)*2)/2});[...L].sort((a,b)=>(inv?a.x[k]-b.x[k]:b.x[k]-a.x[k])).forEach((o,i)=>{o.rk=o.rk||{};o.rk[k]=i+1})};
  sc("tot");sc("gems");sc("stars");sc("spreco",true);
  const mmv=f=>{const L=Object.values(T),xs=L.map(f),mn=Math.min(...xs),mx=Math.max(...xs);return L.map((o,i)=>4.5+(mx>mn?(xs[i]-mn)/(mx-mn):.5)*5)};
- {const L=Object.values(T),fz=mmv(o=>o.fz),gn=mmv(o=>o.gain);L.forEach((o,i)=>{const p=posFin(o.t,1);o.p1=p;o.vx=fz[i]*.4+gn[i]*.4+(p?GM2_PT[p-1]:6)*.2;o.voto=Math.round(o.vx*2)/2})}
+ {const L=Object.values(T),fz=mmv(o=>o.fz),gn=mmv(o=>o.gain);L.forEach((o,i)=>{o.vx=gn[i]*.8+fz[i]*.2;o.voto=Math.round(o.vx*2)/2})}
  [...Object.values(T)].sort((a,b)=>b.vx-a.vx).forEach((o,i)=>o.pos=i+1);
  return ASTA={key,SS,P,T,dim}}
 const cr=v=>`${v>=0?"+":""}${Math.round(v)}`;
 function astaGiudizio(o){const g=o.gems[0],s=[...o.stars].sort((a,b)=>b.gain-a.gain)[0],f=o.flops[0],P=[];
- P.push(`Ha speso <b>${o.spent}</b> crediti; i giocatori dell'asta gli hanno dato <b>${Math.round(o.got)}</b> (PDK prodotti finché sono rimasti + valore alla cessione o di oggi): ${o.gain>=0?`<b class="up">${cr(o.gain)}</b> di valore creato`:`<b class="dn">${cr(o.gain)}</b>, ha pagato più di quanto ha avuto`}.`);
+ P.push(`Ha speso <b>${o.spent}</b> crediti per giocatori che, visto come sono andati (PDK prodotti dal 24/25 a oggi + quanto valgono oggi), ne valgono <b>${Math.round(o.got)}</b>: ${o.gain>=0?`<b class="up">${cr(o.gain)}</b> di valore creato`:`<b class="dn">${cr(o.gain)}</b>, ha pagato più di quanto ha avuto`}.`);
  if(s)P.push(s.gain>=0?`La stella giusta: <b>${E(s.n)}</b>, pagato ${s.c} e valso ${Math.round(s.fair)}${s.gain>=30?" — anche a quella cifra conveniva prenderlo":""}.`:`La stella pagata cara: <b>${E(s.n)}</b>, ${s.c} crediti per un valore di ${Math.round(s.fair)}.`);
  if(g)P.push(`Il talento nascosto: <b>${E(g.n)}</b> a ${g.c} ${g.c===1?"credito":"crediti"}, valso ${Math.round(g.fair)}.${o.gems.length>1?` Altri affari: ${o.gems.slice(1,4).map(x=>`<b>${E(x.n)}</b> ${x.c}→${Math.round(x.fair)}`).join(", ")}.`:""}`);
  if(f)P.push(`Lo spreco: <b>${E(f.n)}</b>, ${f.c} crediti per un valore di ${Math.round(f.fair)}.`);
@@ -425,7 +437,7 @@ function astaGiudizio(o){const g=o.gems[0],s=[...o.stars].sort((a,b)=>b.gain-a.g
 function vAstaTeam(t,full){const A=astaData(),o=A.T[t];if(!o)return"";
  return`<div class="ttasta"><div class="ttpagh"><span class="ttvoto v${Math.floor(o.voto)}">${vf(o.voto)}</span><span><small>Pagella dell'asta · draft iniziale</small><b>${o.pos}° su 8 · ${o.gain>=0?"+":""}${Math.round(o.gain)} crediti di valore</b><em>${astaGiudizio(o).join(" ")}</em></span></div>
  <div class="ttasv">${[["tot","💰","Valore creato"],["gems","💎","Talenti nascosti"],["stars","⭐","Big pagati bene"],["spreco","🗑️","Zero sprechi"]].map(([k,ic,l])=>`<div><small>${ic} ${l}</small><span class="ttvoto xs v${Math.floor(o.v[k])}">${vf(o.v[k])}</span><em>${o.rk[k]}° su 8</em></div>`).join("")}</div>
- <div class="ttasy">${o.per.map(p=>`<span><small>${p.lab}</small><b>${Math.round(p.u)}</b></span>`).join("")}<em>Valore in crediti prodotto dalla rosa dell'asta, anno per anno</em></div>
+ <div class="ttasy">${o.per.map(p=>`<span><small>${p.lab}</small><b>${Math.round(p.u)}</b></span>`).join("")}<em>Valore in crediti prodotto, anno per anno, dai giocatori presi all'asta (con qualunque squadra)</em></div>
  ${full?`<div class="ttasl"><div class="ttash"><span>Giocatore</span><span>Pagato</span><span>Valeva</span><span>±</span></div>${o.L.map(x=>`<div class="ttasr"><span><i>${x.r==="F"?"A":x.r}</i><b>${E(x.n)}${x.via!=null?` <small>ceduto ${x.via===SNOW?"quest'anno":"nel "+YL(x.via)}</small>`:""}</b></span><span>${x.c??"?"}</span><span>${Math.round(x.fair)}</span><span class="${x.gain==null?"":x.gain>=0?"up":"dn"}">${x.gain==null?"—":cr(x.gain)}</span></div>`).join("")}</div>`:""}
  </div>`}
 /* (1218) I ROOKIE DI QUEST'ANNO: chi li ha scoperti meglio, pesando il prezzo pagato (vale anche per i draft futuri: si legge dalle rose di ogni stagione) */
@@ -441,7 +453,7 @@ function vRookie(){const L=[];let mxg=0;const M=med();for(const k in M)mxg=Math.
 function vAstaLega(){const A=astaData(),L=Object.values(A.T).sort((a,b)=>a.pos-b.pos);if(!L.length)return"";
  const all=A.P.filter(x=>x.gain!=null),best=[...all].sort((a,b)=>b.gain-a.gain)[0],worst=[...all].sort((a,b)=>a.gain-b.gain)[0],steal=[...all].filter(x=>x.c<=3).sort((a,b)=>b.fair-a.fair)[0];
  const card=(ic,ti,body)=>`<div class="ttcard"><small>${ic} ${ti}</small>${body}</div>`;
- return`<div class="tth">🔨 La pagella dell'asta</div><p class="ttn small">L'asta del draft iniziale (8 squadre, 300 crediti, base 1). Per ogni giocatore «valeva» = quello che ha dato alla squadra che lo ha comprato: PDK sopra il rimpiazzo prodotti finché è rimasto, stagione per stagione, più il suo valore quando è stato ceduto (o oggi). Chi ha ceduto subito un affare si prende solo il valore di allora. Voto: 40% forza della rosa costruita (PDK veri del 24/25), 40% valore ricavato contro crediti spesi, 20% piazzamento del 1° anno.</p>
+ return`<div class="tth">🔨 La pagella dell'asta</div><p class="ttn small">Solo il lavoro fatto all'asta del draft iniziale (8 squadre, 300 crediti, base 1). Per ogni giocatore preso, «valeva» = il suo valore vero col senno di poi: PDK sopra il rimpiazzo prodotti in ogni stagione dal 24/25 a oggi, con qualunque squadra, più quanto vale oggi. Non conta se la squadra lo ha ancora: averlo ceduto bene o male si giudica nel mercato. Voto: 80% valore ricavato contro crediti spesi, 20% forza della rosa costruita all'asta (PDK veri del 24/25).</p>
  <div class="ttcards">${best?card("💰","Il miglior acquisto",`<b>${lg(best.t)} ${E(best.n)}</b><em>${best.c} cr → valeva ${Math.round(best.fair)} (${cr(best.gain)})</em>`):""}${steal?card("💎","Il furto",`<b>${lg(steal.t)} ${E(steal.n)}</b><em>${steal.c} cr → valeva ${Math.round(steal.fair)}</em>`):""}
  ${worst?card("🗑️","Il più strapagato",`<b>${lg(worst.t)} ${E(worst.n)}</b><em>${worst.c} cr → valeva ${Math.round(worst.fair)} (${cr(worst.gain)})</em>`):""}${A.dim[0]?card("👻","Il dimenticato",`<b>${E(A.dim[0].n)}</b><em>nessuno lo ha preso · valeva ${Math.round(A.dim[0].fair)} cr</em>`):""}</div>
  <div class="ttpr">${L.map(o=>`<details class="ttasd"><summary class="ttprr gm"><b>${o.pos}</b>${lg(o.t)}<span>${TEAMS[o.t].nick}<small>speso ${o.spent} · 1° anno ${Math.round(o.got)} (${cr(o.gain)}) · poi ${Math.round(o.dopo||0)} PDK</small></span><span class="ttvoto sm v${Math.floor(o.voto)}">${vf(o.voto)}</span></summary>${vAstaTeam(o.t,true)}</details>`).join("")}</div>
