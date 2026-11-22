@@ -28,9 +28,9 @@ if(!Object.keys(TT_ROSE[1]).length)TT_ROSE[1]={"MOO":[["Tyrese Haliburton","G"],
    e, a regular season finita, calendario e PDK di ogni turno, così una stagione passata si può rigiocare «a ritroso» con qualsiasi rosa. */
 const SNOW=(()=>{try{const m=String(STAGIONE_CORRENTE).match(/(\d\d)/);return m?+m[1]-23:3}catch(e){return 3}})();
 const ARCH=window.TT_ARCH||{};
-const YL=y=>+y===SNOW?"Oggi":`${+y+23}/${+y+24}`,YLs=y=>+y===SNOW?"oggi":YL(y),SLAB=y=>`20${+y+23}/${+y+24}`;
-const rosList=(t,y)=>{y=+y;if(y===SNOW)return(ROSTER[t]||[]).map(x=>[x[0],x[2]]);return(TT_ROSE[y]&&TT_ROSE[y][t])||(ARCH[y]&&ARCH[y].rose&&ARCH[y].rose[t])||null};
-const YS=()=>{const L=[];for(let y=1;y<=SNOW;y++){if(y===SNOW||Object.keys(TT_ROSE[y]||(ARCH[y]&&ARCH[y].rose)||{}).length)L.push(y)}return L};
+const YL=y=>+y===SNOW?"Oggi":+y===0?"Draft":`${+y+23}/${+y+24}`,YLs=y=>+y===SNOW?"oggi":+y===0?"draft":YL(y),SLAB=y=>`20${+y+23}/${+y+24}`;
+const rosList=(t,y)=>{y=+y;if(y===SNOW)return(ROSTER[t]||[]).map(x=>[x[0],x[2]]);if(y===0)return TT_DRAFT[t]?TT_DRAFT[t].map(x=>[x[0],x[1]]):null;return(TT_ROSE[y]&&TT_ROSE[y][t])||(ARCH[y]&&ARCH[y].rose&&ARCH[y].rose[t])||null};
+const YS=()=>{const L=[];if(Object.keys(window.TT_DRAFT||{}).length)L.push(0);for(let y=1;y<=SNOW;y++){if(y===SNOW||Object.keys(TT_ROSE[y]||(ARCH[y]&&ARCH[y].rose)||{}).length)L.push(y)}return L};
 const CAMPI=()=>[SNOW,...Object.keys(ARCH).map(Number).filter(y=>y<SNOW&&ARCH[y].acc&&ARCH[y].turni&&ARCH[y].turni.length).sort((a,b)=>b-a)];
 const live=()=>!TT.camp||TT.camp===SNOW,DEFY=()=>live()?SNOW:TT.camp,CA=()=>ARCH[TT.camp]||{},OFF=()=>live()?DR_OFF:(CA().off||0);
 const E=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -60,7 +60,7 @@ function score(k,R){if(R&&R.real&&F8()){const F=drForm(k)[R.real]||{t:[],r:[]};R
  const played=top.filter(x=>x.e!=null).length;return{top,score:top.reduce((s,x)=>s+x.f,0),played,closed:W.closed,started:W.started}}
 const turni=()=>{if(!live())return(CA().turni||[]).slice();const L=[];for(let k=1;k<=DR_REG;k++){const W=drWeek(k);if(W.closed||W.started)L.push(k)}return L};
 /* --- LEGA: 8 franchigie, calendario vero --- */
-function lega(){const T=Object.keys(TEAMS),y=t=>TT.sel[t]||DEFY(),S={};T.forEach(t=>S[t]={t,y:y(t),w:0,l:0,pf:0,pa:0,res:[]});
+function lega(){const T=Object.keys(TEAMS),y=t=>(TT.sel[t]??DEFY()),S={};T.forEach(t=>S[t]={t,y:y(t),w:0,l:0,pf:0,pa:0,res:[]});
  for(const k of turni()){const pairs=(live()?DR_SCHED:(CA().sched||[]))[k-1]||[];for(const[a,b]of pairs){const A=score(k,rosa(a,y(a))),B=score(k,rosa(b,y(b)));if(!A||!B)continue;const W=acc(k).W;
   S[a].pf+=A.score;S[a].pa+=B.score;S[b].pf+=B.score;S[b].pa+=A.score;if(W.closed){if(A.score>=B.score){S[a].w++;S[b].l++}else{S[b].w++;S[a].l++}}S[a].res.push({k,o:b,me:A.score,vs:B.score,fin:W.closed});S[b].res.push({k,o:a,me:B.score,vs:A.score,fin:W.closed})}}
  /* parte dalla stessa base di Dreamers (giornate 1-2 Dunkest) */try{const BA=live()?DR_BASE:(CA().base||{});for(const t of T){const b=BA[t];if(b&&S[t].y===SNOW&&live()&&!F8()){S[t].w+=b.w;S[t].l+=b.l;S[t].pf+=b.pf;S[t].pa+=b.pa}else if(b){S[t].w+=b.w;S[t].l+=b.l}}}catch(e){}
@@ -69,7 +69,7 @@ function somma(){return TT.entries.map(([t,y],i)=>{let tot=0,n=0;const res=[];fo
 const reale=()=>{if(!live())return CA().reale||[];try{return drStand().map(x=>x.t)}catch(e){return[]}};
 /* --- grafica --- */
 const lg=t=>`<span class="ttlg">${badge(t)}</span>`;
-function yearChips(t){return`<span class="ttyc">${YS().map(y=>`<button data-tt="y|${t}|${y}" aria-pressed="${(TT.sel[t]||DEFY())===y}"${has(t,y)?"":" disabled"}>${YL(y)}</button>`).join("")}</span>`}
+function yearChips(t){return`<span class="ttyc">${YS().map(y=>`<button data-tt="y|${t}|${y}" aria-pressed="${((TT.sel[t]??DEFY()))===y}"${has(t,y)?"":" disabled"}>${YL(y)}</button>`).join("")}</span>`}
 function campoSel(){const C=CAMPI();if(C.length<2)return"";return`<div class="ttcamp"><small>Stagione giocata</small>${C.map(y=>`<button data-tt="camp|${y}" aria-pressed="${(TT.camp||SNOW)===y}">${SLAB(y)}${y===SNOW?" · in corso":""}</button>`).join("")}</div>`}
 function vLega(){const L=lega(),R=reale();
  return`${F8()?`<p class="ttn"><b>Lega a 8:</b> come Dreamers ma contano solo <b>8 giocatori</b> (3 guardie, 3 ali, 2 centri): i primi 6 pieni con il capitano ×1,5, il 7° e l’8° a metà. La tribuna diventa di almeno 5: chi oggi non gioca più pesa molto meno, come se la squadra lo avesse sostituito. Anche le squadre di oggi sono simulate a 8.</p>`:""}${campoSel()}<p class="ttn">Scegli per ogni franchigia con quale rosa gioca. Il calendario e i PDK sono quelli veri della stagione ${SLAB(TT.camp||SNOW)}${live()?" (in corso)":""}, dal 1° turno.</p>
@@ -81,17 +81,17 @@ function vLega(){const L=lega(),R=reale();
 /* (1213) rose consultabili: dalla scheda squadra si vedono le rose di tutti e tre gli anni, con PDK medi e partite di questa stagione */
 let MED=null;function med(){if(MED&&MED.n===Object.keys(TV.box).length)return MED.m;const m={};for(const id in TV.box){const B=TV.box[id];for(const sd of["a","h"])for(const r of B[sd]||[]){if(String(r[2]||"0")==="0:00")continue;const x=tvNm(r[0]);(m[x]=m[x]||{s:0,g:0});m[x].s+=+r[19]||0;m[x].g++}}MED={n:Object.keys(TV.box).length,m};return m}
 function roseOf(t,y){return rosList(t,y)||[]}
-function vRosa(t,y0){const y=TT.rv&&TT.rv[t]||y0,R=roseOf(t,y),M=med(),RN={G:"Guardie",F:"Ali",C:"Centri"};
+function vRosa(t,y0){const y=TT.rv&&TT.rv[t]!=null?TT.rv[t]:y0,R=roseOf(t,y),M=med(),RN={G:"Guardie",F:"Ali",C:"Centri"};
  const grp=r=>{const L=R.map(([n,q])=>({n,r:q==="A"?"F":q,m:M[tvNm(n)]})).filter(x=>x.r===r).sort((a,b)=>(b.m?b.m.s/b.m.g:-1)-(a.m?a.m.s/a.m.g:-1));
   return L.length?`<div class="ttrg"><h6>${RN[r]}</h6>${L.map(x=>`<div class="ttrp${x.m?"":" no"}"><i>${r==="F"?"A":r}</i><b>${E(x.n)}</b><em>${x.m?f1(x.m.s/x.m.g):"—"}<small>${x.m?x.m.g+" p":"non gioca"}</small></em></div>`).join("")}</div>`:""};
  return`<div class="tth">Rosa ${TEAMS[t].nick}</div><div class="ttry">${YS().map(k=>`<button data-tt="rv|${t}|${k}" aria-pressed="${+y===k}">${YL(k)}</button>`).join("")}</div>
  ${R.length?`<div class="ttros">${grp("G")}${grp("F")}${grp("C")}</div><p class="ttn small">PDK medi e partite di questa stagione. «Non gioca» = nessuna partita quest'anno: nella Macchina del tempo conta 0.</p>`:`<p class="ttn small">Rosa non caricata.</p>`}`}
-function vTeamRes(x){if(!x)return"";return`${vRosa(x.t,x.y)}<div class="tth">${tag(x.t,x.y)} · turno per turno</div><div class="ttres">${x.res.map(r=>`<button class="ttm ${r.fin?(r.me>=r.vs?"w":"l"):"lv"}" data-tt="duel|${r.k}|${x.t}|${x.y}|${r.o}|${TT.sel[r.o]||DEFY()}"><span>T${r.k+OFF()}</span>${lg(r.o)}<b>${f1(r.me)}–${f1(r.vs)}</b><em>${r.fin?(r.me>=r.vs?"V":"P"):"live"}</em></button>`).join("")}</div>`}
+function vTeamRes(x){if(!x)return"";return`${vRosa(x.t,x.y)}<div class="tth">${tag(x.t,x.y)} · turno per turno</div><div class="ttres">${x.res.map(r=>`<button class="ttm ${r.fin?(r.me>=r.vs?"w":"l"):"lv"}" data-tt="duel|${r.k}|${x.t}|${x.y}|${r.o}|${(TT.sel[r.o]??DEFY())}"><span>T${r.k+OFF()}</span>${lg(r.o)}<b>${f1(r.me)}–${f1(r.vs)}</b><em>${r.fin?(r.me>=r.vs?"V":"P"):"live"}</em></button>`).join("")}</div>`}
 /* ---------- (1215) ANALISI · la rubrica della Macchina del tempo: come sono cambiate le franchigie tra 24/25, 25/26 e oggi.
    Metro unico per tutti gli anni = i PDK veri di QUESTA stagione (stessa misura per tutte le rose). ---------- */
 const YN=new Proxy({},{get:(o,y)=>YLs(y)});
 let NAS=null;const nasc=n=>{if(!NAS){NAS={};try{for(const k in NASCITA)NAS[tvNm(k)]=NASCITA[k]}catch(e){}}return NAS[tvNm(n)]||null};
-const etaY=(n,y)=>{const d=nasc(n);if(!d)return null;return(Date.now()-new Date(d+"T00:00:00Z"))/(365.25*864e5)-(SNOW-y)};
+const etaY=(n,y)=>{const d=nasc(n);if(!d)return null;return(Date.now()-new Date(d+"T00:00:00Z"))/(365.25*864e5)-(SNOW-(+y||.6))};/* il draft è dell'estate 2024, pochi mesi prima del 24/25 */
 const pmed=n=>{const m=med()[tvNm(n)];return m?{v:m.s/m.g,g:m.g}:null};
 const dove=n=>{const x=tvNm(n);for(const t in ROSTER)if((ROSTER[t]||[]).some(p=>tvNm(p[0])===x))return t;return null};
 const vo=t=>/^[AEIOU]/.test(TEAMS[t].nick),ART=(p,t)=>({i:vo(t)?"gli":"i",ai:vo(t)?"agli":"ai",dai:vo(t)?"dagli":"dai",con:vo(t)?"con gli":"con i"})[p]+" "+TEAMS[t].nick;
@@ -142,7 +142,7 @@ function pagella(t,D){const A=D.F[t],Y=D.Y.filter(y=>A[y]),a=A[Y[0]],c=A[SNOW];i
   :stay<=3?(d>=3?["🌪️","Rivoluzione riuscita","ha rifatto quasi tutto, e ha funzionato"]:["🌪️","Rivoluzione","ha rifatto quasi tutto, ma i conti ancora non tornano"])
   :d>=3?["📈","Crescita costante","ha fatto mosse mirate e la squadra è più forte"]:d<=-3?["📉","Passo indietro","ha fatto mosse che non hanno pagato"]:["⚖️","Equilibrio","ha cambiato tanto, ma la forza è rimasta quasi la stessa"];
  return{t,v,dir,es,d,de,p1,p3,fy:Y[0]}}
-function vEstate(e,t,i){if(!e)return"";const nm=`${i+1}ª estate · ${YLs(e.a)} → ${YLs(e.b)}`,w=e.lost?dove(e.lost.n):null;
+function vEstate(e,t,i){if(!e)return"";const nm=e.a===0?`Primi mesi · draft → ${YLs(e.b)}`:`${YS()[0]===0?i:i+1}ª estate · ${YLs(e.a)} → ${YLs(e.b)}`,w=e.lost?dove(e.lost.n):null;
  const pv=x=>x.p?` <small>${f1(x.p.v)}</small>`:` <small>0</small>`;
  const chips=(L,c)=>L.length?L.slice(0,6).map(x=>`<span class="ttmv ${c}">${c==="in"?"＋":"－"} ${E(x.n)}${pv(x)}</span>`).join("")+(L.length>6?`<span class="ttmv">+${L.length-6}</span>`:""):`<span class="ttmv">nessuno</span>`;
  const fr=[];if(e.best)fr.push(`La mossa migliore: <b>${E(e.best.n)}</b> (${f1(e.best.p?e.best.p.v:0)} PDK oggi).`);
@@ -151,9 +151,50 @@ function vEstate(e,t,i){if(!e)return"";const nm=`${i+1}ª estate · ${YLs(e.a)} 
  return`<div class="ttest"><div class="ttesth"><b>${nm}</b><span class="${e.df>=0?"up":"dn"}">${pc(e.df)}</span></div>
  <div class="ttmvs">${chips(e.in,"in")}</div><div class="ttmvs">${chips(e.out,"out")}</div>
  <p>Saldo di mercato (PDK di chi entra ed esce dai 10 migliori): <b class="${e.saldo>=0?"up":"dn"}">${e.saldo>=0?"+":""}${f1(e.saldo)}</b>. ${fr.join(" ")}</p></div>`}
+/* (1217) PAGELLE PER CATEGORIA: asta (draft iniziale), scambi, scopritore di talenti, progetto. Metro = PDK veri di questa stagione;
+   voto da 4,5 a 9,5 in proporzione tra la peggiore e la migliore delle 8. Si ricalcolano da sole con trade, turni e stagioni nuove. */
+const CATS=[["asta","🔨","Asta"],["scambi","🔁","Scambi"],["talenti","🔭","Scopritore di talenti"],["progetto","🛡️","Progetto"]];
+let CATC=null;
+function categorie(D){if(CATC&&CATC.k===D.key)return CATC.v;const T=D.T,pv=n=>{const p=pmed(n);return p?p.v:0},R={};
+ for(const t of T){const o={t,det:{}};
+  /* ASTA: forza della rosa del draft sui PDK di oggi (60%) + affari (giocatori pagati ≤5 cr che oggi fanno ≥25 PDK) (40%) */
+  const DR=(TT_DRAFT[t]||[]).map(([n,r,c])=>({n,c,p:pv(n)}));
+  if(DR.length&&D.F[t][0]){const aff=DR.filter(x=>x.c!=null&&x.c<=5&&x.p>=25).sort((a,b)=>b.p-a.p),spe=DR.filter(x=>x.c!=null).reduce((s,x)=>s+x.c,0);
+   const flop=DR.filter(x=>x.c!=null&&x.c>=20).sort((a,b)=>(a.p/a.c)-(b.p/b.c))[0],top=DR.filter(x=>x.c!=null&&x.p>0).sort((a,b)=>(b.p-(b.c||0)*.25)-(a.p-(a.c||0)*.25))[0];
+   o.asta={x:D.F[t][0].f*.6+aff.reduce((s,y)=>s+(y.p-20),0)*1.2,det:{f:D.F[t][0].f,aff,spe,flop,top}}}
+  /* SCAMBI: somma dei saldi di tutte le finestre di mercato (chi entra nei 10 migliori meno chi ne esce, PDK di oggi) */
+  const Y=D.Y.filter(y=>D.F[t][y]),es=Y.slice(1).map((y,i)=>estate(t,D,Y[i],y)).filter(Boolean);
+  const bestIn=es.flatMap(e=>e.inn).sort((a,b)=>pv(b.n)-pv(a.n))[0],worstOut=es.flatMap(e=>e.out10.map(x=>({...x,w:dove(x.n)}))).filter(x=>x.w!==t).sort((a,b)=>pv(b.n)-pv(a.n))[0];
+  o.scambi={x:es.reduce((s,e)=>s+e.saldo,0),det:{n:es.length,bestIn,worstOut}};
+  /* TALENTI: chi è stato preso giovane (≤23 anni) o quasi gratis all'asta (≤5 cr) e oggi fa ≥25 PDK, ovunque giochi adesso */
+  const seen=new Set(),hits=[];Y.forEach((y,i)=>{for(const[n]of roseOf(t,y)){const k=tvNm(n);if(seen.has(k))continue;seen.add(k);const p=pv(n),e=etaY(n,y),c=y===0?((TT_DRAFT[t]||[]).find(z=>tvNm(z[0])===k)||[])[2]:null;
+    if(p>=25&&((e!=null&&e<=23.5)||(c!=null&&c<=5)))hits.push({n,y,e,c,p,qui:(ROSTER[t]||[]).some(z=>tvNm(z[0])===k)})}});
+  hits.sort((a,b)=>b.p-a.p);o.talenti={x:hits.reduce((s,h)=>s+(h.p-20),0),det:{hits}};
+  /* PROGETTO: quota dei PDK dei 10 migliori di oggi che arriva da giocatori in squadra da almeno 2 stagioni */
+  const now=D.F[t][SNOW];if(now&&Y.length>=3){const prev=Y.slice(-3,-1).map(y=>new Set(roseOf(t,y).map(z=>tvNm(z[0]))));const core=now.top.filter(x=>prev.every(S=>S.has(tvNm(x.n))));
+   const tot=now.top.reduce((s,x)=>s+x.p.v,0);o.progetto={x:tot?core.reduce((s,x)=>s+x.p.v,0)/tot*100:0,det:{core,da:YL(Y[Y.length-3])}}}
+  R[t]=o}
+ for(const[k]of CATS){const L=T.filter(t=>R[t][k]);if(!L.length)continue;const xs=L.map(t=>R[t][k].x),mn=Math.min(...xs),mx=Math.max(...xs);
+  [...L].sort((a,b)=>R[b][k].x-R[a][k].x).forEach((t,i)=>{const c=R[t][k];c.rk=i+1;c.v=Math.round((4.5+(mx>mn?(c.x-mn)/(mx-mn):.5)*5)*2)/2})}
+ CATC={k:D.key,v:R};return R}
+const vf=v=>String(v).replace(".",",");
+function catTxt(k,c,t){const d=c.det;if(k==="asta")return`${f1(d.f)} PDK a turno con la rosa del draft (${d.spe} crediti spesi).${d.aff.length?` Affari: ${d.aff.slice(0,3).map(x=>`<b>${E(x.n)}</b> ${x.c} cr → ${f1(x.p)}`).join(", ")}.`:""}${d.flop&&(d.flop.p<20||d.flop.p<d.flop.c*.35)?` Il più pagato a vuoto: <b>${E(d.flop.n)}</b> ${d.flop.c} cr → ${f1(d.flop.p)}.`:""}`;
+ if(k==="scambi")return`Saldo di ${d.n} finestre di mercato: <b>${c.x>=0?"+":""}${f1(c.x)}</b>.${d.bestIn?` Il colpo: <b>${E(d.bestIn.n)}</b>.`:""}${d.worstOut?` Il rimpianto: <b>${E(d.worstOut.n)}</b>${d.worstOut.w?`, oggi ${ART("ai",d.worstOut.w)}`:""}.`:""}`;
+ if(k==="talenti")return d.hits.length?`Presi giovani o quasi gratis e oggi da almeno 25 PDK: ${d.hits.slice(0,4).map(h=>`<b>${E(h.n)}</b> (${h.y===0?`draft${h.c!=null?" "+h.c+" cr":""}`:h.y===SNOW?"preso quest'anno":`preso nel ${YL(h.y)}`}${h.e!=null?`, ${Math.floor(h.e)} anni`:""} → ${f1(h.p)}${h.qui?"":", ceduto"})`).join(", ")}.`:"Nessun talento scoperto finora.";
+ if(k==="progetto")return`${Math.round(c.x)}% dei PDK dei 10 migliori di oggi arriva da chi è in squadra almeno dal ${d.da}${d.core.length?`: ${d.core.slice(0,4).map(x=>`<b>${E(x.n)}</b>`).join(", ")}`:""}.`;return""}
+function vCatPag(t,D){const C=categorie(D)[t];if(!C)return"";return`<div class="ttcats">${CATS.filter(([k])=>C[k]).map(([k,ic,l])=>`<div class="ttcat"><span class="ttvoto sm v${Math.floor(C[k].v)}">${vf(C[k].v)}</span><span><b>${ic} ${l}</b><small>${C[k].rk}° su 8</small><em>${catTxt(k,C[k],t)}</em></span></div>`).join("")}</div>`}
+function vCatClass(D){const C=categorie(D);return`<div class="tth">Le classifiche per categoria</div><p class="ttn small">Asta = rosa del draft iniziale e affari a pochi crediti · Scambi = saldo di tutte le finestre di mercato · Talenti = presi giovani o quasi gratis e oggi forti · Progetto = quanto della squadra di oggi è cresciuto in casa.</p>
+ <div class="ttcatg">${CATS.map(([k,ic,l])=>{const L=D.T.filter(t=>C[t][k]).sort((a,b)=>C[a][k].rk-C[b][k].rk);return L.length?`<div class="ttcatb"><h6>${ic} ${l}</h6>${L.map(t=>`<div class="ttcr2">${lg(t)}<span>${TEAMS[t].nick}</span><span class="ttvoto xs v${Math.floor(C[t][k].v)}">${vf(C[t][k].v)}</span></div>`).join("")}</div>`:""}).join("")}</div>${shBtn("cat","Condividi le categorie")}`}
+async function shareCat(btn){const D=analisiData(),C=categorie(D);try{await document.fonts.load('800 italic 40px "Barlow Condensed"')}catch(e){}
+ const H=300+2*(8*66+90)+120,{cv,X}=ttCanvas(H);ttTop(X,"I GM per categoria",`Asta, scambi, talenti e progetto dal draft a oggi · PDK veri di questa stagione`);
+ for(let i=0;i<4;i++){const[k,ic,l]=CATS[i],x0=40+(i%2)*510,y0=300+Math.floor(i/2)*(8*66+90);X.fillStyle="rgba(255,255,255,.07)";shRR(X,x0,y0,490,8*66+70,22);X.fill();
+  X.fillStyle="#fff";X.textAlign="left";X.font=CF(800,40);X.fillText(`${ic} ${l.toUpperCase()}`,x0+24,y0+50);
+  const L=D.T.filter(t=>C[t][k]).sort((a,b)=>C[a][k].rk-C[b][k].rk);for(let j=0;j<L.length;j++){const t=L[j],y=y0+70+j*66,v=C[t][k].v;await shLogoAt(X,t,x0+20,y+4,52);X.fillStyle="#fff";X.textAlign="left";X.font=CF(800,36);X.fillText(TEAMS[t].nick.toUpperCase(),x0+86,y+44);
+   X.fillStyle=v>=8?"#8b5cf6":v>=7?"#16a34a":v>=6?"#d97706":"#dc2626";shRR(X,x0+390,y+8,80,48,12);X.fill();X.fillStyle="#fff";X.textAlign="center";X.font=CF(800,36);X.fillText(vf(v),x0+430,y+45)}}
+ ttFoot(X,H);shSend(cv,"gm-categorie.png","⏳ I GM per categoria · Dreamers",btn)}
 function vPagella(t,D){const P=pagella(t,D);if(!P)return"";const nk=TEAMS[t].nick;
  return`<div class="ttpag"><div class="ttpagh"><span class="ttvoto v${Math.floor(P.v)}">${String(P.v).replace(".",",")}</span><span><small>Pagella del GM</small><b>${P.dir[0]} ${P.dir[1]}</b><em>Il GM ${vo(t)?"degli":"dei"} ${nk} ${P.dir[2]}. Tra le 8 franchigie: ${P.p1}° nel ${YL(P.fy)} → ${P.p3}° oggi.</em></span></div>
- ${P.es.map((e,i)=>vEstate(e,t,i)).join("")}${shBtn("pag|"+t,"Condividi la pagella")}</div>`}
+ ${vCatPag(t,D)}${P.es.map((e,i)=>vEstate(e,t,i)).join("")}${shBtn("pag|"+t,"Condividi la pagella")}</div>`}
 function vClassGM(D){const L=D.T.map(t=>pagella(t,D)).filter(Boolean).sort((a,b)=>b.v-a.v||b.d-a.d);
  return`<div class="tth">La classifica dei GM</div><p class="ttn small">Il voto guarda quanto è cresciuta la squadra dal ${YL(D.FY)} a oggi, quante posizioni ha guadagnato tra le 8, il saldo delle estati di mercato e se è stata ringiovanita senza perdere forza. Si riscrive da solo con ogni trade, ogni turno e ogni nuova stagione.</p>
  <div class="ttpr">${L.map((x,i)=>`<div class="ttprr gm"><b>${i+1}</b>${lg(x.t)}<span>${TEAMS[x.t].nick}<small>${x.dir[0]} ${x.dir[1]} · ${x.p1}° → ${x.p3}°</small></span><span class="ttvoto sm v${Math.floor(x.v)}">${String(x.v).replace(".",",")}</span></div>`).join("")}</div>${shBtn("gm","Condividi la classifica dei GM")}`}
@@ -184,6 +225,7 @@ function vAnalisi(){const D=analisiData();if(!D.K.length)return`<p class="ttn">S
  ${rim[0]?card("💔","Il rimpianto più grande",`<b>${E(rim[0].n)}</b><em>lasciato ${ART("dai",rim[0].t)}${rim[0].w&&rim[0].w!==rim[0].t?`, ora ${ART("ai",rim[0].w)}`:""} · ${f1(rim[0].p.v)} PDK</em>`):""}
  </div>
  ${vClassGM(D)}
+ ${vCatClass(D)}
  <div class="tth">Power ranking di tutte le epoche</div><p class="ttn small">Le ${D.V.length} versioni delle franchigie (8 × ${D.Y.length} anni), ordinate per PDK medi a turno con la formula Dreamers.</p>
  <div class="ttpr">${D.V.map(x=>`<div class="ttprr${x.y===SNOW?" now":""}"><b>${x.rk}</b>${lg(x.t)}<span>${TEAMS[x.t].nick} <i class="tty">${YN[x.y]}</i></span><span class="ttbar"><i style="width:${Math.round(x.f/D.V[0].f*100)}%"></i></span><em>${f1(x.f)}</em></div>`).join("")}</div>
  <div class="tth">Le franchigie, una per una</div><p class="ttn small">Tocca una squadra per l'articolo. Le barrette sono la forza di ogni annata, da ${YL(D.FY)} a oggi.</p>
@@ -232,15 +274,15 @@ async function sharePag(t,btn){const D=analisiData(),P=pagella(t,D);if(!P)return
  const txt=`Il GM ${vo(t)?"degli":"dei"} ${TEAMS[t].nick} ${P.dir[2]}. Tra le 8 franchigie: ${P.p1}° nel ${YL(P.fy)} → ${P.p3}° oggi.`,TL=ttWrap(mc,txt,700);
  const blocks=P.es.map((e,i)=>{const fr=[];if(e.best)fr.push(`Mossa migliore: ${e.best.n} (${f1(e.best.p?e.best.p.v:0)})`);if(e.lost){const w=dove(e.lost.n);fr.push(`Sacrificio: ${e.lost.n}${w&&w!==t?", oggi "+ART("ai",w):""} (${f1(e.lost.p?e.lost.p.v:0)})`)}
    const n=Math.max(Math.min(e.in.length,6),Math.min(e.out.length,6),1);mc.font=CB(500,26);const FL=fr.flatMap(f=>ttWrap(mc,f,940));return{e,i,n,FL,h:100+n*40+20+FL.length*34+34}});
- const top=430,HD=Math.max(190,150+TL.length*40),H=top+HD+blocks.reduce((s,b)=>s+b.h,0)+120;
+ const CC=categorie(D)[t]||{},CK=CATS.filter(([k])=>CC[k]),top=430,HD=Math.max(190,150+TL.length*40)+(CK.length?160:0),H=top+HD+blocks.reduce((s,b)=>s+b.h,0)+120;
  const cv=document.createElement("canvas");cv.width=1080;cv.height=H;const X=cv.getContext("2d");try{shRecolor(X)}catch(e){}
  const bg=X.createLinearGradient(0,0,0,H);bg.addColorStop(0,"#1e1b4b");bg.addColorStop(1,"#070a1a");X.fillStyle=bg;X.fillRect(0,0,1080,H);
  await shHead(X,1080,t,"PAGELLA DEL GM",1);
  let y=top;const vc=P.v>=8?"#8b5cf6":P.v>=7?"#16a34a":P.v>=6?"#d97706":"#dc2626";X.fillStyle=vc;shRR(X,60,y,170,170,30);X.fill();X.fillStyle="#fff";X.textAlign="center";X.font=CF(800,96);X.fillText(String(P.v).replace(".",","),145,y+118);
  X.textAlign="left";X.fillStyle="#c4b5fd";X.font=CF(800,30);X.fillText("⏳ MACCHINA DEL TEMPO",270,y+30);X.fillStyle="#fff";X.font=CF(800,56);X.fillText(`${P.dir[0]} ${P.dir[1]}`.toUpperCase(),270,y+86);
- X.fillStyle="#e0e7ff";X.font=CB(500,30);TL.forEach((l,i)=>X.fillText(l,270,y+130+i*40));y+=HD;
+ X.fillStyle="#e0e7ff";X.font=CB(500,30);TL.forEach((l,i)=>X.fillText(l,270,y+130+i*40));if(CK.length){const yc=y+Math.max(190,150+TL.length*40)-10,cw=(1000-(CK.length-1)*14)/CK.length;CK.forEach(([k,ic,l],i)=>{const x=40+i*(cw+14),c=CC[k];X.fillStyle="rgba(255,255,255,.08)";shRR(X,x,yc,cw,140,20);X.fill();X.textAlign="center";X.fillStyle="#c4b5fd";X.font=CF(800,28);X.fillText(`${ic} ${({talenti:"TALENTI"})[k]||l.toUpperCase()}`,x+cw/2,yc+38);X.fillStyle=c.v>=8?"#a78bfa":c.v>=7?"#4ade80":c.v>=6?"#fbbf24":"#f87171";X.font=CF(800,58);X.fillText(vf(c.v),x+cw/2,yc+98);X.fillStyle="#a5b4fc";X.font=CB(600,22);X.fillText(`${c.rk}° su 8`,x+cw/2,yc+126)})}y+=HD;
  for(const b of blocks){const e=b.e;y+=20;X.fillStyle="rgba(255,255,255,.07)";shRR(X,40,y,1000,b.h-20,22);X.fill();
-  X.fillStyle="#fff";X.font=CF(800,40);X.textAlign="left";X.fillText(`${b.i+1}ª ESTATE · ${YLs(e.a).toUpperCase()} → ${YLs(e.b).toUpperCase()}`,70,y+54);
+  X.fillStyle="#fff";X.font=CF(800,40);X.textAlign="left";X.fillText(`${e.a===0?"PRIMI MESI":`${YS()[0]===0?b.i:b.i+1}ª ESTATE`} · ${YLs(e.a).toUpperCase()} → ${YLs(e.b).toUpperCase()}`,70,y+54);
   X.textAlign="right";X.fillStyle=e.df>=0?"#4ade80":"#f87171";X.fillText(pc(e.df),1010,y+54);
   const col=(L,x,c,s)=>{X.textAlign="left";L.slice(0,6).forEach((p,j)=>{X.fillStyle=c;X.font=CB(700,27);const nm=`${s} ${p.n}`;let z=27;while(X.measureText(nm).width>360&&z>18){z-=1;X.font=CB(700,z)}X.fillText(nm,x,y+108+j*40);X.fillStyle="#a5b4fc";X.font=CB(600,24);X.textAlign="right";X.fillText(p.p?f1(p.p.v):"0",x+455,y+108+j*40);X.textAlign="left"})};
   col(e.in,70,"#86efac","＋");col(e.out,560,"#fca5a5","－");
@@ -254,7 +296,7 @@ async function shareGM(btn){const D=analisiData(),L=D.T.map(t=>pagella(t,D)).fil
   const vc=x.v>=8?"#8b5cf6":x.v>=7?"#16a34a":x.v>=6?"#d97706":"#dc2626";X.fillStyle=vc;shRR(X,900,y+14,110,70,16);X.fill();X.fillStyle="#fff";X.textAlign="center";X.font=CF(800,50);X.fillText(String(x.v).replace(".",","),955,y+66)}
  ttFoot(X,H);shSend(cv,"classifica-gm.png","⏳ La classifica dei GM · Dreamers",btn)}
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-ttsh]");if(!b||typeof cur==="undefined"||cur!=="giochi")return;e.preventDefault();e.stopPropagation();const k=b.dataset.ttsh;
- (k==="cla"?shareCla(b):k==="gm"?shareGM(b):sharePag(k.split("|")[1],b)).catch(er=>console.error(er))},true);
+ (k==="cla"?shareCla(b):k==="gm"?shareGM(b):k==="cat"?shareCat(b):sharePag(k.split("|")[1],b)).catch(er=>console.error(er))},true);
 /* ---------- (1216) ARCHIVIO: fotografia della stagione in corso per tempo-archivio.js (la usa l'azione GitHub «tempo») ---------- */
 window.ttArchivia=function(force){const sv=TT.camp,sm=TT.mode;TT.camp=0;TT.mode="lega";try{
  const oggi=new Intl.DateTimeFormat("en-CA",{timeZone:"America/New_York"}).format(new Date());
@@ -274,6 +316,8 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
  else if(p[0]==="steam"){}else if(p[0]==="duel"){TT.view=p.slice(1);top=true}else if(p[0]==="back"){TT.view=null;top=true}
  const y=scrollY;render();scrollTo(0,top?0:y)},true);
 const st=document.createElement("style");st.textContent=`
+.ttcats{display:grid;gap:6px;margin:10px 0 2px}.ttcat{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start;padding:7px;border-radius:10px;background:rgba(124,58,237,.08)}.ttcat b{display:inline;font:800 12.5px system-ui}.ttcat small{margin-left:6px;font-size:10.5px;opacity:.7}.ttcat em{display:block;font-style:normal;font-size:11.5px;line-height:1.4;margin-top:2px}
+.ttcatg{display:grid;grid-template-columns:1fr 1fr;gap:6px}.ttcatb{padding:8px;border-radius:12px;background:rgba(124,58,237,.08);border:1px solid rgba(139,92,246,.3)}.ttcatb h6{margin:0 0 5px;font:800 11px system-ui}.ttcr2{display:grid;grid-template-columns:20px 1fr auto;gap:5px;align-items:center;font-size:11.5px;font-weight:700;padding:2px 0}.ttcr2 .ttlg{width:20px;height:20px}.ttvoto.xs{min-width:30px;height:22px;font-size:13px;border-radius:7px}
 .ttsh{display:block;width:100%;margin:10px 0 4px;padding:10px 14px;border-radius:12px;border:1px solid rgba(139,92,246,.55);background:linear-gradient(135deg,rgba(124,58,237,.22),rgba(192,38,211,.18));color:inherit;font:800 13px system-ui;cursor:pointer}.ttsh.done{opacity:.6}
 .ttcamp{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px}.ttcamp small{width:100%;font:800 10px system-ui;letter-spacing:.1em;text-transform:uppercase;opacity:.75}.ttcamp button{padding:7px 10px;border-radius:10px;border:1px solid rgba(139,92,246,.45);background:transparent;color:inherit;font:800 12px system-ui}.ttcamp button[aria-pressed="true"]{background:#7c3aed;color:#fff}
 .ttmod{grid-template-columns:1fr 1fr!important}
