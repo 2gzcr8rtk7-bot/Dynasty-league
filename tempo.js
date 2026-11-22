@@ -51,7 +51,14 @@ const has=(t,y)=>{const r=rosa(t,y);return!!(r&&(r.real||r.length))};
 const tag=(t,y)=>`${TEAMS[t].nick}${+y===SNOW&&live()?"":` <i class="tty">${YL(y)}</i>`}`;
 /* migliori PDK del turno k per TUTTI i giocatori NBA: notti ufficiali Dreamers (con le correzioni) e, per chi non è nelle rose di oggi, tabellini Dynasty TV */
 const ACC={};
-function acc(k){if(!live())return{A:(CA().acc||{})[k]||{},W:{closed:true,started:true}};const W=drWeek(k),key=k+"|"+W.closed+"|"+(W.nights||0);if(ACC[k]&&ACC[k].key===key)return ACC[k];const A={},N=drNotti();
+/* (1627) GIORNATE 1-2 (giocate su Dunkest prima dell'app): non ci sono formazioni né punteggi per giornata, ma ci sono i tabellini di quelle notti.
+   Quando una lega simulata non può usare i risultati veri (rose del passato, Lega a 8), le giornate 1-2 si ricostruiscono dai tabellini con il calendario
+   vero di Dunkest (DR_DK[0], DR_DK[1]): giornata 1 = notti 20-22/10, giornata 2 = 23-24/10. Così tutte le squadre giocano le stesse partite. */
+const G12={"-1":["2026-10-20","2026-10-22"],"0":["2026-10-23","2026-10-24"]};
+function acc(k){if(k<=0&&G12[k]){if(ACC[k])return ACC[k];const A={},N=drNotti(),[a,b]=G12[k];const put=(n,v)=>{const x=tvNm(n);if(A[x]==null||v>A[x])A[x]=v};
+  for(let d=a;d<=b;d=drAdd(d,1)){const o=N[d]||{},seen=new Set();for(const n in o){const v=typeof o[n]==="number"?o[n]:null;if(v!=null){put(n,v);seen.add(tvNm(n))}}for(const g of(TV.days[d]||[])){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;for(const sd of["a","h"])for(const r of B[sd]||[]){const x=tvNm(r[0]);if(seen.has(x))continue;if(String(r[2]||"0")==="0:00")continue;put(r[0],+r[19]||0)}}}
+  return ACC[k]={key:"g12",A,W:{closed:true,started:true,start:a,end:b}}}
+ if(!live())return{A:(CA().acc||{})[k]||{},W:{closed:true,started:true}};const W=drWeek(k),key=k+"|"+W.closed+"|"+(W.nights||0);if(ACC[k]&&ACC[k].key===key)return ACC[k];const A={},N=drNotti();
  const put=(n,v)=>{const x=tvNm(n);if(A[x]==null||v>A[x])A[x]=v};
  for(let d=W.start;d<=W.end;d=drAdd(d,1)){const o=N[d]||{},seen=new Set();for(const n in o){const v=typeof o[n]==="number"?o[n]:null;if(v!=null){put(n,v);seen.add(tvNm(n))}}
   for(const g of (TV.days[d]||[])){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;for(const sd of["a","h"])for(const r of B[sd]||[]){const x=tvNm(r[0]);if(seen.has(x))continue;if(String(r[2]||"0")==="0:00")continue;put(r[0],+r[19]||0)}}}
@@ -59,7 +66,7 @@ function acc(k){if(!live())return{A:(CA().acc||{})[k]||{},W:{closed:true,started
 /* (1216) LEGA A 8: contano 8 giocatori (3 G, 3 A, 2 C; i primi 6 pieni con il capitano ×1,5, 7° e 8° a metà), tribuna minima 5.
    Anche le squadre di oggi sono simulate a 8, con la rosa vera di quel turno (titolari + riserve). */
 const F8=()=>TT.mode==="lega8",Q8={G:3,F:3,C:2};
-function score(k,R){if(R&&R.real&&F8()){const F=drForm(k)[R.real]||{t:[],r:[]};R=[...F.t,...F.r].map(n=>[n,ruoloDi(n)||"F"])}
+function score(k,R){if(k<=0&&R&&R.real)R=(ROSTER[R.real]||[]).map(x=>[x[0],x[2]]);/* giornate 1-2 ricostruite: rosa di oggi */if(R&&R.real&&F8()){const F=drForm(k)[R.real]||{t:[],r:[]};R=[...F.t,...F.r].map(n=>[n,ruoloDi(n)||"F"])}
  if(R&&R.real){const W=drWeek(k),T=drTeam(k,R.real,W);return{top:T.top.map(x=>({n:x.n,r:x.r,e:x.e,m:x.m})),score:T.score||0,played:T.played,closed:W.closed,started:W.started}}const{A,W}=acc(k);if(!R)return null;
  const pool=R.map(([n,r],i)=>({n,r:r==="A"?"F":r,i,e:A[tvNm(n)]??null}));
  const key=x=>x.e==null?-1e9:x.e,ord=(p,q)=>key(q)-key(p)||p.i-q.i;let sel=[];
@@ -71,20 +78,21 @@ function score(k,R){if(R&&R.real&&F8()){const F=drForm(k)[R.real]||{t:[],r:[]};R
 const turni=()=>{if(!live())return(CA().turni||[]).slice();const L=[];for(let k=1;k<=DR_REG;k++){const W=drWeek(k);if(W.closed||W.started)L.push(k)}return L};
 /* --- LEGA: 8 franchigie, calendario vero --- */
 function lega(){const T=Object.keys(TEAMS),y=t=>(TT.sel[t]??DEFY()),S={};T.forEach(t=>S[t]={t,y:y(t),w:0,l:0,pf:0,pa:0,res:[]});
- for(const k of turni()){const pairs=(live()?DR_SCHED:(CA().sched||[]))[k-1]||[];for(const[a,b]of pairs){const A=score(k,rosa(a,y(a))),B=score(k,rosa(b,y(b)));if(!A||!B)continue;const W=acc(k).W;
+ const vere=T.every(t=>S[t].y===SNOW&&live())&&!F8()&&!TT.__noBase,g12=live()&&!vere&&TT.g12!==false;
+ for(const k of[...(g12?[-1,0]:[]),...turni()]){const pairs=k<=0?DR_DK[k+1]:((live()?DR_SCHED:(CA().sched||[]))[k-1]||[]);for(const[a,b]of pairs){const A=score(k,rosa(a,y(a))),B=score(k,rosa(b,y(b)));if(!A||!B)continue;const W=acc(k).W;
   S[a].pf+=A.score;S[a].pa+=B.score;S[b].pf+=B.score;S[b].pa+=A.score;if(W.closed){if(A.score>=B.score){S[a].w++;S[b].l++}else{S[b].w++;S[a].l++}}S[a].res.push({k,o:b,me:A.score,vs:B.score,fin:W.closed});S[b].res.push({k,o:a,me:B.score,vs:A.score,fin:W.closed})}}
  /* parte dalla stessa base di Dreamers (giornate 1-2 Dunkest) *//* (1623) le giornate 1-2 (giocate su Dunkest prima dell'app) si possono aggiungere solo se TUTTE le squadre sono quelle vere di quella stagione:
     una rosa del passato non ha quei risultati, e non può ereditare quelli della rosa vera. Altrimenti la lega parte per tutti dalla 3ª giornata. */
  try{const tutteVere=T.every(t=>S[t].y===SNOW&&live())&&!F8()&&!TT.__noBase;if(tutteVere){const BA=DR_BASE;for(const t of T){const b=BA[t];if(b){S[t].w+=b.w;S[t].l+=b.l;S[t].pf+=b.pf;S[t].pa+=b.pa}}}else{const BA=live()?{}:(CA().base||{});if(!live()&&T.every(t=>S[t].y===TT.camp)){for(const t of T){const b=BA[t];if(b){S[t].w+=b.w;S[t].l+=b.l;S[t].pf+=b.pf;S[t].pa+=b.pa}}}}}catch(e){}
  return Object.values(S).sort((p,q)=>q.w-p.w||q.pf-p.pf)}
-function somma(){return TT.entries.map(([t,y],i)=>{let tot=0,n=0;const res=[];for(const k of turni()){const s=score(k,rosa(t,y));if(!s)continue;tot+=s.score;n++;res.push({k,v:s.score,fin:s.closed})}return{i,t,y,tot,n,avg:n?tot/n:0,res}}).sort((p,q)=>q.tot-p.tot)}
+function somma(){return TT.entries.map(([t,y],i)=>{let tot=0,n=0;const res=[];for(const k of[...(live()?[-1,0]:[]),...turni()]){const s=score(k,rosa(t,y));if(!s)continue;tot+=s.score;n++;res.push({k,v:s.score,fin:s.closed})}return{i,t,y,tot,n,avg:n?tot/n:0,res}}).sort((p,q)=>q.tot-p.tot)}
 const reale=()=>{if(!live())return CA().reale||[];try{return drStand().map(x=>x.t)}catch(e){return[]}};
 /* --- grafica --- */
 const lg=t=>`<span class="ttlg">${badge(t)}</span>`;
 function yearChips(t){return`<span class="ttyc">${YS().map(y=>`<button data-tt="y|${t}|${y}" aria-pressed="${((TT.sel[t]??DEFY()))===y}"${has(t,y)?"":" disabled"}>${YL(y)}</button>`).join("")}</span>`}
 function campoSel(){const C=CAMPI();if(C.length<2)return"";return`<div class="ttcamp"><small>Stagione giocata</small>${C.map(y=>`<button data-tt="camp|${y}" aria-pressed="${(TT.camp||SNOW)===y}">${SLAB(y)}${y===SNOW?" · in corso":""}</button>`).join("")}</div>`}
 function vLega(){const L=lega(),R=reale();
- return`${F8()?`<p class="ttn"><b>Lega a 8:</b> come Dreamers ma contano solo <b>8 giocatori</b> (3 guardie, 3 ali, 2 centri): i primi 6 pieni con il capitano ×1,5, il 7° e l’8° a metà. La tribuna diventa di almeno 5: chi oggi non gioca più pesa molto meno, come se la squadra lo avesse sostituito. Anche le squadre di oggi sono simulate a 8.</p>`:""}${campoSel()}<p class="ttn">«E se fossi rimasto con quella squadra?» Scegli per ogni franchigia con quale rosa gioca: i giocatori di quella rosa fanno i PDK veri di questa stagione, turno per turno. Con almeno una rosa del passato la lega parte dalla 3ª giornata (le prime due si sono giocate su Dunkest con le rose vere). Calendario e PDK: stagione ${SLAB(TT.camp||SNOW)}${live()?" (in corso)":""}.</p>
+ return`${F8()?`<p class="ttn"><b>Lega a 8:</b> come Dreamers ma contano solo <b>8 giocatori</b> (3 guardie, 3 ali, 2 centri): i primi 6 pieni con il capitano ×1,5, il 7° e l’8° a metà. La tribuna diventa di almeno 5: chi oggi non gioca più pesa molto meno, come se la squadra lo avesse sostituito. Anche le squadre di oggi sono simulate a 8.</p>`:""}${campoSel()}<p class="ttn">«E se fossi rimasto con quella squadra?» Scegli per ogni franchigia con quale rosa gioca: i giocatori di quella rosa fanno i PDK veri di questa stagione, turno per turno. Le giornate 1-2 si sono giocate su Dunkest: se tutte le squadre sono quelle vere valgono i risultati veri, altrimenti si ricostruiscono per tutte dai tabellini di quelle notti (20-22 e 23-24 ottobre), con il calendario vero. Calendario e PDK: stagione ${SLAB(TT.camp||SNOW)}${live()?" (in corso)":""}.</p>
  <div class="ttsel">${Object.keys(TEAMS).map(t=>`<div class="ttrow">${lg(t)}<b>${TEAMS[t].nick}</b>${yearChips(t)}</div>`).join("")}</div>
  <div class="tth">Classifica «come sarebbe andata»</div>
  <div class="ttcla">${L.map((x,i)=>{const r=R.indexOf(x.t)+1,d=r?r-(i+1):0;return`<button class="ttcr" data-tt="team|${x.t}">${`<b class="ttp">${i+1}</b>`}${lg(x.t)}<span class="ttnm">${tag(x.t,x.y)}<small>${x.w}-${x.l} · ${f1(x.pf)} PDK</small></span><span class="ttd ${d>0?"up":d<0?"dn":""}">${r?`realtà ${r}°`:""}${d?` (${d>0?"+":""}${d})`:""}</span></button>`}).join("")}</div>
