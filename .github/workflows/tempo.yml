@@ -1,0 +1,31 @@
+name: tempo
+# (1216) Macchina del tempo: ogni giorno fotografa la stagione in corso (rose con le trade; a regular season finita anche calendario e PDK dei turni)
+# in tempo-archivio.js. Quando arriva la stagione nuova, quella vecchia resta nell'archivio e diventa giocabile con qualsiasi rosa.
+on:
+  schedule:
+    - cron: "52 12 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  tempo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Browser senza schermo
+        run: |
+          npm i --no-save --no-package-lock playwright@1.47.2
+          npx playwright install --with-deps chromium
+      - name: Archivia la stagione
+        run: |
+          git config user.name "tempo-bot"
+          git config user.email "tempo-bot@users.noreply.github.com"
+          node tools/tempo_archivio.mjs
+          if [ -z "$(git status --porcelain -- tempo-archivio.js)" ]; then echo "Nessuna novità"; exit 0; fi
+          git add tempo-archivio.js
+          git commit -m "Macchina del tempo: archivio stagione [automatico]"
+          for i in 1 2 3; do git pull --rebase origin main && git push origin HEAD:main && exit 0; sleep 10; done
+          exit 1
