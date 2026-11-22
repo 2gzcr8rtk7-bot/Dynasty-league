@@ -99,6 +99,42 @@ function analisiData(){const key=turni().join(",")+"|"+Object.keys(TV.box).lengt
  return AN={key,T,F,V,M,ALL,fede,viaggi,K}}
 function verdetto(d){return d>=15?["🚀","Rinascita"]:d>=5?["📈","In crescita"]:d>-5?["⚖️","Stabile"]:d>-15?["📉","In calo"]:["🧨","Crollo"]}
 function forma(a,b,c){const u=b.f>=a.f,v=c.f>=b.f;return u&&v?"sempre in salita":!u&&!v?"in discesa anno dopo anno":u&&!v?"su e poi giù: il 25/26 resta il picco":"giù e poi su: oggi la risalita"}
+/* (1216) PAGELLA DEI GM: le mosse di ogni franchigia nelle due estati (24/25→25/26 e 25/26→oggi), saldo di mercato, direzione presa e voto */
+const rk10=F=>new Set(F.top.map(x=>tvNm(x.n)));
+function estate(t,D,a,b){const A=D.F[t][a],B=D.F[t][b],m=D.M[t][a*10+b];if(!A||!B||!m)return null;
+ const tA=rk10(A),tB=rk10(B),pv=x=>x.p?x.p.v:0;
+ const inn=m.in.filter(x=>tB.has(tvNm(x.n))),out=m.out.filter(x=>tA.has(tvNm(x.n)));
+ const saldo=inn.reduce((s,x)=>s+pv(x),0)-out.reduce((s,x)=>s+pv(x),0);
+ const giov=m.in.filter(x=>x.e!=null&&x.e<22.5&&x.p).length;
+ const best=inn.slice().sort((p,q)=>pv(q)-pv(p))[0]||null,lost=out.slice().sort((p,q)=>pv(q)-pv(p))[0]||null;
+ return{a,b,in:m.in,out:m.out,inn,out10:out,saldo,giov,best,lost,df:(B.f/A.f-1)*100,stay:m.stay.length}}
+function pagella(t,D){const A=D.F[t],a=A[1],c=A[3];if(!a||!A[2]||!c)return null;
+ const e1=estate(t,D,1,2),e2=estate(t,D,2,3),d=(c.f/a.f-1)*100,de=a.eta&&c.eta?c.eta-a.eta:0,stay=D.M[t][13].stay.length;
+ /* posizione nel power ranking delle 8 versioni «oggi» rispetto a quelle «24/25» */
+ const pos=y=>1+D.T.filter(u=>D.F[u][y]&&D.F[u][y].f>A[y].f).length,p1=pos(1),p3=pos(3);
+ let v=6+d/12+(p1-p3)*.25+(p3===1?1.5:p3===2?.5:0)+(de<=-1&&d>=0?.5:0)+((e1&&e1.saldo>0?.25:0)+(e2&&e2.saldo>0?.25:0));
+ /* il voto massimo dipende anche da dove sei arrivato: crescere restando in fondo non vale un 10 */v=Math.max(4,Math.min(p3===1?10:p3<=3?9.5:p3<=5?8.5:7.5,Math.round(v*2)/2));
+ const dir=de<=-1.5?(d>=3?["🌱","Ricostruzione riuscita","ha ringiovanito la squadra diventando anche più forte: il lavoro più difficile"]:["🧱","Ricostruzione in corso","ha scelto di ringiovanire, pagando qualcosa oggi in cambio del futuro"])
+  :de>=1.5?(d>=3?["🔥","All-in","ha puntato su giocatori fatti per vincere subito, e la squadra è salita"]:["⚠️","All-in a vuoto","ha preso esperienza ma la squadra non è migliorata"])
+  :stay>=7?(d>=3?["🧭","Continuità che paga","ha tenuto il gruppo e aggiunto i pezzi giusti"]:d<=-3?["⏳","Immobilismo","ha cambiato poco mentre gli altri si muovevano"]:["🧭","Continuità","ha tenuto il gruppo, con pochi ritocchi"])
+  :stay<=3?(d>=3?["🌪️","Rivoluzione riuscita","ha rifatto quasi tutto, e ha funzionato"]:["🌪️","Rivoluzione","ha rifatto quasi tutto, ma i conti ancora non tornano"])
+  :d>=3?["📈","Crescita costante","ha fatto mosse mirate e la squadra è più forte"]:d<=-3?["📉","Passo indietro","ha fatto mosse che non hanno pagato"]:["⚖️","Equilibrio","ha cambiato tanto, ma la forza è rimasta quasi la stessa"];
+ return{t,v,dir,e1,e2,d,de,p1,p3}}
+function vEstate(e,t){if(!e)return"";const nm=e.a===1?"1ª estate · 24/25 → 25/26":"2ª estate · 25/26 → oggi",w=e.lost?dove(e.lost.n):null;
+ const pv=x=>x.p?` <small>${f1(x.p.v)}</small>`:` <small>0</small>`;
+ const chips=(L,c)=>L.length?L.slice(0,6).map(x=>`<span class="ttmv ${c}">${c==="in"?"＋":"－"} ${E(x.n)}${pv(x)}</span>`).join("")+(L.length>6?`<span class="ttmv">+${L.length-6}</span>`:""):`<span class="ttmv">nessuno</span>`;
+ const fr=[];if(e.best)fr.push(`La mossa migliore: <b>${E(e.best.n)}</b> (${f1(e.best.p?e.best.p.v:0)} PDK oggi).`);
+ if(e.lost)fr.push(`Il sacrificio: <b>${E(e.lost.n)}</b>${w&&w!==t?`, oggi ${ART("ai",w)}`:""} (${f1(e.lost.p?e.lost.p.v:0)}).`);
+ if(e.giov>=2)fr.push(`${e.giov} giovani sotto i 23 anni in arrivo: scommessa sul futuro.`);
+ return`<div class="ttest"><div class="ttesth"><b>${nm}</b><span class="${e.df>=0?"up":"dn"}">${pc(e.df)}</span></div>
+ <div class="ttmvs">${chips(e.in,"in")}</div><div class="ttmvs">${chips(e.out,"out")}</div>
+ <p>Saldo di mercato (PDK di chi entra ed esce dai 10 migliori): <b class="${e.saldo>=0?"up":"dn"}">${e.saldo>=0?"+":""}${f1(e.saldo)}</b>. ${fr.join(" ")}</p></div>`}
+function vPagella(t,D){const P=pagella(t,D);if(!P)return"";const nk=TEAMS[t].nick;
+ return`<div class="ttpag"><div class="ttpagh"><span class="ttvoto v${Math.floor(P.v)}">${String(P.v).replace(".",",")}</span><span><small>Pagella del GM</small><b>${P.dir[0]} ${P.dir[1]}</b><em>Il GM ${vo(t)?"degli":"dei"} ${nk} ${P.dir[2]}. Tra le 8 franchigie: ${P.p1}° nel 24/25 → ${P.p3}° oggi.</em></span></div>
+ ${vEstate(P.e1,t)}${vEstate(P.e2,t)}</div>`}
+function vClassGM(D){const L=D.T.map(t=>pagella(t,D)).filter(Boolean).sort((a,b)=>b.v-a.v||b.d-a.d);
+ return`<div class="tth">La classifica dei GM</div><p class="ttn small">Il voto guarda quanto è cresciuta la squadra dal 24/25 a oggi, quante posizioni ha guadagnato tra le 8, il saldo delle due estati di mercato e se è stata ringiovanita senza perdere forza.</p>
+ <div class="ttpr">${L.map((x,i)=>`<div class="ttprr gm"><b>${i+1}</b>${lg(x.t)}<span>${TEAMS[x.t].nick}<small>${x.dir[0]} ${x.dir[1]} · ${x.p1}° → ${x.p3}°</small></span><span class="ttvoto sm v${Math.floor(x.v)}">${String(x.v).replace(".",",")}</span></div>`).join("")}</div>`}
 function articolo(t,D){const A=D.F[t],a=A[1],b=A[2],c=A[3];if(!a||!b||!c)return"";const nk=TEAMS[t].nick,d=(c.f/a.f-1)*100,[ic,vd]=verdetto(d),m=D.M[t][13],m23=D.M[t][23];
  const P=[];
  P.push(`Con i PDK di questa stagione, ${ART("i",t)} del 24/25 farebbero <b>${f1(a.f)}</b> a turno, quelli del 25/26 <b>${f1(b.f)}</b>, quelli di oggi <b>${f1(c.f)}</b>: ${pc(d)} dal primo anno, ${forma(a,b,c)}.`);
@@ -111,7 +147,7 @@ function articolo(t,D){const A=D.F[t],a=A[1],b=A[2],c=A[3];if(!a||!b||!c)return"
  const L=D.ALL[t];P.push(`<i>La rosa di sempre</i> (il meglio delle tre annate insieme) farebbe <b>${f1(L.f)}</b> a turno, ${L.f>c.f?`${f1(L.f-c.f)} più di oggi`:"quanto oggi: il meglio è già in squadra"}. Il trio di punta: ${nomi(L.best.slice(0,3))}.`);
  const rk=[a,b,c].map(x=>x.rk);
  return`<details class="ttart"${TT.art===t?" open":""}><summary>${lg(t)}<span><b>${nk}</b><small>${ic} ${vd} · ${pc(d)}</small></span><span class="ttspk">${[a,b,c].map(x=>`<i style="height:${Math.max(8,Math.round(x.f/D.V[0].f*34))}px" title="${YN[x.y]}"></i>`).join("")}</span></summary>
- <div class="ttart-b"><div class="ttrks">${[a,b,c].map(x=>`<div><small>${YN[x.y]}</small><b>${f1(x.f)}</b><em>${x.rk}° di sempre</em></div>`).join("")}</div>${P.map(p=>`<p>${p}</p>`).join("")}</div></details>`}
+ <div class="ttart-b"><div class="ttrks">${[a,b,c].map(x=>`<div><small>${YN[x.y]}</small><b>${f1(x.f)}</b><em>${x.rk}° di sempre</em></div>`).join("")}</div>${P.map(p=>`<p>${p}</p>`).join("")}${vPagella(t,D)}</div></details>`}
 function vAnalisi(){const D=analisiData();if(!D.K.length)return`<p class="ttn">Servono turni chiusi per le analisi.</p>`;
  const T=D.T.filter(t=>D.F[t][1]&&D.F[t][3]),dd=t=>(D.F[t][3].f/D.F[t][1].f-1)*100,S=[...T].sort((p,q)=>dd(q)-dd(p));
  const up=S[0],dn=S[S.length-1];
@@ -126,6 +162,7 @@ function vAnalisi(){const D=analisiData();if(!D.K.length)return`<p class="ttn">S
  ${col[0]?card("💎","Il colpo più grande",`<b>${E(col[0].n)}</b><em>arrivato ${ART("ai",col[0].t)} · ${f1(col[0].p.v)} PDK</em>`):""}
  ${rim[0]?card("💔","Il rimpianto più grande",`<b>${E(rim[0].n)}</b><em>lasciato ${ART("dai",rim[0].t)}${rim[0].w&&rim[0].w!==rim[0].t?`, ora ${ART("ai",rim[0].w)}`:""} · ${f1(rim[0].p.v)} PDK</em>`):""}
  </div>
+ ${vClassGM(D)}
  <div class="tth">Power ranking di tutte le epoche</div><p class="ttn small">Le 24 versioni delle franchigie (8 × 3 anni), ordinate per PDK medi a turno con la formula Dreamers.</p>
  <div class="ttpr">${D.V.map(x=>`<div class="ttprr${x.y===3?" now":""}"><b>${x.rk}</b>${lg(x.t)}<span>${TEAMS[x.t].nick} <i class="tty">${YN[x.y]}</i></span><span class="ttbar"><i style="width:${Math.round(x.f/D.V[0].f*100)}%"></i></span><em>${f1(x.f)}</em></div>`).join("")}</div>
  <div class="tth">Le franchigie, una per una</div><p class="ttn small">Tocca una squadra per l'articolo. Le barrette sono la forza di 24/25, 25/26 e oggi.</p>
@@ -158,6 +195,11 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
  const y=scrollY;render();scrollTo(0,top?0:y)},true);
 const st=document.createElement("style");st.textContent=`
 .ttmod{grid-template-columns:1fr 1fr!important}
+.ttvoto{display:grid;place-items:center;min-width:48px;height:48px;border-radius:14px;font:800 italic 22px var(--display);color:#fff;background:#64748b}.ttvoto.sm{min-width:36px;height:30px;font-size:16px;border-radius:9px}.ttvoto.v4,.ttvoto.v5{background:#dc2626}.ttvoto.v6{background:#d97706}.ttvoto.v7{background:#16a34a}.ttvoto.v8,.ttvoto.v9,.ttvoto.v10{background:linear-gradient(135deg,#7c3aed,#c026d3)}
+.ttprr.gm{grid-template-columns:20px 24px 1fr auto}
+.ttpag{margin-top:10px;padding:10px;border-radius:12px;background:rgba(124,58,237,.1);border:1px dashed rgba(139,92,246,.5)}.ttpagh{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center}.ttpagh small{display:block;font:800 10px system-ui;letter-spacing:.1em;text-transform:uppercase;opacity:.7}.ttpagh b{display:block;font:800 15px var(--display)}.ttpagh em{display:block;font-style:normal;font-size:12px;line-height:1.4;margin-top:2px}
+.ttest{margin-top:9px;padding-top:8px;border-top:1px solid rgba(139,92,246,.25)}.ttesth{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.ttesth b{font:800 12px system-ui}.ttesth span,.ttest .up,.ttest .dn{font-weight:800}.ttest .up{color:#16a34a}.ttest .dn{color:#dc2626}
+.ttmvs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px}.ttmv{font-size:11px;font-weight:700;padding:3px 7px;border-radius:999px;background:rgba(148,163,184,.18)}.ttmv.in{background:rgba(34,197,94,.16)}.ttmv.out{background:rgba(239,68,68,.14)}.ttmv small{opacity:.7}.ttest p{font-size:12px!important;margin:4px 0 0!important}
 .ttrub{display:grid;gap:4px}.ttmast{padding:14px 14px 12px;border-radius:16px;background:linear-gradient(135deg,#1e1b4b,#4c1d95);color:#fff;border:1px solid rgba(196,181,253,.4)}.ttmast small{display:block;font:800 10px var(--display);letter-spacing:.2em;text-transform:uppercase;color:#c4b5fd}.ttmast b{display:block;font:800 italic 24px var(--display);margin:2px 0 4px}.ttmast em{font-style:normal;font-size:12px;color:#e0e7ff;line-height:1.4}
 .ttcards{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}.ttcard{padding:10px;border-radius:14px;background:rgba(124,58,237,.12);border:1px solid rgba(139,92,246,.35)}.ttcard small{display:block;font:800 10px system-ui;letter-spacing:.05em;text-transform:uppercase;opacity:.8;margin-bottom:4px}.ttcard b{display:flex;align-items:center;gap:5px;font-size:14px;line-height:1.15}.ttcard em{display:block;font-style:normal;font-size:11px;opacity:.8;margin-top:3px}.ttcard .ttlg{width:22px;height:22px}
 .ttpr{display:grid;gap:3px}.ttprr{display:grid;grid-template-columns:20px 24px 1fr 70px 40px;gap:6px;align-items:center;font-size:12px;padding:3px 4px;border-radius:8px}.ttprr.now{background:rgba(124,58,237,.12)}.ttprr>b{font:800 12px var(--display);text-align:center}.ttprr .ttlg{width:22px;height:22px}.ttprr span small{display:block;font-size:10px;opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ttprr span{min-width:0}.ttprr em{font-style:normal;font-weight:800;text-align:right}.ttbar{height:6px;border-radius:9px;background:rgba(148,163,184,.2);overflow:hidden}.ttbar i{display:block;height:100%;background:linear-gradient(90deg,#7c3aed,#c084fc);border-radius:9px}
