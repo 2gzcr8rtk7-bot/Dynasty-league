@@ -232,7 +232,7 @@ const astaY=y=>{const A=window.TT_ASTA&&TT_ASTA[y];if(!A)return null;if(!A.__k){
 const chiDi=(y,n)=>{const C=(window.TT_ASTA_CHI||{})[y]||{};for(const k in C)if(tvNm(k)===tvNm(n))return C[k];return null};
 const dopoDi=(y,n)=>((window.TT_ASTA_DOPO||{})[y]||[]).some(z=>tvNm(z)===tvNm(n));
 function prezzoDi(t,y,n){y=+y;if(y>0){const A=astaY(y);if(A){const v=A[tvNm(n)];if(v!=null)return+v;return null}const e=entryOf(t,y,n);if(y<SNOW&&e&&e[4]!=null)return+e[4]}if(y===0){const z=(TT_DRAFT[t]||[]).find(q=>tvNm(q[0])===tvNm(n));return z?z[2]:null}if(y===SNOW){const z=(ROSTER[t]||[]).find(q=>tvNm(q[0])===tvNm(n));return z&&z[4]!=null?+z[4]:null}const e=entryOf(t,y,n);return e&&e[2]!=null?+e[2]:null}
-function rookieDi(t,y,n){y=+y;if(y===SNOW){try{return!!isRookie(n)}catch(e){return false}}const e=entryOf(t,y,n);if(e&&e[3]!=null)return!!e[3];const a=etaY(n,y);return y>0&&a!=null&&a<=20.5}
+function rookieDi(t,y,n){y=+y;if(y===SNOW){try{return!!isRookie(n)}catch(e){return false}}const e=entryOf(t,y,n);if(e&&e[3]!=null)return!!e[3];/* (1631) rookie di quell'anno = nessuna partita NBA nella stagione prima, partite da quella stagione in poi (incrocio coi dati, non con l'età) */if(y<1)return false;if(stat(n,y-1))return false;for(let s=y;s<=SNOW;s++)if(stat(n,s))return true;return false}
 const MAXP={};function maxPrezzo(y){y=+y;if(MAXP[y]!=null)return MAXP[y];let m=0,mr=0;for(const t of Object.keys(TEAMS))for(const[n]of(roseOf(t,y)||[])){const c=prezzoDi(t,y,n);if(c==null)continue;m=Math.max(m,c);if(y>0&&rookieDi(t,y,n))mr=Math.max(mr,c)}return MAXP[y]=mr||m}
 /* (1220) VALORE DI UN ROOKIE (primo anno): conta soprattutto l'EFFICIENZA (PDK al minuto), poi i PDK concreti (12-13 normali, 15-17 già tanta roba),
    poi la CRESCITA (minuti e PDK delle ultime 5 partite contro la media: se gli danno sempre più spazio, il giudizio sale da solo). */
@@ -469,7 +469,10 @@ function astaData(){const D=analisiData(),key=D.key+"|"+JSON.stringify(Object.ke
  const PM=permanenze(D),P=[];for(const t in TT_DRAFT)for(const[n,r,c]of TT_DRAFT[t]){const st=(PM[t]||[]).find(x=>x.da===0&&tvNm(x.n)===tvNm(n)),fair=valoreVero(n);
   P.push({t,n,r,c,fair,gain:c!=null?fair-c:null,st,per:SS.map(s=>({lab:s.lab,u:resa(n,s.y)*K})),via:st&&st.a!=null?st.a:null})}
  const preso=new Set(P.map(x=>tvNm(x.n))),V=svData(),nomi={};for(let y=1;y<=SNOW;y++){const S=V.S[y]||{};for(const k in S)if(!preso.has(k))nomi[k]=S[k].n||nomi[k]||k}
- const dim=Object.keys(nomi).map(k=>({n:nomi[k],fair:valoreVero(nomi[k])})).filter(x=>x.fair>=30).sort((a,b)=>b.fair-a.fair);
+ /* (1631) «dimenticato» = un giocatore che all'asta (estate 2024) si poteva prendere: già in NBA nel 23/24, oppure rookie del draft NBA 2024
+    (prima stagione 24/25). Chi è arrivato in NBA dopo (Flagg, rookie 2025) all'asta non esisteva e non può essere un dimenticato. */
+ const ok=k=>!!((V.S[0]&&V.S[0][k])||(V.S[1]&&V.S[1][k]));
+ const dim=Object.keys(nomi).filter(ok).map(k=>({n:nomi[k],fair:valoreVero(nomi[k])})).filter(x=>x.fair>=30).sort((a,b)=>b.fair-a.fair);
  const nmOf=k=>{for(const t in ROSTER){const p=(ROSTER[t]||[]).find(z=>tvNm(z[0])===k);if(p)return p[0]}return null};dim.forEach(x=>{const r=nmOf(tvNm(x.n));if(r)x.n=r});
  const T={};for(const t of Object.keys(TEAMS)){const L=P.filter(x=>x.t===t);if(!L.length)continue;const KK=L.filter(x=>x.c!=null);
   const spent=KK.reduce((s,x)=>s+x.c,0),got=KK.reduce((s,x)=>s+x.fair,0),gain=got-spent;
