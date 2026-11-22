@@ -619,11 +619,10 @@ function vAnalisi(){const D=analisiData();if(!D.K.length)return`<p class="ttn">S
  <div class="ttcards">
  ${card("🚀","La più cresciuta",`<b>${lg(up)} ${TEAMS[up].nick}</b><em>${pc(dd(up))} rispetto al ${YL(D.FY)}</em>`)}
  ${card("🧨","La più in calo",`<b>${lg(dn)} ${TEAMS[dn].nick}</b><em>${pc(dd(dn))} rispetto al ${YL(D.FY)}</em>`)}
- ${col[0]?card("💎","Il colpo più grande",`<b>${lg(col[0].t)} ${E(col[0].n)}</b><em>${colpoTxt(col[0],col[0].t).replace(/^<b>[^<]*<\/b>\s*/,"")}</em>`):""}
+ 
  ${rim[0]?card("💔","Il rimpianto più grande",`<b>${lg(rim[0].t)} ${E(rim[0].n)}</b><em>${ART("i",rim[0].t).replace(/^./,c=>c.toUpperCase())} l'hanno ${erroreVenditaPDK(rim[0],rim[0].t).replace(/^<b>[^<]*<\/b>\s*/,"")}</em>`):""}
  </div>
  ${vClassGM(D)}
- ${vColpi(D)}
  ${vCatClass(D)}
  ${vAstaLega()}
  ${vRookie()}
