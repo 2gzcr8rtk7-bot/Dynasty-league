@@ -75,7 +75,7 @@ function lega(){const T=Object.keys(TEAMS),y=t=>(TT.sel[t]??DEFY()),S={};T.forEa
   S[a].pf+=A.score;S[a].pa+=B.score;S[b].pf+=B.score;S[b].pa+=A.score;if(W.closed){if(A.score>=B.score){S[a].w++;S[b].l++}else{S[b].w++;S[a].l++}}S[a].res.push({k,o:b,me:A.score,vs:B.score,fin:W.closed});S[b].res.push({k,o:a,me:B.score,vs:A.score,fin:W.closed})}}
  /* parte dalla stessa base di Dreamers (giornate 1-2 Dunkest) *//* (1623) le giornate 1-2 (giocate su Dunkest prima dell'app) si possono aggiungere solo se TUTTE le squadre sono quelle vere di quella stagione:
     una rosa del passato non ha quei risultati, e non può ereditare quelli della rosa vera. Altrimenti la lega parte per tutti dalla 3ª giornata. */
- try{const tutteVere=T.every(t=>S[t].y===SNOW&&live())&&!F8();if(tutteVere){const BA=DR_BASE;for(const t of T){const b=BA[t];if(b){S[t].w+=b.w;S[t].l+=b.l;S[t].pf+=b.pf;S[t].pa+=b.pa}}}else{const BA=live()?{}:(CA().base||{});if(!live()&&T.every(t=>S[t].y===TT.camp)){for(const t of T){const b=BA[t];if(b){S[t].w+=b.w;S[t].l+=b.l;S[t].pf+=b.pf;S[t].pa+=b.pa}}}}}catch(e){}
+ try{const tutteVere=T.every(t=>S[t].y===SNOW&&live())&&!F8()&&!TT.__noBase;if(tutteVere){const BA=DR_BASE;for(const t of T){const b=BA[t];if(b){S[t].w+=b.w;S[t].l+=b.l;S[t].pf+=b.pf;S[t].pa+=b.pa}}}else{const BA=live()?{}:(CA().base||{});if(!live()&&T.every(t=>S[t].y===TT.camp)){for(const t of T){const b=BA[t];if(b){S[t].w+=b.w;S[t].l+=b.l;S[t].pf+=b.pf;S[t].pa+=b.pa}}}}}catch(e){}
  return Object.values(S).sort((p,q)=>q.w-p.w||q.pf-p.pf)}
 function somma(){return TT.entries.map(([t,y],i)=>{let tot=0,n=0;const res=[];for(const k of turni()){const s=score(k,rosa(t,y));if(!s)continue;tot+=s.score;n++;res.push({k,v:s.score,fin:s.closed})}return{i,t,y,tot,n,avg:n?tot/n:0,res}}).sort((p,q)=>q.tot-p.tot)}
 const reale=()=>{if(!live())return CA().reale||[];try{return drStand().map(x=>x.t)}catch(e){return[]}};
@@ -153,6 +153,38 @@ function mossaTxt(x,t,full){const pre=x.pre&&x.pre.g>=15&&x.da>0?` (${f1(x.pre.p
  return`<b>${E(x.n)}</b>: preso ${quando(x.da)}${c}${pre}, valeva ${r0(x.costo)} → ${fine}${pr} <b class="${x.gain>=0?"up":"dn"}">${crs(x.gain)}</b>`}
 function rimpianti(t,D){return(permanenze(D)[t]||[]).filter(x=>x.a!=null).map(x=>{const d=dopoAltrove(x);return{...x,dopo:d,rimp:d-x.fin}}).filter(x=>x.rimp>=8).sort((a,b)=>b.rimp-a.rimp)}
 function rimpTxt(x,t){const w=dove(x.n);return`<b>${E(x.n)}</b>: ceduto ${x.a===SNOW?"quest'anno":"nel "+YL(x.a)} quando valeva ${r0(x.fin)}, poi ${w&&w!==t?ART("con",w)+" ":"altrove "}ha dato ${r0(x.dopo)} <b class="dn">(${crs(-x.rimp)})</b>`}
+/* ---------- (1625) «E SE NON AVESSE CAMBIATO NIENTE?» — per ogni squadra: in che posizione sarebbe oggi tenendo la rosa di ogni anno passato
+   (le altre 7 restano quelle vere, PDK veri di quest'anno, dalla 3ª giornata per tutti), quanto varrebbe quella rosa oggi e quanti anni avrebbe,
+   contro la rosa vera di oggi (valore, età) e i crediti in cassa. Da qui il giudizio sulle scelte: hanno pagato, sono state una scommessa sul futuro,
+   oppure tenere la squadra vecchia sarebbe stato meglio. ---------- */
+let CFX=null;
+function controfattuale(D){const key=D.key;if(CFX&&CFX.k===key)return CFX.v;const T=D.T,R={},sv={sel:TT.sel,mode:TT.mode,camp:TT.camp},K=kCred();
+ try{TT.mode="lega";TT.camp=0;TT.__noBase=1;
+  const rank=sel=>{TT.sel=sel;return lega().map(x=>x.t)};const base=rank({});
+  const vRosa=L=>L.reduce((s,[n])=>s+valore(n,SNOW,true,null)*K,0),eRosa=L=>{const X=L.map(([n])=>({a:etaY(n,SNOW),p:(stat(n,SNOW)||{}).p||0})).filter(x=>x.a!=null).sort((a,b)=>b.p-a.p).slice(0,10);return X.length?X.reduce((s,x)=>s+x.a,0)/X.length:null};
+  for(const t of T){const oggi=roseOf(t,SNOW)||[];const o={t,real:base.indexOf(t)+1,valNow:vRosa(oggi),etaNow:eRosa(oggi),cred:(typeof CREDITI!=="undefined"&&CREDITI[t]!=null)?+CREDITI[t]:null,alt:[]};
+   for(const y of D.Y){if(y===SNOW)continue;const L=roseOf(t,y)||[];if(!L.length)continue;o.alt.push({y,pos:rank({[t]:y}).indexOf(t)+1,val:vRosa(L),eta:eRosa(L)})}
+   R[t]=o}}finally{TT.sel=sv.sel;TT.mode=sv.mode;TT.camp=sv.camp;delete TT.__noBase}
+ const cr=T.map(t=>R[t].cred).filter(x=>x!=null),crM=cr.length?cr.reduce((a,b)=>a+b,0)/cr.length:null;
+ for(const t of T){const o=R[t];if(!o.alt.length)continue;const best=[...o.alt].sort((a,b)=>a.pos-b.pos||b.val-a.val)[0],last=o.alt[o.alt.length-1];o.best=best;o.last=last;
+  const dPos=best.pos-o.real/* >0: le mosse hanno fatto salire */,dVal=o.valNow-best.val,dEta=best.eta!=null&&o.etaNow!=null?best.eta-o.etaNow:0;
+  /* il FUTURO mette insieme valore della rosa, età e crediti in cassa (contro la media della lega) */
+  const fCr=crM!=null&&o.cred!=null?Math.max(-1,Math.min(1.5,(o.cred-crM)/60)):0,fut=dVal/40+dEta/1.5+fCr;
+  const lab=y=>y===0?"la rosa del draft":"la rosa del "+YL(y);
+  const fatti=`Rispetto ${lab(best.y).replace(/^la /,"alla ")}, la squadra di oggi ${Math.abs(dVal)<10?"vale più o meno lo stesso":dVal>0?`vale di più (${r0(o.valNow)} crediti contro ${r0(best.val)})`:`vale meno (${r0(o.valNow)} crediti contro ${r0(best.val)})`}, ${Math.abs(dEta)<.5?"ha la stessa età":dEta>0?`è più giovane di ${f1(dEta)} anni`:`è più vecchia di ${f1(-dEta)} anni`}${o.cred!=null&&crM!=null?` e ha ${o.cred} crediti in cassa (la media è ${r0(crM)})`:""}.`;
+  const pos=`Con ${lab(best.y)}${best===o.alt.reduce((a,b)=>b.pos<a.pos?b:a)&&o.alt.length>1?", la migliore che ha avuto,":""} oggi sarebbe ${best.pos}°; con quella vera è ${o.real}°.`;
+  let g;
+  if(dPos>=1)g=["✅","Le mosse hanno pagato",`${pos} ${fatti}${fut<=-1?" Ha guadagnato posizioni, ma il futuro è più corto.":""}`];
+  else if(dPos<=-2)g=fut>=1.5?["🔭","Scommessa sul futuro",`${pos} In classifica ha perso. ${fatti} Il conto si farà nelle prossime stagioni.`]:["❌","Era meglio non toccare niente",`${pos} ${fatti} Le mosse hanno tolto più di quanto hanno dato.`];
+  else g=fut>=.7?["👍","Scelta giusta",`${pos} Restare fermi non avrebbe cambiato la classifica. ${fatti} Ha fatto bene a cambiare.`]
+   :fut<=-1?["🕰️","Futuro più corto",`${pos} In classifica sarebbe lo stesso. ${fatti} Ha cambiato per restare dov'era, ma con una squadra che durerà meno.`]
+   :["⚖️","Né meglio né peggio",`${pos} ${fatti} Le mosse non hanno spostato niente.`];
+  o.giud=g}
+ CFX={k:key,v:R};return R}
+function vControfatt(t,D){const o=controfattuale(D)[t];if(!o||!o.giud)return"";
+ return`<div class="ttcf"><div class="ttcfh"><b>🔮 E se non avesse cambiato niente?</b><span>${o.giud[0]} ${o.giud[1]}</span></div>
+ <div class="ttcfg"><div class="now"><small>Rosa vera</small><b>${o.real}°</b><em>${r0(o.valNow)} cr · ${o.etaNow!=null?f1(o.etaNow):"—"} anni</em></div>${o.alt.map(a=>`<div${a===o.best?' class="best"':""}><small>${a.y===0?"Draft":YL(a.y)}</small><b>${a.pos}°</b><em>${r0(a.val)} cr · ${a.eta!=null?f1(a.eta):"—"} anni</em></div>`).join("")}</div>
+ <p>${o.giud[2]}</p></div>`}
 function pagella(t,D){const A=D.F[t],Y=D.Y.filter(y=>A[y]),a=A[Y[0]],c=A[SNOW];if(!a||!c||Y.length<2)return null;
  const es=Y.slice(1).map((y,i)=>estate(t,D,Y[i],y)).filter(Boolean),d=(c.f/a.f-1)*100,de=a.eta&&c.eta?c.eta-a.eta:0,stay=D.M[t].tot.stay.length;
  /* posizione nel power ranking delle 8 versioni «oggi» rispetto a quelle «24/25» */
@@ -501,9 +533,9 @@ function articolo(t,D){const A=D.F[t],YY=D.Y.filter(y=>A[y]),L3=YY.map(y=>A[y]),
  const eta=G.eta[1],vo=G.valOggi,rk=G.rk_valOggi;const fut=eta==null?"":eta<=25.5&&rk<=4?"una rosa giovane e già di valore: il futuro è suo":eta<=25.5?"una rosa giovane: il valore deve ancora arrivare":eta>=29&&rk<=3?"una rosa forte ma avanti con l'età: la finestra per vincere è adesso, poi andrà rinnovata":eta>=29?"una rosa vecchia e senza tanto valore: va rinnovata presto":rk<=3?"una rosa forte e nel pieno della carriera":"una rosa di mezzo, né da titolo né da ricostruzione";
  P.push(`<b>Oggi e domani.</b> La rosa di oggi vale <b>${r0(vo)}</b> crediti (${rk}° tra le 8), età media dei 10 migliori ${eta!=null?f1(eta):"—"} anni: ${fut}.`);
  /* 6. la simulazione «e se fossi rimasto» */
- P.push(`<b>E se fosse rimasta com'era?</b> Con i PDK di quest'anno ${L3.map(x=>`la rosa ${x.y===SNOW?"di oggi":x.y===0?"del draft":"del "+YL(x.y)} farebbe <b>${f1(x.f)}</b>`).join(", ")} a turno. <i>La rosa di sempre</i> (il meglio di tutte le annate) farebbe ${f1(D.ALL[t].f)}: ${nomi(D.ALL[t].best.slice(0,3))}.`);
+ P.push(`<i>La rosa di sempre</i> (il meglio di tutte le annate) farebbe ${f1(D.ALL[t].f)} a turno: ${nomi(D.ALL[t].best.slice(0,3))}.`);
  return`<details class="ttart"${TT.art===t?" open":""}><summary>${lg(t)}<span><b>${nk}</b><small>${P0.dir[0]} ${P0.dir[1]} · GM ${vf(G.v)}</small></span><span class="ttspk">${L3.map(x=>`<i style="height:${Math.max(8,Math.round(x.f/D.V[0].f*34))}px" title="${YN[x.y]}"></i>`).join("")}</span></summary>
- <div class="ttart-b"><div class="ttrks" style="grid-template-columns:repeat(${L3.length},1fr)">${L3.map(x=>`<div><small>${YN[x.y]}</small><b>${f1(x.f)}</b><em>${x.rk}° di sempre</em></div>`).join("")}</div>${P.map(p=>`<p>${p}</p>`).join("")}${vPagella(t,D)}</div></details>`}
+ <div class="ttart-b"><div class="ttrks" style="grid-template-columns:repeat(${L3.length},1fr)">${L3.map(x=>`<div><small>${YN[x.y]}</small><b>${f1(x.f)}</b><em>${x.rk}° di sempre</em></div>`).join("")}</div>${P.slice(0,-1).map(p=>`<p>${p}</p>`).join("")}${vControfatt(t,D)}<p>${P[P.length-1]}</p>${vPagella(t,D)}</div></details>`}
 function vAnalisi(){const D=analisiData();if(!D.K.length)return`<p class="ttn">Servono turni chiusi per le analisi.</p>`;
  const fy=t=>D.F[t][D.Y.find(y=>D.F[t][y])],T=D.T.filter(t=>fy(t)&&D.F[t][SNOW]&&fy(t)!==D.F[t][SNOW]),dd=t=>(D.F[t][SNOW].f/fy(t).f-1)*100,S=[...T].sort((p,q)=>dd(q)-dd(p));
  const up=S[0],dn=S[S.length-1];
@@ -621,6 +653,8 @@ const st=document.createElement("style");st.textContent=`
 .ttasl{display:grid;gap:2px}.ttash,.ttasr{display:grid;grid-template-columns:1fr 46px 46px 46px;gap:4px;align-items:center;font-size:11.5px;padding:3px 4px}.ttash{font:800 10px system-ui;opacity:.7;text-transform:uppercase}.ttash span:not(:first-child),.ttasr span:not(:first-child){text-align:right}.ttasr{border-radius:7px;background:rgba(148,163,184,.08)}.ttasr span:first-child{display:flex;gap:5px;align-items:center;min-width:0}.ttasr i{font:800 9px system-ui;font-style:normal;width:16px;height:16px;border-radius:50%;display:grid;place-items:center;background:rgba(139,92,246,.25);flex:none}.ttasr b{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ttasr span:last-child{font-weight:800}
 .ttash.rk,.ttasr.rk{grid-template-columns:1fr 34px 36px 40px 38px 54px}.ttasr small{font-weight:600;opacity:.6;font-size:9.5px}.ttasd summary{list-style:none;cursor:pointer}.ttasd summary::-webkit-details-marker{display:none}
 .ttteam{margin:14px 0;padding:12px;border-radius:16px;border:1px solid rgba(139,92,246,.45);background:rgba(124,58,237,.07)}.ttteam h4{margin:0 0 8px;font:800 italic 18px var(--display)}.ttteam h4 small{font:700 10px system-ui;opacity:.7;margin-left:6px;font-style:normal}
+.ttcf{margin:10px 0;padding:10px;border-radius:12px;background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.4)}.ttcfh{display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap;align-items:center}.ttcfh b{font:800 13px system-ui}.ttcfh span{font:800 12px system-ui}
+.ttcfg{display:grid;grid-template-columns:repeat(auto-fit,minmax(64px,1fr));gap:5px;margin:8px 0}.ttcfg>div{text-align:center;padding:6px 2px;border-radius:10px;background:rgba(148,163,184,.12)}.ttcfg .now{background:rgba(124,58,237,.18)}.ttcfg .best{outline:1px solid rgba(56,189,248,.6)}.ttcfg small{display:block;font-size:10px;opacity:.75}.ttcfg b{display:block;font:800 18px var(--display)}.ttcfg em{font-style:normal;font-size:9.5px;opacity:.75}.ttcf p{font-size:12px;margin:0}
 .ttsh{display:block;width:100%;margin:10px 0 4px;padding:10px 14px;border-radius:12px;border:1px solid rgba(139,92,246,.55);background:linear-gradient(135deg,rgba(124,58,237,.22),rgba(192,38,211,.18));color:inherit;font:800 13px system-ui;cursor:pointer}.ttsh.done{opacity:.6}
 .ttcamp{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px}.ttcamp small{width:100%;font:800 10px system-ui;letter-spacing:.1em;text-transform:uppercase;opacity:.75}.ttcamp button{padding:7px 10px;border-radius:10px;border:1px solid rgba(139,92,246,.45);background:transparent;color:inherit;font:800 12px system-ui}.ttcamp button[aria-pressed="true"]{background:#7c3aed;color:#fff}
 .ttmod{grid-template-columns:1fr 1fr!important}
