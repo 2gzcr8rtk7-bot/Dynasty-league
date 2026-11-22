@@ -262,9 +262,9 @@ function gmAll(D){if(GMV&&GMV.k===D.key)return GMV.v;const T=D.T,Y=D.Y,R={};
   Y.forEach((y,i)=>{if(!i)return;const m=D.M[t][Y[i-1]+"-"+y];if(!m)return;const w=y;
    for(const x of m.in){const af=after(x.n,w),bf=svVal(x.n,w-1),ok=svNoto(x.n,w);o.saldo+=af*ageF(x.n);if(ok)o.tim+=af-bf;o.mv.push({d:"+",n:x.n,bf,af,ok,y:w})}
    for(const x of m.out){const af=after(x.n,w),bf=svVal(x.n,w-1),ok=svNoto(x.n,w);o.saldo-=af*ageF(x.n);if(ok)o.tim+=bf-af;o.mv.push({d:"-",n:x.n,bf,af,ok,y:w})}});
-  const ps=P.map(q=>q[t]),n=ps.length,wr=ps.map((_,i)=>i===n-1?.4:.6*(i+1)/((n-1)*n/2||1));
+  const ps=P.map(q=>q[t]),n=ps.length,wr=ps.map((_,i)=>i===n-1?.55:.45*(i+1)/((n-1)*n/2||1));/* conta soprattutto l'oggi: le stagioni passate senza titolo pesano meno */
   o.pos=ps;o.ris=ps.reduce((s,p,i)=>s+GM_PT[p-1]*wr[i],0);
-  const pn=ps[n-1];o.tr=Math.max(4.5,Math.min(9.5,6.5+.5*((ps[0]-pn)*.6+((n>1?ps[n-2]:ps[0])-pn)*.4)));
+  const pn=ps[n-1],best=Math.min(...ps.slice(0,-1).concat(pn));o.tr=Math.max(4.5,Math.min(9.5,6.5+.5*((ps[0]-pn)*.6+((n>1?ps[n-2]:ps[0])-pn)*.4)-.25*(pn-best)));/* tornare indietro dal punto più alto (es. 2° → 5°) pesa: non sei andato avanti a vincere */
   const a0=D.F[t][D.FY]&&D.F[t][D.FY].eta,a1=D.F[t][SNOW]&&D.F[t][SNOW].eta;o.ric=a0!=null&&a1!=null&&a1<=a0-2;o.eta=[a0,a1];
   R[t]=o}
  const xs=T.map(t=>R[t].saldo+.5*R[t].tim),mn=Math.min(...xs),mx=Math.max(...xs),AS=astaData().T;
