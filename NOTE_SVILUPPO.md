@@ -4385,3 +4385,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1244: FIX_NOTTE Amen Thompson 23/11 (LAC-HOU, notte del 24/11 italiana) +2,5 PDK (mod.add, si somma ai PDK live e a quelli ufficiali).
 - v1245: FIX_NOTTE 23/11 (notte del 24/11 italiana): Moussa Diabaté (MEM-CHA) e Alperen Şengün (LAC-HOU) +1,5 PDK (mod.add).
 - v1246: FIX_NOTTE 23/11: Scottie Barnes (MIL-TOR) +2,5 PDK (mod.add).
+- v1247: FIX_NOTTE 23/11 (live, UTA-LAL): Luka Dončić e Walker Kessler −1,5 PDK (mod.add).
