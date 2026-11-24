@@ -4383,3 +4383,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1242: mercato pesato sui risultati: il valore delle mosse si moltiplica per un fattore dalla posizione di oggi (1° ×1,3 … 8° ×0,6; diviso se negativo): le mosse contano di più se hanno portato la squadra in alto. Mercato: Ducks, Eagles, Foxes in testa.
 - v1243: FIX_NOTTE Dyson Daniels 22/11 (live, DET-ATL) −2,5 PDK (mod.add −2.5, si somma ai PDK live).
 - v1244: FIX_NOTTE Amen Thompson 23/11 (LAC-HOU, notte del 24/11 italiana) +2,5 PDK (mod.add, si somma ai PDK live e a quelli ufficiali).
+- v1245: FIX_NOTTE 23/11 (notte del 24/11 italiana): Moussa Diabaté (MEM-CHA) e Alperen Şengün (LAC-HOU) +1,5 PDK (mod.add).
