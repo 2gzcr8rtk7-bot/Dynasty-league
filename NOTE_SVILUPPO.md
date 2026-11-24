@@ -4382,3 +4382,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1241: prezzi del draft 2025 (TT_ASTA[2]: Flagg 600 PEA, Harper 250 e Bailey 250 TUR, Edgecombe 200 SPI, Knueppel 30 DUC); i crediti dati o presi negli scambi non entrano più nel voto del mercato (conta quanto rende chi è arrivato: Barnes per 300 cr ai Ducks).
 - v1242: mercato pesato sui risultati: il valore delle mosse si moltiplica per un fattore dalla posizione di oggi (1° ×1,3 … 8° ×0,6; diviso se negativo): le mosse contano di più se hanno portato la squadra in alto. Mercato: Ducks, Eagles, Foxes in testa.
 - v1243: FIX_NOTTE Dyson Daniels 22/11 (live, DET-ATL) −2,5 PDK (mod.add −2.5, si somma ai PDK live).
+- v1244: FIX_NOTTE Amen Thompson 23/11 (LAC-HOU, notte del 24/11 italiana) +2,5 PDK (mod.add, si somma ai PDK live e a quelli ufficiali).
