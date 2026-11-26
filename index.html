@@ -16429,7 +16429,7 @@ async function campoDraw(cv,k,a,b,dream){
     for(let i=0;i<260;i++){const sx=Math.random()*W0,sy=Math.random()*H0,r=Math.random()*1.7+.3;x.globalAlpha=Math.random()*.7+.15;x.fillStyle=Math.random()<.14?'#c084fc':'#fff';x.beginPath();x.arc(sx,sy,r,0,7);x.fill();}x.globalAlpha=1;}
   else{const g=x.createLinearGradient(0,0,0,H0);g.addColorStop(0,'#0b0e15');g.addColorStop(1,'#141926');x.fillStyle=g;x.fillRect(0,0,W0,H0);}
   async function jersey(team,pl,px,py,jw){const im=await dmJer(team,pl).catch(()=>null),jh=jw*77/64;
-    if(im){x.save();x.shadowColor='rgba(0,0,0,.45)';x.shadowBlur=jw*.13;x.shadowOffsetY=jw*.07;x.drawImage(im,px-jw/2,py-jh/2,jw,jh);x.restore();}
+    if(im){x.drawImage(im,px-jw/2,py-jh/2,jw,jh);}/* niente ombra canvas: la maglia ha gia la sua ombreggiatura, come ovunque nell'app */
     else{const C=TEAMS[team];x.fillStyle=C.bg;shRR(x,px-jw/2,py-jh/2,jw,jh,8);x.fill();x.fillStyle=C.fg;x.font=SH_F(800,jw*.46,1);x.textAlign='center';x.textBaseline='middle';x.fillText(String(pl.num||''),px,py);}
     return jh;}
   function pcdCol(lvl){return{v:['#a78bfa','#7c3aed','#fff'],g:['#4ade80','#16a34a','#fff'],y:['#fcd34d','#f5b400','#111'],r:['#f87171','#dc2626','#fff'],na:['#2b313d','#20252f','#9aa3b2']}[lvl]||['#2b313d','#20252f','#9aa3b2'];}
