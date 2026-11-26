@@ -9097,7 +9097,7 @@ function drCalZero(n,k){const p=Object.values(ROSTER).flat().find(x=>x[0]===n);r
 /* (639) orario di inizio (in minuti assoluti) della prima partita non finita del giocatore nel turno: serve a ordinare chi è ancora "in attesa" per chi gioca per primo */
 function drNextTs(n,W){try{const p=Object.values(ROSTER).flat().find(x=>x[0]===n),nba=p&&p[3];if(!nba)return 1e15;let best=1e15;for(let i=0;i<(W.len||7);i++){const d=drAdd(W.start,i),g=(TV.days[d]||[]).find(x=>x[0]===nba||x[1]===nba);if(!g||g[5]==="F")continue;const m=/^(\d{1,2}):(\d{2})(\+1)?/.exec(String(g[6]||""));const ts=Date.parse(d+"T00:00:00Z")/60000+(m?(+m[1]*60+ +m[2]+(m[3]?1440:0)):1439);if(ts<best)best=ts}return best}catch(e){return 1e15}}
 /* (1680) PUNTI EXTRA DI SQUADRA (decisi dal commissario, non legati a un giocatore): DR_BONUS[turno interno k][squadra] = punti */
-const DR_BONUS={10:{DUC:7,EAG:-3}};
+const DR_BONUS={10:{DUC:11,EAG:-3}};
 function drTeam(k,t,W){W=W||drWeek(k);const F0=drForm(k)[t]||{t:[],r:[]},F={t:F0.t.filter(n=>!spFuori(n,k)),r:F0.r.filter(n=>!spFuori(n,k))};
   /* MERITOCRAZIA dentro i ruoli: per ogni ruolo entrano i migliori PDK della settimana (4 G, 4 A, 2 C).
      Ordinati per punteggio: il migliore è capitano ×1,5, dal 2° al 6° pieno, dal 7° al 10° metà; se tra i 5 in campo manca un ruolo,
