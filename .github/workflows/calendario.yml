@@ -1,0 +1,36 @@
+# DYNASTY TV: calendario NBA dei prossimi giorni da ESPN (orari in ora italiana), ogni giorno in automatico.
+# Lo esegue GitHub: nessun costo Claude. Tocca solo i giorni non ancora iniziati (vedi tools/calendario_espn.mjs).
+name: calendario-espn
+on:
+  schedule:
+    - cron: "17 12 * * *"   # circa 13:17 ora italiana (inverno), prima delle 15:00
+    - cron: "47 5 * * *"    # circa 06:47 ora italiana, ripasso del mattino
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: calendario
+  cancel-in-progress: false
+jobs:
+  calendario:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Aggiorna calendario e pubblica
+        run: |
+          git config user.name "calendario-bot"
+          git config user.email "calendario-bot@users.noreply.github.com"
+          for i in 1 2 3; do
+            git fetch origin main && git reset --hard origin/main
+            node tools/calendario_espn.mjs
+            if git diff --quiet -- tv-data.js; then echo "Nessuna novità"; exit 0; fi
+            node tools/verifica.mjs
+            git add tv-data.js
+            git commit -m "Dynasty TV: calendario NBA aggiornato da ESPN [automatico]"
+            git push origin HEAD:main && exit 0
+            sleep 10
+          done
+          exit 1

@@ -1,0 +1,33 @@
+# (1071) PROPOSTE DI CALENDARIO DREAMERS per la stagione nuova: ogni giorno GitHub guarda su ESPN se è uscito il calendario NBA della
+# stagione dopo (di solito a metà agosto). Appena c'è, tools/proposte_calendario.mjs divide le notti in turni (più opzioni) e scrive
+# calendario-proposte.js: nell'app compare a tutti il banner «Calendario Dreamers: proposte pronte». Nessuna opzione si attiva da sola.
+# Se le proposte della stagione nuova ci sono già, la corsa esce subito. Nessun costo Claude.
+name: proposte-calendario
+on:
+  schedule:
+    - cron: "23 9 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: proposte-calendario
+  cancel-in-progress: false
+jobs:
+  proposte:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Cerca il calendario e prepara le proposte
+        run: |
+          git config user.name "calendario-bot"
+          git config user.email "calendario-bot@users.noreply.github.com"
+          node tools/proposte_calendario.mjs
+          if [ -z "$(git status --porcelain -- calendario-proposte.js)" ]; then echo "Nessuna novità"; exit 0; fi
+          git add calendario-proposte.js
+          git commit -m "Calendario Dreamers: proposte per la stagione nuova [automatico]"
+          for i in 1 2 3; do git pull --rebase origin main && git push origin HEAD:main && exit 0; sleep 10; done
+          exit 1

@@ -1,0 +1,4429 @@
+# Note di sviluppo — Dynasty League
+
+File di passaggio tra chi lavora sull'app (due account Claude diversi).
+Prima di iniziare: leggere questo file. Alla fine di ogni sessione: aggiungere cosa è cambiato.
+
+> **IMPORTANTE – regole per chi carica i report**
+> 1. **Prima di ogni push fare sempre `git pull --rebase origin main`**: dopo ogni pubblicazione GitHub aggiunge da solo un commit ("DREAMERS: archivio notti aggiornato [automatico]").
+> 2. **Non modificare e non committare `dreamers-data.js`**: lo genera GitHub (workflow `.github/workflows/dreamers.yml`) leggendo la storia di index.html. Nessun comando da lanciare.
+> 3. Formato di `EFF.gioc` (dal 26/10): [nome, eff. media, partite, minuti medi, MINUTI notte, eff. notte, eff. ultime 5, minuti ultime 5, PDK notte]. La colonna 9 (`p[8]`) è il PDK (Dunkest) della partita della notte, `null` per chi non ha giocato: DREAMERS la usa per archiviare ogni partita (prima leggeva per errore `p[4]`, che sono i minuti).
+> 4. **Efficienza "pura"** (richiesta di Francesco): in tutta l'app conta solo il rapporto Dunkest/minuto, non il minutaggio. Quindi l'efficienza media stagionale di un giocatore (colonna 2 di `EFF.gioc`) va calcolata come **media semplice delle efficienze partita per partita** (es. 1,00 e 0,50 → 0,75), non come Dunkest totali ÷ minuti totali. Stessa regola per le efficienze di squadra in `EFF.squadre` (media semplice delle efficienze dei giocatori).
+> 5. **Una sola fonte per ogni numero**: efficienza MEDIA stagionale = `EFF.gioc[...][1]` (`effMed`); efficienza dell'ULTIMA partita = `ULTIMA.gioc` (`lastEff`); PDK medi e ultima partita = da `PARTITE` (`pdkMed`, `pdkLast`). Campo e panchina mostrano i PDK; scheda, Efficienza e Cup l'efficienza. Sfida della notte usa l'efficienza dell'ultima partita.
+> 6. GitHub controlla da solo la coerenza del report a ogni push (`tools/verifica.mjs`, avvisi nella scheda Actions) e l'app fa lo stesso controllo all'apertura (console). Controlla: notte ≠ ULTIMA, 1 partita con media ≠ ultima, giocatori con partite senza ULTIMA, roster ed EFF non allineati, date diverse tra EFF e ULTIMA.
+> 7. **NUOVO – Spazio in squadra (richiesta di Francesco, 26/10/2026).** A ogni report aggiorna `spazio-data.js` (oggetto `SPAZIO_DATA`) con i dati Dunkest: per **ogni squadra NBA in cui c'è almeno un giocatore della lega** metti **tutti** i giocatori di quella squadra NBA (anche quelli che non sono nella lega) come `[nome, minuti medi, PDK medi, partite]`, calcolati sulle ultime 10 partite della squadra (sulla stagione se ne ha giocate meno). Chiave = sigla NBA usata in `ROSTER` (colonna 4, es. "SAS", "DAL"). Aggiorna anche `agg` con la data del report. Serve all'app per capire la gerarchia di ogni squadra (1° = 5 stelle, 2° = 4, 3° = 3, titolari/sesto uomo = 2, rotazione = 1, fondo = ½): ordine = PDK medi + 0,3 × minuti medi (`spazioStelle` in index.html). Formato di esempio dentro il file. I nomi dei giocatori della lega devono essere scritti uguali a `ROSTER`.
+> 8. **PUBBLICAZIONE SOLO SU ORDINE (regola dell'utente, 27/10/2026).** Non pubblicare MAI su `main` (= sito online) senza un ordine esplicito ("pubblica"). Le modifiche si mettono in coda sul branch `coda` (commit + push su `coda`, mai su `main`), anche più richieste una dopo l'altra; prima si manda sempre un rendering (screenshot). Solo quando arriva l'ordine: `git pull --rebase origin main` sul branch, poi merge di `coda` in `main` e push. Così si possono pubblicare più contenuti insieme.
+
+> 9. **(SUPERATA dalla (1566): il report lo fa GitHub da solo con `tools/report_espn.mjs`; `tools/report_dunkest.mjs` resta solo come riserva automatica)** **REPORT AUTOMATICO DUNKEST (28/10/2026).** Il report del mattino ora si fa con `tools/report_dunkest.mjs` (nel repository, non più script nella sessione di qualcuno). Da dentro la cartella del repo: `NODE_USE_ENV_PROXY=1 node tools/report_dunkest.mjs` (carica tutte le notti dopo l'ultima in PARTITE fino a ieri, data USA). Opzioni: `--prova` (non scrive), `--fino=AAAA-MM-GG`, `--forza`. Fonti solo Dunkest: `/api/stats/table` (chi ha giocato, id) + `/api/player/games` (PDK ufficiale, min:sec, avversario, tabellino). Aggiorna PARTITE, EFF, ULTIMA, GL_STATS, FA, FA_AGG, data in fondo, fa-games.js, tv-data.js (risultati, tabellini, record). Collaudato rifacendo il report del 27/10 dallo stato del 26/10: identico a quello del fratello (unica differenza: 1 minutaggio medio a 0,1). Se Dunkest non ha ancora tutte le partite della notte si ferma senza scrivere (exit 2): riprovare dopo. Poi `node tools/verifica.mjs`, commit su main con `git pull --rebase origin main` prima del push.
+> 10. **(SUPERATA dalla (1566), 10/11/2026: ora i dati ufficiali vengono da ESPN, Dunkest è la riserva)** **ESPN SOLO PER IL LIVE (regola dell'utente, 28/10/2026).** I dati ESPN (tabellini live, PDK ricalcolati con la formula) servono SOLO durante la notte in corso e restano provvisori. Tutti i punteggi ufficiali (PARTITE, EFF, ULTIMA, Dreamers, G League, free agent, tabellini di Dynasty TV delle notti chiuse) devono venire da Dunkest, tramite il report del mattino (`tools/report_dunkest.mjs`), che sovrascrive i provvisori.
+> 11. **SCAMBI E TURNI DREAMERS (regola dell'utente, 29/10/2026).** Un giocatore scambiato non gioca MAI il turno già iniziato per la nuova squadra: conta per la squadra di prima fino alla fine del turno e per la nuova dal turno successivo. Turno iniziato = aperto (12:30 ora italiana del giorno dopo l'ultima notte del turno precedente). Lo fa da solo `drForm(k)` → `drUndoTrades` leggendo `TRADES`: quando registri uno scambio metti SEMPRE `data` e `ora` (ora italiana), e per scambi a 3+ squadre il campo `da:{giocatore:squadra di provenienza}`. Vale per gli scambi dal 29/10/2026 (`DR_REGOLA_SCAMBI`).
+
+L'app è tutta in `index.html` (loghi squadre in base64 nell'oggetto `LOGO`).
+Ogni modifica pubblicata su GitHub viene messa online da GitHub Pages in automatico (prima era Netlify).
+
+## 24/10/2026 — Campo del quintetto (pagina squadra, funzione `vCampo`)
+- Campo ribaltato stile Dunkest: canestro in alto, centro sotto canestro, ali in mezzo, guardie in basso.
+- Coppie dello stesso ruolo più larghe: ali a 22%/78%, guardie a 28%/72% (`ROWY` e `XS` in `vCampo`).
+- Tolte le etichette G/F/C sul bordo sinistro del campo.
+- Campo personalizzato per squadra: bordo e area colorati con il colore della squadra, nome squadra sulla fascia in alto con due mini-loghi, logo grande sul parquet tra le guardie, cerchio di metà campo colorato.
+
+## 24/10/2026 (2) — Ritocchi al campo
+- Campo più alto (proporzione 100/112) per separare le tre file: i numeri di efficienza non toccano più le maglie della fila sotto.
+- Colore squadra solo sul bordo del campo; area del tiro libero e cerchio di metà campo tornati in parquet.
+- Logo squadra spostato nell'angolo in alto a destra del campo.
+- Targhette col nome tutte della stessa larghezza; i cognomi lunghi usano un testo più piccolo.
+- Posizioni: centro 25%, ali 19%/81% a 53%, guardie 30%/70% a 82%.
+
+## 24/10/2026 (3) — Logo sul bordo alto
+- Tolto il logo dal parquet. Ora sta al centro della fascia alta del campo, con città a sinistra e nome squadra a destra.
+- Fascia alta più spessa (viewBox 100x120, campo spostato di 8 unità); bordi laterali sottili come prima.
+- Posizioni righe aggiornate: centro 30%, ali 56,2%, guardie 83,2%.
+
+## 24/10/2026 (4) — Scritte sul bordo stile NBA
+- Città e nome squadra sul bordo alto scritti con il font Anton (blocco condensato tipo parquet NBA), incluso nell'index.html come @font-face "CourtBlock" (base64, solo caratteri latini) così funziona anche offline.
+- Colore delle scritte: secondo colore della squadra se si legge bene sul bordo, altrimenti bianco/nero; contorno scuro e leggera lucidatura per l'effetto "dipinto".
+- Dimensione del testo adattata alla lunghezza (es. SACRAMENTO, CALIFORNIA).
+
+## 24/10/2026 (5) — Campo a tutta larghezza
+- Tolti i bordi colorati laterali (sia nel disegno SVG sia il bordo CSS a sx/dx): il parquet arriva ai lati.
+- Il campo è disegnato nelle stesse coordinate di prima e scalato con `translate(-3.19,9.62) scale(1.0638)`; viewBox ora 100x128.8.
+- Fascia alta più alta (16 unità): logo più grande (19x15.4) e scritte leggermente più grandi.
+- Righe: centro 30,6%, ali 56,6%, guardie 83,3%.
+
+## 24/10/2026 (6)
+- Tolti dal disegno il tabellone e il ferro arancione del canestro.
+
+## 24/10/2026 (7) — Home
+- Logo Texas Ducks nella griglia Franchigie un po' più grande e più basso: regola CSS `.htile[data-team="DUC"] .hlg .badge{transform:translateY(4px) scale(1.15)}`.
+
+## 24/10/2026 (8) — Pacchetto modifiche (Claude, account di Francesco)
+- Ducks: maglia con punte nere anche su giro manica e collo; tolta la stella sotto il numero (DECO.DUC).
+- Menu: "Dunkest" è un vero menu a tendina che si apre dal bottone (non ricarica la pagina). Voci: Risultati, Classifica, Roster, Trade, Regolamento. Funzione `syncMenu()`; per aggiungere voci basta un bottone dentro `#subnav` e il nome in `DK`.
+- Nuova sezione "Sala Trofei" (bottone nella barra, vista `storia`): classifica competenza (8 pt al 1° … 1 pt all'8°) e classifiche finali per anno. Dati nell'array `STORIA`: per un nuovo anno aggiungere una riga con l'ordine d'arrivo.
+- Pagina squadra: "Bacheca" con coppe oro/argento/bronzo, solo per chi ha fatto podio (funzione `bacheca(t)`, legge `STORIA`).
+- Efficienza: aggiunta "Flop 10 lega" sotto la Top 10.
+- Regolamento: testo completo del PDF ufficiale in `REGOLAMENTO` (articoli apribili) + file `regolamento.pdf` scaricabile.
+
+## 24/10/2026 (9) — Sezione Giochi (Claude, account di Francesco)
+- Bottone "Giochi" nella barra (la barra su telefono scorre a destra, bottoni più grandi).
+- Tre giochi, selettore in alto (variabile `GAME`):
+  - "Più o Meno" (`vGiochi`/`hlBind`, stato `HL`): chi ha l'efficienza stagionale più alta; record in localStorage `hlBest`.
+  - "Tiro da 3" (`vTiro`/`tiroCanvas`, stato `TR`): arcade su canvas, 45 secondi, si tira trascinando verso l'alto; la precisione dipende dall'efficienza del giocatore (`tiroAcc`); record in `tiroBest`.
+  - "Partita simulata" (`vSim`/`simRun`, stato `SIM`): partita automatica tra due franchigie con titolari + 4 riserve migliori, tiri pesati sulle efficienze.
+- I giochi usano i dati `EFF`, `ROSTER` e `TITOLARI`: si aggiornano da soli quando si aggiornano quelli.
+
+## 25/10/2026 — Cassa con registro (Claude, account di Francesco)
+- Il riquadro Cassa nella pagina squadra è cliccabile e apre la vista `cassa` con 3 schede:
+  - Bilancio: entrate, uscite e saldo per stagione (stagione = Draft→G64, non anno solare).
+  - Entrate e uscite: registro con data, causa e importo, filtrabile per stagione. Dati in `MOVIMENTI` (per squadra).
+  - Debiti e crediti: chi deve pagare a chi, senza causa. Dati in `DEBITI` (lista unica della lega: da, a, v, tipo portafoglio/post, s, saldato).
+- I numeri del riquadro Cassa (crediti/debiti portafoglio e post draft) ora si calcolano da `DEBITI` (solo quelli non saldati). `CASSA` non esiste più.
+- `STAGIONE_CORRENTE` = etichetta della stagione in corso.
+
+## 25/10/2026 (2) — Tiro da 3 più difficile
+- Il canestro si muove sempre fin dall'inizio. Velocità, ampiezza, margine di canestro e imprecisione dipendono in modo esponenziale dall'efficienza (`tiroPeriod`, `tiroAmp`, `tiroTol`, `tiroNoise`, `tiroE`).
+- Esempi: eff 1,0 → oscillazione 2,7 s, margine 18 px; eff 0,3 → 0,58 s, margine 11 px. Accelera del 4% a ogni centro.
+- Il canestro viene valutato quando la palla arriva (non al tiro): bisogna anticipare il movimento. Durata del volo leggermente casuale (650–790 ms).
+
+## 25/10/2026 (3) — Gioco "Sfida della notte"
+- Quarto gioco nel menu Giochi (`vNotte`, `ntAct`, stato `NT`). Si creano 2-3 gruppi da 1-5 giocatori presi da tutti i roster (ricerca e filtro per squadra).
+- Alla creazione salva per ogni giocatore le partite già giocate (`EFF.gioc[...][2]`). Quando il numero sale, il valore è l'efficienza dell'ultima gara (`lastEff`, quindi `ULTIMA`). Punteggio gruppo = media.
+- Finisce quando tutti hanno giocato una partita; "Chiudi ora" la termina contando solo chi ha giocato.
+- Risultato condivisibile come immagine PNG generata su canvas (`ntShare`). Sfide salvate in localStorage `notteSfide`.
+- Importante: perché funzioni, quando si aggiorna `EFF` va aggiornato anche il numero di partite e `ULTIMA` con l'efficienza dell'ultima partita di ogni giocatore che ha giocato.
+
+## 25/10/2026 (4) — Partita simulata: merito + caso
+- Esito = 60% migliori 5 per efficienza + 20% i 5 successivi + 20% caso (`SIMW`). "Migliori" = più efficienti della rosa con almeno 10 minuti, non i titolari del campo.
+- Vantaggio = 0,60·tanh(Δtop/0,15) + 0,20·tanh(Δaltri/0,20); caso = 0,20·N(0,1). Scarto = 2 + |valore|·28 (max 40).
+- Prima di giocare mostra le medie e il pronostico in percentuale (`simProb`). La cronaca è generata in modo coerente con il punteggio finale.
+
+## 25/10/2026 (5) — Trade speciali
+- Nuova voce "Trade speciali" nel menu Dunkest (vista `speciali`). Dati in `SPECIALI`: t, entra, esce, tipo (30/40/50), inizio (giornata), extra (giornate extra, facoltativo).
+- Durata da regolamento: 30 → 20 giornate, 40 → 40, 50 → fino alla G64. Giornata corrente = ultima di `GIORNATE`.
+- Mostra giornate rimaste (giornata in corso compresa) e colore per tempo rimasto: ≥80% verde chiaro, 50% giallo, 30% arancione, ≤15% rosso, sfumato in mezzo (`spColor`).
+- Le 3 speciali esistenti sono inserite con inizio G1 (da verificare).
+
+## 25/10/2026 (6) — Ritocchi vari
+- G League: i Ducks (G-Ducks) hanno il logo Gotham e sfondo viola (`bg`/`trim`/`logo` facoltativi nella voce di `GLEAGUE`).
+- Pagina squadra: la panchina è ordinata per efficienza dell'ultima gara (`lastEff`), quindi si riordina da sola a ogni aggiornamento dei report.
+- Efficienza: Top 10 (etichetta verde) e Flop 10 (rossa) spostate sopra la sezione Giocatori, che ora ha l'etichetta gialla (classi `.hgreen`, `.hred`, `.hyellow`).
+
+## 25/10/2026 (7) — Cassa automatica da Trade e Speciali
+- I bilanci si aggiornano da soli: la funzione `movimenti(t)` legge `TRADES` e `SPECIALI` e crea le righe di entrate/uscite.
+  - Scambio: chi riceve "N crediti" ha +N, l'altra squadra −N.
+  - Asta: −N crediti per la squadra che acquista.
+  - Trade speciale: −costo da regolamento (30/40/50 cr) + giornate extra (2 cr ciascuna per la 30, 1 cr per la 40). Si abbina a `SPECIALI` tramite squadra + giocatore che entra.
+  - Stagione: `s` facoltativo nella voce di `TRADES`, altrimenti `STAGIONE_CORRENTE`.
+- REGOLA: quando arriva una nuova trade, basta inserirla in `TRADES` (e, se speciale, anche in `SPECIALI`). Non va scritta a mano in `MOVIMENTI`, che ora serve solo per altri movimenti (premi, quote…).
+- Saldi 26/27 attuali: Moose +335, Pelicans −9, Dolphins −17, Foxes −60, Ducks −370. Alcune date mancano in `TRADES`.
+
+## 25/10/2026 (8) — Ducks: solo scritta nei loghi piccoli
+- Dove il logo è piccolo (Classifica, Risultati, scelta squadra, Trade, Trade speciali, Efficienza, Sala Trofei, Giochi, Infortuni) i Ducks usano la sola scritta (`LOGO2.DUC`, la stessa del campo).
+- Il logo intero resta nella casella Home (`.hlg`) e nei banner squadra (`.hlogo`, che usano `LOGO` direttamente). Regola generata nello `<style>` creato da script vicino a `LOGO2`.
+
+## 25/10/2026 (9) — Spiders azzurro chiaro
+- SPI: bg `#8cc9f5` (azzurro chiaro), fg `#0f1f3d`, trim `#1e3a8a` (blu scuro, si vede anche nei bordi della maglia, che resta bianca).
+
+## 25/10/2026 (10) — Loghi più grandi nei riquadri
+- Regola unica presa dalla classifica competenza: il logo occupa il riquadro colorato meno 2 px per lato (`.wedge` padding 2px).
+- Efficienza (squadre e Top/Flop) 54 px, Classifica e Sala Trofei 50–54, Risultati 51, Infortuni e Cassa 42, Sfida della notte 38, Trade speciali e Partita simulata 46. Trade resta 30 (colonna stretta).
+- Tolte le regole speciali `.wedge:has(.lg-DUC)` e `.wedge .logo.lg-DUC` (100%): ora la scritta Ducks ha lo stesso margine e la stessa misura degli altri loghi in ogni riquadro.
+- Partita simulata: logo Ducks +15% (53 px invece di 46, regola `.simtm .wedge .logo.lg-DUC`).
+
+## 25/10/2026 (11) — Sfida della notte: fino a 4 sfide in corso
+- Massimo `NT_MAX` = 4 sfide non finite. Ognuna ha uno slot `c.n` (1–4) assegnato alla creazione; le sfide vecchie senza `n` lo ricevono in automatico (`ntLive`).
+- Pagina iniziale: cruscotto "Sfide in corso" (`ntCard`), una sfida per riga: colore per slot (`NT_SC`), gruppi affiancati con cognome di ogni giocatore, pallino (pieno = ha giocato) ed efficienza della partita, media di ogni gruppo con il gruppo in testa in giallo, barra di avanzamento. Gli slot liberi sono riquadri tratteggiati che aprono "Nuova sfida". Le sfide finite vanno in "Archivio".
+- Con 4 sfide in corso non se ne possono creare altre (bisogna aspettare o usare "Chiudi ora").
+- La data della sfida ora include l'ora. Sottotitolo accorciato in "Prossima partita" (prima allargava la pagina su telefono).
+
+## 25/10/2026 (12) — Calcolatore Scambi
+- Nuovo bottone "Calcolatore Scambi" nella barra, prima di Giochi (vista `valtrade`, `vValTrade`, stato `VT`). Due schede: Calcolatore e Valori lega.
+- Valori: classifica dynasty di Court Consensus (screenshot del 25/10, posizioni 1–293 con alcuni buchi, pick escluse) nell'oggetto `VALORI` (nome → [ruolo, valore, 1 se rookie]). Abbinamento ai roster con `vnz` (ignora accenti, punti, Jr./II). Wolf (2017) e Ighodaro (1700) inseriti a mano su indicazione di Francesco. Chi non è in lista vale `VAL_FALLBACK` = 1600.
+- Punti trade = (valore/1000)^`VAL_EXP` (3,3), così le stelle pesano di più. Crediti: 1 cr = `VAL_CR` (1,13) punti, tarato sulle pick indicate da Francesco: pick 1 = 300 cr, 2 = 250, 3 = 200, 4 = 150, 5 = 100 (`PICK_CR`).
+- Esito: differenza < 10% equilibrata, 10–25% leggermente a favore, > 25% sbilanciata; suggerisce i crediti per pareggiare.
+- Per aggiornare i valori: sostituire `VALORI` e `VALORI_AGG`.
+- Risultato: in alto il valore che ogni squadra RICEVE; il giudizio nomina la squadra che ci guadagna ("Sbilanciata a favore dei X", "Ci guadagnano i X del N%").
+- Barra: parte sinistra = quota ricevuta dalla prima squadra, destra = dalla seconda, con le percentuali scritte e uno stacco tra i due colori (utile quando le squadre hanno colori simili).
+
+## 25/10/2026 (13) — Sfida della notte: correzioni
+- Quando un gruppo arriva a 5 giocatori la scelta passa da sola al gruppo successivo con un messaggio (`NT.msg`); se tutti i gruppi sono pieni lo dice invece di non fare niente.
+- "Chiudi ora" va toccato due volte (conferma), così non si chiude una sfida per sbaglio.
+- Dopo "Lancia la sfida" i tocchi vengono ignorati per 0,6 s (`ntLock`): su iPhone un doppio tocco poteva finire su "Chiudi ora" e chiudere subito la sfida.
+- `ntGames` cerca il giocatore anche nelle altre squadre di `EFF.gioc` (giocatori appena scambiati).
+- Riquadro risultato: resoconto di cosa riceve ogni squadra (giocatori, pick, crediti), sopra il suggerimento per pareggiare.
+
+## 25/10/2026 (14) — Condividi risultato partita
+- Risultati: piccolo bottone condividi nella fascia "Scarto" di ogni partita (`data-share="giornata|indice"`).
+- `shareGame` disegna su canvas un'immagine 1080x1350 (formato storie/post): logo lega, giornata, le due squadre con logo grande, città e punteggio, vincitore con trofeo, scarto. Su telefono apre la condivisione (WhatsApp ecc.), altrimenti scarica il PNG.
+
+## 25/10/2026 (15) — Ducks di nuovo gialli
+- DUC: bg tornato `#facc15` (il giallo originale), al posto del silver `#a9afb7`. Anche le maglie sono gialle con le punte nere (override in `jersey()`).
+
+## 25/10/2026 (16) — Efficienza Cup
+- Si apre dal bottone dorato "Efficienza Cup" in cima alla pagina Efficienza, sopra la classifica squadre (`data-cupgo`); non è più nella barra. Vista `effcup` ("‹ Efficienza" per tornare; nella barra resta evidenziato Efficienza).
+- "Sala" rossa con due selettori: Anno NBA (1/2/3) e Ruolo (Guardie/Ali/Centri) → 9 classifiche (`cupYear`, `cupRole`). Ruolo = quello del roster (`ROSTER[t][i][2]`).
+- Classifica per efficienza stagionale con logo squadra, partite, minuti e podio; chi non ha partite va in "Senza partite".
+- Tutto è calcolato al momento da `ROSTER` ed `EFF.gioc`: con un nuovo report le classifiche si aggiornano da sole.
+- Anno NBA da `NBA_ANNO` (anno del Draft, verificato sulle liste Draft 2024/2025/2026): anno = `NBA_STAG` (2027) − anno draft. Se entra un giovane nuovo in un roster va aggiunto lì; a inizio stagione nuova aumentare `NBA_STAG`.
+
+## Regola generale: tutto collegato ai dati
+Ogni sezione deve leggere i dati (`EFF`, `ULTIMA`, `GIORNATE`, `ROSTER`, `TITOLARI`, `TRADES`, `SPECIALI`) al momento del disegno, senza copiare numeri a mano. Così basta aggiornare quegli oggetti con il report e si aggiornano: classifiche, efficienza, Top/Flop, panchina, Efficienza Cup, Sfida della notte, giochi, calcolatore (roster), cassa.
+- Bottone "Condividi classifica" nella sala: `shareCup` crea un PNG 1080 di larghezza (sfondo rosso, titolo, anno·ruolo, classifica con medaglie, loghi ed efficienza) e apre la condivisione del telefono (o lo scarica). Usa i dati del momento.
+- Immagine condivisa della Cup: per i Ducks usa la sola scritta (`LOGO2`), come nei loghi piccoli dell'app.
+
+## 25/10/2026 (17) — Gioco 5: DREAMERS (fanta efficienza)
+- Quinta card nel menu Giochi (`GAME="dream"`, `vDream`, `drAct`, stato `DR`). Tema viola/notte. Schede: Turno, Calendario, Classifica, Playoff; tocca una partita per vedere le due formazioni.
+- Squadre: le 8 franchigie. Titolari = i 10 con valore più alto in `VALORI` (Court Consensus, come il calcolatore); gli altri sono riserve in ordine di valore.
+- Turni da lunedì a domenica (date NBA USA) dal 26/10/2026: 1–21 regular season (3 gironi all'italiana, `DR_SCHED`), 22 quarti (1–8, 4–5, 2–7, 3–6), 23 semifinali, 24 finale + 3° posto (5–11/04/2027).
+- Efficienza pura: efficienza settimanale di un giocatore = media semplice delle efficienze delle sue partite della settimana; punteggio di turno = media semplice delle 10. Il minutaggio non pesa.
+- Durante il turno: "in corso", media dei titolari che hanno già giocato. A turno chiuso (c'è la notte della domenica): chi non ha giocato è sostituito dalla miglior riserva per valore che ha giocato; senza cambi vale 0.
+- Classifica: vittorie, poi media punteggi. Playoff a 8; a parità passa la testa di serie migliore.
+- Archivio: `dreamers-data.js` (`DREAM_DATA.notti` = {notte NBA: {giocatore: efficienza della partita}}, `DREAM_DATA.form` = formazione di ogni turno, bloccata alla prima notte del turno). Lo genera `tools/dreamers.mjs` leggendo tutta la storia git di index.html (notte = data del report − 1 giorno, efficienza = colonna 6 di `EFF.gioc`). Lo lancia in automatico il workflow GitHub `dreamers.yml` a ogni push di index.html e salva solo se ci sono novità. L'ultima notte del report attuale l'app la legge comunque dal vivo da `EFF`, quindi i punteggi sono aggiornati subito anche prima che il workflow finisca.
+- Tolte dal repository due immagini di prova finite lì per errore (ntd1.png, ntd2.png).
+- Loghi in DREAMERS: tondi con lo sfondo del colore squadra (`drLg(t, taglia)`; taglie: normale 46px, "m" 32px, "s" 26px).
+
+## 25/10/2026 (18) — Giochi divisi: fanta + Arcade
+- Menu Giochi: solo Sfida della notte e DREAMERS (giochi fanta) + pulsante "Arcade" (`GAME="arcade"`) con Più o Meno, Tiro da 3 e Partita simulata (in `GAMES` hanno `a:1`). Dai giochi arcade il tasto indietro torna all'Arcade.
+
+## 25/10/2026 (19) — Medie coerenti in tutta l'app
+- Problema: campo e panchina mostravano l'efficienza dell'ULTIMA partita (`ULTIMA`), la scheda giocatore e la pagina Efficienza la MEDIA stagionale (`EFF`), quindi i numeri sembravano non tornare (es. Edwards 0,28 in panchina, 0,96 nella scheda). I dati erano corretti, era la visualizzazione a mescolare due misure.
+- Ora campo e panchina mostrano la media stagionale (`effMed`), e la panchina è ordinata per media; sotto, in piccolo, "ultima X". Scheda giocatore: nuovo riquadro "Ultima partita".
+- Aggiunti i controlli automatici di coerenza (`tools/verifica.mjs` nel workflow GitHub + `checkDati` all'apertura).
+- Tabellone playoff stile bracket: semifinali a metà altezza tra i due quarti, finalissima al centro con coppa dorata (e nome dei campioni a fine stagione), linee di collegamento; finale 3° posto separata in basso. Box vuoti con "Vincente"/"Perdente semifinale"; niente etichette QF/SF dentro i box.
+- Coppa del tabellone viola (tema DREAMERS), senza scritta sotto; a fine stagione compare "Campioni" con la squadra vincitrice.
+
+## 25/10/2026 (20) — Asta Peacocks: Trevon Brazile
+- Spostamento G League (registrato dall'altro Claude): Brazile sale dalla G League nello slot rookie dei Peacocks, Nate Ament scende in G League (ROSTER, EFF, GLEAGUE, ROOKIE, voce "G League" in TRADES).
+- Aggiunto il costo dell'asta: voce "Asta" in `TRADES` con 14 crediti (registrati come 10 commissione + 4 di lista) → la cassa Peacocks registra −14 da sola; `CREDITI.PEA` 52 → 38. `NBA_ANNO`: Brazile 2026.
+- Pagina Trade: nelle aste i crediti ora si vedono come spesa (−14 cr) invece di +14.
+- Calcolatore Scambi: Trevon Brazile valore 1100 (indicato da Francesco), segnato rookie.
+- G League: G-Peacocks con il logo "Seattle Peacocks" (PNG con sfondo trasparente) e sfondo giallo `#fedd04`.
+
+## 25/10/2026 (21) — Condividi cassa
+- Pagina Cassa: piccolo bottone condividi in alto a destra nella testata (`.bshare.hsh`, `data-cshare`, `shareCassa`). Crea un PNG con testata nel colore della squadra (logo, città, nome), crediti disponibili con crediti/debiti portafoglio e post draft, bilancio per stagione, registro completo entrate/uscite e liste "Deve pagare"/"Deve ricevere". Legge `movimenti(t)`, `DEBITI`, `CREDITI` al momento.
+- Pagina Roster (Dunkest → Roster): stesso piccolo bottone nella testata (`data-rshare`, `shareRoster`). Immagine con testata squadra e 3 colonne (Guardie, Ali, Centri) ordinate per efficienza media: cognome grande, nome · numero · squadra NBA (· R se rookie), efficienza colorata. Testata e invio in comune: `shHead`, `shSend`.
+- G League: G-Turtles con il logo "Los Angeles Turtles" scontornato (PNG trasparente), sfondo viola chiaro `#9b7ad8` (diverso dai G-Ducks) e bordo oro `#f5b82e`.
+
+## 25/10/2026 (22) — Tabella squadra partita per partita
+- Efficienza → squadra (`vEffSquadra`): tolte le colonne Min notte / Eff. notte / PG / Eff. media / Forma / Min ult. 5. Ora ogni colonna è una PARTITA DEL GIOCATORE in ordine (G1 = sua prima, G2 = seconda…), da `PARTITE`; cella = efficienza di quella partita (colorata) con data e avversario sotto. Nessun buco: chi ha giocato meno ha le ultime caselle vuote. Prima colonna (nome + squadra NBA) fissa, si scorre a destra. Si allunga da sola quando il report aggiunge partite a `PARTITE`.
+- Filtro per mese sopra la tabella (`esqMese`, bottoni `data-esqm`): "Stagione" o un mese (si apre sul mese più recente). Nei mesi le colonne sono 1ª, 2ª… partita del mese; nella casella solo la squadra avversaria.
+- Bottone "Statistiche avanzate" (`esqAdv`, `advStats`, `advTable`): PG, minuti medi, efficienza media (media semplice delle partite), medie ultime 30/15/5 (grigie se il giocatore non ha ancora quel numero di partite), Tendenza (pendenza della retta dei minimi quadrati sulle ultime 10 partite × 5 = variazione attesa in 5 partite; servono ≥5 partite; → se sotto ±0,03), Ult. 7 vs media (verde/rosso se |differenza| ≥ 0,05, altrimenti ≈). Tutto da `PARTITE`.
+- Interruttore Efficienza / PDK in cima alla tabella squadra (`esqMet`, `MET()`, `mEv`): stessa tabella partita per partita, filtro mesi e statistiche avanzate, ma con i punti Dunkest della partita (`PARTITE[..][3]`). Colori PDK: verde ≥ 35, giallo 20–35, rosso < 20; soglie tendenza ±1 PDK e ultime 7 vs media ±2 PDK. In modalità PDK i giocatori sono ordinati per PDK medio.
+- Comandi della tabella squadra in un blocco ordinato (`.esqctl`): interruttore Efficienza/PDK e "Statistiche avanzate" a tutta larghezza, stessa altezza (34px); bottoni dei mesi compatti.
+- Fix: i sottotitoli delle intestazioni di sezione (h2 em) ora si accorciano con "…" invece di allargare la pagina su telefono (Home, Efficienza, Infortuni, Sfida della notte).
+- Filtro mesi: sempre tutti i mesi della regular season (Ottobre → Aprile), selezionabili anche se vuoti (messaggio "nessuna partita ancora"); il primo bottone si chiama "Stagione 3". All'apertura si sceglie il mese più recente con dati.
+- Infortuni: per le malattie che colpiscono tutto il corpo (malattia, POTS, influenza, virus, febbre…) il manichino è colorato per intero nel colore dello stato (es. Porziņģis tutto rosso).
+
+## 25/10/2026 (23) — Calcolatore Scambi a 3 squadre
+- Nuova scheda "3 squadre" (`VT.tab="calc3"`, stato `V3`, `v3Res`, `v3Card`, `v3Act`). Ogni pezzo (giocatore, pick, crediti) ha chi lo dà e chi lo riceve (selettore "→", default squadra successiva). Saldo squadra = punti ricevuti − punti dati; barra con zero al centro (verde a destra = guadagna, rosso a sinistra = perde). Squilibrio = saldo massimo ÷ volume massimo scambiato da una squadra (soglie 10%/25%); suggerisce i crediti che il più avvantaggiato dovrebbe dare al più penalizzato. La scheda a 2 squadre è invariata.
+
+## 25/10/2026 (24) — Valori Dynasty League nel Calcolatore Scambi
+- `VALORI` ora contiene i valori della lega (formula di Francesco), non più Court Consensus: Efficienza × PDK medio ÷ (età + correzione) × 1000. Correzione età: 19-21 −4, 22-23 −3, 24-25 −2, 26 −1, 27-30 0, 31-32 +2, 33-34 +4, 35-37 +6, 38+ +11. Età calcolate al 25/10/2026 (alcune stimate, vedi CSV in chat).
+- Dati: 2025/26 se ≥30 partite, altrimenti 2024/25 (≥30), altrimenti le due insieme (`STAGIONI`). Rookie 2026 con valori fissati da Francesco (Boozer 1500, Dybantsa 1200, Wilson 1150, Peterson 1000, Mara 970, Acuff 900, Brown 880, Wagler 850, Burries 830, De Larrea 770, Lendeborg 750, Flemings 700, Graves 550, Morez Johnson 550, Brazile 400; Steinbach da formula 377).
+- Ricalibrato: punti trade = (valore/1000)^2 × 1000; 300 crediti ≈ giocatore da 1150 (centro di 1000-1300), quindi `VAL_CR` = 1,15²×1000/300 ≈ 4,41 punti per credito. `VAL_FALLBACK` = 400.
+- Anche DREAMERS usa `VALORI` per i 10 titolari: le formazioni cambiano di conseguenza (dal turno 1, che parte il 26/10).
+- I valori sono statici: a fine stagione o quando servono vanno ricalcolati con la stessa formula.
+
+## 25/10/2026 (25) — PDK su campo, panchina e DREAMERS
+- Pagina squadra (campo e panchina): al posto dell'efficienza i PDK medi a partita della stagione (`pdkMed`, `pillP`; colori verde ≥35, giallo 20–35, rosso <20); panchina ordinata per PDK medio, sotto "ultima" = PDK dell'ultima partita (`pdkLast`).
+- DREAMERS: il punteggio usa i PDK. PDK settimanale di un giocatore = media dei PDK delle sue partite della settimana; punteggio di turno = media dei 10. `tools/dreamers.mjs` ora archivia i PDK della notte (colonna 5 di `EFF.gioc`), la notte live si legge dallo stesso campo.
+
+## 25/10/2026 (26) — Nuovo logo Foxes
+- `LOGO.FOX` sostituito con il nuovo logo "Detroit Foxes" (volpe in gessato, PNG trasparente). Vale ovunque: Home, testate, campo, classifiche, loghi piccoli e immagini condivise.
+- Efficienza squadre: interruttore "Eff. / PDK" accanto al menu Stagione (`effMet`). In PDK: valore di squadra = media dei PDK medi a partita dei giocatori della rosa (stagione scelta, `teamPdk`), notte = media PDK di chi ha giocato (`teamPdkNight`), classifica riordinata per PDK. Il tastino cambia tutta la pagina: classifica squadre, Top 10, Flop 10 e tabella Giocatori passano ai PDK medi a partita (stessa stagione, stesso filtro min. 10 minuti); scegliendo PDK anche la tabella squadra si apre in PDK.
+
+## 25/10/2026 (27) — Colori dei ruoli unici in tutta l'app
+- Variabili CSS `--rG` (guardie, verde #a3e635), `--rF` (ali, blu #60a5fa), `--rC` (centri, giallo #fbbf24) usate da roster (`.grl`), Rookie History (`.rhrole`, ora con lettera A per le ali come nel resto dell'app), calcolatore (`.vtp .rc`) e immagine roster condivisa. Per nuove schermate usare sempre queste variabili.
+- DREAMERS: a turno chiuso (dopo le sostituzioni) il giocatore con il PDK medio più alto dei 10 è capitano ×1,5 e i 4 più bassi valgono ×0,5; punteggio = media dei 10 valori finali (`drTeam`, campi `m`, `cap`, `half`, `f`). Capitano e dimezzati si applicano anche a turno in corso, tra chi ha già giocato, e cambiano a ogni report; a turno chiuso diventano definitivi.
+- DREAMERS dettaglio partita ordinato a sezioni colorate: Capitano ×1,5 (oro), Punteggio pieno (verde), Panchina · ½ (rosso), In attesa (viola, solo a turno in corso), Tribuna (grigio = riserve non ancora entrate). Dentro ogni sezione ordine per punteggio.
+
+## 25/10/2026 (28) — Condividi scambio
+- Calcolatore Scambi (2 e 3 squadre): piccolo bottone condividi in alto a destra nel riquadro del risultato (`data-tshare`, `shareTrade`, `tradeModel`). Immagine: logo lega e data, per ogni squadra cosa riceve (con valore dei giocatori e, a 3 squadre, da chi), barre di equilibrio con saldo, giudizio colorato, squilibrio % e crediti suggeriti.
+
+## 25/10/2026 (29) — DREAMERS meritocrazia
+- Non ci sono più 10 titolari fissi con riserve che entrano solo per lo 0. Ogni settimana tutta la rosa concorre: i 10 con il PDK medio settimanale più alto sono titolari (1° capitano ×1,5, ultimi 4 dei 10 ×0,5, gli altri pieno), il resto va in tribuna (`drTeam`: `top`, `trib`, `wait`, `zeros`). Si aggiorna a ogni report. A turno chiuso, se hanno giocato meno di 10 giocatori, i posti mancanti valgono 0. `form` (valori) serve solo a definire la rosa del turno.
+
+## 25/10/2026 (30) — DREAMERS a tutto schermo
+- Entrando in DREAMERS la pagina diventa un'app a sé: classe `body.dreamfs` (impostata in `render()`) nasconde testata, barra e footer; bottone rosso fisso "‹ Torna all'app" (`.drexit`, `data-game="menu"`) per tornare ai Giochi.
+- Look più moderno: card con angoli arrotondati e ombre, cerchi dei loghi più grandi (60px nelle partite) con logo centrato al 76% del cerchio.
+- DREAMERS: il bottone "Torna all'app" ora scorre via con la pagina (in cima alla schermata). Calendario con logo + nome squadra (solo animale) per ogni partita, una per riga, vincitrice in bianco.
+- DREAMERS a tutto schermo, spazio sfruttato meglio: classifica a schede grandi (posizione, logo 58px, nome, media e turni, forma ultime 5 V/P, vittorie/sconfitte grandi, distacco dalla prima); tabellone playoff più grande (quarti più larghi con nomi, semifinali e finale con logo grande e punteggio, coppa più grande).
+- DREAMERS a tutto schermo: anche la zona della barra di stato (ora, batteria) è viola: `html.dreamfs` toglie il margine di sicurezza e la fascia scura (`body::before`), il colore `theme-color` diventa viola mentre si è dentro DREAMERS e torna blu uscendo.
+- DREAMERS classifica: aggiunta la MEDIA punteggio accanto a V e P; a parità di vittorie si ordina per media (`drStand` → `avg`).
+- Calcolatore → Valori lega: colonna "Prezzo cr" (prezzo consigliato in crediti) accanto al valore. Proporzionale al valore, tarato su Scottie Barnes (valore 1275 = 400 crediti pagati): prezzo = valore × 400 ÷ 1275, arrotondato a 5 (`PREZZO_RIF`, `prezzo`).
+- Valori aggiornati a mano da Francesco (25/10 sera) per 37 giocatori (es. Flagg 1700, Banchero 1275, Hartenstein 300, Booker 790, Brazile 90, Ighodaro 90, Kuminga 170, Wolf 150, Paul George 250, Porziņģis 30, Ingram 390…). Prezzo consigliato rifatto: curva esponenziale sul valore, correzione età e ruolo (`prezzo(v,nome)`, `PR`, date di nascita in `NASCITA`, `eta`, `ruoloDi`).
+- Prezzi fissati a mano (precedenza sulla curva): `PREZZO_FISSO` — Buzelis 150, Ware 200.
+
+## 25/10/2026 (31) — Risultati in stile calendario
+- Sezione Risultati rifatta: una scheda per giornata (pillola Finale/Live), ogni partita su una riga: logo tondo + nome, punteggio al centro (vincente in oro, scarto sotto), avversaria a destra, icona condividi a fine riga (stesso `data-share` → `shareGame`). CSS `.rgc/.rgh/.rgm/.rgt/.rgl/.rgs`, funzione `vRisultati`.
+- Risultati: loghi quadrati a spigolo vivo e più grandi (56px), `.rgl`.
+- Prezzi fissati a mano (25/10 notte) in `PREZZO_FISSO`: Jokić 1400, Flagg 1200, J. Johnson 850, Cunningham 850, Dončić 800, SGA 750, Boozer 750, Giddey 690, Duren 600, Giannis 600, Castle 420, Clingan 390, Haliburton 290, Ware 200, Buzelis 140, T. Murphy III 130, D. Daniels 125, Kyshawn George 110, Burries 99, Zion 80, Reaves 70, LeBron 50.
+- Valore Jokić portato a 3150 (era 2813), ora sopra Wembanyama (3127).
+- Prezzi fissi aggiunti: Sabonis 470, Trae Young 179, Anthony Davis 155; Buzelis 120.
+- Risultati: loghi senza sfondo colorato (solo PNG trasparente con leggera ombra), `.rgl`.
+- Classifica: loghi senza sfondo colorato (`.clf .wedge`).
+- Sala Trofei: loghi senza sfondo colorato (`body[data-v=storia] .wedge`; `render()` ora scrive `body.dataset.v=cur`).
+
+## 25/10/2026 (32) — DREAMERS: playoff al meglio delle 3
+- Regular season ridotta da 21 a 15 turni (`DR_REG=15`, 2 gironi completi + 1 turno). Playoff: quarti, semifinali e finale (con finale 3° posto in parallelo) al meglio delle 3, una gara a settimana, max 9 settimane (`DR_TOT=24`, fine stagione invariata).
+- Ottimizzati: un turno finisce appena tutte le sue serie sono decise (se finiscono tutte 2-0 si passa subito al turno dopo). A parità di punteggio in una gara vince la testa di serie migliore.
+- Nuova `drPO(st)` sostituisce `drBracket/drWin`: restituisce serie (`R`), settimane di playoff (`W[k]={r,g,pr}`), inizio turni (`RS`), `done`, `end`, `champ`. Calendario: settimane non ancora determinate = "Playoff · solo se necessaria"; tabellone mostra le vittorie nella serie; nel turno ogni partita ha la riga "Quarto N · gara G · serie X–Y".
+- Serie di piazzamento: i perdenti dei quarti giocano le semifinali 5°–8° (in parallelo alle semifinali), poi finale 5° e 7° posto (in parallelo alla finale), tutte al meglio delle 3. Il turno finisce quando sono decise tutte le serie, piazzamenti compresi. In fondo al tab Playoff: blocco "Piazzamenti 5°–8°" e "Classifica finale" 1→8 (`P.fin`).
+- Tab Playoff rifatto: due tabelloni a scorrimento orizzontale (`.bkw/.bk/.bkc/.bkg/.bkm/.bkt`, connettori in CSS): "Tabellone" (quarti → semifinali → finalissima con coppa e campione, finale 3° posto sotto) e "Piazzamenti 5°–8°" (semifinali → finale 5° e 7° posto). Nomi interi, vittorie nella serie, etichetta su ogni serie. Classifica finale 1→8 su due colonne.
+
+## 26/10/2026 (33) — Calcolatore: nuovo esito scambio
+- `tradeVerdict(d,t)`: sotto 10% "Trade equilibrata", fino al 40% "Vincitore trade Squadra", oltre il 40% "Grande truffa dei Squadra" (calcolatore a 2 e a 3 squadre e immagine da condividere).
+- Logo Ducks completo (papero con palla, `LOGO.DUC`) in Risultati, Classifica e Sala Trofei, cioè le sezioni con i loghi senza sfondo (selettori aggiunti alla regola `.hlg`).
+- Ripristinato il logo Ducks solo scritta in Risultati, Classifica e Sala Trofei (tolto il papero completo).
+- Logo Ducks +14% (`transform:scale(1.14)`) solo in Risultati e Classifica.
+
+## 26/10/2026 (34) — Stelle giocatori in Trade Alert
+- `pdkStar(n)` = PDK medio 2025/26 se ≥30 partite, altrimenti 2024/25 (≥30), altrimenti tutte le partite note. `stelle(n)`: 50+ = 5, 45 = 4½, 40 = 4, 35 = 3½, 30 = 3, 28,5 = 2½, 27 = 2, sotto 27 = 0 (stelle vuote); solo i rookie = 1. In Trade Alert ogni giocatore è su una riga con le stelle sotto (`.tstar`, mezza stella con riempimento parziale).
+- 26/10 notte: tolte le caselle colorate (revert dei 3 commit di stile), DREAMERS torna con caselle scure e loghi nel cerchio. In tutte le sezioni DREAMERS ora c'è il nome completo della squadra (`TEAMS.name`, es. "Sacramento Spiders"), che va a capo invece di essere tagliato.
+- DREAMERS Turno compatto: righe più basse, cerchi loghi 46px con più margine (più piccoli rispetto alla casella), nomi 18px, gap 7px: su iPhone si vedono tutte e 4 le partite quasi senza scorrere.
+- DREAMERS: tolti i cerchi colorati dietro i loghi in tutte le sezioni, solo logo con ombra leggera e margine: Turno 52px, Classifica 52px, Calendario 34px, dettaglio 40px, tabelloni 30px, classifica finale 32px (Ducks ×1,14).
+- DREAMERS: alone leggero del colore squadra dietro ogni logo (classe `.tint` + `--tc` nella riga: radiale sfocato + sfumatura lineare tenue), in Turno, dettaglio, Calendario (lato del logo), Classifica, tabelloni e classifica finale. Il colore è solo sfondo: loghi sopra (`z-index:2`) e sempre a piena opacità, anche per chi perde/è eliminato.
+- Tabelloni: l'alone colorato ora segue esattamente gli angoli arrotondati delle caselle (`.bkm` senza padding, prima/ultima riga con raggio 13px); etichetta "Quarto N" sopra l'alone (`.bklab` z-index 5).
+- Menu: il tab "Efficienza" ora si chiama "Statistiche" (stessa sezione, `data-v="efficienza"`); titolo "Statistiche squadre" (e tasto indietro dalla tabella squadra).
+
+## 26/10/2026 (36) — Grafico andamento giocatore
+- Bottone "📈 Grafico" sotto "Statistiche avanzate" (tabella squadra) e nella scheda giocatore. Apre la vista `grafico` (`vGrafico`, stato `GR`): sfondo a tinta piena col colore della squadra proprietaria e scritte nel suo colore (`TEAMS.bg`/`fg`), menu Giocatore/Stagione (3 stagioni o Tutte)/Periodo (Partite, Settimane, Mesi, Stagioni) a metà larghezza, a destra la maglia del giocatore scelto (`jersey`).
+- 3 bottoni-linea attivabili insieme o da soli: PDK verde, Minuti giallo, Efficienza viola (con la media del periodo). Grafico SVG fatto a mano: linea = media mobile (8 partite, 4 settimane, 2 mesi) con curva morbida senza "overshoot"; scala adattata ai dati con margine minimo; PDK/minuti a sinistra, efficienza a destra. Dati: `PARTITE` (stagione in corso) e `STAGIONI` (passate), anno ricavato dal mese (ago-dic = primo anno).
+- Stelle anche nel Calcolatore scambi: in "Valori lega" accanto alla squadra e sotto il nome dei giocatori scelti nel calcolatore a 2 squadre (`starH`). Sistemato il badge "R" dei rookie, che si allargava a tutta la riga (`.vtnn`).
+- Stelle nuove regole: 24-26,9 PDK = 1 stella, sotto 24 = 0. I rookie della stagione hanno in più una stella AZZURRA che si somma alle normali (es. Boozer 29 PDK = 2½ + azzurra); `isRookie(n)`, `.tstar .trk`.
+- Stelle disegnate in SVG (`STAR_P`, riempimento parziale con clipPath) invece che con caratteri ★: tutte perfettamente allineate in orizzontale, mezze stelle precise.
+- Grafico più chiaro: linee spezzate (angoli sui punti, niente curve). Con pochi punti (≤12: stagioni, mesi) ogni punto ha pallino ed etichetta col valore nel colore della linea (valore più alto sopra, più basso sotto, quello in mezzo di lato) e righe verticali tratteggiate; con tanti punti (partite, settimane) etichetta solo sull'ultimo. Mesi senza media mobile. Asse "Stagione 1/2/3" con gli anni sotto. Scegliendo "Tutte" il periodo passa da solo a "Stagioni".
+- Grafico a livelli: menu Giocatore / Stagione (1-2-3 o Tutte) / Mese / Settimana al posto di "Periodo". Livello automatico: Tutte → un punto per stagione; stagione → un punto per mese; mese → un punto per settimana (Sett. 1, 2… con date); settimana → un punto per partita (giorno, data, avversaria). Niente medie mobili: ogni punto è la media reale del periodo, sempre con etichetta valore. Etichette senza sovrapposizioni (cercano il primo posto libero vicino al punto), grafico più alto quando ci sono più linee.
+- Grafico: tolto il livello settimana→partite. Menu "Dal mese" / "Al mese" (intervallo continuo, "Al" mostra solo i mesi dal primo in poi): nessun mese = tutta la stagione per mese; intervallo di più mesi = un punto per mese; stesso mese = un punto per settimana. "Tutte" = un punto per stagione.
+- Mese singolo diviso sempre in 4 settimane fisse (1-7, 8-14, 15-21, 22-fine mese): 4 punti esatti. Regola generale: si mostra sempre l'unità più piccola sopra quella scelta (più stagioni → stagioni, più mesi → mesi, un mese → 4 settimane).
+- Grafico: riquadro in alto a destra "Media e tendenza" per ogni linea accesa. Media = media dei punti del grafico (stagioni, mesi o settimane). Tendenza = retta dei minimi quadrati su tutti i punti: variazione dal primo all'ultimo punto lungo la retta, in % sulla media (`grTrend`); entro ±3% = "stabile", sopra ▲ verde, sotto ▼ rosso.
+
+## 26/10/2026 (37) — Efficienza Cup: Confronto rookie
+- Bottone "Confronto" accanto a "Rookie History" (`cupCmp`, `vRookieCmp`): due menu con tutti i rookie raggruppati per stagione (rookie attuali con partite + Rookie History), tre bottoni PDK / Minuti / Efficienza (uno alla volta), grafico mese per mese (asse continuo Ott→Apr, Mag se serve) con due linee spezzate ed etichette valore, senza media né tendenza. Colore = squadra della lega che possiede il giocatore (`TEAMS.bg`, se uguale all'altro si usa il secondo colore), altrimenti colore fisso dal nome (`CMP_PAL`).
+- Dati: rookie attuali → `PARTITE`; rookie 2024/25-2025/26 in lega → `STAGIONI`; altri 46 rookie storici → `RK_MESI` (medie mensili landofbasketball.com: PDK del mese con formula Dunkest sulle medie, ricalibrato sul PDK ufficiale di stagione di `ROOKIE_HIST`; efficienza = PDK/minuti). Mancano (nessuna fonte mensile trovata): Facundo Campazzo, Terry Taylor, Jalen Williams, Jaylin Williams.
+- Nuovo file `tools/CRITERI_VALORI.md`: registro dei criteri dati da Francesco per stelline, valori e prezzi (taratura in corso).
+
+## 26/10/2026 (38) — Stelline giocatore (pagella) e Spazio in squadra
+- In corso con Francesco la taratura di valori e prezzi del Calcolatore a partire da "stelline" per categoria: PDK (+ rookie), Giovinezza, Infortuni, Minutaggio, Efficienza giovani (1°-3° anno), Efficienza esperti, Spazio in squadra. Regole e voti del GM in `tools/CRITERI_VALORI.md` (da leggere prima di toccare i valori).
+- Nuovo file `spazio-data.js` (`SPAZIO_DATA`, caricato da index.html e nella cache del service worker, cache `dynasty-v3`): **lo compila il Claude dei report da Dunkest**, vedi regola 7 in alto. Finché è vuoto, `spazioStelle(n)` ordina solo i giocatori della lega della stessa squadra NBA (meno preciso perché mancano i compagni non in lega).
+- 26/10 mattina: valori e prezzi aggiornati a mano da Francesco per 51 giocatori (Wembanyama 3250/2500, Dončić 2500/900, Davis 1999/230, Embiid 1540/130…): valori in `VALORI`, prezzi in `PREZZO_FISSO`, `VALORI_AGG` = 26/10/2026. Servono anche come riferimenti per tarare le formule stelline → valore/prezzo.
+
+## 26/10/2026 (39) — Nuovi valori/prezzi e Pagella nella scheda giocatore
+- Valori e prezzi ritarati da Francesco (VALORI_AGG = 26/10/2026; elenco in tools/taratura-26-10.txt, criteri in
+  tools/CRITERI_VALORI.md). I valori restano scelti da Francesco: la formula automatica è ancora in discussione, NON
+  ricalcolarli da soli.
+- Scheda giocatore: nuova sezione **Pagella** (valore, prezzo e stelline graduali: PDK + stella azzurra rookie, Giovinezza,
+  Infortuni, Minutaggio, Efficienza giovani/esperti, Spazio in squadra). Funzioni `pagella(n)`, `pagellaHTML(n)`.
+  Si aggiornano da sole con i report, tranne **INF_STELLE** (stelline infortuni): aggiornarle a mano se un giocatore ha un
+  infortunio lungo, rientra, o entra un giocatore nuovo (regole nel commento sopra INF_STELLE).
+- Valori lega: tocca una riga per aprire la scheda del giocatore (il tasto indietro torna a Valori lega).
+
+## 26/10/2026 (40) — Campo: pulsanti "Cap" e "In arrivo"
+- Sotto il campo la nota sui colori è sostituita da due pulsanti. **Cap** (view `cap`, `vCap`, stato `CAP`, salvato in
+  localStorage `dl_cap_<squadra>`): il GM sceglie i candidati capitano e l'avversario NBA di ognuno; mostra media PDK
+  contro quell'avversario (ultime 3 stagioni, partite, minuti, migliore, pallini partita per partita), forma (Media
+  stagione, Ultimo 50%, Ultimo 15%), Indice Cap (40% vs avversario corretto verso la media + 35% ultimo 15% + 25%
+  stagione) e controllo anti-tank contro il miglior altro candidato (tolleranza 3 PDK, 2/3 verdi; <15 partite = indicativo).
+- Secondo pulsante **Multe** (view `multe`, `vMulte`, `mulPar`, `mulCheck`, `MUL_MIN=15`, `MUL_TOL=3`): simulatore del
+  sistema anti-tank dell'Articolo 6. Il GM seleziona i possibili capitani e le alternative; per ognuno: media stagione,
+  ultimo 50%, ultimo 15% (partite arrotondate per eccesso) e verdetto "Nessuna multa"/"Multa possibile" confrontandolo
+  con ogni altro selezionato (2/3 verdi, tolleranza 3,00 PDK). Con meno di 15 partite o partite non paragonabili per
+  infortunio (<60% dell'altro) avvisa che il calcolo non vale ufficialmente (decide la commissione). Verificato
+  sull'esempio del regolamento (A 3/3, B 2/3).
+
+## 26/10/2026 (41) — Statistiche: "Calcola il trend"
+- Pulsante verde sotto Efficienza Cup → view `trend` (`vTrend`, stato `TRN`, `trKey`, `trLab`, `trCol`). Ricerca al
+  contrario rispetto al Grafico: si scelgono periodo (stagioni consecutive Dalla–Alla stagione; se una sola, dal mese–al mese), squadra, misura (PDK, Minuti,
+  Efficienza), direzione (crescita/calo), soglia % e partite minime; escono tutti i giocatori della lega con quel trend
+  (filtro ruoli G/F/C multiplo, `TRN.ruoli`; stesso calcolo `grTrend` del Grafico; punti per stagione, mese o settimana se il periodo è un solo mese), con grafico
+  a linee nei colori squadra (max 8, tratteggi diversi per giocatori della stessa squadra) e pulsante 📈 che apre il
+  Grafico del giocatore sullo stesso periodo.
+- (42) Grafico e Calcola il trend: al posto di "Stagione" (con "Tutte") ci sono **Dalla stagione / Alla stagione**
+  (stagioni consecutive, `GR.sz`–`GR.sz2`, `TRN.sz`–`TRN.sz2`). Più stagioni = un punto per stagione e mesi disattivati;
+  una stagione = come prima (mesi, o settimane se un solo mese).
+
+## 26/10/2026 (43) — Archivio College riservato (solo Francesco)
+- Nel Campo dei Ducks, a destra di "Roster completo", c'è un pulsantino "accensione" quasi invisibile (`#cpow`): chiede
+  una password e apre la view `college` (archivio POT college per ruolo, con ricerca).
+- I dati sono in `COL_ENC` **cifrati** (AES-GCM, chiave PBKDF2 dalla password): NON modificare, NON decifrare, NON
+  rimuovere. La password non è nel codice. Lo aggiorna solo il Claude di Francesco ricifrando l'archivio.
+- (44) L'archivio riservato è diventato **Scouting** (view `college`): schede Prospetti (classe draft senza dati NBA,
+  proiezione = PDK/min college × tenuta tipica del ruolo, a 25'), Studio rookie (tenuta college→NBA dei giocatori al
+  1°-3° anno, `colConv`, `colNbaPm`, affidabilità dei dati college `colAffid`), Mappa (usage vs PDK/min con linee POT),
+  College→NBA (POT vs miglior PDK NBA, `colReg`), Archivio. Scheda giocatore al tocco (`colCard`: percentili nel ruolo,
+  profilo, tenuta/proiezione, 3 profili college più simili). I dati NBA si leggono dall'app e si aggiornano da soli;
+  l'archivio college resta cifrato (non toccare `COL_ENC`).
+- (45) Scouting in giallo Ducks (logo Texas Ducks, "Ufficio Scouting"). Nuova scheda iniziale **Studio usage**
+  (`colUsage`): profilo "Haliburton" = usage college basso + P36/USG alto (soglie regolabili), grafico usage vs
+  P36/USG colorato per esito NBA, confronto profilo vs altri (30+ PDK, PDK medio, tenuta, salto da rookie),
+  primo anno → migliore, candidati classe 2026, elenco dati NBA mancanti.
+- (46) Scouting: l'archivio cifrato ora contiene anche la carriera Dunkest (regular season dal 2018/19) di ogni
+  giocatore. Studio usage rifatto: curva di crescita per anno NBA, esplosione (+8 PDK sull'anno da rookie), confronto
+  equo solo sui debutti 2018-2023.
+- (47) Scouting: nuova scheda iniziale **Radar** (`colRadar`): "PDK nascosti" = resa al minuto × minuti mancanti fino a
+  32' (resa NBA recente o, se manca, PDK/min college × tenuta del ruolo), validata sullo storico (debutti 2018-2023)
+  e applicata ai rookie 2024-2026. Grafica dello scouting rinnovata (schede a pillola, card arrotondate).
+- (48) Ufficio Scouting diviso in **College** (prima scheda "Archivio" come l'artefatto originale: tre sezioni per ruolo
+  ordinate per POT, `colOrig`) e **NBA** (`vNbaSec`, `nbaTrend`): report a banner dei giocatori della lega con trend
+  nelle ultime 1/2/3 settimane rispetto alla loro media solita, su PDK, minuti ed efficienza, partita per partita.
+- (49) Scouting NBA con massima libertà (stato `NB`): **Report delta** (periodo = ultime N partite / ultimi N giorni /
+  date a scelta; confronto = media solita / resto della stagione / 2025/26 / 2024/25; delta assoluto o %, soglia,
+  partite minime, squadra, ruoli, vista banner o tabella) e **Grafici liberi** (fino a 6 giocatori, periodo con date o
+  scorciatoie 7/14/30 giorni, punti per partita / media mobile 3-5 / settimana / mese, linea della media, trend).
+- (50) Scouting College: nuova prima scheda **🏆 Risultati** (`colRisultati`): classifica dei prospetti (classe 2026, o
+  anche rookie 2024-25) con indice 0-100 da 3 paragoni statistici (stesso ruolo, debutto NBA 2018-2024, profilo college
+  più simile) e la loro carriera Dunkest: picco atteso, probabilità di esplosione, PDK nascosti.
+- (51) Scheda giocatore dello Scouting: **commento tecnico** automatico (`colComment`: POT, PDK/min, P36/USG, usage,
+  profilo, paragoni Dunkest `colComps`, inizio/carriera NBA) e pulsante **Condividi la scheda** (`colShare`, immagine
+  1080×1350 del singolo giocatore).
+- (52) Scouting: la scheda del giocatore si apre in un pannello sopra la lista (`.colsheet`) toccando qualsiasi nome
+  (Archivio, Risultati, Radar, grafici…); si chiude con × o toccando fuori. Corretto il bug per cui dopo un tocco
+  qualsiasi i nomi non aprivano più la scheda (listener "once" sostituito da uno permanente).
+- (53) **PDK nascosti** diventa l'unità di misura dello Scouting (`colHidden`): reale con dati NBA, stima per i prospetti
+  solo college (PDK/min college × tenuta del ruolo × (32' − minuti attesi = 10,6 + 0,52 × usage)). Mostrati in Archivio
+  (colonna "Nasc."), Risultati (ordinamento predefinito), Radar e scheda giocatore. Riga archivio con x[7]=2 = prospetto.
+- (54) Scouting: pulsante **📖 Legenda** in alto a destra (College e NBA) che apre la spiegazione di tutti i dati e i
+  termini (`COL_LEG`, `colLegend`).
+- (55) Risultati: tolto il "picco Dunkest atteso" (non richiesto da Francesco). Indice = 55% PDK nascosti + 45%
+  probabilità di esplosione.
+
+## 26/10/2026 (56) — Telefono in orizzontale
+- Media query `(orientation:landscape) and (max-height:540px)` in fondo al `<head>`: contenuto a tutta larghezza,
+  intestazione su una riga non fissa, campo e grafici entro l'altezza dello schermo, liste a 2 colonne (banner,
+  Risultati, Radar…), filtri a 3-4 colonne. I grafici SVG usano `chW()` (340 in verticale, più larghi in orizzontale) e
+  si ridisegnano da soli quando si gira il telefono.
+- (57) Calcola il trend: toccando un giocatore si apre il suo dettaglio (`trDetail`): per PDK, minuti ed efficienza
+  "partiva da" (primo punto del periodo) → "ora" (ultimo punto), differenza assoluta e %, media del periodo, trend e
+  grafico personale. Il trattino a sinistra della riga mostra/nasconde la linea nel grafico comune.
+  Pulsante Condividi (`trShare`): immagine 1080×1350 del dettaglio.
+- (58) Grafico: con poche partite nel periodo (2-8) i punti sono le singole partite; se il periodo dà un solo punto
+  (es. un solo mese) si scende a settimane e poi a partite. Calcola il trend: se nel periodo nessuno ha più di 8 partite,
+  i punti sono le singole partite (prima 7 giocatori con 2-3 partite nella stessa settimana restavano esclusi).
+- (59) Peacocks: `TEAMS.PEA.txt="#ffffff"` = colore delle scritte sulle intestazioni di squadra/giocatore e nel Grafico
+  (caselle, numeri, etichette) al posto dell'arancione, per leggibilità. Usato come `c.txt||c.fg`.
+- (60) Cap: difesa dell'avversario per ruolo (`capDef`): nelle ultime 5 partite dell'avversario (10 se pochi dati), PDK
+  dei giocatori della lega dello stesso ruolo (≥10') rispetto alla loro media → "difesa morbida/nella media/dura".
+  "Atteso" = Indice Cap corretto per questo delta (peso pieno da 6 prestazioni). In alto il riquadro "Consiglio
+  capitano" con classifica dei candidati per atteso e alternativa.
+- (61) Calcolatore scambi (2 e 3 squadre): giocatori di ogni squadra in ordine di ruolo (Guardie, Ali, Centri, con
+  intestazione colorata) e dentro il ruolo per valore.
+- (62) Valori lega: casella "Cerca giocatore o squadra" in testa (`#vtq`, filtra le righe mentre scrivi, ignora gli accenti).
+
+## 26/10/2026 (63) — Nuovo gioco G-DREAMERS
+- Giochi → G-DREAMERS (`vGDream`, `gdData`, stato `GD`, `GD_START`="2026-10-20"): fanta delle 8 G League. I 5
+  giocatori di ogni G League sono sempre titolari, niente capitano, PDK pieni; nessuno scontro diretto né playoff:
+  ogni notte i PDK si sommano e la classifica è il totale. Schede Classifica (con ultima notte e ▲▼ posizioni),
+  Giornate (punti notte per notte) e Squadre (giocatori, totali e partita per partita).
+- Dati letti da `GL_STATS` (log partita per partita): per aggiornarlo basta il report G League già esistente.
+- (64) Home: barra "Cerca giocatore" elegante al posto di "Tocca un logo per il roster" (`#hq`, `homeSearch`): risultati con maglia, squadra e ruolo; tocco = scheda giocatore (indietro torna alla Home).
+- (65) G-DREAMERS usa i colori delle G League (`GLEAGUE.bg`: Ducks viola, Peacocks giallo, Turtles lilla), per le altre quelli della prima squadra (`gdBg`).
+- (66) Home: pulsantino rosso (telecamera con pallino "live" pulsante) accanto alla ricerca che apre la Dynasty TV (view `tv`).
+- (67) Menu: "Giochi" rinominato **Entertainment**; Dynasty TV tolta dalla barra in alto e messa dentro Entertainment con un pulsante come Arcade (`data-tvopen`); dalla TV "‹ Entertainment" torna al menu. Il pulsante rosso in Home apre sempre la TV.
+- (68) Dynasty TV, tabellino: colonna PDK spostata subito dopo il nome, in rosso; durante una partita in corso diventa "PDK live" con pallino lampeggiante.
+
+(69) Dynasty TV, dettaglio partita: tolti i blocchi "Migliori" e "Statistiche di squadra". Restano punteggio, tab squadre e box score giocatori (con PDK live in rosso).
+
+(70) Dynasty TV, box score: a destra del nome (vicino ai PDK) il logo della squadra Dynasty proprietaria (tvOwn, confronto nomi senza accenti/suffissi su ROSTER). Svincolati: nessun logo.
+
+(71) Dynasty TV, box score: logo proprietario in filigrana (grande, trasparente, a destra nella casella del nome). PDK colorati per fascia: rosso <20, giallo 20-29,99, verde ≥30 (classi pr/py/pg); il totale squadra e l'intestazione PDK sono bianchi.
+
+(72) Dynasty TV, striscia giorni (#tvweek): non più 7 giorni fissi ma tutti i giorni del calendario caricato, scorrevoli col dito (scroll-snap, 7 visibili). All'apertura si centra sul giorno scelto; la posizione di scorrimento resta durante i refresh live (tvWeekPos, TVS.wl/TVS.wd).
+
+(73) Scambio 26/10/2026 DOL↔MOO: ai Dolphins Jaime Jaquez Jr.; ai Mooses Jalen Williams + 30 cr post-Draft (debito Dolphins, in DEBITI tipo "post"). Aggiornati ROSTER, EFF.gioc, INFORTUNI (J. Williams ora t:"MOO"), TRADES. Titolari invariati (nessuno dei due era titolare).
+
+(74) Indietro con swipe: script prima del service worker. Swipe dal bordo sinistro o destro (26px) → navBack(): chiude il .colsheet aperto, altrimenti clicca l'ultimo .gback/.grback della pagina (anche nascosto), altrimenti torna alla sezione precedente (pila NAVH, alimentata da un wrapper di render()). Android: voce finta in history + popstate → navBack. Sui telefoni (hover:none, pointer:coarse) i tasti .gback/.grback sono nascosti, tranne "‹ Annulla" dei giochi (data-nt="back"); su PC restano visibili. NON togliere i .gback dal markup: lo swipe li usa.
+
+(75) Box score Dynasty TV: PDK dei giocatori in riquadri colorati con angoli arrotondati (.pdkb): rosso <20, giallo 20-29,99, verde 30-39,99, viola ≥40 (classi pr/py/pg/pv). Intestazione PDK e totale squadra bianchi, senza riquadro.
+
+(76) Swipe indietro rivisto come SUPPORTO: i tasti ‹ sono di nuovo visibili ovunque (tolto il CSS che li nascondeva). Swipe ottimizzato: zona bordo 34px, la pagina segue il dito 1:1 (requestAnimationFrame, translate3d) con ombra, freccia #swar (fissa in alto a sinistra, sotto l'intestazione) che diventa gialla oltre la soglia (25% schermo o colpo veloce >0,45 px/ms), vibrazione breve su Android, animazione d'ingresso della pagina precedente.
+
+
+(77) Free Agent: i dati ora sono UFFICIALI DUNKEST (richiesta esplicita dell'utente 26/10: "i dati devono essere DUNKEST non espn"). `const FA` e `FA_AGG` sono generati da /home/claude/fa_build.py (sessione dei report) con dunkest.com/api/stats/table, medie di regular season 24/25 (id 19), 25/26 (id 25), 26/27 (id 29): [nome, squadra, ruolo, numero, {stagione:[PG, min, PDK medio ufficiale, PDK/min, pt, rb, as]}]. Si aggiornano ogni mattina con il report Dunkest. NON rimettere dati ESPN/hoopR né PDK ricalcolati. Esclusi i giocatori nel ROSTER; G League (FA_OWN) sempre inclusi. Aggiungendo giocatori al ROSTER non serve toccare FA: lo script li toglie al giro successivo.
+
+(78) Statistiche notte (vista "statnotte", vStatNotte; attenzione: vNotte e VIEWS.notte sono del gioco "Sfida della notte"). Bottone viola .snbtn sotto "Calcola il trend". Elenca tutti i giocatori dei ROSTER con una partita in PARTITE nella notte scelta (data USA, frecce per le notti precedenti), ordinati per PDK, con wedge colorato della franchigia e PDK nei riquadri a fasce (rosso <20, giallo, verde, viola ≥40).
+
+(79) Statistiche notte: interruttore piccolo PDK/Eff. (.snsw, SN.m). In Eff. ordina per efficienza della notte (PARTITE col. 4) con fasce rosso <0,80, giallo 0,80-1,10, verde >1,10, viola ≥1,50 (stesse soglie del lvl dell'app + viola).
+
+(80) Stelline PDK unificate: una sola funzione stelle(n) per liste (Trade, Valori lega, roster) e pagella. Usa pdkMix(n) = PDK aggiornato (stagione in corso pesata min(60%, partite/10) + pgRef; rookie solo stagione in corso) con scala graduale 20=0 · 24=1 · 27=2 · 30=3 · 40=4 · 50=5 (quella della pagella). Prima le liste usavano solo la stagione 2025/26 a gradini (es. Flagg 1 stella fuori, 2,2 nella pagella): 52 giocatori su 115 avevano stelline diverse. pdkStar() resta ma non è più usata per le stelline.
+
+(78) Free Agent, scheda giocatore: sezione "Partita per partita" con scelta stagione 26/27 · 25/26 · 24/25 e mesi come le schede delle franchigie (`faGames`, stato `faPS`). Dati in `fa-games.js` (`const FAG={nome:{"2026/27":[[gg/mm,avv,min,pdk,eff,pt,rb,as]],...}}`, ufficiali Dunkest, generato ogni mattina da /home/claude/fa_games.py), caricato solo quando si apre una scheda free agent (`faLoadG`). Non metterlo dentro index.html (1,4 MB).
+
+(81) PDK a fasce in tutta l'app (grafici esclusi): pdkLvl ora ha 4 livelli r <20 · y 20-29,99 · g 30-39,99 · v ≥40 (prima verde da 35) e c'è l'helper pdkB(v,testo) → <span class="pdkx …"> (riquadro arrotondato, come il box score). Applicato a: Campo (quintetto e panchina, .cev), Statistiche squadre/Efficienza in modo PDK (anche tabella giocatori e griglia partita per partita .gv), scheda giocatore (PDK medi e colonna Dunkest), Free Agent (lista, scheda, partite), G League (colonna PDK, PDK ultima, registro partite), Dynasty TV ("Top" delle partite), Cap (Stagione/Ultimo 50%/15%, media vs, atteso, precedenti .capgl). Usare pdkB/pdkLvl per i nuovi numeri PDK di giocatore; non per totali di squadra.
+
+(82) Niente zoom su iPhone quando si tocca un campo di ricerca/menu: sui dispositivi touch input/select/textarea hanno font-size 16px (sotto i 16px iOS zooma la pagina e lo zoom resta). Non usare font più piccoli nei campi: lo zoom tornerebbe.
+
+(83) Scheda Free Agent: menu a tendina della stagione (#fapsz, Stagione 1/2/3, sostituisce i chip; faPS) e bottone 📈 Grafico (data-grafico="FA") che apre lo stesso grafico dei giocatori dei roster (dalla/alla stagione, mesi, PDK/Minuti/Efficienza) con i dati FAG (fa-games.js). GR.fa = nome del free agent (null per i giocatori dei roster); grGames usa FAG[n][stagione] quando GR.fa===n. Nel grafico FA niente menu giocatore né maglia; logo della franchigia G League se il giocatore ha i diritti, altrimenti "FA". Menu in alto: resta evidenziato Dunkest.
+
+(84) Dynasty TV autonoma (nessun aggiornamento a mano necessario per calendario/risultati/tabellini): oltre a todaysScoreboard (ogni 30 s) il telefono legge scheduleLeagueV2.json (max ogni 10 min, solo con Dynasty TV aperta) → aggiunge giorni/partite mancanti (tv-data.js finisce al 30/11), segna i finali che il report non ha, ricalcola i record W-L (tvRecalcRec). tvBoxes(giorno) scarica boxscore_<gameId> delle partite finite senza tabellino del giorno scelto (anche quando si cambia giorno). I dati di tv-data.js restano la base: finali con tabellino del report non vengono toccati. Solo partite 002/004/005 (regular season + Cup, playoff, play-in). Testato con dati NBA simulati; il collegamento reale dipende dal permesso CORS di cdn.nba.com (da verificare dal telefono durante una partita: nota "Live: dati NBA.com aggiornati…" = ok, "non raggiungibili" = bloccato).
+
+(85) Studio formula valori/prezzi (solo analisi, l'app non è cambiata): risultati in tools/CRITERI_VALORI.md, sezione "Formula appresa". Script di analisi fuori dal repo.
+
+(86) VALORI AUTOMATICI SETTIMANALI (attivi da lunedì 2/11/2026). Blocco dopo prezzo(): VAL_MAN/PREZZO_MAN = copie dei valori/prezzi scritti a mano (la PARTENZA), valApply() al caricamento ricalcola VALORI[n][1] e PREZZO_FISSO[n] settimana per settimana dal lunedì di partenza (VAL_BASE[n] = [data, stelle infortuni alla partenza]; default 26/10/2026). Formula: valore × F(oggi)/F(partenza), F = PDKrif^1,78 × 0,93^(età−25) × 0,925^max(0; 2,5−inf); ±15% massimo a settimana (prima 10%); partite fino alla domenica (data USA). Rookie e senza storia NBA fermi fino a 20 partite. Prezzi fissati = stessa % del valore. Arrotondamento 5 (10 sopra 1000). In Valori lega e nella pagella compare la variazione dalla partenza (valDelta, "partenza X"). VALORI_AGG mostra l'ultimo lunedì "(automatico)".
+REGOLA per chi aggiorna: quando Francesco dà un nuovo valore/prezzo, scriverlo in VALORI/PREZZO_FISSO come sempre E mettere in VAL_BASE[nome] ["AAAA-MM-GG" del lunedì di quella settimana, INF_STELLE attuale]. Nuovi giocatori senza VAL_BASE partono da VAL_ORIGINE: per loro aggiungere sempre la riga in VAL_BASE con la data del lunedì in cui entrano. A fine stagione (stagione nuova) valDt/valBaseStorica vanno aggiornati (anni e stagioni di riferimento).
+
+(87) Freno dei valori automatici portato al 15% a settimana (richiesta di Francesco 26/10).
+
+(88) Free Agent: stagioni scritte come "Stagione 1/2/3" (FA_SZL: 24/25=1, 25/26=2, 26/27=3) nei bottoni della lista e nella tabella della scheda ("Stag. 3" con sotto 26/27).
+
+(89) Scheda giocatore: griglia di 6 caselle come prima, ma "In squadra" (efficienza) sostituita da "Lega · PDK" (posizione per PDK medi a partita tra tutti i giocatori della lega con partite nella stagione scelta) e "Nella lega" rinominata "Lega · efficienza". Nota in fondo spiega le due classifiche.
+
+(90) Loghi G League: glBadge(t,cls) = logo della squadra G League se GLEAGUE ne ha uno (oggi DUC, PEA, TUR), altrimenti logo della franchigia con la "G" gialla. Usato per i giocatori G League in: Calcola il trend (lista), Free Agent (lista e scheda), box score Dynasty TV (filigrana, anche per i free agent con diritti G League: TVGL), grafico. Grafico: ora apre davvero il giocatore G League scelto (prima tornava al primo del roster), con colori e logo G League e "(G League)" nel menu giocatore.
+
+(91) Swipe indietro solo dove si può tornare indietro: parte solo se nella pagina c'è un tasto ‹ visibile o un foglio aperto (navTarget(1)/navBack(1)); niente swipe sulle sezioni principali senza tasto (prima tornava alla sezione precedente e la pagina si muoveva male). Escluso anche "‹ Annulla" dei giochi. Il tasto/gesto indietro di Android continua a usare anche la pila NAVH.
+
+(79) Calendario lega G1-G64: `const CALENDARIO` (dopo CHIUSE) = giornate 1-7 di Dunkest ripetute in ciclo fino alla 64 (casa/trasferta invariate); Rhynos = Spiders (SPI). In Risultati, sotto i risultati: "Prossime giornate" (3) + tendina "Calendario completo"; riga dei Dolphins evidenziata. Le giornate in GIORNATE (con punteggi) hanno la precedenza: il calendario mostra solo quelle con n > ultima giornata in GIORNATE. Aggiunta la G3 live con i parziali delle 21:37 del 26/10 (screenshot dell'utente): da aggiornare a fine giornata.
+
+(80) Risultati: una giornata alla volta con frecce ‹ › stile DREAMERS (`.drnav.rgnav`, `data-rgnav`, stato `rgN`), da G1 a G64; apre sulla giornata in corso. Giornate in GIORNATE = punteggi; le altre = sfide di CALENDARIO. Tolte la lista "Prossime giornate" e la tendina.
+
+(81) Dynasty TV live: cdn.nba.com risponde solo a www.nba.com (CORS), quindi dal telefono non funziona. Fonte live = ESPN (site.api.espn.com scoreboard + summary, `tvEspn`, `esSide`, sigle ESPN→NBA in ESPN_AB), deciso con l utente il 27/10: ESPN SOLO per il live, PDK provvisorio con formula Dunkest; i dati ufficiali restano Dunkest (report del mattino). NBA resta come tentativo di riserva.
+
+(92) DREAMERS LIVE: Dreamers legge i PDK dai tabellini di DYNASTY TV (TV.box) per le notti che il report Dunkest non ha ancora (dal giorno dopo l'ultima notte ufficiale fino a oggi, data USA). Con Dreamers aperto, ogni 60 s fa aggiornare a Dynasty TV quelle notti (tvEspn(data): ESPN, formula Dunkest) → stessi numeri del box score e un solo scaricamento; anche Dynasty TV si ritrova i risultati. drNotti() usa i dati live (DRL) SOLO per le notti senza dati ufficiali (DRD.notti o EFF.agg) e le segna in DR_PROV → banner rosso "Live · notte gg/mm: PDK provvisori". Appena il report porta quella notte, i dati Dunkest la sostituiscono da soli. Niente di live viene salvato nell'archivio (dreamers-data.js resta solo dai report). tvEspn accetta una data (YYYY-MM-DD) opzionale.
+
+(93) PDK LIVE PER TUTTI I FANTA (sostituisce il meccanismo DRL della 92). Provider comune dopo drNotti(): fantaLiveNotte(data) legge i tabellini di DYNASTY TV (TV.box: ufficiali del report se ci sono, altrimenti live ESPN con formula Dunkest) e dà {tvNm(nome): {p,min,opp,nm}}; fantaLiveNotti(da) = notti da "da" a oggi (data USA); fantaLiveScarica/fantaLiveAvvia: ogni 60 s, con un fanta aperto, fa aggiornare a Dynasty TV (tvEspn(data)) le notti mancanti. REGOLA DEI FANTA: dati ufficiali Dunkest prima; live solo per le notti DOPO l'ultima notte ufficiale del fanta, segnate come provvisorie (banner rosso "Live"); il report le sostituisce da solo; il live non va mai negli archivi.
+- Dreamers: drNotti() (ufficiali = DREAM_DATA + EFF.agg).
+- G-Dreamers: gdData() (ufficiali = GL_STATS; GD_LASTOFF = ultima notte ufficiale; D.prov = notti provvisorie).
+- NUOVO FANTA NBA: chiamare fantaLiveAvvia() nella vista, aggiungere {attivo,da} a FANTA_LIVE, e per le notti fantaLiveNotti(giorno dopo l'ultima ufficiale) leggere fantaLiveNotte(d)[tvNm(nome)].
+
+(94) Dynasty TV, in fondo al giorno: sezione "Dreamers" (tvDreamers) con le 4 sfide del turno che contiene quella data, con la grafica delle partite NBA (.tvg + .drtvg viola): punteggi di Dreamers (ufficiali + live provvisorio), stato Finale/Live/In corso/Da giocare, capitani con PDK. Tocca una sfida → apre Dreamers su quel turno e quella sfida. Con Dynasty TV aperta anche FANTA_LIVE scarica le notti mancanti per i fanta.
+
+(95) Dreamers in Dynasty TV: loghi senza sfondo (come quelli NBA). Toccando una sfida si apre il suo "box score" dentro Dynasty TV (TVS.dr = "turno|squadraA|squadraB", tvDrGame): punteggio in alto, tab delle due squadre, tabella In campo (capitano C ×1,5 + 5 a punteggio pieno), Panchina · vale ½ (ultimi 4 dei 10), eventuali posti vuoti, Tribuna, In attesa; colonne PDK (riquadro colorato), Molt., Punti; riga Punteggio squadra; tasto "Apri in Dreamers ›". Classe .drmo (NON .drm, già usata dalle card di Dreamers).
+
+(96) Dynasty TV: dentro una partita o una sfida Dreamers non c'è più "‹ Entertainment"; resta solo "‹ Partite del …" a sinistra (vTV).
+
+(97) Dreamers, correzione: i moltiplicatori sono a posti fissi (1° capitano ×1,5, 2°-6° pieno, 7°-10° metà). Prima "metà" toccava agli ultimi 4 di chi aveva già giocato, quindi a settimana in corso con meno di 10 giocatori finivano a metà giocatori che dovevano essere a punteggio pieno.
+
+(98) Dreamers/G-Dreamers: punteggi squadra (.drr em, .drch em) con lo stesso stile dei punteggi di Dynasty TV (.tvsc): var(--display) corsivo 800, 26px.
+
+(99) Box score sfida Dreamers in Dynasty TV: nel riquadro rosso solo lo stato (Live / In corso / Da giocare / Finale) come le partite NBA; sotto, in piccolo, "Dreamers" (+ "PDK provvisori" se live). Punteggio con lo stesso stile delle partite NBA (.tvsb .tmid).
+
+(100) DREAMERS: punteggio squadra = SOMMA dei punti dei titolari (capitano ×1,5, 2°-6° pieni, 7°-10° ×½), non più la media (richiesta Francesco 27/10/2026). In corso = somma di chi ha già giocato; a turno chiuso i posti vuoti valgono 0. Testi delle note aggiornati.
+
+(101) Sfide Dreamers in Dynasty TV: punteggi a 22px (le partite NBA 26px) perché i numeri sono più lunghi (es. 243,7) e a 26px sembravano più grandi.
+
+(102) Campo di ogni squadra, sotto la panchina: "Live stanotte" (campoLive) = box score della notte con SOLO dati di Dynasty TV (TV.box: live ESPN / tabellini), non Dunkest. Notte = oggi USA se almeno una partita è iniziata, altrimenti la notte prima (campoNotte): alla prima partita di una nuova notte si azzera. Righe = giocatori della franchigia (anche G League, "G") scesi in campo, ordinati per PDK, con stato Live (rosso, tempo) o Finale; colonne PDK (riquadro), Min, Pt, Rim, Ass; Totale notte. Con il Campo aperto FANTA_LIVE fa aggiornare Dynasty TV ogni 60 s.
+
+(103) REGOLA: la G League è una squadra DIVERSA dalla franchigia principale (richiesta di Francesco 27/10). Nelle sezioni della squadra principale NON vanno i giocatori G League: tolti dal Cap (candidati capitano; erano stati aggiunti nel commit 4560bbe), dal box "Live stanotte" del Campo e dal menu giocatori del grafico della squadra (lì compare solo il giocatore G League aperto dal Trend). La G League resta nelle sue sezioni (G League, G-Dreamers, Trend con logo G League, Free Agent con diritti). La difesa per ruolo del Cap continua a usare i dati di tutta la lega.
+
+(104) Fix "Live stanotte" del Campo: dopo mezzanotte (ora di New York, cioè dalle 6 italiane… e già dalle 5 con l'ora solare) la notte in corso è "ieri" in data USA, ma il Campo scaricava solo "oggi" → box vuoto. Ora FANTA_LIVE per il Campo scarica ieri + oggi. fantaLiveAvvia scarica subito a ogni apertura (se l'ultimo giro è di più di 15 s fa) e poi ogni 45 s.
+
+(105) Campo: il tasto "Roster completo ›" (con il tasto nascosto dei Ducks) sta sopra il box "Live stanotte", subito dopo la panchina.
+
+(106) DREAMERS · DUELLO (sfida aperta, scelta da Francesco tra 3 proposte): drDuel(). Testata con punteggi, proiezione (chi deve ancora giocare vale il suo pdkMix) e barra % vittoria; poi i giocatori uno contro uno per posto (capitano, 2°-6° pieni, 7°-10° metà, Tribuna, In attesa), carte di altezza uguale per riga: maglia (jersey), nome, ruolo · squadra NBA, PDK colorato, moltiplicatore (= punti), caselle delle partite della settimana (drSettimana: dal calendario di Dynasty TV; colorata = giocata con PDK, contorno = da giocare con avversario, rosso = in corso, NG = non ha giocato), "x/y partite giocate". Classi du*/duw* (attenzione: .pl, .up esistono già nel CSS globale).
+
+(107) Campo: più spazio tra "Roster completo" e "Live stanotte" (.clwrap margin-top 34px).
+
+(108) Campo · MODALITÀ NOTTE: tastino con la luna accanto a "Quintetto" (#cntbtn, CNT). Acceso: campo e panchina diventano scuri con i colori della squadra (.cdark) e usano SOLO i PDK della notte di Dynasty TV (campoNotteMap, stessa notte del box "Live stanotte": si azzera alla prima partita della notte successiva). Meritocrazia senza capitano: i 5 con il PDK più alto in campo, gli altri in panchina in ordine di punteggio (chi non ha giocato in fondo, "non ha giocato"); sotto ogni panchinaro avversario e stato (● = in corso). Spento: tutto come prima (Dunkest).
+
+(109) Modalità notte: il titolo diventa "Modalità notte" (al posto di "Quintetto"); maglie "black edition" (jersey: nero + bianco + accento notte NOTTE_ACC: Ducks grigio, le altre il colore della squadra); campo in scala di grigi scuro con bordo e alone del colore notte; se nessuno ha giocato "Nessuno in campo stanotte".
+
+(110) Modalità notte: nascosti i bottoni Cap e Multe (.ctools); tornano spegnendo la modalità.
+
+(111) Modalità notte: pallino rosso lampeggiante (.cnlv) accanto al PDK (non sulla maglia) di chi ha la partita ancora in corso, in campo e in panchina.
+
+(112) Modalità notte, campo: il bordo (fascia con il nome della squadra e cornice) resta del colore della squadra; solo i Ducks diventano argento (gradiente metallico "mtl", cornice grigia) al posto del giallo. Il parquet interno diventa grigio scuro per tutte (gradiente "wood" scuro, niente più filtro grigio su tutto il campo).
+
+(113) Modalità notte Ducks: maglie argento con dettagli e numeri neri (come la loro maglia alternativa), bordo del campo argento.
+
+(114) Pallino LIVE sul tasto Entertainment del menu (#t-gi.navlive): controllo leggero del tabellone ESPN ogni 2 minuti (solo con app visibile) + stato di Dynasty TV; acceso se c'è almeno una partita NBA in corso.
+
+(115) Menu: Entertainment spostato tra Statistiche e Calcolatore Trade.
+
+(116) Modalità notte Ducks: anche il banner della squadra in alto (.teamhead) diventa argento con scritte nere (solo Ducks, solo nella pagina Campo).
+
+(117) Campo (anche modalità normale): massimo 2 giocatori per fila; chi è in più va nella fila vicina meno piena (C↔F↔G), spostando il giocatore con il punteggio più basso della fila. Caselle dei nomi tutte della stessa larghezza, nomi lunghi con i puntini.
+
+(118) Campo più largo: niente più limite di 380px (ora fino a 560px, cioè tutta la larghezza del telefono come gli altri riquadri); maglie, nomi e PDK in proporzione alla larghezza del campo (container query, unità cqw). Vale per modalità normale e notte.
+
+(119) Modalità notte Ducks: argento chiaro OPACO (come la loro grafica alternativa) al posto dell'argento metallico: banner #9ca1a8 con sfumatura leggera, bordo campo #90959b piatto (niente gradiente mtl), cornice #7d8288, maglie #a2a6ac con dettagli neri.
+
+(120) Modalità notte Ducks (scelta definitiva 27/10): restano gialli (banner, bordo campo); maglie con base nera e lo stesso disegno originale a zig-zag ma in giallo (DECO DUC ora usa c.trim al posto del nero fisso; in modalità normale trim resta nero, quindi invariato). Tolto l'argento.
+
+(121) Entertainment: la Sfida della notte è passata nell'Arcade (a:1; dalla sfida "‹ Arcade"); il tasto Dynasty TV è grande (.tvbig), rosso pieno, icona telecamera e pastiglia "● LIVE" (pallino lampeggiante quando ci sono partite in corso, come il pallino del menu).
+
+(122) Tasto Dynasty TV in Entertainment rifatto nello stile delle card Dreamers (.gmc .tvgmc, rosso smorzato #c2414b, riquadro inclinato con telecamera, pastiglia LIVE).
+
+(123) Hub Entertainment: in alto sezione "Entertainment" con Dynasty TV, sotto sezione "Fanta Dreamers" con DREAMERS e G-DREAMERS, poi Arcade.
+
+(124) Pallino rosso sul tasto Entertainment del menu sempre presente; lampeggia solo quando ci sono partite in corso (.navlive).
+
+(125) Tolto il pallino rosso dal tasto Entertainment del menu (resta solo il controllo .navlive che fa lampeggiare la pastiglia LIVE della card Dynasty TV).
+
+(126) Dreamers duello, carta del capitano: nel riquadro grande i punti del capitano già moltiplicati, sempre in oro (.pdkx.dugold); a destra il PDK di partenza "×1,5" senza grassetto.
+
+(127) Dynasty TV, sfide Dreamers: logo Ducks alzato di 4px per allinearlo al nome (.drtvg .drtvl .lg-DUC).
+
+(128) Home: tolto il titolo "Franchigie"; al suo posto una barra (.hbar) con ricerca "Cerca giocatore", tasto Dynasty TV, tasto Dreamers viola con stellina (#hdrm → GAME=dream) e interruttore on/off della modalità notte (#hnt, role=switch, accende/spegne CNT: entrando in una squadra si vede già in modalità notte).
+
+(129) Modalità notte "Notte viola" (opzione 4 scelta da Francesco): con CNT acceso render() mette body.notte; tile della Home con cielo viola stellato e loghi scuriti con alone viola; stesso filtro sul logo del banner squadra. Alternative mostrate: Ombra, Sangue, Spettro (in /tmp, non nel repo).
+
+(130) Modalità notte: stile cambiato da "Notte viola" a "Spettro" (verde fantasma: sfondo verde-nero, loghi in verde luminoso con alone, testi verde chiaro) su richiesta di Francesco.
+
+(131) Modalità notte: tornati a "Notte viola" ma SOLO sullo sfondo delle caselle; i loghi restano originali (nessun filtro su colori/luminosità), solo un leggero alone viola dietro (drop-shadow).
+
+(132) Modalità notte: stile "Dreamers neon" con cielo stellato leggero (scelta Francesco 27/10): sfondo della Home come Dreamers con qualche stella in alto; carte arrotondate viola-blu con bordo e alone neon e una decina di stelline di grandezze diverse; loghi originali con alone rosa-viola.
+
+(133) Modalità notte: anche header e menu in alto (sfondo viola Dreamers con stelline, bordo viola, tasto selezionato viola) e lo sfondo di tutte le pagine; html.notte e theme-color #2a1260 per la barra di stato.
+
+(134) Modalità notte: stelle nello stile di Dreamers (.drroom::before): 8 sullo sfondo della Home (opacità .6), 2 per carta (.8), 5 nella fascia in alto.
+
+(135) 27/10/2026 — Modalità notte v4: viola più scuro (velo rgba(6,2,18,.54) sul cielo Dreamers), UN UNICO cielo fisso (html.notte::before) che parte dalla barra di stato dell'iPhone e arriva fino in fondo; la fascia della barra di stato (body::before) e l'header usano lo stesso cielo allineato al viewport, quindi niente stacchi né linee (tolto il bordo sotto l'header). Loghi della Home liberi, senza riquadri, con alone viola; tab selezionato viola. theme-color #2a1260 anche in notte (prima tornava #0a1330).
+
+(136) 27/10/2026 — Modalità notte: tolta la linea leggera sopra i loghi della Home. Era l'alone viola (drop-shadow) dei loghi tagliato dal bordo del riquadro (.htile overflow:hidden): in notte ora .htile ha overflow:visible, così l'alone sfuma nel cielo senza stacchi.
+
+(137) 27/10/2026 — Modalità notte: header e menu tornano come la versione precedente (sfumatura viola più chiara, stelline, linea viola di stacco sotto il menu), mentre il resto della pagina resta il cielo unico scuro con i loghi liberi. In notte l'header sale fino sotto l'orario dell'iPhone (padding-top safe-area, :root senza padding, body::before nascosto), così la barra di stato ha lo stesso colore dell'header. Modalità giorno e Dreamers a schermo intero invariati.
+
+(138) 27/10/2026 — Su richiesta dell'utente la Home in modalità notte torna all'estetica della v69 (riquadri dei loghi in stile Dreamers neon, sfondo viola più chiaro, fascia di stato blu scura). Tolto il blocco "MODALITÀ NOTTE v4" (note 135–137) e ripristinato il theme-color di prima: index.html è identico alla v69.
+
+(139) 27/10/2026 — Modalità notte (estetica v69): tolta la fascia blu sotto l'orario dell'iPhone. In notte l'header viola Dreamers sale fino in cima allo schermo (padding-top safe-area, :root senza padding, body::before nascosto) e theme-color #2a1260. Giorno e Dreamers a schermo intero invariati.
+
+(140) 27/10/2026 — Modalità notte più scura: velo rgba(6,2,18,k) davanti agli sfondi viola (body, header, #main, riquadri loghi, ricerca, tasti menu non selezionati). Home = livello 1 (k .30); tutte le altre sezioni = livello 3 (k .68). Tab selezionato e Dreamers a schermo intero invariati. È un blocco CSS a parte ("(140) MODALITÀ NOTTE più scura"): l'utente lo prova e, se non va bene, per la Home si torna a quella di prima togliendo le regole [data-v=home].
+    Aggiornato: la parte alta (header + menu, fino alla linea viola) resta al livello 1 in tutte le schermate; il livello 3 vale solo sotto la linea viola, fuori dalla Home.
+
+(141) 27/10/2026 — Dreamers/G-Dreamers, scheda Turno: colore dei punteggi delle sfide. Turno in corso: chi è avanti verde, chi è dietro rosso (parità o punteggio assente: colore normale). A fine turno (W.closed): vincitore giallo/oro, sconfitto bianco. Classi .slead/.strail/.sgold/.slost sulle righe .drr (solo lista .drms; le card Dreamers dentro Dynasty TV non cambiano).
+    Aggiornato: niente verde/rosso/oro. Solo chi è avanti (turno in corso) o ha vinto (fine turno) ha il punteggio viola acceso con alone; l'altro resta normale.
+
+(142) 27/10/2026 — Tasto Condividi (icona tonda nel titolo) su "Live stanotte" del Campo e su "Dreamers" dentro Dynasty TV. Crea un'immagine PNG 1080px in stile Dreamers (cielo viola stellato, logo Dynasty League, loghi squadre, pillole PDK colorate) con tutte le info: Live = giocatori, partita/stato, PDK, MIN/PT/RIM/ASS e totale notte; Dreamers = sfide del turno con titolari, punteggi (viola acceso per chi è avanti), stato LIVE/FINALE e capitani. Si apre un foglio di anteprima con Chiudi / Salva / Condividi (share sheet di iPhone con il file; serve il foglio perché iOS vuole il tocco subito prima di navigator.share). Dati presi da SHR_CAMPO / SHR_DR, riempiti da campoLive() e tvDreamers().
+
+(144) 27/10/2026 — Modalità notte: la Home sotto la linea viola torna alla colorazione chiara di prima (tolti i veli su body/#main/riquadri/ricerca della Home). Header e menu restano al livello 1 ovunque; le altre sezioni restano al livello 3 sotto la linea viola.
+
+(145) 27/10/2026 — Condividi anche la SFIDA Dreamers (vista duello): tasto tondo accanto a "‹ Turno N". Immagine 1080px con punteggi delle due squadre (chi è avanti in viola acceso), proiezioni, barra % vittoria, e i 10 titolari di entrambe affiancati per posto (Capitano ×1,5, Punteggio pieno 2–6, Panchina ½ 7–10): nome, ruolo · squadra NBA · partite giocate, PDK medio colorato e punti (×1,5 / ×½). Dati da SHR_DUEL (riempito da drDuel), disegno in shDuel().
+
+(146) 27/10/2026 — Sfida Dreamers (vista duello): nel riquadro in alto il punteggio di chi è avanti (o ha vinto) è viola acceso con alone, come nella lista del Turno.
+
+(147) 27/10/2026 — Modalità notte: in Statistiche il bottone "Statistiche notte" diventa "Statistiche live", rosso che pulsa. La sezione (vStatLive) mostra la notte in corso (data USA, campoNotte) dai tabellini live di Dynasty TV: tutti i giocatori delle 8 franchigie principali (niente G League) con PDK live o Eff. (PDK/min), minuti, pt/rb/as e pallino rosso se la partita è in corso. Si aggiorna da sola (voce FANTA_LIVE per cur==="statnotte"&&CNT). Dati live mai salvati negli archivi. Spenta la modalità notte torna la sezione ufficiale delle notti passate.
+
+(148) 27/10/2026 — Condividi il tabellone playoff Dreamers: tasto tondo nel titolo "Tabellone" della scheda Playoff. Immagine ORIZZONTALE 1920×1270 stile Dreamers con il tabellone a "conference": EAST a sinistra (Quarto 1 = 1ª–8ª, Quarto 2 = 4ª–5ª → Semifinale East), WEST a destra (Quarto 3 = 2ª–7ª, Quarto 4 = 3ª–6ª → Semifinale West), al centro coppa, Finalissima (bordo oro), Campioni e Finale 3° posto; sotto i Piazzamenti 5°–8°. Teste di serie, loghi, vittorie nella serie (vincente in viola acceso, perdente sbiadito), segnaposto "Vincente Q1" ecc. se non ancora decisi. shBase ora accetta la larghezza.
+    Aggiornato: niente logo né scritta Dynasty League nell'immagine (shBase noBrand); i Piazzamenti 5°–8° sono riquadri piccoli (scala 0,62) centrati in basso.
+    Aggiornato: anche la Finale 3° posto è nei riquadri piccoli ("Piazzamenti 3°–8°", 5 riquadri); immagine 1920×1040.
+
+(149) 27/10/2026 — Dreamers: regular season di 14 turni (DR_REG=14, andata e ritorno: ognuno affronta tutti esattamente 2 volte, verificato sul calendario) e playoff al meglio delle 3 (chi vince 2 gare passa, max 9 settimane). DR_TOT=23: regular season 26/10/2026–31/01/2027, playoff dal 01/02/2027, al massimo fino al 04/04/2027. Simulate 200 stagioni: finiscono tutte tra la settimana 21 e la 23.
+
+(150) 27/10/2026 — Immagine condivisa della sfida Dreamers allineata all'app: capitano con pillola ORO e punti calcolati (×1,5) e sotto "PDK ×1,5"; panchina con bordo rosa e "×½ = punti"; punteggio di chi è avanti viola acceso (#d8b4fe), l'altro bianco.
+
+(151) 27/10/2026 — Immagini condivise (cielo stile Dreamers): niente più logo e scritta Dynasty League. Al loro posto il logo Dreamers (quadrato viola con stella bianca, come il tasto della Home, disegnato da shDrLogo) con la scritta DREAMERS / FANTA PDK (Live stanotte). Dove c'è già il grande titolo DREAMERS (sfide in Dynasty TV, sfida singola, tabellone playoff) il logo sta accanto al titolo e la fascia in alto è tolta (immagine più compatta).
+
+(152) 27/10/2026 — Immagine condivisa "Live stanotte": logo squadra grande al centro (220px, alone viola), sotto "LIVE STANOTTE" e il nome completo della squadra in viola fluo (#d8b4fe con alone fucsia); tolte data e "in campo ora". Logo e scritta DREAMERS in alto più piccoli (76px / 48px).
+
+(82) DREAMERS: punteggio del giocatore nel turno = MIGLIOR PDK tra le sue partite della settimana (acc[p].b, drEff), non più la media (richiesta utente 27/10). Tasto "Regolamento" sotto il logo (data-dr="rules", DR.rules, drRules()) con tutte le regole per punti. Se cambiano le regole, aggiorna anche drRules().
+
+(153) 27/10/2026 (Claude, account del secondo utente) — DREAMERS: RUOLI, regola invalicabile. I 10 titolari sono SEMPRE 4 guardie, 4 ali e 2 centri; tra capitano + punteggio pieno (primi 6) almeno 1 centro, 1 ala e 1 guardia. Vale prima della meritocrazia: dentro ogni ruolo entrano i migliori PDK (quote in `DR_QUOTE`); se tra i primi 6 manca un ruolo sale il migliore di quel ruolo e scende in panchina il peggiore dei primi 6 (di un ruolo che ne ha almeno 2). Entrano anche giocatori a 0 o che non hanno giocato (occupano il posto, a turno chiuso valgono 0). Ruolo da `ruoloDi()` (colonna 3 di ROSTER). Codice in `drTeam`; regola aggiunta in `drRules()` (sezione "Ruoli: regola invalicabile"). Nella lista del turno "X/10 · Y a zero" ora conta i titolari che non hanno giocato.
+    Ruoli in tutta l'app: trattino colorato accanto al nome (helper `RTR(nome)`, classe `.rtr G/F/C`, stessi colori `--rG/--rF/--rC` dei badge ruolo): sfida Dreamers, tabellino Dreamers in Dynasty TV, panchina del Campo, Statistiche (notte e live), Efficienza, Trade, Free agent, Capitano, ricerca. Nell'immagine condivisa della sfida c'è una barretta colorata a sinistra di ogni giocatore.
+
+(154) 27/10/2026 (Claude, account del secondo utente) — Pagina squadra (vCampo), fuori dalla modalità notte: mostra la FORMAZIONE DREAMERS del turno in corso (drTeam, stessi dati live di Dynasty TV poi report Dunkest). In campo i primi 5 (capitano con pallino "C"), sotto "6° uomo · 100% PDK" (6° titolare) e "Panchina · 50% PDK" (7°–10°) in stile Dunkest con le maglie (funzione drPanca, classi .dpan/.dpc), poi Tribuna sbiadita. Senza PDK nel turno: "In attesa" e ordine per PDK medio (drTeam ordina chi non ha punteggio per pdkMed), sempre con i ruoli. Il live del Campo (FANTA_LIVE[0]) scarica anche tutta la settimana Dreamers. Tasti Cap/Multe spostati sotto la tribuna. Modalità notte invariata.
+    Aggiornato: maglie tutte uguali (58×70) in campo, 6° uomo e panchina; stesso blocco giocatore ovunque (drGioc: maglia + targhetta nera "ruolo cognome" + cartellino PDK .pcd largo 86px colorato con pdkLvl, capitano con bordo oro e pallino C sulla maglia, panchina mostra i punti ×½ e sotto il PDK pieno). Toccando il cartellino (data-drwk) si apre un foglio (drWkOpen) con le partite del giocatore nel turno: giorno, avversario, PDK o Da giocare/Live/Non ha giocato, evidenziato il miglior PDK che conta. Righe del campo un po' più distanti in formazione Dreamers (ROWY). Poi: cartellino staccato dalla maglia come un bottone (70px, tondo, margine 5px), circa 20% più piccolo.
+
+(155) 27/10/2026 (Claude, account del secondo utente) — Pagina squadra: ridotto lo spazio sopra le maglie nei riquadri "6° uomo" e "Panchina" (tolte le scritte "6° uomo" e "Panchina", restano solo "100% PDK" e "50% PDK"; padding 6px), così le maglie stanno più vicine al campo. IN CODA sul branch `coda`, non ancora pubblicato.
+
+(156) 27/10/2026 (Claude, account del secondo utente) — DREAMERS: tasto "Regolamento" spostato in basso, sotto le sfide/contenuto della scheda (classe .drrulb, dentro .drroom dopo il body); in alto resta solo "‹ Torna al gioco" quando il regolamento è aperto. Nota sotto le sfide aggiornata con la regola dei ruoli. Immagine condivisa del tabellone playoff (shPlayoff): lato WEST speculare all'EAST (parametro `mir` di box: testa di serie e logo a destra del nome, vittorie a sinistra, etichette e segnaposto allineati a destra). IN CODA sul branch `coda`.
+
+(157) 27/10/2026 (Claude, account del secondo utente) — Pagina squadra, fuori dalla modalità notte: al posto della scritta rossa "Quintetto" c'è un PICCOLO tabellone elettronico nella stessa riga del titolo (drTabellone, classe .lbm): punteggio Dreamers della squadra nel turno (DT.score = 10 titolari con capitano ×1,5, pieni ×1, panchina ×½), cifre a 7 segmenti arancioni (SEG/SEGP/segD), pallino di stato (grigio attesa, arancio in corso, rosso lampeggiante live, verde finale). Restano invariati sottotitolo "Dreamers · Turno N", tasto modalità notte (#cntbtn), cassa e tutto il resto. In modalità notte resta il titolo di prima. IN CODA sul branch `coda`.
+    Aggiornato: tolta la parola "Dreamers" (resta "Turno N"); tabellone più lungo con logo della mia squadra, punteggio mio – punteggio avversario e logo dell'avversaria del turno (drPairs), entrambi live da drTeam; chi è dietro ha le cifre più spente. Tocco sul tabellone = apre la sfida in Dreamers. Riga del titolo con 4px in più sopra, nient'altro spostato.
+    Aggiornato: tolta anche la scritta "Turno N"; riga titolo a 3 colonne (h2.lbmh grid 1fr auto 1fr): tabellone esattamente al centro, tasto notte tutto a destra, niente linea rossa. Sotto i punteggi, dentro il tabellone: "X/10 hanno giocato" a sinistra per la mia squadra e a destra per l'avversaria (titolari con punteggio, drTeam.played).
+
+(158) 27/10/2026 (Claude, account del secondo utente) — Tabellone della pagina squadra rifatto in stile NEUTRO "vetro" (scelto dall'utente tra 6 prove): una sola riga sottile (34px) e lunga, pillola semitrasparente: pallino stato, logo, "X/10 giocato", punteggio | punteggio, "X/10 giocato", logo avversaria. Chi è avanti in bianco, chi è dietro in grigio. Niente cifre LED (SEG/segD restano definiti ma non usati qui). Sempre esattamente al centro, tasto notte a destra. IN CODA sul branch `coda`.
+    Aggiornato: tolto il pallino di stato; angoli arrotondati come il tasto notte (9px); punteggi nel colore della squadra padrona della pagina (TEAMS[t].bg, oppure il secondo colore / versione schiarita se troppo scuro sul fondo: es. Eagles in oro, Dolphins in blu chiaro), chi è dietro allo stesso colore ma spento (opacità 50%).
+
+(159) 27/10/2026 (Claude, account del secondo utente) — Pagina squadra: maglie IN CAMPO +10% (64×77, regola .court .cpl.dr .pj); cartellini PDK, targhette e maglie di 6° uomo/panchina invariati. IN CODA sul branch `coda`.
+    Poi (stesso giorno): PROPORZIONI STILE DUNKEST su campo, 6° uomo e panchina: maglie 64×77 ovunque, targhetta e cartellino larghi uguali (112px) e attaccati come un unico blocco (targhetta sopra, cartellino colorato sotto), maglia che entra un po' dietro la targhetta; posizioni in campo C 33/67, A 21/79, G 33/67 e righe 26,2 / 54,6 / 83,2% (solo formazione Dreamers). Blocco CSS "PROPORZIONI STILE DUNKEST". IN CODA.
+    Poi: tolte le scritte piccole sotto i numeri dei cartellini (né "PDK", né il calcolo ×1,5 / ×½, né "partite ›"): resta solo il numero (o "In attesa"). IN CODA.
+
+(160) 27/10/2026 (Claude, account del secondo utente) — RICERCA dalla Home (homeSearch) collegata a tutte le sezioni, risultati divisi in "Squadre", "G League", "Free agent". Squadre → scheda giocatore; G League (GLEAGUE + nome completo da GL_STATS, cerca anche per cognome abbreviato) → apre la sezione G League con il giocatore aperto ed evidenziato (glVai, attributo data-glk sulle righe details.glp); Free agent (FA, esclusi quelli già nelle squadre G League) → scheda free agent (prima il clic finiva anche nel gestore della scheda giocatore, ora no). IN CODA.
+
+(161) 27/10/2026 (Claude, account del secondo utente) — MODALITÀ NOTTE della pagina squadra con lo stesso stile della formazione Dreamers: in campo stesso blocco giocatore (drGiocN: maglia 64×77 + targhetta + cartellino colorato con il PDK della notte, pallino rosso lampeggiante nel cartellino se è in campo ora), stesse posizioni (ROWY/XS unici). Panchina notte = griglia a 3 colonne degli stessi blocchi (.dpan.notte), "Non gioca" per chi non ha partita, "—" per chi ha la partita ma non ha ancora punteggio. Funzionamento invariato (5 migliori della notte in campo, gli altri in panchina per punteggio). IN CODA.
+    Corretto: in modalità notte la PANCHINA resta la lista classica di prima (non la griglia); in campo maglie, targhette e cartellini identici alla modalità normale (verificato: maglia 64×77, targhetta 112×23, cartellino 112×42 in entrambe).
+    Scelta finale: targhetta + cartellino ridotti del 20% (90px, cartellino solo numero alto 27px), maglie 64×77 invariate; uguale in modalità normale e notte (5 titolari). IN CODA.
+
+(162) 27/10/2026 (Claude, account del secondo utente) — DIVISE: nella pagina squadra, tastino con una maglietta a SINISTRA (speculare al tasto notte, stessa misura, #kitbtn/.kitbtn, presente anche in modalità notte accanto al tasto luna). Ogni tocco cambia la maglia: Casa (quella di sempre) → Notte (base scura, la stessa della modalità notte) → Alternativa (base bianca con dettagli nel colore della squadra; se la casa è già chiara, come Dolphins e Spiders, base nel colore della squadra). Funzioni KIT/kitDi/kitC/kitIco, jersey() usa kitC. La scelta vale per tutta la pagina squadra (campo, panchina, tribuna), è per squadra e resta salvata sul telefono di chi la fa (localStorage "dl_kit"); senza scelta: casa di giorno, notte in modalità notte. IN CODA.
+
+(163) 27/10/2026 (Claude, account del secondo utente) — PERIODO A CALENDARIO in tutte le sezioni con grafici: Grafico (GR.da/GR.a), Trend (TRN.da/TRN.a), Scouting → Grafici liberi (NB.g.from/to) e Report "Date a scelta" (NB.from/to). Un bottone "Periodo" apre un solo calendario: frecce per anno e mese, 1° tocco = inizio, 2° tocco = fine (se è prima si scambiano), poi il grafico si aggiorna da solo; scorciatoie Stagione 1/2/3 e Tutto. Limiti: dal 22/10/2024 a oggi. Le stagioni toccate dal periodo (perSzr) decidono i dati; il livello dei punti viene dalle partite nel periodo (perBy: più stagioni → stagioni, oltre 45 giorni → mesi, altrimenti settimane; poche partite → singole partite come prima). Funzioni per*: perBtn, perApri, perDisegna, PER_CB. I vecchi menu Dalla/Alla stagione e Dal/Al mese sono stati tolti (GR.sz/TRN.sz restano solo come stagione di partenza). IN CODA.
+    Aggiunto: scelta "Media per" Stagioni / Mesi / Giorni (perGranBtns, GR.gran / TRN.gran) sotto il Periodo nel Grafico e nel Trend. Un bottone si disattiva (barrato) se il periodo non lo permette: Stagioni solo se le partite toccano più stagioni, Mesi solo se toccano più mesi, Giorni con almeno 2 partite (perOk). Senza scelta resta il livello automatico. Etichette dell asse x del grafico diradate in base alla larghezza (prima con 9-16 punti si sovrapponevano).
+    Poi: nel Grafico il bottone Periodo ha la stessa larghezza e lo stesso stile del menu Giocatore sopra (non va più sopra la maglia).
+
+(164) 27/10/2026 (Claude, account del secondo utente) — GRAFICO CONDIVISO: tasto Condividi tondo in alto a sinistra nel riquadro del Grafico (shBtn("gr")). Crea un immagine ORIZZONTALE larga quanto serve (shGrafico: circa 74px per punto, minimo 1600px, massimo 20000px, alta 1040px) con logo, giocatore, periodo, numero partite, media di ogni misura accesa, linea tratteggiata della media, ogni punto con il suo valore e sotto data e avversario (in "Giorni"), separatori e nomi dei mesi. Dati da SHR_GR riempito da vGrafico. shBase ha un 4° parametro noSz per non scrivere "Stagione 26/27". Si apre il solito foglio Chiudi/Salva/Condividi. IN CODA.
+    Poi: tasto Condividi su OGNI grafico dell app (shChartBtns, aggiunto dopo ogni render a ogni riquadro con svg.grsvg: Trend, dettaglio Trend, confronto rookie, scouting, Grafici liberi...). shCardImg ridisegna il grafico più largo (CHW_X forza chW) in base al numero di punti, lo copia con gli stili (shSvgInline) su sfondo Dreamers con il titolo della sezione. Il Grafico del giocatore tiene la sua immagine dedicata (shGrafico).
+
+(165) 27/10/2026 (Claude, account del secondo utente) — Scheda giocatore (vGiocatore): subito sotto la testata c'è "PDK ed efficienza" (prima si chiamava "Efficienza"), con PDK medi a partita a sinistra ed efficienza media a destra (invertiti). La "Pagella" con le stelline è stata spostata in fondo, dopo "Partita per partita". IN CODA.
+
+(166) 27/10/2026 (Claude, account del secondo utente) — Sfida Dreamers (drDuel): in cima a ogni card c'è una fascia piena del colore del ruolo con scritto GUARDIA / ALA / CENTRO (classe .du.ru-G/F/C, data-rn), scelta dell'utente tra 5 prove (opzione 4). Tolto il trattino ruolo accanto al nome nelle card (ridondante).
+
+(167) 27/10/2026 (Claude, account del secondo utente) — Divise: Peacocks "Notte" verde pavone (#0f6b3f, nome/numero bianchi con bordo blu) invece che nera, anche in modalità notte; Ducks "Alternativa" solo bianco e giallo (nome e numero gialli con contorno oro, niente bordi neri). Codice in kitC. IN CODA.
+    Poi: Ducks Alternativa con un bordino nero sottilissimo su nome e numero (parametro jsw della divisa = spessore del contorno, qui 1,1 invece di 3,2).
+
+(168) 27/10/2026 (Claude, account del secondo utente) — DIVISE: 4ª maglia "Originale NBA" nel tastino della pagina squadra (giro Casa → Notte → Alternativa → Originale NBA, KIT_N ha 4 voci, `KIT[t]=(kitDi(t)+1)%4`). Con questa maglia OGNI giocatore veste la maglia della SUA squadra NBA (colonna 4 di ROSTER, es. Flagg → DAL, Şengün → HOU): jersey() cerca il giocatore in ROSTER[t] per nome e prende i colori da NBA_KIT[sigla]; se non lo trova usa la maglia Casa. NBA_KIT ha le 30 squadre (bg maglia, fg numero, jstroke contorno numero, nf/ns colore e contorno del nome se diversi, trim collo/giromanica, p2 dettagli, d = motivo) ricalcate sugli screenshot Dunkest dell'utente; nbaDeco(c) disegna i motivi (was = fasce Wizards, tor = diagonale nera Raptors, uta = montagne Jazz, sun = righe Suns, por = strisce Blazers, pin = gessato Magic, mil = doppie righe Bucks, plain = filetto laterale, default = fasce laterali). Al posto delle decorazioni DECO della squadra. Solo colori e motivi, niente loghi: sulla maglia restano cognome e numero. Tastino: maglietta a tre colori quando è attiva. BKN e SAC non erano negli screenshot: colori classici, da ritoccare se arriva uno screenshot. PUBBLICATO.
+
+(169) 27/10/2026 (Claude, account del secondo utente) — Maglia Originale NBA dei Bulls (NBA_KIT.CHI): rosso ricalcato su uno screenshot Dunkest dell utente, bg #d4101d (prima #ce1141, tendeva al lampone). Approvata, IN CODA: si pubblica insieme alle altre maglie da ritoccare.
+
+(170) 27/10/2026 (Claude, account del secondo utente) — Maglie Originale NBA ricalcate su screenshot Dunkest dell utente, tutte APPROVATE e IN CODA: Celtics (BOS bg #0a6c33), Rockets (HOU bg #d02a1c, collo/giromanica gialli #edc630, motivo "pind" = gessato scuro appena visibile), Bucks (MIL bg #21472c, crema #e0dccb, motivo "mil" = filetto crema sui fianchi + due fasce crema ai lati ALL ALTEZZA DELLA PANCIA), Mavericks (DAL bg #0a6bd0, numero argento #c9cccb bordato di bianco, motivo "dal" = blu notte #052e5c SOLO sulle spalline, spessore medio-sottile). Si pubblicano insieme a Bulls (169) e alle prossime squadre, solo su ordine dell utente.
+
+(171) 27/10/2026 (Claude, account del secondo utente) — Maglie Originale NBA IN CODA: Raptors APPROVATA (TOR bg #52297a viola, motivo "torc" = righe verticali con piccoli dentini alternate nere #141414 e argento #a9a6a8, collo/giromanica neri con filetto rosso: nuovo campo tline #c8323a disegnato sopra trim in jersey(); nome argento #b0aeb2, numero bianco bordato di nero; NIENTE dinosauro: è il logo, non va messo). Nuggets APPROVATA (DEN bg #1c3f98, collo giallo #f2c230, motivo "den" = fascia arcobaleno a 6 strisce sotto il numero; niente montagne né scritta). Niente loghi o scritte delle squadre NBA su nessuna maglia.
+
+(172) 27/10/2026 (Claude, account del secondo utente) — Maglie Originale NBA APPROVATE e IN CODA: Timberwolves (MIN bg #14191d nera, collo/giromanica con bordo verde ad alberelli = tline #2f9a5c tratteggiato: nuovi campi tlw spessore e tld dasharray della tline; nome/numero bianchi bordo azzurro #8fb0d8 + outer #1d2f56; motivo "none" = nessun disegno) e Hawks (ATL bg #f5bd22 gialla, collo/giromanica neri con filetto rosso #cd1d24, nome/numero neri bordati di rosso, jsw 2.2; niente aquila/ali: è il logo).
+
+(173) 27/10/2026 (Claude, account del secondo utente) — Maglie Originale NBA APPROVATE e IN CODA: Spurs (SAS bg #4bb7a6 verde acqua, collo nero, giromanica diverse per lato = nuovo campo arm:[sinistra,destra] arancio #f39a3a / rosa #ee6f8f; motivo "sas" = fianchi neri con zig-zag bianco, triangolini arancioni e filetto bianco) e Rockets CLASSICA che SOSTITUISCE la rossa della (170): HOU bg #1f2540 blu notte, motivo "houc" = gessato bianco + righe azzurre tratteggiate in alto, collo/giromanica rossi #c0282c con filetto bianco, nome/numero bianchi bordati di rosso (jsw 2.4). Niente loghi, scritte o sponsor.
+
+(174) 27/10/2026 (Claude, account del secondo utente) — Maglie Originale NBA IN CODA: Pistons APPROVATA (DET bg #1279a3 verde petrolio, collo/giromanica neri con filetto giallo #e6a422 tline + filetto rosso #b52a1c: nuovo campo tline2 disegnato appena all interno; motivo "det" = fianchi neri con riga gialla e rossa; nome/numero bianchi bordati di nero; niente cavallo/scritta). Bulls: SENZA gessato (sostituisce la rossa della 169), CHI bg #d00a20, motivo "none", nome/numero neri bordati di bianco, collo nero con filetto bianco — in prova, da confermare. Pacers gessata APPROVATA (IND bg #ffd914, gessato blu notte #1b2440, nome/numero blu bordati di bianco).
+
+(175) 27/10/2026 (Claude, account del secondo utente) — Maglie Originale NBA APPROVATE e IN CODA: Bulls CLASSICA, sostituisce le versioni precedenti (169 e quella senza gessato della 174): CHI bg #d6150f, collo/giromanica bianchi #f4f1ea con righe nero-rosso-nero al centro (nuovo campo tstr = lista [colore, spessore] disegnate sopra trim), nome/numero neri bordati di bianco, motivo "none". Bucks NERA, sostituisce la verde della (170): MIL bg #1c1d1c, collo/giromanica neri con filetto crema #e8d9a8, motivo "milb" = fascia sul petto blu #3a66d6, verde #2e6b3f, bianco, crema, verde, abbassata SOTTO il nome (y 63-85); numero crema #eee1c6 bordato di verde, nome crema bordato di nero (nf/ns). Niente cervo/scritte. Pacers gessata APPROVATA.
+
+(176) 27/10/2026 (Claude, account del secondo utente) — [PUBBLICATO insieme a 169-175] DIVISE A 5 CATEGORIE (tastino maglietta, giro di 5: KIT_N = Casa, Notte, Alternativa, NBA 2026, Anni 90; `KIT[t]=(kitDi(t)+1)%5`). 4 = "NBA 2026": NBA_KIT = maglie attuali delle 30 squadre NBA (quella pubblicata nella 168 + ritocchi approvati oggi: Bulls rosso #d4101d, Celtics, Rockets rossa con gessato leggero, Bucks verde con fasce crema alla pancia, Mavericks blu notte sulle spalline, Nuggets 2026 blu notte con collo bianco/rosso, nome oro, numero bianco bordato di rosso). 5 = "Anni 90": NBA_KIT_90 con 10 squadre (Bulls nera gessata rossa, Rockets blu notte gessata, Bucks nera con fasce, Raptors viola, Nuggets arcobaleno, Timberwolves nera, Hawks gialla, Spurs verde acqua, Pacers gessata, Pistons verde petrolio); le altre squadre vestono NBA_BIANCA (maglia bianca, numero nero) finché non vengono fatte. jersey(): kd 3 → NBA_KIT, kd 4 → NBA_KIT_90 o NBA_BIANCA. Tastino: tricolore per la 4, nero gessato rosso con "90" per la 5. PUBBLICATO il 27/10 sera.
+
+(177) 27/10/2026 (Claude, account del secondo utente) — La maglia scelta col tastino (le 5 categorie: Casa, Notte, Alternativa, NBA 2026, Anni 90) ora vale in TUTTE le sezioni (pagina giocatore, scontri Dreamers, trade, ecc.), non solo nella pagina squadra: `kitDi(t)` legge sempre `KIT[t]`. Senza scelta resta casa (notte solo in modalità notte sul campo). PUBBLICATO con la (178).
+
+(178) 27/10/2026 (Claude, account del secondo utente) — Maglia ANNI 90 dei Cavaliers aggiunta a NBA_KIT_90 (CLE bg #b02a2c vinaccia, collo/giromanica blu notte #1f2a5c con oro #d4b066 al centro via tstr, motivo "cle" = fianchi oro con due righe bianche, nome/numero bianchi bordati d oro). PUBBLICATO insieme alla (177).
+
+(178) 27/10/2026 (Claude, account del secondo utente) — Maglie Anni 90: sul petto ora c'è il NOME DELLA SQUADRA NBA (BULLS, CAVALIERS, ROCKETS... mappa `NBA_NOME`, tutte e 30) al posto del cognome del giocatore; solo categoria Anni 90 (kd===4), le altre categorie invariate. Codice in `jersey()`. IN CODA (rendering inviato).
+
+(179) 27/10/2026 (Claude, account del secondo utente) — Su TUTTE le maglie di ogni categoria il nome sul petto è quello della squadra, mai il cognome: divise NBA 2026 / Anni 90 → squadra NBA (`NBA_NOME`); Casa/Notte/Alternativa → la nostra franchigia (nick: DUCKS, EAGLES...). Se la squadra non ha nick (FA, G League) resta il cognome. Codice in `jersey()`. PUBBLICATO.
+
+(180) 27/10/2026 (Claude, account del secondo utente) — Nome del giocatore sulla targhetta (.pnm) più leggibile: 13px (era 10,4), targhetta sempre larga 90px; i cognomi lunghi si rimpiccioliscono da soli (`pnmFs`: 64/(lettere×0,7), tra 6,4 e 13px) così nessun cognome del roster viene tagliato (verificato su tutti). Vale in formazione Dreamers e modalità notte (stessa classe). PUBBLICATO.
+
+(181) 27/10/2026 (Claude, account del secondo utente) — Maglie Anni 90 ricalcate sulle foto dell'utente, PUBBLICATE: Knicks (NYK blu/arancio, spalline nere), Lakers (viola/oro, collo giallo-bianco), Celtics (verde/bianco), Hornets (CHA acqua con 5 righe verticali, motivo "cha"; versione viola alternativa pronta in `NBA_KIT_90_ALT`, non collegata), Clippers (rosso con fianchi blu), Thunder (azzurro con fianchi blu notte, collo arancio/giallo), Wizards (oro con spalline bianche e fascia nera, motivo "wasg"), Mavericks (verde, collo blu/bianco), Magic (nera gessata bianca, scritte blu). Aggiunti i motivi "cha", "wasg", "default" in `nbaDeco`. Nessun logo/scritta di terzi (il "Wu York" dei Knicks NON riprodotto: maglia classica).
+
+(182) 27/10/2026 (Claude, account del secondo utente) — Nomi sulle targhette TUTTI alla stessa altezza (13px): niente più font ridotto per i cognomi lunghi (tolto `pnmFs`). Se il cognome non entra si stringe solo in larghezza (`scaleX`, funzione `pnmFit()` chiamata dopo ogni `render()` e a font caricati; nome dentro `<b class="pn">`). Vale in formazione Dreamers e modalità notte. PUBBLICATO.
+
+(183) 27/10/2026 (Claude, account del secondo utente) — Maglie Anni 90 PUBBLICATE, ricalcate sulle foto: Warriors (GSW blu, fianchi arancio, riga gialla), Pelicans (NOP "NOLA city": fasce viola/verde/oro), Nets (BKN blu con righe argento/rosse e rombi laterali; la foto era New Jersey → assegnata a Brooklyn), Jazz (UTA viola con montagne bianche sfumate), Grizzlies (MEM acqua, collo nero a puntini), Blazers (POR nera con banda diagonale rossa/bianca), 76ers (PHI nera, bordi rossi), Suns (PHX viola con raggi arancio e sole). Nuovi motivi in `nbaDeco`: nop, bkn, utm, por90, phx. Nessun logo di terzi.
+
+(184) 27/10/2026 (Claude, account del secondo utente) — Maglie Anni 90 di Heat (MIA rossa, collo e fianchi nero/bianchi, scritte nere bordate di bianco; senza il camouflage/scimmia della foto, che è un marchio di terzi) e Kings (SAC nera, collo viola/bianco). Con queste TUTTE le 30 squadre NBA hanno la loro maglia Anni 90. PUBBLICATE.
+
+(185) 27/10/2026 (Claude, account del secondo utente) — Maglia Anni 90 Hawks: scritta HAWKS +7% (nuovo campo opzionale `ws` = fattore scala del nome sulla maglia, vale per ogni kit NBA_KIT_90/NBA_KIT; ATL ws:1.07). PUBBLICATO.
+
+(186) 27/10/2026 (Claude, account del secondo utente) — Il nome "Dynasty League" è diventato "Dreamers" ovunque sia scritto (intestazione, titolo scheda, meta, manifest/icona telefono "Dreamers", immagini condivise e piè di pagina, testo di condivisione "Più o Meno", note sui Valori). Restano "Dynasty TV" e le parole "Dynasty" del regolamento (modalità di gioco). L'URL del sito e il nome del repo non cambiano. PUBBLICATO.
+
+(187) 27/10/2026 (Claude, account del secondo utente) — Il tastino della maglia ora è GLOBALE: una sola scelta (Casa/Notte/Alternativa/NBA 2026/Anni 90) per TUTTE le squadre e TUTTE le sezioni, salvata sul telefono (`dl_kitg`, variabile `KITG`); prima c'era una scelta per squadra (`KIT[t]`/`dl_kit`, ora non più usati). Senza scelta resta automatica (casa; notte in modalità notte). PUBBLICATO.
+
+(188) 27/10/2026 (Claude, account del secondo utente) — REGOLA "turno senza partite per calendario" (IN CODA su `coda`, NON pubblicata): se la squadra NBA del giocatore non ha nessuna partita nel turno per via del calendario, il giocatore vale la sua MEDIA STAGIONALE PDK (`pdkMed`), segnata «media stagione» (duello, tabella squadra, foglio giocatore). Infortunio/non gioca con squadra in campo = resta 0 (distinzione netta). Dati: `DR_ZERO` in index.html (con il calendario del prospetto A: turno 5 ATL, turno 8 MIA) (calcolato dal calendario NBA ufficiale fino al 17/3/2027; unico turno a 0 partite = turno 7, 7–13 dic). Se si cambiano i turni (es. unione 6+7) rigenerare `DR_ZERO`. Aggiunta alle regole `drRules()`.
+
+(189) 27/10/2026 (Claude, account del secondo utente) — CALENDARIO TURNI CORTI = PROSPETTO A (IN CODA su `coda`, NON pubblicato): i turni non sono più settimane ma finestre `DR_TURNI[k-1]=[primo,ultimo]` in index.html (turno 1 = settimana già in corso 26/10–1/11, 7 giorni; poi 22 turni da 2-4 giorni dal 2/11 al 14/1, ognuno con 1-2 partite per squadra NBA, pausa NBA Cup 4-11/12 saltata). Struttura invariata: 14 turni regular season (2 gironi) + playoff fino a 9 turni (tot 23, DR_TOT) → la lega finirebbe a metà gennaio; se si vuole più lunga basta DR_REG=21 (DR_SCHED ha già 3 gironi) e più finestre. Adattati: `drWeekStart/drWeekEnd`, `drWeek` (len variabile), `drCurWeek`, `drSettimana`, caselle giorno con giorno della settimana reale, `tvDreamers`, testi del regolamento, `tools/dreamers.mjs` (weekOf legge DR_TURNI). `DR_ZERO` rigenerato dalle stesse finestre. Calendario NBA noto solo fino al 17/3/2027. Per cambiare date: rigenerare DR_TURNI e DR_ZERO insieme.
+
+(190) 27/10/2026 (Claude, account del secondo utente) — PASSAGGIO DA DUNKEST A DREAMERS (IN CODA su `coda`, NON pubblicato). Decisioni dell'utente: playoff al meglio delle 3; regular season lunga in modo che i playoff finiscano verso fine marzo; classifica (vittorie e punti) delle giornate 1-2 di Dunkest mantenuta; il turno in corso di Dunkest (giornata 3, in corso) va ricreato su Dreamers e giocato qui (NON copiati punteggi né vittoria); calendario scontri uguale a Dunkest.
+- Calendario scontri = `DR_DK` (14 giornate lette dalle foto GM League di Dunkest; la 15ª = la 1ª, quindi si ripete). `DR_SCHED[k-1]=DR_DK[(k-1+DR_OFF)%14]`, `DR_OFF=2`: turno Dreamers 1 = giornata 3 Dunkest (CAL-DAK, TX-SAC, SD-ALA, SL-DET). Le etichette "Turno N" mostrano la numerazione Dunkest (k+2); i playoff hanno le loro etichette.
+- Classifica di partenza `DR_BASE` (da risultati g1-g2 Dunkest): Foxes 2-0 (542,68), Ducks 2-0 (527,99), Peacocks 1-1 (536,75), Eagles 1-1 (511,98), Dolphins 1-1 (511,49), Spiders 1-1 (502,16), Turtles 0-2 (376,80), Mooses 0-2 (337,59) + forma V/P; contano nella media punti e nei turni giocati.
+- Lunghezza: `DR_REG=40` turni Dreamers (= giornate 3-42, 6 gironi) + playoff max 9 turni, `DR_TOT=49`. `DR_TURNI` esteso a 49 finestre (prospetto A fino al 17/3; dal turno 44 PROVVISORIE da 3 giorni, 18/3-4/4, da rigenerare quando esce il calendario NBA di fine stagione). Regular season finisce il 9/3, playoff dal 10/3: tipicamente chiudono a fine marzo, caso peggiore 4/4. `DR_ZERO`: turno 5 ATL, 8 MIA, 29 LAC, 34 LAL, 38 CLE, 39 DEN, 40 TOR (media stagionale PDK).
+- Regolamento aggiornato. Alternativa valutata: 5 gironi/35 giornate (playoff finiscono ~14/3).
+- Regola: il giocatore con media stagionale (squadra NBA a 0 partite) può diventare capitano ×1,5 se è il migliore (già così nel codice, aggiunto al regolamento).
+- (190) ora PUBBLICATO su main.
+
+(191) 27/10/2026 (Claude, account del secondo utente) — PLAYOFF AL MEGLIO DELLE 5 + REGULAR SEASON ACCORCIATA (IN CODA su `coda`, NON pubblicato): serie a 3 vittorie (`drPO`), `DR_REG=33` turni Dreamers (= giornate Dunkest 3-35, 5 gironi in tutto), `DR_TOT=48` (33+15 playoff). Regular season finisce il 12/2/2027, playoff dal 13/2 (pausa All-Star 19-24/2 già nelle finestre); caso peggiore (tutte le serie alla gara 5) chiude l'1/4, tipicamente circa 20-25/3. DR_TURNI ha 49 finestre (l'ultima inutilizzata); turni dal 44 provvisori. Regolamento e note aggiornati.
+
+(192) 27/10/2026 (Claude, account del secondo utente) — Su richiesta: tutto finito PRIMA del 17/3 (fine del calendario NBA noto). `DR_REG=26` (= giornate Dunkest 3-28, 4 gironi), `DR_TOT=41` (26+15 playoff al meglio delle 5). Regular season finisce il 23/1/2027, playoff dal 24/1; caso peggiore chiude l'11/3. (IN CODA su `coda`, NON pubblicato). Sostituisce i numeri di (191).
+
+(193) 27/10/2026 (Claude, account del secondo utente) — Il logo in alto (aggiorna pagina) ora RESTA nella schermata in cui sei: prima del reload salva in sessionStorage lo stato di navigazione (lista `V` nello script del logo: cur, curTeam, GAME, DR, curPlayer, ecc. + scroll) e al riavvio lo ripristina (valido 30 s); i dati si ricaricano freschi. Se si aggiungono nuove variabili di navigazione, aggiungerle a `V`. PUBBLICATO insieme a (190)-(192).
+
+(194) 27/10/2026 (Claude, account del secondo utente) — Barra di navigazione riordinata (IN CODA su `coda`, NON pubblicato): Home · Dreamers · Dynasty TV · Statistiche · Dunkest(▾) · Calcolo Trade · G Dreamers · Sala Trofei · Giochi. Sparisce il tasto "Entertainment" (hub GAME="menu" non più raggiungibile: "Torna all'app"/"‹ Home" riportano alla home). Tasti virtuali: `data-v="dreamers"`→cur giochi+GAME dream, `gdreamers`→gdream, `giochi`→arcade (Arcade), `tv`→cur tv. Pallino LIVE ora sul tasto Dynasty TV (id t-gi). Il tasto attivo scorre in vista nella barra (che scorre in orizzontale).
+- (194) ora PUBBLICATO su main.
+
+(195) 27/10/2026 (Claude, account del secondo utente) — Le GUARDIE sono ROSSE ovunque (prima verdi/lime): `--rG:#ef4444` (chip G, strisce, duelli Dreamers, roster, trade), tasti ruolo del Calcolo Trade e del College (`.trrl`, `.colrl`, `COL_RL`, `.vtrh.G`), canvas di condivisione (4203 e 4482). Ali blu e centri gialli invariati. IN CODA su `coda`, NON pubblicato.
+- (195) ora PUBBLICATO su main. Per tornare indietro: --rG:#a3e635 (lime) e i verdi #22c55e nei punti elencati sopra.
+
+(196) 27/10/2026 (Claude, account del secondo utente) — IMPOSTAZIONI GRAFICHE (IN CODA su `coda`, NON pubblicato). Al posto del badge "Stagione 26/27" in alto c'è l'ingranaggio (#setbtn) → vista `cur="impostazioni"` (`vImpostazioni`, script "VISTA IMPOSTAZIONI"). Stato `DLS` (default `DLS_DEF`, salvato in localStorage "dl_set", per dispositivo; NON condiviso via GitHub). `dlsApply()` imposta le variabili CSS `--sj` (maglia), `--sn` (larghezza tabellino+PDK), `--st` (testo nome), `--sp` (PDK), `--sov` (sovrapposizione) e le classi `dls-norole/dls-nocap/dls-nosh/dls-sq/noanim` su <html>; le regole CSS sono scopate a `.court .cpl.dr` e `.dpan` (campo + 6° uomo/panchina). Il campo (SVG in `vCampo`) legge DLS: parquet (auto, classico, acero, noce, ebano, blu, cemento, viola, verde, colori squadra), colore/spessore linee, bordo (squadra/scuro/chiaro), venature, lucidatura, area colorata, nome squadra, logo. Anteprima sticky con zoom (.62) del vero `vCampo()` (giorno/notte, squadra a scelta). Look rapidi: Classico, Grande, Compatto, Arena notte, Street. Per aggiungere un'impostazione: campo in `DLS_DEF`, controllo in `SL`/`CH`/`TG`, effetto in `dlsApply` o nel codice del campo. L'immagine di condivisione del campo (canvas) NON usa ancora queste impostazioni.
+
+(197) 27/10/2026 (Claude, account del secondo utente) — Campi a tema nelle impostazioni (IN CODA su `coda`, NON pubblicato): parquet "🎄 Natale" (verde, bordo a bastoncino di zucchero, fiocchi di neve, ghirlanda con lucine, agrifoglio) e "🎃 Halloween" (viola scuro, ragnatele agli angoli, zucche, pipistrelli, alone arancione); look rapidi omonimi che impostano anche linee e bordo (nuovi bordi: rosso/arancione/verde `DLS_AP`; nuova linea arancione). Decorazioni in `dlsDecor()` (disattivabili con "Decorazioni delle feste", `DLS.decor`). Per un'altra festa: aggiungere una voce a `DLS_FL`, un ramo in `dlsDecor`, un look in `LOOK`.
+
+(198) 27/10/2026 (Claude, account del secondo utente) — Stili dell'app nelle impostazioni (IN CODA su `coda`, NON pubblicato): sezione "Stile dell'app" con temi colore `DLT` (Classico, Sole/giallo, Smeraldo/verde, Fuoco/arancione, Oceano/blu, Neon/viola, Carbone e oro) e "Personalizzato" (3 selettori colore base/accento/dettaglio → `dlThemeVars()` deriva il resto con `dlMix`). I colori passano da variabili CSS su :root (`--bg --panel --panel2 --line --muted --glow --hd1 --hd2 --red --red2 --gold --onred --pn1 --pn2`); `dlsApply()` le imposta/rimuove su documentElement e anche la meta theme-color (`TH_BAR`). Interruttori: strisce header (`hs`), bordo sottile (`ht`), nav a pillola (`np`) → classi `dlt-nostripe/dlt-thin/dlt-pill`. Limiti: salvataggio per dispositivo (localStorage "dl_set"); la modalità notte (viola) mantiene il suo aspetto sopra i temi. Per un nuovo tema: voce in `DLT` con tutte le variabili + chip in impostazioni.
+
+(199) 27/10/2026 (Claude, account del secondo utente) — Personalizzazione PER SQUADRA nelle impostazioni (IN CODA su `coda`, NON pubblicato): sotto l'anteprima ci sono i tasti delle squadre; la sezione "Personalizza <squadra>" modifica solo quella: banner (colore 1/2, scritte, bordo, grandezza logo ×0,5–1,8) e campo (parquet, linee, fascia col nome, grandezza logo ×0,6–1,6). Dati in `DLS.tm[T]` = {b1,b2,bt,bb,bl,fc,lc,ac,cl} (localStorage "dl_set"). Helper: `dlTm`, `dlHeadSty`, `dlHeadLogo`, `dlShade`; usati nei 3 `.teamhead` (campo, roster, cassa) e in `vCampo()` (parquet/linee/fascia/logo; le scritte della fascia si spostano col logo). Tasti "Ripristina <squadra>" e "Copia su tutte". L'anteprima ora mostra banner + campo. Le impostazioni generali restano valide per le squadre senza personalizzazione.
+
+(200) 27/10/2026 (Claude, account del secondo utente) — Turno 1 Dreamers parte dal 25/10 (IN CODA su `coda`, NON pubblicato): su Dunkest la partita Lakers–Jazz (25/10 USA, notte tra 25 e 26 in Italia) e le altre del 25/10 contano nel turno corrente, quindi `DR_START` = "2026-10-25" e `DR_TURNI[0]` = ["2026-10-25","2026-11-01"] (8 notti). I PDK del 25/10 non sono nel report Dunkest (che parte dal 26/10): `drNotti()` li prende dai tabellini finali di Dynasty TV (`fantaLiveNotte`) per ogni notte del turno senza report; sono "provvisori" solo se una partita non è finita. `tools/dreamers.mjs` resta con START 26/10 (il file generato non contiene il 25/10, che arriva dai tabellini TV). I punteggi dei turni si ricalcolano da soli. Attenzione: se `tv-data.js` perde i tabellini del 25/10 il punteggio del turno 1 scende.
+
+(201) 27/10/2026 (Claude, account del secondo utente) — Fix anteprima impostazioni (IN CODA su `coda`, NON pubblicato): l'anteprima sticky finiva sotto l'intestazione (stesso z-index, top:0). Ora `.setprev` è sticky sotto l'header (`top = safe-area + --hh`, `--hh` = altezza dell'header misurata da JS con ResizeObserver), z-index 4 < header 5, più piccola (zoom .5) e con tasto "Nascondi/Mostra anteprima" (`DLS.pvHide`). I tasti delle squadre sono in una sezione propria sotto l'anteprima.
+
+(202) 27/10/2026 (Claude, account del secondo utente) — Giocatori "sotto speciale" FUORI dalle sfide Dreamers (IN CODA su `coda`, NON pubblicato): chi esce da una trade speciale ancora attiva (Rollins, Ingram, Burries; `SPECIALI[].esce` con `spInfo(x).left>0`) non entra nei 10 titolari né in tribuna delle partite dirette del Dreamers (campionato ufficiale). Resta invece visibile in roster, statistiche della notte e modalità notte del campo (richiesta dell'utente). Funzione `spFuori(nome)` accanto a `SPECIALI`, usata solo nel pool di `drTeam`. Alla scadenza della speciale rientrano da soli.
+
+**REGOLA PER I FUTURI CLAUDE — "Trade speciale in corso" (27/10/2026, chiarita dall'utente).** Un giocatore con l'avviso "Trade Speciale in corso" (es. Rollins, Ingram, Burries; è il giocatore che *esce* in `SPECIALI`) APPARTIENE ancora alla squadra proprietaria (resta in `ROSTER`, nelle statistiche della notte, nella modalità notte del campo, nella pagina Roster con l'avviso, negli scambi e nel conteggio crediti) ma NON PUÒ ESSERE UTILIZZATO finché la speciale è attiva: non entra nei 10 titolari né in tribuna delle sfide dirette Dreamers (campionato ufficiale). Nel codice: `spFuori(nome)` (vicino a `SPECIALI`), oggi applicata solo nel pool di `drTeam`. Qualsiasi nuova funzione che sceglie la formazione/i punteggi del campionato ufficiale (anche G-Dreamers o futuri fanta) deve escluderli con `spFuori`; le viste puramente informative no. Alla scadenza (`spInfo(x).left` = 0) tornano utilizzabili da soli. Il giocatore che *entra* (es. Lillard, De Larrea, K. George) è invece normalmente utilizzabile.
+
+(203) 27/10/2026 (Claude, account del secondo utente) — Avatar "personaggio" al posto della maglia (IN CODA su `coda`, NON pubblicato): impostazione "Giocatori → Maglia / Personaggio (cartone)" (`DLS.pj` = "jersey" | "avatar", default maglia). `jersey(t,num,name)` ritorna `avatarSvg()` se `DLS.pj==="avatar"` e c'è un nome (stesso viewBox 120×146, quindi funziona ovunque: campo, panchina, tribuna, liste, schede). Non sono ritratti: tratti scelti a mano per i 115 giocatori in rosa nella tabella `AVD` ("pelle 1-6|capelli|colore|barba|fascia"; capelli bald/buzz/short/fade/curly/afro/long/bun/braids/cornrows; colore black/brown/lbrown/blond/gray; barba none/stub/short/full/goatee). Chi non è in `AVD` (G League, nuovi arrivi) ottiene un avatar generico da hash del nome. DA CORREGGERE con l'utente: molti tratti sono stime (soprattutto matricole e giocatori meno noti). Per correggere un giocatore basta cambiare la sua riga in `AVD`. Divisa e numero dell'avatar seguono i colori della maglia scelta della squadra.
+
+(204) 27/10/2026 (Claude, account del secondo utente) — Icone scherzo al posto della maglia (IN CODA su `coda`, NON pubblicato): nel selettore "Giocatori" delle impostazioni, accanto a Maglia e Personaggio, ci sono 🗑️ Bidone, 🚽 Cesso, 💩 Cacca (`DLS.pj` = "bin" | "wc" | "poop"). Stessa icona per tutti i giocatori, cambia solo il numero. Funzione `iconeSvg(kind,n,k)`, richiamata da `jersey()` quando c'è un nome (stesso viewBox 120×146 delle maglie).
+
+(205) 27/10/2026 (Claude, account del secondo utente) — Icona per singoli giocatori (IN CODA su `coda`, NON pubblicato): sezione "Icona di singoli giocatori" nelle impostazioni, sotto la scelta generale (Maglia/Personaggio/Bidone/Cesso/Cacca). Si sceglie la squadra con i tasti sotto l'anteprima (`DLS.pvTeam`) e per ogni giocatore c'è un menu: "Come la scelta generale" oppure una delle 5 icone. Dati in `DLS.pjp` = {nome: "jersey|avatar|bin|wc|poop"}; `jersey()` usa `DLS.pjp[nome]` se presente, altrimenti `DLS.pj`. Tasto "Azzera tutte le eccezioni".
+
+(206) 27/10/2026 (Claude, account del secondo utente) — Modalità notte: tabellone della sfida al posto della scritta (IN CODA su `coda`, NON pubblicato): in `vCampo()` con `CNT` attivo, al posto dell'intestazione "Modalità notte · data" compare lo stesso tabellone live di `drTabellone` (mia squadra vs avversario del turno Dreamers, punteggi e "x/10 giocato"), con tasto luna acceso (`drTabellone(t,T,k,P,on)`). I dati (`DT2/DK2/DP2`) sono calcolati solo per il tabellone; formazione e punteggi in campo restano quelli della notte (`campoNotteMap`). Se il calcolo fallisce si torna alla vecchia intestazione. Il tabellone è quello del turno intero (non solo della notte) e si aggiorna col live di Dynasty TV come la modalità normale.
+
+(207) 27/10/2026 (Claude, account del secondo utente) — Live del Campo: tasto Notte / Turno e condivisione (IN CODA su `coda`, NON pubblicato): sotto il titolo di "Live stanotte" (Campo) c'è un selettore `Notte | Turno` (`CLM` = "notte"|"turno", `data-clm`, il click rigenera solo `.clwrap` con `campoLive`). "Turno" = "Migliori del turno": per ogni giocatore del roster la partita col PDK più alto del turno Dreamers in corso (dal primo giorno del turno a oggi, tabellini di Dynasty TV, quindi include anche le partite prima di stanotte, es. 25/10), con data accanto all'avversario e "Somma migliori" in fondo (è la somma semplice, NON il punteggio Dreamers che ha capitano ×1,5, ruoli e panchina ½). Il tasto condividi (`SHR_CAMPO`, campo `turno`) condivide quello che si sta guardando: titolo "MIGLIORI DEL TURNO"/"LIVE STANOTTE", totale, nome file e titolo dello share cambiano di conseguenza (`shCampo`).
+
+(208) 27/10/2026 (Claude, account del secondo utente) — Impostazioni riorganizzate in 5 schede (IN CODA su `coda`, NON pubblicato): sotto anteprima e tasti squadra c'è la barra schede `App | Campo | Giocatori | Squadra | Altro` (`STAB`, `data-stab`; ogni scheda è fatta di riquadri `.setcard`). App = stile e colori personalizzati, intestazione/tasti. Campo = look rapidi, parquet, linee (+ spessore), bordo, lucidatura. Giocatori = icona generale (maglia/personaggio/bidone/cesso/cacca), DIMENSIONI (maglia, larghezza tabellino, scritta nome, PDK, sovrapposizione: erano sepolte in fondo e l'utente non le trovava) e icona dei singoli giocatori. Squadra = banner e campo della squadra scelta. Altro = interruttori di dettaglio e "Ripristina tutto". Per aggiungere un controllo: metterlo nella scheda giusta dentro `PAG` in `vImpostazioni`.
+
+(209) 27/10/2026 (Claude, account del secondo utente) — Modalità notte: linee del campo rosse lampeggianti durante le partite live (IN CODA su `coda`, NON pubblicato): in `vCampo()` il div `.court` prende la classe `clive` quando `CNT` è attivo e almeno una partita della notte attiva (`campoNotte()`) ha stato "L" in `TV.days`; il CSS (`.court.clive .cln`) forza linee rosse `#ff1f3d` con animazione `clblink` (1 s). Si spegne da sola a fine partite; rispetta "Riduci le animazioni" (`.noanim`) e `prefers-reduced-motion` (in quel caso restano rosse fisse). Sovrascrive il colore linee scelto nelle impostazioni solo mentre c'è il live.
+
+(210) 28/10/2026 (Claude, account del secondo utente) — Dynasty TV: partite reali ordinate per stato (IN CODA su `coda`, NON pubblicato): nella lista del giorno (`vTV0`) le partite LIVE stanno in alto, poi quelle in programma, in fondo le FINITE (`rkG`: L=0, altre=1, F=2; a parità resta l'ordine d'inizio, sort stabile). Quando una partita live finisce scende da sola al rinnovo dei dati. Le sfide Dreamers restano nella loro sezione sotto, non vengono toccate.
+
+(211) **Osservatorio (giocatori seguiti)** — Home: barra di ricerca ridotta + pulsante giallo `#hseg` (subito accanto alla ricerca, prima del tasto rosso Dynasty TV) (segnalibro + contatore) che apre la vista `osserv` (`vOsserv`). Segui/Non segui con `segBtn(nome)` (`.segi[data-seg]`) in: risultati ricerca home, righe roster, pagina giocatore. Lista in `SEGUI`, salvata in localStorage `dl_seg` (per dispositivo; `navigator.storage.persist()` al primo segui). Stato vista in `OSV={per:"live|notte|gen", m:"pdk|eff"}`. Live/Notte usano `osNight()` (box Dynasty TV di `campoNotte()`); Generale usa `PARTITE` (PDK medio/Eff/Gare/Min/Ultima; chi non è in PARTITE mostra "—"). Mostra squadra proprietaria (o G League/FA). Backup lista: copia/incolla JSON (`<details class="osbk">`, azioni `data-osc`). Il pulsante Dynasty TV live segue la vista (FANTA_LIVE).
+
+(212) **Tab "Scambi" a tendina** — la voce "Calcolo Trade" (`#t-cs`) ora si chiama "Scambi" ed è un menu a tendina identico a quello di Dunkest (`data-menu="subnav2"`, pannello `#subnav2`, stesse classi `.subnav`) con due voci: Calcolatore trade (`valtrade`) e Osservatorio (`osserv`). `dkOpen` ora contiene l'id del menu aperto (`"subnav"`/`"subnav2"`/false). Il tasto giallo in Home apre comunque l'Osservatorio.
+
+(213) **Pallino live = in campo adesso** — nel tabellino Dynasty TV il pallino rosso (`.lvd`) compare solo per chi è in campo. ESPN non dà questo dato, lo dà il boxscore NBA (`players[].oncourt==="1"`, cdn.nba.com). `tvOnCourt()` (chiamata a ogni `tvLiveTick` se ESPN ha risposto) legge i boxscore NBA delle partite live e salva `TV.box[key].oc` (nomi normalizzati con `tvNm`); nel percorso NBA di fallback lo salva `tvOcNames(B)`. Se `oc` manca o è vuoto (NBA non raggiungibile) i pallini restano su tutti come prima. Testato solo con dati simulati: da verificare con una partita live vera.
+
+(214) **Partita live evidenziata nel turno (caselle: lampeggio `lvbl` del riquadro, colore invariato)** — nelle caselle giorno della sfida Dreamers (`.duw`, in `drDuel`) e nelle righe del foglio "partite del turno" (`.dwr`, in `drWkOpen`) la partita in corso (`y.lv` da `drSettimana`) ha il bordo rosso lampeggiante (`@keyframes lvbd`, classi `.duw.dug.lv`, `.duw.duu.lv`, `.dwr.lv`); con "riduci animazioni" resta un bordo rosso fisso.
+
+(215) **Swipe tra le franchigie nel Campo** — in `cur==="campo"` la pagina segue il dito (drag con `translate3d`, blocco su intento orizzontale, `touchmove` non passivo come il gesto "indietro"); al rilascio (soglia 28% larghezza o velocità) esce di lato e la nuova squadra entra dal lato opposto (render a pagina fuori schermo, poi transizione). Ordine della Home (`Object.keys(TEAMS)`: DOL, DUC, FOX, PEA, SPI, TUR, EAG, MOO), giro continuo; dito verso destra = precedente, verso sinistra = successiva. Sotto soglia la pagina rientra. Bordo 40px riservato al gesto "indietro"; ignorato su input/fogli aperti; flag `busy` evita doppi swipe durante l'animazione. Scrive anche `localStorage "team"`.
+
+(216) **Tasti barra Home uniformi** — `.hseg` (Osservatorio), `.tvgo` (Dynasty TV) e `.hdrm` (Dreamers) in `.hbar` hanno tutti 40×38 px (regola `.hbar .tvgo,.hbar .hseg,.hbar .hdrm`).
+
+(217) **Notifica Osservatorio = seguiti in partita** — il badge sul tasto giallo (`segStato`, `segBadgeHtml`, `segBadge`) non conta più i seguiti: conta quelli che stanno giocando live (badge che lampeggia, `.lvb`) oppure hanno giocato la notte (badge fisso, solo fino alle 12:00 ora del telefono; dopo sparisce). Dati da `osNight()`. In Home, con almeno un seguito, `fantaLiveAvvia()` scarica i dati (voce FANTA_LIVE con `soft:true`: aggiorna solo il badge, senza ridisegnare la Home) e il badge si riaggiorna ogni 60 s.
+
+(218) **Campo = formazione Dreamers, senza limite di 2 per fila** — nella formazione Dreamers (fuori modalità notte) i 5 in campo restano nella fila del loro vero ruolo (C alto, A centro, G basso): tolta la regola "max 2 per fila" (rimane solo in modalità notte). Con 3 affiancati posizioni 18/50/82% a grandezza piena (entrano su 430 px); con 4 o 5 maglie ridotte con `--k` (0,7 / 0,55, `scale` su `.court .cpl.dr`). Nel codice: `KS`, `XN` accanto a `FILA`.
+
+(219) **Regola ruoli corretta: C, A e G tra i 5 IN CAMPO** — prima l'obbligo "almeno 1 centro, 1 ala, 1 guardia" valeva sui primi 6 (capitano + pieni), quindi un centro poteva finire 6° uomo (fuori dal campo). Ora vale sui primi 5 (`drTeam`: `A=sel.slice(0,5)`): se manca un ruolo, sale il migliore di quel ruolo e scende il peggiore dei 5 di un ruolo che ne ha almeno 2. Il 6° uomo è libero (punteggio pieno). Valido per Campo e Dreamers (stessa funzione). Aggiornati commenti e testi del regolamento in-app (sezione "Ruoli: regola invalicabile"). Sostituisce la regola dei "primi 6" della (153).
+
+(220) **Tasto Dynasty TV in Home** — stessa altezza (38 px) degli altri due ma larghezza propria (56 px): pallino tondo e icona videocamera non più schiacciati (`.hbar .tvgo`). La ricerca cede lo spazio.
+
+(221) **Fix Roster (errore `t is not defined`)** — `vRoster` usava `dlHeadSty(t)` con `t` non definita (nella funzione la squadra è `curTeam`): la pagina Roster andava in errore e il tasto "‹ Roster …" dalla scheda giocatore non faceva nulla. Ora `dlHeadSty(curTeam)`. Verificato che tutte le viste di `VIEWS` si disegnano senza errori.
+
+(222) **Condividi: cursore "fino a dove"** — nel foglio di condivisione di "Migliori del turno" / "Live stanotte" (`shOpen("campo")`) c'è un cursore (`.shcut`, 1…N righe, default tutte) che ridisegna l'immagine con le sole prime N righe (`shCampo(n)`; si condivide sempre dall'alto). Con meno righe il totale diventa "SOMMA PRIME N" (somma delle righe mostrate). Cursore e pulsanti sono in un blocco fisso in basso (`.shfoot`, sticky). Il file da condividere/salvare viene rigenerato a ogni spostamento (`mk`).
+
+(223) **Tasto indietro semplice = schermata precedente** — i "‹" di scheda giocatore (`#gback`), scheda Free Agent (`#faback`), Cap/Multe/Scouting (`#capback/#mulback/#colback`), Cassa (`#cassaback`) e Osservatorio (`#osback`) ora tornano sempre alla vista da cui si è arrivati, usando la pila `NAVH` (la stessa del gesto/bottone indietro di Android), e la loro scritta dice dove portano (`backLabel`, `fixBackLabels`, aggiornata a ogni `render`). Gestore in cattura su `document` (`BK_IDS`); con pila vuota restano i vecchi comportamenti. Non toccati i "‹" interni a una sezione (Statistiche, Efficienza coppa, Classifica, Arcade, sfide Dreamers…). Esempio: Campo → giocatore → ‹ Campo Ducks.
+
+(224) **Statistiche squadra Dreamers** — in Dreamers › Classifica ogni riga è un pulsante (`data-dr="cteam"`) che apre `drTeamPage(t)` (stato `DR.team`; ‹ Classifica = `data-dr="tclose"`). Sezioni: Bilancio (V/P) · PDK fatti (totale, media, record in un turno, record del capitano con maglia e nome) · PDK subiti (totale, media) · Scontri diretti (V–P e PDK fatti/subiti per ogni avversario) · Trend PDK squadra (grafico SVG fatti/subiti con scelta "Dal turno X al turno Y", `data-drsel="tf|tt"`). Dati da `drTeamData(t)`: giornate 1–2 = Dunkest (`DR_BASE`: solo totali e V/P, quindi nel trend sono la media delle due giornate, pallino vuoto), poi turni Dreamers (`drTeam`); turni in corso marcati live (pallino vuoto), esclusi da record e scontri. Playoff non ancora inclusi. Totali/medie = `drStand()` (comprendono la base Dunkest).
+
+(225) **Stili grafici Dreamers** — in fondo alla sezione Dreamers, accanto a "Regolamento", tasto "🎨 Stile" (`data-dr="theme"`) che fa ruotare lo stile di tutta la sezione tra 4 voci (`DR_THS=[0,1,3,5]`): Galassia (attuale, default), App (blu notte/rosso/oro, come l'app senza modalità notte), Parquet (legno e crema), Tabellone (grigio e ambra). Scelto dall'utente tra 5 proposte: Neon e Carta eliminati (CSS rimosso). Lo stile è per dispositivo (`localStorage "dl_drth"`, `DR.th`). Solo CSS: l'attributo `data-th` su `.drroom` (assente per Galassia) attiva i blocchi `.drroom[data-th="N"]` (colori, sfondo/texture, raggio, ombre, font via `--display`); posizioni e informazioni invariate. Il Parquet (chiaro) ha regole in più per testi/riquadri scuri. Non rifiniti: tabellone playoff e regolamento negli stili alternativi.
+
+(226) **Stili Dreamers: numero in vantaggio colorato per stile** — il punteggio della squadra in vantaggio nel turno (`.drr.w em`, `.slead/.sgold`) non è più viola: Parquet = arancione, App = oro, Tabellone = giallo (Galassia resta viola).
+
+(227) **Stili Dreamers "App colori" e "Tabellone colori"** — aggiunti (non sostituiscono) al ciclo del tasto 🎨: `DR_TH` ha 8 nomi, `DR_THS=[0,1,3,5,6,7]`, `DR_BASE_TH=[0,1,2,3,4,5,1,5]` mappa lo stile 6/7 sul CSS base 1/5; la room riceve `data-col="1"` e le righe Turno (`.drr`) e Classifica (`.drcr`) si riempiono col colore squadra (`--tc`) + righe diagonali come le card Home; colore testo `--tf` calcolato da `drTf(t)` (nero su colori chiari, bianco altrimenti). Punteggio in vantaggio: oro (App) / giallo (Tabellone) su fondino scuro. Verificati solo Turno e Classifica.
+
+(228) **Stile Dreamers predefinito (App)** — `DR.th` ora è un getter: se l'utente non ha mai scelto uno stile col tasto 🎨 (nessun `dl_drth` in localStorage) vale **App (1)** (corretto dopo la prima versione che usava Tabellone), tranne in modalità notte (`CNT`) dove resta Galassia (0). La scelta manuale (`DR._th`, salvata in `dl_drth`) ha sempre la precedenza.
+
+(229) **Immagini condivise nello stile scelto** — tutte le immagini del tasto Condividi (Dreamers, sfida, Campo, grafico, playoff: tutte passano da `shBase`) seguono lo stile Dreamers di chi condivide (`DR.th` effettivo → `DR_BASE_TH`). `SH_THEMES` (1 App, 3 Parquet, 5 Tabellone; i colori-variante 6/7 usano la base 1/5) + `shTheme()`, `shThemeBg()` (sfondo con strisce) e `shThemeCtx()`, che avvolge `fillStyle/strokeStyle/shadowColor/addColorStop` del canvas e rimappa ogni viola/indaco fisso per luminosità (chiaro = colore evidenza, medio = accento, scuro = pannelli). Restano invariati rossi/verdi/oro/colori squadra e il viola semantico `#8b5cf6` (PDK top). Galassia = disegno originale. Parquet nell'immagine usa pannelli marrone scuro (non crema) per tenere il testo bianco leggibile. Verificata solo l'immagine "Dreamers" (turno); sfida/Campo/grafico/playoff passano dalla stessa funzione ma non ancora controllate a occhio.
+
+(230) **Punteggi Turno allineati** — `.drr em` (punteggi nelle righe del Turno Dreamers) ora ha cifre tabulari (`font-variant-numeric:tabular-nums`, `"tnum"`), larghezza minima 84px e allineamento a destra, così la virgola cade sempre nello stesso punto in tutte le squadre e in tutti gli stili. Verificato in browser di prova (posizione della virgola identica); sul telefono dipende dal supporto `tnum` del font Barlow Condensed.
+
+(231) **Allineamento punteggi valido per ogni turno e stile** — la regola di (230) è globale su `.drr em` (nessun filtro per turno o tema). Negli stili "colori" il fondino scuro del punteggio in vantaggio aggiungeva un padding solo al vincitore e spostava la colonna: ora il padding (8px) è su TUTTI i punteggi `.drroom[data-col] .drr.tint em`. Test automatico: tutti i 26 turni × 6 stili (Galassia, App, Parquet, Tabellone, App colori, Tabellone colori), virgola e bordo destro identici (solo i turni con punteggi hanno celle da confrontare). Se si aggiunge uno stile nuovo, non dare padding/margini diversi a `.drr.w em`.
+
+(232) **Sfida Dreamers: zone In campo / Panchina / Tribuna (grafica B)** — la pagina sfida è raggruppata in `<section class="duz z-campo|z-panch|z-trib">` con targhetta `.duzt` sul bordo: riquadro tinto (verde = In campo con capitano + punteggio pieno; rosa = Panchina 7°–10°; grigio tratteggiato = Tribuna con "Fuori dai 10" e "In attesa"). CSS generico su tutti gli stili (`.duz`, `.z-*`, `.duzt span` usano `var(--display)` quindi seguono il font di ogni stile) + ritocco colori per Parquet (tinte più scure per il fondo chiaro). Verificato a occhio su Galassia, App, Parquet, Tabellone, Tabellone colori. Scartata l'alternativa A (titoli grandi centrati con linee).
+
+(233) **Tabellone Campo: bordino rosso lampeggiante, niente riempimento rosso** — il tabellone (`.lbm`, `drTabellone`) con classe `live` ereditava il fondo rosso della regola generica `.live`; ora `.lbm.live` ha fondo "vetro" invariato e solo bordo rosso 2px che pulsa (`@keyframes lbbr`, spento con prefers-reduced-motion). Il lampeggio vale solo di notte: `lvNotte()` (ora di Roma via Intl) è vero prima delle 08:30 e dopo le 18:00, falso tra le 08:30 e le 18:00; il tabellone ha `data-lv="1"` quando lo stato è live e un `setInterval` ogni 20 s alterna `live`/`run`, quindi si spegne alle 08:30 anche con la pagina aperta. Provato in browser: orari 08:29 acceso, 08:31 spento, 10:00 spento, 18:30 e 23:00 acceso.
+
+(234) **Parquet: loghi senza ombra in tutta Dreamers** — nello stile Parquet (`data-th="3"`) tutti i loghi squadra (`.badge`, `.logo`, `.drlg`, `.bklg`, `.dulg`, `.hlogo`, `.tvlw`) hanno `filter:none!important` e niente box/text-shadow, in ogni sezione (Turno, Calendario, Classifica, Playoff, sfida, statistiche squadra). Verificato: 0 loghi con filtro in Playoff, Turno, Classifica, sfida. Nel tabellone playoff Parquet nomi e numeri ora sono scuri sul crema (prima bianchi, illeggibili). Resta da migliorare il contrasto dei titoli colonna lilla ("QUARTI", "SEMIFINALI") sul fondo legno.
+
+(235) **Punteggi del Turno più a destra** — `.drms .drr{padding-right:36px!important}` (prima 76px): la linguetta di stato (IN CORSO / DA GIOCARE…) è larga 22px, quindi i punteggi si avvicinano al bordo. Il padding è identico su tutte le righe e il punteggio ha larghezza fissa a destra, quindi restano incolonnati (test allineamento: 26 turni × 6 stili, 0 disallineamenti).
+
+(236) **Centro gestione + G-Dreamers fusi** — nella barra la voce "Dunkest" ora si chiama **Centro gestione** (sempre menu a tendina `#subnav`); la voce "G League" nel menu è diventata **G-Dreamers** e la scheda "G Dreamers" è stata tolta dalla barra principale (resta la carta G-DREAMERS nell'hub Giochi). La vista `gleague` è ora `vGLeagueM()`: interruttore **Squadre** (la vecchia pagina G League con classifica efficienza e satelliti, `vGLeague()`, titolo "G-Dreamers") / **Campionato** (`vGDream(true)`: classifica, giornate, squadre del fanta; `GLM` = "squadre"|"camp"). Il Campionato usa gli stessi stili grafici di Dreamers (`DR.th`, tasto 🎨 `data-gdth`, stessa scelta salvata in `dl_drth`; stile predefinito App/Galassia di notte): `.drroom.gdroom.gdemb` con `data-th`/`data-col`; le regole `body.dreamfs .drroom[data-th=N]` sono duplicate per `.drroom.gdemb[data-th=N]` perché qui l'app non è a schermo intero. I click della vista `gleague` sono gestiti nel listener di `#main` (`data-gdm`, `data-gdth`, `data-gd`); `drThemeNext()` è il cambio stile condiviso. Etichette ‹ Indietro: dunkest="Centro gestione", gleague/gdreamers="G-Dreamers". Verificati a occhio Squadre, Campionato in 5 stili e pagina squadra.
+
+(237) **Classifica del Centro gestione = classifica Dreamers** — `vClassifica()` non usa più `standings()` (dati Dunkest) ma `drClassArr()` (basato su `drStand()`): V/P per turno (turni 1–2 da `DR_BASE`, poi i turni Dreamers chiusi), % vittorie, GB, PF/PS = PDK fatti/subiti, Serie = ultimi risultati (`drFormT`, funzione globale uguale al `form` della Classifica Dreamers). Ordine identico alla Classifica in Dreamers (vittorie, poi media PDK). Titolo "Dreamers · turno N" (N = turni chiusi). Si aggiorna da sola quando un turno Dreamers si chiude. `standings()` resta per altri usi (Home ecc.).
+
+(238) **Stile predefinito di G-Dreamers** — `drThG()`: se l'utente non ha mai scelto uno stile col tasto 🎨 (`DR._th` nullo) il Campionato G-Dreamers parte in **App colori (6)** di giorno e in **Galassia (0, quella verde)** con la modalità notte attiva (`CNT`). Il Dreamers resta App (1) / Galassia di notte (nota 228). La scelta manuale vale per entrambe le sezioni (stesso `dl_drth`); `drThemeNext(1)` cicla partendo dallo stile effettivo della sezione G-Dreamers.
+
+(239) **Risultati (Centro gestione) = turni Dreamers** — `vRisultati()` ora scorre i turni Dreamers invece delle giornate Dunkest 1–64: indice `rgN` = numero turno mostrato (1–2 = giornate Dunkest 1–2 di partenza da `GIORNATE`, 3–28 = `DR_SCHED` con `k=rgN-DR_OFF`, poi i playoff `drPO`/`drPairs` fino a `P.end+DR_OFF`). Passato = "Finale" con punteggi reali, presente = "Live/In corso" con parziali (stessi `drTeam` del Dreamers, `pdkF` 1 decimale), futuro = "Da giocare" con gli accoppiamenti (`vs`); playoff non ancora definiti = "Da definire". Tocco su una partita (`data-rgo`) apre la sfida in Dreamers. Tolto il tasto condividi per partita (era legato alle giornate Dunkest; la sfida Dreamers ha il suo). Frecce con limite dinamico.
+
+(240) **Stile app: Tabellone + pulsante Stile** — nuovo tema `DLT.tabellone` (nero/ambra: bg #0b0d10, pannelli #1b2027, accento #ffb000; compare anche nella lista temi di Impostazioni) con sfondo a righe diagonali (`html.dlt-tabellone body`). Nell'header, accanto all'ingranaggio, pulsante piccolo `#stylebtn` (🎨, 34px, dentro `.topbtns`): alterna Classico ↔ Tabellone (`DLS.th`, salvato in `dl_set`). I loghi squadra restano pieni di colore. In arrivo: versione chiara arancione/crema (Parquet) con loghi senza sfondo colorato.
+
+(241) **Tema Parquet dell'app + collegamento con Dreamers** — nuovo tema `DLT.parquet` (arancione/crema, `html.dlt-parquet`) con testi scuri forzati sulle superfici chiare, card squadra e testata Roster color crema con il colore squadra solo come filo (loghi senza sfondo colorato), chip selezionato arancione, e **logo Dreamers arancione** (`.lglogo{filter:hue-rotate(128deg)…}`). Il pulsante Stile cicla Tabellone → Parquet → Classico. `dlSyncDr(th)`: scegliere Tabellone/Parquet/Classico (dal pulsante o dalle Impostazioni) imposta in automatico anche lo stile di Dreamers e G-Dreamers (Tabellone=5, Parquet=3, Classico=predefinito, `dl_drth`); il contrario (cambiare stile dentro Dreamers) non cambia l'app. Pagine controllate: Home, Roster, Classifica, Dynasty TV; altre pagine (Statistiche, Free Agent, Trade, Regolamento…) da rivedere con il tema chiaro.
+
+(242) **Statistiche live ESPN nelle stats dei giocatori (dalle 07:30)** — `liveSync()` (in `index.html`, chiamata all'inizio di `render()`) aggiunge in coda a `PARTITE[nome]` la riga della notte appena giocata, calcolata dai tabellini ESPN di Dynasty TV con la formula Dunkest (`fantaLiveNotte`, che ora restituisce anche `pts/reb/ast`). Parte **dalle 07:30 ora italiana** del giorno dopo la notte (Intl Europe/Rome); prima restano solo le viste live. Poiché medie (`pdkMed`, `pagella`, `capDati`, `mulPar`), grafici (`grGames`), pagina giocatore, trend e tabella squadra leggono tutti `PARTITE`, le righe live compaiono ovunque senza altro codice. La riga ha un 9° valore: `"L"` (partita in corso) o `"P"` (finita, provvisoria); nella tabella squadra la cella pulsa viola (`.gv.gvlive`). A ogni render le righe live precedenti vengono tolte e ricalcolate; appena arrivano i dati ufficiali Dunkest (~10:30, `EFF.agg` avanza oltre quella notte) la riga live non viene più aggiunta, quindi nessun doppione: restano quelle ufficiali. Nuova voce `FANTA_LIVE` che scarica i dati live anche nelle viste statistiche. Limiti: gli aggregati basati su `EFF` (efficienza stagionale, "Notte · in campo") non includono il live; il PDK parziale di partite in corso incide sulle medie finché non finiscono; la sostituzione ufficiale avviene quando la pagina carica il nuovo file dati.
+
+(243) **Live ESPN anche in efficienza stagionale e "Notte · in campo"** — estende (242): `liveEff()` (chiamata da `liveSync()`, dalle 07:30) ripristina da una copia (`EFF0`) `EFF.gioc` e `ULTIMA.gioc` ai valori ufficiali e poi applica la notte live per ogni giocatore: efficienza media = media semplice delle efficienze partita (regola Francesco), partite +1, minuti medi, minuti/efficienza/PDK della notte (colonne 4, 5, 8) e ULTIMA. Idempotente a ogni render; quando `EFF.agg` avanza (dati ufficiali Dunkest) la notte live non viene più applicata e tornano i valori ufficiali. Non toccato: `EFF.squadre` (medie di squadra, colonna non documentata) e `DRD.notti`.
+
+(244) **Rimossa la sezione Giochi (Arcade)** — tolta la scheda "Giochi" dalla barra (`#t-ar`) e il pulsante Arcade dalla Home dei giochi; `GAME==="arcade"` ora ricade nel menu. Il codice dei passatempi (Più o meno, Tiro da 3, Sfida della notte, Partita simulata: `vGiochi`, `vTiro`, `vNotte`, `vSim`) resta nel file ma non è più raggiungibile dall'interfaccia. Dreamers e G-Dreamers invariati (scheda Dreamers).
+
+(245) **Impostazioni: anteprima campo che sale fino in cima** — nella pagina Impostazioni (`cur==="impostazioni"`) `render()` mette `html.setpg`: l'header diventa `position:relative` (scorre via con la pagina) e `.setprev` resta sticky a `top:env(safe-area-inset-top)`. Così scorrendo verso il basso il campo sale il più possibile e poi resta fermo. La classe dipende solo dalla pagina (non dalla posizione di scroll), quindi niente tremolio; le modifiche usano `full()` che conserva lo scroll (verificato: scrollY e posizione anteprima invariati).
+
+(246) **Tasto "↺ Ripristina" rosso nelle Impostazioni** — nella riga fissa sopra l'anteprima (accanto a Giorno/Notte/Nascondi; "Nascondi anteprima" accorciato in "Nascondi"/"Mostra" per stare su una riga). Doppio tocco: il primo diventa "Confermi?" (rosso scuro pulsante, si disarma dopo 4 s), il secondo chiama `dlsResetAll()`: `DLS` torna a `DLS_DEF` (campo, maglie, colori e personalizzazioni per squadra, tema app → Classico) e lo stile Dreamers/G-Dreamers torna al predefinito (`dlSyncDr("classico")`). Restano solo squadra e giorno/notte dell'anteprima. Anche "Ripristina tutto" nella scheda Altro usa la stessa funzione.
+
+(247) **Trade + Trade speciali unite** — tolta la voce "Trade speciali" dal menu Centro gestione; `vTrade()` ora mostra due schede (stile `.gdmsw`, variabile `TRS`, `data-trs`): "Tutte le trade" (`vTradeAll()`, la lista Trade Alert di prima) e "Trade speciale" (`vSpeciali()`, le schede con barra del tempo rimasto). La vista `speciali` resta registrata in `VIEWS` ma non ha più voce di menu.
+
+(248) **Contrasto automatico nel tema Parquet (arancione)** — blocco `<script>` finale: `pqFix()` gira dopo ogni `render()`, `syncMenu()` e al cambio tema; per ogni testo calcola il contrasto col suo sfondo (sale gli antenati, primo colore dei gradienti) e se è < 3,4 lo corregge con `color` inline `!important`: bianco su fondi scuri/arancioni, arancione scuro `#b8410a` (o la stessa tinta scurita se è un colore semantico: verde/rosso/blu/giallo) su fondi chiari. Le stelle vuote (`.tstar`) diventano marroni su fondi chiari (`.stl`). Uscendo dal tema (`dlsApply`) i colori inline vengono rimossi (`pqClean`). In CSS: menu a tendina `.subnav` arancione su crema, voce selezionata bianca su arancione; arancione dell'intestazione leggermente più scuro (`#e85a0c`) per avere bianco leggibile. Verificato con una scansione automatica su 14 pagine (0 testi sotto 3,2). Nota: se aggiungi nuove pagine con sfondi particolari (immagini) il controllo usa solo i colori CSS.
+
+(249) **Parquet: scritte dell'intestazione sempre bianche** — `pqFix()` forza `#fff` su tutti i testi dentro `header` (prima sceglieva il marrone sulle schede della barra); le schede non selezionate hanno anche una leggera ombra del testo.
+
+(250) **Parquet: caselle squadra della Home a doghe di parquet** — `html.dlt-parquet .htile` non è più crema: doghe di legno, cornice chiara interna (come le linee del campo), barra col colore squadra in basso al centro, loghi con ombra morbida, sottotitoli marrone scuro. Toccata solo la casella Home (`.htile`); testata squadra (`.teamhead`) e altre card restano crema.
+
+(251) **Parquet: nomi squadra bianchi nelle caselle Home** — `.htile b/small` bianchi con contorno marrone sottile (text-shadow) per leggersi sul legno; il record `.hrec` resta senza ombra. `pqFix()` salta gli elementi dentro `.htile` per non riscurirli.
+
+(252) **Parquet: niente scritte nere** — `pqFix()` ora gira anche dentro Dreamers/G-Dreamers con stile Parquet (`.drroom[data-th="3"]`), non solo col tema app Parquet, e oltre al contrasto bassa ogni testo nero/marrone scurissimo (luminanza < .07): arancione `#b8410a` su fondi chiari, bianco su fondi scuri, bianco con contorno marrone sul legno. I marroni medi (`#7a5632`, colore parquet) restano. Si salta il testo trasparente (loghi a gradiente) e le caselle `.htile`.
+
+(253) **Fix menu a tendina Parquet** — la regola "tutto bianco nell'intestazione" di (249) colpiva anche le voci dei menu `.subnav` (che stanno dentro `header`), rendendole bianco su crema. Ora `pqFix()` esclude `.subnav`: le voci restano arancioni su crema (selezionata bianca su arancione).
+
+(254) **Parquet: controllo generale contrasto** — `pqFix()` su fondi vivaci non-legno (verde, giallo, viola, rosa: chip PDK, tab, badge) usa arancione bruciato `#7c2d05` invece di bianco; sul legno resta bianco con contorno marrone; i colori semantici (crediti/debiti) si scuriscono solo fino a contrasto 3,4 (non quasi neri). Scansione di ~25 pagine del tema app e delle schede Dreamers/G-Dreamers in stile Parquet: nessun testo nero, nessun bianco su chiaro.
+
+(255) **Pulsante Stile spostato nelle Impostazioni → App** — tolto il tasto tavolozza dall'intestazione (resta solo l'ingranaggio). Nel pannello "Stile dell'app" c'è ora un pulsante a tutta larghezza "🎨 Cambia stile · <stile attuale>" (`#stylebtn`, classe `.stylecyc`) che cicla Tabellone → Parquet → Classico come prima (con `dlSyncDr`) mantenendo lo scroll. Le chip dei temi restano sotto.
+
+(256) **Dreamers Parquet: via le sfumature/aloni sui numeri** — in `.drroom[data-th="3"]` ogni `text-shadow` di `b/em/span/i/small/div` è azzerato (restano solo i contorni marroni messi da `pqFix` sul legno); il numero del leader della sfida (`.duhd .dut.lead b`), `.drtop>b` e i punteggi vincenti `.drr.w em`/`.slead`/`.sgold` sono arancione pieno `#c2410c` senza alone viola né arancione.
+
+(257) **Dynasty TV · sfide Dreamers: vantaggio come nelle partite NBA** — in `tvDreamers()` la classe `win` ora va a chi è avanti anche a turno in corso (prima solo a turno chiuso): punteggio bianco candido per chi è avanti, attenuato (`#8e98b8`) per l'altro. Il CSS `.tvg.live .tvsc{color:#fff}` colorava di bianco entrambi nelle sfide live: aggiunta la regola `.tvg.drtvg.live` per ripristinare l'attenuazione.
+
+(258) **Registro aggiornamenti (Ufficio Scouting → 🔄 Aggiornamenti)** — terza sezione accanto a College e NBA (`COL.sec==="log"`, `vUpdLog()` nel blocco `<script>` finale). In alto due riquadri di stato (dati ufficiali Dunkest: "dati al" + orario del file letto dal footer; ESPN: in uso/non in uso con notti e n. giocatori). Sotto il registro, salvato su questo telefono (`dl_updlog`, ultimi 80 eventi, pulsante Cancella): scrive (1) "Dati ufficiali Dunkest in uso" alla prima apertura, (2) "⚡ Statistiche ESPN caricate per la notte DD/MM: N giocatori" quando `liveSync()` inserisce la notte (dalle 07:30), (3) "📥 Caricati i dati ufficiali Dunkest" quando cambia `EFF.agg` o l'orario "Ultimo aggiornamento", (4) "🔁 Sostituzione completata" quando la notte ESPN è coperta dai dati ufficiali. `ulCheck()` gira a ogni render. Limite: si scrive solo quando l'app è aperta su quel telefono (l'orario è quello del rilevamento, ora italiana).
+
+(259) **Animazioni live: partono con la partita, finiscono alle 07:30** — `lvAnim()` (usata da `lvNotte()` e da `lvSync()` → `html.lvoff`) è vera solo se c'è una partita davvero in corso *iniziata dopo l'ultimo 07:30 italiano*: dai dati Dynasty TV (`g[5]==="L"`, orario d'inizio `g[6]` "HH:MM+N" in ora italiana) oppure dal tabellone ESPN (`window.LVS` = inizio della prima partita "in" nel controllo ogni 2 min). Così le animazioni partono anche a mezzogiorno se c'è una partita, e alle 07:30 si spengono a prescindere (una partita iniziata prima delle 07:30 non conta più). Il CSS `html.lvoff` azzera puntini LIVE, bordo lampeggiante del tabellone (`.lbm.live`, tornato `run`), linee del campo, pulsante LIVE, celle `gvlive`, ecc. Verificato con orari/partite simulati (06:00 notturna → on; 07:31 stessa partita → off; 12:00 con partita → on; senza partita → off; ESPN LVS recente → on, vecchio → off). Limite: l'aggiornamento è al ritmo dei controlli (30 s su Dynasty TV/vista live, 2 min ESPN).
+
+(260) **Cronologia modifiche cliccabile** — il footer "Ultimo aggiornamento: … ›" (`#updbtn`) apre la vista `novita` (`vNovita()`, array `NV_LOG` nel `<script>` finale): elenco per data, dal più recente, con titolo e mini specifica di ogni modifica; "‹ Indietro" torna alla pagina di provenienza. **REGOLA: ogni nuova modifica pubblicata va aggiunta in CIMA a `NV_LOG`** (data, titolo, una frase), oltre alla voce numerata in questo file.
+
+(report) 28/10/2026 — report Dunkest automatico caricato: notti 27/10 (4 partite)
+(261) **Cronologia modifiche: niente area segreta** — tolta da `NV_LOG` la voce sul registro aggiornamenti dell'Ufficio Scouting (area riservata Ducks). REGOLA: le modifiche dell'Ufficio Scouting non vanno mai scritte nella cronologia pubblica.
+
+(262) **Eventi dati colorati nella cronologia pubblica** — la pagina Cronologia (footer cliccabile) ha in cima "Eventi dati": 🔴 rosso = dati ufficiali Dunkest caricati (con l'orario del file, riga fissa "Ultimo caricamento" + eventi rilevati), 🟢 verde = statistiche ESPN ufficiali nell'app dalle 07:30 (notte, n. giocatori), 🟣 viola = inizio modalità live (partita, orario d'inizio). Stessi eventi (`dl_updlog`, `ulCheck()`, chiavi `dk:`/`espn:`/`live:`) e stessi colori anche nel registro dell'Ufficio Scouting. REGOLA (Francesco): le modifiche dell'area segreta Scouting Ducks NON vanno mai in `NV_LOG`.
+
+(263) **Controllo dati + registro tolto dallo Scouting** — `dataCheck()` (script del registro) fa 6 controlli a ogni apertura della Cronologia: giocatori delle rose presenti in `EFF.gioc`, nessun estraneo, ULTIMA coerente con la notte di EFF, partite del riepilogo (`EFF.gioc[..][2]`) = righe di `PARTITE`, nessuna riga ESPN rimasta dopo i dati ufficiali, freschezza del file Dunkest (se dopo le 11:30 non è arrivato quello di oggi → avviso). Esito ✅/⚠️ in cima alla Cronologia (`.nvck`). Nota: la media di `EFF` NON è la media semplice di `PARTITE` (Dunkest tratta diversamente le partite con pochi minuti), quindi non si confrontano. La sezione "🔄 Aggiornamenti" è stata **tolta dall'Ufficio Scouting** (resta il motore `ulCheck()` che alimenta gli eventi della Cronologia pubblica). Questa rimozione NON va in `NV_LOG`.
+
+## (264) Eventi dati uguali per tutti
+- Il registro "Eventi dati" (Cronologia modifiche) non usa più il rilevamento locale del telefono: `window.sharedEvents()` calcola gli eventi da fonti condivise, quindi tutti vedono lo stesso elenco.
+- Rosso: caricamenti Dunkest = commit "[automatico]" del bot su `dreamers-data.js` (API GitHub, cache 10 min).
+- Verde: 07:30 italiane del giorno dopo la notte (ora legale corretta per ogni data, `romeAt`), solo per notti con partite finite.
+- Viola: orario della prima partita della notte dal tabellone ESPN (`tipFetch`), salvato in `dl_tipev` (le notti finite non cambiano).
+- Nessuna menzione di Scouting Ducks nel registro pubblico.
+
+## (265) Controllo dati con orario del telefono
+- Nel riquadro "Controllo dati" l'esito riporta l'ora in cui QUESTO telefono ha fatto il controllo: "Aggiornamenti ok · controllo di questo telefono alle HH:MM" oppure "Problema tecnico" con elenco di cosa non torna. Gli eventi sotto restano identici per tutti.
+
+## (266) Centro Medico collegato a campo e duelli
+- `injSync()` ricostruisce `INJ` a ogni render: un giocatore "out" porta la X rossa (`injX`, classe `.injx`) in campo/panchina (`drGioc`, `drGiocN`) e nelle carte del duello (`drDuel`). Vale 0 e non viene più proiettato a media in `drProiez`.
+- Rientro automatico: se in `PARTITE` c'è una partita con minuti>0 dalla data del bollettino (`INFORTUNI.agg`) in poi (dati ufficiali o live ESPN) il giocatore esce dal Centro Medico (sezione "Rientrati · tolti in automatico") e la X sparisce.
+- Solo stato "out" ha la X. Resta da aggiornare a mano `INFORTUNI.lista` come prima.
+
+## (267) Confronto Dunkest ↔ ESPN notte per notte (+ regola per chi carica Dunkest)
+- Due controlli distinti nella Cronologia: "Controllo di coerenza" (`dataCheck`, invariato) e sezione "Confronto Dunkest ↔ ESPN" (`cfBlock`, script (267) in fondo a `index.html`, oggetto `window.CF`).
+- Ogni telefono rilegge da ESPN i tabelloni/tabellini delle ultime 6 notti dell'era Dreamers e la lista infortuni, e li confronta con le righe ufficiali di `PARTITE` (quelle senza 9° valore). Chip per notte (✅ o numero di differenze), poi cinque sezioni: Giocatori che hanno giocato, Punti PDK (±2), Minuti (±1,5'), Statistiche punti/rimbalzi/assist, Infortunati (su ESPN non da noi / da noi non su ESPN / stato diverso).
+- Solo per l'ULTIMA notte: se un giocatore ha giocato per ESPN ma non è nei dati Dunkest, `liveSync` aggiunge una riga in `PARTITE` con 9° valore "E" e `liveEff` la conta (partite, minuti, efficienza, notte): ESPN è dato ufficiale finché Dunkest non viene corretto. Le righe "E" sono escluse dal controllo doppioni.
+- Non provato con ESPN reale (rete bloccata nel sandbox), solo con risposte simulate. Endpoint infortuni: `.../basketball/nba/injuries`; se non risponde la sezione dice "non raggiungibile".
+- REGOLA PER CHI CARICA I DATI DUNKEST (altro Claude / amico): dopo il report aprire Cronologia modifiche → "Confronto Dunkest ↔ ESPN". Se un giocatore "manca su Dunkest", correggere il report e scrivere nel messaggio di aggiornamento che ESPN era stato usato in sostituzione; verificare PDK/minuti/statistiche diversi; aggiornare `INFORTUNI.lista` allineandola alla lista ESPN (gli infortunati si prendono da ESPN).
+
+## (268) Confronto diviso in Squadre / Free agent / G-League + ESPN ufficiale per FA e G-League
+- Il confronto (267) ora ha tab Squadre · Free agent · G-League (con numero di differenze) oltre alle chip per notte. Fonti Dunkest: squadre = `PARTITE`; G-League = `GL_STATS[team|nome].log` (poi `PARTITE`); free agent = `FAG[nome]["2026/27"]` (fa-games.js, caricato con `faLoadG`) (poi `PARTITE`). Gruppo di un giocatore: ROSTER > G-League > FA (`grp()`).
+- `cfApplyOther()` (chiamata da `liveSync` a ogni render): dalle 07:30 italiane ESPN diventa ufficiale per FA e G-League per la notte dell'ultimo report e le successive: aggiunge una riga con 9° valore "E" nel log (`GL_STATS.log` / `FAG`) e ricalcola le medie (G-League: g, m, p, e, l5; FA: `FA[i][4]["26/27"]` = [partite, min, pdk, eff, pts, reb, ast]). Tutto viene annullato e rifatto a ogni render: appena Dunkest porta la riga di quella data, la riga "E" non viene più aggiunta (le medie tornano ufficiali). Notti precedenti all'ultimo report: solo confronto, nessuna modifica.
+- Caveat: se Dunkest non registra giocatori con pochissimi minuti, ESPN potrebbe aggiungerli in più (ben visibile nel confronto come "Mancano su Dunkest"). Pagine G-League che leggono `glPlayers()` da PARTITE non sono toccate.
+- Non provato con ESPN reale (rete bloccata nel sandbox): provato con risposte simulate.
+
+## (269) Infortunati automatici da ESPN (e tolto il confronto infortuni)
+- Tolto il confronto infortuni ESPN↔nostra lista dal Confronto Dunkest ↔ ESPN: da ora gli infortunati vengono SOLO da ESPN.
+- `injFetch()` (script (267), in fondo): legge `site.api.espn.com/.../basketball/nba/injuries` all'apertura, ogni 5 minuti (solo se l'app è aperta) e quando si torna sull'app; per i giocatori delle 8 rose ricostruisce `INFORTUNI.lista` (stato out/dubbio/quest/dtd da status + fantasyStatus, tipo = parte del corpo + lato + natura tradotti in italiano, rientro da `details.returnDate`, nota = commento ESPN in inglese), aggiorna `INFORTUNI.agg` e `fonti`. Poi `injSync()` e il resto (Centro Medico, X rossa, rientro automatico quando il giocatore gioca) seguono da soli. La lista scritta a mano nel codice resta solo come ripiego se ESPN non risponde.
+- Non è una vera notifica push: l'app si aggiorna quando è aperta. Per avvisi a app chiusa servirebbe un backend.
+- Non provato con ESPN reale (rete bloccata nel sandbox): formato dell'endpoint assunto (injuries[].injuries[] con athlete, status, details.returnDate/side/detail/type, fantasyStatus) e provato con risposta simulata; se il formato fosse diverso la lista resta quella manuale.
+
+## (270) OUT anche in tribuna/panchina
+- `injTag(nome)` aggiunge dopo "Ruolo · SQUADRA" una pillola rossa "OUT" (solo "OUT", senza data) nelle righe tribuna (`drPanca`) e nella panchina modalità notte; la maglia ha lo stesso alone rosso del campo. Solo stato "out".
+
+## (271) OUT nelle carte del duello
+- Nel duello Dreamers l'etichetta OUT è una pillola rossa in alto a destra della carta (riga del nome), identica in entrambe le squadre (`.duo`); la maglia ha l'alone rosso. Il nome si accorcia con "…" se serve spazio.
+
+## (272) Cap e Multe solo nell'Ufficio Scouting
+- Tolti i tasti Cap e Multe dal campo; ora sono (stessi id `#ccap`/`#cmul`) in cima all'Ufficio Scouting (`vCollege`, sotto "Legenda"). Le pagine Cap/Multe tornano con "‹ Ufficio Scouting" (`cur="college"`). Come da regola, nessuna voce nel registro pubblico (`NV_LOG`).
+
+## (273) Segno infortunato leggero sul campo
+- Sul campo e in panchina gli "out" hanno un quadratino rosso con croce bianca (`.injx`, 24px) in basso a sinistra della maglia, appoggiato al tagliandino nome/PDK (dietro di esso, z-index 1). Tolto l'alone rosso sulla maglia. Resta: pillola OUT nel duello (`.duo`) e in tribuna (`.injo`).
+
+## (274) Partite future degli infortunati = NG rosso
+- Nel duello (`drDuel`, caselle della settimana) le partite non ancora giocate di un giocatore "out" (`injOut`) mostrano "NG" in rosso (`.duw.dung`) invece dell'avversario. Se il giocatore gioca, `injSync` lo toglie dagli infortunati e le caselle tornano normali con i PDK registrati.
+
+## (275) Lucchetto "punteggio definitivo" nel duello
+- Nella carta del duello (`drDuel`, classe `.du.fin`) un lucchetto giallo (26px, `.fin-b`) accanto al "×1" segna che il giocatore ha concluso tutte le partite del turno e nessuna è in corso: punteggio definitivo.
+
+## (276) Linea di stato tra cartellino nome e PDK sul campo
+- Sul campo e in panchina (`.cpl`, `.dpc`) l'attributo `data-ist` (`injSt`: out / dub / ok) disegna tra tagliandino nome e tagliandino PDK una barretta di 3px su fondo grigio, riempita in proporzione (come Dunkest): rosso 9% = out (con la croce), arancione 50% = dubbio/in forse/giorno per giorno, verde 100% = disponibile.
+
+## (277) Dubbi dal commento ESPN
+- Il Centro Medico mostra già Out / In dubbio (Doubtful) / In forse (Questionable) / Giorno per giorno. Da ESPN lo stato "Day-To-Day" viene affinato leggendo fantasyStatus e il commento ("doubtful" → dubbio, "questionable" → in forse, altrimenti giorno per giorno). "Out" resta out.
+
+## (278) Età con i mesi nella scheda giocatore
+- Nel riquadro in alto della scheda giocatore, sotto "Ruolo · SQUADRA · #n", compare l'età (es. "22 anni 9 mesi"), calcolata ogni volta da `NASCITA[nome]` (data di nascita) e dalla data di oggi (`etaTxt`): si aggiorna da sola, nessun caricamento. Tutti i 115 giocatori delle rose hanno la data; per un nuovo giocatore aggiungere la sua data in `NASCITA` (serve già anche per i valori). Senza data la riga non compare.
+
+## (279) Tasto "Segui" a contrasto con la testata squadra
+- `.ghead .segrow .segi` eredita il colore del testo della testata (`c.txt||c.fg`), con bordo dello stesso colore: nero sui Ducks, bianco/colore della squadra sulle altre; stato "Seguito" con fondo leggermente più pieno.
+
+## (280) Centro aggiornamenti più semplice + sezione "Errori Dunkest ↔ ESPN" per data
+- Cronologia modifiche: invariato "Controllo di coerenza" (`dataCheck`). Il confronto Dunkest ↔ ESPN diventa un blocco breve `cfBlock` "Dunkest ↔ ESPN · giocatori" (ultima notte): per Squadre / Free agent / G-League solo i giocatori mancanti — "mancano su Dunkest" → usato ESPN come ufficiale; "solo su Dunkest" → tenuto il dato Dunkest (nessuna sostituzione) — più il tasto "Errori Dunkest ↔ ESPN per data".
+- Vista `cferr` (`vCfErr`, `VIEWS.cferr`): calendario (freccette + `<input type=date>` da 20/10/2026 all'ultima notte), ESPN riletto a richiesta per il giorno scelto (`cfLoadDay`); tab Squadre/FA/G-League; sezioni: mancanti, solo Dunkest, avversario diverso, PDK (±2), minuti (±1,5'), punti/rimbalzi/assist. Ogni sezione dice cosa vale nell'app: "Dunkest ha sostituito il dato ESPN" (è vero: `liveSync` aggiunge righe ESPN solo per notti dopo l'ultimo report; con la riga Dunkest il dato ESPN non è più usato). ESPN usato solo se manca su Dunkest e la notte è l'ultimo report o successive (FA/G-League), per le squadre l'ultima notte (le successive le gestisce il live). Per notti più vecchie con giocatori mancanti su Dunkest il dato ESPN non viene usato (la notte è già chiusa).
+- Coerenza data/squadra/giocatore: il confronto per giocatore e per data confronta anche l'AVVERSARIO (Dunkest riga[1] vs ESPN): se la data o la squadra sono sbagliate compaiono come "Avversario diverso" o "Mancano / Solo su Dunkest".
+- REGOLE PER CHI CARICA DUNKEST (altri Claude): 1) usare la DATA DELLA PARTITA USA (non quella di caricamento) per la notte; 2) ogni riga giocatore deve avere data, avversario e squadra coerenti con il calendario NBA di quella data; 3) dopo il caricamento aprire Cronologia modifiche → "Errori Dunkest ↔ ESPN per data" sulle ultime notti e correggere i report se ci sono "Avversario diverso", mancanti o PDK/minuti/statistiche diversi; 4) se il confronto mostra "Mancano su Dunkest", prima di tutto verificare di non aver saltato un giocatore; 5) scrivere nel messaggio di aggiornamento se l'app ha dovuto usare ESPN al posto di Dunkest.
+
+(281) Sezione "Errori Dunkest ↔ ESPN per data" riorganizzata per giocatore: una sola tabella "Dati diversi" con, per ogni giocatore, una riga per ogni dato che non coincide (Minuti, PDK, Punti, Rimbalzi, Assist, Avversario) con valore Dunkest e valore ESPN, più la scritta che Dunkest ha sostituito il dato ESPN. Soglie invariate (minuti > 1,5', PDK > 2). Solo `index.html`, vista `vCfErr`. Non pubblicato: in coda su `coda`.
+
+(282) Ordine dei loghi in Home personalizzabile: Impostazioni › App › "Ordine dei loghi in Home" (frecce ▲▼ per squadra, "Ordine originale"). Salvato in `DLS.ord` (localStorage, per dispositivo; "Ripristina tutto" lo azzera). Helper `teamOrd()` (squadre mancanti in fondo nell'ordine di `TEAMS`) usato da `vHome` e dallo swipe tra squadre del Campo. Non pubblicato: in coda su `coda`.
+
+(283) Impostazioni › Giocatori › "Come indicare lo status": X rossa + linea (default), solo X, solo linea. `DLS.si` → `html[data-si]` (impostato in `dlsApply`); CSS: `data-si="x"` nasconde la barretta `[data-ist] .pcd::before`, `data-si="line"` nasconde `.injx` (X in campo e nei duelli). Le etichette OUT di tribuna/duelli (`.injo`, `.duo`) restano sempre. Non pubblicato: in coda su `coda`.
+
+(284) AREA RISERVATA DUCKS riorganizzata (SEGRETA: non va nel registro pubblico `NV_LOG`). Dopo la password si entra nella **Hall of Fame Ducks** (`cur="sala"`): bacheca SVG con trofei dorati luminosi (uno per ogni titolo Ducks letto da `STORIA`, `ordine[0]==="DUC"`; ora 2: Stagione 1 e 2), elenco palmarès e 3 grandi sezioni: **Scouting** (`cur="college"`, ex Ufficio Scouting, ora con back "‹ Hall of Fame Ducks"), **Personalizzazioni** (`cur="pers"`) e **Software** (`cur="soft"`, tasti Cap e Multe spostati qui da vCollege; i loro back tornano a Software). Nuovo `<script>` finale "HALL OF FAME" (viste `sala/pers/soft`, CSS `.hof*`). `colAsk()` ora apre `sala`. `eff=` dei menu (due punti) include sala/pers/soft.
+Personalizzazioni › Logo Texas Ducks: 8 loghi alternativi in `loghi/duc-N.webp` (sfondo tolto) + "Originale" + "Ripristina logo originale". Scelta in localStorage `dl_ducl` (per telefono). `ducLogoApply()` (subito dopo la definizione di `LOGO2`) sostituisce `LOGO.DUC`/`LOGO2.DUC` e il CSS `.lg-DUC`: cambia ovunque (Home, banner, campo, classifiche, immagini condivise) tranne la G League, che usa `GLEAGUE.DUC.logo`. Per aggiungere un logo: file in `loghi/` + riga in `DUC_LOGHI`. Non pubblicato: in coda su `coda`.
+
+(285) Password sbagliata nell'area riservata Ducks (SEGRETO, non in `NV_LOG`): invece di "Password errata" compare una schermata a tutto schermo (`.colno`) con logo Ducks, tante 🏆 quanti i titoli (da `STORIA`), "2 titoli · Texas Ducks" e la scritta "Questa è l'area riservata Ducks, vai via" + tasto "Vai via". Solo se il browser supporta la verifica (altrimenti resta il messaggio tecnico). Non pubblicato: in coda.
+
+(286) Sfida Dreamers (`drDuel`): in "Fuori dai 10" i giocatori **in attesa / che non hanno giocato** non sono più in una sezione separata "In attesa" con stacco: stanno nello stesso elenco della tribuna, subito dopo quelli con punteggio (stessa riga a coppie, nessun titolo a parte). Le carte restano con l'etichetta "attesa" / "non ha giocato". Non pubblicato: in coda.
+
+(287) Sfida Dreamers: oltre a OUT ora compare **DUB** (pillola arancione (#ff7a00), stessa forma, posizione e larghezza esatta di OUT: 43px) per i giocatori in dubbio/questionable/day-to-day (`injSt(n)==="dub"`, dati ESPN già letti da `injFetch`). Classe `.duo.dub`. Le caselle future NON diventano NG (può giocare); nome con meno spazio a destra. Solo schermata sfida (`drDuel`). Non pubblicato: in coda.
+
+(288) Centro aggiornamenti: righe con ✓ scritte tutte **in verde**; le righe con problemi sono **gialle con ⚠️** (prima rosso/"!"/"✗"). Vale per il Controllo di coerenza e per il blocco Dunkest ↔ ESPN (`.nvck li.y/.n/.w`). Pubblicato subito su richiesta.
+
+(289) Loghi Ducks (area riservata › Personalizzazioni): sostituiti `loghi/duc-7.webp` ("Pazzo lingua") e `loghi/duc-8.webp` ("Pazzo furioso") con le versioni già ritagliate dall'utente (PNG trasparenti; tolti solo i puntini isolati, ridimensionati a 380px). In `DUC_LOGHI` i due percorsi hanno `?v=2` per forzare l'aggiornamento della copia nei telefoni. Segreto, non in `NV_LOG`. Non pubblicato: in coda.
+
+(290) Impostazioni › Campo › **Disegno del legno**: 6 nuovi disegni del parquet oltre alle doghe classiche (spina di pesce, doghe orizzontali sfalsate, diagonale, quadrotti, venatura naturale, listoni con nodi). `DLS.wd` + `WD` + `woodPat(k,id)` (pattern SVG, id `planks` nel campo; miniature con id `wp<k>`). Scegliere un disegno riaccende l'interruttore "Disegno del legno (acceso/spento)" (`DLS.planks`, ex "Venature del parquet"). "Ripristina" riporta alle doghe classiche. Pubblicato subito su richiesta.
+
+(291) Impostazioni › Giocatori: **Trattino dello status · stacco** (acceso/spento, spessore 0–3 px, colore; predefinito 1 px scuro #0b0b12 tra il trattino e il PDK, valido per ogni colore), **Colori della disponibilità** (disponibile, dubbio, OUT: trattino, X ed etichette) e **Colori dei PDK** (viola/verde/giallo/rosso: cartellino in campo e pillole). Chiavi DLS: `sepOn,sepW,sepC,cOut,cDub,cOk,pV,pG,pY,pR` (predefiniti in `DLS_DEF`); `stApply()` (chiamata da `dlsApply`) imposta `--sepw/--sepc` e genera `<style id="stc">` SOLO per i colori diversi dal predefinito. Tasto "Ripristina colori e stacco" (`data-stcreset`). Lo stacco usa `[data-ist] .pcd::before` (altezza 3px + `--sepw`). Non pubblicato: in coda.
+
+(292) Centro medico / ESPN: nuovo stato **Probabile** (`prob`): `mapSt` riconosce "probable" (status/fantasyStatus/commenti ESPN; "questionable" e "doubtful" hanno la precedenza). Il trattino della salute in campo è verde **al 75%** (`[data-ist="prob"]{--w:75%}`, `injSt` ritorna `prob`); dubbio resta 50%, OUT 9%, disponibile 100%. In Centro medico compare il gruppo "Probabile" (pillola verde lime, `STATI.prob`, `bodyMap`). Nessuna X/etichetta per i probabili. Non pubblicato: in coda.
+
+(293) Disegni del legno (290): ognuno porta il **suo colore di legno** (`WD[k][2]` = chiave di `DLS_FL`): spina di pesce = noce scuro, doghe orizzontali = acero chiaro, diagonale = ciliegio (nuovo), quadrotti = frassino grigio (nuovo), venatura = mogano (nuovo), listoni con nodi = bambù (nuovo); doghe classiche = automatico. Scegliendo il disegno si imposta `DLS.floor` (poi il colore resta cambiabile da "Parquet"). NV_LOG aggiornato; aggiunta anche la voce pubblica sui giocatori probabili. Pubblicato insieme a (292).
+
+### (294) Ducks: logo dei profili e logo del campo distinti (area riservata › Personalizzazioni) — SEGRETO, non in NV_LOG
+- Due scelte indipendenti: `DUC_L` (localStorage `dl_ducl`) = logo dei profili (`.lg-DUC`, `LOGO.DUC`: Home, liste, chip, pagina squadra); `DUC_C` (`dl_ducc`) = logo del campo (`LOGO2.DUC` + `DUC_CURL` per il banner del campo, condivisioni, bacheca). G-League esclusa.
+- `ducLogoSet(k,w)` con `w==="c"` per il campo; i bottoni `[data-hlo]` hanno `data-hw` (p/c). `pers()` mostra due card con griglia e "Ripristina" ciascuna.
+
+### (295) Nuovi verdi ufficiali (disponibilità e PDK buono)
+- Campionati da screenshot del GM: `cOk` #22c55e → **#5dcb3c** (trattino disponibilità), `pG` #16a34a → **#3ba764** (PDK buono verde). `DLS_DEF` aggiornato; `ST_BASE` conserva i vecchi valori del CSS statico così `stApply()` applica sempre l'override; chi aveva salvato i vecchi default viene migrato ai nuovi (`DLS[k]===ST_BASE[k]`). Restano personalizzabili in Impostazioni › Giocatori. Voce in NV_LOG "Nuovi verdi".
+
+### (296) Fix: il colore "Disponibile" sovrascriveva anche OUT e Dubbio
+- L'override `[data-ist]{--ist:cOk}` in `stApply()` aveva la stessa specificità di `[data-ist="out"]`/`"dub"` ma veniva dopo nel CSS, quindi colorava anche i trattini di OUT e dubbio. Ora esclude `out` e `dub` con `:not()`; `prob` segue il colore di Disponibile (è verde al 75%).
+
+### (297) Grafico condiviso più alto quando è lungo
+- `shGrafico()`: altezza immagine `H=clamp(W*0.3, 1040, 1800)` invece di 1040 fisso (W≈300+punti×74/110). Fino a ~16 punti resta 1040; con molte giornate l'area del grafico cresce in verticale e i valori si leggono meglio.
+
+### (298) Osservatorio › Generale: Ultima con cartellino colorato + colonna Trend
+- Colonna Ultima ora usa `pdkB(last,pdkF(last))` (cartellino colorato come PDK) in entrambe le viste. Nuova colonna Trend stagionale: `grTrend` sulla serie cronologica di PDK (o efficienza se scelta) delle partite in `PARTITE`, min. 3 partite; ▲/▼ con %, ＝ se |trend|<3%.
+- Per farci stare Trend su mobile: colonna Gare spostata nella riga piccola sotto il nome ("4 gare · Dolphins · DEN"), classe `.osgen` con padding/intestazioni più compatti, segnalibro ridotto.
+- (298b) Osservatorio: toccando nome/logo di un giocatore seguito si apre il suo profilo (`[data-osk]`): giocatore Dreamers → scheda, Free Agent → scheda FA, G-League → sezione G-League sul giocatore (`segInfo` ora restituisce `k` per la G-League). Il segnalibro continua a togliere/mettere il segui.
+
+### (299) Profili Free Agent e G League con la stessa struttura dei giocatori di squadra
+- Nuova `extProfilo(o)`: tasto 📈 Grafico in alto, poi "PDK ed efficienza" con filtro Stagione, riquadri PDK medio ed efficienza media, griglia (Partite, Minuti medi, Proiezione 36', Ultima partita, Punti medi, Rimb. · Assist), poi Partita per partita a mesi. `vFAP` la usa (header con Segui ed età, tabella "Stagioni" spostata in fondo; il filtro stagione usa `faPS`/`#fapsz` come prima).
+- G League: nuova scheda `cur="glplayer"` (`vGLP`, `GLP="TEAM|chiave"`), aperta da `glVai(k)` (Home search, Osservatorio) e toccando un giocatore in G-Dreamers (intercetta `details.glp>summary`). Back `#glpback`; stagione = `gSeason`. Header con colori G League, Segui ed età (`NASCITA`, se presente).
+
+### (300) Fix quadrato viola dietro il logo Ducks in modalità notte (Home)
+- Causa: in notte le tile Home davano ai loghi un `drop-shadow(0 0 16px viola)`; su iPhone l'alone veniva tagliato al bordo del riquadro del badge e, con i loghi 7/8 che riempiono tutto il riquadro, appariva come un quadrato viola. Ora il badge non ha più il filtro e l'alone è un `::before` radiale sul contenitore `.hlg` (non clippato). Il filtro resta per il banner `.teamhead .hlogo`.
+- In più: ripulita la trasparenza dei loghi `loghi/duc-1…8.webp` (alpha < 40 azzerata, pixel quasi trasparenti da compressione) e cache-bust `?v=3`.
+
+### (301) Tasto indietro: torna sempre da dove arrivi
+- Il ‹ della scheda G League tornava a G-Dreamers anche arrivando dall'Osservatorio (il mio handler `#glpback` scattava prima della pila `NAVH`): ora usa la pila e ripiega su G-Dreamers solo se la pila è vuota.
+- Aggiunti alla pila `BK_IDS` anche `#effback` (Efficienza squadra), `#cback` (Campo/Cassa), `[data-cupback]` e `[data-snback]` (Efficienza/Statistiche): prima tornavano sempre alla loro sezione fissa (Statistiche / Home), ora al punto da cui si era arrivati; l'etichetta del tasto dice dove porta.
+
+### (302) Banda dell'intestazione fino in cima allo schermo in tutti i temi
+- Prima solo in notte/Dreamers: sotto l'orario dell'iPhone c'era una fascia piatta (`body::before`). Ora `html:not(.dreamfs){padding-top:0}`, `body:not(.dreamfs) header{top:0;padding-top:env(safe-area-inset-top)}` e la fascia è nascosta (resta solo in Impostazioni, dove l'intestazione non è fissa e l'anteprima sticky ne ha bisogno). Verificato in Home (anche scorrendo), Campo, Scheda giocatore, Impostazioni con safe-area simulata a 59px.
+
+### (303) Nuovo logo Dreamers (richiesta utente 28/10/2026)
+- Logo dato dall'utente (stella bianca a 4 punte su quadrato arrotondato), colorato col viola della modalità notte: sfumatura verticale `#a855f7 → #6d28d9` (come il tasto della barra selezionato in notte).
+- Icone app rifatte: `icon-180.png` (apple-touch, a tutto quadrato: iOS arrotonda da sé), `icon-192.png` e `icon-512.png` (angoli trasparenti, raggio 21,5%), `icon-512-maskable.png` (stella all'82% per la zona sicura). Cache del service worker → `dynasty-v83`. Sul telefono il collegamento già salvato tiene la vecchia icona finché non si riaggiunge alla Home.
+- Logo in alto `#lgreload` (immagine base64 160px): sostituita solo l'immagine, il tocco aggiorna ancora l'app (verificato). Nello stile Parquet resta il filtro arancione `html.dlt-parquet .lglogo`.
+- Tasto Dreamers della Home `.hdrm`: sfondo con la stessa sfumatura, icona SVG = stella a 4 punte (path `M12 1.4C12.53 7.93 15.14 11.71 22 12…`, ricavato dal logo).
+- Immagini condivise `shDrLogo()`: stessa sfumatura e stessa stella al 72% del quadrato.
+### (304) Campo › Live › Turno: frecce per cambiare turno
+- Accanto a Notte/Turno compare `‹ N ›` (`.cltn`, `CLK` = turno scelto, null = in corso; `data-clmk` ∓1). Si può andare indietro fino al primo turno Dreamers (Turno 3) e avanti fino a quello in corso; la nota sotto la tabella cambia per i turni passati. Le frecce si attivano man mano che passano i turni (ora esiste solo il Turno 3).
+
+### (305) Dreamers › sfida: nomi stile NBA e maglie più grandi
+- `.du .dun b`: font `CourtBlock` (quello a blocchi del campo, già incluso), maiuscolo, 16,9px; maglia `.duj` 44×49 (sporge di 1,5px sopra/sotto, riga sempre 46px). `duFit()` (chiamata dopo ogni `render`) riduce il nome di battesimo all'iniziale solo se il nome non entra ("S. GILGEOUS-ALEXANDER"), con `title` = nome completo.
+
+### (306) Duelli Dreamers: pillola DUB/OUT e maglia
+- La pillola DUB/OUT è stata abbassata nella zona tra la riga del nome e il testo della riga punteggio (`.du .duo{top:calc(50% + 18px)}`).
+- Maglia ridotta (svg 40×44,5px, margin-top -1,5px) così l'ombra non tocca più la pillola del punteggio.
+
+### (307) Sezione "Giocatori" (ex Free Agent)
+- Rinominata in menu, titolo, placeholder, etichette "indietro" (`fa`, `faplayer`, gFrom==="fa" → "Giocatori"). Nelle schede dei veri free agent resta la dicitura "Free Agent".
+- `vFA()` ora include anche `faOthers()`: giocatori delle 8 rose (ROSTER, stagione corrente da PARTITE, passate da STAGIONI) e della G League (GL_STATS.log / GL_PAST), righe `.faoth` nascoste finché la ricerca non le trova. Stesse colonne PG/Min/PDK/Eff, filtri stagione e ruolo; filtro "G League" esclude i giocatori di squadra. Logo squadra (`badge`) o G-League (`glBadge`) accanto al nome. Giocatori G League già presenti tra i FA non sono duplicati.
+- Click: squadra → scheda giocatore (gFrom="fa"), G League → `glVai`. La query di ricerca (`faQ`) resta al ritorno e al cambio stagione/ruolo.
+- Voce pubblica in NV_LOG.
+
+### (308) Condividi scheda giocatore
+- Accanto a "Segui" (nella `.segrow` dell'intestazione di scheda squadra, free agent e G League) c'è il tasto "Condividi" (`plShBtn()`, `data-share="pl"`), che usa il foglio di condivisione esistente (`shOpen("pl")`).
+- `shPlayer()` disegna un'immagine 1080×1350: maglia (squadra) o logo G League, nome, ruolo · squadra NBA · numero, età in anni, PDK medi (pillola colorata), efficienza media (pallino per livello), minuti medi, partite, ultima gara, proiezione 36', grafico del trend PDK partita per partita con linea della media, "ultime N gare vs media" e rank lega PDK (solo giocatori di squadra). Stagione = quella scelta nel menu della scheda.
+- I dati vengono da `SHR_PL`, impostato in `vGiocatore` / `vFAP` / `vGLP` a ogni render. Con 0 partite mostra "Nessuna partita NBA in questa stagione". Grafico dalla 2ª partita.
+- `.segrow` ora è flex (gap 8px) per affiancare i due tasti.
+- (308) Intestazione dell'immagine con lo sfondo della squadra (come la scheda in app: gradiente, strisce, bordo trim, testo `txt||fg`); G League col suo colore; free agent resta neutro viola.
+
+### (309) Swipe cambio squadra solo dal campo in giù
+- Nel touchstart dello swipe tra squadre (cur==='campo') si ignora il gesto se il dito parte sopra `#main .court` (banner, bacheca, cassa, tabellone): così si può scorrere gli indici senza cambiare squadra.
+
+### (310) Playoff al meglio delle 3 e regular season fino al 9/3 (pubblicato)
+- `drPO`: serie a 2 vittorie (prima 3); 3 round (quarti, semifinali con vincenti/perdenti, finali per tutte le posizioni 1–8) = max 9 turni. Un round chiude appena tutte le serie sono decise (2-0 → round dopo subito). Simulazione su 300 casi: 7–9 turni, sempre 8 posizioni definite.
+- `DR_REG=40` (giornate 3–42, 6 gironi, regular season finisce 9/3/2027, turno medio 2,92 giorni), `DR_TOT=49` (playoff dal 10/3, max 9 turni, medio 2,89 gg). Le finestre `DR_TURNI` (49) sono invariate; cambia solo il confine regular/playoff. `DR_ZERO` invariato (turni 5, 8, 29, 34, 38, 39, 40). Turni dopo il 17/3 provvisori (calendario NBA non noto).
+- Testi aggiornati: regolamento Dreamers (durata, serie al meglio delle 3), note del tabellone, footer immagine playoff.
+
+### (311) Regolamento Art. 5: premi divisi regular season / playoff (pubblicato)
+- Tabella premi a 4 colonne (Posizione, Regular season, Playoff, Totale): 1° 20-10, 2° 25-15, 3° 35-15, 4° 100-50, 5° 130-70, 6° 200-100, 7° 270-130, 8° 330-170 (totali invariati: 30…500; regular 1110 cr, playoff 560 cr). Box "Novità". Più si è in basso più si prende, in entrambe.
+- Da aggiornare a parte (non richiesto): Art. 4 e Art. 9 citano "giornata 64 = fine regular season"; Art. 5 slot Rookie "dal 4° all'8° posto" (classifica di riferimento da chiarire: regular season o finale playoff).
+
+### (304) Dynasty TV: dalle 15:00 si apre sulla notte successiva + calendario automatico da ESPN (richiesta utente 28/10/2026)
+- `tvDefDay()`: 1) se c'è una partita live → quel giorno; 2) dalle 15:00 ora italiana → la notte che arriva (data USA = data italiana di oggi, o il primo giorno successivo con partite); 3) prima delle 15:00 → l'ultima notte con partite finite (come prima). Ogni nuova apertura di Dynasty TV riparte dal giorno giusto: `render()` mette `TVS.out=1` quando sei fuori da `tv`, `vTV0()` allora azzera `TVS.d`. Verificato con orologio simulato 10:00/14:59 → 27/10, 15:00/22:00 → 28/10.
+- Calendario: `tools/calendario_espn.mjs` (ESPN scoreboard, data USA, ora italiana "HH:MM+N") aggiorna in `tv-data.js` i prossimi 45 giorni, SOLO i giorni in cui nessuna partita è iniziata (niente risultati/tabellini, nessuna partita non "pre" su ESPN); non cancella mai giorni. Lo lancia GitHub: `.github/workflows/calendario.yml` (ogni giorno 12:17 e 05:47 UTC + manuale), nessun costo Claude. Si riallinea a origin/main prima di scrivere e riprova fino a 3 volte.
+### (312) Duelli Dreamers: PDK grande al posto della pillola, pillola OUT/DUB sotto la maglia, nomi "N. Cognome" (pubblicato)
+- Scheda `.du`: riga nome (maglia + "N. Cognome" + ruolo·NBA), poi `.dus` = colonna 42px sotto la maglia (`.dufl`: pillola OUT/DUB, vuota se sano) + bottone PDK grande (`.dubig`, 56px, numero 34px) a destra. Tolto il testo "×1"; restano didascalie piccole dentro il bottone solo per capitano ("44,9 ×1,5"), panchina ("×½ = …"), tribuna, attesa, media stagione.
+- Nomi: iniziale + punto + cognome (maiuscolo CourtBlock), mai rimpiccioliti: vanno a capo se servono (nbsp tra iniziale e cognome; `duFit` toglie il nbsp se un cognome lungo non entra in riga, poi tracking -0,02em come ultima risorsa). `.duh` min-height 46px per tenere allineate le righe.
+- Non toccata l'immagine condivisa del duello (`shDuel`), che ha il suo disegno.
+- (312) Bottone PDK scelto dall'utente: larghezza 67% della colonna, attaccato al bordo destro (`justify-self:end`).
+
+### (313) Turno 3 accorciato, turno 4 allungato
+- SCELTA FINALE (opzione B): `DR_TURNI[0]`: 25/10–29/10 (era fino al 1/11); `DR_TURNI[1]`: 30/10–3/11 (era 2–3/11): turno 4 = 18 squadre NBA con 2 partite e 12 con 3; turno 3 = 1 squadra con 1, 18 con 2, 11 con 3. (La prima versione era 25–30/10 e 31/10–3/11.) Dal calendario in `tv-data.js` (ESPN): turno 4 prima = 30 squadre NBA con 1 sola partita; ora 22 squadre con 2 partite e 8 con 1, nessuna con 3 (il 3/11 non ha gare). Turno 3: 5 squadre con 2 partite, 20 con 3, 5 con 4. Il turno 5 (4–6/11) resta uguale.
+- Nota: `DR_ZERO["5"]=["ATL"]` risulta superato dal calendario ESPN aggiornato (tutte le squadre hanno almeno 1 gara il 4–6/11): da rigenerare per tutti i turni quando serve.
+
+### (314) Duelli Dreamers: bottone PDK più corto, niente calcoli, lucchetto accanto all'OUT/DUB (IN CODA, NON pubblicato)
+- `.dubig`: larghezza min 57pt (sul disegno dell'utente su Miller), numero 28px, a destra; tolte le didascalie di calcolo (×1,5 e ×½ = …): restano solo "tribuna", "attesa", "NG" (non ha giocato) e "media" (turno senza partite NBA per calendario).
+- Il lucchetto (`.fin-b`) ora sta nella riga `.dus` tra la pillola OUT/DUB e il bottone PDK (flex, centrati in verticale), non più sopra il bottone.
+
+(315) Dreamers › sfida, carte più basse (pubblicato): maglia 48×51 (prima più piccola), nome 19px sempre intero ("I. Cognome", a capo solo se serve, mai tagliato), layout a due colonne: a sinistra maglia + pillola OUT/DUB, a destra nome e bottone PDK sotto; altezza carta tipica 173pt (prima ~202pt); `duFit()` pareggia l'altezza delle due carte di ogni riga.
+
+(316) Lucchetto «giocatore finito» anche sul campo (pubblicato): nel tagliandino PDK di campo e panchina (`drPcd`, helper `drFinito`) compare davanti al numero quando tutte le partite del turno del giocatore sono concluse (stessa regola delle carte della sfida; non in modalità notte). Look di default = versione 4 (tondino scuro con lucchetto giallo); in Impostazioni › Giocatori › «Lucchetto giocatore finito» si può scegliere la versione 2 (lucchetto semplice nel colore del numero): `DLS.lk` = "tondo"|"testo", applicata come `html[data-lk]` in `dlsApply()`.
+
+(317) Dreamers › sfida (pubblicato): (a) tasto PDK della migliore prestazione ridotto del 25% (43×34,5pt, cifra 21px, didascalia 8,25px), sempre attaccato al bordo destro; (b) nella riga in alto della sfida, accanto a «‹ Turno N» e al tasto condividi, due frecce ‹ › per andare al turno precedente/successivo restando sulla stessa squadra (quella a sinistra); disattivate se quel turno non esiste o la squadra non gioca (playoff). Handler `data-dr="duk"`.
+
+(318) Dreamers › sfida (pubblicato): eccezione ai nomi — Wembanyama e Antetokounmpo si scrivono solo col cognome (senza l'iniziale), così entrano su una riga; tutti gli altri restano «I. Cognome». Funzione `duNm()` / regex `DU_SOLO` prima di `drDuel`; per aggiungere altre eccezioni basta estendere la regex.
+
+(319) Lucchetto sul campo, invertiti default e opzione (pubblicato): ora il look standard è il lucchetto semplice nel colore del numero (ex versione 2); il tondino scuro con lucchetto giallo (ex versione 4) diventa l'opzione in Impostazioni › Giocatori. `DLS.lk` = "testo" (default, anche se non impostato) | "tondo"; `html[data-lk]` in `dlsApply()`. Nota: la (316) descrive il vecchio default.
+
+(320) C del capitano sul campo: staccata dalla maglia (right:-19px) e in giallo fluo #FFF700 (versione C scelta), con anello scuro e alone dello stesso colore. Pubblicato insieme a (318) e (319).
+
+(321) Registro settimanale dei valori (pubblicato): in Cronologia modifiche (`vNovita`), nuova sezione «Valori giocatori · registro settimanale» (`valSezHTML`, `valStorico`): per ogni lunedì dalla partenza (`VAL_ORIGINE` 26/10) ricalcola con `valAuto` il valore di ogni giocatore e mostra chi è cambiato (vecchio → nuovo, ±%), ordinato per variazione, ultimo lunedì aperto; niente dati salvati, si ricostruisce da solo. Prima del 2/11 mostra solo «Valori di partenza» e la data del prossimo aggiornamento. Correzioni manuali di Francesco: annotarle in `VAL_CORREZ` [data, titolo, testo] (e, come sempre, in VALORI/PREZZO_FISSO/VAL_BASE). Prova con settimane simulate: `window.NV_VAL_NOW=Date.now()+20*864e5`. NV_LOG: voce pubblica aggiunta.
+
+(322) REGOLA FISSA (Francesco, 28/10/2026, «sempre da ora in poi»): l'aggiornamento settimanale dei valori giocatori scatta **ogni lunedì alle 12:00 ora italiana** (non a mezzanotte), così ci sono già le partite della notte e i dati Dunkest. pubblicato. Implementato con `valScatto(d0,i)` (12:00 Europe/Rome, gestisce ora legale: 2/11 = 11:00 UTC, 5/4/2027 = 10:00 UTC) e `valK(d0,now)` usati da `valAuto` e dal registro (`valStorico`); la sezione «Valori giocatori» dice «lunedì … alle 12:00». Non cambiare questo orario senza un ordine di Francesco.
+
+(323) Lucchetto sul campo: tornato standard il tondino scuro con lucchetto giallo (ordine di Francesco, 28/10 sera, con screenshot); il lucchetto semplice nel colore del numero è l'opzione in Impostazioni › Giocatori. `DLS.lk` = "tondo" (default, anche se non impostato) | "testo". Annulla l'inversione della (319). pubblicato.
+
+(324) Campo: tolto il bordo e l'alone giallo attorno al tagliandino PDK del capitano (`.pcd.cap`): ora ha la stessa ombra degli altri, il capitano si riconosce dalla C fluo. pubblicato.
+
+(325) Campo e panchina: maglie e tagliandini nome/PDK ingranditi del 5% (campo: `scale(calc(var(--k)*var(--g5,1.05)))` su `.court .cpl.dr`; panchina: `.dpan .dpc{zoom:1.05}`). Per tornare indietro basta `--g5:1` / togliere lo zoom. pubblicato.
+
+(326) PDK e lucchetto centrati in altezza nel tagliandino (campo e panchina): misurato sullo screenshot del telefono di Francesco (poco spazio sopra, molto sotto): padding 5px/0 + cifra giù di 0,5px, lucchetto giù di 1,6px; altezza del tagliandino invariata. pubblicato. Nota: nel sandbox il font è diverso (fallback), quindi il controllo finale va fatto sul telefono.
+
+(327) PDK e lucchetto nel tagliandino: dopo la (326) risultava troppo basso; scelta la versione A di 6 prove (Francesco, 28/10 sera): rispetto all'originale scende di soli 0,5pt (padding 2,5px/2,5px, cifra +0,5px, lucchetto +0,7px). Sostituisce i valori della (326). pubblicato.
+
+(328) Regolamento Art. 5 (IN CODA, NON pubblicato): gli slot Rookie dalla 4ª all'8ª posizione sono assegnati secondo l'arrivo (classifica finale) della regular season, non dei playoff (ordine di Francesco, 28/10 sera). Aggiornato il box «Slot Rookie», aggiunta la «Novità» e la voce pubblica in NV_LOG. Chiude il punto aperto sul criterio dello slot Rookie. `regolamento.pdf` NON modificato (resta la versione vecchia).
+
+(329) PLAYOFF DREAMERS A DUE TABELLONI (IN CODA, NON pubblicato; ordine di Francesco 28/10 sera): non più un solo tabellone da 8. Due tabelloni da 4 contemporanei, serie al meglio delle 3, 2 round = max 6 turni (prima 3 round / 9 turni).
+- Titolo (1ª–4ª): semifinali 1ª–4ª e 2ª–3ª, poi finale 1°–2° e finale 3°–4°. Tabellone 5ª–8ª: semifinali 5ª–8ª e 6ª–7ª, poi finale 5°–6° e finale 7°–8°. Si definiscono tutte le 8 posizioni.
+- Codice: `drPO` ora ha `R[0]`=[SF titolo 1, SF titolo 2, SF 5–8 n.1, SF 5–8 n.2] e `R[1]`=[finale 1°, finale 3°, finale 5°, finale 7°]; `fin` = posizioni 1..8, `champ` = vincente di R[1][0]. `DR_TOT` da 49 a 46 (40 regular + max 6 playoff; le finestre DR_TURNI oltre la 46ª non si usano). `DR_RN`=["Semifinali","Finali"]; etichette sfida (`sub`) e calendario (SF/F) aggiornate.
+- Schermata Playoff nuova (`.pob`): due blocchi uno sotto l'altro, senza scorrimento laterale (Titolo con coppa, 5ª–8ª), ciascuno con Semifinali → Finali, date del primo turno di ogni round, campione, poi classifica finale 1–8. Immagine condivisa (`shPlayoff`) rifatta con i due tabelloni affiancati.
+- Regolamento (Playoff, in app) e nota in Classifica aggiornati: 46 turni al massimo, due tabelloni. I premi NON sono toccati (Francesco li comunicherà). `regolamento.pdf` e l'artifact «Prospetto turni Dreamers» restano alla versione vecchia (49 turni). Testato anche con scenario simulato: playoff chiusi in 45 turni, classifica 1–8 completa.
+- Resta da definire con Francesco: premi nuovi, e se il tempo recuperato (3 turni) va alla regular season: per ora la regular season resta di 40 turni e i playoff partono sempre dal 10/03.
+
+(330) Playoff a forma di bracket EST/WEST con DUE finali (IN CODA, NON pubblicato; richiesta di Francesco 28/10 sera): ogni tabellone è disegnato come un bracket: semifinale EST (1ª–4ª, o 5ª–8ª) a sinistra, semifinale WEST (2ª–3ª, o 6ª–7ª) a destra, al centro DUE finali (le vincenti delle due semifinali in alto → finale titolo / finale 5°–6°; le perdenti in basso → finale 3°–4° / 7°–8°), con linee gialle per le vincenti e tratteggiate per le perdenti. Sostituisce la versione a due blocchi senza linee della (329): stessa logica di `drPO`, cambia solo la grafica (`.pobk`, `.pk`, linee SVG `svg.lnk`; immagine condivisa `shPlayoff` con i due bracket affiancati, destro speculare). Nomi con il solo nickname per stare nelle colonne strette (cambia con `TEAMS[t].nick` in `mb`).
+
+(331) Playoff Dreamers — bracket secondo lo schizzo di Francesco (IN CODA, NON pubblicato). Immagine condivisione: a SINISTRA i primi 4 (1ª–4ª, 2ª–3ª → Finale titolo con coppa), a DESTRA gli ultimi 4 (5ª–8ª, 6ª–7ª → Finale 5°–6°, speculare), nessun collegamento al centro; sotto, staccate, "Piazzamenti": Finale 3°–4° posto e Finale 7°–8° posto. App: ogni tabellone è un bracket a sé (semifinali → sua finale) con la partita di piazzamento staccata sotto. Motore `drPO` invariato. Sostituisce l'aspetto di (330).
+
+(332) Playoff Dreamers — premio "80 crediti" sopra la Finale 5°–6° (al posto della coppa, che resta solo sul lato titolo): moneta dorata + "80 CREDITI" nell'immagine di condivisione e nel tabellone 5ª–8ª dell'app. pubblicato. (Importo 80 dalla proposta di Francesco; altri premi da definire.)
+
+(333) Playoff Dreamers — immagine: coppa viola Dreamers più grande (≈112px) e luminosa con riflesso; premio "80 crediti" più sobrio (oro spento, senza bagliore). Nota: i colori viola dell'immagine seguono il tema scelto (tema "App" li rende rossi, "Galassia" viola) tramite shThemeCtx. pubblicato.
+
+(334) Playoff Dreamers — premio "80 crediti" allineato: moneta centrata sull'altezza delle cifre, "80" e "CREDITI" sulla stessa linea di base, gruppo centrato sulla Finale 5°–6° (immagine e app). pubblicato.
+
+(335) Dreamers: regular season a 37 turni (DR_REG=37, giornate Dunkest 3–39, fino al 1/3/2027) e playoff al meglio delle 5 (vince chi arriva a 3; 2 round, max 10 turni dal 2/3 fino al 29/3; DR_TOT=47). Aggiornati motore `drPO`, regolamento (sezioni "Regular season e classifica" e "Playoff"), Classifica note, immagine di condivisione e NV_LOG. Provato con stagione simulata: playoff chiusi in 46 turni, classifica finale 1–8 completa. Nota: 37 non è multiplo di 7, quindi gli scontri diretti non sono perfettamente bilanciati (35 lo sarebbe). `regolamento.pdf` e artifact "Prospetto turni Dreamers" restano sulla versione vecchia. PUBBLICATO insieme a (328)–(334).
+
+(336) Regolamento Art. 5 — nuovi premi (IN CODA, NON pubblicato). Regular season (per classifica finale): 1° 30 cr, 2° 40, 3° 50, 4° 150 + slot Rookie, 5° 150 + slot, 6° 250 + slot, 7° 350 + slot, 8° 450 + slot. Playoff: le prime 4 si giocano solo il titolo (nessun premio in crediti); 5ª–8ª si giocano crediti in più in base alla posizione nel loro tabellone: 80 / 50 / 40 / 30 cr. Sostituita la vecchia tabella "regular season + playoff = totale" (1110/560 cr) con due tabelle e box "Novità · Nuovi premi"; NV_LOG "Regolamento: nuovi premi". L'app non assegna i crediti da sola: i premi vanno registrati a mano nei movimenti.
+
+(337) App, tabellone 5ª–8ª: il premio "80 crediti" finiva sotto/dentro il box della finale (moneta, 80 e scritta impilati). Ora è su una sola riga (moneta + 80 + CREDITI), sopra la Finale 5°–6°. pubblicato.
+
+(338) Dettaglio trend giocatore (PDK / Minuti / Efficienza): il tasto condivisione tondo del riquadro finiva sopra il titolo del grafico (PDK, MINUTI, EFFICIENZA). Ora il titolo è spostato a destra del tasto e la riga è alta quanto il tasto (`.tdbox.shcbox .tdh`). pubblicato.
+
+(339) Profili giocatore ovunque (IN CODA, NON pubblicato). Bug: nel Calcola il trend il dettaglio si apriva solo per i giocatori di prima squadra, non per G League (G-Turtles, G-Ducks…): ora `trPl(n)` li trova e mostra il logo G League. Regola generale: toccare il NOME di un giocatore ovunque (`plOpen(n)`, listener globale dopo `glVai`) apre il suo profilo (prima squadra → scheda, G League → profilo G League, FA → profilo FA), senza interferire con tasti/righe che hanno già un'azione. Nel dettaglio trend nuovo tasto "👤 Apri il profilo del giocatore" (`data-plopen`). Controllo automatico su tutte le viste: restano senza profilo solo le righe del Calcolatore scambi (toccare un giocatore lo seleziona per lo scambio) e le righe del trend (aprono il dettaglio, da cui si va al profilo).
+
+(340/341) Live stanotte: tasto condividi su ogni riga (tondino a destra del nome, `data-shpc`) → immagine "prestazione" = il CAMPO della squadra in versione COMPATTA, bordo giallo a ~mezzo cm dal giocatore (stessa grafica della formazione: cornice del colore squadra, logo e nome ai lati in alto, parquet chiaro, linee bianche) con DENTRO solo il giocatore (maglia + tagliandino ruolo/cognome + PDK della partita), senza capitano né punteggio pieno. Funzione `shPcard` (SVG del campo ricreato con `woodPat`, colori cornice da `dlTm`), `SHR_PC`, `shOpen("pc")`. Nessun tasto sul campo. pubblicato.
+
+(342) Immagine "prestazione": sfondo viola Dreamers (shBase) con logo e nome squadra, campetto compatto e più stretto (560px, `shPcCourt`) con solo il giocatore, sotto avversaria/stato e PT-RIM-ASS-MIN; logo originale (LOGO2, proporzioni intatte) grande in alto, senza scritta del nome. Sostituisce la versione a solo campo di (341). pubblicato.
+
+(343) Cronologia modifiche: in cima nuovo tasto "💰 Prezzi e valori giocatori · registro del lunedì" che porta alla sezione "Valori giocatori · registro settimanale" (già esistente da (321), prima era solo in fondo alla pagina); la sezione si apre sull'ultimo lunedì. Primo aggiornamento: lunedì 2/11/2026 ore 12:00. pubblicato.
+
+(344) Pagina "Registro prezzi giocatori" (vista `valreg`, `vValReg`): il tasto "💰 Prezzi e valori giocatori" in Cronologia modifiche ora APRE questa pagina (prima scorreva in fondo). Per ogni lunedì ore 12:00: elenco giocatori modificati con squadra, valore prima → dopo (differenza), prezzo prima → dopo (differenza in cr), % e MOTIVO (`valMotivo`: PDK di riferimento in salita/calo con partite considerate, infortuni, tetto ±15%, altrimenti piccolo aggiustamento di età/andamento); ricerca per giocatore; settimane apribili. Prezzi storici ricalcolati con `valPrezzoAt` (stessa regola di valApply). Finché non arriva il primo lunedì (2/11/2026 ore 12:00) la pagina mostra solo il messaggio con i valori di partenza. Provata con PDK simulato. pubblicato.
+
+(345) Live da TUTTE le sezioni: nuova voce "sottofondo" in FANTA_LIVE (`fondo:true, soft:true`): da qualsiasi schermata (scambi, regolamento, impostazioni…) l'app scarica da ESPN i dati live senza ridisegnare la pagina (così non si perde ciò che stai facendo). Cadenza: ogni 45 s se c'è una partita in corso (`fantaLiveInCorso`), altrimenti ogni 5 minuti; parte 4 s dopo l'apertura e a ogni rientro in primo piano (`visibilitychange`). Con app chiusa o in background il telefono ferma il codice: nessun controllo (servirebbero notifiche push da un server). Provato con `tvEspn` simulato. pubblicato.
+
+(346) Hall of Fame Ducks › Personalizzazioni: il logo grande TEXAS DUCKS ("Originale") ora è una scelta normale della griglia, selezionabile come gli altri. Il tasto "↺ Ripristina situazione ufficiale" torna alla vera situazione ufficiale (due loghi diversi: profili e campo), attivo quando c'è una scelta personalizzata. Area riservata, non nel registro pubblico. pubblicato.
+
+(347) Pallini live (Dynasty TV): prima, se il boxscore NBA non rispondeva, i pallini restavano su tutti i giocatori. Ora "in campo" si ricava da ESPN: 5 titolari + tutte le sostituzioni del play-by-play ("X enters the game for Y") in ordine (funzione esOnCourt); il boxscore NBA, se risponde, corregge. Max 5 per squadra. pubblicato.
+
+(348) Dynasty TV: etichette colonne tabellino rinominate solo a video: Rim→RIM, Ass→AST, Rec→STL, Pp→TOV (anche nella tabella del Centro/classifica e nella legenda). Nessun dato, indice o chiave cambiato (PDK, archivio, Dunkest intatti). pubblicato.
+
+(349) Home in modalità notte (opzione 6): colonna loghi a sinistra (56 px, +15%), a destra banner partite NBA che scorre da destra a sinistra restando dentro la sua colonna (non passa sopra i loghi; con "riduci movimento" non scorre), poi "I miei" (squadra scelta, da campoNotteMap) e "★ Seguiti" (da osNight) con PDK live/finale e totale; tocco sul giocatore apre il profilo (plOpen). Funzioni homeNotte / homeNotteRefresh / bindHomeNotte; si aggiorna da solo con il live (segBadge). Fuori dalla notte resta la griglia di prima. pubblicato.
+
+(350) Hall of Fame Ducks › Personalizzazioni: nuova sezione "Home in modalità notte" con 3 scelte salvate solo sul telefono (dl_hnl): Classica (griglia grande, predefinita), Versione A (loghi in riga in cima + banner partite + miei + seguiti), Versione B (loghi a lato, la (349)). Prima la (349) era attiva per tutti in notte: ora resta la classica finché non si sceglie. Area riservata, non nel registro pubblico. pubblicato.
+
+(351) Campo › "Live stanotte" e "Migliori del turno": toccando una riga (tranne il tasto condividi) si apre Dynasty TV direttamente sulla partita giusta (TVS.d/g) con il box della squadra del giocatore già selezionato (TVS.side). Attributo data-clgo sulla riga. pubblicato.
+
+(352) Home notte (Versioni A e B): toccando una partita del banner si apre la partita su Dynasty TV; toccando un giocatore (miei e seguiti) si apre la sua partita col box della sua squadra (data-hgo; campoNotteMap e osNight ora restituiscono anche k/sd/dy). Banner senza scatti: velocità costante (≈27–40 px/s), copie ripetute quanto serve per un giro continuo, animazione su translate3d, e un orologio unico (hnPhase) che dopo ogni aggiornamento o ridisegno lo riporta al punto giusto invece di ripartire da zero. pubblicato.
+
+(353) Home notte (A e B): dalle 08:30 italiane fino alla prima partita della notte USA la Home mostra "stanotte": banner con le partite in arrivo (orario) e, per i miei e i seguiti la cui squadra NBA gioca, avversario, orario, PDK migliore della stagione da superare e media PDK storica contro quell'avversario (stagione corrente + 2 precedenti, con numero di gare). Appena ESPN segna la prima partita L/F torna live (giocatori in campo, seguiti, banner partite in corso). Prima delle 08:30 restano i risultati della notte appena finita. Funzione homeFase(). pubblicato.
+
+(354) Home notte, fase "stanotte": per i miei giocatori aggiunta la PREVISIONE PDK con la stessa logica del tasto Cap (indice Cap: 40% media vs avversario + 35% ultimo 15% + 25% stagione, corretto dalla difesa dell'avversario contro lo stesso ruolo nelle sue ultime 5 gare; capDati/capDef, con cache 10 min) accanto al PDK da superare, e la riga di difesa (dura/nella media/morbida). Per i SEGUITI al posto del PDK da superare c'è il TREND (come l'Osservatorio, tendenza sulle partite della stagione). pubblicato.
+
+(355) HOME UFFICIALE in modalità notte, per TUTTI (predefinita): colonna loghi a sinistra, banner partite che scorre, pannello "Tutte le squadre" con TUTTI i giocatori Dreamers delle squadre che giocano quella notte (a scorrimento verticale, con il logo della squadra proprietaria): fase "stanotte" (dalle 08:30: avversario, orario, media vs avversario, previsione logica Cap, PDK da superare) poi live (PDK live/finale, tocco → partita su Dynasty TV col box), e sotto i seguiti di quel telefono (trend in pre-partita, PDK in live). Personalizzazioni (area segreta) ora offre: Ufficiale (predefinita), Griglia (come prima), Ducks A e Ducks B (le versioni solo Ducks). Chi ha già scelto A/B le mantiene; chi non aveva scelto vede la ufficiale. pubblicato.
+
+(356) Home ufficiale notte: la tabella "Tutte le squadre" è alta circa 7 righe (312 px, a scorrimento) così sotto resta subito visibile lo spazio dei seguiti. pubblicato.
+
+(357) Impostazioni (rotellina) › nuova scheda "🌙 Notte" per TUTTI: scelta della Home in modalità notte (Ufficiale tutte le squadre · Griglia · Versione A · Versione B) e "La mia squadra" con le 8 squadre (dl_hnt): A e B mostrano i giocatori della squadra scelta, quindi ogni GM ha la sua versione personale. Spostata qui dalla sezione Personalizzazioni dell'area segreta (rimossa da lì). pubblicato.
+
+(358) Impostazioni › Notte: aspetto e dati ora sono indipendenti. Aspetto: Griglia / Loghi a lato / Loghi in cima (dl_hnl). Dati: "Tutte le squadre · ufficiale" oppure "La mia squadra" (dl_hns) + scelta delle 8 squadre (dl_hnt). Quindi entrambe le grafiche con i dati esistono sia in versione ufficiale sia in versione squadra. Chi aveva già scelto A/B mantiene la versione squadra; chi non ha scelto ha lato + ufficiale. pubblicato.
+
+(359) Impostazioni › Notte: scelta unica "Versione della Home" con 9 caselle: Ufficiale (tutte le squadre) + una versione personale per ognuna delle 8 squadre (solo i suoi giocatori, con i colori della squadra sui riquadri), così ogni GM usa la sua e non solo la ufficiale. Aspetto (griglia / loghi a lato / loghi in cima) resta separato. Il riquadro dei giocatori della squadra ora scorre come quello ufficiale (312 px). pubblicato.
+
+(360) Home notte: comportamento identico in TUTTE le versioni (2 aspetti × Ufficiale + 8 squadre): entrambe le tabelle (giocatori e seguiti) senza limite di righe e a scorrimento con la stessa altezza (312 px), tutte le righe cliccabili (partita su Dynasty TV col box giusto), cambio alle 08:30 italiane (prima: notte appena giocata; dopo: stanotte con previsione PDK, obiettivo da raggiungere e trend per i seguiti; poi live alla prima partita), un'unica funzione (homeNotte) per tutte. Verificato con un test su tutte le 36 combinazioni (aspetto × versione × fase). pubblicato.
+
+(361) Home ufficiale anche di GIORNO, nei colori dello stile dell'app (Classico blu, Tabellone nero, ecc.: usa le variabili del tema --pn1/--pn2/--line/--gold/--fg/--muted); di notte resta viola. Stesse funzioni e stessa logica (08:30, live, scorrimento, tocco). Prima la griglia grande era la Home di giorno: ora lo è solo scegliendo "Griglia" in Impostazioni › Home (la scheda 🌙 Notte è ora 🏠 Home). Il passaggio vale per tutti i telefoni che non hanno scelto Griglia. pubblicato.
+
+(362) Loghi della Home di giorno SEMPRE su tessera colorata con i colori della squadra (gradiente, bordo, alone, righe) per tutti, in Classico (blu) e Tabellone (nero) e negli altri stili giorno; in modalità notte resta la tessera viola. Le versioni a loghi non colorati NON esistono più (scelta dell'utente). In area riservata Ducks › Personalizzazioni nuova sezione "Home Ducks · i miei giocatori" (SEGRETO, non in `NV_LOG`): due tasti Classico/Tabellone che impostano stile app + Home solo Ducks (`hnScopeSet("team")`, `hnTeam("DUC")`) e tasto per tornare alla Home ufficiale (tutte le squadre). pubblicato.
+
+(363) Impostazioni grafica: l'anteprima del campo (con Giorno/Notte/Nascondi/Ripristina) e i tasti squadra compaiono solo nelle schede Campo, Giocatori e Squadra; nelle schede App, Home e Altro restano chiusi (`PVON` in `vImpostazioni`). pubblicato.
+
+(364) Live stanotte: la colonna Giocatore (parte blu scura) e piu larga (158-170px, padding destro 42px) e il tasto condividi sta tutto dentro, senza toccare il testo rosso del quarto/minuto live e senza essere tagliato (`.clbox td:first-child`, riga CSS "(142)"). pubblicato.
+
+(365) Home (tutte le versioni): il tempo di gioco della partita (es. "3:02 3rd") sta sotto il nome, dove era gia, ma ora e in ROSSO (classe `.hmc`) per le partite live; "Finale" resta com'era. Vale in tabella giocatori e seguiti. pubblicato.
+
+(366) Home ufficiale (tutte le squadre): il titolo "TUTTE LE SQUADRE" e "N GIOCATORI" sono tasti. Tocco su "Tutte le squadre" = giocatori raggruppati per franchigia (ordine delle squadre in Home, dentro ciascuna per PDK); tocco su "N giocatori" = ordine PDK decrescente (come prima, predefinito). Vale in live e nel pre-partita. Scelta salvata su questo telefono (`dl_hso`, `HN_SO`, `hsoHead`). pubblicato.
+
+(367) Home, banner partite scorrevoli: (1) davanti alle partite NBA ci sono 4 banner DREAMERS (le sfide del turno in corso, `drPairs`/`drTeam`) con i loghi delle nostre squadre, punteggio Dreamers e stato (IN CORSO / LIVE / FINALE · Tn / DAL data); bordo oro; tocco = apre la sfida (`TVS.dr`). (2) Anche le partite NBA usano i loghi (`tvLogo`, classe `.hml`) al posto delle sigle; le sigle restano solo finche il logo non carica. pubblicato.
+
+(368) Banner Dreamers in Home: loghi delle squadre -6% (26px -> 24,4px); Peacocks, Mooses ed Eagles -10% rispetto agli altri (22px) tramite `--k:.9` sul contenitore `.hmdl`. pubblicato.
+
+(369) Home, banner partite scorrevole: si puo trascinare con il dito (o il mouse). Al tocco il banner si ferma, segue il dito (infinito, senza stacchi), al rilascio riparte da dove e rimasto (`hnDrag`, Web Animations: `currentTime`; `HN_T0` riallineato, `HN_DRAG` blocca gli aggiornamenti mentre si trascina). Un trascinamento non apre la partita; un tocco semplice si. CSS `touch-action:pan-y` su `.hmq`. pubblicato.
+
+(370) Home ufficiale: ogni tocco su "TUTTE LE SQUADRE" fa ruotare la squadra mostrata per prima, con i suoi giocatori in cima (poi le altre in ordine): 1 Ducks, 2 Dolphins, 3 Foxes, 4 Peacocks, 5 Spiders, 6 Eagles, 7 Turtles, 8 Mooses, poi riparte. Accanto al titolo compare il nome della squadra in cima. "N GIOCATORI" riporta all'ordine PDK. Stato `HN_SI`/`HN_ORD`, salvato in `dl_hsi`. pubblicato.
+
+(371) CHIUSURA/APERTURA TURNI ALLE 12:30 italiane: `drGate(e)` = true dal 12:30 (Europe/Rome) del giorno dopo l'ultima notte USA `e` del turno. `drWeek().closed` richiede ultimo dato >= fine turno E drGate; `drCurWeek` passa al turno successivo solo da quell'ora (prima resta quello in corso, anche se la sua ultima notte e gia finita); i banner Dreamers della Home usano `drCurWeek`. Cosi i dati Dunkest sono gia caricati. Test: `window.DR_NOW` forza l'ora. Il cambio compare alla prossima apertura/aggiornamento della pagina. pubblicato.
+
+(372) Home (tutte le versioni): quando non ci sono ancora dati della partita/della notte la tabella non resta vuota. Ufficiale = tutti i giocatori di tutte le squadre per MEDIA PDK decrescente (logo squadra, NBA, "media PDK"); versioni delle singole squadre = i giocatori della squadra con la media PDK; seguiti = i seguiti con la media. Intestazione "MEDIA PDK". Stessa casella a scorrimento e stessi tocchi (apre il giocatore). Appena arrivano i dati la tabella viene sostituita da sola (controllo ogni 4 s, `.hmph`, `avgP`, `phList`). Il toggle Tutte le squadre / N giocatori funziona anche in attesa. pubblicato.
+
+(373) Area riservata Ducks (Hall of Fame): piccolo tasto "🕐 Orari" accanto a "Entra in una sezione" → vista `orari` con tutti gli orari di aggiornamento (ora italiana): 06:00 cambio data USA, 06:47 e 13:17 calendario NBA ESPN, 07:30 ESPN ufficiale nelle stats + stop animazioni live, 08:30 Home sulle partite della prossima notte, 12:30 chiusura/apertura turni Dreamers (classifica, playoff), lunedi 12:00 valori e prezzi, Dunkest senza orario fisso, live ogni 45 s. Se cambia un orario nel codice aggiornare anche `orari()`. SEGRETO, non in NV_LOG. pubblicato.
+
+(374) Home: il passaggio alle partite della PROSSIMA notte (prossimi scontri, banner partite in arrivo) ora scatta alle 14:00 italiane (prima 08:30): `homeFase` esclude la finestra 06:00-14:00 (`mn>=360&&mn<840`). Fino alle 14:00 la Home mostra i risultati della notte appena finita. Aggiornata anche la pagina Orari (area riservata Ducks). Sostituisce l'orario di (353). pubblicato.
+(375) Home pre-partita: banner in alto = partite NBA della prossima notte + sfide Dreamers del turno (corrente se ancora in corso, successivo dopo le 12:30), senza etichetta LIVE. pubblicato.
+(376) Home pre-partita, "Da superare": ora è il MIGLIOR PDK del giocatore nel turno Dreamers in corso (quello della partita in arrivo), cioè il punteggio già bloccato nello scontro diretto; prima era il record di tutta la stagione. Senza partite nel turno mostra —. pubblicato.
+(377) Sfida Dreamers, carte della panchina (7°-10°): il cartellino grande ora mostra già il valore dimezzato (es. 18,5 → 9,3), come il capitano mostra già il ×1,5; i giorni sotto restano i PDK veri. Vale anche nell'immagine di condivisione (sotto: PDK vero ×½). pubblicato.
+(378) Tribuna del roster (pagina squadra Dreamers): lucchetto "giocatore finito" nello stile ufficiale (tondo scuro con lucchetto giallo; segue lo stile scelto in Personalizzazioni), in una colonna fissa a sinistra del PDK, quindi i lucchetti sono tutti allineati e non toccano la pillola OUT sotto il nome. pubblicato.
+(379) Immagine di condivisione "prestazione" (giocatore sul campetto): campetto, maglia e targhetta ingranditi del 37,5% (25% + altro 10%); tolte la riga bianca partita e la scritta "PDK formula Dunkest" in fondo con data e ora: resta solo la riga delle statistiche (PT, RIM, ASS, MIN). Tela 1080x1380. pubblicato.
+(380) Home, elenchi "Tutte le squadre" e "Seguiti": sottile linguetta in fondo (barretta grigia) da trascinare in su/giù per accorciare o allungare l'elenco (90-900 px); l'altezza si ricorda su questo telefono (dl_hh), doppio tocco = torna all'altezza standard. pubblicato.
+(381) Linguetta Home: dopo il trascinamento il tocco non apre più il giocatore che si trova sotto il dito (i click vengono ignorati per 0,7 s dopo un ridimensionamento). pubblicato.
+(382) Linguetta Home: ora ha il colore dell'intestazione della Home del momento (viola di notte, oro di giorno, colore squadra nelle viste di squadra), lo stesso della sottolineatura del titolo. pubblicato.
+(383) Linguetta del riquadro Seguiti: stessa tinta di quella dell'altro elenco (viola di notte, oro di giorno); prima di notte era gialla come il titolo. pubblicato.
+(384) NUOVA sezione IA Trade dentro Trade (terza scheda accanto a Tutte le trade e Trade speciale). Percorso a 3 passi con possibilità di tornare indietro: 1) ruoli cercati in ordine (1ª, 2ª, 3ª necessità, almeno la prima); 2) cosa offro: giocatori del roster + crediti (dalla cassa fino al saldo, di portafoglio postdatati max 10, post-Draft max 30); 3) trade a 2 o a 3 squadre. Restituisce 5 scambi con la matematica del calcolatore (punti trade + crediti) corretta di ±8% dalle stelline, con il bisogno dell'altra squadra (ruoli deboli per valore potenziale e per PDK attuale). Regola dei ruoli: ogni giocatore dato richiede in cambio uno dello stesso ruolo; solo i giocatori sotto trade speciale (fuori rosa) si scambiano senza contropartita. Trade a 3: giro tu → squadra 2 → squadra 3 → tu. Tasto Aggiorna: altri 5 senza ripetizioni, all'infinito. "Apri nel calcolatore" carica lo scambio nel calcolatore. pubblicato.
+(385) IA Trade, livello di equilibrio: nella pagina dei risultati tre pulsanti (Equilibrata fino a ±10%, Vinco io tra +10% e +40%, Truffo oltre +40%, stesse soglie del calcolatore); la pagina si ricalcola con il livello scelto, valido anche a 3 squadre. Il badge della carta mostra ±x% / Vinci +x% / Truffa +x%. pubblicato.
+(386) IA Trade, crediti post-Draft = debiti: il tetto non è più fisso a 30 ma dipende dalla classifica Dreamers. Premio regular season per posizione finale 30/40/50/150/150/250/350/450 (cresce col piazzamento peggiore): il minimo GARANTITO è il premio della miglior posizione ancora raggiungibile (1 + squadre che hanno già più vittorie di quante la squadra ne potrà mai fare; i pareggi di vittorie contano come ancora raggiungibili). Si parte da 30 per tutti e il tetto sale man mano che la classifica si consolida. Si sottraggono i debiti post-Draft già aperti (DEBITI). I premi playoff non contano. pubblicato.
+(387) Correzione: IA Trade non è più una scheda dentro Trade ma una voce della tendina SCAMBI (Calcolatore trade · Osservatorio · IA Trade), vista a sé (`iatrade`); la scheda Scambi resta evidenziata e la pagina Trade torna con le sole schede Tutte le trade e Trade speciale. pubblicato.
+(388) IA Trade, crediti di portafoglio: debito separato dal post-Draft, tetto 10 cr per tutti a prescindere dalla posizione, meno i debiti di portafoglio già aperti (es. Dolphins 5 già promessi → 5 disponibili). Il post-Draft resta: minimo 30, sale col premio regular season garantito, meno i debiti post-Draft aperti. pubblicato.
+(389) IA Trade: due novità. 1) "Indifferente": nel modo per ruolo si può non indicare nessuna priorità e far valutare tutti i ruoli. 2) Nuovo modo "Per giocatore" (interruttore in alto): scelgo io fino a 3 giocatori che voglio (ricerca in tutta la lega o per squadra), facoltativamente indico gli intoccabili e i crediti, e l'app costruisce cosa dare con le stesse regole (ruoli compensati, speciali senza contropartita, livello equilibrata/vinco/truffo, tetti dei crediti). Giocatori di una sola squadra = trade a 2; di due squadre diverse = trade a 3 in automatico (uno scambio con ciascuna). pubblicato.
+
+(390) **IA Trade e Calcolatore: interesse dell'altra squadra + tasto condividi.** Ogni scambio suggerito dall'IA (2 e 3 squadre, per ruolo e per giocatore) mostra per ogni squadra partner un commento a 3 livelli (alto/medio/basso) calcolato su bisogno di ruolo (riceve un ruolo dove è carente, cede uno dove abbonda) e saldo di valore dal suo punto di vista (`iaInt`). Lo stesso blocco compare nei risultati del Calcolatore (2 e 3 squadre). Su ogni card IA c'è il tasto condividi (`iaShare`: carica lo scambio nel calcolatore, genera l'immagine, ripristina lo stato); l'immagine include la sezione "Interesse delle squadre" (le altre squadre, non la propria). pubblicato.
+
+(391) **Interesse dell'altra squadra: trend dell'ultimo mese.** `iaTrend(n)` calcola, per ogni giocatore che la squadra partner cede, la tendenza dei PDK nelle gare degli ultimi 30 giorni (retta dei minimi quadrati, `grTrend`). Compare solo con almeno un mese di dati nella stagione in corso (prima gara ≥28 giorni prima dell'ultima, ≥6 gare nella finestra): finora è dormiente, parte da metà novembre. Sopra ±10% entra nel commento e nel punteggio (in salita: non ha voglia di cederlo; in calo: se ne libera volentieri; ±20% = forte; correzione massima ±0,3 sul punteggio d'interesse). Vale anche nel Calcolatore e nell'immagine condivisa. pubblicato.
+
+(392) **Trend anche sui giocatori che do io.** Nel commento di interesse conta anche l'ultimo mese dei giocatori che la squadra partner riceve da me: in salita le interessano di più, in calo meno (stessa soglia ±10%, forte ±20%, solo con almeno un mese di dati). pubblicato.
+
+(393) **Home: la casellina dei giocatori diventa a 3 pagine.** Giocatori (come prima, anche le previsioni pre-14:00) · Risultati Dreamers (turno in corso, frecce ‹ › per sfogliare i turni, punteggi, scarto, LIVE) · Classifica Dreamers (posizione, V, P, media PDK). Si cambia con lo swipe orizzontale (verso destra = pagina successiva, verso sinistra = precedente, in ciclo) o toccando i puntini sotto. La forma e la linguetta di ridimensionamento restano. Toccando una sfida si apre il match Dreamers; toccando una squadra della classifica si apre la sua scheda Dreamers (record ecc.). Stato `HN_PG`/`HN_RK`; stile con le variabili della Home (giorno/notte/squadra). pubblicato.
+(394) Home casellina: loghi della classifica e dei risultati allineati (colonne a larghezza fissa). pubblicato.
+(report) 29/10/2026 — report Dunkest automatico caricato: notti 28/10
+
+(395) **IA Trade: età, classifica e trade a 3 vera.** (a) Nuove preferenze dell'altra squadra (`iaProf`/`iaPref`), usate sia per ordinare gli scambi sia nel commento di interesse (IA e Calcolatore): ETÀ MEDIA del roster (preferisce giocatori di età simile alla sua media; peso maggiore se la squadra è molto più vecchia/giovane della media lega); CLASSIFICA Dreamers: 1ª-2ª (3ª solo se ancora in corsa; segnale smorzato nelle prime giornate) = squadra forte, preferisce stelline/PDK/trend migliori; zona bassa = preferisce giovani, più valore rispetto ai crediti del contratto (valore in crediti ÷ crediti del roster) e buona efficienza. (b) Modo "Per giocatore" con giocatori di 2 squadre: non più due scambi paralleli ma UNA trade a 3 vera: io → g, io → r e g → r (un giocatore di g va a r, o viceversa), ruoli compensati per ognuna delle tre squadre (speciali escluse) e crediti che tornano; commento di interesse per ognuna delle due squadre. Card, apertura nel calcolatore e immagine condivisa aggiornate; il testo dell'interesse nell'immagine va a capo. pubblicato.
+
+(396) **IA Trade: scambi scelti in base all'interesse di TUTTE le squadre.** Il punteggio di ogni candidato (2 e 3 squadre, per ruolo e per giocatore, anche la trade a 3 vera) ora è dominato dall'interesse reale delle squadre coinvolte (quello mostrato nei commenti: ruolo, età, classifica, valore, trend): 55-60% dal mix «meno interessata ×0,55 + media ×0,45», poi adattamento ai tuoi bisogni, stelline e quadratura. Nel livello Equilibrata, se ci sono almeno 10 scambi dove nessuna squadra è sotto «medio», restano solo quelli. Vinco io / Truffo rispettano comunque i loro limiti (le squadre lì sono per forza meno entusiaste, quindi si ordinano comunque dalla più interessata). pubblicato.
+
+(397) **IA Trade: rendimento reale dei giocatori (`iaPerf`).** Esempio segnalato: Jabari Smith dai Foxes (1ª) offerto contro Kyshawn George (poche stelline PDK). Ora il rendimento di un giocatore è un mix di media di riferimento PDK (40%), media stagionale (30%, cresce con le gare giocate) e media delle ultime 10 gare (30%, servono ≥3 gare), corretto dal trend dell'ultimo mese (fino a ±9%). Nell'interesse di ogni squadra: le squadre in alto (peso ×0,40 sulla classifica, segnale meno smorzato nelle prime giornate) vogliono rendimento, stelline e trend migliori e il commento riporta i PDK (es. «riceve giocatori che rendono meno: PDK 19,0 contro 26,0»); tutte le squadre hanno comunque un piccolo malus se perdono rendimento a parità di valore. Con il caso Smith/George l'interesse dei Foxes scende e lo scambio è segnalato come tale. pubblicato.
+
+(398) **IA Trade: confronto con la stagione precedente e rookie.** (a) Veterani: rendimento = riferimento (pdkMix) 35% + media stagionale 35% (cresce con le gare) + ultime 10 gare 10% (prima 30%), poi CONFRONTO con la scorsa stagione (±30%, parametro chiave: servono ≥3 gare quest'anno e ≥15 l'anno scorso; peso pieno da 8 gare) e trend dell'ultimo mese (±9%). Nei commenti: «rispetto alla scorsa stagione: cede X in calo (PDK 34,1 → 15,8)». Chi cede un giocatore in calo se ne libera volentieri, chi lo riceve è meno interessato (e viceversa per chi cresce). (b) Rookie: contano PDK ed efficienza del primo anno rispetto alla soglia del ruolo (guardia 0,60 · ala 0,66 · centro 0,80; ottimo da 0,60 / 0,66 / 0,85); etichette «ottimo / buon rookie / da valutare». Le squadre che puntano a vincere non sono interessate ai rookie e li cedono volentieri; quelle in zona bassa li cercano (di più se già rendono) e li cedono malvolentieri. pubblicato.
+
+(399) **IA Trade: il trend pesa in proporzione alla sua forza.** Curva convessa (`iaTs`): trend lievi (±10-15%) spostano poco (~2-3%), ±30% circa ±8%, da ±60% in su il massimo (±22%, prima ±9%); stessa curva nel peso sull'interesse delle squadre che cedono/ricevono; etichette «forte» da ±20% e «fortissimo» da ±40%. Il confronto con la stagione precedente scende da ±30% a ±20% e viene COMPENSATO dal trend: se il giocatore sta già recuperando (o crollando) in senso opposto al confronto, la differenza con l'anno scorso conta meno (fino a −75%). Esempio: Barnes (−32% sull'anno scorso): senza trend 24,2; trend +30% 26,7; trend +60% 31,0. pubblicato.
+
+(400) **IA Trade: il trend conta davvero solo con 12+ gare nell'ultimo mese.** Il peso del trend (rendimento, interesse delle squadre, compensazione del confronto con l'anno scorso) viene moltiplicato per un'affidabilità che cresce con le gare della finestra: 6 gare = 25%, 9 = 62%, 12 o più = 100%. Esempio (trend +60%, Barnes): 6 gare 25,9 · 9 gare 28,4 · 12 gare 31,0. pubblicato.
+
+(401) **Home: swipe della casellina fluido + «indietro» torna alla Home.** (a) La casellina è un vero carosello a 5 slot (Giocatori', Classifica, Risultati, Giocatori, Classifica': gli estremi sono copie per il giro continuo): il dito trascina la pista con `translate3d` in tempo reale (si vedono le due pagine affiancate), al rilascio scatta alla pagina più vicina con curva morbida (soglia 22% della larghezza o velocità); non scorre da solo; verso destra = pagina successiva (Giocatori → Risultati → Classifica → Giocatori), verso sinistra la precedente; i puntini animano lo stesso scorrimento; l'altezza si adatta alla pagina visibile (anche quando si usa la linguetta). Un trascinamento non apre nessuna riga. (b) Aprendo una sfida o una squadra dalla casellina, il tasto indietro («‹ Home») riporta alla Home da cui si è partiti (flag `DR.fh`, azzerato se dentro Dreamers si cambia sezione). pubblicato.
+
+(402) **Menu Centro gestione senza Risultati e Classifica; tasto «Indietro» ovunque.** (a) Risultati e Classifica sono nella casellina della Home, quindi tolti dal menu a tendina di Centro gestione (le schermate restano raggiungibili dai collegamenti interni). (b) Cronologia di navigazione esistente (pila `NAVH`) estesa: ogni sezione che non ha un proprio tasto ‹ ne riceve uno universale («‹ Home», «‹ Roster Ducks»…) sotto il menu in alto a sinistra (`navUniv`, id `navbk`), che torna alla schermata da cui si è arrivati e dice dove porta; i tasti ‹ a destinazione fissa Dynasty TV, Hall of Fame, Cronologia modifiche, Impostazioni e Novità ora usano la cronologia (BK_IDS esteso). Anche swipe dal bordo e tasto indietro di Android sfruttano il nuovo tasto. pubblicato.
+
+(403) **IA Trade: nuova scheda degli scambi (2 e 3 squadre), in COLONNE.** Le squadre (2 o 3) sono affiancate in alto con il logo e sotto ognuna ha la sua colonna, sfumata con il colore della squadra, con i giocatori che RICEVE (nome, stelline, valore, «da chi») e i crediti che riceve; sotto le caselline i crediti che dai e da dove arrivano (post-Draft, portafoglio, cassa). Vale per scambio a 2, a 3 per ruolo (giro A→B→C) e a 3 vera (`iaRec`/`iaCard`). pubblicato.
+(404) Calcolatore trade e condivisione in colonne: stesso formato della scheda IA (squadre affiancate con logo in alto, sfumatura del colore squadra, giocatori/pick/crediti ricevuti sotto, «da» chi) sia nel calcolatore a 2 e a 3 sia nell'immagine condivisa; in ogni colonna c'è il vantaggio/svantaggio % della squadra (saldo ricevuto−dato ÷ volume massimo scambiato, ≥3% vantaggio, ≤−3% svantaggio, altrimenti «alla pari»), anche nelle schede IA. Helper `trBal`/`trCols`/`trRecVT`/`trRecV3`. pubblicato.
+(405) Nomi giocatori abbreviati («S. Barnes») nelle colonne di schede IA, calcolatore e immagine condivisa, con pallino del ruolo davanti (rosso guardia, blu ala, giallo centro); valore non più tagliato se le stelle sono tante. pubblicato.
+(406) Home, casella multi-pagina: lo swipe si fa solo sulla barra sotto la casella (non più dentro), a giro infinito in entrambe le direzioni; fix dello scatto (il transitionend dei figli chiudeva la corsa a metà: ora conta solo la pista), niente transizione di altezza, altezza massima durante il trascinamento. Puntini con freccette ‹ › (scelta dell'utente, `HN_CTL="arr"`; la rotella `"wheel"` resta disponibile). pubblicato.
+(407) Grafici trend colorati dall'andamento: verde (linea, area sfumata sotto, pallini) se il trend è positivo, rosso se negativo. Vale per la scheda giocatore condivisa (TREND PDK), per i grafici del foglio trend in app (e relativa condivisione) e per le sparkline di Novità; aggiunta l'area sfumata sotto la linea dove mancava. pubblicato.
+(408) Giocatori sempre cliccabili verso il profilo: box score di Dynasty TV (nome e leader della partita), righe di Home «Giocatori» e tabella risultati/campo (toccando il nome si apre il profilo, il resto della riga apre la partita su Dynasty TV). Modalità notte: segue anche Dreamers e G-Dreamers (stile Galassia/notte forzato mentre è attiva, indipendentemente dal tema scelto). pubblicato.
+(409) Home, casella multi-pagina: proposta con una sola freccia › in basso a destra, alla quota della linguetta, per girare all'infinito (Giocatori → Risultati → Classifica → …); attiva (`HN_CTL="one"`; `arr` e `wheel` restano disponibili). Ordine delle pagine ora coerente con i puntini. pubblicato.
+(410) IA Trade: (a) per giocatore, motore a «ragnatela» fino a 5 squadre: i movimenti si scompongono in giri per ruolo (ogni squadra riporta a casa gli stessi ruoli che cede, dà e riceve almeno un giocatore, ha almeno 2 controparti), ricerca per tentativi con budget ~1 s, crediti compensati a rete (max squadre−1 pagamenti), ogni risultato ricontrollato con saldo % e interesse di ogni squadra; selettore «Quante squadre» (2-5, «fino a») e «Guadagno» (equilibrata/vinco io/truffo) nelle Opzioni e anche sopra il risultato per cambiarli in corso (per ruolo: 2-3 squadre + guadagno). (b) Un solo scambio alla volta, in entrambe le modalità, con bottone grande «Aggiorna» + rotellina (giallo di giorno, rosso in modalità notte, fisso in basso); finiti gli scambi resta lo stesso con l'avviso «Non ci sono altre possibilità». (c) Layout: 2-3 squadre colonne verticali, 4-5 squadre in orizzontale (scorrevole in verticale/portrait con invito a ruotare, tutte affiancate in orizzontale); la condivisione supporta fino a 5 colonne; «Apri nel calcolatore» solo fino a 3 squadre. pubblicato.
+(411) Interesse delle squadre: fonte «cassa utile 30 crediti» (CORRETTA il 29/10: 30 cr è il prezzo minimo di una trade speciale). Chi ha meno di 30 crediti è interessato a ricevere crediti quando lo scambio la porta a 30 o più di cassa utile subito (bonus pieno `EQP.lowIn` = +0,25; se ci arriva solo in parte, metà proporzionale); cedere crediti che la lasciano sotto 30 le interessa meno (`EQP.lowOut` = −0,22). Soglia e pesi sono in EQ_DEF (`lowT`, `lowIn`, `lowOut`) e modificabili nella sezione segreta (412). pubblicato.
+
+(412) GESTIONE EQUILIBRIO TRADE (area riservata Ducks › Hall of Fame › prima tessera "⚖️ Gestione equilibrio trade", vista `eq`) — SEGRETO, non in `NV_LOG`. Tre schede: **Simulatore** (2/3/4/5 squadre; "Nuova simulazione / Aggiorna" sceglie a caso una squadra e 1-2 giocatori di un'altra, "Stesso scenario" ricalcola dopo aver cambiato numeri; elenco di TUTTE le proposte con saldo %, interesse alto/medio/basso di ogni squadra e scheda completa; modalità Equilibrate ±10% in automatico, oppure Vinco io / Truffa con percentuale scelta, ±3), **Parametri** (tutti i numeri dell'interesse, ora raccolti in `EQ_DEF`/`EQP` e usati da `iaInt`, `iaPref`, `iaPerf`, `iaNeed`, `iaTs`, `iaP`, `iaMix` e dai punteggi dei builder) e **Valori** (valore, prezzo e crediti di contratto di ogni giocatore, `VAL_CR`, esponente `VAL_EXP`, `PICK_CR`). Le modifiche stanno in localStorage `dl_eq` e valgono SOLO dentro `eqWith()` (applica, calcola, ripristina): fuori dalla sezione l'app usa sempre i valori ufficiali. Due ripristini separati (parametri / valori e crediti), due "Condividi" che copiano un prompt per Claude con vecchio → nuovo, e il tasto "Registro dei lunedì" (apre `valreg`; il tasto indietro torna qui). `VAL_EXP`/`VAL_CR` ora sono `let`. Per rendere permanenti i numeri: scrivere i parametri in `EQ_DEF`, i valori in `VALORI`/`PREZZO_FISSO`/`VAL_BASE` e `VAL_CORREZ`. pubblicato.
+
+(413) Impostazioni (rotellina): entrando si apre per prima la scheda **Home** (anche messa per prima nella barra delle schede). Tolte le versioni personali della Home per squadra: resta SOLO la Home ufficiale (`hnScope()` ora restituisce sempre "all"; i giocatori di una squadra si vedono prima con l'ordine dei loghi). Al posto di «Versione della Home» c'è «Colore della Home di giorno»: Blu (Classico) o Nero (Tabellone), di notte resta viola. Stessa cosa nell'area riservata Ducks › Personalizzazioni: tolta la card «Home Ducks · i miei giocatori», sostituita da «Home · colore di giorno» (Blu/Nero). pubblicato.
+
+(414) Gestione equilibrio trade › Parametri: ora si regolano su una scala UMANA 0-100 (0 = non pesa, 100 = massimo; i crediti restano in crediti). L'app converte da sola nel valore tecnico (`eqT`/`eqH`, intervalli in `EQ_SC`; senza voce 0..1 = percentuale diretta; es. vsk 0-2,5, sck 0-5, tse 0-3, tsrel 0-20) e salva in `EQO` il valore tecnico. Il prompt «Condividi parametri» riporta per ogni parametro la scala 0-100 E il VALORE TECNICO già calcolato da scrivere in `EQ_DEF`, così non ci sono errori di conversione. Il salvataggio del campo è differito (`setTimeout`) per evitare errori di re-render. pubblicato.
+
+(415) IA Trade e calcolatore: con 4 o 5 squadre le colonne non si allargano più oltre lo schermo (la scheda usciva dal bordo): ogni squadra è una RIGA a tutta larghezza, giocatori e crediti a sinistra, logo/nome/«riceve»/% a destra (`.iarows` in `trCols`; tolto lo scorrimento orizzontale e l'avviso di ruotare il telefono). Con 2-3 squadre restano le colonne. pubblicato.
+
+(416) IA Trade «Per giocatore»: ora 2 passi invece di «Voglio» e «Opzioni» separati. Passo 1 «Voglio e opzioni»: squadra, quante squadre (2-5), guadagno e scelta dei giocatori voluti; passo 2 «Intoccabili» (finestra successiva, prima del risultato): giocatori che NON vuoi dare + crediti, poi «Trova scambi». Risultato invariato (i riepiloghi in alto riportano ai due passi). pubblicato.
+
+(417) IA Trade «Per giocatore»: i passi non sono più tasti ma una linguetta-titolo non cliccabile (`.iatab`) con la sezione in cui ci si trova (Voglio e opzioni · Intoccabili · Risultato). pubblicato.
+
+(418) Gestione equilibrio trade › Simulatore: dopo «Aggiorna» la prima proposta si vede subito a scheda piena, con la stessa grafica dell'IA Trade ufficiale (colonne/righe per squadra con i giocatori che ricevono, crediti, interessi); le altre proposte dello stesso scenario sono sotto, apribili, con saldo % e interesse di ogni squadra. SEGRETO. pubblicato.
+
+(419) Scambio 29/10/2026 TUR↔MOO: ai Turtles Cedric Coward, ai Mooses Jeremiah Fears (nessun credito). Aggiornati ROSTER, EFF.gioc, INFORTUNI (Coward ora t:"TUR"), TRADES. Titolari invariati (nessuno dei due era titolare). DREAMERS: il turno 1 (25-29/10) resta con le squadre precedenti perché la formazione del turno è bloccata nell'archivio (`DRD.form[1]`, generata dalla prima notte del turno); dal turno 2 (30/10) la formazione si fissa alla prima notte del turno con i ROSTER nuovi, quindi i due giocatori contano per le nuove squadre negli scontri diretti. Verificato: `drForm(1)` vecchie squadre, `drForm(2)` nuove. pubblicato.
+
+(420) Banner avvisi nel carosello della Home (`hnAvvisi()`, CSS `.tmc`): scheda gialla scorrevole davanti alle partite, alta come le schede partita, per 12 ore dal momento indicato. Si alimenta da sola da `TRADES` (qualsiasi voce con `ora:"HH:MM"` oltre a `data`, quindi scambi, aste, trade speciali, G League) e da `AVV_HOME` (nuovo array, stesso formato, per le variazioni di cassa: `{data,ora,titolo:"Cassa",lati:[["MOO",["+30 cr","motivo"]]]}`). Due lati diversi = «X ricevono ⇄ Y ricevono»; un lato solo = «X acquistano/cassa». Giocatori come chip con PDK, il resto (crediti, pick, slot) come pillola gialla. Durata dell'animazione calcolata sulla larghezza. REGOLA: ogni nuovo scambio/cassa da comunicare va inserito con `ora`. Scambio TUR↔MOO con ora 12:30 del 29/10. Verificato: compare entro 12h e sparisce dopo. pubblicato.
+
+(421) Home: il carosello delle partite e degli avvisi (`.hmqrow`) ora occupa tutta la larghezza, sopra; la colonna dei loghi delle squadre parte più in basso, accanto alle schede (non nella versione TOP, dove resta com'era). In coda, non pubblicato.
+
+(422) Home: i loghi delle schede Dreamers (`.hmdl`) ora 34px come quelli NBA (`.hml`), stesso posto e stessa altezza delle righe; il fattore `--k` ridimensiona solo il disegno dentro la casella. In coda, non pubblicato.
+
+(423) Area DAX › Gestione equilibrio trade: accanto a ogni parametro (Parametri di interesse + Conversione crediti e pick nel tab Valori) un tastino «i»: apre un riquadro con «Cosa calcola» e «Come cambia le cose» (alto/basso) in parole semplici. Testi in `EQ_INFO`, stato `EQ.inf`. SEGRETO, non in NV_LOG. pubblicato.
+
+(424) Banner avvisi della Home: di giorno (stile Blu e stile Nero) usa i colori del tema (sfondo `--pn1/--pn2`, bordo e scritte `--gold`, bordi `--line`); la modalità notte resta viola come prima. pubblicato.
+
+(425) Trade speciale De Larrea (DUC, Speciale 40): scadenza fissata al 6 febbraio 2027 = turno Dreamers 31 (5-7/2) = giornata 33 (giornata = turno + 2), invece della G40 da regolamento. `SPECIALI` ora accetta `scad` (giornata di scadenza) e `fine` (data a parole, mostrata nella scheda). Countdown: 31 giornate (era 38). pubblicato.
+
+(426) Trade speciale Ingram (DUC, Speciale 30): scadenza al 15 dicembre 2026 = turno Dreamers 13 (12-15/12) = giornata 15 (invece della G20). Se serve far finire un turno dopo: `scad:16` (16-18/12). pubblicato.
+
+(427) Trade speciale Rollins (PEA, Speciale 30): scadenza al 15 dicembre 2026 (G15), come Ingram. pubblicato.
+
+(428) COMPARATORE (menu Scambi › Comparatore, vista `compar`, stato `CMR`): due giocatori (roster + G League) scelti con «Cerca» e mostrati sullo stesso grafico, con lo stesso Periodo a calendario e «Media per» del Grafico; una misura alla volta (PDK, Minuti, Efficienza), linea continua azzurra per A e tratteggiata rosa per B, legenda con media e trend, tabella di confronto (partite, PDK, minuti, efficienza; in verde chi è meglio). Punti come nel Trend (`trKey/trLab`): le stesse notti restano allineate. Tasto «⚖ Confronta con un altro giocatore» nel profilo giocatore (roster e G League): apre il Comparatore con quel giocatore al posto A e la ricerca già aperta per il B; «‹ Indietro» riporta al profilo. Non incluso: Free Agent. pubblicato.
+
+(429) Comparatore: il tasto condividi del riquadro del grafico crea un'immagine dedicata (`shCompar`, dati in `SHR_CM`, chiave `cm` in `shOpen`): in alto le due maglie affiancate (G League: logo) con nome, ruolo e squadra, sotto i dati a confronto (partite, PDK medio, minuti medi, efficienza, trend; in verde chi è meglio), in fondo il grafico con le due linee. pubblicato.
+
+(430) Home: colonna dei loghi squadra a DESTRA e elenchi (Tutte le squadre / Seguiti) a SINISTRA, per usarla col pollice destro; il carosello partite/avvisi resta a tutta larghezza in alto. Solo CSS (`.hn6:not(.top)`), notte, Blu e Nero. Nella versione TOP (loghi in riga) non cambia. pubblicato.
+
+(431) Banner avvisi della Home: durata portata da 12 a 24 ore dall'orario indicato (`H12` in `hnAvvisi`, il nome è rimasto). Lo scambio TUR↔MOO (ora 12:30 del 29/10) resta quindi fino alle 12:30 del 30/10. pubblicato.
+
+(432) ANNULLATA la rimozione della modalità «Per ruolo» dell'IA Trade (revert): resta com'era, con i due pulsanti.
+
+(433) IA Trade «Per ruolo» RISCRITTA sullo stesso motore del «Per giocatore» (`iaBuildRole` al posto di `iaBuild` in `iaNext`): dal ruolo cercato (1ª-3ª necessità o «indifferente») sceglie da sola i giocatori obiettivo (i migliori del ruolo che con quello che offri si possono permettere, soglia per livello: eq 1,15×, win 1,55×, scam 3,2×); fase 1 = `iaBuildPl` a 2 squadre su fino a 40 obiettivi, fase 2 = ragnatela 3-5 squadre (budget ridotto) sui migliori 6. Gli intoccabili sono tutti i giocatori NON offerti. Stessi parametri EQP, interessi, bisogni, crediti e livelli del «per giocatore». Il passo «Squadre» ora usa lo stesso selettore 2-5 (`IA.np`) del per giocatore. Regola: per ricevere un ruolo si deve dare lo stesso ruolo (o salire a 4-5 squadre); se non ci sono risultati l'avviso lo spiega. Verificato su 144 scenari (tutte le squadre, ruoli, 2/4 squadre, equilibrata/vinco io/truffo, offrendo giocatori del ruolo cercato): 138 con risultati (tempo medio ~0,5 s). pubblicato.
+
+(434) IA Trade «Per ruolo»: non si può più andare avanti dal passo «Offro» se non si offre almeno un giocatore (non in trade speciale) per OGNI ruolo cercato (1ª-3ª necessità): serve a compensare i ruoli tra le squadre. Con «Indifferente» basta almeno un giocatore non speciale. Il pulsante «Avanti» e la tabella dei passi restano bloccati e l'avviso dice quale ruolo manca. Verificato su 5 casi (solo Centro per Ala+Centro, Centro+Ala, vuoto, indifferente senza/con giocatore). pubblicato.
+
+(435) IA Trade: entrando si vedono SOLO due grandi pulsanti «Per ruolo» / «Per giocatore» (`IA.mode` parte vuoto → schermata `.iachoose`); dentro ogni modalità in alto c'è «‹ Modalità» (torna alla scelta) e il titolo, e al primo passo un riquadro `.iaintro` che spiega in due righe come funziona. La modalità per ruolo aveva già il selettore 2-5 squadre (nota 433): verificato che i risultati a 4-5 squadre usano il layout in righe (`.iarows`, loghi a destra) anche per ruolo. pubblicato.
+
+(436) Home, colonna «Previsione» (variante 4 scelta): box azzurro `.hmv.pv .pdkx` con bordo sottile e barretta del livello (var `--lv`) al posto del riempimento verde/giallo/rosso, così non sembra un PDK già fatto; «Da superare» resta invariato. Override per Parquet. pubblicato.
+
+(437) IA Trade: le spiegazioni delle due modalità non stanno più dentro (tolto `.iaintro`), ma sotto ciascun pulsante nella schermata di scelta (`.iach` = pulsante + `<p>`), così la pagina è più piena e si sceglie già informati. Dentro le modalità restano solo «‹ Modalità» e il titolo. pubblicato.
+
+(438) Etichette turno: banner Home (`IN CORSO · T`, `FINALE · T`, `LIVE T`) e card sfida nelle partite TV (`turno N · sfida`) mostravano il turno interno k (1) invece del numero Dunkest k+DR_OFF (3). Ora ovunque il turno in corso è T3 (verificato sul testo di Home, TV, Risultati, Classifica; le altre viste usavano già DR_OFF). pubblicato.
+
+(439) Tasto indietro delle sotto-schermate: nuovo registro `NAV_SUB` (vicino a `backLabel`). Se dentro una sezione c'è un livello interno attivo, il tasto ‹ (`#navbk` e gli altri BK_IDS), lo swipe e il gesto/tasto indietro di Android tornano prima a quel livello (etichetta «‹ IA Trade») e solo dopo alla schermata precedente. Primo uso: IA Trade → Per ruolo / Per giocatore torna alla scelta delle due modalità. REGOLA: ogni nuova sotto-schermata o sezione va aggiunta a `NAV_SUB` così «indietro» riporta sempre alla situazione di prima. pubblicato.
+
+(440) Età: aggiunte a `NASCITA` le date di nascita di 535 giocatori che non l'avevano (tutti i free agent e i G-League del Comparatore; fonte basketball-reference, roster 2026-27 e 2025-26, più Wikipedia per 6 casi; nessuno è rimasto vuoto). Le date esistenti non sono state toccate (alcune hanno solo il mese approssimato, es. «2006-09-01»). Effetto collaterale voluto: `eta()`/`valEta()` ora usano l'età vera anche per i free agent invece del default 25. Comparatore: nuova riga «Età» (es. «23 anni 4 mesi») come PRIMA riga della tabella dati e della immagine condivisa (`SHR_CM.st`). pubblicato.
+
+(441) IA Trade: le spiegazioni sotto i due pulsanti di scelta (`.iach p`) sono in giallo (`var(--gold)`, grassetto leggero). pubblicato.
+
+(442) DAX › Gestione equilibrio trade › Valori: nuovo tasto «📋 Classifica valori lega» → `eqVL()`: stessa grafica di «Valori lega» (logo, posizione, nome, stelle) con VALORE e PREZZO CR modificabili (EQO.v / EQO.pr, solo simulatore; casella gialla + «era N»), ricerca, barra fissa «Ripristina» / «Condividi valori con Claude» (stesso prompt di `eqShare("v")`). Ordine e valori "era" fissati all'apertura (`EQ.vlBase`). Registrato in `NAV_SUB` (indietro → torna a Valori e crediti). CORRETTO ANCHE un bug del prompt «Condividi valori»: i valori di partenza erano letti dentro il simulatore e risultavano già modificati («2700 → 2700»); ora `eqShare` legge i valori di serie fuori (`EQ.b0`). SEGRETO: non in NV_LOG. pubblicato.
+
+(443) REPARATO sw.js: dalla pubblicazione cf025b4 il file risultava VUOTO (service worker senza cache, i numeri di versione non si aggiornavano). Ripristinato dal commit d39dd96 con `CACHE="dynasty-v95"`. Controllare sempre `wc -c sw.js` dopo ogni bump. pubblicato.
+
+(444) Home › card «Tutte le squadre»: il pulsante in testata non ordina più per squadra ma FILTRA la lista ai soli giocatori di quella squadra (`hsoF`). Ogni click passa alla squadra successiva (saltando quelle senza giocatori, `HN_OWN`); dopo l'ultima si torna alla lista completa. Il pulsante «N GIOCATORI» riporta subito alla lista completa. «1 GIOCATORE» al singolare. In coda su `coda`, non ancora pubblicato.
+
+(444) pubblicato (CACHE dynasty-v96).
+
+(445) Correzione a mano di 32 valori (da DAX › Gestione equilibrio trade › prompt «Condividi valori»): nuovi numeri in `VALORI` (solo il valore, ruolo e flag rookie invariati) e in `VAL_BASE[nome]` = ["2026-10-26" (lunedì di questa settimana), stelle infortuni attuali da `INF_STELLE`]; registrata in `VAL_CORREZ` (29/10/2026) così compare nel registro del lunedì. Nessun prezzo, pick o conversione in crediti modificati (il prompt non ne conteneva): `PREZZO_FISSO`, `PICK_CR`, `VAL_CR`, `VAL_EXP` invariati; i prezzi fissi esistenti (es. Buzelis 120) seguono comunque il valore col calcolo del lunedì. Nota: non in `NV_LOG` (area segreta). pubblicato (CACHE dynasty-v97).
+
+(446) Collin Murray-Boyles: valore 1010 → 900 in `VALORI` (VAL_BASE già ["2026-10-26",2.5], stelle invariate) e annotato in `VAL_CORREZ` (29/10/2026). Nessun prezzo fisso. pubblicato (CACHE dynasty-v98).
+
+(447) Seconda correzione a mano (prompt DAX «Condividi valori»): 19 valori in `VALORI` e `VAL_BASE[nome]` = ["2026-10-26", stelle da `INF_STELLE`]: Derik Queen 1190→1156, Collin Murray-Boyles 900→982, Michael Porter Jr. 908→975, Darius Acuff Jr. 900→800, De'Aaron Fox 747→720, Kawhi Leonard 750→650, Jabari Smith Jr. 726→715, Ausar Thompson 650→580, Dejounte Murray 650→610, Immanuel Quickley 650→690, Moussa Diabaté 400→430, Khaman Maluach 450→499, Jalen Brunson 869→960, Onyeka Okongwu 910→690, Joel Embiid 1265→1300, Cameron Boozer 1499→1349, Tyrese Haliburton 1420→1470, Tyrese Maxey 1505→1490, Egor Dëmin 490→480. Le 32 righe «X → X» del prompt coincidevano già con la nota 445 (nessun cambio), tranne Dëmin 490→480. Nessun prezzo, pick o conversione nel prompt: `PREZZO_FISSO`, `PICK_CR`, `VAL_CR`, `VAL_EXP` invariati. Annotata in `VAL_CORREZ`. pubblicato (CACHE dynasty-v99).
+
+(448) Terza correzione a mano (prompt DAX «Condividi valori»): 8 valori in `VALORI` e `VAL_BASE[nome]` = ["2026-10-26", stelle da `INF_STELLE`]: Mikel Brown Jr. 690→699, Kyshawn George 760→721, Ace Bailey 720→730, Jaime Jaquez Jr. 699→670, RJ Barrett 700→690, Lauri Markkanen 914→880, Zion Williamson 839→810, Jalen Green 472→455. Le altre righe «X → X» coincidevano già con le note 445-447. Nessun prezzo/pick/conversione nel prompt: `PREZZO_FISSO`, `PICK_CR`, `VAL_CR`, `VAL_EXP` invariati. Annotata in `VAL_CORREZ`. pubblicato (CACHE dynasty-v100).
+
+(449) Aggiornamento automatico dei valori: i valori scritti a mano da Francesco tengono già conto delle partite fino al 28/10 (data USA). Nuova costante `VAL_CUT0` e funzione `valCut(d0,i)`: il punto di partenza F0 (settimana 0) si calcola con le partite fino a `VAL_CUT0` (prima: fino alla domenica prima del 26/10), quindi dal lunedì 2/11 ore 12:00 contano solo le partite DA QUI IN AVANTI. Usata in `valAuto` e in `valMotivo` (registro). Prova su 2/11 senza nuove partite: variazioni solo di arrotondamento (±5). Quando Francesco corregge a mano più avanti: aggiornare `VAL_CUT0` all'ultima data di partite già considerate (si usa il più recente tra `VAL_CUT0` e il giorno prima della settimana base). pubblicato (CACHE dynasty-v101).
+
+(450) IA Trade, parametri di interesse (da DAX › Gestione equilibrio trade, SEGRETO, non in `NV_LOG`): in `EQ_DEF` perf 0,10→0,40 (peso del rendimento PDK), win 0,40→0,60 (chi punta al titolo), reb 0,22→0,30 (chi ricostruisce); altri parametri invariati. Prova su 400 scambi casuali equilibrati (±10%): con i nuovi numeri gli interessi si polarizzano (alto 139→176, medio 221→179, basso 338→343, media invariata 0,44). Caso Eagles-Davis (3 giocatori per Davis): con `perf` 0,40 l'interesse Eagles passa da alto a medio; `win` e `reb` NON hanno effetto sugli Eagles perché la loro spinta in classifica `c` è solo 0,125 (4ª dopo 2 turni, `|c|<0,25` = nessun ramo win/reb). pubblicato (v103).
+
+(451) IA TRADE: INTENZIONI DELLE SQUADRE + VALORE PERCEPITO + PDK DI PARTENZA (SEGRETO per i numeri, niente in `NV_LOG`). pubblicato (v103).
+- `iaProf(t)`: la spinta `c` (−1 ricostruisce … +1 vuole vincere subito) ora nasce da TRE segnali insieme: età media del roster (A = (età−media lega)/`isA`), talento (T = z-score della media del valore dei 6 migliori / `isT`) e classifica GREZZA (S, non più smorzata). Pesi: classifica = min(`iwSm`, `iwS0` + `iwS1` × turni giocati) (oggi 20%, cresce a ogni turno fino al 50%); il resto va a età (`iwA` = 62%) e talento (38%). Oggi: MOO −1,00 · TUR −0,76 (ricostruiscono) · DUC +0,07 (giovane ma forte: due strade) · SPI +0,10 · EAG +0,28 · DOL +0,38 · PEA +0,46 · FOX +0,53 (vincere subito).
+- `iaMul(P,t,n)` + `iaInt`: VALORE PERCEPITO. Il saldo di valore dello scambio si corregge per le intenzioni della squadra: chi vuole vincere subito dà più valore ai veterani e meno ai giovani, chi ricostruisce il contrario (`pvA` ±25% a ±5 anni da 26,5), e se ha cassa abbondante (oltre 30 cr, pieno a 230) paga i giovani ancora di più (`pvC`: MOO con 443 cr, TUR con 149). Nel testo di interesse compare «per le sue intenzioni … saldo X% → Y%».
+- `iaPerf`: rendimento PDK a inizio stagione = media dell'anno scorso (`pgRef`); la stagione in corso entra dalla gara `pg0` (5) e arriva al peso massimo `pws` (65%) alla gara `pg1` (20); le ultime 10 gare sono la quota `pl10` (25%) della parte in corso; il confronto con l'anno scorso cresce dalla 3ª gara fino a `pgr` (12) gare dopo. Rimossi `pbase`/`psea` (non più usati).
+- Parametri nuovi in `EQ_DEF`/`EQ_PAR`/`EQ_SC` (nuovo gruppo «Intenzioni della squadra» e righe nel gruppo rendimento). Parametri già in coda (nota 450): perf 0,40 · win 0,60 · reb 0,30.
+- Testi di interesse: «punta a vincere subito / guarda al futuro / dovrebbe ricostruire (N-ª in classifica · età media · talento)».
+- Prova: caso Eagles–Davis (3 giocatori + 15 cr per Davis): da interesse medio a BASSO (Eagles c=+0,28, perdono rendimento PDK 18,2 contro 38,5). Su 400 scambi casuali equilibrati: alto 123, medio 168, basso 412 (prima 139/221/338): le squadre sono più selettive. MOO/TUR: giovane per veterano = interesse alto (1,00), veterano per giovane = basso.
+
+(452) DAX › Parametri: aggiunte le descrizioni «i» (EQ_INFO) per i parametri nuovi della nota 451; i valori di serie mostrati nell'area riservata sono quelli di `EQ_DEF` (perf 40 · win 60 · reb 30 e i nuovi). pubblicato (CACHE dynasty-v102). Le modifiche locali salvate sul telefono (`dl_eq`) restano finché non si preme «Ripristina parametri».
+
+(453) IA TRADE · ARCHIVIO DRAFT E PREMIO PER LE SCELTE ALTE (da test di Francesco, caso Wilson/Lendeborg). pubblicato (v103); i numeri sono segreti, niente in `NV_LOG`.
+- Nuovo archivio `DRAFT_RAW` (+ `DRAFT_EXTRA` per le scelte alte 2020-2021): anno e numero di scelta di tutti i giocatori scelti ai draft 2022-2026 (fonte: Fadeaway World, controllato sui nomi dell'app); `draftOf(nome)` → [anno, scelta]. Le scelte 2020-2021 in `DRAFT_EXTRA` vengono dalla memoria dei numeri ufficiali (verificare se si aggiungono altri giocatori).
+- `iaDraft(n)` = `dpk` (0,22) × peso scelta (`iaDrF`: prime 5 = 1; 6ª 0,8 … 10ª 0,4; 11ª 0,3 … 15ª 0,1; oltre 0) × peso età (`iaAgeF`: pieno fino a 21 anni, 0 a 25,5). Il valore usato dall'IA Trade (`iaP`) è moltiplicato per (1 + iaDraft): Wilson 1240→1513, Boozer 1349→1646, Dybantsa 1250→1525, Flagg 1700→2074, Brown (6ª) 699→~840, Lendeborg (11ª, 24 anni) 730→~745. Il calcolatore scambi e i VALORI pubblici NON cambiano (solo l'IA Trade).
+- Rookie: la qualità rookie `rq` è scalata per età e scelta (rookie di 24 anni = 0,69× di uno di 20 anni scelto in alto).
+- Pagella giocatore: riga gialla «Draft AAAA · scelta n. N».
+- DAX › Parametri: nuovo `dpk` («Premio draft») con descrizione «i».
+- Caso dello screenshot: ora Eagles ricevono ~1945 punti IA contro ~1687 ceduti (prima 1598/1676): non è più uno scambio «±1%».
+- Feedback dei test raccolti in `tools/FEEDBACK_IA_TRADE.md` (anche il glitch grafico della riga #2).
+
+(454) IA TRADE · CARENZA DI RUOLO LETTA CON LE INTENZIONI (test di Francesco, caso Turtles). pubblicato (v103); niente in `NV_LOG`.
+- `iaStats`: il valore dei migliori giocatori di ogni ruolo (da cui nasce la carenza `def`) ora è il valore PERCEPITO dalla squadra (`iaP × iaMul`): una squadra che ricostruisce considera già forte un ruolo con giovani promettenti (età + premio draft); una che vuole vincere subito dà più peso ai veterani. La media di lega si calcola con gli stessi valori percepiti.
+- `iaNeed`: il peso della carenza di PDK (`np`) scende per chi ricostruisce: × max(0,3; 1 − `npr` × |c|), `npr` = 0,60 (nuovo parametro in DAX › Parametri). Chi vuole vincere subito invariato.
+- Effetto sul caso: guardie dei Turtles da carenza 0,13 → 0,06 (sotto la soglia 0,12): la frase diventa «riceve centri, ruolo in cui è carente». Moose guardie 0,45 → 0,28.
+
+(455) IA TRADE · INTENZIONI A 4 SEGNALI E FRASI COERENTI (richiesta di Francesco). pubblicato (v103); niente in `NV_LOG`.
+- `iaTradeSig()` legge `TRADES` (dal più recente, peso ×0,8 a ogni scambio): chi PRENDE veterani/stelle (età sopra 25) o PAGA crediti vota «vincere subito»; chi prende giovani/crediti dando veterani vota «ricostruzione»; dare giovani vale solo ×0,4 come voto vincente. Il lato dello scambio in `TRADES` è quello che RICEVE (verificato su Coward/Fears). Considera anche Aste e Trade speciali (entra/esce); ignora G League. Esempi oggi: MOO −0,68 (ha venduto Barnes per rookie + 300 cr), DOL +0,53 (Fox, P. George).
+- `iaProf`: c = (1−wS−wR)·(età·`iwA` + talento·(1−`iwA`)) + wS·classifica + wR·scambi (`iwR` 0,18). Il talento ora è un mix 60% valore dei 6 migliori + 40% PDK atteso dei 6 migliori (`iaPerf`: anno scorso + stagione in corso); la classifica è il 65% posizione + 35% differenza punti per turno (forma). Oggi: MOO −0,94 · TUR −0,67 · DUC +0,10 · SPI +0,18 · PEA +0,35 · EAG +0,37 · DOL +0,40 · FOX +0,47.
+- `iaInt`: nuova prima frase «intenzioni: … (N-ª in classifica · età media · talento · ultimi scambi …)»; la carenza di ruolo aggiunge il contesto «ma sono veterani: poco in linea con la ricostruzione» (o «ma sono giovani … vincere subito»); il peso del rendimento PDK è ×(1+`pwi`·c) (0,4–1,5; `pwi` 0,50) e la frase «ci guadagna in rendimento» non compare per chi ricostruisce con PDK poco rilevante.
+- DAX › Parametri: nuovi `iwR`, `pwi`.
+- Idee non ancora fatte (da chiedere a Francesco): infortuni (OUT) come segnale di «non può vincere ora», crediti spesi alle aste, pick di draft posseduti, età dei soli titolari.
+
+(456) IA TRADE · ROOKIE DI ALTA SCELTA INCEDIBILI NEL PRIMO ANNO (test Boozer). pubblicato (v103); niente in `NV_LOG`.
+- `iaDraft` ora = `dpk` (0,40) × peso scelta (`iaDrF`: prime 3 = 1; 4ª-5ª 0,75; 6ª 0,6 … 10ª 0,2; 11ª-15ª ~0,15→0,03) × peso età (`iaAgeF`) × ANNI DAL DRAFT (`iaYrF`: 1º anno ×1, 2º ×0,6, 3º ×0,3, 4º ×0,1, poi 0; `DRAFT_ANNO`=2026: da aggiornare a ogni nuova stagione). Valori IA: Boozer 1349→1889, Dybantsa 1250→1750, Wilson 1240→1612, Peterson ~1620, Flagg (2º anno) 1700→2108, Harper 1220→1513; Lendeborg (11ª, 24 anni) invariato.
+- `iaPotBlend`: il PDK usato dall'IA (`iaPerf`) per un giovane scelto in alto si avvicina al PDK atteso dalla scelta (20 + 16 × peso scelta; es. top-3 = 36) con peso `dpw` 0,70 × scelta × età × anni: Boozer 25,7→33,6. Quindi nel primo anno vale la scelta più del rendimento reale.
+- `iaInt`: malus `inc` (0,35) quando una squadra deve cedere un giocatore con premio draft ≥ 40% del massimo + frase «cede malvolentieri Boozer (scelta n. 3 al draft 2026, primo anno): giocatori su cui si costruisce, quasi incedibili».
+- Caso dello screenshot: Spiders cederebbero circa 3674 punti IA e ne riceverebbero circa 2841: non più «±6%» (l'IA non lo propone).
+- DAX › Parametri: `dpk` (ora 0,40, con descrizione aggiornata), nuovi `dpw` e `inc`.
+- Nota: `DRAFT_ANNO` va portato a 2027 dopo il draft 2027 (cambia il peso degli anni).
+
+(457) Quarta correzione a mano (prompt DAX «Condividi valori»): 8 valori in `VALORI` e `VAL_BASE[nome]` = ["2026-10-26", stelle da `INF_STELLE`]: Brayden Burries 680→650, Kyshawn George 721→690, Keaton Wagler 685→699, Yaxel Lendeborg 730→740, Ace Bailey 730→840, Naz Reid 480→490, Ausar Thompson 580→549, Alex Sarr 980→920. Le altre righe «X → X» coincidevano già con le note precedenti. Nessun prezzo/pick/conversione nel prompt: `PREZZO_FISSO`, `PICK_CR`, `VAL_CR`, `VAL_EXP` invariati. Annotata in `VAL_CORREZ`. Pubblicata insieme a tutta la serie in coda (note 450-456). pubblicato (CACHE dynasty-v103).
+
+458. **Condividi sulle trade chiuse (Trade Alert › Operazioni chiuse)** — in coda su `coda`, NON pubblicato. Colonna a destra con tasto "Condividi" su ogni scambio a due squadre; apre l'anteprima Salva/Condividi con immagine 1080 px: logo squadre, maglie, VALORE/PDK/STELLE, badge draft, % di vantaggio e "Il parere di Claude".
+   - `histTradeModel(i)`: riporta temporaneamente i giocatori alle squadre di prima, calcola profili/intenzioni prima e dopo (`IA_TR_FROM=i+1` / `i`), poi ripristina e azzera le cache.
+   - `iaTradeSig` ora ha anche un voto "forma stagionale" (PDK di quest'anno, giocatori con ≥3 partite): un più anziano ma più produttivo = segnale di rinascita.
+   - `histVerdictSide`: incrocia intenzioni di partenza, direzione dello scambio (età, PDK, crediti) e saldo di valore. Classi: COLPO DA MANUALE, MOSSA COERENTE, CARO MA VOLUTO, SVOLTA GIUSTIFICATA, SVOLTA CARISSIMA (cambia strada per i risultati ma paga troppo), FURBO MA INCOERENTE, RAPINA IN PIENO GIORNO, NON HA MOLTO SENSO, DECIDE LA STRADA. `histFinal` = frase di chiusura (truffa confermata, win-win, nessuno ha un piano…).
+   - `histTech`/`histTechLines`: commenti tecnici quantificati per giocatore: ultima partita vs media, ultime 3 vs precedenti, minutaggio, chi nella stessa squadra NBA gli sta rubando minuti, confronto con la stagione scorsa, età. Varianti scelte a caso: ogni condivisione ha parole diverse. Verde = segnale a favore della squadra, rosso = contro.
+
+   - (458, aggiornamento) tolta dal parere la riga "Interesse alto/basso"; righe giocatore ingrandite del 18% (`SC`) per dare più peso a maglie e statistiche.
+
+459. **Condividi trade: layout definitivo, 3-4 squadre, speciali** — pubblicato.
+   - Stile unico a "schede" (una per squadra, nei colori del club); tolti VALORE e STELLE dalle immagini: resta solo il PDK (grande); tolta la riga "Interesse alto/basso".
+   - Scambi a 2-4 squadre (`histTradeOk`: 2-4 squadre diverse, almeno un giocatore con valore): con 3+ squadre pannelli a tutta larghezza con i giocatori in griglia da 3. Squadre che ricevono solo crediti (es. 5 cr a credito) ora sono gestite ("INCASSA CREDITI").
+   - Quantità di testo adattiva (`mode` 0/1/2 e `lim`): 1 giocatore per lato = commento completo con numeri; 2-3 giocatori = senza riga numerica; 4+ giocatori o 3+ squadre = una frase e 2 commenti tecnici (1 con 4 squadre). Le righe dei giocatori si rimpiccioliscono (`SC`) al crescere del numero.
+   - Senza intenzioni calcolabili (3+ squadre, lato senza giocatori) il verdetto usa solo il saldo di valore (`vo`): SCIPPO / BUON AFFARE / SCAMBIO PARI / PREZZO ALTO / PAGA CARISSIMO.
+   - **Trade speciali** (`histSpModel`/`shSpecial`, tasto sulle card della pagina speciali e sulle righe "Speciale" di Trade Alert): entra un giocatore a pagamento, l'altro esce ma resta di proprietà. Parere: UPGRADE NETTO / SCOMMESSA SUL FUTURO (giovane, rivendibile) / ALL-IN PER VINCERE (età alta) / SCELTA TECNICA / NON SI CAPISCE, costo per giornata, commenti tecnici su chi entra e su chi esce (PDK, minuti, anno scorso) e blocco "Alla scadenza": tra i giocatori del ruolo dovrà scegliere chi lasciar andare (più debole per PDK, giovani da tenere come asset).
+   - Bug corretto: "5 cr cr a credito".
+
+460. **Loghi NBA salvati nel repository** — in coda su `coda` (non pubblicato). I loghi delle 30 squadre NBA venivano caricati ogni volta da `cdn.nba.com/logos/nba/<id>/primary/L/logo.svg` (non da ESPN). Da qui il sito NBA è bloccato, quindi li scarica GitHub: workflow `loghi-nba` (`.github/workflows/loghi-nba.yml` + `tools/scarica_loghi_nba.mjs`) salva gli stessi file, identici per qualità e dimensione, in `loghi/nba/<id>.svg`. L'app (`tvLogo`) legge prima la copia interna; se manca ripiega sul sito NBA (`nbaLgFb`), e solo se manca anche quello resta la sigla. Il service worker salva i loghi visti, quindi funzionano anche offline.
+
+461. **Banner trade della Home cliccabile** — in coda su `coda` (non pubblicato). Ogni casella del banner che scorre (`hnAvvisi`, classe `.tmc`) ora porta alla pagina Trade: "Trade speciale" per le speciali, "Tutte le trade" per scambi, aste e G League. Le variazioni di cassa restano non cliccabili. Gestito con `data-tmgo` e un ascoltatore sul `#main` (anche con Invio da tastiera).
+
+462. **Soglia della truffa al 30%** — in coda su `coda` (non pubblicato). Equilibrata fino al 10%, vittoria 10-30%, truffa oltre il 30% (prima 40%). Cambiato ovunque: `tradeVerdict` (calcolatore e Trade Alert), colore del verdetto nei tasti Condividi (calcolatore e scambi chiusi), `histFinal` e le frasi per squadra di `histVerdictSide` (scippo/rapina da ±30%, soglie intermedie a ±15%), proposte IA (`IA_LV`: vittoria 10-30%, truffa 30-80% con centro 50%), pulsanti "Vinco io / Truffo", schede proposta (`iaCard`) e impostazioni DAX (consiglio e valori di partenza: vittoria 15%, truffa 40%).
+
+463. **Verdetti più forti sopra il 40%** — in coda su `coda` (non pubblicato). `tradeVerdict(d,vincitore,perdente)`: <10% equilibrata · 10-30% vincitore · 30-40% «Grande truffa dei X» · 40-50% «Truffa pazzesca dei X» · 50-60% «Mamma mia che inculata» · oltre 60% «Ma i/gli [squadra che perde] ne capiscono di basket?». Vale per calcolatore (2 e 3 squadre), Trade Alert e i due tasti Condividi (`trLose` trova la squadra che perde). Il titolo nelle immagini si rimpicciolisce da solo se è lungo.
+
+464. **Highlights YouTube in Dynasty TV** — pubblicato (v107, 29/10/2026). Chiave `YT_API_KEY` messa dall'utente.
+   - Partita finita con video abbinato: piccolo logo YouTube sotto "FINALE" nel tabellone (`.tvyt`, niente barra rossa). Senza video il logo non compare.
+   - Tocco sul logo: si guarda dentro l'app (`tvYtOpen`): sigla stile telegiornale "DYNASTY TV · HIGHLIGHTS" con risultato e data (circa 3,3 s, jingle con Web Audio), poi player ufficiale YouTube (`youtube-nocookie.com/embed`). Tasto ✕ ed "Apri su YouTube" come riserva se il video non si può incorporare.
+   - Abbinamenti in `hl-data.js` (oggetto `TVHL`, chiave = chiave partita di tv-data.js, es. "2026-10-28_MIAATL"). Attenzione: `HL` esiste già (gioco Higher/Lower), per questo si chiama `TVHL`.
+   - Li scrive GitHub: workflow `highlights-youtube` (`.github/workflows/highlights.yml`, ogni ora 06:23-15:23 ora italiana) con `tools/highlights_yt.mjs`: legge gli ultimi 150 video del canale @thegametimehighlights con l'API ufficiale YouTube Data v3 e abbina il titolo alle partite (le due squadre nel titolo + data nel titolo o partita più recente prima della pubblicazione, entro 3 giorni; esclusi top 10, mix, interviste). `--prova` stampa senza scrivere.
+   - SERVE la chiave API YouTube nel segreto del repository `YT_API_KEY` (Settings › Secrets and variables › Actions). Senza chiave il workflow non fa nulla.
+   - `sw.js`: hl-data.js aggiunto ai file salvati per l'offline (alla pubblicazione alzare la versione della cache).
+
+465. **Quinta correzione a mano: Coward a 605** — Cedric Coward 480→605 in `VALORI` (e quindi `VAL_MAN`), annotazione in `VAL_CORREZ`. Il parere sull'ultima trade (Coward/Fears) si ricalcola da solo: squilibrio 54% → 27%, ora «Vincitore trade Mooses» (non più truffa), Turtles «Svolta giustificata», Mooses «Colpo da manuale». Pubblicato (v108).
+
+466. **Sigla highlights stile NBA + video automatico** — pubblicato (v109, 29/10/2026), scelta dall'utente la variante A.
+   - Nuova musica originale `tvSigla(C,dest,v)` (Web Audio, nessun file audio): rullante che accelera + riser, colpo di ottoni con cassa e piatto a 0,9 s (quando appare DYNASTY TV), una battuta di groove funk con basso e stacchi di ottoni, accordo finale a 3,6 s. Variante "A" (rullante) o "B" (palleggi + sirena da palazzetto): costante `TV_SIGLA_V`. Lampo e "pulsazione" della scritta sul colpo finale.
+   - Video automatico: il player YouTube si carica subito al tocco (muto, in pausa dietro la sigla, comandi via postMessage con `enablejsapi=1`); a 3,9 s riparte da 0 con l'audio. Se il telefono blocca l'audio automatico (iPhone) il video parte muto con l'avviso "🔇 Tocca il video per attivare l'audio".
+
+467. **Carenza di ruolo giudicata dopo lo scambio** — in coda su `coda` (non pubblicato). Segnalazione: nello scambio a 3 Ducks/Peacocks/Eagles i Peacocks risultavano «carenti di centri e ali». Causa: la carenza (`iaStats`, media dei due migliori per ruolo contro la media lega) veniva misurata sulla rosa di PRIMA dello scambio, senza considerare chi esce: i Peacocks danno Sabonis (C) e Murphy III (F) e ricevono Şengün (C) e Avdija (F), quindi i ruoli si sostituiscono, non si coprono. Ora `iaInt` ricalcola il reparto dopo lo scambio (`post`): «ruolo in cui è carente» compare solo se il reparto migliora davvero (−0,02 almeno), e se un reparto peggiora e resta sotto la media compare «indebolisce i centri: il reparto scende ancora sotto la media». Nel caso dei Peacocks: ali sì (migliorano, 0,37→0,22), centri «indebolisce» (perdono Sabonis). Corretto anche «III in calo» (cognome di Trey Murphy III) con `iaSur` nei testi delle tendenze.
+
+468. **Highlights: niente video che spunta durante la sigla** — in coda su `coda`, NON pubblicato. Il player YouTube ora si carica nascosto (`iframe.hid`: opacity 0 + visibility hidden) e senza autoplay/mute: prima partiva muto sotto la sigla e veniva messo in pausa, e su iPhone il video a tratti compariva sopra la sigla. A fine sigla (3,9 s): seekTo 0, unMute, playVideo e il player appare. Se non parte con l'audio (iPhone) riparte muto con l'avviso. Sigla con `translateZ(0)` per tenerla sopra il video.
+
+469. **Carenza/surplus di ruolo ricalcolata** — in coda su `coda` (non pubblicato). Analisi (29/10): con il vecchio calcolo (media dei 2 migliori per ruolo in punti trade al quadrato, confronto con la media lega, tetto −0,3 / +0,6) quasi tutte le squadre risultavano «carenti» di ali e centri: i super-campioni dei Ducks (Wembanyama, Johnson, Flagg) e dei Spiders alzavano la media, e la scala al quadrato amplificava le stelle. Esempio: Peacocks, ali Mobley 1248 + Porter 975 = 37% sotto la media, ma sul valore lineare sono a −5% dalla mediana della lega (1112 contro 1171). Nella lega ci sono 44 ali, 42 guardie e solo 26 centri (circa 3 a squadra). Ora `iaStats`: scala lineare (`iaLin`, valore percepito riportato in scala valore) e riferimento = MEDIANA delle squadre escluso i Ducks (caso a parte). Risultati: Peacocks ali +0,02 (in linea), centri −0,26 (surplus, hanno Sabonis); le uniche carenze vere ora sono Dolphins ali (+0,15), Moose centri (+0,16), Eagles guardie (+0,16), Moose guardie (+0,10), Spiders guardie (+0,08). Usato anche dal calcolo «dopo lo scambio» (467).
+
+470. **Bug immagini Condividi: alone giallo al posto del PDK** — pubblicato (v111, 29/10/2026). Dalla nota 459 (v104) esistevano due funzioni `shPill`: la seconda (pillola con testo per le trade) sostituiva la prima (pillola PDK colorata), quindi nella scheda giocatore il riquadro "PDK MEDI A PARTITA" disegnava un cerchio giallo enorme con il numero non arrotondato (es. 23.636000000000003). Rinominata la seconda in `shTag` (usata dalle immagini delle trade). Sistemate anche le altre immagini che usano la pillola PDK (Live stanotte, efficienza, capitano). Controllato: nessun altro nome di funzione doppio in index.html.
+
+471. **Scambio 29/10/2026 DOL↔SPI** — pubblicato (v112, 29/10/2026). Ai Dolphins Lauri Markkanen e Kristaps Porziņģis; agli Spiders Isaiah Hartenstein e Jaime Jaquez Jr. (nessun credito indicato dall'utente). Aggiornati ROSTER (ognuno con i suoi crediti di contratto, al posto di chi è partito), EFF.gioc, INFORTUNI (Porziņģis ora t:"DOL"), TRADES (ore 19:45, nota "in Dreamers contano dal turno 2 (30/10)"). Titolari invariati (nessuno dei quattro era titolare). DREAMERS verificato: `drForm(1)` squadre vecchie, `drForm(2)` squadre nuove. Crediti di contratto in rosa: DOL 192,5 (+2,5), SPI 186,5 (−2,5). EFF.squadre si ricalcola col report di domani.
+
+472. **Regola scambi a turno iniziato** — pubblicato (v112, 29/10/2026) (vedi regola 11 in alto). `drOpen(k)` (apertura del turno), `drTrTime`, `drUndoTrades(f,k)`: sulla formazione del turno (archivio `DRD.form[k]` o ROSTER attuali) rimette alla squadra di prima i giocatori degli "Scambio" in TRADES con data+ora >= apertura del turno e >= `DR_REGOLA_SCAMBI` (29/10/2026: per decisione dell'utente il turno 1 resta com'era per Diabaté 25/10 e Jaquez/J. Williams 26/10); poi riordina per valore le squadre toccate (10 titolari + riserve). Verificato: turno 1 identico all'archivio; scambio DOL↔SPI conta dal turno 2; simulazione di uno scambio il 31/10 alle 15:00 → vecchia squadra nel turno 2, nuova dal turno 3. Serve perché l'archivio dei turni si crea col report della prima notte, quindi uno scambio fatto a turno aperto ma prima del report sarebbe finito nella formazione del turno.
+
+473. **Formula del valore percepito (questionario + discorso sul Dunkest)** — pubblicato (29/10/2026). Nuove regole di Francesco dentro `iaP` (proposte IA Trade, carenza di ruolo) e nei pareri sulle trade chiuse (`histTradeModel`); il calcolatore a mano (VALORI) non cambia.
+   - **Percorso dei giovani** (`iaPath`): 1º anno, da 19 PDK è già un fenomeno e il bonus della scelta al draft si riduce man mano che rende (prima contro decima ≈ +30% solo se rende poco); 2º anno, il fenomeno deve salire a 26-30, gli altri mostrare efficienza ≥0,60 guardie / ≥0,66 ali / ≥0,90 centri (altrimenti «in ritardo», −15/−25%); 3º anno, chi non esplode crolla (fino a −35%), chi esplode sale. Buzelis e K. George dei Ducks sono già «in calo».
+   - **Scala dei PDK** (`iaTier`): 40 il sogno, 35 contentissimi, 33 entusiasti; a 30 conta il ruolo (ali e centri sono già importanti, guardie solo se giovani, guardie mature «normodotate»).
+   - **Età** (`iaAgeAdj`): giovani un po' di più, dopo i 29 anni il valore scende (fino a −15% sul valore a 38 anni).
+   - **Infortuni** (`iaOutF`): fino a 3 settimane ininfluenti, 3-8 settimane −15%, 2-4 mesi −35%, oltre −50%. **Copertura di ruolo** (`iaCov`): infortunati lunghi, fragili cronici e scommesse acerbe (per chi non ricostruisce) non coprono un ruolo.
+   - **Pareri sulle trade**: nuove frasi sul percorso (terzo anno non esploso, in ritardo al secondo, fenomeno, 35/40 di PDK, guardia matura da 30, ala/centro giovane da 30). Fenomeni 1º/2º anno quasi incedibili.
+   - Soglia efficienza dei centri nella pagella: 0,75 → 0,90.
+   - Taratura: sui 24 scambi del questionario la direzione coincide in 22 casi (restano diversi Turtles-Foxes e Mooses-Barnes, dove il giudizio dipendeva dal percorso delle squadre). Non toccati i crediti (1 cr = 4,41 punti): i suoi esempi indicano circa 9-12 punti a credito per piccole somme e meno per grandi somme, da decidere a parte.
+
+474. **Secondo anno: base 24,5 PDK** — pubblicato (29/10/2026). Al secondo anno anche 24,5 PDK è ancora nei termini (meglio 26-27): la soglia sotto cui, con efficienza bassa, un giocatore risulta «in ritardo sul percorso» scende da 26 a 24,5 (`iaPath`). Ora Knueppel (24,7) e Harper non sono penalizzati dalla soglia; Queen (20,7) e Fears (11,2) restano in ritardo.
+475. **Home pre-partita: tasto "+" per seguire** — pubblicato (v115, 29/10/2026). Nel pannello giocatori prima delle partite (PREVISIONE / DA SUPERARE) accanto al nome c'è un "+" tondo giallo (`hmAdd`, classe `.hmadd`, usa lo stesso `data-seg` / `segTog` del segnalibro): un tocco aggiunge il giocatore ai seguiti (Osservatorio + "Seguiti stanotte" in Home), diventa ✓ pieno; ritocco = toglie. Avviso in basso "✓ Nome nei Seguiti" (`segToast`). Pensato per il telefono: tasto 20 px con area di tocco allargata, il nome va a capo invece di essere tagliato.
+
+475. **Home pre-partita: «Segui» per squadra, non per giocatore** — pubblicato (v116, 29/10/2026). Tolti i «+» accanto ai singoli giocatori della tabella «Tutte le squadre». Quando il pulsante in alto a sinistra passa alla squadra singola, accanto al nome della squadra (ora solo «PEACOCKS», senza «Tutte le squadre ·», per fare spazio) compare un «+» giallo (`hmAddT`): tocca per seguire tutti i giocatori di quella squadra che giocano stanotte (finiscono in «Seguiti stanotte» e nell'Osservatorio), diventa ✓ quando sono tutti seguiti, e un secondo tocco li toglie. Il segnalibro sul singolo giocatore (scheda, Osservatorio) resta com'era.
+
+476. **«Tutte le squadre» e «N giocatori» in giallo pieno** — pubblicato (v117, 29/10/2026). I due pulsanti d'intestazione della tabella Home (`.hso`) non sono più opacizzati quando non sono quello attivo (prima opacità 55%): restano gialli pieni, e la sottolineatura segna solo quale dei due è attivo.
+
+477. **Home: banner delle trade compatti (variante 6)** — pubblicato (v118, 29/10/2026). I banner scorrevoli degli scambi hanno una fascia per squadra col colore della squadra, il logo e «NICK RICEVONO»; sotto i giocatori impilati in colonna e centrati (pallino del ruolo a sinistra). Tolti il tag giallo «scambio · scade …» e i numeri PDK: il banner è lungo solo quanto serve (4 giocatori ≈ 340 px, 6 ≈ 370 px). Le stime di larghezza del marquee in `hnAvvisi()` sono ricalcolate sui nomi più lunghi.
+
+478. **Trade → «Pic-Trade» (foto prescambio + prompt per Claude)** — pubblicato (v119, 29/10/2026). Terza scheda dentro Trade, stile foto «space» (colonne viola Dreamers con fascia e bordo nel colore della squadra; gli altri stili `team`/`mix`/`glow` restano disponibili con `look`). Il GM sceglie le due squadre e per ciascuna cosa CEDE: giocatori (chip della rosa), crediti (max la cassa), crediti a credito post-Draft (debito della squadra che cede), slot (ruolo + giornate), note libere. «Fai la foto» genera la stessa immagine degli scambi (maglie, PDK, età, draft, crediti/slot) con la fascia verde «SCAMBIO UFFICIALE» al posto del parere (`shHistTrade(-1,{T:taTrade(),sub})`, `histTradeModel(i,T0)` accetta uno scambio non ancora registrato). «Copia per Claude» copia un prompt con la riga già pronta per TRADES (data/ora italiane → banner Home 24 ore) e un link `?scambio=…` che riapre il modulo compilato. Si scambia SOLO tra un turno e l'altro (`taWin()`: da apertura turno 12:30 italiane fino alla prima partita del turno ≈01:00); durante un turno il modulo si compila ma foto e prompt restano bloccati. Etichetta dei crediti a credito nelle foto storiche ora «post-Draft» se nel testo.
+
+479. **Rinomina «Foto scambio» → «Pic-Trade»** (scheda in Trade, titolo, scritte della foto, nome file) — pubblicato (v120, 29/10/2026).
+
+480. **Pic-Trade spostato nel menu «Scambi»** — pubblicato (v121, 29/10/2026). Non è più una scheda dentro Trade: è una voce del menu a tendina Scambi (Calcolatore trade, Osservatorio, IA Trade, Comparatore, Pic-Trade), vista propria `pictrade` (`vPicTrade`). Il link `?scambio=…` apre direttamente Pic-Trade.
+
+481. **Pic-Trade: niente turni né blocchi** — pubblicato (v122, 29/10/2026). La sezione serve solo per la foto e per il prompt da copiare, in qualsiasi momento dell'anno: tolti avviso, blocco e ogni riferimento a «dal turno N» (nella foto, nella schermata e nella riga per TRADES). Il prompt dice a Claude, per sicurezza: se un turno è in corso lo scambio vale solo a turno finito (regola 11, `drUndoTrades` con data e ora); se nessun turno è in corso vale subito.
+
+482. **Home, tabella giocatori prima delle partite: il tocco apre il profilo** — pubblicato (v123, 29/10/2026). Quando la tabella mostra PREVISIONE / DA SUPERARE (partite non ancora live) toccare la riga apre il profilo del giocatore (`plOpen`, `data-hpn` in `preRow`); quando le partite sono live e le righe hanno i punteggi (`row`, `data-hgo`) il tocco porta ancora a Dynasty TV.
+
+483. **IA Trade: «rispetto alla scorsa stagione» solo da 6 partite** — pubblicato (v124, 29/10/2026). Il calo/crescita rispetto alla stagione precedente (frase «riceve X in calo (PDK 30,2 → 18,8)» e relativo effetto sull'interesse) ora si calcola solo per i giocatori con almeno 6 partite giocate in stagione (prima 1; il peso saliva fino a 8). Sotto le 6 gare il confronto non compare e non pesa.
+
+484. **Curva infortuni sul valore di scambio** — pubblicato (v125, 29/10/2026). `iaOutF(n)` ora è una curva continua sui giorni che mancano al rientro (Centro Medico, giocatore OUT): fino a 21 giorni 1; oltre 3 settimane −10% (0,90); oltre 3 mesi (90 gg) −50%; oltre 5 mesi (150 gg) −70% (0,30) e fisso; in mezzo si interpola (45 gg 0,76 · 60 gg 0,67 · 120 gg 0,40). Rientro non noto 0,75. Si applica in automatico al Calcolatore trade (`vtSide`, `trPts`, `v3Pts`), all'IA Trade (`iaG`, `iaModel6`, `iaCov`); col rientro (stato non più OUT) torna 1. NON si applica alle foto/analisi degli scambi già chiusi (`histTradeModel`). Non c'è ancora lo «strascico» dopo il rientro (−10/20/30% in base a quanto è stato fuori): serve la data di inizio infortunio, che il Centro Medico non memorizza.
+
+485. **Quinta correzione a mano: 22 valori e 2 prezzi** — pubblicato (v125, 29/10/2026). Da «Gestione equilibrio trade» (Francesco, 29/10/2026). Scritti in `VALORI` e in `VAL_BASE[nome]` (lunedì 2026-10-26, stelle infortuni di adesso = `INF_STELLE`, invariate): Brown Jr. 699→649, Burries 650→610, Fears 710→699, K. George 690→640, Wagler 699→649, Siakam 890→899, Raynaud 670→499, Jaquez Jr. 670→680, Curry 850→820, Coward 605→520, Acuff Jr. 800→750, A. Thompson 549→520, Maluach 499→519, Brunson 960→999, Markkanen 880→700, Morant 1060→985, Daniels 989→820, Brazile 90→110, Ware 1080→950, Mara 950→670, Murray-Boyles 982→977, Porziņģis 30→90. Prezzi fissi nuovi in `PREZZO_FISSO`: Steinbach 35 cr (era 38), Graves 45 cr (era 49). Registrata in `VAL_CORREZ` («Quinta correzione a mano»). `PICK_CR`, `VAL_CR`, `VAL_EXP` e `VAL_CUT0` invariati.
+486. **Strascico dopo il rientro** — pubblicato (v125, 29/10/2026). Dopo il rientro il valore di scambio resta ridotto in base a quanto il giocatore è stato fuori: oltre 3 settimane −10%, oltre 3 mesi −20%, oltre 5 mesi −30% (`injScar` dentro `iaOutF`, quindi vale per Calcolatore trade e IA Trade). Serve la data di inizio infortunio in `INJ_STORIA[nome]="gg/mm"` (ora c'è solo Jalen Williams, 25/10): da aggiornare nei report ogni volta che un giocatore delle nostre squadre resta fuori a lungo. Il rientro è la prima partita con minuti dopo quella data. Lo strascico si riduce con le prestazioni dopo il rientro sopra i 32 PDK (soglia fissa decisa da Francesco): alla prima si dimezza (−5/−10/−15%), alla seconda finisce. Per toglierlo a mano: cancellare il giocatore da `INJ_STORIA`.
+
+487. **Home: loghi a sinistra per i mancini** — pubblicato (v125, 29/10/2026). Personalizzazioni › Stile dell'app › «Lato dei loghi in Home»: 👉 loghi a destra (standard) / 👈 loghi a sinistra (mancini). Salvato su questo telefono in `DLS.hand` ("r"/"l"), applicato come `html[data-hand]`; solo CSS (griglia di `.hn6` ribaltata), nessun cambio alla Home. Il «Ripristina tutto» delle personalizzazioni non lo azzera.
+
+488. **Lato dei loghi spostato in Impostazioni › Home** — pubblicato (v126, 29/10/2026). La scelta «Lato dei loghi in Home» (nota 487) era nella scheda App; ora sta nella scheda Home, subito sotto «Aspetto della Home» (dove Francesco la cerca).
+
+489. **Loghi a sinistra = Home ufficiale, a destra = personalizzazione** — pubblicato (v127, 29/10/2026). Inverso della nota 487/488: di default (nessuna scelta) la Home ha i loghi delle squadre a SINISTRA e gli elenchi a destra; chi vuole i loghi a destra lo sceglie in Impostazioni › Home › Lato dei loghi (`DLS.hand="r"`, `html[data-hand="r"]`). Chi aveva già scelto «mancini» (`l`) resta a sinistra.
+
+490. **Centro scommesse (area riservata Ducks, SEGRETO)** — pubblicato (v128, 30/10/2026). Nuovo riquadro «Centro scommesse» 🎰 in Hall of Fame Ducks (`data-hof="bet"`, vista `VIEWS.bet`, richiede `COL.d`), grafica rosso e oro come la Efficienza Cup. NON compare in `NV_LOG` né altrove di pubblico. Blocco `<style>`+`<script>` in fondo a `index.html` («CENTRO SCOMMESSE»).
+  · **Gettoni**: 1.000 gettoni = 1 credito (`CR`, scelta di Francesco 30/10), saldo iniziale 1.000 gettoni = 1 cr (`START`, scelta di Francesco), puntata 10–200 (`MINS`/`MAXS`, da rivedere), margine del banco 7% (`MARG`). Tutto salvato sul telefono in `localStorage["dl_bet"]` (`{v:1,mese,saldo,iniz,bets:[...]}`); niente server. Decisioni ancora aperte con Francesco: gettoni di partenza definitivi, tetto di conversione mensile in crediti, regola della ricarica con crediti.
+  · **Quote automatiche, nessun caricamento a mano**: (1) *Sopra/Sotto PDK stanotte*: giocatori delle 8 rose con partita «S» e non OUT, linea = mediana pesata (memoria 10 gare, serie 2024/25+2025/26+in corso, solo gare ≥5 minuti) arrotondata a X,5; P da normale, calibrata (`pOU`: 0,5+0,85·(P−0,5)−0,012, tra 0,30 e 0,70). Backtest su 13.051 casi: P media 0,505 vs frequenza reale 0,503, ROI di chi gioca sempre ≈ −margine. (2) *Duelli*: fino a 6 sfide generate tra giocatori di squadre NBA diverse con medie simili (±25%), `pDuel` calibrata su 136.539 coppie. (3) *Sfide Dreamers* del primo turno non ancora iniziato: forza rosa = somma dei migliori 8 PDK medi (correlazione 0,92 con i punteggi dei turni chiusi, residuo ≈36 punti a turno di ~3 notti), scala = notti/3, σ=45·√scala, probabilità ridotta verso 0,5 (×0,8) e limitata 0,15–0,85. Quota = (1−margine)/P, arrotondata, limiti 1,10–8,00.
+  · **Chiusura**: ogni mercato si chiude al fischio d'inizio (orario ESPN di `TV.days`, `koTs`) e la sfida Dreamers alla prima partita del turno; `place()` ricontrolla l'orario.
+  · **Pagamento automatico** (`settle()`, a ogni apertura della sezione): Sopra/Sotto e Duelli con il PDK ufficiale in `PARTITE` (data dd/mm della notte USA); sfide con `drTeam(k,t,W).score` a turno chiuso; pareggio o dato mancante dopo 72 h = rimborso. Verificato con puntate di prova (vinta/persa/rimborsata/duello).
+  · **Backup**: «Copia backup» crea `DRBET1.<base64>.<controllo>`; «Ripristina» rifiuta codici modificati.
+  · **Da fare (fasi successive)**: invio mensile dell'incasso (codice firmato + foto) per la conversione in crediti, ricarica con crediti, classifica mensile, quote live durante la partita, mercato Dreamers dei singoli giocatori. Il controllo anti-barare è solo il ricalcolo manuale mensile.
+
+491. **Condividi dal profilo giocatore: scelta «profilo» / «ultima notte»** — pubblicato (v129, 30/10/2026). Il tasto Condividi nel profilo (`data-share="pl"`, vGiocatore/vFAP/vGLP) non apre più subito la scheda: mostra un foglio dal basso con due scelte, `plShAsk()`. 👤 **Condividi profilo** = la scheda di prima (`shOpen("pl")`). 🌙 **Condividi ultima notte** = la grafica «prestazione» già usata nel Live stanotte (`SHR_PC` → `shPcard`: campo della squadra con maglia e cartellino PDK, più PT/RIM/ASS/MIN). La partita è l'ultima con box ESPN in `TV.box` (anche live), altrimenti l'ultima riga Dunkest di `PARTITE` (`plUltima()`); sotto il titolo del pulsante compaiono avversario, data e PDK. Per i giocatori fuori dalle 8 squadre (FA, G-League) la seconda scelta è disattivata: il campo richiede una squadra. Nessun cambio alle altre condivisioni.
+
+492. **Home: tocco sul giocatore → Dynasty TV solo se la partita è live** — pubblicato (v129, 30/10/2026). Nelle liste della Home («Tutte le squadre»/«I miei» e Osservatorio) la riga del giocatore aveva `data-hgo` (apre Dynasty TV sulla partita) appena esisteva il box della partita, anche a gara finita. Ora `row()` usa `data-hgo` solo se `N.k&&N.lv` (partita in corso); a partita finita la riga ha `data-hpn` e apre il profilo (`plOpen`). Quando ESPN segna la partita come finita il rifresco della Home riscrive la riga e il comportamento cambia da solo. Verificato con orologio simulato dopo la notte: 0 righe su Dynasty TV a partite finite; con una partita messa live solo i 12 giocatori di quella partita vanno su Dynasty TV, il resto sul profilo. Non toccato: «Live stanotte»/«Migliori del turno» nel Campo (`data-clgo`) e le sfide Dreamers del banner.
+
+493. **Home › card Turno: via «parziale», tasto condividi per ogni scontro, immagine dello scontro** — pubblicato (v129, 30/10/2026). (1) In `hnResCard()` la riga sotto il punteggio ora è «LIVE scarto X» (prima «LIVE parziale · scarto X»); a turno chiuso «finale · scarto X» (il LIVE sparisce da solo quando `W.closed`, cioè dati Dunkest del turno caricati dopo le 12:30); prima dell'inizio «da giocare», senza tasto. (2) Accanto allo scarto, una pallina con l'icona condividi (`.hmshr`, `data-drsh="k|a|b"`) apre `dmOpen()` → `shOpen("dm")` → `shDM()` (nuovo tipo `dm` in `shOpen`, file `scontro-<a>-<b>.png`, `SHR_DM`). (3) Immagine 1080×1540: Dreamers + turno e date, LIVE/FINALE, loghi delle due squadre con punteggio (chi è avanti in bianco, l'altro attenuato) e scarto, poi i due campi con cornice nel colore della squadra e parquet (capitano con pallino «C» + 4 in campo, disposti per ruolo C/A/G), e sotto 6° uomo (riquadro dorato) e panchina ×½, ognuno con maglia, targhetta ruolo+cognome e cartellino PDK nei colori del PDK. Dati da `drTeam(k,t,W).top`: [0]=capitano, [1–4]=campo, [5]=6° uomo, [6–9]=panchina. A turno in corso il piè di pagina avvisa «punteggi provvisori». Non toccata la condivisione «sfida» di Dynasty TV (`shDuel`).
+
+494. **Home › card Turno: tasti condividi allineati in colonna** — pubblicato (v130, 30/10/2026). I tasti condividi delle righe scontro (nota 493) stavano in linea dopo il testo «LIVE scarto X», quindi la loro posizione cambiava con la lunghezza del numero (4 righe = 4 posizioni diverse). Ora sono posizionati in modo assoluto nell'angolo in basso a destra della colonna del punteggio (`.hmrs .hmsc{position:relative}`, `.hmsc .hmshr`, 22 px): stessa x in tutte le righe, sotto i punteggi senza sovrapporli. Controllati anche gli altri tasti condividi (Campo/Live stanotte, Dynasty TV, scambi, rose e casse, profilo): già allineati tra loro.
+
+## 495 — Immagine scontro: maglie come nel gioco
+- Il numero maglia si cerca in tutti i roster (Fears e i giocatori appena scambiati non restano più senza numero).
+- Tolta l'ombra sfocata del numero e ridotto il contorno del testo nelle maglie dell'immagine (l'SVG rasterizzato non usa i font della pagina, per questo risultava troppo pesante).
+- Stato: pubblicato (v131, 30/10/2026).
+
+## 496 — Card Turno Home: scarto sopra, LIVE + condividi sotto
+- "scarto" ora sta sopra i punteggi; sotto, LIVE (o "finale") affiancato al tasto condividi, che è centrato esattamente sotto il trattino dei punteggi.
+- Righe compattate (67 px, come prima del cambio): la tabella risultati ha di nuovo altezza fissa e mostra tutti i 4 scontri senza scorrere.
+- Stato: pubblicato (v131, 30/10/2026).
+
+497. **Chiusura turno: Dunkest oppure 12:30 forzata** — (30/10/2026, richiesta di Francesco). Un turno è chiuso (`drWeek().closed`) e il successivo parte (`drCurWeek`) appena sono caricati i dati Dunkest dell'ultima notte del turno (`drDkHas(e)`: notte nel report salvato `DRD.notti` o nell'ultimo report `EFF.agg`; i dati ESPN/tabellini non contano), a prescindere dall'ora; oppure dalle 12:30 italiane del giorno dopo anche senza dati Dunkest (`drGate`). Nuova `drShut(e)=drDkHas(e)||drGate(e)`. Testato con `window.DR_NOW`: T3 (interno 1) resta LIVE alle 06:00 del 30/10 e si chiude alle 13:00. Stato: pubblicato (v132, 30/10/2026).
+
+498. **Immagine scontro: punteggi già moltiplicati** — (30/10/2026, richiesta di Francesco). In `dmPlayer` nuovo parametro `mul`: il capitano mostra il PDK ×1,5, la panchina (4 giocatori) ×½, il 6° uomo e i 4 in campo ×1. Il colore della targhetta resta quello del PDK grezzo (livello della prestazione), il numero scritto è quello che conta nel totale. Verificato: Turtles 26,5+45,68+40,5+74,03+31,5 + 6° 21,25 + panchina 9,38+9,25+9,13+5,12 = 272,34 (come il punteggio). Stato: pubblicato (v132, 30/10/2026).
+
+499. **Scommesse giocatore: se non gioca, giocata annullata e gettoni restituiti** — (30/10/2026, richiesta di Francesco). In `settle()` (Centro scommesse): per Sopra/Sotto, se i dati Dunkest della notte (`drDkHas(b.d)`) sono caricati e il giocatore non ha riga in `PARTITE` (non ha giocato, o meno di 5 minuti), la giocata passa a «Rimborsata» e tornano i gettoni puntati. Stessa regola per i Duelli se uno dei due non ha giocato. Prima il rimborso scattava solo dopo 72 ore (resta come rete di sicurezza). Testato: giocatore che gioca → vinta; fantasma su notte caricata → rimborsato; fantasma su notte non ancora caricata → resta in corso. Aggiornati il testo regola e l'etichetta «Rimborsata (non ha giocato / pari)». Stato: pubblicato (v133, 30/10/2026).
+
+500. **Centro scommesse: MULTIPLA (schedina combinata) con bonus** — (30/10/2026, richiesta di Francesco). Interruttore «Singola / Multipla · bonus» sopra le schede (BS.mx, BS.legs). In multipla ogni quota toccata entra nella schedina (2–8 scelte, anche di schede diverse; stesso mercato = si sostituisce il lato; due scelte sullo stesso giocatore, anche tra Sopra/Sotto e Duelli, non sono ammesse). Quota = prodotto delle quote; dalla 3ª scelta bonus +3% ciascuna (`mxBonus`: 3 scelte +3%, 8 scelte +18%); quota totale max 200. Si vince solo se TUTTE le scelte sono vinte; se una perde, la multipla è persa subito. Scelta annullata/pari (giocatore che non gioca, duello pari) esce dalla multipla e il bonus si ricalcola sulle scelte rimaste (tutte annullate = rimborso). `settle()` rifattorizzata con `lres(b)` (esito di una scelta, usato da singole e multiple), `placeMx()`, `mxCon()`. In «Giocate» la multipla mostra ogni scelta con ✅/❌/↩️/⏳. Testato: vinta con scelta annullata (quota 3, +200), persa, tutte annullate (rimborso), in corso con una scelta aperta. Il bonus è piccolo rispetto al margine del 7% per scelta, quindi il banco resta in vantaggio. Stato: pubblicato (v133, 30/10/2026).
+
+501. **Centro scommesse: INCASSO gettoni → crediti con scontrino firmato** — (30/10/2026, richiesta di Francesco: «non hai messo il tasto incassa?»). Scheda «Giocate»: card «Incassa i tuoi gettoni» con tasto «💰 Incassa N crediti». Regole (default scelti da me, da confermare): si incassa solo il GUADAGNO oltre i 1.000 gettoni iniziali, 1.000 gettoni = 1 credito, massimo `INCMAX`=10 crediti al mese (contati su `BW.inc`). L'incasso toglie i gettoni dal saldo, registra lo scontrino in `BW.inc` e apre l'immagine «SCONTRINO INCASSO» (kind `bt` in `shOpen`, `window.shBT`): crediti, gettoni, saldo dopo, giocate/vinte, mese, data, ID e CODICE `DRINC1.<base64>.<firma>` (firma `h32` con segreto `INCSEC`; se si cambia anche un carattere il codice non è più valido). Il codice viene anche copiato negli appunti. «Scontrini emessi» con tasto Rivedi; sezione «Verifica scontrino (per l'admin)»: incolla il codice → VALIDO con dettagli oppure «Codice modificato». Limite onesto: la firma è nel codice dell'app, quindi protegge da modifiche a mano, non da chi sa programmare; il controllo definitivo resta all'admin (ID unico, anti-doppio). Testato: incasso 3 crediti da saldo 4.380 → 1.380, verifica valida, codice alterato rifiutato, tasto disabilitato dopo il tetto. Non ancora fatti: ricarica con crediti franchigia se si perde tutto, classifica mensile. Stato: pubblicato (v133, 30/10/2026).
+
+502. **Incasso v2: tasto rosso, scelta squadra, scontrino per Claude, 5 crediti/anno, cassa bloccata, condividi scommessa** — (30/10/2026, richiesta di Francesco; sostituisce la nota 501). (1) Tasto rosso «💰 Incassa» in alto a destra nel riquadro saldo → schermata dedicata (`vInc`, `BS.view="inc"`): 1) «Chi sei?» (8 squadre, salvata in `BW.sq`), 2) «Genera scontrino». (2) Regola: si incassa solo il guadagno oltre i 1.000 gettoni iniziali, 1.000 gettoni = 1 credito, **massimo 5 crediti all'anno** (`INCY`, anno solare, `BW.inc[].y`). (3) Raggiunto il massimo la **cassa si blocca** (`frozen()`): si può continuare a scommettere e a condividere ma il saldo non sale né scende (giocate con `fz:true`, `pay()` non muove il saldo; all'atto del blocco le giocate ancora aperte diventano «per gioco» e la posta torna). (4) Scontrino: immagine con squadra, crediti, ID e codice `DRINC2.<base64>.<firma>`; il JSON contiene un campo `istr` con le istruzioni per Claude. (5) PROCEDURA PER CLAUDE (se arriva un'immagine/codice «DRINC2…»): leggi il codice dall'immagine, esegui `python3 tools/incasso.py "<codice>" --registra` (verifica firma, anti-doppio con `tools/incassi_registro.json`, max 5 cr/anno per squadra); se VALIDO somma `cr` a `CREDITI[sq]` in `index.html`, annota in NOTE_SVILUPPO.md, bump CACHE, commit su `coda` (pubblica solo se Francesco lo chiede) e conferma a Francesco; se RIFIUTATO spiega il motivo. (6) Tasto «Condividi» su ogni giocata in «Giocate» (`data-binc="bsh|id"`, `window.shBS`): immagine schedina con scelte, quota, puntata, vincita/esito. Limite: la firma sta nel codice dell'app (protegge da modifiche a mano, non da chi sa programmare); il registro anti-doppio sta nel repo. Testato: scelta squadra obbligatoria, incasso 5 cr da saldo 6.600 → 1.800 con cassa bloccata, giocata dopo il blocco non muove il saldo, tool Python verifica il codice dell'app. Stato: pubblicato (v133, 30/10/2026).
+
+503. **«Live stanotte» / «Migliori del turno»: tocco su un giocatore → profilo** — pubblicato (v134, 30/10/2026). Richiesta di Francesco. Nel gestore `data-clgo` (nota 351): se la riga NON è live (`tr.lvr`), il tocco sulla riga apre il profilo (`plOpen`, come il tocco sul nome); Dynasty TV resta solo per i giocatori in campo (stessa regola della Home). Il tasto condividi non cambia. Testato: tocco su una cella della riga di Jokić → vista «giocatore».
+
+504. **Giocate: «Vincita possibile» in oro** — (30/10/2026, richiesta di Francesco). In «Giocate» ogni scommessa (singola e multipla) mostra una riga in oro ben visibile «Vincita possibile N gettoni» (puntata × quota, arrotondata come il pagamento); se vinta diventa «Vincita N gettoni»; nelle perse/rimborsate non compare. Classe `.btwn`. Titolo della giocata VERDE (in corso/vinta), ROSSO se persa, lilla se rimborsata. Stato: pubblicato (v135, 30/10/2026).
+
+505. **Pic-Trade: banner «Scambio ufficiale» più piccolo e viola** — (30/10/2026, richiesta di Francesco). In `shHistTrade` (solo Pic-Trade, `PRE`): banner da 150 a 105 px di altezza (−30%), font 66→46 e sottotitolo 28→22, colori Dreamers (gradiente viola/indaco, contorno lilla) invece del verde; altezza immagine ridotta di 45 px (nessun vuoto). Con un tema grafico attivo i colori seguono il tema, come il resto dell'immagine. Il parere Trade Alert non cambia. Stato: pubblicato (v136, 30/10/2026).
+
+506. **Sesta correzione a mano: 8 valori** — pubblicato (v136, 30/10/2026). Da Francesco: Giddey 1850→1650, Tatum 1510→1690, Duren 1500→1340, Avdija 1261→1360, Haliburton 1470→1580, Banchero 1350→1410, Towns 1250→1349, Young 1210→1240. («Advija» = Deni Avdija.) Scritti in `VALORI` (le righe `VAL_BASE[nome]` esistevano già con data 2026-10-26 e stelle invariate); annotata in `VAL_CORREZ` («Sesta correzione a mano»). `PREZZO_FISSO`, `PICK_CR`, `VAL_CR`, `VAL_EXP`, `VAL_CUT0` invariati. Il calcolo automatico del lunedì riparte da questi valori.
+
+507. **Scommesse: mercato già giocato opacizzato** — (30/10/2026, richiesta di Francesco). Se hai già puntato una singola su un mercato (Sfide, Giocatori, Duelli) la scheda diventa opaca (`.btcard:has(.btq.pd)`), i due tasti quota sono disattivati (`.btq.pd`) e il lato scelto ha il bordo oro e la scritta «✔ giocata» (`.pm`). In modalità Multipla restano utilizzabili (la regola «un solo mercato per giocata» vale solo per le singole). Sistemata l'altezza dei tasti disattivati (prima l'etichetta della squadra spariva). Stato: pubblicato (v137, 30/10/2026).
+
+508. **Scontro Dreamers, panchina: colore del PDK vero** — (30/10/2026, richiesta di Francesco). Nella pagina dello scontro, sezione «Panchina · ½», il numero grande resta dimezzato (×½) ma il colore della pillola ora è quello del PDK senza moltiplicatore (`pdkLvl(x.e)` invece di `pdkLvl(x.f)`): es. Ball 30,45 → mostra 15,2 in VERDE, Allen 28,4 → 14,2 in giallo. Capitano (oro) e 6° uomo invariati. Stato: pubblicato (v138, 30/10/2026).
+
+509. **Profilo giocatore: «Grafico» e «Confronta con un altro giocatore» in giallo** — (30/10/2026, richiesta di Francesco). I due tasti sotto la scheda del giocatore (profilo, vFAP/vGLP e vista squadra) hanno il testo e il bordo gialli (`.advbtn.ggy`, #facc15, font 14 px) per essere più visibili. Gli altri tasti «Grafico» (righe Free Agent, ecc.) non cambiano. Stato: in coda (branch coda), pubblicato (v139).
+
+510. **Statistiche › Giocatori: ordinamento toccando PG / MIN / PDK / EFF.** — (30/10/2026, richiesta di Francesco). La lista ordina di default per PDK medio decrescente (freccia ▼ gialla sulla colonna). Le intestazioni PG, Min, PDK, Eff. sono tasti (`data-fasrt`, stato `faSrt={k,d}`, comparatore `faCmp`): primo tocco su una colonna = decrescente, secondo tocco = crescente; la colonna attiva è gialla con ▼/▲. I giocatori senza dato stanno sempre in fondo. Vale per tutte le righe (free agent e, cercando, anche squadre e G League). Il numero # segue l'ordine mostrato. Testato su PDK, PG, Min, Eff. in entrambe le direzioni. Stato: in coda (branch coda), pubblicato (v139).
+
+511. **Statistiche › Giocatori: filtro «Free agent»** — (30/10/2026, richiesta di Francesco). Nuovo tasto «Free agent» accanto a «G League» (`data-fafa`, stato `faFA`): acceso, la lista mostra solo i free agent (niente giocatori delle squadre della lega né G League), anche cercando per nome. Si combina con il filtro G League (free agent che stanno in G League), con il ruolo e con la stagione; si spegne ritoccandolo. Testato: da 314 + 116 righe «altri» a 314 free agent, la ricerca «Davion» non trova più il giocatore di squadra. Stato: in coda (branch coda), pubblicato (v139).
+
+512. **Statistiche › Giocatori: stagioni in ordine** — (30/10/2026) I tasti stagione ora sono in ordine cronologico: Stagione 1 a sinistra, Stagione 2 al centro, Stagione 3 a destra; all'apertura è già selezionata la Stagione 3 (26/27). pubblicato (v139, 30/10/2026)
+
+513. **Tasto «Confronta con un altro giocatore» nei profili free agent e G League** — (30/10/2026) Il profilo dei free agent (compresi quelli in G League) ora ha il tasto giallo «Confronta» come tutti gli altri profili. Il comparatore conosce anche i free agent: si possono cercare come giocatore A o B (badge «FA», etichetta «Free agent»), con le loro partite NBA (`fa-games.js` caricato all'apertura, `grGames` non richiede più il grafico FA aperto). `trPl` e `cmAll` includono i FA. Testato: Ty Jerome vs Dončić. pubblicato (v139, 30/10/2026)
+
+514. **Calcola il trend: menu «Giocatori»** — (30/10/2026, richiesta di Francesco) Nuovo menu a tendina accanto a «Squadra»: Tutti (default) / Squadre / G-League / Free agent (`TRN.grp`, `select[data-tr=grp]`). Il trend ora considera anche i free agent (partite da `fa-games.js`, caricato all'apertura); righe con badge «FA», dettaglio e condivisione senza maglia/squadra. Testato: Tutti 169, Squadre 55, G-League 15, Free agent 99 (periodo 20–30/10/26), nessun errore JS. pubblicato (v139, 30/10/2026)
+
+515. **Calcola il trend: «Squadra» spento con Free agent** — (30/10/2026) Con «Giocatori = Free agent» il menu «Squadra» è opacizzato, non selezionabile e torna su «Tutte le squadre» (i free agent non hanno squadra). Con «G-League» resta attivo e filtra solo i roster G League di quella squadra (es. Foxes: 1 giocatore). pubblicato (v139, 30/10/2026)
+
+516. **Roster compatto per ruolo, tutto in una schermata** — (30/10/2026, richiesta di Francesco) Il roster (Centro gestione › squadra) non è più una lista lunga: tre blocchi Guardie / Ali / Centri (numero giocatori a destra) con i giocatori su due colonne, riga più bassa (nome, #numero · squadra NBA, segnalibro, tag infortunio/Rookie piccoli, avviso su una riga). Dolphins (14 giocatori) entra intero in 932 px di altezza senza scorrere. Resta il tocco sulla riga per aprire il profilo. Stato: pubblicato (v140, 30/10/2026).
+
+517. **Roster: speciali in fondo al ruolo + PDK medio** — (30/10/2026, richiesta di Francesco) Dentro ogni ruolo (Guardie/Ali/Centri) i giocatori con Trade Speciale, slot 10 giornate (`AVVISI`) o slot rookie (`ROOKIE`) vanno per ultimi, l'ordine degli altri resta invariato. Sotto il nome, accanto a «#numero · squadra NBA», il PDK medio stagionale (`pdkMed`) in piccolo con lo stesso colore dei PDK ovunque (rosso <20, giallo 20-29,9, verde 30-39,9, viola ≥40). Stato: pubblicato (v140, 30/10/2026).
+
+518. **Roster: PDK medio al posto del «Segui», infortunio sotto il nome** — (30/10/2026, richiesta di Francesco) Tolto il segnalibro «Segui» dalle righe del roster; al suo posto, a destra, il PDK medio stagionale in riquadro colorato più grande. Il tag infortunio (OUT, Questionable, ecc.) sta ora dove prima c'era il PDK: sotto il nome, dopo «#numero · squadra NBA». Il «Segui» resta nel profilo del giocatore. Stato: pubblicato (v140, 30/10/2026).
+
+519. **Roster: ordine per PDK medio** — (30/10/2026, richiesta di Francesco) In ogni ruolo i giocatori sono in ordine di PDK medio decrescente, da sinistra in alto a destra in basso (riga per riga). Gli slot speciali (Trade Speciale, 10 giornate, rookie) restano sempre ultimi a prescindere dal PDK (ordinati tra loro per PDK); chi non ha ancora PDK va in fondo al suo gruppo. Stato: pubblicato (v140, 30/10/2026).
+
+520. **Roster: ordine PDK per colonne** — (30/10/2026, correzione di Francesco alla 519) L'ordine PDK decrescente scorre per colonne: prima tutta la colonna di sinistra dall'alto al basso, poi quella di destra (grid `grid-auto-flow:column`, righe = ceil(n/2), classe `lc` per il filetto). Es. Guardie Dolphins: Young, Maxey, Booker | Fox, Garland. Gli slot speciali restano ultimi (in fondo alla colonna di destra). Vale per tutte le squadre e tutti i ruoli. Stato: pubblicato (v140, 30/10/2026).
+
+521. **Roster: titoli di ruolo colorati e PDK più piccolo** — (30/10/2026, richiesta di Francesco) La barra del titolo (Guardie / Ali / Centri) è ora tutta del colore del ruolo (rosso, azzurro, giallo) con testo scuro; il riquadro del PDK medio è il 20% più piccolo (font 15→12 px). Stato: pubblicato (v140, 30/10/2026).
+
+522. **Statistiche › Giocatori: «Tutti» mostra anche i giocatori delle squadre** — (30/10/2026, domanda di Francesco) Prima i giocatori delle squadre ufficiali e della G League comparivano solo cercandoli per nome, quindi «Tutti» (che è il filtro ruolo) mostrava solo i free agent. Ora un'unica classifica con tutti, in ordine di PDK (o della statistica scelta) e con numero di posizione, e il logo della squadra proprietaria; chi non ha partite resta nascosto salvo ricerca. «Free agent» tiene solo i free agent, «G League» i giocatori G League (+ free agent con diritti). Testato: Tutti 426 righe (112 di squadra), Free agent 314, G League 35, ricerca «Young» 3, nessun errore. Stato: pubblicato (v140, 30/10/2026).
+
+523. **Statistiche › Giocatori: Tutti / G League / Free agent si escludono** — (30/10/2026, richiesta di Francesco) «Tutti», «G League» e «Free agent» sono una scelta unica: sceglierne uno deseleziona gli altri; «Tutti» si vede acceso solo quando non c'è nessun filtro (azzera anche ruolo, G League, Free agent). Ritoccare G League o Free agent lo spegne e si torna a Tutti. I ruoli G / A / C restano combinabili con G League o Free agent. Stato: pubblicato (v140, 30/10/2026).
+
+524. **Statistiche › Giocatori: filtri su due righe, tutto selezionato di default** — (30/10/2026, richiesta di Francesco) Riga origine: «Tutti» (già selezionato: free agent + squadre + G League) / «G League» / «Free agent», scelta unica. Riga ruoli: G / A / C tutti accesi di default; per vederne uno specifico si deselezionano gli altri (se li spegni tutti si torna a tutti). Prima «Tutti» era un ruolo. Testato: 426 righe di default, solo Centri 68, G League 35, Free agent 314, nessun errore. Pubblicato (v140, 30/10/2026).
+
+525. **Statistiche › Giocatori: tasto «Filtri» e periodo con calendario** — (30/10/2026, richiesta di Francesco) La schermata è alleggerita: sopra la tabella restano la ricerca, il tasto «Periodo» (stesso calendario delle altre sezioni: due tocchi inizio/fine, scorciatoie Stagione 1/2/3/Tutto; default stagione in corso) e il tasto «Filtri» (con contatore dei filtri attivi). Dentro Filtri: Origine (Tutti / Solo squadre / Solo G League / Solo free agent), Ruoli (Guardie / Ali / Centri, tutti accesi di default), Squadra NBA e Squadra Dreamers (menu a tendina), «Azzera i filtri». Via i tasti Stagione 1/2/3 e i chip di ruolo. Le medie (PG, Min, PDK, Eff.) sono calcolate sulle sole partite del periodo (`faPerAvg`, `FPR`), da squadre, G League e `fa-games.js` (caricato in automatico; nell'attesa valgono le medie di stagione). Testato: default 426 righe; Solo squadre 111, G League 35, Free agent 314; NBA «LAL» 14; Dreamers «Dolphins» 17; periodi Stagione 2 / 1 / Tutto cambiano lista e medie; nessun errore. Stato: pubblicato (v141, 30/10/2026).
+
+526. **Calcola il trend: linee nel colore della maglia NBA** — (30/10/2026, richiesta di Francesco) Le linee dei free agent (prima tutte azzurre) e dei giocatori della stessa squadra Dreamers ora hanno il colore della maglia della loro squadra NBA (`NBA_KIT`: base, poi secondo colore/filetto/contorno se il primo è troppo scuro per il fondo scuro; `trNba`, `trColN`). Il tratteggio serve solo se due linee finiscono con lo stesso colore. Stato: pubblicato (v142, 30/10/2026).
+
+527. **Giocatori › Filtri: ruoli sempre tutti selezionati, con spunta** — (30/10/2026, segnalazione di Francesco) Nei filtri i ruoli (Guardie / Ali / Centri) risultavano tutti deselezionati sul suo telefono. Non riproducibile nei test (di default sono tutti attivi), quindi: all'apertura della lista se lo stato dei ruoli non è valido (vuoto o di una versione precedente) viene riportato a tutti e tre; le opzioni attive dei filtri mostrano ora una spunta «✓» oltre al giallo, così lo stato è inequivocabile. Stato: pubblicato (v143, 30/10/2026).
+
+528. **Giocatori: nomi più grandi del 10%** — (30/10/2026, richiesta di Francesco) Nella lista Statistiche › Giocatori i nomi passano da 15 a 16,5 px. (Ricontrollato: i filtri «non azzerati» erano uno stato rimasto sul telefono, nessun bug.) Stato: pubblicato (v143, 30/10/2026).
+
+529. **Giocatori: nomi abbreviati e più grandi, mai a capo** — (30/10/2026, richiesta di Francesco) Nella lista i nomi sono scritti con iniziale e cognome (N.Jokić, K.Towns; «P.J.» resta com'è, i Jr. restano), sempre su una sola riga, a 17,25 px (+15% rispetto ai 15 px della v142). Il logo della squadra proprietaria passa sulla riga sotto, a sinistra di «Squadra · Ruolo · NBA», così non toglie spazio al nome e la tabella entra in larghezza senza scorrere. Nomi troppo lunghi finiscono con «…» invece di andare a capo. La ricerca usa ancora il nome completo. Stato: pubblicato (v143, 30/10/2026).
+
+530. **Giocatori › Filtri: «Solo rookie»** — (30/10/2026, richiesta di Francesco) Nuova opzione in Origine (Tutti / Solo squadre / Solo G League / Solo free agent / Solo rookie): mostra solo i rookie (`isRookie`), tra squadre, G League e free agent. Testato: 16 rookie. Stato: pubblicato (v143, 30/10/2026).
+
+531. **Statistiche: tolte le rubriche «Top 10 lega», «Flop 10 lega» e «Giocatori»** — (30/10/2026, richiesta di Francesco) Dalla schermata Statistiche sono state cancellate le tre rubriche in fondo (Top 10 lega, Flop 10 lega e la tabella Giocatori per squadra con i tasti squadra). Restano Statistiche squadre, la Coppa Efficienza, Calcola il trend, Statistiche live; la lista completa è in Centro gestione › Giocatori (con filtri e periodo). Stato: pubblicato (v144, 30/10/2026).
+
+532. **Statistiche: bottoni GIOCATORI e SQUADRE** — (30/10/2026, richiesta di Francesco) La schermata Statistiche ora ha, sotto Efficienza Cup / Calcola il trend / Statistiche notte, due bottoni gialli affiancati: **GIOCATORI** apre la lista Giocatori identica a prima (filtri, periodo, ordinamenti, profili e confronto); **SQUADRE** apre «Statistiche squadre» (stagione, Eff./PDK, classifica con barre) con il tasto ‹ Statistiche; le squadre restano cliccabili e portano alla stessa schermata di prima (Efficienza squadra), da cui il ‹ riporta a Squadre. Tolta la voce «Giocatori» dal menu Centro gestione (la lista vive in Statistiche, anche l'evidenziazione della scheda in alto è su «Statistiche»). Stato: pubblicato (v144, 30/10/2026).
+
+533. **Statistiche › Squadre: scheda squadra con squadra + periodo + filtri** — (30/10/2026, richiesta di Francesco) Il bottone SQUADRE non mostra più le 8 squadre con barre e PDK/Eff. medi: apre direttamente la scheda squadra a griglia (partita per partita, una colonna per partita, avversario sotto il valore) con: scelta squadra (8 chip), banda KPI del periodo (PDK medio, Eff. media, giocatori in campo), **Periodo** col calendario (`ESP`, `PER_CB.esq`), **Filtri** (Cosa misurare Efficienza/PDK, Vista Partita per partita/Statistiche avanzate, Ruoli G/A/C, Azzera) e i tasti Stagione ▾ + mesi Ottobre→Aprile mantenuti come scorciatoie che impostano il periodo (mese = dal 1 a fine mese; stagione = intera stagione). Tutto si calcola sulle sole partite del periodo, anche a cavallo di più stagioni; Grafico in giallo. Default: mese in corso. Stato: pubblicato (v144, 30/10/2026).
+
+534. **Grafico di squadra** — (30/10/2026, richiesta di Francesco) Il tasto «📈 Grafico squadra» nella scheda squadra (Statistiche › Squadre) apre un grafico del gruppo e non più del singolo giocatore: la linea è la media di tutte le partite dei giocatori scelti (PDK / Minuti / Efficienza, per stagioni/mesi/giorni) sul periodo della scheda (`GR.team`, `GR.inc`). Sotto il titolo «Squadra · Giocatori nel grafico»: un chip per giocatore (spunta ✓ = incluso, tutti di default; «Tutti» li riaccende; non si può svuotare). Il tasto condividi crea l'immagine «NOME (SQUADRA)» con logo, periodo, numero di partite e giocatori. Il grafico del singolo giocatore (dal suo profilo e dal Trend) resta com'era. Stato: pubblicato (v144, 30/10/2026).
+
+## 535 — Statistiche › Squadre: "Confronta i giocatori" (sostituisce il grafico aggregato della 534)
+- Il grafico aperto dalla scheda Squadre è ora un confronto: una linea per ogni giocatore della squadra, nel colore della maglia della sua squadra NBA (trattini se due colori coincidono), come nel Calcola il trend.
+- Default: i 5 migliori per media; chip per scegliere i giocatori (max 8); periodo con calendario, livello Stagioni/Mesi/Giorni, misura PDK / Minuti / Efficienza.
+- Condivisione: immagine con titolo, periodo, grafico e legenda con media e partite di ogni giocatore.
+- Stato: pubblicato (v144, 30/10/2026).
+
+## 536 — Chip dei giocatori nel confronto squadra: stile neon vetro
+- Stato: pubblicato (v144, 30/10/2026).
+- Chip trasparenti con bordo e alone nel colore della maglia NBA del giocatore (anche da non selezionati, attenuati); nome + media del periodo accanto.
+
+
+## 537 — Statistiche: «Statistiche notte» aperta di default sotto i pulsanti
+- Tolto il pulsante «Statistiche notte» (o «live» con modalità notte): la lista della notte (con frecce tra le notti e PDK/Eff.) è ora sempre aperta sotto i pulsanti, che restano.
+- Giocatori rosso, Squadre giallo. «Calcola il trend» in verde #22c55e, lo stesso verde dei PDK 30–40.
+- Stato: pubblicato (v145, 30/10/2026).
+
+## 538 — Pulsanti Statistiche in stile «card con icona in tondo»
+- Efficienza Cup viola, Calcola il trend verde, Giocatori rosso, Squadre giallo: sfumato scuro→colore, angoli arrotondati, icona e freccia in cerchi traslucidi, tondo decorativo nell'angolo.
+- Stato: pubblicato (v145, 30/10/2026).
+
+## 539 — G-Dreamers dentro Dreamers (interruttore) e fuori dal Centro gestione
+- Sotto il titolo di Dreamers e di G-Dreamers c'è l'interruttore «Dreamers | G-Dreamers» (viola/verde): passa da un campionato all'altro nella stessa stanza a schermo intero.
+- Tolta la voce «G-Dreamers» dal menu Centro gestione. Le statistiche dei satelliti G League (prima «Squadre» in quella pagina) sono ora la 4ª scheda «G League» dentro G-Dreamers; il tasto indietro dal profilo giocatore G League torna lì.
+- Stato: pubblicato (v146, 30/10/2026).
+
+## 540 — Statistiche: Giocatori e Squadre grandi, Efficienza Cup e Trend piccoli
+- In alto Giocatori (rosso) e Squadre (giallo), grandi e a tutta larghezza con icona e freccia in cerchio; sotto, affiancati e più piccoli, Efficienza Cup (viola) e Calcola il trend (verde). La lista della notte resta sotto.
+- Stato: pubblicato (v147, 30/10/2026).
+
+## 541 — (annullata) pulsanti Statistiche in stile inclinato
+- Provato uno stile con blocchi inclinati (giorno) e vetro neon (notte); Francesco ha scelto di tenere lo stile card già pubblicato e cambiare solo la posizione. Nessuna modifica di stile rimasta.
+
+## 542 — Statistiche notte: frecce tra le notti anche in modalità notte
+- Con la modalità notte la lista parte dalla notte live; la freccia ‹ porta alle notti passate (dati ufficiali), con ‹ › per scorrerle e › sull'ultima per tornare alla live. Senza modalità notte restano le frecce di prima.
+- Stato: pubblicato (v147, 30/10/2026).
+
+
+## No spoiler (30/10/2026, richiesta dell'utente) — pubblicato
+- Impostazioni › Home: prima voce «No spoiler» (`DLS.ns`, tasto `data-dlst="ns"`, salvato sul telefono).
+- Se acceso: in Dynasty TV (lista partite di `vTV`) le partite FINITE non mostrano punteggio, freccetta della vincente e riga «Top» (`tvNoSp(key)`); al loro posto «🙈 Risultato nascosto (no spoiler) · apri la partita per vederlo». Le LIVE restano visibili.
+- Aprire la partita (`tvGame`) la segna come vista (`tvSeen`, localStorage `dl_tvseen`): da lì il risultato di quella partita resta visibile.
+- Non toccati: carosello della Home e sfide DREAMERS (mostrano ancora i risultati). Patch: /home/claude/patch_nospoiler2.py (sessione dei report).
+## 543 — G-Dreamers: scheda «G League» nei colori verdi di G-Dreamers
+- Dentro la stanza G-Dreamers le variabili colore (pannelli, bordi, accenti) sono verdi: titoli, classifica G League, selettore Stagione, numeri di posizione, schede delle squadre satellite e tabelle giocatori non usano più il blu/rosso/oro dell'app versione giorno. Le altre schede (Classifica, Giornate, Squadre) erano già verdi.
+- Stato: pubblicato (v148, 30/10/2026).
+
+## 544 — Dreamers › Classifica: tasto condividi
+- Titolo «Classifica» con il tasto condividi: crea l'immagine con le 8 squadre (posizione, logo, forma V/P, record V–P, distacco in vittorie, media punteggio).
+- Stato: pubblicato (v148, 30/10/2026).
+
+## 545 — G-Dreamers con la modalità notte: vetro liquido verde
+- Con la modalità notte la scheda «G League» di G-Dreamers usa lo stesso stile spaziale/trasparente di Dreamers in verde: titoli a pillola in vetro, tabelle e schede translucide con sfocatura e bordo luminoso, selettore Stagione in vetro. Di giorno resta il verde pieno della 543.
+- Stato: pubblicato (v148, 30/10/2026).
+
+## 546 — Home: bordo oro che pulsa negli scontri diretti a pari vittorie
+- Nel carosello della Home, il banner di uno scontro Dreamers tra due squadre con le stesse vittorie in classifica (solo regular season) ha il bordino oro che pulsa piano (2,8 s, con leggero alone); con «riduci animazioni» attivo resta oro fisso.
+- Stato: pubblicato (v149, 30/10/2026).
+
+## 547 — G-Dreamers: tolta la scheda «Squadre»
+- La scheda «Squadre» (le rose dei satelliti) ripeteva la Classifica, dove toccando una squadra si apre già il dettaglio con i suoi giocatori. G-Dreamers ha ora tre schede: Classifica, Giornate, G League.
+- (30/10 11:30) Dentro la partita: con No spoiler acceso e partita finita non ancora vista, niente punteggio (solo «FINALE» + logo YouTube) e al posto del tabellino la schermata «Allerta spoiler» con tasto «Mostra i risultati per questa partita» (`data-tvrev` → `tvSeen`). Aprire la partita NON la segna più come vista. Patch: /home/claude/patch_nospoiler3.py.
+- (30/10 11:35) Grafica iniziale degli highlights (tvYtOpen): tolto SEMPRE il punteggio, resta «Squadra – Squadra · data» (richiesta utente).
+
+## 548 — «Trade» diventa «Storico trade» e passa nel menu Scambi
+- La voce «Trade» è uscita dal menu Centro gestione (restano Roster, Centro Medico, Regolamento) ed è la prima voce del menu Scambi con il nome «Storico trade»; la scheda Scambi resta evidenziata quando la pagina è aperta. Il tasto indietro dai dettagli usa lo stesso nome.
+- Stato: pubblicato (v152, 30/10/2026).
+549. PUBBLICATA (v163) Statistiche › Squadre: previsione del punteggio Dreamers del prossimo turno (drPrevisione: per ogni giocatore tutte le partite NBA del turno, indice Cap + difesa avversaria + trend, valore atteso del massimo; poi meritocrazia 4G/4A/2C con capitano ×1,5, panchina ×½, tribuna), tessere Media a turno e Record a turno, numeri più grandi.
+550. PUBBLICATA (v163) Previsione turno: gli infortunati OUT perdono le partite prima del rientro (senza data di rientro = fuori tutto il turno e vanno in tribuna a 0); dubbio ×0,5, in forse ×0,8, giorno per giorno ×0,9, probabile ×0,95. Nelle statistiche squadra «Giocatori in campo» diventa «Infortunati» (numero dal Centro Medico).
+551. PUBBLICATA (v163) Banner previsione turno più compatto: numero a sinistra, testo a destra, dettaglio giocatori apribile.
+552. PUBBLICATA (v163) Statistiche squadra: previsione nella casella azzurra con trattino come in Home (verde se sopra la media a turno, oro se sotto), record a turno in casella oro; 4 varianti di colore (v1–v4) in attesa di scelta, ora attiva v1.
+553. PUBBLICATA (v153) Statistiche squadra: scelta opzione 4 (casella previsione tratteggiata, record con trofeo oro).
+554. PUBBLICATA (v154) Tabellone della stanza Dreamers: «giocato» non più x/10 ma partite NBA già giocate/totale a disposizione della squadra nel turno (somma su tutti i giocatori), così si vede chi ha più partite.
+555. PUBBLICATA (v155) No spoiler: nelle impostazioni si sceglie se avere il tasto in testata (accanto all'ingranaggio, 👀/🙈); dalla Home chi lo ha lo accende e spegne. Se il tasto è tolto i risultati sono sempre visibili; chi aveva il no spoiler attivo mantiene il tasto.
+556. PUBBLICATA (v163) Tasto No spoiler in testata nello stile del tasto modalità notte (occhio + pallino rosso, viola quando attivo); 4 varianti provvisorie a/b/c/d in attesa di scelta (ora attiva a).
+557. PUBBLICATA (v156) Tasto No spoiler: scelta variante B (40×40 come l'ingranaggio), senza pallino rosso, occhio aperto/barrato.
+558. PUBBLICATA (v157) Previsione turno: ogni giocatore si apre e spiega il calcolo (media stagione, forma recente, storico contro l'avversario, difesa avversaria per ruolo nelle ultime 5 partite, trend, infortunio, partita migliore, slot) più nota «Come è calcolata» con il confronto con la media storica della squadra.
+559. PUBBLICATA (v158) Previsione turno: dentro ogni giocatore, per ogni partita, la scheda nello stile del tasto Cap (media e minuti contro l'avversario, tutte le partite precedenti colorate, difesa avversaria per ruolo con i giocatori che hanno fatto più o meno della loro media, stagione/ultimo 50%/ultimo 15%, indice e atteso con trend).
+560. PUBBLICATA (v159) Predefinito PDK in tutte le statistiche (Statistiche giocatori e Squadre): l'Efficienza è l'alternativa selezionabile; i pulsanti mettono PDK per primo e «Azzera i filtri» torna a PDK.
+561. PUBBLICATA (v160) Dettaglio previsione: freccia › a destra di ogni giocatore (ruota quando è aperto) e suggerimento «Tocca un giocatore per vedere come è calcolato il suo punteggio».
+562. PUBBLICATA (v161) Dettaglio previsione chiarito: riepilogo del giocatore (previsioni per partita → valore del turno 37,1) e per ogni partita i passaggi 1 Indice Cap, 2 correzione difesa, 3 trend → atteso.
+563. PUBBLICATA (v161), variante 4 (barre) Dettaglio previsione: frase semplice («N partite nel turno: le ho analizzate una per una e conta solo la migliore») e partite come tasti selezionabili che aprono la specifica di quella partita; 4 varianti di layout (v1 caselle, v2 righe, v3 carte, v4 barre) in attesa di scelta, ora attiva v1.
+564. PUBBLICATA (v162) Banner della Home che non scorre: causa probabile l'impostazione «Riduci movimento» del telefono (iPhone: Accessibilità › Movimento), che fermava l'animazione e bloccava anche lo scorrimento a mano. Ora scorre comunque; in più un controllo ogni 3 secondi riavvia l'animazione se resta in pausa.
+565. PUBBLICATA (v163) Dettaglio previsione: equazione chiara «migliore prevista + bonus occasioni = valore del turno» al posto della frase lunga.
+566. PUBBLICATA (v163) Dettaglio previsione in 3 passi numerati: 1 le partite previste (barre selezionabili), 2 migliore + bonus = valore del turno con la spiegazione del perché il bonus è basso/medio/alto, 3 dettaglio della partita scelta.
+567. PUBBLICATA (v163) Statistiche squadra: tolte PDK medio ed Eff. media; sotto la previsione una striscia Infortunati / Partite del prossimo turno (tutti i giocatori) / Trend squadra (ultime 4 partite dei giocatori contro il loro rendimento precedente); sotto Media e Record a turno.
+568. PUBBLICATA (v163) Striscia squadra: Infortunati in rosso (se ci sono), «Partite turno» sempre su una riga anche con doppie cifre (sotto «T4 · 31 giocabili»).
+569. (non pubblicata, in coda) Statistiche: tasti grandi Giocatori e Squadre più bassi del 15% (da 98 a 83 px).
+569. PUBBLICATA (v164) Statistiche: tasti grandi Giocatori e Squadre più bassi di circa il 15% (da 83 a 69 px, icone e scritta ridotte in proporzione).
+570. PUBBLICATA (v165) Statistiche › Giocatori: la colonna Eff. non è più attaccata al bordo destro (margine di 16 px) e le colonne si spostano un po' a sinistra; nome giocatore con 22 px in meno di larghezza massima.
+571. (non pubblicata, in coda) Il Dreamers Post (prova nell'area Ducks): pulsante 📰 Giornale nella Hall of Fame Ducks, oro lampeggiante quando il numero del giorno (7:30 ora italiana) è pronto, bianco quando è già letto o non uscito. Un solo numero al giorno, giornale completo composto dall'app (modelli di frasi + dati veri): caso del giorno/«karma» di uno scambiato che esplode o crolla (es. Fears 57 PDK dopo lo scambio con Coward), scontro del turno con previsioni, bollettino medico, scambi recenti valutati dal calcolatore (equo/vincitore/truffa), migliori della notte, classifica. Tono ironico ma amichevole. Variante di prova con il tasto «Altra variante».
+
+## 572 — Sede giornalistica «Notizie» (area Ducks, NON pubblicata, branch coda)
+Nuova tessera «Notizie» nella Hall Ducks: vetrina di 6 formati (pulsante 📰 oro/bianco, pagina articolo, striscia ULTIM'ORA, banner TG, TG Dreamers a schermo intero con sigla/slide/striscia/controlli, prova voce). Voce = Web Speech it-IT (parte dopo un tocco). Ogni articolo del Post ha «🔊 Ascolta». Nessun numero segreto nel NV_LOG.
+
+573 — Ducks: banner con logo wordmark non più tagliato (`.teamhead .hlogo[data-t="DUC"]{object-fit:contain}`). Area riservata › Personalizzazioni: aggiunto il logo «Papero (solo banner e Home)» (chiave `p`, `DUC_BAN`, localStorage `dl_ducb`): se scelto compare solo nel banner Ducks (`ducBan()`), il resto dell'app resta con la scelta/ufficiale. Scegliere un altro logo o «Ripristina» lo toglie. SEGRETO, non in NV_LOG. In coda su `coda`, non pubblicato.
+
+574 — Home (solo area Ducks, `COL.d` e dopo le 7:30): il TG Dreamers è una scheda della striscia scorrevole delle trade/partite (`.tmc.tgc`, prima delle trade); toccandola parte il TG a schermo intero. In coda su `coda`, non pubblicato.
+
+575 — Scheda TG nella striscia Home senza finestre: al tocco la striscia si ferma con la scheda a sinistra, il TG gira dentro la scheda (loghi/titolo che cambiano, barra di avanzamento, voce) e a fine TG la striscia riparte; secondo tocco = stop. L'overlay a schermo intero resta solo nella vetrina «Notizie». In coda su `coda`, non pubblicato.
+
+576 — Scheda TG in Home: compariva solo se il giornale non era ancora stato letto (usava `gzPronto`); ora dipende solo dall'orario (dopo le 7:30) e dall'area Ducks sbloccata (`gzOraOk`). In coda su `coda`.
+
+577 — Area Ducks: tolto il pulsante 📰 Giornale dalla Hall. Scheda TG in Home: resta visibile tutto il giorno (non sparisce dopo la lettura) fino alle 7:30 del giorno dopo, quando esce il nuovo numero (`gzOra()` prima delle 7:30 restituisce la data di ieri). Si vede anche dopo una ricarica, senza rimettere la password: dopo il primo accesso all'area Ducks su quel telefono si salva `dl_dax` in localStorage. In coda su `coda`.
+
+578 — Area Ducks: tolta la tessera «Notizie» (vetrina non più necessaria: si è scelto il banner TG in Home). In coda su `coda`.
+
+579 — Banner Home: eliminato lo scatto. `homeNotteRefresh` confrontava il DOM vivo (con lo stile inline dell'animazione) con quello nuovo, quindi ridisegnava tutto a ogni giro (ogni 4 s quando c'è `.hmph`) e il banner ripartiva con una fase leggermente diversa. Ora confronta con l'ultimo HTML generato (`el._hnL`) e, quando i dati cambiano davvero, riparte dalla stessa frazione di giro (progress), senza salto. In coda su `coda`.
+
+580 — TG nella scheda Home: comandi dentro la scheda (⏮ indietro, ⏸/▶ pausa e riprendi, ⏭ avanti, ■ chiudi). In pausa il TG resta fermo sulla notizia (voce ferma, scritta «IN PAUSA»); riprendendo, quella notizia riparte dall'inizio (non a metà frase). La striscia resta ferma finché il TG è aperto e riparte alla fine o con ■. In coda su `coda`.
+
+581 — Scheda TG in Home: stessa forma di prima anche con il TG aperto (236×106 px, la striscia non si ingrandisce); comandi e titolo compattati (titolo su 2 righe, pulsanti 22 px). In coda su `coda`.
+
+582 — Lettura vocale e testo degli articoli più naturali. Scritto: gli avversari NBA ora per esteso (Sacramento, Portland… invece di SAC, POR) tramite `GZ_NBA`/`gzOpp`. Voce (`gzPulisci`): numeri letti per intero in italiano (`gzNum`: 57 → cinquantasette, 56,96 → «cinquantasei virgola novantasei»), punteggi «341–378» → «trecentoquarantuno a trecentosettantotto», ordinali (2º → secondo), percentuali, date (30/10 → trenta ottobre), «n.» → numero, «PDK» → pi di cappa, crediti, nomi inglesi delle squadre con pronuncia italianizzata (`GZ_FON`), parentesi e «·» come pause. In coda su `coda`.
+
+583 — Articoli riscritti come racconto completo (contesto → fatto → conseguenza): lo scontro presenta turno, classifica e record delle due squadre e cosa si gioca («Nel turno 4 del Dreamers si affrontano i Foxes, 2º in classifica con 3–0, e i Ducks, 1º…»); scambi con quando è avvenuto, chi riceve cosa e verdetto; infortuni con ruolo del giocatore e rientro; notte e classifica in frasi intere. Articoli corretti (gli Spiders, agli Eagles), plurali (1 vittoria), «Quattro giorni fa». In coda su `coda`.
+
+584 — Il TG Dreamers in Home non dipende più dall'area Ducks: visibile a tutti, sempre, finché non esce quello nuovo alle 7:30 (tolto il controllo `COL.d`/`dl_dax`). Tolta la battuta «Sì, ci siamo anche noi» (testi pubblici). Aggiunta voce in `NV_LOG` (registro pubblico, nessun dato riservato). In coda su `coda`.
+
+585 — Fix scheda TG Home: il codice del giornale viene eseguito dopo il primo disegno della Home, quindi al primo caricamento la scheda mancava e compariva solo dopo aver cambiato sezione. Ora, finita la definizione, la Home viene ridisegnata una volta (`render()` se `cur==="home"`). Testato: caricamento e ricarica a freddo, senza password né localStorage. In coda su `coda`.
+
+586 — Home: la scheda TG non è più la prima della striscia (dopo la prima scheda: trade o partite), così l'eventuale scatto quando il giro ricomincia non colpisce il TG. In coda su `coda`.
+
+587 — Articoli e voce riscritti da zero (`gzEdizione`). Ogni articolo è composto da: apertura parlata, contesto, fatto, commento, chiusura; il titolo non viene mai letto dalla voce, quindi niente ripetizioni (il titolo sta solo a video). Frasi scelte da «sacchetti» deterministici (`P(sale, …)`): ogni gruppo di frasi si usa per intero prima di ripetersi, stesso risultato per tutti nello stesso giorno. Nuovi servizi: squadra della notte, numero del giorno, secondo infortunato, intro e chiusura del TG con giorno della settimana. Pronuncia italiana di tutti i 151 giocatori (`GZ_NOMI`, `gzNomiVoce`: Boozer → «Bùzer», Wembanyama → «Vembaniàma») e delle squadre. Test su 40 giorni simulati: nessun errore, intro tutte diverse, scambi/infortuni/notte quasi sempre diversi. In coda su `coda`, non pubblicato.
+
+588 — TG Dreamers non ufficiale: interruttore in Impostazioni › Home › «TG Dreamers» (`DLS.tgh`, spento di default). Con l'interruttore spento la scheda TG non compare in Home. Aggiornata la voce in `NV_LOG`.
+
+589 — Profili giocatore (squadre ed esterni FA/G League): tolta la barra rossa «PDK ed efficienza» con «Agg. …» (inutile). Il selettore Stagione resta subito sotto i pulsanti, con un po' più di margine. In coda su `coda`.
+
+590. **Sala Trofei «Velluto reale e oro»**: sfondo bordeaux con raggi di luce e puntini dorati, corona sul titolo (oro sfumato, serif spaziato), doppia cornice dorata, nessun rosso nei bordi, prima in classifica con riga evidenziata e ♛, medaglie metalliche oro/argento/bronzo, punti in oro. Stile limitato alla vista Sala Trofei (`.sala-oro`). Su `coda`, non ancora pubblicato.
+
+591 — G League: eliminata la «Classifica G League · efficienza di squadra». Restano le schede delle squadre satellite (con Eff. squadra al loro interno).
+
+592 — Anello di caricamento attorno al logo: mentre l'app scarica i dati da ESPN / NBA.com si riempie un anello viola scuro (frazione di richieste completate), poi lampeggia pieno e viene rimosso del tutto dalla pagina (esiste solo durante lo scarico). Il progresso è reale (richieste fatte / richieste lanciate), non finto. Su `coda`.
+
+593 — Statistiche › Squadre: ora si apre prima l'elenco delle 8 squadre (righe con cuneo colorato, logo sul suo sfondo, nome e città); toccando una squadra si entra nelle sue statistiche (stessa pagina di prima). Le altre strade verso le statistiche di squadra (dalla classifica efficienza, dai profili) restano dirette. Stato `effSqPick`.
+
+594 — TG Dreamers: ANALISI DELLE SQUADRE e SUGGERIMENTI. Nuovo motore `gzProf` (usa iaProf/iaStats dell'IA trade: età media, talento, classifica, mosse di mercato, carenze e surplus per ruolo, crediti in cassa, trend, infortuni) che assegna a ogni squadra una fase: in lotta per il titolo, vuole vincere subito, esperta ma indietro, giovane e già forte, rifondazione, in costruzione, nel limbo (a metà in tutto e ferma sul mercato), all'inseguimento, strada aperta. `gzMercatoCand` propone scambi con prezzo costruito dal calcolatore trade (scarto sotto il 10%): chi ha un reparto scoperto chiede un veterano a chi ricostruisce, oppure chi ricostruisce con cassa compra un giovane in crediti. Nuovi articoli nel TG (max 9 notizie, 8 slide): «La lente sulle squadre» (una squadra a rotazione, tutte comprese ogni 8 giorni, con diagnosi, mercato recente, 3 suggerimenti e verdetto), «Suggerimento di mercato», «Compratori e venditori», «Il consiglio del Tg». Frasi a pezzi combinabili con sacchetto deterministico: nessuna ripetizione ravvicinata. Nuova pagina pubblica «Suggerimenti del TG» (Statistiche › Squadre › pulsante viola): una scheda per squadra con fase, diagnosi e consigli. Esposti `window.gzFatti`, `window.GZ`, `window.gzProf`.
+
+595 — Campo (formazione Dreamers): due frecce ‹ › ai lati del tabellone per rivedere i turni passati (formazione, punteggi e tabellone di quel turno) e tornare avanti fino al turno in corso; sotto compare «Turno N · date · concluso» con il link «torna al turno attuale». Non in modalità notte. Stato `CAMPO_K` (si azzera uscendo dal Campo).
+
+596 — Condividi roster (immagine): ora mostra i PDK medi della stagione (non più l'efficienza), con colori viola da 40, verde 30-40, giallo 20-30, rosso sotto 20; giocatori ordinati per PDK dentro ogni reparto; piè di pagina «PDK medio stagionale».
+
+596 (agg.) — nella condivisione roster i PDK sono in pillola colorata come nell'app (viola/verde/giallo/rosso).
+
+597 — Tabellone del Campo: il contatore «giocato» diventa «giocabili»: partite giocate su quelle realmente giocabili. Gli infortunati «out» del Centro Medico non contano fino alla data di rientro indicata (senza data: fuori tutto il turno); se il Centro Medico li fa rientrare il totale sale da solo. Solo nel turno ancora aperto (i turni passati non hanno il contatore). `drGare(t,k,W,eff)`.
+
+598 — Tabellone del Campo: sotto ogni squadra due righe senza scritte: sopra giocate/totale completo (grigio), sotto giocate/totale senza gli infortunati (verde). Il calcolo usa injRit(): data di rientro dal Centro Medico (data esplicita, assenza singola, durata in settimane, "prime N partite", altrimenti fuori tutto il turno). I giocatori contano solo dal rientro e il numero sale se rientrano. Nei turni passati il contatore è nascosto. Le stime (durata, partite, ignoto) sono approssimate; bollettino al 26/10.
+
+599 — Valore di Alperen Şengün portato da 1610 a 1695 (valore di partenza).
+
+600 — Campo: sotto il tabellone la scritta «Notte N/T» (N = notti già giocate del turno + 1, T = notti del turno) che si aggiorna da sola; visibile solo nel turno in corso, non nei turni passati né in modalità notte. Spazio tra tabellone e campo leggermente ridotto.
+
+601 — Box score di Dynasty TV: la colonna delle stoppate ora si chiama BLK (prima Stp).
+
+602 — Statistiche notte: terzo tasto BOX (accanto a PDK ed Eff.). La classifica resta per PDK e sotto ogni giocatore compaiono le caselle PT RB AS ST BL PP e tiri sbagliati, più tiri/da 3/liberi e titolare. Numeri verdi: 3+ rubate, 3+ stoppate, 7+ rimbalzi, 25+ punti, 7+ assist; gialli al posto del verde se fanno doppia, tripla o quadrupla doppia (10+ in almeno due tra PT RB AS ST BL); rossi: 4+ palle perse, 8+ tiri sbagliati. Dati dai box score di Dynasty TV.
+
+603 — Statistiche notte: BOX è il tasto predefinito; palle perse chiamate TO (rosso da 3 in su); tiri sbagliati rossi se oltre il 60% dei tentati (almeno 5 tiri, liberi compresi); aggiunta la casella 3P (triple segnate, verde da 3 in su, come il bonus PDK).
+
+604 — Statistiche notte, tasto BOX: il PDK a destra è allineato in verticale alle caselle delle statistiche (layout a griglia, il logo copre tutta l altezza della riga).
+
+605 — Box notte: le statistiche che compongono doppia/tripla/quadrupla doppia hanno solo il bordino viola; i numeri seguono sempre le soglie verdi (non più gialli).
+
+606 — Giocatori: linguetta BOX/PDK attaccata al titolo. In BOX la classifica resta quella del PDK ma ogni riga mostra le medie a partita (PT RB AS ST BL 3P TO) calcolate dai box di Dynasty TV nel periodo scelto; toccando un giocatore si apre la pagina con tutti i suoi box score partita per partita (data, avversario, minuti, tiri, caselle colorate, bordino viola per doppie/triple doppie, PDK). Solo giocatori NBA con box in Dynasty TV (non G League).
+
+607 — Giocatori: la linguetta BOX/PDK si sposta sotto il filtro Periodo, attaccata in alto a sinistra alla lista.
+
+608 — Home, tasto PREVISIONE di un giocatore (partite di stanotte): apre la pagina «Come si calcola la previsione» con tutti i dati: indice (storico vs avversario 40 orretto verso la media di stagione, forma recente 35
+608 — Home, tasto PREVISIONE di un giocatore (partite di stanotte): apre la pagina «Come si calcola la previsione» con tutti i dati: indice (storico vs avversario 40% corretto verso la media di stagione, forma recente 35%, stagione 25%), difesa dell'avversario contro il ruolo con le prestazioni campione, correzione, risultato, gare contro l'avversario e ultime gare. Il tasto ‹ riporta alla Home.
+
+609 — Toccando la scritta DREAMERS in alto accanto al logo si torna alla Home (il logo continua ad aggiornare la pagina).
+
+610 — Scritta DREAMERS in alto: al tocco (ritorno alla Home) diventa viola con un alone luminoso che svanisce in circa un secondo.
+
+611 — Scritta DREAMERS: l effetto viola dura solo il tempo del tocco (animazione breve, circa 0,3 secondi, e anche finché è premuta) poi torna subito bianca; alone più leggero.
+
+612 — Home: tolti dalla barra in alto i tasti Dynasty TV (rosso) e Dreamers (viola); la barra Cerca giocatore si allunga e copre lo spazio recuperato (restano segnalibro e modalità notte).
+- (30/10 17:40) Barra di stato iPhone (app da Home, tema normale): striscia a tinta unita var(--hd1) in body::before al posto della fascia a righe che appariva sfocata.
+
+613 — Giocatori, modalità BOX: il PDK è allineato alla riga delle caselle delle statistiche e accanto alla linguetta compare la scritta «Stats medie a partita». Nella pagina del giocatore (box partita per partita) la scritta non c è.
+
+614. Banner Home: le sfide Dreamers (tutte, senza limite a 4) passano davanti alle partite NBA in ogni fase (prima in fase pre venivano dopo le 10 NBA e restavano in fondo al giro), seguite da TG/avvisi e partite NBA.
+
+615. Date dei turni sostituite in tutta l'app dal conteggio notti (es. "1 su 5 notti"; turno concluso "5 su 5"; turno futuro "5 notti"): Home, Dreamers, Campo, Dynasty TV, condivisioni, calendario turni (solo "N notti").
+
+616. Vecchia Home (8 loghi) e testata del Campo: i record V-P usano la classifica Dreamers (drStand) e si aggiornano a ogni turno chiuso, non piu' i vecchi 2-0 dei dati Dunkest.
+
+(peacocks) 30/10/2026 (Claude, account del secondo utente) — Peacocks: colore/sfondo squadra TEAMS.PEA.bg = rosa #f70990 (Home, testate, campo, banner, condivisioni). Maglie invariate: kitC usa ancora il blu #2f6bff per PEA. PUBBLICATO.
+
+(peacocks-maglie) 30/10/2026 (Claude, account del secondo utente) — Maglie Peacocks rifatte (kitC, blocco if(t==="PEA")): Casa = blu del logo #012dd5 con colletto/spalle e contorno verdi #16b35a; Notte = rosa #f70990 con colletto/spalle e contorno nome/numero blu #012dd5; Alternativa "piuma di pavone" = verde petrolio #0b4b57, nome/numero rosa bordati di bianco, colletto/spalle rosa. Tutte con gli occhi di pavone sui fianchi (DECO.PEA, campo feather). PUBBLICATO (solo queste: l Allenamento IA Trade 617-618 dell altra sessione resta in coda).
+617. Nuova voce "Allenamento IA Trade" (ultima in Scambi): scheda con scambio proposto (Dai/Ricevi, valori, eta', differenza %), tasti Accetto/Rifiuto/Cambia (tocchi i giocatori da togliere + nota), sessione infinita salvata sul telefono, "Stampa report" con medie sbilanciamento, eta', ruoli, giocatori piu' accettati/rifiutati, modifiche e elenco completo, da copiare e mandare a Claude per ricalibrare i valori.
+618. Allenamento IA Trade: la scheda e' scritta come un'offerta di Claude: prima "TI OFFRO" (quello che ricevi), poi "RICEVO" (quello che dai), senza loghi ne' nomi delle squadre.
+
+619. Allenamento IA Trade per tutti i GM: prima di iniziare ci si presenta (nome + squadra, obbligatori); le proposte sono sempre sulla squadra del GM (1-3 giocatori per lato, anche scambi a 3 squadre con la terza squadra indicata), tasto Tratto al posto di Cambia, il report riporta nome e squadra del GM.
+
+620. Allenamento IA Trade: le proposte sono sempre a pari quantita' (1vs1, 2vs2, 3vs3), anche a 3 squadre.
+
+621. Allenamento IA Trade: la presentazione chiede solo la squadra (niente nome); ogni risposta registra i secondi impiegati e il report calcola il tempo medio e se le risposte piu' rapide della media riguardano scambi piu' favorevoli o piu' svantaggiosi (Δ medio veloci vs lenti, % accettati, correlazione).
+
+622. Allenamento IA Trade, tempi: le risposte istintive (sotto meta' della mediana) pesano di piu', le lente molto meno (distrazioni; peso 1/(1+(t/mediana)^2), escluse le pause oltre 2 minuti); il report confronta istintive e altre e da' le percentuali ponderate.
+
+623. Allenamento IA Trade, tempi: soglie assolute. Fino a 2 secondi = lampo (peso pieno), 2-3 s = istintiva (peso .8), oltre 3 s il peso scende rapidamente.
+
+624. Indice gusto calibrato sui report GM (361 risposte, validazione incrociata AUC 0,60 -> 0,80): valore % corretto per eta' (3,5 punti/anno) e dimensione pacchetto (12 punti per giocatore extra). Usato: nel generatore di Allenamento IA Trade (le proposte cadono vicino al punto di indifferenza), nel report (percentuali accettati per fascia di indice) e nel Calcolatore trade 2 squadre (riga con la squadra a cui lo scambio piace di piu').
+
+625. Home live: nuova scelta PDK/BOX in Impostazioni > Home > Aspetto della Home. Con BOX ogni giocatore live (Tutte le squadre e Seguiti, in entrambe le Home live) mostra il PDK accanto al cognome, la riga avversario + timer rosso e sotto il box score con gli stessi colori di Statistiche notte (PT RB AS ST BL 3P TO e tiri sbagliati). Default: PDK come prima.
+
+626. Home, giro delle pagine: dalle 14:00 (fase pre) Previsione > Risultati > Classifica > Notte appena avvenuta > Previsione; prima delle 14 la notte appena avvenuta e' la pagina predefinita e la Previsione non c'e' (giro a 3 pagine). Previsione ordinata per PDK previsionale (dal piu' alto). Versione BOX ora predefinita; in Impostazioni la scelta e' BOX / Snella (solo PDK).
+
+627. Home, 4 pagine anche a partite iniziate: dalle 14:00 la Previsione e' sostituita dalla pagina live e la Notte appena avvenuta (giorno USA precedente) resta come ultima pagina; prima delle 14 restano 3 pagine.
+628. Pagina Notte appena avvenuta: swipe da sinistra a destra (o freccia ‹ in alto) per tornare alle notti precedenti con box score, freccia › per tornare avanti; elenco = tutte le notti con box disponibili.
+
+629. Pagina Notte della Home: barra in alto piu' sottile, solo "NOTTE DEL gg/mm" (tolta la riga "scorri a destra"); resta lo swipe e le frecce.
+
+630. Barra Notte del: ancora un po' piu' sottile (20px, titolo 13px).
+
+631. Home: aggiunta una freccia ‹ in basso a sinistra del riquadro a pagine (speculare a ›) per tornare alla pagina precedente.
+
+(numero) 30/10/2026 (Claude, account del secondo utente) — Michael Porter Jr. (PEA): numero di maglia 17 (prima 1). PUBBLICATO.
+632. Scambi (calcolatore, schede IA Trade, interesse): slot di roster. A fine anno gli slot sono 13, quindi chi riceve più giocatori di quanti ne dà (e non ha slot liberi) deve tagliarne: i pezzi in più valgono il 15% se sotto 800 di valore, fino al 100% da 1600 in su (SLF/slotF). Nessuna eccezione per i fuoriclasse. Applicato in trBal (percentuali), vtSide e iaInt (interesse). Tolta la penalità 'pacchetto' dall'indice gusto (GUSTO.pack=0). Esponente dei punti abbassato da 2 a 1,4 (VAL_EXP) e VAL_CR ricalcolato: con 2 lo scambio reale di Jokić del 19/10 (DOL riceve Jokić+Durant+Booker+Hartenstein, PEA riceve Giddey+Mobley+Sabonis+Gobert+37 cr) dava +28% a chi prende Jokić, ora +10%: in linea con i punti Dunkest medi (55+31+26 ≈ 112 contro ≈ 100), vinto da chi ha preso Jokić; Jokić contro tre pezzi da 1400 ≈ −4%. Si può riportare a 2 da Gestione equilibrio trade.
+
+633. Slot di roster, potenziale: il pezzo in più mantiene valore se è giovane o scelto alto al draft (Peterson, Burries, Wagler…), ma solo quanto lo vuole chi lo riceve (fino al 90% per chi ricostruisce, ~25% per chi vuole vincere subito). I veterani da 28 anni in su sotto 1200 di valore valgono la metà dello sconto base: in NBA da tanto senza aver mai portato niente non valgono uno slot.
+
+634. Dreamers: «proiez.» della sfida e «Previsione · turno» della scheda squadra ora sono lo stesso numero. Prima la proiezione della sfida usava il PDK medio (una partita, nessun avversario) e dava ad esempio Dolphins 276 contro i 315 della Previsione; ora usa il valore atteso della Previsione (avversari, difesa, trend, bonus più partite). drPrevisione(t,k) accetta il turno.
+
+635. Home: la schermata Previsione riappariva verso le 05:00-06:00 italiane (all'una di notte ET la data USA passa al giorno dopo e la notte appena giocata non contava più come 'in corso'). Ora la Previsione compare solo dalle 14:00 italiane fino alla prima partita; dopo l'inizio delle partite resta la live e, finite, la notte appena avvenuta fino alle 14:00 successive. homeFase controlla anche l'ora ET (< 09:00 = niente Previsione).
+
+636. Osservatorio (tasto Segui): nella vista 'Notte' e 'Live' i seguiti che stanno giocando vengono prima, poi gli altri per PDK decrescente (prima era solo per PDK). Nella Home la finestra 'Seguiti' era già ordinata così (live prima, poi PDK); il problema visto alle 05:14 era la Previsione che riappariva (nota 635).
+
+637. Home: a partita finita si vedono i minuti giocati. Versione BOX: prima cella tratteggiata «MIN» nel box score (anche in Seguiti e nella pagina Notte); versione snella: «Finale · 28 min» sotto il nome. Durante la partita non compaiono.
+
+638. Campo in modalità notte: toccando il PDK di un giocatore (in campo, panchina, anche 'Non gioca') si apre il foglio con la partita di stanotte (punteggio live con quarto e minuti, oppure Finale, PDK del giocatore) e l'elenco delle partite che gli restano nel turno, con il conteggio. Toccando la maglia si apre ancora la scheda del giocatore.
+
+639. Campo (formazione Dreamers): finché i giocatori sono «in attesa» (nessun punteggio nel turno) l'ordine non è più per PDK medio ma per orario di inizio della prima partita ancora da giocare: nei 5 in campo, nel 6° uomo e nella panchina; a parità, PDK medio. Chi ha già un punteggio resta ordinato per punteggio. La scelta di chi entra nei 10 e nei 5 resta quella di prima (drNextTs, ord2 in drTeam).
+
+640. Caricamento dati ESPN più veloce dalla Home (soprattutto al risveglio del telefono): (1) i tabellini delle partite si scaricano tutti insieme e non uno dopo l'altro (con 4 partite da 1 s l'una: 1 s invece di 4); (2) le notti (ieri e oggi) si scaricano in parallelo; (3) ogni richiesta ha una scadenza di 9 s e il blocco «scaricamento in corso» scade dopo 25 s, così una connessione rimasta appesa dopo il sonno non ferma più il resto; (4) il primo caricamento parte dopo 0,3 s (era 4 s) e riparte subito a ogni rientro nell'app, pageshow e ritorno della rete; (5) la Home chiama sempre il caricamento (prima solo con seguiti).
+
+641. Bug grafico in modalità notte: sotto i riquadri (zona del footer «Ultimo aggiornamento») e nella fascia in fondo comparivano le righe diagonali del tema giorno «Tabellone» (e lo sfondo del Parquet). Ora la notte vince su entrambi i temi, in tutte le schermate, e il fondo della pagina (zona sicura dell'iPhone) è dello stesso viola scuro.
+
+642. Home: cache locale della notte. Ogni scaricamento ESPN salva sul telefono partite e tabellini di oggi, ieri e l'altro ieri (USA); all'apertura dell'app vengono ripristinati prima del primo disegno, così la Home mostra subito box score e PDK già visti invece delle sole medie. Una partita salvata come live da più di 4 ore torna come Finale; dati oltre 36 ore non si usano. ESPN poi aggiorna come prima.
+
+643. La modalità notte (luna in Home e nel Campo) ora si ricorda: resta accesa o spenta anche dopo aver chiuso e riaperto l'app (localStorage dl_cnt).
+
+644. Statistiche live della notte: terzo tasto «Box» accanto a PDK ed Eff. (come nelle notti passate), sotto ogni giocatore PT RB AS ST BL 3P TO e tiri sbagliati con i colori del box score. È il tasto selezionato di default (SN.m=box).
+
+645. Loghi NBA di Dynasty TV senza lampeggio: erano già file nostri (loghi/nba/*.svg) ma a ogni ridisegno l'immagine ripartiva nascosta finché non finiva di caricare (e col caricamento «lazy»). Ora: i loghi già caricati si ricordano e partono subito visibili, tutti i 30 si precaricano all'avvio, niente più lazy; il service worker li salva (precache) e li serve prima dalla copia locale. Quindi anche offline o con rete lenta restano stabili.
+
+646. Statistiche notte: anche in modalità giorno, se esiste una notte live (o appena finita, senza ancora dati ufficiali) è quella la prima schermata, con Box/PDK/EFF. La freccia ‹ porta all'ultima notte ufficiale e › dall'ultima ufficiale torna alla live. Senza notte live nulla cambia.
+
+647. Allenamento IA Trade: ora si apre con due bottoni, «Proposte di scambio» (come prima) e «Valutazione giocatori» (nuova). La nuova mostra un giocatore a caso (più probabili i valori alti) con 7 domande a scelta multipla: valore secondo te rispetto al Calcolatore (×0,6…×1,5, obbligatoria), cosa ne determina il valore, per quanto tempo lo mantiene, che pacchetto daresti per averlo, atteggiamento alla cessione (obbligatoria), a chi serve di più, affidabilità. Report copiabile con medie per età, valore, ruolo, distribuzione delle risposte, più sotto/sopravvalutati; dati in localStorage `atv1`. Inoltre uscendo dall'allenamento la sezione si chiude: al ritorno si riparte sempre dal menu.
+
+648. Valutazione giocatori: il GM non vede più il valore del Calcolatore. Dà un voto 1-10 (scala universale), poi dice quanto conosce il giocatore (obbligatoria, il voto di chi non lo conosce pesa poco), e risponde alle altre domande. Il report confronta il voto con la nostra scala 1-10 (decili del valore Calcolatore, salvata al momento della risposta): scostamento medio per conoscenza, età, fascia, ruolo e risposte, più apprezzati/meno apprezzati; include il nome del GM per incrociare i report di più GM.
+
+649. Valutazione giocatori: tolta la domanda sul pacchetto (1 vs 2-3 giocatori: a pari valore si tiene il singolo, gli scambi tipici sono pari valore con ruolo diverso o stessa fascia con preferenza diversa). Al suo posto: «Lo scambieresti con uno di pari valore che sia…» altro ruolo che serve / stesso ruolo più giovane / più pronto ora / nessuno.
+
+650. Allenamento IA Trade: terzo bottone «Età e crediti». Davanti a un giocatore della squadra del GM: se è giovane (≤24) «lo cedi per uno stesso ruolo/valore ma 3-6 anni più grande, con quanti crediti in più?» (no a nessun prezzo, 50, 100, 200, 300, 500); se è vecchio (≥29) «quanto paghi per uno uguale ma 5, 8 o 10 anni più giovane?» (niente…500). Report: crediti mediani e crediti per anno di differenza, per anni di scarto e fascia (scala 1-10), elenco completo; dati in localStorage `atg1`. Tolta dalla Valutazione la domanda «pari valore» (sostituita da questa).
+
+651. Valutazione giocatori: blocco infortuni al posto di «Affidabilità». Rischio percepito 1-10 (1 di ferro, 10 sempre rotto, obbligatoria), quanto abbassa il valore per il GM (per niente / −10% / −25% / −50% / mai), tipo di problema (gravi e lunghi / tanti stop brevi / minuti gestiti / nessuno). Report: rischio medio, sconto dichiarato per fascia di rischio, giocatori più a rischio e più affidabili per il GM, rischio nell'elenco completo.
+
+652. Valutazione giocatori, infortuni: lo sconto sul valore non ha più risposte predefinite ma una livella 0–100% (passi da 5) che il GM fa scorrere; obbligatoria (va toccata). Il report usa la percentuale esatta.
+
+653. Home, box score a notte finita (es. 06:00–14:00): la pagina Giocatori ora è la «Notte del GG/MM» con le frecce ‹ › per sfogliare le notti precedenti (prima le frecce c'erano solo nella pagina Notte, che compare con live/previsione). Flag `fin` in `homeNotte`; il tocco sulle frecce resta sulla stessa pagina.
+
+654. Home, box score = NAVIGATORE DELLE NOTTI (richiesta di Francesco). Non c'è più il cambio automatico alle 14:00 con la Previsione. La prima pagina mostra sempre «Notte del GG/MM» con le frecce: posizione 0 = notte in corso (LIVE) oppure l'ultima notte finita; ‹ = notti passate (box score), › = notti future con le Previsioni (dalle partite 'S' di TV.days, anche più notti avanti). Stato `HN_NO` (0 presente, >0 passato, <0 futuro), helper `hnPresent/hnFuture/hnPast`; sostituisce la pagina «Notte» a parte e il flag `fin` (653). Il banner in alto segue la notte mostrata quando è futura. `homeFase()` resta usata solo dalla scheda giocatore (riga ~5026). Limite noto: il riquadro Seguiti sotto segue la notte presente/futura, non quella passata sfogliata.
+
+655. Home, navigatore notti: in avanti si può andare di UNA sola notte (la prossima con le Previsioni), non all'infinito. Chiarimento: le frecce in alto scorrono le notti dentro il box score; le frecce in basso (‹ ›) cambiano schermata (Box score / Risultati scontri / Classifica).
+
+656. Home, schede Dreamers in alto: accanto al turno (T4) compare in piccolo la notte del turno su quante, es. «T4 · 2/5» (stessa logica di `drNn`: turno concluso = tutte, in corso = notti giocate + 1). Nelle schede del turno futuro («DAL …») non compare.
+
+657. Home, navigatore notti: le frecce ‹ › in alto sono un po' più staccate da «Tutte le squadre / N giocatori» (margine sotto da −3px a +4px, circa 7px in più) per evitare i tocchi sbagliati senza sprecare spazio.
+
+658. Numero di notte del turno (T4 · 1/5, «1 su 5 notti» in Dreamers/Campo/condivisioni): era sbagliato di +1 (2/5 con una sola notte giocata) perché la notte live/appena finita era già contata tra le notti con dati e poi si aggiungeva ancora 1. Ora `drNnN(W)` = notti dall'inizio del turno fino alla notte mostrata (`hnPresent()`); prima della prima notte resta «5 notti».
+
+659. Home, box score a partita finita: la cella MIN è verde oltre i 30 minuti, rossa sotto i 26, neutra tra 26 e 30 (stesse classi `gv`/`gr2` delle altre celle). Solo nel box (non nella versione snella).
+
+660. Home, minuti a partita finita: tolta la cella MIN dal box (659); i minuti ora stanno accanto a «Finale» («vs POR · Finale · 38 min»), anche nella versione snella. Colori: verde da 30 minuti in su, rosso da 25 in giù, azzurro tra 26 e 29 (classi `mnb mg/mr`). Sostituisce la 659.
+
+661. Valutazione giocatori, correzioni: (1) «Cosa ne determina il valore» ammette PIÙ risposte (tocca per aggiungere/togliere); (2) la domanda sul tempo dipende dal motivo scelto: produzione → per quanto mantiene la produzione; potenziale → quando raggiunge il massimo; contratto → per quanti anni lo terresti; ruolo scarso → quanto è difficile sostituirlo; nome/appeal → quanto dura l'appeal; sopravvalutato → di quanto; con più motivi compare una domanda per ciascuno; togliendo un motivo si toglie la sua risposta; (3) la livella dello sconto infortuni parte da 0% («Nessuno sconto») e si può andare avanti senza toccarla; (4) entrando in «Valutazione giocatori» o «Età e crediti» viene chiesta sempre la squadra (preselezionata quella già salvata). Report: motivi, combinazioni più frequenti e approfondimento per motivo.
+
+662. Allenamento IA Trade, menu: i tre tasti hanno un bordo giallo (2px, #f5b400) con leggero alone e una freccia › a destra, per distinguerli dallo sfondo; corretti i plurali («1 giocatore valutato», «1 risposta»).
+
+663. Allenamento IA Trade: eliminata la sezione «Età e crediti» (650): tolti bottone, schermata, report e codice; il menu ha di nuovo due tasti (Proposte di scambio, Valutazione giocatori). Gli eventuali dati già salvati sul telefono (`atg1`) restano inutilizzati.
+
+664. Allenamento IA Trade: terzo tasto «Confronto giocatori». Due giocatori senza valori (accoppiati con distanza nostra ragionevole); sotto ognuno «Meglio lui», al centro «Pari»; se uno dei due è meglio compare la livella da 1 a 3000 crediti (più campo numerico per scrivere il valore esatto), obbligatoria; con «Pari» la livella non compare e si salva subito. Squadra chiesta a ogni avvio. Report: accordo sul vincitore, crediti del GM contro i nostri (punti trade del Calcolatore convertiti con VAL_CR) per fascia e rapporto, «pari», preferenza per il più giovane, disaccordi, elenco. Dati in localStorage `atc1`.
+
+665. Confronto giocatori: la livella dei crediti è facoltativa. Scelto «Meglio lui» si può salvare anche senza crediti (vale il solo parere); il report conta il vincitore e lascia fuori i crediti mancanti dalle medie («vincitore senza crediti: N»).
+
+666. Valutazione giocatori: tolta la domanda «Quanto lo conosci?» (tutti conoscono bene i giocatori). Il report non separa più per conoscenza: tutte le risposte contano nelle medie.
+
+667. Box score: la cella «TIRI SBAGL.» è rossa quando la percentuale dal campo (FG%) è sotto il 43% (con almeno 5 tiri dal campo tentati; prima la regola era «oltre il 60% di tiri sbagliati tra campo e liberi»). Vale in tutti i box (Home, Statistiche live, Dynasty TV, box giocatori free agent).
+
+668. Box score: la cella «TIRI SBAGL.» è anche verde quando la FG% è sopra il 50% (rossa sotto il 43%; neutra tra 43 e 50). Sempre con almeno 5 tiri dal campo tentati.
+
+669. Confronto giocatori: tolta la livella dei crediti. Sotto ogni giocatore tre tasti: «Poco meglio lui», «Meglio lui», «Molto meglio lui»; al centro «Pari». Si sceglie e si salva con «Salva e prossimo». Report: accordo sul vincitore, distanza nostra (crediti dal Calcolatore) media e mediana per ogni grado di risposta (per tarare le soglie), % di Pari/Poco/Meglio/Molto/vince l'altro per fascia di distanza, età, disaccordi, elenco. I vecchi dati con crediti (`atc1`) restano leggibili come «meglio».
+670. Box score: la cella TO (palle perse) diventa verde con 0 o 1 TO (rossa da 3 in su, come prima). Applicato ai tre box (notte, Home, Free agent).
+671. Sala Trofei 3D: nuovo pulsante «Entra nella Sala 3D» in cima alla Sala Trofei. Apre a schermo intero una stanza viola/spaziale (nebulose, stelle e colonne in parallasse, pavimento a griglia al neon, fasci di luce). Scorrendo il dito si passa da un piedistallo all'altro con profondità e rotazione 3D; per ogni anno compaiono 1°, 2° e 3° posto con coppa oro/argento/bronzo, logo e nome della squadra. Primo e ultimo slot: ingresso e «prossima stagione». Dati da STORIA, quindi un nuovo anno aggiunto lì compare da solo. Solo CSS/JS, nessuna libreria.
+672. Il pulsante che apre la Sala 3D, sopra la Classifica competenza, ora si chiama «Sala trofei Dreamers».
+673. Sala 3D: loghi delle squadre dritti, più grandi e senza sfondo (tolti il tondo dorato e il quadrato colorato dietro il logo).
+674. TG Dreamers: le notizie sulle partite (miglior prestazione, squadra della notte, numero del giorno, karma degli scambi) ora si riferiscono alla notte appena finita. Se nei dati live (box score) c'e una notte conclusa piu recente di quella in PARTITE, il TG usa quella (almeno 5 giocatori con minuti); altrimenti resta PARTITE. In piu: «Anthony Edwards» letto «Entoni Eduards».
+675. TG Dreamers, piu argomenti e nessuna ripetizione. (a) Memoria dei giorni scorsi (localStorage dl_gz_hist): un argomento gia trattato non torna finche non ci sono novita (firma diversa) o passano i giorni di pausa: scambi una sola volta (solo il giorno stesso e il successivo), infortuni 7 giorni, scontro/classifica/squadra della notte/numero del giorno a giorni alterni, consigli 4 giorni. (b) Il «caso del giorno» e il «bidone» dopo uno scambio ora dipendono dalla distanza dalla media del giocatore (hot: almeno +30% e +8 PDK; cold: almeno -40% e -8 PDK), con la frase di confronto (media 25, notte 35: +40%). (c) Nuove notizie: RASSEGNA DELLA NOTTE (box score: punti, rimbalzi, assist, rubate, stoppate, triple, triple doppie, tiro, palle perse, notti nere), FUORI SCALA e SOTTO LA MEDIA (sempre rispetto alla media del giocatore), LA PARTITA DELLA NOTTE (la partita NBA con piu giocatori Dreamers), OCCHIO A STANOTTE (quanti giocatori per squadra giocano nelle prossime partite, scontro del turno e partita da guardare). (d) La notte raccontata e l'ultima conclusa nei box live. (e) Ordine delle notizie con un po di casualita giornaliera (tranne le aperture). Pronuncia: Anthony Edwards = Entoni Eduards.
+676. Sala trofei Dreamers in 3D vera, da percorrere: non piu solo scorrimento. Si trascina per guardarsi intorno (stile Street View), si tocca il pavimento per camminare, si tocca un trofeo per andargli davanti (compare la scheda con squadra, anno e punti), tasti ▲▼ per avanzare, frecce ‹ › per il tour dei trofei, minimappa in basso a destra (toccandola si salta li). Su desktop anche WASD/frecce e rotella. Costruita in CSS 3D (nessuna libreria): piattaforma flottante nello spazio con griglia al neon, pianeti e stelle in parallasse, coppe a piani incrociati che girano, luci, cristalli. Due bacheche nella stessa stanza, una per anno: pedana con vetrate, insegna ANNO n e colore diverso (oro per l'anno 1, azzurro per l'anno 2), con un arco divisorio tra l'uno e l'altro. Anni futuri: una nuova bacheca compare da sola.
+677. Dynasty TV, box score: i 5 titolari sono in ordine di ruolo C, PF, SF, SG, PG. Il ruolo viene dalla posizione nota (tabella dei 115 giocatori Dreamers, oppure la posizione fornita da ESPN/NBA nel dato live, ora salvata come colonna 21 del box); per i giocatori senza posizione nota si stima dalle statistiche (rimbalzi e stoppate verso il centro, assist verso il playmaker). Panchina invariata.
+678. Sala trofei Dreamers 3D rifatta a bacheche per squadra: tutte e 8 le squadre hanno la propria bacheca (due file da quattro lungo un corridoio centrale), nei colori e col logo della squadra, con tre maglie appese (le prime tre della rosa, nella divisa scelta nell'app) e i trofei vinti. Bacheca senza trofei = vuota, con la scritta «Bacheca ancora vuota». Trofei: titolo (coppa dorata, uno per ogni anno vinto, da STORIA) e trofeo dell'All-Star Game (stella azzurra, piu piccolo): anno 1 vinto da Ducks e Turtles (costante ALLSTAR nel blocco della sala; per le prossime edizioni aggiungere una riga {anno,vinc:[squadre]}). Secondi e terzi posti non sono piu mostrati in sala. Si cammina nel corridoio, si tocca una bacheca o un trofeo per avvicinarsi (scheda con i trofei e gli anni), minimappa e tour con ‹ ›. Ordine bacheche: piu titoli, poi piu All-Star, poi alfabetico.
+679. Sala trofei 3D, bacheche da vetrina: interno scuro con alone del colore squadra, soffitto con strisce LED e faretti che puntano trofei e maglie (fasci di luce e pozze di luce sul piano), vetrate laterali con riflesso, montanti metallici e architrave sottile col nome. Le tre maglie appese su un'asta sono le tre divise colore dell'app (0, 1, 2), non piu tre uguali; se la bacheca non ha trofei restano le maglie illuminate.
+680. Sala trofei 3D, ambiente piu ovattato e accogliente: cielo viola Dreamers con un alone lavanda all'orizzonte e solo qualche stellina (tolti i pianeti e i cristalli), pavimento morbido viola tipo moquette trapuntata che si estende fino all'orizzonte (tolti la griglia al neon e i bordi luminosi), passatoia centrale prugna con filo oro, qualche lucciola dorata sospesa.
+681. Impostazioni › Home › «Colore della Home di giorno»: oltre a Blu e Nero ci sono ora 🟡 Carbone oro (tema `oro`) e 🟣 Viola (tema `viola`: applica di giorno l'aspetto viola con cielo stellato della notte tramite la classe `notte`, senza toccare la logica CNT dei contenuti). `render()` e `dlsApply()` attivano la classe anche al cambio di chip.
+682. Impostazioni: la scheda «App» non esiste più. Stile dell'app (con anche 🟣 Viola), Ordine dei loghi, Colori personalizzati e Intestazione e tasti sono ora nella scheda Home, in un'unica card «Colori di tutta l'app»; tolta la card «Colore della Home di giorno» (ridondante: Blu, Nero, Carbone e oro, Viola sono già tra gli stili).
+683. Sala trofei: tolti i tasti ▲▼ e le frecce del tour (ci si muove col dito/mouse: trascina = guardi, tocca pavimento o bacheca = ti avvicini; PC: rotellina e frecce tastiera). Ambiente ora da arena: tribune a gradoni con pubblico su tre lati, striscioni delle 8 squadre, tabellone sospeso DREAMERS, parquet al centro con cerchio di centrocampo.
+684. Sala trofei: tolta la scritta di benvenuto; maglie appese più in alto e trofei/piedistalli un po' più bassi, così le maglie dietro le coppe (es. Ducks) restano visibili.
+685. Sala trofei, anti-crash e fluidità: la scena è divisa in blocchi e a ogni movimento si nascondono (display:none) bacheche, tribune, pavimento e cartelli lontani o dietro le spalle, così il telefono tiene meno livelli 3D in memoria; pavimento di sala con meno tessere; tribune da 6 gradoni in tronconi; tolti blur e ombre filtro (fasci, maglie, loghi).
+686. Dreamers › Turno › sfida: sotto la barra in alto compare una striscia di riquadri piccoli, uno per ogni sfida del turno (loghi e punteggi delle due squadre, in evidenza chi è avanti, bordo oro per quella aperta). Un tocco passa da una sfida all'altra senza tornare indietro (richiesta di Danilo).
+687. Striscia delle altre sfide: i riquadri occupano tutta la larghezza in parti uguali (simmetrici, stessi margini a sinistra e a destra); se non entrano si scorre di lato.
+688. Sei nuovi stili colore (Impostazioni › Home › «Colori di tutta l'app»): Limone (tutto giallo, per chi lo ama), Noce (legno scuro, accogliente), Tramonto (prugna e magenta), Ghiaccio (azzurro chiaro), Sakura (rosa chiaro), Cyber (nero con ciano e magenta).
+689. Sei nuove versioni dello stile Parquet (stessa grafica a doghe, toni diversi): Parquet Acero (chiaro, miele), Wengé (scuro, alto contrasto), Ciliegio (rosso), Ebano e oro (nero e oro), Bosco (verde), Blu. I colori del Parquet sono ora variabili CSS (--pq-*) e ogni variante li imposta.
+690. Sala trofei: nelle bacheche ci sono anche i premi di 2° e 3° posto di ogni anno, coppe d'argento e di bronzo più piccole e più semplici di quella del titolo, con targhetta «2° posto/3° posto · Anno N». Le scritte con i conteggi mostrano 2° e 3° solo se presenti; l'ordine delle bacheche tiene conto anche di questi piazzamenti dopo i titoli.
+691. Impostazioni: la scheda «Squadra» è unita a «Campo». La scheda Campo è divisa in 4 categorie numerate: 1 · Look rapido, 2 · Parquet (colore, disegno del legno, lucidatura), 3 · Linee e bordo, 4 · Solo per la squadra scelta (banner col logo, campo da gioco, ripristina/copia su tutte).
+692. Impostazioni riordinate per logica. Home: 1 Aspetto della Home (aspetto, lato e ordine dei loghi), 2 Colori di tutta l'app (stili, colori personalizzati, intestazione e tasti), 3 Funzioni in Home (No spoiler, TG). Campo: 1 Look, 2 Parquet, 3 Linee e bordo, 4 Dettagli del campo (legno, area colorata, nome e logo al centro), 5 Solo per la squadra scelta. Giocatori: 1 Aspetto (icone, dimensioni, dettagli tabellino, icona singoli), 2 Salute e disponibilità, 3 Colori dei PDK. Altro: Animazioni e feste, Ripristina tutto.
+693. Sala trofei: il piano sopra il piedistallo è scuro (le coppe ci poggiano sopra, prima sembrava un piatto chiaro che copriva la base); nelle scritte i piazzamenti sono «1× 2° posto» / «1× 3° posto».
+694. Impostazioni › Home › «Ordine dei loghi in Home»: la scheda è richiudibile con una freccetta in alto a destra ed è chiusa all'apertura, così la pagina è più corta; si apre solo a chi serve (l'ultimo stato resta finché non esci dalle Impostazioni).
+695. Fix Impostazioni › Campo: scegliere un «Disegno del legno» non cambia più il colore del parquet (prima lo forzava sul legno associato al disegno, ad es. noce per la spina di pesce). Resta il colore scelto in «Colore del parquet»; descrizione della card aggiornata.
+696. Impostazioni › Home › Colori: eliminati gli stili Limone e Sakura e il tasto «Cambia stile» (faceva la stessa cosa della scelta diretta tra i chip). Chi li aveva selezionati torna automaticamente a Classico.
+697. Impostazioni › Campo e Giocatori: l'anteprima del campo è più piccola di default (senza banner della squadra, ~40% più bassa) così restano più opzioni visibili; il tasto ⤢/⤡ la ingrandisce e la riduce, «Nascondi/Mostra» la toglie e rimette.
+698. Impostazioni: tolta la scheda «Altro» (vuota): le decorazioni delle feste sono in Campo › Dettagli del campo, «Riduci le animazioni» in Home › Funzioni. Il tasto «Ripristina questa sezione» (con conferma) è in fondo a ogni scheda (Home, Campo, Giocatori) e ripristina solo le impostazioni di quella scheda, senza toccare le altre. Tolto il Ripristina globale dalla barra dell'anteprima.
+699. Sala trofei, anti-crash 2: gradinate a gradoni sostituite da pareti leggere, pavimento a due strisce, app nascosta mentre la sala e' aperta, culling piu' stretto (memoria GPU ~39 -> ~19 Mpx nel caso peggiore).
+700. Impostazioni: la barra a 3 sezioni (Home, Campo, Giocatori) ora riempie tutta la larghezza.
+701. Parquet: box score con caselle bianche translucide e scritta arancio; numeri verdi (buoni) e rossi (negativi) come nelle altre modalita', bordo viola per le doppie; interruttore Dreamers/G-Dreamers e tab attivi bianchi con scritta arancio.
+702. Parquet: le righe blu della lista squadre in Statistiche diventano bianche con scritta arancio.
+703. Parquet: roster squadra (Guardie/Ali/Centri) con base bianca e nomi arancio al posto del blu; badge PDK e intestazioni di ruolo invariati.
+704. Parquet: pagina Scambi con caselle a base bianca (non trasparente) e scritte arancio: carta squadra, giocatori, crediti, slot, note e tasti Fai la foto / Copia per Claude.
+705. Parquet: pagine Comparatore e Trend (sala grafici) senza fondo blu: parquet dietro, riquadri bianchi con scritte arancio, tasto attivo arancio con scritta bianca.
+706. Parquet: interruttore Modalita' notte arancio quando e' spento (pallino bianco con luna arancio); da acceso resta viola.
+707. Tg Dreamers: l'apertura dice sempre giorno della settimana, numero e mese (es. 'sabato trentuno ottobre'). Voce: testi ripuliti meglio per la lettura (orari a parole, 12/20 -> dodici su venti, sigle NBA/GM/Tg/G-Dreamers, numeri con #, virgolette), lettura a frasi brevi per evitare i tagli di iOS, schermo tenuto acceso e comandi nel centro di controllo, ripresa automatica della notizia al ritorno nell'app.
+708. Parquet: caselle del box score con velo arancio e bordo arancio (doppie sempre con bordo viola).
+709. Impostazioni › Home: nuova scheda chiudibile «Box score in Home» (chiusa di default): stile casella (Standard, Opacizzata, Piena, Solo bordo) e suo colore, bordino on/off e colore, colori dei numeri buoni/negativi/normali (con tasto Automatico), soglie di scatto del colore per PT, RB, AS, ST, BL, 3P e palle perse; anteprima nella scheda; ripristinata dal tasto Ripristina di Home. Le soglie valgono in Home, Statistiche box e box per giocatore.
+710. Scheda «Box score in Home»: anteprima dal vivo fissa in cima (resta visibile mentre scorri le opzioni) che cambia subito con stile, bordino, colori e soglie.
+711. Parquet: nessuna casella trasparente. Impostazioni (schede, tasti, layout Home, selettori, barra sezioni) con base bianca e scritte arancio; regola automatica che rende bianca con scritte arancio ogni casella semitrasparente che sta direttamente sul parquet in tutta l'app (badge PDK, loghi e tasti selezionati esclusi).
+712. Aggiornamento col logo: ora resta dove sei anche dentro le Impostazioni (scheda Home/Campo/Giocatori e schede aperte) e in altre pagine con stato interno (Comparatore, Pic-Trade, IA allenatore, filtri Giocatori e altre).
+713. Dynasty TV, box score: ruolo sottile e neutro accanto al nome (es. 'Naz Reid  PF'). Legge TV.pos (PG, SG, SF, PF, C) se i dati lo contengono; altrimenti, per i giocatori Dreamers, il ruolo della rosa (G, F, C). Finche' tv-data.js non porta i 5 ruoli, per gli altri giocatori NBA il ruolo non compare.
+714. Ruoli a cinque posizioni (PG, SG, SF, PF, C) per tutti i giocatori nei box score di Dynasty TV: l'app scarica le rose ESPN una volta al giorno (30 richieste), le ricorda sul telefono (dl_pos) e ridisegna il box appena arrivano. Se ESPN non risponde restano G/F/C per i soli Dreamers. Provato solo con ESPN simulato.
+715. Dynasty TV, box score: tabella a tutta larghezza (usa i bordi laterali), colonne piu' strette e nome piu' compatto, logo piu' vicino al nome (il nome puo' passarci sopra), cosi' si vedono piu' statistiche senza scorrere. Le righe di tabella restano fuori dalla regola automatica bianco/arancio di Parquet.
+716. Dynasty TV, box score: il ruolo passa sotto il nome, davanti a Quintetto/Panchina (es. 'PG · Quintetto'), cosi' non viene mai coperto dal logo ne' tagliato.
+717. Dynasty TV: banner della partita (loghi, punteggio, video) e tab delle squadre a tutta larghezza come il box. Ruolo sempre presente per tutti i giocatori dei box score: 1) ESPN a 5 ruoli, 2) rosa Dreamers, 3) lista free agent, 4) stima dalle statistiche (rimbalzi, assist, stoppate, triple) - verificato su tutti i 1597 giocatori dei box in archivio, nessuno senza ruolo.
+718. Osservatorio in Parquet: tasti Live/Notte/Generale e PDK/Efficienza arancio (selezionato arancio con scritta bianca, non selezionato bianco con scritta arancio, sempre leggibili); tabella a tutta larghezza fino ai bordi. Il correttore automatico dei contrasti ignora questi tasti. Resto invariato.
+719. Parquet: simbolo «segui» (segnalibro) e tasto «+» sempre leggibili: arancio quando sta su fondo chiaro, bianco quando sta su fondo blu (celle blu delle tabelle Osservatorio/box, testata blu delle schede giocatore con Segui/Condividi).
+720. Dreamers / G-Dreamers in Parquet: interruttore Dreamers|G-Dreamers e schede (Turno, Calendario, Classifica…) con la voce attiva arancio+scritta bianca e le altre bianche con scritta arancio e bordino arancio; bottone «Torna all'app» bianco/arancio; riquadri «Ultima notte / Notti giocate / Dati al» con scritte leggibili (prima bianche col contorno su bianco); righe squadra con bordino arancio e posizione arancio; titolo bianco con ombra arancio. Il correttore contrasti non lascia più scritte bianche dentro le caselle rese bianche.
+721. Dynasty TV in Parquet: banner, data e giorni stanno su un pannello crema (stesso colore dei cartellini) a tutta larghezza con filetti arancio; data e sottotitolo arancio; frecce e giorni crema con bordo arancio; giorno selezionato arancio pieno con scritta bianca. Banner Dynasty TV lasciato blu.
+722. Parquet riscritto come blocco unico ordinato (colori di base in testa: --pq-tx, --pq-b1/b2, --pq-card, --pq-box, --pq-line; poi sala Dreamers, app, correzioni). Corretti: Periodo, Filtri e pannello filtri (scritte arancio, tasti selezionati arancio), Bacheca/Cassa crema con scritte arancio, tasti della barra Campo e tasti tondi (Cap, Cup…) bianchi con scritta arancio, Previsione con numero arancio, campi di ricerca bianchi. Il correttore contrasti ora lavora dopo il pannello bianco, calcola meglio sfondi sfumati e non lascia bianco su bianco.
+723. Area Ducks › «Editor colori»: nuova sezione per scegliere i colori toccando gli elementi dell'app. Tre modalità separate (Parquet, Base, Notte): in ogni schermata tocchi un elemento (barra «Seleziona/Naviga»), scegli sfondo, testo e bordo (anche solo per lo stato selezionato/non selezionato), «⬆ più grande» passa al contenitore. Colori di base modificabili per modalità (partono dai valori attuali), elenco delle modifiche con ✕, esportazione/copia del testo per Claude, azzera per modalità. Salvato su questo telefono (dl_dxcol). I banner delle squadre nel campo restano nel colore della squadra come nella base originale.
+724. Modalità notte ripristinata com'era prima della v253: le correzioni nuove del blocco Parquet (tasti, campi, Bacheca/Cassa, pannelli) valgono solo fuori dalla notte; in notte il correttore dei contrasti usa di nuovo il calcolo e l'ordine di prima e i tasti scelti tornano com'erano. Il lavoro sul Parquet di giorno resta invariato.
+
+725. Passaggio tra modalita' (base, Parquet, notte): al cambio di modalita' vengono tolti tutti i residui del tema precedente (colori scritti sugli elementi, caselle bianche del Parquet), cosi' niente resta nel posto sbagliato. Vale per tutti gli stili. Provato solo nel browser simulato.
+
+726. Parquet: tolta la base bianca dietro la panchina (50% PDK) nella formazione; la panchina ha ora il contorno rosso leggero come il 6° uomo ha il verde; scritta 50% PDK bianca.
+
+727. Parquet: tolto il rettangolo interno nella barra Cerca giocatore.
+
+728. Modalita' notte a se' stante: con la notte accesa il tema Parquet viene spento del tutto (nessuna classe Parquet), cosi' la notte e' identica a quella sopra la base originale. Spegnendo la notte il Parquet torna.
+
+729. Notte come filtro a se': passando a notte si puliscono tutti i colori lasciati dal Parquet (titolo, cerca, ecc.); scegliendo il Parquet con la notte accesa, la notte si spegne e resta solo il Parquet.
+
+730. Notte ricostruita sulla base: con la notte accesa il tema sotto viene sempre calcolato come Classico (nessuna classe, variabile o colore di Parquet/Tabellone), ricalcolato ogni volta che si accende o spegne la notte.
+
+731. Parquet: banner squadra nella vista Campo di nuovo del colore della squadra (tolte le vecchie regole crema); tolto per davvero il rettangolo dentro la barra Cerca giocatore della Home (la regola precedente perdeva per specificita').
+
+732. Parquet: tabelle tipo box score (Dynasty TV, Live stanotte, ecc.): base crema, intestazione e righe Quintetto/Panchina/Totale arancioni con scritte bianche, nomi e numeri arancioni, tasti condividi arancioni, tasto squadra selezionato arancione.
+
+733. Editor colori ufficializzato (Parquet): banner squadra (testo/bordo bianchi), tasto condividi, intestazione tabelle FA, intestazione e riga cmth, span.t, ghead, gszn. Base e notte: nessuna modifica scelta.
+
+734. Parquet: scritta del nome squadra sul campo (es. Texas Ducks) bianca. Editor colori: ora puo' colorare anche le scritte dentro il campo (SVG) toccandole.
+
+735. Parquet: Statistiche G League (G-Dreamers) con base CREMA al posto del verde: card, riquadri dei totali e righe crema con scritte arancio, intestazione colonne arancio con scritte bianche, menu Stagione crema con bordo arancio.
+
+736. Parquet: in TUTTE le tabelle dell'app la barra dei titoli delle colonne e' arancio con scritte bianche (prima la parte di sinistra restava blu, es. Efficienza squadra, Giocatori, Partita per partita). Le caselle con il nome del giocatore (td.pnm) sono sempre crema con nome arancio: prima alcune restavano blu e altre crema perche' la correzione automatica dei colori (pqFix) le ricolorava riga per riga; ora pqFix le salta. Verificato con un controllo automatico su tutte le pagine: nessuna intestazione o prima colonna blu rimasta.
+
+737. Editor colori (area DAX) 2.0: si seleziona esattamente l'elemento toccato (prima saliva da solo al primo contenitore con una classe), evidenziato da un riquadro rosa tratteggiato che resta visibile sopra il pannello (la pagina scorre da sola). Tasti ⬆ Contenitore / ⬇ Dentro / ◀ Prima / Dopo ▶ per spostarsi di un livello o sugli elementi vicini. Scelta «Tutti uguali (N)» (selettore per classe; se l'elemento non ha classi usa quella del contenitore + tag) o «Solo questo» (percorso con nth-child dentro la pagina corrente). Quadratini di colori rapidi (bianco, crema, arancio, marrone, nero, viola, blu notte, trasparente, ↺ originale). Nome leggibile dell'elemento (tipo + testo che contiene). Testo applicato anche alle scritte interne per default. Esportazione per Claude invariata (stesso formato rules/tok). Provato solo in Chromium simulato, non su iPhone.
+
+738. Tutte le tabelle/elenchi appoggiati sulla pagina (figli diretti di .view che contengono una tabella) vanno a tutta larghezza: margini -16px, niente bordi laterali ne' angoli arrotondati, 12px di spazio interno alla prima e ultima colonna. Vale per tutti i temi. Esclusi Regolamento (.rart) e stanza Dreamers (.drroom).
+
+739. Sezioni a tutta larghezza. TELEFONO (fino a 820px): ogni riquadro/sezione figlio diretto della pagina (campo, bacheca, cassa, tribuna, live, partite Dynasty TV, previsione, schede, trade alert, calcolatore, IA trade, elenchi...) arriva al bordo dello schermo (margini -16px); i riquadri tengono bordo e grafica, cambia solo la larghezza. Restano con margine normale solo titoli, note, tasti indietro, file di tasti/filtri, campi di ricerca. Esclusa la stanza Dreamers. COMPUTER (da 1100px): pagina larga fino a 1120px; Dynasty TV e Statistiche notte su due colonne; le pagine con il campo da basket (Home, Campo, Roster, Giocatore, Scouting) restano a 760px centrate per non deformare il campo; le tabelle non sporgono rispetto agli altri riquadri.
+
+740. Correzione della 739: i tasti grandi appoggiati sulla pagina (es. GIOCATORI e SQUADRE in Statistiche) si erano accorciati e spostati a sinistra, perche' un <button> con width:auto si stringe al contenuto. I tasti sono ora esclusi dalla regola delle sezioni a tutta larghezza e tornano come prima (larghi quanto la pagina).
+
+741. Pagina Campo (Home della squadra: intestazione, bacheca, cassa, campo da basket, panchina, tribuna, live): bordino laterale di 6px su telefono, invece di 0 (prima della 739 erano 16px).
+
+742. Pagina Campo: il bordino di 6px resta su intestazione, bacheca, cassa, campo e panchina/tribuna; la tabella Live stanotte (con Notte/Turno, .clwrap) torna fino al bordo dello schermo.
+
+743. Pagina Campo: banner squadra, bacheca, cassa, campo, panchina e tribuna tornano esattamente come prima delle modifiche 739/741 (la regola delle sezioni a tutta larghezza non si applica piu' a campo/college); solo la tabella Live stanotte (.clwrap) resta fino al bordo dello schermo.
+
+744. Parquet: caselle bianche -> crema (#fdf3e1) solo nelle pagine scelte dall'utente: Home, Giocatori, Roster, Pic-trade, Efficienza Cup, Cap, Calcola il trend (funzione pqCrema dopo ogni render e dopo i tocchi). Esclusi badge PDK, campo, loghi Home, tasti selezionati. Restano bianchi Campo, Trade alert e Statistiche (non richiesti).
+
+745. Allenamento IA Trade: dentro ognuno dei tre allenamenti (Proposte di scambio, Valutazione giocatori, Confronto giocatori) il tasto ‹ in alto e' «‹ Allenamenti» e torna al menu dei tre allenamenti (voce in NAV_SUB; prima usciva dalla sezione). Aggiunti «↶ Annulla l'ultima risposta» (toglie l'ultima risposta salvata) e «Ricomincia da capo» (azzera tutte le risposte di quell'allenamento, con secondo tocco di conferma).
+- (31/10 14:10) Campo: barra del tabellone (.lbmh) con colonne auto|minmax(0,1fr)|auto e tabellone compatto sotto 430px: il tasto notte non esce più dal bordo. Patch /home/claude/patch_lbmbar.py (sessione dei report).
+
+746. IA Trade sui gusti dei GM (GM_GUSTI): primo profilo Turtles dal report Allenamento del 31/10/2026 (79 risposte valide). Regressione logistica sulle risposte: chiede +7,5% di vantaggio per accettare al 50%; eta' pesa 2,25 punti di valore per anno (meno della media lega 3,5); ruoli ricevuti: G -2, A +2, C +2 punti; giocatori valutati diversamente dal calcolatore (punti %, ridotti se visti poche volte): Duren +9, Giddey +10, Buzelis +9, Irving +5; Maxey -12, Zubac -12, Demin -10, Tatum -9, Murphy -8, Murray-Boyles -7, Trae Young -7, Ball -7, Towns -5; in cessione Holmgren -9, Queen -12, Peterson -7 (li cede volentieri). Nell'IA Trade, se la squadra scelta in alto (o l'altra squadra) ha un profilo, ogni proposta prende una probabilita' di piacere/essere accettata (crediti compresi) e il punteggio viene moltiplicato per (1-k)+k*2p con k=min(.6,risposte/150); la proposta mostra la riga «🎯 Sui gusti dei GM: ti piace al X% · Turtles accetterebbe al Y%». Per aggiungere un GM: inserire il suo profilo in GM_GUSTI.
+
+747. TG Dreamers 2.0 (gzExtra, dentro la IIFE del TG): cinque nuove rubriche. LA SQUADRA DEL GIORNO (analisi a rotazione: fase, trascinatore, reparto debole o forte, giocatore in crescita/calo, eta', cassa, gusti del GM se c'e' il profilo; tocca a tutte prima di ripetere, memoria dl_gz_mem.an). LA MOVIOLA (scambi chiusi da 7-90 giorni: PDK prodotti dopo lo scambio da ciascun lato, chi lo sta vincendo; torna solo se cambia il vincitore o dopo 9 giorni). IL CONSIGLIO DI MERCATO (1 contro 1 quasi alla pari che piacerebbe al GM con profilo GM_GUSTI, 'sette volte su dieci'; se anche l'altra squadra ha un profilo deve poter accettare). CHI SALE E CHI SCENDE (trend dell'ultimo mese, iaTrend). VI AVEVAMO DETTO (riprende i giocatori citati nei 5 giorni precedenti come in crescita/calo e dice se avevamo ragione; memoria dl_gz_mem.cl, alimentata anche da FUORI SCALA e SOTTO LA MEDIA). Testi parlati: tolti tutti i record 'tre vittorie e zero sconfitte' (gzPulisciRec su titoli e testi: si dicono solo le posizioni, 'Ducks primi, Foxes secondi') e decimali arrotondati ('36,4 PDK' -> '36 PDK'). Le nuove notizie entrano nella stessa scelta delle 9 del giorno, con la stessa casualita' giornaliera.
+
+748. Parquet stile UFFICIALE e predefinito: DLS_DEF.th='parquet'; migrazione una tantum per dispositivo (flag dl_pq_uff): chiunque passa al Parquet (anche lo stile di Dreamers, dl_drth=3), poi puo' scegliere gli altri. Nelle Impostazioni gli stili sono divisi in 'Stile ufficiale' (Parquet) e 'Personalizzati' (Classico, Tabellone e varianti, Viola, Personalizzato). Uno stile non valido torna al Parquet. Modalita' notte invariata (resta calcolata sulla base Classico come prima).
+
+749. GM_GUSTI: profilo Spiders dal report Confronto giocatori del 31/10/2026 (11 confronti, d'accordo con il nostro vincitore 82%). Preferiscono l'esperienza: con almeno 3 anni di differenza scelgono il piu' giovane solo il 25% delle volte -> eta' 1,0 punti/anno (lega 3,5, Turtles 2,25). Vantaggio richiesto non misurabile da un confronto: 3% (neutro). Giocatori: Ausar Thompson +8 (preferito a Bridges, per noi dietro di 67 cr), Mitchell +4 (preferito a Kessler), LeBron +3, Bridges -4, Kessler -2. Con 11 risposte il profilo pesa poco (k = 11/150 = 0,07): servono altri allenamenti, meglio le Proposte di scambio.
+
+750. GM_GUSTI Spiders aggiornato con il report Proposte di scambio del 31/10/2026 (19 risposte) + Confronto (11): totale 30 risposte (peso k=0,2). Regressione: vantaggio richiesto quasi nullo (+1,8%, accettano anche -21%), eta' 1,1 punti/anno (confermato dal Confronto), poco sensibili al valore (sc=18 invece di 12,5: nuovo campo sc = morbidezza della curva per GM). Ruoli ricevuti: C +4 (80% accettati), G -2. Giocatori: Acuff +6, Quickley -5, B. Miller -4; tengono stretti Jaquez +6, Wagner +4, LeBron +4, Mitchell +4; cedono volentieri Morant -6; dal Confronto Ausar Thompson +8, Bridges -4, Kessler -2.
+
+751. GM_GUSTI: profilo Dolphins da Confronto giocatori (230 confronti, d'accordo con il nostro vincitore 86%) + Valutazione giocatori (19) del 31/10/2026. Modello a coppie (regressione su differenza % di valore, eta' e un termine per giocatore con ridge): eta' 1,9 punti/anno (scelgono il piu' giovane il 59% delle volte); giocatori tenuti solo se valore >= 500, visti almeno 4 volte, scostamento dimezzato e limitato a +-12 punti. Piu' alti per loro: Jokic +12, Murray-Boyles +10, Flagg/Boozer/Mara +9, SGA +4, Castle +7, Tatum/Cunningham +6, Reaves +4. Piu' bassi: Bane, Morant, Harden, Embiid -12 (Embiid e Morant anche per gli infortuni: sconti dichiarati 100% e 40%), Allen -11, Bailey/Herro -10, Daniels/Jaquez -9, Durant/Knueppel/Randle -8, Haliburton -7, Banchero/Johnson/Ball/Bridges -6. Vantaggio richiesto non misurabile dai confronti: 3% (neutro). Peso n=60 equivalente (k=0,4): i confronti dicono chi vale di piu' ma non quando si accetta uno scambio. Dalla Valutazione: in media votano 1,2 punti sotto la nostra scala, soprattutto gli over 31 (-2,8) e i giocatori a rischio infortuni.
+
+752. GM_GUSTI Spiders: aggiunta la Valutazione giocatori del 31/10/2026 (11 voti, in media +0,3 sopra la nostra scala; under 22 -1,2). Curry +12 (voto 10 contro il nostro 5), Edey +6, Jaquez +8 (confermato anche dalle proposte), Reaves +4; Clingan -10 ('sopravvalutato', 5 contro 8), De Larrea -3, Dybantsa -2 (voto basso ma nelle proposte lo accettavano: effetto prudente). Totale 41 risposte (k=0,27).
+
+753. Allenamento IA: dopo «aggiorna l'app» Proposte di scambio non si apriva al primo tocco: AT viene ripristinato da sessionStorage e AT.rem (Set) tornava come oggetto {}, quindi AT.rem.has() falliva nel render. vAtr ora lo ricrea come Set.
+
+754. GM_GUSTI Spiders: nuovo Confronto giocatori (39 confronti, accordo 81%; scelgono il piu' giovane il 45% delle volte -> eta' 1,4). Piu' alti per loro: Ausar Thompson +10, Fears +6, Raynaud +6, Castle +5, Daniels +4, Irving +4. Piu' bassi: Morant -9, Caleb Wilson -8, Murray-Boyles -6, Dybantsa -5, Brunson -4, Lillard -4, Bane -3. Totale 69 risposte (k=0,46). Su indicazione dell'utente i nuovi report dei GM si applicano e si pubblicano direttamente, poi lo si informa.
+
+755. GM_GUSTI Dolphins ricalcolato sul Confronto aggiornato (326 confronti, accordo 86%, scelgono il piu' giovane il 56%): eta' 1,7 punti/anno. Piu' alti: Jokic/Boozer +12, Flagg +11, Wembanyama/SGA/Giannis/Murray-Boyles/Mara +9, Doncic/Sabonis +8, Cunningham +6, Castle/Giddey/Edwards +5, Tatum/Brunson/Reaves/Dybantsa +4. Piu' bassi: Daniels/Morant/Allen/Harden/Embiid -12, Caleb Wilson/Bane/Herro -10, Bailey/Jaquez/Durant -9, Murray/Knueppel/Randle -8, Haliburton/Burries/J. Smith/Porter/Bridges -7 e altri. Peso n=75 (k=0,5). Applicato e pubblicato direttamente (regola dell'utente).
+
+756. Parquet: nel box score della Home tornano i colori di giudizio degli altri stili. Minuti accanto al nome: verdi da 30, rossi fino a 25 (prima il Parquet li ricolorava arancio); caselle verdi/rosse comprese 'tiri sbagliati' (FG sotto il 42% rosso, sopra il 50% verde) e palle perse. pqFix e la regola automatica delle caselle bianche (.pqw) non toccano piu' .mnb e .bxs.
+
+757. Impostazioni > Box score in Home: tendina 'Regole avanzate: minuti, palle perse, tiri' (chiusa di default, ricorda se aperta in SETOPEN.bxadv) con cursori: minuti verdi da (30), minuti rossi fino a (25), palle perse verdi fino a (1), tiri dal campo rossi sotto il % (42), verdi sopra il % (50). Valori in DLS.bxT (MINg, MINr, TOg, FGr, FGg), usati da snBoxR e hnMinS; se l'utente sceglie colori propri per numeri buoni/negativi valgono anche per i minuti.
+
+758. Box score separato per stile: le impostazioni del box score (stile casella, colori, bordino, soglie, regole avanzate) sono salvate per Normale / Parquet / Notte in DLS.bxM; passando da uno stile all'altro si caricano le sue (la prima volta si parte da quelle attuali). Nella card Box score c'e' scritto quale stile si sta modificando. Nuova card chiudibile 'I miei salvataggi della Home' (Impostazioni > Home): salva con un nome tutte le impostazioni della scheda Home (stile, colori, intestazione, loghi, ordine, TG, animazioni, box score dei tre stili); Attiva (mette da parte quelle di prima in hpreBak), Disattiva (le rimette), aggiorna, elimina con doppio tocco. Dati in DLS.hpre/hpreOn/hpreBak (localStorage dl_set, quindi per dispositivo).
+759. LUNA DELLA HOME = UN TUO SALVATAGGIO. In Impostazioni > Home > «I miei salvataggi della Home» ogni salvataggio ha un pulsante 🌙: toccandolo, quel salvataggio diventa la «tua notte» (DLS.hpreMoon). Il pulsante luna della Home allora passa da com'e' adesso (es. Parquet) a quel salvataggio e ritorno (usa hpreOn/hpreBak come «Attiva/Disattiva»); ritoccando la 🌙 nella card si torna alla notte classica. I salvataggi ora ricordano anche se la notte era accesa (_cnt), cosi' una notte viola personalizzata si puo' salvare cosi' com'e'. Bug corretto nel wrapper di dlsApply (Parquet/notte): una chiamata annidata aggiornava lt a «classico» e la notte si spegneva da sola appena si salvavano le impostazioni col Parquet; ora conta solo la chiamata esterna.
+760. DREAMERS E G-DREAMERS SEGUONO SEMPRE LO STILE DELL'APP. Tolto il tasto 🎨 Stile dalle due sezioni: lo stile si sceglie solo in Impostazioni (o con la luna della Home). Corrispondenza: notte -> Galassia, Parquet -> Parquet, Tabellone -> Tabellone, tutto il resto -> App. DR._th ora e' un valore calcolato (getter, il setter non fa nulla) e la vecchia scelta salvata dl_drth viene cancellata: era lei a far comparire uno stile diverso (es. App scuro con l'app in Parquet).
+761. Parquet: il pulsantino della squadra selezionata (chip squadre in Rosa/Dynasty TV ecc.) perdeva il logo. La regola .chip[aria-pressed=true] .badge usava background:transparent (che azzera anche l'immagine): ora tocca solo background-color.
+762. TG DREAMERS NON SI BLOCCA PIU' SULLE NOTIZIE. Il passaggio alla notizia successiva aspettava solo la fine della voce (onend dell'ultima frase): se il telefono non la mandava (frasi perse dalla memoria, speak subito dopo cancel, sintesi in pausa) il TG restava fermo per sempre. gzParla ora tiene le frasi in memoria (GZV.q), le fa partire 90 ms dopo il cancel, riprende la sintesi se e' in pausa e ha un controllo (GZV.wd): se una frase non finisce entro un tempo stimato passa avanti; se la voce non parte proprio, legge la notizia «a tempo» come senza voce. Provato con una voce simulata: normale, voce muta, frasi che non finiscono: il TG arriva sempre in fondo.
+763. (DAX, segreto: non in NV_LOG) GESTIONE EQUILIBRIO TRADE: nuova scheda «🎯 Gusti GM». Si possono simulare tutti i parametri dei gusti: per squadra n (peso), req, age, sc, ruoli G/F/C e bonus giocatori (pl, con aggiunta/rimozione), profili di prova per chi non ce l'ha, le costanti GM_K (peso massimo .6, risposte per il pieno 150, sensibilita' di serie 12,5: prima scritte a mano in gmWeigh/gmProb) e l'indice di lega GUSTO (age 3,5, pack 0). Le modifiche stanno in EQO.gg e valgono solo dentro eqWith; «Condividi gusti» fa il prompt con i nomi tecnici. Il simulatore ora riordina le proposte con gmWeigh come l'IA Trade vera e mostra «🎯 Sui gusti dei GM». All'apertura spariscono le modifiche locali (parametri, valori, prezzi, crediti, pick, gusti) che coincidono ormai con i numeri ufficiali. Il codice sta dentro lo stesso blocco delle funzioni eq (prima del Dreamers Post), perche' sono dichiarazioni di blocco.
+764. VALORI DAL PARERE CONCORDE DEI GM + PESO DEGLI INFORTUNI. (a) 11 valori ritoccati dove almeno due profili GM_GUSTI sono d'accordo sul segno e la media e' almeno 4 punti: si applica il 70% della media (i valori di partenza sono di Francesco, un solo parere: non si corregge tutto). Queen 1156->1085, Giddey 1650->1735, Irving 810->835, Ball 1150->1100, Quickley 690->665, Morant 985->915, Bridges 750->720, Reaves 967->995, Castle 1230->1275, Wilson 1240->1160, Bane 710->680 (VALORI + VAL_CORREZ; prezzi fissati invariati; VAL_BASE invariato: stessa data e stelle). Nei profili GM_GUSTI il bonus di quei giocatori e' stato ridotto della correzione applicata (niente doppio conteggio); tolti i bonus sotto 1 punto. Esclusi i disaccordi (Murray-Boyles, Tatum, Acuff, Jaquez, Dybantsa, Fears, Daniels, Brunson) e Kessler (media 3,5). (b) Infortuni: nei report Valutazione (Spiders + Dolphins) gli sconti dichiarati per i giocatori con meno di 1,5 stelle sono ~58%, tra 1,5 e 2,5 ~41%, sopra 2,5 ~5% (soglia 2,5 confermata). Il fattore del calcolo del lunedi' passa da 0,925 a 0,80 per stella sotto 2,5 (VAL_INJ_B; circa meta' di quanto dichiarato dai GM): conta quando le stelle cambiano rispetto a VAL_BASE. (c) Holmgren (fuori ~2 mesi, terzo infortunio serio): INF_STELLE 3 -> 1,5 (-1 per rientro >=60 gg, -0,5 nuova regola RICADUTA) e INJ_STORIA 30/10 per lo strascico. Effetto: lunedi' -15% (tetto settimanale), il resto (~-20% totale) la settimana dopo; in piu' finche' e' OUT vale la curva infortuni negli scambi. Nei report di oggi il segnale su Holmgren e' debole: Turtles (proprietario) lo cede volentieri (bonus -9), Dolphins/Spiders lo mettono in linea col calcolatore; non si sa se hanno risposto prima o dopo la notizia (ora i report hanno l'orario).
+765. ALLENAMENTI IA MIRATI. Proposte di scambio: niente piu' scambi a 3 squadre. In tutte e tre le prove ~70% delle domande riguarda giocatori «focus»: fragili (stelle <2,5), OUT, trend dell'ultimo mese oltre +-15%, rookie, valori ritoccati il 31/10 (AT_RIT, per verificare la correzione). Nel Confronto il focus viene messo contro un giocatore «normale» di valore simile (coppia di contrasto). Le etichette (atFx) si salvano nel log con lo stato del momento; i report hanno una sezione FOCUS (accettati/Δ quando li ricevi o cedi; Δ voto, rischio e sconto; quante volte il GM sceglie quello con la caratteristica) e data e ora di ogni risposta (per distinguere prima/dopo una notizia, es. un infortunio).
+766. GM_GUSTI: nuovo profilo Peacocks (PEA) dalle Proposte (30, valori di adesso): req 7, age 0,75, sc 10, ruoli G -3 / F +3 / C 0, nessun bonus giocatore significativo dagli scambi (troppe poche risposte); dalla Valutazione (2) Duren -6, Cunningham -3; n 32 (peso ~21%). Accuratezza nel campione 80%. Dolphins rifatti sul Confronto completo (401, logit ordinale su log dei crediti di adesso, ridge, peso per numero di apparizioni /8, tetto +-12): age 1,7 -> 1,2, n 75 -> 90, 79 bonus giocatori; tenuti dalla Valutazione Embiid -12, Haliburton -7, Banchero -6 (nel Confronto non escono). I bonus sono rispetto ai valori corretti il 31/10 (764), quindi niente doppio conteggio.
+767. GM_GUSTI Peacocks aggiornati col Confronto (100): stesso logit ordinale dei Dolphins sui crediti di adesso (esclusi i giocatori sotto 40 cr, dove il rapporto dei crediti esagera: Kuminga, P. George, Porzingis...). Bonus: Adebayo -10, Quickley -6, Murray-Boyles/Booker/Allen -5, Barrett -4, Bailey/Porter/Okongwu -3; Dëmin +6, Thompson A./Avdija/Brunson +4, Mara/Curry +3; Duren -6 dalla Valutazione (tolto Cunningham -3: nel Confronto lo preferiscono a Sabonis). Eta' nel confronto quasi nulla (0,3 per anno): resta 0,75. n 32 -> 55. Accordo col calcolatore 82%.
+768. GM_GUSTI Spiders: Valutazione salita a 14 (3 nuove, dopo la notizia dell'infortunio): Holmgren -8 (voto 6 contro il nostro 8, rischio 8/10, sconto dichiarato 25%, risposta delle 16:49 con etichetta OUT ~62gg), Zion +4 (voto 6 contro 5 nonostante rischio 9/10), Wagler in linea. n 69 -> 72. Primo dato su un infortunio fresco: Spiders ~-25%, Turtles ~-9% (prima o dopo la notizia?). Il nostro sconto mentre e' OUT (curva -34% a 62 giorni) piu' il calo delle stelle (-20% dal lunedi') arriva a circa -47%: piu' severo dei GM. Da decidere con Francesco se la curva OUT e il calo delle stelle per lo stesso infortunio devono sommarsi.
+769. HOME E PREVISIONI. (a) La Home ricorda pagina della casella (HN_PG), notte scelta col navigatore (salvata come data, ritrovata tra passate/future) e turno dei risultati (HN_RK) anche chiudendo l'app (localStorage dl_hnav). (b) Nelle previsioni della notte non compaiono i giocatori OUT (fuori quella notte secondo injRit: senza data di rientro o rientro dopo quella notte). (c) PREVISIONE SQUADRA IN DIVENIRE: drPrevisione a turno iniziato resta sul turno in corso (prima passava al successivo); per ogni giocatore valore atteso = E[max(miglior PDK gia' fatto nel turno, partite che restano)] (le partite finite escono, gli OUT perdono quelle prima del rientro); drProiez usa lo stesso valore anche per chi ha gia' giocato ma ha altre partite. Scheda squadra «Previsione · turno» e «proiez.» della sfida sono lo stesso numero e si aggiornano a ogni partita.
+770. Parquet: nella sfida Dreamers i tasti tondi ‹ › e condividi (button.shbtn) erano bianchi su crema per la regola generale dei bottoni shbtn: dentro .drroom ora testo/icona arancioni.
+771. GM_GUSTI Spiders rifatti: Proposte 58 (19 + 39 nuove, senza 3 squadre: req 5 eta' 2,25 sc 8, ruoli G -2 F +2 C 0, accuratezza 76%), Confronto 55 (eta' leggermente a favore dei piu' vecchi), Valutazione 14. Profilo: req 4, age 1,4, sc 12, ruoli G -2 / F +2 / C +1, n 90; bonus = media tra vecchi e nuovi dove ci sono entrambi (23 giocatori, Holmgren -8 e Zion +4 dalla Valutazione).
+772. Ordine ufficiale dei loghi (barra della Home e ovunque si usa teamOrd): Dolphins, Ducks, Foxes, Mooses, Turtles, Spiders, Eagles, Peacocks (ORD_UFF, anche in DLS_DEF.ord). Applicato una volta a tutti i dispositivi (flag dl_ord_uff); poi ognuno puo' cambiarlo nelle impostazioni.
+773. GM_GUSTI: nuovo profilo Foxes (FOX) dalle Proposte (55, valori di adesso, senza 3 squadre): req 11 (i piu' esigenti), age 1,5, sc 8, ruoli G -3 / F +4 / C -1 (guardie ricevute accettate solo 15%), accuratezza nel campione 82%; nessun bonus giocatore oltre il rumore. FOCUS: infortunati OUT ricevuti accettati 8% (Δ medio -24%), rookie ricevuti 14%. Dolphins: Valutazione 29 (10 nuove): Duren -8, Gobert -4, Davis -4 (rischio 10/10, sconto 100%), Queen -4 (risposta sul valore prima della correzione), Siakam +10 -> +7. Sconti infortuni Dolphins confermati: rischio 7-8 46%, 9-10 98%.
+- (31/10 17:13) DREAMERS › sfida: duFit rimpicciolisce il nome (min 12px) solo se non entra neanche a capo e con lettere strette (es. Antetokounmpo). Patch /home/claude/patch_dufit.py.
+774. (tools, l'app non cambia) PROCEDURA FISSA PER I REPORT DEI GM: tools/PROCEDURA_REPORT_GM.md (cosa fare a ogni report, regola delle correzioni di valore col consenso, tabella dei parametri della formula del lunedi' e cosa li verifica, registro delle osservazioni) e tools/gm_fit.py (vals / proposte / confronto / valutazione: gli stessi calcoli usati il 31/10, sui valori di adesso). Ogni sessione futura deve partire da qui quando arriva un report.
+775. AUTONOMIA SUI VALORI (Francesco 31/10 17:18: Claude regola liberamente valori e formula dall'incrocio dei report). Applicato: (a) eta' nei valori di partenza: -0,5% per anno sopra i 26, +0,5% sotto, max +-6% (i 5 profili GM danno tutti un gusto eta' positivo, media ~1,4); profili GM eta' -0,5; GUSTO.age 3,5 -> 1. (b) seconda correzione per consenso (2+ profili stesso segno, media >=4, 70%): 16 valori (vedi VAL_CORREZ «Ottava correzione»), bonus dei profili ridotti di conseguenza, AT_RIT allargato (etichetta «ritoccato»). (c) Infortuni: in valAuto il calo delle stelle per l'infortunio in INJ_STORIA aspetta il rientro (nessuna partita con minuti dopo la data), cosi' finche' e' fuori vale solo la curva OUT negli scambi; al rientro scatta il calo (max -15%/settimana) piu' lo strascico. Holmgren resta 1270 finche' e' fuori. tools/PROCEDURA_REPORT_GM.md aggiornato (regola di autonomia e tabella).
+776. SCAMBI › GUSTI («Mercato dei gusti»): calcolatore di scambi da 2 a 6 squadre A RAGNATELA (ogni giocatore puo' andare a qualsiasi squadra dello scambio) che pesa quasi solo i gusti dei GM (GM_GUSTI a peso pieno, non il 60% massimo dell'IA Trade). Cerchi un giocatore o un ruolo con valore minimo, scegli fino a quante squadre, blocchi i tuoi intoccabili. Probabilita' di ogni squadra = logistica del profilo (vantaggio % sul valore con gli OUT scontati da iaOutF, eta', ruoli, giocatori che piacciono o no con tetto +-20 alla somma); chi non ha report usa il profilo medio («stima»). Punteggio = prodotto (tutti dicono si'); ricerca: ~12.000 partenze casuali in ~2 s con miglioramenti locali (cambia giocatore, destinatario, aggiungi, togli), vincoli: ognuno da' e riceve, roster +-1 e tetto IA_MAXR, nessuno perde oltre il 45% di valore. Risultati: le 6 migliori + le 2 migliori per ogni numero di squadre (con piu' squadre la probabilita' scende per forza). Ogni squadra: chi riceve da chi, chi da' a chi, la sua % e il motivo. Testo che spiega a cosa serve e che sono i GM, con i loro report, a spostare i valori. Tab Scambi evidenziato. Codice in fondo (script 776). Pulizia GM_GUSTI: tolti i bonus dei giocatori sotto 300 di valore (Wolf, Brazile, P. George, Kuminga, Porzingis nei Dolphins: rumore dei crediti piccoli).
+777. GM_GUSTI Foxes + Valutazione (20): Acuff/Mara/Steinbach +12 (loro giocatori), Flemings/Curry +8, Brunson/Graves/Burries +4, Giddey -8, Banchero/Embiid/Holmgren -4; n 55 -> 70. Sconti infortuni Foxes: rischio 9-10 -> 43% (Embiid 50%, Davis 35%), sotto 9 quasi zero.
+778. IA Trade: terza scelta «Per gusti» sotto Per ruolo / Per giocatore: apre il Mercato dei gusti con la squadra scelta nell'IA Trade; in testa «‹ IA Trade» per tornare indietro. Resta anche la voce «Gusti» nel menu Scambi.
+779. Mercato dei gusti: REGOLA DEI RUOLI rispettata sempre: ogni squadra riceve gli stessi ruoli che da' (eccezione: giocatori in trade speciale iaSp, che si spostano senza contropartita, segnati «trade speciale»). Lo scambio e' un'unione di giri per ruolo (il proprietario da' il giocatore cercato ad A e il ruolo gira fino a tornare a lui; chi manca entra con altri giri, anche in direzioni diverse = ragnatela). Massimo 3 giocatori dati per squadra e ~2 per squadra in tutto. Verificato su 3 ricerche (30 proposte): 0 squadre con ruoli sbilanciati. Etichette: «dice si' al X%» per ogni squadra, «si chiude al X%» per la proposta (prodotto), con spiegazione nel testo.
+780. GUSTI: pagina d'ingresso con due tasti, «🔍 Scopri i gusti dei GM» (una scheda per squadra nell'ordine ufficiale: report usati, affidabilita' del profilo, cosa cercano, come chiudono gli scambi con percentuali e casi, infortuni, vantaggio chiesto, eta', decisione netta/normale/morbida, ruoli, giocatori voluti piu'/meno dei nostri valori; chi non ha report: «Ancora da verificare») e «🤖 IA Gusti» (il calcolatore). Testi in GM_DESCR (da aggiornare a ogni report, scritto nella procedura), numeri da GM_GUSTI. «‹ Gusti» per tornare all'ingresso. IA Gusti: spazi tra i gruppi di tasti (ruoli non piu' attaccati a Giocatore/Ruolo), select chiaro, 8 loghi su una riga.
+- (31/10 17:51) Notte automatica: Impostazioni › Home dopo TG Dreamers (DLS.autont). autoNotte() ogni minuto: CNT=true dall inizio della prima partita della notte (orari tv-data.js, ora italiana) alla fine dell ultima (tutte F, o inizio ultima + 3h); localStorage dl_ant (notte già applicata) e dl_ant_on (accesa da noi). Patch /home/claude/patch_autonotte.py.
+781. Parquet: in Statistiche i due tasti grandi diventano Giocatori blu notte (#101a3a -> #2a3f7a) e Squadre arancio (#b8410a -> #f2701a), proposta 4 di 6 scelta da Francesco. Fuori dal Parquet restano come prima.
+782. CESSIONI PESATE COL VANTAGGIO (segnalazione dei GM: alcuni «ceduti volentieri» erano solo offerte molto vantaggiose). (a) Residuo per giocatore ceduto = accettato - probabilita' attesa dal modello (Δ valore, eta', ruoli): solo un residuo positivo vuol dire «se ne libera volentieri». Nuovi bonus dove mancavano (meta' dell'effetto, +-10): TUR Harper +7, Coward +6, Wagler +4, Banchero +3, Haliburton +3 (li tengono); SPI Morant -4, Boozer -4 (li cedono davvero), Castle +4, Hartenstein +4; PEA Zion +4; FOX Naz Reid -5, Irving -3. (b) Testi di «Scopri i gusti dei GM» corretti (es. Mikel Brown e Miller: ceduti solo con +15-22%, non sono in svendita; Reaves e Zubac rifiutati in scambi in perdita). (c) Report «Proposte di scambio»: accanto a ogni giocatore nella sezione GIOCATORI c'e' il Δ medio di quegli scambi. (d) tools/gm_residui.py + regola nella procedura.
+783. DREAMERS nel Parquet: sfide del turno (.drm) e righe della classifica (.drcla .drcr) nello stile «crema con bordo arancio» (proposta 4 di 6 scelta da Francesco): fondo crema senza sfumature delle squadre, bordo arancio 3px, ombra piena marrone sotto, nomi arancio, punteggi arancio scuro, striscia «In corso» arancio. Vale per tutto il riquadro Dreamers (anche G-Dreamers) solo nello stile Parquet.
+784. Dreamers nel Parquet, sfide del turno: chi e' in vantaggio ha il punteggio piu' scuro (#6b240a), chi e' dietro piu' chiaro e sbiadito (#c9a98a), usando le classi slead/strail gia' presenti. Nient'altro (le 4 proposte con pillole/barre/etichette scartate da Francesco).
+785. (DAX, area riservata Ducks) HOOP DREAMERS: basket 5 contro 5 visto di lato con omini stilizzati (grafica originale disegnata in canvas, nessuna immagine di altri giochi), file separato hoop.js caricato solo da «Gioca» (anche nella cache offline di sw.js). Squadre vere (quintetto 2G/2A/1C per valore + panchina, forza da valore/ruolo, stanchezza e cambi), palazzetto nei colori della squadra di casa (tribune animate, striscione, parquet, area dipinta, logo a centrocampo, canestri con retina). Comandi touch (levetta + 3 tasti) e tastiera: attacco TIRO (tieni/lascia con barra di tempismo, schiacciata vicino al ferro), PASSA (verso la levetta o al piu' libero), PALLEGGIO (crossover, caviglie rotte); difesa SALTO (stoppate, contesta, rimbalzi), RUBA (con rischio fallo), CAMBIA giocatore. Regole: tiri da 2 e da 3, 24 secondi, falli di squadra e bonus, tiri liberi, canestro e fallo, passi, fuori campo, intercetti, rimbalzi offensivi, quarti, intervallo con cambio campo, supplementari. CPU in attacco (porta su, penetra, scarica, tira) e in difesa (uomo, aiuto, contesta, ruba). Sonoro sintetizzato (palleggio, retina, ferro, tabellone, scarpe, fischio, sirena, pubblico che esulta). Pausa con sonoro/difficolta'/velocita'/cambi/statistiche/esci; fine partita con tabellino, MVP, rivincita. Menu: squadra, avversaria, palazzetto, gioca o guarda CPU contro CPU, durata quarto 2-12 minuti, difficolta', velocita', sonoro, pubblico, levetta destra/sinistra, falli, cambi, nomi. Taratura con 3 partite simulate (3 min a quarto): circa 40-60 punti a squadra, 3 punti da fuori 30-40%, 7-8 palle rubate.
+786. Hoop Dreamers: joystick sempre visibile (base scura con bordo bianco e frecce, pomello arancio, scritta MUOVITI all'inizio) in basso a sinistra (a destra con l'opzione levetta a destra); si puo' toccare ovunque nella meta' dello schermo e la base va sotto il dito restando tutta dentro lo schermo; risponde da 6 px di spostamento.
+787. STILI INDIPENDENTI (bug ricorrente: riaprendo l'app dopo un po' la notte prendeva colori del Parquet). Causa: all'avvio a freddo con la notte accesa il primo dlsApply girava PRIMA che fosse installato l'involucro della notte (che usa la base classica): le variabili dei colori restavano del Parquet (scritta DREAMERS marrone, menu crema), e le caselle crema scritte sugli elementi (data-pqc) non venivano mai tolte. Rimedio (script 787 in fondo): styleSync() con la firma dello stile (notte/giorno, stile scelto); a ogni cambio, all'avvio, al ritorno nell'app (visibilitychange, pageshow) e con un controllo ogni 1,5 s: toglie tutti i residui scritti sugli elementi (data-pq, data-pqc, pqw), riapplica dlsApply da zero, poi pqFix e crema solo se servono. Provato: avvio in notte, notte->giorno->notte, cambio senza render.
+788. REPORT FOXES Confronto (85 confronti, 31/10 19:05-19:12; d'accordo col nostro vincitore 82%). gm_fit confronto: pl Flemings -9, Clingan -6, K. George -6, Fox -5, Rollins -4, Acuff +4, Giddey +5, Banchero +5, Jokic +6; eta' -1,1/anno (preferiscono i piu' anziani). Fusione col profilo FOX (media dove c'erano entrambi): Banchero, Giddey e Flemings si annullano (tolti), Acuff 12->8. Profilo FOX: n 85, age 1,0->0,25 (media pesata proposte/confronto), fonte aggiornata; GM_DESCR FOX aggiornato. Consenso (2+ profili stesso segno, media >=4, 70%, arrotondato a 5) solo dove il nuovo report porta dati nuovi: Fox 715->670, Clingan 1280->1210, Rollins 595->565, Jokic 3070->3265, Curry 810->835 (Foxes confermano il + dopo la correzione); pl dei profili ridotti della correzione, AT_RIT allargato, VAL_CORREZ «Nona correzione». Altri consensi gia' presenti (Holmgren, Embiid: regole infortuni; Mara, Castle, Morant: gia' ritoccati, servono risposte nuove; Harper, Steinbach) lasciati in attesa.
+789. Hoop Dreamers GRAFICA PIXEL (stile ispirato ai giochi di basket in pixel art, grafica tutta originale): scena disegnata su buffer 480x270 e ingrandita senza sfumature; vista dall'alto di tre quarti (10 px/piede in orizzontale, 4,3 in profondita', 4,2 in altezza), telecamera che segue la palla (camX 21-73). Giocatori a testa grande generati a pixel (20x40, contorno scuro): pelle, 6 acconciature, barba, fascia, scarpe, numero di maglia in font 3x5, canotta/pantaloncini nei colori della squadra; pose braccia (giu', corsa, difesa, braccia alzate, ruba, palla) e gambe (ferme, corsa a 4 fasi, difesa, salto), centri piu' alti; cache per giocatore. Campo in cache: listoni grigi, fasce fuori campo e area dipinta nei colori di casa, nome della squadra in verticale dietro ai fondi, tutte le linee a pixel, logo di casa a centrocampo. Tribune con pubblico nei colori (2 fotogrammi, esultano), ringhiera, tavolo, panchine con i giocatori veri in panchina. Canestri: base imbottita, palo, braccio, tabellone di taglio, ferro e retina. Tabellone in alto stile arena: logo+sigla, punti, quarto, tempo, 24 in rosso, falli a trattini, possesso. Nomi sopra i giocatori in alta risoluzione. In CPU contro CPU niente levetta e tasti.
+790. Hoop Dreamers proporzioni (Francesco: campo troppo grande rispetto ai giocatori): buffer 384x216 (pixel x2,5 invece di x2, giocatori +25%), campo 8 px/piede in orizzontale, 3,36 in profondita', 3,9 in altezza: sullo schermo il campo resta quasi uguale, i giocatori sono piu' grandi. Tribune a 3 file. Tabellone disegnato a parte (canvas 248x27 ingrandito x2) per non ingrandirlo. Levetta e tasti piu' trasparenti (fondo .22/.2, bordo .4/.45, scritte .75, pomello .5 a riposo e .75 quando la tocchi).
+791. Hoop Dreamers RIMESSE: nuova fase "inb". Dopo un canestro (o l'ultimo libero segnato) rimette la squadra che ha subito, da dietro il proprio fondo; palla fuori dal lato o dal fondo: rimessa dal punto dove e' uscita (fuori dal campo); fallo senza bonus, 24 secondi, passi, 5 secondi: rimessa laterale; inizio 2°-4° quarto: a meta' campo dal lato. Chi rimette (il piu' vicino, non il playmaker ne' chi ha subito fallo) sta fermo fuori dal campo; i due compagni piu' vicini vengono a ricevere, gli altri ai loro posti, la difesa marca. Cronometro e 24 fermi durante la rimessa. Tu: scegli il compagno con la levetta e PASSA (o TIRO); la CPU passa dopo 1-1,8 s al piu' libero. 5 secondi senza passare: palla agli avversari. Chi ha rimesso rientra camminando (niente scatto dentro il campo). Corretto anche un errore di disegno al primo fotogramma (tribune con C.t non ancora definito). Simulazione di una partita intera CPU contro CPU: ~45 rimesse, nessun blocco, nessun errore.
+792. GUARDIA DELLA NOTTE (Francesco: il problema giorno-dentro-notte persiste, staccare del tutto gli stili). Causa vera, oltre all'avvio (787): molte sezioni hanno colori chiari scritti fissi (crema/bianco/pastello, es. .gmsc .gmnd .gmaff .gmro nei Gusti) e la notte li copriva solo dove c'era una regola html.notte scritta a mano. Rimedio generale e indipendente (script 792 in fondo): con html.notte, 30 ms e 480 ms dopo ogni render (e a ogni cambio di classe di html, nuovi elementi, ritorno nell'app) si leggono i colori calcolati di ogni elemento dentro #app: sfondo chiaro (L HSL >= 80%, alfa >= .3, con testo dentro, non scritto inline) -> stessa tinta scura (L 20%); testo con contrasto < 5:1 su sfondo scuro -> stessa tinta schiarita (72-88%). Esclusi immagini/svg/canvas/select/option/input, il gioco (#hoopov), elementi con data-nx-skip, testi su sfondi a gradiente/immagine. Ogni giro riparte da zero (toglie i data-nx precedenti), e fuori dalla notte toglie tutto: giorno e Parquet non vengono mai toccati. Prova su tutte le 50 viste in notte: conversioni solo nei Gusti (106) e nell'editor colori (pulsanti bianchi); tempo 5-75 ms per vista in browser simulato. Giorno -> notte -> giorno: nessun residuo.
+793. Notte: titoli delle squadre nei Gusti (h4 #b8410a del giorno) bianchi: regola html.notte .gmsc h4{color:#fff}; e nella guardia 792 ogni titolo h1-h6 scuro in notte diventa bianco (non piu' la sua tinta schiarita).
+794. Guardia della notte piu' severa (Francesco: niente piu' correzioni una alla volta): sfondi chiari da L HSL >= 70% (prima 80%); in notte NESSUN testo scuro (luminanza < .45 su sfondo scuro) a prescindere dal contrasto: tutto schiarito alla tinta della notte, titoli bianchi. Controllo automatico (tools: audit in browser simulato) su tutte le 50 viste + Gusti Scopri/IA in notte: 0 testi scuri su sfondo scuro, 0 sfondi pastello/crema; restano solo le pillole d'accento volute (oro, verde, azzurro).
+795. GUSTI DEI GM + menu HOOP riscritti a variabili (Francesco: riscrivere la schermata in modo indipendente). Tolti i 4 blocchi CSS con colori fissi (crema/marrone di giorno + rattoppi html.notte) e sostituiti da un solo blocco: ogni elemento (.guintro .guhb .gmsc .gmaff .gmnum .gmro .gmnd .gubox .gures .guchip .guseg .guli .gutg .guk .gugo .gucard .gurow .guio .gust .hpteams .hpseg .hpplay ...) usa SOLO variabili --gu-*; tre tavolozze complete e separate: :root (stili scuri, dalle variabili del tema --panel/--fg/--muted/--gold/--red), html.dlt-parquet:not(.notte) (crema/arancio di prima), html.notte (viola/bianco). Prova Parquet / Notte / Classico su Gusti home, Scopri, IA: la guardia della notte (792) non deve piu' correggere nulla (0 elementi), resta solo come rete di sicurezza per il resto dell'app.
+796. REPORT DUCKS Proposte (201 risposte del 30/10 20:52-, 61 si', 32 a tre squadre). gm_fit proposte sui valori di adesso: req 6, age 2,75, sc 15, ruoli G-4 F+4 C0 (accuratezza 74%). Bonus giocatore dai residui del modello (cessioni c>=4 col segno opposto, ricevuti c>=4, scala x min(1,c/8), tetto 10, scartati sotto 3): 37 giocatori. Nuovo profilo GM_GUSTI.DUC (n 120) e scheda GM_DESCR.DUC. Consenso con 6 profili, regola nuova: non contano i giocatori della squadra stessa del GM (attaccamento ai propri), i fragili sotto 2 stelle (regole infortuni) e i ritoccati oggi (servono risposte successive). Decima correzione (70%, a 5): Boozer 1400->1480, J. Brown 1030->1070, Hart 680->660, K. George 1190->1140, Knueppel 1260->1165, James 920->895; pl ridotti, AT_RIT allargato, VAL_CORREZ.
+797. REPORT DUCKS Valutazione (22 giocatori, 31/10 07:04-20:27). Nuovi bonus DUC (delta voto x4, tetto 12, solo giocatori non gia' nel profilo; Boozer escluso perche' appena corretto): Quickley +12, Leonard +12, Fox +8, Mara +8, James +4, Irving +4, Doncic -4, J. Johnson -4, Duren -4. Profilo DUC n 130, fonte e scheda aggiornate. Nessun nuovo consenso (Davis/Holmgren/Embiid/Kessler fragili, Avdija/Porter/Okongwu ritoccati oggi). INFORTUNI: con i Ducks sono 4 GM che sotto le 2 stelle scontano in media oltre il 40% (Ducks 41% sui fragili, Dolphins 46%, Foxes 43%, Spiders 35%): come previsto in PROCEDURA, VAL_INJ_B 0,80 -> 0,75. Nessun valore cambia oggi (conta il rapporto stelle oggi/partenza): pesa dal prossimo calo di stelle.
+798. REPORT DUCKS Confronto (130 confronti, 31/10 07:21 e 20:28-20:34; accordo 83%, piu' giovane scelto 64%). gm_fit confronto: pl Daniels -11, Bailey -9, Peterson -7, Ball -6, Sarr/J. Murray/Herro -5, Doncic/Murphy -4, Flemings/Zion -3, Wilson/Duren/Banchero +3, Fears/Giddey +4, Barnes/Castle +5; eta' +1,0/anno. Fusione col profilo DUC (n 150, fonte e scheda aggiornate). Consenso (esclusi propri, fragili <2 stelle, ritoccati senza risposte successive): undicesima correzione Flemings 695->665, Murphy III 920->880, Herro 815->765 e, con conferma di risposte successive alla correzione, Bailey 820->795, Giddey 1840->1900. pl ridotti, AT_RIT, VAL_CORREZ.
+799. IA TRADE «PER CESSIONE» (quarta scelta dell'IA Trade, dentro il motore dei Gusti: GU.mode='sell'). Scegli i giocatori di cui liberarti (GU.sell, chip 💸 con il valore); la ricerca parte da giri obbligati in cui la tua squadra da' ogni giocatore scelto (tutti insieme nel 35% dei tentativi, altrimenti un sottoinsieme) a un acquirente, scorrendo a turno tutte le altre squadre come primo acquirente; ogni acquirente ricambia lo stesso ruolo, anche passando da altre squadre (regola dei ruoli invariata), 2-6 squadre. In cessione la tua squadra puo' dare SOLO i giocatori scelti (evalDeal). Risultato: «Chi li compra» = per ogni giocatore, ogni squadra che lo riceve con il suo miglior scambio trovato (dice si' al..., si chiude al..., quante squadre, cosa ti da' direttamente, «insieme a» se nel pacchetto ci sono altri tuoi), poi le proposte complete come nell'IA Gusti. Dall'IA Trade il tasto apre i Gusti gia' in cessione con la squadra scelta. Prova: Ducks cedono Buzelis e Amen Thompson, 4 squadre: 7 acquirenti a testa, 9 proposte, 12.000 combinazioni in 2,2 s, nessun errore.
+800. Tolta la quarta scelta «Per cessione» dall'IA Trade (Francesco: doppione dei Gusti; resta «Voglio cedere» nel Mercato dei gusti). In «Chi li compra» ogni squadra e' ora un <details> (.gubd): toccandola si apre lo scambio COMPLETO trovato per lei (dealRows: tutte le squadre, chi riceve e da chi, chi da' e a chi, dice si' al e motivo), utile negli scambi a 3+ squadre dove il cambio arriva da un'altra squadra. card() usa la stessa dealRows.
+801. UN SOLO «IA TRADE» (Francesco): nel menu Scambi tolto il vecchio IA Trade (vIA resta nel codice ma non e' piu' nel menu) e «Gusti» rinominato «IA Trade» (apre la sezione gusti). Pagina iniziale «IA Trade · con i gusti dei GM» con due tasti: «I gusti dei GM» (schede) e «Simula le trade» (Per ruolo / Per giocatore / Voglio vendere). Indietro dalle sottopagine = «IA Trade». Proposte tutte CHIUSE: in testa numero, loghi delle squadre, «N squadre · M giocatori» con i nomi delle squadre e «lo scambio si chiude al X%»; aperte: «I passaggi» (ogni giocatore con ruolo, da squadra -> a squadra con loghi) e poi squadra per squadra (riceve/da'/dice si' al/perche'). Anche in «Chi li compra» lo scambio aperto mostra i passaggi.
+802. Tasto «Con che valori»: «🎯 Usa i gusti dei GM» (predefinito: profili GM_GUSTI, media della lega per chi non ha report) oppure «📊 Valori ufficiali» (profilo neutro per tutti: eta' 0, vantaggio chiesto 0, ruoli 0, nessun gusto per giocatore: conta solo il valore del Calcolatore).
+803. IA Trade: tolto il riquadro «I passaggi» dalle proposte aperte e da «Chi li compra» (Francesco): aperte mostrano solo squadra per squadra cosa riceve e cosa da'.
+804. Simula le trade: tolta tutta la spiegazione (riquadro iniziale con A cosa serve / Chi decide i gusti / Come funziona e il link ai profili), note dei risultati ridotte a una riga, tolta la nota sotto «Con che valori».
+805. IA Trade, pagina iniziale (Francesco): tolta la spiegazione; tasto grande «🤖 IA TRADE» (gradiente arancio, in notte viola-fucsia, ombra piena, effetto pressione) che apre la simulazione (intestazione «IA Trade»); «I gusti dei GM» diventa una nota informativa con bordo tratteggiato e testo grande (ℹ️, «Nota informativa: cosa cerca ogni squadra · N su 8 squadre»).
+806. IA Trade: «Voglio vendere» e' la prima scelta a sinistra ed e' quella selezionata all'apertura (GU.mode 'sell').
+807. IA Trade › Voglio vendere › Chi li compra: da chiusa ogni squadra mostra solo logo, nome e «lo scambio si chiude al X%»; il «dice si' al» di ogni GM e i giocatori scambiati si vedono solo aprendo (in testa: squadre, giocatori e con chi viene ceduto insieme).
+808. IA Trade: tasti «Cerco ruolo» e «Cerco giocatore» (prima «Per ruolo», «Per giocatore»).
+809. IA Trade: le proposte chiuse mostrano solo il numero (#2), «lo scambio si chiude al X%» e la freccia; tolti loghi, «N squadre · M giocatori» e nomi delle squadre (si vedono gia' aprendo).
+810. IA Trade (Cerco ruolo / Cerco giocatore): «Non cedo» diventa «Cedo»: tocchi i giocatori che vorresti cedere (💸) e la tua squadra cede solo quelli; se non ne scegli nessuno l'IA puo' usare tutta la rosa.
+811. Profilo Ducks (Francesco, GM dei Ducks): non e' vero che non cedono Steinbach e Kyshawn George. Tolti dalla scheda GM_DESCR.DUC e tolti i loro bonus dal profilo GM_GUSTI.DUC.pl (non pesano piu' negli scambi simulati).
+812. Profilo Ducks (Francesco): non e' vero che cede volentieri Amen Thompson e Buzelis. Tolta la frase dalla scheda GM_DESCR.DUC e tolti i loro malus da GM_GUSTI.DUC.pl.
+813. Profilo Ducks (Francesco): cede volentieri SOLO Steinbach, Kyshawn George, Daniels e De Larrea. Scheda aggiornata; in GM_GUSTI.DUC.pl -6 a ciascuno dei quattro (= se ne libera volentieri), tolto il -4 di Burries.
+814. Scheda Foxes: Steinbach e' dei Ducks, non dei Foxes. «Tengono stretti i loro giovani Acuff e Mara; apprezzano Curry, Jokic e Steinbach dei Ducks» (il loro +12 su Steinbach resta: e' un giocatore che gli piace). Controllate le altre schede: nessun altro giocatore attribuito alla squadra sbagliata.
+815. Spiders (Francesco): Boozer e Castle sono INTOCCABILI, non ceduti volentieri. Scheda SPI aggiornata; SPI.pl Boozer e Castle +12 (gli dispiace cederli); nuova lista GM_INTOCC (SPI: Boozer, Castle) esclusa dai pool delle altre squadre nella ricerca dell'IA Trade (cerco ruolo, cerco giocatore e voglio vendere): non vengono mai proposti, salvo simulare proprio la squadra Spiders.
+816. Turtles (Francesco): Queen NON e' ceduto volentieri, per loro e' molto costoso. Scheda TUR aggiornata; TUR.pl Queen da -1,9 a +10 (gli dispiace cederlo: negli scambi simulati chiedono molto di piu').
+817. Allenamento IA › Valutazione giocatori (Francesco): ogni GM valuta PRIMA i giocatori della sua squadra (dal piu' importante), con avviso «Prima i giocatori della tua squadra (n di N)»; poi gli altri come prima. Il report ha una sezione nuova «I SUOI GIOCATORI» (voto GM vs noi e risposta a «Se un GM lo chiede, tu…»: intoccabile / sovrapprezzo / prezzo giusto / cedo volentieri).
+818. AV_FATTI: elenco dei giocatori gia' valutati da ogni GM nei report arrivati a Claude (SPI 14, DOL 29, DUC 22, FOX 20); avGen li esclude per la squadra del GM, cosi' nei prossimi allenamenti gli capitano solo giocatori nuovi, anche se azzera le risposte o cambia telefono. Da aggiornare a ogni report di Valutazione (aggiunto alla PROCEDURA).
+819. ALLENAMENTO IA › Proposte di scambio piu' EQUILIBRATE (Francesco: con un pacchetto favorevole si accetta di cedere anche chi si ama; non vuol dire «cedo volentieri»). atGen: obiettivo di vantaggio 3 su 4 entro ±5%, le altre entro ±10% (prima fino a ±32%); scarta gli scambi oltre ±12% di valore e premia quelli piu' vicini alla pari. Report: etichette neutre («accettato di cederlo», non «volentieri ceduti») e nuova sezione «SCAMBI ALLA PARI (Δ tra −6% e +6%)»: per ogni giocatore ceduto in almeno 2 scambi alla pari, quante volte lo ha ceduto (li cede anche alla pari / alla pari non li cede). Regola per Claude (PROCEDURA): «cede volentieri» solo da scambi alla pari, dai residui del modello o dalla risposta del GM sui suoi giocatori nella Valutazione; mai da un si' a uno scambio favorevole.
+820. I FORTI CONTANO, I RIEMPITIVI NO (Francesco: un giocatore da 1000-1400 vale molto piu' di tanti medi; in «Banchero + Quickley per Thompson + Buzelis» conta solo Banchero contro Thompson). Nuovo VALORE DI PACCHETTO pkgPts: punti del Calcolatore del migliore per intero, gli altri x (punti/punti del migliore)^2. Verificato sui 425 Proposte di 5 GM: spiega le risposte meglio della somma (k=2 il migliore). Usato in: IA Trade (gsc), Allenamento IA (atGen e indice gusto), tools/gm_fit.py (proposte) e tools/gm_residui.py (merito/colpa divisi per quota nel pacchetto). Profili rifatti sulla nuova base (vantaggio chiesto e decisione): TUR 16/22, SPI 6/15, PEA 20/18 (25 sulle sole 30 risposte, ridotto verso la media), FOX 18/8, DUC 12/18, DOL stimato 14/15; eta' e ruoli invariati; schede aggiornate. Ducks: tolti i bonus ai riempitivi (Quickley, Leonard, Fox, Mara, James, Irving dalla Valutazione; Siakam, Brunson, D. Murray, Ingram dalle Proposte: quota nel pacchetto < 25%). PROCEDURA: regola ferma 2 + niente bonus da Valutazione sotto 1000 di valore.
+821. IA Trade › Voglio vendere: con piu' giocatori scelti l'IA prova gruppi di ogni dimensione con la stessa probabilita' (singoli, coppie, terzetti, tutti insieme). «Chi li compra» ora e' raggruppato per COSA VENDI (es. «Buzelis», «2 insieme: Buzelis + Daniels»): per ogni gruppo i 4 scambi migliori trovati (loghi e nomi delle altre squadre, «lo scambio si chiude al»; aperto: lo scambio completo squadra per squadra).
+822. Voglio vendere (Francesco): niente piu' sezioni per giocatore/gruppo. Un solo elenco di proposte ordinato per «lo scambio si chiude al», dalla piu' alta alla piu' bassa: dentro ci sono le migliori 3 per ogni gruppo venduto (singoli, coppie, terzetti…), al massimo 20; chiuse mostrano solo numero e percentuale, aperte lo scambio squadra per squadra. buyers() non e' piu' usata.
+823. STUDIO A RITROSO DI TUTTI I REPORT (Francesco: negli scambi contano i giocatori forti; i riempitivi, fino a 800-900 di valore, contano solo negli scambi tra riempitivi). Strumenti in tools/studio/.
+ (a) Quale modo di contare spiega meglio le 422 Proposte di 5 GM: somma semplice 185,2; pacchetto pesato (il migliore intero, gli altri x (punti/migliore)^2) 182,2 = il migliore; riempitivi esclusi del tutto 187-199 (meglio solo per i Ducks, 86,3 con soglia 900-1100). Nell'app resta il pacchetto pesato (gia' fa contare un riempitivo da 750 accanto a un 1400 per circa il 7%).
+ (b) Profili GM_GUSTI rifatti da zero per tutti e 6 i GM, sui valori di adesso: vantaggio chiesto, eta', decisione e ruoli dalle Proposte con il pacchetto pesato; gusti per giocatore dai residui del modello dando merito/colpa SOLO ai giocatori forti quando nello scambio ce n'e' almeno uno da 1000+ (i riempitivi <900 prendono merito solo negli scambi tra riempitivi), piu' i Confronti (scelte uno contro uno, valide anche tra riempitivi) e le Valutazioni (solo giocatori da 900 in su); affidabilita' = proposte + 0,25 x confronti + 0,5 x valutazioni (max 150). Restano le correzioni dette da Francesco (Ducks, Spiders, Turtles). Schede GM_DESCR riscritte con le nuove conclusioni.
+ (c) Verifica delle correzioni dei valori di oggi (35 giocatori): tutte ancora confermate dai profili nuovi (Irving: solo i Dolphins contrari, non basta). Dodicesima correzione (non ancora ritoccati, almeno 2 GM d'accordo, nessun riempitivo valutato per i pacchetti): Sarr 945->915, Edgecombe 1180->1135, Maxey 1500->1455 (Turtles, Spiders e Peacocks), Murray-Boyles 1000->970.
+824. RIEMPITIVI IN BASE AL PIU' FORTE DELLO SCAMBIO (Francesco: i giocatori davvero rari partono da 1200-1300; con un 1100 un 800 conta ancora, con un 1300 in su gli altri sono riempitivi). Formula: k = 3 x (valore del piu' forte dello scambio - 1000)/300, tra 0 e 3; ogni giocatore conta punti x (punti / punti del migliore del suo lato)^k. Fino a 1000: tutti per intero; 1100: un 800 conta ~64%; 1300+: un 800 ~13%, un 1000 ~33%. Provate 72 varianti (soglia 1000/1100/1200, ampiezza 100-300, k massimo 2-6, piu' forte del lato o dello scambio): tutte tra 183,6 e 184 sulle 422 Proposte (la versione precedente 182,2): i dati non smentiscono la regola, quindi si usa quella che descrive il gioco. In uso in IA Trade (gsc), Allenamento (atGen, indice gusto), gm_fit (proposte) e tools/studio. Profili rifatti di nuovo con la formula: TUR 15/22, SPI 7/15, DOL 14/15 (stimato), PEA 21/18 (26 sulle sole 30 risposte, ridotto), FOX 16/8 (ali +4, guardie -4), DUC 13/18; gusti per giocatore con merito/colpa divisi per il peso nel pacchetto; schede aggiornate. Le correzioni dei valori di oggi restano confermate.
+825. Dynasty TV › tabellino nel Parquet (Francesco): nomi giocatori e statistiche in marrone legno #7a4318 (ruolo sotto il nome #b07a40) invece che arancio, cosi' non si scontrano con le caselline PDK rosse; +/- verde/rosso; numero nelle caselline PDK bianco. Barre arancio e sfondo crema invariati. Notte e altri stili non toccati.
+826. Dynasty TV › tabellino nel Parquet: base delle righe BIANCA (righe pari #f9f9f9) invece che crema (scelta 1 di Francesco tra 6 tonalita').
+827. Dynasty TV › tabellino: sotto il nome solo il ruolo (es. G, PF); tolte le scritte «Quintetto»/«Panchina», gia' dette dalle barre del gruppo (Francesco). Vale in tutti gli stili.
+828. Dynasty TV › tabellino (esempio di Francesco da un sito NBA): ruolo subito dopo il nome sulla stessa riga, piu' piccolo e sbiadito (opacita' .55); barre di intestazione, Quintetto/Panchina e Totale con un sottile bordino bianco sopra e sotto (e a destra della colonna nomi). In tutti gli stili.
+829. Tabellino come il sito d'esempio: ogni riga una linea orizzontale sottile e continua dal nome all'ultima statistica (Parquet: marrone al 13%; altri stili: bianco all'8%), sottile linea verticale dopo i nomi; nel Parquet tutte le righe bianche (niente piu' alternanza: la separazione la fanno le linee).
+830. Tabellino Parquet: nomi e statistiche in marrone cioccolato #4a2410 (scelta 2 di Francesco tra legno, cioccolato, caffe' e nero); ruolo sbiadito dello stesso colore; +/- verde/rosso.
+831. Parquet: righe delle squadre CREMA (#fdf3e1, bordino arancio leggero) in Statistiche › Squadre (.sqpk, prima bianche) e in Suggerimenti del TG (.cns, prima blu scuro): nomi arancio, posizione/record marrone chiaro, etichette invariate, testo dei suggerimenti aperti in marrone cioccolato.
+832. Tabellino Parquet: torna il marrone legno #7a4318 (sostituisce il cioccolato della 830) e nomi giocatori in grassetto pieno (800), ruolo accanto a 700 (sul telefono i nomi risultavano sottili).
+833. Tabellino: nomi giocatori 14,5px (prima 13,5) e grassetto 700; ruolo 11,5px. Causa del «sottile» sul telefono: Google Fonts caricava Barlow solo 400-600, quindi 700/800 ricadevano su 600; ora il link carica Barlow 400;500;600;700;800 (vale per tutta l'app).
+834. EDITOR COLORI · selezione 3.0 (Francesco: selezione macchinosa, voler colorare insieme elementi separati). Il riquadro rosa ha 4 pallini per allargarlo/stringerlo e una maniglia ✥ per spostarlo ovunque; quando lo lasci prende da solo gli elementi che stanno dentro (almeno 85% dentro, il piu' esterno; se e' un contenitore senza colore, gli elementi colorati al suo interno), anche separati, e i colori si applicano a tutti insieme (SELS: un selettore per tipo; «Tutti uguali» conta tutti gli elementi di quei tipi). Contorno sottile su ogni elemento preso, titolo «N elementi insieme», «↩ Solo il primo». Il primo tocco sceglie il riquadro colorato piu' vicino (tasto, casella, barra; fino a 3 livelli sopra) invece della singola scritta. Provato: tocco su GIOCATORE + allargo a tutta la barra = 7 titoli colonna (th e th.pdkl) colorati insieme.
+835. Tabellino Parquet: barre arancio piu' chiare (versione 2, #ec7e41→#d77239, scritte bianche) e nomi + statistiche arancio #d9560b (ruolo arancio sbiadito), linee arancio leggere. Barre Quintetto/Panchina/Totale escluse dal contrasto automatico pqFix (metteva un'ombra sotto le scritte).
+836. Editor colori: selezione al TOCCO (Francesco: difficilissimo selezionare). Sul telefono il click spesso non arrivava perche' il touchend era bloccato; ora si seleziona al sollevamento del dito (pointerup) se il dito non si e' mosso piu' di 12 px (scorrere la pagina resta possibile), prendendo l'elemento sotto il dito con elementsFromPoint (salta gli strati trasparenti e quelli dell'editor), poi il riquadro colorato piu' vicino. Il click che segue viene ignorato (niente doppia selezione), la navigazione resta bloccata.
+837. Tabellino Parquet: base delle righe crema leggero #fdf4e6 (versione 3 di Francesco) invece che bianca.
+838. Home: tasto notte (#hnt) spostato nell'intestazione accanto all'ingranaggio (classe hnthd); nella barra della Home restano la ricerca, allargata (flex:1), e il segnalibro dei seguiti a destra. Lo spostamento avviene dopo ogni render (il tasto della Home mantiene il suo onclick).
+839. Tasto notte nell'intestazione: -10% (49x27, pallino 21) e di giorno nel Parquet stile «vetro crema» (versione 4 di Francesco): fondo rgba crema .28, bordo crema, pallino crema con luna arancio.
+840. Tasto notte nell'intestazione: il pallino si sposta davvero (posizione legata anche ad aria-checked, 2px spento / 24px acceso) e con l'animazione: il tasto e' ricreato a ogni render, quindi parte dalla posizione del vecchio e scivola in 0,22 s.
+840b. Causa vera dell'animazione mancante: il cambio giorno/notte ridisegna tutta l'app in modo sincrono (0,15-0,85 s), quindi il pallino saltava. Ora un ascoltatore in cattura sul tasto dell'intestazione fa prima scivolare il pallino (0,24 s), poi dopo 260 ms ripete il click e cambia modalita'. Il tasto resta lo stesso elemento (si copia solo lo stato da quello nuovo creato dalla Home). Provato: giorno->notte->giorno->notte, il pallino passa per posizioni intermedie ogni volta.
+841. Tasto notte: ora e' un elemento FISSO dell'intestazione, creato una volta all'avvio (non piu' spostato dalla Home a ogni render): c'e' in tutte le sezioni anche ricaricando fuori dalla Home; il tasto che la Home disegna nella sua barra e' nascosto via CSS (main #hnt), quindi all'apertura non compare piu' per un attimo nella vecchia posizione. Stato sincronizzato a ogni render e ogni 2 s (notte manuale, automatica o preset luna); con il preset luna il click lo gestisce il suo ascoltatore.
+842. Tasto notte: controllo in piu' (MutationObserver sull'intestazione, ritorno nell'app, pageshow) che lo rimette subito se qualcosa ridisegna l'intestazione e lo toglie.
+843. GRAFICA NATIVA ALL'APERTURA (Francesco: per mezzo secondo comparivano il tasto notte nella vecchia posizione e la grafica blu di base). (a) Tasto notte scritto direttamente nell'HTML dell'intestazione (non piu' creato da JS) e tolto dal modello della Home; il suo stile (piu' piccolo, vetro crema) e' nel <head>. (b) Script nel <head> che, prima del primo disegno, mette sull'html le classi dello stile salvato (dlt-parquet / notte, da dl_set e dl_cnt) e le variabili dei colori calcolate l'ultima volta (dl_shell, salvate a ogni dlsApply), e colora la barra del telefono (theme-color); classe notte sul body appena si apre. Provato: primo disegno senza gli script dell'app = intestazione arancio e parquet di giorno, viola di notte; tasto sempre in alto in tutte le sezioni.
+844. APERTURA PULITA (Francesco: nel primo mezzo secondo l'intestazione saltava sotto la barra del telefono e poi si sistemava). Classe html.boot messa dallo script nel <head>: la pagina resta nascosta sul colore dello stile (parquet #c88a4c, notte #1f0d4a, base #0a1330) finche' l'app non ha fatto il primo disegno completo (load + 2 fotogrammi + 60 ms; massimo 1,8-2,5 s), poi compare con una dissolvenza di 0,18 s.
+845. TG Dreamers in Home (.tgc) sempre leggibile: titolo prima scuro su fondo scuro (il contrasto automatico pqFix lo scuriva). Ora escluso da pqFix e con colori per modalita': Parquet di giorno scheda crema, bordo arancio, titolo marrone; notte scheda viola scura, bordo lilla, titolo bianco; base blu notte con titolo bianco.
+846. TG Dreamers di giorno: base crema vera (#fbeedb -> #f3dfbd) invece che quasi bianca.
+847. Tasto notte super fluido (Francesco: animazione a scatti). Il pallino ora si muove con transform translate3d (animato dalla scheda grafica, non dipende dal lavoro dell'app) invece che con left; al tocco classi moving/flip lo portano subito a destinazione in 0,28 s e il cambio di modalita' (che ridisegna tutta l'app) parte solo dopo 300 ms + un fotogramma libero.
+848. Barra di ricerca della Home nel Parquet crema in modo NATIVO (CSS nel <head>: fondo #fdf3e1, bordo arancio leggero, testo marrone, segnaposto arancio): prima il crema lo aggiungeva pqCrema dopo il caricamento e al primo avvio a volte mancava.
+849. Cambio giorno/notte piu' veloce e fluido. Misura (simulatore): notte->giorno 1,1 s di lavoro, di cui crema 0,47 s e il controllo stili 787 che rifaceva pqFix+crema prima del render (0,31 s) poi rifatti dal render. Ora il controllo dentro render non ripete pqFix/crema (chk lite). In piu' il cambio avviene dentro una View Transition (dove supportata, iOS 18+): l'immagine vecchia resta ferma mentre l'app ridisegna e poi sfuma nella nuova in 0,32 s; il tasto resta fuori dalla dissolvenza.
+850. Apertura di nuovo veloce (Francesco: dopo la 844 l'avvio era piu' lento). La 844 mostrava la pagina solo all'evento load, che aspetta TUTTE le immagini (loghi, foto) e i caratteri: ora si mostra due fotogrammi dopo il primo disegno dell'app (alla fine degli script), massimo 0,7 s (sicurezza nel <head> 1,2 s).
+850b. All'apertura si nasconde solo il contenuto (main e piede) finche' l'app non l'ha disegnato: l'intestazione (ormai nativa, con colori e tasto notte giusti) compare subito, come prima della 844.
+851. OTTIMIZZAZIONE GENERALE (Francesco: app piu' lenta). Misure in simulatore, ogni render: Home 630 -> 110-150 ms, Classifica 505 -> 40 ms, cambio notte->giorno 1,1 s -> 0,26 s, giorno->notte 0,25 -> 0,07 s. Interventi (risultati identici, controllati confrontando il testo di 13 schermate prima e dopo):
+ - pqCrema (744): leggeva e scriveva elemento per elemento (ricalcolo della pagina a ogni scrittura) -> prima legge tutto poi scrive; elementi gia' controllati ricordati (WeakSet); scarto veloce di chi non ha fondo bianco prima dei controlli costosi: 290 -> 11 ms.
+ - pqFix (248) e __pqw (711): stesse scritture rimandate a dopo le letture.
+ - controllo stili 787 dentro il render non rifa' pqFix e crema (li rifa' gia' il render).
+ - drNotti, drWeek, drStand: risultato ricordato fino alla fine del disegno in corso (erano ricalcolati molte volte per ogni render).
+ - tasto notte: pallino 0,2 s, cambio di modalita' dopo 170 ms, dissolvenza 0,22 s.
+852. Tasto notte e cambio di stile insieme (Francesco: il tasto era ancora piu' veloce del cambio). Al tocco si cambiano SUBITO solo classi e variabili dello stile (styleSync lite: pulizia residui + dlsApply, pochi ms) dentro la dissolvenza, nello stesso istante in cui parte il pallino; il ridisegno completo della pagina avviene dopo, a dissolvenza finita (ricorda lo scorrimento). Con il preset luna resta il percorso precedente.
+853. APERTURA PIU' VELOCE. (a) index.html era 5,5 MB: 2,7 MB erano 13 immagini (loghi delle squadre ecc.) scritte dentro il file in base64. Ora sono file a parte in img/ (2 MB, salvati dal service worker e serviti dalla memoria). index.html 2,85 MB: nel simulatore primo disegno 736 -> 312 ms, pagina pronta 2,9 -> 1,3 s. (b) Service worker: la pagina si chiede alla rete ma se non arriva entro 1,2 s si apre subito la copia salvata; la versione nuova si salva comunque e si vede all'apertura successiva (prima si aspettava sempre il download completo da GitHub). (c) Manifest: colori parquet/arancio invece del blu scuro. Contenuto delle 13 schermate controllato identico.
+854. Capsule PDK (.pdkx, .pdkb): numero sempre bianco in tutte le sezioni e stili (regola con specificita' alta) ed escluse dal contrasto automatico pqFix. Nel tabellino della Dreamers le capsule .pdkx prendevano l'arancio della regola 835.
+855. Capsule PDK: colore bianco anche come stile inline !important nel markup (pdkx/pdkb) e riapplicato dopo ogni styleSync, cosi' nessuna regola o script (crema, editor colori, contrasto) puo' piu' colorarle, anche nel tabellino delle nostre squadre in Dynasty TV.
+856. Aggiornamenti: il telefono continuava a mostrare la versione vecchia (index da 2,8 MB, oltre 1,2 s si usava la copia salvata, e la nuova copia poteva essere presa dalla cache del browser). Ora il service worker salva i file con cache:'reload' e la pagina si ricarica da sola quando arriva la versione nuova (subito se aperta da meno di 20 s, altrimenti al rientro nell'app); al rientro controlla anche se c'e' una versione nuova.
+857. Capsule PDK in Dynasty TV tutte rosse: una regola dell'Editor colori salvata sul telefono puo' colorare lo sfondo (e il testo) delle capsule. Ora le regole dell'Editor non toccano mai .pdkx/.pdkb: sfondo per fascia di punteggio (rosso <20, giallo <30, verde <40, viola 40+) e numero bianco.
+858. Dynasty TV, box score delle sfide Dreamers: aggiunte le colonne della MIGLIOR partita del turno (Min, Pt, RIM, AST, STL, BLK, TOV, Tiri, Da 3, Liberi) prese dal tabellino TV.box; la tabella si allarga e scorre a destra come il box NBA (classe .drbxs; attenzione: .drst era gia' usata altrove).
+859. Box sfide Dreamers in Dynasty TV: tolte le colonne Molt. e Punti (resta PDK + statistiche); il punteggio squadra va sotto la colonna PDK.
+860. Dreamers, carte della sfida (Turno): tocco sulla maglia = profilo del giocatore (data-plopen su .duj). Le capsule PDK dei singoli giorni (.duw.dug) hanno il numero bianco come tutte le capsule PDK.
+861. Box score NBA in Dynasty TV: il ruolo (.tvps) e' una targhetta arancio #c2410c con lettera bianca, opaca e sopra il logo della squadra (versione 2 scelta da Francesco).
+862. Targhetta del ruolo nel box NBA: angoli arrotondati uguali sopra e sotto (inline-block, line-height 1, niente ombra; prima il fondo veniva tagliato).
+863. Statistiche notte (righe giocatore): minuti colorati come in Home (classe .mnb, verde >= MINg, rosso <= MINr, soglie bxTh).
+864. Statistiche notte in modalita' BOX: tolto il riassunto pt/rb/as accanto ai minuti (ripeteva le caselle sotto); resta nelle modalita' PDK ed EFF.
+865. Playoff Dreamers: tabelloni piu grandi (semifinali 52%, finali 42%, caselle alte ~50px, loghi 38px, nomi 16px, linee del bracket ricalcolate M52..58), niente aloni/ombre dietro i loghi, testi Vincente/Perdente centrati, coppa arancione solo in Parquet giorno (notte viola).
+866. Targhetta del ruolo nel box NBA: in modalita' notte viola #7c3aed con lettera bianca (di giorno resta arancio).
+867. Box score NBA in Dynasty TV: nuova colonna SQ (prima del PDK) con il logo della nostra squadra (.sqc, tabella .tvsq); ruolo tornato lettera opaca senza pillola (rimosse 861/862/866); colonna nomi 150px con nomi lunghi su due righe.
+868. Impostazioni › Box score: tasto «Copia le impostazioni per Claude» (copia DLS.bxM e le impostazioni attive in JSON con prefisso BOXSCORE), per poterle rendere predefinite per tutti.
+869. Colonna SQ del box NBA: loghi centrati in altezza nella riga e opacita' 0,6.
+870. Campo squadra, tabella Live stanotte/Turno (campoLive, .clall): tutte le colonne del box score (STL, BLK, TOV, tiri, da 3, liberi, Off, Dif, falli, +/-) e scorrimento orizzontale; lo swipe che cambia squadra non parte piu' se il dito e' sulla tabella (.tbl-wrap/.clwrap).
+871. Icona Dreamers in alto (.lglogo, tasto Aggiorna con tabindex): tolto l'anello viola/rosa che restava dopo il tocco (contorno di focus).
+872. Box score NBA (.tvsq): colonne delle statistiche piu' larghe (padding 9px per lato) e numeri centrati.
+873. Box score NBA di Dynasty TV: nomi con iniziale puntata + cognome (tvShort), es. N. Alexander-Walker, CJ -> C. McCollum.
+   (873) vale anche per il box Dreamers (drbox) e per la tabella Live della squadra (clall).
+874. Sala trofei (vStoria, .sala-oro) in Parquet giorno: versione B crema e arancio (Classifica competenza in bianco su fascia arancio, tasto Sala trofei arancio, tabelle crema #fdf4e6 con bordo #d9560b, testi marroni, parquet visibile). Notte invariata.
+875. Sala trofei di notte: versione B viola/bianco/oro (sfondo viola notte, tasto viola con bordo bianco e oro, Classifica competenza bianca su fascia viola tra righe oro, tabelle bianche #f7f3ff con intestazione viola e cornice oro, nomi viola scuro, punti oro).
+876. Sala trofei di notte: tabelle viola scuro esplicito (sul telefono il bianco veniva scurito), nomi e numeri bianchi, piazzamenti lilla, punti e titoli oro, riga del 1° posto con sfumatura oro uniforme.
+877. Sala trofei: tolta la corona ♛ accanto al nome della squadra prima in classifica (giorno e notte).
+878. Valori lega: tocco su un giocatore = REGISTRO VALORE (vista valpl, vValPl): modifiche dal 01/11/2026, a mano (VAL_LOG: report GM e correzioni di Francesco, da aggiungere a ogni cambio di VALORI) e automatiche del lunedi' 12:00 (ricavate con valAt/valAuto prima e dopo lo scatto, motivo da valMotivo). Tasto Profilo per la scheda. Il vecchio Registro prezzi (valreg) resta.
+879. Dreamers a schermo intero (html.dreamfs) con stanza Parquet (data-th=3): sfondo di html/body a righe parquet, cosi' il rimbalzo iOS in alto/in basso non mostra il viola #2a1260.
+880. Report Dolphins Confronto 40 (01/11): GM_GUSTI.DOL.pl aggiornato (fit su 441 confronti meno fit sui primi 401, sommato al profilo), n 125, fonte; GM_DESCR DOL aggiornata. Tredicesima correzione: Darryn Peterson 1200 -> 1150 (DOL -5 + DUC -6,4, 70%), tolta dai profili; VAL_CORREZ, VAL_LOG (primo registro valore), AT_RIT.
+881. Report Dolphins Proposte 279: GM_GUSTI.DOL req 2, age 0,5, sc 18, role G-4/F+4/C+2, n 150, fonte; GM_DESCR DOL (chiude facile, cede volentieri Garland/Bridges/Durant/Young/Markkanen/Booker/P. George; non cede Clingan/Murray-Boyles/Maxey/Porzingis). Nessuna correzione dei valori.
+882. Report Peacocks Proposte 61: GM_GUSTI.PEA rifatto su 91 proposte (req 25, age 1, sc 18, role G-4/F+4/C0, n 116), bonus dai residui sui propri giocatori (Murphy -10, Sabonis -4, Mobley +4, Giddey +4); GM_DESCR PEA aggiornata. Nessuna correzione dei valori.
+883. Report Mooses Proposte 68: nuovo profilo GM_GUSTI.MOO (req 14, age 2,5, sc 22, role C-2, n 68, pl dai residui sui propri: Wilson/Ware +10, Knueppel +7, Herro/Flemings -10, Fears -8) e scheda GM_DESCR MOO. Nessuna correzione dei valori.
+884. Report Mooses Valutazione 23: AV_FATTI.MOO, GM_INTOCC.MOO (Caleb Wilson), GM_GUSTI.MOO pl Boozer/Duren/Morant, GM_DESCR MOO aggiornata. Quattordicesima correzione: Cameron Boozer 1480 -> 1520 (consenso MOO+DOL+DUC), VAL_CORREZ, VAL_LOG, AT_RIT, tolta dai profili.
+- (01/11 16:30) PRESTAZIONI apertura: pqFix raccolto in una sola esecuzione per fotogramma (pqFixNow = quello vero, requestAnimationFrame), tvNm con memoria, flUsaOggi con un solo Intl.DateTimeFormat. Misurato (CPU ×4): lavoro all avvio −30%, contenuto della Home pronto ~0,5 s prima. Patch /home/claude/patch_pqcoalesce.py e patch_perf2.py.
+885. Report Mooses Confronto 151: GM_GUSTI.MOO pl fusi, n, fonte; GM_DESCR MOO. Quindicesima correzione per consenso (15 valori: J. Smith Jr. 725->665, M. Brown 670->615, Daniels 830->765, Harden 945->880, Murray-Boyles 970->935, Towns 1320->1270, Okongwu 670->645, Quickley 630->610, Giannis 1900->2000, Edwards 1270->1350, S. Barnes 1360->1440, N. Reid 490->520, Flagg 1760->1900, Hart 660->630, Rollins 565->535); VAL_CORREZ, VAL_LOG, AT_RIT, correzioni tolte dai profili.
+886. Correzione di Francesco sui Dolphins: Porzingis lo vendono anche in sconto (non «non cede»): GM_DESCR DOL corretta e GM_GUSTI.DOL.pl Porzingis -12.
+887. Gusti dei GM + IA Trade: SITUAZIONE DI SQUADRA (gmSit: eta' media pesata sul valore dei primi 10, quota di valore under 23, giovani di potenziale <=22 e >=900, posizione Dreamers e per valore; tipo giovane/mista/esperta). Nel punteggio (gsc e gmProb) gmSitG: eta' +ka (giovani: fino a +2,5/anno; esperte: l'eta' pesa meno fino a zero) e costo kp per cedere giovani (fino a 8), tetto +-20. Regola STELLA (gmStarG): chi da' il giocatore piu' forte dello scambio per 2+ giocatori tutti sotto l'85% del suo valore perde 12 punti per ogni giocatore in piu'. gmPlOwn: le squadre giovani non sono 'contente di lasciare' i loro giovani di potenziale. TUR: tolti i gusti negativi su Dybantsa e Peterson. Scheda gusti: blocco Situazione squadra con eta' media, valore under 23, % accettati nei report (GM_ACC). Motivi nell'IA Trade: 'non da' il giocatore piu' forte per due o tre medi', 'squadra in ricostruzione...'.
+888. Stanza Ducks › Revisione IA Trade (vista iarev -> gusti con GU.rev): sotto ogni proposta dell'IA tasti Realistico/Forse/Irrealistico e commento, salvati in localStorage dl_iarev con la fotografia della proposta (passaggi, % per squadra, motivi); «Copia il report» crea un testo unico «REVISIONE IA TRADE» da girare a Claude.
+889. Notte: tolto l'alone rosa (drop-shadow fucsia) intorno al logo nel banner della squadra; resta l'ombra scura come di giorno. (La richiesta delle 13:49 era questa, non l'icona in alto.)
+890. Personalizzazioni (stanza Ducks): il logo «Papero» (prima solo banner e Home) ora si puo' scegliere anche come logo dei profili (liste, chip, classifiche, wedge) e come logo del campo, come gli altri loghi.
+891. Scritta DREAMERS dell'intestazione sempre bianca (regola nel <head> e in fondo, specificita' alta): al caricamento a volte diventava scura per un attimo (contrasto automatico / stile Parquet ancora attivo prima della notte).
+892. Ricariche indesiderate: l'aggiornamento automatico (856) ricaricava l'app se apriva la versione nuova entro 20 s o al rientro, perdendo la schermata. Ora: ricarica solo se l'app e' appena aperta (<6 s) e non ancora toccata, altrimenti al rientro dopo almeno 1 minuto in secondo piano; prima di ricaricare salva la navigazione. In piu' la schermata si salva quando l'app va in secondo piano (localStorage dl_nav) e si ripristina se l'app viene riaperta entro 20 minuti (anche se iOS l'ha chiusa).
+893. Revisione IA Trade di Francesco (7 proposte): GM_OBJ (DUC, DOL, SPI = titolo; TUR, MOO = ricostruzione). Squadre da titolo: eta' neutra, contano i PDK di questa stagione (somma PDK medi dei giocatori da rotazione >=15, peso 0,5; esperte 0,3; miste 0,15; tetto +-15). «Contento di lasciare» si annulla se lo scambio fa perdere valore (oltre -5%). Esempi: DOL Maxey+Bridges per Amen+Brazile 52% -> 30%; DUC Edwards per Edgecombe 75% -> 8%; DOL Maxey+Durant+Markkanen per Amen+Reid+Leonard 59% -> 42%.
+894. Report Mooses Confronto 301 (seconda parte) e Foxes Valutazione 33 (13 nuove): pl MOO aggiornati con la differenza tra i fit, pl FOX dai voti nuovi; GM_INTOCC FOX (Doncic, Tatum); GM_OBJ FOX titolo; AV_FATTI FOX; GM_DESCR FOX e MOO. Sedicesima correzione (7 valori): Brayden Burries 630→590, Jaime Jaquez Jr. 685→640, Desmond Bane 675→635, Keaton Wagler 670→640, Isaiah Hartenstein 295→305, Ivica Zubac 1080→1110, Ace Bailey 795→755. Esclusi: gia' corretti oggi (Giannis, J. Smith, Quickley, Daniels), pareri discordi (Tatum, Adebayo, Dybantsa, Banchero), fragili.
+895. IA Trade, revisione Francesco (proposta 9): negli scambi a 3+ squadre scartate le combinazioni in cui una squadra esterna riceve un «regalo» per far quadrare il giro (guadagno oltre +45% e oltre 300 punti di valore, es. Holmgren ai Peacocks per Brazile).
+896. Carte della sfida Dreamers: sotto i giocatori senza partite nel turno compariva il codice «${x.cal?...}» (stringa con apici invece che backtick). Ora scrive «punteggio medio» (squadra NBA ferma da calendario) o «nessuna partita».
+897. App in secondo piano: niente piu' ricarica per aggiornamento al rientro (solo dopo 4 ore fuori o all'apertura a freddo non ancora toccata); se iOS chiude l'app, al riavvio torna alla schermata salvata entro 90 minuti (prima 20).
+898. Report Mooses Valutazione 50 (27 nuove): AV_FATTI.MOO, pl MOO (Edgecombe +8, Durant/J. Brown/Porter +4; Holmgren -5,8, Murray-Boyles -7, Clingan/Davis -4; Giannis, Flagg, Cunningham neutri), GM_DESCR MOO. Nessuna correzione dei valori: nessun nuovo consenso (Davis fragile, Clingan gia' corretto, J. Brown sotto soglia).
+899. Primo report Eagles (Proposte 32, 3 accettati): profilo GM_GUSTI.EAG (req 20 stimato: il fit dava 30 su proposte tutte alla pari; age 0; sc 10; ruoli G +2 / F -2 / C -2; pl Keyonte George +7, Avdija +6 = non li cedono; n 32), GM_ACC EAG, GM_DESCR EAG. Ora tutti gli 8 GM hanno un profilo. Nessuna correzione dei valori.
+900. Report Peacocks Proposte 101 (40 nuove): profilo PEA su 131 proposte (req 25 -> 21, age 1, sc 18), GM_ACC 44/131, pl: Giddey -4 (ora lo cedono alla pari), Rollins -4, Randle -3, Gobert -3; GM_DESCR PEA aggiornata. Nessuna correzione dei valori (giocatori propri).
+901. Aggiornamento automatico dei valori spostato alla DOMENICA ALLE 18:00 ora italiana (Francesco, 01/11): valScatto = lunedi' 00:00 meno 6 ore, valK corretto, valCut conta le partite fino al sabato (data USA), date dei registri e testi «domenica alle 18». Primo scatto della storia: domenica 01/11/2026 alle 18:00 (84 giocatori cambiano nella simulazione, max ±15%).
+902. Home: striscia scorrevole «VALORI · dom 18:00» sotto la ricerca, visibile per 24 ore dopo ogni scatto automatico della domenica alle 18:00: giocatori cambiati (nome puntato e cognome, prima->dopo, %, ▲ verde / ▼ rosso), prima chi sale di piu', in loop. Si inserisce dopo ogni render della Home.
+903. Correzione di Francesco: Evan Mobley 1250 -> 1400 (33,6 PDK di media; simili Edwards 1350, Maxey 1455, Banchero 1430). VAL_BASE Mobley spostata al 2026-11-02 (il calcolo automatico riparte da questo valore, primo scatto domenica 8/11, cosi' stasera non lo riporta giu'); VAL_LOG e VAL_CORREZ.
+904. Su richiesta di Francesco la 903 e' annullata: Mobley resta 1250 di partenza e sale a 1375 (+10%) con lo scatto automatico di domenica 01/11 18:00, tramite VAL_FORZA (valore di arrivo fissato a mano per una settimana, motivo «media stagione 33,6 PDK»). Dalle settimane dopo il calcolo prosegue normalmente da 1375.
+905. Report Peacocks Valutazione 18 (quasi solo i loro): AV_FATTI.PEA, GM_OBJ PEA titolo, pl PEA (Giddey tolto: grosso sovrapprezzo; Lillard, Harden, Gobert, Rollins -4 ceduti volentieri), GM_DESCR PEA (nessuno sconto infortuni). Nessuna correzione dei valori.
+
+## 906 — Valori lega: percentuali colorate anche di giorno
+Nello stile Parquet (giorno) la percentuale di variazione sotto il valore restava marrone per la regola generale del testo; ora verde se sale e rossa se scende, come di notte (anche nel registro valori).
+
+## 907 — Valore dei free agent in background
+A ogni apertura l app calcola senza mostrarlo il valore di tutti i free agent (506 con dati), con la stessa formula della domenica (PDK di riferimento stagione in corso + due passate, età, stelle neutre) e la scala tarata sui giocatori della lega (mediana valore/formula, non rookie con almeno 24 anni). Se un free agent entra in un roster e non è ancora in VALORI, valOf usa questo valore (FA_VAL / valNuovoRos). Poi va aggiunto in VALORI come gli altri.
+
+## 908 — Report Eagles Confronto 37 + Valutazione 14
+Profilo EAG: pl fusi col confronto (giù Zubac, Harper, F. Wagner, Sabonis; su Jokić, Avdija), bonus valutazione (Brunson +8, Towns +4, Duren −4, Davis −4), age 0,5 (giovane scelto 59%), n 45. GM_INTOCC EAG = Avdija; AV_FATTI.EAG con i 14 valutati; scheda GM_DESCR EAG aggiornata. Diciassettesima correzione: Dylan Harper 1260→1210 (EAG+MOO), Nikola Jokić 3265→3400 (EAG+FOX); tolta dai profili, VAL_LOG/VAL_CORREZ/AT_RIT. Sabonis escluso (SPI ed EAG giù ma DOL +10: disaccordo).
+
+## 909 — Etichetta R nei roster per tutti i rookie
+Il roster (e l immagine della scheda) guardava solo la lista ROOKIE (5 nomi); ora usa isRookie, che conta anche i rookie segnati in VALORI: compaiono Burries, De Larrea, Steinbach, Mara, Wagler, Mikel Brown, Dybantsa, Flemings, Caleb Wilson, Graves, Morez Johnson.
+
+## 910 — Report Turtles Valutazione 15
+AV_FATTI.TUR (15), GM_INTOCC TUR = Dylan Harper; pl nuovi Haliburton +4, Dybantsa −4 (gli altri sotto 900 o già nel profilo); scheda GM_DESCR TUR rifatta (Dybantsa e Peterson solo con grosso sovrapprezzo, potenziale 80%). Nessuna correzione dei valori (tutti giocatori propri).
+
+## 911 — Report Turtles Confronto 62
+pl TUR fusi (su Boozer, Haliburton, Ware, Durant; giù Barrett, Murray-Boyles, Mobley, Fears, Mikel Brown, Trae Young, Adebayo), n +16, scheda TUR. Diciottesima correzione: Barrett 650→620 (TUR+DOL+PEA+MOO), Fears 720→675 (TUR+DOL), Durant 900→930 (TUR+MOO). Esclusi: Boozer e Murray-Boyles (già corretti oggi, risposte nuove di un solo GM), Adebayo e Siakam (Dolphins di parere opposto).
+
+## 912 — Report Turtles Proposte 141
+Profilo TUR rifatto sulle 141 proposte (contengono le 81 del 31/10): req 21, age 0,75 (fit 1,25 − 0,5), sc 18, ruoli G −2 / F +4 / C −2, n 161 → 150. GM_ACC TUR = [53,141]. Residui: tengono Harper, Wagler (pl +5), Coward; cedono più volentieri Holmgren, Banchero, Queen; Edey pl −7. Scheda TUR aggiornata. Nessuna correzione dei valori (giocatori propri).
+
+## 913 — Condividi la scheda dei gusti del GM
+Tasto piccolo Condividi accanto al nome di ogni squadra nella pagina «Gusti dei GM»: un unica immagine (1080 px, stile Dreamers) con tutto il testo della scheda: situazione squadra, cosa cercano, come chiudono, infortuni, numeri, ruoli, giocatori più e meno voluti, cosa manca (shGusti, shOpen("gm")).
+
+## 914 — Report Dolphins Valutazione 44 + Spiders Valutazione 28
+DOL: 15 risposte nuove del 01/11 (tutte sui propri giocatori + Kawhi, Maluach, Porter, Giddey): nessun bonus nuovo sopra 900 fuori dal profilo (Clingan −4, proprio); GM_INTOCC DOL = Jokić; AV_FATTI.DOL 44; sconti infortuni 53% a 7–8 e 97% a 9–10 (VAL_INJ_B 0,75 confermato). SPI: 14 risposte nuove sui propri: pl Embiid +8, Mitchell +8, LeBron +12, Franz Wagner +4, Adebayo +4; GM_INTOCC SPI = Boozer, LeBron (Castle ora solo con grosso sovrapprezzo). Schede DOL e SPI aggiornate. Nessuna correzione dei valori (solo giocatori propri o già corretti).
+
+## 915 — Contesto di squadra dinamico nei consigli di scambio
+Richiesta di Francesco (01/11 19:32): cinque parametri sempre aggiornati. gmCtx(t): corsa al titolo (classifica pesata sui turni giocati + forza = PDK in forma dei migliori 10; «in corsa / può giocarsela / fuori»), copertura ruoli (contributo (PDK in forma − 24)/6 tra 0 e 1,25; 2 = coperto, 2,5 = comodo; chi è OUT non copre), veterani fuori età nelle rose giovani (≥29 anni e ≥ età media + 6), giocatori in calo (ultime 5 ≥15% sotto la media). gmForm = metà media stagione + metà ultime 5. gmCtxG nel punteggio di ogni squadra (gsc e gmProb): copertura prima/dopo (peso 1 se scoperto, 0,5 coperto, 0,2 abbondante; −6 se lo scambio la scopre; tetto ±12) + veterani ceduti (+8) + calo (±4); tetto −16…+14. Il peso dei PDK di stagione (kw) è moltiplicato per 0,4 + 0,6 × corsa. Motivi nuovi nelle proposte («resta scoperto nelle guardie», «copre il buco nei centri», «cede un giocatore in calo»…). Scheda Gusti: riga «Contesto di questa settimana».
+
+## 916 — Infortuni ricorrenti nel valore
+Un episodio casuale (caviglia, contusione, malattia, riposo) non abbassa niente; INJ_EPI + lista INFORTUNI → injRic: 2 episodi −0,5 stelle se uno serio o stessa zona, 3 → −0,5/−1, 4+ → −1/−1,5. Toglie stelle a injNow nel calcolo della domenica (pesano solo sotto 2,5). Oggi nessun giocatore ha più di un episodio: nessun valore cambia.
+
+## 917 — Linea d età, direzione degli scambi e rifondazione
+Francesco (01/11 19:37–19:39): non la media ma i picchi. gmAgeProf: giocatori veri (no G League, no speciali fuori rosa, valore ≥300) pesati con la radice del valore; linea = percentili 15–85; stretta = (9 − ampiezza)/5. Oggi: Ducks 21–25 (stretta 0,95), Mooses 20–23 (1), Turtles 20–25 (0,8); Spiders, Dolphins, Eagles, Foxes, Peacocks larghe. Ricevere un giocatore oltre la linea: −stretta×(8d+d²) per anni d oltre (tetto −30: Haliburton 26,7 per i Ducks ≈ −13, un trentenne = tetto, serve un guadagno enorme tipo Jokić). Fuori linea della propria rosa (>linea+2,5 e ≥26 anni) ceduti volentieri (+4…+10). Direzione dagli scambi veri degli ultimi 90 giorni (TRADES a due lati; un solo scambio pesa 1/3): sposta e stringe/allarga la linea. Rifondazione = (0,45 − corsa)/0,45 × vecchiaia (età mediana) × fase della stagione: vende i 29+, cerca giovani da 700+, accetta anche lo scambio grosso (regola stella per medi a 1/3 se riceve un giovane da 900+). ka della media ridotto di metà della strettezza (niente doppio conto). Scheda: linea, direzione, fuori linea, probabilità di rifondare.
+
+## 918 — PDK di riferimento per i ruoli dalle ultime due stagioni
+Francesco (19:41–19:42): gmForm = base delle due stagioni passate (valBaseStorica) + stagione in corso (60% media, 40% ultime 5) pesata g/(g+15) come il valore della domenica: 10 partite 40%, 82 partite 85% (l anno passato resta sempre ~15%). Nella copertura dei ruoli ogni giocatore conta anche per la sua affidabilità (stelle infortuni dalla storia: 3★ 1, 2★ 0,8, 1★ 0,6).
+
+## 919 — Momento della stagione: fretta di chi è in corsa, premi di fondo per chi è fuori
+Francesco (19:43): negli ultimi 12 turni di regular season (urg 0→1 tra 12 e 2 turni dalla fine) chi è in corsa pesa fino a 2,5 volte la copertura dei ruoli (rimpiazzo di un infortunato: paga un sovrapprezzo) e di più i PDK di oggi; chi è 5ª–8ª e fuori dalla corsa (tank = urg × (1 − corsa) × 1,2) può puntare ai premi di fondo (DR_PREMI 250/350/450): i PDK di oggi gli pesano al contrario (cede produzione). Oggi siamo all inizio: nessun effetto. Simulazione a fine stagione: Foxes Reaves→Zubac con i centri scoperti 52% → 68%.
+
+## 920 — Regolamento, premi e cassa nell IA Trade
+Francesco (19:53): 1ª–4ª playoff titolo, 5ª–8ª l altro tabellone; premi di regular season crescono scendendo. Per le 5ª–8ª: pPO = probabilità di arrivare 4ª (vittorie di distacco dalla 4ª contro 0,3 × turni rimasti + 0,5). Vicina = push (si comporta da squadra in corsa: fretta di coprire i buchi, vuole PDK di oggi); lontana = tank (le conviene scendere: cede PDK di oggi). Le 1ª–3ª sicure dei playoff (sec) a fine stagione strapagano meno la copertura (il 4° posto rende anche di più). Cassa: CREDITI; chi lotta (titolo o playoff) con meno di 30 crediti (una trade speciale costa 30/40/50) ha crNeed: nelle proposte con crediti li valuta di più (+crNeed) e li cede malvolentieri (+1,5 crNeed). Scheda: distanza dal 4° posto e cassa.
+
+## 921 — Taratura dai fatti + gmProb riparato
+A ogni apertura l IA ricalcola gli scambi veri a due lati dal 25/10 (TRADES): se dava basso uno scambio che un GM ha fatto davvero, il suo vantaggio chiesto scende (metà dello scarto, pieno da 4 scambi, massimo 2 punti per scambio e 8 in tutto). Oggi: Dolphins −3,8, Mooses −4, Turtles −2, Spiders giusto. Scheda: riga «Taratura dai fatti». Trovato e corretto un errore: gmProb (proposte con crediti dell IA, pesatura dei gusti) usava funzioni non visibili dal suo blocco (gmPlOwn dalla nota 887) e falliva in silenzio: ora usa le versioni esposte su window e include situazione, stella, contesto e taratura.
+
+## 922 — 4° posto sicuro contro 4° posto a rischio
+Francesco (20:00): a fine stagione una 1ª–3ª col 4° posto ormai sicuro, se si infortuna qualcuno, non paga per rimpiazzarlo (scendere al 4° rende di più): secureTop = margine sulla 5ª × fase finale; abbassa fino al 70% il peso della copertura, fino al 60% i PDK di oggi e fino al 70% il bisogno di crediti. Chi è 4ª (o vicina alla 5ª) e rischia di uscire paga volentieri anche con crediti e speciali: danger = 1 − margine sulla 5ª (per le 5ª–8ª: voglia di entrare). Simulazione Foxes Reaves→Zubac con i centri scoperti: sicura 44%, a rischio 70%, oggi 52%.
+
+## 923 — Dolphins Confronto 100 + Spiders Confronto 80 (risposte della sera)
+Nuove 60 risposte DOL e 25 SPI (le prime 40 e 55 erano già nei profili): pl fusi a metà della differenza. DOL: su Giddey, Cunningham, Brunson, Şengün; giù Jaquez, Garland, Franz Wagner, Herro, Randle, Harden, Towns. SPI: su Jokić, Ausar Thompson; giù Murray-Boyles, Morant; età SPI −1,6/anno (preferiscono i più esperti: giovane scelto 43%, rookie 18%). Diciannovesima correzione: Franz Wagner 1050→1020 (DOL+EAG, Mooses di poco al contrario).
+
+## 924 — Dichiarazione diretta del GM dei Ducks
+Francesco (20:08) senza allenamento: GM_DICH.DUC = obiettivo «dinastia» (squadra forte e giovane nel tempo, non spende per vincere subito: tipo giovane, peso PDK di stagione 0,15, danger e bisogno di crediti × 0,3), linea d età fino a 24 (stretta 1: 25 va, 26 solo con tanto guadagno), intoccabile Wembanyama, protetti Şengün, Jalen Johnson, Flagg, Barnes, Amen Thompson, Cunningham, Edwards (−15 sulla quota ceduta), da sostituire Buzelis, Kyshawn George, Daniels, De Larrea, Steinbach (+5), vende quando il giocatore è in forma (+3). GM_OBJ DUC: titolo → dinastia. Prove: Şengün per Embiid 0%, Jalen Johnson per Giannis 5%, Amen Thompson per Haliburton 14%. Scheda Ducks aggiornata.
+
+## 925 — Giocatori sotto diritti fuori dagli scambi
+Francesco (20:09): Steinbach è tenuto dai Ducks ma i diritti sono dei Mooses (scambio con «Diritti su Steinbach (g64)»): i Ducks non possono scambiarlo, i Mooses possono riprenderselo entro la giornata 64 dando in cambio un loro centro. DIRITTI = {Steinbach}: escluso da ogni ricerca dell IA Trade e da gmProb (probabilità 0); tolto dai giocatori che i Ducks vogliono sostituire; scheda Ducks aggiornata.
+
+## 926 — Ducks: prima l età, poi i PDK; i riempitivi si possono scambiare per veterani
+Francesco (20:14): i PDK contano (peso di stagione dinastia 0,15 → 0,35). I protetti non si invecchiano mai; per i riempitivi (es. Buzelis per LeBron «ci penserei») l età pesa solo il 35% (gmFillerK, meno ancora se a fine stagione lottano): vale per linea d età, gusto età dei report (ea) e età della situazione (ka). Prove: Buzelis→LeBron 4% → 53%, Kyshawn George→Durant 76%; Şengün→Embiid 0%, Jalen Johnson→Giannis 6%, Amen Thompson→Haliburton 18%. Scheda Ducks aggiornata.
+
+## 927 — Modalità Dream: lo stadio 3D di ogni squadra
+Richiesta di Francesco (01/11 sera). Nella pagina squadra il vecchio tasto notte accanto al campo (la notte è ormai in alto, vicino alle impostazioni) diventa il tasto viola «D» con stellina (stessa misura, 38×28) che apre la Modalità Dream (dream.js, caricato al primo tocco; motore Three.js r160 in vendor/three.min.js, solo per questa pagina). Palazzetto con i colori della squadra: parquet con aree e cerchio colorati e logo a centrocampo, nome sulle linee di fondo, tribune con pubblico (istanze), fascia LED col nome, maxischermo con lo SCONTRO DIRETTO Dreamers del turno (loghi e punteggi live), striscioni dei trofei (titoli, 2°/3° posto, All-Star; altrimenti «Stagione 26/27»). Le maglie (jersey dell app) dei giocatori della squadra che giocano stanotte fluttuano sul parquet con targhetta (PDK, punti, rimbalzi, assist, in campo/panchina/finale); ogni 20 s si scaricano i dati live (tvEspn + tvOnCourt) e ogni azione nuova (+2/+3, libero, rimbalzo, assist, stoppata, recupero, palla persa, tiro o libero sbagliato) compare accanto alla maglia e sale svanendo. Audio sintetizzato (Web Audio, niente file): brusio del pubblico, boato sui canestri, suoni per le altre azioni, coro «DE-FENSE!» con battito di mani (all ingresso se c è qualcuno live, poi ogni 50–80 s, e col tasto DE-FENSE!); tasto audio on/off salvato. Movimento: trascina per guardare, ▲ ▼ per camminare (anche tra le maglie), tastiera WASD/frecce. Leggerezza: niente ombre, 4 faretti + 2 luci morbide, materiali semplici, risoluzione max 1,5× sul telefono, disegno solo quando serve (10 fps da fermi), tutto liberato all uscita. Senza nessuno in campo: campo vuoto con la scritta.
+
+## 928–930 — Modalità Dream: tutto a tocco, camminare ovunque, bordo campo della squadra
+Francesco (20:41–20:45): niente tasti a vista (tolti ▲ ▼ e DE-FENSE): trascina = guarda, tocco sul parquet o sui gradoni = cammini fin lì (con passaggio morbido), tocco su una maglia = ti porta davanti a lei, tocco sul maxischermo = coro DE-FENSE, due dita = avanti/indietro; rotella e WASD sul computer. Si cammina ovunque: altezza dei piedi dal gradone su cui sei (anello basso, corridoio tra gli anelli, anello alto), occhi più alti in tribuna e tifosi vicinissimi nascosti quando ti fermi. Si parte dall alto, nel corridoio sopra l anello basso, guardando il campo. Bordo campo (fascia fuori dal parquet) nel colore della squadra e più largo (5,6 m invece di 3,4): tribune, tavolo e striscioni spostati di conseguenza.
+
+## 931 — Modalità Dream più realistica, audio tolto
+Francesco (20:52): tetto visibile (pannelli chiari a griglia con leggero colore squadra, travature metalliche chiare), muri con pannelli e fascia nel colore squadra, gradoni definiti (pedata chiara che richiama il colore squadra alternata riga per riga, alzata scura con riflesso del colore), sedili con seduta e schienale nel colore squadra/grigio, luce d ambiente più forte sulle tribune (esposizione 1,15). Audio tolto: un tifo sintetizzato non sembra vero (si potrà rimettere con registrazioni vere). Tasto audio rimosso.
+
+## 932–934 — Modalità Dream: qualità alta, come il campo notte, orizzontale
+Francesco (20:57–21:03). Qualità: antialias sempre, risoluzione fino a 2×, filtro anisotropico massimo e mipmap su tutte le texture, maglie disegnate a 600×730 (prima 300×365), targhette e scritte a doppia risoluzione, maxischermo 2×, parquet 3072 px anche sul telefono. Per non bloccare: se in movimento si scende sotto ~22 fotogrammi al secondo la risoluzione cala da sola di mezzo gradino (mai sotto 1×). L app non risente: dream.js e il motore 3D si caricano solo al primo ingresso, all uscita tutto viene liberato (geometrie, texture, contesto WebGL, timer, ascoltatori). Come il campo della modalità notte: in campo solo i 5 migliori della notte per PDK (stessa scelta di campoNotteMap), dati live dell app (tvEspn + tvOnCourt) a ogni giro di 20 s anche all ingresso; le azioni nuove spuntano SOPRA la maglia e salgono svanendo. Orizzontale: campo visivo 46° in orizzontale e 62° in verticale, ricalcolo alla rotazione, margini delle tacche laterali, si sblocca la rotazione (dove il sistema lo permette) e al ritorno si riblocca in verticale.
+
+## 935 — Modalità Dream: partenza dall anello alto, fascia LED leggibile da dietro
+Francesco (21:09): si parte più in alto, dalla 5ª fila dell anello alto, con lo sguardo sul campo. In campo restano i 5 migliori della notte (Francesco ha confermato 5). La fascia LED tra i due anelli ora ha anche il retro con il testo nel verso giusto (dall anello alto prima si leggeva al contrario).
+
+## 936 — Modalità Dream: tolto il tavolo nero a bordo campo
+Francesco (21:11): via il tavolo dei segnapunti (pedana nera) con la sua fascia LED.
+
+## 937–939 — Modalità Dream: oro Ducks, zoom a due dita, ritorno alla squadra giusta
+Francesco (21:13–21:15). Ducks: colore #f0a500, oro più caldo come logo e banner (la luce 3D schiariva il giallo #facc15). Due dita = zoom come sulle foto (fino a 5×) senza muoversi; da ingranditi il trascinamento è più fine; toccando per camminare lo zoom torna normale; rotella = zoom sul computer. Bug: chiudendo lo stadio ci si ritrovava nella pagina di un altra squadra perché i gesti dentro lo stadio arrivavano all app sotto (lo scorrimento cambia squadra): ora i gesti si fermano allo stadio e alla chiusura si torna sempre alla squadra da cui si è entrati.
+
+## 940–941 — Modalità Dream: atmosfere (LOOK) e parquet senza riflessi
+Francesco (21:17–21:22): preparati 4 look caldi stile NBA (Caldo classico, Prime time, Arena dorata, Luce piena) come parametri LK (window.DREAM_LOOK per le prove), in attesa della scelta. Parquet: da lucido a opaco (niente riflessi speculari che coprivano legno e logo), tolto il riflesso bianco al centro, fari 560 → 330, esposizione 1,15 → 1,0.
+
+## 942 — Modalità Dream: LED viola Dreamers, striscioni illuminati, maglie leggibili da lontano
+Francesco (21:28): pareti con montanti LED verticali viola/lilla e pannelli viola luminosi tra un montante e l altro, quattro anelli LED a varie altezze (viola, lilla, fucsia), anello viola sul soffitto attorno al maxischermo: tutto con materiali che brillano, nessuna luce in più (leggero). Striscioni dei trofei a piena luce con alone viola dietro e cornice LED nel colore del trofeo. Maglie e targhette si ingrandiscono con la distanza (fino a 1,8×) così restano leggibili dall alto.
+
+## 943 — Modalità Dream spenta per i Peacocks
+Francesco (21:35): per i Peacocks il tasto «D» resta al suo posto ma grigio, spento e senza effetto (DRM_NO = [PEA]; per aggiungere o togliere squadre basta cambiare la lista).
+
+## 944 — Modalità Dream: maglie con colori pieni
+Francesco (21:39): le maglie erano spente (la resa della luce le smorzava e quelle a partita finita erano grigiate): ora colori pieni, non toccati dalla luce, e a partita finita solo un velo appena più chiaro.
+
+## 945 — Modalità Dream: maglie simmetriche su tutto il campo
+Francesco (21:40): cinque posti simmetrici (il migliore al centro verso il fondo, due a metà campo verso chi guarda, due ai lati verso i canestri) invece che ammassati; da lontano si ingrandiscono maglia e targhetta senza salire di quota, così non si sovrappongono.
+
+## 946–947 — Modalità Dream spettacolare: parquet, fasci di luce, gradoni illuminati, campo vuoto senza scritte
+Francesco (21:46–21:47). Parquet: listelli con sfumatura propria, venature, nodi, fughe sottili, vernice con riflesso morbido e bordi scuri; logo a centrocampo più grande con ombra. Faretti: 8 fasci di luce visibili dal tetto (coni trasparenti additivi) con i corpi luce, pozze di luce calda sul parquet. Dove camminare: filo di luce calda sul bordo di ogni gradone e anello lilla che segna il punto toccato. Luminosità generale un po più alta (luce d ambiente 1,0). Campo vuoto: tolte la scritta «Nessuno in campo stanotte» in mezzo al campo e quella sul maxischermo.
+
+## 948 — Modalità Dream: targhetta mai coperta dalla maglia
+Francesco (21:51): la maglia copriva la parte alta della targhetta (anche con l ingrandimento da lontano). Ora la targhetta sta in basso e la maglia sempre sopra con 12 cm di stacco, a qualsiasi distanza. Parquet da vicino meno bruciato (fari 330 → 250, pozze di luce più tenui).
+
+## 949 — Riga del tabellone: frecce staccate dai tasti maglia e Dream
+Francesco (21:55): con i numeri lunghi del turno (es. 19/36 15/28) il tabellone si allargava e le frecce ‹ › toccavano il tasto maglia e il tasto Dream. Ora la riga ha 8 px di spazio tra gli elementi e se il tabellone non ci sta si rimpicciolisce in proporzione (lbmFit dopo ogni disegno e alla rotazione).
+
+## 950 — Modalità Dream: fascia LED interrotta sulle scale, partenza dalle scale centrali
+Francesco (22:00): la fascia LED tra i due anelli attraversava le scale centrali: ora si interrompe sopra le scale. Partenza sulle scale centrali dell anello alto (6ª fila) guardando il centrocampo, l altezza della foto di Francesco.
+
+## 951–952 — Modalità Dream: telecronista in italiano
+Francesco (22:04–22:05): la voce italiana del telefono (sintesi vocale di sistema, anche senza rete; preferita una voce italiana «premium/enhanced» se c è) annuncia ogni azione live in breve, prima il nome e poi l azione: «Wembanyama, due punti!», «Cunningham, tripla!», «Flagg, rimbalzo», «Şengün, assist», «Barnes, palla persa», «…, tiro sbagliato», ecc. All ingresso «Benvenuti alla … Arena». Al massimo 3 frasi in coda per restare puntuale; tasto 🔊/🔇 in alto a destra (ricordato); la voce si ferma all uscita. Esultanza e delusione del pubblico: serviranno registrazioni vere (mp3) da Francesco.
+
+## 953 — Modalità Dream: cartellini più nitidi, partenza 5 gradini più in alto
+Francesco (22:08): cartellini delle statistiche disegnati a 3× (prima 2×), testo delle righe secondarie più marcato e chiaro, cartellini e maglie non più velati dalla foschia dello stadio. Partenza dalle scale centrali 5 file più in alto (11ª fila dell anello alto).
+
+## 954 — Modalità Dream: azioni live più lunghe, voce più chiara
+Francesco: l animazione sopra il giocatore spariva troppo presto. Ora il cartello dell azione compare con un piccolo zoom, resta fermo sopra la maglia 4,5 s, poi sale e svanisce in 1,5 s (6 s in tutto, prima 2,8 s). Più azioni dello stesso giocatore si susseguono a 5,2 s l una dall altra (prima 0,9 s, si sovrapponevano). Telecronista più lento e chiaro (velocità 0,92, tono naturale 1), fino a 4 frasi in coda.
+
+## 955 — Modalità Dream: giallo Ducks più caldo, logo più grande
+Francesco ha scelto la versione B: giallo del parquet Ducks #ea9a00 (prima più freddo). Logo a centrocampo più grande del 16% per tutte le squadre. Tolti i ganci di prova DREAM_BG / DREAM_LOGO.
+
+## 956 — Modalità Dream: tetto viola Dreamers
+Francesco (22:47): i pannelli del tetto erano marroni (colore squadra smorzato). Ora sono viola Dreamers (#3b1a72) per tutte le arene, ognuno con un velo viola più chiaro al centro e la griglia scura tra i pannelli; travi e fari invariati.
+
+## 957 — Modalità Dream: corridoio e Sala Trofei
+Francesco (22:53): nell angolo tra le tribune (lato lontano, a destra) c è un portale scuro con cornice LED e insegna «SALA TROFEI · HALL OF FAME»; le sedute dietro sono tolte. Si entra camminando nella porta o toccandola (dissolvenza). Dentro, in una scena a parte costruita solo al primo ingresso: corridoio di 12 m (pavimento lucido con linea del colore squadra, strisce LED, plafoniere, loghi incorniciati), poi la sala 16×14 m alta 6 m con pareti nel colore squadra (giallo Ducks), pavimento in legno scuro con il logo al centro, scritta HALL OF FAME. Bacheca di vetro con i trofei da STORIA e ALLSTAR (coppe oro/argento/bronzo, stella All-Star, targhette) e faretti. Maglie di tutti i giocatori della rosa appese alle pareti laterali in cornice, con targa e faretto. Tocca una maglia o la bacheca per avvicinarti; in fondo al corridoio la porta «ARENA» riporta davanti al portale. Suggerimento in basso ora va a capo.
+
+## 958 — Sala Trofei: ingresso spostato in cima alle scale centrali
+Francesco (23:07–23:08): corridoio più incassato, sulle scale alle spalle della visuale iniziale («se ti giri la trovi dietro di te»). Tolto il portale nell angolo (e il buco nelle sedute). Ora dalla cima delle scale centrali dell anello alto parte un corridoio di circa 4 m incassato nel muro (pareti grafite con LED nel colore squadra, plafoniere, insegna SALA TROFEI sopra l ingresso), con in fondo la porta illuminata: camminandoci dentro o toccandola si entra nella sala. Uscendo dalla porta ARENA si torna in cima alle scale, rivolti verso il campo. L anello luminoso del bordo tribuna si interrompe sul corridoio. Suggerimento iniziale aggiornato.
+
+## 959 — Sala Trofei: aperta solo per Ducks e Turtles
+Francesco (23:16): tutte le arene hanno il corridoio in cima alle scale, ma la porta si apre solo per Ducks e Turtles. Per le altre squadre la porta in fondo è chiusa (due ante di metallo con lucchetto e scritta CHIUSA, niente luce dietro): avvicinandosi o toccandola ci si ferma e compare «🔒 La sala trofei è chiusa: si apre solo per Ducks e Turtles» (e la voce lo dice). Dentro, ogni sala ha le maglie della propria rosa e i propri trofei (Turtles: stella All-Star anno 1; Ducks: due titoli + All-Star), nel colore della squadra.
+- (01/11 23:25) Modalità Dream, AUDIO VERO scelto dall utente (cartella aud/: dream-sottofondo in loop, dream-segnato per canestri/liberi, dream-sbagliato per tiri/liberi sbagliati) + VOCE per ogni azione («Tripla segnata da X!», «Rimbalzo di X»…; 1 s dopo il suono; suoni abbassati mentre parla; coda 6). Il tasto 🔊/🔇 spegne voce e suoni. Sblocco audio/voce iPhone nel tocco del tasto D (window.__drmAC). Patch /home/claude/patch_dreamaudio.py + patch_dreamvoce.py.
+- (01/11 23:30) Dream: pubblico (sottofondo) FISSO e più forte (gain .85, prima .38): sempre acceso, collegato direttamente all uscita, non lo spegne il tasto 🔊/🔇 né si abbassa sotto la voce.
+
+## 960 — Sala Trofei più spettacolare + corridoio senza buco nel tetto
+Francesco (23:22–23:23). Corridoio: gli anelli luminosi bassi dell anello alto (tubi schiacciati larghi oltre 3 m) passavano dentro il corridoio e sembravano un tetto mancante viola: ora si interrompono sopra il corridoio. Sala: i titoli escono dalla bacheca e stanno ognuno su un piedistallo nero lucido con anelli dorati luminosi; coppa d oro gigante (circa 3 m) in metallo riflettente (riflessi da ambiente generato), pallone vero sopra, stella e anelli decorativi; gira piano, con faro dedicato più due laterali, alone dorato, anello di luce a terra, scintille che salgono e targa «CAMPIONI · DREAMERS LEAGUE · ANNO n». Stendardi dei titoli sulla parete d ingresso. Toccando la coppa ci si mette davanti; non si passa attraverso i piedistalli. In bacheca restano gli altri trofei (All-Star). Soffitto viola Dreamers a pannelli con LED viola sui bordi e doppio anello sopra il logo. Pavimento in legno più chiaro e lucido; logo grande e nitido (2048 px) su disco luminoso con raggi, doppio anello dorato e scritta circolare HALL OF FAME · squadra · DREAMERS LEAGUE. Luce generale più alta. Richiesta di modelle scollate: non fatta.
+
+## 961 — Modalità Dream: audio unico, muto all'ingresso, voce poi pubblico
+Francesco (23:35). Un solo interruttore 🔇/🔊 in alto a destra comanda tutto: voce, pubblico di sottofondo ed effetti del pubblico (file aud/ dell amico). Si entra SEMPRE muti: niente parte da solo (prima il sottofondo partiva anche col telefono in silenzioso e col tasto spento, perché era collegato direttamente all uscita). Toccando 🔇 → 🔊 partono insieme voce e pubblico (benvenuto + sottofondo); ritoccando si spegne tutto e il contesto audio viene sospeso. Ordine: prima la voce annuncia la statistica, POI il pubblico reagisce: «dream-segnato» dopo le positive (punti, liberi, rimbalzi, assist, stoppate, recuperi; più forte per triple e canestri), «dream-sbagliato» dopo le negative (palla persa, tiro o libero sbagliato). Sottofondo abbassato mentre parla la voce. Frasi col tono giusto: esclamazioni sulle positive («Tripla! Segnata da…»), «Peccato / Ahi» sulle negative. Il tasto D continua a sbloccare l audio su iPhone ma resta muto finché non si accende.
+- (01/11 23:42) Dream: porta della sala trofei aperta per TUTTE le squadre (SALA=true, prima solo Ducks e Turtles, 959). Richiesta utente.
+
+## 962 — Sala Trofei: titoli di nuovo in bacheca, senza pallone
+Francesco (23:40): via le coppe giganti sui piedistalli (e scintille, anelli a terra, fari dedicati). Le coppe d oro dei titoli tornano nella bacheca di vetro, ai lati della stella All-Star: senza pallone, un po più grandi degli altri trofei, in metallo riflettente su base nera con anello dorato, girano piano dietro il vetro con alone dorato e targa «CAMPIONI · DREAMERS LEAGUE · ANNO n». Tre fari puntati sulla bacheca. Gli stendardi dei titoli sulla parete d ingresso restano.
+
+## 963 — Modalità Dream: scritta e voce in sincrono, scritta più lunga
+Francesco (23:52): la voce arrivava in ritardo rispetto alla scritta. Ora, con l audio acceso, la scritta dell azione compare nell istante in cui la voce comincia a dire la statistica (se il telefono non avvisa entro 3 s compare comunque); finita la frase reagisce il pubblico. Con l audio spento compare subito. Animazione: entra con un rimbalzo, resta sopra la maglia 5,5 s ondeggiando appena, poi sale e svanisce in 1 s (6,9 s in tutto). Più azioni dello stesso giocatore a 7,2 s l una dall altra.
+
+## 964 — Modalità Dream: spogliatoi casa/ospiti e uscita del pubblico in strada
+Francesco (23:52). Spogliatoi: negli angoli del lato lontano (sinistra = casa, destra = ospiti) le prime 7 file delle tribune basse sono tagliate e formano un varco con muri a gradoni, corrimano luminoso, pavimento con linea colorata e in fondo una porta con insegna «SPOGLIATOIO CASA / OSPITI»; camminandoci dentro o toccando la porta si entra. Spogliatoio (scena a parte, costruita al primo ingresso): corridoio di 9 m nei colori della squadra con loghi, stanza 14×12 m con moquette e logo al centro, lavagna della tattica, scritta col nome della squadra. Un armadietto per ogni giocatore della rosa: maglia appesa più una seconda maglia di lato in colori diversi (casa, trasferta, alternativa, a rotazione), targa con cognome/numero/ruolo, sedia davanti con il nome sullo schienale. Chi è in panchina in quel momento (partita in corso, non in campo) ha l armadietto illuminato di verde con «● IN PANCHINA» e la sua maglia su un supporto al centro con le statistiche live; se nessuno è in panchina compare la scritta. Lo spogliatoio ospiti è quello dell avversario del turno (rosa, colori e logo suoi). Uscita del pubblico: in cima alle scale centrali del lato opposto alla sala trofei, stesso corridoio con insegna USCITA; porta su una scena all aperto: facciata dell arena con nome e loghi, porte illuminate (si rientra toccandole o tornando indietro), piazza, marciapiedi, strada con strisce pedonali, lampioni, auto parcheggiate e due in movimento, palazzi con finestre accese, cielo notturno con stelle e il pubblico che esce camminando verso la strada. Scale centrali libere anche sul lato lontano; anelli luminosi e fascia interrotti sopra i due corridoi.
+
+## 965 — Modalità Dream: mascotte che ballano
+Francesco (23:58). Mascotte originali (non quelle NBA) costruite con forme semplici, alte circa 2,3 m, con la maglia della squadra: papera (Ducks), volpe (Foxes), tartaruga (Turtles), delfino (Dolphins), ragno (Spiders), aquila (Eagles), alce (Mooses), pavone (Peacocks). In campo quella di casa e quella dell avversario del turno: girano lungo il campo camminando (gambe e braccia che si muovono) e ogni 7 s si fermano 5 s a ballare (saltelli, braccia in alto, ondeggio, giravolta). Animazione a 30 fotogrammi al secondo, solo nell arena.
+
+## 966 — Modalità Dream: qualità massima del campo, via le mascotte
+Francesco (00:27): il campo si vedeva peggio. Causa: le mascotte facevano ridisegnare di continuo a 30 fotogrammi al secondo, quindi il controllo «telefono che fatica» abbassava la risoluzione e non la rialzava più. Mascotte tolte. Qualità: risoluzione piena del telefono fino a 3× (prima massimo 2×); in movimento può scendere per restare fluida, ma appena ti fermi (0,35 s) torna sempre al massimo. La risoluzione scende solo se fatica mentre ti muovi. Spogliatoi e strada restano: sono scene a parte costruite solo quando ci entri, nell arena pesano solo i varchi (poca geometria).
+
+## 967 — Modalità Dream: la Strada dei Dreamers con tutti gli stadi
+Francesco (00:34). La strada fuori dall arena diventa la strada della lega: 4 stadi per lato, uno di fronte all altro come gli scontri del turno (se il calendario non si legge, ordine fisso). Ogni facciata ha nome e logo della squadra, fascia nel colore squadra, finestre accese, tabellone con il punteggio dello scontro («DUCKS 245,8 · 302,7 FOXES — STASERA · TURNO n») e porte illuminate «ENTRA · squadra» (Peacocks: 🔒 CHIUSO, come il tasto D). Tolte persone e auto (scena ferma: niente ridisegno continuo). Entrando in un altro stadio (camminando nelle porte o toccandole) si libera l arena attuale e si costruisce quella della squadra scelta: una sola arena in memoria alla volta, schermata nera «Entro nella … Arena…». Si arriva sul primo gradone dell anello alto del lato dell uscita, guardando il campo; l audio resta acceso se lo era; all uscita dalla modalità Dream l app torna alla squadra di partenza. Ogni stadio ha la sua sala trofei, i suoi spogliatoi e la sua uscita verso la stessa strada, dove si riappare davanti alla propria facciata.
+
+## 968 — Modalità Dream: in campo anche l avversario del turno
+Francesco (00:41–00:49). In ogni stadio, oltre ai miei giocatori live (fino a 5, i migliori per PDK) ci sono quelli live dell avversario del turno: i miei nella metà sinistra, i suoi nella destra (nel suo stadio il contrario, la casa sempre a sinistra). Posizioni secondo quanti sono (1–5), il migliore più vicino al centro, su due file sfalsate (davanti e dietro) così cartellini e maglie non si coprono; tutto entro ±10,5 m così nello schermo verticale si vedono tutti. Più sono, più maglie e cartellini si rimpiccioliscono: 5 → 64%, 4 → 72%, 3 → 84%, 2 → 94%, 1 → misura piena. Se l avversario non ha nessuno live resta la disposizione di prima (miei su tutto il campo). Voce e scritte anche per le azioni avversarie; il pubblico di casa reagisce al contrario (delusione sui loro canestri, esultanza sui loro errori e palle perse).
+
+## 969 — Modalità Dream: in campo solo chi sta giocando
+Francesco (01:02): nella modalità Dream restano in campo solo i giocatori con la partita in corso (miei e dell avversario, massimo 5 per squadra); chi ha finito la partita stanotte esce dal campo. Nella modalità notte 2D non cambia nulla (restano anche i finiti). Se non gioca nessuno il campo resta vuoto, senza scritte.
+
+## 970 — Modalità Dream: maxischermo con le partite NBA, maglie dritte e nitide, spogliatoio con stati, strada più bella
+Francesco (01:05–01:07). Maxischermo: toccandolo si passa dalla grafica dello scontro diretto a una pagina per ogni partita NBA di stanotte (prima le live, poi le finite, poi quelle da giocare): loghi NBA, sigle, punteggio (in giallo chi conduce), stato («● LIVE · 3rd 4:12», FINALE, DA GIOCARE), «n/N · tocca per cambiare»; si aggiorna da solo con i dati live; sotto lo scontro diretto compare «tocca il tabellone per le partite NBA». Maglie in campo: texture a risoluzione doppia (1200×1460) e sempre parallele allo schermo, quindi dritte anche ai bordi (prima la prospettiva le faceva sembrare storte). Spogliatoio: al centro non c è mai nessuno e niente scritte sospese; sull armadietto di chi è live compare il cartello verde «● IN CAMPO» (la sua maglia è sul parquet) o rosso «● IN PANCHINA» con i PDK (live ma oltre i 5 che entrano in campo), con alone dello stesso colore; si aggiorna a ogni ingresso. Il nome della squadra in alto si rimpicciolisce per stare tutto. Strada: facciate rifatte (nome che sta sempre tutto, «A R E N A», loghi ai lati, vetrate calde ordinate, tabellone LED con i due loghi e il punteggio, pensilina luminosa sulle porte, fari che illuminano la facciata), alberi con le lucine lungo i due marciapiedi (non davanti alle porte), più lampioni accesi e luce generale più alta, pavimentazione più chiara.
+
+## 971 — Modalità Dream: niente stendardi, sala trofei solo per chi ha vinto, piazza, meno crash, più fluido
+Francesco (01:16–01:19). Stendardi dei trofei sopra le tribune tolti (c è la sala trofei). Sala trofei aperta solo per chi ha vinto almeno un titolo o un All-Star; per gli altri porta chiusa e «🔒 Sala trofei chiusa: questa squadra non ha ancora vinto niente». Crash (soprattutto in strada): le facciate pesavano 3200×1800 px ciascuna (8 stadi); ora 1152×648; maglie in campo 900×1095 (prima 1200×1460), maglie degli spogliatoi e della sala più leggere; ogni stanza (sala, spogliatoi, piazza) viene liberata dalla memoria quando esci e ricostruita al rientro; nelle stanze la risoluzione massima è 2×. Fluidità: in movimento la risoluzione scende a circa 2/3 e appena ti fermi torna piena (nitida). La strada diventa la PIAZZA DEI DREAMERS: pavimentazione unica a grandi lastre con fasce viola, fontana luminosa al centro (vasca con acqua illuminata, getti, luce azzurra; non ci si passa attraverso), alberi con lucine in aiuole rialzate, panchine (anche attorno alla fontana), lampioni a globo; ai due capi file di grattacieli illuminati con luci rosse in cima che chiudono la piazza.
+
+## 972 — Modalità Dream sempre in orizzontale
+Francesco (01:30). La modalità Dream si vede sempre in orizzontale. iPhone non permette alle pagine web di bloccare la rotazione, quindi: se la finestra è verticale (telefono tenuto dritto o col blocco rotazione) tutto lo stadio, con tasti e scritte, viene ruotato di 90° (si gira il telefono verso sinistra per guardarlo); se il telefono ruota davvero la finestra (blocco rotazione spento), lo stadio si raddrizza da solo: rispetto al telefono il contenuto resta fermo e non «impazzisce». Tocchi, trascinamenti, pizzico e mira (maglie, porte, tabellone) convertiti nel sistema ruotato; campo visivo orizzontale (46°). Su Android si prova anche a bloccare l orientamento in orizzontale. Ruotata allo stesso modo anche la schermata nera «Entro nella … Arena…». All uscita dalla modalità l app resta verticale come sempre.
+
+## 973 — Modalità Dream: tasto ✕ sotto il megafono
+Francesco (08:37): con lo stadio ruotato la ✕ in alto a sinistra finiva sotto la tacca/barra di stato del telefono. Ora ✕ e 🔊 stanno insieme sul lato destro, la ✕ sotto il megafono; titolo sempre al centro.
+
+## 974 — Modalità Dream: joystick
+Francesco (08:44): joystick semitrasparente in basso a sinistra (rispetto allo stadio orizzontale): cerchio viola chiaro con pomello; su/giù = avanti/indietro, sinistra/destra = passo laterale, velocità proporzionale a quanto lo spingi (fino a 6 m/s); rilasciato torna al centro. Trascinare il resto dello schermo continua a girare lo sguardo, il tocco su un punto continua a portarti lì. Funziona anche nello schermo ruotato e dentro sala trofei, spogliatoi e piazza (con i loro limiti).
+
+## 975 — Modalità Dream: tiro a canestro, canestri realistici, varchi spogliatoi corretti, titolo più in alto
+Francesco (08:48–08:58). TIRO: a destra, in colonna, ✕ in alto, poi 🔊, poi 🏀. Col 🏀 acceso compaiono un mirino semitrasparente al centro, la palla in mano in basso a destra, il tasto arancione TIRA e la barra della forza. Si mira girando lo sguardo come sempre (anche dalle tribune, da tutto il campo); tieni premuto TIRA e la forza sale e scende da sola (1,5 s per ciclo): lasci nel momento giusto. La forza giusta è a metà barra rispetto alla distanza dal canestro che hai davanti (più su = lungo, più giù = corto); la direzione è quella del mirino, senza aiuti. Fisica vera con passi da 4 ms: gravità, ferro (anello di 23 cm, rimbalzi), tabellone, pavimento e gradoni. Esiti: «CIAF! CANESTRO», «DENTRO! (dopo il ferro)», «FERRO… FUORI», «AIR BALL»; contatore «TIRI 3/5 · 60%»; con l audio acceso esulta o si dispera il pubblico. Provato: dal tiro libero entra tra circa 0,50 e 0,56 di forza, da tre tra 0,50 e 0,56, dalle tribune solo intorno a 0,50. Scelta fatta tra la fionda (rendering A/B/C) e la proposta di Francesco «mirino + tasto a tempo»: meglio la seconda perché si può continuare a girare la visuale e funziona ovunque. CANESTRO rifatto: base imbottita nel colore squadra con pannello LED col nome, colonna inclinata imbottita con fascia colorata, doppio braccio, tabellone in vetro con bordo e quadrato bianchi, imbottitura sotto, cronometro dei 24 secondi sopra, ferro con staffa, retina a maglie. VARCHI SPOGLIATOI: il centro di riferimento era quello del campo, ma negli angoli le file delle tribune partono 2,3 m più indietro: un pezzo di tribuna restava dentro il varco davanti alla porta. Ora il varco è calcolato sull arco delle tribune. TITOLO: nello schermo ruotato la barra in alto lasciava lo spazio della tacca (che lì sta di lato): titolo più in alto.
+
+## 976 — Modalità Dream: ufficio del GM con maxischermo, tiro a due tocchi
+Francesco (09:27–09:37). UFFICIO DEL GM: porta sulla parete sinistra del corridoio della sala trofei (si apre solo nello stadio Ducks; altrove «🔒 riservato»); si entra camminandoci o toccandola. Stanza nera con LED, parquet scuro, faretti, quadri con cornice dorata (maglie, titoli, All-Star, record), scrivania, poltrona e maxischermo «GM OFFICE». Tasto «🪑 SIEDITI» (o tocco sullo schermo): ti siedi e lo schermo riempie la vista; dentro c è l app vera (toccabile, scorrevole, in orizzontale e più larga) con le linguette: Scontro diretto (campo), Grafici squadra, Grafici giocatori, Trend, Efficienza, Roster, Calcolatore trade, IA Trade · gusti GM, Storico trade, Osservatorio, Comparatore, Pic-Trade, Free agent, Scouting college (zona riservata: se non è già sbloccata chiede la password con la finestra dell app, che qui non viene mai salvata né scritta), «⏏ Alzati». Alzandosi la pagina dell app torna al suo posto e alla sezione di prima. Uscendo dalla porta si torna nel corridoio davanti all ufficio. Finestre/fogli dell app aperti dallo schermo restano sopra (nello schermo ruotato possono apparire di lato). TIRO: due tocchi su TIRA (il primo fa partire la forza, intanto puoi ancora mirare e muoverti col joystick; il secondo tira); il tocco sul campo in modalità tiro non sposta più; col pallone in mano il trascinamento sposta il mirino come un puntatore (destra = mira a destra, su = in alto), più preciso; ombra della palla a terra e retina che si muove quando entra.
+
+## 977 — Tiro più rapido, mirino come prima
+Francesco (09:38): il trascinamento col pallone torna come senza pallone (come andava prima, era giusto). Palla subito di nuovo in mano: 0,35 s dopo che tocca terra (prima aspettava che si fermasse), 0,6 s dopo il canestro, al massimo 3,5 s.
+
+## 978 — Piazza: cielo secondo l ora; niente spostamento col tocco
+Francesco (09:42–09:44). Piazza dei Dreamers con il cielo dell ora del telefono: giorno 8–17 (cielo azzurro con nuvole e sole, luce piena, lampioni/lucine spenti, finestre dei grattacieli quasi spente), sera 17–20 e alba 6–8 (arancio-viola con il sole basso, lampioni accesi più tenui), notte 20–6 (come prima, con le stelle). Tocco su parquet/tribune/pavimento: non sposta più (dentro e fuori dall arena): ci si muove col joystick, o con frecce/WASD e mouse sul computer. Restano i tocchi su maglie, porte, tabellone, armadietti, bacheca e schermo dell ufficio. Suggerimento iniziale aggiornato.
+
+## 979 — Modalità Dream: visuale come nei videogiochi
+Francesco (09:48): il trascinamento ora muove lo sguardo come in GTA / Call of Duty mobile: dito a destra = guardi a destra, dito in su = guardi in alto (prima era «stile Google Street View», si trascinava il mondo). Vale con e senza pallone; mouse sul computer uguale.
+
+## 980 — Sale trofei aperte a tutti, stadio Peacocks aperto
+Francesco (09:54): sala trofei aperta per tutte le squadre (chi non ha trofei trova la bacheca con «IL PRIMO TROFEO È VICINO»). Stadio Peacocks aperto: tasto D della modalità Dream attivo anche per i Peacocks (DRM_NO vuoto) e porta del loro stadio aperta nella piazza. L ufficio del GM resta solo nello stadio Ducks.
+
+## 981 — Ufficio del GM più bello e luminoso, schermo senza tacca, ESCI visibile, college dal computer del GM
+Francesco (09:57–09:58). Ufficio: luce generale più che doppia e faretti più forti; parete di fondo nel colore della squadra a pannelli; soffitto viola Dreamers come nell arena; tappeto nel colore squadra col logo sotto scrivania e poltrona; divano nel colore squadra; mensole con LED e palloni; lampada ad arco; strisce LED verticali nel colore squadra sulle pareti; schermo senza sfarfallio (era sovrapposto alla cornice). Maxischermo: occupa tutto lo schermo del telefono con fondo nero, ma il pannello rientra dai bordi sicuri (tacca/isola e barra home, anche con lo schermo ruotato); tasto rosso «✕ ESCI» sempre visibile a sinistra delle linguette (che scorrono a parte). Scouting college dal computer del GM: si apre solo la sezione college (non tutta l area riservata: le altre sezioni riservate, se raggiunte da lì, riportano al college). La password resta perché i dati sono cifrati: senza la password non si possono leggere e toglierla vorrebbe dire metterla nel codice pubblico. Se la sezione è già stata sbloccata nell app (stessa sessione) entra direttamente. Uscendo dalla modalità Dream da seduti la pagina dell app torna al suo posto.
+
+## 982 — Finestre dell app in orizzontale dentro l ufficio
+Francesco (10:06): la richiesta della password (e ogni altra finestra o scheda che l app apre sopra) mentre si è seduti al computer del GM ora segue la rotazione dello stadio: con lo schermo ruotato compare in orizzontale come il resto.
+
+## 983 — Computer del GM: scontro diretto come nella sezione Dreamers
+Francesco (10:09): la linguetta «⚔️ Scontro diretto» del maxischermo ora apre la schermata dello scontro della sezione Dreamers (stessa della Home/risultati: turno corrente, la mia squadra a sinistra e l avversaria a destra, punteggio e proiezione, probabilità di vittoria, giocatori in campo/tribuna con punti già fatti e partite che mancano), già scorsa sul mio scontro. È anche la pagina che si apre sedendosi. Alzandosi, la sezione Dreamers dell app torna com era.
+
+## 984 — Modalità Dream: meno crash, ritorno sicuro al campo
+Francesco (10:18): uscendo dall ufficio a volte la pagina crashava e al riavvio l app si apriva sui grafici. Correzioni: (1) la sala trofei resta pronta mentre sei in ufficio, tornando non si ricostruisce (era il picco di memoria); (2) risoluzione massima 2,5× (a 3× con l antialias la memoria video su iPhone superava i 100 MB solo per lo schermo); da fermi resta nitida, in movimento scende di un terzo; (3) un errore in un fotogramma non blocca più lo stadio; (4) se il telefono toglie la grafica 3D si esce puliti; (5) navigazione sicura: mentre sei nella modalità Dream la schermata salvata per il riavvio è sempre il campo della tua squadra (ogni 4 s, quando l app va in secondo piano e quando si chiude), quindi dopo un crash si riparte dal campo, mai dai grafici o da altre sezioni; uscendo dalla modalità Dream si torna sempre al campo (o alla home).
+
+## 985 — Modalità Dream: tiro a molla con parabola, gara da tre, inquadratura TV, palazzi in città
+Francesco (10:34). TIRO A MOLLA: premi TIRA e trascinalo verso il basso come una molla (più lo tiri, più forza; barra a lato); mentre tiri compare in punti gialli il primo terzo della parabola (il resto lo devi sapere tu); lasci = tiro. Forza giusta a circa metà corsa rispetto alla distanza dal canestro davanti; si mira col mirino (anche con l altro dito mentre tieni la molla). GARA DEL TIRO DA TRE (🏆): 5 postazioni attorno all arco del canestro che hai davanti (ti porta lì da sola), 5 palloni ciascuna, l ultimo è il money ball da 2 punti (pallone più chiaro), 60 secondi; punteggio, tempo e postazione in alto; alla fine record salvato sul telefono («NUOVO RECORD!»), voce se l audio è acceso. Ritoccando 🏆 si interrompe. INQUADRATURA TV (📺): la telecamera gira da sola attorno al campo e quando un giocatore fa un azione va su di lui per 6 s; spegne il tiro e la gara. PALAZZI IN PIAZZA (non legati a una squadra): Museo della Lega (capo ovest: una parete per stagione con la classifica finale e i loghi, parete degli All-Star, muro delle 8 squadre, coppa della lega al centro con faro), Centro Medico (capo ovest: un lettino per ogni giocatore fermo o in dubbio di tutte le squadre, coperta nel colore squadra, maglia sopra il letto, stato colorato, rientro e tipo di infortunio), Sala Draft (capo est: maxischermo con l ordine delle scelte dalla classifica attuale, chi è ultimo sceglie per primo, tavoli delle 8 squadre). Insegne luminose e porte «ENTRA»; uscendo si torna in piazza davanti al palazzo; la piazza resta pronta mentre sei dentro. Gli aggiornamenti live ESPN restano sempre attivi anche nella modalità Dream (nessuna pausa all app).
+
+## 986 — Modalità Dream: manichini nel Centro Medico
+Francesco (10:57). Al posto delle maglie sopra i letti, su ogni lettino è sdraiato un manichino semitrasparente senza volto con il nome del giocatore; il busto è nel colore della squadra (una sola forma in più, non pesa); il punto del dolore è una sfera rossa che pulsa piano con un alone (ginocchio, caviglia, piede, polpaccio, coscia, anca, schiena, spalla, gomito, polso, mano, testa…, lato destro o sinistro quando indicato); per malattie e motivi generici il manichino si tinge di rosso tenue.
+
+## 987 — Modalità Dream: niente più crash passando da un arena all altra
+Francesco (11:03): entrando nella DAX Arena, uscendo in piazza e poi entrando nell arena di un altra squadra la pagina si chiudeva. Causa: a ogni cambio di arena si creava una nuova grafica 3D del telefono mentre la vecchia non era ancora stata liberata, e alcune immagini (luci delle insegne, cielo, riflessi) restavano in memoria. Ora: (1) passando a un altra arena si riusa la stessa grafica 3D (stesso schermo), senza crearne una seconda; (2) prima di costruire la nuova arena si svuota tutto quello della precedente (arena, piazza, stanze, ogni immagine dei materiali, cielo e riflessi) e si aspetta un attimo; (3) i comandi touch della vecchia arena vengono staccati, così non si accumulano; (4) se non entri in nessuna arena entro 15 s la grafica tenuta pronta viene liberata.
+
+## 988 — Modalità Dream: la voce della tua partita ti segue in città
+Francesco (11:10). Con l audio acceso, la voce dell arena da cui sei entrato continua ad avvisarti delle azioni dei tuoi (punti, rimbalzi, assist, errori…) anche in piazza, nel Museo, nel Centro Medico, nella Sala Draft e in tutte le sale. Il pubblico (sottofondo ed esultanze/delusioni) si spegne quando esci dall arena (piazza e palazzi della città) e riparte quando ci rientri; negli spogliatoi, nella sala trofei e nell ufficio resta. Entrando nell arena di un altra squadra prendi la voce di quella partita e il suo pubblico.
+
+## 989 — Modalità Dream: la città attorno alla piazza e le macchine da guidare
+Francesco (10:56). CITTÀ: dalla piazza (ai due capi, dove prima c erano i grattacieli) si esce in una città di circa 480×380 m: via principale larga con doppia striscia, strade a griglia con strisce pedonali agli incroci, marciapiedi, isolati di palazzi in 5 stili (mattoni, cemento, vetro, scuro moderno, intonaco chiaro) con negozi e tende colorate al piano terra, impianti e antenne sui tetti, palazzi più alti al bordo che chiudono l orizzonte, viali alberati, lampioni e 4 parchi. Dietro le facciate della piazza ora ci sono i corpi delle 8 arene con la cupola nel colore della squadra. Niente traffico né persone. Il cielo segue l ora (di notte finestre e vetrine accese, luce dei lampioni a terra). Ottimizzata: tutti i palazzi di uno stile sono un solo oggetto, alberi e lampioni ripetuti con un solo disegno (circa 30 disegni per fotogramma). Museo della Lega e Centro Medico ora sono sulla via principale a ovest (uno di fronte all altro), Sala Draft a est; porta «ENTRA» sul marciapiede, uscendo si torna davanti alla porta. Si cammina ovunque: palazzi, arene e fontana fanno da muro. MACCHINE: tre auto parcheggiate (due sulla via principale appena fuori dalla piazza, una sulla strada di fianco alla piazza a est). Avvicinandoti compare il pannello con gli 8 colori delle franchigie (tocchi il logo: carrozzeria, strisce e loghi su portiere, cofano e volante cambiano subito) e il tasto ENTRA. Guida: vista dal posto di guida (cofano, cruscotto con quadranti, volante 3D che gira, montanti, porte), joystick e tasti tiro spariscono; a sinistra il volante da girare col dito (torna dritto quando lo lasci), a destra GAS e FRENO (tenendo FRENO da fermo fai retromarcia), velocità in km/h in alto, 🚪 ESCI in alto a sinistra (scendi di fianco all auto, che resta dove l hai lasciata). Trascinando sullo schermo ti guardi intorno, poi lo sguardo torna davanti. L auto si ferma contro palazzi, arene, fontana e altre auto. Mentre guidi non si entra in stadi e palazzi.
+
+## 990 — Modalità Dream: ufficio del GM aperto in tutte le arene
+Francesco (12:04). La porta dell ufficio nel corridoio della sala trofei ora si apre in tutte le 8 arene (niente più «riservato»). Ogni ufficio è nei colori e col logo della squadra dell arena e il computer mostra i dati di quella squadra (scontro diretto, grafici, trend, efficienza, roster, trade, osservatorio, comparatore, pic-trade, free agent). Lo scouting college resta solo nell ufficio Ducks: sono i dati riservati e cifrati della DAX, negli altri uffici il tasto non c è.
+
+## 991 — Modalità Dream: palazzi della città dietro l angolo della piazza, abitacolo rifatto
+Francesco (12:08): in città non trovava più Museo, Centro Medico e Sala Draft. Ora sono subito dietro l angolo, sulla prima strada che costeggia la piazza: uscendo dal capo ovest a destra il Museo della Lega e a sinistra il Centro Medico, dal capo est la Sala Draft; porta ENTRA rivolta verso la piazza, insegna sopra la porta e insegna grande illuminata sul tetto, visibili già dalla piazza. Abitacolo: i montanti ora vanno nel verso giusto (salgono verso il tetto, prima pendevano in fuori), c è il cielo interno del tetto con le alette parasole, la cornice del parabrezza con il vetro leggermente azzurrato e la fascia scura in alto, i riflessi, lo specchietto, i finestrini laterali e la paratia sotto il cruscotto; da dentro si vede il cofano.
+
+## 992 — Modalità Dream: tiro stile NBA 2K, via la gara da tre
+Francesco (12:16). Tolta la gara del tiro da tre (tasto 🏆). Con 🏀 hai la palla in mano: ti muovi col joystick e mentre cammini palleggi da solo; la visuale segue sempre il canestro più vicino (non si trascina più per guardare). TIRA: tieni premuto, la barra a fianco sale; lasci quando è nella fascia verde (più stretta da lontano). Nel verde la palla entra («PERFETTO!» / «BUONO»), appena fuori può prendere il ferro, lontano è corta (lasciato presto) o lunga (lasciato tardi), anche un po storta. La palla vola verso il canestro mentre a te ne ricompare subito un altra in mano: si può tirare di continuo, fino a 6 palloni in volo. Punti: 2 o 3 (dietro i 7,1 m), conteggio PUNTI · TIRI · % in alto.
+
+## 993 — Modalità Dream: motore, mappa, città chiusa da una strada ad anello, bug comandi auto nei palazzi
+Francesco (12:23–12:24). Motore: in macchina, con l audio acceso, rumore del motore che sale di giri con la velocità e quando acceleri, con i cambi di marcia; si spegne scendendo. Bug: dopo essere sceso dall auto, dentro Centro Medico e gli altri palazzi restavano il pannello per scegliere l auto e il volante; ora pannello, volante, pedali e mappa esistono solo in strada (spariscono appena entri in un palazzo o nello stadio). Mappa: mentre guidi, in alto a sinistra una mappa rotonda girata nel verso di marcia, con la tua auto al centro, isolati, parchi, piazza con la fontana, arene coi colori e i loghi, Museo/Centro Medico/Sala Draft e le altre auto; la N indica il nord. Città: più grande (circa 540×450 m) e chiusa: tutto intorno una strada ad anello larga 14 m (con marciapiedi, lampioni, strisce) e oltre l anello un muro continuo di grattacieli alti 60–120 m che non si può superare, a piedi né in auto; niente più strade che finiscono nel vuoto.
+
+## 994 — Modalità Dream: niente menu «Copia / Traduci / Cerca» dell iPhone sui comandi
+Francesco (12:57): toccando più volte GAS/FRENO l iPhone apriva il menu del testo (Copia, Traduci, Cerca sul web), come se fosse una scritta. Ora in tutta la modalità Dream il testo dei tasti non si può selezionare, niente menu del tocco lungo né evidenziazione al tocco; su GAS, FRENO, volante, ESCI, TIRA e joystick i tocchi ripetuti non arrivano più al sistema (niente selezione, niente zoom col doppio tocco). Nei campi da scrivere (es. password dal computer dell ufficio) si può scrivere come prima.
+In più (12:58) i pedali non hanno più scritte: FRENO è il tasto rosso con un quadrato, GAS il tasto verde con una freccia in su (disegni, non testo: niente da selezionare).
+
+## 995 — Modalità Dream: guida sportiva e corse a tempo
+Francesco (13:10). Guida: più accelerazione (fino a circa 150 km/h), sterzo più pronto, nuovo tasto freno a mano (giallo con la P, sopra il freno): tenendolo in curva la macchina derapa e lascia i segni delle gomme sull asfalto (anche in curva molto veloce scivola un po). 🎥 cambia visuale: da dentro o da dietro la macchina (si ricorda la scelta); in velocità la visuale si allarga. Corse a tempo (🏁): «Giro dell anello» (17 portali lungo la strada ad anello) e «Centro città» (16 portali tra le strade attorno alle arene). La macchina va sulla partenza, semaforo 3-2-1-VIA (anche a voce), cronometro, portale da attraversare in giallo (verde l arrivo) e il successivo in viola, freccia che indica il portale, puntino giallo sulla mappa, parziali contro il tuo record (verde se sei più veloce). Record salvato solo sul telefono. Ritoccando 🏁 la corsa si annulla. Il tiro ora funziona anche negli uffici NBA e al playground; il record di canestri di fila è salvato sul telefono per ogni canestro.
+
+## 996 — Modalità Dream: 30 uffici NBA in città
+30 uffici, uno per squadra NBA, sparsi negli isolati di tutta la città (uno per isolato): fascia nei colori della squadra, insegna col logo (la copia interna dei loghi NBA dell app) e la sigla, tendone colorato, porta «UFFICIO NBA · ENTRA»; sulla mappa di guida un quadratino nel colore della squadra. Dentro (stessa stanza per tutti, cambiano colori, nome e logo; uno solo in memoria alla volta): maxischermo col box score della partita della squadra (live se sta giocando, altrimenti l ultima, con la prossima), titolari con ★, giocatori della lega evidenziati con la squadra Dreamers che li ha; parete «Nella nostra lega» con i giocatori di quella squadra NBA presenti nei roster e chi li ha; logo grande, tappeto col logo; canestro a parete con record di canestri di fila. Leggeri: le 30 insegne sono una sola immagine.
+
+## 997 — Modalità Dream: computer del GM più stabile, password con tastiera dritta
+Francesco (13:18): al computer del GM spesso crash aprendo le schermate e la tastiera per il codice usciva in verticale con la finestra ruotata. Ora mentre sei seduto al computer lo stadio 3D non si disegna e la sua memoria video si riduce al minimo (prima app e 3D giravano insieme in memoria); alzandoti torna com era. Le finestre con un campo da scrivere (password dello scouting) restano dritte con la scritta «Gira il telefono in verticale per scrivere», così finestra e tastiera dell iPhone combaciano (la tastiera di sistema non si può ruotare).
+
+## 998 — Modalità Dream: cartelloni NBA live, playground, palloni da collezionare
+Cartelloni: 4 maxischermi sui palazzi della via principale (due per lato, a est e a ovest della piazza) con le partite NBA di oggi: punteggi, live in rosso col quarto, finali, orari; si aggiornano ogni 20 s (una sola immagine per tutti). Playground nel parco a sud-est (vicino alla Sala Draft scendendo verso sud): campo blu e arancio «Dreamers Playground», due canestri, recinzione, luci di notte, cartello col record; dentro al campo si tocca 🏀 e si tira come in arena. Collezionabili: 30 palloni NBA nascosti in città (marciapiedi e parchi), uno per squadra, colorati, che fluttuano e girano con un alone; si raccolgono passandoci vicino a piedi o in macchina; contatore «palloni NBA x/30» in alto a sinistra, voce e avviso a ogni pallone; salvati sul telefono.
+
+## 999 — Modalità Dream: abitacolo pulito, lampioni accesi di notte
+Francesco (13:39): guidando, sotto il volante si mischiavano i colori della carrozzeria (blu, nero… a seconda della macchina). Era il retro del cofano che attraversava il cruscotto: cruscotto più alto e profondo, paratia spostata, quadranti staccati dal cruscotto; ora sotto il volante è tutto nero pulito con qualsiasi colore. Di notte (e al tramonto) i lampioni sono accesi: alone luminoso attorno a ogni lampada (un solo disegno per tutti) e luce a terra più calda e visibile.
+
+## 1000 — Modalità Dream: macchina nuova, spettacolare
+Francesco (13:45). Coupé sportiva rifatta: carrozzeria morbida con curve vere, vernice lucida trasparente che riflette cielo e skyline (una sola immagine di riflesso calcolata all ingresso in piazza), vetri a specchio, tetto e montanti nel colore squadra, passaruota neri, minigonne, splitter anteriore, diffusore e doppio scarico cromato, spoiler, specchietti, maniglie cromate, linee delle portiere, calandra a nido d ape, fari LED con luce diurna e barra LED rossa posteriore, targhe «DRM·sigla», cerchi a 5 razze con pinze rosse, ombra morbida. Di notte (e al tramonto) i fari illuminano la strada davanti. Abitacolo: cruscotto in pelle con cuciture e bocchette, striscia LED ambiente nel colore della squadra su cruscotto e porte, schermo centrale con la mappa, leva del cambio, volante in pelle con tacca rossa e palette, sedili in pelle cuciti con poggiatesta; quadranti spostati, schermo più piccolo.
+
+## 1001 — Modalità Dream: guida realistica, derapata da rally, rumori di gomme
+Francesco (13:50). Le gomme hanno un limite di aderenza (circa 1 g): a 100 km/h il volante tutto girato fa una curva larga (circa 18° al secondo), la macchina tira dritta e bisogna frenare prima delle curve, altrimenti si va contro i palazzi. Frenata vera: da 100 km/h circa 38 m (2,7 s). Accelerazione: 0-100 in circa 7 s, punta sui 150-160 km/h. Freno a mano da rally: le ruote dietro si bloccano e perdono aderenza, la macchina va di traverso SENZA fermarsi (da 70 km/h dopo mezzo secondo è ancora a 50), si tiene la derapata col controsterzo e col gas, poi riprende aderenza. Rumori (con l audio acceso): stridio delle gomme in frenata forte e in derapata, molto forte col freno a mano; botto e vibrazione contro i muri. Segni delle gomme sull asfalto in derapata e frenata.
+
+## 1002 — Modalità Dream: computer del GM in vista orizzontale, memoria
+Francesco (13:58): nello scontro diretto le schede dei giocatori erano altissime e vuote, i grafici enormi. Causa: l app pareggiava l altezza delle schede misurandole sullo schermo, ma nel monitor ruotato la misura dava la larghezza; ora usa l altezza vera (corretto anche nell app). Il monitor usa le stesse regole dell app quando il telefono è girato in orizzontale (grafici entro l altezza del monitor, liste su due colonne, intestazioni compatte), adattate all altezza del monitor. Memoria: entrando in un palazzo (Museo, Centro Medico, Sala Draft, uffici NBA) la città viene chiusa e si ricostruisce all uscita (prima restava in memoria insieme al palazzo); posizione e colori delle macchine vengono ricordati.
+
+## 1003 — Modalità Dream: città spettacolare
+Francesco (13:45). Facciate rifatte: cornici a ogni piano, telai bianchi, tende colorate alle finestre (anche accese di notte), balconi con ringhiere, mattoni con sfumature, vetrate con riflessi in diagonale, alette scure sui palazzi moderni. Grattacieli di vetro che riflettono cielo e skyline (stessa immagine di riflesso della macchina), cornicioni sui tetti, ombra alla base di ogni palazzo. LED colorati (ciano, viola, rosa, ambra, azzurro, verde) lungo il bordo dei tetti di molti palazzi e lungo gli spigoli dei grattacieli. Asfalto lucido, di notte bagnato con i riflessi. Alberi di due tipi (latifoglie a tre chiome e conifere) con colori variati e ombra a terra; prato vero nei parchi; semafori a tutti gli incroci (rosso su una strada, verde sull altra), idranti rossi; luna e alone di notte. Tutto in pochi disegni ripetuti (circa 35 per fotogramma).
+
+## 1004 — Modalità Dream: sedili, tetto più alto, guida più equilibrata
+Francesco (14:21–14:24). I sedili (poggiatesta) uscivano dal tetto: ora sono più bassi e dentro l abitacolo. Tetto e parabrezza più alti, occhi del pilota più bassi e visuale da dentro più ampia: si vede molta più strada. Sterzo più pronto (sterzata piena con meno giro del volante); frenando la macchina entra meglio in curva; freno a mano con derapata più lunga e scivolosa.
+
+## 1005 — Modalità Dream: curve fino a 72 km/h libere, LED sempre visibili
+Francesco (14:26–14:27). Aderenza in base alla velocità: fino a circa 72 km/h si curva liberamente (anche gli angoli a 90° degli incroci, accelerando o no); sopra i 75 l aderenza cala e la macchina allarga (sottosterzo): bisogna frenare e portarla sui 70 prima della curva. Insegne sul tetto di Museo, Centro Medico e Sala Draft non sfarfallano più (cornice staccata dall insegna). LED dei tetti accesi sempre (anche di giorno), più spessi e staccati dal cornicione.
+- (02/11 14:50) MAGLIE DOLPHINS nuove (richiesta utente): kitC DOL con flm (fulmini tono su tono) e DECO.DOL con fianchi neri, punta argento a zig-zag e stelline. Casa = BIANCA, Notte = SABBIA (al posto della nera), Alternativa = BLU. Patch /home/claude/patch_dolkit.py.
+
+## 1006 — Modalità Dream: soldi virtuali, modelli di auto, concessionario, villa del GM con box
+Francesco (14:04). Soldi virtuali Dream (solo per gioco, salvati sul telefono): si parte con 5.000 💰, sempre in vista in alto a sinistra in città e nelle sale. Concessionario (accanto alla Sala Scommesse, a est sulla strada parallela alla via principale): fermandoti davanti alla porta si apre il catalogo con 5 modelli e le barre di accelerazione, velocità e tenuta: Rally X 4.000 (tenuta alta, fari sul tetto, paraspruzzi), GT Sprint 9.000 (alettone), Muscle V8 12.000 (spunto brutale, presa d aria sul cofano), Volt E 18.000 (elettrica, scatto immediato, LED azzurro), Hyper V12 30.000 (la più veloce, alettone e prese laterali). Le auto si guidano davvero diverse (accelerazione, velocità massima, tenuta). Villa del GM nel parco a sud-ovest: casa moderna su due piani con vetrate e LED viola, piscina a sfioro illuminata, lettini, palme, vialetto e box da 5 posti aperto sulla strada. Le auto comprate vanno nel box; lasciando qualsiasi auto dentro un posto del box viene salvata lì (si ricorda modello e colori). Villa e box anche sulla mappa di guida.
+
+## 1007 — Modalità Dream: Sala Giochi
+Francesco (14:01). Sala Giochi (a est della piazza, sulla strada di fianco, dopo la Sala Draft verso sud): cabinati arcade con insegna luminosa, schermo col record e comandi, biliardo vero al centro. Avvicinandoti compare «GIOCA · 50 💰»: il gioco si apre a tutto schermo con il tasto ✕ ESCI sempre in alto a destra. Giochi originali (niente personaggi di altri marchi): Serpente, Mattoni (con livelli), Invasori (ondate), Labirinto (sei un pallone, scappi dagli arbitri, il fischietto li fa scappare), Dream Run (corri sui tetti, doppio salto), Biliardo 8 contro il computer (mira trascinando dalla bianca). Record salvati sul telefono. I giochi sono in un file a parte che si carica solo entrando (non pesano sul resto).
+
+## 1008 — Modalità Dream: Sala Scommesse
+Sala Scommesse (a est della via principale, lato nord): banco scommesse con maxischermo delle sfide del turno della nostra lega e le quote (calcolate dai punteggi del turno e dalla media della stagione), si punta sulla vincente; le scommesse si pagano da sole quando il turno è chiuso (al primo ingresso dopo). Slot machine con 7 simboli e jackpot, Blackjack (carta, sto, raddoppio, blackjack 3:2), Poker «Jacks or Better» (5 carte, scegli quali tenere, un cambio), Roulette europea (numeri, rosso/nero, pari/dispari, 1-18/19-36) con ruota che gira. Fiches da 10 a 1.000. Tutto con soldi virtuali.
+
+## 1009 — Modalità Dream: asfalto, alberi, cielo
+Francesco (14:43). L asfalto non mostra più un riflesso finto (non corrispondeva ai palazzi): solo lucido. Niente più alberi sui marciapiedi attaccati ai palazzi: alberi solo attorno e dentro i parchi. Cielo: foschia più lontana e dello stesso colore dell orizzonte, grattacieli del muro esterno più bassi: niente più sagome grigie strane guardando in alto; vista più lontana.
+
+## 1010 — Modalità Dream: gas in derapata, testacoda
+Francesco (14:43). In derapata dando gas con tocchi dosati le ruote dietro riprendono trazione e la macchina esce dalla curva accelerando (stile rally); tenendo il gas a tavoletta con la macchina molto di traverso si va in sovrasterzo di potenza e testacoda.
+
+## 1011 — Modalità Dream: guida più fluida e alla velocità giusta
+Francesco (14:55): la macchina sembrava più lenta di quanto segnava il contachilometri. Causa: quando il telefono faceva meno fotogrammi, la fisica rallentava con lui. Ora la fisica usa il tempo vero a piccoli passi (2,5 centesimi): la velocità è sempre quella vera anche se il telefono rallenta (nel simulatore lentissimo: 78 km/h dopo 5 s di gas, prima 57). Fluidità: in macchina la risoluzione è quella da guida (1,35×, poi si adatta da sola: scende se i fotogrammi calano sotto ~48 al secondo, risale se c è margine; da fermi torna nitida); tolte le 12 luci vere della città di notte (piazza, fontana, piscina, playground) che pesavano su ogni pixel di ogni palazzo: restano gli aloni e le luci finte, l aspetto è uguale; vernice e vetri delle auto con un materiale più leggero (stessi riflessi, senza il secondo strato trasparente); filtro delle texture delle facciate più leggero. Nessun dettaglio tolto ai palazzi.
+
+## 1012 — Modalità Dream: concessionario, niente più schermo nero
+Francesco (15:10): toccando la porta del concessionario lo schermo diventava nero, partiva l audio dello stadio e non si usciva più. Il concessionario non è una stanza: toccando la porta (o fermandoti davanti) ora si apre il catalogo in città. In più, se per errore si prova a entrare in una stanza che non esiste, non succede niente invece di bloccarsi.
+
+## 1013 — Modalità Dream: tasto corri, soldi per provare le auto, box da 8, sale più belle
+Francesco (15:16). Tasto CORRI in basso a destra, trasparente come il joystick: tenendolo premuto si cammina più del doppio veloce (sparisce in modalità tiro e in macchina). Regalo di prova: il salvadanaio passa a 80.000 💰 (una volta sola), abbastanza per comprare tutte le auto. Box della villa da 8 posti: ci stanno tutte le auto insieme (5 modelli + quelle di serie). Sala Giochi: moquette arcade fluorescente, neon ciano/rosa/viola su pareti e soffitto, insegna ARCADE luminosa, poster dei giochi nelle cornici, divanetti viola, banco premi. Sala Scommesse: moquette rossa con rombi dorati, colonne dorate, pannelli di velluto con cornici d oro, lampadari di cristallo, insegna JACKPOT, sedie attorno ai tavoli, cordone di velluto davanti al banco scommesse; maxischermo abbassato sotto il titolo.
+
+## 1014 — Modalità Dream: rumore dei passi
+Francesco (15:21). Con l audio acceso, camminando col joystick si sentono i passi (suono breve sintetizzato, un po diverso a ogni passo); correndo col tasto CORRI i passi sono più fitti e forti. In macchina niente passi.
+
+## 1015 — Modalità Dream: tasto corri da videogioco, radio in macchina
+Francesco (15:28). CORRI come nei giochi touch: lo tieni premuto per correre e, senza staccare il dito, lo trascini per girare la visuale. RADIO in macchina (con l audio acceso, solo voce, niente tifosi): segue la squadra dei colori dell auto che guidi (Ducks, Dolphins…) e la sua avversaria del turno. Salendo: «Radio Dreamers: in diretta con i … contro i …, in campo N dei nostri» (oppure che non ci sono partite in corso). Poi ogni azione live dei giocatori in campo viene annunciata appena arriva (canestri da 2 e da 3, liberi, rimbalzi, assist, stoppate, recuperi, palle perse; per l avversaria «Per i …:»); ogni 3 minuti l aggiornamento con i punteggi delle due squadre e i PDK dei tre migliori dei tuoi. Cambiando colori all auto la radio passa a quella squadra. Mentre guidi la voce dello stadio non si sovrappone alla radio.
+
+## 1016 — Modalità Dream: ogni modello di auto ha la sua sagoma
+Francesco (15:33): le auto sembravano tutte uguali. Ora ogni modello ha una carrozzeria diversa (calcolata una volta sola, non pesa): Rally X compatta a due volumi col portellone, tetto alto, portapacchi e fari sul tetto; GT Sprint lunga e bassa, fastback e alettone; Muscle V8 squadrata con muso verticale, cofano lungo con presa d aria e coda tronca con spoiler; Volt E affusolata a goccia con tetto tutto in vetro e LED azzurro; Hyper V12 a cuneo bassissima, abitacolo avanzato, più larga, alettone e feritoie sul cofano motore. Fari, fanali, targhe, loghi e minigonne seguono la forma di ogni auto. Quella di serie resta com era.
+
+## 1017 — Modalità Dream: CORRI a interruttore
+Francesco (15:36). Il tasto CORRI ora si accende e si spegne con un tocco: acceso diventa viola con il bordo giallo e la scritta «CORSA», e col joystick si corre senza tenerlo premuto (dita libere per joystick e visuale); ritoccandolo si torna a camminare.
+
+## 1018 — Modalità Dream: Dream TV spettacolare
+Francesco (15:41). Regia automatica con 8 camere che si alternano a stacchi ogni 6-8 secondi: gru che gira attorno allo stadio scendendo, carrello a bordocampo, vista dall alto che ruota, giro attorno al maxischermo, camera dietro il canestro, drone in picchiata, panoramica dalla tribuna, giro basso «eroico»; ogni camera ha la sua lente, leggero mosso a mano. Quando un giocatore fa un azione la regia stacca sul primo piano che gli gira attorno. Bande nere da cinema, bollino «● LIVE · DREAM TV», nome della camera in basso; joystick e corri nascosti in TV.
+
+## 1019 — Modalità Dream: ruote sistemate, auto più sportive e più diverse in guida
+Francesco (15:44). Ruote e cerchi di nuovo ben visibili (sulle auto più larghe finivano dentro la carrozzeria); cerchi più lucidi; ruote più grandi sulle sportive. Muscle V8 ora fastback in stile muscle car americana con fanali a tre barre; Hyper V12 più bassa e a cuneo stile supercar, prese d aria laterali e splitter. Prestazioni a scala: più l auto costa, più è veloce e tiene in curva (e la derapata si controlla meglio): Rally X 173 km/h, Muscle V8 202, GT Sprint 205 (tenuta 1,22), Volt E 216, Hyper V12 252 km/h con tenuta 1,42; quella di serie resta come prima.
+
+## 1020 — Modalità Dream: il computer del GM è l app vera
+Francesco (15:51): l app nel monitor era tagliata. Ora sedendoti al computer lo stadio si mette da parte (resta in memoria, la voce dei tuoi live continua; pubblico spento) e sei nell app normale, identica, che si apre sullo scontro diretto della squadra e si usa come sempre, anche girando il telefono in orizzontale. In alto a destra «🏟️ TORNA IN UFFICIO» ti riporta seduto nell ufficio; in basso a sinistra «🔊 voce dei tuoi live attiva» se l audio è acceso. Le sezioni riservate restano escluse.
+
+## 1021 — Modalità Dream: Dream TV fluida
+Francesco (16:07): la TV andava a scatti. Causa principale: con la TV accesa lo stadio si ridisegnava solo 10 volte al secondo; ora a ogni fotogramma. In più la camera insegue l inquadratura con un movimento smorzato sul tempo vero (liscio anche se un fotogramma tarda; agli stacchi salta di netto come in TV), mosso a mano più leggero e lento, e in TV la risoluzione si adatta da sola per restare fluida (come in macchina).
+- (02/11 16:20) Dream, girarsi con la mano destra: .drm3hint pointer-events:none (invisibile bloccava i tocchi in basso); tasto CORRI = tocco breve accende/spegne, trascinare da lì gira la visuale; risoluzione piena dopo 1,2 s da fermi (prima 0,35 s) per meno scatti. Patch /home/claude/patch_dreamlook.py.
+
+## 1022 — Modalità Dream: foto delle auto nel concessionario
+Francesco (16:15). Nel catalogo ogni modello ha la sua foto: l auto viene fotografata una volta sola dal gioco stesso (vista di 3/4 anteriore, nei colori della tua squadra, su sfondo viola).
+
+## 1023 — Modalità Dream: guida stabile piano, villa con interni, muscle pulita
+Francesco (16:16–16:19). Guida: sotto i ~40 km/h la macchina resta stabile anche sterzando di colpo (il retro non parte più senza freno a mano); il testacoda di potenza solo sopra i ~47 km/h; ad alta velocità tutto come prima. Muscle V8: tolti lo spoiler che sembrava volare sul tetto e la presa d aria sul cofano; ora rigonfiamento del cofano a filo e coda «ducktail» integrata. Villa: casa attaccata al box (un solo edificio), tolto il pezzo di vialetto che finiva sulla strada, vetrate e piscina dietro la casa, 8 palme attorno alla piscina (fitte sul lato strada per la privacy). Si entra dalla porta sul lato est: grande soggiorno con divano a L, tavolino, tappeto, TV gigante col logo della squadra, camino acceso, piante, lampada e vetrata sulla piscina; cucina con mobili, frigo, isola e sgabelli; camera con letto nei colori della squadra, comodini con lampade, armadio e quadro col logo. Uscendo si torna davanti alla porta.
+
+## 1024 — Modalità Dream: l app al computer del GM sempre in orizzontale
+Francesco (16:34): sedendosi al computer l app si apriva in verticale. Ora, se il telefono è tenuto dritto (o col blocco rotazione), tutta la pagina dell app viene girata in orizzontale come lo stadio, con le regole della vista orizzontale dell app (grafici e liste come col telefono girato); tasti, scorrimento e finestre seguono la rotazione. Alzandosi («Torna in ufficio») la pagina torna normale.
+
+## 1025 — Modalità Dream: niente muro invisibile attorno alle auto parcheggiate
+Francesco (16:37): passando di fianco a un auto parcheggiata ci si fermava contro un muro invisibile. L urto tra auto usava un cerchio di 4,2 m attorno al centro (più largo dell auto); ora ogni auto ha la sua forma vera (due cerchi, davanti e dietro, larghi quanto l auto): si passa di fianco senza problemi. Se la tocchi la spingi via (si sposta e gira un po, tu rallenti un po; botto se vai forte); si blocca solo se dall altra parte c è un palazzo.
+
+## 1026 — Modalità Dream: computer del GM = l app vera in orizzontale
+Francesco (16:45): l app girata non caricava le parti sotto lo schermo e non partiva dalla home. Ora sedendoti al computer si apre l app vera dentro una finestra a tutto schermo girata come lo stadio: dentro la finestra il telefono «è» in orizzontale, quindi l app usa la sua vista orizzontale e scorre e carica tutto esattamente come quando giri il telefono. Parte sempre dalla HOME della tua squadra; il tasto D della modalità Dream lì dentro è nascosto; le sezioni riservate restano escluse. «🏟️ TORNA IN UFFICIO» in alto a destra; la voce dei tuoi live continua (pubblico spento).
+
+## 1027 — Report Allenamento IA Trade Spiders (40) e Mooses (50) del 02/11
+Profili aggiornati fondendo i nuovi dati con i precedenti (peso = risposte): regressione su Δ valore, età e giocatori (ridge). SPIDERS (40 nuove, 20 sì): vantaggio chiesto 7 → 5,8%; età 0 → 0,75 (hanno accettato di ringiovanire: 25,9 contro 28,2 anni); pl: Morant −4,8 (lo cedono alla pari 6 su 7), Mitchell 8 → 3,5 e Franz Wagner 7,2 → 2,8 (ora li cedono più spesso), Boozer 12 → 8,2 e Castle 12 → 8,2 (non li cedono, ma meno estremi), Adebayo 4,3 (1 su 8 alla pari), LaMelo +1,6; n 132; GM_ACC 40/98. MOOSES (44 nuove senza le 6 «da cambiare», 21 sì): vantaggio chiesto 14 → 12,2%; età 2,5 → 2,8; pl: Herro −12 → −8,6 (cede 8 su 12), Ausar Thompson 7,8, Graves, Dëmin, Fears, Jaquez in negativo leggero; piacciono Ighodaro, Kuminga; richieste «più crediti» (Ware per Queen); n 194; GM_ACC 41/112. GM_DESCR di entrambi aggiornate. Nessuna correzione dei valori del Calcolatore (nessun nuovo consenso tra più GM).
+
+## 1028 — Modalità Dream: Officina Dream (tuning, colori, cerchi)
+Nuova officina nel parco a nord-est (mappa: 🔧). Entri con la macchina sul tappeto giallo e appare «🔧 OFFICINA»: cursori per potenza, velocità massima, grip in curva veloce e lenta, scivolata in derapata; colori carrozzeria, dettagli e cerchi. Le modifiche valgono subito nella guida e, se la macchina è in garage, restano salvate nel suo box.
+
+## 1029 — Modalità Dream: villa di lusso con TV a canali
+TV grande sulla parete sinistra del soggiorno con canali: DREAMERS (partite della lega), NBA LIVE (risultati), e un BOX SCORE per ogni partita. Tasto «📺 CANALE» quando sei vicino o tocca la TV; si aggiorna ogni 20 secondi. Arredo di lusso: parquet a spina di pesce, soffitto bianco con faretti, lampadario dorato, tende, libreria, quadri, poltrona.
+
+## 1030 — Modalità Dream: villa con aspetto da casa
+Pareti dipinte calde con boiserie e battiscopa, niente soffitto viola, LED o titolo da sala; l'uscita dice ESCI. TV e salotto spostati: il passaggio tra cucina e camera è libero.
+
+## 1031 — Modalità Dream: computer del GM semplice in orizzontale
+Francesco (17:05): il computer crashava. Ora al computer si apre una schermata nuova in orizzontale con solo due schede: 🧮 Calcolatore trade e 🤖 IA Trade (con i gusti dei GM), più «🏟️ TORNA IN UFFICIO». Niente più app intera dentro una finestra: lo stadio dietro viene messo in pausa per non pesare sul telefono.
+- (02/11 18:20) EDGE-TO-EDGE: calotta #e2ecap (+ #e2ecapb sotto con lo sfondo pagina) alta env(safe-area-inset-top), z 900, che copia lo sfondo di ciò che sta in cima: intestazione (sfumato + righe ::after, allineati; se scorre via ne tiene la parte bassa) oppure, senza intestazione (dreamfs), la stanza in cima con clip-path. Tolte le vecchie strisce body::before. Il contenuto non passa più sotto la Dynamic Island (niente sfocatura iOS). Patch /home/claude/patch_e2e.py.
+
+## 1032 — Modalità Dream: sterzo meno nervoso, abitacolo e strade di notte
+Francesco (18:14): sterzo troppo sensibile, abitacolo e strade buie di notte. Volante con curva progressiva (piccoli movimenti = poca sterzata), sterzata filtrata e ridotta di più con la velocità, rotazione della macchina più morbida. Di notte sedili, cruscotto, volante e pannelli hanno una luce soffusa; luce ambiente e luna più forti; pozze di luce dei lampioni più grandi e più calde.
+
+## 1033 — Modalità Dream: stadi nuovi per tutte le squadre (come le arene NBA)
+Francesco (18:01/18:18): tribune meno ripide e più larghe come nelle foto di Miami/Orlando. Anello basso 20 file (alzata 30 cm), anello delle suite con vetrate illuminate e fascia LED, anello alto 16 file (alzata 46 cm) con fascia LED in cima, tetto più alto, maxischermo quasi doppio con fasce LED e anelli luminosi. Sedili col disegno della squadra: fondo scuro, onde nel colore squadra negli angoli, prima fila colorata e il nome della squadra sui lati lunghi (nickname in basso, nome intero in alto); gradoni grigio scuro. Pubblico più rado (45% sotto, 35% sopra) così il disegno si vede. Vale per tutte le 8 squadre.
+
+## 1034 — Modalità Dream: guida divertente, macchine che non si incastrano, notte, visuale paraurti, stadio
+Francesco (18:20–18:33). GUIDA: dritto stabile (sterzo progressivo e filtrato); in curva veloce col gas oltre l'aderenza il retro parte in derapata controllabile invece di tirare dritto; tutto gas + tutto sterzo = la macchina gira su se stessa (donut, ~480° in 3 s nella prova); testacoda da troppo gas più raro. MURI: contro un palazzo si striscia lungo il muro e la macchina si allinea (si perde solo la velocità verso il muro); se non si passa rimbalza e gira solo se c'è spazio; se la macchina è già dentro un palazzo viene spinta fuori nel punto libero più vicino: non ci si incastra più. NOTTE: lampioni ogni 20 m (prima 30) con pozze di luce calda più grandi; palazzi meno accesi (finestre accese 24%, facciate, vetrine dei piani bassi e vetrate più tenui); luce ambiente moderata. VISUALE: il tasto 🎥 ora gira su dentro → dietro → paraurti (la macchina sparisce, come dal paraurti). STADIO: la fascia LED in cima non passa più davanti alla porta della sala trofei/uscita; tolte le macchie sull'anello delle suite (combaciava con la parete dei gradoni); si parte dall'ultimo scalino prima della sala trofei guardando il campo.
+
+## 1035 — Modalità Dream: città più grande, strade più larghe del 20%
+Francesco (18:52): tutta la città è allargata del 20% in pianta (strade, marciapiedi, isolati, palazzi, parchi, pista ad anello): le macchine restano della loro misura vera, quindi rispetto alla macchina le strade sono più larghe e si scorre meglio. Collisioni con palazzi e auto, segni delle gomme e visuali (dentro, dietro, paraurti) nella misura vera della macchina; il tachimetro segna la velocità vera nella città più grande. Tocchi su porte e oggetti ricalcolati nella nuova scala.
+
+## 1036 — Modalità Dream: DREAM CIRCUIT, pista fuori città
+Francesco (19:01): tasto 🏁 → terza corsa «DREAM CIRCUIT (fuori città)»: la macchina viene portata sulla pista a sud della città, oltre il muro di grattacieli, conto alla rovescia e giro a tempo con 12 portali (l ultimo è il traguardo), record salvato come le altre corse. Pista di ~2,4 km (circa un minuto di giro tirato; il pilota automatico di prova prudente fa 1:15 con punta 130 km/h), larga 16 m: asfalto chiaro, linee bianche ai bordi, cordoli bianchi e rossi e vie di fuga in sabbia nelle curve, erba, barriere di gomme bianche e blu (non si esce: si striscia), rettilineo con traguardo a scacchi, portale «DREAM CIRCUIT» e tribuna viola e oro, torri faro che di notte illuminano la pista. Dal tasto 🏁 sulla pista c è «🏙️ TORNA IN CITTÀ».
+
+## 1037/1038 — Dream Circuit: notte Dream, saliscendi, giri infiniti, tasto città
+Francesco (19:24/19:30): sul circuito il cielo è sempre «notte Dream» (blu-viola scuro con stelle e alone viola all orizzonte, nebbia scura e lontana) a qualsiasi ora; torri faro sempre accese con pozze di luce sulla pista, asfalto, cordoli e barriere illuminati, striscia LED viola sopra le barriere; tornando in città torna il cielo dell ora vera. Pista con saliscendi (dossi lunghi fino a ±5 m e cunette): la macchina segue la quota e si inclina, in salita rallenta e in discesa prende velocità; prato modellato attorno; telecamere, portali, tribuna, torri e segni delle gomme alla quota giusta. Giri infiniti: a ogni traguardo il tempo del giro, «GIRO N · tempo · ultimo · 🏆 record», il giro migliore resta record; si smette dal tasto 🏁. Tasto fisso «🏙️ TORNA IN CITTÀ» sotto la mappa quando sei sul circuito (in macchina o a piedi), oltre a quello nel menu 🏁.
+
+## 1039 — Modalità Dream: due auto nuove nel catalogo, FORMULA DREAM e PROTO LM
+Francesco (19:35). FORMULA DREAM (70.000 💰): monoposto vera costruita apposta (muso basso col numero, ala anteriore a tre elementi con filo LED, halo, casco del pilota, pance con prese d aria, presa sopra la testa con pinna, ala posteriore con paratie e loghi, fondo e diffusore, ruote scoperte con sospensioni e scritta gialla sulle gomme, luce di pioggia), livrea da corsa nei colori della squadra (freccia nel secondo colore, filetti bianchi, logo). Guida: carico aerodinamico (più va forte più tiene: le curve veloci si fanno in pieno), muso puntato (sterzo +35%), potenza 2,7×, punta ~360 km/h; vista da dentro dal casco con volante F1 e schermo. PROTO LM (45.000 💰): hypercar da Le Mans lunga e bassa, pinna dal tetto all alettone, alettone grande con paratie, splitter, prese laterali, stessa livrea da corsa; carico aerodinamico medio, sterzo +10%. Prova col pilota automatico sul Dream Circuit: STREET 1:15, PROTO LM 1:01, FORMULA DREAM 0:53.
+
+## 1040 — Modalità Dream: Formula Dream e Proto LM già nel box della villa
+Francesco (19:51): al primo ingresso dopo l aggiornamento le due auto nuove compaiono nel box della villa (nei colori della tua squadra), gratis, una volta sola; se una c è già non viene doppiata; se il box (8 posti) è pieno non vengono aggiunte.
+
+## 1041 — Formula Dream: visuale abitacolo libera
+Francesco (19:56): tolto l halo (copriva la visuale); occhi del pilota un po più alti e indietro, volante più basso, più piccolo e più inclinato: da dentro si vedono la strada, il muso e le due ruote anteriori.
+
+## 1042/1043 — Piste vere (Spa, Monaco, Silverstone), F1 col volante di prima, sterzo -10%
+Francesco (19:54–20:05). PISTE VERE nel menu 🏁, ognuna fuori città: SPA-FRANCORCHAMPS (a nord), SILVERSTONE (a est), MONACO (a ovest). Tracciati presi dalle linee centrali reali (dati aperti «f1-circuits», licenza MIT), rimpiccioliti (Spa e Silverstone al 45% ≈ 3,1 e 2,6 km di gioco, Monaco all 85% ≈ 2,8 km), curve più strette appena ammorbidite perché la pista larga ci stia; stesse curve nello stesso ordine (La Source, Eau Rouge-Raidillon, Kemmel…; Sainte Dévote, Casino, tornante, tunnel, piscina…; Abbey, Copse, Maggotts-Becketts…). Saliscendi ispirati ai veri (Spa con la discesa all Eau Rouge e la salita del Raidillon, Monaco con la salita al Casino). Spa e Silverstone larghe con cordoli, sabbia, barriere e tribuna; Monaco cittadina: stretta (10 m), muri vicini, palazzi con finestre accese ai lati, asfalto al posto del prato. Tutte con notte Dream, torri faro, giri infiniti a tempo e record, 16 portali, tasto «🏙️ TORNA IN CITTÀ». Prova col pilota automatico prudente: tutte completate senza incastri. FORMULA DREAM: rimessi volante coi LED e posizione degli occhi di prima, senza halo. STERZO: volante 10% meno sensibile su tutte le auto.
+
+## 1044 — Piste: niente portali, tempo sul traguardo
+Francesco (20:24): sulle piste (Dream Circuit, Spa, Monaco, Silverstone) niente più portali né freccia. Dopo il «VIA!» il cronometro parte quando passi la linea del traguardo e a ogni passaggio segna il giro (giri infiniti, ultimo giro e record). Il giro vale solo se hai fatto quasi tutta la pista nel verso giusto: con una scorciatoia o un taglio il tempo riparte da zero senza contare. Le corse in città restano coi portali. Per fluidità si disegna solo la pista su cui sei (in città sono spente).
+
+## 1045 — Piste separate e senza sfarfallio
+Francesco (20:34): ogni pista ora è separata: si costruisce solo quando ci arrivi e viene scaricata dalla memoria quando torni in città (in città restano in memoria solo i dati leggeri del tracciato). Sfarfallio: asfalto senza puntini fitti (grana morbida a chiazze, filtro anisotropo massimo), linee, cordoli, traguardo e pozze di luce con spinta di profondità (non litigano più con l asfalto da lontano), piano vicino della telecamera più lontano sulle piste (più precisione di profondità), cielo Dream con poche stelle morbide al posto dei puntini da 1 pixel. Le cose nuove (centro spaziale, pianeti…) saranno separate allo stesso modo.
+
+## 1046 — DREAM SPACE CENTER e viaggio sul pianeta della squadra (modulo separato space.js)
+Francesco (20:34). Nel parco a nord-est della città (isolato 4,1, prima vuoto): piazzale, rampa di lancio con lo shuttle in verticale (serbatoio arancione, due razzi, orbiter con ali, deriva e fasce nei colori della squadra scelta), torre di lancio a traliccio col braccio d imbarco e luce rossa in cima, palazzo del controllo missione con vetrata, parabola e insegna «🚀 DREAM SPACE CENTER». A piedi vicino alla rampa: «🚀 SALI SULLO SHUTTLE» → scegli la squadra proprietaria (8 loghi) → lo shuttle prende i suoi colori e si parte. Tutto il viaggio è in un file a parte (space.js) caricato solo ora e scaricato al ritorno; la città resta in pausa. 1) Decollo (3-2-1, scossoni) e viaggio di circa un minuto in prima persona dalla cabina (cornici e cruscotto nei colori della squadra, schermi con radar e logo): cloche a sinistra per spostarti, 🔥 BOOST a destra, schiva le meteore (rocce irregolari, alcune con lava), 3 scudi; il pianeta della squadra (colori della squadra, anelli, alone) cresce davanti a te. 2) Ingresso in atmosfera e atterraggio pilotato: pianeta con cielo, lune, montagne e suolo nei colori della squadra; pista 1600×70 m con numeri, strisce, logo della squadra, luci ai bordi, soglia verde, fine rossa, luci di avvicinamento, PAPI (2 bianche + 2 rosse = discesa giusta), torre di controllo e hangar «PIANETA …». Cloche (su = muso su, lati = virata), ▲/▼ GAS; atterri se tocchi sulla pista dolce, ali dritte e non troppo veloce, altrimenti schianto e riprovi; dopo il rullaggio «Benvenuto sul pianeta …» con punteggio, rifai o torna sulla Terra.
+
+## 1047 — Viaggio rapido: 🏠 VILLA e 🚀 SHUTTLE
+Francesco (20:54): in città due tasti (a sinistra sotto i soldi a piedi, a destra in macchina) portano subito davanti al box della villa o alla rampa dello shuttle.
+
+## 1048 — Shuttle coi colori della squadra scelti come per le auto, rumore dei motori nello spazio
+Francesco (21:07): vicino alla rampa compare una fila con gli 8 loghi: tocchi una squadra e lo shuttle cambia subito colori (fasce, ali, deriva), loghi (sul muso, sulle ali e sulla deriva) e nome della squadra sul fianco, anche senza salirci; la scelta resta salvata. «🚀 SALI SULLO SHUTTLE» parte con la squadra scelta (niente più finestra di scelta). Audio: rombo profondo dei motori + ronzio della turbina per tutto il viaggio; sale al conto alla rovescia ed esplode al decollo, cresce col BOOST e all ingresso in atmosfera; in atterraggio segue il gas, cala nel rullaggio; si spegne quando torni in città (rispetta il tasto audio).
+
+## 1049 — Shuttle: rumore del colpo di meteora
+Francesco (21:13): quando una meteora colpisce lo shuttle, botto sordo (colpo basso che scende), crepitio di rocce che si spegne e lamiera che vibra; più forte con le meteore grandi e con l ultimo scudo.
+
+## 1050 — Shuttle: cabina di pianificazione con le costellazioni, rotta da seguire a mano, suono dell avvicinamento
+Francesco (21:17). Salendo sullo shuttle si apre la CABINA DI PIANIFICAZIONE: mappa stellare con la Terra, 8 costellazioni (Orione, Cassiopea, Cigno, Lira, Drago, Pegaso, Andromeda, Scorpione, ognuna col suo disegno di stelle) e il pianeta della squadra; tocchi le costellazioni dove fare tappa (numerate nell ordine, ritocchi per toglierle), la rotta tratteggiata si aggiorna con distanza e tempo stimato (diretta ~1 minuto, con 3 tappe ~1 minuto e mezzo), «↺ AZZERA ROTTA» o «🚀 CONFERMA ROTTA E DECOLLA». In volo la rotta si segue a mano: ogni tappa finisce con un anello-segnale (azzurro col bordo nel colore della squadra) che devi attraversare, la freccia azzurra indica dove spostarti, la costellazione cresce davanti mentre ti avvicini; dentro l anello = «✔ ORIONE» con un trillo, fuori = «FUORI ROTTA!» e un pezzo di strada in più. In alto «TAPPA 1/3: ORIONE · … mila km». Ultima tappa verso il pianeta: rombo e vento che crescono durante l avvicinamento, poi l ingresso in atmosfera. «Riparti dalla Terra» rifà la stessa rotta.
+
+## 1051/1052 — PIANETA DELLA SQUADRA: città spaziale (modulo separato planet.js), alieni-mascotte, memoria separata, radio live
+Francesco (21:26–21:28). Dopo l atterraggio «🚶 SCENDI SUL PIANETA»: il pianeta della squadra dello shuttle (Ducks → pianeta Ducks, ecc.), una città spaziale di 1,1 km di lato (più grande della città sulla Terra) + pista rover fuori città: viali luminosi a griglia nei colori della squadra, grattacieli esagonali con finestre accese e anelli LED, case a cupola di vetro con porta colorata, moduli abitativi, giardini alieni luminosi, lampioni, nel cielo la Terra e un gigante gassoso con gli anelli. Piazza centrale con la SPACE ARENA (gradoni, fascia LED, torri faro, maxischermo, campo col logo); altri 8 campi da basket spaziali: vicino a un canestro «🏀 TIRA» (gravità bassa, «CANESTRO!»). Pista ROVER CIRCUIT a sud con portale e giro a tempo sulla linea (record salvato per pianeta). Veicoli: rover lunari a 6 ruote e motorini spaziali che fluttuano, nei colori della squadra («SALI»/«SCENDI», cloche = gas/sterzo, visuale da dietro, rumore del motore). Shuttle atterrato sulla piazzola con i loghi. Alieni fermi (centinaia, leggeri) a forma di mascotte: papere sul pianeta Ducks, pavoni con la coda a ventaglio sui Peacocks, volpi sui Foxes, delfini sui Dolphins, ragni sugli Spiders, tartarughe sui Turtles, aquile sugli Eagles, alci sui Mooses. A piedi: cloche, trascini per guardarti intorno, 🏃 CORSA; minimappa che gira con te; tasti rapidi 🚀 SHUTTLE, 🏟️ SPACE ARENA, 🏁 PISTA ROVER, 🌍 TORNA SULLA TERRA. MEMORIA: quando parti la città della Terra viene scaricata; sullo shuttle c è solo lo shuttle, sul pianeta solo il pianeta (lo shuttle viene scaricato), tornando sulla Terra la città si ricostruisce davanti alla rampa. RADIO: sullo shuttle e sul pianeta si sente la voce della partita live della squadra dello shuttle (come in macchina).
+
+## 1053 — Pianeta: città 3 volte più grande e meno fitta, viali spaziali larghi, rover di più tipi, crateri da esplorare (open world)
+Francesco (21:43). Città spaziale di 3,3 km di lato (era 1,1): isolati da 220 m, viali larghi 30 m con doppia linea luminosa centrale nel colore della squadra, bordi luminosi e corsie tratteggiate; molti isolati lasciati selvaggi (regolite e giardini alieni), grattacieli più grandi ma pochi per isolato in centro, cupole e moduli sparsi in periferia; lampioni ogni 70 m. Fuori città TERRENO LIBERO su 9×9 km: colline morbide e ~45 CRATERI (conca scura + bordo rialzato chiaro, fino a 600 m di diametro) da esplorare; si cammina e si guida dappertutto, i veicoli seguono il terreno e si inclinano, in salita rallentano (il cingolato si arrampica meglio). Veicoli: ROVER LUNARE a 6 ruote, BUGGY LUNARE veloce col roll-bar, CINGOLATO DA ESPLORAZIONE pesante a 8 ruote con cabina e fari, MOTORINO SPAZIALE che fluttua; parcheggiati allo spazioporto, in piazza, alla pista rover e sul bordo degli 8 crateri più grandi. Nuovo tasto rapido «🌋 CRATERI» (porta a turno sul bordo dei crateri più grandi). Pista rover spostata fuori città su terreno spianato. Minimappa con crateri, città e pista. Sole più basso per far vedere i rilievi.
+
+## 1054 — FLOTTA DA GUERRA su ogni pianeta (modulo separato warship.js): interni camminabili, viaggi interplanetari con battaglie
+Francesco (22:01). Su ogni pianeta, a nord della città, il PORTO DELLA FLOTTA (tasto rapido «🛸 FLOTTA»): tre navi da guerra della squadra (DSS DUCKS I/II/III…) sospese sopra le piazzole, ~110 m: scafo a cuneo con pannelli, ponte superiore, torre di comando con vetrate, tre motori enormi con bagliore nel colore della squadra, pance laterali con hangar e oblò, 6 torrette a doppia canna, nome e logo sulle fiancate, luci di posizione. Alla passerella «🛸 SALI SULLA DSS …» → si entra DENTRO la nave (il pianeta viene scaricato): corridoio centrale con cartelli e luci, PLANCIA DI COMANDO (vetrata sullo spazio, console a ferro di cavallo con schermi, tavolo olografico col pianeta che gira, poltrona del comandante), SALA COMUNE (divani, tavoli, bancone, maxischermo), ARMERIA (fucili nelle rastrelliere, missili, armadietti, luce rossa), BAGNI (cabine, lavandini, specchi, piastrelle), ALLOGGI (letti a castello), INFERMERIA, HANGAR con un caccia, SALA MACCHINE col reattore che pulsa, PORTELLONE per scendere. Dal posto di comando «🧭 ROTTA INTERPLANETARIA» → scegli il pianeta di un altra squadra → viaggio lungo (~3 minuti) con fasi: partenza, campo di meteoriti, pattuglia aliena (6 caccia), fascia di asteroidi densa da passare a zig-zag, squadriglia aliena (9 caccia), INCROCIATORE ALIENO da distruggere per passare, arrivo. Pilotaggio con la cloche (imbardata e beccheggio), ⏫ SPINTA; 🔫 FUOCO = cannoni al plasma infiniti dritti sul mirino; 🎯 MISSILE = missili a ricerca sul bersaglio agganciato (riquadro rosso vicino al mirino), 16 che si ricaricano uno ogni 12 s, con scia di fumo; 🛡️ SCUDO deflettore limitato (acceso assorbe i colpi ma si consuma, spento si ricarica); scafo che si ripara piano se non vieni colpito; 🎥 VISTA dalla torre di comando o esterna. Caccia alieni organici che girano attorno e sparano laser verdi, incrociatore con torrette; esplosioni, allarme, audio di cannoni, missili, scudo ed esplosioni. All arrivo si attracca al pianeta della squadra scelta (si carica solo quello). Nave distrutta → riprova o torna a bordo in porto.
+
+## 1055 — DREAM AIRPORT e pullman: il ritorno sulla Terra (modulo separato airport.js)
+«Torna sulla Terra» (da shuttle, pianeta o flotta) ora porta al DREAM AIRPORT: atterraggio pilotato su una pista di 2 km (luci, soglia verde, fine rossa, luci di avvicinamento, PAPI, torre di controllo, terminal con insegna), cielo e luci secondo l ora vera. Poi «🚌 GUIDA IL PULLMAN»: si guida il pullman (viola, display «DREAM CITY») lungo una strada panoramica di ~5 km in mezzo alla natura (colline, boschi di abeti e latifoglie, laghi, montagne all orizzonte, paletti e lampioni, cartelli «DREAM CITY 4 km / 2 km / 500 m») fino alla porta «BENVENUTI A DREAM CITY» con lo skyline; lì si scarica tutto e si entra in città dalla strada ad anello ovest. «✕ ESCI» torna subito in città alla rampa dello shuttle.
+
+## 1056 — Tasto 🪐 PIANETA dalla Terra e tasti rapidi quadrati a destra
+Francesco (22:33): in città i tasti rapidi sono quadrati (icona + nome) in fila in alto a destra, accanto alla colonna ✕/audio, sia a piedi sia in macchina: 🏠 VILLA, 🚀 SHUTTLE e il nuovo 🪐 PIANETA che porta subito sul pianeta della squadra scelta per lo shuttle (senza viaggio; la città viene scaricata). Anche «🏙️ CITTÀ» del circuito è quadrato nella stessa fila. Sul pianeta i tasti rapidi sono quadrati a destra in due file da tre.
+
+## 1057 — Nave da guerra: si entra in tutte le stanze, partenza sempre a portata
+Francesco (22:45): tra corridoio e stanze c era un muro invisibile (il varco della porta non era camminabile): ora tutte le porte si attraversano (plancia, sala comune, armeria, bagni, sala macchine, alloggi, infermeria, hangar, portellone). Tasti rapidi quadrati a destra a bordo: 🚀 PARTI (porta in plancia e apre subito la rotta interplanetaria verso i pianeti delle altre squadre), 🧭 PLANCIA, 🛋️ COMUNE, 🔫 ARMERIA, 🚻 BAGNI, 🛏️ ALLOGGI, ⚛️ MACCHINE, 🚪 SCENDI. In viaggio i tasti spariscono e tornano quando sei di nuovo a bordo.
+
+## 1058 — Scendendo dalla nave si resta sul pianeta, sotto la nave
+Francesco (22:50): «🚪 SCENDI», il portellone e anche «✕ ESCI» quando sei a bordo ti lasciano sul pianeta accanto alla passerella, sotto la nave (prima ✕ riportava sulla Terra). Sul pianeta «✕ ESCI» e 🌍 TERRA restano per tornare a casa.
+
+## 1059 — Cabina di comando della nave, suoni del viaggio e megafono sempre presente
+Francesco (23:00): in viaggio la vista parte dalla CABINA DI COMANDO: plancia con bordo luminoso nei colori della squadra, tre schermi vivi (radar con rocce e nemici, stato nave, rotta), spie che lampeggiano, montanti del parabrezza, tettuccio, pannelli laterali, cloche e manetta che si muovono coi comandi; i colpi fanno tremare la cabina. 🎥 cambia vista: CABINA → TORRE → ESTERNA.
+Suoni nuovi: rombo dei motori che sale con la SPINTA, partenza e arrivo a curvatura, laser alternati sinistra/destra, scintille sui colpi a segno, lancio del missile (tonfo + sibilo), colpi alieni (suono diverso, da che lato arrivano), colpi sullo scafo (clangore metallico), meteoriti: urto (botta + frantumi), roccia distrutta (sbriciolamento), passaggio ravvicinato (fruscio che passa da un lato all altro).
+Audio (23:00): sullo shuttle, sul pianeta, sulla nave e all aeroporto c è sempre il megafono 🔇/🔊 accanto a ✕ ESCI. Prima, se entravi nello spazio con l audio spento, i suoni di quei luoghi non esistevano proprio e non si potevano più accendere: ora passano tutti da un unico volume che il megafono accende e spegne in ogni momento (anche la radio).
+
+## 1060 — DREAM VALLEY: mondo aperto (valley.js, modulo separato)
+Francesco (23:17): un vero mini-mondo originale, chiuso da montagne, con lago, 3 città poco dense, paesi, campagna, strade da guidare, aeroporti, barche, officine, stadi, slot e scommesse; regola: niente movimenti automatici; serve una mappa apribile con i punti di interesse; suoni per tutto.
+- Ingresso: tasto quadrato 🌄 VALLE in città (accanto a VILLA/SHUTTLE/PIANETA). ✕ ESCI riporta alla porta ovest della città. Il megafono 🔇/🔊 c è sempre.
+- La valle (12 km): catena montuosa innevata tutto intorno + cime lontane all orizzonte; al centro il LAGO DEI SOGNI con isola e FARO. Luce calda di fine pomeriggio, nuvole dipinte, foschia.
+- Città: PORTOLUCE (sul lago, colorata, tetti in coppi, lungolago con palme, porto turistico con pontili), MONTECIELO (collina, pietra, chiesa grande col campanile, cipressi), VALFERRO (industriale: capannoni, ciminiere, container, torri di vetro). In ogni città: piazza con fontana, ARENA da basket (porta alla vera arena di una squadra), SALA SLOT & SCOMMESSE (porta alla sala scommesse), OFFICINA, parco con campetto, distributore.
+- Paesi: CAMPOLUNGO, PRATOFIORITO (vigneti), ROCCALTA (pietra), PINETINA, LIDO SOLE (spiaggia con ombrelloni e pontile). Chiesa, piazzetta, bar, campetto (si tira a canestro), fattorie con fienile rosso, silo, balle di fieno, recinti e mucche.
+- Altro: AEROPORTO (pista 2,4 km, terminal, torre, hangar, eliporto), BELVEDERE in cima alla strada panoramica, CAMPEGGIO, CASTELLO in rovina, CAVA. Campi coltivati a patchwork, boschi di pini, latifoglie e cipressi.
+- Strade: superstrada intorno al lago, statali tra città e paesi, strade di campagna, griglia nelle città; ponti con piloni dove passano sull acqua.
+- Veicoli (tutti fermi finché non sali): utilitaria, berlina, fuoristrada, supercar, pickup, furgone, autobus, camion, trattore, motorino; motoscafo, barca a vela, traghetto; aereo di linea, caccia (postbruciatore), ultraleggero, elicottero. Si trovano nelle città, nei paesi, nelle fattorie, lungo le strade, al porto e all aeroporto. Tre visuali (dietro, lontana, posto di guida).
+- Officina: vernice (anche colori delle squadre), motore e gomme STD/+/++/+++, salvati per tipo di veicolo.
+- Mappa: minimappa rotonda (toccala) e MAPPA grande con tutti i luoghi, arene, slot, officine; tocchi un luogo e ci vai.
+- Suoni: motore diverso per ogni veicolo (auto, supercar, diesel, trattore, motorino, motoscafo, vela, traghetto, jet, aereo di linea, elica, elicottero col battito delle pale), clacson, portiere, urti, schianto, tuffo in acqua, passi (anche in acqua), uccellini in campagna, vento (sale con velocità e quota), sciabordio del lago, canestro/ferro, cricchetto dell officina.
+- Leggerezza: settori da 600 m (5x5 attorno a te, costruiti un pezzo per fotogramma, buttati oltre i 3), montagne lontane in una sola maglia con il buco dove ci sono i settori, città costruite entro 1,3 km e liberate oltre 1,9 km, veicoli lontani non disegnati. Posizione salvata: rientrando riparti da dove eri.
+
+## 1061 — Dream City dentro la Dream Valley: si esce guidando, strade ovunque, navigatore
+Francesco (07:12-07:16): la valle deve essere un unico mondo con Dream City dentro; dalla città si esce in macchina e si va ovunque su strada; niente teletrasporti; molte più strade; mappa consultabile già dalla città con percorso da seguire.
+- Il muro di grattacieli di Dream City ha 4 PORTE (ovest e est sul viale centrale, nord sulla via x=68, sud sulla via x=-140) con arco «🌄 DREAM VALLEY» e strada che esce. Passando la porta (a piedi o in macchina) si è nella valle, davanti alla stessa porta, CON LA STESSA MACCHINA (STREET→berlina, RALLY→fuoristrada, GT/MUSCLE/HYPER/PROTO/F1→supercar, VOLT→utilitaria, col colore della squadra). Dalla valle si rientra dalle stesse porte e in città si ritrova la propria macchina (stesso modello e squadra; i veicoli della valle diventano STREET/RALLY/HYPER). Il passaggio carica solo un attimo: tiene in memoria un posto alla volta.
+- Nella valle Dream City è al suo posto (a nord-ovest del lago): muro di grattacieli con le 4 porte, archi «🌆 DREAM CITY», torri che spuntano, auto parcheggiate fuori da ogni porta.
+- Valle più grande (16 km, montagne a ~7 km dal centro) e RETE FITTA DI STRADE: oltre a superstrade e statali, ~110 incroci di campagna sparsi in tutta la valle collegati ai vicini (in tutto ~490 strade, 450 km), tutti uniti in un solo grafo; accanto a ogni incrocio una FATTORIA col suo vialetto (fienile, silo, casa, mucche, trattore o pickup). Il 97% della valle è a meno di 400 m da una strada; tutti i luoghi sono raggiungibili in macchina.
+- Niente più teletrasporto: la MAPPA (in città dal tasto 🗺️ MAPPA, nella valle da minimappa/🗺️) fa scegliere una META; il navigatore calcola la strada (grafo delle strade, ogni 8 m + incroci), sceglie la porta migliore per uscire dalla città, disegna il percorso sulla mappa, sulla minimappa e come STRISCIA AZZURRA per terra; in alto la distanza che manca; arrivato: «🏁 SEI ARRIVATO».
+- Tolto il tasto 🌄 VALLE (si esce dalle porte).
+
+## 1062 — Uscendo dalla città resta TUA la macchina, i comandi e la visuale
+Francesco (08:11): uscendo dalla città la macchina «si schiacciava» (diventava un modello diverso della valle) e spariva la guida classica (volante + pedali) e la visuale scelta.
+- Ora passando una porta la macchina della città viene staccata dalla città prima che venga liberata e portata nella valle tale e quale: stesso modello, livrea, colori dell officina, assetto (motore/velocità dell officina). Rientrando torna in città con le stesse modifiche.
+- Nella valle le auto (la tua e quelle trovate per strada) si guidano con gli STESSI comandi della città: volante da girare col dito (torna al centro da solo), pedale gas, freno/retro, freno a mano Ⓟ, 🚪 ESCI, tachimetro in alto; 🎥 VISTA cambia tra DENTRO / DIETRO / PARAURTI ed è la stessa scelta salvata della città (vale in tutte e due le zone).
+- Barche, aerei ed elicottero restano col loro joystick e le loro leve.
+
+## 1063-1065 — Sulla Terra gli stessi tasti ovunque, corse nella valle, bug di bus/aereo/strade
+Francesco (08:35-08:43):
+- 1063: con un veicolo ci sono sempre 🎥 (visuale) e 🏁 (corse), come in città. Nella valle 🏁 apre le CORSE DELLA VALLE: GIRO DEL LAGO (superstrada ad anello), SALITA AL BELVEDERE, DREAM CITY→PORTOLUCE, VALFERRO→MONTECIELO (il navigatore porta alla partenza, poi 3-2-1 e cronometro) e SPRINT da dove sei verso qualsiasi luogo; record salvati.
+- 1064: nella valle (Terra) gli stessi tasti della Piazza dei Dreamers: joystick della città, tasto CORRI tondo, colonna ✕ / 🔊 / 🏀 / 📺 a destra, tasti quadrati VILLA · SHUTTLE · PIANETA · MAPPA, chip dei soldi. VILLA e SHUTTLE accendono il navigatore verso Dream City; PIANETA parte per il pianeta. Barche e mezzi di terra si guidano col volante e i pedali; solo aerei ed elicottero col joystick.
+- 1065: visuale "dentro" dei veicoli della valle (bus ecc.) non più nera (si vede la strada pulita); visuale di guida come in città (stesso campo visivo, sguardo un po' in basso, trascinando si guarda anche su/giù); aerei: niente più muri invisibili in aria (gli ostacoli contano solo fino alla loro altezza); dopo uno schianto il velivolo torna da solo al parcheggio e si può scendere (prima restava bloccato); strade: asfalto e 6 m di bordo alla stessa quota e incroci con le due strade alla stessa quota (punti dove il terreno copriva l asfalto da 0,8% a 0,2%), e la macchina non va mai sotto il terreno.
+
+## 1066 — Visuali interne dei veicoli della valle, atterraggio facile
+Francesco (08:54): visuali interne pessime, il bus da dentro non si vedeva, le auto devono essere identiche a Dream City; aerei: atterrare molto più facilmente ovunque.
+- La tua macchina della città nella valle: telecamera calcolata esattamente come in città (stessa posizione al posto di guida, ruota solo con la direzione della macchina, stesso campo visivo e sguardo).
+- I veicoli della valle (bus, camion, furgone, auto, pickup, trattore, motorino) da dentro ora hanno un abitacolo: cruscotto con schermo, volante, montanti del parabrezza, tetto; nel bus anche i sedili e il corridoio. La carrozzeria si nasconde solo da dentro, quindi niente più nero.
+- Aerei: atterri quasi ovunque (terreno anche un po in pendenza, discesa più forte, ali più inclinate); in acqua resta lo splash.
+
+## 1067 — Turno 4 di 4 notti, 3/11 giorno di pausa
+Francesco (08:57): la notte del 3/11 non ci sono partite NBA: il turno 4 (30/10-3/11) diventa di 4 notti (30/10-2/11) e si chiude la mattina del 3/11; il 3/11 è pausa e il turno 5 parte il 4/11 come previsto.
+
+## 1068 — Tornando indietro si torna allo stesso punto della lista
+Francesco (08:59): sfogliando una lista (giocatori, Dynasty TV, statistiche…) e aprendo un profilo o una partita, il tasto indietro deve riportare alla pagina di prima all altezza dell elemento toccato.
+- Toccando un elemento che apre un altra pagina, l app ricorda pagina, altezza ed elemento; tornando indietro (tasto ‹, gesto dal bordo o tasto indietro di Android) la lista riappare con quell elemento al centro dello schermo, evidenziato in giallo per un attimo. Vale per tutte le liste (funziona con qualsiasi elemento che ha un identificativo: giocatore, partita, squadra, riga).
+
+## 1069 — POKE DREAM al posto di Hoop Dreamers (area riservata DAX) · tappa 1
+Francesco (09:25-09:28): togliere Hoop Dreamers dall area DAX e mettere un gioco d avventura a quadretti con i giocatori della nostra app: si sceglie la squadra (l allenatore ha il cappello del colore della squadra: Ducks giallo, Peacocks fucsia…), il professore propone 3 giovani della tua squadra, erba alta, contratti, lotte a turni, livelli 1-100, zaino, schedario, negozi con gli schemi delle mosse, palestre e Lega (a tappe). Tutto originale: mappa, storia, personaggi, grafica, musiche e nomi; regole classiche del genere.
+- poke.js (caricato solo premendo ▶ Gioca): motore a quadretti 240x160 ingrandito in pixel, croce + A/B/MENU (e tocco diretto sulle voci), dialoghi, porte, scale, sporgenze, cartelli, oggetti a terra, allenatori che ti vedono e ti sfidano, PNG che girano.
+- Mappe della tappa 1: casa (2 piani), Borgo Parquet, laboratorio del Prof. Parquet, casa del rivale VITO, Percorso 1 (erba alta, 2 allenatori, oggetti), Canestropoli (Centro Cura, Shop, case, palestra chiusa per ora, strada nord chiusa per lavori). Canna da pesca in regalo a Canestropoli: davanti all acqua si pesca.
+- Giocatori = i 115 della lega (VALORI): tipo 1 dal ruolo (GUARDIA/ALA/CENTRO: guardie > ali > centri > guardie), tipo 2 dallo stile (TIRATORE, DIFENSORE, REGISTA, ATLETA; BASE neutro). Statistiche (PV, ATTACCO, DIFESA, TIRO, LETTURA, VELOCITÀ) calcolate dai dati veri: minuti, PDK, punti, rimbalzi, assist, efficienza, età; più forti = più difficili da mettere sotto contratto.
+- Catalogo di 101 mosse a tema basket (fisiche, di tiro, di stato: infortunio, bloccato, stanco, in tilt, alza/abbassa statistiche, priorità, critici, colpi doppi, contraccolpo, recupero, muraglia); ogni giocatore impara 24 mosse salendo di livello (4 alla volta, scegli quale dimenticare); 74 SCHEMI comprabili nei negozi che si insegnano solo ai ruoli giusti (la schiacciata ai centri/ali, l assist alle guardie…).
+- Lotte: ordine per velocità e priorità, danni con livello/attacco/difesa/potenza, bonus del proprio tipo, efficacia dei tipi, critici, precisione, stati, esperienza, livelli, allenamento delle statistiche, caratteri; cattura con CONTRATTI (base, pro, max, rookie, veterano) con probabilità che sale se il giocatore è indebolito o ha uno stato; fuga; cambio; oggetti in lotta; sconfitta = metà soldi e ritorno al centro.
+- Zaino a tasche (cure, contratti, frutti, oggetti da tenere, schemi, oggetti chiave), schedario visti/presi, deposito al PC, tessera allenatore, opzioni (musica, velocità del testo), salvataggio automatico.
+- Mini giocatori in pixel: maglia della squadra (lega o NBA), numero, corporatura, capelli, barba, fascia; di fronte quando li incontri, di spalle (con nome e numero) quando lottano per te.
+- Musiche chiptune generate (titolo, casa, città, laboratorio, percorso, centro, lotta, allenatore, rivale, vittoria) ed effetti.
+- Hoop Dreamers rimosso (hoop.js tolto; resta nello storico).
+
+## 1070 · Poke Dream: stile MINI, maglie NBA moderne, schermo adattivo
+- Giocatori in stile MINI con la maglia NBA moderna della loro squadra reale (solo colori, niente loghi né scritte); prevista anche la variante anni 90, non attiva.
+- Schermo a tutta pagina: in orizzontale i comandi sono sovrapposti e semitrasparenti e la visuale si allarga ai lati; in verticale i comandi stanno sotto e la visuale si allunga in alto e in basso. Lotte, titolo e menu restano centrati.
+- Iniziali scelti per squadra (guardia, ala, centro con valutazione fino a ~800): Ducks Burries, Buzelis, Steinbach; Dolphins Fox, Bridges, Diabaté; Foxes Acuff, J. Smith, Mara; Peacocks Quickley, Brazile, Gobert; Spiders Green, Jaquez, Hartenstein; Turtles Wagler, Bailey, Edey; Eagles D. Murray, Lendeborg, Okongwu; Mooses Fears, Ausar Thompson, Maluach.
+
+## 1071 · Poke Dream: regione completa
+- 8 città con palestra: Canestropoli (Guardie), Pineta Alta (Ali, TAGLIO), Portocampo (Tiratori, FORZA), Arenapoli (Centri, NUOTO), Isola Playground (Atleti, VOLO), Valle dei Veterani (Difensori), Metropoli del Draft (Registi), Montecima (Base).
+- Percorsi 2–8, Bosco dei Rimbalzi, Tunnel degli Spogliatoi, Via della Vittoria e Lega dei Sogni (4 sale + campione VITO), Hall of Fame. Dopo la Lega si apre la Grotta delle Leggende.
+- Ostacoli: cespugli (TAGLIO), massi (FORZA), acqua (NUOTO); viaggio rapido con VOLO; bici in regalo a Portocampo.
+- Rarità dalla nostra valutazione: fino a 800 comuni, 800–1300 non comuni, 1300–2000 rari, oltre 2000 rarissimi. Wembanyama, Jokić e Dončić (oltre 2400) compaiono solo come eventi unici dopo la Lega.
+- Mappe generate con seme fisso (sempre uguali tra un salvataggio e l'altro), con collegamenti verificati automaticamente.
+
+## 1072 · Poke Dream: forza dei giocatori tarata sulla nostra valutazione
+- La somma delle 6 stat base segue la valutazione, a gradini come nel genere:
+  - comuni (fino a 800): 330–430;
+  - non comuni (800–1300): 430–485;
+  - rari (1300–2000): 485–545;
+  - rarissimi (2000–2400): 545–590;
+  - leggende (oltre 2400): 600–660.
+- Il PDK sposta il totale di poco (±3%).
+- Esempi: Wembanyama 673, Jokić 666, Dončić 625, Giannis 578, Flagg 549, Maxey 506, Durant 434, Buzelis 409, Steinbach 365.
+- Come sono distribuite le stat: il 72% dipende dal ruolo e dalle statistiche (punti, rimbalzi, assist, minuti, età), il resto è uguale per tutti, così nessuno ha valori assurdi.
+
+## 1073 · Poke Dream: verticale a tutto schermo, voce TESSERA, leggende più piccole
+- In verticale il gioco occupa tutto lo schermo. I comandi sono semitrasparenti sopra l'immagine e i testi restano sopra i comandi.
+- Nel menu la voce col nome dell'allenatore ora si chiama TESSERA (la tessera allenatore).
+- I giocatori leggendari in giro per la mappa sono più bassi e piccoli dell'allenatore.
+- Gli iniziali partono dal livello 5.
+
+## 1074 · Poke Dream: lotte nel PALAZZETTO
+- Sfondo delle lotte scelto da Francesco: palazzetto con spalti pieni di tifosi, luci dall'alto e parquet chiaro a doghe, esteso a tutto lo schermo sia in orizzontale sia in verticale. Sotto i giocatori ci sono le basi colorate.
+- Il tuo giocatore è più grande, di spalle e più vicino allo schermo, con i piedi dietro il riquadro del testo come nel genere.
+- Gli altri 5 sfondi provati (playground, prato, tramonto, neon, grotta) restano nel codice ma non sono usati.
+
+## 1075 · Poke Dream: riquadri e scritte della lotta, font più spesso, suoni dei colpi
+- Riquadri come nel genere:
+  - avversario in alto a sinistra, con una codina che punta verso di lui e una striscia rossa;
+  - il tuo giocatore in basso a destra, con la codina verso di lui e una striscia blu;
+  - i nomi lunghi si rimpiccioliscono per entrare nel riquadro.
+- Mosse: le 4 mosse a sinistra; a destra un riquadro con i PP e il tipo della mossa selezionata. Nessuna scritta si sovrappone o esce dai riquadri, né in orizzontale né in verticale.
+- Font più spesso (800) in tutto il gioco.
+- Verticale: la lotta sta in basso, sopra i comandi; gli spalti del palazzetto riempiono la parte alta.
+- Suoni in lotta:
+  - fruscio del gesto + impatto quando la mossa colpisce, diversi per tipo (tiro, schiacciata, stoppata, passaggio, palleggio);
+  - doppio impatto se superefficace, colpo attutito se poco efficace;
+  - suono del tiro a vuoto;
+  - arpeggio quando una statistica sale o scende.
+
+## 1076 · Poke Dream: colori dei ruoli come nell'app, simbolo sulle mosse
+- Colori dei tipi allineati all'app: guardia rossa, ala blu (non azzurra), centro giallo con testo scuro, base grigia. Gli altri tipi sono stati spostati per non confondersi: tiratore arancione, atleta verde acqua, regista viola, difensore ardesia.
+- Accanto a ogni mossa c'è un quadratino col colore del tipo:
+  - stella ★: mossa del ruolo di quel giocatore (fa più danno);
+  - pallino grigio: mossa base.
+- Il riquadro a destra mostra il tipo della mossa scelta e la scritta "★ del suo ruolo" oppure "mossa base".
+- La stella compare anche sulle mosse nella scheda del giocatore.
+
+## 1077 · Poke Dream: cattura con i PALLONI, lotte verticali più grandi, livelli più bassi
+- Parole: non si "firma" più, si cattura. I contratti diventano PALLONI (anche nei vecchi salvataggi).
+- Probabilità di cattura con la formula classica del genere:
+  - conta la salute: in zona gialla o rossa è molto più facile;
+  - conta lo stato: addormentato ×2,5, altri stati ×1,5;
+  - conta la rarità, dalla nostra valutazione: comuni 255–150, non comuni 150–90, rari 90–45, rarissimi 45–25, leggende 3.
+- 18 tipi di pallone (nomi nostri, stesse regole del genere): Pallone ×1, Super ×1,5, Iper ×2, MVP (sempre), Rete (centri/difensori), Tuffo (in acqua), Esca (pesca), Vivaio (livelli bassi), Bis (già catturati), Timer (turni), Rapido (primo turno), Notte (grotte), Cura, Livello, Peso, Veloce, Leggenda (×5 sui leggendari), Premier (omaggio ogni 10 Palloni).
+- Ogni pallone ha il suo colore in lotta e oscilla a ogni scossone. Dopo la Lega si ricevono 1 Pallone MVP e 3 Palloni Leggenda. Gli shop vendono palloni diversi città per città.
+- Lotta in verticale: si usa tutta l'altezza. Avversario e tuo giocatore più grandi, il parquet parte più in alto, i riquadri restano accanto a ciascun giocatore.
+- Soldi persi solo contro gli allenatori, non contro i selvatici o nella sfida col rivale al laboratorio.
+- Livelli dei selvatici più bassi:
+  - Percorso 1: 1–3;
+  - Percorso 2: 4–7;
+  - Bosco: 7–10;
+  - poi qualche livello sotto la palestra successiva, fino a 46–50 nella Via della Vittoria;
+  - gli allenatori sui percorsi sono 1 livello sopra i selvatici.
+
+## 1078 · Poke Dream: grafica pixel art più curata, ingressi scuri, allenatore nuovo, MENU più in basso
+- Erba a due toni con ciuffi, alberi in pixel art (chioma a pixel con contorno e 4 toni), sentieri col bordo scuro dove toccano l'erba, acqua animata con la riva chiara, ombre degli edifici.
+- Ingressi: dove una zona porta a un'altra (bosco, percorso, città) il varco sfuma nel nero e il cambio di zona ha una breve dissolvenza.
+- Allenatore ridisegnato (16x24 disegnato al 130%):
+  - più alto e circa il 30% più grande rispetto all'ambiente;
+  - cappello grande nel colore della squadra, con visiera e stemma;
+  - viso leggibile con occhi, guance e bocca;
+  - giacca con zip colorata, zaino, gambe e scarpe da basket col colore della squadra;
+  - contorno scuro e ombra a terra.
+  - Stesso stile per il rivale.
+- Il pulsante MENU è più in basso, lontano dalla barra del telefono, e il menu si apre sotto il pulsante.
+- Il Percorso 1 non propone più come selvatici i 3 iniziali delle squadre.
+
+## 1079 · Poke Dream: zaino grafico, persone e porte nella stessa scala
+- Zaino nuovo, uguale in esplorazione e in lotta:
+  - 6 tasche in alto con icona (Cure, Palloni, Frutti, Oggetti, Schemi, Chiave);
+  - una griglia di caselle con il disegno in pixel art di ogni strumento e la quantità;
+  - sotto, il riquadro con nome, icona e descrizione.
+  - Con ◀ ▶ ai bordi si cambia tasca, oppure basta toccarla; ogni pallone ha il suo colore.
+- Persone: l'allenatore è il 10% più piccolo di prima (117% della taglia base) e ora tutte le persone hanno lo stesso formato e la stessa grandezza (16x24 al 117%), con contorno scuro. Varianti: senza cappello (capelli), capelli lunghi, camice bianco, capelli bianchi.
+- Porte delle case più grandi (alte ~19px), in scala con le persone, con ombra sul gradino.
+
+## 1080 · Poke Dream: lampeggio d'incontro pulito, strisce del ruolo, interni a schermo pieno
+- Incontro con un selvatico: il lampeggio bianco/nero avviene sopra la mappa, senza mostrare nomi o riquadri. La lotta compare solo dopo, con i giocatori che entrano scivolando.
+- La striscia colorata nei riquadri della lotta segue il ruolo del giocatore: rossa per le guardie, blu per le ali, gialla per i centri.
+- Interni (case, laboratorio, centri, shop, palestre): la stanza viene ingrandita per riempire lo schermo, sia in orizzontale sia in verticale, ed è centrata con una cornice di legno; in verticale resta sopra i comandi.
+
+## 1081 · Poke Dream: suoni delle mosse di stato, cattura con 3 oscillazioni, varchi chiusi davvero
+- Suoni diversi per le mosse di stato:
+  - stanchezza/sonno: ninna nanna discendente;
+  - tilt/confusione: suono ondeggiante;
+  - blocco/paralisi: scossa elettrica;
+  - muraglia/protezione: accordo;
+  - "non ha effetto": due note basse.
+- Cattura come negli originali:
+  1. il pallone vola con un arco, con suono di lancio;
+  2. risucchia il giocatore, con suono e lampo;
+  3. oscilla fino a 3 volte, con un toc-toc a ogni oscillazione;
+  4. alla 3ª oscillazione riuscita parte una fanfara felice con le stelline; se il giocatore scappa, c'è un lampo e un suono di rottura.
+- Il passaggio nord di Canestropoli ora è bloccato davvero senza la MEDAGLIA RETINA (prima si passava accanto alla guardia). Anche la porta della Lega si apre solo con tutte le 8 medaglie.
+
+## 1082 · Poke Dream: revisione completa (menu, strumenti, negozi, mappa, suoni, opzioni)
+- Menu: il tasto B chiude qualsiasi menu (zaino compreso) e torna indietro; il tasto MENU chiude anche il menu principale.
+- Opzioni: volume MUSICA ed EFFETTI separati a 5 livelli, velocità del testo, pulsanti NORMALI o GRANDI.
+- Pulsanti: croce direzionale 3x3 più grande, A e B più grandi e ordinati, semitrasparenti in orizzontale, rispettano le zone sicure del telefono.
+- Strumenti (tutti nello stile del genere, con nomi nostri):
+  - cure: Bevanda max, Elisir, Elisir max, Rientro completo, Kit medico, Integratore PP;
+  - solo in partita: Spinta forza/difesa/tiro/corsa/mira, Fascia protezione;
+  - da tenere: Barretta energetica, Fascia della grinta, Biglietto fortunato, Portafortuna, Fischietto dell'arbitro, Palla rovente, Borraccia magica, Fascia della guardia/dell'ala/del centro (oltre a Polsino, Ginocchiera, Fascia lucky, Scarpe nuove e ai frutti, che ora funzionano davvero);
+  - chiave: Canna buona, Super canna (pescano giocatori più forti), Cuffie da allenamento (esperienza a tutta la squadra), Radar strumenti, Agenda sfide (rivincite dopo la Lega), Mappa della regione (si riceve con lo schedario).
+- Dai/togli oggetto dal menu SQUADRA e dallo zaino; gli effetti valgono in lotta (danni, critici, velocità, recupero a fine turno, frutti automatici, esperienza, crediti doppi).
+- Negozi: lista con icona, prezzo, simbolo del tipo e chip colorati G/A/C che dicono a quali ruoli serve lo schema; vendita con icone.
+- Centro commerciale a Metropoli del Draft con 4 reparti (palloni, cure, allenamento, oggetti da tenere + tutti gli schemi).
+- Regali nelle case delle città (cuffie, biglietto, canne, radar, portafortuna, fascia della grinta, agenda, integratore PP, palla rovente, caramelle).
+- Allenatore delle mosse a Valle dei Veterani: fa ripassare gratis le mosse dimenticate.
+- Mappa della regione disegnata: città, percorsi, medaglie prese e la tua posizione.
+- Simboli dei tipi in pixel art (palla, ala, canestro, bersaglio, scudo, lavagna, fulmine) nelle mosse e nei negozi.
+- Suoni nuovi: passi diversi per erba/sentiero/legno, bici e campanello, nuoto, salto, lancio e abboccata della pesca; musica ed effetti su canali separati.
+- Mappa più grande: percorsi e grotte +40%, più erba, più allenatori e oggetti; verde un po' più scuro e sentieri marroncino chiaro.
+- Pesca: con la canna base a volte non abbocca nessuno; le canne migliori pescano giocatori più forti e di livello più alto.
+
+## 1083 · Poke Dream: 251 giocatori, soprannomi, deposito, giorno/notte, leggenda errante, Lega più dura
+- Schedario a 251 giocatori (come il numero di un gioco del genere): ai 115 della lega si aggiungono i 136 migliori Free Agent per valutazione stimata, con maglia NBA, numero e statistiche; aspetto generato dal nome per chi non ha una scheda.
+- Le fasce dei percorsi sono state riscalate sul nuovo elenco.
+- Soprannomi: dopo ogni cattura si può dare un soprannome, che compare ovunque (scheda, lotta, squadra). Scrittura con la tastiera del telefono.
+- PC del deposito completo: deposita, ritira, guarda il deposito con scheda e rilascio, e "Schedario del Prof." collegato (visti/catturati su 251).
+- Menu MOSSE: sposta in alto e dimentica (l'allenatore delle mosse le fa ripassare).
+- Ciclo giorno/notte dall'orologio vero: mattina, giorno, sera e notte tingono l'esterno; di notte le finestre si accendono e i giocatori rari si incontrano più spesso. La fase compare nella tessera.
+- Leggenda errante: dopo la Lega, Dončić gira per i percorsi e cambia zona a ogni cambio di mappa; se lo incontri scappa dopo un turno, ma i danni restano. Jokić e Wembanyama restano eventi fissi.
+- Alberi da frutto (2 per percorso): un frutto al giorno. I selvatici a volte tengono un frutto, che resta a te se li catturi.
+- Lotteria giornaliera al centro commerciale: premio se esce il numero di maglia di un tuo giocatore.
+- Lega: Elite con 5 giocatori Lv 59-62 e oggetti da tenere; campione VITO con 6 giocatori Lv 66-68 e oggetti. IA più sveglia (cura quando è bassa, usa gli stati, cerca le mosse superefficaci).
+- Boss segreto: IL FONDATORE in fondo alla Grotta delle Leggende, solo da campione, 6 giocatori Lv 78-83 con oggetti; si può risfidare.
+- Allenatore con la testa nuova (scelta di Francesco): rotonda di fronte, con il collo di lato.
+
+## 1084 · Poke Dream: mappa interattiva col TELETRASPORTO, medaglie con effetti, 3 salvataggi, schedario con filtri
+- MAPPA nel menu: si scorre tra le città sbloccate (le altre sono grigie con "???"), si vede dove sei; dalla 5ª medaglia il coach ha il TELETRASPORTO e dalla mappa va subito in una città già visitata. Sostituisce il VOLO.
+- Medaglie con effetti: ognuna delle prime 5 alza una statistica del 10% (attacco, difesa, tiro, lettura, velocità). I giocatori ricevuti da altri allenatori ascoltano solo entro il livello permesso dalle medaglie (10, 20, 30… 100).
+- 3 slot di salvataggio dal titolo (con nome, squadra, medaglie e tempo) e SALVA manuale nel menu.
+- Schedario con FILTRO (tutti, catturati, visti, guardie, ali, centri, rari+, lega, free agent) e ORDINE (numero, valore, nome, potenziale); ogni scheda mostra squadra, NBA, numero, età, rarità e le zone dove si trova.
+- Scheda del giocatore a 3 pagine (◀ ▶): statistiche con barre, mosse con dettagli, dati (allenatore, oggetto, pallone, dove è stato catturato, affetto).
+- Tessera con statistiche: vittorie, catture, passi, crediti vinti.
+- Tutorial breve del professore dopo la sfida col rivale (si può saltare).
+
+## 1085 · Poke Dream: mondo più grande (scorciatoie, mare, faro, parco, traghetto, meteo, buio, TV, radio)
+- PERCORSO 9: scorciatoia Canestropoli ⇄ Arenapoli con un masso (si apre con la 3ª medaglia, FORZA); VALICO DEL CANESTRO: grotta Pineta Alta ⇄ Montecima (3ª medaglia). La regione ora ha due anelli e strade alternative.
+- MARE DELLE ISOLETTE a est di Isola Playground: si gira solo a NUOTO, 4 isolette con erba, alberi da frutto, scogli, oggetti e giocatori che non si trovano altrove.
+- FARO di Portocampo: 5 piani con un allenatore per piano, oggetti e in cima un guardiano che regala un Pallone Leggenda (lì si nasconderà un rarissimo).
+- PARCO GIOCHI ad Arenapoli (zona safari): 500₵, 30 Palloni Parco e 600 passi; niente lotte, solo PALLONE, ESCA (calma) e PIETRA (indebolisce ma fa scappare); i giocatori scappano facilmente. Giocatori di fascia alta e un rarissimo.
+- TRAGHETTO Portocampo ⇄ Isola Playground con il Biglietto traghetto (shop di Portocampo).
+- Meteo per zona: pioggia (costa, isola, mare), vento (Percorso 7, Valle), neve (Percorso 8, Montecima), nebbia (Bosco). Si vede in giro e conta in lotta: pioggia -20% ai tiri e +20% ai difensori, neve +20% atleti, vento +15% ali e -10% precisione dei tiri, nebbia -15% precisione.
+- Buio nel Tunnel e nel Valico: senza la TORCIA (shop di Pineta Alta) si vede solo intorno a te.
+- TV di casa: notizie vere dalla lega (infortuni). RADIO regalata dalla mamma: cambia canale/musica in viaggio.
+- Cartelli a ogni varco dei percorsi ("di qua: …") e in ogni città un NPC con le voci sui giocatori rari delle zone vicine.
+- Corretto un difetto dei menu: un tasto premuto mentre scorreva un testo poteva spostare la selezione del menu successivo (per esempio sulla risposta NO).
+
+## 1086 · Poke Dream: solo orizzontale, stagioni, stile GBA, barre rapide, aspetto dell'allenatore
+- Il gioco si usa solo in ORIZZONTALE: in verticale compare l'avviso di ruotare il telefono (il layout verticale è stato tolto).
+- Stagioni dal mese vero: primavera (verde chiaro e fiori rosa), estate (verde menta), autunno (alberi arancio e prati dorati), inverno (neve e abeti verde-azzurro).
+- Stile ispirato ai giochi GBA: erba menta con ciuffi, sabbia gialla, acqua chiara, abeti a strati alternati agli alberi tondi, steccati di legno tra i lotti, sampietrini nelle città, tetti a tegole con colmo, tende a strisce sopra le porte, finestre con cornice e davanzale.
+- Persone in scala 1:1 con l'ambiente (come nei giochi del genere).
+- Barra RAPIDI a sinistra (6 slot): dallo zaino, su uno strumento, premi MENU per metterlo/toglierlo; tocca lo slot per usarlo subito. Barra SQUADRA a destra: tocca un giocatore per la scheda.
+- ASPETTO nel menu: capelli (corti, lunghi, ricci, rasati), colore, cappello (cappello, berretto, nessuno), giacca, pantaloni, zaino; anteprima nelle 4 direzioni.
+
+## 1087 · Poke Dream: rarissimi in punti fissi, ultra rari all'1%, shiny evidenti, prestito, pergamene del draft
+- I 4 giocatori più forti sotto le leggende non si trovano più nell'erba: uno in cima al FARO, uno su un'isoletta del MARE, uno in fondo al TUNNEL, uno nel PARCO. Si incontrano una volta sola, a livello alto, senza aspettare la Lega.
+- In ogni zona c'è un "ultra raro" (fascia rari) all'1% circa, di livello un po' più alto; le voci di paese lo nominano.
+- Shiny: 1 su 300, annuncio "È uno SHINY!" con jingle e stelline che girano intorno in lotta; contati nelle statistiche.
+- PRESTITO: l'AGENTE nel centro cura di Valle dei Veterani presta un giocatore forte (al livello del tuo più alto) fino alla medaglia della Valle; riportandoglielo si ricevono 5 Iper Palloni e 3000₵.
+- PERGAMENE DEL DRAFT: l'aiutante del laboratorio ne dà una a 2 medaglie e una a 6; dopo 2500 passi si "schiude" in un giovane del vivaio (età ≤ 21) al livello 5.
+
+## 1088 · Poke Dream: interni stile GBA, Procuratori Ombra, missioni col diario, rivale ricorrente, premi dello schedario
+- Interni: stanze più grandi (5 colonne per lato e 2 righe in più), viste alla stessa scala dell'esterno con la telecamera che segue; pavimenti a rombi e parquet nuovi, muri con battiscopa, scaffali, panchine e piante nelle parti nuove.
+- PROCURATORI OMBRA (la squadra cattiva): due scagnozzi chiudono il Tunnel degli Spogliatoi (si passa solo dopo averli battuti), un ladro nel centro commerciale (4ª medaglia), la TORRE RADIO di Valle dei Veterani (3 piani, dalla 5ª medaglia) con il CAPO OMBRA DORIAN in cima, e la resa dei conti con DORIAN nella Via della Vittoria. Premi: Palloni Veloce, Biglietto fortunato, Pallone MVP.
+- Missioni con DIARIO nel menu: il pacco del Professore (da portare a Pineta Alta), un centro per la nonna di Arenapoli, Re della Costa (bagnino di Arenapoli), Dieci catture, Il pescatore (vecchio del Percorso 1), più Ombra e Rivale.
+- VITO ricompare: Percorso 3 (1ª medaglia), Portocampo (3ª), Percorso 6 (5ª), Via della Vittoria (8ª) e nel laboratorio dopo la Lega (Lv 70). La sua squadra cresce ogni volta.
+- Il Professore premia lo schedario: 10, 50, 100, 150, 200 e 251 catturati.
+
+## 1089 · Poke Dream: classi di allenatori, rivincite dei capi, torneo settimanale, passive dei tipi, affetto, sfide in coppia, Sforzo
+- Allenatori con 12 classi (tifoso, cheerleader, arbitro, giornalista, statistico, rookie, veterano, mascotte, preparatore, talent scout, ragazzino…), ognuna con frasi e premio diverso.
+- Da campione i capi palestra offrono una RIVINCITA al giorno con squadre +20 livelli e oggetti; premio doppio.
+- TORNEO SETTIMANALE dall'ARBITRO ad Arenapoli, una volta al giorno: domenica tutto permesso, lunedì solo guardie, martedì solo ali, mercoledì solo centri, giovedì under 30, venerdì solo free agent, sabato senza oggetti; 3 partite di fila senza cure, premio 3000₵ e uno strumento raro.
+- Passive dei tipi: GUARDIA più critici, ALA +10% precisione, CENTRO subisce meno critici e meno colpi fisici, TIRATORE più preciso nei tiri, DIFENSORE -10% danni, REGISTA a volte evita i cali, ATLETA parte in scatto (velocità su al 1º turno).
+- Affetto: cresce con vittorie, livelli e cure; a 100+ il giocatore fa più critici e a volte resiste a un KO "per non deluderti". Si vede nella pagina DATI della scheda.
+- Sfide in COPPIA (due allenatori di fila senza pausa) sul Percorso 9.
+- SFORZO: quando finiscono i PP si usa un colpo disperato con rinculo (anche l'avversario).
+
+## 1090 — Poke Dream non partiva più dal tasto «Gioca» (sw.js)
+- Causa: il service worker chiede `poke.js?v=…` alla rete ma dopo 1,2 s ripiega sulla cache; la copia con quel `?v=` non c'è mai (è sempre nuova) e come ultimo ripiego rispondeva con **index.html al posto di poke.js**. Il file è cresciuto (270 KB) e sul telefono spesso non arriva in 1,2 s → errore di sintassi silenzioso, `PDREAM` assente, tasto muto.
+- Fix sw.js: chiave di cache senza query (`poke.js`, non `poke.js?v=…`), così la copia salvata si ritrova; per i file non-pagina senza copia si aspetta la rete; index.html si serve solo alle navigazioni.
+- index.html: «Gioca» mostra «⏳ Caricamento…», e se il file arriva ma non è il gioco (o l'apertura lancia un errore) compare un avviso invece del nulla.
+- Verificato in Chromium con rete rallentata: con il vecchio sw.js `Unexpected token '<'`, col nuovo il gioco parte.
+
+## 1091 — Poke Dream: servizi (gruppo G6)
+- SCAMBI: a Portocampo (casa di MARCO) scambi un tuo giocatore con un Free Agent esclusivo (non si trova in natura); arriva con OT diverso → obbedisce solo con le medaglie giuste e cresce più in fretta.
+- VALUTATORE a Metropoli: legge il potenziale nascosto (IV) e la statistica migliore.
+- CAMBIANOME a Canestropoli: nuovo soprannome, solo ai giocatori presi da te.
+- DISTRIBUTORI nei centri cura: Borraccia, Bevanda energetica, Caffè, a volte ne esce uno in più.
+- STRUMENTI NASCOSTI: 2 per zona, invisibili; il RADAR (Metropoli) avvisa quando sei vicino, premendo A davanti al punto li raccogli.
+- PC: DEPOSITO STRUMENTI (deposita/ritira), bici: salta i bordi verso il basso, PASS DEL PARCO in vendita ad Arenapoli.
+
+## 1092 — Poke Dream: lotte in DOPPIO, stadi di carriera, gioco ruotato in verticale, cognomi nella barra
+- VERTICALE: via la schermata «ruota il telefono»: col telefono in verticale il gioco parte subito disegnato in orizzontale (ruotato di 90°), comandi compresi; chi guarda gira il telefono da solo. La tacca del telefono resta fuori dai comandi.
+- Barra squadra (destra): accanto a ogni tondino il COGNOME (o il soprannome) del giocatore.
+- LOTTE IN DOPPIO (2 contro 2): motore rinnovato con stadi di statistica per ogni giocatore in campo, scelta dell azione per entrambi (freccia sopra chi sceglie, riquadro «Cosa fa X?»), scelta del bersaglio «A CHI?», ordine per priorità e velocità di tutti e quattro, bersaglio che passa all altro se il primo è KO, sostituzioni per posto, cattura solo quando resta un selvatico, IA che sceglie mossa e bersaglio. Mosse di coppia: Pressing a tutto campo, Contropiede di squadra, Giro palla, Tripla dall angolo (colpiscono entrambi, −25% danno), Urlo di squadra, Zona 2-3 (caricano la coppia).
+  - Dove: selvatici doppi in Percorso 7/8/9, Valico, Bosco, Mare (se hai 2 giocatori in forma); l ultimo allenatore delle zone dal livello 18 è una COPPIA (si vedono in due); COACH DEL DOPPIO ad Arenapoli (2ª medaglia): serie di 3 sfide 2v2 al giorno, premio 1500₵ + uno SCHEMA di coppia.
+- STADI DI CARRIERA (le evoluzioni): ROOKIE → TITOLARE → ALL-STAR. Livelli di passaggio per rarità (14/30 comuni … 32/55 leggende). Animazione a lampeggio dopo la partita (B interrompe), +10% a tutte le statistiche per stadio, aspetto: fascia in testa e polsini (TITOLARE), manicotto, stella e bordo d oro (ALL-STAR). PIETRA DEL VETERANO (9000₵, centro commerciale) fa passare subito di stadio; CARTELLINO GIOVANE da tenere lo blocca. I selvatici e gli avversari arrivano già allo stadio giusto per il livello.
+- Carattere «Instancabile» corretto (+lettura −velocità).
+
+## 1093 — Poke Dream: scheda POTENZIALE, mosse di campo (MN), spaccarocce, registro telefonico
+- Scheda giocatore, 4ª pagina POTENZIALE: barre del potenziale nascosto (IV, "Nato"), dell allenamento (EV, "Allenato", tetto 510 totale e 100 per statistica con gli integratori), frecce ▲▼ del carattere, livello del prossimo stadio. MENTA DEL CARATTERE (7500₵, centro commerciale) cambia il carattere a scelta.
+- MOSSE DI CAMPO: Taglio netto, Spinta di forza, Nuotata, Luce in sala, Spaccarocce (+ Volo). Si imparano con gli SCHEMI dell ISTRUTTORE MN (centro cura di Canestropoli, uno per medaglia) e in partita sono mosse vere. Fuori: se un giocatore della squadra le conosce, cespugli, massi e acqua si superano in automatico col suo nome, Luce in sala illumina le grotte come la torcia. I poteri del coach con le medaglie restano validi.
+- SPACCAROCCE: rocce piccole nelle grotte (nuova casella), spaccandole a volte esce uno strumento o salta fuori un selvatico.
+- REGISTRO TELEFONICO: un allenatore su tre chiede il tuo numero dopo la sconfitta. Ogni giorno 1-2 contatti chiamano all arrivo in una zona: REGALO (vai a prenderlo) o RIVINCITA (squadra +4 livelli a ogni rivincita, premio ×1,5…). Voce TELEFONO nel menu con l elenco dei contatti e dove trovarli.
+
+## 1094 — Poke Dream: TRENO e REGIONE OVEST (8 palestre nuove, Monte Supremo, Lega di secondo giro)
+- STAZIONE a Montecima (edificio nuovo) e ad Approdo Ovest: da Campione della Lega il treno (animazione del viaggio) porta nella REGIONE OVEST, generata con un seme suo (l EST resta identico).
+- OVEST: 8 città (Approdo Ovest, Cascata Alta, Deserto Rosso, Neve Bianca, Vulcano Nero, Laguna Azzurra, Capitale del Gioco, Cima del Mondo), percorsi 11-16, Miniera Rossa, clima fisso per zona (neve, vento, pioggia, nebbia), selvatici di fascia alta (livelli 55-84), coppie in doppio, allenatori col telefono.
+- 8 palestre nuove = MEDAGLIE 9-16 (Ancora, Cascata, Sabbia, Ghiaccio, Lava, Onda, Corona, Mondo), capi con squadre da 4-6 giocatori con oggetti, livelli 60→88, schemi in premio.
+- MONTE SUPREMO (a ovest di Cima del Mondo): con 16 medaglie, in cima IL LEGGENDARIO: i 6 giocatori più forti in assoluto a livello 90-95, 50000₵, rivincite illimitate.
+- LEGA DI SECONDO GIRO: con 16 medaglie Elite e Campione hanno +20 livelli. Tessera: medaglie su 16.
+- MAPPA: due pagine (EST / OVEST) a seconda di dove sei, teletrasporto anche nell OVEST.
+
+## 1095 — Poke Dream: scritte degli edifici leggibili, sala giochi, Torre Lotta, Arena Atletica, sciami, fratelli del giorno, orti, habitat
+- Le insegne degli edifici (CURA, SHOP, PALESTRA…) si disegnano nitide sul livello dei testi, con bordo scuro: prima erano a pixel grossi e illeggibili. Nella barra squadra i cognomi con «Jr.» mostrano «Jackson Jr.».
+- SCIAMI: ogni giorno una specie rara invade un percorso (anche nell OVEST da Campione); lo annuncia la RADIO (canale Borgo FM); 40% degli incontri lì è quella specie.
+- FRATELLI DEL GIORNO: 7 personaggi, uno per giorno della settimana, su percorsi diversi: un regalo a settimana ciascuno (Elisir, Caramella, Pallone Timer, Integratore PP, Fascia lucky, Pietra del veterano, Menta).
+- ORTI: terreno fertile (nuova casella) sui percorsi 2-4-6-7-8 e 11-13-16: pianta un frutto dallo zaino, il giorno dopo l albero dà 2 frutti e torna terreno.
+- SALA GIOCHI nel centro commerciale: gettoni (50 per 1000₵), slot a 3 rulli con animazione (tris fino a 600 gettoni), premi: Pietra del veterano, Menta, schemi rari, Pallone MVP…
+- TORRE LOTTA a Capitale del Gioco (da Campione): serie di 7 sfide al livello della tua squadra, cure tra una e l altra, niente strumenti; serie completa = 3 PUNTI LOTTA da spendere in premi; record e serie sempre più dure.
+- ARENA ATLETICA a Isola Playground: tre minigiochi veri (GARA DI TIRO a tempo con A, SLALOM e RIMBALZI con ◀ ▶ per 20 secondi; la velocità del tuo primo giocatore conta), medaglie bronzo/argento/oro e premi.
+- SCHEDARIO: ogni scheda dice DOVE si trova la specie (percorsi/pesca); a schedario completo il Prof. dà il DIPLOMA e la tessera mostra ★ SCHEDARIO COMPLETO.
+
+## 1096 — Poke Dream: strumenti RAPIDI dallo zaino con un tocco
+- Nello zaino il primo tocco su uno strumento lo seleziona (si legge la descrizione), il secondo lo usa. Sotto la descrizione due tasti: USA e ★ RAPIDI (o ✕ RAPIDI per toglierlo): lo strumento va nella barra a sinistra, anche gli oggetti chiave (Bici, canne, Radio, Torcia…). Resta valido anche il tasto MENU sullo strumento.
+
+## 1097 — Poke Dream: audio (gruppo G7)
+- Ogni città e ogni grotta ha una musica propria (generata dal nome, sempre uguale), percorsi dell OVEST con tema nuovo, centro commerciale con tema da sala giochi.
+- Temi di lotta dedicati: capi palestra, Procuratori Ombra, Elite, Campione, Fondatore/Leggendario, rivale.
+- Jingle: fanfara per la medaglia, motivetto per i premi dello schedario.
+- «Versi» dei giocatori per ruolo (guardia acuto, ala medio, centro grave) quando entrano in campo e aprendo la scheda nello schedario.
+
+## 1098 — Poke Dream: ACADEMY e UOVA, abilità per esemplare, mosse di struttura, strumenti «scelta»
+- ACADEMY a Valle dei Veterani: lasci 1-2 giocatori, crescono camminando (1 esperienza a passo, ritiro a 100₵ + 100 per livello). In due, ogni 300 passi può comparire un UOVO: specie di uno dei due, 3 potenziali ereditati, carattere e abilità spesso dal genitore, mosse base + mosse dei genitori che la specie può imparare, shiny 1/100 se i genitori hanno allenatori diversi. L uovo sta in squadra (non gioca), si schiude dopo 800-1400 passi: nasce a livello 5, con soprannome a scelta.
+- ABILITÀ (una per esemplare, nella scheda DATI): Grinta, Intimidazione (entrando abbassa l attacco avversario), Scatto, Muro, Vista, Guaritore, Sangue freddo, Instancabile, Serenità, Tenacia (resiste a un KO a piena energia), Ispirazione, Furbizia.
+- MOSSE DI STRUTTURA (schemi al centro commerciale): Riflesso e Schermoluce (5 turni, danni dimezzati), Sostituto, Contrattacco (agisce per ultimo, restituisce il doppio), Inseguimento (doppio danno su chi sta per uscire), Chiodi (fino a 3 strati, danno a chi entra).
+- STRUMENTI: Fascia/Occhiali/Sciarpa scelta (+50% ma una sola mossa fino al cambio), Avanzi (1/16 a fine turno).
+
+## 1099 — Poke Dream: leggende erranti a tappe, santuario, Fan Club con foto, bici da corsa, voci dello schedario, registro sfide
+- LEGGENDE ERRANTI: oltre a Dončić (dopo la Lega) altre tre rarissime si liberano dopo la Torre Radio e girano per i percorsi; la radio (Borgo FM) dice dove sono state viste; tengono l energia tra un incontro e l altro.
+- FAN CLUB a Portocampo: il presidente commenta l affetto del tuo primo giocatore, FOTO DI SQUADRA (album con le ultime 12, anche dalla TESSERA); con 8 medaglie e 100 catturati regala la CAMPANELLA D ARGENTO.
+- SANTUARIO nel Bosco dei Rimbalzi: suonando la campanella appare un giocatore ESCLUSIVO (non esiste altrove) a livello 50, una volta sola.
+- BICI DA CORSA: dalla stessa casa della bici a Portocampo, con 8 medaglie: tre volte la velocità a piedi.
+- SCHEDARIO: ogni giocatore ha una voce descrittiva (ruolo, dote migliore, squadra, età, rarità).
+- TESSERA: REGISTRO SFIDE (ultime 60 vittorie con zona e data) e ALBUM FOTO. L Academy è a Pineta Alta (a Valle c era già la Torre Radio).
+- (03/11 22:00) Dream su Android di fascia media (Redmi Note 12 bloccato su «Entro nell arena…»): DRM_LITE (Android con deviceMemory ≤6 o ≤8 core) = niente antialias e risoluzione max 1,5× (prima fino a 2,75×); avviso dopo 20 s se sta ancora caricando. Patch /home/claude/patch_dreamlite.py.
+
+
+## 1100 — TG Dreamers: solo le notizie mediche nuove · Poke Dream: croce direzionale +15%
+- TG Dreamers: il BOLLETTINO MEDICO non pesca più a caso tra tutti gli infortunati del Centro Medico. Prende solo gli infortuni ARRIVATI tra le 7:30 del giorno prima e le 7:30 del giorno dell edizione (data dell aggiornamento ESPN). Un infortunio già noto su questo telefono prima di quella finestra non torna come notizia anche se ESPN lo ritocca (memoria locale dl_inj_seen). Se nella finestra non c è nulla, il TG non fa il servizio sugli infortuni.
+- Poke Dream: croce direzionale più grande del 15% (184 px, 218 con i comandi grandi).
+
+## 1101 — Dream Valley: restyling strade e paesi, guida come in città · Dream City: vetrine tutte diverse
+Francesco (04/11 09:29-09:30): nella Valle la guida sembra diversa e meno sensibile; strade brutte, non curate, alcune non portano a nulla; allargarle del 30%; restyling generale. Di notte in Dream City è difficile guidare perché le vetrine al piano terra sono tutte uguali.
+- GUIDA: nella valle ora le auto (la tua di città e quelle della valle) usano LO STESSO volante e lo stesso modello di sterzo di Dream City (curva progressiva volante/132, filtro, modello a bicicletta con la stessa aderenza: a 70 km/h curva a 90° in un secondo e mezzo, oltre bisogna frenare; freno a mano = retro che gira di più). Prima la valle rispondeva circa la metà a parità di velocità. Per la macchina di città valgono anche sterzo/aderenza/carico aerodinamico del modello (F1, Proto LM…). Barche e aerei invariati.
+- STRADE +30%: superstrada 18,2 m (era 14), statali 12 m (era 9,2), vie di città 15,6 m (era 12).
+- ASFALTO CURATO: texture più fine con grana, rattoppi e crepe; doppia gialla + corsie tratteggiate sulla superstrada, tratteggio sulle statali, cordolo e strisce di parcheggio in città; BANCHINE in ghiaia lungo superstrada/statali e MARCIAPIEDI a lastre lungo le vie di città (strato sotto l asfalto); negli INCROCI l asfalto è liscio senza righe (prima le righe si incrociavano a caso). Banchina sfumata anche nel colore del terreno.
+- NIENTE PIÙ STRADE NEL NULLA: circonvallazione (anello) attorno a ogni città e paese, così ogni via della griglia finisce su una strada; le strade esterne delle città si fermano sulla circonvallazione dal lato da cui arrivano (prima 4 superstrade convergevano in mezzo alla piazza); la strada del campeggio parte dalla superstrada e si collega a quella di Campolungo (prima due tronconi nel prato); la strada Montecielo–aeroporto parte dal terminal; raccordo aeroporto dalla superstrada nord. Restano solo i vialetti delle fattorie (portano alla fattoria) e i capolinea veri (belvedere, castello, cava).
+- PAESI RIFATTI: le due vie passano accanto alla piazza (a nord e a ovest), non più sopra la fontana; le strade esterne arrivano all incrocio delle due vie; le case sono allineate lungo le vie con la porta sulla strada (prima sparse a caso); chiesa e campetto a sud-est, bar con ombrelloni sulla piazza, alberi ai quattro angoli, lampioni lungo le vie.
+- CITTÀ DELLA VALLE: le piastre degli isolati non coprono più il marciapiede delle vie.
+- DREAM CITY, VETRINE: al piano terra 16 negozi diversi (BAR, PIZZERIA, FARMACIA con croce verde, GELATERIA, LIBRERIA con scaffali, BANCA in marmo, FIORI, SPORT, HOTEL, CAFFÈ, OTTICO, serranda chiusa, BARBIERE col palo, MARKET, portone di casa col numero civico, TABACCHI), ognuno con insegna, tenda e luce di notte di colore diverso (calda, fredda, rosa, verde, spenta): di notte ci si orienta. Prima erano 4 vetrine identiche ripetute ogni 16 m. Ogni lotto parte da un negozio diverso.
+- Test nel browser simulato (non sul telefono): screenshot delle strade, incroci, paese, città e mappa; navigatore verso Valferro, Montecielo, Campolungo, Belvedere, Aeroporto, Cava; verifica che restino solo i capolinea voluti; confronto numerico sterzo valle/città.
+
+## 1102 — TG Dreamers: la voce del giorno (registri e lessico diversi ogni giorno), apertura sulla notte con ironia, scambi al massimo due volte
+Francesco (04/11 10:44-10:46): il TG non deve ripetere le stesse frasi né lo stesso modo di parlare giorno dopo giorno (parole, termini, frasi); contenuti: prima le statistiche della notte (la parte più importante, con ironia su chi ha fatto bene e male), gli infortuni dopo le 7:30 del giorno prima solo se ci sono, l analisi delle squadre, possibili trade e direzione. Degli scambi non parlare sempre (Markkanen se n è parlato troppo): una volta il giorno dopo (truffa o no) e al massimo una seconda volta solo se un giocatore scambiato esplode, misurato su una settimana rispetto alla sua media (+10 PDK), non su una partita; se esplodono entrambi, meriti a tutte e due; se uno solo, ironia su chi lo ha ceduto.
+- LA VOCE DEL GIORNO (gzVoceGiorno): 10 registri a rotazione (cronista, bar sport, telecronaca, epica, British, economista, noir, coach, radio notturna, poeta). Ogni registro ha le sue aperture (intro), la prima battuta, 10 transizioni tra le notizie (mescolate ogni giorno), le chiusure e una frase «firma» nel servizio di apertura. Il registro cambia ogni giorno (e con «Altra variante»).
+- LESSICO DEL GIORNO (GZ_LEX): ~45 gruppi di sinonimi intercambiabili (tabellino/referto/box score/foglio statistico, stanotte/nella notte/ieri notte/nelle ultime ore, GM/general manager/dirigente/manager, classifica/graduatoria/tabella, mercato/borsino/tavolo delle trattative, giocatore/atleta/cestista, parquet/campo/legno, ha chiuso con/ha firmato/ha messo a referto…): ogni giorno se ne sceglie uno per gruppo e si applica a TUTTE le notizie (titoli, testo, voce). Correzioni automatiche di articoli e apostrofi dopo la sostituzione (il atleta → l atleta, ai Eagles → agli Eagles, c è → c'è). Nel pezzo «Occhio a stanotte» la parola stanotte non viene toccata.
+- SCALETTA A SEZIONI: 1) la notte (fino a 4 pezzi) 2) bollettino medico solo se c è un infortunio nuovo (finestra 7:30→7:30 della 1100) 3) squadre, mercato, direzione (almeno 3: lente sulle squadre, squadra del giorno, compratori e venditori, suggerimenti e consigli di mercato, scambi del giorno dopo, verdetto) 4) il resto (classifica, stanotte in campo). Dentro ogni sezione decide il punteggio del giorno.
+- LA NOTTE (nuovo servizio di apertura, sostituisce «La notte in cifre»): il migliore con dettagli del box score e confronto con la sua media, il podio, il FLOP della notte (chi ha giocato almeno 20 minuti rendendo meno della metà della sua media) con ironia, un dato della notte (quanti sopra 40, media della notte), chiusa e firma del registro. Ogni pezzo pesca da borse di 5-10 frasi. Il flop non viene ripetuto nel pezzo «Sotto la media».
+- SCAMBI: tolti «Il caso del giorno» e «Bidone della notte» (karma su una singola partita, si ripetevano) e spenta «La moviola» (tornava ogni 9 giorni per 3 mesi). Nuovo «IL VERDETTO DELLO SCAMBIO»: una sola volta per scambio, tra 2 e 10 giorni dopo, SOLO se un giocatore scambiato ha una media post-scambio di almeno +10 PDK sulla sua media stagionale (almeno 3 partite; +14 con 2). Entrambi esplodono → complimenti ai due GM; uno solo → ironia su chi lo ha ceduto. Se nessuno esplode, dello scambio non si parla più. Il pezzo del giorno dopo (truffa / equo) resta, una volta sola.
+- Test nel browser simulato: generate 10 edizioni con i 10 registri, lette per intero; corrette le contrazioni (dgli, un altra', il atleta), i doppioni, la maiuscola a inizio frase.
+
+## 1103 · Campo: gli infortunati vanno in tribuna (04/11/2026)
+- Nella formazione Dreamers (campo, 6° uomo, panchina) a turno aperto chi è «out» nel Centro Medico e non ha ancora punti nel turno passa dietro a tutti i sani: i sani entrano in ordine di PDK come prima, gli infortunati solo se i sani del ruolo non bastano, e in quel caso dal fondo (panchina), poi via via più su. I «dubbi» stanno in mezzo (dopo i sani, prima degli out).
+- Chi ha già punti nel turno resta al suo posto di PDK anche se si fa male dopo. Turni chiusi invariati.
+
+## 1104 · Dream City / Valley: motore e suoni che restavano muti (04/11/2026)
+- Francesco: in città e nella valle la macchina non faceva più rumore, si sentiva solo la radio. Su iPhone la voce sintetica (radio, TG) mette in pausa il contesto audio ("interrupted") e nessuno lo riaccendeva: il tasto "tocco = resume" puntava a una variabile vuota.
+- Ora un «risveglio» (st.A.kick) riaccende il contesto audio a ogni tocco, a ogni fine frase della voce, a ogni aggiornamento del motore e con un controllo al secondo; nella valle lo stesso a ogni tocco e ogni volta che il motore è acceso. Pubblico, sottofondo, motore, clacson, urti e ambiente tornano con i tempi di prima (nessun altro suono è stato cambiato).
+
+## 1105 · Nuove maglie Texas Ducks: "Scie + gessato" (04/11/2026)
+- Francesco ha scelto il disegno 26 tra i rendering: gessato sottile + fasce laterali che salgono curve e si uniscono alla spallina (bordo interno sotto la spallina, poi giù dritto), con una scia di 6 impronte palmate per lato (zampa a 3 dita con palmatura incavata, tallone e unghie; dita incise nel colore della fascia).
+- Codice: DECO.DUC nuovo (fascia = c.trim, impronte = c.fp o colore maglia, gessato = c.pin o c.trim). Casa: gialla, fasce nere, impronte gialle, gessato nero. Notte: nera, fasce gialle, impronte nere, gessato giallo.
+- Bianca (kitC DUC k=2): collo, spalline e fasce neri, impronte e gessato gialli, scritta e numero NERI bordati di giallo (fg #111111, jstroke #facc15, jsw 2.4, pin/fp #facc15).
+- PER TORNARE INDIETRO: il disegno vecchio (denti) è in DECO.DUC0 → rinominarlo DUC; la bianca vecchia era {bg:"#f7f7f5",fg:"#f5c000",trim:"#facc15",jstroke:"#111111",jsw:1.1} (scritta nel commento della riga). Togliere anche la voce del 04/11 in NV_LOG.
+- Provato sul campo vero (pagina Ducks) con le tre divise: nessun errore. Non provato sul telefono.
+
+## 1106 · Striscia delle squadre in Home, da lunedì 18:01 a mercoledì 18:00 (04/11/2026)
+- Come la striscia dei valori della domenica (902), ma con le 8 squadre: logo, nome e variazione % del valore della rosa (somma di valAt dei giocatori di ROSTER subito prima e subito dopo lo scatto della domenica alle 18), verde se sale, rosso se scende, prima chi sale di più.
+- Finestra: da scatto+24h+1min a scatto+72h. Non si sovrappone alla striscia dei giocatori (24 ore dopo lo scatto). Classe .tksq.
+- Provato: con l ora attuale compare (8 squadre), dopo mercoledì 18:00 e la domenica no; nessun errore.
+
+## 1107 · Statistiche squadra: scheda «Valore squadra» + verde/rosso su aumenti e cali (04/11/2026)
+- Sotto Media/Record a turno: valore squadra (somma di valAt dei giocatori di ROSTER), «Settimana» (variazione dell ultimo scatto della domenica), «Stima dom.» (valAt al prossimo scatto calcolato adesso, con le partite giocate finora). Tocca: lista giocatori con valore, settimana e stima.
+- Verde/rosso forzati (anche in Parquet) su Settimana, Stima, lista e sul «Trend squadra».
+- Provato sulle 8 squadre: scheda presente, colori giusti, nessun errore.
+
+## 1108 · Valore squadra: colori del tema (giorno/notte) (04/11/2026)
+- La scheda aveva colori fissi (crema/marrone) e in modalità notte stonava. Ora il riquadro usa le classi .esqk/.esqk3 (stessi sfondi e testi delle altre schede, in Parquet e in notte); la lista sta in un .esqk .vsqlw. Restano forzati solo verde e rosso. Provato in giorno e notte.
+
+## 1109 · Maglie Ducks: gessato + piume (versione 29) (04/11/2026)
+- Francesco: alle maglie Ducks pubblicate (1105) si aggiungono le piume a squame sopra il gessato, come nel rendering 29 «gessato e piume insieme». Gessato a opacità .3, piume nel colore del gessato (c.pin o c.trim) a .22. Fasce curve, impronte, colori e scritte invariati. Provato sul campo con le tre divise, nessun errore.
+
+## 1110 · Maglie Ducks: fascia laterale più spessa fino alla spalla (04/11/2026)
+- La fascia laterale sale lungo la spallina con spessore ~7 (bordo interno M0 0 H29.5 L29 14 C28.8 30 26 44 18.6 60 L16 140) fino in cima alla spalla. Versione A scelta da Francesco. Provato sul campo con le tre divise.
+
+## 1111 · Maglia Ducks notte: torna il disegno con i denti (04/11/2026)
+- Francesco: la notte torna quella di prima (nera, denti gialli sui fianchi e sotto il collo, DECO.DUC0) tramite il flag duc0 in kitC k=1. Casa e bianca restano «scie + gessato + piume». Provato, nessun errore.
+
+## 1112 · Modalità Dream: gara da 3 (tasto 🎯) (04/11/2026)
+- Tasto 🎯 sotto il 🏀 (solo nell'arena, non nelle stanze): 5 postazioni attorno al canestro di destra (angolo, 45°, centro, 45°, angolo; 6,75 m negli angoli, 7,5 m altrove), carrello con 5 palloni per postazione; i primi 4 valgono 1 punto, l'ultimo (money ball bianco, rosso e blu) 2. 60 secondi dopo un conto alla rovescia di 3; massimo 30 punti. Dopo il 5° pallone si passa da soli alla postazione successiva; durante la gara si resta fermi sulla postazione. Si tira con TIRA come sempre.
+- Record sul telefono: localStorage dl_drm_g3rec. Ritoccando 🎯 o spegnendo 🏀 la gara si interrompe (record non salvato).
+- Codice in dream.js (ex stub G3/g3End): g3Racks, g3Go, g3Shot, g3End; il tiro marca il pallone (B.g3) e il canestro conta 1 o 2 punti nella gara invece di 2/3.
+- Provato nel browser simulato: tiri perfetti dentro da tutte le postazioni, fine a tempo e record salvato. Non provato sul telefono.
+- Posizione bloccata a ogni fotogramma durante la gara (shStep) e joystick nascosto fino alla fine. Pavimento nero negli screenshot: solo nel browser di prova (succede anche con la versione pubblicata), sul telefono il parquet si vede.
+
+## 1113 · Bug: dopo aver cambiato squadra nelle Statistiche squadra non si tornava più alla Home (04/11/2026)
+- Causa: il gestore generico dei .chip (render, riga «m.querySelectorAll(".chip:not(...)")») prendeva anche i tasti squadra di effsquadra (data-esqt, senza data-t) e faceva curTeam=undefined (salvandolo anche in localStorage "team"). La Home (homeNotte, TEAMS[myT].bg) andava in errore e restava la pagina vecchia, sia col tasto ‹ sia col menu.
+- Fix: esclusi [data-esqt] e guardia: se il chip non ha una squadra valida non si cambia curTeam. Provato: Statistiche › Squadre › Ducks › Foxes/Dolphins/Eagles › indietro › indietro = Home, nessun errore.
+
+## 1114 · Tiro affidabile: nel verde entra sempre, fuori dal verde si sbaglia (04/11/2026)
+- Francesco: a volte con la barra sul verde la palla usciva. Cause: 1) il rilascio contava il tempo vero, che è avanti di uno o più fotogrammi rispetto alla barra disegnata; 2) piccola casualità anche dentro il verde; 3) la fascia veniva ricalcolata al rilascio.
+- Ora: si usa la posizione della barra che vedi (SH.shownM), la fascia è quella mostrata alla pressione (SH.zw), dentro il verde k=1 esatto. Fuori dal verde l errore minimo sale (0,014 -> 0,032).
+- Provato: 25 tiri dentro il verde (anche sui bordi) dalle 5 postazioni = 25 dentro; appena fuori = tutti fuori.
+
+## 1115 · Tiri di fila affidabili + livella accanto al canestro (04/11/2026)
+- Con tanti tiri di fila un pallone ancora in volo veniva riusato (pool di 6) e un canestro giusto spariva: ora si prende solo un pallone libero o già arrivato, altrimenti se ne crea uno nuovo.
+- Livella: segue il ferro sullo schermo (barPos, proiezione del ferro con la telecamera), 70 px a destra del canestro con la fascia verde all altezza del ferro; più trasparente (sfondo .28, opacità .8, riempimento arancio trasparente con riga bianca in cima).
+
+## 1116 · Livella del tiro orizzontale in alto al centro (04/11/2026)
+- Al posto della riga dei punti (che scende a 84 px, il banner della gara a 116 px): barra orizzontale trasparente larga min(300px,46vw), si riempie da sinistra a destra, il verde è al centro (scala 0..2*TGT, BMX). Stessi tempi di prima per arrivare al verde (TGT 0,82 = 533 ms); a fine barra il tiro parte da solo (tardi). Ripetuto il test: 15 tiri nel verde, anche sui bordi = 15 dentro.
+
+## 1117 · Tiro: tolta la riga dei punti; valori della gara da 3 in verticale in alto a sinistra (04/11/2026)
+- La riga «PUNTI · TIRI · % · di fila» non compare più (shS sempre nascosto). Durante la gara da 3 il riquadro viola sta in alto a sinistra, una voce per riga (gara, tempo, punti, postazione, record); fuori dalla gara non c è.
+
+## 1118 · Modalità Dream: UNO CONTRO UNO (tasto «1v1») (04/11/2026)
+- Solo nell arena, solo premendo il tasto 1v1 (ripremendolo si esce). Partita a 11 contro un manichino bianco leggero (7 pezzi, un solo materiale, niente maglia) sul canestro di destra; fuori dall arco 2 punti, dentro 1. HUD in alto a sinistra (punteggio, chi attacca, vinte/perse salvate in dl_drm_v1).
+- Attacco: joystick, PALLEGGIO (crossover: se riesce il difensore resta indietro 0,95 s), TIRA con la livella (difensore addosso = fascia verde più stretta, v1Cont in win()); sotto canestro terzo tempo (fascia larga) o schiacciata se arrivi correndo. Il difensore sta a 1,9 m tra te e il canestro; se resti addosso a lui può rubarti palla.
+- Difesa: la CPU va a canestro girandoti attorno, tira da fuori se è libera, terzo tempo/schiacciata sotto; RUBA (da vicino, 33%) e SALTA (stoppata 55% se salti quando tira); se le stai addosso sbaglia di più. Telecamera che la segue.
+- Qualità: st.v1on entra nella risoluzione adattiva come guida e TV, solo durante la partita. Salto: st.jy sull altezza della telecamera.
+- Provato nel browser simulato: partita automatica completa fino a 11 senza errori. Fluidità e difficoltà da verificare sul telefono.
+
+## 1119 · 1 contro 1 arcade: attacchi sempre tu (04/11/2026)
+- Francesco: niente più difesa né punteggio a 11. Si attacca sempre: dopo canestro, errore, palla rubata o stoppata si riparte da capo con la palla in mano. Riquadro punti nascosto, vinte/perse non più salvate.
+- Il difensore ruba (se gli resti addosso o col crossover sbagliato da vicino) e salta: stoppata 22% sul tiro da fuori se ti è addosso (fascia stretta), 28% sotto canestro se non l hai superato. Se sei smarcato (crossover riuscito o lontano) terzo tempo e schiacciata non si stoppano; schiacciata se arrivi correndo, altrimenti terzo tempo normale.
+
+## 1120-1123 · 1 contro 1: sagoma di cartone, crossover, terzo tempo con schiacciata, palla subito in mano, step back (04/11/2026)
+- 1120: avversario = sagoma di cartone bianca senza braccia (un piano ritagliato da canvas, MeshBasicMaterial, alphaTest; + basetta). Crossover animato (spostamento morbido 280 ms, la palla passa all altra mano: SH.side/sideC in handPos; se riesce il difensore abbocca dall altra parte). Entro 3,2 m dal ferro TIRA = terzo tempo: due passi verso il ferro, salto (st.jy fino a 1,05), schiacciata se nel verde largo, altrimenti appoggio sbagliato.
+- 1121: palla di nuovo in mano subito (v1Again, 300-350 ms) dopo tiro, rubata o stoppata, dove sei; il difensore si rimette davanti. Niente più «PALLA TUA».
+- 1122: STEP BACK: PALLEGGIO col joystick indietro = passo indietro di 1,25 m e difensore fermo 0,9 s; TIRA col joystick indietro = salto all indietro; per 1,5 s il tiro non è contestato né stoppabile.
+- 1123: nella schiacciata ci si ferma a 1,25 m dal ferro e la visuale non si alza oltre 18° (prima finiva sotto il ferro guardando in alto).
+
+## 1124 · Palla mai più ferma sul ferro + verde largo da soli sotto canestro (04/11/2026)
+- Bug: una palla in equilibrio sopra l anello rimbalzava sul posto per sempre (provato: senza fix resta lì, velocità 0,01). Ora se una palla vicino al ferro va piano per 0,3 s cade: dentro se il centro è dentro l anello, fuori altrimenti (provato: liberata in 0,8 s). Anche il terzo tempo da vicino partiva con una distanza minima di 1 m (traiettoria sbagliata): ora 0,35 m.
+- 1 contro 1: entro 3,2 m dal ferro e senza difensore addosso la fascia verde è quella del mid range (5 m) +60% (0,108 contro 0,0675); il terzo tempo conta la fascia che vedi.
+
+## 1125 · 1 contro 1: tiro da tre marcato più difficile (04/11/2026)
+- Da oltre 7,1 m con il difensore davanti (non superato con crossover, non in step back) la fascia verde è -25% fisso (7,5 m: 0,054 -> 0,040). Libero o in step back resta piena. Resta anche la stoppata (22%) se ti è addosso.
+
+## 1126 · Tiro, gara da 3 e 1 contro 1 più fluidi (04/11/2026)
+- Causa degli scatti: durante il tiro la visuale segue sempre il canestro, quindi la risoluzione saliva (2,5x su iPhone, da fermi) e scendeva (1,67x, in movimento) di continuo; ogni cambio (setSize) ricrea le immagini del motore e blocca un attimo il telefono.
+- Ora con 🏀 acceso, nella gara da 3 e nell 1 contro 1 la risoluzione è FISSA a 1,6x; se il telefono fatica (media sopra 19 ms a fotogramma) scende di 0,15 e non risale finché non esci (st.shPR). Fuori da queste modalità tutto come prima.
+- handPos riusa sempre gli stessi vettori (prima 3 oggetti nuovi a ogni fotogramma = pulizie della memoria).
+- Provato: tiri nel verde ancora tutti dentro, nessun errore. La fluidità vera si giudica solo sul telefono.
+
+## 1127 · Maglia Ducks notte: denti + gessato (04/11/2026)
+- Alla notte con i denti (DECO.DUC0, flag duc0) si aggiunge sotto il gessato giallo (righe ogni 6, opacità .3), come le altre divise. Resto invariato.
+
+## 1128 · Campo: pallini delle partite del turno sotto il cartoncino PDK (04/11/2026)
+- drPcd ora avvolge il cartoncino (vecchio codice in drPcd0) e sotto mette un pallino per ogni partita del turno (drSettimana con CAMPO_DR.W): vuoto = da giocare, verde = giocata, rosso lampeggiante = in corso. Il cartoncino PDK resta identico. Vale per campo, 6° uomo e panchina; la tribuna e la modalità notte del campo non cambiano. Provato: 10 cartoncini, 17 pallini, nessun errore.
+
+## 1129 · Pallini delle partite: colore del PDK e live a radar (04/11/2026)
+- Partita finita: il pallino prende il colore del PDK di quella partita (pdkLvl sul valore della notte: viola da 40, verde 30-40, giallo 20-30, rosso sotto; colori delle Impostazioni DLS.pV/pG/pY/pR). Live: pallino bordato di rosso con un anello rosso che si allarga e svanisce (radar), riempito col colore del PDK parziale se c è.
+
+## 1130 · Pallino live: solo il bordino colorato che lampeggia (04/11/2026)
+- Live: interno vuoto, bordino (2,5 px) del colore del PDK parziale (bianco se non c è ancora) che lampeggia ogni secondo. Tolto l anello a radar.
+
+## 1131 · Pallino live come simbolo del live (04/11/2026)
+- Anello fisso (2 px) e dentro un pallino piccolo (4 px) che lampeggia, tutti e due col colore del PDK parziale (rosso se non c è ancora).
+
+## 1132 · Maglia Ducks gialla (casa): solo gessato, senza piume (04/11/2026)
+- Flag np sulla casa Ducks: niente piume a squame, resta il gessato. Bianca invariata (gessato + piume), notte invariata (denti + gessato).
+
+## 1133 · Maglia Ducks gialla nello stile della notte (04/11/2026)
+- Casa Ducks con duc0: denti neri (DECO.DUC0) + gessato nero, come la notte. Bianca invariata (scie + gessato + piume).
+
+## 1134 · 1 contro 1: sempre lo stesso canestro (04/11/2026)
+- nearRim() durante l 1 contro 1 restituisce sempre il canestro di destra (ARIMS[1]): superando la metà campo il canestro non cambia più.
+
+## 1136 · Home: banner INFERMERIA nella striscia (04/11/2026)
+- In hnAvvisi, prima delle trade: card spessa e lunga (stile .tmc) «🏥 INFERMERIA · ultimi 2 giorni» con due colonne: ❌ OUT e ⚠️ IN DUBBIO (quest, dubbio, dtd, prob). Giocatori delle nostre squadre con logo e nome abbreviato su due righe (fino a 8 per colonna, poi +N). Tocca: Centro Medico.
+- Ultimi 2 giorni = data ESPN dell aggiornamento o prima volta che il telefono l ha visto (x.seen, x.dt): la prima volta tutti gli infortuni attuali risultano «nuovi» per 2 giorni.
+- Provato con infortuni simulati: banner corretto, nessun errore.
+
+## 1137 · Banner Infermeria: solo chi è ENTRATO negli ultimi 2 giorni (04/11/2026)
+- localStorage dl_inj_in = {giocatore: momento di entrata}. Primo avvio: tutti quelli già presenti valgono 0 (vecchi). Chi esce dalla lista viene dimenticato, se rientra è di nuovo nuovo. Il cambio di stato (dubbio -> out) non lo fa ricomparire. Il banner usa x.inT.
+
+## 1138 · Infermeria in due banner separati (04/11/2026)
+- Un banner «🚑 OUT» (bordo sinistro e titolo rossi) e uno «⚠️ IN DUBBIO» (arancio), ognuno con «ultimi 2 giorni» e i suoi giocatori su due righe. Ognuno compare solo se ha giocatori.
+
+## 1139 · Infermeria: al primo avvio conta la data ESPN (04/11/2026)
+- Scelta di Francesco (opzione 2): la prima volta (chiave nuova dl_inj_in2, così vale anche per chi aveva già la 1137) chi ha un aggiornamento ESPN degli ultimi 2 giorni entra nel banner con quella data; gli altri sono vecchi. Dopo, come prima: entra solo chi compare per la prima volta. Nei primi 2 giorni può esserci anche qualcuno già fuori da prima (ESPN aggiorna anche le schede vecchie).
+
+## 1140 · Impostazioni: pallini delle partite colorati o semplici (04/11/2026)
+- Nuovo interruttore DLS.gdc (acceso di default, nel gruppo Campo dei «Ripristina»): acceso = pallini col colore del PDK della partita; spento = verde se giocata, opaco se da giocare. In tutti e due i casi il live è il simbolo rosso lampeggiante (anello + pallino).
+
+## 1141 · Pallini semplici di default (04/11/2026)
+- DLS.gdc parte spento: verde giocata, opaco da giocare, live rosso. Il colore del PDK si accende da Impostazioni › Campo.
+
+## 1142 · Impostazioni › Giocatori › Icona di singoli giocatori: tasti squadra dentro la sezione (05/11/2026)
+- Francesco: c erano solo i Dolphins, non si poteva scegliere la squadra (i tasti erano solo sotto l anteprima, nascosti con «Nascondi»). Ora le 8 squadre sono anche in cima alla sezione (stessi data-dlsv="pvTeam|T").
+
+## 1143 · Modalità Dream: maglie e cartellini PDK più nitidi (05/11/2026)
+- Le texture erano già ad alta risoluzione (maglie 900x1095, cartellini 3x): lo sbiadito veniva dai mipmap (da lontano il motore usa una copia rimpicciolita e sfocata). SHARP(): sulle maglie dei giocatori e su tutti gli sprite (cartellini) map_fragment campiona con lod bias -1.0 (una copia più grande). Nessun costo di memoria. Provato con una maglia di prova affiancata: molto più nitida, nessun errore di shader. Non provato con giocatori live (stanotte nessuno in campo).
+
+## 1144 · Maglie: la scelta vale solo per la squadra (05/11/2026)
+- Torna la scelta per squadra (KIT[t] in dl_kit, come prima della 187): il tastino maglietta nella pagina di una squadra cambia solo le sue maglie, ovunque (campo, giocatore, scontri…). Le altre squadre restano come le hai lasciate. Migrazione: la vecchia scelta globale (dl_kitg) passa una volta alla squadra salvata come «team», poi sparisce. KITO = scelta temporanea per le anteprime (prima usavano KITG).
+
+## 1145 · Ducks: maglia bianca di default per tutti (05/11/2026)
+- Senza una scelta salvata per i Ducks, kitDi("DUC") = 2 (bianca), anche in modalità notte. Le altre maglie si scelgono col tastino nella pagina dei Ducks (vale solo su quel telefono).
+
+## 1146 · Ducks: nel catalogo anche gialla e nera «scie + gessato + piume» (05/11/2026)
+- Il tastino maglietta dei Ducks ha 7 maglie (kitTot): Casa (denti), Notte (denti), Bianca (scie), NBA 2026, Anni 90, 5 = Gialla (scie: fasce nere, impronte gialle) e 6 = Nera (scie: fasce gialle, impronte nere), stesso disegno della bianca. Le altre squadre restano a 5. jersey()/kitIco: NBA solo per 3 e 4.
+
+## 1147 · Ducks gialla e nera (scie): gialla solo gessato, nera senza effetti (05/11/2026)
+- k=5 gialla: np (niente piume, resta il gessato). k=6 nera: np + npin (niente piume né gessato): solo fasce curve e impronte.
+
+## 1148 · Ducks nera (scie): con il gessato (05/11/2026)
+- k=6 torna col gessato giallo (tolto npin), sempre senza piume.
+
+## 1149 · Ducks: 6 maglie in più a stile misto, in prova (05/11/2026)
+- Francesco le vuole tutte nel catalogo, poi deciderà quali tenere. Tastino Ducks a 13 maglie (kitTot). 7-9 (bianca, gialla, nera) = mix 1: fascia con spalla spessa fino in cima e bordo interno a zig zag; 10-12 = mix 2: zig zag originale su fianchi e spalle (DECO.DUC0 senza i denti al collo). Tutte con impronte, gessato, niente piume. Colori presi da 2, 5 e 6.
+
+## 1150 · Ducks: restano 5 maglie (05/11/2026)
+- Scelta di Francesco: 0 = gialla, 1 = nera, 2 = bianca (default), tutte «zig zag originale su fianchi e spalle + impronte + gessato» (mix 2, senza denti al collo né piume); 3 = NBA 2026, 4 = Anni 90. Tolte casa/notte con i denti, scie, spalla spessa zig zag. Chi aveva salvato una maglia tolta passa alla stessa del nuovo catalogo (10->2, 11->0, 12->1) o alla bianca.
+
+## 1151 · Immagini condivise: maglie senza ombre su nome e numero (05/11/2026)
+- jerseyShare(): per le immagini da condividere (canvas) toglie l ombra sfocata del numero e la sfumatura sopra, e divide ogni scritta in due livelli (prima contorno, poi colore) perché su iPhone paint-order nelle immagini SVG non vale e il contorno copriva il colore. Usata in tutte le condivisioni (encodeURIComponent(jersey( -> jerseyShare().
+- Anche nella Modalita Dream (dream.js, 4 punti: maglie in campo, spogliatoio, negozio, ufficio) le maglie diventano immagini: usano jerseyShare anche li.
+
+## 1152 · Ducks: le 3 maglie sono quelle con la spalla spessa liscia (05/11/2026)
+- Rettifica di Francesco: gialla, nera e bianca usano mix 1 (fascia con spalla spessa liscia fino in cima, bordo interno a zig zag, impronte, gessato), non il zig zag originale sulle spalle.
+
+## 1153 · Ducks: maglia gialla di default (05/11/2026)
+- Senza scelta salvata kitDi("DUC") = 0 (gialla, spalla spessa + zig zag + impronte + gessato), anche in modalità notte.
+
+## 1154 · Condivisione: maglie nitide (05/11/2026)
+- Persisteva l alone su nome e numero: la maglia SVG senza width/height veniva rasterizzata a 120x146 e poi ingrandita sul canvas (sfocata). jerseyShare ora mette width 720 height 876.
+
+## 1155 · Ducks: impronte simmetriche (05/11/2026)
+- Maglie gialla, nera e bianca (mix 1): 4 impronte per lato in colonna (x 10, da y 127 ogni 20), tutte inclinate di 10° verso il centro, il lato destro a specchio del sinistro. Prima erano 6, sfalsate a destra e sinistra con inclinazioni alternate.
+- Correzione: la quarta impronta in basso (y 127) finiva sotto il bordo della maglia. Ora y 117, 99, 81, 63, scala .66: tutte e 4 visibili.
+- Rifinitura: impronte inclinate di 22 gradi verso il centro, scala .58, x 9.5 (y 116, 98, 80, 62): tutte dentro la fascia, simmetriche.
+
+## 1156 · Ducks: impronte simmetriche come maglie in più (05/11/2026)
+- Francesco vuole scegliere: 0-2 tornano con le impronte di prima (6, sfalsate), 5-7 = gialla, nera, bianca con 4 impronte simmetriche inclinate 22 gradi (flag sym). Tastino Ducks a 8 maglie.
+
+## 1157 · Ducks impronte simmetriche: 5 per lato (05/11/2026)
+- Maglie 5-7 (sym): 5 impronte per lato (y 118, 103, 88, 73, 58; x 9.3; scala .5), stessa inclinazione 22 gradi, dentro la fascia, staccate tra loro.
+
+## 1158 · Ducks: maglie con 4 impronte grandi tagliate dal bordo (05/11/2026)
+- In aggiunta: 8-10 = gialla, nera, bianca con 4 impronte grandi (scala .95) dritte, sul bordo esterno, tagliate dalla maglia (fpL = lista di posizioni). Tastino Ducks a 11 maglie. La versione 5 impronte simmetriche resta com era.
+
+## 1159 · Ducks: restano 8 maglie, solo il concept impronte grandi tagliate dal bordo (05/11/2026)
+- 0-2 gialla, nera, bianca con 4 impronte grandi dritte tagliate dal bordo (DUC_F4); 5-7 le stesse con 3 impronte, una per dente (DUC_F3, la versione D: +10% rispetto alle 4); 3-4 NBA 2026 e Anni 90. Tolte le 6 impronte sfalsate e le 5 simmetriche. Default gialla con 4. Migrazione una volta (dl_kit_m1159): chi aveva 5-7 o 8-10 passa allo stesso colore con 4 impronte.
+
+## 1160 · Ducks 3 impronte: tagliate a metà sul bordo (05/11/2026)
+- DUC_F3 spostate sul bordo esterno come DUC_F4 (x 6.6, 5.9, 5.2) e +20% (scala 1.15/1.1): si vede solo mezza zampa. Versione E scelta da Francesco.
+
+## 1161 · Ducks: versione unica a 3 impronte (05/11/2026)
+- Tolte le 4 impronte: 0-2 gialla, nera, bianca con DUC_F3 (3 impronte tagliate a metà sul bordo), 3-4 NBA 2026 e Anni 90. Tastino a 5. Default gialla. Chi aveva 5-7 passa a 0-2 (dl_kit_m1161).
+
+## 1162 · Ducks: fascia che segue le zampe (05/11/2026)
+- Il bordo interno della fascia (mix 1) non e piu uno zig zag dritto: segue la sagoma di ognuna delle 3 zampe (dito centrale, membrana, dito laterale, fianco, tallone) con 4,5 di margine, a spigoli (versione A). La spalla scende larga fino al dito laterale della prima zampa, senza stacco. Path: M0 0 H29.5 L29 14 C28.8 30 27.5 40 20.3 47.2 L15.2 56.9 L16.3 70.0 L7.4 66.0 L12.7 77.0 L21.4 73.8 L16.1 83.8 L17.3 97.5 L8.1 94.0 L13.4 105.0 L22.1 101.8 L16.9 111.8 L18.0 125.5 L20 140 L0 140 Z
+
+## 1163 · Ducks: fascia a zampe in aggiunta, non al posto (05/11/2026)
+- Francesco voleva la 1162 in aggiunta. 0-2 tornano con lo zig zag dritto (default gialla), 3-4 NBA, 5-7 = gialla, nera, bianca con la fascia che segue le zampe (c.pz = DUC_PZ). Tastino Ducks a 8.
+
+## 1164 · Ducks: 5 maglie zig zag L in aggiunta (05/11/2026)
+- Scelte da Francesco tra i rendering: 8 gialla, 9 nera, 10 bianca con lo zig zag L (una punta per zampa, margine largo: DUC_ZL = M0 0 H29.5 L29 14 C28.8 28 27.5 38 20.8 47.0 L12.9 69.2 L21.9 73.6 L13.6 96.9 L22.6 101.6 L14.6 126.3 L20 140 L0 140 Z); 11 nera con colletto, spalline e fascia bianchi e zampe nere; 12 gialla con zampe bianche. Tutte in aggiunta. Tastino Ducks a 13. Colori del gessato ancora da decidere (rendering BB e CC).
+
+## 1165 · Ducks: catalogo definitivo zig zag L (05/11/2026)
+- Tolte tutte le altre maglie Ducks. Restano 7: 0 gialla, 1 nera, 2 bianca con gessato nero (BB), 3 NBA 2026, 4 Anni 90, 5 nera con colletto, spalline e fascia bianchi, zampe nere e gessato bianco (CC), 6 gialla con zampe bianche. Tutte con lo zig zag L (DUC_ZL) e 3 impronte tagliate dal bordo. Default gialla. Migrazione una volta (dl_kit_m1165): 5-10 -> stesso colore 0-2, 11 -> 5, 12 -> 6.
+
+## 1166 · Ducks: scritte bianche su nera bordi bianchi e gialla zampe bianche (05/11/2026)
+- 5 (nera bordi bianchi) e 6 (gialla zampe bianche): scritta e numero bianchi con bordo nero (versioni EE e DD).
+
+## 1167 · Ducks: torna lo zig zag dritto + bianca zampe bianche (05/11/2026)
+- Francesco preferisce lo zig zag dritto originale: tolto pz:DUC_ZL dalle maglie 0-2 (5 e 6 lo ereditano). Aggiunta 7 = bianca con bordi neri, zampe bianche, scritta e numero bianchi bordati di nero, gessato nero (KK). Tastino Ducks a 8 (6 Ducks + 2 NBA).
+
+## 1168 · Ducks: tolta la gialla con zampe bianche (05/11/2026)
+- Restano 7 (5 Ducks + 2 NBA): 0 gialla, 1 nera, 2 bianca, 3-4 NBA, 5 nera bordi bianchi, 6 bianca zampe bianche (era la 7). Migrazione dl_kit_m1168: 6 -> 0 (gialla), 7 -> 6.
+
+
+## 1169 · Ducks: testo banner squadra e scritta sul campo neri
+Banner in alto (DUCKS, TEXAS, record, RECORD) e TEXAS DUCKS sul campo ora neri invece che bianchi (CSS :has(.hlogo[data-t=DUC]) + atxt per DUC).
+
+
+## 1170 · Ducks: logo ufficiale = papero ovunque tranne il campo
+LOGO2.DUC (scritta) resta solo nel campo (vCampo e immagine campo condivisa). Chip, liste, banner, immagini condivise, scommesse, storia/titoli usano LOGO.DUC (papero).
+
+
+## 1171 · Ducks: scritta del campo nera anche col tema Parquet
+La regola Parquet .cname{fill:#fff!important} vinceva sul nero: aggiunta classe cn-duc con override a specificita maggiore.
+
+
+## 1172 · Ducks: scritta campo nero pieno
+Per DUC: niente velo gloss sopra il banner del campo, fill-opacity 1, fill e bordo #000.
+
+
+## 1173 · Modalita notte solo colori
+La luna cambia solo i colori (campo compreso). Il campo mostra sempre la formazione ufficiale Dreamers (NTL=false in vCampo al posto della vecchia formazione notte). Linee rosse lampeggianti (clive) quando c e una partita live, sia di giorno sia di notte. Notte automatica tolta: autoNotte disattivata e voce rimossa dalle Impostazioni.
+
+
+## 1174 · Swipe sul giocatore, via lo swipe tra squadre
+Tolto lo swipe orizzontale che cambiava squadra nel Campo. Sul cartellino di ogni giocatore (campo, 6o uomo, panchina) swipe sx/dx: pagine = partite giocate (PDK puro) · cartellino del turno preimpostato (miglior PDK con moltiplicatori) · live (PDK puro) · prossime partite con previsione (drPrevG, stessa formula di vPrevisione, senza moltiplicatori). Il pallino della partita mostrata ha un anello bianco (cur). Pagina scelta ricordata in DRPI durante la sessione.
+
+
+## 1175 · Previsione nel cartellino in stile previsione
+Pagina futura: cartellino grigio In attesa con avversario + riquadrino blu PREVISIONE (stile .hmv.pv della Home) con barretta del livello.
+
+
+## 1177-1178 · Scritta campo Ducks forma originale nera + notte campo insieme ai colori
+Scritta campo Ducks: tolto il bordino nero (ingrossava le lettere, sembrava doppia), resta nero pieno senza velo. Tasto notte: se c e il campo si ridisegna dentro lo stesso cambio (view transition), cosi parquet e colori dell app cambiano insieme. v611 (cartellino previsione 1177 non ancora pubblicato).
+
+
+## 1180 · Scritta campo Ducks senza contorno
+Il contorno color parquet attorno al nero dava l effetto doppio: per DUC stroke none. v612.
+
+
+## 1177-1182 · Cartellino previsione definitivo
+Pagina futura del cartellino: PREV @ SAC su una riga (si stringe se non entra, pfFit) + riquadrino blu basso con solo il PDK previsto e linea del livello. v613.
+
+
+## 1183-1184 · Cartellino live e partite giocate come i PDK normali
+Live e partite giocate: stesso cartellino dei PDK normali, senza avversario (avversario solo nella previsione). Pagine nascoste del cartellino con classe off (clip-path) invece di hidden, cosi il correttore colori del Parquet le sistema. v614.
+
+
+## 1185 · Riquadro previsione numero piu grande
+Numero 9px -> 12px (line-height .88, padding sopra 0): stessa altezza del riquadro. v615.
+
+
+## 1186-1188 · Colore Ducks personalizzabile (area riservata)
+Personalizzazioni > Ducks colore della squadra: tavolozza (giallo ufficiale, 5 grigi, oro, arancio, rosso, verde, blu, viola, nero, bianco) + Scegli tu (input color). localStorage dl_duccol. Cambia TEAMS.DUC.bg (maglie restano gialle: kitC usa DUC_Y) e window.DUC_COL3D in dream.js. Scritte banner/campo: bianche se lo sfondo e scuro (campo: luminosita del bordo), nere se chiaro. v616.
+
+
+## 1189 · Swipe su tutto il giocatore
+touch-action:pan-y su tutto il giocatore (.cpl/.dpc con .pcs), non solo sul cartellino: su iPhone lo swipe sulla maglia ora gira il cartellino. Maglia con mezzo giro (pjsw) al cambio pagina. v617.
+
+
+## 1190 · Papero Ducks adattato alle caselle
+ducFit() dopo ogni render: scala (proprieta CSS scale) il papero fino a 3px dal bordo della casella che lo contiene, senza toccare scritte/loghi vicini, max 1,3. Esclusi badge sotto 26px. v618.
+
+
+## 1191 · Papero Ducks senza ombre
+Tolte drop-shadow/box-shadow dietro al papero ovunque (badge, tile Home, banner squadra anche di notte). v619.
+
+
+## 1192 · Condivisione: ombre sotto scritte su iPhone
+Su iPhone l ombra del canvas applicata al drawImage di un SVG viene disegnata sotto ogni elemento (scritte, numero). Ora la maglia SVG viene prima rasterizzata in un canvas a 2x e poi disegnata con l ombra: ombra solo intorno alla sagoma. Maglia 3D invariata. Altre immagini con maglie: ombre del canvas azzerate prima del disegno. Papero grande nella condivisione senza alone. v620.
+
+
+## 1193-1194 · Campo notte con linee del colore squadra
+Di notte le linee del campo prendono il colore del bordo (apron), opache; se il bordo e troppo scuro (lum<.15) si usa trim/fg. Lucidatura notte: fascia verticale chiara al centro (shineN) al posto della macchia radiale. In live le linee restano rosse pulsanti (clive solo se lvNotte). v621.
+
+
+## 1195-1197 · Sezione Giochi, tasto D solo arena, Sala scommesse fissa
+Nuova voce Giochi nella barra (dopo Sala Trofei, view sgiochi): Poke Dream e Sala scommesse (tolti dall area segreta, aperti a tutti), Dream City con scelta dell arena (drmLaunch t,{}). Tasto D del campo: dreamOpen(t,{solo:true}) -> solo arena, spogliatoi, sala trofei e ufficio GM; verso la citta closedCity(). Sezione Giochi con grafica Parquet di giorno e viola di notte. Sala scommesse (.bt) esclusa dal Parquet (pqFix, pqw, 2 regole CSS): uguale giorno e notte. Schedina condivisa sempre viola (__shNoTheme). v622.
+
+
+## 1198-1199 · Maglie Ducks ridotte a 5, parquet 3D Ducks
+Tolte le maglie Ducks 5 Nera bordi bianchi e 6 Bianca zampe bianche (kitTot 5, migrazione dl_kit_m1198 -> gialla). Arena 3D Ducks: niente cerchio colorato ne cerchio bianco a centrocampo, logo +20% senza ombra e centrato sul baricentro del papero, scritte del parquet nere. v623.
+
+
+## 1200-1201 · Premi nella Sala scommesse
+Tasto Premi al posto di Incassa (vInc resta nel codice ma non e raggiungibile). Catalogo maglie: 20 City Edition per squadra (paesaggi del territorio, Texas in giallo/nero/bianco con deserto) + 3 Dream City, 4000 gettoni l una. Ritirate in localStorage dl_premi; codici kit 100+lettera (City Edition) e 200+i (Dream City, tutte le squadre); compaiono nel tasto maglia dopo le 5 normali (kitLista). window.PREMI genera gli SVG. Campi a tema: solo rendering, da scegliere. v624.
+
+
+## 1202-1203 · Campi a tema in Premi + logo Ducks scritta
+Premi > Campi: 8 campi versione B (paesaggio dipinto nel parquet, bordo colore squadra, linee bianche), 4000 gettoni, dl_campo per montarli. Logo Ducks: scritta (LOGO_DUC0.b) ovunque, papero solo nella colonna squadre della Home (.hrl/.hlg/.htile) e nei banner squadra (ducHead). Le scelte Originale/Papero dei profili in Personalizzazioni ora danno la scritta. Scritta a misura naturale (niente ingrandimento ducFit), come gli altri loghi. Stadio 3D: logo senza deformazione. v625.
+
+
+## 1204 · Scritta Ducks piu grande nelle righe giocatori
+.hmo/.lvh .badge.lg-DUC scale 1.4. v626.
+
+
+## 1205 · Ombra sulla scritta Ducks
+La scritta Ducks ha di nuovo il drop-shadow standard dei loghi; il papero (colonna Home, banner) resta senza. v627.
+
+
+## 1206-1207 · Catalogo Ducks + Prova
+Catalogo Ducks: tolte Mulino Crepuscolo e i due Longhorn; in fondo (R,S,T) 3 maglie Deserto e ranch (bianca/gialla/nera, mesa terracotta, mulino, saguaro e fichi d India verdi). Tasto Prova su maglie e campi: window.PROVA={k,t,c} fa vedere la maglia/il campo sul campo della squadra con barra Torna ai premi; si azzera uscendo dal campo. v628.
+
+
+## 1208 · Campo Rio Grande Ducks
+CAMPI.DUC2 Rio Grande (alba, mesa terracotta, fiume). Piu campi per squadra: chiave C:DUC2, dl_campo[team]=1 (campo base) o la chiave; campoKey(t). v629.
+
+
+## 1209-1211 · Stella dello sceriffo, maglie razzo ufficiali, pulizia catalogo
+Catalogo Ducks: aggiunte Stella dello sceriffo (gialla/nera/bianca); tolte Deserto e ranch x3, Mesa e sole e Sole a raggi Crepuscolo (18 maglie). Maglie ufficiali Ducks col razzo di Houston (DUC_ROCK, kit 300-306) nel tasto maglia dopo le 5 normali. v630.
+
+
+## 1212 · City Edition Ducks nel tasto maglia (prova)
+Le 18 City Edition Ducks del catalogo (kit 100-117) anche nel tasto maglia dopo le maglie razzo, gratis, per provarle. v631.
+
+
+## 1213-1216 · Maglie razzo Rampa
+Rampa bianca/nera/gialla: senza torre, fumo a contrasto (scuro su bianca e gialla), montagne e fumo +13%, montagne a contrasto (grigio scuro sulla bianca, grigio chiaro sulla nera, terracotta sulla gialla). Tolta la giallo-nera (kit 303 -> 300). v632.
+
+
+## 1217-1218 · Sole a raggi
+Catalogo Ducks: S/T/U Sole a raggi gialla, bianca e nera (la nera senza raggi, fondo nero pieno, cactus gialli). Non nel tasto maglia ufficiale. v633.
+
+
+## 1220 · Tasto maglia Ducks
+Tolte dal tasto maglia le City Edition A, C, H, M, N, O (codici 100,102,107,112,113,114): restano nel catalogo. v635.
+
+
+## 1221 · Tasto maglia Ducks ripulito
+Tolte dal tasto maglia Casa/Notte/Alternativa e le City Edition A,B,C,D,E,G,H,I,J,K,L,M,N,O. Casa/Notte/Alternativa zigzag nel catalogo (id DUC:K0-2, kit 400-402). Default Ducks: Rampa gialla (302); chi aveva 0-2 passa a 302. v636.
+
+
+## 1223-1224 · Rampa nuove
+Rampa bianca/nera/gialla sostituite da B13, N20, G23 (rampa40.js): stesso disegno, contrasto nuovo, fiamma corta disegnata sopra il fumo. v638.
+
+
+## 1225 · Via Lattea nuove
+Via Lattea bianca/nera/gialla sostituite da B9, N2, G9 (vl40.js): fasce di sfumatura nel cielo anche su gialla e bianca. v639.
+
+
+## 1226 · Rampa B35 N40 G6
+Rampa bianca/nera/gialla = B35, N40, G6 con montagne di G24 (rampa40.js), nel tasto maglia (300-302) e nel catalogo (V,W,X, codici 121-123, esclusi dal tasto maglia per non doppiarle). v640.
+
+
+## 1228 · Rampa gialla montagne bianche
+Rampa gialla (kit 302 e catalogo X, 123): montagne bianche. v642.
+
+
+## 1229 · Margine logo Ducks scritta
+.lg-DUC (scritta) background-size 84% fuori dalla colonna squadre Home: non tocca piu i bordi della casella. v643.
+
+
+## 1230 · Via Lattea solo nel catalogo
+Via Lattea tolte dal tasto maglia (DUC_ROCK 304-306 null) e aggiunte al catalogo (Y, Z, AA; codici 124-126). Lettere oltre la Z: AA, AB... v644.
+
+
+## 1231 · Rampa nera F1
+Rampa nera (kit 301 e catalogo W, 122): montagne gialle e fumo bianco. v645.
+
+
+## 1232 · Colori PDK
+Numeri dei cartellini PDK: bianchi su viola, verde e rosso, neri sul giallo, di giorno e di notte (il Parquet li rendeva marroni): .pcd escluso da pqFix + regola CSS. v646.
+
+
+## 1233 · Ducks ufficiali
+Rampa tolte dal tasto maglia (DUC_ROCK tutto null; restano nel catalogo V,W,X). Ufficiali Ducks: NBA 2026, Anni 90 e le 3 Stella dello sceriffo (115-117). Default e fallback: Stella dello sceriffo gialla (115). v647.
+
+
+## 1234 · Stella dello sceriffo stile 29
+Window.DUC_SH: le 3 Stella dello sceriffo (kit/catalogo 115-117) con bordo collo/spalline spesso a tre righe (sh40.js stile 29). PREMI.svg le usa per i codici 115-117. v648.
+
+
+## 1235 · Catalogo Ducks ripulito
+Nascoste dal catalogo G,H,I,J (106-109) e le Stella dello sceriffo (115-117, ora ufficiali). Tasto maglia Ducks: Stella gialla, nera, bianca, poi NBA 2026 e Anni 90. Migrazione dl_kit_m1235: tutti ripartono dalla Stella gialla. v649.
+
+
+## 1236 · Logo Ducks +10% nei Dreamers
+html.in-dr (cur giochi + GAME dream): .lg-DUC e img scritta scale 1.1. v650.
+
+(v650: la prima build di GitHub Pages era fallita per un errore temporaneo di GitHub; ripubblicata.)
+
+
+## 1237 · Tempo partita sul cartellino live
+Swipe sul live: riquadrino nero con bordo rosso e tempo (Q3 6:32, Intervallo, Fine Q2, OT) a sinistra del PDK, da TVL.st[key] (lvClock). Partita finita: formato classico. v651.
+
+
+## 1238 · Banner Ducks con logo del campo
+ducHead() ora restituisce la scritta (LOGO_DUC0.b); nel banner 96x76, 12px sopra e 16 sotto dentro il banner. Il papero resta solo nella colonna squadre della Home. v652.
+
+
+## 1239 · Logo Ducks +13%
+.hmdl (banner partite Home), .tvt/.drtvl (Dynasty TV): .lg-DUC scale 1.13. v653.
+
+
+## 1245 · Logo Ducks a misura in ogni sezione
+Tolte le scale fisse per sezione e il 84%. ducFit2(): per ogni .lg-DUC (scritta) misura un logo di altra squadra nella stessa casella e porta la scritta al 95% della sua altezza (o x1.19 senza riferimento), poi la limita a 3px dai bordi e dalle scritte vicine; righe con icona piccola (.hmo,.lvh) min 1.35, lista Giocatori min 1.2. Si ricalcola a ogni render. v659.
+
+
+## 1247 · Logo Ducks: verifica su tutte le viste
+Controllate tutte le VIEWS: la scritta Ducks e alta quanto gli altri loghi (rapporto ~1) ovunque c e spazio; nelle colonne colorate strette (classifica, valtrade, effcup, infortuni, speciali, trade) arriva fino al bordo della colonna (margine orizzontale 0, verticale 3px). v661.
+
+
+## 1249 · Logo Ducks mai fuori dai bordi
+ducFit2: il limite della casella (2px ai lati, 3px sopra/sotto) vale anche sopra i minimi per sezione; se non entra si rimpicciolisce (fino a 0.6). Controllo automatico su tutte le viste, giorno e notte: nessun logo fuori. v663.
+
+- v666 (1252): logo Ducks con regola unica, circa +5% rispetto agli altri loghi dove c'è spazio; tolte le percentuali manuali per sezione; mai fuori dai bordi.
+
+- v667 (1253): logo Ducks ridotto ~9%, ora pari o appena sotto gli altri loghi (misura 0.95); minimo 0.9, mai fuori dai bordi.
+
+- v668 (1254): logo Ducks a grandezza naturale della casella (scala 1, come gli altri loghi), niente ingrandimenti; si riduce solo se non entra.
+
+- v669 (1255): classifica Home, logo Ducks a scala 0.85 (larghezza pari agli stemmi).
+
+- v670 (1256): area riservata Ducks > Editor loghi: tocchi un logo, livella 50-200% (solo quella squadra o tutte nella casella), salvato sul telefono (dl_dxlogo), prompt unico da copiare per Claude.
+
+- v671 (1257): Editor loghi: tasto Navighi / Tocca un logo per girare tutte le pagine con lo strumento acceso; contatore modifiche; prompt unico con il nome della sezione.
+
+- v672 (1258): ufficiali le 12 grandezze del logo Ducks scelte con l Editor loghi (transform scale per vista e casella); editor azzerato una volta (dl_dxlogo_m1258).
+
+- v673 (1259): area riservata Ducks > Laboratorio maglie (labcore.js motore + lab.js interfaccia, caricati solo all apertura): 20 basi modificabili + maglie esistenti come base, colori/temi, 12 bordi, 23 fantasie, 36 elementi (Texas, cowboy, deserto, natura, citta, Ducks, forme, scritta libera) trascinabili, due dita = grandezza e rotazione, scritte e numero, annulla/rifai, prova sul campo, salvataggio (dl_lab) e prompt unico per Claude.
+
+- v673: ripubblicazione (build Pages fallita).
+
+- v673: seconda ripubblicazione (deploy Pages fallito lato GitHub).
+
+- v674 (1260-1261): maglie ufficiali Ducks 115-117 = logo Ducks al posto della scritta TEXAS, gessato marcato; gialla col logo originale, nera e bianca col bianco del logo in giallo; trama chiara sulle maglie scure. Include il Laboratorio maglie (v673 mai andata online per deploy Pages bloccato).
+
+- v675 (1262): 3 maglie Ducks in piu col logo grande (+25%) e gessato marcato, codici 300-302 (DUC_ROCK), nel tasto maglia subito dopo le 115-117; tolto il reset automatico delle 300+.
+
+- v676 (1263): in aggiunta 2 maglie Ducks logo grande con bordino triplo: gialla bianco-nero-bianco (303), bianca giallo-nero-giallo (304). La nera era gia cosi (301).
+
+- v677 (1264): condivisione: le maglie nuove (logo Ducks) sparivano dall immagine per doppio attributo xmlns; jerseyShare lo toglie prima di aggiungerlo.
+
+- v678 (1265): 3 maglie Ducks in piu (305-307) con la scritta DUCKS ad arco ricostruita in vettoriale dal disegno di Francesco; triplo bordino (gialla: bianco esterno + nero, senza filo bianco interno = stile doppiosp in labcore). REGOLA da ora: tutte le nuove maglie Ducks col triplo bordino, la gialla senza il filo bianco interno.
+
+- v679 (1266): DUCKS arco gialla: bordino bianco esterno + nero interno (ordine invertito); numero alzato leggermente su tutte e tre (305-307). Regola gialla = bianco esterno, nero interno.
+
+- v680 (1267): DUCKS arco (305-307): numero dritto in grassetto Helvetica/Arial, piu grande (44, 40 se due cifre via __FS__ in ducRock), subito sotto il logo, come il render di Francesco.
+
+- v681 (1268): le maglie 115-117 (logo piccolo) sostituite dalle DUCKS arco; tolte le 305-307 doppie (chi le aveva passa a 115-117). Restano le Logo grande 300-304.
+
+- v682 (1269): tolte le maglie Logo grande 300,301,303,304 (resta 302 bianca); aggiunte DUCKS bordino 305-307 (scritta -10%, bordino medio intorno al logo, numero corsivo). Chi aveva le tolte passa a 115.
+
+- v683 (1270): Ducks: nel tasto maglia solo le 3 DUCKS bordino (305-307), default 305; ogni altra maglia Ducks salvata passa a 305. Le altre squadre non cambiano.
+
+- v684 (1271): aggiunte DUCKS punte 308-310 (logo con punte sopra e sotto ridisegnato a poligoni, bordino intorno -30%); Ducks ora ha 6 maglie 305-310.
+
+- v685: Dolphins: nel tasto maglia solo 3 maglie premi: Nera Neve e pini (113, default), Bianca Salt Flats (109), City Edition Salt Flats Alba (116). Ogni altra maglia DOL salvata passa a 113. kitDi/kitLista/DOL_KN.
+
+- v686 (1272): aggiunte Prima maglia 311-313 (primissima maglia Ducks, commit 69a2ca7: denti sui fianchi uniti alla fascia liscia delle spalline, collo liscio; scritta = logo DUCKS arco vettoriale col bordino; gialla/nera/bianca). Ducks: 9 maglie 305-313.
+
+- v687 (1273): Ducks: tolte Prima maglia 311-313, DUCKS bordino gialla 305, DUCKS punte nera 309. Restano 308 (default), 306, 307, 310.
+
+- v688 (1274): correzione: rimessa DUCKS bordino gialla 305 (default), tolta DUCKS punte gialla 308. Ducks: 305, 306, 307, 310.
+
+- v689 (1275): DUCKS punte Bianca (310) tolta dal tasto maglia Ducks e messa nel catalogo Premi (id DUC:R10, 4000 gettoni, Prova); se ritirata torna nel tasto maglia. Ducks: 305 (default), 306, 307.
+
+- v690 (1276): DUCKS bordino Nera (306): collo e spalline come la gialla (doppiosp: giallo esterno, nero interno) al posto del triplo.
+
+- v691 (1277): rimesse NBA 2026 (3) e Anni 90 (4) nel tasto maglia di Ducks e Dolphins, in fondo alle loro maglie.
+
+- v692 (1278): Editor loghi: per i loghi Ducks sezione Cambia logo (tutti i DUC_LOGHI + DUCKS arco e DUCKS punte, nuovi loghi/duc-arco.svg e loghi/duc-punte.svg); scelta salvata per vista/casella e scritta nel prompt.
+
+- v693 (1279): ufficiali le 31 regole dell Editor loghi (grandezze e logo Papero al posto della scritta nelle caselle indicate); efficienza wedge 130->125.5% e infortuni wedge 115->110% per non uscire dalla casella. Editor azzerato (dl_dxlogo_m1279).
+
+- v694 (1280): banner squadra Ducks (ducHead: Campo, Cassa, pagina squadra) con il logo Papero; il banner del campo resta con la scritta.
+
+- v695 (1281): nuovo logo Ducks tra le opzioni (DUC_LOGHI 9 "Texas Ducks arrabbiato", loghi/duc-9.webp, sfondo grigio tolto): Personalizzazioni ed Editor loghi.
+
+- v696 (1282): logo Ducks 9 sostituito con la versione senza sfondo fornita da Francesco (duc-9.webp v=2).
+
+- v697 (1283): Editor loghi: deformatore (Allarga/stringi e Allunga/schiaccia 50-200%, tasto Togli deformazione), scritto nel prompt; anteprima dell editor ora vince sulle regole ufficiali (prefisso html).
+
+- v698 (1284): ufficiali le 8 regole della seconda passata Editor loghi (scale x/y assolute, blocco 1284 con prefisso html); editor azzerato (dl_dxlogo_m1284).
+
+- v699 (1285): lista squadre di Statistiche (effsquadra, .sqpkw): logo Ducks Papero al 110%.
+
+- v700 (1286): Suggerimenti del TG (consigli, .cnsw): logo Ducks Papero al 110%.
+
+- v701 (1287): Editor loghi prende anche i loghi del campo: immagine del banner squadra (img.hlogo[data-t]) e logo del banner del campo (<image> in .cbg, cambio logo via href). Selettore salvato in tg.
+
+- v702 (1288): campo Ducks: logo del banner del campo (.cbg image) 96%x99%, logo banner squadra (img.hlogo DUC) 105%; editor azzerato (dl_dxlogo_m1288).
+
+- v703 (1289): tabellone campo (.lbml): Papero Ducks 132%, Eagles 110%; editor azzerato (dl_dxlogo_m1289).
+
+- v704 (1290): tabellone campo Papero Ducks 123% (132x93); Editor loghi ora usa la proprieta CSS scale (si moltiplica con le regole ufficiali: prima sulle regole con prefisso html l anteprima non si vedeva); editor azzerato (m1290).
+
+- v705 (1291): Dynasty TV .drsbl Papero Ducks 113% x 104% = 117.5%; editor azzerato (m1291).
+
+- v706 (1292): Ducks: DUCKS bordino Bianca (307) maglia di default e prima nel tasto; tutti passano una volta alla bianca (dl_kit_m1292), poi possono cambiare.
+
+- v707 (1293): MODALITA GOTHAM CITY DUCKS segreta: tocco sul logo del banner del campo Ducks (dl_gotham). In Gotham: banner squadra viola/verde col logo Gotham (loghi/gotham.webp), campo viola con linee verdi e skyline, banner campo GOTHAM [logo] DUCKS, tasto maglia solo 7 maglie Gotham (500-506: Viola A/B, Verde A/B, Nera A/C, Bianca A), niente NBA/Texas. Ritocco = torna Texas con la maglia di prima (KIT._ducN/_ducG).
+
+- v708 (1294): Gotham: swipe orizzontale sul logo del banner del campo cambia tra 4 stili (Notte su Gotham, Parquet viola, Verde acido, Pioggia e fari; dl_gotham_st), con avviso del nome; tocco = esci/entra.
+
+- v709 (1295): Gotham: logo del banner del campo = scritta Gotham City Ducks (loghi/gotham-campo.webp, sfondo tolto) al 110%.
+
+- v710 (1296): Dream 3D: con Gotham attivo il parquet Ducks diventa campo Gotham (stile 1 Notte su Gotham di default, logo Gotham City Ducks al centro, bordo scuro); swipe orizzontale sul logo a centrocampo = stili 2-4 (dl_gotham_dst). dream.js caricato con ?v=1296.
+
+- v711 (1297): Gotham: scritta Gotham City Ducks sul banner del campo al 100% (non 110); lo swipe cambia solo il campo interno, bordo e banner restano quelli dello stile 1.
+
+- v712 (1298): Dream 3D con Gotham attivo: tutta l arena Ducks in viola/verde (DUC_COL3D, TEAMS.DUC e loghi temporanei durante la Dream, ripristinati alla chiusura).
+
+- v713 (1299): Gotham: tolte le maglie Nera A (504, nera pura con verde) e Bianca A (506); restano Viola A/B, Verde A/B, Nera C (notte).
+
+- v714 (1300): Gotham: rimessa Bianca A (506); tolta solo Nera A (504).
+
+- v715 (1301): Gotham: tolta anche Verde B (503, verde con bordo viola).
+
+- v716 (1302): Gotham: tolti gli stili di campo Parquet viola e Verde acido (anche nella Dream); lo swipe alterna Notte su Gotham e Pioggia e fari.
+
+- v717 (1303): Gotham: la maglia Bianca (506) ora e col verde (triplo bordino, GOTHAM e contorno numero verdi) al posto del viola.
+
+- v718 (1304): Gotham: nuovo logo (loghi/gotham.webp v2, sfondo nero tolto) su banner squadra, centro campo, arena Dream e bordo campo (banner del campo, 100%, al posto della scritta).
+
+- v719 (1305): Dream Gotham: a centrocampo il nuovo logo Gotham (gotham.webp v2) al posto della scritta.
+
+- v720 (1306): Dream Gotham: tolti i palazzi disegnati sul campo.
+
+- v721 (1307): Gotham: aggiunte le 6 maglie Sfumata (507-512: Viola, Viola verde, Verde, Notte, Nera, Bianca) con skyline e fari.
+
+- v722 (1308): Gotham: scritte del banner squadra bianche (anche quelle a bordo campo restano bianche). Logo invariato (gotham.webp v2; gotham-b.webp caricato ma non in uso).
+
+- v723 (1309): Gotham attivo = in tutta l app i Ducks diventano Gotham City Ducks: TEAMS.DUC city/name/bg (#4c1d95 viola notte), tutti i loghi Ducks (LOGO, LOGO2, LOGO_DUC0, .lg-DUC e img) col logo Gotham; banner squadra viola notte. Spegnendo torna tutto Texas.
+
+- v724 (1310): Gotham: il logo Gotham non eredita piu le grandezze/deformazioni del logo Texas (transform/scale none) ne il formato immagine (content:normal), resta dentro le caselle come gli altri loghi.
+
+- v725 (1311): Gotham: aggiunte 4 bianche stile 18 (render 1,2,6,10 = 513-516). Include anche la correzione logo 1310 se non era ancora online.
+
+- v726 (1312): Gotham: aggiunta Sfumata Viola verde con bordi esterni bianchi, GOTHAM e numero bianchi (517).
+
+- v727 (1313): Gotham: un solo campo (Notte su Gotham con linee verdi + fari), tolto il logo dentro il campo; anche nella Dream un solo campo con i fari.
+
+- v728 (1314): Gotham: campo Notte su Gotham (linee verdi, fari, palazzi) solo con la modalita notte (CNT); senza notte il campo interno e quello di default, bordo e banner restano viola.
+
+- v729 (1315): Gotham con modalita notte: durante le partite live le linee del campo lampeggiano verdi invece che rosse.
+
+- v730 (1316): Gotham Sfumata Viola (507): palazzi viola scuro con finestre gialle al posto dei palazzi neri.
+
+- v731 (1317): Gotham Bianca citta nera viola (514): GOTHAM bianca e numero bianco con contorno nero + viola come la scritta.
+
+- v732 (1318): Gotham Bianca citta viola viola (516): GOTHAM bianca e numero bianco con contorno nero + viola.
+
+- v733 (1319): Gotham Sfumata Verde (509): palazzi verde scuro con finestre gialle.
+
+- v734 (1320): Gotham: bordo campo senza logo, scritta unica GOTHAM CITY DUCKS con CITY verde; in Gotham il tasto per tornare Texas e la scritta del bordo campo.
+
+- v735 (1321): Gotham: si torna Texas toccando solo la parola CITY (verde) sul bordo campo.
+
+- v736 (1322): Gotham: tolta la maglia Bianca citta viola notte, viola (515).
+
+- v737 (1323): Gotham: tolta Bianca citta viola, viola (516, palazzi viola chiaro); resta Bianca citta nera, viola (514).
+
+- v738 (1324): Gotham Sfumata Nera (511): palazzi verde notte.
+
+- v739 (1325): Gotham: tolta Sfumata Viola verde (508, bordi e scritte verdi); resta la versione con bordi e scritte bianchi (517).
+
+- v740 (1326): Gotham Sfumata Verde (509): senza palazzi ne fari, solo la sfumatura.
+
+- v741 (1327): Gotham: tolta Sfumata Bianca (512, bianca sfumata viola con verde).
+
+- v742 (1328): Gotham: tolte Sfumata Viola verde bordi e scritte bianchi (517) e Bianca citta nera viola (514).
+
+- v743 (1329): Gotham: tolta Viola A (500); maglia Gotham di partenza ora Viola B (501).
+
+- v744 (1330): Gotham: tolta Sfumata Verde (509).
+
+- v745 (1331): Gotham: tolta la pioggia dal campo 2D e dall arena Dream.
+
+- v746 (1332): Gotham: tolta Sfumata Nera (511).
+
+- v747 (1333): Gotham: aggiunte Verde viola (Verde A col viola al posto del bianco) e Bianca viola (Bianca col viola al posto del verde).
+
+- v748 (1334): Gotham: tolta Bianca citta nera, verde (513).
+
+- v749 (1335): Gotham Bianca viola (519): GOTHAM e numero bianchi, bordino viola-bianco-viola.
+
+- v750 (1336): Gotham: tolte Verde viola (518) e Bianca viola (519); la Bianca citta nera verde (513) era gia stata tolta in v748.
+
+- v751 (1338): BUG campo notte: se si era scelto un parquet nelle impostazioni la modalita notte non scuriva il campo (ordine dei controlli); ora con la notte il campo e sempre scuro per tutte le squadre. Notte Texas Ducks (banner/bordo viola notte, campo Lone Star) caricata ma spenta (window.TEXN_ON) in attesa di approvazione.
+
+- v752 (1340): accesa la notte Texas Ducks: banner e bordo campo viola notte, scritte gialle (bordo lampeggiante, stesso giallo del banner), campo Lone Star viola notte con stella molto opaca. Senza notte e in Gotham invariato.
+
+- v753 (1341): notte Texas: circa meta delle stelle del campo brilla da sola, ognuna con durata e ritardo casuali.
+
+- v754 (1342): notte Texas: banner e bordo campo gialli originali con scritte bianche; campo Lone Star con stelle che brillano da sole.
+
+- v755 (1343): notte Texas: 70 stelline su tutto il campo (piu di meta brilla da sola) + 8 stelline a quattro punte che brillano.
+
+- v756: campo Texas Ducks notte, tolta la stella grande opaca a centrocampo (restano i puntini che brillano).
+
+- v757: Ducks, tocca la scritta TEXAS a bordocampo per scorrere 10 stili luce (LED, neon, luce da dietro, logo al neon, fascio). Sempre attivi, giorno e notte. Scelta salvata in dl_dxled.
+
+- v758: Ducks notte, scritte e logo bordocampo illuminati da dietro + fascio di luce che passa su banner e bordocampo. Tolti il tocco su TEXAS e i 10 stili. Di giorno resta tutto com era.
+
+- v759: home in notte, i loghi della colonna squadre tengono lo sfondo colore squadra come di giorno.
+
+- v760: Ducks notte, tolta la retroilluminazione dalla scritta TEXAS DUCKS a bordocampo (restano logo illuminato e fascio di luce).
+
+- v761: home notte di nuovo con loghi scuri; in Personalizzazioni nuovo tasto "Loghi in Home di notte" per avere lo sfondo colore squadra anche di notte (DLS.hnlg).
+
+- v762: Ducks notte, razzo o meteora che fa un 8 tra i giocatori; tocca TEXAS a bordocampo per passare da uno all altro (dl_dxrk), tasto provvisorio.
+
+- v763: razzo/meteora Ducks anche di giorno (test), tocca TEXAS per cambiare.
+
+- v764: tolti razzo e meteora dal campo Ducks.
+
+- v765: Ducks, nuove maglie ufficiali 314 DUCKS gessato Viola verde (bordino verde, gessato verde) e 315 DUCKS gessato Viola gialla (bordino giallo).
+
+- v766: maglia 314 Ducks Viola verde ora con scritta G-DUCKS (vettoriale dal logo inviato), interno verde.
+
+- v767: maglia 315 Ducks Viola gialla ora con scritta TEXAS (vettoriale dal logo inviato), interno giallo.
+
+- v768: maglia 315 Viola gialla, nuova scritta TEXAS (versione col bordo dritto sopra). La precedente resta in scratch texas_vec.json.
+
+- v769: G League sul campo per tutte le squadre: tocca il logo del banner del campo, compaiono i 5 giocatori G League con maglia nuova G-NOME e ultimo punteggio (avversario e data). Ducks: il logo ora apre la G League al posto di Gotham; tolta tutta la ricolorazione Gotham (app, campo, arena 3D); maglie G League Ducks solo Gotham Viola B (501) e Bianca (506).
+
+- v770: Ducks, il logo riapre il campo Gotham come prima (banner GOTHAM CITY DUCKS, notte con fari, arena 3D Gotham) ma con i 5 giocatori G League e solo maglie Viola B e Bianca; nel resto dell app niente piu cambio logo/nome. Uscita toccando CITY.
+
+- v771: campo stellato di notte (interno viola con stelle che brillano) per tutte le squadre, predefinito; in Personalizzazioni tasto "Campo stellato di notte" per toglierlo/rimetterlo (DLS.nost).
+
+- v772: G League sul campo, tolta la tinta colorata: parquet normale di giorno, stellato di notte (Gotham invariato).
+
+- v773: bordocampo notte Dreamers IN PROVA, uno stile per squadra: DOL 1 Viola, DUC 2 Viola stelle, FOX 3 Viola-fucsia, MOO 4 Notte profonda, TUR 5 Nebulosa, SPI 6 Stelle dorate, EAG 7 Aurora, PEA 8 Glitter. Scritte bianche, linee del campo colore squadra.
+
+- v774: campo G League (tutte le squadre e Gotham) senza panchina e tribuna; sotto il campo tabella Risultati G League della notte con frecce per notti precedenti/successive (giocatore, avversario, minuti, PDK, totale).
+
+- v775: Ducks notte, tolta la retroilluminazione del logo a bordocampo (resta il fascio di luce).
+
+- v776: campo stellato di notte (tutte le squadre) un po piu chiaro: #2e1065 -> #1e0a3c.
+
+- v777: bordocampo notte dei Ducks (viola con stelle, scritte bianche) per tutte le squadre + fascio di luce su banner e bordocampo per tutti. Gotham invariato.
+
+- v778: Dolphins: 2 maglie in piu dall'immagine dell'utente, identiche (img/dol-k5.png bianca, img/dol-k9.png blu, numero 23 fisso), codici 320-321 (DOLIMG in jersey, DOL_KN, kitLista/kitDi).
+
+- v779: Dolphins: tolte 320-321; aggiunte 322 Gessato blu, 323 Bianca montagne, 324 Blu e giallo (immagini utente img/dol-k6.png, dol-k10.png, dol-kY.png, numero 23 fisso). Chi aveva 320-321 torna alla 113.
+- v778: condivisione prestazione giocatore: con la notte accesa il campetto e in versione notte (bordo viola con stelle, campo stellato, scritte bianche, linee colore squadra); di giorno invariato.
+
+- v781: Dolphins: solo 3 maglie dalle immagini utente (330 Blu montagne, 331 Navy gessato, 332 Bianca montagne; img/dol-j1..3.png senza il 23) + NBA 2026 e Anni 90. Numero del giocatore ridisegnato (DOL_DG/dolNumD, block athletic) con colori presi dalle immagini. Tolte 113/109/116 e 322-324 per i Dolphins; default 330.
+
+- v782: premi Dolphins: tolte dal catalogo 113 Neve e pini Nera, 109 Salt Flats Bianca, 116 Salt Flats Alba (PREMI.items filtro DOLX).
+
+- v783: maglie Dolphins 330-332 accorciate: stessa altezza delle altre maglie (y 6-130), larghezza +15%.
+- v781: nuovo logo Ducks "Cowboy viola" (loghi/duc-10.webp, scontornato) nella lista loghi Ducks: zona segreta, editor loghi e personalizzazioni.
+
+- v785: PROVA forme maglia: sul campo Ducks tocca TEXAS per passare fra 20 forme (dl_shp); vale per tutte le maglie di tutte le squadre. Tasto provvisorio.
+
+- v786: prova forme maglia: aggiunte 21 Anni 90 NBA (dal modello di Francesco: spalline sottili, giromanica profondo, piu lunga e stretta) e 22 Anni 90 NBA meno lunga.
+
+- v787: prova forme maglia: aggiunte 23 Moderna collo a V (dal modello Salt Lake: spalline strette e calanti), 24 spalle calanti collo tondo, 25 collo a V spalline larghe.
+
+- v788: prova forme maglia: aggiunte 20 nuove (26-45), ridisegnate in vettoriale con spalline, collo tondo o a V, giromanica, fianchi e fondo diversi. Tocca TEXAS sul campo Ducks.
+- v788: Dolphins: 3 maglie nuove (330 Blu gessato, 331 Bianca, 332 Nera montagne) sulla sagoma app: sfondo dalle immagini utente (img/dol-s1..3.jpg, senza scritta e numero), finiture vettoriali, SALT LAKE ricalcata vettoriale, numero giocatore DOL_DG con contorni. DOL_JV.
+
+- v790: pubblicate su ordine le 3 maglie Dolphins in coda (330 Blu gessato, 331 Bianca, 332 Nera montagne) al posto delle precedenti.
+
+- v792: tolte tutte le forme maglia in prova e il tocco su TEXAS: resta la forma originale.
+
+- v794: due nuovi loghi Ducks nelle personalizzazioni: 11 Viola verde (becco bianco) e 12 Viola verde becco arancio.
+- v793: condivisione: le maglie Dolphins 330-332 (che usano img/dol-s*.jpg) sparivano dall'immagine condivisa; jerseyShare ora sostituisce href img/ con la versione data: precaricata (SHIMG/shImgPre). IN CODA.
+
+- v795: logo Ducks 11 Viola verde sostituito con la versione nuova (becco bianco, colori piu accesi).
+
+- v796: Editor loghi (06/11): logo Ducks Viola verde (duc-11) ufficiale nelle 22 caselle indicate con le grandezze scelte; bordo campo con logo Viola verde; editor azzerato (dl_dxlogo_m1370).
+
+- v797: Ducks, 3 maglie nuove stile Gotham in aggiunta: 316 Bianca verde, 317 Viola bianca, 318 Viola verde (gessato, scritta DUCKS).
+
+- v798: Ducks, maglia 319 DUCKS gessato Bianca viola (bordo e scritta viola) in aggiunta.
+
+- v799: logo Ducks ufficiale ovunque = nuovo Viola verde (loghi/duc-11.webp v3): sostituiti anche Papero (img/2402cd92d5d7.png) e scritta (img/f39bda081f60.png) in LOGO/LOGO2 e in tutte le regole CSS; grandezze dell Editor invariate.
+
+- v800: Ducks, viola #5b21b6 ufficiale per tutti (banner, logo, campo; migrazione dl_duccol_m1372) e linee del campo verdi #a3e635 giorno e notte.
+
+- v801: campo Ducks di giorno: linea sopra il campo bianca 4px, bacheca e cassa bianche con scritte viola, bordocampo viola #5b21b6, parquet bianco ghiaccio, logo bordocampo +10%.
+
+- v802: fix: la cassa/bacheca bianca dei Ducks vale solo di giorno; di notte tornano come prima.
+
+- v803: Ducks, tolte dal selettore e spostate nel catalogo Premi: DUCKS bordino Bianca/Gialla/Nera (307/305/306), TEXAS gessato Viola gialla (315), G-DUCKS gessato Viola verde (314). Predefinita per tutti: DUCKS gessato Bianca verde (316).
+
+- v804: Ducks di giorno, bordocampo bianco predefinito (ac #ffffff, bordo bianco).
+
+- v805: Ducks di giorno, scritte TEXAS DUCKS del bordocampo viola scuro #3b0f7a (notte invariata, bianche).
+
+- v806: Ducks, maglia Bianca viola (319) rifatta: bordini viola/nero, scritta DUCKS e numero verdi e neri. Fascio di luce su banner e bordocampo anche di giorno per i Ducks (riflesso lilla).
+
+- v807: Ducks: logo del bordocampo alzato (centrato nel bordo bianco), fascio di luce solo sul banner (non piu sul bordocampo). Fix Editor loghi: le regole ufficiali (1370) vincevano sull editor e lo script del logo campo annullava il cambio logo; ora l editor vince e moltiplica sulla grandezza ufficiale (100% = attuale).
+
+- v808: Editor loghi seconda passata (17 caselle Ducks) resa ufficiale, moltiplicata sulla grandezza attuale (1379); editor azzerato (dl_dxlogo_m1379).
+
+- v809: fix Ducks: fascio di luce di nuovo sul bordocampo di notte; di giorno solo sul banner.
+
+- v810: Area Ducks bloccata: le personalizzazioni pubbliche (Impostazioni) non cambiano campo/bordocampo Ducks; interruttore in Area segreta > Personalizzazioni per riattivarle sul proprio telefono (dl_dxpers). Logo scelto nell area segreta non piu sovrascritto. Logo bordocampo abbassato al segno di Francesco.
+
+- v811: Ducks, nuova maglia 320 DUCKS Ghiaccio viola (dalla serie di 40, n.17) in aggiunta.
+
+- v812: Ducks, nuova maglia 321 DUCKS Nera triplo lime-viola in aggiunta.
+
+- v813: Ducks, logo del banner squadra +25% e +2% in altezza.
+
+- v814: Ducks, logo del banner squadra rimesso a +10% e +2% in altezza (scelta 4).
+
+- v815: banner Ducks: scritta DUCKS/TEXAS 18px a destra, logo 2 mm (12px) a destra.
+
+- v816: Ducks di giorno: stelline lilla che brillano su parquet e bordocampo (blocco 1383, da togliere se non piace).
+
+- v817: Ducks: scritta TEXAS DUCKS del bordocampo +24% (giorno e notte); logo del banner con l angolo sinistro a circa mezzo millimetro dal bordo.
+
+- v818: Ducks: logo del banner centrato tra bordo sinistro e scritta (translate 9px); scritta TEXAS DUCKS del bordocampo a +12%.
+
+- v819: PROVA palla animata sul campo Ducks (blocco 1385): tocca TEXAS a bordocampo per accendere e passare fra 6 animazioni (viola/scia verde, verde/scia viola, rimbalzo, palleggio a 8 e lob, passaggi a stella, due palle) e spegnere. Spenta di default (dl_dxball).
+
+- v820: prova palla Ducks: aggiunti 3 effetti spettacolari (7 campo che crolla e sotto campo viola con linee lime, 8 scansione neon, 9 onda d urto con stelle), blocco 1386.
+
+- v821: Ducks, maglia predefinita per tutti: DUCKS gessato Bianca viola (319), prima nel selettore (migrazione dl_kit_m1387).
+
+- v822: prova palla Ducks: aggiunte palla grande x2 (viola e verde), canestro visto dall alto con tiro da lontano (viola e verde), doppio crollo (cade il bianco, poi il viola e torna il bianco). Totale 14 animazioni col tocco su TEXAS.
+
+- v823: Ducks, una sola animazione palla (1388): palla viola scia verde, palleggio a 8 dietro/davanti la maglia, passaggi anche con sesto uomo e panchina, canestro dall alto al posto dell arco verde sotto il canestro; a ogni giro tirano tutti una volta in ordine casuale. Tolte le altre animazioni e gli effetti. Accesa di default, tocca TEXAS per spegnere (dl_dxpalla).
+
+- v824: animazione palla Ducks: palla verde con scia viola.
+
+- v825: fix: con lo sfondo Ducks scuro (viola) le scritte su sfondo squadra (profilo giocatore, intestazioni, immagini condivise) diventano bianche (TEAMS.DUC.txt).
+
+- v826: animazione palla Ducks: palla grande quanto il ferro del canestro (un po piu piccola). Predisposto DXSQ per schiacciare il logo nella condivisione (non attivo).
+
+- v827: condivisione prestazione: logo grande Ducks (fuori dal campo) schiacciato del 6% in altezza.
+
+- v828: fix Dream 3D: le maglie in campo (e negli spogliatoi/premi) non si caricavano perche jerseyShare ora mette gia width/height (attributo doppio = SVG invalido); dream.js toglie width/height prima di rimetterli. Ducks: parquet della Dream arena color ghiaccio con il viola.
+
+- v829: animazione palla Ducks: palla 12% piu piccola.
+
+- v830: Ducks, tolta dal selettore la maglia 320 DUCKS Ghiaccio viola (chi la usava torna alla predefinita Bianca viola).
+
+- v831: fix blocco area Ducks: ora QUALSIASI personalizzazione pubblica (look, parquet, legno, linee, bordo, giocatori, colori PDK, dimensioni ecc.) e ignorata sul campo Ducks, sia nel disegno del campo sia negli stili dell app mentre si guarda il campo Ducks. Solo l interruttore dell area segreta le riattiva. (Bozza Ducks Arena 3D salvata a parte, non pubblicata.)
+
+- v832: Dream 3D, Ducks Arena nello stile di Gotham (campo viola scuro con linee lime luminose, stessi colori arena) con nome e logo Texas Ducks; tutti i posti pieni con tifosi verdi.
+
+- v833: effetti campo Ducks (1397), tocca TEXAS per cambiare: palla e canestro, faro che cerca i giocatori, 5 crolli del pavimento visti dall alto (mattonelle tremano, ne cade una, poi due, poi 3-4, poi valanga; sotto il pavimento notte identico, che crolla a sua volta e torna il giorno), spento (dl_dxfx).
+
+- v834: effetti Ducks: tolto il faro; crolli piu lenti (~75% in piu, ciclo 24 s), tremore piu lungo e crescente, nessuna fuga visibile tra le mattonelle prima che si rompano (pavimento intero mascherato, la mattonella appare solo quando trema).
+
+- v835: effetti Ducks: restano solo palla e canestro e il crollo del pavimento (mattonelle grandi, dalla versione attuale all altra e ritorno). Tolti i crolli 2-5.
+
+- v836: effetti Ducks: terza animazione (tocca TEXAS) palla + crollo del pavimento insieme.
+
+- v837: effetti Ducks: 1 palla (predefinita per tutti), 2 crollo del pavimento, poi spento; tolta palla+crollo.
+
+- v838: logo Ducks ufficiale sostituito con la versione occhi rossi (stesso file loghi/duc-11.webp, v4): stesse posizioni e grandezze in tutte le sezioni, anche Dream.
+
+- v839: Home, solo il tasto Ducks della colonna squadre in viola acceso #7c3aed (il resto dei Ducks resta #5b21b6).
+
+- v840: nuovo logo Ducks "Occhi rossi becco arancio" (loghi/duc-13.webp) nella lista loghi: Editor loghi e personalizzazioni. Verificato che l Editor cambia il logo del banner squadra e del bordocampo.
+
+- v841: logo Ducks ufficiale ovunque = occhi rossi becco arancio (duc-11.webp v5), stesse grandezze; anche condivisioni e Dream.
+
+- v842: tabellino sfida Dreamers: pallino rosso lampeggiante accanto ai giocatori in campo in quel momento nelle partite NBA live (come nel box NBA).
+
+- v843: Ducks: di notte il logo con becco bianco (loghi/duc-11n.webp), di giorno quello con becco arancio; stesse grandezze, scambio automatico al cambio giorno/notte (1405).
+
+- v844: condivisioni: sempre il logo Ducks attuale (becco arancio), anche di notte.
+
+- v845: fix animazione palla Ducks: la scia ora e legata alla pagina (scorrendo non si allunga piu in una striscia viola), si azzera dopo pause/salti; protezione da errori di calcolo e piano del giro non piu ricalcolato a ogni fotogramma.
+
+- v846: fix iPhone: chiusa la modalita Dream si chiude anche il contesto audio e la sessione torna auto (spariva l icona del suono bloccata nell isola dinamica).
+
+- v847: animazione palla Ducks: il canestro sta al posto del logo del bordocampo (il logo si nasconde mentre la palla gira e torna quando l animazione e spenta o c e il crollo). Vecchia posizione: window.DXHOOP="".
+
+- v848: animazione palla Ducks: parte solo sulla pagina del campo Ducks e si ferma uscendo; a ogni rientro riparte da zero (tele vecchie tolte, scia e giro azzerati, attesa di fine transizione); si ferma anche con app in background.
+
+- v849: notti del turno N1 N2 N3 al posto di giorno/data nello scontro diretto e nella scheda punteggio del giocatore.
+
+- (1412) Ducks: logo ufficiale di giorno = bordo bianco (loghi/duc-17.webp), di notte invariato (duc-11n). Editor loghi / Personalizzazioni: al posto dei vecchi loghi ora ci sono solo "Bordo bianco" (duc-17) e "Bordo lime" (duc-18), oltre a Originale e Papero.
+
+- (1413) Editor loghi: di notte le scelte fatte nell editor (es. Bordo bianco) non vengono più sostituite dal logo notturno (style #dxlgst e <image data-lgo> esclusi dallo scambio giorno/notte). Verificato su campo (banner, bordocampo, logo del campo) e rosa, giorno e notte, anche dopo riapertura. Condivisioni: logo bordo bianco anche di notte.
+
+- (1414) Campo Ducks uguale su tutti i telefoni: maglie, tabellini e panchina si ridimensionano in proporzione al campo (riferimento: iPhone di Francesco, campo 408px). Prima avevano grandezza fissa e sui telefoni più stretti sembravano più grosse. Il blocco personalizzazioni funzionava già.
+
+- (1415) Ducks notte: nuovo logo ufficiale (loghi/duc-19n.webp, palla e becco bianchi). Editor loghi: solo 4 loghi Ducks col triangolo (Bordo bianco, Bordo lime, Notte vecchio duc-11n, Notte nuovo duc-19n) + le scritte DUCKS arco/punte; tolti Originale e Papero. Condivisioni sempre col logo di giorno.
+
+- (1416) Editor loghi: 25 misure di Francesco (07/11) rese ufficiali (style #ofl1416, moltiplicate sulla grandezza attuale; loghi scelti validi di giorno, di notte resta il logo notte). Sbloccato l editor sulla pagina squadra: la regola ufficiale 1379 (#ofl1379) veniva caricata dopo l editor con la stessa forza e lo annullava su banner, logo campo, bordocampo e alcune caselle di Statistiche; ora l editor ha selettore più forte. Scelte dell editor azzerate (dl_dxlogo_m1416) perché ora ufficiali.
+
+- (1417) Dream: su iPhone la schermata ruotata a volte non copriva il fondo (innerHeight più corto del vero); ora usa l altezza reale dello schermo (VH) e si ricalcola dopo 0,3 e 1,2 s e al resize del visualViewport. dream.js?v=1417. Campo Ducks di giorno: logo del campo e tabellone a bordo campo col logo bordo lime (duc-18); di notte resta il logo notte.
+
+- (1418) Editor loghi: nuova scheda «✥ Sposta» (frecce 1px + cursori -60..60px, proprietà CSS translate sommata a quella ufficiale; per i loghi dentro SVG i px schermo sono convertiti in unità del disegno). Pannello a schede (Grandezza, Forma, Sposta, Logo), riducibile a una riga (▾) e posizionato dalla parte opposta al logo (in alto se il logo è in basso), con scorrimento automatico per lasciare il logo visibile. Prompt e lista includono lo spostamento; la ✕ della lista ora cancella anche le voci di banner/campo.
+
+- (1419) Ducks Arena (Dream): tifosi tutti in bianco, campo viola chiaro (#8b5cf6 → #6d28d9) con linee lime luminose e area viola scuro, bordo #4c1d95, seggiolini viola, logo bordo lime al centro (render 3 scelto da Francesco). dream.js?v=1419.
+
+- (1420) Ducks notte: logo ufficiale con palla viola (loghi/duc-20n.webp). Editor loghi: aggiunto «Notte palla viola»; «Notte nuovo» rinominato «Notte palla bianca» (duc-19n). Condivisioni e scambio giorno/notte riconoscono qualsiasi logo notte duc-NNn.
+
+- (1421) Editor loghi scollegati: la chiave e il selettore includono anche il contenitore del logo (es. .hmtm > .hmrl), così caselle con lo stesso nome in posti diversi (Home lista/raggruppata, Sala Trofei classifica/tabella) non cambiano insieme; le scelte «Solo squadra» vincono su «Tutte le squadre qui».
+- (1422) Prova loghi al contrario: di giorno palla viola (duc-20n?v=2), di notte bordo bianco (duc-17?v=2). Lo script giorno/notte ora lavora sempre (anche di giorno) partendo dal logo scritto nel codice (duc-17?v=1). Condivisioni sempre col logo di giorno (window.DUC_DAY). Il campo di giorno resta col bordo lime e le 25 caselle lime restano lime.
+
+- (1423) Ducks: logo palla viola (duc-20n) sia di giorno sia di notte, ovunque (anche campo e bordocampo; tolte le immagini lime/bianco dalle 25 caselle 1416, restano le grandezze). Ducks Arena Dream: logo palla viola in alta definizione (loghi/duc-20n-hd.webp 1500px) più grande del 20%, disegnato con smussatura alta; linea di metà campo interrotta sul logo. dream.js?v=1423.
+
+- (1424) Editor loghi terza passata (Francesco 07/11): 27 caselle ufficiali (style #ofl1424, 3 id di forza: sopra le ufficiali, sotto l editor) con logo scelto (Notte vecchio duc-11n / Bordo lime duc-18), grandezze moltiplicate sulla grandezza ufficiale e spostamenti (Home .hrl -1px, rosa chip -2px); uguali giorno e notte. Logo del campo (SVG) cambiato via JS con marcatore data-ofl rispettato da 1370 e dallo scambio giorno/notte. Scelte dell editor azzerate (dl_dxlogo_m1424).
+
+- (1425) Editor loghi: aggiunto «Becco arancio palla viola» (loghi/duc-21.webp).
+
+- (1426) Editor loghi: aggiunto «UT · Becco bianco» (loghi/duc-22.webp); il 21 rinominato «UT · Becco arancio».
+
+- (1427) Loghi Ducks veloci: (1) sw.js serve tutti i file in loghi/ dalla copia salvata (prima solo loghi/nba e img: i loghi Ducks aspettavano la rete a ogni apertura) e precarica duc-20n?v=2, duc-11n, duc-18; (2) il logo ufficiale palla viola è scritto direttamente nel codice (96 riferimenti duc-17?v=1 → duc-20n?v=2), niente più logo sbagliato poi scambiato; (3) preload in <head>; (4) i loghi scelti in 1416/1424 sono applicati subito (style #ofl1416i/#ofl1424i), senza aspettare il calcolo delle grandezze. Regola: quando si sostituisce un file logo cambiare sempre il ?v=.
+
+- (1428) Editor loghi quarta passata (Francesco 07/11): 24 caselle ufficiali (style #ofl1428 + #ofl1428i, stessa forza della 1424 ma dopo, quindi vince), soprattutto «UT · Becco bianco» (duc-22) e Notte vecchio; grandezze moltiplicate su quelle attuali (comprese le 1424), spostamenti sommati. duc-22 precaricato e salvato nel service worker. Scelte editor azzerate (dl_dxlogo_m1428).
+
+- (1429) Editor loghi: Statistiche lista squadre (.sqpk > .sqpkw) «UT · Becco bianco» e testata squadra (.view > .esqhead) «Notte vecchio», aggiunte alla 1428. Scelte editor azzerate (dl_dxlogo_m1429).
+
+- (1430) Condivisioni Ducks: sempre il logo «UT · Becco bianco» (duc-22), di giorno e di notte (ldImg/shImg mappano qualsiasi loghi/duc-*.webp).
+
+- (1431) Grandezze ufficiali dei loghi: ordine di calcolo fisso (1416 → 1424 → 1428: ogni livello prima aggiorna i precedenti e misura con i successivi spenti), così sul telefono non escono più grandi del dovuto. Dreamers (turno .drr, calendario .h/.a, classifica .drcr, playoff .bkt): grandezze finali scritte fisse nel codice, uguali agli altri loghi.
+
+- (1432) Home colonna squadre (.hmrail > .hrl): logo Ducks 95% e altezza 102% sulla grandezza attuale, scritto fisso (scale 0.905 0.86). Scelte editor azzerate (dl_dxlogo_m1432).
+
+- (1433) Parquet: condivisione «Live stanotte» con titolo, tabella e riga in fondo su caselle bianche e testo arancione (shPQ); riga in fondo bianca in tutte le condivisioni parquet (shFoot). Lista del Trend su casella bianca con testo arancione.
+- (1434) Condivisioni: logo Ducks +40% e -4% in altezza (Live stanotte cresce verso l alto); rosa e cassa restano come prima.
+
+- (1435) Velocità: loghi Ducks ufficiali ridotti a 340px (20n 65→38KB, 11n 68→40, 18 75→45, 22 80→44; nuove ?v=), condivisioni con copia alta qualità loghi/duc-22-hd.webp. Animazione palla del campo Ducks: misure di giocatori/canestro/tele solo ogni 0,6 s (in mezzo si segue lo scorrimento, niente ricalcolo pagina a ogni fotogramma), stile delle tele scritto solo se cambia, tele a risoluzione massima 2x, niente disegno se il campo è fuori schermo o sotto Dream/giochi a tutto schermo. Test con CPU rallentata 4x: campo 26→48 fps, blocchi lenti 25→3. Scambio giorno/notte non più a ogni cambio di classe in tutta la pagina.
+
+- (1436) Banner squadra sul campo (.view > .teamhead): logo Ducks 95% della grandezza attuale, scritto fisso nel CSS (scale 1.196 1.075), nessun calcolo al caricamento. Scelte editor azzerate (dl_dxlogo_m1436).
+
+- (1437) BUG: il logo Ducks (Notte vecchio) compariva al centro del campo di tutte le squadre. Causa: le voci ufficiali 1424/1428 per il logo dentro il disegno del campo (.cbg > image) non erano limitate ai Ducks. Ora usano .court:has(.cname.cn-duc). Anche l editor: le voci «image» valgono solo per la squadra aperta (body[data-ct]).
+
+- (1438) Impostazioni › Solo per la squadra scelta: pulsante «📋 Rendi ufficiale il campo X: copia per Claude» che copia DLS.tm[X], maglia (KIT[X], KITG), stile attivo e tutte le impostazioni del campo.
+- (1439) Campo ufficiale Dolphins dalle foto del GM: parquet arancione #e8763a, fascia/bordo #1c0f44, banner #3b1858→#24163f (DL_OFF, valgono se chi guarda non ha sue personalizzazioni Dolphins). Maglia automatica: giorno 330 (blu righe), notte 331 (bianca).
+
+- (1440) Ducks Arena (Dream), render 7 scelto: tifosi tutti viola #7c3aed, sedili verdi (#65a30d/#4d7c0f, onde e scritte #84cc16), pavimento fuori dal campo bianco #f4f1fa con il viola che finisce sulla linea lime, linee lime x2.2, canestri verdi (struttura #84cc16/#65a30d, bordo tabellone #a3e635). dream.js?v=1440.
+
+- (1441) Maglia Ducks ufficiale di notte: 318 (viola a righe, DUCKS e numero verdi); di giorno resta quella scelta/predefinita (319 bianca verde e viola).
+
+- (1442) Statistiche › Giocatori (.fagl): logo Ducks -10% (scale 0.991 0.796, fisso).
+
+- (1443) IA Trade › La tua squadra (.gurowc > .guchip): logo Ducks 93%, larghezza 102% (scale 0.949 0.93, fisso). Scelte editor azzerate (dl_dxlogo_m1443).
+
+- (1444) Dreamers pagina squadra: testata (.dthead) e scontri diretti (.dtl) col logo «UT · Becco bianco», grandezza invariata. La voce IA Trade era già ufficiale dalla 1443 (non riapplicata). Scelte editor azzerate (dl_dxlogo_m1444).
+
+- (1445) Notti del turno: ufficiale «N 1-2-3» nel cartellino al posto di «In attesa» (notti in cui gioca la squadra NBA, dal calendario Dynasty TV; «Nessuna partita» se non gioca). In Personalizzazioni › Pallini delle partite la scelta «Numeri nei pallini» (DLS.ntp): cartellino «In attesa» e numero della notte dentro i pallini delle partite da giocare (giocate/live senza numero). Campo Ducks sempre ufficiale (blocco).
+
+- (1446) Scelta «Numeri nei pallini» (DLS.ntp) libera anche sul campo Ducks (aggiunta a KEEP del blocco 1381/1396).
+
+- (1447) Campo: centri e ali più in basso (ROWY C 27.6, F 55.8) e maglie in campo/panchina -4%. Pallini numerati (opzione) più piccoli del 10% e trasparenti: di notte numero bianco su fondo quasi trasparente, di giorno numero viola scuro.
+
+- (1448) Calcolatore scambi: nuova scheda «4 squadre» (stesso motore del 3; saldo, giudizio e condivisione «Scambio a 4»; proposte IA a 4 squadre apribili).
+- (1449) Pallini numerati di giorno con base bianca e numero viola scuro. Logo Ducks banner squadra 98%, altezza 102% (scale 1.172 1.075). Fix: di giorno i Ducks non restano con la maglia viola della notte (KIT.DUC 318 salvato per errore torna 319).
+
+- (1450) Şengün: aggiornamento di domenica 08/11 forzato a +15% (1680 → 1930, VAL_FORZA k=2) su richiesta di Francesco, dichiarato nel registro come «ritocco del commissario: media di 40 PDK in settimana (il calcolo automatico dava circa +6%)» (VAL_FORZA_WHY).
+- (1451) Şengün: motivo nel registro «aggiustamento automatico commissario per prestazioni di 7 PDK sopra media» (testo scelto da Francesco).
+
+- (1452) Personalizzazioni › Pallini: terza modalità «Barra delle notti» (DLS.ntp="bar"): barretta sotto il cartellino con una casella per notte (scura con N1/N3 da giocare, colore PDK senza scritta se giocata, rossa lampeggiante se live), stretta e infilata sotto il cartellino; con la barra nome e PDK -6%. Cartellino PDK senza bordino 3D in fondo per tutti.
+
+- (1453) Fix barra delle notti in panchina: era nascosta dietro lo sfondo della panchina (z-index -1); ora il cartellino sta sopra (z 1) e la barra sotto (z 0). Spessore barra parametrico (--gbk) per le prove.
+
+- (1454) Barra delle notti +17% di spessore (e scritta), in campo e in panchina.
+
+- (1455) Tribuna: sempre la barra delle notti sotto la casella (In attesa → PDK del turno quando c è).
+
+- (1456) Tribuna: le notti seguono la scelta delle Personalizzazioni (N 1-2-3 sotto la casella, pallini numerati o barra), la casella resta per il PDK. Barra delle notti +22%.
+
+- (1457) Campo Ducks: toccando DUCKS si alterna «N 1-2-3 nel cartellino» ↔ «Numeri nei pallini»; TEXAS resta per gli effetti.
+- (1458) Campo Ducks: la «Barra delle notti» scelta nelle Personalizzazioni non vale (si vede N 1-2-3, o i pallini toccando DUCKS); resta solo con le personalizzazioni dell area segreta.
+
+- (1459) Bollino del capitano (C) più piccolo del 25%.
+
+- (1460) Notti del turno scritte «N1  N3» (ogni notte per intero) al posto di «N 1-3».
+
+- (1461) Live del campo: tasti N1 N2 N3 del turno in corso (con data, pallino rosso sulla notte in corso) per scegliere anche una notte futura; per la notte scelta tutti i giocatori della squadra che giocano (chi non ha ancora il box: avversario e ora, PDK «—»).
+
+- (1462) Formazioni Dreamers (campo e scontri diretti) prima dell inizio del turno: dentro ogni ruolo prima chi gioca la N1, poi per PDK medio; capitano = miglior media tra chi gioca la N1. Regole di ruolo e posizioni invariate. A turno iniziato ordine di sempre.
+
+- (1463) Barra delle notti: bianca di giorno, nera di notte; +25%; di nuovo disponibile sul campo Ducks; scritta della casella live leggibile (tolto il pallino live sovrapposto).
+
+- (1464) Barra delle notti bianca di giorno solo sul campo Ducks; le altre squadre restano nere.
+
+- (1465) Barra delle notti: scritte N1/N3 più leggibili (dritte, più spesse, appoggiate al bordo sotto con spazio dal cartellino), viola sui Ducks di giorno, lilla di notte, bianche sulla casella live.
+
+- (1466) Barra delle notti sui Ducks di notte: scritte lime #a3e635.
+- (1467) Dreamers classifica (.drcr > .drlg.l): logo Ducks 102%, altezza 104% (scale 1.026 0.85). Condivisione classifica: logo Ducks solo +3% (c.__ducK), non esce più dalla casella. Scelte editor azzerate (dl_dxlogo_m1467).
+- (1468) Barra delle notti +27%.
+
+- (1469-1471) Barra delle notti per tutte le squadre: bianca di giorno, viola Dreamers di notte; scritte nei colori della franchigia a contrasto (Ducks invariati: viola/lime). Spessore +29%.
+
+- (1472) Barra delle notti = modalità ufficiale predefinita per tutti (DLS_DEF ntp:"bar", migrazione dl_ntp_m1472 una volta sola). Toccando DUCKS: barra → pallini numerati → N1 N3 → barra.
+
+- (1473) Barra delle notti: scritte N1/N3 più grandi nella stessa barra. Tolti gli avvisi quando si tocca TEXAS (effetti) o DUCKS (modalità notti).
+
+- (1474-1476) Palla Ducks in LIVE: con giocatori Ducks in live la palla diventa rossa con aura pulsante e scia verde; passaggi senza tiri; statistiche live (Dynasty TV, controllate ogni 1,5 s) messe in coda e giocate una alla volta con ritmo calmo: punti = tira e segna, assist = passa e segna un compagno non in live, rimbalzo = tira un compagno, ferro, palla a chi prende il rimbalzo; riquadro rosso «+N PT/AST/RIM» accanto al giocatore. Entrata in live solo durante un palleggio, uscita solo a coda vuota e azione finita (nessuno scatto).
+
+- (1477) La palla live rossa parte insieme al lampeggio rosso delle linee del campo (.court.clive, non con html.lvoff) e si spegne con esso.
+- (1478) Fascio di luce del banner Ducks: arriva fino in fondo ed esce dal banner (dxsb fino a 860%).
+- (1479) Barra delle notti: nella casella live il PDK live (1 decimale) nel colore del punteggio, che lampeggia; in tribuna idem.
+- (1480) Barra delle notti come negli scontri diretti: N1 se deve giocare, PDK live colorato che lampeggia, PDK finale nel suo colore, NG se non ha giocato.
+- (1481) Barra delle notti: il lampeggio live non si vedeva (l opacità era bloccata con !important): ora lampeggia con la luminosità.
+- (1482) Palla live: tiro sbagliato (notifica «TIRO ✕», tira e sbaglia, palla a un compagno); rimbalzo solo come notifica; notifiche visibili 5,6 s e impilate se dello stesso giocatore; la palla rossa parte quando almeno un giocatore Ducks inizia la partita (non più col lampeggio del campo).
+
+- (1483) Palla live più leggera: controllo statistiche ogni 2,5 s con uscita immediata se nessuna partita è in corso (niente ricerche sui giocatori), larghezza delle notifiche calcolata una volta sola, le tele cancellano solo la zona disegnata nel fotogramma prima invece di tutta la superficie.
+
+## (1484) Palla live su tutti i campi
+- La palla rossa live (logo che diventa canestro, statistiche come azioni, etichette rosse) parte su ogni squadra quando uno dei suoi giocatori inizia a giocare; fuori dal live le altre squadre non hanno palla.
+- Pulsante "palla live" tra la maglia e la freccia del tabellone, su tutti i campi Ducks compresi (dl_pallalive, default acceso). Indipendente da TEXAS.
+- Scia nel colore della squadra (Ducks verde). Senza live nessuna animazione: solo un controllo ogni 2,5 s.
+
+## (1486) Scia della palla live nel colore di ogni squadra
+- Prima, con un colore squadra scuro (Dolphins blu, Eagles), la scia tornava verde come i Ducks. Ora il colore scuro si schiarisce: Dolphins blu, Eagles giallo. Ducks restano verdi.
+
+## (1487) Palla live viola Dreamers
+- In live la palla è viola Dreamers e lampeggia (colore e alone pulsano tra #7c3aed e lilla), per tutte le squadre. Pulsante "palla live" viola.
+
+## (1488) Canestro stabile
+- Quando il campo si ridisegna (aggiornamenti live) il logo ricompariva per ~0,35 s e la palla ripartiva da capo. Ora con la stessa squadra l'animazione continua senza fermarsi e il logo resta nascosto via CSS (html.dxhoop) finché c'è il canestro.
+
+## (1489) PDK sincronizzati con le azioni della palla live
+- Quando arrivano statistiche che animiamo (punti, assist, rimbalzi, tiri sbagliati), il PDK del giocatore nel cartellino e nella barra resta fermo e cambia a ogni etichetta dell'azione (+2 PT, +1 AST…), un pezzo per azione; all'ultima mostra il valore vero.
+- Le variazioni dovute a statistiche non animate (rubate, stoppate, perse) si vedono subito. Sicurezza: dopo 60 s il valore vero compare comunque.
+
+## (1490) Notte del turno e messaggi live per tutte le statistiche PDK
+- "Notte X/Y" sotto il tabellone conta solo le notti ufficiali (report Dunkest ~10:30): mentre si gioca la prima resta 1/3 e diventa 2/3 quando arriva il report.
+- Palla live: messaggio senza animazione per rubate (+1 RUB), stoppate (+1 STOP), palle perse (PALLA PERSA / 2 PERSE), tiri liberi sbagliati (TL ✕), bonus triple (BONUS 3 TRIPLE) e doppie/triple doppie.
+- PDK sincronizzati anche con questi messaggi: ogni azione sposta il PDK del suo peso Dunkest (su o giù), all'ultima il valore vero.
+
+## (1491) PDK intermedi esatti
+- I valori mostrati durante le azioni live non sono più stime: PDK vero del tabellino (tvPdk/Dynasty TV) meno il contributo, con gli stessi coefficienti della formula Dunkest, delle azioni non ancora mostrate (punti, rimbalzi off/dif, assist, rubate, stoppate, perse, tiri sbagliati, TL sbagliati, bonus triple, bonus doppie doppie). Cartellino con moltiplicatore e miglior notte del turno rispettati. All'ultima azione il valore vero.
+
+## (1492) Palla live obbligatoria, tolto il pulsante
+- Tolto il pulsante "palla live": l'animazione live è sempre attiva per tutti. Tabellone dello scontro diretto di nuovo simmetrico (maglia a sinistra, D a destra, centro esatto).
+
+## (1493) Palla live in Personalizzazioni › Campo
+- Interruttore "Palla live" (DLS.plv, acceso di default) nelle impostazioni del campo, per tutti; vale anche sui Ducks (chiave in KEEP). Niente pulsante sul tabellone.
+
+## (1494) Banner stats live
+- Sopra il tabellone del campo scorre un banner con le statistiche dei giocatori in live (es. "Jokić 2 PT", "Jokić palla persa", "Jokić palla rubata", "Jokić assist"); senza azioni ancora, la riga di ognuno (PT · RIM · AST…). Visibile solo se qualcuno della squadra è in live.
+- Colori come la barra delle notti: giorno bianco / notte viola, scritta nel colore della squadra (Ducks viola di giorno, lime di notte).
+- Nasce spento: Personalizzazioni › Campo › Banner stats live (DLS.tick, in KEEP: vale anche sui Ducks).
+- (1495) Banner: stessa distanza sopra (cassa) e sotto (tabellone), 12 px; scritta sempre nel colore squadra anche col tema parquet.
+
+## (1496) Banner stats live ufficiale
+- Acceso di default (si spegne in Personalizzazioni › Campo). Durante la live il banner è attaccato al bordo alto del campo (stessa larghezza, angoli in alto arrotondati) e "Notte 1/3" passa sopra il tabellone; finita la partita del giocatore il banner sparisce e tutto torna come prima.
+
+## (1497) Banner: ogni statistica nuova passa una volta
+- Le statistiche nuove fanno un solo giro completo (da destra a sinistra), poi il banner torna alle righe complete; quelle arrivate durante il giro passano subito dopo. Prima restavano per sempre (bug: per rivedere le righe complete bisognava chiudere l'app). Il giro continua senza saltare anche se la pagina si ridisegna.
+
+## (1498) Sigle nel banner e nelle notifiche della palla
+- PT, RIM, AST, STL (al posto di RUB / palla rubata), TOV (al posto di PP / palla persa).
+
+## (1499) Barra delle notti unica
+- Tolte le scelte delle notti (N1 N3 nel cartellino, numeri nei pallini, colore dei pallini) da Personalizzazioni e dal tocco su DUCKS: per tutti solo la barra delle notti con i PDK che lampeggiano (DLS.ntp forzato a "bar", anche per chi aveva scelto altro).
+- (1500) Scritta DUCKS sul campo liberata: il tocco non fa più nulla di speciale (resta TEXAS per gli effetti).
+
+## (1501) Card prestazione: logo Ducks −35% (stesso centro); le altre squadre invariate.
+
+## (1502) Editor loghi: aggiunto logo Ducks «Testa verde · becco arancio» (loghi/duc-23.webp).
+- (1503) Editor loghi: aggiunto logo Ducks «Testa verde · scritta bianca» (loghi/duc-24.webp, sfondo nero tolto).
+- (1504) Editor loghi: «Testa verde · scritta bianca» sostituito da «Testa viola · becco arancio» (loghi/duc-25.webp).
+- (1505) Home: il tasto Ducks nella colonna squadre segue il colore franchigia scelto in Personalizzazioni segrete (viola ufficiale = viola acceso come prima).
+- (1506) Editor loghi: la scelta del logo vince sempre sulle regole ufficiali (selettore più forte).
+- (1507) Editor loghi e Personalizzazioni: tolti Bordo bianco, Bordo lime, Notte palla bianca, Notte palla viola (i file restano: duc-20n e duc-18 sono usati dai loghi ufficiali).
+
+## (1508) Nuovo logo ufficiale Ducks «Testa viola · becco arancio»
+- loghi/duc-25.webp (+ duc-25-hd.webp per condivisioni e arena Dream) al posto di tutti i loghi ufficiali Ducks (duc-20n, duc-22, duc-11n, duc-18, duc-22-hd, duc-20n-hd), giorno e notte, in tutte le sezioni; anche LOGO.DUC/LOGO2.DUC. Le grandezze ufficiali delle caselle restano. I vecchi loghi restano sceglibili nell'editor.
+
+## (1509) Editor loghi → ufficiali (Dreamers): .bkt›.bklg 99% (1.092 0.932), .drcr›.drlg.l 104% larghezza 96% (1.024 0.884), .drr›.drlg 101% larghezza 98% (0.824 0.741). Il logo disegnato resta dentro le caselle.
+
+## (1510) Condivisioni: logo Ducks −15% in Dreamers turno, Sfida, Scontro, Playoff, Gusti (SHK_MAP per singola condivisione, moltiplica il +40% generale K0).
+
+## (1511) Condivisioni: tolto l'ingrandimento speciale del logo Ducks (+40% e schiacciamento 0,96, pensati per il logo vecchio) e tutte le correzioni a percentuale (classifica +3%, prestazione −35%, −15% di 1510): il logo Ducks è disegnato come gli altri loghi, nella stessa casella.
+
+## (1512) Dreamers: logo Ducks nel Turno (.drr›.drlg) +5% (0.865 0.778); in Classifica (.drcr›.drlg.l) +3% e meno schiacciato (1.055 0.929). Le regolazioni dell'editor della vista giochi, ormai ufficiali, si cancellano da sole dal telefono (migrazione dl_dxlogo_m1512): prima restavano sopra e nascondevano le modifiche ufficiali.
+
+## (1513) Colore franchigia Ducks: aggiunto «Lime Ducks» #87cd13 e già selezionato (migrazione dl_duccol_m1513). Corretto lo spettro «Scegli tu»: mentre scegli la pagina non si ridisegna più (prima su iPhone lo spettro si chiudeva); il colore si applica dal vivo e si salva.
+
+## (1514) Annullata la preselezione di (1513): torna per tutti il colore ufficiale viola #5b21b6 (chi aveva scelto un altro colore lo tiene). «Lime Ducks» resta tra i colori e lo spettro «Scegli tu» parte già sul lime.
+- (1514b) Tolto anche il riquadro «Lime Ducks»: resta solo lo spettro «Scegli tu» che parte dal lime #87cd13.
+
+## (1515) Tema Ducks viola / lime (area segreta › Personalizzazioni)
+- Viola: tutto com'è. Lime: colore squadra #87cd13 in tutta l'app e, nella pagina squadra Ducks, banner verde fluo sfumato con DUCKS/TEXAS viola, bordocampo #a3ff12, cassa lime chiaro #ecffd0 con bordo #7fd400 e scritte viola. Per telefono (dl_ductema); tornando a viola si ripristina il colore di prima.
+- (1516) Tema lime: anche di notte scritte viola nel banner e nel campo (TEXAS DUCKS).
+
+## (1517) Maglia Ducks 322 «DUCKS gessato · Lime viola»: base lime gessata, bordini viola, scritta DUCKS viola su fondo bianco, numero bianco bordato viola. Nel pulsante maglia del campo.
+- (1518) Maglie Ducks 323 «Lime viola-bianco» (n.2) e 324 «Lime triplo» (n.10), entrambe con la scritta DUCKS dello stile 16 (viola su bianco, bordo bianco).
+- (1519) Pulsante maglia: le maglie lime 322-324 non venivano accettate (si tornava alla 319); di notte i Ducks erano bloccati sulla 318 e i Dolphins sempre sulla ufficiale. Ora il pulsante scorre tutte le maglie, di giorno e di notte, per tutte le squadre.
+- (1520) Maglie lime: resta una sola, 322 «DUCKS gessato · Lime» (bordino viola scuro/chiaro, numero viola bordo bianco, scritta stile 16); tolte 323 e 324 (chi le aveva torna alla predefinita).
+- (1521) Maglia viola con scritta e bordino lime (318, ufficiale di notte) di nuovo sceglibile anche di giorno col pulsante maglia.
+- (1522) Maglie lime: al posto della 322 ora 322 «Lime numero viola» (bordino bianco sotto il viola) e 323 «Lime numero bianco» (numero bianco bordato viola), resto uguale.
+- (1523) Ducks: passando a giorno torna la bianca (la viola 318 di giorno solo se scelta di giorno col pulsante); di notte la viola.
+
+## (1524) Ottimizzazione
+- Loghi squadre img/*.png → .webp senza perdita (pixel identici, verificato), 1965 KB → 1339 KB.
+- Controllo Dunkest↔ESPN e partite free agent (fa-games.js 1,5 MB) spostati a 18 s dopo l'apertura: avvio più leggero. Il live (Dynasty TV, ogni 45 s) parte subito come prima.
+- (1525) Home, banner OUT / IN DUBBIO: non più «ultimi 2 giorni» ma la prossima notte (oggi se non finita, altrimenti la prima con partite); solo chi ha la partita quella notte. Etichetta «notte G/M».
+- (1526) Banner OUT/IN DUBBIO: dalle 7 (ora italiana) indica la notte che arriva; fino alle 7 resta sulla notte in corso.
+- (1527) Tolta la maglia 323 «Lime numero bianco»: resta solo la lime con numero viola (322). Chi l'aveva torna alla predefinita.
+- (1528) Maglia nera Ducks: tolta la «Nera triplo lime-viola»; in prova tre nere: 321 «Nera fluo-viola-fluo», 323 «Nera viola-fluo numero bianco», 324 «Nera triplo viola-fluo-viola» (id gradienti distinti).
+- (1529) Maglia 324: bordini collo e spalle +60% e gessato fluo leggero («Nera triplo viola-fluo-viola gessata»).
+- (1530) Maglie nere: resta solo la 324 «Nera triplo viola-fluo-viola gessata»; tolte 321 e 323.
+- (1531) Bordini maglie Ducks +30%: bianche (316, 319) solo il bordino colorato (7→9,1; il nero resta uguale, 12→14,1); colorate (317, 318, 322) tutti i bordini (12→15,6, 7→9,1). La nera 324 resta com'era.
+- (1532) Maglie bianche 316 e 319: anche il bordino nero +30% (14,1→15,6), come le colorate.
+
+- v954: Peacocks: 3 maglie DPK (340 Blu, 341 Nera, 342 Rosa) al posto delle 3 precedenti, + NBA 2026 e Anni 90. Sfondo img/pea-s1..3.jpg, scritta DPK vettoriale, numero giocatore. PEA_JV/PEA_KN, kitDi/kitLista. IN CODA.
+- (1533) Maglia lime 322: bordino invertito, bianco fuori e viola dentro.
+- (1534) Tolta la maglia 316 «Bianca verde»; chi l'aveva torna alla Bianca viola.
+- (1535) Maglia 319 Bianca viola: bordini tornati come prima del +30% (12 e 7).
+
+- v960: Peacocks DPK: sfondi pea-s1..3 ripuliti (niente bianco del colletto/giromanica originali sotto i bordini vettoriali).
+
+- v961: immagini maglie Peacocks con ?v=2: sw.js serve le /img/ dalla cache (cache-first), con lo stesso nome il telefono teneva la versione vecchia. REGOLA: quando si cambia un'immagine in img/ cambiare nome o ?v=.
+
+- v962: Peacocks DPK: arancione -> verde #16b35a (immagini nuove img/peag-s1..3.jpg, tolte pea-s*).
+- (1536) Ducks di notte: sempre la viola ufficiale 318; la maglia scelta col pulsante di notte vale solo finché resti in notte e non si salva (prima restava salvata la lime).
+- (1537) Maglia lime 322: bordino bianco -30% (9,1→6,4).
+- (1538) Maglie ufficiali Ducks: giorno 317 Viola bianca, notte 319 Bianca viola. Il pulsante maglia vale solo finché resti in quella modalità; passando giorno↔notte o riaprendo l'app torna l'ufficiale (niente più scelta salvata che si trascinava).
+
+## (1539) Gioco del tiro sul campo Ducks
+- Tocca DUCKS: parte il gioco e le animazioni si spengono; tocca DUCKS o TEXAS: si esce e tornano le animazioni. Uscendo dalla pagina il gioco si chiude.
+- Fionda: tocca un giocatore (campo o panchina) e trascina indietro; direzione = angolo, potenza = lunghezza (barra verde/gialla/rossa, max ~230 px). Si vedono solo 3 puntini di direzione, non la traiettoria.
+- Gittata = campo × (0,06 + 1,26 × potenza). Esito dalla distanza dal ferro (raggio 0,31 × maglia): swish < 0,4, dentro < 1,05, ferro e fuori < 1,6, air ball oltre. 2 punti, 3 dai lontani (> 55% del campo).
+- Punti, tiri, serie; record (punti e serie) in dl_dxgame. Vibrazione sul canestro. Il tocco sul giocatore non apre la scheda mentre giochi.
+- (1540) Gioco del tiro: resta acceso finché non tocchi DUCKS (anche cambiando pagina o riaprendo l app, dl_dxgame_on); TEXAS non lo spegne. Col gioco attivo campo e panchina non aprono schede e i cartellini PDK non si girano: solo tiro o scorrimento.
+- (1541) Gioco del tiro: area di tocco del giocatore allargata (maglia + nome + cartellino + margine invisibile ~28% della maglia); se il dito parte da lì la pagina non scorre e parte il tiro.
+- (1542) Gioco del tiro insieme al live: banner stats e PDK continuano ad aggiornarsi mentre giochi (senza animazione della palla). Se il campo si ridisegna durante un tiro, il giocatore si ritrova dal nome e il tiro non si perde.
+
+## (1543) Gioco del tiro: partita contro il computer
+- Avversario = squadra della sfida Dreamers della settimana (logo che compare nel punto di tiro, scia arancione). Tiri a turno, 4 quarti da 5 tiri a testa, supplementare se pari; vittorie/sconfitte salvate (dl_dxgame).
+- Mira del computer: percentuale tra 36% e 64% in base al rapporto dei punteggi veri della sfida (−10% da 3 punti). Tabellone in alto a sinistra: punteggio, quarto, di chi è il turno.
+- A fine partita tocca un giocatore per rigiocare. Il live (banner e PDK) continua.
+
+## (1544) Gioco del tiro: partita contro l animaletto
+- L avversario della sfida della settimana è il suo logo in un cerchio che si muove nel campo e insegue chi ha la palla; se lo tocca la ruba. Palla a te: tocca un compagno per passare, dal portatore tiri con la fionda; 24 secondi.
+- Palla a lui: va in un punto e tira dopo ~1,7 s; tocca la palla in volo (cerchio bianco) per la stoppata. Dopo un tuo canestro palla a lui, dopo un errore rimbalzo 50/50, dopo un suo tiro palla a te.
+- 4 quarti da 2 minuti, supplementare 1 minuto. Velocità e mira dai PDK veri della sfida (36-64%). Sostituisce la partita a turni (1543).
+- (1545) DUCKS a cicli: 1° tocco tiro libero (si tira da qualsiasi giocatore, punti e serie), 2° tocco partita contro l animaletto, 3° tocco torna l animazione. Modalità salvata (dl_dxgame_mode).
+- (1546) Partita più dura: stoppata solo nei primi ~1,5 cm (56 px a terra) dal punto di tiro dell animaletto (il cerchio bianco c è solo in quel tratto); animaletto più veloce (+~35%); ruba appena tocca la maglia (raggio 0,62 maglia, attesa 0,25 s solo al cambio palla, nessuna attesa dopo i passaggi).
+- (1547) Partita: tabellone piccolo e bianco, DUCKS (viola) sopra e avversario (suo colore) sotto con punteggi a destra, pallino su chi ha la palla, tempo in rosso. Tiro: potenza tarata sulla distanza (gittata = distanza × potenza / (0,3 + 0,5 × distanza/campo)); margine in trascinamento circa 33 px centro, 15 ali, 9 guardie.
+- (1548) Stoppata: un solo tocco per ogni possesso dell animaletto (contano i tocchi sul campo o vicino alla palla, anche prima del tiro); se è fuori tempo «TROPPO PRESTO/TARDI» e non si può più stoppare. Difesa: animaletto +20% su centri e ali, +10% sulle guardie (fuori dall arco).
+- (1549) Tasto volume accanto al tabellone del gioco (dl_dxgame_snd, spento di default). Suoni sintetizzati: passi sul parquet dell animaletto, palleggio, tiro, ferro, retina, stoppata, rubata, sirena di fine quarto, pubblico sul canestro. Col volume acceso e il gioco attivo, una voce italiana legge solo le statistiche NUOVE del banner live (evento dxlivestat).
+- (1550) Animaletto: percentuale al tiro tra 45% e 54% (dai PDK della sfida, senza penalità da 3). Tasto volume sotto il tabellone, a sinistra.
+- (1551) Gioco: tabellone nello spazio a sinistra di TEXAS e tasto audio a destra di DUCKS (fascia alta del campo); il tabellone si rimpicciolisce per starci.
+- (1552) Tiro delle guardie (fuori dall arco) tornato come prima (gittata = campo × (0,06 + 1,26 × potenza)); la taratura sulla distanza resta solo per centri e ali. Audio su iPhone: categoria «playback» (navigator.audioSession) + audio silenzioso in loop, così i suoni e la voce si sentono anche col tasto silenzioso; sblocco anche al primo tocco nel gioco.
+
+(1553) Gioco del tiro più leggero (stessa qualità, dpr 2): misure di campo/giocatori/canestro in cache (rilette ogni 0,4 s o quando cambia #main), palla e animaletto disegnati da sprite pronti, tabellone ridisegnato solo quando cambia un numero, canvas grande solo quanto campo+panchina (in alto fino al bordo schermo per l arco dei tiri), tasto audio che non riscrive più il DOM a ogni fotogramma (svegliava gli osservatori dei loghi 1405/1424). Test iPhone 13 con CPU x4: da ~34 a ~45 fps. Le stelline che brillano sul campo costano ancora ~10 fps (non toccate).
+
+(1554) Correzione 1553: la palla disegnata dallo sprite usciva a metà grandezza; ora identica a prima.
+
+(1555) Gioco: nuovo suono per i miei canestri (prova n.2 scelta da Francesco: retina + campanelle do-mi-sol-do + luccichio), al posto di retina+pubblico. Canestri dell animaletto: solo retina come prima.
+
+(1556) Partita: stoppata con un tocco ogni 0,5 s (prima un solo tocco per azione). Zona invariata: solo a inizio tiro, vicino alla palla.
+
+(1557) Partita: fischio d inizio (tutto fermo per 2 s, poi fischio + VIA!; tocchi sul campo ignorati prima), tasto pausa (#dxgpau, accanto/sotto l audio, solo in partita: congela tempo, animaletto, tiri; scritta PAUSA), bip negli ultimi 5 secondi di ogni quarto (sfx tick) prima della sirena.
+
+(1558) Partita: tabellone più grosso, 4 righe (DUCKS, avversario, quarto e minuti, TIRO 24s/DIFESA), occupa il bordocampo dal bordo alto fino alla linea di fondo (slot L più alto, place() può ingrandire fino a 1,6x).
+
+(1559) Tiro: centro più difficile (serve caricare circa metà barra, ~118 px invece di ~80; finestra di canestro da ~34 a ~19 px), ali più facili (stessa carica, finestra da ~16 a ~22 px). Guardie invariate.
+
+(1560) Ritiro Kristaps Porziņģis (DOL), 09/11/2026, art. 10 rimborso da scambio: tolto da ROSTER.DOL, infortuni, statistiche rosa (gioc), VALORI, PREZZO_FISSO, VAL_BASE, INF_STELLE, ruoli TV; cassa Dolphins 0 -> 50 cr con movimento "Rimborso ritiro" in MOVIMENTI.DOL. Lasciati solo i dati storici (scambio del 29/10, partite giocate, formazioni passate) e quelli di aspetto/pronuncia che non mostrano nulla.
+
+(1561) Debito portafoglio Dolphins -> Mooses (5 cr) saldato il 09/11/2026 col rimborso Porziņģis: DEBITI saldato:true, CREDITI DOL 50 -> 45, MOO 443 -> 448, movimenti in MOVIMENTI.DOL e MOVIMENTI.MOO. Resta il debito post draft di 30 cr.
+
+(1562) Maglia ufficiale Ducks di GIORNO: 318 Viola verde (prima 317 Viola bianca). Notte resta 319 Bianca viola; il pulsante maglia funziona come prima.
+
+- v990: SCAMBIO 09/11 17:48 DOL<->PEA: Sabonis, Gobert, Harden, Lillard, Randle ai Dolphins; Clingan, Diabaté (centro, senza slot ala), Young, Garland, Bridges ai Peacocks. ROSTER aggiornato; turno 4 resta con le formazioni vecchie (drUndoTrades), conta dal turno 5 (10/11). Lookup numero/ruolo con fallback su tutti i ROSTER (TRN). PUBBLICATO.
+
+(1563) COLLEGE in Statistiche (tasto verde sotto Squadre): i primi 60 del big board di Tankathon per il Draft 2027 (porting della sezione Rookie 2027 di ESPN 16) con PDK al posto di AVG. Lista con cerca/ruolo/ordina, profilo (cur="colpl") con grafico Partite/Settimane per PDK/Minuti/Efficienza e game log, comparatore (cur="colcmp"); lista cur="colstat". Dati in college-data.js (COLDRAFT, caricato solo alla prima apertura) da tools/tankathon.mjs, ogni domenica 17:00 UTC con .github/workflows/college.yml (storico settimanale per il trend). PDK = formula tvPdk con rimbalzi x 1,075 (30% offensivi), titolare = almeno 20 minuti, stoppate subite 0; bonus triple/doppie doppie/vittoria partita per partita dal game log. Ufficio scouting Ducks (cur="college") non toccato.
+
+(1564) COLLEGE completo + LIVE + Osservatorio (v993). Partite: nuovo tools/college-espn.mjs (dopo tools/tankathon.mjs nello stesso .github/workflows/college.yml, che ora gira anche OGNI MATTINA alle 08:00 UTC oltre alla domenica 17:00): abbina i prospetti all'id ESPN (college -> squadra ESPN -> roster; 55/60, i 5 delle leghe estere restano Tankathon), prende dal game log ESPN tutte le partite della stagione e dal tabellino (summary) OREB, DREB, titolare, risultato. Righe del game log con 4 colonne in più [.., OREB, DREB, titolare, id partita] -> PDK ESATTO come tvPdk (stoppate subite 0, come il percorso ESPN della TV); medie a partita ricalcolate dalle partite ESPN. Cache dei tabellini finiti in tools/college-espn-cache.json (il workflow committa anche quella). Foto settimanale per il trend: tankathon.mjs la scrive solo la domenica (o la prima volta), college-espn.mjs la ricalcola con i dati ESPN. LIVE: dal browser (ESPN college ha CORS aperto, come l'NBA della TV) solo con College o Osservatorio aperti e app visibile: tabellone ogni 45 s (ogni 5 min se non c'è niente in corso), tabellino delle partite in corso -> badge LIVE + PDK provvisorio in lista, profilo (ultimo punto del grafico e prima riga della tabella) e Osservatorio; a fine partita resta "FINALE" provvisorio finché il giro del mattino non la mette nel game log. Prova: COLAPI.sim(idPartita). Osservatorio: i prospetti si seguono come "col:slug" in dl_seg (segnalibro in lista e profilo College, ricerca della Home e nuova ricerca nell'Osservatorio, sezione «College»); sezione College nell'Osservatorio con ultima partita/LIVE, PDK, minuti, punti, media; tocco = profilo (‹ torna all'Osservatorio). Conteggio notifiche e logica NBA invariati; Ufficio scouting Ducks (cur="college") non toccato. Età al draft in evidenza: pastiglia colorata (ageB: verde ≤19,5, oro ≤21, arancio oltre) nelle schede della lista College (tolta dal sottotitolo grigio), nell'intestazione del profilo e nel comparatore; stessa cosa in ESPN 16 (78).
+
+
+(1565) SCONTRINI DEL CENTRO SCOMMESSE contro i furbetti (v994). Solo index.html (Centro scommesse, cur="bet") + nuovo tools/scontrini.py; casino.js e dream.js NON toccati. Registro per telefono in localStorage `dl_bet_log` (v:2): al primo ingresso nel Centro nasce un id telefono casuale e un contatore che parte da un numero casuale (100000-999999); ogni movimento di gettoni è una riga [n, t, tipo, id, puntati, pagati, saldo dopo, info, firma] con firma a catena (h64 = due FNV-1a h32 con segreti, sulla firma precedente + telefono + campi). Tipi: 0 apertura, P singola, M multipla (id giocata = suo contatore, salvato in `b.rn`), S esito (richiama l'id; "x"+id per le giocate di prima del registro), I incasso, R premio (maglie/campi), A saldo cambiato fuori dal registro (saldo ritoccato, backup ripristinato, registro manomesso). DUE scontrini: INIZIALE (DRSI1, uno per squadra/telefono, si stampa una volta; senza non si gioca: place/placeMx bloccati; fissa telefono, contatore, firma, saldo, giocate già aperte `ap`) e FINALE (DRSF1, quante volte si vuole, sempre cumulativo dall'iniziale: movimenti `e`, aperte `ap`, saldo e ultima firma). Lo scontrino si vede solo come immagine (shOpen("sc") → shSC, grafica viola) e si copia intero con «📋 Copia scontrino» (niente textarea); nel riquadro saldo resta «Ultimo scontrino finale: data · impronta». Codice: JSON → deflate-raw (CompressionStream, se manca "j" senza compressione) → XOR pseudo-casuale → base64 + firma h64; contiene `sh` = firma del riassunto normalizzato (intestazione + righe fino a «Impronta»), `ne` = numero movimenti; impronta = primi 6 caratteri della firma, sull'immagine e nel testo. Verifica: `python3 tools/scontrini.py <file .txt con i testi incollati | codici>` (-v movimenti; --registra salva l'iniziale per squadra in tools/scontrini_registro.json). Segnala: riassunto modificato/incompleto, codice rovinato, più iniziali (dati cancellati/secondo telefono), finale di altro telefono, finale che non parte dall'iniziale, catena rotta, saldi incoerenti, righe A, finali che non sono uno l'inizio dell'altro (backup rigiocato), esiti doppi o di giocate mai registrate, giocate sparite dalle aperte, numero di giocate. Limite onesto (scritto anche nel codice): il segreto è nell'app, un programmatore deciso può falsificare; scopre i trucchi alla portata di tutti.
+
+## (1566) Dati ufficiali da ESPN, salvati da GitHub (riserva Dunkest) · infortuni ESPN ogni 5 minuti · report dei dati nel footer (v995)
+- **Nessun report a mano.** `.github/workflows/report.yml` (GitHub) lancia `tools/report_espn.mjs`: di notte ogni 30 minuti (`*/30 0-5` UTC) carica la notte appena TUTTE le partite sono finite (se una è in corso esce senza scrivere); alle 07:07 italiane d'inverno (`7 6` UTC, 08:07 con l'ora legale) corsa di chiusura con `--ultima` (partite non finite = errore); altri tentativi `37 7,9` UTC. Se ESPN fallisce (non risponde, notte incompleta, controlli non superati) usa la RISERVA `tools/report_dunkest.mjs`; se fallisce anche quella alla corsa delle 07:07 il job fallisce e GitHub manda la mail. Commit: «Dati ESPN al GG/MM [automatico]» oppure «Dati Dunkest al GG/MM [automatico, ESPN non disponibile]». Nello stesso giro `tools/verifica.mjs` e `tools/dreamers.mjs` (un push col GITHUB_TOKEN non fa partire dreamers.yml). Lancio a mano: Actions › report-dati › Run workflow (con «prova» spuntato non scrive niente: dice se ESPN e Dunkest rispondono da GitHub). Riepilogo di ogni corsa nel Summary del job.
+- `tools/report_espn.mjs` scrive gli STESSI dati negli STESSI formati del report Dunkest (PARTITE, EFF, ULTIMA, GL_STATS, FA, FA_AGG, fa-games.js, tv-data.js). Storico = tabellini di Dynasty TV delle notti già caricate (non si riscarica niente); notti nuove = ESPN scoreboard + summary. PDK = formula `tvPdk` (stoppate subite = 0, ESPN non le ha); minuti interi di ESPN ("34:00"). Nomi: normalizzati come nel report Dunkest; poi cognome + squadra + iniziale (es. "Ron Holland" = "Ronald Holland II"); i nomi sconosciuti diventano free agent nuovi e sono elencati nel report. Controlli bloccanti (nessun file scritto, exit 2): partita del calendario mancante su ESPN, partite non finite (con `--ultima`), somma punti ≠ punteggio, tabellino con meno di 5 giocatori, oltre il 35% dei giocatori dei roster non trovati. Anomalie non bloccanti: nomi non abbinati, minuti strani (minuti di squadra ≠ 240+25×OT di oltre 8, 0 minuti con statistiche, 50+ minuti senza OT), partite rinviate. Opzioni: `--prova`, `--fino=`, `--forza`, `--ultima`, `--da=… --prova --dump=file.json` (ricarica notti già caricate per confronto). Collaudo: rifacendo tutto dallo stato del 10/11 senza notti nuove i file escono identici (a parte orari e la squadra di Nique Clifford).
+- Confronto ESPN ↔ Dunkest sulle notti 03-09/11 (1064 partite-giocatore): PDK identico in 699 (66%); 356 differenze sono solo le stoppate subite (ESPN più alto di 0,5 o 0,525 a stoppata, in tutto +242 PDK), 9 per tabellino diverso (rimbalzi, palle perse, tiri tentati); titolare e bonus vittoria sempre uguali. Differenza media +0,22 PDK, mediana 0, 90° percentile 0,75, massimo 5. Minuti uguali solo nell'11% (ESPN interi), efficienza della partita uguale nel 31%. Giocatori a 0:19-0:22 che ESPN segna "0" minuti contano con efficienza 0.
+- `tools/report_info.mjs`: ogni corsa (ESPN o Dunkest) aggiunge una riga in `REPORT_INFO.runs` (index.html, ultime 30: quando, fonte, notti, esito, anomalie, info, errore ESPN) e riscrive il footer: «Dati ufficiali ESPN · salvati da GitHub il GG/MM alle HH:MM», con `data-agg="GG/MM/AAAA · HH:MM"` (lo leggono i controlli dell'app con `updStamp()`; prima si leggeva il testo «Ultimo aggiornamento: …»). Toccando il footer: Cronologia modifiche › «Report dei dati ufficiali» (`reportBlock`), stile del controllo di coerenza, più l'ora dell'ultimo salvataggio degli infortuni.
+- **Infortuni**: `.github/workflows/infortuni.yml` ogni 5 minuti lancia `tools/infortuni.mjs` → `infortuni-data.js` (`INFLIVE`, stessa forma della risposta ESPN), commit «Infortuni ESPN aggiornati [automatico]» solo se la lista cambia. Nell'app `injApply` (lettura comune): all'avvio la lista salvata, poi ESPN letto dal telefono ogni 30 secondi con l'app aperta e visibile; se ESPN non risponde resta la lista salvata. `infortuni-data.js` non è nella lista di installazione di sw.js (finché GitHub non lo crea darebbe 404).
+- Testi dell'app: dove diceva che i dati ufficiali vengono da Dunkest ora dice ESPN (Dunkest = riserva); il confronto «Dunkest ↔ ESPN» della Cronologia ora è «Report ↔ ESPN live». Restano «Dunkest» dove è il nome del punteggio (PDK = punti Dunkest, formula Dunkest), le carriere/stagioni passate e il regolamento.
+- Da sapere: se in una corsa si caricano più notti insieme (es. GitHub fermo un giorno), DREAMERS archivia per EFF solo l'ultima, come prima con Dunkest.
+
+(1567) report-dati: tentativi continui ogni 30 minuti dalle 07:07 alle 22:37 italiane (cron 7,37 6-21 UTC); ogni corsa prova ESPN fino a 3 volte; riserva Dunkest solo dalle 08:00; mail se alle 09:00 la notte manca ancora, ma si continua a riprovare.
+
+(1568) College con codice di accesso: la sezione resta dov era (tasto COLLEGE in Statistiche); lista, profilo e comparatore chiedono il codice (stesso dell area riservata), sbloccata finché l app resta aperta (sessionStorage dl_colok). Nel codice c è solo un impronta del codice, non il codice.
+(1569) College solo nella sua sezione: prospetti non più seguibili nell Osservatorio (e tolti dai seguiti già salvati), non più nelle ricerche (Home e Osservatorio), live del college solo dentro la sezione. Codice sbagliato: «Codice sbagliato. La prossima volta sii più partecipe, ora studia da solo».
+(1570) Codice College sbagliato: messaggio «Area riservata».
+(1571) College: l età si legge «Età draft 21,4» (età al draft di giugno 2027, da Tankathon).
+(1572) College: filtro per anni di college (1° anno Freshman, 2° Sophomore, 3° Junior, 4° Senior, Estero = campionati fuori dagli USA), insieme al filtro per ruolo.
+(1573) College: Segui dal profilo, Osservatorio di nuovo, «Live notte per notte» (v1001). 1) Il tasto «Segui» dei prospetti c è SOLO nel profilo (colpl, colSeg0); niente segnalibro sulle schede della lista né nelle ricerche (colSeg resta vuoto, hC vuoto: i prospetti non si trovano nella ricerca della Home né dell Osservatorio). 2) I seguiti "col:slug" non si tolgono più da dl_seg (via la pulizia della (1569)); nell Osservatorio torna la sezione College (#oscol con COLAPI.osBody, segnalibro per smettere di seguire) e il live dei seguiti (lvWho con cur="osserv"); il tocco apre il profilo SENZA codice (colGate lascia passare colpl con CST.from="osserv"). 3) In cima alla lista College un tasto «Live notte per notte» (cur="colnt", dietro al codice, ‹ torna alla lista): una tabella per notte (data USA, dalla più recente, chip per sceglierne una) con tutti i prospetti in campo (avversario, V/S o LIVE/FINALE, minuti, PDK, punti, rimbalzi, assist), dal game log x.gl più la riga live (LV/lvOf); con la pagina aperta gira il live ogni 45 s (IN() comprende "colnt"); tocco = profilo (‹ Live notte per notte). Prova: COLAPI.sim(idPartita).
+(1574) Dati ufficiali: primo tentativo alle 07:30 italiane (cron 30 6 UTC), poi ogni 30 minuti fino a sera; tolte le corse notturne. Dunkest di riserva dalle 08:00, mail dalle 09:00 (invariati).
+(1575) Primo tentativo SEMPRE alle 07:30 italiane anche con l ora legale: cron ogni 30 minuti dalle 05:00 UTC e le corse prima delle 07:30 di Roma escono subito.
+(1576) Home › riquadro Seguiti: anche i prospetti del College seguiti che giocano la notte mostrata o sono live (iniziali, avversario, stato, minuti, punti, PDK); tocca = profilo senza codice; live ESPN dei seguiti anche in Home.
+(1577) College: segnalibro piccolo accanto al nome in ogni scheda della lista (seguito = acceso; tocco = segui/smetti, senza aprire il profilo); nome un po più staccato dalla capsula Età draft.
+(1578) Home: la casella (notte/live, risultati, classifica, previsione) torna sempre sul live quando si torna alla Home o si riapre l app; non si ricorda più la posizione (dl_hnav tolto).
+(1579) Home: fino alle 19:00 la casella sta sul live/ultima notte; dalle 19:00 si mette da sola sulla Previsione della notte successiva, che alla prima palla a due diventa il live (controllo ogni minuto con l app aperta). Prima la Previsione partiva alle 14:00.
+
+- v1006: SCAMBIO A 4 11/11 19:28: Daniels (DUC) ai Dolphins; Green (SPI) e Diabaté (PEA) + 40 cr dai Dolphins ai Ducks; Lillard (DOL) agli Spiders; Steinbach (DUC, diritti restano ai Mooses) + 20 cr (15 SPI + 5 DOL) ai Peacocks. ROSTER aggiornato, TRADES con da:{} per drUndoTrades (conta dal turno 6, 13/11), crediti in MOVIMENTI (le voce 'N cr' non sono lette da movimenti()). Tolto AVVISO slot Diabaté. Scheda scambi: piu di 2 squadre su 2 righe (.tr4).
+
+- v1007: crediti dello scambio a 4 subito in cassa (CREDITI: DOL 45->0, DUC 0->40, SPI 50->35, PEA 38->58). I giocatori in Dreamers restano dal turno 6.
+
+- v1008: Anthony Black (ORL) con 26 anni per scelta della lega: NASCITA 2004-01-20 -> 2000-01-20 (vale per età, valori, IA trade e pagella).
+- v1009: (1580) Anthony Black: 26 anni SOLO nelle scritte (NASCITA_SHOW + etaVis/etaTxt: profili, comparatore, immagini da condividere); NASCITA torna vera (2004-01-20), quindi valori, prezzi, IA trade e pagella usano i 22 anni veri.
+- v1010: maschera età completa: etaM(n,età vera) restituisce l età da mostrare (NASCITA_SHOW) anche nelle frasi dell IA trade (histTech t.age, giocatore più in difficoltà), nelle schede e nei testi dell Allenamento IA trade; i calcoli restano sull età vera.
+- v1011: Comparatore: la ricerca del giocatore si bloccava quando tra i risultati c era uno svincolato (TEAMS["FA"] non esiste → badge in errore, lista non aggiornata; es. «Mitchell» per Davion Mitchell). Ora gli svincolati hanno la pastiglia FA e la scritta Free agent come nello slot.
+- v1012: (1581) Trend (Statistiche): bottoncino tondo «+» per seguire accanto al nome di ogni giocatore della lista (hmAdd, ✓ quando seguito, finisce nell Osservatorio e nei Seguiti); il tocco non apre il dettaglio della riga.
+- v1013: (1582) Profilo giocatore › Partita per partita: ogni mese ha il box score completo (gmTab: Data, Min, PDK, Eff., Proj 36, PT, RB, AS, ST, BL, TO, Tiri, 3P, TL, RO, RD, Falli, +/-) in una tabella che scorre a destra con la colonna Data fissa; @ / vs e «titolare». Stagione in corso: statistiche dai box score di Dynasty TV (gmIdx su TV.box, si aggiorna da sola con i nuovi dati); stagioni passate: solo PT/RB/AS (gli altri dati non esistono), il resto «—». Vale per giocatori di squadra, free agent e G League (faGames, extProfilo, vGiocatore).
+- v1014: (1583) Partita per partita: niente più una finestra per mese. Una finestra per stagione (Stagione 3 · 2026/27, Stagione 2, Stagione 1; aperta quella scelta, le altre chiuse con partite e media nel titolo); dentro una sola tabella che scorre (in alto la partita più recente) con i mesi segnalati da una riga-titolo (nome del mese, gare, media). gmSrc unisce PARTITE, STAGIONI e FAG; gmSeasons + gmTab(...,months).
+- v1015: (1584) Profilo giocatore: tolti i riquadri Ultima partita (Dunkest/min), Punti medi e Rb · As (giocatori di squadra, free agent, G League); l ultima riga dei riquadri si allarga per non lasciare buchi.
+- v1016: (1585) Giocatori (Statistiche): filtro «Solo in crescita rispetto al 2025/26» e colonna «Cresc.» ordinabile (tocca l intestazione). Crescita = PDK medio del periodo scelto contro PDK medio di tutta la 2025/26 (STAGIONI/FAG); servono almeno 3 partite nel periodo e 5 nella stagione scorsa, altrimenti «—» (rookie compresi). Con il filtro acceso la lista si ordina per crescita.
+- v1017: (1586) Maglie NBA 2026 / Anni 90: i giocatori scambiati che restano nel turno con la vecchia squadra (Daniels e Steinbach coi Ducks fino al turno 6) prendevano la maglia della squadra Dreamers perché non erano più nella sua rosa. kitRw cerca la squadra NBA anche nelle altre rose e negli svincolati: ora Daniels ha la maglia Hawks, Steinbach Hornets.
+- v1018: (1587) Grafico / Comparatore / Trend: «Media per» ha anche Settimane (Stagioni · Mesi · Settimane · Giorni). Stagioni è sempre attivo e al tocco allarga da solo il periodo a tutte le stagioni registrate (dal 22/10/2024 a oggi), senza toccare il calendario.
+- v1019: (SC5) SCAMBIO A 4 del 13/11 (08:21): ai Peacocks Maxime Raynaud (diritti ai Turtles), Dyson Daniels, Lauri Markkanen e 5 cr dai Mooses; ai Dolphins Immanuel Quickley e Michael Porter Jr.; ai Mooses Hannes Steinbach (avevano i diritti) e 50 cr dai Turtles; ai Turtles i diritti di Raynaud (entro la giornata 64 decidono se prenderlo dando ai Peacocks uno dei loro centri, o lasciarlo ai Peacocks). ROSTER, CREDITI (PEA 63, MOO 493, TUR 99), MOVIMENTI, DIRITTI (tolto Steinbach, aggiunto Raynaud), TRADES. (1588) REGOLA SCAMBI: uno scambio vale subito se nessuna partita NBA del turno è ancora iniziata (soglia = prima palla a due del turno, drFirstTip); a partite iniziate dal turno dopo. Questo scambio vale già nel turno 6.
+- v1020: (1589) TRADE SPECIALE 30 dei Ducks (13/11): fuori Sergio De Larrea (avviso «Trade Speciale in corso · 30 cr», resta in rosa ma non gioca), dentro Anthony Black (ROSTER DUC, crediti 0 da confermare). Durata stimata come le altre due da 30 (13 turni): dalla G8 alla G20 = turno 18, fino al 31 dicembre (si controlla su Dunkest). Countdown delle speciali: la giornata di adesso è turno in corso + 2 (GIORNATE era fermo alla 3, i numeri non scendevano). Anthony Black torna alla sua età vera (NASCITA_SHOW vuoto).
+- v1021: (1590) Trade speciale 30 dei Ducks (Black per De Larrea) pagata dalla cassa: CREDITI DUC 40 → 10, movimento «Trade speciale 30» −30 del 13/11. Le speciali di Ingram e Rollins erano state pagate prima che esistesse l app, per questo non hanno movimenti.
+- v1022: (1591) REGOLA GENERALE «free agent che entra in squadra»: le sue partite e medie passate restano. faTeamMerge() (a ogni disegno e dopo liveEff, che ricostruisce EFF dalla copia del mattino): per ogni giocatore di ROSTER senza partite prende quelle da free agent (FAG, stagione in corso); se manca la riga in EFF.gioc della sua squadra la sposta dalla vecchia squadra (scambi) o la calcola dalle partite. Il report del mattino poi ricostruisce tutto per intero (tools/report_espn.mjs rifà PARTITE ed EFF.gioc da ROSTER). Anthony Black: 8 partite, 28,2 PDK, eff. 0,89 nel roster Ducks; il Controllo dati torna tutto verde (prima segnalava i giocatori degli scambi del 11/11 e 13/11).
+- v1023: (1592) CON / SENZA (Statistiche › Giocatori, tasto accanto a Box/PDK): scegli un giocatore e i compagni della sua squadra NBA di oggi (dai box score della stagione in corso); tocco = senza, due tocchi = con, tre = niente. Più compagni insieme (es. senza Banchero e senza Suggs). Stagioni 24/25, 25/26, 26/27 o tutte. Confronto «partite filtrate» contro «le altre» (partite, PDK, minuti, efficienza, punti, rimbalzi, assist, differenza) ed elenco delle partite. Presenza del compagno: stagione in corso dai box score di Dynasty TV, stagioni passate dalle partite (stessa data e stesso avversario); una stagione passata conta solo se i due quell anno hanno giocato insieme almeno una volta. Non è «in campo insieme» minuto per minuto.
+- v1024: (1593) Giocatori: ricerca a metà larghezza e accanto il tasto rosso «Con o senza». Pagina Con / Senza rifatta: testata arancione col giocatore (tocca il nome per cambiarlo), passi numerati 1 Stagioni (più stagioni insieme, Tutte), 2 Compagni (+ / ✕ senza in arancione / ✓ con in verde), 3 Risultato (PDK delle partite filtrate contro le altre con differenza in cerchio, barre per minuti, efficienza, punti, rimbalzi, assist; avviso se le partite sono poche), 4 elenco partite. Arancione al posto del rosso.
+- v1025: (1594) Con o senza: il lato destro non è più «le altre partite» ma il contrario esatto del filtro (senza Banchero ↔ con Banchero; senza Banchero e senza Suggs ↔ con Banchero e con Suggs); le partite miste non contano. Etichette una per riga con la pastiglia SENZA/CON, frase di riepilogo («Black senza Banchero e senza Suggs fa 8,1 PDK in più che con Banchero e con Suggs»), legenda delle barre con i due nomi.
+- v1026: (1595) Con o senza: ricerca del giocatore con casella dove si scrive (i nomi compaiono mentre scrivi, tocca per sceglierlo) al posto del menu a tendina. Niente più cerchio al centro: sotto ognuno dei due lati la differenza speculare (chi rende di più +N in verde, l altro −N in rosso), anche su ogni barra (minuti, efficienza, punti, rimbalzi, assist).
+- v1027: (1596) Giocatori: tasto «Con o senza» più piccolo (alto come la ricerca, scritta 13px, ombra leggera) e riga ricerca+tasto dentro i margini, allineata a Periodo e Filtri (prima toccava i bordi dello schermo).
+- v1028: (1597) Con o senza: minuti, efficienza, punti, rimbalzi e assist in colonna dentro ognuno dei due riquadri (valore e differenza speculare +verde/−rosso), al posto delle barre e della legenda. Frase di riepilogo leggibile anche di giorno.
+- v1029: (1598) VALORI. Anthony Black (Ducks): valore 675 = Dyson Daniels (775) −100, deciso da Francesco (VALORI, VAL_BASE settimana del 09/11, VAL_LOG); domenica 15/11 alle 18 sale a 776 (+15%, VAL_FORZA {1:776}). valAuto: un valore forzato vale anche se il giocatore è «in attesa» (nuovo o con poche partite). TUTTI i free agent hanno un valore: quello della formula della domenica (PDK di quest anno pesato con 25/26 e 24/25, età; FA_VAL), chi non ha partite NBA nei dati prende il minimo 100 (FA_MIN). Il valore stimato si vede nel profilo dei free agent e della G League (riquadro Valore stimato / Prezzo) e nella Pagella di chi entra in squadra senza valore in VALORI.
+- v1030: (1599) Anthony Black: prezzo 51 cr = 60% del prezzo di Dyson Daniels (85), in PREZZO_FISSO; segue il valore come gli altri prezzi fissati (domenica con il valore a 775 diventa 60 cr).
+- v1031: (1600) Anthony Black: valore 770 = Dyson Daniels (775) −5 (prima −100); domenica 15/11 +15% → 885 (VAL_FORZA 886, arrotondato ai 5). Prezzo resta 51 cr ora, 60 cr da domenica.
+- v1032: (SC6) SCAMBIO 13/11 23:32: Darius Garland agli Eagles; ai Peacocks Dejounte Murray e 27 cr dagli Eagles. ROSTER, CREDITI (EAG 81, PEA 90), MOVIMENTI, TRADES. Vale subito nel turno 6 (nessuna partita ancora iniziata, prima palla a due 14/11 01:00).
+- v1033: (1601) Giocatori › filtro «Solo rookie»: tutti i rookie della stagione, non solo quelli delle squadre della lega: rookie della lega (ROOKIE / VALORI), tutti i scelti al draft 2026 (DRAFT_RAW[2026]) e i free agent alla prima stagione NBA (nessuna partita nel 24/25 e nel 25/26, età fino a 24 anni). Da 16 a 54 giocatori con partite.
+- v1034: (1602) NASCOSTI = {Meleek Thomas} (scherzo della lega): tolto da Giocatori (anche Solo rookie), Trend, ricerca della Home, Comparatore e Con o senza; resta solo nella G League dei Mooses. Per nasconderne altri basta aggiungerli a NASCOSTI.
+- v1039: (1604) Anthony Black tolto dalla lista FA (era rimasto svincolato anche dopo l ingresso nei Ducks: il report lo avrebbe tolto solo al giro dopo). In più, all apertura, chi è in una rosa della lega viene tolto subito dai free agent (tranne i diritti G League in FA_OWN). Ora Black è solo nei Ducks in Giocatori, ricerca, Comparatore, Con o senza.
+  **REGOLA PER I FUTURI CLAUDE — quando un giocatore cambia squadra o entra/esce da una rosa, sistemare SEMPRE anche le cose collegate:** ROSTER; FA (toglierlo se entra in squadra, aggiungerlo se viene tagliato); VALORI / VAL_BASE / VAL_LOG (valore) e PREZZO_FISSO (prezzo); DIRITTI e FA_OWN (G League); AVVISI e SPECIALI (trade speciali); CREDITI e MOVIMENTI (cassa); TRADES (storico, con da:{} per gli scambi a 3+); poi controllare il Controllo dati (dataCheck) tutto verde.
+- v1040: (1605) Turni passati: un giocatore uscito dopo (trade speciale, scambio, taglio) resta nelle formazioni e nei punteggi dei turni già giocati. spFuori(n,k): con il turno k il giocatore è fuori solo se in quel turno la speciale era attiva (giornata k+2 tra inizio e scadenza); prima la speciale del 13/11 (De Larrea) lo toglieva anche dai turni 1-5 e ne cambiava i punteggi. drTeam e drPrevisione passano il turno. Scambi già gestiti da drUndoTrades e dalle formazioni salvate (DRD.form).
+- v1041: (1606) TRADE SPECIALE 30 degli Eagles (14/11): Davion Mitchell dalla loro G League entra in rosa e gioca dal turno 7 (giornata 9), fuori Stephen Curry (resta degli Eagles, avviso) fino alla giornata 21 (turno 19, 3 gennaio). Cassa Eagles −30 (51) con movimento. spFuori(n,k) ora tiene fuori anche chi entra con una speciale nei turni prima dell inizio. G League Eagles: GLEAGUE accetta [nome, ruolo, dal, al] (date USA): Mitchell fino al 15/11, Ayo Dosunmu dal 16/11 (GL_STATS «EAG|Dosunmu», FA_OWN Dosunmu → EAG al posto di Mitchell). gdData conta i punti di ognuno solo nel suo periodo; le pagine G League mostrano chi è attivo oggi (glAtt). Mitchell tolto dai free agent; valore stimato dalla formula (circa 695).
+
+**REGOLA PER I FUTURI CLAUDE — CREDITI IN DREAMERS (14/11/2026, chiarita dall utente).** In Dreamers NON ci sono contratti né prezzi di ingaggio (quelli esistono solo in ESPN 16, cap-data.js). I crediti servono solo per fare le OPERAZIONI (trade speciale 30/40/50, scambi con crediti, aste, multe...). Ogni operazione si registra nella CASSA: si aggiorna il saldo in CREDITI e si aggiunge una riga in MOVIMENTI della squadra ({s:"26/27",d:"gg/mm/aaaa",c:"descrizione",v:±crediti}). Non chiedere mai «quanto è l ingaggio» di un giocatore. Il 5° campo di ROSTER non è un ingaggio: per chi entra con una speciale o dalla G League si lascia 0.
+  Esempio: «Trade speciale 30» degli Eagles (14/11): fuori Stephen Curry (resta di proprietà degli Eagles, avviso, non gioca negli scontri diretti finché la speciale è attiva), dentro Davion Mitchell dal turno dopo; cassa Eagles −30 con la riga «Trade speciale 30: fuori Stephen Curry, dentro Davion Mitchell (dalla G League)».
+- v1042: (1607) chiarita la regola dei crediti (sopra) anche nel codice vicino a ROSTER; descrizione del movimento degli Eagles riscritta.
+- v1043: (1608) Controllo di tutte le casse dopo le operazioni dall 11/11: ogni saldo CREDITI = saldo prima + movimenti (SPI 35, PEA 90, DUC 10, DOL 0, TUR 99, EAG 51, MOO 493, FOX 21, tutti tornano). Nessun ingaggio era stato messo per sbaglio (Black e Mitchell hanno solo il 5° campo di ROSTER a 0; il prezzo 51 di Black è il prezzo del calcolatore chiesto da Francesco). Descrizioni dei movimenti riscritte con tipo di operazione, crediti, chi riceve e chi cede.
+- v1044: (1609) Campo › Live stanotte / Turno: ci sono TUTTI i giocatori in possesso della squadra. Dopo chi ha giocato e chi aspetta/non ha giocato, anche chi stanotte (o nel turno) non ha partite («nessuna partita stanotte»). Chi è fuori per una trade speciale nel turno (spFuori) è segnato «fuori · trade speciale» in arancione, più chiaro, e non entra nel Totale notte (es. Burries 12,75 tolto: Ducks 13/11 da 210,4 a 197,6). De Larrea ora compare (DAL non giocava il 13/11).
+
+**MAPPA PER I FUTURI CLAUDE — come si collegano i dati di Dreamers (14/11/2026, giro completo dell app).** Prima di toccare un giocatore o una squadra, guardare TUTTE queste voci:
+- **Possesso vs scontri diretti.** `ROSTER` = chi è IN POSSESSO della squadra (lo mostrano Roster, Campo › Live stanotte/Turno, Statistiche notte, profilo, IA trade). Gli SCONTRI DIRETTI passano da `drForm(k)` (formazioni salvate `DRD.form` + `drUndoTrades` per gli scambi a turno iniziato, regola: vale subito se nessuna partita del turno è iniziata, `drFirstTip`) e `drTeam(k,t)`, che toglie chi è fuori con `spFuori(n,k)`. Nelle viste di possesso il giocatore fuori si mostra lo stesso, segnato e non contato nei totali.
+- **Trade speciali.** `SPECIALI` ({t, entra, esce, tipo, inizio, scad, fine}, giornata = turno + `DR_OFF`): chi esce resta in `ROSTER` con `AVVISI`, fuori solo nei turni della speciale; chi entra gioca dal turno di `inizio`. Il costo va in cassa.
+- **Cassa.** Nessun ingaggio. `CREDITI` (saldo) + `MOVIMENTI` (registro con descrizione completa: tipo, crediti, cosa riceve/cede). Controllo: saldo prima + movimenti = saldo.
+- **Storico.** `TRADES` (scambi, con `da:{}` per 3+ squadre); `AVV_HOME`/banner 24 ore.
+- **Svincolati e G League.** `FA` (gli svincolati; chi entra in `ROSTER` va tolto, lo fa anche l avvio), `FA_OWN` (diritti G League), `GLEAGUE` ([nome, ruolo, dal, al], `glAtt` per chi è attivo oggi, `gdData` conta i punti solo nel periodo), `GL_STATS`, `DIRITTI` (diritti tipo Steinbach/Raynaud).
+- **Dati partite.** `PARTITE`, `STAGIONI`, `EFF`, `ULTIMA`, `FAG` li rifà il report ogni mattina (tools/report_espn.mjs); tra un report e l altro `faTeamMerge` porta dentro le partite di chi è appena entrato. `TV` = box score (Dynasty TV, anche live).
+- **Valori.** `VALORI` + `VAL_BASE` (settimana base) + `VAL_FORZA` (valori forzati) + `VAL_LOG` (registro), aggiornamento automatico la domenica 18:00 (`valAuto`, max ±15%); `PREZZO_FISSO` (prezzo nel calcolatore); svincolati: `FA_VAL`/`faValStima`.
+- **Altro.** `NASCITA` (età vera) / `NASCITA_SHOW` (età solo da mostrare), `NASCOSTI` (giocatori tolti dalle liste), versione in sw.js (`dynasty-vNNNN`) da alzare a ogni pubblicazione.
+- v1045: (1610) College › profilo del prospetto › Partita per partita: tocca una partita e si apre il BOX SCORE completo (minuti, punti, tiri, da 3, liberi, rimbalzi off/dif/totali, assist, recuperi, stoppate, palle perse, falli) e «Da dove arriva il PDK» voce per voce con la formula Dunkest della lega (colBox: punti, rimbalzi dif ×1 e off ×1,25 o ×1,075 se senza dettaglio, (assist+recuperi+stoppate) ×1,5, palle perse ×−1,5, tiri e liberi sbagliati, titolare +1, bonus triple, bonus doppie, vittoria +5%); il totale coincide con il PDK della riga. Tutte le partite della stagione 2026/27 dei prospetti dei college USA ci sono già (ESPN, aggiornate ogni mattina); senza partite solo McCoy (Michigan) e Collins (USC), che non hanno ancora giocato, e 5 prospetti di leghe estere che ESPN non copre.
+- v1046: (1611) College › Partita per partita: tolto il pannello con i calcoli del PDK (v1045, non era quello che serviva). Ora è un BOX SCORE come in Dynasty TV: una riga per partita con Data (avversario, V/S, T titolare), PDK, Min, Pt, Rim, Ast, Rub, Stop, Perse, Tiri, Da 3, Liberi, Rimbalzi off/dif, Falli; la tabella scorre a destra con la colonna Data fissa (anche la riga LIVE).
+- v1047: (1612) Giocatori › Filtri: nuovo filtro Età (Tutte / Sotto i 20…32 anni, età vera da NASCITA) che si combina con tutti gli altri (origine squadre/G League/free agent/rookie, crescita, ruoli, squadra NBA, squadra Dreamers); conta nel numero dei filtri attivi e si azzera con «Azzera i filtri». Es. free agent sotto i 23: 69.
+- v1048: (1613) COMPUTER/TABLET (schermo largo ≥1000px): in Dynasty TV, sia nella sfida Dreamers sia nella partita NBA, i box score delle DUE squadre sono affiancati (ognuno col nome e logo sopra) e le schede in alto spariscono (tvDual: si genera la pagina anche per l altra squadra e se ne prende la tabella). Sul telefono non cambia niente. Pagina larga fino a 1280px sugli schermi da 1300px in su. Si riadatta da solo se si allarga/stringe la finestra.
+- v1049: (1614) Le due squadre affiancate nei box score di Dynasty TV anche col TELEFONO IN ORIZZONTALE (da 640px di larghezza in orizzontale, oltre che da 1000px su computer/tablet); le tabelle prendono tutta la larghezza disponibile. In verticale resta tutto come prima; girando il telefono la pagina si riadatta da sola.
+- v1050: (1615) drFirstTip: per un turno già iniziato le partite della prima notte non hanno più l orario (sono live o finite), e la prima palla a due risultava quella di un altra notte (es. turno 6: 15/11 19:00 invece di 14/11 01:00). Ora se la notte ha partite iniziate/finite si usa il primo orario possibile: sabato/domenica 18:00 italiane, altri giorni mezzanotte italiana. Scambi già registrati controllati: restano nei turni giusti.
+- v1051: (1616) Passaggio dal turno finito al nuovo alle 10:30 italiane (prima 12:30): DR_GATE_MIN (chiusura del turno, se i dati ufficiali non sono già arrivati) e drOpen (apertura del turno, conta anche per gli scambi). Aggiornati i testi (regolamento/orari). Scambi già registrati ricontrollati: restano nei turni giusti.
+- v1052: (1617) PARTITA DOPPIA nel profilo (es. Wembanyama 15/11 due volte): la notte live si aggiunge a PARTITE e la riga vecchia si toglie a ogni aggiornamento grazie a PLV. Il tasto «aggiorna» (logo) salvava e poi RIPRISTINAVA anche PLV come copia: la riga live già messa non veniva più riconosciuta e restava, e il giro dopo ne aggiungeva un altra. Tolto PLV dallo stato salvato e, per sicurezza, prima di aggiungere la riga live di una notte si tolgono le righe live della stessa notte (mai due). Si sistema da solo anche sui telefoni con la partita doppia, al primo aggiornamento.
+
+(report 16/11/2026) **Report ESPN delle 07:30 saltato da GitHub** — il 16/11 GitHub ha fatto partire solo la corsa delle 07:00 italiane (che esce subito, è prima delle 07:30) e poi NESSUNA corsa programmata fino alle 08:50: il codice non c'entra, sono le corse `schedule` ai minuti :00/:30 che GitHub ritarda o salta quando i server sono carichi. Lanciato a mano (workflow_dispatch). Cambiato il cron di `report.yml` in `4,19,34,49 5-9` + `4,34 10-21` (UTC): primo tentativo utile 07:34 italiane, la mattina ogni 15 minuti, minuti lontani dalle ore di punta. Il resto della logica (uscita prima delle 07:30, riserva Dunkest dalle 08:00, mail dalle 09:00) è invariato.
+
+(v1053, regola Francesco 16/11/2026) **Report: si punta sempre a ESPN** — `report.yml`: dalle 07:30 alle 10:30 italiane SOLO ESPN, una corsa ogni 15 minuti (cron `2,17,32,47 5-9` UTC, prima delle 07:30 le corse escono subito perché alle 07:00 le partite a volte non sono finite). La riserva Dunkest e la mail di errore partono solo dalle 10:30 (`HM -lt 1030`); dopo, ogni 30 minuti (`2,32 10-21`) fino a sera. Allineati anche i testi dell'app: controllo "dati in ritardo" del registro aggiornamenti ora dalle 11:00 (era 09:00) e la riga del report in Hall of Fame › Orari ("07:30–10:30"). Se si cambiano questi orari, aggiornare insieme workflow, `ulCheck` (controllo ritardo) e `orari()`.
+
+(v1054, richiesta Francesco 16/11/2026) **Probabilità playoff in classifica** — nella classifica della Home (`hnClaCard`) e in quella di Dreamers (DR.tab "cla") al posto di «N turni giocati · −X V» c'è «Playoff NN%» = probabilità di chiudere tra le prime 4 (tabellone del titolo) dopo il turno DR_REG. Script `(1053) PROBABILITÀ PLAYOFF` in fondo a index.html (`window.drPoff(t)`, `drPoffRes()`):
+- Monte Carlo di 2000 stagioni (a pezzi da 100 con setTimeout, seme fisso dallo stato, risultato in localStorage `dl_poff` con chiave = turni chiusi + EFF.agg + ULTIMA + infortuni + formazione + calendario + data).
+- Giocatore: PDK atteso = 45% media stagione + 55% media pesata recente (mezza vita 6 partite), prudenza con poche partite; scarto tipo dalle sue partite (minimo 6 o 22%). Nel turno vale la MIGLIORE partita (come drEff = acc.b), quindi ogni partita si simula a parte.
+- Calendario: TV.days finché c'è (turno in corso: partite finite = PDK vero); dopo, ogni notte la squadra NBA gioca con la sua frequenza reale. Infortuni INJ: out fino alla data «Rientro stimato» (senza data 10 giorni), dubbio 60% nei prossimi 3 giorni. Formazione = drForm(k) senza spFuori.
+- Punteggio di squadra con le regole di drTeam (4 G/4 A/2 C, un C/A/G in campo, capitano ×1,5, 7°–10° ×½).
+- Taratura: media = rapporto punteggi veri / modello sui turni chiusi (oggi 0,985); variabilità = scarto tipo vero dentro le squadre (39) contro quello del modello (30), la differenza si aggiunge come rumore di squadra; ±4% di forza di squadra per stagione simulata.
+- Classifica come drStand (vittorie, poi media; parità = vince la prima). 0% / 100% solo se matematico, altrimenti «<1%» / «>99%».
+- Se cambiano le regole del punteggio (drTeam/drEff) o dei playoff (drPO, prime 4) va aggiornato anche questo script.
+
+(v1055, Francesco 16/11/2026) **Playoff: tolto dalla classifica di Dreamers** (troppo grande): lì tornano «N turni giocati» e «−X V». La probabilità sta nella scheda della squadra (Classifica › tocca la squadra): sezione «Playoff» (`drPoffTeam`) con Prime 4, Primo posto, Vittorie a fine stagione e media prevista a turno. Nella Home resta la scritta piccola «Playoff NN%». Cache passata a `dl_poff2` (RES ha anche m = media simulata a turno e rem = turni che restano).
+
+(v1056, Francesco 16/11/2026) **Playoff: conta anche l'anno scorso** — plModel ora fa come il valore dei giocatori: PDK atteso = stagione in corso (45% media + 55% trend) con peso g/(g+15), il resto dalle stagioni passate (`storia`: 25/26 peso 1, 24/25 peso ½, ridotte sotto le 20 partite, come valBaseStorica); stessa miscela per lo scarto tipo. Rookie/senza storia: solo l'anno in corso con prudenza. La taratura della media sui turni chiusi ora vale 0,912 (l'anno scorso da solo farebbe stimare un 9% in più). Esito al 16/11: Spiders 55%, Dolphins 58% (prima 78% / 28%). Cache `dl_poff3`.
+
+(v1057, Francesco 16/11/2026) **Analisi playoff nella scheda squadra** — la sezione Playoff sta subito sotto «Bilancio» e ha un riquadro «Analisi» composto da solo con i numeri della simulazione (`analisi()` salva in RES.ana, `anaHtml()` scrive): media prevista contro la media della lega, calendario (forza prevista degli avversari che restano rispetto agli altri, ±4 = nella media), con chi se la gioca per le prime 4 (squadre tra 5% e 92%), Punti forti (stelle = 3 PDK attesi più alti, reparti G/A/C con i migliori per quota come in formazione ≥ +8 sulla media, chi va meglio dell'anno scorso ≥ +3, regolarità = scarto tipo dei turni veri ≤ lega −8) e Punti deboli (reparti ≤ −8, chi è sotto l'anno scorso ≤ −3, infortunati con data di rientro, altalenanti ≥ lega +8), e il peso stagione in corso / stagioni passate per quella squadra. Cache `dl_poff4`.
+
+(v1058, Francesco 16/11/2026) **Analisi playoff richiudibile** — `<details class="dtana">`: chiusa si vedono con chi se la gioca, il punto forte e il punto debole principali (▲/▼) e il tasto «Leggi tutta l'analisi»; aperta tutto il resto (media e calendario, elenchi completi, peso del calcolo e metodo). Lo stato aperto/chiuso resta per squadra (ANA_OPEN) anche quando la pagina si ridisegna.
+
+(v1059, Francesco 16/11/2026) **Locandina pre-partita di ogni scontro** — Dreamers › Turno: la fascia a destra di ogni scontro (prima «Da giocare / In corso / Finale») ora è SOLO il tasto Condividi (icona `SH_ICO`, stessa forma, colore per stato invariato); tocco = `pgOpen(k,a,b)` → `shOpen("pg")` → `shPG()` (script (1059) in fondo); il resto della scheda apre lo scontro come prima. Immagine 1080×1350, grafica scelta da Francesco (prima prova): metà diagonali con i colori/territorio di ogni squadra (`LAND` SVG: Salt Lake montagne+lago, Sacramento Tower Bridge, California palme+onde, Texas mesa+cactus+stella, Detroit skyline, Dakota Badlands, San Diego costa+tramonto, Alaska aurora+cime), loghi in cerchi luminosi, VS. Stato: GAME DAY (prima palla a due `drFirstTip`) con record, posizione, % playoff e «Le stelle» (PDK attesi da drPoffRes.ana); LIVE (notte x di y, punteggi, titolari che hanno giocato, migliori finora); FINALE (vincitore in verde, migliori del turno). Posta in palio (`posta`) dalla classifica com'era PRIMA del turno (`standPrima`), sempre nell'ordine sinistra → destra (es. «La 7ª sfida la capolista»); nei playoff il nome della fase.
+
+(v1060, richiesta Dolphins 16/11/2026) **Maglia Dolphins automatica** — `kitDi("DOL")`: di giorno la blu (330), di notte la bianca (331), sempre. Prima una maglia scelta col tasto maglia (`dl_kit_dol_u`) restava per sempre e copriva l'automatico; ora la scelta si salva col tema («330|g» / «331|n») e vale solo finché il tema resta quello: cambiando giorno/notte torna l'automatico. Solo per i Dolphins.
+
+(v1061, Francesco 17/11/2026) **IA Trade più pratica** —
+- **Dà sempre scambi** (`iaBuildRelax`, solo «Equilibrata»): prima cerca entro ±10% (`IA_TOL`), se trova meno di 6 scambi allarga a ±20% e poi a ±35%; quelli oltre ±10% hanno `loose`, badge «⚠ ±X% poco equilibrato» e un motivo in più, e vengono dopo quelli equilibrati. Tutte le soglie fisse .10/.14 dei costruttori (2 squadre, trade a 3, ragnatela) ora seguono `IA_TOL`.
+- **Trade speciali come valore in più**: i giocatori della tua squadra fuori per trade speciale (es. Ducks: Burries, De Larrea, Ingram) si possono aggiungere agli scambi come diritti, anche in «Per ruolo» senza selezionarli (non entrano in `keep`); non contano nei ruoli/slot (`iaSig` già li escludeva) e non possono essere da soli: ogni scambio ha sempre giocatori veri che si compensano. Fino a 4 giocatori dati se ci sono speciali. Motivo «X: diritti della trade speciale, valore in più che non occupa slot»; a parità di punteggio meglio senza speciali (−0,05 per speciale).
+- «Trova scambi» mostra prima «⏳ Sto cercando gli scambi…» e poi calcola (`IA.busy`).
+- Prova con i Ducks (cerco ala; offro A. Thompson, Black, Buzelis, K. George, Diabaté): 17 scambi (prima 12, e sul telefono dell'utente nessuno).
+
+(v1062, 17/11/2026) **Maglia blu Dolphins smorta su un telefono** — sul telefono del GM Dolphins solo la maglia blu (330, tessuto img/dol-s1.jpg) si vedeva azzurra e piatta, bianca e City giuste, anche dopo aver azzerato le personalizzazioni (che non toccano le maglie Dolphins: `jersey()` le restituisce prima). Causa più probabile: copia rovinata/incompleta del tessuto salvata sul telefono (il service worker per /img/ usa la copia salvata e prima la salvava anche senza controllare la risposta). Rimedio: i tre tessuti si chiedono come `img/dol-sN.jpg?v=2` (DOL_JV e precarico SHIMG) e sw.js salva le immagini solo se la risposta è 200 OK, chiedendole al server (`cache:"no-cache"`). Se un tessuto cambia, alzare il ?v=.
+
+(v1063, Francesco 17/11/2026) **Tessuti delle maglie dentro l'app** — le foto dei tessuti delle maglie Dolphins (330-332) e Peacocks (340-342) sono in `window.TEXI` (data: JPEG, script subito dopo `<body>`; Peacocks ridotti a 460 px di larghezza come i Dolphins, qualità 88). All'avvio diventano indirizzi `blob:` (`TEXB`, una copia sola in memoria) che `texU()` mette nelle maglie al posto di img/dol-sN.jpg / img/peag-sN.jpg; `jerseyShare` rimette la versione data: (`TEXR`) e `SHIMG` parte già con i data:. Nessun download per i tessuti, niente cache da rovinare (provato con i file bloccati: maglie e condivisione giuste). +≈365 KB a index.html. I file img/dol-sN.jpg e img/peag-sN.jpg restano nel repo solo per le versioni vecchie; per cambiare un tessuto aggiornare TEXI.
+
+(v1064, 17/11/2026) **Maglie Dolphins/Peacocks invisibili nella condivisione dello scontro** — `dmJer` (immagine «scontro» da Home e Dreamers) usava `jersey()` invece di `jerseyShare()`: le maglie con tessuto (330-332, 340-342) hanno già xmlns e il secondo xmlns aggiunto rendeva l'SVG non valido, in più il tessuto restava un file/blob che dentro un'immagine SVG non si carica. Ora usa `jerseyShare` come tutte le altre condivisioni (shCampo, giocatore, prestazione, giochi): provato Dolphins–Spiders ed Eagles–Peacocks con i file dei tessuti bloccati. Regola: ogni immagine da condividere con maglie deve passare da `jerseyShare`.
+
+(v1065, richiesta Dolphins 17/11/2026) **Maglie Dolphins solo a disegno** — tornano le maglie «a fulmini» del 2-6/11 (corpo `DECO.DOL`: schegge + fianchi con stelline e fulmine), ma con colletto, scritta SALT LAKE e numero delle maglie del 6/11 (`DOL_JV`, togliendo l'`<image>` del tessuto): `DOL_V` = 330 blu (giorno, fianchi neri), 331 bianca con dettagli BLU (notte: fianchi blu, fulmine azzurro, stelline bianche), 332 sabbia con dettagli NERI (v1066, al posto della City). `DECO.DOL` ora accetta i colori dei fianchi (`c.side`, `c.sbolt`, `c.sstar`). Nessuna foto: non possono più rompersi né sparire nelle condivisioni (provati campo, scontro e prestazione). Tolti i tessuti Dolphins da `TEXI` (restano i Peacocks). Restano blu di giorno / bianca di notte automatiche (v1060).
+
+(v1067) Maglie Dolphins blu e sabbia (`DOL_JV[0]`): tolti due segnetti verticali sparsi nella scritta SALT LAKE ricalcata (sottopercorsi larghi 4-5 e alti ~60 nel tracciato, uno a sinistra di «SALT» e uno vicino al numero), che sembravano errori.
+
+(v1068) Maglia Dolphins sabbia (332): scritta SALT LAKE e numero con il bordino NERO (`DOL_V[2].nero` → nel disegno #1e5bff diventa #0b0b0b); blu e bianca invariate.
+
+(v1069, regola Francesco 17/11/2026) **Premio del 4° posto** — regular season: 4° posto 100 cr (non più 150) e NIENTE slot Rookie (slot ora dal 5° all'8°); playoff: chi chiude 4° (perdente della finale 3°–4° del tabellone titolo) prende 50 cr. Aggiornati `DR_PREMI` = 30/40/50/100/150/250/350/450 (usato anche dal tetto post-Draft dell'IA Trade, `iaPostMax`), regolamento Art. 5 (tabella regular season, nuova tabella del tabellone titolo, box Novità, box Slot Rookie ed esempio), tabellone playoff in app («al 4° posto 50 crediti» sotto Piazzamento) e immagine playoff («AL 4° POSTO 50 CREDITI» sotto la finale 3°–4°), NV_LOG. `regolamento.pdf` resta alla versione vecchia (come già prima). L'app NON assegna i crediti da sola: i premi si registrano a mano in cassa (CREDITI + MOVIMENTI).
+STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione finale 1° 20+10, 2° 25+15, 3° 35+15, 4° 100+50, 5° 130+70, 6° 200+100, 7° 270+130, 8° 330+170 (totali 30…500), slot Rookie 4°–8°; (328, 28/10) slot Rookie per arrivo della regular season; (332, 28/10) 80 cr alla finale 5°–6°; (336, 28/10) regular season 30/40/50/150/150/250/350/450 + slot 4°–8°, playoff solo 5ª–8ª 80/50/40/30, prime 4 solo titolo; (1069, 17/11) 4° regular 100 senza slot, 4° playoff +50.
+
+(v1070, Francesco 17/11/2026) **FINE STAGIONE AUTOMATICA** (script «(1070)» in fondo a index.html):
+- **Coppa regular season** (da 26/27): quando `drWeek(DR_REG).closed` la 1ª di `drStand()` entra in `RS_WIN` ({anno,t}); compare in bacheca squadra (`bacheca`, `rsCupSvg` = pallone d'oro sul piedistallo), Sala Trofei (colonna RS: non dà punti; titolo di ogni stagione «· Regular season: X») e sala 3D (`teams()` trofeo k:"r" «Regular season», ordine titolo › RS › 2° › 3° › All-Star).
+- **Classifica competenza** = sempre i playoff: quando `drPO(..).done` con 8 posizioni, `storiaSync()` aggiunge da solo a `STORIA` l'anno `DR_ANNO` (= STORIA.length+1 all'avvio, oggi 3) con `ordine` = classifica finale dei playoff e `rs` = ordine della regular season. Gira a ogni render. A fine stagione, per renderlo definitivo, scrivere la riga in `STORIA` (e in `RS_WIN`) e alzare `STAGIONE_CORRENTE`.
+- **Premi in cassa**: casella «Premi · si usano solo al Draft» (`premiBox(t)` dentro `cassa(t)`, si apre e spiega riga per riga): regular season `DR_PREMI` alla chiusura della regular season, playoff `PO_PREMI` {4:50,5:80,6:50,7:40,8:30} alla fine dei playoff, debiti post-Draft PAGATI SUBITO dai premi (−), crediti post-Draft ricevuti (+). Prima della fine mostra «se finisse oggi» e il previsto. Non entrano in CREDITI né nell'IA Trade. Dopo il Draft (lo comunica Francesco): spostare il netto in CREDITI + MOVIMENTI, segnare i debiti post `saldato:true` e aggiungere l'anno a `PREMI_PASSATI` (la casella sparisce).
+- Provato con stagione simulata tutta chiusa: RS_WIN Eagles, STORIA anno 3, cassa Dolphins 150 + 80 − 30 = 200, bacheca e sala 3D con la coppa RS.
+
+(v1071, Francesco 17/11/2026) **PROPOSTE DI CALENDARIO AUTOMATICHE** — `.github/workflows/proposte-calendario.yml` (ogni giorno 09:23 UTC) lancia `tools/proposte_calendario.mjs`: stagione nuova = quella dopo `STAGIONE_CORRENTE`; controllo veloce su 3 giorni di dicembre, poi scarica da ESPN tutte le partite di regular season (type 2, 1/10–30/4; servono ≥1100), toglie gli ultimi 10 giorni della regular season NBA (`STACCO_FINE`), divide le NOTTI (date con partite; i giorni vuoti sono pausa) con programmazione dinamica ottima: costo 100 per ogni squadra NBA a 0 partite nel turno, 4 per ogni partita oltre la seconda, + costo lunghezza per opzione (A tutti da 3; B da 4 se toglie zeri, costo 60; C da 4 più facilmente, 25; D anche da 5, 4=25 e 5=90 → meglio 4 che 5); opzioni identiche tolte. Ultimi `PLAYOFF_TURNI`=10 turni = playoff. Scrive `calendario-proposte.js` (`window.CAL_PROPOSTE`) solo una volta per stagione. App: `<script src="calendario-proposte.js">` (se manca nessun errore), banner viola in cima alla Home per tutti (`calBanner`, vHome → vHome0) che apre `cur="calprop"` (`vCalProp`: opzioni, turni, regular/playoff, squadre a 0 partite e a 3+, % squadre-turno con 1–2 partite, elenco turni con le squadre a 0). NIENTE si attiva da solo: scelta di Francesco → copiare in DR_TURNI (date [primo,ultimo]), DR_REG, DR_TOT, DR_SCHED/DR_ZERO, e mettere `CAL_SCELTA` = id per togliere il banner. Prova (--prova) sul calendario noto 25/10–30/12: A 19 turni 4 zeri; B 18 turni 1 zero (il calendario reale di quest'anno nello stesso periodo: 17 turni, 2 zeri ma molte più squadre a 3+).
+
+(v1072) Casella Premi in cassa: chiusa è una riga sola «🏆 Premi di fine anno · N cr ›»; tutta la spiegazione (si usano solo al Draft, regular season, playoff, debiti) si vede solo aprendola.
+
+(v1073, Francesco 17/11/2026) **Premi già spendibili** — dentro la casella Premi (solo durante la regular season) riquadro verde «Già spendibili adesso come debito post-Draft» = `iaPostMax(t)`: posto migliore ancora raggiungibile = 1 + squadre con più vittorie di quante la squadra possa ancora fare (vittorie + turni rimasti); premio garantito = `DR_PREMI` di quel posto, meno i debiti post-Draft già aperti. Stesso tetto che usa l'IA Trade. Provato con classifica simulata (3 turni alla fine): Spiders/Dolphins 4° → 100, Peacocks 5° → 150, Turtles 6° → 250, Mooses 7° → 350.
+
+(v1074, Francesco 17/11/2026) **Crediti disponibili in tempo reale anche nel Calcolatore trade** — sotto i crediti di ogni squadra (`crDisp`): può dare fino a cassa + portafoglio (`iaPfMax`, tetto 10) + post-Draft (`iaPostMax`: premio del posto più alto ancora raggiungibile meno i debiti post già aperti, sale da solo dopo ogni turno), avviso rosso se si supera. Pic-Trade: «Crediti a credito post-Draft» ora ha come massimo `iaPostMax(t).max` (prima 999) con la stessa spiegazione. L'IA Trade usava già `iaPostMax` (passo «Crediti»: tetto post-Draft).
+
+(v1075, Francesco 17/11/2026) **Maglie Turtles con i dettagli ORO** — `kitC("TUR",0..2)` (prima del caso generico): verde = colletto, bordi e scritta/numero oro (#f5b400) con bordo verde scuro; nera = tutto oro; bianca = scritta e numero verdi bordati d'oro, colletto e bordi oro. Fasce laterali (`DECO.TUR`) ora prendono `c.side` (oro scuro #c98a00) con il bordino chiaro `c.sideb` (#ffe27a) sul lato interno e in cima; senza questi campi restano azzurre come prima. Stesse forme, scritta, numero ed esagoni di prima. REGOLA FRANCESCO: le maglie nuove si fanno solo in render e si pubblicano SOLO quando lo dice lui (le Peacocks DPK a codice non sono piaciute: non pubblicate).
+
+(v1076, Francesco 17/11/2026) **Peacocks: tornano le maglie disegnate** — `kitDi`/`kitLista` PEA = [0,1,2,3,4] (0 blu, 1 rosa, 2 piuma di pavone; poi NBA 2026 e Anni 90), predefinita 0; le DPK con le foto (340-342, `PEA_JV`) non si usano più e i loro tessuti sono tolti da `TEXI`. Scritta sulla maglia «DPK» (in `jersey`, `word="DPK"` per PEA; il nome della squadra resta Peacocks). `DECO.PEA` (feather): 3 occhi di pavone per lato allineati, più grandi (r 8) e centrati sul bordo della maglia (se ne vede metà).
+
+(v1077, Francesco 17/11/2026) **Peacocks: scritta DPK del primo render e colori più accesi** — script (1077) in fondo: avvolge `jersey()` e per PEA maglie 0-2 sostituisce il testo «DPK» con il tracciato a blocchi con grazie e arco preso da `PEA_JV[0]` (resta in index.html solo per questo): blu = bianca bordo verde #1fd36b, rosa = bianca bordo blu #012dd5, piuma = rosa bordo scuro. `kitC` PEA: blu #1d4dff con verde #1fd36b (prima #012dd5/#16b35a), piuma turchese #0f8a8f con bordi #ff1a9c e righe #4d8bff (prima #0b4b57); rosa invariata.
+
+(v1078, Francesco 17/11/2026) **Turtles: scritta TURTLES vettoriale dall'immagine di Francesco** — script (1078) in fondo: `TUR_WM` (estratta con OpenCV dall'immagine nitida: bordo esterno, base scura, scia blu, riga verde, lettere una per una con sfumatura crema→arancio), larga 75,6/120 (−10%, non tocca le spalline). Avvolge `jersey()` per TUR maglie 0-2: toglie il testo «TURTLES», mette la scritta; collo e spalline (`stroke #f5b400`) sfumati oro→arancio, fasce laterali (`fill #c98a00`) oro→arancio carico, bordino #fff3b0. Bordo esterno della scritta: verde oro→lime, nera oro, bianca verde→lime.
+
+(v1079, Dolphins 17/11/2026) **Campo ufficiale Dolphins di giorno**: `DL_OFF.DOL` = parquet bianco (fc #f4f4f6), cornice blu (ac #1a40a3), linee blu (lc #2a4fd0), banner blu (b1 #2f519b, b2 #1a3f9a) con scritte bianche — dallo screenshot del GM. Di notte `dlTm("DOL")` non applica più DL_OFF: campo come tutte le altre squadre (tolte anche le scritte gialle del banner, 1439). Le personalizzazioni del singolo telefono (DLS.tm) restano sopra.
+
+(v1080) Banner scorrevoli della Home (.tkbar: SQUADRE e gli altri) nei colori dello stile scelto: fondo --panel, bordo --red, etichetta sfumata --red2→--red con testo --onred, testo bianco (o --fg negli stili chiari come Ghiaccio). Parquet tiene il suo arancio, di notte resta viola. Selettore html[style*="--panel:"] perché gli stili mettono le variabili inline sull'html.
+
+(v1081) Logo Dreamers in alto (.lglogo) nei colori dello stile: con stili a variabili (non Parquet, non notte) l'immagine viene sostituita (CSS content) da una stella SVG su quadrato sfumato --red2→--red; stella bianca, scura se --onred non è bianco (Sole, Tabellone, Carbone e oro...). Parquet tiene il suo filtro, la notte il logo viola.
+
+- v1082: Ducks versione lime, di giorno: campo antracite (#2a2d33, venature chiare leggere) al posto del ghiaccio, cornice lime #87cd13 (scelta dell utente: cornice della variante A, campo della variante C). Viola e notte invariati.
+- v1083: con lo stile Carbone e oro (th "oro") i Ducks passano da soli alla versione lime (flag dl_ductema_auto, classe html.ducoro) con campo antracite e cornice lime, anche di notte (ricolora #txfl). Lasciando lo stile tornano viola se il lime era stato messo in automatico. Campo Gotham escluso.
+- v1084: Ducks lime SOLO con stile Carbone e oro e di giorno, per tutti. Di notte Ducks esattamente come prima (viola), con ogni altro stile Ducks normali anche se sul telefono era stato scelto lime a mano. Tolte le modifiche notturne della v1083.
+- v1085: Carbone e oro di giorno: Ducks VIOLA (niente più lime), campo antracite, cornice viola #5b21b6, linee lime, scritte bordocampo bianche (classe html.ducoro). Notte e altri stili normali. Il lime dei Ducks non si attiva più in nessun caso.
+- v1086: Carbone e oro di giorno, pagina Ducks: cassa viola scuro in stile notte (etichette lime, debiti rossi, premi oro, valori bianchi). Notte e parquet invariati.
+- v1087: Carbone e oro di giorno (classe html.tho, solo con DLS.th oro e senza notte): tolto l arancione. Con o senza in nero e oro (variabili --o1/--o2/--bx ecc.), campi e chip scuri (prima testo bianco su crema), scheda oro con testo scuro, frase riassunto leggibile; pulsanti --gu-go (IA Trade, Revisione, Poke Dream Gioca) oro con testo scuro. Restano arancioni solo colori squadra Foxes, medaglia bronzo, legenda tempo rimasto, stato In dubbio, campioni colore impostazioni. Scanner: /tmp/claude-0/scan.js.
+- v1088: Home, loghi delle squadre (fila verticale e versione orizzontale) in ordine di classifica Dreamers (drClassArr), si aggiornano da soli; prima seguivano teamOrd/DLS.ord.
+- v1089: stili ridotti a Parquet (ufficiale), Classico, Carbone e oro, Cyber; gli altri (Sole, Smeraldo, Fuoco, Oceano, Neon, Tabellone, Noce, Tramonto, Ghiaccio, Parquet Acero, Viola, Personalizzato) tolti: chi li aveva torna al Parquet (dlsApply). Tolta la sezione Colori personalizzati, tasto stylebtn gira sui 4 stili. Correzioni della v1087 estese a Classico e Cyber con variabili --tx-* (html.tho + data-thx). Classico: banner SQUADRE nei colori dello stile.
+- v1090: Con o senza, tasto «Condividi grafico e tabella» sotto il risultato: immagine 1080x2020 (csShare, dati in window.CS_LAST) con maglia, i due lati a confronto, grafico PDK partita per partita (dalla stagione più vecchia a destra la più recente, medie tratteggiate) e tabella con barre PDK/minuti/efficienza/punti/rimbalzi/assist e differenze.
+- v1091: le immagini condivise seguono lo stile scelto: shTheme ora dipende da shStile() (notte = viola, Parquet, Classico, Carbone e oro = SH_THEMES.oro, Cyber = SH_THEMES.cyber) e non piu da DR.th. Immagini disegnate a mano (shareGame, shareTrade/IA, shareCassa, ntShare, shareRoster, shareCup, trShare, colShare) ricolorate per ruolo con shRecolor (SH_PAL/SH_ROLE, solo colori fissi; squadre, verde/rosso e PDK invariati). Con o senza con palette per stile. Logo Dreamers (shDrLogo) oro con Carbone e oro, azzurro con Cyber. Locandina partita (shPG) lasciata nei colori delle squadre.
+- v1092: calendario Dreamers, sotto «N notti» le date di inizio e fine turno (prima e ultima notte, date USA), piccole e grigie (.drcd).
+- v1093: pagina Ducks (campo antracite con cornice viola, cassa viola) anche con Cyber e Classico di giorno, come Carbone e oro (classe ducoro). Parquet e notte invariati.
+- v1094: pagina Ducks negli stili scuri di giorno (ducoro): bacheca in oro metallico spazzolato (variante D scelta), scritte scure. Parquet e notte invariati.
+- v1095: campo ufficiale Dolphins di giorno (DL_OFF.DOL) uguale in tutti gli stili: parquet blu #0059e6, linee e cornice bianche, banner bianco con scritta scura (#1d1d1f, anche col Parquet che forzava il bianco). Notte invariata.
+- v1096: capitano nel campo segnalato con la targhetta del nome dorata e © dopo il nome (variante 2 scelta); tolto il bollino giallo C (.pjc nascosto). Tutti gli stili, giorno e notte.
+- v1097: giocatori in dubbio (stato INJ diverso da ok/out/prob: quest, dtd...): segnalino DUB arancione accanto al nome in tribuna e panchina (injTag) e etichetta DUB arancione sulla maglia nel campo/panchina (injX), come gli OUT.
+- v1098: tolto il DUB sulle maglie in campo/panchina (bastano le strisce): DUB arancione solo accanto al nome in tribuna (injTag).
+- v1099 (in prova): campo Ducks negli stili scuri di giorno = «Griglia neon» (variante 3): fondo viola scuro verticale #1c0840→#07021a, griglia verde 18%, sfumatura viola in alto e verde in basso, 40 stelle, linee bianche con bagliore verde (#84ff2e). Prima era antracite (v1082). Parquet e notte invariati.
+- v1100: campo neon dei Ducks (stili scuri di giorno) con animazione «Scintille»: 26 quadratini della griglia (.dxsc) che si accendono piano in verde a turno (3,2 s, opacita max 0,5).
+- v1101: bacheca Ducks negli stili scuri di giorno nel colore dello stile (effetto metallico spazzolato con --red/--red2, scritte --onred): Classico rosso, Cyber azzurro, Carbone e oro oro. Parquet invariato.
+- v1102: tolta l animazione Scintille dal campo neon dei Ducks (non piaciuta). Resta la Griglia neon statica.
+- v1103: bacheca Ducks negli stili scuri di giorno neutra come le altre squadre (fondo scuro, linea a sinistra e scritta BACHECA nel colore --gold dello stile); tolta la striscia metallica (1094/1101). Parquet invariato.
+- v1104: Ducks negli stili scuri di giorno: scritte TEXAS DUCKS sopra il campo e DUCKS del banner squadra (.dxnick) verde fluo #a3e635, striscia sopra il campo viola #5b21b6 (variante 3). Parquet e notte invariati.
+- v1105: Ducks negli stili scuri di giorno: verde fluo anche TEXAS e RECORD del banner (.dxlime), crediti della cassa (10 cr) e tabellone del canestro animato (drawHoop, modo logo). Parquet e notte invariati.
+- v1106: Live stanotte, vista Notte (N1/N2/N3): mostra solo i giocatori che giocano quella notte (tolte le righe «nessuna partita stanotte», REST). Nella vista Turno restano tutti.
+- v1107: Ducks negli stili scuri di giorno: anche il record (7-1) del banner verde fluo.
+- v1108: valore Cedric Coward portato a 900 (era 530 di partenza, 615 con gli aggiornamenti automatici); VAL_BASE nuova partenza 2026-11-16. Prezzo fisso invariato (40).
+- v1109: partita per partita (scheda giocatore) e tabella dsbx: le regole crema html:not(.notte) ora valgono solo col Parquet (html.dlt-parquet); negli stili scuri colonna Data su --panel e righe dei mesi nel colore dello stile. Anche .cspg crema limitato al Parquet.
+- v1110: controllo completo degli stili scuri (Classico, Cyber, Carbone e oro) su tutte le 62 sezioni + schede giocatore aperte, campo di 3 squadre, Efficienza squadra, tab Dreamers, Impostazioni (scanner /tmp/claude-0/aud/aud.js): nessun fondo crema/arancione rimasto; fogli Condividi (shsheet/shchb/shco/shci) nei colori dello stile invece del viola.
+- v1111: capitano nel campo: capsula nome nera come gli altri (tolti oro e ©), lettera del ruolo dentro un pallino oro (variante B, diametro -5% = 1,19em).
+- v1112: pallino oro del capitano un altro 5% piu piccolo (1,13em), lettera invariata.
+- v1113: in campo Victor Wembanyama si chiama WEMBY (drSur).
+- v1114: lettera del ruolo centrata nel pallino oro del capitano (line-height = altezza del pallino, niente spaziature).
+- v1115: pallino oro del capitano -4% (1,085em), alzato di 0,12em per stare in asse con il nome, lettera ricentrata (misurato a pixel su DUC, DOL, PEA, TUR).
+- v1116: capitano: nome centrato sotto la maglia (spazio vuoto a destra largo come pallino + distanza, 1,385em), pallino alla sua sinistra.
+- v1117: pallino capitano altro -4% (1,042em), spazio di bilanciamento 1,342em; allineamento e centratura rimisurati.
+- v1118: tolto lo spazio di bilanciamento della v1116: pallino e nome del capitano di nuovo centrati insieme come blocco (come prima).
+- v1119 (IN PROVA): capitano con lettera del ruolo normale e punteggio PDK oro (blocco 1119 in fondo, si toglie per tornare al pallino oro della v1118).
+- v1120: (prova 1119) lettera del ruolo del capitano identica agli altri (grigia #8b93a7, sulla linea del nome, niente spostamento del pallino).
+- v1121: tolta la prova 1119/1120 (PDK oro): torna il capitano con la lettera del ruolo nel pallino oro (1,042em, allineato), come v1118.
+- v1122: capitano, nome a meta strada verso il centro della maglia (variante 3: spazio di 0,67em a destra del nome).
+- v1123: anche i non capitani con il nome a meta strada verso il centro della maglia (spazio di 0,36em a destra del nome; da 4,7 a 2,3 px di scarto).
+- v1124: in campo Giannis Antetokounmpo si chiama GIANNIS (drSur).
+- v1125 (in prova): barra in alto degli stili scuri di giorno senza strisce, variante «vetro con riflesso» (riflesso bianco 7% in alto, gradiente --hd1/--hd2, filo nel colore dello stile). Parquet e notte invariati.
+- v1126: campo neon dei Ducks senza la griglia di quadratini (tolto il rettangolo url(#dxgr)); restano sfumatura, stelle e linee luminose.
+- v1127: IA Trade (gusti dei GM): il controllo della rosa piena (IA_MAXR 15) scartava ogni scambio delle squadre gia oltre il limite (Ducks a 16) anche 1 contro 1 → «Nessuno scambio trovato» sempre. Ora blocca solo gli scambi che aumentano la rosa (x.free>0) e non conta la G-League. Con Black in vendita: 3 proposte.
+- v1128: REGOLA FRANCESCO: nessun limite di giocatori nelle rose; tolto del tutto il controllo IA_MAXR dall IA Trade (contano solo contropartita, speciali, diritti).
+- v1129: foglio Periodo, i tasti Stagione 1/2/3 e Tutto non funzionavano negli stili non Parquet: usavano data-pq, che la pulizia dei colori Parquet cancella da tutta la pagina. Ora data-perq.
+- v1130: TAGLI 19/11/2026 (andavano fatti prima del turno 7): Oso Ighodaro (TUR) e Danny Wolf (MOO) tolti da ROSTER, EFF.gioc e dalle riserve della formazione salvata del turno 7 (dreamers-data.js form["7"]); aggiunti in FA; infortunio Ighodaro t:"FA". Controllo dati verde.
+- v1131: FIX_NOTTE accetta anche {tov:-N} (palle perse in meno: tabellino TO−N, PDK +1,5 per ognuna su box, PARTITE e DRD.notti, una sola volta). Voce: Burries 18/11.
+- v1132: fixNotte applicata anche nei dati live (fantaLiveNotte), cosi le correzioni valgono durante la partita.
+- v1133: FIX_NOTTE tov: quando arriva la riga ufficiale si allineano anche efficienza media (EFF.gioc) e ultima partita (ULTIMA, e[5]); Controllo dati verde (provato con dati ufficiali simulati).
+- v1134: FIX_NOTTE tov applicata due volte (la riga corretta finiva nella memoria del telefono dl_tvc1 e al ricarico veniva ricorretta: 3 palle perse tolte invece di 2). Ora la riga tiene l originale in r[21] {fx,t,p} e la correzione si calcola sempre da lì; memoria live nuova dl_tvc2 (la vecchia si cancella).
+- v1135: FIX_NOTTE: Buzelis 18/11 tov -1.
+- v1136: PARTITE FUORI MEDIA (ESCL_MEDIA, esclSync dopo fixNotte e liveSync): la partita resta nel punteggio del turno (DRD.notti) e nell elenco partita per partita con «fuori media», ma viene tolta da PARTITE (medie, efficienza, valori, IA, grafici) e la riga EFF.gioc (eff media, gare, minuti) si ricalcola senza. Prima voce: Şengün 18/11 (uscito per infortunio). Controllo dati verde.
+- v1137: FIX_NOTTE {mod:{reb2dif,tiriSbagliati}}: statistiche modificate partendo dalla riga ESPN originale (r[21].o) e PDK ricalcolato con tvPdk (stesso titolare/vittoria); la differenza va su PARTITE, DRD.notti, EFF/ULTIMA. Voce: Daniels 18/11 (rimbalzi tutti difensivi, +1 tiro sbagliato).
+- v1138: Ighodaro e Wolf ricomparivano nel turno 7: tools/dreamers.mjs (giro GitHub del report) ricostruisce la formazione di ogni turno dalla rosa della prima notte e li rimetteva. Ora FUORI_DAL_TURNO {nome: turno} sia in tools/dreamers.mjs sia nell app (filtro su DRD.form all avvio): fuori dal turno 7 in poi, turni 1-6 invariati. ATTENZIONE: non rigenerare dreamers-data.js in locale da un clone poco profondo (git log incompleto = notti e turni persi).
+- v1139: Statistiche › Giocatori, filtro «Minutaggio minimo» (barra 0-40 min, faMinM): medie e classifica solo sulle partite con almeno N minuti (faPerAvg, anche modalita Box/fbxAgg); si somma agli altri filtri, conta nel numero dei filtri, si azzera con Azzera.
+- v1140: scia della palla (campo, anche live): prima 22 fotogrammi di segmenti dritti (lunga sui telefoni a 120 Hz e a scatti); ora ultimi 130 ms (max 16 punti), curva morbida per i punti medi (quadraticCurveTo), si assottiglia e sfuma verso la coda con un alone leggero.
+- v1141: scia della palla calcolata dalla traiettoria (10 posizioni negli ultimi 120 ms ricalcolate con at/atLive, senza uscire dal giro PLAN o dall azione live LP) invece che dai fotogrammi passati: di giorno (piu effetti grafici, meno fotogrammi sul telefono) la coda diventava lunga e a scatti, di notte no.
+- v1142: scia dalla traiettoria troppo corta (120 ms, 15-25 px: coperta dalla palla, sembrava sparita). Ora 12 posizioni negli ultimi 230 ms (25-40 px in palleggio, piu lunga nei passaggi).
+
+## v1143 · Assistente GM (area segreta Ducks, riquadro 🧠 nella Hall of Fame Ducks) (19/11/2026)
+- `gmas.js` (pagina `cur="gmas"`, `VIEWS.gmas`, stato `window.GMAS`) + `gm-nba.js` (dati) caricati in fondo a index.html e nella cache di sw.js.
+- `tools/gm_nba.mjs` + `.github/workflows/gm-nba.yml` (ogni giorno 11:41 UTC e a mano): contratti Basketball Reference (anni, opzioni P/S, garantito), ruoli/età/esperienza e 12 notizie per squadra da ESPN. Spotrac risponde 403 da GitHub: free agent dedotti (ultimo anno = UFA, RFA se esperienza ≤4; opzione l'anno dopo = PO/TO) e cap dalla storia del cap di Basketball Reference, tax e apron stimati coi rapporti 2025/26 (1,215 / 1,267 / 1,344). Se Spotrac torna, usa i suoi dati.
+- Calcoli dai tabellini Dynasty TV: finestra = ultime K partite della SQUADRA (K=6, chi non gioca conta 0), contro le precedenti dal suo arrivo. Ruolo: Dreamers (ROSTER/VALMAP) poi ESPN. «Prende spazio a»: pari ruolo con −2' o peggio che hanno giocato almeno metà delle partite (gli infortunati no). Destinazioni: reparto con meno PDK ogni 36' + spazio nel cap.
+- Schede: In crescita, Investimenti, Rischio scambio, Squadra (tabella reparti, payroll, notizie), Cap. Filtri ruolo e liberi/in Dreamers. Scheda giocatore con grafico minuti/PDK.
+- Classe CSS `.gmn` esiste già nell'app (stile nomi): nella pagina si usa `.gxn`.
+
+## v1144 · Assistente GM: scheda «🧑‍🏫 Allenatori» (19/11/2026)
+- `coachStats()` in gmas.js, dai tabellini Dynasty TV per squadra (stagione e ultime 10): minuti medi dei 5 con più minuti totali (media sulle gare giocate), minuti a testa dei titolari, rotazione (giocatori sopra i 10' a partita), quota minuti e PDK per reparto G/F/C contro la media lega, quota minuti ai ≤23 anni (età ESPN), quintetti diversi. Etichette: spreme i titolari / divide i minuti (±1,5' dalla media), rotazione lunga/corta (±0,6), favorisce un reparto (+3 punti), dà spazio ai giovani (+8 punti), cambia spesso quintetto.
+- Classifica ordinabile; in «Squadra» un riquadro apribile con il dettaglio dell'allenatore.
+- Nome dell'allenatore: `GMNBA.coach` da tools/gm_nba.mjs (API core ESPN, stagione 2027 poi 2026).
+
+## v1145 · Assistente GM: filtro età (19/11/2026)
+- `S.eta` ("u27" di default): In crescita, Investimenti e Rischio scambio mostrano solo under 27 (età ESPN < 27; senza età restano visibili). Pulsante «💰 Over 27 da vendere» (rosso) mostra solo i 27+. La scheda Squadra non è filtrata. Età mostrata nelle righe.
+
+## v1146 · Assistente GM: livella dell'età (19/11/2026)
+- Al posto dei due pulsanti: interruttore «Fino a» / «Da (da vendere)» + livella 19–38 anni (`S.etaN`, default 26, ricordata in localStorage `gm_eta`). Il numero si aggiorna mentre trascini, la lista al rilascio.
+
+## v1147 · Area segreta Ducks: tolti i riquadri (19/11/2026)
+- Rimossi dalla lista della Hall of Fame Ducks: Revisione IA Trade (iarev), Gestione equilibrio trade (eq), Scouting (college), Laboratorio maglie (lab), Software (soft). Il codice delle viste resta.
+
+## v1148 · Assistente GM: «🚀 Radar breakout» (prima scheda) (19/11/2026)
+- `radarAt(TV,cut,W,ctx)` usa solo le partite prima di `cut`; `radarEsito` misura le 2 settimane dopo (esploso = +6' e +6 PDK a partita, almeno 3 gare). Solo chi gioca ≤26' (ultime 10 della squadra, per gara giocata).
+- Segnali: PDK ogni 36' «prudente» (tirato verso la mediana del reparto con 250 minuti fittizi: il dato grezzo peggiorava la prova per il garbage time), rubate+stoppate e tiri ogni 36', spazio per crescere, minuti in salita (ultime 5 contro le 5 prima), strada libera (chi gioca davanti nello stesso reparto: età ≥31/≥34, in scadenza, infortunato da INFLIVE: fuori a lungo 1, breve 0,4 — solo nel radar di oggi), età/2°-3° anno, allenatore (coachStats: giovani, reparto favorito), squadra che perde.
+- Pesi `RW` tarati con prova sui dati (5 date 31/10–12/11, esito 10 giorni): top 20 esplosi 18% contro 8-9% di media; lasciando fuori la data di prova 13%. Script della prova: era in /tmp (non nel repo); per ritararla rifare la ricerca casuale dei pesi su più date quando la stagione è più lunga.
+- In fondo «Quanto ci prende» (ogni lunedì ricalcolato con i dati di allora) e «Previsioni salvate» (top 20 salvata il lunedì in localStorage `gm_radar_hist`, valutata dopo).
+
+## v1149 · Radar breakout che si migliora da solo (19/11/2026)
+- Motore spostato in `radar-core.js` (funzioni pure `radarAt`, `radarEsito`), usato dall'app e da `tools/radar_tune.mjs`.
+- `.github/workflows/radar.yml` (ogni giorno 12:37 UTC e a mano) → `radar-pesi.js` (`const RADAR={upd,W,W0,storia,prev,note}`):
+  date di prova ogni 2 giorni con 10 giorni di esito; ricerca pesi (2500 casuali + 600 ritocchi, seme fisso) sul 70% più vecchio; adottati solo se migliori sul 30% più recente, a metà strada dai pesi attuali. Il peso Allenatore non si tara (servono le statistiche dell'app). Una volta a settimana (prima esecuzione dal lunedì) salva la top 20 vera (`prev`: d = giorno della previsione, w = lunedì) con i pesi del giorno.
+- App: `RW` = RW0 + RADAR.W; «📒 Previsioni vere» (esito dalla data della previsione) e «🧠 Si migliora da solo» (nota, pesi con differenza dai pesi di partenza, storico). Tolto il salvataggio in localStorage (`gm_radar_hist`).
+
+## v1150 · Assistente GM: scheda giocatore rifatta (19/11/2026)
+- Pulsanti Ultime 5/7/10 (`S.win`). Verdetto (In crescita / Stabile / In calo, soglia ±2 PDK) con scomposizione: effetto minuti = Δmin × PDK/36 stagionale /36, effetto rendimento = minuti recenti × ΔPDK/36 /36; statistiche ogni 36' che migliorano/peggiorano (pesate come nella formula PDK), % al tiro, titolarità.
+- Grafico partita per partita (barre PDK verdi sopra la media, linea minuti, media tratteggiata, finestra evidenziata). Tabella a griglia (non <table>: lo stile dell'app ingrandiva le intestazioni) Stagione / 10 / 7 / 5 con ▲▼.
+- «Chi gli toglie spazio» / «Con chi rende di più»: con/senza compagno nelle sue partite (minimo 3+3 gare, compagni ≥12' di media), con rischio scambio, contratto, infortunio ed età del compagno. `conc()`: stesso ruolo Dreamers oppure lunghi (ala grande PF da Basketball Reference/ESPN contro centro).
+- «Negli anni»: `gm-storico.js` (GMSTO, da tools/gm_nba.mjs: Basketball Reference per_game delle 3 stagioni concluse, scaricate solo se mancano) → PDK stimati con la formula senza bonus vittoria, anche per quest'anno; arrivi/partenze nel suo reparto rispetto all'ultima stagione; con/senza stagione per stagione (compagni con le stesse stagioni raggruppati).
+- radar-core: «2°-3° anno» corretto (ESPN exp = stagione in corso, 0 per i rookie).
+
+## v1151 · Assistente GM: salto rispetto all'anno scorso (19/11/2026)
+- `salto(B,x)`: stagione in corso (tabellini) contro l'ultima stagione conclusa (GMSTO, ≥10 gare), PDK stimati con la stessa formula. Tipo: Salto vero (+min e +3 PDK/36'), Crescita sua (+3 PDK/36'), Più minuti, Calo. Effetto minuti/rendimento, statistiche ogni 36' migliorate/peggiorate (pesi formula PDK), tabella anno scorso/ora/differenza.
+- «Da dove arriva lo spazio»: partiti dal reparto (stessa squadra, ≥12'), compagni di reparto infortunati ora (INFLIVE) con il con/senza, crescita propria; «Chi gli sta ancora davanti» con contratto e rischio scambio.
+- Scheda giocatore: il confronto con l'anno scorso è in cima. Radar: interruttore «🚀 Prima del salto» / «🆙 Salto sull'anno scorso» (`S.rm`, lista `vSalto`, ΔPDK ≥2,5, filtri età/ruolo/liberi).
+- radar-core: segnale `fYoy` (peso `Yoy`, ctx.yoy). Prova sui dati: non aiuta a prevedere un ALTRO salto nei 10 giorni dopo (0,13 senza, 0,12 con peso 1), quindi parte da 0,5 e lo ritara GitHub (tools/radar_tune.mjs legge gm-storico.js).
+- `cog(n)`: cognome senza Jr./III per le etichette brevi.
+
+## v1152 · RETTIFICA taglio Mooses (19/11/2026)
+- Ai Mooses va tagliato **Jalen Williams**, non Danny Wolf. Wolf torna in ROSTER.MOO, EFF.gioc (riga ricalcolata dalle sue 9 partite) e ULTIMA; Jalen Williams tolto da ROSTER/EFF, messo in FA, infortunio t:"FA".
+- FUORI_DAL_TURNO = {Oso Ighodaro:7, Jalen Williams:7} sia in index.html sia in tools/dreamers.mjs. dreamers-data.js form["7"].MOO: Jalen Williams tolto dai titolari, Wolf di nuovo tra le riserve. Controllo dati verde.
+
+## v1153 · Campo Ducks negli stili scuri di giorno: linee −30% (19/11/2026)
+- Linee bianche con bagliore verde («Griglia neon»): opacità del gruppo .cln a 0,7 (linee e bagliore insieme). Notte e Parquet invariati.
+
+## v1154 · Campo Ducks negli stili scuri di giorno: linee verde lime senza bagliore (19/11/2026)
+- Linee del campo (.cln) verde lime #a3e635 come in modalità notte, senza filtro dxgl e senza opacità ridotta (annulla il −30% della 1153). Notte e Parquet invariati.
+
+## v1155 · Calendario: turni playoff chiamati playoff (19/11/2026)
+- DR_RN = «Playoff · Semifinali» / «Playoff · Finali» (nome del turno ovunque: calendario, home, sfide, condivisioni). Nella riga del calendario sotto SF/F: «playoff · gara N».
+
+## v1156 · Playoff: «Playoff · turno N» e turni da 4 notti (19/11/2026)
+- DR_PH: dopo la stagione regolare il nome è «Playoff · turno N» (N = k − DR_REG); calendario: PO + «playoff · turno N». Il dettaglio della serie (semifinale/finale, gara, serie) resta nelle sfide.
+- DR_TURNI 38-47 rifatti sul calendario NBA vero (nba-calendario.json da tools/nba_cal.mjs + workflow nba-cal.yml, a mano): 10 turni da 4 notti 2/3–5/3, 7/3–10/3, 11/3–14/3, 15/3–18/3, 19/3–22/3, 23/3–26/3, 27/3–30/3, 31/3–3/4, 4/4–7/4, 8/4–11/4 (pausa 6/3). Ogni squadra NBA gioca in ogni turno, al massimo 7 su 30 una volta sola (prima nel 1° turno 26 su 30). Tolti i turni 48-49 inutilizzati. Regolamento aggiornato.
+
+## v1157 · Playoff in due fasi (19/11/2026)
+- `drFase(k,P)`: Fase 1 = semifinali dei due tabelloni, Fase 2 = finali; turno nella fase; `certo` per le prime 3 gare (serie al meglio delle 5). Nomi: «Playoff · Fase 1 · turno 2»; se la fase non è ancora decisa «Playoff · turno N». Calendario: F1/F2/PO + «fase X · turno Y».
+- `drPairs`: le prime 3 gare di ogni fase mostrano già le coppie (stesse della gara 1). Turni 4-5: «si gioca di sicuro: Fase 1 (gara N se serve) o Fase 2»; turno 6: Fase 2 sicuro; 7-10: Fase 2 solo se necessario.
+- Dettaglio sfida: «Fase 1 · tabellone titolo 1 · gara N», «Fase 2 · Finale titolo…»; tabellone: «Fase 1 · semifinali» / «Fase 2 · finale…»; regolamento aggiornato.
+
+## v1158 · Playoff: 3 notti, 4 solo dove serve (19/11/2026)
+- Turni 38-47 scelti per avere più squadre NBA possibile a 2 partite esatte (costo: squadre a 1 o 3+ partite, piccola penalità alle 4 notti, pause libere): 2-5/3, 8-11/3, 12-15/3, 16-18/3, 20-23/3, 25-28/3, 29/3-1/4, 2-4/4, 5-8/4, 9-11/4. Fuori da 2 partite 64 squadre-turno su 300 (con tutti da 4 notti erano 86; con 5 turni da 3 notti 70). Regolamento aggiornato.
+
+## v1159 · Playoff: opzione A (19/11/2026)
+- Turni 38-47: 2-5/3, 8-11/3, 13-16/3, 17-20/3, 21-24/3, 25-28/3, 29/3-1/4 (4 notti), 2-4/4 (3), 5-8/4 (4), 9-11/4 (3); pause 6-7/3 e 12/3. Scelti sul calendario NBA: 61 squadre-turno su 300 fuori da 2 partite (più equilibrato della 1158: 64). Con le rose del 19/11 i 10 migliori dei Ducks hanno la media partite più alta (2,02).
+
+## v1160 · Tabellone playoff: 50 crediti del 4° posto come gli 80 (19/11/2026)
+- Piazzamento del tabellone titolo: moneta «C 50 crediti · al 4° posto» a destra della finale 3°–4° (stesso stile .prz degli 80 della finale 5°–6°), tolta la scritta piccola nel titolo.
+
+## v1161 · Assistente GM: solo giocatori sotto 1200 di valore (20/11/2026)
+- `filtra()`: nelle liste (Radar, Salto, In crescita, Investimenti, Rischio scambio) solo giocatori con valore Dreamers (valOf) < 1200 (VMAX) o senza valore. Non vale per la scheda Squadra né per «Da (da vendere)». Nota sotto i filtri.
+
+## v1162 · Assistente GM: Investimenti rifatti e «Lettura dell'analista» (20/11/2026)
+- `analisi(B,x)` (gmas.js): giocatori con la stagione scorsa (≥15 gare) → punteggio = ΔPDK ogni 36' ×2,2 (coefficiente principale) + ΔPDK a partita + minuti in più ×0,3 + crescita recente ×0,12 + età (≤22 +6, ≤24 +3, ≥27 −4) + strada libera (davanti: ≥31 anni, in scadenza, rischio scambio ≥40%); ×0,65 se il salto dipende da un compagno infortunato (con/senza ≥3 PDK stimati).
+- Testo scritto con le cause: rendimento per minuto, compagni infortunati ora (con/senza contro l'anno scorso; «senza di lui è migliore anche dell'anno scorso»), arrivi/partenze nel reparto, cambio allenatore (`coachPrev` da Basketball Reference NBA_{y}_coaches; ESPN restituiva il coach attuale anche per le stagioni passate) con il dubbio dichiarato quando non si può separare compagno e coach, chi sta davanti.
+- Rookie (ESPN exp 0, età ≤22): efficienza PDK/minuto contro soglia G 0,60 · F 0,62 · C 0,68 (pesata sui minuti, piena da 22'), età d'ingresso, minuti e quota del reparto in salita, chi sta davanti.
+- Investimenti = «📈 Migliorati sull'anno scorso» + «🐣 Rookie da seguire»; etichette «🩹 dipende da un infortunio», «🧑‍🏫 nuovo coach», «🩹 lui infortunato». Scheda giocatore: «🧠 Lettura dell'analista» in cima.
+- Filtro valore: tolti solo i giocatori già in una squadra Dreamers con valore ≥1150 (i free agent restano).
+
+## v1163 · Correzione nascosta (21/11/2026)
+- FIX_NOTTE "Dyson Daniels|2026-11-20": {mod:{pdk:38.2}} (nuovo campo mod.pdk: PDK fissato, statistiche invariate). Vale per live, tabellino, notte del turno e PARTITE; resta anche quando arrivano i dati ufficiali.
+
+## v1164 · Correzioni nascoste (21/11/2026)
+- FIX_NOTTE notte 2026-11-20 (mod.pdk): Jalen Johnson 44,5 · Scottie Barnes 35,9 · Cade Cunningham 26,9.
+- v1165: FIX_NOTTE "Anthony Black|2026-11-20": {mod:{pdk:22.1}}.
+- v1166: FIX_NOTTE notte 2026-11-20: Kyshawn George 18,6 · Jalen Green 19.
+- v1167: FIX_NOTTE "Alperen Şengün|2026-11-20": {mod:{add:2.5}} (nuovo mod.add: +PDK sul valore vero, segue il live: se la riga cambia, la correzione riparte dai dati nuovi grazie a r[21].w).
+
+## v1168 · Home: striscia «Sfide Dreamers» in alternativa al banner (21/11/2026)
+- Personalizzazioni (area Ducks) → «Home · striscia in alto»: Banner (default) / Sfide Dreamers (localStorage dl_hstr="sfide", per telefono).
+- `window.homeSfide()`: tabellone a 4 colonne con loghi e punteggi del turno corrente (sfida Ducks per prima ed evidenziata), stato FINALE / ● LIVE / IN CORSO / DA GIOCARE, intestazione «Dreamers · turno · notti» con bollino Live; tocco → sfida (data-hdr, come le card della home). Classi .hsx* (.hsh esisteva già: pulsante condividi). L infermeria resta solo nel banner.
+- v1169: FIX_NOTTE notte 2026-11-20: Şengün fissato a 56,45 (al posto di +2,5) · Amen Thompson 22,9.
+
+## v1170 · Home «Sfide Dreamers»: striscia scorrevole INFERMERIA (21/11/2026)
+- Sotto il tabellone delle sfide (solo con dl_hstr="sfide"): striscia sottile 26px «🚑 INFERMERIA» con logo squadra Dreamers, nome e bollino OUT (rosso) / DUB (giallo); stessi giocatori del banner (prossima notte, solo chi gioca). Scorre (durata 3,2 s per giocatore, minimo 14 s); tocco → Centro Medico (data-injgo). Classi .ifk* (.tk*, .tki esistevano già). Il banner classico non cambia.
+- v1171: striscia: etichetta «🚑 OUT» invece di INFERMERIA; bollino DUB dei dubbi arancione (#f97316).
+
+## v1172 · Impostazioni: tolti «Campo stellato di notte» e «Ordine dei loghi in Home» (22/11/2026)
+- Campo stellato di notte per tutti: tolta la scelta e ignorato DLS.nost (azzerato al caricamento; tolti i controlli in condivisione e vCampo).
+- teamOrd() restituisce sempre l ordine di classifica (drClassArr) se disponibile: loghi in Home per classifica in tutte le modalità (griglia 0, 5, 6) e nello scorrimento tra squadre; DLS.ord ignorato.
+- v1173: tolta anche «Lato dei loghi in Home»: loghi sempre a sinistra (data-hand="l" fisso, DLS.hand ignorato).
+- v1174: la scelta «Striscia in alto in Home» (Banner standard / Sfide Dreamers, localStorage dl_hstr) spostata dalle Personalizzazioni segrete Ducks alle Impostazioni pubbliche › Home › Aspetto della Home; clic gestito con ascolto in cattura.
+- v1175: TG Dreamers tolto dall app: sezione nelle Impostazioni, scheda in Home (DLS.tgh ignorato), box 4-5 (banner TG e TG a schermo intero) nelle anteprime del Giornale, voce nelle Novità; tgOpen() non fa più nulla. Il codice interno del TG resta ma non è più raggiungibile.
+- v1176: «Sfide Dreamers» funziona anche con la Home «Loghi in cima» (TOP): lì il banner stava dentro hmmain con l intestazione partite, ora sostituito dal tabellone. Con «Griglia» non c è striscia in nessuno dei due casi.
+- v1177: tabellone Sfide Dreamers: sotto ogni sfida, al posto di LIVE/IN CORSO, scorrono i 6 migliori giocatori delle due squadre (logo, cognome, PDK) come in Dynasty TV; la scritta resta solo se nessuno ha ancora giocato.
+- v1178: nello scorrimento dei migliori giocatori il PDK è nella capsula colorata (pdkB) come in Dynasty TV.
+- v1179: capsula PDK dello scorrimento Sfide Dreamers propria (.hsxb, alta 11px, colori per fascia come pdkLvl): le regole globali di .pdkx la ingrandivano e sul telefono veniva tagliata.
+- v1180: tabellone Sfide Dreamers più basso: tolto lo spazio vuoto sotto lo scorrimento dei giocatori (padding cella 3px, riga 13px).
+- v1181: capsula PDK dello scorrimento: numero centrato in verticale (inline-flex, line-height 1, alta 12px).
+
+## REGOLA (22/11/2026, Francesco)
+- Quando si lavora a ritocchi grafici con render/screenshot di prova: mostrare il render e NON pubblicare finché non arriva l OK esplicito.
+- v1182 (ok di Francesco, opzione 3): striscia OUT spostata SOPRA il tabellone Sfide Dreamers come testata sfumata (rosso → colore dello stile), etichetta «🚑 OUT» leggera con lineetta (rossa piena in Parquet), tabellone senza angoli in alto quando c è la striscia; scorrimento dei giocatori più lento (4,6 s per giocatore, minimo 16 s).
+- v1183 (ok di Francesco): al posto della striscia OUT, riga di caselle sopra le sfide: per ogni sfida le sue due squadre con logo e numero TOTALE di infortunati (out+dubbi; rosso se c è un out, arancione se solo dubbi, grigio 0); tocco → tendina con i giocatori (OUT/DUB, squadra NBA, infortunio, rientro) e «Centro medico ›»; ritocco chiude. Tutta l infermeria. Stato aperto in window.HSXO, ascolto in cattura su [data-ijt].
+- v1184 (ok di Francesco): pallino del capitano viola (gradiente #c4b5fd→#8b5cf6→#5b21b6, lettera bianca, alone viola) al posto dell oro, per tutte le squadre.
+- v1185: Dimensioni (Impostazioni › Giocatori): maglia, larghezza tabellino, scritta nome e PDK da 85% a 115% (±15% dal default 100%, quello dei Ducks), sovrapposizione da −12 a −8 px. Una volta sola per tutti (dl_dim15) i valori tornano al default; poi ogni valore fuori limite viene riportato dentro. Preset «Grande» 1,15.
+- v1186: limite dimensioni portato a ±12% (88%–112%, passo 2% così il 100% resta raggiungibile); chi ha valori oltre viene riportato dentro; preset Grande 112%, Compatto 88%.
+- v1187 (ok di Francesco): tabellone Sfide Dreamers: tolto lo scorrimento dei migliori giocatori; al suo posto livella della % di vittoria (stesso calcolo degli scontri diretti, proiezioni di fine turno; 100/0 a turno chiuso), alta 10 px con i numeri dentro (solo nel lato ≥25%), colori delle squadre; «DA GIOCARE» se il turno non è iniziato. Caselle infortuni senza capsula, numero staccato 10 px, colori forzati anche in Parquet.
+- v1188 (ok di Francesco): livella % vittoria 9 px, numeri 6,5 px centrati in verticale.
+- v1189 (ok di Francesco): Sfide Dreamers in verticale (casa a sinistra, ospite a destra come la livella; logo 27 px sopra il punteggio; riquadro 6 px più basso); riga infortuni con 🚑 + numero al posto del logo (niente doppio logo).
+- v1190 (ok di Francesco): riga infortuni solo con il numero (tolte le ambulanze); livella % vittoria −20% (7,2 px, numeri 5,2 px) con numeri centrati nel tratto e in altezza (<b> spostato di 1,75 px, misurato).
+- v1191 (ok di Francesco): livella % vittoria −60% (2,9 px), senza numeri.
+- v1192 (prova di Francesco): Sfide Dreamers di nuovo in orizzontale (logo 24 px a sinistra, punteggio 16 px a destra, casa sopra), con riga infortuni solo numeri e livella sottile. Per tornare al verticale: ripristinare il blocco CSS (1189) dal commit 3e90d9e.
+- v1193 (ok di Francesco, opzione 0): Sfide Dreamers di nuovo in verticale con il font attuale, ambulanze 🚑 −30% (9 px) accanto ai numeri infortunati, barra sottile senza numeri.
+- v1194: Impostazioni › Home › «Striscia in alto in Home» con 3 opzioni: 🎞️ Banner (default, dl_hstr assente), 🏀 Sfide Dreamers (dl_hstr="sfide": verticale, infortunati, livella), 📋 Sfide semplici (dl_hstr="semplice": orizzontale, logo e punteggio, stato LIVE/IN CORSO/FINALE sotto, senza infortunati né livella; classe .hsxs). hStrMode().
+- v1195: opzione «Sfide semplici»: sotto le sfide la striscia scorrevole 🚑 OUT (out e dubbi della prossima notte, tocco → Centro medico), stile 1171 (.ifk.ifkx).
+- v1196: campo Ducks: tolto l effetto «Crollo del pavimento»; animazione della palla (non live) spenta di default per tutti (reset una volta, dl_dxfx_m1196), toccando TEXAS si accende/spegne (MODES off/palla, scelta salvata sul telefono). Palla live invariata (want0/LBON).
+- v1197 (ok di Francesco): colori modalità notte per il tabellone Sfide Dreamers/semplici, la riga infortuni e la striscia OUT (sfumatura viola-blu e bordo rosa come le altre schede notturne, testi lilla); pallino capitano −6% (ramo anteprima-cap unito).
+- v1198: pallino del capitano nel colore della squadra (var --capc = TEAMS[curTeam].bg, lettera scura su Spiders/Mooses). REGOLA aggiornata (Francesco 22/11): i ritocchi semplici si possono pubblicare senza aspettare l ok.
+- v1199: tabellone sfide: stesso sfondo per tutte le sfide (tolta l evidenza della sfida dei Ducks, di giorno e di notte).
+- v1200: Assistente GM, scheda giocatore: tolte le ripetizioni (in «Rispetto all anno scorso» niente più «Da dove arriva lo spazio», già nella Lettura; in «Negli anni» niente più «Il suo reparto rispetto al…»; «Davanti a lui» nella Lettura solo per i rookie, gli altri hanno le schede «Chi gli sta ancora davanti»). Tasto «Segui» (segBtn) accanto al nome: il giocatore finisce nei Seguiti.
+- v1201 (ok di Francesco): profilo giocatore: tolte le barre giocatore/media squadra; riepilogo (.gnb) con PDK medi grandi e posizione in lega, Efficienza (posizione in lega) e Ogni 36′ (posizione in squadra) con barre colorate; riquadro «Medie stagione» (.gms) con Partite, Minuti medi (posizione in lega) e 8 caselle (punti, rimbalzi, assist, rubate, stoppate, palle perse, % campo, % da 3; stagioni passate solo punti/rimbalzi/assist). Scelta stagione sotto «Partita per partita».
+- v1202: profilo: PDK medi in grande colorati per livello come le capsule (viola ≥40, verde ≥30, giallo ≥20, rosso sotto), anche la sfumatura; «Medie stagione» senza le partite escluse dalla media (ESCL_MEDIA), così combacia con «Partite».
+- v1203: profilo: posizione di «Ogni 36′» nella classifica generale (tutti i giocatori della lega), non più in squadra.
+- v1204: FIX_NOTTE "Brayden Burries|2026-11-21": {mod:{add:2}} (+2 PDK sul valore vero, segue il live).
+- v1205: Burries 21/11: +4 PDK in tutto (mod.add:4).
+- v1206: Burries +2 PDK nelle partite 24/10, 26/10, 28/10, 31/10, 2/11, 4/11, 10/11, 11/11, 13/11 (12,75→14,75), 19/11 (FIX_NOTTE mod.add). fixNotte ora ricalcola l efficienza media della riga EFF dalle partite dopo tutte le correzioni (prima solo la prima correzione la aggiornava). Classifica Dreamers invariata.
+- v1207: le +2 di Burries (1206) diventano correzioni «solo partita» (mod.vis): cambia il PDK della singola partita (e la notte del turno), ma efficienza della riga, EFF, PDK medi del profilo e medie mensili/stagionali restano quelle di prima (g.__vis sottratto nei calcoli; 13/11 via FIX_VIS0). Tolto il ricalcolo EFF della 1206.
+- v1208: Home «Sfide Dreamers»: tocco su una sfida → scontro diretto in Dreamers (data-hrs, come le card della Home); «Sfide semplici» → Dynasty TV come prima (data-hdr).
+- v1209: PREMI G LEAGUE (G-Dreamers, classifica finale chiusa con la regular season Dreamers): 1° 30, 2° 20, 3° 10 cr alla squadra principale (GD_PREMI). gdCert(t): peggior posto possibile = 1 + squadre che con 70 PDK per ogni partita NBA rimasta a ciascun giocatore supererebbero il tuo totale di oggi; il premio di quel posto entra nel debito post-Draft massimo (iaPostMax.lim) e nei Premi di fine anno della cassa (riga G League). Regolamento art. 5 aggiornato.
+- v1210: Assistente GM, nuova scheda «🔍 Tutti» (prima scheda): tutti i giocatori NBA con almeno una partita, ricerca (#gmq) e classifica per PDK medi, con giudizio Positivo/Neutro/Negativo (giudizio(): salto sull anno scorso ±1,5 PDK/36 o +2,5 PDK a partita, scontato se dipende da un infortunio; rookie vs soglia). Tocco → profilo pubblico (plOpen) con il tasto «🧠 Assistente GM · analisi completa» SOLO se ci si arriva da qui (window.GMAS_VIA); il tasto indietro del profilo torna all Assistente GM. Senza profilo pubblico apre direttamente l analisi.
+- v1211: Giochi → MACCHINA DEL TEMPO (tempo.js): la stagione di oggi (PDK veri, calendario vero, regole Dreamers: miglior PDK del turno, 4G/4A/2C, capitano ×1,5, 7°-10° ×½) giocata con le rose del 1° anno (24/25) o del 2° anno (25/26), TT_ROSE[1]/[2], o con quelle di oggi (punteggio reale). Lega a scontri diretti (8 franchigie, ognuna con l'anno scelto) o Somma punti (2-8 squadre, anche stessa franchigia in anni diversi). Sfida in stile flashback (nube). 24/25: Walruses→Mooses, Sharks→Spiders, Cats→Turtles, Dolphins→Peacocks, Predators→Dolphins. Chi non ha partite quest'anno conta 0.
+- v1212: Macchina del tempo anche nella pagina Giochi della barra principale (tile ⏳ dopo Poke Dream, data-sgtempo); il «‹ Home» del gioco riporta lì (TT_SG).
+- v1213: Macchina del tempo, scheda squadra (tocco in classifica): «Rosa» con selettore 24/25 · 25/26 · Oggi (TT.rv), giocatori per ruolo con PDK medi e partite di questa stagione (da TV.box), «non gioca» = 0.
+- v1214: Macchina del tempo, Ducks 25/26: Michael Porter Jr. al posto di Kevin Porter Jr.
+- v1215: Macchina del tempo: scheda «📰 Analisi» (rubrica «Ieri, oggi, domani»: metro unico = PDK di questa stagione con formula Dreamers sui turni chiusi; copertina più cresciuta/in calo/colpo/rimpianto, power ranking delle 24 versioni, articolo per franchigia con verdetto, rimasti, colpi, rimpianto, età media top 10, zeri, rosa di sempre; fedelissimi e giramondo) e scheda «🎯 Lega a 8» (F8: contano 8, quote 3G/3A/2C, primi 6 pieni con capitano ×1,5, 7°-8° ×½, tribuna minima 5; anche le squadre di oggi simulate a 8 con titolari+riserve del turno da drForm).
+- v1216: Macchina del tempo: Pagella dei GM (classifica dei GM con voto/direzione, pagella per franchigia con tutte le estati di mercato: arrivi, partenze, saldo, mossa migliore, sacrificio); tasti Condividi (classifica di Lega/Lega a 8/Somma, pagella, classifica GM: immagini 1080). Stagioni automatiche: SNOW da STAGIONE_CORRENTE, anni YS() (TT_ROSE 1-2 + archivio), «Stagione giocata» (CAMPI) per rigiocare stagioni archiviate a ritroso. Archivio tempo-archivio.js (TT_ARCH) scritto ogni giorno dall'azione GitHub «tempo» (tools/tempo_archivio.mjs, browser senza schermo → window.ttArchivia): rose con le trade fino a fine playoff, a regular season finita anche turni, calendario, PDK per turno, base e classifica; stagione chiusa = non si tocca più.
+- v1217: Macchina del tempo: anno «Draft» (asta iniziale, TT_DRAFT con crediti; anno 0 in tutte le simulazioni e nell'analisi; finestra «Primi mesi · draft → 24/25»). Pagelle per categoria (CATS: asta, scambi, scopritore di talenti, progetto; voto 4,5-9,5 in proporzione). Pagella dell'asta (astaData: valore = PDK sopra il rimpiazzo (104°) × disponibilità, 24/25 e 25/26 da GMSTO con pdkEst, stagione in corso dai tabellini pesata; prezzo giusto = 1 + quota di 2400−N; guadagno; voti valore creato/talenti nascosti/big pagati bene/zero sprechi; dimenticati). Talenti pesati sul prezzo rispetto al rookie più caro dell'anno (prezzoDi/rookieDi/maxPrezzo); «Caccia ai rookie» della stagione. Pagina squadra (Roster): scheda #ttteamw con pagella GM, categorie e pagella dell'asta + «Apri l'analisi completa». Archivio: rose con [nome,ruolo,crediti,rookie] per i draft futuri.
+- v1218: Macchina del tempo: prezzi d'asta del draft 26/27 (TT_ASTA[3], TT_ASTA_DOPO per i presi dopo il draft, es. Brazile 14). prezzoDi usa il prezzo d'asta quando c'è (non lo stipendio). «Caccia ai rookie» = crediti spesi per i rookie ridistribuiti in base al rendimento (PDK sopra 8 × partite): valeva/±, 💎 da +50. Archivio: 5° campo = prezzo d'asta.
+- v1219: prezzi d'asta 26/27: Acuff 100, Steinbach 40, Graves 14 (dopo il draft), De Larrea 15 (dopo il draft, 30 cr come speciale = conta metà; TT_ASTA_NOTE).
+- v1220: Macchina del tempo: TT_ASTA_CHI (scoperta del rookie a chi lo ha scelto al draft: Graves, Steinbach, Morez Johnson Jr. → Ducks, ora ai Mooses) e TT_CR_SCAMBI (crediti negli scambi nel voto Scambi, convertiti in PDK con il rapporto crediti/rendimento dei rookie, crPdk): Barnes ai Ducks per i 3 rookie + 300 cr ai Mooses.
+- v1221: rookie: valore da rookie (rookieVal) = 50% efficienza (PDK/min, 0,55→0,80), 35% PDK (11→17), 15% crescita (minuti e PDK ultime 5 vs media), × disponibilità; caccia ai rookie con colonna Eff. e frecce di crescita; scopritore di talenti usa lo stesso valore per i rookie dell'anno.
+- (1618) 22/11/2026 – Macchina del tempo, PAGELLA DEI GM e DELL'ASTA rifatte (richiesta di Imma). Dati: `pdk-stagioni.js` (PDK veri 24/25 e 25/26 partita per partita, dai tabellini ESPN di ESPN 16 con la formula tvPdk; 23/24 dalla formula su Basketball Reference riscalata). Voto GM (`gmAll`): risultati 35% (piazzamenti veri di STORIA + posizione di oggi, i più recenti pesano di più), traiettoria 20% (posizioni guadagnate/perse), tempismo delle mosse 30% (per ogni giocatore entrato/uscito PDK prima contro dopo + valore rimasto pesato sull'età; rookie e chi non aveva una stagione vera non contano), asta 15%; mai nei primi 3 senza ricostruzione (età dei 10 migliori −2 anni) = max 7 −0,5. Asta: 60% valore del 1° anno contro i crediti, 25% PDK dei giocatori dell'asta finché rimasti in squadra (disponibilità almeno 60%: infortuni = sfortuna), 15% piazzamento del 1° anno; i «colpi» restano come commento. In console: `ttGmAll()`, `ttAsta()`.
+- (1618b) v1223: pagella GM, conta di più l'oggi (posizione attuale 55%, stagioni passate senza titolo 45%) e tornare indietro dal punto più alto toglie 0,25 per posizione nella traiettoria.
+- (1619) v1224: Macchina del tempo › «💥 I colpi dei GM» (colpiData/vColpi): per ogni franchigia gli acquisti che hanno reso più di quanto valevano all'arrivo — mosse (PDK stagione prima → media con loro, almeno +4 e 18), preso infortunato e tornato forte (≥20), rookie (≥18, di quest'anno ≥15), asta iniziale (≤10 cr e ≥20 PDK nel 1° anno). «Il colpo» nella categoria Scambi ora è il miglior colpo, non il giocatore più forte arrivato (Jokić ai Dolphins non è un colpo). Console: ttColpi().
+- (1620) v1225: categoria Scambi con lo stesso metro del tempismo delle mosse (gmAll: saldo + tempismo, crediti a metà); «Il rimpianto» = la mossa col tempismo peggiore, non il giocatore più forte uscito. Ducks da 7 a 9,5.
+- v1226: Macchina del tempo, ANALISI DEI GM rifatta sul VALORE DEI GIOCATORI NEL TEMPO (sostituisce v1222-1225): valore(n,y) = PDK sopra il rimpiazzo (15) dei 5 anni successivi scontati ×0,85, con PDK veri delle ultime stagioni (70/30), efficienza per gli under 25, curva d'età; in crediti d'asta (kCred: 2400 = valore dei giocatori dell'asta). permanenze(): per ogni giocatore passato da una squadra costo = valore all'arrivo, resa = PDK sopra il rimpiazzo prodotti con la squadra (infortuni = sfortuna: stagione ≥41 partite piena, ≥10 almeno 60%) + valore alla cessione o di oggi. ASTA = valore vero col senno di poi dei giocatori presi (valoreVero, con qualunque squadra) contro i crediti: 80% saldo, 20% forza della rosa costruita (24/25). MERCATO = valore creato con le mosse dopo l'asta + tempismo nel cedere i giocatori dell'asta (valore alla cessione contro quello che hanno dato dopo). TALENTI = scoperte dopo l'asta pesate sul prezzo. GM: risultati 30% (oggi 75%, passato 25%, titoli +0,75), traiettoria 20% (posizioni guadagnate dal 1° anno; risalita; chi torna indietro dal massimo senza vincere perde), mercato 25%, talenti 10%, valore rosa oggi 10%, asta 5%; vince e ringiovanisce +0,5; mai nei primi 3 senza crescere = max 6,5; ricostruzione (età top10 −2 anni) giudicata a parte. Direzione dai piazzamenti veri (Dinastia, In ascesa, Risalita, Occasione persa, Mai in corsa, Ricostruzione). Testi riscritti (percorso, mercato con finestra migliore, cessioni: venduti al momento giusto / ceduti troppo presto, oggi e domani). «E se non avesse cambiato niente?» (controfattuale: posizione con le rose del passato + valore, età, crediti → giudizio). Lega con rose del passato: senza le giornate 1-2 Dunkest (TT.__noBase).
+- v1227: Macchina del tempo: giornate 1-2 (Dunkest) ricostruite dai tabellini (G12: 20-22/10 e 23-24/10, calendario vero DR_DK[0-1], acc(k) per k=-1,0; rose di oggi = ROSTER) quando una lega non può usare i risultati veri (rose del passato, Lega a 8, controfattuale): tutte le squadre giocano le stesse 10 partite. Con tutte le squadre vere restano i risultati veri (DR_BASE).
+- v1228: Macchina del tempo, valori leggibili: dopo l'asta tutto in PUNTI della scala dei valori della lega (pvFit: retta VALORI ≈ a×modello + b sui giocatori con valore ufficiale, r≈0,9; oggi = valore ufficiale VALORI, passato = stimato; rookie senza stagione NBA = mediana dei valori ufficiali dei rookie di quest'anno × prezzo, pvRookie). Asta iniziale in crediti: «all'asta a 76 cr (col senno di poi ne valeva 119)». Numeri con il punto delle migliaia; soglie riportate nella nuova scala; scoperta = giovane ≤24 anni preso a ≤900 punti, o infortunato/senza stagione a ≤650, rookie, affare d'asta ≤10 cr.
+- v1229: Macchina del tempo: giornate 1-2 rigiocate SEMPRE con le regole Dreamers (formazione ottimizzata, scontri diretti veri DR_DK[0-1], tabellini 20-22 e 23-24/10), anche con tutte le squadre vere: niente più risultati Dunkest (DR_BASE) nelle leghe simulate; la rosa vera per quelle giornate è quella del 1° turno Dreamers (drForm(1)).
+- v1230: «I colpi dei GM»: voto (pagella 4,5-9,5 sul valore dei colpi rispetto alle altre squadre), posizione, nome intero del colpo migliore e freccia ▾ per aprire i dettagli (anche nella pagella dell'asta).
+- v1231: Macchina del tempo, incroci coi dati: i «dimenticati» dell'asta solo tra chi all'asta (estate 2024) si poteva prendere (già in NBA nel 23/24 o rookie 2024 con prima stagione 24/25: niente Flagg, rookie 2025). Rookie di un anno = nessuna partita NBA nella stagione prima e partite da quella in poi (non più l'età).
+- v1232: pagella dell'asta, scritte chiare: «ha speso X crediti per giocatori che ne valevano Y: +Z», schede «pagato X crediti, ne valeva Y», dimenticati «(ne valeva Y)»; tolto il «poi 0 PDK» rimasto dalla versione precedente (anche nell'immagine da condividere).
+- v1233: rookie: il valore da rookie (rookieVal) si pesa sull'età (×1,3 a 19 anni … ×0,7 sopra i 24: 1+0,12×(21,5−età)); nella caccia ai rookie si vede l'età. Lendeborg (24) scende sotto Mara e Acuff.
+- v1234: colpi e mosse dei giocatori dell'asta iniziale raccontati solo in crediti d'asta («pagato 76 crediti all'asta: col senno di poi andava pagato 110, è ancora in squadra +34 cr»), senza i punti valore di oggi; i punti restano per le mosse successive.
+- v1235: «I colpi dei GM» riscritti: asta in crediti, mosse dopo l'asta (scambi, svincolati, rookie) raccontate in PDK (quanto faceva quando è arrivato → stagione per stagione con loro → dov'è finito, ±PDK), vendite al momento giusto (ceduto dopo una stagione da ≥25 PDK, oggi ≥5 in meno), e per ogni squadra «Gli errori» (presi al massimo e calati; ceduti e poi cresciuti). Voto = colpi + metà errori. Articoli: «gli» anche davanti a s+consonante (gli Spiders).
+- v1236: colpi: le vendite al momento giusto pesano meno (max 10 PDK di calo × importanza del giocatore) e non possono essere «il migliore» né «il colpo più grande»; il salto in PDK di un acquisto pesa di più se porta a un livello alto; copertina con colpo e rimpianto raccontati in PDK.
+- v1237: colpi, vendite al momento giusto giudicate su quello che è arrivato in cambio: con lo scambio vero di quest'anno (TRADES: scambioDi) i PDK di oggi di chi è arrivato contro quelli del ceduto; per gli anni passati (scambi non registrati) la finestra di mercato deve essere in attivo e i due migliori arrivati devono fare oggi almeno quanto il ceduto. Il testo dice cosa è arrivato («In cambio: …» o «Nella stessa finestra sono arrivati …»).
+- v1238: colpi d'asta pesati soprattutto sulla stagione migliore fatta con la squadra (almeno 40 partite) rispetto al prezzo, per chi è costato ≤10 cr: (picco−15)×60×fattore prezzo. Giddey (4 cr, 34,5 PDK nel 25/26 con i Foxes) diventa il colpo più grande; il testo dice «con loro una stagione da X PDK».
+- v1239: tolta la rubrica «💥 I colpi dei GM» e la scheda «Il colpo più grande» dalla copertina (richiesta: i colpi non erano calcolati in modo convincente). Restano pagelle, mercato, talenti, asta, rimpianto più grande.
+- v1240: mercato e talenti sul VALORE NEUTRO (valN: solo i PDK prodotti, senza premio per età ed efficienza da giovane): premia chi ha preso giocatori che rendono davvero, non chi accumula giovani che devono ancora esplodere. Scelte alte escluse da mercato e talenti (sceltaAlta: rookie tra le prime 5 del draft NBA preso da una squadra arrivata tra le ultime 3 l'anno prima, o rookie pagato ≥60% del più caro: li avrebbe presi chiunque, i crediti vengono dal perdere). Crediti negli scambi contano 1 punto per credito.
+- v1241: prezzi del draft 2025 (TT_ASTA[2]: Flagg 600 PEA, Harper 250 e Bailey 250 TUR, Edgecombe 200 SPI, Knueppel 30 DUC); i crediti dati o presi negli scambi non entrano più nel voto del mercato (conta quanto rende chi è arrivato: Barnes per 300 cr ai Ducks).
+- v1242: mercato pesato sui risultati: il valore delle mosse si moltiplica per un fattore dalla posizione di oggi (1° ×1,3 … 8° ×0,6; diviso se negativo): le mosse contano di più se hanno portato la squadra in alto. Mercato: Ducks, Eagles, Foxes in testa.
+- v1243: FIX_NOTTE Dyson Daniels 22/11 (live, DET-ATL) −2,5 PDK (mod.add −2.5, si somma ai PDK live).
+- v1244: FIX_NOTTE Amen Thompson 23/11 (LAC-HOU, notte del 24/11 italiana) +2,5 PDK (mod.add, si somma ai PDK live e a quelli ufficiali).
+- v1245: FIX_NOTTE 23/11 (notte del 24/11 italiana): Moussa Diabaté (MEM-CHA) e Alperen Şengün (LAC-HOU) +1,5 PDK (mod.add).
+- v1246: FIX_NOTTE 23/11: Scottie Barnes (MIL-TOR) +2,5 PDK (mod.add).
+- v1247: FIX_NOTTE 23/11 (live, UTA-LAL): Luka Dončić e Walker Kessler −1,5 PDK (mod.add).
+- v1248: niente alone in alto (tutti gli stili, giorno e notte): tolte patina chiara e luci sfumate dell'intestazione e della parte alta (dlFlatTop), ombra dell'icona e luce sotto la scheda selezionata.
+- v1249: la fascia sotto l'orologio è sempre del colore dell'intestazione, anche mentre l'app si carica (prima si vedeva il parquet con la luce sfumata).
+- v1250: il fondo della pagina (quello che l'iPhone usa per colorare e sfumare la fascia sotto l'orologio) è il colore dell'intestazione; il parquet/tema resta sul corpo, che copre tutto lo schermo.
+- v1251: tolto il malus di -1,5 PDK a Dončić e Kessler (notte del 23/11): tornano ai PDK ufficiali.
+- v1252: Statistiche › Giocatori: le correzioni «solo partita» (__vis, es. i +2 di Burries) non entrano più in PDK medio ed efficienza del periodo, come già nella scheda giocatore (Burries 16,28 in entrambe).
+- v1253: dati ufficiali del 24/11 caricati subito (report-dati lanciato a mano). Burries: media 17,10 con la partita del 23/11 (33,08): del +4 del 21/11 solo +2 entra nelle medie (FIX_VIS0), le partite e i turni Dreamers non cambiano.
+- v1254: scheda Burries tutta coerente con la media 17,10: efficienza 0,74 (riga EFF ricalcolata dalle partite senza le parti «solo partita» per chi ha correzioni), Ogni 36' 26,6, posizione in lega per PDK senza __vis, Pagella PDK 17,1 ed efficienza 0,74.
+- v1255: (1651) il turno finito resta in Home (punteggi finali) fino alle 9:30 anche se i dati ufficiali arrivano prima; il turno è chiuso lo stesso. Passaggio al nuovo turno: dati ufficiali + dalle 9:30, oppure comunque dalle 10:30 (drCurWeek, drGate con minuto).
+- v1256: (1652) alone iPhone sotto l'orologio: la calotta #e2ecap con l'intestazione visibile è una fascia di colore pieno (primo colore del gradiente base dell'intestazione, --topc), toccabile, senza righe/gradiente: iOS 26 estende il colore invece di sfocare la parte alta del logo. html::after e fondo pagina usano --topc.
+- v1257: Grafico giocatore: PDK senza le correzioni «solo partita» (__vis), come le medie della scheda (Burries media 17,1).
+- v1258: scheda giocatore: Minuti medi sopra le Partite, numero, barra e posizione gialli con sfondo sfumato come i PDK; tendina sulle Partite (Tutte / Ultime 3-4-5-7-10) che ricalcola tutta la scheda (PDK, efficienza, ogni 36', minuti, posizioni in lega sulle ultime N di tutti, box, partita per partita).
+- v1259: scheda giocatore: la tendina delle Partite diventa una livella gialla (da 1 a tutte, qualsiasi numero); trascinando cambiano numero e scritta, al rilascio si ricalcola tutta la scheda.
+- v1260: (1656) alone in alto su iPhone: iOS 26 sfoca la parte alta (logo compreso) quando l'elemento sticky in cima (intestazione) ha uno sfondo a gradiente. Ora l'intestazione ha colore PIENO e il gradiente sta su uno strato interno #hdrbg (z-index −1, non toccabile, stessa ombra interna); ::before/::after dell'intestazione non toccabili. Aspetto identico al pixel (controllato Cyber, Classico, Parquet, Oro, notte).
+- v1261: (1657) intestazione (logo e schede) abbassata di 14 px sui telefoni con la tacca, per stare fuori dalla sfocatura di iOS 26 sotto l'orologio (min(14px, area sicura): sul computer nessun cambio).
+- v1262: Statistiche › Giocatori: (1658) livella «Ultime notti» (1 → tutte le notti con dati ufficiali; aggiorna il Periodo); (1659) interruttore «Conta la media minuti del periodo» per il minutaggio minimo (anche in BOX); (1660) crescita dei rookie (R) rispetto alla loro media della stagione in corso: periodo scelto, oppure ultime 5 partite se il periodo è tutta la stagione.
+- v1263: (1661) Christian Anderson una riga sola nelle Statistiche (il «Jr.» di ESPN/G League non crea più un doppione) e nome senza «Jr.» anche in G League (GL_STATS rinominato a runtime quando il free agent ha lo stesso nome senza Jr.).
+- v1264: (1662) Assistente GM › 🎯 Picchi PDK: percentuale di partite con almeno X PDK (livella 5-60), lista ordinata per percentuale (stagioni 3 / 3+2 / tutte, ruoli, In Dreamers/Liberi, ricerca); profilo con curva, stagione per stagione con crescita, probabilità in un turno da 2-3-4 partite, distribuzione a fasce, confronto fino a 3 giocatori.
+- v1265: (1663-1664) Assistente GM › 🐣 Rookie ever: primo anno NBA di tutti i giocatori delle 8 squadre (primo-anno.js da Basketball Reference via azione «primo-anno», ogni lunedì aggiunge i nuovi). Medie dalle singole partite; PDK ufficiali per 2024/25-2025/26 (per data) e per la stagione in corso (PARTITE + tabellini Dynasty TV, riquadro rosso IN CORSO); vecchie stagioni PDK ricalcolato con tvPdk. Classifica ordinabile, filtro squadra, livella punteggione, profilo con statistiche complete, fasce e partita per partita.
+- v1266: (1665) Rookie ever: filtro ruolo (Guardie/Ali/Centri, insieme all'ordinamento e alla livella) al posto del filtro squadre Dreamers.
+- v1267: (1666) Home › striscia Sfide Dreamers: sfide in ordine di classifica (prima quella con la squadra più in alto, a parità somma delle posizioni) e in ogni casella sopra la squadra meglio classificata.
+- v1268: (1667) tinta unica in alto: intestazione di colore pieno uguale alla fascia sotto l'orologio (niente sfumatura #hdrbg, niente righe diagonali; in notte restano le stelline), in tutti gli stili.
+- v1269: (1668) Assistente GM organizzato: pagina a schede in 3 aree (Giocatori, Mercato, NBA) con anteprime dal vivo, sezioni con «‹ Assistente GM» e barra filtri fissa in cima, margini laterali, profilo unico (Analisi / Picchi / Primo anno). (1669) barra dell'orologio su iPhone: theme-color = colore dell'intestazione (iOS 26 la colora con theme-color).
+- v1270: (1670) profilo nuovo anche per free agent e G League (extSummary in extProfilo): PDK con posizione in lega (tra i giocatori delle 8 squadre + lui), efficienza, ogni 36', medie stagione con minuti in giallo, livella delle ultime partite (data-n per giocatore). Valore stimato e prezzo restano in alto.
+- v1271: (SC7) SCAMBIO A 3 del 25/11 16:44: ai Ducks Dyson Daniels e Miles Bridges (Bridges resta in custodia ai Peacocks, DIRITTI prop DUC fino all'inizio dei playoff, AVVISI) + 100 cr (50 PEA, 50 TUR) + 30 post-Draft (DEBITI PEA→DUC 20, TUR→DUC 10); ai Peacocks Haliburton, Sarr e Buzelis (DIRITTI Ducks fino alla giornata 64); ai Turtles Amen Thompson e Clingan. CREDITI DUC 110, PEA 40, TUR 49; MOVIMENTI; TRADES con da:{}. I giocatori passano finito il turno 12: contano dal turno 13.
+- v1272: (SC7 corretto, Francesco) Buzelis resta ai Ducks anche in rosa (i diritti fino alla giornata 64 sono dei Peacocks); Bridges resta ai Peacocks con i diritti dei Ducks (entro l'inizio dei playoff). TRADES, DIRITTI, AVVISI, MOVIMENTI aggiornati.
+- v1273: Dyson Daniels ai PDK ufficiali: tolte da FIX_NOTTE le correzioni del 18/11 (reb2dif+tiro), 20/11 (pdk 38,2) e 22/11 (−2,5). Media 27,14, eff 0,86; anche i punteggi dei turni Dreamers di quelle notti usano i PDK ufficiali.
+- v1274: (1671) Meleek Thomas rimesso in tutte le liste (NASCOSTI vuoto).
+- v1275: (SC7, Francesco) Buzelis NON è sotto diritti: tolti DIRITTI e AVVISI, sistemati TRADES e MOVIMENTI. Resta solo il diritto dei Ducks su Bridges (tenuto dai Peacocks).
+- v1276: (1672) Dyson Daniels valore 980 (era 815) da questa settimana (VAL_FORZA k=4), nel registro come «aggiustamento automatico commissario per prestazioni sopra media» (VAL_FORZA_WHY). Prezzo 110 cr. Dalla prossima domenica riparte il calcolo automatico da 980.
+- v1277: (1673) Giochi › 🔄 Simulatore trade (tempo.js, cur=simtrade): togli giocatori (destinazione squadra o svincolato), prendi free agent o giocatori di altre squadre; tutta la lega rigiocata dalla giornata 1 (G1-G2 incluse) con calendario vero e regole Dreamers (score() della Macchina del tempo), confrontata con la stessa simulazione con le rose di oggi: record, PDK, posizione, partite che cambiano, squadre coinvolte (riceve/cede), classifica simulata, turno per turno.
+- v1278: (1674) Simulatore trade = REALTÀ contro trade: realtà = punteggi veri di Dreamers (drTeam con la rosa vera di ogni turno), giornate 1-2 rigiocate come se fossero di Dreamers (rosa del 1° turno); trade = stessi turni con le rose vere cambiate (chi prendi è tuo dalla giornata 1 e lo perde chi lo aveva; chi cedi esce nei turni in cui era tuo e va alla squadra scelta), drTeam con drForm sostituito e W.acc completato per i free agent. Vale per tutte le squadre coinvolte; classifica realtà contro trade.
+- v1280: (1675) Simulatore trade: media PDK a turno prima/dopo (riquadro e colonna Media della classifica); scambio veloce: per ogni giocatore preso «⇄ in cambio di…» sceglie direttamente chi dai (va alla squadra da cui arriva, svincolato se free agent), anche più di uno (ST.swap, stEff).
+- v1281: (1676) Simulatore trade: PDK totali e medie solo sui turni chiusi (prima entrava anche il turno in corso, a metà, e abbassava la media).
+- v1282: (1677) Simulatore trade: nella REALTÀ le giornate 1-2 sono quelle vere di Dunkest (DR_BASE: V/P per giornata, PDK divisi a metà) → record e medie identici alla classifica; con la trade le giornate 1-2 delle partite con almeno una squadra coinvolta si rigiocano con le regole Dreamers (le altre restano vere).
+- v1283: FIX_NOTTE notte 2026-11-25 (live): Şengün, Jalen Green, Wembanyama +2,5; Buzelis +1,3; Garland −1,5; Towns −0,9 (mod.add).
+- v1284: FIX_NOTTE notte 2026-11-25 (live): Avdija e Lendeborg −0,9 (mod.add).
+- v1285: FIX_NOTTE 2026-11-25 Burries +2 «solo partita» (mod.add+vis): vale nel turno e nella partita, non nelle medie.
+- v1286: FIX_NOTTE 2026-11-25 Davion Mitchell −0,9 (mod.add).
+- v1287: (1679) fixNotte confronta i nomi con tvNm (senza accenti): dal vivo ESPN scrive «Alperen Sengun», e la correzione +2,5 di Şengün non si applicava al live.
+- v1288: FIX_NOTTE 2026-11-25 Davion Mitchell −1,7 in tutto (−0,9 −0,8).
+- v1289: (1680) DR_BONUS: punti extra di squadra per turno (fuori dai giocatori), sommati in drTeam.score. Turno 12 (k=10): Ducks +7.

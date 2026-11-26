@@ -1,0 +1,40 @@
+# DYNASTY TV: associa i video highlights del canale YouTube "The Game Time Highlights" alle partite (hl-data.js).
+# Usa l'API ufficiale YouTube Data v3 con la chiave nel segreto del repository YT_API_KEY. Senza chiave non fa nulla.
+name: highlights-youtube
+on:
+  schedule:
+    # (31/10, richiesta utente) highlights della notte pubblicati entro le 7:30 italiane: dalle 5:03 ogni 10 minuti fino alle 7:53,
+    # poi ogni 15 minuti fino alle 16:53 solo per i video che mancano (se la notte è completa lo script esce subito senza chiamare YouTube).
+    # Orari in UTC (Italia inverno = UTC+1; con l'ora legale scattano un'ora più tardi). GitHub può ritardare qualche minuto le esecuzioni programmate.
+    - cron: "3,13,23,33,43,53 4-6 * * *"
+    - cron: "8,23,38,53 7-15 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: highlights
+  cancel-in-progress: false
+jobs:
+  highlights:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Abbina i video e pubblica
+        env:
+          YT_API_KEY: ${{ secrets.YT_API_KEY }}
+        run: |
+          git config user.name "highlights-bot"
+          git config user.email "highlights-bot@users.noreply.github.com"
+          for i in 1 2 3; do
+            git fetch origin main && git reset --hard origin/main
+            node tools/highlights_yt.mjs
+            if git diff --quiet -- hl-data.js; then echo "Nessun video nuovo"; exit 0; fi
+            git add hl-data.js
+            git commit -m "Dynasty TV: highlights YouTube abbinati [automatico]"
+            git push origin HEAD:main && exit 0
+            sleep 10
+          done
+          exit 1

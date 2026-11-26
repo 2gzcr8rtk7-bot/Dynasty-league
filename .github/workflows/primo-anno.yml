@@ -1,0 +1,35 @@
+name: primo-anno
+# (1663) Primo anno NBA dei giocatori Dreamers (Assistente GM › Rookie ever): Basketball Reference → primo-anno.js.
+# Una volta a settimana aggiunge solo i giocatori nuovi nelle rose; si può lanciare a mano.
+on:
+  schedule:
+    - cron: "41 13 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: primo-anno
+  cancel-in-progress: false
+jobs:
+  primo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Browser senza schermo
+        run: |
+          npm i --no-save --no-package-lock playwright@1.47.2
+          npx playwright install --with-deps chromium
+      - name: Scarica i primi anni
+        run: |
+          git config user.name "primo-anno-bot"
+          git config user.email "primo-anno-bot@users.noreply.github.com"
+          node tools/primo_anno.mjs
+          if [ -z "$(git status --porcelain -- primo-anno.js)" ]; then echo "Nessuna novità"; exit 0; fi
+          git add primo-anno.js
+          git commit -m "Primo anno NBA dei giocatori Dreamers [automatico]"
+          for i in 1 2 3; do git pull --rebase origin main && git push origin HEAD:main && exit 0; sleep 10; done
+          exit 1
