@@ -4428,3 +4428,4 @@ STORIA DEI PREMI (da note e NV_LOG): (311, 27/10) regular+playoff per posizione 
 - v1288: FIX_NOTTE 2026-11-25 Davion Mitchell −1,7 in tutto (−0,9 −0,8).
 - v1289: (1680) DR_BONUS: punti extra di squadra per turno (fuori dai giocatori), sommati in drTeam.score. Turno 12 (k=10): Ducks +7.
 - v1292: (1692-1694) PRESTAZIONI: avvio da ~36 s a ~2 s. fixNotte confronta i nomi in modo veloce (tvNm solo per i nomi con accenti) e applica le correzioni una sola volta per render (FIX_FRESH); drNotti ricostruisce le notti una sola volta per render invece di ~78 (DRNOTTI_C). Correzioni, bonus e dati invariati. Regressione introdotta dal confronto nomi con tvNm (1679).
+- v1293: (1695) PRESTAZIONI: cache per vnz (normalizzazione nomi usata nei calcoli dei valori). Avvio sceso a ~1 s di calcolo (~1,5 s totali). Stessa normalizzazione, solo calcolata una volta per nome. Dati, valori, correzioni e bonus invariati.
