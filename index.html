@@ -16470,8 +16470,8 @@ async function campoDraw(cv,k,a,b,dream){
   x.shadowBlur=0;
   const SLOT=[[.5,.07],[.20,.44],[.80,.44],[.34,.76],[.66,.76]],jwC=96;
   async function onCourt(team,list,end,acc){const st=list.slice(0,5).sort((p,q)=>({C:0,F:1,G:2}[p.r]??3)-({C:0,F:1,G:2}[q.r]??3));
-    const startB=end==='N'?(top+70):(cyMid+92),lenE=end==='N'?655:650,wP=jwC*1.5;
-    for(let i=0;i<st.length;i++){const px=M+50+SLOT[i][0]*(cw-100),py=startB+SLOT[i][1]*lenE;
+    const wP=jwC*1.5;/* specchiato: il CENTRO (depth bassa) sta verso il PROPRIO canestro — nord in alto, sud in basso; caselline sempre sotto la maglia */
+    for(let i=0;i<st.length;i++){const px=M+50+SLOT[i][0]*(cw-100),py=end==='N'?(top+70+SLOT[i][1]*655):((bot-90)-SLOT[i][1]*655);
       const jh=await jersey(team,st[i],px,py,jwC);
       plate(px,py+jh/2-7,drSur(st[i].n)||st[i].n,st[i].e,st[i].r,wP,acc,{lock:true});}}
   await onCourt(a,RA,'N',homeAcc);await onCourt(b,RB,'S',awayAcc);
