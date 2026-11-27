@@ -16473,7 +16473,7 @@ async function campoDraw(cv,k,a,b,dream){
   /* usa la categorizzazione vera della app (top 10 + tribuna/attesa di drTeam): esclude chi e' fuori per trade speciali */
   function roster(team,T){const numById={};(ROSTER[team]||[]).forEach(r=>numById[r[0]]=r[1]);
     const anyNum=n=>{if(numById[n]!=null)return numById[n];for(const t in ROSTER){const f=(ROSTER[t]||[]).find(r=>r[0]===n);if(f)return f[1];}return'';};
-    const seen=new Set(),out=[],key=s=>(typeof tvNm==='function'?tvNm(s):s),push=q=>{const kk=key(q.n);if(seen.has(kk))return;seen.add(kk);out.push({n:q.n,num:anyNum(q.n),e:q.e,r:q.r||(typeof ruoloDi==='function'?ruoloDi(q.n):'')});};
+    const seen=new Set(),out=[],key=s=>(typeof tvNm==='function'?tvNm(s):s),push=q=>{const kk=key(q.n);if(seen.has(kk))return;seen.add(kk);out.push({n:q.n,num:anyNum(q.n),e:q.e,r:q.r||(typeof ruoloDi==='function'?ruoloDi(q.n):''),cap:!!q.cap,m:q.m,f:q.f,half:!!q.half});};
     (T.top||[]).forEach(push);(T.trib||[]).forEach(push);(T.wait||[]).forEach(push);
     return out;}
   const RA=roster(a,A),RB=roster(b,B);
@@ -16488,6 +16488,9 @@ async function campoDraw(cv,k,a,b,dream){
   function pcdCol(lvl){return{v:['#a78bfa','#7c3aed','#fff'],g:['#4ade80','#16a34a','#fff'],y:['#fcd34d','#f5b400','#111'],r:['#f87171','#dc2626','#fff'],na:['#2b313d','#20252f','#9aa3b2']}[lvl]||['#2b313d','#20252f','#9aa3b2'];}
   const roleLvl=e=>typeof pdkLvl==='function'?pdkLvl(e):(e==null?'na':e>=40?'v':e>=30?'g':e>=20?'y':'r');
   function lockIco(cxp,cyp,s,col){x.save();x.strokeStyle=col;x.lineWidth=Math.max(1.3,s*.16);x.beginPath();x.arc(cxp,cyp-s*.14,s*.26,Math.PI*1.08,Math.PI*1.92);x.stroke();x.fillStyle=col;shRR(x,cxp-s*.34,cyp-s*.02,s*.68,s*.5,s*.14);x.fill();x.restore();}
+  /* etichetta ruolo-squadra (capitano ×1,5 / 6° uomo pieno / riserva ½) sopra la capsula */
+  function pill(px,yBot,txt,bg0,bg1,fg,fs){x.save();x.font=SH_F(900,fs,1);const tw=x.measureText(txt).width,padX=fs*.62,h=fs+10,w=tw+padX*2,xl=px-w/2,yt=yBot-h;const g=x.createLinearGradient(0,yt,0,yt+h);g.addColorStop(0,bg0);g.addColorStop(1,bg1);shRR(x,xl,yt,w,h,h/2);x.fillStyle=g;x.fill();x.lineWidth=1.3;x.strokeStyle='rgba(0,0,0,.28)';x.stroke();x.fillStyle=fg;x.textAlign='center';x.textBaseline='middle';x.fillText(txt,px,yt+h/2+.5);x.restore();}
+  function slotPill(px,yBot,slot,fs){if(slot==='cap')pill(px,yBot,'C ×1,5','#fde68a','#f5b400','#1a1203',fs);else if(slot==='six')pill(px,yBot,'6° PIENO','#6ee7b7','#10b981','#06281d',fs);else if(slot==='half')pill(px,yBot,'½','#fbcfe8','#ec4899','#3b0a24',fs);}
   function uniNameFs(names,w,target){let fs=target;while(fs>8){x.font=SH_F(800,fs,1);const br=(fs+16)*.3,avail=w-4*br-20;let ok=true;for(const n of names){if(x.measureText((n||'').toUpperCase()).width>avail){ok=false;break;}}if(ok)break;fs-=1;}return fs;}
   function cardHt(nameFs,pdkFs){return (nameFs+16)+(pdkFs+18);}
   function plate(px,py,name,eVal,role,w,acc,opt){opt=opt||{};
@@ -16501,7 +16504,8 @@ async function campoDraw(cv,k,a,b,dream){
     x.fillStyle='#fff';x.font=SH_F(800,nameFs,1);x.textAlign='center';x.textBaseline='middle';x.fillText((name||'').toUpperCase(),px,by+.5);/* nome dimensione FISSA, uguale per tutti */
     const bx=pxl+br+8;x.beginPath();x.arc(bx,by,br,0,7);x.fillStyle=rc;x.fill();
     x.fillStyle='#0b0d12';x.font=SH_F(900,br*1.2,1);x.textAlign='center';x.fillText(({G:'G',F:'A',A:'A',C:'C'}[role]||'·'),bx,by+.5);
-    x.fillStyle=acc;x.fillRect(pxl+4,py+nh-2.5,w-8,2.5);}
+    x.fillStyle=acc;x.fillRect(pxl+4,py+nh-2.5,w-8,2.5);
+    if(opt.slot)slotPill(px,py-3,opt.slot,opt.slotFs||Math.max(15,nameFs*.72));}
   const M=16,top=310,bot=H0-310,cw=W0-2*M,ch=bot-top,cx=W0/2,cyMid=(top+bot)/2;
   x.save();shRR(x,M,top,cw,ch,24);x.clip();
   if(dream){const gg=x.createLinearGradient(0,top,0,bot);gg.addColorStop(0,CA.bg);gg.addColorStop(.5,'#0c0a20');gg.addColorStop(1,CB.bg);x.globalAlpha=.5;x.fillStyle=gg;x.fillRect(M,top,cw,ch);x.globalAlpha=1;}
@@ -16528,9 +16532,15 @@ async function campoDraw(cv,k,a,b,dream){
   async function onCourt(team,list,end,acc){const st=list.slice(0,5).sort((p,q)=>({C:0,F:1,G:2}[p.r]??3)-({C:0,F:1,G:2}[q.r]??3));
     /* specchiato: il CENTRO verso il PROPRIO canestro; caselline SEMPRE sotto la maglia */
     const RY=rowY(end);
-    for(let i=0;i<st.length;i++){const px=M+50+SLOT[i][0]*(cw-100),py=RY[SLOT[i][1]];
+    /* ali e guardie posizionate SULLA linea da 3: ali sugli angoli alti, guardie in basso vicino al vertice */
+    const ARC=(typeof window!=='undefined'&&window.__ARC)||{w:152,g:112,pad:20};
+    const baseY=end==='N'?top+9:bot-9,adir=end==='N'?1:-1,ayA=baseY+adir*140,R3arc=cw*.42;
+    const onArc=deg=>{const a=deg*Math.PI/180,lo=M+9+wP/2+ARC.pad,hi=W0-M-9-wP/2-ARC.pad;let axx=cx+R3arc*Math.cos(a);axx=Math.max(lo,Math.min(hi,axx));const d2=axx-cx,s=Math.sqrt(Math.max(0,R3arc*R3arc-d2*d2));return[axx,ayA+adir*s];};
+    for(let i=0;i<st.length;i++){let px=M+50+SLOT[i][0]*(cw-100),py=RY[SLOT[i][1]];
+      if(i===1)[px,py]=onArc(ARC.w);else if(i===2)[px,py]=onArc(180-ARC.w);else if(i===3)[px,py]=onArc(ARC.g);else if(i===4)[px,py]=onArc(180-ARC.g);
       const jh=await jersey(team,st[i],px,py,jwC);
-      plate(px,py+jh/2-TUCK,drSur(st[i].n)||st[i].n,st[i].e,st[i].r,wP,acc,{lock:finito(st[i].n),nameFs:NFS,pdkFs:PFS});}}
+      const vv=st[i].f!=null?st[i].f:st[i].e;
+      plate(px,py+jh/2-TUCK,drSur(st[i].n)||st[i].n,vv,st[i].r,wP,acc,{lock:finito(st[i].n),nameFs:NFS,pdkFs:PFS,slot:st[i].cap?'cap':null});}}
   await onCourt(a,RA,'N',homeAcc);await onCourt(b,RB,'S',awayAcc);
   function zoneLabel(txt,px,py,acc,fill){x.font=SH_F(800,22,1);const tw=x.measureText(txt).width,pw=tw+34,ph=34;shRR(x,px,py,pw,ph,ph/2);x.fillStyle=fill;x.fill();x.fillStyle=acc;x.textAlign='left';x.textBaseline='middle';x.fillText(txt,px+17,py+ph/2+1);}
   function chair(px,seatY,w,col){x.fillStyle=col;shRR(x,px-w*.42,seatY-w*.62,w*.84,w*.5,6);x.fill();shRR(x,px-w*.5,seatY,w,w*.26,5);x.fillStyle=col;x.fill();x.fillStyle='rgba(0,0,0,.25)';shRR(x,px-w*.5,seatY+w*.18,w,w*.08,4);x.fill();x.strokeStyle=col;x.lineWidth=4;x.beginPath();x.moveTo(px-w*.4,seatY+w*.26);x.lineTo(px-w*.4,seatY+w*.5);x.moveTo(px+w*.4,seatY+w*.26);x.lineTo(px+w*.4,seatY+w*.5);x.stroke();}
@@ -16540,7 +16550,8 @@ async function campoDraw(cv,k,a,b,dream){
     const BFS=uniNameFs(bench.map(p=>drSur(p.n)||p.n),bw,BFS0*BSC),BPFS=BPFS0*BSC;
     for(let i=0;i<n;i++){const px=startX+slot*i+slot/2,seatY=yTop+BJW*.78;chair(px,seatY,chairW,acc);
       const jy=seatY-jw*.08;await jersey(team,bench[i],px,jy,jw);
-      plate(px,jy+jh/2-jw*.14,drSur(bench[i].n)||bench[i].n,bench[i].e,bench[i].r,bw,acc,{lock:false,nameFs:BFS,pdkFs:BPFS});}}
+      const bp=bench[i],bslot=bp.m==null?null:(bp.half?'half':'six'),bv=bp.f!=null?bp.f:bp.e;
+      plate(px,jy+jh/2-jw*.14,drSur(bp.n)||bp.n,bv,bp.r,bw,acc,{lock:false,nameFs:BFS,pdkFs:BPFS,slot:bslot,slotFs:Math.max(14,BFS*.7)});}}
   /* TRIBUNA senza maglie: solo NOME + PDK (piu grandi, banda piu bassa) */
   async function tribunaZone(team,list,yTop,acc){const trib=list.slice(10);if(!trib.length)return;const TH=78;
     const bg=dream?'rgba(20,16,44,.7)':'rgba(20,24,34,.88)';shRR(x,M,yTop,cw,TH,16);x.fillStyle=bg;x.fill();x.strokeStyle='rgba(255,255,255,.08)';x.lineWidth=2;x.stroke();
