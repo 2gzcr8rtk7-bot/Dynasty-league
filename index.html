@@ -16542,22 +16542,24 @@ async function campoDraw(cv,k,a,b,dream){
 }
 window.campoScontro=async function(k,a,b){
   var old=document.getElementById('cscov');if(old)old.remove();
-  var dream=(typeof CNT!=='undefined'&&!!CNT);
+  var dream=true;/* in questo campo: sempre modalità notte */
   /* nome squadre + punteggio nella barra fissa (tolti dal campo) */
   var _sa,_sb;try{var _W=drWeek(k);_sa=drTeam(k,a,_W).score;_sb=drTeam(k,b,_W).score;}catch(e){}
   var _fmt=function(v){return v==null?'—':(typeof pdkF==='function'?pdkF(v):String(v));};
   var _acc=function(t){return t==='DUC'?'#a3e635':(t==='EAG'?'#facc15':((TEAMS[t].trim&&TEAMS[t].trim!=='#111111')?TEAMS[t].trim:'#e5e7eb'));};
-  var _title='<b style="color:'+_acc(a)+'">'+TEAMS[a].nick.toUpperCase()+'</b> <b style="color:#fff">'+_fmt(_sa)+'</b> <span style="opacity:.5">·</span> <b style="color:#fff">'+_fmt(_sb)+'</b> <b style="color:'+_acc(b)+'">'+TEAMS[b].nick.toUpperCase()+'</b>';
+  var _wa=(_sa!=null&&_sb!=null&&_sa>_sb),_wb=(_sa!=null&&_sb!=null&&_sb>_sa);
+  var _blk=function(t,s,win,mir){var acc=_acc(t);var nk='<b style="font-family:var(--display),system-ui;font-style:italic;font-weight:800;font-size:12.5px;letter-spacing:.04em;color:'+acc+'">'+TEAMS[t].nick.toUpperCase()+'</b>';var sc='<b style="font-family:var(--display),system-ui;font-style:italic;font-weight:800;font-size:21px;line-height:1;color:'+(win?'#fff':'rgba(233,238,246,.66)')+(win?';text-shadow:0 0 16px '+acc:'')+'">'+_fmt(s)+'</b>';return '<span style="display:inline-flex;align-items:baseline;gap:6px">'+(mir?sc+nk:nk+sc)+'</span>';};
+  var _title=_blk(a,_sa,_wa,false)+'<span style="color:#5b6472;font-family:var(--display),system-ui;font-style:italic;font-weight:800;font-size:16px;margin:0 3px">·</span>'+_blk(b,_sb,_wb,true);
   var ov=document.createElement('div');ov.id='cscov';
   ov.style.cssText='position:fixed;inset:0;z-index:100000;background:#07060f;overflow:auto;-webkit-overflow-scrolling:touch';
-  ov.innerHTML='<div style="position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:calc(10px + env(safe-area-inset-top,0px)) calc(12px + env(safe-area-inset-right,0px)) 10px calc(12px + env(safe-area-inset-left,0px));background:rgba(7,6,15,.92);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:2">'
-    +'<button id="cscx" style="background:#2a2f3d;color:#fff;border:0;border-radius:10px;padding:11px 16px;font:700 16px system-ui;cursor:pointer">‹ Chiudi</button>'
-    +'<span style="flex:1;min-width:0;text-align:center;color:#cbd5e1;font:800 14px system-ui;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+_title+'</span>'
-    +'<button id="csctg" style="background:#2a2f3d;color:#fff;border:0;border-radius:10px;padding:11px 16px;font:700 14px system-ui;cursor:pointer"></button></div>'
+  ov.innerHTML='<div style="position:sticky;top:0;display:flex;align-items:center;gap:10px;padding:calc(8px + env(safe-area-inset-top,0px)) calc(12px + env(safe-area-inset-right,0px)) 8px calc(12px + env(safe-area-inset-left,0px));background:linear-gradient(180deg,rgba(9,7,26,.97),rgba(7,6,15,.92));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:2;border-bottom:1px solid rgba(163,230,53,.15)">'
+    +'<button id="cscx" style="flex:none;background:rgba(255,255,255,.07);color:#dce3ec;border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:6px 11px;font:700 13px system-ui;cursor:pointer">‹ Chiudi</button>'
+    +'<span style="flex:1;min-width:0;display:flex;align-items:baseline;justify-content:center;gap:8px;white-space:nowrap;overflow:hidden">'+_title+'</span>'
+    +'</div>'
     +'<div style="padding:4px 10px calc(40px + env(safe-area-inset-bottom,0px))"><p id="cscld" style="color:#8b93a7;text-align:center;font:600 15px system-ui;margin:26px">Preparo la visuale…</p>'
     +'<canvas id="csccv" style="width:100%;max-width:560px;margin:0 auto;display:none;border-radius:12px"></canvas></div>';
   document.body.appendChild(ov);
-  var cv=ov.querySelector('#csccv'),ld=ov.querySelector('#cscld'),tg=ov.querySelector('#csctg');
+  var cv=ov.querySelector('#csccv'),ld=ov.querySelector('#cscld');
   /* chiusura: tasto, gesto «indietro» del telefono, ed Esc */
   var closed=false;
   function close(){if(closed)return;closed=true;try{window.removeEventListener('popstate',onPop);}catch(_){}document.removeEventListener('keydown',onKey);ov.remove();}
@@ -16566,11 +16568,9 @@ window.campoScontro=async function(k,a,b){
   function goBack(){try{if(history.state&&history.state.csc){history.back();return;}}catch(_){}close();}
   try{history.pushState({csc:1},'');window.addEventListener('popstate',onPop);}catch(_){}
   document.addEventListener('keydown',onKey);
-  function lbl(){tg.textContent=dream?'☀️':'🌙';tg.setAttribute('aria-label',dream?'Stile Classico':'Stile Notte');tg.title=dream?'Classico':'Notte';}
   async function go(){ld.style.display='block';cv.style.display='none';try{await campoDraw(cv,k,a,b,dream);cv.style.display='block';}catch(e){console.error(e);ld.textContent='Errore nel disegno.';}finally{if(cv.style.display==='block')ld.style.display='none';}}
-  lbl();await go();
+  await go();
   ov.querySelector('#cscx').onclick=goBack;
-  tg.onclick=async function(){dream=!dream;lbl();await go();};
 };
 document.addEventListener('click',function(e){var h=e.target&&e.target.closest&&e.target.closest('[data-campo]');if(!h)return;e.preventDefault();try{if(typeof SHR_DUEL!=='undefined'&&SHR_DUEL&&SHR_DUEL.a)campoScontro(SHR_DUEL.k,SHR_DUEL.a,SHR_DUEL.b);}catch(_){}},false);
 })();
