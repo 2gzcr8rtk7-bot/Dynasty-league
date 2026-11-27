@@ -5969,7 +5969,7 @@ let HN_H={};try{HN_H=JSON.parse(localStorage.getItem("dl_hh")||"{}")||{}}catch(e
 const HN_ORD=["DUC","DOL","FOX","PEA","SPI","EAG","TUR","MOO"];let HN_SO="",HN_SI=0;try{HN_SO=localStorage.getItem("dl_hso")==="team"?"team":"";HN_SI=Math.max(0,Math.min(7,+localStorage.getItem("dl_hsi")||0))}catch(e){}
 let HN_T="";try{HN_T=localStorage.getItem("dl_hnt")||""}catch(e){}
 /* (625) Home live: "pdk" (solo PDK, come prima) o "box" (box score sotto il nome, PDK accanto al cognome); scelta in Impostazioni > Aspetto della Home, vale per le due Home live e per i seguiti */
-let HN_BX="1";try{HN_BX=localStorage.getItem("dl_hbx")==="0"?"":"1"}catch(e){}
+let HN_BX="1";/* (home) sempre box score + PDK: niente più modalità «solo PDK» */try{if(localStorage.getItem("dl_hbx")!==null)localStorage.removeItem("dl_hbx")}catch(e){}
 function hnBxSet(v){HN_BX=v==="1"?"1":"";try{HN_BX?localStorage.removeItem("dl_hbx"):localStorage.setItem("dl_hbx","0")}catch(e){}}
 function hnBoxHtml(n,N){try{if(!HN_BX||!N||!N.k||!TV.box[N.k])return"";const k=tvNm(n),B=TV.box[N.k],r=(B[N.sd]||[]).find(p=>tvNm(p[0])===k);if(!r)return"";let h=snBoxR(r).replace(/<em class="bxt">.*?<\/em>/,"");return h}catch(e){return""}}
 /* (637) a partita finita nella Home si vedono anche i minuti giocati (box: prima cella MIN; versione snella: accanto a "Finale") */
@@ -5980,7 +5980,7 @@ function hnMinN(n,N){try{if(!N||N.lv||!N.k||!TV.box[N.k])return null;const k=tvN
 const homeMyT=()=>{if(HN_T&&TEAMS[HN_T])return HN_T;let t=curTeam;try{const x=localStorage.getItem("team");if(x&&TEAMS[x])t=x}catch(e){}return t};
 function hnOptsHtml(){const sc=(k)=>k==="5"?`<div class="hnsch"><div style="display:grid;grid-template-columns:repeat(8,1fr);gap:2px">${"<i style='height:9px'></i>".repeat(8)}</div><b style="height:11px"></b><b style="height:15px"></b><b style="height:15px"></b></div>`:k==="6"?`<div class="hnsch" style="grid-template-columns:9px 1fr;gap:4px"><div style="display:grid;gap:2px">${"<i style='height:5px'></i>".repeat(8)}</div><div style="display:grid;gap:3px;align-content:start"><b style="height:11px"></b><b style="height:20px"></b><b style="height:20px"></b></div></div>`:`<div class="hnsch" style="grid-template-columns:1fr 1fr;gap:3px">${"<i style='height:12px'></i>".repeat(8)}</div>`;
   const L=hnLay(),o=(k,n,d)=>`<button class="hnopt${L===k?" on":""}" data-hnl="${k}" aria-pressed="${L===k}">${sc(k)}<span>${n}</span><small>${d}</small></button>`;
-  return`<div class="hngrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${o("0","Griglia","Come prima")}${o("6","Loghi a lato","Con i dati")}${o("5","Loghi in cima","Con i dati")}</div><p class="setnote" style="margin:10px 0 6px">Dati dei giocatori nelle partite live (e nei giocatori seguiti):</p><div class="setchips"><button data-hbx="1" aria-pressed="${HN_BX==="1"}">BOX · box score + PDK</button><button data-hbx="" aria-pressed="${HN_BX!=="1"}">Snella · solo PDK</button></div>`}
+  return`<div class="hngrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${o("0","Griglia","Come prima")}${o("6","Loghi a lato","Con i dati")}${o("5","Loghi in cima","Con i dati")}</div>`}
 function hnVerHtml(){const S=hnScope(),T=homeMyT(),on=(v)=>v==="all"?S==="all":S==="team"&&T===v;
   const tile=(v,lg,n,d)=>`<button class="hnopt hnv${on(v)?" on":""}" data-hnv="${v}" aria-pressed="${on(v)}"><span class="hnvl">${lg}</span><span>${n}</span><small>${d}</small></button>`;
   return`<div class="hngrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${tile("all",'<b class="hnvs">★</b>',"Ufficiale","Tutte le squadre")}${teamOrd().map(t=>tile(t,badge(t),TEAMS[t].nick,"Solo i suoi giocatori")).join("")}</div>`}
@@ -6000,7 +6000,7 @@ document.addEventListener("visibilitychange",()=>{if(!document.hidden&&typeof cu
 {let fz=null;setInterval(()=>{try{if(typeof cur==="undefined"||cur!=="home"||document.hidden)return;const f=String(homeFase()||"");if(fz!==null&&f!==fz){hnLive();const y=scrollY;render();scrollTo(0,y)}fz=f}catch(_){}},60e3)}
 function hnSav(){}/* (1578) posizione della casella non più salvata */
 /* (626) dalle 14:00 (fase pre) il giro ha una 4a pagina: Previsione > Risultati > Classifica > Notte appena avvenuta > Previsione. Prima delle 14 la notte appena avvenuta è la pagina predefinita e la Previsione non esiste. */
-const HN_PGN4=["Previsione","Risultati","Classifica","Notte"],HN_PGN3=["Risultati","Scontri","Classifica"];let HN_PGN=HN_PGN3;
+const HN_PGN4=["Previsione","Risultati","Classifica","Notte"],HN_PGN3=["Risultati","Turno","Classifica"];let HN_PGN=HN_PGN3;
 const HN_CTL="one"; /* "wheel" = rotella · "arr" = freccette */
 function hnDots(){const d=HN_PGN.map((n,i)=>`<button type="button" class="${i===HN_PG?"on":""}" data-hpg="${i}" aria-label="${n}" role="tab" aria-selected="${i===HN_PG}"></button>`).join("");
   if(HN_CTL==="one")return`<div class="hmdots one"><button type="button" class="hmarr hmone" data-hdir="-1" aria-label="Pagina precedente">‹</button><button type="button" class="hmarr hmone" data-hdir="1" aria-label="Pagina successiva (giro infinito)">›</button></div>`;
