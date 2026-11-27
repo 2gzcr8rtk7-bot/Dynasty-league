@@ -16446,6 +16446,8 @@ async function campoDraw(cv,k,a,b,dream){
   const accentOf=t=>ACC[t]||(TEAMS[t].trim&&TEAMS[t].trim!=='#111111'?TEAMS[t].trim:TEAMS[t].bg);
   const homeAcc=accentOf(a),awayAcc=accentOf(b);
   const valOf=e=>e==null?'—':(typeof pdkF==='function'?pdkF(e):String(Math.round(e*10)/10).replace('.',','));
+  /* lucchetto solo se il giocatore è «finito»: tutte le sue partite del turno concluse e nessuna live (punteggio ormai definitivo) */
+  const finito=n=>{try{const gi=drSettimana(n,W).filter(Boolean);return gi.length>0&&gi.every(y=>y.fin)&&!gi.some(y=>y.lv);}catch(e){return false;}};
   /* usa la categorizzazione vera della app (top 10 + tribuna/attesa di drTeam): esclude chi e' fuori per trade speciali */
   function roster(team,T){const numById={};(ROSTER[team]||[]).forEach(r=>numById[r[0]]=r[1]);
     const anyNum=n=>{if(numById[n]!=null)return numById[n];for(const t in ROSTER){const f=(ROSTER[t]||[]).find(r=>r[0]===n);if(f)return f[1];}return'';};
@@ -16506,7 +16508,7 @@ async function campoDraw(cv,k,a,b,dream){
     const RY=rowY(end);
     for(let i=0;i<st.length;i++){const px=M+50+SLOT[i][0]*(cw-100),py=RY[SLOT[i][1]];
       const jh=await jersey(team,st[i],px,py,jwC);
-      plate(px,py+jh/2-TUCK,drSur(st[i].n)||st[i].n,st[i].e,st[i].r,wP,acc,{lock:true,nameFs:NFS,pdkFs:PFS});}}
+      plate(px,py+jh/2-TUCK,drSur(st[i].n)||st[i].n,st[i].e,st[i].r,wP,acc,{lock:finito(st[i].n),nameFs:NFS,pdkFs:PFS});}}
   await onCourt(a,RA,'N',homeAcc);await onCourt(b,RB,'S',awayAcc);
   function zoneLabel(txt,px,py,acc,fill){x.font=SH_F(800,22,1);const tw=x.measureText(txt).width,pw=tw+34,ph=34;shRR(x,px,py,pw,ph,ph/2);x.fillStyle=fill;x.fill();x.fillStyle=acc;x.textAlign='left';x.textBaseline='middle';x.fillText(txt,px+17,py+ph/2+1);}
   function chair(px,seatY,w,col){x.fillStyle=col;shRR(x,px-w*.42,seatY-w*.62,w*.84,w*.5,6);x.fill();shRR(x,px-w*.5,seatY,w,w*.26,5);x.fillStyle=col;x.fill();x.fillStyle='rgba(0,0,0,.25)';shRR(x,px-w*.5,seatY+w*.18,w,w*.08,4);x.fill();x.strokeStyle=col;x.lineWidth=4;x.beginPath();x.moveTo(px-w*.4,seatY+w*.26);x.lineTo(px-w*.4,seatY+w*.5);x.moveTo(px+w*.4,seatY+w*.26);x.lineTo(px+w*.4,seatY+w*.5);x.stroke();}
