@@ -1,0 +1,281 @@
+<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=430,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Archivo:ital,wght@0,600;0,800;1,800;1,900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+:root{
+  --num:'Archivo',system-ui; --disp:'Oswald',system-ui; --body:'Inter',system-ui;
+}
+html,body{background:#05060b;color:#fff;font-family:var(--body)}
+.wrap{width:430px;margin:0 auto;padding:0 0 40px;position:relative;overflow:hidden}
+.bgfx{position:absolute;inset:0;z-index:0;pointer-events:none}
+.content{position:relative;z-index:1;padding:0 16px}
+.row{display:flex;align-items:center;gap:10px}
+.spacer{flex:1}
+/* ---------- TOP BAR ---------- */
+.top{display:flex;align-items:center;gap:12px;padding:16px 16px 10px}
+.logo-app{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#38e1ff,#1f6bff);box-shadow:0 8px 24px rgba(31,107,255,.45),inset 0 1px 0 rgba(255,255,255,.4)}
+.logo-app svg{width:26px;height:26px}
+.brand{font-family:var(--disp);font-weight:700;font-size:28px;letter-spacing:.5px;line-height:1}
+.brand small{display:block;font-family:var(--body);font-weight:600;font-size:9.5px;letter-spacing:3px;color:#8ea0c0;margin-top:3px}
+.icobtn{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.icobtn svg{width:20px;height:20px;stroke:#cdd7ea;fill:none;stroke-width:2}
+/* ---------- TABS ---------- */
+.tabs{display:flex;gap:8px;padding:4px 16px 14px;overflow:hidden}
+.tab{font-family:var(--disp);font-weight:600;font-size:13px;letter-spacing:1px;padding:9px 14px;border-radius:11px;color:#8ea0c0;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);white-space:nowrap}
+.tab.on{color:#05060b;background:linear-gradient(180deg,#5de3ff,#22b8f0);box-shadow:0 6px 18px rgba(45,200,255,.4)}
+/* ---------- SEARCH ---------- */
+.search{display:flex;gap:10px;margin:2px 0 16px}
+.search .box{flex:1;display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);color:#8ea0c0;font-size:15px;font-weight:500;backdrop-filter:blur(12px)}
+.search .box svg{width:18px;height:18px;stroke:#8ea0c0;fill:none;stroke-width:2}
+.bmk{width:52px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(180deg,#ffd34d,#f5a700);box-shadow:0 8px 20px rgba(245,167,0,.4)}
+.bmk svg{width:20px;height:20px;fill:#3a2500}
+/* ---------- TEAM CHIPS ---------- */
+.chips{display:flex;gap:9px;overflow:hidden;padding:2px 0 18px}
+.chip{flex:0 0 auto;width:78px;border-radius:17px;padding:9px 6px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;position:relative;overflow:hidden;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+.chip .glow{position:absolute;inset:0;opacity:.9;background:radial-gradient(120% 70% at 50% 0%,var(--c) 0%,transparent 62%);opacity:.35}
+.chip img{width:46px;height:46px;object-fit:contain;position:relative;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5))}
+.chip .rec{position:relative;font-family:var(--num);font-weight:800;font-size:14px;letter-spacing:.3px}
+.chip .rec.bad{color:#9aa6bd}
+/* ---------- SECTION LABEL ---------- */
+.seclab{font-family:var(--disp);font-weight:600;letter-spacing:2px;font-size:13px;color:#9fb0cf;margin:4px 2px 12px;display:flex;align-items:center;gap:8px}
+.seclab b{color:#fff}
+.seclab .dot{width:6px;height:6px;border-radius:50%;background:#38e1ff;box-shadow:0 0 10px #38e1ff}
+/* ---------- MATCH CARDS ---------- */
+.matches{display:flex;flex-direction:column;gap:12px;margin-bottom:22px}
+.mc{border-radius:22px;padding:15px 16px;position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(16px);box-shadow:0 14px 34px rgba(0,0,0,.45)}
+.mc .side{display:flex;align-items:center;gap:11px;flex:1;min-width:0}
+.mc .side.r{flex-direction:row-reverse;text-align:right}
+.mc .tlogo{width:48px;height:48px;object-fit:contain;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5))}
+.mc .tn{font-family:var(--disp);font-weight:600;font-size:15px;letter-spacing:.5px;line-height:1.05;text-transform:uppercase}
+.mc .tn small{display:block;font-family:var(--body);font-weight:600;font-size:10px;color:#92a2c0;letter-spacing:.5px;margin-top:2px}
+.mc .sc{font-family:var(--num);font-weight:800;font-style:italic;font-size:30px;letter-spacing:-.5px;line-height:1}
+.mc .mid{display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 10px}
+.mc .vs{font-family:var(--disp);font-weight:700;font-size:12px;color:#8ea0c0;letter-spacing:1px}
+.mc .bar{height:7px;border-radius:7px;margin-top:13px;overflow:hidden;background:rgba(255,255,255,.08);display:flex}
+.mc .bar i{height:100%;display:block}
+.mc .barwrap{display:flex;align-items:center;gap:10px}
+.mc .pct{font-family:var(--num);font-weight:800;font-size:12px;color:#aebbd4}
+/* INJURY badge */
+.inj{display:inline-flex;align-items:center;gap:5px;padding:4px 9px 4px 6px;border-radius:999px;font-family:var(--num);font-weight:800;font-size:13px;line-height:1;background:linear-gradient(180deg,rgba(255,86,86,.22),rgba(255,40,40,.12));border:1px solid rgba(255,90,90,.4);color:#ff9d9d;box-shadow:0 0 14px rgba(255,60,60,.18)}
+.inj .cross{width:16px;height:16px;border-radius:5px;background:linear-gradient(180deg,#ff6a6a,#e11d1d);display:grid;place-items:center;box-shadow:0 2px 6px rgba(225,29,29,.5)}
+.inj .cross:before{content:"";width:8px;height:8px;background:#fff;-webkit-mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M9 2h6v7h7v6h-7v7H9v-7H2V9h7z'/></svg>") center/contain no-repeat;mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M9 2h6v7h7v6h-7v7H9v-7H2V9h7z'/></svg>") center/contain no-repeat}
+.injrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+/* ---------- NIGHT / PLAYERS ---------- */
+.nighthead{display:flex;align-items:center;justify-content:center;gap:14px;padding:12px;border-radius:16px 16px 0 0;background:linear-gradient(180deg,rgba(255,255,255,.06),transparent);font-family:var(--disp);font-weight:600;letter-spacing:2px;color:#ff5db0;font-size:15px}
+.nighthead svg{width:16px;height:16px;stroke:#ff5db0;fill:none;stroke-width:2.5}
+.panel{border-radius:22px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(16px);box-shadow:0 14px 34px rgba(0,0,0,.45)}
+.ptabs{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 6px}
+.ptabs .l{font-family:var(--disp);letter-spacing:1.5px;font-weight:600;color:#ff5db0;font-size:13px}
+.ptabs .r{font-family:var(--disp);letter-spacing:1px;font-weight:600;color:#9fb0cf;font-size:12px;border-bottom:2px solid #ff5db0;padding-bottom:4px}
+.pl{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid rgba(255,255,255,.055)}
+.pl .av{width:30px;height:30px;object-fit:contain}
+.pl .nm{font-weight:700;font-size:16px;line-height:1.1}
+.pl .nm small{display:block;font-weight:500;font-size:11px;color:#8ea0c0;margin-top:2px;letter-spacing:.3px}
+.pl .pdk{margin-left:auto;font-family:var(--num);font-weight:800;font-size:17px;padding:7px 13px;border-radius:11px;min-width:62px;text-align:center}
+.lv-v{background:linear-gradient(180deg,#a78bfa,#7c3aed);color:#fff;box-shadow:0 6px 16px rgba(124,58,237,.4)}
+.lv-g{background:linear-gradient(180deg,#4ade80,#16a34a);color:#06230f;box-shadow:0 6px 16px rgba(22,163,74,.35)}
+.lv-y{background:linear-gradient(180deg,#fcd34d,#f5b400);color:#3a2600}
+.lv-r{background:linear-gradient(180deg,#f87171,#dc2626);color:#fff}
+
+/* =================== TEMA 2 · AURORA =================== */
+html.v2 body,html.v2{background:#070612}
+html.v2 .bgfx{background:
+  radial-gradient(60% 40% at 15% 8%,rgba(124,58,237,.55),transparent 60%),
+  radial-gradient(55% 35% at 92% 16%,rgba(236,72,153,.45),transparent 60%),
+  radial-gradient(70% 45% at 50% 55%,rgba(34,122,240,.4),transparent 62%),
+  radial-gradient(50% 40% at 80% 90%,rgba(16,185,129,.3),transparent 60%)}
+html.v2 .mc,html.v2 .panel,html.v2 .chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(26px) saturate(1.2);border-radius:26px}
+html.v2 .mc{box-shadow:0 20px 50px rgba(10,6,30,.6),inset 0 1px 0 rgba(255,255,255,.18)}
+html.v2 .search .box{border-radius:20px;background:rgba(255,255,255,.08);backdrop-filter:blur(24px)}
+
+/* =================== TEMA 3 · PLATINUM (minimal) =================== */
+html.v3 body,html.v3{background:#070708}
+html.v3 .bgfx{background:radial-gradient(80% 50% at 50% -5%,rgba(60,64,78,.5),transparent 60%)}
+html.v3 .brand{font-weight:500;letter-spacing:4px}
+html.v3 .tab.on{background:linear-gradient(180deg,#e8ecf4,#c3cad8);color:#0b0c10;box-shadow:none}
+html.v3 .tab{background:transparent;border-color:rgba(255,255,255,.1)}
+html.v3 .chip{background:transparent;border:1px solid rgba(255,255,255,.1);border-radius:16px}
+html.v3 .chip .glow{opacity:.14}
+html.v3 .mc,html.v3 .panel{background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));border:1px solid rgba(255,255,255,.1);box-shadow:0 10px 30px rgba(0,0,0,.5);backdrop-filter:blur(10px);border-radius:20px}
+html.v3 .mc .sc{font-weight:600;font-style:normal;letter-spacing:1px}
+html.v3 .seclab .dot,html.v3 .logo-app{background:linear-gradient(145deg,#e9edf5,#aab4c6)}
+html.v3 .nighthead,html.v3 .ptabs .l,html.v3 .ptabs .r{color:#c9d2e2}
+html.v3 .nighthead svg{stroke:#c9d2e2}
+html.v3 .ptabs .r{border-color:#c9d2e2}
+html.v3 .bmk{background:linear-gradient(180deg,#e9edf5,#b9c2d2)}
+html.v3 .bmk svg{fill:#20242c}
+html.v3 .inj{background:transparent;border:1px solid rgba(255,120,120,.5);color:#ff8a8a;box-shadow:none;font-weight:700}
+html.v3 .inj .cross{background:none;box-shadow:none}
+html.v3 .inj .cross:before{background:#ff8a8a}
+
+/* =================== TEMA 4 · 2K ENERGETIC =================== */
+html.v4 body,html.v4{background:#0a0712}
+html.v4 .bgfx{background:
+  linear-gradient(135deg,rgba(124,58,237,.3),transparent 40%),
+  linear-gradient(-135deg,rgba(236,72,153,.25),transparent 45%),
+  repeating-linear-gradient(115deg,rgba(255,255,255,.015) 0 2px,transparent 2px 9px)}
+html.v4 .mc{padding:0;border:0;border-radius:22px;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.55)}
+html.v4 .mc .splitbg{position:absolute;inset:0;z-index:0}
+html.v4 .mc .splitbg:before,html.v4 .mc .splitbg:after{content:"";position:absolute;top:0;bottom:0;width:62%}
+html.v4 .mc .splitbg:before{left:0;background:linear-gradient(120deg,var(--ca),transparent);clip-path:polygon(0 0,100% 0,78% 100%,0 100%);opacity:.9}
+html.v4 .mc .splitbg:after{right:0;background:linear-gradient(240deg,var(--cb),transparent);clip-path:polygon(22% 0,100% 0,100% 100%,0 100%);opacity:.9}
+html.v4 .mc>.inner{position:relative;z-index:1;padding:15px 16px;background:linear-gradient(180deg,rgba(5,6,12,.35),rgba(5,6,12,.72))}
+html.v4 .mc .sc{font-family:var(--num);font-style:italic;font-weight:900;font-size:34px;text-shadow:0 3px 10px rgba(0,0,0,.6)}
+html.v4 .tn{font-weight:700}
+html.v4 .chip{border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.05),transparent);border:1px solid rgba(255,255,255,.1)}
+html.v4 .inj{border-radius:8px;background:linear-gradient(180deg,#ff5a5a,#d61111);border:0;color:#fff;box-shadow:0 4px 12px rgba(214,17,17,.5);font-weight:900}
+html.v4 .inj .cross{background:rgba(255,255,255,.22)}
+html.v4 .inj .cross:before{background:#fff}
+
+/* ================= ELEVAZIONE CYBER (tutti i temi) ================= */
+/* v1 default: fondo cyber cyan/magenta */
+.bgfx{background:
+  radial-gradient(70% 42% at 18% 0%,rgba(0,208,255,.16),transparent 60%),
+  radial-gradient(60% 38% at 92% 10%,rgba(255,0,170,.13),transparent 60%),
+  radial-gradient(95% 60% at 50% 102%,rgba(90,0,210,.22),transparent 72%)}
+/* griglia tech + vignetta */
+.wrap::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(140,200,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(140,200,255,.05) 1px,transparent 1px);
+  background-size:36px 36px;-webkit-mask-image:radial-gradient(120% 70% at 50% -5%,#000 25%,transparent 78%);mask-image:radial-gradient(120% 70% at 50% -5%,#000 25%,transparent 78%);opacity:.6}
+/* linea-accento + angoli HUD sulle card sfida */
+.mc::before{content:"";position:absolute;left:14px;right:14px;top:0;height:2px;border-radius:2px;z-index:2;
+  background:linear-gradient(90deg,transparent,var(--ca),var(--cb),transparent);filter:drop-shadow(0 0 7px var(--ca))}
+.mc::after{content:"";position:absolute;inset:7px;border-radius:16px;pointer-events:none;z-index:2;
+  background:
+   linear-gradient(var(--ca),var(--ca)) left top/16px 2px no-repeat,
+   linear-gradient(var(--ca),var(--ca)) left top/2px 16px no-repeat,
+   linear-gradient(var(--cb),var(--cb)) right bottom/16px 2px no-repeat,
+   linear-gradient(var(--cb),var(--cb)) right bottom/2px 16px no-repeat;opacity:.55}
+.mc,.panel{position:relative}
+/* glow punteggi */
+.mc .sc{text-shadow:0 0 20px rgba(130,190,255,.3)}
+/* anello neon sui loghi chip */
+.chip{box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),0 10px 22px rgba(0,0,0,.45)}
+.chip::after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.2px;z-index:2;
+  background:linear-gradient(155deg,var(--c),transparent 58%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.6}
+/* glow sulle pill PDK */
+.pdk{text-shadow:0 1px 1px rgba(0,0,0,.25)}
+.lv-v{box-shadow:0 6px 16px rgba(124,58,237,.45),inset 0 1px 0 rgba(255,255,255,.35)}
+.lv-g{box-shadow:0 6px 16px rgba(22,163,74,.4),inset 0 1px 0 rgba(255,255,255,.35)}
+/* alone pulsante infortunio */
+.inj::after{content:"";position:absolute;inset:-3px;border-radius:999px;border:1px solid rgba(255,80,80,.35);opacity:.55}
+/* intestazione notte: underline glow */
+.ptabs .r{text-shadow:0 0 10px rgba(255,93,176,.5)}
+
+/* ---- V2 AURORA: palette più ricca + glow glass ---- */
+html.v2 .bgfx{background:
+  radial-gradient(58% 40% at 12% 6%,rgba(139,92,246,.6),transparent 60%),
+  radial-gradient(52% 34% at 93% 14%,rgba(244,63,142,.5),transparent 60%),
+  radial-gradient(70% 46% at 48% 52%,rgba(20,140,255,.45),transparent 62%),
+  radial-gradient(52% 42% at 82% 92%,rgba(16,220,170,.35),transparent 60%),#070612}
+html.v2 .mc::after,html.v2 .chip::after{opacity:.75}
+html.v2 .pl .pdk{backdrop-filter:none}
+/* ---- V3 PLATINUM: accenti cyber-acciaio freddi ---- */
+html.v3 .bgfx{background:
+  radial-gradient(80% 50% at 50% -5%,rgba(70,86,110,.5),transparent 60%),
+  radial-gradient(40% 30% at 85% 12%,rgba(60,150,200,.12),transparent 60%),#070708}
+html.v3 .mc::before{background:linear-gradient(90deg,transparent,#8fa6c4,#cfe0f2,transparent);filter:drop-shadow(0 0 5px rgba(150,180,220,.4))}
+html.v3 .mc::after{background:
+   linear-gradient(#9fb2cc,#9fb2cc) left top/14px 1.5px no-repeat,
+   linear-gradient(#9fb2cc,#9fb2cc) left top/1.5px 14px no-repeat,
+   linear-gradient(#9fb2cc,#9fb2cc) right bottom/14px 1.5px no-repeat,
+   linear-gradient(#9fb2cc,#9fb2cc) right bottom/1.5px 14px no-repeat;opacity:.5}
+html.v3 .mc .sc{text-shadow:none}
+html.v3 .chip::after{background:linear-gradient(155deg,rgba(180,195,215,.6),transparent 58%)}
+html.v3 .lv-v{background:linear-gradient(180deg,#c9b8ff,#8b6cf0);box-shadow:0 5px 14px rgba(124,58,237,.3)}
+/* ---- V4 2K: bordi neon + angoli accesi ---- */
+html.v4 .mc::before{top:0;height:3px;filter:drop-shadow(0 0 10px var(--ca))}
+html.v4 .mc::after{inset:8px;opacity:.85}
+html.v4 .mc>.inner{box-shadow:inset 0 0 40px rgba(0,0,0,.4)}
+html.v4 .mc .sc{text-shadow:0 0 22px rgba(255,255,255,.25),0 3px 10px rgba(0,0,0,.6)}
+</style></head>
+<style>
+.switcher{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;gap:6px;justify-content:center;padding:calc(8px + env(safe-area-inset-top,0px)) 10px 8px;background:rgba(5,6,11,.82);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08)}
+.switcher button{font-family:var(--disp,system-ui);font-weight:600;letter-spacing:1px;font-size:11px;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#9fb0cf;cursor:pointer}
+.switcher button.on{background:linear-gradient(180deg,#5de3ff,#22b8f0);color:#05060b;border-color:transparent;box-shadow:0 4px 14px rgba(45,200,255,.4)}
+.wrap{padding-top:58px}
+</style>
+<div class="switcher" id="sw">
+ <button data-s="" class="on">GLASS</button><button data-s="v2">AURORA</button><button data-s="v3">PLATINUM</button><button data-s="v4">2K</button>
+</div>
+<div class="wrap"><div class="bgfx"></div>
+<div class="content" id="app"></div></div>
+<script>
+const TEAMS={
+ DUC:{city:'Texas',nick:'Ducks',bg:'#5b21b6',fg:'#a3e635',logo:'loghi/duc-25.webp?v=1',rec:'9-2'},
+ EAG:{city:'San Diego',nick:'Eagles',bg:'#0f1b4d',fg:'#facc15',logo:'img/756630104519.webp',rec:'8-3'},
+ FOX:{city:'Detroit',nick:'Foxes',bg:'#f97316',fg:'#fff',logo:'img/cc9ccfb8f0bc.webp',rec:'8-3'},
+ SPI:{city:'Sacramento',nick:'Spiders',bg:'#8cc9f5',fg:'#0f1f3d',logo:'img/f85596a38af8.webp',rec:'6-5'},
+ DOL:{city:'Salt Lake',nick:'Dolphins',bg:'#1747c9',fg:'#fff',logo:'img/80465239f661.webp',rec:'5-6'},
+ PEA:{city:'Dakota',nick:'Peacocks',bg:'#f70990',fg:'#ff7a1a',logo:'img/447ab01f859c.webp',rec:'5-6'},
+ MOO:{city:'Alaska',nick:'Mooses',bg:'#7cc4f0',fg:'#fff',logo:'img/c75de376d2cb.webp',rec:'2-9'},
+ TUR:{city:'California',nick:'Turtles',bg:'#16a34a',fg:'#7dd3fc',logo:'img/e5e4d392816e.webp',rec:'1-10'}};
+const ORD=['DUC','EAG','FOX','SPI','DOL','PEA','MOO','TUR'];
+const MATCH=[
+ {a:'DUC',sa:'298,0',ia:3,b:'EAG',sb:'248,7',ib:4,pa:62},
+ {a:'FOX',sa:'213,6',ia:3,b:'SPI',sb:'322,2',ib:4,pa:28},
+ {a:'DOL',sa:'274,4',ia:1,b:'PEA',sb:'167,3',ib:6,pa:76},
+ {a:'MOO',sa:'160,8',ia:2,b:'TUR',sb:'145,6',ib:4,pa:55}];
+const TOP=[
+ {n:'Victor Wembanyama',team:'DUC',nba:'SAS',pdk:'49,8',lv:'v'},
+ {n:'Nikola Jokić',team:'DOL',nba:'DEN',pdk:'47,3',lv:'v'},
+ {n:'Giannis Antetokounmpo',team:'SPI',nba:'MIA',pdk:'44,4',lv:'v'},
+ {n:'Luka Dončić',team:'FOX',nba:'LAL',pdk:'43,6',lv:'v'},
+ {n:'Karl-Anthony Towns',team:'EAG',nba:'NYK',pdk:'40,9',lv:'v'},
+ {n:'Alperen Şengün',team:'DUC',nba:'HOU',pdk:'39,1',lv:'g'},
+ {n:'Tyrese Haliburton',team:'PEA',nba:'IND',pdk:'38,3',lv:'g'}];
+const sur=n=>{const p=n.split(' ');return p.length>1?p.slice(1).join(' '):n;};
+const INJ=n=>`<span class="inj"><span class="cross"></span>${n}</span>`;
+const el=document.getElementById('app');
+let h='';
+// top bar
+h+=`<div class="top" style="padding-left:0;padding-right:0">
+ <div class="logo-app"><svg viewBox="0 0 24 24"><path fill="#fff" d="M12 2l2.4 6.5L21 11l-6.6 2.5L12 20l-2.4-6.5L3 11l6.6-2.5z"/></svg></div>
+ <div class="brand">DREAMERS<small>FANTA PDK · 26/27</small></div><div class="spacer"></div>
+ <div class="icobtn"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></div>
+ <div class="icobtn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.6-2-3.4-2.3 1a7 7 0 0 0-1.7-1l-.3-2.5H9.4L9 5.4a7 7 0 0 0-1.7 1l-2.3-1-2 3.4 2 1.6a7 7 0 0 0 0 2l-2 1.6 2 3.4 2.3-1a7 7 0 0 0 1.7 1l.4 2.5h4.2l.3-2.5a7 7 0 0 0 1.7-1l2.3 1 2-3.4-2-1.6a7 7 0 0 0 .1-1z"/></svg></div></div>`;
+// tabs
+const TABS=[['HOME',1],['DREAMERS',0],['DYNASTY TV',0],['STATISTICHE',0],['CENTRO GEST',0]];
+h+=`<div class="tabs" style="padding-left:0;padding-right:0">${TABS.map(([t,on])=>`<div class="tab${on?' on':''}">${t}</div>`).join('')}</div>`;
+// search
+h+=`<div class="search"><div class="box"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>Cerca giocatore</div>
+ <div class="bmk"><svg viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg></div></div>`;
+// chips
+h+=`<div class="chips">${ORD.map(t=>{const C=TEAMS[t];const bad=+C.rec.split('-')[0]<=2;return `<div class="chip" style="--c:${C.bg}"><div class="glow"></div><img src="${C.logo}" alt=""><div class="rec${bad?' bad':''}">${C.rec}</div></div>`;}).join('')}</div>`;
+// section label
+h+=`<div class="seclab"><span class="dot"></span>DREAMERS · <b>TURNO 12</b> · 2/4 NOTTI</div>`;
+// matches
+h+=`<div class="matches">`;
+for(const m of MATCH){const A=TEAMS[m.a],B=TEAMS[m.b];
+ h+=`<div class="mc" style="--ca:${A.bg};--cb:${B.bg}"><div class="splitbg"></div><div class="inner">
+   <div class="injrow">${INJ(m.ia)}<span class="vs">VS</span>${INJ(m.ib)}</div>
+   <div class="row">
+     <div class="side"><img class="tlogo" src="${A.logo}"><div><div class="tn">${A.nick}<small>${A.city} · ${A.rec}</small></div></div></div>
+     <div class="sc" style="color:${A.bg==='#8cc9f5'||A.bg==='#7cc4f0'?'#fff':'#fff'}">${m.sa}</div>
+   </div>
+   <div class="row" style="margin-top:10px">
+     <div class="sc">${m.sb}</div>
+     <div class="side r"><img class="tlogo" src="${B.logo}"><div><div class="tn">${B.nick}<small>${B.city} · ${B.rec}</small></div></div></div>
+   </div>
+   <div class="barwrap"><span class="pct">${m.pa}%</span><div class="bar" style="flex:1"><i style="width:${m.pa}%;background:linear-gradient(90deg,${A.bg},${A.fg})"></i><i style="width:${100-m.pa}%;background:linear-gradient(90deg,${B.fg},${B.bg})"></i></div><span class="pct">${100-m.pa}%</span></div>
+ </div></div>`;}
+h+=`</div>`;
+// night panel
+h+=`<div class="panel"><div class="ptabs"><div class="l">◂ NOTTE DEL 25/11 ▸</div></div>
+ <div class="ptabs" style="padding-top:2px"><span class="l" style="color:#9fb0cf;letter-spacing:1px">TUTTE LE SQUADRE</span><span class="r">114 GIOCATORI</span></div>`;
+for(const p of TOP){const C=TEAMS[p.team];
+ h+=`<div class="pl"><img class="av" src="${C.logo}"><div class="nm">${p.n}<small>${p.nba} · media PDK</small></div><div class="pdk lv-${p.lv}">${p.pdk}</div></div>`;}
+h+=`</div>`;
+// SEGUITI
+const SEG=[{n:'Jaden McDaniels',team:'DUC',nba:'MIN',pdk:'61,9',lv:'v'},{n:'Amen Thompson',team:'TUR',nba:'HOU',pdk:'30,2',lv:'g'},{n:'Devin Booker',team:'EAG',nba:'PHX',pdk:'27,4',lv:'y'}];
+h+=`<div class="seclab" style="margin-top:22px"><span class="dot" style="background:#ff5db0;box-shadow:0 0 10px #ff5db0"></span><b>★ SEGUITI</b><span class="spacer"></span><span style="font-family:var(--disp);font-size:12px;letter-spacing:1px;color:#9fb0cf">MEDIA PDK</span></div>`;
+h+=`<div class="panel">`;
+for(const p of SEG){const C=TEAMS[p.team];h+=`<div class="pl"><img class="av" src="${C.logo}"><div class="nm">${p.n}<small>${p.nba} · media PDK</small></div><div class="pdk lv-${p.lv}">${p.pdk}</div></div>`;}
+h+=`</div>`;
+el.innerHTML=h;
+// selettore stile
+const sw=document.getElementById('sw');
+sw.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;document.documentElement.className=b.dataset.s;[...sw.children].forEach(x=>x.classList.toggle('on',x===b));window.scrollTo({top:0,behavior:'smooth'});});
+</script></body></html>
