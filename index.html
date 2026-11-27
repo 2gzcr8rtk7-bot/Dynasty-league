@@ -16520,8 +16520,7 @@ async function campoDraw(cv,k,a,b,dream){
   /* TRIBUNA senza maglie: solo NOME + PDK (piu grandi, banda piu bassa) */
   async function tribunaZone(team,list,yTop,acc){const trib=list.slice(10);if(!trib.length)return;const TH=78;
     const bg=dream?'rgba(20,16,44,.7)':'rgba(20,24,34,.88)';shRR(x,M,yTop,cw,TH,16);x.fillStyle=bg;x.fill();x.strokeStyle='rgba(255,255,255,.08)';x.lineWidth=2;x.stroke();
-    zoneLabel('TRIBUNA',M+10,yTop+TH/2-17,'rgba(8,10,16,.95)','#9fb0c7');
-    const x0=M+150,aw=cw-150-12,n=Math.min(trib.length,8),slot=aw/n;
+    const x0=M+12,aw=cw-24,n=Math.min(trib.length,8),slot=aw/n;/* (tribuna) niente scritta TRIBUNA: nomi centrati su tutta la banda */
     let TFS=23;{const names=trib.slice(0,n).map(p=>(drSur(p.n)||p.n).toUpperCase());while(TFS>10){x.font=SH_F(800,TFS,1);let ok=true;for(const nm of names)if(x.measureText(nm).width>slot-10){ok=false;break;}if(ok)break;TFS-=1;}}
     for(let i=0;i<n;i++){const px=x0+slot*i+slot/2;
       x.fillStyle=dream?'#eef2f8':'#e6edf6';x.font=SH_F(800,TFS,1);x.textAlign='center';x.textBaseline='middle';
