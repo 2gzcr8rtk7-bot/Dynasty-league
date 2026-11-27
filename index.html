@@ -5952,10 +5952,10 @@ function vHome0(){
 }
 
 /* (349) HOME in modalità notte: colonna loghi a sinistra (+15%), a destra banner partite NBA che scorrono da destra a sinistra restando nel suo spazio, i miei giocatori live e i giocatori seguiti live. Fuori dalla notte resta la griglia di prima. */
-let HN_L="";try{HN_L=localStorage.getItem("dl_hnl")||""}catch(e){}if(!["0","5","6"].includes(HN_L))HN_L="";
+let HN_L="";try{HN_L=localStorage.getItem("dl_hnl")||""}catch(e){}if(!["5","6"].includes(HN_L)){HN_L="";try{localStorage.removeItem("dl_hnl")}catch(e){}}/* (home) tolta la «Griglia» (0): restano «Loghi a lato» e «Loghi in cima» */
 let HN_S="";try{HN_S=localStorage.getItem("dl_hns")||""}catch(e){}if(!["all","team"].includes(HN_S))HN_S="";
 const hnLay=()=>HN_L===""?"6":HN_L,hnScope=()=>"all";/* (413) solo Home ufficiale: niente più versioni personali per squadra */
-function hnSet(k){const sc=hnScope();HN_L=["0","5","6"].includes(k)?k:"";HN_S=sc;try{HN_L?localStorage.setItem("dl_hnl",HN_L):localStorage.removeItem("dl_hnl");localStorage.setItem("dl_hns",HN_S)}catch(e){}}
+function hnSet(k){const sc=hnScope();HN_L=["5","6"].includes(k)?k:"";HN_S=sc;try{HN_L?localStorage.setItem("dl_hnl",HN_L):localStorage.removeItem("dl_hnl");localStorage.setItem("dl_hns",HN_S)}catch(e){}}
 function hnScopeSet(v){if(!["all","team"].includes(v))return;HN_S=v;try{localStorage.setItem("dl_hns",v)}catch(e){}}
 /* (353) Fase della Home notte: dalle 14:00 (ora italiana, era 08:30) fino alla prima partita della notte USA mostra le partite che stanno per arrivare (restituisce la data USA), poi torna live. Prima delle 08:30 restano i risultati della notte appena finita. */
 function hnNowMn(){const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Rome",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date());return +f.find(x=>x.type==="hour").value*60+ +f.find(x=>x.type==="minute").value}
@@ -5980,7 +5980,7 @@ function hnMinN(n,N){try{if(!N||N.lv||!N.k||!TV.box[N.k])return null;const k=tvN
 const homeMyT=()=>{if(HN_T&&TEAMS[HN_T])return HN_T;let t=curTeam;try{const x=localStorage.getItem("team");if(x&&TEAMS[x])t=x}catch(e){}return t};
 function hnOptsHtml(){const sc=(k)=>k==="5"?`<div class="hnsch"><div style="display:grid;grid-template-columns:repeat(8,1fr);gap:2px">${"<i style='height:9px'></i>".repeat(8)}</div><b style="height:11px"></b><b style="height:15px"></b><b style="height:15px"></b></div>`:k==="6"?`<div class="hnsch" style="grid-template-columns:9px 1fr;gap:4px"><div style="display:grid;gap:2px">${"<i style='height:5px'></i>".repeat(8)}</div><div style="display:grid;gap:3px;align-content:start"><b style="height:11px"></b><b style="height:20px"></b><b style="height:20px"></b></div></div>`:`<div class="hnsch" style="grid-template-columns:1fr 1fr;gap:3px">${"<i style='height:12px'></i>".repeat(8)}</div>`;
   const L=hnLay(),o=(k,n,d)=>`<button class="hnopt${L===k?" on":""}" data-hnl="${k}" aria-pressed="${L===k}">${sc(k)}<span>${n}</span><small>${d}</small></button>`;
-  return`<div class="hngrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${o("0","Griglia","Come prima")}${o("6","Loghi a lato","Con i dati")}${o("5","Loghi in cima","Con i dati")}</div>`}
+  return`<div class="hngrid" style="grid-template-columns:repeat(2,minmax(0,1fr))">${o("6","Loghi a lato","Con i dati")}${o("5","Loghi in cima","Con i dati")}</div>`}
 function hnVerHtml(){const S=hnScope(),T=homeMyT(),on=(v)=>v==="all"?S==="all":S==="team"&&T===v;
   const tile=(v,lg,n,d)=>`<button class="hnopt hnv${on(v)?" on":""}" data-hnv="${v}" aria-pressed="${on(v)}"><span class="hnvl">${lg}</span><span>${n}</span><small>${d}</small></button>`;
   return`<div class="hngrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${tile("all",'<b class="hnvs">★</b>',"Ufficiale","Tutte le squadre")}${teamOrd().map(t=>tile(t,badge(t),TEAMS[t].nick,"Solo i suoi giocatori")).join("")}</div>`}
