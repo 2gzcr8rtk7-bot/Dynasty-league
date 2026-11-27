@@ -16555,17 +16555,5 @@ window.campoScontro=async function(k,a,b){
 document.addEventListener('click',function(e){var h=e.target&&e.target.closest&&e.target.closest('[data-campo]');if(!h)return;e.preventDefault();try{if(typeof SHR_DUEL!=='undefined'&&SHR_DUEL&&SHR_DUEL.a)campoScontro(SHR_DUEL.k,SHR_DUEL.a,SHR_DUEL.b);}catch(_){}},false);
 })();
 </script>
-<script>/* (1700) Anteprima stili Home: pulsante che apre la pagina concept (home-concept.html) con selettore 4 stili */
-(function(){
-var css=document.createElement('style');css.textContent='#stylbtn{position:fixed;right:14px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:9000;display:inline-flex;align-items:center;gap:6px;padding:11px 15px;border:0;border-radius:14px;background:linear-gradient(145deg,#38e1ff,#7c3aed);color:#fff;font:800 14px system-ui;letter-spacing:.3px;box-shadow:0 10px 26px rgba(80,40,220,.5);cursor:pointer}#stylov{position:fixed;inset:0;z-index:100001;background:#05060b;display:flex;flex-direction:column}#stylov .bar{display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px;background:rgba(5,6,11,.92);border-bottom:1px solid rgba(255,255,255,.08)}#stylov iframe{flex:1;border:0;width:100%;background:#05060b}#stylov .load{color:#8b93a7;text-align:center;font:600 15px system-ui;margin:40px}';document.head.appendChild(css);
-var btn=document.createElement('button');btn.id='stylbtn';btn.textContent='✨ Stili Home';document.body.appendChild(btn);
-btn.onclick=function(){var old=document.getElementById('stylov');if(old)old.remove();var ov=document.createElement('div');ov.id='stylov';
- ov.innerHTML='<div class="bar"><button id="stylx" style="background:#2a2f3d;color:#fff;border:0;border-radius:10px;padding:10px 15px;font:700 15px system-ui;cursor:pointer">‹ Chiudi</button><span style="color:#cbd5e1;font:800 14px system-ui;letter-spacing:1px">ANTEPRIMA STILI</span></div><p class="load" id="styld">Carico l’anteprima…</p><iframe id="styif" style="display:none"></iframe>';
- document.body.appendChild(ov);
- /* fetch + srcdoc: evita che il service worker tratti l’iframe come navigazione e serva index.html */
- fetch('home-concept.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.text();}).then(function(t){var f=document.getElementById('styif');if(!f)return;f.srcdoc=t;f.style.display='block';var l=document.getElementById('styld');if(l)l.remove();}).catch(function(){var l=document.getElementById('styld');if(l)l.textContent='Anteprima non disponibile. Riprova tra poco.';});
- var closed=false;function close(){if(closed)return;closed=true;try{window.removeEventListener("popstate",op);}catch(_){}ov.remove();}function op(){close();}try{history.pushState({sty:1},"");window.addEventListener("popstate",op);}catch(_){}
- document.getElementById('stylx').onclick=function(){try{if(history.state&&history.state.sty){history.back();return;}}catch(_){}close();};};
-})();</script>
 </body>
 </html>
