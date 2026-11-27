@@ -5892,7 +5892,7 @@ function segInfo(n){
   try{const S=typeof GL_STATS!=="undefined"?GL_STATS:{};for(const x of GLEAGUE)for(const p of x.g){const st=S[x.t+"|"+p[0]]||{};if((st.n||p[0])===n)return{t:x.t,own:"G-"+TEAMS[x.t].nick,nba:st.nba||"",kind:"G",k:x.t+"|"+p[0]}}}catch(e){}
   const f=(typeof FA!=="undefined"?FA:[]).find(x=>x[0]===n);if(f)return{t:null,own:"Free Agent",nba:f[1],kind:"F"};
   return{t:null,own:"—",nba:"",kind:"?"}}
-function osNight(){const o={};if(typeof TV==="undefined")return o;const d=campoNotte();if(!d)return o;
+function osNight(dd){const o={};if(typeof TV==="undefined")return o;const d=dd||campoNotte();if(!d)return o;
   for(const g of TV.days[d]||[]){const B=g[7]&&TV.box[g[7]];if(!B||g[5]==="S")continue;
     [["a",g[1]],["h",g[0]]].forEach(([sd,opp])=>(B[sd]||[]).forEach(r=>{if(r[19]==null)return;const mm=String(r[2]||"0").split(":");o[tvNm(r[0])]={p:+r[19],min:(+mm[0]||0)+(+mm[1]||0)/60,mt:r[2],pt:r[3],rb:r[6],as:r[7],opp,lv:g[5]==="L",st:g[5]==="L"?(TVL.st[g[7]]||"Live"):"Finale",k:g[7],sd,dy:d}}))}
   return o}
@@ -6120,13 +6120,13 @@ function homeNotte(st){
   const banner=(NB||AV.n)?`<div class="hmq"><div class="hmqt" data-d="${dur}" style="animation-duration:${dur}s">${one}${one}</div></div>`:`<div class="hmq"><div class="hmg hmnone"><small>Nessuna partita NBA stanotte</small></div></div>`;
   const row=(n,N,sub,own)=>{const bx=hnBoxHtml(n,N);if(bx)return`<div class="hmp lvx" ${N.k&&N.lv?`data-hgo="${N.dy}|${N.k}|${N.sd}"`:`data-hpn="${String(n).replace(/"/g,"&quot;")}"`} role="link" tabindex="0"><div class="lvh">${N.lv?'<i class="hmd"></i>':""}${own?`<i class="hmo">${badge(own)}</i>`:""}<span class="plk" data-plopen="${String(n).replace(/"/g,"&quot;")}">${String(n).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}</span>${pdkB(N.p,pdkF(N.p))}</div><small class="lvs">${sub}${hnMinS(n,N)}</small>${bx}</div>`;return row0(n,N,sub,own)},
   row0=(n,N,sub,own)=>(sub=sub+hnMinS(n,N),`<div class="hmp" ${N.k&&N.lv?`data-hgo="${N.dy}|${N.k}|${N.sd}"`:`data-hpn="${String(n).replace(/"/g,"&quot;")}"`} role="link" tabindex="0"><span class="hmn">${N&&N.lv?'<i class="hmd"></i>':""}${own?`<i class="hmo">${badge(own)}</i>`:""}<span class="plk" data-plopen="${String(n).replace(/"/g,"&quot;")}">${String(n).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}</span><small>${sub}</small></span>${pdkB(N.p,pdkF(N.p))}</div>`);
-  let mine=[];try{const M=campoNotteMap(myT);mine=Object.keys(M).map(n=>({n,N:M[n]}))}catch(e){}
+  let mine=[];try{const M=campoNotteMap(myT,d);mine=Object.keys(M).map(n=>({n,N:M[n]}))}catch(e){}
   const OFF=hnScope()==="all";
   const hsoHead=(tit,on,n,r,nm)=>on?`<div class="hmh"><span><button type="button" class="hso${HN_SO==="team"?" on":""}" data-hso="team">${HN_SO==="team"?(TEAMS[HN_ORD[HN_SI]]||{nick:""}).nick.toUpperCase():tit}</button>${HN_SO==="team"&&nm&&nm.length?hmAddT(nm,(TEAMS[HN_ORD[HN_SI]]||{nick:""}).nick):""}</span><span><button type="button" class="hso${HN_SO==="team"?"":" on"}" data-hso="pdk">${n} ${n==1?"GIOCATORE":"GIOCATORI"}</button></span></div>`:`<div class="hmh"><span>${tit}</span><span>${r}</span></div>`;
   const hsoOrd=x=>{const i=HN_ORD.indexOf(x.own);return i<0?99:(i-HN_SI+8)%8};
   /* (444) il pulsante «Tutte le squadre» FILTRA: con HN_SO==="team" restano solo i giocatori della squadra HN_ORD[HN_SI]; HN_OWN = squadre che hanno giocatori in lista (il giro salta le altre) */
   window.HN_OWN=new Set();const hsoF=l=>(OFF&&HN_SO==="team")?l.filter(x=>x.own===HN_ORD[HN_SI]):l;
-  if(OFF){mine=[];teamOrd().forEach(t=>{try{const M=campoNotteMap(t);Object.keys(M).forEach(n=>mine.push({n,N:M[n],own:t}))}catch(e){}})}
+  if(OFF){mine=[];teamOrd().forEach(t=>{try{const M=campoNotteMap(t,d);Object.keys(M).forEach(n=>mine.push({n,N:M[n],own:t}))}catch(e){}})}
   mine.sort((a,b)=>(b.N.lv-a.N.lv)||(b.N.p-a.N.p));
   if(OFF){mine.forEach(x=>HN_OWN.add(x.own));mine=hsoF(mine)}
   /* (627) dalle 14:00 la pagina "Notte appena avvenuta" resta anche a partite iniziate (la Previsione e' sostituita dalla live); (628) con lo swipe da sinistra a destra (o la freccia ‹) si torna alle notti precedenti */
@@ -6134,7 +6134,7 @@ function homeNotte(st){
   let mineP=[],dN=null;try{if(HN_NO>0){dN=PN[HN_NO-1];if(dN){if(OFF){teamOrd().forEach(t=>{try{const M=campoNotteMap(t,dN);Object.keys(M).forEach(n=>mineP.push({n,N:M[n],own:t}))}catch(e){}})}else{const M=campoNotteMap(myT,dN);mineP=Object.keys(M).map(n=>({n,N:M[n]}))}}
       mineP.sort((a,b)=>(b.N.lv-a.N.lv)||(b.N.p-a.N.p));if(OFF){mineP.forEach(x=>HN_OWN.add(x.own));mineP=hsoF(mineP)}}}catch(e){}
   const mTot=mine.reduce((a,x)=>a+(x.N.p||0),0),mTotP=mineP.reduce((a,x)=>a+(x.N.p||0),0);
-  let seg=[];try{const NI=osNight();seg=SEGUI.map(n=>({n,N:NI[tvNm(n)]})).filter(x=>x.N)}catch(e){}
+  let seg=[];try{const NI=osNight(d);seg=SEGUI.map(n=>({n,N:NI[tvNm(n)]})).filter(x=>x.N)}catch(e){}
   seg.sort((a,b)=>(b.N.lv-a.N.lv)||(b.N.p-a.N.p));
   const mLv=mine.some(x=>x.N.lv),sLv=seg.some(x=>x.N.lv);
   const W=(cls,h)=>`<div class="hmscroll"${HN_H[cls]?` style="max-height:${HN_H[cls]}px"`:""}>${h}</div><div class="hmgrip" data-grip="${cls}" role="separator" aria-label="Trascina per allungare o accorciare l'elenco"><i></i></div>`;
