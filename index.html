@@ -16532,12 +16532,10 @@ async function campoDraw(cv,k,a,b,dream){
   async function onCourt(team,list,end,acc){const st=list.slice(0,5).sort((p,q)=>({C:0,F:1,G:2}[p.r]??3)-({C:0,F:1,G:2}[q.r]??3));
     /* specchiato: il CENTRO verso il PROPRIO canestro; caselline SEMPRE sotto la maglia */
     const RY=rowY(end);
-    /* ali e guardie posizionate SULLA linea da 3: ali sugli angoli alti, guardie in basso vicino al vertice */
-    const ARC=(typeof window!=='undefined'&&window.__ARC)||{w:152,g:112,pad:20};
-    const baseY=end==='N'?top+9:bot-9,adir=end==='N'?1:-1,ayA=baseY+adir*140,R3arc=cw*.42;
-    const onArc=deg=>{const a=deg*Math.PI/180,lo=M+9+wP/2+ARC.pad,hi=W0-M-9-wP/2-ARC.pad;let axx=cx+R3arc*Math.cos(a);axx=Math.max(lo,Math.min(hi,axx));const d2=axx-cx,s=Math.sqrt(Math.max(0,R3arc*R3arc-d2*d2));return[axx,ayA+adir*s];};
+    /* ali (slot 1 e 2) spostate verso gli angoli del tiro da 3 (versione B); guardie (slot 3 e 4) in posizione originale */
+    const WG={dy:150,dx:.012};
     for(let i=0;i<st.length;i++){let px=M+50+SLOT[i][0]*(cw-100),py=RY[SLOT[i][1]];
-      if(i===1)[px,py]=onArc(ARC.w);else if(i===2)[px,py]=onArc(180-ARC.w);else if(i===3)[px,py]=onArc(ARC.g);else if(i===4)[px,py]=onArc(180-ARC.g);
+      if(i===1||i===2){const dir=end==='N'?-1:1;py=RY[1]+dir*WG.dy;const outer=i===1?-1:1;px=M+50+(SLOT[i][0]+outer*WG.dx)*(cw-100);}
       const jh=await jersey(team,st[i],px,py,jwC);
       const vv=st[i].f!=null?st[i].f:st[i].e;
       plate(px,py+jh/2-TUCK,drSur(st[i].n)||st[i].n,vv,st[i].r,wP,acc,{lock:finito(st[i].n),nameFs:NFS,pdkFs:PFS,slot:st[i].cap?'cap':null});}}
