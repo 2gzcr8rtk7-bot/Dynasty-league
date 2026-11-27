@@ -16494,7 +16494,7 @@ async function campoDraw(cv,k,a,b,dream){
   const keyW=250,keyH=250;
   for(const end of['N','S']){const baseY=end==='N'?top+9:bot-9,dir=end==='N'?1:-1;
     x.strokeRect(cx-keyW/2,end==='N'?baseY:baseY-keyH,keyW,keyH);
-    x.beginPath();x.arc(cx,baseY+dir*keyH,keyW*.4,0,7);x.stroke();
+    /* niente lunetta: tolto il cerchio del tiro libero in cima all'area */
     const R3=cw*.42,ay=baseY+dir*140;x.beginPath();x.moveTo(cx-R3,baseY);x.lineTo(cx-R3,ay);x.arc(cx,ay,R3,Math.PI,0,dir>0);x.lineTo(cx+R3,baseY);x.stroke();
     x.beginPath();x.arc(cx,baseY+dir*48,22,0,7);x.stroke();}
   x.shadowBlur=0;
