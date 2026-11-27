@@ -16480,7 +16480,7 @@ async function campoDraw(cv,k,a,b,dream){
     const bx=pxl+br+8;x.beginPath();x.arc(bx,by,br,0,7);x.fillStyle=rc;x.fill();
     x.fillStyle='#0b0d12';x.font=SH_F(900,br*1.2,1);x.textAlign='center';x.fillText(({G:'G',F:'A',A:'A',C:'C'}[role]||'·'),bx,by+.5);
     x.fillStyle=acc;x.fillRect(pxl+4,py+nh-2.5,w-8,2.5);}
-  const M=54,top=300,bot=H0-300,cw=W0-2*M,ch=bot-top,cx=W0/2,cyMid=(top+bot)/2;
+  const M=16,top=310,bot=H0-310,cw=W0-2*M,ch=bot-top,cx=W0/2,cyMid=(top+bot)/2;
   x.save();shRR(x,M,top,cw,ch,24);x.clip();
   if(dream){const gg=x.createLinearGradient(0,top,0,bot);gg.addColorStop(0,CA.bg);gg.addColorStop(.5,'#0c0a20');gg.addColorStop(1,CB.bg);x.globalAlpha=.5;x.fillStyle=gg;x.fillRect(M,top,cw,ch);x.globalAlpha=1;}
   else{const g=x.createLinearGradient(0,top,0,bot);g.addColorStop(0,'#c58a4e');g.addColorStop(.5,'#e4b67a');g.addColorStop(1,'#c58a4e');x.fillStyle=g;x.fillRect(M,top,cw,ch);
@@ -16498,11 +16498,11 @@ async function campoDraw(cv,k,a,b,dream){
     const R3=cw*.42,ay=baseY+dir*140;x.beginPath();x.moveTo(cx-R3,baseY);x.lineTo(cx-R3,ay);x.arc(cx,ay,R3,Math.PI,0,dir>0);x.lineTo(cx+R3,baseY);x.stroke();
     x.beginPath();x.arc(cx,baseY+dir*48,22,0,7);x.stroke();}
   x.shadowBlur=0;
-  const SLOT=[[.5,0],[.16,1],[.84,1],[.34,2],[.66,2]],jwC=118,wP=215,TUCK=18;/* maglie +23%; ali (riga centrale) un po' aperte verso i 3 punti; capsule larghe (B): nome 28 / PDK 35 */
+  const SLOT=[[.5,0],[.13,1],[.87,1],[.34,2],[.66,2]],jwC=118,wP=215,TUCK=18;/* maglie +23%; ali (riga centrale) aperte verso i 3 punti; capsule larghe (B): nome 28 / PDK 35 */
   const courtNames=[...RA.slice(0,5),...RB.slice(0,5)].map(p=>drSur(p.n)||p.n);
   const NFS=uniNameFs(courtNames,wP,28),PFS=35;/* nome: dimensione UNICA per tutti */
   const jh0=jwC*77/64,cardH=cardHt(NFS,PFS),foot=(jh0/2-TUCK)+cardH;
-  function rowY(end){if(end==='N'){const C=top+jh0/2+14,G=cyMid-8-foot,F=(C+G)/2;return[C,F,G];}const C=bot-jh0/2-12-cardH,G=cyMid+8+jh0/2,F=(C+G)/2;return[C,F,G];}
+  function rowY(end){const R0=18,R2=40;/* centro (1ª) staccato dal fondocampo; 3ª riga staccata dal centrocampo; ali (F) ferme */if(end==='N'){const C=top+jh0/2+14,G=cyMid-8-foot,F=(C+G)/2;return[C+R0,F,G-R2];}const C=bot-jh0/2-12-cardH,G=cyMid+8+jh0/2,F=(C+G)/2;return[C-R0,F,G+R2];}
   async function onCourt(team,list,end,acc){const st=list.slice(0,5).sort((p,q)=>({C:0,F:1,G:2}[p.r]??3)-({C:0,F:1,G:2}[q.r]??3));
     /* specchiato: il CENTRO verso il PROPRIO canestro; caselline SEMPRE sotto la maglia */
     const RY=rowY(end);
@@ -16512,11 +16512,11 @@ async function campoDraw(cv,k,a,b,dream){
   await onCourt(a,RA,'N',homeAcc);await onCourt(b,RB,'S',awayAcc);
   function zoneLabel(txt,px,py,acc,fill){x.font=SH_F(800,22,1);const tw=x.measureText(txt).width,pw=tw+34,ph=34;shRR(x,px,py,pw,ph,ph/2);x.fillStyle=fill;x.fill();x.fillStyle=acc;x.textAlign='left';x.textBaseline='middle';x.fillText(txt,px+17,py+ph/2+1);}
   function chair(px,seatY,w,col){x.fillStyle=col;shRR(x,px-w*.42,seatY-w*.62,w*.84,w*.5,6);x.fill();shRR(x,px-w*.5,seatY,w,w*.26,5);x.fillStyle=col;x.fill();x.fillStyle='rgba(0,0,0,.25)';shRR(x,px-w*.5,seatY+w*.18,w,w*.08,4);x.fill();x.strokeStyle=col;x.lineWidth=4;x.beginPath();x.moveTo(px-w*.4,seatY+w*.26);x.lineTo(px-w*.4,seatY+w*.5);x.moveTo(px+w*.4,seatY+w*.26);x.lineTo(px+w*.4,seatY+w*.5);x.stroke();}
-  const BJW=89,BFS0=25,BPFS0=28;/* panchinari +20% (senza scritta PANCHINA) */
+  const BJW=89,BFS0=25,BPFS0=28,BSC=1.1;/* panchina: maglie e capsule (nome+PDK) +10%; sedie invariate */
   async function benchZone(team,list,yTop,acc){const bench=list.slice(5,10);if(!bench.length)return;
-    const n=bench.length,cwB=cw+40,startX=cx-cwB/2,slot=cwB/n,jw=BJW,chairW=jw*1.5,bw=jw*1.6,jh=jw*77/64;
-    const BFS=uniNameFs(bench.map(p=>drSur(p.n)||p.n),bw,BFS0),BPFS=BPFS0;
-    for(let i=0;i<n;i++){const px=startX+slot*i+slot/2,seatY=yTop+jw*.78;chair(px,seatY,chairW,acc);
+    const n=bench.length,cwB=cw+40,startX=cx-cwB/2,slot=cwB/n,jw=BJW*BSC,chairW=BJW*1.5,bw=jw*1.6,jh=jw*77/64;
+    const BFS=uniNameFs(bench.map(p=>drSur(p.n)||p.n),bw,BFS0*BSC),BPFS=BPFS0*BSC;
+    for(let i=0;i<n;i++){const px=startX+slot*i+slot/2,seatY=yTop+BJW*.78;chair(px,seatY,chairW,acc);
       const jy=seatY-jw*.08;await jersey(team,bench[i],px,jy,jw);
       plate(px,jy+jh/2-jw*.14,drSur(bench[i].n)||bench[i].n,bench[i].e,bench[i].r,bw,acc,{lock:false,nameFs:BFS,pdkFs:BPFS});}}
   /* TRIBUNA senza maglie: solo NOME + PDK (piu grandi, banda piu bassa) */
@@ -16536,9 +16536,9 @@ async function campoDraw(cv,k,a,b,dream){
     if(lg){const z=80,r=Math.min(z/lg.width,z/lg.height);x.drawImage(lg,cx-300-lg.width*r/2,cyH-lg.height*r/2,lg.width*r,lg.height*r);}
     x.fillStyle=acc;x.font=SH_F(800,44,1);x.letterSpacing='2px';x.fillText((C.city+' '+C.nick).toUpperCase(),cx+10,cyH);x.letterSpacing='0px';
     if(T.score!=null){x.fillStyle='#fff';x.font=SH_F(900,40,1);x.fillText(valOf(T.score),cx+400,cyH);}}
-  const bjh=BJW*77/64,bcardH=(BFS0+16)+(BPFS0+18),blkDown=BJW*.56+bjh/2+bcardH,benchHY=top-4-blkDown,benchAY=bot+4+BJW*.15;
+  const bjh=BJW*BSC*77/64,bcardH=(BFS0*BSC+16)+(BPFS0*BSC+18),blkDown=BJW*.56+bjh/2+bcardH,benchHY=top-4-blkDown,benchAY=bot+4+BJW*.15;
   /* niente intestazioni squadra sul campo (nome+punteggio sono nella barra dell'overlay): pagina piu corta, tribune ai bordi */
-  await tribunaZone(a,RA,8,homeAcc);await benchZone(a,RA,benchHY,homeAcc);
+  await tribunaZone(a,RA,4,homeAcc);await benchZone(a,RA,benchHY,homeAcc);
   await benchZone(b,RB,benchAY,awayAcc);await tribunaZone(b,RB,benchAY+blkDown+8,awayAcc);
 }
 window.campoScontro=async function(k,a,b){
@@ -16557,8 +16557,8 @@ window.campoScontro=async function(k,a,b){
     +'<button id="cscx" style="flex:none;background:rgba(255,255,255,.07);color:#dce3ec;border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:6px 11px;font:700 13px system-ui;cursor:pointer">‹ Chiudi</button>'
     +'<span style="flex:1;min-width:0;display:flex;align-items:baseline;justify-content:center;gap:8px;white-space:nowrap;overflow:hidden">'+_title+'</span>'
     +'</div>'
-    +'<div style="padding:4px 10px calc(40px + env(safe-area-inset-bottom,0px))"><p id="cscld" style="color:#8b93a7;text-align:center;font:600 15px system-ui;margin:26px">Preparo la visuale…</p>'
-    +'<canvas id="csccv" style="width:100%;max-width:560px;margin:0 auto;display:none;border-radius:12px"></canvas></div>';
+    +'<div style="padding:4px calc(3px + env(safe-area-inset-right,0px)) calc(40px + env(safe-area-inset-bottom,0px)) calc(3px + env(safe-area-inset-left,0px))"><p id="cscld" style="color:#8b93a7;text-align:center;font:600 15px system-ui;margin:26px">Preparo la visuale…</p>'
+    +'<canvas id="csccv" style="width:100%;max-width:640px;margin:0 auto;display:none;border-radius:12px"></canvas></div>';
   document.body.appendChild(ov);
   var cv=ov.querySelector('#csccv'),ld=ov.querySelector('#cscld');
   /* chiusura: tasto, gesto «indietro» del telefono, ed Esc */
