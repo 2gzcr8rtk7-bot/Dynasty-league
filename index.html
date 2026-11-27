@@ -16495,8 +16495,8 @@ async function campoDraw(cv,k,a,b,dream){
   for(const end of['N','S']){const baseY=end==='N'?top+9:bot-9,dir=end==='N'?1:-1;
     x.strokeRect(cx-keyW/2,end==='N'?baseY:baseY-keyH,keyW,keyH);
     /* niente lunetta: tolto il cerchio del tiro libero in cima all'area */
-    const R3=cw*.42,ay=baseY+dir*140;x.beginPath();x.moveTo(cx-R3,baseY);x.lineTo(cx-R3,ay);x.arc(cx,ay,R3,Math.PI,0,dir>0);x.lineTo(cx+R3,baseY);x.stroke();
-    x.beginPath();x.arc(cx,baseY+dir*48,22,0,7);x.stroke();}
+    const R3=cw*.42,ay=baseY+dir*140;x.beginPath();x.moveTo(cx-R3,baseY);x.lineTo(cx-R3,ay);x.arc(cx,ay,R3,Math.PI,0,dir>0);x.lineTo(cx+R3,baseY);x.stroke();}
+    /* tolto anche il cerchietto dell'area vicino al canestro */
   x.shadowBlur=0;
   const SLOT=[[.5,0],[.13,1],[.87,1],[.34,2],[.66,2]],jwC=118,wP=215,TUCK=18;/* maglie +23%; ali (riga centrale) aperte verso i 3 punti; capsule larghe (B): nome 28 / PDK 35 */
   const courtNames=[...RA.slice(0,5),...RB.slice(0,5)].map(p=>drSur(p.n)||p.n);
