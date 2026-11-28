@@ -1107,6 +1107,9 @@ body:not(.notte) .tmc .tmar{color:var(--gold)}
 .hn6 .hmmulti.live{background:linear-gradient(180deg,var(--panel,#15102b),var(--bg,#0a0713)) padding-box,linear-gradient(140deg,#ff3b5c,#ff6a3d 50%,#ff2d7a) border-box!important;animation:hmliveb 1.6s ease-in-out infinite}
 @keyframes hmliveb{0%,100%{box-shadow:0 18px 44px rgba(0,0,0,.5),0 0 14px rgba(255,59,92,.28)}50%{box-shadow:0 18px 44px rgba(0,0,0,.5),0 0 40px rgba(255,59,92,.7),0 0 0 2px rgba(255,59,92,.22)}}
 .hn6 .hmmulti.live::after{content:"";position:absolute;inset:0;border-radius:22px;background:radial-gradient(130% 80% at 50% 0,rgba(255,45,70,.15),transparent 58%),radial-gradient(130% 80% at 50% 100%,rgba(255,45,70,.11),transparent 58%);pointer-events:none;z-index:3}
+.hn6 .hmmulti.live::before{content:"";position:absolute;inset:0;border-radius:22px;border:2.5px solid #ff2d55;box-shadow:0 0 14px rgba(255,45,85,.75);pointer-events:none;z-index:4;animation:hmbord 1s ease-in-out infinite}
+@keyframes hmbord{0%,100%{opacity:1}50%{opacity:.1}}
+@media (prefers-reduced-motion:reduce){.hn6 .hmmulti.live::before{animation:none;opacity:.9}}
 .hn6 .hmmulti.live .hmnv .hmtg{display:none}
 .hn6 .hmmulti.live .hmnt b{color:#ff8a9c}
 @media (prefers-reduced-motion:reduce){.hn6 .hmmulti.live{animation:none;box-shadow:0 18px 44px rgba(0,0,0,.5),0 0 30px rgba(255,59,92,.55)}}
