@@ -9090,7 +9090,8 @@ const drShut=e=>drDkHas(e)||drGate(e);
    drForm(k) parte dalla formazione archiviata (o dai ROSTER attuali) e rimette alla squadra di prima i giocatori degli
    "Scambio" a 2 squadre in TRADES con data+ora >= apertura del turno k (senza ora = 00:00). Per scambi a 3+ squadre serve il campo da:{giocatore:squadra}. */
 const DR_REGOLA_SCAMBI="2026-10-29 00:00"; /* la regola vale per gli scambi da questa data (decisione utente: il turno 1 resta com'era per Diabaté 25/10 e Jaquez/J. Williams 26/10) */
-function drOpen(k){const T=DR_TURNI;if(k<=1||!T[k-2])return DR_START+" 00:00";return drAdd(T[k-2][1],1)+" 10:30"}
+const DR_OPEN_OVR={11:"2026-11-28 08:00"};/* (28/11) SOLO per oggi: il turno 11 apre alle 8:00 invece delle 10:30 (default); non tocca gli altri turni */
+function drOpen(k){const O=(typeof DR_OPEN_OVR!=="undefined")&&DR_OPEN_OVR[k];if(O)return O;const T=DR_TURNI;if(k<=1||!T[k-2])return DR_START+" 00:00";return drAdd(T[k-2][1],1)+" 10:30"}
 function drTrTime(x){const m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(x.data||"");return m?`${m[3]}-${m[2]}-${m[1]} ${x.ora||"00:00"}`:""}
 /* (1588) REGOLA SCAMBI (decisione utente 13/11/2026): uno scambio vale SUBITO anche a turno aperto se nessuna partita NBA del turno è ancora iniziata;
    a partite iniziate si aspetta il turno dopo. Soglia = palla a due della prima partita del turno (ora italiana, dal calendario di Dynasty TV); senza calendario si usa l apertura del turno. */
